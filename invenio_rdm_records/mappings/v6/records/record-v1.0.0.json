@@ -1,0 +1,48 @@
+{
+  "mappings": {
+    "record-v1.0.0": {
+      "date_detection": false,
+      "numeric_detection": false,
+      "properties": {
+        "_access": {
+          "type": "object",
+          "properties": {
+            "metadata_restricted": {
+              "type": "boolean"
+            },
+            "files_restricted": {
+              "type": "boolean"
+            }
+          }
+        },
+        "_bucket": {
+          "enabled": false
+        },
+        "access_right": {
+          "type": "keyword"
+        },
+        "$schema": {
+          "type": "keyword"
+        },
+        "recid": {
+          "type": "long"
+        },
+        "title": {
+          "type": "text"
+        },
+        "description": {
+          "type": "text"
+        },
+        "owners": {
+          "type": "integer"
+        },
+        "_created": {
+          "type": "date"
+        },
+        "_updated": {
+          "type": "date"
+        }
+      }
+    }
+  }
+}
