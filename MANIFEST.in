@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
 #
 # Copyright (C) 2019 CERN.
+# Copyright (C) 2019 Northwestern University, Galter Health Sciences Library & Learning Center.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify it
 # under the terms of the MIT License; see LICENSE file for more details.
 
-# TODO: Generate this manifest file by running the following commands:
 # (please sort the lines in this file after running below commands)
 #
 #  git init
@@ -13,8 +13,23 @@
 #  pip install -e .[all]
 #  check-manifest -u
 
+include *.rst
+include *.sh
+include *.txt
 include .dockerignore
 include .editorconfig
 include .tx/config
+include babel.ini
+include docs/requirements.txt ..
+include LICENSE
+include pytest.ini
 prune docs/_build
-recursive-include invenio_rdm_records/translations *.po *.pot *.mo
+recursive-include docs *.bat
+recursive-include docs *.py
+recursive-include docs *.rst
+recursive-include docs Makefile
+recursive-include examples *.py
+recursive-include examples *.sh
+recursive-include invenio_rdm_records *.html
+recursive-include invenio_rdm_records *.json
+recursive-include tests *.py
