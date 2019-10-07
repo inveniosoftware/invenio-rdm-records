@@ -1,5 +1,7 @@
 ..
     Copyright (C) 2019 CERN.
+    Copyright (C) 2019 Northwestern University, Galter Health Sciences Library & Learning Center.
+
 
     Invenio-RDM-Records is free software; you can redistribute it and/or
     modify it under the terms of the MIT License; see LICENSE file for more
@@ -25,8 +27,6 @@
         :target: https://github.com/inveniosoftware/invenio-rdm-records/blob/master/LICENSE
 
 DataCite-based data model for Invenio.
-
-TODO: Please provide feature overview of module
 
 Further documentation is available on
 https://invenio-rdm-records.readthedocs.io/

@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # Copyright (C) 2019 CERN.
+# Copyright (C) 2019 Northwestern University, Galter Health Sciences Library & Learning Center.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify it
 # under the terms of the MIT License; see LICENSE file for more details.
@@ -19,10 +20,6 @@ class InvenioRDMRecords(object):
 
     def __init__(self, app=None):
         """Extension initialization."""
-        # TODO: This is an example of translation string with comment. Please
-        # remove it.
-        # NOTE: This is a note to a translator.
-        _('A translation string')
         if app:
             self.init_app(app)
 

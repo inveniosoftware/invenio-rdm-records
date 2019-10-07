@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # Copyright (C) 2019 CERN.
+# Copyright (C) 2019 Northwestern University, Galter Health Sciences Library & Learning Center.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify it
 # under the terms of the MIT License; see LICENSE file for more details.
@@ -58,7 +59,7 @@ setup(
     version=version,
     description=__doc__,
     long_description=readme + '\n\n' + history,
-    keywords='invenio TODO',
+    keywords='invenio data model',
     license='MIT',
     author='CERN',
     author_email='info@inveniosoftware.org',
@@ -77,17 +78,6 @@ setup(
         'invenio_i18n.translations': [
             'messages = invenio_rdm_records',
         ],
-        # TODO: Edit these entry points to fit your needs.
-        # 'invenio_access.actions': [],
-        # 'invenio_admin.actions': [],
-        # 'invenio_assets.bundles': [],
-        # 'invenio_base.api_apps': [],
-        # 'invenio_base.api_blueprints': [],
-        # 'invenio_base.blueprints': [],
-        # 'invenio_celery.tasks': [],
-        # 'invenio_db.models': [],
-        # 'invenio_pidstore.minters': [],
-        # 'invenio_records.jsonresolver': [],
     },
     extras_require=extras_require,
     install_requires=install_requires,
@@ -105,6 +95,6 @@ setup(
         'Programming Language :: Python :: 2.7',
         'Programming Language :: Python :: 3',
         'Programming Language :: Python :: 3.5',
-        'Development Status :: 1 - Planning',
+        'Development Status :: 3 - Alpha',
     ],
 )
