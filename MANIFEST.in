@@ -20,7 +20,7 @@ include .dockerignore
 include .editorconfig
 include .tx/config
 include babel.ini
-include docs/requirements.txt ..
+include docs/requirements.txt
 include LICENSE
 include pytest.ini
 prune docs/_build
@@ -32,4 +32,5 @@ recursive-include examples *.py
 recursive-include examples *.sh
 recursive-include invenio_rdm_records *.html
 recursive-include invenio_rdm_records *.json
+recursive-include invenio_rdm_records *.po *.pot
 recursive-include tests *.py
