@@ -25,9 +25,31 @@ tests_require = [
     'pytest-invenio>=1.0.5',
 ]
 
+invenio_search_version = '1.2.0'
+
 extras_require = {
     'docs': [
         'Sphinx>=1.5.1',
+    ],
+    # Elasticsearch version
+    'elasticsearch5': [
+        'invenio-search[elasticsearch5]>={}'.format(invenio_search_version),
+    ],
+    'elasticsearch6': [
+        'invenio-search[elasticsearch6]>={}'.format(invenio_search_version),
+    ],
+    'elasticsearch7': [
+        'invenio-search[elasticsearch7]>={}'.format(invenio_search_version),
+    ],
+    # Databases
+    'mysql': [
+        'invenio-db[mysql,versioning]>=1.0.0',
+    ],
+    'postgresql': [
+        'invenio-db[postgresql,versioning]>=1.0.0',
+    ],
+    'sqlite': [
+        'invenio-db[versioning]>=1.0.0',
     ],
     'tests': tests_require,
 }
@@ -43,6 +65,11 @@ setup_requires = [
 
 install_requires = [
     'Flask-BabelEx>=0.9.3',
+    'invenio-jsonschemas>=1.0.0,<1.1.0',
+    'invenio-records-rest>=1.5.0,<1.6.0',
+    'invenio-records>=1.3.0,<1.4.0',
+    'invenio-records-files>=1.1.1,<1.2.0'
+    # TODO: add invenio-records-permissions
 ]
 
 packages = find_packages()
@@ -72,11 +99,23 @@ setup(
         'invenio_base.apps': [
             'invenio_rdm_records = invenio_rdm_records:InvenioRDMRecords',
         ],
+        'invenio_base.api_apps': [
+            'invenio_rdm_records = invenio_rdm_records:InvenioRDMRecords',
+        ],
         'invenio_base.blueprints': [
             'invenio_rdm_records = invenio_rdm_records.views:blueprint',
         ],
+        'invenio_config.module': [
+            'invenio_rdm_records = invenio_rdm_records.config',
+        ],
         'invenio_i18n.translations': [
             'messages = invenio_rdm_records',
+        ],
+        'invenio_jsonschemas.schemas': [
+            'invenio_rdm_records = invenio_rdm_records.jsonschemas',
+        ],
+        'invenio_search.mappings': [
+            'records = invenio_rdm_records.mappings',
         ],
     },
     extras_require=extras_require,
