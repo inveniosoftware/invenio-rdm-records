@@ -11,7 +11,10 @@
 
 from __future__ import absolute_import, print_function
 
+import json
+
 from flask import Flask
+from invenio_search import current_search
 
 from invenio_rdm_records import InvenioRDMRecords
 
@@ -33,10 +36,3 @@ def test_init():
     assert 'invenio-rdm-records' not in app.extensions
     ext.init_app(app)
     assert 'invenio-rdm-records' in app.extensions
-
-
-def test_view(base_client):
-    """Test view."""
-    res = base_client.get("/")
-    assert res.status_code == 200
-    assert 'Welcome to Invenio-RDM-Records' in str(res.data)

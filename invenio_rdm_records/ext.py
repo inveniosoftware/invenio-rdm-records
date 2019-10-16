@@ -31,12 +31,20 @@ class InvenioRDMRecords(object):
 
     def init_config(self, app):
         """Initialize configuration."""
-        # Use theme's base template if theme is installed
-        if 'BASE_TEMPLATE' in app.config:
-            app.config.setdefault(
-                'RDM_RECORDS_BASE_TEMPLATE',
-                app.config['BASE_TEMPLATE'],
-            )
+        with_endpoints = app.config.get(
+            'RDM_RECORDS_ENDPOINTS_ENABLED', True)
         for k in dir(config):
             if k.startswith('RDM_RECORDS_'):
                 app.config.setdefault(k, getattr(config, k))
+            elif k == 'SEARCH_UI_JSTEMPLATE_RESULTS':
+                app.config['SEARCH_UI_JSTEMPLATE_RESULTS'] = getattr(
+                    config, k)
+            elif k == 'PIDSTORE_RECID_FIELD':
+                app.config['PIDSTORE_RECID_FIELD'] = getattr(config, k)
+            else:
+                for n in ['RECORDS_REST_ENDPOINTS', 'RECORDS_UI_ENDPOINTS',
+                          'RECORDS_REST_FACETS', 'RECORDS_REST_SORT_OPTIONS',
+                          'RECORDS_REST_DEFAULT_SORT']:
+                    if k == n and with_endpoints:
+                        app.config.setdefault(n, {})
+                        app.config[n].update(getattr(config, k))
