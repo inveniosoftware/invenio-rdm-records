@@ -69,7 +69,7 @@ install_requires = [
     'invenio-records-rest>=1.5.0,<1.6.0',
     'invenio-records>=1.3.0,<1.4.0',
     'invenio-records-files>=1.1.1,<1.2.0'
-    # TODO: add invenio-records-permissions
+    'invenio-records-permissions'
 ]
 
 packages = find_packages()

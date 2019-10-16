@@ -7,6 +7,8 @@
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
 
+"""DataCite-based data model for Invenio."""
+
 from invenio_indexer.api import RecordIndexer
 from invenio_records_files.api import Record
 from invenio_records_permissions import record_create_permission_factory, \
@@ -14,9 +16,6 @@ from invenio_records_permissions import record_create_permission_factory, \
     record_read_files_permission_factory, record_read_permission_factory, \
     record_update_permission_factory
 from invenio_records_permissions.api import RecordsSearch
-
-
-"""DataCite-based data model for Invenio."""
 
 RDM_RECORDS_DEFAULT_VALUE = 'foobar'
 """Default value for the application."""
