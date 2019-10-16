@@ -30,3 +30,25 @@ DataCite-based data model for Invenio.
 
 Further documentation is available on
 https://invenio-rdm-records.readthedocs.io/
+
+Development
+===========
+
+Install
+-------
+
+Choose a version of elasticsearch and a DB, then run:
+
+.. code-block:: console
+
+    pipenv run pip install -e .[all]
+    pipenv run pip install invenio-search[<elasticsearch[5|6|7]>]
+    pipenv run pip install invenio-db[<[mysql|postgresql|]>,versioning]
+
+
+Tests
+-----
+
+.. code-block:: console
+
+    pipenv run ./run-tests.sh
