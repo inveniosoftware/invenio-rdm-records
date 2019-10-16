@@ -11,8 +11,7 @@
 
 from __future__ import absolute_import, print_function
 
-from flask import Blueprint, render_template
-from flask_babelex import gettext as _
+from flask import Blueprint
 
 blueprint = Blueprint(
     'invenio_rdm_records',
@@ -20,11 +19,9 @@ blueprint = Blueprint(
     template_folder='templates',
     static_folder='static',
 )
+"""Blueprint used for loading templates and static assets
 
-
-@blueprint.route("/")
-def index():
-    """Render a basic view."""
-    return render_template(
-        "invenio_rdm_records/index.html",
-        module_name=_('Invenio-RDM-Records'))
+The sole purpose of this blueprint is to ensure that Invenio can find the
+templates and static files located in the folders of the same names next to
+this file.
+"""

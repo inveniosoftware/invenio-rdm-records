@@ -23,6 +23,7 @@ tests_require = [
     'pytest-cov>=2.5.1',
     'pytest-pep8>=1.0.6',
     'pytest-invenio>=1.0.5',
+    'invenio_app>=1.2.3,<1.3.0'
 ]
 
 invenio_search_version = '1.2.0'
@@ -69,7 +70,8 @@ install_requires = [
     'invenio-records-rest>=1.5.0,<1.6.0',
     'invenio-records>=1.3.0,<1.4.0',
     'invenio-records-files>=1.1.1,<1.2.0',
-    'invenio-records-permissions>=1.0.0a1'
+    'invenio-records-permissions>=1.0.0a1',
+    'marshmallow>=2.20.5,<3',
 ]
 
 packages = find_packages()

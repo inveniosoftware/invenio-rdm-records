@@ -22,19 +22,64 @@
           "type": "keyword"
         },
         "$schema": {
-          "type": "keyword"
+          "type": "keyword",
+          "index": false
         },
         "recid": {
-          "type": "long"
+          "type": "keyword"
         },
         "title": {
-          "type": "text"
+          "type": "text",
+          "copy_to": "suggest_title"
+        },
+        "suggest_title": {
+          "type": "completion"
         },
         "description": {
           "type": "text"
         },
         "owners": {
           "type": "integer"
+        },
+        "keywords": {
+          "type": "keyword"
+        },
+        "publication_date": {
+          "type": "date",
+          "format": "date"
+        },
+        "contributors": {
+          "type": "object",
+          "properties": {
+            "ids": {
+              "type": "object",
+              "properties": {
+                "source": {
+                  "type": "text",
+                  "fields": {
+                    "keyword": {
+                      "type": "keyword"
+                    }
+                  }
+                },
+                "value": {
+                  "type": "keyword"
+                }
+              }
+            },
+            "affiliations": {
+              "type": "text"
+            },
+            "role": {
+              "type": "keyword"
+            },
+            "email": {
+              "type": "text"
+            },
+            "name": {
+              "type": "text"
+            }
+          }
         },
         "_created": {
           "type": "date"

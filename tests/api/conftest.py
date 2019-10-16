@@ -16,16 +16,10 @@ fixtures are available.
 from __future__ import absolute_import, print_function
 
 import pytest
-from invenio_app.factory import create_app
+from invenio_app.factory import create_api
 
 
 @pytest.fixture(scope='module')
-def celery_config():
-    """Override pytest-invenio fixture."""
-    return {}
-
-
-@pytest.fixture(scope='module')
-def create_app():
-    """Create app fixture."""
-    return create_app
+def create_app(instance_path):
+    """Application factory fixture."""
+    return create_api
