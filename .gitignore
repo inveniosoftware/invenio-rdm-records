@@ -60,3 +60,7 @@ target/
 
 # Vim swapfiles
 .*.sw?
+
+# Editors
+*.sublime-*
+.vscode/

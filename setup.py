@@ -68,8 +68,8 @@ install_requires = [
     'invenio-jsonschemas>=1.0.0,<1.1.0',
     'invenio-records-rest>=1.5.0,<1.6.0',
     'invenio-records>=1.3.0,<1.4.0',
-    'invenio-records-files>=1.1.1,<1.2.0'
-    'invenio-records-permissions'
+    'invenio-records-files>=1.1.1,<1.2.0',
+    'invenio-records-permissions>=1.0.0a1'
 ]
 
 packages = find_packages()

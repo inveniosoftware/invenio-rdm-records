@@ -9,24 +9,21 @@
 
 """Permissions for Invenio App RDM."""
 
-# TODO: refactor accoding to new PermissionPolicy
-from invenio_records_permissions.generators import AnyUser, \
-    AnyUserIfPublicFiles
-from invenio_records_permissions.permissions.records import \
-    RecordPermissionConfig
+from invenio_records_permissions.generators import AnyUser
+from invenio_records_permissions.policies import RecordPermissionPolicy
 
 
-class RDMRecordPermissionConfig(RecordPermissionConfig):
+class RDMRecordPermissionPolicy(RecordPermissionPolicy):
     """Access control configuration for records.
 
     Note that even if the array is empty, the invenio_access Permission class
     always adds the ``superuser-access``, so admins will always be allowed.
 
     - Create action given to everyone. NOTE: just for testing purposes.
-    - Read access given to everyone.
-    - Update access given to record owners.
-    - Delete access given to admins only.
+    - Read access given to everyone if public record and given to owners
+      always. (inherited)
+    - Update access given to record owners. (inherited)
+    - Delete access given to admins only. (inherited)
     """
 
-    can_create = [AnyUser]
-    can_read_files = [AnyUserIfPublicFiles]
+    can_create = [AnyUser()]

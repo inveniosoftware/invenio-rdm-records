@@ -13,8 +13,7 @@ from invenio_indexer.api import RecordIndexer
 from invenio_records_files.api import Record
 from invenio_records_permissions import record_create_permission_factory, \
     record_delete_permission_factory, record_list_permission_factory, \
-    record_read_files_permission_factory, record_read_permission_factory, \
-    record_update_permission_factory
+    record_read_permission_factory, record_update_permission_factory
 from invenio_records_permissions.api import RecordsSearch
 
 RDM_RECORDS_DEFAULT_VALUE = 'foobar'
@@ -60,12 +59,16 @@ RECORDS_REST_ENDPOINTS = dict(
 
 # Records Permissions
 
-RECORDS_PERMISSIONS_RECORD_FACTORY = ('invenio_rdm_records.permissions:'
-                                      'RDMRecordPermissionConfig')
+RECORDS_PERMISSIONS_RECORD_FACTORY = (
+    'invenio_rdm_records.permissions.RDMRecordPermissionPolicy'
+)
+"""PermissionPolicy used by permission factories above."""
 
 # Files REST
 
-FILES_REST_PERMISSION_FACTORY = record_read_files_permission_factory
+# TODO: Change for record_read_files_permission_factory when files permissions
+#       are ready
+FILES_REST_PERMISSION_FACTORY = record_read_permission_factory
 
 # Records Files
 
