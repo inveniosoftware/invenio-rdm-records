@@ -11,10 +11,14 @@
 
 from __future__ import absolute_import, print_function
 
+from flask_babelex import lazy_gettext as _
 from invenio_records_rest.schemas import Nested, StrictKeysMixin
 from invenio_records_rest.schemas.fields import DateString, \
     PersistentIdentifier, SanitizedUnicode
-from marshmallow import fields, validate
+from marshmallow import ValidationError, fields, missing, validate, \
+    validates_schema
+
+from ..models import AccessRight, ObjectType
 
 
 class AccessSchemaV1(StrictKeysMixin):
@@ -43,6 +47,39 @@ class ContributorSchemaV1(StrictKeysMixin):
     email = fields.Email()
 
 
+class ResourceTypeSchemaV1(StrictKeysMixin):
+    """Resource type schema."""
+
+    type = fields.Str(
+        required=True,
+        error_messages=dict(
+            required=_('Type must be specified.')
+        ),
+    )
+    subtype = fields.Str()
+    openaire_subtype = fields.Str()
+    title = fields.Method('get_title', dump_only=True)
+
+    def get_title(self, obj):
+        """Get title."""
+        obj = ObjectType.get_by_dict(obj)
+        return obj['title']['en'] if obj else missing
+
+    @validates_schema
+    def validate_data(self, data):
+        """Validate resource type."""
+        obj = ObjectType.get_by_dict(data)
+        if obj is None:
+            raise ValidationError(_('Invalid resource type.'))
+
+    def dump_openaire_type(self, obj):
+        """Get OpenAIRE subtype."""
+        acc = obj.get('access_right')
+        if acc:
+            return AccessRight.as_category(acc)
+        return missing
+
+
 class MetadataSchemaV1(StrictKeysMixin):
     """Schema for the record metadata."""
 
@@ -58,12 +95,13 @@ class MetadataSchemaV1(StrictKeysMixin):
     keywords = fields.List(SanitizedUnicode(), many=True)
     publication_date = DateString()
     contributors = Nested(ContributorSchemaV1, many=True, required=True)
+    resource_type = fields.Nested(ResourceTypeSchemaV1)
 
 
-# TODO: Use `RecordMetadataSchemaJSONV1` to inject PID in PUT/PATCH/...
 class RecordSchemaV1(StrictKeysMixin):
     """Record schema."""
 
+    # TODO: Use `RecordMetadataSchemaJSONV1` to inject PID in PUT/PATCH/...
     metadata = fields.Nested(MetadataSchemaV1)
     bucket = fields.Str()
     created = fields.Str(dump_only=True)

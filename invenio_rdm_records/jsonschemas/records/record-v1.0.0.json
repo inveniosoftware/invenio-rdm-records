@@ -32,39 +32,6 @@
       ],
       "type": "string"
     },
-    "recid": {
-      "description": "Invenio record identifier (integer).",
-      "type": "number"
-    },
-    "title": {
-      "description": "Record title.",
-      "type": "string"
-    },
-    "description": {
-      "description": "Description/abstract for record.",
-      "type": "string"
-    },
-    "owners": {
-      "description": "List of user IDs that are owners of the record.",
-      "items": {
-        "type": "number"
-      },
-      "type": "array",
-      "minItems": 1,
-      "uniqueItems": true
-    },
-    "keywords": {
-      "description": "Free text keywords.",
-      "items": {
-        "type": "string"
-      },
-      "type": "array"
-    },
-    "publication_date": {
-      "description": "When the record is published",
-      "type": "string",
-      "format": "date-time"
-    },
     "contributors": {
       "description": "Contributors in order of importance.",
       "minItems": 1,
@@ -123,19 +90,70 @@
 
       }
     },
-    "_created": {
+    "description": {
+      "description": "Description/abstract for record.",
       "type": "string"
     },
-    "_updated": {
+    "keywords": {
+      "description": "Free text keywords.",
+      "items": {
+        "type": "string"
+      },
+      "type": "array"
+    },
+    "owners": {
+      "description": "List of user IDs that are owners of the record.",
+      "items": {
+        "type": "number"
+      },
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true
+    },
+    "publication_date": {
+      "description": "When the record is published",
+      "type": "string",
+      "format": "date-time"
+    },
+    "recid": {
+      "description": "Invenio record identifier (integer).",
+      "type": "number"
+    },
+    "resource_type": {
+      "additionalProperties": false,
+      "description": "Record resource type.",
+      "properties": {
+        "openaire_subtype": {
+          "description": "OpenAIRE-specific resource type.",
+          "type": "string"
+        },
+        "subtype": {
+          "description": "Specific resource type.",
+          "type": "string"
+        },
+        "type": {
+          "default": "publication",
+          "description": "General resource type.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "type"
+      ],
+      "type": "object"
+    },
+    "title": {
+      "description": "Record title.",
       "type": "string"
     }
   },
   "required": [
-    "access_right",
     "_access",
+    "access_right",
     "contributors",
-    "title",
-    "owners"
+    "owners",
+    "resource_type",
+    "title"
   ]
 }
 

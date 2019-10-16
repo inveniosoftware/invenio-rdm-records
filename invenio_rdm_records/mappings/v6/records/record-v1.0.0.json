@@ -21,33 +21,6 @@
         "access_right": {
           "type": "keyword"
         },
-        "$schema": {
-          "type": "keyword",
-          "index": false
-        },
-        "recid": {
-          "type": "keyword"
-        },
-        "title": {
-          "type": "text",
-          "copy_to": "suggest_title"
-        },
-        "suggest_title": {
-          "type": "completion"
-        },
-        "description": {
-          "type": "text"
-        },
-        "owners": {
-          "type": "integer"
-        },
-        "keywords": {
-          "type": "keyword"
-        },
-        "publication_date": {
-          "type": "date",
-          "format": "date"
-        },
         "contributors": {
           "type": "object",
           "properties": {
@@ -81,11 +54,52 @@
             }
           }
         },
+        "description": {
+          "type": "text"
+        },
+        "keywords": {
+          "type": "keyword"
+        },
+        "owners": {
+          "type": "integer"
+        },
+        "publication_date": {
+          "type": "date",
+          "format": "date"
+        },
+        "recid": {
+          "type": "keyword"
+        },
+        "resource_type": {
+          "type": "object",
+          "properties": {
+            "openaire_subtype": {
+              "type": "keyword"
+            },
+            "type": {
+              "type": "keyword"
+            },
+            "subtype": {
+              "type": "keyword"
+            }
+          }
+        },
+        "suggest_title": {
+          "type": "completion"
+        },
+        "title": {
+          "type": "text",
+          "copy_to": "suggest_title"
+        },
         "_created": {
           "type": "date"
         },
         "_updated": {
           "type": "date"
+        },
+        "$schema": {
+          "type": "text",
+          "index": false
         }
       }
     }
