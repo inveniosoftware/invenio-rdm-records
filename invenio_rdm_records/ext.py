@@ -37,14 +37,12 @@ class InvenioRDMRecords(object):
             if k.startswith('RDM_RECORDS_'):
                 app.config.setdefault(k, getattr(config, k))
             elif k == 'SEARCH_UI_JSTEMPLATE_RESULTS':
-                app.config['SEARCH_UI_JSTEMPLATE_RESULTS'] = getattr(
-                    config, k)
+                app.config[k] = getattr(config, k)
             elif k == 'PIDSTORE_RECID_FIELD':
-                app.config['PIDSTORE_RECID_FIELD'] = getattr(config, k)
-            else:
-                for n in ['RECORDS_REST_ENDPOINTS', 'RECORDS_UI_ENDPOINTS',
-                          'RECORDS_REST_FACETS', 'RECORDS_REST_SORT_OPTIONS',
-                          'RECORDS_REST_DEFAULT_SORT']:
-                    if k == n and with_endpoints:
-                        app.config.setdefault(n, {})
-                        app.config[n].update(getattr(config, k))
+                app.config[k] = getattr(config, k)
+            elif with_endpoints:
+                if k in ['RECORDS_REST_ENDPOINTS', 'RECORDS_UI_ENDPOINTS',
+                         'RECORDS_REST_FACETS', 'RECORDS_REST_SORT_OPTIONS',
+                         'RECORDS_REST_DEFAULT_SORT']:
+                    app.config.setdefault(k, {})
+                    app.config[k].update(getattr(config, k))
