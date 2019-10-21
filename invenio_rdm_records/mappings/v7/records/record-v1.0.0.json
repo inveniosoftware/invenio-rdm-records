@@ -1,0 +1,93 @@
+{
+  "mappings": {
+    "record-v1.0.0": {
+      "date_detection": false,
+      "numeric_detection": false,
+      "properties": {
+        "_access": {
+          "type": "object",
+          "properties": {
+            "metadata_restricted": {
+              "type": "boolean"
+            },
+            "files_restricted": {
+              "type": "boolean"
+            }
+          }
+        },
+        "_bucket": {
+          "enabled": false
+        },
+        "access_right": {
+          "type": "keyword"
+        },
+        "$schema": {
+          "type": "keyword",
+          "index": false
+        },
+        "recid": {
+          "type": "keyword"
+        },
+        "title": {
+          "type": "text",
+          "copy_to": "suggest_title"
+        },
+        "suggest_title": {
+          "type": "completion"
+        },
+        "description": {
+          "type": "text"
+        },
+        "owners": {
+          "type": "integer"
+        },
+        "keywords": {
+          "type": "keyword"
+        },
+        "publication_date": {
+          "type": "date",
+          "format": "date"
+        },
+        "contributors": {
+          "type": "object",
+          "properties": {
+            "ids": {
+              "type": "object",
+              "properties": {
+                "source": {
+                  "type": "text",
+                  "fields": {
+                    "keyword": {
+                      "type": "keyword"
+                    }
+                  }
+                },
+                "value": {
+                  "type": "keyword"
+                }
+              }
+            },
+            "affiliations": {
+              "type": "text"
+            },
+            "role": {
+              "type": "keyword"
+            },
+            "email": {
+              "type": "text"
+            },
+            "name": {
+              "type": "text"
+            }
+          }
+        },
+        "_created": {
+          "type": "date"
+        },
+        "_updated": {
+          "type": "date"
+        }
+      }
+    }
+  }
+}
