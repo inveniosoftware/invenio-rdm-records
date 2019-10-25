@@ -12,6 +12,7 @@
 from __future__ import absolute_import, print_function
 
 import arrow
+import pycountry
 from flask_babelex import lazy_gettext as _
 from invenio_records_rest.schemas import Nested, StrictKeysMixin
 from invenio_records_rest.schemas.fields import DateString, \
@@ -120,6 +121,7 @@ class MetadataSchemaV1(StrictKeysMixin):
     dates = fields.List(
         fields.Nested(DateSchemaV1), validate=validate.Length(min=1))
     embargo_date = DateString()
+    language = SanitizedUnicode()
     recid = PersistentIdentifier()
     title = SanitizedUnicode(required=True, validate=validate.Length(min=3))
     description = SanitizedUnicode()
@@ -164,6 +166,15 @@ class MetadataSchemaV1(StrictKeysMixin):
             raise ValidationError(
                 _('Embargo date must be in the future.'),
                 field_names=['embargo_date']
+            )
+
+    @validates('language')
+    def validate_language(self, value):
+        """Validate that language is ISO 639-3 value."""
+        if not pycountry.languages.get(alpha_3=value):
+            raise ValidationError(
+                _('Language must be a lower-cased 3-letter ISO 639-3 string.'),
+                field_name=['language']
             )
 
 

@@ -69,6 +69,9 @@
       "embargo_date": {
         "type": "date"
       },
+      "language": {
+        "type": "keyword"
+      },
       "$schema": {
         "type": "keyword",
         "index": false

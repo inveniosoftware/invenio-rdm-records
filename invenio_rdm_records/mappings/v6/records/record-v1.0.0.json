@@ -109,6 +109,9 @@
         "keywords": {
           "type": "keyword"
         },
+        "language": {
+          "type": "keyword"
+        },
         "owners": {
           "type": "integer"
         },

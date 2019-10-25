@@ -193,3 +193,15 @@ def test_dates():
                     'start': '2019-01-01', 'end': '2019-01-31',
                     'description': 'Some description'}]})
     assert 'dates' not in errors
+
+
+def test_language():
+    """Test resource type."""
+    msv1 = MetadataSchemaV1(partial=['language'])
+    data, errors = msv1.load(dict(language='eng'))
+    assert data['language'] == 'eng'
+    assert 'language' not in errors
+    data, errors = msv1.load(dict(language='English'))
+    assert 'language' in errors
+    data, errors = msv1.load(dict())
+    assert 'language' not in errors

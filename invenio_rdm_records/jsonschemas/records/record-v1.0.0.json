@@ -209,6 +209,10 @@
       },
       "type": "array"
     },
+    "language": {
+      "description": "Primary language of the resource. ISO 639-3 language code.",
+      "type": "string"
+    },
     "owners": {
       "description": "List of user IDs that are owners of the record.",
       "items": {
