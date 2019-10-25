@@ -21,6 +21,20 @@
         "access_right": {
           "type": "keyword"
         },
+        "additional_descriptions": {
+          "type": "object",
+          "properties": {
+            "description": {
+              "type": "text"
+            },
+            "description_type": {
+              "type": "keyword"
+            },
+            "lang": {
+              "type": "keyword"
+            }
+          }
+        },
         "additional_titles": {
           "type": "object",
           "properties": {

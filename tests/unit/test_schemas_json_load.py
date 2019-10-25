@@ -84,6 +84,36 @@ def test_invalid_additional_titles(val):
 
 
 @pytest.mark.parametrize(('val', 'expected'), [
+    ([dict(description='Full additional description',
+           description_type='Description type',
+           lang='en')], None),
+    ([dict(description='Only required fields',
+           description_type='Description type')], None),
+])
+def test_valid_additional_descriptions(val, expected):
+    """Test additional descriptions."""
+    data, errors = MetadataSchemaV1(partial=['additional_descriptions']).load(
+        dict(additional_descriptions=val))
+
+    if expected is not None:
+        assert data['additional_descriptions'] == expected
+    else:
+        assert data['additional_descriptions'] == val
+
+
+@pytest.mark.parametrize('val', [
+    ([dict(description_type='Invalid no description', lang='en')], None),
+    ([dict(description='Invalid no description type', lang='en')], None),
+    ([dict(lang='en')], None),
+])
+def test_invalid_additional_descriptions(val):
+    """Test additional descriptions."""
+    data, errors = MetadataSchemaV1(partial=['additional_descriptions']).load(
+        dict(additional_descriptions=val))
+    assert 'additional_descriptions' in errors
+
+
+@pytest.mark.parametrize(('val', 'expected'), [
     ('2016-01-02', '2016-01-02'),
     (' 2016-01-02 ', '2016-01-02'),
     ('0001-01-01', '0001-01-01'),

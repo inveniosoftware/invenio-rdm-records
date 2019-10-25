@@ -89,12 +89,23 @@ class TitleSchemaV1(StrictKeysMixin):
     lang = SanitizedUnicode()
 
 
+class DescriptionSchemaV1(StrictKeysMixin):
+    """Schema for the additional descriptions."""
+
+    description = SanitizedUnicode(required=True,
+                                   validate=validate.Length(min=3))
+    # TODO: Shall it be checked against the enum?
+    description_type = SanitizedUnicode()
+    lang = SanitizedUnicode()
+
+
 class MetadataSchemaV1(StrictKeysMixin):
     """Schema for the record metadata."""
 
     # TODO: Check enumeration (i.e. only open/embargoed/... accepted)
     access_right = SanitizedUnicode(required=True)
     access = fields.Nested(AccessSchemaV1)
+    additional_descriptions = fields.List(fields.Nested(DescriptionSchemaV1))
     additional_titles = fields.List(fields.Nested(TitleSchemaV1))
     recid = PersistentIdentifier()
     title = SanitizedUnicode(required=True, validate=validate.Length(min=3))

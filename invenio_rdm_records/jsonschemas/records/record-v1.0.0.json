@@ -12,6 +12,17 @@
           "TranslatedTitle",
           "Other"
       ]
+    },
+    "description_type": {
+      "type": "string",
+      "enum": [
+          "Abstract",
+          "Methods",
+          "SeriesInformation",
+          "TableOfContents",
+          "TechnicalInfo",
+          "Other"
+      ]
     }
   },
   "type": "object",
@@ -43,6 +54,28 @@
         "closed"
       ],
       "type": "string"
+    },
+    "additional_descriptions": {
+      "type": "array",
+      "items": {
+          "type": "object",
+          "properties": {
+              "description": {
+                "description": "Description/abstract for record.",
+                "type": "string"
+              },
+              "description_type": {
+                "description": "Type of description.",
+                "$ref": "#/definitions/description_type"
+              },
+              "lang": {
+                "description": "Language of the description.",
+                "type": "string"
+              }
+          },
+          "required": ["description", "description_type"]
+      },
+      "uniqueItems": true
     },
     "additional_titles": {
       "type": "array",
