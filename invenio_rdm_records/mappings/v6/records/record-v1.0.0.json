@@ -152,7 +152,7 @@
           "type": "date"
         },
         "$schema": {
-          "type": "text",
+          "type": "keyword",
           "index": false
         }
       }

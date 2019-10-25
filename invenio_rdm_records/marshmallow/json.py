@@ -118,20 +118,20 @@ class MetadataSchemaV1(StrictKeysMixin):
     access = fields.Nested(AccessSchemaV1)
     additional_descriptions = fields.List(fields.Nested(DescriptionSchemaV1))
     additional_titles = fields.List(fields.Nested(TitleSchemaV1))
+    contributors = Nested(ContributorSchemaV1, many=True, required=True)
     dates = fields.List(
         fields.Nested(DateSchemaV1), validate=validate.Length(min=1))
-    embargo_date = DateString()
-    language = SanitizedUnicode()
-    recid = PersistentIdentifier()
-    title = SanitizedUnicode(required=True, validate=validate.Length(min=3))
     description = SanitizedUnicode()
+    embargo_date = DateString()
+    keywords = fields.List(SanitizedUnicode(), many=True)
+    language = SanitizedUnicode()
     owners = fields.List(fields.Integer(),
                          validate=validate.Length(min=1),
                          required=True)
-    keywords = fields.List(SanitizedUnicode(), many=True)
     publication_date = DateString()
-    contributors = Nested(ContributorSchemaV1, many=True, required=True)
+    recid = PersistentIdentifier()
     resource_type = fields.Nested(ResourceTypeSchemaV1)
+    title = SanitizedUnicode(required=True, validate=validate.Length(min=3))
     version = SanitizedUnicode()
 
     @pre_load()
