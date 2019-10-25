@@ -132,6 +132,7 @@ class MetadataSchemaV1(StrictKeysMixin):
     publication_date = DateString()
     contributors = Nested(ContributorSchemaV1, many=True, required=True)
     resource_type = fields.Nested(ResourceTypeSchemaV1)
+    version = SanitizedUnicode()
 
     @pre_load()
     def preload_publicationdate(self, data):

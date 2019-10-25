@@ -72,6 +72,9 @@
       "language": {
         "type": "keyword"
       },
+      "version": {
+        "type": "keyword"
+      },
       "$schema": {
         "type": "keyword",
         "index": false

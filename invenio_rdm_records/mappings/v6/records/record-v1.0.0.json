@@ -142,6 +142,9 @@
           "type": "text",
           "copy_to": "suggest_title"
         },
+        "version": {
+          "type": "keyword"
+        },
         "_created": {
           "type": "date"
         },
