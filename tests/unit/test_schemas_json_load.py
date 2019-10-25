@@ -9,6 +9,8 @@
 
 """Tests for Invenio RDM Records JSON Schemas."""
 
+from datetime import datetime
+
 import pytest
 
 from invenio_rdm_records.marshmallow.json import MetadataSchemaV1
@@ -79,3 +81,29 @@ def test_invalid_additional_titles(val):
     data, errors = MetadataSchemaV1(partial=['additional_titles']).load(
         dict(additional_titles=val))
     assert 'additional_titles' in errors
+
+
+@pytest.mark.parametrize(('val', 'expected'), [
+    ('2016-01-02', '2016-01-02'),
+    (' 2016-01-02 ', '2016-01-02'),
+    ('0001-01-01', '0001-01-01'),
+    (None, datetime.utcnow().date().isoformat()),
+    ('2016', datetime.utcnow().date().isoformat()),
+])
+def test_valid_publication_date(val, expected):
+    """Test publication date."""
+    data, errors = MetadataSchemaV1(partial=['publication_date']).load(
+        dict(publication_date=val) if val is not None else dict())
+    assert data['publication_date'] == val if expected is None else expected
+
+
+@pytest.mark.parametrize('val', [
+    '2016-02-32',
+    ' invalid',
+])
+def test_invalid_publication_date(val):
+    """Test publication date."""
+    data, errors = MetadataSchemaV1(partial=['publication_date']).load(
+        dict(publication_date=val))
+    assert 'publication_date' in errors
+    assert 'publication_date' not in data
