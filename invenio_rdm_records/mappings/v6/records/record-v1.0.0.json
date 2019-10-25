@@ -28,7 +28,7 @@
               "type": "text",
               "copy_to": "suggest_title"
             },
-            "type": {
+            "title_type": {
               "type": "keyword"
             },
             "lang": {

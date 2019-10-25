@@ -53,7 +53,7 @@
               "description": "Title of the record.",
               "type": "string"
             },
-            "type": {
+            "title_type": {
               "description": "Type of title.",
               "$ref": "#/definitions/title_type"
             },
