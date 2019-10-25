@@ -21,6 +21,21 @@
         "access_right": {
           "type": "keyword"
         },
+        "additional_titles": {
+          "type": "object",
+          "properties": {
+            "title": {
+              "type": "text",
+              "copy_to": "suggest_title"
+            },
+            "type": {
+              "type": "keyword"
+            },
+            "lang": {
+              "type": "keyword"
+            }
+          }
+        },
         "contributors": {
           "type": "object",
           "properties": {

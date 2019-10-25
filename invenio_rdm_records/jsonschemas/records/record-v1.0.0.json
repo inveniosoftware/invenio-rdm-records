@@ -2,6 +2,18 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "id": "http://localhost/schemas/records/record-v1.0.0.json",
   "title": "Invenio Datacite based Record Schema v1.0.0",
+  "definitions": {
+    "title_type": {
+      "description": "Alternative titles types.",
+      "type": "string",
+      "enum": [
+          "AlternativeTitle",
+          "Subtitle",
+          "TranslatedTitle",
+          "Other"
+      ]
+    }
+  },
   "type": "object",
   "additionalProperties": false,
   "properties": {
@@ -31,6 +43,28 @@
         "closed"
       ],
       "type": "string"
+    },
+    "additional_titles": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+            "title": {
+              "description": "Title of the record.",
+              "type": "string"
+            },
+            "type": {
+              "description": "Type of title.",
+              "$ref": "#/definitions/title_type"
+            },
+            "lang": {
+              "description": "Language of the title.",
+              "type": "string"
+            }
+        },
+        "required": ["title"]
+      },
+      "uniqueItems": true
     },
     "contributors": {
       "description": "Contributors in order of importance.",
