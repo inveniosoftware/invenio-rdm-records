@@ -137,3 +137,59 @@ def test_invalid_publication_date(val):
         dict(publication_date=val))
     assert 'publication_date' in errors
     assert 'publication_date' not in data
+
+
+@pytest.mark.parametrize(('val', 'expected'), [
+    ('2016-01-02', '2016-01-02'),
+    (' 2016-01-02 ', '2016-01-02'),
+    ('0001-01-01', '0001-01-01'),
+    (None, datetime.utcnow().date().isoformat()),
+    ('2016', datetime.utcnow().date().isoformat()),
+])
+def test_valid_embargo_date(val, expected):
+    """Test embargo date."""
+    data, errors = MetadataSchemaV1(partial=['embargo_date']).load(
+        dict(embargo_date=val) if val is not None else dict())
+    assert data['embargo_date'] == val if expected is None else expected
+
+
+def test_dates():
+    """Test dates."""
+    schema = MetadataSchemaV1(partial=['dates'])
+
+    data, errors = schema.load({'dates': None})
+    assert 'not be null' in errors['dates'][0]
+    data, errors = schema.load({'dates': []})
+    assert 'Shorter than minimum' in errors['dates'][0]
+    data, errors = schema.load({'dates': [{}]})
+    assert 'required field' in errors['dates'][0]['type'][0]
+    data, errors = schema.load({'dates': [{'type': 'Valid'}]})
+    print(errors)
+    assert 'at least one date' in errors['dates'][0]
+    data, errors = schema.load({'dates': [{'type': 'Valid', 'start': None}]})
+    assert 'not be null' in errors['dates'][0]['start'][0]
+    data, errors = schema.load({'dates': [{'type': 'Valid', 'start': ''}]})
+    assert 'Not a valid date' in errors['dates'][0]['start'][0]
+
+    # "start" date after "end"
+    data, errors = schema.load(
+        {'dates': [{'type': 'Valid',
+                    'start': '2019-02-01', 'end': '2019-01-01'}]})
+    assert 'must be before "end"' in errors['dates'][0]
+
+    # Single date value (i.e. start == end)
+    data, errors = schema.load(
+        {'dates': [{'type': 'Valid',
+                    'start': '2019-01-01', 'end': '2019-01-01'}]})
+    assert 'dates' not in errors
+    data, errors = schema.load(
+        {'dates': [{'type': 'Valid', 'start': '2019-01-01'}]})
+    assert 'dates' not in errors
+    data, errors = schema.load(
+        {'dates': [{'type': 'Valid', 'end': '2019-01-01'}]})
+    assert 'dates' not in errors
+    data, errors = schema.load(
+        {'dates': [{'type': 'Valid',
+                    'start': '2019-01-01', 'end': '2019-01-31',
+                    'description': 'Some description'}]})
+    assert 'dates' not in errors

@@ -83,8 +83,28 @@
             }
           }
         },
+        "dates": {
+          "type": "object",
+          "properties": {
+            "start": {
+              "type": "date"
+            },
+            "end": {
+              "type": "date"
+            },
+            "type": {
+              "type": "keyword"
+            },
+            "description": {
+              "type": "text"
+            }
+          }
+        },
         "description": {
           "type": "text"
+        },
+        "embargo_date": {
+          "type": "date"
         },
         "keywords": {
           "type": "keyword"
@@ -93,8 +113,7 @@
           "type": "integer"
         },
         "publication_date": {
-          "type": "date",
-          "format": "date"
+          "type": "date"
         },
         "recid": {
           "type": "keyword"

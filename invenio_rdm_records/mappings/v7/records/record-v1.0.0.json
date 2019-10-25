@@ -49,6 +49,26 @@
           }
         }
       },
+      "dates": {
+        "type": "object",
+        "properties": {
+          "start": {
+            "type": "date"
+          },
+          "end": {
+            "type": "date"
+          },
+          "type": {
+            "type": "keyword"
+          },
+          "description": {
+            "type": "text"
+          }
+        }
+      },
+      "embargo_date": {
+        "type": "date"
+      },
       "$schema": {
         "type": "keyword",
         "index": false
@@ -73,8 +93,7 @@
         "type": "keyword"
       },
       "publication_date": {
-        "type": "date",
-        "format": "date"
+        "type": "date"
       },
       "contributors": {
         "type": "object",

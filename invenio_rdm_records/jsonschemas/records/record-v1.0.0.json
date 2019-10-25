@@ -157,9 +157,50 @@
 
       }
     },
+    "dates": {
+      "description": "Date interval.",
+      "items": {
+        "additionalProperties": false,
+        "properties": {
+          "description": {
+            "description": "Description of the date interval.",
+            "type": "string"
+          },
+          "end": {
+            "description": "End date.",
+            "type": "string",
+            "format": "date-time"
+          },
+          "start": {
+            "description": "Start date.",
+            "type": "string",
+            "format": "date-time"
+          },
+          "type": {
+            "description": "Type of the date interval.",
+            "enum": [
+              "Collected",
+              "Valid",
+              "Withdrawn"
+            ]
+          }
+        },
+        "required": [
+          "type"
+        ],
+        "type": "object"
+      },
+      "type": "array"
+    },
     "description": {
       "description": "Description/abstract for record.",
       "type": "string"
+    },
+    "embargo_date": {
+      "description": "Embargo date of record (ISO8601 formatted date).",
+      "title": "Embargo Date",
+      "type": "string",
+      "format": "date-time"
     },
     "keywords": {
       "description": "Free text keywords.",
@@ -178,7 +219,7 @@
       "uniqueItems": true
     },
     "publication_date": {
-      "description": "When the record is published",
+      "description": "Record publication date (IS8601-formatted). EDTF support to be added for field.",
       "type": "string",
       "format": "date-time"
     },
@@ -218,7 +259,9 @@
     "_access",
     "access_right",
     "contributors",
+    "description",
     "owners",
+    "publication_date",
     "resource_type",
     "title"
   ]

@@ -11,12 +11,13 @@
 
 from __future__ import absolute_import, print_function
 
+import arrow
 from flask_babelex import lazy_gettext as _
 from invenio_records_rest.schemas import Nested, StrictKeysMixin
 from invenio_records_rest.schemas.fields import DateString, \
     PersistentIdentifier, SanitizedUnicode
-from marshmallow import ValidationError, fields, missing, validate, \
-    validates_schema
+from marshmallow import ValidationError, fields, missing, pre_load, validate, \
+    validates, validates_schema
 
 from ..models import AccessRight, ObjectType
 
@@ -99,6 +100,15 @@ class DescriptionSchemaV1(StrictKeysMixin):
     lang = SanitizedUnicode()
 
 
+class DateSchemaV1(StrictKeysMixin):
+    """Schema for date intervals."""
+
+    start = DateString()
+    end = DateString()
+    type = fields.Str(required=True)
+    description = fields.Str()
+
+
 class MetadataSchemaV1(StrictKeysMixin):
     """Schema for the record metadata."""
 
@@ -107,6 +117,9 @@ class MetadataSchemaV1(StrictKeysMixin):
     access = fields.Nested(AccessSchemaV1)
     additional_descriptions = fields.List(fields.Nested(DescriptionSchemaV1))
     additional_titles = fields.List(fields.Nested(TitleSchemaV1))
+    dates = fields.List(
+        fields.Nested(DateSchemaV1), validate=validate.Length(min=1))
+    embargo_date = DateString()
     recid = PersistentIdentifier()
     title = SanitizedUnicode(required=True, validate=validate.Length(min=3))
     description = SanitizedUnicode()
@@ -117,6 +130,41 @@ class MetadataSchemaV1(StrictKeysMixin):
     publication_date = DateString()
     contributors = Nested(ContributorSchemaV1, many=True, required=True)
     resource_type = fields.Nested(ResourceTypeSchemaV1)
+
+    @pre_load()
+    def preload_publicationdate(self, data):
+        """Default publication date."""
+        if 'publication_date' not in data:
+            data['publication_date'] = arrow.utcnow().date().isoformat()
+
+    @validates('dates')
+    def validate_dates(self, value):
+        """Validate that start date is before the corresponding end date."""
+        for interval in value:
+            start = arrow.get(interval.get('start'), 'YYYY-MM-DD').date() \
+                if interval.get('start') else None
+            end = arrow.get(interval.get('end'), 'YYYY-MM-DD').date() \
+                if interval.get('end') else None
+
+            if not start and not end:
+                raise ValidationError(
+                    _('There must be at least one date.'),
+                    field_names=['dates']
+                )
+            if start and end and start > end:
+                raise ValidationError(
+                    _('"start" date must be before "end" date.'),
+                    field_names=['dates']
+                )
+
+    @validates('embargo_date')
+    def validate_embargo_date(self, value):
+        """Validate that embargo date is in the future."""
+        if arrow.get(value).date() <= arrow.utcnow().date():
+            raise ValidationError(
+                _('Embargo date must be in the future.'),
+                field_names=['embargo_date']
+            )
 
 
 class RecordSchemaV1(StrictKeysMixin):
