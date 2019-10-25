@@ -135,6 +135,29 @@
             }
           }
         },
+        "rights": {
+          "type": "object",
+          "properties": {
+            "rights": {
+              "type": "text"
+            },
+            "uri": {
+              "type": "keyword"
+            },
+            "identifier": {
+              "type": "keyword"
+            },
+            "identifier_scheme": {
+              "type": "keyword"
+            },
+            "scheme_uri": {
+              "type": "keyword"
+            },
+            "lang": {
+              "type": "keyword"
+            }
+          }
+        },
         "suggest_title": {
           "type": "completion"
         },

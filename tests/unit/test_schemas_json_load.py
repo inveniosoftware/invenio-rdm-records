@@ -164,7 +164,6 @@ def test_dates():
     data, errors = schema.load({'dates': [{}]})
     assert 'required field' in errors['dates'][0]['type'][0]
     data, errors = schema.load({'dates': [{'type': 'Valid'}]})
-    print(errors)
     assert 'at least one date' in errors['dates'][0]
     data, errors = schema.load({'dates': [{'type': 'Valid', 'start': None}]})
     assert 'not be null' in errors['dates'][0]['start'][0]
@@ -205,3 +204,26 @@ def test_language():
     assert 'language' in errors
     data, errors = msv1.load(dict())
     assert 'language' not in errors
+
+
+@pytest.mark.parametrize(('val', 'expected'), [
+    ([dict(rights='Full rights schema',
+           uri='http://creativecommons.org/l',
+           identifier='CC-BY-3.0',
+           identifier_scheme='SPDX',
+           scheme_uri='https://spdx.org/licenses',
+           lang='en')], None),
+    ([dict(rights='Random rights with only free text')], None),
+    ([dict()], None)
+])
+def test_valid_rights(val, expected):
+    """Test rights."""
+    data, errors = MetadataSchemaV1(partial=['rights']).load(
+        dict(rights=val))
+
+    assert data['rights'] == val if expected is None else expected
+
+    data, errors = MetadataSchemaV1(partial=['rights']).load(
+        {'rights': [{'lang': 'english'}]}
+    )
+    assert 'lang' not in errors

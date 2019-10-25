@@ -254,6 +254,42 @@
       ],
       "type": "object"
     },
+    "rights": {
+      "description": "Any rights information for this resource.",
+      "type": "array",
+      "items": {
+          "type": "object",
+          "properties": {
+              "rights": {
+                "description": "The right itself. Free text.",
+                "type": "string"
+              },
+              "uri": {
+                "description": "The URI of the license.",
+                "type": "string",
+                "format": "uri"
+              },
+              "identifier": {
+                "description": "A short, standardized version of the license name.",
+                "type": "string"
+              },
+              "identifier_scheme": {
+                "description": "The name of the scheme.",
+                "type": "string"
+              },
+              "scheme_uri": {
+                "description": "The URI of the identifier_scheme.",
+                "type": "string",
+                "format": "uri"
+              },
+              "lang": {
+                "description": "Language of the right information",
+                "type": "string"
+              }
+          }
+      },
+      "uniqueItems": true
+    },
     "title": {
       "description": "Record title.",
       "type": "string"

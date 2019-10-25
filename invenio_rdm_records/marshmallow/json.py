@@ -110,6 +110,17 @@ class DateSchemaV1(StrictKeysMixin):
     description = fields.Str()
 
 
+class RightSchemaV1(StrictKeysMixin):
+    """Schema for rights."""
+
+    rights = SanitizedUnicode()
+    uri = SanitizedUnicode()
+    identifier = SanitizedUnicode()
+    identifier_scheme = SanitizedUnicode()
+    scheme_uri = SanitizedUnicode()
+    lang = SanitizedUnicode()
+
+
 class MetadataSchemaV1(StrictKeysMixin):
     """Schema for the record metadata."""
 
@@ -131,6 +142,7 @@ class MetadataSchemaV1(StrictKeysMixin):
     publication_date = DateString()
     recid = PersistentIdentifier()
     resource_type = fields.Nested(ResourceTypeSchemaV1)
+    rights = fields.List(fields.Nested(RightSchemaV1))
     title = SanitizedUnicode(required=True, validate=validate.Length(min=3))
     version = SanitizedUnicode()
 
