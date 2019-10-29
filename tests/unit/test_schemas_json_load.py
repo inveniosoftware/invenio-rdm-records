@@ -62,7 +62,7 @@ def test_title(val, expected):
 
 @pytest.mark.parametrize(('val', 'expected'), [
     ([dict(title='Full additional title',
-           title_type='Title type',
+           title_type='Other',
            lang='eng')], None),
     ([dict(title='Only required field')], None),
 ])
@@ -75,6 +75,8 @@ def test_valid_additional_titles(val, expected):
 
 @pytest.mark.parametrize('val', [
     ([dict(title_type='Invalid title type', lang='eng')], None),
+    ([dict(title_type='Other', lang='eng')], None),
+    ([dict(title='Invalid lang', title_type='Other', lang='en')], None),
 ])
 def test_invalid_additional_titles(val):
     """Test additional titles."""
@@ -85,10 +87,10 @@ def test_invalid_additional_titles(val):
 
 @pytest.mark.parametrize(('val', 'expected'), [
     ([dict(description='Full additional description',
-           description_type='Description type',
+           description_type='Other',
            lang='eng')], None),
     ([dict(description='Only required fields',
-           description_type='Description type')], None),
+           description_type='Other')], None),
 ])
 def test_valid_additional_descriptions(val, expected):
     """Test additional descriptions."""
@@ -102,9 +104,13 @@ def test_valid_additional_descriptions(val, expected):
 
 
 @pytest.mark.parametrize('val', [
-    ([dict(description_type='Invalid no description', lang='eng')], None),
+    ([dict(description_type='Other', lang='eng')], None),
     ([dict(description='Invalid no description type', lang='eng')], None),
     ([dict(lang='eng')], None),
+    ([dict(description='Invalid type',
+           description_type='Invalid Type', lang='eng')], None),
+    ([dict(description='Invalid lang',
+           description_type='Other', lang='en')], None),
 ])
 def test_invalid_additional_descriptions(val):
     """Test additional descriptions."""
@@ -169,6 +175,11 @@ def test_dates():
     assert 'not be null' in errors['dates'][0]['start'][0]
     data, errors = schema.load({'dates': [{'type': 'Valid', 'start': ''}]})
     assert 'Not a valid date' in errors['dates'][0]['start'][0]
+    data, errors = schema.load(
+        {'dates': [{'type': 'Invalid',
+                    'start': '2019-01-01', 'end': '2019-01-31',
+                    'description': 'Some description'}]})
+    assert 'Invalid date type' in errors['dates'][0]['type'][0]
 
     # "start" date after "end"
     data, errors = schema.load(

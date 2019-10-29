@@ -42,11 +42,27 @@ class PersonIdsSchemaV1(StrictKeysMixin):
 class ContributorSchemaV1(StrictKeysMixin):
     """Contributor schema."""
 
+    ROLES = [
+        "ContactPerson",
+        "Researcher",
+        "Other"
+    ]
+
     ids = fields.Nested(PersonIdsSchemaV1, many=True)
     name = SanitizedUnicode(required=True)
     role = SanitizedUnicode()
     affiliations = fields.List(SanitizedUnicode())
     email = fields.Email()
+
+    @validates('role')
+    def validate_role(self, value):
+        """Validate that the role is one of the allowed ones."""
+        if value not in self.ROLES:
+            raise ValidationError(
+                _('Invalid role. Not one of {allowed}.'.format(
+                                                        allowed=self.ROLES)),
+                field_names=['contributor']
+            )
 
 
 class ResourceTypeSchemaV1(StrictKeysMixin):
@@ -85,8 +101,14 @@ class ResourceTypeSchemaV1(StrictKeysMixin):
 class TitleSchemaV1(StrictKeysMixin):
     """Schema for the additional title."""
 
+    TITLE_TYPES = [
+          "AlternativeTitle",
+          "Subtitle",
+          "TranslatedTitle",
+          "Other"
+    ]
+
     title = SanitizedUnicode(required=True, validate=validate.Length(min=3))
-    # TODO: Shall it be checked against the enum?
     title_type = SanitizedUnicode()
     lang = SanitizedUnicode()
 
@@ -95,13 +117,30 @@ class TitleSchemaV1(StrictKeysMixin):
         """Validate that language is ISO 639-3 value."""
         validate_iso639_3(value)
 
+    @validates('title_type')
+    def validate_title_type(self, value):
+        """Validate that the title type is one of the allowed ones."""
+        if value not in self.TITLE_TYPES:
+            raise ValidationError(
+                _('Invalid title type. Not one of {allowed}.'.format(
+                                                    allowed=self.TITLE_TYPES)),
+                field_names=['additional_titles']
+            )
+
 
 class DescriptionSchemaV1(StrictKeysMixin):
     """Schema for the additional descriptions."""
 
+    DESCRIPTION_TYPES = [
+          "Abstract",
+          "Methods",
+          "SeriesInformation",
+          "TableOfContents",
+          "TechnicalInfo",
+          "Other"
+    ]
     description = SanitizedUnicode(required=True,
                                    validate=validate.Length(min=3))
-    # TODO: Shall it be checked against the enum?
     description_type = SanitizedUnicode()
     lang = SanitizedUnicode()
 
@@ -110,14 +149,40 @@ class DescriptionSchemaV1(StrictKeysMixin):
         """Validate that language is ISO 639-3 value."""
         validate_iso639_3(value)
 
+    @validates('description_type')
+    def validate_description_type(self, value):
+        """Validate that the description type is one of the allowed ones."""
+        if value not in self.DESCRIPTION_TYPES:
+            raise ValidationError(
+                _('Invalid description type. Not one of {allowed}.'.format(
+                                            allowed=self.DESCRIPTION_TYPES)),
+                field_names=['additional_descriptions']
+            )
+
 
 class DateSchemaV1(StrictKeysMixin):
     """Schema for date intervals."""
+
+    DATE_TYPES = [
+        "Collected",
+        "Valid",
+        "Withdrawn"
+    ]
 
     start = DateString()
     end = DateString()
     type = fields.Str(required=True)
     description = fields.Str()
+
+    @validates('type')
+    def validate_type(self, value):
+        """Validate that the type is one of the allowed ones."""
+        if value not in self.DATE_TYPES:
+            raise ValidationError(
+                _('Invalid date type. Not one of {allowed}.'.format(
+                                            allowed=self.DATE_TYPES)),
+                field_names=['dates']
+            )
 
 
 class RightSchemaV1(StrictKeysMixin):

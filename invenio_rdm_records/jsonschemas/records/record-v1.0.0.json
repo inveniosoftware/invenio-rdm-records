@@ -2,29 +2,6 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "id": "http://localhost/schemas/records/record-v1.0.0.json",
   "title": "Invenio Datacite based Record Schema v1.0.0",
-  "definitions": {
-    "title_type": {
-      "description": "Alternative titles types.",
-      "type": "string",
-      "enum": [
-          "AlternativeTitle",
-          "Subtitle",
-          "TranslatedTitle",
-          "Other"
-      ]
-    },
-    "description_type": {
-      "type": "string",
-      "enum": [
-          "Abstract",
-          "Methods",
-          "SeriesInformation",
-          "TableOfContents",
-          "TechnicalInfo",
-          "Other"
-      ]
-    }
-  },
   "type": "object",
   "additionalProperties": false,
   "properties": {
@@ -47,12 +24,6 @@
     "access_right": {
       "default": "open",
       "description": "Access right for record.",
-      "enum": [
-        "open",
-        "embargoed",
-        "restricted",
-        "closed"
-      ],
       "type": "string"
     },
     "additional_descriptions": {
@@ -66,7 +37,7 @@
               },
               "description_type": {
                 "description": "Type of description.",
-                "$ref": "#/definitions/description_type"
+                "type": "string"
               },
               "lang": {
                 "description": "Language of the description. ISO 639-3 language code.",
@@ -88,7 +59,7 @@
             },
             "title_type": {
               "description": "Type of title.",
-              "$ref": "#/definitions/title_type"
+              "type": "string"
             },
             "lang": {
               "description": "Language of the title. ISO 639-3 language code.",
@@ -143,12 +114,7 @@
           },
           "role": {
             "description": "",
-            "type": "string",
-            "enum": [
-              "ContactPerson",
-              "Researcher",
-              "Other"
-            ]
+            "type": "string"
           }
         },
         "required": [
@@ -177,12 +143,7 @@
             "format": "date-time"
           },
           "type": {
-            "description": "Type of the date interval.",
-            "enum": [
-              "Collected",
-              "Valid",
-              "Withdrawn"
-            ]
+            "description": "Type of the date interval."
           }
         },
         "required": [
