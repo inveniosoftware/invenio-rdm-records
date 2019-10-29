@@ -69,7 +69,7 @@
                 "$ref": "#/definitions/description_type"
               },
               "lang": {
-                "description": "Language of the description.",
+                "description": "Language of the description. ISO 639-3 language code.",
                 "type": "string"
               }
           },
@@ -91,7 +91,7 @@
               "$ref": "#/definitions/title_type"
             },
             "lang": {
-              "description": "Language of the title.",
+              "description": "Language of the title. ISO 639-3 language code.",
               "type": "string"
             }
         },
@@ -283,7 +283,7 @@
                 "format": "uri"
               },
               "lang": {
-                "description": "Language of the right information",
+                "description": "Language of the right information. ISO 639-3 language code.",
                 "type": "string"
               }
           }

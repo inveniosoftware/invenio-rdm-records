@@ -12,7 +12,6 @@
 from __future__ import absolute_import, print_function
 
 import arrow
-import pycountry
 from flask_babelex import lazy_gettext as _
 from invenio_records_rest.schemas import Nested, StrictKeysMixin
 from invenio_records_rest.schemas.fields import DateString, \
@@ -21,6 +20,7 @@ from marshmallow import ValidationError, fields, missing, pre_load, validate, \
     validates, validates_schema
 
 from ..models import AccessRight, ObjectType
+from .utils import validate_iso639_3
 
 
 class AccessSchemaV1(StrictKeysMixin):
@@ -90,6 +90,11 @@ class TitleSchemaV1(StrictKeysMixin):
     title_type = SanitizedUnicode()
     lang = SanitizedUnicode()
 
+    @validates('lang')
+    def validate_language(self, value):
+        """Validate that language is ISO 639-3 value."""
+        validate_iso639_3(value)
+
 
 class DescriptionSchemaV1(StrictKeysMixin):
     """Schema for the additional descriptions."""
@@ -99,6 +104,11 @@ class DescriptionSchemaV1(StrictKeysMixin):
     # TODO: Shall it be checked against the enum?
     description_type = SanitizedUnicode()
     lang = SanitizedUnicode()
+
+    @validates('lang')
+    def validate_language(self, value):
+        """Validate that language is ISO 639-3 value."""
+        validate_iso639_3(value)
 
 
 class DateSchemaV1(StrictKeysMixin):
@@ -119,6 +129,11 @@ class RightSchemaV1(StrictKeysMixin):
     identifier_scheme = SanitizedUnicode()
     scheme_uri = SanitizedUnicode()
     lang = SanitizedUnicode()
+
+    @validates('lang')
+    def validate_language(self, value):
+        """Validate that language is ISO 639-3 value."""
+        validate_iso639_3(value)
 
 
 class MetadataSchemaV1(StrictKeysMixin):
@@ -184,11 +199,7 @@ class MetadataSchemaV1(StrictKeysMixin):
     @validates('language')
     def validate_language(self, value):
         """Validate that language is ISO 639-3 value."""
-        if not pycountry.languages.get(alpha_3=value):
-            raise ValidationError(
-                _('Language must be a lower-cased 3-letter ISO 639-3 string.'),
-                field_name=['language']
-            )
+        validate_iso639_3(value)
 
 
 class RecordSchemaV1(StrictKeysMixin):

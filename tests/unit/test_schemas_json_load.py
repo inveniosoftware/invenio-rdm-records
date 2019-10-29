@@ -63,7 +63,7 @@ def test_title(val, expected):
 @pytest.mark.parametrize(('val', 'expected'), [
     ([dict(title='Full additional title',
            title_type='Title type',
-           lang='en')], None),
+           lang='eng')], None),
     ([dict(title='Only required field')], None),
 ])
 def test_valid_additional_titles(val, expected):
@@ -74,7 +74,7 @@ def test_valid_additional_titles(val, expected):
 
 
 @pytest.mark.parametrize('val', [
-    ([dict(title_type='Invalid title type', lang='en')], None),
+    ([dict(title_type='Invalid title type', lang='eng')], None),
 ])
 def test_invalid_additional_titles(val):
     """Test additional titles."""
@@ -86,7 +86,7 @@ def test_invalid_additional_titles(val):
 @pytest.mark.parametrize(('val', 'expected'), [
     ([dict(description='Full additional description',
            description_type='Description type',
-           lang='en')], None),
+           lang='eng')], None),
     ([dict(description='Only required fields',
            description_type='Description type')], None),
 ])
@@ -102,9 +102,9 @@ def test_valid_additional_descriptions(val, expected):
 
 
 @pytest.mark.parametrize('val', [
-    ([dict(description_type='Invalid no description', lang='en')], None),
-    ([dict(description='Invalid no description type', lang='en')], None),
-    ([dict(lang='en')], None),
+    ([dict(description_type='Invalid no description', lang='eng')], None),
+    ([dict(description='Invalid no description type', lang='eng')], None),
+    ([dict(lang='eng')], None),
 ])
 def test_invalid_additional_descriptions(val):
     """Test additional descriptions."""
@@ -212,7 +212,7 @@ def test_language():
            identifier='CC-BY-3.0',
            identifier_scheme='SPDX',
            scheme_uri='https://spdx.org/licenses',
-           lang='en')], None),
+           lang='eng')], None),
     ([dict(rights='Random rights with only free text')], None),
     ([dict()], None)
 ])
@@ -224,6 +224,6 @@ def test_valid_rights(val, expected):
     assert data['rights'] == val if expected is None else expected
 
     data, errors = MetadataSchemaV1(partial=['rights']).load(
-        {'rights': [{'lang': 'english'}]}
+        {'rights': [{'lang': 'en'}]}
     )
     assert 'lang' not in errors
