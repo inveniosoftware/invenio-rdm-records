@@ -2,21 +2,33 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "id": "http://localhost/schemas/records/record-v1.0.0.json",
   "title": "Invenio Datacite based Record Schema v1.0.0",
+  "definitions": {
+    "permission_identity": {
+      "type": "object",
+      "description": "Identity that can be targeted by a permission.",
+      "additionalProperties": false,
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Per type unique id."
+        },
+        "type": {
+          "type": "string",
+          "description": "Kind of permission_identity. What the id represents.",
+          "enum": [
+            "person",
+            "role",
+            "org"
+          ]
+        }
+      },
+      "required": ["id", "type"]
+    }
+  },
   "type": "object",
   "additionalProperties": false,
   "properties": {
-    "_access": {
-      "metadata_restricted": {
-        "default": false,
-        "description": "Record metadata accesibility. Public by default (False).",
-        "type": "boolean"
-      },
-      "files_restricted": {
-        "default": false,
-        "description": "Record associated files accesibility. Public by default (False).",
-        "type": "boolean"
-      }
-    },
     "_bucket": {
       "description": "Record bucket.",
       "type": "string"
@@ -214,7 +226,7 @@
       "type": "object"
     },
     "rights": {
-      "description": "Any rights information for this resource.",
+      "description": "Any license rights information for this resource.",
       "type": "array",
       "items": {
           "type": "object",
@@ -257,6 +269,31 @@
     "version": {
       "description": "Record version tag.",
       "type": "string"
+    },
+    "sys": {
+      "type": "object",
+      "description": "Internal system metadata (non-bibliographic)",
+      "properties": {
+        "permissions": {
+          "type": "object",
+          "description": "Additional explicit access control for specific user/groups and specific actions",
+          "properties": {
+            "can_read": {
+              "type": "array",
+              "items": { "$ref": "#/definitions/permission_identity" }
+            },
+            "can_update": {
+              "type": "array",
+              "items": { "$ref": "#/definitions/permission_identity" }
+            },
+            "can_delete": {
+              "type": "array",
+              "items": { "$ref": "#/definitions/permission_identity" }
+            }
+          }
+        }
+      },
+      "additionalProperties": true
     }
   },
   "required": [

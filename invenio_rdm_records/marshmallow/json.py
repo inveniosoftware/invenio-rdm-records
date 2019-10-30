@@ -16,20 +16,53 @@ from flask_babelex import lazy_gettext as _
 from invenio_records_rest.schemas import Nested, StrictKeysMixin
 from invenio_records_rest.schemas.fields import DateString, \
     PersistentIdentifier, SanitizedUnicode
-from marshmallow import ValidationError, fields, pre_load, validate, \
+from marshmallow import Schema, ValidationError, fields, pre_load, validate, \
     validates, validates_schema
 
 from ..models import ObjectType
 from .utils import validate_iso639_3
 
 
-class AccessSchemaV1(StrictKeysMixin):
-    """Access schema."""
+class PermissionIdentitySchemaV1(StrictKeysMixin):
+    """Permission Identity schema."""
 
-    # TODO revist acccording to
-    # https://github.com/inveniosoftware/invenio-rdm-records/issues/20
-    metadata_restricted = fields.Bool(required=True)
-    files_restricted = fields.Bool(required=True)
+    id = SanitizedUnicode(required=True)
+    type = SanitizedUnicode(
+        required=True,
+        validate=validate.OneOf(
+            choices=['person', 'role', 'org'],
+            error=_('Invalid type. {input} not one of {choices}.')
+        )
+    )
+
+
+class CansDict(fields.Field):
+    """Custom field for dict accepting only `can_<action>` keys."""
+
+    def __init__(self, nested_field, *args, **kwargs):
+        """Constructor.
+
+        :param nested_field: Schema to apply to `can_<action>` values.
+        """
+        super(CansDict, self).__init__(self, *args, **kwargs)
+        self.nested_field = nested_field
+
+    def _deserialize(self, value, attr, data):
+        """Override parent's _deserialize."""
+        return {
+            k: self.nested_field.deserialize(v) for k, v in value.items()
+            if k.startswith('can_')
+        }
+
+
+class InternalSchemaV1(StrictKeysMixin):
+    """Internal non-widely-shareable metadata."""
+
+    permissions = CansDict(
+        fields.List(
+            fields.Nested(PermissionIdentitySchemaV1)
+        )
+    )
 
 
 class PersonIdsSchemaV1(StrictKeysMixin):
@@ -145,12 +178,20 @@ class RightSchemaV1(StrictKeysMixin):
     lang = SanitizedUnicode(validate=validate_iso639_3)
 
 
-class MetadataSchemaV1(StrictKeysMixin):
+class MetadataSchemaV1(Schema):
     """Schema for the record metadata."""
 
-    # TODO: Check enumeration (i.e. only open/embargoed/... accepted)
-    access_right = SanitizedUnicode(required=True)
-    access = fields.Nested(AccessSchemaV1)
+    ACCESS_RIGHT_CHOICES = [
+        'open',
+        'embargoed',
+        'restricted',
+        'closed'
+    ]
+
+    access_right = SanitizedUnicode(required=True, validate=validate.OneOf(
+        choices=ACCESS_RIGHT_CHOICES,
+        error=_('Invalid access right. {input} not one of {choices}.')
+    ))
     additional_descriptions = fields.List(fields.Nested(DescriptionSchemaV1))
     additional_titles = fields.List(fields.Nested(TitleSchemaV1))
     contributors = Nested(ContributorSchemaV1, many=True, required=True)
@@ -158,6 +199,7 @@ class MetadataSchemaV1(StrictKeysMixin):
         fields.Nested(DateSchemaV1), validate=validate.Length(min=1))
     description = SanitizedUnicode()
     embargo_date = DateString()
+    sys = fields.Nested(InternalSchemaV1)
     keywords = fields.List(SanitizedUnicode(), many=True)
     language = SanitizedUnicode(validate=validate_iso639_3)
     owners = fields.List(fields.Integer(),
