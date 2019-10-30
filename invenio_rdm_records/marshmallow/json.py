@@ -50,19 +50,13 @@ class ContributorSchemaV1(StrictKeysMixin):
 
     ids = fields.Nested(PersonIdsSchemaV1, many=True)
     name = SanitizedUnicode(required=True)
-    role = SanitizedUnicode()
+    role = SanitizedUnicode(
+        validate=validate.OneOf(
+            choices=ROLES,
+            error=_('Invalid role. {input} not one of {choices}.')
+        ))
     affiliations = fields.List(SanitizedUnicode())
     email = fields.Email()
-
-    @validates('role')
-    def validate_role(self, value):
-        """Validate that the role is one of the allowed ones."""
-        if value not in self.ROLES:
-            raise ValidationError(
-                _('Invalid role. Not one of {allowed}.'.format(
-                                                        allowed=self.ROLES)),
-                field_names=['contributor']
-            )
 
 
 class ResourceTypeSchemaV1(StrictKeysMixin):
@@ -109,23 +103,11 @@ class TitleSchemaV1(StrictKeysMixin):
     ]
 
     title = SanitizedUnicode(required=True, validate=validate.Length(min=3))
-    title_type = SanitizedUnicode()
-    lang = SanitizedUnicode()
-
-    @validates('lang')
-    def validate_language(self, value):
-        """Validate that language is ISO 639-3 value."""
-        validate_iso639_3(value)
-
-    @validates('title_type')
-    def validate_title_type(self, value):
-        """Validate that the title type is one of the allowed ones."""
-        if value not in self.TITLE_TYPES:
-            raise ValidationError(
-                _('Invalid title type. Not one of {allowed}.'.format(
-                                                    allowed=self.TITLE_TYPES)),
-                field_names=['additional_titles']
-            )
+    title_type = SanitizedUnicode(validate=validate.OneOf(
+            choices=TITLE_TYPES,
+            error=_('Invalid title type. {input} not one of {choices}.')
+        ))
+    lang = SanitizedUnicode(validate=validate_iso639_3)
 
 
 class DescriptionSchemaV1(StrictKeysMixin):
@@ -141,23 +123,11 @@ class DescriptionSchemaV1(StrictKeysMixin):
     ]
     description = SanitizedUnicode(required=True,
                                    validate=validate.Length(min=3))
-    description_type = SanitizedUnicode()
-    lang = SanitizedUnicode()
-
-    @validates('lang')
-    def validate_language(self, value):
-        """Validate that language is ISO 639-3 value."""
-        validate_iso639_3(value)
-
-    @validates('description_type')
-    def validate_description_type(self, value):
-        """Validate that the description type is one of the allowed ones."""
-        if value not in self.DESCRIPTION_TYPES:
-            raise ValidationError(
-                _('Invalid description type. Not one of {allowed}.'.format(
-                                            allowed=self.DESCRIPTION_TYPES)),
-                field_names=['additional_descriptions']
-            )
+    description_type = SanitizedUnicode(validate=validate.OneOf(
+            choices=DESCRIPTION_TYPES,
+            error=_('Invalid description type. {input} not one of {choices}.')
+        ))
+    lang = SanitizedUnicode(validate=validate_iso639_3)
 
 
 class DateSchemaV1(StrictKeysMixin):
@@ -171,18 +141,11 @@ class DateSchemaV1(StrictKeysMixin):
 
     start = DateString()
     end = DateString()
-    type = fields.Str(required=True)
+    type = fields.Str(required=True, validate=validate.OneOf(
+            choices=DATE_TYPES,
+            error=_('Invalid date type. {input} not one of {choices}.')
+        ))
     description = fields.Str()
-
-    @validates('type')
-    def validate_type(self, value):
-        """Validate that the type is one of the allowed ones."""
-        if value not in self.DATE_TYPES:
-            raise ValidationError(
-                _('Invalid date type. Not one of {allowed}.'.format(
-                                            allowed=self.DATE_TYPES)),
-                field_names=['dates']
-            )
 
 
 class RightSchemaV1(StrictKeysMixin):
@@ -193,12 +156,7 @@ class RightSchemaV1(StrictKeysMixin):
     identifier = SanitizedUnicode()
     identifier_scheme = SanitizedUnicode()
     scheme_uri = SanitizedUnicode()
-    lang = SanitizedUnicode()
-
-    @validates('lang')
-    def validate_language(self, value):
-        """Validate that language is ISO 639-3 value."""
-        validate_iso639_3(value)
+    lang = SanitizedUnicode(validate=validate_iso639_3)
 
 
 class MetadataSchemaV1(StrictKeysMixin):
@@ -215,7 +173,7 @@ class MetadataSchemaV1(StrictKeysMixin):
     description = SanitizedUnicode()
     embargo_date = DateString()
     keywords = fields.List(SanitizedUnicode(), many=True)
-    language = SanitizedUnicode()
+    language = SanitizedUnicode(validate=validate_iso639_3)
     owners = fields.List(fields.Integer(),
                          validate=validate.Length(min=1),
                          required=True)
@@ -260,11 +218,6 @@ class MetadataSchemaV1(StrictKeysMixin):
                 _('Embargo date must be in the future.'),
                 field_names=['embargo_date']
             )
-
-    @validates('language')
-    def validate_language(self, value):
-        """Validate that language is ISO 639-3 value."""
-        validate_iso639_3(value)
 
 
 class RecordSchemaV1(StrictKeysMixin):
