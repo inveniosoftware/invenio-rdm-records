@@ -19,6 +19,10 @@ from jsonref import JsonRef
 class AccessRight(object):
     """Class defining access right status."""
 
+    # TODO This seems like a Jinja2 filter because it is really
+    #      all about the frontend. Could be moved to views.py
+    #      and adapted.
+
     OPEN = 'open'
 
     EMBARGOED = 'embargoed'
