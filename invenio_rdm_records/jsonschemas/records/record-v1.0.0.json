@@ -155,7 +155,7 @@
       "type": "array"
     },
     "description": {
-      "description": "Description/abstract for record.",
+      "description": "Description for record.",
       "type": "string"
     },
     "embargo_date": {
