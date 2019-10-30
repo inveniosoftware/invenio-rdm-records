@@ -19,11 +19,11 @@ class RDMRecordPermissionPolicy(RecordPermissionPolicy):
     Note that even if the array is empty, the invenio_access Permission class
     always adds the ``superuser-access``, so admins will always be allowed.
 
-    - Create action given to everyone. NOTE: just for testing purposes.
+    - Create action given to everyone for now.
     - Read access given to everyone if public record and given to owners
       always. (inherited)
     - Update access given to record owners. (inherited)
     - Delete access given to admins only. (inherited)
     """
 
-    can_create = [AnyUser()]
+    can_create = [AnyUser()]  # TODO: Change when deposit permissions done

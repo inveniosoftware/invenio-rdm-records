@@ -107,7 +107,7 @@ RECORDS_REST_DEFAULT_SORT = dict(
 
 # Records Permissions
 
-RECORDS_PERMISSIONS_RECORD_FACTORY = (
+RECORDS_PERMISSIONS_RECORD_POLICY = (
     'invenio_rdm_records.permissions.RDMRecordPermissionPolicy'
 )
 """PermissionPolicy used by permission factories above."""
