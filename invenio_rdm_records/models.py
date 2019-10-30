@@ -16,35 +16,6 @@ from elasticsearch_dsl.utils import AttrDict
 from jsonref import JsonRef
 
 
-class AccessRight(object):
-    """Class defining access right status."""
-
-    # TODO This seems like a Jinja2 filter because it is really
-    #      all about the frontend. Could be moved to views.py
-    #      and adapted.
-
-    OPEN = 'open'
-
-    EMBARGOED = 'embargoed'
-
-    RESTRICTED = 'restricted'
-
-    CLOSED = 'closed'
-
-    _category = {
-        OPEN: 'success',
-        EMBARGOED: 'warning',
-        RESTRICTED: 'danger',
-        CLOSED: 'danger',
-    }
-
-    @classmethod
-    def as_category(cls, value, **kwargs):
-        """Get title for a specific status."""
-        cat = cls._category[value]
-        return kwargs[cat] if cat in kwargs else cat
-
-
 class ObjectType(object):
     """Class to load object types data."""
 

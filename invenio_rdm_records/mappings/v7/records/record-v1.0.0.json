@@ -123,9 +123,6 @@
       "resource_type": {
         "type": "object",
         "properties": {
-          "openaire_subtype": {
-            "type": "keyword"
-          },
           "type": {
             "type": "keyword"
           },

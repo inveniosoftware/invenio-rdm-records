@@ -122,7 +122,6 @@
         "required": [
           "name"
         ]
-
       }
     },
     "dates": {
@@ -161,7 +160,6 @@
     },
     "embargo_date": {
       "description": "Embargo date of record (ISO8601 formatted date).",
-      "title": "Embargo Date",
       "type": "string",
       "format": "date-time"
     },
@@ -192,17 +190,13 @@
       "format": "date-time"
     },
     "recid": {
-      "description": "Invenio record identifier (integer).",
-      "type": "number"
+      "description": "Invenio record identifier (alphanumeric).",
+      "type": "string"
     },
     "resource_type": {
       "additionalProperties": false,
       "description": "Record resource type.",
       "properties": {
-        "openaire_subtype": {
-          "description": "OpenAIRE-specific resource type.",
-          "type": "string"
-        },
         "subtype": {
           "description": "Specific resource type.",
           "type": "string"
@@ -214,7 +208,8 @@
         }
       },
       "required": [
-        "type"
+        "type",
+        "subtype"
       ],
       "type": "object"
     },

@@ -206,7 +206,7 @@ def test_dates():
 
 
 def test_language():
-    """Test resource type."""
+    """Test language."""
     msv1 = MetadataSchemaV1(partial=['language'])
     data, errors = msv1.load(dict(language='eng'))
     assert data['language'] == 'eng'

@@ -16,10 +16,10 @@ from flask_babelex import lazy_gettext as _
 from invenio_records_rest.schemas import Nested, StrictKeysMixin
 from invenio_records_rest.schemas.fields import DateString, \
     PersistentIdentifier, SanitizedUnicode
-from marshmallow import ValidationError, fields, missing, pre_load, validate, \
+from marshmallow import ValidationError, fields, pre_load, validate, \
     validates, validates_schema
 
-from ..models import AccessRight, ObjectType
+from ..models import ObjectType
 from .utils import validate_iso639_3
 
 
@@ -69,13 +69,6 @@ class ResourceTypeSchemaV1(StrictKeysMixin):
         ),
     )
     subtype = fields.Str()
-    openaire_subtype = fields.Str()
-    title = fields.Method('get_title', dump_only=True)
-
-    def get_title(self, obj):
-        """Get title."""
-        obj = ObjectType.get_by_dict(obj)
-        return obj['title']['en'] if obj else missing
 
     @validates_schema
     def validate_data(self, data):
@@ -83,13 +76,6 @@ class ResourceTypeSchemaV1(StrictKeysMixin):
         obj = ObjectType.get_by_dict(data)
         if obj is None:
             raise ValidationError(_('Invalid resource type.'))
-
-    def dump_openaire_type(self, obj):
-        """Get OpenAIRE subtype."""
-        acc = obj.get('access_right')
-        if acc:
-            return AccessRight.as_category(acc)
-        return missing
 
 
 class TitleSchemaV1(StrictKeysMixin):
