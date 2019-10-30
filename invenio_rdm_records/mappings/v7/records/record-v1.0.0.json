@@ -21,7 +21,7 @@
         "type": "keyword"
       },
       "additional_descriptions": {
-        "type": "object",
+        "type": "nested",
         "properties": {
           "description": {
             "type": "text"
@@ -35,7 +35,7 @@
         }
       },
       "additional_titles": {
-        "type": "object",
+        "type": "nested",
         "properties": {
           "title": {
             "type": "text",
@@ -121,7 +121,7 @@
         "type": "keyword"
       },
       "resource_type": {
-        "type": "object",
+        "type": "nested",
         "properties": {
           "type": {
             "type": "keyword"
@@ -132,7 +132,7 @@
         }
       },
       "rights": {
-        "type": "object",
+        "type": "nested",
         "properties": {
           "rights": {
             "type": "text"
