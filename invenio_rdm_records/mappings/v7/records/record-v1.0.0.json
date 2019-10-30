@@ -20,32 +20,34 @@
       "access_right": {
         "type": "keyword"
       },
-      "$schema": {
-        "type": "keyword",
-        "index": false
+      "additional_descriptions": {
+        "type": "nested",
+        "properties": {
+          "description": {
+            "type": "text"
+          },
+          "description_type": {
+            "type": "keyword"
+          },
+          "lang": {
+            "type": "keyword"
+          }
+        }
       },
-      "recid": {
-        "type": "keyword"
-      },
-      "title": {
-        "type": "text",
-        "copy_to": "suggest_title"
-      },
-      "suggest_title": {
-        "type": "completion"
-      },
-      "description": {
-        "type": "text"
-      },
-      "owners": {
-        "type": "integer"
-      },
-      "keywords": {
-        "type": "keyword"
-      },
-      "publication_date": {
-        "type": "date",
-        "format": "date"
+      "additional_titles": {
+        "type": "nested",
+        "properties": {
+          "title": {
+            "type": "text",
+            "copy_to": "suggest_title"
+          },
+          "title_type": {
+            "type": "keyword"
+          },
+          "lang": {
+            "type": "keyword"
+          }
+        }
       },
       "contributors": {
         "type": "object",
@@ -80,11 +82,97 @@
           }
         }
       },
+      "dates": {
+        "type": "object",
+        "properties": {
+          "start": {
+            "type": "date"
+          },
+          "end": {
+            "type": "date"
+          },
+          "type": {
+            "type": "keyword"
+          },
+          "description": {
+            "type": "text"
+          }
+        }
+      },
+      "description": {
+        "type": "text"
+      },
+      "embargo_date": {
+        "type": "date"
+      },
+      "keywords": {
+        "type": "keyword"
+      },
+      "language": {
+        "type": "keyword"
+      },
+      "owners": {
+        "type": "integer"
+      },
+      "publication_date": {
+        "type": "date"
+      },
+      "recid": {
+        "type": "keyword"
+      },
+      "resource_type": {
+        "type": "nested",
+        "properties": {
+          "type": {
+            "type": "keyword"
+          },
+          "subtype": {
+            "type": "keyword"
+          }
+        }
+      },
+      "rights": {
+        "type": "nested",
+        "properties": {
+          "rights": {
+            "type": "text"
+          },
+          "uri": {
+            "type": "keyword"
+          },
+          "identifier": {
+            "type": "keyword"
+          },
+          "identifier_scheme": {
+            "type": "keyword"
+          },
+          "scheme_uri": {
+            "type": "keyword"
+          },
+          "lang": {
+            "type": "keyword"
+          }
+        }
+      },
+      "suggest_title": {
+        "type": "completion"
+      },
+      "title": {
+        "type": "text",
+        "copy_to": "suggest_title"
+      },
+      "version": {
+        "type": "keyword"
+      },
       "_created": {
         "type": "date"
       },
       "_updated": {
         "type": "date"
+      },
+      "$schema": {
+        "type": "keyword",
+        "index": false
       }
     }
   }

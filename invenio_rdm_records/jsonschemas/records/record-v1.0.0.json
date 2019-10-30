@@ -24,46 +24,53 @@
     "access_right": {
       "default": "open",
       "description": "Access right for record.",
-      "enum": [
-        "open",
-        "embargoed",
-        "restricted",
-        "closed"
-      ],
       "type": "string"
     },
-    "recid": {
-      "description": "Invenio record identifier (integer).",
-      "type": "number"
-    },
-    "title": {
-      "description": "Record title.",
-      "type": "string"
-    },
-    "description": {
-      "description": "Description/abstract for record.",
-      "type": "string"
-    },
-    "owners": {
-      "description": "List of user IDs that are owners of the record.",
-      "items": {
-        "type": "number"
-      },
+    "additional_descriptions": {
       "type": "array",
-      "minItems": 1,
+      "items": {
+          "type": "object",
+          "properties": {
+              "description": {
+                "description": "Description/abstract for record.",
+                "type": "string"
+              },
+              "description_type": {
+                "description": "Type of description.",
+                "type": "string"
+              },
+              "lang": {
+                "description": "Language of the description. ISO 639-3 language code.",
+                "type": "string",
+                "maxLength": 3
+              }
+          },
+          "required": ["description", "description_type"]
+      },
       "uniqueItems": true
     },
-    "keywords": {
-      "description": "Free text keywords.",
+    "additional_titles": {
+      "type": "array",
       "items": {
-        "type": "string"
+        "type": "object",
+        "properties": {
+            "title": {
+              "description": "Title of the record.",
+              "type": "string"
+            },
+            "title_type": {
+              "description": "Type of title.",
+              "type": "string"
+            },
+            "lang": {
+              "description": "Language of the title. ISO 639-3 language code.",
+              "type": "string",
+              "maxLength": 3
+            }
+        },
+        "required": ["title"]
       },
-      "type": "array"
-    },
-    "publication_date": {
-      "description": "When the record is published",
-      "type": "string",
-      "format": "date-time"
+      "uniqueItems": true
     },
     "contributors": {
       "description": "Contributors in order of importance.",
@@ -109,33 +116,158 @@
           },
           "role": {
             "description": "",
-            "type": "string",
-            "enum": [
-              "ContactPerson",
-              "Researcher",
-              "Other"
-            ]
+            "type": "string"
           }
         },
         "required": [
           "name"
         ]
-
       }
     },
-    "_created": {
+    "dates": {
+      "description": "Date interval.",
+      "items": {
+        "additionalProperties": false,
+        "properties": {
+          "description": {
+            "description": "Description of the date interval.",
+            "type": "string"
+          },
+          "end": {
+            "description": "End date.",
+            "type": "string",
+            "format": "date-time"
+          },
+          "start": {
+            "description": "Start date.",
+            "type": "string",
+            "format": "date-time"
+          },
+          "type": {
+            "description": "Type of the date interval."
+          }
+        },
+        "required": [
+          "type"
+        ],
+        "type": "object"
+      },
+      "type": "array"
+    },
+    "description": {
+      "description": "Description for record.",
       "type": "string"
     },
-    "_updated": {
+    "embargo_date": {
+      "description": "Embargo date of record (ISO8601 formatted date).",
+      "type": "string",
+      "format": "date-time"
+    },
+    "keywords": {
+      "description": "Free text keywords.",
+      "items": {
+        "type": "string"
+      },
+      "type": "array"
+    },
+    "language": {
+      "description": "Primary language of the resource. ISO 639-3 language code.",
+      "type": "string",
+      "maxLength": 3
+    },
+    "owners": {
+      "description": "List of user IDs that are owners of the record.",
+      "items": {
+        "type": "number"
+      },
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true
+    },
+    "publication_date": {
+      "description": "Record publication date (IS8601-formatted). EDTF support to be added for field.",
+      "type": "string",
+      "format": "date-time"
+    },
+    "recid": {
+      "description": "Invenio record identifier (alphanumeric).",
+      "type": "string"
+    },
+    "resource_type": {
+      "additionalProperties": false,
+      "description": "Record resource type.",
+      "properties": {
+        "subtype": {
+          "description": "Specific resource type.",
+          "type": "string"
+        },
+        "type": {
+          "default": "publication",
+          "description": "General resource type.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "type",
+        "subtype"
+      ],
+      "type": "object"
+    },
+    "rights": {
+      "description": "Any rights information for this resource.",
+      "type": "array",
+      "items": {
+          "type": "object",
+          "properties": {
+              "rights": {
+                "description": "The right itself. Free text.",
+                "type": "string"
+              },
+              "uri": {
+                "description": "The URI of the license.",
+                "type": "string",
+                "format": "uri"
+              },
+              "identifier": {
+                "description": "A short, standardized version of the license name.",
+                "type": "string"
+              },
+              "identifier_scheme": {
+                "description": "The name of the scheme.",
+                "type": "string"
+              },
+              "scheme_uri": {
+                "description": "The URI of the identifier_scheme.",
+                "type": "string",
+                "format": "uri"
+              },
+              "lang": {
+                "description": "Language of the right information. ISO 639-3 language code.",
+                "type": "string",
+                "maxLength": 3
+              }
+          }
+      },
+      "uniqueItems": true
+    },
+    "title": {
+      "description": "Record title.",
+      "type": "string"
+    },
+    "version": {
+      "description": "Record version tag.",
       "type": "string"
     }
   },
   "required": [
-    "access_right",
     "_access",
+    "access_right",
     "contributors",
-    "title",
-    "owners"
+    "description",
+    "owners",
+    "publication_date",
+    "resource_type",
+    "title"
   ]
 }
 

@@ -66,13 +66,15 @@ setup_requires = [
 ]
 
 install_requires = [
+    'arrow>=0.13.0',
     'Flask-BabelEx>=0.9.3',
     'invenio-jsonschemas>=1.0.0,<1.1.0',
     'invenio-records-rest>=1.5.0,<1.6.0',
     'invenio-records>=1.3.0,<1.4.0',
     'invenio-records-files>=1.1.1,<1.2.0',
-    'invenio-records-permissions>=1.0.0a1',
+    'invenio-records-permissions>=1.0.0a3',
     'marshmallow>=2.20.5,<3',
+    'pycountry>=18.12.8',
 ]
 
 packages = find_packages()
