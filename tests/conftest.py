@@ -15,8 +15,12 @@ fixtures are available.
 
 from __future__ import absolute_import, print_function
 
+import shutil
+import tempfile
+
 import pytest
 from invenio_app.factory import create_app
+from invenio_files_rest.models import Location
 
 
 @pytest.fixture(scope='module')

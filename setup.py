@@ -3,8 +3,8 @@
 # Copyright (C) 2019 CERN.
 # Copyright (C) 2019 Northwestern University, Galter Health Sciences Library & Learning Center.
 #
-# Invenio-RDM-Records is free software; you can redistribute it and/or modify it
-# under the terms of the MIT License; see LICENSE file for more details.
+# Invenio-RDM-Records is free software; you can redistribute it and/or modify
+# it under the terms of the MIT License; see LICENSE file for more details.
 
 """DataCite-based data model for Invenio."""
 
@@ -75,6 +75,7 @@ install_requires = [
     'invenio-records-permissions>=1.0.0a3',
     'marshmallow>=2.20.5,<3',
     'pycountry>=18.12.8',
+    'Faker>=2.0.3'
 ]
 
 packages = find_packages()
@@ -101,6 +102,9 @@ setup(
     include_package_data=True,
     platforms='any',
     entry_points={
+        'flask.commands': [
+            'rdm-records = invenio_rdm_records.cli:rdm_records',
+        ],
         'invenio_base.apps': [
             'invenio_rdm_records = invenio_rdm_records:InvenioRDMRecords',
         ],
