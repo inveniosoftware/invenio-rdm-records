@@ -75,7 +75,8 @@ install_requires = [
     'invenio-records-permissions>=1.0.0a3',
     'marshmallow>=2.20.5,<3',
     'pycountry>=18.12.8',
-    'Faker>=2.0.3'
+    'Faker>=2.0.3',
+    'invenio-pidstore>=1.1.0'
 ]
 
 packages = find_packages()
