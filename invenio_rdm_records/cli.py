@@ -44,7 +44,7 @@ def create_fake_record():
     # Create and index record
     rec_uuid = uuid.uuid4()
     current_pidstore.minters['recid'](rec_uuid, data_to_use)
-    record = Record.create(data_to_use)
+    record = Record.create(data_to_use, id_=rec_uuid)
     RecordIndexer().index(record)
 
     # Flush to index and database
