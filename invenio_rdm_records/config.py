@@ -28,8 +28,8 @@ def _(x):
 RECORDS_REST_ENDPOINTS = dict(
     recid=dict(
         pid_type='recid',
-        pid_minter='recid',
-        pid_fetcher='recid',
+        pid_minter='recid_v2',
+        pid_fetcher='recid_v2',
         default_endpoint_prefix=True,
         search_class=RecordsSearch,
         indexer_class=RecordIndexer,
