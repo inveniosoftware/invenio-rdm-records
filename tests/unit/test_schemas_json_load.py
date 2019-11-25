@@ -263,7 +263,7 @@ def test_access_right(access_right, valid):
     ({}, False),
     ({'metadata_restricted': True}, False),
     ({'files_restricted': False}, False),
-    ({'metadata_restricted': True, 'files_restricted': False}, True),
+    ({'metadata_restricted': True, 'files_restricted': True}, True),
 ])
 def test_access(access, valid):
     data, errors = (
