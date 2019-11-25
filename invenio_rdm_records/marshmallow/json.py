@@ -148,9 +148,18 @@ class RightSchemaV1(StrictKeysMixin):
 class MetadataSchemaV1(StrictKeysMixin):
     """Schema for the record metadata."""
 
-    # TODO: Check enumeration (i.e. only open/embargoed/... accepted)
-    access_right = SanitizedUnicode(required=True)
-    access = fields.Nested(AccessSchemaV1)
+    ACCESS_RIGHT_CHOICES = [
+        'open',
+        'embargoed',
+        'restricted',
+        'closed'
+    ]
+
+    access_right = SanitizedUnicode(required=True, validate=validate.OneOf(
+        choices=ACCESS_RIGHT_CHOICES,
+        error=_('Invalid access right. {input} not one of {choices}.')
+    ))
+    _access = fields.Nested(AccessSchemaV1, required=True)
     additional_descriptions = fields.List(fields.Nested(DescriptionSchemaV1))
     additional_titles = fields.List(fields.Nested(TitleSchemaV1))
     contributors = Nested(ContributorSchemaV1, many=True, required=True)
@@ -175,6 +184,17 @@ class MetadataSchemaV1(StrictKeysMixin):
         """Default publication date."""
         if 'publication_date' not in data:
             data['publication_date'] = arrow.utcnow().date().isoformat()
+
+    @pre_load()
+    def preload_access(self, data):
+        """Load 'access' from data and convert to '_access'.
+
+        WHY: StrictKeysMixin prevents the use of `load_from`. If/When amended,
+             we can replace this by `load_from`.
+        """
+        if 'access' in data:
+            # Purposefully overrides any prior '_access'
+            data['_access'] = data.pop('access')
 
     @validates('dates')
     def validate_dates(self, value):
