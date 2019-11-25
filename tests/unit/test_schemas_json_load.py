@@ -238,3 +238,41 @@ def test_valid_rights(val, expected):
         {'rights': [{'lang': 'en'}]}
     )
     assert 'lang' not in errors
+
+
+@pytest.mark.parametrize(('access_right', 'valid'), [
+    ('open', True),
+    ('embargoed', True),
+    ('restricted', True),
+    ('closed', True),
+    ('FOO', False)
+])
+def test_access_right(access_right, valid):
+    data, errors = (
+        MetadataSchemaV1(partial=True).load({'access_right': access_right})
+    )
+
+    if valid:
+        assert not errors
+        assert data['access_right'] == access_right
+    else:
+        assert 'access_right' in errors
+
+
+@pytest.mark.parametrize(('access', 'valid'), [
+    ({}, False),
+    ({'metadata_restricted': True}, False),
+    ({'files_restricted': False}, False),
+    ({'metadata_restricted': True, 'files_restricted': False}, True),
+])
+def test_access(access, valid):
+    data, errors = (
+        MetadataSchemaV1(partial=True).load({'access': access})
+    )
+
+    if valid:
+        assert not errors
+        assert data['_access'] == access
+        assert 'access' not in data
+    else:
+        assert '_access' in errors
