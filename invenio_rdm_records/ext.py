@@ -1,8 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # Copyright (C) 2019 CERN.
-# Copyright (C) 2019 Northwestern University,
-#                    Galter Health Sciences Library & Learning Center.
+# Copyright (C) 2019 Northwestern University.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
@@ -31,18 +30,17 @@ class InvenioRDMRecords(object):
 
     def init_config(self, app):
         """Initialize configuration."""
-        with_endpoints = app.config.get(
-            'RDM_RECORDS_ENDPOINTS_ENABLED', True)
+        supported_configurations = [
+            'FILES_REST_PERMISSION_FACTORY',
+            'PIDSTORE_RECID_FIELD',
+            'RECORDS_REST_ENDPOINTS',
+            'RECORDS_REST_FACETS',
+            'RECORDS_REST_SORT_OPTIONS',
+            'RECORDS_REST_DEFAULT_SORT',
+            'RECORDS_FILES_REST_ENDPOINTS',
+            'RECORDS_PERMISSIONS_RECORD_POLICY'
+        ]
+
         for k in dir(config):
-            if k.startswith('RDM_RECORDS_'):
+            if k in supported_configurations:
                 app.config.setdefault(k, getattr(config, k))
-            elif k == 'SEARCH_UI_JSTEMPLATE_RESULTS':
-                app.config[k] = getattr(config, k)
-            elif k == 'PIDSTORE_RECID_FIELD':
-                app.config[k] = getattr(config, k)
-            elif with_endpoints:
-                if k in ['RECORDS_REST_ENDPOINTS', 'RECORDS_UI_ENDPOINTS',
-                         'RECORDS_REST_FACETS', 'RECORDS_REST_SORT_OPTIONS',
-                         'RECORDS_REST_DEFAULT_SORT']:
-                    app.config.setdefault(k, {})
-                    app.config[k].update(getattr(config, k))

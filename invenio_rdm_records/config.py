@@ -130,16 +130,4 @@ RECORDS_FILES_REST_ENDPOINTS = {
 }
 """Set default files rest endpoints."""
 
-RECORDS_UI_ENDPOINTS = {
-    'recid': {
-        'pid_type': 'recid',
-        'route': '/records/<pid_value>',
-        'template': 'records/record.html',
-    },
-}
-"""Records UI for RDM Records."""
-
-SEARCH_UI_JSTEMPLATE_RESULTS = 'templates/records/results.html'
-"""Result list template."""
-
 PIDSTORE_RECID_FIELD = 'recid'
