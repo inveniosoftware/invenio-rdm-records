@@ -115,9 +115,6 @@ setup(
         'invenio_base.blueprints': [
             'invenio_rdm_records = invenio_rdm_records.views:blueprint',
         ],
-        'invenio_config.module': [
-            'invenio_rdm_records = invenio_rdm_records.config',
-        ],
         'invenio_i18n.translations': [
             'messages = invenio_rdm_records',
         ],
