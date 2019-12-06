@@ -67,10 +67,12 @@ RECORDS_REST_ENDPOINTS = dict(
 RECORDS_REST_FACETS = dict(
     records=dict(
         aggs=dict(
-            keywords=dict(terms=dict(field='keywords'))
+            access_right=dict(terms=dict(field='access_right')),
+            resource_type=dict(terms=dict(field='resource_type.type'))
         ),
         post_filters=dict(
-            keywords=terms_filter('keywords'),
+            access_right=terms_filter('access_right'),
+            resource_type=terms_filter('resource_type.type')
         )
     )
 )
