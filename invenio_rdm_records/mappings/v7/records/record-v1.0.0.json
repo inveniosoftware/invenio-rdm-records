@@ -121,7 +121,7 @@
         "type": "keyword"
       },
       "resource_type": {
-        "type": "nested",
+        "type": "object",
         "properties": {
           "type": {
             "type": "keyword"
