@@ -27,7 +27,9 @@ tests_require = [
     'invenio_app>=1.2.3,<1.3.0'
 ]
 
-invenio_search_version = '1.2.0'
+# Should follow inveniosoftware/invenio versions
+invenio_db_version = '>=1.0.4,<1.1.0'
+invenio_search_version = '>=1.2.0,<1.3.0'
 
 extras_require = {
     'docs': [
@@ -35,20 +37,20 @@ extras_require = {
     ],
     # Elasticsearch version
     'elasticsearch6': [
-        'invenio-search[elasticsearch6]>={}'.format(invenio_search_version),
+        'invenio-search[elasticsearch6]{}'.format(invenio_search_version),
     ],
     'elasticsearch7': [
-        'invenio-search[elasticsearch7]>={}'.format(invenio_search_version),
+        'invenio-search[elasticsearch7]{}'.format(invenio_search_version),
     ],
     # Databases
     'mysql': [
-        'invenio-db[mysql,versioning]>=1.0.0',
+        'invenio-db[mysql,versioning]{}'.format(invenio_db_version),
     ],
     'postgresql': [
-        'invenio-db[postgresql,versioning]>=1.0.0',
+        'invenio-db[postgresql,versioning]{}'.format(invenio_db_version),
     ],
     'sqlite': [
-        'invenio-db[versioning]>=1.0.0',
+        'invenio-db[versioning]{}'.format(invenio_db_version),
     ],
     'tests': tests_require,
 }
@@ -69,10 +71,10 @@ install_requires = [
     'arrow>=0.13.0',
     'Flask-BabelEx>=0.9.3',
     'invenio-jsonschemas>=1.0.0,<1.1.0',
-    'invenio-records-rest>=1.5.0,<1.6.0',
+    'invenio-records-rest>=1.6.0,<1.7.0',
     'invenio-records>=1.3.0,<1.4.0',
-    'invenio-records-files>=1.1.1,<1.2.0',
-    'invenio-records-permissions>=1.0.0a3',
+    'invenio-records-files>=1.2.0,<1.3.0',
+    'invenio-records-permissions>=1.0.0a5',
     'marshmallow>=2.20.5,<3',
     'pycountry>=18.12.8',
     'Faker>=2.0.3',
