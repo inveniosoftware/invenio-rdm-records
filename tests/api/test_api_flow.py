@@ -11,6 +11,7 @@
 from __future__ import absolute_import, print_function
 
 import json
+from io import BytesIO
 
 from invenio_search import current_search
 
@@ -36,7 +37,6 @@ def assert_single_hit(response, expected_record):
 def test_simple_flow(client, location):
     """Test simple flow using REST API."""
     # TODO pass headers and data to fixture
-    headers = [('Content-Type', 'application/json')]
     data = {
             'access': {
                 'metadata_restricted': 'false',
@@ -50,14 +50,53 @@ def test_simple_flow(client, location):
             'owners': [1]
         }
 
-    # TODO: use urlfor
     url = 'https://localhost:5000/records/'
 
     # create a record
-    response = client.post(url, data=json.dumps(data), headers=headers)
+    response = client.post(url, json=data)
     assert response.status_code == 201
     current_search.flush_and_refresh('records')
 
     # retrieve records
-    response = client.get('https://localhost:5000/records/')
+    response = client.get(url)
     assert_single_hit(response, data)
+
+
+def test_simple_file_upload(client, location):
+    # Create record
+    data = {
+        "access": {
+            "metadata_restricted": "false",
+            "files_restricted": "false"
+        },
+        "access_right": "open",
+        "contributors": [{"name": "Jon Doe"}],
+        "description": "Record with a file",
+        "owners": [1],
+        "publication_date": "05/11/2019",
+        "title": "Example dataset"
+    }
+    records_url = 'https://localhost:5000/records/'
+    response = client.post(records_url, json=data)
+    assert response.status_code == 201
+    current_search.flush_and_refresh('records')
+
+    # Attach file to record
+    recid = response.json['id']
+    files_url = records_url + "{}/files/example.txt".format(recid)
+    headers = [("Content-Type", "application/octet-stream")]
+    response = client.put(
+        files_url, data=BytesIO(b"foo bar baz"), headers=headers)
+
+    assert response.status_code == 200
+    assert response.json['key'] == 'example.txt'
+    assert response.json['size'] != 0
+
+    # Retrieve record
+    record_url = records_url + "{}".format(recid)
+    response = client.get(record_url)
+
+    expected_files_url = (
+        'https://localhost:5000/records/{}/files'.format(recid)
+    )
+    assert response.json['links']['files'] == expected_files_url
