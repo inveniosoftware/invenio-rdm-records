@@ -12,8 +12,9 @@
 from invenio_indexer.api import RecordIndexer
 from invenio_records_files.api import Record
 from invenio_records_permissions import record_create_permission_factory, \
-    record_delete_permission_factory, record_list_permission_factory, \
-    record_read_permission_factory, record_update_permission_factory
+    record_delete_permission_factory, record_files_permission_factory, \
+    record_list_permission_factory, record_read_permission_factory, \
+    record_update_permission_factory
 from invenio_records_permissions.api import RecordsSearch
 from invenio_records_rest.facets import terms_filter
 
@@ -60,6 +61,7 @@ RECORDS_REST_ENDPOINTS = dict(
         create_permission_factory_imp=record_create_permission_factory,
         update_permission_factory_imp=record_update_permission_factory,
         delete_permission_factory_imp=record_delete_permission_factory,
+        links_factory_imp='invenio_rdm_records.links.links_factory'
     ),
 )
 """REST API for invenio_rdm_records."""
@@ -116,9 +118,7 @@ RECORDS_PERMISSIONS_RECORD_POLICY = (
 
 # Files REST
 
-# TODO: Change for record_read_files_permission_factory when files permissions
-#       are ready
-FILES_REST_PERMISSION_FACTORY = record_read_permission_factory
+FILES_REST_PERMISSION_FACTORY = record_files_permission_factory
 """Set default files permission factory."""
 
 # Records Files
