@@ -1,6 +1,6 @@
 ..
     Copyright (C) 2019 CERN.
-    Copyright (C) 2019 Northwestern University, Galter Health Sciences Library & Learning Center.
+    Copyright (C) 2019 Northwestern University.
 
 
     Invenio-RDM-Records is free software; you can redistribute it and/or
