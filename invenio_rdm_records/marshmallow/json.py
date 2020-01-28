@@ -19,26 +19,50 @@ from marshmallow import ValidationError, fields, pre_load, validate, \
     validates, validates_schema
 
 from ..models import ObjectType
-from .utils import validate_iso639_3
+from .utils import api_link_for, validate_iso639_3
 
 
-class AccessSchemaV1(StrictKeysMixin):
-    """Access schema."""
+class AccessConditionSchemaV1(StrictKeysMixin):
+    """Access condition."""
 
-    # TODO revist acccording to
-    # https://github.com/inveniosoftware/invenio-rdm-records/issues/20
-    metadata_restricted = fields.Bool(required=True)
-    files_restricted = fields.Bool(required=True)
+    condition = SanitizedUnicode()
+    link_validity = SanitizedUnicode()
 
 
-class PersonIdsSchemaV1(StrictKeysMixin):
-    """Ids schema."""
+class CommunitySchemaV1(StrictKeysMixin):
+    """Communities to which the record belongs to."""
 
-    source = SanitizedUnicode()
-    value = SanitizedUnicode()
+    primary = SanitizedUnicode()
+    secondary = fields.List(SanitizedUnicode())
 
 
-class ContributorSchemaV1(StrictKeysMixin):
+class IdentifierSchemaV1(StrictKeysMixin):
+    """Extra/Alternate identifiers of the record."""
+
+    identifier = SanitizedUnicode(required=True)
+    scheme = SanitizedUnicode(required=True)
+
+
+class AffiliationSchemaV1(StrictKeysMixin):
+    """Affiliation of a creator/contributor."""
+
+    name = SanitizedUnicode(required=True)
+    identifier = SanitizedUnicode(required=True)
+    scheme = SanitizedUnicode(required=True)
+
+
+class CreatorSchemaV1(StrictKeysMixin):
+    """Creator schema."""
+
+    name = SanitizedUnicode(required=True)
+    type = SanitizedUnicode()
+    given_name = SanitizedUnicode()
+    family_name = SanitizedUnicode()
+    identifiers = fields.List(fields.Nested(IdentifierSchemaV1))
+    affiliations = fields.List(fields.Nested(AffiliationSchemaV1))
+
+
+class ContributorSchemaV1(CreatorSchemaV1):
     """Contributor schema."""
 
     ROLES = [
@@ -47,15 +71,36 @@ class ContributorSchemaV1(StrictKeysMixin):
         "Other"
     ]
 
-    ids = fields.Nested(PersonIdsSchemaV1, many=True)
-    name = SanitizedUnicode(required=True)
-    role = SanitizedUnicode(
-        validate=validate.OneOf(
-            choices=ROLES,
-            error=_('Invalid role. {input} not one of {choices}.')
-        ))
-    affiliations = fields.List(SanitizedUnicode())
-    email = fields.Email()
+    role = SanitizedUnicode(required=True, validate=validate.OneOf(
+                choices=ROLES,
+                error=_('Invalid role. {input} not one of {choices}.')
+            ))
+
+
+class FilesSchemaV1(StrictKeysMixin):
+    """Files metadata schema."""
+
+    type = fields.String(required=True)
+    checksum = fields.String(required=True)
+    size = fields.Integer(required=True)
+    bucket = fields.String(required=True)
+    key = fields.String(required=True)
+    links = fields.Method('get_links', required=True)
+
+    def get_links(self, obj):
+        """Get links."""
+        return {
+            'self': api_link_for(
+                'object', bucket=obj['bucket'], key=obj['key'])
+        }
+
+
+class InternalNoteSchemaV1(StrictKeysMixin):
+    """Internal notes shema."""
+
+    user = SanitizedUnicode(required=True)
+    note = SanitizedUnicode(required=True)
+    timestamp = DateString(required=True)
 
 
 class ResourceTypeSchemaV1(StrictKeysMixin):
@@ -108,11 +153,28 @@ class DescriptionSchemaV1(StrictKeysMixin):
     ]
     description = SanitizedUnicode(required=True,
                                    validate=validate.Length(min=3))
-    description_type = SanitizedUnicode(validate=validate.OneOf(
+    type = SanitizedUnicode(validate=validate.OneOf(
             choices=DESCRIPTION_TYPES,
             error=_('Invalid description type. {input} not one of {choices}.')
         ))
     lang = SanitizedUnicode(validate=validate_iso639_3)
+
+
+class LicenseSchemaV1(StrictKeysMixin):
+    """License schema."""
+
+    license = SanitizedUnicode()
+    uri = SanitizedUnicode()
+    identifier = SanitizedUnicode()
+    scheme = SanitizedUnicode()
+
+
+class SubjectSchemaV1(StrictKeysMixin):
+    """Subject schema."""
+
+    subject = SanitizedUnicode(required=True)
+    identifier = SanitizedUnicode()
+    scheme = SanitizedUnicode()
 
 
 class DateSchemaV1(StrictKeysMixin):
@@ -133,50 +195,70 @@ class DateSchemaV1(StrictKeysMixin):
     description = fields.Str()
 
 
-class RightSchemaV1(StrictKeysMixin):
-    """Schema for rights."""
+class RelatedIdentifierSchemaV1(StrictKeysMixin):
+    """Related identifier schema."""
 
-    rights = SanitizedUnicode()
-    uri = SanitizedUnicode()
+    identifier = SanitizedUnicode(required=True)
+    scheme = SanitizedUnicode(required=True)
+    relation_type = SanitizedUnicode(required=True)
+    resource_type = fields.Nested(ResourceTypeSchemaV1)
+
+
+class ReferenceSchemaV1(StrictKeysMixin):
+    """Reference schema."""
+
+    reference_string = SanitizedUnicode()
     identifier = SanitizedUnicode()
-    identifier_scheme = SanitizedUnicode()
-    scheme_uri = SanitizedUnicode()
-    lang = SanitizedUnicode(validate=validate_iso639_3)
+    scheme = SanitizedUnicode()
+
+
+class PointSchemaV1(StrictKeysMixin):
+    """Point schema."""
+
+    lat = fields.Number()
+    lon = fields.Number()
+
+
+class LocationSchemaV1(StrictKeysMixin):
+    """Location schema."""
+
+    point = fields.Nested(PointSchemaV1)
+    place = SanitizedUnicode(required=True)
+    description = SanitizedUnicode()
 
 
 class MetadataSchemaV1(StrictKeysMixin):
     """Schema for the record metadata."""
 
-    ACCESS_RIGHT_CHOICES = [
-        'open',
-        'embargoed',
-        'restricted',
-        'closed'
-    ]
-
-    access_right = SanitizedUnicode(required=True, validate=validate.OneOf(
-        choices=ACCESS_RIGHT_CHOICES,
-        error=_('Invalid access right. {input} not one of {choices}.')
-    ))
-    _access = fields.Nested(AccessSchemaV1, required=True)
-    additional_descriptions = fields.List(fields.Nested(DescriptionSchemaV1))
-    additional_titles = fields.List(fields.Nested(TitleSchemaV1))
-    contributors = Nested(ContributorSchemaV1, many=True, required=True)
-    dates = fields.List(
-        fields.Nested(DateSchemaV1), validate=validate.Length(min=1))
-    description = SanitizedUnicode()
-    embargo_date = DateString()
-    keywords = fields.List(SanitizedUnicode(), many=True)
-    language = SanitizedUnicode(validate=validate_iso639_3)
-    owners = fields.List(fields.Integer(),
-                         validate=validate.Length(min=1),
-                         required=True)
-    publication_date = DateString()
-    recid = PersistentIdentifier()
+    # Administrative fields
+    _visibility = fields.Bool(default=True)
+    _visibility_files = fields.Bool(default=True)
+    _embargo_date = DateString()
+    _access_condition = fields.Nested(AccessConditionSchemaV1)
+    _contact = SanitizedUnicode()
+    _community = fields.Nested(CommunitySchemaV1)
+    _owners = fields.List(fields.Integer(), validate=validate.Length(min=1),
+                          dump_only=True, required=True)
+    _created_by = DateString()
+    _files = fields.List(fields.Nested(FilesSchemaV1(), dump_only=True))
+    _default_preview = SanitizedUnicode()
+    _internal_notes = fields.List(fields.Nested(InternalNoteSchemaV1))
+    # Metadata fields
     resource_type = fields.Nested(ResourceTypeSchemaV1)
-    rights = fields.List(fields.Nested(RightSchemaV1))
-    title = SanitizedUnicode(required=True, validate=validate.Length(min=3))
+    identifiers = fields.Nested(IdentifierSchemaV1)
+    creators = fields.List(Nested(CreatorSchemaV1, required=True))
+    titles = fields.List(fields.Nested(TitleSchemaV1))
+    descriptions = fields.List(fields.Nested(DescriptionSchemaV1))
+    publication_date = DateString()
+    licenses = fields.List(fields.Nested(LicenseSchemaV1))
+    subjects = fields.List(fields.Nested(SubjectSchemaV1))
+    language = SanitizedUnicode(validate=validate_iso639_3)
+    dates = fields.List(fields.Nested(DateSchemaV1))
     version = SanitizedUnicode()
+    related_identifiers = fields.List(
+        fields.Nested(RelatedIdentifierSchemaV1))
+    references = fields.List(fields.Nested(ReferenceSchemaV1))
+    locations = fields.List(fields.Nested(LocationSchemaV1))
 
     @pre_load()
     def preload_publicationdate(self, data):

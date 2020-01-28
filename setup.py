@@ -18,6 +18,7 @@ history = open('CHANGES.rst').read()
 tests_require = [
     'check-manifest>=0.25',
     'coverage>=4.0',
+    'Faker>=2.0.3',
     'isort>=4.3.3',
     'pydocstyle>=2.0.0',
     'pytest-cov>=2.5.1',
@@ -71,14 +72,14 @@ install_requires = [
     'arrow>=0.13.0',
     'Flask-BabelEx>=0.9.3',
     'invenio-jsonschemas>=1.0.0,<1.1.0',
+    'invenio-pidstore>=1.1.0',
     'invenio-records-rest>=1.6.0,<1.7.0',
     'invenio-records>=1.3.0,<1.4.0',
     'invenio-records-files>=1.2.0,<1.3.0',
     'invenio-records-permissions>=1.0.0a6',
-    'marshmallow>=2.20.5,<3',
+    'marshmallow>=3.0.0,<4.0.0',
     'pycountry>=18.12.8',
-    'Faker>=2.0.3',
-    'invenio-pidstore>=1.1.0'
+    'webargs>=5.4.0,<6.0.0'
 ]
 
 packages = find_packages()
