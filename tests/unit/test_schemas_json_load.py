@@ -8,270 +8,767 @@
 
 """Tests for Invenio RDM Records JSON Schemas."""
 
-from datetime import datetime
-
 import pytest
+from marshmallow import ValidationError
 
-from invenio_rdm_records.marshmallow.json import MetadataSchemaV1
+from invenio_rdm_records.marshmallow.json import AffiliationSchemaV1, \
+    CommunitySchemaV1, ContributorSchemaV1, CreatorSchemaV1, DateSchemaV1, \
+    DescriptionSchemaV1, IdentifierSchemaV1, InternalNoteSchemaV1, \
+    LicenseSchemaV1, LocationSchemaV1, MetadataSchemaV1, PointSchemaV1, \
+    ReferenceSchemaV1, RelatedIdentifierSchemaV1, ResourceTypeSchemaV1, \
+    SubjectSchemaV1, TitleSchemaV1
 
 
-@pytest.mark.parametrize(('val', 'expected'), [
-    (dict(type='publication', subtype='preprint'), None),
-    (dict(type='image', subtype='photo'), None),
-    (dict(type='dataset'), None),
-    (dict(type='dataset', title='Dataset'), dict(type='dataset')),
-])
-def test_valid_resource_type(val, expected):
+def test_community():
+    """Test Community Schema."""
+    valid_full = {
+        "primary": "Primary Community",
+        "secondary": ["Secondary Community"]
+    }
+    data = CommunitySchemaV1().load(valid_full)
+    assert data == valid_full
+
+    valid_primary = {
+        "primary": "Primary Community"
+    }
+    data = CommunitySchemaV1().load(valid_primary)
+    assert data == valid_primary
+
+    invalid_no_primary = {
+        "secondary": ["Secondary Community"]
+    }
+    with pytest.raises(ValidationError):
+        CommunitySchemaV1().load(invalid_no_primary)
+
+
+def test_identifier():
+    """Test Identifier Schema."""
+    valid_full = {
+        "identifier": "10.5281/zenodo.9999999",
+        "scheme": "DOI"
+    }
+    data = IdentifierSchemaV1().load(valid_full)
+    assert data == valid_full
+
+    invalid_no_identifier = {
+        "scheme": "DOI"
+    }
+    with pytest.raises(ValidationError):
+        data = IdentifierSchemaV1().load(invalid_no_identifier)
+
+    invalid_no_scheme = {
+        "identifier": "10.5281/zenodo.9999999"
+    }
+    with pytest.raises(ValidationError):
+        data = IdentifierSchemaV1().load(invalid_no_scheme)
+
+
+def test_affiliations():
+    """Test affiliations schema."""
+    valid_full = {
+        "name": "Entity One",
+        "identifier": "entity-one",
+        "scheme": "entity-id-scheme"
+    }
+    data = AffiliationSchemaV1().load(valid_full)
+    assert data == valid_full
+
+    invalid_no_name = {
+        "identifier": "entity-one",
+        "scheme": "entity-id-scheme"
+    }
+    with pytest.raises(ValidationError):
+        data = AffiliationSchemaV1().load(invalid_no_name)
+
+    invalid_no_identifier = {
+        "name": "Entity One",
+        "scheme": "entity-id-scheme"
+    }
+    with pytest.raises(ValidationError):
+        data = AffiliationSchemaV1().load(invalid_no_identifier)
+
+    invalid_no_scheme = {
+        "name": "Entity One",
+        "identifier": "entity-one"
+    }
+    with pytest.raises(ValidationError):
+        data = AffiliationSchemaV1().load(invalid_no_scheme)
+
+
+def test_creator():
+    """Test creator schema."""
+    valid_minimal = {
+        "name": "Julio Cesar",
+        "type": "Personal",
+        "given_name": "Julio",
+        "family_name": "Cesar",
+        "identifiers": [{
+            "identifier": "9999-9999-9999-9999",
+            "scheme": "Orcid"
+        }],
+        "affiliations": [{
+            "name": "Entity One",
+            "identifier": "entity-one",
+            "scheme": "entity-id-scheme"
+        }]
+    }
+
+    data = CreatorSchemaV1().load(valid_minimal)
+    assert data == valid_minimal
+
+    valid_minimal = {
+        "name": "Julio Cesar",
+        "type": "Personal"
+    }
+
+    data = CreatorSchemaV1().load(valid_minimal)
+    assert data == valid_minimal
+
+    invalid_no_name = {
+        "type": "Personal",
+        "given_name": "Julio",
+        "family_name": "Cesar",
+        "identifiers": [{
+            "identifier": "9999-9999-9999-9999",
+            "scheme": "Orcid"
+        }],
+        "affiliations": [{
+            "name": "Entity One",
+            "identifier": "entity-one",
+            "scheme": "entity-id-scheme"
+        }]
+    }
+    with pytest.raises(ValidationError):
+        data = CreatorSchemaV1().load(invalid_no_name)
+
+    invalid_no_name_type = {
+        "name": "Julio Cesar",
+        "given_name": "Julio",
+        "family_name": "Cesar",
+        "identifiers": [{
+            "identifier": "9999-9999-9999-9999",
+            "scheme": "Orcid"
+        }],
+        "affiliations": [{
+            "name": "Entity One",
+            "identifier": "entity-one",
+            "scheme": "entity-id-scheme"
+        }]
+    }
+    with pytest.raises(ValidationError):
+        data = CreatorSchemaV1().load(invalid_no_name_type)
+
+    invalid_name_type = {
+        "name": "Julio Cesar",
+        "type": "Invalid",
+        "given_name": "Julio",
+        "family_name": "Cesar",
+        "identifiers": [{
+            "identifier": "9999-9999-9999-9999",
+            "scheme": "Orcid"
+        }],
+        "affiliations": [{
+            "name": "Entity One",
+            "identifier": "entity-one",
+            "scheme": "entity-id-scheme"
+        }]
+    }
+    with pytest.raises(ValidationError):
+        data = CreatorSchemaV1().load(invalid_name_type)
+
+
+def test_contributor():
+    """Test contributor schema."""
+    valid_full = {
+        "name": "Julio Cesar",
+        "type": "Personal",
+        "given_name": "Julio",
+        "family_name": "Cesar",
+        "identifiers": [{
+            "identifier": "9999-9999-9999-9999",
+            "scheme": "Orcid"
+        }],
+        "affiliations": [{
+            "name": "Entity One",
+            "identifier": "entity-one",
+            "scheme": "entity-id-scheme"
+        }],
+        "role": "RightsHolder"
+    }
+
+    data = ContributorSchemaV1().load(valid_full)
+    assert data == valid_full
+
+    valid_minimal = {
+        "name": "Julio Cesar",
+        "type": "Personal",
+        "role": "RightsHolder"
+    }
+
+    data = ContributorSchemaV1().load(valid_minimal)
+    assert data == valid_minimal
+
+    invalid_no_name = {
+        "type": "Personal",
+        "given_name": "Julio",
+        "family_name": "Cesar",
+        "identifiers": [{
+            "identifier": "9999-9999-9999-9999",
+            "scheme": "Orcid"
+        }],
+        "affiliations": [{
+            "name": "Entity One",
+            "identifier": "entity-one",
+            "scheme": "entity-id-scheme"
+        }],
+        "role": "RightsHolder"
+    }
+    with pytest.raises(ValidationError):
+        data = ContributorSchemaV1().load(invalid_no_name)
+
+    invalid_no_name_type = {
+        "name": "Julio Cesar",
+        "given_name": "Julio",
+        "family_name": "Cesar",
+        "identifiers": [{
+            "identifier": "9999-9999-9999-9999",
+            "scheme": "Orcid"
+        }],
+        "affiliations": [{
+            "name": "Entity One",
+            "identifier": "entity-one",
+            "scheme": "entity-id-scheme"
+        }],
+        "role": "RightsHolder"
+    }
+    with pytest.raises(ValidationError):
+        data = ContributorSchemaV1().load(invalid_no_name_type)
+
+    invalid_name_type = {
+        "name": "Julio Cesar",
+        "type": "Invalid",
+        "given_name": "Julio",
+        "family_name": "Cesar",
+        "identifiers": [{
+            "identifier": "9999-9999-9999-9999",
+            "scheme": "Orcid"
+        }],
+        "affiliations": [{
+            "name": "Entity One",
+            "identifier": "entity-one",
+            "scheme": "entity-id-scheme"
+        }],
+        "role": "RightsHolder"
+    }
+    with pytest.raises(ValidationError):
+        data = ContributorSchemaV1().load(invalid_name_type)
+
+    invalid_no_role = {
+        "name": "Julio Cesar",
+        "type": "Personal",
+        "given_name": "Julio",
+        "family_name": "Cesar",
+        "identifiers": [{
+            "identifier": "9999-9999-9999-9999",
+            "scheme": "Orcid"
+        }],
+        "affiliations": [{
+            "name": "Entity One",
+            "identifier": "entity-one",
+            "scheme": "entity-id-scheme"
+        }]
+    }
+    with pytest.raises(ValidationError):
+        data = ContributorSchemaV1().load(invalid_no_role)
+
+    invalid_role = {
+        "name": "Julio Cesar",
+        "type": "Personal",
+        "given_name": "Julio",
+        "family_name": "Cesar",
+        "identifiers": [{
+            "identifier": "9999-9999-9999-9999",
+            "scheme": "Orcid"
+        }],
+        "affiliations": [{
+            "name": "Entity One",
+            "identifier": "entity-one",
+            "scheme": "entity-id-scheme"
+        }],
+        "role": "Invalid"
+    }
+    with pytest.raises(ValidationError):
+        data = ContributorSchemaV1().load(invalid_role)
+
+
+def test_internal_note():
+    """Test internal note schema."""
+    valid_full = {
+        "user": "inveniouser",
+        "note": "RDM record",
+        "timestamp": "2020-02-01"
+    }
+    data = InternalNoteSchemaV1().load(valid_full)
+    assert data == valid_full
+
+    invalid_no_user = {
+        "note": "RDM record",
+        "timestamp": "2020-02-01"
+    }
+    with pytest.raises(ValidationError):
+        data = InternalNoteSchemaV1().load(invalid_no_user)
+
+    invalid_no_note = {
+        "user": "inveniouser",
+        "timestamp": "2020-02-01"
+    }
+    with pytest.raises(ValidationError):
+        data = InternalNoteSchemaV1().load(invalid_no_note)
+
+    invalid_no_timestamp = {
+        "user": "inveniouser",
+        "note": "RDM record"
+    }
+    with pytest.raises(ValidationError):
+        data = InternalNoteSchemaV1().load(invalid_no_timestamp)
+
+    invalid_timestamp = {
+        "user": "inveniouser",
+        "note": "RDM record",
+        "timestamp": "01/02/2020"
+    }
+    with pytest.raises(ValidationError):
+        data = InternalNoteSchemaV1().load(invalid_timestamp)
+
+
+def test_resource_type():
     """Test resource type."""
-    data, errors = MetadataSchemaV1(partial=['resource_type']).load(
-        dict(resource_type=val))
-    assert data['resource_type'] == val if expected is None else expected
+    valid_full = {
+        "type": "image",
+        "subtype": "photo"
+    }
+    data = ResourceTypeSchemaV1().load(valid_full)
+    assert data == valid_full
+
+    valid_type = {
+        "type": "image",
+    }
+    data = ResourceTypeSchemaV1().load(valid_type)
+    assert data == valid_type
+
+    invalid_no_type = {
+        "subtype": "photo"
+    }
+    with pytest.raises(ValidationError):
+        ResourceTypeSchemaV1().load(invalid_no_type)
+
+    invalid_type = {
+        "type": "invalid",
+        "subtype": "photo"
+    }
+    with pytest.raises(ValidationError):
+        ResourceTypeSchemaV1().load(invalid_type)
+
+    invalid_subtype = {
+        "type": "image",
+        "subtype": "invalid"
+    }
+    with pytest.raises(ValidationError):
+        ResourceTypeSchemaV1().load(invalid_subtype)
 
 
-@pytest.mark.parametrize('val', [
-    dict(type='image', subtype='preprint'),
-    dict(subtype='photo'),
-    dict(type='invalid'),
-    dict(title='Dataset'),
-    dict(),
-])
-def test_invalid_resource_type(val):
-    """Test resource type."""
-    data, errors = MetadataSchemaV1(partial=['resource_type']).load(
-        dict(resource_type=val))
-    assert 'resource_type' in errors
+def test_titles():
+    """Test titles schema."""
+    valid_full = {
+        "title": "A Romans story",
+        "type": "Other",
+        "lang": "eng"
+    }
+
+    data = TitleSchemaV1().load(valid_full)
+    assert data == valid_full
+
+    valid_minimal = {
+        "title": "A Romans story",
+        "type": "Other"
+    }
+
+    data = TitleSchemaV1().load(valid_minimal)
+    assert data == valid_minimal
+
+    invalid_no_title = {
+        "type": "Other",
+        "lang": "eng"
+    }
+    with pytest.raises(ValidationError):
+        data = TitleSchemaV1().load(invalid_no_title)
+
+    invalid_no_title_type = {
+        "title": "A Romans story",
+        "lang": "eng"
+    }
+    with pytest.raises(ValidationError):
+        data = TitleSchemaV1().load(invalid_no_title_type)
+
+    invalid_title_type = {
+        "title": "A Romans story",
+        "type": "Invalid",
+        "lang": "eng"
+    }
+    with pytest.raises(ValidationError):
+        data = TitleSchemaV1().load(invalid_title_type)
+
+    invalid_lang = {
+        "title": "A Romans story",
+        "type": "Other",
+        "lang": "inv"
+    }
+    with pytest.raises(ValidationError):
+        data = TitleSchemaV1().load(invalid_lang)
 
 
-@pytest.mark.parametrize(('val', 'expected'), [
-    ('Test', 'Test',),
-    (' Test ', 'Test'),
-    ('', None),
-    ('  ', None),
-])
-def test_title(val, expected):
-    """Test title."""
-    data, errors = MetadataSchemaV1(partial=['title']).load(
-        dict(title=val))
-    if expected is not None:
-        assert data['title'] == expected
-    else:
-        assert 'title' in errors
-        assert 'title' not in data
+def test_descriptions():
+    """Test descriptions schema."""
+    valid_full = {
+        "description": "A story on how Julio Cesar relates to Gladiator.",
+        "type": "Abstract",
+        "lang": "eng"
+    }
+
+    data = DescriptionSchemaV1().load(valid_full)
+    assert data == valid_full
+
+    valid_minimal = {
+        "description": "A story on how Julio Cesar relates to Gladiator.",
+        "type": "Abstract"
+    }
+
+    data = DescriptionSchemaV1().load(valid_minimal)
+    assert data == valid_minimal
+
+    invalid_no_description = {
+        "type": "Abstract",
+        "lang": "eng"
+    }
+    with pytest.raises(ValidationError):
+        data = DescriptionSchemaV1().load(invalid_no_description)
+
+    invalid_no_description_type = {
+        "description": "A story on how Julio Cesar relates to Gladiator.",
+        "lang": "eng"
+    }
+    with pytest.raises(ValidationError):
+        data = DescriptionSchemaV1().load(invalid_no_description_type)
+
+    invalid_description_type = {
+        "description": "A story on how Julio Cesar relates to Gladiator.",
+        "type": "Invalid",
+        "lang": "eng"
+    }
+    with pytest.raises(ValidationError):
+        data = DescriptionSchemaV1().load(invalid_description_type)
+
+    invalid_lang = {
+        "description": "A story on how Julio Cesar relates to Gladiator.",
+        "type": "Abstract",
+        "lang": "inv"
+    }
+    with pytest.raises(ValidationError):
+        data = DescriptionSchemaV1().load(invalid_lang)
 
 
-@pytest.mark.parametrize(('val', 'expected'), [
-    ([dict(title='Full additional title',
-           title_type='Other',
-           lang='eng')], None),
-    ([dict(title='Only required field')], None),
-])
-def test_valid_additional_titles(val, expected):
-    """Test additional titles."""
-    data, errors = MetadataSchemaV1(partial=['additional_titles']).load(
-        dict(additional_titles=val))
-    assert data['additional_titles'] == val if expected is None else expected
+def test_license():
+    """Test license scehma."""
+    valid_full = {
+        "license": "Copyright Maximo Decimo Meridio 2020. Long statement",
+        "uri": "https://opensource.org/licenses/BSD-3-Clause",
+        "identifier": "BSD-3",
+        "scheme": "BSD-3"
+    }
+
+    data = LicenseSchemaV1().load(valid_full)
+    assert data == valid_full
+
+    valid_minimal = {
+        "license": "Copyright Maximo Decimo Meridio 2020. Long statement"
+    }
+
+    data = LicenseSchemaV1().load(valid_minimal)
+    assert data == valid_minimal
+
+    invalid_no_license = {
+        "uri": "https://opensource.org/licenses/BSD-3-Clause",
+        "identifier": "BSD-3",
+        "scheme": "BSD-3"
+    }
+    with pytest.raises(ValidationError):
+        data = LicenseSchemaV1().load(invalid_no_license)
 
 
-@pytest.mark.parametrize('val', [
-    ([dict(title_type='Invalid title type', lang='eng')], None),
-    ([dict(title_type='Other', lang='eng')], None),
-    ([dict(title='Invalid lang', title_type='Other', lang='en')], None),
-])
-def test_invalid_additional_titles(val):
-    """Test additional titles."""
-    data, errors = MetadataSchemaV1(partial=['additional_titles']).load(
-        dict(additional_titles=val))
-    assert 'additional_titles' in errors
+def test_subject():
+    """Test subject schema."""
+    valid_full = {
+        "subject": "Romans",
+        "identifier": "subj-1",
+        "scheme": "no-scheme"
+    }
+
+    data = SubjectSchemaV1().load(valid_full)
+    assert data == valid_full
+
+    valid_minimal = {
+        "subject": "Romans"
+    }
+
+    data = SubjectSchemaV1().load(valid_minimal)
+    assert data == valid_minimal
+
+    invalid_no_subject = {
+        "identifier": "subj-1",
+        "scheme": "no-scheme"
+    }
+    with pytest.raises(ValidationError):
+        data = SubjectSchemaV1().load(invalid_no_subject)
 
 
-@pytest.mark.parametrize(('val', 'expected'), [
-    ([dict(description='Full additional description',
-           description_type='Other',
-           lang='eng')], None),
-    ([dict(description='Only required fields',
-           description_type='Other')], None),
-])
-def test_valid_additional_descriptions(val, expected):
-    """Test additional descriptions."""
-    data, errors = MetadataSchemaV1(partial=['additional_descriptions']).load(
-        dict(additional_descriptions=val))
+def test_date():
+    """Test date schama."""
+    valid_full = {
+        "start": "2020-06-01",
+        "end":  "2021-06-01",
+        "description": "Random test date",
+        "type": "Other"
+    }
 
-    if expected is not None:
-        assert data['additional_descriptions'] == expected
-    else:
-        assert data['additional_descriptions'] == val
+    data = DateSchemaV1().load(valid_full)
+    assert data == valid_full
 
+    # Note that none start or end are required. But it validates that at
+    # least one of them is present.
+    valid_minimal = {
+        "start": "2020-06-01",
+        "type": "Other"
+    }
 
-@pytest.mark.parametrize('val', [
-    ([dict(description_type='Other', lang='eng')], None),
-    ([dict(description='Invalid no description type', lang='eng')], None),
-    ([dict(lang='eng')], None),
-    ([dict(description='Invalid type',
-           description_type='Invalid Type', lang='eng')], None),
-    ([dict(description='Invalid lang',
-           description_type='Other', lang='en')], None),
-])
-def test_invalid_additional_descriptions(val):
-    """Test additional descriptions."""
-    data, errors = MetadataSchemaV1(partial=['additional_descriptions']).load(
-        dict(additional_descriptions=val))
-    assert 'additional_descriptions' in errors
+    data = DateSchemaV1().load(valid_minimal)
+    assert data == valid_minimal
 
+    invalid_no_type = {
+        "start": "2020-06-01",
+        "end":  "2021-06-01",
+        "description": "Random test date",
+    }
+    with pytest.raises(ValidationError):
+        data = DateSchemaV1().load(invalid_no_type)
 
-@pytest.mark.parametrize(('val', 'expected'), [
-    ('2016-01-02', '2016-01-02'),
-    (' 2016-01-02 ', '2016-01-02'),
-    ('0001-01-01', '0001-01-01'),
-    (None, datetime.utcnow().date().isoformat()),
-    ('2016', datetime.utcnow().date().isoformat()),
-])
-def test_valid_publication_date(val, expected):
-    """Test publication date."""
-    data, errors = MetadataSchemaV1(partial=['publication_date']).load(
-        dict(publication_date=val) if val is not None else dict())
-    assert data['publication_date'] == val if expected is None else expected
+    invalid_end_format = {
+        "start": "2020/06/01",
+        "end":  "2021-06-01",
+        "description": "Random test date",
+    }
+    with pytest.raises(ValidationError):
+        data = DateSchemaV1().load(invalid_end_format)
 
-
-@pytest.mark.parametrize('val', [
-    '2016-02-32',
-    ' invalid',
-])
-def test_invalid_publication_date(val):
-    """Test publication date."""
-    data, errors = MetadataSchemaV1(partial=['publication_date']).load(
-        dict(publication_date=val))
-    assert 'publication_date' in errors
-    assert 'publication_date' not in data
+    invalid_end_format = {
+        "start": "2020-06-01",
+        "end":  "2021-13-01",  # Days and months swaped
+        "description": "Random test date",
+    }
+    with pytest.raises(ValidationError):
+        data = DateSchemaV1().load(invalid_end_format)
 
 
-@pytest.mark.parametrize(('val', 'expected'), [
-    ('2016-01-02', '2016-01-02'),
-    (' 2016-01-02 ', '2016-01-02'),
-    ('0001-01-01', '0001-01-01'),
-    (None, datetime.utcnow().date().isoformat()),
-    ('2016', datetime.utcnow().date().isoformat()),
-])
-def test_valid_embargo_date(val, expected):
-    """Test embargo date."""
-    data, errors = MetadataSchemaV1(partial=['embargo_date']).load(
-        dict(embargo_date=val) if val is not None else dict())
-    assert data['embargo_date'] == val if expected is None else expected
+def test_related_identifiers():
+    """Test related identifiers schema."""
+    valid_full = {
+        "identifier": "10.5281/zenodo.9999988",
+        "scheme": "DOI",
+        "relation_type": "Requires",
+        "resource_type": {
+            "type": "image",
+            "subtype": "photo"
+        }
+    }
+
+    data = RelatedIdentifierSchemaV1().load(valid_full)
+    assert data == valid_full
+
+    valid_minimal = {
+        "identifier": "10.5281/zenodo.9999988",
+        "scheme": "DOI",
+        "relation_type": "Requires"
+    }
+
+    data = RelatedIdentifierSchemaV1().load(valid_minimal)
+    assert data == valid_minimal
+
+    invalid_no_identifier = {
+        "scheme": "DOI",
+        "relation_type": "Requires",
+        "resource_type": {
+            "type": "image",
+            "subtype": "photo"
+        }
+    }
+    with pytest.raises(ValidationError):
+        data = RelatedIdentifierSchemaV1().load(invalid_no_identifier)
+
+    invalid_no_scheme = {
+        "identifier": "10.5281/zenodo.9999988",
+        "relation_type": "Requires",
+        "resource_type": {
+            "type": "image",
+            "subtype": "photo"
+        }
+    }
+    with pytest.raises(ValidationError):
+        data = RelatedIdentifierSchemaV1().load(invalid_no_scheme)
+
+    invalid_scheme = {
+        "identifier": "10.5281/zenodo.9999988",
+        "scheme": "INVALID",
+        "relation_type": "Requires",
+        "resource_type": {
+            "type": "image",
+            "subtype": "photo"
+        }
+    }
+    with pytest.raises(ValidationError):
+        data = RelatedIdentifierSchemaV1().load(invalid_scheme)
+
+    invalid_no_relation_type = {
+        "identifier": "10.5281/zenodo.9999988",
+        "scheme": "DOI",
+        "resource_type": {
+            "type": "image",
+            "subtype": "photo"
+        }
+    }
+    with pytest.raises(ValidationError):
+        data = RelatedIdentifierSchemaV1().load(invalid_no_relation_type)
+
+    invalid_relation_type = {
+        "identifier": "10.5281/zenodo.9999988",
+        "scheme": "DOI",
+        "relation_type": "INVALID",
+        "resource_type": {
+            "type": "image",
+            "subtype": "photo"
+        }
+    }
+    with pytest.raises(ValidationError):
+        data = RelatedIdentifierSchemaV1().load(invalid_relation_type)
 
 
-def test_dates():
-    """Test dates."""
-    schema = MetadataSchemaV1(partial=['dates'])
+def test_references():
+    """Test references schema."""
+    valid_full = {
+        "reference_string": "Reference to something et al.",
+        "identifier": "9999.99988",
+        "scheme": "GRID"
+    }
 
-    data, errors = schema.load({'dates': None})
-    assert 'not be null' in errors['dates'][0]
-    data, errors = schema.load({'dates': []})
-    assert 'Shorter than minimum' in errors['dates'][0]
-    data, errors = schema.load({'dates': [{}]})
-    assert 'required field' in errors['dates'][0]['type'][0]
-    data, errors = schema.load({'dates': [{'type': 'Valid'}]})
-    assert 'at least one date' in errors['dates'][0]
-    data, errors = schema.load({'dates': [{'type': 'Valid', 'start': None}]})
-    assert 'not be null' in errors['dates'][0]['start'][0]
-    data, errors = schema.load({'dates': [{'type': 'Valid', 'start': ''}]})
-    assert 'Not a valid date' in errors['dates'][0]['start'][0]
-    data, errors = schema.load(
-        {'dates': [{'type': 'Invalid',
-                    'start': '2019-01-01', 'end': '2019-01-31',
-                    'description': 'Some description'}]})
-    assert 'Invalid date type' in errors['dates'][0]['type'][0]
+    data = ReferenceSchemaV1().load(valid_full)
+    assert data == valid_full
 
-    # "start" date after "end"
-    data, errors = schema.load(
-        {'dates': [{'type': 'Valid',
-                    'start': '2019-02-01', 'end': '2019-01-01'}]})
-    assert 'must be before "end"' in errors['dates'][0]
+    valid_minimal = {
+        "reference_string": "Reference to something et al."
+    }
 
-    # Single date value (i.e. start == end)
-    data, errors = schema.load(
-        {'dates': [{'type': 'Valid',
-                    'start': '2019-01-01', 'end': '2019-01-01'}]})
-    assert 'dates' not in errors
-    data, errors = schema.load(
-        {'dates': [{'type': 'Valid', 'start': '2019-01-01'}]})
-    assert 'dates' not in errors
-    data, errors = schema.load(
-        {'dates': [{'type': 'Valid', 'end': '2019-01-01'}]})
-    assert 'dates' not in errors
-    data, errors = schema.load(
-        {'dates': [{'type': 'Valid',
-                    'start': '2019-01-01', 'end': '2019-01-31',
-                    'description': 'Some description'}]})
-    assert 'dates' not in errors
+    data = ReferenceSchemaV1().load(valid_minimal)
+    assert data == valid_minimal
+
+    invalid_no_reference = {
+        "identifier": "9999.99988",
+        "scheme": "GRID"
+    }
+    with pytest.raises(ValidationError):
+        data = ReferenceSchemaV1().load(invalid_no_reference)
+
+    invalid_scheme = {
+        "reference_string": "Reference to something et al.",
+        "identifier": "9999.99988",
+        "scheme": "Invalid"
+    }
+    with pytest.raises(ValidationError):
+        data = ReferenceSchemaV1().load(invalid_scheme)
 
 
-def test_language():
-    """Test language."""
-    msv1 = MetadataSchemaV1(partial=['language'])
-    data, errors = msv1.load(dict(language='eng'))
-    assert data['language'] == 'eng'
-    assert 'language' not in errors
-    data, errors = msv1.load(dict(language='English'))
-    assert 'language' in errors
-    data, errors = msv1.load(dict())
-    assert 'language' not in errors
+def test_point():
+    """Test point."""
+    valid_full = {
+        "lat": 41.902604,
+        "lon": 12.496189
+    }
+
+    data = PointSchemaV1().load(valid_full)
+    assert data == valid_full
+
+    invalid_no_lat = {
+        "lon": 12.496189
+    }
+    with pytest.raises(ValidationError):
+        data = PointSchemaV1().load(invalid_no_lat)
+
+    invalid_no_lon = {
+        "lat": 41.902604,
+    }
+    with pytest.raises(ValidationError):
+        data = PointSchemaV1().load(invalid_no_lon)
 
 
-@pytest.mark.parametrize(('val', 'expected'), [
-    ([dict(rights='Full rights schema',
-           uri='http://creativecommons.org/l',
-           identifier='CC-BY-3.0',
-           identifier_scheme='SPDX',
-           scheme_uri='https://spdx.org/licenses',
-           lang='eng')], None),
-    ([dict(rights='Random rights with only free text')], None),
-    ([dict()], None)
-])
-def test_valid_rights(val, expected):
-    """Test rights."""
-    data, errors = MetadataSchemaV1(partial=['rights']).load(
-        dict(rights=val))
+def test_location():
+    """Test location schema."""
+    valid_full = {
+        "point": {
+            "lat": 41.902604,
+            "lon": 12.496189
+        },
+        "place": "Rome",
+        "description": "Rome, from Romans"
+    }
 
-    assert data['rights'] == val if expected is None else expected
+    data = LocationSchemaV1().load(valid_full)
+    assert data == valid_full
 
-    data, errors = MetadataSchemaV1(partial=['rights']).load(
-        {'rights': [{'lang': 'en'}]}
-    )
-    assert 'lang' not in errors
+    valid_minimal = {
+        "place": "Rome",
+    }
 
+    data = LocationSchemaV1().load(valid_minimal)
+    assert data == valid_minimal
 
-@pytest.mark.parametrize(('access_right', 'valid'), [
-    ('open', True),
-    ('embargoed', True),
-    ('restricted', True),
-    ('closed', True),
-    ('FOO', False)
-])
-def test_access_right(access_right, valid):
-    data, errors = (
-        MetadataSchemaV1(partial=True).load({'access_right': access_right})
-    )
-
-    if valid:
-        assert not errors
-        assert data['access_right'] == access_right
-    else:
-        assert 'access_right' in errors
+    invalid_no_place = {
+        "point": {
+            "lat": 41.902604,
+            "lon": 12.496189
+        },
+        "description": "Rome, from Romans"
+    }
+    with pytest.raises(ValidationError):
+        data = LocationSchemaV1().load(invalid_no_place)
 
 
-@pytest.mark.parametrize(('access', 'valid'), [
-    ({}, False),
-    ({'metadata_restricted': True}, False),
-    ({'files_restricted': False}, False),
-    ({'metadata_restricted': True, 'files_restricted': True}, True),
-])
-def test_access(access, valid):
-    data, errors = (
-        MetadataSchemaV1(partial=True).load({'access': access})
-    )
+def test_metadata_schema(full_record, minimal_record):
+    """Test metadata schema."""
+    # Test full attributes
+    data = MetadataSchemaV1().load(full_record)
+    # Because we are checking the loaded object not the dumped dictionary
+    data["embargo_date"] = data.pop("_embargo_date")
+    data["community"] = data.pop("_community")
+    data["contact"] = data.pop("_contact")
+    assert data == full_record
 
-    if valid:
-        assert not errors
-        assert data['_access'] == access
-        assert 'access' not in data
-    else:
-        assert '_access' in errors
+    # Test full attributes
+    data = MetadataSchemaV1().load(minimal_record)
+    assert data == minimal_record
+
+    # Test embargo validation
+    minimal_record["embargo_date"] = "1000-01-01"
+    with pytest.raises(ValidationError):
+        data = MetadataSchemaV1().load(minimal_record)
+
+
+# def test_record_schema():
+#     """Test record schema."""
+#      # Test full attributes

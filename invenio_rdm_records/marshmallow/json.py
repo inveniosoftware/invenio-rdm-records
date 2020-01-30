@@ -32,7 +32,7 @@ class AccessConditionSchemaV1(StrictKeysMixin):
 class CommunitySchemaV1(StrictKeysMixin):
     """Communities to which the record belongs to."""
 
-    primary = SanitizedUnicode()
+    primary = SanitizedUnicode(required=True)
     secondary = fields.List(SanitizedUnicode())
 
 
@@ -54,8 +54,16 @@ class AffiliationSchemaV1(StrictKeysMixin):
 class CreatorSchemaV1(StrictKeysMixin):
     """Creator schema."""
 
+    NAMES = [
+        "Organizational",
+        "Personal"
+    ]
+
     name = SanitizedUnicode(required=True)
-    type = SanitizedUnicode()
+    type = SanitizedUnicode(required=True, validate=validate.OneOf(
+                choices=NAMES,
+                error=_('Invalid name type. {input} not one of {choices}.')
+            ))
     given_name = SanitizedUnicode()
     family_name = SanitizedUnicode()
     identifiers = fields.List(fields.Nested(IdentifierSchemaV1))
@@ -67,7 +75,25 @@ class ContributorSchemaV1(CreatorSchemaV1):
 
     ROLES = [
         "ContactPerson",
+        "DataCollector",
+        "DataCurator",
+        "DataManager",
+        "Distributor",
+        "Editor",
+        "HostingInstitution",
+        "Producer",
+        "ProjectLeader",
+        "ProjectManager",
+        "ProjectMember",
+        "RegistrationAgency",
+        "RegistrationAuthority",
+        "RelatedPerson",
         "Researcher",
+        "ResearchGroup",
+        "RightsHolder",
+        "Sponsor",
+        "Supervisor",
+        "WorkPackageLeader",
         "Other"
     ]
 
@@ -115,7 +141,7 @@ class ResourceTypeSchemaV1(StrictKeysMixin):
     subtype = fields.Str()
 
     @validates_schema
-    def validate_data(self, data):
+    def validate_data(self, data, **kwargs):
         """Validate resource type."""
         obj = ObjectType.get_by_dict(data)
         if obj is None:
@@ -126,14 +152,14 @@ class TitleSchemaV1(StrictKeysMixin):
     """Schema for the additional title."""
 
     TITLE_TYPES = [
-          "AlternativeTitle",
-          "Subtitle",
-          "TranslatedTitle",
-          "Other"
+        "AlternativeTitle",
+        "Subtitle",
+        "TranslatedTitle",
+        "Other"
     ]
 
     title = SanitizedUnicode(required=True, validate=validate.Length(min=3))
-    title_type = SanitizedUnicode(validate=validate.OneOf(
+    type = SanitizedUnicode(required=True, validate=validate.OneOf(
             choices=TITLE_TYPES,
             error=_('Invalid title type. {input} not one of {choices}.')
         ))
@@ -153,7 +179,7 @@ class DescriptionSchemaV1(StrictKeysMixin):
     ]
     description = SanitizedUnicode(required=True,
                                    validate=validate.Length(min=3))
-    type = SanitizedUnicode(validate=validate.OneOf(
+    type = SanitizedUnicode(required=True, validate=validate.OneOf(
             choices=DESCRIPTION_TYPES,
             error=_('Invalid description type. {input} not one of {choices}.')
         ))
@@ -163,7 +189,7 @@ class DescriptionSchemaV1(StrictKeysMixin):
 class LicenseSchemaV1(StrictKeysMixin):
     """License schema."""
 
-    license = SanitizedUnicode()
+    license = SanitizedUnicode(required=True)
     uri = SanitizedUnicode()
     identifier = SanitizedUnicode()
     scheme = SanitizedUnicode()
@@ -181,9 +207,17 @@ class DateSchemaV1(StrictKeysMixin):
     """Schema for date intervals."""
 
     DATE_TYPES = [
+        "Accepted",
+        "Available",
+        "Copyrighted",
         "Collected",
+        "Created",
+        "Issued",
+        "Submitted",
+        "Updated",
         "Valid",
-        "Withdrawn"
+        "Withdrawn",
+        "Other"
     ]
 
     start = DateString()
@@ -198,25 +232,99 @@ class DateSchemaV1(StrictKeysMixin):
 class RelatedIdentifierSchemaV1(StrictKeysMixin):
     """Related identifier schema."""
 
+    RELATIONS = [
+        "IsCitedBy",
+        "Cites",
+        "IsSupplementTo",
+        "IsSupplementedBy",
+        "IsContinuedBy",
+        "Continues",
+        "IsDescribedBy",
+        "Describes",
+        "HasMetadata",
+        "IsMetadataFor",
+        "HasVersion",
+        "IsVersionOf",
+        "IsNewVersionOf",
+        "IsPreviousVersionOf",
+        "IsPartOf",
+        "HasPart",
+        "IsReferencedBy",
+        "References",
+        "IsDocumentedBy",
+        "Documents",
+        "IsCompiledBy",
+        "Compiles",
+        "IsVariantFormOf",
+        "IsOriginalFormOf",
+        "IsIdenticalTo",
+        "IsReviewedBy",
+        "Reviews",
+        "IsDerivedFrom",
+        "IsSourceOf",
+        "IsRequiredBy",
+        "Requires",
+        "IsObsoletedBy",
+        "Obsoletes"
+    ]
+
+    SCHEMES = [
+        "ARK",
+        "arXiv",
+        "bibcode",
+        "DOI",
+        "EAN13",
+        "EISSN",
+        "Handle",
+        "IGSN",
+        "ISBN",
+        "ISSN",
+        "ISTC",
+        "LISSN",
+        "LSID",
+        "PMID",
+        "PURL",
+        "UPC",
+        "URL",
+        "URN",
+        "w3id"
+    ]
+
     identifier = SanitizedUnicode(required=True)
-    scheme = SanitizedUnicode(required=True)
-    relation_type = SanitizedUnicode(required=True)
+    scheme = SanitizedUnicode(required=True, validate=validate.OneOf(
+            choices=SCHEMES,
+            error=_('Invalid related identifier scheme. ' +
+                    '{input} not one of {choices}.')
+        ))
+    relation_type = SanitizedUnicode(required=True, validate=validate.OneOf(
+            choices=RELATIONS,
+            error=_('Invalid relation type. {input} not one of {choices}.')
+        ))
     resource_type = fields.Nested(ResourceTypeSchemaV1)
 
 
 class ReferenceSchemaV1(StrictKeysMixin):
     """Reference schema."""
 
-    reference_string = SanitizedUnicode()
+    SCHEMES = [
+        "ISNI",
+        "GRID",
+        "Crossref Funder ID",
+        "Other"
+    ]
+    reference_string = SanitizedUnicode(required=True)
     identifier = SanitizedUnicode()
-    scheme = SanitizedUnicode()
+    scheme = SanitizedUnicode(validate=validate.OneOf(
+            choices=SCHEMES,
+            error=_('Invalid reference scheme. {input} not one of {choices}.')
+        ))
 
 
 class PointSchemaV1(StrictKeysMixin):
     """Point schema."""
 
-    lat = fields.Number()
-    lon = fields.Number()
+    lat = fields.Number(required=True)
+    lon = fields.Number(required=True)
 
 
 class LocationSchemaV1(StrictKeysMixin):
@@ -260,23 +368,6 @@ class MetadataSchemaV1(StrictKeysMixin):
     references = fields.List(fields.Nested(ReferenceSchemaV1))
     locations = fields.List(fields.Nested(LocationSchemaV1))
 
-    @pre_load()
-    def preload_publicationdate(self, data):
-        """Default publication date."""
-        if 'publication_date' not in data:
-            data['publication_date'] = arrow.utcnow().date().isoformat()
-
-    @pre_load()
-    def preload_access(self, data):
-        """Load 'access' from data and convert to '_access'.
-
-        WHY: StrictKeysMixin prevents the use of `load_from`. If/When amended,
-             we can replace this by `load_from`.
-        """
-        if 'access' in data:
-            # Purposefully overrides any prior '_access'
-            data['_access'] = data.pop('access')
-
     @validates('dates')
     def validate_dates(self, value):
         """Validate that start date is before the corresponding end date."""
@@ -297,7 +388,7 @@ class MetadataSchemaV1(StrictKeysMixin):
                     field_names=['dates']
                 )
 
-    @validates('embargo_date')
+    @validates('_embargo_date')
     def validate_embargo_date(self, value):
         """Validate that embargo date is in the future."""
         if arrow.get(value).date() <= arrow.utcnow().date():
