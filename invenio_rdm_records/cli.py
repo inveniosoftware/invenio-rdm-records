@@ -24,20 +24,112 @@ def create_fake_record():
     """Create records for demo purposes."""
     fake = Faker()
     data_to_use = {
-        "_access": {
-            "metadata_restricted": False,
-            "files_restricted": False
+        "_visibility": True,
+        "_visibility_files": True,
+        "_owners": [1],
+        "_created_by": 2,
+        "_default_preview": "previewer one",
+        "_internal_notes": [{
+            "user": "inveniouser",
+            "note": "RDM record",
+            "timestamp": fake.iso8601(tzinfo=None, end_datetime=None),
+        }],
+        "embargo_date": fake.iso8601(tzinfo=None, end_datetime=None),
+        "contact": "info@inveniosoftware.org",
+        "community": {
+            "primary": "Maincom",
+            "secondary": ["Subcom One", "Subcom Two"]
         },
-        "access_right": "open",
-        "contributors": [{"name": fake.name()}],
-        "description": fake.bs(),
-        "owners": [1],
-        "publication_date": fake.iso8601(tzinfo=None, end_datetime=None),
         "resource_type": {
-            "subtype": "dataset",
-            "type": "Dataset"
+            "type": "image",
+            "subtype": "photo"
         },
-        "title": fake.company() + "'s dataset"
+        "identifiers": [{
+            "identifier": "10.5281/zenodo.9999999",
+            "scheme": "DOI"
+        }, {
+            "identifier": "9999.99999",
+            "scheme": "arXiv"
+        }],
+        "creators": [{
+            "name": fake.name(),
+            "type": "Personal",
+            "identifiers": [{
+                "identifier": "9999-9999-9999-9999",
+                "scheme": "Orcid"
+            }],
+            "affiliations": [{
+                "name": fake.company(),
+                "identifier": "entity-one",
+                "scheme": "entity-id-scheme"
+            }]
+        }],
+        "contributors": [{
+            "name": fake.name(),
+            "type": "Personal",
+            "identifiers": [{
+                "identifier": "9999-9999-9999-9998",
+                "scheme": "Orcid"
+            }],
+            "affiliations": [{
+                "name": fake.company(),
+                "identifier": "entity-one",
+                "scheme": "entity-id-scheme"
+            }],
+            "role": "RightsHolder"
+        }],
+        "titles": [{
+            "title": fake.company() + "'s gallery",
+            "type": "Other",
+            "lang": "eng"
+        }],
+        "descriptions": [{
+            "description": fake.bs(),
+            "type": "Abstract",
+            "lang": "eng"
+        }],
+        "publication_date": fake.iso8601(tzinfo=None, end_datetime=None),
+        "licenses": [{
+            "license": "Copyright Maximo Decimo Meridio 2020. Long statement",
+            "uri": "https://opensource.org/licenses/BSD-3-Clause",
+            "identifier": "BSD-3",
+            "scheme": "BSD-3",
+        }],
+        "subjects": [{
+            "subject": "Romans",
+            "identifier": "subj-1",
+            "scheme": "no-scheme"
+        }],
+        "language": "eng",
+        "dates": [{
+            # No end date to avoid computations based on start
+            "start": fake.iso8601(tzinfo=None, end_datetime=None),
+            "description": "Random test date",
+            "type": "Other"
+        }],
+        "version": "v0.0.1",
+        "related_identifiers": [{
+            "identifier": "10.5281/zenodo.9999988",
+            "scheme": "DOI",
+            "relation_type": "Requires",
+            "resource_type": {
+                "type": "image",
+                "subtype": "photo"
+            }
+        }],
+        "references": [{
+            "reference_string": "Reference to something et al.",
+            "identifier": "9999.99988",
+            "scheme": "GRID"
+        }],
+        "locations": [{
+            "point": {
+                "lat": 41.902604,
+                "lon": 12.496189
+            },
+            "place": "Rome",
+            "description": "Rome, from Romans"
+        }]
     }
 
     # Create and index record

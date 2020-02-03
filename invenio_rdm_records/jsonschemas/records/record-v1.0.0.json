@@ -26,30 +26,11 @@
       "description": "Visibility of the files of a record (CV).",
       "type": "string"
     },
-    "_embargo_date": {
-      "description": "Embargo date of record (ISO8601 formatted date).",
-      "type": "string",
-      "format": "date-time"
-    },
     "_access_condition": {
       "type": "object",
       "properties": {
         "condition": {"type": "string"},
         "link_validity": {"type": "string"}
-      }
-    },
-    "_contact": {
-      "type": "string"
-    },
-    "_community": {
-      "type": "object",
-      "properties": {
-        "primary": {"type": "string"},
-        "secondary": {
-          "type": "array",
-          "minItems": 0,
-          "items":{"type": "string"}
-        }
       }
     },
     "_owners": {
@@ -158,6 +139,25 @@
         "updated": {
           "description": "Last OAI-PMH set update (ISO8601 formatted timestamp)",
           "type": "string"
+        }
+      }
+    },
+    "embargo_date": {
+      "description": "Embargo date of record (ISO8601 formatted date).",
+      "type": "string",
+      "format": "date-time"
+    },
+    "contact": {
+      "type": "string"
+    },
+    "community": {
+      "type": "object",
+      "properties": {
+        "primary": {"type": "string"},
+        "secondary": {
+          "type": "array",
+          "minItems": 0,
+          "items":{"type": "string"}
         }
       }
     },

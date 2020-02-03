@@ -13,7 +13,6 @@ from __future__ import absolute_import, print_function
 import json
 
 from invenio_records.models import RecordMetadata
-from invenio_search import current_search
 
 from invenio_rdm_records.cli import create_fake_record
 
@@ -28,7 +27,7 @@ def test_create_fake_record_saves_to_db(es_clear, location):
     assert created_record.model == retrieved_record
 
 
-def assert_single_hit(response, expected_record):
+def _assert_single_hit(response, expected_record):
     assert response.status_code == 200
 
     search_hits = response.json['hits']['hits']
@@ -44,14 +43,16 @@ def assert_single_hit(response, expected_record):
         assert key in search_hit
 
     required_fields = [
-        'access_right',
-        'contributors',
-        'description',
-        'owners',
-        'publication_date',
+        '_visibility',
+        '_owners',
+        'contact',
+        'titles',
+        'descriptions',
         'recid',
         'resource_type',
-        'title',
+        'creators',
+        'contributors',
+        'licenses'
     ]
     for key in required_fields:
         expected_value = expected_record[key]
@@ -61,8 +62,9 @@ def assert_single_hit(response, expected_record):
 
 
 def test_create_fake_record_saves_to_index(client, es_clear, location):
+    """Test the creation of fake records and searching for them."""
     created_record = create_fake_record()
 
     response = client.get("/records/")
 
-    assert_single_hit(response, created_record)
+    _assert_single_hit(response, created_record)
