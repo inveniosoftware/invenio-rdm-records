@@ -16,9 +16,10 @@ from io import BytesIO
 from invenio_search import current_search
 
 
-def assert_single_hit(response, expected_record):
+def _assert_single_hit(response, expected_record):
     assert response.status_code == 200
 
+    print(response.json)
     search_hits = response.json['hits']['hits']
 
     # Kept for debugging
@@ -31,53 +32,28 @@ def assert_single_hit(response, expected_record):
     for key in ['created', 'updated', 'metadata', 'links']:
         assert key in search_hit
 
-    assert search_hit['metadata']['title'] == expected_record['title']
+    assert search_hit['metadata']['titles'] == expected_record['titles']
 
 
-def test_simple_flow(client, location):
+def test_simple_flow(client, location, full_record):
     """Test simple flow using REST API."""
-    # TODO pass headers and data to fixture
-    data = {
-            'access': {
-                'metadata_restricted': 'false',
-                'files_restricted': 'false'
-            },
-            'access_right': 'open',
-            'title': 'The title of the record',
-            'contributors': [
-                {'name': 'Ellis Jonathan'}
-            ],
-            'owners': [1]
-        }
-
     url = 'https://localhost:5000/records/'
 
     # create a record
-    response = client.post(url, json=data)
+    response = client.post(url, json=full_record)
     assert response.status_code == 201
     current_search.flush_and_refresh('records')
 
     # retrieve records
     response = client.get(url)
-    assert_single_hit(response, data)
+    _assert_single_hit(response, full_record)
 
 
-def test_simple_file_upload(client, location):
+def test_simple_file_upload(client, location, full_record):
+    """Test simple file upload using REST API."""
     # Create record
-    data = {
-        "access": {
-            "metadata_restricted": "false",
-            "files_restricted": "false"
-        },
-        "access_right": "open",
-        "contributors": [{"name": "Jon Doe"}],
-        "description": "Record with a file",
-        "owners": [1],
-        "publication_date": "05/11/2019",
-        "title": "Example dataset"
-    }
     records_url = 'https://localhost:5000/records/'
-    response = client.post(records_url, json=data)
+    response = client.post(records_url, json=full_record)
     assert response.status_code == 201
     current_search.flush_and_refresh('records')
 
