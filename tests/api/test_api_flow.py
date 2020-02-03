@@ -19,7 +19,6 @@ from invenio_search import current_search
 def _assert_single_hit(response, expected_record):
     assert response.status_code == 200
 
-    print(response.json)
     search_hits = response.json['hits']['hits']
 
     # Kept for debugging
