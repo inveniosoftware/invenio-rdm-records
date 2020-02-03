@@ -369,10 +369,13 @@ class MetadataSchemaV1(BaseSchema):
     _default_preview = SanitizedUnicode()
     _internal_notes = fields.List(fields.Nested(InternalNoteSchemaV1))
     # Extra non-administrative fields
-    _embargo_date = DateString(data_key="embargo_date")
-    _community = fields.Nested(CommunitySchemaV1, data_key="community")
-    _contact = SanitizedUnicode(data_key="contact")
+    _embargo_date = DateString(data_key="embargo_date",
+                               attribute="embargo_date")
+    _community = fields.Nested(CommunitySchemaV1, data_key="community",
+                               attribute="community")
+    _contact = SanitizedUnicode(data_key="contact", attribute="contact")
     # Metadata fields
+    recid = PersistentIdentifier()
     resource_type = fields.Nested(ResourceTypeSchemaV1)
     identifiers = fields.List(fields.Nested(IdentifierSchemaV1))
     creators = fields.List(Nested(CreatorSchemaV1))
