@@ -753,10 +753,6 @@ def test_metadata_schema(full_record, minimal_record):
     """Test metadata schema."""
     # Test full attributes
     data = MetadataSchemaV1().load(full_record)
-    # Because we are checking the loaded object not the dumped dictionary
-    data["embargo_date"] = data.pop("_embargo_date")
-    data["community"] = data.pop("_community")
-    data["contact"] = data.pop("_contact")
     assert data == full_record
 
     # Test full attributes
