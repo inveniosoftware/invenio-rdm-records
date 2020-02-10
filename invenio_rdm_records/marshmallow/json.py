@@ -23,13 +23,6 @@ from ..models import ObjectType
 from .utils import api_link_for, validate_iso639_3
 
 
-class AccessConditionSchemaV1(BaseSchema):
-    """Access condition."""
-
-    condition = SanitizedUnicode()
-    link_validity = SanitizedUnicode()
-
-
 class CommunitySchemaV1(BaseSchema):
     """Communities to which the record belongs to."""
 
@@ -123,7 +116,7 @@ class FilesSchemaV1(BaseSchema):
 
 
 class InternalNoteSchemaV1(BaseSchema):
-    """Internal notes shema."""
+    """Internal note shema."""
 
     user = SanitizedUnicode(required=True)
     note = SanitizedUnicode(required=True)
@@ -153,6 +146,7 @@ class TitleSchemaV1(BaseSchema):
     """Schema for the additional title."""
 
     TITLE_TYPES = [
+        'MainTitle',
         "AlternativeTitle",
         "Subtitle",
         "TranslatedTitle",
@@ -163,7 +157,7 @@ class TitleSchemaV1(BaseSchema):
     type = SanitizedUnicode(required=True, validate=validate.OneOf(
             choices=TITLE_TYPES,
             error=_('Invalid title type. {input} not one of {choices}.')
-        ))
+        ), default='MainTitle')
     lang = SanitizedUnicode(validate=validate_iso639_3)
 
 
@@ -355,18 +349,23 @@ class LocationSchemaV1(BaseSchema):
     description = SanitizedUnicode()
 
 
+class AccessSchemaV1(BaseSchema):
+    """Access schema."""
+
+    metadata_restricted = fields.Bool(required=True)
+    files_restricted = fields.Bool(required=True)
+
+
 class MetadataSchemaV1(BaseSchema):
     """Schema for the record metadata."""
 
     # Administrative fields
-    _visibility = fields.Bool(default=True)
-    _visibility_files = fields.Bool(default=True)
-    # _access_condition = fields.Nested(AccessConditionSchemaV1)
+    _access = fields.Nested(AccessSchemaV1, required=True)
     _owners = fields.List(fields.Integer, validate=validate.Length(min=1),
                           required=True)
-    _created_by = fields.Integer()
-    _files = fields.List(fields.Nested(FilesSchemaV1(), dump_only=True))
+    _created_by = fields.Integer(required=True)
     _default_preview = SanitizedUnicode()
+    _files = fields.List(fields.Nested(FilesSchemaV1(), dump_only=True))
     _internal_notes = fields.List(fields.Nested(InternalNoteSchemaV1))
     # Extra non-administrative fields
     _embargo_date = DateString(data_key="embargo_date",
@@ -374,24 +373,28 @@ class MetadataSchemaV1(BaseSchema):
     _community = fields.Nested(CommunitySchemaV1, data_key="community",
                                attribute="community")
     _contact = SanitizedUnicode(data_key="contact", attribute="contact")
+    access_right = SanitizedUnicode(required=True, validate=validate.OneOf(
+        choices=['open', 'embargoed', 'restricted', 'closed'],
+        error=_('Invalid access right. {input} not one of {choices}.')
+    ))
     # Metadata fields
     recid = PersistentIdentifier()
     resource_type = fields.Nested(ResourceTypeSchemaV1)
     identifiers = fields.List(fields.Nested(IdentifierSchemaV1))
     creators = fields.List(Nested(CreatorSchemaV1))
-    contributors = fields.List(Nested(ContributorSchemaV1))
     titles = fields.List(fields.Nested(TitleSchemaV1))
-    descriptions = fields.List(fields.Nested(DescriptionSchemaV1))
     publication_date = DateString()
-    licenses = fields.List(fields.Nested(LicenseSchemaV1))
     subjects = fields.List(fields.Nested(SubjectSchemaV1))
-    language = SanitizedUnicode(validate=validate_iso639_3)
+    contributors = fields.List(Nested(ContributorSchemaV1))
     dates = fields.List(fields.Nested(DateSchemaV1))
-    version = SanitizedUnicode()
+    language = SanitizedUnicode(validate=validate_iso639_3)
     related_identifiers = fields.List(
         fields.Nested(RelatedIdentifierSchemaV1))
-    references = fields.List(fields.Nested(ReferenceSchemaV1))
+    version = SanitizedUnicode()
+    licenses = fields.List(fields.Nested(LicenseSchemaV1))
+    descriptions = fields.List(fields.Nested(DescriptionSchemaV1))
     locations = fields.List(fields.Nested(LocationSchemaV1))
+    references = fields.List(fields.Nested(ReferenceSchemaV1))
 
     @validates('_embargo_date')
     def validate_embargo_date(self, value):

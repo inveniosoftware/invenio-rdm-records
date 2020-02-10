@@ -72,9 +72,10 @@ def full_record():
     - files (when files are added to the record)
     """
     return {
-        "_visibility": True,
-        "_visibility_files": True,
-        "_owners": [1],
+        "_access": {
+            "metadata_restricted": False,
+            "files_restricted": False
+        },
         "_created_by": 2,
         "_default_preview": "previewer one",
         "_internal_notes": [{
@@ -82,6 +83,8 @@ def full_record():
             "note": "RDM record",
             "timestamp": "2020-02-01"
         }],
+        "_owners": [1],
+        "access_right": "open",
         "embargo_date": "2022-12-31",
         "contact": "info@inveniosoftware.org",
         "community": {
@@ -114,6 +117,17 @@ def full_record():
                 "scheme": "entity-id-scheme"
             }]
         }],
+        "titles": [{
+            "title": "A Romans story",
+            "type": "Other",
+            "lang": "eng"
+        }],
+        "publication_date": "2020-06-01",
+        "subjects": [{
+            "subject": "Romans",
+            "identifier": "subj-1",
+            "scheme": "no-scheme"
+        }],
         "contributors": [{
             "name": "Maximo Decimo Meridio",
             "type": "Personal",
@@ -130,36 +144,13 @@ def full_record():
             }],
             "role": "RightsHolder"
         }],
-        "titles": [{
-            "title": "A Romans story",
-            "type": "Other",
-            "lang": "eng"
-        }],
-        "descriptions": [{
-            "description": "A story on how Julio Cesar relates to Gladiator.",
-            "type": "Abstract",
-            "lang": "eng"
-        }],
-        "publication_date": "2020-06-01",
-        "licenses": [{
-            "license": "Copyright Maximo Decimo Meridio 2020. Long statement",
-            "uri": "https://opensource.org/licenses/BSD-3-Clause",
-            "identifier": "BSD-3",
-            "scheme": "BSD-3",
-        }],
-        "subjects": [{
-            "subject": "Romans",
-            "identifier": "subj-1",
-            "scheme": "no-scheme"
-        }],
-        "language": "eng",
         "dates": [{
             "start": "2020-06-01",
             "end":  "2021-06-01",
             "description": "Random test date",
             "type": "Other"
         }],
-        "version": "v0.0.1",
+        "language": "eng",
         "related_identifiers": [{
             "identifier": "10.5281/zenodo.9999988",
             "scheme": "DOI",
@@ -169,10 +160,17 @@ def full_record():
                 "subtype": "photo"
             }
         }],
-        "references": [{
-            "reference_string": "Reference to something et al.",
-            "identifier": "9999.99988",
-            "scheme": "GRID"
+        "version": "v0.0.1",
+        "licenses": [{
+            "license": "Copyright Maximo Decimo Meridio 2020. Long statement",
+            "uri": "https://opensource.org/licenses/BSD-3-Clause",
+            "identifier": "BSD-3",
+            "scheme": "BSD-3",
+        }],
+        "descriptions": [{
+            "description": "A story on how Julio Cesar relates to Gladiator.",
+            "type": "Abstract",
+            "lang": "eng"
         }],
         "locations": [{
             "point": {
@@ -181,6 +179,11 @@ def full_record():
             },
             "place": "Rome",
             "description": "Rome, from Romans"
+        }],
+        "references": [{
+            "reference_string": "Reference to something et al.",
+            "identifier": "9999.99988",
+            "scheme": "GRID"
         }]
     }
 
@@ -194,6 +197,11 @@ def minimal_record():
     - recid
     """
     return {
-        "_visibility": True,
+        "_access": {
+            "metadata_restricted": False,
+            "files_restricted": False
+        },
         "_owners": [1],
+        "_created_by": 1,
+        "access_right": "open",
     }

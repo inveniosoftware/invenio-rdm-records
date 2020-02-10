@@ -377,7 +377,7 @@ def test_resource_type():
         ResourceTypeSchemaV1().load(invalid_subtype)
 
 
-def test_titles():
+def test_title():
     """Test titles schema."""
     valid_full = {
         "title": "A Romans story",
@@ -427,7 +427,7 @@ def test_titles():
         data = TitleSchemaV1().load(invalid_lang)
 
 
-def test_descriptions():
+def test_description():
     """Test descriptions schema."""
     valid_full = {
         "description": "A story on how Julio Cesar relates to Gladiator.",
@@ -755,7 +755,7 @@ def test_metadata_schema(full_record, minimal_record):
     data = MetadataSchemaV1().load(full_record)
     assert data == full_record
 
-    # Test full attributes
+    # Test minimal attributes
     data = MetadataSchemaV1().load(minimal_record)
     assert data == minimal_record
 
@@ -763,8 +763,3 @@ def test_metadata_schema(full_record, minimal_record):
     minimal_record["embargo_date"] = "1000-01-01"
     with pytest.raises(ValidationError):
         data = MetadataSchemaV1().load(minimal_record)
-
-
-# def test_record_schema():
-#     """Test record schema."""
-#      # Test full attributes

@@ -3,55 +3,29 @@
     "date_detection": false,
     "numeric_detection": false,
     "properties": {
+      "_access": {
+        "type": "object",
+        "properties": {
+          "metadata_restricted": {
+            "type": "boolean"
+          },
+          "files_restricted": {
+            "type": "boolean"
+          }
+        }
+      },
       "_bucket": {
         "enabled": false
-      },
-      "_recid": {
-        "type": "keyword"
       },
       "_conceptrecid": {
         "type": "keyword"
       },
-      "_visibility": {
-        "type": "keyword"
-      },
-      "_visibility_files": {
-        "type": "keyword"
-      },
-      "_embargo_date": {
-        "type": "date"
-      },
-      "_access_condition": {
-        "type": "object",
-        "properties": {
-          "condition": {
-            "type": "keyword"
-          },
-          "link_validity": {
-            "type": "keyword"
-          }
-        }
-      },
-      "_contact": {
-        "type": "keyword"
-      },
-      "_community": {
-        "type": "object",
-        "properties": {
-          "primary": {
-            "type": "text"
-          },
-          "secondary": {
-            "type": "text"
-          }
-        }
-      },
-      "_owners": {
-        "type": "integer"
-      },          
       "_created_by": {
         "type": "integer"
-      },      
+      },
+      "_default_preview": {
+        "enabled": false
+      },
       "_files": {
         "type": "object",
         "properties": {
@@ -80,14 +54,11 @@
           }
         }
       },
-      "_default_preview": {
-        "enabled": false
-      },
       "_internal_notes": {
         "type": "object",
         "properties": {
           "user": {
-            "type": "text"
+            "type": "keyword"
           },
           "note": {
             "type": "text"
@@ -96,6 +67,9 @@
             "type": "date"
           }
         }
+      },
+      "_recid": {
+        "type": "keyword"
       },
       "_oai": {
         "type": "object",
@@ -110,7 +84,30 @@
             "type": "date"
           }
         }
-      },        
+      },
+      "_owners": {
+        "type": "integer"
+      },
+      "_embargo_date": {
+        "type": "date"
+      },
+      "_contact": {
+        "type": "keyword"
+      },
+      "_community": {
+        "type": "object",
+        "properties": {
+          "primary": {
+            "type": "text"
+          },
+          "secondary": {
+            "type": "text"
+          }
+        }
+      },
+      "access_right": {
+        "type": "keyword"
+      },
       "resource_type": {
         "type": "object",
         "properties": {
@@ -175,6 +172,41 @@
           }
         }
       },
+      "titles": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "text",
+            "copy_to": "suggest_title"
+          },
+          "type": {
+            "type": "keyword"
+          },
+          "lang": {
+            "type": "keyword"
+          }
+        }
+      },
+      "suggest_title": {
+        "type": "completion"
+      },
+      "publication_date": {
+        "type": "date"
+      },
+      "subjects": {
+        "type": "object",
+        "properties": {
+          "subject": {
+            "type": "text"
+          },
+          "identifier": {
+            "type": "keyword"
+          },
+          "scheme": {
+            "type": "keyword"
+          }
+        }
+      },
       "contributors": {
         "type": "object",
         "properties": {
@@ -219,72 +251,6 @@
             "type": "keyword"
           }
         }
-      },        
-      "titles": {
-        "type": "object",
-        "properties": {
-          "title": {
-            "type": "text",
-            "copy_to": "suggest_title"
-          },
-          "type": {
-            "type": "keyword"
-          },
-          "lang": {
-            "type": "keyword"
-          }
-        }
-      },        
-      "descriptions": {
-        "type": "object",
-        "properties": {
-          "description": {
-            "type": "text"
-          },
-          "type": {
-            "type": "keyword"
-          },
-          "lang": {
-            "type": "keyword"
-          }
-        }
-      },        
-      "publication_date": {
-        "type": "date"
-      },
-      "licenses": {
-        "type": "object",
-        "properties": {
-          "license": {
-            "type": "text"
-          },
-          "uri": {
-            "type": "keyword"
-          },
-          "identifier": {
-            "type": "keyword"
-          },
-          "scheme": {
-            "type": "keyword"
-          }
-        }
-      },        
-      "subjects": {
-        "type": "object",
-        "properties": {
-          "subject": {
-            "type": "text"
-          },
-          "identifier": {
-            "type": "keyword"
-          },
-          "scheme": {
-            "type": "keyword"
-          }
-        }
-      },
-      "language": {
-        "type": "keyword"
       },
       "dates": {
         "type": "object",
@@ -303,7 +269,7 @@
           }
         }
       },
-      "version": {
+      "language": {
         "type": "keyword"
       },
       "related_identifiers": {
@@ -331,16 +297,36 @@
           }
         }
       },
-      "references": {
+      "version": {
+        "type": "keyword"
+      },
+      "licenses": {
         "type": "object",
         "properties": {
-          "reference_string": {
+          "license": {
             "type": "text"
+          },
+          "uri": {
+            "type": "keyword"
           },
           "identifier": {
             "type": "keyword"
           },
           "scheme": {
+            "type": "keyword"
+          }
+        }
+      },
+      "descriptions": {
+        "type": "object",
+        "properties": {
+          "description": {
+            "type": "text"
+          },
+          "type": {
+            "type": "keyword"
+          },
+          "lang": {
             "type": "keyword"
           }
         }
@@ -367,8 +353,19 @@
           }
         }
       },
-      "suggest_title": {
-        "type": "completion"
+      "references": {
+        "type": "object",
+        "properties": {
+          "reference_string": {
+            "type": "text"
+          },
+          "identifier": {
+            "type": "keyword"
+          },
+          "scheme": {
+            "type": "keyword"
+          }
+        }
       },
       "_created": {
         "type": "date"

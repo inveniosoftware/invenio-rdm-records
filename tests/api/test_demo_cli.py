@@ -43,8 +43,9 @@ def _assert_single_hit(response, expected_record):
         assert key in search_hit
 
     required_fields = [
-        '_visibility',
+        '_access',
         '_owners',
+        'access_right',
         'contact',
         'titles',
         'descriptions',

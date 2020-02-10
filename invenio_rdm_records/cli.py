@@ -24,9 +24,10 @@ def create_fake_record():
     """Create records for demo purposes."""
     fake = Faker()
     data_to_use = {
-        "_visibility": True,
-        "_visibility_files": True,
-        "_owners": [1],
+        "_access": {
+            "metadata_restricted": False,
+            "files_restricted": False
+        },
         "_created_by": 2,
         "_default_preview": "previewer one",
         "_internal_notes": [{
@@ -34,6 +35,8 @@ def create_fake_record():
             "note": "RDM record",
             "timestamp": fake.iso8601(tzinfo=None, end_datetime=None),
         }],
+        "_owners": [1],
+        "access_right": "open",
         "embargo_date": fake.iso8601(tzinfo=None, end_datetime=None),
         "contact": "info@inveniosoftware.org",
         "community": {
@@ -64,6 +67,17 @@ def create_fake_record():
                 "scheme": "entity-id-scheme"
             }]
         }],
+        "titles": [{
+            "title": fake.company() + "'s gallery",
+            "type": "Other",
+            "lang": "eng"
+        }],
+        "publication_date": fake.iso8601(tzinfo=None, end_datetime=None),
+        "subjects": [{
+            "subject": "Romans",
+            "identifier": "subj-1",
+            "scheme": "no-scheme"
+        }],
         "contributors": [{
             "name": fake.name(),
             "type": "Personal",
@@ -78,36 +92,13 @@ def create_fake_record():
             }],
             "role": "RightsHolder"
         }],
-        "titles": [{
-            "title": fake.company() + "'s gallery",
-            "type": "Other",
-            "lang": "eng"
-        }],
-        "descriptions": [{
-            "description": fake.bs(),
-            "type": "Abstract",
-            "lang": "eng"
-        }],
-        "publication_date": fake.iso8601(tzinfo=None, end_datetime=None),
-        "licenses": [{
-            "license": "Copyright Maximo Decimo Meridio 2020. Long statement",
-            "uri": "https://opensource.org/licenses/BSD-3-Clause",
-            "identifier": "BSD-3",
-            "scheme": "BSD-3",
-        }],
-        "subjects": [{
-            "subject": "Romans",
-            "identifier": "subj-1",
-            "scheme": "no-scheme"
-        }],
-        "language": "eng",
         "dates": [{
             # No end date to avoid computations based on start
             "start": fake.iso8601(tzinfo=None, end_datetime=None),
             "description": "Random test date",
             "type": "Other"
         }],
-        "version": "v0.0.1",
+        "language": "eng",
         "related_identifiers": [{
             "identifier": "10.5281/zenodo.9999988",
             "scheme": "DOI",
@@ -117,10 +108,17 @@ def create_fake_record():
                 "subtype": "photo"
             }
         }],
-        "references": [{
-            "reference_string": "Reference to something et al.",
-            "identifier": "9999.99988",
-            "scheme": "GRID"
+        "version": "v0.0.1",
+        "licenses": [{
+            "license": "Copyright Maximo Decimo Meridio 2020. Long statement",
+            "uri": "https://opensource.org/licenses/BSD-3-Clause",
+            "identifier": "BSD-3",
+            "scheme": "BSD-3",
+        }],
+        "descriptions": [{
+            "description": fake.bs(),
+            "type": "Abstract",
+            "lang": "eng"
         }],
         "locations": [{
             "point": {
@@ -129,6 +127,11 @@ def create_fake_record():
             },
             "place": "Rome",
             "description": "Rome, from Romans"
+        }],
+        "references": [{
+            "reference_string": "Reference to something et al.",
+            "identifier": "9999.99988",
+            "scheme": "GRID"
         }]
     }
 

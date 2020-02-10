@@ -6,45 +6,33 @@
   "additionalProperties": false,
 
   "properties": {
+    "_access": {
+      "metadata_restricted": {
+        "default": false,
+        "description": "Record metadata accesibility. Public by default (False).",
+        "type": "boolean"
+      },
+      "files_restricted": {
+        "default": false,
+        "description": "Record associated files accesibility. Public by default (False).",
+        "type": "boolean"
+      }
+    },
     "_bucket": {
       "description": "Record bucket.",
       "type": "string"
     },
-    "_recid": {
+    "_conceptrecid": {
       "description": "Invenio record identifier (alphanumeric).",
       "type": "string"
-    },
-    "_conceptrecid": {
-      "description": "Invenio record identifier (integer).",
-      "type": "string"
-    },
-    "_visibility": {
-      "description": "Visibility of the record (CV).",
-      "type": "string"
-    },
-    "_visibility_files": {
-      "description": "Visibility of the files of a record (CV).",
-      "type": "string"
-    },
-    "_access_condition": {
-      "type": "object",
-      "properties": {
-        "condition": {"type": "string"},
-        "link_validity": {"type": "string"}
-      }
-    },
-    "_owners": {
-      "description": "List of user IDs that are owners of the record.",
-      "type": "array",
-      "minItems": 1,
-      "uniqueItems": true,
-      "items": {
-        "type": "number"
-      }
     },
     "_created_by": {
       "description": "ID of user that created the deposit.",
       "type": "integer"
+    },
+    "_default_preview": {
+      "description": "Default preview for the record.",
+      "type": "string"
     },
     "_files": {
       "description": "List of files attached to the record.",
@@ -56,7 +44,7 @@
             "type": "string"
           },
           "checksum": {
-            "description": "Checksum the file. Starts with '<algorithm>:' prefix, e.g.: 'md5:1234abcd...'",
+            "description": "Checksum the file according to '<algorithm>' prefix, e.g.: 'md5:1234abcd...'",
             "type": "string"
           },
           "file_id": {
@@ -93,14 +81,9 @@
           "type",
           "version_id"
         ],
-        "title": "File schema.",
         "type": "object"
       },
       "type": "array"
-    },
-    "_default_preview": {
-      "description": "Default preview for the record.",
-      "type": "string"
     },
     "_internal_notes": {
       "type": "array",
@@ -119,6 +102,10 @@
           },
           "required": ["user", "note", "timestamp"]
       }
+    },
+    "_recid": {
+      "description": "Invenio record identifier (alphanumeric).",
+      "type": "string"
     },
     "_oai": {
       "type": "object",
@@ -141,6 +128,20 @@
           "type": "string"
         }
       }
+    },
+    "_owners": {
+      "description": "List of user IDs that are owners of the record.",
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "number"
+      }
+    },
+    "access_right": {
+      "default": "open",
+      "description": "Access right for record.",
+      "type": "string"
     },
     "embargo_date": {
       "description": "Embargo date of record (ISO8601 formatted date).",
@@ -202,7 +203,10 @@
         "additionalProperties": false,
         "properties": {
             "name": {"type": "string"},
-            "type": {"type": "string"},
+            "type": {
+              "type": "string",
+              "description": "Type of name: Organizational or Personal"
+            },
             "given_name": {"type": "string"},
             "family_name": {"type": "string"},
             "identifiers": {
@@ -232,6 +236,50 @@
             }
         },
         "required": ["name"]
+      }
+    },
+    "titles": {
+      "description": "Record title.",
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "object",
+        "properties": {
+            "title": {
+              "description": "Title of the record.",
+              "type": "string"
+            },
+            "type": {
+              "description": "Type of title.",
+              "type": "string"
+            },
+            "lang": {
+              "description": "Language of the title. ISO 639-3 language code.",
+              "type": "string",
+              "maxLength": 3
+            }
+        },
+        "required": ["title"]
+      }
+    },
+    "publication_date": {
+      "description": "Record publication date (IS8601-formatted).",
+      "type": "string",
+      "format": "date"
+    },
+    "subjects": {
+      "type": "array",
+      "uniqueItems": true,
+      "minItems": 0,
+      "items": {
+          "type": "object",
+          "properties": {
+              "subject": {"type": "string"},
+              "identifier": {"type": "string"},
+              "scheme": {"type": "string"}
+          },
+          "required": ["subject"]
       }
     },
     "contributors": {
@@ -276,59 +324,66 @@
         "required": ["name", "role"]
       }
     },
-    "titles": {
-      "description": "Record title.",
+    "dates": {
+      "description": "Date or date interval.",
+      "minItems": 0,
       "type": "array",
-      "minItems": 1,
-      "uniqueItems": true,
       "items": {
         "type": "object",
+        "additionalProperties": false,
         "properties": {
-            "title": {
-              "description": "Title of the record.",
-              "type": "string"
-            },
-            "type": {
-              "description": "Type of title.",
-              "type": "string"
-            },
-            "lang": {
-              "description": "Language of the title. ISO 639-3 language code.",
-              "type": "string",
-              "maxLength": 3
-            }
+          "description": {
+            "description": "Description of the date or date interval e.g. 'Accepted' or 'Available' (CV).",
+            "type": "string"
+          },
+          "end": {
+            "description": "End date.",
+            "type": "string",
+            "format": "date-time"
+          },
+          "start": {
+            "description": "Start date.",
+            "type": "string",
+            "format": "date-time"
+          },
+          "type": {
+            "description": "Type of the date interval."
+          }
         },
-        "required": ["title"]
+        "required": ["type"]
       }
     },
-    "descriptions": {
-      "description": "Description for record.",
+    "language": {
+      "description": "Primary language of the resource. ISO 639-3 language code.",
+      "type": "string",
+      "maxLength": 3
+    },
+    "related_identifiers": {
       "type": "array",
       "uniqueItems": true,
+      "minItems": 0,
       "items": {
           "type": "object",
           "properties": {
-              "description": {
-                "description": "Description/abstract for record.",
-                "type": "string"
+            "identifier": {"type": "string"},
+            "scheme": {"type": "string"},
+            "relation_type": {"type": "string"},
+            "resource_type": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "type": {"type": "string"},
+                "subtype": {"type": "string"}
               },
-              "type": {
-                "description": "Type of description.",
-                "type": "string"
-              },
-              "lang": {
-                "description": "Language of the description. ISO 639-3 language code.",
-                "type": "string",
-                "maxLength": 3
-              }
+              "required": ["type"]
+            }
           },
-          "required": ["description"]
+          "required": ["identifier", "scheme", "relation_type"]
       }
     },
-    "publication_date": {
-      "description": "Record publication date (IS8601-formatted).",
-      "type": "string",
-      "format": "date"
+    "version": {
+      "description": "Record version tag.",
+      "type": "string"
     },
     "licenses": {
       "description": "Any license or copyright information for this resource.",
@@ -358,92 +413,28 @@
         }
       }
     },
-    "subjects": {
+    "descriptions": {
+      "description": "Description for record.",
       "type": "array",
       "uniqueItems": true,
-      "minItems": 0,
       "items": {
           "type": "object",
           "properties": {
-              "subject": {"type": "string"},
-              "identifier": {"type": "string"},
-              "scheme": {"type": "string"}
-          },
-          "required": ["subject"]
-      }
-    },
-    "language": {
-      "description": "Primary language of the resource. ISO 639-3 language code.",
-      "type": "string",
-      "maxLength": 3
-    },
-    "dates": {
-      "description": "Date interval.",
-      "minItems": 0,
-      "type": "array",
-      "items": {
-        "type": "object",
-        "additionalProperties": false,
-        "properties": {
-          "description": {
-            "description": "Description of the date interval.",
-            "type": "string"
-          },
-          "end": {
-            "description": "End date.",
-            "type": "string",
-            "format": "date-time"
-          },
-          "start": {
-            "description": "Start date.",
-            "type": "string",
-            "format": "date-time"
-          },
-          "type": {
-            "description": "Type of the date interval."
-          }
-        },
-        "required": ["type"]
-      }
-    },
-    "version": {
-      "description": "Record version tag.",
-      "type": "string"
-    },
-    "related_identifiers": {
-      "type": "array",
-      "uniqueItems": true,
-      "minItems": 0,
-      "items": {
-          "type": "object",
-          "properties": {
-            "identifier": {"type": "string"},
-            "scheme": {"type": "string"},
-            "relation_type": {"type": "string"},
-            "resource_type": {
-              "type": "object",
-              "additionalProperties": false,
-              "properties": {
-                "type": {"type": "string"},
-                "subtype": {"type": "string"}
+              "description": {
+                "description": "Description/abstract for record.",
+                "type": "string"
               },
-              "required": ["type"]
-            }
+              "type": {
+                "description": "Type of description.",
+                "type": "string"
+              },
+              "lang": {
+                "description": "Language of the description. ISO 639-3 language code.",
+                "type": "string",
+                "maxLength": 3
+              }
           },
-          "required": ["identifier", "scheme", "relation_type"]
-      }
-    },
-    "references": {
-      "type": "array",
-      "minItems": 0,
-      "items": {
-        "type": "object",
-        "additionalProperties": false,
-        "properties": {
-          "reference_string": {"type": "string"},
-          "identifier": {"type": "string"},
-          "scheme": {"type": "string"}
-        }
+          "required": ["description"]
       }
     },
     "locations": {
@@ -467,20 +458,29 @@
             }
           },
           "place": {
-            "description": "Description of the location",
+            "description": "Place of the location",
             "type": "string"
           },
           "description": {
-            "description": "Place of the location",
+            "description": "Description of the location",
             "type": "string"
           }
         },
         "required": ["place"]
       }
+    },
+    "references": {
+      "type": "array",
+      "minItems": 0,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "reference_string": {"type": "string"},
+          "identifier": {"type": "string"},
+          "scheme": {"type": "string"}
+        }
+      }
     }
-  },
-  "required": [
-    "recid",
-    "visibility"
-  ]
+  }
 }
