@@ -31,7 +31,7 @@
       "type": "integer"
     },
     "_default_preview": {
-      "description": "Default preview for the record.",
+      "description": "Default file previewed for the record.",
       "type": "string"
     },
     "_files": {
@@ -389,7 +389,7 @@
       "description": "Any license or copyright information for this resource.",
       "type": "array",
       "uniqueItems": true,
-      "minItems": 0,
+      "minItems": 1,
       "items": {
         "type": "object",
         "properties": {

@@ -100,12 +100,12 @@ class ContributorSchemaV1(CreatorSchemaV1):
 class FilesSchemaV1(BaseSchema):
     """Files metadata schema."""
 
-    type = fields.String(required=True)
-    checksum = fields.String(required=True)
-    size = fields.Integer(required=True)
-    bucket = fields.String(required=True)
-    key = fields.String(required=True)
-    links = fields.Method('get_links', required=True)
+    type = fields.String()
+    checksum = fields.String()
+    size = fields.Integer()
+    bucket = fields.String()
+    key = fields.String()
+    links = fields.Method('get_links')
 
     def get_links(self, obj):
         """Get links."""
@@ -360,6 +360,10 @@ class MetadataSchemaV1(BaseSchema):
     """Schema for the record metadata."""
 
     # Administrative fields
+    access_right = SanitizedUnicode(required=True, validate=validate.OneOf(
+        choices=['open', 'embargoed', 'restricted', 'closed'],
+        error=_('Invalid access right. {input} not one of {choices}.')
+    ))
     _access = fields.Nested(AccessSchemaV1, required=True)
     _owners = fields.List(fields.Integer, validate=validate.Length(min=1),
                           required=True)
@@ -367,22 +371,20 @@ class MetadataSchemaV1(BaseSchema):
     _default_preview = SanitizedUnicode()
     _files = fields.List(fields.Nested(FilesSchemaV1(), dump_only=True))
     _internal_notes = fields.List(fields.Nested(InternalNoteSchemaV1))
-    # Extra non-administrative fields
     _embargo_date = DateString(data_key="embargo_date",
                                attribute="embargo_date")
     _community = fields.Nested(CommunitySchemaV1, data_key="community",
                                attribute="community")
     _contact = SanitizedUnicode(data_key="contact", attribute="contact")
-    access_right = SanitizedUnicode(required=True, validate=validate.OneOf(
-        choices=['open', 'embargoed', 'restricted', 'closed'],
-        error=_('Invalid access right. {input} not one of {choices}.')
-    ))
+
     # Metadata fields
+    identifiers = fields.List(fields.Nested(IdentifierSchemaV1),
+                              required=True)
+    creators = fields.List(Nested(CreatorSchemaV1), required=True)
+    titles = fields.List(fields.Nested(TitleSchemaV1), required=True)
+    resource_type = fields.Nested(ResourceTypeSchemaV1, required=True)
     recid = PersistentIdentifier()
-    resource_type = fields.Nested(ResourceTypeSchemaV1)
-    identifiers = fields.List(fields.Nested(IdentifierSchemaV1))
-    creators = fields.List(Nested(CreatorSchemaV1))
-    titles = fields.List(fields.Nested(TitleSchemaV1))
+    # No need for require since it's assign today's if not existent
     publication_date = DateString()
     subjects = fields.List(fields.Nested(SubjectSchemaV1))
     contributors = fields.List(Nested(ContributorSchemaV1))

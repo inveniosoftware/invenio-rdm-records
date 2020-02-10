@@ -162,7 +162,7 @@ def full_record():
         }],
         "version": "v0.0.1",
         "licenses": [{
-            "license": "Copyright Maximo Decimo Meridio 2020. Long statement",
+            "license": "Berkeley Software Distribution 3",
             "uri": "https://opensource.org/licenses/BSD-3-Clause",
             "identifier": "BSD-3",
             "scheme": "BSD-3",
@@ -204,4 +204,35 @@ def minimal_record():
         "_owners": [1],
         "_created_by": 1,
         "access_right": "open",
+        "resource_type": {
+            "type": "image",
+            "subtype": "photo"
+        },
+        "identifiers": [{
+            "identifier": "10.5281/zenodo.9999999",
+            "scheme": "DOI"
+        }, {
+            "identifier": "9999.99999",
+            "scheme": "arXiv"
+        }],
+        "creators": [{
+            "name": "Julio Cesar",
+            "type": "Personal",
+            "given_name": "Julio",
+            "family_name": "Cesar",
+            "identifiers": [{
+                "identifier": "9999-9999-9999-9999",
+                "scheme": "Orcid"
+            }],
+            "affiliations": [{
+                "name": "Entity One",
+                "identifier": "entity-one",
+                "scheme": "entity-id-scheme"
+            }]
+        }],
+        "titles": [{
+            "title": "A Romans story",
+            "type": "Other",
+            "lang": "eng"
+        }]
     }
