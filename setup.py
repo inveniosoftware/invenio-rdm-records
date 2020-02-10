@@ -79,7 +79,7 @@ install_requires = [
     'invenio-records-permissions>=1.0.0a6',
     'marshmallow>=3.3.0,<4.0.0',
     'pycountry>=18.12.8',
-    'webargs>=5.4.0,<6.0.0'
+    'Werkzeug>=0.16.1,<1.0.0'
 ]
 
 packages = find_packages()
