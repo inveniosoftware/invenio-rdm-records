@@ -120,6 +120,87 @@ RECORDS_PERMISSIONS_RECORD_POLICY = (
 FILES_REST_PERMISSION_FACTORY = record_files_permission_factory
 """Set default files permission factory."""
 
+# Invenio-IIIF
+# =================
+# See https://invenio-iiif.readthedocs.io/en/latest/configuration.html
+
+IIIF_PREVIEW_TEMPLATE = "invenio_rdm_records/iiif_preview.html"
+"""Template for IIIF image preview."""
+
+# Invenio-Previewer
+# =================
+# See https://github.com/inveniosoftware/invenio-previewer/blob/master/invenio_previewer/config.py  # noqa
+
+PREVIEWER_PREFERENCE = [
+    'csv_dthreejs',
+    'iiif_image',
+    'simple_image',
+    'json_prismjs',
+    'xml_prismjs',
+    'mistune',
+    'pdfjs',
+    'ipynb',
+    'zip',
+]
+"""Preferred previewers."""
+
+# Invenio-Records-UI
+# ==================
+# See https://invenio-records-ui.readthedocs.io/en/latest/configuration.html
+
+RECORDS_UI_ENDPOINTS = {
+    'recid': {
+        'pid_type': 'recid',
+        'record_class': 'invenio_records_files.api:Record',
+        'route': '/records/<pid_value>',
+        'template': 'invenio_rdm_records/record_landing_page.html'
+    },
+    'recid_files': {
+        'pid_type': 'recid',
+        'record_class': 'invenio_records_files.api:Record',
+        'route': '/records/<pid_value>/files/<path:filename>',
+        'view_imp': 'invenio_records_files.utils.file_download_ui',
+    },
+    'recid_previewer': {
+        'pid_type': 'recid',
+        'record_class': 'invenio_records_files.api:Record',
+        'route': '/records/<pid_value>/preview/<path:filename>',
+        'view_imp': 'invenio_previewer.views.preview',
+    },
+}
+
+#: Allow list of contributor types.
+RECORD_CONTRIBUTOR_TYPES = [
+    dict(label='Contact person', datacite='ContactPerson'),
+    dict(label='Data collector', datacite='DataCollector'),
+    dict(label='Data curator', datacite='DataCurator'),
+    dict(label='Data manager', datacite='DataManager'),
+    dict(label='Distributor', datacite='Distributor'),
+    dict(label='Editor', datacite='Editor'),
+    dict(label='Hosting institution', datacite='HostingInstitution'),
+    dict(label='Other', datacite='Other'),
+    dict(label='Producer', datacite='Producer'),
+    dict(label='Project leader', datacite='ProjectLeader'),
+    dict(label='Project manager', datacite='ProjectManager'),
+    dict(label='Project member', datacite='ProjectMember'),
+    dict(label='Registration agency', datacite='RegistrationAgency'),
+    dict(label='Registration authority', datacite='RegistrationAuthority'),
+    dict(label='Related person', datacite='RelatedPerson'),
+    dict(label='Researcher', datacite='Researcher'),
+    dict(label='Research group', datacite='ResearchGroup'),
+    dict(label='Rights holder', datacite='RightsHolder'),
+    dict(label='Sponsor', datacite='Sponsor'),
+    dict(label='Supervisor', datacite='Supervisor'),
+    dict(label='Work package leader', datacite='WorkPackageLeader'),
+    dict(label='Other', datacite='Other')
+]
+
+RECORD_CONTRIBUTOR_TYPES_LABELS = {
+    x['datacite']: x['label'] for x in RECORD_CONTRIBUTOR_TYPES
+}
+
+"""Records UI for RDM Records."""
+
 # Records Files
 
 RECORDS_FILES_REST_ENDPOINTS = {
@@ -130,3 +211,18 @@ RECORDS_FILES_REST_ENDPOINTS = {
 """Set default files rest endpoints."""
 
 PIDSTORE_RECID_FIELD = 'recid'
+
+# Invenio-Formatter
+# =================
+
+FORMATTER_BADGES_ALLOWED_TITLES = ['DOI', 'doi']
+"""List of allowed titles in badges."""
+
+FORMATTER_BADGES_TITLE_MAPPING = {'doi': 'DOI'}
+"""Mapping of titles."""
+
+# Invenio-RDM-Records
+# ===================
+
+RDM_RECORDS_LOCAL_DOI_PREFIXES = ['10.9999']
+"""List  of locally managed DOI prefixes."""

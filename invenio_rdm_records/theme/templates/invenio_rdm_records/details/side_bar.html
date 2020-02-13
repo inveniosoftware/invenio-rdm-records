@@ -1,0 +1,125 @@
+{#
+  Copyright (C) 2020 CERN.
+  Copyright (C) 2020 Northwestern University.
+
+  Invenio App RDM is free software; you can redistribute it and/or modify it
+  under the terms of the MIT License; see LICENSE file for more details.
+#}
+
+<dt class="record-info-title">{{ _('Metrics')}}:</dt>
+<hr class="thin-line"></hr>
+<dd>
+<!-- Stats -->
+<div class="row stats-box">
+  <div id="accordion">
+      <!-- Banner -->
+      <div class="row">
+          <div class="col-sm-4">
+              <span class="stats-data">1,175</span>
+          </div>
+          <div class="col-sm-4">
+              <span class="stats-data">52</span>
+          </div>
+          <div class="col-sm-4">
+              <span class="stats-data">8</span>
+          </div>
+      </div>
+      <div class="row">
+          <div class="col-sm-4">
+              <i class="fa fa-eye " data-toggle="tooltip" tooltip="" data-placement="top" title="" data-original-title="Total views."></i> views
+          </div>
+          <div class="col-sm-4">
+              <i class="fa fa-download " data-toggle="tooltip" tooltip="" data-placement="top" title="" data-original-title="Total downloads."></i> downloads
+          </div>
+          <div class="col-sm-4">
+              <i class="fa fa-pencil " data-toggle="tooltip" tooltip="" data-placement="top" title="" data-original-title="Total citation."></i> citations
+          </div>
+      </div>
+
+    <!-- Collapsed details -->
+    <div id="toggle-stats" class="row">
+      <div class="col-sm-12">
+        <a style="cursor: pointer;" class="panel-toggle" data-toggle="collapse" data-target="#collapse-stats" aria-expanded="true" aria-controls="collapse-stats">
+          See more details...
+        </a>
+      </div>
+    </div>
+    <div id="collapse-stats" class="collapse" aria-labelledby="toggle-stats" data-parent="#accordion">
+      <table class="table stats-table">
+        <!-- Skip table header if no versions -->
+        <tbody><tr>
+          <th></th>
+          <th>All versions</th>
+          <th>This version</th>
+        </tr><tr>
+          <td>Views <i class="fa fa-question-circle text-muted" data-toggle="tooltip" tooltip="" data-placement="top" title="" data-original-title="Total views."></i></td><td>1,175</td><td>265</td>
+        </tr>
+        <tr>
+          <td>Downloads <i class="fa fa-question-circle text-muted" data-toggle="tooltip" tooltip="" data-placement="top" title="" data-original-title="Total downloads."></i></td><td>52</td><td>10</td>
+        </tr>
+        <tr>
+          <td>Data volume <i class="fa fa-question-circle text-muted" data-toggle="tooltip" tooltip="" data-placement="top" title="" data-original-title="Total download volume."></i></td><td>191.3 MB</td><td>21.8 MB</td>
+        </tr>
+        <tr>
+          <td>Unique views <i class="fa fa-question-circle text-muted" data-toggle="tooltip" tooltip="" data-placement="top" title="" data-original-title="Views in one hour user-sessions are counted only once."></i></td><td>880</td><td>192</td>
+        </tr>
+        <tr>
+          <td>Unique downloads <i class="fa fa-question-circle text-muted" data-toggle="tooltip" tooltip="" data-placement="top" title="" data-original-title="Downloads in one hour user-sessions are counted only once."></i></td><td>46</td><td>8</td>
+        </tr>
+      </tbody></table>
+      <div class="row">
+        <a href="/coming-soon">More info on how stats are collected.</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Altmetric -->
+<div class="altmetric-embed altmetric-hidden" data-badge-type="donut" data-badge-details="left" data-hide-no-mentions="true" data-doi="{{ record.identifiers|doi_identifier }}" data-uuid="2a8761bb-6e07-cad2-ff33-e6d1f68afaed"></div>
+</dd>
+
+<dt class="record-info-title">{{ _('Versions')}}:</dt>
+<hr class="thin-line"></hr>
+<dd>
+  <table class="table">
+    <tbody><tr class="info">
+      <td>
+          <a href="{{ url_for('invenio_records_ui.recid', pid_value=record.pid) }}">{{ record.version }}</a>
+          <small class="text-muted">{{ record.identifiers|doi_identifier }}</small>
+      </td>
+      <td align="right"><small class="text-muted">{{ record.publication_date|to_date|dateformat(format='medium')}}</small></td>
+    </tr>
+  </tbody></table>
+  <small>
+    <strong>Cite all versions?</strong> You can cite all versions by using the DOI <a href="https://doi.org/{{ record.identifiers|doi_identifier }}">{{ record.identifiers|doi_identifier }}</a>. This DOI represents all versions, and will always resolve to the latest one. <a href="/coming-soon">Read more</a>.
+  </small>
+</dd>
+
+{%- set communities = record.community %}
+<dt class="record-info-title">{{ _('Communities')}}:</dt>
+<hr class="thin-line"></hr>
+<dd>
+<ul class="list-unstyled">
+<li><a>{{ communities.primary }}</a></li>
+{%- for community in communities.secondary%}
+<li><a href="/coming-soon">{{ community }}</a></li>
+{%- endfor %}
+</ul>
+</dd>
+
+<dt class="record-info-title">{{ _('Export')}}:</dt>
+<hr class="thin-line"></hr>
+<dd>
+  <ul class="list-inline">
+      <li><a href="/coming-soon">BibTeX</a></li>
+      <li><a href="/coming-soon">CSL</a></li>
+      <li><a href="/coming-soon">DataCite</a></li>
+      <li><a href="/coming-soon">Dublin Core</a></li>
+      <li><a href="/coming-soon">DCAT</a></li>
+      <li><a href="/coming-soon">JSON</a></li>
+      <li><a href="/coming-soon">JSON-LD</a></li>
+      <li><a href="/coming-soon">GeoJSON</a></li>
+      <li><a href="/coming-soon">MARCXML</a></li>
+      <li><a href="/coming-soon"><i class="fa fa-external-link"></i> Mendeley</a></li>
+  </ul>
+</dd>

@@ -1,0 +1,21 @@
+{#
+    Copyright (C) 2020 CERN.
+    Copyright (C) 2020 Northwestern University.
+  
+    Invenio App RDM is free software; you can redistribute it and/or modify it
+    under the terms of the MIT License; see LICENSE file for more details.
+#}
+
+{%- for group in record.contributors|groupby('role')%}
+<h5><b>{{group.grouper|contributortype_title}}(s)</b></h5>
+
+{%- for creator in group.list %}
+{%- if creator.identifiers[0].scheme == "Orcid" %}
+<a href="{{creator.identifiers[0].identifier|pid_url('orcid')}}">
+    <img class="inline-orcid" src="{{ url_for('static', filename='images/orcid.png')}}" />
+</a>
+{%- endif %}
+<span class="text-muted" {% if creator.affiliations and creator.affiliations[0] %}data-toggle="tooltip" title="{{creator.affiliations[0].name}}"{% endif %}>{{creator.name}}</span>{% if not loop.last %}; {% endif %}
+{%- endfor %}
+
+{%- endfor %}

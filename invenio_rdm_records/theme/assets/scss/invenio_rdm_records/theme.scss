@@ -1,0 +1,154 @@
+/*
+ *   Copyright (C) 2020 CERN.
+ *   Copyright (C) 2020 Northwestern University.
+ *
+ * Invenio App RDM is free software; you can redistribute it and/or modify it
+ * under the terms of the MIT License; see LICENSE file for more details.
+ */
+
+@import "variables";
+
+// Preview
+.iiif-preview-img {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+// Record info
+.record-info-title {
+    margin-top: 10px;
+}
+
+.record-version {
+    color:#777;
+}
+
+.label-keyword {
+    color:#777;
+    border: 1px solid#777;
+}
+
+.stats-box {
+    text-align: center;
+    padding-bottom: 10px;
+    margin-bottom: 10px;
+
+    table.stats-table {
+        td:nth-child(1) {
+        text-align: left;
+        }
+    }
+
+    #toggle-stats {
+        margin-top: 10px
+    }
+
+    #collapse-stats {
+        margin-top: 15px;
+        margin-left: 10px;
+        font-size: 12px;
+    }
+
+    .stats-data {
+        font-size: 36px;
+    }
+}
+
+.well {
+    word-wrap: break-word;
+
+    .pid-versions-dropdown {
+
+        // Dropdown Scrollbar
+        .dropdown-menu {
+        height: auto;
+        max-height: 200px;
+        overflow-y: auto;
+        }
+
+        .dropdown-head {
+        color: black;
+        font-weight: 500;
+        }
+
+        .dropdown-item.current a {
+        font-weight: bold;
+        }
+    }
+
+    dl {
+        margin-bottom: 0;
+    }
+    dd {
+        padding-left: 10px;
+        margin-bottom: 4px;
+
+        .label {
+        display: inline-block;
+        margin-top: 2px;
+        line-height: inherit;
+        text-align: left;
+        white-space: normal;
+
+        }
+
+        a.label-link {
+        color: #fff;
+        text-decoration: none;
+
+        &:hover {
+            color: #fff;
+            text-decoration: none;
+        }
+
+        }
+
+        a.label-external-link {
+        color: #fff;
+
+        &:hover {
+            color: $brand-primary;
+        }
+        }
+
+        &.custom-keywords, &.dates, &.locations {
+        li {
+            padding-bottom: 5px;
+            div {
+            padding-left: 10px;
+            }
+        }
+        }
+    }
+}
+
+.inline-orcid {
+    height: $font-size-base;
+}
+
+.thin-line {
+    margin: 0px !important;
+}
+
+.send-btn {
+    margin-bottom: 10px;
+    padding: 2px 6px;
+}
+
+// Files toogles
+
+.hide-on-collapsed {
+	display: block;
+}
+.show-on-collapsed {
+	display: none;
+}
+.panel-toggle.collapsed {
+	.hide-on-collapsed {
+		display: none;
+	}
+	.show-on-collapsed {
+		display: block;
+	}
+}

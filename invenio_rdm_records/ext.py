@@ -8,8 +8,6 @@
 
 """DataCite-based data model for Invenio."""
 
-from __future__ import absolute_import, print_function
-
 from flask_babelex import gettext as _
 
 from . import config
@@ -42,5 +40,5 @@ class InvenioRDMRecords(object):
         ]
 
         for k in dir(config):
-            if k in supported_configurations:
+            if k in supported_configurations or k.startswith('RDM_RECORDS_'):
                 app.config.setdefault(k, getattr(config, k))

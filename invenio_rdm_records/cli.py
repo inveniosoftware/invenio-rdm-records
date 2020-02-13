@@ -48,7 +48,7 @@ def create_fake_record():
             "subtype": "photo"
         },
         "identifiers": [{
-            "identifier": "10.5281/zenodo.9999999",
+            "identifier": "10.9999/rdm.9999999",
             "scheme": "DOI"
         }, {
             "identifier": "9999.99999",
@@ -100,7 +100,7 @@ def create_fake_record():
         }],
         "language": "eng",
         "related_identifiers": [{
-            "identifier": "10.5281/zenodo.9999988",
+            "identifier": "10.9999/rdm.9999988",
             "scheme": "DOI",
             "relation_type": "Requires",
             "resource_type": {
@@ -110,23 +110,23 @@ def create_fake_record():
         }],
         "version": "v0.0.1",
         "licenses": [{
-            "license": "Copyright Maximo Decimo Meridio 2020. Long statement",
+            "license": "Berkeley Software Distribution 3",
             "uri": "https://opensource.org/licenses/BSD-3-Clause",
             "identifier": "BSD-3",
             "scheme": "BSD-3",
         }],
         "descriptions": [{
-            "description": fake.bs(),
+            "description": fake.text(max_nb_chars=3000),
             "type": "Abstract",
             "lang": "eng"
         }],
         "locations": [{
             "point": {
-                "lat": 41.902604,
-                "lon": 12.496189
+                "lat": str(fake.latitude()),
+                "lon": str(fake.longitude())
             },
-            "place": "Rome",
-            "description": "Rome, from Romans"
+            "place": fake.location_on_land()[2],
+            "description": "Random place on land for random coordinates..."
         }],
         "references": [{
             "reference_string": "Reference to something et al.",

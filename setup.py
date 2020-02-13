@@ -32,6 +32,9 @@ invenio_db_version = '>=1.0.4,<1.1.0'
 invenio_search_version = '>=1.2.0,<1.3.0'
 
 extras_require = {
+    'badges': [
+        'CairoSVG>=1.0.20',
+    ],
     'docs': [
         'Sphinx>=1.5.1',
     ],
@@ -71,12 +74,15 @@ install_requires = [
     'arrow>=0.13.0',
     'Faker>=2.0.3',
     'Flask-BabelEx>=0.9.3',
+    'idutils>=1.1.3',
+    'invenio-formatter>=1.0.2,<1.1.0',
     'invenio-jsonschemas>=1.0.1,<1.1.0',
     'invenio-pidstore>=1.1.0,<1.2.0',
     'invenio-records-rest>=1.6.4,<1.7.0',
     'invenio-records>=1.3.0,<1.4.0',
     'invenio-records-files>=1.2.1,<1.3.0',
     'invenio-records-permissions>=1.0.0a6',
+    'invenio-previewer>=1.1.0,<1.2.0',
     'marshmallow>=3.3.0,<4.0.0',
     'pycountry>=18.12.8',
     'Werkzeug>=0.16.1,<1.0.0'
@@ -109,6 +115,9 @@ setup(
         'flask.commands': [
             'rdm-records = invenio_rdm_records.cli:rdm_records',
         ],
+        'invenio_assets.webpack': [
+            'invenio_rdm_records_theme = invenio_rdm_records.theme.webpack:theme',
+        ],
         'invenio_base.apps': [
             'invenio_rdm_records = invenio_rdm_records:InvenioRDMRecords',
         ],
@@ -116,7 +125,7 @@ setup(
             'invenio_rdm_records = invenio_rdm_records:InvenioRDMRecords',
         ],
         'invenio_base.blueprints': [
-            'invenio_rdm_records = invenio_rdm_records.views:blueprint',
+            'invenio_rdm_records = invenio_rdm_records.theme.views:blueprint',
         ],
         'invenio_i18n.translations': [
             'messages = invenio_rdm_records',

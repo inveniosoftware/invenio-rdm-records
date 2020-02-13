@@ -1,0 +1,81 @@
+{#
+  Copyright (C) 2019-2020 CERN.
+  Copyright (C) 2019-2020 Northwestern University.
+
+  Invenio App RDM is free software; you can redistribute it and/or modify it
+  under the terms of the MIT License; see LICENSE file for more details.
+#}
+
+{%- extends config.BASE_TEMPLATE %}
+
+{%- block css %}
+{{ webpack['invenio-app-rdm-theme.css'] }}
+{{ webpack['invenio-rdm-records-theme.css'] }}
+{%- endblock %}
+
+{%- from "invenio_rdm_records/macros/files.html" import file_list_box, preview_file_box %}
+
+{%- block page_body %}
+<div class="container record-detail">
+  <div class="row">
+    <div class="col-sm-8 col-md-8 col-left">
+      {%- block record_body %}
+      <span class="label label-info" title="Publication date">{{ record.publication_date|to_date|dateformat(format='long') }}</span>
+      <span class="label record-version"> | Version {{ record.version }}</span>
+      <div class="pull-right">
+        <span class="label label-default">{{ record.resource_type.type if record.resource_type else "resource type" }}</span>
+        {% if record.access_right in ["embargoed", "closed"] %}
+        <span class="label label-danger titlecase">
+        {% elif record.access_right == "restricted" %}
+        <span class="label label-warning titlecase">
+        {% else %}
+        <span class="label label-success titlecase">
+        {% endif %}
+        {{ record.access_right }} Access
+        </span>
+      </div>
+
+      <h1>{{ record.titles[0].title }}</h1>
+      <p>{%- include "invenio_rdm_records/details/creators.html" %}</p>
+      {%- if record.contributors %}
+      <p>{%- include "invenio_rdm_records/details/contributors.html" %}</p>
+      {%- endif %}
+
+      <div class="row">
+        <div class="col-sm-4 col-md-4 col-left">
+          {%- include "invenio_rdm_records/details/contact.html" %}
+        </div>
+        <div class="col-sm-4 col-md-4 col-right pull-right">
+          {%- include "invenio_rdm_records/details/doi.html" %}
+        </div>
+      </div>
+      {%- include "invenio_rdm_records/details/citation.html" %}
+      {%- include "invenio_rdm_records/details/keywords.html" %}
+      {%- include "invenio_rdm_records/details/description.html" %}
+      {%- include "invenio_rdm_records/details/licenses.html" %}
+
+      {# files #}
+      {%- if record.files and record|can_list_files %}
+        {%- set files = record.files %}
+        {{ preview_file_box(files|select_preview_file, pid) }}
+        {{ file_list_box(files.dumps(), pid) }}
+      {%- else %}
+        <br>
+        <p style="text-align: center;">No associated files.</p>
+      {% endif %}
+
+      {# More details #}
+
+      {%- endblock record_body %}
+    </div>
+
+    {# Side bar #}
+    <div class="col-sm-4 col-md-4 col-right">
+      <div class="well">
+        {%- include "invenio_rdm_records/details/side_bar.html" %}
+      </div>
+    </div>
+  </div>
+</div>
+{{ webpack['invenio-rdm-records-js.js'] }}
+{%- endblock %}

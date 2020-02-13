@@ -8,8 +8,6 @@
 
 """DataCite-based data model for Invenio."""
 
-from __future__ import absolute_import, print_function
-
 from .ext import InvenioRDMRecords
 from .version import __version__
 

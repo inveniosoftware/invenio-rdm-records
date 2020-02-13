@@ -8,8 +8,6 @@
 
 """JSON Schemas."""
 
-from __future__ import absolute_import, print_function
-
 import arrow
 from flask_babelex import lazy_gettext as _
 from invenio_records_rest.schemas import Nested
