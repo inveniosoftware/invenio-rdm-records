@@ -73,7 +73,7 @@ setup_requires = [
 install_requires = [
     'arrow>=0.13.0',
     'Faker>=2.0.3',
-    'Flask-BabelEx>=0.9.3',
+    'Flask-BabelEx>=0.9.4',
     'idutils>=1.1.3',
     'invenio-formatter>=1.0.2,<1.1.0',
     'invenio-jsonschemas>=1.0.1,<1.1.0',
@@ -85,7 +85,6 @@ install_requires = [
     'invenio-previewer>=1.1.0,<1.2.0',
     'marshmallow>=3.3.0,<4.0.0',
     'pycountry>=18.12.8',
-    'Werkzeug>=0.16.1,<1.0.0'
 ]
 
 packages = find_packages()
