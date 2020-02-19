@@ -30,7 +30,8 @@ recursive-include docs *.rst
 recursive-include docs Makefile
 recursive-include examples *.py
 recursive-include examples *.sh
-recursive-include invenio_rdm_records *.html
 recursive-include invenio_rdm_records *.json
 recursive-include invenio_rdm_records *.po *.pot
+recursive-include invenio_rdm_records *.png *.svg
+recursive-include invenio_rdm_records *.html *.js *.scss
 recursive-include tests *.py

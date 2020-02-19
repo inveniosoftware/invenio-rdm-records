@@ -21,7 +21,8 @@ def theme():
         __name__,
         'assets',
         entry={
-            'invenio-rdm-records-theme': './scss/invenio_rdm_records/theme.scss',
+            'invenio-rdm-records-theme':
+                './scss/invenio_rdm_records/theme.scss',
             'invenio-rdm-records-js': './js/invenio_rdm_records/rdmrecords.js',
         },
         dependencies={

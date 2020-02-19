@@ -16,5 +16,5 @@ API Docs
 Views
 -----
 
-.. automodule:: invenio_rdm_records.views
+.. automodule:: invenio_rdm_records.theme.views
    :members:

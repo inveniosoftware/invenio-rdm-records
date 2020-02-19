@@ -13,12 +13,11 @@ templates and static files located in the folders of the same names next to
 this file.
 """
 
-import arrow
-import idutils
-
 from operator import itemgetter
 from os.path import splitext
 
+import arrow
+import idutils
 from flask import Blueprint, current_app, render_template
 from invenio_previewer.views import is_previewable
 from invenio_records_permissions.policies import get_record_permission_policy

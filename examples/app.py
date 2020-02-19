@@ -46,7 +46,7 @@ from flask import Flask
 from flask_babelex import Babel
 
 from invenio_rdm_records import InvenioRDMRecords
-from invenio_rdm_records.views import blueprint
+from invenio_rdm_records.theme.views import blueprint
 
 # Create Flask application
 app = Flask(__name__)
