@@ -12,4 +12,4 @@ This file is imported by ``invenio_rdm_records.__init__``,
 and parsed by ``setup.py``.
 """
 
-__version__ = '1.0.0a8'
+__version__ = '0.9.0'
