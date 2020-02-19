@@ -6,7 +6,7 @@
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
 
-"""Permissions for Invenio App RDM."""
+"""Permissions for Invenio RDM Records."""
 
 from invenio_records_permissions.generators import AnyUser
 from invenio_records_permissions.policies import RecordPermissionPolicy
