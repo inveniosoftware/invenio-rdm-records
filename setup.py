@@ -32,9 +32,6 @@ invenio_db_version = '>=1.0.4,<1.1.0'
 invenio_search_version = '>=1.2.0,<1.3.0'
 
 extras_require = {
-    'badges': [
-        'CairoSVG>=1.0.20',
-    ],
     'docs': [
         'Sphinx>=1.5.1',
     ],
@@ -72,6 +69,7 @@ setup_requires = [
 
 install_requires = [
     'arrow>=0.13.0',
+    'CairoSVG>=1.0.20',
     'Faker>=2.0.3',
     'Flask-BabelEx>=0.9.4',
     'idutils>=1.1.3',
