@@ -77,5 +77,10 @@
     </div>
   </div>
 </div>
-{{ webpack['invenio-rdm-records-js.js'] }}
+
 {%- endblock %}
+
+{%- block javascript %}
+  {{ super() }}
+  {{ webpack['invenio-rdm-records-js.js'] }}
+{%- endblock javascript %}
