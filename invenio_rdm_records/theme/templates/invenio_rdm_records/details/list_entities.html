@@ -1,0 +1,27 @@
+{#
+    Copyright (C) 2020 CERN.
+    Copyright (C) 2020 Northwestern University.
+
+    Invenio RDM Records is free software; you can redistribute it and/or modify
+    it under the terms of the MIT License; see LICENSE file for more details.
+#}
+
+{% macro list_entities(entities) %}
+  {% for entity in entities %}
+    {%- if entity.identifiers and entity.identifiers[0] %}
+      {# TODO: Is the first identifier given precedence or is "Orcid" given precedence? #}
+      {# Assume first identifier is given precedence #}
+      {% set main_identifier = entity.identifiers[0] %}
+      {%- if main_identifier.scheme == "Orcid" %}
+      <a href="{{ main_identifier.identifier|pid_url('orcid') }}">
+        <img class="inline-orcid" src="{{ url_for('static', filename='images/orcid.svg') }}" />
+      </a>
+      {# TODO: Other potential main identifiers #}
+      {%- endif %}
+    {% else %}
+      {# TODO: Change for an organization icon when organizations supported #}
+      <i class="fa fa-user" aria-hidden="true"></i>
+    {%- endif %}
+    <span class="text-muted" {% if entity.affiliations and entity.affiliations[0] %}data-toggle="tooltip" title="{{entity.affiliations[0].name}}"{% endif %}>{{entity.name}}</span>
+  {% endfor %}
+{%- endmacro %}

@@ -377,12 +377,12 @@ class MetadataSchemaV1(BaseSchema):
 
     # Metadata fields
     identifiers = fields.List(fields.Nested(IdentifierSchemaV1),
-                              required=True)
+                              required=True)  # TODO: not required
     creators = fields.List(Nested(CreatorSchemaV1), required=True)
     titles = fields.List(fields.Nested(TitleSchemaV1), required=True)
     resource_type = fields.Nested(ResourceTypeSchemaV1, required=True)
     recid = PersistentIdentifier()
-    # No need for require since it's assign today's if not existent
+    # No need for require since it assigns today's date if not existent
     publication_date = DateString()
     subjects = fields.List(fields.Nested(SubjectSchemaV1))
     contributors = fields.List(Nested(ContributorSchemaV1))
