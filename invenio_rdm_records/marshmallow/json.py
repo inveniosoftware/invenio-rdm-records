@@ -9,6 +9,7 @@
 """JSON Schemas."""
 
 import arrow
+from flask import current_app
 from flask_babelex import lazy_gettext as _
 from invenio_records_rest.schemas import Nested
 from invenio_records_rest.schemas.fields import DateString, \
@@ -418,6 +419,23 @@ class MetadataSchemaV1(BaseSchema):
     descriptions = fields.List(fields.Nested(DescriptionSchemaV1))
     locations = fields.List(fields.Nested(LocationSchemaV1))
     references = fields.List(fields.Nested(ReferenceSchemaV1))
+    extensions = fields.Method('dump_extensions', 'load_extensions')
+
+    def dump_extensions(self, value):
+        """Dumps the extensions value."""
+        current_app_metadata_extensions = (
+            current_app.extensions['invenio-rdm-records'].metadata_extensions
+        )
+        ExtensionSchema = current_app_metadata_extensions.to_schema()
+        return ExtensionSchema().dump(value)
+
+    def load_extensions(self, obj):
+        """Loads the extensions field from obj."""
+        current_app_metadata_extensions = (
+            current_app.extensions['invenio-rdm-records'].metadata_extensions
+        )
+        ExtensionSchema = current_app_metadata_extensions.to_schema()
+        return ExtensionSchema().load(obj)
 
     @validates('_embargo_date')
     def validate_embargo_date(self, value):

@@ -226,3 +226,9 @@ FORMATTER_BADGES_TITLE_MAPPING = {'doi': 'DOI'}
 
 RDM_RECORDS_LOCAL_DOI_PREFIXES = ['10.9999']
 """List  of locally managed DOI prefixes."""
+
+RDM_RECORDS_METADATA_EXTENSIONS = {}
+"""Configuration for custom extension to the metadata.
+
+See metadata_extensions::MetadataExtensions for its shape.
+"""
