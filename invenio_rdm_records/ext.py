@@ -8,9 +8,8 @@
 
 """DataCite-based data model for Invenio."""
 
-from flask_babelex import gettext as _
-
 from . import config
+from .metadata_extensions import MetadataExtensions
 
 
 class InvenioRDMRecords(object):
@@ -24,6 +23,9 @@ class InvenioRDMRecords(object):
     def init_app(self, app):
         """Flask application initialization."""
         self.init_config(app)
+        self.metadata_extensions = MetadataExtensions(
+            app.config['RDM_RECORDS_METADATA_EXTENSIONS']
+        )
         app.extensions['invenio-rdm-records'] = self
 
     def init_config(self, app):

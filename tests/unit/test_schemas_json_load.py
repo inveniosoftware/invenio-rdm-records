@@ -9,7 +9,9 @@
 """Tests for Invenio RDM Records JSON Schemas."""
 
 import pytest
+from invenio_records_rest.schemas.fields import SanitizedUnicode
 from marshmallow import ValidationError
+from marshmallow.fields import Integer, List
 
 from invenio_rdm_records.marshmallow.json import AffiliationSchemaV1, \
     CommunitySchemaV1, ContributorSchemaV1, CreatorSchemaV1, DateSchemaV1, \
@@ -780,11 +782,74 @@ def test_identifiers(minimal_record):
     }
     with pytest.raises(ValidationError):
         data = MetadataSchemaV1().load(minimal_record)
+def test_extensions():
+    """Test metadata extensions schema."""
+    RDM_RECORDS_METADATA_EXTENSIONS = {
+        'dwc:Dublin Core': {
+            'family:Family': {
+                'types': {
+                    'elasticsearch': 'keyword',
+                    'marshmallow': SanitizedUnicode(required=True)
+                }
+            },
+            'behavior:Behaviour': {
+                'types': {
+                    'marshmallow': SanitizedUnicode(),
+                    'elasticsearch': 'text',
+                }
+            }
+        },
+        'nubiomed:Biomedical Extension': {
+            'number_in_sequence:Number in Sequence (e.g. page, order)': {
+                'types': {
+                    'elasticsearch': 'long',
+                    'marshmallow': Integer()
+                }
+            },
+            'scientific_sequence:Scientific Sequence': {  # made up
+                'types': {
+                    'elasticsearch': 'long',
+                    'marshmallow': List(Integer())
+                }
+            }
+        }
+    }
+    extensions = MetadataExtensions(RDM_RECORDS_METADATA_EXTENSIONS)
+    ExtensionsSchema = extensions.to_schema()
+
+    # Minimal if not absent
+    valid_minimal = {
+        'dwc:family': 'Felidae'
+    }
+
+    data = ExtensionsSchema().load(valid_minimal)
+
+    assert data == valid_minimal
+
+    # Full
+    valid_full = {
+        'dwc:family': 'Felidae',
+        'dwc:behavior': 'Plays with yarn, sleeps in cardboard box.',
+        'nubiomed:number_in_sequence': 3,
+        'nubiomed:scientific_sequence': [1, 1, 2, 3, 5, 8],
+    }
+
+    data = ExtensionsSchema().load(valid_full)
+
+    assert data == valid_full
+
+    # Invalid
+    invalid_number_in_sequence = {
+        'dwc:family': 'Felidae',
+        'nubiomed:scientific_sequence': [1, 'l', 2, 3, 5, 8],
+    }
+    with pytest.raises(ValidationError):
+        data = ExtensionsSchema().load(invalid_number_in_sequence)
+
 
 
 def test_metadata_schema(full_record, minimal_record):
     """Test metadata schema."""
-    # STOPPED HERE
     # Test full attributes
     data = MetadataSchemaV1().load(full_record)
     assert data == full_record
