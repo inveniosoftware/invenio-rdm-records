@@ -9,9 +9,10 @@
 """Metadata Extensions."""
 from copy import deepcopy
 
+from flask import current_app
 from invenio_records_rest.schemas.fields import DateString, SanitizedUnicode
 from marshmallow import Schema
-from marshmallow.fields import Float, Integer, List, Nested
+from marshmallow.fields import Integer, List
 
 
 class MetadataExtensions(object):
@@ -24,20 +25,20 @@ class MetadataExtensions(object):
 
         Example:
         {
-            'dwc:Darwin Core': {
-                'family:Family': {
+            'dwc': {
+                'family': {
                     'types': {
                         'marshmallow': SanitizedUnicode(),
                         'elasticsearch': 'keyword',
                     }
                 },
-                'genus:Genus': {
+                'genus': {
                     'types': {
                         'marshmallow': SanitizedUnicode(),
                         'elasticsearch': 'keyword',
                     }
                 },
-                'behavior:Behaviour': {
+                'behavior': {
                     'types': {
                         'marshmallow': SanitizedUnicode(),
                         'elasticsearch': 'text',
@@ -45,6 +46,9 @@ class MetadataExtensions(object):
                 }
             }
         }
+
+        Note: use translation layer `_()` to get human readable label from
+              ids used internally.
         """
         self.extensions = deepcopy(extensions) or {}
         self._validate()
@@ -60,19 +64,14 @@ class MetadataExtensions(object):
     def _validate(self):
         """Validates extension configuration.
 
-        We only allow certain types, so this flags divergence from
-        what is allowed early.
+        We only allow certain types, so this private method flags divergence
+        from what is allowed early.
         """
-        def validate_key(key):
-            identifier, label = key.split(":", 1)
-            assert identifier
-            assert label
-
         def validate_marshmallow_type(types):
             """Make sure the Marshmallow type is one we support."""
             def validate_basic_marshmallow_type(_type):
                 allowed_types = [
-                    DateString, Float, Integer, SanitizedUnicode
+                    DateString, Integer, SanitizedUnicode
                 ]
                 assert any([
                     isinstance(_type, allowed_type) for allowed_type
@@ -88,40 +87,61 @@ class MetadataExtensions(object):
         def validate_elasticsearch_type(types):
             """Make sure the Elasticsearch type is one we support."""
             allowed_types = [
-                'date', 'double', 'long', 'keyword', 'text'
+                'date', 'long', 'keyword', 'text'
             ]
             assert types['elasticsearch'] in allowed_types
 
-        section_ids = set()
         for section_key, section_cfg in self.extensions.items():
-            validate_key(section_key)
-
-            section_id = self._get_id(section_key)
-            assert section_id not in section_ids
-            section_ids.add(section_id)
-
-            field_ids = set()
             for field_key, field_cfg in section_cfg.items():
-                validate_key(field_key)
-
-                field_id = self._get_id(field_key)
-                assert field_id not in field_ids
-                field_ids.add(field_id)
-
                 validate_marshmallow_type(field_cfg['types'])
                 validate_elasticsearch_type(field_cfg['types'])
 
     def to_schema(self):
         """Dynamically creates and returns the extensions Schema."""
-        def schema_key(section_key, field_key):
-            return "{}:{}".format(
-                self._get_id(section_key), self._get_id(field_key),
-            )
-
         schema_dict = {}
+
         for section_key, section_cfg in self.extensions.items():
             for field_key, field_cfg in section_cfg.items():
-                key = schema_key(section_key, field_key)
+                key = "{}:{}".format(section_key, field_key)
                 schema_dict[key] = field_cfg['types']['marshmallow']
 
         return Schema.from_dict(schema_dict)
+
+    def get_field_type(self, field_key, _type):
+        """Returns type value for given field_key and type.
+
+        :params field_key: str formatted as <section_id>:<field_id>
+        :params _type: str between 'elasticsearch' or 'marshmallow'
+        """
+        section_key, field_key = field_key.split(":", 1)
+        return (
+            self.extensions
+                .get(section_key, {})
+                .get(field_key, {})
+                .get('types', {})
+                .get(_type)
+        )
+
+
+def add_es_metadata_extensions(record):
+    """Add 'extensions_X' field to record for Elasticsearch ingestion.
+
+    :param record: internal json representation of the record
+    """
+    current_app_metadata_extensions = (
+        current_app.extensions['invenio-rdm-records'].metadata_extensions
+    )
+
+    for key, value in record.get('extensions', {}).items():
+        field_type = current_app_metadata_extensions.get_field_type(
+            key, 'elasticsearch'
+        )
+        if not field_type:
+            continue
+
+        es_field = 'extensions_{}s'.format(field_type)
+
+        if es_field not in record:
+            record[es_field] = []
+
+        record[es_field].append({'key': key, 'value': value})

@@ -421,21 +421,28 @@ class MetadataSchemaV1(BaseSchema):
     references = fields.List(fields.Nested(ReferenceSchemaV1))
     extensions = fields.Method('dump_extensions', 'load_extensions')
 
-    def dump_extensions(self, value):
-        """Dumps the extensions value."""
-        current_app_metadata_extensions = (
-            current_app.extensions['invenio-rdm-records'].metadata_extensions
-        )
-        ExtensionSchema = current_app_metadata_extensions.to_schema()
-        return ExtensionSchema().dump(value)
+    def dump_extensions(self, obj):
+        """Dumps the extensions value.
 
-    def load_extensions(self, obj):
-        """Loads the extensions field from obj."""
+        :params obj: content of the object's 'extensions' field
+        """
         current_app_metadata_extensions = (
             current_app.extensions['invenio-rdm-records'].metadata_extensions
         )
         ExtensionSchema = current_app_metadata_extensions.to_schema()
-        return ExtensionSchema().load(obj)
+        return ExtensionSchema().dump(obj)
+
+    def load_extensions(self, value):
+        """Loads the 'extensions' field.
+
+        :params value: content of the input's 'extensions' field
+        """
+        current_app_metadata_extensions = (
+            current_app.extensions['invenio-rdm-records'].metadata_extensions
+        )
+        ExtensionSchema = current_app_metadata_extensions.to_schema()
+
+        return ExtensionSchema().load(value)
 
     @validates('_embargo_date')
     def validate_embargo_date(self, value):
