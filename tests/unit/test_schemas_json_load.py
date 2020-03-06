@@ -9,7 +9,7 @@
 """Tests for Invenio RDM Records JSON Schemas."""
 
 import pytest
-from invenio_records_rest.schemas.fields import SanitizedUnicode
+from invenio_records_rest.schemas.fields import DateString, SanitizedUnicode
 from marshmallow import ValidationError
 from marshmallow.fields import Integer, List
 
@@ -785,31 +785,37 @@ def test_identifiers(minimal_record):
 def test_extensions():
     """Test metadata extensions schema."""
     RDM_RECORDS_METADATA_EXTENSIONS = {
-        'dwc:Dublin Core': {
-            'family:Family': {
+        'dwc': {
+            'family': {
                 'types': {
                     'elasticsearch': 'keyword',
                     'marshmallow': SanitizedUnicode(required=True)
                 }
             },
-            'behavior:Behaviour': {
+            'behavior': {
                 'types': {
                     'marshmallow': SanitizedUnicode(),
                     'elasticsearch': 'text',
                 }
             }
         },
-        'nubiomed:Biomedical Extension': {
-            'number_in_sequence:Number in Sequence (e.g. page, order)': {
+        'nubiomed': {
+            'number_in_sequence': {
                 'types': {
                     'elasticsearch': 'long',
                     'marshmallow': Integer()
                 }
             },
-            'scientific_sequence:Scientific Sequence': {  # made up
+            'scientific_sequence': {  # made up
                 'types': {
                     'elasticsearch': 'long',
                     'marshmallow': List(Integer())
+                }
+            },
+            'original_presentation_date': {
+                'types': {
+                    'elasticsearch': 'date',
+                    'marshmallow': DateString()
                 }
             }
         }
@@ -832,6 +838,7 @@ def test_extensions():
         'dwc:behavior': 'Plays with yarn, sleeps in cardboard box.',
         'nubiomed:number_in_sequence': 3,
         'nubiomed:scientific_sequence': [1, 1, 2, 3, 5, 8],
+        'nubiomed:original_presentation_date': '2019-02-14',
     }
 
     data = ExtensionsSchema().load(valid_full)
