@@ -6,6 +6,10 @@
   "additionalProperties": false,
 
   "properties": {
+    "$schema": {
+      "description": "This record's jsonschema. Needed?",
+      "type": "string"
+    },
     "_access": {
       "metadata_restricted": {
         "default": false,
@@ -456,6 +460,22 @@
           "scheme": {"type": "string"}
         }
       }
+    },
+    "extensions": {
+      "additionalProperties": {
+        "anyOf": [
+          {
+            "type": "array",
+            "items": {
+              "type": ["string", "number"]
+            }
+          },
+          {"type": "string"},
+          {"type": "number"}
+        ]
+      },
+      "description": "Configured additional metadata",
+      "type": "object"
     }
   }
 }
