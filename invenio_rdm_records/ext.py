@@ -8,8 +8,10 @@
 
 """DataCite-based data model for Invenio."""
 
+from invenio_indexer.signals import before_record_index
+
 from . import config
-from .metadata_extensions import MetadataExtensions
+from .metadata_extensions import MetadataExtensions, add_es_metadata_extensions
 
 
 class InvenioRDMRecords(object):
@@ -26,6 +28,10 @@ class InvenioRDMRecords(object):
         self.metadata_extensions = MetadataExtensions(
             app.config['RDM_RECORDS_METADATA_EXTENSIONS']
         )
+        before_record_index.connect(
+            before_record_index_hook, sender=app, weak=False
+        )
+
         app.extensions['invenio-rdm-records'] = self
 
     def init_config(self, app):
@@ -44,3 +50,16 @@ class InvenioRDMRecords(object):
         for k in dir(config):
             if k in supported_configurations or k.startswith('RDM_RECORDS_'):
                 app.config.setdefault(k, getattr(config, k))
+
+
+def before_record_index_hook(
+        sender, json=None, record=None, index=None, **kwargs):
+    """Hook to transform Deposits before indexing in ES.
+
+    :param sender: The entity sending the signal.
+    :param json: The dumped Record dict which will be indexed.
+    :param record: The correspondng Record object.
+    :param index: The index in which the json will be indexed.
+    :param kwargs: Any other parameters.
+    """
+    add_es_metadata_extensions(json)  # mutates json
