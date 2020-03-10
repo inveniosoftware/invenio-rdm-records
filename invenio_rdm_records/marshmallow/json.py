@@ -19,6 +19,7 @@ from marshmallow import ValidationError, fields, pre_load, validate, \
     validates, validates_schema
 
 from ..models import ObjectType
+from .fields import EDTFLvl0DateString
 from .utils import api_link_for, validate_iso639_3
 
 
@@ -406,8 +407,8 @@ class MetadataSchemaV1(BaseSchema):
     titles = fields.List(fields.Nested(TitleSchemaV1), required=True)
     resource_type = fields.Nested(ResourceTypeSchemaV1, required=True)
     recid = PersistentIdentifier()
-    # No need for require since it assigns today's date if not existent
-    publication_date = DateString()
+    # Not required since it defaults to today's date if not provided
+    publication_date = EDTFLvl0DateString()
     subjects = fields.List(fields.Nested(SubjectSchemaV1))
     contributors = fields.List(Nested(ContributorSchemaV1))
     dates = fields.List(fields.Nested(DateSchemaV1))
@@ -452,14 +453,6 @@ class MetadataSchemaV1(BaseSchema):
                 _('Embargo date must be in the future.'),
                 field_names=['embargo_date']
             )
-
-    @pre_load()
-    def preload_publicationdate(self, data, **kwargs):
-        """Default publication date."""
-        if 'publication_date' not in data:
-            data['publication_date'] = arrow.utcnow().date().isoformat()
-
-        return data
 
 
 class RecordSchemaV1(BaseSchema):

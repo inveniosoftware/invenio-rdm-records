@@ -175,6 +175,9 @@
         "type": "completion"
       },
       "publication_date": {
+        "type": "keyword"
+      },
+      "_publication_date_search": {
         "type": "date"
       },
       "subjects": {

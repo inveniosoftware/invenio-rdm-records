@@ -861,6 +861,32 @@ def test_extensions():
         data = ExtensionsSchema().load(invalid_number_in_sequence)
 
 
+def test_publication_date(minimal_record):
+    # Partial
+    minimal_record['publication_date'] = '2020-02'
+
+    data = MetadataSchemaV1().load(minimal_record)
+
+    assert data == minimal_record
+
+    # Interval (asymmetrical is allowed!)
+    minimal_record['publication_date'] = '2020-02-02/2025-12'
+
+    data = MetadataSchemaV1().load(minimal_record)
+
+    assert data == minimal_record
+
+    # Invalid date
+    minimal_record['publication_date'] = 'invalid'
+    with pytest.raises(ValidationError):
+        data = MetadataSchemaV1().load(minimal_record)
+
+    # Invalid interval
+    minimal_record['publication_date'] = '2025-12/2020-02-02'
+    with pytest.raises(ValidationError):
+        data = MetadataSchemaV1().load(minimal_record)
+
+
 def test_metadata_schema(full_record, minimal_record):
     """Test metadata schema."""
     # Test full attributes
