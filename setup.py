@@ -70,6 +70,7 @@ setup_requires = [
 install_requires = [
     'arrow>=0.13.0',
     'CairoSVG>=1.0.20',
+    'edtf>=4.0.1,<5.0.0',
     'Faker>=2.0.3',
     'Flask-BabelEx>=0.9.4',
     'idutils>=1.1.3',

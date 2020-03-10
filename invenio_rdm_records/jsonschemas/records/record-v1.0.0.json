@@ -251,9 +251,8 @@
       }
     },
     "publication_date": {
-      "description": "Record publication date (IS8601-formatted).",
-      "type": "string",
-      "format": "date"
+      "description": "Record publication date (EDTF-lvl-0-formatted).",
+      "type": "string"
     },
     "subjects": {
       "type": "array",

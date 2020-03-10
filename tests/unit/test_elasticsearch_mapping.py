@@ -62,6 +62,18 @@ def app_config(app_config):
     return app_config
 
 
+@pytest.fixture()
+def minimal_record(appctx, minimal_record):
+    data = {
+        '$schema': (
+            current_jsonschemas.path_to_url('records/record-v1.0.0.json')
+        ),
+        'publication_date': '2020-06-01'
+    }
+    minimal_record.update(data)
+    return minimal_record
+
+
 def assert_unordered_equality(array_dict1, array_dict2):
     array1 = sorted(array_dict1, key=lambda d: d['key'])
     array2 = sorted(array_dict2, key=lambda d: d['key'])
@@ -81,9 +93,6 @@ def test_metadata_extensions_mapping(db, es, minimal_record):
         - this test requires a running ES instance
     """
     data = {
-        '$schema': (
-            current_jsonschemas.path_to_url('records/record-v1.0.0.json')
-        ),
         'extensions': {
             'dwc:family': 'Felidae',
             'dwc:behavior': 'Plays with yarn, sleeps in cardboard box.',
@@ -140,3 +149,43 @@ def test_metadata_extensions_mapping(db, es, minimal_record):
     assert_unordered_equality(
         source['extensions_booleans'], expected_booleans
     )
+
+
+def test_publication_date_mapping(db, es, minimal_record):
+    """Tests publication_date related fields are indexed properly.
+
+    - Tests prepare_publication_date.
+    - Tests jsonschema validates correctly
+    - Tests that retrieved record document is fine.
+
+    NOTE:
+        - es fixture depends on appctx fixture, so we are in app context
+        - this test requires a running ES instance
+    """
+    # Interval
+    minimal_record['publication_date'] = '1939/1945'
+    record = Record.create(minimal_record)
+    db.session.commit()
+    indexer = RecordIndexer()
+
+    index_result = indexer.index(record)
+
+    _index = index_result['_index']
+    _doc = index_result['_type']
+    _id = index_result['_id']
+    es_doc = es.get(index=_index, doc_type=_doc, id=_id)
+    source = es_doc['_source']
+    assert source['publication_date'] == '1939/1945'
+    assert source['_publication_date_search'] == '1939-01-01'
+
+    # Regular date
+    minimal_record['publication_date'] = '2020-02-01'
+    record = Record.create(minimal_record)
+
+    index_result = indexer.index(record)
+
+    _id = index_result['_id']
+    es_doc = es.get(index=_index, doc_type=_doc, id=_id)
+    source = es_doc['_source']
+    assert source['publication_date'] == '2020-02-01'
+    assert source['_publication_date_search'] == '2020-02-01'

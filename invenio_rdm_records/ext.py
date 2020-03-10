@@ -7,7 +7,9 @@
 # it under the terms of the MIT License; see LICENSE file for more details.
 
 """DataCite-based data model for Invenio."""
+import time
 
+from edtf.parser.grammar import level0Expression
 from invenio_indexer.signals import before_record_index
 
 from . import config
@@ -54,14 +56,36 @@ class InvenioRDMRecords(object):
                 app.config.setdefault(k, getattr(config, k))
 
 
+def prepare_publication_date(record_dict):
+    """
+    Add search compatible publication date to record_dict prior to ES index.
+
+    This date is the lowest year-month-day date from the interval or (partial)
+    date. The regular publication_date is not in a format ES can use for
+    powerful date queries.
+
+    :param record_dict: dumped Record dict
+    """
+    print("record_dict", record_dict)
+    parser = level0Expression("level0")
+    date_or_interval = parser.parseString(record_dict['publication_date'])[0]
+    # lower_strict() is available for EDTF Interval AND Date objects
+    date_tuple = date_or_interval.lower_strict()
+    record_dict['_publication_date_search'] = time.strftime(
+        "%Y-%m-%d", date_tuple
+    )
+
+
 def before_record_index_hook(
         sender, json=None, record=None, index=None, **kwargs):
     """Hook to transform Deposits before indexing in ES.
 
     :param sender: The entity sending the signal.
     :param json: The dumped Record dict which will be indexed.
-    :param record: The correspondng Record object.
+    :param record: The corresponding Record object.
     :param index: The index in which the json will be indexed.
     :param kwargs: Any other parameters.
     """
-    add_es_metadata_extensions(json)  # mutates json
+    # All thee operations mutate the json
+    add_es_metadata_extensions(json)  # TODO: Change for prepare
+    prepare_publication_date(json)
