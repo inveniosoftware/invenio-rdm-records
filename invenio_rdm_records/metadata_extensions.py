@@ -12,7 +12,7 @@ from copy import deepcopy
 from flask import current_app
 from invenio_records_rest.schemas.fields import DateString, SanitizedUnicode
 from marshmallow import Schema
-from marshmallow.fields import Integer, List
+from marshmallow.fields import Bool, Integer, List
 
 
 class MetadataExtensions(object):
@@ -71,7 +71,7 @@ class MetadataExtensions(object):
             """Make sure the Marshmallow type is one we support."""
             def validate_basic_marshmallow_type(_type):
                 allowed_types = [
-                    DateString, Integer, SanitizedUnicode
+                    Bool, DateString, Integer, SanitizedUnicode
                 ]
                 assert any([
                     isinstance(_type, allowed_type) for allowed_type
@@ -87,7 +87,7 @@ class MetadataExtensions(object):
         def validate_elasticsearch_type(types):
             """Make sure the Elasticsearch type is one we support."""
             allowed_types = [
-                'date', 'long', 'keyword', 'text'
+                'boolean', 'date', 'long', 'keyword', 'text'
             ]
             assert types['elasticsearch'] in allowed_types
 
@@ -123,16 +123,18 @@ class MetadataExtensions(object):
         )
 
 
-def add_es_metadata_extensions(record):
-    """Add 'extensions_X' field to record for Elasticsearch ingestion.
+def add_es_metadata_extensions(record_dict):
+    """Add 'extensions_X' fields to record_dict prior to Elasticsearch index.
 
-    :param record: internal json representation of the record
+    :param record_dict: dumped Record dict
+
+    QUESTION: Should we even keep indexing 'extensions'?
     """
     current_app_metadata_extensions = (
         current_app.extensions['invenio-rdm-records'].metadata_extensions
     )
 
-    for key, value in record.get('extensions', {}).items():
+    for key, value in record_dict.get('extensions', {}).items():
         field_type = current_app_metadata_extensions.get_field_type(
             key, 'elasticsearch'
         )
@@ -141,7 +143,7 @@ def add_es_metadata_extensions(record):
 
         es_field = 'extensions_{}s'.format(field_type)
 
-        if es_field not in record:
-            record[es_field] = []
+        if es_field not in record_dict:
+            record_dict[es_field] = []
 
-        record[es_field].append({'key': key, 'value': value})
+        record_dict[es_field].append({'key': key, 'value': value})

@@ -1,0 +1,191 @@
+# -*- coding: utf-8 -*-
+#
+# Copyright (C) 2020 CERN.
+# Copyright (C) 2020 Northwestern University.
+#
+# Invenio-RDM-Records is free software; you can redistribute it and/or modify
+# it under the terms of the MIT License; see LICENSE file for more details.
+
+"""Test Elasticsearch Mapping."""
+
+import pytest
+from invenio_indexer.api import RecordIndexer
+from invenio_jsonschemas import current_jsonschemas
+from invenio_records.api import Record
+from invenio_records_rest.schemas.fields import DateString, SanitizedUnicode
+from marshmallow.fields import Bool, Float, Integer, List
+
+from invenio_rdm_records.metadata_extensions import add_es_metadata_extensions
+
+
+@pytest.fixture(scope='module')
+def app_config(app_config):
+    """Override conftest.py's app_config
+    """
+    # Added custom configuration
+    app_config['RDM_RECORDS_METADATA_EXTENSIONS'] = {
+        'dwc': {
+            'family': {
+                'types': {
+                    'elasticsearch': 'keyword',
+                    'marshmallow': SanitizedUnicode(required=True)
+                }
+            },
+            'behavior': {
+                'types': {
+                    'marshmallow': SanitizedUnicode(),
+                    'elasticsearch': 'text',
+                }
+            }
+        },
+        'nubiomed': {
+            'number_in_sequence': {
+                'types': {
+                    'elasticsearch': 'long',
+                    'marshmallow': Integer()
+                }
+            },
+            'scientific_sequence': {
+                'types': {
+                    'elasticsearch': 'long',
+                    'marshmallow': List(Integer())
+                }
+            },
+            'original_presentation_date': {
+                'types': {
+                    'elasticsearch': 'date',
+                    'marshmallow': DateString()
+                }
+            },
+            'right_or_wrong': {
+                'types': {
+                    'elasticsearch': 'boolean',
+                    'marshmallow': Bool()
+                }
+            }
+        }
+    }
+
+    return app_config
+
+
+def assert_unordered_equality(array_dict1, array_dict2):
+    array1 = sorted(array_dict1, key=lambda d: d['key'])
+    array2 = sorted(array_dict2, key=lambda d: d['key'])
+    assert array1 == array2
+
+
+def test_add_es_metadata_extensions(appctx):
+    record = {
+        # contains other fields, but we only care about 'extensions' field
+        'extensions': {
+            'dwc:family': 'Felidae',
+            'dwc:behavior': 'Plays with yarn, sleeps in cardboard box.',
+            'nubiomed:number_in_sequence': 3,
+            'nubiomed:scientific_sequence': [1, 1, 2, 3, 5, 8],
+            'nubiomed:original_presentation_date': '2019-02-14',
+        }
+    }
+
+    add_es_metadata_extensions(record)
+
+    expected_keywords = [
+        {'key': 'dwc:family', 'value': 'Felidae'},
+    ]
+    expected_texts = [
+        {
+            'key': 'dwc:behavior',
+            'value': 'Plays with yarn, sleeps in cardboard box.'
+        },
+    ]
+    expected_longs = [
+        {
+            'key': 'nubiomed:number_in_sequence',
+            'value': 3
+        },
+        {'key': 'nubiomed:scientific_sequence', 'value': [1, 1, 2, 3, 5, 8]},
+    ]
+    expected_dates = [
+        {
+            'key': 'nubiomed:original_presentation_date',
+            'value': '2019-02-14'
+        },
+    ]
+    assert_unordered_equality(record['extensions_keywords'], expected_keywords)
+    assert_unordered_equality(record['extensions_texts'], expected_texts)
+    assert_unordered_equality(record['extensions_longs'], expected_longs)
+    assert_unordered_equality(record['extensions_dates'], expected_dates)
+
+
+def test_metadata_extensions_mapping(db, es, minimal_record):
+    """Tests that a Record is indexed into Elasticsearch properly.
+
+    - Tests that the before_record_index_hook is registered properly.
+    - Side-effect: re-tests add_es_metadata_extensions.
+    - Tests jsonschema validates correctly
+    - Tests that retrieved record document is fine.
+
+    NOTE:
+        - es fixture depends on appctx fixture, so we are in app context
+        - this test requires a running ES instance
+    """
+    data = {
+        '$schema': (
+            current_jsonschemas.path_to_url('records/record-v1.0.0.json')
+        ),
+        'extensions': {
+            'dwc:family': 'Felidae',
+            'dwc:behavior': 'Plays with yarn, sleeps in cardboard box.',
+            'nubiomed:number_in_sequence': 3,
+            'nubiomed:scientific_sequence': [1, 1, 2, 3, 5, 8],
+            'nubiomed:original_presentation_date': '2019-02-14',
+            'nubiomed:right_or_wrong': True,
+        }
+    }
+    minimal_record.update(data)
+    record = Record.create(minimal_record)
+    db.session.commit()
+    indexer = RecordIndexer()
+
+    index_result = indexer.index(record)
+
+    _index = index_result['_index']
+    _doc = index_result['_type']
+    _id = index_result['_id']
+    es_doc = es.get(index=_index, doc_type=_doc, id=_id)
+    source = es_doc['_source']
+    expected_keywords = [
+        {'key': 'dwc:family', 'value': 'Felidae'},
+    ]
+    expected_texts = [
+        {
+            'key': 'dwc:behavior',
+            'value': 'Plays with yarn, sleeps in cardboard box.'
+        },
+    ]
+    expected_longs = [
+        {
+            'key': 'nubiomed:number_in_sequence',
+            'value': 3
+        },
+        {'key': 'nubiomed:scientific_sequence', 'value': [1, 1, 2, 3, 5, 8]},
+    ]
+    expected_dates = [
+        {
+            'key': 'nubiomed:original_presentation_date',
+            'value': '2019-02-14'
+        },
+    ]
+    expected_booleans = [
+        {
+            'key': 'nubiomed:right_or_wrong',
+            'value': True
+        },
+    ]
+    assert_unordered_equality(source['extensions_keywords'], expected_keywords)
+    assert_unordered_equality(source['extensions_texts'], expected_texts)
+    assert_unordered_equality(source['extensions_longs'], expected_longs)
+    assert_unordered_equality(source['extensions_dates'], expected_dates)
+    assert_unordered_equality(
+        source['extensions_booleans'], expected_booleans
+    )

@@ -467,11 +467,12 @@
           {
             "type": "array",
             "items": {
-              "type": ["string", "number"]
+              "type": ["boolean", "number", "string"]
             }
           },
-          {"type": "string"},
-          {"type": "number"}
+          {"type": "boolean"},
+          {"type": "number"},
+          {"type": "string"}
         ]
       },
       "description": "Configured additional metadata",

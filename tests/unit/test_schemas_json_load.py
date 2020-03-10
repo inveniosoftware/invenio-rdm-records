@@ -11,7 +11,7 @@
 import pytest
 from invenio_records_rest.schemas.fields import DateString, SanitizedUnicode
 from marshmallow import ValidationError
-from marshmallow.fields import Integer, List
+from marshmallow.fields import Bool, Integer, List
 
 from invenio_rdm_records.marshmallow.json import AffiliationSchemaV1, \
     CommunitySchemaV1, ContributorSchemaV1, CreatorSchemaV1, DateSchemaV1, \
@@ -817,6 +817,12 @@ def test_extensions():
                     'elasticsearch': 'date',
                     'marshmallow': DateString()
                 }
+            },
+            'right_or_wrong': {
+                'types': {
+                    'elasticsearch': 'boolean',
+                    'marshmallow': Bool()
+                }
             }
         }
     }
@@ -839,6 +845,7 @@ def test_extensions():
         'nubiomed:number_in_sequence': 3,
         'nubiomed:scientific_sequence': [1, 1, 2, 3, 5, 8],
         'nubiomed:original_presentation_date': '2019-02-14',
+        'nubiomed:right_or_wrong': True,
     }
 
     data = ExtensionsSchema().load(valid_full)

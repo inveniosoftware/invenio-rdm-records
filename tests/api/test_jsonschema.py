@@ -23,6 +23,7 @@ def test_metadata_extensions(appctx, minimal_record):
             'nubiomed:number_in_sequence': 3,
             'nubiomed:scientific_sequence': [1, 1, 2, 3, 5, 8],
             'nubiomed:original_presentation_date': '2019-02-14',
+            'nubiomed:right_or_wrong': True
         }
     }
     minimal_record.update(data)
