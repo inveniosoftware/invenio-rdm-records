@@ -7,7 +7,7 @@
 
   "properties": {
     "$schema": {
-      "description": "This record's jsonschema. Needed?",
+      "description": "This record's jsonschema.",
       "type": "string"
     },
     "_access": {

@@ -28,8 +28,9 @@ class InvenioRDMRecords(object):
         self.metadata_extensions = MetadataExtensions(
             app.config['RDM_RECORDS_METADATA_EXTENSIONS']
         )
-        before_record_index.connect(
-            before_record_index_hook, sender=app, weak=False
+        before_record_index.dynamic_connect(
+            before_record_index_hook, sender=app, weak=False,
+            index='records-record-v1.0.0'
         )
 
         app.extensions['invenio-rdm-records'] = self

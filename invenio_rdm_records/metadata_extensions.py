@@ -53,14 +53,6 @@ class MetadataExtensions(object):
         self.extensions = deepcopy(extensions) or {}
         self._validate()
 
-    def _get_id(self, key):
-        identifier, _ = key.split(":", 1)
-        return identifier
-
-    def _get_label(self, key):
-        _, label = key.split(":", 1)
-        return label
-
     def _validate(self):
         """Validates extension configuration.
 
@@ -127,8 +119,6 @@ def add_es_metadata_extensions(record_dict):
     """Add 'extensions_X' fields to record_dict prior to Elasticsearch index.
 
     :param record_dict: dumped Record dict
-
-    QUESTION: Should we even keep indexing 'extensions'?
     """
     current_app_metadata_extensions = (
         current_app.extensions['invenio-rdm-records'].metadata_extensions
