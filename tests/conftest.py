@@ -102,21 +102,31 @@ def full_record():
             "identifier": "9999.99999",
             "scheme": "arXiv"
         }],
-        "creators": [{
-            "name": "Julio Cesar",
-            "type": "Personal",
-            "given_name": "Julio",
-            "family_name": "Cesar",
-            "identifiers": [{
-                "identifier": "9999-9999-9999-9999",
-                "scheme": "Orcid"
-            }],
-            "affiliations": [{
-                "name": "Entity One",
-                "identifier": "entity-one",
-                "scheme": "entity-id-scheme"
-            }]
-        }],
+        "creators": [
+            {
+                "name": "Julio Cesar",
+                "type": "Personal",
+                "given_name": "Julio",
+                "family_name": "Cesar",
+                "identifiers": [{
+                    "identifier": "9999-9999-9999-9999",
+                    "scheme": "Orcid"
+                }],
+                "affiliations": [{
+                    "name": "Entity One",
+                    "identifier": "entity-one",
+                    "scheme": "entity-id-scheme"
+                }]
+            },
+            {
+                "name": "California Digital Library",
+                "type": "Organizational",
+                "identifiers": [{
+                    "identifier": "03yrm5c26",
+                    "scheme": "ROR"
+                }]
+            }
+        ],
         "titles": [{
             "title": "A Romans story",
             "type": "Other",
@@ -191,7 +201,7 @@ def full_record():
 @pytest.fixture(scope='function')
 def minimal_record():
     """
-    Dictionary with the minimum requried fields to create a record.
+    Dictionary with the minimum required fields to create a record.
 
     The following attributes are injected by the de/serialization:
     - recid
@@ -215,21 +225,8 @@ def minimal_record():
             "identifier": "9999.99999",
             "scheme": "arXiv"
         }],
-        "creators": [{
-            "name": "Julio Cesar",
-            "type": "Personal",
-            "given_name": "Julio",
-            "family_name": "Cesar",
-            "identifiers": [{
-                "identifier": "9999-9999-9999-9999",
-                "scheme": "Orcid"
-            }],
-            "affiliations": [{
-                "name": "Entity One",
-                "identifier": "entity-one",
-                "scheme": "entity-id-scheme"
-            }]
-        }],
+        # Technically not required
+        "creators": [],
         "titles": [{
             "title": "A Romans story",
             "type": "Other",

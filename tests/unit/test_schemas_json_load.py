@@ -97,7 +97,18 @@ def test_affiliations():
 
 def test_creator():
     """Test creator schema."""
+    # If present, bare minimum
     valid_minimal = {
+        "name": "Julio Cesar",
+        "type": "Personal"
+    }
+
+    data = CreatorSchemaV1().load(valid_minimal)
+
+    assert data == valid_minimal
+
+    # Full person
+    valid_full_person = {
         "name": "Julio Cesar",
         "type": "Personal",
         "given_name": "Julio",
@@ -113,16 +124,25 @@ def test_creator():
         }]
     }
 
-    data = CreatorSchemaV1().load(valid_minimal)
-    assert data == valid_minimal
+    data = CreatorSchemaV1().load(valid_full_person)
 
-    valid_minimal = {
-        "name": "Julio Cesar",
-        "type": "Personal"
+    assert data == valid_full_person
+
+    # Full organization
+    valid_full_org = {
+        "name": "California Digital Library",
+        "type": "Organizational",
+        "identifiers": [{
+            "identifier": "03yrm5c26",
+            "scheme": "ROR"
+        }],
+        # "given_name", "family_name" and "affiliations" are ignored if passed
+        "family_name": "I am ignored!"
     }
 
-    data = CreatorSchemaV1().load(valid_minimal)
-    assert data == valid_minimal
+    data = CreatorSchemaV1().load(valid_full_org)
+
+    assert data == valid_full_org
 
     invalid_no_name = {
         "type": "Personal",
@@ -141,7 +161,7 @@ def test_creator():
     with pytest.raises(ValidationError):
         data = CreatorSchemaV1().load(invalid_no_name)
 
-    invalid_no_name_type = {
+    invalid_no_type = {
         "name": "Julio Cesar",
         "given_name": "Julio",
         "family_name": "Cesar",
@@ -156,9 +176,9 @@ def test_creator():
         }]
     }
     with pytest.raises(ValidationError):
-        data = CreatorSchemaV1().load(invalid_no_name_type)
+        data = CreatorSchemaV1().load(invalid_no_type)
 
-    invalid_name_type = {
+    invalid_type = {
         "name": "Julio Cesar",
         "type": "Invalid",
         "given_name": "Julio",
@@ -174,7 +194,7 @@ def test_creator():
         }]
     }
     with pytest.raises(ValidationError):
-        data = CreatorSchemaV1().load(invalid_name_type)
+        data = CreatorSchemaV1().load(invalid_type)
 
 
 def test_contributor():

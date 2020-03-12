@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2019 CERN.
-# Copyright (C) 2019 Northwestern University.
+# Copyright (C) 2019-2020 CERN.
+# Copyright (C) 2019-2020 Northwestern University.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
@@ -51,6 +51,9 @@ class CreatorSchemaV1(BaseSchema):
         "Personal"
     ]
 
+    # TODO: Need to revisit `name` in Deposit form:
+    #       current mock-up doesn't have `name` field, so there is assumed
+    #       work on the front-end to fill this value.
     name = SanitizedUnicode(required=True)
     type = SanitizedUnicode(required=True, validate=validate.OneOf(
                 choices=NAMES,
