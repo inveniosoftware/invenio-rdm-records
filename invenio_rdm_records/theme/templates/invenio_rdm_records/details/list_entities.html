@@ -8,20 +8,20 @@
 
 {% macro list_entities(entities) %}
   {% for entity in entities %}
-    {%- if entity.identifiers and entity.identifiers[0] %}
-      {# TODO: Is the first identifier given precedence or is "Orcid" given precedence? #}
-      {# Assume first identifier is given precedence #}
-      {% set main_identifier = entity.identifiers[0] %}
-      {%- if main_identifier.scheme == "Orcid" %}
-      <a href="{{ main_identifier.identifier|pid_url('orcid') }}">
-        <img class="inline-orcid" src="{{ url_for('static', filename='images/orcid.svg') }}" />
-      </a>
-      {# TODO: Other potential main identifiers #}
-      {%- endif %}
-    {% else %}
-      {# TODO: Change for an organization icon when organizations supported #}
-      <i class="fa fa-user" aria-hidden="true"></i>
+    {# TODO: Is the first identifier given precedence or is "Orcid" given precedence? #}
+    {# Assume first identifier is given precedence #}
+    {% set main_identifier = entity.identifiers[0] if entity.identifiers and entity.identifiers[0] else {"scheme": ""} %}
+    {%- if main_identifier.scheme == "Orcid" %}
+    <a href="{{ main_identifier.identifier|pid_url('orcid') }}">
+      <img class="inline-orcid" src="{{ url_for('static', filename='images/orcid.svg') }}" />
+    </a>
+    {# TODO: Other potential main identifiers #}
+    {%- elif entity.type == "Organizational" %}
+    <i class="fa fa-users" aria-hidden="true"></i>
+    {%- else %}
+    <i class="fa fa-user" aria-hidden="true"></i>
     {%- endif %}
+
     <span class="text-muted" {% if entity.affiliations and entity.affiliations[0] %}data-toggle="tooltip" title="{{entity.affiliations[0].name}}"{% endif %}>{{entity.name}}</span>
   {% endfor %}
 {%- endmacro %}
