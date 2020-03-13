@@ -23,7 +23,7 @@ tests_require = [
     'pytest-cov>=2.5.1',
     'pytest-pep8>=1.0.6',
     'pytest-invenio>=1.2.0',
-    'pytest>=4.0.0,<5.0.0',
+    'pytest>=4.0.0,<5.3.0',
     'invenio_app>=1.2.3,<1.3.0'
 ]
 
@@ -75,11 +75,12 @@ install_requires = [
     'idutils>=1.1.3',
     'invenio-formatter>=1.0.2,<1.1.0',
     'invenio-jsonschemas>=1.0.1,<1.1.0',
-    'invenio-pidstore>=1.1.0,<1.2.0',
+    'invenio-pidstore>=1.1.0,<1.3.0',
     'invenio-records-rest>=1.6.4,<1.7.0',
     'invenio-records>=1.3.0,<1.4.0',
     'invenio-records-files>=1.2.1,<1.3.0',
     'invenio-records-permissions>=0.7.0',
+    'invenio-records-ui>=1.0.1,<1.2.0',
     'invenio-previewer>=1.1.0,<1.2.0',
     'marshmallow>=3.3.0,<4.0.0',
     'pycountry>=18.12.8',
