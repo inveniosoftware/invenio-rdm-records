@@ -95,23 +95,19 @@ def full_record():
             "type": "image",
             "subtype": "photo"
         },
-        "identifiers": [{
-            "identifier": "10.5281/zenodo.9999999",
-            "scheme": "DOI"
-        }, {
-            "identifier": "9999.99999",
-            "scheme": "arXiv"
-        }],
+        "identifiers": {
+            "DOI": "10.5281/zenodo.9999999",
+            "arXiv": "9999.99999"
+        },
         "creators": [
             {
                 "name": "Julio Cesar",
                 "type": "Personal",
                 "given_name": "Julio",
                 "family_name": "Cesar",
-                "identifiers": [{
-                    "identifier": "9999-9999-9999-9999",
-                    "scheme": "Orcid"
-                }],
+                "identifiers": {
+                    "Orcid": "9999-9999-9999-9999"
+                },
                 "affiliations": [{
                     "name": "Entity One",
                     "identifier": "entity-one",
@@ -121,10 +117,9 @@ def full_record():
             {
                 "name": "California Digital Library",
                 "type": "Organizational",
-                "identifiers": [{
-                    "identifier": "03yrm5c26",
-                    "scheme": "ROR"
-                }]
+                "identifiers": {
+                    "ROR": "03yrm5c26",
+                }
             }
         ],
         "titles": [{
@@ -143,10 +138,9 @@ def full_record():
             "type": "Personal",
             "given_name": "Maximo",
             "family_name": "Decimo Meridio",
-            "identifiers": [{
-                "identifier": "9999-9999-9999-9998",
-                "scheme": "Orcid"
-            }],
+            "identifiers": {
+                "Orcid": "9999-9999-9999-9998",
+            },
             "affiliations": [{
                 "name": "Entity One",
                 "identifier": "entity-one",
@@ -218,13 +212,6 @@ def minimal_record():
             "type": "image",
             "subtype": "photo"
         },
-        "identifiers": [{
-            "identifier": "10.5281/zenodo.9999999",
-            "scheme": "DOI"
-        }, {
-            "identifier": "9999.99999",
-            "scheme": "arXiv"
-        }],
         # Technically not required
         "creators": [],
         "titles": [{

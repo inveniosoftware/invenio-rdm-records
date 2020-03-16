@@ -13,10 +13,10 @@ from marshmallow import ValidationError
 
 from invenio_rdm_records.marshmallow.json import AffiliationSchemaV1, \
     CommunitySchemaV1, ContributorSchemaV1, CreatorSchemaV1, DateSchemaV1, \
-    DescriptionSchemaV1, IdentifierSchemaV1, InternalNoteSchemaV1, \
-    LicenseSchemaV1, LocationSchemaV1, MetadataSchemaV1, PointSchemaV1, \
-    ReferenceSchemaV1, RelatedIdentifierSchemaV1, ResourceTypeSchemaV1, \
-    SubjectSchemaV1, TitleSchemaV1
+    DescriptionSchemaV1, InternalNoteSchemaV1, LicenseSchemaV1, \
+    LocationSchemaV1, MetadataSchemaV1, PointSchemaV1, ReferenceSchemaV1, \
+    RelatedIdentifierSchemaV1, ResourceTypeSchemaV1, SubjectSchemaV1, \
+    TitleSchemaV1
 
 
 def test_community():
@@ -39,28 +39,6 @@ def test_community():
     }
     with pytest.raises(ValidationError):
         CommunitySchemaV1().load(invalid_no_primary)
-
-
-def test_identifier():
-    """Test Identifier Schema."""
-    valid_full = {
-        "identifier": "10.5281/zenodo.9999999",
-        "scheme": "DOI"
-    }
-    data = IdentifierSchemaV1().load(valid_full)
-    assert data == valid_full
-
-    invalid_no_identifier = {
-        "scheme": "DOI"
-    }
-    with pytest.raises(ValidationError):
-        data = IdentifierSchemaV1().load(invalid_no_identifier)
-
-    invalid_no_scheme = {
-        "identifier": "10.5281/zenodo.9999999"
-    }
-    with pytest.raises(ValidationError):
-        data = IdentifierSchemaV1().load(invalid_no_scheme)
 
 
 def test_affiliations():
@@ -113,10 +91,9 @@ def test_creator():
         "type": "Personal",
         "given_name": "Julio",
         "family_name": "Cesar",
-        "identifiers": [{
-            "identifier": "9999-9999-9999-9999",
-            "scheme": "Orcid"
-        }],
+        "identifiers": {
+            "Orcid": "9999-9999-9999-9999",
+        },
         "affiliations": [{
             "name": "Entity One",
             "identifier": "entity-one",
@@ -132,10 +109,9 @@ def test_creator():
     valid_full_org = {
         "name": "California Digital Library",
         "type": "Organizational",
-        "identifiers": [{
-            "identifier": "03yrm5c26",
-            "scheme": "ROR"
-        }],
+        "identifiers": {
+            "ROR": "03yrm5c26",
+        },
         # "given_name", "family_name" and "affiliations" are ignored if passed
         "family_name": "I am ignored!"
     }
@@ -148,10 +124,9 @@ def test_creator():
         "type": "Personal",
         "given_name": "Julio",
         "family_name": "Cesar",
-        "identifiers": [{
-            "identifier": "9999-9999-9999-9999",
-            "scheme": "Orcid"
-        }],
+        "identifiers": {
+            "Orcid": "9999-9999-9999-9999",
+        },
         "affiliations": [{
             "name": "Entity One",
             "identifier": "entity-one",
@@ -165,10 +140,9 @@ def test_creator():
         "name": "Julio Cesar",
         "given_name": "Julio",
         "family_name": "Cesar",
-        "identifiers": [{
-            "identifier": "9999-9999-9999-9999",
-            "scheme": "Orcid"
-        }],
+        "identifiers": {
+            "Orcid": "9999-9999-9999-9999",
+        },
         "affiliations": [{
             "name": "Entity One",
             "identifier": "entity-one",
@@ -183,10 +157,9 @@ def test_creator():
         "type": "Invalid",
         "given_name": "Julio",
         "family_name": "Cesar",
-        "identifiers": [{
-            "identifier": "9999-9999-9999-9999",
-            "scheme": "Orcid"
-        }],
+        "identifiers": {
+            "Orcid": "9999-9999-9999-9999",
+        },
         "affiliations": [{
             "name": "Entity One",
             "identifier": "entity-one",
@@ -204,10 +177,9 @@ def test_contributor():
         "type": "Personal",
         "given_name": "Julio",
         "family_name": "Cesar",
-        "identifiers": [{
-            "identifier": "9999-9999-9999-9999",
-            "scheme": "Orcid"
-        }],
+        "identifiers": {
+            "Orcid": "9999-9999-9999-9999",
+        },
         "affiliations": [{
             "name": "Entity One",
             "identifier": "entity-one",
@@ -232,10 +204,9 @@ def test_contributor():
         "type": "Personal",
         "given_name": "Julio",
         "family_name": "Cesar",
-        "identifiers": [{
-            "identifier": "9999-9999-9999-9999",
-            "scheme": "Orcid"
-        }],
+        "identifiers": {
+            "Orcid": "9999-9999-9999-9999",
+        },
         "affiliations": [{
             "name": "Entity One",
             "identifier": "entity-one",
@@ -250,10 +221,9 @@ def test_contributor():
         "name": "Julio Cesar",
         "given_name": "Julio",
         "family_name": "Cesar",
-        "identifiers": [{
-            "identifier": "9999-9999-9999-9999",
-            "scheme": "Orcid"
-        }],
+        "identifiers": {
+            "Orcid": "9999-9999-9999-9999",
+        },
         "affiliations": [{
             "name": "Entity One",
             "identifier": "entity-one",
@@ -269,10 +239,9 @@ def test_contributor():
         "type": "Invalid",
         "given_name": "Julio",
         "family_name": "Cesar",
-        "identifiers": [{
-            "identifier": "9999-9999-9999-9999",
-            "scheme": "Orcid"
-        }],
+        "identifiers": {
+            "Orcid": "9999-9999-9999-9999",
+        },
         "affiliations": [{
             "name": "Entity One",
             "identifier": "entity-one",
@@ -288,10 +257,9 @@ def test_contributor():
         "type": "Personal",
         "given_name": "Julio",
         "family_name": "Cesar",
-        "identifiers": [{
-            "identifier": "9999-9999-9999-9999",
-            "scheme": "Orcid"
-        }],
+        "identifiers": {
+            "Orcid": "9999-9999-9999-9999",
+        },
         "affiliations": [{
             "name": "Entity One",
             "identifier": "entity-one",
@@ -306,10 +274,9 @@ def test_contributor():
         "type": "Personal",
         "given_name": "Julio",
         "family_name": "Cesar",
-        "identifiers": [{
-            "identifier": "9999-9999-9999-9999",
-            "scheme": "Orcid"
-        }],
+        "identifiers": {
+            "Orcid": "9999-9999-9999-9999",
+        },
         "affiliations": [{
             "name": "Entity One",
             "identifier": "entity-one",
@@ -769,8 +736,55 @@ def test_location():
         data = LocationSchemaV1().load(invalid_no_place)
 
 
+def test_identifiers(minimal_record):
+    """Test Identifiers field."""
+    # Empty dict (no 'identifiers' field at all is also supported)
+    minimal_record['identifiers'] = {}
+    data = MetadataSchemaV1().load(minimal_record)
+    assert data == minimal_record
+
+    # Minimal
+    minimal_record['identifiers'] = {
+        "DOI": "10.5281/zenodo.9999999",
+    }
+    data = MetadataSchemaV1().load(minimal_record)
+    assert data == minimal_record
+
+    # Different schemes
+    minimal_record['identifiers'] = {
+        "DOI": "10.5281/zenodo.9999999",
+        "ARK": "ark:/123/456",
+    }
+    data = MetadataSchemaV1().load(minimal_record)
+    assert data == minimal_record
+
+    # With duplicate schemes, only last one is picked
+    minimal_record['identifiers'] = {
+        "DOI": "10.5281/zenodo.9999999",
+        "DOI": "10.5281/zenodo.0000000",
+    }
+    data = MetadataSchemaV1().load(minimal_record)
+    assert data == minimal_record
+    assert data['identifiers']['DOI'] == "10.5281/zenodo.0000000"
+
+    # Invalid: no identifier
+    minimal_record['identifiers'] = {
+        "DOI": ""
+    }
+    with pytest.raises(ValidationError):
+        data = MetadataSchemaV1().load(minimal_record)
+
+    # Invalid: no scheme
+    minimal_record['identifiers'] = {
+        "": "10.5281/zenodo.9999999"
+    }
+    with pytest.raises(ValidationError):
+        data = MetadataSchemaV1().load(minimal_record)
+
+
 def test_metadata_schema(full_record, minimal_record):
     """Test metadata schema."""
+    # STOPPED HERE
     # Test full attributes
     data = MetadataSchemaV1().load(full_record)
     assert data == full_record
