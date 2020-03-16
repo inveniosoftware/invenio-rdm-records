@@ -28,11 +28,32 @@ class CommunitySchemaV1(BaseSchema):
     secondary = fields.List(SanitizedUnicode())
 
 
-class IdentifierSchemaV1(BaseSchema):
-    """Extra/Alternate identifiers of the record."""
+# 'Fake' Identifiers Field
+def _not_blank(error_msg):
+    """Returns a non-blank validation rule with custom error message."""
+    return validate.Length(min=1, error=error_msg)
 
-    identifier = SanitizedUnicode(required=True)
-    scheme = SanitizedUnicode(required=True)
+
+def Identifiers():
+    """Returns a "fake" Identifiers field.
+
+    Field expects:
+
+        "<scheme1>": "<identifier1>",
+        ...
+        "<schemeN>": "<identifierN>"
+    """
+    return fields.Dict(
+        # scheme
+        keys=SanitizedUnicode(
+            required=True, validate=_not_blank(_('Scheme cannot be blank.'))
+        ),
+        # identifier
+        values=SanitizedUnicode(
+            required=True,
+            validate=_not_blank(_('Identifier cannot be blank.'))
+        )
+    )
 
 
 class AffiliationSchemaV1(BaseSchema):
@@ -61,7 +82,7 @@ class CreatorSchemaV1(BaseSchema):
             ))
     given_name = SanitizedUnicode()
     family_name = SanitizedUnicode()
-    identifiers = fields.List(fields.Nested(IdentifierSchemaV1))
+    identifiers = Identifiers()
     affiliations = fields.List(fields.Nested(AffiliationSchemaV1))
 
 
@@ -379,8 +400,7 @@ class MetadataSchemaV1(BaseSchema):
     _contact = SanitizedUnicode(data_key="contact", attribute="contact")
 
     # Metadata fields
-    identifiers = fields.List(fields.Nested(IdentifierSchemaV1),
-                              required=True)  # TODO: not required
+    identifiers = Identifiers()
     creators = fields.List(Nested(CreatorSchemaV1), required=True)
     titles = fields.List(fields.Nested(TitleSchemaV1), required=True)
     resource_type = fields.Nested(ResourceTypeSchemaV1, required=True)

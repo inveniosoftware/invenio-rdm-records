@@ -47,20 +47,16 @@ def create_fake_record():
             "type": "image",
             "subtype": "photo"
         },
-        "identifiers": [{
-            "identifier": "10.9999/rdm.9999999",
-            "scheme": "DOI"
-        }, {
-            "identifier": "9999.99999",
-            "scheme": "arXiv"
-        }],
+        "identifiers": {
+            "DOI": "10.9999/rdm.9999999",
+            "arXiv": "9999.99999",
+        },
         "creators": [{
             "name": fake.name(),
             "type": "Personal",
-            "identifiers": [{
-                "identifier": "9999-9999-9999-9999",
-                "scheme": "Orcid"
-            }],
+            "identifiers": {
+                "Orcid": "9999-9999-9999-9999",
+            },
             "affiliations": [{
                 "name": fake.company(),
                 "identifier": "entity-one",
@@ -81,10 +77,9 @@ def create_fake_record():
         "contributors": [{
             "name": fake.name(),
             "type": "Personal",
-            "identifiers": [{
-                "identifier": "9999-9999-9999-9998",
-                "scheme": "Orcid"
-            }],
+            "identifiers": {
+                "Orcid": "9999-9999-9999-9998",
+            },
             "affiliations": [{
                 "name": fake.company(),
                 "identifier": "entity-one",

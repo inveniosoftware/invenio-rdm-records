@@ -182,17 +182,8 @@
       ]
     },
     "identifiers": {
-      "type": "array",
-      "minItems": 0,
-      "uniqueItems": true,
-      "items":{
-          "type": "object",
-          "properties": {
-              "identifier": {"type": "string"},
-              "scheme": {"type": "string"}
-          },
-          "required": ["identifier", "scheme"]
-      }
+      "type": "object",
+      "additionalProperties": { "type": "string" }
     },
     "creators": {
       "description": "Creators in order of importance.",
@@ -210,16 +201,8 @@
             "given_name": {"type": "string"},
             "family_name": {"type": "string"},
             "identifiers": {
-              "type": "array",
-              "uniqueItems": true,
-              "items": {
-                  "type": "object",
-                  "properties": {
-                      "identifier": {"type": "string"},
-                      "scheme": {"type": "string"}
-                  },
-                  "required": ["identifier", "scheme"]
-              }
+              "type": "object",
+              "additionalProperties": { "type": "string" }
             },
             "affiliations": {
               "type": "array",
@@ -295,16 +278,8 @@
             "given_name": {"type": "string"},
             "family_name": {"type": "string"},
             "identifiers": {
-              "type": "array",
-              "uniqueItems": true,
-              "items": {
-                  "type": "object",
-                  "properties": {
-                      "identifier": {"type": "string"},
-                      "scheme": {"type": "string"}
-                  },
-                  "required": ["identifier", "scheme"]
-              }
+              "type": "object",
+              "additionalProperties": { "type": "string" }
             },
             "affiliations": {
               "type": "array",
