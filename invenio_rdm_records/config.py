@@ -227,8 +227,84 @@ FORMATTER_BADGES_TITLE_MAPPING = {'doi': 'DOI'}
 RDM_RECORDS_LOCAL_DOI_PREFIXES = ['10.9999']
 """List  of locally managed DOI prefixes."""
 
-RDM_RECORDS_METADATA_EXTENSIONS = {}
-"""Configuration for custom extension to the metadata.
+RDM_RECORDS_METADATA_NAMESPACES = {}
+"""Namespaces for fields *added* to the metadata schema.
 
-See metadata_extensions::MetadataExtensions for its shape.
+Of the shape:
+
+.. code-block:: python
+
+    {
+        '<prefix1>': {
+            '@context': '<url>'
+        },
+        # ...
+        '<prefixN>': {
+            '@context': '<url>'
+        }
+    }
+
+For example:
+
+.. code-block:: python
+
+    {
+        'dwc': {
+            '@context': 'http://rs.tdwg.org/dwc/terms/'
+        },
+        'z':{
+            '@context': 'https://zenodo.org/terms'
+        }
+    }
+
+Use :const:`invenio_rdm_records.config.RDM_RECORDS_METADATA_EXTENSIONS` to
+define the added fields.
+
+See :class:`invenio_rdm_records.metadata_extensions.MetadataExtensions` for
+how this configuration variable is used.
+"""
+
+RDM_RECORDS_METADATA_EXTENSIONS = {}
+"""Fields added to the metadata schema.
+
+Of the shape:
+
+.. code-block:: python
+
+    {
+        '<prefix1>:<field1>': {
+            'elasticsearch': '<allowed elasticsearch type>'
+            'marshmallow': '<allowed marshmallow type>'
+        },
+        # ...
+        '<prefixN>:<fieldN>': {
+            'elasticsearch': '<allowed elasticsearch type>'
+            'marshmallow': '<allowed marshmallow type>'
+        }
+    }
+
+For example:
+
+.. code-block:: python
+
+    {
+        'dwc:family': {
+            'elasticsearch': 'keyword',
+            'marshmallow': SanitizedUnicode()
+        },
+        'dwc:behavior': {
+            'elasticsearch': 'text',
+            'marshmallow': SanitizedUnicode()
+        },
+        'z:department': {
+            'elasticsearch': 'text',
+            'marshmallow': SanitizedUnicode()
+        }
+    }
+
+Use :const:`invenio_rdm_records.config.RDM_RECORDS_METADATA_NAMESPACES` to
+define the prefixes.
+
+See :class:`invenio_rdm_records.metadata_extensions.MetadataExtensions` for
+allowed types and how this configuration variable is used.
 """

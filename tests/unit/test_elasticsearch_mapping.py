@@ -23,46 +23,39 @@ def app_config(app_config):
     """Override conftest.py's app_config
     """
     # Added custom configuration
-    app_config['RDM_RECORDS_METADATA_EXTENSIONS'] = {
+    app_config['RDM_RECORDS_METADATA_NAMESPACES'] = {
         'dwc': {
-            'family': {
-                'types': {
-                    'elasticsearch': 'keyword',
-                    'marshmallow': SanitizedUnicode(required=True)
-                }
-            },
-            'behavior': {
-                'types': {
-                    'marshmallow': SanitizedUnicode(),
-                    'elasticsearch': 'text',
-                }
-            }
+            '@context': 'https://example.com/dwc/terms'
         },
         'nubiomed': {
-            'number_in_sequence': {
-                'types': {
-                    'elasticsearch': 'long',
-                    'marshmallow': Integer()
-                }
-            },
-            'scientific_sequence': {
-                'types': {
-                    'elasticsearch': 'long',
-                    'marshmallow': List(Integer())
-                }
-            },
-            'original_presentation_date': {
-                'types': {
-                    'elasticsearch': 'date',
-                    'marshmallow': DateString()
-                }
-            },
-            'right_or_wrong': {
-                'types': {
-                    'elasticsearch': 'boolean',
-                    'marshmallow': Bool()
-                }
-            }
+            '@context': 'https://example.com/nubiomed/terms'
+        }
+    }
+
+    app_config['RDM_RECORDS_METADATA_EXTENSIONS'] = {
+        'dwc:family': {
+            'elasticsearch': 'keyword',
+            'marshmallow': SanitizedUnicode(required=True)
+        },
+        'dwc:behavior': {
+            'elasticsearch': 'text',
+            'marshmallow': SanitizedUnicode()
+        },
+        'nubiomed:number_in_sequence': {
+            'elasticsearch': 'long',
+            'marshmallow': Integer()
+        },
+        'nubiomed:scientific_sequence': {
+            'elasticsearch': 'long',
+            'marshmallow': List(Integer())
+        },
+        'nubiomed:original_presentation_date': {
+            'elasticsearch': 'date',
+            'marshmallow': DateString()
+        },
+        'nubiomed:right_or_wrong': {
+            'elasticsearch': 'boolean',
+            'marshmallow': Bool()
         }
     }
 
@@ -75,53 +68,11 @@ def assert_unordered_equality(array_dict1, array_dict2):
     assert array1 == array2
 
 
-def test_add_es_metadata_extensions(appctx):
-    record = {
-        # contains other fields, but we only care about 'extensions' field
-        'extensions': {
-            'dwc:family': 'Felidae',
-            'dwc:behavior': 'Plays with yarn, sleeps in cardboard box.',
-            'nubiomed:number_in_sequence': 3,
-            'nubiomed:scientific_sequence': [1, 1, 2, 3, 5, 8],
-            'nubiomed:original_presentation_date': '2019-02-14',
-        }
-    }
-
-    add_es_metadata_extensions(record)
-
-    expected_keywords = [
-        {'key': 'dwc:family', 'value': 'Felidae'},
-    ]
-    expected_texts = [
-        {
-            'key': 'dwc:behavior',
-            'value': 'Plays with yarn, sleeps in cardboard box.'
-        },
-    ]
-    expected_longs = [
-        {
-            'key': 'nubiomed:number_in_sequence',
-            'value': 3
-        },
-        {'key': 'nubiomed:scientific_sequence', 'value': [1, 1, 2, 3, 5, 8]},
-    ]
-    expected_dates = [
-        {
-            'key': 'nubiomed:original_presentation_date',
-            'value': '2019-02-14'
-        },
-    ]
-    assert_unordered_equality(record['extensions_keywords'], expected_keywords)
-    assert_unordered_equality(record['extensions_texts'], expected_texts)
-    assert_unordered_equality(record['extensions_longs'], expected_longs)
-    assert_unordered_equality(record['extensions_dates'], expected_dates)
-
-
 def test_metadata_extensions_mapping(db, es, minimal_record):
     """Tests that a Record is indexed into Elasticsearch properly.
 
     - Tests that the before_record_index_hook is registered properly.
-    - Side-effect: re-tests add_es_metadata_extensions.
+    - Tests add_es_metadata_extensions.
     - Tests jsonschema validates correctly
     - Tests that retrieved record document is fine.
 

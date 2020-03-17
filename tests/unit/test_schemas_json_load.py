@@ -19,6 +19,7 @@ from invenio_rdm_records.marshmallow.json import AffiliationSchemaV1, \
     LocationSchemaV1, MetadataSchemaV1, PointSchemaV1, ReferenceSchemaV1, \
     RelatedIdentifierSchemaV1, ResourceTypeSchemaV1, SubjectSchemaV1, \
     TitleSchemaV1
+from invenio_rdm_records.metadata_extensions import MetadataExtensions
 
 
 def test_community():
@@ -782,51 +783,50 @@ def test_identifiers(minimal_record):
     }
     with pytest.raises(ValidationError):
         data = MetadataSchemaV1().load(minimal_record)
+
+
 def test_extensions():
     """Test metadata extensions schema."""
-    RDM_RECORDS_METADATA_EXTENSIONS = {
+    RDM_RECORDS_METADATA_NAMESPACES = {
         'dwc': {
-            'family': {
-                'types': {
-                    'elasticsearch': 'keyword',
-                    'marshmallow': SanitizedUnicode(required=True)
-                }
-            },
-            'behavior': {
-                'types': {
-                    'marshmallow': SanitizedUnicode(),
-                    'elasticsearch': 'text',
-                }
-            }
+            '@context': 'https://example.com/dwc/terms'
         },
         'nubiomed': {
-            'number_in_sequence': {
-                'types': {
-                    'elasticsearch': 'long',
-                    'marshmallow': Integer()
-                }
-            },
-            'scientific_sequence': {  # made up
-                'types': {
-                    'elasticsearch': 'long',
-                    'marshmallow': List(Integer())
-                }
-            },
-            'original_presentation_date': {
-                'types': {
-                    'elasticsearch': 'date',
-                    'marshmallow': DateString()
-                }
-            },
-            'right_or_wrong': {
-                'types': {
-                    'elasticsearch': 'boolean',
-                    'marshmallow': Bool()
-                }
-            }
+            '@context': 'https://example.com/nubiomed/terms'
         }
     }
-    extensions = MetadataExtensions(RDM_RECORDS_METADATA_EXTENSIONS)
+
+    RDM_RECORDS_METADATA_EXTENSIONS = {
+        'dwc:family': {
+            'elasticsearch': 'keyword',
+            'marshmallow': SanitizedUnicode(required=True)
+        },
+        'dwc:behavior': {
+            'elasticsearch': 'text',
+            'marshmallow': SanitizedUnicode()
+        },
+        'nubiomed:number_in_sequence': {
+            'elasticsearch': 'long',
+            'marshmallow': Integer()
+        },
+        'nubiomed:scientific_sequence': {
+            'elasticsearch': 'long',
+            'marshmallow': List(Integer())
+        },
+        'nubiomed:original_presentation_date': {
+            'elasticsearch': 'date',
+            'marshmallow': DateString()
+        },
+        'nubiomed:right_or_wrong': {
+            'elasticsearch': 'boolean',
+            'marshmallow': Bool()
+        }
+    }
+
+    extensions = MetadataExtensions(
+        RDM_RECORDS_METADATA_NAMESPACES,
+        RDM_RECORDS_METADATA_EXTENSIONS
+    )
     ExtensionsSchema = extensions.to_schema()
 
     # Minimal if not absent
@@ -859,7 +859,6 @@ def test_extensions():
     }
     with pytest.raises(ValidationError):
         data = ExtensionsSchema().load(invalid_number_in_sequence)
-
 
 
 def test_metadata_schema(full_record, minimal_record):
