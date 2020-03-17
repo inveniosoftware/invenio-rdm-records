@@ -26,6 +26,7 @@ class InvenioRDMRecords(object):
         """Flask application initialization."""
         self.init_config(app)
         self.metadata_extensions = MetadataExtensions(
+            app.config['RDM_RECORDS_METADATA_NAMESPACES'],
             app.config['RDM_RECORDS_METADATA_EXTENSIONS']
         )
         before_record_index.dynamic_connect(
