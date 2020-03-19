@@ -11,10 +11,10 @@ from datetime import date
 
 from edtf.parser.grammar import ParseException, level0Expression
 from flask_babelex import lazy_gettext as _
-from marshmallow import fields, missing
+from marshmallow import fields
 
 
-class EDTFLvl0DateString(fields.Str):
+class EDTFLevel0DateString(fields.Str):
     """
     Extended Date(/Time) Format Level 0 date string field.
 
@@ -33,12 +33,12 @@ class EDTFLvl0DateString(fields.Str):
         NOTE: Level 0 allows for an interval.
         NOTE: ``level0Expression`` tries hard to parse dates. For example,
               ``"2020-01-02garbage"`` will parse to the 2020-01-02 date.
-        NOTE: defaults to today's date if not given
+        NOTE: uses today's date if falsey value given
         """
         if not value:
             today_str = date.today().isoformat()
             return (
-                super(EDTFLvl0DateString, self)
+                super(EDTFLevel0DateString, self)
                 ._deserialize(today_str, attr, data, **kwargs)
             )
 
@@ -53,13 +53,13 @@ class EDTFLvl0DateString(fields.Str):
             # check it is chronological if interval
             # NOTE: EDTF Date and Interval both have same interface
             #       and date.lower_strict() <= date.upper_strict() is always
-            #       True
+            #       True for a Date
             result = result[0]
             if result.upper_strict() < result.lower_strict():
                 raise self.make_error("invalid")
 
             return (
-                super(EDTFLvl0DateString, self)
+                super(EDTFLevel0DateString, self)
                 ._deserialize(str(result), attr, data, **kwargs)
             )
         except ParseException:

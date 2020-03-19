@@ -11,6 +11,8 @@
 See https://pytest-invenio.readthedocs.io/ for documentation on which test
 fixtures are available.
 """
+from copy import deepcopy
+from datetime import date
 
 import pytest
 from invenio_app.factory import create_app as _create_app
@@ -61,29 +63,21 @@ def create_app():
 
 
 @pytest.fixture(scope='function')
-def full_record():
-    """
-    Dictionary to create a record with all the fields.
-
-    The following attributes are injected by the de/serialization:
-    - bucket
-    - recid
-    - conceptrecid
-    - files (when files are added to the record)
-    """
+def full_input_record():
+    """Full record data as dict coming from the external world."""
     return {
         "_access": {
             "metadata_restricted": False,
             "files_restricted": False
         },
-        "_created_by": 2,
+        "_created_by": 2,  # TODO: Revisit with deposit
         "_default_preview": "previewer one",
         "_internal_notes": [{
             "user": "inveniouser",
             "note": "RDM record",
             "timestamp": "2020-02-01"
         }],
-        "_owners": [1],
+        "_owners": [1],  # TODO: Revisit with deposit
         "access_right": "open",
         "embargo_date": "2022-12-31",
         "contact": "info@inveniosoftware.org",
@@ -193,13 +187,20 @@ def full_record():
 
 
 @pytest.fixture(scope='function')
-def minimal_record():
+def full_record(full_input_record):
     """
-    Dictionary with the minimum required fields to create a record.
+    Dictionary with all fields to create a record.
 
-    The following attributes are injected by the de/serialization:
-    - recid
+    It fills in the post_loaded fields.
     """
+    record = deepcopy(full_input_record)
+    record['_publication_date_search'] = '2020-06-01'
+    return record
+
+
+@pytest.fixture(scope='function')
+def minimal_input_record():
+    """Minimal record data as dict coming from the external world."""
     return {
         "_access": {
             "metadata_restricted": False,
@@ -220,3 +221,16 @@ def minimal_record():
             "lang": "eng"
         }]
     }
+
+
+@pytest.fixture(scope='function')
+def minimal_record(minimal_input_record):
+    """
+    Dictionary with the minimum required fields to create a record.
+
+    It fills in the missing and post_loaded fields.
+    """
+    record = deepcopy(minimal_input_record)
+    record['publication_date'] = date.today().isoformat()
+    record['_publication_date_search'] = date.today().isoformat()
+    return record

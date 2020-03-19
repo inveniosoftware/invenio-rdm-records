@@ -251,8 +251,13 @@
       }
     },
     "publication_date": {
-      "description": "Record publication date (EDTF-lvl-0-formatted).",
+      "description": "Record publication date (EDTF level 0 format).",
       "type": "string"
+    },
+    "_publication_date_search": {
+      "description": "Record publication date (ISO 8601 format).",
+      "type": "string",
+      "format": "date"
     },
     "subjects": {
       "type": "array",

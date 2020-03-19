@@ -22,7 +22,7 @@ from invenio_records_files.api import Record
 from invenio_search import current_search
 
 
-def fake_edtf_lvl_0():
+def fake_edtf_level_0():
     """Generates a fake publication_date string."""
     def fake_date(end_date=None):
         fake = Faker()
@@ -101,7 +101,7 @@ def create_fake_record():
             "type": "Other",
             "lang": "eng"
         }],
-        "publication_date": fake_edtf_lvl_0(),
+        "publication_date": fake_edtf_level_0(),
         "subjects": [{
             "subject": "Romans",
             "identifier": "subj-1",

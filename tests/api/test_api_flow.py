@@ -32,25 +32,25 @@ def _assert_single_hit(response, expected_record):
     assert search_hit['metadata']['titles'] == expected_record['titles']
 
 
-def test_simple_flow(client, location, full_record):
+def test_simple_flow(client, location, full_input_record):
     """Test simple flow using REST API."""
     url = 'https://localhost:5000/records/'
 
     # create a record
-    response = client.post(url, json=full_record)
+    response = client.post(url, json=full_input_record)
     assert response.status_code == 201
     current_search.flush_and_refresh('records')
 
     # retrieve records
     response = client.get(url)
-    _assert_single_hit(response, full_record)
+    _assert_single_hit(response, full_input_record)
 
 
-def test_simple_file_upload(client, location, full_record):
+def test_simple_file_upload(client, location, full_input_record):
     """Test simple file upload using REST API."""
     # Create record
     records_url = 'https://localhost:5000/records/'
-    response = client.post(records_url, json=full_record)
+    response = client.post(records_url, json=full_input_record)
     assert response.status_code == 201
     current_search.flush_and_refresh('records')
 

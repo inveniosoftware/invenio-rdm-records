@@ -7,7 +7,6 @@
 # it under the terms of the MIT License; see LICENSE file for more details.
 
 """Tests for Invenio RDM Records JSON Schemas."""
-
 import pytest
 from invenio_records_rest.schemas.fields import DateString, SanitizedUnicode
 from marshmallow import ValidationError
@@ -739,50 +738,54 @@ def test_location():
         data = LocationSchemaV1().load(invalid_no_place)
 
 
-def test_identifiers(minimal_record):
+def test_identifiers(minimal_input_record):
     """Test Identifiers field."""
-    # Empty dict (no 'identifiers' field at all is also supported)
-    minimal_record['identifiers'] = {}
-    data = MetadataSchemaV1().load(minimal_record)
-    assert data == minimal_record
+    # No 'identifiers' field at all is supported
+    data = MetadataSchemaV1().load(minimal_input_record)
+    assert data.get('identifiers') == minimal_input_record.get('identifiers')
+
+    # Empty dict
+    minimal_input_record['identifiers'] = {}
+    data = MetadataSchemaV1().load(minimal_input_record)
+    assert data['identifiers'] == minimal_input_record['identifiers']
 
     # Minimal
-    minimal_record['identifiers'] = {
+    minimal_input_record['identifiers'] = {
         "DOI": "10.5281/zenodo.9999999",
     }
-    data = MetadataSchemaV1().load(minimal_record)
-    assert data == minimal_record
+    data = MetadataSchemaV1().load(minimal_input_record)
+    assert data['identifiers'] == minimal_input_record['identifiers']
 
     # Different schemes
-    minimal_record['identifiers'] = {
+    minimal_input_record['identifiers'] = {
         "DOI": "10.5281/zenodo.9999999",
         "ARK": "ark:/123/456",
     }
-    data = MetadataSchemaV1().load(minimal_record)
-    assert data == minimal_record
+    data = MetadataSchemaV1().load(minimal_input_record)
+    assert data['identifiers'] == minimal_input_record['identifiers']
 
     # With duplicate schemes, only last one is picked
-    minimal_record['identifiers'] = {
+    minimal_input_record['identifiers'] = {
         "DOI": "10.5281/zenodo.9999999",
         "DOI": "10.5281/zenodo.0000000",
     }
-    data = MetadataSchemaV1().load(minimal_record)
-    assert data == minimal_record
+    data = MetadataSchemaV1().load(minimal_input_record)
+    assert data['identifiers'] == minimal_input_record['identifiers']
     assert data['identifiers']['DOI'] == "10.5281/zenodo.0000000"
 
     # Invalid: no identifier
-    minimal_record['identifiers'] = {
+    minimal_input_record['identifiers'] = {
         "DOI": ""
     }
     with pytest.raises(ValidationError):
-        data = MetadataSchemaV1().load(minimal_record)
+        data = MetadataSchemaV1().load(minimal_input_record)
 
     # Invalid: no scheme
-    minimal_record['identifiers'] = {
+    minimal_input_record['identifiers'] = {
         "": "10.5281/zenodo.9999999"
     }
     with pytest.raises(ValidationError):
-        data = MetadataSchemaV1().load(minimal_record)
+        data = MetadataSchemaV1().load(minimal_input_record)
 
 
 def test_extensions():
@@ -861,43 +864,71 @@ def test_extensions():
         data = ExtensionsSchema().load(invalid_number_in_sequence)
 
 
-def test_publication_date(minimal_record):
+def test_publication_date(minimal_input_record, minimal_record):
+    def assert_publication_dates(data, expected):
+        assert data['publication_date'] == expected_record['publication_date']
+        assert (
+            data['_publication_date_search'] ==
+            expected_record['_publication_date_search']
+        )
+
+    expected_record = minimal_record
+
+    # No publication_date uses today as default
+    data = MetadataSchemaV1().load(minimal_input_record)
+
+    assert_publication_dates(data, expected_record)
+
+    # Falsey publication_date uses today as default
+    minimal_input_record['publication_date'] = ""
+
+    data = MetadataSchemaV1().load(minimal_input_record)
+
+    assert_publication_dates(data, expected_record)
+
     # Partial
-    minimal_record['publication_date'] = '2020-02'
+    minimal_input_record['publication_date'] = '2020-02'
+    expected_record['publication_date'] = '2020-02'
+    expected_record['_publication_date_search'] = '2020-02-01'
 
-    data = MetadataSchemaV1().load(minimal_record)
+    data = MetadataSchemaV1().load(minimal_input_record)
 
-    assert data == minimal_record
+    assert_publication_dates(data, expected_record)
 
     # Interval (asymmetrical is allowed!)
-    minimal_record['publication_date'] = '2020-02-02/2025-12'
+    minimal_input_record['publication_date'] = '2020-02-02/2025-12'
+    expected_record['publication_date'] = '2020-02-02/2025-12'
+    expected_record['_publication_date_search'] = '2020-02-02'
 
-    data = MetadataSchemaV1().load(minimal_record)
+    data = MetadataSchemaV1().load(minimal_input_record)
 
-    assert data == minimal_record
+    assert_publication_dates(data, expected_record)
 
     # Invalid date
-    minimal_record['publication_date'] = 'invalid'
+    minimal_input_record['publication_date'] = 'invalid'
     with pytest.raises(ValidationError):
-        data = MetadataSchemaV1().load(minimal_record)
+        data = MetadataSchemaV1().load(minimal_input_record)
 
     # Invalid interval
-    minimal_record['publication_date'] = '2025-12/2020-02-02'
+    minimal_input_record['publication_date'] = '2025-12/2020-02-02'
     with pytest.raises(ValidationError):
-        data = MetadataSchemaV1().load(minimal_record)
+        data = MetadataSchemaV1().load(minimal_input_record)
 
 
-def test_metadata_schema(full_record, minimal_record):
+def test_embargo_date(minimal_input_record):
+    # Test embargo validation
+    minimal_input_record["embargo_date"] = "1000-01-01"
+    with pytest.raises(ValidationError):
+        data = MetadataSchemaV1().load(minimal_input_record)
+
+
+def test_metadata_schema(
+        full_input_record, full_record, minimal_input_record, minimal_record):
     """Test metadata schema."""
     # Test full attributes
-    data = MetadataSchemaV1().load(full_record)
+    data = MetadataSchemaV1().load(full_input_record)
     assert data == full_record
 
     # Test minimal attributes
-    data = MetadataSchemaV1().load(minimal_record)
+    data = MetadataSchemaV1().load(minimal_input_record)
     assert data == minimal_record
-
-    # Test embargo validation
-    minimal_record["embargo_date"] = "1000-01-01"
-    with pytest.raises(ValidationError):
-        data = MetadataSchemaV1().load(minimal_record)
