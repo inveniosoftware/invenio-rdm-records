@@ -154,7 +154,6 @@ def test_metadata_extensions_mapping(db, es, minimal_record):
 def test_publication_date_mapping(db, es, minimal_record):
     """Tests publication_date related fields are indexed properly.
 
-    - Tests prepare_publication_date.
     - Tests jsonschema validates correctly
     - Tests that retrieved record document is fine.
 
@@ -164,6 +163,7 @@ def test_publication_date_mapping(db, es, minimal_record):
     """
     # Interval
     minimal_record['publication_date'] = '1939/1945'
+    minimal_record['_publication_date_search'] = '1939-01-01'
     record = Record.create(minimal_record)
     db.session.commit()
     indexer = RecordIndexer()
@@ -177,15 +177,3 @@ def test_publication_date_mapping(db, es, minimal_record):
     source = es_doc['_source']
     assert source['publication_date'] == '1939/1945'
     assert source['_publication_date_search'] == '1939-01-01'
-
-    # Regular date
-    minimal_record['publication_date'] = '2020-02-01'
-    record = Record.create(minimal_record)
-
-    index_result = indexer.index(record)
-
-    _id = index_result['_id']
-    es_doc = es.get(index=_index, doc_type=_doc, id=_id)
-    source = es_doc['_source']
-    assert source['publication_date'] == '2020-02-01'
-    assert source['_publication_date_search'] == '2020-02-01'

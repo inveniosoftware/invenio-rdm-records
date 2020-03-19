@@ -7,19 +7,22 @@
 # it under the terms of the MIT License; see LICENSE file for more details.
 
 """JSON Schemas."""
+import time
+from datetime import date
 
 import arrow
+from edtf.parser.grammar import level0Expression
 from flask import current_app
 from flask_babelex import lazy_gettext as _
 from invenio_records_rest.schemas import Nested
 from invenio_records_rest.schemas.fields import DateString, \
     PersistentIdentifier, SanitizedUnicode
 from invenio_rest.serializer import BaseSchema
-from marshmallow import ValidationError, fields, pre_load, validate, \
+from marshmallow import ValidationError, fields, post_load, validate, \
     validates, validates_schema
 
 from ..models import ObjectType
-from .fields import EDTFLvl0DateString
+from .fields import EDTFLevel0DateString
 from .utils import api_link_for, validate_iso639_3
 
 
@@ -380,6 +383,35 @@ class AccessSchemaV1(BaseSchema):
     files_restricted = fields.Bool(required=True)
 
 
+def prepare_publication_date(record_dict):
+    """
+    Adds search and API compatible _publication_date_search field.
+
+    This date is the lowest year-month-day date from the interval or (partial)
+    date.
+
+    WHY:
+        - The regular publication_date is not in a format ES can use for
+          powerful date queries.
+        - Nor is it in a format serializers can use directly (more of a
+          convenience in their case).
+        - It supports our effort to align DB record and ES record.
+
+    NOTE: Keeping this function outside the class to make it easier to move
+          when dealing with deposit. By then, if only called here, it can
+          be merged in MetadataSchemaV1.
+
+    :param record_dict: loaded Record dict
+    """
+    parser = level0Expression("level0")
+    date_or_interval = parser.parseString(record_dict['publication_date'])[0]
+    # lower_strict() is available for EDTF Interval AND Date objects
+    date_tuple = date_or_interval.lower_strict()
+    record_dict['_publication_date_search'] = time.strftime(
+        "%Y-%m-%d", date_tuple
+    )
+
+
 class MetadataSchemaV1(BaseSchema):
     """Schema for the record metadata."""
 
@@ -407,8 +439,9 @@ class MetadataSchemaV1(BaseSchema):
     titles = fields.List(fields.Nested(TitleSchemaV1), required=True)
     resource_type = fields.Nested(ResourceTypeSchemaV1, required=True)
     recid = PersistentIdentifier()
-    # Not required since it defaults to today's date if not provided
-    publication_date = EDTFLvl0DateString()
+    publication_date = EDTFLevel0DateString(
+        missing=lambda: date.today().isoformat()
+    )
     subjects = fields.List(fields.Nested(SubjectSchemaV1))
     contributors = fields.List(Nested(ContributorSchemaV1))
     dates = fields.List(fields.Nested(DateSchemaV1))
@@ -453,6 +486,12 @@ class MetadataSchemaV1(BaseSchema):
                 _('Embargo date must be in the future.'),
                 field_names=['embargo_date']
             )
+
+    @post_load
+    def post_load_publication_date(self, obj, **kwargs):
+        """Add '_publication_date_search' field."""
+        prepare_publication_date(obj)
+        return obj
 
 
 class RecordSchemaV1(BaseSchema):
