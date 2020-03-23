@@ -1,0 +1,3 @@
+type,type_name,subtype,subtype_name,datacite_general,datacite_type,csl,openaire_resourceType,openaire_type,schema.org,notes
+publication, Publication, publication-book, Book, Text, Book, book, 0002, publication, https://schema.org/Book
+my_image, Image, my_photo, Photo, Image, Photo, graphic, 0025, dataset, https://schema.org/Photograph

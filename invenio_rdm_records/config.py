@@ -308,3 +308,29 @@ define the prefixes.
 See :class:`invenio_rdm_records.metadata_extensions.MetadataExtensions` for
 allowed types and how this configuration variable is used.
 """
+
+RDM_RECORDS_CUSTOM_VOCABULARIES = {}
+"""Paths to custom controlled vocabularies.
+
+Of the shape:
+
+.. code-block:: python
+
+    {
+        '<vocabulary1>': '<absolute path to CSV file containing it',
+        # ...
+        '<vocabularyN>': '<absolute path to CSV file containing it'
+        }
+    }
+
+For example:
+
+.. code-block:: python
+
+    {
+        'resource_types': os.path.join(
+            os.path.dirname(os.path.abspath(__file__)),
+            'my_resource_types.csv'
+        )
+    }
+"""

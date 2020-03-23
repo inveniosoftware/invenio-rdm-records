@@ -21,7 +21,7 @@ from invenio_rest.serializer import BaseSchema
 from marshmallow import ValidationError, fields, post_load, validate, \
     validates, validates_schema
 
-from ..models import ObjectType
+from ..vocabularies import Vocabulary
 from .fields import EDTFLevel0DateString
 from .utils import api_link_for, validate_iso639_3
 
@@ -157,16 +157,22 @@ class ResourceTypeSchemaV1(BaseSchema):
         required=True,
         error_messages=dict(
             required=_('Type must be specified.')
-        ),
+        )
     )
-    subtype = fields.Str()
+    subtype = fields.Str(
+        required=True,
+        error_messages=dict(
+            required=_('Subtype must be specified.')
+        )
+    )
 
     @validates_schema
     def validate_data(self, data, **kwargs):
         """Validate resource type."""
-        obj = ObjectType.get_by_dict(data)
-        if obj is None:
-            raise ValidationError(_('Invalid resource type.'))
+        vocabulary = Vocabulary.get_vocabulary('resource_types')
+        obj = vocabulary.get_by_dict(data)
+        if not obj:
+            raise ValidationError(vocabulary.get_invalid(data))
 
 
 class TitleSchemaV1(BaseSchema):
