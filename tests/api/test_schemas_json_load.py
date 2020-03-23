@@ -7,6 +7,8 @@
 # it under the terms of the MIT License; see LICENSE file for more details.
 
 """Tests for Invenio RDM Records JSON Schemas."""
+import os
+
 import pytest
 from invenio_records_rest.schemas.fields import DateString, SanitizedUnicode
 from marshmallow import ValidationError
@@ -19,6 +21,13 @@ from invenio_rdm_records.marshmallow.json import AffiliationSchemaV1, \
     RelatedIdentifierSchemaV1, ResourceTypeSchemaV1, SubjectSchemaV1, \
     TitleSchemaV1
 from invenio_rdm_records.metadata_extensions import MetadataExtensions
+from invenio_rdm_records.vocabularies import Vocabulary
+
+
+@pytest.fixture(scope='function')
+def vocabulary_clear(appctx):
+    """Clears the Vocabulary singleton and pushes an appctx."""
+    Vocabulary.clear()
 
 
 def test_community():
@@ -330,30 +339,30 @@ def test_internal_note():
         data = InternalNoteSchemaV1().load(invalid_timestamp)
 
 
-def test_resource_type():
+def test_resource_type(vocabulary_clear):
     """Test resource type."""
     valid_full = {
         "type": "image",
-        "subtype": "photo"
+        "subtype": "image-photo"
     }
     data = ResourceTypeSchemaV1().load(valid_full)
     assert data == valid_full
 
-    valid_type = {
+    invalid_no_subtype = {
         "type": "image",
     }
-    data = ResourceTypeSchemaV1().load(valid_type)
-    assert data == valid_type
+    with pytest.raises(ValidationError):
+        ResourceTypeSchemaV1().load(invalid_no_subtype)
 
     invalid_no_type = {
-        "subtype": "photo"
+        "subtype": "image-photo"
     }
     with pytest.raises(ValidationError):
         ResourceTypeSchemaV1().load(invalid_no_type)
 
     invalid_type = {
         "type": "invalid",
-        "subtype": "photo"
+        "subtype": "image-photo"
     }
     with pytest.raises(ValidationError):
         ResourceTypeSchemaV1().load(invalid_type)
@@ -364,6 +373,35 @@ def test_resource_type():
     }
     with pytest.raises(ValidationError):
         ResourceTypeSchemaV1().load(invalid_subtype)
+
+
+def test_custom_resource_type(config, vocabulary_clear):
+    """Test custom resource type."""
+    config['RDM_RECORDS_CUSTOM_VOCABULARIES'] = {
+        'resource_types': os.path.join(
+            os.path.dirname(os.path.abspath(__file__)),
+            'data',
+            'resource_types.csv'
+        )
+    }
+
+    # new resource type validates
+    valid_full = {
+        "type": "my_image",
+        "subtype": "my_photo"
+    }
+    data = ResourceTypeSchemaV1().load(valid_full)
+    assert data == valid_full
+
+    # old resource type does not validate
+    valid_full = {
+        "type": "image",
+        "subtype": "image-photo"
+    }
+    with pytest.raises(ValidationError) as error:
+        data = ResourceTypeSchemaV1().load(valid_full)
+
+    config['RDM_RECORDS_CUSTOM_VOCABULARIES'] = {}
 
 
 def test_title():
@@ -567,7 +605,7 @@ def test_date():
         data = DateSchemaV1().load(invalid_end_format)
 
 
-def test_related_identifiers():
+def test_related_identifiers(vocabulary_clear):
     """Test related identifiers schema."""
     valid_full = {
         "identifier": "10.5281/zenodo.9999988",
@@ -575,7 +613,7 @@ def test_related_identifiers():
         "relation_type": "Requires",
         "resource_type": {
             "type": "image",
-            "subtype": "photo"
+            "subtype": "image-photo"
         }
     }
 
@@ -596,7 +634,7 @@ def test_related_identifiers():
         "relation_type": "Requires",
         "resource_type": {
             "type": "image",
-            "subtype": "photo"
+            "subtype": "image-photo"
         }
     }
     with pytest.raises(ValidationError):
@@ -607,7 +645,7 @@ def test_related_identifiers():
         "relation_type": "Requires",
         "resource_type": {
             "type": "image",
-            "subtype": "photo"
+            "subtype": "image-photo"
         }
     }
     with pytest.raises(ValidationError):
@@ -619,7 +657,7 @@ def test_related_identifiers():
         "relation_type": "Requires",
         "resource_type": {
             "type": "image",
-            "subtype": "photo"
+            "subtype": "image-photo"
         }
     }
     with pytest.raises(ValidationError):
@@ -630,7 +668,7 @@ def test_related_identifiers():
         "scheme": "DOI",
         "resource_type": {
             "type": "image",
-            "subtype": "photo"
+            "subtype": "image-photo"
         }
     }
     with pytest.raises(ValidationError):
@@ -642,7 +680,7 @@ def test_related_identifiers():
         "relation_type": "INVALID",
         "resource_type": {
             "type": "image",
-            "subtype": "photo"
+            "subtype": "image-photo"
         }
     }
     with pytest.raises(ValidationError):
@@ -864,7 +902,8 @@ def test_extensions():
         data = ExtensionsSchema().load(invalid_number_in_sequence)
 
 
-def test_publication_date(minimal_input_record, minimal_record):
+def test_publication_date(
+        vocabulary_clear, minimal_input_record, minimal_record):
     def assert_publication_dates(data, expected):
         assert data['publication_date'] == expected_record['publication_date']
         assert (
@@ -915,7 +954,7 @@ def test_publication_date(minimal_input_record, minimal_record):
         data = MetadataSchemaV1().load(minimal_input_record)
 
 
-def test_embargo_date(minimal_input_record):
+def test_embargo_date(vocabulary_clear, minimal_input_record):
     # Test embargo validation
     minimal_input_record["embargo_date"] = "1000-01-01"
     with pytest.raises(ValidationError):
@@ -923,7 +962,8 @@ def test_embargo_date(minimal_input_record):
 
 
 def test_metadata_schema(
-        full_input_record, full_record, minimal_input_record, minimal_record):
+        vocabulary_clear, full_input_record, full_record,
+        minimal_input_record, minimal_record):
     """Test metadata schema."""
     # Test full attributes
     data = MetadataSchemaV1().load(full_input_record)

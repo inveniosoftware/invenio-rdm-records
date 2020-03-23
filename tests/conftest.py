@@ -87,7 +87,7 @@ def full_input_record():
         },
         "resource_type": {
             "type": "image",
-            "subtype": "photo"
+            "subtype": "image-photo"
         },
         "identifiers": {
             "DOI": "10.5281/zenodo.9999999",
@@ -155,7 +155,7 @@ def full_input_record():
             "relation_type": "Requires",
             "resource_type": {
                 "type": "image",
-                "subtype": "photo"
+                "subtype": "image-photo"
             }
         }],
         "version": "v0.0.1",
@@ -211,7 +211,7 @@ def minimal_input_record():
         "access_right": "open",
         "resource_type": {
             "type": "image",
-            "subtype": "photo"
+            "subtype": "image-photo"
         },
         # Technically not required
         "creators": [],
