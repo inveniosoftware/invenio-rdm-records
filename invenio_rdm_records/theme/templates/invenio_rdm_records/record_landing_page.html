@@ -23,7 +23,7 @@
       <span class="label label-info" title="Publication date">{{ record.publication_date|to_date|format_date(format='long') }}</span>
       <span class="label record-version"> | Version {{ record.version }}</span>
       <div class="pull-right">
-        <span class="label label-default">{{ record.resource_type.type if record.resource_type else "resource type" }}</span>
+        <span class="label label-default">{{ record.resource_type | display_resource_type }}</span>
         {% if record.access_right in ["embargoed", "closed"] %}
         <span class="label label-danger titlecase">
         {% elif record.access_right == "restricted" %}

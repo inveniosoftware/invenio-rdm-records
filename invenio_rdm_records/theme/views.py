@@ -25,6 +25,7 @@ from invenio_previewer.views import is_previewable
 from invenio_records_permissions.policies import get_record_permission_policy
 
 from ..utils import is_doi_locally_managed
+from ..vocabularies import Vocabulary
 
 blueprint = Blueprint(
     'invenio_rdm_records',
@@ -144,3 +145,18 @@ def doi_identifier(identifiers):
 def doi_locally_managed(pid):
     """Determine if DOI is managed locally."""
     return is_doi_locally_managed(pid)
+
+
+@blueprint.app_template_filter('display_resource_type')
+def display_resource_type(resource_type):
+    """Returns formatted resource type string."""
+    vocabulary = Vocabulary.get_vocabulary('resource_types')
+    entry = vocabulary.get_by_dict(resource_type)
+
+    # NOTE: translations could also be done via the CSV file directly
+    result = _(entry.get('type_name'))
+    if entry.get('subtype_name'):
+        subtype_name = _(entry.get('subtype_name'))
+        result += " / " + subtype_name
+
+    return result

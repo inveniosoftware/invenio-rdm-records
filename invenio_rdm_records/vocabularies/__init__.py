@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2019 CERN.
-# Copyright (C) 2019 Northwestern University.
+# Copyright (C) 2020 CERN.
+# Copyright (C) 2020 Northwestern University.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
@@ -64,6 +64,7 @@ class ResourceTypeVocabulary(object):
         with open(self.path) as f:
             reader = csv.DictReader(f, skipinitialspace=True)
             self.data = {
+                # NOTE: unfilled cells return '' (empty string)
                 (row['type'], row['subtype']): row
                 for row in hierarchized_rows(reader)
             }
@@ -71,7 +72,7 @@ class ResourceTypeVocabulary(object):
     def get_by_dict(self, type_subtype):
         """Returns a vocabulary entry as an OrderedDict."""
         return self.data.get(
-            (type_subtype['type'], type_subtype['subtype'])
+            (type_subtype['type'], type_subtype.get('subtype', ''))
         )
 
     def get_invalid(self, type_subtype):
@@ -84,7 +85,7 @@ class ResourceTypeVocabulary(object):
             choices = types
         else:
             _input = type_subtype.get('subtype')
-            choices = [k[1] for k in self.data.keys()]
+            choices = set([k[1] for k in self.data.keys()])
 
         return _(
             'Invalid resource type. {input} not one of {choices}'.format(
