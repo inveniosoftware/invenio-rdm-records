@@ -1,3 +1,32 @@
-type,type_name,subtype,subtype_name,datacite_general,datacite_type,csl,openaire_resourceType,openaire_type,schema.org,notes
-publication, Publication, publication-book, Book, Text, Book, book, 0002, publication, https://schema.org/Book
-image, Image, image-photo, Photo, Image, Photo, graphic, 0025, dataset, https://schema.org/Photograph
+type,type_name,subtype,subtype_name,datacite_general,datacite_type,csl,openaire_resourceType,openaire_type,schema.org
+publication,Publication,publication-book,Book,Text,Book,book,2,publication,https://schema.org/Book
+,,publication-section,Book section,Text,Book section,chapter,13,publication,https://schema.org/ScholarlyArticle
+,,publication-conferencepaper,Conference paper,Text,Conference paper,paper-conference,4,publication,https://schema.org/ScholarlyArticle
+,,publication-article,Journal article,Text,Journal article,article-journal,1,publication,https://schema.org/ScholarlyArticle
+,,publication-patent,Patent,Text,Patent,patent,19,publication,https://schema.org/CreativeWork
+,,publication-preprint,Preprint,Text,Preprint,article,16,publication,https://schema.org/ScholarlyArticle
+,,publication-report,Report,Text,Report,article,17,publication,https://schema.org/ScholarlyArticle
+,,publication-softwaredocumentation,Software documentation,Text,Software documentation,article,9,publication,https://schema.org/CreativeWork
+,,publication-thesis,Thesis,Text,Thesis,thesis,6,publication,https://schema.org/ScholarlyArticle
+,,publication-technicalnote,Technical note,Text,Technical note,article,9,publication,https://schema.org/ScholarlyArticle
+,,publication-workingpaper,Working paper,Text,Working paper,article,14,publication,https://schema.org/ScholarlyArticle
+,,publication-proposal,Proposal,Text,Proposal,article,36,publication,https://schema.org/CreativeWork
+,,publication-deliverable,Project deliverable,Text,Project deliverable,report,34,publication,https://schema.org/CreativeWork
+,,publication-milestone,Project milestone,Text,Project milestone,report,35,publication,https://schema.org/CreativeWork
+,,publication-other,Other,Text,Other,article,20,publication,https://schema.org/CreativeWork
+,,publication-datamanagementplan,Data management plan,Text,Data Management Plan,report,9,publication,https://schema.org/CreativeWork
+,,publication-annotationcollection,Annotation collection,Collection,,report,9,publication,https://schema.org/Collection
+,,publication-taxonomictreatment,Taxonomic treatment,Text,Taxonomic treatment,article,20,publication,https://schema.org/ScholarlyArticle
+image,Image,image-figure,Figure,Image,Figure,figure,25,dataset,https://schema.org/ImageObject
+,,image-plot,Plot,Image,Plot,figure,25,dataset,https://schema.org/ImageObject
+,,image-drawing,Drawing,Image,Drawing,graphic,25,dataset,https://schema.org/ImageObject
+,,image-diagram,Diagram,Image,Diagram,figure,25,dataset,https://schema.org/ImageObject
+,,image-photo,Photo,Image,Photo,graphic,25,dataset,https://schema.org/Photograph
+,,image-other,Other,Image,Other,graphic,25,dataset,https://schema.org/ImageObject
+poster,Poster,,,Text,Poster,graphic,4,publication,https://schema.org/CreativeWork
+presentation,Presentation,,,Text,Presentation,speech,4,publication,https://schema.org/PresentationDigitalDocument
+dataset,Dataset,,,Dataset,,dataset,21,dataset,https://schema.org/Dataset
+video,Video/Audio,,,Audiovisual,,motion_picture,33,dataset,https://schema.org/MediaObject
+software,Software,,,Software,,article,29,software,https://schema.org/SoftwareSourceCode
+lesson,Lesson,,,InteractiveResource,,speech,10,other,https://schema.org/CreativeWork
+other,Other,,,Other,,article,20,other,https://schema.org/CreativeWork

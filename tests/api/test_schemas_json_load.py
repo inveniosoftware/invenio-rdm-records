@@ -348,11 +348,17 @@ def test_resource_type(vocabulary_clear):
     data = ResourceTypeSchemaV1().load(valid_full)
     assert data == valid_full
 
-    invalid_no_subtype = {
-        "type": "image",
+    valid_no_subtype = {
+        "type": "poster"
+    }
+    data = ResourceTypeSchemaV1().load(valid_no_subtype)
+    assert data == valid_no_subtype
+
+    invalid_no_subtype_when_required = {
+        "type": "image"
     }
     with pytest.raises(ValidationError):
-        ResourceTypeSchemaV1().load(invalid_no_subtype)
+        ResourceTypeSchemaV1().load(invalid_no_subtype_when_required)
 
     invalid_no_type = {
         "subtype": "image-photo"

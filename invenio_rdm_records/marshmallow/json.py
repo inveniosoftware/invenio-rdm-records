@@ -159,12 +159,7 @@ class ResourceTypeSchemaV1(BaseSchema):
             required=_('Type must be specified.')
         )
     )
-    subtype = fields.Str(
-        required=True,
-        error_messages=dict(
-            required=_('Subtype must be specified.')
-        )
-    )
+    subtype = fields.Str()
 
     @validates_schema
     def validate_data(self, data, **kwargs):
