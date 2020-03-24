@@ -18,7 +18,9 @@ from os.path import splitext
 
 import arrow
 import idutils
+from arrow.parser import ParserError
 from flask import Blueprint, current_app, render_template
+from flask_babelex import format_date as babel_format_date
 from invenio_previewer.views import is_previewable
 from invenio_records_permissions.policies import get_record_permission_policy
 
@@ -49,7 +51,29 @@ def to_date(date_string):
         ```
     """
     assert isinstance(date_string, str)
-    return arrow.get(date_string).date()
+    date = ""
+    try:
+        date = arrow.get(date_string).date()
+    except ParserError:
+        date = date_string
+    return date
+
+
+@blueprint.app_template_filter('format_date')
+def format_date(date, format):
+    """Return a formatted Date string.
+
+    If the passed date is a string then it returns it
+
+    Typically used as follows:
+
+        ```jinja2
+        {{ date | format_date("long") }}
+        ```
+    """
+    if isinstance(date, str):
+        return date
+    return babel_format_date(date=date, format=format)
 
 
 @blueprint.app_template_filter()
@@ -108,12 +132,12 @@ def pid_url(identifier, scheme=None, url_scheme='https'):
 
 
 @blueprint.app_template_filter('doi_identifier')
-def doi_identifier(pids):
+def doi_identifier(identifiers):
     """Determine if DOI is managed locally."""
-    for id in pids:
+    for identifier in identifiers:
         # TODO: extract this "DOI" constant to a registry?
-        if id['scheme'] == "DOI":
-            return id['identifier']
+        if identifier == 'DOI':
+            return identifiers[identifier]
 
 
 @blueprint.app_template_filter('doi_locally_managed')

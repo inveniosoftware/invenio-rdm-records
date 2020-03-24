@@ -86,7 +86,7 @@
           <a href="{{ url_for('invenio_records_ui.recid', pid_value=record.pid) }}">{{ record.version }}</a>
           <small class="text-muted">{{ record.identifiers|doi_identifier }}</small>
       </td>
-      <td align="right"><small class="text-muted">{{ record.publication_date|to_date|dateformat(format='medium')}}</small></td>
+      <td align="right"><small class="text-muted">{{ record.publication_date|to_date|format_date(format='medium')}}</small></td>
     </tr>
   </tbody></table>
   <small>
