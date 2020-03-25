@@ -21,6 +21,16 @@ from invenio_pidstore import current_pidstore
 from invenio_records_files.api import Record
 from invenio_search import current_search
 
+from .vocabularies import Vocabulary
+
+
+def fake_resource_type():
+    vocabulary = Vocabulary.get_vocabulary('resource_types')
+    _type, subtype = random.choice(list(vocabulary.data.keys()))
+    return {
+        "type": _type,
+        "subtype": subtype
+    }
 
 def fake_edtf_level_0():
     """Generates a fake publication_date string."""
@@ -76,10 +86,7 @@ def create_fake_record():
             "primary": "Maincom",
             "secondary": ["Subcom One", "Subcom Two"]
         },
-        "resource_type": {
-            "type": "image",
-            "subtype": "photo"
-        },
+        "resource_type": fake_resource_type(),
         "identifiers": {
             "DOI": "10.9999/rdm.9999999",
             "arXiv": "9999.99999",
@@ -131,10 +138,7 @@ def create_fake_record():
             "identifier": "10.9999/rdm.9999988",
             "scheme": "DOI",
             "relation_type": "Requires",
-            "resource_type": {
-                "type": "image",
-                "subtype": "photo"
-            }
+            "resource_type": fake_resource_type()
         }],
         "version": "v0.0.1",
         "licenses": [{
