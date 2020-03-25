@@ -7,7 +7,3 @@
 # it under the terms of the MIT License; see LICENSE file for more details.
 
 """Invenio RDM Records."""
-
-from ..version import __version__
-
-__all__ = ('__version__', )
