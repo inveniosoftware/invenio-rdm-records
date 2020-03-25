@@ -21,6 +21,7 @@ import idutils
 from arrow.parser import ParserError
 from flask import Blueprint, current_app, render_template
 from flask_babelex import format_date as babel_format_date
+from flask_babelex import lazy_gettext as _
 from invenio_previewer.views import is_previewable
 from invenio_records_permissions.policies import get_record_permission_policy
 
@@ -147,12 +148,13 @@ def doi_locally_managed(pid):
     return is_doi_locally_managed(pid)
 
 
-@blueprint.app_template_filter('display_resource_type')
-def display_resource_type(resource_type):
-    """Returns formatted resource type string."""
-    vocabulary = Vocabulary.get_vocabulary('resource_types')
-    entry = vocabulary.get_by_dict(resource_type)
+@blueprint.app_template_filter('vocabulary_title')
+def vocabulary_title(dict_key, vocabulary_key):
+    """Returns formatted vocabulary-corresponding human-readable string."""
+    vocabulary = Vocabulary.get_vocabulary(vocabulary_key)
+    entry = vocabulary.get_by_dict(dict_key)
 
+    # TODO: Refactor to move logic into appropriate vocabulary class
     # NOTE: translations could also be done via the CSV file directly
     result = _(entry.get('type_name'))
     if entry.get('subtype_name'):
