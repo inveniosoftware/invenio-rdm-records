@@ -25,12 +25,14 @@ from .vocabularies import Vocabulary
 
 
 def fake_resource_type():
+    """Generates a fake resource_type."""
     vocabulary = Vocabulary.get_vocabulary('resource_types')
     _type, subtype = random.choice(list(vocabulary.data.keys()))
     return {
         "type": _type,
         "subtype": subtype
     }
+
 
 def fake_edtf_level_0():
     """Generates a fake publication_date string."""
