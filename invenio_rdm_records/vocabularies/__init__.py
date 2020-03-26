@@ -69,11 +69,23 @@ class ResourceTypeVocabulary(object):
                 for row in hierarchized_rows(reader)
             }
 
-    def get_by_dict(self, type_subtype):
+    def get_entry_by_dict(self, type_subtype):
         """Returns a vocabulary entry as an OrderedDict."""
         return self.data.get(
             (type_subtype['type'], type_subtype.get('subtype', ''))
         )
+
+    def get_title_by_dict(self, type_subtype):
+        """Returns a vocabulary entry title."""
+        entry = self.get_entry_by_dict(type_subtype)
+
+        # NOTE: translations could also be done via the CSV file directly
+        result = _(entry.get('type_name'))
+        if entry.get('subtype_name'):
+            subtype_name = _(entry.get('subtype_name'))
+            result += " / " + subtype_name
+
+        return result
 
     def get_invalid(self, type_subtype):
         """Returns the error message for the given dict key."""
