@@ -459,13 +459,13 @@ class MetadataSchemaV1(BaseSchema):
     def dump_extensions(self, obj):
         """Dumps the extensions value.
 
-        :params obj: content of the object's 'extensions' field
+        :params obj: invenio_records_files.api.Record instance
         """
         current_app_metadata_extensions = (
             current_app.extensions['invenio-rdm-records'].metadata_extensions
         )
         ExtensionSchema = current_app_metadata_extensions.to_schema()
-        return ExtensionSchema().dump(obj)
+        return ExtensionSchema().dump(obj.get('extensions', {}))
 
     def load_extensions(self, value):
         """Loads the 'extensions' field.

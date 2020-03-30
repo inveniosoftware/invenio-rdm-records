@@ -11,9 +11,10 @@
 import pytest
 from invenio_indexer.api import RecordIndexer
 from invenio_jsonschemas import current_jsonschemas
+# TODO: use from invenio_records_files.api import Record
 from invenio_records.api import Record
 from invenio_records_rest.schemas.fields import DateString, SanitizedUnicode
-from marshmallow.fields import Bool, Float, Integer, List
+from marshmallow.fields import Bool, Integer, List
 
 from invenio_rdm_records.metadata_extensions import add_es_metadata_extensions
 
