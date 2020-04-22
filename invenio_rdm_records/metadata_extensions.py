@@ -70,13 +70,10 @@ class MetadataExtensions(object):
     def _validate_marshmallow_type(self, field_cfg):
         """Make sure the Marshmallow type is one we support."""
         def validate_basic_marshmallow_type(_type):
-            allowed_types = [
+            allowed_types = (
                 Bool, DateString, Integer, SanitizedUnicode
-            ]
-            assert any([
-                isinstance(_type, allowed_type) for allowed_type
-                in allowed_types
-            ])
+            )
+            assert isinstance(_type, allowed_types)
 
         marshmallow_type = field_cfg['marshmallow']
         if isinstance(marshmallow_type, List):
