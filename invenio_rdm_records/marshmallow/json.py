@@ -20,6 +20,7 @@ from invenio_records_rest.schemas.fields import DateString, \
 from invenio_rest.serializer import BaseSchema
 from marshmallow import ValidationError, fields, post_load, validate, \
     validates, validates_schema
+from marshmallow.schema import SchemaMeta
 
 from ..vocabularies import Vocabulary
 from .fields import EDTFLevel0DateString
@@ -88,7 +89,7 @@ class CreatorSchemaV1(BaseSchema):
     given_name = SanitizedUnicode()
     family_name = SanitizedUnicode()
     identifiers = Identifiers()
-    affiliations = fields.List(fields.Nested(AffiliationSchemaV1))
+    affiliations = fields.List(Nested(AffiliationSchemaV1))
 
 
 class ContributorSchemaV1(CreatorSchemaV1):
@@ -342,7 +343,7 @@ class RelatedIdentifierSchemaV1(BaseSchema):
             choices=RELATIONS,
             error=_('Invalid relation type. {input} not one of {choices}.')
         ))
-    resource_type = fields.Nested(ResourceTypeSchemaV1)
+    resource_type = Nested(ResourceTypeSchemaV1)
 
 
 class ReferenceSchemaV1(BaseSchema):
@@ -372,7 +373,7 @@ class PointSchemaV1(BaseSchema):
 class LocationSchemaV1(BaseSchema):
     """Location schema."""
 
-    point = fields.Nested(PointSchemaV1)
+    point = Nested(PointSchemaV1)
     place = SanitizedUnicode(required=True)
     description = SanitizedUnicode()
 
@@ -421,39 +422,39 @@ class MetadataSchemaV1(BaseSchema):
         choices=['open', 'embargoed', 'restricted', 'closed'],
         error=_('Invalid access right. {input} not one of {choices}.')
     ))
-    _access = fields.Nested(AccessSchemaV1, required=True)
+    _access = Nested(AccessSchemaV1, required=True)
     _owners = fields.List(fields.Integer, validate=validate.Length(min=1),
                           required=True)
     _created_by = fields.Integer(required=True)
     _default_preview = SanitizedUnicode()
-    _files = fields.List(fields.Nested(FilesSchemaV1(), dump_only=True))
-    _internal_notes = fields.List(fields.Nested(InternalNoteSchemaV1))
+    _files = fields.List(Nested(FilesSchemaV1, dump_only=True))
+    _internal_notes = fields.List(Nested(InternalNoteSchemaV1))
     _embargo_date = DateString(data_key="embargo_date",
                                attribute="embargo_date")
-    _community = fields.Nested(CommunitySchemaV1, data_key="community",
-                               attribute="community")
+    _community = Nested(CommunitySchemaV1, data_key="community",
+                        attribute="community")
     _contact = SanitizedUnicode(data_key="contact", attribute="contact")
 
     # Metadata fields
     identifiers = Identifiers()
     creators = fields.List(Nested(CreatorSchemaV1), required=True)
-    titles = fields.List(fields.Nested(TitleSchemaV1), required=True)
-    resource_type = fields.Nested(ResourceTypeSchemaV1, required=True)
+    titles = fields.List(Nested(TitleSchemaV1), required=True)
+    resource_type = Nested(ResourceTypeSchemaV1, required=True)
     recid = PersistentIdentifier()
     publication_date = EDTFLevel0DateString(
         missing=lambda: date.today().isoformat()
     )
-    subjects = fields.List(fields.Nested(SubjectSchemaV1))
+    subjects = fields.List(Nested(SubjectSchemaV1))
     contributors = fields.List(Nested(ContributorSchemaV1))
-    dates = fields.List(fields.Nested(DateSchemaV1))
+    dates = fields.List(Nested(DateSchemaV1))
     language = SanitizedUnicode(validate=validate_iso639_3)
     related_identifiers = fields.List(
-        fields.Nested(RelatedIdentifierSchemaV1))
+        Nested(RelatedIdentifierSchemaV1))
     version = SanitizedUnicode()
-    licenses = fields.List(fields.Nested(LicenseSchemaV1))
-    descriptions = fields.List(fields.Nested(DescriptionSchemaV1))
-    locations = fields.List(fields.Nested(LocationSchemaV1))
-    references = fields.List(fields.Nested(ReferenceSchemaV1))
+    licenses = fields.List(Nested(LicenseSchemaV1))
+    descriptions = fields.List(Nested(DescriptionSchemaV1))
+    locations = fields.List(Nested(LocationSchemaV1))
+    references = fields.List(Nested(ReferenceSchemaV1))
     extensions = fields.Method('dump_extensions', 'load_extensions')
 
     def dump_extensions(self, obj):
@@ -499,10 +500,35 @@ class RecordSchemaV1(BaseSchema):
     """Record schema."""
 
     # TODO: Use `RecordMetadataSchemaJSONV1` to inject PID in PUT/PATCH/...
-    metadata = fields.Nested(MetadataSchemaV1)
+    metadata = Nested(MetadataSchemaV1)
     bucket = fields.Str()
     created = fields.Str(dump_only=True)
     revision = fields.Integer(dump_only=True)
     updated = fields.Str(dump_only=True)
     links = fields.Dict(dump_only=True)
     id = PersistentIdentifier(attribute='pid.pid_value')
+
+
+def dump_empty(schema_or_field):
+    """Return a full json-compatible dict with empty values.
+
+    NOTE: This is only needed because the frontend needs it.
+          This might change soon.
+    """
+    if isinstance(schema_or_field, (BaseSchema,)):
+        schema = schema_or_field
+        return {k: dump_empty(v) for (k, v) in schema.fields.items()}
+    if isinstance(schema_or_field, SchemaMeta):
+        # NOTE: Nested fields can pass a Schema class (SchemaMeta)
+        #       or a Schema instance.
+        #       Schema classes need to be instantiated to get .fields
+        schema = schema_or_field()
+        return {k: dump_empty(v) for (k, v) in schema.fields.items()}
+    if isinstance(schema_or_field, fields.List):
+        field = schema_or_field
+        return [dump_empty(field.inner)]
+    if isinstance(schema_or_field, Nested):
+        field = schema_or_field
+        return dump_empty(field.nested)
+
+    return None
