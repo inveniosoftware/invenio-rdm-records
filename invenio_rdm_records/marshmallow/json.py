@@ -165,7 +165,7 @@ class ResourceTypeSchemaV1(BaseSchema):
     @validates_schema
     def validate_data(self, data, **kwargs):
         """Validate resource type."""
-        vocabulary = Vocabulary.get_vocabulary('resource_types')
+        vocabulary = Vocabulary.get_vocabulary('resource_type')
         obj = vocabulary.get_entry_by_dict(data)
         if not obj:
             raise ValidationError(vocabulary.get_invalid(data))

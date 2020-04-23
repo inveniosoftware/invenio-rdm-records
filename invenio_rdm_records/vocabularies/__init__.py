@@ -106,13 +106,46 @@ class ResourceTypeVocabulary(object):
             )
         )
 
+    def dump_text_values(self):
+        """Returns json-compatible key-part: texts and the values.
+
+        The current shape is influenced by current frontend, but it's flexible
+        enough to withstand the test of time (new frontend would be able to
+        change it easily).
+
+        TODO: Be attentive to generalization for all vocabularies.
+        """
+        text_values = {'type': [], 'subtype': []}
+
+        for (_type, subtype), entry in self.data.items():
+            type_option = {
+                'text': _(entry.get('type_name')),
+                'value': _type
+            }
+
+            if type_option not in text_values['type']:
+                text_values['type'].append(type_option)
+
+            subtype_option = {
+                'parent-text': type_option['text'],
+                'parent-value': type_option['value'],
+                'text': _(entry.get('subtype_name')),
+                'value': subtype,
+            }
+
+            # These are not duplicated so we can just append
+            text_values['subtype'].append(subtype_option)
+
+        return text_values
+
 
 class Vocabulary(object):
     """Interface to vocabulary data."""
 
     this_dir = dirname(__file__)
     vocabularies = {
-        'resource_types': {
+        # NOTE: keys should be same as MetadataSchemaV1 fields
+        'resource_type': {
             'path': join(this_dir, 'resource_types.csv'),
             'class': ResourceTypeVocabulary,
             'object': None
@@ -144,3 +177,17 @@ class Vocabulary(object):
         """Clears loaded vocabularies."""
         for vocabulary in cls.vocabularies.values():
             vocabulary['object'] = None
+
+
+def dump_vocabularies(vocabulary_singleton):
+    """Returns a json-compatible dict of options for frontend.
+
+    The current shape is influenced by current frontend, but it's flexible
+    enough to withstand the test of time (new frontend would be able to
+    change it easily).
+    """
+    vocabularies = vocabulary_singleton.vocabularies
+    return {
+        field: vocabulary_singleton.get_vocabulary(field).dump_text_values()
+        for field in vocabularies
+    }
