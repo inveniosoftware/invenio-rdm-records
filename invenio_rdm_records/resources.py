@@ -9,8 +9,8 @@
 """DataCite-based data model for Invenio."""
 
 from invenio_indexer.api import RecordIndexer
-from invenio_resources.controllers import RecordController
-from invenio_resources.resources import RecordResource, RecordResourceConfig
+from invenio_resources.controller import RecordController
+from invenio_resources.resource import RecordResource, RecordResourceConfig
 from invenio_records_files.api import Record
 from invenio_records_permissions.api import RecordsSearch
 
