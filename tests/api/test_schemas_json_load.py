@@ -21,13 +21,6 @@ from invenio_rdm_records.marshmallow.json import AffiliationSchemaV1, \
     RelatedIdentifierSchemaV1, ResourceTypeSchemaV1, SubjectSchemaV1, \
     TitleSchemaV1
 from invenio_rdm_records.metadata_extensions import MetadataExtensions
-from invenio_rdm_records.vocabularies import Vocabulary
-
-
-@pytest.fixture(scope='function')
-def vocabulary_clear(appctx):
-    """Clears the Vocabulary singleton and pushes an appctx."""
-    Vocabulary.clear()
 
 
 def test_community():

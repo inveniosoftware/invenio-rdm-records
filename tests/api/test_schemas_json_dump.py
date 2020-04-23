@@ -1,3 +1,16 @@
+# -*- coding: utf-8 -*-
+#
+# Copyright (C) 2020 CERN.
+# Copyright (C) 2020 Northwestern University.
+#
+# Invenio-RDM-Records is free software; you can redistribute it and/or modify
+# it under the terms of the MIT License; see LICENSE file for more details.
+
+import os
+
+from flask_babelex import lazy_gettext as _
+
+from invenio_rdm_records.vocabularies import Vocabulary, dump_vocabularies
 from invenio_rdm_records.marshmallow.json import MetadataSchemaV1, dump_empty
 
 
@@ -135,3 +148,47 @@ def test_dumping_empty_record():
         'identifiers': None,
         'recid': None
     }
+
+
+def test_dump_vocabularies(config, vocabulary_clear):
+    prev_config = config.get('RDM_RECORDS_CUSTOM_VOCABULARIES')
+    config['RDM_RECORDS_CUSTOM_VOCABULARIES'] = {
+        'resource_type': os.path.join(
+            os.path.dirname(os.path.abspath(__file__)),
+            'data',
+            'resource_types.csv'
+        )
+    }
+
+    dumped_vocabularies = dump_vocabularies(Vocabulary)
+
+    assert dumped_vocabularies == {
+        'resource_type': {
+            'type': [
+                {
+                    'text': _('Publication'),
+                    'value': 'publication',
+                },
+                {
+                    'text': _('Image'),
+                    'value': 'my_image',
+                }
+            ],
+            'subtype': [
+                {
+                    'parent-text': _('Publication'),
+                    'parent-value': 'publication',
+                    'text': _('Book'),
+                    'value': 'publication-book',
+                },
+                {
+                    'parent-text': _('Image'),
+                    'parent-value': 'my_image',
+                    'text': _('Photo'),
+                    'value': 'my_photo',
+                }
+            ]
+        }
+    }
+
+    config['RDM_RECORDS_CUSTOM_VOCABULARIES'] = prev_config

@@ -15,8 +15,15 @@ fixtures are available.
 import pytest
 from invenio_app.factory import create_api
 
+from invenio_rdm_records.vocabularies import Vocabulary
 
 @pytest.fixture(scope='module')
 def create_app(instance_path):
     """Application factory fixture."""
     return create_api
+
+
+@pytest.fixture(scope='function')
+def vocabulary_clear(appctx):
+    """Clears the Vocabulary singleton and pushes an appctx."""
+    Vocabulary.clear()
