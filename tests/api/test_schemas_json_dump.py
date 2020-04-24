@@ -166,10 +166,12 @@ def test_dump_vocabularies(config, vocabulary_clear):
         'resource_type': {
             'type': [
                 {
+                    'icon': 'file alternate',
                     'text': _('Publication'),
                     'value': 'publication',
                 },
                 {
+                    'icon': 'chart bar outline',
                     'text': _('Image'),
                     'value': 'my_image',
                 }

@@ -10,7 +10,7 @@
 
 import csv
 import json
-from collections import defaultdict
+from collections import OrderedDict, defaultdict
 from os.path import dirname, join
 
 from flask import current_app
@@ -52,7 +52,7 @@ def hierarchized_rows(dict_reader):
 
 
 class ResourceTypeVocabulary(object):
-    """Class with data as dict with appropriate key for resource types."""
+    """Encapsulates all resource type vocabulary data."""
 
     def __init__(self, path):
         """Constructor."""
@@ -63,11 +63,12 @@ class ResourceTypeVocabulary(object):
         """Sets self.data with the filled rows."""
         with open(self.path) as f:
             reader = csv.DictReader(f, skipinitialspace=True)
-            self.data = {
+            # NOTE: We use an OrderedDict to preserve on file row order
+            self.data = OrderedDict([
                 # NOTE: unfilled cells return '' (empty string)
-                (row['type'], row['subtype']): row
+                ((row['type'], row['subtype']), row)
                 for row in hierarchized_rows(reader)
-            }
+            ])
 
     def get_entry_by_dict(self, type_subtype):
         """Returns a vocabulary entry as an OrderedDict."""
@@ -106,7 +107,7 @@ class ResourceTypeVocabulary(object):
             )
         )
 
-    def dump_text_values(self):
+    def dump_options(self):
         """Returns json-compatible key-part: texts and the values.
 
         The current shape is influenced by current frontend, but it's flexible
@@ -115,16 +116,17 @@ class ResourceTypeVocabulary(object):
 
         TODO: Be attentive to generalization for all vocabularies.
         """
-        text_values = {'type': [], 'subtype': []}
+        options = {'type': [], 'subtype': []}
 
         for (_type, subtype), entry in self.data.items():
             type_option = {
+                'icon': entry.get('type_icon'),
                 'text': _(entry.get('type_name')),
                 'value': _type
             }
 
-            if type_option not in text_values['type']:
-                text_values['type'].append(type_option)
+            if type_option not in options['type']:
+                options['type'].append(type_option)
 
             subtype_option = {
                 'parent-text': type_option['text'],
@@ -134,9 +136,9 @@ class ResourceTypeVocabulary(object):
             }
 
             # These are not duplicated so we can just append
-            text_values['subtype'].append(subtype_option)
+            options['subtype'].append(subtype_option)
 
-        return text_values
+        return options
 
 
 class Vocabulary(object):
@@ -188,6 +190,6 @@ def dump_vocabularies(vocabulary_singleton):
     """
     vocabularies = vocabulary_singleton.vocabularies
     return {
-        field: vocabulary_singleton.get_vocabulary(field).dump_text_values()
+        field: vocabulary_singleton.get_vocabulary(field).dump_options()
         for field in vocabularies
     }
