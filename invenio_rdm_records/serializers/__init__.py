@@ -8,28 +8,34 @@
 
 """Record serializers."""
 
-from invenio_resources.serializers.json import JSONSerializer
-from invenio_resources.serializers.response import (
-    record_responsify,
-    search_responsify,
-)
+# from invenio_resources.serializers.json import JSONSerializer
+# from invenio_resources.serializers.response import (
+#     record_responsify,
+#     search_responsify,
+# )
+
+#
+
+# # Serializers
+# # ===========
+# #: JSON serializer definition.
+# json_v1 = JSONSerializer(RecordSchemaV1, replace_refs=True)
+
+# # Records-REST serializers
+# # ========================
+# #: JSON record serializer for individual records.
+# json_v1_response = record_responsify(json_v1, "application/json")
+# #: JSON record serializer for search results.
+# json_v1_search = search_responsify(json_v1, "application/json")
+
+# __all__ = (
+#     "json_v1",
+#     "json_v1_response",
+#     "json_v1_search",
+# )
+
 
 from ..marshmallow import RecordSchemaV1
+from invenio_resources.serializers.record import JSONRercordSerializer
 
-# Serializers
-# ===========
-#: JSON serializer definition.
-json_v1 = JSONSerializer(RecordSchemaV1, replace_refs=True)
-
-# Records-REST serializers
-# ========================
-#: JSON record serializer for individual records.
-json_v1_response = record_responsify(json_v1, "application/json")
-#: JSON record serializer for search results.
-json_v1_search = search_responsify(json_v1, "application/json")
-
-__all__ = (
-    "json_v1",
-    "json_v1_response",
-    "json_v1_search",
-)
+json_v1 = JSONRercordSerializer(RecordSchemaV1)

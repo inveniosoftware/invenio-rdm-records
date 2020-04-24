@@ -10,7 +10,7 @@
 
 from invenio_indexer.api import RecordIndexer
 from invenio_resources.controller import RecordController
-from invenio_resources.resource import RecordResource, RecordResourceConfig
+from invenio_resources.resources import RecordResource, RecordResourceConfig
 from invenio_records_files.api import Record
 from invenio_records_permissions.api import RecordsSearch
 
@@ -20,16 +20,12 @@ record_config = RecordResourceConfig(
     'record_class="invenio_records_files.api.Record")'
     ":pid_value>",
     item_serializers={
-        "application/json": (
-            "invenio_rdm_records.serializers:json_v1_response"
-        ),
+        "application/json": "invenio_rdm_records.serializers:json_v1",
     },
     list_serializers={
-        "application/json": ("invenio_rdm_records.serializers:json_v1_search"),
+        "application/json": "invenio_rdm_records.serializers:json_v1"
     },
-    item_loaders={
-        "application/json": ("invenio_rdm_records.loaders:json_v1"),
-    },
+    item_loaders={"application/json": "invenio_rdm_records.loaders:json_v1"},
 )
 
 record_controller = RecordController(

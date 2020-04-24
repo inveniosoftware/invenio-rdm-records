@@ -38,7 +38,9 @@ class InvenioRDMRecords(object):
         )
 
         # Register required resources
-        record_resource.register_resource(app)
+        app.register_blueprint(
+            record_resource.as_blueprint(name="invenio_resource_record")
+        )
 
         app.extensions["invenio-rdm-records"] = self
 
