@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2019 CERN.
-# Copyright (C) 2019 Northwestern University.
+# Copyright (C) 2019-2020 CERN.
+# Copyright (C) 2019-2020 Northwestern University.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
@@ -377,7 +377,7 @@ def test_resource_type(vocabulary_clear):
 def test_custom_resource_type(config, vocabulary_clear):
     """Test custom resource type."""
     config['RDM_RECORDS_CUSTOM_VOCABULARIES'] = {
-        'resource_types': os.path.join(
+        'resource_type': os.path.join(
             os.path.dirname(os.path.abspath(__file__)),
             'data',
             'resource_types.csv'
@@ -397,7 +397,7 @@ def test_custom_resource_type(config, vocabulary_clear):
         "type": "image",
         "subtype": "image-photo"
     }
-    with pytest.raises(ValidationError) as error:
+    with pytest.raises(ValidationError):
         data = ResourceTypeSchemaV1().load(valid_full)
 
     config['RDM_RECORDS_CUSTOM_VOCABULARIES'] = {}
