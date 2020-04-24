@@ -108,11 +108,11 @@ class ResourceTypeVocabulary(object):
         )
 
     def dump_options(self):
-        """Returns json-compatible key-part: texts and the values.
+        """Returns json-compatible dict of options for type and subtype.
 
         The current shape is influenced by current frontend, but it's flexible
         enough to withstand the test of time (new frontend would be able to
-        change it easily).
+        adapt it to their needs easily).
 
         TODO: Be attentive to generalization for all vocabularies.
         """
@@ -128,15 +128,17 @@ class ResourceTypeVocabulary(object):
             if type_option not in options['type']:
                 options['type'].append(type_option)
 
-            subtype_option = {
-                'parent-text': type_option['text'],
-                'parent-value': type_option['value'],
-                'text': _(entry.get('subtype_name')),
-                'value': subtype,
-            }
+            # NOTE: There isn't always a subtype
+            if subtype:
+                subtype_option = {
+                    'parent-text': type_option['text'],
+                    'parent-value': type_option['value'],
+                    'text': _(entry.get('subtype_name')),
+                    'value': subtype,
+                }
 
-            # These are not duplicated so we can just append
-            options['subtype'].append(subtype_option)
+                # These are not duplicated so we can just append
+                options['subtype'].append(subtype_option)
 
         return options
 

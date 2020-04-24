@@ -26,7 +26,7 @@ from .vocabularies import Vocabulary
 
 def fake_resource_type():
     """Generates a fake resource_type."""
-    vocabulary = Vocabulary.get_vocabulary('resource_types')
+    vocabulary = Vocabulary.get_vocabulary('resource_type')
     _type, subtype = random.choice(list(vocabulary.data.keys()))
     return {
         "type": _type,

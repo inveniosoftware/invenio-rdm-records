@@ -10,8 +10,8 @@ import os
 
 from flask_babelex import lazy_gettext as _
 
-from invenio_rdm_records.vocabularies import Vocabulary, dump_vocabularies
 from invenio_rdm_records.marshmallow.json import MetadataSchemaV1, dump_empty
+from invenio_rdm_records.vocabularies import Vocabulary, dump_vocabularies
 
 
 def test_dumping_empty_record():
@@ -174,6 +174,11 @@ def test_dump_vocabularies(config, vocabulary_clear):
                     'icon': 'chart bar outline',
                     'text': _('Image'),
                     'value': 'my_image',
+                },
+                {
+                    'icon': 'code',
+                    'text': _('Software'),
+                    'value': 'software',
                 }
             ],
             'subtype': [
