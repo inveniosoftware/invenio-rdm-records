@@ -106,6 +106,71 @@
             }
           }
         },
+        "_communities": {
+          "type": "object",
+          "properties": {
+            "accepted": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "keyword"
+                },
+                "comid": {
+                  "type": "keyword"
+                },
+                "title": {
+                  "type": "text"
+                },
+                "request_id": {
+                  "type": "keyword"
+                },
+                "created_by": {
+                  "type": "integer"
+                }
+              }
+            },
+            "pending": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "keyword"
+                },
+                "comid": {
+                  "type": "keyword"
+                },
+                "title": {
+                  "type": "text"
+                },
+                "request_id": {
+                  "type": "keyword"
+                },
+                "created_by": {
+                  "type": "integer"
+                }
+              }
+            },
+            "rejected": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "keyword"
+                },
+                "comid": {
+                  "type": "keyword"
+                },
+                "title": {
+                  "type": "text"
+                },
+                "request_id": {
+                  "type": "keyword"
+                },
+                "created_by": {
+                  "type": "integer"
+                }
+              }
+            }
+          }
+        },
         "access_right": {
           "type": "keyword"
         },
