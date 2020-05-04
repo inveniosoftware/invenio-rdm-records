@@ -68,6 +68,7 @@ install_requires = [
     'Flask-BabelEx>=0.9.4',
     'idutils>=1.1.3',
     'invenio-assets>=1.2.0,<1.3.0',
+    'invenio-communities>=2.0.1,<3.0.0',
     'invenio-formatter[badges]>=1.1.0a1,<2.0.0',
     'invenio-jsonschemas>=1.1.0,<2.0.0',
     'invenio-pidstore>=1.2.0,<2.0.0',

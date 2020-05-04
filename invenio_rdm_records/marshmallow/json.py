@@ -14,8 +14,9 @@ import arrow
 from edtf.parser.grammar import level0Expression
 from flask import current_app
 from flask_babelex import lazy_gettext as _
+from invenio_communities.records.api import Record, RecordCommunitiesCollection
 from invenio_records_rest.schemas import Nested
-from invenio_records_rest.schemas.fields import DateString, \
+from invenio_records_rest.schemas.fields import DateString, GenMethod, \
     PersistentIdentifier, SanitizedUnicode
 from invenio_rest.serializer import BaseSchema
 from marshmallow import ValidationError, fields, post_load, validate, \
@@ -397,6 +398,39 @@ def prepare_publication_date(record_dict):
     )
 
 
+class CommunitiesRequestV1(BaseSchema):
+    """Community Request Schema."""
+
+    id = SanitizedUnicode(required=True)
+    comid = SanitizedUnicode(required=True)
+    title = SanitizedUnicode(required=True)
+    request_id = SanitizedUnicode()
+    created_by = fields.Integer()
+    links = fields.Method('get_links')
+
+    def get_links(self, obj):
+        """Get links."""
+        res = {
+            'self': api_link_for(
+                'community_inclusion_request',
+                id=obj['comid'], request_id=obj['request_id']),
+            'community': api_link_for('community', id=obj['comid']),
+        }
+        for action in ('accept', 'reject', 'comment'):
+            res[action] = api_link_for(
+                'community_inclusion_request_action',
+                id=obj['comid'], request_id=obj['request_id'], action=action)
+        return res
+
+
+class CommunityStatusV1(BaseSchema):
+    """Status of a community request."""
+
+    pending = fields.List(Nested(CommunitiesRequestV1))
+    accepted = fields.List(Nested(CommunitiesRequestV1))
+    rejected = fields.List(Nested(CommunitiesRequestV1))
+
+
 class MetadataSchemaV1(BaseSchema):
     """Schema for the record metadata."""
 
@@ -410,8 +444,7 @@ class MetadataSchemaV1(BaseSchema):
     _internal_notes = fields.List(Nested(InternalNoteSchemaV1))
     _embargo_date = DateString(data_key="embargo_date",
                                attribute="embargo_date")
-    _community = Nested(CommunitySchemaV1, data_key="community",
-                        attribute="community")
+    _communities = GenMethod('dump_communities')
     _contact = SanitizedUnicode(data_key="contact", attribute="contact")
 
     # Metadata fields
@@ -459,6 +492,18 @@ class MetadataSchemaV1(BaseSchema):
         ExtensionSchema = current_app_metadata_extensions.to_schema()
 
         return ExtensionSchema().load(value)
+
+    def dump_communities(self, obj):
+        """Dumps communities related to the record."""
+        # NOTE: If the field is already there, it's coming from ES
+        if '_communities' in obj:
+            return CommunityStatusV1().dump(obj['_communities'])
+
+        record = self.context.get('record')
+        if record:
+            _record = Record(record, model=record.model)
+            return CommunityStatusV1().dump(
+                RecordCommunitiesCollection(_record).as_dict())
 
     @validates('_embargo_date')
     def validate_embargo_date(self, value):

@@ -41,6 +41,10 @@ URLS = {
     'thumbnail': '{base}{path}',
     'thumbs': '{base}/record/{id}/thumb{size}',
     'community': '{base}/communities/{id}',
+    'community_inclusion_request':
+        '{base}/communities/{id}/requests/inclusion/{request_id}',
+    'community_inclusion_request_action':
+        '{base}/communities/{id}/requests/inclusion/{request_id}/{action}',
 }
 
 

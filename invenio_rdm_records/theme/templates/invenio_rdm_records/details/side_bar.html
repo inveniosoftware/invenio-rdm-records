@@ -121,17 +121,13 @@
   </small>
 </dd>
 
-{%- set communities = record.community %}
 <dt class="record-info-title">{{ _('Communities')}}:</dt>
 <hr class="thin-line">
 </hr>
 <dd>
-  <ul class="list-unstyled">
-    <li><a>{{ communities.primary }}</a></li>
-    {%- for community in communities.secondary%}
-    <li><a href="/coming-soon">{{ community }}</a></li>
-    {%- endfor %}
-  </ul>
+<div id="communities-management"
+  data-record='{{ record | tojson }}'
+  data-communities='{{ record_communities(record).as_dict() | tojson }}'></div>
 </dd>
 
 <dt class="record-info-title">{{ _('Export')}}:</dt>
