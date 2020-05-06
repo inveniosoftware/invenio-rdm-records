@@ -155,17 +155,6 @@
     "contact": {
       "type": "string"
     },
-    "community": {
-      "type": "object",
-      "properties": {
-        "primary": {"type": "string"},
-        "secondary": {
-          "type": "array",
-          "minItems": 0,
-          "items":{"type": "string"}
-        }
-      }
-    },
     "resource_type": {
       "type": "object",
       "additionalProperties": false,

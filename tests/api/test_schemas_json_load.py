@@ -15,34 +15,12 @@ from marshmallow import ValidationError
 from marshmallow.fields import Bool, Integer, List
 
 from invenio_rdm_records.marshmallow.json import AffiliationSchemaV1, \
-    CommunitySchemaV1, ContributorSchemaV1, CreatorSchemaV1, DateSchemaV1, \
-    DescriptionSchemaV1, InternalNoteSchemaV1, LicenseSchemaV1, \
-    LocationSchemaV1, MetadataSchemaV1, PointSchemaV1, ReferenceSchemaV1, \
+    ContributorSchemaV1, CreatorSchemaV1, DateSchemaV1, DescriptionSchemaV1, \
+    InternalNoteSchemaV1, LicenseSchemaV1, LocationSchemaV1, \
+    MetadataSchemaV1, PointSchemaV1, ReferenceSchemaV1, \
     RelatedIdentifierSchemaV1, ResourceTypeSchemaV1, SubjectSchemaV1, \
     TitleSchemaV1
 from invenio_rdm_records.metadata_extensions import MetadataExtensions
-
-
-def test_community():
-    """Test Community Schema."""
-    valid_full = {
-        "primary": "Primary Community",
-        "secondary": ["Secondary Community"]
-    }
-    data = CommunitySchemaV1().load(valid_full)
-    assert data == valid_full
-
-    valid_primary = {
-        "primary": "Primary Community"
-    }
-    data = CommunitySchemaV1().load(valid_primary)
-    assert data == valid_primary
-
-    invalid_no_primary = {
-        "secondary": ["Secondary Community"]
-    }
-    with pytest.raises(ValidationError):
-        CommunitySchemaV1().load(invalid_no_primary)
 
 
 def test_affiliations():

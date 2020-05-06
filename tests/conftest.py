@@ -81,10 +81,6 @@ def full_input_record():
         "access_right": "open",
         "embargo_date": "2022-12-31",
         "contact": "info@inveniosoftware.org",
-        "community": {
-            "primary": "Maincom",
-            "secondary": ["Subcom One", "Subcom Two"]
-        },
         "resource_type": {
             "type": "image",
             "subtype": "image-photo"
