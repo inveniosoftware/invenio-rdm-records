@@ -20,7 +20,7 @@ def test_dumping_empty_record():
     assert empty_record == {
         '_access': {'files_restricted': None, 'metadata_restricted': None},
         '_default_preview': None,
-        '_community': {'primary': None, 'secondary': [None]},
+        '_communities': None,
         '_contact': None,
         '_created_by': None,
         '_embargo_date': None,

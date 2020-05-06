@@ -84,10 +84,6 @@ def create_fake_record():
         "access_right": "open",
         "embargo_date": fake.iso8601(tzinfo=None, end_datetime=None),
         "contact": "info@inveniosoftware.org",
-        "community": {
-            "primary": "Maincom",
-            "secondary": ["Subcom One", "Subcom Two"]
-        },
         "resource_type": fake_resource_type(),
         "identifiers": {
             "DOI": "10.9999/rdm.9999999",

@@ -95,17 +95,6 @@
         "_contact": {
           "type": "keyword"
         },
-        "_community": {
-          "type": "object",
-          "properties": {
-            "primary": {
-              "type": "text"
-            },
-            "secondary": {
-              "type": "text"
-            }
-          }
-        },
         "_communities": {
           "type": "object",
           "properties": {
