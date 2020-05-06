@@ -8,9 +8,12 @@
 
 """Test Elasticsearch Mapping."""
 
+import uuid
+
 import pytest
 from invenio_indexer.api import RecordIndexer
 from invenio_jsonschemas import current_jsonschemas
+from invenio_pidstore import current_pidstore
 # TODO: use from invenio_records_files.api import Record
 from invenio_records.api import Record
 from invenio_records_rest.schemas.fields import DateString, SanitizedUnicode
@@ -104,7 +107,9 @@ def test_metadata_extensions_mapping(db, es, minimal_record):
         }
     }
     minimal_record.update(data)
-    record = Record.create(minimal_record)
+    record_id = uuid.uuid4()
+    current_pidstore.minters['recid_v2'](record_id, minimal_record)
+    record = Record.create(minimal_record, id_=record_id)
     db.session.commit()
     indexer = RecordIndexer()
 
@@ -165,7 +170,10 @@ def test_publication_date_mapping(db, es, minimal_record):
     # Interval
     minimal_record['publication_date'] = '1939/1945'
     minimal_record['_publication_date_search'] = '1939-01-01'
-    record = Record.create(minimal_record)
+
+    record_id = uuid.uuid4()
+    current_pidstore.minters['recid_v2'](record_id, minimal_record)
+    record = Record.create(minimal_record, id_=record_id)
     db.session.commit()
     indexer = RecordIndexer()
 
