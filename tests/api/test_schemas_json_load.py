@@ -174,7 +174,7 @@ def test_creator():
         data = CreatorSchemaV1().load(invalid_type)
 
 
-def test_contributor():
+def test_contributor(vocabulary_clear):
     """Test contributor schema."""
     valid_full = {
         "name": "Julio Cesar",
@@ -292,6 +292,60 @@ def test_contributor():
         data = ContributorSchemaV1().load(invalid_role)
 
 
+def test_custom_contributor_role(config, vocabulary_clear):
+    """Test custom contributor role."""
+    prev_config = config['RDM_RECORDS_CUSTOM_VOCABULARIES']
+    config['RDM_RECORDS_CUSTOM_VOCABULARIES'] = {
+        'contributors.role': {
+            'path': os.path.join(
+                os.path.dirname(os.path.abspath(__file__)),
+                'data',
+                'contributor_role.csv'
+            )
+        }
+    }
+
+    # new contributor role validates
+    librarian_role = {
+        "name": "Julio Cesar",
+        "type": "Personal",
+        "given_name": "Julio",
+        "family_name": "Cesar",
+        "identifiers": {
+            "Orcid": "9999-9999-9999-9999",
+        },
+        "affiliations": [{
+            "name": "Entity One",
+            "identifier": "entity-one",
+            "scheme": "entity-id-scheme"
+        }],
+        "role": "Librarian"
+    }
+    data = ContributorSchemaV1().load(librarian_role)
+    assert data == librarian_role
+
+    # old contributor role does not validate
+    contactperson_role = {
+        "name": "Julio Cesar",
+        "type": "Personal",
+        "given_name": "Julio",
+        "family_name": "Cesar",
+        "identifiers": {
+            "Orcid": "9999-9999-9999-9999",
+        },
+        "affiliations": [{
+            "name": "Entity One",
+            "identifier": "entity-one",
+            "scheme": "entity-id-scheme"
+        }],
+        "role": "ContactPerson"
+    }
+    with pytest.raises(ValidationError):
+        data = ContributorSchemaV1().load(contactperson_role)
+
+    config['RDM_RECORDS_CUSTOM_VOCABULARIES'] = prev_config
+
+
 def test_internal_note():
     """Test internal note schema."""
     valid_full = {
@@ -377,11 +431,13 @@ def test_resource_type(vocabulary_clear):
 def test_custom_resource_type(config, vocabulary_clear):
     """Test custom resource type."""
     config['RDM_RECORDS_CUSTOM_VOCABULARIES'] = {
-        'resource_type': os.path.join(
-            os.path.dirname(os.path.abspath(__file__)),
-            'data',
-            'resource_types.csv'
-        )
+        'resource_type': {
+            'path': os.path.join(
+                os.path.dirname(os.path.abspath(__file__)),
+                'data',
+                'resource_types.csv'
+            )
+        }
     }
 
     # new resource type validates

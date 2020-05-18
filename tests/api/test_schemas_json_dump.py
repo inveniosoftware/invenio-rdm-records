@@ -153,16 +153,39 @@ def test_dumping_empty_record():
 def test_dump_vocabularies(config, vocabulary_clear):
     prev_config = config.get('RDM_RECORDS_CUSTOM_VOCABULARIES')
     config['RDM_RECORDS_CUSTOM_VOCABULARIES'] = {
-        'resource_type': os.path.join(
-            os.path.dirname(os.path.abspath(__file__)),
-            'data',
-            'resource_types.csv'
-        )
+        'resource_type': {
+            'path': os.path.join(
+                os.path.dirname(os.path.abspath(__file__)),
+                'data',
+                'resource_types.csv'
+            )
+        },
+        'contributors.role': {
+            'path': os.path.join(
+                os.path.dirname(os.path.abspath(__file__)),
+                'data',
+                'contributor_role.csv'
+            )
+        }
     }
 
     dumped_vocabularies = dump_vocabularies(Vocabulary)
 
     assert dumped_vocabularies == {
+        'contributors': {
+            'role': [
+                {
+                    'icon': '',
+                    'value': 'Librarian',
+                    'text': _('Librarian')
+                },
+                {
+                    'icon': '',
+                    'value': 'DataCollector',
+                    'text': _('Data Collector')
+                }
+            ]
+        },
         'resource_type': {
             'type': [
                 {

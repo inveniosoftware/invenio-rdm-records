@@ -95,34 +95,15 @@ class CreatorSchemaV1(BaseSchema):
 class ContributorSchemaV1(CreatorSchemaV1):
     """Contributor schema."""
 
-    ROLES = [
-        "ContactPerson",
-        "DataCollector",
-        "DataCurator",
-        "DataManager",
-        "Distributor",
-        "Editor",
-        "HostingInstitution",
-        "Producer",
-        "ProjectLeader",
-        "ProjectManager",
-        "ProjectMember",
-        "RegistrationAgency",
-        "RegistrationAuthority",
-        "RelatedPerson",
-        "Researcher",
-        "ResearchGroup",
-        "RightsHolder",
-        "Sponsor",
-        "Supervisor",
-        "WorkPackageLeader",
-        "Other"
-    ]
+    role = SanitizedUnicode(required=True)
 
-    role = SanitizedUnicode(required=True, validate=validate.OneOf(
-                choices=ROLES,
-                error=_('Invalid role. {input} not one of {choices}.')
-            ))
+    @validates_schema
+    def validate_data(self, data, **kwargs):
+        """Validate role."""
+        vocabulary = Vocabulary.get_vocabulary('contributors.role')
+        obj = vocabulary.get_entry_by_dict(data)
+        if not obj:
+            raise ValidationError(vocabulary.get_invalid(data))
 
 
 class FilesSchemaV1(BaseSchema):
