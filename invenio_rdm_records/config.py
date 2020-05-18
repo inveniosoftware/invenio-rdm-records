@@ -317,9 +317,12 @@ Of the shape:
 .. code-block:: python
 
     {
-        '<vocabulary1>': '<absolute path to CSV file containing it',
+        '<dotted>.<path>.<to field1>': {
+            'path': '<absolute path to CSV file containing it>'
+        },
         # ...
-        '<vocabularyN>': '<absolute path to CSV file containing it'
+        '<dotted>.<path>.<to fieldN>': {
+            'path': '<absolute path to CSV file containing it>'
         }
     }
 
@@ -328,9 +331,17 @@ For example:
 .. code-block:: python
 
     {
-        'resource_types': os.path.join(
-            os.path.dirname(os.path.abspath(__file__)),
-            'my_resource_types.csv'
-        )
+        'resource_type': {
+            'path': os.path.join(
+                os.path.dirname(os.path.abspath(__file__)),
+                'my_resource_types.csv'
+            )
+        },
+        'contributors.role': {
+            'path': os.path.join(
+                os.path.dirname(os.path.abspath(__file__)),
+                'my_resource_types.csv'
+            )
+        }
     }
 """
