@@ -11,7 +11,7 @@ import os
 from flask_babelex import lazy_gettext as _
 
 from invenio_rdm_records.marshmallow.json import MetadataSchemaV1, dump_empty
-from invenio_rdm_records.vocabularies import Vocabularies, dump_vocabularies
+from invenio_rdm_records.vocabularies import Vocabularies
 
 
 def test_dumping_empty_record():
@@ -169,7 +169,7 @@ def test_dump_vocabularies(config, vocabulary_clear):
         }
     }
 
-    dumped_vocabularies = dump_vocabularies(Vocabularies)
+    dumped_vocabularies = Vocabularies.dump()
 
     assert dumped_vocabularies == {
         'contributors': {

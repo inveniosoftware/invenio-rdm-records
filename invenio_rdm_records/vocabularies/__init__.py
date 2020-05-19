@@ -42,7 +42,6 @@ class Vocabularies(object):
 
         :param key: string of dotted subkeys for Vocabulary object.
         """
-
         vocabulary_dict = cls.vocabularies.get(key)
 
         if not vocabulary_dict:
@@ -85,23 +84,22 @@ class Vocabularies(object):
 
         _clear(cls.vocabularies)
 
+    @classmethod
+    def dump(cls):
+        """Returns a json-compatible dict of options for frontend.
 
-def dump_vocabularies(vocabulary_singleton):
-    """Returns a json-compatible dict of options for frontend.
+        The current shape is influenced by current frontend, but it's flexible
+        enough to withstand the test of time (new frontend would be able to
+        change it easily).
+        """
+        options = {}
+        for key in cls.vocabularies:
+            result = options
+            for i, dotkey in enumerate(key.split('.')):
+                if i == (len(key.split('.')) - 1):
+                    result[dotkey] = cls.get_vocabulary(key).dump_options()
+                else:
+                    result.setdefault(dotkey, {})
+                    result = result[dotkey]
 
-    The current shape is influenced by current frontend, but it's flexible
-    enough to withstand the test of time (new frontend would be able to
-    change it easily).
-    """
-    options = {}
-    # sign to move this to the class
-    for key in vocabulary_singleton.vocabularies:
-        result = options
-        for i, dotkey in enumerate(key.split('.')):
-            if i == (len(key.split('.')) - 1):
-                result[dotkey] = vocabulary_singleton.get_vocabulary(key).dump_options()  # noqa
-            else:
-                result.setdefault(dotkey, {})
-                result = result[dotkey]
-
-    return options
+        return options
