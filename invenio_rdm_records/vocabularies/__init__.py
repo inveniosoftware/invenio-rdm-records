@@ -15,6 +15,7 @@ from flask_babelex import lazy_gettext as _
 
 from .contributor_role import ContributorRoleVocabulary
 from .resource_type import ResourceTypeVocabulary
+from .title_type import TitleTypeVocabulary
 from .utils import hierarchized_rows
 
 
@@ -32,6 +33,11 @@ class Vocabularies(object):
         'contributors.role': {
             'path': join(this_dir, 'contributor_role.csv'),
             'class': ContributorRoleVocabulary,
+            'object': None
+        },
+        'titles.type': {
+            'path': join(this_dir, 'title_type.csv'),
+            'class': TitleTypeVocabulary,
             'object': None
         }
     }

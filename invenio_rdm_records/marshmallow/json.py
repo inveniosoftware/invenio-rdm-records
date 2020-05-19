@@ -155,20 +155,17 @@ class ResourceTypeSchemaV1(BaseSchema):
 class TitleSchemaV1(BaseSchema):
     """Schema for the additional title."""
 
-    TITLE_TYPES = [
-        'MainTitle',
-        "AlternativeTitle",
-        "Subtitle",
-        "TranslatedTitle",
-        "Other"
-    ]
-
     title = SanitizedUnicode(required=True, validate=validate.Length(min=3))
-    type = SanitizedUnicode(required=True, validate=validate.OneOf(
-            choices=TITLE_TYPES,
-            error=_('Invalid title type. {input} not one of {choices}.')
-        ), default='MainTitle')
+    type = SanitizedUnicode(required=True, default='MainTitle')
     lang = SanitizedUnicode(validate=validate_iso639_3)
+
+    @validates_schema
+    def validate_data(self, data, **kwargs):
+        """Validate type."""
+        vocabulary = Vocabularies.get_vocabulary('titles.type')
+        obj = vocabulary.get_entry_by_dict(data)
+        if not obj:
+            raise ValidationError(vocabulary.get_invalid(data))
 
 
 class DescriptionSchemaV1(BaseSchema):

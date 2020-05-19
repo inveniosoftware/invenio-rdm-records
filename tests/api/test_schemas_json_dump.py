@@ -151,6 +151,7 @@ def test_dumping_empty_record():
 
 
 def test_dump_vocabularies(config, vocabulary_clear):
+    # TODO: Break up into a test for each vocabulary
     prev_config = config.get('RDM_RECORDS_CUSTOM_VOCABULARIES')
     config['RDM_RECORDS_CUSTOM_VOCABULARIES'] = {
         'resource_type': {
@@ -166,7 +167,15 @@ def test_dump_vocabularies(config, vocabulary_clear):
                 'data',
                 'contributor_role.csv'
             )
+        },
+        'titles.type': {
+            'path': os.path.join(
+                os.path.dirname(os.path.abspath(__file__)),
+                'data',
+                'title_type.csv'
+            )
         }
+
     }
 
     dumped_vocabularies = Vocabularies.dump()
@@ -218,7 +227,16 @@ def test_dump_vocabularies(config, vocabulary_clear):
                     'value': 'my_photo',
                 }
             ]
-        }
+        },
+        'titles': {
+            'type': [
+                {
+                    'icon': '',
+                    'value': 'AlternateTitle',
+                    'text': _('Alternate Title')
+                }
+            ]
+        },
     }
 
     config['RDM_RECORDS_CUSTOM_VOCABULARIES'] = prev_config
