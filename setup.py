@@ -16,20 +16,13 @@ readme = open('README.rst').read()
 history = open('CHANGES.rst').read()
 
 tests_require = [
-    'check-manifest>=0.25',
-    'coverage>=4.0',
-    'isort>=4.3.3',
-    'pydocstyle>=2.0.0',
-    'pytest-cov>=2.5.1',
-    'pytest-pep8>=1.0.6',
-    'pytest-invenio>=1.2.0',
-    'pytest>=4.0.0,<5.3.0',
-    'invenio_app>=1.2.3,<1.3.0'
+    'pytest-invenio>=1.3.2,<2.0.0',
+    'invenio-app>=1.3.0,<2.0.0'
 ]
 
 # Should follow inveniosoftware/invenio versions
-invenio_db_version = '>=1.0.4,<1.1.0'
-invenio_search_version = '>=1.2.0,<1.3.0'
+invenio_db_version = '>=1.0.4,<2.0.0'
+invenio_search_version = '>=1.2.0,<2.0.0'
 
 extras_require = {
     'docs': [
@@ -74,15 +67,15 @@ install_requires = [
     'Faker>=2.0.3',
     'Flask-BabelEx>=0.9.4',
     'idutils>=1.1.3',
-    'invenio-formatter[badges]>=1.0.2,<1.1.0',
-    'invenio-jsonschemas>=1.0.1,<1.1.0',
-    'invenio-pidstore>=1.1.0,<1.3.0',
-    'invenio-records-rest>=1.6.4,<1.7.0',
-    'invenio-records>=1.3.0,<1.4.0',
-    'invenio-records-files>=1.2.1,<1.3.0',
-    'invenio-records-permissions>=0.7.0',
-    'invenio-records-ui>=1.0.1,<1.2.0',
-    'invenio-previewer>=1.1.0,<1.2.0',
+    'invenio-formatter[badges]>=1.1.0a1,<2.0.0',
+    'invenio-jsonschemas>=1.1.0,<2.0.0',
+    'invenio-pidstore>=1.2.0,<2.0.0',
+    'invenio-records-rest>=1.7.1,<2.0.0',
+    'invenio-records>=1.3.1,<2.0.0',
+    'invenio-records-files>=1.2.1,<2.0.0',
+    'invenio-records-permissions>=0.7.0,<2.0.0',
+    'invenio-records-ui>=1.2.0a1,<2.0.0',
+    'invenio-previewer>=1.2.1,<2.0.0',
     'marshmallow>=3.3.0,<4.0.0',
     'pycountry>=18.12.8',
 ]
