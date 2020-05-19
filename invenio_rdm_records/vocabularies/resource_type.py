@@ -8,38 +8,26 @@
 
 """Resource Type Vocabulary."""
 
-import csv
-from collections import OrderedDict
-
 from flask_babelex import lazy_gettext as _
 
-from .utils import hierarchized_rows
+from .vocabulary import Vocabulary
 
 
-class ResourceTypeVocabulary(object):
+class ResourceTypeVocabulary(Vocabulary):
     """Encapsulates all resource type vocabulary data."""
 
-    def __init__(self, path):
-        """Constructor."""
-        self.path = path
-        self._load_data()
+    @property
+    def vocabulary_name(self):
+        """Returns the human readable name for this vocabulary."""
+        return 'resource type'
 
-    def _load_data(self):
-        """Sets self.data with the filled rows."""
-        with open(self.path) as f:
-            reader = csv.DictReader(f, skipinitialspace=True)
-            # NOTE: We use an OrderedDict to preserve on file row order
-            self.data = OrderedDict([
-                # NOTE: unfilled cells return '' (empty string)
-                ((row['type'], row['subtype']), row)
-                for row in hierarchized_rows(reader)
-            ])
+    def key(self, row):
+        """Returns the primary key of the row.
 
-    def get_entry_by_dict(self, type_subtype):
-        """Returns a vocabulary entry as an OrderedDict."""
-        return self.data.get(
-            (type_subtype['type'], type_subtype.get('subtype', ''))
-        )
+        row: dict-like
+        returns: serializable
+        """
+        return (row.get('type'), row.get('subtype', ''))
 
     def get_title_by_dict(self, type_subtype):
         """Returns a vocabulary entry title."""
@@ -66,7 +54,8 @@ class ResourceTypeVocabulary(object):
             choices = set([k[1] for k in self.data.keys()])
 
         return _(
-            'Invalid resource type. {input} not one of {choices}'.format(
+            'Invalid {vocabulary_name}. {input} not one of {choices}'.format(
+                vocabulary_name=self.vocabulary_name,
                 input=_input,
                 choices=choices
             )
