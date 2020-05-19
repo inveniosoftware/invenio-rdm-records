@@ -25,7 +25,7 @@ from invenio_previewer.views import is_previewable
 from invenio_records_permissions.policies import get_record_permission_policy
 
 from ..utils import is_doi_locally_managed
-from ..vocabularies import Vocabulary
+from ..vocabularies import Vocabularies
 
 blueprint = Blueprint(
     'invenio_rdm_records',
@@ -150,5 +150,5 @@ def doi_locally_managed(pid):
 @blueprint.app_template_filter('vocabulary_title')
 def vocabulary_title(dict_key, vocabulary_key):
     """Returns formatted vocabulary-corresponding human-readable string."""
-    vocabulary = Vocabulary.get_vocabulary(vocabulary_key)
+    vocabulary = Vocabularies.get_vocabulary(vocabulary_key)
     return vocabulary.get_title_by_dict(dict_key)
