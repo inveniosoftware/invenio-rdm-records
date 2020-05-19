@@ -22,7 +22,7 @@ from marshmallow import ValidationError, fields, post_load, validate, \
     validates, validates_schema
 from marshmallow.schema import SchemaMeta
 
-from ..vocabularies import Vocabulary
+from ..vocabularies import Vocabularies
 from .fields import EDTFLevel0DateString
 from .utils import api_link_for, validate_iso639_3
 
@@ -100,7 +100,7 @@ class ContributorSchemaV1(CreatorSchemaV1):
     @validates_schema
     def validate_data(self, data, **kwargs):
         """Validate role."""
-        vocabulary = Vocabulary.get_vocabulary('contributors.role')
+        vocabulary = Vocabularies.get_vocabulary('contributors.role')
         obj = vocabulary.get_entry_by_dict(data)
         if not obj:
             raise ValidationError(vocabulary.get_invalid(data))
@@ -146,7 +146,7 @@ class ResourceTypeSchemaV1(BaseSchema):
     @validates_schema
     def validate_data(self, data, **kwargs):
         """Validate resource type."""
-        vocabulary = Vocabulary.get_vocabulary('resource_type')
+        vocabulary = Vocabularies.get_vocabulary('resource_type')
         obj = vocabulary.get_entry_by_dict(data)
         if not obj:
             raise ValidationError(vocabulary.get_invalid(data))

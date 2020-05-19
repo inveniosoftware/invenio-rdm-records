@@ -18,7 +18,7 @@ from .resource_type import ResourceTypeVocabulary
 from .utils import hierarchized_rows
 
 
-class Vocabulary(object):
+class Vocabularies(object):
     """Interface to vocabulary data."""
 
     this_dir = dirname(__file__)
@@ -73,7 +73,7 @@ class Vocabulary(object):
     def clear(cls):
         """Clears loaded vocabularies."""
         def _clear(vocabulary_dict):
-            """Clear out Vocabulary object."""
+            """Clear out Vocabulary objects."""
             if (isinstance(vocabulary_dict, dict) and
                     'object' in vocabulary_dict):
                 vocabulary_dict['object'] = None

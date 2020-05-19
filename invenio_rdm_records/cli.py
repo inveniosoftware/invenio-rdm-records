@@ -21,12 +21,12 @@ from invenio_pidstore import current_pidstore
 from invenio_records_files.api import Record
 from invenio_search import current_search
 
-from .vocabularies import Vocabulary
+from .vocabularies import Vocabularies
 
 
 def fake_resource_type():
     """Generates a fake resource_type."""
-    vocabulary = Vocabulary.get_vocabulary('resource_type')
+    vocabulary = Vocabularies.get_vocabulary('resource_type')
     _type, subtype = random.choice(list(vocabulary.data.keys()))
     return {
         "type": _type,
