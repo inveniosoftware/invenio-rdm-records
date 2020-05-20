@@ -396,10 +396,6 @@ class MetadataSchemaV1(BaseSchema):
     """Schema for the record metadata."""
 
     # Administrative fields
-    access_right = SanitizedUnicode(required=True, validate=validate.OneOf(
-        choices=['open', 'embargoed', 'restricted', 'closed'],
-        error=_('Invalid access right. {input} not one of {choices}.')
-    ))
     _access = Nested(AccessSchemaV1, required=True)
     _owners = fields.List(fields.Integer, validate=validate.Length(min=1),
                           required=True)
@@ -414,6 +410,7 @@ class MetadataSchemaV1(BaseSchema):
     _contact = SanitizedUnicode(data_key="contact", attribute="contact")
 
     # Metadata fields
+    access_right = SanitizedUnicode(required=True)
     identifiers = Identifiers()
     creators = fields.List(Nested(CreatorSchemaV1), required=True)
     titles = fields.List(Nested(TitleSchemaV1), required=True)
@@ -466,6 +463,15 @@ class MetadataSchemaV1(BaseSchema):
                 _('Embargo date must be in the future.'),
                 field_names=['embargo_date']
             )
+
+    @validates('access_right')
+    def validate_access_right(self, value):
+        """Validate that access right is one of the allowed ones."""
+        access_right_key = {'access_right': value}
+        vocabulary = Vocabularies.get_vocabulary('access_right')
+        obj = vocabulary.get_entry_by_dict(access_right_key)
+        if not obj:
+            raise ValidationError(vocabulary.get_invalid(access_right_key))
 
     @post_load
     def post_load_publication_date(self, obj, **kwargs):
