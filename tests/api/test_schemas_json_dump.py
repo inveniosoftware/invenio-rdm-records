@@ -150,8 +150,7 @@ def test_dumping_empty_record():
     }
 
 
-def test_dump_vocabularies(config, vocabulary_clear):
-    # TODO: Break up into a test for each vocabulary
+def test_dump_resource_type(config, vocabulary_clear):
     prev_config = config.get('RDM_RECORDS_CUSTOM_VOCABULARIES')
     config['RDM_RECORDS_CUSTOM_VOCABULARIES'] = {
         'resource_type': {
@@ -161,6 +160,50 @@ def test_dump_vocabularies(config, vocabulary_clear):
                 'resource_types.csv'
             )
         },
+    }
+
+    dumped_vocabularies = Vocabularies.dump()
+
+    assert dumped_vocabularies['resource_type'] == {
+        'type': [
+            {
+                'icon': 'file alternate',
+                'text': _('Publication'),
+                'value': 'publication',
+            },
+            {
+                'icon': 'chart bar outline',
+                'text': _('Image'),
+                'value': 'my_image',
+            },
+            {
+                'icon': 'code',
+                'text': _('Software'),
+                'value': 'software',
+            }
+        ],
+        'subtype': [
+            {
+                'parent-text': _('Publication'),
+                'parent-value': 'publication',
+                'text': _('Book'),
+                'value': 'publication-book',
+            },
+            {
+                'parent-text': _('Image'),
+                'parent-value': 'my_image',
+                'text': _('Photo'),
+                'value': 'my_photo',
+            }
+        ]
+    }
+
+    config['RDM_RECORDS_CUSTOM_VOCABULARIES'] = prev_config
+
+
+def test_dump_contributors_role(config, vocabulary_clear):
+    prev_config = config.get('RDM_RECORDS_CUSTOM_VOCABULARIES')
+    config['RDM_RECORDS_CUSTOM_VOCABULARIES'] = {
         'contributors.role': {
             'path': os.path.join(
                 os.path.dirname(os.path.abspath(__file__)),
@@ -168,6 +211,29 @@ def test_dump_vocabularies(config, vocabulary_clear):
                 'contributor_role.csv'
             )
         },
+    }
+
+    dumped_vocabularies = Vocabularies.dump()
+
+    assert dumped_vocabularies['contributors']['role'] == [
+        {
+            'icon': '',
+            'value': 'Librarian',
+            'text': _('Librarian')
+        },
+        {
+            'icon': '',
+            'value': 'DataCollector',
+            'text': _('Data Collector')
+        }
+    ]
+
+    config['RDM_RECORDS_CUSTOM_VOCABULARIES'] = prev_config
+
+
+def test_dump_titles_type(config, vocabulary_clear):
+    prev_config = config.get('RDM_RECORDS_CUSTOM_VOCABULARIES')
+    config['RDM_RECORDS_CUSTOM_VOCABULARIES'] = {
         'titles.type': {
             'path': os.path.join(
                 os.path.dirname(os.path.abspath(__file__)),
@@ -175,68 +241,41 @@ def test_dump_vocabularies(config, vocabulary_clear):
                 'title_type.csv'
             )
         }
-
     }
 
     dumped_vocabularies = Vocabularies.dump()
 
-    assert dumped_vocabularies == {
-        'contributors': {
-            'role': [
-                {
-                    'icon': '',
-                    'value': 'Librarian',
-                    'text': _('Librarian')
-                },
-                {
-                    'icon': '',
-                    'value': 'DataCollector',
-                    'text': _('Data Collector')
-                }
-            ]
-        },
-        'resource_type': {
-            'type': [
-                {
-                    'icon': 'file alternate',
-                    'text': _('Publication'),
-                    'value': 'publication',
-                },
-                {
-                    'icon': 'chart bar outline',
-                    'text': _('Image'),
-                    'value': 'my_image',
-                },
-                {
-                    'icon': 'code',
-                    'text': _('Software'),
-                    'value': 'software',
-                }
-            ],
-            'subtype': [
-                {
-                    'parent-text': _('Publication'),
-                    'parent-value': 'publication',
-                    'text': _('Book'),
-                    'value': 'publication-book',
-                },
-                {
-                    'parent-text': _('Image'),
-                    'parent-value': 'my_image',
-                    'text': _('Photo'),
-                    'value': 'my_photo',
-                }
-            ]
-        },
-        'titles': {
-            'type': [
-                {
-                    'icon': '',
-                    'value': 'AlternateTitle',
-                    'text': _('Alternate Title')
-                }
-            ]
-        },
+    assert dumped_vocabularies['titles']['type'] == [
+        {
+            'icon': '',
+            'value': 'AlternateTitle',
+            'text': _('Alternate Title')
+        }
+    ]
+
+    config['RDM_RECORDS_CUSTOM_VOCABULARIES'] = prev_config
+
+
+def test_dump_access_right(config, vocabulary_clear):
+    prev_config = config.get('RDM_RECORDS_CUSTOM_VOCABULARIES')
+    config['RDM_RECORDS_CUSTOM_VOCABULARIES'] = {
+        'access_right': {
+            'path': os.path.join(
+                os.path.dirname(os.path.abspath(__file__)),
+                'data',
+                'access_right.csv'
+            )
+        }
     }
+
+    dumped_vocabularies = Vocabularies.dump()
+
+    assert dumped_vocabularies['access_right'] == [
+        {
+            'icon': '',
+            'value': 'open',
+            'text': _('Open Access')
+        },
+    ]
 
     config['RDM_RECORDS_CUSTOM_VOCABULARIES'] = prev_config
