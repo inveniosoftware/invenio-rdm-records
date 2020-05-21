@@ -272,7 +272,7 @@ def test_dump_access_right(config, vocabulary_clear):
 
     assert dumped_vocabularies['access_right'] == [
         {
-            'icon': '',
+            'icon': 'lock open',
             'value': 'open',
             'text': _('Open Access')
         },

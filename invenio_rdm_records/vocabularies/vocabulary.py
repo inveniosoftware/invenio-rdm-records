@@ -89,7 +89,7 @@ class Vocabulary(object):
         """
         options = [
             {
-                'icon': '',
+                'icon': entry.get('icon', ''),
                 'text': _(entry.get(self.readable_key)),
                 'value': key
             }
