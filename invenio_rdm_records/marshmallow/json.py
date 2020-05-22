@@ -27,6 +27,20 @@ from .fields import EDTFLevel0DateString
 from .utils import api_link_for, validate_iso639_3
 
 
+def validate_entry(vocabulary_key, entry_key):
+    """Validates if an entry is valid for a vocabulary.
+
+    :param vocabulary_key: str, Vocabulary key
+    :param entry_key: str, specific entry key
+
+    raises marshmallow.ValidationError if entry is not valid.
+    """
+    vocabulary = Vocabularies.get_vocabulary(vocabulary_key)
+    obj = vocabulary.get_entry_by_dict(entry_key)
+    if not obj:
+        raise ValidationError(vocabulary.get_invalid(entry_key))
+
+
 class CommunitySchemaV1(BaseSchema):
     """Communities to which the record belongs to."""
 
@@ -100,10 +114,7 @@ class ContributorSchemaV1(CreatorSchemaV1):
     @validates_schema
     def validate_data(self, data, **kwargs):
         """Validate role."""
-        vocabulary = Vocabularies.get_vocabulary('contributors.role')
-        obj = vocabulary.get_entry_by_dict(data)
-        if not obj:
-            raise ValidationError(vocabulary.get_invalid(data))
+        validate_entry('contributors.role', data)
 
 
 class FilesSchemaV1(BaseSchema):
@@ -146,10 +157,7 @@ class ResourceTypeSchemaV1(BaseSchema):
     @validates_schema
     def validate_data(self, data, **kwargs):
         """Validate resource type."""
-        vocabulary = Vocabularies.get_vocabulary('resource_type')
-        obj = vocabulary.get_entry_by_dict(data)
-        if not obj:
-            raise ValidationError(vocabulary.get_invalid(data))
+        validate_entry('resource_type', data)
 
 
 class TitleSchemaV1(BaseSchema):
@@ -162,10 +170,7 @@ class TitleSchemaV1(BaseSchema):
     @validates_schema
     def validate_data(self, data, **kwargs):
         """Validate type."""
-        vocabulary = Vocabularies.get_vocabulary('titles.type')
-        obj = vocabulary.get_entry_by_dict(data)
-        if not obj:
-            raise ValidationError(vocabulary.get_invalid(data))
+        validate_entry('titles.type', data)
 
 
 class DescriptionSchemaV1(BaseSchema):
@@ -468,10 +473,7 @@ class MetadataSchemaV1(BaseSchema):
     def validate_access_right(self, value):
         """Validate that access right is one of the allowed ones."""
         access_right_key = {'access_right': value}
-        vocabulary = Vocabularies.get_vocabulary('access_right')
-        obj = vocabulary.get_entry_by_dict(access_right_key)
-        if not obj:
-            raise ValidationError(vocabulary.get_invalid(access_right_key))
+        validate_entry('access_right', access_right_key)
 
     @post_load
     def post_load_publication_date(self, obj, **kwargs):

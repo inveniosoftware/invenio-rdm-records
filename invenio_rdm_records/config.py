@@ -340,7 +340,7 @@ For example:
         'contributors.role': {
             'path': os.path.join(
                 os.path.dirname(os.path.abspath(__file__)),
-                'my_resource_types.csv'
+                'my_contributor_roles.csv'
             )
         }
     }
