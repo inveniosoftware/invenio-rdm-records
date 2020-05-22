@@ -9,7 +9,7 @@
 {%- extends config.BASE_TEMPLATE %}
 
 {%- block css %}
-{{ webpack['invenio-app-rdm-theme.css'] }}
+{{ super() }}
 {{ webpack['invenio-rdm-records-theme.css'] }}
 {%- endblock %}
 
@@ -20,7 +20,8 @@
   <div class="row">
     <div class="col-sm-8 col-md-8 col-left">
       {%- block record_body %}
-      <span class="label label-info" title="Publication date">{{ record.publication_date|to_date|format_date(format='long') }}</span>
+      <span class="label label-info"
+        title="Publication date">{{ record.publication_date|to_date|format_date(format='long') }}</span>
       <span class="label record-version"> | Version {{ record.version }}</span>
       <div class="pull-right">
         <span class="label label-default">{{ record.resource_type | vocabulary_title('resource_type') }}</span>
