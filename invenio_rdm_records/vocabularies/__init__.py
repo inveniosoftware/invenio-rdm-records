@@ -17,7 +17,6 @@ from .access_right import AccessRightVocabulary
 from .contributor_role import ContributorRoleVocabulary
 from .resource_type import ResourceTypeVocabulary
 from .title_type import TitleTypeVocabulary
-from .utils import hierarchized_rows
 
 
 class Vocabularies(object):
@@ -84,18 +83,8 @@ class Vocabularies(object):
     @classmethod
     def clear(cls):
         """Clears loaded vocabularies."""
-        def _clear(vocabulary_dict):
-            """Clear out Vocabulary objects."""
-            if (isinstance(vocabulary_dict, dict) and
-                    'object' in vocabulary_dict):
-                vocabulary_dict['object'] = None
-            elif isinstance(vocabulary_dict, dict):
-                for value in vocabulary_dict.values():
-                    _clear(value)
-            else:
-                pass
-
-        _clear(cls.vocabularies)
+        for value in cls.vocabularies.values():
+            value['object'] = None
 
     @classmethod
     def dump(cls):
