@@ -9,7 +9,12 @@ import $ from "jquery";
 
 $("#files")
   .find(".preview-link")
-  .on("click", function(event) {
+  .on("click", function (event) {
     $("#preview").show();
     $("#preview-iframe").attr("src", $(event.target).data("url"));
   });
+
+
+$(document).ready(function () {
+  $('.ui.accordion').accordion();
+});
