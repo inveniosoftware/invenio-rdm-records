@@ -107,7 +107,7 @@
           "required": ["user", "note", "timestamp"]
       }
     },
-    "_recid": {
+    "recid": {
       "description": "Invenio record identifier (alphanumeric).",
       "type": "string"
     },
