@@ -18,13 +18,11 @@ theme = WebpackThemeBundle(
         'semantic-ui': dict(
             entry={
                 'invenio-rdm-records-theme':
-                    './scss/invenio_rdm_records/theme.scss',
+                    './less/invenio_rdm_records/theme.less',
                 'invenio-rdm-records-js':
                     './js/invenio_rdm_records/rdmrecords.js',
             },
-            dependencies={
-                'jquery': '3.1.0'
-            }
+            dependencies={}
         )
     }
 )

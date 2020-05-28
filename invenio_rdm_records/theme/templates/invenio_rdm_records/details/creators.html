@@ -7,6 +7,7 @@
 #}
 
 {%- from "invenio_rdm_records/details/list_entities.html" import list_entities %}
-
-<b><h4>Creators:</h4></b>
+<div class="entities-title">
+  <b><h3>Creators:</h3></b>
+</div>
 {{ list_entities(record.creators) }}

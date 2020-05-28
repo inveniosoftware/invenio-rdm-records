@@ -17,11 +17,12 @@
     </a>
     {# TODO: Other potential main identifiers #}
     {%- elif entity.type == "Organizational" %}
-    <i class="fa fa-users" aria-hidden="true"></i>
+    <i class="user icon"></i>
     {%- else %}
-    <i class="fa fa-user" aria-hidden="true"></i>
+    <i class="user icon"></i>
     {%- endif %}
 
-    <span class="text-muted" {% if entity.affiliations and entity.affiliations[0] %}data-toggle="tooltip" title="{{entity.affiliations[0].name}}"{% endif %}>{{entity.name}}</span>
+    <span class="text-muted" {% if entity.affiliations and entity.affiliations[0] %}data-toggle="tooltip"
+      title="{{entity.affiliations[0].name}}" {% endif %}>{{entity.name}}</span>
   {% endfor %}
 {%- endmacro %}

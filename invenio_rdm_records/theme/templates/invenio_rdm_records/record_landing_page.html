@@ -11,29 +11,35 @@
 {%- block css %}
 {{ super() }}
 {{ webpack['invenio-rdm-records-theme.css'] }}
-{%- endblock %}
+{%- endblock css %}
 
 {%- from "invenio_rdm_records/macros/files.html" import file_list_box, preview_file_box %}
 
 {%- block page_body %}
 <div class="container record-detail">
-  <div class="ui grid">
-    <div class="eleven wide column">
+  <div class="ui centered grid">
+    <div class="ten wide column">
       {%- block record_body %}
-      <span class="label label-info"
-        title="Publication date">{{ record.publication_date|to_date|format_date(format='long') }}</span>
-      <span class="label record-version"> | Version {{ record.version }}</span>
-      <div class="pull-right">
-        <span class="label label-default">{{ record.resource_type | vocabulary_title('resource_type') }}</span>
-        {% if record.access_right in ["embargoed", "closed"] %}
-        <span class="label label-danger titlecase">
-        {% elif record.access_right == "restricted" %}
-        <span class="label label-warning titlecase">
-        {% else %}
-        <span class="label label-success titlecase">
-        {% endif %}
-        {{ record.access_right }} Access
-        </span>
+      <div class="ui grid">
+        <div class="two column row">
+          <div class="left floated left aligned column">
+            <span class="ui label teal"
+              title="Publication date">{{ record.publication_date|to_date|format_date(format='long') }}</span>
+            <span class="label record-version"> | Version {{ record.version }}</span>
+          </div>
+          <div class="right floated right aligned column">
+            <span class="ui label grey">{{ record.resource_type | vocabulary_title('resource_type') }}</span>
+            {% if record.access_right in ["embargoed", "closed"] %}
+            <span class="ui label red">
+            {% elif record.access_right == "restricted" %}
+            <span class="ui label yellow">
+            {% else %}
+            <span class="ui label green">
+            {% endif %}
+              {{ record.access_right }} Access
+            </span>
+          </div>
+        </div>
       </div>
 
       <h1>{{ record.titles[0].title }}</h1>
@@ -43,11 +49,13 @@
       {%- endif %}
 
       <div class="ui grid">
-        <div class="twelve wide column">
-          {%- include "invenio_rdm_records/details/contact.html" %}
-        </div>
-        <div class="four wide column pull-right">
-          {%- include "invenio_rdm_records/details/doi.html" %}
+        <div class="four column row">
+          <div class="left floated column">
+            {%- include "invenio_rdm_records/details/contact.html" %}
+          </div>
+          <div class="right floated column">
+            {%- include "invenio_rdm_records/details/doi.html" %}
+          </div>
         </div>
       </div>
       {%- include "invenio_rdm_records/details/citation.html" %}
@@ -71,15 +79,15 @@
     </div>
 
     {# Side bar #}
-    <div class="five wide column">
-      <div class="well">
+    <div class="four wide column">
+      <div class="ui segment">
         {%- include "invenio_rdm_records/details/side_bar.html" %}
       </div>
     </div>
   </div>
 </div>
 
-{%- endblock %}
+{%- endblock page_body %}
 
 {%- block javascript %}
   {{ super() }}

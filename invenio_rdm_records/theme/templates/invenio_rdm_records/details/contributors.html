@@ -7,9 +7,10 @@
 #}
 {%- from "invenio_rdm_records/details/list_entities.html" import list_entities %}
 
-<b><h4>Contributors:</h4></b>
-
+<div class="entities-title">
+  <b><h3>Contributors:</h3></b>
+</div>
 {%- for group in record.contributors|groupby('role')%}
-<h5><b>{{group.grouper|contributortype_title}}(s)</b></h5>
+<h4><b>{{group.grouper|contributortype_title}}(s)</b></h4>
 {{ list_entities(group.list) }}
 {%- endfor %}

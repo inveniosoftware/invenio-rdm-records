@@ -31,12 +31,18 @@
 .label-keyword {
     color:#777;
     border: 1px solid#777;
+    border-radius: 4px;
+    padding: 2px;
+}
+
+.entities-title {
+    margin-top: 0px;
 }
 
 .stats-box {
     text-align: center;
     padding-bottom: 10px;
-    margin-bottom: 10px;
+    margin: 25px 10px 0px  0px;
 
     table.stats-table {
         td:nth-child(1) {
@@ -59,7 +65,21 @@
     }
 }
 
-.well {
+dt {
+    margin-bottom: 3px;
+}
+
+dd {
+    margin-inline-start: 0px;
+}
+
+.ui.segment {
+    min-height: 20px;
+    padding: 20px;
+    margin-bottom: 20px;
+    background-color: #f5f5f5;
+    border: 1px solid #e3e3e3;
+    border-radius: 4px;
     word-wrap: break-word;
 
     .pid-versions-dropdown {
@@ -85,7 +105,7 @@
         margin-bottom: 0;
     }
     dd {
-        padding-left: 10px;
+        padding-left: 5px;
         margin-bottom: 4px;
 
         .label {
@@ -112,7 +132,7 @@
         color: #fff;
 
         &:hover {
-            color: $brand-primary;
+            color: @brand-primary;
         }
         }
 
@@ -128,16 +148,19 @@
 }
 
 .inline-orcid {
-    height: $font-size-base;
+    height: @font-size-base;
 }
 
 .thin-line {
     margin: 0px !important;
 }
 
-.send-btn {
-    margin-bottom: 10px;
-    padding: 2px 6px;
+.ui.button.send-button {
+    margin: 3px 0px;
+    padding: 6px;
+    background-color: transparent;
+    border: 1px solid black;
+    color: black;
 }
 
 // Files toogles
