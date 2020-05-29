@@ -165,7 +165,7 @@ class TitleSchemaV1(BaseSchema):
     """Schema for the additional title."""
 
     title = SanitizedUnicode(required=True, validate=validate.Length(min=3))
-    type = SanitizedUnicode(required=True, default='MainTitle')
+    type = SanitizedUnicode(missing='MainTitle')
     lang = SanitizedUnicode(validate=validate_iso639_3)
 
     @validates_schema
