@@ -16,72 +16,74 @@
 {%- from "invenio_rdm_records/macros/files.html" import file_list_box, preview_file_box %}
 
 {%- block page_body %}
-<div class="container record-detail">
-  <div class="ui centered grid">
-    <div class="ten wide column">
-      {%- block record_body %}
-      <div class="ui grid">
-        <div class="two column row">
-          <div class="left floated left aligned column">
-            <span class="ui label teal"
-              title="Publication date">{{ record.publication_date|to_date|format_date(format='long') }}</span>
-            <span class="label record-version"> | Version {{ record.version }}</span>
-          </div>
-          <div class="right floated right aligned column">
-            <span class="ui label grey">{{ record.resource_type | vocabulary_title('resource_type') }}</span>
-            {% if record.access_right in ["embargoed", "closed"] %}
-            <span class="ui label red">
-            {% elif record.access_right == "restricted" %}
-            <span class="ui label yellow">
-            {% else %}
-            <span class="ui label green">
-            {% endif %}
-              {{ record.access_right }} Access
-            </span>
-          </div>
-        </div>
-      </div>
-
-      <h1>{{ record.titles[0].title }}</h1>
-      <p>{%- include "invenio_rdm_records/details/creators.html" %}</p>
-      {%- if record.contributors %}
-      <p>{%- include "invenio_rdm_records/details/contributors.html" %}</p>
-      {%- endif %}
-
-      <div class="ui grid">
-        <div class="four column row">
-          <div class="left floated column">
-            {%- include "invenio_rdm_records/details/contact.html" %}
-          </div>
-          <div class="right floated column">
-            {%- include "invenio_rdm_records/details/doi.html" %}
+<div class="ui container">
+  <div class="ui padded relaxed grid">
+    <div class="two column row">
+      <div class="ten wide column">
+        {%- block record_body %}
+        <div class="ui grid">
+          <div class="two column row">
+            <div class="left floated left aligned column">
+              <span class="ui label teal"
+                title="Publication date">{{ record.publication_date|to_date|format_date(format='long') }}</span>
+              <span class="label record-version"> | Version {{ record.version }}</span>
+            </div>
+            <div class="right floated right aligned column">
+              <span class="ui label grey">{{ record.resource_type | vocabulary_title('resource_type') }}</span>
+              {% if record.access_right in ["embargoed", "closed"] %}
+              <span class="ui label red">
+                {% elif record.access_right == "restricted" %}
+                <span class="ui label yellow">
+                  {% else %}
+                  <span class="ui label green">
+                    {% endif %}
+                    {{ record.access_right }} Access
+                  </span>
+            </div>
           </div>
         </div>
-      </div>
-      {%- include "invenio_rdm_records/details/citation.html" %}
-      {%- include "invenio_rdm_records/details/keywords.html" %}
-      {%- include "invenio_rdm_records/details/description.html" %}
-      {%- include "invenio_rdm_records/details/licenses.html" %}
 
-      {# files #}
-      {%- if record.files and record|can_list_files %}
+        <h1>{{ record.titles[0].title }}</h1>
+        <p>{%- include "invenio_rdm_records/details/creators.html" %}</p>
+        {%- if record.contributors %}
+        <p>{%- include "invenio_rdm_records/details/contributors.html" %}</p>
+        {%- endif %}
+
+        <div class="ui grid">
+          <div class="four column row">
+            <div class="left floated column">
+              {%- include "invenio_rdm_records/details/contact.html" %}
+            </div>
+            <div class="right floated column">
+              {%- include "invenio_rdm_records/details/doi.html" %}
+            </div>
+          </div>
+        </div>
+        {%- include "invenio_rdm_records/details/citation.html" %}
+        {%- include "invenio_rdm_records/details/keywords.html" %}
+        {%- include "invenio_rdm_records/details/description.html" %}
+        {%- include "invenio_rdm_records/details/licenses.html" %}
+
+        {# files #}
+        {%- if record.files and record|can_list_files %}
         {%- set files = record.files %}
         {{ preview_file_box(files|select_preview_file, pid) }}
         {{ file_list_box(files.dumps(), pid) }}
-      {%- else %}
+        {%- else %}
         <br>
         <p style="text-align: center;">No associated files.</p>
-      {% endif %}
+        {% endif %}
 
-      {# More details #}
+        {# More details #}
 
-      {%- endblock record_body %}
-    </div>
-
-    {# Side bar #}
-    <div class="four wide column">
-      <div class="ui segment">
-        {%- include "invenio_rdm_records/details/side_bar.html" %}
+        {%- endblock record_body %}
+      </div>
+      <div class="six wide column">
+        {% block sidebar %}
+        <div class="ui segment rdm-sidebar">
+          {%- include "invenio_rdm_records/details/side_bar.html" %}
+        </div>
+        {% endblock sidebar %}
       </div>
     </div>
   </div>
@@ -90,8 +92,8 @@
 {%- endblock page_body %}
 
 {%- block javascript %}
-  {{ super() }}
-  {{ webpack['invenio-rdm-records-js.js'] }}
-  {# Communities management #}
-  {{ webpack['invenio-communities-records.js'] }}
+{{ super() }}
+{{ webpack['invenio-rdm-records-js.js'] }}
+{# Communities management #}
+{{ webpack['invenio-communities-records.js'] }}
 {%- endblock javascript %}
