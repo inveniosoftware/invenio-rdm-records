@@ -18,3 +18,9 @@ $("#files")
 $(document).ready(function () {
   $('.ui.accordion').accordion();
 });
+
+$(document).ready(function () {
+  $('#record-doi-badge').click(function () {
+    $('#doi-modal').modal('show');
+  });
+});
