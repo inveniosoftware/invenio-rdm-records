@@ -437,24 +437,28 @@ def test_custom_resource_type(config, vocabulary_clear):
     config['RDM_RECORDS_CUSTOM_VOCABULARIES'] = {}
 
 
-def test_title():
+def test_title(vocabulary_clear):
     """Test titles schema."""
     valid_full = {
         "title": "A Romans story",
         "type": "Other",
         "lang": "eng"
     }
-
     data = TitleSchemaV1().load(valid_full)
     assert data == valid_full
 
+    valid_partial = {
+        "title": "A Romans story",
+        "lang": "eng"
+    }
+    data = TitleSchemaV1().load(valid_partial)
+    assert data == dict(valid_partial, type='MainTitle')
+
     valid_minimal = {
         "title": "A Romans story",
-        "type": "Other"
     }
-
     data = TitleSchemaV1().load(valid_minimal)
-    assert data == valid_minimal
+    assert data == dict(valid_minimal, type='MainTitle')
 
     invalid_no_title = {
         "type": "Other",
@@ -462,13 +466,6 @@ def test_title():
     }
     with pytest.raises(ValidationError):
         data = TitleSchemaV1().load(invalid_no_title)
-
-    invalid_no_title_type = {
-        "title": "A Romans story",
-        "lang": "eng"
-    }
-    with pytest.raises(ValidationError):
-        data = TitleSchemaV1().load(invalid_no_title_type)
 
     invalid_title_type = {
         "title": "A Romans story",
