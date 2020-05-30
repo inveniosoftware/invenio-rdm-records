@@ -121,7 +121,7 @@ class Vocabulary(object):
         """
         options = [
             {
-                'icon': entry.get('icon', ''),
+                **({'icon': entry['icon']} if entry.get('icon') else {}),
                 'text': _(entry.get(self.readable_key)),
                 'value': key
             }
