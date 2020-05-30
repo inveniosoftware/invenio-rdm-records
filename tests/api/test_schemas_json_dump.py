@@ -217,12 +217,10 @@ def test_dump_contributors_role(config, vocabulary_clear):
 
     assert dumped_vocabularies['contributors']['role'] == [
         {
-            'icon': '',
             'value': 'Librarian',
             'text': _('Librarian')
         },
         {
-            'icon': '',
             'value': 'DataCollector',
             'text': _('Data Collector')
         }
@@ -247,7 +245,6 @@ def test_dump_titles_type(config, vocabulary_clear):
 
     assert dumped_vocabularies['titles']['type'] == [
         {
-            'icon': '',
             'value': 'AlternateTitle',
             'text': _('Alternate Title')
         }
