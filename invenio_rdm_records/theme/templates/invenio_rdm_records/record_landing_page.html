@@ -32,13 +32,13 @@
               <span class="ui label grey">{{ record.resource_type | vocabulary_title('resource_type') }}</span>
               {% if record.access_right in ["embargoed", "closed"] %}
               <span class="ui label red">
-                {% elif record.access_right == "restricted" %}
-                <span class="ui label yellow">
-                  {% else %}
-                  <span class="ui label green">
-                    {% endif %}
-                    {{ record.access_right }} Access
-                  </span>
+              {% elif record.access_right == "restricted" %}
+              <span class="ui label yellow">
+              {% else %}
+              <span class="ui label green">
+              {% endif %}
+                {{ record | vocabulary_title('access_right') }}
+              </span>
             </div>
           </div>
         </div>
