@@ -11,6 +11,7 @@ import time
 from datetime import date
 
 import arrow
+import idutils
 from edtf.parser.grammar import level0Expression
 from flask import current_app
 from flask_babelex import lazy_gettext as _
@@ -103,8 +104,38 @@ class CreatorSchemaV1(BaseSchema):
             ))
     given_name = SanitizedUnicode()
     family_name = SanitizedUnicode()
-    identifiers = Identifiers()
+    identifiers = fields.Dict()
     affiliations = fields.List(Nested(AffiliationSchemaV1))
+
+    @validates("identifiers")
+    def validate_identifiers(self, value):
+        """Validate well-formed identifiers are passed."""
+        if any(key not in ['Orcid', 'ror'] for key in value.keys()):
+            raise ValidationError(_("Invalid identifier."))
+
+        if value.get('Orcid'):
+            if not idutils.is_orcid(value.get('Orcid')):
+                raise ValidationError(_("Invalid ORCiD identifier."))
+
+        if value.get('ror'):
+            # TODO: implement when is_ror is in idutils package
+            pass
+
+    @validates_schema
+    def validate_data(self, data, **kwargs):
+        """Validate identifier based on type."""
+        if data['type'] == "Personal":
+            person_identifiers = ['Orcid']
+            identifiers = data.get('identifiers', {}).keys()
+            if any([ident not in person_identifiers for ident in identifiers]):
+                raise ValidationError(_("Invalid identifier for a person."))
+        elif data['type'] == "Organizational":
+            org_identifiers = ['ror']
+            identifiers = data.get('identifiers', {}).keys()
+            if any([ident not in org_identifiers for ident in identifiers]):
+                raise ValidationError(
+                    _("Invalid identifier for an organization.")
+                )
 
 
 class ContributorSchemaV1(CreatorSchemaV1):
