@@ -62,9 +62,7 @@ def test_creator():
         "name": "Julio Cesar",
         "type": "Personal"
     }
-
     data = CreatorSchemaV1().load(valid_minimal)
-
     assert data == valid_minimal
 
     # Full person
@@ -74,7 +72,7 @@ def test_creator():
         "given_name": "Julio",
         "family_name": "Cesar",
         "identifiers": {
-            "Orcid": "9999-9999-9999-9999",
+            "Orcid": '0000-0002-1825-0097',
         },
         "affiliations": [{
             "name": "Entity One",
@@ -82,9 +80,7 @@ def test_creator():
             "scheme": "entity-id-scheme"
         }]
     }
-
     data = CreatorSchemaV1().load(valid_full_person)
-
     assert data == valid_full_person
 
     # Full organization
@@ -92,14 +88,12 @@ def test_creator():
         "name": "California Digital Library",
         "type": "Organizational",
         "identifiers": {
-            "ROR": "03yrm5c26",
+            "ror": "03yrm5c26",
         },
         # "given_name", "family_name" and "affiliations" are ignored if passed
         "family_name": "I am ignored!"
     }
-
     data = CreatorSchemaV1().load(valid_full_org)
-
     assert data == valid_full_org
 
     invalid_no_name = {
@@ -107,7 +101,7 @@ def test_creator():
         "given_name": "Julio",
         "family_name": "Cesar",
         "identifiers": {
-            "Orcid": "9999-9999-9999-9999",
+            "Orcid": "0000-0002-1825-0097",
         },
         "affiliations": [{
             "name": "Entity One",
@@ -120,16 +114,6 @@ def test_creator():
 
     invalid_no_type = {
         "name": "Julio Cesar",
-        "given_name": "Julio",
-        "family_name": "Cesar",
-        "identifiers": {
-            "Orcid": "9999-9999-9999-9999",
-        },
-        "affiliations": [{
-            "name": "Entity One",
-            "identifier": "entity-one",
-            "scheme": "entity-id-scheme"
-        }]
     }
     with pytest.raises(ValidationError):
         data = CreatorSchemaV1().load(invalid_no_type)
@@ -137,19 +121,60 @@ def test_creator():
     invalid_type = {
         "name": "Julio Cesar",
         "type": "Invalid",
-        "given_name": "Julio",
-        "family_name": "Cesar",
-        "identifiers": {
-            "Orcid": "9999-9999-9999-9999",
-        },
-        "affiliations": [{
-            "name": "Entity One",
-            "identifier": "entity-one",
-            "scheme": "entity-id-scheme"
-        }]
     }
     with pytest.raises(ValidationError):
         data = CreatorSchemaV1().load(invalid_type)
+
+    invalid_scheme = {
+        "name": "Julio Cesar",
+        "type": "Personal",
+        "identifiers": {
+            "unapproved scheme": "0000-0002-1825-0097",
+        }
+    }
+    with pytest.raises(ValidationError):
+        data = CreatorSchemaV1().load(invalid_type)
+
+    invalid_orcid_identifier = {
+        "name": "Julio Cesar",
+        "type": "Personal",
+        "identifiers": {
+            # NOTE: This *is* an invalid ORCiD
+            "Orcid": "9999-9999-9999-9999",
+        }
+    }
+    with pytest.raises(ValidationError):
+        data = CreatorSchemaV1().load(invalid_orcid_identifier)
+
+    invalid_ror_identifier = {
+        "name": "Julio Cesar Empire",
+        "type": "Organizational",
+        "identifiers": {
+            "ror": "9999-9999-9999-9999",
+        }
+    }
+    with pytest.raises(ValidationError):
+        data = CreatorSchemaV1().load(invalid_ror_identifier)
+
+    invalid_identifier_for_person = {
+        "name": "Julio Cesar",
+        "type": "Personal",
+        "identifiers": {
+            "ror": "03yrm5c26"
+        }
+    }
+    with pytest.raises(ValidationError):
+        data = CreatorSchemaV1().load(invalid_identifier_for_person)
+
+    invalid_identifier_for_org = {
+        "name": "Julio Cesar Empire",
+        "type": "Organizational",
+        "identifiers": {
+            "Orcid": "0000-0002-1825-0097",
+        }
+    }
+    with pytest.raises(ValidationError):
+        data = CreatorSchemaV1().load(invalid_identifier_for_org)
 
 
 def test_contributor(vocabulary_clear):
@@ -160,7 +185,7 @@ def test_contributor(vocabulary_clear):
         "given_name": "Julio",
         "family_name": "Cesar",
         "identifiers": {
-            "Orcid": "9999-9999-9999-9999",
+            "Orcid": "0000-0002-1825-0097",
         },
         "affiliations": [{
             "name": "Entity One",
@@ -187,7 +212,7 @@ def test_contributor(vocabulary_clear):
         "given_name": "Julio",
         "family_name": "Cesar",
         "identifiers": {
-            "Orcid": "9999-9999-9999-9999",
+            "Orcid": "0000-0002-1825-0097",
         },
         "affiliations": [{
             "name": "Entity One",
@@ -204,7 +229,7 @@ def test_contributor(vocabulary_clear):
         "given_name": "Julio",
         "family_name": "Cesar",
         "identifiers": {
-            "Orcid": "9999-9999-9999-9999",
+            "Orcid": "0000-0002-1825-0097",
         },
         "affiliations": [{
             "name": "Entity One",
@@ -222,7 +247,7 @@ def test_contributor(vocabulary_clear):
         "given_name": "Julio",
         "family_name": "Cesar",
         "identifiers": {
-            "Orcid": "9999-9999-9999-9999",
+            "Orcid": "0000-0002-1825-0097",
         },
         "affiliations": [{
             "name": "Entity One",
@@ -240,7 +265,7 @@ def test_contributor(vocabulary_clear):
         "given_name": "Julio",
         "family_name": "Cesar",
         "identifiers": {
-            "Orcid": "9999-9999-9999-9999",
+            "Orcid": "0000-0002-1825-0097",
         },
         "affiliations": [{
             "name": "Entity One",
@@ -257,7 +282,7 @@ def test_contributor(vocabulary_clear):
         "given_name": "Julio",
         "family_name": "Cesar",
         "identifiers": {
-            "Orcid": "9999-9999-9999-9999",
+            "Orcid": "0000-0002-1825-0097",
         },
         "affiliations": [{
             "name": "Entity One",
@@ -290,7 +315,7 @@ def test_custom_contributor_role(config, vocabulary_clear):
         "given_name": "Julio",
         "family_name": "Cesar",
         "identifiers": {
-            "Orcid": "9999-9999-9999-9999",
+            "Orcid": "0000-0002-1825-0097",
         },
         "affiliations": [{
             "name": "Entity One",
@@ -309,7 +334,7 @@ def test_custom_contributor_role(config, vocabulary_clear):
         "given_name": "Julio",
         "family_name": "Cesar",
         "identifiers": {
-            "Orcid": "9999-9999-9999-9999",
+            "Orcid": "0000-0002-1825-0097",
         },
         "affiliations": [{
             "name": "Entity One",

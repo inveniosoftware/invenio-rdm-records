@@ -96,7 +96,7 @@ def full_input_record():
                 "given_name": "Julio",
                 "family_name": "Cesar",
                 "identifiers": {
-                    "Orcid": "9999-9999-9999-9999"
+                    "Orcid": "0000-0002-1825-0097"
                 },
                 "affiliations": [{
                     "name": "Entity One",
@@ -108,7 +108,7 @@ def full_input_record():
                 "name": "California Digital Library",
                 "type": "Organizational",
                 "identifiers": {
-                    "ROR": "03yrm5c26",
+                    "ror": "03yrm5c26",
                 }
             }
         ],
@@ -129,7 +129,7 @@ def full_input_record():
             "given_name": "Maximo",
             "family_name": "Decimo Meridio",
             "identifiers": {
-                "Orcid": "9999-9999-9999-9998",
+                "Orcid": "0000-0002-1825-0097",
             },
             "affiliations": [{
                 "name": "Entity One",
