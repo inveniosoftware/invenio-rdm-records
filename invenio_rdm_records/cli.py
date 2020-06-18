@@ -93,12 +93,13 @@ def create_fake_record():
             "name": fake.name(),
             "type": "Personal",
             "identifiers": {
-                "Orcid": "9999-9999-9999-9999",
+                "Orcid": "0000-0002-1825-0097",
             },
             "affiliations": [{
                 "name": fake.company(),
-                "identifier": "entity-one",
-                "scheme": "entity-id-scheme"
+                "identifiers": {
+                    "ror": "03yrm5c26"
+                }
             }]
         }],
         "titles": [{
@@ -120,8 +121,9 @@ def create_fake_record():
             },
             "affiliations": [{
                 "name": fake.company(),
-                "identifier": "entity-one",
-                "scheme": "entity-id-scheme"
+                "identifiers": {
+                    "ror": "03yrm5c26"
+                }
             }],
             "role": "RightsHolder"
         }],

@@ -27,32 +27,38 @@ def test_affiliations():
     """Test affiliations schema."""
     valid_full = {
         "name": "Entity One",
-        "identifier": "entity-one",
-        "scheme": "entity-id-scheme"
+        "identifiers": {
+            "ror": "03yrm5c26"
+        }
     }
     data = AffiliationSchemaV1().load(valid_full)
     assert data == valid_full
 
     invalid_no_name = {
-        "identifier": "entity-one",
-        "scheme": "entity-id-scheme"
+        "identifiers": {
+            "ror": "03yrm5c26"
+        }
     }
     with pytest.raises(ValidationError):
         data = AffiliationSchemaV1().load(invalid_no_name)
 
-    invalid_no_identifier = {
+    invalid_identifier = {
         "name": "Entity One",
-        "scheme": "entity-id-scheme"
+        "identifiers": {
+            "ror": ""
+        }
     }
     with pytest.raises(ValidationError):
-        data = AffiliationSchemaV1().load(invalid_no_identifier)
+        data = AffiliationSchemaV1().load(invalid_identifier)
 
-    invalid_no_scheme = {
+    invalid_scheme = {
         "name": "Entity One",
-        "identifier": "entity-one"
+        "identifiers": {
+            "": "03yrm5c26"
+        }
     }
     with pytest.raises(ValidationError):
-        data = AffiliationSchemaV1().load(invalid_no_scheme)
+        data = AffiliationSchemaV1().load(invalid_scheme)
 
 
 def test_creator():
@@ -76,8 +82,9 @@ def test_creator():
         },
         "affiliations": [{
             "name": "Entity One",
-            "identifier": "entity-one",
-            "scheme": "entity-id-scheme"
+            "identifiers": {
+                "ror": "03yrm5c26"
+            }
         }]
     }
     data = CreatorSchemaV1().load(valid_full_person)
@@ -105,8 +112,9 @@ def test_creator():
         },
         "affiliations": [{
             "name": "Entity One",
-            "identifier": "entity-one",
-            "scheme": "entity-id-scheme"
+            "identifiers": {
+                "ror": "03yrm5c26"
+            }
         }]
     }
     with pytest.raises(ValidationError):
@@ -189,8 +197,9 @@ def test_contributor(vocabulary_clear):
         },
         "affiliations": [{
             "name": "Entity One",
-            "identifier": "entity-one",
-            "scheme": "entity-id-scheme"
+            "identifiers": {
+                "ror": "03yrm5c26"
+            }
         }],
         "role": "RightsHolder"
     }
@@ -214,11 +223,6 @@ def test_contributor(vocabulary_clear):
         "identifiers": {
             "Orcid": "0000-0002-1825-0097",
         },
-        "affiliations": [{
-            "name": "Entity One",
-            "identifier": "entity-one",
-            "scheme": "entity-id-scheme"
-        }],
         "role": "RightsHolder"
     }
     with pytest.raises(ValidationError):
@@ -231,11 +235,6 @@ def test_contributor(vocabulary_clear):
         "identifiers": {
             "Orcid": "0000-0002-1825-0097",
         },
-        "affiliations": [{
-            "name": "Entity One",
-            "identifier": "entity-one",
-            "scheme": "entity-id-scheme"
-        }],
         "role": "RightsHolder"
     }
     with pytest.raises(ValidationError):
@@ -249,11 +248,6 @@ def test_contributor(vocabulary_clear):
         "identifiers": {
             "Orcid": "0000-0002-1825-0097",
         },
-        "affiliations": [{
-            "name": "Entity One",
-            "identifier": "entity-one",
-            "scheme": "entity-id-scheme"
-        }],
         "role": "RightsHolder"
     }
     with pytest.raises(ValidationError):
@@ -267,11 +261,6 @@ def test_contributor(vocabulary_clear):
         "identifiers": {
             "Orcid": "0000-0002-1825-0097",
         },
-        "affiliations": [{
-            "name": "Entity One",
-            "identifier": "entity-one",
-            "scheme": "entity-id-scheme"
-        }]
     }
     with pytest.raises(ValidationError):
         data = ContributorSchemaV1().load(invalid_no_role)
@@ -284,11 +273,6 @@ def test_contributor(vocabulary_clear):
         "identifiers": {
             "Orcid": "0000-0002-1825-0097",
         },
-        "affiliations": [{
-            "name": "Entity One",
-            "identifier": "entity-one",
-            "scheme": "entity-id-scheme"
-        }],
         "role": "Invalid"
     }
     with pytest.raises(ValidationError):
@@ -317,11 +301,6 @@ def test_custom_contributor_role(config, vocabulary_clear):
         "identifiers": {
             "Orcid": "0000-0002-1825-0097",
         },
-        "affiliations": [{
-            "name": "Entity One",
-            "identifier": "entity-one",
-            "scheme": "entity-id-scheme"
-        }],
         "role": "Librarian"
     }
     data = ContributorSchemaV1().load(librarian_role)
@@ -338,8 +317,9 @@ def test_custom_contributor_role(config, vocabulary_clear):
         },
         "affiliations": [{
             "name": "Entity One",
-            "identifier": "entity-one",
-            "scheme": "entity-id-scheme"
+            "identifiers": {
+                "ror": "03yrm5c26"
+            }
         }],
         "role": "ContactPerson"
     }

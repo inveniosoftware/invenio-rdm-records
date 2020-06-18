@@ -48,8 +48,7 @@ def test_dumping_empty_record():
                 'affiliations': [
                     {
                         'name': None,
-                        'identifier': None,
-                        'scheme': None
+                        'identifiers': None,
                     }
                 ],
                 'family_name': None,
@@ -65,8 +64,7 @@ def test_dumping_empty_record():
                 'affiliations': [
                     {
                         'name': None,
-                        'identifier': None,
-                        'scheme': None
+                        'identifiers': None,
                     }
                 ],
                 'family_name': None,

@@ -100,8 +100,9 @@ def full_input_record():
                 },
                 "affiliations": [{
                     "name": "Entity One",
-                    "identifier": "entity-one",
-                    "scheme": "entity-id-scheme"
+                    "identifiers": {
+                        "ror": "03yrm5c26"
+                    }
                 }]
             },
             {
@@ -133,8 +134,9 @@ def full_input_record():
             },
             "affiliations": [{
                 "name": "Entity One",
-                "identifier": "entity-one",
-                "scheme": "entity-id-scheme"
+                "identifiers": {
+                    "ror": "03yrm5c26"
+                }
             }],
             "role": "RightsHolder"
         }],
