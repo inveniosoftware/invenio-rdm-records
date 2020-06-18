@@ -82,8 +82,19 @@ class AffiliationSchemaV1(BaseSchema):
     """Affiliation of a creator/contributor."""
 
     name = SanitizedUnicode(required=True)
-    identifier = SanitizedUnicode(required=True)
-    scheme = SanitizedUnicode(required=True)
+    identifiers = fields.Dict()
+
+    @validates("identifiers")
+    def validate_identifiers(self, value):
+        """Validate well-formed identifiers are passed."""
+        if len(value) == 0:
+            raise ValidationError(_("Invalid identifier."))
+
+        if 'ror' in value:
+            if not idutils.is_ror(value.get('ror')):
+                raise ValidationError(_("Invalid identifier."))
+        else:
+            raise ValidationError(_("Invalid identifier."))
 
 
 class CreatorSchemaV1(BaseSchema):
@@ -113,13 +124,13 @@ class CreatorSchemaV1(BaseSchema):
         if any(key not in ['Orcid', 'ror'] for key in value.keys()):
             raise ValidationError(_("Invalid identifier."))
 
-        if value.get('Orcid'):
+        if 'Orcid' in value:
             if not idutils.is_orcid(value.get('Orcid')):
-                raise ValidationError(_("Invalid ORCiD identifier."))
+                raise ValidationError(_("Invalid identifier."))
 
-        if value.get('ror'):
-            # TODO: implement when is_ror is in idutils package
-            pass
+        if 'ror' in value:
+            if not idutils.is_ror(value.get('ror')):
+                raise ValidationError(_("Invalid identifier."))
 
     @validates_schema
     def validate_data(self, data, **kwargs):
