@@ -8,16 +8,19 @@
 
 {% macro list_entities(entities) %}
   {% for entity in entities %}
-    {# TODO: Is the first identifier given precedence or is "Orcid" given precedence? #}
-    {# Assume first identifier is given precedence #}
-    {% set main_identifier = entity.identifiers[0] if entity.identifiers and entity.identifiers[0] else {"scheme": ""} %}
-    {%- if main_identifier.scheme == "Orcid" %}
-    <a href="{{ main_identifier.identifier|pid_url('orcid') }}">
-      <img class="inline-orcid" src="{{ url_for('static', filename='images/orcid.svg') }}" />
-    </a>
-    {# TODO: Other potential main identifiers #}
+    {# TODO: Revisit when more than ORCiD accepted #}
+    {%- if "Orcid" in entity.identifiers %}
+      <a href="{{ entity.identifiers['Orcid']|pid_url('orcid') }}">
+        <img class="inline-orcid" src="{{ url_for('static', filename='images/orcid.svg') }}" />
+      </a>
+    {%- elif "ror" in entity.identifiers %}
+      {# TODO: Use ROR icon when they come up with one #}
+      <a href="{{ entity.identifiers['ror']|pid_url('ror') }}">
+        <i class="building outline icon"></i>
+      </a>
+    {# if no identifiers: distinguish btw people and organizations #}
     {%- elif entity.type == "Organizational" %}
-    <i class="user icon"></i>
+    <i class="group icon"></i>
     {%- else %}
     <i class="user icon"></i>
     {%- endif %}
