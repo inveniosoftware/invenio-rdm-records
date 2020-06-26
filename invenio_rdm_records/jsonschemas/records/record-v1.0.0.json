@@ -203,11 +203,15 @@
               "items": {
                   "type": "object",
                   "properties": {
-                      "name": {"type": "string"},
-                      "identifier": {"type": "string"},
-                      "scheme": {"type": "string"}
+                    "name": {"type": "string"},
+                    "identifiers": {
+                      "type": "object",
+                      "additionalProperties": {
+                        "type": "string"
+                      }
+                    }
                   },
-                  "required": ["name", "identifier", "scheme"]
+                  "required": ["name", "identifiers"]
               }
             }
         },
@@ -282,13 +286,17 @@
               "type": "array",
               "uniqueItems": true,
               "items": {
-                  "type": "object",
-                  "properties": {
-                      "name": {"type": "string"},
-                      "identifier": {"type": "string"},
-                      "scheme": {"type": "string"}
-                  },
-                  "required": ["name", "identifier", "scheme"]
+                "type": "object",
+                "properties": {
+                  "name": {"type": "string"},
+                  "identifiers": {
+                    "type": "object",
+                    "additionalProperties": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "required": ["name", "identifiers"]
               }
             },
             "role": {"type": "string"}

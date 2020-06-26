@@ -116,9 +116,6 @@ def create_fake_record():
         "contributors": [{
             "name": fake.name(),
             "type": "Personal",
-            "identifiers": {
-                "Orcid": "9999-9999-9999-9998",
-            },
             "affiliations": [{
                 "name": fake.company(),
                 "identifiers": {
