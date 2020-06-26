@@ -200,11 +200,8 @@
               "name": {
                 "type": "text"
               },
-              "identifier": {
-                "type": "keyword"
-              },
-              "scheme": {
-                "type": "keyword"
+              "identifiers": {
+                "type": "object"
               }
             }
           }
@@ -272,11 +269,8 @@
               "name": {
                 "type": "text"
               },
-              "identifier": {
-                "type": "keyword"
-              },
-              "scheme": {
-                "type": "keyword"
+              "identifiers": {
+                "type": "object"
               }
             }
           },
