@@ -7,10 +7,14 @@
 # it under the terms of the MIT License; see LICENSE file for more details.
 
 """DataCite-based data model for Invenio."""
+from celery import shared_task
+from invenio_db import db
+from invenio_files_rest.signals import file_deleted, file_uploaded
 from invenio_indexer.signals import before_record_index
 
 from . import config
 from .metadata_extensions import MetadataExtensions, add_es_metadata_extensions
+from .tasks import update_record_files_async
 
 
 class InvenioRDMRecords(object):
@@ -28,10 +32,7 @@ class InvenioRDMRecords(object):
             app.config['RDM_RECORDS_METADATA_NAMESPACES'],
             app.config['RDM_RECORDS_METADATA_EXTENSIONS']
         )
-        before_record_index.dynamic_connect(
-            before_record_index_hook, sender=app, weak=False,
-            index='records-record-v1.0.0'
-        )
+        self._register_signals(app)
 
         app.extensions['invenio-rdm-records'] = self
 
@@ -51,6 +52,16 @@ class InvenioRDMRecords(object):
         for k in dir(config):
             if k in supported_configurations or k.startswith('RDM_RECORDS_'):
                 app.config.setdefault(k, getattr(config, k))
+
+    def _register_signals(self, app):
+        """Register signals."""
+        before_record_index.dynamic_connect(
+            before_record_index_hook, sender=app, weak=False,
+            index='records-record-v1.0.0'
+        )
+
+        file_deleted.connect(update_record_files_async, weak=False)
+        file_uploaded.connect(update_record_files_async, weak=False)
 
 
 def before_record_index_hook(
