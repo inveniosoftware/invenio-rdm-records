@@ -46,7 +46,8 @@ class InvenioRDMRecords(object):
             'RECORDS_REST_SORT_OPTIONS',
             'RECORDS_REST_DEFAULT_SORT',
             'RECORDS_FILES_REST_ENDPOINTS',
-            'RECORDS_PERMISSIONS_RECORD_POLICY'
+            'RECORDS_PERMISSIONS_RECORD_POLICY',
+            'THEME_SITEURL',
         ]
 
         for k in dir(config):
