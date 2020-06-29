@@ -7,20 +7,18 @@
 
 import $ from "jquery";
 
-$("#files")
-  .find(".preview-link")
-  .on("click", function (event) {
-    $("#preview").show();
-    $("#preview-iframe").attr("src", $(event.target).data("url"));
-  });
-
-
-$(document).ready(function () {
-  $('.ui.accordion').accordion();
+$(".preview-link").on("click", function (event) {
+  $("#preview").find(".title .filename").html($(event.target).data("fileKey"));
+  $("#preview").accordion("open", 0);
+  $("#preview-iframe").attr("src", $(event.target).data("url"));
 });
 
 $(document).ready(function () {
-  $('#record-doi-badge').click(function () {
-    $('#doi-modal').modal('show');
+  $(".ui.accordion").accordion();
+});
+
+$(document).ready(function () {
+  $("#record-doi-badge").click(function () {
+    $("#doi-modal").modal("show");
   });
 });
