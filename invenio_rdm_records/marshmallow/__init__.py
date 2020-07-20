@@ -8,6 +8,6 @@
 
 """Schemas for marshmallow."""
 
-from .json import MetadataSchemaV1, RecordSchemaV1
+from .json import BibliographicRecordSchemaV1, MetadataSchemaV1
 
-__all__ = ('MetadataSchemaV1', 'RecordSchemaV1',)
+__all__ = ('BibliographicRecordSchemaV1', 'MetadataSchemaV1')

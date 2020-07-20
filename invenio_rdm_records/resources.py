@@ -13,7 +13,7 @@ from invenio_records_resources.resources import RecordResource, \
 from invenio_records_resources.responses import RecordResponse
 from invenio_records_resources.serializers import RecordJSONSerializer
 
-from .marshmallow.json import RecordSchemaV1
+from .marshmallow.json import BibliographicRecordSchemaV1
 
 
 class BibliographicRecordResourceConfig(RecordResourceConfig):
@@ -23,7 +23,7 @@ class BibliographicRecordResourceConfig(RecordResourceConfig):
     list_route = "/rdm-records"
     response_handlers = {
         "application/json": RecordResponse(
-            RecordJSONSerializer(schema=RecordSchemaV1)
+            RecordJSONSerializer(schema=BibliographicRecordSchemaV1)
         )
     }
 
