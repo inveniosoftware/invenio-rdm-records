@@ -12,12 +12,12 @@ from invenio_records_rest.serializers.json import JSONSerializer
 from invenio_records_rest.serializers.response import record_responsify, \
     search_responsify
 
-from ..marshmallow import RecordSchemaV1
+from ..marshmallow import BibliographicRecordSchemaV1
 
 # Serializers
 # ===========
 #: JSON serializer definition.
-json_v1 = JSONSerializer(RecordSchemaV1, replace_refs=True)
+json_v1 = JSONSerializer(BibliographicRecordSchemaV1, replace_refs=True)
 
 # Records-REST serializers
 # ========================

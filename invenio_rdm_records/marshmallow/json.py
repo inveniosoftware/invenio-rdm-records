@@ -569,7 +569,7 @@ class MetadataSchemaV1(BaseSchema):
         return obj
 
 
-class RecordSchemaV1(BaseSchema):
+class BibliographicRecordSchemaV1(BaseSchema):
     """Record schema."""
 
     # TODO: Use `RecordMetadataSchemaJSONV1` to inject PID in PUT/PATCH/...
