@@ -67,19 +67,21 @@ install_requires = [
     'Faker>=2.0.3',
     'Flask-BabelEx>=0.9.4',
     'idutils>=1.1.7',
-    'invenio-assets>=1.2.0,<1.3.0',
+    'invenio-assets>=1.2.2,<1.3.0',
     'invenio-communities>=2.0.4,<3.0.0',
     'invenio-formatter[badges]>=1.1.0a1,<2.0.0',
     'invenio-jsonschemas>=1.1.0,<2.0.0',
     'invenio-pidstore>=1.2.0,<2.0.0',
     'invenio-records-rest>=1.7.1,<2.0.0',
-    'invenio-records>=1.3.1,<2.0.0',
+    'invenio-records>=1.3.2,<2.0.0',
     'invenio-records-files>=1.2.1,<2.0.0',
-    'invenio-records-permissions>=0.7.0,<1.0.0',
+    'invenio-records-permissions>=0.8.0,<1.0.0',
+    'invenio-records-resources>=0.2.0,<1.0.0',
     'invenio-records-ui>=1.2.0a1,<2.0.0',
     'invenio-previewer>=1.2.1,<2.0.0',
     'marshmallow>=3.3.0,<4.0.0',
     'pycountry>=18.12.8',
+    'six>=1.12.0'  # Needed to pass CI tests
 ]
 
 packages = find_packages()
