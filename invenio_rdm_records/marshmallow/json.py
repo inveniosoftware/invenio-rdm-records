@@ -20,8 +20,8 @@ from invenio_records_rest.schemas import Nested
 from invenio_records_rest.schemas.fields import DateString, GenMethod, \
     PersistentIdentifier, SanitizedUnicode
 from invenio_rest.serializer import BaseSchema
-from marshmallow import ValidationError, fields, post_load, validate, \
-    validates, validates_schema
+from marshmallow import INCLUDE, ValidationError, fields, post_load, \
+    validate, validates, validates_schema
 from marshmallow.schema import SchemaMeta
 
 from ..vocabularies import Vocabularies
@@ -476,6 +476,11 @@ class CommunityStatusV1(BaseSchema):
 class MetadataSchemaV1(BaseSchema):
     """Schema for the record metadata."""
 
+    class Meta:
+        """Meta class to accept unknwon fields."""
+
+        unknown = INCLUDE
+
     # Administrative fields
     _access = Nested(AccessSchemaV1, required=True)
     _owners = fields.List(fields.Integer, validate=validate.Length(min=1),
@@ -572,7 +577,6 @@ class MetadataSchemaV1(BaseSchema):
 class BibliographicRecordSchemaV1(BaseSchema):
     """Record schema."""
 
-    # TODO: Use `RecordMetadataSchemaJSONV1` to inject PID in PUT/PATCH/...
     metadata = Nested(MetadataSchemaV1)
     bucket = fields.Str()
     created = fields.Str(dump_only=True)
@@ -580,6 +584,13 @@ class BibliographicRecordSchemaV1(BaseSchema):
     updated = fields.Str(dump_only=True)
     links = fields.Dict(dump_only=True)
     id = PersistentIdentifier(attribute='pid.pid_value')
+
+
+class BibliographicDraftSchemaV1(BibliographicRecordSchemaV1):
+    """Schema for drafts v1 in JSON."""
+
+    status = fields.Str()
+    expiry_date = fields.Str()
 
 
 def dump_empty(schema_or_field):

@@ -8,24 +8,33 @@
 
 """Bibliographic Record Service."""
 
-from invenio_records_resources.services import MarshmallowDataValidator, \
-    RecordService, RecordServiceConfig
+from invenio_drafts_resources.services import RecordDraftService, \
+    RecordDraftServiceConfig
+from invenio_records_resources.services import MarshmallowDataValidator
 
-from invenio_rdm_records.permissions import RDMRecordPermissionPolicy
+from .marshmallow import MetadataSchemaV1
+from .models import BibliographicRecord, BibliographicRecordDraft
+from .permissions import RDMRecordPermissionPolicy
 
-from .marshmallow.json import MetadataSchemaV1
 
+class BibliographicRecordDraftServiceConfig(RecordDraftServiceConfig):
+    """Bibliografic record draft service config."""
 
-# TODO: IMPLEMENT ME if more specialized configuration needed
-class BibliographicRecordServiceConfig(RecordServiceConfig):
-    """Bibliographic Record Service configuration."""
-
+    # Record
+    record_cls = BibliographicRecord
     permission_policy_cls = RDMRecordPermissionPolicy
     data_validator = MarshmallowDataValidator(
-        schema=MetadataSchemaV1)
+        schema=MetadataSchemaV1
+    )
+
+    # Draft
+    draft_cls = BibliographicRecordDraft
+    draft_data_validator = MarshmallowDataValidator(
+        schema=MetadataSchemaV1
+    )
 
 
-class BibliographicRecordService(RecordService):
-    """Bibliographic Record Service."""
+class BibliographicRecordDraftService(RecordDraftService):
+    """Bibliographic record draft service."""
 
-    default_config = BibliographicRecordServiceConfig
+    default_config = BibliographicRecordDraftServiceConfig

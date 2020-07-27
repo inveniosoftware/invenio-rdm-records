@@ -28,3 +28,4 @@ class RDMRecordPermissionPolicy(RecordPermissionPolicy):
     # TODO: Change all below when permissions settled
     can_create = [AnyUser()]
     can_update_files = [AnyUser()]
+    can_publish = [AnyUser()]
