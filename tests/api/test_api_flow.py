@@ -56,8 +56,13 @@ def test_simple_file_upload(client, location, full_input_record):
     assert response.status_code == 201
     current_search.flush_and_refresh('records')
 
-    # Attach file to record
+    # Check record existance
     recid = response.json['id']
+    response = client.get(records_url + recid)
+
+    assert response.status_code == 200
+
+    # Attach file to record
     files_url = records_url + "{}/files/example.txt".format(recid)
     headers = [("Content-Type", "application/octet-stream")]
     response = client.put(
@@ -75,28 +80,3 @@ def test_simple_file_upload(client, location, full_input_record):
         'https://localhost:5000/records/{}/files'.format(recid)
     )
     assert response.json['links']['files'] == expected_files_url
-
-
-def test_new_api_integration(client):
-    """Test integration with new REST API.
-
-    TODO: Once integration is complete, this test can be removed since the
-          above will cover it.
-
-    NOTE: we are mocking implementation out bc we just want to test
-          integration.
-    """
-    expected_response_keys = set(['hits', 'links', 'aggregations'])
-    expected_metadata_keys = set([
-        'access_right', 'resource_type', 'creators', 'titles'
-    ])
-
-    # Get published bibliographic records
-    response = client.get('/rdm-records', headers=HEADERS)
-
-    assert response.status_code == 200
-    response_keys = set(response.json.keys())
-    assert response_keys == expected_response_keys
-    for r in response.json["hits"]["hits"]:
-        metadata_keys = set(r["metadata"])
-        assert expected_metadata_keys.issubset(metadata_keys)
