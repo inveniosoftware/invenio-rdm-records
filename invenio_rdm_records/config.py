@@ -12,7 +12,7 @@ from invenio_indexer.api import RecordIndexer
 from invenio_records_files.api import Record
 from invenio_records_permissions import record_create_permission_factory, \
     record_delete_permission_factory, record_files_permission_factory, \
-    record_list_permission_factory, record_read_permission_factory, \
+    record_read_permission_factory, record_search_permission_factory, \
     record_update_permission_factory
 from invenio_records_permissions.api import RecordsSearch
 from invenio_records_rest.facets import terms_filter
@@ -56,7 +56,7 @@ RECORDS_REST_ENDPOINTS = dict(
         max_result_window=10000,
         error_handlers=dict(),
         read_permission_factory_imp=record_read_permission_factory,
-        list_permission_factory_imp=record_list_permission_factory,
+        list_permission_factory_imp=record_search_permission_factory,
         create_permission_factory_imp=record_create_permission_factory,
         update_permission_factory_imp=record_update_permission_factory,
         delete_permission_factory_imp=record_delete_permission_factory,
