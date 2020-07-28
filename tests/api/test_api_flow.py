@@ -99,4 +99,4 @@ def test_new_api_integration(client):
     assert response_keys == expected_response_keys
     for r in response.json["hits"]["hits"]:
         metadata_keys = set(r["metadata"])
-        assert metadata_keys == expected_metadata_keys
+        assert expected_metadata_keys.issubset(metadata_keys)

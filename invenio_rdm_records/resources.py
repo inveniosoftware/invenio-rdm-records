@@ -14,6 +14,7 @@ from invenio_records_resources.responses import RecordResponse
 from invenio_records_resources.serializers import RecordJSONSerializer
 
 from .marshmallow.json import BibliographicRecordSchemaV1
+from .services import BibliographicRecordService
 
 
 class BibliographicRecordResourceConfig(RecordResourceConfig):
