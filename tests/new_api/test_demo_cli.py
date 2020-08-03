@@ -11,18 +11,20 @@
 import json
 
 from invenio_records.models import RecordMetadata
+from invenio_search import current_search
 
 from invenio_rdm_records.cli import create_fake_record
 
 
-def test_create_fake_record_saves_to_db(es_clear, location):
+def test_create_fake_record_saves_to_db(app, es_clear, location):
     """Test simple flow using REST API."""
+    # app needed for config overwrite of pidstore
     assert RecordMetadata.query.first() is None
 
     created_record = create_fake_record()
 
     retrieved_record = RecordMetadata.query.first()
-    assert created_record.model == retrieved_record
+    assert created_record.record.model == retrieved_record
 
 
 def _assert_single_hit(response, expected_record):
@@ -63,7 +65,9 @@ def _assert_single_hit(response, expected_record):
 def test_create_fake_record_saves_to_index(client, es_clear, location):
     """Test the creation of fake records and searching for them."""
     created_record = create_fake_record()
+    # ES does not flush fast enough some times
+    current_search.flush_and_refresh(index='records')
 
-    response = client.get("/records/")
+    response = client.get("/rdm-records")
 
-    _assert_single_hit(response, created_record)
+    _assert_single_hit(response, created_record.record)

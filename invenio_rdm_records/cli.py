@@ -15,12 +15,15 @@ import click
 from edtf.parser.grammar import level0Expression
 from faker import Faker
 from flask.cli import with_appcontext
+from flask_principal import Identity
+from invenio_access import any_user
 from invenio_db import db
 from invenio_indexer.api import RecordIndexer
 from invenio_pidstore import current_pidstore
 from invenio_records_files.api import Record
 from invenio_search import current_search
 
+from .services import BibliographicRecordDraftService
 from .vocabularies import Vocabularies
 
 
@@ -78,11 +81,11 @@ def create_fake_record():
         "_internal_notes": [{
             "user": "inveniouser",
             "note": "RDM record",
-            "timestamp": fake.iso8601(tzinfo=None, end_datetime=None),
+            "timestamp": fake.date(pattern='%Y-%m-%d')
         }],
         "_owners": [1],
         "access_right": "open",
-        "embargo_date": fake.iso8601(tzinfo=None, end_datetime=None),
+        "embargo_date": fake.future_date(end_date='+1y').strftime("%Y-%m-%d"),
         "contact": "info@inveniosoftware.org",
         "resource_type": fake_resource_type(),
         "identifiers": {
@@ -126,7 +129,7 @@ def create_fake_record():
         }],
         "dates": [{
             # No end date to avoid computations based on start
-            "start": fake.iso8601(tzinfo=None, end_datetime=None),
+            "start": fake.date(pattern='%Y-%m-%d'),
             "description": "Random test date",
             "type": "Other"
         }],
@@ -164,17 +167,21 @@ def create_fake_record():
         }]
     }
 
-    # Create and index record
-    rec_uuid = uuid.uuid4()
-    current_pidstore.minters['recid_v2'](rec_uuid, data_to_use)
-    record = Record.create(data_to_use, id_=rec_uuid)
-    RecordIndexer().index(record)
+    # identity providing `any_user` system role
+    identity = Identity(1)
+    identity.provides.add(any_user)
 
-    # Flush to index and database
-    current_search.flush_and_refresh(index='records')
-    db.session.commit()
+    draft_service = BibliographicRecordDraftService()
 
-    return record
+    identified_draft = draft_service.create(
+        data=data_to_use, identity=identity
+    )
+
+    identified_record = draft_service.publish(
+        id_=identified_draft.id, identity=identity
+    )
+
+    return identified_record
 
 
 @click.group()

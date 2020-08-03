@@ -500,7 +500,7 @@ class MetadataSchemaV1(BaseSchema):
     creators = fields.List(Nested(CreatorSchemaV1), required=True)
     titles = fields.List(Nested(TitleSchemaV1), required=True)
     resource_type = Nested(ResourceTypeSchemaV1, required=True)
-    recid = PersistentIdentifier()
+    recid = SanitizedUnicode()
     publication_date = EDTFLevel0DateString(
         missing=lambda: date.today().isoformat()
     )
