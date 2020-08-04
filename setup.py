@@ -132,6 +132,7 @@ setup(
         ],
         'invenio_search.mappings': [
             'records = invenio_rdm_records.mappings',
+            'drafts = invenio_rdm_records.mappings',
         ],
     },
     extras_require=extras_require,
