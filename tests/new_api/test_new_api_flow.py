@@ -11,12 +11,13 @@
 import json
 
 import pytest
+from invenio_search import current_search
 from sqlalchemy.orm.exc import NoResultFound
 
 HEADERS = {"content-type": "application/json", "accept": "application/json"}
 
 
-def test_create_draft_of_new_record(client, minimal_record):
+def test_create_draft_of_new_record(client, minimal_record, es_clear):
     """Test draft creation of a non-existing record."""
     response = client.post(
         "/rdm-records", data=json.dumps(minimal_record), headers=HEADERS
@@ -40,6 +41,7 @@ def test_record_draft_publish(client, minimal_record):
     response = client.post(
         "/rdm-records", data=json.dumps(minimal_record), headers=HEADERS
     )
+    current_search.flush_and_refresh('drafts')
 
     assert response.status_code == 201
     recid = response.json['pid']
@@ -48,6 +50,7 @@ def test_record_draft_publish(client, minimal_record):
     response = client.post(
         "/rdm-records/{}/draft/actions/publish".format(recid), headers=HEADERS
     )
+    current_search.flush_and_refresh('*')
 
     assert response.status_code == 200
     response_fields = response.json.keys()
