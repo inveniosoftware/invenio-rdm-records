@@ -16,85 +16,80 @@ from sqlalchemy.orm.exc import NoResultFound
 HEADERS = {"content-type": "application/json", "accept": "application/json"}
 
 
-def test_create_draft_of_new_record(client, minimal_record):
-    """Test draft creation of a non-existing record."""
+@pytest.fixture
+def draft_response(client, minimal_input_record, es_clear):
+    """Bibliographic Draft fixture."""
     response = client.post(
-        "/rdm-records", data=json.dumps(minimal_record), headers=HEADERS
+        "/rdm-records", json=minimal_input_record, headers=HEADERS
     )
-
-    assert response.status_code == 201
-    response_fields = response.json.keys()
-    fields_to_check = ['pid', 'metadata', 'revision',
-                       'created', 'updated', 'links']
-
-    for field in fields_to_check:
-        assert field in response_fields
+    return response
 
 
-def test_record_draft_publish(client, minimal_record):
+def test_create_draft_of_new_record(draft_response):
+    """Test draft creation of a non-existing record."""
+    assert draft_response.status_code == 201
+
+    response_fields = set(draft_response.json.keys())
+    expected_fields = set([
+        'pid', 'metadata', 'revision', 'created', 'updated', 'links'
+    ])
+    assert expected_fields == response_fields
+
+
+def test_record_draft_publish(client, draft_response):
     """Test draft publication of a non-existing record.
 
     It has to first create said draft and includes record read.
     """
-    # Create the draft
-    response = client.post(
-        "/rdm-records", data=json.dumps(minimal_record), headers=HEADERS
-    )
-
-    assert response.status_code == 201
-    recid = response.json['pid']
+    pid_value = draft_response.json['pid']
 
     # Publish it
     response = client.post(
-        "/rdm-records/{}/draft/actions/publish".format(recid), headers=HEADERS
+        f"/rdm-records/{pid_value}/draft/actions/publish", headers=HEADERS
     )
 
-    assert response.status_code == 200
-    response_fields = response.json.keys()
-    fields_to_check = ['pid', 'metadata', 'revision',
-                       'created', 'updated', 'links']
-
-    for field in fields_to_check:
-        assert field in response_fields
+    assert response.status_code == 202
+    response_fields = set(response.json.keys())
+    expected_fields = set([
+        'pid', 'metadata', 'revision', 'created', 'updated', 'links'
+    ])
+    assert expected_fields == response_fields
 
     # Check draft deletion
     # TODO: Remove import when exception is properly handled
     with pytest.raises(NoResultFound):
         response = client.get(
-            "/rdm-records/{}/draft".format(recid),
+            f"/rdm-records/{pid_value}/draft",
             headers=HEADERS
         )
     # assert response.status_code == 404
 
     # Test record exists
-    response = client.get("/rdm-records/{}".format(recid), headers=HEADERS)
+    response = client.get(f"/rdm-records/{pid_value}", headers=HEADERS)
 
     assert response.status_code == 200
-
-    response_fields = response.json.keys()
-    fields_to_check = ['pid', 'metadata', 'revision',
-                       'created', 'updated', 'links']
-
-    for field in fields_to_check:
-        assert field in response_fields
+    response_fields = set(response.json.keys())
+    assert expected_fields == response_fields
 
 
-def test_record_search(client):
-    """Test draft creation."""
-    expected_response_keys = set(['hits', 'links', 'aggregations'])
-    expected_metadata_keys = set([
-        'access_right', 'resource_type', 'creators', 'titles'
-    ])
+def test_record_search(client, draft_response):
+    pid_value = draft_response.json['pid']
+    response = client.post(
+        f"/rdm-records/{pid_value}/draft/actions/publish", headers=HEADERS
+    )
 
     # Get published bibliographic records
     response = client.get('/rdm-records', headers=HEADERS)
 
     assert response.status_code == 200
+    expected_response_keys = set(['hits', 'links', 'aggregations'])
     response_keys = set(response.json.keys())
     # The datamodel has other tests (jsonschemas, mappings, schemas)
     # Here we just want to crosscheck the important ones are there.
     assert expected_response_keys.issubset(response_keys)
-
+    expected_metadata_keys = set([
+        'access_right', 'resource_type', 'creators', 'titles'
+    ])
     for r in response.json["hits"]["hits"]:
         metadata_keys = set(r["metadata"])
         assert expected_metadata_keys.issubset(metadata_keys)

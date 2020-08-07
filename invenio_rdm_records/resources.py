@@ -10,7 +10,7 @@
 
 from invenio_drafts_resources.resources import DraftActionResource, \
     DraftActionResourceConfig, DraftResource, DraftResourceConfig
-from invenio_drafts_resources.serializers import DraftJSONSerializer
+from invenio_drafts_resources.serializers import RecordDraftJSONSerializer
 from invenio_records_resources.resources import RecordResource, \
     RecordResourceConfig
 from invenio_records_resources.responses import RecordResponse
@@ -44,7 +44,7 @@ class BibliographicDraftResourceConfig(DraftResourceConfig):
     list_route = "/rdm-records/<pid_value>/draft"
     response_handlers = {
         "application/json": RecordResponse(
-            DraftJSONSerializer(schema=BibliographicDraftSchemaV1)
+            RecordDraftJSONSerializer(schema=BibliographicDraftSchemaV1)
         )
     }
 
@@ -58,7 +58,7 @@ class BibliographicDraftResource(DraftResource):
 class BibliographicDraftActionResourceConfig(DraftActionResourceConfig):
     """Bibliographic record draft action resource config."""
 
-    list_route = "/rdm-records//<pid_value>/draft/actions/<action>"
+    list_route = "/rdm-records/<pid_value>/draft/actions/<action>"
     response_handlers = {
         "application/json": RecordResponse(
             RecordJSONSerializer(schema=BibliographicRecordSchemaV1)

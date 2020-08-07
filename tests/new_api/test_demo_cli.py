@@ -17,7 +17,7 @@ from invenio_rdm_records.cli import create_fake_record
 
 
 def test_create_fake_record_saves_to_db(app, es_clear, location):
-    """Test simple flow using REST API."""
+    """Test if fake records are saved to db."""
     # app needed for config overwrite of pidstore
     assert RecordMetadata.query.first() is None
 

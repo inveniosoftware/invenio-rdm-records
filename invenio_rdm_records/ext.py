@@ -45,6 +45,7 @@ class InvenioRDMRecords(object):
             'RECORDS_REST_FACETS',
             'RECORDS_REST_SORT_OPTIONS',
             'RECORDS_REST_DEFAULT_SORT',
+            'RECORDS_UI_ENDPOINTS',
             'RECORDS_FILES_REST_ENDPOINTS',
             'RECORDS_PERMISSIONS_RECORD_POLICY',
             'THEME_SITEURL',

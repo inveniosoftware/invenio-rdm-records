@@ -23,7 +23,7 @@ from invenio_pidstore import current_pidstore
 from invenio_records_files.api import Record
 from invenio_search import current_search
 
-from .services import BibliographicRecordDraftService
+from .services import BibliographicRecordService
 from .vocabularies import Vocabularies
 
 
@@ -171,7 +171,7 @@ def create_fake_record():
     identity = Identity(1)
     identity.provides.add(any_user)
 
-    draft_service = BibliographicRecordDraftService()
+    draft_service = BibliographicRecordService()
 
     identified_draft = draft_service.create(
         data=data_to_use, identity=identity

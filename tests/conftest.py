@@ -207,6 +207,7 @@ def minimal_input_record():
         "_owners": [1],
         "_created_by": 1,
         "access_right": "open",
+        "publication_date": "2020-06-01",
         "resource_type": {
             "type": "image",
             "subtype": "image-photo"
@@ -229,6 +230,5 @@ def minimal_record(minimal_input_record):
     It fills in the missing and post_loaded fields.
     """
     record = deepcopy(minimal_input_record)
-    record['publication_date'] = date.today().isoformat()
-    record['_publication_date_search'] = date.today().isoformat()
+    record['_publication_date_search'] = record['publication_date']
     return record

@@ -18,7 +18,7 @@ from invenio_pidstore.providers.recordid_v2 import RecordIdProviderV2
 
 from invenio_rdm_records.resources import BibliographicDraftActionResource, \
     BibliographicDraftResource, BibliographicRecordResource
-from invenio_rdm_records.services import BibliographicRecordDraftService
+from invenio_rdm_records.services import BibliographicRecordService
 
 
 @pytest.fixture(scope='module')
@@ -30,9 +30,9 @@ def create_app(instance_path):
 @pytest.fixture(scope='module')
 def app(app):
     """app fixture."""
-    RecordIdProviderV2.default_status_with_obj = PIDStatus.NEW
+    RecordIdProviderV2.default_status_with_obj = PIDStatus.RESERVED
 
-    record_draft_service = BibliographicRecordDraftService()
+    record_draft_service = BibliographicRecordService()
     record_bp = BibliographicRecordResource(
         service=record_draft_service
     ).as_blueprint("bibliographic_record_resource")

@@ -15,9 +15,12 @@ from invenio_records_resources.services import MarshmallowDataValidator
 from .marshmallow import MetadataSchemaV1
 from .models import BibliographicRecord, BibliographicRecordDraft
 from .permissions import RDMRecordPermissionPolicy
+from .pid_manager import BibliographicPIDManager
+from .resources import BibliographicDraftActionResourceConfig, \
+    BibliographicDraftResourceConfig, BibliographicRecordResourceConfig
 
 
-class BibliographicRecordDraftServiceConfig(RecordDraftServiceConfig):
+class BibliographicRecordServiceConfig(RecordDraftServiceConfig):
     """Bibliografic record draft service config."""
 
     # Record
@@ -26,15 +29,20 @@ class BibliographicRecordDraftServiceConfig(RecordDraftServiceConfig):
     data_validator = MarshmallowDataValidator(
         schema=MetadataSchemaV1
     )
+    pid_manager = BibliographicPIDManager()
+    record_route = BibliographicRecordResourceConfig.item_route
+    record_search_route = BibliographicRecordResourceConfig.list_route
 
     # Draft
     draft_cls = BibliographicRecordDraft
     draft_data_validator = MarshmallowDataValidator(
         schema=MetadataSchemaV1
     )
+    draft_route = BibliographicDraftResourceConfig.list_route
+    draft_action_route = BibliographicDraftActionResourceConfig.list_route
 
 
-class BibliographicRecordDraftService(RecordDraftService):
-    """Bibliographic record draft service."""
+class BibliographicRecordService(RecordDraftService):
+    """Bibliographic record service."""
 
-    default_config = BibliographicRecordDraftServiceConfig
+    default_config = BibliographicRecordServiceConfig

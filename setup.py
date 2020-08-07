@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2019 CERN.
-# Copyright (C) 2019 Northwestern University.
+# Copyright (C) 2019-2020 CERN.
+# Copyright (C) 2019-2020 Northwestern University.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
@@ -69,7 +69,7 @@ install_requires = [
     'idutils>=1.1.7',
     'invenio-assets>=1.2.2,<1.3.0',
     'invenio-communities>=2.0.4,<3.0.0',
-    'invenio-drafts-resources>=0.1.3,<1.0.0',
+    'invenio-drafts-resources>=0.2.2,<0.3.0',
     'invenio-formatter[badges]>=1.1.0a1,<2.0.0',
     'invenio-jsonschemas>=1.1.0,<2.0.0',
     'invenio-pidstore>=1.2.1,<2.0.0',
@@ -77,7 +77,7 @@ install_requires = [
     'invenio-records>=1.3.2,<2.0.0',
     'invenio-records-files>=1.2.1,<2.0.0',
     'invenio-records-permissions>=0.9.0,<1.0.0',
-    'invenio-records-resources>=0.3.2,<1.0.0',
+    'invenio-records-resources>=0.4.0,<0.5.0',
     'invenio-records-ui>=1.2.0a1,<2.0.0',
     'invenio-previewer>=1.2.1,<2.0.0',
     'marshmallow>=3.3.0,<4.0.0',
@@ -131,7 +131,11 @@ setup(
             'invenio_rdm_records = invenio_rdm_records.jsonschemas',
         ],
         'invenio_search.mappings': [
-            'records = invenio_rdm_records.mappings',
+            'records = invenio_rdm_records.mappings.records',
+            # TODO: When indexing is done based on $schema
+            #       (invenio-drafts-resources/issues/27), this should
+            #       be revisited
+            'drafts = invenio_rdm_records.mappings.drafts',
         ],
     },
     extras_require=extras_require,

@@ -33,15 +33,7 @@ class EDTFLevel0DateString(fields.Str):
         NOTE: Level 0 allows for an interval.
         NOTE: ``level0Expression`` tries hard to parse dates. For example,
               ``"2020-01-02garbage"`` will parse to the 2020-01-02 date.
-        NOTE: uses today's date if falsey value given
         """
-        if not value:
-            today_str = date.today().isoformat()
-            return (
-                super(EDTFLevel0DateString, self)
-                ._deserialize(today_str, attr, data, **kwargs)
-            )
-
         parser = level0Expression("level0")
 
         try:

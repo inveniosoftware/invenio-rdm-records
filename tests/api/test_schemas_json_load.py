@@ -948,18 +948,6 @@ def test_publication_date(
 
     expected_record = minimal_record
 
-    # No publication_date uses today as default
-    data = MetadataSchemaV1().load(minimal_input_record)
-
-    assert_publication_dates(data, expected_record)
-
-    # Falsey publication_date uses today as default
-    minimal_input_record['publication_date'] = ""
-
-    data = MetadataSchemaV1().load(minimal_input_record)
-
-    assert_publication_dates(data, expected_record)
-
     # Partial
     minimal_input_record['publication_date'] = '2020-02'
     expected_record['publication_date'] = '2020-02'
