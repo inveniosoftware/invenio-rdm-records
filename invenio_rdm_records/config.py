@@ -71,6 +71,11 @@ RECORDS_REST_FACETS = dict(
             access_right=dict(terms=dict(field='access_right')),
             resource_type=dict(terms=dict(field='resource_type.type'))
         ),
+        # TODO: Move this to `invenio-communities` (or inject via config?)
+        filters=dict(
+            community=terms_filter('_communities.accepted.id'),
+            community_pending=terms_filter('_communities.pending.id'),
+        ),
         post_filters=dict(
             access_right=terms_filter('access_right'),
             resource_type=terms_filter('resource_type.type')
