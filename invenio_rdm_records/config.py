@@ -60,7 +60,6 @@ RECORDS_REST_ENDPOINTS = dict(
         create_permission_factory_imp=record_create_permission_factory,
         update_permission_factory_imp=record_update_permission_factory,
         delete_permission_factory_imp=record_delete_permission_factory,
-        links_factory_imp='invenio_rdm_records.links.links_factory'
     ),
 )
 """REST API for invenio_rdm_records."""
