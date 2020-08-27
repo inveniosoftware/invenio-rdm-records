@@ -32,12 +32,11 @@ class BibliographicRecordServiceConfig(RecordDraftServiceConfig):
     pid_manager = BibliographicPIDManager()
     record_route = BibliographicRecordResourceConfig.item_route
     record_search_route = BibliographicRecordResourceConfig.list_route
+    record_files_route = record_route + "/files"
 
     # Draft
     draft_cls = BibliographicRecordDraft
-    draft_data_validator = MarshmallowDataValidator(
-        schema=MetadataSchemaV1
-    )
+    draft_data_validator = data_validator
     draft_route = BibliographicDraftResourceConfig.list_route
     draft_action_route = BibliographicDraftActionResourceConfig.list_route
 
