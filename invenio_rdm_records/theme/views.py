@@ -134,7 +134,7 @@ def pid_url(identifier, scheme=None, url_scheme='https'):
 
 @blueprint.app_template_filter('doi_identifier')
 def doi_identifier(identifiers):
-    """Determine if DOI is managed locally."""
+    """Extract DOI from sequence of identifiers."""
     for identifier in identifiers:
         # TODO: extract this "DOI" constant to a registry?
         if identifier == 'DOI':
@@ -142,13 +142,13 @@ def doi_identifier(identifiers):
 
 
 @blueprint.app_template_filter('doi_locally_managed')
-def doi_locally_managed(pid):
+def doi_locally_managed(doi):
     """Determine if DOI is managed locally."""
-    return is_doi_locally_managed(pid)
+    return is_doi_locally_managed(doi)
 
 
 @blueprint.app_template_filter('vocabulary_title')
 def vocabulary_title(dict_key, vocabulary_key):
     """Returns formatted vocabulary-corresponding human-readable string."""
     vocabulary = Vocabularies.get_vocabulary(vocabulary_key)
-    return vocabulary.get_title_by_dict(dict_key)
+    return vocabulary.get_title_by_dict(dict_key) if vocabulary else ""
