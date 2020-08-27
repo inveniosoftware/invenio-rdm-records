@@ -19,6 +19,7 @@ from invenio_pidstore.providers.recordid_v2 import RecordIdProviderV2
 from invenio_rdm_records.resources import BibliographicDraftActionResource, \
     BibliographicDraftResource, BibliographicRecordResource
 from invenio_rdm_records.services import BibliographicRecordService
+from invenio_rdm_records.vocabularies import Vocabularies
 
 
 @pytest.fixture(scope='module')
@@ -47,3 +48,12 @@ def app(app):
     app.register_blueprint(draft_bp)
     app.register_blueprint(draft_action_bp)
     return app
+
+
+@pytest.fixture(scope='function')
+def vocabulary_clear(app):
+    """Clears the Vocabulary singleton and pushes an application context.
+
+    NOTE: app fixture pushes an application context
+    """
+    Vocabularies.clear()

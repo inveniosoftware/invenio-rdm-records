@@ -64,6 +64,10 @@ class BibliographicDraftActionResourceConfig(DraftActionResourceConfig):
             RecordJSONSerializer(schema=BibliographicRecordSchemaV1)
         )
     }
+    # TODO: Remove when invenio-drafts-resources provides it
+    action_commands = {
+        "publish": "publish",
+    }
 
 
 class BibliographicDraftActionResource(DraftActionResource):

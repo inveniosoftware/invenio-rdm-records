@@ -14,8 +14,6 @@ fixtures are available.
 
 import pytest
 from invenio_app.factory import create_api
-from invenio_pidstore.models import PIDStatus
-from invenio_pidstore.providers.recordid_v2 import RecordIdProviderV2
 
 from invenio_rdm_records.vocabularies import Vocabularies
 
@@ -23,8 +21,6 @@ from invenio_rdm_records.vocabularies import Vocabularies
 @pytest.fixture(scope='module')
 def create_app(instance_path):
     """Application factory fixture."""
-    RecordIdProviderV2.default_status_with_obj = PIDStatus.REGISTERED
-
     return create_api
 
 

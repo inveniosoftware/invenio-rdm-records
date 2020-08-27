@@ -9,6 +9,7 @@
 """Module tests."""
 
 import json
+from io import BytesIO
 
 import pytest
 from sqlalchemy.orm.exc import NoResultFound
@@ -93,3 +94,24 @@ def test_record_search(client, draft_response):
     for r in response.json["hits"]["hits"]:
         metadata_keys = set(r["metadata"])
         assert expected_metadata_keys.issubset(metadata_keys)
+
+
+@pytest.mark.skip(reason="Temporarily disabled since July sprint")
+def test_simple_file_upload(app, client, draft_response):
+    """Test simple file upload using REST API."""
+    # Create record
+    pid_value = draft_response.json['pid']
+    response = client.post(
+        f"/rdm-records/{pid_value}/draft/actions/publish", headers=HEADERS
+    )
+    assert response.status_code == 202
+
+    response = client.put(
+        f"/rdm-records/{pid_value}/files/example.txt",
+        data=BytesIO(b"foo bar baz"),
+        headers={"content-type": "application/octet-stream"}
+    )
+
+    assert response.status_code == 200
+    assert response.json['key'] == 'example.txt'
+    assert response.json['size'] != 0

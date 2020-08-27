@@ -43,7 +43,7 @@ def published_json(client, minimal_input_record, es):
 
 
 def test_draft_links(client, draft_json, minimal_input_record):
-    """Tests the links from for endpoints that return a draft."""
+    """Tests the links for endpoints that return a draft."""
     created_draft_links = draft_json["links"]
     pid_value = draft_json["pid"]
 
@@ -56,7 +56,7 @@ def test_draft_links(client, draft_json, minimal_input_record):
         "self": f"https://localhost:5000/api/rdm-records/{pid_value}/draft",
         "self_html": f"https://localhost:5000/deposits/{pid_value}/edit",
         "publish": f"https://localhost:5000/api/rdm-records/{pid_value}/draft/actions/publish",  # noqa
-        # TODO: Uncomment when implemented
+        # TODO: Uncomment when files can be associated with drafts
         # "files": f"https://localhost:5000/api/rdm-records/{pid_value}/files",
     }
     assert expected_links == created_draft_links == read_draft_links
@@ -73,8 +73,8 @@ def test_record_links(client, published_json):
         "self": f"https://localhost:5000/api/rdm-records/{pid_value}",
         "self_html": f"https://localhost:5000/records/{pid_value}",
         "edit": f"https://localhost:5000/api/rdm-records/{pid_value}/draft",
+        "files": f"https://localhost:5000/api/rdm-records/{pid_value}/files",
         # TODO: Uncomment when implemented
-        # "files": f"https://localhost:5000/api/rdm-records/{pid_value}/files",
         # "versions":
         #   f"https://localhost:5000/api/rdm-records/{pid_value}/...",
         # "latest": f"https://localhost:5000/api/rdm-records/{pid_value}/...",
