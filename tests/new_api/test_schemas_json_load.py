@@ -861,8 +861,9 @@ def test_identifiers(minimal_input_record):
         data = MetadataSchemaV1().load(minimal_input_record)
 
 
-def test_extensions():
+def test_extensions(app, minimal_input_record):
     """Test metadata extensions schema."""
+    # Setup metadata extensions
     RDM_RECORDS_METADATA_NAMESPACES = {
         'dwc': {
             '@context': 'https://example.com/dwc/terms'
@@ -899,20 +900,24 @@ def test_extensions():
         }
     }
 
-    extensions = MetadataExtensions(
-        RDM_RECORDS_METADATA_NAMESPACES,
-        RDM_RECORDS_METADATA_EXTENSIONS
+    orig_metadata_extensions = (
+        app.extensions['invenio-rdm-records'].metadata_extensions
     )
-    ExtensionsSchema = extensions.to_schema()
+
+    app.extensions['invenio-rdm-records'].metadata_extensions = (
+        MetadataExtensions(
+            RDM_RECORDS_METADATA_NAMESPACES,
+            RDM_RECORDS_METADATA_EXTENSIONS
+        )
+    )
 
     # Minimal if not absent
     valid_minimal = {
         'dwc:family': 'Felidae'
     }
-
-    data = ExtensionsSchema().load(valid_minimal)
-
-    assert data == valid_minimal
+    minimal_input_record['extensions'] = valid_minimal
+    data = MetadataSchemaV1().load(minimal_input_record)
+    assert valid_minimal == data.get('extensions')
 
     # Full
     valid_full = {
@@ -923,22 +928,25 @@ def test_extensions():
         'nubiomed:original_presentation_date': '2019-02-14',
         'nubiomed:right_or_wrong': True,
     }
-
-    data = ExtensionsSchema().load(valid_full)
-
-    assert data == valid_full
+    minimal_input_record['extensions'] = valid_full
+    data = MetadataSchemaV1().load(minimal_input_record)
+    assert valid_full == data.get('extensions')
 
     # Invalid
     invalid_number_in_sequence = {
         'dwc:family': 'Felidae',
         'nubiomed:scientific_sequence': [1, 'l', 2, 3, 5, 8],
     }
+    minimal_input_record['extensions'] = invalid_number_in_sequence
     with pytest.raises(ValidationError):
-        data = ExtensionsSchema().load(invalid_number_in_sequence)
+        data = MetadataSchemaV1().load(minimal_input_record)
+
+    app.extensions['invenio-rdm-records'].metadata_extensions = (
+        orig_metadata_extensions
+    )
 
 
-def test_publication_date(
-        vocabulary_clear, minimal_input_record, minimal_record):
+def test_publication_date(app, minimal_input_record, minimal_record):
     def assert_publication_dates(data, expected):
         assert data['publication_date'] == expected_record['publication_date']
         assert (
