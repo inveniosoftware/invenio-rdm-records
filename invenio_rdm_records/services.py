@@ -18,6 +18,7 @@ from .permissions import RDMRecordPermissionPolicy
 from .pid_manager import BibliographicPIDManager
 from .resources import BibliographicDraftActionResourceConfig, \
     BibliographicDraftResourceConfig, BibliographicRecordResourceConfig
+from .search import BibliographicRecordsSearch
 
 
 class BibliographicRecordServiceConfig(RecordDraftServiceConfig):
@@ -33,6 +34,7 @@ class BibliographicRecordServiceConfig(RecordDraftServiceConfig):
     record_route = BibliographicRecordResourceConfig.item_route
     record_search_route = BibliographicRecordResourceConfig.list_route
     record_files_route = record_route + "/files"
+    search_cls = BibliographicRecordsSearch
 
     # Draft
     draft_cls = BibliographicRecordDraft
