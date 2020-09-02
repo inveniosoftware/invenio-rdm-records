@@ -46,4 +46,5 @@ class BibliographicRecordServiceConfig(RecordDraftServiceConfig):
 class BibliographicRecordService(RecordDraftService):
     """Bibliographic record service."""
 
+    config_name = "RDM_RECORDS_BIBLIOGRAPHIC_SERVICE_CONFIG"
     default_config = BibliographicRecordServiceConfig

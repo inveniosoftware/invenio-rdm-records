@@ -35,6 +35,7 @@ class BibliographicRecordResourceConfig(RecordResourceConfig):
 class BibliographicRecordResource(RecordResource):
     """Record resource."""
 
+    config_name = "RDM_RECORDS_BIBLIOGRAPHIC_RECORD_CONFIG"
     default_config = BibliographicRecordResourceConfig
 
 
@@ -52,6 +53,7 @@ class BibliographicDraftResourceConfig(DraftResourceConfig):
 class BibliographicDraftResource(DraftResource):
     """Record resource."""
 
+    config_name = "RDM_RECORDS_BIBLIOGRAPHIC_DRAFT_CONFIG"
     default_config = BibliographicDraftResourceConfig
 
 
@@ -73,4 +75,5 @@ class BibliographicDraftActionResourceConfig(DraftActionResourceConfig):
 class BibliographicDraftActionResource(DraftActionResource):
     """Bibliographic record draft action  resource."""
 
+    config_name = "RDM_RECORDS_BIBLIOGRAPHIC_DRAFT_ACTION_CONFIG"
     default_config = BibliographicDraftActionResourceConfig
