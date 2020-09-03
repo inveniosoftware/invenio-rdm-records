@@ -12,6 +12,7 @@ from invenio_drafts_resources.services import RecordDraftService, \
     RecordDraftServiceConfig
 from invenio_records_resources.services import MarshmallowDataValidator
 
+from .links import DraftSelfHtmlLinkBuilder, RecordSelfHtmlLinkBuilder
 from .marshmallow import MetadataSchemaV1
 from .models import BibliographicRecord, BibliographicRecordDraft
 from .permissions import RDMRecordPermissionPolicy
@@ -35,12 +36,18 @@ class BibliographicRecordServiceConfig(RecordDraftServiceConfig):
     record_search_route = BibliographicRecordResourceConfig.list_route
     record_files_route = record_route + "/files"
     search_cls = BibliographicRecordsSearch
+    record_link_builders = RecordDraftServiceConfig.record_link_builders + [
+        RecordSelfHtmlLinkBuilder,
+    ]
 
     # Draft
     draft_cls = BibliographicRecordDraft
     draft_data_validator = data_validator
     draft_route = BibliographicDraftResourceConfig.list_route
     draft_action_route = BibliographicDraftActionResourceConfig.list_route
+    draft_link_builders = RecordDraftServiceConfig.draft_link_builders + [
+        DraftSelfHtmlLinkBuilder,
+    ]
 
 
 class BibliographicRecordService(RecordDraftService):

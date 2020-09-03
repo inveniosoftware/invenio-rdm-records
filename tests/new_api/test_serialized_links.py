@@ -54,7 +54,7 @@ def test_draft_links(client, draft_json, minimal_input_record):
 
     expected_links = {
         "self": f"https://localhost:5000/api/rdm-records/{pid_value}/draft",
-        "self_html": f"https://localhost:5000/deposits/{pid_value}/edit",
+        "self_html": f"https://localhost:5000/uploads/{pid_value}",
         "publish": f"https://localhost:5000/api/rdm-records/{pid_value}/draft/actions/publish",  # noqa
         # TODO: Uncomment when files can be associated with drafts
         # "files": f"https://localhost:5000/api/rdm-records/{pid_value}/files",
