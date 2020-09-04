@@ -454,14 +454,14 @@ class CommunitiesRequestV1(BaseSchema):
         """Get links."""
         res = {
             'self': api_link_for(
-                'community_inclusion_request',
-                id=obj['comid'], request_id=obj['request_id']),
+                'community_records_item',
+                comid=obj['comid'], com_rec_id=obj['id']),
             'community': api_link_for('community', id=obj['comid']),
         }
         for action in ('accept', 'reject', 'comment'):
             res[action] = api_link_for(
-                'community_inclusion_request_action',
-                id=obj['comid'], request_id=obj['request_id'], action=action)
+                'community_records_item_actions',
+                comid=obj['comid'], com_rec_id=obj['id'], action=action)
         return res
 
 
