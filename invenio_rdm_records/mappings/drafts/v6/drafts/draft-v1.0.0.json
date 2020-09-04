@@ -160,6 +160,14 @@
             }
           }
         },
+        "_communities_collections":{
+          "type": "object",
+          "properties": {
+            "id":{
+              "type": "keyword"
+            }
+          }
+        },
         "access_right": {
           "type": "keyword"
         },

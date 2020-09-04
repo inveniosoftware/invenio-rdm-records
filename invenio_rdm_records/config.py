@@ -17,6 +17,9 @@ from invenio_records_permissions import record_create_permission_factory, \
 from invenio_records_permissions.api import RecordsSearch
 from invenio_records_rest.facets import terms_filter
 
+from invenio_rdm_records.utils import community_collections_agg, \
+    DynamicAggregation
+
 
 def _(x):
     """Identity function for string extraction."""
@@ -68,16 +71,26 @@ RECORDS_REST_FACETS = dict(
     records=dict(
         aggs=dict(
             access_right=dict(terms=dict(field='access_right')),
-            resource_type=dict(terms=dict(field='resource_type.type'))
+            resource_type=dict(terms=dict(field='resource_type.type')),
+            community_collections=DynamicAggregation(
+                base_agg=dict(
+                    terms=dict(
+                        field='_communities_collections.id',
+                    )
+                ),
+                function_agg=community_collections_agg
+            ),
         ),
         # TODO: Move this to `invenio-communities` (or inject via config?)
         filters=dict(
-            community=terms_filter('_communities.accepted.id'),
-            community_pending=terms_filter('_communities.pending.id'),
+            community=terms_filter('_communities.accepted.comid'),
+            community_pending=terms_filter('_communities.pending.comid'),
         ),
         post_filters=dict(
             access_right=terms_filter('access_right'),
-            resource_type=terms_filter('resource_type.type')
+            resource_type=terms_filter('resource_type.type'),
+            community_collections=terms_filter('_communities_collections.id'),
+
         )
     )
 )
