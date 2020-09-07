@@ -20,6 +20,7 @@ from .permissions import RDMRecordPermissionPolicy
 from .pid_manager import BibliographicPIDManager
 from .resources import BibliographicDraftActionResourceConfig, \
     BibliographicDraftResourceConfig, BibliographicRecordResourceConfig
+from .schemas import RDMRecordSchemaV1
 from .search import BibliographicRecordsSearch
 
 
@@ -32,6 +33,7 @@ class BibliographicRecordServiceConfig(RecordDraftServiceConfig):
     data_validator = MarshmallowDataValidator(
         schema=MetadataSchemaV1
     )
+    data_schema = RDMRecordSchemaV1
     pid_manager = BibliographicPIDManager()
     record_route = BibliographicRecordResourceConfig.item_route
     record_search_route = BibliographicRecordResourceConfig.list_route
