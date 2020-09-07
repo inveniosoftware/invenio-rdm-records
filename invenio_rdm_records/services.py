@@ -10,9 +10,13 @@
 
 from invenio_drafts_resources.services import RecordDraftService, \
     RecordDraftServiceConfig
+from invenio_drafts_resources.services.components import RelationsComponent
 from invenio_records_resources.services import MarshmallowDataValidator
+from invenio_records_resources.services.components import AccessComponent, \
+    FilesComponent, MetadataComponent, PIDSComponent
 from invenio_records_resources.services.search import terms_filter
 
+from .components import CommunitiesComponent, StatsComponent
 from .links import DraftSelfHtmlLinkBuilder, RecordSelfHtmlLinkBuilder
 from .marshmallow import MetadataSchemaV1
 from .models import BibliographicRecord, BibliographicRecordDraft
@@ -69,6 +73,16 @@ class BibliographicRecordServiceConfig(RecordDraftServiceConfig):
     draft_action_route = BibliographicDraftActionResourceConfig.list_route
     draft_link_builders = RecordDraftServiceConfig.draft_link_builders + [
         DraftSelfHtmlLinkBuilder,
+    ]
+
+    components = [
+        MetadataComponent,
+        PIDSComponent,
+        RelationsComponent,
+        AccessComponent,
+        FilesComponent,
+        CommunitiesComponent,
+        StatsComponent,
     ]
 
 
