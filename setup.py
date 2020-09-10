@@ -81,6 +81,8 @@ install_requires = [
     'invenio-records-ui>=1.2.0a1,<2.0.0',
     'invenio-previewer>=1.2.1,<2.0.0',
     'marshmallow>=3.3.0,<4.0.0',
+    # until fix in invenio-previewer is released
+    'nbconvert[execute]>=4.1.0,<6.0.0',
     'pycountry>=18.12.8',
     'six>=1.12.0'  # Needed to pass CI tests
 ]
