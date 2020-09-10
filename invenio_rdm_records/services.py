@@ -11,6 +11,7 @@
 from invenio_drafts_resources.services import RecordDraftService, \
     RecordDraftServiceConfig
 from invenio_records_resources.services import MarshmallowDataValidator
+from invenio_records_resources.services.search import terms_filter
 
 from .links import DraftSelfHtmlLinkBuilder, RecordSelfHtmlLinkBuilder
 from .marshmallow import MetadataSchemaV1
@@ -35,10 +36,29 @@ class BibliographicRecordServiceConfig(RecordDraftServiceConfig):
     record_route = BibliographicRecordResourceConfig.item_route
     record_search_route = BibliographicRecordResourceConfig.list_route
     record_files_route = record_route + "/files"
-    search_cls = BibliographicRecordsSearch
     record_link_builders = RecordDraftServiceConfig.record_link_builders + [
         RecordSelfHtmlLinkBuilder,
     ]
+    search_cls = BibliographicRecordsSearch
+    search_faceting_options = {
+        'aggs': {
+            'resource_type': {
+                'terms': {'field': 'resource_type.type'},
+                'aggs': {
+                    'subtype': {
+                        'terms': {'field': 'resource_type.subtype'},
+                    }
+                }
+            },
+            'access_right': {
+                'terms': {'field': 'access_right'},
+            }
+        },
+        'post_filters': {
+            'subtype': terms_filter('resource_type.subtype'),
+            'resource_type': terms_filter('resource_type.type'),
+        }
+    }
 
     # Draft
     draft_cls = BibliographicRecordDraft
