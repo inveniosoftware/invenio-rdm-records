@@ -16,6 +16,9 @@ from invenio_records_resources.services.components import AccessComponent, \
     FilesComponent, MetadataComponent, PIDSComponent
 from invenio_records_resources.services.search import terms_filter
 
+# TODO: figure import
+from invenio_records_resources.services.search import terms_filter
+
 from .components import CommunitiesComponent, StatsComponent
 from .links import DraftSelfHtmlLinkBuilder, RecordSelfHtmlLinkBuilder
 from .marshmallow import MetadataSchemaV1
