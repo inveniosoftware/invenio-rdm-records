@@ -17,7 +17,9 @@ from .metadata import MetadataSchemaV1
 from .pids import PIDSSchemaV1
 from .relations import RelationsSchemaV1
 from .stats import StatsSchemaV1
+from invenio_records_resources.linker.base import LinksField
 from invenio_records_rest.schemas.fields import GenFunction
+from invenio_records_resources.schemas import FieldPermissionsMixin
 
 
 # NOTE: Use this one for system fields only
@@ -35,24 +37,19 @@ class NestedAttribute(fields.Nested, AttributeAccessorFieldMixin):
     """Nested object attribute field."""
 
 
+class RecordLinks(Schema, FieldPermissionsMixin):
 
-# NOTE: Explicitly use this at the top level of schemas that contain system
-# fields (e.g. `record.files`) and even some of their nested values, e.g.
-# `record.files.count`
-class AttrSchema(_Schema):
+    field_dump_permissions = {
+        'self': 'read',
+        'draft': 'update',
+        'publish': 'update',
+        'edit': 'update',
+    }
 
-    def get_attribute(self, obj, attr, default):
-        return get_value(obj, attr, default)
-
-# .vs
-
-# NOTE: Use this one for system fields only
-class NestedAttributeField(fields.Nested):
-
-    def get_value(self, obj, attr, accessor=None, default=missing):
-        attribute = getattr(self, "attribute", None)
-        check_key = attr if attribute is None else attribute
-        return get_value(obj, check_key, default)
+    self = GenFunction(lambda obj, ctx: {'pid_value': obj.pid.pid_value})
+    draft = GenFunction(lambda obj, ctx: {'pid_value': obj.pid.pid_value})
+    publish = GenFunction(lambda obj, ctx: {'pid_value': obj.pid.pid_value})
+    edit = GenFunction(lambda obj, ctx: {'pid_value': obj.pid.pid_value})
 
 
 class RDMRecordSchemaV1(Schema):
@@ -85,6 +82,8 @@ class RDMRecordSchemaV1(Schema):
     # pids = NestedAttribute(PIDSSchemaV1)
     # stats = NestedAttribute(StatsSchemaV1, dump_only=True)
     # relations = NestedAttribute(RelationsSchemaV1, dump_only=True)
+
+    links = LinksField(links_schema=RecordLinks, links_namespace='record')
 
 
 __all__ = (
