@@ -8,7 +8,7 @@
 
 """RDM record schemas."""
 
-from marshmallow import INCLUDE, EXCLUDE, Schema as _Schema, fields, missing
+from marshmallow import INCLUDE, EXCLUDE, Schema, fields, missing
 
 from .access import AccessSchemaV1
 from .communities import CommunitiesSchemaV1
@@ -17,32 +17,23 @@ from .metadata import MetadataSchemaV1
 from .pids import PIDSSchemaV1
 from .relations import RelationsSchemaV1
 from .stats import StatsSchemaV1
+from invenio_records_rest.schemas.fields import GenFunction
 
 
-def get_value(obj, key, default=missing):
-    if not isinstance(key, int) and "." in key:
-        return _get_value_for_keys(obj, key.split("."), default)
-    else:
-        return _get_value_for_key(obj, key, default)
+# NOTE: Use this one for system fields only
+class AttributeAccessorFieldMixin:
+    """Marshmallow field mixin for attribute-based serialization."""
+
+    def get_value(self, obj, attr, accessor=None, default=missing):
+        """Return the value for a given key from an object attribute."""
+        attribute = getattr(self, "attribute", None)
+        check_key = attr if attribute is None else attribute
+        return getattr(obj, check_key, default)
 
 
-def _get_value_for_keys(obj, keys, default):
-    if len(keys) == 1:
-        return _get_value_for_key(obj, keys[0], default)
-    else:
-        return _get_value_for_keys(
-            _get_value_for_key(obj, keys[0], default), keys[1:], default
-        )
+class NestedAttribute(fields.Nested, AttributeAccessorFieldMixin):
+    """Nested object attribute field."""
 
-
-def _get_value_for_key(obj, key, default):
-    if not hasattr(obj, "__getitem__"):
-        return getattr(obj, key, default)
-    # NOTE: Here we reverse the order, and do `getattr` first
-    try:
-        return getattr(obj, key)
-    except (KeyError, IndexError, TypeError, AttributeError):
-        return obj.get(key, default)
 
 
 # NOTE: Explicitly use this at the top level of schemas that contain system
@@ -64,7 +55,7 @@ class NestedAttributeField(fields.Nested):
         return get_value(obj, check_key, default)
 
 
-class RDMRecordSchemaV1(AttrSchema):
+class RDMRecordSchemaV1(Schema):
     """Record schema."""
 
     class Meta:
@@ -87,13 +78,13 @@ class RDMRecordSchemaV1(AttrSchema):
 
     # status = fields.Str(dump_only=True)
 
-    metadata = fields.Nested(MetadataSchemaV1)
-    access = fields.Nested(AccessSchemaV1)
-    # files = fields.Nested(FilesSchemaV1, dump_only=True)
-    # communities = fields.Nested(CommunitiesSchemaV1)
-    # pids = fields.Nested(PIDSSchemaV1)
-    # stats = fields.Nested(StatsSchemaV1, dump_only=True)
-    # relations = fields.Nested(RelationsSchemaV1, dump_only=True)
+    metadata = NestedAttribute(MetadataSchemaV1)
+    access = NestedAttribute(AccessSchemaV1)
+    # files = NestedAttribute(FilesSchemaV1, dump_only=True)
+    # communities = NestedAttribute(CommunitiesSchemaV1)
+    # pids = NestedAttribute(PIDSSchemaV1)
+    # stats = NestedAttribute(StatsSchemaV1, dump_only=True)
+    # relations = NestedAttribute(RelationsSchemaV1, dump_only=True)
 
 
 __all__ = (
