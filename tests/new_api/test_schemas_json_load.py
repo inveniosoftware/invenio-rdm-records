@@ -472,6 +472,14 @@ def test_title(vocabulary_clear):
     with pytest.raises(ValidationError):
         data = TitleSchemaV1().load(invalid_no_title)
 
+    invalid_title_empty = {
+        "title": "",
+        "type": "Other",
+        "lang": "eng"
+    }
+    with pytest.raises(ValidationError):
+        data = TitleSchemaV1().load(invalid_title_empty)
+
     invalid_title_type = {
         "title": "A Romans story",
         "type": "Invalid",

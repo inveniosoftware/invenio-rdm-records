@@ -37,7 +37,7 @@ from ..vocabularies import Vocabularies
 from .utils import api_link_for
 
 
-def validate_entry(vocabulary_key, entry_key):
+def validate_entry(vocabulary_key, entry_key, error_field=None):
     """Validates if an entry is valid for a vocabulary.
 
     :param vocabulary_key: str, Vocabulary key
@@ -48,7 +48,10 @@ def validate_entry(vocabulary_key, entry_key):
     vocabulary = Vocabularies.get_vocabulary(vocabulary_key)
     obj = vocabulary.get_entry_by_dict(entry_key)
     if not obj:
-        raise ValidationError(vocabulary.get_invalid(entry_key))
+        error = vocabulary.get_invalid(entry_key)
+        if error_field:
+            error = {error_field: error}
+        raise ValidationError(error)
 
 
 class CommunitySchemaV1(Schema):
@@ -128,33 +131,35 @@ class CreatorSchemaV1(Schema):
 
     @validates("identifiers")
     def validate_identifiers(self, value):
-        """Validate well-formed identifiers are passed."""
+        """Validate well-formed identifiers are passed.
+
+        Each key is a "scheme" and each value is an "identifier".
+        """
         if any(key not in ['Orcid', 'ror'] for key in value.keys()):
-            raise ValidationError(_("Invalid identifier."))
+            raise ValidationError({"scheme": _("Invalid scheme.")})
 
         if 'Orcid' in value:
             if not idutils.is_orcid(value.get('Orcid')):
-                raise ValidationError(_("Invalid identifier."))
+                raise ValidationError({"identifier": _("Invalid identifier.")})
 
         if 'ror' in value:
             if not idutils.is_ror(value.get('ror')):
-                raise ValidationError(_("Invalid identifier."))
+                raise ValidationError({"identifier": _("Invalid identifier.")})
 
     @validates_schema
     def validate_data(self, data, **kwargs):
         """Validate identifier based on type."""
         if data['type'] == "Personal":
-            person_identifiers = ['Orcid']
-            identifiers = data.get('identifiers', {}).keys()
-            if any([ident not in person_identifiers for ident in identifiers]):
-                raise ValidationError(_("Invalid identifier for a person."))
+            person_schemes = ['Orcid']
+            schemes = data.get('identifiers', {}).keys()
+            if any([scheme not in person_schemes for scheme in schemes]):
+                raise ValidationError({"scheme": _("Invalid scheme.")})
+
         elif data['type'] == "Organizational":
-            org_identifiers = ['ror']
-            identifiers = data.get('identifiers', {}).keys()
-            if any([ident not in org_identifiers for ident in identifiers]):
-                raise ValidationError(
-                    _("Invalid identifier for an organization.")
-                )
+            org_schemes = ['ror']
+            schemes = data.get('identifiers', {}).keys()
+            if any([scheme not in org_schemes for scheme in schemes]):
+                raise ValidationError({"scheme": _("Invalid scheme.")})
 
 
 class ContributorSchemaV1(CreatorSchemaV1):
@@ -221,7 +226,7 @@ class TitleSchemaV1(Schema):
     @validates_schema
     def validate_data(self, data, **kwargs):
         """Validate type."""
-        validate_entry('titles.type', data)
+        validate_entry("titles.type", data, error_field="type")
 
 
 class DescriptionSchemaV1(Schema):
