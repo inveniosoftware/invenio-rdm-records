@@ -97,17 +97,11 @@ class Vocabulary(object):
         return _(entry.get(self.readable_key))
 
     def get_invalid(self, dict_key):
-        """Returns the error message for the given dict key."""
-        # TODO: Revisit with deposit to return targeted error message
-        choices = set(self.data.keys())
-        _input = self.key(dict_key)
-
+        """Returns the user facing error message for the given dict key."""
+        vocabulary_name = self.vocabulary_name
+        choices = sorted([self.key(e) for e in self.data.values()])
         return _(
-            'Invalid {vocabulary_name}. {input} not one of {choices}.'.format(
-                vocabulary_name=self.vocabulary_name,
-                input=_input,
-                choices=choices
-            )
+            f"Invalid {vocabulary_name}. Choose one of {choices}."
         )
 
     def dump_options(self):
