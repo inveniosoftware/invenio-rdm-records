@@ -13,67 +13,29 @@ from invenio_drafts_resources.resources import DraftActionResource, \
 from invenio_drafts_resources.serializers import RecordDraftJSONSerializer
 from invenio_records_resources.resources import RecordResource, \
     RecordResourceConfig
-from invenio_records_resources.responses import RecordResponse
+from invenio_records_resources.resources.record_response import RecordResponse
 from invenio_records_resources.serializers import RecordJSONSerializer
 
 from .marshmallow.json import BibliographicDraftSchemaV1, \
     BibliographicRecordSchemaV1
 
 
-class BibliographicRecordResourceConfig(RecordResourceConfig):
-    """Bibliographic Record resource config."""
-
-    item_route = "/rdm-records/<pid_value>"
-    list_route = "/rdm-records"
-    response_handlers = {
-        "application/json": RecordResponse(
-            RecordJSONSerializer(schema=BibliographicRecordSchemaV1)
-        )
-    }
-
-
 class BibliographicRecordResource(RecordResource):
     """Record resource."""
 
     config_name = "RDM_RECORDS_BIBLIOGRAPHIC_RECORD_CONFIG"
-    default_config = BibliographicRecordResourceConfig
-
-
-class BibliographicDraftResourceConfig(DraftResourceConfig):
-    """Bibliographic Record resource config."""
-
-    list_route = "/rdm-records/<pid_value>/draft"
-    response_handlers = {
-        "application/json": RecordResponse(
-            RecordDraftJSONSerializer(schema=BibliographicDraftSchemaV1)
-        )
-    }
+    default_config = RecordResourceConfig
 
 
 class BibliographicDraftResource(DraftResource):
     """Record resource."""
 
     config_name = "RDM_RECORDS_BIBLIOGRAPHIC_DRAFT_CONFIG"
-    default_config = BibliographicDraftResourceConfig
-
-
-class BibliographicDraftActionResourceConfig(DraftActionResourceConfig):
-    """Bibliographic record draft action resource config."""
-
-    list_route = "/rdm-records/<pid_value>/draft/actions/<action>"
-    response_handlers = {
-        "application/json": RecordResponse(
-            RecordJSONSerializer(schema=BibliographicRecordSchemaV1)
-        )
-    }
-    # TODO: Remove when invenio-drafts-resources provides it
-    action_commands = {
-        "publish": "publish",
-    }
+    default_config = DraftResourceConfig
 
 
 class BibliographicDraftActionResource(DraftActionResource):
     """Bibliographic record draft action  resource."""
 
     config_name = "RDM_RECORDS_BIBLIOGRAPHIC_DRAFT_ACTION_CONFIG"
-    default_config = BibliographicDraftActionResourceConfig
+    default_config = DraftActionResourceConfig
