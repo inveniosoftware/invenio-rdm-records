@@ -10,32 +10,29 @@
 
 from invenio_drafts_resources.resources import DraftActionResource, \
     DraftActionResourceConfig, DraftResource, DraftResourceConfig
-from invenio_drafts_resources.serializers import RecordDraftJSONSerializer
+# from invenio_drafts_resources.serializers import RecordDraftJSONSerializer
 from invenio_records_resources.resources import RecordResource, \
     RecordResourceConfig
 from invenio_records_resources.resources.record_response import RecordResponse
-from invenio_records_resources.serializers import RecordJSONSerializer
+# from invenio_records_resources.serializers import RecordJSONSerializer
 
 from .marshmallow.json import BibliographicDraftSchemaV1, \
     BibliographicRecordSchemaV1
 
 
 class BibliographicRecordResource(RecordResource):
-    """Record resource."""
+    """Bibliographic record resource."""
 
     config_name = "RDM_RECORDS_BIBLIOGRAPHIC_RECORD_CONFIG"
-    default_config = RecordResourceConfig
 
 
 class BibliographicDraftResource(DraftResource):
-    """Record resource."""
+    """Bibliographic record draft resource."""
 
     config_name = "RDM_RECORDS_BIBLIOGRAPHIC_DRAFT_CONFIG"
-    default_config = DraftResourceConfig
 
 
 class BibliographicDraftActionResource(DraftActionResource):
-    """Bibliographic record draft action  resource."""
+    """Bibliographic record draft actions resource."""
 
     config_name = "RDM_RECORDS_BIBLIOGRAPHIC_DRAFT_ACTION_CONFIG"
-    default_config = DraftActionResourceConfig

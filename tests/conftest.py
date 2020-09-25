@@ -200,25 +200,27 @@ def full_record(full_input_record):
 def minimal_input_record():
     """Minimal record data as dict coming from the external world."""
     return {
-        "_access": {
-            "metadata_restricted": False,
-            "files_restricted": False
-        },
-        "_owners": [1],
-        "_created_by": 1,
-        "access_right": "open",
-        "publication_date": "2020-06-01",
-        "resource_type": {
-            "type": "image",
-            "subtype": "image-photo"
-        },
-        # Technically not required
-        "creators": [],
-        "titles": [{
-            "title": "A Romans story",
-            "type": "Other",
-            "lang": "eng"
-        }]
+        "metadata": {
+            "_access": {
+                "metadata_restricted": False,
+                "files_restricted": False
+            },
+            "_owners": [1],
+            "_created_by": 1,
+            "access_right": "open",
+            "publication_date": "2020-06-01",
+            "resource_type": {
+                "type": "image",
+                "subtype": "image-photo"
+            },
+            # Technically not required
+            "creators": [],
+            "titles": [{
+                "title": "A Romans story",
+                "type": "Other",
+                "lang": "eng"
+            }]
+        }
     }
 
 

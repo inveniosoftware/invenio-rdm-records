@@ -22,7 +22,7 @@ tests_require = [
 
 # Should follow inveniosoftware/invenio versions
 invenio_db_version = '>=1.0.4,<2.0.0'
-invenio_search_version = '>=1.2.0,<2.0.0'
+invenio_search_version = '>=1.4.0,<2.0.0'
 
 extras_require = {
     'docs': [
@@ -77,13 +77,14 @@ install_requires = [
     'invenio-records>=1.3.2,<2.0.0',
     'invenio-records-files>=1.2.1,<2.0.0',
     'invenio-records-permissions>=0.9.0,<1.0.0',
-    'invenio-records-resources>=0.5.1,<0.6.0',
+    'invenio-records-resources>=0.6.1,<0.7.0',
     'invenio-records-ui>=1.2.0a1,<2.0.0',
     'invenio-previewer>=1.2.1,<2.0.0',
     'marshmallow>=3.3.0,<4.0.0',
     # until fix in invenio-previewer is released
     'nbconvert[execute]>=4.1.0,<6.0.0',
     'pycountry>=18.12.8',
+    # TODO: Get from invenio-base
     'six>=1.12.0'  # Needed to pass CI tests
 ]
 

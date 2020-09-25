@@ -10,23 +10,15 @@
 
 from invenio_drafts_resources.services.records import RecordDraftService, \
     RecordDraftServiceConfig
-from invenio_drafts_resources.services.records.components import RelationsComponent
-from invenio_records_resources.services import MarshmallowDataValidator
-from invenio_records_resources.services.records.components import AccessComponent, \
-    FilesComponent, MetadataComponent, PIDSComponent
-
-# TODO: figure import
-from invenio_records_resources.services.search import terms_filter
+from invenio_drafts_resources.services.records.components import \
+    RelationsComponent
+from invenio_records_resources.services.records.components import \
+    AccessComponent, FilesComponent, MetadataComponent, PIDSComponent
+from invenio_records_resources.services.records.search import terms_filter
 
 from .components import CommunitiesComponent, StatsComponent
-from .links import DraftSelfHtmlLinkBuilder, RecordSelfHtmlLinkBuilder
-from .marshmallow import MetadataSchemaV1
 from .models import BibliographicRecord, BibliographicRecordDraft
 from .permissions import RDMRecordPermissionPolicy
-from .pid_manager import BibliographicPIDManager
-from .resources import BibliographicDraftActionResourceConfig, \
-    BibliographicDraftResourceConfig, BibliographicRecordResourceConfig
-from .schemas import RDMRecordSchemaV1
 from .marshmallow.json import BibliographicDraftSchemaV1
 
 

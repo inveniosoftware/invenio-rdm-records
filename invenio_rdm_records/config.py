@@ -10,17 +10,96 @@
 
 from invenio_indexer.api import RecordIndexer
 from invenio_records_files.api import Record
-from invenio_records_permissions import record_create_permission_factory, \
-    record_delete_permission_factory, record_files_permission_factory, \
-    record_read_permission_factory, record_search_permission_factory, \
-    record_update_permission_factory
-from invenio_records_permissions.api import RecordsSearch
 from invenio_records_rest.facets import terms_filter
 
 
 def _(x):
     """Identity function for string extraction."""
     return x
+
+
+# Records REST API endpoints.
+
+# NOTE: We have to keep this until invenio-records-files and
+#       invenio-communities use the new records-resources way of creating APIs
+RECORDS_REST_ENDPOINTS = dict(
+    recid=dict(
+        pid_type='recid',
+        pid_minter='recid_v2',
+        pid_fetcher='recid_v2',
+        default_endpoint_prefix=True,
+        record_class=Record,
+        search_index='records',
+        search_type=None,
+        record_serializers={
+            'application/json': ('invenio_rdm_records.serializers'
+                                 ':json_v1_response'),
+        },
+        search_serializers={
+            'application/json': ('invenio_rdm_records.serializers'
+                                 ':json_v1_search'),
+        },
+        record_loaders={
+            'application/json': ('invenio_rdm_records.loaders'
+                                 ':json_v1'),
+        },
+        list_route='/rest-records/',
+        item_route='/rest-records/<pid(recid,'
+                   'record_class="invenio_records_files.api.Record")'
+                   ':pid_value>',
+        default_media_type='application/json',
+        max_result_window=10000,
+        error_handlers=dict(),
+    ),
+)
+"""REST API for invenio_rdm_records."""
+
+RECORDS_REST_FACETS = dict(
+    records=dict(
+        aggs=dict(
+            access_right=dict(terms=dict(field='access_right')),
+            resource_type=dict(terms=dict(field='resource_type.type'))
+        ),
+        # TODO: Move this to `invenio-communities` (or inject via config?)
+        filters=dict(
+            community=terms_filter('_communities.accepted.id'),
+            community_pending=terms_filter('_communities.pending.id'),
+        ),
+        post_filters=dict(
+            access_right=terms_filter('access_right'),
+            resource_type=terms_filter('resource_type.type')
+        )
+    )
+)
+"""Introduce searching facets."""
+
+
+RECORDS_REST_SORT_OPTIONS = dict(
+    records=dict(
+        bestmatch=dict(
+            title=_('Best match'),
+            fields=['_score'],
+            default_order='desc',
+            order=1,
+        ),
+        mostrecent=dict(
+            title=_('Most recent'),
+            fields=['-_created'],
+            default_order='asc',
+            order=2,
+        ),
+    )
+)
+"""Setup sorting options."""
+
+
+RECORDS_REST_DEFAULT_SORT = dict(
+    records=dict(
+        query='bestmatch',
+        noquery='mostrecent',
+    )
+)
+"""Set default sorting options."""
 
 
 # Records Permissions
@@ -32,7 +111,7 @@ RECORDS_PERMISSIONS_RECORD_POLICY = (
 
 # Files REST
 
-FILES_REST_PERMISSION_FACTORY = record_files_permission_factory
+# FILES_REST_PERMISSION_FACTORY = record_files_permission_factory
 """Set default files permission factory."""
 
 # Invenio-IIIF
