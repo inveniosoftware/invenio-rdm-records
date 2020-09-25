@@ -15,10 +15,11 @@ import idutils
 from edtf.parser.grammar import level0Expression
 from flask import current_app
 from flask_babelex import lazy_gettext as _
-from invenio_records_resources.schemas.utils import FieldPermissionsMixin
 from invenio_records_rest.schemas.fields import DateString, SanitizedUnicode
 from marshmallow import INCLUDE, Schema, ValidationError, fields, post_load, \
     validate, validates, validates_schema
+from marshmallow_utils.fields import GenFunction, LinksField
+from marshmallow_utils.permissions import FieldPermissionsMixin
 
 from ..marshmallow.fields import EDTFLevel0DateString
 from ..marshmallow.utils import validate_iso639_3
