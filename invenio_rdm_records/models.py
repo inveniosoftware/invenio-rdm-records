@@ -9,8 +9,8 @@
 
 from invenio_db import db
 from invenio_drafts_resources.records import Draft, DraftMetadataBase, Record
-from invenio_records_resources.records.systemfields import IndexField
 from invenio_records.models import RecordMetadata, RecordMetadataBase
+from invenio_records_resources.records.systemfields import IndexField
 
 
 class BibliographicRecordDraftMetadata(db.Model, DraftMetadataBase):

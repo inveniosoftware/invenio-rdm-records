@@ -8,7 +8,7 @@
 
 """RDM record schemas."""
 
-from marshmallow import INCLUDE, EXCLUDE, Schema, fields, missing
+from marshmallow import EXCLUDE, INCLUDE, Schema, fields, missing
 from marshmallow_utils.fields import GenFunction, LinksField
 from marshmallow_utils.permissions import FieldPermissionsMixin
 
@@ -55,6 +55,8 @@ class RDMRecordSchemaV1(Schema):
     """Record schema."""
 
     class Meta:
+        """Meta class."""
+
         unknown = EXCLUDE
 
     field_load_permissions = {

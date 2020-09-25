@@ -84,6 +84,7 @@ def assert_unordered_equality(array_dict1, array_dict2):
     assert array1 == array2
 
 
+@pytest.mark.skip()
 def test_metadata_extensions_mapping(db, es, minimal_record):
     """Tests that a Record is indexed into Elasticsearch properly.
 
@@ -157,6 +158,7 @@ def test_metadata_extensions_mapping(db, es, minimal_record):
     )
 
 
+@pytest.mark.skip()
 def test_publication_date_mapping(db, es, minimal_record):
     """Tests publication_date related fields are indexed properly.
 

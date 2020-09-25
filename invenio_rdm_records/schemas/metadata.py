@@ -25,7 +25,9 @@ from ..marshmallow.fields import EDTFLevel0DateString
 from ..marshmallow.utils import validate_iso639_3
 from .utils import validate_entry
 
-# TODO (Alex): This file can be split into separate parts for each group of fields
+# TODO (Alex): This file can be split into separate parts for each group
+#              of fields
+
 
 def prepare_publication_date(record_dict):
     """

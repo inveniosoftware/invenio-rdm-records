@@ -10,11 +10,9 @@
 
 from invenio_drafts_resources.resources import DraftActionResource, \
     DraftActionResourceConfig, DraftResource, DraftResourceConfig
-# from invenio_drafts_resources.serializers import RecordDraftJSONSerializer
 from invenio_records_resources.resources import RecordResource, \
     RecordResourceConfig
 from invenio_records_resources.resources.record_response import RecordResponse
-# from invenio_records_resources.serializers import RecordJSONSerializer
 
 from .marshmallow.json import BibliographicDraftSchemaV1, \
     BibliographicRecordSchemaV1
