@@ -10,12 +10,14 @@
 
 import json
 
+import pytest
 from invenio_records.models import RecordMetadata
 from invenio_search import current_search
 
 from invenio_rdm_records.cli import create_fake_record
 
 
+@pytest.mark.skip()
 def test_create_fake_record_saves_to_db(app, es_clear, location):
     """Test if fake records are saved to db."""
     # app needed for config overwrite of pidstore
@@ -62,6 +64,7 @@ def _assert_single_hit(response, expected_record):
         assert search_hit['metadata'][key] == expected_value
 
 
+@pytest.mark.skip()
 def test_create_fake_record_saves_to_index(client, es_clear, location):
     """Test the creation of fake records and searching for them."""
     created_record = create_fake_record()

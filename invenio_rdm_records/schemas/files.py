@@ -30,6 +30,7 @@ class FileSchemaV1(Schema):
     #             'object', bucket=obj['bucket'], key=obj['key'])
     #     }
 
+
 class FilesSchemaV1(Schema):
     """Files metadata schema."""
 

@@ -395,10 +395,10 @@
             }
           }
         },
-        "_created": {
+        "created": {
           "type": "date"
         },
-        "_updated": {
+        "updated": {
           "type": "date"
         },
         "$schema": {
