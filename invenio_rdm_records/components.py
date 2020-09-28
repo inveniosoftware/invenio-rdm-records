@@ -8,7 +8,8 @@
 
 """RDM service components."""
 
-from invenio_records_resources.services.components import ServiceComponent
+from invenio_records_resources.services.records.components import \
+    ServiceComponent
 
 
 # TODO: move into invenio-communities

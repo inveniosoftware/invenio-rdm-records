@@ -62,6 +62,7 @@ def app_config(app_config):
     return app_config
 
 
+@pytest.mark.skip()
 def test_extensions(db, minimal_record):
     """Test MetadataSchemaV1 dump() for 'extensions' field.
 

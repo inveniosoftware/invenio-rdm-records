@@ -1,0 +1,4 @@
+type,type_name,type_icon,subtype,subtype_name,datacite_general,datacite_type,csl,openaire_resourceType,openaire_type,schema.org,notes
+publication, Publication, file alternate, publication-book, Book, Text, Book, book, 0002, publication, https://schema.org/Book
+my_image, Image, chart bar outline, my_photo, Photo, Image, Photo, graphic, 0025, dataset, https://schema.org/Photograph
+software,Software,code,,,Software,,article,29,software,https://schema.org/SoftwareSourceCode

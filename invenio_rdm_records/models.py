@@ -8,9 +8,9 @@
 """Bibliographic Record and Draft models."""
 
 from invenio_db import db
-from invenio_drafts_resources.drafts import DraftBase, DraftMetadataBase
-from invenio_records.api import Record
+from invenio_drafts_resources.records import Draft, DraftMetadataBase, Record
 from invenio_records.models import RecordMetadata, RecordMetadataBase
+from invenio_records_resources.records.systemfields import IndexField
 
 
 class BibliographicRecordDraftMetadata(db.Model, DraftMetadataBase):
@@ -19,11 +19,12 @@ class BibliographicRecordDraftMetadata(db.Model, DraftMetadataBase):
     __tablename__ = 'bibl_drafts_metadata'
 
 
-class BibliographicRecordDraft(DraftBase):
+class BibliographicRecordDraft(Draft):
     """Bibliographic draft API."""
 
     model_cls = BibliographicRecordDraftMetadata
 
+    index = IndexField('records-draft-v1.0.0', search_alias='records')
 
 # class BibliographicRecordMetadata(db.Model, RecordMetadataBase):
 #     """Represent a bibliographic record metadata."""
@@ -33,6 +34,8 @@ class BibliographicRecordDraft(DraftBase):
 
 class BibliographicRecord(Record):
     """Bibliographic Record API."""
+
+    index = IndexField('records-record-v1.0.0', search_alias='records')
 
     # FIXME: Cannot due to collision with old implementation.
     # model_cls = BibliographicRecordMetadata

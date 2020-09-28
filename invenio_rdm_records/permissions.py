@@ -8,11 +8,12 @@
 
 """Permissions for Invenio RDM Records."""
 
+from invenio_drafts_resources.services.records.permissions import \
+    RecordDraftPermissionPolicy
 from invenio_records_permissions.generators import AnyUser
-from invenio_records_permissions.policies import RecordPermissionPolicy
 
 
-class RDMRecordPermissionPolicy(RecordPermissionPolicy):
+class RDMRecordPermissionPolicy(RecordDraftPermissionPolicy):
     """Access control configuration for records.
 
     Note that even if the array is empty, the invenio_access Permission class
@@ -29,3 +30,4 @@ class RDMRecordPermissionPolicy(RecordPermissionPolicy):
     can_create = [AnyUser()]
     can_update_files = [AnyUser()]
     can_publish = [AnyUser()]
+    can_read = [AnyUser()]

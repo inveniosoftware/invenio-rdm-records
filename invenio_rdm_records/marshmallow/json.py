@@ -15,12 +15,11 @@ import idutils
 from edtf.parser.grammar import level0Expression
 from flask import current_app
 from flask_babelex import lazy_gettext as _
-from invenio_communities.records.api import Record, RecordCommunitiesCollection
+from invenio_drafts_resources.services.records.schema import RecordSchema
 from invenio_records_rest.schemas import Nested
 from invenio_records_rest.schemas.fields import DateString, GenMethod, \
     PersistentIdentifier, SanitizedUnicode
-from invenio_rest.serializer import BaseSchema
-from marshmallow import INCLUDE, ValidationError, fields, post_load, \
+from marshmallow import INCLUDE, Schema, ValidationError, fields, post_load, \
     validate, validates, validates_schema
 from marshmallow.schema import SchemaMeta
 
@@ -43,7 +42,7 @@ def validate_entry(vocabulary_key, entry_key):
         raise ValidationError(vocabulary.get_invalid(entry_key))
 
 
-class CommunitySchemaV1(BaseSchema):
+class CommunitySchemaV1(Schema):
     """Communities to which the record belongs to."""
 
     primary = SanitizedUnicode(required=True)
@@ -78,7 +77,7 @@ def Identifiers():
     )
 
 
-class AffiliationSchemaV1(BaseSchema):
+class AffiliationSchemaV1(Schema):
     """Affiliation of a creator/contributor."""
 
     name = SanitizedUnicode(required=True)
@@ -97,7 +96,7 @@ class AffiliationSchemaV1(BaseSchema):
             raise ValidationError(_("Invalid identifier."))
 
 
-class CreatorSchemaV1(BaseSchema):
+class CreatorSchemaV1(Schema):
     """Creator schema."""
 
     NAMES = [
@@ -160,7 +159,7 @@ class ContributorSchemaV1(CreatorSchemaV1):
         validate_entry('contributors.role', data)
 
 
-class FilesSchemaV1(BaseSchema):
+class FilesSchemaV1(Schema):
     """Files metadata schema."""
 
     type = fields.String()
@@ -178,7 +177,7 @@ class FilesSchemaV1(BaseSchema):
         }
 
 
-class InternalNoteSchemaV1(BaseSchema):
+class InternalNoteSchemaV1(Schema):
     """Internal note shema."""
 
     user = SanitizedUnicode(required=True)
@@ -186,7 +185,7 @@ class InternalNoteSchemaV1(BaseSchema):
     timestamp = DateString(required=True)
 
 
-class ResourceTypeSchemaV1(BaseSchema):
+class ResourceTypeSchemaV1(Schema):
     """Resource type schema."""
 
     type = fields.Str(
@@ -203,7 +202,7 @@ class ResourceTypeSchemaV1(BaseSchema):
         validate_entry('resource_type', data)
 
 
-class TitleSchemaV1(BaseSchema):
+class TitleSchemaV1(Schema):
     """Schema for the additional title."""
 
     title = SanitizedUnicode(required=True, validate=validate.Length(min=3))
@@ -216,7 +215,7 @@ class TitleSchemaV1(BaseSchema):
         validate_entry('titles.type', data)
 
 
-class DescriptionSchemaV1(BaseSchema):
+class DescriptionSchemaV1(Schema):
     """Schema for the additional descriptions."""
 
     DESCRIPTION_TYPES = [
@@ -236,7 +235,7 @@ class DescriptionSchemaV1(BaseSchema):
     lang = SanitizedUnicode(validate=validate_iso639_3)
 
 
-class LicenseSchemaV1(BaseSchema):
+class LicenseSchemaV1(Schema):
     """License schema."""
 
     license = SanitizedUnicode(required=True)
@@ -245,7 +244,7 @@ class LicenseSchemaV1(BaseSchema):
     scheme = SanitizedUnicode()
 
 
-class SubjectSchemaV1(BaseSchema):
+class SubjectSchemaV1(Schema):
     """Subject schema."""
 
     subject = SanitizedUnicode(required=True)
@@ -253,7 +252,7 @@ class SubjectSchemaV1(BaseSchema):
     scheme = SanitizedUnicode()
 
 
-class DateSchemaV1(BaseSchema):
+class DateSchemaV1(Schema):
     """Schema for date intervals."""
 
     DATE_TYPES = [
@@ -298,7 +297,7 @@ class DateSchemaV1(BaseSchema):
             )
 
 
-class RelatedIdentifierSchemaV1(BaseSchema):
+class RelatedIdentifierSchemaV1(Schema):
     """Related identifier schema."""
 
     RELATIONS = [
@@ -372,7 +371,7 @@ class RelatedIdentifierSchemaV1(BaseSchema):
     resource_type = Nested(ResourceTypeSchemaV1)
 
 
-class ReferenceSchemaV1(BaseSchema):
+class ReferenceSchemaV1(Schema):
     """Reference schema."""
 
     SCHEMES = [
@@ -389,14 +388,14 @@ class ReferenceSchemaV1(BaseSchema):
         ))
 
 
-class PointSchemaV1(BaseSchema):
+class PointSchemaV1(Schema):
     """Point schema."""
 
     lat = fields.Number(required=True)
     lon = fields.Number(required=True)
 
 
-class LocationSchemaV1(BaseSchema):
+class LocationSchemaV1(Schema):
     """Location schema."""
 
     point = Nested(PointSchemaV1)
@@ -404,7 +403,7 @@ class LocationSchemaV1(BaseSchema):
     description = SanitizedUnicode()
 
 
-class AccessSchemaV1(BaseSchema):
+class AccessSchemaV1(Schema):
     """Access schema."""
 
     metadata_restricted = fields.Bool(required=True)
@@ -440,7 +439,7 @@ def prepare_publication_date(record_dict):
     )
 
 
-class CommunitiesRequestV1(BaseSchema):
+class CommunitiesRequestV1(Schema):
     """Community Request Schema."""
 
     id = SanitizedUnicode(required=True)
@@ -465,7 +464,7 @@ class CommunitiesRequestV1(BaseSchema):
         return res
 
 
-class CommunityStatusV1(BaseSchema):
+class CommunityStatusV1(Schema):
     """Status of a community request."""
 
     pending = fields.List(Nested(CommunitiesRequestV1))
@@ -473,7 +472,7 @@ class CommunityStatusV1(BaseSchema):
     rejected = fields.List(Nested(CommunitiesRequestV1))
 
 
-class MetadataSchemaV1(BaseSchema):
+class MetadataSchemaV1(Schema):
     """Schema for the record metadata."""
 
     class Meta:
@@ -491,7 +490,8 @@ class MetadataSchemaV1(BaseSchema):
     _internal_notes = fields.List(Nested(InternalNoteSchemaV1))
     _embargo_date = DateString(data_key="embargo_date",
                                attribute="embargo_date")
-    _communities = GenMethod('dump_communities')
+    # TODO: Re-enable in separate issue
+    # _communities = GenMethod('dump_communities')
     _contact = SanitizedUnicode(data_key="contact", attribute="contact")
 
     # Metadata fields
@@ -538,17 +538,18 @@ class MetadataSchemaV1(BaseSchema):
 
         return ExtensionSchema().load(value)
 
-    def dump_communities(self, obj):
-        """Dumps communities related to the record."""
-        # NOTE: If the field is already there, it's coming from ES
-        if '_communities' in obj:
-            return CommunityStatusV1().dump(obj['_communities'])
+    # TODO: Re-enable when invenio-communities doesn't use records-rest
+    # def dump_communities(self, obj):
+    #     """Dumps communities related to the record."""
+    #     # NOTE: If the field is already there, it's coming from ES
+    #     if '_communities' in obj:
+    #         return CommunityStatusV1().dump(obj['_communities'])
 
-        record = self.context.get('record')
-        if record:
-            _record = Record(record, model=record.model)
-            return CommunityStatusV1().dump(
-                RecordCommunitiesCollection(_record).as_dict())
+    #     record = self.context.get('record')
+    #     if record:
+    #         _record = Record(record, model=record.model)
+    #         return CommunityStatusV1().dump(
+    #             RecordCommunitiesCollection(_record).as_dict())
 
     @validates('_embargo_date')
     def validate_embargo_date(self, value):
@@ -572,16 +573,11 @@ class MetadataSchemaV1(BaseSchema):
         return obj
 
 
-class BibliographicRecordSchemaV1(BaseSchema):
+class BibliographicRecordSchemaV1(RecordSchema):
     """Record schema."""
 
     metadata = Nested(MetadataSchemaV1)
     bucket = fields.Str()
-    created = fields.Str(dump_only=True)
-    revision = fields.Integer(dump_only=True)
-    updated = fields.Str(dump_only=True)
-    links = fields.Dict(dump_only=True)
-    id = PersistentIdentifier(attribute='pid.pid_value')
 
 
 class BibliographicDraftSchemaV1(BibliographicRecordSchemaV1):
@@ -597,7 +593,7 @@ def dump_empty(schema_or_field):
     NOTE: This is only needed because the frontend needs it.
           This might change soon.
     """
-    if isinstance(schema_or_field, (BaseSchema,)):
+    if isinstance(schema_or_field, (Schema,)):
         schema = schema_or_field
         return {k: dump_empty(v) for (k, v) in schema.fields.items()}
     if isinstance(schema_or_field, SchemaMeta):

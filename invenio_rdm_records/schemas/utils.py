@@ -8,8 +8,9 @@
 
 """RDM record schema utilities."""
 
-from ..vocabularies import Vocabularies
 from marshmallow import ValidationError
+
+from ..vocabularies import Vocabularies
 
 
 def validate_entry(vocabulary_key, entry_key):
