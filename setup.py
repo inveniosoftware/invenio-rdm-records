@@ -16,7 +16,7 @@ readme = open('README.rst').read()
 history = open('CHANGES.rst').read()
 
 tests_require = [
-    'pytest-invenio>=1.3.2,<2.0.0',
+    'pytest-invenio>=1.3.4,<2.0.0',
     'invenio-app>=1.3.0,<2.0.0'
 ]
 
@@ -138,7 +138,7 @@ setup(
             # TODO: When indexing is done based on $schema
             #       (invenio-drafts-resources/issues/27), this should
             #       be revisited
-            'drafts = invenio_rdm_records.mappings.drafts',
+            # 'drafts = invenio_rdm_records.mappings.drafts',
         ],
     },
     extras_require=extras_require,

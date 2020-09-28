@@ -15,6 +15,7 @@ import idutils
 from edtf.parser.grammar import level0Expression
 from flask import current_app
 from flask_babelex import lazy_gettext as _
+from invenio_drafts_resources.services.records.schema import RecordSchema
 from invenio_records_rest.schemas import Nested
 from invenio_records_rest.schemas.fields import DateString, GenMethod, \
     PersistentIdentifier, SanitizedUnicode
@@ -572,16 +573,11 @@ class MetadataSchemaV1(Schema):
         return obj
 
 
-class BibliographicRecordSchemaV1(Schema):
+class BibliographicRecordSchemaV1(RecordSchema):
     """Record schema."""
 
     metadata = Nested(MetadataSchemaV1)
     bucket = fields.Str()
-    created = fields.Str(dump_only=True)
-    revision = fields.Integer(dump_only=True)
-    updated = fields.Str(dump_only=True)
-    links = fields.Dict(dump_only=True)
-    id = PersistentIdentifier(attribute='pid.pid_value')
 
 
 class BibliographicDraftSchemaV1(BibliographicRecordSchemaV1):

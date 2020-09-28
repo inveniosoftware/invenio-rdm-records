@@ -42,11 +42,11 @@ def app_config(app_config):
     supported_configurations = [
         'FILES_REST_PERMISSION_FACTORY',
         'PIDSTORE_RECID_FIELD',
-        'RECORDS_REST_ENDPOINTS',
-        'RECORDS_REST_FACETS',
-        'RECORDS_REST_SORT_OPTIONS',
-        'RECORDS_REST_DEFAULT_SORT',
-        'RECORDS_FILES_REST_ENDPOINTS',
+        # 'RECORDS_REST_ENDPOINTS',
+        # 'RECORDS_REST_FACETS',
+        # 'RECORDS_REST_SORT_OPTIONS',
+        # 'RECORDS_REST_DEFAULT_SORT',
+        # 'RECORDS_FILES_REST_ENDPOINTS',
         'RECORDS_PERMISSIONS_RECORD_POLICY'
     ]
 
@@ -214,7 +214,10 @@ def minimal_input_record():
                 "subtype": "image-photo"
             },
             # Technically not required
-            "creators": [],
+            "creators": [{
+                "name": "John Doe",
+                "type": "Personal"
+            }],
             "titles": [{
                 "title": "A Romans story",
                 "type": "Other",
@@ -232,5 +235,6 @@ def minimal_record(minimal_input_record):
     It fills in the missing and post_loaded fields.
     """
     record = deepcopy(minimal_input_record)
-    record['_publication_date_search'] = record['publication_date']
+    record["metadata"]["_publication_date_search"] = \
+        record["metadata"]['publication_date']
     return record

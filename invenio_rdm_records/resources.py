@@ -30,7 +30,19 @@ class BibliographicDraftResource(DraftResource):
     config_name = "RDM_RECORDS_BIBLIOGRAPHIC_DRAFT_CONFIG"
 
 
+class BibliographicDraftActionResourceConfig(DraftActionResourceConfig):
+    """Mock service configuration."""
+
+    list_route = "/records/<pid_value>/draft/actions/<action>"
+
+    action_commands = {
+        "publish": "publish"
+    }
+
+
 class BibliographicDraftActionResource(DraftActionResource):
     """Bibliographic record draft actions resource."""
 
     config_name = "RDM_RECORDS_BIBLIOGRAPHIC_DRAFT_ACTION_CONFIG"
+
+    default_config = BibliographicDraftActionResourceConfig

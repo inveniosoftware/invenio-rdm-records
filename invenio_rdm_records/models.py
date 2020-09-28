@@ -24,6 +24,7 @@ class BibliographicRecordDraft(Draft):
 
     model_cls = BibliographicRecordDraftMetadata
 
+    index = IndexField('records-draft-v1.0.0', search_alias='records')
 
 # class BibliographicRecordMetadata(db.Model, RecordMetadataBase):
 #     """Represent a bibliographic record metadata."""
