@@ -42,11 +42,11 @@ def app_config(app_config):
     supported_configurations = [
         'FILES_REST_PERMISSION_FACTORY',
         'PIDSTORE_RECID_FIELD',
-        'RECORDS_REST_ENDPOINTS',
-        'RECORDS_REST_FACETS',
-        'RECORDS_REST_SORT_OPTIONS',
-        'RECORDS_REST_DEFAULT_SORT',
-        'RECORDS_FILES_REST_ENDPOINTS',
+        # 'RECORDS_REST_ENDPOINTS',
+        # 'RECORDS_REST_FACETS',
+        # 'RECORDS_REST_SORT_OPTIONS',
+        # 'RECORDS_REST_DEFAULT_SORT',
+        # 'RECORDS_FILES_REST_ENDPOINTS',
         'RECORDS_PERMISSIONS_RECORD_POLICY'
     ]
 
@@ -200,25 +200,30 @@ def full_record(full_input_record):
 def minimal_input_record():
     """Minimal record data as dict coming from the external world."""
     return {
-        "_access": {
-            "metadata_restricted": False,
-            "files_restricted": False
-        },
-        "_owners": [1],
-        "_created_by": 1,
-        "access_right": "open",
-        "publication_date": "2020-06-01",
-        "resource_type": {
-            "type": "image",
-            "subtype": "image-photo"
-        },
-        # Technically not required
-        "creators": [],
-        "titles": [{
-            "title": "A Romans story",
-            "type": "Other",
-            "lang": "eng"
-        }]
+        "metadata": {
+            "_access": {
+                "metadata_restricted": False,
+                "files_restricted": False
+            },
+            "_owners": [1],
+            "_created_by": 1,
+            "access_right": "open",
+            "publication_date": "2020-06-01",
+            "resource_type": {
+                "type": "image",
+                "subtype": "image-photo"
+            },
+            # Technically not required
+            "creators": [{
+                "name": "John Doe",
+                "type": "Personal"
+            }],
+            "titles": [{
+                "title": "A Romans story",
+                "type": "Other",
+                "lang": "eng"
+            }]
+        }
     }
 
 
@@ -230,5 +235,6 @@ def minimal_record(minimal_input_record):
     It fills in the missing and post_loaded fields.
     """
     record = deepcopy(minimal_input_record)
-    record['_publication_date_search'] = record['publication_date']
+    record["metadata"]["_publication_date_search"] = \
+        record["metadata"]['publication_date']
     return record

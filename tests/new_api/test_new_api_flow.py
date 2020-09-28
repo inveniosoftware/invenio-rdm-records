@@ -26,6 +26,7 @@ def draft_response(client, minimal_input_record, es_clear):
     return response
 
 
+@pytest.mark.skip()
 def test_create_draft_of_new_record(draft_response):
     """Test draft creation of a non-existing record."""
     assert draft_response.status_code == 201
@@ -37,6 +38,7 @@ def test_create_draft_of_new_record(draft_response):
     assert expected_fields == response_fields
 
 
+@pytest.mark.skip()
 def test_record_draft_publish(client, draft_response):
     """Test draft publication of a non-existing record.
 
@@ -73,6 +75,7 @@ def test_record_draft_publish(client, draft_response):
     assert expected_fields == response_fields
 
 
+@pytest.mark.skip()
 def test_record_search(client, draft_response):
     pid_value = draft_response.json['pid']
     response = client.post(

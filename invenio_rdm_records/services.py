@@ -8,49 +8,33 @@
 
 """Bibliographic Record Service."""
 
-from invenio_drafts_resources.services import RecordDraftService, \
+from invenio_drafts_resources.services.records import RecordDraftService, \
     RecordDraftServiceConfig
-from invenio_drafts_resources.services.components import RelationsComponent
-from invenio_records_resources.services import MarshmallowDataValidator
-from invenio_records_resources.services.components import AccessComponent, \
-    FilesComponent, MetadataComponent, PIDSComponent
-from invenio_records_resources.services.search import terms_filter
-
-# TODO: figure import
-from invenio_records_resources.services.search import terms_filter
+from invenio_drafts_resources.services.records.components import \
+    RelationsComponent
+from invenio_records_resources.services.records.components import \
+    AccessComponent, FilesComponent, MetadataComponent, PIDSComponent
+from invenio_records_resources.services.records.search import terms_filter
 
 from .components import CommunitiesComponent, StatsComponent
-from .links import DraftSelfHtmlLinkBuilder, RecordSelfHtmlLinkBuilder
-from .marshmallow import MetadataSchemaV1
+from .marshmallow.json import BibliographicDraftSchemaV1
 from .models import BibliographicRecord, BibliographicRecordDraft
 from .permissions import RDMRecordPermissionPolicy
-from .pid_manager import BibliographicPIDManager
-from .resources import BibliographicDraftActionResourceConfig, \
-    BibliographicDraftResourceConfig, BibliographicRecordResourceConfig
-from .schemas import RDMRecordSchemaV1
-from .search import BibliographicRecordsSearch
 
 
 class BibliographicRecordServiceConfig(RecordDraftServiceConfig):
     """Bibliografic record draft service config."""
 
-    # Record
+    # Record class
     record_cls = BibliographicRecord
+    # Draft class
+    draft_cls = BibliographicRecordDraft
+
+    schema = BibliographicDraftSchemaV1
     permission_policy_cls = RDMRecordPermissionPolicy
-    data_validator = MarshmallowDataValidator(
-        schema=MetadataSchemaV1
-    )
-    data_schema = RDMRecordSchemaV1
-    pid_manager = BibliographicPIDManager()
-    record_route = BibliographicRecordResourceConfig.item_route
-    record_search_route = BibliographicRecordResourceConfig.list_route
-    record_files_route = record_route + "/files"
-    record_link_builders = RecordDraftServiceConfig.record_link_builders + [
-        RecordSelfHtmlLinkBuilder,
-    ]
-    search_cls = BibliographicRecordsSearch
-    search_faceting_options = {
-        'aggs': {
+
+    search_facets_options = dict(
+        aggs={
             'resource_type': {
                 'terms': {'field': 'resource_type.type'},
                 'aggs': {
@@ -63,20 +47,11 @@ class BibliographicRecordServiceConfig(RecordDraftServiceConfig):
                 'terms': {'field': 'access_right'},
             }
         },
-        'post_filters': {
+        post_filters={
             'subtype': terms_filter('resource_type.subtype'),
             'resource_type': terms_filter('resource_type.type'),
         }
-    }
-
-    # Draft
-    draft_cls = BibliographicRecordDraft
-    draft_data_validator = data_validator
-    draft_route = BibliographicDraftResourceConfig.list_route
-    draft_action_route = BibliographicDraftActionResourceConfig.list_route
-    draft_link_builders = RecordDraftServiceConfig.draft_link_builders + [
-        DraftSelfHtmlLinkBuilder,
-    ]
+    )
 
     components = [
         MetadataComponent,

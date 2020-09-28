@@ -8,7 +8,9 @@
 
 """RDM record schemas."""
 
-from marshmallow import INCLUDE, EXCLUDE, Schema, fields, missing
+from marshmallow import EXCLUDE, INCLUDE, Schema, fields, missing
+from marshmallow_utils.fields import GenFunction, LinksField
+from marshmallow_utils.permissions import FieldPermissionsMixin
 
 from .access import AccessSchemaV1
 from .communities import CommunitiesSchemaV1
@@ -17,9 +19,6 @@ from .metadata import MetadataSchemaV1
 from .pids import PIDSSchemaV1
 from .relations import RelationsSchemaV1
 from .stats import StatsSchemaV1
-from invenio_records_resources.linker.base import LinksField
-from invenio_records_rest.schemas.fields import GenFunction
-from invenio_records_resources.schemas import FieldPermissionsMixin
 
 
 # NOTE: Use this one for system fields only
@@ -56,6 +55,8 @@ class RDMRecordSchemaV1(Schema):
     """Record schema."""
 
     class Meta:
+        """Meta class."""
+
         unknown = EXCLUDE
 
     field_load_permissions = {

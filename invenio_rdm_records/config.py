@@ -10,11 +10,6 @@
 
 from invenio_indexer.api import RecordIndexer
 from invenio_records_files.api import Record
-from invenio_records_permissions import record_create_permission_factory, \
-    record_delete_permission_factory, record_files_permission_factory, \
-    record_read_permission_factory, record_search_permission_factory, \
-    record_update_permission_factory
-from invenio_records_permissions.api import RecordsSearch
 from invenio_records_rest.facets import terms_filter
 
 
@@ -25,14 +20,14 @@ def _(x):
 
 # Records REST API endpoints.
 
+# NOTE: We have to keep this until invenio-records-files and
+#       invenio-communities use the new records-resources way of creating APIs
 RECORDS_REST_ENDPOINTS = dict(
     recid=dict(
         pid_type='recid',
         pid_minter='recid_v2',
         pid_fetcher='recid_v2',
         default_endpoint_prefix=True,
-        search_class=RecordsSearch,
-        indexer_class=RecordIndexer,
         record_class=Record,
         search_index='records',
         search_type=None,
@@ -48,18 +43,13 @@ RECORDS_REST_ENDPOINTS = dict(
             'application/json': ('invenio_rdm_records.loaders'
                                  ':json_v1'),
         },
-        list_route='/records/',
-        item_route='/records/<pid(recid,'
+        list_route='/rest-records/',
+        item_route='/rest-records/<pid(recid,'
                    'record_class="invenio_records_files.api.Record")'
                    ':pid_value>',
         default_media_type='application/json',
         max_result_window=10000,
         error_handlers=dict(),
-        read_permission_factory_imp=record_read_permission_factory,
-        list_permission_factory_imp=record_search_permission_factory,
-        create_permission_factory_imp=record_create_permission_factory,
-        update_permission_factory_imp=record_update_permission_factory,
-        delete_permission_factory_imp=record_delete_permission_factory,
     ),
 )
 """REST API for invenio_rdm_records."""
@@ -121,7 +111,7 @@ RECORDS_PERMISSIONS_RECORD_POLICY = (
 
 # Files REST
 
-FILES_REST_PERMISSION_FACTORY = record_files_permission_factory
+# FILES_REST_PERMISSION_FACTORY = record_files_permission_factory
 """Set default files permission factory."""
 
 # Invenio-IIIF

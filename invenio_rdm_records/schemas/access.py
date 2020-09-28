@@ -10,7 +10,8 @@
 
 import arrow
 from invenio_records_rest.schemas.fields import DateString, SanitizedUnicode
-from marshmallow import Schema, fields, validate, validates, ValidationError
+from marshmallow import Schema, ValidationError, fields, validate, validates
+
 from .utils import validate_entry
 
 
