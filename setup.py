@@ -134,11 +134,7 @@ setup(
             'invenio_rdm_records = invenio_rdm_records.jsonschemas',
         ],
         'invenio_search.mappings': [
-            'records = invenio_rdm_records.mappings.records',
-            # TODO: When indexing is done based on $schema
-            #       (invenio-drafts-resources/issues/27), this should
-            #       be revisited
-            # 'drafts = invenio_rdm_records.mappings.drafts',
+            'rdmrecords = invenio_rdm_records.mappings',
         ],
     },
     extras_require=extras_require,

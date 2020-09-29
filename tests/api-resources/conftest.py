@@ -81,17 +81,14 @@ def app_config(app_config):
     """
     supported_configurations = [
         'FILES_REST_PERMISSION_FACTORY',
-        'PIDSTORE_RECID_FIELD',
-        'RECORDS_REST_ENDPOINTS',
-        # 'RECORDS_REST_FACETS',
-        # 'RECORDS_REST_SORT_OPTIONS',
-        # 'RECORDS_REST_DEFAULT_SORT',
-        # 'RECORDS_FILES_REST_ENDPOINTS',
-        'RECORDS_PERMISSIONS_RECORD_POLICY'
     ]
 
     for config_key in supported_configurations:
         app_config[config_key] = getattr(config, config_key, None)
+
+    # Temporarly force to delete records rest default endpoints until
+    # we completely remove the dependency on the module
+    app_config["RECORDS_REST_ENDPOINTS"] = {}
 
     return app_config
 

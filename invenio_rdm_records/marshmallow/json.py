@@ -6,7 +6,16 @@
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
 
-"""JSON Schemas."""
+"""JSON Schemas.
+
+#######
+WARNING
+#######
+
+This file is discontinued and has to be migrated to
+"invenio_rdm_records.shcemas".
+"""
+
 import time
 from datetime import date
 
@@ -22,10 +31,10 @@ from invenio_records_rest.schemas.fields import DateString, GenMethod, \
 from marshmallow import INCLUDE, Schema, ValidationError, fields, post_load, \
     validate, validates, validates_schema
 from marshmallow.schema import SchemaMeta
+from marshmallow_utils.fields import EDTFDateString, ISOLangString
 
 from ..vocabularies import Vocabularies
-from .fields import EDTFLevel0DateString
-from .utils import api_link_for, validate_iso639_3
+from .utils import api_link_for
 
 
 def validate_entry(vocabulary_key, entry_key):
@@ -207,7 +216,7 @@ class TitleSchemaV1(Schema):
 
     title = SanitizedUnicode(required=True, validate=validate.Length(min=3))
     type = SanitizedUnicode(missing='MainTitle')
-    lang = SanitizedUnicode(validate=validate_iso639_3)
+    lang = ISOLangString()
 
     @validates_schema
     def validate_data(self, data, **kwargs):
@@ -232,7 +241,7 @@ class DescriptionSchemaV1(Schema):
             choices=DESCRIPTION_TYPES,
             error=_('Invalid description type. {input} not one of {choices}.')
         ))
-    lang = SanitizedUnicode(validate=validate_iso639_3)
+    lang = ISOLangString()
 
 
 class LicenseSchemaV1(Schema):
@@ -501,11 +510,11 @@ class MetadataSchemaV1(Schema):
     titles = fields.List(Nested(TitleSchemaV1), required=True)
     resource_type = Nested(ResourceTypeSchemaV1, required=True)
     recid = SanitizedUnicode()
-    publication_date = EDTFLevel0DateString(required=True)
+    publication_date = EDTFDateString(required=True)
     subjects = fields.List(Nested(SubjectSchemaV1))
     contributors = fields.List(Nested(ContributorSchemaV1))
     dates = fields.List(Nested(DateSchemaV1))
-    language = SanitizedUnicode(validate=validate_iso639_3)
+    language = ISOLangString()
     related_identifiers = fields.List(
         Nested(RelatedIdentifierSchemaV1))
     version = SanitizedUnicode()

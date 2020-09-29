@@ -54,61 +54,6 @@ RECORDS_REST_ENDPOINTS = dict(
 )
 """REST API for invenio_rdm_records."""
 
-RECORDS_REST_FACETS = dict(
-    records=dict(
-        aggs=dict(
-            access_right=dict(terms=dict(field='access_right')),
-            resource_type=dict(terms=dict(field='resource_type.type'))
-        ),
-        # TODO: Move this to `invenio-communities` (or inject via config?)
-        filters=dict(
-            community=terms_filter('_communities.accepted.id'),
-            community_pending=terms_filter('_communities.pending.id'),
-        ),
-        post_filters=dict(
-            access_right=terms_filter('access_right'),
-            resource_type=terms_filter('resource_type.type')
-        )
-    )
-)
-"""Introduce searching facets."""
-
-
-RECORDS_REST_SORT_OPTIONS = dict(
-    records=dict(
-        bestmatch=dict(
-            title=_('Best match'),
-            fields=['_score'],
-            default_order='desc',
-            order=1,
-        ),
-        mostrecent=dict(
-            title=_('Most recent'),
-            fields=['-_created'],
-            default_order='asc',
-            order=2,
-        ),
-    )
-)
-"""Setup sorting options."""
-
-
-RECORDS_REST_DEFAULT_SORT = dict(
-    records=dict(
-        query='bestmatch',
-        noquery='mostrecent',
-    )
-)
-"""Set default sorting options."""
-
-
-# Records Permissions
-
-RECORDS_PERMISSIONS_RECORD_POLICY = (
-    'invenio_rdm_records.permissions.RDMRecordPermissionPolicy'
-)
-"""PermissionPolicy used by permission factories above."""
-
 # Files REST
 
 # FILES_REST_PERMISSION_FACTORY = record_files_permission_factory
@@ -194,17 +139,6 @@ RECORD_CONTRIBUTOR_TYPES_LABELS = {
 }
 
 """Records UI for RDM Records."""
-
-# Records Files
-
-RECORDS_FILES_REST_ENDPOINTS = {
-    'RECORDS_REST_ENDPOINTS': {
-        'recid': '/files',
-    }
-}
-"""Set default files rest endpoints."""
-
-PIDSTORE_RECID_FIELD = 'recid'
 
 # Invenio-Formatter
 # =================

@@ -18,11 +18,9 @@ from flask_babelex import lazy_gettext as _
 from invenio_records_rest.schemas.fields import DateString, SanitizedUnicode
 from marshmallow import INCLUDE, Schema, ValidationError, fields, post_load, \
     validate, validates, validates_schema
-from marshmallow_utils.fields import GenFunction, LinksField
+from marshmallow_utils.fields import EDTFDateString, GenFunction, ISOLangString
 from marshmallow_utils.permissions import FieldPermissionsMixin
 
-from ..marshmallow.fields import EDTFLevel0DateString
-from ..marshmallow.utils import validate_iso639_3
 from .utils import validate_entry
 
 # TODO (Alex): This file can be split into separate parts for each group
@@ -243,7 +241,7 @@ class TitleSchemaV1(Schema):
 
     title = SanitizedUnicode(required=True, validate=validate.Length(min=3))
     type = SanitizedUnicode(missing='MainTitle')
-    lang = SanitizedUnicode(validate=validate_iso639_3)
+    lang = ISOLangString()
 
     @validates_schema
     def validate_data(self, data, **kwargs):
@@ -268,7 +266,7 @@ class DescriptionSchemaV1(Schema):
             choices=DESCRIPTION_TYPES,
             error=_('Invalid description type. {input} not one of {choices}.')
         ))
-    lang = SanitizedUnicode(validate=validate_iso639_3)
+    lang = ISOLangString()
 
 
 class LicenseSchemaV1(Schema):
@@ -461,11 +459,11 @@ class MetadataSchemaV1(Schema, FieldPermissionsMixin):
     titles = fields.List(fields.Nested(TitleSchemaV1), required=True)
     creators = fields.List(fields.Nested(CreatorSchemaV1), required=True)
     resource_type = fields.Nested(ResourceTypeSchemaV1, required=True)
-    publication_date = EDTFLevel0DateString(required=True)
+    publication_date = EDTFDateString(required=True)
     subjects = fields.List(fields.Nested(SubjectSchemaV1))
     contributors = fields.List(fields.Nested(ContributorSchemaV1))
     dates = fields.List(fields.Nested(DateSchemaV1))
-    language = SanitizedUnicode(validate=validate_iso639_3)
+    language = ISOLangString()
     related_identifiers = fields.List(
         fields.Nested(RelatedIdentifierSchemaV1))
     version = SanitizedUnicode()
