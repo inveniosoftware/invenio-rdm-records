@@ -14,19 +14,8 @@ from flask_babelex import lazy_gettext as _
 from marshmallow import ValidationError
 from six.moves.urllib.parse import quote
 
-
-def validate_iso639_3(value):
-    """Validate that language is ISO 639-3 value."""
-    if not pycountry.languages.get(alpha_3=value):
-        raise ValidationError(
-            _('Language must be a lower-cased 3-letter ISO 639-3 string.'),
-            field_name=['language']
-        )
-
-
 # TODO: Revist this links list.
 # Ported from zenodo/modules/records/serializers/schemas/common.py#64
-
 URLS = {
     'badge': '{base}/badge/doi/{doi}.svg',
     'bucket': '{base}/files/{bucket}',

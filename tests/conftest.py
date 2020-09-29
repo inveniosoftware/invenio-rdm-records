@@ -200,14 +200,14 @@ def full_record(full_input_record):
 def minimal_input_record():
     """Minimal record data as dict coming from the external world."""
     return {
-        "metadata": {
-            "_access": {
-                "metadata_restricted": False,
-                "files_restricted": False
-            },
-            "_owners": [1],
-            "_created_by": 1,
+        "access": {
+            "metadata_restricted": False,
+            "files_restricted": False,
+            "owners": [1],
             "access_right": "open",
+            "created_by": 1,
+        },
+        "metadata": {
             "publication_date": "2020-06-01",
             "resource_type": {
                 "type": "image",

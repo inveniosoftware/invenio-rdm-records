@@ -74,7 +74,7 @@ install_requires = [
     'invenio-jsonschemas>=1.1.0,<2.0.0',
     'invenio-pidstore>=1.2.1,<2.0.0',
     'invenio-records-rest>=1.7.1,<2.0.0',
-    'invenio-records>=1.3.2,<2.0.0',
+    'invenio-records>=1.4.0a4,<2.0.0',
     'invenio-records-files>=1.2.1,<2.0.0',
     'invenio-records-permissions>=0.9.0,<1.0.0',
     'invenio-records-resources>=0.6.1,<0.7.0',
@@ -134,11 +134,7 @@ setup(
             'invenio_rdm_records = invenio_rdm_records.jsonschemas',
         ],
         'invenio_search.mappings': [
-            'records = invenio_rdm_records.mappings.records',
-            # TODO: When indexing is done based on $schema
-            #       (invenio-drafts-resources/issues/27), this should
-            #       be revisited
-            # 'drafts = invenio_rdm_records.mappings.drafts',
+            'rdmrecords = invenio_rdm_records.mappings',
         ],
     },
     extras_require=extras_require,
