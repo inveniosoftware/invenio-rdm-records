@@ -8,6 +8,7 @@
 
 """RDM record schemas."""
 
+from invenio_drafts_resources.services.records.schema import RecordSchema
 from marshmallow import EXCLUDE, INCLUDE, Schema, fields, missing
 from marshmallow_utils.fields import GenFunction, LinksField
 from marshmallow_utils.permissions import FieldPermissionsMixin
@@ -51,7 +52,7 @@ class RecordLinks(Schema, FieldPermissionsMixin):
     edit = GenFunction(lambda obj, ctx: {'pid_value': obj.pid.pid_value})
 
 
-class RDMRecordSchemaV1(Schema):
+class RDMRecordSchemaV1(RecordSchema):
     """Record schema."""
 
     class Meta:
@@ -68,9 +69,9 @@ class RDMRecordSchemaV1(Schema):
     }
 
     # schema_version = fields.Interger(dump_only=True)
-    revision = fields.Integer(attribute='revision_id', dump_only=True)
-    id = fields.Str(attribute='recid', dump_only=True)
-    concept_id = fields.Str(attribute='conceptrecid', dump_only=True)
+    # revision = fields.Integer(attribute='revision_id', dump_only=True)
+    # id = fields.Str(attribute='recid', dump_only=True)
+    # concept_id = fields.Str(attribute='conceptrecid', dump_only=True)
     created = fields.Str(dump_only=True)
     updated = fields.Str(dump_only=True)
 
@@ -84,7 +85,7 @@ class RDMRecordSchemaV1(Schema):
     # stats = NestedAttribute(StatsSchemaV1, dump_only=True)
     # relations = NestedAttribute(RelationsSchemaV1, dump_only=True)
 
-    links = LinksField(links_schema=RecordLinks, links_namespace='record')
+    links = LinksField(links_schema=RecordLinks, namespace='record')
 
 
 __all__ = (

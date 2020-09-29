@@ -24,7 +24,8 @@ class BibliographicRecordDraft(Draft):
 
     model_cls = BibliographicRecordDraftMetadata
 
-    index = IndexField('records-draft-v1.0.0', search_alias='records')
+    index = IndexField(
+        'rdmrecords-drafts-draft-v1.0.0', search_alias='rdmrecords')
 
 # class BibliographicRecordMetadata(db.Model, RecordMetadataBase):
 #     """Represent a bibliographic record metadata."""
@@ -35,7 +36,8 @@ class BibliographicRecordDraft(Draft):
 class BibliographicRecord(Record):
     """Bibliographic Record API."""
 
-    index = IndexField('records-record-v1.0.0', search_alias='records')
+    index = IndexField(
+        'rdmrecords-records-record-v1.0.0', search_alias='rdmrecords')
 
     # FIXME: Cannot due to collision with old implementation.
     # model_cls = BibliographicRecordMetadata

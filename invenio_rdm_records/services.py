@@ -17,9 +17,9 @@ from invenio_records_resources.services.records.components import \
 from invenio_records_resources.services.records.search import terms_filter
 
 from .components import CommunitiesComponent, StatsComponent
-from .marshmallow.json import BibliographicDraftSchemaV1
 from .models import BibliographicRecord, BibliographicRecordDraft
 from .permissions import RDMRecordPermissionPolicy
+from .schemas import RDMRecordSchemaV1
 
 
 class BibliographicRecordServiceConfig(RecordDraftServiceConfig):
@@ -30,7 +30,7 @@ class BibliographicRecordServiceConfig(RecordDraftServiceConfig):
     # Draft class
     draft_cls = BibliographicRecordDraft
 
-    schema = BibliographicDraftSchemaV1
+    schema = RDMRecordSchemaV1
     permission_policy_cls = RDMRecordPermissionPolicy
 
     search_facets_options = dict(
