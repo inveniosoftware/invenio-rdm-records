@@ -16,7 +16,7 @@ readme = open('README.rst').read()
 history = open('CHANGES.rst').read()
 
 tests_require = [
-    'pytest-invenio>=1.3.4,<2.0.0',
+    'pytest-invenio>=1.4.0,<2.0.0',
     'invenio-app>=1.3.0,<2.0.0'
 ]
 
@@ -61,29 +61,22 @@ setup_requires = [
 ]
 
 install_requires = [
-    'arrow>=0.13.0',
     'CairoSVG>=1.0.20',
-    'edtf>=4.0.1,<5.0.0',
     'Faker>=2.0.3',
-    'Flask-BabelEx>=0.9.4',
+    'ftfy>=4.4.3,<5.0.0',
     'idutils>=1.1.7',
     'invenio-assets>=1.2.2,<1.3.0',
-    'invenio-communities>=2.0.4,<3.0.0',
-    'invenio-drafts-resources>=0.3.0,<0.4.0',
+    'invenio-communities>=2.1.1,<3.0.0',
+    'invenio-drafts-resources>=0.4.0,<1.0.0',
     'invenio-formatter[badges]>=1.1.0a1,<2.0.0',
-    'invenio-jsonschemas>=1.1.0,<2.0.0',
-    'invenio-pidstore>=1.2.1,<2.0.0',
-    'invenio-records-rest>=1.7.1,<2.0.0',
+    "invenio-i18n>=1.2.0",
     'invenio-records>=1.4.0a4,<2.0.0',
     'invenio-records-files>=1.2.1,<2.0.0',
-    'invenio-records-permissions>=0.9.0,<1.0.0',
-    'invenio-records-resources>=0.6.1,<0.7.0',
     'invenio-records-ui>=1.2.0a1,<2.0.0',
     'invenio-previewer>=1.2.1,<2.0.0',
-    'marshmallow>=3.3.0,<4.0.0',
+    'marshmallow-utils>=0.1.6,<1.0.0',
     # until fix in invenio-previewer is released
     'nbconvert[execute]>=4.1.0,<6.0.0',
-    'pycountry>=18.12.8',
     # TODO: Get from invenio-base
     'six>=1.12.0'  # Needed to pass CI tests
 ]
