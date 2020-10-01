@@ -6,10 +6,9 @@
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify it
 # under the terms of the MIT License; see LICENSE file for more details.
 
-dist: trusty
-
-addons:
-  postgresql: 9.5
+branches:
+  except:
+  - /^v\d+\.\d+(\.\d+)?(\S*)?$/
 
 notifications:
   email: false
@@ -21,35 +20,33 @@ language: python
 matrix:
   fast_finish: true
   allow_failures:
-    - env: REQUIREMENTS=devel EXTRAS=all,postgresql,elasticsearch7 ES_URL=$ES7_DOWNLOAD_URL
+    - REQUIREMENTS=devel
 
 cache:
   - pip
 
-services:
-  - postgresql
-  - redis
-
 env:
   global:
-    - ES6_DOWNLOAD_URL="https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-6.8.2.tar.gz"
-    - ES7_DOWNLOAD_URL="https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-7.3.0-linux-x86_64.tar.gz"
-    - ES_HOST=127.0.0.1
-    - SQLALCHEMY_DATABASE_URI="postgresql+psycopg2://postgres@localhost:5432/invenio"
+    - DOCKER_COMPOSE_VERSION=1.26.2
+    - SQLALCHEMY_DATABASE_URI="postgresql+psycopg2://invenio:invenio@localhost:5432/invenio"
   matrix:
-    - REQUIREMENTS=lowest EXTRAS=all,postgresql,elasticsearch6 ES_URL=$ES6_DOWNLOAD_URL
-    - REQUIREMENTS=release EXTRAS=all,postgresql,elasticsearch6 ES_URL=$ES6_DOWNLOAD_URL
-    - REQUIREMENTS=release EXTRAS=all,postgresql,elasticsearch7 ES_URL=$ES7_DOWNLOAD_URL DEPLOY=true
-    - REQUIREMENTS=devel EXTRAS=all,postgresql,elasticsearch6 ES_URL=$ES6_DOWNLOAD_URL
-    - REQUIREMENTS=devel EXTRAS=all,postgresql,elasticsearch7 ES_URL=$ES7_DOWNLOAD_URL
+    - REQUIREMENTS=lowest EXTRAS=all,postgresql,elasticsearch6 ES_VERSION=ES_6_LATEST
+    - REQUIREMENTS=lowest EXTRAS=all,postgresql,elasticsearch7 ES_VERSION=ES_7_LATEST
+    - REQUIREMENTS=release EXTRAS=all,postgresql,elasticsearch6 ES_VERSION=ES_6_LATEST
+    - REQUIREMENTS=release EXTRAS=all,postgresql,elasticsearch7 ES_VERSION=ES_7_LATEST
+    - REQUIREMENTS=devel EXTRAS=all,postgresql,elasticsearch6 ES_VERSION=ES_6_LATEST
+    - REQUIREMENTS=devel EXTRAS=all,postgresql,elasticsearch7 ES_VERSION=ES_7_LATEST
 
 python:
   - "3.6"
+  - "3.7"
+  - "3.8"
 
 before_install:
-  - "mkdir /tmp/elasticsearch"
-  - "wget -O - $ES_URL | tar xz --directory=/tmp/elasticsearch --strip-components=1"
-  - "/tmp/elasticsearch/bin/elasticsearch > /tmp/local-es.log &"
+  - sudo rm /usr/local/bin/docker-compose
+  - curl -L https://github.com/docker/compose/releases/download/${DOCKER_COMPOSE_VERSION}/docker-compose-`uname -s`-`uname -m` > docker-compose
+  - chmod +x docker-compose
+  - sudo mv docker-compose /usr/local/bin
   - "travis_retry pip install --upgrade pip setuptools py"
   - "travis_retry pip install twine wheel coveralls requirements-builder"
   - "requirements-builder -e $EXTRAS --level=min setup.py > .travis-lowest-requirements.txt"
@@ -62,24 +59,11 @@ install:
   - "pip freeze"
 
 before_script:
-  # Allow ES to start
-  - sleep 5
-  - curl http://127.0.0.1:9200 && echo "Elasticsearch is up!" || cat /tmp/local-es.log
+  - "docker --version"
+  - "docker-compose --version"
 
 script:
   - "./run-tests.sh"
 
 after_success:
   - coveralls
-
-deploy:
-  provider: pypi
-  user: inveniosoftware
-  password:
-    secure: OPjtRlBwDMnGy3w7Q8LNHWa8ScOibC/ToCixG/GGqnnyIzgkOkffAPBgtu7nZfTbfoplKTcBCxDnVLDUeBy7Uj1uXVR+CmrCnmBz8x4mz7z4xWOMGv49h2FBzZZF2659MobxDaDNxD5hrzpgSDWML0Bp3uRLw88uR5zd5Y+C7+pbdozsnzuUzNWZAPVZ6psL55Hgx9n2ULDt072nGVAeZa2k4lBqiPfewEpzupyQ6z1EDxkJ1taRozvV5pxCeV/AtabZ63sT0Dc5+gE0tZhZ7ta6uBXuwAB4ZjVvXpWDCfI247XSbOxTF7MmyUPPHIwBfRLBxi8WEppWyUrFs+667VQkh1DF6Qv6UBMuwqesLKyJnDMqfC0EhBWckjHFgMuupdZiAMwj6rcETrmpesxw78WUhzNUg/PPjuEqvM+8ouFm8DaMeYq4zlX7dzRgqBmkLnmizJt9z5H4sZ6NXPKpDAXuDNbVxjZdFeoguvrp8ZZZKd5cl2SCpGndejri9SIfQ7L6AkFkz0QIIZ9JsQcxdmPD5Mgpmfpf93/g8fkhYKJWjwxTBDrhDqSatXLi/HqfooND4voFvudO5cmFudHFdtdcj9ppcasePSpmZKNk3vHWxQyglkH6Ey7Hm6dwPXkh+vSEGQ8Payb8qbI4DwNc/vff+8Scbx6v1oBCE4fVYV8=
-  distributions: "compile_catalog sdist bdist_wheel"
-  on:
-    tags: true
-    python: "3.6"
-    repo: inveniosoftware/invenio-rdm-records
-    condition: $DEPLOY = true
