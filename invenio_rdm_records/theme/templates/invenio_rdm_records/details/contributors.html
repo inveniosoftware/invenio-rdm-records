@@ -10,7 +10,7 @@
 <div class="entities-title">
   <b><h3>Contributors:</h3></b>
 </div>
-{%- for group in record.contributors|groupby('role')%}
+{%- for group in metadata.contributors|groupby('role')%}
 <h4><b>{{group.grouper|contributortype_title}}(s)</b></h4>
 {{ list_entities(group.list) }}
 {%- endfor %}

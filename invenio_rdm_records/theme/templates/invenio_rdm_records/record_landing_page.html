@@ -15,6 +15,8 @@
 
 {%- from "invenio_rdm_records/macros/files.html" import file_list_box, preview_file_box %}
 
+{%- set metadata = record.metadata %}
+{%- set access = record.access %}
 {%- block page_body %}
 <div class="ui container">
   <div class="ui padded relaxed grid">
@@ -25,25 +27,25 @@
           <div class="two column row">
             <div class="left floated left aligned column">
               <span class="ui label teal"
-                title="Publication date">{{ record.publication_date|to_date|format_date(format='long') }}</span>
-              <span class="label record-version"> | Version {{ record.version }}</span>
+                title="Publication date">{{ metadata.publication_date|to_date|format_date(format='long') }}</span>
+              <span class="label record-version"> | Version {{ metadata.version }}</span>
             </div>
             <div class="right floated right aligned column">
-              <span class="ui label grey">{{ record.resource_type | vocabulary_title('resource_type') }}</span>
-              {% if record.access_right in ["embargoed", "closed"] %}
+              <span class="ui label grey">{{ metadata.resource_type | vocabulary_title('resource_type') }}</span>
+              {% if access.access_right in ["embargoed", "closed"] %}
               <span class="ui label red">
-              {% elif record.access_right == "restricted" %}
+              {% elif access.access_right == "restricted" %}
               <span class="ui label yellow">
               {% else %}
               <span class="ui label green">
               {% endif %}
-                {{ record | vocabulary_title('access_right') }}
+                {{ access | vocabulary_title('access_right') }}
               </span>
             </div>
           </div>
         </div>
 
-        <h1>{{ record.titles[0].title }}</h1>
+        <h1>{{ metadata.titles[0].title }}</h1>
         <p>{%- include "invenio_rdm_records/details/creators.html" %}</p>
         {%- if record.contributors %}
         <p>{%- include "invenio_rdm_records/details/contributors.html" %}</p>
