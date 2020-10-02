@@ -158,9 +158,11 @@ def create_fake_record():
                 "identifier": "9999.99988",
                 "scheme": "GRID"
             }],
-            "embargo_date": fake.future_date(end_date='+1y').strftime("%Y-%m-%d"),
+            "embargo_date": (
+                fake.future_date(end_date='+1y').strftime("%Y-%m-%d")
+            ),
             "contact": "info@inveniosoftware.org",
-                    "_default_preview": "previewer one",
+            "_default_preview": "previewer one",
             "_internal_notes": [{
                 "user": "inveniouser",
                 "note": "RDM record",
