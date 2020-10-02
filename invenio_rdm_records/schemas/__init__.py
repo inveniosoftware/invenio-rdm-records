@@ -10,12 +10,12 @@
 
 from invenio_drafts_resources.services.records.schema import RecordSchema
 from marshmallow import EXCLUDE, INCLUDE, Schema, fields, missing
-from marshmallow_utils.fields import GenFunction, LinksField
-from marshmallow_utils.permissions import FieldPermissionsMixin
 
 from .access import AccessSchemaV1
 from .communities import CommunitiesSchemaV1
 from .files import FilesSchemaV1
+from .links import BibliographicDraftLinksSchemaV1, \
+    BibliographicRecordLinksSchemaV1
 from .metadata import MetadataSchemaV1
 from .pids import PIDSSchemaV1
 from .relations import RelationsSchemaV1
@@ -35,21 +35,6 @@ class AttributeAccessorFieldMixin:
 
 class NestedAttribute(fields.Nested, AttributeAccessorFieldMixin):
     """Nested object attribute field."""
-
-
-class RecordLinks(Schema, FieldPermissionsMixin):
-
-    field_dump_permissions = {
-        'self': 'read',
-        'draft': 'update',
-        'publish': 'update',
-        'edit': 'update',
-    }
-
-    self = GenFunction(lambda obj, ctx: {'pid_value': obj.pid.pid_value})
-    draft = GenFunction(lambda obj, ctx: {'pid_value': obj.pid.pid_value})
-    publish = GenFunction(lambda obj, ctx: {'pid_value': obj.pid.pid_value})
-    edit = GenFunction(lambda obj, ctx: {'pid_value': obj.pid.pid_value})
 
 
 class RDMRecordSchemaV1(RecordSchema):
@@ -85,9 +70,9 @@ class RDMRecordSchemaV1(RecordSchema):
     # stats = NestedAttribute(StatsSchemaV1, dump_only=True)
     # relations = NestedAttribute(RelationsSchemaV1, dump_only=True)
 
-    links = LinksField(links_schema=RecordLinks, namespace='record')
-
 
 __all__ = (
+    'BibliographicDraftLinksSchemaV1',
+    'BibliographicRecordLinksSchemaV1'
     'RDMRecordSchemaV1',
 )

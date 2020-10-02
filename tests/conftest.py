@@ -42,7 +42,7 @@ def app_config(app_config):
     supported_configurations = [
         'FILES_REST_PERMISSION_FACTORY',
         'PIDSTORE_RECID_FIELD',
-        # 'RECORDS_REST_ENDPOINTS',
+        'RECORDS_REST_ENDPOINTS',
         # 'RECORDS_REST_FACETS',
         # 'RECORDS_REST_SORT_OPTIONS',
         # 'RECORDS_REST_DEFAULT_SORT',
