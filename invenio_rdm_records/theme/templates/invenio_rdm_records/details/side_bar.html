@@ -93,7 +93,7 @@
 
   <!-- Altmetric -->
   <div class="altmetric-embed altmetric-hidden" data-badge-type="donut" data-badge-details="left"
-    data-hide-no-mentions="true" data-doi="{{ record.identifiers|doi_identifier }}"
+    data-hide-no-mentions="true" data-doi="{{ metadata.identifiers|doi_identifier }}"
     data-uuid="2a8761bb-6e07-cad2-ff33-e6d1f68afaed"></div>
 </dd>
 
@@ -105,29 +105,21 @@
     <tbody>
       <tr class="info">
         <td>
-          <a href="{{ url_for('invenio_records_ui.recid', pid_value=record.pid) }}">{{ record.version }}</a>
-          <small class="text-muted">{{ record.identifiers|doi_identifier }}</small>
+          <a href="{{ url_for('invenio_records_ui.recid', pid_value=record.id) }}">{{ metadata.version }}</a>
+          <small class="text-muted">{{ metadata.identifiers|doi_identifier }}</small>
         </td>
         <td align="right"><small
-            class="text-muted">{{ record.publication_date|to_date|format_date(format='medium')}}</small></td>
+            class="text-muted">{{ metadata.publication_date|to_date|format_date(format='medium')}}</small></td>
       </tr>
     </tbody>
   </table>
   <small>
     <strong>Cite all versions?</strong> You can cite all versions by using the DOI <a
-      href="https://doi.org/{{ record.identifiers|doi_identifier }}">{{ record.identifiers|doi_identifier }}</a>. This
+      href="https://doi.org/{{ metadata.identifiers|doi_identifier }}">{{ metadata.identifiers|doi_identifier }}</a>. This
     DOI represents all versions, and will always resolve to the latest one. <a href="/coming-soon">Read more</a>.
   </small>
 </dd>
 
-<dt class="record-info-title">{{ _('Communities')}}:</dt>
-<hr class="thin-line">
-</hr>
-<dd>
-<div id="communities-management"
-  data-record='{{ record | tojson }}'
-  data-communities='{{ record_communities(record).as_dict() | tojson }}'></div>
-</dd>
 
 <dt class="record-info-title">{{ _('Export')}}:</dt>
 <hr class="thin-line">
