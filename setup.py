@@ -74,7 +74,7 @@ install_requires = [
     'invenio-records-files>=1.2.1,<2.0.0',
     'invenio-records-ui>=1.2.0a1,<2.0.0',
     'invenio-previewer>=1.2.1,<2.0.0',
-    'marshmallow-utils>=0.1.6,<1.0.0',
+    'marshmallow-utils>=0.2.1,<0.3.0',
     # until fix in invenio-previewer is released
     'nbconvert[execute]>=4.1.0,<6.0.0',
     # TODO: Get from invenio-base
