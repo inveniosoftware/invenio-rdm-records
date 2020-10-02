@@ -22,36 +22,7 @@ def _(x):
 
 # NOTE: We have to keep this until invenio-records-files and
 #       invenio-communities use the new records-resources way of creating APIs
-RECORDS_REST_ENDPOINTS = dict(
-    recid=dict(
-        pid_type='recid',
-        pid_minter='recid_v2',
-        pid_fetcher='recid_v2',
-        default_endpoint_prefix=True,
-        record_class=Record,
-        search_index='records',
-        search_type=None,
-        record_serializers={
-            'application/json': ('invenio_rdm_records.serializers'
-                                 ':json_v1_response'),
-        },
-        search_serializers={
-            'application/json': ('invenio_rdm_records.serializers'
-                                 ':json_v1_search'),
-        },
-        record_loaders={
-            'application/json': ('invenio_rdm_records.loaders'
-                                 ':json_v1'),
-        },
-        list_route='/rest-records/',
-        item_route='/rest-records/<pid(recid,'
-                   'record_class="invenio_records_files.api.Record")'
-                   ':pid_value>',
-        default_media_type='application/json',
-        max_result_window=10000,
-        error_handlers=dict(),
-    ),
-)
+RECORDS_REST_ENDPOINTS = {}
 """REST API for invenio_rdm_records."""
 
 # Files REST

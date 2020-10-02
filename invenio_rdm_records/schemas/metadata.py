@@ -15,11 +15,10 @@ import idutils
 from edtf.parser.grammar import level0Expression
 from flask import current_app
 from flask_babelex import lazy_gettext as _
-from invenio_records_rest.schemas.fields import DateString, SanitizedUnicode
 from marshmallow import INCLUDE, Schema, ValidationError, fields, post_load, \
     validate, validates, validates_schema
-from marshmallow_utils.fields import EDTFDateString, GenFunction, ISOLangString
-from marshmallow_utils.permissions import FieldPermissionsMixin
+from marshmallow_utils.fields import EDTFDateString, GenFunction, \
+    ISODateString, ISOLangString, SanitizedUnicode
 
 from .utils import validate_entry
 
@@ -61,7 +60,7 @@ class InternalNoteSchemaV1(Schema):
 
     user = SanitizedUnicode(required=True)
     note = SanitizedUnicode(required=True)
-    timestamp = DateString(required=True)
+    timestamp = ISODateString(required=True)
 
 
 class DateSchemaV1(Schema):
@@ -81,8 +80,8 @@ class DateSchemaV1(Schema):
         "Other"
     ]
 
-    start = DateString()
-    end = DateString()
+    start = ISODateString()
+    end = ISODateString()
     type = fields.Str(required=True, validate=validate.OneOf(
             choices=DATE_TYPES,
             error=_('Invalid date type. {input} not one of {choices}.')
@@ -303,8 +302,8 @@ class DateSchemaV1(Schema):
         "Other"
     ]
 
-    start = DateString()
-    end = DateString()
+    start = ISODateString()
+    end = ISODateString()
     type = fields.Str(required=True, validate=validate.OneOf(
             choices=DATE_TYPES,
             error=_('Invalid date type. {input} not one of {choices}.')
@@ -437,7 +436,7 @@ class LocationSchemaV1(Schema):
     description = SanitizedUnicode()
 
 
-class MetadataSchemaV1(Schema, FieldPermissionsMixin):
+class MetadataSchemaV1(Schema):
     """Schema for the record metadata."""
 
     field_load_permissions = {

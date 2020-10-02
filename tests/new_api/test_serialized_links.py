@@ -18,7 +18,7 @@ HEADERS = {"content-type": "application/json", "accept": "application/json"}
 
 
 @pytest.fixture
-def draft_json(client, minimal_input_record, es):
+def draft_json(app, client, minimal_input_record, es):
     """Bibliographic Draft fixture."""
     response = client.post(
         "/records", json=minimal_input_record, headers=HEADERS
@@ -42,7 +42,6 @@ def published_json(app, client, minimal_input_record, es):
     return response.json
 
 
-@pytest.mark.skip()
 def test_draft_links(client, draft_json, minimal_input_record):
     """Tests the links for endpoints that return a draft."""
     created_draft_links = draft_json["links"]
@@ -63,7 +62,6 @@ def test_draft_links(client, draft_json, minimal_input_record):
     assert expected_links == created_draft_links == read_draft_links
 
 
-@pytest.mark.skip()
 def test_record_links(client, published_json):
     """Tests the links for a published bibliographic record."""
     pid_value = published_json["id"]
@@ -84,7 +82,6 @@ def test_record_links(client, published_json):
     assert expected_links == published_record_links == read_record_links
 
 
-@pytest.mark.skip()
 def test_record_search_links(client, published_json):
     """Tests the links for a search of published bibliographic records."""
     response = client.get("/records", headers=HEADERS)

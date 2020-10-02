@@ -15,14 +15,12 @@ fixtures are available.
 import pytest
 from flask_principal import Identity, Need, UserNeed
 from invenio_app.factory import create_api
-from invenio_drafts_resources.resources.draft_config import DraftResourceConfig
-from invenio_records_resources.resources.record_config import \
-    RecordResourceConfig
 
 from invenio_rdm_records import config
 from invenio_rdm_records.resources import BibliographicDraftActionResource, \
     BibliographicDraftActionResourceConfig, BibliographicDraftResource, \
-    BibliographicRecordResource
+    BibliographicDraftResourceConfig, BibliographicRecordResource, \
+    BibliographicRecordResourceConfig
 from invenio_rdm_records.services import BibliographicRecordService, \
     BibliographicRecordServiceConfig
 

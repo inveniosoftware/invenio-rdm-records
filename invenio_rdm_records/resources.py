@@ -9,22 +9,48 @@
 """Bibliographic Record Resource."""
 
 from invenio_drafts_resources.resources import DraftActionResource, \
-    DraftActionResourceConfig, DraftResource, DraftResourceConfig
-from invenio_records_resources.resources import RecordResource, \
-    RecordResourceConfig
-from invenio_records_resources.resources.record_response import RecordResponse
+    DraftActionResourceConfig, DraftResource, DraftResourceConfig, \
+    RecordResource, RecordResourceConfig
+
+from .schemas import BibliographicDraftLinksSchemaV1, \
+    BibliographicRecordLinksSchemaV1
+
+
+class BibliographicRecordResourceConfig(RecordResourceConfig):
+    """Bibliographic record resource configuration."""
+
+    links_config = {
+        **RecordResourceConfig.links_config,
+        "record": BibliographicRecordLinksSchemaV1
+    }
+
+    draft_links_config = {
+        **RecordResourceConfig.draft_links_config,
+        "record": BibliographicDraftLinksSchemaV1
+    }
 
 
 class BibliographicRecordResource(RecordResource):
     """Bibliographic record resource."""
 
     config_name = "RDM_RECORDS_BIBLIOGRAPHIC_RECORD_CONFIG"
+    default_config = BibliographicRecordResourceConfig
+
+
+class BibliographicDraftResourceConfig(DraftResourceConfig):
+    """Bibliographic draft resource configuration."""
+
+    links_config = {
+        **DraftResourceConfig.links_config,
+        "record": BibliographicDraftLinksSchemaV1
+    }
 
 
 class BibliographicDraftResource(DraftResource):
     """Bibliographic record draft resource."""
 
     config_name = "RDM_RECORDS_BIBLIOGRAPHIC_DRAFT_CONFIG"
+    default_config = BibliographicDraftResourceConfig
 
 
 class BibliographicDraftActionResourceConfig(DraftActionResourceConfig):
@@ -36,10 +62,14 @@ class BibliographicDraftActionResourceConfig(DraftActionResourceConfig):
         "publish": "publish"
     }
 
+    record_links_config = {
+        **DraftActionResourceConfig.record_links_config,
+        "record": BibliographicRecordLinksSchemaV1
+    }
+
 
 class BibliographicDraftActionResource(DraftActionResource):
     """Bibliographic record draft actions resource."""
 
     config_name = "RDM_RECORDS_BIBLIOGRAPHIC_DRAFT_ACTION_CONFIG"
-
     default_config = BibliographicDraftActionResourceConfig
