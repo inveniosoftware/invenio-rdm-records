@@ -72,116 +72,112 @@ def create_fake_record():
     """Create records for demo purposes."""
     fake = Faker()
     data_to_use = {
-        "_access": {
+        "access": {
             "metadata_restricted": False,
-            "files_restricted": False
+            "files_restricted": False,
+            "owners": [1],
+            "access_right": "open",
+            "created_by": 1,
         },
-        "_created_by": 2,
-        "_default_preview": "previewer one",
-        "_internal_notes": [{
-            "user": "inveniouser",
-            "note": "RDM record",
-            "timestamp": fake.date(pattern='%Y-%m-%d')
-        }],
-        "_owners": [1],
-        "access_right": "open",
-        "embargo_date": fake.future_date(end_date='+1y').strftime("%Y-%m-%d"),
-        "contact": "info@inveniosoftware.org",
-        "resource_type": fake_resource_type(),
-        "identifiers": {
-            "DOI": "10.9999/rdm.9999999",
-            "arXiv": "9999.99999",
-        },
-        "creators": [{
-            "name": fake.name(),
-            "type": "Personal",
+        "metadata": {
+            "resource_type": fake_resource_type(),
             "identifiers": {
-                "Orcid": "0000-0002-1825-0097",
+                "DOI": "10.9999/rdm.9999999",
+                "arXiv": "9999.99999",
             },
-            "affiliations": [{
-                "name": fake.company(),
+            "creators": [{
+                "name": fake.name(),
+                "type": "Personal",
                 "identifiers": {
-                    "ror": "03yrm5c26"
-                }
-            }]
-        }],
-        "titles": [{
-            "title": fake.company() + "'s gallery",
-            "type": "Other",
-            "lang": "eng"
-        }],
-        "publication_date": fake_edtf_level_0(),
-        "subjects": [{
-            "subject": "Romans",
-            "identifier": "subj-1",
-            "scheme": "no-scheme"
-        }],
-        "contributors": [{
-            "name": fake.name(),
-            "type": "Personal",
-            "affiliations": [{
-                "name": fake.company(),
-                "identifiers": {
-                    "ror": "03yrm5c26"
-                }
+                    "Orcid": "0000-0002-1825-0097",
+                },
+                "affiliations": [{
+                    "name": fake.company(),
+                    "identifiers": {
+                        "ror": "03yrm5c26"
+                    }
+                }]
             }],
-            "role": "RightsHolder"
-        }],
-        "dates": [{
-            # No end date to avoid computations based on start
-            "start": fake.date(pattern='%Y-%m-%d'),
-            "description": "Random test date",
-            "type": "Other"
-        }],
-        "language": "eng",
-        "related_identifiers": [{
-            "identifier": "10.9999/rdm.9999988",
-            "scheme": "DOI",
-            "relation_type": "Requires",
-            "resource_type": fake_resource_type()
-        }],
-        "version": "v0.0.1",
-        "licenses": [{
-            "license": "Berkeley Software Distribution 3",
-            "uri": "https://opensource.org/licenses/BSD-3-Clause",
-            "identifier": "BSD-3",
-            "scheme": "BSD-3",
-        }],
-        "descriptions": [{
-            "description": fake.text(max_nb_chars=3000),
-            "type": "Abstract",
-            "lang": "eng"
-        }],
-        "locations": [{
-            "point": {
-                "lat": str(fake.latitude()),
-                "lon": str(fake.longitude())
-            },
-            "place": fake.location_on_land()[2],
-            "description": "Random place on land for random coordinates..."
-        }],
-        "references": [{
-            "reference_string": "Reference to something et al.",
-            "identifier": "9999.99988",
-            "scheme": "GRID"
-        }]
+            "titles": [{
+                "title": fake.company() + "'s gallery",
+                "type": "Other",
+                "lang": "eng"
+            }],
+            "publication_date": fake_edtf_level_0(),
+            "subjects": [{
+                "subject": "Romans",
+                "identifier": "subj-1",
+                "scheme": "no-scheme"
+            }],
+            "contributors": [{
+                "name": fake.name(),
+                "type": "Personal",
+                "affiliations": [{
+                    "name": fake.company(),
+                    "identifiers": {
+                        "ror": "03yrm5c26"
+                    }
+                }],
+                "role": "RightsHolder"
+            }],
+            "dates": [{
+                # No end date to avoid computations based on start
+                "start": fake.date(pattern='%Y-%m-%d'),
+                "description": "Random test date",
+                "type": "Other"
+            }],
+            "language": "eng",
+            "related_identifiers": [{
+                "identifier": "10.9999/rdm.9999988",
+                "scheme": "DOI",
+                "relation_type": "Requires",
+                "resource_type": fake_resource_type()
+            }],
+            "version": "v0.0.1",
+            "licenses": [{
+                "license": "Berkeley Software Distribution 3",
+                "uri": "https://opensource.org/licenses/BSD-3-Clause",
+                "identifier": "BSD-3",
+                "scheme": "BSD-3",
+            }],
+            "descriptions": [{
+                "description": fake.text(max_nb_chars=3000),
+                "type": "Abstract",
+                "lang": "eng"
+            }],
+            "locations": [{
+                "point": {
+                    "lat": str(fake.latitude()),
+                    "lon": str(fake.longitude())
+                },
+                "place": fake.location_on_land()[2],
+                "description": "Random place on land for random coordinates..."
+            }],
+            "references": [{
+                "reference_string": "Reference to something et al.",
+                "identifier": "9999.99988",
+                "scheme": "GRID"
+            }],
+            "embargo_date": fake.future_date(end_date='+1y').strftime("%Y-%m-%d"),
+            "contact": "info@inveniosoftware.org",
+                    "_default_preview": "previewer one",
+            "_internal_notes": [{
+                "user": "inveniouser",
+                "note": "RDM record",
+                "timestamp": fake.date(pattern='%Y-%m-%d')
+            }],
+        }
     }
 
     # identity providing `any_user` system role
     identity = Identity(1)
     identity.provides.add(any_user)
 
-    draft_service = BibliographicRecordService()
+    service = BibliographicRecordService()
+    draft = service.create(data=data_to_use, identity=identity)
+    record = service.publish(id_=draft.id, identity=identity)
 
-    identified_draft = draft_service.create(
-        data=data_to_use, identity=identity
-    )
-
-    identified_record = draft_service.publish(
-        id_=identified_draft.id, identity=identity
-    )
-
-    return identified_record
+    return record
 
 
 @click.group()
