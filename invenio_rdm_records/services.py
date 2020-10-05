@@ -36,20 +36,20 @@ class BibliographicRecordServiceConfig(RecordDraftServiceConfig):
     search_facets_options = dict(
         aggs={
             'resource_type': {
-                'terms': {'field': 'resource_type.type'},
+                'terms': {'field': 'metadata.resource_type.type'},
                 'aggs': {
                     'subtype': {
-                        'terms': {'field': 'resource_type.subtype'},
+                        'terms': {'field': 'metadata.resource_type.subtype'},
                     }
                 }
             },
             'access_right': {
-                'terms': {'field': 'access_right'},
+                'terms': {'field': 'access.access_right'},
             }
         },
         post_filters={
-            'subtype': terms_filter('resource_type.subtype'),
-            'resource_type': terms_filter('resource_type.type'),
+            'subtype': terms_filter('metadata.resource_type.subtype'),
+            'resource_type': terms_filter('metadata.resource_type.type'),
         }
     )
 
