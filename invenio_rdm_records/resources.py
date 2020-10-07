@@ -32,6 +32,7 @@ class BibliographicRecordResourceConfig(RecordResourceConfig):
     }
 
     error_map = {
+        **RecordResourceConfig.error_map,
         ValidationError: handle_validation_error,
     }
 
