@@ -169,7 +169,7 @@ class CreatorSchemaV1(Schema):
     name = SanitizedUnicode(required=True)
     type = SanitizedUnicode(required=True, validate=validate.OneOf(
                 choices=NAMES,
-                error=_('Invalid name type. {input} not one of {choices}.')
+                error=_(f'Invalid value. Choose one of {NAMES}.')
             ))
     given_name = SanitizedUnicode()
     family_name = SanitizedUnicode()
@@ -179,16 +179,20 @@ class CreatorSchemaV1(Schema):
     @validates("identifiers")
     def validate_identifiers(self, value):
         """Validate well-formed identifiers are passed."""
-        if any(key not in ['Orcid', 'ror'] for key in value.keys()):
-            raise ValidationError(_("Invalid identifier."))
+        schemes = ['Orcid', 'ror']
+
+        if any(scheme not in schemes for scheme in value.keys()):
+            raise ValidationError(
+                [_(f"Invalid value. Choose one of {schemes}.")]
+            )
 
         if 'Orcid' in value:
             if not idutils.is_orcid(value.get('Orcid')):
-                raise ValidationError(_("Invalid identifier."))
+                raise ValidationError({'Orcid': [_("Invalid value.")]})
 
         if 'ror' in value:
             if not idutils.is_ror(value.get('ror')):
-                raise ValidationError(_("Invalid identifier."))
+                raise ValidationError({'ror': [_("Invalid value.")]})
 
     @validates_schema
     def validate_data(self, data, **kwargs):
@@ -196,15 +200,20 @@ class CreatorSchemaV1(Schema):
         if data['type'] == "Personal":
             person_identifiers = ['Orcid']
             identifiers = data.get('identifiers', {}).keys()
-            if any([ident not in person_identifiers for ident in identifiers]):
-                raise ValidationError(_("Invalid identifier for a person."))
+            if any([i not in person_identifiers for i in identifiers]):
+                messages = [
+                    _(f"Invalid value. Choose one of {person_identifiers}.")
+                ]
+                raise ValidationError({"identifiers": messages})
+
         elif data['type'] == "Organizational":
             org_identifiers = ['ror']
             identifiers = data.get('identifiers', {}).keys()
-            if any([ident not in org_identifiers for ident in identifiers]):
-                raise ValidationError(
-                    _("Invalid identifier for an organization.")
-                )
+            if any([i not in org_identifiers for i in identifiers]):
+                messages = [
+                    _(f"Invalid value. Choose one of {org_identifiers}.")
+                ]
+                raise ValidationError({"identifiers": messages})
 
 
 class ContributorSchemaV1(CreatorSchemaV1):
@@ -221,12 +230,7 @@ class ContributorSchemaV1(CreatorSchemaV1):
 class ResourceTypeSchemaV1(Schema):
     """Resource type schema."""
 
-    type = fields.Str(
-        required=True,
-        error_messages=dict(
-            required=_('Type must be specified.')
-        )
-    )
+    type = fields.Str(required=True)
     subtype = fields.Str()
 
     @validates_schema

@@ -61,14 +61,13 @@ def test_nested_field_error(client, minimal_input_record, es_clear):
     expected_errors = [
         {
             # Could be more specific...
-            "field": "metadata.creators.1.identifiers",
-            "messages": ["Invalid identifier."]
+            "field": "metadata.creators.1.identifiers.ror",
+            "messages": ["Invalid value."]
         }
     ]
     assert expected_errors == errors
 
 
-@pytest.mark.skip()
 def test_multiple_errors(client, minimal_input_record):
     minimal_input_record["metadata"]["publication_date"] = ""
     minimal_input_record["metadata"]["titles"] = [{
@@ -89,9 +88,9 @@ def test_multiple_errors(client, minimal_input_record):
             "messages": ["Please provide a valid date or interval."]
         },
         {
-            "field": "metadata.titles.0.type",  # TODO: This is the failing one
+            "field": "metadata.titles.0.type",
             "messages": [
-                "Invalid title type. Choose one of ['AlternativeTitle', "
+                "Invalid value. Choose one of ['AlternativeTitle', "
                 "'MainTitle', 'Other', 'Subtitle', 'TranslatedTitle']."
             ]
         }

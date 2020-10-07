@@ -24,4 +24,6 @@ def validate_entry(vocabulary_key, entry_key):
     vocabulary = Vocabularies.get_vocabulary(vocabulary_key)
     obj = vocabulary.get_entry_by_dict(entry_key)
     if not obj:
-        raise ValidationError(vocabulary.get_invalid(entry_key))
+        raise ValidationError(
+            vocabulary.get_invalid(entry_key)
+        )
