@@ -42,24 +42,21 @@ class ResourceTypeVocabulary(Vocabulary):
         return result
 
     def get_invalid(self, type_subtype):
-        """Returns the error message for the given dict key."""
-        # TODO: Revisit with deposit to return targeted error message
-        types = set([k[0] for k in self.data.keys()])
+        """Returns the {<field>: <messages>} error dict for the given key."""
+        types = sorted([k[0] for k in self.data.keys() if k[0]])
         _type = type_subtype.get('type')
+
         if not _type or (_type not in types):
-            _input = _type
+            field = 'type'
             choices = types
         else:
-            _input = type_subtype.get('subtype')
-            choices = set([k[1] for k in self.data.keys()])
+            field = 'subtype'
+            choices = sorted([
+                k[1] for k in self.data.keys()
+                if k[1] and k[0] == _type
+            ])
 
-        return _(
-            'Invalid {vocabulary_name}. {input} not one of {choices}'.format(
-                vocabulary_name=self.vocabulary_name,
-                input=_input,
-                choices=choices
-            )
-        )
+        return {field: [_(f"Invalid value. Choose one of {choices}.")]}
 
     def dump_options(self):
         """Returns json-compatible dict of options for type and subtype.

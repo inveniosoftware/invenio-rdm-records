@@ -17,6 +17,8 @@ class AccessRightVocabulary(Vocabulary):
     NOTE: Perhaps a stretch of Vocabulary, but very useful.
     """
 
+    key_field = 'access_right'
+
     @property
     def readable_key(self):
         """Returns the key to readable values for this vocabulary."""
@@ -26,11 +28,3 @@ class AccessRightVocabulary(Vocabulary):
     def vocabulary_name(self):
         """Returns the human readable name for this vocabulary."""
         return 'access right'
-
-    def key(self, row):
-        """Returns the primary key of the row.
-
-        row: dict-like
-        returns: serializable
-        """
-        return row.get('access_right')

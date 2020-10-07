@@ -10,7 +10,8 @@
 
 import arrow
 from invenio_records_rest.schemas.fields import DateString, SanitizedUnicode
-from marshmallow import Schema, ValidationError, fields, validate, validates
+from marshmallow import Schema, ValidationError, fields, validate, validates, \
+    validates_schema
 
 from .utils import validate_entry
 
@@ -36,8 +37,7 @@ class AccessSchemaV1(Schema):
                 field_names=['embargo_date']
             )
 
-    @validates('access_right')
-    def validate_access_right(self, value):
+    @validates_schema
+    def validate_access_right(self, data, **kwargs):
         """Validate that access right is one of the allowed ones."""
-        access_right_key = {'access_right': value}
-        validate_entry('access_right', access_right_key)
+        validate_entry('access_right', data)

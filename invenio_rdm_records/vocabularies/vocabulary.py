@@ -51,6 +51,8 @@ def hierarchized_rows(dict_reader):
 class Vocabulary(object):
     """Abstracts common vocabulary functionality."""
 
+    key_field = None  # Children need to fill
+
     def __init__(self, path):
         """Constructor."""
         self.path = path
@@ -72,7 +74,7 @@ class Vocabulary(object):
         row: dict-like
         returns: serializable
         """
-        raise NotImplementedError()
+        return row.get(self.key_field)
 
     def _load_data(self):
         """Sets self.data with the filled rows."""
@@ -100,9 +102,9 @@ class Vocabulary(object):
         """Returns the user facing error message for the given dict key."""
         vocabulary_name = self.vocabulary_name
         choices = sorted([self.key(e) for e in self.data.values()])
-        return _(
-            f"Invalid {vocabulary_name}. Choose one of {choices}."
-        )
+        return {
+            self.key_field: [_(f"Invalid value. Choose one of {choices}.")]
+        }
 
     def dump_options(self):
         """Returns json-compatible dict of options for roles.

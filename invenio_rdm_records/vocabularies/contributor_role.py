@@ -14,6 +14,8 @@ from .vocabulary import Vocabulary
 class ContributorRoleVocabulary(Vocabulary):
     """Encapsulates all contributor role vocabulary data."""
 
+    key_field = "role"
+
     @property
     def readable_key(self):
         """Returns the key to readable values for this vocabulary."""
@@ -23,11 +25,3 @@ class ContributorRoleVocabulary(Vocabulary):
     def vocabulary_name(self):
         """Returns the human readable name for this vocabulary."""
         return 'role'
-
-    def key(self, row):
-        """Returns the primary key of the row.
-
-        row: dict-like
-        returns: serializable
-        """
-        return row.get('role')
