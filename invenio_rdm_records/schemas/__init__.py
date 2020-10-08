@@ -15,7 +15,8 @@ from .access import AccessSchemaV1
 from .communities import CommunitiesSchemaV1
 from .files import FilesSchemaV1
 from .links import BibliographicDraftLinksSchemaV1, \
-    BibliographicRecordLinksSchemaV1
+    BibliographicRecordLinksSchemaV1, \
+    BibliographicUserRecordsSearchLinksSchemaV1
 from .metadata import MetadataSchemaV1
 from .pids import PIDSSchemaV1
 from .relations import RelationsSchemaV1
@@ -74,5 +75,6 @@ class RDMRecordSchemaV1(RecordSchema):
 __all__ = (
     'BibliographicDraftLinksSchemaV1',
     'BibliographicRecordLinksSchemaV1'
+    'BibliographicUserRecordsSearchLinksSchemaV1',
     'RDMRecordSchemaV1',
 )

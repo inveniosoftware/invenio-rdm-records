@@ -12,6 +12,11 @@ from invenio_drafts_resources.services.records import RecordDraftService, \
     RecordDraftServiceConfig
 from invenio_drafts_resources.services.records.components import \
     RelationsComponent
+from invenio_drafts_resources.services.records.schema import RecordSchema
+from invenio_records_resources.services.records.service import \
+    RecordService
+from invenio_records_resources.services.records.config import \
+    RecordServiceConfig
 from invenio_records_resources.services.records.components import \
     AccessComponent, FilesComponent, MetadataComponent, PIDSComponent
 from invenio_records_resources.services.records.search import terms_filter
@@ -69,3 +74,16 @@ class BibliographicRecordService(RecordDraftService):
 
     config_name = "RDM_RECORDS_BIBLIOGRAPHIC_SERVICE_CONFIG"
     default_config = BibliographicRecordServiceConfig
+
+
+class BibliographicUserRecordsServiceConfig(BibliographicRecordServiceConfig):
+    """Bibliographic user records service configuration."""
+
+    record_cls = BibliographicRecordDraft
+
+
+class BibliographicUserRecordsService(RecordService):
+    """Bibliographic user records service."""
+
+    config_name = "RDM_RECORDS_BIBLIOGRAPHIC_USER_RECORDS_SERVICE_CONFIG"
+    default_config = BibliographicUserRecordsServiceConfig
