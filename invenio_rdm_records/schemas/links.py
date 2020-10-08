@@ -10,6 +10,8 @@
 
 from invenio_drafts_resources.resources import DraftLinksSchema
 from invenio_records_resources.resources import RecordLinksSchema
+from invenio_records_resources.resources.records.schemas_links import \
+    SearchLinksSchema, search_link_params, search_link_when
 from marshmallow_utils.fields import Link
 from uritemplate import URITemplate
 
@@ -39,4 +41,26 @@ class BibliographicRecordLinksSchemaV1(RecordLinksSchema):
         template=URITemplate("/records/{pid_value}"),
         permission="read",
         params=lambda record: {'pid_value': record.pid.pid_value}
+    )
+
+
+class BibliographicUserRecordsSearchLinksSchemaV1(SearchLinksSchema):
+    """User Record Links schema."""
+
+    self = Link(
+        template=URITemplate("/api/user/records{?params*}"),
+        permission="search",
+        params=search_link_params(0)
+    )
+    prev = Link(
+        template=URITemplate("/api/user/records{?params*}"),
+        permission="search",
+        params=search_link_params(-1),
+        when=search_link_when(-1)
+    )
+    next = Link(
+        template=URITemplate("/api/user/records{?params*}"),
+        permission="search",
+        params=search_link_params(+1),
+        when=search_link_when(+1)
     )

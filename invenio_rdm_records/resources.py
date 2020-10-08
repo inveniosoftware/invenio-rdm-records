@@ -15,7 +15,8 @@ from marshmallow.exceptions import ValidationError
 
 from .errors import handle_validation_error
 from .schemas import BibliographicDraftLinksSchemaV1, \
-    BibliographicRecordLinksSchemaV1
+    BibliographicRecordLinksSchemaV1, \
+    BibliographicUserRecordsSearchLinksSchemaV1
 
 
 class BibliographicRecordResourceConfig(RecordResourceConfig):
@@ -80,3 +81,19 @@ class BibliographicDraftActionResource(DraftActionResource):
 
     config_name = "RDM_RECORDS_BIBLIOGRAPHIC_DRAFT_ACTION_CONFIG"
     default_config = BibliographicDraftActionResourceConfig
+
+
+class BibliographicUserRecordsResourceConfig(RecordResourceConfig):
+    """Mock service configuration."""
+
+    list_route = "/user/records"
+    links_config = {
+        "search": BibliographicUserRecordsSearchLinksSchemaV1
+    }
+
+
+class BibliographicUserRecordsResource(BibliographicRecordResource):
+    """Bibliographic record user records resource."""
+
+    config_name = "RDM_RECORDS_BIBLIOGRAPHIC_USER_RECORDS_CONFIG"
+    default_config = BibliographicUserRecordsResourceConfig
