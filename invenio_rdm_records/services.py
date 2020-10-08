@@ -13,13 +13,12 @@ from invenio_drafts_resources.services.records import RecordDraftService, \
 from invenio_drafts_resources.services.records.components import \
     RelationsComponent
 from invenio_drafts_resources.services.records.schema import RecordSchema
-from invenio_records_resources.services.records.service import \
-    RecordService
-from invenio_records_resources.services.records.config import \
-    RecordServiceConfig
 from invenio_records_resources.services.records.components import \
     AccessComponent, FilesComponent, MetadataComponent, PIDSComponent
+from invenio_records_resources.services.records.config import \
+    RecordServiceConfig
 from invenio_records_resources.services.records.search import terms_filter
+from invenio_records_resources.services.records.service import RecordService
 
 from .components import CommunitiesComponent, StatsComponent
 from .models import BibliographicRecord, BibliographicRecordDraft
