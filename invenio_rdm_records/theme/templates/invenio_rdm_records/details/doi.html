@@ -7,7 +7,6 @@
 #}
 
 {%- set id_doi = metadata.identifiers|doi_identifier %}
-<dt>{{_('DOI')}}:</dt>
 <dd>
 {% if id_doi %}
   <span class="get-badge" data-toggle="tooltip" data-placement="bottom" style="cursor: pointer;"
@@ -30,9 +29,6 @@
     </div>
   </div>
 {% else %}
-  <span class="get-badge" data-toggle="tooltip" data-placement="bottom" style="cursor: pointer;"
-    title="Get the DOI badge!">
-    No minted DOI
-  </span>
+  {{ _("No minted DOI") }}
 {% endif %}
 </dd>
