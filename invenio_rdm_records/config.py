@@ -8,10 +8,6 @@
 
 """DataCite-based data model for Invenio."""
 
-from invenio_indexer.api import RecordIndexer
-from invenio_records_files.api import Record
-from invenio_records_rest.facets import terms_filter
-
 
 def _(x):
     """Identity function for string extraction."""
@@ -61,7 +57,7 @@ PREVIEWER_PREFERENCE = [
 RECORDS_UI_ENDPOINTS = {
     'recid': {
         'pid_type': 'recid',
-        'record_class': 'invenio_records_files.api:Record',
+        'record_class': 'invenio_rdm_records.models:BibliographicRecord',
         'route': '/records/<pid_value>',
         'template': 'invenio_rdm_records/record_landing_page.html'
     },
