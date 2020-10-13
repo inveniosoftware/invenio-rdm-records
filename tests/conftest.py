@@ -63,7 +63,7 @@ def create_app():
 
 
 @pytest.fixture(scope='function')
-def full_input_record():
+def full_record():
     """Full record data as dict coming from the external world."""
     return {
         "_access": {
@@ -185,19 +185,7 @@ def full_input_record():
 
 
 @pytest.fixture(scope='function')
-def full_record(full_input_record):
-    """
-    Dictionary with all fields to create a record.
-
-    It fills in the post_loaded fields.
-    """
-    record = deepcopy(full_input_record)
-    record['_publication_date_search'] = '2020-06-01'
-    return record
-
-
-@pytest.fixture(scope='function')
-def minimal_input_record():
+def minimal_record():
     """Minimal record data as dict coming from the external world."""
     return {
         "access": {
@@ -225,16 +213,3 @@ def minimal_input_record():
             }]
         }
     }
-
-
-@pytest.fixture(scope='function')
-def minimal_record(minimal_input_record):
-    """
-    Dictionary with the minimum required fields to create a record.
-
-    It fills in the missing and post_loaded fields.
-    """
-    record = deepcopy(minimal_input_record)
-    record["metadata"]["_publication_date_search"] = \
-        record["metadata"]['publication_date']
-    return record

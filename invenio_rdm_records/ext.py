@@ -13,7 +13,8 @@ from invenio_files_rest.signals import file_deleted, file_uploaded
 from invenio_indexer.signals import before_record_index
 
 from . import config
-from .metadata_extensions import MetadataExtensions, add_es_metadata_extensions
+from .services.schemas.metadata_extensions import MetadataExtensions, \
+    add_es_metadata_extensions
 
 
 class InvenioRDMRecords(object):
