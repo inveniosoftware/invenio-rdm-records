@@ -17,6 +17,8 @@
 
 {%- set metadata = record.metadata %}
 {%- set access = record.access %}
+{# FIXME: Take it from record.ui.access_right.category #}
+{%- set access_right_category = access.access_right %}
 {%- block page_body %}
 <div class="ui container">
   <div class="ui padded relaxed grid">
@@ -32,13 +34,7 @@
             </div>
             <div class="right floated right aligned column">
               <span class="ui label grey">{{ metadata.resource_type | vocabulary_title('resource_type') }}</span>
-              {% if access.access_right in ["embargoed", "closed"] %}
-              <span class="ui label red">
-              {% elif access.access_right == "restricted" %}
-              <span class="ui label yellow">
-              {% else %}
-              <span class="ui label green">
-              {% endif %}
+              <span class="ui label access-right {{ access_right_category }}">
                 {{ access | vocabulary_title('access_right') }}
               </span>
             </div>

@@ -11,12 +11,14 @@
 from invenio_drafts_resources.resources import DraftActionResource, \
     DraftActionResourceConfig, DraftResource, DraftResourceConfig, \
     RecordResource, RecordResourceConfig
+from invenio_records_resources.resources import RecordResponse
 from marshmallow.exceptions import ValidationError
 
 from .errors import handle_validation_error
 from .schemas import BibliographicDraftLinksSchemaV1, \
     BibliographicRecordLinksSchemaV1, \
     BibliographicUserRecordsSearchLinksSchemaV1
+from .serializers import UIJSONSerializer
 
 
 class BibliographicRecordResourceConfig(RecordResourceConfig):
@@ -35,6 +37,12 @@ class BibliographicRecordResourceConfig(RecordResourceConfig):
     error_map = {
         **RecordResourceConfig.error_map,
         ValidationError: handle_validation_error,
+    }
+
+    response_handlers = {
+        **RecordResourceConfig.response_handlers,
+        "application/vnd.inveniordm.v1+json": RecordResponse(
+            UIJSONSerializer())
     }
 
 

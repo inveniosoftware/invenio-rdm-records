@@ -35,7 +35,7 @@ def create_app(instance_path):
 def record_resource():
     """Resource."""
     return BibliographicRecordResource(
-        config=RecordResourceConfig(),
+        config=BibliographicRecordResourceConfig(),
         service=BibliographicRecordService(
             config=BibliographicRecordServiceConfig()
         )
@@ -46,7 +46,7 @@ def record_resource():
 def draft_resource():
     """Resource."""
     return BibliographicDraftResource(
-        config=DraftResourceConfig(),
+        config=BibliographicDraftResourceConfig(),
         service=BibliographicRecordService(
             config=BibliographicRecordServiceConfig()
         )

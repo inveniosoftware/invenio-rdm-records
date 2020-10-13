@@ -9,7 +9,6 @@
 """Module tests."""
 
 import json
-from io import BytesIO
 
 import pytest
 from sqlalchemy.orm.exc import NoResultFound
@@ -23,6 +22,15 @@ def headers():
     return {
         'content-type': 'application/json',
         'accept': 'application/json',
+    }
+
+
+@pytest.fixture()
+def ui_headers():
+    """Default headers for making requests."""
+    return {
+        'content-type': 'application/json',
+        'accept': 'application/vnd.inveniordm.v1+json',
     }
 
 
@@ -80,7 +88,7 @@ def test_simple_flow(app, client, minimal_record, headers):
     assert res.json['hits']['hits'][0]['metadata'] == \
         created_record['metadata']
     data = res.json['hits']['hits'][0]
-    data['metadata']['title'] = 'New title'
+    assert data['metadata']['titles'][0]['title'] == 'New title'
 
 
 def test_create_draft(client, minimal_record, headers):
@@ -228,7 +236,7 @@ def test_create_publish_new_revision(client, minimal_record,
     )
 
     assert response.status_code == 201
-    assert response.json['revision_id'] == 1
+    assert response.json['revision_id'] == 4
     _assert_single_item_response(response)
 
     # Update that new draft
@@ -266,3 +274,20 @@ def test_create_publish_new_revision(client, minimal_record,
 
     assert response.json["metadata"]["titles"][0]["title"] == \
         minimal_record["metadata"]["titles"][0]["title"]
+
+
+def test_ui_data_in_record(
+        app, client, minimal_record, headers, ui_headers):
+    """Publish a record and check that it contains the UI data."""
+    recid = _create_and_publish(client, minimal_record, headers)
+
+    BibliographicRecord.index.refresh()
+
+    # Check if list results contain UI data
+    response = client.get(
+        '/records', query_string={'q': f'id:{recid}'}, headers=ui_headers)
+    assert response.json['hits']['hits'][0]['ui']
+
+    # Check if item results contain UI data
+    response = client.get(f'/records/{recid}', headers=ui_headers)
+    assert response.json['ui']
