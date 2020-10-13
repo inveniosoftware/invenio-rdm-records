@@ -57,7 +57,7 @@ PREVIEWER_PREFERENCE = [
 RECORDS_UI_ENDPOINTS = {
     'recid': {
         'pid_type': 'recid',
-        'record_class': 'invenio_rdm_records.models:BibliographicRecord',
+        'record_class': 'invenio_rdm_records.records:BibliographicRecord',
         'route': '/records/<pid_value>',
         'template': 'invenio_rdm_records/record_landing_page.html'
     },
@@ -155,7 +155,8 @@ For example:
 Use :const:`invenio_rdm_records.config.RDM_RECORDS_METADATA_EXTENSIONS` to
 define the added fields.
 
-See :class:`invenio_rdm_records.metadata_extensions.MetadataExtensions` for
+See :class:`invenio_rdm_records.services.schemas.\
+metadata_extensions.MetadataExtensions` for
 how this configuration variable is used.
 """
 
@@ -200,7 +201,8 @@ For example:
 Use :const:`invenio_rdm_records.config.RDM_RECORDS_METADATA_NAMESPACES` to
 define the prefixes.
 
-See :class:`invenio_rdm_records.metadata_extensions.MetadataExtensions` for
+See :class:`invenio_rdm_records.services.schemas.\
+metadata_extensions.MetadataExtensions` for
 allowed types and how this configuration variable is used.
 """
 

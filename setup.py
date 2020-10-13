@@ -124,10 +124,10 @@ setup(
             'messages = invenio_rdm_records',
         ],
         'invenio_jsonschemas.schemas': [
-            'invenio_rdm_records = invenio_rdm_records.jsonschemas',
+            'invenio_rdm_records = invenio_rdm_records.records.jsonschemas',
         ],
         'invenio_search.mappings': [
-            'rdmrecords = invenio_rdm_records.mappings',
+            'rdmrecords = invenio_rdm_records.records.mappings',
         ],
     },
     extras_require=extras_require,
