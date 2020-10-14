@@ -23,6 +23,19 @@ class UIJSONSerializer(JSONSerializer):
                 category=obj["access"]["access_right"]
             ))
 
+    def _serialize_aggregations(self, obj_list):
+        """Dump ui config for aggregations."""
+        aggregations = obj_list.get("aggregations")
+        if aggregations:
+            aggregations["ui"] = dict(
+                access_right=dict(
+                    open="Open Access",
+                    closed="Closed Access",
+                    restricted="Restricted Access",
+                    embargoed="Embargoed Access"
+                )
+            )
+
     def serialize_object(self, obj, response_ctx=None, *args, **kwargs):
         """Dump the object into a json string."""
         obj['ui'] = self._serialize_access_right(obj)
@@ -31,6 +44,7 @@ class UIJSONSerializer(JSONSerializer):
     def serialize_object_list(
             self, obj_list, response_ctx=None, *args, **kwargs):
         """Dump the object list into a json string."""
+        self._serialize_aggregations(obj_list)
         for obj in obj_list["hits"]["hits"]:
             obj['ui'] = self._serialize_access_right(obj)
         return json.dumps(obj_list)
