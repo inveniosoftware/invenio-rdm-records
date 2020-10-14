@@ -32,19 +32,18 @@ class EDTFDumperExt(ElasticsearchDumperExt):
         :param field: dot separated path to the EDTF field to process.
         """
         super(EDTFDumperExt, self).__init__()
-        self.field_path = field.split('.')
+        self.keys = parse_lookup_key(field)
+        self.key = self.keys[-1]
 
     def dump(self, record, data):
         """Dump the data."""
         try:
-            keys = parse_lookup_key(self.field_path)
-            key = keys[-1]
-            date_value = dict_lookup(data, keys)
+            parent_data = dict_lookup(data, self.keys, parent=True)
 
-            pd = parse_edtf(date_value)
-            data[f"{key}_start"] = date.fromtimestamp(
+            pd = parse_edtf(parent_data[self.key])
+            parent_data[f"{self.key}_start"] = date.fromtimestamp(
                 calendar.timegm(pd.lower_strict())).isoformat()
-            data[f"{key}_end"] = date.fromtimestamp(
+            parent_data[f"{self.key}_end"] = date.fromtimestamp(
                 calendar.timegm(pd.upper_strict())).isoformat()
         except (KeyError, EDTFParseException):
             # The field does not exists or had wrong data
@@ -52,8 +51,8 @@ class EDTFDumperExt(ElasticsearchDumperExt):
 
     def load(self, data, record_cls):
         """Load the data."""
-        # From `dump` the new fields are always in the root
-        key = parse_lookup_key(self.field_path)[-1]
+        parent_data = dict_lookup(data, self.keys, parent=True)
+
         # `None` covers the cases where exceptions were raised in _dump
-        data.pop(f"{key}_start", None)
-        data.pop(f"{key}_end", None)
+        parent_data.pop(f"{self.key}_start", None)
+        parent_data.pop(f"{self.key}_end", None)

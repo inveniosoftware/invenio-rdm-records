@@ -38,14 +38,14 @@ def test_esdumper_with_edtfext(app, db, minimal_record,
 
     # Dump it
     dump = record.dumps(dumper=dumper)
-    assert dump['publication_date_start'] == expected_start
-    assert dump['publication_date_end'] == expected_end
+    assert dump['metadata']['publication_date_start'] == expected_start
+    assert dump['metadata']['publication_date_end'] == expected_end
     assert dump['metadata']['publication_date'] == date
 
     # Load it
     new_record = BibliographicRecord.loads(dump, loader=dumper)
-    assert 'publication_date_start' not in new_record
-    assert 'publication_date_end' not in new_record
+    assert 'publication_date_start' not in new_record['metadata']
+    assert 'publication_date_end' not in new_record['metadata']
     assert 'publication_date' in new_record['metadata']
 
 
@@ -62,14 +62,14 @@ def test_esdumper_with_edtfext_not_defined(app, db, minimal_record):
 
     # Dump it
     dump = record.dumps(dumper=dumper)
-    assert 'non_existing_field_start' not in dump
-    assert 'non_existing_field_end' not in dump
+    assert 'non_existing_field_start' not in dump['metadata']
+    assert 'non_existing_field_end' not in dump['metadata']
     assert 'non_existing_field' not in dump['metadata']
 
     # Load it
     new_record = BibliographicRecord.loads(dump, loader=dumper)
-    assert 'non_existing_field_start' not in new_record
-    assert 'non_existing_field_end' not in new_record
+    assert 'non_existing_field_start' not in new_record['metadata']
+    assert 'non_existing_field_end' not in new_record['metadata']
     assert 'non_existing_field' not in new_record['metadata']
 
 
@@ -86,12 +86,12 @@ def test_esdumper_with_edtfext_parse_error(app, db, minimal_record):
 
     # Dump it
     dump = record.dumps(dumper=dumper)
-    assert 'type_start' not in dump
-    assert 'type_end' not in dump
+    assert 'type_start' not in dump['metadata']['resource_type']
+    assert 'type_end' not in dump['metadata']['resource_type']
     assert 'type' in dump['metadata']['resource_type']
 
     # Load it
     new_record = BibliographicRecord.loads(dump, loader=dumper)
-    assert 'type_start' not in new_record
-    assert 'type_end' not in new_record
+    assert 'type_start' not in new_record['metadata']['resource_type']
+    assert 'type_end' not in new_record['metadata']['resource_type']
     assert 'type' in new_record['metadata']['resource_type']
