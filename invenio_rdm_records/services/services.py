@@ -54,6 +54,7 @@ class BibliographicRecordServiceConfig(RecordDraftServiceConfig):
         post_filters={
             'subtype': terms_filter('metadata.resource_type.subtype'),
             'resource_type': terms_filter('metadata.resource_type.type'),
+            'access_right': terms_filter('access.access_right'),
         }
     )
 
