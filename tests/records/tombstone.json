@@ -1,0 +1,44 @@
+{
+  "$schema": "https://localhost/schemas/records/record-v1.0.0.json",
+  "id": "abcde-12345",
+  "conceptid": "12345-abcde",
+  "pid": {
+    "pk": 1,
+    "pid_type": "recid",
+    "obj_type": "rec",
+    "status": "R"
+  },
+  "conceptpid": {
+    "pk": 2,
+    "pid_type": "recid",
+    "obj_type": "rec",
+    "status": "R"
+  },
+  "pids": {
+    "doi": {
+      "id": "10.5281/zenodo.1234",
+      "provider": "datacite",
+      "client": "zenodo"
+    },
+    "concept-doi": {
+      "id": "10.5281/zenodo.1234",
+      "provider": "datacite",
+      "client": "zenodo"
+    },
+    "handle": {
+      "id": "9.12314",
+      "provider": "cern-handle",
+      "client": "zenodo"
+    },
+    "oai": {
+      "id": "oai:zenodo.org:12345",
+      "provider": "zenodo"
+    }
+  },
+  "tombstone": {
+    "reason": "Spam record, removed by InvenioRDM staff.",
+    "category": "spam_manual",
+    "removed_by": {"user": 1},
+    "timestamp": "2020-09-01T12:02:00+0000"
+  }
+}
