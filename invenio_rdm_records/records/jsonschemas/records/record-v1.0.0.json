@@ -7,12 +7,6 @@
 
   "definitions": {
 
-    "lang": {
-      "description": "ISO 639-3 language code.",
-      "type": "string",
-      "maxLength": 3
-    },
-
     "nameType": {
       "description": "Type of name.",
       "type": "string",
@@ -89,10 +83,6 @@
       "additionalProperties": false,
       "required": ["pk", "pid_type", "obj_type", "status"],
       "properties": {
-        "id": {
-          "description": "TODO: The value of the persistent identifier.",
-          "type": "string"
-        },
         "pk": {
           "description": "Primary key of the PID object.",
           "type": "integer"
@@ -125,7 +115,7 @@
       "additionalProperties": false,
       "required": ["id", "provider"],
       "properties": {
-        "id": {
+        "identifier": {
           "description": "The value of the persistent identifier.",
           "type": "string"
         },
@@ -143,7 +133,12 @@
     "identifiers": {
       "description": "Identifiers object (keys being scheme, value being the identifier).",
       "type": "object",
-      "additionalProperties": {"type": "string"}
+      "additionalProperties": {"$ref": "#/definitions/identifier"}
+    },
+
+    "identifier": {
+      "description": "An identifier.",
+      "type": "string",
     },
 
     "resource_type": {
@@ -223,8 +218,9 @@
       }
     },
 
-    "agent-user": {
+    "user": {
       "type": "object",
+      "description": "..",
       "additionalProperties": false,
       "properties": {
         "user": {
@@ -234,9 +230,9 @@
     },
 
     "agent": {
-      "description": "An agent.",
+      "description": "An agent (user, software process, community, ...).",
       "oneOf": [
-        {"$ref": "#/definitions/agent-user"}
+        {"$ref": "#/definitions/user"}
       ]
     }
   },
@@ -260,7 +256,8 @@
     "conceptpid": {"$ref": "#/definitions/internal-pid"},
 
     "pids": {
-      "additionalProperties": {"$ref": "#/definitions/external-pid"}
+      "additionalProperties": {"$ref": "#/definitions/external-pid"},
+      "description": "Managed persistent identifiers for a record including e.g. OAI-PMH identifier, minted DOIs and more. Managed PIDs are registered in the PIDStore"
     },
 
     "metadata": {
@@ -306,7 +303,6 @@
                   "type": "string"
                 },
                 "type": {"$ref": "#/definitions/titleType"},
-                "lang": {"$ref": "#/definitions/lang"}
             },
             "required": ["title"]
           }
@@ -471,7 +467,6 @@
                   "type": "string"
                 },
                 "type": {"$ref": "#/definitions/descriptionType"},
-                "lang": {"$ref": "#/definitions/lang"}
             }
           }
         },
@@ -539,7 +534,10 @@
             "type": "object",
             "additionalProperties": false,
             "properties": {
-              "reference_string": {"type": "string"},
+              "reference": {
+                "type": "string",
+                "description": "A reference string."
+              },
               "identifier": {"type": "string"},
               "scheme": {"type": "string"}
             }

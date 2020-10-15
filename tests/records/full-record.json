@@ -16,22 +16,22 @@
   },
   "pids": {
     "doi": {
-      "id": "10.5281/zenodo.1234",
+      "identifier": "10.5281/zenodo.1234",
       "provider": "datacite",
       "client": "zenodo"
     },
     "concept-doi": {
-      "id": "10.5281/zenodo.1234",
+      "identifier": "10.5281/zenodo.1234",
       "provider": "datacite",
       "client": "zenodo"
     },
     "handle": {
-      "id": "9.12314",
+      "identifier": "9.12314",
       "provider": "cern-handle",
       "client": "zenodo"
     },
     "oai": {
-      "id": "oai:zenodo.org:12345",
+      "identifier": "oai:zenodo.org:12345",
       "provider": "zenodo"
     }
   },
@@ -87,19 +87,20 @@
       }]
     }],
     "dates": [{
-      "date": "test",
+      "date": "1939/1945",
       "type": "other",
       "description": "A date"
     }],
     "languages": ["da", "en"],
     "identifiers": [{
-      "identifier": "10.1234/foo",
-      "scheme": "doi"
+      "identifier": "1924MNRAS..84..308E",
+      "scheme": "bibcode"
     }],
     "related_identifiers": [{
       "identifier": "10.1234/foo.bar",
       "scheme": "doi",
-      "relation": "cites"
+      "relation": "cites",
+      "resource_type": {"type": "dataset"}
     }],
     "sizes": [
       "11 pages"
