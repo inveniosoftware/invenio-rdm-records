@@ -11,7 +11,7 @@
 from marshmallow import Schema, fields
 
 
-class RelationsSchemaV1(Schema):
+class RelationsSchema(Schema):
     """Relations schema."""
 
     version = fields.Raw()

@@ -9,24 +9,33 @@
 """RDM record schemas."""
 
 import arrow
-from invenio_records_rest.schemas.fields import DateString, SanitizedUnicode
 from marshmallow import Schema, ValidationError, fields, validate, validates, \
     validates_schema
+from marshmallow_utils.fields import EDTFDateString, SanitizedUnicode
 
 from .utils import validate_entry
 
 
-class AccessSchemaV1(Schema):
+class AccessConditionSchema(Schema):
+    """Access condition schema.
+
+    Conditions under which access to files are granted.
+    """
+
+    condition = fields.String()
+    default_link_validity = fields.Integer()
+
+
+class AccessSchema(Schema):
     """Access schema."""
 
-    metadata_restricted = fields.Bool(required=True)
-    files_restricted = fields.Bool(required=True)
-    owners = fields.List(
+    metadata = fields.Bool(required=True)
+    files = fields.Bool(required=True)
+    owned_by = fields.List(
         fields.Integer, validate=validate.Length(min=1), required=True)
-    created_by = fields.Integer(required=True)
-    embargo_date = DateString()
-    contact = SanitizedUnicode(data_key="contact", attribute="contact")
     access_right = SanitizedUnicode(required=True)
+    embargo_date = EDTFDateString()
+    access_condition = fields.Nested(AccessConditionSchema)
 
     @validates('embargo_date')
     def validate_embargo_date(self, value):

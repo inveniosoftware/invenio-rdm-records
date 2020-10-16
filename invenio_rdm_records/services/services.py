@@ -23,7 +23,7 @@ from invenio_records_resources.services.records.service import RecordService
 from ..records import BibliographicDraft, BibliographicRecord
 from .components import CommunitiesComponent, StatsComponent
 from .permissions import RDMRecordPermissionPolicy
-from .schemas import RDMRecordSchemaV1
+from .schemas import RDMRecordSchema
 
 
 class BibliographicRecordServiceConfig(RecordDraftServiceConfig):
@@ -34,7 +34,7 @@ class BibliographicRecordServiceConfig(RecordDraftServiceConfig):
     # Draft class
     draft_cls = BibliographicDraft
 
-    schema = RDMRecordSchemaV1
+    schema = RDMRecordSchema
     permission_policy_cls = RDMRecordPermissionPolicy
 
     search_facets_options = dict(

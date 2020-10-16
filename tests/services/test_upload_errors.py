@@ -70,7 +70,7 @@ def test_nested_field_error(client, minimal_record, es_clear):
 
 def test_multiple_errors(client, minimal_record):
     minimal_record["metadata"]["publication_date"] = ""
-    minimal_record["metadata"]["titles"] = [{
+    minimal_record["metadata"]["additional_titles"] = [{
         "title": "A Romans story",
         "type": "invalid",
         "lang": "eng"
@@ -88,7 +88,7 @@ def test_multiple_errors(client, minimal_record):
             "messages": ["Please provide a valid date or interval."]
         },
         {
-            "field": "metadata.titles.0.type",
+            "field": "metadata.additional_titles.0.type",
             "messages": [
                 "Invalid value. Choose one of ['AlternativeTitle', "
                 "'MainTitle', 'Other', 'Subtitle', 'TranslatedTitle']."

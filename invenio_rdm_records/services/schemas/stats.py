@@ -11,7 +11,7 @@
 from marshmallow import Schema, fields
 
 
-class StatsSchemaV1(Schema):
+class StatsSchema(Schema):
     """Files metadata schema."""
 
     views = fields.Int()

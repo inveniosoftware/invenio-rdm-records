@@ -128,8 +128,6 @@ def test_pid_conceptpid(appctx, prop):
     """Test pid/conceptpid."""
     pid = {
         "pk": 1,
-        "pid_type": "recid",
-        "obj_type": "rec",
         "status": "R",
     }
     assert validates({prop: pid})
@@ -151,19 +149,27 @@ def test_pid_conceptpid(appctx, prop):
 def test_pids(appctx):
     """Test external pids."""
     assert validates({"pids": {
-        "doi": {"id": "10.12345", "provider": "datacite", "client": "test"}
+        "doi": {
+            "identifier": "10.12345", "provider": "datacite", "client": "test"
+        }
     }})
     assert validates({"pids": {
-        "doi": {"id": "10.12345", "provider": "datacite", "client": "test"},
-        "oai": {"id": "oai:10.12345", "provider": "local"},
+        "doi": {
+            "identifier": "10.12345", "provider": "datacite", "client": "test"
+        },
+        "oai": {"identifier": "oai:10.12345", "provider": "local"},
     }})
     # Extra property
     assert fails({"pids": {
-        "oai": {"id": "oai:10.12345", "provider": "local", "invalid": "test"}
+        "oai": {
+            "identifier": "oai:10.12345",
+            "provider": "local",
+            "invalid": "test"
+        }
     }})
     # Not a string
     assert fails({"pids": {
-        "oai": {"id": 1, "provider": "local"}
+        "oai": {"identifier": 1, "provider": "local"}
     }})
 
 
@@ -215,7 +221,7 @@ def test_additional_titles(appctx):
         {"title": "Test"}
     ]})
     assert validates_meta({"additional_titles": [
-        {"title": "Test", "type": "subtitle", "lang": "da"},
+        {"title": "Test", "type": "subtitle", "lang": "dan"},
     ]})
 
     assert fails_meta({"additional_titles": [
@@ -286,8 +292,9 @@ def test_dates(appctx):
 
 def test_languages(appctx):
     """Test language property."""
-    assert validates_meta({"languages": ["da", "en"]})
-    assert fails_meta({"languages": "da"})
+    assert validates_meta({"languages": ["dan", "eng"]})
+    assert fails_meta({"languages": ["da"]})
+    assert fails_meta({"languages": "dan"})
     assert fails_meta({"languages": ["invalid"]})
 
 
@@ -393,7 +400,7 @@ def test_additional_descriptions(appctx):
     desc = {
         "description": "bla bla",
         "type": "other",
-        "lang": "da",
+        "lang": "dan"
     }
     assert validates_meta({"additional_descriptions": [desc]})
     desc["invalid"] = "invalid"
@@ -448,7 +455,7 @@ def test_reference(appctx):
     """Test references property."""
     assert validates_meta({"references": [
         {
-            "reference_string": "Nielsen et al,..",
+            "reference": "Nielsen et al,..",
             "identifier": "101.234",
             "scheme": "doi",
         },
@@ -462,9 +469,9 @@ def test_reference(appctx):
 
 
 #
-# Test metaext
+# Test ext
 #
-def test_metaext(appctx):
+def test_ext(appctx):
     """Test references property."""
     data_types = [
         "string",
@@ -478,12 +485,7 @@ def test_metaext(appctx):
     ]
 
     for val in data_types:
-        assert validates({"metaext": {"dwc:afield": val}})
-
-    # Invalid field name
-    assert fails({"metaext": {"0dwc:afield": "test"}})
-    assert fails({"metaext": {"afield": "test"}})
-    assert fails({"metaext": {"afield": "test"}})
+        assert validates({"ext": {"dwc": {"afield": val}}})
 
 
 #
