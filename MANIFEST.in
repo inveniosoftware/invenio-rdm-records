@@ -34,4 +34,4 @@ recursive-include invenio_rdm_records *.json *.csv
 recursive-include invenio_rdm_records *.po *.pot
 recursive-include invenio_rdm_records *.png *.svg
 recursive-include invenio_rdm_records *.html *.js *.less
-recursive-include tests *.py *.csv
+recursive-include tests *.py *.csv *.json

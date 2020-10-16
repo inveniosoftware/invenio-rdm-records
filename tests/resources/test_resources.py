@@ -60,12 +60,12 @@ def test_simple_flow(app, client, minimal_record, headers):
 
     # Update and save draft
     data = read_draft.json
-    data["metadata"]["titles"][0]["title"] = 'New title'
+    data["metadata"]["title"] = 'New title'
 
     res = client.put(
         f'/records/{id_}/draft', headers=headers, data=json.dumps(data))
     assert res.status_code == 200
-    assert res.json['metadata']['titles'][0]["title"] == 'New title'
+    assert res.json['metadata']["title"] == 'New title'
 
     # Publish it
     response = client.post(
@@ -88,7 +88,7 @@ def test_simple_flow(app, client, minimal_record, headers):
     assert res.json['hits']['hits'][0]['metadata'] == \
         created_record['metadata']
     data = res.json['hits']['hits'][0]
-    assert data['metadata']['titles'][0]['title'] == 'New title'
+    assert data['metadata']['title'] == 'New title'
 
 
 def test_create_draft(client, minimal_record, headers):
@@ -122,14 +122,14 @@ def test_update_draft(client, minimal_record, headers):
         "/records", data=json.dumps(minimal_record), headers=headers)
 
     assert response.status_code == 201
-    assert response.json['metadata']['titles'][0]["title"] == \
-        minimal_record['metadata']['titles'][0]["title"]
+    assert response.json['metadata']["title"] == \
+        minimal_record['metadata']["title"]
 
     recid = response.json['id']
 
-    orig_title = minimal_record['metadata']['titles'][0]["title"]
+    orig_title = minimal_record['metadata']["title"]
     edited_title = "Edited title"
-    minimal_record['metadata']['titles'][0]["title"] = edited_title
+    minimal_record['metadata']["title"] = edited_title
 
     # Update draft content
     update_response = client.put(
@@ -139,7 +139,7 @@ def test_update_draft(client, minimal_record, headers):
     )
 
     assert update_response.status_code == 200
-    assert update_response.json["metadata"]['titles'][0]["title"] == \
+    assert update_response.json["metadata"]["title"] == \
         edited_title
     assert update_response.json["id"] == recid
 
@@ -148,7 +148,7 @@ def test_update_draft(client, minimal_record, headers):
         "/records/{}/draft".format(recid), headers=headers)
 
     assert update_response.status_code == 200
-    assert update_response.json["metadata"]['titles'][0]["title"] == \
+    assert update_response.json["metadata"]["title"] == \
         edited_title
     assert update_response.json["id"] == recid
 
@@ -228,8 +228,8 @@ def test_create_publish_new_revision(client, minimal_record,
     # time.sleep(70)
 
     # Create new draft of said record
-    orig_title = minimal_record["metadata"]["titles"][0]["title"]
-    minimal_record["metadata"]["titles"][0]["title"] = "Edited title"
+    orig_title = minimal_record["metadata"]["title"]
+    minimal_record["metadata"]["title"] = "Edited title"
     response = client.post(
         "/records/{}/draft".format(recid),
         headers=headers
@@ -254,7 +254,7 @@ def test_create_publish_new_revision(client, minimal_record,
 
     assert response.status_code == 200
     _assert_single_item_response(response)
-    assert response.json['metadata']['titles'][0]["title"] == orig_title
+    assert response.json['metadata']["title"] == orig_title
 
     # Publish it to check the increment in reversion
     response = client.post(
@@ -265,15 +265,15 @@ def test_create_publish_new_revision(client, minimal_record,
 
     assert response.json['id'] == recid
     assert response.json['revision_id'] == 2
-    assert response.json['metadata']["titles"][0]["title"] == \
-        minimal_record["metadata"]["titles"][0]["title"]
+    assert response.json['metadata']["title"] == \
+        minimal_record["metadata"]["title"]
 
     # Check it was actually edited
     response = client.get(
         "/records/{}".format(recid), headers=headers)
 
-    assert response.json["metadata"]["titles"][0]["title"] == \
-        minimal_record["metadata"]["titles"][0]["title"]
+    assert response.json["metadata"]["title"] == \
+        minimal_record["metadata"]["title"]
 
 
 def test_ui_data_in_record(

@@ -66,121 +66,187 @@ def create_app():
 def full_record():
     """Full record data as dict coming from the external world."""
     return {
-        "_access": {
-            "metadata_restricted": False,
-            "files_restricted": False
+        "pids": {
+            "doi": {
+                "identifier": "10.5281/zenodo.1234",
+                "provider": "datacite",
+                "client": "zenodo"
+            },
+            "concept-doi": {
+                "identifier": "10.5281/zenodo.1234",
+                "provider": "datacite",
+                "client": "zenodo"
+            },
+            "handle": {
+                "identifier": "9.12314",
+                "provider": "cern-handle",
+                "client": "zenodo"
+            },
+            "oai": {
+                "identifier": "oai:zenodo.org:12345",
+                "provider": "zenodo"
+            }
         },
-        "_created_by": 2,  # TODO: Revisit with deposit
-        "_default_preview": "previewer one",
-        "_internal_notes": [{
-            "user": "inveniouser",
-            "note": "RDM record",
-            "timestamp": "2020-02-01"
-        }],
-        "_owners": [1],  # TODO: Revisit with deposit
-        "access_right": "open",
-        "embargo_date": "2022-12-31",
-        "contact": "info@inveniosoftware.org",
-        "resource_type": {
-            "type": "image",
-            "subtype": "image-photo"
-        },
-        "identifiers": {
-            "DOI": "10.5281/zenodo.9999999",
-            "arXiv": "9999.99999"
-        },
-        "creators": [
-            {
-                "name": "Julio Cesar",
-                "type": "Personal",
-                "given_name": "Julio",
-                "family_name": "Cesar",
+        "metadata": {
+            "resource_type": {
+                "type": "publication",
+                "subtype": "article"
+            },
+            "creators": [{
+                "name": "Nielsen, Lars Holm",
+                "type": "personal",
+                "given_name": "Lars Holm",
+                "family_name": "Nielsen",
                 "identifiers": {
-                    "Orcid": "0000-0002-1825-0097"
+                    "orcid": "0000-0001-8135-3489"
                 },
                 "affiliations": [{
-                    "name": "Entity One",
+                    "name": "CERN",
                     "identifiers": {
-                        "ror": "03yrm5c26"
+                        "ror": "01ggx4157",
+                        "isni": "000000012156142X"
                     }
                 }]
-            },
-            {
-                "name": "California Digital Library",
-                "type": "Organizational",
+            }],
+            "title": "InvenioRDM",
+            "additional_titles": [{
+                "title": "a research data management platform",
+                "type": "subtitle",
+                "lang": "eng"
+            }],
+            "publisher": "InvenioRDM",
+            "publication_date": "2018/2020-09",
+            "subjects": [{
+                "subject": "test",
+                "identifier": "test",
+                "scheme": "dewey"
+            }],
+            "contributors": [{
+                "name": "Nielsen, Lars Holm",
+                "type": "personal",
+                "role": "other",
+                "given_name": "Lars Holm",
+                "family_name": "Nielsen",
                 "identifiers": {
-                    "ror": "03yrm5c26",
-                }
-            }
-        ],
-        "titles": [{
-            "title": "A Romans story",
-            "type": "Other",
-            "lang": "eng"
-        }],
-        "publication_date": "2020-06-01",
-        "subjects": [{
-            "subject": "Romans",
-            "identifier": "subj-1",
-            "scheme": "no-scheme"
-        }],
-        "contributors": [{
-            "name": "Maximo Decimo Meridio",
-            "type": "Personal",
-            "given_name": "Maximo",
-            "family_name": "Decimo Meridio",
-            "identifiers": {
-                "Orcid": "0000-0002-1825-0097",
-            },
-            "affiliations": [{
-                "name": "Entity One",
-                "identifiers": {
-                    "ror": "03yrm5c26"
+                    "orcid": "0000-0001-8135-3489"
+                },
+                "affiliations": [{
+                    "name": "CERN",
+                    "identifiers": {
+                        "ror": "01ggx4157",
+                        "isni": "000000012156142X"
+                    }
+                }]
+            }],
+            "dates": [{
+                "date": "1939/1945",
+                "type": "other",
+                "description": "A date"
+            }],
+            "languages": ["da", "en"],
+            "identifiers": [{
+                "identifier": "1924MNRAS..84..308E",
+                "scheme": "bibcode"
+            }],
+            "related_identifiers": [{
+                "identifier": "10.1234/foo.bar",
+                "scheme": "doi",
+                "relation": "cites",
+                "resource_type": {"type": "dataset"}
+            }],
+            "sizes": [
+                "11 pages"
+            ],
+            "formats": [
+                "application/pdf"
+            ],
+            "version": "v1.0",
+            "rights": [{
+                "rights": "Creative Commons Attribution 4.0 International",
+                "scheme": "spdx",
+                "identifier": "cc-by-4.0",
+                "url": "https://creativecommons.org/licenses/by/4.0/"
+            }],
+            "description": "Test",
+            "additional_descriptions": [{
+                "description": "Bla bla bla",
+                "type": "methods",
+                "lang": "eng"
+            }],
+            "locations": [{
+                "point": {
+                    "lat": 1,
+                    "lon": 2
+                },
+                "place": "home",
+                "description": "test"
+            }],
+            "funding": [{
+                "funder": {
+                    "name": "European Commission",
+                    "identifier": "1234",
+                    "scheme": "ror"
+                },
+                "award": {
+                    "title": "OpenAIRE",
+                    "number": "246686",
+                    "identifier": ".../246686",
+                    "scheme": "openaire"
                 }
             }],
-            "role": "RightsHolder"
-        }],
-        "dates": [{
-            "start": "2020-06-01",
-            "end":  "2021-06-01",
-            "description": "Random test date",
-            "type": "Other"
-        }],
-        "language": "eng",
-        "related_identifiers": [{
-            "identifier": "10.5281/zenodo.9999988",
-            "scheme": "DOI",
-            "relation_type": "Requires",
-            "resource_type": {
-                "type": "image",
-                "subtype": "image-photo"
+            "references": [{
+                "reference": "Nielsen et al,..",
+                "identifier": "101.234",
+                "scheme": "doi"
+            }]
+        },
+        "ext": {
+            "dwc": {
+                "collectionCode": "abc",
+                "collectionCode2": 1.1,
+                "collectionCode3": True,
+                "test": ["abc", 1, True]
             }
-        }],
-        "version": "v0.0.1",
-        "licenses": [{
-            "license": "Berkeley Software Distribution 3",
-            "uri": "https://opensource.org/licenses/BSD-3-Clause",
-            "identifier": "BSD-3",
-            "scheme": "BSD-3",
-        }],
-        "descriptions": [{
-            "description": "A story on how Julio Cesar relates to Gladiator.",
-            "type": "Abstract",
-            "lang": "eng"
-        }],
-        "locations": [{
-            "point": {
-                "lat": 41.902604,
-                "lon": 12.496189
+        },
+        "provenance": {
+            "created_by": {
+                "user": 1
             },
-            "place": "Rome",
-            "description": "Rome, from Romans"
-        }],
-        "references": [{
-            "reference_string": "Reference to something et al.",
-            "identifier": "9999.99988",
-            "scheme": "GRID"
-        }]
+            "on_behalf_of": {
+                "user": 2
+            }
+        },
+        "access": {
+            "metadata": True,
+            "files": False,
+            "owned_by": [{
+                "user": 1
+            }],
+            "embargo_date": "2021-01-01T00:00:00+0000",
+            "access_condition": {
+                "condition": "Medical doctors.",
+                "default_link_validity": 30
+            }
+        },
+        "files": {
+            "disabled": False,
+            "total_size": 1114324524355,
+            "count": 1,
+            "bucket": "81983514-22e5-473a-b521-24254bd5e049",
+            "files": [{
+                "checksum": "md5:234245234213421342",
+                "size": 1114324524355,
+                "key": "big-dataset.zip",
+                "ext": "zip",
+                "description": "File containing the data.",
+                "order": "1",
+                "default_preview": True,
+                "identifier": "445aaacd-9de1-41ab-af52-25ab6cb93df7"
+            }]
+        },
+        "notes": [
+            "Under investigation for copyright infringement."
+        ]
     }
 
 
@@ -189,11 +255,10 @@ def minimal_record():
     """Minimal record data as dict coming from the external world."""
     return {
         "access": {
-            "metadata_restricted": False,
-            "files_restricted": False,
-            "owners": [1],
-            "access_right": "open",
-            "created_by": 1,
+            "metadata": False,
+            "files": False,
+            "owned_by": [1],
+            "access_right": "open"
         },
         "metadata": {
             "publication_date": "2020-06-01",
@@ -206,10 +271,6 @@ def minimal_record():
                 "name": "John Doe",
                 "type": "Personal"
             }],
-            "titles": [{
-                "title": "A Romans story",
-                "type": "Other",
-                "lang": "eng"
-            }]
+            "title": "A Romans story"
         }
     }

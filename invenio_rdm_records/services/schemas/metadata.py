@@ -22,9 +22,6 @@ from marshmallow_utils.fields import EDTFDateString, GenFunction, \
 
 from .utils import validate_entry
 
-# TODO (Alex): This file can be split into separate parts for each group
-#              of fields
-
 
 def prepare_publication_date(record_dict):
     """
@@ -42,7 +39,7 @@ def prepare_publication_date(record_dict):
 
     NOTE: Keeping this function outside the class to make it easier to move
           when dealing with deposit. By then, if only called here, it can
-          be merged in MetadataSchemaV1.
+          be merged in MetadataSchema.
 
     :param record_dict: loaded Record dict
     """
@@ -55,7 +52,7 @@ def prepare_publication_date(record_dict):
     )
 
 
-class InternalNoteSchemaV1(Schema):
+class InternalNoteSchema(Schema):
     """Internal note shema."""
 
     user = SanitizedUnicode(required=True)
@@ -63,7 +60,7 @@ class InternalNoteSchemaV1(Schema):
     timestamp = ISODateString(required=True)
 
 
-class DateSchemaV1(Schema):
+class DateSchema(Schema):
     """Schema for date intervals."""
 
     DATE_TYPES = [
@@ -136,7 +133,7 @@ def Identifiers():
     )
 
 
-class AffiliationSchemaV1(Schema):
+class AffiliationSchema(Schema):
     """Affiliation of a creator/contributor."""
 
     name = SanitizedUnicode(required=True)
@@ -155,7 +152,7 @@ class AffiliationSchemaV1(Schema):
             raise ValidationError(_("Invalid identifier."))
 
 
-class CreatorSchemaV1(Schema):
+class CreatorSchema(Schema):
     """Creator schema."""
 
     NAMES = [
@@ -174,7 +171,7 @@ class CreatorSchemaV1(Schema):
     given_name = SanitizedUnicode()
     family_name = SanitizedUnicode()
     identifiers = fields.Dict()
-    affiliations = fields.List(fields.Nested(AffiliationSchemaV1))
+    affiliations = fields.List(fields.Nested(AffiliationSchema))
 
     @validates("identifiers")
     def validate_identifiers(self, value):
@@ -216,7 +213,7 @@ class CreatorSchemaV1(Schema):
                 raise ValidationError({"identifiers": messages})
 
 
-class ContributorSchemaV1(CreatorSchemaV1):
+class ContributorSchema(CreatorSchema):
     """Contributor schema."""
 
     role = SanitizedUnicode(required=True)
@@ -227,7 +224,7 @@ class ContributorSchemaV1(CreatorSchemaV1):
         validate_entry('contributors.role', data)
 
 
-class ResourceTypeSchemaV1(Schema):
+class ResourceTypeSchema(Schema):
     """Resource type schema."""
 
     type = fields.Str(required=True)
@@ -239,7 +236,7 @@ class ResourceTypeSchemaV1(Schema):
         validate_entry('resource_type', data)
 
 
-class TitleSchemaV1(Schema):
+class TitleSchema(Schema):
     """Schema for the additional title."""
 
     title = SanitizedUnicode(required=True, validate=validate.Length(min=3))
@@ -252,7 +249,7 @@ class TitleSchemaV1(Schema):
         validate_entry('titles.type', data)
 
 
-class DescriptionSchemaV1(Schema):
+class DescriptionSchema(Schema):
     """Schema for the additional descriptions."""
 
     DESCRIPTION_TYPES = [
@@ -272,7 +269,7 @@ class DescriptionSchemaV1(Schema):
     lang = ISOLangString()
 
 
-class LicenseSchemaV1(Schema):
+class LicenseSchema(Schema):
     """License schema."""
 
     license = SanitizedUnicode(required=True)
@@ -281,7 +278,7 @@ class LicenseSchemaV1(Schema):
     scheme = SanitizedUnicode()
 
 
-class SubjectSchemaV1(Schema):
+class SubjectSchema(Schema):
     """Subject schema."""
 
     subject = SanitizedUnicode(required=True)
@@ -289,7 +286,7 @@ class SubjectSchemaV1(Schema):
     scheme = SanitizedUnicode()
 
 
-class DateSchemaV1(Schema):
+class DateSchema(Schema):
     """Schema for date intervals."""
 
     DATE_TYPES = [
@@ -334,7 +331,7 @@ class DateSchemaV1(Schema):
             )
 
 
-class RelatedIdentifierSchemaV1(Schema):
+class RelatedIdentifierSchema(Schema):
     """Related identifier schema."""
 
     RELATIONS = [
@@ -405,10 +402,10 @@ class RelatedIdentifierSchemaV1(Schema):
             choices=RELATIONS,
             error=_('Invalid relation type. {input} not one of {choices}.')
         ))
-    resource_type = fields.Nested(ResourceTypeSchemaV1)
+    resource_type = fields.Nested(ResourceTypeSchema)
 
 
-class ReferenceSchemaV1(Schema):
+class ReferenceSchema(Schema):
     """Reference schema."""
 
     SCHEMES = [
@@ -425,22 +422,22 @@ class ReferenceSchemaV1(Schema):
         ))
 
 
-class PointSchemaV1(Schema):
+class PointSchema(Schema):
     """Point schema."""
 
     lat = fields.Number(required=True)
     lon = fields.Number(required=True)
 
 
-class LocationSchemaV1(Schema):
+class LocationSchema(Schema):
     """Location schema."""
 
-    point = fields.Nested(PointSchemaV1)
+    point = fields.Nested(PointSchema)
     place = SanitizedUnicode(required=True)
     description = SanitizedUnicode()
 
 
-class MetadataSchemaV1(Schema):
+class MetadataSchema(Schema):
     """Schema for the record metadata."""
 
     field_load_permissions = {
@@ -459,23 +456,23 @@ class MetadataSchemaV1(Schema):
         unknown = INCLUDE
 
     # Metadata fields
-    titles = fields.List(fields.Nested(TitleSchemaV1), required=True)
-    creators = fields.List(fields.Nested(CreatorSchemaV1), required=True)
-    resource_type = fields.Nested(ResourceTypeSchemaV1, required=True)
+    title = fields.String(required=True, validate=validate.Length(min=3))
+    additional_titles = fields.List(fields.Nested(TitleSchema))
+    creators = fields.List(fields.Nested(CreatorSchema), required=True)
+    resource_type = fields.Nested(ResourceTypeSchema, required=True)
     publication_date = EDTFDateString(required=True)
-    subjects = fields.List(fields.Nested(SubjectSchemaV1))
-    contributors = fields.List(fields.Nested(ContributorSchemaV1))
-    dates = fields.List(fields.Nested(DateSchemaV1))
-    language = ISOLangString()
-    related_identifiers = fields.List(
-        fields.Nested(RelatedIdentifierSchemaV1))
-    version = SanitizedUnicode()
-    licenses = fields.List(fields.Nested(LicenseSchemaV1))
-    descriptions = fields.List(fields.Nested(DescriptionSchemaV1))
-    locations = fields.List(fields.Nested(LocationSchemaV1))
-    references = fields.List(fields.Nested(ReferenceSchemaV1))
-
-    _internal_notes = fields.List(fields.Nested(InternalNoteSchemaV1))
+    # subjects = fields.List(fields.Nested(SubjectSchema))
+    # contributors = fields.List(fields.Nested(ContributorSchema))
+    # dates = fields.List(fields.Nested(DateSchema))
+    # language = ISOLangString()
+    # related_identifiers = fields.List(
+    #     fields.Nested(RelatedIdentifierSchema))
+    # version = SanitizedUnicode()
+    # licenses = fields.List(fields.Nested(LicenseSchema))
+    # descriptions = fields.List(fields.Nested(DescriptionSchema))
+    # locations = fields.List(fields.Nested(LocationSchema))
+    # references = fields.List(fields.Nested(ReferenceSchema))
+    # notes = fields.List(fields.Nested(InternalNoteSchema))
 
     # TODO (Alex): this might go in a separate top-level field?
     # extensions = fields.Method('dump_extensions', 'load_extensions')

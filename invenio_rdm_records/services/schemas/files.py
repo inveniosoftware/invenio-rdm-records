@@ -12,7 +12,7 @@ from invenio_records_rest.schemas.fields import SanitizedUnicode
 from marshmallow import INCLUDE, Schema, fields, validate
 
 
-class FileSchemaV1(Schema):
+class FileSchema(Schema):
     """File schema."""
 
     type = fields.String()
@@ -31,9 +31,9 @@ class FileSchemaV1(Schema):
     #     }
 
 
-class FilesSchemaV1(Schema):
+class FilesSchema(Schema):
     """Files metadata schema."""
 
     enabled = fields.Bool()
     default_preview = SanitizedUnicode()
-    items = fields.List(fields.Nested(FileSchemaV1))
+    items = fields.List(fields.Nested(FileSchema))

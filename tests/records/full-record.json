@@ -4,14 +4,10 @@
   "conceptid": "12345-abcde",
   "pid": {
     "pk": 1,
-    "pid_type": "recid",
-    "obj_type": "rec",
     "status": "R"
   },
   "conceptpid": {
     "pk": 2,
-    "pid_type": "recid",
-    "obj_type": "rec",
     "status": "R"
   },
   "pids": {
@@ -60,7 +56,7 @@
     "additional_titles": [{
       "title": "a research data management platform",
       "type": "subtitle",
-      "lang": "en"
+      "lang": "eng"
     }],
     "publisher": "InvenioRDM",
     "publication_date": "2018/2020-09",
@@ -91,7 +87,7 @@
       "type": "other",
       "description": "A date"
     }],
-    "languages": ["da", "en"],
+    "languages": ["dan", "eng"],
     "identifiers": [{
       "identifier": "1924MNRAS..84..308E",
       "scheme": "bibcode"
@@ -119,7 +115,7 @@
     "additional_descriptions": [{
       "description": "Bla bla bla",
       "type": "methods",
-      "lang": "en"
+      "lang": "eng"
     }],
     "locations": [{
       "point": {
@@ -143,16 +139,18 @@
       }
     }],
     "references": [{
-      "reference_string": "Nielsen et al,..",
+      "reference": "Nielsen et al,..",
       "identifier": "101.234",
       "scheme": "doi"
     }]
   },
-  "metaext": {
-    "dwc:collectionCode": "abc",
-    "dwc:collectionCode2": 1.1,
-    "dwc:collectionCode3": true,
-    "dwc:test": ["abc", 1, true]
+  "ext": {
+    "dwc": {
+      "collectionCode": "abc",
+      "collectionCode2": 1.1,
+      "collectionCode3": true,
+      "test": ["abc", 1, true]
+    }
   },
   "provenance": {
     "created_by": {
@@ -165,7 +163,6 @@
   "access": {
     "metadata": true,
     "files": false,
-    "contact": true,
     "owned_by": [{
       "user": 1
     }],
@@ -191,13 +188,8 @@
       "file_id": "445aaacd-9de1-41ab-af52-25ab6cb93df7"
     }]
   },
-  "system": {
-    "notes": [{
-      "note": "Under investigation for copyright infringement.",
-      "created_by": {
-        "user": 1
-      },
-      "timestamp": "2020-01-01T00:00:00+0000"
-    }]
-  }
+
+  "notes": [
+    "Under investigation for copyright infringement."
+  ]
 }
