@@ -12,6 +12,8 @@ import json
 
 from flask_resources.serializers import JSONSerializer
 
+from invenio_rdm_records.vocabularies import Vocabularies
+
 
 class UIJSONSerializer(JSONSerializer):
     """UI JSON serializer implementation."""
@@ -28,12 +30,10 @@ class UIJSONSerializer(JSONSerializer):
         aggregations = obj_list.get("aggregations")
         if aggregations:
             aggregations["ui"] = dict(
-                access_right=dict(
-                    open="Open Access",
-                    closed="Closed Access",
-                    restricted="Restricted Access",
-                    embargoed="Embargoed Access"
-                )
+                access_right=self.serialize_ui_options_from_vocabulary(
+                    'access_right'),
+                resource_type=self.serialize_ui_options_from_vocabulary(
+                    'resource_type', 'type')
             )
 
     def serialize_object(self, obj, response_ctx=None, *args, **kwargs):
@@ -48,3 +48,25 @@ class UIJSONSerializer(JSONSerializer):
         for obj in obj_list["hits"]["hits"]:
             obj['ui'] = self._serialize_access_right(obj)
         return json.dumps(obj_list)
+
+    @classmethod
+    def serialize_ui_options_from_vocabulary(
+            cls, vocabulary_name, top_bucket_key=None):
+        """Creates UI facet label options from RDM vocabularies.
+
+        top_bucket_key: string used for nested buckets to indicate the top
+        level aggregation.
+        """
+        ui_options = {}
+        vocabulary = Vocabularies.get_vocabulary(
+            vocabulary_name).dump_options()
+        if type(vocabulary) is dict:
+            ui_options[top_bucket_key] = {}
+            for key in vocabulary.keys():
+                for option in vocabulary[key]:
+                    ui_options[top_bucket_key][option['value']] = \
+                        str(option['text'])
+        else:
+            for option in vocabulary:
+                ui_options[option['value']] = str(option['text'])
+        return ui_options
