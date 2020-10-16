@@ -11,13 +11,9 @@
 from invenio_drafts_resources.services.records.schema import RecordSchema
 from marshmallow import EXCLUDE, INCLUDE, Schema, fields, missing
 
-from .access import AccessSchemaV1
-from .communities import CommunitiesSchemaV1
-from .files import FilesSchemaV1
-from .metadata import MetadataSchemaV1
-from .pids import PIDSSchemaV1
-from .relations import RelationsSchemaV1
-from .stats import StatsSchemaV1
+from .access import AccessSchema
+from .metadata import MetadataSchema
+from .pids import PIDSchema
 
 
 # NOTE: Use this one for system fields only
@@ -35,7 +31,7 @@ class NestedAttribute(fields.Nested, AttributeAccessorFieldMixin):
     """Nested object attribute field."""
 
 
-class RDMRecordSchemaV1(RecordSchema):
+class RDMRecordSchema(RecordSchema):
     """Record schema."""
 
     class Meta:
@@ -51,24 +47,22 @@ class RDMRecordSchemaV1(RecordSchema):
         'files': 'read_files',
     }
 
-    # schema_version = fields.Interger(dump_only=True)
-    # revision = fields.Integer(attribute='revision_id', dump_only=True)
-    # id = fields.Str(attribute='recid', dump_only=True)
-    # concept_id = fields.Str(attribute='conceptrecid', dump_only=True)
+    id = fields.Str()
+    conceptid = fields.Str()
+    metadata = NestedAttribute(MetadataSchema)
+    access = NestedAttribute(AccessSchema)
+    pids = fields.List(NestedAttribute(PIDSchema))
     created = fields.Str(dump_only=True)
     updated = fields.Str(dump_only=True)
-
-    # status = fields.Str(dump_only=True)
-
-    metadata = NestedAttribute(MetadataSchemaV1)
-    access = NestedAttribute(AccessSchemaV1)
+    revision = fields.Integer(dump_only=True)
     # files = NestedAttribute(FilesSchemaV1, dump_only=True)
     # communities = NestedAttribute(CommunitiesSchemaV1)
     # pids = NestedAttribute(PIDSSchemaV1)
     # stats = NestedAttribute(StatsSchemaV1, dump_only=True)
     # relations = NestedAttribute(RelationsSchemaV1, dump_only=True)
+    # schema_version = fields.Interger(dump_only=True)
 
 
 __all__ = (
-    'RDMRecordSchemaV1',
+    'RDMRecordSchema',
 )

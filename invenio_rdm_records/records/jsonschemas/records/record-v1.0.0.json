@@ -65,6 +65,12 @@
       ]
     },
 
+    "language": {
+      "type": "string",
+      "minLength": 3,
+      "maxLength": 3
+    },
+
     "longitude": {
       "type": "number",
       "minimum": -180,
@@ -77,23 +83,31 @@
       "maximum": 90
     },
 
+    "scheme": {
+      "description": "A scheme.",
+      "type": "string"
+    },
+
+    "identifier": {
+      "description": "An identifier.",
+      "type": "string"
+    },
+
+    "identifiers": {
+      "description": "Identifiers object (keys being scheme, value being the identifier).",
+      "type": "object",
+      "additionalProperties": {"$ref": "#/definitions/identifier"}
+    },
+
     "internal-pid": {
       "type": "object",
       "description": "An internal persistent identifier object.",
       "additionalProperties": false,
-      "required": ["pk", "pid_type", "obj_type", "status"],
+      "required": ["pk", "status"],
       "properties": {
         "pk": {
           "description": "Primary key of the PID object.",
           "type": "integer"
-        },
-        "pid_type": {
-          "description": "The persistent identifier type (e.g. doi or recid).",
-          "type": "string"
-        },
-        "obj_type": {
-          "description": "The type of the assigned object (e.g. rec).",
-          "type": "string"
         },
         "status": {
           "description": "The status of the PID (from Invenio-PIDStore).",
@@ -113,12 +127,9 @@
       "type": "object",
       "description": "An external persistent identifier object.",
       "additionalProperties": false,
-      "required": ["id", "provider"],
+      "required": ["identifier", "provider"],
       "properties": {
-        "identifier": {
-          "description": "The value of the persistent identifier.",
-          "type": "string"
-        },
+        "identifier": {"$ref": "#/definitions/identifier"},
         "provider": {
           "description": "The provider of the persistent identifier.",
           "type": "string"
@@ -130,16 +141,6 @@
       }
     },
 
-    "identifiers": {
-      "description": "Identifiers object (keys being scheme, value being the identifier).",
-      "type": "object",
-      "additionalProperties": {"$ref": "#/definitions/identifier"}
-    },
-
-    "identifier": {
-      "description": "An identifier.",
-      "type": "string",
-    },
 
     "resource_type": {
       "type": "object",
@@ -211,10 +212,7 @@
           "description": "TODO - Bucket id - what about third party storage systems?",
           "type": "string"
         },
-        "file_id": {
-          "description": "TODO - Identifier of the file. - same as for bucket",
-          "type": "string"
-        }
+        "file_id": {"$ref": "#/definitions/identifier"}
       }
     },
 
@@ -303,6 +301,7 @@
                   "type": "string"
                 },
                 "type": {"$ref": "#/definitions/titleType"},
+                "lang": {"ref": "#/definitions/language"}
             },
             "required": ["title"]
           }
@@ -324,8 +323,8 @@
               "additionalProperties": false,
               "properties": {
                   "subject": {"type": "string"},
-                  "identifier": {"type": "string"},
-                  "scheme": {"type": "string"}
+                  "identifier": {"$ref": "#/definitions/identifier"},
+                  "scheme": {"$ref": "#/definitions/scheme"}
               },
               "required": ["subject"]
           }
@@ -373,7 +372,7 @@
         "languages": {
           "description": "The primary languages of the resource. ISO 639-3 language code.",
           "type": "array",
-          "items": {"$ref": "#/definitions/lang"}
+          "items": {"$ref": "#/definitions/language"}
         },
 
         "identifiers": {
@@ -383,8 +382,8 @@
               "type": "object",
               "additionalProperties": false,
               "properties": {
-                  "identifier": {"type": "string"},
-                  "scheme": {"type": "string"}
+                  "identifier": {"$ref": "#/definitions/identifier"},
+                  "scheme": {"$ref": "#/definitions/scheme"}
               }
           },
           "uniqueItems": true
@@ -397,8 +396,8 @@
               "type": "object",
               "additionalProperties": false,
               "properties": {
-                "identifier": {"type": "string"},
-                "scheme": {"type": "string"},
+                "identifier": {"$ref": "#/definitions/identifier"},
+                "scheme": {"$ref": "#/definitions/scheme"},
                 "relation": {"$ref": "#/definitions/relationType"},
                 "resource_type": {"$ref": "#/definitions/resource_type"}
               }
@@ -435,14 +434,8 @@
                 "description": "The license name or license itself. Free text.",
                 "type": "string"
               },
-              "identifier": {
-                "description": "An identifier for the license.",
-                "type": "string"
-              },
-              "scheme": {
-                "description": "An scheme for the identifier (e.g. spdx)",
-                "type": "string"
-              },
+              "identifier": {"$ref": "#/definitions/identifier"},
+              "scheme": {"$ref": "#/definitions/scheme"},
               "url": {
                 "type": "string",
                 "format": "uri"
@@ -467,6 +460,7 @@
                   "type": "string"
                 },
                 "type": {"$ref": "#/definitions/descriptionType"},
+                "lang": {"ref": "#/definitions/language"}
             }
           }
         },
@@ -509,8 +503,8 @@
                 "additionalProperties": false,
                 "properties": {
                   "name": {"type": "string"},
-                  "identifier": {"type": "string"},
-                  "scheme": {"type": "string"}
+                  "identifier": {"$ref": "#/definitions/identifier"},
+                  "scheme": {"$ref": "#/definitions/scheme"}
                 }
               },
               "award": {
@@ -519,8 +513,8 @@
                 "properties": {
                   "title": {"type": "string"},
                   "number": {"type": "string"},
-                  "identifier": {"type": "string"},
-                  "scheme": {"type": "string"}
+                  "identifier": {"$ref": "#/definitions/identifier"},
+                  "scheme": {"$ref": "#/definitions/scheme"}
                 }
               }
             }
@@ -538,34 +532,17 @@
                 "type": "string",
                 "description": "A reference string."
               },
-              "identifier": {"type": "string"},
-              "scheme": {"type": "string"}
+              "identifier": {"$ref": "#/definitions/identifier"},
+              "scheme": {"$ref": "#/definitions/scheme"}
             }
           }
         }
       }
     },
 
-    "metaext": {
+    "ext": {
       "type": "object",
-      "description": "Configured additional metadata",
-      "propertyNames": {
-        "pattern": "^[A-Za-z][A-Za-z0-9_]*:[A-Za-z0-9_]+$"
-      },
-      "additionalProperties": {
-        "anyOf": [
-          {
-            "type": "array",
-            "items": {
-              "type": ["boolean", "number", "integer", "string"]
-            }
-          },
-          {"type": "boolean"},
-          {"type": "number"},
-          {"type": "integer"},
-          {"type": "string"}
-        ]
-      }
+      "description": "Configured additional metadata"
     },
 
     "tombstone": {
@@ -596,8 +573,7 @@
       "additionalProperties": false,
       "properties": {
         "created_by": {"$ref": "#/definitions/agent"},
-        "on_behalf_of": {"$ref": "#/definitions/agent"},
-        "contact": {"$ref": "#/definitions/agent"}
+        "on_behalf_of": {"$ref": "#/definitions/agent"}
       }
     },
 
@@ -614,11 +590,6 @@
 
         "files": {
           "description": "Files visibility (true - public, false - private)",
-          "type": "boolean"
-        },
-
-        "contact": {
-          "description": "Enable the contact feature to contact owners.",
           "type": "boolean"
         },
 
@@ -688,25 +659,10 @@
       }
     },
 
-    "system": {
-      "type": "object",
-      "description": "System information.",
-      "properties": {
-        "notes": {
-          "type": "array",
-          "items":{
-              "type": "object",
-              "properties": {
-                  "created_by": {"$ref": "#/definitions/agent-user"},
-                  "note": {"type": "string"},
-                  "timestamp": {
-                    "description": "ISO8601 formatted date time stamp.",
-                    "type": "string",
-                    "format": "date-time"
-                  }
-              }
-          }
-        }
+    "notes": {
+      "type": "array",
+      "items":{
+          "type": "string"
       }
     }
   }

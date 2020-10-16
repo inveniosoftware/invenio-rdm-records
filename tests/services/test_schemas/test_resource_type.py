@@ -14,7 +14,7 @@ import pytest
 from flask_babelex import lazy_gettext as _
 from marshmallow import ValidationError
 
-from invenio_rdm_records.services.schemas.metadata import ResourceTypeSchemaV1
+from invenio_rdm_records.services.schemas.metadata import ResourceTypeSchema
 
 from .test_utils import assert_raises_messages
 
@@ -24,14 +24,14 @@ def test_valid_full(vocabulary_clear):
         "type": "image",
         "subtype": "image-photo"
     }
-    assert valid_full == ResourceTypeSchemaV1().load(valid_full)
+    assert valid_full == ResourceTypeSchema().load(valid_full)
 
 
 def test_valid_no_subtype(vocabulary_clear):
     valid_no_subtype = {
         "type": "poster"
     }
-    assert valid_no_subtype == ResourceTypeSchemaV1().load(valid_no_subtype)
+    assert valid_no_subtype == ResourceTypeSchema().load(valid_no_subtype)
 
 
 def test_invalid_no_type(vocabulary_clear):
@@ -40,7 +40,7 @@ def test_invalid_no_type(vocabulary_clear):
     }
 
     assert_raises_messages(
-        lambda: ResourceTypeSchemaV1().load(invalid_no_type),
+        lambda: ResourceTypeSchema().load(invalid_no_type),
         {"type": ["Missing data for required field."]}
     )
 
@@ -72,7 +72,7 @@ def test_invalid_type(custom_config, vocabulary_clear):
     }
 
     assert_raises_messages(
-        lambda: ResourceTypeSchemaV1().load(invalid_type),
+        lambda: ResourceTypeSchema().load(invalid_type),
         {
             "type": [_(
                 "Invalid value. Choose one of ['my_image', 'publication', "
@@ -88,7 +88,7 @@ def test_invalid_no_subtype_when_required(vocabulary_clear):
     }
 
     assert_raises_messages(
-        lambda: ResourceTypeSchemaV1().load(invalid_no_subtype_when_required),
+        lambda: ResourceTypeSchema().load(invalid_no_subtype_when_required),
         {
             "subtype": [_(
                 "Invalid value. Choose one of ['image-diagram', "
@@ -106,7 +106,7 @@ def test_invalid_subtype(custom_config, vocabulary_clear):
     }
 
     assert_raises_messages(
-        lambda: ResourceTypeSchemaV1().load(invalid_subtype),
+        lambda: ResourceTypeSchema().load(invalid_subtype),
         {
             "subtype": [_(
                 "Invalid value. Choose one of ['my_photo']."
@@ -121,7 +121,7 @@ def test_custom_valid_full(custom_config, vocabulary_clear):
         "type": "my_image",
         "subtype": "my_photo"
     }
-    data = ResourceTypeSchemaV1().load(valid_full)
+    data = ResourceTypeSchema().load(valid_full)
     assert data == valid_full
 
 
@@ -132,7 +132,7 @@ def test_custom_default_now_invalid(custom_config, vocabulary_clear):
     }
 
     assert_raises_messages(
-        lambda: ResourceTypeSchemaV1().load(now_invalid_subtype),
+        lambda: ResourceTypeSchema().load(now_invalid_subtype),
         {
             "type": [_(
                 "Invalid value. Choose one of ['my_image', 'publication', "

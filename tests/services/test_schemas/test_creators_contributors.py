@@ -13,8 +13,8 @@ import os
 import pytest
 from flask_babelex import lazy_gettext as _
 
-from invenio_rdm_records.services.schemas.metadata import \
-    ContributorSchemaV1, CreatorSchemaV1
+from invenio_rdm_records.services.schemas.metadata import ContributorSchema, \
+    CreatorSchema
 
 from .test_utils import assert_raises_messages
 
@@ -24,7 +24,7 @@ def test_creator_valid_minimal():
         "name": "Julio Cesar",
         "type": "Personal"
     }
-    assert valid_minimal == CreatorSchemaV1().load(valid_minimal)
+    assert valid_minimal == CreatorSchema().load(valid_minimal)
 
 
 def test_creator_valid_full_person():
@@ -43,7 +43,7 @@ def test_creator_valid_full_person():
             }
         }]
     }
-    data = CreatorSchemaV1().load(valid_full_person)
+    data = CreatorSchema().load(valid_full_person)
     assert data == valid_full_person
 
 
@@ -58,7 +58,7 @@ def test_creator_valid_full_organization():
         # "given_name", "family_name" and "affiliations" are ignored if passed
         "family_name": "I am ignored!"
     }
-    data = CreatorSchemaV1().load(valid_full_org)
+    data = CreatorSchema().load(valid_full_org)
     assert data == valid_full_org
 
 
@@ -79,7 +79,7 @@ def test_creator_invalid_no_name():
     }
 
     assert_raises_messages(
-        lambda: CreatorSchemaV1().load(invalid_no_name),
+        lambda: CreatorSchema().load(invalid_no_name),
         {'name': ['Missing data for required field.']}
     )
 
@@ -90,7 +90,7 @@ def test_creator_invalid_no_type():
     }
 
     assert_raises_messages(
-        lambda: CreatorSchemaV1().load(invalid_no_type),
+        lambda: CreatorSchema().load(invalid_no_type),
         {'type': ['Missing data for required field.']}
     )
 
@@ -102,7 +102,7 @@ def test_creator_invalid_type():
     }
 
     assert_raises_messages(
-        lambda: CreatorSchemaV1().load(invalid_type),
+        lambda: CreatorSchema().load(invalid_type),
         {'type': [
             "Invalid value. Choose one of ['Organizational', 'Personal']."
         ]}
@@ -119,7 +119,7 @@ def test_creator_invalid_identifiers_scheme():
     }
 
     assert_raises_messages(
-        lambda: CreatorSchemaV1().load(invalid_scheme),
+        lambda: CreatorSchema().load(invalid_scheme),
         {'identifiers': ["Invalid value. Choose one of ['Orcid', 'ror']."]}
     )
 
@@ -135,7 +135,7 @@ def test_creator_invalid_identifiers_orcid():
     }
 
     assert_raises_messages(
-        lambda: CreatorSchemaV1().load(invalid_orcid_identifier),
+        lambda: CreatorSchema().load(invalid_orcid_identifier),
         {'identifiers': {'Orcid': ["Invalid value."]}}
     )
 
@@ -150,7 +150,7 @@ def test_creator_invalid_identifiers_ror():
     }
 
     assert_raises_messages(
-        lambda: CreatorSchemaV1().load(invalid_ror_identifier),
+        lambda: CreatorSchema().load(invalid_ror_identifier),
         {'identifiers': {'ror': ["Invalid value."]}}
     )
 
@@ -165,7 +165,7 @@ def test_creator_invalid_identifiers_for_person():
     }
 
     assert_raises_messages(
-        lambda: CreatorSchemaV1().load(invalid_identifier_for_person),
+        lambda: CreatorSchema().load(invalid_identifier_for_person),
         {'identifiers': ["Invalid value. Choose one of ['Orcid']."]}
     )
 
@@ -180,7 +180,7 @@ def test_creator_invalid_identifiers_for_org():
     }
 
     assert_raises_messages(
-        lambda: CreatorSchemaV1().load(invalid_identifier_for_org),
+        lambda: CreatorSchema().load(invalid_identifier_for_org),
         {'identifiers': ["Invalid value. Choose one of ['ror']."]}
     )
 
@@ -202,7 +202,7 @@ def test_contributor_valid_full(vocabulary_clear):
         }],
         "role": "RightsHolder"
     }
-    assert valid_full == ContributorSchemaV1().load(valid_full)
+    assert valid_full == ContributorSchema().load(valid_full)
 
 
 def test_contributor_valid_minimal(vocabulary_clear):
@@ -211,7 +211,7 @@ def test_contributor_valid_minimal(vocabulary_clear):
         "type": "Personal",
         "role": "RightsHolder"
     }
-    assert valid_minimal == ContributorSchemaV1().load(valid_minimal)
+    assert valid_minimal == ContributorSchema().load(valid_minimal)
 
 
 def test_contributor_invalid_no_name(vocabulary_clear):
@@ -226,7 +226,7 @@ def test_contributor_invalid_no_name(vocabulary_clear):
     }
 
     assert_raises_messages(
-        lambda: ContributorSchemaV1().load(invalid_no_name),
+        lambda: ContributorSchema().load(invalid_no_name),
         {'name': ['Missing data for required field.']}
     )
 
@@ -243,7 +243,7 @@ def test_contributor_invalid_no_role(vocabulary_clear):
     }
 
     assert_raises_messages(
-        lambda: ContributorSchemaV1().load(invalid_no_role),
+        lambda: ContributorSchema().load(invalid_no_role),
         {'role': ['Missing data for required field.']}
     )
 
@@ -281,7 +281,7 @@ def test_contributor_invalid_role(custom_config, vocabulary_clear):
     }
 
     assert_raises_messages(
-        lambda: ContributorSchemaV1().load(invalid_role),
+        lambda: ContributorSchema().load(invalid_role),
         {'role': [
             "Invalid value. Choose one of ['DataCollector', 'Librarian']."
         ]}

@@ -15,7 +15,7 @@ from marshmallow import INCLUDE, Schema, fields, validate
 #
 # Communities
 #
-class CommunitiesRequestV1(Schema):
+class CommunitiesRequest(Schema):
     """Community Request Schema."""
 
     id = SanitizedUnicode(required=True)
@@ -41,23 +41,23 @@ class CommunitiesRequestV1(Schema):
     #     return res
 
 
-class CommunitiesSchemaV1(Schema):
+class CommunitiesSchema(Schema):
     """Communities schema."""
 
-    pending = fields.List(fields.Nested(CommunitiesRequestV1))
-    accepted = fields.List(fields.Nested(CommunitiesRequestV1))
-    rejected = fields.List(fields.Nested(CommunitiesRequestV1))
+    pending = fields.List(fields.Nested(CommunitiesRequest))
+    accepted = fields.List(fields.Nested(CommunitiesRequest))
+    rejected = fields.List(fields.Nested(CommunitiesRequest))
 
 
-# TODO: See how this can be integrated in `CommunitiesSchemaV1`
+# TODO: See how this can be integrated in `CommunitiesSchema`
 def dump_communities(self, obj):
     """Dumps communities related to the record."""
     # NOTE: If the field is already there, it's coming from ES
     if '_communities' in obj:
-        return CommunitiesSchemaV1().dump(obj['_communities'])
+        return CommunitiesSchema().dump(obj['_communities'])
 
     record = self.context.get('record')
     if record:
         _record = Record(record, model=record.model)
-        return CommunitiesSchemaV1().dump(
+        return CommunitiesSchema().dump(
             RecordCommunitiesCollection(_record).as_dict())

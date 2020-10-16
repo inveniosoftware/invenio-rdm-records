@@ -4,34 +4,30 @@
   "conceptid": "12345-abcde",
   "pid": {
     "pk": 1,
-    "pid_type": "recid",
-    "obj_type": "rec",
     "status": "R"
   },
   "conceptpid": {
     "pk": 2,
-    "pid_type": "recid",
-    "obj_type": "rec",
     "status": "R"
   },
   "pids": {
     "doi": {
-      "id": "10.5281/zenodo.1234",
+      "identifier": "10.5281/zenodo.1234",
       "provider": "datacite",
       "client": "zenodo"
     },
     "concept-doi": {
-      "id": "10.5281/zenodo.1234",
+      "identifier": "10.5281/zenodo.1234",
       "provider": "datacite",
       "client": "zenodo"
     },
     "handle": {
-      "id": "9.12314",
+      "identifier": "9.12314",
       "provider": "cern-handle",
       "client": "zenodo"
     },
     "oai": {
-      "id": "oai:zenodo.org:12345",
+      "identifier": "oai:zenodo.org:12345",
       "provider": "zenodo"
     }
   },

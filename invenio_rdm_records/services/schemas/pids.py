@@ -14,10 +14,9 @@ from marshmallow import INCLUDE, Schema, fields, validate
 #
 # PIDs
 #
-# TODO (Alex): See how this will be managed
-class PIDSSchemaV1(Schema):
+class PIDSchema(Schema):
     """PIDs schema."""
 
-    doi = fields.Str()
-    concept_doi = fields.Str()
-    oai = fields.Str()
+    identifier = fields.Str(required=True)
+    provider = fields.Str(required=True)
+    client = fields.Str()
