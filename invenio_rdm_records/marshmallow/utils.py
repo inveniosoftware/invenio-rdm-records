@@ -8,51 +8,51 @@
 
 """Marshmallow utility functions."""
 
-import pycountry
-from flask import current_app
-from flask_babelex import lazy_gettext as _
-from marshmallow import ValidationError
-from six.moves.urllib.parse import quote
+# import pycountry
+# from flask import current_app
+# from flask_babelex import lazy_gettext as _
+# from marshmallow import ValidationError
+# from six.moves.urllib.parse import quote
 
-# TODO: Revist this links list.
-# Ported from zenodo/modules/records/serializers/schemas/common.py#64
-URLS = {
-    'badge': '{base}/badge/doi/{doi}.svg',
-    'bucket': '{base}/files/{bucket}',
-    'funder': '{base}/funders/{id}',
-    'grant': '{base}/grants/{id}',
-    'object': '{base}/files/{bucket}/{key}',
-    'deposit_html': '{base}/deposit/{id}',
-    'deposit': '{base}/deposit/depositions/{id}',
-    'record_html': '{base}/record/{id}',
-    'record_file': '{base}/record/{id}/files/{filename}',
-    'record': '{base}/records/{id}',
-    'thumbnail': '{base}{path}',
-    'thumbs': '{base}/record/{id}/thumb{size}',
-    'community': '{base}/communities/{id}',
-    'community_inclusion_request':
-        '{base}/communities/{id}/requests/inclusion/{request_id}',
-    'community_inclusion_request_action':
-        '{base}/communities/{id}/requests/inclusion/{request_id}/{action}',
-}
-
-
-def link_for(base, tpl, **kwargs):
-    """Create a link using specific template."""
-    tpl = URLS.get(tpl)
-    for k in ['key', ]:
-        if k in kwargs:
-            kwargs[k] = quote(kwargs[k].encode('utf8'))
-    return tpl.format(base=base, **kwargs)
+# # TODO: Revist this links list.
+# # Ported from zenodo/modules/records/serializers/schemas/common.py#64
+# URLS = {
+#     'badge': '{base}/badge/doi/{doi}.svg',
+#     'bucket': '{base}/files/{bucket}',
+#     'funder': '{base}/funders/{id}',
+#     'grant': '{base}/grants/{id}',
+#     'object': '{base}/files/{bucket}/{key}',
+#     'deposit_html': '{base}/deposit/{id}',
+#     'deposit': '{base}/deposit/depositions/{id}',
+#     'record_html': '{base}/record/{id}',
+#     'record_file': '{base}/record/{id}/files/{filename}',
+#     'record': '{base}/records/{id}',
+#     'thumbnail': '{base}{path}',
+#     'thumbs': '{base}/record/{id}/thumb{size}',
+#     'community': '{base}/communities/{id}',
+#     'community_inclusion_request':
+#         '{base}/communities/{id}/requests/inclusion/{request_id}',
+#     'community_inclusion_request_action':
+#         '{base}/communities/{id}/requests/inclusion/{request_id}/{action}',
+# }
 
 
-def api_link_for(tpl, **kwargs):
-    """Create an API link using specific template."""
-    is_api_app = 'invenio-deposit-rest' in current_app.extensions
+# def link_for(base, tpl, **kwargs):
+#     """Create a link using specific template."""
+#     tpl = URLS.get(tpl)
+#     for k in ['key', ]:
+#         if k in kwargs:
+#             kwargs[k] = quote(kwargs[k].encode('utf8'))
+#     return tpl.format(base=base, **kwargs)
 
-    base = '{}/api'
-    if current_app.testing and is_api_app:
-        base = '{}'
 
-    return link_for(
-        base.format(current_app.config['THEME_SITEURL']), tpl, **kwargs)
+# def api_link_for(tpl, **kwargs):
+#     """Create an API link using specific template."""
+#     is_api_app = 'invenio-deposit-rest' in current_app.extensions
+
+#     base = '{}/api'
+#     if current_app.testing and is_api_app:
+#         base = '{}'
+
+#     return link_for(
+#         base.format(current_app.config['THEME_SITEURL']), tpl, **kwargs)

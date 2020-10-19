@@ -11,13 +11,14 @@ import os
 import pytest
 from flask_babelex import lazy_gettext as _
 
-from invenio_rdm_records.marshmallow.json import MetadataSchemaV1, dump_empty
+from invenio_rdm_records.services.schemas import MetadataSchema
+from invenio_rdm_records.services.schemas.utils import dump_empty
 from invenio_rdm_records.vocabularies import Vocabularies
 
 
 @pytest.mark.skip()
 def test_dumping_empty_record():
-    empty_record = dump_empty(MetadataSchemaV1())
+    empty_record = dump_empty(MetadataSchema())
 
     assert empty_record == {
         '_access': {'files_restricted': None, 'metadata_restricted': None},

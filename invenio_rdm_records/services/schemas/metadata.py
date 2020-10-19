@@ -414,7 +414,7 @@ class ReferenceSchema(Schema):
         "Crossref Funder ID",
         "Other"
     ]
-    reference_string = SanitizedUnicode(required=True)
+    reference = SanitizedUnicode(required=True)
     identifier = SanitizedUnicode()
     scheme = SanitizedUnicode(validate=validate.OneOf(
             choices=SCHEMES,
