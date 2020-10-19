@@ -8,7 +8,9 @@
 
 """RDM record schema utilities."""
 
-from marshmallow import ValidationError
+from marshmallow import Schema, ValidationError, fields
+from marshmallow.schema import SchemaMeta
+from marshmallow_utils.fields import NestedAttribute
 
 from ...vocabularies import Vocabularies
 
@@ -27,3 +29,28 @@ def validate_entry(vocabulary_key, entry_key):
         raise ValidationError(
             vocabulary.get_invalid(entry_key)
         )
+
+
+def dump_empty(schema_or_field):
+    """Return a full json-compatible dict with empty values.
+
+    NOTE: This is only needed because the frontend needs it.
+          This might change soon.
+    """
+    if isinstance(schema_or_field, (Schema,)):
+        schema = schema_or_field
+        return {k: dump_empty(v) for (k, v) in schema.fields.items()}
+    if isinstance(schema_or_field, SchemaMeta):
+        # NOTE: Nested fields can pass a Schema class (SchemaMeta)
+        #       or a Schema instance.
+        #       Schema classes need to be instantiated to get .fields
+        schema = schema_or_field()
+        return {k: dump_empty(v) for (k, v) in schema.fields.items()}
+    if isinstance(schema_or_field, fields.List):
+        field = schema_or_field
+        return [dump_empty(field.inner)]
+    if isinstance(schema_or_field, NestedAttribute):
+        field = schema_or_field
+        return dump_empty(field.nested)
+
+    return None
