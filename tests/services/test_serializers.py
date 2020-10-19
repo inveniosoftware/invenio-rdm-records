@@ -15,7 +15,7 @@ from invenio_records.api import Record
 from invenio_records_rest.schemas.fields import SanitizedUnicode
 from marshmallow.fields import Bool
 
-from invenio_rdm_records.marshmallow.json import MetadataSchemaV1
+from invenio_rdm_records.services.schemas import MetadataSchema
 
 # TODO: Figure out at what level to test... The higher the level, the more
 #       layers we can cover, but the slower and more cumbersome to setup are
@@ -45,17 +45,21 @@ def app_config(app_config):
     }
 
     app_config['RDM_RECORDS_METADATA_EXTENSIONS'] = {
-        'dwc:family': {
-            'elasticsearch': 'keyword',
-            'marshmallow': SanitizedUnicode(required=True)
+        'dwc': {
+            'family': {
+                'elasticsearch': 'keyword',
+                'marshmallow': SanitizedUnicode(required=True)
+            },
+            'behavior': {
+                'elasticsearch': 'text',
+                'marshmallow': SanitizedUnicode()
+            }
         },
-        'dwc:behavior': {
-            'elasticsearch': 'text',
-            'marshmallow': SanitizedUnicode()
-        },
-        'nubiomed:right_or_wrong': {
-            'elasticsearch': 'boolean',
-            'marshmallow': Bool()
+        'nubiomed': {
+            'right_or_wrong': {
+                'elasticsearch': 'boolean',
+                'marshmallow': Bool()
+            }
         }
     }
 
@@ -71,15 +75,19 @@ def test_extensions(db, minimal_record):
     """
     data = {
         'extensions': {
-            'dwc:family': 'Felidae',
-            'dwc:behavior': 'Plays with yarn, sleeps in cardboard box.',
-            'nubiomed:right_or_wrong': True,
+            'dwc': {
+                'family': 'Felidae',
+                'behavior': 'Plays with yarn, sleeps in cardboard box.',
+            },
+            'nubiomed': {
+                'right_or_wrong': True
+            }
         }
     }
     minimal_record.update(data)
     record = Record.create(minimal_record)
     db.session.commit()
 
-    serialized_record = MetadataSchemaV1().dump(record)  # returns MarshmalDict
+    serialized_record = MetadataSchema().dump(record)  # returns MarshmalDict
 
     assert serialized_record['extensions'] == data['extensions']

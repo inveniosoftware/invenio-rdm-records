@@ -38,14 +38,14 @@ def test_nested_field_error(client, minimal_record, es_clear):
     minimal_record["metadata"]["creators"] = [
         {
             "name": "Julio Cesar",
-            "type": "Personal",
+            "type": "personal",
             "given_name": "Julio",
             "family_name": "Cesar",
         },
         # Invalid ror identifier
         {
             "name": "California Digital Library",
-            "type": "Organizational",
+            "type": "organizational",
             "identifiers": {
                 "ror": "9999-9999-9999-9999",
             }

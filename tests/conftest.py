@@ -269,7 +269,7 @@ def minimal_record():
             # Technically not required
             "creators": [{
                 "name": "John Doe",
-                "type": "Personal"
+                "type": "personal"
             }],
             "title": "A Romans story"
         }

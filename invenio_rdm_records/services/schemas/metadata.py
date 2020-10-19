@@ -64,17 +64,17 @@ class DateSchema(Schema):
     """Schema for date intervals."""
 
     DATE_TYPES = [
-        "Accepted",
-        "Available",
-        "Copyrighted",
-        "Collected",
-        "Created",
-        "Issued",
-        "Submitted",
-        "Updated",
-        "Valid",
-        "Withdrawn",
-        "Other"
+        "accepted",
+        "available",
+        "copyrighted",
+        "collected",
+        "created",
+        "issued",
+        "submitted",
+        "updated",
+        "valid",
+        "withdrawn",
+        "other"
     ]
 
     start = ISODateString()
@@ -156,8 +156,8 @@ class CreatorSchema(Schema):
     """Creator schema."""
 
     NAMES = [
-        "Organizational",
-        "Personal"
+        "organizational",
+        "personal"
     ]
 
     # TODO: Need to revisit `name` in Deposit form:
@@ -176,16 +176,16 @@ class CreatorSchema(Schema):
     @validates("identifiers")
     def validate_identifiers(self, value):
         """Validate well-formed identifiers are passed."""
-        schemes = ['Orcid', 'ror']
+        schemes = ['orcid', 'ror']
 
         if any(scheme not in schemes for scheme in value.keys()):
             raise ValidationError(
                 [_(f"Invalid value. Choose one of {schemes}.")]
             )
 
-        if 'Orcid' in value:
-            if not idutils.is_orcid(value.get('Orcid')):
-                raise ValidationError({'Orcid': [_("Invalid value.")]})
+        if 'orcid' in value:
+            if not idutils.is_orcid(value.get('orcid')):
+                raise ValidationError({'orcid': [_("Invalid value.")]})
 
         if 'ror' in value:
             if not idutils.is_ror(value.get('ror')):
@@ -194,8 +194,8 @@ class CreatorSchema(Schema):
     @validates_schema
     def validate_data(self, data, **kwargs):
         """Validate identifier based on type."""
-        if data['type'] == "Personal":
-            person_identifiers = ['Orcid']
+        if data['type'] == "personal":
+            person_identifiers = ['orcid']
             identifiers = data.get('identifiers', {}).keys()
             if any([i not in person_identifiers for i in identifiers]):
                 messages = [
@@ -203,7 +203,7 @@ class CreatorSchema(Schema):
                 ]
                 raise ValidationError({"identifiers": messages})
 
-        elif data['type'] == "Organizational":
+        elif data['type'] == "organizational":
             org_identifiers = ['ror']
             identifiers = data.get('identifiers', {}).keys()
             if any([i not in org_identifiers for i in identifiers]):
@@ -253,12 +253,12 @@ class DescriptionSchema(Schema):
     """Schema for the additional descriptions."""
 
     DESCRIPTION_TYPES = [
-          "Abstract",
-          "Methods",
-          "SeriesInformation",
-          "TableOfContents",
-          "TechnicalInfo",
-          "Other"
+          "abstract",
+          "methods",
+          "seriesinformation",
+          "tableofcontents",
+          "technicalinfo",
+          "other"
     ]
     description = SanitizedUnicode(required=True,
                                    validate=validate.Length(min=3))
@@ -290,17 +290,17 @@ class DateSchema(Schema):
     """Schema for date intervals."""
 
     DATE_TYPES = [
-        "Accepted",
-        "Available",
-        "Copyrighted",
-        "Collected",
-        "Created",
-        "Issued",
-        "Submitted",
-        "Updated",
-        "Valid",
-        "Withdrawn",
-        "Other"
+        "accepted",
+        "available",
+        "copyrighted",
+        "collected",
+        "created",
+        "issued",
+        "submitted",
+        "updated",
+        "valid",
+        "withdrawn",
+        "other"
     ]
 
     start = ISODateString()
@@ -335,60 +335,60 @@ class RelatedIdentifierSchema(Schema):
     """Related identifier schema."""
 
     RELATIONS = [
-        "IsCitedBy",
-        "Cites",
-        "IsSupplementTo",
-        "IsSupplementedBy",
-        "IsContinuedBy",
-        "Continues",
-        "IsDescribedBy",
-        "Describes",
-        "HasMetadata",
-        "IsMetadataFor",
-        "HasVersion",
-        "IsVersionOf",
-        "IsNewVersionOf",
-        "IsPreviousVersionOf",
-        "IsPartOf",
-        "HasPart",
-        "IsReferencedBy",
-        "References",
-        "IsDocumentedBy",
-        "Documents",
-        "IsCompiledBy",
-        "Compiles",
-        "IsVariantFormOf",
-        "IsOriginalFormOf",
-        "IsIdenticalTo",
-        "IsReviewedBy",
-        "Reviews",
-        "IsDerivedFrom",
-        "IsSourceOf",
-        "IsRequiredBy",
-        "Requires",
-        "IsObsoletedBy",
-        "Obsoletes"
+        "iscitedby",
+        "cites",
+        "issupplementto",
+        "issupplementedby",
+        "iscontinuedby",
+        "continues",
+        "isdescribedby",
+        "describes",
+        "hasmetadata",
+        "ismetadatafor",
+        "hasversion",
+        "isversionof",
+        "isnewversionof",
+        "ispreviousversionof",
+        "ispartof",
+        "haspart",
+        "isreferencedby",
+        "references",
+        "isdocumentedby",
+        "documents",
+        "iscompiledby",
+        "compiles",
+        "isvariantformof",
+        "isoriginalformof",
+        "isidenticalto",
+        "isreviewedby",
+        "reviews",
+        "isderivedfrom",
+        "issourceof",
+        "isrequiredby",
+        "requires",
+        "isobsoletedby",
+        "obsoletes"
     ]
 
     SCHEMES = [
-        "ARK",
-        "arXiv",
+        "ark",
+        "arxiv",
         "bibcode",
-        "DOI",
-        "EAN13",
-        "EISSN",
-        "Handle",
-        "IGSN",
-        "ISBN",
-        "ISSN",
-        "ISTC",
-        "LISSN",
-        "LSID",
-        "PMID",
-        "PURL",
-        "UPC",
-        "URL",
-        "URN",
+        "doi",
+        "ean13",
+        "eissn",
+        "handle",
+        "igsn",
+        "isbn",
+        "issn",
+        "istc",
+        "lissn",
+        "lsid",
+        "pmid",
+        "purl",
+        "upc",
+        "url",
+        "urn",
         "w3id"
     ]
 
@@ -409,12 +409,12 @@ class ReferenceSchema(Schema):
     """Reference schema."""
 
     SCHEMES = [
-        "ISNI",
-        "GRID",
-        "Crossref Funder ID",
-        "Other"
+        "isni",
+        "grid",
+        "crossreffunderid",
+        "other"
     ]
-    reference_string = SanitizedUnicode(required=True)
+    reference = SanitizedUnicode(required=True)
     identifier = SanitizedUnicode()
     scheme = SanitizedUnicode(validate=validate.OneOf(
             choices=SCHEMES,
