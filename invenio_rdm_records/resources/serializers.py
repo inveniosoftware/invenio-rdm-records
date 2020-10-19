@@ -103,9 +103,13 @@ class UIJSONSerializer(JSONSerializer):
             self._serialize_resource_type_agg(
                 aggregations.get("resource_type"))
 
+    def serialize_obj_ui(self, obj):
+        """Dump ui config for object."""
+        obj.setdefault('ui', {}).update(self._serialize_access_right(obj))
+
     def serialize_object(self, obj, response_ctx=None, *args, **kwargs):
         """Dump the object into a json string."""
-        obj['ui'] = self._serialize_access_right(obj)
+        self.serialize_obj_ui(obj)
         return json.dumps(obj)
 
     def serialize_object_list(
@@ -113,5 +117,5 @@ class UIJSONSerializer(JSONSerializer):
         """Dump the object list into a json string."""
         self._serialize_aggregations(obj_list)
         for obj in obj_list["hits"]["hits"]:
-            obj['ui'] = self._serialize_access_right(obj)
+            self.serialize_obj_ui(obj)
         return json.dumps(obj_list)
