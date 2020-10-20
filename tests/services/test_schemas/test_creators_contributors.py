@@ -84,17 +84,6 @@ def test_creator_invalid_no_name():
     )
 
 
-def test_creator_invalid_no_type():
-    invalid_no_type = {
-        "name": "Julio Cesar",
-    }
-
-    assert_raises_messages(
-        lambda: CreatorSchema().load(invalid_no_type),
-        {'type': ['Missing data for required field.']}
-    )
-
-
 def test_creator_invalid_type():
     invalid_type = {
         "name": "Julio Cesar",

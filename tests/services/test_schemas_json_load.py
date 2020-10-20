@@ -558,46 +558,6 @@ def test_extensions(app, minimal_record):
     )
 
 
-@pytest.mark.skip()
-def test_publication_date(app, minimal_record):
-    def assert_publication_dates(data, expected):
-        assert data['publication_date'] == expected_record['publication_date']
-        assert (
-            data['_publication_date_search'] ==
-            expected_record['_publication_date_search']
-        )
-
-    expected_record = minimal_record
-
-    # Partial
-    minimal_record['publication_date'] = '2020-02'
-    expected_record['publication_date'] = '2020-02'
-    expected_record['_publication_date_search'] = '2020-02-01'
-
-    data = MetadataSchema().load(minimal_record)
-
-    assert_publication_dates(data, expected_record)
-
-    # Interval (asymmetrical is allowed!)
-    minimal_record['publication_date'] = '2020-02-02/2025-12'
-    expected_record['publication_date'] = '2020-02-02/2025-12'
-    expected_record['_publication_date_search'] = '2020-02-02'
-
-    data = MetadataSchema().load(minimal_record)
-
-    assert_publication_dates(data, expected_record)
-
-    # Invalid date
-    minimal_record['publication_date'] = 'invalid'
-    with pytest.raises(ValidationError):
-        data = MetadataSchema().load(minimal_record)
-
-    # Invalid interval
-    minimal_record['publication_date'] = '2025-12/2020-02-02'
-    with pytest.raises(ValidationError):
-        data = MetadataSchema().load(minimal_record)
-
-
 def test_embargo_date(vocabulary_clear, minimal_record):
     # Test embargo validation
     minimal_record["embargo_date"] = "1000-01-01"

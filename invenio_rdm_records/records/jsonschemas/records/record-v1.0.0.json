@@ -235,7 +235,6 @@
     }
   },
 
-
   "properties": {
     "$schema": {
       "description": "JSONSchema declaration.",
@@ -461,7 +460,8 @@
                 },
                 "type": {"$ref": "#/definitions/descriptionType"},
                 "lang": {"ref": "#/definitions/language"}
-            }
+            },
+            "required": ["description", "type"]
           }
         },
 
