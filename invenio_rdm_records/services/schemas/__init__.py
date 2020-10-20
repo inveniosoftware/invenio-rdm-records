@@ -48,18 +48,23 @@ class RDMRecordSchema(RecordSchema):
     }
 
     id = fields.Str()
+    # pid
     conceptid = fields.Str()
-    metadata = NestedAttribute(MetadataSchema)
-    access = NestedAttribute(AccessSchema)
+    # conceptpid
     pids = fields.List(NestedAttribute(PIDSchema))
+    metadata = NestedAttribute(MetadataSchema)
+    # ext = fields.Method('dump_extensions', 'load_extensions')
+    # tombstone
+    # provenance
+    access = NestedAttribute(AccessSchema)
+    # files = NestedAttribute(FilesSchema, dump_only=True)
+    # notes = fields.List(fields.Nested(InternalNoteSchema))
     created = fields.Str(dump_only=True)
     updated = fields.Str(dump_only=True)
     revision = fields.Integer(dump_only=True)
-    # files = NestedAttribute(FilesSchemaV1, dump_only=True)
-    # communities = NestedAttribute(CommunitiesSchemaV1)
-    # pids = NestedAttribute(PIDSSchemaV1)
-    # stats = NestedAttribute(StatsSchemaV1, dump_only=True)
-    # relations = NestedAttribute(RelationsSchemaV1, dump_only=True)
+    # communities = NestedAttribute(CommunitiesSchema)
+    # stats = NestedAttribute(StatsSchema, dump_only=True)
+    # relations = NestedAttribute(RelationsSchema, dump_only=True)
     # schema_version = fields.Interger(dump_only=True)
 
 

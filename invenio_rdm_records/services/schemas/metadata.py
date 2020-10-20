@@ -23,35 +23,6 @@ from marshmallow_utils.fields import EDTFDateString, GenFunction, \
 from .utils import validate_entry
 
 
-def prepare_publication_date(record_dict):
-    """
-    Adds search and API compatible _publication_date_search field.
-
-    This date is the lowest year-month-day date from the interval or (partial)
-    date.
-
-    WHY:
-        - The regular publication_date is not in a format ES can use for
-          powerful date queries.
-        - Nor is it in a format serializers can use directly (more of a
-          convenience in their case).
-        - It supports our effort to align DB record and ES record.
-
-    NOTE: Keeping this function outside the class to make it easier to move
-          when dealing with deposit. By then, if only called here, it can
-          be merged in MetadataSchema.
-
-    :param record_dict: loaded Record dict
-    """
-    parser = level0Expression("level0")
-    date_or_interval = parser.parseString(record_dict['publication_date'])[0]
-    # lower_strict() is available for EDTF Interval AND Date objects
-    date_tuple = date_or_interval.lower_strict()
-    record_dict['_publication_date_search'] = time.strftime(
-        "%Y-%m-%d", date_tuple
-    )
-
-
 class InternalNoteSchema(Schema):
     """Internal note shema."""
 
@@ -164,7 +135,7 @@ class CreatorSchema(Schema):
     #       current mock-up doesn't have `name` field, so there is assumed
     #       work on the front-end to fill this value.
     name = SanitizedUnicode(required=True)
-    type = SanitizedUnicode(required=True, validate=validate.OneOf(
+    type = SanitizedUnicode(validate=validate.OneOf(
                 choices=NAMES,
                 error=_(f'Invalid value. Choose one of {NAMES}.')
             ))
@@ -456,26 +427,29 @@ class MetadataSchema(Schema):
         unknown = INCLUDE
 
     # Metadata fields
-    title = fields.String(required=True, validate=validate.Length(min=3))
-    additional_titles = fields.List(fields.Nested(TitleSchema))
-    creators = fields.List(fields.Nested(CreatorSchema), required=True)
     resource_type = fields.Nested(ResourceTypeSchema, required=True)
+    creators = fields.List(fields.Nested(CreatorSchema), required=True)
+    title = SanitizedUnicode(required=True, validate=validate.Length(min=3))
+    additional_titles = fields.List(fields.Nested(TitleSchema))
+    publisher = SanitizedUnicode()
     publication_date = EDTFDateString(required=True)
     # subjects = fields.List(fields.Nested(SubjectSchema))
-    # contributors = fields.List(fields.Nested(ContributorSchema))
+    contributors = fields.List(fields.Nested(ContributorSchema))
     # dates = fields.List(fields.Nested(DateSchema))
-    # language = ISOLangString()
+    # languages = ISOLangString()
+    # alternate identifiers
+    # identifiers = fields.List(fields.Nested(RelatedIdentifierSchema))
     # related_identifiers = fields.List(
     #     fields.Nested(RelatedIdentifierSchema))
+    # sizes
+    # formats
     # version = SanitizedUnicode()
-    # licenses = fields.List(fields.Nested(LicenseSchema))
-    # descriptions = fields.List(fields.Nested(DescriptionSchema))
+    # rights = fields.List(fields.Nested(LicenseSchema))
+    description = SanitizedUnicode(validate=validate.Length(min=3))
+    additional_descriptions = fields.List(fields.Nested(DescriptionSchema))
     # locations = fields.List(fields.Nested(LocationSchema))
+    # funding
     # references = fields.List(fields.Nested(ReferenceSchema))
-    # notes = fields.List(fields.Nested(InternalNoteSchema))
-
-    # TODO (Alex): this might go in a separate top-level field?
-    # extensions = fields.Method('dump_extensions', 'load_extensions')
 
     def dump_extensions(self, obj):
         """Dumps the extensions value.
@@ -499,9 +473,3 @@ class MetadataSchema(Schema):
         ExtensionSchema = current_app_metadata_extensions.to_schema()
 
         return ExtensionSchema().load(value)
-
-    @post_load
-    def post_load_publication_date(self, obj, **kwargs):
-        """Add '_publication_date_search' field."""
-        prepare_publication_date(obj)
-        return obj
