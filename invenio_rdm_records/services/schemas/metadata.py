@@ -276,32 +276,12 @@ class DateSchema(Schema):
         "other"
     ]
 
-    start = ISODateString()
-    end = ISODateString()
+    date = EDTFDateString(required=True)
     type = fields.Str(required=True, validate=validate.OneOf(
             choices=DATE_TYPES,
             error=_('Invalid date type. {input} not one of {choices}.')
         ))
     description = fields.Str()
-
-    @validates_schema
-    def validate_dates(self, data, **kwargs):
-        """Validate that start date is before the corresponding end date."""
-        start = arrow.get(data.get('start'), 'YYYY-MM-DD').date() \
-            if data.get('start') else None
-        end = arrow.get(data.get('end'), 'YYYY-MM-DD').date() \
-            if data.get('end') else None
-
-        if not start and not end:
-            raise ValidationError(
-                _('There must be at least one date.'),
-                field_names=['dates']
-            )
-        if start and end and start > end:
-            raise ValidationError(
-                _('"start" date must be before "end" date.'),
-                field_names=['dates']
-            )
 
 
 class RelatedIdentifierSchema(Schema):
@@ -437,7 +417,7 @@ class MetadataSchema(Schema):
     publication_date = EDTFDateString(required=True)
     subjects = fields.List(fields.Nested(SubjectSchema))
     contributors = fields.List(fields.Nested(ContributorSchema))
-    # dates = fields.List(fields.Nested(DateSchema))
+    dates = fields.List(fields.Nested(DateSchema))
     # languages = ISOLangString()
     # alternate identifiers
     # identifiers = fields.List(fields.Nested(RelatedIdentifierSchema))

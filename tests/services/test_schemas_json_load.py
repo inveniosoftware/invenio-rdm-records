@@ -89,53 +89,6 @@ def test_license():
         data = LicenseSchema().load(invalid_no_license)
 
 
-def test_date():
-    """Test date schama."""
-    valid_full = {
-        "start": "2020-06-01",
-        "end":  "2021-06-01",
-        "description": "Random test date",
-        "type": "other"
-    }
-
-    data = DateSchema().load(valid_full)
-    assert data == valid_full
-
-    # Note that none start or end are required. But it validates that at
-    # least one of them is present.
-    valid_minimal = {
-        "start": "2020-06-01",
-        "type": "other"
-    }
-
-    data = DateSchema().load(valid_minimal)
-    assert data == valid_minimal
-
-    invalid_no_type = {
-        "start": "2020-06-01",
-        "end":  "2021-06-01",
-        "description": "Random test date",
-    }
-    with pytest.raises(ValidationError):
-        data = DateSchema().load(invalid_no_type)
-
-    invalid_end_format = {
-        "start": "2020/06/01",
-        "end":  "2021-06-01",
-        "description": "Random test date",
-    }
-    with pytest.raises(ValidationError):
-        data = DateSchema().load(invalid_end_format)
-
-    invalid_end_format = {
-        "start": "2020-06-01",
-        "end":  "2021-13-01",  # Days and months swaped
-        "description": "Random test date",
-    }
-    with pytest.raises(ValidationError):
-        data = DateSchema().load(invalid_end_format)
-
-
 def test_related_identifiers(vocabulary_clear):
     """Test related identifiers schema."""
     valid_full = {

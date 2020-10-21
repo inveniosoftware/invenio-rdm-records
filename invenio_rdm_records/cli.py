@@ -119,7 +119,7 @@ def create_fake_record():
             }],
             "dates": [{
                 # No end date to avoid computations based on start
-                "start": fake.date(pattern='%Y-%m-%d'),
+                "date": fake.date(pattern='%Y-%m-%d'),
                 "description": "Random test date",
                 "type": "other"
             }],
