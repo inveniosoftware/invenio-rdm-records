@@ -261,57 +261,6 @@ def test_location():
 
 
 @pytest.mark.skip()
-def test_identifiers(minimal_record):
-    """Test Identifiers field."""
-    # No 'identifiers' field at all is supported
-    data = MetadataSchema().load(minimal_record)
-    assert data.get('identifiers') == minimal_record.get('identifiers')
-
-    # Empty dict
-    minimal_record['identifiers'] = {}
-    data = MetadataSchema().load(minimal_record)
-    assert data['identifiers'] == minimal_record['identifiers']
-
-    # Minimal
-    minimal_record['identifiers'] = {
-        "doi": "10.5281/zenodo.9999999",
-    }
-    data = MetadataSchema().load(minimal_record)
-    assert data['identifiers'] == minimal_record['identifiers']
-
-    # Different schemes
-    minimal_record['identifiers'] = {
-        "doi": "10.5281/zenodo.9999999",
-        "ark": "ark:/123/456",
-    }
-    data = MetadataSchema().load(minimal_record)
-    assert data['identifiers'] == minimal_record['identifiers']
-
-    # With duplicate schemes, only last one is picked
-    minimal_record['identifiers'] = {
-        "doi": "10.5281/zenodo.9999999",
-        "doi": "10.5281/zenodo.0000000",
-    }
-    data = MetadataSchema().load(minimal_record)
-    assert data['identifiers'] == minimal_record['identifiers']
-    assert data['identifiers']['doi'] == "10.5281/zenodo.0000000"
-
-    # Invalid: no identifier
-    minimal_record['identifiers'] = {
-        "doi": ""
-    }
-    with pytest.raises(ValidationError):
-        data = MetadataSchema().load(minimal_record)
-
-    # Invalid: no scheme
-    minimal_record['identifiers'] = {
-        "": "10.5281/zenodo.9999999"
-    }
-    with pytest.raises(ValidationError):
-        data = MetadataSchema().load(minimal_record)
-
-
-@pytest.mark.skip()
 def test_extensions(app, minimal_record):
     """Test metadata extensions schema."""
     # Setup metadata extensions
