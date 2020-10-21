@@ -31,10 +31,14 @@ def fake_resource_type():
     """Generates a fake resource_type."""
     vocabulary = Vocabularies.get_vocabulary('resource_type')
     _type, subtype = random.choice(list(vocabulary.data.keys()))
-    return {
-        "type": _type,
-        "subtype": subtype
+    resource_type = {
+        "type": _type
     }
+    if subtype:
+        resource_type.update({
+            "subtype": subtype
+        })
+    return resource_type
 
 
 def fake_edtf_level_0():
