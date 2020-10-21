@@ -12,6 +12,7 @@ from invenio_records_rest.schemas.fields import SanitizedUnicode
 from marshmallow import INCLUDE, Schema, post_dump
 from marshmallow_utils.fields import LocalizedEDTFDateString
 
+
 class UISchema(Schema):
     """UI config schema."""
 
