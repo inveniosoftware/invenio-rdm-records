@@ -90,8 +90,8 @@ def test_multiple_errors(client, minimal_record):
         {
             "field": "metadata.additional_titles.0.type",
             "messages": [
-                "Invalid value. Choose one of ['AlternativeTitle', "
-                "'MainTitle', 'Other', 'Subtitle', 'TranslatedTitle']."
+                "Invalid value. Choose one of ['alternativetitle', "
+                "'other', 'subtitle', 'translatedtitle']."
             ]
         }
     ]

@@ -189,7 +189,7 @@ def test_contributor_valid_full(vocabulary_clear):
                 "ror": "03yrm5c26"
             }
         }],
-        "role": "RightsHolder"
+        "role": "rightsholder"
     }
     assert valid_full == ContributorSchema().load(valid_full)
 
@@ -198,7 +198,7 @@ def test_contributor_valid_minimal(vocabulary_clear):
     valid_minimal = {
         "name": "Julio Cesar",
         "type": "personal",
-        "role": "RightsHolder"
+        "role": "rightsholder"
     }
     assert valid_minimal == ContributorSchema().load(valid_minimal)
 
@@ -211,7 +211,7 @@ def test_contributor_invalid_no_name(vocabulary_clear):
         "identifiers": {
             "orcid": "0000-0002-1825-0097",
         },
-        "role": "RightsHolder"
+        "role": "rightsholder"
     }
 
     assert_raises_messages(

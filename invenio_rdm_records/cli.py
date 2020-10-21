@@ -111,19 +111,19 @@ def create_fake_record():
                         "ror": "03yrm5c26"
                     }
                 }],
-                "role": "RightsHolder"
+                "role": "rightsholder"
             }],
             "dates": [{
                 # No end date to avoid computations based on start
                 "start": fake.date(pattern='%Y-%m-%d'),
                 "description": "Random test date",
-                "type": "Other"
+                "type": "other"
             }],
             "languages": ["eng"],
             "related_identifiers": [{
                 "identifier": "10.9999/rdm.9999988",
-                "scheme": "DOI",
-                "relation_type": "Requires",
+                "scheme": "doi",
+                "relation_type": "requires",
                 "resource_type": fake_resource_type()
             }],
             "version": "v0.0.1",
@@ -145,7 +145,7 @@ def create_fake_record():
             "references": [{
                 "reference": "Reference to something et al.",
                 "identifier": "9999.99988",
-                "scheme": "GRID"
+                "scheme": "grid"
             }]
         }
     }

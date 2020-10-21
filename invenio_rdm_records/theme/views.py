@@ -137,7 +137,7 @@ def doi_identifier(identifiers):
     """Extract DOI from sequence of identifiers."""
     for identifier in identifiers:
         # TODO: extract this "DOI" constant to a registry?
-        if identifier == 'DOI':
+        if identifier == 'doi':
             return identifiers[identifier]
 
 
