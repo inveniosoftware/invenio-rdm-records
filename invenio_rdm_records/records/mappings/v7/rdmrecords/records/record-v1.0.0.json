@@ -122,11 +122,8 @@
               "description" : {
                 "type" : "text"
               },
-              "end" : {
-                "type" : "date"
-              },
-              "start" : {
-                "type" : "date"
+              "date" : {
+                "type" : "keyword"
               },
               "type" : {
                 "type" : "keyword"
