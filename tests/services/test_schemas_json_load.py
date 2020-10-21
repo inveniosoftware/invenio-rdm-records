@@ -12,51 +12,13 @@ from invenio_records_rest.schemas.fields import DateString, SanitizedUnicode
 from marshmallow import ValidationError
 from marshmallow.fields import Bool, Integer, List
 
-from invenio_rdm_records.services.schemas.metadata import AffiliationSchema, \
-    ContributorSchema, CreatorSchema, DateSchema, DescriptionSchema, \
-    InternalNoteSchema, LicenseSchema, LocationSchema, MetadataSchema, \
-    PointSchema, ReferenceSchema, RelatedIdentifierSchema, \
-    ResourceTypeSchema, SubjectSchema
+from invenio_rdm_records.services.schemas.metadata import ContributorSchema, \
+    CreatorSchema, DateSchema, DescriptionSchema, InternalNoteSchema, \
+    LicenseSchema, LocationSchema, MetadataSchema, PointSchema, \
+    ReferenceSchema, RelatedIdentifierSchema, ResourceTypeSchema, \
+    SubjectSchema
 from invenio_rdm_records.services.schemas.metadata_extensions import \
     MetadataExtensions
-
-
-def test_affiliations():
-    """Test affiliations schema."""
-    valid_full = {
-        "name": "Entity One",
-        "identifiers": {
-            "ror": "03yrm5c26"
-        }
-    }
-    data = AffiliationSchema().load(valid_full)
-    assert data == valid_full
-
-    invalid_no_name = {
-        "identifiers": {
-            "ror": "03yrm5c26"
-        }
-    }
-    with pytest.raises(ValidationError):
-        data = AffiliationSchema().load(invalid_no_name)
-
-    invalid_identifier = {
-        "name": "Entity One",
-        "identifiers": {
-            "ror": ""
-        }
-    }
-    with pytest.raises(ValidationError):
-        data = AffiliationSchema().load(invalid_identifier)
-
-    invalid_scheme = {
-        "name": "Entity One",
-        "identifiers": {
-            "": "03yrm5c26"
-        }
-    }
-    with pytest.raises(ValidationError):
-        data = AffiliationSchema().load(invalid_scheme)
 
 
 def test_internal_note():

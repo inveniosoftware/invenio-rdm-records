@@ -116,11 +116,12 @@ class AffiliationSchema(Schema):
         if len(value) == 0:
             raise ValidationError(_("Invalid identifier."))
 
-        if 'ror' in value:
-            if not idutils.is_ror(value.get('ror')):
-                raise ValidationError(_("Invalid identifier."))
-        else:
-            raise ValidationError(_("Invalid identifier."))
+        for identifier in value.keys():
+            validator = getattr(idutils, 'is_' + identifier, None)
+            # NOTE: identifier key cannot be empty string
+            if not identifier or (validator and
+                                  not validator(value.get(identifier))):
+                raise ValidationError(_(f"Invalid identifier ({identifier})."))
 
 
 class CreatorSchema(Schema):
