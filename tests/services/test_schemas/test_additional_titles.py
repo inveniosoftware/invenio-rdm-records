@@ -20,7 +20,7 @@ from .test_utils import assert_raises_messages
 def test_valid_full(vocabulary_clear):
     valid_full = {
         "title": "A Romans story",
-        "type": "Other",
+        "type": "other",
         "lang": "eng"
     }
     assert valid_full == TitleSchema().load(valid_full)
@@ -31,21 +31,19 @@ def test_valid_partial(vocabulary_clear):
         "title": "A Romans story",
         "lang": "eng"
     }
-    data = TitleSchema().load(valid_partial)
-    assert dict(valid_partial, type='MainTitle') == data
+    assert valid_partial == TitleSchema().load(valid_partial)
 
 
 def test_valid_minimal(vocabulary_clear):
     valid_minimal = {
         "title": "A Romans story"
     }
-    data = TitleSchema().load(valid_minimal)
-    assert data == dict(valid_minimal, type='MainTitle')
+    assert valid_minimal == TitleSchema().load(valid_minimal)
 
 
 def test_invalid_no_title(vocabulary_clear):
     invalid_no_title = {
-        "type": "Other",
+        "type": "other",
         "lang": "eng"
     }
 
@@ -58,7 +56,7 @@ def test_invalid_no_title(vocabulary_clear):
 def test_invalid_title_empty(vocabulary_clear):
     invalid_title_empty = {
         "title": "",
-        "type": "Other",
+        "type": "other",
         "lang": "eng"
     }
 
@@ -71,7 +69,7 @@ def test_invalid_title_empty(vocabulary_clear):
 def test_invalid_too_short(vocabulary_clear):
     too_short = {
         "title": "AA",
-        "type": "Other",
+        "type": "other",
         "lang": "eng"
     }
 
@@ -91,8 +89,8 @@ def test_invalid_title_type(vocabulary_clear):
     assert_raises_messages(
         lambda: TitleSchema().load(invalid_title_type),
         {'type': [_(
-            "Invalid value. Choose one of ['AlternativeTitle', "
-            "'MainTitle', 'Other', 'Subtitle', 'TranslatedTitle']."
+            "Invalid value. Choose one of ['alternativetitle', "
+            "'other', 'subtitle', 'translatedtitle']."
         )]}
     )
 
@@ -100,7 +98,7 @@ def test_invalid_title_type(vocabulary_clear):
 def test_invalid_lang(vocabulary_clear):
     invalid_lang = {
         "title": "A Romans story",
-        "type": "Other",
+        "type": "other",
         "lang": "inv"
     }
 

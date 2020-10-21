@@ -1,6 +1,5 @@
 type,type_name,datacite,notes
-MainTitle, Main Title,,
-AlternativeTitle, Alternative Title,
-Subtitle, Subtitle,
-TranslatedTitle, Translated Title,
-Other, Other
+alternativetitle, Alternative Title,
+subtitle, Subtitle,
+translatedtitle, Translated Title,
+other, Other

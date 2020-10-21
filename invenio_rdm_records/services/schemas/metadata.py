@@ -211,13 +211,14 @@ class TitleSchema(Schema):
     """Schema for the additional title."""
 
     title = SanitizedUnicode(required=True, validate=validate.Length(min=3))
-    type = SanitizedUnicode(missing='MainTitle')
+    type = SanitizedUnicode()
     lang = ISOLangString()
 
     @validates_schema
     def validate_data(self, data, **kwargs):
         """Validate type."""
-        validate_entry('titles.type', data)
+        if data.get('type'):
+            validate_entry('titles.type', data)
 
 
 class DescriptionSchema(Schema):

@@ -18,11 +18,11 @@ from invenio_rdm_records.theme.views import doi_identifier, \
 
 def test_vocabulary_title(app):
     # Valid key and vocabulary
-    title = vocabulary_title({"role": "DataManager"}, 'contributors.role')
+    title = vocabulary_title({"role": "datamanager"}, 'contributors.role')
     assert title == "Data Manager"
 
     # Invalid vocabulary
-    title = vocabulary_title({"role": "DataManager"}, 'garbage')
+    title = vocabulary_title({"role": "datamanager"}, 'garbage')
     assert title == ""
 
     # Invalid key
@@ -50,15 +50,15 @@ def test_to_date():
 def test_doi_identifier():
     # DOI present
     identifiers = {
-        "DOI": "10.5281/zenodo.9999999",
-        "arXiv": "9999.99999"
+        "doi": "10.5281/zenodo.9999999",
+        "arxiv": "9999.99999"
     }
     doi = doi_identifier(identifiers)
     assert "10.5281/zenodo.9999999" == doi
 
     # DOI absent
     identifiers = {
-        "arXiv": "9999.99999"
+        "arxiv": "9999.99999"
     }
     doi = doi_identifier(identifiers)
     assert doi is None
