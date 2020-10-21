@@ -76,34 +76,6 @@ class DateSchema(Schema):
             )
 
 
-# 'Fake' Identifiers Field
-def _not_blank(error_msg):
-    """Returns a non-blank validation rule with custom error message."""
-    return validate.Length(min=1, error=error_msg)
-
-
-def Identifiers():
-    """Returns a "fake" Identifiers field.
-
-    Field expects:
-
-        "<scheme1>": "<identifier1>",
-        ...
-        "<schemeN>": "<identifierN>"
-    """
-    return fields.Dict(
-        # scheme
-        keys=SanitizedUnicode(
-            required=True, validate=_not_blank(_('Scheme cannot be blank.'))
-        ),
-        # identifier
-        values=SanitizedUnicode(
-            required=True,
-            validate=_not_blank(_('Identifier cannot be blank.'))
-        )
-    )
-
-
 class AffiliationSchema(Schema):
     """Affiliation of a creator/contributor."""
 
@@ -284,6 +256,24 @@ class DateSchema(Schema):
     description = fields.Str()
 
 
+# 'Fake' Identifiers Field
+def _not_blank(error_msg):
+    """Returns a non-blank validation rule with custom error message."""
+    return validate.Length(min=1, error=error_msg)
+
+
+class IdentifierSchema(Schema):
+    """Identifier schema.
+
+    NOTE: Equivalent to DataCite's alternate identifier.
+    """
+
+    identifier = SanitizedUnicode(
+        required=True, validate=_not_blank(_('Identifier cannot be blank.')))
+    scheme = SanitizedUnicode(
+        required=True, validate=_not_blank(_('Scheme cannot be blank.')))
+
+
 class RelatedIdentifierSchema(Schema):
     """Related identifier schema."""
 
@@ -420,7 +410,7 @@ class MetadataSchema(Schema):
     dates = fields.List(fields.Nested(DateSchema))
     # languages = ISOLangString()
     # alternate identifiers
-    # identifiers = fields.List(fields.Nested(RelatedIdentifierSchema))
+    identifiers = fields.List(fields.Nested(IdentifierSchema))
     # related_identifiers = fields.List(
     #     fields.Nested(RelatedIdentifierSchema))
     # sizes
