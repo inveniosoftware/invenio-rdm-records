@@ -61,56 +61,6 @@ def test_internal_note():
         data = InternalNoteSchema().load(invalid_timestamp)
 
 
-def test_description():
-    """Test descriptions schema."""
-    valid_full = {
-        "description": "A story on how Julio Cesar relates to Gladiator.",
-        "type": "abstract",
-        "lang": "eng"
-    }
-
-    data = DescriptionSchema().load(valid_full)
-    assert data == valid_full
-
-    valid_minimal = {
-        "description": "A story on how Julio Cesar relates to Gladiator.",
-        "type": "abstract"
-    }
-
-    data = DescriptionSchema().load(valid_minimal)
-    assert data == valid_minimal
-
-    invalid_no_description = {
-        "type": "abstract",
-        "lang": "eng"
-    }
-    with pytest.raises(ValidationError):
-        data = DescriptionSchema().load(invalid_no_description)
-
-    invalid_no_description_type = {
-        "description": "A story on how Julio Cesar relates to Gladiator.",
-        "lang": "eng"
-    }
-    with pytest.raises(ValidationError):
-        data = DescriptionSchema().load(invalid_no_description_type)
-
-    invalid_description_type = {
-        "description": "A story on how Julio Cesar relates to Gladiator.",
-        "type": "Invalid",
-        "lang": "eng"
-    }
-    with pytest.raises(ValidationError):
-        data = DescriptionSchema().load(invalid_description_type)
-
-    invalid_lang = {
-        "description": "A story on how Julio Cesar relates to Gladiator.",
-        "type": "abstract",
-        "lang": "inv"
-    }
-    with pytest.raises(ValidationError):
-        data = DescriptionSchema().load(invalid_lang)
-
-
 def test_license():
     """Test license scehma."""
     valid_full = {
