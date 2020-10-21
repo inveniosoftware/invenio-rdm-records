@@ -89,32 +89,6 @@ def test_license():
         data = LicenseSchema().load(invalid_no_license)
 
 
-def test_subject():
-    """Test subject schema."""
-    valid_full = {
-        "subject": "Romans",
-        "identifier": "subj-1",
-        "scheme": "no-scheme"
-    }
-
-    data = SubjectSchema().load(valid_full)
-    assert data == valid_full
-
-    valid_minimal = {
-        "subject": "Romans"
-    }
-
-    data = SubjectSchema().load(valid_minimal)
-    assert data == valid_minimal
-
-    invalid_no_subject = {
-        "identifier": "subj-1",
-        "scheme": "no-scheme"
-    }
-    with pytest.raises(ValidationError):
-        data = SubjectSchema().load(invalid_no_subject)
-
-
 def test_date():
     """Test date schama."""
     valid_full = {
