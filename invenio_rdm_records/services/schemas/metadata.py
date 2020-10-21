@@ -435,7 +435,7 @@ class MetadataSchema(Schema):
     additional_titles = fields.List(fields.Nested(TitleSchema))
     publisher = SanitizedUnicode()
     publication_date = EDTFDateString(required=True)
-    # subjects = fields.List(fields.Nested(SubjectSchema))
+    subjects = fields.List(fields.Nested(SubjectSchema))
     contributors = fields.List(fields.Nested(ContributorSchema))
     # dates = fields.List(fields.Nested(DateSchema))
     # languages = ISOLangString()
