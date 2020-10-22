@@ -9,7 +9,6 @@
 """Record response serializers."""
 
 import json
-from functools import partial
 
 from flask_resources.serializers import JSONSerializer
 
@@ -21,87 +20,60 @@ class UIJSONSerializer(JSONSerializer):
 
     def _serialize_access_right(self, obj):
         """Inject ui config for `access_right` field."""
+        access_right_vocabulary = self._serialize_ui_options_from_vocabulary(
+            "access_right")
+        category_value = obj["access"]["access_right"]
         return dict(
             access_right=dict(
-                category=obj["access"]["access_right"]
+                category=category_value,
+                icon=access_right_vocabulary[category_value]['icon']
             ))
 
     def _serialize_ui_options_from_vocabulary(
-            self, vocabulary_name, top_bucket_key=None):
-        """Creates UI facet label options from RDM vocabularies.
+            self, vocabulary_name):
+        """Creates a flattened dictionary with the vocabulary data.
 
-        :params top_bucket_key: Key used for nested buckets to indicate
-                                the top level aggregation.
+        :params vocabulary_name: name of the vocabulary to be used
         """
-        ui_options = {}
+        flattened_vocabulary = {}
         vocabulary = Vocabularies.get_vocabulary(
             vocabulary_name).dump_options()
         if type(vocabulary) is dict:
-            ui_options[top_bucket_key] = {}
+            flattened_vocabulary = {}
             for key in vocabulary.keys():
                 for option in vocabulary[key]:
-                    ui_options[top_bucket_key][option['value']] = \
-                        str(option['text'])
+                    flattened_vocabulary[option['value']] = option
+
         else:
             for option in vocabulary:
-                ui_options[option['value']] = str(option['text'])
-        return ui_options
+                flattened_vocabulary[option['value']] = option
+        return flattened_vocabulary
 
-    def _set_bucket_label(self, labels_map, bucket):
-        """Set bucket label from config.
-
-        :params labels_map: Dict of transforming bucket values to labels.
-        :params bucket: Current aggregation bucket.
-        """
-        bucket_label = labels_map.get(bucket["key"])
-        if bucket_label:
-            bucket["label"] = bucket_label
-        if bucket.get("subtype"):
-            bucket["subtype"]["buckets"] = list(map(
-                partial(self._set_bucket_label, labels_map),
-                bucket["subtype"]["buckets"]))
-        return bucket
-
-    def _set_buckets_labels(self, label_map, buckets):
-        """Map buckets values to labels according to configuration.
-
-        :params labels_map: Dict of transforming bucket values to labels.
-        :params buckets: Current aggregation bucket list.
-        """
-        return list(map(
-                partial(self._set_bucket_label, label_map),
-                buckets))
-
-    def _serialize_agg(self, agg_obj, labels_map):
-        """Inject ui config for aggregation.
+    def _add_bucket_labels(self, agg_obj, vocabulary):
+        """Inject labels in the aggregation buckets.
 
         :params agg_obj: Current aggregation object.
-        :params labels_map: Dict of transforming bucket values to labels.
+        :params vocabulary: Dict with vocabulary data.
         """
-        if agg_obj:
-            agg_obj["buckets"] = self._set_buckets_labels(
-                labels_map, agg_obj["buckets"]
-            )
-
-    def _serialize_resource_type_agg(self, resource_type_agg):
-        """Inject ui config for `resource_type` aggregation."""
-        resource_type_labels = self._serialize_ui_options_from_vocabulary(
-            "resource_type", "type")
-        self._serialize_agg(resource_type_agg, resource_type_labels["type"])
-
-    def _serialize_access_right_agg(self, access_right_agg):
-        """Inject ui config for `access_right` aggregation."""
-        access_right_labels = self._serialize_ui_options_from_vocabulary(
-            "access_right")
-        self._serialize_agg(access_right_agg, access_right_labels)
+        buckets = agg_obj['buckets']
+        for bucket in buckets:
+            bucket['label'] = str(vocabulary.get(bucket['key'])['text'])
+            for key in bucket:
+                if isinstance(bucket[key], dict) and 'buckets' in bucket[key]:
+                    sub_bucket = bucket[key]
+                    self._add_bucket_labels(sub_bucket, vocabulary)
 
     def _serialize_aggregations(self, obj_list):
         """Inject ui config in aggregations."""
         aggregations = obj_list.get("aggregations")
         if aggregations:
-            self._serialize_access_right_agg(aggregations.get("access_right"))
-            self._serialize_resource_type_agg(
-                aggregations.get("resource_type"))
+            for aggregation_key in aggregations:
+                agg_vocabulary = self._serialize_ui_options_from_vocabulary(
+                    aggregation_key)
+                if not agg_vocabulary:
+                    continue
+                self._add_bucket_labels(
+                    aggregations[aggregation_key], agg_vocabulary)
 
     def serialize_obj_ui(self, obj):
         """Dump ui config for object."""
