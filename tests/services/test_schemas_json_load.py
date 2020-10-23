@@ -13,51 +13,11 @@ from marshmallow import ValidationError
 from marshmallow.fields import Bool, Integer, List
 
 from invenio_rdm_records.services.schemas.metadata import ContributorSchema, \
-    CreatorSchema, DateSchema, DescriptionSchema, InternalNoteSchema, \
-    LocationSchema, MetadataSchema, PointSchema, ReferenceSchema, \
-    RelatedIdentifierSchema, ResourceTypeSchema, SubjectSchema
+    CreatorSchema, DateSchema, DescriptionSchema, LocationSchema, \
+    MetadataSchema, PointSchema, ReferenceSchema, RelatedIdentifierSchema, \
+    ResourceTypeSchema, SubjectSchema
 from invenio_rdm_records.services.schemas.metadata_extensions import \
     MetadataExtensions
-
-
-def test_internal_note():
-    """Test internal note schema."""
-    valid_full = {
-        "user": "inveniouser",
-        "note": "RDM record",
-        "timestamp": "2020-02-01"
-    }
-    data = InternalNoteSchema().load(valid_full)
-    assert data == valid_full
-
-    invalid_no_user = {
-        "note": "RDM record",
-        "timestamp": "2020-02-01"
-    }
-    with pytest.raises(ValidationError):
-        data = InternalNoteSchema().load(invalid_no_user)
-
-    invalid_no_note = {
-        "user": "inveniouser",
-        "timestamp": "2020-02-01"
-    }
-    with pytest.raises(ValidationError):
-        data = InternalNoteSchema().load(invalid_no_note)
-
-    invalid_no_timestamp = {
-        "user": "inveniouser",
-        "note": "RDM record"
-    }
-    with pytest.raises(ValidationError):
-        data = InternalNoteSchema().load(invalid_no_timestamp)
-
-    invalid_timestamp = {
-        "user": "inveniouser",
-        "note": "RDM record",
-        "timestamp": "01/02/2020"
-    }
-    with pytest.raises(ValidationError):
-        data = InternalNoteSchema().load(invalid_timestamp)
 
 
 def test_references():

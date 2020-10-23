@@ -29,14 +29,6 @@ def _no_duplicates(value_list):
     return len(value_list) == len(set(str_list))
 
 
-class InternalNoteSchema(Schema):
-    """Internal note shema."""
-
-    user = SanitizedUnicode(required=True)
-    note = SanitizedUnicode(required=True)
-    timestamp = ISODateString(required=True)
-
-
 class DateSchema(Schema):
     """Schema for date intervals."""
 
@@ -405,12 +397,10 @@ class MetadataSchema(Schema):
 
     field_load_permissions = {
         # TODO: define "can_admin" action
-        # '_internal_notes': 'admin',
     }
 
     field_dump_permissions = {
         # TODO: define "can_admin" action
-        # '_internal_notes': 'admin',
     }
 
     class Meta:
