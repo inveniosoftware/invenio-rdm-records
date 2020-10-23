@@ -12,10 +12,8 @@ from invenio_records_rest.schemas.fields import DateString, SanitizedUnicode
 from marshmallow import ValidationError
 from marshmallow.fields import Bool, Integer, List
 
-from invenio_rdm_records.services.schemas.metadata import ContributorSchema, \
-    CreatorSchema, DateSchema, DescriptionSchema, LocationSchema, \
-    MetadataSchema, PointSchema, ReferenceSchema, RelatedIdentifierSchema, \
-    ResourceTypeSchema, SubjectSchema
+from invenio_rdm_records.services.schemas.metadata import LocationSchema, \
+    MetadataSchema, PointSchema
 from invenio_rdm_records.services.schemas.metadata_extensions import \
     MetadataExtensions
 
@@ -161,6 +159,7 @@ def test_extensions(app, minimal_record):
     )
 
 
+@pytest.mark.skip()
 def test_embargo_date(vocabulary_clear, minimal_record):
     # Test embargo validation
     minimal_record["embargo_date"] = "1000-01-01"
