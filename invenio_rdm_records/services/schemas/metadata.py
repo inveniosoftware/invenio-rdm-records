@@ -428,7 +428,7 @@ class MetadataSchema(Schema):
         validate=_not_blank(_('Size cannot be a blank string.'))))
     formats = fields.List(SanitizedUnicode(
         validate=_not_blank(_('Format cannot be a blank string.'))))
-    # version = SanitizedUnicode()
+    version = SanitizedUnicode()
     # rights = fields.List(fields.Nested(LicenseSchema))
     description = SanitizedUnicode(validate=validate.Length(min=3))
     additional_descriptions = fields.List(fields.Nested(DescriptionSchema))
