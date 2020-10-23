@@ -424,7 +424,8 @@ class MetadataSchema(Schema):
         validate=_no_duplicates,
         error=_('Invalid related identifiers cannot contain duplicates.')
     )
-    # sizes
+    sizes = fields.List(SanitizedUnicode(
+        validate=_not_blank(_('Size cannot be a blank string.'))))
     # formats
     # version = SanitizedUnicode()
     # rights = fields.List(fields.Nested(LicenseSchema))
