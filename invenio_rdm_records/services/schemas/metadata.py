@@ -360,6 +360,52 @@ class RelatedIdentifierSchema(Schema):
     resource_type = fields.Nested(ResourceTypeSchema)
 
 
+class FunderSchema(Schema):
+    """Funder schema."""
+
+    name = SanitizedUnicode(
+        required=True,
+        validate=_not_blank(_('Name cannot be blank.'))
+    )
+    identifier = SanitizedUnicode(
+        validate=_not_blank(_('Identifier cannot be blank.')))
+    scheme = SanitizedUnicode(
+        validate=_not_blank(_('Scheme cannot be blank.')))
+
+
+class AwardSchema(Schema):
+    """Award schema."""
+
+    title = SanitizedUnicode(
+        required=True,
+        validate=_not_blank(_('Name cannot be blank.'))
+    )
+    number = SanitizedUnicode(
+        required=True,
+        validate=_not_blank(_('Name cannot be blank.'))
+    )
+    identifier = SanitizedUnicode(
+        validate=_not_blank(_('Identifier cannot be blank.')))
+    scheme = SanitizedUnicode(
+        validate=_not_blank(_('Scheme cannot be blank.')))
+
+
+class FundingSchema(Schema):
+    """Funding schema."""
+
+    funder = fields.Nested(FunderSchema)
+    award = fields.Nested(AwardSchema)
+
+    @validates_schema
+    def validate_data(self, data, **kwargs):
+        """Validate either funder or award is present."""
+        funder = data.get('funder')
+        award = data.get('award')
+        if not funder and not award:
+            raise ValidationError(
+                {"funding": _("At least award or funder shold be present.")})
+
+
 class ReferenceSchema(Schema):
     """Reference schema."""
 
@@ -435,7 +481,7 @@ class MetadataSchema(Schema):
     description = SanitizedUnicode(validate=validate.Length(min=3))
     additional_descriptions = fields.List(fields.Nested(DescriptionSchema))
     # locations = fields.List(fields.Nested(LocationSchema))
-    # funding
+    funding = fields.List(fields.Nested(FundingSchema))
     references = fields.List(fields.Nested(ReferenceSchema))
 
     def dump_extensions(self, obj):
