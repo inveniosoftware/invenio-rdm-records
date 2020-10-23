@@ -23,6 +23,11 @@ from marshmallow_utils.fields import EDTFDateString, GenFunction, \
 from .utils import validate_entry
 
 
+def _no_duplicates(value_list):
+    str_list = [str(value) for value in value_list]
+    return len(value_list) == len(set(str_list))
+
+
 class InternalNoteSchema(Schema):
     """Internal note shema."""
 
@@ -335,7 +340,10 @@ class RelatedIdentifierSchema(Schema):
         "w3id"
     ]
 
-    identifier = SanitizedUnicode(required=True)
+    identifier = SanitizedUnicode(
+        required=True,
+        validate=_not_blank(_('Identifier cannot be blank.'))
+    )
     scheme = SanitizedUnicode(required=True, validate=validate.OneOf(
             choices=SCHEMES,
             error=_('Invalid related identifier scheme. ' +
@@ -411,8 +419,11 @@ class MetadataSchema(Schema):
     languages = fields.List(ISOLangString())
     # alternate identifiers
     identifiers = fields.List(fields.Nested(IdentifierSchema))
-    # related_identifiers = fields.List(
-    #     fields.Nested(RelatedIdentifierSchema))
+    related_identifiers = fields.List(
+        fields.Nested(RelatedIdentifierSchema),
+        validate=_no_duplicates,
+        error=_('Invalid related identifiers cannot contain duplicates.')
+    )
     # sizes
     # formats
     # version = SanitizedUnicode()
