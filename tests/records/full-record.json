@@ -118,12 +118,16 @@
       "lang": "eng"
     }],
     "locations": [{
-      "point": {
-        "lat": 1,
-        "lon": 2
+      "geometry": {
+        "type": "Point",
+        "coordinates": [6.05, 46.23333]
       },
-      "place": "home",
-      "description": "test"
+      "identifiers": {
+        "geonames": "2661235",
+        "tgn": "http://vocab.getty.edu/tgn/8703679"
+      },
+      "place": "CERN",
+      "description": "Invenio birth place."
     }],
     "funding": [{
       "funder": {

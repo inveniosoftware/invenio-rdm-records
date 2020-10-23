@@ -20,6 +20,7 @@ from marshmallow import INCLUDE, Schema, ValidationError, fields, post_load, \
     validate, validates, validates_schema
 from marshmallow_utils.fields import EDTFDateString, GenFunction, \
     ISODateString, ISOLangString, SanitizedUnicode
+from marshmallow_utils.schemas import GeometryObjectSchema
 
 from .utils import validate_entry
 
@@ -395,9 +396,20 @@ class PointSchema(Schema):
 class LocationSchema(Schema):
     """Location schema."""
 
-    point = fields.Nested(PointSchema)
-    place = SanitizedUnicode(required=True)
+    geometry = fields.Nested(GeometryObjectSchema)
+    place = SanitizedUnicode()
+    identifiers = fields.Dict()
     description = SanitizedUnicode()
+
+    @validates_schema
+    def validate_data(self, data, **kwargs):
+        """Validate identifier based on type."""
+        if not data.get('geometry') and not data.get('place') and \
+           not data.get('identifiers') and not data.get('description'):
+            raise ValidationError({
+                "locations": _("At least one of ['geometry', 'place', \
+                'identifiers', 'description'] shold be present.")
+            })
 
 
 class MetadataSchema(Schema):
@@ -442,6 +454,6 @@ class MetadataSchema(Schema):
     rights = fields.List(fields.Nested(RightsSchema))
     description = SanitizedUnicode(validate=validate.Length(min=3))
     additional_descriptions = fields.List(fields.Nested(DescriptionSchema))
-    # locations = fields.List(fields.Nested(LocationSchema))
+    locations = fields.List(fields.Nested(LocationSchema))
     funding = fields.List(fields.Nested(FundingSchema))
     references = fields.List(fields.Nested(ReferenceSchema))
