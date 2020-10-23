@@ -41,7 +41,8 @@
           </div>
         </div>
 
-        <h1>{{ metadata.titles[0].title }}</h1>
+        <h1>{{ metadata.title }}</h1>
+        {# TODO: How do we want to display metadata.additional_titles ? #}
         <p>{%- include "invenio_rdm_records/details/creators.html" %}</p>
         {%- if record.contributors %}
         <p>{%- include "invenio_rdm_records/details/contributors.html" %}</p>
