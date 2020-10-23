@@ -20,40 +20,6 @@ from invenio_rdm_records.services.schemas.metadata_extensions import \
     MetadataExtensions
 
 
-def test_references():
-    """Test references schema."""
-    valid_full = {
-        "reference": "Reference to something et al.",
-        "identifier": "9999.99988",
-        "scheme": "grid"
-    }
-
-    data = ReferenceSchema().load(valid_full)
-    assert data == valid_full
-
-    valid_minimal = {
-        "reference": "Reference to something et al."
-    }
-
-    data = ReferenceSchema().load(valid_minimal)
-    assert data == valid_minimal
-
-    invalid_no_reference = {
-        "identifier": "9999.99988",
-        "scheme": "grid"
-    }
-    with pytest.raises(ValidationError):
-        data = ReferenceSchema().load(invalid_no_reference)
-
-    invalid_scheme = {
-        "reference": "Reference to something et al.",
-        "identifier": "9999.99988",
-        "scheme": "Invalid"
-    }
-    with pytest.raises(ValidationError):
-        data = ReferenceSchema().load(invalid_scheme)
-
-
 def test_point():
     """Test point."""
     valid_full = {
