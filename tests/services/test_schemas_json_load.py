@@ -12,65 +12,9 @@ from invenio_records_rest.schemas.fields import DateString, SanitizedUnicode
 from marshmallow import ValidationError
 from marshmallow.fields import Bool, Integer, List
 
-from invenio_rdm_records.services.schemas.metadata import LocationSchema, \
-    MetadataSchema, PointSchema
+from invenio_rdm_records.services.schemas.metadata import MetadataSchema
 from invenio_rdm_records.services.schemas.metadata_extensions import \
     MetadataExtensions
-
-
-def test_point():
-    """Test point."""
-    valid_full = {
-        "lat": 41.902604,
-        "lon": 12.496189
-    }
-
-    data = PointSchema().load(valid_full)
-    assert data == valid_full
-
-    invalid_no_lat = {
-        "lon": 12.496189
-    }
-    with pytest.raises(ValidationError):
-        data = PointSchema().load(invalid_no_lat)
-
-    invalid_no_lon = {
-        "lat": 41.902604,
-    }
-    with pytest.raises(ValidationError):
-        data = PointSchema().load(invalid_no_lon)
-
-
-def test_location():
-    """Test location schema."""
-    valid_full = {
-        "point": {
-            "lat": 41.902604,
-            "lon": 12.496189
-        },
-        "place": "Rome",
-        "description": "Rome, from Romans"
-    }
-
-    data = LocationSchema().load(valid_full)
-    assert data == valid_full
-
-    valid_minimal = {
-        "place": "Rome",
-    }
-
-    data = LocationSchema().load(valid_minimal)
-    assert data == valid_minimal
-
-    invalid_no_place = {
-        "point": {
-            "lat": 41.902604,
-            "lon": 12.496189
-        },
-        "description": "Rome, from Romans"
-    }
-    with pytest.raises(ValidationError):
-        data = LocationSchema().load(invalid_no_place)
 
 
 @pytest.mark.skip()

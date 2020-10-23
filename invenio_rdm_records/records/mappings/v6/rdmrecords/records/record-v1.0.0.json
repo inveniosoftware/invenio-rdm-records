@@ -177,21 +177,24 @@
             },
             "locations" : {
               "properties" : {
-                "description" : {
-                  "type" : "text"
+                "geometry": {
+                  "properties" : {
+                    "type" : {
+                      "type" : "keyword"
+                    },
+                    "coordinates" : {
+                      "type" : "float"
+                    }
+                  }
                 },
                 "place" : {
                   "type" : "text"
                 },
-                "point" : {
-                  "properties" : {
-                    "lat" : {
-                      "type" : "double"
-                    },
-                    "lon" : {
-                      "type" : "double"
-                    }
-                  }
+                "identifiers" : {
+                  "type" : "object"
+                },
+                "description" : {
+                  "type" : "text"
                 }
               }
             },

@@ -408,23 +408,39 @@ def test_additional_descriptions(appctx):
 
 
 def test_locations(appctx):
-    """Test locations property."""
-    p = {"lat": 1, "lon": 1}
-    assert validates_meta({"locations": [
-        {"point": p, "place": "home", "description": "cozy place"}
-    ]})
+    """Test locations property.
+
+    Note: point bounds (i.e. +-90) are checked at Marshmallow schema level.
+    """
+    assert validates_meta({"locations": [{
+        "geometry": {"type": "Point", "coordinates": [6.05, 46.23333]},
+    }]})
+    assert validates_meta({"locations": [{
+        "identifiers": {
+            "geonames": "2661235",
+            "tgn": "http://vocab.getty.edu/tgn/8703679"
+        },
+    }]})
+    assert validates_meta({"locations": [{
+        "place": "CERN"
+    }]})
+    assert validates_meta({"locations": [{
+        "description": "Invenio birth place."
+    }]})
+    assert validates_meta({"locations": [{
+        "geometry": {"type": "Point", "coordinates": [6.05, 46.23333]},
+        "identifiers": {
+            "geonames": "2661235",
+            "tgn": "http://vocab.getty.edu/tgn/8703679"
+        },
+        "place": "CERN",
+        "description": "Invenio birth place."
+    }]})
     # Additional props
-    assert fails_meta({"locations": [{"point": p, "invalid": "home"}]})
-    p["invalid"] = 2
-    assert fails_meta({"locations": [{"point": p}]})
-    # Invalid lat/lon
-    assert fails_meta({"locations": [{"point": {"lat": -90.1, "lon": 1}}]})
-    assert fails_meta({"locations": [{"point": {"lat": 90.1, "lon": 1}}]})
-    assert fails_meta({"locations": [{"point": {"lat": 1, "lon": 180.1}}]})
-    assert fails_meta({"locations": [{"point": {"lat": 1, "lon": -180.1}}]})
-    assert validates_meta({"locations": [{"point": {"lat": 90, "lon": 180}}]})
-    assert validates_meta({
-        "locations": [{"point": {"lat": -90, "lon": -180}}]})
+    assert fails_meta({"locations": [{
+        "place": "CERN",
+        "invalid": "home"
+    }]})
 
 
 def test_funding(appctx):

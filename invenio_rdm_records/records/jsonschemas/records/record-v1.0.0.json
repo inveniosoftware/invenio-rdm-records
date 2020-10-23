@@ -471,14 +471,18 @@
             "type": "object",
             "additionalProperties": false,
             "properties": {
-              "point": {
+              "geometry": {
                 "type": "object",
-                "additionalProperties": false,
                 "properties": {
-                  "lat": {"$ref": "#/definitions/latitude"},
-                  "lon": {"$ref": "#/definitions/longitude"}
+                  "type": {
+                    "type": "string"
+                  },
+                  "coordinates": {
+                    "type": "array"
+                  }
                 }
               },
+              "identifiers": {"$ref": "#/definitions/identifiers"},
               "place": {
                 "description": "Place of the location",
                 "type": "string"

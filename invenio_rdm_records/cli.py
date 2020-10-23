@@ -176,6 +176,30 @@ def create_fake_record():
                     "scheme": "openaire"
                 }
             }],
+            "locations": [{
+                'geometry': {
+                    'type': 'Point',
+                    'coordinates': [
+                        float(fake.latitude()), float(fake.longitude())
+                    ]
+                },
+                "place": fake.location_on_land()[2],
+                "description": "Random place on land...",
+                'identifiers': {
+                    'wikidata': '12345abcde',
+                    'geonames': '12345abcde'
+                }
+            }, {
+                'geometry': {
+                    'type': 'MultiPoint',
+                    'coordinates': [
+                        [float(fake.latitude()), float(fake.longitude())],
+                        [float(fake.latitude()), float(fake.longitude())]
+                    ]
+                },
+                "place": fake.location_on_land()[2],
+            }
+            ],
             "references": [{
                 "reference": "Reference to something et al.",
                 "identifier": "9999.99988",
