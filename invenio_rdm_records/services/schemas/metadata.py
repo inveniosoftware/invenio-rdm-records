@@ -436,7 +436,7 @@ class MetadataSchema(Schema):
     additional_descriptions = fields.List(fields.Nested(DescriptionSchema))
     # locations = fields.List(fields.Nested(LocationSchema))
     # funding
-    # references = fields.List(fields.Nested(ReferenceSchema))
+    references = fields.List(fields.Nested(ReferenceSchema))
 
     def dump_extensions(self, obj):
         """Dumps the extensions value.
