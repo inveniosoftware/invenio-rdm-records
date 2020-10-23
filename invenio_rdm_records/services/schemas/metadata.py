@@ -483,26 +483,3 @@ class MetadataSchema(Schema):
     # locations = fields.List(fields.Nested(LocationSchema))
     funding = fields.List(fields.Nested(FundingSchema))
     references = fields.List(fields.Nested(ReferenceSchema))
-
-    def dump_extensions(self, obj):
-        """Dumps the extensions value.
-
-        :params obj: invenio_records_files.api.Record instance
-        """
-        current_app_metadata_extensions = (
-            current_app.extensions['invenio-rdm-records'].metadata_extensions
-        )
-        ExtensionSchema = current_app_metadata_extensions.to_schema()
-        return ExtensionSchema().dump(obj.get('extensions', {}))
-
-    def load_extensions(self, value):
-        """Loads the 'extensions' field.
-
-        :params value: content of the input's 'extensions' field
-        """
-        current_app_metadata_extensions = (
-            current_app.extensions['invenio-rdm-records'].metadata_extensions
-        )
-        ExtensionSchema = current_app_metadata_extensions.to_schema()
-
-        return ExtensionSchema().load(value)
