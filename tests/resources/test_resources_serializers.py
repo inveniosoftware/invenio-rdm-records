@@ -15,7 +15,7 @@ from invenio_rdm_records.resources.serializers import UIJSONSerializer
 
 def test_ui_serializer(minimal_record):
     """Test UI serializer."""
-    expected_data = {"access_right":  {"category": "open"}}
+    expected_data = {"access_right": {"category": "open", "icon": "lock open"}}
     serialized_record = UIJSONSerializer().serialize_object(minimal_record)
     assert json.loads(serialized_record)['ui'] == expected_data
     serialized_records = UIJSONSerializer().serialize_object_list(
