@@ -14,9 +14,8 @@ from marshmallow.fields import Bool, Integer, List
 
 from invenio_rdm_records.services.schemas.metadata import ContributorSchema, \
     CreatorSchema, DateSchema, DescriptionSchema, InternalNoteSchema, \
-    LicenseSchema, LocationSchema, MetadataSchema, PointSchema, \
-    ReferenceSchema, RelatedIdentifierSchema, ResourceTypeSchema, \
-    SubjectSchema
+    LocationSchema, MetadataSchema, PointSchema, ReferenceSchema, \
+    RelatedIdentifierSchema, ResourceTypeSchema, SubjectSchema
 from invenio_rdm_records.services.schemas.metadata_extensions import \
     MetadataExtensions
 
@@ -59,34 +58,6 @@ def test_internal_note():
     }
     with pytest.raises(ValidationError):
         data = InternalNoteSchema().load(invalid_timestamp)
-
-
-def test_license():
-    """Test license scehma."""
-    valid_full = {
-        "license": "Copyright Maximo Decimo Meridio 2020. Long statement",
-        "uri": "https://opensource.org/licenses/BSD-3-Clause",
-        "identifier": "BSD-3",
-        "scheme": "BSD-3"
-    }
-
-    data = LicenseSchema().load(valid_full)
-    assert data == valid_full
-
-    valid_minimal = {
-        "license": "Copyright Maximo Decimo Meridio 2020. Long statement"
-    }
-
-    data = LicenseSchema().load(valid_minimal)
-    assert data == valid_minimal
-
-    invalid_no_license = {
-        "uri": "https://opensource.org/licenses/BSD-3-Clause",
-        "identifier": "BSD-3",
-        "scheme": "BSD-3"
-    }
-    with pytest.raises(ValidationError):
-        data = LicenseSchema().load(invalid_no_license)
 
 
 def test_references():
