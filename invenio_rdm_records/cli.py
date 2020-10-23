@@ -132,7 +132,7 @@ def create_fake_record():
             }],
             "version": "v0.0.1",
             "rights": [{
-                "license": "Berkeley Software Distribution 3",
+                "rights": "Berkeley Software Distribution 3",
                 "uri": "https://opensource.org/licenses/BSD-3-Clause",
                 "identifier": "BSD-3",
                 "scheme": "BSD-3",

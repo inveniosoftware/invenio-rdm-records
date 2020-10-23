@@ -9,6 +9,7 @@
 """RDM record schemas."""
 
 import time
+from urllib import parse
 
 import arrow
 import idutils
@@ -219,11 +220,22 @@ class DescriptionSchema(Schema):
     lang = ISOLangString()
 
 
-class LicenseSchema(Schema):
+def _is_uri(uri):
+    try:
+        parse.urlparse(uri)
+        return True
+    except AttributeError:
+        return False
+
+
+class RightsSchema(Schema):
     """License schema."""
 
-    license = SanitizedUnicode(required=True)
-    uri = SanitizedUnicode()
+    rights = SanitizedUnicode(required=True)
+    uri = SanitizedUnicode(
+        validate=_is_uri,
+        error=_('Wrong URI format. Should follow RFC 3986.')
+    )
     identifier = SanitizedUnicode()
     scheme = SanitizedUnicode()
 
@@ -429,7 +441,7 @@ class MetadataSchema(Schema):
     formats = fields.List(SanitizedUnicode(
         validate=_not_blank(_('Format cannot be a blank string.'))))
     version = SanitizedUnicode()
-    # rights = fields.List(fields.Nested(LicenseSchema))
+    rights = fields.List(fields.Nested(RightsSchema))
     description = SanitizedUnicode(validate=validate.Length(min=3))
     additional_descriptions = fields.List(fields.Nested(DescriptionSchema))
     # locations = fields.List(fields.Nested(LocationSchema))
