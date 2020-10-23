@@ -408,7 +408,7 @@ class MetadataSchema(Schema):
     subjects = fields.List(fields.Nested(SubjectSchema))
     contributors = fields.List(fields.Nested(ContributorSchema))
     dates = fields.List(fields.Nested(DateSchema))
-    # languages = ISOLangString()
+    languages = fields.List(ISOLangString())
     # alternate identifiers
     identifiers = fields.List(fields.Nested(IdentifierSchema))
     # related_identifiers = fields.List(
