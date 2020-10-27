@@ -30,7 +30,9 @@
             <div class="left floated left aligned column">
               <span class="ui label teal"
                 title="Publication date">{{ metadata.publication_date|to_date|format_date(format='long') }}</span>
+              {%- if metadata.version %}
               <span class="label record-version"> | Version {{ metadata.version }}</span>
+              {% endif %}
             </div>
             <div class="right floated right aligned column">
               <span class="ui label grey">{{ metadata.resource_type | vocabulary_title('resource_type') }}</span>
