@@ -5,7 +5,8 @@
   Invenio RDM Records is free software; you can redistribute it and/or modify
   it under the terms of the MIT License; see LICENSE file for more details.
 #}
-<dt class="record-info-title">{{ _('Metrics')}}:</dt>
+<div class="ui segment rdm-sidebar">
+<dt class="record-info-title"><b>{{ _('Metrics')}}</b></dt>
 <hr class="thin-line">
 </hr>
 <dd>
@@ -35,8 +36,8 @@
       <div class="ui accordion">
         <div class="title centered">
           <a style="cursor: pointer;" class="dropdown">
-            <span class="up">See more detail...</span>
-            <span class="down">See less detail...</span>
+            <span class="up">Show details<i class="angle right icon"></i></span>
+            <span class="down">Hide details<i class="angle down icon"></i></span>
           </a>
         </div>
         <div class="content">
@@ -98,7 +99,11 @@
     data-uuid="2a8761bb-6e07-cad2-ff33-e6d1f68afaed"></div>
 </dd>
 
-<dt class="record-info-title">{{ _('Versions')}}:</dt>
+</div>
+
+<div class="ui segment rdm-sidebar">
+
+<dt class="record-info-title"><b>{{ _('Versions')}}</b></dt>
 <hr class="thin-line">
 </hr>
 <dd>
@@ -121,21 +126,24 @@
   </small>
 </dd>
 
+</div>
 
-<dt class="record-info-title">{{ _('Export')}}:</dt>
+<div class="ui segment rdm-sidebar">
+
+<dt class="record-info-title"><b>{{ _('Export')}}</b></dt>
 <hr class="thin-line">
 </hr>
 <dd>
-  <ul class="list-inline">
-    <li><a href="/coming-soon">BibTeX</a></li>
-    <li><a href="/coming-soon">CSL</a></li>
-    <li><a href="/coming-soon">DataCite</a></li>
-    <li><a href="/coming-soon">Dublin Core</a></li>
-    <li><a href="/coming-soon">DCAT</a></li>
-    <li><a href="/coming-soon">JSON</a></li>
-    <li><a href="/coming-soon">JSON-LD</a></li>
-    <li><a href="/coming-soon">GeoJSON</a></li>
-    <li><a href="/coming-soon">MARCXML</a></li>
-    <li><a href="/coming-soon"><i class="fa fa-external-link"></i> Mendeley</a></li>
-  </ul>
+  <a href="/coming-soon">BibTeX</a>
+  <a href="/coming-soon">CSL</a>
+  <a href="/coming-soon">DataCite</a>
+  <a href="/coming-soon">Dublin Core</a>
+  <a href="/coming-soon">DCAT</a>
+  <a href="/coming-soon">JSON</a>
+  <a href="/coming-soon">JSON-LD</a>
+  <a href="/coming-soon">GeoJSON</a>
+  <a href="/coming-soon">MARCXML</a>
+  <a href="/coming-soon"><i class="fa fa-external-link"></i> Mendeley</a>
 </dd>
+
+</div>
