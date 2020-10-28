@@ -7,7 +7,7 @@
 #}
 
 
-<dt class="record-info-title">{{ _('Description')}}:</dt>
+<dt class="record-info-title"><b>{{ _('Description')}}</b></dt>
 <dd>
-  <em>{{ metadata.get('descriptions', [{'description': 'No description'}])[0].description | safe }}</em>
+  {{ metadata.get('descriptions', [{'description': 'No description'}])[0].description | safe }}
 </dd>
