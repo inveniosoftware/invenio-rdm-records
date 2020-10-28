@@ -29,51 +29,6 @@ def _no_duplicates(value_list):
     return len(value_list) == len(set(str_list))
 
 
-class DateSchema(Schema):
-    """Schema for date intervals."""
-
-    DATE_TYPES = [
-        "accepted",
-        "available",
-        "copyrighted",
-        "collected",
-        "created",
-        "issued",
-        "submitted",
-        "updated",
-        "valid",
-        "withdrawn",
-        "other"
-    ]
-
-    start = ISODateString()
-    end = ISODateString()
-    type = fields.Str(required=True, validate=validate.OneOf(
-            choices=DATE_TYPES,
-            error=_('Invalid date type. {input} not one of {choices}.')
-        ))
-    description = fields.Str()
-
-    @validates_schema
-    def validate_dates(self, data, **kwargs):
-        """Validate that start date is before the corresponding end date."""
-        start = arrow.get(data.get('start'), 'YYYY-MM-DD').date() \
-            if data.get('start') else None
-        end = arrow.get(data.get('end'), 'YYYY-MM-DD').date() \
-            if data.get('end') else None
-
-        if not start and not end:
-            raise ValidationError(
-                _('There must be at least one date.'),
-                field_names=['dates']
-            )
-        if start and end and start > end:
-            raise ValidationError(
-                _('"start" date must be before "end" date.'),
-                field_names=['dates']
-            )
-
-
 class AffiliationSchema(Schema):
     """Affiliation of a creator/contributor."""
 
