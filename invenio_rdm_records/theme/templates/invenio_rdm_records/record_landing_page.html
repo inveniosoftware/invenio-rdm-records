@@ -35,7 +35,7 @@
               {% endif %}
             </div>
             <div class="right floated right aligned column">
-              <span class="ui label grey">{{ metadata.resource_type | vocabulary_title('resource_type') }}</span>
+              <span class="ui label grey">{{ metadata.resource_type | vocabulary_subtitle('resource_type') }}</span>
               <span class="ui label access-right {{ access_right_category }}">
                 {{ access | vocabulary_title('access_right') }}
               </span>
