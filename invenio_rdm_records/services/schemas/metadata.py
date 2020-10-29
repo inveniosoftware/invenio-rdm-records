@@ -61,10 +61,17 @@ class CreatorSchema(Schema):
     #       current mock-up doesn't have `name` field, so there is assumed
     #       work on the front-end to fill this value.
     name = SanitizedUnicode(required=True)
-    type = SanitizedUnicode(validate=validate.OneOf(
-                choices=NAMES,
-                error=_(f'Invalid value. Choose one of {NAMES}.')
-            ))
+    type = SanitizedUnicode(
+        required=True,
+        validate=validate.OneOf(
+            choices=NAMES,
+            error=_(f'Invalid value. Choose one of {NAMES}.')
+        ),
+        error_messages={
+            # NOTE: [] needed to mirror above error message
+            "required": [_(f'Invalid value. Choose one of {NAMES}.')]
+        }
+    )
     given_name = SanitizedUnicode()
     family_name = SanitizedUnicode()
     identifiers = fields.Dict()

@@ -84,6 +84,19 @@ def test_creator_invalid_no_name():
     )
 
 
+def test_creator_invalid_no_type():
+    invalid_no_type = {
+        "name": "Julio Cesar",
+    }
+
+    assert_raises_messages(
+        lambda: CreatorSchema().load(invalid_no_type),
+        {'type': [
+            "Invalid value. Choose one of ['organizational', 'personal']."
+        ]}
+    )
+
+
 def test_creator_invalid_type():
     invalid_type = {
         "name": "Julio Cesar",
