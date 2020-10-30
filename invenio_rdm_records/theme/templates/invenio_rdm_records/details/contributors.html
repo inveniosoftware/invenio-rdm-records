@@ -7,9 +7,6 @@
 #}
 {%- from "invenio_rdm_records/details/list_entities.html" import list_entities %}
 
-<div class="entities-title">
-  <b><h3>Contributors:</h3></b>
-</div>
 {%- for group in metadata.contributors|groupby('role')%}
 <h4><b>{{group.grouper|contributortype_title}}(s)</b></h4>
 {{ list_entities(group.list) }}

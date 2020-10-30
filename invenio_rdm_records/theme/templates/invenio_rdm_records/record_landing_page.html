@@ -46,9 +46,7 @@
         <h1>{{ metadata.title }}</h1>
         {# TODO: How do we want to display metadata.additional_titles ? #}
         <p>{%- include "invenio_rdm_records/details/creators.html" %}</p>
-        {%- if record.contributors %}
         <p>{%- include "invenio_rdm_records/details/contributors.html" %}</p>
-        {%- endif %}
 
         {%- include "invenio_rdm_records/details/keywords.html" %}
         {%- include "invenio_rdm_records/details/description.html" %}
