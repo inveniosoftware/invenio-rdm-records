@@ -21,11 +21,18 @@
     {# if no identifiers: distinguish btw people and organizations #}
     {%- elif entity.type == "organizational" %}
     <i class="group icon"></i>
-    {%- else %}
-    <i class="user icon"></i>
     {%- endif %}
 
     <span class="text-muted" {% if entity.affiliations and entity.affiliations[0] %}data-toggle="tooltip"
       title="{{entity.affiliations[0].name}}" {% endif %}>{{entity.name}}</span>
+
   {% endfor %}
+
+{%- endmacro %}
+
+{% macro list_affiliations(entities) %}
+  {% for entity in entities %}
+    <div> {{entity.affiliations[0].name}}</div><br />
+  {% endfor %}
+
 {%- endmacro %}
