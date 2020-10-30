@@ -10,13 +10,28 @@
 
 import json
 
+import arrow
+from flask_babelex import format_date
 from flask_resources.serializers import JSONSerializer
+from marshmallow_utils.fields import LocalizedEDTFDateString
 
 from invenio_rdm_records.vocabularies import Vocabularies
 
 
 class UIJSONSerializer(JSONSerializer):
     """UI JSON serializer implementation."""
+
+    def _serialize_obj_dates(self, obj):
+        """Serializes objects dates to localized ones."""
+        localization_serializer = LocalizedEDTFDateString()
+        obj['ui']['publication_date_l10n'] = \
+            localization_serializer.serialize(
+                attr="metadata.publication_date",
+                obj=obj
+            )
+        if obj.get('updated'):
+            obj['ui']['updated_date_l10n'] = format_date(
+                    arrow.get(obj['updated']).datetime, format='long')
 
     def _serialize_access_right(self, obj):
         """Inject ui config for `access_right` field."""
@@ -26,7 +41,19 @@ class UIJSONSerializer(JSONSerializer):
         return dict(
             access_right=dict(
                 category=category_value,
-                icon=access_right_vocabulary[category_value]['icon']
+                icon=access_right_vocabulary[category_value]['icon'],
+                title=str(access_right_vocabulary[category_value]['text'])
+            ))
+
+    def _serialize_resource_type(self, obj):
+        """Inject ui config for `resource_type` field."""
+        resource_types_vocabulary = Vocabularies.get_vocabulary(
+            'resource_type')
+        title = resource_types_vocabulary.get_title_by_dict(
+            obj["metadata"]["resource_type"])
+        return dict(
+            resource_type=dict(
+                title=str(title)
             ))
 
     def _serialize_ui_options_from_vocabulary(
@@ -43,7 +70,6 @@ class UIJSONSerializer(JSONSerializer):
             for key in vocabulary.keys():
                 for option in vocabulary[key]:
                     flattened_vocabulary[option['value']] = option
-
         else:
             for option in vocabulary:
                 flattened_vocabulary[option['value']] = option
@@ -75,13 +101,15 @@ class UIJSONSerializer(JSONSerializer):
                 self._add_bucket_labels(
                     aggregations[aggregation_key], agg_vocabulary)
 
-    def serialize_obj_ui(self, obj):
+    def _serialize_obj_ui(self, obj):
         """Dump ui config for object."""
         obj.setdefault('ui', {}).update(self._serialize_access_right(obj))
+        obj['ui'].update(self._serialize_resource_type(obj))
 
     def serialize_object(self, obj, response_ctx=None, *args, **kwargs):
         """Dump the object into a json string."""
-        self.serialize_obj_ui(obj)
+        self._serialize_obj_ui(obj)
+        self._serialize_obj_dates(obj)
         return json.dumps(obj)
 
     def serialize_object_list(
@@ -89,5 +117,6 @@ class UIJSONSerializer(JSONSerializer):
         """Dump the object list into a json string."""
         self._serialize_aggregations(obj_list)
         for obj in obj_list["hits"]["hits"]:
-            self.serialize_obj_ui(obj)
+            self._serialize_obj_ui(obj)
+            self._serialize_obj_dates(obj)
         return json.dumps(obj_list)

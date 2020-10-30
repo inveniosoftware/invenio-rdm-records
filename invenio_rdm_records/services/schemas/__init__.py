@@ -14,7 +14,6 @@ from marshmallow import EXCLUDE, INCLUDE, Schema, fields, missing
 from .access import AccessSchema
 from .metadata import MetadataSchema
 from .pids import PIDSchema
-from .ui import UISchema
 
 
 # NOTE: Use this one for system fields only
@@ -63,7 +62,6 @@ class RDMRecordSchema(RecordSchema):
     created = fields.Str(dump_only=True)
     updated = fields.Str(dump_only=True)
     revision = fields.Integer(dump_only=True)
-    ui = NestedAttribute(UISchema, attribute="metadata", dump_only=True)
 
     # communities = NestedAttribute(CommunitiesSchema)
     # stats = NestedAttribute(StatsSchema, dump_only=True)
