@@ -8,12 +8,13 @@
 """DataCite-based data model for Invenio."""
 
 import calendar
-from datetime import date
 
+from arrow import Arrow
 from edtf import parse_edtf
 from edtf.parser.edtf_exceptions import EDTFParseException
 from invenio_records.dictutils import dict_lookup, parse_lookup_key
 from invenio_records.dumpers import ElasticsearchDumperExt
+from pytz import utc
 
 
 class EDTFDumperExt(ElasticsearchDumperExt):
@@ -41,10 +42,12 @@ class EDTFDumperExt(ElasticsearchDumperExt):
             parent_data = dict_lookup(data, self.keys, parent=True)
 
             pd = parse_edtf(parent_data[self.key])
-            parent_data[f"{self.key}_start"] = date.fromtimestamp(
-                calendar.timegm(pd.lower_strict())).isoformat()
-            parent_data[f"{self.key}_end"] = date.fromtimestamp(
-                calendar.timegm(pd.upper_strict())).isoformat()
+            parent_data[f"{self.key}_start"] = Arrow.fromtimestamp(
+                calendar.timegm(pd.lower_strict()), tzinfo=utc
+                ).date().isoformat()
+            parent_data[f"{self.key}_end"] = Arrow.fromtimestamp(
+                calendar.timegm(pd.upper_strict()), tzinfo=utc
+                ).date().isoformat()
         except (KeyError, EDTFParseException):
             # The field does not exists or had wrong data
             return data  # FIXME: should log this in debug mode?
