@@ -61,6 +61,7 @@ setup_requires = [
 ]
 
 install_requires = [
+    'arrow>=0.17.0',
     'CairoSVG>=1.0.20',
     'Faker>=2.0.3',
     'ftfy>=4.4.3,<5.0.0',
@@ -77,6 +78,7 @@ install_requires = [
     'marshmallow-utils>=0.2.2,<0.3.0',
     # until fix in invenio-previewer is released
     'nbconvert[execute]>=4.1.0,<6.0.0',
+    'pytz>=2020.4',
     # TODO: Get from invenio-base
     'six>=1.12.0'  # Needed to pass CI tests
 ]
