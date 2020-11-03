@@ -8,23 +8,21 @@
 
 {% macro list_entities(entities) %}
   {% for entity in entities %}
-    {# TODO: Revisit when more than ORCiD accepted #}
     {%- if "orcid" in entity.identifiers %}
-      <a href="{{ entity.identifiers['orcid']|pid_url('orcid') }}">
-        <img class="inline-orcid" src="{{ url_for('static', filename='images/orcid.svg') }}" />
-      </a>
+    <a href="{{ entity.identifiers['orcid']|pid_url('orcid') }}">
+      <img class="inline-orcid" src="{{ url_for('static', filename='images/orcid.svg') }}" />
+    </a>
     {%- elif "ror" in entity.identifiers %}
-      {# TODO: Use ROR icon when they come up with one #}
-      <a href="{{ entity.identifiers['ror']|pid_url('ror') }}">
-        <i class="building outline icon"></i>
-      </a>
+    <a href="{{ entity.identifiers['ror']|pid_url('ror') }}">
+      <i class="building outline icon"></i>
+    </a>
     {# if no identifiers: distinguish btw people and organizations #}
     {%- elif entity.type == "organizational" %}
     <i class="group icon"></i>
     {%- endif %}
 
     <span class="text-muted" {% if entity.affiliations and entity.affiliations[0] %}data-toggle="tooltip"
-      title="{{entity.affiliations[0].name}}" {% endif %}>{{entity.name}}</span>
+      title="{{entity.affiliations[0].name}}" {% endif %}>{{entity.name}}{{ ", " if not loop.last }}</span>
 
   {% endfor %}
 

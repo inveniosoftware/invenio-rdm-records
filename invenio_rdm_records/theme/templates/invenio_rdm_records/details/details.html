@@ -1,0 +1,29 @@
+{#
+  Copyright (C) 2020 CERN.
+  Copyright (C) 2020 Northwestern University.
+
+  Invenio RDM Records is free software; you can redistribute it and/or modify
+  it under the terms of the MIT License; see LICENSE file for more details.
+#}
+
+
+{%- from "invenio_rdm_records/macros/detail.html" import show_detail %}
+
+<dt class="record-info-title"><b>{{ _('Details')}}</b></dt>
+<hr class="thin-line"></hr>
+<dd>
+  {{ show_detail(_('Resource type'), metadata.resource_type.type) }}
+  {{ show_detail(_('Publication date'), record.ui.publication_date_l10n ) }}
+  {{ show_detail(_('Publisher'), metadata.publisher) }}
+  {{ show_detail(_('Additional titles'), metadata.additional_titles) }}
+  {{ show_detail(_('Additional descriptions'), metadata.additional_descriptions) }}
+  {{ show_detail(_('Dates'), metadata.dates) }}
+  {{ show_detail(_('Formats'), metadata.formats) }}
+  {{ show_detail(_('Sizes'), metadata.sizes) }}
+  {{ show_detail(_('Rights'), metadata.rights) }}
+  {{ show_detail(_('Funding'), metadata.funding) }}
+  {{ show_detail(_('Related identifiers'), metadata.related_identifiers) }}
+  {{ show_detail(_('References'), metadata.references) }}
+</dd>
+<hr class="thin-line"></hr>
+

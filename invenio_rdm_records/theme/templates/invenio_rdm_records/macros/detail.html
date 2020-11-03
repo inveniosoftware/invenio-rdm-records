@@ -1,0 +1,19 @@
+{#
+  Copyright (C) 2020 CERN.
+
+  Invenio RDM Records is free software; you can redistribute it and/or modify
+  it under the terms of the MIT License; see LICENSE file for more details.
+#}
+
+{% macro show_detail(title, value) %}
+<div class="ui relaxed grid">
+  <div class="two column row">
+    <div class="six wide column">
+      <p class="record-info-title"><b>{{ title }}</b></p>
+    </div>
+    <div class="ten wide column">
+      {{ value }}
+    </div>
+  </div>
+</div>
+{%- endmacro %}

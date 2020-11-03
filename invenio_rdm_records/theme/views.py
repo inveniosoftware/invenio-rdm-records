@@ -12,7 +12,6 @@ The sole purpose of this blueprint is to ensure that Invenio can find the
 templates and static files located in the folders of the same names next to
 this file.
 """
-
 from operator import itemgetter
 from os.path import splitext
 
@@ -24,6 +23,7 @@ from flask_babelex import format_date as babel_format_date
 from invenio_previewer.views import is_previewable
 from invenio_records_permissions.policies import get_record_permission_policy
 
+from ..resources.serializers import UIJSONSerializer
 from ..utils import is_doi_locally_managed
 from ..vocabularies import Vocabularies
 
@@ -39,42 +39,6 @@ blueprint = Blueprint(
 def coming_soon():
     """Route to display on soon-to-come features."""
     return render_template('invenio_rdm_records/coming_soon_page.html')
-
-
-@blueprint.app_template_filter('to_date')
-def to_date(date_string):
-    """Return a Date object from a passed date string.
-
-    Typically used as follows:
-
-        ```jinja2
-        {{ date_string | to_date | date_format("long") }}
-        ```
-    """
-    assert isinstance(date_string, str)
-    date = ""
-    try:
-        date = arrow.get(date_string).date()
-    except ParserError:
-        date = date_string
-    return date
-
-
-@blueprint.app_template_filter('format_date')
-def format_date(date, format):
-    """Return a formatted Date string.
-
-    If the passed date is a string then it returns it
-
-    Typically used as follows:
-
-        ```jinja2
-        {{ date | format_date("long") }}
-        ```
-    """
-    if isinstance(date, str):
-        return date
-    return babel_format_date(date=date, format=format)
 
 
 @blueprint.app_template_filter()
@@ -106,13 +70,6 @@ def can_list_files(record):
     """
     PermissionPolicy = get_record_permission_policy()
     return PermissionPolicy(action='read_files', record=record).can()
-
-
-@blueprint.app_template_filter()
-def contributortype_title(value):
-    """Get object type."""
-    return current_app.config.get('RECORD_CONTRIBUTOR_TYPES_LABELS', {}).get(
-        value, value)
 
 
 @blueprint.app_template_filter('pid_url')
@@ -148,8 +105,14 @@ def doi_locally_managed(doi):
 
 
 @blueprint.app_template_filter('vocabulary_title')
-def vocabulary_title(dict_key, vocabulary_key):
-    """Returns formatted vocabulary-corresponding human-readable string."""
+def vocabulary_title(dict_key, vocabulary_key, alt_key=None):
+    """Returns formatted vocabulary-corresponding human-readable string.
+
+    In some cases the dict needs to be reconstructed. `alt_key` will be the
+    key while `dict_key` will become the value.
+    """
+    if alt_key:
+        dict_key = {alt_key: dict_key}
     vocabulary = Vocabularies.get_vocabulary(vocabulary_key)
     return vocabulary.get_title_by_dict(dict_key) if vocabulary else ""
 
@@ -160,3 +123,11 @@ def vocabulary_subtitle(dict_key, vocabulary_key):
     vocabulary = Vocabularies.get_vocabulary(vocabulary_key)
     return vocabulary.get_title_by_dict(dict_key).split('/')[1].strip() \
         if vocabulary else ""
+
+
+@blueprint.app_template_filter('serialize_ui')
+def serialize_ui(record):
+    """Returns the UI serialization of a record."""
+    serializer = UIJSONSerializer()
+    # We need a dict not a string
+    return serializer.serialize_to_dict(record)

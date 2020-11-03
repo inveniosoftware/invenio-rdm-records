@@ -13,7 +13,7 @@ import datetime
 import pytest
 
 from invenio_rdm_records.theme.views import doi_identifier, \
-    doi_locally_managed, to_date, vocabulary_title
+    doi_locally_managed, vocabulary_title
 
 
 def test_vocabulary_title(app):
@@ -28,23 +28,6 @@ def test_vocabulary_title(app):
     # Invalid key
     title = vocabulary_title({"role": "garbage"}, 'contributor_role')
     assert title == ""
-
-
-def test_to_date():
-    # Valid date_string
-    date_string = "2020-08-27"
-    date = to_date(date_string)
-    assert datetime.date(2020, 8, 27) == date
-
-    # Non-string date_string
-    with pytest.raises(AssertionError):
-        date_string = None
-        date = to_date(date_string)
-
-    # Invalid date_string
-    date_string = "garbage"
-    date = to_date(date_string)
-    assert date == "garbage"
 
 
 def test_doi_identifier():

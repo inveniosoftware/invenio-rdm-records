@@ -22,3 +22,7 @@ $(document).ready(function () {
     $("#doi-modal").modal("show");
   });
 });
+
+$("#jump-btn").on("click", function (event) {
+  document.documentElement.scrollTop = 0;
+});
