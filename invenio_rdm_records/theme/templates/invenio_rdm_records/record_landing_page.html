@@ -20,6 +20,10 @@
 {%- set metadata = record.metadata %}
 
 {%- block page_body %}
+<div
+  id="recordManagement"
+  data-recid='{{ record["id"] | tojson }}'>
+</div>
 <div class="ui container">
   <div class="ui padded relaxed grid">
     <div class="two column row">
@@ -103,5 +107,6 @@
 {{ webpack['invenio-rdm-records-js.js'] }}
 {# Communities management #}
 {{ webpack['invenio-communities-records.js'] }}
-{{webpack['previewer_theme.js']}}
+{{ webpack['previewer_theme.js'] }}
+{{ webpack['invenio-rdm-record-management.js'] }}
 {%- endblock javascript %}
