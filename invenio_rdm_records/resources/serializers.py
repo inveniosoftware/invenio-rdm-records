@@ -29,9 +29,14 @@ class UIJSONSerializer(JSONSerializer):
                 attr="metadata.publication_date",
                 obj=obj
             )
+
         if obj.get('updated'):
             obj['ui']['updated_date_l10n'] = format_date(
                     arrow.get(obj['updated']).datetime, format='long')
+
+        if obj.get('created'):
+            obj['ui']['created_date_l10n'] = format_date(
+                arrow.get(obj['created']).datetime, format='long')
 
     def _serialize_access_right(self, obj):
         """Inject ui config for `access_right` field."""
@@ -106,11 +111,15 @@ class UIJSONSerializer(JSONSerializer):
         obj.setdefault('ui', {}).update(self._serialize_access_right(obj))
         obj['ui'].update(self._serialize_resource_type(obj))
 
-    def serialize_object(self, obj, response_ctx=None, *args, **kwargs):
-        """Dump the object into a json string."""
+    def serialize_to_dict(self, obj, response_ctx=None, *args, **kwargs):
+        """Serialize the object into a dict."""
         self._serialize_obj_ui(obj)
         self._serialize_obj_dates(obj)
-        return json.dumps(obj)
+        return obj
+
+    def serialize_object(self, obj, response_ctx=None, *args, **kwargs):
+        """Dump the object into a json string."""
+        return json.dumps(self.serialize_to_dict(obj))
 
     def serialize_object_list(
             self, obj_list, response_ctx=None, *args, **kwargs):

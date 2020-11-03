@@ -9,5 +9,5 @@
 
 <dt class="record-info-title"><b>{{ _('Description')}}</b></dt>
 <dd>
-  {{ metadata.get('descriptions', [{'description': 'No description'}])[0].description | safe }}
+  {{ metadata.get('description', [{'description': 'No description'}]) | safe }}
 </dd>

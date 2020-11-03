@@ -114,8 +114,7 @@
           <a href="{{ url_for('invenio_records_ui.recid', pid_value=record.id) }}">{{ metadata.version }}</a>
           <small class="text-muted">{{ metadata.identifiers|doi_identifier }}</small>
         </td>
-        <td align="right"><small
-            class="text-muted">{{ metadata.publication_date|to_date|format_date(format='medium')}}</small></td>
+        <td align="right"><smallclass="text-muted">{{ record.ui.publication_date_l10n }}</small></td>
       </tr>
     </tbody>
   </table>
@@ -133,17 +132,17 @@
 <dt class="record-info-title"><b>{{ _('Export')}}</b></dt>
 <hr class="thin-line">
 </hr>
-<dd>
-  <a href="/coming-soon">BibTeX</a>
-  <a href="/coming-soon">CSL</a>
-  <a href="/coming-soon">DataCite</a>
-  <a href="/coming-soon">Dublin Core</a>
-  <a href="/coming-soon">DCAT</a>
-  <a href="/coming-soon">JSON</a>
-  <a href="/coming-soon">JSON-LD</a>
-  <a href="/coming-soon">GeoJSON</a>
-  <a href="/coming-soon">MARCXML</a>
-  <a href="/coming-soon"><i class="fa fa-external-link"></i> Mendeley</a>
+<dd class="span-dd">
+  <a class="export-format" href="/coming-soon">BibTeX</a>
+  <a class="export-format" href="/coming-soon">CSL</a>
+  <a class="export-format" href="/coming-soon">DataCite</a>
+  <a class="export-format" href="/coming-soon">Dublin Core</a>
+  <a class="export-format" href="/coming-soon">DCAT</a>
+  <a class="export-format" href="/coming-soon">JSON</a>
+  <a class="export-format" href="/coming-soon">JSON-LD</a>
+  <a class="export-format" href="/coming-soon">GeoJSON</a>
+  <a class="export-format" href="/coming-soon">MARCXML</a>
+  <a class="export-format" href="/coming-soon">Mendeley</a>
 </dd>
 
 </div>

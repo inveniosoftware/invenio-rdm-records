@@ -14,11 +14,11 @@
 {%- endblock css %}
 
 {%- from "invenio_rdm_records/macros/files.html" import file_list_box, preview_file_box %}
+{%- from "invenio_rdm_records/macros/detail.html" import show_detail %}
 
+{%- set record = record|serialize_ui %}
 {%- set metadata = record.metadata %}
-{%- set access = record.access %}
-{# FIXME: Take it from record.ui.access_right.category #}
-{%- set access_right_category = access.access_right %}
+
 {%- block page_body %}
 <div class="ui container">
   <div class="ui padded relaxed grid">
@@ -28,23 +28,21 @@
         <div class="ui grid">
           <div class="two column row">
             <div class="left floated left aligned column">
-              <span class="ui"
-                title="Publication date">{{ metadata.publication_date|to_date|format_date(format='long') }}</span>
+              <span class="ui" title="Publication date">{{ record.ui.publication_date_l10n }}</span>
               {%- if metadata.version %}
               <span class="label record-version"> | Version {{ metadata.version }}</span>
               {% endif %}
             </div>
             <div class="right floated right aligned column">
               <span class="ui label grey">{{ metadata.resource_type | vocabulary_subtitle('resource_type') }}</span>
-              <span class="ui label access-right {{ access_right_category }}">
-                {{ access | vocabulary_title('access_right') }}
+              <span class="ui label access-right {{ record.ui.access_right.icon }}">
+                <i class="icon {{ record.ui.access_right.icon }}"></i>
+                Open Access
               </span>
             </div>
           </div>
         </div>
-
         <h1>{{ metadata.title }}</h1>
-        {# TODO: How do we want to display metadata.additional_titles ? #}
         <p>{%- include "invenio_rdm_records/details/creators.html" %}</p>
         <p>{%- include "invenio_rdm_records/details/contributors.html" %}</p>
 
@@ -63,12 +61,35 @@
         {% endif %}
 
         {# More details #}
+        {%- include "invenio_rdm_records/details/details.html" %}
+
+        <div class="ui grid">
+          <div class="two column row">
+            <div class="six wide column">
+              <p class="record-info-title"><b>Upload infromation</b></p>
+            </div>
+            <div class="ten wide column">
+              <span class="label record-version">
+                <b>Created:</b> TODO | <b>Created:</b> TODO | <b>Modified:</b> TODO
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <div class="ui grid">
+          <div class="centered row" id="jump-btn">
+            <a style="cursor: pointer;">
+              <span class="ui button">
+                <i class="arrow alternate circle up outline icon"></i>Jump up</span>
+            </a>
+          </div>
+        </div>
 
         {%- endblock record_body %}
       </div>
       <div class="six wide column">
         {% block sidebar %}
-          {%- include "invenio_rdm_records/details/side_bar.html" %}
+        {%- include "invenio_rdm_records/details/side_bar.html" %}
         {% endblock sidebar %}
       </div>
     </div>

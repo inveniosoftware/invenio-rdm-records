@@ -7,10 +7,8 @@
 #}
 
 <dt class="record-info-title"><b>{{_('Subjects')}}</b></dt>
-<dd>
+<dd class="span-dd">
   {%- for keyword in metadata.subjects %}
-  <span class="label label-keyword">
-    {{ keyword.subject }}
-  </span>
+  <span class="label label-keyword">{{ keyword.subject }}</span>
   {%- endfor %}
 </dd>

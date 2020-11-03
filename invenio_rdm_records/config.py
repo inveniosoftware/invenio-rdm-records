@@ -75,36 +75,6 @@ RECORDS_UI_ENDPOINTS = {
     },
 }
 
-#: Allow list of contributor types.
-RECORD_CONTRIBUTOR_TYPES = [
-    dict(label='Contact person', datacite='ContactPerson'),
-    dict(label='Data collector', datacite='DataCollector'),
-    dict(label='Data curator', datacite='DataCurator'),
-    dict(label='Data manager', datacite='DataManager'),
-    dict(label='Distributor', datacite='Distributor'),
-    dict(label='Editor', datacite='Editor'),
-    dict(label='Hosting institution', datacite='HostingInstitution'),
-    dict(label='Other', datacite='Other'),
-    dict(label='Producer', datacite='Producer'),
-    dict(label='Project leader', datacite='ProjectLeader'),
-    dict(label='Project manager', datacite='ProjectManager'),
-    dict(label='Project member', datacite='ProjectMember'),
-    dict(label='Registration agency', datacite='RegistrationAgency'),
-    dict(label='Registration authority', datacite='RegistrationAuthority'),
-    dict(label='Related person', datacite='RelatedPerson'),
-    dict(label='Researcher', datacite='Researcher'),
-    dict(label='Research group', datacite='ResearchGroup'),
-    dict(label='Rights holder', datacite='RightsHolder'),
-    dict(label='Sponsor', datacite='Sponsor'),
-    dict(label='Supervisor', datacite='Supervisor'),
-    dict(label='Work package leader', datacite='WorkPackageLeader'),
-    dict(label='Other', datacite='Other')
-]
-
-RECORD_CONTRIBUTOR_TYPES_LABELS = {
-    x['datacite']: x['label'] for x in RECORD_CONTRIBUTOR_TYPES
-}
-
 """Records UI for RDM Records."""
 
 # Invenio-Formatter

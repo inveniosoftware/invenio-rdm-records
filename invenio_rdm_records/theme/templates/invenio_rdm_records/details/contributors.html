@@ -8,6 +8,6 @@
 {%- from "invenio_rdm_records/details/list_entities.html" import list_entities %}
 
 {%- for group in metadata.contributors|groupby('role')%}
-<h4><b>{{group.grouper|contributortype_title}}(s)</b></h4>
+<h4><b>{{group.grouper | vocabulary_title('contributors.role', 'role')}}(s)</b></h4>
 {{ list_entities(group.list) }}
 {%- endfor %}

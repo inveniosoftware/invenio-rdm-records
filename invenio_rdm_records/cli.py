@@ -98,11 +98,25 @@ def create_fake_record():
                         "ror": "03yrm5c26"
                     }
                 }]
-            }],
+            } for i in range(4)],
             "title": fake.company() + "'s gallery",
+            "additional_titles": [{
+                "title": "a research data management platform",
+                "type": "subtitle",
+                "lang": "eng"
+            }, {
+                "title": fake.company() + "'s gallery",
+                "type": "alternativetitle",
+                "lang": "eng"
+            }],
+            "publisher": "InvenioRDM",
             "publication_date": fake_edtf_level_0(),
             "subjects": [{
-                "subject": "Romans",
+                "subject": fake.word(),
+                "identifier": "subj-1",
+                "scheme": "no-scheme"
+            }, {
+                "subject": fake.word(),
                 "identifier": "subj-1",
                 "scheme": "no-scheme"
             }],
@@ -116,7 +130,7 @@ def create_fake_record():
                     }
                 }],
                 "role": "rightsholder"
-            }],
+            } for i in range(3)],
             "dates": [{
                 # No end date to avoid computations based on start
                 "date": fake.date(pattern='%Y-%m-%d'),
@@ -130,6 +144,12 @@ def create_fake_record():
                 "relation_type": "requires",
                 "resource_type": fake_resource_type()
             }],
+            "sizes": [
+                "11 pages"
+            ],
+            "formats": [
+                "application/pdf"
+            ],
             "version": "v0.0.1",
             "rights": [{
                 "rights": "Berkeley Software Distribution 3",
@@ -138,13 +158,23 @@ def create_fake_record():
                 "scheme": "BSD-3",
             }],
             "description": fake.text(max_nb_chars=3000),
-            "locations": [{
-                "point": {
-                    "lat": str(fake.latitude()),
-                    "lon": str(fake.longitude())
+            "additional_descriptions": [{
+                "description": fake.text(max_nb_chars=200),
+                "type": "methods",
+                "lang": "eng"
+            } for i in range(2)],
+            "funding": [{
+                "funder": {
+                    "name": "European Commission",
+                    "identifier": "1234",
+                    "scheme": "ror"
                 },
-                "place": fake.location_on_land()[2],
-                "description": "Random place on land for random coordinates..."
+                "award": {
+                    "title": "OpenAIRE",
+                    "number": "246686",
+                    "identifier": ".../246686",
+                    "scheme": "openaire"
+                }
             }],
             "references": [{
                 "reference": "Reference to something et al.",
