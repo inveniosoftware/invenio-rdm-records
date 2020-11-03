@@ -21,6 +21,8 @@ theme = WebpackThemeBundle(
                     './less/invenio_rdm_records/theme.less',
                 'invenio-rdm-records-js':
                     './js/invenio_rdm_records/rdmrecords.js',
+                'invenio-rdm-record-management':
+                    './js/invenio_rdm_records/recordManagement.js',
             },
             dependencies={}
         )
