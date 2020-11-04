@@ -9,6 +9,7 @@
 """Record response serializers."""
 
 import json
+from copy import deepcopy
 
 import arrow
 from flask_babelex import format_date
@@ -79,6 +80,36 @@ class UIJSONSerializer(JSONSerializer):
             resource_type_short=dict(title=str(short))
         )
 
+    def _serialize_obj_creators(self, obj):
+        """Serializes creators setting up the list of affiliations."""
+        # NOTE: Must contain metadata
+        creators = deepcopy(obj['metadata'].get('creators', []))
+
+        ui_affiliations = {}
+        footnote_idx = 1
+        for creator in creators:
+            creator_footnotes = []
+            for affiliation in creator.get('affiliations', []):
+                affiliation_name = affiliation.get('name')
+                exists_idx = ui_affiliations.get(affiliation_name)
+                if not exists_idx:
+                    ui_affiliations[affiliation_name] = footnote_idx
+                    creator_footnotes.append(footnote_idx)
+                    footnote_idx += 1
+                else:
+                    creator_footnotes.append(exists_idx)
+            if creator_footnotes:  # avoid adding empty list field
+                creator['affiliations'] = {
+                    #  If it entered, there is at least one affiliation
+                    'popup': creator.get('affiliations')[0].get('name'),
+                    'footnotes': creator_footnotes
+                }
+
+        obj['ui']['creators'] = {
+            "creators": creators,
+            "affiliations": ui_affiliations
+        }
+
     def _serialize_ui_options_from_vocabulary(
             self, vocabulary_name):
         """Creates a flattened dictionary with the vocabulary data.
@@ -133,6 +164,7 @@ class UIJSONSerializer(JSONSerializer):
         """Serialize the object into a dict."""
         self._serialize_obj_ui(obj)
         self._serialize_obj_dates(obj)
+        self._serialize_obj_creators(obj)
         return obj
 
     def serialize_object(self, obj, response_ctx=None, *args, **kwargs):

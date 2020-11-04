@@ -11,16 +11,16 @@
 
 <div class="ui accordion">
   <div class="title">
-    {{ list_entities(metadata.creators) }}
+    {{ list_entities(record.ui.creators.creators, show_affiliations=True) }}
     <a style="cursor: pointer;" class="dropdown">
-      <span class="up ui label">show affiliations</span>
-      <span class="down ui label">hide affiliations</span>
+      <span class="up ui label small">show affiliations</span>
+      <span class="down ui label small">hide affiliations</span>
     </a>
   </div>
 
   <div class="content">
     <div class="transition hidden">
-      {{ list_affiliations(metadata.creators) }}
+      {{ list_affiliations(record.ui.creators.affiliations) }}
     </div>
   </div>
 

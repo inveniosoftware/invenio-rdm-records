@@ -6,31 +6,40 @@
     it under the terms of the MIT License; see LICENSE file for more details.
 #}
 
-{% macro list_entities(entities) %}
+ {% macro entity_icon(entity) %}
+  {%- if "orcid" in entity.identifiers %}
+  <a href="{{ entity.identifiers['orcid']|pid_url('orcid') }}">
+    <img class="inline-orcid" src="{{ url_for('static', filename='images/orcid.svg') }}" />
+  </a>
+  {%- elif "ror" in entity.identifiers %}
+  <a href="{{ entity.identifiers['ror']|pid_url('ror') }}">
+    <i class="building outline icon"></i>
+  </a>
+  {# if no identifiers: distinguish btw people and organizations #}
+  {%- elif entity.type == "organizational" %}
+  <i class="group icon"></i>
+  {%- endif %}
+ {% endmacro %}
+
+{% macro list_entities(entities, show_affiliations=False) %}
   {% for entity in entities %}
-    {%- if "orcid" in entity.identifiers %}
-    <a href="{{ entity.identifiers['orcid']|pid_url('orcid') }}">
-      <img class="inline-orcid" src="{{ url_for('static', filename='images/orcid.svg') }}" />
-    </a>
-    {%- elif "ror" in entity.identifiers %}
-    <a href="{{ entity.identifiers['ror']|pid_url('ror') }}">
-      <i class="building outline icon"></i>
-    </a>
-    {# if no identifiers: distinguish btw people and organizations #}
-    {%- elif entity.type == "organizational" %}
-    <i class="group icon"></i>
-    {%- endif %}
-
-    <span class="text-muted" {% if entity.affiliations and entity.affiliations[0] %}data-toggle="tooltip"
-      title="{{entity.affiliations[0].name}}" {% endif %}>{{entity.name}}{{ ", " if not loop.last }}</span>
-
+    {{ entity_icon(entity) }}
+    <span
+      class="ui entity-popup text-muted"
+      {% if show_affiliations and entity.affiliations %}
+        data-content="{{ entity.affiliations.popup }}"
+      {% endif %}
+    >
+    {{ entity.name }}
+    </span>
+    <sup class="font-tiny">{% for footnote in entity.affiliations.footnotes %}{{ footnote }}{{ ", " if not loop.last }}{% endfor %}</sup>
+    {{ "; " if not loop.last }}
   {% endfor %}
 
 {%- endmacro %}
 
-{% macro list_affiliations(entities) %}
-  {% for entity in entities %}
-    <div> {{entity.affiliations[0].name}}</div><br />
+{% macro list_affiliations(affiliations) %}
+  {% for name, footnote in affiliations.items() %}
+    <p>{{ footnote }} {{'. ' + name }}</p>
   {% endfor %}
-
 {%- endmacro %}
