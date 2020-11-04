@@ -268,8 +268,27 @@ def minimal_record():
             },
             # Technically not required
             "creators": [{
-                "name": "John Doe",
+                "name": "Troy Brown",
                 "type": "personal"
+            }, {
+                "name": "Phillip Lester",
+                "type": "personal",
+                "identifiers": {"orcid": "0000-0002-1825-0097"},
+                "affiliations": [{
+                    "name": "Carter-Morris",
+                    "identifiers": {"ror": "03yrm5c26"}
+                }]
+            }, {
+                "name": "Steven Williamson",
+                "type": "personal",
+                "identifiers": {"orcid": "0000-0002-1825-0097"},
+                "affiliations": [{
+                    "name": "Ritter and Sons",
+                    "identifiers": {"ror": "03yrm5c26"}
+                }, {
+                    "name": "Montgomery, Bush and Madden",
+                    "identifiers": {"ror": "03yrm5c26"}
+                }]
             }],
             "title": "A Romans story"
         }
