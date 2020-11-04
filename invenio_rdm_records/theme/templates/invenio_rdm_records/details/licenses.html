@@ -8,7 +8,7 @@
 
 <dt class="record-info-title"><b>{{ _('Licenses')}}</b><i class="question circle outline icon"></i></dt>
 <dd>
-  {%- for license in metadata.licenses%}
-  <a href={{license.uri}} >{{ license.license }}</a>
+  {%- for right in metadata.rights%}
+  <a href="{{ right.uri }}">{{ right.identifier }}</a>
   {% endfor %}
 </dd>

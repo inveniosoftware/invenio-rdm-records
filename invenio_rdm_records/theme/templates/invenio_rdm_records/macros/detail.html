@@ -61,12 +61,6 @@
   {% endfor %}
 {% endmacro %}
 
-{% macro show_rights(rights) %}
-  {% for right in rights %}
-    <a href="{{ right.uri }}">{{ right.identifier }}</a>
-  {% endfor %}
-{% endmacro %}
-
 {% macro _identifiers_for_group(related_identifiers) %}
   {% for identifier in related_identifiers %}
   <p>{{ identifier.identifier + ' ( ' + identifier.scheme + ' )' }}</p>
