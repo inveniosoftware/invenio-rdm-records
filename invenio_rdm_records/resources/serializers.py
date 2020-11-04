@@ -18,6 +18,19 @@ from marshmallow_utils.fields import LocalizedEDTFDateString
 from invenio_rdm_records.vocabularies import Vocabularies
 
 
+def _dict_or_property(obj, attr_name):
+    """Auxiliary function to get a value from the dict or property.
+
+    FIXME: This should not be needed. Needs fix at record API level.
+    """
+    attr = obj.get(attr_name)
+    if attr:
+        return attr
+    elif hasattr(obj, attr_name):
+        return getattr(obj, attr_name)
+    return None
+
+
 class UIJSONSerializer(JSONSerializer):
     """UI JSON serializer implementation."""
 
@@ -30,13 +43,16 @@ class UIJSONSerializer(JSONSerializer):
                 obj=obj
             )
 
-        if obj.get('updated'):
+        # FIXME: When API update is part of the dict, when UI is a property
+        updated = _dict_or_property(obj, "updated")
+        if updated:
             obj['ui']['updated_date_l10n'] = format_date(
-                    arrow.get(obj['updated']).datetime, format='long')
+                    arrow.get(updated).datetime, format='long')
 
-        if obj.get('created'):
+        created = _dict_or_property(obj, "updated")
+        if created:
             obj['ui']['created_date_l10n'] = format_date(
-                arrow.get(obj['created']).datetime, format='long')
+                arrow.get(created).datetime, format='long')
 
     def _serialize_access_right(self, obj):
         """Inject ui config for `access_right` field."""
