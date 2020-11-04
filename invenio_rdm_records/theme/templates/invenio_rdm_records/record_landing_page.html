@@ -40,9 +40,7 @@
             <div class="right floated right aligned column">
               <span class="ui label grey">{{ metadata.resource_type | vocabulary_subtitle('resource_type') }}</span>
               <span class="ui label access-right {{ record.ui.access_right.icon }}">
-                <i class="icon {{ record.ui.access_right.icon }}"></i>
-                Open Access
-              </span>
+                <i class="icon {{ record.ui.access_right.icon }}"></i>{{ record.ui.access_right.title }}</span>
             </div>
           </div>
         </div>
@@ -68,13 +66,13 @@
         {%- include "invenio_rdm_records/details/details.html" %}
 
         <div class="ui grid">
-          <div class="two column row">
-            <div class="six wide column">
+          <div class="two column row top-bottom-padded font-small">
+            <div class="four wide column">
               <p class="record-info-title"><b>Upload infromation</b></p>
             </div>
-            <div class="ten wide column">
+            <div class="twelve wide column">
               <span class="label record-version">
-                <b>Created:</b> TODO | <b>Created:</b> TODO | <b>Modified:</b> TODO
+                <b>Visibility:</b> {{ record.ui.access_right.title }} | <b>Created:</b> {{ record.ui.created_date_l10n }} | <b>Modified:</b> {{ record.ui.updated_date_l10n }}
               </span>
             </div>
           </div>
