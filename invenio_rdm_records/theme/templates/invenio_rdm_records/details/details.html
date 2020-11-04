@@ -12,18 +12,17 @@
 <dt class="record-info-title"><b>{{ _('Details')}}</b></dt>
 <hr class="thin-line"></hr>
 <dd class="top-bottom-padded">
-  {{ show_detail(_('Resource type'), record.ui.resource_type.title) }}
-  {{ show_detail(_('Publication date'), record.ui.publication_date_l10n ) }}
-  {{ show_detail(_('Publisher'), metadata.publisher) }}
-  {{ show_detail(_('Additional titles'), metadata.additional_titles) }}
-  {{ show_detail(_('Additional descriptions'), metadata.additional_descriptions) }}
-  {{ show_detail(_('Dates'), metadata.dates) }}
-  {{ show_detail(_('Formats'), metadata.formats) }}
-  {{ show_detail(_('Sizes'), metadata.sizes) }}
-  {{ show_detail(_('Rights'), metadata.rights) }}
-  {{ show_detail(_('Funding'), metadata.funding) }}
-  {{ show_detail(_('Related identifiers'), metadata.related_identifiers) }}
-  {{ show_detail(_('References'), metadata.references) }}
+  {{ show_detail(_('Resource type'), record.ui.resource_type.title) if record.ui.resource_type.title }}
+  {{ show_detail(_('Publication date'), record.ui.publication_date_l10n) if record.ui.publication_date_l10n }}
+  {{ show_detail(_('Publisher'), metadata.publisher) if metadata.publisher }}
+  {{ show_detail(_('Additional titles'), metadata.additional_titles) if metadata.additional_titles }}
+  {{ show_detail(_('Additional descriptions'), metadata.additional_descriptions) if metadata.additional_descriptions }}
+  {{ show_detail(_('Dates'), metadata.dates) if metadata.dates }}
+  {{ show_detail(_('Formats'), metadata.formats) if metadata.formats }}
+  {{ show_detail(_('Sizes'), metadata.sizes) if metadata.sizes }}
+  {{ show_detail(_('Rights'), metadata.rights) if metadata.rights }}
+  {{ show_detail(_('Funding'), metadata.funding) if metadata.funding }}
+  {{ show_detail(_('Related identifiers'), metadata.related_identifiers) if metadata.related_identifiers }}
+  {{ show_detail(_('References'), metadata.references) if metadata.references }}
 </dd>
 <hr class="thin-line"></hr>
-
