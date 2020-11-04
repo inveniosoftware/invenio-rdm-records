@@ -57,9 +57,6 @@
         {%- set files = record.files %}
         {{ preview_file_box(files|select_preview_file, pid) }}
         {{ file_list_box(files.dumps(), pid) }}
-        {%- else %}
-        <br>
-        <p style="text-align: center;">No associated files.</p>
         {% endif %}
 
         {# More details #}
