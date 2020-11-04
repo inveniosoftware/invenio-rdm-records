@@ -72,10 +72,12 @@ class UIJSONSerializer(JSONSerializer):
             'resource_type')
         title = resource_types_vocabulary.get_title_by_dict(
             obj["metadata"]["resource_type"])
+        short = title.split('/')[-1].strip()
+
         return dict(
-            resource_type=dict(
-                title=str(title)
-            ))
+            resource_type=dict(title=str(title)),
+            resource_type_short=dict(title=str(short))
+        )
 
     def _serialize_ui_options_from_vocabulary(
             self, vocabulary_name):

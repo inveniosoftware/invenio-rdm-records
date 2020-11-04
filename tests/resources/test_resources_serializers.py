@@ -22,6 +22,7 @@ def test_ui_serializer(app, minimal_record):
             'title': 'Open Access'
         },
         'resource_type': {'title': 'Image / Photo'},
+        'resource_type_short': {'title': 'Photo'},
         'publication_date_l10n': 'Jun 1, 2020'
     }
     with app.app_context():

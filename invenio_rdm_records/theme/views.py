@@ -117,14 +117,6 @@ def vocabulary_title(dict_key, vocabulary_key, alt_key=None):
     return vocabulary.get_title_by_dict(dict_key) if vocabulary else ""
 
 
-@blueprint.app_template_filter('vocabulary_subtitle')
-def vocabulary_subtitle(dict_key, vocabulary_key):
-    """Returns formatted vocabulary-corresponding human-readable string."""
-    vocabulary = Vocabularies.get_vocabulary(vocabulary_key)
-    return vocabulary.get_title_by_dict(dict_key).split('/')[1].strip() \
-        if vocabulary else ""
-
-
 @blueprint.app_template_filter('serialize_ui')
 def serialize_ui(record):
     """Returns the UI serialization of a record."""
