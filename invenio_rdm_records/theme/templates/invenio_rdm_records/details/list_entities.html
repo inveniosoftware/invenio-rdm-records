@@ -32,8 +32,10 @@
     >
     {{ entity.name }}
     </span>
+    {% if show_affiliations and entity.affiliations %}
     <sup class="font-tiny">{% for footnote in entity.affiliations.footnotes %}{{ footnote }}{{ ", " if not loop.last }}{% endfor %}</sup>
     {{ "; " if not loop.last }}
+    {% endif %}
   {% endfor %}
 
 {%- endmacro %}
