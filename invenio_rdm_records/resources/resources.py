@@ -99,6 +99,12 @@ class BibliographicUserRecordsResourceConfig(RecordResourceConfig):
         "search": BibliographicUserRecordsSearchLinksSchemaV1
     }
 
+    response_handlers = {
+        **RecordResourceConfig.response_handlers,
+        "application/vnd.inveniordm.v1+json": RecordResponse(
+            UIJSONSerializer())
+    }
+
 
 class BibliographicUserRecordsResource(BibliographicRecordResource):
     """Bibliographic record user records resource."""
