@@ -18,10 +18,12 @@
     </a>
   </div>
 
+  {% if record.ui.creators.affiliations %}
   <div class="content">
     <div class="transition hidden">
       {{ list_affiliations(record.ui.creators.affiliations) }}
     </div>
   </div>
+  {% endif %}
 
 </div>
