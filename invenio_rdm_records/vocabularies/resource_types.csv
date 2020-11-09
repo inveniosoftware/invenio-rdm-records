@@ -1,5 +1,6 @@
 type,type_name,type_icon,subtype,subtype_name,datacite_general,datacite_type,csl,openaire_resourceType,openaire_type,schema.org
-publication,Publication,file alternate,publication-annotationcollection,Annotation collection,Collection,,report,9,publication,https://schema.org/Collection
+publication,Publication,file alternate,,,Text,,report,17,publication,https://schema.org/CreativeWork
+,,,publication-annotationcollection,Annotation collection,Collection,,report,9,publication,https://schema.org/Collection
 ,,,publication-book,Book,Text,Book,book,2,publication,https://schema.org/Book
 ,,,publication-section,Book section,Text,Book section,chapter,13,publication,https://schema.org/ScholarlyArticle
 ,,,publication-conferencepaper,Conference paper,Text,Conference paper,paper-conference,4,publication,https://schema.org/ScholarlyArticle
@@ -20,7 +21,8 @@ publication,Publication,file alternate,publication-annotationcollection,Annotati
 poster,Poster,columns,,,Text,Poster,graphic,4,publication,https://schema.org/CreativeWork
 presentation,Presentation,group,,,Text,Presentation,speech,4,publication,https://schema.org/PresentationDigitalDocument
 dataset,Dataset,table,,,Dataset,,dataset,21,dataset,https://schema.org/Dataset
-image,Image,chart bar outline,image-figure,Figure,Image,Figure,figure,25,dataset,https://schema.org/ImageObject
+image,Image,chart bar outline,,,Image,,figure,25,dataset,https://schema.org/ImageObject
+,,,image-figure,Figure,Image,Figure,figure,25,dataset,https://schema.org/ImageObject
 ,,,image-plot,Plot,Image,Plot,figure,25,dataset,https://schema.org/ImageObject
 ,,,image-drawing,Drawing,Image,Drawing,graphic,25,dataset,https://schema.org/ImageObject
 ,,,image-diagram,Diagram,Image,Diagram,figure,25,dataset,https://schema.org/ImageObject

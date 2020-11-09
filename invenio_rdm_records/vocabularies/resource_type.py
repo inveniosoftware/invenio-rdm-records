@@ -16,6 +16,8 @@ from .vocabulary import Vocabulary
 class ResourceTypeVocabulary(Vocabulary):
     """Encapsulates all resource type vocabulary data."""
 
+    key_field = 'resource_type'
+
     @property
     def vocabulary_name(self):
         """Returns the human readable name for this vocabulary."""
@@ -29,17 +31,19 @@ class ResourceTypeVocabulary(Vocabulary):
         """
         return (row.get('type'), row.get('subtype', ''))
 
+    def get_entry_by_dict(self, dict_key):
+        if isinstance(dict_key, str):
+            split = dict_key.split('-')
+            if len(split) == 2:
+                dict_key = {'type': split[0], 'subtype': dict_key}
+            else:
+                dict_key = {'type': dict_key}
+        return super().get_entry_by_dict(dict_key)
+
     def get_title_by_dict(self, type_subtype):
         """Returns a vocabulary entry title."""
         entry = self.get_entry_by_dict(type_subtype)
-
-        # NOTE: translations could also be done via the CSV file directly
-        result = _(entry.get('type_name'))
-        if entry.get('subtype_name'):
-            subtype_name = _(entry.get('subtype_name'))
-            result += " / " + subtype_name
-
-        return result
+        return entry.get('type_name') or entry.get('subtype_name')
 
     def get_invalid(self, type_subtype):
         """Returns the {<field>: <messages>} error dict for the given key."""

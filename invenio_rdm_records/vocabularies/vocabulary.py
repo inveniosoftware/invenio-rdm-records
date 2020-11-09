@@ -96,7 +96,7 @@ class Vocabulary(object):
         entry = self.get_entry_by_dict(dict_key)
 
         # NOTE: translations could also be done via the CSV file directly
-        return _(entry.get(self.readable_key))
+        return entry.get(self.readable_key)
 
     def get_invalid(self, dict_key):
         """Returns the user facing error message for the given dict key."""

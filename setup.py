@@ -62,6 +62,7 @@ setup_requires = [
 
 install_requires = [
     'arrow>=0.17.0',
+    'babel-edtf>=1.0.0',
     'CairoSVG>=1.0.20',
     'Faker>=2.0.3',
     'ftfy>=4.4.3,<5.0.0',
@@ -70,12 +71,11 @@ install_requires = [
     'invenio-communities>=2.1.1,<3.0.0',
     'invenio-drafts-resources>=0.5.0,<0.6.0',
     'invenio-formatter[badges]>=1.1.0a1,<2.0.0',
-    "invenio-i18n>=1.2.0",
+    'invenio-i18n>=1.2.0',
     'invenio-records>=1.4.0a4,<2.0.0',
     'invenio-records-files>=1.2.1,<2.0.0',
     'invenio-records-ui>=1.2.0a1,<2.0.0',
     'invenio-previewer>=1.2.1,<2.0.0',
-    'marshmallow-utils>=0.2.2,<0.3.0',
     # until fix in invenio-previewer is released
     'nbconvert[execute]>=4.1.0,<6.0.0',
     'pytz>=2020.4',
