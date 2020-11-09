@@ -6,19 +6,12 @@
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify it
 # under the terms of the MIT License; see LICENSE file for more details.
 
-# (please sort the lines in this file after running below commands)
-#
-#  git init
-#  git add -A
-#  pip install -e .[all]
-#  check-manifest -u
-
-include *.rst
-include *.sh
-include *.txt
 include .dockerignore
 include .editorconfig
 include .tx/config
+include *.rst
+include *.sh
+include *.txt
 include babel.ini
 include docs/requirements.txt
 include LICENSE
@@ -30,8 +23,8 @@ recursive-include docs *.rst
 recursive-include docs Makefile
 recursive-include examples *.py
 recursive-include examples *.sh
-recursive-include invenio_rdm_records *.json *.csv
-recursive-include invenio_rdm_records *.po *.pot
-recursive-include invenio_rdm_records *.png *.svg
 recursive-include invenio_rdm_records *.html *.js *.less
+recursive-include invenio_rdm_records *.json *.csv
+recursive-include invenio_rdm_records *.png *.svg
+recursive-include invenio_rdm_records *.po *.pot
 recursive-include tests *.py *.csv *.json
