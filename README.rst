@@ -11,11 +11,8 @@
  Invenio-RDM-Records
 ====================
 
-.. image:: https://img.shields.io/travis/inveniosoftware/invenio-rdm-records.svg
-        :target: https://travis-ci.org/inveniosoftware/invenio-rdm-records
-
-.. image:: https://img.shields.io/coveralls/inveniosoftware/invenio-rdm-records.svg
-        :target: https://coveralls.io/r/inveniosoftware/invenio-rdm-records
+.. image:: https://github.com/inveniosoftware/invenio-rdm-records/workflows/CI/badge.svg
+        :target: https://github.com/inveniosoftware/invenio-rdm-records/actions?query=workflow%3ACI+branch%3Amaster
 
 .. image:: https://img.shields.io/github/tag/inveniosoftware/invenio-rdm-records.svg
         :target: https://github.com/inveniosoftware/invenio-rdm-records/releases
