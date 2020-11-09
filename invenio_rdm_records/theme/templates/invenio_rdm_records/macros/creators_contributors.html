@@ -25,7 +25,7 @@
   {% for crea_contr in crea_contrors %}
     {{ crea_contributors_icon(crea_contr) }}
     <span
-      class="ui creator-popup text-muted"
+      class="ui tooltip-popup text-muted"
       {% if show_affiliations and crea_contr.affiliations %}
         data-content="{{ crea_contr.affiliations.popup }}"
       {% endif %}

@@ -49,9 +49,12 @@
         <p>{%- include "invenio_rdm_records/details/contributors.html" %}</p>
 
         {%- include "invenio_rdm_records/details/keywords.html" %}
+        <div class="top-padded">
         {%- include "invenio_rdm_records/details/description.html" %}
+        </div>
+        <div class="top-padded">
         {%- include "invenio_rdm_records/details/licenses.html" %}
-
+        </div>
         {# files #}
         {%- if record.files and record|can_list_files %}
         {%- set files = record.files %}
@@ -60,7 +63,9 @@
         {% endif %}
 
         {# More details #}
+        <div class="top-padded">
         {%- include "invenio_rdm_records/details/details.html" %}
+        </div>
 
         <div class="ui grid">
           <div class="two column row top-bottom-padded font-small">
