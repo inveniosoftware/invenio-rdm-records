@@ -11,8 +11,6 @@
 See https://pytest-invenio.readthedocs.io/ for documentation on which test
 fixtures are available.
 """
-from copy import deepcopy
-from datetime import date
 
 import pytest
 from invenio_app.factory import create_app as _create_app
@@ -43,10 +41,6 @@ def app_config(app_config):
         'FILES_REST_PERMISSION_FACTORY',
         'PIDSTORE_RECID_FIELD',
         'RECORDS_REST_ENDPOINTS',
-        # 'RECORDS_REST_FACETS',
-        # 'RECORDS_REST_SORT_OPTIONS',
-        # 'RECORDS_REST_DEFAULT_SORT',
-        # 'RECORDS_FILES_REST_ENDPOINTS',
         'RECORDS_PERMISSIONS_RECORD_POLICY'
     ]
 
