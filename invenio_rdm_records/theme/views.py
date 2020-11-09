@@ -24,7 +24,6 @@ from invenio_previewer.views import is_previewable
 from invenio_records_permissions.policies import get_record_permission_policy
 
 from ..resources.serializers import UIJSONSerializer
-from ..utils import is_doi_locally_managed
 from ..vocabularies import Vocabularies
 
 blueprint = Blueprint(
@@ -96,12 +95,6 @@ def doi_identifier(identifiers):
         # TODO: extract this "DOI" constant to a registry?
         if identifier == 'doi':
             return identifiers[identifier]
-
-
-@blueprint.app_template_filter('doi_locally_managed')
-def doi_locally_managed(doi):
-    """Determine if DOI is managed locally."""
-    return is_doi_locally_managed(doi)
 
 
 @blueprint.app_template_filter('vocabulary_title')
