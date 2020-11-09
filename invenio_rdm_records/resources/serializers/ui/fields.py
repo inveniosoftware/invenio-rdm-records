@@ -39,3 +39,10 @@ class VocabularyField(fields.String):
     def _serialize(self, value, attr, obj, **kwargs):
         """Serialize the vocabulary title."""
         return self.format(value)
+
+
+class VocabularyTitleField(VocabularyField):
+
+    def entry(self, value):
+        """Get the vocabulary title."""
+        return self.vocabulary.get_title_by_dict(value)
