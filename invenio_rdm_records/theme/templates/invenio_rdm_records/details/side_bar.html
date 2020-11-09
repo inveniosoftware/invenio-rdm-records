@@ -10,139 +10,49 @@
 
 
 <div class="ui segment rdm-sidebar">
-<dt class="record-info-title"><b>{{ _('Metrics')}}</b></dt>
-<hr class="thin-line">
-</hr>
-<dd>
-  <!-- Stats -->
-  <div class="row stats-box">
-    <div>
-      <!-- Banner -->
-      <div class="ui grid three column">
-        <div class="column">
-          <div><span class="stats-data">1,175</span></div>
-          <i class="fa fa-eye " data-toggle="tooltip" tooltip="" data-placement="top" title=""
-            data-original-title="Total views."></i> views
-        </div>
-        <div class="column">
-          <div><span class="stats-data">52</span></div>
-          <i class="fa fa-download " data-toggle="tooltip" tooltip="" data-placement="top" title=""
-            data-original-title="Total downloads."></i> downloads
-        </div>
-        <div class="column">
-          <div><span class="stats-data">8</span></div>
-          <i class="fa fa-pencil " data-toggle="tooltip" tooltip="" data-placement="top" title=""
-            data-original-title="Total citation."></i> citations
-        </div>
-      </div>
-
-      <!-- Collapsed details -->
-      <div class="ui accordion">
-        <div class="title centered">
-          <a style="cursor: pointer;" class="dropdown">
-            <span class="up">Show details<i class="angle right icon"></i></span>
-            <span class="down">Hide details<i class="angle down icon"></i></span>
-          </a>
-        </div>
-        <div class="content">
-          <div class="transition hidden">
-            <table class="table stats-table">
-              <!-- Skip table header if no versions -->
-              <tbody>
-                <tr>
-                  <th></th>
-                  <th>All versions</th>
-                  <th>This version</th>
-                </tr>
-                <tr>
-                  <td>Views <i class="fa fa-question-circle text-muted" data-toggle="tooltip" tooltip=""
-                      data-placement="top" title="" data-original-title="Total views."></i></td>
-                  <td>1,175</td>
-                  <td>265</td>
-                </tr>
-                <tr>
-                  <td>Downloads <i class="fa fa-question-circle text-muted" data-toggle="tooltip" tooltip=""
-                      data-placement="top" title="" data-original-title="Total downloads."></i></td>
-                  <td>52</td>
-                  <td>10</td>
-                </tr>
-                <tr>
-                  <td>Data volume <i class="fa fa-question-circle text-muted" data-toggle="tooltip" tooltip=""
-                      data-placement="top" title="" data-original-title="Total download volume."></i></td>
-                  <td>191.3 MB</td>
-                  <td>21.8 MB</td>
-                </tr>
-                <tr>
-                  <td>Unique views <i class="fa fa-question-circle text-muted" data-toggle="tooltip" tooltip=""
-                      data-placement="top" title=""
-                      data-original-title="Views in one hour user-sessions are counted only once."></i></td>
-                  <td>880</td>
-                  <td>192</td>
-                </tr>
-                <tr>
-                  <td>Unique downloads <i class="fa fa-question-circle text-muted" data-toggle="tooltip" tooltip=""
-                      data-placement="top" title=""
-                      data-original-title="Downloads in one hour user-sessions are counted only once."></i></td>
-                  <td>46</td>
-                  <td>8</td>
-                </tr>
-              </tbody>
-            </table>
-            <div class="row">
-              <a href="/coming-soon">More info on how stats are collected.</a>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Altmetric -->
-  <div class="altmetric-embed altmetric-hidden" data-badge-type="donut" data-badge-details="left"
-    data-hide-no-mentions="true" data-doi="{{ metadata.identifiers|doi_identifier }}"
-    data-uuid="2a8761bb-6e07-cad2-ff33-e6d1f68afaed"></div>
-</dd>
-
+  <dt><b>{{ _('Metrics')}}</b></dt>
+  <hr class="thin-line">
+  </hr>
+  <dd>
+    <!-- Stats -->
+    {%- include "invenio_rdm_records/details/stats.html" %}
+  </dd>
 </div>
 
 <div class="ui segment rdm-sidebar">
-
-<dt class="record-info-title"><b>{{ _('Versions')}}</b></dt>
-<hr class="thin-line">
-</hr>
-<dd class="versions">
-  {{ show_version(metadata.version, record.ui.publication_date_l10n, None) }}
-  <div class="ui container">
-    <div class="ui padded grid">
-    <div class="one column row">
-      <p class="font-small">
-        <strong>Cite all versions?</strong> You can cite all versions by using the DOI <a
-          href="https://doi.org/{{ metadata.identifiers|doi_identifier }}">{{ metadata.identifiers|doi_identifier }}</a>. This
-        DOI represents all versions, and will always resolve to the latest one. <a href="/coming-soon">Read more</a>.
-      </p>
+  <dt><b>{{ _('Versions')}}</b></dt>
+  <hr class="thin-line">
+  </hr>
+  <dd class="versions">
+    {{ show_version(metadata.version, record.ui.publication_date_l10n, None) }}
+    <div class="ui container">
+      <div class="ui padded grid">
+      <div class="one column row">
+        <p class="font-small">
+          <strong>Cite all versions?</strong> You can cite all versions by using the DOI <a
+            href="https://doi.org/{{ metadata.identifiers|doi_identifier }}">{{ metadata.identifiers|doi_identifier }}</a>. This
+          DOI represents all versions, and will always resolve to the latest one. <a href="/coming-soon">Read more</a>.
+        </p>
+      </div>
+      </div>
     </div>
-    </div>
-  </div>
-</dd>
-
+  </dd>
 </div>
 
 <div class="ui segment rdm-sidebar">
-
-<dt class="record-info-title"><b>{{ _('Export')}}</b></dt>
-<hr class="thin-line">
-</hr>
-<dd class="top-bottom-padded">
-  <a class="export-format" href="/coming-soon">BibTeX</a>
-  <a class="export-format" href="/coming-soon">CSL</a>
-  <a class="export-format" href="/coming-soon">DataCite</a>
-  <a class="export-format" href="/coming-soon">Dublin Core</a>
-  <a class="export-format" href="/coming-soon">DCAT</a>
-  <a class="export-format" href="/coming-soon">JSON</a>
-  <a class="export-format" href="/coming-soon">JSON-LD</a>
-  <a class="export-format" href="/coming-soon">GeoJSON</a>
-  <a class="export-format" href="/coming-soon">MARCXML</a>
-  <a class="export-format" href="/coming-soon">Mendeley</a>
-</dd>
-
+  <dt><b>{{ _('Export')}}</b></dt>
+  <hr class="thin-line">
+  </hr>
+  <dd class="top-bottom-padded">
+    <a class="export-format" href="/coming-soon">BibTeX</a>
+    <a class="export-format" href="/coming-soon">CSL</a>
+    <a class="export-format" href="/coming-soon">DataCite</a>
+    <a class="export-format" href="/coming-soon">Dublin Core</a>
+    <a class="export-format" href="/coming-soon">DCAT</a>
+    <a class="export-format" href="/coming-soon">JSON</a>
+    <a class="export-format" href="/coming-soon">JSON-LD</a>
+    <a class="export-format" href="/coming-soon">GeoJSON</a>
+    <a class="export-format" href="/coming-soon">MARCXML</a>
+    <a class="export-format" href="/coming-soon">Mendeley</a>
+  </dd>
 </div>
