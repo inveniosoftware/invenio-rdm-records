@@ -19,7 +19,7 @@ from flask_babelex import lazy_gettext as _
 from marshmallow import INCLUDE, Schema, ValidationError, fields, post_load, \
     validate, validates, validates_schema
 from marshmallow_utils.fields import EDTFDateString, GenFunction, \
-    ISODateString, ISOLangString, LocalizedEDTFDateString, SanitizedUnicode
+    ISODateString, ISOLangString, SanitizedUnicode
 
 from .utils import validate_entry
 

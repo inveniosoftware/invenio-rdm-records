@@ -11,7 +11,7 @@
 import arrow
 from marshmallow import Schema, ValidationError, fields, validate, validates, \
     validates_schema
-from marshmallow_utils.fields import EDTFDateString, SanitizedUnicode
+from marshmallow_utils.fields import ISODateString, SanitizedUnicode
 
 from .utils import validate_entry
 
@@ -34,7 +34,7 @@ class AccessSchema(Schema):
     owned_by = fields.List(
         fields.Integer, validate=validate.Length(min=1), required=True)
     access_right = SanitizedUnicode(required=True)
-    embargo_date = EDTFDateString()
+    embargo_date = ISODateString()
     access_condition = fields.Nested(AccessConditionSchema)
 
     @validates('embargo_date')
