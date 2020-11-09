@@ -27,4 +27,4 @@ $("#jump-btn").on("click", function (event) {
   document.documentElement.scrollTop = 0;
 });
 
-$('.ui.entity-popup').popup();
+$('.ui.creator-popup').popup();
