@@ -6,12 +6,12 @@
     it under the terms of the MIT License; see LICENSE file for more details.
 #}
 
-{%- from "invenio_rdm_records/details/list_entities.html" import list_entities %}
-{%- from "invenio_rdm_records/details/list_entities.html" import list_affiliations %}
+{%- from "invenio_rdm_records/macros/creators_contributors.html" import show_affiliations,
+  show_crea_contributors %}
 
 <div class="ui accordion">
   <div class="title">
-    {{ list_entities(record.ui.creators.creators, show_affiliations=True) }}
+    {{ show_crea_contributors(record.ui.creators.creators, show_affiliations=True) }}
     <a style="cursor: pointer;" class="dropdown">
       <span class="up ui label small">show affiliations</span>
       <span class="down ui label small">hide affiliations</span>
@@ -21,7 +21,7 @@
   {% if record.ui.creators.affiliations %}
   <div class="content">
     <div class="transition hidden">
-      {{ list_affiliations(record.ui.creators.affiliations) }}
+      {{ show_affiliations(record.ui.creators.affiliations) }}
     </div>
   </div>
   {% endif %}
