@@ -8,12 +8,7 @@
 
 """Test views."""
 
-import datetime
-
-import pytest
-
-from invenio_rdm_records.theme.views import doi_identifier, \
-    doi_locally_managed, vocabulary_title
+from invenio_rdm_records.theme.views import doi_identifier, vocabulary_title
 
 
 def test_vocabulary_title(app):
@@ -50,11 +45,3 @@ def test_doi_identifier():
     identifiers = {}
     doi = doi_identifier(identifiers)
     assert doi is None
-
-
-def test_doi_locally_managed(app):
-    # DOI is locally managed
-    assert doi_locally_managed("10.9999/zenodo.9999999")
-
-    # DOI is not locally managed
-    assert not doi_locally_managed("10.5281/zenodo.9999999")
