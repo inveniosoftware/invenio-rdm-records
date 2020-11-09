@@ -18,7 +18,7 @@ from marshmallow_utils.fields import FormatEDTF as FormatEDTF_
 
 from invenio_rdm_records.vocabularies import Vocabularies
 
-from .fields import VocabularyField
+from .fields import VocabularyField, VocabularyTitleField
 
 # Partial to make short definitions in below schema.
 FormatEDTF = partial(FormatEDTF_, locale=get_locale)
@@ -95,7 +95,7 @@ class UIObjectSchema(Schema):
 
     updated_date_l10n_long = FormatDate(attribute='updated', format='long')
 
-    resource_type = VocabularyField(
+    resource_type = VocabularyTitleField(
         'resource_type', attribute='metadata.resource_type')
 
     access_right = fields.Nested(AccessRightSchema, attribute='access')
