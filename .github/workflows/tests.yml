@@ -65,7 +65,7 @@ jobs:
       - name: Install dependencies
         run: |
           pip install -r .${{matrix.REQUIREMENTS}}-${{ matrix.python-version }}-requirements.txt
-          pip install -e .[all]
+          pip install .[all]
           pip freeze
           docker --version
           docker-compose --version
