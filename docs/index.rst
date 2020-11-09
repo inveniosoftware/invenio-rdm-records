@@ -21,7 +21,6 @@ Invenio-RDM-Records.
    installation
    configuration
    usage
-   examplesapp
 
 
 API Reference
