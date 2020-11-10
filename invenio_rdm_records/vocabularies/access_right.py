@@ -30,6 +30,7 @@ class AccessRightVocabulary(Vocabulary):
         return 'access right'
 
     def get_entry_by_dict(self, dict_key):
+        """Returns a vocabulary entry as an OrderedDict."""
         if isinstance(dict_key, str):
             dict_key = {self.key_field: dict_key}
         return super().get_entry_by_dict(dict_key)

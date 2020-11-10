@@ -82,23 +82,6 @@ def test_invalid_type(custom_config, vocabulary_clear):
     )
 
 
-def test_invalid_no_subtype_when_required(vocabulary_clear):
-    invalid_no_subtype_when_required = {
-        "type": "image"
-    }
-
-    assert_raises_messages(
-        lambda: ResourceTypeSchema().load(invalid_no_subtype_when_required),
-        {
-            "subtype": [_(
-                "Invalid value. Choose one of ['image-diagram', "
-                "'image-drawing', 'image-figure', 'image-other', "
-                "'image-photo', 'image-plot']."
-            )]
-        }
-    )
-
-
 def test_invalid_subtype(custom_config, vocabulary_clear):
     invalid_subtype = {
         "type": "my_image",

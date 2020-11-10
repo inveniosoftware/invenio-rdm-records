@@ -10,7 +10,6 @@
 
 from .ui import UIJSONSerializer
 
-
 __all__ = (
     'UIJSONSerializer',
 )

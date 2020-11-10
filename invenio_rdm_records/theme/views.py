@@ -115,4 +115,4 @@ def serialize_ui(record):
     """Returns the UI serialization of a record."""
     serializer = UIJSONSerializer()
     # We need a dict not a string
-    return serializer.serialize_to_dict(record)
+    return serializer.serialize_object_to_dict(record)

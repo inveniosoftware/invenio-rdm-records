@@ -6,20 +6,20 @@
     it under the terms of the MIT License; see LICENSE file for more details.
 #}
 
- {% macro crea_contributors_icon(crea_contr) %}
-  {%- if "orcid" in crea_contr.identifiers %}
-  <a href="{{ crea_contr.identifiers['orcid']|pid_url('orcid') }}">
-    <img class="inline-orcid" src="{{ url_for('static', filename='images/orcid.svg') }}" />
-  </a>
-  {%- elif "ror" in crea_contr.identifiers %}
-  <a href="{{ crea_contr.identifiers['ror']|pid_url('ror') }}">
-    <i class="building outline icon"></i>
-  </a>
-  {# if no identifiers: distinguish btw people and organizations #}
-  {%- elif crea_contr.type == "organizational" %}
-  <i class="group icon"></i>
-  {%- endif %}
- {% endmacro %}
+{% macro crea_contributors_icon(crea_contr) %}
+{%- if "orcid" in crea_contr.identifiers %}
+<a href="{{ crea_contr.identifiers['orcid']|pid_url('orcid') }}">
+  <img class="inline-orcid" src="{{ url_for('static', filename='images/orcid.svg') }}" />
+</a>
+{%- elif "ror" in crea_contr.identifiers %}
+<a href="{{ crea_contr.identifiers['ror']|pid_url('ror') }}">
+  <i class="building outline icon"></i>
+</a>
+{# if no identifiers: distinguish btw people and organizations #}
+{%- elif crea_contr.type == "organizational" %}
+<i class="group icon"></i>
+{%- endif %}
+{% endmacro %}
 
 {% macro show_crea_contributors(crea_contrors, show_affiliations=False) %}
   {% for crea_contr in crea_contrors %}
@@ -27,19 +27,22 @@
     <span
       class="ui tooltip-popup text-muted"
       {% if show_affiliations and crea_contr.affiliations %}
-        data-content="{{ crea_contr.affiliations.popup }}"
-      {% endif %}
-    >
-    {{ crea_contr.name }}
-    </span>
-    <sup class="font-tiny">{% for footnote in crea_contr.affiliations.footnotes %}{{ footnote }}{{ ", " if not loop.last }}{% endfor %}</sup>
+        data-content="{{ crea_contr.affiliations[0][1] }}"
+      {% endif %}>
+      {{ crea_contr.name }}
+      </span>
+    <sup class="font-tiny">
+      {% for affiliation in crea_contr.affiliations %}
+        {{ affiliation[0] }}{{ ", " if not loop.last }}
+      {% endfor %}
+    </sup>
     {{ "; " if not loop.last }}
-  {% endfor %}
+    {% endfor %}
 
 {%- endmacro %}
 
 {% macro show_affiliations(affiliations) %}
-  {% for name, footnote in affiliations.items() %}
-    <p>{{ footnote }} {{'. ' + name }}</p>
+  {% for affiliation in affiliations %}
+    <p>{{ affiliation[0] }} {{'. ' + affiliation[1] }}</p>
   {% endfor %}
 {%- endmacro %}
