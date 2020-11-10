@@ -33,8 +33,8 @@ class UIJSONSerializer(JSONSerializer):
     def dump_list(self, obj_list):
         """Dump the list of objects with extra information."""
         ctx = {
-            'object_key':self.object_key,
-            'object_schema_cls':self.object_schema_cls,
+            'object_key': self.object_key,
+            'object_schema_cls': self.object_schema_cls,
         }
         return self.list_schema_cls(context=ctx).dump(obj_list)
 
@@ -48,3 +48,11 @@ class UIJSONSerializer(JSONSerializer):
     def serialize_object_list(self, obj_list):
         """Dump the object list into a JSON string."""
         return json.dumps(self.dump_list(obj_list))
+
+    def serialize_object_to_dict(self, obj):
+        """Dump the object into a JSON string."""
+        return self.dump_obj(obj)
+
+    def serialize_object_list_to_dict(self, obj_list):
+        """Dump the object list into a JSON string."""
+        return self.dump_list(obj_list)

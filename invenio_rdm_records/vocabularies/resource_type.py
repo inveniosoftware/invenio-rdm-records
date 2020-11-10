@@ -32,6 +32,7 @@ class ResourceTypeVocabulary(Vocabulary):
         return (row.get('type'), row.get('subtype', ''))
 
     def get_entry_by_dict(self, dict_key):
+        """Returns a vocabulary entry as an OrderedDict."""
         if isinstance(dict_key, str):
             split = dict_key.split('-')
             if len(split) == 2:
@@ -43,7 +44,7 @@ class ResourceTypeVocabulary(Vocabulary):
     def get_title_by_dict(self, type_subtype):
         """Returns a vocabulary entry title."""
         entry = self.get_entry_by_dict(type_subtype)
-        return entry.get('type_name') or entry.get('subtype_name')
+        return entry.get('subtype_name') or entry.get('type_name')
 
     def get_invalid(self, type_subtype):
         """Returns the {<field>: <messages>} error dict for the given key."""

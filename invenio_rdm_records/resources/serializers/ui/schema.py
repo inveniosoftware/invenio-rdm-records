@@ -11,7 +11,7 @@
 from copy import deepcopy
 from functools import partial
 
-from flask_babelex import _, get_locale
+from flask_babelex import get_locale
 from marshmallow import INCLUDE, Schema, fields, missing
 from marshmallow_utils.fields import FormatDate as FormatDate_
 from marshmallow_utils.fields import FormatEDTF as FormatEDTF_
@@ -40,8 +40,9 @@ def make_affiliation_index(attr, obj, dummy_ctx):
         name = affiliation.get('name')
         if name not in affiliations_idx:
             affiliations_idx[name] = index['val']
+            assigned_index = index['val']
             index['val'] += 1
-        return [index['val'], name]
+        return [assigned_index, name]
 
     # For each creator, apply the
     for creator in creators:
@@ -112,6 +113,8 @@ class UIListSchema(Schema):
     """Schema for dumping extra information in the UI."""
 
     class Meta:
+        """."""
+
         unknown = INCLUDE
 
     hits = fields.Method('get_hits')
@@ -120,7 +123,7 @@ class UIListSchema(Schema):
     def get_hits(self, obj_list):
         """Apply hits transformation."""
         for obj in obj_list['hits']['hits']:
-             obj[self.context['object_key']] = \
+            obj[self.context['object_key']] = \
                 self.context['object_schema_cls']().dump(obj)
         return obj_list['hits']
 

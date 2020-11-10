@@ -32,13 +32,13 @@
         <div class="ui grid middle aligned">
           <div class="two column row">
             <div class="left floated left aligned column">
-              <span class="ui" title="Publication date">{{ record.ui.publication_date_l10n }}</span>
+              <span class="ui" title="Publication date">{{ record.ui.publication_date_l10n_long }}</span>
               {%- if metadata.version %}
               <span class="label text-muted"> | Version {{ metadata.version }}</span>
               {% endif %}
             </div>
             <div class="right floated right aligned column">
-              <span class="ui label small grey">{{ record.ui.resource_type_short.title }}</span>
+              <span class="ui label small grey">{{ record.ui.resource_type }}</span>
               <span class="ui label small access-right {{ record.ui.access_right.icon }}">
                 <i class="icon {{ record.ui.access_right.icon }}"></i>{{ record.ui.access_right.title }}</span>
             </div>
@@ -74,7 +74,7 @@
             </div>
             <div class="twelve wide column">
               <span class="label text-muted">
-                <b>Created:</b> {{ record.ui.created_date_l10n }} | <b>Modified:</b> {{ record.ui.updated_date_l10n }}
+                <b>Created:</b> {{ record.ui.created_date_l10n_long }} | <b>Modified:</b> {{ record.ui.updated_date_l10n_long }}
               </span>
             </div>
           </div>

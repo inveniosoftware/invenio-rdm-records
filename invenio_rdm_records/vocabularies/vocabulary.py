@@ -100,7 +100,6 @@ class Vocabulary(object):
 
     def get_invalid(self, dict_key):
         """Returns the user facing error message for the given dict key."""
-        vocabulary_name = self.vocabulary_name
         choices = sorted([self.key(e) for e in self.data.values()])
         return {
             self.key_field: [_(f"Invalid value. Choose one of {choices}.")]

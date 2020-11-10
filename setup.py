@@ -62,7 +62,6 @@ setup_requires = [
 
 install_requires = [
     'arrow>=0.17.0',
-    'babel-edtf>=1.0.0',
     'CairoSVG>=1.0.20',
     'Faker>=2.0.3',
     'ftfy>=4.4.3,<5.0.0',

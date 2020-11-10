@@ -33,6 +33,7 @@ class VocabularyField(fields.String):
         return self.vocabulary.get_entry_by_dict(value)
 
     def format(self, value):
+        """Get the specific key or object from the vocabulary."""
         entry = self.entry(value)
         return entry[self.entry_key] if self.entry_key else entry
 
@@ -42,6 +43,7 @@ class VocabularyField(fields.String):
 
 
 class VocabularyTitleField(VocabularyField):
+    """Vocabulary title field."""
 
     def entry(self, value):
         """Get the vocabulary title."""
