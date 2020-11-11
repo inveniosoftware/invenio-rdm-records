@@ -27,7 +27,7 @@
     <span
       class="ui tooltip-popup text-muted"
       {% if show_affiliations and crea_contr.affiliations %}
-        data-content="{{ crea_contr.affiliations[0][1] }}"
+        data-content="{{ crea_contr.affiliations|join('; ', attribute='1') }}"
       {% endif %}>
       {{ crea_contr.name }}
       </span>
