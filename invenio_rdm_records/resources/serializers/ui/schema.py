@@ -42,9 +42,9 @@ def make_affiliation_index(attr, obj, dummy_ctx):
         name = affiliation.get('name')
         if name not in affiliations_idx:
             affiliations_idx[name] = index['val']
-            assigned_index = index['val']
             index['val'] += 1
-        return [assigned_index, name]
+        idx = affiliations_idx[name]
+        return [idx, name]
 
     # For each creator, apply the
     for creator in creators:
