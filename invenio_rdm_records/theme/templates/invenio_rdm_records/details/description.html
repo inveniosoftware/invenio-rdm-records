@@ -9,5 +9,8 @@
 
 <dt><b>{{ _('Description')}}</b></dt>
 <dd>
-  {{ metadata.get('description', [{'description': 'No description'}]) | safe }}
+  {{
+    metadata.get('description', [{'description': 'No description'}]) |
+      sanitize_html() | safe
+  }}
 </dd>
