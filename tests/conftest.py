@@ -284,23 +284,6 @@ def minimal_record():
                     "identifiers": {"ror": "03yrm5c26"}
                 }]
             }],
-            "contributors": [{
-                "name": "Nielsen, Lars Holm",
-                "type": "personal",
-                "role": "other",
-                "given_name": "Lars Holm",
-                "family_name": "Nielsen",
-                "identifiers": {
-                    "orcid": "0000-0001-8135-3489"
-                },
-                "affiliations": [{
-                    "name": "CERN",
-                    "identifiers": {
-                        "ror": "01ggx4157",
-                        "isni": "000000012156142X"
-                    }
-                }]
-            }],
             "title": "A Romans story"
         }
     }
