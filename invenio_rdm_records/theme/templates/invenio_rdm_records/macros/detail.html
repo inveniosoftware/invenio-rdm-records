@@ -18,6 +18,19 @@
 </div>
 {%- endmacro %}
 
+{% macro show_sanitized_detail(title, value) %}
+<div class="ui relaxed grid">
+  <div class="two column row">
+    <div class="four wide column">
+      <p><b>{{ title }}</b></p>
+    </div>
+    <div class="twelve wide column">
+      {{ value | sanitize_html()| safe }}
+    </div>
+  </div>
+</div>
+{%- endmacro %}
+
 {% macro list_sizes(sizes) %}
   {% for size in sizes %}
     {{ size }}{{ ", " if not loop.last }}
@@ -38,7 +51,9 @@
 
 {% macro show_add_descriptions(add_descriptions) %}
   {% for add_description in add_descriptions %}
-    {{ show_detail(add_description.type, add_description.description) }}
+    {{
+      show_sanitized_detail(add_description.type, add_description.description)
+    }}
   {% endfor %}
 {% endmacro %}
 
