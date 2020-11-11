@@ -41,7 +41,7 @@ const RecordManagement = () => {
                   <Icon name="edit" />
                   Edit
                 </Button>
-                <Button color="green" size="mini">
+                <Button color="green" size="mini" disabled>
                   <Icon name="clone" />
                   New Version
                 </Button>
