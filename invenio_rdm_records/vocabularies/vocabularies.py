@@ -15,6 +15,7 @@ from flask_babelex import lazy_gettext as _
 
 from .access_right import AccessRightVocabulary
 from .contributor_role import ContributorRoleVocabulary
+from .license import LicenseVocabulary
 from .resource_type import ResourceTypeVocabulary
 from .title_type import TitleTypeVocabulary
 
@@ -43,6 +44,11 @@ class Vocabularies:
         'access_right': {
             'path': join(this_dir, 'access_right.csv'),
             'class': AccessRightVocabulary,
+            'object': None
+        },
+        'license': {
+            'path': join(this_dir, 'licenses.json'),
+            'class': LicenseVocabulary,
             'object': None
         }
 
