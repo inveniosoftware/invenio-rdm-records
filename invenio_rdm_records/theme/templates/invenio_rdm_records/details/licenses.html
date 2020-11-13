@@ -6,9 +6,12 @@
   it under the terms of the MIT License; see LICENSE file for more details.
 #}
 
+{% set rights = metadata.get('rights') %}
+{% if rights %}
 <dt><b>{{ _('Licenses')}}</b><i class="question circle outline icon"></i></dt>
 <dd>
-  {%- for right in metadata.rights%}
+  {%- for right in rights%}
   <a href="{{ right.uri }}">{{ right.identifier }}</a>
   {% endfor %}
 </dd>
+{% endif %}

@@ -6,11 +6,10 @@
   it under the terms of the MIT License; see LICENSE file for more details.
 #}
 
-
-<dt><b>{{ _('Description')}}</b></dt>
+{% set description = metadata.get('description') %}
+{% if description %}
+<dt><b>{{ _('Description') }}</b></dt>
 <dd>
-  {{
-    metadata.get('description', [{'description': 'No description'}]) |
-      sanitize_html() | safe
-  }}
+  {{ description | sanitize_html() | safe }}
 </dd>
+{% endif %}
