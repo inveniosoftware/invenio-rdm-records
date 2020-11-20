@@ -50,17 +50,14 @@ class AffiliationSchema(Schema):
                 raise ValidationError(_(f"Invalid identifier ({identifier})."))
 
 
-class CreatorSchema(Schema):
-    """Creator schema."""
+class CreatibutorSchema(Schema):
+    """Creator/Contributor schema."""
 
     NAMES = [
         "organizational",
         "personal"
     ]
 
-    # TODO: Need to revisit `name` in Deposit form:
-    #       current mock-up doesn't have `name` field, so there is assumed
-    #       work on the front-end to fill this value.
     name = SanitizedUnicode(required=True)
     type = SanitizedUnicode(
         required=True,
@@ -77,6 +74,21 @@ class CreatorSchema(Schema):
     family_name = SanitizedUnicode()
     identifiers = fields.Dict()
     affiliations = fields.List(fields.Nested(AffiliationSchema))
+
+    @post_load
+    def fill_given_family_names(self, data, **kwargs):
+        """Fill the given_name and family_name based on name.
+
+        Allows to override conversion of name to family name / given name
+        if given_name or family_name is explicitly passed.
+        """
+        if data["type"] == "personal":
+            family_name, given_name = (
+                [n.strip() for n in data["name"].partition(",")][0::2]
+            )
+            data["family_name"] = data.get("family_name", family_name)
+            data["given_name"] = data.get("given_name", given_name)
+        return data
 
     @validates("identifiers")
     def validate_identifiers(self, value):
@@ -118,7 +130,19 @@ class CreatorSchema(Schema):
                 raise ValidationError({"identifiers": messages})
 
 
-class ContributorSchema(CreatorSchema):
+class CreatorSchema(CreatibutorSchema):
+    """Creator schema."""
+
+    # role = SanitizedUnicode()
+
+    # @validates_schema
+    # def validate_data(self, data, **kwargs):
+    #     """Validate role."""
+    #     if 'role' in data:
+    #         validate_entry('creators.role', data)
+
+
+class ContributorSchema(CreatibutorSchema):
     """Contributor schema."""
 
     role = SanitizedUnicode(required=True)
