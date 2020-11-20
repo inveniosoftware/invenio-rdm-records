@@ -133,13 +133,13 @@ class CreatibutorSchema(Schema):
 class CreatorSchema(CreatibutorSchema):
     """Creator schema."""
 
-    # role = SanitizedUnicode()
+    role = SanitizedUnicode()
 
-    # @validates_schema
-    # def validate_data(self, data, **kwargs):
-    #     """Validate role."""
-    #     if 'role' in data:
-    #         validate_entry('creators.role', data)
+    @validates_schema
+    def validate_role(self, data, **kwargs):
+        """Validate role."""
+        if 'role' in data:
+            validate_entry('creators.role', data)
 
 
 class ContributorSchema(CreatibutorSchema):
@@ -148,7 +148,7 @@ class ContributorSchema(CreatibutorSchema):
     role = SanitizedUnicode(required=True)
 
     @validates_schema
-    def validate_data(self, data, **kwargs):
+    def validate_role(self, data, **kwargs):
         """Validate role."""
         validate_entry('contributors.role', data)
 
