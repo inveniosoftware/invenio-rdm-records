@@ -73,6 +73,8 @@ def test_invalid_extra_right():
 ])
 def test_valid_rights(references, minimal_record, vocabulary_clear):
     metadata = minimal_record['metadata']
+    # NOTE: this is done to get possible load transformations out of the way
+    metadata = MetadataSchema().load(metadata)
     metadata['references'] = references
 
     assert metadata == MetadataSchema().load(metadata)
