@@ -19,17 +19,32 @@ from invenio_rdm_records.services.schemas.metadata import ContributorSchema, \
 from .test_utils import assert_raises_messages
 
 
-def test_creator_valid_minimal():
+def test_creator_valid_minimal_person():
     valid_minimal = {
-        "name": "Julio Cesar",
+        "name": "Cesar, Julio",
         "type": "personal"
+    }
+    expected = {
+        "name": "Cesar, Julio",
+        "type": "personal",
+        "given_name": "Julio",
+        "family_name": "Cesar",
+
+    }
+    assert expected == CreatorSchema().load(valid_minimal)
+
+
+def test_creator_valid_minimal_organization():
+    valid_minimal = {
+        "name": "Cesar, Julio",
+        "type": "organizational"
     }
     assert valid_minimal == CreatorSchema().load(valid_minimal)
 
 
 def test_creator_valid_full_person():
     valid_full_person = {
-        "name": "Julio Cesar",
+        "name": "Cesar, Julio",
         "type": "personal",
         "given_name": "Julio",
         "family_name": "Cesar",
@@ -43,8 +58,7 @@ def test_creator_valid_full_person():
             }
         }]
     }
-    data = CreatorSchema().load(valid_full_person)
-    assert data == valid_full_person
+    assert valid_full_person == CreatorSchema().load(valid_full_person)
 
 
 def test_creator_valid_full_organization():
@@ -55,11 +69,55 @@ def test_creator_valid_full_organization():
         "identifiers": {
             "ror": "03yrm5c26",
         },
-        # "given_name", "family_name" and "affiliations" are ignored if passed
+        # "given_name", "family_name" and "affiliations" are allowed but
+        # meaningless. Perhaps disallow them?
         "family_name": "I am ignored!"
     }
     data = CreatorSchema().load(valid_full_org)
     assert data == valid_full_org
+
+
+def test_creatibutor_name_edge_cases():
+    # More than 1 comma
+    valid_many_commas = {
+        "name": "Cesar, Julio, Chavez",
+        "type": "personal"
+    }
+    expected = {
+        "name": "Cesar, Julio, Chavez",
+        "type": "personal",
+        "given_name": "Julio, Chavez",
+        "family_name": "Cesar",
+    }
+    assert expected == CreatorSchema().load(valid_many_commas)
+
+    # No comma
+    valid_no_comma = {
+        "name": "Cesar Julio",
+        "type": "personal"
+    }
+    expected = {
+        "name": "Cesar Julio",
+        "type": "personal",
+        "given_name": "",
+        "family_name": "Cesar Julio",
+
+    }
+    assert expected == CreatorSchema().load(valid_no_comma)
+
+    # Given name is also explicitly passed
+    valid_explicit_given_name = {
+        "name": "Cesar, Julio",
+        "type": "personal",
+        "given_name": "Julius",
+    }
+    expected = {
+        "name": "Cesar, Julio",
+        "type": "personal",
+        "given_name": "Julius",  # overrode Julio
+        "family_name": "Cesar",
+    }
+    assert expected == CreatorSchema().load(valid_explicit_given_name)
 
 
 def test_creator_invalid_no_name():
@@ -209,11 +267,18 @@ def test_contributor_valid_full(vocabulary_clear):
 
 def test_contributor_valid_minimal(vocabulary_clear):
     valid_minimal = {
-        "name": "Julio Cesar",
+        "name": "Cesar, Julio",
         "type": "personal",
         "role": "rightsholder"
     }
-    assert valid_minimal == ContributorSchema().load(valid_minimal)
+    expected = {
+        "name": "Cesar, Julio",
+        "type": "personal",
+        "role": "rightsholder",
+        "family_name": "Cesar",
+        "given_name": "Julio",
+    }
+    assert expected == ContributorSchema().load(valid_minimal)
 
 
 def test_contributor_invalid_no_name(vocabulary_clear):
