@@ -11,7 +11,7 @@
 from .vocabulary import Vocabulary
 
 
-class ContributorRoleVocabulary(Vocabulary):
+class CreatibutorRoleVocabulary(Vocabulary):
     """Encapsulates all contributor role vocabulary data."""
 
     key_field = "role"

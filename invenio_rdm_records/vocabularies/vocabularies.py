@@ -14,7 +14,7 @@ from flask import current_app
 from flask_babelex import lazy_gettext as _
 
 from .access_right import AccessRightVocabulary
-from .contributor_role import ContributorRoleVocabulary
+from .creatibutor_role import CreatibutorRoleVocabulary
 from .resource_type import ResourceTypeVocabulary
 from .title_type import TitleTypeVocabulary
 
@@ -30,9 +30,14 @@ class Vocabularies:
             'class': ResourceTypeVocabulary,
             'object': None
         },
+        'creators.role': {
+            'path': join(this_dir, 'creator_role.csv'),
+            'class': CreatibutorRoleVocabulary,
+            'object': None
+        },
         'contributors.role': {
             'path': join(this_dir, 'contributor_role.csv'),
-            'class': ContributorRoleVocabulary,
+            'class': CreatibutorRoleVocabulary,
             'object': None
         },
         'titles.type': {
@@ -45,7 +50,6 @@ class Vocabularies:
             'class': AccessRightVocabulary,
             'object': None
         }
-
     }
 
     @classmethod

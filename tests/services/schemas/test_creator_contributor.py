@@ -120,6 +120,22 @@ def test_creatibutor_name_edge_cases():
     assert expected == CreatorSchema().load(valid_explicit_given_name)
 
 
+def test_creator_valid_role(vocabulary_clear):
+    valid_minimal = {
+        "name": "Cesar, Julio",
+        "type": "personal",
+        "role": "rightsholder"
+    }
+    expected = {
+        "name": "Cesar, Julio",
+        "type": "personal",
+        "role": "rightsholder",
+        "family_name": "Cesar",
+        "given_name": "Julio",
+    }
+    assert expected == CreatorSchema().load(valid_minimal)
+
+
 def test_creator_invalid_no_name():
     invalid_no_name = {
         "type": "personal",

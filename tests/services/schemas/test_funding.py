@@ -61,6 +61,8 @@ def test_invalid_empty_funding():
 ])
 def test_valid_rights(funding, minimal_record, vocabulary_clear):
     metadata = minimal_record['metadata']
+    # NOTE: this is done to get possible load transformations out of the way
+    metadata = MetadataSchema().load(metadata)
     metadata['funding'] = funding
 
     assert metadata == MetadataSchema().load(metadata)
