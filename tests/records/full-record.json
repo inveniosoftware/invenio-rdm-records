@@ -117,18 +117,20 @@
       "type": "methods",
       "lang": "eng"
     }],
-    "locations": [{
-      "geometry": {
-        "type": "Point",
-        "coordinates": [6.05, 46.23333]
-      },
-      "identifiers": {
-        "geonames": "2661235",
-        "tgn": "http://vocab.getty.edu/tgn/8703679"
-      },
-      "place": "CERN",
-      "description": "Invenio birth place."
-    }],
+    "locations": {
+      "features": [{
+        "geometry": {
+          "type": "Point",
+          "coordinates": [6.05, 46.23333]
+        },
+        "identifiers": {
+          "geonames": "2661235",
+          "tgn": "http://vocab.getty.edu/tgn/8703679"
+        },
+        "place": "CERN",
+        "description": "Invenio birth place."
+      }]
+    },
     "funding": [{
       "funder": {
         "name": "European Commission",
