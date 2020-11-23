@@ -19,31 +19,54 @@ from invenio_rdm_records.services.schemas.metadata import ContributorSchema, \
 from .test_utils import assert_raises_messages
 
 
-def test_creator_valid_minimal_person():
-    valid_minimal = {
-        "name": "Cesar, Julio",
+def test_creator_person_valid_minimal():
+    valid_given_name = {
+        "given_name": "Julio",
         "type": "personal"
     }
     expected = {
-        "name": "Cesar, Julio",
-        "type": "personal",
         "given_name": "Julio",
-        "family_name": "Cesar",
-
+        "name": "Julio",
+        "type": "personal",
     }
-    assert expected == CreatorSchema().load(valid_minimal)
+    assert expected == CreatorSchema().load(valid_given_name)
+
+    valid_family_name = {
+        "family_name": "Cesar",
+        "type": "personal"
+    }
+    expected = {
+        "family_name": "Cesar",
+        "name": "Cesar",
+        "type": "personal",
+    }
+    assert expected == CreatorSchema().load(valid_family_name)
 
 
-def test_creator_valid_minimal_organization():
+def test_creator_organization_valid_minimal():
     valid_minimal = {
-        "name": "Cesar, Julio",
+        "name": "Julio Cesar Empire",
         "type": "organizational"
     }
     assert valid_minimal == CreatorSchema().load(valid_minimal)
 
 
-def test_creator_valid_full_person():
+def test_creator_person_valid_full():
     valid_full_person = {
+        "type": "personal",
+        "given_name": "Julio",
+        "family_name": "Cesar",
+        "identifiers": {
+            "orcid": '0000-0002-1825-0097',
+        },
+        "affiliations": [{
+            "name": "Entity One",
+            "identifiers": {
+                "ror": "03yrm5c26"
+            }
+        }]
+    }
+    expected = {
         "name": "Cesar, Julio",
         "type": "personal",
         "given_name": "Julio",
@@ -58,10 +81,11 @@ def test_creator_valid_full_person():
             }
         }]
     }
-    assert valid_full_person == CreatorSchema().load(valid_full_person)
+
+    assert expected == CreatorSchema().load(valid_full_person)
 
 
-def test_creator_valid_full_organization():
+def test_creator_organization_valid_full():
     # Full organization
     valid_full_org = {
         "name": "California Digital Library",
@@ -69,92 +93,83 @@ def test_creator_valid_full_organization():
         "identifiers": {
             "ror": "03yrm5c26",
         },
-        # "given_name", "family_name" and "affiliations" are allowed but
-        # meaningless. Perhaps disallow them?
         "family_name": "I am ignored!"
     }
-    data = CreatorSchema().load(valid_full_org)
-    assert data == valid_full_org
+    expected = {
+        "name": "California Digital Library",
+        "type": "organizational",
+        "identifiers": {
+            "ror": "03yrm5c26",
+        },
+    }
+    assert expected == CreatorSchema().load(valid_full_org)
 
 
 def test_creatibutor_name_edge_cases():
-    # More than 1 comma
-    valid_many_commas = {
-        "name": "Cesar, Julio, Chavez",
+    # Pass in name and given_name: name is ignored
+    valid_person_name_and_given_name = {
+        "name": "Cesar, Julio",
+        "given_name": "Julio",
         "type": "personal"
     }
     expected = {
-        "name": "Cesar, Julio, Chavez",
+        "name": "Julio",
         "type": "personal",
-        "given_name": "Julio, Chavez",
-        "family_name": "Cesar",
+        "given_name": "Julio",
     }
-    assert expected == CreatorSchema().load(valid_many_commas)
+    assert expected == CreatorSchema().load(valid_person_name_and_given_name)
 
-    # No comma
-    valid_no_comma = {
-        "name": "Cesar Julio",
-        "type": "personal"
+    # Pass name and family_name for organization: family_name is ignored and
+    # removed
+    valid_org_name_and_family_name = {
+        "name": "Julio Cesar Inc.",
+        "family_name": "Cesar",
+        "type": "organizational"
     }
     expected = {
-        "name": "Cesar Julio",
-        "type": "personal",
-        "given_name": "",
-        "family_name": "Cesar Julio",
-
+        "name": "Julio Cesar Inc.",
+        "type": "organizational",
     }
-    assert expected == CreatorSchema().load(valid_no_comma)
-
-    # Given name is also explicitly passed
-    valid_explicit_given_name = {
-        "name": "Cesar, Julio",
-        "type": "personal",
-        "given_name": "Julius",
-    }
-    expected = {
-        "name": "Cesar, Julio",
-        "type": "personal",
-        "given_name": "Julius",  # overrode Julio
-        "family_name": "Cesar",
-    }
-    assert expected == CreatorSchema().load(valid_explicit_given_name)
+    assert expected == CreatorSchema().load(valid_org_name_and_family_name)
 
 
 def test_creator_valid_role(vocabulary_clear):
-    valid_minimal = {
-        "name": "Cesar, Julio",
+    valid_role = {
+        "family_name": "Cesar",
+        "given_name": "Julio",
         "type": "personal",
         "role": "rightsholder"
     }
     expected = {
+        "family_name": "Cesar",
+        "given_name": "Julio",
         "name": "Cesar, Julio",
         "type": "personal",
-        "role": "rightsholder",
-        "family_name": "Cesar",
-        "given_name": "Julio",
+        "role": "rightsholder"
     }
-    assert expected == CreatorSchema().load(valid_minimal)
+    assert expected == CreatorSchema().load(valid_role)
 
 
-def test_creator_invalid_no_name():
-    invalid_no_name = {
-        "type": "personal",
-        "given_name": "Julio",
-        "family_name": "Cesar",
-        "identifiers": {
-            "orcid": "0000-0002-1825-0097",
-        },
+def test_creator_person_invalid_no_given_name_nor_family_name():
+    invalid_no_given_name_nor_family_name = {
         "affiliations": [{
             "name": "Entity One",
             "identifiers": {
                 "ror": "03yrm5c26"
             }
-        }]
+        }],
+        "identifiers": {
+            "orcid": "0000-0002-1825-0097",
+        },
+        "type": "personal",
     }
 
     assert_raises_messages(
-        lambda: CreatorSchema().load(invalid_no_name),
-        {'name': ['Missing data for required field.']}
+        lambda: CreatorSchema().load(invalid_no_given_name_nor_family_name),
+        {
+            'given_name': ['One name must be filled.'],
+            'family_name': ['One name must be filled.']
+        }
     )
 
 
@@ -187,7 +202,8 @@ def test_creator_invalid_type():
 
 def test_creator_invalid_identifiers_scheme():
     invalid_scheme = {
-        "name": "Julio Cesar",
+        "family_name": "Cesar",
+        "given_name": "Julio",
         "type": "personal",
         "identifiers": {
             "unapproved scheme": "0000-0002-1825-0097",
@@ -202,7 +218,8 @@ def test_creator_invalid_identifiers_scheme():
 
 def test_creator_invalid_identifiers_orcid():
     invalid_orcid_identifier = {
-        "name": "Julio Cesar",
+        "family_name": "Cesar",
+        "given_name": "Julio",
         "type": "personal",
         "identifiers": {
             # NOTE: This *is* an invalid ORCiD
@@ -231,9 +248,10 @@ def test_creator_invalid_identifiers_ror():
     )
 
 
-def test_creator_invalid_identifiers_for_person():
+def test_creator_person_invalid_identifiers():
     invalid_identifier_for_person = {
-        "name": "Julio Cesar",
+        "family_name": "Cesar",
+        "given_name": "Julio",
         "type": "personal",
         "identifiers": {
             "ror": "03yrm5c26"
@@ -246,7 +264,7 @@ def test_creator_invalid_identifiers_for_person():
     )
 
 
-def test_creator_invalid_identifiers_for_org():
+def test_creator_organization_invalid_identifiers():
     invalid_identifier_for_org = {
         "name": "Julio Cesar Empire",
         "type": "organizational",
@@ -261,47 +279,58 @@ def test_creator_invalid_identifiers_for_org():
     )
 
 
-def test_contributor_valid_full(vocabulary_clear):
+def test_contributor_person_valid_full(vocabulary_clear):
     valid_full = {
-        "name": "Julio Cesar",
-        "type": "personal",
-        "given_name": "Julio",
-        "family_name": "Cesar",
-        "identifiers": {
-            "orcid": "0000-0002-1825-0097",
-        },
         "affiliations": [{
             "name": "Entity One",
             "identifiers": {
                 "ror": "03yrm5c26"
             }
         }],
+        "family_name": "Cesar",
+        "given_name": "Julio",
+        "identifiers": {
+            "orcid": "0000-0002-1825-0097",
+        },
+        "type": "personal",
         "role": "rightsholder"
     }
-    assert valid_full == ContributorSchema().load(valid_full)
+    expected = {**valid_full, "name": "Cesar, Julio"}
+    assert expected == ContributorSchema().load(valid_full)
 
 
-def test_contributor_valid_minimal(vocabulary_clear):
-    valid_minimal = {
-        "name": "Cesar, Julio",
+def test_contributor_person_valid_minimal(vocabulary_clear):
+    valid_minimal_given_name = {
+        "given_name": "Julio",
         "type": "personal",
         "role": "rightsholder"
     }
     expected = {
-        "name": "Cesar, Julio",
+        "given_name": "Julio",
+        "name": "Julio",
         "type": "personal",
         "role": "rightsholder",
-        "family_name": "Cesar",
-        "given_name": "Julio",
     }
-    assert expected == ContributorSchema().load(valid_minimal)
+    assert expected == ContributorSchema().load(valid_minimal_given_name)
 
-
-def test_contributor_invalid_no_name(vocabulary_clear):
-    invalid_no_name = {
-        "type": "personal",
-        "given_name": "Julio",
+    valid_minimal_family_name = {
         "family_name": "Cesar",
+        "type": "personal",
+        "role": "rightsholder"
+    }
+    expected = {
+        "family_name": "Cesar",
+        "name": "Cesar",
+        "type": "personal",
+        "role": "rightsholder",
+    }
+    assert expected == ContributorSchema().load(valid_minimal_family_name)
+
+
+def test_contributor_person_invalid_no_family_name_nor_given_name(
+        vocabulary_clear):
+    invalid_no_family_name_nor_given_name = {
+        "type": "personal",
         "identifiers": {
             "orcid": "0000-0002-1825-0097",
         },
@@ -309,8 +338,13 @@ def test_contributor_invalid_no_name(vocabulary_clear):
     }
 
     assert_raises_messages(
-        lambda: ContributorSchema().load(invalid_no_name),
-        {'name': ['Missing data for required field.']}
+        lambda: ContributorSchema().load(
+            invalid_no_family_name_nor_given_name
+        ),
+        {
+            'family_name': ['One name must be filled.'],
+            'given_name': ['One name must be filled.'],
+        }
     )
 
 
