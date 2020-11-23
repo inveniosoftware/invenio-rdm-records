@@ -8,6 +8,7 @@ The `licenses.json` file should be sourced from
 
 import json
 from collections import OrderedDict
+from operator import itemgetter
 
 from .vocabulary import Vocabulary
 
@@ -28,3 +29,11 @@ class LicenseVocabulary(Vocabulary):
                 (self.key(obj), obj)
                 for obj in data['licenses']
             ])
+
+    def dump_options(self):
+        return [{
+            'rights': item[self.readable_key],
+            'scheme': 'spdx',
+            'identifier': item[self.key_field],
+            'url': item['seeAlso'][0] if item.get('seeAlso') else None,
+        } for item in sorted(self.data.values(), key=itemgetter(self.readable_key))]
