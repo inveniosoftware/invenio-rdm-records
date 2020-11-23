@@ -58,7 +58,6 @@ class CreatibutorSchema(Schema):
         "personal"
     ]
 
-    name = SanitizedUnicode(required=True)
     type = SanitizedUnicode(
         required=True,
         validate=validate.OneOf(
@@ -70,25 +69,11 @@ class CreatibutorSchema(Schema):
             "required": [_(f'Invalid value. Choose one of {NAMES}.')]
         }
     )
+    name = SanitizedUnicode()
     given_name = SanitizedUnicode()
     family_name = SanitizedUnicode()
     identifiers = fields.Dict()
     affiliations = fields.List(fields.Nested(AffiliationSchema))
-
-    @post_load
-    def fill_given_family_names(self, data, **kwargs):
-        """Fill the given_name and family_name based on name.
-
-        Allows to override conversion of name to family name / given name
-        if given_name or family_name is explicitly passed.
-        """
-        if data["type"] == "personal":
-            family_name, given_name = (
-                [n.strip() for n in data["name"].partition(",")][0::2]
-            )
-            data["family_name"] = data.get("family_name", family_name)
-            data["given_name"] = data.get("given_name", given_name)
-        return data
 
     @validates("identifiers")
     def validate_identifiers(self, value):
@@ -109,7 +94,7 @@ class CreatibutorSchema(Schema):
                 raise ValidationError({'ror': [_("Invalid value.")]})
 
     @validates_schema
-    def validate_data(self, data, **kwargs):
+    def validate_type_identifiers(self, data, **kwargs):
         """Validate identifier based on type."""
         if data['type'] == "personal":
             person_identifiers = ['orcid']
@@ -128,6 +113,41 @@ class CreatibutorSchema(Schema):
                     _(f"Invalid value. Choose one of {org_identifiers}.")
                 ]
                 raise ValidationError({"identifiers": messages})
+
+    @validates_schema
+    def validate_names(Self, data, **kwargs):
+        """Validate names based on type."""
+        if data['type'] == "personal":
+            if not (data.get('given_name') or data.get('family_name')):
+                messages = [_(f"One name must be filled.")]
+                raise ValidationError({
+                    "given_name": messages,
+                    "family_name": messages
+                })
+
+        elif data['type'] == "organizational":
+            if not data.get('name'):
+                messages = [_('Name cannot be blank.')]
+                raise ValidationError({"name": messages})
+
+    @post_load
+    def update_names(self, data, **kwargs):
+        """Update names for organization / person.
+
+        Fill name from given_name and family_name if person.
+        Remove given_name and family_name if organization.
+        """
+        if data["type"] == "personal":
+            names = [data.get("family_name"), data.get("given_name")]
+            data["name"] = ", ".join([n for n in names if n])
+
+        elif data['type'] == "organizational":
+            if 'family_name' in data:
+                del data['family_name']
+            if 'given_name' in data:
+                del data['given_name']
+
+        return data
 
 
 class CreatorSchema(CreatibutorSchema):

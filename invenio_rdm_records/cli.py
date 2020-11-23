@@ -87,7 +87,8 @@ def create_fake_record():
         "metadata": {
             "resource_type": fake_resource_type(),
             "creators": [{
-                "name": fake.name(),
+                "family_name": fake.last_name(),
+                "given_name": fake.first_name(),
                 "type": "personal",
                 "identifiers": {
                     "orcid": "0000-0002-1825-0097",
@@ -121,7 +122,8 @@ def create_fake_record():
                 "scheme": "no-scheme"
             }],
             "contributors": [{
-                "name": fake.name(),
+                "family_name": fake.last_name(),
+                "given_name": fake.first_name(),
                 "type": "personal",
                 "affiliations": [{
                     "name": fake.company(),

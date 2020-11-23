@@ -274,12 +274,13 @@ def minimal_record():
                 "type": "image",
                 "subtype": "image-photo"
             },
-            # Technically not required
             "creators": [{
-                "name": "Troy Brown",
+                "family_name": "Brown",
+                "given_name": "Troy",
                 "type": "personal"
             }, {
-                "name": "Phillip Lester",
+                "family_name": "Lester",
+                "given_name": "Phillip",
                 "type": "personal",
                 "identifiers": {"orcid": "0000-0002-1825-0097"},
                 "affiliations": [{
@@ -287,7 +288,8 @@ def minimal_record():
                     "identifiers": {"ror": "03yrm5c26"}
                 }]
             }, {
-                "name": "Steven Williamson",
+                "family_name": "Williamson",
+                "given_name": "Steven",
                 "type": "personal",
                 "identifiers": {"orcid": "0000-0002-1825-0097"},
                 "affiliations": [{
