@@ -183,25 +183,25 @@
               }
             },
             "locations" : {
-              "properties" : {
-                "geometry": {
-                  "properties" : {
-                    "type" : {
-                      "type" : "keyword"
+              "properties": {
+                "features": {
+                  "properties": {
+                    "centroid": {
+                      "type": "geo_point"
                     },
-                    "coordinates" : {
-                      "type" : "float"
+                    "geometry": {
+                      "type": "geo_shape"
+                    },
+                    "place": {
+                      "type": "text"
+                    },
+                    "identifiers": {
+                      "type": "object"
+                    },
+                    "description": {
+                      "type": "text"
                     }
                   }
-                },
-                "place" : {
-                  "type" : "text"
-                },
-                "identifiers" : {
-                  "type" : "object"
-                },
-                "description" : {
-                  "type" : "text"
                 }
               }
             },
