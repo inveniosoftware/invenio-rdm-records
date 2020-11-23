@@ -407,40 +407,49 @@ def test_additional_descriptions(appctx):
     assert fails_meta({"additional_descriptions": [desc]})
 
 
-def test_locations(appctx):
+@pytest.mark.parametrize('features', [
+    [{
+        "geometry": {"type": "Point", "coordinates": [6.05, 46.23333]},
+    }], [{
+        "identifiers": {
+            "geonames": "2661235",
+            "tgn": "http://vocab.getty.edu/tgn/8703679"
+        },
+    }], [{
+        "place": "CERN"
+    }], [{
+        "description": "Invenio birth place."
+    }], [{
+        "geometry": {"type": "Point", "coordinates": [6.05, 46.23333]},
+        "identifiers": {
+            "geonames": "2661235",
+            "tgn": "http://vocab.getty.edu/tgn/8703679"
+        },
+        "place": "CERN",
+        "description": "Invenio birth place."
+    }],
+])
+def test_locations_valid(appctx, features):
     """Test locations property.
 
     Note: point bounds (i.e. +-90) are checked at Marshmallow schema level.
     """
-    assert validates_meta({"locations": [{
-        "geometry": {"type": "Point", "coordinates": [6.05, 46.23333]},
-    }]})
-    assert validates_meta({"locations": [{
-        "identifiers": {
-            "geonames": "2661235",
-            "tgn": "http://vocab.getty.edu/tgn/8703679"
-        },
-    }]})
-    assert validates_meta({"locations": [{
-        "place": "CERN"
-    }]})
-    assert validates_meta({"locations": [{
-        "description": "Invenio birth place."
-    }]})
-    assert validates_meta({"locations": [{
-        "geometry": {"type": "Point", "coordinates": [6.05, 46.23333]},
-        "identifiers": {
-            "geonames": "2661235",
-            "tgn": "http://vocab.getty.edu/tgn/8703679"
-        },
-        "place": "CERN",
-        "description": "Invenio birth place."
-    }]})
+    assert validates_meta({"locations": {"features": features}})
+
+
+@pytest.mark.parametrize("locations", [
+    {
+        'features': [{
+            "geometry": None,
+            "properties": None,
+            "place": "CERN",
+            "invalid": "home"
+        }]
+    }
+])
+def test_locations_invalid(appctx, locations):
     # Additional props
-    assert fails_meta({"locations": [{
-        "place": "CERN",
-        "invalid": "home"
-    }]})
+    assert fails_meta({"locations": locations})
 
 
 def test_funding(appctx):

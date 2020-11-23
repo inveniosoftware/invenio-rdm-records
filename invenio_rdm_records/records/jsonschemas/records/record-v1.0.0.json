@@ -235,6 +235,225 @@
       "oneOf": [
         {"$ref": "#/definitions/user"}
       ]
+    },
+
+    "GeoJSON-Geometry": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "$id": "https://geojson.org/schema/Geometry.json",
+      "title": "GeoJSON Geometry",
+      "oneOf": [
+        {
+          "title": "GeoJSON Point",
+          "type": "object",
+          "required": [
+            "type",
+            "coordinates"
+          ],
+          "properties": {
+            "type": {
+              "type": "string",
+              "enum": [
+                "Point"
+              ]
+            },
+            "coordinates": {
+              "type": "array",
+              "minItems": 2,
+              "items": {
+                "type": "number"
+              }
+            },
+            "bbox": {
+              "type": "array",
+              "minItems": 4,
+              "items": {
+                "type": "number"
+              }
+            }
+          }
+        },
+        {
+          "title": "GeoJSON LineString",
+          "type": "object",
+          "required": [
+            "type",
+            "coordinates"
+          ],
+          "properties": {
+            "type": {
+              "type": "string",
+              "enum": [
+                "LineString"
+              ]
+            },
+            "coordinates": {
+              "type": "array",
+              "minItems": 2,
+              "items": {
+                "type": "array",
+                "minItems": 2,
+                "items": {
+                  "type": "number"
+                }
+              }
+            },
+            "bbox": {
+              "type": "array",
+              "minItems": 4,
+              "items": {
+                "type": "number"
+              }
+            }
+          }
+        },
+        {
+          "title": "GeoJSON Polygon",
+          "type": "object",
+          "required": [
+            "type",
+            "coordinates"
+          ],
+          "properties": {
+            "type": {
+              "type": "string",
+              "enum": [
+                "Polygon"
+              ]
+            },
+            "coordinates": {
+              "type": "array",
+              "items": {
+                "type": "array",
+                "minItems": 4,
+                "items": {
+                  "type": "array",
+                  "minItems": 2,
+                  "items": {
+                    "type": "number"
+                  }
+                }
+              }
+            },
+            "bbox": {
+              "type": "array",
+              "minItems": 4,
+              "items": {
+                "type": "number"
+              }
+            }
+          }
+        },
+        {
+          "title": "GeoJSON MultiPoint",
+          "type": "object",
+          "required": [
+            "type",
+            "coordinates"
+          ],
+          "properties": {
+            "type": {
+              "type": "string",
+              "enum": [
+                "MultiPoint"
+              ]
+            },
+            "coordinates": {
+              "type": "array",
+              "items": {
+                "type": "array",
+                "minItems": 2,
+                "items": {
+                  "type": "number"
+                }
+              }
+            },
+            "bbox": {
+              "type": "array",
+              "minItems": 4,
+              "items": {
+                "type": "number"
+              }
+            }
+          }
+        },
+        {
+          "title": "GeoJSON MultiLineString",
+          "type": "object",
+          "required": [
+            "type",
+            "coordinates"
+          ],
+          "properties": {
+            "type": {
+              "type": "string",
+              "enum": [
+                "MultiLineString"
+              ]
+            },
+            "coordinates": {
+              "type": "array",
+              "items": {
+                "type": "array",
+                "minItems": 2,
+                "items": {
+                  "type": "array",
+                  "minItems": 2,
+                  "items": {
+                    "type": "number"
+                  }
+                }
+              }
+            },
+            "bbox": {
+              "type": "array",
+              "minItems": 4,
+              "items": {
+                "type": "number"
+              }
+            }
+          }
+        },
+        {
+          "title": "GeoJSON MultiPolygon",
+          "type": "object",
+          "required": [
+            "type",
+            "coordinates"
+          ],
+          "properties": {
+            "type": {
+              "type": "string",
+              "enum": [
+                "MultiPolygon"
+              ]
+            },
+            "coordinates": {
+              "type": "array",
+              "items": {
+                "type": "array",
+                "items": {
+                  "type": "array",
+                  "minItems": 4,
+                  "items": {
+                    "type": "array",
+                    "minItems": 2,
+                    "items": {
+                      "type": "number"
+                    }
+                  }
+                }
+              }
+            },
+            "bbox": {
+              "type": "array",
+              "minItems": 4,
+              "items": {
+                "type": "number"
+              }
+            }
+          }
+        }
+      ]
     }
   },
 
@@ -468,36 +687,54 @@
         },
 
         "locations": {
-          "description": "Geographical locations.",
-          "type": "array",
-          "items": {
-            "type": "object",
-            "additionalProperties": false,
-            "properties": {
-              "geometry": {
+          "description": "Geographical locations relevant to this record.",
+          "$comment": "This part of the schema is modelled on GeoJSON, but without the scope to embed arbitrary metadata.\n\nWe nest `features` within `locations` to give scope later to say something about the locations as a whole.",
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "features": {
+              "type": "array",
+              "items": {
+                "allOf": [{
                 "type": "object",
+                "additionalProperties": false,
                 "properties": {
-                  "type": {
-                    "type": "string"
+                  "geometry": {
+                    "allOf": [{
+                      "$ref": "#/definitions/GeoJSON-Geometry"
+                    }, {
+                      "$comment": "Bounding boxes (`bbox`) are forbidden on our geometries, even though they're allowed on GeoJSON geometries",
+                      "properties": {
+                        "type": {},
+                        "coordinates": {}
+                      },
+                      "additionalProperties": false
+                    }]
                   },
-                  "coordinates": {
-                    "type": "array"
+                  "identifiers": {"$ref": "#/definitions/identifiers"},
+                  "place": {
+                    "description": "Place of the location",
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "description": {
+                    "description": "Description of the location",
+                    "type": "string",
+                    "minLength": 1
                   }
                 }
-              },
-              "identifiers": {"$ref": "#/definitions/identifiers"},
-              "place": {
-                "description": "Place of the location",
-                "type": "string"
-              },
-              "description": {
-                "description": "Description of the location",
-                "type": "string"
+                }, {
+                  "anyOf": [
+                    {"required": ["geometry"]},
+                    {"required": ["identifiers"]},
+                    {"required": ["place"]},
+                    {"required": ["description"]}
+                  ]
+                }]
               }
             }
           }
         },
-
         "funding": {
           "type": "array",
           "items": {
