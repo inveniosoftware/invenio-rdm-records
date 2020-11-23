@@ -1,3 +1,11 @@
+# -*- coding: utf-8 -*-
+#
+# Copyright (C) 2020 CERN.
+# Copyright (C) 2020 Cottage Labs LLP.
+#
+# Invenio-RDM-Records is free software; you can redistribute it and/or modify
+# it under the terms of the MIT License; see LICENSE file for more details.
+
 """License vocabulary, in SPDX form.
 
 Unlike other vocabularies, this one is pulled from a JSON file, not a CSV.
