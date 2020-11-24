@@ -13,7 +13,7 @@ from invenio_drafts_resources.services.records import RecordDraftService, \
 from invenio_drafts_resources.services.records.components import \
     RelationsComponent
 from invenio_records_resources.services.files.config import FileServiceConfig
-from invenio_records_resources.services.files.service import FileServiceMixin
+from invenio_records_resources.services.files.service import RecordFileService
 from invenio_records_resources.services.records.components import \
     AccessComponent, FilesComponent, MetadataComponent, PIDSComponent
 from invenio_records_resources.services.records.search import terms_filter
@@ -95,7 +95,7 @@ class BibliographicRecordFilesServiceConfig(BibliographicRecordServiceConfig, Fi
     """Bibliographic record files service configuration."""
 
 
-class BibliographicRecordFilesService(RecordService, FileServiceMixin):
+class BibliographicRecordFilesService(RecordFileService):
     """Bibliographic record files service."""
 
     config_name = "RDM_RECORDS_BIBLIOGRAPHIC_RECORD_FILES_SERVICE_CONFIG"
@@ -111,7 +111,7 @@ class BibliographicDraftFilesServiceConfig(BibliographicRecordServiceConfig, Fil
     record_cls = BibliographicDraft
 
 
-class BibliographicDraftFilesService(RecordService, FileServiceMixin):
+class BibliographicDraftFilesService(RecordFileService):
     """Bibliographic draft files service."""
 
     config_name = "RDM_RECORDS_BIBLIOGRAPHIC_DRAFT_FILES_SERVICE_CONFIG"
