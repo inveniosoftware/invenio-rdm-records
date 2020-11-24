@@ -20,7 +20,7 @@ from invenio_vocabularies.records.models import VocabularyType
 from werkzeug.local import LocalProxy
 
 from . import models
-from .dumpers import EDTFDumperExt
+from .dumpers import EDTFDumperExt, EDTFListDumperExt
 
 
 class Language(Vocabulary):
@@ -54,11 +54,13 @@ class BibliographicRecord(Record):
     model_cls = models.RecordMetadata
 
     index = IndexField(
-        'rdmrecords-records-record-v1.0.0', search_alias='rdmrecords-records')
+        "rdmrecords-records-record-v1.0.0", search_alias="rdmrecords-records"
+    )
 
     dumper = ElasticsearchDumper(
         extensions=[
             EDTFDumperExt('metadata.publication_date'),
+            EDTFListDumperExt("metadata.dates", "date"),
             RelationDumperExt('relations'),
         ])
 
@@ -91,11 +93,13 @@ class BibliographicDraft(Draft):
     model_cls = models.DraftMetadata
 
     index = IndexField(
-        'rdmrecords-drafts-draft-v1.0.0', search_alias='rdmrecords-drafts')
+        "rdmrecords-drafts-draft-v1.0.0", search_alias="rdmrecords-drafts"
+    )
 
     dumper = ElasticsearchDumper(
         extensions=[
             EDTFDumperExt('metadata.publication_date'),
+            EDTFListDumperExt("metadata.dates", "date"),
             RelationDumperExt('relations'),
         ])
 

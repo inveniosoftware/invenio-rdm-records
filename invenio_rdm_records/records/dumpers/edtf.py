@@ -17,14 +17,23 @@ from invenio_records.dumpers import ElasticsearchDumperExt
 from pytz import utc
 
 
+def _format_date(date):
+    """Format the given date into ISO format."""
+    arrow = Arrow.fromtimestamp(calendar.timegm(date), tzinfo=utc)
+    return arrow.date().isoformat()
+
+
 class EDTFDumperExt(ElasticsearchDumperExt):
     """Elasticsearch dumper extension for EDTF dates support.
 
-    It adds two fields in the root of the document: publication_date_start
-    and publication_date_end, which correspond to the lower strict and upper
-    strict bounds. This are required for sorting. In an ascending sort (most
-    recent last), sort by publication_date_start to get a natural sort order.
-    In a descending sort (most recent first), sort by publication_date_end.
+    It parses the value (i.e. the EDTF level 0 string) of the specified
+    field in the document and adds a dictionary holding the values
+    :code:`{"lte": lower_strict, "gte": upper_strict}`, whose values correspond
+    to the lower strict and upper strict bounds.
+    They are required for sorting.
+    In an ascending sort (most recent last), sort by publication_date_start
+    to get a natural sort order. In a descending sort (most recent first),
+    sort by publication_date_end.
     """
 
     def __init__(self, field):
@@ -35,19 +44,18 @@ class EDTFDumperExt(ElasticsearchDumperExt):
         super(EDTFDumperExt, self).__init__()
         self.keys = parse_lookup_key(field)
         self.key = self.keys[-1]
+        self.range_key = "{}_range".format(self.key)
 
     def dump(self, record, data):
         """Dump the data."""
         try:
             parent_data = dict_lookup(data, self.keys, parent=True)
-
             pd = parse_edtf(parent_data[self.key])
-            parent_data[f"{self.key}_start"] = Arrow.fromtimestamp(
-                calendar.timegm(pd.lower_strict()), tzinfo=utc
-                ).date().isoformat()
-            parent_data[f"{self.key}_end"] = Arrow.fromtimestamp(
-                calendar.timegm(pd.upper_strict()), tzinfo=utc
-                ).date().isoformat()
+            parent_data[self.range_key] = {
+                "gte": _format_date(pd.lower_strict()),
+                "lte": _format_date(pd.upper_strict()),
+            }
+
         except (KeyError, EDTFParseException):
             # The field does not exists or had wrong data
             return data  # FIXME: should log this in debug mode?
@@ -63,4 +71,59 @@ class EDTFDumperExt(ElasticsearchDumperExt):
         except KeyError:
             # Drafts partially saved with no data
             # The empty {} gets removed by `clear_none`
-            pass
+            return data
+
+
+class EDTFListDumperExt(ElasticsearchDumperExt):
+    """Elasticsearch dumper extension for support of EDTF date lists.
+
+    It iterates over the items at the specified field in the
+    document and adds dictionaries holding the values
+    :code:`{"lte": lower_strict, "gte": upper_strict}`, as parsed
+    from their EDTF fields (specified by the key).
+    These values correspond to the lower strict and upper strict bounds.
+    They are required for sorting.
+    In an ascending sort (most recent last), sort by publication_date_start
+    to get a natural sort order. In a descending sort (most recent first),
+    sort by publication_date_end.
+    """
+
+    def __init__(self, list_field, key):
+        """Constructor.
+
+        :param list_field: dot separated path to the array to process.
+        :param key: name of the EDTF field in each array item.
+        """
+        super(EDTFListDumperExt, self).__init__()
+        self.keys = parse_lookup_key(list_field)
+        self.key = key
+        self.range_key = "{}_range".format(self.key)
+
+    def dump(self, record, data):
+        """Dump the data."""
+        try:
+            date_list = dict_lookup(data, self.keys, parent=False)
+
+            # note: EDTF parse_edtf (using pyparsing) expects a string
+            for item in date_list:
+                pd = parse_edtf(item[self.key])
+                item[self.range_key] = {
+                    "gte": _format_date(pd.lower_strict()),
+                    "lte": _format_date(pd.upper_strict()),
+                }
+
+        except (KeyError, EDTFParseException):
+            # The field does not exists or had wrong data
+            return data  # FIXME: should log this in debug mode?
+
+    def load(self, data, record_cls):
+        """Load the data."""
+        try:
+            date_list = dict_lookup(data, self.keys, parent=False)
+
+            # `None` covers the cases where exceptions were raised in _dump
+            for item in date_list:
+                item.pop(self.range_key, None)
+
+        except KeyError:
+            return data
