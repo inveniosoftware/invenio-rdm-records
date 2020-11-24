@@ -10,13 +10,18 @@
 
 from invenio_drafts_resources.resources import DraftActionResource, \
     DraftActionResourceConfig, DraftFileActionResource, \
-    DraftFileActionResourceConfig, DraftFileResource, DraftFileResourceConfig, \
-    DraftResource, DraftResourceConfig, RecordResource, RecordResourceConfig
+    DraftFileActionResourceConfig, DraftFileResource, \
+    DraftFileResourceConfig, DraftResource, DraftResourceConfig, \
+    RecordResource, RecordResourceConfig
 from invenio_records_resources.resources import RecordResponse
+from invenio_records_resources.resources.files import FileActionResource, \
+    FileActionResourceConfig, FileResource, FileResourceConfig
 from marshmallow.exceptions import ValidationError
 
 from .errors import handle_validation_error
-from .schemas_links import BibliographicDraftLinksSchemaV1, \
+from .schemas_links import BibliographicDraftFileLinksSchema, \
+    BibliographicDraftFilesLinksSchema, BibliographicDraftLinksSchemaV1, \
+    BibliographicRecordFileLinksSchema, BibliographicRecordFilesLinksSchema, \
     BibliographicRecordLinksSchemaV1, \
     BibliographicUserRecordsSearchLinksSchemaV1
 from .serializers import UIJSONSerializer
@@ -59,7 +64,7 @@ class BibliographicDraftResourceConfig(DraftResourceConfig):
 
     links_config = {
         **DraftResourceConfig.links_config,
-        "record": BibliographicDraftLinksSchemaV1
+        "record": BibliographicDraftLinksSchemaV1,
     }
 
 
@@ -76,7 +81,9 @@ class BibliographicDraftActionResourceConfig(DraftActionResourceConfig):
     list_route = "/records/<pid_value>/draft/actions/<action>"
 
     action_commands = {
-        "publish": "publish"
+        "create": {
+            "publish": "publish"
+        }
     }
 
     record_links_config = {
@@ -113,24 +120,83 @@ class BibliographicUserRecordsResource(BibliographicRecordResource):
     config_name = "RDM_RECORDS_BIBLIOGRAPHIC_USER_RECORDS_CONFIG"
     default_config = BibliographicUserRecordsResourceConfig
 
+#
+# Record files
+#
 
-class BibliographicRecordFilesResourceConfig(DraftFileResourceConfig):
+# /api/records/:pid_value/files[/:key]
+class BibliographicRecordFilesResourceConfig(FileResourceConfig):
     """Bibliographic record files resource config."""
 
+    links_config = {
+        "file": BibliographicRecordFileLinksSchema,
+        "files": BibliographicRecordFilesLinksSchema,
+    }
 
-class BibliographicRecordFilesResource(DraftFileResource):
+
+class BibliographicRecordFilesResource(FileResource):
     """Bibliographic record files resource."""
 
     config_name = "RDM_RECORDS_BIBLIOGRAPHIC_RECORD_FILES_CONFIG"
     default_config = BibliographicRecordFilesResourceConfig
 
 
-class BibliographicRecordFilesActionResourceConfig(DraftFileActionResourceConfig):
+# /api/records/:pid_value/files/:key/:action
+class BibliographicRecordFilesActionResourceConfig(FileActionResourceConfig):
     """Bibliographic record files action resource config."""
 
+    links_config = {
+        "file": BibliographicRecordFileLinksSchema,
+        "files": BibliographicRecordFilesLinksSchema,
+    }
+    action_commands = {
+        'read': {
+            'content': 'get_file_content'
+        },
+    }
 
-class BibliographicRecordFilesActionResource(DraftFileActionResource):
+
+
+class BibliographicRecordFilesActionResource(FileActionResource):
     """Bibliographic record files action resource."""
 
     config_name = "RDM_RECORDS_BIBLIOGRAPHIC_RECORD_FILES_ACTION_CONFIG"
     default_config = BibliographicRecordFilesActionResourceConfig
+
+
+#
+# Draft files
+#
+
+# /api/records/:pid_value/draft/files[/:key]
+class BibliographicDraftFilesResourceConfig(DraftFileResourceConfig):
+    """Bibliographic record files resource config."""
+
+    links_config = {
+        "file": BibliographicDraftFileLinksSchema,
+        "files": BibliographicDraftFilesLinksSchema,
+    }
+
+
+class BibliographicDraftFilesResource(DraftFileResource):
+    """Bibliographic record files resource."""
+
+    config_name = "RDM_RECORDS_BIBLIOGRAPHIC_DRAFT_FILES_CONFIG"
+    default_config = BibliographicDraftFilesResourceConfig
+
+
+# /api/records/:pid_value/draft/files/:key/:action
+class BibliographicDraftFilesActionResourceConfig(DraftFileActionResourceConfig):
+    """Bibliographic record files action resource config."""
+
+    links_config = {
+        "file": BibliographicDraftFileLinksSchema,
+        "files": BibliographicDraftFilesLinksSchema,
+    }
+
+
+class BibliographicDraftFilesActionResource(DraftFileActionResource):
+    """Bibliographic record files action resource."""
+
+    config_name = "RDM_RECORDS_BIBLIOGRAPHIC_DRAFT_FILES_ACTION_CONFIG"
+    default_config = BibliographicDraftFilesActionResourceConfig

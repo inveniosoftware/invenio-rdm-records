@@ -7,15 +7,16 @@
 
 """Bibliographic Record and Draft API."""
 
-from werkzeug.local import LocalProxy
 from invenio_drafts_resources.records import Draft, Record
-from invenio_records.systemfields import ModelField
 from invenio_records.dumpers import ElasticsearchDumper
-from invenio_records_resources.records.systemfields import IndexField, FilesField
+from invenio_records.systemfields import ModelField
 from invenio_records_resources.records.api import RecordFile as RecordFileBase
+from invenio_records_resources.records.systemfields import FilesField, \
+    IndexField
+from werkzeug.local import LocalProxy
 
-from .dumpers import EDTFDumperExt
 from . import models
+from .dumpers import EDTFDumperExt
 
 
 class RecordFile(RecordFileBase):

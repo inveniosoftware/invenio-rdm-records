@@ -12,9 +12,9 @@ from invenio_drafts_resources.services.records.schema import RecordSchema
 from marshmallow import EXCLUDE, INCLUDE, Schema, fields, missing
 
 from .access import AccessSchema
+from .files import FilesSchema
 from .metadata import MetadataSchema
 from .pids import PIDSchema
-from .files import FilesSchema
 
 
 # NOTE: Use this one for system fields only

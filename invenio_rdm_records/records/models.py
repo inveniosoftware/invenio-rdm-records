@@ -8,10 +8,10 @@
 """Bibliographic Record and Draft models."""
 
 from invenio_db import db
-from invenio_records.models import RecordMetadataBase
-from invenio_records_resources.records.models import RecordFileBase
 from invenio_drafts_resources.records import DraftMetadataBase
 from invenio_files_rest.models import Bucket
+from invenio_records.models import RecordMetadataBase
+from invenio_records_resources.records.models import RecordFileBase
 from sqlalchemy_utils.types import UUIDType
 
 

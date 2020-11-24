@@ -9,10 +9,9 @@
 
 from .resources import BibliographicDraftActionResource, \
     BibliographicDraftActionResourceConfig, BibliographicDraftResource, \
-    BibliographicDraftResourceConfig, BibliographicRecordFilesResource, \
-    BibliographicRecordFilesResourceConfig, \
-    BibliographicRecordFilesActionResource, \
+    BibliographicDraftResourceConfig, BibliographicRecordFilesActionResource, \
     BibliographicRecordFilesActionResourceConfig, \
+    BibliographicRecordFilesResource, BibliographicRecordFilesResourceConfig, \
     BibliographicRecordResource, BibliographicRecordResourceConfig, \
     BibliographicUserRecordsResource, BibliographicUserRecordsResourceConfig
 

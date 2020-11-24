@@ -12,11 +12,10 @@ from invenio_drafts_resources.services.records import RecordDraftService, \
     RecordDraftServiceConfig
 from invenio_drafts_resources.services.records.components import \
     RelationsComponent
-from invenio_drafts_resources.services.records.schema import RecordSchema
+from invenio_records_resources.services.files.config import FileServiceConfig
+from invenio_records_resources.services.files.service import FileServiceMixin
 from invenio_records_resources.services.records.components import \
     AccessComponent, FilesComponent, MetadataComponent, PIDSComponent
-from invenio_records_resources.services.records.config import \
-    RecordServiceConfig
 from invenio_records_resources.services.records.search import terms_filter
 from invenio_records_resources.services.records.service import RecordService
 
@@ -87,3 +86,33 @@ class BibliographicUserRecordsService(RecordService):
 
     config_name = "RDM_RECORDS_BIBLIOGRAPHIC_USER_RECORDS_SERVICE_CONFIG"
     default_config = BibliographicUserRecordsServiceConfig
+
+
+#
+# Record files
+#
+class BibliographicRecordFilesServiceConfig(BibliographicRecordServiceConfig, FileServiceConfig):
+    """Bibliographic record files service configuration."""
+
+
+class BibliographicRecordFilesService(RecordService, FileServiceMixin):
+    """Bibliographic record files service."""
+
+    config_name = "RDM_RECORDS_BIBLIOGRAPHIC_RECORD_FILES_SERVICE_CONFIG"
+    default_config = BibliographicRecordFilesServiceConfig
+
+
+#
+# Draft files
+#
+class BibliographicDraftFilesServiceConfig(BibliographicRecordServiceConfig, FileServiceConfig):
+    """Bibliographic draft files service configuration."""
+
+    record_cls = BibliographicDraft
+
+
+class BibliographicDraftFilesService(RecordService, FileServiceMixin):
+    """Bibliographic draft files service."""
+
+    config_name = "RDM_RECORDS_BIBLIOGRAPHIC_DRAFT_FILES_SERVICE_CONFIG"
+    default_config = BibliographicDraftFilesServiceConfig
