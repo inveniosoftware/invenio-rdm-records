@@ -13,7 +13,8 @@ from invenio_db import db
 from invenio_records.dumpers import ElasticsearchDumper
 
 from invenio_rdm_records.records import BibliographicRecord
-from invenio_rdm_records.records.dumpers import EDTFDumperExt, LocationsDumper
+from invenio_rdm_records.records.dumpers import EDTFDumperExt, \
+    EDTFListDumperExt, LocationsDumper
 
 
 @pytest.mark.parametrize("date, expected_start, expected_end", [
@@ -29,9 +30,14 @@ def test_esdumper_with_edtfext(app, db, minimal_record, location,
     # Create a simple extension that adds a computed field.
 
     dumper = ElasticsearchDumper(
-        extensions=[EDTFDumperExt('metadata.publication_date')])
+        extensions=[
+            EDTFDumperExt("metadata.publication_date"),
+            EDTFListDumperExt("metadata.dates", "date"),
+        ]
+    )
 
-    minimal_record['metadata']['publication_date'] = date
+    minimal_record["metadata"]["publication_date"] = date
+    minimal_record["metadata"]["dates"] = [{"date": date}]
 
     # Create the record
     record = BibliographicRecord.create(minimal_record)
@@ -39,15 +45,19 @@ def test_esdumper_with_edtfext(app, db, minimal_record, location,
 
     # Dump it
     dump = record.dumps(dumper=dumper)
-    assert dump['metadata']['publication_date_start'] == expected_start
-    assert dump['metadata']['publication_date_end'] == expected_end
-    assert dump['metadata']['publication_date'] == date
+    assert dump["metadata"]["publication_date_range"]["gte"] == expected_start
+    assert dump["metadata"]["publication_date_range"]["lte"] == expected_end
+    assert dump["metadata"]["publication_date"] == date
+    assert dump["metadata"]["dates"][0]["date_range"]["gte"] == expected_start
+    assert dump["metadata"]["dates"][0]["date_range"]["lte"] == expected_end
+    assert dump["metadata"]["dates"][0]["date"] == date
 
     # Load it
     new_record = BibliographicRecord.loads(dump, loader=dumper)
-    assert 'publication_date_start' not in new_record['metadata']
-    assert 'publication_date_end' not in new_record['metadata']
-    assert 'publication_date' in new_record['metadata']
+    assert "publication_date_range" not in new_record["metadata"]
+    assert "publication_date" in new_record["metadata"]
+    assert "date_range" not in new_record["metadata"]["dates"][0]
+    assert "date" in new_record["metadata"]["dates"][0]
 
 
 def test_esdumper_with_edtfext_not_defined(app, db, location, minimal_record):
@@ -55,7 +65,10 @@ def test_esdumper_with_edtfext_not_defined(app, db, location, minimal_record):
     # Create a simple extension that adds a computed field.
 
     dumper = ElasticsearchDumper(
-        extensions=[EDTFDumperExt('metadata.non_existing_field')])
+        extensions=[
+            EDTFDumperExt("metadata.non_existing_field"),
+        ]
+    )
 
     # Create the record
     record = BibliographicRecord.create(minimal_record)
@@ -63,15 +76,38 @@ def test_esdumper_with_edtfext_not_defined(app, db, location, minimal_record):
 
     # Dump it
     dump = record.dumps(dumper=dumper)
-    assert 'non_existing_field_start' not in dump['metadata']
-    assert 'non_existing_field_end' not in dump['metadata']
-    assert 'non_existing_field' not in dump['metadata']
+    assert "non_existing_field_range" not in dump["metadata"]
+    assert "non_existing_field" not in dump["metadata"]
 
     # Load it
     new_record = BibliographicRecord.loads(dump, loader=dumper)
-    assert 'non_existing_field_start' not in new_record['metadata']
-    assert 'non_existing_field_end' not in new_record['metadata']
-    assert 'non_existing_field' not in new_record['metadata']
+    assert "non_existing_field_range" not in new_record["metadata"]
+    assert "non_existing_field" not in new_record["metadata"]
+
+
+def test_eslistdumper_with_edtfext_not_defined(app, db, minimal_record):
+    """Test edft extension implementation."""
+    # Create a simple extension that adds a computed field.
+
+    dumper = ElasticsearchDumper(
+        extensions=[
+            EDTFListDumperExt("metadata.non_existing_array_field", "date"),
+        ]
+    )
+
+    # Create the record
+    record = BibliographicRecord.create(minimal_record)
+    db.session.commit()
+
+    # Dump it
+    dump = record.dumps(dumper=dumper)
+    assert "non_existing_array_field_range" not in dump["metadata"]
+    assert "non_existing_array_field" not in dump["metadata"]
+
+    # Load it
+    new_record = BibliographicRecord.loads(dump, loader=dumper)
+    assert "non_existing_array_field_range" not in new_record["metadata"]
+    assert "non_existing_array_field" not in new_record["metadata"]
 
 
 def test_esdumper_with_edtfext_parse_error(app, db, location, minimal_record):
@@ -79,7 +115,10 @@ def test_esdumper_with_edtfext_parse_error(app, db, location, minimal_record):
     # NOTE: We cannot trigger this on publication_date because it is checked
     # by marshmallow on record creation. We can simply give a non date field.
     dumper = ElasticsearchDumper(
-        extensions=[EDTFDumperExt('metadata.resource_type.type')])
+        extensions=[
+            EDTFDumperExt("metadata.resource_type.type"),
+        ]
+    )
 
     # Create the record
     record = BibliographicRecord.create(minimal_record)
@@ -87,12 +126,36 @@ def test_esdumper_with_edtfext_parse_error(app, db, location, minimal_record):
 
     # Dump it
     dump = record.dumps(dumper=dumper)
-    assert 'type_start' not in dump['metadata']['resource_type']
-    assert 'type_end' not in dump['metadata']['resource_type']
-    assert 'type' in dump['metadata']['resource_type']
+    assert "type_range" not in dump["metadata"]["resource_type"]
+    assert "type" in dump["metadata"]["resource_type"]
 
     # Load it
     new_record = BibliographicRecord.loads(dump, loader=dumper)
+    assert "type_range" not in new_record["metadata"]["resource_type"]
+    assert "type" in new_record["metadata"]["resource_type"]
+
+
+def test_eslistdumper_with_edtfext_parse_error(app, db, minimal_record):
+    """Test edft extension implementation."""
+    dumper = ElasticsearchDumper(
+        extensions=[
+            EDTFListDumperExt("metadata.contributors", "name"),
+        ]
+    )
+
+    # Create the record
+    record = BibliographicRecord.create(minimal_record)
+    db.session.commit()
+
+    # Dump it
+    dump = record.dumps(dumper=dumper)
+    assert "name_range" not in dump["metadata"]["contributors"][0]
+    assert "name" in dump["metadata"]["contributors"][0]
+
+    # Load it
+    new_record = BibliographicRecord.loads(dump, loader=dumper)
+    assert 'name_range' not in new_record["metadata"]["contributors"][0]
+    assert 'name' in new_record["metadata"]["contributors"][0]
     assert 'type_start' not in new_record['metadata']['resource_type']
     assert 'type_end' not in new_record['metadata']['resource_type']
     assert 'type' in new_record['metadata']['resource_type']

@@ -48,12 +48,6 @@
                 }
               }
             },
-            "publication_date_start" : {
-              "type" : "date"
-            },
-            "publication_date_end" : {
-              "type" : "date"
-            },
             "contact" : {
               "type" : "keyword"
             },
@@ -125,6 +119,9 @@
                 },
                 "date" : {
                   "type" : "keyword"
+                },
+                "date_range" : {
+                  "type" : "date_range"
                 },
                 "type" : {
                   "type" : "keyword"
@@ -207,6 +204,9 @@
             },
             "publication_date" : {
               "type" : "keyword"
+            },
+            "publication_date_range" : {
+              "type" : "date_range"
             },
             "references" : {
               "properties" : {
