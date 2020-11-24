@@ -7,20 +7,28 @@
 
 """Bibliographic Record and Draft API."""
 
-
+from werkzeug.local import LocalProxy
 from invenio_drafts_resources.records import Draft, Record
+from invenio_records.systemfields import ModelField
 from invenio_records.dumpers import ElasticsearchDumper
-from invenio_records.models import RecordMetadata
-from invenio_records_resources.records.systemfields import IndexField
+from invenio_records_resources.records.systemfields import IndexField, FilesField
+from invenio_records_resources.records.api import RecordFile as RecordFileBase
 
 from .dumpers import EDTFDumperExt
-from .models import DraftMetadata
+from . import models
+
+
+class RecordFile(RecordFileBase):
+    """Example record file API."""
+
+    model_cls = models.RecordFile
+    record_cls = LocalProxy(lambda: BibliographicRecord)
 
 
 class BibliographicRecord(Record):
     """Bibliographic Record API."""
 
-    model_cls = RecordMetadata
+    model_cls = models.RecordMetadata
 
     index = IndexField(
         'rdmrecords-records-record-v1.0.0', search_alias='rdmrecords-records')
@@ -28,14 +36,29 @@ class BibliographicRecord(Record):
     dumper = ElasticsearchDumper(
         extensions=[EDTFDumperExt('metadata.publication_date')])
 
+    files = FilesField(store=False, file_cls=RecordFile)
+    bucket_id = ModelField()
+    bucket = ModelField(dump=False)
+
+
+class DraftFile(RecordFileBase):
+    """Example record file API."""
+
+    model_cls = models.DraftFile
+    record_cls = LocalProxy(lambda: BibliographicDraft)
+
 
 class BibliographicDraft(Draft):
     """Bibliographic draft API."""
 
-    model_cls = DraftMetadata
+    model_cls = models.DraftMetadata
 
     index = IndexField(
         'rdmrecords-drafts-draft-v1.0.0', search_alias='rdmrecords-drafts')
 
     dumper = ElasticsearchDumper(
         extensions=[EDTFDumperExt('metadata.publication_date')])
+
+    files = FilesField(store=False, file_cls=DraftFile)
+    bucket_id = ModelField()
+    bucket = ModelField(dump=False)
