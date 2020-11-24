@@ -18,8 +18,12 @@ class FileSchema(Schema):
     type = fields.String()
     checksum = fields.String()
     size = fields.Integer()
-    bucket = fields.String()
-    key = fields.String()
+    key = SanitizedUnicode()
+    version_id = SanitizedUnicode()
+    bucket_id = SanitizedUnicode()
+    mimetype = SanitizedUnicode()
+    storage_class = SanitizedUnicode()
+
     # TODO (Alex): See how this fits with using the refactored Linker
     # links = fields.Method('get_links')
 
@@ -36,4 +40,15 @@ class FilesSchema(Schema):
 
     enabled = fields.Bool()
     default_preview = SanitizedUnicode()
-    items = fields.List(fields.Nested(FileSchema))
+    order = fields.List(SanitizedUnicode())
+
+    # TODO: Used to store metadata for files (e.g. description, width/height)
+    # meta = fields.Dict(
+    #     keys=SanitizedUnicode(),
+    #     values=fields.Raw(),
+    # )
+    # entries = fields.Dict(
+    #     keys=SanitizedUnicode(),
+    #     values=fields.Nested(FileSchema),
+    #     dump_only=True,
+    # )

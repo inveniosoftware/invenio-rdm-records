@@ -180,6 +180,26 @@
       "additionalProperties": false,
       "description": "A file object.",
       "properties": {
+        "version_id": {
+          "description": "Object version ID.",
+          "type": "string"
+        },
+        "bucket_id": {
+          "description": "Object verison bucket ID.",
+          "type": "string"
+        },
+        "mimetype": {
+          "description": "File MIMEType.",
+          "type": "string"
+        },
+        "uri": {
+          "description": "File URI.",
+          "type": "string"
+        },
+        "storage_class": {
+          "description": "File storage class.",
+          "type": "string"
+        },
         "checksum": {
           "description": "Checksum of the file.",
           "type": "string"
@@ -190,26 +210,6 @@
         },
         "key": {
           "description": "Key (filename) of the file.",
-          "type": "string"
-        },
-        "ext": {
-          "description": "File extension.",
-          "type": "string"
-        },
-        "description": {
-          "description": "Description for file.",
-          "type": "string"
-        },
-        "order": {
-          "description": "Value to sort according to.",
-          "type": "string"
-        },
-        "default_preview": {
-          "description": "Set to true to use as the default previewed file.",
-          "type": "boolean"
-        },
-        "bucket": {
-          "description": "TODO - Bucket id - what about third party storage systems?",
           "type": "string"
         },
         "file_id": {"$ref": "#/definitions/identifier"}
@@ -639,25 +639,27 @@
       "description": "Files associated with the record",
       "additionalProperties": false,
       "properties": {
-        "disabled": {
+        "enabled": {
           "type": "boolean",
-          "description": "Set to true for metadata only records."
+          "description": "Set to false for metadata only records."
         },
-        "total_size": {
-          "type": "integer",
-          "description": "Total size of all files in bytes."
-        },
-        "count": {
-          "type": "integer",
-          "description": "Number of files."
-        },
-        "files": {
-          "type": "array",
-          "items": {"$ref": "#/definitions/file"}
-        },
-        "bucket": {
+        "default_preview": {
           "type": "string",
-          "description": "TODO - we need a bucket id, but what about third-party storage? systems"
+          "description": "Key of the default previewed file."
+        },
+        "order": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "entries": {
+          "type": "object",
+          "additionalProperties": {"$ref": "#/definitions/file"}
+        },
+        "meta": {
+          "type": "object",
+          "additionalProperties": {"type": "object"}
         }
       }
     },
