@@ -9,15 +9,22 @@
 
 from .resources import BibliographicDraftActionResource, \
     BibliographicDraftActionResourceConfig, BibliographicDraftResource, \
-    BibliographicDraftResourceConfig, BibliographicRecordResource, \
-    BibliographicRecordResourceConfig, BibliographicUserRecordsResource, \
-    BibliographicUserRecordsResourceConfig
+    BibliographicDraftResourceConfig, BibliographicRecordFilesResource, \
+    BibliographicRecordFilesResourceConfig, \
+    BibliographicRecordFilesActionResource, \
+    BibliographicRecordFilesActionResourceConfig, \
+    BibliographicRecordResource, BibliographicRecordResourceConfig, \
+    BibliographicUserRecordsResource, BibliographicUserRecordsResourceConfig
 
 __all__ = (
     "BibliographicDraftActionResource",
     "BibliographicDraftActionResourceConfig",
     "BibliographicDraftResource",
     "BibliographicDraftResourceConfig",
+    "BibliographicRecordFilesResource",
+    "BibliographicRecordFilesResourceConfig",
+    "BibliographicRecordFilesActionResource",
+    "BibliographicRecordFilesActionResourceConfig",
     "BibliographicRecordResource",
     "BibliographicRecordResourceConfig",
     "BibliographicUserRecordsResource",

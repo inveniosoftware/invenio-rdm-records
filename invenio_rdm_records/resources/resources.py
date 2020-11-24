@@ -9,8 +9,9 @@
 """Bibliographic Record Resource."""
 
 from invenio_drafts_resources.resources import DraftActionResource, \
-    DraftActionResourceConfig, DraftResource, DraftResourceConfig, \
-    RecordResource, RecordResourceConfig
+    DraftActionResourceConfig, DraftFileActionResource, \
+    DraftFileActionResourceConfig, DraftFileResource, DraftFileResourceConfig, \
+    DraftResource, DraftResourceConfig, RecordResource, RecordResourceConfig
 from invenio_records_resources.resources import RecordResponse
 from marshmallow.exceptions import ValidationError
 
@@ -111,3 +112,25 @@ class BibliographicUserRecordsResource(BibliographicRecordResource):
 
     config_name = "RDM_RECORDS_BIBLIOGRAPHIC_USER_RECORDS_CONFIG"
     default_config = BibliographicUserRecordsResourceConfig
+
+
+class BibliographicRecordFilesResourceConfig(DraftFileResourceConfig):
+    """Bibliographic record files resource config."""
+
+
+class BibliographicRecordFilesResource(DraftFileResource):
+    """Bibliographic record files resource."""
+
+    config_name = "RDM_RECORDS_BIBLIOGRAPHIC_RECORD_FILES_CONFIG"
+    default_config = BibliographicRecordFilesResourceConfig
+
+
+class BibliographicRecordFilesActionResourceConfig(DraftFileActionResourceConfig):
+    """Bibliographic record files action resource config."""
+
+
+class BibliographicRecordFilesActionResource(DraftFileActionResource):
+    """Bibliographic record files action resource."""
+
+    config_name = "RDM_RECORDS_BIBLIOGRAPHIC_RECORD_FILES_ACTION_CONFIG"
+    default_config = BibliographicRecordFilesActionResourceConfig
