@@ -120,6 +120,7 @@ class BibliographicUserRecordsResource(BibliographicRecordResource):
     config_name = "RDM_RECORDS_BIBLIOGRAPHIC_USER_RECORDS_CONFIG"
     default_config = BibliographicUserRecordsResourceConfig
 
+
 #
 # Record files
 #
@@ -156,7 +157,6 @@ class BibliographicRecordFilesActionResourceConfig(FileActionResourceConfig):
     }
 
 
-
 class BibliographicRecordFilesActionResource(FileActionResource):
     """Bibliographic record files action resource."""
 
@@ -186,7 +186,8 @@ class BibliographicDraftFilesResource(DraftFileResource):
 
 
 # /api/records/:pid_value/draft/files/:key/:action
-class BibliographicDraftFilesActionResourceConfig(DraftFileActionResourceConfig):
+class BibliographicDraftFilesActionResourceConfig(
+        DraftFileActionResourceConfig):
     """Bibliographic record files action resource config."""
 
     links_config = {

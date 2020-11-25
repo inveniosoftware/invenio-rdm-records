@@ -37,8 +37,14 @@ class BibliographicRecord(Record):
     dumper = ElasticsearchDumper(
         extensions=[EDTFDumperExt('metadata.publication_date')])
 
-    files = FilesField(store=False, file_cls=RecordFile)
-    bucket_id = ModelField()
+    files = FilesField(
+        store=False, file_cls=RecordFile,
+        # Don't create
+        create=False,
+        # Don't delete, we'll manage in the service
+        delete=False,
+    )
+    bucket_id = ModelField(dump=False)
     bucket = ModelField(dump=False)
 
 
@@ -60,6 +66,10 @@ class BibliographicDraft(Draft):
     dumper = ElasticsearchDumper(
         extensions=[EDTFDumperExt('metadata.publication_date')])
 
-    files = FilesField(store=False, file_cls=DraftFile)
-    bucket_id = ModelField()
+    files = FilesField(
+        store=False, file_cls=DraftFile,
+        # Don't delete, we'll manage in the service
+        delete=False,
+    )
+    bucket_id = ModelField(dump=False)
     bucket = ModelField(dump=False)

@@ -27,7 +27,7 @@ class RecordMetadata(db.Model, RecordMetadataBase):
 
 
 class RecordFile(db.Model, RecordFileBase):
-    """Record file"""
+    """Record file."""
 
     record_model_cls = RecordMetadata
 
@@ -44,7 +44,7 @@ class DraftMetadata(db.Model, DraftMetadataBase):
 
 
 class DraftFile(db.Model, RecordFileBase):
-    """Draft file"""
+    """Draft file."""
 
     record_model_cls = DraftMetadata
 

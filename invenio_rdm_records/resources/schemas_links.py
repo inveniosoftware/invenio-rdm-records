@@ -142,7 +142,8 @@ class BibliographicDraftFileLinksSchema(Schema):
     )
 
     content = Link(
-        template=URITemplate("/api/records/{pid_value}/draft/files/{key}/content"),
+        template=URITemplate(
+            "/api/records/{pid_value}/draft/files/{key}/content"),
         permission="read",
         params=lambda record_file: {
             'pid_value': record_file.record.pid.pid_value,
@@ -151,7 +152,8 @@ class BibliographicDraftFileLinksSchema(Schema):
     )
 
     commit = Link(
-        template=URITemplate("/api/records/{pid_value}/draft/files/{key}/commit"),
+        template=URITemplate(
+            "/api/records/{pid_value}/draft/files/{key}/commit"),
         permission="read",
         params=lambda record_file: {
             'pid_value': record_file.record.pid.pid_value,
