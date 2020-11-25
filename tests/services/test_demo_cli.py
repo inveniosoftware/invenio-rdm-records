@@ -11,10 +11,10 @@
 import json
 
 import pytest
-from invenio_records.models import RecordMetadata
 
 from invenio_rdm_records.cli import create_fake_record
 from invenio_rdm_records.records import BibliographicRecord
+from invenio_rdm_records.records.models import RecordMetadata
 
 
 def test_create_fake_record_saves_to_db(app, es_clear, location):

@@ -14,6 +14,7 @@ fixtures are available.
 
 import pytest
 from invenio_app.factory import create_app as _create_app
+from invenio_files_rest.models import Location
 
 from invenio_rdm_records import config
 
@@ -54,6 +55,19 @@ def app_config(app_config):
 def create_app():
     """Create app fixture for UI+API app."""
     return _create_app
+
+
+@pytest.fixture(scope='function')
+def location(db, tmp_path):
+    """File system location."""
+    loc = Location(
+        name='testloc',
+        uri=str(tmp_path),
+        default=True
+    )
+    db.session.add(loc)
+    db.session.commit()
+    return loc
 
 
 @pytest.fixture(scope='function')

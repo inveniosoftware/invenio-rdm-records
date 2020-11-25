@@ -18,7 +18,7 @@ HEADERS = {"content-type": "application/json", "accept": "application/json"}
 
 
 @pytest.fixture
-def draft_json(app, client, minimal_record, es):
+def draft_json(app, client, minimal_record, es, location):
     """Bibliographic Draft fixture."""
     response = client.post(
         "/records", json=minimal_record, headers=HEADERS
@@ -27,7 +27,7 @@ def draft_json(app, client, minimal_record, es):
 
 
 @pytest.fixture
-def published_json(app, client, minimal_record, es):
+def published_json(app, client, minimal_record, es, location):
     """Bibliographic Record fixture.
 
     Can't depend on draft_json since publication deletes draft.
@@ -57,7 +57,7 @@ def test_draft_links(client, draft_json, minimal_record):
         "self_html": f"https://localhost:5000/uploads/{pid_value}",
         "publish": f"https://localhost:5000/api/records/{pid_value}/draft/actions/publish",  # noqa
         # TODO: Uncomment when files can be associated with drafts
-        # "files": f"https://localhost:5000/api/records/{pid_value}/files",
+        "files": f"https://localhost:5000/api/records/{pid_value}/draft/files",
     }
     assert expected_links == created_draft_links == read_draft_links
 
@@ -73,7 +73,7 @@ def test_record_links(client, published_json):
         "self": f"https://localhost:5000/api/records/{pid_value}",
         "self_html": f"https://localhost:5000/records/{pid_value}",
         # "edit": f"https://localhost:5000/api/records/{pid_value}/draft",
-        # "files": f"https://localhost:5000/api/records/{pid_value}/files",
+        "files": f"https://localhost:5000/api/records/{pid_value}/files",
         # TODO: Uncomment when implemented
         # "versions":
         #   f"https://localhost:5000/api/records/{pid_value}/...",

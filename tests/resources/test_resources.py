@@ -44,7 +44,7 @@ def _assert_single_item_response(response):
         assert field in response_fields
 
 
-def test_simple_flow(app, client, minimal_record, headers):
+def test_simple_flow(app, client, location, minimal_record, headers):
     """Test a simple REST API flow."""
     # Create a draft
     created_draft = client.post(
@@ -91,7 +91,7 @@ def test_simple_flow(app, client, minimal_record, headers):
     assert data['metadata']['title'] == 'New title'
 
 
-def test_create_draft(client, minimal_record, headers):
+def test_create_draft(client, location, minimal_record, headers):
     """Test draft creation of a non-existing record."""
     response = client.post(
         "/records", data=json.dumps(minimal_record), headers=headers)
@@ -100,7 +100,7 @@ def test_create_draft(client, minimal_record, headers):
     _assert_single_item_response(response)
 
 
-def test_read_draft(client, minimal_record, headers):
+def test_read_draft(client, location, minimal_record, headers):
     """Test draft read."""
     response = client.post(
         "/records", data=json.dumps(minimal_record), headers=headers)
@@ -116,7 +116,7 @@ def test_read_draft(client, minimal_record, headers):
     _assert_single_item_response(response)
 
 
-def test_update_draft(client, minimal_record, headers):
+def test_update_draft(client, location, minimal_record, headers):
     """Test draft update."""
     response = client.post(
         "/records", data=json.dumps(minimal_record), headers=headers)
@@ -153,7 +153,7 @@ def test_update_draft(client, minimal_record, headers):
     assert update_response.json["id"] == recid
 
 
-def test_delete_draft(client, minimal_record, headers):
+def test_delete_draft(client, location, minimal_record, headers):
     """Test draft deletion."""
     response = client.post(
         "/records", data=json.dumps(minimal_record), headers=headers)
@@ -195,7 +195,7 @@ def _create_and_publish(client, minimal_record, headers):
     return recid
 
 
-def test_publish_draft(client, minimal_record, headers):
+def test_publish_draft(client, location, minimal_record, headers):
     """Test draft publication of a non-existing record.
 
     It has to first create said draft.
@@ -218,7 +218,7 @@ def test_publish_draft(client, minimal_record, headers):
     _assert_single_item_response(response)
 
 
-def test_create_publish_new_revision(client, minimal_record,
+def test_create_publish_new_revision(client, location, minimal_record,
                                      identity_simple, headers):
     """Test draft creation of an existing record and publish it."""
     recid = _create_and_publish(client, minimal_record, headers)
@@ -230,13 +230,14 @@ def test_create_publish_new_revision(client, minimal_record,
     # Create new draft of said record
     orig_title = minimal_record["metadata"]["title"]
     minimal_record["metadata"]["title"] = "Edited title"
+
     response = client.post(
         "/records/{}/draft".format(recid),
         headers=headers
     )
 
     assert response.status_code == 201
-    assert response.json['revision_id'] == 4
+    assert response.json['revision_id'] == 5
     _assert_single_item_response(response)
 
     # Update that new draft
@@ -263,8 +264,10 @@ def test_create_publish_new_revision(client, minimal_record,
     assert response.status_code == 202
     _assert_single_item_response(response)
 
+    # TODO: Because of seting the `.bucket`/`.bucket_id` fields on the record
+    # there are extra revision bumps.
     assert response.json['id'] == recid
-    assert response.json['revision_id'] == 2
+    assert response.json['revision_id'] == 4
     assert response.json['metadata']["title"] == \
         minimal_record["metadata"]["title"]
 
@@ -277,7 +280,7 @@ def test_create_publish_new_revision(client, minimal_record,
 
 
 def test_ui_data_in_record(
-        app, client, minimal_record, headers, ui_headers):
+        app, client, location, minimal_record, headers, ui_headers):
     """Publish a record and check that it contains the UI data."""
     recid = _create_and_publish(client, minimal_record, headers)
 

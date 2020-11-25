@@ -22,7 +22,7 @@ from invenio_rdm_records.records.dumpers import EDTFDumperExt
     ("1776", "1776-01-01", "1776-12-31"),
     ("2021-01/2021-03", "2021-01-01", "2021-03-31")
 ])
-def test_esdumper_with_edtfext(app, db, minimal_record,
+def test_esdumper_with_edtfext(app, db, minimal_record, location,
                                date, expected_start, expected_end):
     """Test edft extension implementation."""
     # Create a simple extension that adds a computed field.
@@ -49,7 +49,7 @@ def test_esdumper_with_edtfext(app, db, minimal_record,
     assert 'publication_date' in new_record['metadata']
 
 
-def test_esdumper_with_edtfext_not_defined(app, db, minimal_record):
+def test_esdumper_with_edtfext_not_defined(app, db, location, minimal_record):
     """Test edft extension implementation."""
     # Create a simple extension that adds a computed field.
 
@@ -73,7 +73,7 @@ def test_esdumper_with_edtfext_not_defined(app, db, minimal_record):
     assert 'non_existing_field' not in new_record['metadata']
 
 
-def test_esdumper_with_edtfext_parse_error(app, db, minimal_record):
+def test_esdumper_with_edtfext_parse_error(app, db, location, minimal_record):
     """Test edft extension implementation."""
     # NOTE: We cannot trigger this on publication_date because it is checked
     # by marshmallow on record creation. We can simply give a non date field.
