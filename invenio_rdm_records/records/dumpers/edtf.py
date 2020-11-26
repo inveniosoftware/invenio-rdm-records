@@ -31,9 +31,9 @@ class EDTFDumperExt(ElasticsearchDumperExt):
     :code:`{"lte": lower_strict, "gte": upper_strict}`, whose values correspond
     to the lower strict and upper strict bounds.
     They are required for sorting.
-    In an ascending sort (most recent last), sort by publication_date_start
+    In an ascending sort (most recent last), sort by `<FIELD_NAME>_range.gte`
     to get a natural sort order. In a descending sort (most recent first),
-    sort by publication_date_end.
+    sort by `<FIELD_NAME>_range.lte`.
     """
 
     def __init__(self, field):
@@ -83,16 +83,19 @@ class EDTFListDumperExt(ElasticsearchDumperExt):
     from their EDTF fields (specified by the key).
     These values correspond to the lower strict and upper strict bounds.
     They are required for sorting.
-    In an ascending sort (most recent last), sort by publication_date_start
+    In an ascending sort (most recent last), sort by `<FIELD_NAME>_range.gte`
     to get a natural sort order. In a descending sort (most recent first),
-    sort by publication_date_end.
+    sort by `<FIELD_NAME>_range.lte`.
     """
 
     def __init__(self, list_field, key):
         """Constructor.
 
-        :param list_field: dot separated path to the array to process.
-        :param key: name of the EDTF field in each array item.
+        :param list_field: dot-separated path to the array to process.
+        :param key: name of the (scalar) EDTF field. This field has to be
+                    present in each array item. In contrast to `list_field`,
+                    this should be a simple field name (and not a
+                    dot-separated path).
         """
         super(EDTFListDumperExt, self).__init__()
         self.keys = parse_lookup_key(list_field)
