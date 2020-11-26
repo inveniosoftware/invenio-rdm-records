@@ -9,30 +9,35 @@
 {% from 'invenio_previewer/macros.html' import file_list, preview_file %}
 
 {% macro preview_file_box(file, pid) %}
-  {%- if file -%}
-    <div class="ui accordion" id="preview" href="#collapsablePreview">
-      <div class="title">
-        {{_('Preview')}} - <span class="filename">{{ file.key }}</span><i class="dropdown icon"></i>
-      </div>
-      <div id="collapsablePreview" class="content">
-        {{- preview_file('invenio_records_ui.recid_previewer', pid=pid, filename=file.key) }}
-      </div>
+<div class="panel-spacing">
+  <div class="ui accordion panel" id="preview" href="#collapsablePreview">
+    <div class="active title panel-heading">
+      {{file}}
     </div>
-  {%- endif %}
+    <div id="collapsablePreview" class="active content">
+      {{ preview_file('invenio_records_ui.recid_previewer', pid=pid, filename=file) }}
+    </div>
+  </div>
+</div>
 {%- endmacro %}
 
 
 
 {% macro file_list_box(files, pid) %}
-  <div class="ui accordion" id="preview" href="#collapsablePreview">
-    <div class="title">
+<div class="panel-spacing">
+  <div class="ui accordion panel" id="preview" href="#collapsablePreview">
+    <div class="title panel-heading">
       {{ _("Files") }}
       <small class="text-muted">{% if files %} ({{files|sum(attribute='size')|filesizeformat}}){% endif %}</small>
       <i class="dropdown icon"></i>
     </div>
-    <div id="collapsableFiles">
-      {{ file_list(files, pid) }}
+    <div class="active content">
+      <div id="collapsableFiles">
+        {{ file_list(files, pid) }}
+      </div>
     </div>
   </div>
+</div>
+
 
 {%- endmacro %}

@@ -56,10 +56,10 @@
         {%- include "invenio_rdm_records/details/licenses.html" %}
         </div>
         {# files #}
-        {%- if record.files and record|can_list_files %}
-        {%- set files = record.files %}
+        {%- if record.files.entries and record|can_list_files %}
+        {%- set files = record.files.entries %}
         {{ preview_file_box(files|select_preview_file, pid) }}
-        {{ file_list_box(files.dumps(), pid) }}
+        'file_list_box(files.dumps(), pid)'
         {% endif %}
 
         {# More details #}

@@ -63,13 +63,13 @@ RECORDS_UI_ENDPOINTS = {
     },
     'recid_files': {
         'pid_type': 'recid',
-        'record_class': 'invenio_records_files.api:Record',
+        'record_class': 'invenio_rdm_records.records:BibliographicRecord',
         'route': '/records/<pid_value>/files/<path:filename>',
         'view_imp': 'invenio_records_files.utils.file_download_ui',
     },
     'recid_previewer': {
         'pid_type': 'recid',
-        'record_class': 'invenio_records_files.api:Record',
+        'record_class': 'invenio_rdm_records.records:BibliographicRecord',
         'route': '/records/<pid_value>/preview/<path:filename>',
         'view_imp': 'invenio_previewer.views.preview',
     },

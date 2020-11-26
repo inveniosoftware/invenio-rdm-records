@@ -46,13 +46,13 @@ def select_preview_file(files):
     selected = None
 
     try:
-        for f in sorted(files or [], key=itemgetter('key')):
-            file_type = splitext(f['key'])[1][1:].lower()
+        for file_key in sorted(files):
+            file_type = splitext(file_key)[1][1:].lower()
             if is_previewable(file_type):
                 if selected is None:
-                    selected = f
-                elif f['default']:
-                    selected = f
+                    selected = file_key
+                # elif file_key['default']:
+                #     selected = file_key
     except KeyError:
         pass
     return selected
