@@ -8,6 +8,8 @@
 
 """DataCite-based data model for Invenio."""
 
+from .utils import previewer_record_file_factory
+
 
 def _(x):
     """Identity function for string extraction."""
@@ -218,3 +220,5 @@ RDM_RECORDS_UI_EDIT_URL = "/uploads/<pid_value>"
 
 #: Default site URL (used only when not in a context - e.g. like celery tasks).
 THEME_SITEURL = "http://localhost:5000"
+
+PREVIEWER_RECORD_FILE_FACOTRY = previewer_record_file_factory

@@ -41,6 +41,7 @@ class InvenioRDMRecords(object):
             'FILES_REST_PERMISSION_FACTORY',
             'RECORDS_UI_ENDPOINTS',
             'THEME_SITEURL',
+            'PREVIEWER_RECORD_FILE_FACOTRY'
         ]
 
         for k in dir(config):
