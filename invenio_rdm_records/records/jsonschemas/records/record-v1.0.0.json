@@ -691,9 +691,11 @@
           "$comment": "This part of the schema is modelled on GeoJSON, but without the scope to embed arbitrary metadata.\n\nWe nest `features` within `locations` to give scope later to say something about the locations as a whole.",
           "type": "object",
           "additionalProperties": false,
+          "required": ["features"],
           "properties": {
             "features": {
               "type": "array",
+              "minItems": 1,
               "items": {
                 "allOf": [{
                 "type": "object",

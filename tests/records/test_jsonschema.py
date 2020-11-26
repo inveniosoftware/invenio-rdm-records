@@ -438,17 +438,28 @@ def test_locations_valid(appctx, features):
 
 
 @pytest.mark.parametrize("locations", [
+    None,  # locations must be an object
+    {},  # Missing features
+    {'features': []},  # Empty features
+    {'features': [{}]},  # Empty feature
     {
         'features': [{
-            "geometry": None,
-            "properties": None,
+            "properties": None,   # Additional props
             "place": "CERN",
-            "invalid": "home"
         }]
+    },
+    {
+        'features': [{
+            "place": None,  # place should be a string
+        }],
+    },
+    {
+        'features': [{
+            "place": "",  # place should have at least one character
+        }],
     }
 ])
 def test_locations_invalid(appctx, locations):
-    # Additional props
     assert fails_meta({"locations": locations})
 
 
