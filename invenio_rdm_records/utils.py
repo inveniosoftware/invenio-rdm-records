@@ -27,6 +27,8 @@ def previewer_record_file_factory(pid, record, filename):
         return None
 
     try:
-        return FileObject(obj=record.files[filename].object_version, data={})
+        rf = record.files.get(filename)
+        if rf is not None:
+            return FileObject(obj=rf.file, data=rf.metadata or {})
     except KeyError:
         return None

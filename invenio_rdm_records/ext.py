@@ -41,9 +41,13 @@ class InvenioRDMRecords(object):
             'FILES_REST_PERMISSION_FACTORY',
             'RECORDS_UI_ENDPOINTS',
             'THEME_SITEURL',
-            'PREVIEWER_RECORD_FILE_FACOTRY'
+        ]
+        overriding_configurations = [
+            'PREVIEWER_RECORD_FILE_FACOTRY',
         ]
 
         for k in dir(config):
             if k in supported_configurations or k.startswith('RDM_RECORDS_'):
                 app.config.setdefault(k, getattr(config, k))
+            if k in overriding_configurations and not app.config.get(k):
+                app.config[k] = getattr(config, k)

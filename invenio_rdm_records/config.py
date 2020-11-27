@@ -41,7 +41,8 @@ IIIF_PREVIEW_TEMPLATE = "invenio_rdm_records/iiif_preview.html"
 
 PREVIEWER_PREFERENCE = [
     'csv_dthreejs',
-    'iiif_image',
+    # TODO: IIIF checks bucket-level permissions, and thus won't work
+    # 'iiif_image',
     'simple_image',
     'json_prismjs',
     'xml_prismjs',

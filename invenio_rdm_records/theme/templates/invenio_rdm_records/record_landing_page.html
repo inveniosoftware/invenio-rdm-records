@@ -57,9 +57,10 @@
         </div>
         {# files #}
         {%- if record.files and record|can_list_files %}
-        {%- set files = record.files|make_files_preview_compatible %}
-        {{ preview_file_box(files|select_preview_file, pid) }}
-        {{ file_list_box(files, pid) }}
+          {%- set files = record.files|make_files_preview_compatible %}
+          {%- set default_preview_file = files|select_preview_file(default_preview=record.files.default_preview) %}
+          {{ preview_file_box(default_preview_file, pid) }}
+          {{ file_list_box(files, pid) }}
         {% endif %}
 
         {# More details #}
