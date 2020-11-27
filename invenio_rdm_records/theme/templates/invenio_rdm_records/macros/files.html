@@ -12,10 +12,10 @@
 <div class="panel-spacing">
   <div class="ui accordion panel" id="preview" href="#collapsablePreview">
     <div class="active title panel-heading">
-      {{file}}
+      {{file.key}}
     </div>
     <div id="collapsablePreview" class="active content">
-      {{ preview_file('invenio_records_ui.recid_previewer', pid=pid, filename=file) }}
+      {{ preview_file('invenio_records_ui.recid_previewer', pid=pid, filename=file.key) }}
     </div>
   </div>
 </div>

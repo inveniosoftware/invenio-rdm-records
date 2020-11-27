@@ -18,14 +18,15 @@ from os.path import splitext
 import arrow
 import idutils
 from arrow.parser import ParserError
-from flask import Blueprint, current_app, render_template
+from flask import Blueprint, abort, current_app, render_template, request
 from flask_babelex import format_date as babel_format_date
+from invenio_files_rest.views import ObjectResource
 from invenio_previewer.views import is_previewable
 from invenio_records_files.api import FileObject
 from invenio_records_permissions.policies import get_record_permission_policy
 
-
 from ..resources.serializers import UIJSONSerializer
+from ..utils import previewer_record_file_factory
 from ..vocabularies import Vocabularies
 
 blueprint = Blueprint(
@@ -43,18 +44,31 @@ def coming_soon():
 
 
 @blueprint.app_template_filter()
+def make_files_preview_compatible(files):
+    """Processes a list of RecordFiles to a list of FileObjects.
+
+    This is needed to make the objects compatible with invenio-previewer.
+    """
+    file_objects = []
+    for file in files:
+        file_objects.append(
+            FileObject(obj=files[file].object_version, data={}).dumps())
+    return file_objects
+
+
+@blueprint.app_template_filter()
 def select_preview_file(files, default_preview=None):
     """Get list of files and select one for preview."""
     selected = None
 
     try:
-        for f in sorted(files, key=lambda f: f.key):
-            file_type = splitext(f.key)[1][1:].lower()
+        for f in sorted(files or [], key=itemgetter('key')):
+            file_type = splitext(f['key'])[1][1:].lower()
             if is_previewable(file_type):
                 if selected is None:
-                    selected = f.key
-                if f.key == default_preview:
-                    return f.key
+                    selected = f
+                elif f['key'] == default_preview:
+                    selected = f
     except KeyError:
         pass
     return selected
@@ -65,7 +79,6 @@ def to_previewer_files(record):
     """Get previewer-compatible files list."""
     return [FileObject(obj=f.object_version, data=f.metadata or {})
             for f in record.files.values()]
-
 
 
 @blueprint.app_template_filter('can_list_files')
@@ -126,3 +139,39 @@ def serialize_ui(record):
     serializer = UIJSONSerializer()
     # We need a dict not a string
     return serializer.serialize_object_to_dict(record)
+
+
+def file_download_ui(pid, record, _record_file_factory=None, **kwargs):
+    """File download view for a given record.
+
+    If ``download`` is passed as a querystring argument, the file is sent as an
+    attachment.
+
+    :param pid: The persistent identifier instance.
+    :param record: The record metadata.
+    """
+    _record_file_factory = _record_file_factory or \
+        previewer_record_file_factory
+    # Extract file from record.
+    fileobj = _record_file_factory(
+        pid, record, kwargs.get('filename')
+    )
+    if not fileobj:
+        abort(404)
+
+    obj = fileobj.obj
+
+    # Check permissions
+    # ObjectResource.check_object_permission(obj)
+
+    # Send file.
+    return ObjectResource.send_object(
+        obj.bucket, obj,
+        expected_chksum=fileobj.get('checksum'),
+        logger_data={
+            'bucket_id': obj.bucket_id,
+            'pid_type': pid.pid_type,
+            'pid_value': pid.pid_value,
+        },
+        as_attachment=('download' in request.args)
+    )
