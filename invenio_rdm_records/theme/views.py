@@ -21,7 +21,9 @@ from arrow.parser import ParserError
 from flask import Blueprint, current_app, render_template
 from flask_babelex import format_date as babel_format_date
 from invenio_previewer.views import is_previewable
+from invenio_records_files.api import FileObject
 from invenio_records_permissions.policies import get_record_permission_policy
+
 
 from ..resources.serializers import UIJSONSerializer
 from ..vocabularies import Vocabularies
@@ -41,21 +43,29 @@ def coming_soon():
 
 
 @blueprint.app_template_filter()
-def select_preview_file(files):
+def select_preview_file(files, default_preview=None):
     """Get list of files and select one for preview."""
     selected = None
 
     try:
-        for file_key in sorted(files):
-            file_type = splitext(file_key)[1][1:].lower()
+        for f in sorted(files, key=lambda f: f.key):
+            file_type = splitext(f.key)[1][1:].lower()
             if is_previewable(file_type):
                 if selected is None:
-                    selected = file_key
-                # elif file_key['default']:
-                #     selected = file_key
+                    selected = f.key
+                if f.key == default_preview:
+                    return f.key
     except KeyError:
         pass
     return selected
+
+
+@blueprint.app_template_filter()
+def to_previewer_files(record):
+    """Get previewer-compatible files list."""
+    return [FileObject(obj=f.object_version, data=f.metadata or {})
+            for f in record.files.values()]
+
 
 
 @blueprint.app_template_filter('can_list_files')
