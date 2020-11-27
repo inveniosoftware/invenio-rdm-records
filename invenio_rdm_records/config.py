@@ -67,7 +67,7 @@ RECORDS_UI_ENDPOINTS = {
         'pid_type': 'recid',
         'record_class': 'invenio_rdm_records.records:BibliographicRecord',
         'route': '/records/<pid_value>/files/<path:filename>',
-        'view_imp': 'invenio_records_files.utils.file_download_ui',
+        'view_imp': 'invenio_rdm_records.theme.views.file_download_ui',
     },
     'recid_previewer': {
         'pid_type': 'recid',
