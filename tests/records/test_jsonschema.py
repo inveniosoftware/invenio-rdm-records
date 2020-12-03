@@ -9,6 +9,7 @@
 """JSONSchema tests."""
 
 import json
+import unittest.mock
 from os.path import dirname, join
 
 import pytest
@@ -539,3 +540,12 @@ def test_tombstones(appctx):
         "reason": "Spam record, removed by InvenioRDM staff.",
         "invalid": "test"
     }})
+
+
+def test_no_external_resolution(appctx):
+    with unittest.mock.patch('requests.get') as requests_get:
+        requests_get.side_effect = AssertionError(
+            "Attempted to resolve a URL using requests"
+        )
+
+        assert validates(_load_json('full-record.json'))
