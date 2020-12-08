@@ -76,6 +76,7 @@ install_requires = [
     'invenio-records-ui>=1.2.0a1,<2.0.0',
     'invenio-previewer>=1.3.0a3,<1.3.0a4',
     # until fix in invenio-previewer is released
+    'invenio-vocabularies>=0.1.0',
     'nbconvert[execute]>=4.1.0,<6.0.0',
     'pytz>=2020.4',
     # TODO: Get from invenio-base
