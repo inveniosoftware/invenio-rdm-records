@@ -8,10 +8,13 @@
 
 """Command-line tools for demo module."""
 import datetime
+import json
 import random
 import uuid
+from os import path
 
 import click
+import invenio_vocabularies
 from edtf.parser.grammar import level0Expression
 from faker import Faker
 from flask.cli import with_appcontext
@@ -22,6 +25,8 @@ from invenio_indexer.api import RecordIndexer
 from invenio_pidstore import current_pidstore
 from invenio_records_files.api import Record
 from invenio_search import current_search
+from invenio_vocabularies.records.models import VocabularyType
+from invenio_vocabularies.services.records.service import VocabulariesService
 
 from .services import BibliographicDraftFilesService, \
     BibliographicRecordService
@@ -226,6 +231,38 @@ def create_fake_record():
     return record
 
 
+def create_vocabulary_languages():
+    """Creates the languages vocabulary."""
+    identity = Identity(1)
+    identity.provides.add(any_user)
+
+    service = VocabulariesService()
+
+    file_path = path.join(
+        path.dirname(invenio_vocabularies.__file__),
+        'data', 'languages.json'
+    )
+    with open(file_path, 'r') as f:
+        json_array = json.load(f)
+
+        vocabulary_type = VocabularyType(name="languages")
+        db.session.add(vocabulary_type)
+        db.session.commit()
+
+        for item in json_array:
+            service.create(
+                identity=identity,
+                data=dict(
+                    metadata=dict(
+                        title=item["title"],
+                        description=item["description"],
+                        props=dict(value=item["id"])
+                    ),
+                    vocabulary_type_id=vocabulary_type.id,
+                ),
+            )
+
+
 @click.group()
 def rdm_records():
     """InvenioRDM records commands."""
@@ -242,3 +279,9 @@ def demo():
         create_fake_record()
 
     click.secho('Created records!', fg='green')
+
+    click.secho('Creating languages vocabulary...', fg='blue')
+
+    create_vocabulary_languages()
+
+    click.secho('Created languages!', fg='green')
