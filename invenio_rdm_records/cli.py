@@ -26,7 +26,6 @@ from invenio_pidstore import current_pidstore
 from invenio_records_files.api import Record
 from invenio_search import current_search
 from invenio_vocabularies.records.models import VocabularyType
-from invenio_vocabularies.services.records.service import VocabulariesService
 
 from invenio_rdm_records.vocabularies.v2 import VocabulariesV2
 
