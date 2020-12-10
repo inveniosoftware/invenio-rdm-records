@@ -58,19 +58,6 @@ def create_app():
 
 
 @pytest.fixture(scope='function')
-def location(db, tmp_path):
-    """File system location."""
-    loc = Location(
-        name='testloc',
-        uri=str(tmp_path),
-        default=True
-    )
-    db.session.add(loc)
-    db.session.commit()
-    return loc
-
-
-@pytest.fixture(scope='function')
 def full_record():
     """Full record data as dict coming from the external world."""
     return {
