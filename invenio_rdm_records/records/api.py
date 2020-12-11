@@ -32,7 +32,7 @@ class Language(Vocabulary):
         with db.session.no_autoflush:
             query = cls.model_cls.query.filter(
                 # TODO: move this to the base Vocabulary record class
-                cls.model_cls.vocabulary_type.name == 'languages',
+                cls.model_cls.vocabulary_type.has(name='languages'),
                 cls.model_cls.id == id_,
             )
             if not with_deleted:
@@ -64,7 +64,7 @@ class BibliographicRecord(Record):
 
     relations = RelationsField(
         languages=PIDListRelation(
-            'metadata.languages', attrs=['title'], pid_field=Language.pid),
+            'metadata.languages', attrs=['metadata'], pid_field=Language.pid),
     )
 
     files = FilesField(
@@ -94,7 +94,15 @@ class BibliographicDraft(Draft):
         'rdmrecords-drafts-draft-v1.0.0', search_alias='rdmrecords-drafts')
 
     dumper = ElasticsearchDumper(
-        extensions=[EDTFDumperExt('metadata.publication_date')])
+        extensions=[
+            EDTFDumperExt('metadata.publication_date'),
+            RelationDumperExt('relations'),
+        ])
+
+    relations = RelationsField(
+        languages=PIDListRelation(
+            'metadata.languages', attrs=['metadata'], pid_field=Language.pid),
+    )
 
     files = FilesField(
         store=False, file_cls=DraftFile,
