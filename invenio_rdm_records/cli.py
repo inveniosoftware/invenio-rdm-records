@@ -140,7 +140,8 @@ def create_fake_record():
                 "description": "Random test date",
                 "type": "other"
             }],
-            "languages": ["eng"],
+            # TODO: Add when we have PIDs for languages vocabulary
+            # "languages": [{"id": "eng"}],
             "related_identifiers": [{
                 "identifier": "10.9999/rdm.9999988",
                 "scheme": "doi",

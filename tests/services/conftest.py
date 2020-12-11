@@ -13,9 +13,13 @@ fixtures are available.
 """
 
 import pytest
+from flask_principal import Identity
+from invenio_access import any_user
 from invenio_app.factory import create_api
 from invenio_pidstore.models import PIDStatus
 from invenio_pidstore.providers.recordid_v2 import RecordIdProviderV2
+from invenio_vocabularies.records.models import VocabularyType
+from invenio_vocabularies.services.service import VocabulariesService
 
 from invenio_rdm_records.resources import BibliographicDraftActionResource, \
     BibliographicDraftResource, BibliographicRecordResource
@@ -58,3 +62,33 @@ def vocabulary_clear(app):
     NOTE: app fixture pushes an application context
     """
     Vocabularies.clear()
+
+
+@pytest.fixture()
+def languages(db):
+    """Languages fixture."""
+    vocabulary_type = VocabularyType(name='languages')
+    db.session.add(vocabulary_type)
+    db.session.commit()
+
+    identity = Identity(1)
+    identity.provides.add(any_user)
+    service = VocabulariesService()
+
+    languages = {}
+
+    for lang in (
+        {"props": {"id": "en"}, "title": {"en": "English"}},
+        {"props": {"id": "fr"}, "title": {"en": "French"}},
+        {"props": {"id": "it"}, "title": {"en": "Italian"}},
+    ):
+        record = service.create(
+            identity=identity,
+            data={
+                "metadata": lang,
+                "vocabulary_type_id": vocabulary_type.id,
+            },
+        )
+        languages[lang['props']['id']] = record
+
+    return languages

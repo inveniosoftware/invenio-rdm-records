@@ -7,16 +7,38 @@
 
 """Bibliographic Record and Draft API."""
 
+from invenio_db import db
 from invenio_drafts_resources.records import Draft, Record
 from invenio_records.dumpers import ElasticsearchDumper
-from invenio_records.systemfields import ModelField
+from invenio_records.dumpers.relations import RelationDumperExt
+from invenio_records.systemfields import ModelField, RelationsField
 from invenio_records_resources.records.api import RecordFile as RecordFileBase
 from invenio_records_resources.records.systemfields import FilesField, \
-    IndexField
+    IndexField, PIDListRelation
+from invenio_vocabularies.records.api import Vocabulary
+from invenio_vocabularies.records.models import VocabularyType
 from werkzeug.local import LocalProxy
 
 from . import models
 from .dumpers import EDTFDumperExt
+
+
+class Language(Vocabulary):
+    """Language vocabulary record class."""
+
+    @classmethod
+    def get_record(cls, id_, with_deleted=False):
+        """Get a language record."""
+        with db.session.no_autoflush:
+            query = cls.model_cls.query.filter(
+                # TODO: move this to the base Vocabulary record class
+                cls.model_cls.vocabulary_type.name == 'languages',
+                cls.model_cls.id == id_,
+            )
+            if not with_deleted:
+                query = query.filter(cls.model_cls.is_deleted != True)  # noqa
+            obj = query.one()
+            return cls(obj.data, model=obj)
 
 
 class RecordFile(RecordFileBase):
@@ -35,7 +57,15 @@ class BibliographicRecord(Record):
         'rdmrecords-records-record-v1.0.0', search_alias='rdmrecords-records')
 
     dumper = ElasticsearchDumper(
-        extensions=[EDTFDumperExt('metadata.publication_date')])
+        extensions=[
+            EDTFDumperExt('metadata.publication_date'),
+            RelationDumperExt('relations'),
+        ])
+
+    relations = RelationsField(
+        languages=PIDListRelation(
+            'metadata.languages', attrs=['title'], pid_field=Language.pid),
+    )
 
     files = FilesField(
         store=False, file_cls=RecordFile,
