@@ -75,7 +75,7 @@ install_requires = [
     'invenio-records-files>=1.2.1,<2.0.0',
     'invenio-records-ui>=1.2.0a1,<2.0.0',
     'invenio-previewer>=1.3.0,<1.4.0',
-    'invenio-vocabularies>=0.1.0,<1.0.0',
+    'invenio-vocabularies>=0.1.5,<1.0.0',
     # until fix in invenio-previewer is released
     'nbconvert[execute]>=4.1.0,<6.0.0',
     'pytz>=2020.4',
@@ -122,14 +122,19 @@ setup(
         'invenio_base.blueprints': [
             'invenio_rdm_records = invenio_rdm_records.theme.views:blueprint',
         ],
+        "invenio_base.api_blueprints": [
+            'invenio_vocabularies_subjects = invenio_rdm_records.vocabularies.views:create_subjects_blueprint_from_app',
+        ],
         'invenio_i18n.translations': [
             'messages = invenio_rdm_records',
         ],
         'invenio_jsonschemas.schemas': [
             'invenio_rdm_records = invenio_rdm_records.records.jsonschemas',
+            'subjects = invenio_vocabularies.contrib.subjects.jsonschemas',
         ],
         'invenio_search.mappings': [
             'rdmrecords = invenio_rdm_records.records.mappings',
+            'subjects = invenio_vocabularies.contrib.subjects.mappings',
         ],
     },
     extras_require=extras_require,

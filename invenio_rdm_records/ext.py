@@ -11,6 +11,7 @@ from celery import shared_task
 from invenio_db import db
 from invenio_files_rest.signals import file_deleted, file_uploaded
 from invenio_indexer.signals import before_record_index
+from invenio_vocabularies.contrib.subjects.subjects import subject_record_type
 
 from . import config
 from .services.schemas.metadata_extensions import MetadataExtensions, \
@@ -25,6 +26,16 @@ class InvenioRDMRecords(object):
         if app:
             self.init_app(app)
 
+    def init_vocabularies(self, app):
+        """Initialize vocabulary resources."""
+        self.subjects_service = subject_record_type.service_cls(
+            config=subject_record_type.service_config_cls,
+        )
+        self.subjects_resource = subject_record_type.resource_cls(
+            service=self.subjects_service,
+            config=subject_record_type.resource_config_cls,
+        )
+
     def init_app(self, app):
         """Flask application initialization."""
         self.init_config(app)
@@ -32,7 +43,7 @@ class InvenioRDMRecords(object):
             app.config['RDM_RECORDS_METADATA_NAMESPACES'],
             app.config['RDM_RECORDS_METADATA_EXTENSIONS']
         )
-
+        self.init_vocabularies(app)
         app.extensions['invenio-rdm-records'] = self
 
     def init_config(self, app):
@@ -43,7 +54,7 @@ class InvenioRDMRecords(object):
             'THEME_SITEURL',
         ]
         overriding_configurations = [
-            'PREVIEWER_RECORD_FILE_FACOTRY',
+            'PREVIEWER_RECORD_FILE_FACTORY',
         ]
 
         for k in dir(config):
