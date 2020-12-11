@@ -465,8 +465,10 @@ class LanguageSchema(Schema):
         unknown = EXCLUDE
 
     id = SanitizedUnicode(required=True)
-    title = fields.Raw(attribute="metadata.title", dump_only=True)
-    description = fields.Raw(attribute="metadata.description", dump_only=True)
+    # TODO: replace ".en" with UI serialization
+    title = fields.Raw(attribute="metadata.title.en", dump_only=True)
+    description = fields.Raw(
+        attribute="metadata.description.en", dump_only=True)
     props = fields.Raw(attribute="metadata.props", dump_only=True)
 
 
