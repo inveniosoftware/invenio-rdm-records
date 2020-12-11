@@ -16,8 +16,8 @@ import idutils
 from edtf.parser.grammar import level0Expression
 from flask import current_app
 from flask_babelex import lazy_gettext as _
-from marshmallow import INCLUDE, Schema, ValidationError, fields, post_load, \
-    validate, validates, validates_schema
+from marshmallow import EXCLUDE, INCLUDE, Schema, ValidationError, fields, \
+    post_load, validate, validates, validates_schema
 from marshmallow_utils.fields import EDTFDateString, GenFunction, \
     ISODateString, ISOLangString, SanitizedUnicode
 from marshmallow_utils.schemas import GeometryObjectSchema
@@ -459,10 +459,15 @@ class LocationSchema(Schema):
 class LanguageSchema(Schema):
     """Language schema."""
 
+    class Meta:
+        """Meta class to discard unknown fields."""
+
+        unknown = EXCLUDE
+
     id = SanitizedUnicode(required=True)
-    title = fields.Raw(dump_only=True)
-    description = fields.Raw(dump_only=True)
-    props = fields.Raw(dump_only=True)
+    title = fields.Raw(attribute="metadata.title", dump_only=True)
+    description = fields.Raw(attribute="metadata.description", dump_only=True)
+    props = fields.Raw(attribute="metadata.props", dump_only=True)
 
 
 class MetadataSchema(Schema):
