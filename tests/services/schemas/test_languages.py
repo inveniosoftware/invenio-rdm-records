@@ -15,11 +15,13 @@ from invenio_rdm_records.services.schemas.metadata import MetadataSchema
 
 def test_valid_languages(app, minimal_record):
     metadata = minimal_record['metadata']
-    metadata['languages'] = ["dan", "eng"]
+    metadata['languages'] = [{"id": "dan"}, {"id": "eng"}]
     data = MetadataSchema().load(metadata)
     assert data['languages'] == metadata['languages']
 
 
+# TODO: Validation takes place in record.commit() now via the RelationsField
+@pytest.mark.skip()
 def test_invalid_iso_3_languages(app, minimal_record):
     metadata = minimal_record['metadata']
     metadata['languages'] = ["da"]
@@ -30,12 +32,14 @@ def test_invalid_iso_3_languages(app, minimal_record):
 
 def test_invalid_no_list_languages(app, minimal_record):
     metadata = minimal_record['metadata']
-    metadata['languages'] = "eng"
+    metadata['languages'] = {"id": "eng"}
 
     with pytest.raises(ValidationError):
         data = MetadataSchema().load(metadata)
 
 
+# TODO: Validation takes place in record.commit() now via the RelationsField
+@pytest.mark.skip()
 def test_invalid_code_languages(app, minimal_record):
     metadata = minimal_record['metadata']
     metadata['languages'] = ["inv"]

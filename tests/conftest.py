@@ -138,7 +138,7 @@ def full_record():
                 "type": "other",
                 "description": "A date"
             }],
-            "languages": ["da", "en"],
+            "languages": [{"id": "da"}, {"id": "en"}],
             "identifiers": [{
                 "identifier": "1924MNRAS..84..308E",
                 "scheme": "bibcode"

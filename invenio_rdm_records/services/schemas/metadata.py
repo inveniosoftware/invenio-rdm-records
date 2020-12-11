@@ -456,6 +456,15 @@ class LocationSchema(Schema):
             })
 
 
+class LanguageSchema(Schema):
+    """Language schema."""
+
+    id = SanitizedUnicode(required=True)
+    title = fields.Raw(dump_only=True)
+    description = fields.Raw(dump_only=True)
+    props = fields.Raw(dump_only=True)
+
+
 class MetadataSchema(Schema):
     """Schema for the record metadata."""
 
@@ -482,7 +491,7 @@ class MetadataSchema(Schema):
     subjects = fields.List(fields.Nested(SubjectSchema))
     contributors = fields.List(fields.Nested(ContributorSchema))
     dates = fields.List(fields.Nested(DateSchema))
-    languages = fields.List(ISOLangString())
+    languages = fields.List(fields.Nested(LanguageSchema))
     # alternate identifiers
     identifiers = fields.List(fields.Nested(IdentifierSchema))
     related_identifiers = fields.List(

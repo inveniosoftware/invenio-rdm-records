@@ -292,7 +292,7 @@ def test_dates(appctx):
 
 def test_languages(appctx):
     """Test language property."""
-    assert validates_meta({"languages": ["dan", "eng"]})
+    assert validates_meta({"languages": [{"id": "dan"}, {"id": "eng"}]})
     assert fails_meta({"languages": ["da"]})
     assert fails_meta({"languages": "dan"})
     assert fails_meta({"languages": ["invalid"]})

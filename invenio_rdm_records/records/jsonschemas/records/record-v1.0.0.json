@@ -66,9 +66,12 @@
     },
 
     "language": {
-      "type": "string",
-      "minLength": 3,
-      "maxLength": 3
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        }
+      }
     },
 
     "longitude": {

@@ -87,7 +87,7 @@
       "type": "other",
       "description": "A date"
     }],
-    "languages": ["dan", "eng"],
+    "languages": [{"id": "dan"}, {"id": "eng"}],
     "identifiers": [{
       "identifier": "1924MNRAS..84..308E",
       "scheme": "bibcode"
