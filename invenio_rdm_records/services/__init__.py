@@ -9,12 +9,14 @@
 
 from .permissions import RDMRecordPermissionPolicy
 from .services import BibliographicDraftFilesService, \
-    BibliographicRecordService, BibliographicRecordServiceConfig, \
-    BibliographicUserRecordsService, BibliographicUserRecordsServiceConfig
+    BibliographicRecordFilesService, BibliographicRecordService, \
+    BibliographicRecordServiceConfig, BibliographicUserRecordsService, \
+    BibliographicUserRecordsServiceConfig
 
 __all__ = (
     "BibliographicRecordService",
     "BibliographicRecordServiceConfig",
+    "BibliographicRecordFilesService",
     "BibliographicUserRecordsService",
     "BibliographicUserRecordsServiceConfig",
     "BibliographicDraftFilesService",

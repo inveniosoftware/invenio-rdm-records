@@ -23,18 +23,18 @@ class StatsComponent(ServiceComponent):
 
 
 class AccessComponent(ServiceComponent):
-     """Service component for access integration."""
+    """Service component for access integration."""
 
-     def create(self, identity, data=None, record=None, **kwargs):
-         """Add basic ownership fields to the record."""
-         validated_data = data.get('access', {})
-         # TODO (Alex): replace with `record.access = ...`
-         validated_data.setdefault('owned_by', [identity.id])
-         record.update({'access': validated_data})
+    def create(self, identity, data=None, record=None, **kwargs):
+        """Add basic ownership fields to the record."""
+        validated_data = data.get('access', {})
+        # TODO (Alex): replace with `record.access = ...`
+        validated_data.setdefault('owned_by', [identity.id])
+        record.update({'access': validated_data})
 
-     def update(self, identity, data=None, record=None, **kwargs):
-         """Update handler."""
-         validated_data = data.get('access', {})
-         # TODO (Alex): replace with `record.access = ...`
-         validated_data.setdefault('owned_by', [identity.id])
-         record.update({'access': validated_data})
+    def update(self, identity, data=None, record=None, **kwargs):
+        """Update handler."""
+        validated_data = data.get('access', {})
+        # TODO (Alex): replace with `record.access = ...`
+        validated_data.setdefault('owned_by', [identity.id])
+        record.update({'access': validated_data})

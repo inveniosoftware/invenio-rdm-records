@@ -8,7 +8,9 @@
 """Invenio RDM module to create REST APIs."""
 
 from .resources import BibliographicDraftActionResource, \
-    BibliographicDraftActionResourceConfig, BibliographicDraftResource, \
+    BibliographicDraftActionResourceConfig, \
+    BibliographicDraftFilesActionResource, BibliographicDraftFilesResource, \
+    BibliographicDraftFilesResourceConfig, BibliographicDraftResource, \
     BibliographicDraftResourceConfig, BibliographicRecordFilesActionResource, \
     BibliographicRecordFilesActionResourceConfig, \
     BibliographicRecordFilesResource, BibliographicRecordFilesResourceConfig, \
@@ -18,6 +20,10 @@ from .resources import BibliographicDraftActionResource, \
 __all__ = (
     "BibliographicDraftActionResource",
     "BibliographicDraftActionResourceConfig",
+    "BibliographicDraftFilesResource",
+    "BibliographicDraftFilesResourceConfig",
+    "BibliographicDraftFilesActionResource",
+    "BibliographicDraftFilesActionResourceConfig",
     "BibliographicDraftResource",
     "BibliographicDraftResourceConfig",
     "BibliographicRecordFilesResource",

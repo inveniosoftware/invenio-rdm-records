@@ -124,6 +124,14 @@ setup(
         ],
         "invenio_base.api_blueprints": [
             'invenio_vocabularies_subjects = invenio_rdm_records.vocabularies.views:create_subjects_blueprint_from_app',
+            'invenio_rdm_records_record = invenio_rdm_records.views:create_records_bp',
+            'invenio_rdm_records_draft = invenio_rdm_records.views:create_drafts_bp',
+            'invenio_rdm_records_draft_action = invenio_rdm_records.views:create_drafts_action_bp',
+            'invenio_rdm_records_user_records = invenio_rdm_records.views:create_user_records_bp',
+            'invenio_rdm_records_record_files = invenio_rdm_records.views:create_record_files_bp',
+            'invenio_rdm_records_record_files_action = invenio_rdm_records.views:create_record_files_action_bp',
+            'invenio_rdm_records_draft_files = invenio_rdm_records.views:create_draft_files_bp',
+            'invenio_rdm_records_draft_files_action = invenio_rdm_records.views:create_draft_files_action_bp',
         ],
         'invenio_i18n.translations': [
             'messages = invenio_rdm_records',

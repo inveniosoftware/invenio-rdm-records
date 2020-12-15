@@ -17,51 +17,12 @@ from flask_principal import Identity, Need, UserNeed
 from invenio_app.factory import create_api
 
 from invenio_rdm_records import config
-from invenio_rdm_records.resources import BibliographicDraftActionResource, \
-    BibliographicDraftActionResourceConfig, BibliographicDraftResource, \
-    BibliographicDraftResourceConfig, BibliographicRecordResource, \
-    BibliographicRecordResourceConfig
-from invenio_rdm_records.services import BibliographicRecordService, \
-    BibliographicRecordServiceConfig
 
 
 @pytest.fixture(scope='module')
 def create_app(instance_path):
     """Application factory fixture."""
     return create_api
-
-
-@pytest.fixture(scope="module")
-def record_resource():
-    """Resource."""
-    return BibliographicRecordResource(
-        config=BibliographicRecordResourceConfig(),
-        service=BibliographicRecordService(
-            config=BibliographicRecordServiceConfig()
-        )
-    )
-
-
-@pytest.fixture(scope="module")
-def draft_resource():
-    """Resource."""
-    return BibliographicDraftResource(
-        config=BibliographicDraftResourceConfig(),
-        service=BibliographicRecordService(
-            config=BibliographicRecordServiceConfig()
-        )
-    )
-
-
-@pytest.fixture(scope="module")
-def action_resource():
-    """Action Resource."""
-    return BibliographicDraftActionResource(
-        config=BibliographicDraftActionResourceConfig(),
-        service=BibliographicRecordService(
-            config=BibliographicRecordServiceConfig()
-        )
-    )
 
 
 @pytest.fixture(scope='module')
@@ -89,16 +50,6 @@ def app_config(app_config):
     app_config["RECORDS_REST_ENDPOINTS"] = {}
 
     return app_config
-
-
-@pytest.fixture(scope="module")
-def base_app(base_app, record_resource, draft_resource, action_resource):
-    """Application factory fixture."""
-    base_app.register_blueprint(
-        record_resource.as_blueprint('record_resource'))
-    base_app.register_blueprint(draft_resource.as_blueprint('draft_resource'))
-    base_app.register_blueprint(action_resource.as_blueprint('draft_action'))
-    yield base_app
 
 
 @pytest.fixture(scope="module")
