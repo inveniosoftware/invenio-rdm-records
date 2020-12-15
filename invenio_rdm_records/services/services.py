@@ -15,12 +15,12 @@ from invenio_drafts_resources.services.records.components import \
 from invenio_records_resources.services.files.config import FileServiceConfig
 from invenio_records_resources.services.files.service import RecordFileService
 from invenio_records_resources.services.records.components import \
-    AccessComponent, MetadataComponent, PIDSComponent
+    MetadataComponent
 from invenio_records_resources.services.records.search import terms_filter
 from invenio_records_resources.services.records.service import RecordService
 
 from ..records import BibliographicDraft, BibliographicRecord
-from .components import CommunitiesComponent, StatsComponent
+from .components import AccessComponent, CommunitiesComponent, StatsComponent
 from .permissions import RDMRecordPermissionPolicy
 from .schemas import RDMRecordSchema
 
@@ -59,7 +59,6 @@ class BibliographicRecordServiceConfig(RecordDraftServiceConfig):
 
     components = [
         MetadataComponent,
-        PIDSComponent,
         RelationsComponent,
         AccessComponent,
         DraftFilesComponent,

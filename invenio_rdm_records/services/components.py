@@ -20,3 +20,21 @@ class CommunitiesComponent(ServiceComponent):
 # TODO: move into invenio-stats
 class StatsComponent(ServiceComponent):
     """Service component for stats integration."""
+
+
+class AccessComponent(ServiceComponent):
+     """Service component for access integration."""
+
+     def create(self, identity, data=None, record=None, **kwargs):
+         """Add basic ownership fields to the record."""
+         validated_data = data.get('access', {})
+         # TODO (Alex): replace with `record.access = ...`
+         validated_data.setdefault('owned_by', [identity.id])
+         record.update({'access': validated_data})
+
+     def update(self, identity, data=None, record=None, **kwargs):
+         """Update handler."""
+         validated_data = data.get('access', {})
+         # TODO (Alex): replace with `record.access = ...`
+         validated_data.setdefault('owned_by', [identity.id])
+         record.update({'access': validated_data})
