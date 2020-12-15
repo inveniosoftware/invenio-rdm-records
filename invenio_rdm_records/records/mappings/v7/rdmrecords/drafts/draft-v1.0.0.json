@@ -155,8 +155,15 @@
           "identifiers" : {
             "type" : "object"
           },
-          "language" : {
-            "type" : "keyword"
+          "languages" : {
+            "properties" : {
+              "metadata": {
+                "type": "object"
+              },
+              "id" : {
+                "type" : "keyword"
+              }
+            }
           },
           "licenses" : {
             "properties" : {
