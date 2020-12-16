@@ -8,8 +8,6 @@
 
 """DataCite-based data model for Invenio."""
 
-from .utils import previewer_record_file_factory
-
 
 def _(x):
     """Identity function for string extraction."""
@@ -27,67 +25,6 @@ RECORDS_REST_ENDPOINTS = {}
 
 # FILES_REST_PERMISSION_FACTORY = record_files_permission_factory
 """Set default files permission factory."""
-
-# Invenio-IIIF
-# =================
-# See https://invenio-iiif.readthedocs.io/en/latest/configuration.html
-
-IIIF_PREVIEW_TEMPLATE = "invenio_rdm_records/iiif_preview.html"
-"""Template for IIIF image preview."""
-
-# Invenio-Previewer
-# =================
-# See https://github.com/inveniosoftware/invenio-previewer/blob/master/invenio_previewer/config.py  # noqa
-
-PREVIEWER_PREFERENCE = [
-    'csv_dthreejs',
-    # TODO: IIIF checks bucket-level permissions, and thus won't work
-    # 'iiif_image',
-    'simple_image',
-    'json_prismjs',
-    'xml_prismjs',
-    'mistune',
-    'pdfjs',
-    'ipynb',
-    'zip',
-]
-"""Preferred previewers."""
-
-# Invenio-Records-UI
-# ==================
-# See https://invenio-records-ui.readthedocs.io/en/latest/configuration.html
-
-RECORDS_UI_ENDPOINTS = {
-    'recid': {
-        'pid_type': 'recid',
-        'record_class': 'invenio_rdm_records.records:BibliographicRecord',
-        'route': '/records/<pid_value>',
-        'template': 'invenio_rdm_records/record_landing_page.html'
-    },
-    'recid_files': {
-        'pid_type': 'recid',
-        'record_class': 'invenio_rdm_records.records:BibliographicRecord',
-        'route': '/records/<pid_value>/files/<path:filename>',
-        'view_imp': 'invenio_rdm_records.theme.views.file_download_ui',
-    },
-    'recid_previewer': {
-        'pid_type': 'recid',
-        'record_class': 'invenio_rdm_records.records:BibliographicRecord',
-        'route': '/records/<pid_value>/preview/<path:filename>',
-        'view_imp': 'invenio_previewer.views.preview',
-    },
-}
-
-"""Records UI for RDM Records."""
-
-# Invenio-Formatter
-# =================
-
-FORMATTER_BADGES_ALLOWED_TITLES = ['DOI', 'doi']
-"""List of allowed titles in badges."""
-
-FORMATTER_BADGES_TITLE_MAPPING = {'doi': 'DOI'}
-"""Mapping of titles."""
 
 # Invenio-RDM-Records
 # ===================
@@ -221,5 +158,3 @@ RDM_RECORDS_UI_EDIT_URL = "/uploads/<pid_value>"
 
 #: Default site URL (used only when not in a context - e.g. like celery tasks).
 THEME_SITEURL = "http://localhost:5000"
-
-PREVIEWER_RECORD_FILE_FACOTRY = previewer_record_file_factory

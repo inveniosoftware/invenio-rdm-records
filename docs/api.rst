@@ -15,9 +15,3 @@ API Docs
 
 .. automodule:: invenio_rdm_records.services.schemas.metadata_extensions
   :members:
-
-Views
------
-
-.. automodule:: invenio_rdm_records.theme.views
-   :members:
