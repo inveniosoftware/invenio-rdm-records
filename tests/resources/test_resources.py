@@ -17,15 +17,6 @@ from invenio_rdm_records.records import BibliographicRecord
 
 
 @pytest.fixture()
-def headers():
-    """Default headers for making requests."""
-    return {
-        'content-type': 'application/json',
-        'accept': 'application/json',
-    }
-
-
-@pytest.fixture()
 def ui_headers():
     """Default headers for making requests."""
     return {
@@ -100,6 +91,26 @@ def test_create_draft(client, location, minimal_record, headers):
     _assert_single_item_response(response)
 
 
+def test_create_partial_draft(client, location, minimal_record, headers):
+    """Test partial draft creation of a non-existing record.
+
+    NOTE: This tests functionality implemented in records/drafts-resources, but
+          intentions specific to this module.
+    """
+    minimal_record['metadata']["title"] = ""
+    response = client.post("/records", json=minimal_record, headers=headers)
+
+    assert 201 == response.status_code
+    _assert_single_item_response(response)
+    errors = [
+        {
+            "field": "metadata.title",
+            "messages": ["Shorter than minimum length 3."]
+        },
+    ]
+    assert errors == response.json["errors"]
+
+
 def test_read_draft(client, location, minimal_record, headers):
     """Test draft read."""
     response = client.post(
@@ -153,6 +164,40 @@ def test_update_draft(client, location, minimal_record, headers):
     assert update_response.json["id"] == recid
 
 
+def test_update_partial_draft(client, location, minimal_record, headers):
+    """Test partial draft update.
+
+    NOTE: This tests functionality implemented in records/drafts-resources, but
+          intentions specific to this module.
+    """
+    response = client.post("/records", json=minimal_record, headers=headers)
+    assert 201 == response.status_code
+    recid = response.json['id']
+    minimal_record['metadata']["title"] = ""
+
+    # Update draft content
+    response = client.put(
+        f"/records/{recid}/draft",
+        json=minimal_record,
+        headers=headers
+    )
+
+    assert 200 == response.status_code
+    _assert_single_item_response(response)
+    errors = [
+        {
+            "field": "metadata.title",
+            "messages": ["Shorter than minimum length 3."]
+        },
+    ]
+    assert errors == response.json["errors"]
+
+    # The draft has had its title erased
+    response = client.get(f"/records/{recid}/draft", headers=headers)
+    assert 200 == response.status_code
+    assert "title" not in response.json["metadata"]
+
+
 def test_delete_draft(client, location, minimal_record, headers):
     """Test draft deletion."""
     response = client.post(
@@ -195,27 +240,25 @@ def _create_and_publish(client, minimal_record, headers):
     return recid
 
 
-# TODO
-@pytest.mark.skip()
 def test_publish_draft(client, location, minimal_record, headers):
-    """Test draft publication of a non-existing record.
+    """Test publication of a new draft.
 
     It has to first create said draft.
     """
     recid = _create_and_publish(client, minimal_record, headers)
 
-    # Check draft does not exists anymore
+    # Check draft does not exist anymore
     # FIXME: Remove import when exception is properly handled
     with pytest.raises(NoResultFound):
-        response = client.get(
-            "/records/{}/draft".format(recid), headers=headers)
+        response = client.get(f"/records/{recid}/draft", headers=headers)
 
-        assert response.status_code == 404
+        # Part of FIXME to uncomment
+        # assert response.status_code == 404
 
     # Check record exists
-    response = client.get("/records/{}".format(recid), headers=headers)
+    response = client.get(f"/records/{recid}", headers=headers)
 
-    assert response.status_code == 200
+    assert 200 == response.status_code
 
     _assert_single_item_response(response)
 

@@ -16,9 +16,7 @@ from invenio_drafts_resources.resources import DraftActionResource, \
 from invenio_records_resources.resources import RecordResponse
 from invenio_records_resources.resources.files import FileActionResource, \
     FileActionResourceConfig, FileResource, FileResourceConfig
-from marshmallow.exceptions import ValidationError
 
-from .errors import handle_validation_error
 from .schemas_links import BibliographicDraftFileLinksSchema, \
     BibliographicDraftFilesLinksSchema, BibliographicDraftLinksSchemaV1, \
     BibliographicRecordFileLinksSchema, BibliographicRecordFilesLinksSchema, \
@@ -38,11 +36,6 @@ class BibliographicRecordResourceConfig(RecordResourceConfig):
     draft_links_config = {
         **RecordResourceConfig.draft_links_config,
         "record": BibliographicDraftLinksSchemaV1
-    }
-
-    error_map = {
-        **RecordResourceConfig.error_map,
-        ValidationError: handle_validation_error,
     }
 
     response_handlers = {
