@@ -76,65 +76,69 @@ class InvenioRDMRecords(object):
         """Initialize vocabulary resources."""
         # Records
         self.records_service = BibliographicRecordService(
-            config=app.config.get("RDM_RECORDS_RECORDS_SERVICE_CONFIG"),
+            config=app.config.get(BibliographicRecordService.config_name),
         )
 
         self.records_resource = BibliographicRecordResource(
             service=self.records_service,
-            config=app.config.get("RDM_RECORDS_RECORDS_RESOURCE_CONFIG"),
+            config=app.config.get(BibliographicRecordResource.config_name),
         )
 
         # Drafts
         self.drafts_resource = BibliographicDraftResource(
             service=self.records_service,
-            config=app.config.get("RDM_RECORDS_DRAFTS_RESOURCE_CONFIG"),
+            config=app.config.get(BibliographicDraftResource.config_name),
         )
 
         self.drafts_action_resource = BibliographicDraftActionResource(
             service=self.records_service,
             config=app.config.get(
-                "RDM_RECORDS_DRAFTS_ACTION_RESOURCE_CONFIG"),
+                BibliographicDraftActionResource.config_name),
         )
 
         # User
         self.user_records_service = BibliographicUserRecordsService(
-            config=app.config.get("RDM_RECORDS_USER_RECORDS_SERVICE_CONFIG"),
+            config=app.config.get(
+                BibliographicUserRecordsService.config_name),
         )
 
         self.user_records_resource = BibliographicUserRecordsResource(
             service=self.user_records_service,
-            config=app.config.get("RDM_RECORDS_USER_RECORDS_RESOURCE_CONFIG"),
+            config=app.config.get(
+                BibliographicUserRecordsResource.config_name),
         )
 
         # Files
         self.record_files_service = BibliographicRecordFilesService(
-            config=app.config.get("RDM_RECORDS_RECORD_FILES_SERVICE_CONFIG"),
+            config=app.config.get(
+                BibliographicRecordFilesService.config_name),
         )
 
         self.record_files_resource = BibliographicRecordFilesResource(
             service=self.record_files_service,
-            config=app.config.get("RDM_RECORDS_RECORD_FILES_RESOURCE_CONFIG"),
+            config=app.config.get(
+                BibliographicRecordFilesResource.config_name),
         )
 
         self.record_files_action_resource = \
             BibliographicRecordFilesActionResource(
                 service=self.record_files_service,
                 config=app.config.get(
-                    "RDM_RECORDS_RECORD_FILES_ACTION_RESOURCE_CONFIG"),
+                    BibliographicRecordFilesActionResource.config_name),
             )
 
         self.draft_files_service = BibliographicDraftFilesService(
-            config=app.config.get("RDM_RECORDS_DRAFT_FILES_SERVICE_CONFIG"),
+            config=app.config.get(BibliographicDraftFilesService.config_name),
         )
 
         self.draft_files_resource = BibliographicDraftFilesResource(
             service=self.draft_files_service,
-            config=app.config.get("RDM_RECORDS_DRAFT_FILES_RESOURCE_CONFIG"),
+            config=app.config.get(BibliographicDraftFilesResource.config_name),
         )
 
         self.draft_files_action_resource = \
             BibliographicDraftFilesActionResource(
                 service=self.draft_files_service,
                 config=app.config.get(
-                    "RDM_RECORDS_DRAFT_FILES_ACTION_RESOURCE_CONFIG"),
+                    BibliographicDraftFilesActionResource.config_name),
             )
