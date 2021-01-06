@@ -69,7 +69,7 @@ install_requires = [
     'invenio-drafts-resources>=0.7.2,<0.8.0',
     'invenio-records>=1.5.0a1,<2.0.0',
     'invenio-records-files>=1.2.1,<2.0.0',
-    'invenio-vocabularies>=0.1.5,<1.0.0',
+    'invenio-vocabularies>=0.1.6,<1.0.0',
     'pytz>=2020.4',
 ]
 

@@ -12,6 +12,8 @@ from copy import deepcopy
 from functools import partial
 
 from flask_babelex import get_locale
+from invenio_i18n.ext import current_i18n
+from invenio_vocabularies.api import VocabularyRegistry
 from marshmallow import INCLUDE, Schema, fields, missing
 from marshmallow_utils.fields import FormatDate as FormatDate_
 from marshmallow_utils.fields import FormatEDTF as FormatEDTF_
@@ -64,6 +66,25 @@ def make_affiliation_index(attr, obj, dummy_ctx):
     }
 
 
+def localize_vocabulary_list(field_name, key, attr, obj):
+    """Localize vocabulary."""
+    field_data = attr.get("metadata", {}).get(field_name)
+
+    if not field_data:
+        return None
+
+    localized = []
+    str_locale = str(current_i18n.locale)
+    for item in field_data:
+        localized.append({
+            "id": item.get("id"),
+            "title": item.get("metadata",
+                              {}).get("title", {}).get(str_locale)
+        })
+
+    return localized
+
+
 #
 # Object schema
 #
@@ -108,6 +129,9 @@ class UIObjectSchema(Schema):
     contributors = fields.Function(
         partial(make_affiliation_index, 'contributors'))
 
+    languages = fields.Function(
+        partial(localize_vocabulary_list, 'languages', 'title'))
+
 
 #
 # List schema
@@ -145,7 +169,27 @@ class UIListSchema(Schema):
             if buckets:
                 apply_labels(vocab, buckets)
 
+        # FIXME: This is hardcoded because vocabularies has not been
+        # fully migrated. Ideally all would be treated equally in the for
+        # loop above.
+        languages = aggs.get("languages")
+
+        if languages:
+            languages["buckets"] = serialize_vocabulary(
+                "languages", languages["buckets"])
+
         return aggs
+
+
+def serialize_vocabulary(vocab, buckets):
+    """Serialize vocabulary based aggregations."""
+    vocab_resource = VocabularyRegistry.get(vocab)
+
+    for bucket in buckets:
+        bucket["label"] = \
+            vocab_resource.get(bucket["key"]).get_title(current_i18n.locale)
+
+    return buckets
 
 
 def apply_labels(vocab, buckets):
