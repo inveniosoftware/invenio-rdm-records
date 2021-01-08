@@ -54,8 +54,13 @@ class EDTFDumperExt(ElasticsearchDumperExt):
 
     def load(self, data, record_cls):
         """Load the data."""
-        parent_data = dict_lookup(data, self.keys, parent=True)
+        try:
+            parent_data = dict_lookup(data, self.keys, parent=True)
 
-        # `None` covers the cases where exceptions were raised in _dump
-        parent_data.pop(f"{self.key}_start", None)
-        parent_data.pop(f"{self.key}_end", None)
+            # `None` covers the cases where exceptions were raised in _dump
+            parent_data.pop(f"{self.key}_start", None)
+            parent_data.pop(f"{self.key}_end", None)
+        except KeyError:
+            # Drafts partially saved with no data
+            # The empty {} gets removed by `clear_none`
+            pass
