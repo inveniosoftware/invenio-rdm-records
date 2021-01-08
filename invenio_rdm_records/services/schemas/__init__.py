@@ -9,7 +9,7 @@
 """RDM record schemas."""
 
 from invenio_drafts_resources.services.records.schema import RecordSchema
-from marshmallow import EXCLUDE, INCLUDE, Schema, fields, missing
+from marshmallow import EXCLUDE, INCLUDE, Schema, fields, missing, post_dump
 
 from .access import AccessSchema
 from .files import FilesSchema
@@ -91,6 +91,20 @@ class RDMRecordSchema(RecordSchema):
     #     ExtensionSchema = current_app_metadata_extensions.to_schema()
 
     #     return ExtensionSchema().load(value)
+
+    @post_dump
+    def default_nested(self, data, many, **kwargs):
+        """Serialize metadata as empty dict for partial drafts.
+
+        Cannot use marshmallow for Nested fields due to issue:
+        https://github.com/marshmallow-code/marshmallow/issues/1566
+        https://github.com/marshmallow-code/marshmallow/issues/41
+        and more.
+        """
+        if not data.get("metadata"):
+            data["metadata"] = {}
+
+        return data
 
 
 __all__ = (
