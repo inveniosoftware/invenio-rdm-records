@@ -30,7 +30,7 @@ FormatDate = partial(FormatDate_, locale=get_locale)
 def make_affiliation_index(attr, obj, dummy_ctx):
     """Serializes creators/contributors for easier UI consumption."""
     # Copy so we don't modify in place the existing dict.
-    creators = deepcopy(obj['metadata'].get(attr))
+    creators = deepcopy(obj.get('metadata', {}).get(attr))
     if not creators:
         return missing
 
