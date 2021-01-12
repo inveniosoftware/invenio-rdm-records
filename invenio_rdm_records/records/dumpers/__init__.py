@@ -7,5 +7,5 @@
 
 """ElasticSearch dumpers, for transforming to and from versions to index."""
 
-from .edtf import EDTFDumperExt
+from .edtf import EDTFDumperExt, EDTFListDumperExt
 from .locations import LocationsDumper
