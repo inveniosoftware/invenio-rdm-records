@@ -7,10 +7,7 @@
 # it under the terms of the MIT License; see LICENSE file for more details.
 
 """DataCite-based data model for Invenio."""
-from celery import shared_task
-from invenio_db import db
-from invenio_files_rest.signals import file_deleted, file_uploaded
-from invenio_indexer.signals import before_record_index
+
 from invenio_vocabularies.contrib.subjects.subjects import subject_record_type
 
 from . import config
@@ -22,8 +19,7 @@ from .resources import BibliographicDraftActionResource, \
 from .services import BibliographicDraftFilesService, \
     BibliographicRecordFilesService, BibliographicRecordService, \
     BibliographicUserRecordsService
-from .services.schemas.metadata_extensions import MetadataExtensions, \
-    add_es_metadata_extensions
+from .services.schemas.metadata_extensions import MetadataExtensions
 
 
 class InvenioRDMRecords(object):
