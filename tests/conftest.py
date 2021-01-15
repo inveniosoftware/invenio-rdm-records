@@ -13,6 +13,7 @@ fixtures are available.
 """
 
 import pytest
+from flask_principal import Identity, Need, UserNeed
 from invenio_app.factory import create_app as _create_app
 from invenio_files_rest.models import Location
 
@@ -290,3 +291,12 @@ def minimal_record():
             "title": "A Romans story"
         }
     }
+
+
+@pytest.fixture(scope="module")
+def identity_simple():
+    """Simple identity fixture."""
+    i = Identity(1)
+    i.provides.add(UserNeed(1))
+    i.provides.add(Need(method='system_role', value='any_user'))
+    return i

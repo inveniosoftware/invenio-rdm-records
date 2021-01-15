@@ -12,9 +12,10 @@ import pytest
 from invenio_db import db
 from invenio_records.dumpers import ElasticsearchDumper
 
-from invenio_rdm_records.records import BibliographicRecord
+from invenio_rdm_records.records import BibliographicDraft, BibliographicRecord
 from invenio_rdm_records.records.dumpers import EDTFDumperExt, \
     EDTFListDumperExt, LocationsDumper
+from invenio_rdm_records.services import BibliographicRecordService
 
 
 @pytest.mark.parametrize("date, expected_start, expected_end", [
@@ -161,143 +162,34 @@ def test_eslistdumper_with_edtfext_parse_error(app, db, minimal_record):
     assert 'type' in new_record['metadata']['resource_type']
 
 
-def test_locationsdumper_with_point_geometry(app, db, minimal_record):
-    dumper = ElasticsearchDumper(
-        extensions=[LocationsDumper()]
+def test_edtf_dumper_query(app, db, location, minimal_record, identity_simple):
+    """Test edft extension queries."""
+    date = "2021-01-01"
+    minimal_record["metadata"]["publication_date"] = date
+    minimal_record["metadata"]["dates"] = [{"date": date}]
+
+    # Create the record
+    service = BibliographicRecordService(
+        config=app.config.get(BibliographicRecordService.config_name),
     )
+    record = service.create(identity_simple, minimal_record)
+    BibliographicDraft.index.refresh()
 
-    minimal_record['locations'] = {
-        'features': [{
-            'geometry': {
-                'type': 'Point',
-                'coordinates': [6.052778, 46.234167]
-            }
-        }]
-    }
+    # Search for it
+    assert service.search(
+        identity_simple,
+        {"q": "metadata.publication_date_range:[2020 TO 2021]"},
+        status="draft"
+    ).total == 1
 
-    record = BibliographicRecord.create(minimal_record)
+    assert service.search(
+        identity_simple,
+        {"q": "metadata.publication_date_range:[2020-12-31 TO 2021-01-02]"},
+        status="draft"
+    ).total == 1
 
-    # Dump it
-    dump = record.dumps(dumper=dumper)
-
-    # Centroid has been inferred
-    assert (
-        dump['locations']['features'][0]['centroid'] ==
-        minimal_record['locations']['features'][0]['geometry']['coordinates']
-    )
-
-    # And it round-trips
-    assert (
-        record.loads(dump, loader=dumper)['locations'] ==
-        minimal_record['locations']
-    )
-
-
-def test_locationsdumper_with_no_featurecollection(app, db, minimal_record):
-    dumper = ElasticsearchDumper(
-        extensions=[LocationsDumper()]
-    )
-
-    record = BibliographicRecord.create(minimal_record)
-
-    # Dump it
-    dump = record.dumps(dumper=dumper)
-
-
-@unittest.mock.patch(
-    'invenio_rdm_records.records.dumpers.locations.shapely',
-    None
-)
-def test_locationsdumper_with_polygon_and_no_shapely(app, db, minimal_record):
-    dumper = ElasticsearchDumper(
-        extensions=[LocationsDumper()]
-    )
-
-    minimal_record['locations'] = {
-        'features': [{
-            'geometry': {
-                'type': 'Polygon',
-                'coordinates': [
-                    [
-                        [100.0, 0.0], [101.0, 0.0], [101.0, 1.0], [100.0, 1.0],
-                        [100.0, 0.0],
-                    ]
-                ]
-            }
-        }],
-    }
-
-    record = BibliographicRecord.create(minimal_record)
-
-    with pytest.warns(UserWarning):
-        dump = record.dumps(dumper=dumper)
-
-    assert 'centroid' not in dump['locations']['features'][0]
-
-
-def test_locationsdumper_with_polygon_and_mock_shapely(
-    app, db, minimal_record
-):
-    with unittest.mock.patch(
-        'invenio_rdm_records.records.dumpers.locations.shapely'
-    ) as shapely:
-        dumper = ElasticsearchDumper(
-            extensions=[LocationsDumper()]
-        )
-
-        minimal_record['locations'] = {
-            'features': [{
-                'geometry': {
-                    'type': 'Polygon',
-                    'coordinates': [
-                        [
-                            [100.0, 0.0], [101.0, 0.0], [101.0, 1.0],
-                            [100.0, 1.0], [100.0, 0.0],
-                        ]
-                    ]
-                }
-            }],
-        }
-
-        record = BibliographicRecord.create(minimal_record)
-
-        shape = unittest.mock.Mock()
-        shape.centroid.x, shape.centroid.y = 100.5, 0.5
-        shapely.geometry.shape.return_value = shape
-
-        dump = record.dumps(dumper=dumper)
-
-        shapely.geometry.shape.assert_called_once_with(
-            minimal_record['locations']['features'][0]['geometry']
-        )
-        assert dump['locations']['features'][0]['centroid'] == [100.5, 0.5]
-
-
-def test_locationsdumper_with_polygon_and_shapely(app, db, minimal_record):
-    pytest.importorskip('shapely')
-
-    dumper = ElasticsearchDumper(
-        extensions=[LocationsDumper()]
-    )
-
-    # This also tests shapes with elevations
-    minimal_record['locations'] = {
-        'features': [{
-            'geometry': {
-                'type': 'Polygon',
-                'coordinates': [
-                    [
-                        [100.0, 0.0, 10], [101.0, 0.0, 10], [101.0, 1.0, 30],
-                        [100.0, 1.0, 30], [100.0, 0.0, 10],
-                    ]
-                ]
-            }
-        }],
-    }
-
-    record = BibliographicRecord.create(minimal_record)
-
-    dump = record.dumps(dumper=dumper)
-
-    # 3D geometries still lead to 2D centroids
-    assert dump['locations']['features'][0]['centroid'] == [100.5, 0.5]
+    assert service.search(
+        identity_simple,
+        {"q": "metadata.publication_date_range:[2022 TO 2023]"},
+        status="draft"
+    ).total == 0
