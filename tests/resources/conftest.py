@@ -13,7 +13,6 @@ fixtures are available.
 """
 
 import pytest
-from flask_principal import Identity, Need, UserNeed
 from invenio_app.factory import create_api
 
 from invenio_rdm_records import config
@@ -244,15 +243,6 @@ def full_record():
             "Under investigation for copyright infringement."
         ]
     }
-
-
-@pytest.fixture(scope="module")
-def identity_simple():
-    """Simple identity fixture."""
-    i = Identity(1)
-    i.provides.add(UserNeed(1))
-    i.provides.add(Need(method='system_role', value='any_user'))
-    return i
 
 
 @pytest.fixture()
