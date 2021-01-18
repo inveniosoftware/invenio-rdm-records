@@ -13,6 +13,7 @@ from marshmallow import ValidationError
 from invenio_rdm_records.services.schemas.metadata import SubjectSchema
 
 
+@pytest.mark.skipif(reason="valid schemes unknonw and will become vocab")
 def test_valid_subject():
     valid_full = {
         "subject": "Romans",

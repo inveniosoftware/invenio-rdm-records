@@ -18,8 +18,8 @@ def test_valid_reference():
     """Test references schema."""
     valid_full = {
         "reference": "Reference to something et al.",
-        "identifier": "9999.99988",
-        "scheme": "grid"
+        "identifier": "0000 0001 1456 7559",
+        "scheme": "isni"
     }
     assert valid_full == ReferenceSchema().load(valid_full)
 
@@ -33,8 +33,8 @@ def test_valid_minimal_reference():
 
 def test_invalid_no_reference():
     invalid_no_reference = {
-        "identifier": "9999.99988",
-        "scheme": "grid"
+        "identifier": "0000 0001 1456 7559",
+        "scheme": "isni"
     }
     with pytest.raises(ValidationError):
         data = ReferenceSchema().load(invalid_no_reference)
@@ -43,7 +43,7 @@ def test_invalid_no_reference():
 def test_invalid_scheme_reference():
     invalid_scheme = {
         "reference": "Reference to something et al.",
-        "identifier": "9999.99988",
+        "identifier": "0000 0001 1456 7559",
         "scheme": "Invalid"
     }
     with pytest.raises(ValidationError):
@@ -53,7 +53,7 @@ def test_invalid_scheme_reference():
 def test_invalid_extra_right():
     invalid_extra = {
         "reference": "Reference to something et al.",
-        "identifier": "9999.99988",
+        "identifier": "0000 0001 1456 7559",
         "scheme": "Invalid",
         "extra": "field"
     }
@@ -65,8 +65,8 @@ def test_invalid_extra_right():
     ([]),
     ([{
         "reference": "Reference to something et al.",
-        "identifier": "9999.99988",
-        "scheme": "grid"
+        "identifier": "0000 0001 1456 7559",
+        "scheme": "isni"
     }, {
         "reference": "Reference to something et al."
     }])

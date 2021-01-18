@@ -40,6 +40,21 @@ def test_valid_minimal_related_identifiers():
     assert data == valid_minimal
 
 
+def test_valid_no_scheme_related_identifiers(app):
+    """It is valid becuase the schema is detected by the schema."""
+    valid_no_scheme = {
+        "identifier": "10.5281/zenodo.9999988",
+        "relation_type": "requires",
+        "resource_type": {
+            "type": "image",
+            "subtype": "image-photo"
+        }
+    }
+    loaded = RelatedIdentifierSchema().load(valid_no_scheme)
+    valid_no_scheme["scheme"] = "doi"
+    assert valid_no_scheme == loaded
+
+
 def test_invalid_no_identifiers_related_identifiers(app):
     invalid_no_identifier = {
         "scheme": "doi",
@@ -51,19 +66,6 @@ def test_invalid_no_identifiers_related_identifiers(app):
     }
     with pytest.raises(ValidationError):
         data = RelatedIdentifierSchema().load(invalid_no_identifier)
-
-
-def test_invalid_no_scheme_related_identifiers(app):
-    invalid_no_scheme = {
-        "identifier": "10.5281/zenodo.9999988",
-        "relation_type": "requires",
-        "resource_type": {
-            "type": "image",
-            "subtype": "image-photo"
-        }
-    }
-    with pytest.raises(ValidationError):
-        data = RelatedIdentifierSchema().load(invalid_no_scheme)
 
 
 def test_invalid_scheme_related_identifiers(app):
@@ -122,7 +124,7 @@ def test_invalid_extra_field_related_identifiers(app):
         data = RelatedIdentifierSchema().load(invalid_extra)
 
 
-def test_valid_related_identifiers(app, minimal_record):
+def test_valid_related_identifiers_in_schema(app, minimal_record):
     metadata = minimal_record['metadata']
     metadata['related_identifiers'] = [
         {
@@ -134,7 +136,7 @@ def test_valid_related_identifiers(app, minimal_record):
                 "subtype": "image-photo"
             }
         }, {
-            "identifier": "10.5281/zenodo.9999988",
+            "identifier": "10.5281/zenodo.9999977",
             "scheme": "doi",
             "relation_type": "requires"
         }
@@ -154,24 +156,6 @@ def test_invalid_related_identifiers(app, minimal_record):
             "subtype": "image-photo"
         }
     }
-
-    with pytest.raises(ValidationError):
-        data = MetadataSchema().load(metadata)
-
-
-def test_invalid_duplicated_related_identifiers(app, minimal_record):
-    metadata = minimal_record['metadata']
-    metadata['related_identifiers'] = [
-        {
-            "identifier": "10.5281/zenodo.9999988",
-            "scheme": "doi",
-            "relation_type": "requires"
-        }, {
-            "identifier": "10.5281/zenodo.9999988",
-            "scheme": "doi",
-            "relation_type": "requires"
-        }
-    ]
 
     with pytest.raises(ValidationError):
         data = MetadataSchema().load(metadata)

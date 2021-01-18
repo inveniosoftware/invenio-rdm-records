@@ -9,45 +9,34 @@
 """RDM record schemas."""
 
 import time
+from functools import partial
 from urllib import parse
 
 import arrow
-import idutils
 from edtf.parser.grammar import level0Expression
 from flask import current_app
 from flask_babelex import lazy_gettext as _
 from marshmallow import EXCLUDE, INCLUDE, Schema, ValidationError, fields, \
-    post_load, validate, validates, validates_schema
+    post_load, pre_load, validate, validates, validates_schema
 from marshmallow_utils.fields import EDTFDateString, GenFunction, \
-    ISODateString, ISOLangString, SanitizedUnicode
-from marshmallow_utils.schemas import GeometryObjectSchema
+    IdentifierSet, ISODateString, ISOLangString, SanitizedUnicode
+from marshmallow_utils.schemas import GeometryObjectSchema, IdentifierSchema
 
 from .utils import validate_entry
 
 
-def _no_duplicates(value_list):
-    str_list = [str(value) for value in value_list]
-    return len(value_list) == len(set(str_list))
+def _not_blank(error_msg):
+    """Returns a non-blank validation rule with custom error message."""
+    return validate.Length(min=1, error=error_msg)
 
 
 class AffiliationSchema(Schema):
     """Affiliation of a creator/contributor."""
 
     name = SanitizedUnicode(required=True)
-    identifiers = fields.Dict()
-
-    @validates("identifiers")
-    def validate_identifiers(self, value):
-        """Validate well-formed identifiers are passed."""
-        if len(value) == 0:
-            raise ValidationError(_("Invalid identifier."))
-
-        for identifier in value.keys():
-            validator = getattr(idutils, 'is_' + identifier, None)
-            # NOTE: identifier key cannot be empty string
-            if not identifier or (validator and
-                                  not validator(value.get(identifier))):
-                raise ValidationError(_(f"Invalid identifier ({identifier})."))
+    identifiers = IdentifierSet(
+        fields.Nested(partial(IdentifierSchema, allow_all=True)),
+    )
 
 
 class CreatibutorSchema(Schema):
@@ -72,54 +61,23 @@ class CreatibutorSchema(Schema):
     name = SanitizedUnicode()
     given_name = SanitizedUnicode()
     family_name = SanitizedUnicode()
-    identifiers = fields.Dict()
+    identifiers = IdentifierSet(
+        fields.Nested(partial(
+            IdentifierSchema,
+            # It is intendedly allowing org schemes to be sent as personal
+            # and viceversa. This is a trade off learnt from running
+            # Zenodo in production.
+            allowed_schemes=["orcid", "isni", "gnd", "ror"]
+        ))
+    )
     affiliations = fields.List(fields.Nested(AffiliationSchema))
 
-    @validates("identifiers")
-    def validate_identifiers(self, value):
-        """Validate well-formed identifiers are passed."""
-        schemes = ['orcid', 'ror']
-
-        if any(scheme not in schemes for scheme in value.keys()):
-            raise ValidationError(
-                [_(f"Invalid value. Choose one of {schemes}.")]
-            )
-
-        if 'orcid' in value:
-            if not idutils.is_orcid(value.get('orcid')):
-                raise ValidationError({'orcid': [_("Invalid value.")]})
-
-        if 'ror' in value:
-            if not idutils.is_ror(value.get('ror')):
-                raise ValidationError({'ror': [_("Invalid value.")]})
-
     @validates_schema
-    def validate_type_identifiers(self, data, **kwargs):
-        """Validate identifier based on type."""
-        if data['type'] == "personal":
-            person_identifiers = ['orcid']
-            identifiers = data.get('identifiers', {}).keys()
-            if any([i not in person_identifiers for i in identifiers]):
-                messages = [
-                    _(f"Invalid value. Choose one of {person_identifiers}.")
-                ]
-                raise ValidationError({"identifiers": messages})
-
-        elif data['type'] == "organizational":
-            org_identifiers = ['ror']
-            identifiers = data.get('identifiers', {}).keys()
-            if any([i not in org_identifiers for i in identifiers]):
-                messages = [
-                    _(f"Invalid value. Choose one of {org_identifiers}.")
-                ]
-                raise ValidationError({"identifiers": messages})
-
-    @validates_schema
-    def validate_names(Self, data, **kwargs):
+    def validate_names(self, data, **kwargs):
         """Validate names based on type."""
         if data['type'] == "personal":
             if not (data.get('given_name') or data.get('family_name')):
-                messages = [_(f"One name must be filled.")]
+                messages = [_("Family name or given name must be filled.")]
                 raise ValidationError({
                     "given_name": messages,
                     "family_name": messages
@@ -227,24 +185,28 @@ def _is_uri(uri):
         return False
 
 
-class RightsSchema(Schema):
+class RightsSchema(IdentifierSchema):
     """License schema."""
+
+    def __init__(self, **kwargs):
+        """Constructor."""
+        super().__init__(allow_all=True, required=False, **kwargs)
 
     rights = SanitizedUnicode(required=True)
     uri = SanitizedUnicode(
         validate=_is_uri,
         error=_('Wrong URI format. Should follow RFC 3986.')
     )
-    identifier = SanitizedUnicode()
-    scheme = SanitizedUnicode()
 
 
-class SubjectSchema(Schema):
+class SubjectSchema(IdentifierSchema):
     """Subject schema."""
 
+    def __init__(self, **kwargs):
+        """Constructor."""
+        super().__init__(allow_all=True, required=False, **kwargs)
+
     subject = SanitizedUnicode(required=True)
-    identifier = SanitizedUnicode()
-    scheme = SanitizedUnicode()
 
 
 class DateSchema(Schema):
@@ -272,25 +234,7 @@ class DateSchema(Schema):
     description = fields.Str()
 
 
-# 'Fake' Identifiers Field
-def _not_blank(error_msg):
-    """Returns a non-blank validation rule with custom error message."""
-    return validate.Length(min=1, error=error_msg)
-
-
-class IdentifierSchema(Schema):
-    """Identifier schema.
-
-    NOTE: Equivalent to DataCite's alternate identifier.
-    """
-
-    identifier = SanitizedUnicode(
-        required=True, validate=_not_blank(_('Identifier cannot be blank.')))
-    scheme = SanitizedUnicode(
-        required=True, validate=_not_blank(_('Scheme cannot be blank.')))
-
-
-class RelatedIdentifierSchema(Schema):
+class RelatedIdentifierSchema(IdentifierSchema):
     """Related identifier schema."""
 
     RELATIONS = [
@@ -351,15 +295,10 @@ class RelatedIdentifierSchema(Schema):
         "w3id"
     ]
 
-    identifier = SanitizedUnicode(
-        required=True,
-        validate=_not_blank(_('Identifier cannot be blank.'))
-    )
-    scheme = SanitizedUnicode(required=True, validate=validate.OneOf(
-            choices=SCHEMES,
-            error=_('Invalid related identifier scheme. ' +
-                    '{input} not one of {choices}.')
-        ))
+    def __init__(self, **kwargs):
+        """Constructor."""
+        super().__init__(allowed_schemes=self.SCHEMES, **kwargs)
+
     relation_type = SanitizedUnicode(required=True, validate=validate.OneOf(
             choices=RELATIONS,
             error=_('Invalid relation type. {input} not one of {choices}.')
@@ -367,21 +306,25 @@ class RelatedIdentifierSchema(Schema):
     resource_type = fields.Nested(ResourceTypeSchema)
 
 
-class FunderSchema(Schema):
+class FunderSchema(IdentifierSchema):
     """Funder schema."""
+
+    def __init__(self, **kwargs):
+        """Constructor."""
+        super().__init__(allow_all=True, required=False, **kwargs)
 
     name = SanitizedUnicode(
         required=True,
         validate=_not_blank(_('Name cannot be blank.'))
     )
-    identifier = SanitizedUnicode(
-        validate=_not_blank(_('Identifier cannot be blank.')))
-    scheme = SanitizedUnicode(
-        validate=_not_blank(_('Scheme cannot be blank.')))
 
 
-class AwardSchema(Schema):
+class AwardSchema(IdentifierSchema):
     """Award schema."""
+
+    def __init__(self, **kwargs):
+        """Constructor."""
+        super().__init__(allow_all=True, required=False, **kwargs)
 
     title = SanitizedUnicode(
         required=True,
@@ -391,10 +334,6 @@ class AwardSchema(Schema):
         required=True,
         validate=_not_blank(_('Name cannot be blank.'))
     )
-    identifier = SanitizedUnicode(
-        validate=_not_blank(_('Identifier cannot be blank.')))
-    scheme = SanitizedUnicode(
-        validate=_not_blank(_('Scheme cannot be blank.')))
 
 
 class FundingSchema(Schema):
@@ -413,7 +352,7 @@ class FundingSchema(Schema):
                 {"funding": _("At least award or funder shold be present.")})
 
 
-class ReferenceSchema(Schema):
+class ReferenceSchema(IdentifierSchema):
     """Reference schema."""
 
     SCHEMES = [
@@ -422,12 +361,13 @@ class ReferenceSchema(Schema):
         "crossreffunderid",
         "other"
     ]
+
+    def __init__(self, **kwargs):
+        """Constructor."""
+        super().__init__(allowed_schemes=self.SCHEMES,
+                         required=False, **kwargs)
+
     reference = SanitizedUnicode(required=True)
-    identifier = SanitizedUnicode()
-    scheme = SanitizedUnicode(validate=validate.OneOf(
-            choices=SCHEMES,
-            error=_('Invalid reference scheme. {input} not one of {choices}.')
-        ))
 
 
 class PointSchema(Schema):
@@ -442,7 +382,9 @@ class LocationSchema(Schema):
 
     geometry = fields.Nested(GeometryObjectSchema)
     place = SanitizedUnicode()
-    identifiers = fields.Dict()
+    identifiers = fields.List(
+        fields.Nested(partial(IdentifierSchema, allow_all=True)),
+    )
     description = SanitizedUnicode()
 
     @validates_schema
@@ -498,12 +440,10 @@ class MetadataSchema(Schema):
     dates = fields.List(fields.Nested(DateSchema))
     languages = fields.List(fields.Nested(LanguageSchema))
     # alternate identifiers
-    identifiers = fields.List(fields.Nested(IdentifierSchema))
-    related_identifiers = fields.List(
-        fields.Nested(RelatedIdentifierSchema),
-        validate=_no_duplicates,
-        error=_('Invalid related identifiers cannot contain duplicates.')
+    identifiers = IdentifierSet(
+        fields.Nested(partial(IdentifierSchema, allow_all=True))
     )
+    related_identifiers = fields.List(fields.Nested(RelatedIdentifierSchema))
     sizes = fields.List(SanitizedUnicode(
         validate=_not_blank(_('Size cannot be a blank string.'))))
     formats = fields.List(SanitizedUnicode(
