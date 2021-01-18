@@ -93,15 +93,19 @@ def full_record():
                 "type": "personal",
                 "given_name": "Lars Holm",
                 "family_name": "Nielsen",
-                "identifiers": {
-                    "orcid": "0000-0001-8135-3489"
-                },
+                "identifiers": [{
+                    "scheme": "orcid",
+                    "identifier": "0000-0001-8135-3489"
+                }],
                 "affiliations": [{
                     "name": "CERN",
-                    "identifiers": {
-                        "ror": "01ggx4157",
-                        "isni": "000000012156142X"
-                    }
+                    "identifiers": [{
+                        "scheme": "ror",
+                        "identifier": "01ggx4157",
+                    }, {
+                        "scheme": "isni",
+                        "identifier": "000000012156142X",
+                    }]
                 }]
             }],
             "title": "InvenioRDM",
@@ -123,15 +127,19 @@ def full_record():
                 "role": "other",
                 "given_name": "Lars Holm",
                 "family_name": "Nielsen",
-                "identifiers": {
-                    "orcid": "0000-0001-8135-3489"
-                },
+                "identifiers": [{
+                    "scheme": "orcid",
+                    "identifier": "0000-0001-8135-3489"
+                }],
                 "affiliations": [{
                     "name": "CERN",
-                    "identifiers": {
-                        "ror": "01ggx4157",
-                        "isni": "000000012156142X"
-                    }
+                    "identifiers": [{
+                        "scheme": "ror",
+                        "identifier": "01ggx4157",
+                    }, {
+                        "scheme": "isni",
+                        "identifier": "000000012156142X",
+                    }]
                 }]
             }],
             "dates": [{
@@ -270,22 +278,37 @@ def minimal_record():
                 "family_name": "Lester",
                 "given_name": "Phillip",
                 "type": "personal",
-                "identifiers": {"orcid": "0000-0002-1825-0097"},
+                "identifiers": [{
+                    "scheme": "orcid",
+                    "identifier": "0000-0001-8135-3489"
+                }],
                 "affiliations": [{
                     "name": "Carter-Morris",
-                    "identifiers": {"ror": "03yrm5c26"}
+                    "identifiers": [{
+                        "scheme": "ror",
+                        "identifier": "03yrm5c26"
+                    }]
                 }]
             }, {
                 "family_name": "Williamson",
                 "given_name": "Steven",
                 "type": "personal",
-                "identifiers": {"orcid": "0000-0002-1825-0097"},
+                "identifiers": [{
+                    "scheme": "orcid",
+                    "identifier": "0000-0001-8135-3489"
+                }],
                 "affiliations": [{
                     "name": "Ritter and Sons",
-                    "identifiers": {"ror": "03yrm5c26"}
+                    "identifiers": [{
+                        "scheme": "ror",
+                        "identifier": "03yrm5c26"
+                    }]
                 }, {
                     "name": "Montgomery, Bush and Madden",
-                    "identifiers": {"ror": "03yrm5c26"}
+                    "identifiers": [{
+                        "scheme": "ror",
+                        "identifier": "03yrm5c26"
+                    }]
                 }]
             }],
             "title": "A Romans story"

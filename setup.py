@@ -64,12 +64,12 @@ install_requires = [
     'arrow>=0.17.0',
     'Faker>=2.0.3',
     'ftfy>=4.4.3,<5.0.0',
-    'idutils>=1.1.7',
     'invenio-communities>=2.1.1,<3.0.0',
     'invenio-drafts-resources>=0.7.2,<0.8.0',
     'invenio-records>=1.5.0a1,<2.0.0',
     'invenio-records-files>=1.2.1,<2.0.0',
     'invenio-vocabularies>=0.1.6,<1.0.0',
+    'marshmallow-utils>=0.3.3',
     'pytz>=2020.4',
 ]
 
