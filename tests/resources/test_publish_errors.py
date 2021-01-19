@@ -47,14 +47,18 @@ def test_nested_field_error(
         client, minimal_record, location, es_clear, headers):
     minimal_record["metadata"]["creators"] = [
         {
-            "name": "Julio Cesar",
-            "type": "personal",
-            "given_name": "Julio",
-            "family_name": "Cesar",
+            "person_or_org": {
+                "name": "Julio Cesar",
+                "type": "personal",
+                "given_name": "Julio",
+                "family_name": "Cesar",
+            }
         },
         # No name even though it is required
         {
-            "type": "organizational",
+            "person_or_org": {
+                "type": "organizational",
+            }
         }
     ]
     response = save_partial_draft(client, minimal_record, headers)
@@ -68,7 +72,7 @@ def test_nested_field_error(
     assert 400 == response.status_code
     expected = [
         {
-            "field": "metadata.creators.1.name",
+            "field": "metadata.creators.1.person_or_org.name",
             "messages": ["Name cannot be blank."]
         }
     ]
