@@ -52,22 +52,26 @@ def fails_meta(data):
 def person():
     """Person for creator or contributor."""
     return {
-        "name": "Nielsen, Lars Holm",
-        "type": "personal",
-        "given_name": "Lars Holm",
-        "family_name": "Nielsen",
-        "identifiers": {
-            "orcid": "0000-0001-8135-3489"
+        "person_or_org": {
+            "name": "Nielsen, Lars Holm",
+            "type": "personal",
+            "given_name": "Lars Holm",
+            "family_name": "Nielsen",
+            "identifiers": [{
+                "scheme": "orcid",
+                "identifier": "0000-0001-8135-3489"
+            }],
         },
-        "affiliations": [
-            {
-                "name": "CERN",
-                "identifiers": {
-                    "ror": "01ggx4157",
-                    "isni": "000000012156142X",
-                }
-            }
-        ]
+        "affiliations": [{
+            "name": "CERN",
+            "identifiers": [{
+                "scheme": "ror",
+                "identifier": "01ggx4157"
+            }, {
+                "scheme": "isni",
+                "identifier": "000000012156142X"
+            }]
+        }]
     }
 
 
@@ -75,19 +79,21 @@ def person():
 def org():
     """Organization for creator or contributor."""
     return {
-        "name": "CERN",
-        "type": "organizational",
-        "identifiers": {
-            "ror": "01ggx4157"
+        "person_or_org": {
+            "name": "CERN",
+            "type": "organizational",
+            "identifiers": [{
+                "scheme": "ror",
+                "identifier": "01ggx4157"
+            }],
         },
-        "affiliations": [
-            {
-                "name": "CERN",
-                "identifiers": {
-                    "ror": "..."
-                }
-            }
-        ]
+        "affiliations": [{
+            "name": "CERN",
+            "identifiers": [{
+                "scheme": "ror",
+                "identifier": "..."
+            }],
+        }]
     }
 
 
@@ -196,14 +202,16 @@ def test_creators(appctx, person, org):
     """Test creators."""
     assert fails_meta({"creators": {}})
     assert validates_meta({"creators": []})
-    assert validates_meta({"creators": [{"name": "test"}]})
+    assert validates_meta({"creators": [{"person_or_org": {"name": "test"}}]})
 
     assert validates_meta({"creators": [person]})
     assert validates_meta({"creators": [org]})
     assert validates_meta({"creators": [person, org]})
 
     # Additional prop fails
-    assert fails_meta({"creators": [{"name": "test", "invalid": "test"}]})
+    assert fails_meta({"creators": [
+        {"person_or_org": {"name": "test"}, "invalid": "test"}
+    ]})
     person["affiliations"][0]["invalid"] = "test"
     assert fails_meta({"creators": [person]})
 
@@ -265,7 +273,8 @@ def test_contributors(appctx, person, org):
     assert fails_meta({"contributors": {}})
     assert validates_meta({"contributors": []})
     assert validates_meta({"contributors": [
-        {"name": "test", "role": "other"}]})
+        {"person_or_org": {"name": "test"}, "role": "other"}
+    ]})
 
     person["role"] = "other"
     org["role"] = "hosting_institution"
@@ -275,7 +284,8 @@ def test_contributors(appctx, person, org):
     assert validates_meta({"contributors": [person, org]})
 
     # Additional prop fails
-    assert fails_meta({"contributors": [{"name": "test", "invalid": "test"}]})
+    assert fails_meta({"contributors": [
+        {"person_or_org": {"name": "test"}, "invalid": "test"}]})
     person["affiliations"][0]["invalid"] = "test"
     assert fails_meta({"contributors": [person]})
 
@@ -412,20 +422,26 @@ def test_additional_descriptions(appctx):
     [{
         "geometry": {"type": "Point", "coordinates": [6.05, 46.23333]},
     }], [{
-        "identifiers": {
-            "geonames": "2661235",
-            "tgn": "http://vocab.getty.edu/tgn/8703679"
-        },
+        "identifiers": [{
+            "scheme": "geonames",
+            "identifier": "2661235"
+        }, {
+            "scheme": "tgn",
+            "identifier": "http://vocab.getty.edu/tgn/8703679"
+        }],
     }], [{
         "place": "CERN"
     }], [{
         "description": "Invenio birth place."
     }], [{
         "geometry": {"type": "Point", "coordinates": [6.05, 46.23333]},
-        "identifiers": {
-            "geonames": "2661235",
-            "tgn": "http://vocab.getty.edu/tgn/8703679"
-        },
+        "identifiers": [{
+            "scheme": "geonames",
+            "identifier": "2661235"
+        }, {
+            "scheme": "tgn",
+            "identifier": "http://vocab.getty.edu/tgn/8703679"
+        }],
         "place": "CERN",
         "description": "Invenio birth place."
     }],

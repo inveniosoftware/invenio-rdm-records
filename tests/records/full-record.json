@@ -37,19 +37,25 @@
       "subtype": "article"
     },
     "creators": [{
-      "name": "Nielsen, Lars Holm",
-      "type": "personal",
-      "given_name": "Lars Holm",
-      "family_name": "Nielsen",
-      "identifiers": {
-        "orcid": "0000-0001-8135-3489"
+      "person_or_org": {
+        "name": "Nielsen, Lars Holm",
+        "type": "personal",
+        "given_name": "Lars Holm",
+        "family_name": "Nielsen",
+        "identifiers": [{
+          "scheme": "orcid",
+          "identifier": "0000-0001-8135-3489"
+        }]
       },
       "affiliations": [{
         "name": "CERN",
-        "identifiers": {
-          "ror": "01ggx4157",
-          "isni": "000000012156142X"
-        }
+        "identifiers": [{
+          "scheme": "ror",
+          "identifier": "01ggx4157"
+        }, {
+          "scheme": "isni",
+          "identifier": "000000012156142X"
+        }]
       }]
     }],
     "title": "InvenioRDM",
@@ -66,20 +72,26 @@
       "scheme": "dewey"
     }],
     "contributors": [{
-      "name": "Nielsen, Lars Holm",
-      "type": "personal",
-      "role": "other",
-      "given_name": "Lars Holm",
-      "family_name": "Nielsen",
-      "identifiers": {
-        "orcid": "0000-0001-8135-3489"
+      "person_or_org": {
+        "name": "Nielsen, Lars Holm",
+        "type": "personal",
+        "given_name": "Lars Holm",
+        "family_name": "Nielsen",
+        "identifiers": [{
+          "scheme": "orcid",
+          "identifier": "0000-0001-8135-3489"
+        }]
       },
+      "role": "other",
       "affiliations": [{
         "name": "CERN",
-        "identifiers": {
-          "ror": "01ggx4157",
-          "isni": "000000012156142X"
-        }
+        "identifiers": [{
+          "scheme": "ror",
+          "identifier": "01ggx4157"
+        }, {
+          "scheme": "isni",
+          "identifier": "000000012156142X"
+        }]
       }]
     }],
     "dates": [{
@@ -123,10 +135,13 @@
           "type": "Point",
           "coordinates": [6.05, 46.23333]
         },
-        "identifiers": {
-          "geonames": "2661235",
-          "tgn": "http://vocab.getty.edu/tgn/8703679"
-        },
+        "identifiers": [{
+          "scheme": "geonames",
+          "identifier": "2661235"
+        }, {
+          "scheme": "tgn",
+          "identifier": "http://vocab.getty.edu/tgn/8703679"
+        }],
         "place": "CERN",
         "description": "Invenio birth place."
       }]
@@ -134,7 +149,7 @@
     "funding": [{
       "funder": {
         "name": "European Commission",
-        "identifier": "1234",
+        "identifier": "01ggx4157",
         "scheme": "ror"
       },
       "award": {

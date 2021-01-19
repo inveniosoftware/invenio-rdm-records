@@ -150,13 +150,15 @@ def test_eslistdumper_with_edtfext_parse_error(app, db, minimal_record):
 
     # Dump it
     dump = record.dumps(dumper=dumper)
-    assert "family_name_range" not in dump["metadata"]["creators"][0]
-    assert "family_name" in dump["metadata"]["creators"][0]
+    person_or_org = dump["metadata"]["creators"][0]["person_or_org"]
+    assert "family_name_range" not in person_or_org
+    assert "family_name" in person_or_org
 
     # Load it
     new_record = BibliographicRecord.loads(dump, loader=dumper)
-    assert 'family_name_range' not in new_record['metadata']['creators'][0]
-    assert 'family_name' in new_record['metadata']['creators'][0]
+    person_or_org = dump["metadata"]["creators"][0]["person_or_org"]
+    assert 'family_name_range' not in person_or_org
+    assert 'family_name' in person_or_org
     assert 'type_start' not in new_record['metadata']['resource_type']
     assert 'type_end' not in new_record['metadata']['resource_type']
     assert 'type' in new_record['metadata']['resource_type']

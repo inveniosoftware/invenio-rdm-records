@@ -56,29 +56,47 @@
                 "affiliations" : {
                   "properties" : {
                     "identifiers" : {
-                      "type" : "object"
+                      "properties": {
+                        "identifier" : {
+                          "type" : "keyword"
+                        },
+                        "scheme" : {
+                          "type" : "keyword"
+                        }
+                      }
                     },
                     "name" : {
                       "type" : "text"
                     }
                   }
                 },
-                "family_name" : {
-                  "type" : "text"
-                },
-                "given_name" : {
-                  "type" : "text"
-                },
-                "identifiers" : {
-                  "type" : "object"
-                },
-                "name" : {
-                  "type" : "text"
+                "person_or_org": {
+                  "properties": {
+                    "family_name" : {
+                      "type" : "text"
+                    },
+                    "given_name" : {
+                      "type" : "text"
+                    },
+                    "identifiers" : {
+                      "properties": {
+                        "identifier" : {
+                          "type" : "keyword"
+                        },
+                        "scheme" : {
+                          "type" : "keyword"
+                        }
+                      }
+                    },
+                    "name" : {
+                      "type" : "text"
+                    },
+                    "type" : {
+                      "type" : "keyword"
+                    }
+                  }
                 },
                 "role" : {
-                  "type" : "keyword"
-                },
-                "type" : {
                   "type" : "keyword"
                 }
               }
@@ -88,26 +106,47 @@
                 "affiliations" : {
                   "properties" : {
                     "identifiers" : {
-                      "type" : "object"
+                      "properties": {
+                        "identifier" : {
+                          "type" : "keyword"
+                        },
+                        "scheme" : {
+                          "type" : "keyword"
+                        }
+                      }
                     },
                     "name" : {
                       "type" : "text"
                     }
                   }
                 },
-                "family_name" : {
-                  "type" : "text"
+                "person_or_org": {
+                  "properties": {
+                    "family_name" : {
+                      "type" : "text"
+                    },
+                    "given_name" : {
+                      "type" : "text"
+                    },
+                    "identifiers" : {
+                      "properties": {
+                        "identifier" : {
+                          "type" : "keyword"
+                        },
+                        "scheme" : {
+                          "type" : "keyword"
+                        }
+                      }
+                    },
+                    "name" : {
+                      "type" : "text"
+                    },
+                    "type" : {
+                      "type" : "keyword"
+                    }
+                  }
                 },
-                "given_name" : {
-                  "type" : "text"
-                },
-                "identifiers" : {
-                  "type" : "object"
-                },
-                "name" : {
-                  "type" : "text"
-                },
-                "type" : {
+                "role" : {
                   "type" : "keyword"
                 }
               }
@@ -151,7 +190,14 @@
               }
             },
             "identifiers" : {
-              "type" : "object"
+              "properties": {
+                "identifier" : {
+                  "type" : "text"
+                },
+                "scheme" : {
+                  "type" : "keyword"
+                }
+              }
             },
             "languages" : {
               "properties" : {
@@ -193,7 +239,14 @@
                       "type": "text"
                     },
                     "identifiers": {
-                      "type": "object"
+                      "properties": {
+                        "identifier" : {
+                          "type" : "keyword"
+                        },
+                        "scheme" : {
+                          "type" : "keyword"
+                        }
+                      }
                     },
                     "description": {
                       "type": "text"

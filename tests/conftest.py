@@ -89,14 +89,16 @@ def full_record():
                 "subtype": "publication-article"
             },
             "creators": [{
-                "name": "Nielsen, Lars Holm",
-                "type": "personal",
-                "given_name": "Lars Holm",
-                "family_name": "Nielsen",
-                "identifiers": [{
-                    "scheme": "orcid",
-                    "identifier": "0000-0001-8135-3489"
-                }],
+                "person_or_org": {
+                    "name": "Nielsen, Lars Holm",
+                    "type": "personal",
+                    "given_name": "Lars Holm",
+                    "family_name": "Nielsen",
+                    "identifiers": [{
+                        "scheme": "orcid",
+                        "identifier": "0000-0001-8135-3489"
+                    }],
+                },
                 "affiliations": [{
                     "name": "CERN",
                     "identifiers": [{
@@ -122,15 +124,17 @@ def full_record():
                 "scheme": "dewey"
             }],
             "contributors": [{
-                "name": "Nielsen, Lars Holm",
-                "type": "personal",
+                "person_or_org": {
+                    "name": "Nielsen, Lars Holm",
+                    "type": "personal",
+                    "given_name": "Lars Holm",
+                    "family_name": "Nielsen",
+                    "identifiers": [{
+                        "scheme": "orcid",
+                        "identifier": "0000-0001-8135-3489"
+                    }],
+                },
                 "role": "other",
-                "given_name": "Lars Holm",
-                "family_name": "Nielsen",
-                "identifiers": [{
-                    "scheme": "orcid",
-                    "identifier": "0000-0001-8135-3489"
-                }],
                 "affiliations": [{
                     "name": "CERN",
                     "identifiers": [{
@@ -271,17 +275,21 @@ def minimal_record():
                 "subtype": "image-photo"
             },
             "creators": [{
-                "family_name": "Brown",
-                "given_name": "Troy",
-                "type": "personal"
+                "person_or_org": {
+                    "family_name": "Brown",
+                    "given_name": "Troy",
+                    "type": "personal"
+                }
             }, {
-                "family_name": "Lester",
-                "given_name": "Phillip",
-                "type": "personal",
-                "identifiers": [{
-                    "scheme": "orcid",
-                    "identifier": "0000-0001-8135-3489"
-                }],
+                "person_or_org": {
+                    "family_name": "Lester",
+                    "given_name": "Phillip",
+                    "type": "personal",
+                    "identifiers": [{
+                        "scheme": "orcid",
+                        "identifier": "0000-0001-8135-3489"
+                    }],
+                },
                 "affiliations": [{
                     "name": "Carter-Morris",
                     "identifiers": [{
@@ -290,13 +298,15 @@ def minimal_record():
                     }]
                 }]
             }, {
-                "family_name": "Williamson",
-                "given_name": "Steven",
-                "type": "personal",
-                "identifiers": [{
-                    "scheme": "orcid",
-                    "identifier": "0000-0001-8135-3489"
-                }],
+                "person_or_org": {
+                    "family_name": "Williamson",
+                    "given_name": "Steven",
+                    "type": "personal",
+                    "identifiers": [{
+                        "scheme": "orcid",
+                        "identifier": "0000-0001-8135-3489"
+                    }],
+                },
                 "affiliations": [{
                     "name": "Ritter and Sons",
                     "identifiers": [{

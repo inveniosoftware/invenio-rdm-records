@@ -102,6 +102,16 @@
       "additionalProperties": {"$ref": "#/definitions/identifier"}
     },
 
+    "identifiers_with_scheme": {
+      "description": "Identifiers object with identifier value and scheme in separate keys.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "identifier": {"$ref": "#/definitions/identifier"},
+        "scheme": {"$ref": "#/definitions/scheme"}
+      }
+    },
+
     "internal-pid": {
       "type": "object",
       "description": "An internal persistent identifier object.",
@@ -172,7 +182,11 @@
           "additionalProperties": false,
           "properties": {
             "name": {"type": "string"},
-            "identifiers": {"$ref": "#/definitions/identifiers"}
+            "identifiers": {
+              "type": "array",
+              "items": {"$ref": "#/definitions/identifiers_with_scheme"},
+              "uniqueItems": true
+            }
           },
           "required": ["name", "identifiers"]
       }
@@ -493,13 +507,25 @@
           "items": {
             "type": "object",
             "additionalProperties": false,
-            "required": ["name"],
+            "required": ["person_or_org"],
             "properties": {
-                "name": {"type": "string"},
-                "type": {"$ref": "#/definitions/nameType"},
-                "given_name": {"type": "string"},
-                "family_name": {"type": "string"},
-                "identifiers": {"$ref": "#/definitions/identifiers"},
+                "person_or_org": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": ["name"],
+                  "properties": {
+                    "name": {"type": "string"},
+                    "type": {"$ref": "#/definitions/nameType"},
+                    "given_name": {"type": "string"},
+                    "family_name": {"type": "string"},
+                    "identifiers": {
+                      "type": "array",
+                      "items": {"$ref": "#/definitions/identifiers_with_scheme"},
+                      "uniqueItems": true
+                    }
+                  }
+                },
+                "role": {"type": "string"},
                 "affiliations": {"$ref": "#/definitions/affiliations"}
             }
           }
@@ -557,15 +583,26 @@
           "items": {
             "type": "object",
             "additionalProperties": false,
-            "required": ["name", "role"],
+            "required": ["person_or_org", "role"],
             "properties": {
-                "name": {"type": "string"},
-                "type": {"$ref": "#/definitions/nameType"},
-                "role": {"$ref": "#/definitions/contributorType"},
-                "given_name": {"type": "string"},
-                "family_name": {"type": "string"},
-                "identifiers": {"$ref": "#/definitions/identifiers"},
-                "affiliations": {"$ref": "#/definitions/affiliations"}
+              "person_or_org": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": ["name"],
+                "properties": {
+                  "name": {"type": "string"},
+                  "type": {"$ref": "#/definitions/nameType"},
+                  "given_name": {"type": "string"},
+                  "family_name": {"type": "string"},
+                  "identifiers": {
+                    "type": "array",
+                    "items": {"$ref": "#/definitions/identifiers_with_scheme"},
+                    "uniqueItems": true
+                  }
+                }
+              },
+              "role": {"$ref": "#/definitions/contributorType"},
+              "affiliations": {"$ref": "#/definitions/affiliations"}
             }
           }
         },
@@ -599,14 +636,7 @@
         "identifiers": {
           "description": "Alternate identifiers for the record.",
           "type": "array",
-          "items": {
-              "type": "object",
-              "additionalProperties": false,
-              "properties": {
-                  "identifier": {"$ref": "#/definitions/identifier"},
-                  "scheme": {"$ref": "#/definitions/scheme"}
-              }
-          },
+          "items": {"$ref": "#/definitions/identifiers_with_scheme"},
           "uniqueItems": true
         },
 
@@ -713,7 +743,11 @@
                       "additionalProperties": false
                     }]
                   },
-                  "identifiers": {"$ref": "#/definitions/identifiers"},
+                  "identifiers": {
+                    "type": "array",
+                    "items": {"$ref": "#/definitions/identifiers_with_scheme"},
+                    "uniqueItems": true
+                  },
                   "place": {
                     "description": "Place of the location",
                     "type": "string",

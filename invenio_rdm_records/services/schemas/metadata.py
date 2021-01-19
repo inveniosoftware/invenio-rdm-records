@@ -39,8 +39,8 @@ class AffiliationSchema(Schema):
     )
 
 
-class CreatibutorSchema(Schema):
-    """Creator/Contributor schema."""
+class PersonOrOrganizationSchema(Schema):
+    """Person or Organization schema."""
 
     NAMES = [
         "organizational",
@@ -70,7 +70,6 @@ class CreatibutorSchema(Schema):
             allowed_schemes=["orcid", "isni", "gnd", "ror"]
         ))
     )
-    affiliations = fields.List(fields.Nested(AffiliationSchema))
 
     @validates_schema
     def validate_names(self, data, **kwargs):
@@ -108,10 +107,12 @@ class CreatibutorSchema(Schema):
         return data
 
 
-class CreatorSchema(CreatibutorSchema):
+class CreatorSchema(Schema):
     """Creator schema."""
 
+    person_or_org = fields.Nested(PersonOrOrganizationSchema, required=True)
     role = SanitizedUnicode()
+    affiliations = fields.List(fields.Nested(AffiliationSchema))
 
     @validates_schema
     def validate_role(self, data, **kwargs):
@@ -120,10 +121,12 @@ class CreatorSchema(CreatibutorSchema):
             validate_entry('creators.role', data)
 
 
-class ContributorSchema(CreatibutorSchema):
+class ContributorSchema(Schema):
     """Contributor schema."""
 
+    person_or_org = fields.Nested(PersonOrOrganizationSchema)
     role = SanitizedUnicode(required=True)
+    affiliations = fields.List(fields.Nested(AffiliationSchema))
 
     @validates_schema
     def validate_role(self, data, **kwargs):
