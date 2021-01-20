@@ -9,22 +9,12 @@
 
     "nameType": {
       "description": "Type of name.",
-      "type": "string",
-      "enum": [
-          "organizational",
-          "personal"
-      ]
+      "type": "string"
     },
 
     "titleType": {
       "description": "Type of title.",
-      "type": "string",
-      "enum": [
-          "alternative_title",
-          "subtitle",
-          "translated_title",
-          "other"
-      ]
+      "type": "string"
     },
 
     "contributorType": {
@@ -33,20 +23,7 @@
 
     "dateType": {
       "description": "Type of the date.",
-      "type": "string",
-      "enum": [
-        "accepted",
-        "available",
-        "copyrighted",
-        "collected",
-        "created",
-        "issued",
-        "submitted",
-        "updated",
-        "valid",
-        "withdrawn",
-        "other"
-      ]
+      "type": "string"
     },
 
     "relationType": {
@@ -54,15 +31,7 @@
     },
 
     "descriptionType": {
-      "type": "string",
-      "enum": [
-        "abstract",
-        "methods",
-        "seriesinformation",
-        "tableofcontents",
-        "technicalinfo",
-        "other"
-      ]
+      "type": "string"
     },
 
     "language": {
@@ -153,7 +122,6 @@
         }
       }
     },
-
 
     "resource_type": {
       "type": "object",
