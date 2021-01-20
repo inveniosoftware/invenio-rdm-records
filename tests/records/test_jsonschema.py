@@ -224,10 +224,6 @@ def test_additional_titles(appctx):
     assert validates_meta({"additional_titles": [
         {"title": "Test", "type": "subtitle", "lang": "dan"},
     ]})
-
-    assert fails_meta({"additional_titles": [
-        {"title": "Test", "type": "invalid", "lang": "toolong"}
-    ]})
     assert fails_meta({"additional_titles": [
         {"title": "Test", "invalid": "invalid"}
     ]})
