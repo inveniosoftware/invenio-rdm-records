@@ -7,6 +7,7 @@
 # it under the terms of the MIT License; see LICENSE file for more details.
 
 """Metadata Extensions."""
+
 from copy import deepcopy
 
 from flask import current_app

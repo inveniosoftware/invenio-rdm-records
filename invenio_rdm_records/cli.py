@@ -7,9 +7,9 @@
 # it under the terms of the MIT License; see LICENSE file for more details.
 
 """Command-line tools for demo module."""
+
 import datetime
 import random
-import uuid
 
 import click
 from edtf.parser.grammar import level0Expression
@@ -17,14 +17,8 @@ from faker import Faker
 from flask.cli import with_appcontext
 from flask_principal import Identity
 from invenio_access import any_user
-from invenio_db import db
-from invenio_indexer.api import RecordIndexer
-from invenio_pidstore import current_pidstore
-from invenio_records_files.api import Record
-from invenio_search import current_search
 
-from .services import BibliographicDraftFilesService, \
-    BibliographicRecordService
+from .services import RDMDraftFilesService, RDMRecordService
 from .vocabularies import Vocabularies
 
 
@@ -216,8 +210,8 @@ def create_fake_record():
     identity = Identity(1)
     identity.provides.add(any_user)
 
-    service = BibliographicRecordService()
-    draft_files_service = BibliographicDraftFilesService()
+    service = RDMRecordService()
+    draft_files_service = RDMDraftFilesService()
 
     draft = service.create(data=data_to_use, identity=identity)
     draft_files_service.update_files(

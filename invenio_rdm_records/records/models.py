@@ -5,7 +5,7 @@
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
 
-"""Bibliographic Record and Draft models."""
+"""Record and Draft database models."""
 
 from invenio_db import db
 from invenio_drafts_resources.records import DraftMetadataBase
@@ -20,6 +20,7 @@ class RecordMetadata(db.Model, RecordMetadataBase):
 
     __tablename__ = 'rdm_records_metadata'
 
+    # Enable versioning
     __versioned__ = {}
 
     bucket_id = db.Column(UUIDType, db.ForeignKey(Bucket.id))
@@ -27,7 +28,7 @@ class RecordMetadata(db.Model, RecordMetadataBase):
 
 
 class RecordFile(db.Model, RecordFileBase):
-    """Record file."""
+    """File associated with a record."""
 
     record_model_cls = RecordMetadata
 
@@ -35,7 +36,7 @@ class RecordFile(db.Model, RecordFileBase):
 
 
 class DraftMetadata(db.Model, DraftMetadataBase):
-    """Represent a bibliographic record draft metadata."""
+    """Draft metadata for a record."""
 
     __tablename__ = 'rdm_drafts_metadata'
 
@@ -44,7 +45,7 @@ class DraftMetadata(db.Model, DraftMetadataBase):
 
 
 class DraftFile(db.Model, RecordFileBase):
-    """Draft file."""
+    """File associated with a draft."""
 
     record_model_cls = DraftMetadata
 

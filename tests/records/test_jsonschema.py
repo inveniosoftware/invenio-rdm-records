@@ -15,7 +15,7 @@ from os.path import dirname, join
 import pytest
 from jsonschema.exceptions import ValidationError
 
-from invenio_rdm_records.records.api import BibliographicRecord as Record
+from invenio_rdm_records.records.api import RDMRecord as Record
 
 
 #

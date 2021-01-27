@@ -13,7 +13,8 @@ from functools import partial
 
 from flask_babelex import get_locale
 from invenio_i18n.ext import current_i18n
-from invenio_vocabularies.api import VocabularyRegistry
+# TODO
+# from invenio_vocabularies.api import VocabularyRegistry
 from marshmallow import INCLUDE, Schema, fields, missing
 from marshmallow_utils.fields import FormatDate as FormatDate_
 from marshmallow_utils.fields import FormatEDTF as FormatEDTF_

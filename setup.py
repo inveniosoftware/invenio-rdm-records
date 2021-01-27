@@ -16,7 +16,7 @@ readme = open('README.rst').read()
 history = open('CHANGES.rst').read()
 
 tests_require = [
-    'pytest-invenio>=1.4.0,<2.0.0',
+    'pytest-invenio>=1.4.1,<2.0.0',
     'invenio-app>=1.3.0,<2.0.0'
 ]
 
@@ -65,11 +65,11 @@ install_requires = [
     'Faker>=2.0.3',
     'ftfy>=4.4.3,<5.0.0',
     'invenio-communities>=2.1.1,<3.0.0',
-    'invenio-drafts-resources>=0.7.2,<0.8.0',
+    'invenio-drafts-resources>=0.8.0,<0.9.0',
     'invenio-records>=1.5.0a1,<2.0.0',
     'invenio-records-files>=1.2.1,<2.0.0',
-    'invenio-vocabularies>=0.1.6,<1.0.0',
-    'marshmallow-utils>=0.3.3',
+    'invenio-vocabularies>=0.2.0,<1.0.0',
+    'marshmallow-utils>=0.3.5',
     'pytz>=2020.4',
 ]
 

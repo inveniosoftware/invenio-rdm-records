@@ -13,7 +13,7 @@ import json
 import pytest
 from sqlalchemy.orm.exc import NoResultFound
 
-from invenio_rdm_records.records import BibliographicRecord
+from invenio_rdm_records.records import RDMRecord
 
 
 @pytest.fixture()
@@ -69,7 +69,7 @@ def test_simple_flow(app, client, location, minimal_record, headers):
 
     created_record = response.json
 
-    BibliographicRecord.index.refresh()
+    RDMRecord.index.refresh()
 
     # Search it
     res = client.get(
@@ -212,13 +212,10 @@ def test_delete_draft(client, location, minimal_record, headers):
 
     assert update_response.status_code == 204
 
-    # Check draft deletion
-    # FIXME: Remove import when exception is properly handled
-    with pytest.raises(NoResultFound):
-        update_response = client.get(
-            "/records/{}/draft".format(recid), headers=headers)
+    update_response = client.get(
+        "/records/{}/draft".format(recid), headers=headers)
 
-        assert update_response.status_code == 404
+    assert update_response.status_code == 404
 
 
 def _create_and_publish(client, minimal_record, headers):
@@ -247,13 +244,8 @@ def test_publish_draft(client, location, minimal_record, headers):
     """
     recid = _create_and_publish(client, minimal_record, headers)
 
-    # Check draft does not exist anymore
-    # FIXME: Remove import when exception is properly handled
-    with pytest.raises(NoResultFound):
-        response = client.get(f"/records/{recid}/draft", headers=headers)
-
-        # Part of FIXME to uncomment
-        # assert response.status_code == 404
+    response = client.get(f"/records/{recid}/draft", headers=headers)
+    assert response.status_code == 404
 
     # Check record exists
     response = client.get(f"/records/{recid}", headers=headers)
@@ -333,7 +325,7 @@ def test_ui_data_in_record(
     """Publish a record and check that it contains the UI data."""
     recid = _create_and_publish(client, minimal_record, headers)
 
-    BibliographicRecord.index.refresh()
+    RDMRecord.index.refresh()
 
     # Check if list results contain UI data
     response = client.get(
