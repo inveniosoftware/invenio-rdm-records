@@ -66,10 +66,7 @@ install_requires = [
     'ftfy>=4.4.3,<5.0.0',
     'invenio-communities>=2.1.1,<3.0.0',
     'invenio-drafts-resources>=0.8.0,<0.9.0',
-    'invenio-records>=1.5.0a1,<2.0.0',
-    'invenio-records-files>=1.2.1,<2.0.0',
     'invenio-vocabularies>=0.2.0,<1.0.0',
-    'marshmallow-utils>=0.3.5',
     'pytz>=2020.4',
 ]
 
