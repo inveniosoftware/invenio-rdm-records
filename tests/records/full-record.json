@@ -4,11 +4,15 @@
   "conceptid": "12345-abcde",
   "pid": {
     "pk": 1,
-    "status": "R"
+    "status": "R",
+    "pid_type": "recid",
+    "obj_type": "rec"
   },
   "conceptpid": {
     "pk": 2,
-    "status": "R"
+    "status": "R",
+    "pid_type": "recid",
+    "obj_type": "rec"
   },
   "pids": {
     "doi": {

@@ -28,8 +28,8 @@ from .dumpers import EDTFDumperExt, EDTFListDumperExt
 class CommonFieldsMixin:
     """Common system fields between records and drafts."""
 
-    # schema = ConstantField(
-    #    '$schema', 'http://localhost/schemas/records/record-v1.0.0.json')
+    schema = ConstantField(
+       '$schema', 'http://localhost/schemas/records/record-v1.0.0.json')
 
     dumper = ElasticsearchDumper(
         extensions=[

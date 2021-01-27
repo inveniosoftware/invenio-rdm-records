@@ -19,12 +19,14 @@ class AccessComponent(ServiceComponent):
         """Add basic ownership fields to the record."""
         validated_data = data.get('access', {})
         # TODO (Alex): replace with `record.access = ...`
-        validated_data.setdefault('owned_by', [identity.id])
+        if identity.id:
+            validated_data.setdefault('owned_by', [{'user': identity.id}])
         record.update({'access': validated_data})
 
     def update(self, identity, data=None, record=None, **kwargs):
         """Update handler."""
         validated_data = data.get('access', {})
         # TODO (Alex): replace with `record.access = ...`
-        validated_data.setdefault('owned_by', [identity.id])
+        if identity.id:
+            validated_data.setdefault('owned_by', [{'user': identity.id}])
         record.update({'access': validated_data})

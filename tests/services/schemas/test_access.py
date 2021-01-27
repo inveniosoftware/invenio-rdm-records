@@ -21,7 +21,7 @@ def test_valid_full(vocabulary_clear):
     valid_full = {
         "metadata": False,
         "files": False,
-        "owned_by": [1],
+        "owned_by": [{"user": 1}],
         "embargo_date": "2120-10-06",
         "access_right": "open",
         "access_condition": {
@@ -36,7 +36,7 @@ def test_invalid_access_right(vocabulary_clear):
     invalid_access_right = {
         "metadata": False,
         "files": False,
-        "owned_by": [1],
+        "owned_by": [{"user": 1}],
         "access_right": "invalid value"
     }
 
@@ -52,16 +52,21 @@ def test_invalid_access_right(vocabulary_clear):
 
 
 @pytest.mark.parametrize("invalid_access,missing_attr", [
-    ({"metadata": False, "files": False, "access_right": "open"}, "owned_by"),
-    ({"metadata": False, "files": False, "owned_by": [1]}, "access_right"),
-    ({"metadata": False, "owned_by": [1], "access_right": "open"}, "files"),
-    ({"files": False, "owned_by": [1], "access_right": "open"}, "metadata")
+    ({"metadata": False, "files": False, "access_right": "open",
+      "owned_by": [1]},
+     "owned_by"),
+    ({"metadata": False, "files": False, "owned_by": [{"user": 1}]},
+     "access_right"),
+    ({"metadata": False, "owned_by": [{"user": 1}], "access_right": "open"},
+     "files"),
+    ({"files": False, "owned_by": [{"user": 1}], "access_right": "open"},
+     "metadata")
 ])
 def test_invalid(invalid_access, missing_attr):
 
     with pytest.raises(ValidationError) as e:
         AccessSchema().load(invalid_access)
 
-        error_fields = e.value.messages.keys()
-        assert len(error_fields) == 1
-        assert missing_attr in error_fields
+    error_fields = e.value.messages.keys()
+    assert len(error_fields) == 1
+    assert missing_attr in error_fields
