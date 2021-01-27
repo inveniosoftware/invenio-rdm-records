@@ -146,11 +146,11 @@ def full_record():
                     }]
                 }]
             }],
-            "dates": [{
-                "date": "1939/1945",
-                "type": "other",
-                "description": "A date"
-            }],
+            # "dates": [{
+            #     "date": "1939/1945",
+            #     "type": "other",
+            #     "description": "A date"
+            # }],
             "languages": [{"id": "da"}, {"id": "en"}],
             "identifiers": [{
                 "identifier": "1924MNRAS..84..308E",
