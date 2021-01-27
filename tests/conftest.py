@@ -237,20 +237,23 @@ def full_record():
             }
         },
         "files": {
-            "disabled": False,
-            "total_size": 1114324524355,
-            "count": 1,
-            "bucket": "81983514-22e5-473a-b521-24254bd5e049",
-            "files": [{
-                "checksum": "md5:234245234213421342",
-                "size": 1114324524355,
-                "key": "big-dataset.zip",
-                "ext": "zip",
-                "description": "File containing the data.",
-                "order": "1",
-                "default_preview": True,
-                "identifier": "445aaacd-9de1-41ab-af52-25ab6cb93df7"
-            }]
+            "enabled": True,
+            "default_preview": "big-dataset.zip",
+            "order": ["big-dataset.zip"],
+            "entries": {
+                "big-dataset.zip": {
+                    "checksum": "md5:234245234213421342",
+                    "mimetype": "application/zip",
+                    "size": 1114324524355,
+                    "key": "big-dataset.zip",
+                    "file_id": "445aaacd-9de1-41ab-af52-25ab6cb93df7"
+                }
+            },
+            "meta": {
+                "big-dataset.zip": {
+                    "description": "File containing the data."
+                }
+            }
         },
         "notes": [
             "Under investigation for copyright infringement."
@@ -265,7 +268,7 @@ def minimal_record():
         "access": {
             "metadata": False,
             "files": False,
-            "owned_by": [1],
+            "owned_by": [{"user": 1}],
             "access_right": "open"
         },
         "metadata": {

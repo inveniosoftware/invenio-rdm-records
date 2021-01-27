@@ -9,7 +9,11 @@
 
     "nameType": {
       "description": "Type of name.",
-      "type": "string"
+      "type": "string",
+      "enum": [
+        "personal",
+        "organizational"
+      ]
     },
 
     "titleType": {
@@ -101,6 +105,14 @@
             "M",
             "D"
           ]
+        },
+        "pid_type": {
+          "description": "The type of the persistent identifier.",
+          "type": "string"
+        },
+        "obj_type": {
+          "description": "The type of the associated object.",
+          "type": "string"
         }
       }
     },
@@ -140,6 +152,23 @@
       "required": [
         "type"
       ]
+    },
+
+    "person_or_org": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["type"],
+      "properties": {
+        "name": {"type": "string"},
+        "type": {"$ref": "#/definitions/nameType"},
+        "given_name": {"type": "string"},
+        "family_name": {"type": "string"},
+        "identifiers": {
+          "type": "array",
+          "items": {"$ref": "#/definitions/identifiers_with_scheme"},
+          "uniqueItems": true
+        }
+      }
     },
 
     "affiliations": {
@@ -477,22 +506,7 @@
             "additionalProperties": false,
             "required": ["person_or_org"],
             "properties": {
-                "person_or_org": {
-                  "type": "object",
-                  "additionalProperties": false,
-                  "required": ["name"],
-                  "properties": {
-                    "name": {"type": "string"},
-                    "type": {"$ref": "#/definitions/nameType"},
-                    "given_name": {"type": "string"},
-                    "family_name": {"type": "string"},
-                    "identifiers": {
-                      "type": "array",
-                      "items": {"$ref": "#/definitions/identifiers_with_scheme"},
-                      "uniqueItems": true
-                    }
-                  }
-                },
+                "person_or_org": {"$ref": "#/definitions/person_or_org"},
                 "role": {"type": "string"},
                 "affiliations": {"$ref": "#/definitions/affiliations"}
             }
@@ -553,22 +567,7 @@
             "additionalProperties": false,
             "required": ["person_or_org", "role"],
             "properties": {
-              "person_or_org": {
-                "type": "object",
-                "additionalProperties": false,
-                "required": ["name"],
-                "properties": {
-                  "name": {"type": "string"},
-                  "type": {"$ref": "#/definitions/nameType"},
-                  "given_name": {"type": "string"},
-                  "family_name": {"type": "string"},
-                  "identifiers": {
-                    "type": "array",
-                    "items": {"$ref": "#/definitions/identifiers_with_scheme"},
-                    "uniqueItems": true
-                  }
-                }
-              },
+              "person_or_org": {"$ref": "#/definitions/person_or_org"},
               "role": {"$ref": "#/definitions/contributorType"},
               "affiliations": {"$ref": "#/definitions/affiliations"}
             }

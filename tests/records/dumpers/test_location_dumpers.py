@@ -21,7 +21,7 @@ def test_locationsdumper_with_point_geometry(app, db, minimal_record):
         extensions=[LocationsDumper()]
     )
 
-    minimal_record['locations'] = {
+    minimal_record['metadata']['locations'] = {
         'features': [{
             'geometry': {
                 'type': 'Point',
@@ -36,15 +36,17 @@ def test_locationsdumper_with_point_geometry(app, db, minimal_record):
     dump = record.dumps(dumper=dumper)
 
     # Centroid has been inferred
+    dumped_feature = dump['metadata']['locations']['features'][0]
+    expected_feature = minimal_record['metadata']['locations']['features'][0]
     assert (
-        dump['locations']['features'][0]['centroid'] ==
-        minimal_record['locations']['features'][0]['geometry']['coordinates']
+        dumped_feature['centroid'] ==
+        expected_feature['geometry']['coordinates']
     )
 
     # And it round-trips
     assert (
-        record.loads(dump, loader=dumper)['locations'] ==
-        minimal_record['locations']
+        record.loads(dump, loader=dumper)['metadata']['locations'] ==
+        minimal_record['metadata']['locations']
     )
 
 
@@ -68,7 +70,7 @@ def test_locationsdumper_with_polygon_and_no_shapely(app, db, minimal_record):
         extensions=[LocationsDumper()]
     )
 
-    minimal_record['locations'] = {
+    minimal_record['metadata']['locations'] = {
         'features': [{
             'geometry': {
                 'type': 'Polygon',
@@ -87,7 +89,7 @@ def test_locationsdumper_with_polygon_and_no_shapely(app, db, minimal_record):
     with pytest.warns(UserWarning):
         dump = record.dumps(dumper=dumper)
 
-    assert 'centroid' not in dump['locations']['features'][0]
+    assert 'centroid' not in dump['metadata']['locations']['features'][0]
 
 
 def test_locationsdumper_with_polygon_and_mock_shapely(
@@ -100,7 +102,7 @@ def test_locationsdumper_with_polygon_and_mock_shapely(
             extensions=[LocationsDumper()]
         )
 
-        minimal_record['locations'] = {
+        minimal_record['metadata']['locations'] = {
             'features': [{
                 'geometry': {
                     'type': 'Polygon',
@@ -123,9 +125,10 @@ def test_locationsdumper_with_polygon_and_mock_shapely(
         dump = record.dumps(dumper=dumper)
 
         shapely.geometry.shape.assert_called_once_with(
-            minimal_record['locations']['features'][0]['geometry']
+            minimal_record['metadata']['locations']['features'][0]['geometry']
         )
-        assert dump['locations']['features'][0]['centroid'] == [100.5, 0.5]
+        assert dump['metadata']['locations']['features'][0]['centroid'] == \
+            [100.5, 0.5]
 
 
 def test_locationsdumper_with_polygon_and_shapely(app, db, minimal_record):

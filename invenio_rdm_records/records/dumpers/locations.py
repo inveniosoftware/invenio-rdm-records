@@ -32,9 +32,9 @@ class LocationsDumper(ElasticsearchDumperExt):
 
     def dump(self, record, data):
         """Dump the data."""
-        if 'locations' not in data:
+        if 'locations' not in data.get('metadata', {}):
             return data
-        for feature in data['locations']['features']:
+        for feature in data['metadata']['locations']['features']:
             geometry = feature.get('geometry')
             if geometry:
                 if geometry['type'] == 'Point':
@@ -50,7 +50,7 @@ class LocationsDumper(ElasticsearchDumperExt):
 
     def load(self, data, record_cls):
         """Load the data."""
-        if 'locations' not in data:
+        if 'locations' not in data.get('metadata', {}):
             return
-        for feature in data['locations']['features']:
+        for feature in data['metadata']['locations']['features']:
             feature.pop('centroid', None)

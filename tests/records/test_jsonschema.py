@@ -202,16 +202,21 @@ def test_creators(appctx, person, org):
     """Test creators."""
     assert fails_meta({"creators": {}})
     assert validates_meta({"creators": []})
-    assert validates_meta({"creators": [{"person_or_org": {"name": "test"}}]})
+    assert validates_meta({"creators": [{"person_or_org": {
+        "name": "test", "type": "organizational"}}]})
 
     assert validates_meta({"creators": [person]})
     assert validates_meta({"creators": [org]})
     assert validates_meta({"creators": [person, org]})
 
     # Additional prop fails
-    assert fails_meta({"creators": [
-        {"person_or_org": {"name": "test"}, "invalid": "test"}
-    ]})
+    assert fails_meta({"creators": [{
+        "person_or_org": {
+            "name": "test",
+            "type": "organizational"
+        },
+        "invalid": "test"
+    }]})
     person["affiliations"][0]["invalid"] = "test"
     assert fails_meta({"creators": [person]})
 
@@ -268,9 +273,10 @@ def test_contributors(appctx, person, org):
     """Test contributors."""
     assert fails_meta({"contributors": {}})
     assert validates_meta({"contributors": []})
-    assert validates_meta({"contributors": [
-        {"person_or_org": {"name": "test"}, "role": "other"}
-    ]})
+    assert validates_meta({"contributors": [{
+        "person_or_org": {"name": "test", "type": "organizational"},
+        "role": "other"
+    }]})
 
     person["role"] = "other"
     org["role"] = "hosting_institution"
