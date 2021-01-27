@@ -7,9 +7,9 @@
 
 """Data access layer."""
 
-from .api import BibliographicDraft, BibliographicRecord
+from .api import RDMDraft, RDMRecord
 
 __all__ = (
-    "BibliographicDraft",
-    "BibliographicRecord",
+    "RDMDraft",
+    "RDMRecord",
 )

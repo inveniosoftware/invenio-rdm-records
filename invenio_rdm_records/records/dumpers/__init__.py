@@ -9,3 +9,9 @@
 
 from .edtf import EDTFDumperExt, EDTFListDumperExt
 from .locations import LocationsDumper
+
+__all__ = (
+    "EDTFDumperExt",
+    "EDTFListDumperExt",
+    "LocationsDumper",
+)

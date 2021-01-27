@@ -12,7 +12,7 @@ import pytest
 from invenio_db import db
 from invenio_records.dumpers import ElasticsearchDumper
 
-from invenio_rdm_records.records import BibliographicRecord
+from invenio_rdm_records.records import RDMRecord
 from invenio_rdm_records.records.dumpers import LocationsDumper
 
 
@@ -30,7 +30,7 @@ def test_locationsdumper_with_point_geometry(app, db, minimal_record):
         }]
     }
 
-    record = BibliographicRecord.create(minimal_record)
+    record = RDMRecord.create(minimal_record)
 
     # Dump it
     dump = record.dumps(dumper=dumper)
@@ -53,7 +53,7 @@ def test_locationsdumper_with_no_featurecollection(app, db, minimal_record):
         extensions=[LocationsDumper()]
     )
 
-    record = BibliographicRecord.create(minimal_record)
+    record = RDMRecord.create(minimal_record)
 
     # Dump it
     dump = record.dumps(dumper=dumper)
@@ -82,7 +82,7 @@ def test_locationsdumper_with_polygon_and_no_shapely(app, db, minimal_record):
         }],
     }
 
-    record = BibliographicRecord.create(minimal_record)
+    record = RDMRecord.create(minimal_record)
 
     with pytest.warns(UserWarning):
         dump = record.dumps(dumper=dumper)
@@ -114,7 +114,7 @@ def test_locationsdumper_with_polygon_and_mock_shapely(
             }],
         }
 
-        record = BibliographicRecord.create(minimal_record)
+        record = RDMRecord.create(minimal_record)
 
         shape = unittest.mock.Mock()
         shape.centroid.x, shape.centroid.y = 100.5, 0.5
@@ -150,7 +150,7 @@ def test_locationsdumper_with_polygon_and_shapely(app, db, minimal_record):
         }],
     }
 
-    record = BibliographicRecord.create(minimal_record)
+    record = RDMRecord.create(minimal_record)
 
     dump = record.dumps(dumper=dumper)
 

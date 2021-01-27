@@ -7,31 +7,17 @@
 
 """Invenio RDM module to create REST APIs."""
 
-from .resources import BibliographicDraftActionResource, \
-    BibliographicDraftActionResourceConfig, \
-    BibliographicDraftFilesActionResource, BibliographicDraftFilesResource, \
-    BibliographicDraftFilesResourceConfig, BibliographicDraftResource, \
-    BibliographicDraftResourceConfig, BibliographicRecordFilesActionResource, \
-    BibliographicRecordFilesActionResourceConfig, \
-    BibliographicRecordFilesResource, BibliographicRecordFilesResourceConfig, \
-    BibliographicRecordResource, BibliographicRecordResourceConfig, \
-    BibliographicUserRecordsResource, BibliographicUserRecordsResourceConfig
+from .resources import RDMDraftActionResource, RDMDraftFilesActionResource, \
+    RDMDraftFilesResource, RDMDraftResource, RDMRecordFilesActionResource, \
+    RDMRecordFilesResource, RDMRecordResource, RDMUserRecordsResource
 
 __all__ = (
-    "BibliographicDraftActionResource",
-    "BibliographicDraftActionResourceConfig",
-    "BibliographicDraftFilesResource",
-    "BibliographicDraftFilesResourceConfig",
-    "BibliographicDraftFilesActionResource",
-    "BibliographicDraftFilesActionResourceConfig",
-    "BibliographicDraftResource",
-    "BibliographicDraftResourceConfig",
-    "BibliographicRecordFilesResource",
-    "BibliographicRecordFilesResourceConfig",
-    "BibliographicRecordFilesActionResource",
-    "BibliographicRecordFilesActionResourceConfig",
-    "BibliographicRecordResource",
-    "BibliographicRecordResourceConfig",
-    "BibliographicUserRecordsResource",
-    "BibliographicUserRecordsResourceConfig",
+    "RDMDraftActionResource",
+    "RDMDraftFilesResource",
+    "RDMDraftFilesActionResource",
+    "RDMDraftResource",
+    "RDMRecordFilesResource",
+    "RDMRecordFilesActionResource",
+    "RDMRecordResource",
+    "RDMUserRecordsResource",
 )

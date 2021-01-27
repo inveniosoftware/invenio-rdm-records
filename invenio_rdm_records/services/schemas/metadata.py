@@ -8,18 +8,14 @@
 
 """RDM record schemas."""
 
-import time
 from functools import partial
 from urllib import parse
 
-import arrow
-from edtf.parser.grammar import level0Expression
-from flask import current_app
 from flask_babelex import lazy_gettext as _
 from marshmallow import EXCLUDE, INCLUDE, Schema, ValidationError, fields, \
-    post_load, pre_load, validate, validates, validates_schema
-from marshmallow_utils.fields import EDTFDateString, GenFunction, \
-    IdentifierSet, ISODateString, ISOLangString, SanitizedUnicode
+    post_load, validate, validates_schema
+from marshmallow_utils.fields import EDTFDateString, IdentifierSet, \
+    ISOLangString, SanitizedUnicode
 from marshmallow_utils.schemas import GeometryObjectSchema, IdentifierSchema
 
 from .utils import validate_entry

@@ -6,16 +6,14 @@
 # it under the terms of the MIT License; see LICENSE file for more details.
 
 """Module tests."""
-import unittest.mock
 
 import pytest
-from invenio_db import db
 from invenio_records.dumpers import ElasticsearchDumper
 
-from invenio_rdm_records.records import BibliographicDraft, BibliographicRecord
+from invenio_rdm_records.records import RDMDraft, RDMRecord
 from invenio_rdm_records.records.dumpers import EDTFDumperExt, \
-    EDTFListDumperExt, LocationsDumper
-from invenio_rdm_records.services import BibliographicRecordService
+    EDTFListDumperExt
+from invenio_rdm_records.services import RDMRecordService
 
 
 @pytest.mark.parametrize("date, expected_start, expected_end", [
@@ -41,7 +39,7 @@ def test_esdumper_with_edtfext(app, db, minimal_record, location,
     minimal_record["metadata"]["dates"] = [{"date": date}]
 
     # Create the record
-    record = BibliographicRecord.create(minimal_record)
+    record = RDMRecord.create(minimal_record)
     db.session.commit()
 
     # Dump it
@@ -54,7 +52,7 @@ def test_esdumper_with_edtfext(app, db, minimal_record, location,
     assert dump["metadata"]["dates"][0]["date"] == date
 
     # Load it
-    new_record = BibliographicRecord.loads(dump, loader=dumper)
+    new_record = RDMRecord.loads(dump, loader=dumper)
     assert "publication_date_range" not in new_record["metadata"]
     assert "publication_date" in new_record["metadata"]
     assert "date_range" not in new_record["metadata"]["dates"][0]
@@ -72,7 +70,7 @@ def test_esdumper_with_edtfext_not_defined(app, db, location, minimal_record):
     )
 
     # Create the record
-    record = BibliographicRecord.create(minimal_record)
+    record = RDMRecord.create(minimal_record)
     db.session.commit()
 
     # Dump it
@@ -81,7 +79,7 @@ def test_esdumper_with_edtfext_not_defined(app, db, location, minimal_record):
     assert "non_existing_field" not in dump["metadata"]
 
     # Load it
-    new_record = BibliographicRecord.loads(dump, loader=dumper)
+    new_record = RDMRecord.loads(dump, loader=dumper)
     assert "non_existing_field_range" not in new_record["metadata"]
     assert "non_existing_field" not in new_record["metadata"]
 
@@ -97,7 +95,7 @@ def test_eslistdumper_with_edtfext_not_defined(app, db, minimal_record):
     )
 
     # Create the record
-    record = BibliographicRecord.create(minimal_record)
+    record = RDMRecord.create(minimal_record)
     db.session.commit()
 
     # Dump it
@@ -106,7 +104,7 @@ def test_eslistdumper_with_edtfext_not_defined(app, db, minimal_record):
     assert "non_existing_array_field" not in dump["metadata"]
 
     # Load it
-    new_record = BibliographicRecord.loads(dump, loader=dumper)
+    new_record = RDMRecord.loads(dump, loader=dumper)
     assert "non_existing_array_field_range" not in new_record["metadata"]
     assert "non_existing_array_field" not in new_record["metadata"]
 
@@ -122,7 +120,7 @@ def test_esdumper_with_edtfext_parse_error(app, db, location, minimal_record):
     )
 
     # Create the record
-    record = BibliographicRecord.create(minimal_record)
+    record = RDMRecord.create(minimal_record)
     db.session.commit()
 
     # Dump it
@@ -131,7 +129,7 @@ def test_esdumper_with_edtfext_parse_error(app, db, location, minimal_record):
     assert "type" in dump["metadata"]["resource_type"]
 
     # Load it
-    new_record = BibliographicRecord.loads(dump, loader=dumper)
+    new_record = RDMRecord.loads(dump, loader=dumper)
     assert "type_range" not in new_record["metadata"]["resource_type"]
     assert "type" in new_record["metadata"]["resource_type"]
 
@@ -145,7 +143,7 @@ def test_eslistdumper_with_edtfext_parse_error(app, db, minimal_record):
     )
 
     # Create the record
-    record = BibliographicRecord.create(minimal_record)
+    record = RDMRecord.create(minimal_record)
     db.session.commit()
 
     # Dump it
@@ -155,7 +153,7 @@ def test_eslistdumper_with_edtfext_parse_error(app, db, minimal_record):
     assert "family_name" in person_or_org
 
     # Load it
-    new_record = BibliographicRecord.loads(dump, loader=dumper)
+    new_record = RDMRecord.loads(dump, loader=dumper)
     person_or_org = dump["metadata"]["creators"][0]["person_or_org"]
     assert 'family_name_range' not in person_or_org
     assert 'family_name' in person_or_org
@@ -171,11 +169,11 @@ def test_edtf_dumper_query(app, db, location, minimal_record, identity_simple):
     minimal_record["metadata"]["dates"] = [{"date": date}]
 
     # Create the record
-    service = BibliographicRecordService(
-        config=app.config.get(BibliographicRecordService.config_name),
+    service = RDMRecordService(
+        config=app.config.get(RDMRecordService.config_name),
     )
     record = service.create(identity_simple, minimal_record)
-    BibliographicDraft.index.refresh()
+    RDMDraft.index.refresh()
 
     # Search for it
     assert service.search(

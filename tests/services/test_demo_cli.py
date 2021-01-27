@@ -13,7 +13,7 @@ import json
 import pytest
 
 from invenio_rdm_records.cli import create_fake_record
-from invenio_rdm_records.records import BibliographicRecord
+from invenio_rdm_records.records import RDMRecord
 from invenio_rdm_records.records.models import RecordMetadata
 
 
@@ -71,7 +71,7 @@ def test_create_fake_record_saves_to_index(app, client, es_clear, location):
     """Test the creation of fake records and searching for them."""
     created_record = create_fake_record()
     # ES does not flush fast enough some times
-    BibliographicRecord.index.refresh()
+    RDMRecord.index.refresh()
 
     response = client.get("/records")
 

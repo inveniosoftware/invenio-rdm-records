@@ -6,20 +6,20 @@
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
 
-"""Test BibliographicRecordService generated links."""
+"""Test RDMRecordService generated links."""
 
 import pytest
 from invenio_access.models import ActionUsers
 from invenio_accounts.testutils import create_test_user, login_user_via_view
 
-from invenio_rdm_records.services import BibliographicRecordService
+from invenio_rdm_records.services import RDMRecordService
 
 HEADERS = {"content-type": "application/json", "accept": "application/json"}
 
 
 @pytest.fixture
 def draft_json(app, client, minimal_record, es, location):
-    """Bibliographic Draft fixture."""
+    """RDM Draft fixture."""
     response = client.post(
         "/records", json=minimal_record, headers=HEADERS
     )
@@ -28,7 +28,7 @@ def draft_json(app, client, minimal_record, es, location):
 
 @pytest.fixture
 def published_json(app, client, minimal_record, es, location):
-    """Bibliographic Record fixture.
+    """RDM Record fixture.
 
     Can't depend on draft_json since publication deletes draft.
     """
@@ -65,7 +65,7 @@ def test_draft_links(client, draft_json, minimal_record):
 # TODO
 @pytest.mark.skip()
 def test_record_links(client, published_json):
-    """Tests the links for a published bibliographic record."""
+    """Tests the links for a published RDM record."""
     pid_value = published_json["id"]
     published_record_links = published_json["links"]
     response = client.get(f"/records/{pid_value}", headers=HEADERS)
@@ -87,7 +87,7 @@ def test_record_links(client, published_json):
 # TODO
 @pytest.mark.skip()
 def test_record_search_links(client, published_json):
-    """Tests the links for a search of published bibliographic records."""
+    """Tests the links for a search of published RDM records."""
     response = client.get("/records", headers=HEADERS)
     search_record_links = response.json["links"]
 

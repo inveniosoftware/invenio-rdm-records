@@ -12,16 +12,6 @@ from invenio_records_resources.services.records.components import \
     ServiceComponent
 
 
-# TODO: move into invenio-communities
-class CommunitiesComponent(ServiceComponent):
-    """Service component for communities integration."""
-
-
-# TODO: move into invenio-stats
-class StatsComponent(ServiceComponent):
-    """Service component for stats integration."""
-
-
 class AccessComponent(ServiceComponent):
     """Service component for access integration."""
 

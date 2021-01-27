@@ -17,6 +17,7 @@ include docs/requirements.txt
 include LICENSE
 include pytest.ini
 prune docs/_build
+recursive-include .github/workflows *.yml
 recursive-include docs *.bat
 recursive-include docs *.py
 recursive-include docs *.rst
@@ -28,4 +29,3 @@ recursive-include invenio_rdm_records *.json *.csv
 recursive-include invenio_rdm_records *.png *.svg
 recursive-include invenio_rdm_records *.po *.pot
 recursive-include tests *.py *.csv *.json
-recursive-include .github/workflows *.yml
