@@ -82,17 +82,21 @@ def create_fake_record():
         "metadata": {
             "resource_type": fake_resource_type(),
             "creators": [{
-                "family_name": fake.last_name(),
-                "given_name": fake.first_name(),
-                "type": "personal",
-                "identifiers": {
-                    "orcid": "0000-0002-1825-0097",
+                "person_or_org": {
+                    "family_name": fake.last_name(),
+                    "given_name": fake.first_name(),
+                    "type": "personal",
+                    "identifiers": [{
+                        "scheme": "orcid",
+                        "identifier": "0000-0002-1825-0097",
+                    }],
                 },
                 "affiliations": [{
                     "name": fake.company(),
-                    "identifiers": {
-                        "ror": "03yrm5c26"
-                    }
+                    "identifiers": [{
+                        "scheme": "ror",
+                        "identifier": "03yrm5c26",
+                    }]
                 }]
             } for i in range(4)],
             "title": fake.company() + "'s gallery",
@@ -109,22 +113,25 @@ def create_fake_record():
             "publication_date": fake_edtf_level_0(),
             "subjects": [{
                 "subject": fake.word(),
-                "identifier": "subj-1",
-                "scheme": "no-scheme"
+                "identifier": "03yrm5c26",
+                "scheme": "ror"
             }, {
                 "subject": fake.word(),
-                "identifier": "subj-1",
-                "scheme": "no-scheme"
+                "identifier": "03yrm5c26",
+                "scheme": "ror"
             }],
             "contributors": [{
-                "family_name": fake.last_name(),
-                "given_name": fake.first_name(),
-                "type": "personal",
+                "person_or_org": {
+                    "family_name": fake.last_name(),
+                    "given_name": fake.first_name(),
+                    "type": "personal",
+                },
                 "affiliations": [{
                     "name": fake.company(),
-                    "identifiers": {
-                        "ror": "03yrm5c26"
-                    }
+                    "identifiers": [{
+                        "scheme": "ror",
+                        "identifier": "03yrm5c26",
+                    }]
                 }],
                 "role": "rightsholder"
             } for i in range(3)],
@@ -152,8 +159,8 @@ def create_fake_record():
             "rights": [{
                 "rights": "Berkeley Software Distribution 3",
                 "uri": "https://opensource.org/licenses/BSD-3-Clause",
-                "identifier": "BSD-3",
-                "scheme": "BSD-3",
+                "identifier": "03yrm5c26",
+                "scheme": "ror",
             }],
             "description": fake.text(max_nb_chars=3000),
             "additional_descriptions": [{
@@ -164,14 +171,14 @@ def create_fake_record():
             "funding": [{
                 "funder": {
                     "name": "European Commission",
-                    "identifier": "1234",
+                    "identifier": "03yrm5c26",
                     "scheme": "ror"
                 },
                 "award": {
                     "title": "OpenAIRE",
                     "number": "246686",
-                    "identifier": ".../246686",
-                    "scheme": "openaire"
+                    "identifier": "0000-0002-1825-0097",
+                    "scheme": "orcid"
                 }
             }],
             "locations": [{
@@ -183,10 +190,13 @@ def create_fake_record():
                 },
                 "place": fake.location_on_land()[2],
                 "description": "Random place on land...",
-                'identifiers': {
-                    'wikidata': '12345abcde',
-                    'geonames': '12345abcde'
-                }
+                'identifiers': [{
+                    'scheme': 'ror',
+                    'identifier': '03yrm5c26',
+                }, {
+                    'scheme': 'orcid',
+                    'identifier': '0000-0002-1825-0097',
+                }]
             }, {
                 'geometry': {
                     'type': 'MultiPoint',
@@ -200,8 +210,8 @@ def create_fake_record():
             ],
             "references": [{
                 "reference": "Reference to something et al.",
-                "identifier": "9999.99988",
-                "scheme": "grid"
+                "identifier": "0000000114559647",
+                "scheme": "isni"
             }]
         }
     }
