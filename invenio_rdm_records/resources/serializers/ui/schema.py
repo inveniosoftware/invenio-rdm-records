@@ -173,11 +173,11 @@ class UIListSchema(Schema):
         # FIXME: This is hardcoded because vocabularies has not been
         # fully migrated. Ideally all would be treated equally in the for
         # loop above.
-        languages = aggs.get("languages")
+        # languages = aggs.get("languages")
 
-        if languages:
-            languages["buckets"] = serialize_vocabulary(
-                "languages", languages["buckets"])
+        # if languages:
+        #     languages["buckets"] = serialize_vocabulary(
+        #         "languages", languages["buckets"])
 
         return aggs
 
