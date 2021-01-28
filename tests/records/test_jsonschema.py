@@ -334,13 +334,14 @@ def test_related_identifiers(appctx):
     assert fails_meta({"related_identifiers": 1})
     assert validates_meta({"related_identifiers": []})
     assert validates_meta({"related_identifiers": [
-        {"identifier": "10.1234/test", "scheme": "doi", "relation": "cites"}
+        {"identifier": "10.1234/test", "scheme": "doi",
+         "relation_type": "cites"}
     ]})
     assert validates_meta({"related_identifiers": [
-        {"identifier": "10.1234/test", "relation": "cites"}
+        {"identifier": "10.1234/test", "relation_type": "cites"}
     ]})
     assert validates_meta({"related_identifiers": [
-        {"identifier": "10.1234/test", "relation": "cites"}
+        {"identifier": "10.1234/test", "relation_type": "cites"}
     ]})
     # Additional property
     assert fails_meta({"related_identifiers": [
@@ -348,8 +349,10 @@ def test_related_identifiers(appctx):
     ]})
     # Unique
     assert fails_meta({"related_identifiers": [
-        {"identifier": "10.1234/test", "scheme": "doi", "relation": "cites"},
-        {"identifier": "10.1234/test", "scheme": "doi", "relation": "cites"}
+        {"identifier": "10.1234/test", "scheme": "doi",
+         "relation_type": "cites"},
+        {"identifier": "10.1234/test", "scheme": "doi",
+         "relation_type": "cites"}
     ]})
 
 

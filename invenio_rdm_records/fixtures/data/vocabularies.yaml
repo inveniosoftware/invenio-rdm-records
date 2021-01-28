@@ -1,0 +1,6 @@
+languages:
+  pid-type: lng
+  data-file: vocabularies/languages.yaml
+resourcetypes:
+  pid-type: rt
+  data-file: vocabularies/resourcetypes.yaml

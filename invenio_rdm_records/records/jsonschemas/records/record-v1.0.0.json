@@ -616,7 +616,7 @@
               "properties": {
                 "identifier": {"$ref": "#/definitions/identifier"},
                 "scheme": {"$ref": "#/definitions/scheme"},
-                "relation": {"$ref": "#/definitions/relationType"},
+                "relation_type": {"$ref": "#/definitions/relationType"},
                 "resource_type": {"$ref": "#/definitions/resource_type"}
               }
           }
