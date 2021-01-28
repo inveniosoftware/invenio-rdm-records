@@ -1,0 +1,22 @@
+- id: eng
+  title:
+    en: English
+    da: Engelsk
+  description:
+    en: English
+    da: Engelsk
+  props:
+    iso639-2: en
+    iso639-3: eng
+    type: extinct
+- id: da
+  title:
+    en: Danish
+    da: Dansk
+  description:
+    en: English
+    da: Engelsk
+  props:
+    iso639-2: da
+    iso639-3: dan
+    type: extinct

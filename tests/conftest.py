@@ -159,7 +159,7 @@ def full_record():
             "related_identifiers": [{
                 "identifier": "10.1234/foo.bar",
                 "scheme": "doi",
-                "relation": "cites",
+                "relation_type": "cites",
                 "resource_type": {"type": "dataset"}
             }],
             "sizes": [

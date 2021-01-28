@@ -18,8 +18,16 @@ from flask.cli import with_appcontext
 from flask_principal import Identity
 from invenio_access import any_user
 
+from .fixtures import FixturesEngine
 from .services import RDMDraftFilesService, RDMRecordService
 from .vocabularies import Vocabularies
+
+
+def system_identity():
+    """System identity."""
+    identity = Identity(1)
+    identity.provides.add(any_user)
+    return identity
 
 
 def fake_resource_type():
@@ -216,17 +224,13 @@ def create_fake_record():
         }
     }
 
-    # identity providing `any_user` system role
-    identity = Identity(1)
-    identity.provides.add(any_user)
-
     service = RDMRecordService()
     draft_files_service = RDMDraftFilesService()
 
-    draft = service.create(data=data_to_use, identity=identity)
+    draft = service.create(data=data_to_use, identity=system_identity())
     draft_files_service.update_files(
-        id_=draft.id, identity=identity, data={'enabled': False})
-    record = service.publish(id_=draft.id, identity=identity)
+        id_=draft.id, identity=system_identity(), data={'enabled': False})
+    record = service.publish(id_=draft.id, identity=system_identity())
 
     return record
 
@@ -240,10 +244,14 @@ def rdm_records():
 @rdm_records.command('demo')
 @with_appcontext
 def demo():
-    """Create 10 fake records for demo purposes."""
+    """Create 100 fake records for demo purposes."""
+    click.secho('Creating vocabularies!', fg='green')
+
+    FixturesEngine(system_identity()).run()
+
     click.secho('Creating demo records...', fg='blue')
 
-    for _ in range(10):
+    for _ in range(100):
         create_fake_record()
 
     click.secho('Created records!', fg='green')

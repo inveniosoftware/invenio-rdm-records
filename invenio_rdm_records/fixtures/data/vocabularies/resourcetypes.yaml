@@ -1,0 +1,14 @@
+- id: text
+  title:
+    en: Text
+    da: Tekst
+  icon: file-o
+  props:
+    type: text
+- id: dataset
+  title:
+    en: Dataset
+    da: Datasæt
+  icon: file-o
+  props:
+    type: data

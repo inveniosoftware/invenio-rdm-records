@@ -68,6 +68,7 @@ install_requires = [
     'invenio-drafts-resources>=0.8.0,<0.9.0',
     'invenio-vocabularies>=0.2.0,<1.0.0',
     'pytz>=2020.4',
+    'pyyaml>=5.4.0',
 ]
 
 packages = find_packages()
