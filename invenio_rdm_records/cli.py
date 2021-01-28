@@ -74,7 +74,7 @@ def create_fake_record():
         "access": {
             "metadata": False,
             "files": False,
-            "owned_by": [1],
+            "owned_by": [{"user": 1}],
             "access_right": "open",
             "embargo_date":
                 fake.future_date(end_date='+1y').strftime("%Y-%m-%d")
@@ -135,20 +135,20 @@ def create_fake_record():
                 }],
                 "role": "rightsholder"
             } for i in range(3)],
-            "dates": [{
-                # No end date to avoid computations based on start
-                "date": fake.date(pattern='%Y-%m-%d'),
-                "description": "Random test date",
-                "type": "other"
-            }],
+            # "dates": [{
+            #     # No end date to avoid computations based on start
+            #     "date": fake.date(pattern='%Y-%m-%d'),
+            #     "description": "Random test date",
+            #     "type": "other"
+            # }],
             # TODO: Add when we have PIDs for languages vocabulary
             # "languages": [{"id": "eng"}],
-            "related_identifiers": [{
-                "identifier": "10.9999/rdm.9999988",
-                "scheme": "doi",
-                "relation_type": "requires",
-                "resource_type": fake_resource_type()
-            }],
+            # "related_identifiers": [{
+            #     "identifier": "10.9999/rdm.9999988",
+            #     "scheme": "doi",
+            #     "relation_type": "requires",
+            #     "resource_type": fake_resource_type()
+            # }],
             "sizes": [
                 "11 pages"
             ],
@@ -156,12 +156,12 @@ def create_fake_record():
                 "application/pdf"
             ],
             "version": "v0.0.1",
-            "rights": [{
-                "rights": "Berkeley Software Distribution 3",
-                "uri": "https://opensource.org/licenses/BSD-3-Clause",
-                "identifier": "03yrm5c26",
-                "scheme": "ror",
-            }],
+            # "rights": [{
+            #     "rights": "Berkeley Software Distribution 3",
+            #     "uri": "https://opensource.org/licenses/BSD-3-Clause",
+            #     "identifier": "03yrm5c26",
+            #     "scheme": "ror",
+            # }],
             "description": fake.text(max_nb_chars=3000),
             "additional_descriptions": [{
                 "description": fake.text(max_nb_chars=200),
@@ -181,33 +181,33 @@ def create_fake_record():
                     "scheme": "orcid"
                 }
             }],
-            "locations": [{
-                'geometry': {
-                    'type': 'Point',
-                    'coordinates': [
-                        float(fake.latitude()), float(fake.longitude())
-                    ]
-                },
-                "place": fake.location_on_land()[2],
-                "description": "Random place on land...",
-                'identifiers': [{
-                    'scheme': 'ror',
-                    'identifier': '03yrm5c26',
-                }, {
-                    'scheme': 'orcid',
-                    'identifier': '0000-0002-1825-0097',
-                }]
-            }, {
-                'geometry': {
-                    'type': 'MultiPoint',
-                    'coordinates': [
-                        [float(fake.latitude()), float(fake.longitude())],
-                        [float(fake.latitude()), float(fake.longitude())]
-                    ]
-                },
-                "place": fake.location_on_land()[2],
-            }
-            ],
+            # "locations": [{
+            #     'geometry': {
+            #         'type': 'Point',
+            #         'coordinates': [
+            #             float(fake.latitude()), float(fake.longitude())
+            #         ]
+            #     },
+            #     "place": fake.location_on_land()[2],
+            #     "description": "Random place on land...",
+            #     'identifiers': [{
+            #         'scheme': 'ror',
+            #         'identifier': '03yrm5c26',
+            #     }, {
+            #         'scheme': 'orcid',
+            #         'identifier': '0000-0002-1825-0097',
+            #     }]
+            # }, {
+            #     'geometry': {
+            #         'type': 'MultiPoint',
+            #         'coordinates': [
+            #             [float(fake.latitude()), float(fake.longitude())],
+            #             [float(fake.latitude()), float(fake.longitude())]
+            #         ]
+            #     },
+            #     "place": fake.location_on_land()[2],
+            # }
+            # ],
             "references": [{
                 "reference": "Reference to something et al.",
                 "identifier": "0000000114559647",
