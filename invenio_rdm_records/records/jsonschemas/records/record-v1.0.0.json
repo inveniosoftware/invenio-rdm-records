@@ -185,7 +185,7 @@
               "uniqueItems": true
             }
           },
-          "required": ["name", "identifiers"]
+          "required": ["name"]
       }
     },
 
