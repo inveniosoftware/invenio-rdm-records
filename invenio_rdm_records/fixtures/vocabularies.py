@@ -42,16 +42,28 @@ class YamlIterator(DataIterator):
 class CSVIterator(DataIterator):
     """CSV data iterator that loads records from CSV files."""
 
-    def map_row(self, row):
+    def map_row(self, header, row):
         """Map a CSV row into a record."""
-        raise NotImplementedError
+        entry = {}
+        for attr, value in zip(header, row):
+            if attr == 'tags':
+                value = [x.strip() for x in value.split(',')]
+            keys = attr.split('__')
+            if len(keys) == 1:
+                entry[keys[0]] = value
+            elif len(keys) == 2:
+                if keys[0] not in entry:
+                    entry[keys[0]] = {}
+                entry[keys[0]][keys[1]] = value
+        return entry
 
     def __iter__(self):
         """Iterate over records."""
         with open(self._data_file) as fp:
-            reader = csv.reader(fp)
+            reader = csv.reader(fp, delimiter=';', quotechar='"')
+            header = next(reader)
             for row in reader:
-                yield self.map_row(row)
+                yield self.map_row(header, row)
 
 
 class JSONLinesIterator(DataIterator):
@@ -98,6 +110,7 @@ class VocabulariesFixture:
         """Load the records form the data file."""
         for record in self.iter_datafile(data_file):
             record['type'] = id_
+            # TODO: edit out languages which is not configured by the system
             current_service.create(self._identity, record)
 
     def iter_datafile(self, data_file):
