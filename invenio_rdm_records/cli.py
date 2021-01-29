@@ -249,9 +249,9 @@ def demo():
 
     FixturesEngine(system_identity()).run()
 
-    click.secho('Creating demo records...', fg='blue')
+    click.secho('Creating demo records...', fg='green')
 
     for _ in range(100):
         create_fake_record()
 
-    click.secho('Created records!', fg='green')
+    click.secho('Created records and vocabularies!', fg='green')
