@@ -1,6 +1,11 @@
+affiliations:
+  pid-type: aff
+  data-file: vocabularies/affiliations.yaml
 languages:
   pid-type: lng
   data-file: vocabularies/languages.yaml
+licenses:
+  pid-type: lic
 resourcetypes:
   pid-type: rt
   data-file: vocabularies/resourcetypes.yaml
