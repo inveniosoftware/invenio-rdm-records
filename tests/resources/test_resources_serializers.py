@@ -47,8 +47,8 @@ def test_ui_serializer(app, full_record):
         'publication_date_l10n_medium': 'Jan 2018 – Sep 2020',
         'resource_type': 'Journal article',
         'languages': [
-            {'id': 'da', 'title': "Danish"},
-            {'id': 'en', 'title': "English"}
+            {'id': 'da', 'title_l10n': "Danish"},
+            {'id': 'en', 'title_l10n': "English"}
         ]
     }
 

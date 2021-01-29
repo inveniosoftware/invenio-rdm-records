@@ -134,10 +134,10 @@ def full_record():
             }],
             "languages": [{
                 "id": "da",
-                "metadata": {"title": {"en": "Danish"}}
+                "title": {"en": "Danish"}
             }, {
                 "id": "en",
-                "metadata": {"title": {"en": "English"}}
+                "title": {"en": "English"}
             }],
             "identifiers": [{
                 "identifier": "1924MNRAS..84..308E",

@@ -434,9 +434,8 @@ class LanguageSchema(Schema):
         unknown = EXCLUDE
 
     id = SanitizedUnicode(required=True)
-    title = fields.Raw(attribute="metadata.title", dump_only=True)
-    description = fields.Raw(
-        attribute="metadata.description", dump_only=True)
+    title = fields.Raw(dump_only=True)
+    description = fields.Raw(dump_only=True)
 
 
 class MetadataSchema(Schema):

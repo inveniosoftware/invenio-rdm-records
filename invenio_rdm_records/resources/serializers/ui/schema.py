@@ -79,8 +79,7 @@ def localize_vocabulary_list(field_name, key, attr, obj):
     for item in field_data:
         localized.append({
             "id": item.get("id"),
-            "title": item.get("metadata",
-                              {}).get("title", {}).get(str_locale)
+            "title_l10n": item.get("title", {}).get(str_locale)
         })
 
     return localized
