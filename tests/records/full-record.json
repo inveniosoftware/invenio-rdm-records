@@ -103,7 +103,11 @@
       "type": "other",
       "description": "A date"
     }],
-    "languages": [{"id": "dan"}, {"id": "eng"}],
+    "languages": [{
+      "id": "dan"
+    }, {
+      "id": "eng"
+    }],
     "identifiers": [{
       "identifier": "1924MNRAS..84..308E",
       "scheme": "bibcode"
@@ -112,7 +116,9 @@
       "identifier": "10.1234/foo.bar",
       "scheme": "doi",
       "relation_type": "cites",
-      "resource_type": {"type": "dataset"}
+      "resource_type": {
+        "type": "dataset"
+      }
     }],
     "sizes": [
       "11 pages"
@@ -122,11 +128,14 @@
     ],
     "version": "v1.0",
     "rights": [{
-      "rights": "Creative Commons Attribution 4.0 International",
-      "scheme": "spdx",
-      "identifier": "cc-by-4.0",
-      "url": "https://creativecommons.org/licenses/by/4.0/"
-    }],
+        "title": "Creative Commons Attribution 4.0 International",
+        "description": "A description.",
+        "link": "https://creativecommons.org/licenses/by/4.0/"
+      },
+      {
+        "id": "cc-by-4.0"
+      }
+    ],
     "description": "Test",
     "additional_descriptions": [{
       "description": "Bla bla bla",

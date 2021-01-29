@@ -14,37 +14,30 @@ from invenio_rdm_records.services.schemas.metadata import MetadataSchema, \
     RightsSchema
 
 
-@pytest.mark.skip(reason="idutils cannot validate spdx")
 def test_valid_full():
     valid_full = {
-        "rights": "Creative Commons Attribution 4.0 International",
-        "scheme": "spdx",
-        "identifier": "cc-by-4.0",
-        "uri": "https://creativecommons.org/licenses/by/4.0/"
+        "title": "Creative Commons Attribution 4.0 International",
+        "description": "A description",
+        "link": "https://creativecommons.org/licenses/by/4.0/"
     }
     assert valid_full == RightsSchema().load(valid_full)
 
 
 def test_valid_minimal():
     valid_minimal = {
-        "rights": "Copyright (C) 2020. All rights reserved.",
+        "id": "cc-by-4.0",
     }
     assert valid_minimal == RightsSchema().load(valid_minimal)
 
 
 def test_invalid_no_right():
     invalid_no_right = {
-        "uri": "https://opensource.org/licenses/BSD-3-Clause",
+        "link": "https://opensource.org/licenses/BSD-3-Clause",
         "identifier": "BSD-3",
         "scheme": "BSD-3"
     }
     with pytest.raises(ValidationError):
         data = RightsSchema().load(invalid_no_right)
-
-
-def test_invalid_empty_right():
-    with pytest.raises(ValidationError):
-        data = RightsSchema().load({})
 
 
 def test_invalid_extra_right():
