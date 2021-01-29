@@ -191,6 +191,7 @@ class RightsSchema(IdentifierSchema):
         """Constructor."""
         super().__init__(allow_all=True, required=False, **kwargs)
 
+    id = SanitizedUnicode()
     title = SanitizedUnicode()
     description = SanitizedUnicode()
     link = SanitizedUnicode(

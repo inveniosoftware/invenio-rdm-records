@@ -382,17 +382,19 @@ def test_rights(appctx):
     assert fails_meta({"rights": 1})
     assert validates_meta({"rights": []})
     lic_full = {
-        "rights": "Creative Commons Attribution 4.0 International",
-        "scheme": "spdx",
-        "identifier": "cc-by-4.0",
-        "url": "https://creativecommons.org/licenses/by/4.0/"
+        "title": "Creative Commons Attribution 4.0 International",
+        "description": "A Description",
+        "link": "https://creativecommons.org/licenses/by/4.0/"
     }
     lic_min = {
-        "rights": "Copyright (C) 2020. All rights reserved.",
-        "url": "https://localhost"
+        "title": "Copyright (C) 2020. All rights reserved.",
+    }
+    lic_linked = {
+        "id": "cc-by-4.0"
     }
     assert validates_meta({"rights": [lic_full]})
     assert validates_meta({"rights": [lic_min]})
+    assert validates_meta({"rights": [lic_linked]})
 
     # Additional property
     lic_full["invalid"] = "test"
