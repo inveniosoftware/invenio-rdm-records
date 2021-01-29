@@ -34,8 +34,9 @@ class YamlIterator(DataIterator):
         """Iterate over records."""
         with open(self._data_file) as fp:
             data = yaml.load(fp)
-            for entry in data:
-                yield entry
+            if data:  # Allow empty files
+                for entry in data:
+                    yield entry
 
 
 class CSVIterator(DataIterator):
@@ -85,11 +86,13 @@ class VocabulariesFixture:
     def load_vocabulary(self, id_, entry):
         """Load a single vocabulary."""
         pid_type = entry['pid-type']
-        data_file = self._search_path.path(entry['data-file'])
         # Create the vocabulary type
         current_service.create_type(self._identity, id_, pid_type)
         # Load the data file
-        self.load_datafile(id_, data_file)
+        data_file_path = entry.get('data-file')
+        if data_file_path:  # Creates pid_type, no data yet
+            data_file = self._search_path.path(data_file_path)
+            self.load_datafile(id_, data_file)
 
     def load_datafile(self, id_, data_file):
         """Load the records form the data file."""
