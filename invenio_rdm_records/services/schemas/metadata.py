@@ -191,8 +191,9 @@ class RightsSchema(IdentifierSchema):
         """Constructor."""
         super().__init__(allow_all=True, required=False, **kwargs)
 
-    rights = SanitizedUnicode(required=True)
-    uri = SanitizedUnicode(
+    title = SanitizedUnicode()
+    description = SanitizedUnicode()
+    link = SanitizedUnicode(
         validate=_is_uri,
         error=_('Wrong URI format. Should follow RFC 3986.')
     )
