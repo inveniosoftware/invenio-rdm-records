@@ -531,8 +531,7 @@
                 },
                 "type": {"$ref": "#/definitions/titleType"},
                 "lang": {"ref": "#/definitions/language"}
-            },
-            "required": ["title"]
+            }
           }
         },
 
