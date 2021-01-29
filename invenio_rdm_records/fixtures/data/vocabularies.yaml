@@ -6,6 +6,7 @@ languages:
   data-file: vocabularies/languages.yaml
 licenses:
   pid-type: lic
+  data-file: vocabularies/licenses.csv
 resourcetypes:
   pid-type: rt
   data-file: vocabularies/resourcetypes.yaml
