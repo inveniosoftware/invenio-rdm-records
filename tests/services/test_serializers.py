@@ -9,11 +9,9 @@
 """Test serializers."""
 
 import pytest
-from invenio_pidstore.models import PersistentIdentifier
-# TODO: use from invenio_records_files.api import Record
 from invenio_records.api import Record
-from invenio_records_rest.schemas.fields import SanitizedUnicode
 from marshmallow.fields import Bool
+from marshmallow_utils.fields import SanitizedUnicode
 
 from invenio_rdm_records.services.schemas import MetadataSchema
 
