@@ -7,10 +7,11 @@
 # it under the terms of the MIT License; see LICENSE file for more details.
 
 """DEPRECATED. Tests for Invenio RDM Records JSON Schemas."""
+
 import pytest
-from invenio_records_rest.schemas.fields import DateString, SanitizedUnicode
 from marshmallow import ValidationError
 from marshmallow.fields import Bool, Integer, List
+from marshmallow_utils.fields import ISODateString, SanitizedUnicode
 
 from invenio_rdm_records.services.schemas.metadata import MetadataSchema
 from invenio_rdm_records.services.schemas.metadata_extensions import \
@@ -49,7 +50,7 @@ def test_extensions(app, minimal_record):
         },
         'nubiomed:original_presentation_date': {
             'elasticsearch': 'date',
-            'marshmallow': DateString()
+            'marshmallow': ISODateString()
         },
         'nubiomed:right_or_wrong': {
             'elasticsearch': 'boolean',

@@ -8,8 +8,8 @@
 
 """RDM record schemas."""
 
-from invenio_records_rest.schemas.fields import SanitizedUnicode
 from marshmallow import Schema, fields
+from marshmallow_utils.fields import SanitizedUnicode
 
 
 class FileSchema(Schema):

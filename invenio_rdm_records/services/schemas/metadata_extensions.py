@@ -11,9 +11,9 @@
 from copy import deepcopy
 
 from flask import current_app
-from invenio_records_rest.schemas.fields import DateString, SanitizedUnicode
 from marshmallow import Schema
 from marshmallow.fields import Bool, Integer, List
+from marshmallow_utils.fields import ISODateString, SanitizedUnicode
 
 
 class MetadataExtensions(object):
@@ -72,7 +72,7 @@ class MetadataExtensions(object):
         """Make sure the Marshmallow type is one we support."""
         def validate_basic_marshmallow_type(_type):
             allowed_types = (
-                Bool, DateString, Integer, SanitizedUnicode
+                Bool, ISODateString, Integer, SanitizedUnicode
             )
             assert isinstance(_type, allowed_types)
 
