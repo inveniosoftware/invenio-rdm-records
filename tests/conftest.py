@@ -2,6 +2,7 @@
 #
 # Copyright (C) 2019 CERN.
 # Copyright (C) 2019 Northwestern University.
+# Copyright (C) 2021 TU Wien.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
@@ -336,3 +337,12 @@ def identity_simple():
     i.provides.add(UserNeed(1))
     i.provides.add(Need(method='system_role', value='any_user'))
     return i
+
+
+@pytest.fixture(scope='module')
+def testapp(base_app, database):
+    """Application with just a database.
+
+    Pytest-Invenio also initialises ES with the app fixture.
+    """
+    yield base_app
