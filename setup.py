@@ -116,6 +116,9 @@ setup(
             'invenio_rdm_records_draft_files = invenio_rdm_records.views:create_draft_files_bp',
             'invenio_rdm_records_draft_files_action = invenio_rdm_records.views:create_draft_files_action_bp',
         ],
+        'invenio_db.alembic': [
+            'invenio_rdm_records = invenio_rdm_records:alembic',
+        ],
         'invenio_jsonschemas.schemas': [
             'invenio_rdm_records = invenio_rdm_records.records.jsonschemas',
             'subjects = invenio_vocabularies.contrib.subjects.jsonschemas',
