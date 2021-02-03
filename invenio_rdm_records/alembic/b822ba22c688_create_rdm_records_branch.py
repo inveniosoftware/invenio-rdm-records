@@ -8,14 +8,13 @@
 
 """Create RDM-Records branch."""
 
-from alembic import op
 import sqlalchemy as sa
-
+from alembic import op
 
 # revision identifiers, used by Alembic.
-revision = 'b822ba22c688'
+revision = "b822ba22c688"
 down_revision = None
-branch_labels = ('invenio_rdm_records',)
+branch_labels = ("invenio_rdm_records",)
 depends_on = None
 
 
