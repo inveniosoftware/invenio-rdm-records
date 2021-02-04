@@ -15,7 +15,7 @@ from alembic import op
 revision = "b822ba22c688"
 down_revision = None
 branch_labels = ("invenio_rdm_records",)
-depends_on = None
+depends_on = "dbdbc1b19cf2"
 
 
 def upgrade():
