@@ -285,44 +285,9 @@ def minimal_record():
                 }
             }, {
                 "person_or_org": {
-                    "family_name": "Lester",
-                    "given_name": "Phillip",
-                    "type": "personal",
-                    "identifiers": [{
-                        "scheme": "orcid",
-                        "identifier": "0000-0001-8135-3489"
-                    }],
+                    "name": "Troy Inc.",
+                    "type": "organizational",
                 },
-                "affiliations": [{
-                    "name": "Carter-Morris",
-                    "identifiers": [{
-                        "scheme": "ror",
-                        "identifier": "03yrm5c26"
-                    }]
-                }]
-            }, {
-                "person_or_org": {
-                    "family_name": "Williamson",
-                    "given_name": "Steven",
-                    "type": "personal",
-                    "identifiers": [{
-                        "scheme": "orcid",
-                        "identifier": "0000-0001-8135-3489"
-                    }],
-                },
-                "affiliations": [{
-                    "name": "Ritter and Sons",
-                    "identifiers": [{
-                        "scheme": "ror",
-                        "identifier": "03yrm5c26"
-                    }]
-                }, {
-                    "name": "Montgomery, Bush and Madden",
-                    "identifiers": [{
-                        "scheme": "ror",
-                        "identifier": "03yrm5c26"
-                    }]
-                }]
             }],
             "title": "A Romans story"
         }

@@ -6,10 +6,12 @@
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
 
-"""DEPRECATED. Tests for Invenio RDM Records JSON Schemas."""
+"""Tests for Invenio RDM Records MetadataSchema."""
+
+from copy import deepcopy
 
 import pytest
-from marshmallow import ValidationError
+from marshmallow import Schema, ValidationError, fields
 from marshmallow.fields import Bool, Integer, List
 from marshmallow_utils.fields import ISODateString, SanitizedUnicode
 
@@ -105,21 +107,17 @@ def test_extensions(app, minimal_record):
 
 
 @pytest.mark.skip()
-def test_embargo_date(vocabulary_clear, minimal_record):
-    # Test embargo validation
-    minimal_record["embargo_date"] = "1000-01-01"
-    with pytest.raises(ValidationError):
-        data = MetadataSchema().load(minimal_record)
-
-
-@pytest.mark.skip()
-def test_metadata_schema(
-        vocabulary_clear, full_record, minimal_record):
+def test_full_metadata_schema(vocabulary_clear, full_record):
     """Test metadata schema."""
     # Test full attributes
     data = MetadataSchema().load(full_record)
     assert data == full_record
 
-    # Test minimal attributes
-    data = MetadataSchema().load(minimal_record)
-    assert data == minimal_record
+
+def test_minimal_metadata_schema(vocabulary_clear, minimal_metadata):
+    expected_metadata = deepcopy(minimal_metadata)
+    expected_metadata["creators"][0]["person_or_org"]["name"] = "Brown, Troy"
+
+    data = MetadataSchema().load(minimal_metadata)
+
+    assert data == expected_metadata

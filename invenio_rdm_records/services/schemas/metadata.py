@@ -130,16 +130,37 @@ class ContributorSchema(Schema):
         validate_entry('contributors.role', data)
 
 
-class ResourceTypeSchema(Schema):
-    """Resource type schema."""
+class ResourceType(fields.Field):
+    """Represents a Resource type as a field.
 
-    type = fields.Str(required=True)
-    subtype = fields.Str()
+    This is needed to get a nice error message directly under the
+    'resource_type' key. Otherwise the error message is under the "_schema"
+    key.
+    """
 
-    @validates_schema
-    def validate_data(self, data, **kwargs):
-        """Validate resource type."""
-        validate_entry('resource_type', data)
+    class ResourceTypeSchema(Schema):
+        """Resource type schema."""
+
+        type = fields.Str(required=True)
+        subtype = fields.Str()
+
+        @validates_schema
+        def validate_data(self, data, **kwargs):
+            """Validate resource type."""
+            validate_entry('resource_type', data)
+
+    def _deserialize(self, value, attr, data, **kwargs):
+        try:
+            return ResourceType.ResourceTypeSchema().load(value)
+        except ValidationError as error:
+            error_content = (
+                []
+                + error.messages.get("type", [])
+                + error.messages.get("subtype", [])
+                + error.messages.get("_schema", [])
+            )
+
+            raise ValidationError(error_content)
 
 
 class TitleSchema(Schema):
@@ -304,7 +325,7 @@ class RelatedIdentifierSchema(IdentifierSchema):
             choices=RELATIONS,
             error=_('Invalid relation type. {input} not one of {choices}.')
         ))
-    resource_type = fields.Nested(ResourceTypeSchema)
+    resource_type = ResourceType()
 
 
 class FunderSchema(IdentifierSchema):
@@ -430,7 +451,7 @@ class MetadataSchema(Schema):
         unknown = INCLUDE
 
     # Metadata fields
-    resource_type = fields.Nested(ResourceTypeSchema, required=True)
+    resource_type = ResourceType(required=True)
     creators = fields.List(fields.Nested(CreatorSchema), required=True)
     title = SanitizedUnicode(required=True, validate=validate.Length(min=3))
     additional_titles = fields.List(fields.Nested(TitleSchema))
