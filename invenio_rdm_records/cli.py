@@ -245,13 +245,20 @@ def rdm_records():
 @with_appcontext
 def demo():
     """Create 100 fake records for demo purposes."""
-    click.secho('Creating vocabularies!', fg='green')
-
-    FixturesEngine(system_identity()).run()
-
     click.secho('Creating demo records...', fg='green')
 
     for _ in range(100):
         create_fake_record()
 
-    click.secho('Created records and vocabularies!', fg='green')
+    click.secho('Created records!', fg='green')
+
+
+@rdm_records.command('vocabularies')
+@with_appcontext
+def create_vocabularies():
+    """Create the vocabularies required for record creation."""
+    click.secho('Creating vocabularies...', fg='green')
+
+    FixturesEngine(system_identity()).run()
+
+    click.secho('Created vocabularies!', fg='green')
