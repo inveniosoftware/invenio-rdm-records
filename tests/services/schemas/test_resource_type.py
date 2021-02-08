@@ -9,39 +9,50 @@
 """Test metadata resource type schema."""
 
 import os
+from copy import deepcopy
 
 import pytest
 from flask_babelex import lazy_gettext as _
 from marshmallow import ValidationError
 
-from invenio_rdm_records.services.schemas.metadata import ResourceTypeSchema
+from invenio_rdm_records.services.schemas.metadata import MetadataSchema
 
 from .test_utils import assert_raises_messages
 
-
-def test_valid_full(vocabulary_clear):
-    valid_full = {
-        "type": "image",
-        "subtype": "image-photo"
-    }
-    assert valid_full == ResourceTypeSchema().load(valid_full)
+# NOTE: test for a valid full resource type is included in test_metadata.py
+#       when testing for a valid minimal metadata as a whole
 
 
-def test_valid_no_subtype(vocabulary_clear):
-    valid_no_subtype = {
+def test_valid_no_subtype(minimal_metadata, vocabulary_clear):
+    expected_metadata = deepcopy(minimal_metadata)
+    expected_metadata["creators"][0]["person_or_org"]["name"] = "Brown, Troy"
+    expected_metadata["resource_type"] = minimal_metadata["resource_type"] = {
         "type": "poster"
     }
-    assert valid_no_subtype == ResourceTypeSchema().load(valid_no_subtype)
+
+    assert expected_metadata == MetadataSchema().load(minimal_metadata)
 
 
-def test_invalid_no_type(vocabulary_clear):
-    invalid_no_type = {
-        "subtype": "image-photo"
-    }
+def test_invalid_no_resource_type(minimal_metadata, vocabulary_clear):
+    minimal_metadata["resource_type"] = {}
+    assert_raises_messages(
+        lambda: MetadataSchema().load(minimal_metadata),
+        {"resource_type": ["Missing data for required field."]}
+    )
+
+    del minimal_metadata["resource_type"]
+    assert_raises_messages(
+        lambda: MetadataSchema().load(minimal_metadata),
+        {"resource_type": ["Missing data for required field."]}
+    )
+
+
+def test_invalid_no_type(minimal_metadata, vocabulary_clear):
+    minimal_metadata["resource_type"] = {"subtype": "image-photo"}
 
     assert_raises_messages(
-        lambda: ResourceTypeSchema().load(invalid_no_type),
-        {"type": ["Missing data for required field."]}
+        lambda: MetadataSchema().load(minimal_metadata),
+        {"resource_type": ["Missing data for required field."]}
     )
 
 
@@ -64,62 +75,50 @@ def custom_config(config):
     config['RDM_RECORDS_CUSTOM_VOCABULARIES'] = prev_custom_vocabularies
 
 
-def test_invalid_type(custom_config, vocabulary_clear):
+def test_invalid_type(custom_config, minimal_metadata, vocabulary_clear):
     # doubles as a test of custom config
-    invalid_type = {
+    minimal_metadata["resource_type"] = {
         "type": "invalid",
         "subtype": "image-photo"
     }
 
     assert_raises_messages(
-        lambda: ResourceTypeSchema().load(invalid_type),
-        {
-            "type": [_(
-                "Invalid value. Choose one of ['my_image', 'publication', "
-                "'software']."
-            )]
-        }
+        lambda: MetadataSchema().load(minimal_metadata),
+        {"resource_type": [_("Invalid value.")]}
     )
 
 
-def test_invalid_subtype(custom_config, vocabulary_clear):
-    invalid_subtype = {
+def test_invalid_subtype(custom_config, minimal_metadata, vocabulary_clear):
+    minimal_metadata["resource_type"] = {
         "type": "my_image",
         "subtype": "invalid"
     }
 
     assert_raises_messages(
-        lambda: ResourceTypeSchema().load(invalid_subtype),
-        {
-            "subtype": [_(
-                "Invalid value. Choose one of ['my_photo']."
-            )]
-        }
+        lambda: MetadataSchema().load(minimal_metadata),
+        {"resource_type": [_("Invalid value.")]}
     )
 
 
-def test_custom_valid_full(custom_config, vocabulary_clear):
-    # new resource type validates
-    valid_full = {
+def test_custom_valid_full(custom_config, minimal_metadata, vocabulary_clear):
+    expected_metadata = deepcopy(minimal_metadata)
+    expected_metadata["creators"][0]["person_or_org"]["name"] = "Brown, Troy"
+    expected_metadata["resource_type"] = minimal_metadata["resource_type"] = {
         "type": "my_image",
         "subtype": "my_photo"
     }
-    data = ResourceTypeSchema().load(valid_full)
-    assert data == valid_full
+
+    assert expected_metadata == MetadataSchema().load(minimal_metadata)
 
 
-def test_custom_default_now_invalid(custom_config, vocabulary_clear):
-    now_invalid_subtype = {
+def test_custom_previous_types_now_invalid(
+        custom_config, minimal_metadata, vocabulary_clear):
+    minimal_metadata["resource_type"] = {
         "type": "image",
         "subtype": "image-photo"
     }
 
     assert_raises_messages(
-        lambda: ResourceTypeSchema().load(now_invalid_subtype),
-        {
-            "type": [_(
-                "Invalid value. Choose one of ['my_image', 'publication', "
-                "'software']."
-            )]
-        }
+        lambda: MetadataSchema().load(minimal_metadata),
+        {"resource_type": [_("Invalid value.")]}
     )

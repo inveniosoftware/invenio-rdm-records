@@ -48,20 +48,7 @@ class ResourceTypeVocabulary(Vocabulary):
 
     def get_invalid(self, type_subtype):
         """Returns the {<field>: <messages>} error dict for the given key."""
-        types = sorted([k[0] for k in self.data.keys() if k[0]])
-        _type = type_subtype.get('type')
-
-        if not _type or (_type not in types):
-            field = 'type'
-            choices = types
-        else:
-            field = 'subtype'
-            choices = sorted([
-                k[1] for k in self.data.keys()
-                if k[1] and k[0] == _type
-            ])
-
-        return {field: [_(f"Invalid value. Choose one of {choices}.")]}
+        return [_(f"Invalid value.")]
 
     def dump_options(self):
         """Returns json-compatible dict of options for type and subtype.
