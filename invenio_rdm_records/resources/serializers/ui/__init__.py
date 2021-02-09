@@ -8,8 +8,6 @@
 
 """Record response serializers."""
 
-import json
-
 from flask_resources.serializers import JSONSerializer
 
 from .schema import UIListSchema, UIObjectSchema
@@ -43,11 +41,11 @@ class UIJSONSerializer(JSONSerializer):
     #
     def serialize_object(self, obj):
         """Dump the object into a JSON string."""
-        return json.dumps(self.dump_obj(obj))
+        return super().serialize_object(self.dump_obj(obj))
 
     def serialize_object_list(self, obj_list):
         """Dump the object list into a JSON string."""
-        return json.dumps(self.dump_list(obj_list))
+        return super().serialize_object_list(self.dump_list(obj_list))
 
     def serialize_object_to_dict(self, obj):
         """Dump the object into a JSON string."""
