@@ -14,7 +14,7 @@ import pytest
 
 from invenio_rdm_records.cli import create_fake_record
 from invenio_rdm_records.records import RDMRecord
-from invenio_rdm_records.records.models import RecordMetadata
+from invenio_rdm_records.records.models import RDMRecordMetadata
 
 
 # TODO
@@ -22,11 +22,11 @@ from invenio_rdm_records.records.models import RecordMetadata
 def test_create_fake_record_saves_to_db(app, es_clear, location):
     """Test if fake records are saved to db."""
     # app needed for config overwrite of pidstore
-    assert RecordMetadata.query.first() is None
+    assert RDMRecordMetadata.query.first() is None
 
     created_record = create_fake_record()
 
-    retrieved_record = RecordMetadata.query.first()
+    retrieved_record = RDMRecordMetadata.query.first()
     assert created_record._record.model == retrieved_record
 
 

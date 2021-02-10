@@ -66,8 +66,7 @@ install_requires = [
     'Faker>=2.0.3',
     'ftfy>=4.4.3,<5.0.0',
     'invenio-drafts-resources>=0.9.0,<0.10.0',
-    # 'invenio-records-rest>=1.6.0',
-    'invenio-vocabularies>=0.3.0,<0.4.0',
+    'invenio-vocabularies>=0.3.1,<0.4.0',
     'pytz>=2020.4',
     'pyyaml>=5.4.0',
 ]
@@ -115,6 +114,10 @@ setup(
             'invenio_rdm_records_record_files_action = invenio_rdm_records.views:create_record_files_action_bp',
             'invenio_rdm_records_draft_files = invenio_rdm_records.views:create_draft_files_bp',
             'invenio_rdm_records_draft_files_action = invenio_rdm_records.views:create_draft_files_action_bp',
+        ],
+        'invenio_db.models': [
+            'invenio_rdm_records = invenio_rdm_records.records.models',
+            'subjects = invenio_vocabularies.contrib.subjects.models',
         ],
         'invenio_db.alembic': [
             'invenio_rdm_records = invenio_rdm_records:alembic',
