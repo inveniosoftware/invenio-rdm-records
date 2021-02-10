@@ -65,7 +65,7 @@ class RecordFile(RecordFileBase):
 class RDMRecord(CommonFieldsMixin, Record):
     """RDM Record API."""
 
-    model_cls = models.RecordMetadata
+    model_cls = models.RDMRecordMetadata
 
     index = IndexField(
         "rdmrecords-records-record-v1.0.0", search_alias="rdmrecords-records"

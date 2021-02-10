@@ -15,7 +15,7 @@ from invenio_records_resources.records.models import RecordFileBase
 from sqlalchemy_utils.types import UUIDType
 
 
-class RecordMetadata(db.Model, RecordMetadataBase):
+class RDMRecordMetadata(db.Model, RecordMetadataBase):
     """Represent a bibliographic record metadata."""
 
     __tablename__ = 'rdm_records_metadata'
@@ -30,7 +30,7 @@ class RecordMetadata(db.Model, RecordMetadataBase):
 class RecordFile(db.Model, RecordFileBase):
     """File associated with a record."""
 
-    record_model_cls = RecordMetadata
+    record_model_cls = RDMRecordMetadata
 
     __tablename__ = 'rdm_records_files'
 
