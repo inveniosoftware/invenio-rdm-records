@@ -1,22 +1,960 @@
+- id: afr
+  title:
+    en: Afrikaans (South Africa)
+    tr: "Afrikaanca (G\xFCney Afrika)"
+- id: agq
+  title:
+    en: Aghem
+    tr: Aghem
+- id: aka
+  title:
+    en: Akan (Ghana)
+    tr: Akan (Gana)
+- id: als
+  title:
+    en: Albanian (Albania)
+    tr: "Arnavut\xE7a (Arnavutluk)"
+- id: amh
+  title:
+    en: Amharic (Ethiopia)
+    tr: Amharca (Etiyopya)
+- id: ara
+  title:
+    en: Arabic (Egypt)
+    tr: "Arap\xE7a (M\u0131s\u0131r)"
+- id: arb
+  title:
+    en: Arabic (Egypt)
+    tr: "Arap\xE7a (M\u0131s\u0131r)"
+- id: asa
+  title:
+    en: Asu
+    tr: Asu
+- id: asm
+  title:
+    en: Assamese (India)
+    tr: Assamca (Hindistan)
+- id: ast
+  title:
+    en: Asturian
+    tr: "Asturyas\xE7a"
+- id: aze
+  title:
+    en: Azerbaijani (Latin, Azerbaijan)
+    tr: Azerbaycan dili (Latin, Azerbaycan)
+- id: azj
+  title:
+    en: Azerbaijani (Latin, Azerbaijan)
+    tr: Azerbaycan dili (Latin, Azerbaycan)
+- id: bam
+  title:
+    en: Bambara (Mali)
+    tr: Bambara (Mali)
+- id: bas
+  title:
+    en: Basaa
+    tr: Basa Dili
+- id: bel
+  title:
+    en: Belarusian (Belarus)
+    tr: "Belarus\xE7a (Belarus)"
+- id: bem
+  title:
+    en: Bemba
+    tr: Bemba
+- id: ben
+  title:
+    en: Bangla (Bangladesh)
+    tr: "Bengalce (Banglade\u015F)"
+- id: bez
+  title:
+    en: Bena
+    tr: Bena
+- id: bod
+  title:
+    en: Tibetan (China)
+    tr: "Tibet\xE7e (\xC7in)"
+- id: bos
+  title:
+    en: Bosnian (Latin, Bosnia & Herzegovina)
+    tr: "Bo\u015Fnak\xE7a (Latin, Bosna-Hersek)"
+- id: bre
+  title:
+    en: Breton (France)
+    tr: Bretonca (Fransa)
+- id: brx
+  title:
+    en: Bodo
+    tr: Bodo
+- id: bul
+  title:
+    en: Bulgarian (Bulgaria)
+    tr: Bulgarca (Bulgaristan)
+- id: bxk
+  title:
+    en: Luyia (Kenya)
+    tr: Luyia (Kenya)
+- id: cat
+  title:
+    en: Catalan (Spain)
+    tr: "Katalanca (\u0130spanya)"
+- id: ccp
+  title:
+    en: Chakma
+    tr: Chakma
+- id: ceb
+  title:
+    en: Cebuano
+    tr: Sebuano dili
+- id: ces
+  title:
+    en: Czech (Czechia)
+    tr: "\xC7ek\xE7e (\xC7ekya)"
+- id: cgg
+  title:
+    en: Chiga
+    tr: Kiga
+- id: che
+  title:
+    en: Chechen (Russia)
+    tr: "\xC7e\xE7ence (Rusya)"
+- id: chr
+  title:
+    en: Cherokee
+    tr: "\xC7erokice"
+- id: chu
+  title:
+    en: Church Slavic (Russia)
+    tr: "Kilise Slavcas\u0131 (Rusya)"
+- id: ckb
+  title:
+    en: Central Kurdish
+    tr: "Orta K\xFCrt\xE7e"
+- id: cmn
+  title:
+    en: Chinese (Simplified, China)
+    tr: "\xC7ince (Basitle\u015Ftirilmi\u015F, \xC7in)"
+- id: cor
+  title:
+    en: Cornish (United Kingdom)
+    tr: "Kernevek\xE7e (Birle\u015Fik Krall\u0131k)"
+- id: cym
+  title:
+    en: Welsh (United Kingdom)
+    tr: "Galce (Birle\u015Fik Krall\u0131k)"
+- id: dan
+  title:
+    en: Danish (Denmark)
+    tr: Danca (Danimarka)
+- id: dav
+  title:
+    en: Taita
+    tr: Taita
+- id: deu
+  title:
+    en: German (Germany)
+    tr: Almanca (Almanya)
+- id: dje
+  title:
+    en: Zarma
+    tr: Zarma
+- id: dsb
+  title:
+    en: Lower Sorbian
+    tr: "A\u015Fa\u011F\u0131 Sorb\xE7a"
+- id: dua
+  title:
+    en: Duala
+    tr: Duala
+- id: dyo
+  title:
+    en: Jola-Fonyi
+    tr: Jola-Fonyi
+- id: dzo
+  title:
+    en: Dzongkha (Bhutan)
+    tr: Dzongkha (Butan)
+- id: ebu
+  title:
+    en: Embu
+    tr: Embu
+- id: ekk
+  title:
+    en: Estonian (Estonia)
+    tr: Estonca (Estonya)
+- id: ell
+  title:
+    en: Greek (Greece)
+    tr: Yunanca (Yunanistan)
 - id: eng
   title:
-    en: English
-    da: Engelsk
-  description:
-    en: English
-    da: Engelsk
-  props:
-    iso639-2: en
-    iso639-3: eng
-    type: extinct
-- id: da
+    en: English (United States)
+    tr: "\u0130ngilizce (Amerika Birle\u015Fik Devletleri)"
+- id: epo
   title:
-    en: Danish
-    da: Dansk
-  description:
-    en: English
-    da: Engelsk
-  props:
-    iso639-2: da
-    iso639-3: dan
-    type: extinct
+    en: Esperanto (World)
+    tr: "Esperanto (D\xFCnya)"
+- id: est
+  title:
+    en: Estonian (Estonia)
+    tr: Estonca (Estonya)
+- id: eus
+  title:
+    en: Basque (Spain)
+    tr: "Bask\xE7a (\u0130spanya)"
+- id: ewe
+  title:
+    en: Ewe (Ghana)
+    tr: Ewe (Gana)
+- id: ewo
+  title:
+    en: Ewondo
+    tr: Ewondo
+- id: fao
+  title:
+    en: Faroese (Faroe Islands)
+    tr: "Faroe dili (Faroe Adalar\u0131)"
+- id: fas
+  title:
+    en: Persian (Iran)
+    tr: "Fars\xE7a (\u0130ran)"
+- id: fat
+  title:
+    en: Akan (Ghana)
+    tr: Akan (Gana)
+- id: fil
+  title:
+    en: Filipino
+    tr: Filipince
+- id: fin
+  title:
+    en: Finnish (Finland)
+    tr: Fince (Finlandiya)
+- id: fra
+  title:
+    en: French (France)
+    tr: "Frans\u0131zca (Fransa)"
+- id: fry
+  title:
+    en: Western Frisian (Netherlands)
+    tr: "Bat\u0131 Frizcesi (Hollanda)"
+- id: fuc
+  title:
+    en: Fulah (Latin, Senegal)
+    tr: Fula dili (Latin, Senegal)
+- id: ful
+  title:
+    en: Fulah (Latin, Senegal)
+    tr: Fula dili (Latin, Senegal)
+- id: fur
+  title:
+    en: Friulian
+    tr: Friuli dili
+- id: gaz
+  title:
+    en: Oromo (Ethiopia)
+    tr: Oromo dili (Etiyopya)
+- id: gla
+  title:
+    en: Scottish Gaelic (United Kingdom)
+    tr: "\u0130sko\xE7 Gaelcesi (Birle\u015Fik Krall\u0131k)"
+- id: gle
+  title:
+    en: Irish (Ireland)
+    tr: "\u0130rlandaca (\u0130rlanda)"
+- id: glg
+  title:
+    en: Galician (Spain)
+    tr: "Gali\xE7yaca (\u0130spanya)"
+- id: glv
+  title:
+    en: Manx (Isle of Man)
+    tr: "Man dili (Man Adas\u0131)"
+- id: gsw
+  title:
+    en: Swiss German
+    tr: "\u0130svi\xE7re Almancas\u0131"
+- id: guj
+  title:
+    en: Gujarati (India)
+    tr: "G\xFCcerat\xE7a (Hindistan)"
+- id: guz
+  title:
+    en: Gusii
+    tr: Gusii
+- id: hau
+  title:
+    en: Hausa (Nigeria)
+    tr: Hausa dili (Nijerya)
+- id: haw
+  title:
+    en: Hawaiian
+    tr: Hawaii dili
+- id: heb
+  title:
+    en: Hebrew (Israel)
+    tr: "\u0130branice (\u0130srail)"
+- id: hin
+  title:
+    en: Hindi (India)
+    tr: "Hint\xE7e (Hindistan)"
+- id: hrv
+  title:
+    en: Croatian (Croatia)
+    tr: "H\u0131rvat\xE7a (H\u0131rvatistan)"
+- id: hsb
+  title:
+    en: Upper Sorbian
+    tr: "Yukar\u0131 Sorb\xE7a"
+- id: hun
+  title:
+    en: Hungarian (Hungary)
+    tr: Macarca (Macaristan)
+- id: hye
+  title:
+    en: Armenian (Armenia)
+    tr: Ermenice (Ermenistan)
+- id: ibo
+  title:
+    en: Igbo (Nigeria)
+    tr: "\u0130bo dili (Nijerya)"
+- id: iii
+  title:
+    en: Sichuan Yi (China)
+    tr: "Sichuan Yi (\xC7in)"
+- id: ina
+  title:
+    en: Interlingua (World)
+    tr: "\u0130nterlingua (D\xFCnya)"
+- id: ind
+  title:
+    en: Indonesian (Indonesia)
+    tr: Endonezce (Endonezya)
+- id: isl
+  title:
+    en: Icelandic (Iceland)
+    tr: "\u0130zlandaca (\u0130zlanda)"
+- id: ita
+  title:
+    en: Italian (Italy)
+    tr: "\u0130talyanca (\u0130talya)"
+- id: jav
+  title:
+    en: Javanese (Indonesia)
+    tr: Cava dili (Endonezya)
+- id: jgo
+  title:
+    en: Ngomba
+    tr: Ngomba
+- id: jmc
+  title:
+    en: Machame
+    tr: Machame
+- id: jpn
+  title:
+    en: Japanese (Japan)
+    tr: Japonca (Japonya)
+- id: kab
+  title:
+    en: Kabyle
+    tr: Kabiliyece
+- id: kal
+  title:
+    en: Kalaallisut (Greenland)
+    tr: "Gr\xF6nland dili (Gr\xF6nland)"
+- id: kam
+  title:
+    en: Kamba
+    tr: Kamba
+- id: kan
+  title:
+    en: Kannada (India)
+    tr: Kannada dili (Hindistan)
+- id: kas
+  title:
+    en: Kashmiri (Arabic, India)
+    tr: "Ke\u015Fmir dili (Arap, Hindistan)"
+- id: kat
+  title:
+    en: Georgian (Georgia)
+    tr: "G\xFCrc\xFCce (G\xFCrcistan)"
+- id: kaz
+  title:
+    en: Kazakh (Kazakhstan)
+    tr: "Kazak\xE7a (Kazakistan)"
+- id: kde
+  title:
+    en: Makonde
+    tr: Makonde
+- id: kea
+  title:
+    en: Kabuverdianu
+    tr: Kabuverdianu
+- id: khk
+  title:
+    en: Mongolian (Mongolia)
+    tr: "Mo\u011Folca (Mo\u011Folistan)"
+- id: khm
+  title:
+    en: Khmer (Cambodia)
+    tr: "Khmer dili (Kambo\xE7ya)"
+- id: khq
+  title:
+    en: Koyra Chiini
+    tr: Koyra Chiini
+- id: kik
+  title:
+    en: Kikuyu (Kenya)
+    tr: Kikuyu (Kenya)
+- id: kin
+  title:
+    en: Kinyarwanda (Rwanda)
+    tr: Kinyarwanda (Ruanda)
+- id: kir
+  title:
+    en: Kyrgyz (Kyrgyzstan)
+    tr: "K\u0131rg\u0131zca (K\u0131rg\u0131zistan)"
+- id: kkj
+  title:
+    en: Kako
+    tr: Kako
+- id: kln
+  title:
+    en: Kalenjin
+    tr: Kalenjin
+- id: kmr
+  title:
+    en: Kurdish (Turkey)
+    tr: "K\xFCrt\xE7e (T\xFCrkiye)"
+- id: knn
+  title:
+    en: Konkani (India)
+    tr: Konkani dili (Hindistan)
+- id: kok
+  title:
+    en: Konkani
+    tr: Konkani dili
+- id: kor
+  title:
+    en: Korean (South Korea)
+    tr: "Korece (G\xFCney Kore)"
+- id: ksb
+  title:
+    en: Shambala
+    tr: "\u015Eambala"
+- id: ksf
+  title:
+    en: Bafia
+    tr: Bafia
+- id: ksh
+  title:
+    en: Colognian
+    tr: "K\xF6ln leh\xE7esi"
+- id: kur
+  title:
+    en: Kurdish (Turkey)
+    tr: "K\xFCrt\xE7e (T\xFCrkiye)"
+- id: lag
+  title:
+    en: Langi
+    tr: Langi
+- id: lao
+  title:
+    en: Lao (Laos)
+    tr: Lao dili (Laos)
+- id: lav
+  title:
+    en: Latvian (Latvia)
+    tr: Letonca (Letonya)
+- id: lin
+  title:
+    en: Lingala (Congo - Kinshasa)
+    tr: "Lingala (Kongo - Kin\u015Fasa)"
+- id: lit
+  title:
+    en: Lithuanian (Lithuania)
+    tr: Litvanca (Litvanya)
+- id: lkt
+  title:
+    en: Lakota
+    tr: Lakotaca
+- id: lrc
+  title:
+    en: Northern Luri
+    tr: Kuzey Luri
+- id: ltz
+  title:
+    en: Luxembourgish (Luxembourg)
+    tr: "L\xFCksemburgca (L\xFCksemburg)"
+- id: lub
+  title:
+    en: Luba-Katanga (Congo - Kinshasa)
+    tr: "Luba-Katanga (Kongo - Kin\u015Fasa)"
+- id: lug
+  title:
+    en: Ganda (Uganda)
+    tr: Ganda (Uganda)
+- id: luo
+  title:
+    en: Luo
+    tr: Luo
+- id: luy
+  title:
+    en: Luyia
+    tr: Luyia
+- id: lvs
+  title:
+    en: Latvian (Latvia)
+    tr: Letonca (Letonya)
+- id: mai
+  title:
+    en: Maithili
+    tr: Maithili
+- id: mal
+  title:
+    en: Malayalam (India)
+    tr: Malayalam dili (Hindistan)
+- id: mar
+  title:
+    en: Marathi (India)
+    tr: Marathi dili (Hindistan)
+- id: mas
+  title:
+    en: Masai
+    tr: Masai
+- id: mer
+  title:
+    en: Meru
+    tr: Meru
+- id: mfe
+  title:
+    en: Morisyen
+    tr: Morisyen
+- id: mgh
+  title:
+    en: Makhuwa-Meetto
+    tr: Makhuwa-Meetto
+- id: mgo
+  title:
+    en: "Meta\u02BC"
+    tr: "Meta\u2019"
+- id: mkd
+  title:
+    en: Macedonian (North Macedonia)
+    tr: Makedonca (Kuzey Makedonya)
+- id: mlg
+  title:
+    en: Malagasy (Madagascar)
+    tr: "Malga\u015F\xE7a (Madagaskar)"
+- id: mlt
+  title:
+    en: Maltese (Malta)
+    tr: Maltaca (Malta)
+- id: mni
+  title:
+    en: Manipuri
+    tr: Manipuri dili
+- id: mon
+  title:
+    en: Mongolian (Mongolia)
+    tr: "Mo\u011Folca (Mo\u011Folistan)"
+- id: mri
+  title:
+    en: Maori (New Zealand)
+    tr: Maori dili (Yeni Zelanda)
+- id: msa
+  title:
+    en: Malay (Malaysia)
+    tr: Malayca (Malezya)
+- id: mua
+  title:
+    en: Mundang
+    tr: Mundang
+- id: mya
+  title:
+    en: Burmese (Myanmar (Burma))
+    tr: Birman dili (Myanmar (Burma))
+- id: mzn
+  title:
+    en: Mazanderani
+    tr: Mazenderanca
+- id: naq
+  title:
+    en: Nama
+    tr: Nama
+- id: nde
+  title:
+    en: North Ndebele (Zimbabwe)
+    tr: Kuzey Ndebele (Zimbabve)
+- id: nds
+  title:
+    en: Low German
+    tr: "A\u015Fa\u011F\u0131 Almanca"
+- id: nep
+  title:
+    en: Nepali (Nepal)
+    tr: Nepalce (Nepal)
+- id: nld
+  title:
+    en: Dutch (Netherlands)
+    tr: "Felemenk\xE7e (Hollanda)"
+- id: nmg
+  title:
+    en: Kwasio
+    tr: Kwasio
+- id: nnh
+  title:
+    en: Ngiemboon
+    tr: Ngiemboon
+- id: nno
+  title:
+    en: Norwegian Nynorsk (Norway)
+    tr: "Norve\xE7\xE7e Nynorsk (Norve\xE7)"
+- id: nob
+  title:
+    en: "Norwegian Bokm\xE5l (Norway)"
+    tr: "Norve\xE7\xE7e Bokm\xE5l (Norve\xE7)"
+- id: nor
+  title:
+    en: "Norwegian Bokm\xE5l (Norway)"
+    tr: "Norve\xE7\xE7e Bokm\xE5l (Norve\xE7)"
+- id: npi
+  title:
+    en: Nepali (Nepal)
+    tr: Nepalce (Nepal)
+- id: nus
+  title:
+    en: Nuer
+    tr: Nuer
+- id: nyn
+  title:
+    en: Nyankole
+    tr: Nyankole
+- id: ori
+  title:
+    en: Odia (India)
+    tr: Oriya Dili (Hindistan)
+- id: orm
+  title:
+    en: Oromo (Ethiopia)
+    tr: Oromo dili (Etiyopya)
+- id: ory
+  title:
+    en: Odia (India)
+    tr: Oriya Dili (Hindistan)
+- id: oss
+  title:
+    en: Ossetic (Georgia)
+    tr: "Oset\xE7e (G\xFCrcistan)"
+- id: pan
+  title:
+    en: Punjabi (Gurmukhi, India)
+    tr: "Pencap\xE7a (Gurmukhi, Hindistan)"
+- id: pbu
+  title:
+    en: Pashto (Afghanistan)
+    tr: "Pe\u015Ftuca (Afganistan)"
+- id: pcm
+  title:
+    en: Nigerian Pidgin
+    tr: Nijerya Pidgin dili
+- id: pes
+  title:
+    en: Persian (Iran)
+    tr: "Fars\xE7a (\u0130ran)"
+- id: plt
+  title:
+    en: Malagasy (Madagascar)
+    tr: "Malga\u015F\xE7a (Madagaskar)"
+- id: pol
+  title:
+    en: Polish (Poland)
+    tr: "Leh\xE7e (Polonya)"
+- id: por
+  title:
+    en: Portuguese (Brazil)
+    tr: Portekizce (Brezilya)
+- id: prg
+  title:
+    en: Prussian
+    tr: Prusyaca
+- id: pus
+  title:
+    en: Pashto (Afghanistan)
+    tr: "Pe\u015Ftuca (Afganistan)"
+- id: que
+  title:
+    en: Quechua (Peru)
+    tr: "Ke\xE7uva dili (Peru)"
+- id: quz
+  title:
+    en: Quechua (Peru)
+    tr: "Ke\xE7uva dili (Peru)"
+- id: rof
+  title:
+    en: Rombo
+    tr: Rombo
+- id: roh
+  title:
+    en: Romansh (Switzerland)
+    tr: "Roman\u015F\xE7a (\u0130svi\xE7re)"
+- id: ron
+  title:
+    en: Romanian (Romania)
+    tr: Rumence (Romanya)
+- id: run
+  title:
+    en: Rundi (Burundi)
+    tr: Kirundi (Burundi)
+- id: rus
+  title:
+    en: Russian (Russia)
+    tr: "Rus\xE7a (Rusya)"
+- id: rwk
+  title:
+    en: Rwa
+    tr: Rwa
+- id: sag
+  title:
+    en: Sango (Central African Republic)
+    tr: Sango (Orta Afrika Cumhuriyeti)
+- id: sah
+  title:
+    en: Sakha
+    tr: "Yakut\xE7a"
+- id: saq
+  title:
+    en: Samburu
+    tr: Samburu
+- id: sat
+  title:
+    en: Santali
+    tr: Santali
+- id: sbp
+  title:
+    en: Sangu
+    tr: Sangu
+- id: seh
+  title:
+    en: Sena
+    tr: Sena
+- id: ses
+  title:
+    en: Koyraboro Senni
+    tr: Koyraboro Senni
+- id: shi
+  title:
+    en: Tachelhit
+    tr: "Ta\u015Felit"
+- id: sin
+  title:
+    en: Sinhala (Sri Lanka)
+    tr: Sinhali dili (Sri Lanka)
+- id: slk
+  title:
+    en: Slovak (Slovakia)
+    tr: "Slovak\xE7a (Slovakya)"
+- id: slv
+  title:
+    en: Slovenian (Slovenia)
+    tr: Slovence (Slovenya)
+- id: sme
+  title:
+    en: Northern Sami (Norway)
+    tr: "Kuzey Laponcas\u0131 (Norve\xE7)"
+- id: smn
+  title:
+    en: Inari Sami
+    tr: "\u0130nari Laponcas\u0131"
+- id: sna
+  title:
+    en: Shona (Zimbabwe)
+    tr: "\u015Eona dili (Zimbabve)"
+- id: snd
+  title:
+    en: Sindhi (Arabic, Pakistan)
+    tr: Sindhi dili (Arap, Pakistan)
+- id: som
+  title:
+    en: Somali (Somalia)
+    tr: Somalice (Somali)
+- id: spa
+  title:
+    en: Spanish (Spain)
+    tr: "\u0130spanyolca (\u0130spanya)"
+- id: spy
+  title:
+    en: Kalenjin (Kenya)
+    tr: Kalenjin (Kenya)
+- id: sqi
+  title:
+    en: Albanian (Albania)
+    tr: "Arnavut\xE7a (Arnavutluk)"
+- id: srp
+  title:
+    en: Serbian (Cyrillic, Serbia)
+    tr: "S\u0131rp\xE7a (Kiril, S\u0131rbistan)"
+- id: sun
+  title:
+    en: Sundanese (Latin, Indonesia)
+    tr: Sunda dili (Latin, Endonezya)
+- id: swa
+  title:
+    en: Swahili (Tanzania)
+    tr: Svahili dili (Tanzanya)
+- id: swe
+  title:
+    en: Swedish (Sweden)
+    tr: "\u0130sve\xE7\xE7e (\u0130sve\xE7)"
+- id: swh
+  title:
+    en: Swahili (Tanzania)
+    tr: Svahili dili (Tanzanya)
+- id: tam
+  title:
+    en: Tamil (India)
+    tr: Tamilce (Hindistan)
+- id: tat
+  title:
+    en: Tatar (Russia)
+    tr: Tatarca (Rusya)
+- id: tel
+  title:
+    en: Telugu (India)
+    tr: Telugu dili (Hindistan)
+- id: teo
+  title:
+    en: Teso
+    tr: Teso
+- id: tgk
+  title:
+    en: Tajik (Tajikistan)
+    tr: "Tacik\xE7e (Tacikistan)"
+- id: tgl
+  title:
+    en: Filipino (Philippines)
+    tr: Filipince (Filipinler)
+- id: tha
+  title:
+    en: Thai (Thailand)
+    tr: Tayca (Tayland)
+- id: tir
+  title:
+    en: Tigrinya (Ethiopia)
+    tr: Tigrinya dili (Etiyopya)
+- id: ton
+  title:
+    en: Tongan (Tonga)
+    tr: Tonga dili (Tonga)
+- id: tuk
+  title:
+    en: Turkmen (Turkmenistan)
+    tr: "T\xFCrkmence (T\xFCrkmenistan)"
+- id: tur
+  title:
+    en: Turkish (Turkey)
+    tr: "T\xFCrk\xE7e (T\xFCrkiye)"
+- id: twi
+  title:
+    en: Akan (Ghana)
+    tr: Akan (Gana)
+- id: twq
+  title:
+    en: Tasawaq
+    tr: Tasawaq
+- id: tzm
+  title:
+    en: Central Atlas Tamazight
+    tr: Orta Atlas Tamazigti
+- id: uig
+  title:
+    en: Uyghur (China)
+    tr: "Uygurca (\xC7in)"
+- id: ukr
+  title:
+    en: Ukrainian (Ukraine)
+    tr: Ukraynaca (Ukrayna)
+- id: und
+  title:
+    en: English (United States)
+    tr: "\u0130ngilizce (Amerika Birle\u015Fik Devletleri)"
+- id: urd
+  title:
+    en: Urdu (Pakistan)
+    tr: Urduca (Pakistan)
+- id: uzb
+  title:
+    en: Uzbek (Latin, Uzbekistan)
+    tr: "\xD6zbek\xE7e (Latin, \xD6zbekistan)"
+- id: uzn
+  title:
+    en: Uzbek (Latin, Uzbekistan)
+    tr: "\xD6zbek\xE7e (Latin, \xD6zbekistan)"
+- id: vai
+  title:
+    en: Vai
+    tr: Vai
+- id: vie
+  title:
+    en: Vietnamese (Vietnam)
+    tr: Vietnamca (Vietnam)
+- id: vol
+  title:
+    en: "Volap\xFCk (World)"
+    tr: "Volap\xFCk (D\xFCnya)"
+- id: vun
+  title:
+    en: Vunjo
+    tr: Vunjo
+- id: wae
+  title:
+    en: Walser
+    tr: Walser
+- id: wol
+  title:
+    en: Wolof (Senegal)
+    tr: "Volof\xE7a (Senegal)"
+- id: xho
+  title:
+    en: Xhosa (South Africa)
+    tr: "Zosa dili (G\xFCney Afrika)"
+- id: xog
+  title:
+    en: Soga
+    tr: Soga
+- id: yav
+  title:
+    en: Yangben
+    tr: Yangben
+- id: ydd
+  title:
+    en: Yiddish (World)
+    tr: "Yidi\u015F (D\xFCnya)"
+- id: yid
+  title:
+    en: Yiddish (World)
+    tr: "Yidi\u015F (D\xFCnya)"
+- id: yor
+  title:
+    en: Yoruba (Nigeria)
+    tr: Yorubaca (Nijerya)
+- id: yue
+  title:
+    en: Cantonese
+    tr: Kantonca
+- id: zgh
+  title:
+    en: Standard Moroccan Tamazight
+    tr: Standart Fas Tamazigti
+- id: zho
+  title:
+    en: Chinese (Simplified, China)
+    tr: "\xC7ince (Basitle\u015Ftirilmi\u015F, \xC7in)"
+- id: zsm
+  title:
+    en: Malay (Malaysia)
+    tr: Malayca (Malezya)
+- id: zul
+  title:
+    en: Zulu (South Africa)
+    tr: "Zuluca (G\xFCney Afrika)"
