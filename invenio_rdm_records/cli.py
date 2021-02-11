@@ -80,12 +80,17 @@ def create_fake_record():
     fake = Faker()
     data_to_use = {
         "access": {
-            "metadata": False,
-            "files": False,
+            "record": "public",
+            "files": "restricted",
             "owned_by": [{"user": 1}],
-            "access_right": "open",
-            "embargo_date":
-                fake.future_date(end_date='+1y').strftime("%Y-%m-%d")
+            "embargo": {
+                "active": True,
+                "until": fake.future_date(end_date='+1y').strftime("%Y-%m-%d"),
+                "reason": "top secret material"
+            },
+            "grants": [
+                {"subject": "user", "id": "1", "level": "manage"}
+            ]
         },
         "metadata": {
             "resource_type": fake_resource_type(),

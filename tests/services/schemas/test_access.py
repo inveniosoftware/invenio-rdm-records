@@ -17,56 +17,48 @@ from invenio_rdm_records.services.schemas.access import AccessSchema
 from .test_utils import assert_raises_messages
 
 
-def test_valid_full(vocabulary_clear):
+def test_valid_full():
     valid_full = {
-        "metadata": False,
-        "files": False,
+        "record": "public",
+        "files": "restricted",
         "owned_by": [{"user": 1}],
-        "embargo_date": "2120-10-06",
-        "access_right": "open",
-        "access_condition": {
-            "condition": "because it is needed",
-            "default_link_validity": 30
-        }
+        "embargo": {
+            "active": True,
+            "until": "2120-10-06",
+            "reason": "espionage"
+        },
     }
     assert valid_full == AccessSchema().load(valid_full)
 
 
-def test_invalid_access_right(vocabulary_clear):
-    invalid_access_right = {
-        "metadata": False,
-        "files": False,
-        "owned_by": [{"user": 1}],
-        "access_right": "invalid value"
-    }
-
-    assert_raises_messages(
-        lambda: AccessSchema().load(invalid_access_right),
-        {
-            "access_right": [_(
-                "Invalid value. Choose one of ['closed', 'embargoed', "
-                "'open', 'restricted']."
-            )]
-        }
-    )
-
-
-@pytest.mark.parametrize("invalid_access,missing_attr", [
-    ({"metadata": False, "files": False, "access_right": "open",
-      "owned_by": [1]},
-     "owned_by"),
-    ({"metadata": False, "files": False, "owned_by": [{"user": 1}]},
-     "access_right"),
-    ({"metadata": False, "owned_by": [{"user": 1}], "access_right": "open"},
+@pytest.mark.parametrize("invalid_access,invalid_attr", [
+    ({"files": "restricted", "owned_by": [{"user": 1}],
+     "embargo": {"active": True, "until": "2131-01-01", "reason": "secret!"}},
+     "record"),
+    ({"record": "public", "owned_by": [{"user": 1}],
+     "embargo": {"active": True, "until": "2131-01-01", "reason": "secret!"}},
      "files"),
-    ({"files": False, "owned_by": [{"user": 1}], "access_right": "open"},
-     "metadata")
+    ({"record": "public", "files": "restricted", "owned_by": [1],
+     "embargo": {"active": True, "until": "2131-01-01", "reason": "secret!"}},
+     "owned_by"),
+    ({"record": "public", "files": "restricted", "owned_by": [{"user": 1}],
+     "embargo": {"active": False, "until": "2131-01-01", "reason": "secret!"}},
+     "embargo"),
+    ({"record": "public", "files": "restricted", "owned_by": [{"user": 1}],
+     "embargo": {"active": True, "until": "1999-01-01", "reason": "secret!"}},
+     "embargo"),
+    ({"record": "invalid", "files": "restricted", "owned_by": [{"user": 1}],
+     "embargo": {"active": False, "until": "1999-01-01", "reason": "secret!"}},
+     "record"),
+    ({"record": "public", "files": "invalid", "owned_by": [{"user": 1}],
+     "embargo": {"active": False, "until": "1999-01-01", "reason": "secret!"}},
+     "files"),
 ])
-def test_invalid(invalid_access, missing_attr):
+def test_invalid(invalid_access, invalid_attr):
 
     with pytest.raises(ValidationError) as e:
         AccessSchema().load(invalid_access)
 
     error_fields = e.value.messages.keys()
     assert len(error_fields) == 1
-    assert missing_attr in error_fields
+    assert invalid_attr in error_fields

@@ -831,14 +831,16 @@
       "additionalProperties": false,
       "properties": {
 
-        "metadata": {
-          "description": "Metadata visibility (true - public, false - private)",
-          "type": "boolean"
+        "record": {
+          "description": "Record visibility (public or restricted)",
+          "type": "string",
+          "enum": ["public", "restricted"]
         },
 
         "files": {
-          "description": "Files visibility (true - public, false - private)",
-          "type": "boolean"
+          "description": "Files visibility (public or restricted)",
+          "type": "string",
+          "enum": ["public", "restricted"]
         },
 
         "owned_by": {
@@ -849,32 +851,47 @@
           "items": {"$ref": "#/definitions/agent"}
         },
 
-        "embargo_date": {
-          "description": "Embargo date of record (ISO8601 formatted date time in UTC). At this time both metadata and files will be made public.",
-          "type": "string",
-          "format": "date-time"
-        },
-
-        "access_condition": {
-          "description": "Conditions under which access to files are granted",
+        "embargo": {
+          "description": "Description of the embargo on the record.",
           "type": "object",
           "additionalProperties": false,
           "properties": {
-            "condition": {
-              "type": "string",
-              "description": "Textual description under which conditions access is granted."
+            "active": {
+              "description": "Whether or not the embargo is (still) active.",
+              "type": "boolean"
             },
-            "default_link_validity": {
-              "type": "integer",
-              "description": "Number of days"
+            "until": {
+              "description": "Embargo date of record (ISO8601 formatted date time in UTC). At this time both metadata and files will be made public.",
+              "type": "string",
+              "format": "date"
+            },
+            "reason": {
+              "description": "The reason why the record is under embargo.",
+              "type": "string"
             }
           }
         },
 
-        "access_right": {
-          "default": "open",
-          "description": "TODO - Access right for record. - should be computed or moved to metadata?",
-          "type": "string"
+        "grants": {
+          "description": "Access grants for the record.",
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["subject", "id", "level"],
+            "additionalProperties": false,
+            "properties": {
+              "subject": {
+                "type": "string",
+                "enum": ["user", "role", "sysrole"]
+              },
+              "id": {
+                "type": "string"
+              },
+              "level": {
+                "type": "string"
+              }
+            }
+          }
         }
       }
     },

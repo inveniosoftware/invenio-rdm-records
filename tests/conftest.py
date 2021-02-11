@@ -225,15 +225,15 @@ def full_record():
             }
         },
         "access": {
-            "metadata": True,
-            "files": False,
+            "record": "public",
+            "files": "restricted",
             "owned_by": [{
                 "user": 1
             }],
-            "embargo_date": "2021-01-01T00:00:00+0000",
-            "access_condition": {
-                "condition": "Medical doctors.",
-                "default_link_validity": 30
+            "embargo": {
+                "active": True,
+                "until": "2131-01-01",
+                "reason": "Only for medical doctors."
             }
         },
         "files": {
@@ -266,10 +266,9 @@ def minimal_record():
     """Minimal record data as dict coming from the external world."""
     return {
         "access": {
-            "metadata": False,
-            "files": False,
+            "record": "public",
+            "files": "public",
             "owned_by": [{"user": 1}],
-            "access_right": "open"
         },
         "metadata": {
             "publication_date": "2020-06-01",

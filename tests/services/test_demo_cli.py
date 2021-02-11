@@ -53,7 +53,7 @@ def _assert_single_hit(response, expected_record):
     _assert_fields(root_fields, search_hit, expected_record)
 
     access_fields = [
-        "metadata", "files", "owned_by", "access_right", "embargo_date"
+        "record", "files", "owned_by", "embargo", "grants"
     ]
     _assert_fields(
         access_fields, search_hit['access'], expected_record['access'])
