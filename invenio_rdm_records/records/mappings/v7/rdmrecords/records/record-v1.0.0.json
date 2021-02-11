@@ -11,20 +11,47 @@
       },
       "access" : {
         "properties" : {
-          "access_right" : {
+          "record" : {
             "type" : "keyword"
           },
-          "created_by" : {
-            "type" : "long"
+          "files" : {
+            "type" : "keyword"
           },
-          "files_restricted" : {
-            "type" : "boolean"
+          "owned_by" : {
+            "properties": {
+              "user": {
+                "type": "keyword"
+              }
+            }
           },
-          "metadata_restricted" : {
-            "type" : "boolean"
+          "embargo": {
+            "properties": {
+              "active": {
+                "type": "boolean"
+              },
+              "until": {
+                "type": "date"
+              },
+              "reason": {
+                "type": "text"
+              }
+            }
           },
-          "owners" : {
-            "type" : "long"
+          "grants": {
+            "properties": {
+              "subject": {
+                "type": "keyword"
+              },
+              "id": {
+                "type": "keyword"
+              },
+              "level": {
+                "type": "keyword"
+              }
+            }
+          },
+          "grant_tokens": {
+            "type": "keyword"
           }
         }
       },
@@ -176,15 +203,6 @@
               },
               "type" : {
                 "type" : "keyword"
-              }
-            }
-          },
-          "embargo_date" : {
-            "type" : "text",
-            "fields" : {
-              "keyword" : {
-                "type" : "keyword",
-                "ignore_above" : 256
               }
             }
           },
