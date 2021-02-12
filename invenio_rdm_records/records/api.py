@@ -20,6 +20,7 @@ from werkzeug.local import LocalProxy
 
 from . import models
 from .dumpers import EDTFDumperExt, EDTFListDumperExt
+from .systemfields import AccessField
 
 
 #
@@ -50,6 +51,8 @@ class CommonFieldsMixin:
     bucket_id = ModelField(dump=False)
 
     bucket = ModelField(dump=False)
+
+    access = AccessField()
 
 
 #
