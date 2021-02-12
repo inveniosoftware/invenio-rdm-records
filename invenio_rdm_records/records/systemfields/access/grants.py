@@ -10,22 +10,24 @@
 
 from base64 import b64decode, b64encode
 
-from invenio_accounts.models import User
+from invenio_accounts.models import Role, User
 
 
 class Grant:
+    """Grant for a specific permission level on a record."""
+
     def __init__(
-        self, subject, permission, subject_type=None, subject_id=None
+        self, subject, permission_level, subject_type=None, subject_id=None
     ):
         """Permission grant for a specific subject (e.g. a user).
 
         :param subject: The subject of the permission grant.
-        :param permission: The given permission.
+        :param permission_level: The granted permission level.
         """
         self.subject = subject
-        self.permission = permission
+        self.permission_level = permission_level
         self._subject_type = subject_type
-        self._subject_id = subject_id or self.subject.id
+        self._subject_id = subject_id
 
     @property
     def subject_type(self):
@@ -34,6 +36,10 @@ class Grant:
 
         if isinstance(self.subject, User):
             return "user"
+
+        elif isinstance(self.subject, Role):
+            return "role"
+
         else:
             # TODO
             raise NotImplementedError()
@@ -51,8 +57,9 @@ class Grant:
         return True
 
     def to_need(self):
-        # TODO
-        pass
+        """Create the need that this grant provides."""
+        # TODO create the need(s?) that the grant provides
+        return None
 
     def to_token(self):
         """Dump the Grant to a grant token."""
@@ -63,7 +70,7 @@ class Grant:
         return "{}.{}.{}".format(
             b64encode(self.subject_type),
             b64encode(self.subject_id),
-            b64encode(self.permission),
+            b64encode(self.permission_level),
         )
 
     def to_dict(self):
@@ -71,22 +78,43 @@ class Grant:
         return {
             "subject": self.subject_type,
             "id": self.subject_id,
-            "permission": self.permission,
+            "level": self.permission_level,
         }
+
+    @classmethod
+    def from_string_parts(cls, subject_type, subject_id, permission_level):
+        """Create a Grant from the specified parts."""
+
+        if subject_type == "user":
+            subject = User.query.get(subject_id)
+
+        elif subject_type == "role":
+            subject = Role.query.get(subject_id)
+
+        elif subject_type == "sysrole":
+            # TODO
+            raise NotImplementedError()
+
+        else:
+            raise ValueError("unknown subject type: {}".format(subject_type))
+
+        return cls(
+            subject=subject,
+            permission_level=permission_level,
+            subject_type=subject_type,
+            subject_id=subject_id,
+        )
 
     @classmethod
     def from_token(cls, token):
         """Parse the grant token into a Grant."""
         # TODO
-        subject_type, subject_id, permission = (
+        subject_type, subject_id, permission_level = (
             b64decode(val) for val in token.split(".")
         )
 
-        return cls(
-            None,
-            permission=permission,
-            subject_type=subject_type,
-            subject_id=subject_id,
+        return cls.from_string_parts(
+            subject_type, subject_id, permission_level
         )
 
     @classmethod
@@ -94,25 +122,16 @@ class Grant:
         """Parse the dictionary into a Grant."""
         subject_type = dict_["subject"]
         subject_id = dict_["id"]
-        permission = dict_["level"]
+        permission_level = dict_["level"]
 
-        # TODO
-        if subject_type == "user":
-            subject = User.query.get(int(subject_id))
-        elif subject_type == "role":
-            raise NotImplementedError()
-        elif subject_type == "sysrole":
-            raise NotImplementedError()
-
-        return cls(
-            subject,
-            permission,
-            subject_type=subject_type,
-            subject_id=subject_id,
+        return cls.from_string_parts(
+            subject_type, subject_id, permission_level
         )
 
 
 class Grants(set):
+    """Set of grants for various permission levels on a record."""
+
     grant_cls = Grant
 
     def __init__(self, grants=None):

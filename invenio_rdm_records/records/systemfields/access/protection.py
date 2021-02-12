@@ -10,6 +10,8 @@
 
 
 class Protection:
+    """Protection class for the access system field."""
+
     def __init__(self, record="public", files="public"):
         self.set(record=record, files=files)
 
