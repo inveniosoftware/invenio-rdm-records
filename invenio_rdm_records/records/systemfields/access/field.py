@@ -61,6 +61,7 @@ class AccessField(SystemField):
 
     @property
     def owners(self):
+        """An alias for the owned_by property."""
         return self.owned_by
 
     @property

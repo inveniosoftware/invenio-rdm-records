@@ -12,6 +12,8 @@ import arrow
 
 
 class Embargo:
+    """Embargo class for the access system field."""
+
     def __init__(self, until, reason=None, active=None):
         self.until = until
         if isinstance(self.until, str):
@@ -57,7 +59,7 @@ class Embargo:
 
     @classmethod
     def from_dict(cls, dict_, ignore_active_value=False):
-        """Parse the Embargo from the ."""
+        """Parse the Embargo from the given dictionary."""
         until = arrow.get(dict_["until"]).datetime
         reason = dict_.get("reason")
         active = dict_.get("active")
