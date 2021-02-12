@@ -95,24 +95,32 @@ class AccessField(SystemField):
 
     def post_init(self, record, data, model=None, **kwargs):
         """Initialize the field values after the record is initialized."""
-        access_dict = data["access"]
-        owners = self._owners_cls()
-        grants = self._grants_cls()
+        access_dict = data.get("access")
+        if access_dict:
+            owners = self._owners_cls()
+            grants = self._grants_cls()
 
-        for owner_dict in access_dict.get("owned_by", []):
-            owners.add(owners.owner_from_dict(owner_dict))
+            for owner_dict in access_dict.get("owned_by", []):
+                owners.add(owners.owner_from_dict(owner_dict))
 
-        for grant_dict in access_dict.get("grants", []):
-            grants.add(grants.grant_cls.from_dict(grant_dict))
+            for grant_dict in access_dict.get("grants", []):
+                grants.add(grants.grant_cls.from_dict(grant_dict))
 
-        protection = self._protection_cls(
-            access_dict["record"], access_dict["files"]
-        )
+            protection = self._protection_cls(
+                access_dict["record"], access_dict["files"]
+            )
 
-        embargo = None
-        embargo_dict = access_dict.get("embargo")
-        if embargo_dict is not None:
-            embargo = self._embargo_cls.from_dict(embargo_dict)
+            embargo = None
+            embargo_dict = access_dict.get("embargo")
+            if embargo_dict is not None:
+                embargo = self._embargo_cls.from_dict(embargo_dict)
+
+        else:
+            # if there is no 'access' property, fall back to default values
+            owners = self._owners_cls()
+            grants = self._grants_cls()
+            protection = self._protection_cls()
+            embargo = None
 
         self.__init__(
             owned_by=owners,
