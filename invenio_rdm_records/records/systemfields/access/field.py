@@ -34,6 +34,16 @@ class Access:
         grants_cls=None,
         protection_cls=None,
     ):
+        """Create a new Access object for a record.
+
+        If ``owned_by``, ``grants`` or ``protection`` are not specified,
+        a new instance of ``owners_cls``, ``grants_cls`` or ``protection_cls``
+        will be used, respectively.
+        :param owned_by: The set of record owners
+        :param grants: The grants permitting access to the record
+        :param protection: The record and file protection levels
+        :param embargo: The embargo on the record (None means no embargo)
+        """
         owners_cls = owners_cls or Access.owners_cls
         grants_cls = grants_cls or Access.grant_cls
         protection_cls = protection_cls or Access.protection_cls
@@ -86,7 +96,7 @@ class Access:
             "record": self.protection.record,
             "files": self.protection.files,
             "owned_by": self.owned_by.dump(),
-            "grants": self.grants.dump(),
+            # "grants": self.grants.dump(),  # TODO enable again when ready
         }
 
         if self.embargo is not None:
@@ -98,12 +108,19 @@ class Access:
     def from_dict(
         cls,
         access_dict,
-        grants_cls=None,
         owners_cls=None,
+        grants_cls=None,
         protection_cls=None,
         embargo_cls=None,
     ):
-        """Create a new Access object from the specified 'access' property."""
+        """Create a new Access object from the specified 'access' property.
+
+        The new ``Access`` object will be populated with new instances from
+        the configured classes.
+        If ``access_dict`` is empty, the ``Access`` object will be populated
+        with new instances of ``owners_cls``, ``grants_cls``, and
+        ``protection_cls``.
+        """
         grants_cls = grants_cls or Access.grant_cls
         owners_cls = owners_cls or Access.owners_cls
         protection_cls = protection_cls or Access.protection_cls
@@ -114,7 +131,7 @@ class Access:
             grants = grants_cls()
 
             for owner_dict in access_dict.get("owned_by", []):
-                owners.add(owners_cls.owner_from_dict(owner_dict))
+                owners.add(owners.owner_cls(owner_dict))
 
             for grant_dict in access_dict.get("grants", []):
                 grants.add(grants.grant_cls.from_dict(grant_dict))
@@ -143,6 +160,7 @@ class Access:
         )
 
     def __repr__(self):
+        """Return repr(self)."""
         protection_str = "{}/{}".format(
             self.protection.record, self.protection.files
         )
@@ -164,6 +182,7 @@ class AccessField(SystemField):
     """System field for managing record access."""
 
     def __init__(self, key="access", access_obj_class=Access):
+        """Create a new AccessField instance."""
         self._access_obj_class = access_obj_class
         super().__init__(key=key)
 
@@ -182,6 +201,7 @@ class AccessField(SystemField):
         return None
 
     def __get__(self, record, owner=None):
+        """Get the record's access object."""
         if record is None:
             # access by class
             return self
@@ -191,4 +211,9 @@ class AccessField(SystemField):
 
     def pre_commit(self, record):
         """Dump the configured values before the record is committed."""
-        record["access"] = self.obj(record).dump()
+        obj = self.obj(record)
+        if obj is not None:
+            # only set the 'access' property if one was present in the
+            # first place -- this was a problem in the unit test:
+            # tests/resources/test_resources.py:test_simple_flow
+            record["access"] = obj.dump()

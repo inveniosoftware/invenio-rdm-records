@@ -15,6 +15,7 @@ class Embargo:
     """Embargo class for the access system field."""
 
     def __init__(self, until, reason=None, active=None):
+        """Create a new Embargo."""
         self.until = until
         if isinstance(self.until, str):
             self.until = arrow.get().datetime
@@ -24,6 +25,7 @@ class Embargo:
 
     @property
     def active(self):
+        """Whether or not the Embargo is (still) active."""
         if self._active is not None:
             return self._active
 
@@ -31,15 +33,18 @@ class Embargo:
 
     @active.setter
     def set_active(self, value):
+        """Set the Embargo's (boolean) active state."""
         self._active = value
 
     def clear(self):
-        # TODO
+        """Completely remove the embargo."""
+        # TODO remove the embargo information entirely
         pass
 
     def lift(self):
-        # TODO
-        pass
+        """Update the embargo active status if it has expired."""
+        if arrow.utcnow().datetime < self.until:
+            self.active = False
 
     def dump(self):
         """Dump the embargo as dictionary."""
@@ -50,11 +55,13 @@ class Embargo:
         }
 
     def __repr__(self):
+        """Return repr(self)."""
         return "<{} (active: {}, until: {}, reason: {})>".format(
             type(self).__name__, self.active, self.until, self.reason
         )
 
     def __bool__(self):
+        """Return bool(self)."""
         return self.active
 
     @classmethod
