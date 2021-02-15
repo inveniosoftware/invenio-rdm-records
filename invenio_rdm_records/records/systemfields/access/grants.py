@@ -10,6 +10,8 @@
 
 from base64 import b64decode, b64encode
 
+from flask_principal import RoleNeed, UserNeed
+from invenio_access.permissions import SystemRoleNeed
 from invenio_accounts.models import Role, User
 
 
@@ -58,8 +60,20 @@ class Grant:
 
     def to_need(self):
         """Create the need that this grant provides."""
-        # TODO create the need(s?) that the grant provides
-        return None
+        if self.subject_type == "user":
+            need = UserNeed(self.subject.id)
+
+        elif self.subject_type == "role":
+            # according to invenio_access.utils:get_identity, RoleNeeds
+            # take the roles' names
+            need = RoleNeed(self.subject.name)
+
+        elif self.subject_type == "sysrole":
+            # system roles don't have a model class behind them, so
+            # it's probably best to go with the subject_id
+            need = SystemRoleNeed(self.subject_id)
+
+        return need
 
     def to_token(self):
         """Dump the Grant to a grant token."""
