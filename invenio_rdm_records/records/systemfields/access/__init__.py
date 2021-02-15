@@ -8,9 +8,17 @@
 """Access system field for RDM Records."""
 
 from .embargo import Embargo
-from .field import AccessField
+from .field import Access, AccessField
 from .grants import Grant, Grants
 from .owners import Owners
 from .protection import Protection
 
-__all__ = ("AccessField", "Embargo", "Grant", "Grants", "Owners", "Protection")
+__all__ = (
+    "Access",
+    "AccessField",
+    "Embargo",
+    "Grant",
+    "Grants",
+    "Owners",
+    "Protection",
+)
