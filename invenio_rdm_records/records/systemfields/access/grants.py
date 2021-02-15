@@ -25,14 +25,32 @@ class Grant:
 
         :param subject: The subject of the permission grant.
         :param permission_level: The granted permission level.
+        :param subject_type: An override for the subject's type.
+        :param subject_id: An override for the subject's ID.
         """
-        self.subject = subject
         self.permission_level = permission_level
+        self._subject = subject
         self._subject_type = subject_type
         self._subject_id = subject_id
 
     @property
+    def subject(self):
+        """The entity that is subject to the Grant.
+
+        Note: If the subject entity has not been cached yet, this operation
+        will trigger a database query.
+        """
+        if self._subject is not None:
+            if self._subject_type == "user":
+                self._subject = User.query.get(self._subject_id)
+            elif self._subject_type == "role":
+                self._subject = Role.query.get(self._subject_id)
+
+        return self._subject
+
+    @property
     def subject_type(self):
+        """The type of the Grant's subject (user, role or sysrole)."""
         if self._subject_type:
             return self._subject_type
 
@@ -43,11 +61,13 @@ class Grant:
             return "role"
 
         else:
-            # TODO
-            raise NotImplementedError()
+            # if it's nothing else, it's gonna be a system role
+            # (which doesn't have a persisted subject entity)
+            return "sysrole"
 
     @property
     def subject_id(self):
+        """The ID of the Grant's subject."""
         if self._subject_id:
             return self._subject_id
 
@@ -96,21 +116,25 @@ class Grant:
         }
 
     @classmethod
-    def from_string_parts(cls, subject_type, subject_id, permission_level):
-        """Create a Grant from the specified parts."""
+    def from_string_parts(
+        cls, subject_type, subject_id, permission_level, fetch_subject=False
+    ):
+        """Create a Grant from the specified parts.
 
-        if subject_type == "user":
-            subject = User.query.get(subject_id)
-
-        elif subject_type == "role":
-            subject = Role.query.get(subject_id)
-
-        elif subject_type == "sysrole":
-            # TODO
-            raise NotImplementedError()
-
-        else:
+        :param subject_type: The grant subject's type (user, role or sysrole).
+        :param subject_id: The grant subject's ID.
+        :param permission_level: The grant's permission level.
+        :param fetch_subject: Whether to fetch the subject entity from the
+                              database eagerly.
+        """
+        if subject_type not in ["user", "role", "sysrole"]:
             raise ValueError("unknown subject type: {}".format(subject_type))
+
+        if fetch_subject:
+            if subject_type == "user":
+                subject = User.query.get(subject_id)
+            elif subject_type == "role":
+                subject = Role.query.get(subject_id)
 
         return cls(
             subject=subject,
@@ -149,12 +173,12 @@ class Grants(set):
     grant_cls = Grant
 
     def __init__(self, grants=None):
+        """Create a new set of Grants."""
         super().__init__(grants or [])
 
     def needs(self, permission):
         """Get allowed needs for the given permission level."""
         needs = {grant.to_need() for grant in self if grant.covers(permission)}
-
         return needs
 
     def dump(self):

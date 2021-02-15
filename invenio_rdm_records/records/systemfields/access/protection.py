@@ -13,6 +13,7 @@ class Protection:
     """Protection class for the access system field."""
 
     def __init__(self, record="public", files="public"):
+        """Create a new protection levels instance."""
         self.set(record=record, files=files)
 
     def _validate_protection_level(self, level):
@@ -34,12 +35,14 @@ class Protection:
             self.files = files
 
     def __get__(self):
+        """Get the protection level of the record and its files."""
         return {
             "record": self.record,
             "files": self.files,
         }
 
     def __repr__(self):
+        """Return repr(self)."""
         return "<{} (record: {}, files: {})>".format(
             type(self).__name__,
             self.record,
