@@ -17,8 +17,8 @@ class Embargo:
     def __init__(self, until, reason=None, active=None):
         """Create a new Embargo."""
         self.until = until
-        if isinstance(self.until, str):
-            self.until = arrow.get().datetime
+        if isinstance(until, str):
+            self.until = arrow.get(until).datetime
 
         self.reason = reason
         self._active = active
@@ -32,25 +32,28 @@ class Embargo:
         return arrow.utcnow().datetime < self.until
 
     @active.setter
-    def set_active(self, value):
+    def active(self, value):
         """Set the Embargo's (boolean) active state."""
-        self._active = value
-
-    def clear(self):
-        """Completely remove the embargo."""
-        # TODO remove the embargo information entirely
-        pass
+        self._active = bool(value)
 
     def lift(self):
-        """Update the embargo active status if it has expired."""
-        if arrow.utcnow().datetime < self.until:
+        """Update the embargo active status if it has expired.
+
+        Returns ``True`` if the embargo was actually lifted (i.e. it was
+        expired but still marked as active).
+        """
+        if arrow.utcnow().datetime > self.until:
+            was_active = bool(self._active)
             self.active = False
+            return was_active
+
+        return False
 
     def dump(self):
         """Dump the embargo as dictionary."""
         return {
             "active": self.active,
-            "until": self.until.isoformat(),
+            "until": self.until.strftime("%Y-%m-%d"),
             "reason": self.reason,
         }
 

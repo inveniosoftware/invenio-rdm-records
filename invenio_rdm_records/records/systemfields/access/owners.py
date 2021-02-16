@@ -40,7 +40,7 @@ class Owner:
         """Dump the owner to a dictionary."""
         return {self.owner_type: self.owner_id}
 
-    def resolve(self):
+    def resolve(self, raise_exc=False):
         """Resolve the owner entity (e.g. User) via a database query."""
         if self._entity is None:
             if self.owner_type == "user":
@@ -51,7 +51,30 @@ class Owner:
                     "unknown owner type: {}".format(self.owner_type)
                 )
 
+            if self._entity is None and raise_exc:
+                raise LookupError(
+                    "could not find owner: {}".format(self.dump())
+                )
+
         return self._entity
+
+    def __hash__(self):
+        """Return hash(self)."""
+        return hash(self.owner_type) + hash(self.owner_id)
+
+    def __eq__(self, other):
+        """Return self == other."""
+        if type(self) != type(other):
+            return False
+
+        return (
+            self.owner_type == other.owner_type
+            and self.owner_id == other.owner_id
+        )
+
+    def __ne__(self, other):
+        """Return self != other."""
+        return not self == other
 
     def __str__(self):
         """Return str(self)."""
@@ -83,14 +106,16 @@ class Owners(set):
 
         super().add(owner)
 
+    def remove(self, owner):
+        """Remove the specified owner from the set of owners.
+
+        :param owner: The record's owner (either a dict, User or Owner).
+        """
+        if not isinstance(owner, self.owner_cls):
+            owner = self.owner_cls(owner)
+
+        super().remove(owner)
+
     def dump(self):
         """Dump the owners as a list of owner dictionaries."""
         return [owner.dump() for owner in self]
-
-    @classmethod
-    def owner_from_dict(cls, dict_):
-        """Parse the owned_by entry into a new Owners element."""
-        if "user" in dict_:
-            return User.query.get(dict_["user"])
-        else:
-            raise ValueError("unknown owner type: {}".format(dict_))

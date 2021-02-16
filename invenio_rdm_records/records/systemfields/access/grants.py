@@ -40,7 +40,7 @@ class Grant:
         Note: If the subject entity has not been cached yet, this operation
         will trigger a database query.
         """
-        if self._subject is not None:
+        if self._subject is None:
             if self._subject_type == "user":
                 self._subject = User.query.get(self._subject_id)
             elif self._subject_type == "role":
@@ -102,9 +102,9 @@ class Grant:
         # this ensures that we can always separate the values again
         # (b/c the base64 alphabet doesn't contain the dot)
         return "{}.{}.{}".format(
-            b64encode(self.subject_type),
-            b64encode(self.subject_id),
-            b64encode(self.permission_level),
+            b64encode(str(self.subject_type).encode()).decode(),
+            b64encode(str(self.subject_id).encode()).decode(),
+            b64encode(str(self.permission_level).encode()).decode(),
         )
 
     def to_dict(self):
@@ -135,6 +135,8 @@ class Grant:
                 subject = User.query.get(subject_id)
             elif subject_type == "role":
                 subject = Role.query.get(subject_id)
+        else:
+            subject = None
 
         return cls(
             subject=subject,
@@ -148,7 +150,7 @@ class Grant:
         """Parse the grant token into a Grant."""
         # TODO
         subject_type, subject_id, permission_level = (
-            b64decode(val) for val in token.split(".")
+            b64decode(val).decode() for val in token.split(".")
         )
 
         return cls.from_string_parts(
@@ -164,6 +166,38 @@ class Grant:
 
         return cls.from_string_parts(
             subject_type, subject_id, permission_level
+        )
+
+    def __hash__(self):
+        """Return hash(self)."""
+        return (
+            hash(self.subject_type)
+            + hash(self.subject_id)
+            + hash(self.permission_level)
+        )
+
+    def __eq__(self, other):
+        """Return self == other."""
+        if type(self) != type(other):
+            return False
+
+        return (
+            self.subject_type == other.subject_type
+            and self.subject_id == other.subject_id
+            and self.permission_level == other.permission_level
+        )
+
+    def __ne__(self, other):
+        """Return self != other."""
+        return not self == other
+
+    def __repr__(self):
+        """Return repr(self)."""
+        return "<{} (subject: {}, id: {}, level: {})>".format(
+            type(self).__name__,
+            self.subject_type,
+            self.subject_id,
+            self.permission_level,
         )
 
 
