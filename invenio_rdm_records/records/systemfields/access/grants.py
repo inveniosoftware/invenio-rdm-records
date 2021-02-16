@@ -97,7 +97,6 @@ class Grant:
 
     def to_token(self):
         """Dump the Grant to a grant token."""
-        # TODO
         # do something similar to JWT: base64-encode and separate with dots
         # this ensures that we can always separate the values again
         # (b/c the base64 alphabet doesn't contain the dot)
@@ -148,7 +147,6 @@ class Grant:
     @classmethod
     def from_token(cls, token):
         """Parse the grant token into a Grant."""
-        # TODO
         subject_type, subject_id, permission_level = (
             b64decode(val).decode() for val in token.split(".")
         )
