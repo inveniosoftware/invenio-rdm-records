@@ -82,7 +82,9 @@ def test_embargo_lift():
 #
 
 
-def test_grant_creation(user, role):
+def test_grant_creation(users, roles):
+    user = users[0]
+    role = roles[0]
     grant = Grant(user, "view")
     assert grant.subject_type == "user"
     assert grant.subject_id == user.id
@@ -99,7 +101,8 @@ def test_grant_creation(user, role):
     assert grant.subject is None
 
 
-def test_grant_from_dict(user):
+def test_grant_from_dict(users):
+    user = users[0]
     grant_dict = {"subject": "user", "id": user.id, "level": "view"}
     grant = Grant.from_dict(grant_dict)
     assert grant.subject_type == "user"
@@ -107,7 +110,9 @@ def test_grant_from_dict(user):
     assert grant.subject == user
 
 
-def test_grant_to_need(user, role):
+def test_grant_to_need(users, roles):
+    user = users[0]
+    role = roles[0]
     grant = Grant(user, "view")
     need = grant.to_need()
     assert need.method == "id"
@@ -153,7 +158,9 @@ def test_grant_to_and_from_token():
     assert Grant.from_token(grant.to_token()) == grant
 
 
-def test_grants_creation(user, role):
+def test_grants_creation(users, roles):
+    user = users[0]
+    role = roles[0]
     grant1 = Grant(user, "manage")
     grant2 = Grant(role, "view")
     dict_ = {"subject": "sysrole", "id": "system", "level": "view"}
@@ -166,7 +173,9 @@ def test_grants_creation(user, role):
     assert len(grants) == 3
 
 
-def test_grants_dump(user, role):
+def test_grants_dump(users, roles):
+    user = users[0]
+    role = roles[0]
     grant1 = Grant(user, "manage")
     grant2 = Grant(role, "view")
     dict_ = {"subject": "sysrole", "id": "system", "level": "view"}
@@ -180,7 +189,9 @@ def test_grants_dump(user, role):
     assert grant3.to_dict() in dump
 
 
-def test_grants_needs(user, role):
+def test_grants_needs(users, roles):
+    user = users[0]
+    role = roles[0]
     grant1 = Grant(user, "manage")
     grant2 = Grant(role, "view")
     dict_ = {"subject": "sysrole", "id": "system", "level": "view"}
@@ -197,7 +208,8 @@ def test_grants_needs(user, role):
 #
 
 
-def test_owner_creation(user):
+def test_owner_creation(users):
+    user = users[0]
     owner1 = Owner({"user": user.id})
     owner2 = Owner(user)
     assert owner1.owner_id == owner2.owner_id == user.id
@@ -205,7 +217,8 @@ def test_owner_creation(user):
     assert owner1.dump() == owner2.dump()
 
 
-def test_owner_resolve(user):
+def test_owner_resolve(users):
+    user = users[0]
     owner = Owner({"user": user.id})
     assert owner.resolve() == user
 
@@ -222,7 +235,8 @@ def test_owner_dump():
     assert owner.dump() == dict_
 
 
-def test_owners_creation(user):
+def test_owners_creation(users):
+    user = users[0]
     owner1 = Owner({"user": user.id})
     owner2 = Owner(user)
     owner3 = Owner({"user": 1337})
