@@ -13,12 +13,10 @@ from datetime import timedelta
 
 import arrow
 import pytest
-from flask_babelex import lazy_gettext as _
-from marshmallow.exceptions import ValidationError
 
 from invenio_rdm_records.records import RDMRecord
 from invenio_rdm_records.records.systemfields.access import Access, \
-    AccessField, Embargo, Grant, Grants, Owner, Owners, Protection
+    Embargo, Grant, Grants, Owner, Owners, Protection
 
 #
 # Protection
@@ -135,7 +133,7 @@ def test_grant_to_token():
         b64encode("system".encode()).decode(),
         b64encode("view".encode()).decode(),
     )
-    need = grant.to_token() == token
+    assert grant.to_token() == token
 
 
 def test_grant_from_token():
@@ -152,7 +150,7 @@ def test_grant_from_token():
 def test_grant_to_and_from_token():
     dict_ = {"subject": "sysrole", "id": "system", "level": "view"}
     grant = Grant.from_dict(dict_)
-    need = Grant.from_token(grant.to_token()) == grant
+    assert Grant.from_token(grant.to_token()) == grant
 
 
 def test_grants_creation(user, role):
