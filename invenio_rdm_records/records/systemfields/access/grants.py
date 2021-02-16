@@ -41,12 +41,29 @@ class Grant:
         will trigger a database query.
         """
         if self._subject is None:
-            if self._subject_type == "user":
-                self._subject = User.query.get(self._subject_id)
-            elif self._subject_type == "role":
-                self._subject = Role.query.get(self._subject_id)
+            self._subject = self.resolve_subject()
 
         return self._subject
+
+    def resolve_subject(self, raise_exc=False):
+        """Force resolving of the grant's subject.
+
+        If the grant subject should be resolvable (i.e. it is not a
+        system role) but cannot be found and ``raise_exc`` is set,
+        a LookupError will be raised.
+        """
+        subject = None
+        if self._subject_type == "user":
+            subject = User.query.get(self._subject_id)
+        elif self._subject_type == "role":
+            subject = Role.query.get(self._subject_id)
+
+        if self._subject_type in ["user", "role"] and subject is None:
+            raise LookupError(
+                "could not find grant subject: {}".format(self.to_dict())
+            )
+
+        return subject
 
     @property
     def subject_type(self):
