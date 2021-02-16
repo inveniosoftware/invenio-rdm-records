@@ -59,7 +59,7 @@ def create_app():
 
 
 @pytest.fixture(scope='function')
-def full_record():
+def full_record(users):
     """Full record data as dict coming from the external world."""
     return {
         "pids": {
@@ -218,17 +218,17 @@ def full_record():
         },
         "provenance": {
             "created_by": {
-                "user": 1
+                "user": users[0].id
             },
             "on_behalf_of": {
-                "user": 2
+                "user": users[1].id
             }
         },
         "access": {
             "record": "public",
             "files": "restricted",
             "owned_by": [{
-                "user": 1
+                "user": users[0].id
             }],
             "embargo": {
                 "active": True,
@@ -262,13 +262,13 @@ def full_record():
 
 
 @pytest.fixture(scope='function')
-def minimal_record():
+def minimal_record(users):
     """Minimal record data as dict coming from the external world."""
     return {
         "access": {
             "record": "public",
             "files": "public",
-            "owned_by": [{"user": 1}],
+            "owned_by": [{"user": users[0].id}],
         },
         "metadata": {
             "publication_date": "2020-06-01",
@@ -294,27 +294,31 @@ def minimal_record():
 
 
 @pytest.fixture()
-def user(app, db):
+def users(app, db):
     """Create example user."""
     with db.session.begin_nested():
         datastore = app.extensions["security"].datastore
-        user = datastore.create_user(email="info@inveniosoftware.org",
-                                     password="password", active=True)
+        user1 = datastore.create_user(email="info@inveniosoftware.org",
+                                      password="password", active=True)
+        user2 = datastore.create_user(email="ser-testalot@inveniosoftware.org",
+                                      password="beetlesmasher", active=True)
 
     db.session.commit()
-    return user
+    return [user1, user2]
 
 
 @pytest.fixture()
-def role(app, db):
+def roles(app, db):
     """Create example user."""
     with db.session.begin_nested():
         datastore = app.extensions["security"].datastore
-        role = datastore.create_role(name="test",
-                                     description="role for testing purposes")
+        role1 = datastore.create_role(name="test",
+                                      description="role for testing purposes")
+        role2 = datastore.create_role(name="strong",
+                                      description="tests are coming")
 
     db.session.commit()
-    return role
+    return [role1, role2]
 
 
 @pytest.fixture(scope="module")
