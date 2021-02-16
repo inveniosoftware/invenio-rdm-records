@@ -15,8 +15,8 @@ import arrow
 import pytest
 
 from invenio_rdm_records.records import RDMRecord
-from invenio_rdm_records.records.systemfields.access import Access, \
-    Embargo, Grant, Grants, Owner, Owners, Protection
+from invenio_rdm_records.records.systemfields.access import Access, Embargo, \
+    Grant, Grants, Owner, Owners, Protection
 
 #
 # Protection
