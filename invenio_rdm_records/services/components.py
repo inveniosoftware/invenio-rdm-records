@@ -17,6 +17,7 @@ class AccessComponent(ServiceComponent):
     """Service component for access integration."""
 
     def _validate_record_access(self, record):
+        """Check if all entities referenced in record.access do exist."""
         errors = []
 
         for owner in record.access.owners:
@@ -33,33 +34,26 @@ class AccessComponent(ServiceComponent):
 
         return errors
 
-    def _format_errors(self, errors):
-        return ", ".join([str(e) for e in errors])
+    def _populate_access_and_validate(self, identity, data, record, **kwargs):
+        """Populate and validate the record's access field."""
+        if "access" in data:
+            # populate the record's access field with the data already
+            # validated by marshmallow
+            record.update({"access": data.get("access")})
+
+        if record is not None and not record.access.owners and identity.id:
+            # TODO can this even happen? isn't the min length 1 in marshmallow?
+            record.access.owners.add({"user": identity.id})
+
+        errors = self._validate_record_access(record)
+        if errors:
+            message = ", ".join([str(e) for e in errors])
+            raise ValidationError(message, field_name="access")
 
     def create(self, identity, data=None, record=None, **kwargs):
         """Add basic ownership fields to the record."""
-        if "access" in data:
-            record.update({"access": data.get("access")})
-
-        if record is not None and not record.access.owners and identity.id:
-            # TODO can this even happen? isn't the min length 1 in marshmallow?
-            record.access.owners.add({"user": identity.id})
-
-        errors = self._validate_record_access(record)
-        if errors:
-            message = self._format_errors(errors)
-            raise ValidationError(message, field_name="access")
+        self._populate_access_and_validate(identity, data, record, **kwargs)
 
     def update(self, identity, data=None, record=None, **kwargs):
         """Update handler."""
-        if "access" in data:
-            record.update({"access": data.get("access")})
-
-        if record is not None and not record.access.owners and identity.id:
-            # TODO can this even happen? isn't the min length 1 in marshmallow?
-            record.access.owners.add({"user": identity.id})
-
-        errors = self._validate_record_access(record)
-        if errors:
-            message = self._format_errors(errors)
-            raise ValidationError(message, field_name="access")
+        self._populate_access_and_validate(identity, data, record, **kwargs)
