@@ -216,6 +216,16 @@ class AccessField(SystemField):
 
         return None
 
+    def set_obj(self, record, obj):
+        """Set the access object."""
+        # We accept both dicts and access class objects.
+        if isinstance(obj, dict):
+            obj = self._access_obj_class.from_dict(obj)
+        assert isinstance(obj, self._access_obj_class)
+        # We do not dump the object until the pre_commit hook
+        # I.e. record.access != record['access']
+        self._set_cache(record, obj)
+
     def __get__(self, record, owner=None):
         """Get the record's access object."""
         if record is None:
@@ -224,6 +234,10 @@ class AccessField(SystemField):
 
         # access by object
         return self.obj(record)
+
+    def __set__(self, record, obj):
+        """Set the records access object."""
+        self.set_obj(record, obj)
 
     def pre_commit(self, record):
         """Dump the configured values before the record is committed."""
