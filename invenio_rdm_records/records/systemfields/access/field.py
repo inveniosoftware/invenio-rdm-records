@@ -63,7 +63,15 @@ class Access:
         if protection is None:
             self._protection = protection_cls("public", "public")
 
-        self._embargo = embargo
+        self.embargo = embargo
+
+    def clear_embargo(self):
+        """Remove all information about the embargo."""
+        if self.embargo is not None:
+            # disable the embargo first, for good measure
+            self.embargo.active = False
+
+        self._embargo = None
 
     @property
     def owned_by(self):
@@ -89,6 +97,14 @@ class Access:
     def embargo(self):
         """The embargo information of the record."""
         return self._embargo
+
+    @embargo.setter
+    def embargo(self, embargo):
+        self._embargo = embargo
+
+        if embargo is not None:
+            # allow 'clear_embargo()' to be called as 'embargo.clear()'
+            self._embargo.clear = lambda: self.clear_embargo()
 
     def dump(self):
         """Dump the field values as dictionary."""

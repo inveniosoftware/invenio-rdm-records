@@ -293,6 +293,30 @@ def minimal_record():
     }
 
 
+@pytest.fixture()
+def user(app, db):
+    """Create example user."""
+    with db.session.begin_nested():
+        datastore = app.extensions["security"].datastore
+        user = datastore.create_user(email="info@inveniosoftware.org",
+                                     password="password", active=True)
+
+    db.session.commit()
+    return user
+
+
+@pytest.fixture()
+def role(app, db):
+    """Create example user."""
+    with db.session.begin_nested():
+        datastore = app.extensions["security"].datastore
+        role = datastore.create_role(name="test",
+                                     description="role for testing purposes")
+
+    db.session.commit()
+    return role
+
+
 @pytest.fixture(scope="module")
 def identity_simple():
     """Simple identity fixture."""
