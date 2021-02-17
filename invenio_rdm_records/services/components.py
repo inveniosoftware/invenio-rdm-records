@@ -36,34 +36,19 @@ class AccessComponent(ServiceComponent):
 
     def _populate_access_and_validate(self, identity, data, record, **kwargs):
         """Populate and validate the record's access field."""
-        errors = []
-
         if "access" in data:
             # populate the record's access field with the data already
             # validated by marshmallow
             record.update({"access": data.get("access")})
-            try:
-                record.access.refresh_from_dict(record.get("access"))
-            except Exception as e:
-                # NOTE: in "severe" cases, even accessing 'record.access' can
-                #       raise an exception -- e.g. if unknown owner types
-                #       (i.e. anything other than {"user": id}, e.g. {})
-                #       has been specified
-                errors.append(e)
+            record.access.refresh_from_dict(record.get("access"))
 
-        try:
-            if record is not None and not record.access.owners and identity.id:
-                # NOTE: this should not happen, because the jsonschema demands
-                #       at least one owner to be specified
-                record.access.owners.add({"user": identity.id})
+        if record is not None and not record.access.owners and identity.id:
+            # NOTE: this should not happen, because the jsonschema demands
+            #       at least one owner to be specified
+            record.access.owners.add({"user": identity.id})
 
-        except Exception as e:
-            errors.append(e)
-
-        try:
-            errors.extend(self._validate_record_access(record))
-        except Exception as e:
-            errors.append(e)
+        errors = self._validate_record_access(record)
+        errors.extend(record.access.errors)
 
         if errors:
             # filter out duplicate error messages
