@@ -8,6 +8,8 @@
 
 """Bibliographic Record Resource."""
 
+from flask import g
+from flask_resources.context import resource_requestctx
 from invenio_drafts_resources.resources import DraftActionResource, \
     DraftFileActionResource, DraftFileResource, DraftResource, \
     RecordResource
@@ -52,6 +54,17 @@ class RDMUserRecordsResource(RDMRecordResource):
 
     config_name = "RDM_RECORDS_BIBLIOGRAPHIC_USER_RECORDS_CONFIG"
     default_config = config.RDMUserRecordsResourceConfig
+
+    def search(self):
+        """Perform a search over the items."""
+        identity = g.identity
+        hits = self.service.search_drafts(
+            identity=identity,
+            params=resource_requestctx.url_args,
+            links_config=self.config.links_config,
+            es_preference=self._get_es_preference()
+        )
+        return hits.to_dict(), 200
 
 
 #

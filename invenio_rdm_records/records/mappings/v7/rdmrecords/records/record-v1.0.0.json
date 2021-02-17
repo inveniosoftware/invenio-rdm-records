@@ -55,6 +55,9 @@
           }
         }
       },
+      "has_draft": {
+        "type": "boolean"
+      },
       "metadata" : {
         "properties" : {
           "_default_preview" : {
@@ -428,6 +431,9 @@
       },
       "updated" : {
         "type" : "date"
+      },
+      "status": {
+        "type": "keyword"
       }
     }
   }
