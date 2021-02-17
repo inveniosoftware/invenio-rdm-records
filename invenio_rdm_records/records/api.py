@@ -19,8 +19,9 @@ from invenio_vocabularies.records.api import Vocabulary
 from werkzeug.local import LocalProxy
 
 from . import models
-from .dumpers import EDTFDumperExt, EDTFListDumperExt, GrantTokensDumperExt
-from .systemfields import AccessField
+from .dumpers import EDTFDumperExt, EDTFListDumperExt, GrantTokensDumperExt, \
+    HasDraftDumperExt
+from .systemfields import AccessField, HasDraftCheckField, RecordStatusField
 
 
 #
@@ -38,6 +39,7 @@ class CommonFieldsMixin:
             EDTFListDumperExt("metadata.dates", "date"),
             GrantTokensDumperExt("access.grant_tokens"),
             RelationDumperExt('relations'),
+            HasDraftDumperExt('has_draft'),
         ]
     )
 
@@ -54,6 +56,35 @@ class CommonFieldsMixin:
     bucket = ModelField(dump=False)
 
     access = AccessField()
+
+    status = RecordStatusField()
+
+
+#
+# Draft API
+#
+class DraftFile(RecordFileBase):
+    """File associated with a draft."""
+
+    model_cls = models.DraftFile
+    record_cls = LocalProxy(lambda: RDMDraft)
+
+
+class RDMDraft(CommonFieldsMixin, Draft):
+    """RDM draft API."""
+
+    model_cls = models.DraftMetadata
+
+    index = IndexField(
+        "rdmrecords-drafts-draft-v1.0.0", search_alias="rdmrecords"
+    )
+
+    files = FilesField(
+        store=False,
+        file_cls=DraftFile,
+        # Don't delete, we'll manage in the service
+        delete=False,
+    )
 
 
 #
@@ -84,29 +115,4 @@ class RDMRecord(CommonFieldsMixin, Record):
         delete=False,
     )
 
-
-#
-# Draft API
-#
-class DraftFile(RecordFileBase):
-    """File associated with a draft."""
-
-    model_cls = models.DraftFile
-    record_cls = LocalProxy(lambda: RDMDraft)
-
-
-class RDMDraft(CommonFieldsMixin, Draft):
-    """RDM draft API."""
-
-    model_cls = models.DraftMetadata
-
-    index = IndexField(
-        "rdmrecords-drafts-draft-v1.0.0", search_alias="rdmrecords-drafts"
-    )
-
-    files = FilesField(
-        store=False,
-        file_cls=DraftFile,
-        # Don't delete, we'll manage in the service
-        delete=False,
-    )
+    has_draft = HasDraftCheckField(RDMDraft)

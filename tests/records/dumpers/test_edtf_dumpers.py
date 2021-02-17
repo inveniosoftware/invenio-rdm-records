@@ -165,7 +165,6 @@ def test_eslistdumper_with_edtfext_parse_error(app, db, minimal_record):
     assert 'type' in new_record['metadata']['resource_type']
 
 
-@pytest.mark.skip()
 def test_edtf_dumper_query(app, db, location, minimal_record, users):
     """Test edft extension queries."""
     identity = Identity(users[0].id)

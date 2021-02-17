@@ -22,7 +22,7 @@ class RDMRecordService(RecordDraftService):
     default_config = config.RDMRecordServiceConfig
 
 
-class RDMUserRecordsService(RecordService):
+class RDMUserRecordsService(RecordDraftService):
     """Bibliographic user records service."""
 
     config_name = "RDM_RECORDS_BIBLIOGRAPHIC_USER_RECORDS_SERVICE_CONFIG"
