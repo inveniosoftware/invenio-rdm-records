@@ -40,9 +40,11 @@ class AccessComponent(ServiceComponent):
             # populate the record's access field with the data already
             # validated by marshmallow
             record.update({"access": data.get("access")})
+            record.access.refresh_from_dict(record.get("access"))
 
         if record is not None and not record.access.owners and identity.id:
-            # TODO can this even happen? isn't the min length 1 in marshmallow?
+            # NOTE: this should not happen, because the jsonschema demands at
+            #       least one owner to be specified
             record.access.owners.add({"user": identity.id})
 
         errors = self._validate_record_access(record)

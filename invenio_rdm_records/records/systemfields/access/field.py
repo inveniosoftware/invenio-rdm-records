@@ -120,6 +120,14 @@ class Access:
 
         return access
 
+    def refresh_from_dict(self, access_dict):
+        """Re-initialize the Access object with the data in the access_dict."""
+        new_access = self.from_dict(access_dict)
+        self._owned_by = new_access.owned_by
+        self._grants = new_access.grants
+        self._protection = new_access.protection
+        self.embargo = new_access.embargo
+
     @classmethod
     def from_dict(
         cls,
@@ -137,10 +145,10 @@ class Access:
         with new instances of ``owners_cls``, ``grants_cls``, and
         ``protection_cls``.
         """
-        grants_cls = grants_cls or Access.grant_cls
-        owners_cls = owners_cls or Access.owners_cls
-        protection_cls = protection_cls or Access.protection_cls
-        embargo_cls = embargo_cls or Access.embargo_cls
+        grants_cls = grants_cls or cls.grant_cls
+        owners_cls = owners_cls or cls.owners_cls
+        protection_cls = protection_cls or cls.protection_cls
+        embargo_cls = embargo_cls or cls.embargo_cls
 
         if access_dict:
             owners = owners_cls()
