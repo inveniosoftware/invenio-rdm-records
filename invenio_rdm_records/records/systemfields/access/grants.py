@@ -199,14 +199,29 @@ class Grant:
         )
 
 
-class Grants(set):
-    """Set of grants for various permission levels on a record."""
+class Grants(list):
+    """List of grants for various permission levels on a record."""
 
     grant_cls = Grant
 
     def __init__(self, grants=None):
-        """Create a new set of Grants."""
-        super().__init__(grants or [])
+        """Create a new list of Grants."""
+        for grant in grants or []:
+            self.add(grant)
+
+    def append(self, grant):
+        """Add the grant to the list of grants."""
+        if grant not in self:
+            super().append(grant)
+
+    def add(self, grant):
+        """Alias for self.append(grant)."""
+        self.append(grant)
+
+    def extend(self, grants):
+        """Add all new items from the specified grants to this list."""
+        for grant in grants:
+            self.add(grant)
 
     def needs(self, permission):
         """Get allowed needs for the given permission level."""

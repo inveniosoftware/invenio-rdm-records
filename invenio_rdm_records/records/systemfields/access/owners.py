@@ -85,29 +85,39 @@ class Owner:
         return repr(self.resolve())
 
 
-class Owners(set):
-    """A set of owners for a record."""
+class Owners(list):
+    """A list of owners for a record."""
 
     owner_cls = Owner
 
     def __init__(self, owners=None, owner_cls=None):
-        """Create a new set of owners."""
+        """Create a new list of owners."""
         self.owner_cls = owner_cls or Owners.owner_cls
         for owner in owners or []:
             self.add(owner)
 
     def add(self, owner):
-        """Add the specified owner to the set of owners.
+        """Alias for self.append(owner)."""
+        self.append(owner)
+
+    def append(self, owner):
+        """Add the specified owner to the list of owners.
 
         :param owner: The record's owner (either a dict, User or Owner).
         """
         if not isinstance(owner, self.owner_cls):
             owner = self.owner_cls(owner)
 
-        super().add(owner)
+        if owner not in self:
+            super().append(owner)
+
+    def extend(self, owners):
+        """Add all new items from the specified owners to this list."""
+        for owner in owners:
+            self.add(owner)
 
     def remove(self, owner):
-        """Remove the specified owner from the set of owners.
+        """Remove the specified owner from the list of owners.
 
         :param owner: The record's owner (either a dict, User or Owner).
         """
