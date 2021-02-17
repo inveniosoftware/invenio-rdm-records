@@ -14,14 +14,14 @@ fixtures are available.
 """
 
 import pytest
-from flask_principal import Identity
+from flask_principal import Identity, UserNeed
 from invenio_access.permissions import any_user, authenticated_user, \
     system_process
 from invenio_records_permissions.generators import AnyUser, \
     AuthenticatedUser, SystemProcess
 
 from invenio_rdm_records.records import RDMRecord
-from invenio_rdm_records.services.generators import IfRestricted
+from invenio_rdm_records.services.generators import IfRestricted, RecordOwners
 
 
 def _public_record():
@@ -33,6 +33,12 @@ def _public_record():
 def _restricted_record():
     record = RDMRecord({}, access={})
     record.access.protection.set("restricted", "restricted")
+    return record
+
+
+def _owned_record():
+    record = RDMRecord({}, access={})
+    record.access.owners.add({'user': 16})
     return record
 
 
@@ -81,3 +87,26 @@ def test_ifrestricted_query():
             ]
         }
     }
+
+
+def test_record_owner(mocker):
+    generator = RecordOwners()
+    record = _owned_record()
+
+    assert generator.needs(record=record) == [
+        UserNeed(16),
+    ]
+
+    assert generator.excludes(record=record) == []
+
+    # Anonymous identity.
+    assert not generator.query_filter(identity=mocker.Mock(provides=[]))
+
+    # Authenticated identity
+    query_filter = generator.query_filter(
+        identity=mocker.Mock(
+            provides=[mocker.Mock(method='id', value=15)]
+        )
+    )
+
+    assert query_filter.to_dict() == {'term': {'access.owned_by': 15}}
