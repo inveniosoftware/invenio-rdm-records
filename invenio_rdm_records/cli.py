@@ -257,6 +257,6 @@ def create_vocabularies():
     """Create the vocabularies required for record creation."""
     click.secho('Creating vocabularies...', fg='green')
 
-    FixturesEngine(system_identity()).run()
+    FixturesEngine(system_identity).run()
 
     click.secho('Created vocabularies!', fg='green')
