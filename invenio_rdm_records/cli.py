@@ -16,18 +16,11 @@ from edtf.parser.grammar import level0Expression
 from faker import Faker
 from flask.cli import with_appcontext
 from flask_principal import Identity
-from invenio_access import any_user
+from invenio_access.permissions import system_identity
 
 from .fixtures import FixturesEngine
 from .services import RDMDraftFilesService, RDMRecordService
 from .vocabularies import Vocabularies
-
-
-def system_identity():
-    """System identity."""
-    identity = Identity(1)
-    identity.provides.add(any_user)
-    return identity
 
 
 def fake_resource_type():
@@ -232,10 +225,10 @@ def create_fake_record():
     service = RDMRecordService()
     draft_files_service = RDMDraftFilesService()
 
-    draft = service.create(data=data_to_use, identity=system_identity())
+    draft = service.create(data=data_to_use, identity=system_identity)
     draft_files_service.update_files(
-        id_=draft.id, identity=system_identity(), data={'enabled': False})
-    record = service.publish(id_=draft.id, identity=system_identity())
+        id_=draft.id, identity=system_identity, data={'enabled': False})
+    record = service.publish(id_=draft.id, identity=system_identity)
 
     return record
 
