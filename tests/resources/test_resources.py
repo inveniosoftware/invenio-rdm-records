@@ -35,6 +35,29 @@ def _assert_single_item_response(response):
         assert field in response_fields
 
 
+def _validate_access(response, original):
+    """Validate that the record's access is as specified."""
+    assert "access" in response
+
+    access, orig_access = response["access"], original["access"]
+    assert len(access["owned_by"]) == len(orig_access["owned_by"])
+    assert access["record"] == orig_access["record"]
+    assert access["files"] == orig_access["files"]
+
+    if orig_access.get("embargo"):
+        assert "embargo" in access
+        embargo, orig_embargo = access["embargo"], orig_access["embargo"]
+
+        until = arrow.get(embargo["until"]).datetime
+        orig_until = arrow.get(orig_embargo["until"]).datetime
+        assert until.strftime("%Y-%m-%d") == orig_until.strftime("%Y-%m-%d")
+
+        if embargo.get("reason"):
+            assert embargo.get("reason") == orig_embargo.get("reason")
+
+        assert embargo.get("active") == orig_embargo.get("active")
+
+
 def test_simple_flow(app, client, location, minimal_record, headers):
     """Test a simple REST API flow."""
     # Create a draft
@@ -42,12 +65,14 @@ def test_simple_flow(app, client, location, minimal_record, headers):
         '/records', headers=headers, data=json.dumps(minimal_record))
     assert created_draft.status_code == 201
     _assert_single_item_response(created_draft)
+    _validate_access(created_draft.json, minimal_record)
     id_ = created_draft.json["id"]
 
     # Read the draft
     read_draft = client.get(f'/records/{id_}/draft', headers=headers)
     assert read_draft.status_code == 200
     assert read_draft.json['metadata'] == created_draft.json['metadata']
+    _validate_access(read_draft.json, minimal_record)
 
     # Update and save draft
     data = read_draft.json
@@ -57,6 +82,7 @@ def test_simple_flow(app, client, location, minimal_record, headers):
         f'/records/{id_}/draft', headers=headers, data=json.dumps(data))
     assert res.status_code == 200
     assert res.json['metadata']["title"] == 'New title'
+    _validate_access(res.json, minimal_record)
 
     # Publish it
     response = client.post(
@@ -66,6 +92,7 @@ def test_simple_flow(app, client, location, minimal_record, headers):
     recid = response.json["id"]
     response = client.get("/records/{}".format(recid), headers=headers)
     assert response.status_code == 200
+    _validate_access(response.json, minimal_record)
 
     created_record = response.json
 
@@ -80,6 +107,7 @@ def test_simple_flow(app, client, location, minimal_record, headers):
         created_record['metadata']
     data = res.json['hits']['hits'][0]
     assert data['metadata']['title'] == 'New title'
+    _validate_access(data, minimal_record)
 
 
 def test_create_draft(client, location, minimal_record, headers):
@@ -89,6 +117,7 @@ def test_create_draft(client, location, minimal_record, headers):
 
     assert response.status_code == 201
     _assert_single_item_response(response)
+    _validate_access(response.json, minimal_record)
 
 
 def test_create_partial_draft(client, location, minimal_record, headers):
@@ -125,6 +154,7 @@ def test_read_draft(client, location, minimal_record, headers):
     assert response.status_code == 200
 
     _assert_single_item_response(response)
+    _validate_access(response.json, minimal_record)
 
 
 def test_update_draft(client, location, minimal_record, headers):
@@ -135,6 +165,7 @@ def test_update_draft(client, location, minimal_record, headers):
     assert response.status_code == 201
     assert response.json['metadata']["title"] == \
         minimal_record['metadata']["title"]
+    _validate_access(response.json, minimal_record)
 
     recid = response.json['id']
 
@@ -153,6 +184,7 @@ def test_update_draft(client, location, minimal_record, headers):
     assert update_response.json["metadata"]["title"] == \
         edited_title
     assert update_response.json["id"] == recid
+    _validate_access(update_response.json, minimal_record)
 
     # Check the updates where saved
     update_response = client.get(
@@ -162,6 +194,7 @@ def test_update_draft(client, location, minimal_record, headers):
     assert update_response.json["metadata"]["title"] == \
         edited_title
     assert update_response.json["id"] == recid
+    _validate_access(update_response.json, minimal_record)
 
 
 def test_update_partial_draft(client, location, minimal_record, headers):
@@ -226,6 +259,7 @@ def _create_and_publish(client, minimal_record, headers):
 
     assert response.status_code == 201
     recid = response.json['id']
+    _validate_access(response.json, minimal_record)
 
     # Publish it
     response = client.post(
@@ -233,6 +267,7 @@ def _create_and_publish(client, minimal_record, headers):
 
     assert response.status_code == 202
     _assert_single_item_response(response)
+    _validate_access(response.json, minimal_record)
 
     return recid
 
@@ -253,6 +288,7 @@ def test_publish_draft(client, location, minimal_record, headers):
     assert 200 == response.status_code
 
     _assert_single_item_response(response)
+    _validate_access(response.json, minimal_record)
 
 
 # TODO
