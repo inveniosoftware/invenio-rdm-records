@@ -114,10 +114,9 @@ def test_full_metadata_schema(vocabulary_clear, full_record):
     assert data == full_record
 
 
-def test_minimal_metadata_schema(vocabulary_clear, minimal_metadata):
-    expected_metadata = deepcopy(minimal_metadata)
-    expected_metadata["creators"][0]["person_or_org"]["name"] = "Brown, Troy"
+def test_minimal_metadata_schema(
+        vocabulary_clear, minimal_metadata, expected_minimal_metadata):
 
-    data = MetadataSchema().load(minimal_metadata)
+    metadata = MetadataSchema().load(minimal_metadata)
 
-    assert data == expected_metadata
+    assert expected_minimal_metadata == metadata

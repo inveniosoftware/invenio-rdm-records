@@ -7,10 +7,13 @@
 
 """Test date schema."""
 
+from copy import deepcopy
+
 import pytest
 from marshmallow import ValidationError
 
-from invenio_rdm_records.services.schemas.metadata import DateSchema
+from invenio_rdm_records.services.schemas.metadata import DateSchema, \
+    MetadataSchema
 
 
 def test_valid_full_date():
@@ -65,3 +68,16 @@ def test_invalid_range():
     }
     with pytest.raises(ValidationError):
         data = DateSchema().load(invalid_range)
+
+
+def test_dates_in_metadata_schema(
+        minimal_metadata, expected_minimal_metadata, vocabulary_clear):
+    minimal_metadata["dates"] = expected_minimal_metadata["dates"] = [{
+        "date": "1939/1945",
+        "type": "other",
+        "description": "A date"
+    }]
+
+    metadata = MetadataSchema().load(minimal_metadata)
+
+    assert expected_minimal_metadata == metadata
