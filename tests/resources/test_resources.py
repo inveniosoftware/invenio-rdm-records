@@ -10,8 +10,8 @@
 
 import json
 
+import arrow
 import pytest
-from sqlalchemy.orm.exc import NoResultFound
 
 from invenio_rdm_records.records import RDMRecord
 
@@ -28,8 +28,9 @@ def ui_headers():
 def _assert_single_item_response(response):
     """Assert the fields present on a single item response."""
     response_fields = response.json.keys()
-    fields_to_check = ['id', 'conceptid', 'metadata',
-                       'created', 'updated', 'links']
+    fields_to_check = [
+        'access', 'conceptid', 'created', 'id', 'links', 'metadata', 'updated'
+    ]
 
     for field in fields_to_check:
         assert field in response_fields
@@ -289,6 +290,26 @@ def test_publish_draft(client, location, minimal_record, headers):
 
     _assert_single_item_response(response)
     _validate_access(response.json, minimal_record)
+
+
+def test_publish_draft_w_dates(client, location, minimal_record, headers):
+    """Test publication of a draft with dates."""
+    dates = [{
+        "date": "1939/1945",
+        "type": "other",
+        "description": "A date"
+    }]
+    minimal_record["metadata"]["dates"] = dates
+
+    recid = _create_and_publish(client, minimal_record, headers)
+
+    response = client.get(f"/records/{recid}/draft", headers=headers)
+    assert response.status_code == 404
+
+    # Check record exists
+    response = client.get(f"/records/{recid}", headers=headers)
+    assert 200 == response.status_code
+    assert dates == response.json["metadata"]["dates"]
 
 
 # TODO

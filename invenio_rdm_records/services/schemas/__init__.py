@@ -34,10 +34,9 @@ class RDMRecordSchema(RecordSchema):
         'files': 'read_files',
     }
 
-    id = fields.Str()
-    # pid
+    # WARNING: conceptid is a dump_only field in its parent.
+    #          Don't know if the difference is on purpose.
     conceptid = fields.Str()
-    # conceptpid
     pids = fields.List(NestedAttribute(PIDSchema))
     metadata = NestedAttribute(MetadataSchema)
     # ext = fields.Method('dump_extensions', 'load_extensions')
@@ -46,8 +45,6 @@ class RDMRecordSchema(RecordSchema):
     access = fields.Nested(AccessSchema)
     # files = NestedAttribute(FilesSchema, dump_only=True)
     # notes = fields.List(fields.Nested(InternalNoteSchema))
-    created = fields.Str(dump_only=True)
-    updated = fields.Str(dump_only=True)
     revision = fields.Integer(dump_only=True)
 
     # communities = NestedAttribute(CommunitiesSchema)
