@@ -65,3 +65,8 @@ target/
 # Editors
 *.sublime-*
 .vscode/
+
+# pipenv
+# This project is a library and not an application.
+Pipfile
+Pipfile.lock
