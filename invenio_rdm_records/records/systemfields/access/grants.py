@@ -118,9 +118,9 @@ class Grant:
         # this ensures that we can always separate the values again
         # (b/c the base64 alphabet doesn't contain the dot)
         return "{}.{}.{}".format(
-            b64encode(str(self.subject_type).encode()).decode(),
-            b64encode(str(self.subject_id).encode()).decode(),
-            b64encode(str(self.permission_level).encode()).decode(),
+            b64encode(str(self.subject_type).encode(), b"-_").decode(),
+            b64encode(str(self.subject_id).encode(), b"-_").decode(),
+            b64encode(str(self.permission_level).encode(), b"-_").decode(),
         )
 
     def to_dict(self):
@@ -165,7 +165,7 @@ class Grant:
     def from_token(cls, token):
         """Parse the grant token into a Grant."""
         subject_type, subject_id, permission_level = (
-            b64decode(val).decode() for val in token.split(".")
+            b64decode(val, b"-_").decode() for val in token.split(".")
         )
 
         return cls.from_string_parts(
