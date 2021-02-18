@@ -7,11 +7,13 @@
 
 """ElasticSearch dumpers, for transforming to and from versions to index."""
 
+from .access import GrantTokensDumperExt
 from .edtf import EDTFDumperExt, EDTFListDumperExt
 from .locations import LocationsDumper
 
 __all__ = (
     "EDTFDumperExt",
     "EDTFListDumperExt",
+    "GrantTokensDumperExt",
     "LocationsDumper",
 )

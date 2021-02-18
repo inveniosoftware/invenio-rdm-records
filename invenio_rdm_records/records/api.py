@@ -19,7 +19,7 @@ from invenio_vocabularies.records.api import Vocabulary
 from werkzeug.local import LocalProxy
 
 from . import models
-from .dumpers import EDTFDumperExt, EDTFListDumperExt
+from .dumpers import EDTFDumperExt, EDTFListDumperExt, GrantTokensDumperExt
 from .systemfields import AccessField
 
 
@@ -36,6 +36,7 @@ class CommonFieldsMixin:
         extensions=[
             EDTFDumperExt('metadata.publication_date'),
             EDTFListDumperExt("metadata.dates", "date"),
+            GrantTokensDumperExt("access.grant_tokens"),
             RelationDumperExt('relations'),
         ]
     )
