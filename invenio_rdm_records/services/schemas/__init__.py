@@ -43,7 +43,7 @@ class RDMRecordSchema(RecordSchema):
     # ext = fields.Method('dump_extensions', 'load_extensions')
     # tombstone
     # provenance
-    access = NestedAttribute(AccessSchema)
+    access = fields.Nested(AccessSchema)
     # files = NestedAttribute(FilesSchema, dump_only=True)
     # notes = fields.List(fields.Nested(InternalNoteSchema))
     created = fields.Str(dump_only=True)
