@@ -153,6 +153,20 @@ For example:
     }
 """
 
+RDM_RECORDS_USER_FIXTURE_PASSWORDS = {
+    "admin@inveniosoftware.org": None
+}
+"""Overrides for the user fixtures' passwords.
+
+The password set for a user fixture in this dictionary overrides the
+password set in the ``users.yaml`` file. This can be used to set custom
+passwords for the fixture users (of course, this has to be configured
+before the fixtures are installed, e.g. by setting up the services).
+If ``None`` or an empty string is configured in this dictionary, then the
+password from ``users.yaml`` will be used. If that is also absent, a password
+will be generated randomly.
+"""
+
 RDM_RECORDS_UI_EDIT_URL = "/uploads/<pid_value>"
 """Default UI URL for the edit page of a Bibliographic Record."""
 

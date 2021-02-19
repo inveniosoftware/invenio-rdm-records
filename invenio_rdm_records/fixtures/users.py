@@ -11,6 +11,7 @@ import secrets
 import string
 
 import yaml
+from flask import current_app
 from flask_security.utils import hash_password
 from invenio_access.models import ActionUsers
 from invenio_access.proxies import current_access
@@ -34,24 +35,31 @@ class UsersFixture:
                 self.create_user(email, user_data)
 
     def create_user(self, email, entry):
-        """Load a single vocabulary."""
-        # for auto-generated passwords use letters, digits,
-        # and some punctuation marks
-        alphabet = string.ascii_letters + string.digits + "+,-_."
-        gen_passwd = "".join(secrets.choice(alphabet) for i in range(20))
-        password = entry["password"] or gen_passwd
+        """Load a single user."""
+        # when the user's password is set in the configuration, then
+        # this overrides everything else
+        password = current_app.config.get(
+            "RDM_RECORDS_USER_FIXTURE_PASSWORDS", {}
+        ).get(email)
+
+        if not password:
+            # for auto-generated passwords use letters, digits,
+            # and some punctuation marks
+            alphabet = string.ascii_letters + string.digits + "+,-_."
+            gen_passwd = "".join(secrets.choice(alphabet) for i in range(20))
+            password = entry.get("password") or gen_passwd
 
         user_data = {
             "email": email,
-            "active": entry["active"] or False,
+            "active": entry.get("active", False),
             "password": hash_password(password),
         }
         user = current_datastore.create_user(**user_data)
 
-        for role in entry["roles"] or []:
+        for role in entry.get("roles", []):
             current_datastore.add_role_to_user(user, role)
 
-        for action in entry["allow"] or []:
+        for action in entry.get("allow", []):
             action = current_access.actions[action]
             db.session.add(ActionUsers.allow(action, user_id=user.id))
 
