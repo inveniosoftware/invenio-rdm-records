@@ -77,7 +77,7 @@ class AccessSchema(Schema):
     # grants = fields.List(fields.Nested(Grant))
 
     # NOTE: this field is only present to avoid errors for unknown fields
-    grant_tokens = fields.List(fields.String, dump_only=True, required=False)
+    grant_tokens = fields.List(fields.String, dump_only=True)
 
     def validate_protection_value(self, value, field_name):
         """Check that the protection value is valid."""

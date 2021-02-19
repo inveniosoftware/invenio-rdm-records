@@ -31,7 +31,7 @@ class GrantTokensDumperExt(ElasticsearchDumperExt):
 
     def dump(self, record, data):
         """Dump the grant tokens to the data dictionary."""
-        if record.access is not None:
+        if record.access:
             tokens = [grant.to_token() for grant in record.access.grants]
             parent_data = dict_lookup(data, self.keys, parent=True)
             parent_data[self.key] = tokens
