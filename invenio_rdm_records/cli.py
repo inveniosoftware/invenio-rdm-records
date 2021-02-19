@@ -251,12 +251,12 @@ def demo():
     click.secho('Created records!', fg='green')
 
 
-@rdm_records.command('vocabularies')
+@rdm_records.command('fixtures')
 @with_appcontext
-def create_vocabularies():
-    """Create the vocabularies required for record creation."""
-    click.secho('Creating vocabularies...', fg='green')
+def create_fixtures():
+    """Create the fixtures required for record creation."""
+    click.secho('Creating required fixtures...', fg='green')
 
     FixturesEngine(system_identity).run()
 
-    click.secho('Created vocabularies!', fg='green')
+    click.secho('Created required fixtures!', fg='green')

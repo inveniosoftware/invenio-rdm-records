@@ -10,6 +10,7 @@
 
 from os.path import dirname, join
 
+from .users import UsersFixture
 from .vocabularies import VocabulariesFixture
 
 
@@ -51,4 +52,9 @@ class FixturesEngine:
             self._identity,
             SearchPath(self.data_dir),
             'vocabularies.yaml',
+        ).load()
+
+        UsersFixture(
+            SearchPath(self.data_dir),
+            'users.yaml',
         ).load()
