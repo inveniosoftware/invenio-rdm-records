@@ -111,4 +111,4 @@ def test_record_owner(mocker):
         )
     )
 
-    assert query_filter.to_dict() == {'term': {'access.owned_by': 15}}
+    assert query_filter.to_dict() == {'term': {'access.owned_by.user': 15}}
