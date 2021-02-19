@@ -76,9 +76,6 @@ class AccessSchema(Schema):
     # TODO re-enable when the grants are ready
     # grants = fields.List(fields.Nested(Grant))
 
-    # NOTE: this field is only present to avoid errors for unknown fields
-    grant_tokens = fields.List(fields.String, dump_only=True)
-
     def validate_protection_value(self, value, field_name):
         """Check that the protection value is valid."""
         if value not in ["public", "restricted"]:
