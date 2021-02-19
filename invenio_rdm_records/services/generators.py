@@ -89,5 +89,5 @@ class RecordOwners(Generator):
         """Filters for current identity as owner."""
         for need in identity.provides:
             if need.method == 'id':
-                return Q('term', **{'access.owned_by': need.value})
+                return Q("term", **{"access.owned_by.user": need.value})
         return []
