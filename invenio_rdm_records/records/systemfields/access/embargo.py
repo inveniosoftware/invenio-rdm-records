@@ -29,6 +29,9 @@ class Embargo:
         if self._active is not None:
             return self._active
 
+        elif self.until is None:
+            return False
+
         return arrow.utcnow().datetime < self.until
 
     @active.setter
@@ -42,25 +45,32 @@ class Embargo:
         Returns ``True`` if the embargo was actually lifted (i.e. it was
         expired but still marked as active).
         """
-        if arrow.utcnow().datetime > self.until:
-            was_active = bool(self._active)
-            self.active = False
-            return was_active
+        if self.until is not None:
+            if arrow.utcnow().datetime > self.until:
+                was_active = bool(self._active)
+                self.active = False
+                return was_active
 
         return False
 
     def dump(self):
         """Dump the embargo as dictionary."""
+        until_str = None
+        if self.until is not None:
+            until_str = self.until.strftime("%Y-%m-%d")
+
         return {
             "active": self.active,
-            "until": self.until.strftime("%Y-%m-%d"),
+            "until": until_str,
             "reason": self.reason,
         }
 
     def __repr__(self):
         """Return repr(self)."""
+        until_str = self.until or "n/a"
+
         return "<{} (active: {}, until: {}, reason: {})>".format(
-            type(self).__name__, self.active, self.until, self.reason
+            type(self).__name__, self.active, until_str, self.reason
         )
 
     def __bool__(self):
@@ -70,12 +80,18 @@ class Embargo:
     @classmethod
     def from_dict(cls, dict_, ignore_active_value=False):
         """Parse the Embargo from the given dictionary."""
-        until = arrow.get(dict_["until"]).datetime
+        until = dict_.get("until")
+        if until is not None:
+            until = arrow.get(until).datetime
+
         reason = dict_.get("reason")
         active = dict_.get("active")
         if ignore_active_value:
             # with ignore_active_value, the 'active' value is re-calculated
             # instead of parsed
             active = None
+
+        if until is None and reason is None and active is None:
+            return None
 
         return cls(until, reason=reason, active=active)

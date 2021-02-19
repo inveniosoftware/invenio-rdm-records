@@ -34,9 +34,9 @@ class Agent(Schema):
 class EmbargoSchema(Schema):
     """Schema for an embargo on the record."""
 
-    active = fields.Bool()
-    until = ISODateString()
-    reason = SanitizedUnicode()
+    active = fields.Bool(allow_none=True, missing=None)
+    until = ISODateString(allow_none=True, missing=None)
+    reason = SanitizedUnicode(allow_none=True, missing=None)
 
     @validates_schema
     def validate_embargo(self, data, **kwargs):
