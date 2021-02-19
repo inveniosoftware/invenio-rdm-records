@@ -1,0 +1,7 @@
+admin@inveniosoftware.org:
+  active: False
+  password: monkey1234
+  roles:
+    - admin
+  allow:
+    - superuser-access
