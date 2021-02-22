@@ -41,7 +41,7 @@ def _validate_access(response, original):
     assert "access" in response
 
     access, orig_access = response["access"], original["access"]
-    assert len(access["owned_by"]) == len(orig_access["owned_by"])
+    assert len(access["owned_by"]) > 0
     assert access["record"] == orig_access["record"]
     assert access["files"] == orig_access["files"]
 
@@ -59,7 +59,10 @@ def _validate_access(response, original):
         assert embargo.get("active") == orig_embargo.get("active")
 
 
-def test_simple_flow(app, client, location, minimal_record, headers):
+def test_simple_flow(
+    app, client_with_login, location, minimal_record, headers
+):
+    client = client_with_login
     """Test a simple REST API flow."""
     # Create a draft
     created_draft = client.post(
@@ -111,8 +114,9 @@ def test_simple_flow(app, client, location, minimal_record, headers):
     _validate_access(data, minimal_record)
 
 
-def test_create_draft(client, location, minimal_record, headers):
+def test_create_draft(client_with_login, location, minimal_record, headers):
     """Test draft creation of a non-existing record."""
+    client = client_with_login
     response = client.post(
         "/records", data=json.dumps(minimal_record), headers=headers)
 
@@ -121,12 +125,15 @@ def test_create_draft(client, location, minimal_record, headers):
     _validate_access(response.json, minimal_record)
 
 
-def test_create_partial_draft(client, location, minimal_record, headers):
+def test_create_partial_draft(
+    client_with_login, location, minimal_record, headers
+):
     """Test partial draft creation of a non-existing record.
 
     NOTE: This tests functionality implemented in records/drafts-resources, but
           intentions specific to this module.
     """
+    client = client_with_login
     minimal_record['metadata']["title"] = ""
     response = client.post("/records", json=minimal_record, headers=headers)
 
@@ -141,8 +148,9 @@ def test_create_partial_draft(client, location, minimal_record, headers):
     assert errors == response.json["errors"]
 
 
-def test_read_draft(client, location, minimal_record, headers):
+def test_read_draft(client_with_login, location, minimal_record, headers):
     """Test draft read."""
+    client = client_with_login
     response = client.post(
         "/records", data=json.dumps(minimal_record), headers=headers)
 
@@ -158,8 +166,9 @@ def test_read_draft(client, location, minimal_record, headers):
     _validate_access(response.json, minimal_record)
 
 
-def test_update_draft(client, location, minimal_record, headers):
+def test_update_draft(client_with_login, location, minimal_record, headers):
     """Test draft update."""
+    client = client_with_login
     response = client.post(
         "/records", data=json.dumps(minimal_record), headers=headers)
 
@@ -198,12 +207,15 @@ def test_update_draft(client, location, minimal_record, headers):
     _validate_access(update_response.json, minimal_record)
 
 
-def test_update_partial_draft(client, location, minimal_record, headers):
+def test_update_partial_draft(
+    client_with_login, location, minimal_record, headers
+):
     """Test partial draft update.
 
     NOTE: This tests functionality implemented in records/drafts-resources, but
           intentions specific to this module.
     """
+    client = client_with_login
     response = client.post("/records", json=minimal_record, headers=headers)
     assert 201 == response.status_code
     recid = response.json['id']
@@ -232,8 +244,9 @@ def test_update_partial_draft(client, location, minimal_record, headers):
     assert "title" not in response.json["metadata"]
 
 
-def test_delete_draft(client, location, minimal_record, headers):
+def test_delete_draft(client_with_login, location, minimal_record, headers):
     """Test draft deletion."""
+    client = client_with_login
     response = client.post(
         "/records", data=json.dumps(minimal_record), headers=headers)
 
@@ -273,11 +286,12 @@ def _create_and_publish(client, minimal_record, headers):
     return recid
 
 
-def test_publish_draft(client, location, minimal_record, headers):
+def test_publish_draft(client_with_login, location, minimal_record, headers):
     """Test publication of a new draft.
 
     It has to first create said draft.
     """
+    client = client_with_login
     recid = _create_and_publish(client, minimal_record, headers)
 
     response = client.get(f"/records/{recid}/draft", headers=headers)
@@ -292,8 +306,11 @@ def test_publish_draft(client, location, minimal_record, headers):
     _validate_access(response.json, minimal_record)
 
 
-def test_publish_draft_w_dates(client, location, minimal_record, headers):
+def test_publish_draft_w_dates(
+    client_with_login, location, minimal_record, headers
+):
     """Test publication of a draft with dates."""
+    client = client_with_login
     dates = [{
         "date": "1939/1945",
         "type": "other",
@@ -314,9 +331,15 @@ def test_publish_draft_w_dates(client, location, minimal_record, headers):
 
 # TODO
 @pytest.mark.skip()
-def test_create_publish_new_revision(client, location, minimal_record,
-                                     identity_simple, headers):
+def test_create_publish_new_revision(
+    client_with_login,
+    location,
+    minimal_record,
+    identity_simple,
+    headers,
+):
     """Test draft creation of an existing record and publish it."""
+    client = client_with_login
     recid = _create_and_publish(client, minimal_record, headers)
 
     # # FIXME: Allow ES to clean deleted documents.
@@ -378,8 +401,15 @@ def test_create_publish_new_revision(client, location, minimal_record,
 # TODO
 @pytest.mark.skip()
 def test_ui_data_in_record(
-        app, client, location, minimal_record, headers, ui_headers):
+    app,
+    client_with_login,
+    location,
+    minimal_record,
+    headers,
+    ui_headers,
+):
     """Publish a record and check that it contains the UI data."""
+    client = client_with_login
     recid = _create_and_publish(client, minimal_record, headers)
 
     RDMRecord.index.refresh()

@@ -254,7 +254,7 @@ def test_owners_creation(users):
 # Access System Field
 #
 
-def test_access_field_on_record(minimal_record):
+def test_access_field_on_record(minimal_record, users):
     next_year = arrow.utcnow().datetime + timedelta(days=+365)
     minimal_record["access"]["embargo"] = {
         "until": next_year.strftime("%Y-%m-%d"),
@@ -262,18 +262,18 @@ def test_access_field_on_record(minimal_record):
         "reason": "nothing in particular",
     }
     rec = RDMRecord.create(minimal_record)
+    rec.access.owners.add(users[0])
 
     assert isinstance(rec.access, Access)
     assert isinstance(rec.access.protection, Protection)
     assert rec.access.protection.record == minimal_record["access"]["record"]
     assert rec.access.protection.files == minimal_record["access"]["files"]
-    assert len(rec.access.owners) == len(minimal_record["access"]["owned_by"])
+    assert len(rec.access.owners) > 0
     assert isinstance(rec.access.embargo, Embargo)
     # TODO check Grants once they're back in
-    assert minimal_record["access"] == rec.access.dump()
 
 
-def test_access_field_update_embargo(minimal_record):
+def test_access_field_update_embargo(minimal_record, users):
     next_year = arrow.utcnow().datetime + timedelta(days=+365)
     minimal_record["access"]["embargo"] = {
         "until": next_year.strftime("%Y-%m-%d"),
@@ -281,6 +281,7 @@ def test_access_field_update_embargo(minimal_record):
         "reason": "nothing in particular",
     }
     rec = RDMRecord.create(minimal_record.copy())
+    rec.access.owners.add(users[0])
     assert rec.access.embargo
 
     rec.access.embargo.active = False
@@ -289,7 +290,6 @@ def test_access_field_update_embargo(minimal_record):
 
     minimal_record["access"]["embargo"]["active"] = False
     minimal_record["access"]["embargo"]["reason"] = "can't remember"
-    assert minimal_record["access"] == rec["access"]
 
 
 def test_access_field_clear_embargo(minimal_record):
@@ -305,33 +305,33 @@ def test_access_field_clear_embargo(minimal_record):
     assert not rec.access.embargo
 
 
-def test_access_field_update_owners(minimal_record):
+def test_access_field_update_owners(minimal_record, users):
     rec = RDMRecord.create(minimal_record.copy())
     new_owner = {"user": 1337}
-    assert new_owner not in rec["access"]["owned_by"]
-
+    rec.access.owners.add(users[0])
     rec.access.owners.add(new_owner)
     rec.commit()
 
     num_owners = len(rec.access.owners)
-    assert len(rec["access"]["owned_by"]) == num_owners
-    assert num_owners == len(minimal_record["access"]["owned_by"]) + 1
+    assert num_owners == len(rec["access"]["owned_by"])
+    assert num_owners == 2
     assert new_owner in rec["access"]["owned_by"]
 
     rec.access.owners.remove(new_owner)
     rec.commit()
 
     num_owners = len(rec.access.owners)
-    assert len(rec["access"]["owned_by"]) == num_owners
-    assert num_owners == len(minimal_record["access"]["owned_by"])
+    assert num_owners == len(rec["access"]["owned_by"])
+    assert num_owners == 1
     assert new_owner not in rec["access"]["owned_by"]
 
 
-def test_access_field_update_protection(minimal_record):
+def test_access_field_update_protection(minimal_record, users):
     minimal_record["access"]["record"] = "restricted"
     minimal_record["access"]["files"] = "restricted"
 
     rec = RDMRecord.create(minimal_record)
+    rec.access.owners.add(users[0])
     assert rec.access.protection.record == "restricted"
     assert rec.access.protection.files == "restricted"
 

@@ -9,8 +9,10 @@
 """Test RDMRecordService generated links."""
 
 import pytest
+from flask_security import login_user
 from invenio_access.models import ActionUsers
-from invenio_accounts.testutils import create_test_user, login_user_via_view
+from invenio_accounts.testutils import create_test_user, \
+    login_user_via_session, login_user_via_view
 
 from invenio_rdm_records.services import RDMRecordService
 
@@ -18,8 +20,11 @@ HEADERS = {"content-type": "application/json", "accept": "application/json"}
 
 
 @pytest.fixture
-def draft_json(app, client, minimal_record, es, location):
+def draft_json(app, client, minimal_record, es, location, users):
     """RDM Draft fixture."""
+    login_user(users[0], remember=True)
+    login_user_via_session(client, email=users[0].email)
+
     response = client.post(
         "/records", json=minimal_record, headers=HEADERS
     )
