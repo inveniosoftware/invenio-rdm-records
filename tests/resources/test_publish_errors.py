@@ -8,6 +8,9 @@
 
 """Test errors."""
 
+import pytest
+from flask_security import login_user
+from invenio_accounts.testutils import login_user_via_session
 
 # Helpers
 
@@ -23,7 +26,9 @@ def save_partial_draft(client, partial_record, headers):
 
 
 def test_simple_field_error(
-        client, minimal_record, location, es_clear, headers):
+        client_with_login, minimal_record, location, es_clear, headers
+):
+    client = client_with_login
     minimal_record["metadata"]["publication_date"] = ""
     response = save_partial_draft(client, minimal_record, headers)
     recid = response.json['id']
@@ -44,7 +49,9 @@ def test_simple_field_error(
 
 
 def test_nested_field_error(
-        client, minimal_record, location, es_clear, headers):
+        client_with_login, minimal_record, location, es_clear, headers
+):
+    client = client_with_login
     minimal_record["metadata"]["creators"] = [
         {
             "person_or_org": {
@@ -79,7 +86,10 @@ def test_nested_field_error(
     assert expected == response.json["errors"]
 
 
-def test_multiple_errors(client, minimal_record, location, es_clear, headers):
+def test_multiple_errors(
+    client_with_login, minimal_record, location, es_clear, headers
+):
+    client = client_with_login
     minimal_record["metadata"]["publication_date"] = ""
     minimal_record["metadata"]["additional_titles"] = [{
         "title": "A Romans story",

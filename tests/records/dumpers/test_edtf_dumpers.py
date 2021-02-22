@@ -182,24 +182,21 @@ def test_edtf_dumper_query(app, db, location, minimal_record, users):
     service = RDMRecordService(
         config=app.config.get(RDMRecordService.config_name),
     )
-    record = service.create(identity_simple, minimal_record)
+    record = service.create(identity, minimal_record)
     RDMDraft.index.refresh()
 
     # Search for it
-    assert service.search(
-        identity_simple,
+    assert service.search_drafts(
+        identity,
         {"q": "metadata.publication_date_range:[2020 TO 2021]"},
-        status="draft"
     ).total == 1
 
-    assert service.search(
-        identity_simple,
+    assert service.search_drafts(
+        identity,
         {"q": "metadata.publication_date_range:[2020-12-31 TO 2021-01-02]"},
-        status="draft"
     ).total == 1
 
-    assert service.search(
-        identity_simple,
+    assert service.search_drafts(
+        identity,
         {"q": "metadata.publication_date_range:[2022 TO 2023]"},
-        status="draft"
     ).total == 0
