@@ -11,13 +11,14 @@
 from invenio_drafts_resources.services.records.schema import RecordSchema
 from marshmallow import EXCLUDE, fields, post_dump
 from marshmallow_utils.fields import NestedAttribute
+from marshmallow_utils.permissions import FieldPermissionsMixin
 
 from .access import AccessSchema
 from .metadata import MetadataSchema
 from .pids import PIDSchema
 
 
-class RDMRecordSchema(RecordSchema):
+class RDMRecordSchema(RecordSchema, FieldPermissionsMixin):
     """Record schema."""
 
     class Meta:
@@ -27,6 +28,7 @@ class RDMRecordSchema(RecordSchema):
         unknown = EXCLUDE
 
     field_load_permissions = {
+        'access': 'manage',
         'files': 'update',
     }
 

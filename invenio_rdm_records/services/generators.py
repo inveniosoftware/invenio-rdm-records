@@ -14,7 +14,8 @@ from itertools import chain
 
 from elasticsearch_dsl import Q, query
 from flask_principal import UserNeed
-from invenio_records_permissions.generators import Generator
+from invenio_access.permissions import authenticated_user
+from invenio_records_permissions.generators import AnyUser, Generator
 
 
 class IfRestricted(Generator):
@@ -81,9 +82,12 @@ class RecordOwners(Generator):
 
     def needs(self, record=None, **kwargs):
         """Enabling Needs."""
-        owners = record.access.owners.dump()
-        return [UserNeed(owner.get('user')
-                         ) for owner in owners]
+        if record is None:
+            # 'record is None' means that this must be a 'create'
+            # this should be allowed for any authenticated user
+            return [authenticated_user]
+
+        return [UserNeed(owner.owner_id) for owner in record.access.owners]
 
     def query_filter(self, identity=None, **kwargs):
         """Filters for current identity as owner."""

@@ -13,6 +13,7 @@ from flask_babelex import lazy_gettext as _
 from marshmallow import Schema, ValidationError, fields, validate, validates, \
     validates_schema
 from marshmallow_utils.fields import ISODateString, SanitizedUnicode
+from marshmallow_utils.permissions import FieldPermissionsMixin
 
 from .utils import validate_entry
 
@@ -66,8 +67,21 @@ class EmbargoSchema(Schema):
                 )
 
 
-class AccessSchema(Schema):
+class AccessSchema(Schema, FieldPermissionsMixin):
     """Access schema."""
+
+    # TODO: we don't want 'owned_by' to be set by the users
+    #       but if we don't allow it to be specified, we run
+    #       into problems while publishing drafts
+    field_load_permissions = {
+        # "owned_by": "disabled",
+    }
+
+    # omit the grants from dumps, except for users with the
+    # 'manage' permission
+    field_dump_permissions = {
+        "grants": "manage",
+    }
 
     record = SanitizedUnicode(required=True)
     files = SanitizedUnicode(required=True)
