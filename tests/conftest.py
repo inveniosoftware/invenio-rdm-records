@@ -15,8 +15,8 @@ fixtures are available.
 
 import pytest
 from flask_principal import Identity, Need, UserNeed
+from flask_security.utils import hash_password
 from invenio_app.factory import create_app as _create_app
-
 from invenio_rdm_records import config
 
 
@@ -262,13 +262,12 @@ def full_record(users):
 
 
 @pytest.fixture(scope='function')
-def minimal_record(users):
+def minimal_record():
     """Minimal record data as dict coming from the external world."""
     return {
         "access": {
             "record": "public",
             "files": "public",
-            "owned_by": [{"user": users[0].id}],
         },
         "metadata": {
             "publication_date": "2020-06-01",
@@ -298,10 +297,16 @@ def users(app, db):
     """Create example user."""
     with db.session.begin_nested():
         datastore = app.extensions["security"].datastore
-        user1 = datastore.create_user(email="info@inveniosoftware.org",
-                                      password="password", active=True)
-        user2 = datastore.create_user(email="ser-testalot@inveniosoftware.org",
-                                      password="beetlesmasher", active=True)
+        user1 = datastore.create_user(
+            email="info@inveniosoftware.org",
+            password=hash_password("password"),
+            active=True
+        )
+        user2 = datastore.create_user(
+            email="ser-testalot@inveniosoftware.org",
+            password=hash_password("beetlesmasher"),
+            active=True
+        )
 
     db.session.commit()
     return [user1, user2]

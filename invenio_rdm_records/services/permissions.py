@@ -12,6 +12,8 @@ from invenio_drafts_resources.services.records.permissions import \
     RecordDraftPermissionPolicy
 from invenio_records_permissions.generators import AnyUser, SystemProcess
 
+from invenio_rdm_records.services.generators import IfRestricted, RecordOwners
+
 
 class RDMRecordPermissionPolicy(RecordDraftPermissionPolicy):
     """Access control configuration for records.
@@ -27,7 +29,29 @@ class RDMRecordPermissionPolicy(RecordDraftPermissionPolicy):
     """
 
     # TODO: Change all below when permissions settled
+    # Record
     can_create = [AnyUser(), SystemProcess()]
-    can_update_files = [AnyUser(), SystemProcess()]
-    can_publish = [AnyUser(), SystemProcess()]
     can_read = [AnyUser(), SystemProcess()]
+
+    # Record - files
+    # For now, can_read_files means:
+    # - can list files
+    # - can read a file metadata
+    # - can download the file
+    can_read_files = [
+        IfRestricted(
+            'record',
+            then_=[RecordOwners()],
+            else_=[
+                IfRestricted(
+                    'files',
+                    then_=[RecordOwners()],
+                    else_=[AnyUser()]
+                )
+            ]
+        )
+    ]
+    can_update_files = [AnyUser(), SystemProcess()]
+
+    # Draft
+    can_publish = [AnyUser(), SystemProcess()]
