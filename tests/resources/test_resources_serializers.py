@@ -16,7 +16,7 @@ from invenio_rdm_records.resources.serializers import UIJSONSerializer
 def test_ui_serializer(app, full_record):
     """Test UI serializer."""
     expected_data = {
-        'access_right': {},
+        # 'access_right': {},
         'contributors': {
             'affiliations': [[1, 'CERN']],
             'contributors': [{

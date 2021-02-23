@@ -45,9 +45,9 @@ class RDMRecordServiceConfig(RecordDraftServiceConfig):
                     }
                 }
             },
-            'access_right': {
-                'terms': {'field': 'access.access_right'},
-            },
+            # 'access_right': {
+            #     'terms': {'field': 'access.access_right'},
+            # },
             'languages': {
                 'terms': {'field': 'metadata.languages.id'},
             }
@@ -55,7 +55,7 @@ class RDMRecordServiceConfig(RecordDraftServiceConfig):
         post_filters={
             'subtype': terms_filter('metadata.resource_type.subtype'),
             'resource_type': terms_filter('metadata.resource_type.type'),
-            'access_right': terms_filter('access.access_right'),
+            # 'access_right': terms_filter('access.access_right'),
             'languages': terms_filter('metadata.languages.id'),
         }
     )
