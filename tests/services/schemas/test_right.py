@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # Copyright (C) 2020 CERN.
+# Copyright (C) 2021 Graz University of Technology.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
@@ -50,6 +51,16 @@ def test_invalid_extra_right():
     }
     with pytest.raises(ValidationError):
         data = RightsSchema().load(invalid_extra)
+
+
+def test_invalid_url():
+    invalid_url = {
+        "title": "Creative Commons Attribution 4.0 International",
+        "description": "A description",
+        "link": "creativecommons.org/licenses/by/4.0/"
+    }
+    with pytest.raises(ValidationError):
+        data = RightsSchema().load(invalid_url)
 
 
 @pytest.mark.skip(reason="idutils cannot validate spdx")

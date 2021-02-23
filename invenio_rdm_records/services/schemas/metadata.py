@@ -2,6 +2,7 @@
 #
 # Copyright (C) 2020 CERN.
 # Copyright (C) 2020 Northwestern University.
+# Copyright (C) 2021 Graz University of Technology.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
@@ -24,6 +25,11 @@ from .utils import validate_entry
 def _not_blank(error_msg):
     """Returns a non-blank validation rule with custom error message."""
     return validate.Length(min=1, error=error_msg)
+
+
+def _valid_url(error_msg):
+    """Returns a URL validation rule with custom error message."""
+    return validate.URL(error=error_msg)
 
 
 class AffiliationSchema(Schema):
@@ -216,8 +222,7 @@ class RightsSchema(IdentifierSchema):
     title = SanitizedUnicode()
     description = SanitizedUnicode()
     link = SanitizedUnicode(
-        validate=_is_uri,
-        error=_('Wrong URI format. Should follow RFC 3986.')
+        validate=_valid_url(_('Not a valid URL.'))
     )
 
 
