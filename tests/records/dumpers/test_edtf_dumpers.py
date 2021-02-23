@@ -8,6 +8,9 @@
 """Module tests."""
 
 import pytest
+from flask_principal import Identity, UserNeed
+from flask_security import login_user
+from invenio_access.permissions import SystemRoleNeed
 from invenio_records.dumpers import ElasticsearchDumper
 
 from invenio_rdm_records.records import RDMDraft, RDMRecord
@@ -162,8 +165,14 @@ def test_eslistdumper_with_edtfext_parse_error(app, db, minimal_record):
     assert 'type' in new_record['metadata']['resource_type']
 
 
-def test_edtf_dumper_query(app, db, location, minimal_record, identity_simple):
+def test_edtf_dumper_query(app, db, location, minimal_record, users):
     """Test edft extension queries."""
+    identity = Identity(users[0].id)
+    identity.provides.add(UserNeed(users[0].id))
+    identity.provides.add(SystemRoleNeed('any_user'))
+    identity.provides.add(SystemRoleNeed('authenticated_user'))
+    login_user(users[0], remember=True)
+
     date = "2021-01-01"
     minimal_record["metadata"]["publication_date"] = date
     minimal_record["metadata"]["dates"] = [{"date": date}]
@@ -172,24 +181,21 @@ def test_edtf_dumper_query(app, db, location, minimal_record, identity_simple):
     service = RDMRecordService(
         config=app.config.get(RDMRecordService.config_name),
     )
-    record = service.create(identity_simple, minimal_record)
+    record = service.create(identity, minimal_record)
     RDMDraft.index.refresh()
 
     # Search for it
-    assert service.search(
-        identity_simple,
+    assert service.search_drafts(
+        identity,
         {"q": "metadata.publication_date_range:[2020 TO 2021]"},
-        status="draft"
     ).total == 1
 
-    assert service.search(
-        identity_simple,
+    assert service.search_drafts(
+        identity,
         {"q": "metadata.publication_date_range:[2020-12-31 TO 2021-01-02]"},
-        status="draft"
     ).total == 1
 
-    assert service.search(
-        identity_simple,
+    assert service.search_drafts(
+        identity,
         {"q": "metadata.publication_date_range:[2022 TO 2023]"},
-        status="draft"
     ).total == 0

@@ -12,6 +12,8 @@ from invenio_records_resources.services.records.components import \
     ServiceComponent
 from marshmallow import ValidationError
 
+from ..records.systemfields.access import Access
+
 
 class AccessComponent(ServiceComponent):
     """Service component for access integration."""
@@ -42,10 +44,16 @@ class AccessComponent(ServiceComponent):
             record.update({"access": data.get("access")})
             record.access.refresh_from_dict(record.get("access"))
 
-        if record is not None and not record.access.owners and identity.id:
-            # NOTE: this should not happen, because the jsonschema demands
-            #       at least one owner to be specified
-            record.access.owners.add({"user": identity.id})
+        if record is not None:
+            if not record.access:
+                # this happens when a new record is created without an
+                # 'access' property
+                record.access = Access()
+
+            if not record.access.owners and identity.id:
+                # this happens when a new record was created, either without
+                # an 'access' or 'access.owned_by' property set
+                record.access.owners.add({"user": identity.id})
 
         errors = self._validate_record_access(record)
         errors.extend(record.access.errors)

@@ -50,7 +50,7 @@ class RDMRecordServiceConfig(RecordDraftServiceConfig):
             # },
             'languages': {
                 'terms': {'field': 'metadata.languages.id'},
-            }
+            },
         },
         post_filters={
             'subtype': terms_filter('metadata.resource_type.subtype'),
@@ -71,14 +71,40 @@ class RDMRecordServiceConfig(RecordDraftServiceConfig):
 class RDMUserRecordsServiceConfig(RDMRecordServiceConfig):
     """RDM user records service configuration."""
 
-    record_cls = RDMDraft
+    search_facets_options = dict(
+        aggs={
+            'resource_type': {
+                'terms': {'field': 'metadata.resource_type.type'},
+                'aggs': {
+                    'subtype': {
+                        'terms': {'field': 'metadata.resource_type.subtype'},
+                    }
+                }
+            },
+            'access_right': {
+                'terms': {'field': 'access.access_right'},
+            },
+            'languages': {
+                'terms': {'field': 'metadata.languages.id'},
+            },
+            'status': {
+                'terms': {'field': 'status'},
+            },
+        },
+        post_filters={
+            'subtype': terms_filter('metadata.resource_type.subtype'),
+            'resource_type': terms_filter('metadata.resource_type.type'),
+            'access_right': terms_filter('access.access_right'),
+            'languages': terms_filter('metadata.languages.id'),
+            'status': terms_filter('status'),
+        }
+    )
 
 
 #
 # Record files
 #
-class RDMRecordFilesServiceConfig(
-        RDMRecordServiceConfig, FileServiceConfig):
+class RDMRecordFilesServiceConfig(RDMRecordServiceConfig, FileServiceConfig):
     """RDM record files service configuration."""
 
 

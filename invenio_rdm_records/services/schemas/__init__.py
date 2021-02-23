@@ -11,13 +11,14 @@
 from invenio_drafts_resources.services.records.schema import RecordSchema
 from marshmallow import EXCLUDE, fields, post_dump
 from marshmallow_utils.fields import NestedAttribute
+from marshmallow_utils.permissions import FieldPermissionsMixin
 
 from .access import AccessSchema
 from .metadata import MetadataSchema
 from .pids import PIDSchema
 
 
-class RDMRecordSchema(RecordSchema):
+class RDMRecordSchema(RecordSchema, FieldPermissionsMixin):
     """Record schema."""
 
     class Meta:
@@ -27,6 +28,7 @@ class RDMRecordSchema(RecordSchema):
         unknown = EXCLUDE
 
     field_load_permissions = {
+        'access': 'manage',
         'files': 'update',
     }
 
@@ -46,6 +48,8 @@ class RDMRecordSchema(RecordSchema):
     # files = NestedAttribute(FilesSchema, dump_only=True)
     # notes = fields.List(fields.Nested(InternalNoteSchema))
     revision = fields.Integer(dump_only=True)
+
+    status = fields.Str(dump_only=True)
 
     # communities = NestedAttribute(CommunitiesSchema)
     # stats = NestedAttribute(StatsSchema, dump_only=True)

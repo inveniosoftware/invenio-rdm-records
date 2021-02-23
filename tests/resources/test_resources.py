@@ -13,7 +13,7 @@ import json
 import arrow
 import pytest
 
-from invenio_rdm_records.records import RDMRecord
+from invenio_rdm_records.records import RDMDraft, RDMRecord
 
 
 @pytest.fixture()
@@ -41,7 +41,7 @@ def _validate_access(response, original):
     assert "access" in response
 
     access, orig_access = response["access"], original["access"]
-    assert len(access["owned_by"]) == len(orig_access["owned_by"])
+    assert len(access["owned_by"]) > 0
     assert access["record"] == orig_access["record"]
     assert access["files"] == orig_access["files"]
 
@@ -59,7 +59,10 @@ def _validate_access(response, original):
         assert embargo.get("active") == orig_embargo.get("active")
 
 
-def test_simple_flow(app, client, location, minimal_record, headers):
+def test_simple_flow(
+    app, client_with_login, location, minimal_record, headers, es_clear
+):
+    client = client_with_login
     """Test a simple REST API flow."""
     # Create a draft
     created_draft = client.post(
@@ -111,8 +114,11 @@ def test_simple_flow(app, client, location, minimal_record, headers):
     _validate_access(data, minimal_record)
 
 
-def test_create_draft(client, location, minimal_record, headers):
+def test_create_draft(
+    client_with_login, location, minimal_record, headers, es_clear
+):
     """Test draft creation of a non-existing record."""
+    client = client_with_login
     response = client.post(
         "/records", data=json.dumps(minimal_record), headers=headers)
 
@@ -121,12 +127,15 @@ def test_create_draft(client, location, minimal_record, headers):
     _validate_access(response.json, minimal_record)
 
 
-def test_create_partial_draft(client, location, minimal_record, headers):
+def test_create_partial_draft(
+    client_with_login, location, minimal_record, headers, es_clear
+):
     """Test partial draft creation of a non-existing record.
 
     NOTE: This tests functionality implemented in records/drafts-resources, but
           intentions specific to this module.
     """
+    client = client_with_login
     minimal_record['metadata']["title"] = ""
     response = client.post("/records", json=minimal_record, headers=headers)
 
@@ -141,8 +150,11 @@ def test_create_partial_draft(client, location, minimal_record, headers):
     assert errors == response.json["errors"]
 
 
-def test_read_draft(client, location, minimal_record, headers):
+def test_read_draft(
+    client_with_login, location, minimal_record, headers, es_clear
+):
     """Test draft read."""
+    client = client_with_login
     response = client.post(
         "/records", data=json.dumps(minimal_record), headers=headers)
 
@@ -158,8 +170,11 @@ def test_read_draft(client, location, minimal_record, headers):
     _validate_access(response.json, minimal_record)
 
 
-def test_update_draft(client, location, minimal_record, headers):
+def test_update_draft(
+    client_with_login, location, minimal_record, headers, es_clear
+):
     """Test draft update."""
+    client = client_with_login
     response = client.post(
         "/records", data=json.dumps(minimal_record), headers=headers)
 
@@ -198,12 +213,15 @@ def test_update_draft(client, location, minimal_record, headers):
     _validate_access(update_response.json, minimal_record)
 
 
-def test_update_partial_draft(client, location, minimal_record, headers):
+def test_update_partial_draft(
+    client_with_login, location, minimal_record, headers, es_clear
+):
     """Test partial draft update.
 
     NOTE: This tests functionality implemented in records/drafts-resources, but
           intentions specific to this module.
     """
+    client = client_with_login
     response = client.post("/records", json=minimal_record, headers=headers)
     assert 201 == response.status_code
     recid = response.json['id']
@@ -232,8 +250,11 @@ def test_update_partial_draft(client, location, minimal_record, headers):
     assert "title" not in response.json["metadata"]
 
 
-def test_delete_draft(client, location, minimal_record, headers):
+def test_delete_draft(
+    client_with_login, location, minimal_record, headers, es_clear
+):
     """Test draft deletion."""
+    client = client_with_login
     response = client.post(
         "/records", data=json.dumps(minimal_record), headers=headers)
 
@@ -273,11 +294,14 @@ def _create_and_publish(client, minimal_record, headers):
     return recid
 
 
-def test_publish_draft(client, location, minimal_record, headers):
+def test_publish_draft(
+    client_with_login, location, minimal_record, headers, es_clear
+):
     """Test publication of a new draft.
 
     It has to first create said draft.
     """
+    client = client_with_login
     recid = _create_and_publish(client, minimal_record, headers)
 
     response = client.get(f"/records/{recid}/draft", headers=headers)
@@ -292,8 +316,11 @@ def test_publish_draft(client, location, minimal_record, headers):
     _validate_access(response.json, minimal_record)
 
 
-def test_publish_draft_w_dates(client, location, minimal_record, headers):
+def test_publish_draft_w_dates(
+    client_with_login, location, minimal_record, headers, es_clear
+):
     """Test publication of a draft with dates."""
+    client = client_with_login
     dates = [{
         "date": "1939/1945",
         "type": "other",
@@ -312,11 +339,98 @@ def test_publish_draft_w_dates(client, location, minimal_record, headers):
     assert dates == response.json["metadata"]["dates"]
 
 
+def test_user_records_and_drafts(
+    client_with_login, location, headers, minimal_record, es_clear
+):
+    """Tests the search over the records index.
+
+    Note: The three use cases are set in the same test so there is the
+          possibility of failure. Meaning that if search is not done
+          correctly more than one record/draft will be returned.
+    """
+    client = client_with_login
+    # Create a draft
+    response = client.post(
+        "/records", data=json.dumps(minimal_record), headers=headers)
+    assert response.status_code == 201
+    draftid = response.json['id']
+
+    RDMDraft.index.refresh()
+    RDMRecord.index.refresh()
+
+    # Search user records
+    response = client.get("/user/records", headers=headers)
+    assert response.status_code == 200
+    assert response.json['hits']['total'] == 1
+    assert response.json['hits']['hits'][0]['id'] == draftid
+
+    # Create and publish new draft
+    recid = _create_and_publish(client, minimal_record, headers)
+
+    RDMDraft.index.refresh()
+    RDMRecord.index.refresh()
+
+    # Search user records
+    response = client.get("/user/records", headers=headers)
+    assert response.status_code == 200
+    assert response.json['hits']['total'] == 2
+    assert response.json['hits']['hits'][0]['id'] == recid
+    assert response.json['hits']['hits'][1]['id'] == draftid
+
+    # Search only for user drafts
+    response = client.get("/user/records?status=draft", headers=headers)
+    assert response.status_code == 200
+    assert response.json['hits']['total'] == 1
+    assert response.json['hits']['hits'][0]['id'] == draftid
+
+    # Search only for user published
+    response = client.get("/user/records?status=published", headers=headers)
+    assert response.status_code == 200
+    assert response.json['hits']['total'] == 1
+    assert response.json['hits']['hits'][0]['id'] == recid
+
+    # Edit published user's record
+    response = client.post(
+        "/records/{}/draft".format(recid),
+        headers=headers
+    )
+
+    RDMDraft.index.refresh()
+    RDMRecord.index.refresh()
+
+    edit_recid = response.json['id']
+
+    # Search user records
+    response = client.get("/user/records", headers=headers)
+    assert response.status_code == 200
+    # The total results remain the same as we return the unique number of
+    # user drafts and records
+    assert response.json['hits']['total'] == 2
+
+    # Search only for user drafts
+    response = client.get("/user/records?status=draft", headers=headers)
+    assert response.status_code == 200
+    assert response.json['hits']['total'] == 2
+    assert response.json['hits']['hits'][0]['id'] == edit_recid
+    assert response.json['hits']['hits'][1]['id'] == draftid
+
+    # Search only for user published
+    response = client.get("/user/records?status=published", headers=headers)
+    assert response.status_code == 200
+    assert response.json['hits']['total'] == 0
+
+
 # TODO
 @pytest.mark.skip()
-def test_create_publish_new_revision(client, location, minimal_record,
-                                     identity_simple, headers):
+def test_create_publish_new_revision(
+    client_with_login,
+    location,
+    minimal_record,
+    identity_simple,
+    headers,
+):
     """Test draft creation of an existing record and publish it."""
+    client = client_with_login
     recid = _create_and_publish(client, minimal_record, headers)
 
     # # FIXME: Allow ES to clean deleted documents.
@@ -378,8 +492,15 @@ def test_create_publish_new_revision(client, location, minimal_record,
 # TODO
 @pytest.mark.skip()
 def test_ui_data_in_record(
-        app, client, location, minimal_record, headers, ui_headers):
+    app,
+    client_with_login,
+    location,
+    minimal_record,
+    headers,
+    ui_headers,
+):
     """Publish a record and check that it contains the UI data."""
+    client = client_with_login
     recid = _create_and_publish(client, minimal_record, headers)
 
     RDMRecord.index.refresh()
