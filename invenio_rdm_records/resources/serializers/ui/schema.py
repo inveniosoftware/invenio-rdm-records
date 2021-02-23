@@ -89,22 +89,22 @@ def localize_vocabulary_list(field_name, key, attr, obj):
 #
 # Object schema
 #
-class AccessRightSchema(Schema):
-    """Access right vocabulary."""
+# class AccessRightSchema(Schema):
+#     """Access right vocabulary."""
 
-    category = fields.String(attribute='access_right', dump_only=True)
+#     category = fields.String(attribute='access_right', dump_only=True)
 
-    icon = VocabularyField(
-        'access_right',
-        entry_key='icon',
-        attribute='access_right'
-    )
+#     icon = VocabularyField(
+#         'access_right',
+#         entry_key='icon',
+#         attribute='access_right'
+#     )
 
-    title = VocabularyField(
-        'access_right',
-        entry_key='access_right_name',
-        attribute='access_right'
-    )
+#     title = VocabularyField(
+#         'access_right',
+#         entry_key='access_right_name',
+#         attribute='access_right'
+#     )
 
 
 class UIObjectSchema(Schema):
@@ -123,7 +123,7 @@ class UIObjectSchema(Schema):
     resource_type = VocabularyTitleField(
         'resource_type', attribute='metadata.resource_type')
 
-    access_right = fields.Nested(AccessRightSchema, attribute='access')
+    # access_right = fields.Nested(AccessRightSchema, attribute='access')
 
     creators = fields.Function(partial(make_affiliation_index, 'creators'))
 
