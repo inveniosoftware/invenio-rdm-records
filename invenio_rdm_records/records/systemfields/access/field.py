@@ -244,7 +244,7 @@ class AccessField(SystemField):
             self._set_cache(instance, obj)
             return obj
 
-        return None
+        self._access_obj_class()
 
     def set_obj(self, record, obj):
         """Set the access object."""
