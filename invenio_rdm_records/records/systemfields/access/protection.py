@@ -19,17 +19,44 @@ class Protection:
     def _validate_protection_level(self, level):
         return level in ("public", "restricted")
 
-    def set(self, record, files=None):
-        """Set the protection level for record and files."""
-        if not self._validate_protection_level(record):
+    @property
+    def record(self):
+        """Get the record's overall protection level."""
+        return self._record
+
+    @record.setter
+    def record(self, value):
+        """Set the record's overall protection level."""
+        if not self._validate_protection_level(value):
             raise ValueError(
-                "unknown record protection level: {}".format(record)
-            )
-        elif files is not None and not self._validate_protection_level(files):
-            raise ValueError(
-                "unknown files protection level: {}".format(files)
+                "unknown record protection level: {}".format(value)
             )
 
+        if value == "restricted":
+            self._files = "restricted"
+
+        self._record = value
+
+    @property
+    def files(self):
+        """Get the record's files protection level."""
+        return self._files
+
+    @files.setter
+    def files(self, value):
+        """Set the record's files protection level."""
+        if not self._validate_protection_level(value):
+            raise ValueError(
+                "unknown files protection level: {}".format(value)
+            )
+
+        if self.record == "restricted":
+            self._files = "restricted"
+        else:
+            self._files = value
+
+    def set(self, record, files=None):
+        """Set the protection level for record and files."""
         self.record = record
         if files is not None:
             self.files = files
