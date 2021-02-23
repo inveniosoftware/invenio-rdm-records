@@ -262,7 +262,7 @@ def full_record(users):
 
 
 @pytest.fixture(scope='function')
-def minimal_record(users):
+def minimal_record():
     """Minimal record data as dict coming from the external world."""
     return {
         "access": {
