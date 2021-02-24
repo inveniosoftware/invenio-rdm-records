@@ -62,14 +62,40 @@ class RDMRecordServiceConfig(RecordDraftServiceConfig):
 
     components = [
         MetadataComponent,
-        RelationsComponent,
         AccessComponent,
         DraftFilesComponent,
+        VersionSupportComponent,
     ]
 
 
 class RDMUserRecordsServiceConfig(RDMRecordServiceConfig):
     """RDM user records service configuration."""
+
+    search_sort_default = 'bestmatch'
+    search_sort_default_no_query = 'updated-desc'
+    search_sort_options = {
+        "bestmatch": dict(
+            title=_('Best match'),
+            fields=['_score'],  # ES defaults to desc on `_score` field
+        ),
+        "updated-desc": dict(
+            title=_('Recently updated'),
+            fields=['-updated'],
+        ),
+        "updated-asc": dict(
+            title=_('Least recently updated'),
+            fields=['updated'],
+        ),
+        "newest": dict(
+            title=_('Newest'),
+            fields=['-created'],
+        ),
+        "oldest": dict(
+            title=_('Oldest'),
+            fields=['created'],
+        ),
+
+    }
 
     search_facets_options = dict(
         aggs={
@@ -81,9 +107,9 @@ class RDMUserRecordsServiceConfig(RDMRecordServiceConfig):
                     }
                 }
             },
-            'access_right': {
-                'terms': {'field': 'access.access_right'},
-            },
+            # 'access_right': {
+            #     'terms': {'field': 'access.access_right'},
+            # },
             'languages': {
                 'terms': {'field': 'metadata.languages.id'},
             },
@@ -94,7 +120,7 @@ class RDMUserRecordsServiceConfig(RDMRecordServiceConfig):
         post_filters={
             'subtype': terms_filter('metadata.resource_type.subtype'),
             'resource_type': terms_filter('metadata.resource_type.type'),
-            'access_right': terms_filter('access.access_right'),
+            # 'access_right': terms_filter('access.access_right'),
             'languages': terms_filter('metadata.languages.id'),
             'status': terms_filter('status'),
         }
