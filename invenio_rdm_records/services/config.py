@@ -8,16 +8,16 @@
 
 """RDM Record Service."""
 
+from flask_babelex import lazy_gettext as _
 from invenio_drafts_resources.services.records import RecordDraftServiceConfig
 from invenio_drafts_resources.services.records.components import \
-    DraftFilesComponent, RelationsComponent
+    DraftFilesComponent
 from invenio_records_resources.services.files.config import FileServiceConfig
-from invenio_records_resources.services.records.components import \
-    MetadataComponent
 from invenio_records_resources.services.records.search import terms_filter
 
 from ..records import RDMDraft, RDMRecord
-from .components import AccessComponent
+from .components import AccessComponent, MetadataComponent, \
+    VersionSupportComponent
 from .permissions import RDMRecordPermissionPolicy
 from .schemas import RDMRecordSchema
 
