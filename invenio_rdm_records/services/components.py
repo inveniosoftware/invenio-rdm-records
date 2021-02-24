@@ -67,6 +67,33 @@ class AccessComponent(ServiceComponent):
         """Add basic ownership fields to the record."""
         self._populate_access_and_validate(identity, data, record, **kwargs)
 
-    def update(self, identity, data=None, record=None, **kwargs):
+    def update_draft(self, identity, data=None, record=None, **kwargs):
         """Update handler."""
         self._populate_access_and_validate(identity, data, record, **kwargs)
+
+
+class MetadataComponent(ServiceComponent):
+    """Service component for metadata."""
+
+    def create(self, identity, data=None, record=None, **kwargs):
+        """Inject parsed metadata to the record."""
+        record.metadata = data.get('metadata', {})
+
+    def update(self, identity, data=None, record=None, **kwargs):
+        """Inject parsed metadata to the record."""
+        record.metadata = data.get('metadata', {})
+
+    def update_draft(self, identity, data=None, record=None, **kwargs):
+        """Inject parsed metadata to the record."""
+        record.metadata = data.get('metadata', {})
+
+
+class VersionSupportComponent(ServiceComponent):
+    """Version support component."""
+
+    # TODO: This component has to be merged with RelationsComponent in
+    # Invenio-Drafts-Resources.
+
+    def new_version(self, identity, draft=None, record=None, **kwargs):
+        """Create a new version of a record."""
+        raise NotImplementedError("Version support is not yet implemented.")
