@@ -12,10 +12,10 @@ import operator
 from functools import reduce
 from itertools import chain
 
-from elasticsearch_dsl import Q, query
+from elasticsearch_dsl import Q
 from flask_principal import UserNeed
 from invenio_access.permissions import authenticated_user
-from invenio_records_permissions.generators import AnyUser, Generator
+from invenio_records_permissions.generators import Generator
 
 
 class IfRestricted(Generator):
@@ -41,6 +41,10 @@ class IfRestricted(Generator):
 
     def generators(self, record):
         """Get the "then" or "else" generators."""
+        if record is None:
+            # TODO - when permissions on links are checked, the record is not
+            # passes properly, causing below ``record.access`` to fail.
+            return self.else_
         is_restricted = getattr(
             record.access.protection, self.field, "restricted")
         return self.then_ if is_restricted == "restricted" else self.else_
@@ -58,23 +62,27 @@ class IfRestricted(Generator):
                 record)]
         return set(chain.from_iterable(needs))
 
-    def make_query(self, status, generators, **kwargs):
+    def make_query(self, generators, **kwargs):
         """Make a query for one set of generators."""
-        q = Q("match", **{f"access.{self.field}": status})
-
         queries = [g.query_filter(**kwargs) for g in generators]
         queries = [q for q in queries if q]
-
-        if queries:
-            q &= reduce(operator.or_, queries)
-
-        return q
+        return reduce(operator.or_, queries) if queries else None
 
     def query_filter(self, **kwargs):
         """Filters for current identity as super user."""
-        q_restricted = self.make_query("restricted", self.then_, **kwargs)
-        q_public = self.make_query("public", self.else_, **kwargs)
-        return q_restricted | q_public
+        q_restricted = Q("match", **{f"access.{self.field}": "restricted"})
+        q_public = Q("match", **{f"access.{self.field}": "public"})
+        then_query = self.make_query(self.then_, **kwargs)
+        else_query = self.make_query(self.else_, **kwargs)
+
+        if then_query and else_query:
+            return (q_restricted & then_query) | (q_public & else_query)
+        elif then_query:
+            return (q_restricted & then_query) | q_public
+        elif else_query:
+            return q_public & else_query
+        else:
+            return q_public
 
 
 class RecordOwners(Generator):
@@ -86,12 +94,10 @@ class RecordOwners(Generator):
             # 'record is None' means that this must be a 'create'
             # this should be allowed for any authenticated user
             return [authenticated_user]
-
         return [UserNeed(owner.owner_id) for owner in record.access.owners]
 
     def query_filter(self, identity=None, **kwargs):
         """Filters for current identity as owner."""
-        for need in identity.provides:
-            if need.method == 'id':
-                return Q("term", **{"access.owned_by.user": need.value})
-        return []
+        users = [n.value for n in identity.provides if n.method == "id"]
+        if users:
+            return Q("terms", **{"access.owned_by.user": users})
