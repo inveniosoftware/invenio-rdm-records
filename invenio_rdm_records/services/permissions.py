@@ -46,7 +46,6 @@ class RDMRecordPermissionPolicy(RecordPermissionPolicy):
     ]
     can_update = [Disable()]
     can_delete = [Disable()]
-    can_update_files = [Disable()]
 
     # Drafts
     can_create = [AuthenticatedUser(), SystemProcess()]
@@ -55,9 +54,30 @@ class RDMRecordPermissionPolicy(RecordPermissionPolicy):
     can_read_draft = [RecordOwners(), SystemProcess()]
     can_update_draft = [RecordOwners(), SystemProcess()]
     can_delete_draft = [RecordOwners(), SystemProcess()]
-    can_read_draft_files = [RecordOwners(), SystemProcess()]
-    can_update_draft_files = [RecordOwners(), SystemProcess()]
 
     can_manage = [RecordOwners(), SystemProcess()]
 
     can_publish = [RecordOwners(), SystemProcess()]
+
+    # Files
+    # TODO: Revisit to distinguish between record files permissions and draft
+    #       files permissions. As it is right now, there is no distinction
+    #       in permission requirements between the two.
+    # Record - files
+    # For now, can_read_files means:
+    # - can list files
+    # - can read a file metadata
+    # - can download the file
+    can_read_files = [
+        IfRestricted(
+            'files',
+            then_=[RecordOwners()],
+            else_=[AnyUser()]
+        )
+    ]
+    # Draft - files
+    # create_files is for 3-step file upload
+    can_create_files = [RecordOwners()]
+    # update_files is for updating files options
+    can_update_files = [RecordOwners()]
+    can_delete_files = [RecordOwners()]

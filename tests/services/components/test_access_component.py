@@ -19,7 +19,7 @@ from invenio_rdm_records.services import RDMRecordService
 from invenio_rdm_records.services.components import AccessComponent
 
 
-def test_access_component_valid(minimal_record, identity_simple):
+def test_access_component_valid(minimal_record, identity_simple, users):
     record = RDMRecord.create(minimal_record)
     component = AccessComponent(RDMRecordService())
     component.create(identity_simple, minimal_record, record)
@@ -27,7 +27,8 @@ def test_access_component_valid(minimal_record, identity_simple):
     assert len(record.access.owners) > 0
 
 
-def test_access_component_unknown_owner(minimal_record, identity_simple):
+def test_access_component_unknown_owner(
+        minimal_record, identity_simple, users):
     minimal_record["access"]["owned_by"] = [{"user": -1337}]
 
     record = RDMRecord.create(minimal_record)
@@ -41,7 +42,7 @@ def test_access_component_unknown_owner(minimal_record, identity_simple):
 
 
 def test_access_component_unknown_grant_subject(
-    minimal_record, identity_simple
+    minimal_record, identity_simple, users
 ):
     minimal_record["access"]["grants"] = [
         {"subject": "user", "id": "-1337", "level": "view"}
