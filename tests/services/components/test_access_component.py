@@ -37,7 +37,7 @@ def test_access_component_unknown_owner(minimal_record, identity_simple):
         component.create(identity_simple, minimal_record, record)
 
     with pytest.raises(ValidationError):
-        component.update(identity_simple, minimal_record, record)
+        component.update_draft(identity_simple, minimal_record, record)
 
 
 def test_access_component_unknown_grant_subject(
@@ -54,7 +54,7 @@ def test_access_component_unknown_grant_subject(
         component.create(identity_simple, minimal_record, record)
 
     with pytest.raises(ValidationError):
-        component.update(identity_simple, minimal_record, record)
+        component.update_draft(identity_simple, minimal_record, record)
 
 
 def test_access_component_set_owner(minimal_record, users):
