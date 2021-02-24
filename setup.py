@@ -66,8 +66,8 @@ install_requires = [
     'arrow>=0.17.0',
     'Faker>=2.0.3',
     'ftfy>=4.4.3,<5.0.0',
-    'invenio-drafts-resources>=0.9.5,<0.10.0',
-    'invenio-vocabularies>=0.3.2,<0.4.0',
+    'invenio-drafts-resources>=0.9.7,<0.10.0',
+    'invenio-vocabularies>=0.3.3,<0.4.0',
     'pytz>=2020.4',
     'pyyaml>=5.4.0',
 ]
