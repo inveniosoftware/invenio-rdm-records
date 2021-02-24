@@ -69,11 +69,7 @@ class Access:
 
     def clear_embargo(self):
         """Remove all information about the embargo."""
-        if self.embargo is not None:
-            # disable the embargo first, for good measure
-            self.embargo.active = False
-
-        self._embargo = None
+        self._embargo = Embargo()
 
     @property
     def owned_by(self):
@@ -107,23 +103,20 @@ class Access:
 
     @embargo.setter
     def embargo(self, embargo):
-        self._embargo = embargo
+        if embargo is None:
+            embargo = Embargo()
 
-        if embargo is not None:
-            # allow 'clear_embargo()' to be called as 'embargo.clear()'
-            self._embargo.clear = lambda: self.clear_embargo()
+        self._embargo = embargo
 
     def dump(self):
         """Dump the field values as dictionary."""
         access = {
             "record": self.protection.record,
             "files": self.protection.files,
+            "embargo": self.embargo.dump(),
             "owned_by": self.owned_by.dump(),
             # "grants": self.grants.dump(),  # TODO enable again when ready
         }
-
-        if self.embargo is not None:
-            access["embargo"] = self.embargo.dump()
 
         return access
 
@@ -210,15 +203,11 @@ class Access:
         protection_str = "{}/{}".format(
             self.protection.record, self.protection.files
         )
-        if self.embargo is not None:
-            embargo_str = "embargo: {}".format(repr(self.embargo))
-        else:
-            embargo_str = "no embargo"
 
         return "<{} (protection: {}, {}, owners: {}, grants: {})>".format(
             type(self).__name__,
             protection_str,
-            embargo_str,
+            self.embargo,
             len(self.owners),
             len(self.grants),
         )

@@ -8,7 +8,9 @@
 
 """RDM record schema utilities."""
 
-from marshmallow import Schema, ValidationError, fields
+import arrow
+from arrow.parser import ParserError
+from marshmallow import Schema, ValidationError, fields, missing
 from marshmallow.schema import SchemaMeta
 from marshmallow_utils.fields import NestedAttribute
 
@@ -54,3 +56,23 @@ def dump_empty(schema_or_field):
         return dump_empty(field.nested)
 
     return None
+
+
+class ISODateString(fields.Date):
+    """ISO8601-formatted date string that allows dumping of null values."""
+
+    def _serialize(self, value, attr, obj, **kwargs):
+        """Serialize an ISO8601-formatted date."""
+        try:
+            if value is not None:
+                value = arrow.get(value).date()
+
+            return super()._serialize(
+                value, attr, obj, **kwargs
+            )
+        except ParserError:
+            return missing
+
+    def _deserialize(self, value, attr, data, **kwargs):
+        """Deserialize an ISO8601-formatted date."""
+        return super()._deserialize(value, attr, data, **kwargs).isoformat()

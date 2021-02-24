@@ -14,7 +14,7 @@ import arrow
 class Embargo:
     """Embargo class for the access system field."""
 
-    def __init__(self, until, reason=None, active=None):
+    def __init__(self, until=None, reason=None, active=None):
         """Create a new Embargo."""
         self.until = until
         if isinstance(until, str):
@@ -53,6 +53,12 @@ class Embargo:
 
         return False
 
+    def clear(self):
+        """Clear any information if the embargo was ever active."""
+        self.until = None
+        self.reason = None
+        self._active = None
+
     def dump(self):
         """Dump the embargo as dictionary."""
         until_str = None
@@ -67,11 +73,29 @@ class Embargo:
 
     def __repr__(self):
         """Return repr(self)."""
+        if self == Embargo():
+            return "<No Embargo>"
+
         until_str = self.until or "n/a"
 
         return "<{} (active: {}, until: {}, reason: {})>".format(
             type(self).__name__, self.active, until_str, self.reason
         )
+
+    def __eq__(self, other):
+        """Return self == other."""
+        if type(self) != type(other):
+            return False
+
+        return (
+            self.reason == other.reason
+            and self.until == other.until
+            and self.active == other.active
+        )
+
+    def __ne__(self, other):
+        """Return self != other."""
+        return not (self == other)
 
     def __bool__(self):
         """Return bool(self)."""
@@ -80,8 +104,11 @@ class Embargo:
     @classmethod
     def from_dict(cls, dict_, ignore_active_value=False):
         """Parse the Embargo from the given dictionary."""
+        if not dict_:
+            return cls()
+
         until = dict_.get("until")
-        if until is not None:
+        if until:
             until = arrow.get(until).datetime
 
         reason = dict_.get("reason")
@@ -91,7 +118,7 @@ class Embargo:
             # instead of parsed
             active = None
 
-        if until is None and reason is None and active is None:
-            return None
+        if not until and not reason and not active:
+            return cls()
 
-        return cls(until, reason=reason, active=active)
+        return cls(until=until, reason=reason, active=active)
