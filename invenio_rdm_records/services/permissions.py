@@ -28,9 +28,32 @@ class RDMRecordPermissionPolicy(RecordDraftPermissionPolicy):
     - Delete access given to admins only. (inherited)
     """
 
-    # TODO: Change all below when permissions settled
-    can_create = [AnyUser(), SystemProcess()]
-    can_update_files = [AnyUser(), SystemProcess()]
-    can_publish = [AnyUser(), SystemProcess()]
-    can_read = [AnyUser(), SystemProcess()]
-    can_manage = [RecordOwners(), SystemProcess()]
+    NEED_LABEL_TO_ACTION = {
+        'bucket-update': 'update_files',
+        'bucket-read': 'read_files',
+        'object-read': 'read_files',
+    }
+
+    # Records
+    can_search = [AnyUser(), SystemProcess()]
+    can_read = [
+        IfRestricted('record', then_=[RecordOwners()], else_=[AnyUser()]),
+        SystemProcess(),
+    ]
+    can_read_files = [
+        IfRestricted('files', then_=[RecordOwners()], else_=[AnyUser()]),
+        SystemProcess(),
+    ]
+    can_update = [Disable()]
+    can_delete = [Disable()]
+    can_update_files = [Disable()]
+
+    # Drafts
+    can_create = [AuthenticatedUser(), SystemProcess()]
+    can_search_drafts = [AuthenticatedUser(), SystemProcess()]
+
+    can_read_draft = [RecordOwners(), SystemProcess()]
+    can_update_draft = [RecordOwners(), SystemProcess()]
+    can_delete_draft = [RecordOwners(), SystemProcess()]
+    can_read_draft_files = [RecordOwners(), SystemProcess()]
+    can_update_draft_files = [RecordOwners(), SystemProcess()]

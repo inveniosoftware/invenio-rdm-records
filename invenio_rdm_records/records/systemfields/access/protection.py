@@ -31,8 +31,13 @@ class Protection:
             )
 
         self.record = record
-        if files is not None:
-            self.files = files
+
+        if record == "restricted":
+            # Files are restricted if record is restricted.
+            self.files = "restricted"
+        else:
+            # If files are not set, the record's protection is used.
+            self.files = files or record
 
     def __get__(self):
         """Get the protection level of the record and its files."""

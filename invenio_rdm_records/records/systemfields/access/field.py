@@ -241,10 +241,11 @@ class AccessField(SystemField):
         data = self.get_dictkey(instance)
         if data:
             obj = self._access_obj_class.from_dict(data)
-            self._set_cache(instance, obj)
-            return obj
+        else:
+            obj = self._access_obj_class()
 
-        return None
+        self._set_cache(instance, obj)
+        return obj
 
     def set_obj(self, record, obj):
         """Set the access object."""

@@ -46,30 +46,6 @@ def test_grant_tokens_dumper(app, db, minimal_record):
     assert "grant_tokens" not in new_record["access"]
 
 
-def test_grant_tokens_dumper_without_access(app, db, minimal_record):
-    """Test grant token dumper extension implementation."""
-    dumper = ElasticsearchDumper(
-        extensions=[GrantTokensDumperExt("access.grant_tokens")]
-    )
-
-    del minimal_record["access"]
-
-    # Create the record
-    record = RDMRecord.create(minimal_record)
-    db.session.commit()
-
-    # Dump it
-    dump = record.dumps(dumper=dumper)
-    assert "access" not in dump or "grant_tokens" not in dump["access"]
-
-    # Load it
-    new_record = RDMRecord.loads(dump, loader=dumper)
-    assert (
-        "access" not in new_record
-        or "grant_tokens" not in new_record["access"]
-    )
-
-
 # TODO re-enable after grants have been enabled in the schema
 @pytest.mark.skip
 def test_grant_tokens_dumper_query(
