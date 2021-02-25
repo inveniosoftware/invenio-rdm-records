@@ -17,6 +17,8 @@ from flask_principal import UserNeed
 from invenio_access.permissions import authenticated_user
 from invenio_records_permissions.generators import Generator
 
+from invenio_rdm_records.records import RDMDraft
+
 
 class IfRestricted(Generator):
     """IfRestricted.
@@ -101,3 +103,42 @@ class RecordOwners(Generator):
         users = [n.value for n in identity.provides if n.method == "id"]
         if users:
             return Q("terms", **{"access.owned_by.user": users})
+
+
+class IfDraft(Generator):
+    """Generator that depends on whether the record is a draft or not.
+
+    IfDraft(
+        then_=[...],
+        else_=[...],
+    )
+
+    This might be a temporary hack or the way to go.
+    """
+
+    def __init__(self, then_, else_):
+        """Constructor."""
+        self.then_ = then_
+        self.else_ = else_
+
+    def _generators(self, record):
+        """Get the "then" or "else" generators."""
+        return self.then_ if isinstance(record, RDMDraft) else self._else
+
+    def needs(self, record=None, **kwargs):
+        """Set of Needs granting permission."""
+        return list(set(chain.from_iterable(
+            [
+                g.needs(record=record, **kwargs)
+                for g in self._generators(record)
+            ]
+        )))
+
+    def excludes(self, record=None, **kwargs):
+        """Set of Needs denying permission."""
+        return list(set(chain.from_iterable(
+            [
+                g.excludes(record=record, **kwargs)
+                for g in self._generators(record)
+            ]
+        )))
