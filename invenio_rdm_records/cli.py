@@ -75,15 +75,15 @@ def create_fake_record():
         "access": {
             "record": "public",
             "files": "restricted",
-            "owned_by": [{"user": 1}],
             "embargo": {
                 "active": True,
                 "until": fake.future_date(end_date='+1y').strftime("%Y-%m-%d"),
                 "reason": "top secret material"
             },
-            "grants": [
-                {"subject": "user", "id": "1", "level": "manage"}
-            ]
+            # TODO re-add when grants are enabled
+            # "grants": [
+            #     {"subject": "user", "id": "1", "level": "manage"}
+            # ]
         },
         "metadata": {
             "resource_type": fake_resource_type(),
@@ -226,7 +226,7 @@ def create_fake_record():
     draft_files_service = RDMDraftFilesService()
 
     draft = service.create(data=data_to_use, identity=system_identity)
-    draft_files_service.update_files(
+    draft_files_service.update_files_options(
         id_=draft.id, identity=system_identity, data={'enabled': False})
     record = service.publish(id_=draft.id, identity=system_identity)
 
