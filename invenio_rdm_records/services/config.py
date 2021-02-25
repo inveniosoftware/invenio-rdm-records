@@ -48,15 +48,15 @@ class RDMRecordServiceConfig(RecordDraftServiceConfig):
             # 'access_right': {
             #     'terms': {'field': 'access.access_right'},
             # },
-            'languages': {
-                'terms': {'field': 'metadata.languages.id'},
-            },
+            # 'languages': {
+            #     'terms': {'field': 'metadata.languages.id'},
+            # },
         },
         post_filters={
             'subtype': terms_filter('metadata.resource_type.subtype'),
             'resource_type': terms_filter('metadata.resource_type.type'),
             # 'access_right': terms_filter('access.access_right'),
-            'languages': terms_filter('metadata.languages.id'),
+            # 'languages': terms_filter('metadata.languages.id'),
         }
     )
 
@@ -111,9 +111,9 @@ class RDMUserRecordsServiceConfig(RDMRecordServiceConfig):
             # 'access_right': {
             #     'terms': {'field': 'access.access_right'},
             # },
-            'languages': {
-                'terms': {'field': 'metadata.languages.id'},
-            },
+            # 'languages': {
+            #     'terms': {'field': 'metadata.languages.id'},
+            # },
             'status': {
                 'terms': {'field': 'status'},
             },
@@ -122,7 +122,7 @@ class RDMUserRecordsServiceConfig(RDMRecordServiceConfig):
             'subtype': terms_filter('metadata.resource_type.subtype'),
             'resource_type': terms_filter('metadata.resource_type.type'),
             # 'access_right': terms_filter('access.access_right'),
-            'languages': terms_filter('metadata.languages.id'),
+            # 'languages': terms_filter('metadata.languages.id'),
             'status': terms_filter('status'),
         }
     )
