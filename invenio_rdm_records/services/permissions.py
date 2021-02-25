@@ -73,11 +73,12 @@ class RDMRecordPermissionPolicy(RecordPermissionPolicy):
             'files',
             then_=[RecordOwners()],
             else_=[AnyUser()]
-        )
+        ),
+        SystemProcess()
     ]
     # Draft - files
     # create_files is for 3-step file upload
-    can_create_files = [RecordOwners()]
+    can_create_files = [RecordOwners(), SystemProcess()]
     # update_files is for updating files options
-    can_update_files = [RecordOwners()]
-    can_delete_files = [RecordOwners()]
+    can_update_files = [RecordOwners(), SystemProcess()]
+    can_delete_files = [RecordOwners(), SystemProcess()]
