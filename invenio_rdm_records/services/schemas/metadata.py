@@ -16,7 +16,7 @@ from flask_babelex import lazy_gettext as _
 from marshmallow import EXCLUDE, INCLUDE, Schema, ValidationError, fields, \
     post_load, validate, validates_schema
 from marshmallow_utils.fields import EDTFDateString, IdentifierSet, \
-    ISOLangString, SanitizedUnicode
+    ISOLangString, SanitizedHTML, SanitizedUnicode
 from marshmallow_utils.schemas import GeometryObjectSchema, IdentifierSchema
 
 from .utils import validate_entry
@@ -194,8 +194,8 @@ class DescriptionSchema(Schema):
           "technicalinfo",
           "other"
     ]
-    description = SanitizedUnicode(required=True,
-                                   validate=validate.Length(min=3))
+    description = SanitizedHTML(required=True,
+                                validate=validate.Length(min=3))
     type = SanitizedUnicode(required=True, validate=validate.OneOf(
             choices=DESCRIPTION_TYPES,
             error=_('Invalid description type. {input} not one of {choices}.')
@@ -477,7 +477,7 @@ class MetadataSchema(Schema):
         validate=_not_blank(_('Format cannot be a blank string.'))))
     version = SanitizedUnicode()
     rights = fields.List(fields.Nested(RightsSchema))
-    description = SanitizedUnicode(validate=validate.Length(min=3))
+    description = SanitizedHTML(validate=validate.Length(min=3))
     additional_descriptions = fields.List(fields.Nested(DescriptionSchema))
     locations = fields.List(fields.Nested(LocationSchema))
     funding = fields.List(fields.Nested(FundingSchema))
