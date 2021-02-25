@@ -314,8 +314,6 @@ def test_only_owners_can_update_file_options(
     assert response.status_code == 200
 
 
-# TODO
-@pytest.mark.skip()
 def test_only_owners_can_list_draft_w_public_files(
         client, headers, draft_w_public_file, users):
     # Indeed drafts should only be seen by their owners (+ shared with soon)
@@ -324,15 +322,15 @@ def test_only_owners_can_list_draft_w_public_files(
 
     # Anonymous user can't list files
     response = client.get(url, headers=headers)
-    assert response.status_code == 403
+    assert 403 == response.status_code
 
     # Different user can't list files
     login_user(client, users[1])
     response = client.get(url, headers=headers)
-    assert response.status_code == 403
+    assert 403 == response.status_code
 
     # Owner can list files
     logout_user(client)
     login_user(client, users[0])
     response = client.get(url, headers=headers)
-    assert response.status_code == 200
+    assert 200 == response.status_code

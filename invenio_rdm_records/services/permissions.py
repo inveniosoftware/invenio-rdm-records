@@ -12,7 +12,7 @@ from invenio_records_permissions.generators import AnyUser, \
     AuthenticatedUser, Disable, SystemProcess
 from invenio_records_permissions.policies.records import RecordPermissionPolicy
 
-from .generators import IfRestricted, RecordOwners
+from .generators import IfDraft, IfRestricted, RecordOwners
 
 
 class RDMRecordPermissionPolicy(RecordPermissionPolicy):
@@ -72,9 +72,14 @@ class RDMRecordPermissionPolicy(RecordPermissionPolicy):
         IfRestricted(
             'files',
             then_=[RecordOwners()],
-            else_=[AnyUser()]
+            else_=[
+                IfDraft(
+                    then_=[RecordOwners()],
+                    else_=[AnyUser()]
+                ),
+            ]
         ),
-        SystemProcess()
+        SystemProcess(),
     ]
     # Draft - files
     # create_files is for 3-step file upload
