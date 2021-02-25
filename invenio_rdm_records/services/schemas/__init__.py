@@ -51,6 +51,8 @@ class RDMRecordSchema(RecordSchema, FieldPermissionsMixin):
 
     status = fields.Str(dump_only=True)
 
+    published = fields.Boolean(attribute='is_published', dump_only=True)
+
     # communities = NestedAttribute(CommunitiesSchema)
     # stats = NestedAttribute(StatsSchema, dump_only=True)
     # relations = NestedAttribute(RelationsSchema, dump_only=True)
