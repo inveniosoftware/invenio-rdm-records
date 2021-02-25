@@ -75,6 +75,7 @@ def create_fake_record():
         "access": {
             "record": "public",
             "files": "restricted",
+            "owned_by": [{"user": 1}],
             "embargo": {
                 "active": True,
                 "until": fake.future_date(end_date='+1y').strftime("%Y-%m-%d"),
