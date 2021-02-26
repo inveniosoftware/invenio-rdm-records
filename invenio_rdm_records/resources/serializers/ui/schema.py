@@ -72,14 +72,14 @@ def localize_vocabulary_list(field_name, key, attr, obj):
     field_data = attr.get("metadata", {}).get(field_name)
 
     if not field_data:
-        return None
+        return missing
 
     localized = []
     str_locale = str(current_i18n.locale)
     for item in field_data:
         localized.append({
             "id": item.get("id"),
-            "title_l10n": item.get("title", {}).get(str_locale)
+            "title_l10n": item.get(key, {}).get(str_locale)
         })
 
     return localized
