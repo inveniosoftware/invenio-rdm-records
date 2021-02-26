@@ -331,10 +331,11 @@ def roles(app, db):
     return [role1, role2]
 
 
-@pytest.fixture(scope="module")
-def identity_simple():
+@pytest.fixture(scope="function")
+def identity_simple(users):
     """Simple identity fixture."""
-    i = Identity(1)
-    i.provides.add(UserNeed(1))
+    user = users[0]
+    i = Identity(user.id)
+    i.provides.add(UserNeed(user.id))
     i.provides.add(Need(method='system_role', value='any_user'))
     return i

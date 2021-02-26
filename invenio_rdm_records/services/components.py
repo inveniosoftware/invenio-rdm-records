@@ -8,6 +8,7 @@
 
 """RDM service components."""
 
+from invenio_access.permissions import Permission, system_process
 from invenio_records_resources.services.records.components import \
     ServiceComponent
 from marshmallow import ValidationError
@@ -38,6 +39,12 @@ class AccessComponent(ServiceComponent):
 
     def _populate_access_and_validate(self, identity, data, record, **kwargs):
         """Populate and validate the record's access field."""
+        if not Permission(system_process).allows(identity):
+            # if it's not a system process doing this operation, ignore the
+            # set record owners -- only system processes are allowed to
+            # explicitly set the record's owners
+            data.get("access", {}).pop("owned_by", None)
+
         if "access" in data:
             # populate the record's access field with the data already
             # validated by marshmallow
