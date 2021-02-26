@@ -123,7 +123,7 @@ class IfDraft(Generator):
 
     def _generators(self, record):
         """Get the "then" or "else" generators."""
-        return self.then_ if isinstance(record, RDMDraft) else self._else
+        return self.then_ if isinstance(record, RDMDraft) else self.else_
 
     def needs(self, record=None, **kwargs):
         """Set of Needs granting permission."""
