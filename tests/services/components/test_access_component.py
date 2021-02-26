@@ -12,6 +12,7 @@ from datetime import timedelta
 import arrow
 import pytest
 from flask_principal import Identity, UserNeed
+from invenio_access.permissions import system_identity
 from marshmallow import ValidationError
 
 from invenio_rdm_records.records import RDMRecord
@@ -34,11 +35,24 @@ def test_access_component_unknown_owner(
     record = RDMRecord.create(minimal_record)
     component = AccessComponent(RDMRecordService())
 
-    with pytest.raises(ValidationError):
-        component.create(identity_simple, minimal_record, record)
+    # both should work, since 'access.owned_by' is ignored for anybody
+    # other than system processes
+    component.create(identity_simple, minimal_record, record)
+    component.update_draft(identity_simple, minimal_record, record)
+
+
+def test_access_component_unknown_owner_with_system_process(
+        minimal_record, users):
+    minimal_record["access"]["owned_by"] = [{"user": -1337}]
+
+    record = RDMRecord.create(minimal_record)
+    component = AccessComponent(RDMRecordService())
 
     with pytest.raises(ValidationError):
-        component.update_draft(identity_simple, minimal_record, record)
+        component.create(system_identity, minimal_record, record)
+
+    with pytest.raises(ValidationError):
+        component.update_draft(system_identity, minimal_record, record)
 
 
 def test_access_component_unknown_grant_subject(
