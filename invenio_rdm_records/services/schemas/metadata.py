@@ -456,7 +456,13 @@ class MetadataSchema(Schema):
 
     # Metadata fields
     resource_type = ResourceType(required=True)
-    creators = fields.List(fields.Nested(CreatorSchema), required=True)
+    creators = fields.List(
+        fields.Nested(CreatorSchema),
+        required=True,
+        validate=validate.Length(
+            min=1, error=_("Missing data for required field.")
+        )
+    )
     title = SanitizedUnicode(required=True, validate=validate.Length(min=3))
     additional_titles = fields.List(fields.Nested(TitleSchema))
     publisher = SanitizedUnicode()
