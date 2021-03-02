@@ -14,7 +14,7 @@ import pytest
 from flask_babelex import lazy_gettext as _
 
 from invenio_rdm_records.services.schemas.metadata import ContributorSchema, \
-    CreatorSchema, PersonOrOrganizationSchema
+    CreatorSchema, MetadataSchema, PersonOrOrganizationSchema
 
 from .test_utils import assert_raises_messages
 
@@ -403,5 +403,33 @@ def test_contributor_invalid_role(custom_config, vocabulary_clear):
         lambda: ContributorSchema().load(invalid_role),
         {'role': [
             "Invalid value. Choose one of ['DataCollector', 'Librarian']."
+        ]}
+    )
+
+
+def test_metadata_requires_non_empty_creators(
+        minimal_metadata, vocabulary_clear):
+
+    del minimal_metadata["creators"]
+    assert_raises_messages(
+        lambda: MetadataSchema().load(minimal_metadata),
+        {'creators': [
+            "Missing data for required field."
+        ]}
+    )
+
+    minimal_metadata["creators"] = []
+    assert_raises_messages(
+        lambda: MetadataSchema().load(minimal_metadata),
+        {'creators': [
+            "Missing data for required field."
+        ]}
+    )
+
+    minimal_metadata["creators"] = None
+    assert_raises_messages(
+        lambda: MetadataSchema().load(minimal_metadata),
+        {'creators': [
+            "Field may not be null."
         ]}
     )
