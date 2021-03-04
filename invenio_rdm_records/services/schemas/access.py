@@ -12,10 +12,8 @@ import arrow
 from flask_babelex import lazy_gettext as _
 from marshmallow import Schema, ValidationError, fields, validates, \
     validates_schema
-from marshmallow_utils.fields import SanitizedUnicode
+from marshmallow_utils.fields import ISODateString, SanitizedUnicode
 from marshmallow_utils.permissions import FieldPermissionsMixin
-
-from .utils import ISODateString
 
 
 class Grant(Schema):

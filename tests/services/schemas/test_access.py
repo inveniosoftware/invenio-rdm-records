@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2020 CERN.
-# Copyright (C) 2020 Northwestern University.
+# Copyright (C) 2020-2021 CERN.
+# Copyright (C) 2020-2021 Northwestern University.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
@@ -9,12 +9,45 @@
 """Test metadata access schema."""
 
 import pytest
-from flask_babelex import lazy_gettext as _
 from marshmallow.exceptions import ValidationError
 
-from invenio_rdm_records.services.schemas.access import AccessSchema
+from invenio_rdm_records.services.schemas.access import AccessSchema, \
+    EmbargoSchema
 
-from .test_utils import assert_raises_messages
+
+def test_embargo_load_no_until_is_valid():
+    expected = {
+        "active": False,
+        "until": None,
+        "reason": None
+    }
+
+    valid_no_until = {
+        "active": False,
+    }
+    assert expected == EmbargoSchema().load(valid_no_until)
+
+    valid_no_until = {
+        "active": False,
+        "until": None,
+    }
+    assert expected == EmbargoSchema().load(valid_no_until)
+
+
+def test_embargo_dump_no_until_is_valid():
+    valid_no_until = {
+        "active": False,
+    }
+    assert valid_no_until == EmbargoSchema().dump(valid_no_until)
+
+    expected = {
+        "active": False,
+    }
+    valid_no_until = {
+        "active": False,
+        "until": None,
+    }
+    assert expected == EmbargoSchema().dump(valid_no_until)
 
 
 def test_valid_full():
@@ -32,9 +65,10 @@ def test_valid_full():
 
 
 @pytest.mark.parametrize("invalid_access,invalid_attr", [
-    ({"files": "restricted", "owned_by": [{"user": 1}],
-     "embargo": {"active": True, "until": "2131-01-01", "reason": "secret!"}},
-     "record"),
+    ({
+        "files": "restricted", "owned_by": [{"user": 1}],
+        "embargo": {"active": True, "until": "2131-01-01", "reason": "secret!"}
+    }, "record"),
     ({"record": "public", "owned_by": [{"user": 1}],
      "embargo": {"active": True, "until": "2131-01-01", "reason": "secret!"}},
      "files"),

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2020 CERN.
-# Copyright (C) 2020 Northwestern University.
+# Copyright (C) 2020-2021 CERN.
+# Copyright (C) 2020-2021 Northwestern University.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
@@ -56,23 +56,3 @@ def dump_empty(schema_or_field):
         return dump_empty(field.nested)
 
     return None
-
-
-class ISODateString(fields.Date):
-    """ISO8601-formatted date string that allows dumping of null values."""
-
-    def _serialize(self, value, attr, obj, **kwargs):
-        """Serialize an ISO8601-formatted date."""
-        try:
-            if value is not None:
-                value = arrow.get(value).date()
-
-            return super()._serialize(
-                value, attr, obj, **kwargs
-            )
-        except ParserError:
-            return missing
-
-    def _deserialize(self, value, attr, data, **kwargs):
-        """Deserialize an ISO8601-formatted date."""
-        return super()._deserialize(value, attr, data, **kwargs).isoformat()

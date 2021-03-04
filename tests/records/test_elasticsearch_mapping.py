@@ -16,7 +16,7 @@ from invenio_jsonschemas import current_jsonschemas
 from invenio_pidstore import current_pidstore
 from invenio_records.api import Record
 from marshmallow.fields import Bool, Integer, List
-from marshmallow_utils.fields import ISODateString, SanitizedUnicode
+from marshmallow_utils.fields import SanitizedUnicode
 
 from invenio_rdm_records.services.schemas.metadata_extensions import \
     add_es_metadata_extensions
