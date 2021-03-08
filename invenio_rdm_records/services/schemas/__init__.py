@@ -49,9 +49,7 @@ class RDMRecordSchema(RecordSchema, FieldPermissionsMixin):
     # notes = fields.List(fields.Nested(InternalNoteSchema))
     revision = fields.Integer(dump_only=True)
 
-    status = fields.Str(dump_only=True)
-
-    published = fields.Boolean(attribute='is_published', dump_only=True)
+    is_published = fields.Boolean(dump_only=True)
 
     # communities = NestedAttribute(CommunitiesSchema)
     # stats = NestedAttribute(StatsSchema, dump_only=True)

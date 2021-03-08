@@ -10,6 +10,6 @@
 
 from .access import AccessField
 from .has_draftcheck import HasDraftCheckField
-from .record_status import RecordStatusField
+from .is_published import IsPublishedField
 
-__all__ = ("AccessField", "HasDraftCheckField", "RecordStatusField")
+__all__ = ("AccessField", "HasDraftCheckField", "IsPublishedField")

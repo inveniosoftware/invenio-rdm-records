@@ -342,12 +342,7 @@ def test_publish_draft_w_dates(
 def test_user_records_and_drafts(
     client_with_login, location, headers, minimal_record, es_clear
 ):
-    """Tests the search over the records index.
-
-    Note: The three use cases are set in the same test so there is the
-          possibility of failure. Meaning that if search is not done
-          correctly more than one record/draft will be returned.
-    """
+    """Tests the search over the drafts search alias."""
     client = client_with_login
     # Create a draft
     response = client.post(
@@ -377,47 +372,19 @@ def test_user_records_and_drafts(
     assert response.json['hits']['hits'][0]['id'] == recid
     assert response.json['hits']['hits'][1]['id'] == draftid
 
-    # Search only for user drafts
-    response = client.get("/user/records?status=draft", headers=headers)
+    # Search only for user published records and drafts
+    response = client.get("/user/records?is_published=true", headers=headers)
+    assert response.status_code == 200
+    assert response.json['hits']['total'] == 1
+    # the published record of this draft is excluded versus the filter
+    # `has_draft: False`
+    assert response.json['hits']['hits'][0]['id'] == recid
+
+    # Search only for user new drafts
+    response = client.get("/user/records?is_published=false", headers=headers)
     assert response.status_code == 200
     assert response.json['hits']['total'] == 1
     assert response.json['hits']['hits'][0]['id'] == draftid
-
-    # Search only for user published
-    response = client.get("/user/records?status=published", headers=headers)
-    assert response.status_code == 200
-    assert response.json['hits']['total'] == 1
-    assert response.json['hits']['hits'][0]['id'] == recid
-
-    # Edit published user's record
-    response = client.post(
-        "/records/{}/draft".format(recid),
-        headers=headers
-    )
-
-    RDMDraft.index.refresh()
-    RDMRecord.index.refresh()
-
-    edit_recid = response.json['id']
-
-    # Search user records
-    response = client.get("/user/records", headers=headers)
-    assert response.status_code == 200
-    # The total results remain the same as we return the unique number of
-    # user drafts and records
-    assert response.json['hits']['total'] == 2
-
-    # Search only for user drafts
-    response = client.get("/user/records?status=draft", headers=headers)
-    assert response.status_code == 200
-    assert response.json['hits']['total'] == 2
-    assert response.json['hits']['hits'][0]['id'] == edit_recid
-    assert response.json['hits']['hits'][1]['id'] == draftid
-
-    # Search only for user published
-    response = client.get("/user/records?status=published", headers=headers)
-    assert response.status_code == 200
-    assert response.json['hits']['total'] == 0
 
 
 # TODO

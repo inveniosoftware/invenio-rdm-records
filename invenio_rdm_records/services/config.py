@@ -114,8 +114,8 @@ class RDMUserRecordsServiceConfig(RDMRecordServiceConfig):
             # 'languages': {
             #     'terms': {'field': 'metadata.languages.id'},
             # },
-            'status': {
-                'terms': {'field': 'status'},
+            'is_published': {
+                'terms': {'field': 'is_published'},
             },
         },
         post_filters={
@@ -123,7 +123,7 @@ class RDMUserRecordsServiceConfig(RDMRecordServiceConfig):
             'resource_type': terms_filter('metadata.resource_type.type'),
             # 'access_right': terms_filter('access.access_right'),
             # 'languages': terms_filter('metadata.languages.id'),
-            'status': terms_filter('status'),
+            'is_published': terms_filter('is_published'),
         }
     )
 
