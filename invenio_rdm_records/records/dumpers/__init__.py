@@ -9,7 +9,6 @@
 
 from .access import GrantTokensDumperExt
 from .edtf import EDTFDumperExt, EDTFListDumperExt
-from .has_draft import HasDraftDumperExt
 from .locations import LocationsDumper
 
 __all__ = (
@@ -17,5 +16,4 @@ __all__ = (
     "EDTFListDumperExt",
     "GrantTokensDumperExt",
     "LocationsDumper",
-    "HasDraftDumperExt",
 )

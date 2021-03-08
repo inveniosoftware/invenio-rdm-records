@@ -433,8 +433,8 @@
         "updated" : {
           "type" : "date"
         },
-        "status": {
-          "type": "keyword"
+        "is_published": {
+          "type": "boolean"
         }
       }
     }

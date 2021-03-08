@@ -8,6 +8,7 @@
 """RDM Record and Draft API."""
 
 from invenio_drafts_resources.records import Draft, Record
+from invenio_pidstore.models import PIDStatus
 from invenio_records.dumpers import ElasticsearchDumper
 from invenio_records.dumpers.relations import RelationDumperExt
 from invenio_records.systemfields import ConstantField, ModelField, \
@@ -19,9 +20,8 @@ from invenio_vocabularies.records.api import Vocabulary
 from werkzeug.local import LocalProxy
 
 from . import models
-from .dumpers import EDTFDumperExt, EDTFListDumperExt, GrantTokensDumperExt, \
-    HasDraftDumperExt
-from .systemfields import AccessField, HasDraftCheckField, RecordStatusField
+from .dumpers import EDTFDumperExt, EDTFListDumperExt, GrantTokensDumperExt
+from .systemfields import AccessField, HasDraftCheckField, IsPublishedField
 
 
 #
@@ -39,7 +39,6 @@ class CommonFieldsMixin:
             EDTFListDumperExt("metadata.dates", "date"),
             GrantTokensDumperExt("access.grant_tokens"),
             RelationDumperExt('relations'),
-            HasDraftDumperExt('has_draft'),
         ]
     )
 
@@ -57,7 +56,9 @@ class CommonFieldsMixin:
 
     access = AccessField()
 
-    status = RecordStatusField()
+    # We redefine the property as we extend the `PIDStatusCheckField` to dump
+    # the property in ES in order to be available for aggregation
+    is_published = IsPublishedField(status=PIDStatus.REGISTERED)
 
 
 #
@@ -85,6 +86,8 @@ class RDMDraft(CommonFieldsMixin, Draft):
         # Don't delete, we'll manage in the service
         delete=False,
     )
+
+    has_draft = HasDraftCheckField()
 
 
 #
