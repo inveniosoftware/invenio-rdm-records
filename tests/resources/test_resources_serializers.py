@@ -49,7 +49,8 @@ def test_ui_serializer(app, full_record):
         'languages': [
             {'id': 'da', 'title_l10n': "Danish"},
             {'id': 'en', 'title_l10n': "English"}
-        ]
+        ],
+        'description_stripped': 'Test',
     }
 
     with app.app_context():

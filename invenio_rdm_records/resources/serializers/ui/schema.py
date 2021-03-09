@@ -18,6 +18,7 @@ from invenio_i18n.ext import current_i18n
 from marshmallow import INCLUDE, Schema, fields, missing
 from marshmallow_utils.fields import FormatDate as FormatDate_
 from marshmallow_utils.fields import FormatEDTF as FormatEDTF_
+from marshmallow_utils.fields import StrippedHTML
 
 from invenio_rdm_records.vocabularies import Vocabularies
 
@@ -131,6 +132,8 @@ class UIObjectSchema(Schema):
 
     languages = fields.Function(
         partial(localize_vocabulary_list, 'languages', 'title'))
+
+    description_stripped = StrippedHTML(attribute="metadata.description")
 
 
 #
