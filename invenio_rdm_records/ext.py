@@ -8,15 +8,42 @@
 
 """DataCite-based data model for Invenio."""
 
+from flask import flash, request, session
+from flask_babelex import _
+from flask_principal import identity_loaded
 from invenio_vocabularies.contrib.subjects.subjects import subject_record_type
+from itsdangerous import SignatureExpired
 
 from . import config
+from .links import LinkNeed, SecretLink
 from .resources import RDMDraftActionResource, RDMDraftFilesActionResource, \
     RDMDraftFilesResource, RDMDraftResource, RDMRecordFilesActionResource, \
     RDMRecordFilesResource, RDMRecordResource, RDMUserRecordsResource
 from .services import RDMDraftFilesService, RDMRecordFilesService, \
     RDMRecordService, RDMUserRecordsService
 from .services.schemas.metadata_extensions import MetadataExtensions
+
+
+def verify_token():
+    """Verify the token and store it in the session if it's valid."""
+    token = request.args.get("token", None)
+    if token:
+        try:
+            data = SecretLink.load_token(token)
+            if data:
+                session["rdm-records-token"] = data
+
+        except SignatureExpired:
+            session.pop("rdm-records-token", None)
+            flash(_("Your shared link has expired."))
+
+
+@identity_loaded.connect
+def on_identity_loaded(sender, identity):
+    """Add the secret link token need to the freshly loaded Identity."""
+    token_data = session.get("rdm-records-token")
+    if token_data:
+        identity.provides.add(LinkNeed(token_data["id"]))
 
 
 class InvenioRDMRecords(object):
@@ -46,6 +73,7 @@ class InvenioRDMRecords(object):
         )
         self.init_resource(app)
         self.init_vocabularies(app)
+        app.before_request(verify_token)
         app.extensions['invenio-rdm-records'] = self
 
     def init_config(self, app):

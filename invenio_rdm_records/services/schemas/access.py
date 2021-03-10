@@ -24,6 +24,12 @@ class Grant(Schema):
     level = fields.String()
 
 
+class Link(Schema):
+    """Schema for a secret link."""
+
+    id = fields.String()
+
+
 class Agent(Schema):
     """An agent schema."""
 
@@ -79,6 +85,7 @@ class AccessSchema(Schema, FieldPermissionsMixin):
     # 'manage' permission
     field_dump_permissions = {
         "grants": "manage",
+        "links": "manage",
     }
 
     record = SanitizedUnicode(required=True)
@@ -87,6 +94,7 @@ class AccessSchema(Schema, FieldPermissionsMixin):
     embargo = fields.Nested(EmbargoSchema)
     # TODO re-enable when the grants are ready
     # grants = fields.List(fields.Nested(Grant))
+    links = fields.List(fields.Nested(Link))
 
     def validate_protection_value(self, value, field_name):
         """Check that the protection value is valid."""

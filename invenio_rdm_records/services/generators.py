@@ -17,6 +17,7 @@ from flask_principal import UserNeed
 from invenio_access.permissions import authenticated_user
 from invenio_records_permissions.generators import Generator
 
+from invenio_rdm_records.links import permissions
 from invenio_rdm_records.records import RDMDraft
 
 
@@ -142,3 +143,26 @@ class IfDraft(Generator):
                 for g in self._generators(record)
             ]
         )))
+
+
+class SecretLinks(Generator):
+    """Secret Links for records."""
+
+    def __init__(self, permission):
+        """Constructor."""
+        self.permission = permission
+
+    def needs(self, record=None, **kwargs):
+        """Set of Needs granting permission."""
+        if record is None:
+            return []
+
+        return [
+            link.need
+            for link in (lnk.resolve() for lnk in record.access.links)
+            if (
+                link is not None
+                and not link.is_expired
+                and link.covers(self.permission)
+            )
+        ]

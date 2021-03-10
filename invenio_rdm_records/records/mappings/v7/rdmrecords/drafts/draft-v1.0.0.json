@@ -52,6 +52,13 @@
           },
           "grant_tokens": {
             "type": "keyword"
+          },
+          "links": {
+            "properties": {
+              "id": {
+                "type": "keyword"
+              }
+            }
           }
         }
       },

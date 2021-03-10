@@ -12,7 +12,7 @@ from invenio_records_permissions.generators import AnyUser, \
     AuthenticatedUser, Disable, SystemProcess
 from invenio_records_permissions.policies.records import RecordPermissionPolicy
 
-from .generators import IfDraft, IfRestricted, RecordOwners
+from .generators import IfDraft, IfRestricted, RecordOwners, SecretLinks
 
 
 class RDMRecordPermissionPolicy(RecordPermissionPolicy):
@@ -39,10 +39,7 @@ class RDMRecordPermissionPolicy(RecordPermissionPolicy):
     can_read = [
         IfRestricted('record', then_=[RecordOwners()], else_=[AnyUser()]),
         SystemProcess(),
-    ]
-    can_read_files = [
-        IfRestricted('files', then_=[RecordOwners()], else_=[AnyUser()]),
-        SystemProcess(),
+        SecretLinks("read"),
     ]
     can_update = [Disable()]
     can_delete = [Disable()]
@@ -80,6 +77,7 @@ class RDMRecordPermissionPolicy(RecordPermissionPolicy):
             ]
         ),
         SystemProcess(),
+        SecretLinks("read_files"),
     ]
     # Draft - files
     # create_files is for 3-step file upload
