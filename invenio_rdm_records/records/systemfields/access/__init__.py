@@ -10,6 +10,7 @@
 from .embargo import Embargo
 from .field import Access, AccessField
 from .grants import Grant, Grants
+from .links import Link, Links
 from .owners import Owner, Owners
 from .protection import Protection
 
@@ -19,6 +20,8 @@ __all__ = (
     "Embargo",
     "Grant",
     "Grants",
+    "Link",
+    "Links",
     "Owner",
     "Owners",
     "Protection",

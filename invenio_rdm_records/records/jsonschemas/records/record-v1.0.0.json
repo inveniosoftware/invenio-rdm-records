@@ -892,6 +892,21 @@
               }
             }
           }
+        },
+
+        "links": {
+          "description": "Secret links for the record.",
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["id"],
+            "additionalProperties": false,
+            "properties": {
+              "id": {
+                "type": "string"
+              }
+            }
+          }
         }
       }
     },

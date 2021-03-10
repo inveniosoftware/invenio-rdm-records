@@ -12,6 +12,7 @@ from invenio_records.systemfields import SystemField
 
 from .embargo import Embargo
 from .grants import Grants
+from .links import Links
 from .owners import Owners
 from .protection import Protection
 
@@ -20,6 +21,7 @@ class Access:
     """Access management per record."""
 
     grant_cls = Grants
+    links_cls = Links
     owners_cls = Owners
     protection_cls = Protection
     embargo_cls = Embargo
@@ -28,11 +30,13 @@ class Access:
         self,
         owned_by=None,
         grants=None,
+        links=None,
         protection=None,
         embargo=None,
         errors=None,
         owners_cls=None,
         grants_cls=None,
+        links_cls=None,
         protection_cls=None,
     ):
         """Create a new Access object for a record.
@@ -47,6 +51,7 @@ class Access:
         """
         owners_cls = owners_cls or Access.owners_cls
         grants_cls = grants_cls or Access.grant_cls
+        links_cls = links_cls or Access.links_cls
         protection_cls = protection_cls or Access.protection_cls
 
         # since owned_by and grants are basically sets and empty sets
@@ -59,6 +64,10 @@ class Access:
         self._grants = grants
         if grants is None:
             self._grants = grants_cls()
+
+        self._links = links
+        if links is None:
+            self._links = links_cls()
 
         self._protection = protection
         if protection is None:
@@ -85,6 +94,11 @@ class Access:
     def grants(self):
         """The set of permission grants for the record."""
         return self._grants
+
+    @property
+    def links(self):
+        """The set of secret links for the record."""
+        return self._links
 
     @property
     def protection(self):
@@ -115,6 +129,7 @@ class Access:
             "files": self.protection.files,
             "embargo": self.embargo.dump(),
             "owned_by": self.owned_by.dump(),
+            "links": self.links.dump(),
             # "grants": self.grants.dump(),  # TODO enable again when ready
         }
 
@@ -126,6 +141,7 @@ class Access:
         self._errors = new_access.errors
         self._owned_by = new_access.owned_by
         self._grants = new_access.grants
+        self._links = new_access.links
         self._protection = new_access.protection
         self.embargo = new_access.embargo
 
@@ -135,6 +151,7 @@ class Access:
         access_dict,
         owners_cls=None,
         grants_cls=None,
+        links_cls=None,
         protection_cls=None,
         embargo_cls=None,
     ):
@@ -143,10 +160,11 @@ class Access:
         The new ``Access`` object will be populated with new instances from
         the configured classes.
         If ``access_dict`` is empty, the ``Access`` object will be populated
-        with new instances of ``owners_cls``, ``grants_cls``, and
-        ``protection_cls``.
+        with new instances of ``owners_cls``, ``grants_cls``, ``links_cls``,
+        and ``protection_cls``.
         """
         grants_cls = grants_cls or cls.grant_cls
+        links_cls = links_cls or cls.links_cls
         owners_cls = owners_cls or cls.owners_cls
         protection_cls = protection_cls or cls.protection_cls
         embargo_cls = embargo_cls or cls.embargo_cls
@@ -155,6 +173,7 @@ class Access:
         if access_dict:
             owners = owners_cls()
             grants = grants_cls()
+            links = links_cls()
             protection = None
             embargo = None
 
@@ -167,6 +186,12 @@ class Access:
             for grant_dict in access_dict.get("grants", []):
                 try:
                     grants.add(grants.grant_cls.from_dict(grant_dict))
+                except Exception as e:
+                    errors.append(e)
+
+            for link_dict in access_dict.get("links", []):
+                try:
+                    links.add(links.link_cls(link_dict))
                 except Exception as e:
                     errors.append(e)
 
@@ -185,12 +210,14 @@ class Access:
             # if there is no 'access' property, fall back to default values
             owners = owners_cls()
             grants = grants_cls()
+            links = links_cls()
             protection = protection_cls()
             embargo = None
 
         access = cls(
             owned_by=owners,
             grants=grants,
+            links=links,
             protection=protection,
             embargo=embargo,
             errors=errors,
@@ -204,12 +231,15 @@ class Access:
             self.protection.record, self.protection.files
         )
 
-        return "<{} (protection: {}, {}, owners: {}, grants: {})>".format(
+        return (
+            "<{} (protection: {}, {}, " "owners: {}, grants: {}, links: {})>"
+        ).format(
             type(self).__name__,
             protection_str,
             self.embargo,
-            len(self.owners),
-            len(self.grants),
+            len(self.owners or []),
+            len(self.grants or []),
+            len(self.links or []),
         )
 
 
