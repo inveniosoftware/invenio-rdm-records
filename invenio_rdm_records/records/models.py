@@ -8,14 +8,28 @@
 """Record and Draft database models."""
 
 from invenio_db import db
-from invenio_drafts_resources.records import DraftMetadataBase
+from invenio_drafts_resources.records import DraftMetadataBase, \
+    ParentRecordMixin
 from invenio_files_rest.models import Bucket
 from invenio_records.models import RecordMetadataBase
 from invenio_records_resources.records.models import RecordFileBase
 from sqlalchemy_utils.types import UUIDType
 
 
-class RDMRecordMetadata(db.Model, RecordMetadataBase):
+#
+# Parent
+#
+class RDMParentMetadata(db.Model, RecordMetadataBase):
+    """Model for mock module metadata."""
+
+    __tablename__ = 'rdm_parents_metadata'
+
+
+#
+# Records
+#
+class RDMRecordMetadata(db.Model, RecordMetadataBase,
+                        ParentRecordMixin(RDMParentMetadata)):
     """Represent a bibliographic record metadata."""
 
     __tablename__ = 'rdm_records_metadata'
@@ -35,7 +49,11 @@ class RecordFile(db.Model, RecordFileBase):
     __tablename__ = 'rdm_records_files'
 
 
-class DraftMetadata(db.Model, DraftMetadataBase):
+#
+# Drafts
+#
+class DraftMetadata(db.Model, DraftMetadataBase,
+                    ParentRecordMixin(RDMParentMetadata)):
     """Draft metadata for a record."""
 
     __tablename__ = 'rdm_drafts_metadata'

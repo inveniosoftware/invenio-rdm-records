@@ -1,15 +1,8 @@
 {
   "$schema": "https://localhost/schemas/records/record-v1.0.0.json",
   "id": "abcde-12345",
-  "conceptid": "12345-abcde",
   "pid": {
     "pk": 1,
-    "status": "R",
-    "pid_type": "recid",
-    "obj_type": "rec"
-  },
-  "conceptpid": {
-    "pk": 2,
     "status": "R",
     "pid_type": "recid",
     "obj_type": "rec"

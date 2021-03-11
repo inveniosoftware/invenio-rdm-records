@@ -53,13 +53,6 @@
             },
             "grant_tokens": {
               "type": "keyword"
-            },
-            "links": {
-              "properties": {
-                "id": {
-                  "type": "keyword"
-                }
-              }
             }
           }
         },
@@ -440,8 +433,8 @@
         "updated" : {
           "type" : "date"
         },
-        "is_published": {
-          "type": "boolean"
+        "status": {
+          "type": "keyword"
         }
       }
     }

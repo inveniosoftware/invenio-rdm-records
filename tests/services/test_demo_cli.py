@@ -48,7 +48,7 @@ def _assert_single_hit(response, expected_record):
     search_hit = search_hits[0]
     # only a record that has been published has an id, so we don't check for it
     root_fields = [
-        'id', 'conceptid', 'created', 'updated', 'metadata', 'access',
+        'id', 'created', 'updated', 'metadata', 'access',
     ]
     _assert_fields(root_fields, search_hit, expected_record)
 

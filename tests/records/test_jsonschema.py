@@ -124,35 +124,6 @@ def test_id(appctx):
     assert fails({"id": 1})
 
 
-def test_conceptid(appctx):
-    """Test conceptid."""
-    assert validates({"conceptid": "12345-abcd"})
-    assert fails({"conceptid": {"id": "val"}})
-
-
-@pytest.mark.parametrize("prop", ["pid", "conceptpid"])
-def test_pid_conceptpid(appctx, prop):
-    """Test pid/conceptpid."""
-    pid = {
-        "pk": 1,
-        "status": "R",
-    }
-    assert validates({prop: pid})
-
-    # Valid status
-    for s in ["N", "K", "R", "M", "D"]:
-        pid["status"] = s
-        assert validates({prop: pid})
-
-    # Invalid status
-    pid["status"] = "INVALID"
-    assert fails({prop: pid})
-
-    # Extra propert
-    pid["invalid"] = "1"
-    assert fails({prop: pid})
-
-
 def test_pids(appctx):
     """Test external pids."""
     assert validates({"pids": {

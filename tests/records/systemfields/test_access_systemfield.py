@@ -14,9 +14,17 @@ from datetime import timedelta
 import arrow
 import pytest
 
-from invenio_rdm_records.records import RDMRecord
+from invenio_rdm_records.records import RDMParent, RDMRecord
 from invenio_rdm_records.records.systemfields.access import Access, Embargo, \
     Grant, Grants, Owner, Owners, Protection
+
+
+@pytest.fixture()
+def parent(app, db):
+    """A parent record."""
+    # The parent record is not automatically created when using RDMRecord.
+    return RDMParent.create({})
+
 
 #
 # Protection
@@ -273,14 +281,14 @@ def test_access_field_on_record(minimal_record, users):
     # TODO check Grants once they're back in
 
 
-def test_access_field_update_embargo(minimal_record, users):
+def test_access_field_update_embargo(minimal_record, parent, users):
     next_year = arrow.utcnow().datetime + timedelta(days=+365)
     minimal_record["access"]["embargo"] = {
         "until": next_year.strftime("%Y-%m-%d"),
         "active": True,
         "reason": "nothing in particular",
     }
-    rec = RDMRecord.create(minimal_record.copy())
+    rec = RDMRecord.create(minimal_record.copy(), parent=parent)
     rec.access.owners.add(users[0])
     assert rec.access.embargo
 
@@ -305,8 +313,8 @@ def test_access_field_clear_embargo(minimal_record):
     assert not rec.access.embargo
 
 
-def test_access_field_update_owners(minimal_record, users):
-    rec = RDMRecord.create(minimal_record.copy())
+def test_access_field_update_owners(minimal_record, parent, users):
+    rec = RDMRecord.create(minimal_record.copy(), parent=parent)
     new_owner = {"user": 1337}
     rec.access.owners.add(users[0])
     rec.access.owners.add(new_owner)
@@ -326,11 +334,11 @@ def test_access_field_update_owners(minimal_record, users):
     assert new_owner not in rec["access"]["owned_by"]
 
 
-def test_access_field_update_protection(minimal_record, users):
+def test_access_field_update_protection(minimal_record, parent, users):
     minimal_record["access"]["record"] = "restricted"
     minimal_record["access"]["files"] = "restricted"
 
-    rec = RDMRecord.create(minimal_record)
+    rec = RDMRecord.create(minimal_record, parent=parent)
     rec.access.owners.add(users[0])
     assert rec.access.protection.record == "restricted"
     assert rec.access.protection.files == "restricted"

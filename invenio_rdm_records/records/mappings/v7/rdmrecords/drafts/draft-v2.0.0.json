@@ -3,9 +3,6 @@
     "date_detection": false,
     "numeric_detection": false,
     "properties": {
-      "conceptid" : {
-        "type" : "keyword"
-      },
       "id" : {
         "type" : "keyword"
       },
@@ -52,6 +49,13 @@
           },
           "grant_tokens": {
             "type": "keyword"
+          },
+          "links": {
+            "properties": {
+              "id": {
+                "type": "keyword"
+              }
+            }
           }
         }
       },
@@ -432,8 +436,8 @@
       "updated" : {
         "type" : "date"
       },
-      "status": {
-        "type": "keyword"
+      "is_published": {
+        "type": "boolean"
       }
     }
   }
