@@ -7,9 +7,10 @@
 
 """Data access layer."""
 
-from .api import RDMDraft, RDMRecord
+from .api import RDMDraft, RDMParent, RDMRecord
 
 __all__ = (
     "RDMDraft",
+    "RDMParent",
     "RDMRecord",
 )

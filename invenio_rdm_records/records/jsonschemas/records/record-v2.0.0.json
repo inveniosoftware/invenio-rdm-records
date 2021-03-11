@@ -1,7 +1,7 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "id": "https://inveniosoftware.org/schemas/rdm/records/record-v1.0.0.json",
-  "title": "InvenioRDM Record Schema v1.0.0",
+  "id": "https://inveniosoftware.org/schemas/rdm/records/record-v2.0.0.json",
+  "title": "InvenioRDM Record Schema v2.0.0",
   "type": "object",
   "additionalProperties": false,
 
@@ -479,12 +479,6 @@
     },
     "pid": {"$ref": "#/definitions/internal-pid"},
 
-    "conceptid": {
-      "description": "Persistent concept record identifier (alphanumeric).",
-      "type": "string"
-    },
-    "conceptpid": {"$ref": "#/definitions/internal-pid"},
-
     "pids": {
       "additionalProperties": {"$ref": "#/definitions/external-pid"},
       "description": "Managed persistent identifiers for a record including e.g. OAI-PMH identifier, minted DOIs and more. Managed PIDs are registered in the PIDStore"
@@ -888,6 +882,21 @@
                 "type": "string"
               },
               "level": {
+                "type": "string"
+              }
+            }
+          }
+        },
+
+        "links": {
+          "description": "Secret links for the record.",
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["id"],
+            "additionalProperties": false,
+            "properties": {
+              "id": {
                 "type": "string"
               }
             }

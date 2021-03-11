@@ -36,9 +36,6 @@ class RDMRecordSchema(RecordSchema, FieldPermissionsMixin):
         'files': 'read_files',
     }
 
-    # WARNING: conceptid is a dump_only field in its parent.
-    #          Don't know if the difference is on purpose.
-    conceptid = fields.Str()
     pids = fields.List(NestedAttribute(PIDSchema))
     metadata = NestedAttribute(MetadataSchema)
     # ext = fields.Method('dump_extensions', 'load_extensions')

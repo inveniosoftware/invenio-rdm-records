@@ -29,7 +29,7 @@ def _assert_single_item_response(response):
     """Assert the fields present on a single item response."""
     response_fields = response.json.keys()
     fields_to_check = [
-        'access', 'conceptid', 'created', 'id', 'links', 'metadata', 'updated'
+        'access', 'created', 'id', 'links', 'metadata', 'updated'
     ]
 
     for field in fields_to_check:

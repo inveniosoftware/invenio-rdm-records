@@ -8,6 +8,9 @@
 """RDM Record and Draft API."""
 
 from invenio_drafts_resources.records import Draft, Record
+from invenio_drafts_resources.records.api import \
+    ParentRecord as ParentRecordBase
+from invenio_drafts_resources.records.systemfields import ParentField
 from invenio_pidstore.models import PIDStatus
 from invenio_records.dumpers import ElasticsearchDumper
 from invenio_records.dumpers.relations import RelationDumperExt
@@ -31,7 +34,7 @@ class CommonFieldsMixin:
     """Common system fields between records and drafts."""
 
     schema = ConstantField(
-       '$schema', 'http://localhost/schemas/records/record-v1.0.0.json')
+       '$schema', 'http://localhost/schemas/records/record-v2.0.0.json')
 
     dumper = ElasticsearchDumper(
         extensions=[
@@ -62,6 +65,24 @@ class CommonFieldsMixin:
 
 
 #
+# Parent record API
+#
+class RDMParent(ParentRecordBase):
+    """Example parent record."""
+
+    # Configuration
+    model_cls = models.RDMParentMetadata
+
+    dumper = ElasticsearchDumper(
+        extensions=[]
+    )
+
+    # System fields
+    schema = ConstantField(
+        '$schema', 'http://localhost/schemas/records/parent-v1.0.0.json')
+
+
+#
 # Draft API
 #
 class DraftFile(RecordFileBase):
@@ -77,7 +98,7 @@ class RDMDraft(CommonFieldsMixin, Draft):
     model_cls = models.DraftMetadata
 
     index = IndexField(
-        "rdmrecords-drafts-draft-v1.0.0", search_alias="rdmrecords"
+        "rdmrecords-drafts-draft-v2.0.0", search_alias="rdmrecords"
     )
 
     files = FilesField(
@@ -88,6 +109,9 @@ class RDMDraft(CommonFieldsMixin, Draft):
     )
 
     has_draft = HasDraftCheckField()
+
+    parent = ParentField(
+        RDMParent, create=True, soft_delete=False, hard_delete=True)
 
 
 #
@@ -106,7 +130,7 @@ class RDMRecord(CommonFieldsMixin, Record):
     model_cls = models.RDMRecordMetadata
 
     index = IndexField(
-        "rdmrecords-records-record-v1.0.0", search_alias="rdmrecords-records"
+        "rdmrecords-records-record-v2.0.0", search_alias="rdmrecords-records"
     )
 
     files = FilesField(
@@ -119,3 +143,10 @@ class RDMRecord(CommonFieldsMixin, Record):
     )
 
     has_draft = HasDraftCheckField(RDMDraft)
+
+    parent = ParentField(
+        RDMParent, create=False, soft_delete=False, hard_delete=False)
+
+    create_from_draft = [
+        'parent'
+    ]
