@@ -3,12 +3,20 @@
 #
 # Copyright (C) 2019-2020 CERN.
 # Copyright (C) 2019-2020 Northwestern University.
+# Copyright (C)      2021 TU Wien.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify it
 # under the terms of the MIT License; see LICENSE file for more details.
 
 # Usage:
-#   env DB=postgresql ./run-tests.sh
+#   ./run-tests.sh [pytest options and args...]
+#
+# Note: the DB, SEARCH and MQ services to use are determined by corresponding environment
+#       variables if they are set -- otherwise, the following defaults are used:
+#       DB=postgresql, SEARCH=elasticsearch and MQ=redis
+#
+# Example for using mysql instead of postgresql:
+#    DB=mysql ./run-tests.sh
 
 # Quit on errors
 set -o errexit
@@ -24,7 +32,7 @@ trap cleanup EXIT
 
 python -m check_manifest --ignore ".*-requirements.txt"
 python -m sphinx.cmd.build -qnNW docs docs/_build/html
-eval "$(docker-services-cli up --db ${DB:-postgresql} --search ${SEARCH:-elasticsearch} --mq redis --env)"
-python -m pytest
+eval "$(docker-services-cli up --db ${DB:-postgresql} --search ${SEARCH:-elasticsearch} --mq ${MQ:-redis} --env)"
+python -m pytest $@
 tests_exit_code=$?
 exit "$tests_exit_code"
