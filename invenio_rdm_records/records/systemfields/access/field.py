@@ -38,6 +38,7 @@ class Access:
         grants_cls=None,
         links_cls=None,
         protection_cls=None,
+        embargo_cls=None,
     ):
         """Create a new Access object for a record.
 
@@ -53,74 +54,27 @@ class Access:
         grants_cls = grants_cls or Access.grant_cls
         links_cls = links_cls or Access.links_cls
         protection_cls = protection_cls or Access.protection_cls
+        embargo_cls = embargo_cls or Access.embargo_cls
 
         # since owned_by and grants are basically sets and empty sets
         # evaluate to False, assigning 'self.x = x or x_cls()' could lead to
         # unwanted results
-        self._owned_by = owned_by
-        if owned_by is None:
-            self._owned_by = owners_cls()
-
-        self._grants = grants
-        if grants is None:
-            self._grants = grants_cls()
-
-        self._links = links
-        if links is None:
-            self._links = links_cls()
-
-        self._protection = protection
-        if protection is None:
-            self._protection = protection_cls("public", "public")
-
-        self.embargo = embargo
-        self._errors = errors or []
+        public = protection_cls("public", "public")
+        self.owned_by = owned_by if owned_by is not None else owners_cls()
+        self.grants = grants if grants is not None else grants_cls()
+        self.links = links if links is not None else links_cls()
+        self.protection = protection if protection is not None else public
+        self.embargo = embargo if embargo is not None else embargo_cls()
+        self.errors = errors or []
 
     def clear_embargo(self):
         """Remove all information about the embargo."""
         self._embargo = Embargo()
 
     @property
-    def owned_by(self):
-        """The set of owners for the record."""
-        return self._owned_by
-
-    @property
     def owners(self):
         """An alias for the owned_by property."""
         return self.owned_by
-
-    @property
-    def grants(self):
-        """The set of permission grants for the record."""
-        return self._grants
-
-    @property
-    def links(self):
-        """The set of secret links for the record."""
-        return self._links
-
-    @property
-    def protection(self):
-        """The file & record protection level of the record."""
-        return self._protection
-
-    @property
-    def embargo(self):
-        """The embargo information of the record."""
-        return self._embargo
-
-    @property
-    def errors(self):
-        """Get the list of accumulated validation errors."""
-        return self._errors
-
-    @embargo.setter
-    def embargo(self, embargo):
-        if embargo is None:
-            embargo = Embargo()
-
-        self._embargo = embargo
 
     def dump(self):
         """Dump the field values as dictionary."""
@@ -138,11 +92,11 @@ class Access:
     def refresh_from_dict(self, access_dict):
         """Re-initialize the Access object with the data in the access_dict."""
         new_access = self.from_dict(access_dict)
-        self._errors = new_access.errors
-        self._owned_by = new_access.owned_by
-        self._grants = new_access.grants
-        self._links = new_access.links
-        self._protection = new_access.protection
+        self.errors = new_access.errors
+        self.owned_by = new_access.owned_by
+        self.grants = new_access.grants
+        self.links = new_access.links
+        self.protection = new_access.protection
         self.embargo = new_access.embargo
 
     @classmethod
@@ -170,13 +124,14 @@ class Access:
         embargo_cls = embargo_cls or cls.embargo_cls
         errors = []
 
-        if access_dict:
-            owners = owners_cls()
-            grants = grants_cls()
-            links = links_cls()
-            protection = None
-            embargo = None
+        # provide defaults in case there is no 'access' property
+        owners = owners_cls()
+        grants = grants_cls()
+        links = links_cls()
+        protection = protection_cls()
+        embargo = embargo_cls()
 
+        if access_dict:
             for owner_dict in access_dict.get("owned_by", []):
                 try:
                     owners.add(owners.owner_cls(owner_dict))
@@ -205,14 +160,6 @@ class Access:
             embargo_dict = access_dict.get("embargo")
             if embargo_dict is not None:
                 embargo = embargo_cls.from_dict(embargo_dict)
-
-        else:
-            # if there is no 'access' property, fall back to default values
-            owners = owners_cls()
-            grants = grants_cls()
-            links = links_cls()
-            protection = protection_cls()
-            embargo = None
 
         access = cls(
             owned_by=owners,
