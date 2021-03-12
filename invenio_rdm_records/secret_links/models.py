@@ -48,14 +48,18 @@ class SecretLink(db.Model):
     permission_level = db.Column(db.String, nullable=False, default="")
     """Permission level of the link."""
 
-    def covers(self, permission):
+    def allows(self, action):
         """Check if the secret link covers the specified permission."""
         # TODO permission hierarchy
-        return self.permission_level == permission
+        return self.permission_level == action
 
     def revoke(self, commit=False):
         """Revoke (i.e. delete) this secret link."""
-        self.revoke_link(self, commit=commit)
+        db.session.delete(self)
+        if commit:
+            db.session.commit()
+
+        link_revoked.send(self)
 
     @property
     def need(self):
@@ -94,7 +98,6 @@ class SecretLink(db.Model):
         permission_level,
         extra_data=dict(),
         expires_at=None,
-        commit=False,
     ):
         """Create a new secret link."""
         is_date = isinstance(expires_at, date)
@@ -102,41 +105,22 @@ class SecretLink(db.Model):
         if is_date and not is_datetime:
             expires_at = datetime.combine(expires_at, datetime.min.time())
 
-        with db.session.begin_nested():
-            obj = cls(
-                permission_level=permission_level,
-                expires_at=expires_at,
-                token="",
-            )
-            db.session.add(obj)
+        if expires_at is None:
+            serializer = SecretLinkSerializer()
+        else:
+            serializer = TimedSecretLinkSerializer(expires_at=expires_at)
 
-        with db.session.begin_nested():
-            # Create a token pointing back to the SecretLink via its ID
-            #
-            # NOTE: the nested transactions are required in order for the
-            #       SecretLink to get an auto-assigned UUID, which can be
-            #       referenced in the token
-            if expires_at is None:
-                serializer = SecretLinkSerializer()
-            else:
-                serializer = TimedSecretLinkSerializer(expires_at=expires_at)
+        id_ = uuid.uuid4()
+        link = cls(
+            id=id_,
+            permission_level=permission_level,
+            expires_at=expires_at,
+            token=serializer.create_token(id_, extra_data),
+        )
+        db.session.add(link)
+        link_created.send(link)
 
-            obj.token = serializer.create_token(obj.id, extra_data)
-
-        if commit:
-            db.session.commit()
-
-        link_created.send(obj)
-        return obj
-
-    @staticmethod
-    def revoke_link(link, commit=False):
-        """Revoke a secret link."""
-        db.session.delete(link)
-        if commit:
-            db.session.commit()
-
-        link_revoked.send(link)
+        return link
 
     @classmethod
     def validate_token(cls, token, expected_data):

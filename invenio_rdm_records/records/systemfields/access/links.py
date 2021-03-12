@@ -8,7 +8,7 @@
 
 """Links class for the access system field."""
 
-from ....links.models import SecretLink
+from ....secret_links.models import SecretLink
 
 
 class Link:
@@ -108,22 +108,34 @@ class Links(list):
         permission_level,
         extra_data=dict(),
         expires_at=None,
-        commit=False,
     ):
         """Create a new secret link and add it to the list of links."""
         link = SecretLink.create(
             permission_level=permission_level,
             extra_data=extra_data,
             expires_at=expires_at,
-            commit=commit,
         )
         self.add(link)
         return link
 
+    def resolve_all(self):
+        """Resolve all available links in this list and return them.
+
+        Note: This will perform database queries!
+        """
+        resolved_links = (link.resolve() for link in self)
+        return [link for link in resolved_links if link is not None]
+
     def needs(self, permission):
-        """Get allowed needs for the given permission level."""
-        needs = {link.need for link in self if link.covers(permission)}
-        return needs
+        """Get allowed needs for the given permission level.
+
+        Note: This will perform database queries!
+        """
+        return [
+            link.need
+            for link in self.resolve_all()
+            if not link.is_expired and link.allows(permission)
+        ]
 
     def dump(self):
         """Dump the links as a list of link IDs."""

@@ -15,10 +15,10 @@ from invenio_vocabularies.contrib.subjects.subjects import subject_record_type
 from itsdangerous import SignatureExpired
 
 from . import config
-from .links import LinkNeed, SecretLink
 from .resources import RDMDraftActionResource, RDMDraftFilesActionResource, \
     RDMDraftFilesResource, RDMDraftResource, RDMRecordFilesActionResource, \
     RDMRecordFilesResource, RDMRecordResource, RDMUserRecordsResource
+from .secret_links import LinkNeed, SecretLink
 from .services import RDMDraftFilesService, RDMRecordFilesService, \
     RDMRecordService, RDMUserRecordsService
 from .services.schemas.metadata_extensions import MetadataExtensions

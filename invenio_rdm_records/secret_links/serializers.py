@@ -60,10 +60,9 @@ class TokenSerializerMixin(Serializer):
 
             # Compare expected data with data in token.
             expected_data = expected_data or {}
-            if expected_data:
-                for k, v in expected_data.items():
-                    if data["data"].get(k) != v:
-                        return None
+            for k, v in expected_data.items():
+                if data["data"].get(k) != v:
+                    return None
 
             return data
 
