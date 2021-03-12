@@ -12,8 +12,8 @@ from datetime import datetime, timedelta
 import pytest
 from itsdangerous import SignatureExpired
 
-from invenio_rdm_records.links.serializers import SecretLinkSerializer, \
-    TimedSecretLinkSerializer
+from invenio_rdm_records.secret_links.serializers import \
+    SecretLinkSerializer, TimedSecretLinkSerializer
 
 
 def test_serializer(base_app):

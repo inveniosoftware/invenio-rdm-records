@@ -17,7 +17,6 @@ from flask_principal import UserNeed
 from invenio_access.permissions import authenticated_user
 from invenio_records_permissions.generators import Generator
 
-from invenio_rdm_records.links import permissions
 from invenio_rdm_records.records import RDMDraft
 
 
@@ -157,12 +156,4 @@ class SecretLinks(Generator):
         if record is None:
             return []
 
-        return [
-            link.need
-            for link in (lnk.resolve() for lnk in record.access.links)
-            if (
-                link is not None
-                and not link.is_expired
-                and link.covers(self.permission)
-            )
-        ]
+        return record.access.links.needs(self.permission)
