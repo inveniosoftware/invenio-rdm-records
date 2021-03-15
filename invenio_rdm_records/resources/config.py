@@ -11,7 +11,7 @@
 from flask_resources.serializers import JSONSerializer
 from invenio_drafts_resources.resources import DraftActionResourceConfig, \
     DraftFileActionResourceConfig, DraftFileResourceConfig, \
-    DraftResourceConfig, RecordResourceConfig
+    DraftResourceConfig, RecordResourceConfig, RecordVersionsResourceConfig
 from invenio_records_resources.resources import RecordResponse
 from invenio_records_resources.resources.files import \
     FileActionResourceConfig, FileResourceConfig
@@ -44,6 +44,10 @@ DraftLinks = LinksSchema.create(links={
 
 SearchLinks = SearchLinksSchema.create(
     template="/api/records{?params*}")
+
+
+SearchVersionsLinks = SearchLinksSchema.create(
+    template='/api/records/<pid_value>/versions{?params*}')
 
 
 UserSearchLinks = SearchLinksSchema.create(
@@ -90,7 +94,7 @@ record_serializers = {
 
 
 #
-# Records
+# Records and record versions
 #
 class RDMRecordResourceConfig(RecordResourceConfig):
     """Record resource configuration."""
@@ -109,6 +113,18 @@ class RDMRecordResourceConfig(RecordResourceConfig):
     }
 
     response_handlers = record_serializers
+
+
+class RDMRecordVersionsResourceConfig(RecordVersionsResourceConfig):
+    """Record resource version config."""
+
+    list_route = "/records/<pid_value>/versions"
+
+    item_route = "/records/<pid_value>/versions/latest"
+
+    links_config = {
+        "search": SearchVersionsLinks
+    }
 
 
 #

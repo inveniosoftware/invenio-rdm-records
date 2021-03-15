@@ -9,7 +9,8 @@
 
 from .resources import RDMDraftActionResource, RDMDraftFilesActionResource, \
     RDMDraftFilesResource, RDMDraftResource, RDMRecordFilesActionResource, \
-    RDMRecordFilesResource, RDMRecordResource, RDMUserRecordsResource
+    RDMRecordFilesResource, RDMRecordResource, RDMRecordVersionsResource, \
+    RDMUserRecordsResource
 
 __all__ = (
     "RDMDraftActionResource",
@@ -18,6 +19,7 @@ __all__ = (
     "RDMDraftResource",
     "RDMRecordFilesResource",
     "RDMRecordFilesActionResource",
+    "RDMRecordVersionsResource",
     "RDMRecordResource",
     "RDMUserRecordsResource",
 )

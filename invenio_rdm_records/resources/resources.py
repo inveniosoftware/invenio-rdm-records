@@ -12,7 +12,7 @@ from flask import g
 from flask_resources.context import resource_requestctx
 from invenio_drafts_resources.resources import DraftActionResource, \
     DraftFileActionResource, DraftFileResource, DraftResource, \
-    RecordResource
+    RecordResource, RecordVersionsResource, RecordVersionsResourceConfig
 from invenio_records_resources.resources.files import FileActionResource, \
     FileResource
 
@@ -28,6 +28,12 @@ class RDMRecordResource(RecordResource):
     config_name = "RDM_RECORDS_BIBLIOGRAPHIC_RECORD_CONFIG"
     default_config = config.RDMRecordResourceConfig
 
+
+class RDMRecordVersionsResource(RecordVersionsResource):
+    """Bibliographic record versions resource."""
+
+    config_name = "RDM_RECORDS_BIBLIOGRAPHIC_RECORD_VERSIONS_CONFIG"
+    default_config = config.RDMRecordVersionsResourceConfig
 
 #
 # Drafts

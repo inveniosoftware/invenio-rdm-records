@@ -9,11 +9,12 @@
 
 from .permissions import RDMRecordPermissionPolicy
 from .services import RDMDraftFilesService, RDMRecordFilesService, \
-    RDMRecordService, RDMUserRecordsService
+    RDMRecordService, RDMRecordVersionsService, RDMUserRecordsService
 
 __all__ = (
     "RDMRecordService",
     "RDMRecordFilesService",
+    "RDMRecordVersionsService",
     "RDMUserRecordsService",
     "RDMDraftFilesService",
     "RDMRecordPermissionPolicy",
