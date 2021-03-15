@@ -17,10 +17,11 @@ from itsdangerous import SignatureExpired
 from . import config
 from .resources import RDMDraftActionResource, RDMDraftFilesActionResource, \
     RDMDraftFilesResource, RDMDraftResource, RDMRecordFilesActionResource, \
-    RDMRecordFilesResource, RDMRecordResource, RDMUserRecordsResource
+    RDMRecordFilesResource, RDMRecordResource, RDMRecordVersionsResource, \
+    RDMUserRecordsResource
 from .secret_links import LinkNeed, SecretLink
 from .services import RDMDraftFilesService, RDMRecordFilesService, \
-    RDMRecordService, RDMUserRecordsService
+    RDMRecordService, RDMRecordVersionsService, RDMUserRecordsService
 from .services.schemas.metadata_extensions import MetadataExtensions
 
 
@@ -100,9 +101,18 @@ class InvenioRDMRecords(object):
             config=app.config.get(RDMRecordService.config_name),
         )
 
+        self.records_versions_service = RDMRecordVersionsService(
+            config=app.config.get(RDMRecordVersionsService.config_name),
+        )
+
         self.records_resource = RDMRecordResource(
             service=self.records_service,
             config=app.config.get(RDMRecordResource.config_name),
+        )
+
+        self.records_versions_resource = RDMRecordVersionsResource(
+            service=self.records_versions_service,
+            config=app.config.get(RDMRecordVersionsResource.config_name),
         )
 
         # Drafts
