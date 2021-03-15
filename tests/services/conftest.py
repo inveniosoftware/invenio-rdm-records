@@ -109,10 +109,10 @@ def authenticated_identity():
 
 
 @pytest.fixture(scope="function")
-def superuser_identity():
+def superuser_identity(superuser_role_need):
     """Superuser identity fixture."""
     identity = Identity(1)
-    identity.provides.add(superuser_access)
+    identity.provides.add(superuser_role_need)
     return identity
 
 
