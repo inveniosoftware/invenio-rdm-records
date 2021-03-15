@@ -35,6 +35,25 @@ class RDMRecordServiceConfig(RecordDraftServiceConfig):
 
     permission_policy_cls = RDMRecordPermissionPolicy
 
+    search_sort_options = {
+        "bestmatch": dict(
+            title=_('Best match'),
+            fields=['_score'],  # ES defaults to desc on `_score` field
+        ),
+        "newest": dict(
+            title=_('Newest'),
+            fields=['-created'],
+        ),
+        "oldest": dict(
+            title=_('Oldest'),
+            fields=['created'],
+        ),
+        "version": dict(
+            title=_('Version'),
+            fields=['-versions.index'],
+        ),
+    }
+
     search_facets_options = dict(
         aggs={
             'resource_type': {
@@ -111,7 +130,10 @@ class RDMUserRecordsServiceConfig(RDMRecordServiceConfig):
             title=_('Oldest'),
             fields=['created'],
         ),
-
+        "version": dict(
+            title=_('Version'),
+            fields=['-versions.index'],
+        ),
     }
 
     search_facets_options = dict(

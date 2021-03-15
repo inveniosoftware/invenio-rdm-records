@@ -449,6 +449,28 @@
       },
       "is_published": {
         "type": "boolean"
+      },
+      "versions": {
+        "properties": {
+          "index": {
+            "type": "integer"
+          },
+          "is_latest": {
+            "type": "boolean"
+          },
+          "is_latest_draft": {
+            "type": "boolean"
+          },
+          "latest_id": {
+            "type": "keyword"
+          },
+          "latest_index": {
+            "type": "integer"
+          },
+          "next_draft_id": {
+            "type": "keyword"
+          }
+        }
       }
     }
   }
