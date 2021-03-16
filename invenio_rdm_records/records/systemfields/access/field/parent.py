@@ -10,66 +10,47 @@
 
 from invenio_records.systemfields import SystemField
 
-from .embargo import Embargo
-from .grants import Grants
-from .links import Links
-from .owners import Owners
-from .protection import Protection
+from ..grants import Grants
+from ..links import Links
+from ..owners import Owners
 
 
-class Access:
-    """Access management per record."""
+class ParentRecordAccess:
+    """Access management for all versions of a record."""
 
     grant_cls = Grants
     links_cls = Links
     owners_cls = Owners
-    protection_cls = Protection
-    embargo_cls = Embargo
 
     def __init__(
         self,
         owned_by=None,
         grants=None,
         links=None,
-        protection=None,
-        embargo=None,
-        errors=None,
         owners_cls=None,
         grants_cls=None,
         links_cls=None,
-        protection_cls=None,
-        embargo_cls=None,
     ):
         """Create a new Access object for a record.
 
-        If ``owned_by``, ``grants`` or ``protection`` are not specified,
-        a new instance of ``owners_cls``, ``grants_cls`` or ``protection_cls``
+        If ``owned_by``, ``grants`` or ``links`` are not specified,
+        a new instance of ``owners_cls``, ``grants_cls`` or ``links_cls``
         will be used, respectively.
         :param owned_by: The set of record owners
         :param grants: The grants permitting access to the record
-        :param protection: The record and file protection levels
-        :param embargo: The embargo on the record (None means no embargo)
+        :param links: The secret links permitting access to the record
         """
-        owners_cls = owners_cls or Access.owners_cls
-        grants_cls = grants_cls or Access.grant_cls
-        links_cls = links_cls or Access.links_cls
-        protection_cls = protection_cls or Access.protection_cls
-        embargo_cls = embargo_cls or Access.embargo_cls
+        owners_cls = owners_cls or ParentRecordAccess.owners_cls
+        grants_cls = grants_cls or ParentRecordAccess.grant_cls
+        links_cls = links_cls or ParentRecordAccess.links_cls
 
         # since owned_by and grants are basically sets and empty sets
         # evaluate to False, assigning 'self.x = x or x_cls()' could lead to
         # unwanted results
-        public = protection_cls("public", "public")
-        self.owned_by = owned_by if owned_by is not None else owners_cls()
-        self.grants = grants if grants is not None else grants_cls()
-        self.links = links if links is not None else links_cls()
-        self.protection = protection if protection is not None else public
-        self.embargo = embargo if embargo is not None else embargo_cls()
-        self.errors = errors or []
-
-    def clear_embargo(self):
-        """Remove all information about the embargo."""
-        self._embargo = Embargo()
+        self.owned_by = owned_by if owned_by else owners_cls()
+        self.grants = grants if grants else grants_cls()
+        self.links = links if links else links_cls()
+        self.errors = []
 
     @property
     def owners(self):
@@ -79,9 +60,6 @@ class Access:
     def dump(self):
         """Dump the field values as dictionary."""
         access = {
-            "record": self.protection.record,
-            "files": self.protection.files,
-            "embargo": self.embargo.dump(),
             "owned_by": self.owned_by.dump(),
             "links": self.links.dump(),
             # "grants": self.grants.dump(),  # TODO enable again when ready
@@ -96,8 +74,6 @@ class Access:
         self.owned_by = new_access.owned_by
         self.grants = new_access.grants
         self.links = new_access.links
-        self.protection = new_access.protection
-        self.embargo = new_access.embargo
 
     @classmethod
     def from_dict(
@@ -106,30 +82,24 @@ class Access:
         owners_cls=None,
         grants_cls=None,
         links_cls=None,
-        protection_cls=None,
-        embargo_cls=None,
     ):
         """Create a new Access object from the specified 'access' property.
 
-        The new ``Access`` object will be populated with new instances from
-        the configured classes.
-        If ``access_dict`` is empty, the ``Access`` object will be populated
-        with new instances of ``owners_cls``, ``grants_cls``, ``links_cls``,
-        and ``protection_cls``.
+        The new ``ParentRecordAccess`` object will be populated with new
+        instances from the configured classes.
+        If ``access_dict`` is empty, the ``ParentRecordAccess`` object will
+        be populated with new instances of ``owners_cls``, ``grants_cls``,
+        and ``links_cls``.
         """
         grants_cls = grants_cls or cls.grant_cls
         links_cls = links_cls or cls.links_cls
         owners_cls = owners_cls or cls.owners_cls
-        protection_cls = protection_cls or cls.protection_cls
-        embargo_cls = embargo_cls or cls.embargo_cls
         errors = []
 
         # provide defaults in case there is no 'access' property
         owners = owners_cls()
         grants = grants_cls()
         links = links_cls()
-        protection = protection_cls()
-        embargo = embargo_cls()
 
         if access_dict:
             for owner_dict in access_dict.get("owned_by", []):
@@ -150,51 +120,31 @@ class Access:
                 except Exception as e:
                     errors.append(e)
 
-            try:
-                protection = protection_cls(
-                    access_dict["record"], access_dict["files"]
-                )
-            except Exception as e:
-                errors.append(e)
-
-            embargo_dict = access_dict.get("embargo")
-            if embargo_dict is not None:
-                embargo = embargo_cls.from_dict(embargo_dict)
-
         access = cls(
             owned_by=owners,
             grants=grants,
             links=links,
-            protection=protection,
-            embargo=embargo,
-            errors=errors,
         )
-
+        access.errors = errors
         return access
 
     def __repr__(self):
         """Return repr(self)."""
-        protection_str = "{}/{}".format(
-            self.protection.record, self.protection.files
-        )
-
         return (
-            "<{} (protection: {}, {}, " "owners: {}, grants: {}, links: {})>"
+            "<{} (owners: {}, grants: {}, links: {})>"
         ).format(
             type(self).__name__,
-            protection_str,
-            self.embargo,
             len(self.owners or []),
             len(self.grants or []),
             len(self.links or []),
         )
 
 
-class AccessField(SystemField):
+class ParentRecordAccessField(SystemField):
     """System field for managing record access."""
 
-    def __init__(self, key="access", access_obj_class=Access):
-        """Create a new AccessField instance."""
+    def __init__(self, key="access", access_obj_class=ParentRecordAccess):
+        """Create a new ParentRecordAccessField instance."""
         self._access_obj_class = access_obj_class
         super().__init__(key=key)
 
@@ -218,7 +168,9 @@ class AccessField(SystemField):
         # We accept both dicts and access class objects.
         if isinstance(obj, dict):
             obj = self._access_obj_class.from_dict(obj)
+
         assert isinstance(obj, self._access_obj_class)
+
         # We do not dump the object until the pre_commit hook
         # I.e. record.access != record['access']
         self._set_cache(record, obj)

@@ -8,15 +8,14 @@
 """Access system field for RDM Records."""
 
 from .embargo import Embargo
-from .field import Access, AccessField
+from .field import ParentRecordAccess, ParentRecordAccessField, RecordAccess, \
+    RecordAccessField
 from .grants import Grant, Grants
 from .links import Link, Links
 from .owners import Owner, Owners
 from .protection import Protection
 
 __all__ = (
-    "Access",
-    "AccessField",
     "Embargo",
     "Grant",
     "Grants",
@@ -24,5 +23,9 @@ __all__ = (
     "Links",
     "Owner",
     "Owners",
+    "ParentRecordAccess",
+    "ParentRecordAccessField",
     "Protection",
+    "RecordAccess",
+    "RecordAccessField",
 )

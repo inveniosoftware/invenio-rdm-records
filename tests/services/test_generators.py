@@ -2,6 +2,7 @@
 #
 # Copyright (C) 2021 Graz University of Technology.
 # Copyright (C) 2021 CERN.
+# Copyright (C) 2021 TU Wien.
 #
 # Invenio-Records-Permissions is free software; you can redistribute it
 # and/or modify it under the terms of the MIT License; see LICENSE file for
@@ -20,7 +21,7 @@ from invenio_access.permissions import any_user, authenticated_user, \
 from invenio_records_permissions.generators import AnyUser, \
     AuthenticatedUser, SystemProcess
 
-from invenio_rdm_records.records import RDMRecord
+from invenio_rdm_records.records import RDMParent, RDMRecord
 from invenio_rdm_records.services.generators import IfRestricted, RecordOwners
 
 
@@ -37,9 +38,17 @@ def _restricted_record():
 
 
 def _owned_record():
-    record = RDMRecord({}, access={})
-    record.access.owners.add({'user': 16})
-    record.access.owners.add({'user': 17})
+    data = {
+        "access": {
+            "owned_by": [
+                {"user": 16},
+                {"user": 17},
+            ]
+        }
+    }
+
+    record = RDMRecord.create({}, access={})
+    record.parent = RDMParent(data)
     return record
 
 
@@ -90,7 +99,7 @@ def test_ifrestricted_query():
     }
 
 
-def test_record_owner(mocker):
+def test_record_owner(app, mocker):
     generator = RecordOwners()
     record = _owned_record()
 
@@ -111,4 +120,9 @@ def test_record_owner(mocker):
         )
     )
 
-    assert query_filter.to_dict() == {'terms': {'access.owned_by.user': [15]}}
+    expected_query_filter = {
+        "terms": {
+            "parent.access.owned_by.user": [15]
+        }
+    }
+    assert query_filter.to_dict() == expected_query_filter

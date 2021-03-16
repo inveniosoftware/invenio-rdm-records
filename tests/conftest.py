@@ -21,6 +21,7 @@ from invenio_accounts.testutils import login_user_via_session
 from invenio_app.factory import create_app as _create_app
 
 from invenio_rdm_records import config
+from invenio_rdm_records.records.api import RDMParent
 
 
 @pytest.fixture(scope='module')
@@ -290,6 +291,13 @@ def minimal_record():
             "title": "A Romans story"
         }
     }
+
+
+@pytest.fixture()
+def parent(app, db):
+    """A parent record."""
+    # The parent record is not automatically created when using RDMRecord.
+    return RDMParent.create({})
 
 
 @pytest.fixture()

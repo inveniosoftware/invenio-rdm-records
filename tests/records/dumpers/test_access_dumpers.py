@@ -22,25 +22,31 @@ def test_grant_tokens_dumper(app, db, minimal_record, location):
         extensions=[GrantTokensDumperExt("access.grant_tokens")]
     )
 
-    # Create the record
-    minimal_record["access"]["grants"] = [
-        {"subject": "user", "id": "1", "level": "view"},
-        {"subject": "user", "id": "2", "level": "manage"},
-    ]
-    record = RDMRecord.create(minimal_record, parent=RDMParent.create({}))
+    data = {
+        "access": {
+            "grants": [
+                {"subject": "user", "id": "1", "level": "view"},
+                {"subject": "user", "id": "2", "level": "manage"},
+            ]
+        }
+    }
+
+    # Create the parent record
+    parent = RDMParent.create(data)
+    parent.commit()
     db.session.commit()
 
-    grant1 = record.access.grants[0]
-    grant2 = record.access.grants[1]
+    grant1 = parent.access.grants[0]
+    grant2 = parent.access.grants[1]
 
     # Dump it
-    dump = record.dumps(dumper=dumper)
+    dump = parent.dumps(dumper=dumper)
     assert len(dump["access"]["grant_tokens"]) == 2
     assert grant1.to_token() in dump["access"]["grant_tokens"]
     assert grant2.to_token() in dump["access"]["grant_tokens"]
 
     # Load it
-    new_record = RDMRecord.loads(dump, loader=dumper)
+    new_record = RDMParent.loads(dump, loader=dumper)
     assert "grant_tokens" not in new_record["access"]
     assert "grant_tokens" not in new_record["access"]
 

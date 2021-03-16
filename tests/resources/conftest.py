@@ -2,6 +2,7 @@
 #
 # Copyright (C) 2020 CERN.
 # Copyright (C) 2020 Northwestern University.
+# Copyright (C) 2021 TU Wien.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
@@ -214,17 +215,11 @@ def full_record():
         "access": {
             "record": "public",
             "files": "restricted",
-            "owned_by": [{
-                "user": 1
-            }],
             "embargo": {
                 "active": True,
                 "until": "2131-01-01",
                 "reason": "Only for medical doctors."
             },
-            "grants": [
-                {"subject": "user", "id": "1", "level": "manage"}
-            ]
         },
         "files": {
             "disabled": False,

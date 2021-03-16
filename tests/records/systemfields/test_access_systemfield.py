@@ -2,6 +2,7 @@
 #
 # Copyright (C) 2020 CERN.
 # Copyright (C) 2020 Northwestern University.
+# Copyright (C) 2021 TU Wien.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
@@ -14,17 +15,9 @@ from datetime import timedelta
 import arrow
 import pytest
 
-from invenio_rdm_records.records import RDMParent, RDMRecord
-from invenio_rdm_records.records.systemfields.access import Access, Embargo, \
-    Grant, Grants, Owner, Owners, Protection
-
-
-@pytest.fixture()
-def parent(app, db):
-    """A parent record."""
-    # The parent record is not automatically created when using RDMRecord.
-    return RDMParent.create({})
-
+from invenio_rdm_records.records import RDMRecord
+from invenio_rdm_records.records.systemfields.access import Embargo, Grant, \
+    Grants, Owner, Owners, Protection, RecordAccess
 
 #
 # Protection
@@ -259,8 +252,9 @@ def test_owners_creation(users):
 
 
 #
-# Access System Field
+# Record Access System Field
 #
+
 
 def test_access_field_on_record(minimal_record, users):
     next_year = arrow.utcnow().datetime + timedelta(days=+365)
@@ -270,15 +264,12 @@ def test_access_field_on_record(minimal_record, users):
         "reason": "nothing in particular",
     }
     rec = RDMRecord.create(minimal_record)
-    rec.access.owners.add(users[0])
 
-    assert isinstance(rec.access, Access)
+    assert isinstance(rec.access, RecordAccess)
     assert isinstance(rec.access.protection, Protection)
     assert rec.access.protection.record == minimal_record["access"]["record"]
     assert rec.access.protection.files == minimal_record["access"]["files"]
-    assert len(rec.access.owners) > 0
     assert isinstance(rec.access.embargo, Embargo)
-    # TODO check Grants once they're back in
 
 
 def test_access_field_update_embargo(minimal_record, parent, users):
@@ -289,7 +280,6 @@ def test_access_field_update_embargo(minimal_record, parent, users):
         "reason": "nothing in particular",
     }
     rec = RDMRecord.create(minimal_record.copy(), parent=parent)
-    rec.access.owners.add(users[0])
     assert rec.access.embargo
 
     rec.access.embargo.active = False
@@ -313,33 +303,11 @@ def test_access_field_clear_embargo(minimal_record):
     assert not rec.access.embargo
 
 
-def test_access_field_update_owners(minimal_record, parent, users):
-    rec = RDMRecord.create(minimal_record.copy(), parent=parent)
-    new_owner = {"user": 1337}
-    rec.access.owners.add(users[0])
-    rec.access.owners.add(new_owner)
-    rec.commit()
-
-    num_owners = len(rec.access.owners)
-    assert num_owners == len(rec["access"]["owned_by"])
-    assert num_owners == 2
-    assert new_owner in rec["access"]["owned_by"]
-
-    rec.access.owners.remove(new_owner)
-    rec.commit()
-
-    num_owners = len(rec.access.owners)
-    assert num_owners == len(rec["access"]["owned_by"])
-    assert num_owners == 1
-    assert new_owner not in rec["access"]["owned_by"]
-
-
 def test_access_field_update_protection(minimal_record, parent, users):
     minimal_record["access"]["record"] = "restricted"
     minimal_record["access"]["files"] = "restricted"
 
     rec = RDMRecord.create(minimal_record, parent=parent)
-    rec.access.owners.add(users[0])
     assert rec.access.protection.record == "restricted"
     assert rec.access.protection.files == "restricted"
 
@@ -348,3 +316,30 @@ def test_access_field_update_protection(minimal_record, parent, users):
 
     assert rec["access"]["record"] == "public"
     assert rec["access"]["files"] == "public"
+
+
+#
+# Parent Record Access System Field
+#
+
+
+def test_access_field_update_owners(minimal_record, parent, users):
+    rec = RDMRecord.create(minimal_record.copy(), parent=parent)
+    parent = rec.parent
+    new_owner = {"user": 1337}
+    parent.access.owners.add(users[0])
+    parent.access.owners.add(new_owner)
+    parent.commit()
+
+    num_owners = len(parent.access.owners)
+    assert num_owners == len(parent["access"]["owned_by"])
+    assert num_owners == 2
+    assert new_owner in parent["access"]["owned_by"]
+
+    parent.access.owners.remove(new_owner)
+    parent.commit()
+
+    num_owners = len(parent.access.owners)
+    assert num_owners == len(parent["access"]["owned_by"])
+    assert num_owners == 1
+    assert new_owner not in parent["access"]["owned_by"]

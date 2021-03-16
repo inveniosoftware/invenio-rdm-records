@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # Copyright (C) 2021 Graz University of Technology.
+# Copyright (C) 2021 TU Wien.
 #
 # Invenio-RDM-Records is free software; you can redistribute it
 # and/or modify it under the terms of the MIT License; see LICENSE file for
@@ -16,7 +17,7 @@ from invenio_drafts_resources.services.records.permissions import \
 from invenio_records_permissions.generators import AnyUser, \
     AuthenticatedUser, Disable, SystemProcess
 
-from invenio_rdm_records.records import RDMRecord
+from invenio_rdm_records.records import RDMParent, RDMRecord
 from invenio_rdm_records.services.generators import IfRestricted, RecordOwners
 
 
@@ -54,14 +55,14 @@ def test_permission_policy_generators(app, anyuser_identity,
     policy = TestRDMPermissionPolicy
 
     # TODO: add to fixture
-    rest_record = RDMRecord({}, access={})
+    rest_record = RDMRecord.create({}, access={}, parent=RDMParent.create({}))
     rest_record.access.protection.set("restricted", "restricted")
-    rest_record.access.owners.add({'user': 1})
+    rest_record.parent.access.owners.add({'user': 1})
 
     # TODO: add to fixture
-    pub_record = RDMRecord({}, access={})
+    pub_record = RDMRecord.create({}, access={}, parent=RDMParent.create({}))
     pub_record.access.protection.set("public", "public")
-    pub_record.access.owners.add({'user': 21})
+    pub_record.parent.access.owners.add({'user': 21})
 
     assert policy(action='search').allows(anyuser_identity)
     assert policy(action='search').allows(system_process_identity)

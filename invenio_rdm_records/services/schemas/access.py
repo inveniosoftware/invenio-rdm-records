@@ -2,6 +2,7 @@
 #
 # Copyright (C) 2020 CERN.
 # Copyright (C) 2020 Northwestern University.
+# Copyright (C) 2021 TU Wien.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
@@ -74,14 +75,9 @@ class EmbargoSchema(Schema):
 class AccessSchema(Schema, FieldPermissionsMixin):
     """Access schema."""
 
-    # TODO: we don't want 'owned_by' to be set by the users
-    #       but if we don't allow it to be specified, we run
-    #       into problems while publishing drafts
-    field_load_permissions = {
-        # "owned_by": "disabled",
-    }
+    field_load_permissions = {}
 
-    # omit the grants from dumps, except for users with the
+    # omit the grants and links from dumps, except for users with the
     # 'manage' permission
     field_dump_permissions = {
         "grants": "manage",
@@ -90,11 +86,12 @@ class AccessSchema(Schema, FieldPermissionsMixin):
 
     record = SanitizedUnicode(required=True)
     files = SanitizedUnicode(required=True)
-    owned_by = fields.List(fields.Nested(Agent))
     embargo = fields.Nested(EmbargoSchema)
-    # TODO re-enable when the grants are ready
+
+    # TODO move them to the parent schema
     # grants = fields.List(fields.Nested(Grant))
-    links = fields.List(fields.Nested(Link))
+    # owned_by = fields.List(fields.Nested(Agent))
+    # links = fields.List(fields.Nested(Link))
 
     def validate_protection_value(self, value, field_name):
         """Check that the protection value is valid."""
