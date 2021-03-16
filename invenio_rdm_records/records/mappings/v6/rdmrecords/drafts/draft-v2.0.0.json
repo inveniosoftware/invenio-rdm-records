@@ -15,13 +15,6 @@
             "files" : {
               "type" : "keyword"
             },
-            "owned_by" : {
-              "properties": {
-                "user": {
-                  "type": "keyword"
-                }
-              }
-            },
             "embargo": {
               "properties": {
                 "active": {
@@ -34,27 +27,45 @@
                   "type": "text"
                 }
               }
+            }
+          }
+        },
+        "parent" : {
+          "properties": {
+            "id" : {
+              "type" : "keyword"
             },
-            "grants": {
-              "properties": {
-                "subject": {
+            "access": {
+              "properties" : {
+                "owned_by" : {
+                  "properties": {
+                    "user": {
+                      "type": "keyword"
+                    }
+                  }
+                },
+                "grants": {
+                  "properties": {
+                    "subject": {
+                      "type": "keyword"
+                    },
+                    "id": {
+                      "type": "keyword"
+                    },
+                    "level": {
+                      "type": "keyword"
+                    }
+                  }
+                },
+                "grant_tokens": {
                   "type": "keyword"
                 },
-                "id": {
-                  "type": "keyword"
-                },
-                "level": {
-                  "type": "keyword"
-                }
-              }
-            },
-            "grant_tokens": {
-              "type": "keyword"
-            },
-            "links": {
-              "properties": {
-                "id": {
-                  "type": "keyword"
+                "links": {
+                  "properties": {
+                    "id": {
+                      "type": "keyword"
+                    }
+                  }
                 }
               }
             }
