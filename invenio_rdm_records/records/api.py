@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # Copyright (C) 2020 CERN.
+# Copyright (C) 2021 TU Wien.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
@@ -23,7 +24,8 @@ from werkzeug.local import LocalProxy
 
 from . import models
 from .dumpers import EDTFDumperExt, EDTFListDumperExt, GrantTokensDumperExt
-from .systemfields import AccessField, HasDraftCheckField, IsPublishedField
+from .systemfields import HasDraftCheckField, IsPublishedField, \
+    ParentRecordAccessField, RecordAccessField
 
 
 #
@@ -36,12 +38,16 @@ class RDMParent(ParentRecordBase):
     model_cls = models.RDMParentMetadata
 
     dumper = ElasticsearchDumper(
-        extensions=[]
+        extensions=[
+            GrantTokensDumperExt("access.grant_tokens"),
+        ]
     )
 
     # System fields
     schema = ConstantField(
         '$schema', 'http://localhost/schemas/records/parent-v1.0.0.json')
+
+    access = ParentRecordAccessField()
 
 
 #
@@ -60,7 +66,6 @@ class CommonFieldsMixin:
         extensions=[
             EDTFDumperExt('metadata.publication_date'),
             EDTFListDumperExt("metadata.dates", "date"),
-            GrantTokensDumperExt("access.grant_tokens"),
             RelationDumperExt('relations'),
         ]
     )
@@ -77,7 +82,7 @@ class CommonFieldsMixin:
 
     bucket = ModelField(dump=False)
 
-    access = AccessField()
+    access = RecordAccessField()
 
     # We redefine the property as we extend the `PIDStatusCheckField` to dump
     # the property in ES in order to be available for aggregation

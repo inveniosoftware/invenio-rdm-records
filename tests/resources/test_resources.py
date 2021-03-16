@@ -2,6 +2,7 @@
 #
 # Copyright (C) 2020 CERN.
 # Copyright (C) 2020 Northwestern University.
+# Copyright (C) 2021 TU Wien.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
@@ -41,7 +42,6 @@ def _validate_access(response, original):
     assert "access" in response
 
     access, orig_access = response["access"], original["access"]
-    assert len(access["owned_by"]) > 0
     assert access["record"] == orig_access["record"]
     assert access["files"] == orig_access["files"]
 

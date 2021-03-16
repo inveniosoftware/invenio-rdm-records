@@ -190,9 +190,6 @@
   "access": {
     "record": "public",
     "files": "restricted",
-    "owned_by": [{
-      "user": 1
-    }],
     "embargo": {
       "active": true,
       "until": "2131-01-01",

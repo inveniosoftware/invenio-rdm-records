@@ -28,13 +28,14 @@ def test_read_restricted_record_with_secret_link(
     record = service.publish(id_=draft.id, identity=identity_simple)
     recid = record.id
 
-    link = record._record.access.links.create(
+    link = record._record.parent.access.links.create(
         permission_level="read",
     )
 
     # FIXME without this, commit() won't work (b/c of jsonschema)
     record._record.pop("status", None)
     record._record.commit()
+    record._record.parent.commit()
     db.session.commit()
 
     # the record shouldn't be accessible without login and/or token

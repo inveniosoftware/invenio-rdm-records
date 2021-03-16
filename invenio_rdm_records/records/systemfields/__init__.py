@@ -8,7 +8,7 @@
 
 """System Fields for RDM Records."""
 
-from .access import AccessField
+from .access import ParentRecordAccessField, RecordAccessField
 from .has_draftcheck import HasDraftCheckField
 from .is_published import IsPublishedField
 

@@ -232,7 +232,7 @@
 
     "user": {
       "type": "object",
-      "description": "..",
+      "description": "A user, referenced by their ID",
       "additionalProperties": false,
       "properties": {
         "user": {
@@ -837,13 +837,6 @@
           "enum": ["public", "restricted"]
         },
 
-        "owned_by": {
-          "description": "List of user IDs that are owners of the record.",
-          "type": "array",
-          "uniqueItems": true,
-          "items": {"$ref": "#/definitions/agent"}
-        },
-
         "embargo": {
           "description": "Description of the embargo on the record.",
           "type": "object",
@@ -861,43 +854,6 @@
             "reason": {
               "description": "The reason why the record is under embargo.",
               "type": ["string", "null"]
-            }
-          }
-        },
-
-        "grants": {
-          "description": "Access grants for the record.",
-          "type": "array",
-          "items": {
-            "type": "object",
-            "required": ["subject", "id", "level"],
-            "additionalProperties": false,
-            "properties": {
-              "subject": {
-                "type": "string",
-                "enum": ["user", "role", "sysrole"]
-              },
-              "id": {
-                "type": "string"
-              },
-              "level": {
-                "type": "string"
-              }
-            }
-          }
-        },
-
-        "links": {
-          "description": "Secret links for the record.",
-          "type": "array",
-          "items": {
-            "type": "object",
-            "required": ["id"],
-            "additionalProperties": false,
-            "properties": {
-              "id": {
-                "type": "string"
-              }
             }
           }
         }

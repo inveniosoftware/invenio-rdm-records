@@ -6,6 +6,24 @@
   "additionalProperties": false,
 
   "definitions": {
+    "user": {
+      "type": "object",
+      "description": "A user, referenced by their ID",
+      "additionalProperties": false,
+      "properties": {
+        "user": {
+          "type": "integer"
+        }
+      }
+    },
+
+    "agent": {
+      "description": "An agent (user, software process, community, ...).",
+      "oneOf": [
+        {"$ref": "#/definitions/user"}
+      ]
+    },
+
     "internal-pid": {
       "type": "object",
       "description": "An internal persistent identifier object.",
@@ -50,6 +68,58 @@
       "type": "string"
     },
 
-    "pid": {"$ref": "#/definitions/internal-pid"}
+    "pid": {"$ref": "#/definitions/internal-pid"},
+
+    "access": {
+      "type": "object",
+      "description": "Access control and ownership for all versions of a record.",
+      "additionalProperties": false,
+      "properties": {
+
+        "owned_by": {
+          "description": "List of owners of the child records.",
+          "type": "array",
+          "uniqueItems": true,
+          "items": {"$ref": "#/definitions/agent"}
+        },
+
+        "grants": {
+          "description": "Access grants for the child records.",
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["subject", "id", "level"],
+            "additionalProperties": false,
+            "properties": {
+              "subject": {
+                "type": "string",
+                "enum": ["user", "role", "sysrole"]
+              },
+              "id": {
+                "type": "string"
+              },
+              "level": {
+                "type": "string"
+              }
+            }
+          }
+        },
+
+        "links": {
+          "description": "Secret links for the child records.",
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["id"],
+            "additionalProperties": false,
+            "properties": {
+              "id": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    }
   }
 }

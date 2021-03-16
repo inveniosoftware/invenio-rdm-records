@@ -2,6 +2,7 @@
 #
 # Copyright (C) 2020-2021 CERN.
 # Copyright (C) 2020-2021 Northwestern University.
+# Copyright (C)      2021 TU Wien.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
@@ -54,7 +55,6 @@ def test_valid_full():
     valid_full = {
         "record": "public",
         "files": "restricted",
-        "owned_by": [{"user": 1}],
         "embargo": {
             "active": True,
             "until": "2120-10-06",
@@ -65,26 +65,22 @@ def test_valid_full():
 
 
 @pytest.mark.parametrize("invalid_access,invalid_attr", [
-    ({
-        "files": "restricted", "owned_by": [{"user": 1}],
-        "embargo": {"active": True, "until": "2131-01-01", "reason": "secret!"}
-    }, "record"),
-    ({"record": "public", "owned_by": [{"user": 1}],
+    ({"files": "restricted",
+     "embargo": {"active": True, "until": "2131-01-01", "reason": "secret!"}},
+     "record"),
+    ({"record": "public",
      "embargo": {"active": True, "until": "2131-01-01", "reason": "secret!"}},
      "files"),
-    ({"record": "public", "files": "restricted", "owned_by": [1],
-     "embargo": {"active": True, "until": "2131-01-01", "reason": "secret!"}},
-     "owned_by"),
-    ({"record": "public", "files": "restricted", "owned_by": [{"user": 1}],
+    ({"record": "public", "files": "restricted",
      "embargo": {"active": False, "until": "2131-01-01", "reason": "secret!"}},
      "embargo"),
-    ({"record": "public", "files": "restricted", "owned_by": [{"user": 1}],
+    ({"record": "public", "files": "restricted",
      "embargo": {"active": True, "until": "1999-01-01", "reason": "secret!"}},
      "embargo"),
-    ({"record": "invalid", "files": "restricted", "owned_by": [{"user": 1}],
+    ({"record": "invalid", "files": "restricted",
      "embargo": {"active": False, "until": "1999-01-01", "reason": "secret!"}},
      "record"),
-    ({"record": "public", "files": "invalid", "owned_by": [{"user": 1}],
+    ({"record": "public", "files": "invalid",
      "embargo": {"active": False, "until": "1999-01-01", "reason": "secret!"}},
      "files"),
 ])

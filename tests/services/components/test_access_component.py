@@ -21,19 +21,23 @@ from invenio_rdm_records.services import RDMRecordService
 from invenio_rdm_records.services.components import AccessComponent
 
 
-def test_access_component_valid(minimal_record, identity_simple, users):
-    record = RDMRecord.create(minimal_record, parent=RDMParent.create({}))
+def test_access_component_valid(
+    minimal_record, parent, identity_simple, users
+):
+    record = RDMRecord.create(minimal_record, parent=parent)
     component = AccessComponent(RDMRecordService())
     component.create(identity_simple, minimal_record, record)
 
-    assert len(record.access.owners) > 0
+    assert len(record.parent.access.owners) > 0
 
 
+# TODO this test doesn't currently make sense (the parents will handle owners)
+@pytest.mark.skip
 def test_access_component_unknown_owner(
-        minimal_record, identity_simple, users):
-    minimal_record["access"]["owned_by"] = [{"user": -1337}]
-
-    record = RDMRecord.create(minimal_record, parent=RDMParent.create({}))
+    minimal_record, parent, identity_simple, users
+):
+    record = RDMRecord.create(minimal_record, parent=parent)
+    record.parent["access"]["owned_by"] = [{"user": -1337}]
     component = AccessComponent(RDMRecordService())
 
     # both should work, since 'access.owned_by' is ignored for anybody
@@ -42,11 +46,13 @@ def test_access_component_unknown_owner(
     component.update_draft(identity_simple, minimal_record, record)
 
 
+# TODO this test doesn't currently make sense (the parents will handle owners)
+@pytest.mark.skip
 def test_access_component_unknown_owner_with_system_process(
-        minimal_record, users):
-    minimal_record["access"]["owned_by"] = [{"user": -1337}]
-
-    record = RDMRecord.create(minimal_record, parent=RDMParent.create({}))
+    minimal_record, parent, users
+):
+    record = RDMRecord.create(minimal_record, parent=parent)
+    record.parent["access"]["owned_by"] = [{"user": -1337}]
     component = AccessComponent(RDMRecordService())
 
     with pytest.raises(ValidationError):
@@ -56,14 +62,15 @@ def test_access_component_unknown_owner_with_system_process(
         component.update_draft(system_identity, minimal_record, record)
 
 
+# TODO this test doesn't currently make sense (the parents will handle grants)
+@pytest.mark.skip
 def test_access_component_unknown_grant_subject(
-    minimal_record, identity_simple, users
+    minimal_record, parent, identity_simple, users
 ):
-    minimal_record["access"]["grants"] = [
+    record = RDMRecord.create(minimal_record, parent=parent)
+    record.parent["access"]["grants"] = [
         {"subject": "user", "id": "-1337", "level": "view"}
     ]
-
-    record = RDMRecord.create(minimal_record, parent=RDMParent.create({}))
     component = AccessComponent(RDMRecordService())
 
     with pytest.raises(ValidationError):
@@ -73,17 +80,15 @@ def test_access_component_unknown_grant_subject(
         component.update_draft(identity_simple, minimal_record, record)
 
 
-def test_access_component_set_owner(minimal_record, users):
+# TODO this test doesn't currently make sense (the parents will handle grants)
+@pytest.mark.skip
+def test_access_component_set_owner(minimal_record, parent, users):
     user = users[0]
     identity = Identity(user.id)
     identity.provides.add(UserNeed(user.id))
 
-    minimal_record["access"]["owned_by"] = []
-
-    # NOTE: we can't use RDMRecord.create(...) here, because
-    #       the schema validation would complain about the zero-length
-    #       owned_by array
-    record = RDMRecord(minimal_record)
+    record = RDMRecord.create(minimal_record, parent=parent)
+    record.parent["access"]["owned_by"] = []
     component = AccessComponent(RDMRecordService())
     component.create(identity, minimal_record, record)
 
@@ -92,12 +97,10 @@ def test_access_component_set_owner(minimal_record, users):
 
 
 def test_access_component_update_access_via_json(
-    minimal_record, users, identity_simple
+    minimal_record, parent, users, identity_simple
 ):
     next_year = arrow.utcnow().datetime + timedelta(days=+365)
     restricted_access = {
-        "owned_by": [{"user": users[0].id}],
-        "grants": [],
         "record": "restricted",
         "files": "restricted",
         "embargo": {
@@ -109,7 +112,7 @@ def test_access_component_update_access_via_json(
     minimal_record["access"] = restricted_access
 
     # create an initially restricted-access record
-    record = RDMRecord.create(minimal_record, parent=RDMParent.create({}))
+    record = RDMRecord.create(minimal_record, parent=parent)
     component = AccessComponent(RDMRecordService())
     component.create(identity_simple, minimal_record, record)
 
@@ -123,7 +126,6 @@ def test_access_component_update_access_via_json(
     # (instead of via the record's access object)
     new_data = minimal_record.copy()
     public_access = {
-        "owned_by": [{"user": users[0].id}],
         "grants": [],
         "record": "public",
         "files": "public",

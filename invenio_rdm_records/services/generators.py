@@ -2,6 +2,7 @@
 #
 # Copyright (C) 2021 Graz University of Technology.
 # Copyright (C) 2021 CERN.
+# Copyright (C) 2021 TU Wien.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
@@ -96,13 +97,16 @@ class RecordOwners(Generator):
             # 'record is None' means that this must be a 'create'
             # this should be allowed for any authenticated user
             return [authenticated_user]
-        return [UserNeed(owner.owner_id) for owner in record.access.owners]
+
+        return [
+            UserNeed(owner.owner_id) for owner in record.parent.access.owners
+        ]
 
     def query_filter(self, identity=None, **kwargs):
         """Filters for current identity as owner."""
         users = [n.value for n in identity.provides if n.method == "id"]
         if users:
-            return Q("terms", **{"access.owned_by.user": users})
+            return Q("terms", **{"parent.access.owned_by.user": users})
 
 
 class IfDraft(Generator):
@@ -156,4 +160,4 @@ class SecretLinks(Generator):
         if record is None:
             return []
 
-        return record.access.links.needs(self.permission)
+        return record.parent.access.links.needs(self.permission)
