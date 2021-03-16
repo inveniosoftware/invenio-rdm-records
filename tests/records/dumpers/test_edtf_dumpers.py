@@ -14,6 +14,7 @@ from invenio_access.permissions import SystemRoleNeed
 from invenio_records.dumpers import ElasticsearchDumper
 
 from invenio_rdm_records.records import RDMDraft, RDMRecord
+from invenio_rdm_records.records.api import RDMParent
 from invenio_rdm_records.records.dumpers import EDTFDumperExt, \
     EDTFListDumperExt
 from invenio_rdm_records.services import RDMRecordService
@@ -42,7 +43,7 @@ def test_esdumper_with_edtfext(app, db, minimal_record, location,
     minimal_record["metadata"]["dates"] = [{"date": date}]
 
     # Create the record
-    record = RDMRecord.create(minimal_record)
+    record = RDMRecord.create(minimal_record, parent=RDMParent.create({}))
     db.session.commit()
 
     # Dump it
@@ -73,7 +74,7 @@ def test_esdumper_with_edtfext_not_defined(app, db, location, minimal_record):
     )
 
     # Create the record
-    record = RDMRecord.create(minimal_record)
+    record = RDMRecord.create(minimal_record, parent=RDMParent.create({}))
     db.session.commit()
 
     # Dump it
@@ -98,7 +99,7 @@ def test_eslistdumper_with_edtfext_not_defined(app, db, minimal_record):
     )
 
     # Create the record
-    record = RDMRecord.create(minimal_record)
+    record = RDMRecord.create(minimal_record, parent=RDMParent.create({}))
     db.session.commit()
 
     # Dump it
@@ -123,7 +124,7 @@ def test_esdumper_with_edtfext_parse_error(app, db, location, minimal_record):
     )
 
     # Create the record
-    record = RDMRecord.create(minimal_record)
+    record = RDMRecord.create(minimal_record, parent=RDMParent.create({}))
     db.session.commit()
 
     # Dump it
@@ -146,7 +147,7 @@ def test_eslistdumper_with_edtfext_parse_error(app, db, minimal_record):
     )
 
     # Create the record
-    record = RDMRecord.create(minimal_record)
+    record = RDMRecord.create(minimal_record, parent=RDMParent.create({}))
     db.session.commit()
 
     # Dump it

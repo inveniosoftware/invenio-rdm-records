@@ -16,8 +16,7 @@ from invenio_records_resources.services.files.config import FileServiceConfig
 from invenio_records_resources.services.records.search import terms_filter
 
 from ..records import RDMDraft, RDMRecord
-from .components import AccessComponent, MetadataComponent, \
-    VersionSupportComponent
+from .components import AccessComponent, MetadataComponent
 from .permissions import RDMRecordPermissionPolicy
 from .schemas import RDMRecordSchema
 
@@ -65,7 +64,6 @@ class RDMRecordServiceConfig(RecordDraftServiceConfig):
         AccessComponent,
         DraftFilesComponent,
         PIDComponent,
-        VersionSupportComponent,
     ]
 
 

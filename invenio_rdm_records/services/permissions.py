@@ -47,13 +47,13 @@ class RDMRecordPermissionPolicy(RecordPermissionPolicy):
     # Drafts
     can_create = [AuthenticatedUser(), SystemProcess()]
     can_search_drafts = [AuthenticatedUser(), SystemProcess()]
-
     can_read_draft = [RecordOwners(), SystemProcess()]
     can_update_draft = [RecordOwners(), SystemProcess()]
     can_delete_draft = [RecordOwners(), SystemProcess()]
 
     can_manage = [RecordOwners(), SystemProcess()]
-
+    can_new_version = [RecordOwners(), SystemProcess()]
+    can_edit = [RecordOwners(), SystemProcess()]
     can_publish = [RecordOwners(), SystemProcess()]
 
     # Files

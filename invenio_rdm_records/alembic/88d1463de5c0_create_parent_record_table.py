@@ -71,7 +71,12 @@ def upgrade():
         'rdm_drafts_metadata',
         'rdm_parents_metadata',
         ['parent_id'],
-        ['id']
+        ['id'],
+        ondelete='RESTRICT',
+    )
+    op.add_column(
+        'rdm_drafts_metadata',
+        sa.Column('parent_index', sa.Integer, nullable=True)
     )
 
     # Records table FK to parent
@@ -84,7 +89,12 @@ def upgrade():
         'rdm_records_metadata',
         'rdm_parents_metadata',
         ['parent_id'],
-        ['id']
+        ['id'],
+        ondelete='RESTRICT',
+    )
+    op.add_column(
+        'rdm_records_metadata',
+        sa.Column('parent_index', sa.Integer, nullable=True)
     )
 
     # Records revisions table FK to parent
@@ -92,21 +102,59 @@ def upgrade():
         'rdm_records_metadata_version',
         sa.Column('parent_id', UUIDType(), nullable=True)
     )
+    op.add_column(
+        'rdm_records_metadata_version',
+        sa.Column('parent_index', sa.Integer, nullable=True)
+    )
+
+    # Create versions state table
+    op.create_table(
+        'rdm_versions_state',
+        sa.Column('latest_index', sa.Integer(), nullable=True),
+        sa.Column('parent_id', UUIDType(), nullable=False),
+        sa.Column('latest_id', UUIDType(), nullable=True),
+        sa.Column('next_draft_id', UUIDType(), nullable=True),
+        sa.ForeignKeyConstraint(
+            ['latest_id'],
+            ['rdm_records_metadata.id'],
+            name=op.f('fk_rdm_versions_state_latest_id_rdm_records_metadata'),
+        ),
+        sa.ForeignKeyConstraint(
+            ['next_draft_id'],
+            ['rdm_drafts_metadata.id'],
+            name=op.f(
+                'fk_rdm_versions_state_next_draft_id_rdm_drafts_metadata'),
+        ),
+        sa.ForeignKeyConstraint(
+            ['parent_id'],
+            ['rdm_parents_metadata.id'],
+            name=op.f('fk_rdm_versions_state_parent_id_rdm_parents_metadata'),
+            ondelete='CASCADE',
+        ),
+        sa.PrimaryKeyConstraint(
+            'parent_id',
+            name=op.f('pk_rdm_versions_state')
+        ),
+    )
 
 
 def downgrade():
     """Downgrade database."""
+    op.drop_table('rdm_versions_state')
     op.drop_column('rdm_records_metadata_version', 'parent_id')
+    op.drop_column('rdm_records_metadata_version', 'parent_index')
     op.drop_constraint(
         op.f('fk_rdm_records_metadata_parent_id_rdm_parents_metadata'),
         'rdm_records_metadata',
         type_='foreignkey'
     )
     op.drop_column('rdm_records_metadata', 'parent_id')
+    op.drop_column('rdm_records_metadata', 'parent_index')
     op.drop_constraint(
         op.f('fk_rdm_drafts_metadata_parent_id_rdm_parents_metadata'),
         'rdm_drafts_metadata',
         type_='foreignkey'
     )
     op.drop_column('rdm_drafts_metadata', 'parent_id')
+    op.drop_column('rdm_drafts_metadata', 'parent_index')
     op.drop_table('rdm_parents_metadata')

@@ -10,7 +10,6 @@
 from invenio_drafts_resources.records import Draft, Record
 from invenio_drafts_resources.records.api import \
     ParentRecord as ParentRecordBase
-from invenio_drafts_resources.records.systemfields import ParentField
 from invenio_pidstore.models import PIDStatus
 from invenio_records.dumpers import ElasticsearchDumper
 from invenio_records.dumpers.relations import RelationDumperExt
@@ -28,10 +27,31 @@ from .systemfields import AccessField, HasDraftCheckField, IsPublishedField
 
 
 #
+# Parent record API
+#
+class RDMParent(ParentRecordBase):
+    """Example parent record."""
+
+    # Configuration
+    model_cls = models.RDMParentMetadata
+
+    dumper = ElasticsearchDumper(
+        extensions=[]
+    )
+
+    # System fields
+    schema = ConstantField(
+        '$schema', 'http://localhost/schemas/records/parent-v1.0.0.json')
+
+
+#
 # Common properties between records and drafts.
 #
 class CommonFieldsMixin:
     """Common system fields between records and drafts."""
+
+    versions_model_cls = models.RDMVersionsState
+    parent_record_cls = RDMParent
 
     schema = ConstantField(
        '$schema', 'http://localhost/schemas/records/record-v2.0.0.json')
@@ -65,24 +85,6 @@ class CommonFieldsMixin:
 
 
 #
-# Parent record API
-#
-class RDMParent(ParentRecordBase):
-    """Example parent record."""
-
-    # Configuration
-    model_cls = models.RDMParentMetadata
-
-    dumper = ElasticsearchDumper(
-        extensions=[]
-    )
-
-    # System fields
-    schema = ConstantField(
-        '$schema', 'http://localhost/schemas/records/parent-v1.0.0.json')
-
-
-#
 # Draft API
 #
 class DraftFile(RecordFileBase):
@@ -95,7 +97,7 @@ class DraftFile(RecordFileBase):
 class RDMDraft(CommonFieldsMixin, Draft):
     """RDM draft API."""
 
-    model_cls = models.DraftMetadata
+    model_cls = models.RDMDraftMetadata
 
     index = IndexField(
         "rdmrecords-drafts-draft-v2.0.0", search_alias="rdmrecords"
@@ -109,9 +111,6 @@ class RDMDraft(CommonFieldsMixin, Draft):
     )
 
     has_draft = HasDraftCheckField()
-
-    parent = ParentField(
-        RDMParent, create=True, soft_delete=False, hard_delete=True)
 
 
 #
@@ -143,10 +142,3 @@ class RDMRecord(CommonFieldsMixin, Record):
     )
 
     has_draft = HasDraftCheckField(RDMDraft)
-
-    parent = ParentField(
-        RDMParent, create=False, soft_delete=False, hard_delete=False)
-
-    create_from_draft = [
-        'parent'
-    ]

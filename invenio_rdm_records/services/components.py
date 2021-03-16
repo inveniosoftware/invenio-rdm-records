@@ -78,6 +78,18 @@ class AccessComponent(ServiceComponent):
         """Update handler."""
         self._populate_access_and_validate(identity, data, record, **kwargs)
 
+    def publish(self, identity, draft=None, record=None, **kwargs):
+        """Update draft metadata."""
+        record.access = draft.access
+
+    def edit(self, identity, draft=None, record=None, **kwargs):
+        """Update draft metadata."""
+        draft.access = record.access
+
+    def new_version(self, identity, draft=None, record=None, **kwargs):
+        """Update draft metadata."""
+        draft.access = record.access
+
 
 class MetadataComponent(ServiceComponent):
     """Service component for metadata."""
@@ -86,21 +98,18 @@ class MetadataComponent(ServiceComponent):
         """Inject parsed metadata to the record."""
         record.metadata = data.get('metadata', {})
 
-    def update(self, identity, data=None, record=None, **kwargs):
-        """Inject parsed metadata to the record."""
-        record.metadata = data.get('metadata', {})
-
     def update_draft(self, identity, data=None, record=None, **kwargs):
         """Inject parsed metadata to the record."""
         record.metadata = data.get('metadata', {})
 
+    def publish(self, identity, draft=None, record=None, **kwargs):
+        """Update draft metadata."""
+        record.metadata = draft.get('metadata', {})
 
-class VersionSupportComponent(ServiceComponent):
-    """Version support component."""
-
-    # TODO: This component has to be merged with RelationsComponent in
-    # Invenio-Drafts-Resources.
+    def edit(self, identity, draft=None, record=None, **kwargs):
+        """Update draft metadata."""
+        draft.metadata = record.get('metadata', {})
 
     def new_version(self, identity, draft=None, record=None, **kwargs):
-        """Create a new version of a record."""
-        raise NotImplementedError("Version support is not yet implemented.")
+        """Update draft metadata."""
+        draft.metadata = record.get('metadata', {})

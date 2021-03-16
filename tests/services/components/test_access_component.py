@@ -16,12 +16,13 @@ from invenio_access.permissions import system_identity
 from marshmallow import ValidationError
 
 from invenio_rdm_records.records import RDMRecord
+from invenio_rdm_records.records.api import RDMParent
 from invenio_rdm_records.services import RDMRecordService
 from invenio_rdm_records.services.components import AccessComponent
 
 
 def test_access_component_valid(minimal_record, identity_simple, users):
-    record = RDMRecord.create(minimal_record)
+    record = RDMRecord.create(minimal_record, parent=RDMParent.create({}))
     component = AccessComponent(RDMRecordService())
     component.create(identity_simple, minimal_record, record)
 
@@ -32,7 +33,7 @@ def test_access_component_unknown_owner(
         minimal_record, identity_simple, users):
     minimal_record["access"]["owned_by"] = [{"user": -1337}]
 
-    record = RDMRecord.create(minimal_record)
+    record = RDMRecord.create(minimal_record, parent=RDMParent.create({}))
     component = AccessComponent(RDMRecordService())
 
     # both should work, since 'access.owned_by' is ignored for anybody
@@ -45,7 +46,7 @@ def test_access_component_unknown_owner_with_system_process(
         minimal_record, users):
     minimal_record["access"]["owned_by"] = [{"user": -1337}]
 
-    record = RDMRecord.create(minimal_record)
+    record = RDMRecord.create(minimal_record, parent=RDMParent.create({}))
     component = AccessComponent(RDMRecordService())
 
     with pytest.raises(ValidationError):
@@ -62,7 +63,7 @@ def test_access_component_unknown_grant_subject(
         {"subject": "user", "id": "-1337", "level": "view"}
     ]
 
-    record = RDMRecord.create(minimal_record)
+    record = RDMRecord.create(minimal_record, parent=RDMParent.create({}))
     component = AccessComponent(RDMRecordService())
 
     with pytest.raises(ValidationError):
@@ -108,7 +109,7 @@ def test_access_component_update_access_via_json(
     minimal_record["access"] = restricted_access
 
     # create an initially restricted-access record
-    record = RDMRecord.create(minimal_record)
+    record = RDMRecord.create(minimal_record, parent=RDMParent.create({}))
     component = AccessComponent(RDMRecordService())
     component.create(identity_simple, minimal_record, record)
 

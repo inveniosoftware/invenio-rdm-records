@@ -10,25 +10,24 @@
 import pytest
 from invenio_records.dumpers import ElasticsearchDumper
 
-from invenio_rdm_records.records import RDMDraft, RDMRecord
+from invenio_rdm_records.records import RDMDraft, RDMParent, RDMRecord
 from invenio_rdm_records.records.dumpers import GrantTokensDumperExt
 from invenio_rdm_records.records.systemfields.access import Grant
 from invenio_rdm_records.services import RDMRecordService
 
 
-def test_grant_tokens_dumper(app, db, minimal_record):
+def test_grant_tokens_dumper(app, db, minimal_record, location):
     """Test grant token dumper extension implementation."""
     dumper = ElasticsearchDumper(
         extensions=[GrantTokensDumperExt("access.grant_tokens")]
     )
 
+    # Create the record
     minimal_record["access"]["grants"] = [
         {"subject": "user", "id": "1", "level": "view"},
         {"subject": "user", "id": "2", "level": "manage"},
     ]
-
-    # Create the record
-    record = RDMRecord.create(minimal_record)
+    record = RDMRecord.create(minimal_record, parent=RDMParent.create({}))
     db.session.commit()
 
     grant1 = record.access.grants[0]
