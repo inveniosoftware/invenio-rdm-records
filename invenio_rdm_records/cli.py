@@ -17,8 +17,11 @@ from faker import Faker
 from flask.cli import with_appcontext
 from flask_principal import Identity
 from invenio_access.permissions import system_identity
+from invenio_vocabularies.proxies import \
+    current_service as current_vocabularies_service
 
 from .fixtures import FixturesEngine
+from .proxies import current_rdm_records
 from .services import RDMDraftFilesService, RDMRecordService
 from .vocabularies import Vocabularies
 
@@ -261,3 +264,20 @@ def create_fixtures():
     FixturesEngine(system_identity).run()
 
     click.secho('Created required fixtures!', fg='green')
+
+
+@rdm_records.command("rebuild-index")
+@with_appcontext
+def rebuild_index():
+    """Reindex all drafts, records and vocabularies."""
+    click.secho("Reindexing records and drafts...", fg="green")
+
+    rec_service = current_rdm_records.records_service
+    rec_service.rebuild_index(identity=system_identity)
+
+    click.secho("Reindexing vocabularies...", fg="green")
+
+    vocab_service = current_vocabularies_service
+    vocab_service.rebuild_index(identity=system_identity)
+
+    click.secho("Reindexed everything!", fg="green")
