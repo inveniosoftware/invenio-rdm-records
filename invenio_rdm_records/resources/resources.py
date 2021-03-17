@@ -35,6 +35,7 @@ class RDMRecordVersionsResource(RecordVersionsResource):
     config_name = "RDM_RECORDS_BIBLIOGRAPHIC_RECORD_VERSIONS_CONFIG"
     default_config = config.RDMRecordVersionsResourceConfig
 
+
 #
 # Drafts
 #
