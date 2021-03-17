@@ -15,14 +15,12 @@ import click
 from edtf.parser.grammar import level0Expression
 from faker import Faker
 from flask.cli import with_appcontext
-from flask_principal import Identity
 from invenio_access.permissions import system_identity
 from invenio_vocabularies.proxies import \
     current_service as current_vocabularies_service
 
 from .fixtures import FixturesEngine
 from .proxies import current_rdm_records
-from .services import RDMDraftFilesService, RDMRecordService
 from .vocabularies import Vocabularies
 
 
@@ -226,8 +224,8 @@ def create_fake_record():
         }
     }
 
-    service = RDMRecordService()
-    draft_files_service = RDMDraftFilesService()
+    service = current_rdm_records.records_service
+    draft_files_service = current_rdm_records.draft_files_service
 
     draft = service.create(data=data_to_use, identity=system_identity)
     draft_files_service.update_files_options(
