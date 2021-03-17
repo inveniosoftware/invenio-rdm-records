@@ -15,6 +15,7 @@ def create_records_bp(app):
             "bibliographic_records_resource"
         )
 
+
 def create_records_versions_bp(app):
     """Create records versions blueprint."""
     ext = app.extensions
