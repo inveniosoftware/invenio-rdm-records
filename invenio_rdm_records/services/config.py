@@ -68,13 +68,8 @@ class RDMRecordServiceConfig(RecordDraftServiceConfig):
     ]
 
 
-class RDMRecordVersionsServiceConfig(RecordServiceConfig):
+class RDMRecordVersionsServiceConfig(RDMRecordServiceConfig):
     """Record versions service config."""
-
-    record_cls = RDMRecord
-    permission_policy_cls = RDMRecordPermissionPolicy
-
-    schema = RDMRecordSchema
 
     search_sort_default = 'newest'
     search_sort_default_no_query = 'newest'
