@@ -116,6 +116,7 @@ setup(
             'invenio_rdm_records_record_files_action = invenio_rdm_records.views:create_record_files_action_bp',
             'invenio_rdm_records_draft_files = invenio_rdm_records.views:create_draft_files_bp',
             'invenio_rdm_records_draft_files_action = invenio_rdm_records.views:create_draft_files_action_bp',
+            'invenio_rdm_records_parent_links = invenio_rdm_records.views:create_parent_record_links_bp',
         ],
         'invenio_db.models': [
             'invenio_rdm_records = invenio_rdm_records.records.models',
