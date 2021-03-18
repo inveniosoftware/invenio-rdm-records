@@ -17,26 +17,6 @@ from marshmallow_utils.fields import ISODateString, SanitizedUnicode
 from marshmallow_utils.permissions import FieldPermissionsMixin
 
 
-class Grant(Schema):
-    """Schema for an access grant."""
-
-    subject = fields.String()
-    id = fields.String()
-    level = fields.String()
-
-
-class Link(Schema):
-    """Schema for a secret link."""
-
-    id = fields.String()
-
-
-class Agent(Schema):
-    """An agent schema."""
-
-    user = fields.Integer(required=True)
-
-
 class EmbargoSchema(Schema):
     """Schema for an embargo on the record."""
 
@@ -72,26 +52,12 @@ class EmbargoSchema(Schema):
                 )
 
 
-class AccessSchema(Schema, FieldPermissionsMixin):
+class AccessSchema(Schema):
     """Access schema."""
-
-    field_load_permissions = {}
-
-    # omit the grants and links from dumps, except for users with the
-    # 'manage' permission
-    field_dump_permissions = {
-        "grants": "manage",
-        "links": "manage",
-    }
 
     record = SanitizedUnicode(required=True)
     files = SanitizedUnicode(required=True)
     embargo = fields.Nested(EmbargoSchema)
-
-    # TODO move them to the parent schema
-    # grants = fields.List(fields.Nested(Grant))
-    # owned_by = fields.List(fields.Nested(Agent))
-    # links = fields.List(fields.Nested(Link))
 
     def validate_protection_value(self, value, field_name):
         """Check that the protection value is valid."""

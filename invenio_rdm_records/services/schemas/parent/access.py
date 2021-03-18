@@ -1,0 +1,59 @@
+# -*- coding: utf-8 -*-
+#
+# Copyright (C) 2020 CERN.
+# Copyright (C) 2020 Northwestern University.
+# Copyright (C) 2021 TU Wien.
+#
+# Invenio-RDM-Records is free software; you can redistribute it and/or modify
+# it under the terms of the MIT License; see LICENSE file for more details.
+
+"""Access schema for RDM parent record."""
+
+import arrow
+from flask_babelex import lazy_gettext as _
+from marshmallow import (
+    Schema,
+    ValidationError,
+    fields,
+    validates,
+    validates_schema,
+)
+from marshmallow_utils.fields import ISODateString, SanitizedUnicode
+from marshmallow_utils.permissions import FieldPermissionsMixin
+
+
+class Grant(Schema):
+    """Schema for an access grant."""
+
+    subject = fields.String()
+    id = fields.String()
+    level = fields.String()
+
+
+class Link(Schema):
+    """Schema for a secret link."""
+
+    id = fields.String()
+
+
+class Agent(Schema):
+    """An agent schema."""
+
+    user = fields.Integer(required=True)
+
+
+class ParentAccessSchema(Schema, FieldPermissionsMixin):
+    """Access schema."""
+
+    field_load_permissions = {}
+
+    # omit the grants and links from dumps, except for users with
+    # 'manage' permissions
+    field_dump_permissions = {
+        "grants": "manage",
+        "links": "manage",
+    }
+
+    grants = fields.List(fields.Nested(Grant))
+    owned_by = fields.List(fields.Nested(Agent))
+    links = fields.List(fields.Nested(Link))
