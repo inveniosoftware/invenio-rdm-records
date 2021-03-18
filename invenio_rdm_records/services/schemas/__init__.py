@@ -2,6 +2,7 @@
 #
 # Copyright (C) 2020 CERN.
 # Copyright (C) 2020 Northwestern University.
+# Copyright (C) 2021 TU Wien.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
@@ -15,6 +16,7 @@ from marshmallow_utils.permissions import FieldPermissionsMixin
 
 from .access import AccessSchema
 from .metadata import MetadataSchema
+from .parent import RDMParentSchema
 from .pids import PIDSchema
 from .versions import VersionsSchema
 
@@ -47,6 +49,7 @@ class RDMRecordSchema(RecordSchema, FieldPermissionsMixin):
     # notes = fields.List(fields.Nested(InternalNoteSchema))
     revision = fields.Integer(dump_only=True)
     versions = NestedAttribute(VersionsSchema, dump_only=True)
+    parent = NestedAttribute(RDMParentSchema, dump_only=True)
 
     is_published = fields.Boolean(dump_only=True)
 
@@ -94,5 +97,6 @@ class RDMRecordSchema(RecordSchema, FieldPermissionsMixin):
 
 
 __all__ = (
+    'RDMParentSchema',
     'RDMRecordSchema',
 )
