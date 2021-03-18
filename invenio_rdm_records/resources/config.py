@@ -8,6 +8,7 @@
 
 """Resources configuration."""
 
+from flask_resources.errors import HTTPJSONException, create_errormap_handler
 from flask_resources.serializers import JSONSerializer
 from invenio_drafts_resources.resources import DraftActionResourceConfig, \
     DraftFileActionResourceConfig, DraftFileResourceConfig, \
@@ -257,3 +258,33 @@ class RDMDraftFilesActionResourceConfig(DraftFileActionResourceConfig):
         "file": DraftFileLinks,
         "files": DraftListFilesLinks,
     }
+
+
+#
+# Parent Record Links
+#
+record_links_error_map = RecordResourceConfig.error_map.copy()
+record_links_error_map.update({
+    LookupError: create_errormap_handler(
+        HTTPJSONException(
+            code=404,
+            description="No secret link found with the given ID.",
+        )
+    ),
+})
+
+
+class RDMParentRecordLinksResourceConfig(RecordResourceConfig):
+    """User records resource configuration."""
+
+    item_route = "/records/<pid_value>/access/links/<link_id>"
+
+    list_route = "/records/<pid_value>/access/links"
+
+    links_config = {}
+
+    response_handlers = {
+        "application/json": RecordResponse(JSONSerializer())
+    }
+
+    error_map = record_links_error_map

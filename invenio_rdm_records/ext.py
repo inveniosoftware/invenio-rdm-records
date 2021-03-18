@@ -16,9 +16,9 @@ from itsdangerous import SignatureExpired
 
 from . import config
 from .resources import RDMDraftActionResource, RDMDraftFilesActionResource, \
-    RDMDraftFilesResource, RDMDraftResource, RDMRecordFilesActionResource, \
-    RDMRecordFilesResource, RDMRecordResource, RDMRecordVersionsResource, \
-    RDMUserRecordsResource
+    RDMDraftFilesResource, RDMDraftResource, RDMParentRecordLinksResource, \
+    RDMRecordFilesActionResource, RDMRecordFilesResource, RDMRecordResource, \
+    RDMRecordVersionsResource, RDMUserRecordsResource
 from .secret_links import LinkNeed, SecretLink
 from .services import RDMDraftFilesService, RDMRecordFilesService, \
     RDMRecordService, RDMRecordVersionsService, RDMUserRecordsService
@@ -173,3 +173,10 @@ class InvenioRDMRecords(object):
                 config=app.config.get(
                     RDMDraftFilesActionResource.config_name),
             )
+
+        # Parent Records
+
+        self.parent_record_links_resource = RDMParentRecordLinksResource(
+            service=self.records_service,
+            config=app.config.get(RDMParentRecordLinksResource.config_name)
+        )

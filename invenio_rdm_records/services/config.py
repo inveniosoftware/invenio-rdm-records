@@ -2,6 +2,7 @@
 #
 # Copyright (C) 2020-2021 CERN.
 # Copyright (C) 2020-2021 Northwestern University.
+# Copyright (C)      2021 TU Wien.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
@@ -12,14 +13,15 @@ from flask_babelex import lazy_gettext as _
 from invenio_drafts_resources.services.records import RecordDraftServiceConfig
 from invenio_drafts_resources.services.records.components import \
     DraftFilesComponent, PIDComponent
-from invenio_records_resources.services import RecordServiceConfig
 from invenio_records_resources.services.files.config import FileServiceConfig
 from invenio_records_resources.services.records.search import terms_filter
 
 from ..records import RDMDraft, RDMRecord
 from .components import AccessComponent, MetadataComponent
 from .permissions import RDMRecordPermissionPolicy
-from .schemas import RDMRecordSchema
+from .result_items import SecretLinkItem, SecretLinkList
+from .schemas import RDMParentSchema, RDMRecordSchema
+from .schemas.parent.access import SecretLink
 
 
 class RDMRecordServiceConfig(RecordDraftServiceConfig):
@@ -32,6 +34,10 @@ class RDMRecordServiceConfig(RecordDraftServiceConfig):
     draft_cls = RDMDraft
 
     schema = RDMRecordSchema
+
+    schema_parent = RDMParentSchema
+
+    schema_secret_link = SecretLink
 
     permission_policy_cls = RDMRecordPermissionPolicy
 
@@ -53,6 +59,10 @@ class RDMRecordServiceConfig(RecordDraftServiceConfig):
             fields=['-versions.index'],
         ),
     }
+
+    link_result_item_cls = SecretLinkItem
+
+    link_result_list_cls = SecretLinkList
 
     search_facets_options = dict(
         aggs={

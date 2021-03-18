@@ -9,15 +9,8 @@
 
 """Access schema for RDM parent record."""
 
-import arrow
 from flask_babelex import lazy_gettext as _
-from marshmallow import (
-    Schema,
-    ValidationError,
-    fields,
-    validates,
-    validates_schema,
-)
+from marshmallow import Schema, fields
 from marshmallow_utils.fields import ISODateString, SanitizedUnicode
 from marshmallow_utils.permissions import FieldPermissionsMixin
 
@@ -30,10 +23,14 @@ class Grant(Schema):
     level = fields.String()
 
 
-class Link(Schema):
+class SecretLink(Schema):
     """Schema for a secret link."""
 
-    id = fields.String()
+    id = fields.String(dump_only=True)
+    created_at = ISODateString(required=False)
+    expires_at = ISODateString(required=False)
+    permission = fields.String(required=False)
+    token = SanitizedUnicode(dump_only=True)
 
 
 class Agent(Schema):
@@ -56,4 +53,4 @@ class ParentAccessSchema(Schema, FieldPermissionsMixin):
 
     grants = fields.List(fields.Nested(Grant))
     owned_by = fields.List(fields.Nested(Agent))
-    links = fields.List(fields.Nested(Link))
+    links = fields.List(fields.Nested(SecretLink))
