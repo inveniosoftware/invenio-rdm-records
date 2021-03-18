@@ -126,6 +126,8 @@ class RDMRecordVersionsResourceConfig(RecordVersionsResourceConfig):
         "search": SearchVersionsLinks
     }
 
+    response_handlers = record_serializers
+
 
 #
 # Drafts and draft actions
