@@ -10,6 +10,7 @@
 """Module tests."""
 
 import json
+from datetime import datetime, timedelta
 
 import arrow
 import pytest
@@ -480,3 +481,187 @@ def test_ui_data_in_record(
     # Check if item results contain UI data
     response = client.get(f'/records/{recid}', headers=ui_headers)
     assert response.json['ui']
+
+
+#
+# Links Endpoint
+#
+
+
+def test_link_creation(
+    app, client_with_login, location,
+    minimal_record, headers, es_clear,
+):
+    """Test the creation of secret links."""
+    client = client_with_login
+    in_10_days = datetime.utcnow() + timedelta(days=10)
+    in_10_days_str = in_10_days.strftime("%Y-%m-%d")
+
+    # Create and publish a draft
+    recid = _create_and_publish(client, minimal_record, headers)
+
+    # check that there are no links yet (and the endpoint works)
+    links_result = client.get(
+        f"/records/{recid}/access/links", headers=headers
+    )
+    assert links_result.status_code == 200
+    assert int(links_result.json["hits"]["total"]) == 0
+    assert len(links_result.json["hits"]["hits"]) == 0
+
+    # create a secret link
+    link_result = client.post(
+        f"/records/{recid}/access/links", headers=headers,
+        data=json.dumps({"permission": "read"})
+    )
+
+    print(link_result.json)
+    assert link_result.status_code == 201
+    link_id = link_result.json["id"]
+    link_json = link_result.json
+    assert link_json["id"]
+    assert link_json["permission"] == "read"
+    assert link_json["token"]
+    assert link_json["created_at"]
+    assert not link_json.get("expires_at")
+
+    # check that the created link is findable
+    links_result = client.get(
+        f"/records/{recid}/access/links", headers=headers
+    )
+    assert links_result.status_code == 200
+    assert int(links_result.json["hits"]["total"]) == 1
+    assert len(links_result.json["hits"]["hits"]) == 1
+
+    new_link_result = client.get(
+        f"/records/{recid}/access/links/{link_id}", headers=headers
+    )
+    new_link_json = new_link_result.json
+    assert new_link_result.status_code == 200
+    assert new_link_json["id"] == link_id
+    assert new_link_json["token"] == link_json["token"]
+    assert new_link_json["permission"] == link_json["permission"]
+    assert new_link_json["created_at"] == link_json["created_at"]
+    assert not new_link_json.get("expires_at")
+
+    # create an expiring link
+    link_result = client.post(
+        f"/records/{recid}/access/links", headers=headers,
+        data=json.dumps(
+            {"permission": "read_files", "expires_at": in_10_days_str}
+        )
+    )
+
+    link_json = link_result.json
+    assert link_result.status_code == 201
+    assert link_json["id"]
+    assert link_json["permission"] == "read_files"
+    assert link_json["token"]
+    assert link_json["created_at"]
+    assert link_json["expires_at"]
+
+    # check that both links exist
+    links_result = client.get(
+        f"/records/{recid}/access/links", headers=headers
+    )
+    assert links_result.status_code == 200
+    assert int(links_result.json["hits"]["total"]) == 2
+    assert len(links_result.json["hits"]["hits"]) == 2
+
+
+def test_link_deletion(
+    app, client_with_login, location,
+    minimal_record, headers, es_clear,
+):
+    """Test the deletion of a secret link."""
+    client = client_with_login
+
+    # Create and publish a draft
+    recid = _create_and_publish(client, minimal_record, headers)
+
+    # create a link and delete it again
+    link_result = client.post(
+        f"/records/{recid}/access/links", headers=headers,
+        data=json.dumps({"permission": "read"})
+    )
+    link_id = link_result.json["id"]
+
+    # check that the record exists
+    link_result = client.get(
+        f"/records/{recid}/access/links/{link_id}", headers=headers
+    )
+    assert link_result.status_code == 200
+
+    # delete the record
+    delete_result = client.delete(
+        f"/records/{recid}/access/links/{link_id}", headers=headers
+    )
+    assert delete_result.status_code == 204
+
+    # check that the record is deleted
+    link_result = client.get(
+        f"/records/{recid}/access/links/{link_id}", headers=headers
+    )
+    assert link_result.status_code == 404
+
+    # check that there are no links left
+    links_result = client.get(
+        f"/records/{recid}/access/links", headers=headers
+    )
+    assert links_result.status_code == 200
+    assert int(links_result.json["hits"]["total"]) == 0
+    assert len(links_result.json["hits"]["hits"]) == 0
+
+
+def test_link_update(
+    app, client_with_login, location,
+    minimal_record, headers, es_clear,
+):
+    """Test the deletion of a secret link."""
+    client = client_with_login
+    in_10_days = datetime.utcnow() + timedelta(days=10)
+    in_10_days_str = in_10_days.strftime("%Y-%m-%d")
+    in_20_days = datetime.utcnow() + timedelta(days=20)
+    in_20_days_str = in_20_days.strftime("%Y-%m-%d")
+    _10_days_ago = datetime.utcnow() - timedelta(days=10)
+    _10_days_ago_str = _10_days_ago.strftime("%Y-%m-%d")
+
+    # Create and publish a draft
+    recid = _create_and_publish(client, minimal_record, headers)
+
+    # create a link and delete it again
+    link_result = client.post(
+        f"/records/{recid}/access/links", headers=headers,
+        data=json.dumps({"permission": "read"})
+    )
+    link_id = link_result.json["id"]
+
+    # reducing the lifespan of a link should work...
+    link_result = client.patch(
+        f"/records/{recid}/access/links/{link_id}", headers=headers,
+        data=json.dumps({"expires_at": in_10_days_str})
+    )
+    assert link_result.status_code == 200
+    assert link_result.json["expires_at"] == in_10_days_str
+
+    # ... but extending the lifespan shouldn't work
+    link_result = client.patch(
+        f"/records/{recid}/access/links/{link_id}", headers=headers,
+        data=json.dumps({"expires_at": in_20_days_str})
+    )
+    assert link_result.status_code == 400
+
+    # also, past dates shouldn't work either
+    link_result = client.patch(
+        f"/records/{recid}/access/links/{link_id}", headers=headers,
+        data=json.dumps({"expires_at": _10_days_ago_str})
+    )
+    assert link_result.status_code == 400
+
+    # permission level update should work fine
+    link_result = client.patch(
+        f"/records/{recid}/access/links/{link_id}", headers=headers,
+        data=json.dumps({"permission": "read_files"})
+    )
+    assert link_result.status_code == 200
+    assert link_result.json["expires_at"] == in_10_days_str
+    assert link_result.json["permission"] == "read_files"
