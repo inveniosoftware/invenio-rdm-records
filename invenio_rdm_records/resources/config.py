@@ -49,6 +49,10 @@ SearchLinks = SearchLinksSchema.create(
 SearchVersionsLinks = SearchLinksSchema.create(
     template='/api/records/<pid_value>/versions{?params*}')
 
+RecordVersionsLinks = LinksSchema.create(links={
+    "self": ItemLink(template='/api/records/{pid_value}'),
+    "self_html": ItemLink(template="/records/{pid_value}"),
+})
 
 UserSearchLinks = SearchLinksSchema.create(
     template="/api/user/records{?params*}")
@@ -123,6 +127,7 @@ class RDMRecordVersionsResourceConfig(RecordVersionsResourceConfig):
     item_route = "/records/<pid_value>/versions/latest"
 
     links_config = {
+        "record": RecordVersionsLinks,
         "search": SearchVersionsLinks
     }
 

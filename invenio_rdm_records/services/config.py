@@ -79,6 +79,10 @@ class RDMRecordVersionsServiceConfig(RDMRecordServiceConfig):
             fields=['-created'],
         ),
     }
+    search_facets_options = dict(
+        aggs={},
+        post_filters={},
+    )
 
 
 class RDMUserRecordsServiceConfig(RDMRecordServiceConfig):
