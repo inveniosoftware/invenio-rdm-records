@@ -76,7 +76,7 @@ def upgrade():
     )
     op.add_column(
         'rdm_drafts_metadata',
-        sa.Column('parent_index', sa.Integer, nullable=True)
+        sa.Column('index', sa.Integer, nullable=True)
     )
 
     # Records table FK to parent
@@ -94,7 +94,7 @@ def upgrade():
     )
     op.add_column(
         'rdm_records_metadata',
-        sa.Column('parent_index', sa.Integer, nullable=True)
+        sa.Column('index', sa.Integer, nullable=True)
     )
 
     # Records revisions table FK to parent
@@ -104,7 +104,7 @@ def upgrade():
     )
     op.add_column(
         'rdm_records_metadata_version',
-        sa.Column('parent_index', sa.Integer, nullable=True)
+        sa.Column('index', sa.Integer, nullable=True)
     )
 
     # Create versions state table
@@ -142,19 +142,19 @@ def downgrade():
     """Downgrade database."""
     op.drop_table('rdm_versions_state')
     op.drop_column('rdm_records_metadata_version', 'parent_id')
-    op.drop_column('rdm_records_metadata_version', 'parent_index')
+    op.drop_column('rdm_records_metadata_version', 'index')
     op.drop_constraint(
         op.f('fk_rdm_records_metadata_parent_id_rdm_parents_metadata'),
         'rdm_records_metadata',
         type_='foreignkey'
     )
     op.drop_column('rdm_records_metadata', 'parent_id')
-    op.drop_column('rdm_records_metadata', 'parent_index')
+    op.drop_column('rdm_records_metadata', 'index')
     op.drop_constraint(
         op.f('fk_rdm_drafts_metadata_parent_id_rdm_parents_metadata'),
         'rdm_drafts_metadata',
         type_='foreignkey'
     )
     op.drop_column('rdm_drafts_metadata', 'parent_id')
-    op.drop_column('rdm_drafts_metadata', 'parent_index')
+    op.drop_column('rdm_drafts_metadata', 'index')
     op.drop_table('rdm_parents_metadata')
