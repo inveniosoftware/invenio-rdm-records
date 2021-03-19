@@ -12,7 +12,7 @@ from invenio_drafts_resources.records import DraftMetadataBase, \
     ParentRecordMixin, ParentRecordStateMixin
 from invenio_files_rest.models import Bucket
 from invenio_records.models import RecordMetadataBase
-from invenio_records_resources.records.models import RecordFileBase
+from invenio_records_resources.records.models import RecordFileMixin
 from sqlalchemy_utils.types import UUIDType
 
 
@@ -41,10 +41,10 @@ class RDMRecordMetadata(db.Model, RecordMetadataBase, ParentRecordMixin):
     bucket = db.relationship(Bucket)
 
 
-class RecordFile(db.Model, RecordFileBase):
+class RecordFile(db.Model, RecordMetadataBase, RecordFileMixin):
     """File associated with a record."""
 
-    record_model_cls = RDMRecordMetadata
+    __record_model_cls__ = RDMRecordMetadata
 
     __tablename__ = 'rdm_records_files'
 
@@ -62,10 +62,10 @@ class RDMDraftMetadata(db.Model, DraftMetadataBase, ParentRecordMixin):
     bucket = db.relationship(Bucket)
 
 
-class DraftFile(db.Model, RecordFileBase):
+class DraftFile(db.Model, RecordMetadataBase, RecordFileMixin):
     """File associated with a draft."""
 
-    record_model_cls = RDMDraftMetadata
+    __record_model_cls__ = RDMDraftMetadata
 
     __tablename__ = 'rdm_drafts_files'
 
