@@ -40,8 +40,9 @@ def test_sort_by_versions(
     # Re-index them
     service.indexer.index(record_2._record)
     service.indexer.index(record_3._record)
-    record_2._record.index.refresh()  # Needed because not all documents
-                                      # caught by search otherwise
+    # refresh() is Needed because not all documents
+    # are caught by search otherwise
+    record_2._record.index.refresh()
 
     result = service.search(superuser_identity, sort='version').to_dict()
 

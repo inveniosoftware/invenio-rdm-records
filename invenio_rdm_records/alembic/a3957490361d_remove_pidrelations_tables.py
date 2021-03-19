@@ -31,3 +31,4 @@ def upgrade():
 def downgrade():
     """Downgrade database."""
     # no turning back
+    pass
