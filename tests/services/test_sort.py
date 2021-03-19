@@ -28,9 +28,12 @@ def test_sort_by_versions(
     record = service.publish(draft.id, superuser_identity)
     # Create version 2
     draft = service.new_version(record.id, superuser_identity)
+    # NOTE: needed because publication_date is stripped from draft
+    service.update_draft(draft.id, superuser_identity, minimal_record)
     record_2 = service.publish(draft.id, superuser_identity)
     # Create version 3
     draft = service.new_version(record_2.id, superuser_identity)
+    service.update_draft(draft.id, superuser_identity, minimal_record)
     record_3 = service.publish(draft.id, superuser_identity)
     # NOTE: we swap version 2 and 3, so that "newest" order is different
     #       than "versions" order
