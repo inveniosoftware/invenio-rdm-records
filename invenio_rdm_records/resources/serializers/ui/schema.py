@@ -86,6 +86,14 @@ def localize_vocabulary_list(field_name, key, attr, obj):
     return localized
 
 
+def record_version(obj):
+    """Return record's version."""
+    field_data = obj.get("metadata", {}).get("version")
+
+    if not field_data:
+        return f"v{obj['versions']['index']}"
+
+    return field_data
 #
 # Object schema
 #
@@ -134,6 +142,8 @@ class UIObjectSchema(Schema):
         partial(localize_vocabulary_list, 'languages', 'title'))
 
     description_stripped = StrippedHTML(attribute="metadata.description")
+
+    version = fields.Function(record_version)
 
 
 #
