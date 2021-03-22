@@ -13,7 +13,6 @@ from flask_babelex import lazy_gettext as _
 from invenio_drafts_resources.services.records import RecordDraftServiceConfig
 from invenio_drafts_resources.services.records.components import \
     DraftFilesComponent, PIDComponent
-from invenio_records_resources.services import RecordServiceConfig
 from invenio_records_resources.services.files.config import FileServiceConfig
 from invenio_records_resources.services.records.search import terms_filter
 
@@ -43,6 +42,10 @@ class RDMRecordServiceConfig(RecordDraftServiceConfig):
 
     permission_policy_cls = RDMRecordPermissionPolicy
 
+    link_result_item_cls = SecretLinkItem
+
+    link_result_list_cls = SecretLinkList
+
     search_sort_options = {
         "bestmatch": dict(
             title=_('Best match'),
@@ -61,10 +64,6 @@ class RDMRecordServiceConfig(RecordDraftServiceConfig):
             fields=['-versions.index'],
         ),
     }
-
-    link_result_item_cls = SecretLinkItem
-
-    link_result_list_cls = SecretLinkList
 
     search_facets_options = dict(
         aggs={

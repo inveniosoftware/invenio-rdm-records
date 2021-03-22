@@ -107,7 +107,6 @@ setup(
         ],
         "invenio_base.api_blueprints": [
             'invenio_vocabularies_subjects = invenio_rdm_records.vocabularies.views:create_subjects_blueprint_from_app',
-            'invenio_rdm_records_record = invenio_rdm_records.views:create_records_bp',
             'invenio_rdm_records_record_versions = invenio_rdm_records.views:create_records_versions_bp',
             'invenio_rdm_records_draft = invenio_rdm_records.views:create_drafts_bp',
             'invenio_rdm_records_draft_action = invenio_rdm_records.views:create_drafts_action_bp',

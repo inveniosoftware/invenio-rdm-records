@@ -16,7 +16,7 @@ from invenio_records.dumpers import ElasticsearchDumper
 from invenio_records.dumpers.relations import RelationDumperExt
 from invenio_records.systemfields import ConstantField, ModelField, \
     RelationsField
-from invenio_records_resources.records.api import RecordFile as RecordFileBase
+from invenio_records_resources.records.api import FileRecord
 from invenio_records_resources.records.systemfields import FilesField, \
     IndexField, PIDListRelation
 from invenio_vocabularies.records.api import Vocabulary
@@ -92,10 +92,10 @@ class CommonFieldsMixin:
 #
 # Draft API
 #
-class DraftFile(RecordFileBase):
+class RDMFileDraft(FileRecord):
     """File associated with a draft."""
 
-    model_cls = models.DraftFile
+    model_cls = models.RDMFileDraftMetadata
     record_cls = LocalProxy(lambda: RDMDraft)
 
 
@@ -110,7 +110,7 @@ class RDMDraft(CommonFieldsMixin, Draft):
 
     files = FilesField(
         store=False,
-        file_cls=DraftFile,
+        file_cls=RDMFileDraft,
         # Don't delete, we'll manage in the service
         delete=False,
     )
@@ -121,10 +121,10 @@ class RDMDraft(CommonFieldsMixin, Draft):
 #
 # Record API
 #
-class RecordFile(RecordFileBase):
+class RDMFileRecord(FileRecord):
     """Example record file API."""
 
-    model_cls = models.RecordFile
+    model_cls = models.RDMFileRecordMetadata
     record_cls = LocalProxy(lambda: RDMRecord)
 
 
@@ -139,7 +139,7 @@ class RDMRecord(CommonFieldsMixin, Record):
 
     files = FilesField(
         store=False,
-        file_cls=RecordFile,
+        file_cls=RDMFileRecord,
         # Don't create
         create=False,
         # Don't delete, we'll manage in the service

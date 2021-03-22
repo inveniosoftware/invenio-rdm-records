@@ -11,17 +11,18 @@
 from flask import flash, g, request, session
 from flask_babelex import _
 from flask_principal import identity_loaded
+from invenio_drafts_resources.resources import RecordResource
+from invenio_drafts_resources.services.records import RecordService
+from invenio_records_resources.resources.files import FileResource
 from invenio_vocabularies.contrib.subjects.subjects import subject_record_type
 from itsdangerous import SignatureExpired
 
 from . import config
-from .resources import RDMDraftActionResource, RDMDraftFilesActionResource, \
-    RDMDraftFilesResource, RDMDraftResource, RDMParentRecordLinksResource, \
-    RDMRecordFilesActionResource, RDMRecordFilesResource, RDMRecordResource, \
-    RDMRecordVersionsResource, RDMUserRecordsResource
+from .resources import RDMDraftFilesResourceConfig, \
+    RDMParentRecordLinksResource, RDMRecordFilesResourceConfig, \
+    RDMRecordResourceConfig, RDMParentRecordLinksResourceConfig
 from .secret_links import LinkNeed, SecretLink
-from .services import RDMDraftFilesService, RDMRecordFilesService, \
-    RDMRecordService, RDMRecordVersionsService, RDMUserRecordsService
+from .services import RDMRecordServiceConfig
 from .services.schemas.metadata_extensions import MetadataExtensions
 
 
@@ -63,13 +64,7 @@ class InvenioRDMRecords(object):
 
     def init_vocabularies(self, app):
         """Initialize vocabulary resources."""
-        self.subjects_service = subject_record_type.service_cls(
-            config=subject_record_type.service_config_cls,
-        )
-        self.subjects_resource = subject_record_type.resource_cls(
-            service=self.subjects_service,
-            config=subject_record_type.resource_config_cls,
-        )
+
 
     def init_app(self, app):
         """Flask application initialization."""
@@ -78,6 +73,7 @@ class InvenioRDMRecords(object):
             app.config['RDM_RECORDS_METADATA_NAMESPACES'],
             app.config['RDM_RECORDS_METADATA_EXTENSIONS']
         )
+        self.init_services(app)
         self.init_resource(app)
         self.init_vocabularies(app)
         app.before_request(verify_token)
@@ -100,89 +96,57 @@ class InvenioRDMRecords(object):
             if k in overriding_configurations and not app.config.get(k):
                 app.config[k] = getattr(config, k)
 
+    def init_services(self, app):
+        """Initialize vocabulary resources."""
+        # Services
+        # TODO: Rename very long configuration names.
+        self.records_service = RecordService(
+            config=app.config.get(
+                "RDM_RECORDS_BIBLIOGRAPHIC_SERVICE_CONFIG",
+                RDMRecordServiceConfig),
+        )
+        self.subjects_service = subject_record_type.service_cls(
+            config=subject_record_type.service_config_cls,
+        )
+
     def init_resource(self, app):
         """Initialize vocabulary resources."""
-        # Records
-        self.records_service = RDMRecordService(
-            config=app.config.get(RDMRecordService.config_name),
-        )
-
-        self.records_versions_service = RDMRecordVersionsService(
-            config=app.config.get(RDMRecordVersionsService.config_name),
-        )
-
-        self.records_resource = RDMRecordResource(
-            service=self.records_service,
-            config=app.config.get(RDMRecordResource.config_name),
-        )
-
-        self.records_versions_resource = RDMRecordVersionsResource(
-            service=self.records_versions_service,
-            config=app.config.get(RDMRecordVersionsResource.config_name),
-        )
-
-        # Drafts
-        self.drafts_resource = RDMDraftResource(
-            service=self.records_service,
-            config=app.config.get(RDMDraftResource.config_name),
-        )
-
-        self.drafts_action_resource = RDMDraftActionResource(
+        # TODO: Rename very long configuration names.
+        # Record resource
+        self.records_resource = RecordResource(
             service=self.records_service,
             config=app.config.get(
-                RDMDraftActionResource.config_name),
+                "RDM_RECORDS_BIBLIOGRAPHIC_RECORD_CONFIG",
+                RDMRecordResourceConfig),
         )
 
-        # User
-        self.user_records_service = RDMUserRecordsService(
+        # Record files resource
+        self.record_files_resource = FileResource(
+            service=self.records_service,
             config=app.config.get(
-                RDMUserRecordsService.config_name),
+                "RDM_RECORDS_BIBLIOGRAPHIC_RECORD_FILES_CONFIG",
+                RDMRecordFilesResourceConfig),
         )
 
-        self.user_records_resource = RDMUserRecordsResource(
-            service=self.user_records_service,
+        # Draft files resource
+        self.draft_files_resource = FileResource(
+            service=self.records_service,
             config=app.config.get(
-                RDMUserRecordsResource.config_name),
+                "RDM_RECORDS_BIBLIOGRAPHIC_DRAFT_FILES_CONFIG",
+                RDMDraftFilesResourceConfig),
         )
-
-        # Files
-        self.record_files_service = RDMRecordFilesService(
-            config=app.config.get(
-                RDMRecordFilesService.config_name),
-        )
-
-        self.record_files_resource = RDMRecordFilesResource(
-            service=self.record_files_service,
-            config=app.config.get(
-                RDMRecordFilesResource.config_name),
-        )
-
-        self.record_files_action_resource = \
-            RDMRecordFilesActionResource(
-                service=self.record_files_service,
-                config=app.config.get(
-                    RDMRecordFilesActionResource.config_name),
-            )
-
-        self.draft_files_service = RDMDraftFilesService(
-            config=app.config.get(RDMDraftFilesService.config_name),
-        )
-
-        self.draft_files_resource = RDMDraftFilesResource(
-            service=self.draft_files_service,
-            config=app.config.get(RDMDraftFilesResource.config_name),
-        )
-
-        self.draft_files_action_resource = \
-            RDMDraftFilesActionResource(
-                service=self.draft_files_service,
-                config=app.config.get(
-                    RDMDraftFilesActionResource.config_name),
-            )
 
         # Parent Records
-
         self.parent_record_links_resource = RDMParentRecordLinksResource(
             service=self.records_service,
-            config=app.config.get(RDMParentRecordLinksResource.config_name)
+            config=app.config.get(
+                "RDM_RECORDS_BIBLIOGRAPHIC_PARENT_RECORD_LINKS_CONFIG",
+                RDMParentRecordLinksResourceConfig
+            )
+        )
+
+        # Vocabularies
+        self.subjects_resource = subject_record_type.resource_cls(
+            service=self.subjects_service,
+            config=subject_record_type.resource_config_cls,
         )

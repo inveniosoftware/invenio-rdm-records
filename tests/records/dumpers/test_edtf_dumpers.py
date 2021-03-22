@@ -13,12 +13,11 @@ from flask_security import login_user
 from invenio_access.permissions import SystemRoleNeed
 from invenio_records.dumpers import ElasticsearchDumper
 
+from invenio_rdm_records.proxies import current_rdm_records
 from invenio_rdm_records.records import RDMDraft, RDMRecord
 from invenio_rdm_records.records.api import RDMParent
 from invenio_rdm_records.records.dumpers import EDTFDumperExt, \
     EDTFListDumperExt
-from invenio_rdm_records.services import RDMUserRecordsService
-
 
 @pytest.mark.parametrize("date, expected_start, expected_end", [
     ("2021-01-01", "2021-01-01", "2021-01-01"),
@@ -179,9 +178,7 @@ def test_edtf_dumper_query(app, db, location, minimal_record, users):
     minimal_record["metadata"]["dates"] = [{"date": date}]
 
     # Create the record
-    service = RDMUserRecordsService(
-        config=app.config.get(RDMUserRecordsService.config_name),
-    )
+    service = current_rdm_records.records_service
     record = service.create(identity, minimal_record)
     RDMDraft.index.refresh()
 

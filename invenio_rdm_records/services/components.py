@@ -16,8 +16,6 @@ from invenio_records_resources.services.records.components import \
     ServiceComponent
 from marshmallow import ValidationError
 
-from ..records.systemfields.access import RecordAccess
-
 
 class ParentRecordAccessComponent(ServiceComponent):
     """Service component for access integration in parent records."""

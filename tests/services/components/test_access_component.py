@@ -15,9 +15,8 @@ from flask_principal import Identity, UserNeed
 from invenio_access.permissions import system_identity
 from marshmallow import ValidationError
 
+from invenio_rdm_records.proxies import current_rdm_records
 from invenio_rdm_records.records import RDMRecord
-from invenio_rdm_records.records.api import RDMParent
-from invenio_rdm_records.services import RDMRecordService
 from invenio_rdm_records.services.components import AccessComponent
 
 
@@ -25,7 +24,7 @@ def test_access_component_valid(
     minimal_record, parent, identity_simple, users
 ):
     record = RDMRecord.create(minimal_record, parent=parent)
-    component = AccessComponent(RDMRecordService())
+    component = AccessComponent(current_rdm_records.records_service)
     component.create(identity_simple, minimal_record, record)
 
     assert len(record.parent.access.owners) > 0
@@ -53,7 +52,7 @@ def test_access_component_unknown_owner_with_system_process(
 ):
     record = RDMRecord.create(minimal_record, parent=parent)
     record.parent["access"]["owned_by"] = [{"user": -1337}]
-    component = AccessComponent(RDMRecordService())
+    component = AccessComponent(current_rdm_records.records_service)
 
     with pytest.raises(ValidationError):
         component.create(system_identity, minimal_record, record)
@@ -71,7 +70,7 @@ def test_access_component_unknown_grant_subject(
     record.parent["access"]["grants"] = [
         {"subject": "user", "id": "-1337", "level": "view"}
     ]
-    component = AccessComponent(RDMRecordService())
+    component = AccessComponent(current_rdm_records.records_service)
 
     with pytest.raises(ValidationError):
         component.create(identity_simple, minimal_record, record)
@@ -89,7 +88,7 @@ def test_access_component_set_owner(minimal_record, parent, users):
 
     record = RDMRecord.create(minimal_record, parent=parent)
     record.parent["access"]["owned_by"] = []
-    component = AccessComponent(RDMRecordService())
+    component = AccessComponent(current_rdm_records.records_service)
     component.create(identity, minimal_record, record)
 
     assert len(record.access.owners) == 1
@@ -113,7 +112,7 @@ def test_access_component_update_access_via_json(
 
     # create an initially restricted-access record
     record = RDMRecord.create(minimal_record, parent=parent)
-    component = AccessComponent(RDMRecordService())
+    component = AccessComponent(current_rdm_records.records_service)
     component.create(identity_simple, minimal_record, record)
 
     prot = record.access.protection

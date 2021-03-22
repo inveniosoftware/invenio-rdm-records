@@ -14,8 +14,8 @@ from datetime import datetime
 import arrow
 from flask_babelex import lazy_gettext as _
 from invenio_db import db
-from invenio_drafts_resources.services.records import RecordDraftService
-from invenio_records_resources.services.files.service import RecordFileService
+from invenio_drafts_resources.services.records import RecordService
+from invenio_records_resources.services.files.service import FileServiceMixin
 from invenio_records_resources.services.records.schema import \
     ServiceSchemaWrapper
 from marshmallow.exceptions import ValidationError
@@ -23,7 +23,7 @@ from marshmallow.exceptions import ValidationError
 from . import config
 
 
-class RDMRecordService(RecordDraftService):
+class RDMRecordService(RecordService, FileServiceMixin):
     """Bibliographic record service."""
 
     config_name = "RDM_RECORDS_BIBLIOGRAPHIC_SERVICE_CONFIG"

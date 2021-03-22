@@ -9,6 +9,9 @@
 """Views."""
 
 
+def create_blueprints_from_app(app):
+    """Create blueprints."""
+
 def create_records_bp(app):
     """Create records blueprint."""
     ext = app.extensions["invenio-rdm-records"]
