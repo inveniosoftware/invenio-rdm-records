@@ -51,6 +51,7 @@ def test_ui_serializer(app, full_record):
             {'id': 'en', 'title_l10n': "English"}
         ],
         'description_stripped': 'Test',
+        'version': 'v1.0',
     }
 
     with app.app_context():
