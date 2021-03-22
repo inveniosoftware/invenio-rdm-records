@@ -38,34 +38,11 @@ class RDMRecordService(RecordDraftService):
         return self.config.link_result_list_cls(*args, **kwargs)
 
     @property
-    def schema_parent(self):
-        """Schema for parent records."""
-        # TODO move to RecordDraftService?
-        return MarshmallowServiceSchema(self, schema=self.config.schema_parent)
-
-    @property
     def schema_secret_link(self):
         """Schema for secret links."""
         return MarshmallowServiceSchema(
             self, schema=self.config.schema_secret_link
         )
-
-    def _get_record_and_parent_by_id(self, id_):
-        """Resolve the record and its parent, by the given ID.
-
-        If the ID belongs to a parent record, no child record will be
-        resolved.
-        """
-        try:
-            record = self.record_cls.pid.resolve(id_, registered_only=False)
-            parent = record.parent
-        except Exception:  # TODO NoResultFoundException?
-            record = None
-            parent = self.record_cls.parent_record_cls.pid.resolve(
-                id_, registered_only=False
-            )
-
-        return record, parent
 
     def _validate_secret_link_expires_at(
         self, expires_at, is_specified=True, secret_link=None
@@ -123,18 +100,6 @@ class RDMRecordService(RecordDraftService):
 
         return expires_at
 
-    def _index_related_records(self, record, parent):
-        """Index all records that are related to the specified ones."""
-        siblings = self.record_cls.get_records_by_parent(
-            parent or record.parent
-        )
-
-        # TODO only index the current record immediately;
-        #      all siblings should be sent to a high-priority celery task
-        #      instead (requires bulk indexing to work)
-        for sibling in siblings:
-            self.indexer.index(sibling)
-
     def create_secret_link(
         self,
         id_,
@@ -152,7 +117,6 @@ class RDMRecordService(RecordDraftService):
         data, __ = self.schema_secret_link.load(
             identity, data, raise_errors=True
         )
-        print(data)
         expires_at = self._validate_secret_link_expires_at(
             data.get("expires_at")
         )
@@ -190,7 +154,7 @@ class RDMRecordService(RecordDraftService):
         identity,
         links_config=None,
     ):
-        """Create a secret link for a record (resp. its parent)."""
+        """Read the secret links of a record (resp. its parent)."""
         record, parent = self._get_record_and_parent_by_id(id_)
 
         # Permissions
@@ -212,7 +176,7 @@ class RDMRecordService(RecordDraftService):
         link_id,
         links_config=None,
     ):
-        """Create a secret link for a record (resp. its parent)."""
+        """Read a specific secret link of a record (resp. its parent)."""
         record, parent = self._get_record_and_parent_by_id(id_)
 
         # Permissions
@@ -241,7 +205,7 @@ class RDMRecordService(RecordDraftService):
         data,
         links_config=None,
     ):
-        """Create a secret link for a record (resp. its parent)."""
+        """Update a secret link for a record (resp. its parent)."""
         record, parent = self._get_record_and_parent_by_id(id_)
 
         # Permissions
@@ -294,7 +258,7 @@ class RDMRecordService(RecordDraftService):
         link_id,
         links_config=None,
     ):
-        """Create a secret link for a record (resp. its parent)."""
+        """Delete a secret link for a record (resp. its parent)."""
         record, parent = self._get_record_and_parent_by_id(id_)
 
         # Permissions
