@@ -9,7 +9,7 @@
 """Test RDMRecordService generated links."""
 
 import pytest
-from flask_security import login_user
+from flask_security import login_user, url_for_security
 from invenio_access.models import ActionUsers
 from invenio_accounts.testutils import create_test_user, \
     login_user_via_session, login_user_via_view
@@ -32,16 +32,16 @@ def draft_json(app, client, minimal_record, es, location, users):
 
 
 @pytest.fixture
-def published_json(app, client, minimal_record, es, location):
+def published_json(app, client_with_login, minimal_record, es, location):
     """RDM Record fixture.
 
     Can't depend on draft_json since publication deletes draft.
     """
-    response = client.post(
+    response = client_with_login.post(
         "/records", json=minimal_record, headers=HEADERS
     )
     pid_value = response.json["id"]
-    response = client.post(
+    response = client_with_login.post(
         f"/records/{pid_value}/draft/actions/publish", headers=HEADERS
     )
     return response.json
@@ -61,14 +61,15 @@ def test_draft_links(client, draft_json, minimal_record):
         "self": f"https://localhost:5000/api/records/{pid_value}/draft",
         "self_html": f"https://localhost:5000/uploads/{pid_value}",
         "publish": f"https://localhost:5000/api/records/{pid_value}/draft/actions/publish",  # noqa
-        # TODO: Uncomment when files can be associated with drafts
+        "versions": f"https://localhost:5000/api/records/{pid_value}/versions",
+        "latest": f"https://localhost:5000/api/records/{pid_value}/versions/latest",  # noqa
+        "latest_html": f"https://localhost:5000/records/{pid_value}/versions/latest",  # noqa
+        "access_links": f"https://localhost:5000/api/records/{pid_value}/access/links",  # noqa
         "files": f"https://localhost:5000/api/records/{pid_value}/draft/files",
     }
     assert expected_links == created_draft_links == read_draft_links
 
 
-# TODO
-@pytest.mark.skip()
 def test_record_links(client, published_json):
     """Tests the links for a published RDM record."""
     pid_value = published_json["id"]
@@ -79,18 +80,17 @@ def test_record_links(client, published_json):
     expected_links = {
         "self": f"https://localhost:5000/api/records/{pid_value}",
         "self_html": f"https://localhost:5000/records/{pid_value}",
+        # TODO: Uncomment when implemented
         # "edit": f"https://localhost:5000/api/records/{pid_value}/draft",
         "files": f"https://localhost:5000/api/records/{pid_value}/files",
-        # TODO: Uncomment when implemented
-        # "versions":
-        #   f"https://localhost:5000/api/records/{pid_value}/...",
-        # "latest": f"https://localhost:5000/api/records/{pid_value}/...",
+        "versions": f"https://localhost:5000/api/records/{pid_value}/versions",
+        "latest": f"https://localhost:5000/api/records/{pid_value}/versions/latest",  # noqa
+        "latest_html": f"https://localhost:5000/records/{pid_value}/versions/latest",  # noqa
+        "access_links": f"https://localhost:5000/api/records/{pid_value}/access/links",  # noqa
     }
     assert expected_links == published_record_links == read_record_links
 
 
-# TODO
-@pytest.mark.skip()
 def test_record_search_links(client, published_json):
     """Tests the links for a search of published RDM records."""
     response = client.get("/records", headers=HEADERS)
@@ -103,22 +103,55 @@ def test_record_search_links(client, published_json):
     assert expected_links == search_record_links
 
 
-@pytest.mark.skip()
 def test_permission_links(client, db, published_json):
     """Test the links when affected by permissions."""
-    # We test that only admins get the "delete" link (according to our policy)
     pid_value = published_json["id"]
-    user = create_test_user("jane@example.com")
-    db.session.add(ActionUsers(action='admin-access', user=user))
+    other_user = create_test_user("joe@example.com")
+    admin_user = create_test_user("jane@example.com")
+    db.session.add(ActionUsers(action='admin-access', user=admin_user))
     db.session.commit()
-    login_user_via_view(
-        client, email=user.email, password=user.password_plaintext,
-        login_url='/login'
-    )
+
+    # the user should still be logged in, as per fixture
     response = client.get(f"/records/{pid_value}", headers=HEADERS)
     read_record_links = response.json["links"]
 
     assert (
-        f"https://localhost:5000/api/records/{pid_value}" ==
-        read_record_links["delete"]
+        f"https://localhost:5000/api/records/{pid_value}/access/links" ==
+        read_record_links["access_links"]
     )
+
+    # log out and check again
+    client.post("/logout")
+    response = client.get(f"/records/{pid_value}", headers=HEADERS)
+    read_record_links = response.json["links"]
+    assert "access_links" not in read_record_links
+
+    # check that another user doesn't see some links
+    login_user_via_view(
+        client,
+        email=other_user.email,
+        password=other_user.password_plaintext,
+        login_url='/login'
+    )
+
+    response = client.get(f"/records/{pid_value}", headers=HEADERS)
+    read_record_links = response.json["links"]
+    assert "access_links" not in read_record_links
+
+    # TODO re-enable when the "delete" link is generated
+    # We test that only admins get the "delete" link (according to our policy)
+    #
+    # client.post(url_for_security("logout"))
+    # login_user_via_view(
+    #     client,
+    #     email=admin_user.email,
+    #     password=admin_user.password_plaintext,
+    #     login_url='/login'
+    # )
+    # response = client.get(f"/records/{pid_value}", headers=HEADERS)
+    # read_record_links = response.json["links"]
+    #
+    # assert (
+    #     f"https://localhost:5000/api/records/{pid_value}" ==
+    #     read_record_links["delete"]
+    # )

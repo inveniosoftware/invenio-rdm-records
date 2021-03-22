@@ -28,6 +28,12 @@ RecordLinks = LinksSchema.create(links={
     "self": ItemLink(template='/api/records/{pid_value}'),
     "self_html": ItemLink(template='/records/{pid_value}'),
     "files": ItemLink(template='/api/records/{pid_value}/files'),
+    "versions": ItemLink(template='/api/records/{pid_value}/versions'),
+    "latest": ItemLink(template='/api/records/{pid_value}/versions/latest'),
+    "latest_html": ItemLink(template='/records/{pid_value}/versions/latest'),
+    "access_links": ItemLink(
+        template='/api/records/{pid_value}/access/links', permission="manage"
+    ),
 })
 
 
@@ -35,10 +41,16 @@ DraftLinks = LinksSchema.create(links={
     "self": ItemLink(template="/api/records/{pid_value}/draft"),
     "self_html": ItemLink(template="/uploads/{pid_value}"),
     "files": ItemLink(template="/api/records/{pid_value}/draft/files"),
+    "versions": ItemLink(template='/api/records/{pid_value}/versions'),
+    "latest": ItemLink(template='/api/records/{pid_value}/versions/latest'),
+    "latest_html": ItemLink(template='/records/{pid_value}/versions/latest'),
+    "access_links": ItemLink(
+        template='/api/records/{pid_value}/access/links', permission="manage"
+    ),
     "publish": ItemLink(
         template="/api/records/{pid_value}/draft/actions/publish",
         permission="publish",
-    )
+    ),
 })
 
 
