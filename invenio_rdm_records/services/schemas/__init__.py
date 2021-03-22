@@ -16,6 +16,7 @@ from marshmallow_utils.permissions import FieldPermissionsMixin
 from .access import AccessSchema
 from .metadata import MetadataSchema
 from .pids import PIDSchema
+from .versions import VersionsSchema
 
 
 class RDMRecordSchema(RecordSchema, FieldPermissionsMixin):
@@ -45,6 +46,7 @@ class RDMRecordSchema(RecordSchema, FieldPermissionsMixin):
     # files = NestedAttribute(FilesSchema, dump_only=True)
     # notes = fields.List(fields.Nested(InternalNoteSchema))
     revision = fields.Integer(dump_only=True)
+    versions = NestedAttribute(VersionsSchema, dump_only=True)
 
     is_published = fields.Boolean(dump_only=True)
 
