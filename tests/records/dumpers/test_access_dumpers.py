@@ -10,10 +10,10 @@
 import pytest
 from invenio_records.dumpers import ElasticsearchDumper
 
-from invenio_rdm_records.records import RDMDraft, RDMParent, RDMRecord
+from invenio_rdm_records.proxies import current_rdm_records
+from invenio_rdm_records.records import RDMDraft, RDMParent
 from invenio_rdm_records.records.dumpers import GrantTokensDumperExt
 from invenio_rdm_records.records.systemfields.access import Grant
-from invenio_rdm_records.services import RDMRecordService
 
 
 def test_grant_tokens_dumper(app, db, minimal_record, location):
@@ -71,10 +71,7 @@ def test_grant_tokens_dumper_query(
     ]
 
     # Create the record
-    service = RDMRecordService(
-        config=app.config.get(RDMRecordService.config_name),
-    )
-
+    service = current_rdm_records.records_service
     service.create(identity_simple, minimal_record)
 
     minimal_record["access"]["grants"] = [

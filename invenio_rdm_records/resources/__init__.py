@@ -7,19 +7,22 @@
 
 """Invenio RDM module to create REST APIs."""
 
-from .resources import RDMDraftActionResource, RDMDraftFilesActionResource, \
-    RDMDraftFilesResource, RDMDraftResource, RDMRecordFilesActionResource, \
-    RDMRecordFilesResource, RDMRecordResource, RDMRecordVersionsResource, \
-    RDMUserRecordsResource
+from .config import RDMDraftActionResourceConfig, \
+    RDMDraftFilesActionResourceConfig, RDMDraftFilesResourceConfig, \
+    RDMDraftResourceConfig, RDMRecordFilesActionResourceConfig, \
+    RDMRecordFilesResourceConfig, RDMRecordResourceConfig, \
+    RDMRecordVersionsResourceConfig, RDMUserRecordsResourceConfig
+from .resources import RDMUserRecordsResource
 
 __all__ = (
-    "RDMDraftActionResource",
-    "RDMDraftFilesResource",
-    "RDMDraftFilesActionResource",
-    "RDMDraftResource",
-    "RDMRecordFilesResource",
-    "RDMRecordFilesActionResource",
-    "RDMRecordVersionsResource",
-    "RDMRecordResource",
+    "RDMDraftActionResourceConfig",
+    "RDMDraftFilesActionResourceConfig",
+    "RDMDraftFilesResourceConfig",
+    "RDMDraftResourceConfig",
+    "RDMRecordFilesActionResourceConfig",
+    "RDMRecordFilesResourceConfig",
+    "RDMRecordResourceConfig",
+    "RDMRecordVersionsResourceConfig",
     "RDMUserRecordsResource",
+    "RDMUserRecordsResourceConfig",
 )

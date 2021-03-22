@@ -14,8 +14,6 @@ from invenio_access.models import ActionUsers
 from invenio_accounts.testutils import create_test_user, \
     login_user_via_session, login_user_via_view
 
-from invenio_rdm_records.services import RDMRecordService
-
 HEADERS = {"content-type": "application/json", "accept": "application/json"}
 
 

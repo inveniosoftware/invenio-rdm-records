@@ -12,13 +12,13 @@
 
 import pytest
 
-from invenio_rdm_records.services import RDMRecordService
+from invenio_rdm_records.proxies import current_rdm_records
 
 
 @pytest.fixture()
 def service(app, location):
     """Service fixture."""
-    return RDMRecordService()
+    return current_rdm_records.records_service
 
 
 def test_sort_by_versions(

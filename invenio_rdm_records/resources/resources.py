@@ -10,99 +10,24 @@
 
 from flask import g
 from flask_resources.context import resource_requestctx
-from invenio_drafts_resources.resources import DraftActionResource, \
-    DraftFileActionResource, DraftFileResource, DraftResource, \
-    RecordResource, RecordVersionsResource, RecordVersionsResourceConfig
-from invenio_records_resources.resources.files import FileActionResource, \
-    FileResource
-
-from . import config
-
-
-#
-# Records
-#
-class RDMRecordResource(RecordResource):
-    """Bibliographic record resource."""
-
-    config_name = "RDM_RECORDS_BIBLIOGRAPHIC_RECORD_CONFIG"
-    default_config = config.RDMRecordResourceConfig
-
-
-class RDMRecordVersionsResource(RecordVersionsResource):
-    """Bibliographic record versions resource."""
-
-    config_name = "RDM_RECORDS_BIBLIOGRAPHIC_RECORD_VERSIONS_CONFIG"
-    default_config = config.RDMRecordVersionsResourceConfig
-
-
-#
-# Drafts
-#
-class RDMDraftResource(DraftResource):
-    """Bibliographic record draft resource."""
-
-    config_name = "RDM_RECORDS_BIBLIOGRAPHIC_DRAFT_CONFIG"
-    default_config = config.RDMDraftResourceConfig
-
-
-class RDMDraftActionResource(DraftActionResource):
-    """Bibliographic record draft actions resource."""
-
-    config_name = "RDM_RECORDS_BIBLIOGRAPHIC_DRAFT_ACTION_CONFIG"
-    default_config = config.RDMDraftActionResourceConfig
-
+from invenio_drafts_resources.resources import RecordResource
+from invenio_records_resources.resources.records.utils import es_preference
 
 #
 # User records
 #
-class RDMUserRecordsResource(RDMRecordResource):
+class RDMUserRecordsResource(RecordResource):
     """Bibliographic record user records resource."""
-
-    config_name = "RDM_RECORDS_BIBLIOGRAPHIC_USER_RECORDS_CONFIG"
-    default_config = config.RDMUserRecordsResourceConfig
 
     def search(self):
         """Perform a search over the items."""
+        # TODO: Define this one in Invenio-Drafts-Resources, once resources
+        # have been refactored to be easier to deal with.
         identity = g.identity
         hits = self.service.search_drafts(
             identity=identity,
             params=resource_requestctx.url_args,
             links_config=self.config.links_config,
-            es_preference=self._get_es_preference()
+            es_preference=es_preference()
         )
         return hits.to_dict(), 200
-
-
-#
-# Record files
-#
-class RDMRecordFilesResource(FileResource):
-    """Bibliographic record files resource."""
-
-    config_name = "RDM_RECORDS_BIBLIOGRAPHIC_RECORD_FILES_CONFIG"
-    default_config = config.RDMRecordFilesResourceConfig
-
-
-class RDMRecordFilesActionResource(FileActionResource):
-    """Bibliographic record files action resource."""
-
-    config_name = "RDM_RECORDS_BIBLIOGRAPHIC_RECORD_FILES_ACTION_CONFIG"
-    default_config = config.RDMRecordFilesActionResourceConfig
-
-
-#
-# Draft files
-#
-class RDMDraftFilesResource(DraftFileResource):
-    """Bibliographic record files resource."""
-
-    config_name = "RDM_RECORDS_BIBLIOGRAPHIC_DRAFT_FILES_CONFIG"
-    default_config = config.RDMDraftFilesResourceConfig
-
-
-class RDMDraftFilesActionResource(DraftFileActionResource):
-    """Bibliographic record files action resource."""
-
-    config_name = "RDM_RECORDS_BIBLIOGRAPHIC_DRAFT_FILES_ACTION_CONFIG"
-    default_config = config.RDMDraftFilesActionResourceConfig

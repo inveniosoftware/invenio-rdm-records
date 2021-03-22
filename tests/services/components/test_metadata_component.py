@@ -7,13 +7,9 @@
 
 """Tests for the service Metadata component."""
 
-from flask_principal import Identity, UserNeed
-from invenio_access.permissions import system_identity
-from marshmallow import ValidationError
-
+from invenio_rdm_records.proxies import current_rdm_records
 from invenio_rdm_records.records import RDMRecord
-from invenio_rdm_records.records.api import RDMDraft, RDMParent
-from invenio_rdm_records.services import RDMRecordService
+from invenio_rdm_records.records.api import RDMDraft
 from invenio_rdm_records.services.components import MetadataComponent
 
 
@@ -25,7 +21,7 @@ def test_metadata_component(minimal_record, parent, identity_simple, location):
     assert 'publication_date' in record.metadata
     assert 'title' in record.metadata
 
-    component = MetadataComponent(RDMRecordService())
+    component = MetadataComponent(current_rdm_records.records_service)
     component.new_version(identity_simple, draft=draft, record=record)
 
     # Make sure publication_date was NOT copied, but that title WAS copied
