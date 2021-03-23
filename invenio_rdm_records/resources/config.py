@@ -143,6 +143,10 @@ class RDMRecordVersionsResourceConfig(RecordVersionsResourceConfig):
         "search": SearchVersionsLinks
     }
 
+    draft_links_config = {
+        "record": DraftLinks,
+    }
+
     response_handlers = record_serializers
 
 
