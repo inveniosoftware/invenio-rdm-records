@@ -8,7 +8,7 @@
 
 """DataCite-based data model for Invenio."""
 
-from flask import flash, request, session
+from flask import flash, g, request, session
 from flask_babelex import _
 from flask_principal import identity_loaded
 from invenio_vocabularies.contrib.subjects.subjects import subject_record_type
@@ -33,6 +33,12 @@ def verify_token():
             data = SecretLink.load_token(token)
             if data:
                 session["rdm-records-token"] = data
+
+                # NOTE: the identity is loaded before this handler is executed
+                #       so if we want the initial request to be authorized,
+                #       we need to add the LinkNeed here
+                if hasattr(g, "identity"):
+                    g.identity.provides.add(LinkNeed(data["id"]))
 
         except SignatureExpired:
             session.pop("rdm-records-token", None)
