@@ -76,16 +76,11 @@ def create_fake_record():
         "access": {
             "record": "public",
             "files": "restricted",
-            "owned_by": [{"user": 1}],
             "embargo": {
                 "active": True,
                 "until": fake.future_date(end_date='+1y').strftime("%Y-%m-%d"),
                 "reason": "top secret material"
             },
-            # TODO re-add when grants are enabled
-            # "grants": [
-            #     {"subject": "user", "id": "1", "level": "manage"}
-            # ]
         },
         "metadata": {
             "resource_type": fake_resource_type(),
