@@ -100,12 +100,12 @@ class RDMRecordServiceConfig(RecordDraftServiceConfig):
 class RDMRecordVersionsServiceConfig(RDMRecordServiceConfig):
     """Record versions service config."""
 
-    search_sort_default = 'newest'
-    search_sort_default_no_query = 'newest'
+    search_sort_default = 'version'
+    search_sort_default_no_query = 'version'
     search_sort_options = {
-        "newest": dict(
-            title=_('Newest'),
-            fields=['-created'],
+        "version": dict(
+            title=_('Version'),
+            fields=['-versions.index'],
         ),
     }
     search_facets_options = dict(
