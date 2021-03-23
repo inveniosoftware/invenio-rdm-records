@@ -11,7 +11,7 @@
 
 from copy import copy
 
-from invenio_access.permissions import Permission, system_process
+from invenio_access.permissions import system_process
 from invenio_records_resources.services.records.components import \
     ServiceComponent
 from marshmallow import ValidationError
@@ -85,7 +85,7 @@ class AccessComponent(ServiceComponent):
         # corresponding user to the owners
         # (record.parent.access.owners) and commit the parent
         # otherwise, the parent's owners stays empty
-        is_sys_id = Permission(system_process).allows(identity)
+        is_sys_id = system_process in identity.provides
         if not record.parent.access.owners and not is_sys_id:
             owner_dict = {"user": identity.id}
             record.parent.access.owners.add(owner_dict)
