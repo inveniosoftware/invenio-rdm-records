@@ -9,12 +9,10 @@
 """Test RDMRecordService generated links."""
 
 import pytest
-from flask_security import login_user, url_for_security
+from flask_security import login_user
 from invenio_access.models import ActionUsers
 from invenio_accounts.testutils import create_test_user, \
     login_user_via_session, login_user_via_view
-
-from invenio_rdm_records.services import RDMRecordService
 
 HEADERS = {"content-type": "application/json", "accept": "application/json"}
 
@@ -155,3 +153,15 @@ def test_permission_links(client, db, published_json):
     #     f"https://localhost:5000/api/records/{pid_value}" ==
     #     read_record_links["delete"]
     # )
+
+
+def test_versions_search_links(client, published_json, headers):
+    """Tests the links for a search of versions."""
+    pid_value = published_json["id"]
+    response = client.get(f"/records/{pid_value}/versions", headers=headers)
+    search_versions_links = response.json["links"]
+
+    expected_links = {
+        "self": f"https://localhost:5000/api/records/{pid_value}/versions?page=1&size=25&sort=version"  # noqa
+    }
+    assert expected_links == search_versions_links
