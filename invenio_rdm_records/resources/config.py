@@ -19,7 +19,7 @@ from invenio_records_resources.resources.files import \
 from invenio_records_resources.resources.records.schemas_links import \
     ItemLink, LinksSchema, SearchLinksSchema
 
-from .links import FileItemLink
+from .links import FileItemLink, SearchVersionsLinksSchema
 from .serializers import UIJSONSerializer
 
 #
@@ -59,13 +59,16 @@ SearchLinks = SearchLinksSchema.create(
     template="/api/records{?params*}")
 
 
-SearchVersionsLinks = SearchLinksSchema.create(
-    template='/api/records/<pid_value>/versions{?params*}')
+SearchVersionsLinks = SearchVersionsLinksSchema.create(
+    template='/api/records/{pid_value}/versions{?params*}'
+)
+
 
 RecordVersionsLinks = LinksSchema.create(links={
     "self": ItemLink(template='/api/records/{pid_value}'),
     "self_html": ItemLink(template="/records/{pid_value}"),
 })
+
 
 UserSearchLinks = SearchLinksSchema.create(
     template="/api/user/records{?params*}")
@@ -140,7 +143,7 @@ class RDMRecordVersionsResourceConfig(RecordVersionsResourceConfig):
     item_route = "/records/<pid_value>/versions/latest"
 
     links_config = {
-        "record": RecordVersionsLinks,
+        "record": RecordVersionsLinks,  # TODO: "record" -> "item"
         "search": SearchVersionsLinks
     }
 
