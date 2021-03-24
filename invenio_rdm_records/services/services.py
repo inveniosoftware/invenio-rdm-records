@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # Copyright (C) 2020 CERN.
-# Copyright (C) 2020 Northwestern University.
+# Copyright (C) 2020-2021 Northwestern University.
 # Copyright (C) 2021 TU Wien.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
@@ -17,7 +17,7 @@ from invenio_db import db
 from invenio_drafts_resources.services.records import RecordDraftService
 from invenio_records_resources.services.files.service import RecordFileService
 from invenio_records_resources.services.records.schema import \
-    MarshmallowServiceSchema
+    ServiceSchemaWrapper
 from marshmallow.exceptions import ValidationError
 
 from . import config
@@ -40,7 +40,7 @@ class RDMRecordService(RecordDraftService):
     @property
     def schema_secret_link(self):
         """Schema for secret links."""
-        return MarshmallowServiceSchema(
+        return ServiceSchemaWrapper(
             self, schema=self.config.schema_secret_link
         )
 
@@ -115,7 +115,7 @@ class RDMRecordService(RecordDraftService):
 
         # Validation
         data, __ = self.schema_secret_link.load(
-            identity, data, raise_errors=True
+            data, context=dict(identity=identity), raise_errors=True
         )
         expires_at = self._validate_secret_link_expires_at(
             data.get("expires_at")
@@ -221,7 +221,7 @@ class RDMRecordService(RecordDraftService):
 
         # Validation
         data, __ = self.schema_secret_link.load(
-            identity, data, raise_errors=True
+            data, context=dict(identity=identity), raise_errors=True
         )
         permission = data.get("permission")
         expires_at = self._validate_secret_link_expires_at(

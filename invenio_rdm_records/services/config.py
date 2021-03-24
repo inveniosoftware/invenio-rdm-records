@@ -13,6 +13,7 @@ from flask_babelex import lazy_gettext as _
 from invenio_drafts_resources.services.records import RecordDraftServiceConfig
 from invenio_drafts_resources.services.records.components import \
     DraftFilesComponent, PIDComponent
+from invenio_records_resources.services import RecordServiceConfig
 from invenio_records_resources.services.files.config import FileServiceConfig
 from invenio_records_resources.services.records.search import terms_filter
 
@@ -22,6 +23,7 @@ from .permissions import RDMRecordPermissionPolicy
 from .result_items import SecretLinkItem, SecretLinkList
 from .schemas import RDMParentSchema, RDMRecordSchema
 from .schemas.parent.access import SecretLink
+from .search_params import AllVersionsUserRecordsParam
 
 
 class RDMRecordServiceConfig(RecordDraftServiceConfig):
@@ -174,6 +176,10 @@ class RDMUserRecordsServiceConfig(RDMRecordServiceConfig):
             'is_published': terms_filter('is_published'),
         }
     )
+
+    search_params_interpreters_cls = [
+       AllVersionsUserRecordsParam
+    ] + RecordServiceConfig.search_params_interpreters_cls
 
 
 #

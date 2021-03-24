@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # Copyright (C) 2021 TU Wien.
+# Copyright (C) 2021 Northwestern University.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
@@ -41,10 +42,13 @@ class SecretLinkItem(ServiceItemResult):
 
         links = LinksFactory(host=_current_host, config=self._links_config)
         self._data = self._service.schema_secret_link.dump(
-            self._identity,
             self._link.to_dict(),
-            links_namespace="secret_link",  # TODO is this required in any way?
-            links_factory=links,
+            context=dict(
+                identity=self._identity,
+                # TODO is this required in any way?
+                links_namespace="secret_link",
+                links_factory=links,
+            )
         )
 
         return self._data
@@ -84,12 +88,13 @@ class SecretLinkList(ServiceListResult):
         for res in self._results:
             # Project the record
             projection = self._service.schema_secret_link.dump(
-                self._identity,
                 res.to_dict(),
-                links_namespace="secret_link",
-                links_factory=links,
+                context=dict(
+                    identity=self._identity,
+                    links_namespace="secret_link",
+                    links_factory=links,
+                )
             )
-
             yield projection
 
     def to_dict(self):
