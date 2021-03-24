@@ -12,7 +12,6 @@
 from flask_babelex import lazy_gettext as _
 from marshmallow import Schema, fields
 from marshmallow_utils.fields import ISODateString, SanitizedUnicode
-from marshmallow_utils.permissions import FieldPermissionsMixin
 
 
 class Grant(Schema):
@@ -39,17 +38,8 @@ class Agent(Schema):
     user = fields.Integer(required=True)
 
 
-class ParentAccessSchema(Schema, FieldPermissionsMixin):
+class ParentAccessSchema(Schema):
     """Access schema."""
-
-    field_load_permissions = {}
-
-    # omit the grants and links from dumps, except for users with
-    # 'manage' permissions
-    field_dump_permissions = {
-        "grants": "manage",
-        "links": "manage",
-    }
 
     grants = fields.List(fields.Nested(Grant))
     owned_by = fields.List(fields.Nested(Agent))
