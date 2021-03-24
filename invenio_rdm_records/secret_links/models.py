@@ -63,14 +63,11 @@ class SecretLink(db.Model):
 
     def to_dict(self):
         """Dump the SecretLink to a dictionary."""
-        created_at = self.created.isoformat() if self.created else None
-        expires_at = self.expires_at.isoformat() if self.expires_at else None
-
         result_dict = {
             "id": str(self.id),
             "token": str(self.token),
-            "created_at": created_at,
-            "expires_at": expires_at,
+            "created_at": self.created,
+            "expires_at": self.expires_at,
             "permission": self.permission_level,
         }
 
