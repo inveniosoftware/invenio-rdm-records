@@ -31,7 +31,7 @@ RecordLinks = LinksSchema.create(links={
     "files": ItemLink(template='/api/records/{pid_value}/files'),
     "versions": ItemLink(template='/api/records/{pid_value}/versions'),
     "latest": ItemLink(template='/api/records/{pid_value}/versions/latest'),
-    "latest_html": ItemLink(template='/records/{pid_value}/versions/latest'),
+    "latest_html": ItemLink(template='/records/{pid_value}/latest'),
     "access_links": ItemLink(
         template='/api/records/{pid_value}/access/links', permission="manage"
     ),
@@ -44,7 +44,7 @@ DraftLinks = LinksSchema.create(links={
     "files": ItemLink(template="/api/records/{pid_value}/draft/files"),
     "versions": ItemLink(template='/api/records/{pid_value}/versions'),
     "latest": ItemLink(template='/api/records/{pid_value}/versions/latest'),
-    "latest_html": ItemLink(template='/records/{pid_value}/versions/latest'),
+    "latest_html": ItemLink(template='/records/{pid_value}/latest'),
     "access_links": ItemLink(
         template='/api/records/{pid_value}/access/links', permission="manage"
     ),
