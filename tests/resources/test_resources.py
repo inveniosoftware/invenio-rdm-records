@@ -52,7 +52,7 @@ def _validate_access(response, original):
 
         until = arrow.get(embargo["until"]).datetime
         orig_until = arrow.get(orig_embargo["until"]).datetime
-        assert until.strftime("%Y-%m-%d") == orig_until.strftime("%Y-%m-%d")
+        assert until.isoformat() == orig_until.isoformat()
 
         if embargo.get("reason"):
             assert embargo.get("reason") == orig_embargo.get("reason")
@@ -495,7 +495,7 @@ def test_link_creation(
     """Test the creation of secret links."""
     client = client_with_login
     in_10_days = datetime.utcnow() + timedelta(days=10)
-    in_10_days_str = in_10_days.strftime("%Y-%m-%d")
+    in_10_days_str = in_10_days.strftime("%Y-%m-%dT00:00:00")
 
     # Create and publish a draft
     recid = _create_and_publish(client, minimal_record, headers)
@@ -619,11 +619,11 @@ def test_link_update(
     """Test the deletion of a secret link."""
     client = client_with_login
     in_10_days = datetime.utcnow() + timedelta(days=10)
-    in_10_days_str = in_10_days.strftime("%Y-%m-%d")
+    in_10_days_str = in_10_days.strftime("%Y-%m-%dT00:00:00")
     in_20_days = datetime.utcnow() + timedelta(days=20)
-    in_20_days_str = in_20_days.strftime("%Y-%m-%d")
+    in_20_days_str = in_20_days.strftime("%Y-%m-%dT00:00:00")
     _10_days_ago = datetime.utcnow() - timedelta(days=10)
-    _10_days_ago_str = _10_days_ago.strftime("%Y-%m-%d")
+    _10_days_ago_str = _10_days_ago.strftime("%Y-%m-%dT00:00:00")
 
     # Create and publish a draft
     recid = _create_and_publish(client, minimal_record, headers)

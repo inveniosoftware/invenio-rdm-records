@@ -11,7 +11,7 @@
 
 from flask_babelex import lazy_gettext as _
 from marshmallow import Schema, fields
-from marshmallow_utils.fields import ISODateString, SanitizedUnicode
+from marshmallow_utils.fields import SanitizedUnicode
 
 
 class Grant(Schema):
@@ -26,8 +26,8 @@ class SecretLink(Schema):
     """Schema for a secret link."""
 
     id = fields.String(dump_only=True)
-    created_at = ISODateString(required=False)
-    expires_at = ISODateString(required=False)
+    created_at = fields.DateTime(required=False)
+    expires_at = fields.DateTime(required=False)
     permission = fields.String(required=False)
     token = SanitizedUnicode(dump_only=True)
 
