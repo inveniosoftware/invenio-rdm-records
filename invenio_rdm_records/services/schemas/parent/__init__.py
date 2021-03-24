@@ -8,7 +8,7 @@
 """RDM parent record schema."""
 
 from invenio_drafts_resources.services.records.schema import ParentSchema
-from marshmallow import EXCLUDE, fields, post_dump
+from marshmallow import EXCLUDE, fields
 from marshmallow_utils.fields import NestedAttribute
 from marshmallow_utils.permissions import FieldPermissionsMixin
 
@@ -26,6 +26,12 @@ class RDMParentSchema(ParentSchema, FieldPermissionsMixin):
         unknown = EXCLUDE
 
     pid = NestedAttribute(PIDSchema)
+    # omit the 'access' field from dumps, except for users with
+    # 'manage' permissions
+    field_dump_permissions = {
+        "access": "manage",
+    }
+
     access = fields.Nested(ParentAccessSchema)
 
 
