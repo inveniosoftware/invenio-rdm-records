@@ -17,7 +17,7 @@ from invenio_rdm_records.records import RDMDraft, RDMRecord
 from invenio_rdm_records.records.api import RDMParent
 from invenio_rdm_records.records.dumpers import EDTFDumperExt, \
     EDTFListDumperExt
-from invenio_rdm_records.services import RDMRecordService
+from invenio_rdm_records.services import RDMUserRecordsService
 
 
 @pytest.mark.parametrize("date, expected_start, expected_end", [
@@ -179,8 +179,8 @@ def test_edtf_dumper_query(app, db, location, minimal_record, users):
     minimal_record["metadata"]["dates"] = [{"date": date}]
 
     # Create the record
-    service = RDMRecordService(
-        config=app.config.get(RDMRecordService.config_name),
+    service = RDMUserRecordsService(
+        config=app.config.get(RDMUserRecordsService.config_name),
     )
     record = service.create(identity, minimal_record)
     RDMDraft.index.refresh()

@@ -47,7 +47,8 @@ def test_sort_by_versions(
     # are caught by search otherwise
     record_2._record.index.refresh()
 
-    result = service.search(superuser_identity, sort='version').to_dict()
+    result = service.search(superuser_identity, sort='version',
+                            params={"allversions": True}).to_dict()
 
     expected_order = [record_2.id, record_3.id, record.id]
     assert expected_order == [h["id"] for h in result['hits']['hits']]
