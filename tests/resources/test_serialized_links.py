@@ -61,7 +61,7 @@ def test_draft_links(client, draft_json, minimal_record):
         "publish": f"https://localhost:5000/api/records/{pid_value}/draft/actions/publish",  # noqa
         "versions": f"https://localhost:5000/api/records/{pid_value}/versions",
         "latest": f"https://localhost:5000/api/records/{pid_value}/versions/latest",  # noqa
-        "latest_html": f"https://localhost:5000/records/{pid_value}/versions/latest",  # noqa
+        "latest_html": f"https://localhost:5000/records/{pid_value}/latest",  # noqa
         "access_links": f"https://localhost:5000/api/records/{pid_value}/access/links",  # noqa
         "files": f"https://localhost:5000/api/records/{pid_value}/draft/files",
     }
@@ -83,7 +83,7 @@ def test_record_links(client, published_json):
         "files": f"https://localhost:5000/api/records/{pid_value}/files",
         "versions": f"https://localhost:5000/api/records/{pid_value}/versions",
         "latest": f"https://localhost:5000/api/records/{pid_value}/versions/latest",  # noqa
-        "latest_html": f"https://localhost:5000/records/{pid_value}/versions/latest",  # noqa
+        "latest_html": f"https://localhost:5000/records/{pid_value}/latest",  # noqa
         "access_links": f"https://localhost:5000/api/records/{pid_value}/access/links",  # noqa
     }
     assert expected_links == published_record_links == read_record_links
