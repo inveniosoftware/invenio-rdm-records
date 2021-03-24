@@ -12,6 +12,7 @@ from copy import deepcopy
 from functools import partial
 
 from flask_babelex import get_locale
+from flask_babelex import gettext as _
 from invenio_i18n.ext import current_i18n
 # TODO
 # from invenio_vocabularies.api import VocabularyRegistry
@@ -181,6 +182,15 @@ class UIListSchema(Schema):
             buckets = agg.get('buckets')
             if buckets:
                 apply_labels(vocab, buckets)
+
+        # TODO: temporary hack until vocabularies can be fixed
+        is_published_agg = aggs.get('is_published')
+        if is_published_agg:
+            for b in is_published_agg.get('buckets', []):
+                if b.get('key') == 1:
+                    b['label'] = _("Published")
+                elif b.get('key') == 0:
+                    b['label'] = _("New")
 
         # FIXME: This is hardcoded because vocabularies has not been
         # fully migrated. Ideally all would be treated equally in the for
