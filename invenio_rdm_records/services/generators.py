@@ -161,3 +161,12 @@ class SecretLinks(Generator):
             return []
 
         return record.parent.access.links.needs(self.permission)
+
+    def query_filter(self, identity=None, **kwargs):
+        """Filters for current identity secret links."""
+        secret_links = [
+            n.value for n in identity.provides if n.method == "link"
+        ]
+
+        if secret_links:
+            return Q("terms", **{"parent.access.links.id": secret_links})
