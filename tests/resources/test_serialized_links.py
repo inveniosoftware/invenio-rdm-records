@@ -101,60 +101,6 @@ def test_record_search_links(client, published_json):
     assert expected_links == search_record_links
 
 
-def test_permission_links(client, db, published_json):
-    """Test the links when affected by permissions."""
-    pid_value = published_json["id"]
-    other_user = create_test_user("joe@example.com")
-    admin_user = create_test_user("jane@example.com")
-    db.session.add(ActionUsers(action='admin-access', user=admin_user))
-    db.session.commit()
-
-    # the user should still be logged in, as per fixture
-    response = client.get(f"/records/{pid_value}", headers=HEADERS)
-    read_record_links = response.json["links"]
-
-    assert (
-        f"https://localhost:5000/api/records/{pid_value}/access/links" ==
-        read_record_links["access_links"]
-    )
-
-    # log out and check again
-    client.post("/logout")
-    response = client.get(f"/records/{pid_value}", headers=HEADERS)
-    read_record_links = response.json["links"]
-    assert "access_links" not in read_record_links
-
-    # check that another user doesn't see some links
-    login_user_via_view(
-        client,
-        email=other_user.email,
-        password=other_user.password_plaintext,
-        login_url='/login'
-    )
-
-    response = client.get(f"/records/{pid_value}", headers=HEADERS)
-    read_record_links = response.json["links"]
-    assert "access_links" not in read_record_links
-
-    # TODO re-enable when the "delete" link is generated
-    # We test that only admins get the "delete" link (according to our policy)
-    #
-    # client.post(url_for_security("logout"))
-    # login_user_via_view(
-    #     client,
-    #     email=admin_user.email,
-    #     password=admin_user.password_plaintext,
-    #     login_url='/login'
-    # )
-    # response = client.get(f"/records/{pid_value}", headers=HEADERS)
-    # read_record_links = response.json["links"]
-    #
-    # assert (
-    #     f"https://localhost:5000/api/records/{pid_value}" ==
-    #     read_record_links["delete"]
-    # )
-
-
 def test_versions_search_links(client, published_json, headers):
     """Tests the links for a search of versions."""
     pid_value = published_json["id"]

@@ -8,10 +8,18 @@
 
 """Result items for secret link operations of the services."""
 
+from flask import current_app
 from flask_babelex import lazy_gettext as _
 from invenio_records_resources.services.base.results import \
     ServiceItemResult, ServiceListResult
 from marshmallow_utils.links import LinksFactory
+
+
+def _current_host():
+    """Function used to provide the current hostname to the link store."""
+    if current_app:
+        return current_app.config['SITE_HOSTNAME']
+    return None
 
 
 class SecretLinkItem(ServiceItemResult):

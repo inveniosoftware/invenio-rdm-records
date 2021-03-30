@@ -518,6 +518,7 @@ def test_link_creation(
     assert link_result.status_code == 201
     link_id = link_result.json["id"]
     link_json = link_result.json
+
     assert link_json["id"]
     assert link_json["permission"] == "read"
     assert link_json["token"]

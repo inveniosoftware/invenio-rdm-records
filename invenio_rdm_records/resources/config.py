@@ -8,6 +8,7 @@
 
 """Resources configuration."""
 
+import marshmallow as ma
 from flask_resources import HTTPJSONException, JSONSerializer, \
     ResponseHandler, create_error_handler
 from invenio_drafts_resources.resources import RecordResourceConfig
@@ -158,17 +159,20 @@ class RDMParentRecordLinksResourceConfig(RecordResourceConfig):
     """User records resource configuration."""
 
     blueprint_name = "record_access"
+
     url_prefix = "/records/<pid_value>/access"
+
     routes = {
         "list": "/links",
         "item": "/links/<link_id>",
     }
 
-    item_route = "/records/<pid_value>/access/links/<link_id>"
-
-    list_route = "/records/<pid_value>/access/links"
-
     links_config = {}
+
+    request_view_args = {
+        "pid_value": ma.fields.Str(),
+        "link_id": ma.fields.Str()
+    }
 
     response_handlers = {
         "application/json": ResponseHandler(JSONSerializer())

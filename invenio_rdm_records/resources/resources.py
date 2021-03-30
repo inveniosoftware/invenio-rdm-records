@@ -10,8 +10,10 @@
 """Bibliographic Record Resource."""
 
 from flask import abort, g
-from flask_resources import resource_requestctx, route
+from flask_resources import resource_requestctx, response_handler, route
 from invenio_drafts_resources.resources import RecordResource
+from invenio_records_resources.resources.records.resource import \
+    request_data, request_search_args, request_view_args
 
 
 #
@@ -22,15 +24,24 @@ class RDMParentRecordLinksResource(RecordResource):
 
     def create_url_rules(self):
         """Create the URL rules for the record resource."""
+
+        def p(route):
+            """Prefix a route with the URL prefix."""
+            return f"{self.config.url_prefix}{route}"
+
         routes = self.config.routes
         return [
-            route("GET", routes["list"], self.search),
-            route("POST", routes["list"], self.create),
-            route("GET", routes["item"], self.read),
-            route("PUT", routes["item"], self.update),
-            route("DELETE", routes["item"], self.delete),
+            route("GET", p(routes["list"]), self.search),
+            route("POST", p(routes["list"]), self.create),
+            route("GET", p(routes["item"]), self.read),
+            route("PUT", p(routes["item"]), self.update),
+            route("PATCH", p(routes["item"]), self.partial_update),
+            route("DELETE", p(routes["item"]), self.delete),
         ]
 
+    @request_view_args
+    @request_data
+    @response_handler()
     def create(self):
         """Create a secret link for a record."""
         item = self.service.create_secret_link(
@@ -41,6 +52,8 @@ class RDMParentRecordLinksResource(RecordResource):
 
         return item.to_dict(), 201
 
+    @request_view_args
+    @response_handler()
     def read(self):
         """Read a secret link for a record."""
         item = self.service.read_secret_link(
@@ -54,6 +67,9 @@ class RDMParentRecordLinksResource(RecordResource):
         """Update a secret link for a record."""
         abort(405)
 
+    @request_view_args
+    @request_data
+    @response_handler()
     def partial_update(self):
         """Patch a secret link for a record."""
         item = self.service.update_secret_link(
@@ -62,9 +78,9 @@ class RDMParentRecordLinksResource(RecordResource):
             link_id=resource_requestctx.view_args["link_id"],
             data=resource_requestctx.data,
         )
-
         return item.to_dict(), 200
 
+    @request_view_args
     def delete(self):
         """Delete a a secret link for a record."""
         self.service.delete_secret_link(
@@ -72,8 +88,11 @@ class RDMParentRecordLinksResource(RecordResource):
             identity=g.identity,
             link_id=resource_requestctx.view_args["link_id"],
         )
-        return None, 204
+        return "", 204
 
+    @request_search_args
+    @request_view_args
+    @response_handler(many=True)
     def search(self):
         """List secret links for a record."""
         items = self.service.read_secret_links(
