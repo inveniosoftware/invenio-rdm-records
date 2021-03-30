@@ -17,8 +17,8 @@ readme = open('README.rst').read()
 history = open('CHANGES.rst').read()
 
 tests_require = [
-    'pytest-invenio>=1.4.1,<2.0.0',
     'invenio-app>=1.3.0,<2.0.0',
+    'pytest-invenio>=1.4.1,<2.0.0',
     'pytest-mock>=1.6.0',
 ]
 
@@ -58,7 +58,7 @@ for name, reqs in extras_require.items():
     extras_require['all'].extend(reqs)
 
 setup_requires = [
-    'Babel>=1.3',
+    'Babel>=2.8',
     'pytest-runner>=3.0.0,<5',
 ]
 
@@ -66,8 +66,8 @@ install_requires = [
     'arrow>=0.17.0',
     'Faker>=2.0.3',
     'ftfy>=4.4.3,<5.0.0',
-    'invenio-drafts-resources>=0.11.0,<0.12.0',
-    'invenio-vocabularies>=0.5.0,<0.6.0',
+    'invenio-drafts-resources>=0.11.1,<0.12.0',
+    'invenio-vocabularies>=0.5.1,<0.6.0',
     'pytz>=2020.4',
     'pyyaml>=5.4.0',
 ]
