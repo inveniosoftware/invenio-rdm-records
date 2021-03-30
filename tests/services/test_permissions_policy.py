@@ -13,7 +13,7 @@ from flask_principal import RoleNeed, UserNeed
 from invenio_access.permissions import any_user, authenticated_user, \
     system_process
 from invenio_drafts_resources.services.records.permissions import \
-    RecordDraftPermissionPolicy
+    RecordPermissionPolicy
 from invenio_records_permissions.generators import AnyUser, \
     AuthenticatedUser, Disable, SystemProcess
 
@@ -21,7 +21,7 @@ from invenio_rdm_records.records import RDMParent, RDMRecord
 from invenio_rdm_records.services.generators import IfRestricted, RecordOwners
 
 
-class TestRDMPermissionPolicy(RecordDraftPermissionPolicy):
+class TestRDMPermissionPolicy(RecordPermissionPolicy):
     """Define permission policies for RDM Records."""
     can_search = [AnyUser(), SystemProcess()]
     can_create = [AuthenticatedUser(), SystemProcess()]

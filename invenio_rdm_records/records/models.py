@@ -5,7 +5,7 @@
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
 
-"""Record and Draft database models."""
+"""Record and draft database models."""
 
 from invenio_db import db
 from invenio_drafts_resources.records import DraftMetadataBase, \

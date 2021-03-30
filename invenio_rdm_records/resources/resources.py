@@ -10,7 +10,7 @@
 """Bibliographic Record Resource."""
 
 from flask import abort, g
-from flask_resources.context import resource_requestctx
+from flask_resources import resource_requestctx, route
 from invenio_drafts_resources.resources import RecordResource
 
 

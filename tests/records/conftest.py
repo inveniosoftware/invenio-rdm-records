@@ -14,7 +14,9 @@ fixtures are available.
 
 import pytest
 from invenio_app.factory import create_api
+from invenio_indexer.api import RecordIndexer
 
+from invenio_rdm_records.records.api import RDMDraft
 from invenio_rdm_records.vocabularies import Vocabularies
 
 
@@ -28,3 +30,11 @@ def create_app(instance_path):
 def vocabulary_clear(appctx):
     """Clears the Vocabulary singleton and pushes an appctx."""
     Vocabularies.clear()
+
+
+@pytest.fixture()
+def indexer():
+    """Indexer instance with correct Record class."""
+    return RecordIndexer(
+        record_cls=RDMDraft, record_to_index=lambda r: (r.index._name, '_doc')
+    )

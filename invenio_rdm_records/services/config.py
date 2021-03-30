@@ -10,10 +10,13 @@
 """RDM Record Service."""
 
 from flask_babelex import lazy_gettext as _
-from invenio_drafts_resources.services.records import RecordDraftServiceConfig
 from invenio_drafts_resources.services.records.components import \
     DraftFilesComponent, PIDComponent
-from invenio_records_resources.services.files.config import FileServiceConfig
+from invenio_drafts_resources.services.records.config import \
+    RecordServiceConfig, SearchDraftsOptions, SearchOptions, \
+    SearchVersionsOptions, is_draft, is_record
+from invenio_records_resources.services import ConditionalLink, \
+    FileServiceConfig, RecordLink
 from invenio_records_resources.services.records.search import terms_filter
 
 from ..records import RDMDraft, RDMRecord
@@ -22,50 +25,15 @@ from .permissions import RDMRecordPermissionPolicy
 from .result_items import SecretLinkItem, SecretLinkList
 from .schemas import RDMParentSchema, RDMRecordSchema
 from .schemas.parent.access import SecretLink
-from .search_params import AllVersionsUserRecordsParam
 
 
-class RDMRecordServiceConfig(RecordDraftServiceConfig):
-    """RDM record draft service config."""
+#
+# Search options
+#
+class RDMSearchOptions(SearchOptions):
+    """Search options for record search."""
 
-    # Record class
-    record_cls = RDMRecord
-
-    # Draft class
-    draft_cls = RDMDraft
-
-    schema = RDMRecordSchema
-
-    schema_parent = RDMParentSchema
-
-    schema_secret_link = SecretLink
-
-    permission_policy_cls = RDMRecordPermissionPolicy
-
-    link_result_item_cls = SecretLinkItem
-
-    link_result_list_cls = SecretLinkList
-
-    search_sort_options = {
-        "bestmatch": dict(
-            title=_('Best match'),
-            fields=['_score'],  # ES defaults to desc on `_score` field
-        ),
-        "newest": dict(
-            title=_('Newest'),
-            fields=['-created'],
-        ),
-        "oldest": dict(
-            title=_('Oldest'),
-            fields=['created'],
-        ),
-        "version": dict(
-            title=_('Version'),
-            fields=['-versions.index'],
-        ),
-    }
-
-    search_facets_options = dict(
+    facets_options = dict(
         aggs={
             'resource_type': {
                 'terms': {'field': 'metadata.resource_type.type'},
@@ -90,64 +58,11 @@ class RDMRecordServiceConfig(RecordDraftServiceConfig):
         }
     )
 
-    components = [
-        MetadataComponent,
-        AccessComponent,
-        DraftFilesComponent,
-        PIDComponent,
-    ]
 
+class RDMSearchDraftsOptions(SearchDraftsOptions):
+    """Search options for drafts search."""
 
-class RDMRecordVersionsServiceConfig(RDMRecordServiceConfig):
-    """Record versions service config."""
-
-    search_sort_default = 'version'
-    search_sort_default_no_query = 'version'
-    search_sort_options = {
-        "version": dict(
-            title=_('Version'),
-            fields=['-versions.index'],
-        ),
-    }
-    search_facets_options = dict(
-        aggs={},
-        post_filters={},
-    )
-
-
-class RDMUserRecordsServiceConfig(RDMRecordServiceConfig):
-    """RDM user records service configuration."""
-
-    search_sort_default = 'bestmatch'
-    search_sort_default_no_query = 'updated-desc'
-    search_sort_options = {
-        "bestmatch": dict(
-            title=_('Best match'),
-            fields=['_score'],  # ES defaults to desc on `_score` field
-        ),
-        "updated-desc": dict(
-            title=_('Recently updated'),
-            fields=['-updated'],
-        ),
-        "updated-asc": dict(
-            title=_('Least recently updated'),
-            fields=['updated'],
-        ),
-        "newest": dict(
-            title=_('Newest'),
-            fields=['-created'],
-        ),
-        "oldest": dict(
-            title=_('Oldest'),
-            fields=['created'],
-        ),
-        "version": dict(
-            title=_('Version'),
-            fields=['-versions.index'],
-        ),
-    }
-
-    search_facets_options = dict(
+    facets_options = dict(
         aggs={
             'resource_type': {
                 'terms': {'field': 'metadata.resource_type.type'},
@@ -176,23 +91,79 @@ class RDMUserRecordsServiceConfig(RDMRecordServiceConfig):
         }
     )
 
-    search_params_interpreters_cls = [
-       AllVersionsUserRecordsParam
-    ] + RecordServiceConfig.search_params_interpreters_cls
-
 
 #
-# Record files
+# Service configuration
 #
-class RDMRecordFilesServiceConfig(RDMRecordServiceConfig, FileServiceConfig):
-    """RDM record files service configuration."""
+class RDMRecordServiceConfig(RecordServiceConfig):
+    """RDM record draft service config."""
+
+    # Record and draft classes
+    record_cls = RDMRecord
+    draft_cls = RDMDraft
+
+    # Schemas
+    schema = RDMRecordSchema
+    schema_parent = RDMParentSchema
+    schema_secret_link = SecretLink
+
+    # Permission policy
+    permission_policy_cls = RDMRecordPermissionPolicy
+
+    # Result classes
+    link_result_item_cls = SecretLinkItem
+    link_result_list_cls = SecretLinkList
+
+    # Search configuration
+    search = RDMSearchOptions
+    search_drafts = RDMSearchDraftsOptions
+    search_versions = SearchVersionsOptions
+
+    # Components
+    components = [
+        MetadataComponent,
+        AccessComponent,
+        DraftFilesComponent,
+        PIDComponent,
+    ]
+
+    # Links
+    links_item = {
+        "self": ConditionalLink(
+            cond=is_record,
+            if_=RecordLink("{+api}/records/{id}"),
+            else_=RecordLink("{+api}/records/{id}/draft"),
+        ),
+        "self_html": ConditionalLink(
+            cond=is_record,
+            if_=RecordLink("{+ui}/records/{id}"),
+            else_=RecordLink("{+ui}/uploads/{id}"),
+        ),
+        "files": ConditionalLink(
+            cond=is_record,
+            if_=RecordLink("{+api}/records/{id}/files"),
+            else_=RecordLink("{+api}/records/{id}/draft/files"),
+        ),
+        "latest": RecordLink("{+api}/records/{id}/versions/latest"),
+        "latest_html": RecordLink("{+ui}/records/{id}/latest"),
+        "publish": RecordLink(
+            "{+api}/records/{id}/draft/actions/publish",
+            when=is_draft
+        ),
+        "versions": RecordLink("{+api}/records/{id}/versions"),
+        "access_links": RecordLink("{+api}/records/{id}/access/links"),
+    }
 
 
-#
-# Draft files
-#
-class RDMDraftFilesServiceConfig(
-        RDMRecordServiceConfig, FileServiceConfig):
-    """RDM draft files service configuration."""
+class RDMFileRecordServiceConfig(FileServiceConfig):
+    """Configuration for record files."""
+
+    record_cls = RDMRecord
+    permission_policy_cls = RDMRecordPermissionPolicy
+
+
+class RDMFileDraftServiceConfig(FileServiceConfig):
+    """Configuration for draft files."""
 
     record_cls = RDMDraft
+    permission_policy_cls = RDMRecordPermissionPolicy

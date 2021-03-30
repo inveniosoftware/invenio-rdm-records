@@ -18,14 +18,14 @@ from invenio_records.systemfields import ConstantField, ModelField, \
     RelationsField
 from invenio_records_resources.records.api import FileRecord
 from invenio_records_resources.records.systemfields import FilesField, \
-    IndexField, PIDListRelation
+    IndexField, PIDListRelation, PIDStatusCheckField
 from invenio_vocabularies.records.api import Vocabulary
 from werkzeug.local import LocalProxy
 
 from . import models
 from .dumpers import EDTFDumperExt, EDTFListDumperExt, GrantTokensDumperExt
-from .systemfields import HasDraftCheckField, IsPublishedField, \
-    ParentRecordAccessField, RecordAccessField
+from .systemfields import HasDraftCheckField, ParentRecordAccessField, \
+    RecordAccessField
 
 
 #
@@ -84,9 +84,7 @@ class CommonFieldsMixin:
 
     access = RecordAccessField()
 
-    # We redefine the property as we extend the `PIDStatusCheckField` to dump
-    # the property in ES in order to be available for aggregation
-    is_published = IsPublishedField(status=PIDStatus.REGISTERED)
+    is_published = PIDStatusCheckField(status=PIDStatus.REGISTERED, dump=True)
 
 
 #

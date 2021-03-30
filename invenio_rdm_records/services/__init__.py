@@ -7,16 +7,15 @@
 
 """High-level API for wokring with RDM records, files, pids and search."""
 
-from .config import RDMDraftFilesServiceConfig, RDMRecordFilesServiceConfig, \
-    RDMRecordServiceConfig, RDMRecordVersionsServiceConfig, \
-    RDMUserRecordsServiceConfig
+from .config import RDMFileDraftServiceConfig, RDMFileRecordServiceConfig, \
+    RDMRecordServiceConfig
 from .permissions import RDMRecordPermissionPolicy
+from .services import RDMRecordService
 
 __all__ = (
-    "RDMRecordServiceConfig",
-    "RDMRecordFilesServiceConfig",
-    "RDMRecordVersionsServiceConfig",
-    "RDMUserRecordsServiceConfig",
-    "RDMDraftFilesServiceConfig",
+    "RDMFileDraftServiceConfig",
+    "RDMFileRecordServiceConfig",
     "RDMRecordPermissionPolicy",
+    "RDMRecordService",
+    "RDMRecordServiceConfig",
 )

@@ -19,6 +19,7 @@ from invenio_rdm_records.records.api import RDMParent
 from invenio_rdm_records.records.dumpers import EDTFDumperExt, \
     EDTFListDumperExt
 
+
 @pytest.mark.parametrize("date, expected_start, expected_end", [
     ("2021-01-01", "2021-01-01", "2021-01-01"),
     ("2021-01", "2021-01-01", "2021-01-31"),
@@ -163,37 +164,3 @@ def test_eslistdumper_with_edtfext_parse_error(app, db, minimal_record):
     assert 'type_start' not in new_record['metadata']['resource_type']
     assert 'type_end' not in new_record['metadata']['resource_type']
     assert 'type' in new_record['metadata']['resource_type']
-
-
-def test_edtf_dumper_query(app, db, location, minimal_record, users):
-    """Test edft extension queries."""
-    identity = Identity(users[0].id)
-    identity.provides.add(UserNeed(users[0].id))
-    identity.provides.add(SystemRoleNeed('any_user'))
-    identity.provides.add(SystemRoleNeed('authenticated_user'))
-    login_user(users[0], remember=True)
-
-    date = "2021-01-01"
-    minimal_record["metadata"]["publication_date"] = date
-    minimal_record["metadata"]["dates"] = [{"date": date}]
-
-    # Create the record
-    service = current_rdm_records.records_service
-    record = service.create(identity, minimal_record)
-    RDMDraft.index.refresh()
-
-    # Search for it
-    assert service.search_drafts(
-        identity,
-        {"q": "metadata.publication_date_range:[2020 TO 2021]"},
-    ).total == 1
-
-    assert service.search_drafts(
-        identity,
-        {"q": "metadata.publication_date_range:[2020-12-31 TO 2021-01-02]"},
-    ).total == 1
-
-    assert service.search_drafts(
-        identity,
-        {"q": "metadata.publication_date_range:[2022 TO 2023]"},
-    ).total == 0

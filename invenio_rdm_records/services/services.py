@@ -7,7 +7,7 @@
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
 
-"""Bibliographic Record Service."""
+"""RDM Record Service."""
 
 from datetime import datetime
 
@@ -15,19 +15,29 @@ import arrow
 from flask_babelex import lazy_gettext as _
 from invenio_db import db
 from invenio_drafts_resources.services.records import RecordService
-from invenio_records_resources.services.files.service import FileServiceMixin
 from invenio_records_resources.services.records.schema import \
     ServiceSchemaWrapper
 from marshmallow.exceptions import ValidationError
 
-from . import config
 
+class RDMRecordService(RecordService):
+    """RDM record service."""
 
-class RDMRecordService(RecordService, FileServiceMixin):
-    """Bibliographic record service."""
+    def __init__(self, config, files_service=None, draft_files_service=None):
+        """Constructor for RDMRecordService."""
+        super().__init__(config)
+        self._files = files_service
+        self._draft_files = draft_files_service
 
-    config_name = "RDM_RECORDS_BIBLIOGRAPHIC_SERVICE_CONFIG"
-    default_config = config.RDMRecordServiceConfig
+    @property
+    def files(self):
+        """Record files service."""
+        return self._files
+
+    @property
+    def draft_files(self):
+        """Draft files service."""
+        return self._draft_files
 
     def link_result_item(self, *args, **kwargs):
         """Create a new instance of the resource unit."""
@@ -285,37 +295,3 @@ class RDMRecordService(RecordService, FileServiceMixin):
         self._index_related_records(record, parent)
 
         return True
-
-
-class RDMRecordVersionsService(RecordDraftService):
-    """Bibliographic record versions service."""
-
-    config_name = "RDM_RECORDS_VERSIONS_BIBLIOGRAPHIC_SERVICE_CONFIG"
-    default_config = config.RDMRecordVersionsServiceConfig
-
-
-class RDMUserRecordsService(RecordDraftService):
-    """Bibliographic user records service."""
-
-    config_name = "RDM_RECORDS_BIBLIOGRAPHIC_USER_RECORDS_SERVICE_CONFIG"
-    default_config = config.RDMUserRecordsServiceConfig
-
-
-#
-# Record files
-#
-class RDMRecordFilesService(RecordFileService):
-    """Bibliographic record files service."""
-
-    config_name = "RDM_RECORDS_BIBLIOGRAPHIC_RECORD_FILES_SERVICE_CONFIG"
-    default_config = config.RDMRecordFilesServiceConfig
-
-
-#
-# Draft files
-#
-class RDMDraftFilesService(RecordFileService):
-    """Bibliographic draft files service."""
-
-    config_name = "RDM_RECORDS_BIBLIOGRAPHIC_DRAFT_FILES_SERVICE_CONFIG"
-    default_config = config.RDMDraftFilesServiceConfig

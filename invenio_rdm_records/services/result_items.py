@@ -11,7 +11,6 @@
 from flask_babelex import lazy_gettext as _
 from invenio_records_resources.services.base.results import \
     ServiceItemResult, ServiceListResult
-from invenio_records_resources.services.records.results import _current_host
 from marshmallow_utils.links import LinksFactory
 
 
@@ -40,7 +39,7 @@ class SecretLinkItem(ServiceItemResult):
         if self._data:
             return self._data
 
-        links = LinksFactory(host=_current_host, config=self._links_config)
+        links = LinksFactory(host="", config=self._links_config)
         self._data = self._service.schema_secret_link.dump(
             self._link.to_dict(),
             context=dict(

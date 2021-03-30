@@ -13,4 +13,4 @@
 def create_subjects_blueprint_from_app(app):
     """Create app blueprint."""
     return app.extensions["invenio-rdm-records"].subjects_resource \
-        .as_blueprint("vocabularies-subjects")
+        .as_blueprint()

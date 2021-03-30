@@ -12,17 +12,18 @@ from flask import flash, g, request, session
 from flask_babelex import _
 from flask_principal import identity_loaded
 from invenio_drafts_resources.resources import RecordResource
-from invenio_drafts_resources.services.records import RecordService
 from invenio_records_resources.resources.files import FileResource
+from invenio_records_resources.services import FileService
 from invenio_vocabularies.contrib.subjects.subjects import subject_record_type
 from itsdangerous import SignatureExpired
 
 from . import config
 from .resources import RDMDraftFilesResourceConfig, \
-    RDMParentRecordLinksResource, RDMRecordFilesResourceConfig, \
-    RDMRecordResourceConfig, RDMParentRecordLinksResourceConfig
+    RDMParentRecordLinksResource, RDMParentRecordLinksResourceConfig, \
+    RDMRecordFilesResourceConfig, RDMRecordResourceConfig
 from .secret_links import LinkNeed, SecretLink
-from .services import RDMRecordServiceConfig
+from .services import RDMFileDraftServiceConfig, RDMFileRecordServiceConfig, \
+    RDMRecordService, RDMRecordServiceConfig
 from .services.schemas.metadata_extensions import MetadataExtensions
 
 
@@ -62,10 +63,6 @@ class InvenioRDMRecords(object):
         if app:
             self.init_app(app)
 
-    def init_vocabularies(self, app):
-        """Initialize vocabulary resources."""
-
-
     def init_app(self, app):
         """Flask application initialization."""
         self.init_config(app)
@@ -75,7 +72,6 @@ class InvenioRDMRecords(object):
         )
         self.init_services(app)
         self.init_resource(app)
-        self.init_vocabularies(app)
         app.before_request(verify_token)
         app.extensions['invenio-rdm-records'] = self
 
@@ -99,50 +95,39 @@ class InvenioRDMRecords(object):
     def init_services(self, app):
         """Initialize vocabulary resources."""
         # Services
-        # TODO: Rename very long configuration names.
-        self.records_service = RecordService(
-            config=app.config.get(
-                "RDM_RECORDS_BIBLIOGRAPHIC_SERVICE_CONFIG",
-                RDMRecordServiceConfig),
+        self.records_service = RDMRecordService(
+            RDMRecordServiceConfig,
+            files_service=FileService(RDMFileRecordServiceConfig),
+            draft_files_service=FileService(RDMFileDraftServiceConfig),
         )
+
         self.subjects_service = subject_record_type.service_cls(
             config=subject_record_type.service_config_cls,
         )
 
     def init_resource(self, app):
         """Initialize vocabulary resources."""
-        # TODO: Rename very long configuration names.
-        # Record resource
         self.records_resource = RecordResource(
-            service=self.records_service,
-            config=app.config.get(
-                "RDM_RECORDS_BIBLIOGRAPHIC_RECORD_CONFIG",
-                RDMRecordResourceConfig),
+            RDMRecordResourceConfig,
+            self.records_service,
         )
 
         # Record files resource
         self.record_files_resource = FileResource(
-            service=self.records_service,
-            config=app.config.get(
-                "RDM_RECORDS_BIBLIOGRAPHIC_RECORD_FILES_CONFIG",
-                RDMRecordFilesResourceConfig),
+            service=self.records_service.files,
+            config=RDMRecordFilesResourceConfig
         )
 
         # Draft files resource
         self.draft_files_resource = FileResource(
-            service=self.records_service,
-            config=app.config.get(
-                "RDM_RECORDS_BIBLIOGRAPHIC_DRAFT_FILES_CONFIG",
-                RDMDraftFilesResourceConfig),
+            service=self.records_service.draft_files,
+            config=RDMDraftFilesResourceConfig
         )
 
         # Parent Records
         self.parent_record_links_resource = RDMParentRecordLinksResource(
             service=self.records_service,
-            config=app.config.get(
-                "RDM_RECORDS_BIBLIOGRAPHIC_PARENT_RECORD_LINKS_CONFIG",
-                RDMParentRecordLinksResourceConfig
-            )
+            config=RDMParentRecordLinksResourceConfig
         )
 
         # Vocabularies
