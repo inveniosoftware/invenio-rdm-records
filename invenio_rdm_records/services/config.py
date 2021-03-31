@@ -17,6 +17,8 @@ from invenio_drafts_resources.services.records.config import \
     SearchVersionsOptions, is_draft, is_record
 from invenio_records_resources.services import ConditionalLink, \
     FileServiceConfig, RecordLink
+from invenio_records_resources.services.files.links import FileLink
+from invenio_records_resources.services.records.links import RecordLink
 from invenio_records_resources.services.records.search import terms_filter
 
 from ..records import RDMDraft, RDMRecord
@@ -167,3 +169,13 @@ class RDMFileDraftServiceConfig(FileServiceConfig):
 
     record_cls = RDMDraft
     permission_policy_cls = RDMRecordPermissionPolicy
+
+    file_links_list = {
+        "self": RecordLink("{+api}/records/{id}/draft/files"),
+    }
+
+    file_links_item = {
+        "self": FileLink("{+api}/records/{id}/draft/files/{key}"),
+        "content": FileLink("{+api}/records/{id}/draft/files/{key}/content"),
+        "commit": FileLink("{+api}/records/{id}/draft/files/{key}/commit"),
+    }
