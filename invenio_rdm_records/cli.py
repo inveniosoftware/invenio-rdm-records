@@ -220,7 +220,7 @@ def create_fake_record():
     }
 
     service = current_rdm_records.records_service
-    draft_files_service = current_rdm_records.draft_files_service
+    draft_files_service = service.draft_files
 
     draft = service.create(data=data_to_use, identity=system_identity)
     draft_files_service.update_files_options(
