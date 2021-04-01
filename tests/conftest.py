@@ -46,12 +46,17 @@ def app_config(app_config):
     supported_configurations = [
         'FILES_REST_PERMISSION_FACTORY',
         'PIDSTORE_RECID_FIELD',
+        'RECORDS_PERMISSIONS_RECORD_POLICY',
         'RECORDS_REST_ENDPOINTS',
-        'RECORDS_PERMISSIONS_RECORD_POLICY'
     ]
 
     for config_key in supported_configurations:
         app_config[config_key] = getattr(config, config_key, None)
+
+    app_config['RECORDS_REFRESOLVER_CLS'] = \
+        "invenio_records.resolver.InvenioRefResolver"
+    app_config['RECORDS_REFRESOLVER_STORE'] = \
+        "invenio_jsonschemas.proxies.current_refresolver_store"
 
     return app_config
 

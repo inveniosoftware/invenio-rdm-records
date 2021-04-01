@@ -79,6 +79,8 @@ class InvenioRDMRecords(object):
         """Initialize configuration."""
         supported_configurations = [
             'FILES_REST_PERMISSION_FACTORY',
+            'RECORDS_REFRESOLVER_CLS',
+            'RECORDS_REFRESOLVER_STORE',
             'RECORDS_UI_ENDPOINTS',
             'THEME_SITEURL',
         ]
