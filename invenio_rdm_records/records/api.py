@@ -45,7 +45,7 @@ class RDMParent(ParentRecordBase):
 
     # System fields
     schema = ConstantField(
-        '$schema', 'http://localhost/schemas/records/parent-v1.0.0.json')
+        '$schema', 'local://records/parent-v1.0.0.json')
 
     access = ParentRecordAccessField()
 
@@ -60,7 +60,7 @@ class CommonFieldsMixin:
     parent_record_cls = RDMParent
 
     schema = ConstantField(
-       '$schema', 'http://localhost/schemas/records/record-v2.0.0.json')
+       '$schema', 'local://records/record-v2.0.0.json')
 
     dumper = ElasticsearchDumper(
         extensions=[
