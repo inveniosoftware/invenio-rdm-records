@@ -8,14 +8,15 @@
 
 """RDM record schemas."""
 
-from marshmallow import INCLUDE, Schema, fields, validate
+from marshmallow import Schema, fields, EXCLUDE
 
 
-#
-# PIDs
-#
-class PIDSchema(Schema):
-    """PIDs schema."""
+class ExternalPIDsSchema(Schema):
+    """External PIDs schema."""
+
+    class Meta:
+
+        unknown = EXCLUDE
 
     identifier = fields.Str(required=True)
     provider = fields.Str(required=True)

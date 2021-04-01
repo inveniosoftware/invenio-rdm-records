@@ -17,7 +17,7 @@ from marshmallow_utils.permissions import FieldPermissionsMixin
 from .access import AccessSchema
 from .metadata import MetadataSchema
 from .parent import RDMParentSchema
-from .pids import PIDSchema
+from .external_pids import ExternalPIDsSchema
 from .versions import VersionsSchema
 
 
@@ -39,7 +39,7 @@ class RDMRecordSchema(RecordSchema, FieldPermissionsMixin):
         'files': 'read_files',
     }
 
-    pids = fields.List(NestedAttribute(PIDSchema))
+    pids = NestedAttribute(ExternalPIDsSchema)
     metadata = NestedAttribute(MetadataSchema)
     # ext = fields.Method('dump_extensions', 'load_extensions')
     # tombstone

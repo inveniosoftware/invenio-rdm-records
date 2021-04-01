@@ -9,7 +9,6 @@
 
 """RDM Record Service."""
 
-from flask_babelex import lazy_gettext as _
 from invenio_drafts_resources.services.records.components import \
     DraftFilesComponent, PIDComponent
 from invenio_drafts_resources.services.records.config import \
@@ -19,8 +18,10 @@ from invenio_records_resources.services import ConditionalLink, \
     FileServiceConfig, RecordLink
 from invenio_records_resources.services.records.search import terms_filter
 
+from ..external_pids import Providers
 from ..records import RDMDraft, RDMRecord
-from .components import AccessComponent, MetadataComponent
+from .components import AccessComponent, MetadataComponent, \
+    ExternalPIDsComponent
 from .permissions import RDMRecordPermissionPolicy
 from .result_items import SecretLinkItem, SecretLinkList
 from .schemas import RDMParentSchema, RDMRecordSchema
@@ -125,7 +126,11 @@ class RDMRecordServiceConfig(RecordServiceConfig):
         AccessComponent,
         DraftFilesComponent,
         PIDComponent,
+        ExternalPIDsComponent,
     ]
+
+    # External PIDs providers
+    external_pids_providers = Providers
 
     # Links
     links_item = {

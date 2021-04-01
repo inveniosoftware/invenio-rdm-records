@@ -139,3 +139,55 @@ class MetadataComponent(ServiceComponent):
         # (publication date and version)
         for f in self.new_version_skip_fields:
             draft.metadata.pop(f, None)
+
+
+class ExternalPIDsComponent(ServiceComponent):
+    """."""
+
+    def create(self, identity, data=None, record=None, **kwargs):
+        """Create a draft for a new record."""
+        external_pids = data.get("pids")
+        for scheme, obj in external_pids.items():
+            external_pid = obj["identifier"]
+            # TODO:
+            # provider == "external"?
+            # yes: check and fail if already existing
+            # no:
+            # 0. fail if identifier empty?
+            # 1. verify provider and client (if provider) exist
+            # 2. if new, reserve/register PID
+
+        record["pids"] = external_pids
+
+    def read(self, identity, **kwargs):
+        pass
+
+    def update(self, identity, **kwargs):
+        pass
+
+    def delete(self, identity, **kwargs):
+        pass
+
+    def read_draft(self, identity, **kwargs):
+        pass
+
+    def update_draft(self, identity, **kwargs):
+        pass
+
+    def edit(self, identity, **kwargs):
+        """Create a new revision or a draft for an existing record."""
+        pass
+
+    def publish(self, identity, **kwargs):
+        # TODO: provider.register()
+        pass
+
+    def new_version(self, identity, **kwargs):
+        # TODO: from the copied metadata, remove managed PID
+        # should we call provider.reserve? (check Zenodo behavior)
+        pass
+
+    def delete_draft(self, identity, **kwargs):
+        pass
+
+

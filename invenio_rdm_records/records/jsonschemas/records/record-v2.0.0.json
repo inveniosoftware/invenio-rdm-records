@@ -481,7 +481,8 @@
 
     "pids": {
       "additionalProperties": {"$ref": "#/definitions/external-pid"},
-      "description": "Managed persistent identifiers for a record including e.g. OAI-PMH identifier, minted DOIs and more. Managed PIDs are registered in the PIDStore"
+      "description": "External persistent identifiers for a record including e.g. OAI-PMH identifier, minted DOIs and more. PIDs are registered in the PIDStore.",
+      "uniqueItems": true
     },
 
     "metadata": {
