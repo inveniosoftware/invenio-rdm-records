@@ -4,59 +4,6 @@
   "title": "InvenioRDM Parent Record Schema v1.0.0",
   "type": "object",
   "additionalProperties": false,
-
-  "definitions": {
-    "user": {
-      "type": "object",
-      "description": "A user, referenced by their ID",
-      "additionalProperties": false,
-      "properties": {
-        "user": {
-          "type": "integer"
-        }
-      }
-    },
-
-    "agent": {
-      "description": "An agent (user, software process, community, ...).",
-      "oneOf": [
-        {"$ref": "#/definitions/user"}
-      ]
-    },
-
-    "internal-pid": {
-      "type": "object",
-      "description": "An internal persistent identifier object.",
-      "additionalProperties": false,
-      "required": ["pk", "status"],
-      "properties": {
-        "pk": {
-          "description": "Primary key of the PID object.",
-          "type": "integer"
-        },
-        "status": {
-          "description": "The status of the PID (from Invenio-PIDStore).",
-          "type": "string",
-          "enum": [
-            "N",
-            "K",
-            "R",
-            "M",
-            "D"
-          ]
-        },
-        "pid_type": {
-          "description": "The type of the persistent identifier.",
-          "type": "string"
-        },
-        "obj_type": {
-          "description": "The type of the associated object.",
-          "type": "string"
-        }
-      }
-    }
-  },
-
   "properties": {
     "$schema": {
       "description": "JSONSchema declaration.",
@@ -68,7 +15,7 @@
       "type": "string"
     },
 
-    "pid": {"$ref": "#/definitions/internal-pid"},
+    "pid": {"$ref": "local://records/definitions-v1.0.0.json#/internal-pid"},
 
     "access": {
       "type": "object",
@@ -80,7 +27,7 @@
           "description": "List of owners of the child records.",
           "type": "array",
           "uniqueItems": true,
-          "items": {"$ref": "#/definitions/agent"}
+          "items": {"$ref": "local://records/definitions-v1.0.0.json#/agent"}
         },
 
         "grants": {
