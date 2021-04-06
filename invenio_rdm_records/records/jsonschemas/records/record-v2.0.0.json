@@ -4,470 +4,6 @@
   "title": "InvenioRDM Record Schema v2.0.0",
   "type": "object",
   "additionalProperties": false,
-
-  "definitions": {
-
-    "nameType": {
-      "description": "Type of name.",
-      "type": "string",
-      "enum": [
-        "personal",
-        "organizational"
-      ]
-    },
-
-    "titleType": {
-      "description": "Type of title.",
-      "type": "string"
-    },
-
-    "contributorType": {
-      "type": "string"
-    },
-
-    "dateType": {
-      "description": "Type of the date.",
-      "type": "string"
-    },
-
-    "relationType": {
-      "type": "string"
-    },
-
-    "descriptionType": {
-      "type": "string"
-    },
-
-    "language": {
-      "type": "object",
-      "properties": {
-        "id": {
-          "type": "string"
-        }
-      }
-    },
-
-    "longitude": {
-      "type": "number",
-      "minimum": -180,
-      "maximum": 180
-    },
-
-    "latitude": {
-      "type": "number",
-      "minimum": -90,
-      "maximum": 90
-    },
-
-    "scheme": {
-      "description": "A scheme.",
-      "type": "string"
-    },
-
-    "identifier": {
-      "description": "An identifier.",
-      "type": "string"
-    },
-
-    "identifiers": {
-      "description": "Identifiers object (keys being scheme, value being the identifier).",
-      "type": "object",
-      "additionalProperties": {"$ref": "#/definitions/identifier"}
-    },
-
-    "identifiers_with_scheme": {
-      "description": "Identifiers object with identifier value and scheme in separate keys.",
-      "type": "object",
-      "additionalProperties": false,
-      "properties": {
-        "identifier": {"$ref": "#/definitions/identifier"},
-        "scheme": {"$ref": "#/definitions/scheme"}
-      }
-    },
-
-    "internal-pid": {
-      "type": "object",
-      "description": "An internal persistent identifier object.",
-      "additionalProperties": false,
-      "required": ["pk", "status"],
-      "properties": {
-        "pk": {
-          "description": "Primary key of the PID object.",
-          "type": "integer"
-        },
-        "status": {
-          "description": "The status of the PID (from Invenio-PIDStore).",
-          "type": "string",
-          "enum": [
-            "N",
-            "K",
-            "R",
-            "M",
-            "D"
-          ]
-        },
-        "pid_type": {
-          "description": "The type of the persistent identifier.",
-          "type": "string"
-        },
-        "obj_type": {
-          "description": "The type of the associated object.",
-          "type": "string"
-        }
-      }
-    },
-
-    "external-pid": {
-      "type": "object",
-      "description": "An external persistent identifier object.",
-      "additionalProperties": false,
-      "required": ["identifier", "provider"],
-      "properties": {
-        "identifier": {"$ref": "#/definitions/identifier"},
-        "provider": {
-          "description": "The provider of the persistent identifier.",
-          "type": "string"
-        },
-        "client": {
-          "description": "Client identifier for the specific PID.",
-          "type": "string"
-        }
-      }
-    },
-
-    "resource_type": {
-      "type": "object",
-      "additionalProperties": false,
-      "description": "A resource type.",
-      "properties": {
-        "type": {
-          "description": "The general resource type identifier.",
-          "type": "string"
-        },
-        "subtype": {
-          "description": "The specific resource type identifier.",
-          "type": "string"
-        }
-      },
-      "required": [
-        "type"
-      ]
-    },
-
-    "person_or_org": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": ["type"],
-      "properties": {
-        "name": {"type": "string"},
-        "type": {"$ref": "#/definitions/nameType"},
-        "given_name": {"type": "string"},
-        "family_name": {"type": "string"},
-        "identifiers": {
-          "type": "array",
-          "items": {"$ref": "#/definitions/identifiers_with_scheme"},
-          "uniqueItems": true
-        }
-      }
-    },
-
-    "affiliations": {
-      "type": "array",
-      "uniqueItems": true,
-      "items": {
-          "type": "object",
-          "additionalProperties": false,
-          "properties": {
-            "name": {"type": "string"},
-            "identifiers": {
-              "type": "array",
-              "items": {"$ref": "#/definitions/identifiers_with_scheme"},
-              "uniqueItems": true
-            }
-          },
-          "required": ["name"]
-      }
-    },
-
-    "file": {
-      "type": "object",
-      "additionalProperties": false,
-      "description": "A file object.",
-      "properties": {
-        "version_id": {
-          "description": "Object version ID.",
-          "type": "string"
-        },
-        "bucket_id": {
-          "description": "Object verison bucket ID.",
-          "type": "string"
-        },
-        "mimetype": {
-          "description": "File MIMEType.",
-          "type": "string"
-        },
-        "uri": {
-          "description": "File URI.",
-          "type": "string"
-        },
-        "storage_class": {
-          "description": "File storage class.",
-          "type": "string"
-        },
-        "checksum": {
-          "description": "Checksum of the file.",
-          "type": "string"
-        },
-        "size": {
-          "description": "Size of the file in bytes.",
-          "type": "number"
-        },
-        "key": {
-          "description": "Key (filename) of the file.",
-          "type": "string"
-        },
-        "file_id": {"$ref": "#/definitions/identifier"}
-      }
-    },
-
-    "user": {
-      "type": "object",
-      "description": "A user, referenced by their ID",
-      "additionalProperties": false,
-      "properties": {
-        "user": {
-          "type": "integer"
-        }
-      }
-    },
-
-    "agent": {
-      "description": "An agent (user, software process, community, ...).",
-      "oneOf": [
-        {"$ref": "#/definitions/user"}
-      ]
-    },
-
-    "GeoJSON-Geometry": {
-      "$schema": "http://json-schema.org/draft-07/schema#",
-      "$id": "https://geojson.org/schema/Geometry.json",
-      "title": "GeoJSON Geometry",
-      "oneOf": [
-        {
-          "title": "GeoJSON Point",
-          "type": "object",
-          "required": [
-            "type",
-            "coordinates"
-          ],
-          "properties": {
-            "type": {
-              "type": "string",
-              "enum": [
-                "Point"
-              ]
-            },
-            "coordinates": {
-              "type": "array",
-              "minItems": 2,
-              "items": {
-                "type": "number"
-              }
-            },
-            "bbox": {
-              "type": "array",
-              "minItems": 4,
-              "items": {
-                "type": "number"
-              }
-            }
-          }
-        },
-        {
-          "title": "GeoJSON LineString",
-          "type": "object",
-          "required": [
-            "type",
-            "coordinates"
-          ],
-          "properties": {
-            "type": {
-              "type": "string",
-              "enum": [
-                "LineString"
-              ]
-            },
-            "coordinates": {
-              "type": "array",
-              "minItems": 2,
-              "items": {
-                "type": "array",
-                "minItems": 2,
-                "items": {
-                  "type": "number"
-                }
-              }
-            },
-            "bbox": {
-              "type": "array",
-              "minItems": 4,
-              "items": {
-                "type": "number"
-              }
-            }
-          }
-        },
-        {
-          "title": "GeoJSON Polygon",
-          "type": "object",
-          "required": [
-            "type",
-            "coordinates"
-          ],
-          "properties": {
-            "type": {
-              "type": "string",
-              "enum": [
-                "Polygon"
-              ]
-            },
-            "coordinates": {
-              "type": "array",
-              "items": {
-                "type": "array",
-                "minItems": 4,
-                "items": {
-                  "type": "array",
-                  "minItems": 2,
-                  "items": {
-                    "type": "number"
-                  }
-                }
-              }
-            },
-            "bbox": {
-              "type": "array",
-              "minItems": 4,
-              "items": {
-                "type": "number"
-              }
-            }
-          }
-        },
-        {
-          "title": "GeoJSON MultiPoint",
-          "type": "object",
-          "required": [
-            "type",
-            "coordinates"
-          ],
-          "properties": {
-            "type": {
-              "type": "string",
-              "enum": [
-                "MultiPoint"
-              ]
-            },
-            "coordinates": {
-              "type": "array",
-              "items": {
-                "type": "array",
-                "minItems": 2,
-                "items": {
-                  "type": "number"
-                }
-              }
-            },
-            "bbox": {
-              "type": "array",
-              "minItems": 4,
-              "items": {
-                "type": "number"
-              }
-            }
-          }
-        },
-        {
-          "title": "GeoJSON MultiLineString",
-          "type": "object",
-          "required": [
-            "type",
-            "coordinates"
-          ],
-          "properties": {
-            "type": {
-              "type": "string",
-              "enum": [
-                "MultiLineString"
-              ]
-            },
-            "coordinates": {
-              "type": "array",
-              "items": {
-                "type": "array",
-                "minItems": 2,
-                "items": {
-                  "type": "array",
-                  "minItems": 2,
-                  "items": {
-                    "type": "number"
-                  }
-                }
-              }
-            },
-            "bbox": {
-              "type": "array",
-              "minItems": 4,
-              "items": {
-                "type": "number"
-              }
-            }
-          }
-        },
-        {
-          "title": "GeoJSON MultiPolygon",
-          "type": "object",
-          "required": [
-            "type",
-            "coordinates"
-          ],
-          "properties": {
-            "type": {
-              "type": "string",
-              "enum": [
-                "MultiPolygon"
-              ]
-            },
-            "coordinates": {
-              "type": "array",
-              "items": {
-                "type": "array",
-                "items": {
-                  "type": "array",
-                  "minItems": 4,
-                  "items": {
-                    "type": "array",
-                    "minItems": 2,
-                    "items": {
-                      "type": "number"
-                    }
-                  }
-                }
-              }
-            },
-            "bbox": {
-              "type": "array",
-              "minItems": 4,
-              "items": {
-                "type": "number"
-              }
-            }
-          }
-        }
-      ]
-    }
-  },
-
   "properties": {
     "$schema": {
       "description": "JSONSchema declaration.",
@@ -477,10 +13,10 @@
       "description": "Persistent record identifier (alphanumeric).",
       "type": "string"
     },
-    "pid": {"$ref": "#/definitions/internal-pid"},
+    "pid": {"$ref": "local://records/definitions-v1.0.0.json#/internal-pid"},
 
     "pids": {
-      "additionalProperties": {"$ref": "#/definitions/external-pid"},
+      "additionalProperties": {"$ref": "local://records/definitions-v1.0.0.json#/external-pid"},
       "description": "Managed persistent identifiers for a record including e.g. OAI-PMH identifier, minted DOIs and more. Managed PIDs are registered in the PIDStore"
     },
 
@@ -490,7 +26,7 @@
       "additionalProperties": false,
       "properties": {
 
-        "resource_type": {"$ref": "#/definitions/resource_type"},
+        "resource_type": {"$ref": "local://records/definitions-v1.0.0.json#/resource_type"},
 
         "creators": {
           "description": "Creators of the resource.",
@@ -500,9 +36,9 @@
             "additionalProperties": false,
             "required": ["person_or_org"],
             "properties": {
-                "person_or_org": {"$ref": "#/definitions/person_or_org"},
+                "person_or_org": {"$ref": "local://records/definitions-v1.0.0.json#/person_or_org"},
                 "role": {"type": "string"},
-                "affiliations": {"$ref": "#/definitions/affiliations"}
+                "affiliations": {"$ref": "local://records/definitions-v1.0.0.json#/affiliations"}
             }
           }
         },
@@ -523,8 +59,8 @@
                   "description": "Additional title of the record.",
                   "type": "string"
                 },
-                "type": {"$ref": "#/definitions/titleType"},
-                "lang": {"ref": "#/definitions/language"}
+                "type": {"$ref": "local://records/definitions-v1.0.0.json#/titleType"},
+                "lang": {"ref": "local://records/definitions-v1.0.0.json#/language"}
             }
           }
         },
@@ -545,8 +81,8 @@
               "additionalProperties": false,
               "properties": {
                   "subject": {"type": "string"},
-                  "identifier": {"$ref": "#/definitions/identifier"},
-                  "scheme": {"$ref": "#/definitions/scheme"}
+                  "identifier": {"$ref": "local://records/definitions-v1.0.0.json#/identifier"},
+                  "scheme": {"$ref": "local://records/definitions-v1.0.0.json#/scheme"}
               },
               "required": ["subject"]
           }
@@ -560,9 +96,9 @@
             "additionalProperties": false,
             "required": ["person_or_org", "role"],
             "properties": {
-              "person_or_org": {"$ref": "#/definitions/person_or_org"},
-              "role": {"$ref": "#/definitions/contributorType"},
-              "affiliations": {"$ref": "#/definitions/affiliations"}
+              "person_or_org": {"$ref": "local://records/definitions-v1.0.0.json#/person_or_org"},
+              "role": {"$ref": "local://records/definitions-v1.0.0.json#/contributorType"},
+              "affiliations": {"$ref": "local://records/definitions-v1.0.0.json#/affiliations"}
             }
           }
         },
@@ -578,7 +114,7 @@
                 "description": "Date or date interval in EDTF level 0 format",
                 "type": "string"
               },
-              "type": {"$ref": "#/definitions/dateType"},
+              "type": {"$ref": "local://records/definitions-v1.0.0.json#/dateType"},
               "description": {
                 "description": "Description of the date or date interval e.g. 'Accepted' or 'Available' (CV).",
                 "type": "string"
@@ -590,13 +126,13 @@
         "languages": {
           "description": "The primary languages of the resource. ISO 639-3 language code.",
           "type": "array",
-          "items": {"$ref": "#/definitions/language"}
+          "items": {"$ref": "local://records/definitions-v1.0.0.json#/language"}
         },
 
         "identifiers": {
           "description": "Alternate identifiers for the record.",
           "type": "array",
-          "items": {"$ref": "#/definitions/identifiers_with_scheme"},
+          "items": {"$ref": "local://records/definitions-v1.0.0.json#/identifiers_with_scheme"},
           "uniqueItems": true
         },
 
@@ -607,10 +143,10 @@
               "type": "object",
               "additionalProperties": false,
               "properties": {
-                "identifier": {"$ref": "#/definitions/identifier"},
-                "scheme": {"$ref": "#/definitions/scheme"},
-                "relation_type": {"$ref": "#/definitions/relationType"},
-                "resource_type": {"$ref": "#/definitions/resource_type"}
+                "identifier": {"$ref": "local://records/definitions-v1.0.0.json#/identifier"},
+                "scheme": {"$ref": "local://records/definitions-v1.0.0.json#/scheme"},
+                "relation_type": {"$ref": "local://records/definitions-v1.0.0.json#/relationType"},
+                "resource_type": {"$ref": "local://records/definitions-v1.0.0.json#/resource_type"}
               }
           }
         },
@@ -641,7 +177,7 @@
             "type": "object",
             "additionalProperties": false,
             "properties": {
-              "id": {"$ref": "#/definitions/identifier"},
+              "id": {"$ref": "local://records/definitions-v1.0.0.json#/identifier"},
               "title": {
                 "description": "The license name or license itself. Free text.",
                 "type": "string"
@@ -673,8 +209,8 @@
                   "description": "Description for record.",
                   "type": "string"
                 },
-                "type": {"$ref": "#/definitions/descriptionType"},
-                "lang": {"ref": "#/definitions/language"}
+                "type": {"$ref": "local://records/definitions-v1.0.0.json#/descriptionType"},
+                "lang": {"ref": "local://records/definitions-v1.0.0.json#/language"}
             }
           }
         },
@@ -696,7 +232,7 @@
                 "properties": {
                   "geometry": {
                     "allOf": [{
-                      "$ref": "#/definitions/GeoJSON-Geometry"
+                      "$ref": "local://records/definitions-v1.0.0.json#/GeoJSON-Geometry"
                     }, {
                       "$comment": "Bounding boxes (`bbox`) are forbidden on our geometries, even though they're allowed on GeoJSON geometries",
                       "properties": {
@@ -708,7 +244,7 @@
                   },
                   "identifiers": {
                     "type": "array",
-                    "items": {"$ref": "#/definitions/identifiers_with_scheme"},
+                    "items": {"$ref": "local://records/definitions-v1.0.0.json#/identifiers_with_scheme"},
                     "uniqueItems": true
                   },
                   "place": {
@@ -745,8 +281,8 @@
                 "additionalProperties": false,
                 "properties": {
                   "name": {"type": "string"},
-                  "identifier": {"$ref": "#/definitions/identifier"},
-                  "scheme": {"$ref": "#/definitions/scheme"}
+                  "identifier": {"$ref": "local://records/definitions-v1.0.0.json#/identifier"},
+                  "scheme": {"$ref": "local://records/definitions-v1.0.0.json#/scheme"}
                 }
               },
               "award": {
@@ -755,8 +291,8 @@
                 "properties": {
                   "title": {"type": "string"},
                   "number": {"type": "string"},
-                  "identifier": {"$ref": "#/definitions/identifier"},
-                  "scheme": {"$ref": "#/definitions/scheme"}
+                  "identifier": {"$ref": "local://records/definitions-v1.0.0.json#/identifier"},
+                  "scheme": {"$ref": "local://records/definitions-v1.0.0.json#/scheme"}
                 }
               }
             }
@@ -774,8 +310,8 @@
                 "type": "string",
                 "description": "A reference string."
               },
-              "identifier": {"$ref": "#/definitions/identifier"},
-              "scheme": {"$ref": "#/definitions/scheme"}
+              "identifier": {"$ref": "local://records/definitions-v1.0.0.json#/identifier"},
+              "scheme": {"$ref": "local://records/definitions-v1.0.0.json#/scheme"}
             }
           }
         }
@@ -800,7 +336,7 @@
           "type": "string",
           "description": "Category for the removal."
         },
-        "removed_by": {"$ref": "#/definitions/agent"},
+        "removed_by": {"$ref": "local://records/definitions-v1.0.0.json#/agent"},
         "timestamp": {
           "type": "string",
           "description": "ISO8601 formatted timestamp in UTC.",
@@ -814,8 +350,8 @@
       "description": "Record provenance.",
       "additionalProperties": false,
       "properties": {
-        "created_by": {"$ref": "#/definitions/agent"},
-        "on_behalf_of": {"$ref": "#/definitions/agent"}
+        "created_by": {"$ref": "local://records/definitions-v1.0.0.json#/agent"},
+        "on_behalf_of": {"$ref": "local://records/definitions-v1.0.0.json#/agent"}
       }
     },
 
@@ -881,7 +417,7 @@
         },
         "entries": {
           "type": "object",
-          "additionalProperties": {"$ref": "#/definitions/file"}
+          "additionalProperties": {"$ref": "local://records/definitions-v1.0.0.json#/file"}
         },
         "meta": {
           "type": "object",
