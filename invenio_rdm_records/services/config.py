@@ -47,9 +47,9 @@ class RDMSearchOptions(SearchOptions):
                     }
                 }
             },
-            # 'access_right': {
-            #     'terms': {'field': 'access.access_right'},
-            # },
+            'access_status': {
+                'terms': {'field': 'access.status'},
+            },
             # 'languages': {
             #     'terms': {'field': 'metadata.languages.id'},
             # },
@@ -59,8 +59,8 @@ class RDMSearchOptions(SearchOptions):
                 'metadata.resource_type.type',
                 'metadata.resource_type.subtype',
                 splitchar='::',
-            )
-            # 'access_right': terms_filter('access.access_right'),
+            ),
+            'access_status': terms_filter('access.status'),
             # 'languages': terms_filter('metadata.languages.id'),
         }
     )
@@ -79,9 +79,9 @@ class RDMSearchDraftsOptions(SearchDraftsOptions):
                     }
                 }
             },
-            # 'access_right': {
-            #     'terms': {'field': 'access.access_right'},
-            # },
+            'access_status': {
+                'terms': {'field': 'access.status'},
+            },
             # 'languages': {
             #     'terms': {'field': 'metadata.languages.id'},
             # },
@@ -92,7 +92,7 @@ class RDMSearchDraftsOptions(SearchDraftsOptions):
         post_filters={
             'subtype': terms_filter('metadata.resource_type.subtype'),
             'resource_type': terms_filter('metadata.resource_type.type'),
-            # 'access_right': terms_filter('access.access_right'),
+            'access_status': terms_filter('access.status'),
             # 'languages': terms_filter('metadata.languages.id'),
             'is_published': terms_filter('is_published'),
         }

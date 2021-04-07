@@ -15,8 +15,15 @@ from invenio_rdm_records.resources.serializers import UIJSONSerializer
 
 def test_ui_serializer(app, full_record):
     """Test UI serializer."""
+    full_record['access']['status'] = 'embargoed'
     expected_data = {
-        # 'access_right': {},
+        'access_status': {
+            'description_l10n': 'The record and files will be made publicly '
+                                'available on Jan 1, 2131.',
+            'icon': '',
+            'id': 'embargoed',
+            'title_l10n': 'Embargoed'
+        },
         'contributors': {
             'affiliations': [[1, 'CERN']],
             'contributors': [{

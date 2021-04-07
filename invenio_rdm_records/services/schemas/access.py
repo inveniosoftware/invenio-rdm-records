@@ -14,7 +14,7 @@ from flask_babelex import lazy_gettext as _
 from marshmallow import Schema, ValidationError, fields, validates, \
     validates_schema
 from marshmallow_utils.fields import ISODateString, SanitizedUnicode
-from marshmallow_utils.permissions import FieldPermissionsMixin
+from marshmallow_utils.fields.nestedattr import NestedAttribute
 
 
 class EmbargoSchema(Schema):
@@ -57,17 +57,24 @@ class AccessSchema(Schema):
 
     record = SanitizedUnicode(required=True)
     files = SanitizedUnicode(required=True)
-    embargo = fields.Nested(EmbargoSchema)
+    embargo = NestedAttribute(EmbargoSchema)
+    status = SanitizedUnicode(dump_only=False)
 
     def validate_protection_value(self, value, field_name):
         """Check that the protection value is valid."""
         if value not in ["public", "restricted"]:
             raise ValidationError(
-                _("'{}' must be either 'public' or 'restricted'").format(
-                    field_name
-                ),
+                _(f"'{field_name}' must be either 'public' or 'restricted'"),
                 "record"
             )
+
+    def get_attribute(self, obj, key, default):
+        """Override from where we get attributes when serializing."""
+        if key in ["record", "files"]:
+            return getattr(obj.protection, key, default)
+        elif key == "status":
+            return obj.status.value
+        return getattr(obj, key, default)
 
     @validates("record")
     def validate_record_protection(self, value):

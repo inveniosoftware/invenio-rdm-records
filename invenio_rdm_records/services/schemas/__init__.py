@@ -9,9 +9,9 @@
 
 """RDM record schemas."""
 
-from flask_babelex import lazy_gettext as _
 from invenio_drafts_resources.services.records.schema import RecordSchema
-from marshmallow import EXCLUDE, ValidationError, fields, post_dump, validates
+from marshmallow import EXCLUDE, ValidationError, fields, post_dump, \
+    pre_load, validates
 from marshmallow_utils.fields import NestedAttribute
 from marshmallow_utils.permissions import FieldPermissionsMixin
 from marshmallow_utils.schemas import IdentifierSchema
@@ -41,7 +41,7 @@ class RDMRecordSchema(RecordSchema, FieldPermissionsMixin):
     # ext = fields.Method('dump_extensions', 'load_extensions')
     # tombstone
     # provenance
-    access = fields.Nested(AccessSchema)
+    access = NestedAttribute(AccessSchema)
     # files = NestedAttribute(FilesSchema, dump_only=True)
     # notes = fields.List(fields.Nested(InternalNoteSchema))
     revision = fields.Integer(dump_only=True)
