@@ -171,4 +171,4 @@ RDM_RECORDS_UI_EDIT_URL = "/uploads/<pid_value>"
 """Default UI URL for the edit page of a Bibliographic Record."""
 
 #: Default site URL (used only when not in a context - e.g. like celery tasks).
-THEME_SITEURL = "http://localhost:5000"
+THEME_SITEURL = "http://127.0.0.1:5000"
