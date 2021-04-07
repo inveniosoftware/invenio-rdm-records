@@ -23,7 +23,7 @@ from marshmallow_utils.fields import StrippedHTML
 
 from invenio_rdm_records.vocabularies import Vocabularies
 
-from .fields import VocabularyTitleField
+from .fields import AccessStatusField, UIAccessStatus, VocabularyTitleField
 
 # Partial to make short definitions in below schema.
 FormatEDTF = partial(FormatEDTF_, locale=get_locale)
@@ -95,25 +95,6 @@ def record_version(obj):
         return f"v{obj['versions']['index']}"
 
     return field_data
-#
-# Object schema
-#
-# class AccessRightSchema(Schema):
-#     """Access right vocabulary."""
-
-#     category = fields.String(attribute='access_right', dump_only=True)
-
-#     icon = VocabularyField(
-#         'access_right',
-#         entry_key='icon',
-#         attribute='access_right'
-#     )
-
-#     title = VocabularyField(
-#         'access_right',
-#         entry_key='access_right_name',
-#         attribute='access_right'
-#     )
 
 
 class UIObjectSchema(Schema):
@@ -132,7 +113,7 @@ class UIObjectSchema(Schema):
     resource_type = VocabularyTitleField(
         'resource_type', attribute='metadata.resource_type')
 
-    # access_right = fields.Nested(AccessRightSchema, attribute='access')
+    access_status = AccessStatusField(attribute='access')
 
     creators = fields.Function(partial(make_affiliation_index, 'creators'))
 
@@ -186,6 +167,12 @@ class UIListSchema(Schema):
                     b['label'] = _("Published")
                 elif b.get('key') == 0:
                     b['label'] = _("New")
+
+        access_status_agg = aggs.get('access_status')
+        if access_status_agg:
+            for b in access_status_agg.get('buckets', []):
+                if b.get('key'):
+                    b['label'] = UIAccessStatus(b.get('key')).title
 
         # FIXME: This is hardcoded because vocabularies has not been
         # fully migrated. Ideally all would be treated equally in the for

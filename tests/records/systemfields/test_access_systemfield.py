@@ -256,14 +256,14 @@ def test_owners_creation(users):
 #
 
 
-def test_access_field_on_record(minimal_record, users):
+def test_access_field_on_record(minimal_record, parent, users):
     next_year = arrow.utcnow().datetime + timedelta(days=+365)
     minimal_record["access"]["embargo"] = {
         "until": next_year.strftime("%Y-%m-%d"),
         "active": True,
         "reason": "nothing in particular",
     }
-    rec = RDMRecord.create(minimal_record)
+    rec = RDMRecord.create(minimal_record, parent=parent)
 
     assert isinstance(rec.access, RecordAccess)
     assert isinstance(rec.access.protection, Protection)
@@ -290,14 +290,14 @@ def test_access_field_update_embargo(minimal_record, parent, users):
     minimal_record["access"]["embargo"]["reason"] = "can't remember"
 
 
-def test_access_field_clear_embargo(minimal_record):
+def test_access_field_clear_embargo(minimal_record, parent):
     next_year = arrow.utcnow().datetime + timedelta(days=+365)
     minimal_record["access"]["embargo"] = {
         "until": next_year.strftime("%Y-%m-%d"),
         "active": True,
         "reason": "nothing in particular",
     }
-    rec = RDMRecord.create(minimal_record)
+    rec = RDMRecord.create(minimal_record, parent=parent)
 
     rec.access.embargo.clear()
     assert not rec.access.embargo

@@ -27,6 +27,9 @@
                   "type": "text"
                 }
               }
+            },
+            "status" : {
+              "type": "keyword"
             }
           }
         },

@@ -8,10 +8,24 @@
 
 """Access system field."""
 
+from enum import Enum
+
 from invenio_records.systemfields import SystemField
 
 from ..embargo import Embargo
 from ..protection import Protection
+
+
+class AccessStatusEnum(Enum):
+    """Enum defining access statuses."""
+
+    OPEN = 'open'
+
+    EMBARGOED = 'embargoed'
+
+    RESTRICTED = 'restricted'
+
+    METADATA_ONLY = 'metadata-only'
 
 
 class RecordAccess:
@@ -26,6 +40,7 @@ class RecordAccess:
         embargo=None,
         protection_cls=None,
         embargo_cls=None,
+        has_files=None,
     ):
         """Create a new RecordAccess object for a record.
 
@@ -41,7 +56,28 @@ class RecordAccess:
         public = protection_cls("public", "public")
         self.protection = protection if protection is not None else public
         self.embargo = embargo if embargo is not None else embargo_cls()
+        self.has_files = has_files
         self.errors = []
+
+    @property
+    def status(self):
+        """Record's access status."""
+        status = AccessStatusEnum.RESTRICTED
+
+        if self.embargo.active:
+            status = AccessStatusEnum.EMBARGOED
+        elif self.protection.record == "public" and (
+            self.protection.files == "restricted" or not self.has_files
+        ):
+            status = AccessStatusEnum.METADATA_ONLY
+        elif (
+            self.protection.record
+            == self.protection.files
+            == "public"
+        ):
+            status = AccessStatusEnum.OPEN
+
+        return status
 
     def dump(self):
         """Dump the field values as dictionary."""
@@ -66,6 +102,7 @@ class RecordAccess:
         access_dict,
         protection_cls=None,
         embargo_cls=None,
+        has_files=None
     ):
         """Create a new Access object from the specified 'access' property.
 
@@ -97,6 +134,7 @@ class RecordAccess:
         access = cls(
             protection=protection,
             embargo=embargo,
+            has_files=has_files,
         )
         access.errors = errors
 
@@ -133,7 +171,10 @@ class RecordAccessField(SystemField):
 
         data = self.get_dictkey(instance)
         if data:
-            obj = self._access_obj_class.from_dict(data)
+            obj = self._access_obj_class.from_dict(
+                data,
+                has_files=len(instance.files)
+            )
         else:
             obj = self._access_obj_class()
 
@@ -173,3 +214,13 @@ class RecordAccessField(SystemField):
             # first place -- this was a problem in the unit test:
             # tests/resources/test_resources.py:test_simple_flow
             record["access"] = obj.dump()
+
+    def post_dump(self, record, data, dumper=None):
+        """Called before a record is dumped."""
+        if data.get("access") and isinstance(data.get("access"), dict):
+            data["access"]["status"] = record.access.status.value
+
+    def pre_load(self, data, loader=None):
+        """Called before a record is dumped."""
+        if data.get('access') and isinstance(data.get('access'), dict):
+            data['access'].pop('status')
