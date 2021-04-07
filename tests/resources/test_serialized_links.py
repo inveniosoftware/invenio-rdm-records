@@ -56,14 +56,14 @@ def test_draft_links(client, draft_json, minimal_record):
     read_draft_links = response.json["links"]
 
     expected_links = {
-        "self": f"https://localhost:5000/api/records/{pid_value}/draft",
-        "self_html": f"https://localhost:5000/uploads/{pid_value}",
-        "publish": f"https://localhost:5000/api/records/{pid_value}/draft/actions/publish",  # noqa
-        "versions": f"https://localhost:5000/api/records/{pid_value}/versions",
-        "latest": f"https://localhost:5000/api/records/{pid_value}/versions/latest",  # noqa
-        "latest_html": f"https://localhost:5000/records/{pid_value}/latest",  # noqa
-        "access_links": f"https://localhost:5000/api/records/{pid_value}/access/links",  # noqa
-        "files": f"https://localhost:5000/api/records/{pid_value}/draft/files",
+        "self": f"https://127.0.0.1:5000/api/records/{pid_value}/draft",
+        "self_html": f"https://127.0.0.1:5000/uploads/{pid_value}",
+        "publish": f"https://127.0.0.1:5000/api/records/{pid_value}/draft/actions/publish",  # noqa
+        "versions": f"https://127.0.0.1:5000/api/records/{pid_value}/versions",
+        "latest": f"https://127.0.0.1:5000/api/records/{pid_value}/versions/latest",  # noqa
+        "latest_html": f"https://127.0.0.1:5000/records/{pid_value}/latest",  # noqa
+        "access_links": f"https://127.0.0.1:5000/api/records/{pid_value}/access/links",  # noqa
+        "files": f"https://127.0.0.1:5000/api/records/{pid_value}/draft/files",
     }
     assert expected_links == created_draft_links == read_draft_links
 
@@ -76,15 +76,15 @@ def test_record_links(client, published_json):
     read_record_links = response.json["links"]
 
     expected_links = {
-        "self": f"https://localhost:5000/api/records/{pid_value}",
-        "self_html": f"https://localhost:5000/records/{pid_value}",
+        "self": f"https://127.0.0.1:5000/api/records/{pid_value}",
+        "self_html": f"https://127.0.0.1:5000/records/{pid_value}",
         # TODO: Uncomment when implemented
-        # "edit": f"https://localhost:5000/api/records/{pid_value}/draft",
-        "files": f"https://localhost:5000/api/records/{pid_value}/files",
-        "versions": f"https://localhost:5000/api/records/{pid_value}/versions",
-        "latest": f"https://localhost:5000/api/records/{pid_value}/versions/latest",  # noqa
-        "latest_html": f"https://localhost:5000/records/{pid_value}/latest",  # noqa
-        "access_links": f"https://localhost:5000/api/records/{pid_value}/access/links",  # noqa
+        # "edit": f"https://127.0.0.1:5000/api/records/{pid_value}/draft",
+        "files": f"https://127.0.0.1:5000/api/records/{pid_value}/files",
+        "versions": f"https://127.0.0.1:5000/api/records/{pid_value}/versions",
+        "latest": f"https://127.0.0.1:5000/api/records/{pid_value}/versions/latest",  # noqa
+        "latest_html": f"https://127.0.0.1:5000/records/{pid_value}/latest",  # noqa
+        "access_links": f"https://127.0.0.1:5000/api/records/{pid_value}/access/links",  # noqa
     }
     assert expected_links == published_record_links == read_record_links
 
@@ -96,7 +96,7 @@ def test_record_search_links(client, published_json):
 
     expected_links = {
         # NOTE: Variations are covered in records-resources
-        "self": "https://localhost:5000/api/records?page=1&size=25&sort=newest"
+        "self": "https://127.0.0.1:5000/api/records?page=1&size=25&sort=newest"
     }
     assert expected_links == search_record_links
 
@@ -108,6 +108,6 @@ def test_versions_search_links(client, published_json, headers):
     search_versions_links = response.json["links"]
 
     expected_links = {
-        "self": f"https://localhost:5000/api/records/{pid_value}/versions?page=1&size=25&sort=version"  # noqa
+        "self": f"https://127.0.0.1:5000/api/records/{pid_value}/versions?page=1&size=25&sort=version"  # noqa
     }
     assert expected_links == search_versions_links
