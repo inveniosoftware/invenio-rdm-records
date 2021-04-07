@@ -10,10 +10,12 @@
 from .access import GrantTokensDumperExt
 from .edtf import EDTFDumperExt, EDTFListDumperExt
 from .locations import LocationsDumper
+from .pids import PIDsDumperExt
 
 __all__ = (
     "EDTFDumperExt",
     "EDTFListDumperExt",
+    "PIDsDumperExt",
     "GrantTokensDumperExt",
     "LocationsDumper",
 )
