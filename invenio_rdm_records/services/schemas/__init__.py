@@ -9,8 +9,9 @@
 
 """RDM record schemas."""
 
+from flask_babelex import lazy_gettext as _
 from invenio_drafts_resources.services.records.schema import RecordSchema
-from marshmallow import EXCLUDE, fields, post_dump
+from marshmallow import EXCLUDE, ValidationError, fields, post_dump, validates
 from marshmallow_utils.fields import NestedAttribute
 from marshmallow_utils.permissions import FieldPermissionsMixin
 
@@ -23,6 +24,9 @@ from .versions import VersionsSchema
 
 class RDMRecordSchema(RecordSchema, FieldPermissionsMixin):
     """Record schema."""
+
+    #PIDS-FIXME
+    PIDS_TYPES = {"doi", "concep-doi", "oai"}
 
     class Meta:
         """Meta class."""
@@ -39,7 +43,7 @@ class RDMRecordSchema(RecordSchema, FieldPermissionsMixin):
         'files': 'read_files',
     }
 
-    pids = fields.List(NestedAttribute(PIDSchema))
+    pids = fields.Dict(keys=fields.String(), values=fields.Nested(PIDSchema))
     metadata = NestedAttribute(MetadataSchema)
     # ext = fields.Method('dump_extensions', 'load_extensions')
     # tombstone
@@ -80,6 +84,20 @@ class RDMRecordSchema(RecordSchema, FieldPermissionsMixin):
     #     ExtensionSchema = current_app_metadata_extensions.to_schema()
 
     #     return ExtensionSchema().load(value)
+
+    @validates("pids")
+    def validate_pids(self, value):
+        """Validates the keys of the pids are supported providers."""
+        # #PIDS-FIXME is this needed? Otherwise it will fail at sevice
+        # component level when processing. If needed add list of supported
+        # be careful on format not to explode the translation file
+
+        not_allowed_types = set(value.keys()) - self.PIDS_TYPES
+        if not_allowed_types:
+            raise ValidationError(
+                    _("Unkown PID type"),
+                    field_name="pids",
+                )
 
     @post_dump
     def default_nested(self, data, many, **kwargs):
