@@ -71,6 +71,24 @@
             }
           }
         },
+        "pids" : {
+          "properties" : {
+            "identifier" : {
+              "type" : "keyword"
+            },
+            "scheme" : {
+              "type" : "keyword"
+            },
+            "client" : {
+              "type" : "keyword",
+              "index": false
+            },
+            "provider" : {
+              "type" : "keyword",
+              "index": false
+            }
+          }
+        },
         "has_draft": {
           "type": "boolean"
         },

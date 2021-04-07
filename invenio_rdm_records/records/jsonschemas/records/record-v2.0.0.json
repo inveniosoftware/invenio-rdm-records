@@ -16,8 +16,13 @@
     "pid": {"$ref": "local://records/definitions-v1.0.0.json#/internal-pid"},
 
     "pids": {
-      "additionalProperties": {"$ref": "local://records/definitions-v1.0.0.json#/external-pid"},
-      "description": "Managed persistent identifiers for a record including e.g. OAI-PMH identifier, minted DOIs and more. Managed PIDs are registered in the PIDStore"
+      "type": "object",
+      "description": "External persistent identifiers for a record including e.g. OAI-PMH identifier, minted DOIs and more. PIDs are registered in the PIDStore.",
+      "items": {
+        "type": "object",
+        "additionalProperties": {"$ref": "local://records/definitions-v1.0.0.json#/external-pid"}
+      },
+      "uniqueItems": true
     },
 
     "metadata": {
