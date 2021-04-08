@@ -8,7 +8,7 @@
 """RDM parent record schema."""
 
 from invenio_drafts_resources.services.records.schema import ParentSchema
-from marshmallow import EXCLUDE, fields
+from marshmallow import fields
 from marshmallow_utils.permissions import FieldPermissionsMixin
 
 from .access import ParentAccessSchema
@@ -16,12 +16,6 @@ from .access import ParentAccessSchema
 
 class RDMParentSchema(ParentSchema, FieldPermissionsMixin):
     """Record schema."""
-
-    class Meta:
-        """Meta class."""
-
-        # TODO: RAISE instead!
-        unknown = EXCLUDE
 
     # omit the 'access' field from dumps, except for users with
     # 'manage' permissions

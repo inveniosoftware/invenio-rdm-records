@@ -16,14 +16,14 @@ from flask_babelex import gettext as _
 from invenio_i18n.ext import current_i18n
 # TODO
 # from invenio_vocabularies.api import VocabularyRegistry
-from marshmallow import INCLUDE, Schema, fields, missing
+from marshmallow import Schema, fields, missing
 from marshmallow_utils.fields import FormatDate as FormatDate_
 from marshmallow_utils.fields import FormatEDTF as FormatEDTF_
 from marshmallow_utils.fields import StrippedHTML
 
 from invenio_rdm_records.vocabularies import Vocabularies
 
-from .fields import VocabularyField, VocabularyTitleField
+from .fields import VocabularyTitleField
 
 # Partial to make short definitions in below schema.
 FormatEDTF = partial(FormatEDTF_, locale=get_locale)
@@ -151,11 +151,6 @@ class UIObjectSchema(Schema):
 # List schema
 class UIListSchema(Schema):
     """Schema for dumping extra information in the UI."""
-
-    class Meta:
-        """."""
-
-        unknown = INCLUDE
 
     hits = fields.Method('get_hits')
     aggregations = fields.Method('get_aggs')
