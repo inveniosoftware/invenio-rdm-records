@@ -13,8 +13,8 @@ from functools import partial
 from urllib import parse
 
 from flask_babelex import lazy_gettext as _
-from marshmallow import EXCLUDE, INCLUDE, Schema, ValidationError, fields, \
-    post_load, validate, validates_schema
+from marshmallow import Schema, ValidationError, fields, post_load, validate, \
+    validates_schema
 from marshmallow_utils.fields import EDTFDateString, IdentifierSet, \
     ISOLangString, SanitizedHTML, SanitizedUnicode
 from marshmallow_utils.schemas import GeometryObjectSchema, IdentifierSchema
@@ -428,11 +428,6 @@ class LocationSchema(Schema):
 class LanguageSchema(Schema):
     """Language schema."""
 
-    class Meta:
-        """Meta class to discard unknown fields."""
-
-        unknown = EXCLUDE
-
     id = SanitizedUnicode(required=True)
     title = fields.Raw(dump_only=True)
     description = fields.Raw(dump_only=True)
@@ -448,11 +443,6 @@ class MetadataSchema(Schema):
     field_dump_permissions = {
         # TODO: define "can_admin" action
     }
-
-    class Meta:
-        """Meta class to accept unknwon fields."""
-
-        unknown = INCLUDE
 
     # Metadata fields
     resource_type = ResourceType(required=True)

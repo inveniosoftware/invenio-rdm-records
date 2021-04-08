@@ -10,7 +10,7 @@
 """RDM record schemas."""
 
 from invenio_drafts_resources.services.records.schema import RecordSchema
-from marshmallow import EXCLUDE, fields, post_dump
+from marshmallow import fields, post_dump
 from marshmallow_utils.fields import NestedAttribute
 from marshmallow_utils.permissions import FieldPermissionsMixin
 
@@ -23,12 +23,6 @@ from .versions import VersionsSchema
 
 class RDMRecordSchema(RecordSchema, FieldPermissionsMixin):
     """Record schema."""
-
-    class Meta:
-        """Meta class."""
-
-        # TODO: RAISE instead!
-        unknown = EXCLUDE
 
     field_load_permissions = {
         'access': 'manage',
