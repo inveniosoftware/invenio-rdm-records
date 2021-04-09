@@ -168,6 +168,7 @@ class RDMFileDraftServiceConfig(FileServiceConfig):
     """Configuration for draft files."""
 
     record_cls = RDMDraft
+    permission_action_prefix = "draft_"
     permission_policy_cls = RDMRecordPermissionPolicy
 
     file_links_list = {

@@ -149,3 +149,72 @@ def test_only_owners_can_download_restricted_file(
     login_user(client, users[0])
     response = client.get(url, headers=headers)
     assert response.status_code == 200
+
+
+def test_record_files_cannot_be_deleted(
+        client, headers, record_w_restricted_file, users):
+    recid = record_w_restricted_file
+    url = f"/records/{recid}/files/test.pdf"
+
+    # Anonymous user can't delete a file
+    response = client.delete(url, headers=headers)
+    assert response.status_code == 405
+
+    # Different user can't delete file
+    login_user(client, users[1])
+    response = client.delete(url, headers=headers)
+    assert response.status_code == 405
+    logout_user(client)
+
+    # Owner can't delete a file
+    login_user(client, users[0])
+    response = client.delete(url, headers=headers)
+    assert response.status_code == 405
+
+
+def test_files_cannot_be_uploaded_to_records(
+        client, headers, record_w_restricted_file, users):
+    recid = record_w_restricted_file
+    url = f"/records/{recid}/files"
+
+    # Anonymous user can't upload a file
+    response = client.post(url, headers=headers, json=[{'key': 'test.pdf'}])
+    assert response.status_code == 405
+
+    # Different user can't upload a file
+    login_user(client, users[1])
+    response = client.post(url, headers=headers, json=[{'key': 'test.pdf'}])
+    assert response.status_code == 405
+    logout_user(client)
+
+    # Owner can't upload a file
+    login_user(client, users[0])
+    response = client.post(url, headers=headers, json=[{'key': 'test.pdf'}])
+    assert response.status_code == 405
+
+
+def test_record_files_options_cannot_be_modified(
+        client, headers, record_w_restricted_file, users):
+    recid = record_w_restricted_file
+    url = f"/records/{recid}/files"
+
+    # Anonymous user can't modify record file options
+    response = client.put(
+        url, headers=headers, json=[{'default_preview': 'test.pdf'}]
+    )
+    assert response.status_code == 405
+
+    # Different user can't modify record file options
+    login_user(client, users[1])
+    response = client.put(
+        url, headers=headers, json=[{'default_preview': 'test.pdf'}]
+    )
+    assert response.status_code == 405
+    logout_user(client)
+
+    # Owner can't modify record file options
+    login_user(client, users[0])
+    response = client.put(
+        url, headers=headers, json=[{'default_preview': 'test.pdf'}]
+    )
+    assert response.status_code == 405
