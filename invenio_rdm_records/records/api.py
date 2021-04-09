@@ -14,8 +14,8 @@ from invenio_drafts_resources.records.api import \
 from invenio_pidstore.models import PIDStatus
 from invenio_records.dumpers import ElasticsearchDumper
 from invenio_records.dumpers.relations import RelationDumperExt
-from invenio_records.systemfields import ConstantField, ModelField, \
-    RelationsField
+from invenio_records.systemfields import ConstantField, DictField, \
+    ModelField, RelationsField
 from invenio_records_resources.records.api import FileRecord
 from invenio_records_resources.records.systemfields import FilesField, \
     IndexField, PIDListRelation, PIDStatusCheckField
@@ -85,6 +85,8 @@ class CommonFieldsMixin:
     access = RecordAccessField()
 
     is_published = PIDStatusCheckField(status=PIDStatus.REGISTERED, dump=True)
+
+    pids = DictField("pids")
 
 
 #
