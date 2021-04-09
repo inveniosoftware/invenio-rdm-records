@@ -125,6 +125,7 @@ class RDMRecordResourceConfig(RecordResourceConfig):
 class RDMRecordFilesResourceConfig(FileResourceConfig):
     """Bibliographic record files resource config."""
 
+    allow_upload = False
     blueprint_name = "record_files"
     url_prefix = "/records/<pid_value>"
 
