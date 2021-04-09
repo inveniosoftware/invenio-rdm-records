@@ -139,3 +139,27 @@ class MetadataComponent(ServiceComponent):
         # (publication date and version)
         for f in self.new_version_skip_fields:
             draft.metadata.pop(f, None)
+
+
+class ExternalPIDsComponent(ServiceComponent):
+    """Service component for pids."""
+
+    def create(self, identity, data=None, record=None, **kwargs):
+        """Inject parsed pids to the record."""
+        record.pids = data.get('pids', {})
+
+    def update_draft(self, identity, data=None, record=None, **kwargs):
+        """Inject parsed pids to the record."""
+        record.pids = data.get('pids', {})
+
+    def publish(self, identity, draft=None, record=None, **kwargs):
+        """Update draft pids."""
+        record.pids = draft.get('pids', {})
+
+    def edit(self, identity, draft=None, record=None, **kwargs):
+        """Update draft pids."""
+        record.pids = record.get('pids', {})
+
+    def new_version(self, identity, draft=None, record=None, **kwargs):
+        """Update draft pids."""
+        record.pids = data.get('pids', {})

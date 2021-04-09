@@ -82,6 +82,13 @@ def create_fake_record():
                 "reason": "top secret material"
             },
         },
+        "pids":  {
+            "doi": {
+                "identifier": "10.5281/zenodo.1234",
+                "provider": "datacite",
+                "client": "zenodo"
+            }
+        },
         "metadata": {
             "resource_type": fake_resource_type(),
             "creators": [{
@@ -215,7 +222,11 @@ def create_fake_record():
                 "reference": "Reference to something et al.",
                 "identifier": "0000000114559647",
                 "scheme": "isni"
-            }]
+            }],
+            "identifiers": [{
+                "identifier": "ark:/123/456",
+                "scheme": "ark"
+            }],
         }
     }
 
