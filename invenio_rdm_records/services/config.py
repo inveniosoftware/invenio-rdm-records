@@ -22,7 +22,8 @@ from invenio_records_resources.services.records.links import RecordLink
 from invenio_records_resources.services.records.search import terms_filter
 
 from ..records import RDMDraft, RDMRecord
-from .components import AccessComponent, MetadataComponent
+from .components import AccessComponent, ExternalPIDsComponent, \
+    MetadataComponent
 from .permissions import RDMRecordPermissionPolicy
 from .result_items import SecretLinkItem, SecretLinkList
 from .schemas import RDMParentSchema, RDMRecordSchema
@@ -126,7 +127,10 @@ class RDMRecordServiceConfig(RecordServiceConfig):
         MetadataComponent,
         AccessComponent,
         DraftFilesComponent,
+        # for the internal `pid` field
         PIDComponent,
+        # for the `pids` field (external PIDs)
+        ExternalPIDsComponent,
     ]
 
     # Links
