@@ -75,12 +75,7 @@ def create_fake_record():
     data_to_use = {
         "access": {
             "record": "public",
-            "files": "restricted",
-            "embargo": {
-                "active": True,
-                "until": fake.future_date(end_date='+1y').strftime("%Y-%m-%d"),
-                "reason": "top secret material"
-            },
+            "files": "public",
         },
         "metadata": {
             "resource_type": fake_resource_type(),
