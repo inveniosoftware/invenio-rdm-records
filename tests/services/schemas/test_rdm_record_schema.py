@@ -19,9 +19,32 @@ def test_valid_pid(app, db, minimal_record, location):
             "identifier": "10.5281/zenodo.1234",
             "provider": "datacite",
             "client": "zenodo"
-        },
-        "oai": {
-            "identifier": "oai:zenodo.org:12345", "provider": "zenodo"
+        }
+    }
+
+    minimal_record["pids"] = valid_full
+    assert valid_full == RDMRecordSchema().load(minimal_record)["pids"]
+
+
+def test_valid_external(app, db, minimal_record, location):
+    valid_full = {
+        "doi": {
+            "identifier": "10.5281/zenodo.1234",
+            "provider": "external",
+        }
+    }
+
+    minimal_record["pids"] = valid_full
+    assert valid_full == RDMRecordSchema().load(minimal_record)["pids"]
+
+
+@pytest.mark.skip("Non idutils pid types are not supported yet")
+def test_valid_unknown_scheme(app, db, minimal_record, location):
+    valid_full = {
+        "rand-unknown": {
+            "identifier": "aa::bb::11:::22",
+            "provider": "datacite",
+            "client": "zenodo"
         }
     }
 
@@ -39,6 +62,20 @@ def test_invalid_pid(app, db, minimal_record, location):
         "invalid": {
             "identifier": "10.5281/zenodo.1234",
             "provider": "datacite",
+            "client": "zenodo"
+        }
+    }
+
+    minimal_record["pids"] = invalid_pid_type
+    with pytest.raises(ValidationError):
+        data = RDMRecordSchema().load(minimal_record)
+
+
+def test_invalid_external_with_client(app, db, minimal_record, location):
+    invalid_pid_type = {
+        "doi": {
+            "identifier": "10.5281/zenodo.1234",
+            "provider": "external",
             "client": "zenodo"
         }
     }

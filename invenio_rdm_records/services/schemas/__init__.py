@@ -14,6 +14,7 @@ from invenio_drafts_resources.services.records.schema import RecordSchema
 from marshmallow import EXCLUDE, ValidationError, fields, post_dump, validates
 from marshmallow_utils.fields import NestedAttribute
 from marshmallow_utils.permissions import FieldPermissionsMixin
+from marshmallow_utils.schemas import IdentifierSchema
 
 from .access import AccessSchema
 from .metadata import MetadataSchema
@@ -25,8 +26,7 @@ from .versions import VersionsSchema
 class RDMRecordSchema(RecordSchema, FieldPermissionsMixin):
     """Record schema."""
 
-    # PIDS-FIXME
-    PIDS_TYPES = {"doi", "concep-doi", "oai"}
+    PIDS_PROVIDER_EXTERNAL = "external"
 
     class Meta:
         """Meta class."""
@@ -88,14 +88,19 @@ class RDMRecordSchema(RecordSchema, FieldPermissionsMixin):
     @validates("pids")
     def validate_pids(self, value):
         """Validates the keys of the pids are supported providers."""
-        # #PIDS-FIXME is this needed? Otherwise it will fail at sevice
-        # component level when processing. If needed add list of supported
-        # be careful on format not to explode the translation file
+        for scheme, pid_attrs in value.items():
+            id_schema = IdentifierSchema(allow_all=True)
+            id_schema.load({
+                "scheme": scheme,
+                "identifier": pid_attrs.get("identifier")
+            })
 
-        not_allowed_types = set(value.keys()) - self.PIDS_TYPES
-        if not_allowed_types:
-            raise ValidationError(
-                    _("Unkown PID type"),
+            is_provider_external = \
+                pid_attrs.get("provider") == self.PIDS_PROVIDER_EXTERNAL
+            has_client = pid_attrs.get("client")
+            if is_provider_external and has_client:
+                raise ValidationError(
+                    _("External provider cannot have a client."),
                     field_name="pids",
                 )
 
