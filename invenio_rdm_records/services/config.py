@@ -122,6 +122,10 @@ class RDMRecordServiceConfig(RecordServiceConfig):
     search_drafts = RDMSearchDraftsOptions
     search_versions = SearchVersionsOptions
 
+    # PIDs providers
+    # PIDS-FIXME: setup default providers
+    pids_providers = {}
+
     # Components
     components = [
         MetadataComponent,
@@ -130,7 +134,8 @@ class RDMRecordServiceConfig(RecordServiceConfig):
         # for the internal `pid` field
         PIDComponent,
         # for the `pids` field (external PIDs)
-        ExternalPIDsComponent,
+        # PIDS-FIXME: Re-enable when pids implementation is ready
+        # ExternalPIDsComponent,
     ]
 
     # Links

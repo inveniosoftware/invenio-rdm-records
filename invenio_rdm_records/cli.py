@@ -77,13 +77,14 @@ def create_fake_record():
             "record": "public",
             "files": "public",
         },
-        "pids":  {
-            "doi": {
-                "identifier": "10.5281/zenodo.1234",
-                "provider": "datacite",
-                "client": "zenodo"
-            }
-        },
+        # PIDS-FIXME: re-enable
+        # "pids":  {
+        #     "doi": {
+        #         "identifier": "10.5281/zenodo.1234",
+        #         "provider": "datacite",
+        #         "client": "zenodo"
+        #     }
+        # },
         "metadata": {
             "resource_type": fake_resource_type(),
             "creators": [{
