@@ -10,7 +10,7 @@
 """Module tests."""
 
 import json
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 
 import arrow
 import pytest
@@ -639,12 +639,13 @@ def test_link_update(
 ):
     """Test the deletion of a secret link."""
     client = client_with_login
+    # Note, we test with and without timezone aware timestamps.
     in_10_days = datetime.utcnow() + timedelta(days=10)
-    in_10_days_str = in_10_days.strftime("%Y-%m-%dT00:00:00")
-    in_20_days = datetime.utcnow() + timedelta(days=20)
-    in_20_days_str = in_20_days.strftime("%Y-%m-%dT00:00:00")
+    in_10_days_str = in_10_days.replace(tzinfo=timezone.utc).isoformat()
+    in_20_days = arrow.utcnow() + timedelta(days=20)
+    in_20_days_str = in_20_days.isoformat()
     _10_days_ago = datetime.utcnow() - timedelta(days=10)
-    _10_days_ago_str = _10_days_ago.strftime("%Y-%m-%dT00:00:00")
+    _10_days_ago_str = _10_days_ago.isoformat()
 
     # Create and publish a draft
     recid = _create_and_publish(client, minimal_record, headers)
