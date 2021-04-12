@@ -71,27 +71,28 @@ def create_app():
 def full_record(users):
     """Full record data as dict coming from the external world."""
     return {
-        "pids": {
-            "doi": {
-                "identifier": "10.5281/zenodo.1234",
-                "provider": "datacite",
-                "client": "zenodo"
-            },
-            "concept-doi": {
-                "identifier": "10.5281/zenodo.1234",
-                "provider": "datacite",
-                "client": "zenodo"
-            },
-            "handle": {
-                "identifier": "9.12314",
-                "provider": "cern-handle",
-                "client": "zenodo"
-            },
-            "oai": {
-                "identifier": "oai:zenodo.org:12345",
-                "provider": "zenodo"
-            }
-        },
+        # PIDS-FIXME: re-enable
+        # "pids": {
+        #     "doi": {
+        #         "identifier": "10.5281/zenodo.1234",
+        #         "provider": "datacite",
+        #         "client": "zenodo"
+        #     },
+        #     "concept-doi": {
+        #         "identifier": "10.5281/zenodo.1234",
+        #         "provider": "datacite",
+        #         "client": "zenodo"
+        #     },
+        #     "handle": {
+        #         "identifier": "9.12314",
+        #         "provider": "cern-handle",
+        #         "client": "zenodo"
+        #     },
+        #     "oai": {
+        #         "identifier": "oai:zenodo.org:12345",
+        #         "provider": "zenodo"
+        #     }
+        # },
         "metadata": {
             "resource_type": {
                 "type": "publication",
@@ -271,6 +272,8 @@ def full_record(users):
 def minimal_record():
     """Minimal record data as dict coming from the external world."""
     return {
+        # PIDS-FIXME: re-enable
+        # "pids": {},
         "access": {
             "record": "public",
             "files": "public",

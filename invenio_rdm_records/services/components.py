@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2020 CERN.
+# Copyright (C) 2020-2021 CERN.
 # Copyright (C) 2020 Northwestern University.
 # Copyright (C) 2021 TU Wien.
 #
@@ -11,7 +11,9 @@
 
 from copy import copy
 
+from flask_babelex import lazy_gettext as _
 from invenio_access.permissions import system_process
+from invenio_pidstore.models import PIDStatus
 from invenio_records_resources.services.records.components import \
     ServiceComponent
 from marshmallow import ValidationError
@@ -144,22 +146,69 @@ class MetadataComponent(ServiceComponent):
 class ExternalPIDsComponent(ServiceComponent):
     """Service component for pids."""
 
+    def get_provider(self, scheme):
+        """Process a given PID with its provider."""
+        provider = self.service.config.pids_providers[scheme]
+
+        return provider
+
+    def _validate_pids(self, pids):
+        """Validate an iterator of pids."""
+        for scheme, pid_attrs in pids.items():
+            self.get_provider(scheme).validate(pid_attrs=pid_attrs)
+
     def create(self, identity, data=None, record=None, **kwargs):
         """Inject parsed pids to the record."""
-        record.pids = data.get('pids', {})
+        pids = data.get('pids', {})
+        self._validate_pids(pids)
+        record.pids = pids
 
     def update_draft(self, identity, data=None, record=None, **kwargs):
         """Inject parsed pids to the record."""
-        record.pids = data.get('pids', {})
+        pids = data.get('pids', {})
+        self._validate_pids(pids)
+        record.pids = pids
 
     def publish(self, identity, draft=None, record=None, **kwargs):
         """Update draft pids."""
-        record.pids = draft.get('pids', {})
+        pids = draft.get('pids', {})
+
+        for scheme, pid_attrs in pids.items():
+            provider = self.get_provider(scheme)
+            provider.validate(pid_attrs=pid_attrs)
+
+            identifier_value = pid_attrs.get("identifier")
+            if not identifier_value:
+                pid = provider.create()
+                pid_attrs["identifier"] = pid.value
+                pids[scheme] = pid_attrs
+
+            elif not provider.is_external():
+                raise ValidationError(
+                    _(f"Cannot create PID {scheme} with a given value," +
+                      "it must be assigned by the system."),
+                    field_name="pids"
+                )
+            else:
+                pid = provider.get(identifier_value)
+
+            # PIDS-FIXME: Move to provier.validate base class?
+            if pid.status != PIDStatus.RESERVED != PIDStatus.REGISTERED:
+                provider.reserve(pid)
 
     def edit(self, identity, draft=None, record=None, **kwargs):
         """Update draft pids."""
-        record.pids = record.get('pids', {})
+        # NOTE: getting from record instead of draft
+        # Do not allow to edit pids
+        pids = record.get('pids', {})
+        self._validate_pids(pids)
+        record.pids = pids
 
     def new_version(self, identity, draft=None, record=None, **kwargs):
         """Update draft pids."""
-        record.pids = data.get('pids', {})
+        pids = record.get('pids', {})
+
+        # PIDS-FIXME: Remove DOI (maybe all)
+        # new version should be no PIDS just concept?
+        self._validate_pids(pids)
+        record.pids = pids
