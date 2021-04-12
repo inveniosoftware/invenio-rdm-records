@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2020 CERN.
+# Copyright (C) 2020-2021 CERN.
 # Copyright (C) 2020 Northwestern University.
 # Copyright (C) 2021 TU Wien.
 #
@@ -9,9 +9,12 @@
 
 """Access schema for RDM parent record."""
 
+
+from datetime import timezone
+
 from flask_babelex import lazy_gettext as _
 from marshmallow import Schema, fields
-from marshmallow_utils.fields import SanitizedUnicode
+from marshmallow_utils.fields import SanitizedUnicode, TZDateTime
 
 
 class Grant(Schema):
@@ -26,8 +29,10 @@ class SecretLink(Schema):
     """Schema for a secret link."""
 
     id = fields.String(dump_only=True)
-    created_at = fields.DateTime(required=False)
-    expires_at = fields.DateTime(required=False)
+    created_at = TZDateTime(
+        timezone=timezone.utc, format='iso', required=False, dump_only=True)
+    expires_at = TZDateTime(
+        timezone=timezone.utc, format='iso', required=False)
     permission = fields.String(required=False)
     token = SanitizedUnicode(dump_only=True)
 
