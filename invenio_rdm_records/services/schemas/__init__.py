@@ -26,8 +26,6 @@ from .versions import VersionsSchema
 class RDMRecordSchema(RecordSchema, FieldPermissionsMixin):
     """Record schema."""
 
-    PIDS_PROVIDER_EXTERNAL = "external"
-
     class Meta:
         """Meta class."""
 
@@ -89,20 +87,13 @@ class RDMRecordSchema(RecordSchema, FieldPermissionsMixin):
     def validate_pids(self, value):
         """Validates the keys of the pids are supported providers."""
         for scheme, pid_attrs in value.items():
-            id_schema = IdentifierSchema(allow_all=True)
+            # The required flag applies to the identifier value
+            # It won't fail for empty allowing the components to reserve one
+            id_schema = IdentifierSchema(allow_all=True, required=True)
             id_schema.load({
                 "scheme": scheme,
                 "identifier": pid_attrs.get("identifier")
             })
-
-            is_provider_external = \
-                pid_attrs.get("provider") == self.PIDS_PROVIDER_EXTERNAL
-            has_client = pid_attrs.get("client")
-            if is_provider_external and has_client:
-                raise ValidationError(
-                    _("External provider cannot have a client."),
-                    field_name="pids",
-                )
 
     @post_dump
     def default_nested(self, data, many, **kwargs):

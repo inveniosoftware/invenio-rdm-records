@@ -122,6 +122,10 @@ class RDMRecordServiceConfig(RecordServiceConfig):
     search_drafts = RDMSearchDraftsOptions
     search_versions = SearchVersionsOptions
 
+    # PIDs providers
+    # PIDS-FIXME: setup default providers
+    pids_providers = {}
+
     # Components
     components = [
         MetadataComponent,
