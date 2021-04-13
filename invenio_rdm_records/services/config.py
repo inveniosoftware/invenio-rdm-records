@@ -19,7 +19,8 @@ from invenio_records_resources.services import ConditionalLink, \
     FileServiceConfig, RecordLink
 from invenio_records_resources.services.files.links import FileLink
 from invenio_records_resources.services.records.links import RecordLink
-from invenio_records_resources.services.records.search import terms_filter
+from invenio_records_resources.services.records.search import \
+    nested_terms_filter, terms_filter
 
 from ..records import RDMDraft, RDMRecord
 from .components import AccessComponent, ExternalPIDsComponent, \
@@ -54,8 +55,11 @@ class RDMSearchOptions(SearchOptions):
             # },
         },
         post_filters={
-            'subtype': terms_filter('metadata.resource_type.subtype'),
-            'resource_type': terms_filter('metadata.resource_type.type'),
+            'resource_type': nested_terms_filter(
+                'metadata.resource_type.type',
+                'metadata.resource_type.subtype',
+                splitchar='::',
+            )
             # 'access_right': terms_filter('access.access_right'),
             # 'languages': terms_filter('metadata.languages.id'),
         }
