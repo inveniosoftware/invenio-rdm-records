@@ -180,3 +180,26 @@ class RDMParentRecordLinksResourceConfig(RecordResourceConfig):
     }
 
     error_handlers = record_links_error_handlers
+
+
+class RDMPIDProviderResourceConfig(RecordResourceConfig):
+    """PID provider resource configuration."""
+
+    blueprint_name = "reserve"
+
+    url_prefix = "/records/<pid_value>/draft/pids"
+
+    routes = {
+        "item": "/<providers>"
+    }
+
+    request_view_args = {
+        "provider": ma.fields.Str(),
+        "pid_value": ma.fields.Str(),
+    }
+
+    response_handlers = {
+        "application/json": ResponseHandler(JSONSerializer())
+    }
+
+    error_handlers = record_links_error_handlers

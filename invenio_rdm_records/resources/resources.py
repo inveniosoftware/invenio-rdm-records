@@ -100,3 +100,36 @@ class RDMParentRecordLinksResource(RecordResource):
             identity=g.identity,
         )
         return items.to_dict(), 200
+
+
+class RDMPIDProviderResource(RecordResource):
+    """PID provider resource."""
+
+    def create_url_rules(self):
+        """Create the URL rules for the pid provider resource."""
+
+        def p(route):
+            """Prefix a route with the URL prefix."""
+            return f"{self.config.url_prefix}{route}"
+
+        routes = self.config.routes
+        return [
+            route("GET", p(routes["item"]), self.create),
+            route("DELETE", p(routes["item"]), self.delete),
+        ]
+
+    @request_view_args
+    @request_data
+    @response_handler()
+    def create(self):
+        """Reserve doi."""
+        # self.service.get_pid(
+        # )
+        return '122323423', 201  # PIDS-FIXME
+
+    @request_view_args
+    def delete(self):
+        """Delete  doi."""
+        # self.service.delete_pid(
+        # )
+        return "", 204

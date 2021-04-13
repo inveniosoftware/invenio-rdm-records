@@ -31,3 +31,9 @@ def create_parent_record_links_bp(app):
     """Create parent record links blueprint."""
     ext = app.extensions["invenio-rdm-records"]
     return ext.parent_record_links_resource.as_blueprint()
+
+
+def create_pid_resource_bp(app):
+    """Create pid resource blueprint."""
+    ext = app.extensions["invenio-rdm-records"]
+    return ext.pid_provider_resource.as_blueprint()
