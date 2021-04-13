@@ -295,3 +295,20 @@ class RDMRecordService(RecordService):
         self._index_related_records(record, parent)
 
         return True
+
+    def get_pid(
+        self, id_, identity,
+    ):
+        """Reserve doi."""
+        #  provider =
+        # find_the_provider_by_the_param_value
+        # (<provider param value>)
+        #  return provider.reserve(...)
+
+        return "1234"
+
+    def delete_pid(
+        self, id_, identity, doi,
+    ):
+        """Unreserve doi."""
+        return ""

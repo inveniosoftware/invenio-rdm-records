@@ -223,7 +223,7 @@ def test_update_draft(
     assert update_response.json["id"] == recid
     _validate_access(update_response.json, minimal_record)
 
-    # Check the updates where saved
+    # Check the updates were saved
     update_response = client.get(
         "/records/{}/draft".format(recid), headers=headers)
 
@@ -687,3 +687,42 @@ def test_link_update(
     assert link_result.status_code == 200
     assert link_result.json["expires_at"] == in_10_days_str
     assert link_result.json["permission"] == "read_files"
+
+
+def test_with_login(
+    app, client, minimal_record, client_with_login,
+    headers, es_clear,
+):
+    """Test the reserve function with client logged in."""
+    # GET with client login
+    client = client_with_login
+    get_pid = client.get(
+        '/records/1234/draft/pids/doi',
+        headers=headers)
+    assert get_pid.status_code == 201
+    # doi = get_pid.json["doi"]
+    # assert doi == "mydoi"
+
+
+@pytest.mark.skip("Needs to implementation of login")
+def test_without_login(
+    app, client, minimal_record, client_with_login,
+    headers, es_clear,
+):
+    """Test the reserve function" without client log in."""
+    # GET without client login
+    get_pid = client.get(
+        '/records/1234/draft/pids/doi',
+        headers=headers)
+    assert get_pid.status_code == 201
+
+
+def test_delete_pid_resource(
+     app, client, headers,
+):
+    """Test the unreserve function."""
+    # DELETE Unreserve
+    delete_pid = client.delete(
+        '/records/1234/draft/pids/doi',
+        headers=headers)
+    assert delete_pid.status_code == 204
