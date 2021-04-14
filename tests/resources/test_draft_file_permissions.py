@@ -33,7 +33,8 @@ def logout_user(client):
 
 
 def create_draft(client, record, headers):
-    """Create draft and return its id."""
+    """Create draft ready for file attachment and return its id."""
+    record["files"] = {"enabled": True}
     response = client.post("/records", json=record, headers=headers)
     assert response.status_code == 201
     return response.json['id']
@@ -48,7 +49,7 @@ def init_file(client, recid, headers):
     )
 
 
-def upload_file(client, recid, headers):
+def upload_file(client, recid):
     """Create draft and return its id."""
     return client.put(
         f"/records/{recid}/draft/files/test.pdf/content",
@@ -100,18 +101,18 @@ def test_only_owners_can_upload_file(
 
     # Anonymous user
     logout_user(client)
-    response = upload_file(client, recid, headers)
+    response = upload_file(client, recid)
     assert response.status_code == 403
 
     # Different user
     login_user(client, users[1])
-    response = upload_file(client, recid, headers)
+    response = upload_file(client, recid)
     assert response.status_code == 403
 
     # Owner
     logout_user(client)
     login_user(client, users[0])
-    response = upload_file(client, recid, headers)
+    response = upload_file(client, recid)
     assert response.status_code == 200
 
 
@@ -121,7 +122,7 @@ def test_only_owners_can_commit_file(
 
     recid = create_draft(client, minimal_record, headers)
     init_file(client, recid, headers)
-    upload_file(client, recid, headers)
+    upload_file(client, recid)
 
     # Anonymous user
     logout_user(client)
@@ -145,7 +146,7 @@ def create_draft_w_file(client, record, headers):
     recid = create_draft(client, record, headers)
     response = init_file(client, recid, headers)
     assert response.status_code == 201
-    response = upload_file(client, recid, headers)
+    response = upload_file(client, recid)
     assert response.status_code == 200
     response = commit_file(client, recid, headers)
     assert response.status_code == 200

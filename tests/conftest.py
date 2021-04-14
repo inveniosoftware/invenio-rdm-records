@@ -290,6 +290,9 @@ def minimal_record():
             "record": "public",
             "files": "public",
         },
+        "files": {
+            "enabled": False,  # Most tests don't care about files
+        },
         "metadata": {
             "publication_date": "2020-06-01",
             "resource_type": {

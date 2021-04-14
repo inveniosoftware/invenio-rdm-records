@@ -35,6 +35,7 @@ def logout_user(client):
 def create_record_w_file(client, record, headers):
     """Create record with a file."""
     # Create draft
+    record["files"] = {"enabled": True}
     response = client.post("/records", json=record, headers=headers)
     assert response.status_code == 201
     recid = response.json['id']
