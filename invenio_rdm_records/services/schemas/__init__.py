@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2020 CERN.
-# Copyright (C) 2020 Northwestern University.
+# Copyright (C) 2020-2021 CERN.
+# Copyright (C) 2020-2021 Northwestern University.
 # Copyright (C) 2021 TU Wien.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
@@ -10,13 +10,13 @@
 """RDM record schemas."""
 
 from invenio_drafts_resources.services.records.schema import RecordSchema
-from marshmallow import EXCLUDE, ValidationError, fields, post_dump, \
-    pre_load, validates
+from marshmallow import fields, post_dump
 from marshmallow_utils.fields import NestedAttribute
 from marshmallow_utils.permissions import FieldPermissionsMixin
 from marshmallow_utils.schemas import IdentifierSchema
 
 from .access import AccessSchema
+from .files import FilesSchema
 from .metadata import MetadataSchema
 from .parent import RDMParentSchema
 from .pids import PIDSchema
@@ -28,7 +28,7 @@ class RDMRecordSchema(RecordSchema, FieldPermissionsMixin):
 
     field_load_permissions = {
         'access': 'manage',
-        'files': 'update',
+        'files': 'update_draft',
     }
 
     field_dump_permissions = {
@@ -42,7 +42,7 @@ class RDMRecordSchema(RecordSchema, FieldPermissionsMixin):
     # tombstone
     # provenance
     access = NestedAttribute(AccessSchema)
-    # files = NestedAttribute(FilesSchema, dump_only=True)
+    files = fields.Nested(FilesSchema)
     # notes = fields.List(fields.Nested(InternalNoteSchema))
     revision = fields.Integer(dump_only=True)
     versions = NestedAttribute(VersionsSchema, dump_only=True)
