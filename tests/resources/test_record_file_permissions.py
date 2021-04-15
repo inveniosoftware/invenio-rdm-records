@@ -218,3 +218,24 @@ def test_record_files_options_cannot_be_modified(
         url, headers=headers, json=[{'default_preview': 'test.pdf'}]
     )
     assert response.status_code == 405
+
+
+def test_record_files_cannot_be_imported(
+        client, headers, record_w_restricted_file, users):
+    recid = record_w_restricted_file
+    url = f"/records/{recid}/actions/files-import"
+
+    # Anonymous user can't import record files
+    response = client.post(url, headers=headers)
+    assert response.status_code == 404
+
+    # Different user can't modify record file options
+    login_user(client, users[1])
+    response = response = client.post(url, headers=headers)
+    assert response.status_code == 404
+    logout_user(client)
+
+    # Owner can't modify record file options
+    login_user(client, users[0])
+    response = response = client.post(url, headers=headers)
+    assert response.status_code == 404

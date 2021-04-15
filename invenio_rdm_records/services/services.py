@@ -15,6 +15,7 @@ import arrow
 from flask_babelex import lazy_gettext as _
 from invenio_db import db
 from invenio_drafts_resources.services.records import RecordService
+from invenio_files_rest.models import ObjectVersion
 from invenio_records_resources.services.records.schema import \
     ServiceSchemaWrapper
 from marshmallow.exceptions import ValidationError
@@ -52,6 +53,51 @@ class RDMRecordService(RecordService):
         """Schema for secret links."""
         return ServiceSchemaWrapper(
             self, schema=self.config.schema_secret_link
+        )
+
+    def import_files(self, id_, identity):
+        """Import files from previous record version."""
+        # FIXME: Remove "registered_only=False" since it breaks access to an
+        # unpublished record.
+
+        draft = self.draft_cls.pid.resolve(id_, registered_only=False)
+        self.require_permission(identity, "update_draft", record=draft)
+
+        # Retrieve latest record
+        record = self.record_cls.get_record(draft.versions.latest_id)
+
+        if not draft.files.enabled or draft.files.items():
+            raise ValidationError(
+                _("Files should be enabled and no files uploaded.")
+            )
+
+        if not record.files.enabled or not record.files.bucket:
+            raise ValidationError(_("Record should have files enabled"))
+
+        # Set the record bucket on the draft
+        for o in ObjectVersion.get_by_bucket(record.bucket):
+            o.copy(bucket=draft.bucket)
+
+        # Copy over the files
+        for key, df in record.files.items():
+            # metadata
+            if df.metadata is not None:
+                draft.files[key] = df.object_version, df.metadata
+            else:
+                draft.files[key] = df.object_version
+
+        # Commit and index
+        draft.commit()
+        db.session.commit()
+        self.indexer.index(draft)
+
+        return self._draft_files.file_result_list(
+            self._draft_files,
+            identity,
+            results=draft.files.values(),
+            record=draft,
+            links_tpl=self._draft_files.file_links_list_tpl(id_),
+            links_item_tpl=self._draft_files.file_links_item_tpl(id_),
         )
 
     def _validate_secret_link_expires_at(

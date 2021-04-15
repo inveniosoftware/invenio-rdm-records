@@ -247,6 +247,51 @@ def test_only_owners_can_download_restricted_file(
     assert response.status_code == 200
 
 
+def test_only_owners_can_import_files(
+        client, headers, draft_w_public_file, users):
+    recid = draft_w_public_file
+
+    # Login with owner and publish draft with files
+    login_user(client, users[0])
+    response = client.post(
+        f"/records/{recid}/draft/actions/publish", headers=headers)
+    assert response.status_code == 202
+    assert response.json["id"] == recid
+    assert response.json["is_published"] is True
+    assert response.json["versions"]["index"] == 1
+
+    # Create new draft from the published record
+    response = client.post(f"/records/{recid}/versions", headers=headers)
+    assert response.status_code == 201
+    assert response.json["is_published"] is False
+    assert response.json["versions"]["index"] == 2
+    draft_id = response.json["id"]
+    logout_user(client)
+
+    url = f"/records/{draft_id}/draft/actions/files-import"
+
+    # Anonymous user can't import files from parent record
+    response = client.post(url, headers=headers)
+    assert response.status_code == 403
+
+    # Different user can't import files from parent record
+    login_user(client, users[1])
+    response = client.post(url, headers=headers)
+    assert response.status_code == 403
+    logout_user(client)
+
+    # Owner can import files from parent record
+    login_user(client, users[0])
+    response = client.post(url, headers=headers)
+    assert response.status_code == 201
+    assert response.json["entries"][0]["key"] == "test.pdf"
+
+    # Double check if files are copied from the parent record
+    response = client.get(f"/records/{draft_id}/draft/files", headers=headers)
+    assert response.status_code == 200
+    assert response.json["entries"][0]["key"] == "test.pdf"
+
+
 def test_only_owners_can_delete_file(
         client, headers, draft_w_public_file, users):
     recid = draft_w_public_file
