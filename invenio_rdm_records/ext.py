@@ -21,7 +21,7 @@ from . import config
 from .resources import RDMDraftFilesResourceConfig, \
     RDMParentRecordLinksResource, RDMParentRecordLinksResourceConfig, \
     RDMPIDProviderResource, RDMPIDProviderResourceConfig, \
-    RDMRecordFilesResourceConfig, RDMRecordResourceConfig
+    RDMRecordFilesResourceConfig, RDMRecordResource, RDMRecordResourceConfig
 from .secret_links import LinkNeed, SecretLink
 from .services import RDMFileDraftServiceConfig, RDMFileRecordServiceConfig, \
     RDMRecordService, RDMRecordServiceConfig
@@ -110,7 +110,7 @@ class InvenioRDMRecords(object):
 
     def init_resource(self, app):
         """Initialize vocabulary resources."""
-        self.records_resource = RecordResource(
+        self.records_resource = RDMRecordResource(
             RDMRecordResourceConfig,
             self.records_service,
         )

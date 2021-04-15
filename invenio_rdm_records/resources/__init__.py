@@ -10,11 +10,13 @@
 from .config import RDMDraftFilesResourceConfig, \
     RDMParentRecordLinksResourceConfig, RDMPIDProviderResourceConfig, \
     RDMRecordFilesResourceConfig, RDMRecordResourceConfig
-from .resources import RDMParentRecordLinksResource, RDMPIDProviderResource
+from .resources import RDMParentRecordLinksResource, RDMPIDProviderResource, \
+    RDMRecordResource
 
 __all__ = (
     "RDMDraftFilesResourceConfig",
     "RDMParentRecordLinksResource",
+    "RDMRecordResource",
     "RDMParentRecordLinksResourceConfig",
     "RDMPIDProviderResource",
     "RDMPIDProviderResourceConfig",
