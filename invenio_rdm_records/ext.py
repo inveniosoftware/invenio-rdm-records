@@ -19,8 +19,8 @@ from itsdangerous import SignatureExpired
 
 from . import config
 from .resources import RDMDraftFilesResourceConfig, \
+    RDMManagedPIDProviderResource, RDMManagedPIDProviderResourceConfig, \
     RDMParentRecordLinksResource, RDMParentRecordLinksResourceConfig, \
-    RDMPIDProviderResource, RDMPIDProviderResourceConfig, \
     RDMRecordFilesResourceConfig, RDMRecordResource, RDMRecordResourceConfig
 from .secret_links import LinkNeed, SecretLink
 from .services import RDMFileDraftServiceConfig, RDMFileRecordServiceConfig, \
@@ -140,7 +140,7 @@ class InvenioRDMRecords(object):
         )
 
         # PID provider
-        self.pid_provider_resource = RDMPIDProviderResource(
-            service=None,   # PIDS-FIXME
-            config=RDMPIDProviderResourceConfig,
+        self.pid_provider_resource = RDMManagedPIDProviderResource(
+            service=self.records_service,
+            config=RDMManagedPIDProviderResourceConfig,
         )

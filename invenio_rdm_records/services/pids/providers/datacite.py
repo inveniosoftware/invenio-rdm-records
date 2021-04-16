@@ -9,22 +9,33 @@
 
 from datacite import DataCiteRESTClient
 from datacite.errors import DataCiteError, HttpError
+from flask import current_app
 from invenio_pidstore.models import PIDStatus
 
-from .base import BaseClient, BaseProvider
+from .base import BaseClient, BasePIDProvider
 
 
 class DataCiteClient(BaseClient):
-    """DataCite client."""
+    """DataCite Client.
 
-    def __init__(self, username, password, prefix, test_mode, **kwards):
+    It Loads the values from config.
+    """
+
+    def __init__(self, name, username, password, prefix, test_mode, **kwards):
         """Constructor."""
-        super(DataCiteClient, self).__init__(username, password)
-        self.prefix = prefix
-        self.test_mode = test_mode
+        self.name = name
+        name = self.name.upper()
+        self.prefix = current_app.config[f"{name}_DATACITE_CLIENT_PREFIX"],
+        self.test_mode = \
+            current_app.config[f"{name}_DATACITE_CLIENT_TEST_MODE"],
+
+        super(DataCiteClient, self).__init__(
+            username=current_app.config[f"{name}_DATACITE_CLIENT_USERNAME"],
+            password=current_app.config[f"{name}_DATACITE_CLIENT_PASSWORD"],
+        )
 
 
-class DataCiteProvider(BaseProvider):
+class DataCitePIDProvider(BasePIDProvider):
     """DataCite Provider class.
 
     Note that DataCite is only contacted when a DOI is reserved or
@@ -32,7 +43,9 @@ class DataCiteProvider(BaseProvider):
     only at PIDStore level.
     """
 
-    def __init__(self, name, client, pid_type="doi",
+    name = "datacite"
+
+    def __init__(self, client, pid_type="doi",
                  default_status=PIDStatus.NEW, **kwargs):
         """Constructor."""
         self._client_credentials = client
@@ -40,8 +53,19 @@ class DataCiteProvider(BaseProvider):
             client.username, client.password, client.prefix, client.test_mode
         )
 
-        super(DataCiteProvider, self).__init__(
-            name, client, pid_type, default_status)
+        super(DataCitePIDProvider, self).__init__(
+            self.client, pid_type, default_status)
+
+    def _generate_id(self, recid, **kwargs):
+        """Generate a DOI."""
+        prefix = self.client.prefix
+
+        return '{prefix}/rdm.{recid}'.format(prefix=prefix, recid=recid)
+
+    def create(self, recid, **kwargs):
+        """Create a new DOI PID based on the record ID."""
+        pid_value = self._generate_id(recid)
+        return super().create(pid_value=pid_value, **kwargs)
 
     def reserve(self, record, pid):
         """Reserve a DOI (amounts to upload metadata, but not to mint).
@@ -67,7 +91,8 @@ class DataCiteProvider(BaseProvider):
         try:
             pid.register()
             # Set metadata for DOI
-            self.client.public_doi(metadata=record, doi=pid.pid_value)
+            self.client.public_doi(
+                metadata=record, url="PIDS-FIXME.com", doi=pid.pid_value)
         except (DataCiteError, HttpError):
             # PIDS-FIXME: PIDSTore logs, but invenio has almost no logs
             # A custom exception maybe better?
@@ -86,7 +111,8 @@ class DataCiteProvider(BaseProvider):
         # if pid.is_deleted():
         try:
             # Set metadata
-            self.client.update_doi(metadata=record, doi=pid.pid_value)
+            self.client.update_doi(
+                metadata=record, doi=pid.pid_value, url=None)
         except (DataCiteError, HttpError):
             raise
 
@@ -96,7 +122,7 @@ class DataCiteProvider(BaseProvider):
 
         return True
 
-    def unregister(self, pid, **kwargs):
+    def delete(self, pid, **kwargs):
         """Delete/unregister a registered DOI.
 
         If the PID has not been reserved then it's deleted only locally.
@@ -107,7 +133,6 @@ class DataCiteProvider(BaseProvider):
             if pid.is_reserved():  # Delete only works for draft DOIs
                 self.client.delete_doi(pid.pid_value)
             elif pid.is_registered():
-                # First try external in case of errors
                 self.client.hide_doi(pid.pid_value)
             # In any case gets deleted locally (New, Reserved or Registered)
             pid.delete()

@@ -7,217 +7,241 @@
 
 """Tests for the service ExternalPIDsComponent."""
 
+from functools import partial
+
 import pytest
+from invenio_pidstore.errors import PIDDoesNotExistError
 from invenio_pidstore.models import PIDStatus
 from marshmallow import ValidationError
 
+from invenio_rdm_records.services import RDMRecordService
 from invenio_rdm_records.services.components import ExternalPIDsComponent
-from invenio_rdm_records.services.pids.providers import BaseProvider, \
-    ExternalProvider
+from invenio_rdm_records.services.config import RDMRecordServiceConfig
+from invenio_rdm_records.services.pids.providers import BaseClient, \
+    BasePIDProvider, UnmanagedPIDProvider
 
 
 class TestRecord:
     """Custom record to ease component testing."""
+
     pids = None
 
+    def get(self, attr, default):
+        """Dummy accesor to pids, emulates descriptor."""
+        return self.pids
 
-class TestPID:
-    """Test PID mock class."""
 
-    def __init__(self, identifier=None):
+class TestClient(BaseClient):
+    """Dummy PID Client class."""
+
+    def __init__(self, **kwards):
         """Constructor."""
-        self.value = identifier or "1234"
-        self.status = PIDStatus.RESERVED
+        pass
 
 
-class TestProvider(BaseProvider):
-    """Custom provider for testing purposes."""
+class TestBaseProvider(BasePIDProvider):
+    """Test provider."""
 
-    def __init__(self, **kwargs):
+    def __init__(self, name="testprov", pid_type="testid", **kwargs):
         """Constructor."""
-        super(TestProvider, self).__init__(name="test-invenio")
+        self.counter = 1
+        super(TestBaseProvider, self).__init__(
+            name=name, pid_type=pid_type, **kwargs)
 
-    def create(self, **kwargs):
-        """Create a new PID."""
-        return TestPID()
-
-    # PIDS-FIXME: This should interact with the resolver?
-    def get(self, pid_value, **kwargs):
-        """Create a new PID."""
-        return TestPID(pid_value)
-
-    def validate(self, pid_attrs=None, **kwargs):
-        """Validate the PID."""
-        # PIDS-FIXME: Should this be moved to the base provider?
-        given_provider = pid_attrs.get("provider")
-
-        if self.name != given_provider:
-            raise ValidationError(
-                f"PID Provider {given_provider} not supported.",
-                field_name="pids"
-            )
-        if pid_attrs.get("identifier") == "12345":
-            raise ValidationError(
-                "PID does not correspond to record.",
-                field_name="pids"
-            )
+    def _generate_id(self, **kwargs):
+        """Generates an identifier value."""
+        self.counter += 1
+        return self.counter - 1
 
 
-class TestService:
+class TestServiceConfig(RDMRecordServiceConfig):
+    """Custom service config with only pid providers."""
+    pids_providers = {
+        "test": TestBaseProvider,
+        "unmanaged": UnmanagedPIDProvider
+    }
+
+    providers_clients = {
+        "test-client": TestClient
+    }
+
+
+class TestService(RDMRecordService):
     """Custom service."""
 
-    class TestServiceConfig:
-        """Custom service config with only pid providers."""
-        pids_providers = {
-            "test": TestProvider(
-                name="test-invenio",
-                client="test_pid"
-            ),
-            # NOTE: Always require an external provider
-            "external": ExternalProvider(name="test-external")
-        }
-
-    config = TestServiceConfig()
+    def __init__(self, config, **kwargs):
+        """Constructor for RDMRecordService."""
+        super(TestService, self).__init__(config, **kwargs)
 
 
 @pytest.fixture(scope="function")
-def external_pids_cmp():
-    return ExternalPIDsComponent(service=TestService())
+def unmanaged_pids_cmp():
+    service = TestService(config=TestServiceConfig())
+
+    return ExternalPIDsComponent(service=service)
 
 
-def test_create_invalid_provider_name(external_pids_cmp):
-    # Test that it fails on the provider validation step
+#
+# External Provider
+#
+
+def test_create_valid_pid_unmanaged(unmanaged_pids_cmp):
     data = {"pids": {
-        "test": {
-            "provider": "test-invalid",
-            "client": "test_pid"
-        }
-    }}
-
-    with pytest.raises(ValidationError):
-        external_pids_cmp.create(
-            identity=None, data=data, record=TestRecord())
-
-
-def test_create_valid_external_pid(external_pids_cmp):
-    data = {"pids": {
-        "external": {
+        "unmanaged": {
             "identifier": "somevalue",
-            "provider": "test-external",
+            "provider": "unmanaged",
         }
     }}
 
     record = TestRecord()
-    external_pids_cmp.create(identity=None, data=data, record=record)
+    unmanaged_pids_cmp.create(identity=None, data=data, record=record)
 
-    assert record.pids["external"]["identifier"] == "somevalue"
-    assert record.pids["external"]["provider"] == "test-external"
+    assert record.pids["unmanaged"]["identifier"] == "somevalue"
+    assert record.pids["unmanaged"]["provider"] == "unmanaged"
 
 
-def test_create_external_pid_no_value(external_pids_cmp):
+def test_create_unmanaged_pid_no_value(unmanaged_pids_cmp):
     data = {"pids": {
-        "test": {
-            "provider": "external",
+        "unmanaged": {
+            "provider": "unmanaged",
         }
     }}
 
+    record = TestRecord()
+    unmanaged_pids_cmp.create(identity=None, data=data, record=record)
+
+    assert not record.pids["unmanaged"].get("identifier")
+    assert record.pids["unmanaged"]["provider"] == "unmanaged"
+
+
+def test_publish_valid_pid_unmanaged(unmanaged_pids_cmp):
+    data = {"pids": {
+        "unmanaged": {
+            "identifier": "somevalue",
+            "provider": "unmanaged",
+        }
+    }}
+
+    record = TestRecord()
+    draft = TestRecord()
+    unmanaged_pids_cmp.create(identity=None, data=data, record=draft)
+    unmanaged_pids_cmp.publish(
+        identity=None, data=data, draft=draft, record=record)
+
+    assert record.pids["unmanaged"]["identifier"] == "somevalue"
+    assert record.pids["unmanaged"]["provider"] == "unmanaged"
+
+
+def test_publish_unmanaged_pid_no_value(unmanaged_pids_cmp):
+    data = {"pids": {
+        "unmanaged": {
+            "provider": "unmanaged",
+        }
+    }}
+
+    record = TestRecord()
+    draft = TestRecord()
+    unmanaged_pids_cmp.create(identity=None, data=data, record=draft)
+    # NOTE: Cannot publish without identifier value because the system
+    # cannot assign one (is unmanaged)
     with pytest.raises(ValidationError):
-        external_pids_cmp.create(
-            identity=None, data=data, record=TestRecord())
+        unmanaged_pids_cmp.publish(
+            identity=None, data=data, draft=draft, record=record)
 
 
-def test_update_no_change_pid(external_pids_cmp):
+#
+# Base/General provider
+#
+
+def test_update_no_change_pid(app, unmanaged_pids_cmp):
     data = {"pids": {
         "test": {
             "identifier": "1234",
-            "provider": "test-invenio",
-            "client": "test_pid"
+            "provider": "testprov",
+            "client": "test-client"
         }
     }}
 
     record = TestRecord()
-    external_pids_cmp.create(identity=None, data=data, record=record)
-    external_pids_cmp.update_draft(identity=None, data=data, record=record)
+    unmanaged_pids_cmp.create(identity=None, data=data, record=record)
+    unmanaged_pids_cmp.update_draft(identity=None, data=data, record=record)
 
     assert record.pids["test"]["identifier"] == "1234"
-    assert record.pids["test"]["provider"] == "test-invenio"
-    assert record.pids["test"]["client"] == "test_pid"
+    assert record.pids["test"]["provider"] == "testprov"
+    assert record.pids["test"]["client"] == "test-client"
 
 
-def test_update_add_pid_no_identifier(external_pids_cmp):
+def test_update_add_pid_no_identifier(app, unmanaged_pids_cmp):
     data = {"pids": {}}
     record = TestRecord()
-    external_pids_cmp.create(identity=None, data=data, record=record)
+    unmanaged_pids_cmp.create(identity=None, data=data, record=record)
 
-    data["pids"] = {"test": {
-        "provider": "test-invenio",
-        "client": "test_pid"
-    }}
-    external_pids_cmp.update_draft(identity=None, data=data, record=record)
+    data["pids"] = {
+        "test": {
+            "provider": "testprov",
+            "client": "test-client"
+        }
+    }
+    unmanaged_pids_cmp.update_draft(identity=None, data=data, record=record)
 
     assert not record.pids["test"].get("identifier")
-    assert record.pids["test"]["provider"] == "test-invenio"
-    assert record.pids["test"]["client"] == "test_pid"
+    assert record.pids["test"]["provider"] == "testprov"
+    assert record.pids["test"]["client"] == "test-client"
 
 
-def test_update_add_pid_no_identifier(external_pids_cmp):
+def test_update_add_pid_with_identifier(app, unmanaged_pids_cmp):
     data = {"pids": {}}
     record = TestRecord()
-    external_pids_cmp.create(identity=None, data=data, record=record)
+    unmanaged_pids_cmp.create(identity=None, data=data, record=record)
 
-    data["pids"] = {"test": {
-        "identifier": "1234",
-        "provider": "test-invenio",
-        "client": "test_pid"
-    }}
-    external_pids_cmp.update_draft(identity=None, data=data, record=record)
+    data["pids"] = {
+        "test": {
+            "identifier": "1234",
+            "provider": "testprov",
+            "client": "test-client"
+        }
+    }
+    unmanaged_pids_cmp.update_draft(identity=None, data=data, record=record)
 
     assert record.pids["test"]["identifier"] == "1234"
-    assert record.pids["test"]["provider"] == "test-invenio"
-    assert record.pids["test"]["client"] == "test_pid"
+    assert record.pids["test"]["provider"] == "testprov"
+    assert record.pids["test"]["client"] == "test-client"
 
 
-def test_update_add_reserved_pid(external_pids_cmp):
-    data = {"pids": {}}
-    record = TestRecord()
-    external_pids_cmp.create(identity=None, data=data, record=record)
-
-    data["pids"] = {"test": {
-        "identifier": "12345",
-        "provider": "test-invenio",
-        "client": "test_pid"
-    }}
-
-    with pytest.raises(ValidationError):
-        external_pids_cmp.update_draft(
-            identity=None, data=data, record=TestRecord())
+@pytest.mark.skip("PIDS-FIXME: the PID belongs to other record")
+def test_update_add_reserved_pid(app, unmanaged_pids_cmp):
+    pass
 
 
-@pytest.mark.skip("PIDS-FIXME re-enable")
-def test_publish_without_pid_value(external_pids_cmp):
+def test_publish_without_pid_value(app, unmanaged_pids_cmp):
     data = {"pids": {
         "test": {
-            "provider": "test-invenio",
-            "client": "test_pid"
+            "provider": "testprov",
+            "client": "test-client"
         }
     }}
 
     record = TestRecord()
-    external_pids_cmp.publish(identity=None, data=data, record=record)
+    draft = TestRecord()
+    unmanaged_pids_cmp.create(identity=None, data=data, record=draft)
+    unmanaged_pids_cmp.publish(
+        identity=None, data=data, draft=draft, record=record)
 
-    assert record.pids["test"]["identifier"] == "1234"
+    assert record.pids["test"]["identifier"]  # value depends on the counter
 
 
-@pytest.mark.skip("PIDS-FIXME re-enable")
-def test_publish_with_pid_value(external_pids_cmp):
+def test_publish_with_pid_value_not_created(app, unmanaged_pids_cmp):
     data = {"pids": {
         "test": {
             "identifier": "somevalue",
-            "provider": "test-invenio",
-            "client": "test_pid"
+            "provider": "testprov",
+            "client": "test-client"
         }
     }}
 
-    with pytest.raises(ValidationError):
-        external_pids_cmp.publish(
-            identity=None, data=data, record=TestRecord())
+    record = TestRecord()
+    draft = TestRecord()
+    unmanaged_pids_cmp.create(identity=None, data=data, record=draft)
+    with pytest.raises(PIDDoesNotExistError):
+        unmanaged_pids_cmp.publish(
+            identity=None, data=data, draft=draft, record=record)
