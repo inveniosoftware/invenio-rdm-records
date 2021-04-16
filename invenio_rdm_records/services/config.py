@@ -9,6 +9,8 @@
 
 """RDM Record Service."""
 
+from functools import partial
+
 from flask_babelex import lazy_gettext as _
 from invenio_drafts_resources.services.records.components import \
     DraftFilesComponent, PIDComponent
@@ -26,6 +28,8 @@ from ..records import RDMDraft, RDMRecord
 from .components import AccessComponent, ExternalPIDsComponent, \
     MetadataComponent
 from .permissions import RDMRecordPermissionPolicy
+from .pids.providers import DataCiteClient, DataCitePIDProvider, \
+    UnmanagedPIDProvider
 from .result_items import SecretLinkItem, SecretLinkList
 from .schemas import RDMParentSchema, RDMRecordSchema
 from .schemas.parent.access import SecretLink
@@ -127,8 +131,14 @@ class RDMRecordServiceConfig(RecordServiceConfig):
     search_versions = SearchVersionsOptions
 
     # PIDs providers
-    # PIDS-FIXME: setup default providers
-    pids_providers = {}
+    pids_providers = {
+        "unmanaged": UnmanagedPIDProvider,
+        "doi": DataCitePIDProvider,
+    }
+
+    providers_clients = {
+        "datacite": partial(DataCiteClient, name="inveniordm")
+    }
 
     # Components
     components = [
@@ -138,8 +148,7 @@ class RDMRecordServiceConfig(RecordServiceConfig):
         # for the internal `pid` field
         PIDComponent,
         # for the `pids` field (external PIDs)
-        # PIDS-FIXME: Re-enable when pids implementation is ready
-        # ExternalPIDsComponent,
+        ExternalPIDsComponent,
     ]
 
     # Links

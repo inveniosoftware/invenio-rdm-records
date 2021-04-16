@@ -7,11 +7,14 @@
 
 """PID Providers module."""
 
-from .base import BaseClient, BaseProvider
-from .external import ExternalProvider
+from .base import BaseClient, BasePIDProvider
+from .datacite import DataCiteClient, DataCitePIDProvider
+from .unmanaged import UnmanagedPIDProvider
 
 __all__ = (
     "BaseClient",
-    "BaseProvider",
-    "ExternalProvider",
+    "BasePIDProvider",
+    "DataCiteClient",
+    "DataCitePIDProvider",
+    "UnmanagedPIDProvider",
 )

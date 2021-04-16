@@ -20,17 +20,18 @@ class BaseClient:
         self.url = url
 
 
-class BaseProvider:
+class BasePIDProvider:
     """Base Provider class."""
+
+    name = "base"
 
     def _generate_id(self, **kwargs):
         """Generates an identifier value."""
         raise NotImplementedError
 
-    def __init__(self, name, client=None, pid_type=None,
+    def __init__(self, client=None, pid_type=None,
                  default_status=PIDStatus.NEW, system_managed=True, **kwargs):
         """Constructor."""
-        self.name = name
         self.client = client
         self.pid_type = pid_type
         self.default_status = default_status
@@ -46,20 +47,16 @@ class BaseProvider:
     def get(self, pid_value, pid_type=None, **kwargs):
         """Get a persistent identifier for this provider.
 
-        :param pid_type: Persistent identifier type. (Default: configured
-            :attr:`invenio_pidstore.providers.base.BaseProvider.pid_type`)
+        :param pid_type: Persistent identifier type.)
         :param pid_value: Persistent identifier value.
-        :param kwargs: See
-            :meth:`invenio_pidstore.providers.base.BaseProvider` required
-            initialization properties.
         :returns: A :class:`invenio_pidstore.models.base.PersistentIdentifier`
             instance.
         """
         return PersistentIdentifier.get(pid_type or self.pid_type, pid_value,
                                         pid_provider=self.name, **kwargs)
 
-    def create(self, pid_value=None, pid_type=None, object_type=None,
-               object_uuid=None, **kwargs):
+    def create(self, pid_value=None, pid_type=None, status=None,
+               object_type=None, object_uuid=None, **kwargs):
         """Create a new instance for the given type and pid.
 
         :param pid_value: Persistent identifier value. (Default: None).
@@ -108,7 +105,7 @@ class BaseProvider:
 
     def update(self, record, pid, **kwargs):
         """Update information about the persistent identifier."""
-        pass
+        raise NotImplementedError
 
     def delete(self, pid, **kwargs):
         """Delete a persistent identifier.
@@ -119,8 +116,8 @@ class BaseProvider:
 
     def get_status(self, identifier, **kwargs):
         """Get the status of the identifier."""
-        return self.get(identifier).status
+        return self.get(identifier, **kwargs).status
 
-    def validate(self, pid_attrs, **kwargs):
+    def validate(self, identifier=None, client=None, provider=None, **kwargs):
         """Validate the attributes of the identifier."""
-        return True
+        return provider == self.name

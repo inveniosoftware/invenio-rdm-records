@@ -132,7 +132,7 @@ class RDMParentRecordLinksResource(RecordResource):
         return items.to_dict(), 200
 
 
-class RDMPIDProviderResource(RecordResource):
+class RDMManagedPIDProviderResource(RecordResource):
     """PID provider resource."""
 
     def create_url_rules(self):
@@ -153,13 +153,23 @@ class RDMPIDProviderResource(RecordResource):
     @response_handler()
     def create(self):
         """Reserve doi."""
-        # self.service.get_pid(
-        # )
-        return '122323423', 201  # PIDS-FIXME
+        item = self.service.reserve_pid(
+            id_=resource_requestctx.view_args["pid_value"],
+            pid_type=resource_requestctx.view_args["pid_type"],
+            pid_client=resource_requestctx.args.get("client"),
+            identity=g.identity,
+        )
+
+        return item.to_dict(), 200
 
     @request_view_args
     def delete(self):
         """Delete  doi."""
-        # self.service.delete_pid(
-        # )
+        self.service.delete_pid(
+            id_=resource_requestctx.view_args["pid_value"],
+            pid_type=resource_requestctx.view_args["pid_type"],
+            pid_client=resource_requestctx.args.get("client"),
+            identity=g.identity,
+        )
+
         return "", 204

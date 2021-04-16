@@ -64,7 +64,7 @@ setup_requires = [
 
 install_requires = [
     'arrow>=0.17.0',
-    'datacite>=1.1.0',
+    'datacite>=1.1.1',
     'Faker>=2.0.3',
     'ftfy>=4.4.3,<5.0.0',
     'invenio-drafts-resources>=0.11.3,<0.12.0',

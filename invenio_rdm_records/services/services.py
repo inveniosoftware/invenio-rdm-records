@@ -342,19 +342,82 @@ class RDMRecordService(RecordService):
 
         return True
 
-    def get_pid(
-        self, id_, identity,
-    ):
-        """Reserve doi."""
-        #  provider =
-        # find_the_provider_by_the_param_value
-        # (<provider param value>)
-        #  return provider.reserve(...)
+    def get_provider(self, scheme, client=None):
+        """Process a given PID with its provider."""
+        provider_class = self.config.pids_providers.get(scheme)
 
-        return "1234"
+        if provider_class and client:
+            client_class = self.config.providers_clients.get(client)
+            return provider_class(client_class()) if client else None
+        elif provider_class:
+            return provider_class()
 
-    def delete_pid(
-        self, id_, identity, doi,
-    ):
-        """Unreserve doi."""
-        return ""
+        raise ValidationError(
+            message=_(f"Provider for PID type {scheme} client"
+                      f"{client} not supported"),
+            field_name="pids",
+        )
+
+    def reserve_pid(self, id_, identity, pid_type, pid_client=None):
+        """Reserve PID for a given record."""
+        draft = self.draft_cls.pid.resolve(id_, registered_only=False)
+
+        # Permissions
+        self.require_permission(identity, "manage", record=draft)
+
+        provider = self.get_provider(pid_type, client=pid_client)
+        pid = provider.create(id_)
+
+        draft.pids[pid_type] = {
+            "identifier": pid.pid_value,
+            "provider": provider.name
+        }
+        if provider.client:
+            draft.pids[pid_type]["client"] = provider._client_credentials.name
+
+        draft.commit()
+
+        provider.reserve(draft, pid)
+
+        return self.result_item(
+            self,
+            identity,
+            draft,
+            links_tpl=self.links_item_tpl,
+        )
+
+    def delete_pid(self, id_, identity, pid_type, pid_client=None):
+        """Delete PID for a given record.
+
+        It will be soft deleted if already registered.
+        """
+        draft = self.draft_cls.pid.resolve(id_, registered_only=False)
+
+        # Permissions
+        self.require_permission(identity, "manage", record=draft)
+
+        provider = self.get_provider(pid_type, client=pid_client)
+        pid_attr = draft.pids.get(pid_type)
+
+        if not pid_attr:
+            raise ValidationError(
+                message=_("Identifier value or client not given for PID " +
+                          f"type {pid_type}"),
+                field_name="pids",
+            )
+
+        pid = provider.get(
+            pid_value=pid_attr["identifier"],
+            pid_type=pid_type
+        )
+
+        deleted = provider.delete(pid)
+        draft.pids.pop(pid_type)
+        draft.commit()
+
+        return self.result_item(
+            self,
+            identity,
+            draft,
+            links_tpl=self.links_item_tpl,
+        )
