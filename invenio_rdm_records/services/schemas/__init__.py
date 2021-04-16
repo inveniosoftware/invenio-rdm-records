@@ -10,7 +10,7 @@
 """RDM record schemas."""
 
 from invenio_drafts_resources.services.records.schema import RecordSchema
-from marshmallow import fields, post_dump
+from marshmallow import fields, post_dump, validates
 from marshmallow_utils.fields import NestedAttribute
 from marshmallow_utils.permissions import FieldPermissionsMixin
 from marshmallow_utils.schemas import IdentifierSchema
@@ -35,8 +35,7 @@ class RDMRecordSchema(RecordSchema, FieldPermissionsMixin):
         'files': 'read_files',
     }
 
-    # PIDS-FIXME: Re-enable when pids implementation is ready
-    # pids = fields.Dict(keys=fields.String(), values=fields.Nested(PIDSchema))
+    pids = fields.Dict(keys=fields.String(), values=fields.Nested(PIDSchema))
     metadata = NestedAttribute(MetadataSchema)
     # ext = fields.Method('dump_extensions', 'load_extensions')
     # tombstone
@@ -78,18 +77,18 @@ class RDMRecordSchema(RecordSchema, FieldPermissionsMixin):
 
     #     return ExtensionSchema().load(value)
 
-    # @validates("pids")
-    # def validate_pids(self, value):
-    #     """Validates the keys of the pids are supported providers."""
-    #     for scheme, pid_attrs in value.items():
-    #         # The required flag applies to the identifier value
-    #         # It won't fail for empty allowing the components to reserve one
-    #         id_schema = IdentifierSchema(
-    #             fail_on_unknown=False, identifier_required=True)
-    #         id_schema.load({
-    #             "scheme": scheme,
-    #             "identifier": pid_attrs.get("identifier")
-    #         })
+    @validates("pids")
+    def validate_pids(self, value):
+        """Validates the keys of the pids are supported providers."""
+        for scheme, pid_attrs in value.items():
+            # The required flag applies to the identifier value
+            # It won't fail for empty allowing the components to reserve one
+            id_schema = IdentifierSchema(
+                fail_on_unknown=False, identifier_required=True)
+            id_schema.load({
+                "scheme": scheme,
+                "identifier": pid_attrs.get("identifier")
+            })
 
     @post_dump
     def default_nested(self, data, many, **kwargs):

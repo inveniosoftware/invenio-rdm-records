@@ -146,16 +146,11 @@ class MetadataComponent(ServiceComponent):
 class ExternalPIDsComponent(ServiceComponent):
     """Service component for pids."""
 
-    def get_provider(self, scheme):
-        """Process a given PID with its provider."""
-        provider = self.service.config.pids_providers[scheme]
-
-        return provider
-
     def _validate_pids(self, pids):
         """Validate an iterator of pids."""
         for scheme, pid_attrs in pids.items():
-            self.get_provider(scheme).validate(pid_attrs=pid_attrs)
+            self.service.get_provider(
+                scheme, pid_attrs.get("client")).validate(pid_attrs=pid_attrs)
 
     def create(self, identity, data=None, record=None, **kwargs):
         """Inject parsed pids to the record."""
@@ -174,27 +169,30 @@ class ExternalPIDsComponent(ServiceComponent):
         pids = draft.get('pids', {})
 
         for scheme, pid_attrs in pids.items():
-            provider = self.get_provider(scheme)
+            client = pid_attrs.get("client")
+            provider = self.service.get_provider(scheme, client)
             provider.validate(pid_attrs=pid_attrs)
 
             identifier_value = pid_attrs.get("identifier")
-            if not identifier_value:
-                pid = provider.create()
-                pid_attrs["identifier"] = pid.value
-                pids[scheme] = pid_attrs
+            if provider.is_managed():
+                if not identifier_value:
+                    pid = provider.create()
+                    pid_attrs["identifier"] = pid.pid_value
+                    pids[scheme] = pid_attrs
+                else:
+                    pid = provider.get(identifier_value)
+                # PIDS-FIXME: Move to provier.validate base class?
+                if pid.status != PIDStatus.RESERVED != PIDStatus.REGISTERED:
+                    provider.reserve(pid)
 
-            elif not provider.is_external():
+            elif not identifier_value:
                 raise ValidationError(
-                    _(f"Cannot create PID {scheme} with a given value," +
-                      "it must be assigned by the system."),
+                    _("Identifier value is required for the unmanaged PID " +
+                      f"provider {provider.name}"),
                     field_name="pids"
                 )
-            else:
-                pid = provider.get(identifier_value)
 
-            # PIDS-FIXME: Move to provier.validate base class?
-            if pid.status != PIDStatus.RESERVED != PIDStatus.REGISTERED:
-                provider.reserve(pid)
+        record.pids = pids
 
     def edit(self, identity, draft=None, record=None, **kwargs):
         """Update draft pids."""
@@ -211,4 +209,4 @@ class ExternalPIDsComponent(ServiceComponent):
         # PIDS-FIXME: Remove DOI (maybe all)
         # new version should be no PIDS just concept?
         self._validate_pids(pids)
-        record.pids = pids
+        draft.pids = pids
