@@ -78,8 +78,10 @@ def test_invalid_scheme_related_identifiers(app):
             "subtype": "image-photo"
         }
     }
-    with pytest.raises(ValidationError):
-        data = RelatedIdentifierSchema().load(invalid_scheme)
+
+    loaded = RelatedIdentifierSchema().load(invalid_scheme)
+    # Check the backend forced the correct scheme
+    assert loaded["scheme"] == "doi"
 
 
 def test_invalid_no_type_related_identifiers(app):

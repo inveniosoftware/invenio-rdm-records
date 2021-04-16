@@ -31,16 +31,6 @@ def test_valid_minimal():
     assert valid_minimal == RightsSchema().load(valid_minimal)
 
 
-def test_invalid_no_right():
-    invalid_no_right = {
-        "link": "https://opensource.org/licenses/BSD-3-Clause",
-        "identifier": "BSD-3",
-        "scheme": "BSD-3"
-    }
-    with pytest.raises(ValidationError):
-        data = RightsSchema().load(invalid_no_right)
-
-
 def test_invalid_extra_right():
     invalid_extra = {
         "rights": "Creative Commons Attribution 4.0 International",
@@ -63,16 +53,15 @@ def test_invalid_url():
         data = RightsSchema().load(invalid_url)
 
 
-@pytest.mark.skip(reason="idutils cannot validate spdx")
 @pytest.mark.parametrize("rights", [
     ([]),
     ([{
-        "rights": "Creative Commons Attribution 4.0 International",
+        "title": "Creative Commons Attribution 4.0 International",
         "scheme": "spdx",
         "identifier": "cc-by-4.0",
-        "uri": "https://creativecommons.org/licenses/by/4.0/"
+        "link": "https://creativecommons.org/licenses/by/4.0/"
     }, {
-        "rights": "Copyright (C) 2020. All rights reserved."
+        "title": "Copyright (C) 2020. All rights reserved."
     }])
 ])
 def test_valid_rights(rights, minimal_record, vocabulary_clear):

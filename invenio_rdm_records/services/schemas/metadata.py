@@ -37,7 +37,7 @@ class AffiliationSchema(Schema):
 
     name = SanitizedUnicode(required=True)
     identifiers = IdentifierSet(
-        fields.Nested(partial(IdentifierSchema, allow_all=True)),
+        fields.Nested(IdentifierSchema),
     )
 
 
@@ -216,7 +216,8 @@ class RightsSchema(IdentifierSchema):
 
     def __init__(self, **kwargs):
         """Constructor."""
-        super().__init__(allow_all=True, required=False, **kwargs)
+        super().__init__(
+            fail_on_unknown=False, identifier_required=False, **kwargs)
 
     id = SanitizedUnicode()
     title = SanitizedUnicode()
@@ -231,7 +232,8 @@ class SubjectSchema(IdentifierSchema):
 
     def __init__(self, **kwargs):
         """Constructor."""
-        super().__init__(allow_all=True, required=False, **kwargs)
+        super().__init__(
+            fail_on_unknown=False, identifier_required=False, **kwargs)
 
     subject = SanitizedUnicode(required=True)
 
@@ -338,7 +340,8 @@ class FunderSchema(IdentifierSchema):
 
     def __init__(self, **kwargs):
         """Constructor."""
-        super().__init__(allow_all=True, required=False, **kwargs)
+        super().__init__(
+            fail_on_unknown=False, identifier_required=False, **kwargs)
 
     name = SanitizedUnicode(
         required=True,
@@ -351,7 +354,8 @@ class AwardSchema(IdentifierSchema):
 
     def __init__(self, **kwargs):
         """Constructor."""
-        super().__init__(allow_all=True, required=False, **kwargs)
+        super().__init__(
+            fail_on_unknown=False, identifier_required=False, **kwargs)
 
     title = SanitizedUnicode(
         required=True,
@@ -392,7 +396,7 @@ class ReferenceSchema(IdentifierSchema):
     def __init__(self, **kwargs):
         """Constructor."""
         super().__init__(allowed_schemes=self.SCHEMES,
-                         required=False, **kwargs)
+                         identifier_required=False, **kwargs)
 
     reference = SanitizedUnicode(required=True)
 
@@ -410,7 +414,7 @@ class LocationSchema(Schema):
     geometry = fields.Nested(GeometryObjectSchema)
     place = SanitizedUnicode()
     identifiers = fields.List(
-        fields.Nested(partial(IdentifierSchema, allow_all=True)),
+        fields.Nested(partial(IdentifierSchema, fail_on_unknown=False)),
     )
     description = SanitizedUnicode()
 
@@ -463,7 +467,7 @@ class MetadataSchema(Schema):
     languages = fields.List(fields.Nested(LanguageSchema))
     # alternate identifiers
     identifiers = IdentifierSet(
-        fields.Nested(partial(IdentifierSchema, allow_all=True))
+        fields.Nested(partial(IdentifierSchema, fail_on_unknown=False))
     )
     related_identifiers = fields.List(fields.Nested(RelatedIdentifierSchema))
     sizes = fields.List(SanitizedUnicode(

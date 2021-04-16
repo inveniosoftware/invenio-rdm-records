@@ -46,8 +46,9 @@ def test_invalid_scheme_reference():
         "identifier": "0000 0001 1456 7559",
         "scheme": "Invalid"
     }
-    with pytest.raises(ValidationError):
-        data = ReferenceSchema().load(invalid_scheme)
+    loaded = data = ReferenceSchema().load(invalid_scheme)
+    # Check the backend forced the change to the correct scheme
+    assert loaded["scheme"] == "isni"
 
 
 def test_invalid_extra_right():

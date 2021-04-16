@@ -104,12 +104,12 @@ def test_extensions(app, minimal_record):
     )
 
 
-@pytest.mark.skip()
-def test_full_metadata_schema(vocabulary_clear, full_record):
+def test_full_metadata_schema(vocabulary_clear, full_metadata):
     """Test metadata schema."""
     # Test full attributes
-    data = MetadataSchema().load(full_record)
-    assert data == full_record
+
+    data = MetadataSchema().load(full_metadata)
+    assert data == full_metadata
 
 
 def test_minimal_metadata_schema(
