@@ -14,6 +14,12 @@ import pytest
 
 
 @pytest.fixture(scope="function")
+def full_metadata(full_record):
+    """Fixture for full incoming valid metdata."""
+    return full_record["metadata"]
+
+
+@pytest.fixture(scope="function")
 def minimal_metadata(minimal_record):
     """Fixture for minimal incoming valid metdata."""
     return minimal_record["metadata"]

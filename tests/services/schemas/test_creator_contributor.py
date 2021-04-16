@@ -211,12 +211,9 @@ def test_creator_invalid_identifiers_scheme():
 
     # Check returns the 3 schemes (org + personal)
     # because the scheme-per-type check comes later on
-    assert_raises_messages(
-        lambda: PersonOrOrganizationSchema().load(invalid_scheme),
-        {'identifiers': {0: {'_schema': [
-            'Invalid identifier format or scheme.'
-        ]}}}
-    )
+    loaded = PersonOrOrganizationSchema().load(invalid_scheme)
+    # Check that the scheme type was force by the backend
+    assert loaded["identifiers"][0]["scheme"] == "orcid"
 
 
 def test_creator_invalid_identifiers_orcid():
@@ -231,12 +228,9 @@ def test_creator_invalid_identifiers_orcid():
         }]
     }
 
-    assert_raises_messages(
-        lambda: PersonOrOrganizationSchema().load(invalid_orcid_identifier),
-        {'identifiers': {0: {'_schema': [
-            'Invalid identifier format or scheme.'
-        ]}}}
-    )
+    loaded = PersonOrOrganizationSchema().load(invalid_orcid_identifier)
+    # Check that the scheme type was force by the backend
+    assert loaded["identifiers"][0]["scheme"] == "gnd"
 
 
 def test_creator_invalid_identifiers_ror():
@@ -249,12 +243,9 @@ def test_creator_invalid_identifiers_ror():
         }]
     }
 
-    assert_raises_messages(
-        lambda: PersonOrOrganizationSchema().load(invalid_ror_identifier),
-        {'identifiers': {0: {'_schema': [
-            'Invalid identifier format or scheme.'
-        ]}}}
-    )
+    loaded = PersonOrOrganizationSchema().load(invalid_ror_identifier)
+    # Check that the scheme type was force by the backend
+    assert loaded["identifiers"][0]["scheme"] == "gnd"
 
 
 def test_contributor_person_valid_full(vocabulary_clear):

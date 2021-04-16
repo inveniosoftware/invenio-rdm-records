@@ -180,10 +180,10 @@ def full_record(users):
             ],
             "version": "v1.0",
             "rights": [{
-                "rights": "Creative Commons Attribution 4.0 International",
+                "title": "Creative Commons Attribution 4.0 International",
                 "scheme": "spdx",
                 "identifier": "cc-by-4.0",
-                "url": "https://creativecommons.org/licenses/by/4.0/"
+                "link": "https://creativecommons.org/licenses/by/4.0/"
             }],
             "description": "Test",
             "additional_descriptions": [{
@@ -192,12 +192,21 @@ def full_record(users):
                 "lang": "eng"
             }],
             "locations": [{
-                "point": {
-                    "lat": 1,
-                    "lon": 2
+                "geometry": {
+                    "type": "Point",
+                    "coordinates": [-32.94682, -60.63932]
                 },
-                "place": "home",
-                "description": "test"
+                "place": "test location place",
+                "description": "test location description",
+                "identifiers": [
+                    {
+                        "identifier": "12345abcde",
+                        "scheme": "wikidata"
+                    }, {
+                        "identifier": "12345abcde",
+                        "scheme": "geonames"
+                    }
+                ],
             }],
             "funding": [{
                 "funder": {
@@ -214,8 +223,8 @@ def full_record(users):
             }],
             "references": [{
                 "reference": "Nielsen et al,..",
-                "identifier": "101.234",
-                "scheme": "doi"
+                "identifier": "0000 0001 1456 7559",
+                "scheme": "isni"
             }]
         },
         "ext": {
