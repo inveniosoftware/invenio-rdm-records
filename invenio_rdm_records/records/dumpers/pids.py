@@ -5,7 +5,7 @@
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
 
-"""ElasticSearch dumpers for PIDs."""
+"""Elasticsearch dumpers for PIDs."""
 
 
 from invenio_records.dumpers import ElasticsearchDumperExt

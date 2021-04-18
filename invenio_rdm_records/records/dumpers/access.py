@@ -5,7 +5,7 @@
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
 
-"""ElasticSearch dumpers for access-control information."""
+"""Elasticsearch dumpers for access-control information."""
 
 from invenio_records.dictutils import dict_lookup, parse_lookup_key
 from invenio_records.dumpers import ElasticsearchDumperExt
