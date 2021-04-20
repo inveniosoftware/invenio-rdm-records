@@ -77,14 +77,11 @@ def create_fake_record():
             "record": "public",
             "files": "public",
         },
-        # PIDS-FIXME: re-enable
-        # "pids":  {
-        #     "doi": {
-        #         "identifier": "10.5281/zenodo.1234",
-        #         "provider": "datacite",
-        #         "client": "zenodo"
-        #     }
-        # },
+        "files": {
+            "enabled": False,
+        },
+        "pids":  {
+        },
         "metadata": {
             "resource_type": fake_resource_type(),
             "creators": [{
@@ -230,8 +227,6 @@ def create_fake_record():
     draft_files_service = service.draft_files
 
     draft = service.create(data=data_to_use, identity=system_identity)
-    draft_files_service.update_files_options(
-        id_=draft.id, identity=system_identity, data={'enabled': False})
     record = service.publish(id_=draft.id, identity=system_identity)
 
     return record
