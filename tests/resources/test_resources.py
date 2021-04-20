@@ -297,8 +297,7 @@ def test_delete_draft(
 def _create_and_publish(client, minimal_record, headers):
     """Create a draft and publish it."""
     # Create the draft
-    response = client.post(
-        "/records", data=json.dumps(minimal_record), headers=headers)
+    response = client.post("/records", json=minimal_record, headers=headers)
 
     assert response.status_code == 201
     recid = response.json['id']
@@ -306,7 +305,7 @@ def _create_and_publish(client, minimal_record, headers):
 
     # Publish it
     response = client.post(
-        "/records/{}/draft/actions/publish".format(recid), headers=headers)
+        f"/records/{recid}/draft/actions/publish", headers=headers)
 
     assert response.status_code == 202
     _assert_single_item_response(response)
