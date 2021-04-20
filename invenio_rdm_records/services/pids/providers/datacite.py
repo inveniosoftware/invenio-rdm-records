@@ -12,6 +12,7 @@ from datacite.errors import DataCiteError, HttpError
 from flask import current_app
 from invenio_pidstore.models import PIDStatus
 
+from ....resources.serializers import DataCite43JSONSerializer
 from .base import BaseClient, BasePIDProvider
 
 
@@ -87,7 +88,8 @@ class DataCitePIDProvider(BasePIDProvider):
         # Only registered PIDs can be updated.
         try:
             pid.reserve()
-            self.client.draft_doi(metadata=record, doi=pid.pid_value)
+            doc = DataCite43JSONSerializer.serialize_object(record)
+            self.client.draft_doi(metadata=doc, doi=pid.pid_value)
         except (DataCiteError, HttpError):
             raise
 
@@ -102,8 +104,9 @@ class DataCitePIDProvider(BasePIDProvider):
         try:
             pid.register()
             # Set metadata for DOI
+            doc = DataCite43JSONSerializer.serialize_object(record)
             self.client.public_doi(
-                metadata=record, url="PIDS-FIXME.com", doi=pid.pid_value)
+                metadata=doc, url="PIDS-FIXME.com", doi=pid.pid_value)
         except (DataCiteError, HttpError):
             # PIDS-FIXME: PIDSTore logs, but invenio has almost no logs
             # A custom exception maybe better?
@@ -122,8 +125,9 @@ class DataCitePIDProvider(BasePIDProvider):
         # if pid.is_deleted():
         try:
             # Set metadata
+            doc = DataCite43JSONSerializer.serialize_object(record)
             self.client.update_doi(
-                metadata=record, doi=pid.pid_value, url=None)
+                metadata=doc, doi=pid.pid_value, url=None)
         except (DataCiteError, HttpError):
             raise
 

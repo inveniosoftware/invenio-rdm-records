@@ -208,11 +208,6 @@ def test_update_add_pid_with_identifier(app, unmanaged_pids_cmp):
     assert record.pids["test"]["client"] == "test-client"
 
 
-@pytest.mark.skip("PIDS-FIXME: the PID belongs to other record")
-def test_update_add_reserved_pid(app, unmanaged_pids_cmp):
-    pass
-
-
 def test_publish_without_pid_value(app, unmanaged_pids_cmp):
     data = {"pids": {
         "test": {
