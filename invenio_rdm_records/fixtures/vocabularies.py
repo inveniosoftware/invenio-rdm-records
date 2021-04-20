@@ -15,6 +15,8 @@ from os.path import splitext
 import yaml
 from invenio_vocabularies.proxies import current_service
 
+from .tasks import create_vocabulary_record
+
 
 #
 # Data iterators
@@ -110,8 +112,7 @@ class VocabulariesFixture:
         """Load the records form the data file."""
         for record in self.iter_datafile(data_file):
             record['type'] = id_
-            # TODO: edit out languages which is not configured by the system
-            current_service.create(self._identity, record)
+            create_vocabulary_record.delay(record)
 
     def iter_datafile(self, data_file):
         """Get an row iterator for a given data file."""
