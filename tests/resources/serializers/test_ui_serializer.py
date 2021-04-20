@@ -13,9 +13,10 @@ import json
 from invenio_rdm_records.resources.serializers import UIJSONSerializer
 
 
-def test_ui_serializer(app, full_record):
+def test_ui_serializer(app, full_record_ui):
     """Test UI serializer."""
-    full_record['access']['status'] = 'embargoed'
+    # full_record_ui = full_record
+    full_record_ui['access']['status'] = 'embargoed'
     expected_data = {
         'access_status': {
             'description_l10n': 'The record and files will be made publicly '
@@ -63,10 +64,10 @@ def test_ui_serializer(app, full_record):
 
     with app.app_context():
         serialized_record = UIJSONSerializer().serialize_object_to_dict(
-            full_record)
+            full_record_ui)
 
     assert serialized_record['ui'] == expected_data
     serialized_records = UIJSONSerializer().serialize_object_list(
-        {"hits": {"hits": [full_record]}})
+        {"hits": {"hits": [full_record_ui]}})
     assert json.loads(serialized_records)['hits']['hits'][0]['ui'] == \
         expected_data

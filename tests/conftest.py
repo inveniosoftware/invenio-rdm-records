@@ -75,26 +75,11 @@ def full_record(users):
     """Full record data as dict coming from the external world."""
     return {
         "pids": {
-            # PIDS-FIXME: re-enable
-            # "doi": {
-            #     "identifier": "10.5281/zenodo.1234",
-            #     "provider": "datacite",
-            #     "client": "zenodo"
-            # },
-            # "concept-doi": {
-            #     "identifier": "10.5281/zenodo.1234",
-            #     "provider": "datacite",
-            #     "client": "zenodo"
-            # },
-            # "handle": {
-            #     "identifier": "9.12314",
-            #     "provider": "cern-handle",
-            #     "client": "zenodo"
-            # },
-            # "oai": {
-            #     "identifier": "oai:zenodo.org:12345",
-            #     "provider": "zenodo"
-            # }
+            "doi": {
+                "identifier": "10.5281/inveniordm.1234",
+                "provider": "datacite",
+                "client": "inveniordm"
+            },
         },
         "metadata": {
             "resource_type": {
@@ -257,6 +242,9 @@ def full_record(users):
         },
         "files": {
             "enabled": True,
+            "total_size": 1114324524355,
+            "count": 1,
+            "bucket": "81983514-22e5-473a-b521-24254bd5e049",
             "default_preview": "big-dataset.zip",
             "order": ["big-dataset.zip"],
             "entries": {
