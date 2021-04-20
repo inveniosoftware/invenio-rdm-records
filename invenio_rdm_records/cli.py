@@ -77,6 +77,9 @@ def create_fake_record():
             "record": "public",
             "files": "public",
         },
+        "files": {
+            "enabled": False,
+        },
         "pids":  {
             # "doi": {
             #     "identifier": "10.5281/inveniordm.1234",
@@ -229,8 +232,6 @@ def create_fake_record():
     draft_files_service = service.draft_files
 
     draft = service.create(data=data_to_use, identity=system_identity)
-    draft_files_service.update_files_options(
-        id_=draft.id, identity=system_identity, data={'enabled': False})
     record = service.publish(id_=draft.id, identity=system_identity)
 
     return record
