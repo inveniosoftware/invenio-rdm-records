@@ -13,8 +13,9 @@ from invenio_pidstore.models import PersistentIdentifier, PIDStatus
 class BaseClient:
     """PID Client base class."""
 
-    def __init__(self, username, password, url=None, **kwards):
+    def __init__(self, name, username, password, url=None, **kwargs):
         """Constructor."""
+        self.name = name
         self.username = username
         self.password = password
         self.url = url
@@ -23,19 +24,21 @@ class BaseClient:
 class BasePIDProvider:
     """Base Provider class."""
 
-    name = "base"
+    name = None
 
-    def _generate_id(self, **kwargs):
+    def _generate_id(self, record, **kwargs):
         """Generates an identifier value."""
         raise NotImplementedError
 
-    def __init__(self, client=None, pid_type=None,
-                 default_status=PIDStatus.NEW, system_managed=True, **kwargs):
+    def __init__(self, api_client=None, pid_type=None,
+                 default_status=PIDStatus.NEW, system_managed=True,
+                 required=False, **kwargs):
         """Constructor."""
-        self.client = client
+        self.api_client = api_client
         self.pid_type = pid_type
         self.default_status = default_status
         self.system_managed = system_managed
+        self.required = required
 
     def is_managed(self):
         """Returns if the PIDs from the provider are managed by the system.
@@ -87,27 +90,32 @@ class BasePIDProvider:
             status=status,
         )
 
-    def reserve(self, pid, **kwargs):
+    def reserve(self, pid, record, **kwargs):
         """Reserve a persistent identifier.
 
         This might or might not be useful depending on the service of the
         provider.
         See: :meth:`invenio_pidstore.models.PersistentIdentifier.reserve`.
         """
-        return pid.reserve()
+        is_reserved_or_registered = pid.is_reserved() or pid.is_registered()
+        if not is_reserved_or_registered:
+            return pid.reserve()
+        return True
 
-    def register(self, pid, **kwargs):
+    def register(self, pid, record, **kwargs):
         """Register a persistent identifier.
 
         See: :meth:`invenio_pidstore.models.PersistentIdentifier.register`.
         """
-        return pid.register()
+        if not pid.is_registered():
+            return pid.register()
+        return True
 
-    def update(self, record, pid, **kwargs):
+    def update(self, pid, record, **kwargs):
         """Update information about the persistent identifier."""
         raise NotImplementedError
 
-    def delete(self, pid, **kwargs):
+    def delete(self, pid, record, **kwargs):
         """Delete a persistent identifier.
 
         See: :meth:`invenio_pidstore.models.PersistentIdentifier.delete`.
@@ -118,6 +126,10 @@ class BasePIDProvider:
         """Get the status of the identifier."""
         return self.get(identifier, **kwargs).status
 
-    def validate(self, identifier=None, client=None, provider=None, **kwargs):
+    def validate(self, identifier=None, provider=None, client=None, **kwargs):
         """Validate the attributes of the identifier."""
-        return provider == self.name
+        if provider and provider != self.name:
+            raise ValueError(f"Provider name {provider} does not "
+                             f"match {self.name}")
+
+        return True

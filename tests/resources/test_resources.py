@@ -533,7 +533,6 @@ def test_link_creation(
         data=json.dumps({"permission": "read"})
     )
 
-    print(link_result.json)
     assert link_result.status_code == 201
     link_id = link_result.json["id"]
     link_json = link_result.json

@@ -11,9 +11,7 @@
 
 from copy import copy
 
-from flask_babelex import lazy_gettext as _
 from invenio_access.permissions import system_process
-from invenio_pidstore.models import PIDStatus
 from invenio_records_resources.services.records.components import \
     ServiceComponent
 from marshmallow import ValidationError
@@ -149,13 +147,15 @@ class ExternalPIDsComponent(ServiceComponent):
     def _validate_pids(self, pids):
         """Validate an iterator of pids."""
         for scheme, pid_attrs in pids.items():
-            self.service.get_provider(
-                scheme, pid_attrs.get("client")).validate(pid_attrs=pid_attrs)
+            client = pid_attrs.get("client")
+            provider = self.service.get_provider(scheme, client)
+            provider.validate(**pid_attrs)
 
     def create(self, identity, data=None, record=None, **kwargs):
-        """Inject parsed pids to the record."""
+        """Inject parsed pids to the draft record."""
         pids = data.get('pids', {})
         self._validate_pids(pids)
+        # NOTE: record is a draft because we hook to the draft service.
         record.pids = pids
 
     def update_draft(self, identity, data=None, record=None, **kwargs):
@@ -164,49 +164,97 @@ class ExternalPIDsComponent(ServiceComponent):
         self._validate_pids(pids)
         record.pids = pids
 
+    def _publish_managed(
+        self, provider, is_required, draft_pid, record_pids, draft=None,
+        scheme=None
+    ):
+        """Publish a system managed PID."""
+        identifier_value = draft_pid.get("identifier")
+        pid = None
+        if is_required:
+            if not identifier_value:
+                pid = provider.create(draft)
+                provider.reserve(pid, draft)
+            else:
+                pid = provider.get(identifier_value)
+                assert pid.is_reserved() or pid.is_registered()
+
+            if not pid.is_registered():  # avoid dup registration
+                provider.register(pid, draft)
+            else:
+                # PIDS-FIXME: this should update meta to datacite
+                pass
+        else:
+            if identifier_value:
+                # must be already created and reserved
+                pid = provider.get(identifier_value)
+                assert pid.is_reserved() or pid.is_registered()
+                # PIDS-FIXME: this should update meta to datacite???
+                provider.register(pid, draft)
+
+        if pid:  # ignore not required & no given id value
+            record_pids[scheme] = {
+                "identifier": pid.pid_value,
+                "provider": provider.name,
+                "client": provider.client.name
+            }
+
+    def _publish_unmanaged(
+        self, provider, is_required, draft_pid, record_pids, draft=None,
+        scheme=None
+    ):
+        """Publish an unmanaged PID."""
+        identifier_value = draft_pid.get("identifier")
+        scheme = provider.pid_type
+
+        if identifier_value:
+            record_pids[scheme] = {
+                "identifier": identifier_value,
+                "provider": provider.name,
+            }
+        elif draft_pid != {}:
+            # NOTE: Do not accept partial
+            raise ValidationError(
+                f"Value required for {scheme} PID.",
+                field_name=f"pids.{scheme}")
+
     def publish(self, identity, draft=None, record=None, **kwargs):
         """Update draft pids."""
-        pids = draft.get('pids', {})
+        record_pids = {}
+        draft_pids = draft.get('pids', {})
+        providers = self.service.get_configured_providers()
 
-        for scheme, pid_attrs in pids.items():
-            client = pid_attrs.get("client")
+        for scheme, provider_config in providers.items():
+            # PID content
+            draft_pid = draft_pids.get(scheme, {})
+            # Provider checks
+            client = draft_pid.get("client")
             provider = self.service.get_provider(scheme, client)
-            provider.validate(pid_attrs=pid_attrs)
+            provider.validate(**draft_pid)
+            # Publishing part
+            # PIDS-FIXME should we require this two config values?
+            is_required = provider_config.get("required", False)
+            is_system_managed = \
+                provider_config.get("system_managed", False)
 
-            identifier_value = pid_attrs.get("identifier")
-            if provider.is_managed():
-                if not identifier_value:
-                    pid = provider.create()
-                    pid_attrs["identifier"] = pid.pid_value
-                    pids[scheme] = pid_attrs
-                else:
-                    pid = provider.get(identifier_value)
-                # PIDS-FIXME: Move to provier.validate base class?
-                if pid.status != PIDStatus.RESERVED != PIDStatus.REGISTERED:
-                    provider.reserve(pid)
+            if is_system_managed:
+                self._publish_managed(
+                    provider, is_required, draft_pid, record_pids, draft=draft,
+                    scheme=scheme or provider.pid_type)
+            else:
+                self._publish_unmanaged(
+                    provider, is_required, draft_pid, record_pids)
 
-            elif not identifier_value:
-                raise ValidationError(
-                    _("Identifier value is required for the unmanaged PID " +
-                      f"provider {provider.name}"),
-                    field_name="pids"
-                )
-
-        record.pids = pids
+        record.pids = record_pids
 
     def edit(self, identity, draft=None, record=None, **kwargs):
         """Update draft pids."""
-        # NOTE: getting from record instead of draft
-        # Do not allow to edit pids
-        pids = record.get('pids', {})
-        self._validate_pids(pids)
-        record.pids = pids
+        # PIDS are taken from the published record so that cannot
+        # be changed in the draft.
+        record_pids = record.get('pids', {})
+        self._validate_pids(record_pids)
+        record.pids = record_pids
 
     def new_version(self, identity, draft=None, record=None, **kwargs):
         """Update draft pids."""
-        pids = record.get('pids', {})
-
-        # PIDS-FIXME: Remove DOI (maybe all)
-        # new version should be no PIDS just concept?
-        self._validate_pids(pids)
-        draft.pids = pids
+        draft.pids = {}

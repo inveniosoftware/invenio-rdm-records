@@ -338,21 +338,47 @@ class RDMRecordService(RecordService):
 
         return True
 
-    def get_provider(self, scheme, client=None):
-        """Process a given PID with its provider."""
-        provider_class = self.config.pids_providers.get(scheme)
+    # PIDS-FIXME: extract to a subservice
+    def get_configured_providers(self):
+        """Get the providers from configuration."""
+        return self.config.pids_providers
 
-        if provider_class and client:
-            client_class = self.config.providers_clients.get(client)
-            return provider_class(client_class()) if client else None
-        elif provider_class:
+    def get_client(self, client_name):
+        """Get a client from config."""
+        client_config = self.config.pids_providers_clients.get(client_name)
+        client_class = client_config.get("client")
+        client_args = client_config.get("args", {})
+        if not client_class:
+            raise ValueError
+
+        return client_class(**client_args)
+
+    def get_provider(self, scheme, client_name=None):
+        """Get a provider from config."""
+        try:
+            provider = self.config.pids_providers.get(scheme)
+            if not provider:
+                raise ValueError
+            provider_class = provider["provider"]
+
+            if client_name:
+                client = self.get_client(client_name)
+                return provider_class(client)
+
+            elif provider.get("system_managed", False):
+                # use as default the client configured for the provider
+                client_name = provider_class.name
+                client = self.get_client(client_name)
+                return provider_class(client)
+
             return provider_class()
 
-        raise ValidationError(
-            message=_(f"Provider for PID type {scheme} client"
-                      f"{client} not supported"),
-            field_name="pids",
-        )
+        except ValueError:
+            raise ValidationError(
+                message=_(f"Provider for PID type {scheme} client "
+                          f"{client_name} not supported"),
+                field_name="pids",
+            )
 
     def reserve_pid(self, id_, identity, pid_type, pid_client=None):
         """Reserve PID for a given record."""

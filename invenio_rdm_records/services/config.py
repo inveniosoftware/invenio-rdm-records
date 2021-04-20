@@ -11,14 +11,13 @@
 
 from functools import partial
 
-from flask_babelex import lazy_gettext as _
 from invenio_drafts_resources.services.records.components import \
     DraftFilesComponent, PIDComponent
 from invenio_drafts_resources.services.records.config import \
     RecordServiceConfig, SearchDraftsOptions, SearchOptions, \
     SearchVersionsOptions, is_draft, is_record
 from invenio_records_resources.services import ConditionalLink, \
-    FileServiceConfig, RecordLink
+    FileServiceConfig
 from invenio_records_resources.services.files.links import FileLink
 from invenio_records_resources.services.records.links import RecordLink
 from invenio_records_resources.services.records.search import \
@@ -28,7 +27,7 @@ from ..records import RDMDraft, RDMRecord
 from .components import AccessComponent, ExternalPIDsComponent, \
     MetadataComponent
 from .permissions import RDMRecordPermissionPolicy
-from .pids.providers import DataCiteClient, DataCitePIDProvider, \
+from .pids.providers import DOIDataCiteClient, DOIDataCitePIDProvider, \
     UnmanagedPIDProvider
 from .result_items import SecretLinkItem, SecretLinkList
 from .schemas import RDMParentSchema, RDMRecordSchema
@@ -132,12 +131,25 @@ class RDMRecordServiceConfig(RecordServiceConfig):
 
     # PIDs providers
     pids_providers = {
-        "unmanaged": UnmanagedPIDProvider,
-        "doi": DataCitePIDProvider,
+        "unmanaged": {
+            "provider": UnmanagedPIDProvider,
+            "required": False,
+            "system_managed": False,
+        },
+        "doi": {
+            "provider": DOIDataCitePIDProvider,
+            "required": True,
+            "system_managed": True,
+        },
     }
 
-    providers_clients = {
-        "datacite": partial(DataCiteClient, name="inveniordm")
+    pids_providers_clients = {
+        "datacite": {
+            "client": DOIDataCiteClient,
+            "args": {
+                "name": "rdm"
+            }
+        }
     }
 
     # Components

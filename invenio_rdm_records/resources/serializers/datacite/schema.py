@@ -186,19 +186,18 @@ class DataCite43Schema(Schema):
         metadata = obj["metadata"]
 
         titles = [{"title": metadata.get("title")}]
-        additional_titles = metadata.get("additional_titles")
+        additional_titles = metadata.get("additional_titles", [])
 
-        if additional_titles:
-            for add_title in additional_titles:
-                title = {"title": add_title.get("title")}
-                type_ = add_title.get("type")
-                if type_:
-                    title["titleType"] = type_.capitalize()
-                lang = add_title.get("lang")
-                if lang:
-                    title["lang"] = lang
+        for add_title in additional_titles:
+            title = {"title": add_title.get("title")}
+            type_ = add_title.get("type")
+            if type_:
+                title["titleType"] = type_.capitalize()
+            lang = add_title.get("lang")
+            if lang:
+                title["lang"] = lang
 
-                titles.append(title)
+            titles.append(title)
 
         return titles
 
@@ -214,7 +213,7 @@ class DataCite43Schema(Schema):
             "dateType": "Issued"
         }]
 
-        for date in obj["metadata"]["dates"]:
+        for date in obj["metadata"].get("dates", []):
             to_append = {
                 "date": date["date"],
                 "dateType": date["type"].capitalize()
@@ -244,13 +243,12 @@ class DataCite43Schema(Schema):
 
         # Identifiers field
         metadata = obj["metadata"]
-        identifiers = metadata.get("identifiers")
-        if identifiers:
-            for id_ in identifiers:
-                serialized_identifiers.append({
-                    "identifier": id_["identifier"],
-                    "identifierType": id_["scheme"]
-                })
+        identifiers = metadata.get("identifiers", [])
+        for id_ in identifiers:
+            serialized_identifiers.append({
+                "identifier": id_["identifier"],
+                "identifierType": id_["scheme"]
+            })
 
         # PIDs field
         pids = obj["pids"]
@@ -267,15 +265,14 @@ class DataCite43Schema(Schema):
         # PIDS-FIXME: This might get much more complex depending on the id
         serialized_identifiers = []
         metadata = obj["metadata"]
-        identifiers = metadata.get("related_identifiers")
-        if identifiers:
-            for rel_id in identifiers:
-                serialized_identifiers.append({
-                    "relatedIdentifier": rel_id["identifier"],
-                    "relatedIdentifierType": rel_id["scheme"].upper(),
-                    "relationType": rel_id["relation_type"].capitalize(),
-                    "resourceTypeGeneral": rel_id["resource_type"]["type"],
-                })
+        identifiers = metadata.get("related_identifiers", [])
+        for rel_id in identifiers:
+            serialized_identifiers.append({
+                "relatedIdentifier": rel_id["identifier"],
+                "relatedIdentifierType": rel_id["scheme"].upper(),
+                "relationType": rel_id["relation_type"].capitalize(),
+                "resourceTypeGeneral": rel_id["resource_type"]["type"],
+            })
 
         return serialized_identifiers or missing
 
@@ -291,19 +288,18 @@ class DataCite43Schema(Schema):
                 "descriptionType": "Abstract"
             })
 
-        additional_descriptions = metadata.get("additional_descriptions")
-        if additional_descriptions:
-            for add_desc in additional_descriptions:
-                description = {
-                    "description": add_desc["description"],
-                    "descriptionType": add_desc["type"].capitalize()
-                }
+        additional_descriptions = metadata.get("additional_descriptions", [])
+        for add_desc in additional_descriptions:
+            description = {
+                "description": add_desc["description"],
+                "descriptionType": add_desc["type"].capitalize()
+            }
 
-                lang = add_desc.get("lang")
-                if lang:
-                    description["lang"] = lang
+            lang = add_desc.get("lang")
+            if lang:
+                description["lang"] = lang
 
-                descriptions.append(description)
+            descriptions.append(description)
 
         return descriptions or missing
 
