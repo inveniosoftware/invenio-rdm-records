@@ -35,13 +35,18 @@ class RDMRecordSchema(RecordSchema, FieldPermissionsMixin):
         'files': 'read_files',
     }
 
+    # ATTENTION: In this schema you should be using the ``NestedAttribute``
+    # instead  of Marshmallow's ``fields.Nested``. Using NestedAttribute
+    # ensures that the nested schema will receive the system field instead of
+    # the record dict (i.e. record.myattr instead of record['myattr']).
+
     pids = fields.Dict(keys=fields.String(), values=fields.Nested(PIDSchema))
     metadata = NestedAttribute(MetadataSchema)
     # ext = fields.Method('dump_extensions', 'load_extensions')
     # tombstone
     # provenance
     access = NestedAttribute(AccessSchema)
-    files = fields.Nested(FilesSchema)
+    files = NestedAttribute(FilesSchema)
     # notes = fields.List(fields.Nested(InternalNoteSchema))
     revision = fields.Integer(dump_only=True)
     versions = NestedAttribute(VersionsSchema, dump_only=True)
