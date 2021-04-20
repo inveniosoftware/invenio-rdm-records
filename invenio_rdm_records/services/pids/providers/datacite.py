@@ -8,35 +8,39 @@
 """DataCite DOI Provider."""
 
 from datacite import DataCiteRESTClient
-from datacite.errors import DataCiteError, HttpError
+from datacite.errors import DataCiteError
 from flask import current_app
-from invenio_pidstore.models import PIDStatus
+from invenio_pidstore.models import PersistentIdentifier, PIDStatus
 
 from ....resources.serializers import DataCite43JSONSerializer
 from .base import BaseClient, BasePIDProvider
 
 
-class DataCiteClient(BaseClient):
+class DOIDataCiteClient(BaseClient):
     """DataCite Client.
 
     It Loads the values from config.
     """
 
-    def __init__(self, name, username, password, prefix, test_mode, **kwards):
+    def __init__(self, name, url=None, **kwargs):
         """Constructor."""
-        self.name = name
-        name = self.name.upper()
-        self.prefix = current_app.config[f"{name}_DATACITE_CLIENT_PREFIX"],
-        self.test_mode = \
-            current_app.config.getf("{name}_DATACITE_CLIENT_TEST_MODE", True),
+        # PIDS-FIXME: Rethink config loading
+        config_key = f"{name.upper()}_DATACITE_CLIENT"
 
-        super(DataCiteClient, self).__init__(
-            username=current_app.config[f"{name}_DATACITE_CLIENT_USERNAME"],
-            password=current_app.config[f"{name}_DATACITE_CLIENT_PASSWORD"],
+        super().__init__(
+            name=name,
+            username=current_app.config[f"{config_key}_USERNAME"],
+            password=current_app.config[f"{config_key}_PASSWORD"],
+            url=url,
+            **kwargs
         )
 
+        self.prefix = current_app.config[f"{config_key}_PREFIX"]
+        self.test_mode = \
+            current_app.config.get(f"{config_key}_TEST_MODE", True)
 
-class DataCitePIDProvider(BasePIDProvider):
+
+class DOIDataCitePIDProvider(BasePIDProvider):
     """DataCite Provider class.
 
     Note that DataCite is only contacted when a DOI is reserved or
@@ -50,86 +54,90 @@ class DataCitePIDProvider(BasePIDProvider):
                  default_status=PIDStatus.NEW, generate_suffix_func=None,
                  generate_id_func=None, **kwargs):
         """Constructor."""
-        self._client_credentials = client
-        self.client = DataCiteRESTClient(
+        self.client = client
+        self.api_client = DataCiteRESTClient(
             client.username, client.password, client.prefix, client.test_mode
         )
 
-        super(DataCitePIDProvider, self).__init__(
-            self.client, pid_type, default_status)
+        super().__init__(self.api_client, pid_type, default_status)
 
-        self.generate_suffix = generate_suffix_func or self._generate_suffix
+        self.generate_suffix = generate_suffix_func or \
+            DOIDataCitePIDProvider._generate_suffix
         self.generate_id = generate_id_func or self._generate_id
 
-    def _generate_suffix(self, recid, **kwargs):
-        """Generate DOI suffix.
+    @staticmethod
+    def _generate_suffix(record, client, **kwargs):
+        """Generate a unique DOI suffix.
 
         The content after the slash.
         """
-        return f"{self._client_credentials.name}.{recid}"
+        recid = record.pid.pid_value
+        return f"{client.name}.{recid}"
 
-    def _generate_id(self, recid, **kwargs):
-        """Generate a DOI."""
+    def _generate_id(self, record, **kwargs):
+        """Generate a unique DOI."""
         prefix = self.client.prefix
-        # subs by name attr of self
-        return f"{prefix}/{self.generate_suffix(recid, **kwargs)}"
+        suffix = self.generate_suffix(record, self.client, **kwargs)
+        return f"{prefix}/{suffix}"
 
-    def create(self, recid, **kwargs):
-        """Create a new DOI PID based on the record ID."""
-        pid_value = self.generate_id(recid, **kwargs)
-        return super().create(pid_value=pid_value, **kwargs)
+    def create(self, record, **kwargs):
+        """Create a new unique DOI PID based on the record ID."""
+        doi = self.generate_id(record, **kwargs)
+        return super().create(
+            pid_value=doi,
+            object_type="rec",
+            object_uuid=record.id,
+            **kwargs
+        )
 
-    def reserve(self, record, pid):
-        """Reserve a DOI (amounts to upload metadata, but not to mint).
+    def reserve(self, pid, record, **kwargs):
+        """Reserve a DOI only in the local system.
 
-        :param doc: Set metadata for DOI.
+        It does not reserve the DOI in DataCite.
+        :param pid: the PID to reserve.
+        :param record: the record.
         :returns: `True` if is reserved successfully.
         """
-        # Only registered PIDs can be updated.
-        try:
-            pid.reserve()
-            doc = DataCite43JSONSerializer().serialize_object(record)
-            self.client.draft_doi(metadata=doc, doi=pid.pid_value)
-        except (DataCiteError, HttpError):
-            raise
+        super().reserve(pid, record)
 
         return True
 
-    def register(self, record, pid, **kwargs):
+    def register(self, pid, record, **kwargs):
         """Register a DOI via the DataCite API.
 
-        :param record: Record with the metadata for the DOI.
+        :param pid: the PID to register.
+        :param record: the record metadata for the DOI.
         :returns: `True` if is registered successfully.
         """
+        super().register(pid, record)
+        # PIDS-FIXME: move to async task, exception handling included
         try:
-            pid.register()
-            # Set metadata for DOI
-            doc = DataCite43JSONSerializer().serialize_object(record)
-            self.client.public_doi(
+            doc = DataCite43JSONSerializer().dump_one(record)
+            self.api_client.public_doi(
                 metadata=doc, url="PIDS-FIXME.com", doi=pid.pid_value)
-        except (DataCiteError, HttpError):
-            # PIDS-FIXME: PIDSTore logs, but invenio has almost no logs
-            # A custom exception maybe better?
-            raise
+        except DataCiteError:
+            pass
 
         return True
 
-    def update(self, record, pid, **kwargs):
+    def update(self, pid, record, **kwargs):
         """Update metadata associated with a DOI.
 
         This can be called before/after a DOI is registered.
-        :param doc: Set metadata for DOI.
+        :param pid: the PID to register.
+        :param record: the record metadata for the DOI.
         :returns: `True` if is updated successfully.
         """
         # PIDS-FIXME: Do we want to log when reactivate the DOI
         # if pid.is_deleted():
         try:
+            # PIDS-FIXME: move to async task, exception handling included
             # Set metadata
-            doc = DataCite43JSONSerializer().serialize_object(record)
-            self.client.update_doi(
+            doc = DataCite43JSONSerializer().dump_one(record)
+            self.api_client.update_doi(
                 metadata=doc, doi=pid.pid_value, url=None)
-        except (DataCiteError, HttpError):
-            raise
+        except DataCiteError:
+            pass
 
         if pid.is_deleted():
             # PIDS-FIXME: Is this correct?
@@ -137,26 +145,26 @@ class DataCitePIDProvider(BasePIDProvider):
 
         return True
 
-    def delete(self, pid, **kwargs):
+    def delete(self, pid, record, **kwargs):
         """Delete/unregister a registered DOI.
 
         If the PID has not been reserved then it's deleted only locally.
         Otherwise, also it's deleted also remotely.
         :returns: `True` if is deleted successfully.
         """
+        # PIDS-FIXME: move to async task, exception handling included
         try:
             if pid.is_reserved():  # Delete only works for draft DOIs
-                self.client.delete_doi(pid.pid_value)
+                self.api_client.delete_doi(pid.pid_value)
             elif pid.is_registered():
-                self.client.hide_doi(pid.pid_value)
-            # In any case gets deleted locally (New, Reserved or Registered)
-            pid.delete()
-        except (DataCiteError, HttpError):
-            raise
+                self.api_client.hide_doi(pid.pid_value)
+        except DataCiteError:
+            pass
 
-        return True
+        return super().delete(pid, record)
 
-    def validate(self, pid_attrs, **kwargs):
+    def validate(self, identifier=None, provider=None, client=None, **kwargs):
         """Validate the attributes of the identifier."""
-        # PIDS-FIXME: Anything needed here
-        pass
+        super().validate(identifier, provider, client, **kwargs)
+        if identifier:
+            self.api_client.check_doi(identifier)

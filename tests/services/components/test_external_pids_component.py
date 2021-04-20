@@ -10,233 +10,459 @@
 from functools import partial
 
 import pytest
+from invenio_db import db
 from invenio_pidstore.errors import PIDDoesNotExistError
 from invenio_pidstore.models import PIDStatus
 from marshmallow import ValidationError
 
+from invenio_rdm_records.proxies import current_rdm_records
+from invenio_rdm_records.records import RDMDraft, RDMRecord
 from invenio_rdm_records.services import RDMRecordService
 from invenio_rdm_records.services.components import ExternalPIDsComponent
 from invenio_rdm_records.services.config import RDMRecordServiceConfig
 from invenio_rdm_records.services.pids.providers import BaseClient, \
-    BasePIDProvider, UnmanagedPIDProvider
+    BasePIDProvider, DOIDataCiteClient, DOIDataCitePIDProvider, \
+    UnmanagedPIDProvider
+
+#
+# Unmanaged Provider
+#
 
 
-class TestRecord:
-    """Custom record to ease component testing."""
+class RequiredUnmanagedPIDProvider(UnmanagedPIDProvider):
+    """Custom unmanaged PID provider."""
 
-    pids = None
-
-    def get(self, attr, default):
-        """Dummy accesor to pids, emulates descriptor."""
-        return self.pids
+    name = "requman"
 
 
-class TestClient(BaseClient):
-    """Dummy PID Client class."""
+class NotRequiredUnmanagedPIDProvider(UnmanagedPIDProvider):
+    """Custom unmanaged PID provider."""
 
-    def __init__(self, **kwards):
-        """Constructor."""
-        pass
+    name = "nrequman"
 
 
-class TestBaseProvider(BasePIDProvider):
-    """Test provider."""
-
-    def __init__(self, name="testprov", pid_type="testid", **kwargs):
-        """Constructor."""
-        self.counter = 1
-        super(TestBaseProvider, self).__init__(
-            name=name, pid_type=pid_type, **kwargs)
-
-    def _generate_id(self, **kwargs):
-        """Generates an identifier value."""
-        self.counter += 1
-        return self.counter - 1
-
-
-class TestServiceConfig(RDMRecordServiceConfig):
+class TestServiceReqUnmanConfig(RDMRecordServiceConfig):
     """Custom service config with only pid providers."""
     pids_providers = {
-        "test": TestBaseProvider,
-        "unmanaged": UnmanagedPIDProvider
+        "requman": {  # Required Unamanged
+            "provider": RequiredUnmanagedPIDProvider,
+            "required": True,
+            "system_managed": False,
+        }
     }
 
-    providers_clients = {
-        "test-client": TestClient
+    pids_providers_clients = {}
+
+
+class TestServiceNReqUnmanConfig(RDMRecordServiceConfig):
+    """Custom service config with only pid providers."""
+    pids_providers = {
+        "nrequman": {  # Non required Unmanaged
+            "provider": NotRequiredUnmanagedPIDProvider,
+            "required": False,
+            "system_managed": False,
+        }
     }
 
-
-class TestService(RDMRecordService):
-    """Custom service."""
-
-    def __init__(self, config, **kwargs):
-        """Constructor for RDMRecordService."""
-        super(TestService, self).__init__(config, **kwargs)
+    pids_providers_clients = {}
 
 
 @pytest.fixture(scope="function")
-def unmanaged_pids_cmp():
-    service = TestService(config=TestServiceConfig())
+def req_pid_unmanaged_cmp():
+    service = RDMRecordService(config=TestServiceReqUnmanConfig())
 
     return ExternalPIDsComponent(service=service)
 
 
-#
-# External Provider
-#
+@pytest.fixture(scope="function")
+def not_req_unmanaged_pid_cmp():
+    service = RDMRecordService(config=TestServiceNReqUnmanConfig())
 
-def test_create_valid_pid_unmanaged(unmanaged_pids_cmp):
-    data = {"pids": {
-        "unmanaged": {
-            "identifier": "somevalue",
-            "provider": "unmanaged",
+    return ExternalPIDsComponent(service=service)
+
+
+def test_unmanaged_required_pid_value(
+    req_pid_unmanaged_cmp, minimal_record, identity_simple
+):
+    component = req_pid_unmanaged_cmp
+    pids = {
+        "requman": {
+            "identifier": "value",
+            "provider": "requman",
         }
-    }}
+    }
 
-    record = TestRecord()
-    unmanaged_pids_cmp.create(identity=None, data=data, record=record)
+    # make sure `pids` field is added
+    data = minimal_record.copy()
+    data["pids"] = pids
 
-    assert record.pids["unmanaged"]["identifier"] == "somevalue"
-    assert record.pids["unmanaged"]["provider"] == "unmanaged"
+    # create a minimal draft
+    draft = RDMDraft.create(data)
+    component.create(identity_simple, data=data, record=draft)
+    assert "pids" in draft and draft.pids == pids
+
+    # publish
+    record = RDMRecord.publish(draft)
+    component.publish(identity_simple, draft=draft, record=record)
+    assert record.pids == pids
 
 
-def test_create_unmanaged_pid_no_value(unmanaged_pids_cmp):
-    data = {"pids": {
-        "unmanaged": {
-            "provider": "unmanaged",
+def test_unmanaged_required_no_pid_value(
+    req_pid_unmanaged_cmp, minimal_record, identity_simple
+):
+    component = req_pid_unmanaged_cmp
+    pids = {
+        "requman": {
+            "provider": "requman",
         }
-    }}
+    }
 
-    record = TestRecord()
-    unmanaged_pids_cmp.create(identity=None, data=data, record=record)
+    # make sure `pids` field is added
+    data = minimal_record.copy()
+    data["pids"] = pids
 
-    assert not record.pids["unmanaged"].get("identifier")
-    assert record.pids["unmanaged"]["provider"] == "unmanaged"
+    # create a minimal draft
+    draft = RDMDraft.create(data)
+    component.create(identity_simple, data=data, record=draft)
+    assert "pids" in draft and draft.pids == pids
 
-
-def test_publish_valid_pid_unmanaged(unmanaged_pids_cmp):
-    data = {"pids": {
-        "unmanaged": {
-            "identifier": "somevalue",
-            "provider": "unmanaged",
-        }
-    }}
-
-    record = TestRecord()
-    draft = TestRecord()
-    unmanaged_pids_cmp.create(identity=None, data=data, record=draft)
-    unmanaged_pids_cmp.publish(
-        identity=None, data=data, draft=draft, record=record)
-
-    assert record.pids["unmanaged"]["identifier"] == "somevalue"
-    assert record.pids["unmanaged"]["provider"] == "unmanaged"
-
-
-def test_publish_unmanaged_pid_no_value(unmanaged_pids_cmp):
-    data = {"pids": {
-        "unmanaged": {
-            "provider": "unmanaged",
-        }
-    }}
-
-    record = TestRecord()
-    draft = TestRecord()
-    unmanaged_pids_cmp.create(identity=None, data=data, record=draft)
-    # NOTE: Cannot publish without identifier value because the system
-    # cannot assign one (is unmanaged)
+    # publish, fail because is required an no value given
+    record = RDMRecord.publish(draft)
     with pytest.raises(ValidationError):
-        unmanaged_pids_cmp.publish(
-            identity=None, data=data, draft=draft, record=record)
+        component.publish(identity_simple, draft=draft, record=record)
+
+
+def test_unmanaged_no_required_pid_value(
+    not_req_unmanaged_pid_cmp, minimal_record, identity_simple
+):
+    component = not_req_unmanaged_pid_cmp
+    pids = {
+        "nrequman": {
+            "identifier": "value",
+            "provider": "nrequman",
+        }
+    }
+
+    # make sure `pids` field is added
+    data = minimal_record.copy()
+    data["pids"] = pids
+
+    # create a minimal draft
+    draft = RDMDraft.create(data)
+    component.create(identity_simple, data=data, record=draft)
+    assert "pids" in draft and draft.pids == pids
+    # publish
+    record = RDMRecord.publish(draft)
+    component.publish(identity_simple, draft=draft, record=record)
+    assert record.pids == pids
+
+
+def test_unmanaged_no_required_no_partial_value(
+    not_req_unmanaged_pid_cmp, minimal_record, identity_simple
+):
+    component = not_req_unmanaged_pid_cmp
+    pids = {
+        "nrequman": {
+            "provider": "nrequman",
+        }
+    }
+
+    # make sure `pids` field is added
+    data = minimal_record.copy()
+    data["pids"] = pids
+
+    # create a minimal draft
+    draft = RDMDraft.create(data)
+    component.create(identity_simple, data=data, record=draft)
+    assert "pids" in draft and draft.pids == pids
+
+    # publish
+    # NOTE: Better fail than strip and not tell the user.
+    record = RDMRecord.publish(draft)
+    with pytest.raises(ValidationError):
+        component.publish(identity_simple, draft=draft, record=record)
+
+
+def test_unmanaged_no_required_no_value(
+    not_req_unmanaged_pid_cmp, minimal_record, identity_simple
+):
+    # NOTE: Since is {} should simply be ignored
+    component = not_req_unmanaged_pid_cmp
+    pids = {
+        "nrequman": {}
+    }
+
+    # make sure `pids` field is added
+    data = minimal_record.copy()
+    data["pids"] = pids
+
+    # create a minimal draft
+    draft = RDMDraft.create(data)
+    component.create(identity_simple, data=data, record=draft)
+    assert "pids" in draft and draft.pids == pids
+
+    # publish
+    record = RDMRecord.publish(draft)
+    component.publish(identity_simple, draft=draft, record=record)
+
+
+def test_unmanaged_no_required_no_pids(
+    not_req_unmanaged_pid_cmp, minimal_record, identity_simple
+):
+    # NOTE: Since is {} should simply be ignored
+    component = not_req_unmanaged_pid_cmp
+    pids = {}
+
+    # make sure `pids` field is added
+    data = minimal_record.copy()
+    data["pids"] = pids
+
+    # create a minimal draft
+    draft = RDMDraft.create(data)
+    component.create(identity_simple, data=data, record=draft)
+    assert "pids" in draft and draft.pids == pids
+
+    # publish
+    record = RDMRecord.publish(draft)
+    component.publish(identity_simple, draft=draft, record=record)
 
 
 #
-# Base/General provider
+# Managed Provider, using DOI as an example
+#
+class TestServiceNReqManConfig(RDMRecordServiceConfig):
+    """Custom service config with only pid providers."""
+    pids_providers = {
+        "doi": {
+            "provider": DOIDataCitePIDProvider,
+            "required": False,
+            "system_managed": True,
+        },
+    }
+
+    pids_providers_clients = {
+        "datacite": {  # default for when no client is passed
+            "client": DOIDataCiteClient,
+            "args": {
+                "name": "rdm"  # to reuse default credentials
+            }
+        },
+        "rdm": {
+            "client": DOIDataCiteClient,
+            "args": {
+                "name": "rdm"
+            }
+        }
+    }
+
+
+class TestServiceReqManConfig(TestServiceNReqManConfig):
+    """Custom service config with only pid providers."""
+    pids_providers = {
+        "doi": {
+            "provider": DOIDataCitePIDProvider,
+            "required": True,
+            "system_managed": True,
+        },
+    }
+
+
+@pytest.fixture(scope="function")
+def not_req_managed_pid_cmp():
+    service = RDMRecordService(config=TestServiceNReqManConfig())
+
+    return ExternalPIDsComponent(service=service)
+
+
+@pytest.fixture(scope="function")
+def req_managed_pid_cmp():
+    service = RDMRecordService(config=TestServiceReqManConfig())
+
+    return ExternalPIDsComponent(service=service)
+
+
+def test_non_configured_provider(
+    not_req_managed_pid_cmp, minimal_record, identity_simple,
+):
+    component = not_req_managed_pid_cmp
+    pids = {
+        "noconfig": {
+            "provider": "nrequman",
+        }
+    }
+
+    # make sure `pids` field is added
+    data = minimal_record.copy()
+    data["pids"] = pids
+
+    # create a minimal draft
+    draft = RDMDraft.create(data)
+    with pytest.raises(ValidationError):
+        component.create(identity_simple, data=data, record=draft)
+
+
+def test_create_managed_doi_empty_pids(
+    req_managed_pid_cmp, minimal_record, identity_simple, mocker
+):
+    mocker.patch("invenio_rdm_records.services.config.DOIDataCiteClient")
+    mocker.patch("invenio_rdm_records.services.pids.providers.datacite." +
+                 "DataCiteRESTClient")
+    component = req_managed_pid_cmp
+    pids = {}
+
+    # make sure `pids` field is added
+    data = minimal_record.copy()
+    data["pids"] = pids
+
+    # create a minimal draft
+    draft = RDMDraft.create(data)
+    component.create(identity_simple, data=data, record=draft)
+    assert "pids" in draft and draft.pids == pids
+
+    # publish
+    record = RDMRecord.publish(draft)
+    component.publish(identity_simple, draft=draft, record=record)
+    doi = record.pids.get("doi")
+
+    assert doi
+    assert doi.get("identifier")
+    assert doi["provider"] == "datacite"
+    assert doi["client"] == "rdm"  # default: dict key: datacite, name: rdm
+
+
+def test_create_managed_doi_with_no_value(
+    req_managed_pid_cmp, minimal_record, identity_simple, mocker
+):
+    mocker.patch("invenio_rdm_records.services.pids.providers.datacite." +
+                 "DataCiteRESTClient")
+    mocker.patch("invenio_rdm_records.services.pids.providers.datacite." +
+                 "DataCite43JSONSerializer")
+    component = req_managed_pid_cmp
+    pids = {
+        "doi": {
+            "provider": "datacite",
+            "client": "rdm"
+        }
+    }
+
+    # make sure `pids` field is added
+    data = minimal_record.copy()
+    data["pids"] = pids
+
+    # create a minimal draft
+    draft = RDMDraft.create(data)
+    component.create(identity_simple, data=data, record=draft)
+    assert "pids" in draft and draft.pids == pids
+    # publish
+    record = RDMRecord.publish(draft)
+    component.publish(identity_simple, draft=draft, record=record)
+    doi = record.pids.get("doi")
+    assert doi
+    assert doi.get("identifier")
+    assert doi["provider"] == "datacite"
+    assert doi["client"] == "rdm"
+
+
+def test_create_managed_doi_with_value(
+    req_managed_pid_cmp, minimal_record, identity_simple, mocker
+):
+    client = mocker.patch(
+        "invenio_rdm_records.services.pids.providers.datacite."
+        "DOIDataCiteClient")
+    mocker.patch("invenio_rdm_records.services.pids.providers.datacite." +
+                 "DataCiteRESTClient")
+    component = req_managed_pid_cmp
+
+    # create a minimal draft
+    data = minimal_record.copy()
+    draft = RDMDraft.create(data)
+    component.create(identity_simple, data=data, record=draft)
+    assert "pids" in draft and draft.pids == {}
+
+    # when provider is managed and required, and the identifier is in the
+    # payload, it means that it was reserved via the `reserve` endpoint
+    provider = DOIDataCitePIDProvider(client)
+    pid = provider.create(draft)
+    provider.reserve(pid, draft)
+    db.session.commit()
+
+    pids = {
+        "doi": {
+            "identifier": pid.pid_value,
+            "provider": "datacite",
+            "client": "rdm"
+        }
+    }
+    draft["pids"] = pids
+
+    # publish
+    record = RDMRecord.publish(draft)
+    component.publish(identity_simple, draft=draft, record=record)
+    assert record.pids == pids
+
+    assert provider.get(pid.pid_value).is_registered()
+
+
+#
+#  DOI / Versioning
 #
 
-def test_update_no_change_pid(app, unmanaged_pids_cmp):
-    data = {"pids": {
-        "test": {
-            "identifier": "1234",
-            "provider": "testprov",
-            "client": "test-client"
-        }
-    }}
+def test_doi_publish_versions(
+    app, location, minimal_record, identity_simple, mocker
+):
+    client = mocker.patch(
+        "invenio_rdm_records.services.pids.providers.datacite."
+        "DOIDataCiteClient")
+    mocker.patch("invenio_rdm_records.services.pids.providers.datacite." +
+                 "DataCiteRESTClient")
+    mocker.patch("invenio_rdm_records.services.pids.providers.datacite." +
+                 "DataCite43JSONSerializer")
+    component = ExternalPIDsComponent(current_rdm_records.records_service)
+    doi_provider = DOIDataCitePIDProvider(client)
 
-    record = TestRecord()
-    unmanaged_pids_cmp.create(identity=None, data=data, record=record)
-    unmanaged_pids_cmp.update_draft(identity=None, data=data, record=record)
+    data = minimal_record.copy()
+    # make sure `pids` field is added on create
+    del data["pids"]
 
-    assert record.pids["test"]["identifier"] == "1234"
-    assert record.pids["test"]["provider"] == "testprov"
-    assert record.pids["test"]["client"] == "test-client"
+    # create a minimal draft
+    draft = RDMDraft.create(data)
+    component.create(identity_simple, data=data, record=draft)
+    assert "pids" in draft and draft.pids == {}
 
+    # publish
+    record = RDMRecord.publish(draft)
+    # NOTE: simulate metadata component required by datacite serialization
+    record["metadata"] = draft["metadata"]
+    component.publish(identity_simple, draft=draft, record=record)
+    doi_v1 = record.pids["doi"]
+    # DOI
+    assert doi_v1
+    assert doi_v1["identifier"]
+    assert doi_v1["provider"] == "datacite"
+    assert doi_v1["client"] == "rdm"  # Default since no values given
 
-def test_update_add_pid_no_identifier(app, unmanaged_pids_cmp):
-    data = {"pids": {}}
-    record = TestRecord()
-    unmanaged_pids_cmp.create(identity=None, data=data, record=record)
+    doi_pid = doi_provider.get(doi_v1["identifier"])
+    assert doi_pid.object_uuid == record.id
 
-    data["pids"] = {
-        "test": {
-            "provider": "testprov",
-            "client": "test-client"
-        }
-    }
-    unmanaged_pids_cmp.update_draft(identity=None, data=data, record=record)
+    # create a new version (v2) of the record
+    draft_v2 = RDMDraft.new_version(record)
+    component.new_version(identity_simple, draft=draft_v2, record=record)
+    assert "pids" in draft and draft.pids == {}
 
-    assert not record.pids["test"].get("identifier")
-    assert record.pids["test"]["provider"] == "testprov"
-    assert record.pids["test"]["client"] == "test-client"
+    # publish v2
+    record_v2 = RDMRecord.publish(draft_v2)
+    # NOTE: simulate metadata component required by datacite serialization
+    draft_v2["metadata"] = minimal_record["metadata"]
+    component.publish(identity_simple, draft=draft_v2, record=record_v2)
+    doi_v2 = record_v2.pids["doi"]
+    # DOI
+    assert doi_v2
+    assert doi_v2["identifier"]
+    assert doi_v2["provider"] == "datacite"
+    assert doi_v2["client"] == "rdm"  # Default since no values given
+    assert doi_v1 != doi_v2
 
+    doi_v2_pid = doi_provider.get(doi_v2["identifier"])
+    assert doi_v2_pid.object_uuid == record_v2.id
 
-def test_update_add_pid_with_identifier(app, unmanaged_pids_cmp):
-    data = {"pids": {}}
-    record = TestRecord()
-    unmanaged_pids_cmp.create(identity=None, data=data, record=record)
-
-    data["pids"] = {
-        "test": {
-            "identifier": "1234",
-            "provider": "testprov",
-            "client": "test-client"
-        }
-    }
-    unmanaged_pids_cmp.update_draft(identity=None, data=data, record=record)
-
-    assert record.pids["test"]["identifier"] == "1234"
-    assert record.pids["test"]["provider"] == "testprov"
-    assert record.pids["test"]["client"] == "test-client"
-
-
-def test_publish_without_pid_value(app, unmanaged_pids_cmp):
-    data = {"pids": {
-        "test": {
-            "provider": "testprov",
-            "client": "test-client"
-        }
-    }}
-
-    record = TestRecord()
-    draft = TestRecord()
-    unmanaged_pids_cmp.create(identity=None, data=data, record=draft)
-    unmanaged_pids_cmp.publish(
-        identity=None, data=data, draft=draft, record=record)
-
-    assert record.pids["test"]["identifier"]  # value depends on the counter
-
-
-def test_publish_with_pid_value_not_created(app, unmanaged_pids_cmp):
-    data = {"pids": {
-        "test": {
-            "identifier": "somevalue",
-            "provider": "testprov",
-            "client": "test-client"
-        }
-    }}
-
-    record = TestRecord()
-    draft = TestRecord()
-    unmanaged_pids_cmp.create(identity=None, data=data, record=draft)
-    with pytest.raises(PIDDoesNotExistError):
-        unmanaged_pids_cmp.publish(
-            identity=None, data=data, draft=draft, record=record)
+    assert doi_v1 != doi_v2

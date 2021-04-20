@@ -41,7 +41,6 @@ def test_valid_unmanaged(app, db, minimal_record, location):
     assert valid_full == RDMRecordSchema().load(minimal_record)["pids"]
 
 
-@pytest.mark.skip("PIDS-FIXME re-enable")
 def test_valid_unknown_scheme(app, db, minimal_record, location):
     valid_full = {
         "rand-unknown": {

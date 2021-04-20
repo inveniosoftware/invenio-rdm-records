@@ -67,7 +67,7 @@ def test_base_provider_reserve(app, db):
     provider = BasePIDProvider(pid_type="testid")
 
     created_pid = provider.create(pid_value="1234")
-    assert provider.reserve(created_pid)
+    assert provider.reserve(created_pid, {})
 
     # NOTE: DB level requires pid_type
     db_pid = PersistentIdentifier.get(pid_value="1234", pid_type="testid")
@@ -80,7 +80,7 @@ def test_base_provider_register(app, db):
     provider = BasePIDProvider(pid_type="testid")
 
     created_pid = provider.create(pid_value="1234")
-    assert provider.register(created_pid)
+    assert provider.register(created_pid, {})
 
     # NOTE: DB level requires pid_type
     db_pid = PersistentIdentifier.get(pid_value="1234", pid_type="testid")
@@ -93,7 +93,7 @@ def test_base_provider_hard_delete(app, db):
     provider = BasePIDProvider(pid_type="testid")
 
     created_pid = provider.create(pid_value="1234")
-    assert provider.delete(created_pid)
+    assert provider.delete(created_pid, {})
 
     # NOTE: DB level requires pid_type
     with pytest.raises(PIDDoesNotExistError):
@@ -104,8 +104,8 @@ def test_base_provider_soft_delete(app, db):
     provider = BasePIDProvider(pid_type="testid")
 
     created_pid = provider.create(pid_value="1234")
-    assert provider.reserve(created_pid)
-    assert provider.delete(created_pid)
+    assert provider.reserve(created_pid, {})
+    assert provider.delete(created_pid, {})
 
     # NOTE: DB level requires pid_type
     db_pid = PersistentIdentifier.get(pid_value="1234", pid_type="testid")
@@ -123,4 +123,5 @@ def test_base_provider_get_status(app, db):
 
 def test_base_provider_validate(app, db):
     provider = BasePIDProvider(pid_type="testid")
-    assert provider.validate(identifier=None, client=None, provider="base")
+    # NOTE: BasePIDProvider defaults name to None
+    assert provider.validate(identifier=None, client=None, provider=None)

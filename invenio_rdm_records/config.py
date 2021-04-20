@@ -172,3 +172,8 @@ RDM_RECORDS_UI_EDIT_URL = "/uploads/<pid_value>"
 
 #: Default site URL (used only when not in a context - e.g. like celery tasks).
 THEME_SITEURL = "http://127.0.0.1:5000"
+
+#: DataCite DOI credentials
+RDM_DATACITE_CLIENT_USERNAME = ""
+RDM_DATACITE_CLIENT_PASSWORD = ""
+RDM_DATACITE_CLIENT_PREFIX = "10.81088"

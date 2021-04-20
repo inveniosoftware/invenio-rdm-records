@@ -23,7 +23,7 @@ class UnmanagedPIDProvider(BasePIDProvider):
 
     def __init__(self, **kwargs):
         """Constructor."""
-        super(UnmanagedPIDProvider, self).__init__(system_managed=False)
+        super().__init__(pid_type=self.name, system_managed=False)
 
     def get(self, pid_value, pid_type=None, **kwargs):
         """Not allowed for unmanaged PIDs."""
@@ -34,19 +34,19 @@ class UnmanagedPIDProvider(BasePIDProvider):
         """Not allowed for unmanaged PIDs."""
         raise NotImplementedError
 
-    def reserve(self, pid, **kwargs):
+    def reserve(self, pid, record, **kwargs):
         """Not allowed for unmanaged PIDs."""
         raise NotImplementedError
 
-    def register(self, pid, **kwargs):
+    def register(self, pid, record, **kwargs):
         """Not allowed for unmanaged PIDs."""
         raise NotImplementedError
 
-    def update(self, pid, **kwargs):
+    def update(self, pid, record, **kwargs):
         """Not allowed for unmanaged PIDs."""
         raise NotImplementedError
 
-    def delete(self, pid, **kwargs):
+    def delete(self, pid, record, **kwargs):
         """Not allowed for unmanaged PIDs."""
         raise NotImplementedError
 
