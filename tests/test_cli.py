@@ -7,14 +7,10 @@
 
 """Tests for the CLI."""
 
-from invenio_rdm_records.cli import create_fake_record
+from invenio_rdm_records.fixtures.demo import create_fake_record
+from invenio_rdm_records.fixtures.tasks import create_demo_record
 
 
 def test_fake_demo_record_creation(app, db, location, es_clear):
-    record = create_fake_record()
-
-    assert record.id
-    assert "links" in record.data.keys()
-    assert "files" in record.data.keys()
-    assert "pids" in record.data.keys()
-    assert "metadata" in record.data.keys()
+    """Assert that demo record creation works without failing."""
+    create_demo_record(create_fake_record())

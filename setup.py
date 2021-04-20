@@ -114,6 +114,9 @@ setup(
             'invenio_rdm_records_parent_links = invenio_rdm_records.views:create_parent_record_links_bp',
             'invenio_rdm_pid_resource = invenio_rdm_records.views:create_pid_resource_bp'
         ],
+        'invenio_celery.tasks': [
+            'invenio_rdm_records = invenio_rdm_records.fixtures.tasks',
+        ],
         'invenio_db.models': [
             'invenio_rdm_records = invenio_rdm_records.records.models',
             'subjects = invenio_vocabularies.contrib.subjects.models',
