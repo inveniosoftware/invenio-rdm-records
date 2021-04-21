@@ -20,7 +20,7 @@ def test_ui_serializer(app, full_record):
         'access_status': {
             'description_l10n': 'The record and files will be made publicly '
                                 'available on Jan 1, 2131.',
-            'icon': '',
+            'icon': 'outline clock',
             'id': 'embargoed',
             'title_l10n': 'Embargoed'
         },

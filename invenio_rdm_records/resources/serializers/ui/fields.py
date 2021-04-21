@@ -81,9 +81,9 @@ class UIAccessStatus(object):
         """Access status icon."""
         return {
             AccessStatusEnum.OPEN: "unlock",
-            AccessStatusEnum.EMBARGOED: "",
-            AccessStatusEnum.RESTRICTED: "lock",
-            AccessStatusEnum.METADATA_ONLY: "key",
+            AccessStatusEnum.EMBARGOED: "outline clock",
+            AccessStatusEnum.RESTRICTED: "ban",
+            AccessStatusEnum.METADATA_ONLY: "tag",
         }.get(self.access_status)
 
 
@@ -108,13 +108,10 @@ class UIObjectAccessStatus(UIAccessStatus):
                     date=format_edtf(obj.get('embargo').get('until')))
             ),
             AccessStatusEnum.RESTRICTED: lambda obj: (
-                _("You may request access to the files in this upload, "
-                  "provided that you fulfil the conditions below. The "
-                  "decision whether to grant/deny access is solely under "
-                  "the responsibility of the record owner.")
+                _("Access to the record is restricted.")
             ),
             AccessStatusEnum.METADATA_ONLY: lambda obj: (
-                _("Files are not publicly accessible.")
+                _("No files is available for this record.")
             ),
         }.get(self.access_status)(self.record_access_dict)
 

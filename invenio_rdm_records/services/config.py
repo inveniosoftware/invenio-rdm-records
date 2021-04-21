@@ -170,6 +170,8 @@ class RDMRecordServiceConfig(RecordServiceConfig):
         ),
         "latest": RecordLink("{+api}/records/{id}/versions/latest"),
         "latest_html": RecordLink("{+ui}/records/{id}/latest"),
+        "draft": RecordLink("{+api}/records/{id}/draft", when=is_record),
+        "record": RecordLink("{+api}/records/{id}", when=is_draft),
         "publish": RecordLink(
             "{+api}/records/{id}/draft/actions/publish",
             when=is_draft
