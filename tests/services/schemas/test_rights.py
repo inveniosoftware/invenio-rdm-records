@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2020 CERN.
+# Copyright (C) 2020-2021 CERN.
+# Copyright (C) 2021 Northwestern University.
 # Copyright (C) 2021 Graz University of Technology.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
@@ -33,14 +34,14 @@ def test_valid_minimal():
 
 def test_invalid_extra_right():
     invalid_extra = {
-        "rights": "Creative Commons Attribution 4.0 International",
+        "title": "Creative Commons Attribution 4.0 International",
         "scheme": "spdx",
         "identifier": "cc-by-4.0",
         "uri": "https://creativecommons.org/licenses/by/4.0/",
         "extra": "field"
     }
     with pytest.raises(ValidationError):
-        data = RightsSchema().load(invalid_extra)
+        RightsSchema().load(invalid_extra)
 
 
 def test_invalid_url():
@@ -50,7 +51,7 @@ def test_invalid_url():
         "link": "creativecommons.org/licenses/by/4.0/"
     }
     with pytest.raises(ValidationError):
-        data = RightsSchema().load(invalid_url)
+        RightsSchema().load(invalid_url)
 
 
 @pytest.mark.parametrize("rights", [
