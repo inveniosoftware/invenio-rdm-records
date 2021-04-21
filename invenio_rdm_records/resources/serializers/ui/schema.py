@@ -166,7 +166,7 @@ class UIListSchema(Schema):
                 if b.get('key') == 1:
                     b['label'] = _("Published")
                 elif b.get('key') == 0:
-                    b['label'] = _("New")
+                    b['label'] = _("Unpublished")
 
         access_status_agg = aggs.get('access_status')
         if access_status_agg:

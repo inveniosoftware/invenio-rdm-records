@@ -59,6 +59,7 @@ def test_draft_links(client, draft_json, minimal_record):
         "self": f"https://127.0.0.1:5000/api/records/{pid_value}/draft",
         "self_html": f"https://127.0.0.1:5000/uploads/{pid_value}",
         "publish": f"https://127.0.0.1:5000/api/records/{pid_value}/draft/actions/publish",  # noqa
+        "record": f"https://127.0.0.1:5000/api/records/{pid_value}",
         "versions": f"https://127.0.0.1:5000/api/records/{pid_value}/versions",
         "latest": f"https://127.0.0.1:5000/api/records/{pid_value}/versions/latest",  # noqa
         "latest_html": f"https://127.0.0.1:5000/records/{pid_value}/latest",  # noqa
@@ -78,8 +79,7 @@ def test_record_links(client, published_json):
     expected_links = {
         "self": f"https://127.0.0.1:5000/api/records/{pid_value}",
         "self_html": f"https://127.0.0.1:5000/records/{pid_value}",
-        # TODO: Uncomment when implemented
-        # "edit": f"https://127.0.0.1:5000/api/records/{pid_value}/draft",
+        "draft": f"https://127.0.0.1:5000/api/records/{pid_value}/draft",
         "files": f"https://127.0.0.1:5000/api/records/{pid_value}/files",
         "versions": f"https://127.0.0.1:5000/api/records/{pid_value}/versions",
         "latest": f"https://127.0.0.1:5000/api/records/{pid_value}/versions/latest",  # noqa
