@@ -686,3 +686,103 @@ def test_link_update(
     assert link_result.status_code == 200
     assert link_result.json["expires_at"] == in_10_days_str
     assert link_result.json["permission"] == "read_files"
+
+
+def test_reserve_pid_with_login(
+     app, location, es_clear, headers, client_with_login, minimal_record
+ ):
+     """Test the reserve function with client logged in."""
+     # GET with client login
+     client = client_with_login
+     # Create the draft
+     response = client.post(
+         "/records", data=json.dumps(minimal_record), headers=headers)
+
+     assert response.status_code == 201
+     recid = response.json['id']
+
+     response = client.get(
+         f"/records/{recid}/draft/pids/doi", headers=headers)
+     assert response.status_code == 200
+     assert response.json["pids"]["doi"]["identifier"]
+
+
+ def test_reserve_pid_without_login(
+     app, location, es_clear, headers, client, minimal_record
+ ):
+     """Test the reserve function" without client log in."""
+     # Create the draft
+     response = client.post(
+         "/records", data=json.dumps(minimal_record), headers=headers)
+
+     assert response.status_code == 201
+     recid = response.json['id']
+
+     response = client.get(
+         f"/records/{recid}/draft/pids/doi", headers=headers)
+     assert response.status_code == 403
+
+
+ def test_reserve_pid_twice():
+     # PIDS-FIXME: implement where a pid type gets reserved twice
+     # e.g. double GET call to doi. Better at service level?
+     assert False
+
+
+ def test_delete_pid_with_login(
+     app, location, es_clear, headers, client_with_login, minimal_record
+ ):
+     """Test the unreserve function."""
+     # GET with client login
+     client = client_with_login
+     # Create the draft
+     response = client.post(
+         "/records", data=json.dumps(minimal_record), headers=headers)
+
+     assert response.status_code == 201
+     recid = response.json['id']
+
+     # reserve a doi
+     response = client.get(
+         f"/records/{recid}/draft/pids/doi", headers=headers)
+     assert response.status_code == 200
+     assert response.json["pids"]["doi"]["identifier"]
+
+     # remove the doi
+     pids = response.json["pids"]
+     pids.pop("doi")
+     response = client.delete(
+         f"/records/{recid}/draft/pids/doi", headers=headers)
+     assert response.status_code == 200
+     assert response.json["pids"] == pids
+     assert not response.json["pids"].get("doi")
+
+
+ def test_publish_pid_flow(
+     app, location, es_clear, headers, client_with_login, minimal_record
+ ):
+     """Test the reserve function with client logged in."""
+     # GET with client login
+     client = client_with_login
+     # Create the draft
+     response = client.post(
+         "/records", data=json.dumps(minimal_record), headers=headers)
+
+     assert response.status_code == 201
+     recid = response.json['id']
+
+     # Reserve DOI
+     response = client.get(
+         f"/records/{recid}/draft/pids/doi", headers=headers)
+     assert response.status_code == 200
+     assert response.json["pids"]["doi"]["identifier"]
+
+     # Publish it, will register DOI
+     response = client.post(
+         f"/records/{recid}/draft/actions/publish", headers=headers)
+     assert response.status_code == 200
+
+     # Get from datacite
+     doi = response.json["pids"]["doi"]["identifier"]
+     response = client.get(f"https://datacite....{doi}")
+     assert response.status_code == 200  # Assert redirect?

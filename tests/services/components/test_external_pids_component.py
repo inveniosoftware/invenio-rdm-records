@@ -153,6 +153,20 @@ def test_publish_unmanaged_pid_no_value(unmanaged_pids_cmp):
 # Base/General provider
 #
 
+def test_create_invalid_provider_name(app, external_pids_cmp):
+      # PIDS-FIXME: Will be correct when #514 fixed
+      data = {"pids": {
+          "test": {
+              "provider": "invalid",
+              "client": "test-client"
+          }
+      }}
+
+      with pytest.raises(ValidationError):
+          external_pids_cmp.create(
+              identity=None, data=data, record=TestRecord())
+
+
 def test_update_no_change_pid(app, unmanaged_pids_cmp):
     data = {"pids": {
         "test": {
@@ -208,6 +222,11 @@ def test_update_add_pid_with_identifier(app, unmanaged_pids_cmp):
     assert record.pids["test"]["client"] == "test-client"
 
 
+def test_update_add_reserved_pid(app, unmanaged_pids_cmp):
+     # PIDS-FIXME: implement
+     assert True == False
+
+
 def test_publish_without_pid_value(app, unmanaged_pids_cmp):
     data = {"pids": {
         "test": {
@@ -223,6 +242,26 @@ def test_publish_without_pid_value(app, unmanaged_pids_cmp):
         identity=None, data=data, draft=draft, record=record)
 
     assert record.pids["test"]["identifier"]  # value depends on the counter
+
+
+def test_publish_with_pid_value(app, external_pids_cmp):
+      data = {"pids": {
+          "test": {
+              "identifier": "1234",
+              "provider": "testprov",
+              "client": "test-client"
+          }
+      }}
+
+      record = TestRecord()
+      draft = TestRecord()
+      external_pids_cmp.create(identity=None, data=data, record=draft)
+      external_pids_cmp.publish(
+              identity=None, data=data, draft=draft, record=record)
+
+      assert record.pids["test"]["identifier"] == "1234"
+      assert record.pids["test"]["provider"] == "testprov"
+      assert record.pids["test"]["client"] == "test-client"
 
 
 def test_publish_with_pid_value_not_created(app, unmanaged_pids_cmp):
