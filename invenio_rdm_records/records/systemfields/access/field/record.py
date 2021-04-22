@@ -66,9 +66,7 @@ class RecordAccess:
 
         if self.embargo.active:
             status = AccessStatusEnum.EMBARGOED
-        elif self.protection.record == "public" and (
-            self.protection.files == "restricted" or not self.has_files
-        ):
+        elif self.protection.record == "public" and not self.has_files:
             status = AccessStatusEnum.METADATA_ONLY
         elif (
             self.protection.record
