@@ -106,6 +106,9 @@ class UIObjectSchema(Schema):
     publication_date_l10n_long = FormatEDTF(
         attribute='metadata.publication_date', format='long')
 
+    embargo_end_date_long = FormatEDTF(
+        attribute='access.embargo.until', format='long')
+
     created_date_l10n_long = FormatDate(attribute='created', format='long')
 
     updated_date_l10n_long = FormatDate(attribute='updated', format='long')
