@@ -90,30 +90,69 @@ class UIAccessStatus(object):
 class UIObjectAccessStatus(UIAccessStatus):
     """Record or draft access status UI properties."""
 
-    def __init__(self, record_access_dict):
+    def __init__(self, record_access_dict, has_files):
         """Build access status object."""
         self.record_access_dict = record_access_dict
+        self.has_files = has_files
         super().__init__(record_access_dict.get('status'))
 
     @property
     def description(self):
         """Record access status description."""
+        options = {
+            AccessStatusEnum.OPEN: _(
+                "The record and files are publicly accessible."),
+            AccessStatusEnum.METADATA_ONLY: _(
+                "No files are available for this record.")
+        }
+
+        if self.record_access_dict.get('record') == 'restricted':
+            if self.has_files:
+                options.update({
+                    AccessStatusEnum.EMBARGOED: _(
+                        "The record and files will be made publicly available "
+                        "on %(date)s.") % {"date": self.embargo_date},
+                    AccessStatusEnum.RESTRICTED: _(
+                        "The record and files are restricted to users with "
+                        "access."),
+                })
+            else:
+                options.update({
+                    AccessStatusEnum.EMBARGOED: _(
+                        "The record will be made publicly available on "
+                        "%(date)s.") % {"date": self.embargo_date},
+                    AccessStatusEnum.RESTRICTED: _(
+                        "The record is restricted to users with access."),
+                })
+        else:
+            options.update({
+                AccessStatusEnum.EMBARGOED: _(
+                    "The files will be made publicly available on "
+                    "%(date)s.") % {"date": self.embargo_date},
+                AccessStatusEnum.RESTRICTED: _(
+                    "The record is publicly accessible, but files are "
+                    "restricted to users with access."),
+            })
+
+        return options.get(self.access_status)
+
+    @property
+    def embargo_date(self):
+        """Embargo date."""
+        until = self.record_access_dict.get('embargo').get('until')
+        if until:
+            return format_edtf(until, format='long')
+        return until
+
+    @property
+    def message_class(self):
+        """UI message class name."""
         return {
-            AccessStatusEnum.OPEN: lambda obj: (
-                _("Files are publicly accessible.")
-            ),
-            AccessStatusEnum.EMBARGOED: lambda obj: (
-                _("The record and files will be made publicly available on")
-                + " {date}.".format(
-                    date=format_edtf(obj.get('embargo').get('until')))
-            ),
-            AccessStatusEnum.RESTRICTED: lambda obj: (
-                _("Access to the record is restricted.")
-            ),
-            AccessStatusEnum.METADATA_ONLY: lambda obj: (
-                _("No files is available for this record.")
-            ),
-        }.get(self.access_status)(self.record_access_dict)
+            AccessStatusEnum.OPEN: "",
+            AccessStatusEnum.EMBARGOED: "warning",
+            AccessStatusEnum.RESTRICTED: "negative",
+            AccessStatusEnum.METADATA_ONLY: "",
+        }.get(self.access_status)
 
 
 class AccessStatusField(fields.Field):
@@ -122,12 +161,15 @@ class AccessStatusField(fields.Field):
     def _serialize(self, value, attr, obj, **kwargs):
         """Serialise access status."""
         record_access_dict = obj.get('access')
+        has_files = obj.get('files').get('enabled', False)
         if record_access_dict:
             record_access_status_ui = \
-                UIObjectAccessStatus(record_access_dict)
+                UIObjectAccessStatus(record_access_dict, has_files)
             return {
                 "id": record_access_status_ui.id,
                 "title_l10n": record_access_status_ui.title,
                 "description_l10n": record_access_status_ui.description,
                 "icon": record_access_status_ui.icon,
+                "embargo_date_l10n": record_access_status_ui.embargo_date,
+                "message_class": record_access_status_ui.message_class,
             }

@@ -31,10 +31,6 @@ class RDMRecordSchema(RecordSchema, FieldPermissionsMixin):
         'files': 'update_draft',
     }
 
-    field_dump_permissions = {
-        'files': 'read_files',
-    }
-
     # ATTENTION: In this schema you should be using the ``NestedAttribute``
     # instead  of Marshmallow's ``fields.Nested``. Using NestedAttribute
     # ensures that the nested schema will receive the system field instead of

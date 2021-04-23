@@ -19,11 +19,13 @@ def test_ui_serializer(app, full_record_ui):
     full_record_ui['access']['status'] = 'embargoed'
     expected_data = {
         'access_status': {
-            'description_l10n': 'The record and files will be made publicly '
-                                'available on Jan 1, 2131.',
+            'description_l10n': 'The files will be made publicly available on '
+                                'January 1, 2131.',
             'icon': 'outline clock',
             'id': 'embargoed',
-            'title_l10n': 'Embargoed'
+            'title_l10n': 'Embargoed',
+            'embargo_date_l10n': 'January 1, 2131',
+            'message_class': 'warning',
         },
         'contributors': {
             'affiliations': [[1, 'CERN']],
@@ -53,7 +55,6 @@ def test_ui_serializer(app, full_record_ui):
         },
         'publication_date_l10n_long': 'January 2018 – September 2020',
         'publication_date_l10n_medium': 'Jan 2018 – Sep 2020',
-        'embargo_end_date_long': 'January 1, 2131',
         'resource_type': 'Journal article',
         'languages': [
             {'id': 'da', 'title_l10n': "Danish"},

@@ -10,6 +10,7 @@
 
 from marshmallow import Schema, fields
 from marshmallow_utils.fields import SanitizedUnicode
+from marshmallow_utils.permissions import FieldPermissionsMixin
 
 
 class FileSchema(Schema):
@@ -35,8 +36,13 @@ class FileSchema(Schema):
     #     }
 
 
-class FilesSchema(Schema):
+class FilesSchema(Schema, FieldPermissionsMixin):
     """Files metadata schema."""
+
+    field_dump_permissions = {
+        'default_preview': 'read_files',
+        'order': 'read_files',
+    }
 
     enabled = fields.Bool()
     default_preview = SanitizedUnicode()
