@@ -345,13 +345,11 @@ class RDMRecordService(RecordService):
 
     def get_client(self, client_name):
         """Get a client from config."""
-        client_config = self.config.pids_providers_clients.get(client_name)
-        client_class = client_config.get("client")
-        client_args = client_config.get("args", {})
+        client_class = self.config.pids_providers_clients.get(client_name)
         if not client_class:
             raise ValueError
 
-        return client_class(**client_args)
+        return client_class(name=client_name)
 
     def get_provider(self, scheme, client_name=None):
         """Get a provider from config."""
@@ -387,19 +385,18 @@ class RDMRecordService(RecordService):
         # Permissions
         self.require_permission(identity, "manage", record=draft)
 
-        provider = self.get_provider(pid_type, client=pid_client)
-        pid = provider.create(id_)
+        provider = self.get_provider(pid_type, client_name=pid_client)
+        pid = provider.create(draft)
 
         draft.pids[pid_type] = {
             "identifier": pid.pid_value,
             "provider": provider.name
         }
         if provider.client:
-            draft.pids[pid_type]["client"] = provider._client_credentials.name
+            draft.pids[pid_type]["client"] = provider.client.name
 
+        provider.reserve(pid, draft)
         draft.commit()
-
-        provider.reserve(draft, pid)
 
         return self.result_item(
             self,
@@ -418,7 +415,7 @@ class RDMRecordService(RecordService):
         # Permissions
         self.require_permission(identity, "manage", record=draft)
 
-        provider = self.get_provider(pid_type, client=pid_client)
+        provider = self.get_provider(pid_type, client_name=pid_client)
         pid_attr = draft.pids.get(pid_type)
 
         if not pid_attr:
@@ -433,7 +430,7 @@ class RDMRecordService(RecordService):
             pid_type=pid_type
         )
 
-        deleted = provider.delete(pid)
+        deleted = provider.delete(pid, draft)
         draft.pids.pop(pid_type)
         draft.commit()
 

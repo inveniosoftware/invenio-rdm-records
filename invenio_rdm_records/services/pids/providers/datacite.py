@@ -25,7 +25,7 @@ class DOIDataCiteClient(BaseClient):
     def __init__(self, name, url=None, **kwargs):
         """Constructor."""
         # PIDS-FIXME: Rethink config loading
-        config_key = f"{name.upper()}_DATACITE_CLIENT"
+        config_key = f"RDM_DATACITE_CLIENT"
 
         super().__init__(
             name=name,
