@@ -169,12 +169,20 @@ class ResourceType(fields.Field):
             raise ValidationError(error_content)
 
 
+class LanguageSchema(Schema):
+    """Language schema."""
+
+    id = SanitizedUnicode(required=True)
+    title = fields.Raw(dump_only=True)
+    description = fields.Raw(dump_only=True)
+
+
 class TitleSchema(Schema):
     """Schema for the additional title."""
 
     title = SanitizedUnicode(required=True, validate=validate.Length(min=3))
     type = SanitizedUnicode()
-    lang = ISOLangString()
+    lang = fields.Nested(LanguageSchema)
 
     @validates_schema
     def validate_data(self, data, **kwargs):
@@ -429,12 +437,6 @@ class LocationSchema(Schema):
             })
 
 
-class LanguageSchema(Schema):
-    """Language schema."""
-
-    id = SanitizedUnicode(required=True)
-    title = fields.Raw(dump_only=True)
-    description = fields.Raw(dump_only=True)
 
 
 class MetadataSchema(Schema):

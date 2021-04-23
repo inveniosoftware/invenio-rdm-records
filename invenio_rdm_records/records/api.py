@@ -76,6 +76,11 @@ class CommonFieldsMixin:
             attrs=['id', 'title'],
             pid_field=Vocabulary.pid.with_type_ctx('languages')
         ),
+        additional_titles=PIDListRelation(
+            'metadata.additional_titles',
+            attrs=['lang.id', 'title'],
+            pid_field=Vocabulary.pid.with_type_ctx('languages')
+        ),
     )
 
     bucket_id = ModelField(dump=False)

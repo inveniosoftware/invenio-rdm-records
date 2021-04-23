@@ -149,7 +149,7 @@ def full_record(users):
                 "type": "other",
                 "description": "A date"
             }],
-            "languages": [{"id": "da"}, {"id": "en"}],
+            "languages": [{"id": "dan"}, {"id": "eng"}],
             "identifiers": [{
                 "identifier": "1924MNRAS..84..308E",
                 "scheme": "bibcode"

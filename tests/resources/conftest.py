@@ -103,10 +103,10 @@ def full_record_ui(full_record):
     }]
 
     ui_record["metadata"]["languages"] = [{
-        "id": "da",
+        "id": "dan",
         "title": {"en": "Danish"}
     }, {
-        "id": "en",
+        "id": "eng",
         "title": {"en": "English"}
     }]
 

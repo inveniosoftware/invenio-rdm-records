@@ -56,9 +56,9 @@ def languages(db):
     languages = {}
 
     for lang in (
-        {"props": {"id": "en"}, "title": {"en": "English"}},
-        {"props": {"id": "fr"}, "title": {"en": "French"}},
-        {"props": {"id": "it"}, "title": {"en": "Italian"}},
+        {"props": {"id": "eng"}, "title": {"en": "English"}},
+        {"props": {"id": "fra"}, "title": {"en": "French"}},
+        {"props": {"id": "ita"}, "title": {"en": "Italian"}},
     ):
         record = service.create(
             identity=identity,

@@ -56,8 +56,8 @@ def test_ui_serializer(app, full_record_ui):
         'embargo_end_date_long': 'January 1, 2131',
         'resource_type': 'Journal article',
         'languages': [
-            {'id': 'da', 'title_l10n': "Danish"},
-            {'id': 'en', 'title_l10n': "English"}
+            {'id': 'dan', 'title_l10n': "Danish"},
+            {'id': 'eng', 'title_l10n': "English"}
         ],
         'description_stripped': 'Test',
         'version': 'v1.0',
