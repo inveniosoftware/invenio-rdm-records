@@ -57,9 +57,6 @@ class RDMRecordService(RecordService):
 
     def import_files(self, id_, identity):
         """Import files from previous record version."""
-        # FIXME: Remove "registered_only=False" since it breaks access to an
-        # unpublished record.
-
         draft = self.draft_cls.pid.resolve(id_, registered_only=False)
         self.require_permission(identity, "update_draft", record=draft)
 
@@ -74,17 +71,16 @@ class RDMRecordService(RecordService):
         if not record.files.enabled or not record.files.bucket:
             raise ValidationError(_("Record should have files enabled"))
 
-        # Set the record bucket on the draft
-        for o in ObjectVersion.get_by_bucket(record.bucket):
-            o.copy(bucket=draft.bucket)
-
         # Copy over the files
         for key, df in record.files.items():
-            # metadata
+            # Copy object version to new bucket
+            new_obj = df.object_version.copy(bucket=draft.bucket)
+
+            # Create the file record.
             if df.metadata is not None:
-                draft.files[key] = df.object_version, df.metadata
+                draft.files[key] = new_obj, df.metadata
             else:
-                draft.files[key] = df.object_version
+                draft.files[key] = new_obj
 
         # Commit and index
         draft.commit()
