@@ -241,18 +241,8 @@ class TestServiceNReqManConfig(RDMRecordServiceConfig):
     }
 
     pids_providers_clients = {
-        "datacite": {  # default for when no client is passed
-            "client": DOIDataCiteClient,
-            "args": {
-                "name": "rdm"  # to reuse default credentials
-            }
-        },
-        "rdm": {
-            "client": DOIDataCiteClient,
-            "args": {
-                "name": "rdm"
-            }
-        }
+        "datacite": DOIDataCiteClient,  # default for when no client is passed
+        "rdm": DOIDataCiteClient
     }
 
 
@@ -327,7 +317,7 @@ def test_create_managed_doi_empty_pids(
     assert doi
     assert doi.get("identifier")
     assert doi["provider"] == "datacite"
-    assert doi["client"] == "rdm"  # default: dict key: datacite, name: rdm
+    assert doi["client"] == "datacite"  # default
 
 
 def test_create_managed_doi_with_no_value(
@@ -360,7 +350,7 @@ def test_create_managed_doi_with_no_value(
     assert doi
     assert doi.get("identifier")
     assert doi["provider"] == "datacite"
-    assert doi["client"] == "rdm"
+    assert doi["client"] == "rdm"  # tests non-default client works
 
 
 def test_create_managed_doi_with_value(
@@ -439,7 +429,7 @@ def test_doi_publish_versions(
     assert doi_v1
     assert doi_v1["identifier"]
     assert doi_v1["provider"] == "datacite"
-    assert doi_v1["client"] == "rdm"  # Default since no values given
+    assert doi_v1["client"] == "datacite"  # Default since no values given
 
     doi_pid = doi_provider.get(doi_v1["identifier"])
     assert doi_pid.object_uuid == record.id
@@ -459,7 +449,7 @@ def test_doi_publish_versions(
     assert doi_v2
     assert doi_v2["identifier"]
     assert doi_v2["provider"] == "datacite"
-    assert doi_v2["client"] == "rdm"  # Default since no values given
+    assert doi_v2["client"] == "datacite"  # Default since no values given
     assert doi_v1 != doi_v2
 
     doi_v2_pid = doi_provider.get(doi_v2["identifier"])

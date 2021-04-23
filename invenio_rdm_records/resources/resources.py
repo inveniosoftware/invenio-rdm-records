@@ -10,10 +10,12 @@
 """Bibliographic Record Resource."""
 
 from flask import abort, g
-from flask_resources import resource_requestctx, response_handler, route
+from flask_resources import request_parser, resource_requestctx, \
+    response_handler, route
 from invenio_drafts_resources.resources import RecordResource
 from invenio_records_resources.resources.records.resource import \
     request_data, request_search_args, request_view_args
+from marshmallow_utils.fields import SanitizedUnicode
 
 
 class RDMRecordResource(RecordResource):
@@ -132,6 +134,11 @@ class RDMParentRecordLinksResource(RecordResource):
         return items.to_dict(), 200
 
 
+request_pid_args = request_parser(
+    {"client": SanitizedUnicode()}, location='args'
+)
+
+
 class RDMManagedPIDProviderResource(RecordResource):
     """PID provider resource."""
 
@@ -148,6 +155,7 @@ class RDMManagedPIDProviderResource(RecordResource):
             route("DELETE", p(routes["item"]), self.delete),
         ]
 
+    @request_pid_args
     @request_view_args
     @request_data
     @response_handler()
@@ -162,6 +170,7 @@ class RDMManagedPIDProviderResource(RecordResource):
 
         return item.to_dict(), 200
 
+    @request_pid_args
     @request_view_args
     def delete(self):
         """Delete  doi."""

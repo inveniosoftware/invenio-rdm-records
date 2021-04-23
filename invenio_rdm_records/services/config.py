@@ -144,12 +144,7 @@ class RDMRecordServiceConfig(RecordServiceConfig):
     }
 
     pids_providers_clients = {
-        "datacite": {
-            "client": DOIDataCiteClient,
-            "args": {
-                "name": "rdm"
-            }
-        }
+        "datacite": DOIDataCiteClient
     }
 
     # Components
