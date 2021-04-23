@@ -136,11 +136,11 @@ class RDMRecordServiceConfig(RecordServiceConfig):
             "required": False,
             "system_managed": False,
         },
-        "doi": {
-            "provider": DOIDataCitePIDProvider,
-            "required": True,
-            "system_managed": True,
-        },
+        # "doi": {
+        #     "provider": DOIDataCitePIDProvider,
+        #     "required": True,
+        #     "system_managed": True,
+        # },
     }
 
     pids_providers_clients = {
