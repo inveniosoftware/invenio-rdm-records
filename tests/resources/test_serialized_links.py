@@ -65,6 +65,7 @@ def test_draft_links(client, draft_json, minimal_record):
         "latest_html": f"https://127.0.0.1:5000/records/{pid_value}/latest",  # noqa
         "access_links": f"https://127.0.0.1:5000/api/records/{pid_value}/access/links",  # noqa
         "files": f"https://127.0.0.1:5000/api/records/{pid_value}/draft/files",
+        "reserve_doi": f"https://127.0.0.1:5000/api/records/{pid_value}/draft/pids/doi",  # noqa
     }
     assert expected_links == created_draft_links == read_draft_links
 
@@ -72,6 +73,7 @@ def test_draft_links(client, draft_json, minimal_record):
 def test_record_links(client, published_json):
     """Tests the links for a published RDM record."""
     pid_value = published_json["id"]
+    doi_value = published_json["pids"]["doi"]["identifier"].replace("/", "%2F")
     published_record_links = published_json["links"]
     response = client.get(f"/records/{pid_value}", headers=HEADERS)
     read_record_links = response.json["links"]
@@ -79,12 +81,14 @@ def test_record_links(client, published_json):
     expected_links = {
         "self": f"https://127.0.0.1:5000/api/records/{pid_value}",
         "self_html": f"https://127.0.0.1:5000/records/{pid_value}",
+        "self_doi": f"https://127.0.0.1:5000/doi/{doi_value}",
         "draft": f"https://127.0.0.1:5000/api/records/{pid_value}/draft",
         "files": f"https://127.0.0.1:5000/api/records/{pid_value}/files",
         "versions": f"https://127.0.0.1:5000/api/records/{pid_value}/versions",
         "latest": f"https://127.0.0.1:5000/api/records/{pid_value}/versions/latest",  # noqa
         "latest_html": f"https://127.0.0.1:5000/records/{pid_value}/latest",  # noqa
         "access_links": f"https://127.0.0.1:5000/api/records/{pid_value}/access/links",  # noqa
+        "reserve_doi": f"https://127.0.0.1:5000/api/records/{pid_value}/draft/pids/doi",  # noqa
     }
     assert expected_links == published_record_links == read_record_links
 

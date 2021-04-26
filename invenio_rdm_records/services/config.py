@@ -26,6 +26,7 @@ from invenio_records_resources.services.records.search import \
 from ..records import RDMDraft, RDMRecord
 from .components import AccessComponent, ExternalPIDsComponent, \
     MetadataComponent
+from .links import HiddenLink, RecordPIDsLink
 from .permissions import RDMRecordPermissionPolicy
 from .pids.providers import DOIDataCiteClient, DOIDataCitePIDProvider, \
     UnmanagedPIDProvider
@@ -170,6 +171,11 @@ class RDMRecordServiceConfig(RecordServiceConfig):
             if_=RecordLink("{+ui}/records/{id}"),
             else_=RecordLink("{+ui}/uploads/{id}"),
         ),
+        "self_doi": ConditionalLink(
+            cond=is_record,
+            if_=RecordPIDsLink("{+ui}/doi/{pid_doi}"),
+            else_=HiddenLink(),
+        ),
         "files": ConditionalLink(
             cond=is_record,
             if_=RecordLink("{+api}/records/{id}/files"),
@@ -185,6 +191,7 @@ class RDMRecordServiceConfig(RecordServiceConfig):
         ),
         "versions": RecordLink("{+api}/records/{id}/versions"),
         "access_links": RecordLink("{+api}/records/{id}/access/links"),
+        "reserve_doi": RecordLink("{+api}/records/{id}/draft/pids/doi")
     }
 
 
