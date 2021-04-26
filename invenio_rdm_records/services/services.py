@@ -15,7 +15,6 @@ import arrow
 from flask_babelex import lazy_gettext as _
 from invenio_db import db
 from invenio_drafts_resources.services.records import RecordService
-from invenio_pidstore.models import PersistentIdentifier
 from invenio_records_resources.services.records.schema import \
     ServiceSchemaWrapper
 from marshmallow.exceptions import ValidationError
@@ -23,22 +22,6 @@ from marshmallow.exceptions import ValidationError
 
 class RDMRecordService(RecordService):
     """RDM record service."""
-
-    def __init__(self, config, files_service=None, draft_files_service=None):
-        """Constructor for RDMRecordService."""
-        super().__init__(config)
-        self._files = files_service
-        self._draft_files = draft_files_service
-
-    @property
-    def files(self):
-        """Record files service."""
-        return self._files
-
-    @property
-    def draft_files(self):
-        """Draft files service."""
-        return self._draft_files
 
     def link_result_item(self, *args, **kwargs):
         """Create a new instance of the resource unit."""
@@ -53,47 +36,6 @@ class RDMRecordService(RecordService):
         """Schema for secret links."""
         return ServiceSchemaWrapper(
             self, schema=self.config.schema_secret_link
-        )
-
-    def import_files(self, id_, identity):
-        """Import files from previous record version."""
-        draft = self.draft_cls.pid.resolve(id_, registered_only=False)
-        self.require_permission(identity, "update_draft", record=draft)
-
-        # Retrieve latest record
-        record = self.record_cls.get_record(draft.versions.latest_id)
-
-        if not draft.files.enabled or draft.files.items():
-            raise ValidationError(
-                _("Files should be enabled and no files uploaded.")
-            )
-
-        if not record.files.enabled or not record.files.bucket:
-            raise ValidationError(_("Record should have files enabled"))
-
-        # Copy over the files
-        for key, df in record.files.items():
-            # Copy object version to new bucket
-            new_obj = df.object_version.copy(bucket=draft.bucket)
-
-            # Create the file record.
-            if df.metadata is not None:
-                draft.files[key] = new_obj, df.metadata
-            else:
-                draft.files[key] = new_obj
-
-        # Commit and index
-        draft.commit()
-        db.session.commit()
-        self.indexer.index(draft)
-
-        return self._draft_files.file_result_list(
-            self._draft_files,
-            identity,
-            results=draft.files.values(),
-            record=draft,
-            links_tpl=self._draft_files.file_links_list_tpl(id_),
-            links_item_tpl=self._draft_files.file_links_item_tpl(id_),
         )
 
     def _validate_secret_link_expires_at(

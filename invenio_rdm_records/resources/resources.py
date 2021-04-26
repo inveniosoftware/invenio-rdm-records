@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2020 CERN.
+# Copyright (C) 2020-2021 CERN.
 # Copyright (C) 2020 Northwestern University.
 # Copyright (C) 2021 TU Wien.
 #
@@ -21,32 +21,6 @@ from marshmallow_utils.fields import SanitizedUnicode
 
 class RDMRecordResource(RecordResource):
     """RDM record resource."""
-
-    def create_url_rules(self):
-        """Create the URL rules for the record resource."""
-
-        def p(route):
-            """Prefix a route with the URL prefix."""
-            return f"{self.config.url_prefix}{route}"
-
-        routes = self.config.routes
-        url_rules = super(RDMRecordResource, self).create_url_rules()
-        url_rules += [
-            route("POST", p(routes["item-files-import"]),
-                  self.import_files)
-        ]
-        return url_rules
-
-    @request_view_args
-    @request_data
-    @response_handler(many=True)
-    def import_files(self):
-        """Import files from previous record version."""
-        files = self.service.import_files(
-            resource_requestctx.view_args["pid_value"],
-            g.identity,
-        )
-        return files.to_dict(), 201
 
 
 #

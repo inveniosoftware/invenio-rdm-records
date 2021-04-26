@@ -34,9 +34,6 @@ class RDMRecordResourceConfig(RecordResourceConfig):
     blueprint_name = "records"
     url_prefix = "/records"
 
-    routes = RecordResourceConfig.routes
-    routes["item-files-import"] = "/<pid_value>/draft/actions/files-import"
-
     response_handlers = record_serializers
 
 
