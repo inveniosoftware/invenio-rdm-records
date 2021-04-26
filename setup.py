@@ -112,7 +112,8 @@ setup(
             'invenio_rdm_records_record_files = invenio_rdm_records.views:create_record_files_bp',
             'invenio_rdm_records_draft_files = invenio_rdm_records.views:create_draft_files_bp',
             'invenio_rdm_records_parent_links = invenio_rdm_records.views:create_parent_record_links_bp',
-            'invenio_rdm_pid_resource = invenio_rdm_records.views:create_pid_resource_bp'
+            'invenio_rdm_pid_provider_resource = invenio_rdm_records.views:create_pid_provider_resource_bp',
+            'invenio_rdm_pid_resolver_resource = invenio_rdm_records.views:create_pid_resolver_resource_bp',
         ],
         'invenio_celery.tasks': [
             'invenio_rdm_records = invenio_rdm_records.fixtures.tasks',

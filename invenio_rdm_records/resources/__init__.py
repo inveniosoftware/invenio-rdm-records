@@ -7,19 +7,21 @@
 
 """Invenio RDM module to create REST APIs."""
 
-from .config import RDMDraftFilesResourceConfig, \
+from .config import PIDResolverResourceConfig, RDMDraftFilesResourceConfig, \
     RDMManagedPIDProviderResourceConfig, RDMParentRecordLinksResourceConfig, \
     RDMRecordFilesResourceConfig, RDMRecordResourceConfig
-from .resources import RDMManagedPIDProviderResource, \
+from .resources import PIDResolverResource, RDMManagedPIDProviderResource, \
     RDMParentRecordLinksResource, RDMRecordResource
 
 __all__ = (
+    "PIDResolverResource",
+    "PIDResolverResourceConfig",
     "RDMDraftFilesResourceConfig",
-    "RDMParentRecordLinksResource",
-    "RDMRecordResource",
-    "RDMParentRecordLinksResourceConfig",
     "RDMManagedPIDProviderResource",
     "RDMManagedPIDProviderResourceConfig",
+    "RDMParentRecordLinksResource",
+    "RDMParentRecordLinksResourceConfig",
     "RDMRecordFilesResourceConfig",
+    "RDMRecordResource",
     "RDMRecordResourceConfig",
 )

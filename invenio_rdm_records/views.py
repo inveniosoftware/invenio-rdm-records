@@ -33,7 +33,13 @@ def create_parent_record_links_bp(app):
     return ext.parent_record_links_resource.as_blueprint()
 
 
-def create_pid_resource_bp(app):
+def create_pid_provider_resource_bp(app):
     """Create pid resource blueprint."""
     ext = app.extensions["invenio-rdm-records"]
     return ext.pid_provider_resource.as_blueprint()
+
+
+def create_pid_resolver_resource_bp(app):
+    """Create pid resource blueprint."""
+    ext = app.extensions["invenio-rdm-records"]
+    return ext.pid_resolver_resource.as_blueprint()

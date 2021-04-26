@@ -13,6 +13,7 @@ from flask import abort, g
 from flask_resources import request_parser, resource_requestctx, \
     response_handler, route
 from invenio_drafts_resources.resources import RecordResource
+from invenio_drafts_resources.resources.records.errors import RedirectException
 from invenio_records_resources.resources.records.resource import \
     request_data, request_search_args, request_view_args
 from marshmallow_utils.fields import SanitizedUnicode
@@ -182,3 +183,60 @@ class RDMManagedPIDProviderResource(RecordResource):
         )
 
         return "", 204
+
+
+class PIDResolverResource(RecordResource):
+    """PID resolver resource."""
+
+    def create_url_rules(self):
+        """Create the URL rules for the pid provider resource."""
+
+        def p(route):
+            """Prefix a route with the URL prefix."""
+            return f"{self.config.url_prefix}{route}"
+
+        routes = self.config.routes
+        return [
+            route("GET", p(routes["item-doi"]), self.read_doi),
+            route("GET", p(routes["item"]), self.read),
+        ]
+
+    def _read(self, pid_value):
+        """Read a record from a PID."""
+        item = self.service.resolve_pid(
+            id_=pid_value,
+            pid_type=resource_requestctx.view_args["pid_type"],
+            pid_client=resource_requestctx.args.get("client"),
+            identity=g.identity,
+        )
+
+        return item
+
+    @request_pid_args
+    @request_view_args
+    @response_handler()
+    def read_doi(self):
+        """Redirect to the record.
+
+        GET /pids/:pid_type/:pid_prefix/:pid_value
+        """
+        pid_prefix = resource_requestctx.view_args["pid_prefix"]
+        pid_value = resource_requestctx.view_args["pid_value"]
+        if pid_prefix:
+            pid_value = f"{pid_prefix}/{pid_value}"
+
+        item = self._read(pid_value)
+
+        raise RedirectException(item["links"]["self"])
+
+    @request_pid_args
+    @request_view_args
+    @response_handler()
+    def read(self):
+        """Redirect to the record.
+
+        GET /pids/:pid_type/:pid_value
+        """
+        item = self._read(resource_requestctx.view_args["pid_value"])
+
+        raise RedirectException(item["links"]["self"])

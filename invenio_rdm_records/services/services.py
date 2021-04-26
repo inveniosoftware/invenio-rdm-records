@@ -15,7 +15,7 @@ import arrow
 from flask_babelex import lazy_gettext as _
 from invenio_db import db
 from invenio_drafts_resources.services.records import RecordService
-from invenio_files_rest.models import ObjectVersion
+from invenio_pidstore.models import PersistentIdentifier
 from invenio_records_resources.services.records.schema import \
     ServiceSchemaWrapper
 from marshmallow.exceptions import ValidationError
@@ -402,6 +402,25 @@ class RDMRecordService(RecordService):
             self,
             identity,
             draft,
+            links_tpl=self.links_item_tpl,
+        )
+
+    def resolve_pid(self, id_, identity, pid_type, pid_client=None):
+        """Resolve PID to a record."""
+        # PIDS-FIXME: should be migrated to self.record_cls.pids.resolve()
+        provider = self.get_provider(pid_type, client_name=pid_client)
+        pid = provider.get(pid_value=id_, pid_type=pid_type)
+
+        # get related record/draft
+        record = self.record_cls.get_record(pid.object_uuid)
+
+        # permissions
+        self.require_permission(identity, "read", record=record)
+
+        return self.result_item(
+            self,
+            identity,
+            record,
             links_tpl=self.links_item_tpl,
         )
 
