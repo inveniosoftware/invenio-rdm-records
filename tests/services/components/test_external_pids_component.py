@@ -7,12 +7,8 @@
 
 """Tests for the service ExternalPIDsComponent."""
 
-from functools import partial
-
 import pytest
 from invenio_db import db
-from invenio_pidstore.errors import PIDDoesNotExistError
-from invenio_pidstore.models import PIDStatus
 from marshmallow import ValidationError
 
 from invenio_rdm_records.proxies import current_rdm_records
@@ -20,9 +16,8 @@ from invenio_rdm_records.records import RDMDraft, RDMRecord
 from invenio_rdm_records.services import RDMRecordService
 from invenio_rdm_records.services.components import ExternalPIDsComponent
 from invenio_rdm_records.services.config import RDMRecordServiceConfig
-from invenio_rdm_records.services.pids.providers import BaseClient, \
-    BasePIDProvider, DOIDataCiteClient, DOIDataCitePIDProvider, \
-    UnmanagedPIDProvider
+from invenio_rdm_records.services.pids.providers import DOIDataCiteClient, \
+    DOIDataCitePIDProvider, UnmanagedPIDProvider
 
 #
 # Unmanaged Provider
@@ -44,10 +39,12 @@ class NotRequiredUnmanagedPIDProvider(UnmanagedPIDProvider):
 class TestServiceReqUnmanConfig(RDMRecordServiceConfig):
     """Custom service config with only pid providers."""
     pids_providers = {
-        "requman": {  # Required Unamanged
-            "provider": RequiredUnmanagedPIDProvider,
-            "required": True,
-            "system_managed": False,
+        "requman": {  # Required Unmanaged
+            "requman": {
+                "provider": RequiredUnmanagedPIDProvider,
+                "required": True,
+                "system_managed": False,
+            }
         }
     }
 
@@ -58,9 +55,11 @@ class TestServiceNReqUnmanConfig(RDMRecordServiceConfig):
     """Custom service config with only pid providers."""
     pids_providers = {
         "nrequman": {  # Non required Unmanaged
-            "provider": NotRequiredUnmanagedPIDProvider,
-            "required": False,
-            "system_managed": False,
+            "nrequman": {
+                "provider": NotRequiredUnmanagedPIDProvider,
+                "required": False,
+                "system_managed": False,
+            }
         }
     }
 
@@ -234,9 +233,11 @@ class TestServiceNReqManConfig(RDMRecordServiceConfig):
     """Custom service config with only pid providers."""
     pids_providers = {
         "doi": {
-            "provider": DOIDataCitePIDProvider,
-            "required": False,
-            "system_managed": True,
+            "datacite": {
+                "provider": DOIDataCitePIDProvider,
+                "required": False,
+                "system_managed": True,
+            }
         },
     }
 
@@ -250,9 +251,11 @@ class TestServiceReqManConfig(TestServiceNReqManConfig):
     """Custom service config with only pid providers."""
     pids_providers = {
         "doi": {
-            "provider": DOIDataCitePIDProvider,
-            "required": True,
-            "system_managed": True,
+            "datacite": {
+                "provider": DOIDataCitePIDProvider,
+                "required": True,
+                "system_managed": True,
+            }
         },
     }
 

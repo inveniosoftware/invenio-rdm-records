@@ -34,6 +34,16 @@ class RDMRecordResourceConfig(RecordResourceConfig):
     blueprint_name = "records"
     url_prefix = "/records"
 
+    routes = RecordResourceConfig.routes
+
+    # PIDs
+    routes["item-pids-reserve"] = "/<pid_value>/draft/pids/<pid_type>"
+
+    request_view_args = {
+        "pid_value": ma.fields.Str(),
+        "pid_type": ma.fields.Str(),
+    }
+
     response_handlers = record_serializers
 
 
@@ -98,24 +108,3 @@ class RDMParentRecordLinksResourceConfig(RecordResourceConfig):
     }
 
     error_handlers = record_links_error_handlers
-
-
-class RDMManagedPIDProviderResourceConfig(RecordResourceConfig):
-    """PID provider resource configuration."""
-
-    blueprint_name = "record_pid_provider"
-
-    url_prefix = "/records/<pid_value>/draft/pids"
-
-    routes = {
-        "item": "/<pid_type>"
-    }
-
-    request_view_args = {
-        "pid_type": ma.fields.Str(),
-        "pid_value": ma.fields.Str(),
-    }
-
-    response_handlers = {
-        "application/json": ResponseHandler(JSONSerializer())
-    }

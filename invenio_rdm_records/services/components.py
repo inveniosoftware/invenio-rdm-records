@@ -11,6 +11,7 @@
 
 from copy import copy
 
+from flask_babelex import lazy_gettext as _
 from invenio_access.permissions import system_process
 from invenio_records_resources.services.records.components import \
     ServiceComponent
@@ -144,12 +145,34 @@ class MetadataComponent(ServiceComponent):
 class ExternalPIDsComponent(ServiceComponent):
     """Service component for pids."""
 
+    def _validate_pid(self, scheme, pid):
+        """Call provider to validate the given PID."""
+        provider_name = pid.get("provider")
+        client = pid.get("client")
+        provider = self.service.get_provider(scheme, provider_name, client)
+        if provider:
+            provider.validate(**pid)
+
     def _validate_pids(self, pids):
-        """Validate an iterator of pids."""
-        for scheme, pid_attrs in pids.items():
-            client = pid_attrs.get("client")
-            provider = self.service.get_provider(scheme, client)
-            provider.validate(**pid_attrs)
+        """Validate an iterator of PIDs."""
+        verified_pids = set()
+        pids_providers = self.service.config.pids_providers
+        for scheme, providers in pids_providers.items():
+            if scheme not in pids:
+                continue
+
+            pid = pids.get(scheme, {})
+            self._validate_pid(scheme, pid)
+            verified_pids.add(scheme)
+
+        # ensure that there are no extra PIDs for which there is no config
+        all_pids = set(pids.keys())
+        unknown_pids = all_pids - verified_pids
+        if unknown_pids:
+            raise ValidationError(
+                message=_(f"No configuration defined for PIDs {unknown_pids}"),
+                field_name="pids",
+            )
 
     def create(self, identity, data=None, record=None, **kwargs):
         """Inject parsed pids to the draft record."""
@@ -164,10 +187,8 @@ class ExternalPIDsComponent(ServiceComponent):
         self._validate_pids(pids)
         record.pids = pids
 
-    def _publish_managed(
-        self, provider, is_required, draft_pid, record_pids, draft=None,
-        scheme=None
-    ):
+    def _publish_managed(self, scheme, provider, is_required, draft_pid,
+                         record_pids, draft=None):
         """Publish a system managed PID."""
         identifier_value = draft_pid.get("identifier")
         pid = None
@@ -200,13 +221,10 @@ class ExternalPIDsComponent(ServiceComponent):
                 "client": provider.client.name
             }
 
-    def _publish_unmanaged(
-        self, provider, is_required, draft_pid, record_pids, draft=None,
-        scheme=None
-    ):
+    def _publish_unmanaged(self, scheme, provider, is_required, draft_pid,
+                           record_pids, draft=None):
         """Publish an unmanaged PID."""
         identifier_value = draft_pid.get("identifier")
-        scheme = provider.pid_type
 
         if identifier_value:
             record_pids[scheme] = {
@@ -223,28 +241,34 @@ class ExternalPIDsComponent(ServiceComponent):
         """Update draft pids."""
         record_pids = {}
         draft_pids = draft.get('pids', {})
-        providers = self.service.get_configured_providers()
 
-        for scheme, provider_config in providers.items():
-            # PID content
+        self._validate_pids(draft_pids)
+
+        pids_providers = self.service.config.pids_providers
+        for scheme, providers in pids_providers.items():
             draft_pid = draft_pids.get(scheme, {})
-            # Provider checks
-            client = draft_pid.get("client")
-            provider = self.service.get_provider(scheme, client)
-            provider.validate(**draft_pid)
-            # Publishing part
-            # PIDS-FIXME should we require this two config values?
-            is_required = provider_config.get("required", False)
-            is_system_managed = \
-                provider_config.get("system_managed", False)
+
+            pid_provider = draft_pid.get("provider")
+            pid_client = draft_pid.get("client")
+            provider = self.service.get_provider(scheme, pid_provider,
+                                                 pid_client)
+            if not provider:
+                continue
+
+            # This is not ideal because the provider.name must match with
+            # the dict keys in `pids_providers` config and it might fail
+            # when different.
+            provider_config = providers[provider.name]
+
+            is_required = provider_config["required"]
+            is_system_managed = provider_config["system_managed"]
 
             if is_system_managed:
-                self._publish_managed(
-                    provider, is_required, draft_pid, record_pids, draft=draft,
-                    scheme=scheme or provider.pid_type)
+                self._publish_managed(scheme, provider, is_required, draft_pid,
+                                      record_pids, draft=draft)
             else:
-                self._publish_unmanaged(
-                    provider, is_required, draft_pid, record_pids)
+                self._publish_unmanaged(scheme, provider, is_required,
+                                        draft_pid, record_pids)
 
         record.pids = record_pids
 

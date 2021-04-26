@@ -15,6 +15,8 @@ import arrow
 from flask_babelex import lazy_gettext as _
 from invenio_db import db
 from invenio_drafts_resources.services.records import RecordService
+from invenio_pidstore.errors import PIDDoesNotExistError
+from invenio_pidstore.models import PersistentIdentifier
 from invenio_records_resources.services.records.schema import \
     ServiceSchemaWrapper
 from marshmallow.exceptions import ValidationError
@@ -281,43 +283,62 @@ class RDMRecordService(RecordService):
         return True
 
     # PIDS-FIXME: extract to a subservice
-    def get_configured_providers(self):
-        """Get the providers from configuration."""
-        return self.config.pids_providers
 
     def get_client(self, client_name):
-        """Get a client from config."""
-        client_class = self.config.pids_providers_clients.get(client_name)
-        if not client_class:
-            raise ValueError
-
+        """Get the provider client from config."""
+        client_class = self.config.pids_providers_clients[client_name]
         return client_class(name=client_name)
 
-    def get_provider(self, scheme, client_name=None):
+    def get_managed_provider(self, providers_dict):
+        """Get the provider set as system managed."""
+        for name, attrs in providers_dict.items():
+            if attrs["system_managed"]:
+                return name, attrs
+
+    def get_required_provider(self, providers_dict):
+        """Get the provider set as required."""
+        for name, attrs in providers_dict.items():
+            if attrs["required"]:
+                return name, attrs
+
+    def get_provider(self, scheme, provider_name=None, client_name=None):
         """Get a provider from config."""
         try:
-            provider = self.config.pids_providers.get(scheme)
-            if not provider:
-                raise ValueError
-            provider_class = provider["provider"]
+            providers = self.config.pids_providers[scheme]
 
+            if provider_name:
+                provider_config = providers[provider_name]
+            else:
+                # if no name provided, one of the configured must be required
+                _provider = self.get_required_provider(providers)
+                if not _provider:
+                    # there are no required providers
+                    return None
+                else:
+                    name, provider_config = _provider
+
+            provider_class = provider_config["provider"]
+        except ValueError:
+            raise ValidationError(
+                message=_(f"Unknown PID provider for {scheme}"),
+                field_name=f"pids.{scheme}",
+            )
+
+        try:
             if client_name:
                 client = self.get_client(client_name)
                 return provider_class(client)
-
-            elif provider.get("system_managed", False):
+            elif provider_config["system_managed"]:
                 # use as default the client configured for the provider
                 client_name = provider_class.name
                 client = self.get_client(client_name)
                 return provider_class(client)
 
             return provider_class()
-
         except ValueError:
             raise ValidationError(
-                message=_(f"Provider for PID type {scheme} client "
-                          f"{client_name} not supported"),
-                field_name="pids",
+                message=_(f"{client_name} not supported for PID {scheme}"),
+                ield_name=f"pids.{scheme}",
             )
 
     def reserve_pid(self, id_, identity, pid_type, pid_client=None):
@@ -327,7 +348,14 @@ class RDMRecordService(RecordService):
         # Permissions
         self.require_permission(identity, "manage", record=draft)
 
-        provider = self.get_provider(pid_type, client_name=pid_client)
+        providers = self.config.pids_providers[pid_type]
+        _provider = self.get_managed_provider(providers)
+        if not _provider:
+            raise Exception(f"No managed provider configured for {pid_type}.")
+
+        provider_name, _ = _provider
+        provider = self.get_provider(pid_type, provider_name=provider_name,
+                                     client_name=pid_client)
         pid = provider.create(draft)
 
         draft.pids[pid_type] = {
@@ -340,6 +368,9 @@ class RDMRecordService(RecordService):
         provider.reserve(pid, draft)
         draft.commit()
 
+        db.session.commit()
+        self.indexer.index(draft)
+
         return self.result_item(
             self,
             identity,
@@ -347,11 +378,9 @@ class RDMRecordService(RecordService):
             links_tpl=self.links_item_tpl,
         )
 
-    def resolve_pid(self, id_, identity, pid_type, pid_client=None):
+    def resolve_pid(self, id_, identity, pid_type):
         """Resolve PID to a record."""
-        # PIDS-FIXME: should be migrated to self.record_cls.pids.resolve()
-        provider = self.get_provider(pid_type, client_name=pid_client)
-        pid = provider.get(pid_value=id_, pid_type=pid_type)
+        pid = PersistentIdentifier.get(pid_type=pid_type, pid_value=id_)
 
         # get related record/draft
         record = self.record_cls.get_record(pid.object_uuid)
@@ -366,8 +395,8 @@ class RDMRecordService(RecordService):
             links_tpl=self.links_item_tpl,
         )
 
-    def delete_pid(self, id_, identity, pid_type, pid_client=None):
-        """Delete PID for a given record.
+    def discard_pid(self, id_, identity, pid_type, pid_client=None):
+        """Discard a previously reserved PID for a given record.
 
         It will be soft deleted if already registered.
         """
@@ -376,24 +405,34 @@ class RDMRecordService(RecordService):
         # Permissions
         self.require_permission(identity, "manage", record=draft)
 
-        provider = self.get_provider(pid_type, client_name=pid_client)
-        pid_attr = draft.pids.get(pid_type)
+        providers = self.config.pids_providers[pid_type]
+        _provider = self.get_managed_provider(providers)
+        if not _provider:
+            raise Exception(f"No managed provider configured for {pid_type}.")
 
-        if not pid_attr:
+        provider_name, _ = _provider
+        provider = self.get_provider(pid_type, provider_name=provider_name,
+                                     client_name=pid_client)
+        pid_attr = draft.pids[pid_type]
+
+        try:
+            pid = provider.get_by_record(
+                draft.id,
+                pid_type=pid_type,
+                pid_value=pid_attr["identifier"],
+            )
+        except PIDDoesNotExistError:
             raise ValidationError(
-                message=_("Identifier value or client not given for PID " +
-                          f"type {pid_type}"),
-                field_name="pids",
+                message=_(f"No registered PID found for type {pid_type}"),
+                field_name=f"pids.{pid_type}",
             )
 
-        pid = provider.get(
-            pid_value=pid_attr["identifier"],
-            pid_type=pid_type
-        )
-
-        deleted = provider.delete(pid, draft)
+        provider.delete(pid, draft)
         draft.pids.pop(pid_type)
         draft.commit()
+
+        db.session.commit()
+        self.indexer.index(draft)
 
         return self.result_item(
             self,

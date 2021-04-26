@@ -12,7 +12,8 @@ import logging
 from datacite import DataCiteRESTClient
 from datacite.errors import DataCiteError
 from flask import current_app
-from invenio_pidstore.models import PersistentIdentifier, PIDStatus
+from invenio_pidstore.errors import PIDAlreadyExists, PIDDoesNotExistError
+from invenio_pidstore.models import PIDStatus
 
 from ....resources.serializers import DataCite43JSONSerializer
 from .base import BaseClient, BasePIDProvider
@@ -92,12 +93,24 @@ class DOIDataCitePIDProvider(BasePIDProvider):
     def create(self, record, **kwargs):
         """Create a new unique DOI PID based on the record ID."""
         doi = self.generate_id(record, **kwargs)
-        return super().create(
-            pid_value=doi,
-            object_type="rec",
-            object_uuid=record.id,
-            **kwargs
-        )
+
+        try:
+            pid = self.get(doi)
+        except PIDDoesNotExistError:
+            # not existing, create a new one
+            return super().create(
+                pid_value=doi,
+                object_type="rec",
+                object_uuid=record.id,
+                **kwargs
+            )
+
+        # re-activate if previously deleted
+        if pid.is_deleted():
+            pid.sync_status(PIDStatus.NEW)
+            return pid
+        else:
+            raise PIDAlreadyExists(self.pid_type, doi)
 
     def reserve(self, pid, record, **kwargs):
         """Reserve a DOI only in the local system.

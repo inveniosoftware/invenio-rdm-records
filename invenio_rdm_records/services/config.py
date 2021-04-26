@@ -132,15 +132,17 @@ class RDMRecordServiceConfig(RecordServiceConfig):
 
     # PIDs providers
     pids_providers = {
-        "unmanaged": {
-            "provider": UnmanagedPIDProvider,
-            "required": False,
-            "system_managed": False,
-        },
         "doi": {
-            "provider": DOIDataCitePIDProvider,
-            "required": True,
-            "system_managed": True,
+            "datacite": {
+                "provider": DOIDataCitePIDProvider,
+                "required": True,
+                "system_managed": True,
+            },
+            "unmanaged": {
+                "provider": UnmanagedPIDProvider,
+                "required": False,
+                "system_managed": False,
+            },
         },
     }
 

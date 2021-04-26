@@ -700,16 +700,16 @@ def test_reserve_pid_with_login(
     assert response.status_code == 201
     recid = response.json['id']
 
-    response = client.get(
+    response = client.post(
         f"/records/{recid}/draft/pids/doi", headers=headers)
-    assert response.status_code == 200
+    assert response.status_code == 201
     assert response.json["pids"]["doi"]["identifier"]
 
 
-def test_delete_pid_with_login(
+def test_discard_pid_with_login(
     app, location, es_clear, headers, client_with_login, minimal_record
 ):
-    """Test the unreserve function."""
+    """Test the discard function."""
     # GET with client login
     client = client_with_login
     # Create the draft
@@ -720,9 +720,9 @@ def test_delete_pid_with_login(
     recid = response.json['id']
 
     # reserve a doi
-    response = client.get(
+    response = client.post(
         f"/records/{recid}/draft/pids/doi", headers=headers)
-    assert response.status_code == 200
+    assert response.status_code == 201
     assert response.json["pids"]["doi"]["identifier"]
 
     # remove the doi
@@ -730,7 +730,8 @@ def test_delete_pid_with_login(
     pids.pop("doi")
     response = client.delete(
         f"/records/{recid}/draft/pids/doi", headers=headers)
-    assert response.status_code == 204
+    assert response.status_code == 200
+    assert response.json["pids"] == {}
 
 
 def test_publish_pid_flow(
@@ -747,9 +748,9 @@ def test_publish_pid_flow(
     recid = response.json['id']
 
     # Reserve DOI
-    response = client.get(
+    response = client.post(
         f"/records/{recid}/draft/pids/doi", headers=headers)
-    assert response.status_code == 200
+    assert response.status_code == 201
     assert response.json["pids"]["doi"]["identifier"]
     assert response.json["pids"]["doi"]["client"] == "datacite"  # default
 
