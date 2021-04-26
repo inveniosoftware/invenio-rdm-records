@@ -98,11 +98,9 @@ class DOIDataCitePIDProvider(BasePIDProvider):
         :param record: the record.
         :returns: `True` if is reserved successfully.
         """
-        super().reserve(pid, record)
+        return super().reserve(pid, record)
 
-        return True
-
-    def register(self, pid, record, **kwargs):
+    def register(self, pid, record, url, **kwargs):
         """Register a DOI via the DataCite API.
 
         :param pid: the PID to register.
@@ -114,13 +112,13 @@ class DOIDataCitePIDProvider(BasePIDProvider):
         try:
             doc = DataCite43JSONSerializer().dump_one(record)
             self.api_client.public_doi(
-                metadata=doc, url="PIDS-FIXME.com", doi=pid.pid_value)
+                metadata=doc, url=url, doi=pid.pid_value)
         except DataCiteError:
             pass
 
         return True
 
-    def update(self, pid, record, **kwargs):
+    def update(self, pid, record, url, **kwargs):
         """Update metadata associated with a DOI.
 
         This can be called before/after a DOI is registered.
@@ -135,7 +133,7 @@ class DOIDataCitePIDProvider(BasePIDProvider):
             # Set metadata
             doc = DataCite43JSONSerializer().dump_one(record)
             self.api_client.update_doi(
-                metadata=doc, doi=pid.pid_value, url=None)
+                metadata=doc, doi=pid.pid_value, url=url)
         except DataCiteError:
             pass
 
@@ -168,3 +166,5 @@ class DOIDataCitePIDProvider(BasePIDProvider):
         super().validate(identifier, provider, client, **kwargs)
         if identifier:
             self.api_client.check_doi(identifier)
+
+        return True
