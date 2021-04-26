@@ -7,6 +7,8 @@
 
 """DataCite DOI Provider."""
 
+import logging
+
 from datacite import DataCiteRESTClient
 from datacite.errors import DataCiteError
 from flask import current_app
@@ -22,22 +24,23 @@ class DOIDataCiteClient(BaseClient):
     It Loads the values from config.
     """
 
-    def __init__(self, name, url=None, **kwargs):
+    def __init__(self, name, url=None, config_key=None, **kwargs):
         """Constructor."""
-        # PIDS-FIXME: Rethink config loading
-        config_key = f"RDM_DATACITE_CLIENT"
+        config_key = config_key or f"RDM_DATACITE_CLIENT"
 
-        super().__init__(
-            name=name,
-            username=current_app.config[f"{config_key}_USERNAME"],
-            password=current_app.config[f"{config_key}_PASSWORD"],
-            url=url,
-            **kwargs
-        )
+        username = current_app.config.get(f"{config_key}_USERNAME")
+        password = current_app.config.get(f"{config_key}_PASSWORD")
+        prefix = current_app.config.get(f"{config_key}_PREFIX")
 
-        self.prefix = current_app.config[f"{config_key}_PREFIX"]
+        super().__init__(name, username, password, url=url, **kwargs)
+
+        self.prefix = current_app.config.get(f"{config_key}_PREFIX")
         self.test_mode = \
             current_app.config.get(f"{config_key}_TEST_MODE", True)
+
+    def has_credentials(self, **kwargs):
+        """Returns if the client has the credentials properly set up."""
+        return self.username and self.password and self.prefix
 
 
 class DOIDataCitePIDProvider(BasePIDProvider):
@@ -55,9 +58,15 @@ class DOIDataCitePIDProvider(BasePIDProvider):
                  generate_id_func=None, **kwargs):
         """Constructor."""
         self.client = client
-        self.api_client = DataCiteRESTClient(
-            client.username, client.password, client.prefix, client.test_mode
-        )
+        self.api_client = None
+        self.is_api_client_setup = False
+
+        if client and client.has_credentials():
+            self.api_client = DataCiteRESTClient(
+                client.username, client.password,
+                client.prefix, client.test_mode
+            )
+            self.is_api_client_setup = True
 
         super().__init__(self.api_client, pid_type, default_status)
 
@@ -107,14 +116,22 @@ class DOIDataCitePIDProvider(BasePIDProvider):
         :param record: the record metadata for the DOI.
         :returns: `True` if is registered successfully.
         """
-        super().register(pid, record)
-        # PIDS-FIXME: move to async task, exception handling included
-        try:
-            doc = DataCite43JSONSerializer().dump_one(record)
-            self.api_client.public_doi(
-                metadata=doc, url=url, doi=pid.pid_value)
-        except DataCiteError:
-            pass
+        local_success = super().register(pid, record)
+        if not local_success:
+            return False
+
+        if self.is_api_client_setup:
+            # PIDS-FIXME: move to async task, exception handling included
+            try:
+                doc = DataCite43JSONSerializer().dump_one(record)
+                self.api_client.public_doi(
+                    metadata=doc, url=url, doi=pid.pid_value)
+            except DataCiteError:
+                logging.warning("DataCite provider errored when updating " +
+                                f"DOI for {pid.pid_value}")
+        else:
+            logging.warning("DataCite client not configured. " +
+                            f"Cannot register DOI for {pid.pid_value}")
 
         return True
 
@@ -128,18 +145,23 @@ class DOIDataCitePIDProvider(BasePIDProvider):
         """
         # PIDS-FIXME: Do we want to log when reactivate the DOI
         # if pid.is_deleted():
-        try:
-            # PIDS-FIXME: move to async task, exception handling included
-            # Set metadata
-            doc = DataCite43JSONSerializer().dump_one(record)
-            self.api_client.update_doi(
-                metadata=doc, doi=pid.pid_value, url=url)
-        except DataCiteError:
-            pass
+        if self.is_api_client_setup:
+            try:
+                # PIDS-FIXME: move to async task, exception handling included
+                # Set metadata
+                doc = DataCite43JSONSerializer().dump_one(record)
+                self.api_client.update_doi(
+                        metadata=doc, doi=pid.pid_value, url=url)
+            except DataCiteError:
+                logging.warning("DataCite provider errored when updating " +
+                                f"DOI for {pid.pid_value}")
+                return False
+        else:
+            logging.warning("DataCite client not configured. " +
+                            f"Cannot update DOI for {pid.pid_value}")
 
         if pid.is_deleted():
-            # PIDS-FIXME: Is this correct?
-            pid.sync_status(PIDStatus.REGISTERED)
+            return pid.sync_status(PIDStatus.REGISTERED)
 
         return True
 
@@ -153,18 +175,28 @@ class DOIDataCitePIDProvider(BasePIDProvider):
         # PIDS-FIXME: move to async task, exception handling included
         try:
             if pid.is_reserved():  # Delete only works for draft DOIs
-                self.api_client.delete_doi(pid.pid_value)
+                if self.is_api_client_setup:
+                    self.api_client.delete_doi(pid.pid_value)
+                else:
+                    logging.warning("DataCite client not configured. " +
+                                    f"Cannot delete DOI for {pid.pid_value}")
             elif pid.is_registered():
-                self.api_client.hide_doi(pid.pid_value)
+                if self.is_api_client_setup:
+                    self.api_client.hide_doi(pid.pid_value)
+                else:
+                    logging.warning("DataCite client not configured. " +
+                                    f"Cannot delete DOI for {pid.pid_value}")
         except DataCiteError:
-            pass
+            logging.warning("DataCite provider errored when deleting " +
+                            f"DOI for {pid.pid_value}")
+            return False
 
         return super().delete(pid, record)
 
     def validate(self, identifier=None, provider=None, client=None, **kwargs):
         """Validate the attributes of the identifier."""
         super().validate(identifier, provider, client, **kwargs)
-        if identifier:
+        if identifier and self.is_api_client_setup:
             self.api_client.check_doi(identifier)
 
         return True

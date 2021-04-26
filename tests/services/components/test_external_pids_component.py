@@ -396,7 +396,6 @@ def test_create_managed_doi_with_value(
 #
 #  DOI / Versioning
 #
-@pytest.mark.skip("PIDS-FIXME: mock service with doi configured")
 def test_doi_publish_versions(
     app, location, minimal_record, identity_simple, mocker
 ):
