@@ -336,28 +336,29 @@ def test_only_owners_can_delete_all_files(
 
 
 def test_only_owners_can_update_file_options(
-        client, headers, draft_w_public_file, users):
+        client, headers, draft_w_public_file, minimal_record, users):
     recid = draft_w_public_file
-    url = f"/records/{recid}/draft/files"
-    payload = {
+    url = f"/records/{recid}/draft"
+    minimal_record["files"] = {
         "enabled": True,
         "default_preview": "test.pdf",
     }
 
     # Anonymous user can't update file options
-    response = client.put(url, json=payload, headers=headers)
+    response = client.put(url, json=minimal_record, headers=headers)
     assert response.status_code == 403
 
     # Different user can't update file options
     login_user(client, users[1])
-    response = client.put(url, json=payload, headers=headers)
+    response = client.put(url, json=minimal_record, headers=headers)
     assert response.status_code == 403
 
     # Owner can update file options
     logout_user(client)
     login_user(client, users[0])
-    response = client.put(url, json=payload, headers=headers)
+    response = client.put(url, json=minimal_record, headers=headers)
     assert response.status_code == 200
+    assert "test.pdf" == response.json["files"]["default_preview"]
 
 
 def test_only_owners_can_list_draft_w_public_files(

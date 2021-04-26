@@ -45,7 +45,7 @@ class FilesSchema(Schema, FieldPermissionsMixin):
     }
 
     enabled = fields.Bool()
-    default_preview = SanitizedUnicode()
+    default_preview = SanitizedUnicode(allow_none=True)
     order = fields.List(SanitizedUnicode())
 
     def get_attribute(self, obj, attr, default):
@@ -59,10 +59,7 @@ class FilesSchema(Schema, FieldPermissionsMixin):
         """
         value = getattr(obj, attr, default)
 
-        if attr == "default_preview" and value is None:
-            # NOTE: Might be that the "real" solution is to have
-            #       default_preview default to "" in records-resources, but
-            #       this way at least we save some bytes.
+        if attr == "default_preview" and not value:
             return default
 
         return value
