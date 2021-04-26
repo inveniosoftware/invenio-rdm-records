@@ -687,7 +687,6 @@ def test_link_update(
     assert link_result.json["permission"] == "read_files"
 
 
-@pytest.mark.skip("PIDS-FIXME: mock service with doi configured")
 def test_reserve_pid_with_login(
       app, location, es_clear, headers, client_with_login, minimal_record
   ):
@@ -707,7 +706,6 @@ def test_reserve_pid_with_login(
     assert response.json["pids"]["doi"]["identifier"]
 
 
-@pytest.mark.skip("PIDS-FIXME: mock service with doi configured")
 def test_delete_pid_with_login(
     app, location, es_clear, headers, client_with_login, minimal_record
 ):
@@ -735,7 +733,6 @@ def test_delete_pid_with_login(
     assert response.status_code == 204
 
 
-@pytest.mark.skip("PIDS-FIXME: mock service with doi configured")
 def test_publish_pid_flow(
     app, location, es_clear, headers, client_with_login, minimal_record
 ):
@@ -762,9 +759,3 @@ def test_publish_pid_flow(
     assert response.status_code == 202
     assert response.json["pids"]["doi"]["identifier"]
     assert response.json["pids"]["doi"]["client"] == "datacite"  # default
-
-    # Get from datacite
-    # PIDS-FIXME: Check rediction
-    # doi = response.json["pids"]["doi"]["identifier"]
-    # response = client.get(f"https://datacite....{doi}")
-    # assert response.status_code == 200  # Assert redirect?
