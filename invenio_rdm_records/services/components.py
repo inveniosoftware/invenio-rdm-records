@@ -180,7 +180,8 @@ class ExternalPIDsComponent(ServiceComponent):
                 assert pid.is_reserved() or pid.is_registered()
 
             if not pid.is_registered():  # avoid dup registration
-                provider.register(pid, draft)
+                url = self.service.links_item_tpl.expand(draft)["record"]
+                provider.register(pid, draft, url)
             else:
                 # PIDS-FIXME: this should update meta to datacite
                 pass
