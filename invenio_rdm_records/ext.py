@@ -11,7 +11,6 @@
 from flask import flash, g, request, session
 from flask_babelex import _
 from flask_principal import identity_loaded
-from invenio_drafts_resources.resources import RecordResource
 from invenio_records_resources.resources.files import FileResource
 from invenio_records_resources.services import FileService
 from invenio_vocabularies.contrib.subjects.subjects import subject_record_type
@@ -19,7 +18,6 @@ from itsdangerous import SignatureExpired
 
 from . import config
 from .resources import RDMDraftFilesResourceConfig, \
-    RDMManagedPIDProviderResource, RDMManagedPIDProviderResourceConfig, \
     RDMParentRecordLinksResource, RDMParentRecordLinksResourceConfig, \
     RDMRecordFilesResourceConfig, RDMRecordResource, RDMRecordResourceConfig
 from .secret_links import LinkNeed, SecretLink
@@ -137,10 +135,4 @@ class InvenioRDMRecords(object):
         self.subjects_resource = subject_record_type.resource_cls(
             service=self.subjects_service,
             config=subject_record_type.resource_config_cls,
-        )
-
-        # PID provider
-        self.pid_provider_resource = RDMManagedPIDProviderResource(
-            service=self.records_service,
-            config=RDMManagedPIDProviderResourceConfig,
         )

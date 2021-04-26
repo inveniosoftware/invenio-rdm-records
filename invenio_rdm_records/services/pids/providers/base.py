@@ -6,8 +6,9 @@
 # it under the terms of the MIT License; see LICENSE file for more details.
 
 """PID Base Provider."""
-
+from invenio_pidstore.errors import PIDDoesNotExistError
 from invenio_pidstore.models import PersistentIdentifier, PIDStatus
+from sqlalchemy.orm.exc import NoResultFound
 
 
 class BaseClient:
@@ -47,16 +48,40 @@ class BasePIDProvider:
         """
         return self.system_managed
 
-    def get(self, pid_value, pid_type=None, **kwargs):
+    def get(self, pid_value, pid_type=None):
         """Get a persistent identifier for this provider.
 
-        :param pid_type: Persistent identifier type.)
+        :param pid_type: Persistent identifier type.
         :param pid_value: Persistent identifier value.
         :returns: A :class:`invenio_pidstore.models.base.PersistentIdentifier`
             instance.
         """
         return PersistentIdentifier.get(pid_type or self.pid_type, pid_value,
-                                        pid_provider=self.name, **kwargs)
+                                        pid_provider=self.name)
+
+    def get_by_record(self, record_id, pid_type=None, pid_value=None,
+                      object_type="rec"):
+        """Get a persistent identifier for this provider.
+
+        :param record_id: the record UUID.
+        :param pid_type: Persistent identifier type.
+        :param pid_value: Persistent identifier value.
+        :param object_type: Persistent identifier object_type.
+        :returns: A :class:`invenio_pidstore.models.base.PersistentIdentifier`
+            instance.
+        """
+        query = PersistentIdentifier.query.filter_by(
+            pid_type=pid_type or self.pid_type,
+            object_type=object_type,
+            object_uuid=record_id
+        )
+        if pid_value:
+            query.filter_by(pid_value=pid_value)
+
+        try:
+            return query.one()
+        except NoResultFound:
+            raise PIDDoesNotExistError(pid_type, None)
 
     def create(self, pid_value=None, pid_type=None, status=None,
                object_type=None, object_uuid=None, **kwargs):
