@@ -82,7 +82,7 @@ def not_req_unmanaged_pid_cmp():
 
 
 def test_unmanaged_required_pid_value(
-    req_pid_unmanaged_cmp, minimal_record, identity_simple
+    req_pid_unmanaged_cmp, minimal_record, identity_simple, location
 ):
     component = req_pid_unmanaged_cmp
     pids = {
@@ -108,7 +108,7 @@ def test_unmanaged_required_pid_value(
 
 
 def test_unmanaged_required_no_pid_value(
-    req_pid_unmanaged_cmp, minimal_record, identity_simple
+    req_pid_unmanaged_cmp, minimal_record, identity_simple, location
 ):
     component = req_pid_unmanaged_cmp
     pids = {
@@ -133,7 +133,7 @@ def test_unmanaged_required_no_pid_value(
 
 
 def test_unmanaged_no_required_pid_value(
-    not_req_unmanaged_pid_cmp, minimal_record, identity_simple
+    not_req_unmanaged_pid_cmp, minimal_record, identity_simple, location
 ):
     component = not_req_unmanaged_pid_cmp
     pids = {
@@ -158,7 +158,7 @@ def test_unmanaged_no_required_pid_value(
 
 
 def test_unmanaged_no_required_no_partial_value(
-    not_req_unmanaged_pid_cmp, minimal_record, identity_simple
+    not_req_unmanaged_pid_cmp, minimal_record, identity_simple, location
 ):
     component = not_req_unmanaged_pid_cmp
     pids = {
@@ -184,7 +184,7 @@ def test_unmanaged_no_required_no_partial_value(
 
 
 def test_unmanaged_no_required_no_value(
-    not_req_unmanaged_pid_cmp, minimal_record, identity_simple
+    not_req_unmanaged_pid_cmp, minimal_record, identity_simple, location
 ):
     # NOTE: Since is {} should simply be ignored
     component = not_req_unmanaged_pid_cmp
@@ -207,7 +207,7 @@ def test_unmanaged_no_required_no_value(
 
 
 def test_unmanaged_no_required_no_pids(
-    not_req_unmanaged_pid_cmp, minimal_record, identity_simple
+    not_req_unmanaged_pid_cmp, minimal_record, identity_simple, location
 ):
     # NOTE: Since is {} should simply be ignored
     component = not_req_unmanaged_pid_cmp
@@ -272,7 +272,7 @@ def req_managed_pid_cmp():
 
 
 def test_non_configured_provider(
-    not_req_managed_pid_cmp, minimal_record, identity_simple,
+    not_req_managed_pid_cmp, minimal_record, identity_simple, location
 ):
     component = not_req_managed_pid_cmp
     pids = {
@@ -292,7 +292,7 @@ def test_non_configured_provider(
 
 
 def test_create_managed_doi_empty_pids(
-    req_managed_pid_cmp, minimal_record, identity_simple, mocker
+    req_managed_pid_cmp, minimal_record, identity_simple, mocker, location
 ):
     mocker.patch("invenio_rdm_records.services.config.DOIDataCiteClient")
     mocker.patch("invenio_rdm_records.services.pids.providers.datacite." +
@@ -321,7 +321,7 @@ def test_create_managed_doi_empty_pids(
 
 
 def test_create_managed_doi_with_no_value(
-    req_managed_pid_cmp, minimal_record, identity_simple, mocker
+    req_managed_pid_cmp, minimal_record, identity_simple, mocker, location
 ):
     mocker.patch("invenio_rdm_records.services.pids.providers.datacite." +
                  "DataCiteRESTClient")
@@ -354,7 +354,7 @@ def test_create_managed_doi_with_no_value(
 
 
 def test_create_managed_doi_with_value(
-    req_managed_pid_cmp, minimal_record, identity_simple, mocker
+    req_managed_pid_cmp, minimal_record, identity_simple, mocker, location
 ):
     client = mocker.patch(
         "invenio_rdm_records.services.pids.providers.datacite."
