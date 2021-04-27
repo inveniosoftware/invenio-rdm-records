@@ -107,6 +107,20 @@ def test_creator_organization_valid_full():
 
 
 def test_creatibutor_name_edge_cases():
+    # Pass in name and family_name: name is ignored
+    valid_person_name_and_given_name = {
+        "name": "Cesar, Julio",
+        "family_name": "Cesar",
+        "type": "personal"
+    }
+    expected = {
+        "name": "Cesar",
+        "type": "personal",
+        "family_name": "Cesar",
+    }
+    assert expected == PersonOrOrganizationSchema().load(
+        valid_person_name_and_given_name)
+
     # Pass name and family_name for organization: family_name is ignored and
     # removed
     valid_org_name_and_family_name = {
