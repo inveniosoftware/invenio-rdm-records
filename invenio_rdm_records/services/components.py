@@ -254,7 +254,7 @@ class ExternalPIDsComponent(ServiceComponent):
         # be changed in the draft.
         record_pids = record.get('pids', {})
         self._validate_pids(record_pids)
-        record.pids = record_pids
+        draft.pids = record_pids
 
     def new_version(self, identity, draft=None, record=None, **kwargs):
         """Update draft pids."""
