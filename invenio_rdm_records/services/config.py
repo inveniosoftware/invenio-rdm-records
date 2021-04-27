@@ -18,6 +18,7 @@ from invenio_drafts_resources.services.records.config import \
     SearchVersionsOptions, is_draft, is_record
 from invenio_records_resources.services import ConditionalLink, \
     FileServiceConfig
+from invenio_records_resources.services.base.links import Link
 from invenio_records_resources.services.files.links import FileLink
 from invenio_records_resources.services.records.links import RecordLink
 from invenio_records_resources.services.records.search import \
@@ -26,7 +27,6 @@ from invenio_records_resources.services.records.search import \
 from ..records import RDMDraft, RDMRecord
 from .components import AccessComponent, ExternalPIDsComponent, \
     MetadataComponent
-from .links import HiddenLink, RecordPIDsLink
 from .permissions import RDMRecordPermissionPolicy
 from .pids.providers import DOIDataCiteClient, DOIDataCitePIDProvider, \
     UnmanagedPIDProvider
@@ -171,10 +171,14 @@ class RDMRecordServiceConfig(RecordServiceConfig):
             if_=RecordLink("{+ui}/records/{id}"),
             else_=RecordLink("{+ui}/uploads/{id}"),
         ),
-        "self_doi": ConditionalLink(
-            cond=is_record,
-            if_=RecordPIDsLink("{+ui}/doi/{pid_doi}"),
-            else_=HiddenLink(),
+        # TODO: only include link when DOI support is enabled.
+        "self_doi": Link(
+            "{+ui}/doi/{pid_doi}",
+            when=is_record,
+            vars=lambda record, vars: vars.update({
+                f"pid_{scheme}": pid["identifier"]
+                for (scheme, pid) in record.pids.items()
+            })
         ),
         "files": ConditionalLink(
             cond=is_record,
@@ -191,6 +195,7 @@ class RDMRecordServiceConfig(RecordServiceConfig):
         ),
         "versions": RecordLink("{+api}/records/{id}/versions"),
         "access_links": RecordLink("{+api}/records/{id}/access/links"),
+        # TODO: only include link when DOI support is enabled.
         "reserve_doi": RecordLink("{+api}/records/{id}/draft/pids/doi")
     }
 
