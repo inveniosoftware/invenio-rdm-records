@@ -14,6 +14,7 @@ from invenio_db import db
 from itsdangerous import BadData
 from sqlalchemy_utils import UUIDType
 
+from .errors import InvalidPermissionLevelError
 from .permissions import LinkNeed
 from .serializers import SecretLinkSerializer, TimedSecretLinkSerializer
 from .signals import link_created, link_revoked
@@ -50,8 +51,13 @@ class SecretLink(db.Model):
 
     def allows(self, action):
         """Check if the secret link covers the specified permission."""
-        # TODO permission hierarchy
-        return self.permission_level == action
+        if action == "view":
+            return self.permission_level in ["view", "preview", "edit"]
+        elif action == "preview":
+            return self.permission_level in ["preview", "edit"]
+        elif action == "edit":
+            return self.permission_level == "edit"
+        return False
 
     def revoke(self, commit=False):
         """Revoke (i.e. delete) this secret link."""
@@ -112,6 +118,8 @@ class SecretLink(db.Model):
         expires_at=None,
     ):
         """Create a new secret link."""
+        if permission_level not in ["view", "preview", "edit"]:
+            raise InvalidPermissionLevelError(permission_level)
         is_date = isinstance(expires_at, date)
         is_datetime = isinstance(expires_at, datetime)
         if is_date and not is_datetime:

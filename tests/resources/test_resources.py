@@ -530,7 +530,7 @@ def test_link_creation(
     # create a secret link
     link_result = client.post(
         f"/records/{recid}/access/links", headers=headers,
-        data=json.dumps({"permission": "read"})
+        data=json.dumps({"permission": "view"})
     )
 
     assert link_result.status_code == 201
@@ -538,7 +538,7 @@ def test_link_creation(
     link_json = link_result.json
 
     assert link_json["id"]
-    assert link_json["permission"] == "read"
+    assert link_json["permission"] == "view"
     assert link_json["token"]
     assert link_json["created_at"]
     assert not link_json.get("expires_at")
@@ -566,14 +566,14 @@ def test_link_creation(
     link_result = client.post(
         f"/records/{recid}/access/links", headers=headers,
         data=json.dumps(
-            {"permission": "read_files", "expires_at": in_10_days_str}
+            {"permission": "preview", "expires_at": in_10_days_str}
         )
     )
 
     link_json = link_result.json
     assert link_result.status_code == 201
     assert link_json["id"]
-    assert link_json["permission"] == "read_files"
+    assert link_json["permission"] == "preview"
     assert link_json["token"]
     assert link_json["created_at"]
     assert link_json["expires_at"]
@@ -600,7 +600,7 @@ def test_link_deletion(
     # create a link and delete it again
     link_result = client.post(
         f"/records/{recid}/access/links", headers=headers,
-        data=json.dumps({"permission": "read"})
+        data=json.dumps({"permission": "view"})
     )
     link_id = link_result.json["id"]
 
@@ -651,7 +651,7 @@ def test_link_update(
     # create a link and delete it again
     link_result = client.post(
         f"/records/{recid}/access/links", headers=headers,
-        data=json.dumps({"permission": "read"})
+        data=json.dumps({"permission": "view"})
     )
     link_id = link_result.json["id"]
 
@@ -680,11 +680,11 @@ def test_link_update(
     # permission level update should work fine
     link_result = client.patch(
         f"/records/{recid}/access/links/{link_id}", headers=headers,
-        data=json.dumps({"permission": "read_files"})
+        data=json.dumps({"permission": "preview"})
     )
     assert link_result.status_code == 200
     assert link_result.json["expires_at"] == in_10_days_str
-    assert link_result.json["permission"] == "read_files"
+    assert link_result.json["permission"] == "preview"
 
 
 def test_reserve_pid_with_login(

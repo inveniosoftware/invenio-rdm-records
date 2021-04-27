@@ -27,7 +27,6 @@ class RDMRecordSchema(RecordSchema, FieldPermissionsMixin):
     """Record schema."""
 
     field_load_permissions = {
-        'access': 'manage',
         'files': 'update_draft',
     }
 

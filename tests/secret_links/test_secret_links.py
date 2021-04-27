@@ -17,11 +17,11 @@ from invenio_rdm_records.secret_links.models import SecretLink
 def test_secret_link_creation(app):
     """Check SecretLink.create()."""
     with app.app_context():
-        link = SecretLink.create("read")
+        link = SecretLink.create("preview")
         db.session.commit()
 
-        assert link.allows("read")
-        assert not link.allows("read_files")
+        assert link.allows("view")
+        assert not link.allows("edit")
         assert not link.extra_data
         assert not link.is_expired
 
@@ -33,7 +33,7 @@ def test_secret_link_not_expired(app):
     """Check is_expired for a link that will expire in 10 minutes."""
     with app.app_context():
         in_10_mins = datetime.utcnow() + timedelta(minutes=10)
-        link = SecretLink.create("read", expires_at=in_10_mins)
+        link = SecretLink.create("view", expires_at=in_10_mins)
         db.session.commit()
 
         assert not link.is_expired
@@ -43,7 +43,7 @@ def test_secret_link_expired(app):
     """Check is_expired for a link that expired 10 minutes ago."""
     with app.app_context():
         _10_mins_ago = datetime.utcnow() - timedelta(minutes=10)
-        link = SecretLink.create("read", expires_at=_10_mins_ago)
+        link = SecretLink.create("view", expires_at=_10_mins_ago)
         db.session.commit()
 
         assert link.is_expired
@@ -52,7 +52,7 @@ def test_secret_link_expired(app):
 def test_secret_link_revoke(app):
     """Ensure that revoke() deletes secret links."""
     with app.app_context():
-        link = SecretLink.create("read")
+        link = SecretLink.create("view")
         db.session.commit()
         uuid = link.id
 
@@ -66,7 +66,7 @@ def test_secret_link_revoke(app):
 def test_secret_link_get_by_token(app):
     """Check get_by_token for a valid token."""
     with app.app_context():
-        link = SecretLink.create("read")
+        link = SecretLink.create("view")
         db.session.commit()
 
         link2 = SecretLink.get_by_token(link.token)
@@ -85,7 +85,7 @@ def test_secret_link_get_by_invalid_token(app):
 def test_secret_link_get_by_old_token(app):
     """Ensure that deleted/revoked links aren't returned by get_by_token."""
     with app.app_context():
-        link = SecretLink.create("read")
+        link = SecretLink.create("view")
         db.session.commit()
 
         token = link.token
@@ -101,7 +101,7 @@ def test_secret_link_validate_token(app):
     """Check validate_token for a valid token."""
     with app.app_context():
         in_10_mins = datetime.utcnow() + timedelta(minutes=10)
-        link = SecretLink.create("read", expires_at=in_10_mins)
+        link = SecretLink.create("view", expires_at=in_10_mins)
         db.session.commit()
 
         assert link.validate_token(link.token, expected_data={})
@@ -111,7 +111,7 @@ def test_secret_link_validate_token_expired(app):
     """Check validate_token for an expired token."""
     with app.app_context():
         _10_mins_ago = datetime.utcnow() - timedelta(minutes=10)
-        link = SecretLink.create("read", expires_at=_10_mins_ago)
+        link = SecretLink.create("view", expires_at=_10_mins_ago)
         db.session.commit()
 
         assert not link.validate_token(link.token, expected_data={})

@@ -13,7 +13,7 @@
 from datetime import timezone
 
 from flask_babelex import lazy_gettext as _
-from marshmallow import Schema, fields
+from marshmallow import Schema, fields, validate
 from marshmallow_utils.fields import SanitizedUnicode, TZDateTime
 
 
@@ -33,7 +33,9 @@ class SecretLink(Schema):
         timezone=timezone.utc, format='iso', required=False, dump_only=True)
     expires_at = TZDateTime(
         timezone=timezone.utc, format='iso', required=False)
-    permission = fields.String(required=False)
+    permission = fields.String(
+        required=False,
+        validate=validate.OneOf(["view", "preview", "edit"]))
     token = SanitizedUnicode(dump_only=True)
 
 

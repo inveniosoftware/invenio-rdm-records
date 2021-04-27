@@ -21,6 +21,8 @@ from invenio_records_resources.services.records.schema import \
     ServiceSchemaWrapper
 from marshmallow.exceptions import ValidationError
 
+from ..secret_links.errors import InvalidPermissionLevelError
+
 
 class RDMRecordService(RecordService):
     """RDM record service."""
@@ -123,11 +125,17 @@ class RDMRecordService(RecordService):
             )
 
         # Creation
-        link = parent.access.links.create(
-            permission_level=data["permission"],
-            expires_at=expires_at,
-            extra_data=data.get("extra_data", {}),
-        )
+        try:
+            link = parent.access.links.create(
+                permission_level=data["permission"],
+                expires_at=expires_at,
+                extra_data=data.get("extra_data", {}),
+            )
+        except InvalidPermissionLevelError:
+            raise ValidationError(
+                _("Invalid access permission level."),
+                field_name="permission",
+            )
 
         # Commit and index
         parent.commit()
@@ -346,7 +354,7 @@ class RDMRecordService(RecordService):
         draft = self.draft_cls.pid.resolve(id_, registered_only=False)
 
         # Permissions
-        self.require_permission(identity, "manage", record=draft)
+        self.require_permission(identity, "pid_reserve", record=draft)
 
         providers = self.config.pids_providers[pid_type]
         _provider = self.get_managed_provider(providers)
@@ -403,7 +411,7 @@ class RDMRecordService(RecordService):
         draft = self.draft_cls.pid.resolve(id_, registered_only=False)
 
         # Permissions
-        self.require_permission(identity, "manage", record=draft)
+        self.require_permission(identity, "pid_delete", record=draft)
 
         providers = self.config.pids_providers[pid_type]
         _provider = self.get_managed_provider(providers)
