@@ -221,4 +221,4 @@ class RecordAccessField(SystemField):
     def pre_load(self, data, loader=None):
         """Called before a record is dumped."""
         if data.get('access') and isinstance(data.get('access'), dict):
-            data['access'].pop('status')
+            data['access'].pop('status', None)
