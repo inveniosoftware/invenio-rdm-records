@@ -119,26 +119,3 @@ class RDMManagedPIDProviderResourceConfig(RecordResourceConfig):
     response_handlers = {
         "application/json": ResponseHandler(JSONSerializer())
     }
-
-
-class PIDResolverResourceConfig(RecordResourceConfig):
-    """PID provider resource configuration."""
-
-    blueprint_name = "record_pids_resolver"
-
-    url_prefix = "/pids/<pid_type>"
-
-    routes = {
-        "item-doi": "/<pid_prefix>/<pid_value>",
-        "item": "/<pid_value>"
-    }
-
-    request_view_args = {
-        "pid_prefix": ma.fields.Str(),
-        "pid_type": ma.fields.Str(),
-        "pid_value": ma.fields.Str(),
-    }
-
-    response_handlers = {
-        "application/json": ResponseHandler(JSONSerializer())
-    }

@@ -18,11 +18,10 @@ from invenio_vocabularies.contrib.subjects.subjects import subject_record_type
 from itsdangerous import SignatureExpired
 
 from . import config
-from .resources import PIDResolverResource, PIDResolverResourceConfig, \
-    RDMDraftFilesResourceConfig, RDMManagedPIDProviderResource, \
-    RDMManagedPIDProviderResourceConfig, RDMParentRecordLinksResource, \
-    RDMParentRecordLinksResourceConfig, RDMRecordFilesResourceConfig, \
-    RDMRecordResource, RDMRecordResourceConfig
+from .resources import RDMDraftFilesResourceConfig, \
+    RDMManagedPIDProviderResource, RDMManagedPIDProviderResourceConfig, \
+    RDMParentRecordLinksResource, RDMParentRecordLinksResourceConfig, \
+    RDMRecordFilesResourceConfig, RDMRecordResource, RDMRecordResourceConfig
 from .secret_links import LinkNeed, SecretLink
 from .services import RDMFileDraftServiceConfig, RDMFileRecordServiceConfig, \
     RDMRecordService, RDMRecordServiceConfig
@@ -144,10 +143,4 @@ class InvenioRDMRecords(object):
         self.pid_provider_resource = RDMManagedPIDProviderResource(
             service=self.records_service,
             config=RDMManagedPIDProviderResourceConfig,
-        )
-
-        # PID resolver
-        self.pid_resolver_resource = PIDResolverResource(
-            service=self.records_service,
-            config=PIDResolverResourceConfig,
         )
