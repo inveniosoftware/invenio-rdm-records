@@ -77,10 +77,9 @@ class PersonOrOrganizationSchema(Schema):
     def validate_names(self, data, **kwargs):
         """Validate names based on type."""
         if data['type'] == "personal":
-            if not (data.get('given_name') or data.get('family_name')):
-                messages = [_("Family name or given name must be filled.")]
+            if not data.get('family_name'):
+                messages = [_("Family name must be filled.")]
                 raise ValidationError({
-                    "given_name": messages,
                     "family_name": messages
                 })
 

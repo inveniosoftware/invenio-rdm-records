@@ -67,7 +67,6 @@ def test_ui_serializer(app, full_record_ui):
     with app.app_context():
         serialized_record = UIJSONSerializer().serialize_object_to_dict(
             full_record_ui)
-
     assert serialized_record['ui'] == expected_data
     serialized_records = UIJSONSerializer().serialize_object_list(
         {"hits": {"hits": [full_record_ui]}})
