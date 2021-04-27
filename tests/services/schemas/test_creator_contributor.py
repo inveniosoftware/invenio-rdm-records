@@ -20,17 +20,6 @@ from .test_utils import assert_raises_messages
 
 
 def test_creator_person_valid_minimal():
-    valid_given_name = {
-        "given_name": "Julio",
-        "type": "personal"
-    }
-    expected = {
-        "given_name": "Julio",
-        "name": "Julio",
-        "type": "personal",
-    }
-    assert expected == PersonOrOrganizationSchema().load(valid_given_name)
-
     valid_family_name = {
         "family_name": "Cesar",
         "type": "personal"
@@ -76,6 +65,30 @@ def test_creator_person_valid_full():
     assert valid_full_person == loaded
 
 
+def test_creator_person_valid_no_given_name():
+    valid_full_person = {
+        "person_or_org": {
+            "type": "personal",
+            "family_name": "Cesar",
+            "identifiers": [{
+                "scheme": "orcid",
+                "identifier": "0000-0002-1825-0097",
+            }],
+        },
+        "affiliations": [{
+            "name": "Entity One",
+            "identifiers": [{
+                "scheme": "ror",
+                "identifier": "03yrm5c26"
+            }]
+        }]
+    }
+
+    loaded = CreatorSchema().load(valid_full_person)
+    valid_full_person["person_or_org"]["name"] = "Cesar"
+    assert valid_full_person == loaded
+
+
 def test_creator_organization_valid_full():
     # Full organization
     valid_full_org = {
@@ -94,20 +107,6 @@ def test_creator_organization_valid_full():
 
 
 def test_creatibutor_name_edge_cases():
-    # Pass in name and given_name: name is ignored
-    valid_person_name_and_given_name = {
-        "name": "Cesar, Julio",
-        "given_name": "Julio",
-        "type": "personal"
-    }
-    expected = {
-        "name": "Julio",
-        "type": "personal",
-        "given_name": "Julio",
-    }
-    assert expected == PersonOrOrganizationSchema().load(
-        valid_person_name_and_given_name)
-
     # Pass name and family_name for organization: family_name is ignored and
     # removed
     valid_org_name_and_family_name = {
@@ -144,9 +143,10 @@ def test_creator_valid_role(vocabulary_clear):
     assert expected == CreatorSchema().load(valid_role)
 
 
-def test_creator_person_invalid_no_given_name_nor_family_name():
-    invalid_no_given_name_nor_family_name = {
+def test_creator_person_invalid_no_family_name():
+    invalid_no_family_name = {
         "person_or_org": {
+            "given_name": "Julio",
             "identifiers": [{
                 "scheme": "orcid",
                 "identifier": "0000-0002-1825-0097",
@@ -163,10 +163,9 @@ def test_creator_person_invalid_no_given_name_nor_family_name():
     }
 
     assert_raises_messages(
-        lambda: CreatorSchema().load(invalid_no_given_name_nor_family_name),
+        lambda: CreatorSchema().load(invalid_no_family_name),
         {"person_or_org": {
-            'given_name': ['Family name or given name must be filled.'],
-            'family_name': ['Family name or given name must be filled.']
+            'family_name': ['Family name must be filled.']
         }}
     )
 
@@ -276,23 +275,6 @@ def test_contributor_person_valid_full(vocabulary_clear):
 
 
 def test_contributor_person_valid_minimal(vocabulary_clear):
-    valid_minimal_given_name = {
-        "person_or_org": {
-            "given_name": "Julio",
-            "type": "personal",
-        },
-        "role": "rightsholder"
-    }
-    expected = {
-        "person_or_org": {
-            "given_name": "Julio",
-            "name": "Julio",
-            "type": "personal",
-        },
-        "role": "rightsholder",
-    }
-    assert expected == ContributorSchema().load(valid_minimal_given_name)
-
     valid_minimal_family_name = {
         "person_or_org": {
             "family_name": "Cesar",
@@ -329,8 +311,7 @@ def test_contributor_person_invalid_no_family_name_nor_given_name(
             invalid_no_family_name_nor_given_name
         ),
         {"person_or_org": {
-            'given_name': ['Family name or given name must be filled.'],
-            'family_name': ['Family name or given name must be filled.']
+            'family_name': ["Family name must be filled."]
         }}
     )
 
