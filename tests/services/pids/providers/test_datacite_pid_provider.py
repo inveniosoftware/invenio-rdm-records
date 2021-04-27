@@ -12,17 +12,20 @@ from invenio_pidstore.errors import PIDDoesNotExistError
 from invenio_pidstore.models import PersistentIdentifier, PIDStatus
 
 from invenio_rdm_records.records import RDMDraft, RDMRecord
-from invenio_rdm_records.services.pids.providers import DOIDataCitePIDProvider
+from invenio_rdm_records.services.pids.providers import DOIDataCiteClient, \
+    DOIDataCitePIDProvider
 
 
 @pytest.fixture()
 def datacite_provider(mocker):
-    client = mocker.patch(
-        "invenio_rdm_records.services.pids.providers.datacite."
-        "DOIDataCiteClient")
+    """Datacite provider with mocked REST client."""
     mocker.patch("invenio_rdm_records.services.pids.providers.datacite." +
                  "DataCiteRESTClient")
 
+    # NOTE: user and password will be loaded as empty strings
+    # this will produce warnings at provider level and wont spawn asyn tasks
+    # this is desired for tests
+    client = DOIDataCiteClient(name="datacite")
     return DOIDataCitePIDProvider(name="datacite", client=client)
 
 
@@ -70,9 +73,7 @@ def test_datacite_provider_reserve(record, datacite_provider):
     assert db_pid.status == PIDStatus.NEW
 
 
-def test_datacite_provider_register(record, datacite_provider, mocker):
-    mocker.patch("invenio_rdm_records.services.pids.providers.datacite." +
-                 "DataCite43JSONSerializer")
+def test_datacite_provider_register(record, datacite_provider):
     created_pid = datacite_provider.create(record)
     assert datacite_provider.register(pid=created_pid, record=record, url=None)
 
@@ -85,9 +86,7 @@ def test_datacite_provider_register(record, datacite_provider, mocker):
     assert db_pid.status == PIDStatus.REGISTERED
 
 
-def test_datacite_provider_update(record, datacite_provider, mocker):
-    mocker.patch("invenio_rdm_records.services.pids.providers.datacite." +
-                 "DataCite43JSONSerializer")
+def test_datacite_provider_update(record, datacite_provider):
     created_pid = datacite_provider.create(record)
     assert datacite_provider.register(
         pid=created_pid, record=record, url=None)
@@ -128,11 +127,7 @@ def test_datacite_provider_unregister_reserved(
             pid_value=created_pid.pid_value, pid_type="doi")
 
 
-def test_datacite_provider_unregister_regitered(
-    record, datacite_provider, mocker
-):
-    mocker.patch("invenio_rdm_records.services.pids.providers.datacite." +
-                 "DataCite43JSONSerializer")
+def test_datacite_provider_unregister_regitered(record, datacite_provider):
     # Unregister NEW is a soft delete
     created_pid = datacite_provider.create(record)
     assert datacite_provider.register(pid=created_pid, record=record, url=None)

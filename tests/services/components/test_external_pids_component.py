@@ -328,8 +328,6 @@ def test_create_managed_doi_with_no_value(
 ):
     mocker.patch("invenio_rdm_records.services.pids.providers.datacite." +
                  "DataCiteRESTClient")
-    mocker.patch("invenio_rdm_records.services.pids.providers.datacite." +
-                 "DataCite43JSONSerializer")
     component = req_managed_pid_cmp
     pids = {
         "doi": {
@@ -407,8 +405,6 @@ def test_doi_publish_versions(
         "DOIDataCiteClient")
     mocker.patch("invenio_rdm_records.services.pids.providers.datacite." +
                  "DataCiteRESTClient")
-    mocker.patch("invenio_rdm_records.services.pids.providers.datacite." +
-                 "DataCite43JSONSerializer")
     component = ExternalPIDsComponent(current_rdm_records.records_service)
     doi_provider = DOIDataCitePIDProvider(client)
 

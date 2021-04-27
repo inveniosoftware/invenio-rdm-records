@@ -7,16 +7,15 @@
 
 """DataCite DOI Provider."""
 
-import json
 import logging
 
 from datacite import DataCiteRESTClient
-from datacite.errors import DataCiteError
 from flask import current_app
 from invenio_pidstore.errors import PIDAlreadyExists, PIDDoesNotExistError
 from invenio_pidstore.models import PIDStatus
 
-from ....resources.serializers import DataCite43JSONSerializer
+from ..tasks import doi_datacite_delete, doi_datacite_register, \
+    doi_datacite_update
 from .base import BaseClient, BasePIDProvider
 
 
@@ -77,16 +76,6 @@ class DOIDataCitePIDProvider(BasePIDProvider):
         self.generate_id = generate_id_func or self._generate_id
 
     @staticmethod
-    def _log_errors(errors):
-        """Log errors from DataCiteError class."""
-        # NOTE: DataCiteError is a tuple with the errors on the first
-        errors = json.loads(errors.args[0])["errors"]
-        for error in errors:
-            field = error["source"]
-            reason = error["title"]
-            logging.warning(f"Error in {field}: {reason}")
-
-    @staticmethod
     def _generate_suffix(record, client, **kwargs):
         """Generate a unique DOI suffix.
 
@@ -145,19 +134,11 @@ class DOIDataCitePIDProvider(BasePIDProvider):
         local_success = super().register(pid, record)
         if not local_success:
             return False
-
         if self.is_api_client_setup:
-            # PIDS-FIXME: move to async task, exception handling included
-            try:
-                doc = DataCite43JSONSerializer().dump_one(record)
-                self.api_client.public_doi(
-                    metadata=doc, url=url, doi=pid.pid_value)
-            except DataCiteError as e:
-                logging.warning("DataCite provider errored when updating " +
-                                f"DOI for {pid.pid_value}")
-                self._log_errors(e)
-
-                return False
+            delay = \
+                current_app.config["RDM_RECORDS_DOI_DATACITE_REGISTER_DELAY"]
+            doi_datacite_register.apply_async(
+                [record.pid.pid_value, self.client.name], countdown=delay)
         else:
             logging.warning("DataCite client not configured. " +
                             f"Cannot register DOI for {pid.pid_value}")
@@ -175,18 +156,10 @@ class DOIDataCitePIDProvider(BasePIDProvider):
         # PIDS-FIXME: Do we want to log when reactivate the DOI
         # if pid.is_deleted():
         if self.is_api_client_setup:
-            try:
-                # PIDS-FIXME: move to async task, exception handling included
-                # Set metadata
-                doc = DataCite43JSONSerializer().dump_one(record)
-                self.api_client.update_doi(
-                    metadata=doc, doi=pid.pid_value, url=url)
-            except DataCiteError as e:
-                logging.warning("DataCite provider errored when updating " +
-                                f"DOI for {pid.pid_value}")
-                self._log_errors(e)
-
-                return False
+            delay = \
+                current_app.config["RDM_RECORDS_DOI_DATACITE_UPDATE_DELAY"]
+            doi_datacite_update.apply_async(
+                [record.pid.pid_value, self.client.name], countdown=delay)
         else:
             logging.warning("DataCite client not configured. " +
                             f"Cannot update DOI for {pid.pid_value}")
@@ -203,26 +176,21 @@ class DOIDataCitePIDProvider(BasePIDProvider):
         Otherwise, also it's deleted also remotely.
         :returns: `True` if is deleted successfully.
         """
-        # PIDS-FIXME: move to async task, exception handling included
-        try:
-            if pid.is_reserved():  # Delete only works for draft DOIs
-                if self.is_api_client_setup:
-                    self.api_client.delete_doi(pid.pid_value)
-                else:
-                    logging.warning("DataCite client not configured. " +
-                                    f"Cannot delete DOI for {pid.pid_value}")
-            elif pid.is_registered():
-                if self.is_api_client_setup:
-                    self.api_client.hide_doi(pid.pid_value)
-                else:
-                    logging.warning("DataCite client not configured. " +
-                                    f"Cannot delete DOI for {pid.pid_value}")
-        except DataCiteError as e:
-            logging.warning("DataCite provider errored when deleting " +
-                            f"DOI for {pid.pid_value}")
-            self._log_errors(e)
+        if self.is_api_client_setup:
+            # this provider does not send NEW or RESERVED to datacite
+            if pid.is_registered():
+                delay = current_app.config[
+                    "RDM_RECORDS_DOI_DATACITE_UPDATE_DELAY"]
+                recid_value = record.pid.pid_value
+                doi_value = pid.pid_value  # pid (func param) is a DOI
 
-            return False
+                doi_datacite_delete.apply_async(
+                    [recid_value, doi_value, self.client.name],
+                    countdown=delay
+                )
+        else:
+            logging.warning("DataCite client not configured. " +
+                            f"Cannot delete DOI for {pid.pid_value}")
 
         return super().delete(pid, record)
 
