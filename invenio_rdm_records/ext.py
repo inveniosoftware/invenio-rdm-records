@@ -93,11 +93,17 @@ class InvenioRDMRecords(object):
             if k in overriding_configurations and not app.config.get(k):
                 app.config[k] = getattr(config, k)
 
+    def _filter_record_service_config(self, app, service_config_cls):
+        """Filter record service config based on app global config."""
+        if not app.config["RDM_RECORDS_DOI_DATACITE_ENABLED"]:
+            service_config_cls.pids_providers.pop("doi", None)
+        return service_config_cls
+
     def init_services(self, app):
         """Initialize vocabulary resources."""
         # Services
         self.records_service = RDMRecordService(
-            RDMRecordServiceConfig,
+            self._filter_record_service_config(app, RDMRecordServiceConfig),
             files_service=FileService(RDMFileRecordServiceConfig),
             draft_files_service=FileService(RDMFileDraftServiceConfig),
         )

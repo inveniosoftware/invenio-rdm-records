@@ -48,9 +48,6 @@ def app_config(app_config):
         'PIDSTORE_RECID_FIELD',
         'RECORDS_PERMISSIONS_RECORD_POLICY',
         'RECORDS_REST_ENDPOINTS',
-        'RDM_DATACITE_CLIENT_USERNAME',
-        'RDM_DATACITE_CLIENT_PASSWORD',
-        'RDM_DATACITE_CLIENT_PREFIX',
     ]
 
     for config_key in supported_configurations:
