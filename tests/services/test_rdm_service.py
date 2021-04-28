@@ -11,10 +11,14 @@
 
 import pytest
 from invenio_pidstore.errors import PIDDoesNotExistError
+from marshmallow import ValidationError
 
 from invenio_rdm_records.proxies import current_rdm_records
 
 
+#
+# PIDs
+#
 def test_resolve_pid(
     app, location, es_clear, superuser_identity, minimal_record
 ):
@@ -55,3 +59,133 @@ def test_resolve_non_existing_pid(
             identity=superuser_identity,
             pid_type="doi"
         )
+
+
+def test_pid_creation_default_required(
+    app, location, es_clear, superuser_identity, minimal_record
+):
+    service = current_rdm_records.records_service
+    minimal_record["pids"] = {}
+    # create the draft
+    draft = service.create(superuser_identity, minimal_record)
+    # publish the record
+    record = service.publish(draft.id, superuser_identity)
+    published_doi = record.to_dict()["pids"]["doi"]
+
+    assert published_doi["identifier"]
+    assert published_doi["provider"] == "datacite"  # default
+    assert published_doi["client"] == "datacite"  # default
+
+
+def test_pid_creation_invalid_format_value_managed(
+    app, location, es_clear, superuser_identity, minimal_record
+):
+    service = current_rdm_records.records_service
+    # set the pids field
+    doi = {
+        "identifier": "loremipsum",
+        "provider": "datacite",
+        "client": "datacite"
+    }
+    pids = {"doi": doi}
+    minimal_record["pids"] = pids
+    # create the draft
+    # will pass creation since validation is just reported, not hard fail
+    draft = service.create(superuser_identity, minimal_record)
+    # publish the record
+    with pytest.raises(ValidationError):
+        record = service.publish(draft.id, superuser_identity)
+
+
+def test_pid_creation_invalid_no_value_managed(
+    app, location, es_clear, superuser_identity, minimal_record
+):
+    service = current_rdm_records.records_service
+    # set the pids field
+    # no value, to get a value from the system it should not send the pid_type
+    doi = {
+        "provider": "datacite",
+        "client": "datacite"
+    }
+    pids = {"doi": doi}
+    minimal_record["pids"] = pids
+    # create the draft
+    draft = service.create(superuser_identity, minimal_record)
+    # publish the record
+    with pytest.raises(ValidationError):
+        service.publish(draft.id, superuser_identity)
+
+
+def test_pid_creation_invalid_scheme_managed(
+    app, location, es_clear, superuser_identity, minimal_record
+):
+    service = current_rdm_records.records_service
+    # set the pids field
+    lorem = {
+        "identifier": "10.1234/datacite.12345",
+        "provider": "datacite",
+        "client": "datacite"
+    }
+    pids = {"lorem": lorem}
+    minimal_record["pids"] = pids
+    # create the draft
+    # won't reach publish
+    with pytest.raises(ValidationError):
+        service.create(superuser_identity, minimal_record)
+
+
+def test_pid_creation_valid_unmanaged(
+    app, location, es_clear, superuser_identity, minimal_record
+):
+    service = current_rdm_records.records_service
+    # set the pids field
+    doi = {
+        "identifier": "10.1234/datacite.12345",
+        "provider": "unmanaged",
+    }
+    pids = {"doi": doi}
+    minimal_record["pids"] = pids
+    # create the draft
+    draft = service.create(superuser_identity, minimal_record)
+    # publish the record
+    record = service.publish(draft.id, superuser_identity)
+    published_doi = record.to_dict()["pids"]["doi"]
+
+    assert doi["identifier"] == published_doi["identifier"]
+    assert doi["provider"] == published_doi["provider"]
+
+
+def test_pid_creation_invalid_format_unmanaged(
+    app, location, es_clear, superuser_identity, minimal_record
+):
+    service = current_rdm_records.records_service
+    # set the pids field
+    doi = {
+        "identifier": "loremipsum",
+        "provider": "unmanaged",
+    }
+    pids = {"doi": doi}
+    minimal_record["pids"] = pids
+    # create the draft
+    # will pass creation since validation is just reported, not hard fail
+    draft = service.create(superuser_identity, minimal_record)
+    # publish the record
+    with pytest.raises(ValidationError):
+        record = service.publish(draft.id, superuser_identity)
+
+
+def test_pid_creation_invalid_scheme_unmanaged(
+    app, location, es_clear, superuser_identity, minimal_record
+):
+    service = current_rdm_records.records_service
+    # set the pids field
+    lorem = {
+        "identifier": "10.1234/datacite.12345",
+        "provider": "unmanaged",
+    }
+    pids = {"lorem": lorem}
+    minimal_record["pids"] = pids
+    # create the draft
+    # won't reach publish
+    with pytest.raises(ValidationError):
+        service.create(superuser_identity, minimal_record)

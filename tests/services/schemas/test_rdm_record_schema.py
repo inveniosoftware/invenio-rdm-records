@@ -39,16 +39,3 @@ def test_valid_unmanaged(app, db, minimal_record, location):
 
     minimal_record["pids"] = valid_full
     assert valid_full == RDMRecordSchema().load(minimal_record)["pids"]
-
-
-def test_valid_unknown_scheme(app, db, minimal_record, location):
-    valid_full = {
-        "rand-unknown": {
-            "identifier": "aa::bb::11:::22",
-            "provider": "datacite",
-            "client": "zenodo"
-        }
-    }
-
-    minimal_record["pids"] = valid_full
-    assert valid_full == RDMRecordSchema().load(minimal_record)["pids"]

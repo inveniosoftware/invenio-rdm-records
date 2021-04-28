@@ -85,7 +85,7 @@ class RDMRecordSchema(RecordSchema, FieldPermissionsMixin):
             # The required flag applies to the identifier value
             # It won't fail for empty allowing the components to reserve one
             id_schema = IdentifierSchema(
-                fail_on_unknown=False, identifier_required=True)
+                fail_on_unknown=True, identifier_required=True)
             id_schema.load({
                 "scheme": scheme,
                 "identifier": pid_attrs.get("identifier")
