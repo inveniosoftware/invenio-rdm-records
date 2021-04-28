@@ -27,17 +27,17 @@ class DOIDataCiteClient(BaseClient):
 
     def __init__(self, name, url=None, config_key=None, **kwargs):
         """Constructor."""
-        config_key = config_key or f"RDM_DATACITE_CLIENT"
+        config_key = config_key or f"RDM_RECORDS_DOI_DATACITE"
 
         username = current_app.config.get(f"{config_key}_USERNAME")
         password = current_app.config.get(f"{config_key}_PASSWORD")
         prefix = current_app.config.get(f"{config_key}_PREFIX")
+        test_mode = current_app.config.get(f"{config_key}_TEST_MODE", True)
 
         super().__init__(name, username, password, url=url, **kwargs)
 
-        self.prefix = current_app.config.get(f"{config_key}_PREFIX")
-        self.test_mode = \
-            current_app.config.get(f"{config_key}_TEST_MODE", True)
+        self.prefix = prefix
+        self.test_mode = test_mode
 
     def has_credentials(self, **kwargs):
         """Returns if the client has the credentials properly set up."""

@@ -338,8 +338,8 @@ class RDMRecordService(RecordService):
                 return provider_class(client)
             elif provider_config["system_managed"]:
                 # use as default the client configured for the provider
-                client_name = provider_class.name
-                client = self.get_client(client_name)
+                provider_name = provider_class.name
+                client = self.get_client(provider_name)
                 return provider_class(client)
 
             return provider_class()
