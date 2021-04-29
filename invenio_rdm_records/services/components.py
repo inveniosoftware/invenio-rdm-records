@@ -198,7 +198,6 @@ class ExternalPIDsComponent(ServiceComponent):
                 provider.reserve(pid, draft)
             else:
                 pid = provider.get(identifier_value)
-                assert pid.is_reserved() or pid.is_registered()
 
             if not pid.is_registered():  # avoid dup registration
                 url = self.service.links_item_tpl.expand(draft)["record"]

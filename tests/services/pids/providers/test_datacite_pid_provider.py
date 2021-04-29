@@ -67,7 +67,7 @@ def test_datacite_provider_reserve(record, datacite_provider):
     assert created_pid == db_pid
     assert db_pid.pid_value
     assert db_pid.pid_type == "doi"
-    assert db_pid.status == PIDStatus.RESERVED
+    assert db_pid.status == PIDStatus.NEW
 
 
 def test_datacite_provider_register(record, datacite_provider, mocker):
@@ -119,12 +119,13 @@ def test_datacite_provider_unregister_reserved(
     # Unregister NEW is a soft delete
     created_pid = datacite_provider.create(record)
     assert datacite_provider.reserve(pid=created_pid, record=record)
-    assert created_pid.status == PIDStatus.RESERVED
+    assert created_pid.status == PIDStatus.NEW
     assert datacite_provider.delete(created_pid, record)
 
-    deleted_pid = PersistentIdentifier.get(
+    # reserve keeps status as NEW so is hard deleted
+    with pytest.raises(PIDDoesNotExistError):
+        PersistentIdentifier.get(
             pid_value=created_pid.pid_value, pid_type="doi")
-    assert deleted_pid.status == PIDStatus.DELETED
 
 
 def test_datacite_provider_unregister_regitered(
