@@ -9,11 +9,12 @@
 
 """RDM service components."""
 
+import re
 from copy import copy
 
 from flask_babelex import lazy_gettext as _
 from invenio_access.permissions import system_process
-from invenio_records_resources.services.records.components import \
+from invenio_drafts_resources.services.records.components import \
     ServiceComponent
 from marshmallow import ValidationError
 
@@ -174,16 +175,28 @@ class ExternalPIDsComponent(ServiceComponent):
                 field_name="pids",
             )
 
-    def create(self, identity, data=None, record=None, **kwargs):
+    def _remove_invalid_pids(self, pids, errors):
+        """Remove pids that have validation errors."""
+        errors = errors or []
+        for error in errors:
+            if "pids._schema" == error["field"]:
+                for message in error["messages"]:
+                    # assume format "[some text] scheme {scheme}"
+                    pid_type = message.split("scheme")[1].strip()
+                    pids.pop(pid_type, None)
+
+    def create(self, identity, data=None, record=None,  errors=None):
         """Inject parsed pids to the draft record."""
         pids = data.get('pids', {})
+        self._remove_invalid_pids(pids, errors)
         self._validate_pids(pids)
         # NOTE: record is a draft because we hook to the draft service.
         record.pids = pids
 
-    def update_draft(self, identity, data=None, record=None, **kwargs):
+    def update_draft(self, identity, data=None, record=None,  errors=None):
         """Inject parsed pids to the record."""
         pids = data.get('pids', {})
+        self._remove_invalid_pids(pids, errors)
         self._validate_pids(pids)
         record.pids = pids
 
@@ -236,7 +249,7 @@ class ExternalPIDsComponent(ServiceComponent):
                 f"Value required for {scheme} PID.",
                 field_name=f"pids.{scheme}")
 
-    def publish(self, identity, draft=None, record=None, **kwargs):
+    def publish(self, identity, draft=None, record=None):
         """Update draft pids."""
         record_pids = {}
         draft_pids = draft.get('pids', {})
@@ -271,7 +284,7 @@ class ExternalPIDsComponent(ServiceComponent):
 
         record.pids = record_pids
 
-    def edit(self, identity, draft=None, record=None, **kwargs):
+    def edit(self, identity, draft=None, record=None):
         """Update draft pids."""
         # PIDS are taken from the published record so that cannot
         # be changed in the draft.
@@ -279,6 +292,6 @@ class ExternalPIDsComponent(ServiceComponent):
         self._validate_pids(record_pids)
         draft.pids = record_pids
 
-    def new_version(self, identity, draft=None, record=None, **kwargs):
+    def new_version(self, identity, draft=None, record=None):
         """Update draft pids."""
         draft.pids = {}

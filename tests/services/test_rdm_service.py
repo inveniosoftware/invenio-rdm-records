@@ -91,15 +91,25 @@ def test_pid_creation_invalid_format_value_managed(
     minimal_record["pids"] = pids
     # create the draft
     # will pass creation since validation is just reported, not hard fail
+    # but it will be removed (not saved)
     draft = service.create(superuser_identity, minimal_record)
-    # publish the record
-    with pytest.raises(ValidationError):
-        record = service.publish(draft.id, superuser_identity)
+    assert draft.to_dict()["pids"] == {}
 
 
 def test_pid_creation_invalid_no_value_managed(
     app, location, es_clear, superuser_identity, minimal_record
 ):
+    # NOTE: This use case is tricky because it will spawn two exceptions
+    # Because a value is missing and is also invalid. Should consider only
+    # second case.
+    # {
+    #   'field': 'pids.doi.value.identifier',
+    #   'messages': ['Missing data for required field.']
+    # }
+    # {
+    #   'field': 'pids._schema',
+    #   'messages': [l'Invalid value for scheme doi']
+    # }
     service = current_rdm_records.records_service
     # set the pids field
     # no value, to get a value from the system it should not send the pid_type
@@ -110,10 +120,10 @@ def test_pid_creation_invalid_no_value_managed(
     pids = {"doi": doi}
     minimal_record["pids"] = pids
     # create the draft
+    # will pass creation since validation is just reported, not hard fail
+    # but it will be removed (not saved)
     draft = service.create(superuser_identity, minimal_record)
-    # publish the record
-    with pytest.raises(ValidationError):
-        service.publish(draft.id, superuser_identity)
+    assert draft.to_dict()["pids"] == {}
 
 
 def test_pid_creation_invalid_scheme_managed(
@@ -168,10 +178,9 @@ def test_pid_creation_invalid_format_unmanaged(
     minimal_record["pids"] = pids
     # create the draft
     # will pass creation since validation is just reported, not hard fail
+    # but it will be removed (not saved)
     draft = service.create(superuser_identity, minimal_record)
-    # publish the record
-    with pytest.raises(ValidationError):
-        record = service.publish(draft.id, superuser_identity)
+    assert draft.to_dict()["pids"] == {}
 
 
 def test_pid_creation_invalid_scheme_unmanaged(
