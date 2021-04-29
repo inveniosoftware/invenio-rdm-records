@@ -113,14 +113,16 @@ class DOIDataCitePIDProvider(BasePIDProvider):
             raise PIDAlreadyExists(self.pid_type, doi)
 
     def reserve(self, pid, record, **kwargs):
-        """Reserve a DOI only in the local system.
+        """Constant True.
 
-        It does not reserve the DOI in DataCite.
+        It does not reserve locally, nor externally. This is to avoid storing
+        many PIDs as cause of reserve/discard, which would then be soft
+        deleted. Therefore we want to pass from status.NEW to status.RESERVED.
         :param pid: the PID to reserve.
         :param record: the record.
-        :returns: `True` if is reserved successfully.
+        :returns: `True`
         """
-        return super().reserve(pid, record)
+        return True
 
     def register(self, pid, record, url, **kwargs):
         """Register a DOI via the DataCite API.
