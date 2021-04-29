@@ -9,8 +9,9 @@
 
 """RDM record schemas."""
 
+from flask_babelex import lazy_gettext as _
 from invenio_drafts_resources.services.records.schema import RecordSchema
-from marshmallow import fields, post_dump, validates
+from marshmallow import ValidationError, fields, post_dump, validates
 from marshmallow_utils.fields import NestedAttribute
 from marshmallow_utils.permissions import FieldPermissionsMixin
 from marshmallow_utils.schemas import IdentifierSchema
@@ -80,15 +81,25 @@ class RDMRecordSchema(RecordSchema, FieldPermissionsMixin):
     @validates("pids")
     def validate_pids(self, value):
         """Validates the keys of the pids are supported providers."""
+        error_messages = []
         for scheme, pid_attrs in value.items():
             # The required flag applies to the identifier value
             # It won't fail for empty allowing the components to reserve one
             id_schema = IdentifierSchema(
                 fail_on_unknown=True, identifier_required=True)
-            id_schema.load({
-                "scheme": scheme,
-                "identifier": pid_attrs.get("identifier")
-            })
+            try:
+                id_schema.load({
+                    "scheme": scheme,
+                    "identifier": pid_attrs.get("identifier")
+                })
+            except ValidationError:
+                # cannot raise in case more than one pid presents errors
+                error_messages.append(
+                    _(f"Invalid value for scheme {scheme}")
+                )
+
+        if error_messages:
+            raise ValidationError(message=error_messages)
 
     @post_dump
     def default_nested(self, data, many, **kwargs):
