@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # Copyright (C) 2021 CERN.
+# Copyright (C) 2021 Northwestern University.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
@@ -11,6 +12,8 @@ from edtf import parse_edtf
 from edtf.parser.grammar import ParseException
 from marshmallow import Schema, ValidationError, fields, missing, post_dump
 from marshmallow_utils.fields import SanitizedUnicode
+
+from invenio_rdm_records.vocabularies import Vocabularies
 
 
 class PersonOrOrgSchema43(Schema):
@@ -177,10 +180,11 @@ class DataCite43Schema(Schema):
     def get_type(self, obj):
         """Get resource type."""
         resource_type = obj["metadata"]["resource_type"]
-
+        vocabulary = Vocabularies.get_vocabulary('resource_type')
+        entry = vocabulary.get_entry_by_dict(resource_type)
         return {
-            'resourceTypeGeneral': "FIXME",
-            'resourceType': "FIXME",
+            'resourceTypeGeneral': entry.get("datacite_general", "Other"),
+            'resourceType': entry.get("datacite_type", "Other"),
         }
 
     def get_titles(self, obj):
