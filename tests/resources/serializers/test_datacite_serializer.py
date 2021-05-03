@@ -50,7 +50,7 @@ def test_datacite43_serializer(app, full_record):
             },
         ],
         "publisher": "InvenioRDM",
-        # "publicationYear": "2018",
+        "publicationYear": "2018",
         "subjects": [{
             "subject": "test",
             "valueURI": "test",
