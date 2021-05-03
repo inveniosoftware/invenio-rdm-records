@@ -8,12 +8,9 @@
 
 """Test metadata resource type schema."""
 
-import os
 from copy import deepcopy
 
-import pytest
 from flask_babelex import lazy_gettext as _
-from marshmallow import ValidationError
 
 from invenio_rdm_records.services.schemas.metadata import MetadataSchema
 

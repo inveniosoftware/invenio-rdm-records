@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2019 CERN.
-# Copyright (C) 2019 Northwestern University.
+# Copyright (C) 2019-2021 CERN.
+# Copyright (C) 2019-2021 Northwestern University.
 # Copyright (C) 2021 TU Wien.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
@@ -22,6 +22,7 @@ from invenio_app.factory import create_app as _create_app
 
 from invenio_rdm_records import config
 from invenio_rdm_records.records.api import RDMParent
+from invenio_rdm_records.vocabularies import Vocabularies
 
 
 @pytest.fixture(scope='module')
@@ -357,3 +358,12 @@ def identity_simple(users):
     i.provides.add(UserNeed(user.id))
     i.provides.add(Need(method='system_role', value='any_user'))
     return i
+
+
+@pytest.fixture(scope='function')
+def vocabulary_clear(app):
+    """Clears the Vocabulary singleton and pushes an application context.
+
+    NOTE: app fixture pushes an application context
+    """
+    Vocabularies.clear()

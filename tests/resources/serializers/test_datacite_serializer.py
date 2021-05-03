@@ -3,23 +3,22 @@
 #
 # Copyright (C) 2021 CERN.
 # Copyright (C) 2021 Caltech.
+# Copyright (C) 2021 Northwestern University.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
 
 """Resources serializers tests."""
 
-import json
-
 from invenio_rdm_records.resources.serializers import DataCite43JSONSerializer
 
 
-def test_datacite43_serializer(app, full_record):
+def test_datacite43_serializer(app, full_record, vocabulary_clear):
     """Test serializer to DayaCide 4.3 JSON"""
     expected_data = {
         "types": {
-            "resourceTypeGeneral": "FIXME",
-            "resourceType": "FIXME"
+            "resourceTypeGeneral": "Text",
+            "resourceType": "Journal article"
         },
         "creators": [
             {
