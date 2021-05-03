@@ -8,6 +8,8 @@
 
 """Record response serializers."""
 
+from copy import deepcopy
+
 from flask_resources.serializers import JSONSerializer
 
 from .schema import UIListSchema, UIObjectSchema
@@ -25,8 +27,10 @@ class UIJSONSerializer(JSONSerializer):
     #
     def dump_obj(self, obj):
         """Dump the object with extra information."""
-        obj[self.object_key] = self.object_schema_cls().dump(obj)
-        return obj
+        ser_obj = deepcopy(obj)
+        ser_obj[self.object_key] = self.object_schema_cls().dump(ser_obj)
+
+        return ser_obj
 
     def dump_list(self, obj_list):
         """Dump the list of objects with extra information."""
