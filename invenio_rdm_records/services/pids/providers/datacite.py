@@ -7,6 +7,7 @@
 
 """DataCite DOI Provider."""
 
+import json
 import logging
 
 from datacite import DataCiteRESTClient
@@ -76,6 +77,16 @@ class DOIDataCitePIDProvider(BasePIDProvider):
         self.generate_id = generate_id_func or self._generate_id
 
     @staticmethod
+    def _log_errors(errors):
+        """Log errors from DataCiteError class."""
+        # NOTE: DataCiteError is a tuple with the errors on the first
+        errors = json.loads(errors.args[0])["errors"]
+        for error in errors:
+            field = error["source"]
+            reason = error["title"]
+            logging.warning(f"Error in {field}: {reason}")
+
+    @staticmethod
     def _generate_suffix(record, client, **kwargs):
         """Generate a unique DOI suffix.
 
@@ -139,11 +150,15 @@ class DOIDataCitePIDProvider(BasePIDProvider):
             # PIDS-FIXME: move to async task, exception handling included
             try:
                 doc = DataCite43JSONSerializer().dump_one(record)
+                metadata = doc["metadata"]
                 self.api_client.public_doi(
-                    metadata=doc, url=url, doi=pid.pid_value)
-            except DataCiteError:
+                    metadata=metadata, url=url, doi=pid.pid_value)
+            except DataCiteError as e:
                 logging.warning("DataCite provider errored when updating " +
                                 f"DOI for {pid.pid_value}")
+                self._log_errors(e)
+
+                return False
         else:
             logging.warning("DataCite client not configured. " +
                             f"Cannot register DOI for {pid.pid_value}")
@@ -165,11 +180,14 @@ class DOIDataCitePIDProvider(BasePIDProvider):
                 # PIDS-FIXME: move to async task, exception handling included
                 # Set metadata
                 doc = DataCite43JSONSerializer().dump_one(record)
+                metadata = doc["metadata"]
                 self.api_client.update_doi(
-                        metadata=doc, doi=pid.pid_value, url=url)
-            except DataCiteError:
+                    metadata=metadata, doi=pid.pid_value, url=url)
+            except DataCiteError as e:
                 logging.warning("DataCite provider errored when updating " +
                                 f"DOI for {pid.pid_value}")
+                self._log_errors(e)
+
                 return False
         else:
             logging.warning("DataCite client not configured. " +
@@ -201,9 +219,11 @@ class DOIDataCitePIDProvider(BasePIDProvider):
                 else:
                     logging.warning("DataCite client not configured. " +
                                     f"Cannot delete DOI for {pid.pid_value}")
-        except DataCiteError:
+        except DataCiteError as e:
             logging.warning("DataCite provider errored when deleting " +
                             f"DOI for {pid.pid_value}")
+            self._log_errors(e)
+
             return False
 
         return super().delete(pid, record)
