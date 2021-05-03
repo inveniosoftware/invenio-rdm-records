@@ -7,6 +7,8 @@
 
 """DataCite Serializers for Invenio RDM Records."""
 
+from copy import deepcopy
+
 from flask_resources.serializers import MarshmallowJSONSerializer
 
 from .schema import DataCite43Schema
@@ -21,5 +23,8 @@ class DataCite43JSONSerializer(MarshmallowJSONSerializer):
 
     def dump_one(self, obj):
         """Dump the object with extra information."""
-        obj["metadata"] = self._schema_cls().dump(obj)
-        return obj
+        # Do not change the original record/obj
+        serialized = deepcopy(obj)
+        serialized["metadata"] = self._schema_cls().dump(serialized)
+
+        return serialized
