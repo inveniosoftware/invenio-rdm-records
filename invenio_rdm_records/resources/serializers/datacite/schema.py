@@ -7,7 +7,9 @@
 
 """DataCite based Schema for Invenio RDM Records."""
 
-from marshmallow import Schema, fields, missing, post_dump
+from edtf import parse_edtf
+from edtf.parser.grammar import ParseException
+from marshmallow import Schema, ValidationError, fields, missing, post_dump
 from marshmallow_utils.fields import SanitizedUnicode
 
 
@@ -203,8 +205,14 @@ class DataCite43Schema(Schema):
 
     def get_publication_year(self, obj):
         """Get publication year from edtf date."""
-        # PIDS-FIXME: Make the EDTFDateString somehow access the year?
-        return missing
+        try:
+            publication_date = obj["metadata"]["publication_date"]
+            parsed_date = parse_edtf(publication_date)
+            return str(parsed_date.lower_strict().tm_year)
+        except ParseException:
+            # NOTE: Should not fail since it was validated at service schema
+            raise ValidationError(
+                "Unable to parse publicationYear from publication_date")
 
     def get_dates(self, obj):
         """Get dates."""
