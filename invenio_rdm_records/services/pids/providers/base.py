@@ -6,6 +6,7 @@
 # it under the terms of the MIT License; see LICENSE file for more details.
 
 """PID Base Provider."""
+from flask_babelex import lazy_gettext as _
 from invenio_pidstore.errors import PIDDoesNotExistError
 from invenio_pidstore.models import PersistentIdentifier, PIDStatus
 from sqlalchemy.orm.exc import NoResultFound
@@ -152,9 +153,16 @@ class BasePIDProvider:
         return self.get(identifier, **kwargs).status
 
     def validate(self, identifier=None, provider=None, client=None, **kwargs):
-        """Validate the attributes of the identifier."""
-        if provider and provider != self.name:
-            raise ValueError(f"Provider name {provider} does not "
-                             f"match {self.name}")
+        """Validate the attributes of the identifier.
 
-        return True
+        :returns: A tuple (success, errors). The first specifies if the
+                  validation was passed successfully. The second one is an
+                  array of error messages.
+        """
+        if provider and provider != self.name:
+            errors = [
+                _(f"Provider name {provider} does not match {self.name}")
+            ]
+            return False, errors
+
+        return True, []

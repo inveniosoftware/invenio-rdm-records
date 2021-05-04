@@ -8,6 +8,7 @@
 """Base provider tests."""
 
 import pytest
+from flask_babelex import lazy_gettext as _
 from invenio_pidstore.errors import PIDDoesNotExistError
 from invenio_pidstore.models import PersistentIdentifier, PIDStatus
 
@@ -121,7 +122,18 @@ def test_base_provider_get_status(app, db):
     assert provider.get_status(created_pid.pid_value) == PIDStatus.NEW
 
 
-def test_base_provider_validate(app, db):
+def test_base_provider_validate_no_values_given(app, db):
     provider = BasePIDProvider(pid_type="testid")
-    # NOTE: BasePIDProvider defaults name to None
-    assert provider.validate(identifier=None, client=None, provider=None)
+    # base has name set to None
+    success, errors = provider.validate(
+        identifier=None, client=None, provider=None)
+    assert success
+    assert not errors
+
+
+def test_base_provider_validate_failure(app, db):
+    provider = BasePIDProvider(pid_type="testid")
+    success, errors = provider.validate(
+        identifier=None, client=None, provider="fail")
+    assert not success
+    assert errors == [_("Provider name fail does not match None")]

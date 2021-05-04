@@ -152,7 +152,9 @@ class ExternalPIDsComponent(ServiceComponent):
         client = pid.get("client")
         provider = self.service.get_provider(scheme, provider_name, client)
         if provider:
-            provider.validate(**pid)
+            success, errors = provider.validate(**pid)
+            if errors:
+                raise ValidationError(message=errors, field_name="pids")
 
     def _validate_pids(self, pids):
         """Validate an iterator of PIDs."""
