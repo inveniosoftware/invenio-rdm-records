@@ -7,6 +7,7 @@
 
 """PID Base Provider."""
 
+from flask_babelex import lazy_gettext as _
 from invenio_pidstore.models import PIDStatus
 
 from .base import BasePIDProvider
@@ -55,9 +56,16 @@ class UnmanagedPIDProvider(BasePIDProvider):
         raise NotImplementedError
 
     def validate(self, identifier=None, client=None, provider=None, **kwargs):
-        """Validate the attributes of the identifier."""
-        provider_ok = super(
-            UnmanagedPIDProvider, self).validate(provider=provider)
-        client_ok = not client
+        """Validate the attributes of the identifier.
 
-        return provider_ok and client_ok
+        :returns: A tuple (success, errors). The first specifies if the
+                  validation was passed successfully. The second one is an
+                  array of error messages.
+        """
+        success, errors = super().validate(provider=provider)
+
+        if client:
+            errors.append(
+                _(f"Client attribute not supported for provider {self.name}"))
+
+        return (True, []) if not errors else (False, errors)

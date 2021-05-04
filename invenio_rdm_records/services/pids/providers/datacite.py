@@ -229,9 +229,18 @@ class DOIDataCitePIDProvider(BasePIDProvider):
         return super().delete(pid, record)
 
     def validate(self, identifier=None, provider=None, client=None, **kwargs):
-        """Validate the attributes of the identifier."""
-        super().validate(identifier, provider, client, **kwargs)
-        if identifier and self.is_api_client_setup:
-            self.api_client.check_doi(identifier)
+        """Validate the attributes of the identifier.
 
-        return True
+        :returns: A tuple (success, errors). The first specifies if the
+                  validation was passed successfully. The second one is an
+                  array of error messages.
+        """
+        _, errors = super().validate(identifier, provider, client, **kwargs)
+
+        if identifier and self.is_api_client_setup:
+            try:
+                self.api_client.check_doi(identifier)
+            except ValueError as e:
+                errors.append(str(e))
+
+        return (True, []) if not errors else (False, errors)
