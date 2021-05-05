@@ -147,4 +147,4 @@ def test_datacite43_serializer(app, full_record, vocabulary_clear):
     serializer = DataCite43JSONSerializer()
     serialized_record = serializer.dump_one(full_record)
 
-    assert serialized_record["metadata"] == expected_data
+    assert serialized_record == expected_data
