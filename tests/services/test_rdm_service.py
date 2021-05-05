@@ -375,3 +375,95 @@ def test_embargo_lift_with_error(running_app, es_clear, minimal_record):
     # Record should not be lifted since it didn't expire (until 3220)
     with pytest.raises(EmbargoNotLiftedError):
         service.lift_embargo(_id=record['id'], identity=superuser_identity)
+
+
+def _publish_record(identity, record):
+    service = current_rdm_records.records_service
+    record["pids"] = {}
+    # create the draft
+    draft = service.create(identity, record)
+    # publish the record
+    record = service.publish(draft.id, identity)
+    published_doi = record.to_dict()["pids"]["doi"]
+
+    return published_doi
+
+
+def test_pid_creation_duplicated_unmanaged(
+    running_app, es_clear, superuser_identity, minimal_record
+):
+    service = current_rdm_records.records_service
+    published_doi = _publish_record(superuser_identity, minimal_record)
+
+    # set the pids field
+    doi = {
+        "identifier": published_doi["identifier"],
+        "provider": "unmanaged",
+    }
+    pids = {"doi": doi}
+    minimal_record["pids"] = pids
+
+    # create the draft with duplicated DOI
+    with pytest.raises(ValidationError):
+        service.create(superuser_identity, minimal_record)
+
+
+def test_pid_update_duplicated_unmanaged(
+    running_app, es_clear, superuser_identity, minimal_record
+):
+    service = current_rdm_records.records_service
+    published_doi = _publish_record(superuser_identity, minimal_record)
+
+    # create the draft
+    draft = service.create(superuser_identity, minimal_record)
+    # update draft with duplicated
+    doi = {
+        "identifier": published_doi["identifier"],
+        "provider": "unmanaged",
+    }
+    pids = {"doi": doi}
+    update_data = draft.to_dict()
+    update_data["pids"] = pids
+    with pytest.raises(ValidationError):
+        service.update_draft(draft.id, superuser_identity, update_data)
+
+
+def test_pid_create_duplicated_managed(
+    running_app, es_clear, superuser_identity, minimal_record
+):
+    service = current_rdm_records.records_service
+    published_doi = _publish_record(superuser_identity, minimal_record)
+
+    # set the pids field
+    doi = {
+        "identifier": published_doi["identifier"],
+        "provider": published_doi["provider"],
+        "client": published_doi["client"],
+    }
+    pids = {"doi": doi}
+    minimal_record["pids"] = pids
+
+    # create the draft with duplicated DOI
+    with pytest.raises(ValidationError):
+        service.create(superuser_identity, minimal_record)
+
+
+def test_pid_update_duplicated_managed(
+    running_app, es_clear, superuser_identity, minimal_record
+):
+    service = current_rdm_records.records_service
+    published_doi = _publish_record(superuser_identity, minimal_record)
+
+    # create the draft
+    draft = service.create(superuser_identity, minimal_record)
+    # update draft with duplicated
+    doi = {
+        "identifier": published_doi["identifier"],
+        "provider": published_doi["provider"],
+        "client": published_doi["client"],
+    }
+    pids = {"doi": doi}
+    update_data = draft.to_dict()
+    update_data["pids"] = pids
+    with pytest.raises(ValidationError):
+        service.update_draft(draft.id, superuser_identity, update_data)

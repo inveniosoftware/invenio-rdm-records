@@ -7,6 +7,8 @@
 
 """Tests for the service ExternalPIDsComponent."""
 
+from functools import partial
+
 import pytest
 from invenio_db import db
 from marshmallow import ValidationError
@@ -41,7 +43,8 @@ class TestServiceReqUnmanConfig(RDMRecordServiceConfig):
     pids_providers = {
         "requman": {  # Required Unmanaged
             "requman": {
-                "provider": RequiredUnmanagedPIDProvider,
+                "provider": partial(
+                    RequiredUnmanagedPIDProvider, pid_type="requman"),
                 "required": True,
                 "system_managed": False,
             }
@@ -56,7 +59,8 @@ class TestServiceNReqUnmanConfig(RDMRecordServiceConfig):
     pids_providers = {
         "nrequman": {  # Non required Unmanaged
             "nrequman": {
-                "provider": NotRequiredUnmanagedPIDProvider,
+                "provider": partial(
+                    NotRequiredUnmanagedPIDProvider, pid_type="nrequman"),
                 "required": False,
                 "system_managed": False,
             }
@@ -160,6 +164,8 @@ def test_unmanaged_no_required_no_partial_value(
     not_req_unmanaged_pid_cmp, minimal_record, identity_simple, location
 ):
     component = not_req_unmanaged_pid_cmp
+    # if no name provided, one of the configured must be required
+    # since is not required we need to pass the provider name
     pids = {
         "nrequman": {
             "provider": "nrequman",
@@ -180,29 +186,6 @@ def test_unmanaged_no_required_no_partial_value(
     record = RDMRecord.publish(draft)
     with pytest.raises(ValidationError):
         component.publish(identity_simple, draft=draft, record=record)
-
-
-def test_unmanaged_no_required_no_value(
-    not_req_unmanaged_pid_cmp, minimal_record, identity_simple, location
-):
-    # NOTE: Since is {} should simply be ignored
-    component = not_req_unmanaged_pid_cmp
-    pids = {
-        "nrequman": {}
-    }
-
-    # make sure `pids` field is added
-    data = minimal_record.copy()
-    data["pids"] = pids
-
-    # create a minimal draft
-    draft = RDMDraft.create(data)
-    component.create(identity_simple, data=data, record=draft)
-    assert "pids" in draft and draft.pids == pids
-
-    # publish
-    record = RDMRecord.publish(draft)
-    component.publish(identity_simple, draft=draft, record=record)
 
 
 def test_unmanaged_no_required_no_pids(

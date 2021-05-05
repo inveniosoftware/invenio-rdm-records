@@ -9,6 +9,8 @@
 
 """RDM Record Service."""
 
+from functools import partial
+
 from flask_babelex import gettext as _
 from invenio_drafts_resources.services.records.components import \
     DraftFilesComponent, PIDComponent
@@ -137,7 +139,7 @@ class RDMRecordServiceConfig(RecordServiceConfig):
                 "system_managed": True,
             },
             "unmanaged": {
-                "provider": UnmanagedPIDProvider,
+                "provider": partial(UnmanagedPIDProvider, pid_type="doi"),
                 "required": False,
                 "system_managed": False,
             },

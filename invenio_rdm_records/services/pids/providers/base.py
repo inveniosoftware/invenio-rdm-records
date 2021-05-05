@@ -49,7 +49,7 @@ class BasePIDProvider:
         """
         return self.system_managed
 
-    def get(self, pid_value, pid_type=None):
+    def get(self, pid_value, pid_type=None, pid_provider=None):
         """Get a persistent identifier for this provider.
 
         :param pid_type: Persistent identifier type.
@@ -57,8 +57,14 @@ class BasePIDProvider:
         :returns: A :class:`invenio_pidstore.models.base.PersistentIdentifier`
             instance.
         """
-        return PersistentIdentifier.get(pid_type or self.pid_type, pid_value,
-                                        pid_provider=self.name)
+        args = {
+            "pid_type": pid_type or self.pid_type,
+            "pid_value": pid_value
+        }
+        if pid_provider:
+            args["pid_provider"] = pid_provider
+
+        return PersistentIdentifier.get(**args)
 
     def get_by_record(self, record_id, pid_type=None, pid_value=None,
                       object_type="rec"):
@@ -152,17 +158,30 @@ class BasePIDProvider:
         """Get the status of the identifier."""
         return self.get(identifier, **kwargs).status
 
-    def validate(self, identifier=None, provider=None, client=None, **kwargs):
+    def validate(
+        self, record, identifier=None, provider=None, client=None, **kwargs
+    ):
         """Validate the attributes of the identifier.
 
         :returns: A tuple (success, errors). The first specifies if the
                   validation was passed successfully. The second one is an
                   array of error messages.
         """
+        errors = []
         if provider and provider != self.name:
-            errors = [
+            errors.append(
                 _(f"Provider name {provider} does not match {self.name}")
-            ]
-            return False, errors
+            )
+        # deduplication check
+        try:
+            pid = self.get(pid_value=identifier, pid_type=self.pid_type)
+            if pid and pid.object_uuid != record.id:
+                errors.append(_(
+                    f"PID {self.pid_type}:{identifier} is not " +
+                    f"associated to record {record.pid.pid_value}"
+                ))
 
-        return True, []
+        except PIDDoesNotExistError:
+            pass
+
+        return (True, []) if not errors else (False, errors)

@@ -26,6 +26,12 @@ class ExternalPIDsComponent(ServiceComponent):
             provider_name = pid.get("provider")
             client = pid.get("client")
             provider = self.service.get_provider(scheme, provider_name, client)
+            if not provider:
+                raise ValidationError(
+                    message=_(f"Provider {provider_name} not found for PID " +
+                              f"type {scheme}"),
+                    field_name="pids",
+                )
 
         # NOTE: provider should not be None by now, if not configured should
         # fail in `_validate_pid_schemes`
@@ -37,10 +43,11 @@ class ExternalPIDsComponent(ServiceComponent):
         """Validate an iterator of PIDs."""
         pids_providers = self.service.config.pids_providers
         for scheme, providers in pids_providers.items():
-            pid = pids.get(scheme, {})
-            self._validate_pid(scheme, pid, record)
+            pid = pids.get(scheme)
+            if pid:
+                self._validate_pid(scheme, pid, record)
 
-    def _validate_pid_schemes(self, pids, record):
+    def _validate_pid_schemes(self, pids):
         """Validate the pid schemes are supported by the service."""
         pids_providers = set(self.service.config.pids_providers.keys())
         all_pids = set(pids.keys())
@@ -55,7 +62,8 @@ class ExternalPIDsComponent(ServiceComponent):
         """Remove pids that have validation errors."""
         errors = errors or []
         for error in errors:
-            if "pids._schema" == error["field"]:
+            pids_has_error = error["field"] == "pids._schema"
+            if pids_has_error:
                 for message in error["messages"]:
                     # assume format "[some text] scheme {scheme}"
                     pid_type = message.split("scheme")[1].strip()
@@ -121,7 +129,7 @@ class ExternalPIDsComponent(ServiceComponent):
                 "identifier": identifier_value,
                 "provider": provider.name,
             }
-        elif draft_pid != {}:
+        elif draft_pid != {} or is_required:
             # NOTE: Do not accept partial
             raise ValidationError(
                 f"Value required for {scheme} PID.",
@@ -145,7 +153,9 @@ class ExternalPIDsComponent(ServiceComponent):
             if not provider:
                 continue
 
-            self._validate_pid(scheme, draft_pid, draft, provider)
+            if draft_pid:
+                self._validate_pid(scheme, draft_pid, draft, provider)
+
             # This is not ideal because the provider.name must match with
             # the dict keys in `pids_providers` config and it might fail
             # when different.

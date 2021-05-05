@@ -7,21 +7,32 @@
 
 """Unmanaged provider tests."""
 
+import pytest
 from flask_babelex import lazy_gettext as _
 
 from invenio_rdm_records.services.pids.providers import UnmanagedPIDProvider
 
 
-def test_unmanaged_provider_validate(app, db):
-    provider = UnmanagedPIDProvider(pid_type="testid")
-    success, errors = provider.validate(provider="unmanaged")
+@pytest.fixture(scope='function')
+def unmananged_provider():
+    """Application factory fixture."""
+    return UnmanagedPIDProvider(pid_type="testid")
+
+
+def test_unmanaged_provider_validate(
+    running_app, db, unmananged_provider, record
+):
+    success, errors = unmananged_provider.validate(
+        record=record, provider="unmanaged")
     assert success
     assert not errors
 
 
-def test_unmanaged_provider_validate_failure(app, db):
-    provider = UnmanagedPIDProvider(pid_type="testid")
-    success, errors = provider.validate(client="someclient", provider="fail")
+def test_unmanaged_provider_validate_failure(
+    running_app, db, unmananged_provider, record
+):
+    success, errors = unmananged_provider.validate(
+        record=record, client="someclient", provider="fail")
 
     expected_errors = [
         _("Provider name fail does not match unmanaged"),

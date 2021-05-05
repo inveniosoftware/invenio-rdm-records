@@ -22,13 +22,9 @@ class UnmanagedPIDProvider(BasePIDProvider):
 
     name = "unmanaged"
 
-    def __init__(self, **kwargs):
+    def __init__(self, pid_type, **kwargs):
         """Constructor."""
-        super().__init__(pid_type=self.name, system_managed=False)
-
-    def get(self, pid_value, pid_type=None, **kwargs):
-        """Not allowed for unmanaged PIDs."""
-        raise NotImplementedError
+        super().__init__(pid_type=pid_type, system_managed=False)
 
     def create(self, pid_value=None, pid_type=None, object_type=None,
                object_uuid=None, **kwargs):
@@ -55,14 +51,17 @@ class UnmanagedPIDProvider(BasePIDProvider):
         """Not allowed for unmanaged PIDs."""
         raise NotImplementedError
 
-    def validate(self, identifier=None, client=None, provider=None, **kwargs):
+    def validate(
+        self, record, identifier=None, client=None, provider=None, **kwargs
+    ):
         """Validate the attributes of the identifier.
 
         :returns: A tuple (success, errors). The first specifies if the
                   validation was passed successfully. The second one is an
                   array of error messages.
         """
-        success, errors = super().validate(provider=provider)
+        success, errors = super().validate(
+            record, identifier, provider, client, **kwargs)
 
         if client:
             errors.append(

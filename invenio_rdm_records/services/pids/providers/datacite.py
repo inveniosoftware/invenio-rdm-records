@@ -107,6 +107,7 @@ class DOIDataCitePIDProvider(BasePIDProvider):
         doi = self.generate_id(record, **kwargs)
 
         try:
+            # needed for e.g. draft creation from `edit`
             pid = self.get(doi)
         except PIDDoesNotExistError:
             # not existing, create a new one
@@ -237,7 +238,7 @@ class DOIDataCitePIDProvider(BasePIDProvider):
                   array of error messages.
         """
         success, errors = super().validate(
-            identifier, provider, client, **kwargs)
+            record, identifier, provider, client, **kwargs)
 
         if identifier and self.is_api_client_setup:
             # format check
@@ -245,12 +246,5 @@ class DOIDataCitePIDProvider(BasePIDProvider):
                 self.api_client.check_doi(identifier)
             except ValueError as e:
                 errors.append(str(e))
-
-            # deduplication check
-            try:
-                self.get_by_record(record.id, self.pid_type, identifier)
-            except PIDDoesNotExistError:
-                errors.append(_(f"PID {self.pid_type}:{identifier} is not " +
-                                f"associated to record {record.pid.pid_value}"))
 
         return (True, []) if not errors else (False, errors)
