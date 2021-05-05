@@ -74,7 +74,8 @@ class CommonFieldsMixin:
         languages=PIDListRelation(
             'metadata.languages',
             attrs=['id', 'title'],
-            pid_field=Vocabulary.pid.with_type_ctx('languages')
+            pid_field=Vocabulary.pid.with_type_ctx('languages'),
+            cache_key='languages',
         ),
     )
 
