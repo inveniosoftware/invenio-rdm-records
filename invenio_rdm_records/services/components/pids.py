@@ -20,31 +20,31 @@ from marshmallow import ValidationError
 class ExternalPIDsComponent(ServiceComponent):
     """Service component for pids."""
 
-    def _validate_pid(self, scheme, pid):
+    def _validate_pid(self, scheme, pid, record, provider=None):
         """Call provider to validate the given PID."""
-        provider_name = pid.get("provider")
-        client = pid.get("client")
-        provider = self.service.get_provider(scheme, provider_name, client)
-        if provider:
-            success, errors = provider.validate(**pid)
-            if errors:
-                raise ValidationError(message=errors, field_name="pids")
+        if not provider:  # In case we do not need to calculate it again
+            provider_name = pid.get("provider")
+            client = pid.get("client")
+            provider = self.service.get_provider(scheme, provider_name, client)
 
-    def _validate_pids(self, pids):
+        # NOTE: provider should not be None by now, if not configured should
+        # fail in `_validate_pid_schemes`
+        success, errors = provider.validate(record=record, **pid)
+        if errors:
+            raise ValidationError(message=errors, field_name="pids")
+
+    def _validate_pids(self, pids, record):
         """Validate an iterator of PIDs."""
-        verified_pids = set()
         pids_providers = self.service.config.pids_providers
         for scheme, providers in pids_providers.items():
-            if scheme not in pids:
-                continue
-
             pid = pids.get(scheme, {})
-            self._validate_pid(scheme, pid)
-            verified_pids.add(scheme)
+            self._validate_pid(scheme, pid, record)
 
-        # ensure that there are no extra PIDs for which there is no config
+    def _validate_pid_schemes(self, pids, record):
+        """Validate the pid schemes are supported by the service."""
+        pids_providers = set(self.service.config.pids_providers.keys())
         all_pids = set(pids.keys())
-        unknown_pids = all_pids - verified_pids
+        unknown_pids = all_pids - pids_providers
         if unknown_pids:
             raise ValidationError(
                 message=_(f"No configuration defined for PIDs {unknown_pids}"),
@@ -65,7 +65,8 @@ class ExternalPIDsComponent(ServiceComponent):
         """Inject parsed pids to the draft record."""
         pids = data.get('pids', {})
         self._remove_invalid_pids(pids, errors)
-        self._validate_pids(pids)
+        self._validate_pid_schemes(pids)
+        self._validate_pids(pids, record)
         # NOTE: record is a draft because we hook to the draft service.
         record.pids = pids
 
@@ -73,7 +74,8 @@ class ExternalPIDsComponent(ServiceComponent):
         """Inject parsed pids to the record."""
         pids = data.get('pids', {})
         self._remove_invalid_pids(pids, errors)
-        self._validate_pids(pids)
+        self._validate_pid_schemes(pids)
+        self._validate_pids(pids, record)
         record.pids = pids
 
     def _publish_managed(self, scheme, provider, is_required, draft_pid,
@@ -130,7 +132,7 @@ class ExternalPIDsComponent(ServiceComponent):
         record_pids = {}
         draft_pids = draft.get('pids', {})
 
-        self._validate_pids(draft_pids)
+        self._validate_pid_schemes(draft_pids)
 
         pids_providers = self.service.config.pids_providers
         for scheme, providers in pids_providers.items():
@@ -143,6 +145,7 @@ class ExternalPIDsComponent(ServiceComponent):
             if not provider:
                 continue
 
+            self._validate_pid(scheme, draft_pid, draft, provider)
             # This is not ideal because the provider.name must match with
             # the dict keys in `pids_providers` config and it might fail
             # when different.
@@ -165,7 +168,8 @@ class ExternalPIDsComponent(ServiceComponent):
         # PIDS are taken from the published record so that cannot
         # be changed in the draft.
         record_pids = record.get('pids', {})
-        self._validate_pids(record_pids)
+        self._validate_pid_schemes(record_pids)
+        self._validate_pids(record_pids, record)
         draft.pids = record_pids
 
     def new_version(self, identity, draft=None, record=None):

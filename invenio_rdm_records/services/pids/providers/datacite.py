@@ -13,6 +13,7 @@ import logging
 from datacite import DataCiteRESTClient
 from datacite.errors import DataCiteError
 from flask import current_app
+from flask_babelex import lazy_gettext as _
 from invenio_pidstore.errors import PIDAlreadyExists, PIDDoesNotExistError
 from invenio_pidstore.models import PIDStatus
 
@@ -226,19 +227,30 @@ class DOIDataCitePIDProvider(BasePIDProvider):
 
         return super().delete(pid, record)
 
-    def validate(self, identifier=None, provider=None, client=None, **kwargs):
+    def validate(
+        self, record, identifier=None, provider=None, client=None, **kwargs
+    ):
         """Validate the attributes of the identifier.
 
         :returns: A tuple (success, errors). The first specifies if the
                   validation was passed successfully. The second one is an
                   array of error messages.
         """
-        _, errors = super().validate(identifier, provider, client, **kwargs)
+        success, errors = super().validate(
+            identifier, provider, client, **kwargs)
 
         if identifier and self.is_api_client_setup:
+            # format check
             try:
                 self.api_client.check_doi(identifier)
             except ValueError as e:
                 errors.append(str(e))
+
+            # deduplication check
+            try:
+                self.get_by_record(record.id, self.pid_type, identifier)
+            except PIDDoesNotExistError:
+                errors.append(_(f"PID {self.pid_type}:{identifier} is not " +
+                                f"associated to record {record.pid.pid_value}"))
 
         return (True, []) if not errors else (False, errors)
