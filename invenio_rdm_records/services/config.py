@@ -26,7 +26,7 @@ from invenio_records_resources.services.records.search import \
 
 from ..records import RDMDraft, RDMRecord
 from .components import AccessComponent, ExternalPIDsComponent, \
-    MetadataComponent
+    MetadataComponent, RelationsComponent
 from .permissions import RDMRecordPermissionPolicy
 from .pids.providers import DOIDataCiteClient, DOIDataCitePIDProvider, \
     UnmanagedPIDProvider
@@ -150,7 +150,7 @@ class RDMRecordServiceConfig(RecordServiceConfig):
         "datacite": DOIDataCiteClient
     }
 
-    # Components
+    # Components - order matters!
     components = [
         MetadataComponent,
         AccessComponent,
@@ -159,6 +159,7 @@ class RDMRecordServiceConfig(RecordServiceConfig):
         PIDComponent,
         # for the `pids` field (external PIDs)
         ExternalPIDsComponent,
+        RelationsComponent,
     ]
 
     # Links

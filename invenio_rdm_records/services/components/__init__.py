@@ -12,10 +12,12 @@ from .access import AccessComponent
 from .metadata import MetadataComponent
 from .parent import ParentRecordAccessComponent
 from .pids import ExternalPIDsComponent
+from .relations import RelationsComponent
 
 __all__ = (
     'AccessComponent',
     'ExternalPIDsComponent',
     'MetadataComponent',
     'ParentRecordAccessComponent',
+    'RelationsComponent',
 )
