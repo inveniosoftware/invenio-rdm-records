@@ -21,44 +21,12 @@ from invenio_access.permissions import any_user, authenticated_user, \
     superuser_access, system_process
 from invenio_accounts.models import Role
 from invenio_app.factory import create_api
-from invenio_vocabularies.records.models import VocabularyType
-from invenio_vocabularies.services.service import VocabulariesService
 
 
 @pytest.fixture(scope='module')
 def create_app(instance_path):
     """Application factory fixture."""
     return create_api
-
-
-@pytest.fixture()
-def languages(db):
-    """Languages fixture."""
-    vocabulary_type = VocabularyType(name='languages')
-    db.session.add(vocabulary_type)
-    db.session.commit()
-
-    identity = Identity(1)
-    identity.provides.add(any_user)
-    service = VocabulariesService()
-
-    languages = {}
-
-    for lang in (
-        {"props": {"id": "en"}, "title": {"en": "English"}},
-        {"props": {"id": "fr"}, "title": {"en": "French"}},
-        {"props": {"id": "it"}, "title": {"en": "Italian"}},
-    ):
-        record = service.create(
-            identity=identity,
-            data={
-                "metadata": lang,
-                "vocabulary_type_id": vocabulary_type.id,
-            },
-        )
-        languages[lang['props']['id']] = record
-
-    return languages
 
 
 @pytest.fixture(scope="function")

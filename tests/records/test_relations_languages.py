@@ -19,25 +19,6 @@ from invenio_rdm_records.records.api import RDMDraft, RDMRecord
 
 
 #
-# Fixtures
-#
-@pytest.fixture(scope="module")
-def lang(app):
-    """Language vocabulary record."""
-    vocabulary_service.create_type(system_identity, "languages", "lng")
-    lang = vocabulary_service.create(system_identity, {
-        "id": "eng",
-        "title": {
-            "en": "English",
-            "da": "Engelsk",
-        },
-        "tags": ["individual", "living"],
-        "type": "languages"
-    })
-    return lang
-
-
-#
 # Tests
 #
 def test_languages_field(app, location, minimal_record):
