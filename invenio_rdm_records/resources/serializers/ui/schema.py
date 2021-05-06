@@ -11,12 +11,12 @@
 from copy import deepcopy
 from functools import partial
 
+from flask import current_app
 from flask_babelex import get_locale
 from flask_babelex import gettext as _
 from invenio_i18n.ext import current_i18n
-# TODO
-# from invenio_vocabularies.api import VocabularyRegistry
 from marshmallow import Schema, fields, missing
+from marshmallow_utils.fields import BabelGettextDictField
 from marshmallow_utils.fields import FormatDate as FormatDate_
 from marshmallow_utils.fields import FormatEDTF as FormatEDTF_
 from marshmallow_utils.fields import StrippedHTML
@@ -25,9 +25,19 @@ from invenio_rdm_records.vocabularies import Vocabularies
 
 from .fields import AccessStatusField, UIAccessStatus, VocabularyTitleField
 
+
+def current_default_locale():
+    """Get the Flask app's default locale."""
+    if current_app:
+        return current_app.config.get('BABEL_DEFAULT_LOCALE', 'en')
+    # Use english by default if not specified
+    return 'en'
+
+
 # Partial to make short definitions in below schema.
 FormatEDTF = partial(FormatEDTF_, locale=get_locale)
 FormatDate = partial(FormatDate_, locale=get_locale)
+L10NString = partial(BabelGettextDictField, get_locale, current_default_locale)
 
 
 def make_affiliation_index(attr, obj, dummy_ctx):
@@ -69,24 +79,6 @@ def make_affiliation_index(attr, obj, dummy_ctx):
     }
 
 
-def localize_vocabulary_list(field_name, key, attr, obj):
-    """Localize vocabulary."""
-    field_data = attr.get("metadata", {}).get(field_name)
-
-    if not field_data:
-        return missing
-
-    localized = []
-    str_locale = str(current_i18n.locale)
-    for item in field_data:
-        localized.append({
-            "id": item.get("id"),
-            "title_l10n": item.get(key, {}).get(str_locale)
-        })
-
-    return localized
-
-
 def record_version(obj):
     """Return record's version."""
     field_data = obj.get("metadata", {}).get("version")
@@ -95,6 +87,13 @@ def record_version(obj):
         return f"v{obj['versions']['index']}"
 
     return field_data
+
+
+class LanguageL10NSchema(Schema):
+    """Localization of language titles."""
+
+    id = fields.String()
+    title = L10NString(data_key='title_l10n')
 
 
 class UIObjectSchema(Schema):
@@ -120,8 +119,10 @@ class UIObjectSchema(Schema):
     contributors = fields.Function(
         partial(make_affiliation_index, 'contributors'))
 
-    languages = fields.Function(
-        partial(localize_vocabulary_list, 'languages', 'title'))
+    languages = fields.List(
+        fields.Nested(LanguageL10NSchema),
+        attribute='metadata.languages',
+    )
 
     description_stripped = StrippedHTML(attribute="metadata.description")
 
