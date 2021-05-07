@@ -219,14 +219,10 @@ def test_datacite43_serializer(running_app, full_record, vocabulary_clear):
         "sizes": ["11 pages"],
         "formats": ["application/pdf"],
         "version": "v1.0",
-        "rightsList": [
-            {
-                "rights": "Creative Commons Attribution 4.0 International",
-                "rightsIdentifierScheme": "spdx",
-                "rightsIdentifier": "cc-by-4.0",
-                "rightsUri": "https://creativecommons.org/licenses/by/4.0/",
-            }
-        ],
+        "rightsList": [{
+            "rights": "Creative Commons Attribution 4.0 International",
+            "rightsUri": "https://creativecommons.org/licenses/by/4.0/",
+        }],
         "descriptions": [
             {"description": "Test", "descriptionType": "Abstract"},
             {

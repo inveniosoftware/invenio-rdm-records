@@ -162,8 +162,7 @@ def full_record(users):
             "version": "v1.0",
             "rights": [{
                 "title": "Creative Commons Attribution 4.0 International",
-                "scheme": "spdx",
-                "identifier": "cc-by-4.0",
+                "id": "cc-by-4.0",
                 "link": "https://creativecommons.org/licenses/by/4.0/"
             }],
             "description": "Test",

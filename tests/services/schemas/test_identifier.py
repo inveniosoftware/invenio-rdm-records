@@ -16,7 +16,7 @@ from invenio_rdm_records.services.schemas.metadata import IdentifierSchema, \
 
 def test_valid_identifier():
     valid = {
-        "identifier": "10.5281/zenodo.9999999",
+        "identifier": "10.5281/rdm.9999999",
         "scheme": "doi"
     }
     loaded = IdentifierSchema(allowed_schemes=["doi"]).load(valid)
@@ -26,7 +26,7 @@ def test_valid_identifier():
 def test_valid_no_schema():
     """It is valid becuase the schema is detected by the schema."""
     valid_identifier = {
-        "identifier": "10.5281/zenodo.9999999",
+        "identifier": "10.5281/rdm.9999999",
     }
     loaded = IdentifierSchema(allowed_schemes=["doi"]).load(valid_identifier)
     valid_identifier["scheme"] = "doi"
@@ -38,7 +38,7 @@ def test_invalid_no_identifier():
         "scheme": "doi"
     }
     with pytest.raises(ValidationError):
-        data = IdentifierSchema().load(invalid)
+        data = IdentifierSchema(allowed_schemes=["doi"]).load(invalid)
 
 
 def test_valid_empty_list(app, minimal_record):
@@ -51,7 +51,7 @@ def test_valid_empty_list(app, minimal_record):
 def test_valid_multiple_identifiers(app, minimal_record):
     metadata = minimal_record['metadata']
     metadata['identifiers'] = [
-        {"identifier": "10.5281/zenodo.9999999", "scheme": "doi"},
+        {"identifier": "10.5281/rdm.9999999", "scheme": "doi"},
         {"identifier": "ark:/123/456", "scheme": "ark"}
     ]
     data = MetadataSchema().load(metadata)
@@ -62,16 +62,16 @@ def test_invalid_duplicate_scheme(app, minimal_record):
     # NOTE: Duplicates are accepted, there is no de-duplication
     metadata = minimal_record['metadata']
     metadata['identifiers'] = [
-        {"identifier": "10.5281/zenodo.9999999", "scheme": "doi"},
-        {"identifier": "10.5281/zenodo.0000000", "scheme": "doi"}
+        {"identifier": "10.5281/rdm.9999999", "scheme": "doi"},
+        {"identifier": "10.5281/rdm.0000000", "scheme": "doi"}
     ]
 
     with pytest.raises(ValidationError):
         data = MetadataSchema().load(metadata)
 
     metadata['identifiers'] = [
-        {"identifier": "10.5281/zenodo.9999999", "scheme": "doi"},
-        {"identifier": "10.5281/zenodo.0000000"}
+        {"identifier": "10.5281/rdm.9999999", "scheme": "doi"},
+        {"identifier": "10.5281/rdm.0000000"}
     ]
 
     with pytest.raises(ValidationError):

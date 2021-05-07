@@ -18,6 +18,7 @@ from invenio_rdm_records.services.schemas.metadata import MetadataSchema, \
 
 def test_valid_full():
     valid_full = {
+        "id": "cc-by-4.0",
         "title": "Creative Commons Attribution 4.0 International",
         "description": "A description",
         "link": "https://creativecommons.org/licenses/by/4.0/"
@@ -35,8 +36,7 @@ def test_valid_minimal():
 def test_invalid_extra_right():
     invalid_extra = {
         "title": "Creative Commons Attribution 4.0 International",
-        "scheme": "spdx",
-        "identifier": "cc-by-4.0",
+        "id": "cc-by-4.0",
         "uri": "https://creativecommons.org/licenses/by/4.0/",
         "extra": "field"
     }
@@ -58,8 +58,7 @@ def test_invalid_url():
     ([]),
     ([{
         "title": "Creative Commons Attribution 4.0 International",
-        "scheme": "spdx",
-        "identifier": "cc-by-4.0",
+        "id": "cc-by-4.0",
         "link": "https://creativecommons.org/licenses/by/4.0/"
     }, {
         "title": "Copyright (C) 2020. All rights reserved."
