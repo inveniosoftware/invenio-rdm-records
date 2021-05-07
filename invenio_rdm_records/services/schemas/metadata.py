@@ -12,6 +12,7 @@
 from functools import partial
 from urllib import parse
 
+import idutils
 from flask_babelex import lazy_gettext as _
 from marshmallow import Schema, ValidationError, fields, post_load, validate, \
     validates_schema
@@ -195,13 +196,8 @@ def _is_uri(uri):
         return False
 
 
-class RightsSchema(IdentifierSchema):
+class RightsSchema(Schema):
     """License schema."""
-
-    def __init__(self, **kwargs):
-        """Constructor."""
-        super().__init__(
-            fail_on_unknown=False, identifier_required=False, **kwargs)
 
     id = SanitizedUnicode()
     title = SanitizedUnicode()
@@ -225,23 +221,23 @@ class RelatedIdentifierSchema(IdentifierSchema):
     SCHEMES = [
         "ark",
         "arxiv",
-        "bibcode",
+        ("bibcode", idutils.is_ads),
         "doi",
         "ean13",
-        "eissn",
+        ("eissn", lambda x: True),  # FIXME: is this an issn
         "handle",
-        "igsn",
+        ("igsn", lambda x: True),
         "isbn",
         "issn",
         "istc",
-        "lissn",
+        ("lissn", lambda x: True),
         "lsid",
         "pmid",
         "purl",
-        "upc",
+        ("upc", lambda x: True),
         "url",
         "urn",
-        "w3id"
+        ("w3id", lambda x: True),
     ]
 
     def __init__(self, **kwargs):
@@ -252,27 +248,19 @@ class RelatedIdentifierSchema(IdentifierSchema):
     resource_type = fields.Nested(VocabularySchema)
 
 
-class FunderSchema(IdentifierSchema):
+class FunderSchema(Schema):
     """Funder schema."""
-
-    def __init__(self, **kwargs):
-        """Constructor."""
-        super().__init__(
-            fail_on_unknown=False, identifier_required=False, **kwargs)
 
     name = SanitizedUnicode(
         required=True,
         validate=_not_blank(_('Name cannot be blank.'))
     )
+    scheme = SanitizedUnicode()
+    identifier = SanitizedUnicode()
 
 
-class AwardSchema(IdentifierSchema):
+class AwardSchema(Schema):
     """Award schema."""
-
-    def __init__(self, **kwargs):
-        """Constructor."""
-        super().__init__(
-            fail_on_unknown=False, identifier_required=False, **kwargs)
 
     title = SanitizedUnicode(
         required=True,
@@ -282,6 +270,8 @@ class AwardSchema(IdentifierSchema):
         required=True,
         validate=_not_blank(_('Name cannot be blank.'))
     )
+    scheme = SanitizedUnicode()
+    identifier = SanitizedUnicode()
 
 
 class FundingSchema(Schema):
@@ -305,9 +295,9 @@ class ReferenceSchema(IdentifierSchema):
 
     SCHEMES = [
         "isni",
-        "grid",
-        "crossreffunderid",
-        "other"
+        ("grid", lambda x: True),
+        ("crossreffunderid", lambda x: True),
+        ("other", lambda x: True)
     ]
 
     def __init__(self, **kwargs):
@@ -331,7 +321,12 @@ class LocationSchema(Schema):
     geometry = fields.Nested(GeometryObjectSchema)
     place = SanitizedUnicode()
     identifiers = fields.List(
-        fields.Nested(partial(IdentifierSchema, fail_on_unknown=False)),
+        fields.Nested(partial(
+            IdentifierSchema,
+            allowed_schemes=[
+                ("wikidata", lambda x: True), ("geonames", lambda x: True)
+            ])
+        )
     )
     description = SanitizedUnicode()
 
@@ -382,7 +377,10 @@ class MetadataSchema(Schema):
     languages = fields.List(fields.Nested(VocabularySchema))
     # alternate identifiers
     identifiers = IdentifierSet(
-        fields.Nested(partial(IdentifierSchema, fail_on_unknown=False))
+        fields.Nested(partial(
+            IdentifierSchema,
+            allowed_schemes=RelatedIdentifierSchema.SCHEMES
+        ))
     )
     related_identifiers = fields.List(fields.Nested(RelatedIdentifierSchema))
     sizes = fields.List(SanitizedUnicode(

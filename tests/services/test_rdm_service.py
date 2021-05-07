@@ -16,6 +16,7 @@ from unittest import mock
 import arrow
 import pytest
 from dateutil import tz
+from flask_babelex import lazy_gettext as _
 from invenio_pidstore.errors import PIDDoesNotExistError
 from marshmallow import ValidationError
 
@@ -163,9 +164,14 @@ def test_pid_creation_invalid_scheme_managed(
     pids = {"lorem": lorem}
     minimal_record["pids"] = pids
     # create the draft
-    # won't reach publish
-    with pytest.raises(Exception):
-        service.create(superuser_identity, minimal_record)
+    # check soft validation reported the error
+    draft = service.create(superuser_identity, minimal_record)
+    expected_errors = [
+        {'field': 'pids', 'messages': [_('Invalid value for scheme lorem')]}
+    ]
+    assert draft.errors == expected_errors
+    # NOTE: the invalid pid got removed, so if publish it will not be there
+    assert draft.to_dict()["pids"] == {}
 
 
 def test_pid_creation_valid_unmanaged(running_app, es_clear, minimal_record):
@@ -220,9 +226,13 @@ def test_pid_creation_invalid_scheme_unmanaged(
     pids = {"lorem": lorem}
     minimal_record["pids"] = pids
     # create the draft
-    # won't reach publish
-    with pytest.raises(Exception):
-        service.create(superuser_identity, minimal_record)
+    draft = service.create(superuser_identity, minimal_record)
+    expected_errors = [
+        {'field': 'pids', 'messages': [_('Invalid value for scheme lorem')]}
+    ]
+    assert draft.errors == expected_errors
+    # NOTE: the invalid pid got removed, so if publish it will not be there
+    assert draft.to_dict()["pids"] == {}
 
 
 def _publish_record(identity, record):

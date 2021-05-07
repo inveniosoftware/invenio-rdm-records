@@ -82,11 +82,11 @@ class RDMRecordSchema(RecordSchema, FieldPermissionsMixin):
     def validate_pids(self, value):
         """Validates the keys of the pids are supported providers."""
         error_messages = []
+        id_schema = IdentifierSchema(
+                allowed_schemes=["doi"], identifier_required=True)
         for scheme, pid_attrs in value.items():
             # The required flag applies to the identifier value
             # It won't fail for empty allowing the components to reserve one
-            id_schema = IdentifierSchema(
-                fail_on_unknown=True, identifier_required=True)
             try:
                 id_schema.load({
                     "scheme": scheme,
