@@ -10,12 +10,14 @@
 
 """RDM record schemas."""
 
+from flask import current_app
 from flask_babelex import lazy_gettext as _
 from invenio_drafts_resources.services.records.schema import RecordSchema
 from marshmallow import ValidationError, fields, post_dump, validates
 from marshmallow_utils.fields import NestedAttribute
 from marshmallow_utils.permissions import FieldPermissionsMixin
 from marshmallow_utils.schemas import IdentifierSchema
+from werkzeug.local import LocalProxy
 
 from .access import AccessSchema
 from .files import FilesSchema
@@ -23,6 +25,11 @@ from .metadata import MetadataSchema
 from .parent import RDMParentSchema
 from .pids import PIDSchema
 from .versions import VersionsSchema
+
+
+record_pids_schemes = LocalProxy(
+    lambda: current_app.config["RDM_RECORDS_RECORD_PID_SCHEMES"]
+)
 
 
 class RDMRecordSchema(RecordSchema, FieldPermissionsMixin):
@@ -83,7 +90,7 @@ class RDMRecordSchema(RecordSchema, FieldPermissionsMixin):
         """Validates the keys of the pids are supported providers."""
         error_messages = []
         id_schema = IdentifierSchema(
-                allowed_schemes=["doi"], identifier_required=True)
+                allowed_schemes=record_pids_schemes, identifier_required=True)
         for scheme, pid_attrs in value.items():
             # The required flag applies to the identifier value
             # It won't fail for empty allowing the components to reserve one

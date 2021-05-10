@@ -13,12 +13,39 @@ from functools import partial
 from urllib import parse
 
 import idutils
+from flask import current_app
 from flask_babelex import lazy_gettext as _
 from marshmallow import Schema, ValidationError, fields, post_load, validate, \
     validates_schema
 from marshmallow_utils.fields import EDTFDateString, IdentifierSet, \
     SanitizedHTML, SanitizedUnicode
 from marshmallow_utils.schemas import GeometryObjectSchema, IdentifierSchema
+from werkzeug.local import LocalProxy
+
+
+record_personorg_affiliation_schemes = LocalProxy(
+    lambda: current_app.config["RDM_RECORDS_PERSONORG_AFFILIATION_SCHEMES"]
+)
+
+
+record_personorg_schemes = LocalProxy(
+    lambda: current_app.config["RDM_RECORDS_PERSONORG_SCHEMES"]
+)
+
+
+record_identifiers_schemes = LocalProxy(
+    lambda: current_app.config["RDM_RECORDS_IDENTIFIERS_SCHEMES"]
+)
+
+
+record_references_schemes = LocalProxy(
+    lambda: current_app.config["RDM_RECORDS_REFERENCES_SCHEMES"]
+)
+
+
+record_location_schemes = LocalProxy(
+    lambda: current_app.config["RDM_RECORDS_LOCATION_SCHEMES"]
+)
 
 
 def _not_blank(error_msg):
@@ -109,7 +136,7 @@ class PersonOrOrganizationSchema(Schema):
             # It is intended to allow org schemes to be sent as personal
             # and viceversa. This is a trade off learnt from running
             # Zenodo in production.
-            allowed_schemes=["orcid", "isni", "gnd", "ror"]
+            allowed_schemes=record_personorg_schemes
         ))
     )
 
@@ -218,31 +245,9 @@ class DateSchema(Schema):
 class RelatedIdentifierSchema(IdentifierSchema):
     """Related identifier schema."""
 
-    SCHEMES = [
-        "ark",
-        "arxiv",
-        ("bibcode", idutils.is_ads),
-        "doi",
-        "ean13",
-        ("eissn", lambda x: True),  # FIXME: is this an issn
-        "handle",
-        ("igsn", lambda x: True),
-        "isbn",
-        "issn",
-        "istc",
-        ("lissn", lambda x: True),
-        "lsid",
-        "pmid",
-        "purl",
-        ("upc", lambda x: True),
-        "url",
-        "urn",
-        ("w3id", lambda x: True),
-    ]
-
     def __init__(self, **kwargs):
         """Constructor."""
-        super().__init__(allowed_schemes=self.SCHEMES, **kwargs)
+        super().__init__(allowed_schemes=record_identifiers_schemes, **kwargs)
 
     relation_type = fields.Nested(VocabularySchema, required=True)
     resource_type = fields.Nested(VocabularySchema)
@@ -293,16 +298,9 @@ class FundingSchema(Schema):
 class ReferenceSchema(IdentifierSchema):
     """Reference schema."""
 
-    SCHEMES = [
-        "isni",
-        ("grid", lambda x: True),
-        ("crossreffunderid", lambda x: True),
-        ("other", lambda x: True)
-    ]
-
     def __init__(self, **kwargs):
         """Constructor."""
-        super().__init__(allowed_schemes=self.SCHEMES,
+        super().__init__(allowed_schemes=record_references_schemes,
                          identifier_required=False, **kwargs)
 
     reference = SanitizedUnicode(required=True)
@@ -322,11 +320,7 @@ class LocationSchema(Schema):
     place = SanitizedUnicode()
     identifiers = fields.List(
         fields.Nested(partial(
-            IdentifierSchema,
-            allowed_schemes=[
-                ("wikidata", lambda x: True), ("geonames", lambda x: True)
-            ])
-        )
+            IdentifierSchema, allowed_schemes=record_location_schemes))
     )
     description = SanitizedUnicode()
 
@@ -378,9 +372,7 @@ class MetadataSchema(Schema):
     # alternate identifiers
     identifiers = IdentifierSet(
         fields.Nested(partial(
-            IdentifierSchema,
-            allowed_schemes=RelatedIdentifierSchema.SCHEMES
-        ))
+            IdentifierSchema, allowed_schemes=record_identifiers_schemes))
     )
     related_identifiers = fields.List(fields.Nested(RelatedIdentifierSchema))
     sizes = fields.List(SanitizedUnicode(

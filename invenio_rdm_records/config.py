@@ -8,6 +8,8 @@
 
 """DataCite-based data model for Invenio."""
 
+import idutils
+
 
 def _(x):
     """Identity function for string extraction."""
@@ -169,3 +171,45 @@ RDM_RECORDS_DOI_DATACITE_USERNAME = ""
 RDM_RECORDS_DOI_DATACITE_PASSWORD = ""
 RDM_RECORDS_DOI_DATACITE_PREFIX = "10.1234"
 RDM_RECORDS_DOI_DATACITE_TEST_MODE = True
+
+#: PID Schemes
+
+RDM_RECORDS_RECORD_PID_SCHEMES = ["doi"]
+RDM_RECORDS_PERSONORG_AFFILIATION_SCHEMES = [
+    ("grid", lambda x: True),
+    "gnd",
+    "isni",
+    "ror"
+]
+RDM_RECORDS_PERSONORG_SCHEMES = ["orcid", "isni", "gnd", "ror"]
+RDM_RECORDS_IDENTIFIERS_SCHEMES = [
+    "ark",
+    "arxiv",
+    ("bibcode", idutils.is_ads),
+    "doi",
+    "ean13",
+    ("eissn", lambda x: True),  # FIXME: is this an issn
+    "handle",
+    ("igsn", lambda x: True),
+    "isbn",
+    "issn",
+    "istc",
+    ("lissn", lambda x: True),
+    "lsid",
+    "pmid",
+    "purl",
+    ("upc", lambda x: True),
+    "url",
+    "urn",
+    ("w3id", lambda x: True),
+]
+RDM_RECORDS_REFERENCES_SCHEMES = [
+    "isni",
+    ("grid", lambda x: True),
+    ("crossreffunderid", lambda x: True),
+    ("other", lambda x: True)
+]
+RDM_RECORDS_LOCATION_SCHEMES = [
+    ("wikidata", lambda x: True),
+    ("geonames", lambda x: True)
+]
