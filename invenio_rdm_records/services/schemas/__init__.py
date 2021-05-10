@@ -26,7 +26,6 @@ from .parent import RDMParentSchema
 from .pids import PIDSchema
 from .versions import VersionsSchema
 
-
 record_pids_schemes = LocalProxy(
     lambda: current_app.config["RDM_RECORDS_RECORD_PID_SCHEMES"]
 )
@@ -89,11 +88,11 @@ class RDMRecordSchema(RecordSchema, FieldPermissionsMixin):
     def validate_pids(self, value):
         """Validates the keys of the pids are supported providers."""
         error_messages = []
+        # The required flag applies to the identifier value
+        # It won't fail for empty allowing the components to reserve one
         id_schema = IdentifierSchema(
                 allowed_schemes=record_pids_schemes, identifier_required=True)
         for scheme, pid_attrs in value.items():
-            # The required flag applies to the identifier value
-            # It won't fail for empty allowing the components to reserve one
             try:
                 id_schema.load({
                     "scheme": scheme,

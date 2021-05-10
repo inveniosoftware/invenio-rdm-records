@@ -175,12 +175,6 @@ RDM_RECORDS_DOI_DATACITE_TEST_MODE = True
 #: PID Schemes
 
 RDM_RECORDS_RECORD_PID_SCHEMES = ["doi"]
-RDM_RECORDS_PERSONORG_AFFILIATION_SCHEMES = [
-    ("grid", lambda x: True),
-    "gnd",
-    "isni",
-    "ror"
-]
 RDM_RECORDS_PERSONORG_SCHEMES = ["orcid", "isni", "gnd", "ror"]
 RDM_RECORDS_IDENTIFIERS_SCHEMES = [
     "ark",

@@ -36,7 +36,7 @@ def valid_full_location():
     }
 
 
-def test_valid_full(valid_full_location):
+def test_valid_full(app, valid_full_location):
     assert valid_full_location == LocationSchema().load(valid_full_location)
 
 
@@ -46,19 +46,19 @@ def test_valid_full(valid_full_location):
     ({"place": "test location place"}),
     ({"identifiers": [{"identifier": "12345abcde", "scheme": "wikidata"}]})
 ])
-def test_valid_minimal(valid_minimal_location):
+def test_valid_minimal(app, valid_minimal_location):
     assert valid_minimal_location == \
         LocationSchema().load(valid_minimal_location)
 
 
-def test_invalid_geometry_type(valid_full_location):
+def test_invalid_geometry_type(app, valid_full_location):
     valid_full_location["geometry"]["type"] = "invalid"
 
     with pytest.raises(ValidationError):
         data = LocationSchema().load(valid_full_location)
 
 
-def test_invalid_wrong_geometry_type(valid_full_location):
+def test_invalid_wrong_geometry_type(app, valid_full_location):
     # type multipoint, but point coordinates
     valid_full_location["geometry"]["type"] = "MultiPoint"
 
@@ -66,7 +66,7 @@ def test_invalid_wrong_geometry_type(valid_full_location):
         data = LocationSchema().load(valid_full_location)
 
 
-def test_invalid_empty(valid_full_location):
+def test_invalid_empty(app, valid_full_location):
     with pytest.raises(ValidationError):
         data = LocationSchema().load({})
 

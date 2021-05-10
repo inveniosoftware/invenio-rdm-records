@@ -22,12 +22,6 @@ from marshmallow_utils.fields import EDTFDateString, IdentifierSet, \
 from marshmallow_utils.schemas import GeometryObjectSchema, IdentifierSchema
 from werkzeug.local import LocalProxy
 
-
-record_personorg_affiliation_schemes = LocalProxy(
-    lambda: current_app.config["RDM_RECORDS_PERSONORG_AFFILIATION_SCHEMES"]
-)
-
-
 record_personorg_schemes = LocalProxy(
     lambda: current_app.config["RDM_RECORDS_PERSONORG_SCHEMES"]
 )

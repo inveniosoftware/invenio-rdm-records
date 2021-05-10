@@ -19,7 +19,7 @@ from invenio_rdm_records.services.schemas.metadata import ContributorSchema, \
 from .test_utils import assert_raises_messages
 
 
-def test_creator_person_valid_minimal():
+def test_creator_person_valid_minimal(app):
     valid_family_name = {
         "family_name": "Cesar",
         "type": "personal"
@@ -32,7 +32,7 @@ def test_creator_person_valid_minimal():
     assert expected == PersonOrOrganizationSchema().load(valid_family_name)
 
 
-def test_creator_organization_valid_minimal():
+def test_creator_organization_valid_minimal(app):
     valid_minimal = {
         "name": "Julio Cesar Empire",
         "type": "organizational"
@@ -40,7 +40,7 @@ def test_creator_organization_valid_minimal():
     assert valid_minimal == PersonOrOrganizationSchema().load(valid_minimal)
 
 
-def test_creator_person_valid_full():
+def test_creator_person_valid_full(app):
     valid_full_person = {
         "person_or_org": {
             "type": "personal",
@@ -59,7 +59,7 @@ def test_creator_person_valid_full():
     assert valid_full_person == loaded
 
 
-def test_creator_person_valid_no_given_name():
+def test_creator_person_valid_no_given_name(app):
     valid_full_person = {
         "person_or_org": {
             "type": "personal",
@@ -77,7 +77,7 @@ def test_creator_person_valid_no_given_name():
     assert valid_full_person == loaded
 
 
-def test_creator_organization_valid_full():
+def test_creator_organization_valid_full(app):
     # Full organization
     valid_full_org = {
         "name": "California Digital Library",
@@ -94,7 +94,7 @@ def test_creator_organization_valid_full():
     assert valid_full_org == loaded
 
 
-def test_creatibutor_name_edge_cases():
+def test_creatibutor_name_edge_cases(app):
     # Pass in name and family_name: name is ignored
     valid_person_name_and_given_name = {
         "name": "Cesar, Julio",
@@ -124,7 +124,7 @@ def test_creatibutor_name_edge_cases():
         valid_org_name_and_family_name)
 
 
-def test_creator_valid_role(vocabulary_clear):
+def test_creator_valid_role(app, vocabulary_clear):
     valid_role = {
         "person_or_org": {
             "family_name": "Cesar",
@@ -145,7 +145,7 @@ def test_creator_valid_role(vocabulary_clear):
     assert expected == CreatorSchema().load(valid_role)
 
 
-def test_creator_person_invalid_no_family_name():
+def test_creator_person_invalid_no_family_name(app):
     invalid_no_family_name = {
         "person_or_org": {
             "given_name": "Julio",
@@ -166,7 +166,7 @@ def test_creator_person_invalid_no_family_name():
     )
 
 
-def test_creator_invalid_no_type():
+def test_creator_invalid_no_type(app):
     invalid_no_type = {
         "name": "Julio Cesar",
     }
@@ -179,7 +179,7 @@ def test_creator_invalid_no_type():
     )
 
 
-def test_creator_invalid_type():
+def test_creator_invalid_type(app):
     invalid_type = {
         "name": "Julio Cesar",
         "type": "Invalid",
@@ -193,7 +193,7 @@ def test_creator_invalid_type():
     )
 
 
-def test_creator_invalid_identifiers_scheme():
+def test_creator_invalid_identifiers_scheme(app):
     invalid_scheme = {
         "family_name": "Cesar",
         "given_name": "Julio",
@@ -216,7 +216,7 @@ def test_creator_invalid_identifiers_scheme():
     )
 
 
-def test_creator_invalid_identifiers_orcid():
+def test_creator_invalid_identifiers_orcid(app):
     invalid_orcid_identifier = {
         "family_name": "Cesar",
         "given_name": "Julio",
@@ -236,7 +236,7 @@ def test_creator_invalid_identifiers_orcid():
     )
 
 
-def test_creator_invalid_identifiers_ror():
+def test_creator_invalid_identifiers_ror(app):
     invalid_ror_identifier = {
         "name": "Julio Cesar Empire",
         "type": "organizational",
@@ -254,7 +254,7 @@ def test_creator_invalid_identifiers_ror():
     )
 
 
-def test_contributor_person_valid_full(vocabulary_clear):
+def test_contributor_person_valid_full(app, vocabulary_clear):
     valid_full = {
         "affiliations": [{"id": "test"}],
         "person_or_org": {
@@ -275,7 +275,7 @@ def test_contributor_person_valid_full(vocabulary_clear):
     assert loaded == valid_full
 
 
-def test_contributor_person_valid_minimal(vocabulary_clear):
+def test_contributor_person_valid_minimal(app, vocabulary_clear):
     valid_minimal_family_name = {
         "person_or_org": {
             "family_name": "Cesar",
@@ -295,7 +295,8 @@ def test_contributor_person_valid_minimal(vocabulary_clear):
 
 
 def test_contributor_person_invalid_no_family_name_nor_given_name(
-        vocabulary_clear):
+    app, vocabulary_clear
+):
     invalid_no_family_name_nor_given_name = {
         "person_or_org": {
             "type": "personal",
@@ -317,7 +318,7 @@ def test_contributor_person_invalid_no_family_name_nor_given_name(
     )
 
 
-def test_contributor_invalid_no_role(vocabulary_clear):
+def test_contributor_invalid_no_role(app, vocabulary_clear):
     invalid_no_role = {
         "person_or_org": {
             "name": "Julio Cesar",
@@ -356,7 +357,7 @@ def custom_config(config):
     config['RDM_RECORDS_CUSTOM_VOCABULARIES'] = prev_custom_vocabularies
 
 
-def test_contributor_invalid_role(custom_config, vocabulary_clear):
+def test_contributor_invalid_role(app, custom_config, vocabulary_clear):
     # Doubles as a test of custom roles
     invalid_role = {
         "person_or_org": {
@@ -379,8 +380,8 @@ def test_contributor_invalid_role(custom_config, vocabulary_clear):
 
 
 def test_metadata_requires_non_empty_creators(
-        minimal_metadata, vocabulary_clear):
-
+    app, minimal_metadata, vocabulary_clear
+):
     del minimal_metadata["creators"]
     assert_raises_messages(
         lambda: MetadataSchema().load(minimal_metadata),
