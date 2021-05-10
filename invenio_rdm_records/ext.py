@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2019 CERN.
+# Copyright (C) 2019-2021 CERN.
 # Copyright (C) 2019 Northwestern University.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
@@ -22,7 +22,7 @@ from .resources import RDMDraftFilesResourceConfig, \
     RDMRecordFilesResourceConfig, RDMRecordResource, RDMRecordResourceConfig
 from .secret_links import LinkNeed, SecretLink
 from .services import RDMFileDraftServiceConfig, RDMFileRecordServiceConfig, \
-    RDMRecordService, RDMRecordServiceConfig
+    RDMRecordService, RDMRecordServiceConfig, SecretLinkService
 from .services.schemas.metadata_extensions import MetadataExtensions
 
 
@@ -106,8 +106,8 @@ class InvenioRDMRecords(object):
             self._filter_record_service_config(app, RDMRecordServiceConfig),
             files_service=FileService(RDMFileRecordServiceConfig),
             draft_files_service=FileService(RDMFileDraftServiceConfig),
+            secret_links_service=SecretLinkService(RDMRecordServiceConfig)
         )
-
         self.subjects_service = subject_record_type.service_cls(
             config=subject_record_type.service_config_cls,
         )
