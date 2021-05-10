@@ -15,7 +15,7 @@ from invenio_rdm_records.services.schemas.metadata import MetadataSchema, \
     RelatedIdentifierSchema
 
 
-def test_valid_related_identifiers():
+def test_valid_related_identifiers(app):
     valid_full = {
         "identifier": "10.5281/rdm.9999988",
         "scheme": "doi",
@@ -29,7 +29,7 @@ def test_valid_related_identifiers():
     assert data == valid_full
 
 
-def test_valid_minimal_related_identifiers():
+def test_valid_minimal_related_identifiers(app):
     valid_minimal = {
         "identifier": "10.5281/rdm.9999988",
         "scheme": "doi",

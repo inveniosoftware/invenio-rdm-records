@@ -14,7 +14,7 @@ from invenio_rdm_records.services.schemas.metadata import MetadataSchema, \
     ReferenceSchema
 
 
-def test_valid_reference():
+def test_valid_reference(app):
     """Test references schema."""
     valid_full = {
         "reference": "Reference to something et al.",
@@ -24,14 +24,14 @@ def test_valid_reference():
     assert valid_full == ReferenceSchema().load(valid_full)
 
 
-def test_valid_minimal_reference():
+def test_valid_minimal_reference(app):
     valid_minimal = {
         "reference": "Reference to something et al."
     }
     assert valid_minimal == ReferenceSchema().load(valid_minimal)
 
 
-def test_invalid_no_reference():
+def test_invalid_no_reference(app):
     invalid_no_reference = {
         "identifier": "0000 0001 1456 7559",
         "scheme": "isni"
@@ -40,7 +40,7 @@ def test_invalid_no_reference():
         data = ReferenceSchema().load(invalid_no_reference)
 
 
-def test_invalid_scheme_reference():
+def test_invalid_scheme_reference(app):
     invalid_scheme = {
         "reference": "Reference to something et al.",
         "identifier": "0000 0001 1456 7559",
@@ -50,7 +50,7 @@ def test_invalid_scheme_reference():
         data = ReferenceSchema().load(invalid_scheme)
 
 
-def test_invalid_extra_right():
+def test_invalid_extra_right(app):
     invalid_extra = {
         "reference": "Reference to something et al.",
         "identifier": "0000 0001 1456 7559",
@@ -71,7 +71,7 @@ def test_invalid_extra_right():
         "reference": "Reference to something et al."
     }])
 ])
-def test_valid_rights(references, minimal_record, vocabulary_clear):
+def test_valid_rights(app, references, minimal_record, vocabulary_clear):
     metadata = minimal_record['metadata']
     # NOTE: this is done to get possible load transformations out of the way
     metadata = MetadataSchema().load(metadata)
