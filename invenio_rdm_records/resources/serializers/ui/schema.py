@@ -21,9 +21,7 @@ from marshmallow_utils.fields import FormatDate as FormatDate_
 from marshmallow_utils.fields import FormatEDTF as FormatEDTF_
 from marshmallow_utils.fields import StrippedHTML
 
-from invenio_rdm_records.vocabularies import Vocabularies
-
-from .fields import AccessStatusField, UIAccessStatus, VocabularyTitleField
+from .fields import AccessStatusField, VocabularyTitleField
 
 
 def current_default_locale():
@@ -149,65 +147,4 @@ class UIListSchema(Schema):
         aggs = obj_list.get("aggregations")
         if not aggs:
             return missing
-
-        for name, agg in aggs.items():
-            # Aggregation key/name must match vocabulary id.
-            vocab = Vocabularies.get_vocabulary(name)
-            if not vocab:
-                continue
-
-            buckets = agg.get('buckets')
-            if buckets:
-                apply_labels(vocab, buckets)
-
-        # TODO: temporary hack until vocabularies can be fixed
-        is_published_agg = aggs.get('is_published')
-        if is_published_agg:
-            for b in is_published_agg.get('buckets', []):
-                if b.get('key') == 1:
-                    b['label'] = _("Published")
-                elif b.get('key') == 0:
-                    b['label'] = _("Unpublished")
-
-        access_status_agg = aggs.get('access_status')
-        if access_status_agg:
-            for b in access_status_agg.get('buckets', []):
-                if b.get('key'):
-                    b['label'] = UIAccessStatus(b.get('key')).title
-
-        # FIXME: This is hardcoded because vocabularies has not been
-        # fully migrated. Ideally all would be treated equally in the for
-        # loop above.
-        # languages = aggs.get("languages")
-
-        # if languages:
-        #     languages["buckets"] = serialize_vocabulary(
-        #         "languages", languages["buckets"])
-
         return aggs
-
-
-def serialize_vocabulary(vocab, buckets):
-    """Serialize vocabulary based aggregations."""
-    vocab_resource = VocabularyRegistry.get(vocab)
-
-    for bucket in buckets:
-        bucket["label"] = \
-            vocab_resource.get(bucket["key"]).get_title(current_i18n.locale)
-
-    return buckets
-
-
-def apply_labels(vocab, buckets):
-    """Inject labels in the aggregation buckets.
-
-    :params agg: Current aggregation object.
-    :params vocab: The vocabulary
-    """
-    for b in buckets:
-        b['label'] = vocab.get_title_by_dict(b['key'])
-
-        # Recursively apply to subbuckets
-        for data in b.values():
-            if isinstance(data, dict) and 'buckets' in data:
-                apply_labels(vocab, data['buckets'])

@@ -66,9 +66,10 @@ install_requires = [
     'arrow>=0.17.0',
     'datacite>=1.1.1',
     'Faker>=2.0.3',
+    'flask>=1.1,<2',
     'ftfy>=4.4.3,<5.0.0',
     'invenio-drafts-resources>=0.12.0,<0.13.0',
-    'invenio-vocabularies>=0.6.0,<0.7.0',
+    'invenio-vocabularies>=0.6.1,<0.7.0',
     'pytz>=2020.4',
     'pyyaml>=5.4.0',
 ]
