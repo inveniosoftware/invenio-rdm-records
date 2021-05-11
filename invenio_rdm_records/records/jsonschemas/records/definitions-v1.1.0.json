@@ -110,10 +110,6 @@
     "type": "object",
     "description": "An external persistent identifier object.",
     "additionalProperties": false,
-    "required": [
-      "identifier",
-      "provider"
-    ],
     "properties": {
       "identifier": {
         "$ref": "#/identifier"

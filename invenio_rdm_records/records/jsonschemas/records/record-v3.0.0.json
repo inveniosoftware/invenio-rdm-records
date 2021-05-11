@@ -18,9 +18,9 @@
     "pids": {
       "type": "object",
       "description": "External persistent identifiers for a record including e.g. OAI-PMH identifier, minted DOIs and more. PIDs are registered in the PIDStore.",
-      "items": {
-        "type": "object",
-        "additionalProperties": {"$ref": "local://records/definitions-v1.1.0.json#/external-pid"}
+      "additionalProperties": {"$ref": "local://records/definitions-v1.1.0.json#/external-pid"},
+      "propertyNames": {
+        "pattern": "^[a-z_-][a-z0-9_-]*$"
       },
       "uniqueItems": true
     },
