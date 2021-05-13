@@ -129,18 +129,11 @@
     "additionalProperties": false,
     "description": "A resource type.",
     "properties": {
-      "type": {
-        "description": "The general resource type identifier.",
-        "type": "string"
-      },
-      "subtype": {
-        "description": "The specific resource type identifier.",
+      "id": {
         "type": "string"
       }
     },
-    "required": [
-      "type"
-    ]
+    "required": ["id"]
   },
   "person_or_org": {
     "type": "object",

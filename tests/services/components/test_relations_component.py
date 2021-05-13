@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # Copyright (C) 2021 CERN.
+# Copyright (C) 2021 Northwestern University.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
@@ -13,13 +14,12 @@ from invenio_rdm_records.proxies import current_rdm_records
 
 
 @pytest.fixture()
-def service(app):
+def service(running_app):
     """The record service."""
     return current_rdm_records.records_service
 
 
-def test_dereferencing(
-        service, minimal_record, identity_simple, location, lang):
+def test_dereferencing(service, minimal_record, identity_simple, lang):
     """Read and read draft should dereference the record."""
     idty = identity_simple
     minimal_record['metadata']['languages'] = [{'id': 'eng'}]

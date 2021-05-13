@@ -97,7 +97,7 @@ class VocabulariesFixture:
             for id_, entry in data.items():
                 self.load_vocabulary(id_, entry)
 
-    def load_vocabulary(self, id_, entry):
+    def load_vocabulary(self, id_, entry, delay=True):
         """Load a single vocabulary."""
         pid_type = entry['pid-type']
         # Create the vocabulary type
@@ -106,13 +106,16 @@ class VocabulariesFixture:
         data_file_path = entry.get('data-file')
         if data_file_path:  # Creates pid_type, no data yet
             data_file = self._search_path.path(data_file_path)
-            self.load_datafile(id_, data_file)
+            self.load_datafile(id_, data_file, delay=delay)
 
-    def load_datafile(self, id_, data_file):
-        """Load the records form the data file."""
+    def load_datafile(self, id_, data_file, delay=True):
+        """Load the records from the data file."""
         for record in self.iter_datafile(data_file):
             record['type'] = id_
-            create_vocabulary_record.delay(record)
+            if delay:
+                create_vocabulary_record.delay(record)
+            else:  # mostly for tests
+                create_vocabulary_record(record)
 
     def iter_datafile(self, data_file):
         """Get an row iterator for a given data file."""

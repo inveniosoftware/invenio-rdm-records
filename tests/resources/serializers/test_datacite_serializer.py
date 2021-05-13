@@ -10,15 +10,45 @@
 
 """Resources serializers tests."""
 
+import pytest
+from invenio_access.permissions import system_identity
+from invenio_vocabularies.proxies import current_service as vocabulary_service
+
 from invenio_rdm_records.resources.serializers import DataCite43JSONSerializer
 
 
-def test_datacite43_serializer(app, full_record, vocabulary_clear):
+@pytest.fixture(scope="module")
+def resource_type_dataset(resource_type_type):
+    """Resource type vocabulary record."""
+    return vocabulary_service.create(system_identity, {
+        "id": "dataset",
+        "props": {
+            "csl": "dataset",
+            "datacite_general": "Dataset",
+            "datacite_type": '',
+            "openaire_resourceType": '21',
+            "openaire_type": "dataset",
+            "schema.org": "https://schema.org/Dataset",
+            "subtype": '',
+            "subtype_name": '',
+            "type": "dataset",
+            "type_icon": "table",
+            "type_name": "Dataset",
+        },
+        "title": {
+            "en": "Dataset"
+        },
+        "type": "resource_types"
+    })
+
+
+def test_datacite43_serializer(
+        running_app, full_record, resource_type_dataset, vocabulary_clear):
     """Test serializer to DayaCide 4.3 JSON"""
     expected_data = {
         "types": {
-            "resourceTypeGeneral": "Text",
-            "resourceType": "Journal article"
+            "resourceTypeGeneral": "Image",
+            "resourceType": "Photo"
         },
         "creators": [
             {
@@ -84,7 +114,7 @@ def test_datacite43_serializer(app, full_record, vocabulary_clear):
                 "dateInformation": "A date"
             },
         ],
-        "language": "da",
+        "language": "dan",
         "identifiers": [
             {
                 "identifier": "1924MNRAS..84..308E",
@@ -100,7 +130,7 @@ def test_datacite43_serializer(app, full_record, vocabulary_clear):
                 "relatedIdentifier": "10.1234/foo.bar",
                 "relatedIdentifierType": "DOI",
                 "relationType": "Cites",
-                "resourceTypeGeneral": "dataset",
+                "resourceTypeGeneral": "Dataset",
             }
         ],
         "sizes": ["11 pages"],

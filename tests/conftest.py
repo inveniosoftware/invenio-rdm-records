@@ -13,6 +13,8 @@ See https://pytest-invenio.readthedocs.io/ for documentation on which test
 fixtures are available.
 """
 
+from collections import namedtuple
+
 import pytest
 from flask_principal import Identity, Need, UserNeed
 from flask_security import login_user
@@ -85,10 +87,7 @@ def full_record(users):
             },
         },
         "metadata": {
-            "resource_type": {
-                "type": "publication",
-                "subtype": "publication-article"
-            },
+            "resource_type": {"id": "image-photo"},
             "creators": [{
                 "person_or_org": {
                     "name": "Nielsen, Lars Holm",
@@ -152,7 +151,7 @@ def full_record(users):
                 "type": "other",
                 "description": "A date"
             }],
-            "languages": [{"id": "da"}, {"id": "en"}],
+            "languages": [{"id": "dan"}, {"id": "eng"}],
             "identifiers": [{
                 "identifier": "1924MNRAS..84..308E",
                 "scheme": "bibcode"
@@ -161,7 +160,7 @@ def full_record(users):
                 "identifier": "10.1234/foo.bar",
                 "scheme": "doi",
                 "relation_type": "cites",
-                "resource_type": {"type": "dataset"}
+                "resource_type": {"id": "dataset"}
             }],
             "sizes": [
                 "11 pages"
@@ -285,10 +284,7 @@ def minimal_record():
         },
         "metadata": {
             "publication_date": "2020-06-01",
-            "resource_type": {
-                "type": "image",
-                "subtype": "image-photo"
-            },
+            "resource_type": {"id": "image-photo"},
             "creators": [{
                 "person_or_org": {
                     "family_name": "Brown",
@@ -391,3 +387,50 @@ def lang(app, lang_type):
         "type": "languages"
     })
     return lang
+
+
+@pytest.fixture(scope="module")
+def resource_type_type(app):
+    """Resource type vocabulary type."""
+    return vocabulary_service.create_type(
+        system_identity, "resource_types", "rsrct")
+
+
+@pytest.fixture(scope="module")
+def resource_type_item(app, resource_type_type):
+    """Resource type vocabulary record."""
+    return vocabulary_service.create(system_identity, {
+        "id": "image-photo",
+        "props": {
+            "csl": "graphic",
+            "datacite_general": "Image",
+            "datacite_type": "Photo",
+            "openaire_resourceType": "25",
+            "openaire_type": "dataset",
+            "schema.org": "https://schema.org/Photograph",
+            "subtype": "image-photo",
+            "subtype_name": "Photo",
+            "type": "image",
+            "type_icon": "chart bar outline",
+            "type_name": "Image",
+        },
+        "title": {
+            "en": "Photo"
+        },
+        "type": "resource_types"
+    })
+
+
+RunningApp = namedtuple("RunningApp", [
+    "app", "location", "resource_type_item"
+])
+
+
+@pytest.fixture
+def running_app(app, location, resource_type_item):
+    """This fixture provides an app with the typically needed db data loaded.
+
+    All of these fixtures are often needed together, so collecting them
+    under a semantic umbrella makes sense.
+    """
+    return RunningApp(app, location, resource_type_item)

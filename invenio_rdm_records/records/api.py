@@ -18,7 +18,7 @@ from invenio_records.systemfields import ConstantField, DictField, \
     ModelField, RelationsField
 from invenio_records_resources.records.api import FileRecord
 from invenio_records_resources.records.systemfields import FilesField, \
-    IndexField, PIDListRelation, PIDStatusCheckField
+    IndexField, PIDListRelation, PIDRelation, PIDStatusCheckField
 from invenio_vocabularies.records.api import Vocabulary
 from werkzeug.local import LocalProxy
 
@@ -76,6 +76,12 @@ class CommonFieldsMixin:
             attrs=['id', 'title'],
             pid_field=Vocabulary.pid.with_type_ctx('languages'),
             cache_key='languages',
+        ),
+        resource_type=PIDRelation(
+            'metadata.resource_type',
+            attrs=['id', 'title'],  # TODO?: 'props'
+            pid_field=Vocabulary.pid.with_type_ctx('resource_types'),
+            cache_key='resource_type',
         ),
     )
 

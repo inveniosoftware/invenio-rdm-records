@@ -72,7 +72,8 @@ def create_record_w_file(client, record, headers):
 
 
 @pytest.fixture(scope='function')
-def record_w_restricted_file(client, headers, location, minimal_record, users):
+def record_w_restricted_file(
+        client, headers, running_app, minimal_record, users):
     # Login
     login_user(client, users[0])
 
