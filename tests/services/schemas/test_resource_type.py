@@ -20,33 +20,34 @@ from .test_utils import assert_raises_messages
 #       when testing for a valid minimal metadata as a whole
 
 
-def test_valid_no_subtype(minimal_metadata, vocabulary_clear):
+def test_valid_type_and_subtype(minimal_metadata):
+    # default minimal_metadata's resource type is image-photo
+    expected_metadata = deepcopy(minimal_metadata)
+    expected_metadata["creators"][0]["person_or_org"]["name"] = "Brown, Troy"
+
+    assert expected_metadata == MetadataSchema().load(minimal_metadata)
+
+
+def test_valid_no_subtype(minimal_metadata):
+    # whether id represents a resource type with or without subtype should
+    # not matter
     expected_metadata = deepcopy(minimal_metadata)
     expected_metadata["creators"][0]["person_or_org"]["name"] = "Brown, Troy"
     expected_metadata["resource_type"] = minimal_metadata["resource_type"] = {
-        "type": "poster"
+        "id": "dataset"
     }
 
     assert expected_metadata == MetadataSchema().load(minimal_metadata)
 
 
-def test_invalid_no_resource_type(minimal_metadata, vocabulary_clear):
+def test_invalid_no_resource_type(minimal_metadata):
     minimal_metadata["resource_type"] = {}
     assert_raises_messages(
         lambda: MetadataSchema().load(minimal_metadata),
-        {"resource_type": ["Missing data for required field."]}
+        {"resource_type": {'id': ["Missing data for required field."]}}
     )
 
     del minimal_metadata["resource_type"]
-    assert_raises_messages(
-        lambda: MetadataSchema().load(minimal_metadata),
-        {"resource_type": ["Missing data for required field."]}
-    )
-
-
-def test_invalid_no_type(minimal_metadata, vocabulary_clear):
-    minimal_metadata["resource_type"] = {"subtype": "image-photo"}
-
     assert_raises_messages(
         lambda: MetadataSchema().load(minimal_metadata),
         {"resource_type": ["Missing data for required field."]}

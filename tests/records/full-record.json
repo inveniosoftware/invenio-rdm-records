@@ -25,8 +25,7 @@
   },
   "metadata": {
     "resource_type": {
-      "type": "publication",
-      "subtype": "article"
+      "id": "publication-article"
     },
     "creators": [{
       "person_or_org": {
@@ -105,7 +104,7 @@
       "scheme": "doi",
       "relation_type": "cites",
       "resource_type": {
-        "type": "dataset"
+        "id": "dataset"
       }
     }],
     "sizes": [

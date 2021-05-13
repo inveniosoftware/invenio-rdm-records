@@ -10,10 +10,10 @@
 
 from edtf import parse_edtf
 from edtf.parser.grammar import ParseException
+from invenio_access.permissions import system_identity
+from invenio_vocabularies.proxies import current_service as vocabulary_service
 from marshmallow import Schema, ValidationError, fields, missing, post_dump
 from marshmallow_utils.fields import SanitizedUnicode
-
-from invenio_rdm_records.vocabularies import Vocabularies
 
 
 class PersonOrOrgSchema43(Schema):
@@ -177,14 +177,21 @@ class DataCite43Schema(Schema):
         fields.Nested(FundingSchema43), attribute='metadata.funding')
     schemaVersion = fields.Constant("http://datacite.org/schema/kernel-4")
 
+    def _read_resource_type(self, id_):
+        """Retrieve resource type record using service."""
+        return vocabulary_service.read(
+            ('resource_types', id_),
+            system_identity
+        )._record
+
     def get_type(self, obj):
         """Get resource type."""
         resource_type = obj["metadata"]["resource_type"]
-        vocabulary = Vocabularies.get_vocabulary('resource_type')
-        entry = vocabulary.get_entry_by_dict(resource_type)
+        resource_type_record = self._read_resource_type(resource_type["id"])
+        props = resource_type_record["props"]
         return {
-            'resourceTypeGeneral': entry.get("datacite_general", "Other"),
-            'resourceType': entry.get("datacite_type", "Other"),
+            'resourceTypeGeneral': props.get("datacite_general", "Other"),
+            'resourceType': props.get("datacite_type", "Other"),
         }
 
     def get_titles(self, obj):
@@ -279,12 +286,19 @@ class DataCite43Schema(Schema):
         metadata = obj["metadata"]
         identifiers = metadata.get("related_identifiers", [])
         for rel_id in identifiers:
-            serialized_identifiers.append({
-                "relatedIdentifier": rel_id["identifier"],
+            serialized_identifier = {
                 "relatedIdentifierType": rel_id["scheme"].upper(),
                 "relationType": rel_id["relation_type"].capitalize(),
-                "resourceTypeGeneral": rel_id["resource_type"]["type"],
-            })
+                "relatedIdentifier": rel_id["identifier"],
+            }
+
+            resource_type_id = rel_id.get("resource_type", {}).get("id")
+            if resource_type_id:
+                props = self._read_resource_type(resource_type_id)["props"]
+                serialized_identifier["resourceTypeGeneral"] = props.get(
+                    "datacite_general", "Other")
+
+            serialized_identifiers.append(serialized_identifier)
 
         return serialized_identifiers or missing
 

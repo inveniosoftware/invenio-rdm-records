@@ -16,13 +16,12 @@ from invenio_rdm_records.proxies import current_rdm_records
 
 
 @pytest.fixture()
-def service(app, location):
+def service(running_app):
     """Service fixture."""
     return current_rdm_records.records_service
 
 
-def test_sort_by_versions(
-        service, superuser_identity, minimal_record):
+def test_sort_by_versions(service, superuser_identity, minimal_record):
     # Create version 1
     draft = service.create(superuser_identity, minimal_record)
     record = service.publish(draft.id, superuser_identity)

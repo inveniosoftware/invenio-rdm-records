@@ -52,9 +52,9 @@ class UIJSONSerializer(JSONSerializer):
         return super().serialize_object_list(self.dump_list(obj_list))
 
     def serialize_object_to_dict(self, obj):
-        """Dump the object into a JSON string."""
+        """Dump the object into a UI dict."""
         return self.dump_obj(obj)
 
     def serialize_object_list_to_dict(self, obj_list):
-        """Dump the object list into a JSON string."""
+        """Dump the object list into a UI list."""
         return self.dump_list(obj_list)

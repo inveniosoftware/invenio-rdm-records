@@ -12,6 +12,15 @@ from invenio_rdm_records.fixtures.demo import create_fake_record
 from invenio_rdm_records.fixtures.tasks import create_demo_record
 
 
-def test_fake_demo_record_creation(app, db, location, es_clear):
+def test_fake_demo_record_creation(app, location, db, es_clear, vocabularies):
     """Assert that demo record creation works without failing."""
+    vocabularies.load_vocabulary(
+        'resource_types',
+        {
+            "pid-type": "rsrct",
+            "data-file": "vocabularies/resource_types.yaml"
+        },
+        delay=False
+    )
+
     create_demo_record(create_fake_record())

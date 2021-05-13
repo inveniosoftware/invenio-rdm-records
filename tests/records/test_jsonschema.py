@@ -162,11 +162,8 @@ def test_metadata(appctx):
 def test_resource_type(appctx):
     """Test resource type."""
     assert fails_meta({"resource_type": {}})
-    assert validates_meta({"resource_type": {"type": "publication"}})
-    assert validates_meta(
-        {"resource_type": {"type": "publication", "subtype": "test"}})
-    assert fails_meta(
-        {"resource_type": {"type": "publication", "invalid": "test"}})
+    assert validates_meta({"resource_type": {"id": "publication"}})
+    assert fails_meta({"resource_type": {"id": 123}})
 
 
 def test_creators(appctx, person, org):

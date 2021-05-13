@@ -11,7 +11,7 @@
 
 from flask_principal import RoleNeed, UserNeed
 from invenio_access.permissions import any_user, authenticated_user, \
-    system_process
+    system_identity, system_process
 from invenio_drafts_resources.services.records.permissions import \
     RecordPermissionPolicy
 from invenio_records_permissions.generators import AnyUser, \
@@ -49,8 +49,7 @@ class TestRDMPermissionPolicy(RecordPermissionPolicy):
 
 def test_permission_policy_generators(app, anyuser_identity,
                                       authenticated_identity,
-                                      superuser_identity,
-                                      system_process_identity):
+                                      superuser_identity):
     """Test permission policies with given Identities."""
     policy = TestRDMPermissionPolicy
 
@@ -65,9 +64,9 @@ def test_permission_policy_generators(app, anyuser_identity,
     pub_record.parent.access.owners.add({'user': 21})
 
     assert policy(action='search').allows(anyuser_identity)
-    assert policy(action='search').allows(system_process_identity)
+    assert policy(action='search').allows(system_identity)
     assert policy(action='create').allows(authenticated_identity)
-    assert policy(action='create').allows(system_process_identity)
+    assert policy(action='create').allows(system_identity)
     assert isinstance(policy(action='update').generators[0], Disable)
     assert isinstance(policy(action='delete').generators[0], Disable)
     assert policy(action='read'

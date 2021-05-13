@@ -21,7 +21,7 @@ from marshmallow_utils.fields import FormatDate as FormatDate_
 from marshmallow_utils.fields import FormatEDTF as FormatEDTF_
 from marshmallow_utils.fields import StrippedHTML
 
-from .fields import AccessStatusField, VocabularyTitleField
+from .fields import AccessStatusField
 
 
 def current_default_locale():
@@ -87,6 +87,13 @@ def record_version(obj):
     return field_data
 
 
+class ResourceTypeL10NSchema(Schema):
+    """Localization of resource type title."""
+
+    id = fields.String()
+    title = L10NString(data_key='title_l10n')
+
+
 class LanguageL10NSchema(Schema):
     """Localization of language titles."""
 
@@ -107,8 +114,10 @@ class UIObjectSchema(Schema):
 
     updated_date_l10n_long = FormatDate(attribute='updated', format='long')
 
-    resource_type = VocabularyTitleField(
-        'resource_type', attribute='metadata.resource_type')
+    resource_type = fields.Nested(
+        ResourceTypeL10NSchema,
+        attribute='metadata.resource_type'
+    )
 
     access_status = AccessStatusField(attribute='access')
 

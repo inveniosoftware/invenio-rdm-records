@@ -11,25 +11,20 @@
 import datetime
 import json
 import random
+from pathlib import Path
 
 from edtf.parser.grammar import level0Expression
 from faker import Faker
 
-from ..vocabularies import Vocabularies
+from .vocabularies import YamlIterator
 
 
 def fake_resource_type():
     """Generates a fake resource_type."""
-    vocabulary = Vocabularies.get_vocabulary('resource_type')
-    _type, subtype = random.choice(list(vocabulary.data.keys()))
-    resource_type = {
-        "type": _type
-    }
-    if subtype:
-        resource_type.update({
-            "subtype": subtype
-        })
-    return resource_type
+    filename = Path(__file__).parent / "data/vocabularies/resource_types.yaml"
+    ressource_type_ids = [r["id"] for r in YamlIterator(filename)]
+    random_id = random.choice(ressource_type_ids)
+    return {"id": random_id}
 
 
 def fake_edtf_level_0():
