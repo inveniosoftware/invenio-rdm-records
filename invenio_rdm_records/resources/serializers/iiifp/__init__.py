@@ -11,7 +11,6 @@
 from flask_resources.serializers import MarshmallowJSONSerializer
 from .schema import IIIFPresiSchema
 
-
 class IIIFPresiSerializer(MarshmallowJSONSerializer):
     """Marshmallow based IIIF Presentation API serializer for records."""
 

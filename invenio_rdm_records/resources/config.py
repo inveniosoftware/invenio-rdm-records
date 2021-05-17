@@ -14,8 +14,7 @@ from flask_resources import HTTPJSONException, JSONSerializer, \
 from invenio_drafts_resources.resources import RecordResourceConfig
 from invenio_records_resources.resources.files import FileResourceConfig
 
-from .serializers import UIJSONSerializer
-from .serializers import IIIFPresiSerializer
+from .serializers import UIJSONSerializer, IIIFPresiSerializer
 
 #
 # Response handlers
@@ -23,7 +22,8 @@ from .serializers import IIIFPresiSerializer
 record_serializers = {
     "application/json": ResponseHandler(JSONSerializer()),
     "application/vnd.inveniordm.v1+json": ResponseHandler(UIJSONSerializer()),
-    "application/iiifp": ResponseHandler(IIIFPresiSerializer()),
+    "application/iiifp": ResponseHandler(IIIFPresiSerializer(), \
+        headers= {"Access-Control-Allow-Origin" : "*", "Content-Type" : "application/json"}),
 }
 
 
