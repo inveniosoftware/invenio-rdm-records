@@ -17,6 +17,10 @@ from invenio_records_resources.resources.records.resource import \
     request_data, request_search_args, request_view_args
 from marshmallow_utils.fields import SanitizedUnicode
 
+#stuff I've added, todo: file these away
+from .serializers.iiifp import IIIFPresiSerializer
+from invenio_drafts_resources.services import RecordService
+
 request_pids_args = request_parser(
     {"client": SanitizedUnicode()}, location='args'
 )
@@ -37,9 +41,20 @@ class RDMRecordResource(RecordResource):
         url_rules += [
             route("POST", p(routes["item-pids-reserve"]), self.pids_reserve),
             route("DELETE", p(routes["item-pids-reserve"]), self.pids_discard),
+            route("GET",p(routes["iiif-manifest"]), self.get_iiifp)
         ]
 
         return url_rules
+
+
+    @request_view_args
+    def get_iiifp(self):
+        pid = resource_requestctx.view_args["pid_value"]
+        record = self.service.read(id_=pid, identity=g.identity)
+
+        manifest = IIIFPresiSerializer().dump_one(record)
+        return manifest, 200
+
 
     @request_pids_args
     @request_view_args
@@ -68,6 +83,7 @@ class RDMRecordResource(RecordResource):
         )
 
         return item.to_dict(), 200
+
 
 
 #
