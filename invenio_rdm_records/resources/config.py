@@ -22,8 +22,9 @@ from .serializers import UIJSONSerializer, IIIFPresiSerializer
 record_serializers = {
     "application/json": ResponseHandler(JSONSerializer()),
     "application/vnd.inveniordm.v1+json": ResponseHandler(UIJSONSerializer()),
-    "application/iiifp": ResponseHandler(IIIFPresiSerializer(), \
-        headers= {"Access-Control-Allow-Origin" : "*", "Content-Type" : "application/ld+json;profile=\"http://iiif.io/api/presentation/3/context.json\""}),
+    "application/iiifp": ResponseHandler(IIIFPresiSerializer(),
+        headers = {"Access-Control-Allow-Origin": "*", "Content-Type": \
+            "application/ld+json"}),
 }
 
 
@@ -41,7 +42,7 @@ class RDMRecordResourceConfig(RecordResourceConfig):
     # PIDs
     routes["item-pids-reserve"] = "/<pid_value>/draft/pids/<pid_type>"
 
-    #IIIFP
+    # IIIFP
     routes["iiif-manifest"] = "/<pid_value>/iiif/manifest"
 
     request_view_args = {
