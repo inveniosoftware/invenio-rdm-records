@@ -13,7 +13,6 @@ from flask_babelex import lazy_gettext as _
 from invenio_db import db
 from invenio_drafts_resources.services.records import RecordService
 from invenio_pidstore.errors import PIDDoesNotExistError
-from invenio_pidstore.models import PersistentIdentifier
 from marshmallow.exceptions import ValidationError
 
 
@@ -21,10 +20,11 @@ class RDMRecordService(RecordService):
     """RDM record service."""
 
     def __init__(self, config, files_service=None, draft_files_service=None,
-                 secret_links_service=None):
+                 secret_links_service=None, pids_service=None):
         """Constructor for RecordService."""
         super().__init__(config, files_service, draft_files_service)
         self._secret_links = secret_links_service
+        self._pids = pids_service
 
     #
     # Subservice
@@ -34,7 +34,11 @@ class RDMRecordService(RecordService):
         """Record secret link service."""
         return self._secret_links
 
-    # PIDS-FIXME: extract to a subservice
+    @property
+    def pids(self):
+        """Record pids service."""
+        return self._pids
+
     def get_client(self, client_name):
         """Get the provider client from config."""
         client_class = self.config.pids_providers_clients[client_name]
@@ -91,103 +95,3 @@ class RDMRecordService(RecordService):
                 message=_(f"{client_name} not supported for PID {scheme}"),
                 ield_name=f"pids.{scheme}",
             )
-
-    def reserve_pid(self, id_, identity, pid_type, pid_client=None):
-        """Reserve PID for a given record."""
-        draft = self.draft_cls.pid.resolve(id_, registered_only=False)
-
-        # Permissions
-        self.require_permission(identity, "pid_reserve", record=draft)
-
-        providers = self.config.pids_providers[pid_type]
-        _provider = self.get_managed_provider(providers)
-        if not _provider:
-            raise Exception(f"No managed provider configured for {pid_type}.")
-
-        provider_name, _ = _provider
-        provider = self.get_provider(pid_type, provider_name=provider_name,
-                                     client_name=pid_client)
-        pid = provider.create(draft)
-
-        draft.pids[pid_type] = {
-            "identifier": pid.pid_value,
-            "provider": provider.name
-        }
-        if provider.client:
-            draft.pids[pid_type]["client"] = provider.client.name
-
-        provider.reserve(pid, draft)
-        draft.commit()
-
-        db.session.commit()
-        self.indexer.index(draft)
-
-        return self.result_item(
-            self,
-            identity,
-            draft,
-            links_tpl=self.links_item_tpl,
-        )
-
-    def resolve_pid(self, id_, identity, pid_type):
-        """Resolve PID to a record."""
-        pid = PersistentIdentifier.get(pid_type=pid_type, pid_value=id_)
-
-        # get related record/draft
-        record = self.record_cls.get_record(pid.object_uuid)
-
-        # permissions
-        self.require_permission(identity, "read", record=record)
-
-        return self.result_item(
-            self,
-            identity,
-            record,
-            links_tpl=self.links_item_tpl,
-        )
-
-    def discard_pid(self, id_, identity, pid_type, pid_client=None):
-        """Discard a previously reserved PID for a given record.
-
-        It will be soft deleted if already registered.
-        """
-        draft = self.draft_cls.pid.resolve(id_, registered_only=False)
-
-        # Permissions
-        self.require_permission(identity, "pid_delete", record=draft)
-
-        providers = self.config.pids_providers[pid_type]
-        _provider = self.get_managed_provider(providers)
-        if not _provider:
-            raise Exception(f"No managed provider configured for {pid_type}.")
-
-        provider_name, _ = _provider
-        provider = self.get_provider(pid_type, provider_name=provider_name,
-                                     client_name=pid_client)
-        pid_attr = draft.pids[pid_type]
-
-        try:
-            pid = provider.get_by_record(
-                draft.id,
-                pid_type=pid_type,
-                pid_value=pid_attr["identifier"],
-            )
-        except PIDDoesNotExistError:
-            raise ValidationError(
-                message=_(f"No registered PID found for type {pid_type}"),
-                field_name=f"pids.{pid_type}",
-            )
-
-        provider.delete(pid, draft)
-        draft.pids.pop(pid_type)
-        draft.commit()
-
-        db.session.commit()
-        self.indexer.index(draft)
-
-        return self.result_item(
-            self,
-            identity,
-            draft,
-            links_tpl=self.links_item_tpl,
-        )

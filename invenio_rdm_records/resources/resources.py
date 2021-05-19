@@ -46,7 +46,7 @@ class RDMRecordResource(RecordResource):
     @response_handler()
     def pids_reserve(self):
         """Reserve a PID."""
-        item = self.service.reserve_pid(
+        item = self.service.pids.reserve(
             id_=resource_requestctx.view_args["pid_value"],
             pid_type=resource_requestctx.view_args["pid_type"],
             pid_client=resource_requestctx.args.get("client"),
@@ -60,7 +60,7 @@ class RDMRecordResource(RecordResource):
     @response_handler()
     def pids_discard(self):
         """Discard a previously reserved PID."""
-        item = self.service.discard_pid(
+        item = self.service.pids.discard(
             id_=resource_requestctx.view_args["pid_value"],
             pid_type=resource_requestctx.view_args["pid_type"],
             pid_client=resource_requestctx.args.get("client"),

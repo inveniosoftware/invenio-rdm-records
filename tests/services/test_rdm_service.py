@@ -31,7 +31,7 @@ def test_resolve_pid(
     doi = record.to_dict()["pids"]["doi"]["identifier"]
 
     # test resolution
-    resolved_record = service.resolve_pid(
+    resolved_record = service.pids.resolve(
         id_=doi,
         identity=superuser_identity,
         pid_type="doi"
@@ -54,7 +54,7 @@ def test_resolve_non_existing_pid(
     # test resolution
     fake_doi = "10.1234/client.12345-abdce"
     with pytest.raises(PIDDoesNotExistError):
-        service.resolve_pid(
+        service.pids.resolve(
             id_=fake_doi,
             identity=superuser_identity,
             pid_type="doi"

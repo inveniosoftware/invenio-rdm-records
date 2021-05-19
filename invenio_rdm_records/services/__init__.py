@@ -10,10 +10,12 @@
 from .config import RDMFileDraftServiceConfig, RDMFileRecordServiceConfig, \
     RDMRecordServiceConfig
 from .permissions import RDMRecordPermissionPolicy
+from .pids import PIDSService
 from .secret_links import SecretLinkService
 from .services import RDMRecordService
 
 __all__ = (
+    "PIDSService",
     "RDMFileDraftServiceConfig",
     "RDMFileRecordServiceConfig",
     "RDMRecordPermissionPolicy",

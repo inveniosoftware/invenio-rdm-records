@@ -21,8 +21,9 @@ from .resources import RDMDraftFilesResourceConfig, \
     RDMParentRecordLinksResource, RDMParentRecordLinksResourceConfig, \
     RDMRecordFilesResourceConfig, RDMRecordResource, RDMRecordResourceConfig
 from .secret_links import LinkNeed, SecretLink
-from .services import RDMFileDraftServiceConfig, RDMFileRecordServiceConfig, \
-    RDMRecordService, RDMRecordServiceConfig, SecretLinkService
+from .services import PIDSService, RDMFileDraftServiceConfig, \
+    RDMFileRecordServiceConfig, RDMRecordService, RDMRecordServiceConfig, \
+    SecretLinkService
 from .services.schemas.metadata_extensions import MetadataExtensions
 
 
@@ -106,7 +107,8 @@ class InvenioRDMRecords(object):
             self._filter_record_service_config(app, RDMRecordServiceConfig),
             files_service=FileService(RDMFileRecordServiceConfig),
             draft_files_service=FileService(RDMFileDraftServiceConfig),
-            secret_links_service=SecretLinkService(RDMRecordServiceConfig)
+            secret_links_service=SecretLinkService(RDMRecordServiceConfig),
+            pids_service=PIDSService(RDMRecordServiceConfig)
         )
         self.subjects_service = subject_record_type.service_cls(
             config=subject_record_type.service_config_cls,
