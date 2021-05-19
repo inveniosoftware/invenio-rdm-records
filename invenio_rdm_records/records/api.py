@@ -60,7 +60,7 @@ class CommonFieldsMixin:
     parent_record_cls = RDMParent
 
     schema = ConstantField(
-       '$schema', 'local://records/record-v2.0.0.json')
+       '$schema', 'local://records/record-v3.0.0.json')
 
     dumper = ElasticsearchDumper(
         extensions=[
@@ -74,7 +74,8 @@ class CommonFieldsMixin:
         languages=PIDListRelation(
             'metadata.languages',
             attrs=['id', 'title'],
-            pid_field=Vocabulary.pid.with_type_ctx('languages')
+            pid_field=Vocabulary.pid.with_type_ctx('languages'),
+            cache_key='languages',
         ),
     )
 
@@ -105,7 +106,7 @@ class RDMDraft(CommonFieldsMixin, Draft):
     model_cls = models.RDMDraftMetadata
 
     index = IndexField(
-        "rdmrecords-drafts-draft-v2.0.0", search_alias="rdmrecords"
+        "rdmrecords-drafts-draft-v3.0.0", search_alias="rdmrecords"
     )
 
     files = FilesField(
@@ -134,7 +135,7 @@ class RDMRecord(CommonFieldsMixin, Record):
     model_cls = models.RDMRecordMetadata
 
     index = IndexField(
-        "rdmrecords-records-record-v2.0.0", search_alias="rdmrecords-records"
+        "rdmrecords-records-record-v3.0.0", search_alias="rdmrecords-records"
     )
 
     files = FilesField(

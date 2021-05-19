@@ -115,7 +115,7 @@ class RDMParentRecordLinksResource(RecordResource):
     @response_handler()
     def create(self):
         """Create a secret link for a record."""
-        item = self.service.create_secret_link(
+        item = self.service.secret_links.create(
             id_=resource_requestctx.view_args["pid_value"],
             identity=g.identity,
             data=resource_requestctx.data,
@@ -127,7 +127,7 @@ class RDMParentRecordLinksResource(RecordResource):
     @response_handler()
     def read(self):
         """Read a secret link for a record."""
-        item = self.service.read_secret_link(
+        item = self.service.secret_links.read(
             id_=resource_requestctx.view_args["pid_value"],
             identity=g.identity,
             link_id=resource_requestctx.view_args["link_id"],
@@ -143,7 +143,7 @@ class RDMParentRecordLinksResource(RecordResource):
     @response_handler()
     def partial_update(self):
         """Patch a secret link for a record."""
-        item = self.service.update_secret_link(
+        item = self.service.secret_links.update(
             id_=resource_requestctx.view_args["pid_value"],
             identity=g.identity,
             link_id=resource_requestctx.view_args["link_id"],
@@ -154,7 +154,7 @@ class RDMParentRecordLinksResource(RecordResource):
     @request_view_args
     def delete(self):
         """Delete a a secret link for a record."""
-        self.service.delete_secret_link(
+        self.service.secret_links.delete(
             id_=resource_requestctx.view_args["pid_value"],
             identity=g.identity,
             link_id=resource_requestctx.view_args["link_id"],
@@ -166,7 +166,7 @@ class RDMParentRecordLinksResource(RecordResource):
     @response_handler(many=True)
     def search(self):
         """List secret links for a record."""
-        items = self.service.read_secret_links(
+        items = self.service.secret_links.read_all(
             id_=resource_requestctx.view_args["pid_value"],
             identity=g.identity,
         )

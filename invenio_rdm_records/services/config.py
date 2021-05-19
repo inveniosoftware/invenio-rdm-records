@@ -9,8 +9,7 @@
 
 """RDM Record Service."""
 
-from functools import partial
-
+from flask_babelex import gettext as _
 from invenio_drafts_resources.services.records.components import \
     DraftFilesComponent, PIDComponent
 from invenio_drafts_resources.services.records.config import \
@@ -20,19 +19,56 @@ from invenio_records_resources.services import ConditionalLink, \
     FileServiceConfig
 from invenio_records_resources.services.base.links import Link
 from invenio_records_resources.services.files.links import FileLink
+from invenio_records_resources.services.records.facets import \
+    NestedTermsFacet, RecordRelationLabels, TermsFacet
 from invenio_records_resources.services.records.links import RecordLink
-from invenio_records_resources.services.records.search import \
-    nested_terms_filter, terms_filter
 
 from ..records import RDMDraft, RDMRecord
+from ..records.systemfields.access.field.record import AccessStatusEnum
 from .components import AccessComponent, ExternalPIDsComponent, \
-    MetadataComponent
+    MetadataComponent, RelationsComponent
 from .permissions import RDMRecordPermissionPolicy
 from .pids.providers import DOIDataCiteClient, DOIDataCitePIDProvider, \
     UnmanagedPIDProvider
 from .result_items import SecretLinkItem, SecretLinkList
 from .schemas import RDMParentSchema, RDMRecordSchema
 from .schemas.parent.access import SecretLink
+
+#
+# Facet definitions
+#
+resource_type_facet = NestedTermsFacet(
+    field='metadata.resource_type.type',
+    subfield='metadata.resource_type.subtype',
+    label=_("Resource types"),
+    # value_labels=VocabularyLabels('resource_types')
+)
+
+language_facet = TermsFacet(
+    field='metadata.languages.id',
+    label=_('Languages'),
+    value_labels=RecordRelationLabels(
+        RDMRecord.relations.languages,
+        'title.en',
+    ),
+)
+
+access_status_facet = TermsFacet(
+    field='access.status',
+    label=_("Access status"),
+    value_labels={
+        AccessStatusEnum.OPEN.value: _("Open"),
+        AccessStatusEnum.EMBARGOED.value: _("Embargoed"),
+        AccessStatusEnum.RESTRICTED.value: _("Restricted"),
+        AccessStatusEnum.METADATA_ONLY.value: _("Metadata-only"),
+    }
+)
+
+is_published_facet = TermsFacet(
+    field='is_published',
+    label=_('State'),
+    value_labels={"true": _("Published"), "false": _("Unpublished")}
+)
 
 
 #
@@ -41,66 +77,21 @@ from .schemas.parent.access import SecretLink
 class RDMSearchOptions(SearchOptions):
     """Search options for record search."""
 
-    facets_options = dict(
-        aggs={
-            'resource_type': {
-                'terms': {'field': 'metadata.resource_type.type'},
-                'aggs': {
-                    'subtype': {
-                        'terms': {'field': 'metadata.resource_type.subtype'},
-                    }
-                }
-            },
-            'access_status': {
-                'terms': {'field': 'access.status'},
-            },
-            # 'languages': {
-            #     'terms': {'field': 'metadata.languages.id'},
-            # },
-        },
-        post_filters={
-            'resource_type': nested_terms_filter(
-                'metadata.resource_type.type',
-                'metadata.resource_type.subtype',
-                splitchar='::',
-            ),
-            'access_status': terms_filter('access.status'),
-            # 'languages': terms_filter('metadata.languages.id'),
-        }
-    )
+    facets = {
+        'resource_type': resource_type_facet,
+        'languages': language_facet,
+    }
 
 
 class RDMSearchDraftsOptions(SearchDraftsOptions):
     """Search options for drafts search."""
 
-    facets_options = dict(
-        aggs={
-            'resource_type': {
-                'terms': {'field': 'metadata.resource_type.type'},
-                'aggs': {
-                    'subtype': {
-                        'terms': {'field': 'metadata.resource_type.subtype'},
-                    }
-                }
-            },
-            'access_status': {
-                'terms': {'field': 'access.status'},
-            },
-            # 'languages': {
-            #     'terms': {'field': 'metadata.languages.id'},
-            # },
-            'is_published': {
-                'terms': {'field': 'is_published'},
-            },
-        },
-        post_filters={
-            'subtype': terms_filter('metadata.resource_type.subtype'),
-            'resource_type': terms_filter('metadata.resource_type.type'),
-            'access_status': terms_filter('access.status'),
-            # 'languages': terms_filter('metadata.languages.id'),
-            'is_published': terms_filter('is_published'),
-        }
-    )
+    facets = {
+        'resource_type': resource_type_facet,
+        'languages': language_facet,
+        'access_status': access_status_facet,
+        'is_published': is_published_facet,
+    }
 
 
 #
@@ -150,7 +141,7 @@ class RDMRecordServiceConfig(RecordServiceConfig):
         "datacite": DOIDataCiteClient
     }
 
-    # Components
+    # Components - order matters!
     components = [
         MetadataComponent,
         AccessComponent,
@@ -159,6 +150,7 @@ class RDMRecordServiceConfig(RecordServiceConfig):
         PIDComponent,
         # for the `pids` field (external PIDs)
         ExternalPIDsComponent,
+        RelationsComponent,
     ]
 
     # Links

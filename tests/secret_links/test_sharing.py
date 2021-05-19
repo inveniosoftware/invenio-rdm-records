@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 #
+# Copyright (C) 2021 CERN.
 # Copyright (C) 2021 TU Wien.
 #
 # Invenio is free software; you can redistribute it and/or modify it
@@ -67,19 +68,18 @@ def test_invalid_level(service, restricted_record, identity):
     """Test invalid permission level."""
     record = restricted_record
     with pytest.raises(ValidationError):
-        service.create_secret_link(record.id, identity, {
-            "permission": "invalid"
-        })
+        service.secret_links.create(record.id, identity, {
+            "permission": "invalid"})
 
 
 def test_permission_levels(service, restricted_record, identity, client):
     """Test invalid permission level."""
     id_ = restricted_record.id
-    view_link = service.create_secret_link(
+    view_link = service.secret_links.create(
         id_, identity, {"permission": "view"})
-    preview_link = service.create_secret_link(
+    preview_link = service.secret_links.create(
         id_, identity, {"permission": "preview"})
-    edit_link = service.create_secret_link(
+    edit_link = service.secret_links.create(
         id_, identity, {"permission": "edit"})
 
     # == Anonymous user
@@ -158,17 +158,21 @@ def test_permission_levels(service, restricted_record, identity, client):
 
     # Deny user with edit link to share the links
     pytest.raises(
-        PermissionDeniedError, service.create_secret_link, id_, i, {})
+        PermissionDeniedError,
+        service.secret_links.create, id_, i, {})
     pytest.raises(
-        PermissionDeniedError, service.read_secret_links, id_, i)
+        PermissionDeniedError, service.secret_links.read_all,
+        id_, i)
     pytest.raises(
-        PermissionDeniedError, service.read_secret_link, id_, i, edit_link.id)
+        PermissionDeniedError, service.secret_links.read,
+        id_, i, edit_link.id)
     pytest.raises(
         PermissionDeniedError,
-        service.update_secret_link, id_, i, edit_link.id, {})
+        service.secret_links.update, id_, i, edit_link.id,
+        {})
     pytest.raises(
         PermissionDeniedError,
-        service.delete_secret_link, id_, i, edit_link.id)
+        service.secret_links.delete, id_, i, edit_link.id)
 
     # Allow user with edit link to update, delete, edit, publish
     draft = service.read_draft(id_, i)

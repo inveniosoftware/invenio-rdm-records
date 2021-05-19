@@ -11,23 +11,31 @@
 from copy import deepcopy
 from functools import partial
 
+from flask import current_app
 from flask_babelex import get_locale
 from flask_babelex import gettext as _
 from invenio_i18n.ext import current_i18n
-# TODO
-# from invenio_vocabularies.api import VocabularyRegistry
 from marshmallow import Schema, fields, missing
+from marshmallow_utils.fields import BabelGettextDictField
 from marshmallow_utils.fields import FormatDate as FormatDate_
 from marshmallow_utils.fields import FormatEDTF as FormatEDTF_
 from marshmallow_utils.fields import StrippedHTML
 
-from invenio_rdm_records.vocabularies import Vocabularies
+from .fields import AccessStatusField, VocabularyTitleField
 
-from .fields import AccessStatusField, UIAccessStatus, VocabularyTitleField
+
+def current_default_locale():
+    """Get the Flask app's default locale."""
+    if current_app:
+        return current_app.config.get('BABEL_DEFAULT_LOCALE', 'en')
+    # Use english by default if not specified
+    return 'en'
+
 
 # Partial to make short definitions in below schema.
 FormatEDTF = partial(FormatEDTF_, locale=get_locale)
 FormatDate = partial(FormatDate_, locale=get_locale)
+L10NString = partial(BabelGettextDictField, get_locale, current_default_locale)
 
 
 def make_affiliation_index(attr, obj, dummy_ctx):
@@ -69,24 +77,6 @@ def make_affiliation_index(attr, obj, dummy_ctx):
     }
 
 
-def localize_vocabulary_list(field_name, key, attr, obj):
-    """Localize vocabulary."""
-    field_data = attr.get("metadata", {}).get(field_name)
-
-    if not field_data:
-        return missing
-
-    localized = []
-    str_locale = str(current_i18n.locale)
-    for item in field_data:
-        localized.append({
-            "id": item.get("id"),
-            "title_l10n": item.get(key, {}).get(str_locale)
-        })
-
-    return localized
-
-
 def record_version(obj):
     """Return record's version."""
     field_data = obj.get("metadata", {}).get("version")
@@ -95,6 +85,13 @@ def record_version(obj):
         return f"v{obj['versions']['index']}"
 
     return field_data
+
+
+class LanguageL10NSchema(Schema):
+    """Localization of language titles."""
+
+    id = fields.String()
+    title = L10NString(data_key='title_l10n')
 
 
 class UIObjectSchema(Schema):
@@ -120,8 +117,10 @@ class UIObjectSchema(Schema):
     contributors = fields.Function(
         partial(make_affiliation_index, 'contributors'))
 
-    languages = fields.Function(
-        partial(localize_vocabulary_list, 'languages', 'title'))
+    languages = fields.List(
+        fields.Nested(LanguageL10NSchema),
+        attribute='metadata.languages',
+    )
 
     description_stripped = StrippedHTML(attribute="metadata.description")
 
@@ -148,65 +147,4 @@ class UIListSchema(Schema):
         aggs = obj_list.get("aggregations")
         if not aggs:
             return missing
-
-        for name, agg in aggs.items():
-            # Aggregation key/name must match vocabulary id.
-            vocab = Vocabularies.get_vocabulary(name)
-            if not vocab:
-                continue
-
-            buckets = agg.get('buckets')
-            if buckets:
-                apply_labels(vocab, buckets)
-
-        # TODO: temporary hack until vocabularies can be fixed
-        is_published_agg = aggs.get('is_published')
-        if is_published_agg:
-            for b in is_published_agg.get('buckets', []):
-                if b.get('key') == 1:
-                    b['label'] = _("Published")
-                elif b.get('key') == 0:
-                    b['label'] = _("Unpublished")
-
-        access_status_agg = aggs.get('access_status')
-        if access_status_agg:
-            for b in access_status_agg.get('buckets', []):
-                if b.get('key'):
-                    b['label'] = UIAccessStatus(b.get('key')).title
-
-        # FIXME: This is hardcoded because vocabularies has not been
-        # fully migrated. Ideally all would be treated equally in the for
-        # loop above.
-        # languages = aggs.get("languages")
-
-        # if languages:
-        #     languages["buckets"] = serialize_vocabulary(
-        #         "languages", languages["buckets"])
-
         return aggs
-
-
-def serialize_vocabulary(vocab, buckets):
-    """Serialize vocabulary based aggregations."""
-    vocab_resource = VocabularyRegistry.get(vocab)
-
-    for bucket in buckets:
-        bucket["label"] = \
-            vocab_resource.get(bucket["key"]).get_title(current_i18n.locale)
-
-    return buckets
-
-
-def apply_labels(vocab, buckets):
-    """Inject labels in the aggregation buckets.
-
-    :params agg: Current aggregation object.
-    :params vocab: The vocabulary
-    """
-    for b in buckets:
-        b['label'] = vocab.get_title_by_dict(b['key'])
-
-        # Recursively apply to subbuckets
-        for data in b.values():
-            if isinstance(data, dict) and 'buckets' in data:
-                apply_labels(vocab, data['buckets'])
