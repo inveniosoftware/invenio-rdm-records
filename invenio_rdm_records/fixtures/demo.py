@@ -11,20 +11,38 @@
 import datetime
 import json
 import random
-from pathlib import Path
 
 from edtf.parser.grammar import level0Expression
 from faker import Faker
+from invenio_access.permissions import system_identity
+from invenio_vocabularies.proxies import current_service as vocabulary_service
 
-from .vocabularies import YamlIterator
 
+class CachedVocabularies:
+    """Singleton to store some vocabulary entries.
 
-def fake_resource_type():
-    """Generates a fake resource_type."""
-    filename = Path(__file__).parent / "data/vocabularies/resource_types.yaml"
-    ressource_type_ids = [r["id"] for r in YamlIterator(filename)]
-    random_id = random.choice(ressource_type_ids)
-    return {"id": random_id}
+    This is needed because otherwise expensive random picking would have to be
+    done for every call to create_fake_record().
+
+    Even then, we shouldn't load all vocabularies' entries in memory
+    (at least not big ones).
+    """
+
+    _resource_type_ids = []
+
+    @classmethod
+    def fake_resource_type(cls):
+        """Generate a random resource_type."""
+        if not cls._resource_type_ids:
+            results = vocabulary_service.search(
+                system_identity, type='resource_types'
+            )
+            cls._resource_type_ids = [
+                r["id"] for r in results.to_dict()["hits"]["hits"]
+            ]
+
+        random_id = random.choice(cls._resource_type_ids)
+        return {"id": random_id}
 
 
 def fake_edtf_level_0():
@@ -72,7 +90,7 @@ def create_fake_record():
         "pids": {
         },
         "metadata": {
-            "resource_type": fake_resource_type(),
+            "resource_type": CachedVocabularies.fake_resource_type(),
             "creators": [{
                 "person_or_org": {
                     "family_name": fake.last_name(),

@@ -13,19 +13,14 @@ import pathlib
 import pytest
 from invenio_access.permissions import system_identity
 
-from invenio_rdm_records.fixtures import SearchPath
 from invenio_rdm_records.fixtures.vocabularies import VocabulariesFixture
 
 
 @pytest.fixture()
 def vocabularies():
     """Vocabularies object fixture."""
-    data_dir = (
-        pathlib.Path(__file__).parent / "data"
-    ).resolve()
-
     return VocabulariesFixture(
         system_identity,
-        SearchPath(data_dir),
+        [pathlib.Path(__file__).parent / "data"],
         'vocabularies.yaml',
     )

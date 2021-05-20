@@ -35,7 +35,7 @@ class YamlIterator(DataIterator):
     def __iter__(self):
         """Iterate over records."""
         with open(self._data_file) as fp:
-            data = yaml.load(fp)
+            data = yaml.safe_load(fp)
             if data:  # Allow empty files
                 for entry in data:
                     yield entry
@@ -84,18 +84,33 @@ class JSONLinesIterator(DataIterator):
 class VocabulariesFixture:
     """Vocabularies fixture."""
 
-    def __init__(self, identity, search_path, filename):
+    def __init__(self, identity, search_paths, filename):
         """Initialize the fixture."""
-        self._search_path = search_path
+        self._search_paths = search_paths
         self._filename = filename
         self._identity = identity
 
     def load(self):
-        """Load the fixture."""
-        with open(self._search_path.path(self._filename)) as fp:
-            data = yaml.load(fp)
-            for id_, entry in data.items():
-                self.load_vocabulary(id_, entry)
+        """Load the fixture.
+
+        Fixtures found sooner in self._search_paths have priority.
+        """
+        ids = set()
+
+        for path in self._search_paths:
+            filepath = path / self._filename
+
+            # Providing a vocabularies.yaml file is optional
+            if not filepath.exists():
+                continue
+
+            with open(filepath) as fp:
+                data = yaml.safe_load(fp)
+                for id_, entry in data.items():
+                    if id_ not in ids:
+                        entry["data-file"] = path / entry["data-file"]
+                        self.load_vocabulary(id_, entry)
+                        ids.add(id_)
 
     def load_vocabulary(self, id_, entry, delay=True):
         """Load a single vocabulary."""
@@ -103,10 +118,7 @@ class VocabulariesFixture:
         # Create the vocabulary type
         current_service.create_type(self._identity, id_, pid_type)
         # Load the data file
-        data_file_path = entry.get('data-file')
-        if data_file_path:  # Creates pid_type, no data yet
-            data_file = self._search_path.path(data_file_path)
-            self.load_datafile(id_, data_file, delay=delay)
+        self.load_datafile(id_, entry["data-file"], delay=delay)
 
     def load_datafile(self, id_, data_file, delay=True):
         """Load the records from the data file."""

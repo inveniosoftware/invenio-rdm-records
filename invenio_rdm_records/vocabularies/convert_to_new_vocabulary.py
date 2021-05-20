@@ -69,7 +69,10 @@ class ResourceTypeConverterType:
 
 
 class Converter:
+    """General Converter."""
+
     def __init__(self, converter_type):
+        """Constructor."""
         self.converter_type = converter_type
 
     def convert(self, filepath, dirpath):

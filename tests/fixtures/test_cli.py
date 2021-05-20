@@ -8,6 +8,8 @@
 
 """Tests for the CLI."""
 
+from pathlib import Path
+
 from invenio_rdm_records.fixtures.demo import create_fake_record
 from invenio_rdm_records.fixtures.tasks import create_demo_record
 
@@ -18,7 +20,9 @@ def test_fake_demo_record_creation(app, location, db, es_clear, vocabularies):
         'resource_types',
         {
             "pid-type": "rsrct",
-            "data-file": "vocabularies/resource_types.yaml"
+            "data-file": (
+                Path(__file__).parent / "data/vocabularies/resource_types.yaml"
+            )
         },
         delay=False
     )
