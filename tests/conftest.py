@@ -17,8 +17,10 @@ import pytest
 from flask_principal import Identity, Need, UserNeed
 from flask_security import login_user
 from flask_security.utils import hash_password
+from invenio_access.permissions import system_identity
 from invenio_accounts.testutils import login_user_via_session
 from invenio_app.factory import create_app as _create_app
+from invenio_vocabularies.proxies import current_service as vocabulary_service
 
 from invenio_rdm_records import config
 from invenio_rdm_records.records.api import RDMParent
@@ -357,6 +359,7 @@ def identity_simple(users):
     i = Identity(user.id)
     i.provides.add(UserNeed(user.id))
     i.provides.add(Need(method='system_role', value='any_user'))
+    i.provides.add(Need(method='system_role', value='authenticated_user'))
     return i
 
 
@@ -367,3 +370,24 @@ def vocabulary_clear(app):
     NOTE: app fixture pushes an application context
     """
     Vocabularies.clear()
+
+
+@pytest.fixture(scope="module")
+def lang_type(app):
+    """Lanuage vocabulary type."""
+    return vocabulary_service.create_type(system_identity, "languages", "lng")
+
+
+@pytest.fixture(scope="module")
+def lang(app, lang_type):
+    """Language vocabulary record."""
+    lang = vocabulary_service.create(system_identity, {
+        "id": "eng",
+        "title": {
+            "en": "English",
+            "da": "Engelsk",
+        },
+        "tags": ["individual", "living"],
+        "type": "languages"
+    })
+    return lang

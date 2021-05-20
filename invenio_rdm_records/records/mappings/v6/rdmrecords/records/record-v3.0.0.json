@@ -4,9 +4,6 @@
       "date_detection": false,
       "numeric_detection": false,
       "properties": {
-        "conceptid" : {
-          "type" : "keyword"
-        },
         "id" : {
           "type" : "keyword"
         },
@@ -17,13 +14,6 @@
             },
             "files" : {
               "type" : "keyword"
-            },
-            "owned_by" : {
-              "properties": {
-                "user": {
-                  "type": "keyword"
-                }
-              }
             },
             "embargo": {
               "properties": {
@@ -38,21 +28,67 @@
                 }
               }
             },
-            "grants": {
-              "properties": {
-                "subject": {
+            "status" : {
+              "type": "keyword"
+            }
+          }
+        },
+        "parent" : {
+          "properties": {
+            "id" : {
+              "type" : "keyword"
+            },
+            "access": {
+              "properties" : {
+                "owned_by" : {
+                  "properties": {
+                    "user": {
+                      "type": "keyword"
+                    }
+                  }
+                },
+                "grants": {
+                  "properties": {
+                    "subject": {
+                      "type": "keyword"
+                    },
+                    "id": {
+                      "type": "keyword"
+                    },
+                    "level": {
+                      "type": "keyword"
+                    }
+                  }
+                },
+                "grant_tokens": {
                   "type": "keyword"
                 },
-                "id": {
-                  "type": "keyword"
-                },
-                "level": {
-                  "type": "keyword"
+                "links": {
+                  "properties": {
+                    "id": {
+                      "type": "keyword"
+                    }
+                  }
                 }
               }
+            }
+          }
+        },
+        "pids" : {
+          "properties" : {
+            "identifier" : {
+              "type" : "keyword"
             },
-            "grant_tokens": {
-              "type": "keyword"
+            "scheme" : {
+              "type" : "keyword"
+            },
+            "client" : {
+              "type" : "keyword",
+              "index": false
+            },
+            "provider" : {
+              "type" : "keyword",
+              "index": false
             }
           }
         },
@@ -433,8 +469,30 @@
         "updated" : {
           "type" : "date"
         },
-        "status": {
-          "type": "keyword"
+        "is_published": {
+          "type": "boolean"
+        },
+        "versions": {
+          "properties": {
+            "index": {
+              "type": "integer"
+            },
+            "is_latest": {
+              "type": "boolean"
+            },
+            "is_latest_draft": {
+              "type": "boolean"
+            },
+            "latest_id": {
+              "type": "keyword"
+            },
+            "latest_index": {
+              "type": "integer"
+            },
+            "next_draft_id": {
+              "type": "keyword"
+            }
+          }
         }
       }
     }
