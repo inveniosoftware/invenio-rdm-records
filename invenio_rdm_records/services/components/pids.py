@@ -24,8 +24,8 @@ class ExternalPIDsComponent(ServiceComponent):
         """Call provider to validate the given PID."""
         provider_name = pid.get("provider")
         client = pid.get("client")
-        provider = self.service.get_provider(scheme, provider_name,
-                                             client)
+        provider = self.service.pids.get_provider(scheme, provider_name,
+                                                  client)
         if provider:
             success, errors = provider.validate(**pid)
             if errors:
@@ -139,8 +139,8 @@ class ExternalPIDsComponent(ServiceComponent):
 
             pid_provider = draft_pid.get("provider")
             pid_client = draft_pid.get("client")
-            provider = self.service.get_provider(scheme, pid_provider,
-                                                 pid_client)
+            provider = self.service.pids.get_provider(scheme, pid_provider,
+                                                      pid_client)
             if not provider:
                 continue
 
