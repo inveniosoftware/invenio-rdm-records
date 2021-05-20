@@ -107,15 +107,15 @@ class IIIFPresiSchema(Schema):
                                 "id": f"{cid}{p}/1/1",
                                 "type": "Annotation",
                                 "motivation": "painting",
+                                "target": f"{cid}{p}/1",
                                 "body": {
-                                  "target": f"{cid}{p}/1",
-                                  "id": "foo",
+                                  "id": f"{cid}{p}/1/1",
                                   "type": "Image",
                                   "format": "image/jpeg",
                                   "width": 1280,
                                   "height": 960,
                                   "service": [{
-                                      "id": "https://rdm/api/iiif/foo",
+                                      "id": f"{cid}/image/foo{p}.jpg",
                                       "type": "ImageService2",
                                       "profile": "level2"
                                   }]
