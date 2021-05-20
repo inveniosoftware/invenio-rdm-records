@@ -8,6 +8,25 @@
 
 """Views."""
 
+from flask import Blueprint
+
+blueprint = Blueprint('invenio_rdm_records_ext', __name__)
+
+
+@blueprint.record_once
+def init(state):
+    """Init app."""
+    app = state.app
+    # Register services - cannot be done in extension because
+    # Invenio-Records-Resources might not have been initialized.
+    registry = app.extensions['invenio-records-resources'].registry
+    ext = app.extensions['invenio-rdm-records']
+    registry.register(ext.records_service, service_id='rdm-records')
+    registry.register(ext.records_service.files, service_id='rdm-files')
+    registry.register(
+        ext.records_service.draft_files, service_id='rdm-draft-files')
+    registry.register(ext.subjects_service, service_id='rdm-subjects')
+
 
 def create_records_bp(app):
     """Create records blueprint."""

@@ -68,7 +68,7 @@ install_requires = [
     'Faker>=2.0.3',
     'flask>=1.1,<2',
     'ftfy>=4.4.3,<5.0.0',
-    'invenio-drafts-resources>=0.12.0,<0.13.0',
+    'invenio-drafts-resources>=0.12.1,<0.13.0',
     'invenio-vocabularies>=0.6.1,<0.7.0',
     'pytz>=2020.4',
     'pyyaml>=5.4.0',
@@ -108,11 +108,12 @@ setup(
             'invenio_rdm_records = invenio_rdm_records:InvenioRDMRecords',
         ],
         "invenio_base.api_blueprints": [
-            'invenio_vocabularies_subjects = invenio_rdm_records.vocabularies.views:create_subjects_blueprint_from_app',
             'invenio_rdm_records = invenio_rdm_records.views:create_records_bp',
-            'invenio_rdm_records_record_files = invenio_rdm_records.views:create_record_files_bp',
             'invenio_rdm_records_draft_files = invenio_rdm_records.views:create_draft_files_bp',
+            'invenio_rdm_records_ext = invenio_rdm_records.views:blueprint',
             'invenio_rdm_records_parent_links = invenio_rdm_records.views:create_parent_record_links_bp',
+            'invenio_rdm_records_record_files = invenio_rdm_records.views:create_record_files_bp',
+            'invenio_vocabularies_subjects = invenio_rdm_records.vocabularies.views:create_subjects_blueprint_from_app',
         ],
         'invenio_celery.tasks': [
             'invenio_rdm_records = invenio_rdm_records.fixtures.tasks',
