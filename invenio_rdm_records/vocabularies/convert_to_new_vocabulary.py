@@ -16,6 +16,7 @@ import csv
 from collections import defaultdict
 from pathlib import Path
 
+import click
 import yaml
 
 
@@ -53,10 +54,8 @@ def hierarchized_rows(dict_reader):
         yield current_row
 
 
-class ResourceTypeExporter:
-    """Exporter for resource type vocabulary."""
-
-    base_filename = "resource_types"
+class ResourceTypeConverterType:
+    """Converter for resource type vocabulary."""
 
     def to_dict(self, csv_row):
         """Converts csv_row to new vocabulary dict."""
@@ -68,31 +67,46 @@ class ResourceTypeExporter:
             "props": dict(csv_row)
         }
 
-    @property
-    def csv_filename(self):
-        """Get csv filename."""
-        return Path(self.base_filename).with_suffix(".csv")
 
-    @property
-    def yaml_filename(self):
-        """Get yaml filename."""
-        return Path(self.base_filename).with_suffix(".yaml")
+class Converter:
+    def __init__(self, converter_type):
+        self.converter_type = converter_type
+
+    def convert(self, filepath, dirpath):
+        """Write converted filepath file to dirpath directory."""
+        yaml_filepath = dirpath / filepath.with_suffix(".yaml").name
+        with open(filepath) as csv_file:
+            reader = csv.DictReader(csv_file)
+            reader = hierarchized_rows(reader)
+            with open(yaml_filepath, "w") as yaml_file:
+                yaml.dump(
+                    [self.converter_type.to_dict(row) for row in reader],
+                    yaml_file
+                )
+            click.secho("Conversion done!", fg="green")
+
+
+@click.command()
+@click.argument('csv_filename')
+@click.option('--to', default='.', help='Export destination directory.')
+def convert(csv_filename, to):
+    """Convert CSV_FILENAME into a new vocabulary yaml file in TO."""
+    csv_filepath = Path(csv_filename)
+    dirpath = Path(to)
+
+    if not csv_filepath.suffix == ".csv":
+        click.secho("Only csv conversion allowed.", fg="red")
+        exit()
+
+    if csv_filepath.stem == "resource_types":
+        converter_type = ResourceTypeConverterType()
+    else:
+        click.secho("Not supported yet!", fg="red")
+        exit()
+
+    converter = Converter(converter_type)
+    converter.convert(csv_filepath, dirpath)
 
 
 if __name__ == "__main__":
-    exporter = ResourceTypeExporter()
-
-    csv_filepath = Path(__file__).parent / exporter.csv_filename
-    yaml_filepath = (
-        Path(__file__).parent.parent /
-        Path("fixtures/data/vocabularies") / exporter.yaml_filename
-    ).resolve()
-
-    with open(csv_filepath) as csv_file:
-        reader = csv.DictReader(csv_file)
-        reader = hierarchized_rows(reader)
-        with open(yaml_filepath, "w") as yaml_file:
-            yaml_doc = yaml.dump(
-                [exporter.to_dict(row) for row in reader],
-                yaml_file
-            )
+    convert()
