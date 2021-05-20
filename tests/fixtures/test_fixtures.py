@@ -5,17 +5,24 @@
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
+from pathlib import Path
 
+import pytest
 from invenio_access.permissions import system_identity
+from invenio_pidstore.errors import PIDDoesNotExistError
 from invenio_vocabularies.proxies import current_service as vocabulary_service
 
+from invenio_rdm_records.fixtures.vocabularies import VocabulariesFixture
 
-def test_load_languages(app, vocabularies):
+
+def test_load_languages(app, db, vocabularies):
     vocabularies.load_vocabulary(
         'languages',
         {
             "pid-type": "lng",
-            "data-file": "vocabularies/languages.yaml"
+            "data-file": (
+                Path(__file__).parent / "data/vocabularies/languages.yaml"
+            )
         },
         delay=False
     )
@@ -27,12 +34,14 @@ def test_load_languages(app, vocabularies):
     assert item_dict["id"] == "aae"
 
 
-def test_load_resource_types(app, vocabularies):
+def test_load_resource_types(app, db, vocabularies):
     vocabularies.load_vocabulary(
         'resource_types',
         {
             "pid-type": "rsrct",
-            "data-file": "vocabularies/resource_types.yaml"
+            "data-file": (
+                Path(__file__).parent / "data/vocabularies/resource_types.yaml"
+            )
         },
         delay=False
     )
@@ -45,3 +54,27 @@ def test_load_resource_types(app, vocabularies):
 
     assert item_dict["id"] == "publication-annotationcollection"
     assert item_dict["props"]["datacite_general"] == "Collection"
+
+
+def test_loading_paths_traversal(app, db):
+    dir_ = Path(__file__).parent
+    vocabularies = VocabulariesFixture(
+        system_identity,
+        [dir_ / "app_data", dir_ / "data"],
+        "vocabularies.yaml"
+    )
+
+    vocabularies.load()
+
+    # app_data/vocabularies/resource_types.yaml only has image resource types
+    with pytest.raises(PIDDoesNotExistError):
+        vocabulary_service.read(
+            ('resource_types', 'publication-annotationcollection'),
+            system_identity
+        )
+
+    # languages are found
+    item = vocabulary_service.read(
+        ('languages', 'aae'), system_identity)
+    item_dict = item.to_dict()
+    assert item_dict["id"] == "aae"
