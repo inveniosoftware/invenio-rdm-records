@@ -13,9 +13,10 @@ from marshmallow import ValidationError
 
 from invenio_rdm_records.proxies import current_rdm_records
 from invenio_rdm_records.records import RDMDraft, RDMRecord
-from invenio_rdm_records.services import RDMRecordService
+from invenio_rdm_records.services import RDMRecordService, config
 from invenio_rdm_records.services.components import ExternalPIDsComponent
 from invenio_rdm_records.services.config import RDMRecordServiceConfig
+from invenio_rdm_records.services.pids import PIDSService
 from invenio_rdm_records.services.pids.providers import DOIDataCiteClient, \
     DOIDataCitePIDProvider, UnmanagedPIDProvider
 
@@ -68,15 +69,17 @@ class TestServiceNReqUnmanConfig(RDMRecordServiceConfig):
 
 @pytest.fixture(scope="function")
 def req_pid_unmanaged_cmp():
-    service = RDMRecordService(config=TestServiceReqUnmanConfig())
-
+    pids_service = PIDSService(TestServiceReqUnmanConfig())
+    service = RDMRecordService(config=TestServiceReqUnmanConfig(),
+                               pids_service=pids_service)
     return ExternalPIDsComponent(service=service)
 
 
 @pytest.fixture(scope="function")
 def not_req_unmanaged_pid_cmp():
-    service = RDMRecordService(config=TestServiceNReqUnmanConfig())
-
+    pids_service = PIDSService(TestServiceNReqUnmanConfig())
+    service = RDMRecordService(config=TestServiceNReqUnmanConfig(),
+                               pids_service=pids_service)
     return ExternalPIDsComponent(service=service)
 
 
@@ -262,15 +265,17 @@ class TestServiceReqManConfig(TestServiceNReqManConfig):
 
 @pytest.fixture(scope="function")
 def not_req_managed_pid_cmp():
-    service = RDMRecordService(config=TestServiceNReqManConfig())
-
+    pids_service = PIDSService(TestServiceNReqManConfig())
+    service = RDMRecordService(config=TestServiceNReqManConfig(),
+                               pids_service=pids_service)
     return ExternalPIDsComponent(service=service)
 
 
 @pytest.fixture(scope="function")
 def req_managed_pid_cmp():
-    service = RDMRecordService(config=TestServiceReqManConfig())
-
+    pids_service = PIDSService(TestServiceReqManConfig())
+    service = RDMRecordService(config=TestServiceReqManConfig(),
+                               pids_service=pids_service)
     return ExternalPIDsComponent(service=service)
 
 

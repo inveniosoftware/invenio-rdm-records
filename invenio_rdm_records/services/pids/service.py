@@ -11,9 +11,9 @@
 
 from flask_babelex import lazy_gettext as _
 from invenio_db import db
-from invenio_drafts_resources.services.records import RecordService
 from invenio_pidstore.errors import PIDDoesNotExistError
 from invenio_pidstore.models import PersistentIdentifier
+from invenio_records_resources.services.records import RecordService
 from marshmallow.exceptions import ValidationError
 
 

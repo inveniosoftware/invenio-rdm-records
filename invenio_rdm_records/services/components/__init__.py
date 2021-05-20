@@ -8,7 +8,6 @@
 
 """High-level API for working with RDM service components."""
 
-from ..pids import PIDSService
 from .access import AccessComponent
 from .metadata import MetadataComponent
 from .parent import ParentRecordAccessComponent
@@ -20,6 +19,5 @@ __all__ = (
     'ExternalPIDsComponent',
     'MetadataComponent',
     'ParentRecordAccessComponent',
-    'PIDSService',
     'RelationsComponent',
 )
