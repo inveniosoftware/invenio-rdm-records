@@ -20,16 +20,3 @@ def test_version():
     """Test version import."""
     from invenio_rdm_records import __version__
     assert __version__
-
-
-def test_init():
-    """Test extension initialization."""
-    app = Flask('testapp')
-    ext = InvenioRDMRecords(app)
-    assert 'invenio-rdm-records' in app.extensions
-
-    app = Flask('testapp')
-    ext = InvenioRDMRecords()
-    assert 'invenio-rdm-records' not in app.extensions
-    ext.init_app(app)
-    assert 'invenio-rdm-records' in app.extensions
