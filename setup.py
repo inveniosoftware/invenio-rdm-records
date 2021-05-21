@@ -115,6 +115,9 @@ setup(
             'invenio_rdm_records_record_files = invenio_rdm_records.views:create_record_files_bp',
             'invenio_vocabularies_subjects = invenio_rdm_records.vocabularies.views:create_subjects_blueprint_from_app',
         ],
+        "invenio_base.blueprints": [
+            'invenio_rdm_records_ext = invenio_rdm_records.views:blueprint',
+        ],
         'invenio_celery.tasks': [
             'invenio_rdm_records = invenio_rdm_records.fixtures.tasks',
         ],
