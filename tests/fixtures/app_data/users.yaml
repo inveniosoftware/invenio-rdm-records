@@ -1,0 +1,12 @@
+admin@example.com:
+  active: False
+  password: $ecurep4ssw0rd
+  roles:
+    - admin
+  allow:
+    - superuser-access
+user@example.com:
+  active: True
+  password:
+  roles:
+  allow:

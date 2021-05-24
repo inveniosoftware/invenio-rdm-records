@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 #
+# Copyright (C) 2021 Northwestern University.
 # Copyright (C) 2021 TU Wien.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
@@ -22,20 +23,32 @@ from invenio_db import db
 class UsersFixture:
     """Users fixture."""
 
-    def __init__(self, search_path, filename):
+    def __init__(self, search_paths, filename):
         """Initialize the fixture."""
-        self._search_path = search_path
+        self._search_paths = search_paths
         self._filename = filename
 
     def load(self):
-        """Load the fixture."""
-        with open(self._search_path.path(self._filename)) as fp:
-            data = yaml.load(fp)
-            for email, user_data in data.items():
-                self.create_user(email, user_data)
+        """Load the fixture.
 
-    def create_user(self, email, entry):
-        """Load a single user."""
+        The first users.yaml fixture found in self._search_paths is chosen.
+        """
+        for path in self._search_paths:
+            filepath = path / self._filename
+
+            # Providing a users.yaml file is optional
+            if not filepath.exists():
+                continue
+
+            with open(filepath) as fp:
+                data = yaml.safe_load(fp) or {}
+                for email, user_data in data.items():
+                    self.create_user(email, user_data)
+
+            break
+
+    def _get_password(self, email, entry):
+        """Retrieve password associated with email."""
         # when the user's password is set in the configuration, then
         # this overrides everything else
         password = current_app.config.get(
@@ -49,6 +62,11 @@ class UsersFixture:
             gen_passwd = "".join(secrets.choice(alphabet) for i in range(20))
             password = entry.get("password") or gen_passwd
 
+        return password
+
+    def create_user(self, email, entry):
+        """Load a single user."""
+        password = self._get_password(email, entry)
         user_data = {
             "email": email,
             "active": entry.get("active", False),
@@ -56,10 +74,10 @@ class UsersFixture:
         }
         user = current_datastore.create_user(**user_data)
 
-        for role in entry.get("roles", []):
+        for role in entry.get("roles", []) or []:
             current_datastore.add_role_to_user(user, role)
 
-        for action in entry.get("allow", []):
+        for action in entry.get("allow", []) or []:
             action = current_access.actions[action]
             db.session.add(ActionUsers.allow(action, user_id=user.id))
 

@@ -9,9 +9,11 @@ from pathlib import Path
 
 import pytest
 from invenio_access.permissions import system_identity
+from invenio_accounts.proxies import current_datastore
 from invenio_pidstore.errors import PIDDoesNotExistError
 from invenio_vocabularies.proxies import current_service as vocabulary_service
 
+from invenio_rdm_records.fixtures.users import UsersFixture
 from invenio_rdm_records.fixtures.vocabularies import VocabulariesFixture
 
 
@@ -78,3 +80,22 @@ def test_loading_paths_traversal(app, db):
         ('languages', 'aae'), system_identity)
     item_dict = item.to_dict()
     assert item_dict["id"] == "aae"
+
+
+def test_load_users(app, db, admin_role):
+    dir_ = Path(__file__).parent
+    users = UsersFixture(
+        [
+            dir_ / "app_data",
+            dir_.parent.parent / "invenio_rdm_records/fixtures/data"
+        ],
+        "users.yaml"
+    )
+
+    users.load()
+
+    # app_data/users.yaml doesn't create an admin@inveniosoftware.org user
+    u1 = current_datastore.find_user(email="admin@inveniosoftware.org")
+    assert u1 is None
+    assert current_datastore.find_user(email="admin@example.com")
+    assert current_datastore.find_user(email="user@example.com")
