@@ -8,27 +8,10 @@
 
 """Data fixtures module."""
 
-from os.path import dirname, join
 from pathlib import Path
 
 from .users import UsersFixture
 from .vocabularies import VocabulariesFixture
-
-
-class SearchPath:
-    """Basic class that helps with finding a specific file name.
-
-    TODO: This class is meant to be further developed from this very basic
-    view.
-    """
-
-    def __init__(self, root):
-        """Initialize the search path."""
-        self._root = root
-
-    def path(self, file_path):
-        """Lookup a specific filename path in the search directories."""
-        return join(self._root, file_path)
 
 
 class FixturesEngine:
@@ -42,11 +25,6 @@ class FixturesEngine:
         """Initialize the class."""
         self._identity = identity
 
-    @property
-    def data_dir(self):
-        """Initialize the class."""
-        return join(dirname(__file__), 'data')
-
     def run(self):
         """Run the fixture loading."""
         dir_ = Path(__file__).parent
@@ -58,6 +36,6 @@ class FixturesEngine:
         ).load()
 
         UsersFixture(
-            SearchPath(self.data_dir),
+            [Path("./app_data"), dir_ / "data"],
             'users.yaml',
         ).load()

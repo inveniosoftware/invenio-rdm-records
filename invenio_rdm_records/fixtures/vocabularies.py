@@ -35,10 +35,10 @@ class YamlIterator(DataIterator):
     def __iter__(self):
         """Iterate over records."""
         with open(self._data_file) as fp:
-            data = yaml.safe_load(fp)
-            if data:  # Allow empty files
-                for entry in data:
-                    yield entry
+            # Allow empty files
+            data = yaml.safe_load(fp) or []
+            for entry in data:
+                yield entry
 
 
 class CSVIterator(DataIterator):
@@ -105,7 +105,7 @@ class VocabulariesFixture:
                 continue
 
             with open(filepath) as fp:
-                data = yaml.safe_load(fp)
+                data = yaml.safe_load(fp) or {}
                 for id_, entry in data.items():
                     if id_ not in ids:
                         entry["data-file"] = path / entry["data-file"]

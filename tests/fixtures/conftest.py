@@ -12,6 +12,7 @@ import pathlib
 
 import pytest
 from invenio_access.permissions import system_identity
+from invenio_accounts.models import Role
 
 from invenio_rdm_records.fixtures.vocabularies import VocabulariesFixture
 
@@ -24,3 +25,12 @@ def vocabularies():
         [pathlib.Path(__file__).parent / "data"],
         'vocabularies.yaml',
     )
+
+
+@pytest.fixture(scope="function")
+def admin_role(db):
+    """Create an admin role."""
+    role = Role(name="admin")
+    db.session.add(role)
+    db.session.commit()
+    return role
