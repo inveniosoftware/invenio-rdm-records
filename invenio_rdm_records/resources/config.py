@@ -39,6 +39,9 @@ class RDMRecordResourceConfig(RecordResourceConfig):
     # PIDs
     routes["item-pids-reserve"] = "/<pid_value>/draft/pids/<pid_type>"
 
+    # IIIF presentation
+    routes["iiif-manifest"] = "/<pid_value>/iiif/manifest"
+
     request_view_args = {
         "pid_value": ma.fields.Str(),
         "pid_type": ma.fields.Str(),

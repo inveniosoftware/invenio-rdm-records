@@ -3,19 +3,24 @@
 # Copyright (C) 2020-2021 CERN.
 # Copyright (C) 2020 Northwestern University.
 # Copyright (C) 2021 TU Wien.
+# Copyright (C) 2021 data-futures.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
 
 """Bibliographic Record Resource."""
 
-from flask import abort, g
+from flask import abort, g, jsonify
 from flask_resources import request_parser, resource_requestctx, \
     response_handler, route
 from invenio_drafts_resources.resources import RecordResource
 from invenio_records_resources.resources.records.resource import \
     request_data, request_search_args, request_view_args
 from marshmallow_utils.fields import SanitizedUnicode
+
+from .serializers.iiifp import IIIFPresiSerializer
+from invenio_drafts_resources.services import RecordService
+from flask_restful.utils import cors
 
 request_pids_args = request_parser(
     {"client": SanitizedUnicode()}, location='args'
@@ -37,9 +42,20 @@ class RDMRecordResource(RecordResource):
         url_rules += [
             route("POST", p(routes["item-pids-reserve"]), self.pids_reserve),
             route("DELETE", p(routes["item-pids-reserve"]), self.pids_discard),
+            route("GET", p(routes["iiif-manifest"]), self.get_iiifp)
         ]
 
         return url_rules
+
+    @request_view_args
+    @cors.crossdomain(origin="*", methods="GET")
+    def get_iiifp(self):
+        """Return IIIF MMManifest."""
+        pid = resource_requestctx.view_args["pid_value"]
+        record = self.service.read(id_=pid, identity=g.identity)
+        manifest = jsonify(IIIFPresiSerializer().dump_one(record))
+        manifest.mimetype = "application/ld+json"
+        return manifest, 200
 
     @request_pids_args
     @request_view_args
