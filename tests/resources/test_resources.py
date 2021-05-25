@@ -11,6 +11,7 @@
 
 import json
 from datetime import datetime, timedelta, timezone
+from io import BytesIO
 
 import arrow
 import pytest
@@ -405,6 +406,75 @@ def test_user_records_and_drafts(
     assert response.status_code == 200
     assert response.json['hits']['total'] == 1
     assert response.json['hits']['hits'][0]['id'] == draftid
+
+
+def _assert_file_entry(entry, recid, filename):
+    assert entry["key"] == filename
+
+    links = entry["links"]
+    assert links["self"] == f'https://127.0.0.1:5000/api/records/{recid}/draft/files/{filename}'  # noqa
+    assert links["content"] == f'https://127.0.0.1:5000/api/records/{recid}/draft/files/{filename}/content'  # noqa
+    assert links["commit"] == f'https://127.0.0.1:5000/api/records/{recid}/draft/files/{filename}/commit'  # noqa
+
+
+def _create_and_assert_file(client, h, recid, filename, file_content):
+    response = client.post(
+        f'/records/{recid}/draft/files', headers=h, json=[{'key': filename}])
+
+    assert response.status_code == 201
+    entries = response.json["entries"]
+    found = False
+    i = 0
+    while not found and i < len(entries):
+        entry = entries[i]
+        if entry["key"] == filename:
+            found = True
+            _assert_file_entry(entry, recid, filename)
+        i += 1
+
+    assert found
+
+    response = client.put(
+        f"/records/{recid}/draft/files/{filename}/content",
+        headers={
+            'content-type': 'application/octet-stream',
+            'accept': 'application/json',
+        },
+        data=BytesIO(file_content),
+    )
+
+    assert response.status_code == 200
+    _assert_file_entry(entry, recid, filename)
+
+    response = client.post(
+        f"/records/{recid}/draft/files/{filename}/commit", headers=h)
+
+    assert response.status_code == 200
+    _assert_file_entry(entry, recid, filename)
+
+
+def test_multiple_files_record(
+    app, location, es_clear, client_with_login, headers, minimal_record
+):
+    client = client_with_login
+    minimal_record["files"]["enabled"] = True
+    response = client.post(
+        '/records', headers=headers, data=json.dumps(minimal_record))
+    assert response.status_code == 201
+    recid = response.json['id']
+
+    filename1 = 'test.txt'
+    file_content1 = b'testfile1'
+    filename2 = 'test2.txt'
+    file_content2 = b'testfile2'
+
+    _create_and_assert_file(client, headers, recid, filename1, file_content2)
+    _create_and_assert_file(client, headers, recid, filename2, file_content2)
+
+    response = client.post(
+        f"/records/{recid}/draft/actions/publish", headers=headers)
+
+    assert response.status_code == 202
 
 
 # TODO
