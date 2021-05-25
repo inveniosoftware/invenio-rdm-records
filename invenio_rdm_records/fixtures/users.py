@@ -18,6 +18,7 @@ from invenio_access.models import ActionUsers
 from invenio_access.proxies import current_access
 from invenio_accounts.proxies import current_datastore
 from invenio_db import db
+from sqlalchemy.exc import IntegrityError
 
 
 class UsersFixture:
@@ -43,8 +44,13 @@ class UsersFixture:
             with open(filepath) as fp:
                 data = yaml.safe_load(fp) or {}
                 for email, user_data in data.items():
-                    self.create_user(email, user_data)
-
+                    try:
+                        self.create_user(email, user_data)
+                    except IntegrityError:
+                        current_app.logger.warning(
+                            f"User {email} already exists"
+                        )
+                        continue
             break
 
     def _get_password(self, email, entry):
