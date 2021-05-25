@@ -1,7 +1,7 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "id": "local://records/record-v2.0.0.json",
-  "title": "InvenioRDM Record Schema v2.0.0",
+  "id": "local://records/record-v3.0.0.json",
+  "title": "InvenioRDM Record Schema v3.0.0",
   "type": "object",
   "additionalProperties": false,
   "properties": {

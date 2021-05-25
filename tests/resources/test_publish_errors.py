@@ -1,16 +1,13 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2020 CERN.
-# Copyright (C) 2020 Northwestern University.
+# Copyright (C) 2020-2021 CERN.
+# Copyright (C) 2020-2021 Northwestern University.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
 
 """Test errors."""
 
-import pytest
-from flask_security import login_user
-from invenio_accounts.testutils import login_user_via_session
 
 # Helpers
 
@@ -26,7 +23,7 @@ def save_partial_draft(client, partial_record, headers):
 
 
 def test_simple_field_error(
-        client_with_login, minimal_record, location, es_clear, headers
+        client_with_login, minimal_record, running_app, es_clear, headers
 ):
     client = client_with_login
     minimal_record["metadata"]["publication_date"] = ""
@@ -49,7 +46,7 @@ def test_simple_field_error(
 
 
 def test_nested_field_error(
-        client_with_login, minimal_record, location, es_clear, headers
+        client_with_login, minimal_record, running_app, es_clear, headers
 ):
     client = client_with_login
     minimal_record["metadata"]["creators"] = [
@@ -87,7 +84,7 @@ def test_nested_field_error(
 
 
 def test_multiple_errors(
-    client_with_login, minimal_record, location, es_clear, headers
+    client_with_login, minimal_record, running_app, es_clear, headers
 ):
     client = client_with_login
     minimal_record["metadata"]["publication_date"] = ""

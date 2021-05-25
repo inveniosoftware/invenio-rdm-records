@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2020 CERN.
+# Copyright (C) 2020-2021 CERN.
+# Copyright (C) 2020-2021 Northwestern University.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
@@ -27,7 +28,7 @@ from invenio_rdm_records.records.dumpers import EDTFDumperExt, \
     ("1776", "1776-01-01", "1776-12-31"),
     ("2021-01/2021-03", "2021-01-01", "2021-03-31")
 ])
-def test_esdumper_with_edtfext(app, db, minimal_record, location,
+def test_esdumper_with_edtfext(running_app, db, minimal_record,
                                date, expected_start, expected_end):
     """Test edft extension implementation."""
     # Create a simple extension that adds a computed field.
@@ -63,7 +64,7 @@ def test_esdumper_with_edtfext(app, db, minimal_record, location,
     assert "date" in new_record["metadata"]["dates"][0]
 
 
-def test_esdumper_with_edtfext_not_defined(app, db, location, minimal_record):
+def test_esdumper_with_edtfext_not_defined(running_app, db, minimal_record):
     """Test edft extension implementation."""
     # Create a simple extension that adds a computed field.
 
@@ -88,7 +89,8 @@ def test_esdumper_with_edtfext_not_defined(app, db, location, minimal_record):
     assert "non_existing_field" not in new_record["metadata"]
 
 
-def test_eslistdumper_with_edtfext_not_defined(app, db, minimal_record):
+def test_eslistdumper_with_edtfext_not_defined(
+        running_app, db, minimal_record):
     """Test edft extension implementation."""
     # Create a simple extension that adds a computed field.
 
@@ -113,7 +115,7 @@ def test_eslistdumper_with_edtfext_not_defined(app, db, minimal_record):
     assert "non_existing_array_field" not in new_record["metadata"]
 
 
-def test_esdumper_with_edtfext_parse_error(app, db, location, minimal_record):
+def test_esdumper_with_edtfext_parse_error(running_app, db, minimal_record):
     """Test edft extension implementation."""
     # NOTE: We cannot trigger this on publication_date because it is checked
     # by marshmallow on record creation. We can simply give a non date field.
@@ -130,15 +132,16 @@ def test_esdumper_with_edtfext_parse_error(app, db, location, minimal_record):
     # Dump it
     dump = record.dumps(dumper=dumper)
     assert "type_range" not in dump["metadata"]["resource_type"]
-    assert "type" in dump["metadata"]["resource_type"]
+    assert "id" in dump["metadata"]["resource_type"]
 
     # Load it
     new_record = RDMRecord.loads(dump, loader=dumper)
     assert "type_range" not in new_record["metadata"]["resource_type"]
-    assert "type" in new_record["metadata"]["resource_type"]
+    assert "id" in new_record["metadata"]["resource_type"]
 
 
-def test_eslistdumper_with_edtfext_parse_error(app, db, minimal_record):
+def test_eslistdumper_with_edtfext_parse_error(
+        running_app, db, minimal_record):
     """Test edft extension implementation."""
     dumper = ElasticsearchDumper(
         extensions=[
@@ -163,4 +166,4 @@ def test_eslistdumper_with_edtfext_parse_error(app, db, minimal_record):
     assert 'family_name' in person_or_org
     assert 'type_start' not in new_record['metadata']['resource_type']
     assert 'type_end' not in new_record['metadata']['resource_type']
-    assert 'type' in new_record['metadata']['resource_type']
+    assert 'id' in new_record['metadata']['resource_type']

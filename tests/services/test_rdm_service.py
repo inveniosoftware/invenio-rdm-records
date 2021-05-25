@@ -9,21 +9,37 @@
 
 """Service level tests for Invenio RDM Records."""
 
+from collections import namedtuple
+
 import pytest
 from invenio_pidstore.errors import PIDDoesNotExistError
+from invenio_vocabularies.proxies import current_service as vocabulary_service
 from marshmallow import ValidationError
 
 from invenio_rdm_records.proxies import current_rdm_records
+
+RunningApp = namedtuple("RunningApp", [
+    "app", "location", "superuser_identity", "resource_type_item"
+])
+
+
+@pytest.fixture
+def running_app(app, location, superuser_identity, resource_type_item):
+    """This fixture provides an app with the typically needed db data loaded.
+
+    All of these fixtures are often needed together, so collecting them
+    under a semantic umbrella makes sense.
+    """
+    return RunningApp(app, location, superuser_identity, resource_type_item)
 
 
 #
 # PIDs
 #
-def test_resolve_pid(
-    app, location, es_clear, superuser_identity, minimal_record
-):
+def test_resolve_pid(running_app, es_clear, minimal_record):
     """Test the reserve function with client logged in."""
     service = current_rdm_records.records_service
+    superuser_identity = running_app.superuser_identity
     # create the draft
     draft = service.create(superuser_identity, minimal_record)
     # publish the record
@@ -40,11 +56,10 @@ def test_resolve_pid(
     assert resolved_record.to_dict()["pids"]["doi"]["identifier"] == doi
 
 
-def test_resolve_non_existing_pid(
-    app, location, es_clear, superuser_identity, minimal_record
-):
+def test_resolve_non_existing_pid(running_app, es_clear, minimal_record):
     """Test the reserve function with client logged in."""
     service = current_rdm_records.records_service
+    superuser_identity = running_app.superuser_identity
     # create the draft
     draft = service.create(superuser_identity, minimal_record)
     # publish the record
@@ -61,9 +76,8 @@ def test_resolve_non_existing_pid(
         )
 
 
-def test_pid_creation_default_required(
-    app, location, es_clear, superuser_identity, minimal_record
-):
+def test_pid_creation_default_required(running_app, es_clear, minimal_record):
+    superuser_identity = running_app.superuser_identity
     service = current_rdm_records.records_service
     minimal_record["pids"] = {}
     # create the draft
@@ -78,8 +92,9 @@ def test_pid_creation_default_required(
 
 
 def test_pid_creation_invalid_format_value_managed(
-    app, location, es_clear, superuser_identity, minimal_record
+    running_app, es_clear, minimal_record
 ):
+    superuser_identity = running_app.superuser_identity
     service = current_rdm_records.records_service
     # set the pids field
     doi = {
@@ -97,7 +112,7 @@ def test_pid_creation_invalid_format_value_managed(
 
 
 def test_pid_creation_invalid_no_value_managed(
-    app, location, es_clear, superuser_identity, minimal_record
+    running_app, es_clear, minimal_record
 ):
     # NOTE: This use case is tricky because it will spawn two exceptions
     # Because a value is missing and is also invalid. Should consider only
@@ -110,6 +125,7 @@ def test_pid_creation_invalid_no_value_managed(
     #   'field': 'pids._schema',
     #   'messages': [l'Invalid value for scheme doi']
     # }
+    superuser_identity = running_app.superuser_identity
     service = current_rdm_records.records_service
     # set the pids field
     # no value, to get a value from the system it should not send the pid_type
@@ -127,8 +143,9 @@ def test_pid_creation_invalid_no_value_managed(
 
 
 def test_pid_creation_invalid_scheme_managed(
-    app, location, es_clear, superuser_identity, minimal_record
+    running_app, es_clear, minimal_record
 ):
+    superuser_identity = running_app.superuser_identity
     service = current_rdm_records.records_service
     # set the pids field
     lorem = {
@@ -144,9 +161,8 @@ def test_pid_creation_invalid_scheme_managed(
         service.create(superuser_identity, minimal_record)
 
 
-def test_pid_creation_valid_unmanaged(
-    app, location, es_clear, superuser_identity, minimal_record
-):
+def test_pid_creation_valid_unmanaged(running_app, es_clear, minimal_record):
+    superuser_identity = running_app.superuser_identity
     service = current_rdm_records.records_service
     # set the pids field
     doi = {
@@ -166,8 +182,9 @@ def test_pid_creation_valid_unmanaged(
 
 
 def test_pid_creation_invalid_format_unmanaged(
-    app, location, es_clear, superuser_identity, minimal_record
+    running_app, es_clear, minimal_record
 ):
+    superuser_identity = running_app.superuser_identity
     service = current_rdm_records.records_service
     # set the pids field
     doi = {
@@ -184,8 +201,9 @@ def test_pid_creation_invalid_format_unmanaged(
 
 
 def test_pid_creation_invalid_scheme_unmanaged(
-    app, location, es_clear, superuser_identity, minimal_record
+    running_app, es_clear, minimal_record
 ):
+    superuser_identity = running_app.superuser_identity
     service = current_rdm_records.records_service
     # set the pids field
     lorem = {
@@ -198,3 +216,33 @@ def test_pid_creation_invalid_scheme_unmanaged(
     # won't reach publish
     with pytest.raises(ValidationError):
         service.create(superuser_identity, minimal_record)
+
+
+def test_minimal_draft_creation(running_app, es_clear, minimal_record):
+    superuser_identity = running_app.superuser_identity
+    service = current_rdm_records.records_service
+
+    record_item = service.create(superuser_identity, minimal_record)
+    record_dict = record_item.to_dict()
+
+    assert record_dict["metadata"]["resource_type"] == {
+        'id': 'image-photo',
+        'title': {'en': 'Photo'}
+    }
+
+
+def test_draft_w_languages_creation(
+        running_app, es_clear, minimal_record, lang):
+    superuser_identity = running_app.superuser_identity
+    service = current_rdm_records.records_service
+    minimal_record["metadata"]["languages"] = [{
+        "id": "eng",
+    }]
+
+    record_item = service.create(superuser_identity, minimal_record)
+    record_dict = record_item.to_dict()
+
+    assert record_dict["metadata"]["languages"] == [{
+        'id': 'eng',
+        'title': {'en': 'English', 'da': 'Engelsk'}
+    }]

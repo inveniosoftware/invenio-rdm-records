@@ -21,14 +21,14 @@ from invenio_rdm_records.records.api import RDMDraft, RDMRecord
 #
 # Tests
 #
-def test_languages_field(app, location, minimal_record):
+def test_languages_field(running_app, minimal_record):
     """Languages should be defined as a relation."""
     assert 'languages' in RDMDraft.relations
     assert 'languages' in RDMRecord.relations
     assert RDMDraft.relations.languages
 
 
-def test_languages_validation(app, location, minimal_record, lang):
+def test_languages_validation(running_app, minimal_record, lang):
     """Test languages relationship."""
     minimal_record["metadata"]["languages"] = [{"id": "eng"}]
     draft = RDMDraft.create(minimal_record)
@@ -40,7 +40,7 @@ def test_languages_validation(app, location, minimal_record, lang):
     assert isinstance(lang, Vocabulary)
 
 
-def test_languages_indexing(app, location, minimal_record, lang):
+def test_languages_indexing(running_app, minimal_record, lang):
     """Test languages relationship."""
     minimal_record["metadata"]["languages"] = [{"id": "eng"}]
     draft = RDMDraft.create(minimal_record).commit()
@@ -63,7 +63,7 @@ def test_languages_indexing(app, location, minimal_record, lang):
     assert loaded_draft["metadata"]["languages"] == [{"id": "eng"}]
 
 
-def test_languages_invalid(app, location, minimal_record):
+def test_languages_invalid(running_app, minimal_record, lang):
     """Should fail on invalid id's and invalid structure."""
     # The id "invalid" does not exists.
     minimal_record["metadata"]["languages"] = [{"id": "invalid"}]

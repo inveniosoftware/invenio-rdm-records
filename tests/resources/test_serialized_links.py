@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2020 CERN.
-# Copyright (C) 2020 Northwestern University.
+# Copyright (C) 2020-2021 CERN.
+# Copyright (C) 2020-2021 Northwestern University.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
@@ -10,48 +10,44 @@
 
 import pytest
 from flask_security import login_user
-from invenio_access.models import ActionUsers
-from invenio_accounts.testutils import create_test_user, \
-    login_user_via_session, login_user_via_view
-
-HEADERS = {"content-type": "application/json", "accept": "application/json"}
+from invenio_accounts.testutils import login_user_via_session
 
 
 @pytest.fixture
-def draft_json(app, client, minimal_record, es, location, users):
+def draft_json(running_app, client, minimal_record, users, headers):
     """RDM Draft fixture."""
     login_user(users[0], remember=True)
     login_user_via_session(client, email=users[0].email)
 
     response = client.post(
-        "/records", json=minimal_record, headers=HEADERS
+        "/records", json=minimal_record, headers=headers
     )
     return response.json
 
 
 @pytest.fixture
-def published_json(app, client_with_login, minimal_record, es, location):
+def published_json(running_app, client_with_login, minimal_record, headers):
     """RDM Record fixture.
 
     Can't depend on draft_json since publication deletes draft.
     """
     response = client_with_login.post(
-        "/records", json=minimal_record, headers=HEADERS
+        "/records", json=minimal_record, headers=headers
     )
     pid_value = response.json["id"]
     response = client_with_login.post(
-        f"/records/{pid_value}/draft/actions/publish", headers=HEADERS
+        f"/records/{pid_value}/draft/actions/publish", headers=headers
     )
     return response.json
 
 
-def test_draft_links(client, draft_json, minimal_record):
+def test_draft_links(client, draft_json, minimal_record, headers):
     """Tests the links for endpoints that return a draft."""
     created_draft_links = draft_json["links"]
     pid_value = draft_json["id"]
 
     response = client.get(
-        f"/records/{pid_value}/draft", headers=HEADERS
+        f"/records/{pid_value}/draft", headers=headers
     )
     read_draft_links = response.json["links"]
 
@@ -70,12 +66,12 @@ def test_draft_links(client, draft_json, minimal_record):
     assert expected_links == created_draft_links == read_draft_links
 
 
-def test_record_links(client, published_json):
+def test_record_links(client, published_json, headers):
     """Tests the links for a published RDM record."""
     pid_value = published_json["id"]
     doi_value = published_json["pids"]["doi"]["identifier"].replace("/", "%2F")
     published_record_links = published_json["links"]
-    response = client.get(f"/records/{pid_value}", headers=HEADERS)
+    response = client.get(f"/records/{pid_value}", headers=headers)
     read_record_links = response.json["links"]
 
     expected_links = {
@@ -93,9 +89,9 @@ def test_record_links(client, published_json):
     assert expected_links == published_record_links == read_record_links
 
 
-def test_record_search_links(client, published_json):
+def test_record_search_links(client, published_json, headers):
     """Tests the links for a search of published RDM records."""
-    response = client.get("/records", headers=HEADERS)
+    response = client.get("/records", headers=headers)
     search_record_links = response.json["links"]
 
     expected_links = {
