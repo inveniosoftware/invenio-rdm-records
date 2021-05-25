@@ -13,7 +13,9 @@ import json
 from os.path import splitext
 
 import yaml
+from flask import current_app
 from invenio_vocabularies.proxies import current_service
+from sqlalchemy.exc import IntegrityError
 
 from .tasks import create_vocabulary_record
 
@@ -109,7 +111,13 @@ class VocabulariesFixture:
                 for id_, entry in data.items():
                     if id_ not in ids:
                         entry["data-file"] = path / entry["data-file"]
-                        self.load_vocabulary(id_, entry)
+                        try:
+                            self.load_vocabulary(id_, entry)
+                        except IntegrityError:
+                            current_app.logger.warning(
+                                f"Vocabulary {id_} already exists"
+                            )
+                            continue
                         ids.add(id_)
 
     def load_vocabulary(self, id_, entry, delay=True):
