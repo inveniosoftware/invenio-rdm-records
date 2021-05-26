@@ -135,37 +135,11 @@ class ContributorSchema(Schema):
         validate_entry('contributors.role', data)
 
 
-class ResourceType(fields.Field):
-    """Represents a Resource type as a field.
+class ResourceTypeSchema(Schema):
+    """Resource type schema."""
 
-    This is needed to get a nice error message directly under the
-    'resource_type' key. Otherwise the error message is under the "_schema"
-    key.
-    """
-
-    class ResourceTypeSchema(Schema):
-        """Resource type schema."""
-
-        type = fields.Str(required=True)
-        subtype = fields.Str()
-
-        @validates_schema
-        def validate_data(self, data, **kwargs):
-            """Validate resource type."""
-            validate_entry('resource_type', data)
-
-    def _deserialize(self, value, attr, data, **kwargs):
-        try:
-            return ResourceType.ResourceTypeSchema().load(value)
-        except ValidationError as error:
-            error_content = (
-                []
-                + error.messages.get("type", [])
-                + error.messages.get("subtype", [])
-                + error.messages.get("_schema", [])
-            )
-
-            raise ValidationError(error_content)
+    id = SanitizedUnicode(required=True)
+    title = fields.Dict(dump_only=True)
 
 
 class TitleSchema(Schema):
@@ -331,7 +305,7 @@ class RelatedIdentifierSchema(IdentifierSchema):
             choices=RELATIONS,
             error=_('Invalid relation type. {input} not one of {choices}.')
         ))
-    resource_type = ResourceType()
+    resource_type = fields.Nested(ResourceTypeSchema)
 
 
 class FunderSchema(IdentifierSchema):
@@ -448,7 +422,7 @@ class MetadataSchema(Schema):
     }
 
     # Metadata fields
-    resource_type = ResourceType(required=True)
+    resource_type = fields.Nested(ResourceTypeSchema, required=True)
     creators = fields.List(
         fields.Nested(CreatorSchema),
         required=True,

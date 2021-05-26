@@ -2,6 +2,7 @@
 #
 # Copyright (C) 2021 CERN.
 # Copyright (C) 2021 TU Wien.
+# Copyright (C) 2021 Northwestern University.
 #
 # Invenio is free software; you can redistribute it and/or modify it
 # under the terms of the MIT License; see LICENSE file for more details.
@@ -23,20 +24,13 @@ from invenio_rdm_records.secret_links.permissions import LinkNeed
 
 
 @pytest.fixture()
-def identity(identity_simple):
-    """Ensure it's an authenticated user."""
-    identity_simple.provides.add(authenticated_user)
-    return identity_simple
-
-
-@pytest.fixture()
-def service(app, client, location, es_clear):
+def service(running_app, client, es_clear):
     """RDM Record Service."""
-    return app.extensions['invenio-rdm-records'].records_service
+    return running_app.app.extensions['invenio-rdm-records'].records_service
 
 
 @pytest.fixture()
-def restricted_record(service, minimal_record, identity):
+def restricted_record(service, minimal_record, identity_simple):
     """Restricted record fixture."""
     data = minimal_record.copy()
     data["files"]["enabled"] = True
@@ -44,43 +38,44 @@ def restricted_record(service, minimal_record, identity):
     data["access"]["files"] = "restricted"
 
     # Create
-    draft = service.create(identity, data)
+    draft = service.create(identity_simple, data)
 
     # Add a file
     service.draft_files.init_files(
-        draft.id, identity, data=[{'key': 'test.pdf'}])
+        draft.id, identity_simple, data=[{'key': 'test.pdf'}])
     service.draft_files.set_file_content(
-        draft.id, 'test.pdf', identity, BytesIO(b'test file')
+        draft.id, 'test.pdf', identity_simple, BytesIO(b'test file')
     )
     service.draft_files.commit_file(
-        draft.id, 'test.pdf', identity)
+        draft.id, 'test.pdf', identity_simple)
 
     # Publish
-    record = service.publish(draft.id, identity)
+    record = service.publish(draft.id, identity_simple)
 
     # Put in edit mode so that draft exists
-    draft = service.edit(draft.id, identity)
+    draft = service.edit(draft.id, identity_simple)
 
     return record
 
 
-def test_invalid_level(service, restricted_record, identity):
+def test_invalid_level(service, restricted_record, identity_simple):
     """Test invalid permission level."""
     record = restricted_record
     with pytest.raises(ValidationError):
-        service.secret_links.create(record.id, identity, {
+        service.secret_links.create(record.id, identity_simple, {
             "permission": "invalid"})
 
 
-def test_permission_levels(service, restricted_record, identity, client):
+def test_permission_levels(
+        service, restricted_record, identity_simple, client):
     """Test invalid permission level."""
     id_ = restricted_record.id
     view_link = service.secret_links.create(
-        id_, identity, {"permission": "view"})
+        id_, identity_simple, {"permission": "view"})
     preview_link = service.secret_links.create(
-        id_, identity, {"permission": "preview"})
+        id_, identity_simple, {"permission": "preview"})
     edit_link = service.secret_links.create(
-        id_, identity, {"permission": "edit"})
+        id_, identity_simple, {"permission": "edit"})
 
     # == Anonymous user
     anon = AnonymousIdentity()
@@ -189,10 +184,9 @@ def test_permission_levels(service, restricted_record, identity, client):
 
 
 def test_read_restricted_record_with_secret_link(
-    app, client, location, minimal_record, es_clear, identity_simple
+    running_app, client, minimal_record, es_clear, identity_simple
 ):
     """Test access to a restricted record via a shared link."""
-    identity_simple.provides.add(authenticated_user)
     service = current_rdm_records.records_service
     record_data = minimal_record.copy()
     record_data["access"]["files"] = "restricted"

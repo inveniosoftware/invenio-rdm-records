@@ -10,7 +10,7 @@
 from invenio_rdm_records.records.api import RDMDraft
 
 
-def test_idempotence_dumps_loads(app, location, minimal_record):
+def test_idempotence_dumps_loads(running_app, minimal_record):
     """Idempotence of dumps and loads."""
     # This simple test asserts a key property of the dumps and loads methods.
     # A record that's dumped, must when loaded produce exactly the same dict

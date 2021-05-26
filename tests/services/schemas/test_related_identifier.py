@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2020 CERN.
+# Copyright (C) 2020-2021 CERN.
+# Copyright (C) 2020-2021 CERN.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
@@ -20,8 +21,7 @@ def test_valid_related_identifiers():
         "scheme": "doi",
         "relation_type": "requires",
         "resource_type": {
-            "type": "image",
-            "subtype": "image-photo"
+            "id": "image-photo"
         }
     }
 
@@ -46,8 +46,7 @@ def test_valid_no_scheme_related_identifiers(app):
         "identifier": "10.5281/zenodo.9999988",
         "relation_type": "requires",
         "resource_type": {
-            "type": "image",
-            "subtype": "image-photo"
+            "id": "image-photo"
         }
     }
     loaded = RelatedIdentifierSchema().load(valid_no_scheme)
@@ -60,8 +59,7 @@ def test_invalid_no_identifiers_related_identifiers(app):
         "scheme": "doi",
         "relation_type": "requires",
         "resource_type": {
-            "type": "image",
-            "subtype": "image-photo"
+            "id": "image-photo"
         }
     }
     with pytest.raises(ValidationError):
@@ -74,8 +72,7 @@ def test_invalid_scheme_related_identifiers(app):
         "scheme": "INVALID",
         "relation_type": "requires",
         "resource_type": {
-            "type": "image",
-            "subtype": "image-photo"
+            "id": "image-photo"
         }
     }
 
@@ -89,8 +86,7 @@ def test_invalid_no_type_related_identifiers(app):
         "identifier": "10.5281/zenodo.9999988",
         "scheme": "doi",
         "resource_type": {
-            "type": "image",
-            "subtype": "image-photo"
+            "id": "image-photo"
         }
     }
     with pytest.raises(ValidationError):
@@ -103,8 +99,7 @@ def test_invalid_relation_type_related_identifiers(app):
         "scheme": "doi",
         "relation_type": "INVALID",
         "resource_type": {
-            "type": "image",
-            "subtype": "image-photo"
+            "id": "image-photo"
         }
     }
     with pytest.raises(ValidationError):
@@ -117,8 +112,7 @@ def test_invalid_extra_field_related_identifiers(app):
         "scheme": "doi",
         "relation_type": "INVALID",
         "resource_type": {
-            "type": "image",
-            "subtype": "image-photo"
+            "id": "image-photo"
         },
         "extra": "field"
     }
@@ -134,8 +128,7 @@ def test_valid_related_identifiers_in_schema(app, minimal_record):
             "scheme": "doi",
             "relation_type": "requires",
             "resource_type": {
-                "type": "image",
-                "subtype": "image-photo"
+                "id": "image-photo"
             }
         }, {
             "identifier": "10.5281/zenodo.9999977",
@@ -154,8 +147,7 @@ def test_invalid_related_identifiers(app, minimal_record):
         "scheme": "doi",
         "relation_type": "requires",
         "resource_type": {
-            "type": "image",
-            "subtype": "image-photo"
+            "id": "image-photo"
         }
     }
 

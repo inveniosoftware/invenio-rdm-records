@@ -1,0 +1,495 @@
+- id: publication
+  props:
+    csl: report
+    datacite_general: Text
+    datacite_type: ''
+    openaire_resourceType: '17'
+    openaire_type: publication
+    schema.org: https://schema.org/CreativeWork
+    subtype: ''
+    subtype_name: ''
+    type: publication
+    type_icon: file alternate
+    type_name: Publication
+  title:
+    en: Publication
+- id: publication-annotationcollection
+  props:
+    csl: report
+    datacite_general: Collection
+    datacite_type: ''
+    openaire_resourceType: '9'
+    openaire_type: publication
+    schema.org: https://schema.org/Collection
+    subtype: publication-annotationcollection
+    subtype_name: Annotation collection
+    type: publication
+    type_icon: file alternate
+    type_name: Publication
+  title:
+    en: Annotation collection
+- id: publication-book
+  props:
+    csl: book
+    datacite_general: Text
+    datacite_type: Book
+    openaire_resourceType: '2'
+    openaire_type: publication
+    schema.org: https://schema.org/Book
+    subtype: publication-book
+    subtype_name: Book
+    type: publication
+    type_icon: file alternate
+    type_name: Publication
+  title:
+    en: Book
+- id: publication-section
+  props:
+    csl: chapter
+    datacite_general: Text
+    datacite_type: Book section
+    openaire_resourceType: '13'
+    openaire_type: publication
+    schema.org: https://schema.org/ScholarlyArticle
+    subtype: publication-section
+    subtype_name: Book section
+    type: publication
+    type_icon: file alternate
+    type_name: Publication
+  title:
+    en: Book section
+- id: publication-conferencepaper
+  props:
+    csl: paper-conference
+    datacite_general: Text
+    datacite_type: Conference paper
+    openaire_resourceType: '4'
+    openaire_type: publication
+    schema.org: https://schema.org/ScholarlyArticle
+    subtype: publication-conferencepaper
+    subtype_name: Conference paper
+    type: publication
+    type_icon: file alternate
+    type_name: Publication
+  title:
+    en: Conference paper
+- id: publication-datamanagementplan
+  props:
+    csl: report
+    datacite_general: Text
+    datacite_type: Data management plan
+    openaire_resourceType: '9'
+    openaire_type: publication
+    schema.org: https://schema.org/CreativeWork
+    subtype: publication-datamanagementplan
+    subtype_name: Data management plan
+    type: publication
+    type_icon: file alternate
+    type_name: Publication
+  title:
+    en: Data management plan
+- id: publication-article
+  props:
+    csl: article-journal
+    datacite_general: Text
+    datacite_type: Journal article
+    openaire_resourceType: '1'
+    openaire_type: publication
+    schema.org: https://schema.org/ScholarlyArticle
+    subtype: publication-article
+    subtype_name: Journal article
+    type: publication
+    type_icon: file alternate
+    type_name: Publication
+  title:
+    en: Journal article
+- id: publication-patent
+  props:
+    csl: patent
+    datacite_general: Text
+    datacite_type: Patent
+    openaire_resourceType: '19'
+    openaire_type: publication
+    schema.org: https://schema.org/CreativeWork
+    subtype: publication-patent
+    subtype_name: Patent
+    type: publication
+    type_icon: file alternate
+    type_name: Publication
+  title:
+    en: Patent
+- id: publication-preprint
+  props:
+    csl: article
+    datacite_general: Text
+    datacite_type: Preprint
+    openaire_resourceType: '16'
+    openaire_type: publication
+    schema.org: https://schema.org/ScholarlyArticle
+    subtype: publication-preprint
+    subtype_name: Preprint
+    type: publication
+    type_icon: file alternate
+    type_name: Publication
+  title:
+    en: Preprint
+- id: publication-deliverable
+  props:
+    csl: report
+    datacite_general: Text
+    datacite_type: Project deliverable
+    openaire_resourceType: '34'
+    openaire_type: publication
+    schema.org: https://schema.org/CreativeWork
+    subtype: publication-deliverable
+    subtype_name: Project deliverable
+    type: publication
+    type_icon: file alternate
+    type_name: Publication
+  title:
+    en: Project deliverable
+- id: publication-milestone
+  props:
+    csl: report
+    datacite_general: Text
+    datacite_type: Project milestone
+    openaire_resourceType: '35'
+    openaire_type: publication
+    schema.org: https://schema.org/CreativeWork
+    subtype: publication-milestone
+    subtype_name: Project milestone
+    type: publication
+    type_icon: file alternate
+    type_name: Publication
+  title:
+    en: Project milestone
+- id: publication-proposal
+  props:
+    csl: article
+    datacite_general: Text
+    datacite_type: Proposal
+    openaire_resourceType: '36'
+    openaire_type: publication
+    schema.org: https://schema.org/CreativeWork
+    subtype: publication-proposal
+    subtype_name: Proposal
+    type: publication
+    type_icon: file alternate
+    type_name: Publication
+  title:
+    en: Proposal
+- id: publication-report
+  props:
+    csl: article
+    datacite_general: Text
+    datacite_type: Report
+    openaire_resourceType: '17'
+    openaire_type: publication
+    schema.org: https://schema.org/ScholarlyArticle
+    subtype: publication-report
+    subtype_name: Report
+    type: publication
+    type_icon: file alternate
+    type_name: Publication
+  title:
+    en: Report
+- id: publication-softwaredocumentation
+  props:
+    csl: article
+    datacite_general: Text
+    datacite_type: Software documentation
+    openaire_resourceType: '9'
+    openaire_type: publication
+    schema.org: https://schema.org/CreativeWork
+    subtype: publication-softwaredocumentation
+    subtype_name: Software documentation
+    type: publication
+    type_icon: file alternate
+    type_name: Publication
+  title:
+    en: Software documentation
+- id: publication-taxonomictreatment
+  props:
+    csl: article
+    datacite_general: Text
+    datacite_type: Taxonomic treatment
+    openaire_resourceType: '20'
+    openaire_type: publication
+    schema.org: https://schema.org/ScholarlyArticle
+    subtype: publication-taxonomictreatment
+    subtype_name: Taxonomic treatment
+    type: publication
+    type_icon: file alternate
+    type_name: Publication
+  title:
+    en: Taxonomic treatment
+- id: publication-technicalnote
+  props:
+    csl: article
+    datacite_general: Text
+    datacite_type: Technical note
+    openaire_resourceType: '9'
+    openaire_type: publication
+    schema.org: https://schema.org/ScholarlyArticle
+    subtype: publication-technicalnote
+    subtype_name: Technical note
+    type: publication
+    type_icon: file alternate
+    type_name: Publication
+  title:
+    en: Technical note
+- id: publication-thesis
+  props:
+    csl: thesis
+    datacite_general: Text
+    datacite_type: Thesis
+    openaire_resourceType: '6'
+    openaire_type: publication
+    schema.org: https://schema.org/ScholarlyArticle
+    subtype: publication-thesis
+    subtype_name: Thesis
+    type: publication
+    type_icon: file alternate
+    type_name: Publication
+  title:
+    en: Thesis
+- id: publication-workingpaper
+  props:
+    csl: article
+    datacite_general: Text
+    datacite_type: Working paper
+    openaire_resourceType: '14'
+    openaire_type: publication
+    schema.org: https://schema.org/ScholarlyArticle
+    subtype: publication-workingpaper
+    subtype_name: Working paper
+    type: publication
+    type_icon: file alternate
+    type_name: Publication
+  title:
+    en: Working paper
+- id: publication-other
+  props:
+    csl: article
+    datacite_general: Text
+    datacite_type: Other
+    openaire_resourceType: '20'
+    openaire_type: publication
+    schema.org: https://schema.org/CreativeWork
+    subtype: publication-other
+    subtype_name: Other
+    type: publication
+    type_icon: file alternate
+    type_name: Publication
+  title:
+    en: Other
+- id: poster
+  props:
+    csl: graphic
+    datacite_general: Text
+    datacite_type: Poster
+    openaire_resourceType: '4'
+    openaire_type: publication
+    schema.org: https://schema.org/CreativeWork
+    subtype: ''
+    subtype_name: ''
+    type: poster
+    type_icon: columns
+    type_name: Poster
+  title:
+    en: Poster
+- id: presentation
+  props:
+    csl: speech
+    datacite_general: Text
+    datacite_type: Presentation
+    openaire_resourceType: '4'
+    openaire_type: publication
+    schema.org: https://schema.org/PresentationDigitalDocument
+    subtype: ''
+    subtype_name: ''
+    type: presentation
+    type_icon: group
+    type_name: Presentation
+  title:
+    en: Presentation
+- id: dataset
+  props:
+    csl: dataset
+    datacite_general: Dataset
+    datacite_type: ''
+    openaire_resourceType: '21'
+    openaire_type: dataset
+    schema.org: https://schema.org/Dataset
+    subtype: ''
+    subtype_name: ''
+    type: dataset
+    type_icon: table
+    type_name: Dataset
+  title:
+    en: Dataset
+- id: image
+  props:
+    csl: figure
+    datacite_general: Image
+    datacite_type: ''
+    openaire_resourceType: '25'
+    openaire_type: dataset
+    schema.org: https://schema.org/ImageObject
+    subtype: ''
+    subtype_name: ''
+    type: image
+    type_icon: chart bar outline
+    type_name: Image
+  title:
+    en: Image
+- id: image-figure
+  props:
+    csl: figure
+    datacite_general: Image
+    datacite_type: Figure
+    openaire_resourceType: '25'
+    openaire_type: dataset
+    schema.org: https://schema.org/ImageObject
+    subtype: image-figure
+    subtype_name: Figure
+    type: image
+    type_icon: chart bar outline
+    type_name: Image
+  title:
+    en: Figure
+- id: image-plot
+  props:
+    csl: figure
+    datacite_general: Image
+    datacite_type: Plot
+    openaire_resourceType: '25'
+    openaire_type: dataset
+    schema.org: https://schema.org/ImageObject
+    subtype: image-plot
+    subtype_name: Plot
+    type: image
+    type_icon: chart bar outline
+    type_name: Image
+  title:
+    en: Plot
+- id: image-drawing
+  props:
+    csl: graphic
+    datacite_general: Image
+    datacite_type: Drawing
+    openaire_resourceType: '25'
+    openaire_type: dataset
+    schema.org: https://schema.org/ImageObject
+    subtype: image-drawing
+    subtype_name: Drawing
+    type: image
+    type_icon: chart bar outline
+    type_name: Image
+  title:
+    en: Drawing
+- id: image-diagram
+  props:
+    csl: figure
+    datacite_general: Image
+    datacite_type: Diagram
+    openaire_resourceType: '25'
+    openaire_type: dataset
+    schema.org: https://schema.org/ImageObject
+    subtype: image-diagram
+    subtype_name: Diagram
+    type: image
+    type_icon: chart bar outline
+    type_name: Image
+  title:
+    en: Diagram
+- id: image-photo
+  props:
+    csl: graphic
+    datacite_general: Image
+    datacite_type: Photo
+    openaire_resourceType: '25'
+    openaire_type: dataset
+    schema.org: https://schema.org/Photograph
+    subtype: image-photo
+    subtype_name: Photo
+    type: image
+    type_icon: chart bar outline
+    type_name: Image
+  title:
+    en: Photo
+- id: image-other
+  props:
+    csl: graphic
+    datacite_general: Image
+    datacite_type: Other
+    openaire_resourceType: '25'
+    openaire_type: dataset
+    schema.org: https://schema.org/ImageObject
+    subtype: image-other
+    subtype_name: Other
+    type: image
+    type_icon: chart bar outline
+    type_name: Image
+  title:
+    en: Other
+- id: video
+  props:
+    csl: motion_picture
+    datacite_general: Audiovisual
+    datacite_type: ''
+    openaire_resourceType: '33'
+    openaire_type: dataset
+    schema.org: https://schema.org/MediaObject
+    subtype: ''
+    subtype_name: ''
+    type: video
+    type_icon: film
+    type_name: Video/Audio
+  title:
+    en: Video/Audio
+- id: software
+  props:
+    csl: article
+    datacite_general: Software
+    datacite_type: ''
+    openaire_resourceType: '29'
+    openaire_type: software
+    schema.org: https://schema.org/SoftwareSourceCode
+    subtype: ''
+    subtype_name: ''
+    type: software
+    type_icon: code
+    type_name: Software
+  title:
+    en: Software
+- id: lesson
+  props:
+    csl: speech
+    datacite_general: InteractiveResource
+    datacite_type: ''
+    openaire_resourceType: '10'
+    openaire_type: other
+    schema.org: https://schema.org/CreativeWork
+    subtype: ''
+    subtype_name: ''
+    type: lesson
+    type_icon: graduation
+    type_name: Lesson
+  title:
+    en: Lesson
+- id: other
+  props:
+    csl: article
+    datacite_general: Other
+    datacite_type: ''
+    openaire_resourceType: '20'
+    openaire_type: other
+    schema.org: https://schema.org/CreativeWork
+    subtype: ''
+    subtype_name: ''
+    type: other
+    type_icon: asterisk
+    type_name: Other
+  title:
+    en: Other

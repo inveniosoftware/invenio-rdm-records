@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2020 CERN.
-# Copyright (C) 2020 Northwestern University.
+# Copyright (C) 2020-2021 CERN.
+# Copyright (C) 2020-2021 Northwestern University.
 # Copyright (C) 2021 TU Wien.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
@@ -256,7 +256,7 @@ def test_owners_creation(users):
 #
 
 
-def test_access_field_on_record(minimal_record, parent, users):
+def test_access_field_on_record(running_app, minimal_record, parent, users):
     next_year = arrow.utcnow().datetime + timedelta(days=+365)
     minimal_record["access"]["embargo"] = {
         "until": next_year.strftime("%Y-%m-%d"),
@@ -272,7 +272,8 @@ def test_access_field_on_record(minimal_record, parent, users):
     assert isinstance(rec.access.embargo, Embargo)
 
 
-def test_access_field_update_embargo(minimal_record, parent, users):
+def test_access_field_update_embargo(
+        running_app, minimal_record, parent, users):
     next_year = arrow.utcnow().datetime + timedelta(days=+365)
     minimal_record["access"]["embargo"] = {
         "until": next_year.strftime("%Y-%m-%d"),
@@ -303,7 +304,8 @@ def test_access_field_clear_embargo(minimal_record, parent):
     assert not rec.access.embargo
 
 
-def test_access_field_update_protection(minimal_record, parent, users):
+def test_access_field_update_protection(
+        running_app, minimal_record, parent, users):
     minimal_record["access"]["record"] = "restricted"
     minimal_record["access"]["files"] = "restricted"
 
@@ -323,7 +325,8 @@ def test_access_field_update_protection(minimal_record, parent, users):
 #
 
 
-def test_access_field_update_owners(minimal_record, parent, users):
+def test_access_field_update_owners(
+        running_app, minimal_record, parent, users):
     rec = RDMRecord.create(minimal_record.copy(), parent=parent)
     parent = rec.parent
     new_owner = {"user": 1337}

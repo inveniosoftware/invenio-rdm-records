@@ -61,7 +61,7 @@ def _validate_access(response, original):
 
 
 def test_simple_flow(
-    app, client_with_login, location, minimal_record, headers, es_clear
+    running_app, client_with_login, minimal_record, headers, es_clear
 ):
     client = client_with_login
     """Test a simple REST API flow."""
@@ -116,7 +116,7 @@ def test_simple_flow(
 
 
 def test_create_draft(
-    client_with_login, location, minimal_record, headers, es_clear
+    running_app, client_with_login, minimal_record, headers, es_clear
 ):
     """Test draft creation of a non-existing record."""
     client = client_with_login
@@ -129,7 +129,7 @@ def test_create_draft(
 
 
 def test_create_partial_draft(
-    client_with_login, location, minimal_record, headers, es_clear
+    running_app, client_with_login, minimal_record, headers, es_clear
 ):
     """Test partial draft creation of a non-existing record.
 
@@ -152,7 +152,7 @@ def test_create_partial_draft(
 
 
 def test_create_draft_w_extra_fields_reports_error_doesnt_save_field(
-    client_with_login, location, minimal_record, headers, es_clear
+    running_app, client_with_login, minimal_record, headers, es_clear
 ):
     """Extra fields are reported in errors but not saved."""
     client = client_with_login
@@ -172,7 +172,7 @@ def test_create_draft_w_extra_fields_reports_error_doesnt_save_field(
 
 
 def test_read_draft(
-    client_with_login, location, minimal_record, headers, es_clear
+    running_app, client_with_login, minimal_record, headers, es_clear
 ):
     """Test draft read."""
     client = client_with_login
@@ -192,7 +192,7 @@ def test_read_draft(
 
 
 def test_update_draft(
-    client_with_login, location, minimal_record, headers, es_clear
+    running_app, client_with_login, minimal_record, headers, es_clear
 ):
     """Test draft update."""
     client = client_with_login
@@ -235,7 +235,7 @@ def test_update_draft(
 
 
 def test_update_partial_draft(
-    client_with_login, location, minimal_record, headers, es_clear
+    running_app, client_with_login, minimal_record, headers, es_clear
 ):
     """Test partial draft update.
 
@@ -272,7 +272,7 @@ def test_update_partial_draft(
 
 
 def test_delete_draft(
-    client_with_login, location, minimal_record, headers, es_clear
+    running_app, client_with_login, minimal_record, headers, es_clear
 ):
     """Test draft deletion."""
     client = client_with_login
@@ -315,7 +315,7 @@ def _create_and_publish(client, minimal_record, headers):
 
 
 def test_publish_draft(
-    client_with_login, location, minimal_record, headers, es_clear
+    running_app, client_with_login, minimal_record, headers, es_clear
 ):
     """Test publication of a new draft.
 
@@ -337,7 +337,7 @@ def test_publish_draft(
 
 
 def test_publish_draft_w_dates(
-    client_with_login, location, minimal_record, headers, es_clear
+    running_app, client_with_login, minimal_record, headers, es_clear
 ):
     """Test publication of a draft with dates."""
     client = client_with_login
@@ -360,7 +360,7 @@ def test_publish_draft_w_dates(
 
 
 def test_user_records_and_drafts(
-    client_with_login, location, headers, minimal_record, es_clear
+    running_app, client_with_login, headers, minimal_record, es_clear
 ):
     """Tests the search over the drafts search alias."""
     client = client_with_login
@@ -508,8 +508,7 @@ def test_ui_data_in_record(
 
 
 def test_link_creation(
-    app, client_with_login, location,
-    minimal_record, headers, es_clear,
+    running_app, client_with_login, minimal_record, headers, es_clear,
 ):
     """Test the creation of secret links."""
     client = client_with_login
@@ -588,8 +587,7 @@ def test_link_creation(
 
 
 def test_link_deletion(
-    app, client_with_login, location,
-    minimal_record, headers, es_clear,
+    running_app, client_with_login, minimal_record, headers, es_clear
 ):
     """Test the deletion of a secret link."""
     client = client_with_login
@@ -632,8 +630,7 @@ def test_link_deletion(
 
 
 def test_link_update(
-    app, client_with_login, location,
-    minimal_record, headers, es_clear,
+    running_app, client_with_login, minimal_record, headers, es_clear
 ):
     """Test the deletion of a secret link."""
     client = client_with_login
@@ -687,8 +684,13 @@ def test_link_update(
     assert link_result.json["permission"] == "preview"
 
 
+#
+# DOI API
+#
+
+
 def test_reserve_pid_with_login(
-      app, location, es_clear, headers, client_with_login, minimal_record
+    running_app, client_with_login, minimal_record, headers, es_clear
   ):
     """Test the reserve function with client logged in."""
     # GET with client login
@@ -707,7 +709,7 @@ def test_reserve_pid_with_login(
 
 
 def test_discard_pid_with_login(
-    app, location, es_clear, headers, client_with_login, minimal_record
+    running_app, client_with_login, minimal_record, headers, es_clear
 ):
     """Test the discard function."""
     # GET with client login
@@ -735,7 +737,7 @@ def test_discard_pid_with_login(
 
 
 def test_publish_pid_flow(
-    app, location, es_clear, headers, client_with_login, minimal_record
+    running_app, client_with_login, minimal_record, headers, es_clear
 ):
     """Test the reserve function with client logged in."""
     # GET with client login

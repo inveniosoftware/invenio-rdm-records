@@ -70,7 +70,7 @@ def commit_file(client, recid, headers):
 
 
 def test_only_owners_can_init_file_upload(
-        client, headers, location, minimal_record, users):
+        client, headers, running_app, minimal_record, users):
     login_user(client, users[0])
 
     recid = create_draft(client, minimal_record, headers)
@@ -93,7 +93,7 @@ def test_only_owners_can_init_file_upload(
 
 
 def test_only_owners_can_upload_file(
-        client, headers, location, minimal_record, users):
+        client, headers, running_app, minimal_record, users):
     login_user(client, users[0])
 
     recid = create_draft(client, minimal_record, headers)
@@ -117,7 +117,7 @@ def test_only_owners_can_upload_file(
 
 
 def test_only_owners_can_commit_file(
-        client, headers, location, minimal_record, users):
+        client, headers, running_app, minimal_record, users):
     login_user(client, users[0])
 
     recid = create_draft(client, minimal_record, headers)
@@ -154,7 +154,8 @@ def create_draft_w_file(client, record, headers):
 
 
 @pytest.fixture(scope='function')
-def draft_w_restricted_file(client, headers, location, minimal_record, users):
+def draft_w_restricted_file(
+        client, headers, running_app, minimal_record, users):
     # Login
     login_user(client, users[0])
 
@@ -172,7 +173,7 @@ def draft_w_restricted_file(client, headers, location, minimal_record, users):
 
 
 @pytest.fixture(scope='function')
-def draft_w_public_file(client, headers, location, minimal_record, users):
+def draft_w_public_file(client, headers, running_app, minimal_record, users):
     # Login
     login_user(client, users[0])
 
