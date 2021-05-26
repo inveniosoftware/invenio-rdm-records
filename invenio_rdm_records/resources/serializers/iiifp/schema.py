@@ -81,24 +81,25 @@ class IIIFPresiSchema(Schema):
         canvases = []
         p = 1
         # check for width/height before including this file
-        for i in obj._record.files.entries:
+        for i, e in enumerate(obj._record.files.entries.items()):
+            key, file = e
             try:
-                w = obj._record.files.entries[i].metadata["width"]
-                h = obj._record.files.entries[i].metadata["height"]
-            except (AttributeError, KeyError, TypeError):
+                w = file.metadata["width"]
+                h = file.metadata["height"]
+            except (KeyError):
                 continue
 
             canvases.append({
-                "@id": f"{self.presiUriBase(obj)}/canvas/p{p}",
+                "@id": f"{self.presiUriBase(obj)}/canvas/p{i+1}",
                 "@type": "sc:Canvas",
                 "label": f"Page {p}",
                 "width": w,
                 "height": h,
                 "images": [
                     {
-                        "@id": f"{self.presiUriBase(obj)}/canvas/p{p}/a1",
+                        "@id": f"{self.presiUriBase(obj)}/canvas/p{i+1}/a1",
                         "@type": "oa:Annotation",
-                        "on": f"{self.presiUriBase(obj)}/canvas/p{p}",
+                        "on": f"{self.presiUriBase(obj)}/canvas/p{i+1}",
                         "motivation": "sc:painting",
                         "resource":
                             {
@@ -108,7 +109,7 @@ class IIIFPresiSchema(Schema):
                                 "width": w,
                                 "height": h,
                                 "service": self.image_service(
-                                    imgid=f"{self.imgUriBase(obj)}:{i}",
+                                    imgid=f"{self.imgUriBase(obj)}:{key}",
                                     vers=2,
                                     level=2
                                 )
