@@ -78,7 +78,6 @@ class IIIFPresiSchema(Schema):
     def make_sequence(self, obj):
         """Create sequence of canvases from any image attachments. """
         canvases = []
-        p = 1
         # check for width/height before including this file
         for i, e in enumerate(obj._record.files.entries.items()):
             key, file = e
@@ -91,7 +90,7 @@ class IIIFPresiSchema(Schema):
             canvases.append({
                 "@id": f"{self.presiUriBase(obj)}/canvas/p{i+1}",
                 "@type": "sc:Canvas",
-                "label": f"Page {p}",
+                "label": f"Page {i+1}",
                 "width": w,
                 "height": h,
                 "images": [
@@ -117,7 +116,6 @@ class IIIFPresiSchema(Schema):
                     ]
                 }
             )
-            p += 1
 
         return [{
             '@id': f"{self.presiUriBase(obj)}sequence/default",
