@@ -13,14 +13,12 @@
 from flask import abort, g, jsonify
 from flask_resources import request_parser, resource_requestctx, \
     response_handler, route
+from flask_restful.utils import cors
 from invenio_drafts_resources.resources import RecordResource
 from invenio_records_resources.resources.records.resource import \
     request_data, request_search_args, request_view_args
 from marshmallow_utils.fields import SanitizedUnicode
-
 from .serializers.iiifp import IIIFPresiSerializer
-from invenio_drafts_resources.services import RecordService
-from flask_restful.utils import cors
 
 request_pids_args = request_parser(
     {"client": SanitizedUnicode()}, location='args'
