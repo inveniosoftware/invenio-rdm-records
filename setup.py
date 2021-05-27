@@ -68,11 +68,10 @@ install_requires = [
     'Faker>=2.0.3',
     'flask>=1.1,<2',
     'ftfy>=4.4.3,<5.0.0',
-    'invenio-drafts-resources>=0.12.1,<0.13.0',
+    'invenio-drafts-resources>=0.12.2,<0.13.0',
     'invenio-vocabularies>=0.6.1,<0.7.0',
     'pytz>=2020.4',
     'pyyaml>=5.4.0',
-    'Wand>=0.4.4',
 ]
 
 packages = find_packages()
