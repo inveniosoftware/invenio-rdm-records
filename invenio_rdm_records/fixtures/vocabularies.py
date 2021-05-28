@@ -92,13 +92,8 @@ class VocabulariesFixture:
         self._filename = filename
         self._identity = identity
 
-    def load(self):
-        """Load the fixture.
-
-        Fixtures found sooner in self._search_paths have priority.
-        """
-        ids = set()
-
+    def _open_vocabularies(self):
+        """Open vocabulary file and return its content."""
         for path in self._search_paths:
             filepath = path / self._filename
 
@@ -109,16 +104,34 @@ class VocabulariesFixture:
             with open(filepath) as fp:
                 data = yaml.safe_load(fp) or {}
                 for id_, entry in data.items():
-                    if id_ not in ids:
-                        entry["data-file"] = path / entry["data-file"]
-                        try:
-                            self.load_vocabulary(id_, entry)
-                        except IntegrityError:
-                            current_app.logger.info(
-                                f"Skipping creation of {id_}, already existing"
-                            )
-                            continue
-                        ids.add(id_)
+                    entry["data-file"] = path / entry["data-file"]
+                    yield id_, entry
+
+    def get_records_by_vocabulary(self, vocabulary_id):
+        """Get all records of a given vocabulary."""
+        for id_, entry in self._open_vocabularies():
+            if vocabulary_id != id_:
+                continue
+            for record in self.iter_datafile(entry["data-file"]):
+                yield record
+
+    def load(self):
+        """Load the fixture.
+
+        Fixtures found sooner in self._search_paths have priority.
+        """
+        ids = set()
+
+        for id_, entry in self._open_vocabularies():
+            if id_ not in ids:
+                try:
+                    self.load_vocabulary(id_, entry)
+                except IntegrityError:
+                    current_app.logger.info(
+                        f"Skipping creation of {id_}, already existing"
+                    )
+                    continue
+                ids.add(id_)
 
     def load_vocabulary(self, id_, entry, delay=True):
         """Load a single vocabulary."""
