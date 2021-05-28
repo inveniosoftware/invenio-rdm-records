@@ -47,8 +47,8 @@ class UsersFixture:
                     try:
                         self.create_user(email, user_data)
                     except IntegrityError:
-                        current_app.logger.warning(
-                            f"User {email} already exists"
+                        current_app.logger.info(
+                            f"skipping creation of {email}, already existing"
                         )
                         continue
             break
