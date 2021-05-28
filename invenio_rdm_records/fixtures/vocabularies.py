@@ -114,8 +114,8 @@ class VocabulariesFixture:
                         try:
                             self.load_vocabulary(id_, entry)
                         except IntegrityError:
-                            current_app.logger.warning(
-                                f"Vocabulary {id_} already exists"
+                            current_app.logger.info(
+                                f"Skipping creation of {id_}, already existing"
                             )
                             continue
                         ids.add(id_)
