@@ -11,11 +11,13 @@
 import datetime
 import json
 import random
+from pathlib import Path
 
 from edtf.parser.grammar import level0Expression
 from faker import Faker
 from invenio_access.permissions import system_identity
-from invenio_vocabularies.proxies import current_service as vocabulary_service
+
+from invenio_rdm_records.fixtures import VocabulariesFixture
 
 
 class CachedVocabularies:
@@ -34,12 +36,18 @@ class CachedVocabularies:
     def fake_resource_type(cls):
         """Generate a random resource_type."""
         if not cls._resource_type_ids:
-            results = vocabulary_service.search(
-                system_identity, type='resource_types'
-            )
-            cls._resource_type_ids = [
-                r["id"] for r in results.to_dict()["hits"]["hits"]
-            ]
+            cls._resource_type_ids = []
+
+            dir_ = Path(__file__).parent
+
+            res_types = VocabulariesFixture(
+                system_identity,
+                [Path("./app_data"), dir_ / "data"],
+                "vocabularies.yaml",
+            ).get_records_by_vocabulary("resource_types")
+
+            for res in res_types:
+                cls._resource_type_ids.append(res["id"])
 
         random_id = random.choice(cls._resource_type_ids)
         return {"id": random_id}
