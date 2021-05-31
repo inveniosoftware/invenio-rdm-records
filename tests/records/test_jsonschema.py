@@ -386,7 +386,7 @@ def test_additional_descriptions(appctx):
     desc = {
         "description": "bla bla",
         "type": "other",
-        "lang": "dan"
+        "lang": {"id": "dan"}
     }
     assert validates_meta({"additional_descriptions": [desc]})
     desc["invalid"] = "invalid"
