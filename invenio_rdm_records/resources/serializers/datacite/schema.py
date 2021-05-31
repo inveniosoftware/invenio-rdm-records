@@ -208,7 +208,9 @@ class DataCite43Schema(Schema):
                 title["titleType"] = type_.capitalize()
             lang = add_title.get("lang")
             if lang:
-                title["lang"] = lang
+                id = lang.get("id")
+                if id:
+                    title["lang"] = id
 
             titles.append(title)
 
@@ -323,7 +325,9 @@ class DataCite43Schema(Schema):
 
             lang = add_desc.get("lang")
             if lang:
-                description["lang"] = lang
+                id = lang.get("id")
+                if id:
+                    description["lang"] = id
 
             descriptions.append(description)
 
