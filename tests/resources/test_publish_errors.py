@@ -91,7 +91,7 @@ def test_multiple_errors(
     minimal_record["metadata"]["additional_titles"] = [{
         "title": "A Romans story",
         "type": "invalid",
-        "lang": { 
+        "lang": {
             "id": "eng"
         }
     }]
