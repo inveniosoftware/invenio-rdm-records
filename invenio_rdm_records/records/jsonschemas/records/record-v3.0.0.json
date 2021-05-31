@@ -65,7 +65,7 @@
                   "type": "string"
                 },
                 "type": {"$ref": "local://records/definitions-v1.1.0.json#/titleType"},
-                "lang": {"ref": "local://records/definitions-v1.1.0.json#/language"}
+                "lang": {"$ref": "local://records/definitions-v1.1.0.json#/language"}
             }
           }
         },
@@ -216,7 +216,7 @@
                   "type": "string"
                 },
                 "type": {"$ref": "local://records/definitions-v1.1.0.json#/descriptionType"},
-                "lang": {"ref": "local://records/definitions-v1.1.0.json#/language"}
+                "lang": {"$ref": "local://records/definitions-v1.1.0.json#/language"}
             }
           }
         },
