@@ -147,7 +147,7 @@ class TitleSchema(Schema):
 
     title = SanitizedUnicode(required=True, validate=validate.Length(min=3))
     type = SanitizedUnicode()
-    lang = ISOLangString()
+    lang = fields.Nested(LanguageSchema)
 
     @validates_schema
     def validate_data(self, data, **kwargs):
@@ -173,7 +173,7 @@ class DescriptionSchema(Schema):
             choices=DESCRIPTION_TYPES,
             error=_('Invalid description type. {input} not one of {choices}.')
         ))
-    lang = ISOLangString()
+    lang = fields.Nested(LanguageSchema)
 
 
 def _is_uri(uri):
