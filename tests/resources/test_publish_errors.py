@@ -91,7 +91,9 @@ def test_multiple_errors(
     minimal_record["metadata"]["additional_titles"] = [{
         "title": "A Romans story",
         "type": "invalid",
-        "lang": "eng"
+        "lang": { 
+            "id": "eng"
+        }
     }]
     response = save_partial_draft(client, minimal_record, headers)
     recid = response.json['id']
