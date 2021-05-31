@@ -103,9 +103,7 @@ def test_invalid_lang(vocabulary_clear):
     invalid_lang = {
         "description": "A Romans story",
         "type": "other",
-        "lang": {
-            "id": "inva"
-        }
+        "lang": "inv"
     }
 
     assert_raises_messages(
