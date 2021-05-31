@@ -107,12 +107,13 @@ def test_invalid_title_type(vocabulary_clear):
     )
 
 
+@pytest.mark.skip(reason="currently don't know how to test this")    
 def test_invalid_lang(vocabulary_clear):
     invalid_lang = {
         "title": "A Romans story",
         "type": "other",
         "lang": {
-            "id": "inva"
+            "id": "inv"
         }
     }
 
