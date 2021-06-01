@@ -142,12 +142,20 @@ class ResourceTypeSchema(Schema):
     title = fields.Dict(dump_only=True)
 
 
+class LanguageSchema(Schema):
+    """Language schema."""
+
+    id = SanitizedUnicode(required=True)
+    title = fields.Raw(dump_only=True)
+    description = fields.Raw(dump_only=True)
+
+
 class TitleSchema(Schema):
     """Schema for the additional title."""
 
     title = SanitizedUnicode(required=True, validate=validate.Length(min=3))
     type = SanitizedUnicode()
-    lang = ISOLangString()
+    lang = fields.Nested(LanguageSchema)
 
     @validates_schema
     def validate_data(self, data, **kwargs):
@@ -173,7 +181,7 @@ class DescriptionSchema(Schema):
             choices=DESCRIPTION_TYPES,
             error=_('Invalid description type. {input} not one of {choices}.')
         ))
-    lang = ISOLangString()
+    lang = fields.Nested(LanguageSchema)
 
 
 def _is_uri(uri):
@@ -400,14 +408,6 @@ class LocationSchema(Schema):
                 "locations": _("At least one of ['geometry', 'place', \
                 'identifiers', 'description'] shold be present.")
             })
-
-
-class LanguageSchema(Schema):
-    """Language schema."""
-
-    id = SanitizedUnicode(required=True)
-    title = fields.Raw(dump_only=True)
-    description = fields.Raw(dump_only=True)
 
 
 class MetadataSchema(Schema):

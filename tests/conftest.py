@@ -114,7 +114,9 @@ def full_record(users):
             "additional_titles": [{
                 "title": "a research data management platform",
                 "type": "subtitle",
-                "lang": "eng"
+                "lang": {
+                    "id": "eng"
+                }
             }],
             "publisher": "InvenioRDM",
             "publication_date": "2018/2020-09",
@@ -179,7 +181,9 @@ def full_record(users):
             "additional_descriptions": [{
                 "description": "Bla bla bla",
                 "type": "methods",
-                "lang": "eng"
+                "lang": {
+                    "id": "eng"
+                }
             }],
             "locations": [{
                 "geometry": {
