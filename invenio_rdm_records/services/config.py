@@ -47,10 +47,7 @@ resource_type_facet = TermsFacet(
 language_facet = TermsFacet(
     field='metadata.languages.id',
     label=_('Languages'),
-    value_labels=RecordRelationLabels(
-        RDMRecord.relations.languages,
-        'title.en',
-    ),
+    value_labels=VocabularyLabels('languages')
 )
 
 access_status_facet = TermsFacet(

@@ -206,11 +206,9 @@ class DataCite43Schema(Schema):
             type_ = add_title.get("type")
             if type_:
                 title["titleType"] = type_.capitalize()
-            lang = add_title.get("lang")
-            if lang:
-                id = lang.get("id")
-                if id:
-                    title["lang"] = id
+            lang_id = add_title.get("lang", {}).get("id")
+            if lang_id:
+                title["lang"] = lang_id
 
             titles.append(title)
 

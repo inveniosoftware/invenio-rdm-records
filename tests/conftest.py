@@ -23,6 +23,7 @@ from invenio_access.permissions import system_identity
 from invenio_accounts.testutils import login_user_via_session
 from invenio_app.factory import create_app as _create_app
 from invenio_vocabularies.proxies import current_service as vocabulary_service
+from invenio_vocabularies.records.api import Vocabulary
 
 from invenio_rdm_records import config
 from invenio_rdm_records.records.api import RDMParent
