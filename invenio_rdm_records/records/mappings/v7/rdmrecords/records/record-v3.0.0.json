@@ -347,12 +347,17 @@
                 "type" : "keyword"
               },
               "resource_type" : {
-                "properties" : {
-                  "subtype" : {
-                    "type" : "keyword"
+                "type": "object",
+                "properties": {
+                  "@v": {
+                    "type": "keyword"
                   },
-                  "type" : {
-                    "type" : "keyword"
+                  "id": {
+                    "type": "keyword"
+                  },
+                  "title": {
+                    "type": "object",
+                    "dynamic": true
                   }
                 }
               },
@@ -362,12 +367,17 @@
             }
           },
           "resource_type" : {
-            "properties" : {
-              "subtype" : {
-                "type" : "keyword"
+            "type": "object",
+            "properties": {
+              "@v": {
+                "type": "keyword"
               },
-              "type" : {
-                "type" : "keyword"
+              "id": {
+                "type": "keyword"
+              },
+              "title": {
+                "type": "object",
+                "dynamic": true
               }
             }
           },
