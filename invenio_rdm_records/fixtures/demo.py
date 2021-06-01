@@ -52,6 +52,12 @@ class CachedVocabularies:
         random_id = random.choice(cls._resource_type_ids)
         return {"id": random_id}
 
+    @classmethod
+    def fake_language(cls):
+        """Generate a random resource_type."""
+        random_id = random.choice(["eng", "aah", "aag"])
+        return {"id": random_id}
+
 
 def fake_edtf_level_0():
     """Generates a fake publication_date string."""
@@ -159,8 +165,7 @@ def create_fake_record():
             #     "description": "Random test date",
             #     "type": "other"
             # }],
-            # TODO: Add when we have PIDs for languages vocabulary
-            # "languages": [{"id": "eng"}],
+            "languages": [CachedVocabularies.fake_language()],
             # "related_identifiers": [{
             #     "identifier": "10.9999/rdm.9999988",
             #     "scheme": "doi",

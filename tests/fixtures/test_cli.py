@@ -26,5 +26,15 @@ def test_fake_demo_record_creation(app, location, db, es_clear, vocabularies):
         },
         delay=False
     )
+    vocabularies.load_vocabulary(
+        'languages',
+        {
+            "pid-type": "lng",
+            "data-file": (
+                Path(__file__).parent / "data/vocabularies/languages.yaml"
+            )
+        },
+        delay=False
+    )
 
     create_demo_record(create_fake_record())
