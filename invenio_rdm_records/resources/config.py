@@ -14,14 +14,22 @@ from flask_resources import HTTPJSONException, JSONSerializer, \
 from invenio_drafts_resources.resources import RecordResourceConfig
 from invenio_records_resources.resources.files import FileResourceConfig
 
-from .serializers import UIJSONSerializer
+
+from .serializers import UIJSONSerializer, CSLJSONSerializer, CitationStringSerializer
+from .serializers.csl.schema import CSLJSONSchema
+
 
 #
 # Response handlers
 #
 record_serializers = {
     "application/json": ResponseHandler(JSONSerializer()),
-    "application/vnd.inveniordm.v1+json": ResponseHandler(UIJSONSerializer())
+    "application/vnd.inveniordm.v1+json": ResponseHandler(UIJSONSerializer()),
+    "application/vnd.citationstyles.csl+json":
+        ResponseHandler(CSLJSONSerializer),
+    "text/x-bibliography" : ResponseHandler(CitationStringSerializer(
+        JSONSerializer(CSLJSONSchema)
+    ))
 }
 
 

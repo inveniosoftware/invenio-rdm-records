@@ -73,6 +73,8 @@ install_requires = [
     'invenio-communities>=2.3.0',
     'pytz>=2020.4',
     'pyyaml>=5.4.0',
+    'citeproc-py>=0.6.0',
+    'citeproc-py-styles>=0.1.2'
 ]
 
 packages = find_packages()
