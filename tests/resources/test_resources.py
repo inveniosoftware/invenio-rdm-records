@@ -454,7 +454,7 @@ def _create_and_assert_file(client, h, recid, filename, file_content):
 
 
 def test_multiple_files_record(
-    app, location, es_clear, client_with_login, headers, minimal_record
+    running_app, client_with_login, headers, minimal_record, es_clear
 ):
     client = client_with_login
     minimal_record["files"]["enabled"] = True
@@ -761,7 +761,7 @@ def test_link_update(
 
 def test_reserve_pid_with_login(
     running_app, client_with_login, minimal_record, headers, es_clear
-  ):
+):
     """Test the reserve function with client logged in."""
     # GET with client login
     client = client_with_login
