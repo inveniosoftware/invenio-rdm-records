@@ -8,10 +8,13 @@
 
 """Record response serializers."""
 
+from .csl import CSLJSONSerializer
 from .datacite import DataCite43JSONSerializer
 from .ui import UIJSONSerializer
 
 __all__ = (
     "UIJSONSerializer",
+    "CSLJSONSerializer",
     "DataCite43JSONSerializer",
+
 )
