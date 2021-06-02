@@ -8,6 +8,8 @@
 """CSL based Schema for Invenio RDM Records."""
 
 from edtf import parse_edtf
+from edtf.parser.edtf_exceptions import EDTFParseException
+from edtf.parser.parser_classes import Date, Interval
 from invenio_access.permissions import system_identity
 from invenio_vocabularies.proxies import current_service as vocabulary_service
 from marshmallow import Schema, fields, missing
@@ -20,30 +22,37 @@ class CSLCreatorSchema(Schema):
     family = fields.Str(attribute="person_or_org.name")
 
 
+def add_if_not_none(year, month, day):
+    """Adds year, month a day to a list if each are not None."""
+    _list = []
+    _list.append(year) if year else None
+    _list.append(month) if month else None
+    _list.append(day) if day else None
+    return _list
+
+
 class CSLJSONSchema(Schema):
     """CSL Marshmallow Schema."""
 
-    id_ = SanitizedUnicode(data_key="id", attribute='id')
-    type_ = fields.Method('get_type', data_key="type")
+    id_ = SanitizedUnicode(data_key="id", attribute="id")
+    type_ = fields.Method("get_type", data_key="type")
     title = SanitizedUnicode(attribute="metadata.title")
     abstract = SanitizedUnicode(attribute="metadata.description")
-    author = fields.List(
-        fields.Nested(CSLCreatorSchema), attribute='metadata.creators')
-    issued = fields.Method('get_issued')
-    language = fields.Method('get_language')
+    author = fields.List(fields.Nested(CSLCreatorSchema),
+                         attribute="metadata.creators")
+    issued = fields.Method("get_issued")
+    language = fields.Method("get_language")
     version = SanitizedUnicode(attribute="metadata.version")
-    note = fields.Method('get_note')
-    doi = fields.Method('get_doi', data_key="DOI")
-    isbn = fields.Method('get_isbn', data_key="ISBN")
-    issn = fields.Method('get_issn', data_key="ISSN")
-    publisher = SanitizedUnicode(attribute='metadata.publisher')
+    note = fields.Method("get_note")
+    doi = fields.Method("get_doi", data_key="DOI")
+    isbn = fields.Method("get_isbn", data_key="ISBN")
+    issn = fields.Method("get_issn", data_key="ISSN")
+    publisher = SanitizedUnicode(attribute="metadata.publisher")
 
     def _read_resource_type(self, id_):
         """Retrieve resource type record using service."""
-        return vocabulary_service.read(
-            ('resource_types', id_),
-            system_identity
-        )._record
+        rec = vocabulary_service.read(("resource_types", id_), system_identity)
+        return rec._record
 
     def get_type(self, obj):
         """Get resource type."""
@@ -54,22 +63,25 @@ class CSLJSONSchema(Schema):
 
     def get_issued(self, obj):
         """Get issued dates."""
-        date_parts = []
-        publication_date = obj["metadata"]["publication_date"].split("/")
-        for date in publication_date:
-            p_date = parse_edtf(date)
-            date_part = []
-            year, month, day = p_date.year, p_date.month, p_date.day
-            if year:
-                date_part.append(year)
-            if month:
-                date_part.append(month)
-            if day:
-                date_part.append(day)
+        try:
+            parsed = parse_edtf(obj["metadata"].get("publication_date"))
+        except EDTFParseException:
+            return missing
 
-            date_parts.append(date_part)
-
-        return {"date-parts": date_parts}
+        if isinstance(parsed, Date):
+            parts = add_if_not_none(parsed.year, parsed.month, parsed.day)
+            return {"date-parts": [parts]}
+        elif isinstance(parsed, Interval):
+            d1 = parsed.lower
+            d2 = parsed.upper
+            return {
+                "date-parts": [
+                    add_if_not_none(d1.year, d1.month, d1.day),
+                    add_if_not_none(d2.year, d2.month, d2.day),
+                ]
+            }
+        else:
+            return missing
 
     def get_language(self, obj):
         """Get language."""
