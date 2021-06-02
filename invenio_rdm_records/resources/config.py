@@ -14,7 +14,8 @@ from flask_resources import HTTPJSONException, JSONSerializer, \
 from invenio_drafts_resources.resources import RecordResourceConfig
 from invenio_records_resources.resources.files import FileResourceConfig
 
-from .serializers import CSLJSONSerializer, UIJSONSerializer
+from .serializers import CSLJSONSerializer, StringCitationSerializer, \
+    UIJSONSerializer
 
 #
 # Response handlers
@@ -22,8 +23,12 @@ from .serializers import CSLJSONSerializer, UIJSONSerializer
 record_serializers = {
     "application/json": ResponseHandler(JSONSerializer()),
     "application/vnd.inveniordm.v1+json": ResponseHandler(UIJSONSerializer()),
-    "application/vnd.citationstyles.csl+json":
-        ResponseHandler(CSLJSONSerializer()),
+    "application/vnd.citationstyles.csl+json": ResponseHandler(
+        CSLJSONSerializer()
+    ),
+    "text/x-bibliography": ResponseHandler(
+        StringCitationSerializer(), headers={"content-type": "text/plain"}
+    ),
 }
 
 
@@ -76,14 +81,16 @@ class RDMDraftFilesResourceConfig(FileResourceConfig):
 record_links_error_handlers = RecordResourceConfig.error_handlers.copy()
 
 
-record_links_error_handlers.update({
-    LookupError: create_error_handler(
-        HTTPJSONException(
-            code=404,
-            description="No secret link found with the given ID.",
-        )
-    ),
-})
+record_links_error_handlers.update(
+    {
+        LookupError: create_error_handler(
+            HTTPJSONException(
+                code=404,
+                description="No secret link found with the given ID.",
+            )
+        ),
+    }
+)
 
 
 class RDMParentRecordLinksResourceConfig(RecordResourceConfig):
@@ -102,11 +109,9 @@ class RDMParentRecordLinksResourceConfig(RecordResourceConfig):
 
     request_view_args = {
         "pid_value": ma.fields.Str(),
-        "link_id": ma.fields.Str()
+        "link_id": ma.fields.Str(),
     }
 
-    response_handlers = {
-        "application/json": ResponseHandler(JSONSerializer())
-    }
+    response_handlers = {"application/json": ResponseHandler(JSONSerializer())}
 
     error_handlers = record_links_error_handlers
