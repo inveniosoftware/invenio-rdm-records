@@ -17,7 +17,7 @@ from invenio_vocabularies.proxies import current_service as vocabulary_service
 from invenio_rdm_records.resources.serializers import DataCite43JSONSerializer
 
 
-@pytest.fixture(scope="module")
+@pytest.fixture(scope="function")
 def resource_type_dataset(resource_type_type):
     """Resource type vocabulary record."""
     return vocabulary_service.create(system_identity, {

@@ -404,7 +404,7 @@ def resource_type_type(app):
 @pytest.fixture(scope="module")
 def resource_type_item(app, resource_type_type):
     """Resource type vocabulary record."""
-    return vocabulary_service.create(system_identity, {
+    vocab = vocabulary_service.create(system_identity, {
         "id": "image-photo",
         "props": {
             "csl": "graphic",
@@ -424,6 +424,10 @@ def resource_type_item(app, resource_type_type):
         },
         "type": "resource_types"
     })
+
+    Vocabulary.index.refresh()
+
+    return vocab
 
 
 RunningApp = namedtuple("RunningApp", [

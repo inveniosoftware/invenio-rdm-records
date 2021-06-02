@@ -13,10 +13,14 @@ See https://pytest-invenio.readthedocs.io/ for documentation on which test
 fixtures are available.
 """
 
+from collections import namedtuple
 from copy import deepcopy
 
 import pytest
+from invenio_access.permissions import system_identity
 from invenio_app.factory import create_api
+from invenio_vocabularies.proxies import current_service as vocabulary_service
+from invenio_vocabularies.records.api import Vocabulary
 
 from invenio_rdm_records import config
 
@@ -61,3 +65,54 @@ def headers():
         'content-type': 'application/json',
         'accept': 'application/json',
     }
+
+
+@pytest.fixture(scope="function")
+def resource_type_type(app):
+    """Resource type vocabulary type."""
+    return vocabulary_service.create_type(
+        system_identity, "resource_types", "rsrct")
+
+
+@pytest.fixture(scope="function")
+def resource_type_item(app, resource_type_type):
+    """Resource type vocabulary record."""
+    vocab = vocabulary_service.create(system_identity, {
+        "id": "image-photo",
+        "props": {
+            "csl": "graphic",
+            "datacite_general": "Image",
+            "datacite_type": "Photo",
+            "openaire_resourceType": "25",
+            "openaire_type": "dataset",
+            "schema.org": "https://schema.org/Photograph",
+            "subtype": "image-photo",
+            "subtype_name": "Photo",
+            "type": "image",
+            "type_icon": "chart bar outline",
+            "type_name": "Image",
+        },
+        "title": {
+            "en": "Photo"
+        },
+        "type": "resource_types"
+    })
+
+    Vocabulary.index.refresh()
+
+    return vocab
+
+
+RunningApp = namedtuple("RunningApp", [
+    "app", "location", "resource_type_item"
+])
+
+
+@pytest.fixture
+def running_app(app, location, resource_type_item):
+    """This fixture provides an app with the typically needed db data loaded.
+
+    All of these fixtures are often needed together, so collecting them
+    under a semantic umbrella makes sense.
+    """
+    return RunningApp(app, location, resource_type_item)
