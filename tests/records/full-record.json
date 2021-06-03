@@ -1,5 +1,5 @@
 {
-  "$schema": "local://records/record-v3.0.0.json",
+  "$schema": "local://records/record-v4.0.0.json",
   "id": "abcde-12345",
   "pid": {
     "pk": 1,
@@ -53,16 +53,14 @@
     "additional_titles": [{
       "title": "a research data management platform",
       "type": "subtitle",
-      "lang": { 
+      "lang": {
         "id": "eng"
       }
     }],
     "publisher": "InvenioRDM",
     "publication_date": "2018/2020-09",
     "subjects": [{
-      "subject": "test",
-      "identifier": "test",
-      "scheme": "dewey"
+      "id": "A-D000007"
     }],
     "contributors": [{
       "person_or_org": {
@@ -129,7 +127,7 @@
     "additional_descriptions": [{
       "description": "Bla bla bla",
       "type": "methods",
-      "lang": { 
+      "lang": {
         "id": "eng"
       }
     }],

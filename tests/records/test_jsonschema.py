@@ -23,7 +23,7 @@ from invenio_rdm_records.records.api import RDMRecord as Record
 #
 def validates(data):
     """Assertion function used to validate according to the schema."""
-    data["$schema"] = "local://records/record-v3.0.0.json"
+    data["$schema"] = "local://records/record-v4.0.0.json"
     Record(data).validate()
     return True
 
@@ -491,6 +491,15 @@ def test_reference(appctx):
             "invalid": "Nielsen et al,..",
         },
     ]})
+
+
+def test_subjects(appctx):
+    """Test subjects property."""
+    assert validates_meta(
+        {"subjects": [{"id": "A-D000007"}, {"id": "A-D000008"}]})
+    assert fails_meta({"subjects": ["A-D000007"]})
+    assert fails_meta({"subjects": "A-D000007"})
+    assert fails_meta({"subjects": ["invalid"]})
 
 
 #
