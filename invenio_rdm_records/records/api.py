@@ -60,7 +60,7 @@ class CommonFieldsMixin:
     parent_record_cls = RDMParent
 
     schema = ConstantField(
-       '$schema', 'local://records/record-v3.0.0.json')
+       '$schema', 'local://records/record-v4.0.0.json')
 
     dumper = ElasticsearchDumper(
         extensions=[
