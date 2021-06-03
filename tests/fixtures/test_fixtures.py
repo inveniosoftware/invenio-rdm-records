@@ -31,9 +31,8 @@ def test_load_languages(app, db, vocabularies):
 
     item = vocabulary_service.read(
         ('languages', 'aae'), system_identity)
-    item_dict = item.to_dict()
 
-    assert item_dict["id"] == "aae"
+    assert item.id == "aae"
 
 
 def test_load_resource_types(app, db, vocabularies):
@@ -76,10 +75,12 @@ def test_loading_paths_traversal(app, db):
         )
 
     # languages are found
-    item = vocabulary_service.read(
-        ('languages', 'aae'), system_identity)
-    item_dict = item.to_dict()
-    assert item_dict["id"] == "aae"
+    item = vocabulary_service.read(('languages', 'aae'), system_identity)
+    assert item.id == "aae"
+
+    # subjects A from app_data/ are loaded
+    item = vocabulary_service.read(('subjects', 'A-D000008'), system_identity)
+    assert item.id == "A-D000008"
 
 
 def test_load_users(app, db, admin_role):

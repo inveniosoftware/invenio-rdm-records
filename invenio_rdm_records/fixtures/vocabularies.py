@@ -80,6 +80,30 @@ class JSONLinesIterator(DataIterator):
                 yield json.loads(line)
 
 
+def create_iterator(data_file):
+    ext = splitext(data_file)[1].lower()
+    if ext == '.yaml':
+        return YamlIterator(data_file)
+    elif ext == '.csv':
+        return CSVIterator(data_file)
+    elif ext == '.jsonl':
+        return JSONLinesIterator(data_file)
+    raise RuntimeError(f'Unknown data format: {ext}')
+
+
+class DataIteratorIterator:
+    """Iterator over iterators."""
+
+    def __init__(self, data_files):
+        """Initialize iterator."""
+        self._data_files = data_files
+
+    def __iter__(self):
+        """Iterate over iterators."""
+        for data_file in self._data_files.values():
+            yield from create_iterator(data_file)
+
+
 #
 # Fixture
 #
@@ -104,7 +128,13 @@ class VocabulariesFixture:
             with open(filepath) as fp:
                 data = yaml.safe_load(fp) or {}
                 for id_, entry in data.items():
-                    entry["data-file"] = path / entry["data-file"]
+                    if isinstance(entry["data-file"], dict):
+                        entry["data-file"] = {
+                            k: path / v for k, v in entry["data-file"].items()
+                        }
+                    else:
+                        entry["data-file"] = path / entry["data-file"]
+
                     yield id_, entry
 
     def get_records_by_vocabulary(self, vocabulary_id):
@@ -141,22 +171,18 @@ class VocabulariesFixture:
         # Load the data file
         self.load_datafile(id_, entry["data-file"], delay=delay)
 
-    def load_datafile(self, id_, data_file, delay=True):
+    def load_datafile(self, id_, data_file_or_dict, delay=True):
         """Load the records from the data file."""
-        for record in self.iter_datafile(data_file):
+        for record in self.iter_datafile(data_file_or_dict):
             record['type'] = id_
             if delay:
                 create_vocabulary_record.delay(record)
             else:  # mostly for tests
                 create_vocabulary_record(record)
 
-    def iter_datafile(self, data_file):
-        """Get an row iterator for a given data file."""
-        ext = splitext(data_file)[1].lower()
-        if ext == '.yaml':
-            return YamlIterator(data_file)
-        elif ext == '.csv':
-            return CSVIterator(data_file)
-        elif ext == '.jsonl':
-            return JSONLinesIterator(data_file)
-        raise RuntimeError(f'Unknown data format: {ext}')
+    def iter_datafile(self, data_file_or_dict):
+        """Get an entry iterator for a given "data file" entry."""
+        if isinstance(data_file_or_dict, dict):
+            return DataIteratorIterator(data_file_or_dict)
+        else:
+            return create_iterator(data_file_or_dict)
