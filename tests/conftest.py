@@ -404,6 +404,27 @@ def resource_type_type(app):
 @pytest.fixture(scope="module")
 def resource_type_item(app, resource_type_type):
     """Resource type vocabulary record."""
+    vocabulary_service.create(system_identity, {  # create base resource type
+        "id": "image",
+        "props": {
+            "csl": "figure",
+            "datacite_general": "Image",
+            "datacite_type": "",
+            "openaire_resourceType": "25",
+            "openaire_type": "dataset",
+            "schema.org": "https://schema.org/ImageObject",
+            "subtype": "",
+            "subtype_name": "",
+            "type": "image",
+            "type_icon": "chart bar outline",
+            "type_name": "Image",
+        },
+        "title": {
+            "en": "Image"
+        },
+        "type": "resource_types"
+    })
+
     vocab = vocabulary_service.create(system_identity, {
         "id": "image-photo",
         "props": {
