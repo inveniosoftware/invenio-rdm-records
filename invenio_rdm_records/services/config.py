@@ -22,7 +22,8 @@ from invenio_records_resources.services.files.links import FileLink
 from invenio_records_resources.services.records.facets import \
     RecordRelationLabels, TermsFacet
 from invenio_records_resources.services.records.links import RecordLink
-from invenio_vocabularies.services.facets import VocabularyLabels
+from invenio_vocabularies.services.facets import NestedVocabularyTermsFacet, \
+    VocabularyLabels
 
 from ..records import RDMDraft, RDMRecord
 from ..records.systemfields.access.field.record import AccessStatusEnum
@@ -38,7 +39,7 @@ from .schemas.parent.access import SecretLink
 #
 # Facet definitions
 #
-resource_type_facet = TermsFacet(
+resource_type_facet = NestedVocabularyTermsFacet(
     field='metadata.resource_type.id',
     label=_("Resource types"),
     value_labels=VocabularyLabels('resource_types')
