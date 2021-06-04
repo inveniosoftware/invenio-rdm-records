@@ -122,9 +122,7 @@ def full_record(users):
             "publisher": "InvenioRDM",
             "publication_date": "2018/2020-09",
             "subjects": [{
-                "subject": "test",
-                "identifier": "test",
-                "scheme": "dewey"
+                "id": "A-D000007"
             }],
             "contributors": [{
                 "person_or_org": {
