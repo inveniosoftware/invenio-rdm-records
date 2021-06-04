@@ -11,6 +11,7 @@
 import datetime
 import json
 import random
+from itertools import islice
 from pathlib import Path
 
 from edtf.parser.grammar import level0Expression
@@ -51,6 +52,27 @@ class CachedVocabularies:
 
         random_id = random.choice(cls._resource_type_ids)
         return {"id": random_id}
+
+    @classmethod
+    def fake_subjects(cls):
+        """Generate random subjects.
+
+        because this is fake data, we only load the 10 first entries found
+        """
+        if not cls._subject_ids:
+            dir_ = Path(__file__).parent
+
+            subjects = VocabulariesFixture(
+                system_identity,
+                [Path("./app_data"), dir_ / "data"],
+                "vocabularies.yaml",
+            ).get_records_by_vocabulary("subjects")
+
+            cls._subject_ids = [s["id"] for s in islice(subjects, 10)]
+
+        n = random.choice([0, 1, 2])
+        random_ids = random.sample(cls._subject_ids, n)
+        return [{"id": i} for i in random_ids]
 
     @classmethod
     def fake_language(cls):
@@ -135,15 +157,7 @@ def create_fake_record():
             }],
             "publisher": "InvenioRDM",
             "publication_date": fake_edtf_level_0(),
-            "subjects": [{
-                "subject": fake.word(),
-                "identifier": "03yrm5c26",
-                "scheme": "ror"
-            }, {
-                "subject": fake.word(),
-                "identifier": "03yrm5c26",
-                "scheme": "ror"
-            }],
+            "subjects": CachedVocabularies.fake_subjects(),
             "contributors": [{
                 "person_or_org": {
                     "family_name": fake.last_name(),
