@@ -208,15 +208,11 @@ class RightsSchema(IdentifierSchema):
     )
 
 
-class SubjectSchema(IdentifierSchema):
+class SubjectSchema(Schema):
     """Subject schema."""
 
-    def __init__(self, **kwargs):
-        """Constructor."""
-        super().__init__(
-            fail_on_unknown=False, identifier_required=False, **kwargs)
-
-    subject = SanitizedUnicode(required=True)
+    id = SanitizedUnicode(required=True)
+    title = fields.Dict(dump_only=True)  # for localization
 
 
 class DateSchema(Schema):
