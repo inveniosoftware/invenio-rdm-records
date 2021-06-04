@@ -79,9 +79,15 @@ class CommonFieldsMixin:
         ),
         resource_type=PIDRelation(
             'metadata.resource_type',
-            attrs=['id', 'title'],  # TODO?: 'props'
+            attrs=['id', 'title'],
             pid_field=Vocabulary.pid.with_type_ctx('resource_types'),
             cache_key='resource_type',
+        ),
+        subjects=PIDListRelation(
+            'metadata.subjects',
+            attrs=['id', 'title'],
+            pid_field=Vocabulary.pid.with_type_ctx('subjects'),
+            cache_key='subjects',
         ),
     )
 
