@@ -49,6 +49,7 @@ class RDMParent(ParentRecordBase):
 
     access = ParentRecordAccessField()
 
+    pids = DictField("pids")
 
 #
 # Common properties between records and drafts.
