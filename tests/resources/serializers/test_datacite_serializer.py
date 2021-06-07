@@ -13,6 +13,7 @@
 import pytest
 from invenio_access.permissions import system_identity
 from invenio_vocabularies.proxies import current_service as vocabulary_service
+from invenio_vocabularies.records.api import Vocabulary
 
 from invenio_rdm_records.resources.serializers import DataCite43JSONSerializer
 
@@ -20,7 +21,7 @@ from invenio_rdm_records.resources.serializers import DataCite43JSONSerializer
 @pytest.fixture(scope="function")
 def resource_type_dataset(resource_type_type):
     """Resource type vocabulary record."""
-    return vocabulary_service.create(system_identity, {
+    vocab = vocabulary_service.create(system_identity, {
         "id": "dataset",
         "props": {
             "csl": "dataset",
@@ -41,10 +42,50 @@ def resource_type_dataset(resource_type_type):
         "type": "resource_types"
     })
 
+    Vocabulary.index.refresh()
+
+    return vocab
+
+
+@pytest.fixture(scope="module")
+def subject_type(app):
+    """Subject vocabulary type."""
+    return vocabulary_service.create_type(system_identity, "subjects", "sub")
+
+
+@pytest.fixture(scope="module")
+def subject_D000007(app, subject_type):
+    """Subject vocabulary record."""
+    vocab = vocabulary_service.create(system_identity, {
+        "id": "A-D000007",
+        "props": {
+            "subjectScheme": "MeSH"
+        },
+        "tags": ["mesh"],
+        "title": {
+            "en": "Abdominal Injuries"
+        },
+        "type": "subjects"
+    })
+
+    Vocabulary.index.refresh()
+
+    return vocab
+
+
+@pytest.fixture
+def running_app_plus(running_app, resource_type_dataset, subject_D000007):
+    """Return running_app but load everything for datacite serialization.
+
+    Since test_datacite43_serializer doesn't use content of running_app, we
+    don't bother with a new namedtuple.
+    """
+    return running_app
+
 
 def test_datacite43_serializer(
-        running_app, full_record, resource_type_dataset, vocabulary_clear):
-    """Test serializer to DayaCide 4.3 JSON"""
+        running_app_plus, full_record, vocabulary_clear):
+    """Test serializer to DataCite 4.3 JSON"""
     expected_data = {
         "types": {
             "resourceTypeGeneral": "Image",
@@ -81,9 +122,8 @@ def test_datacite43_serializer(
         "publisher": "InvenioRDM",
         "publicationYear": "2018",
         "subjects": [{
-            "subject": "test",
-            "valueURI": "test",
-            "subjectScheme": "dewey"
+            "subject": "Abdominal Injuries",
+            "subjectScheme": "MeSH",
         }],
         "contributors": [
             {

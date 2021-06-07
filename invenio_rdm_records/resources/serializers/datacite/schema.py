@@ -160,8 +160,7 @@ class DataCite43Schema(Schema):
         fields.Nested(ContributorSchema43), attribute='metadata.contributors')
     publisher = fields.Str(attribute='metadata.publisher')
     publicationYear = fields.Method("get_publication_year")
-    subjects = fields.List(
-        fields.Nested(SubjectSchema43), attribute='metadata.subjects')
+    subjects = fields.Method("get_subjects")
     dates = fields.Method('get_dates')
     language = fields.Method('get_language')
     identifiers = fields.Method('get_identifiers')
@@ -353,3 +352,34 @@ class DataCite43Schema(Schema):
 
             locations.append(serialized_location)
         return locations or missing
+
+    def get_subjects(self, obj):
+        """Get datacite subjects."""
+        if not obj["metadata"]["subjects"]:
+            return missing
+
+        # TODO: Implement read_many for vocabulary_service
+        def create_datacite_subject(subject):
+            """Generate datacite subject dict."""
+            subject_record = vocabulary_service.read(
+                ('subjects', subject["id"]),
+                system_identity,
+            )._record
+
+            datacite_subject = {
+                "subject": subject_record.get("title", {}).get("en")
+            }
+
+            other_fields = ["subjectScheme", "schemeURI", "valueURI"]
+            other_values = [
+                subject_record.get("props", {}).get(f) for f in other_fields
+            ]
+            datacite_subject.update({
+                k: v for k, v in zip(other_fields, other_values) if v
+            })
+
+            return datacite_subject
+
+        return [
+            create_datacite_subject(s) for s in obj["metadata"]["subjects"]
+        ]

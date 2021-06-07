@@ -31,7 +31,7 @@ def subject_item(app, subject_type):
     vocab = vocabulary_service.create(system_identity, {
         "id": "A-D000007",
         "props": {
-            "subject_label": "MeSH"
+            "subjectScheme": "MeSH"
         },
         "tags": ["mesh"],
         "title": {
