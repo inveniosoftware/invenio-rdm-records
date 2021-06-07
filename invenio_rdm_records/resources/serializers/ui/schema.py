@@ -101,6 +101,13 @@ class LanguageL10NSchema(Schema):
     title = L10NString(data_key='title_l10n')
 
 
+class SubjectL10NSchema(Schema):
+    """Localization of subject titles."""
+
+    id = fields.String()
+    title = L10NString(data_key='title_l10n')
+
+
 class UIObjectSchema(Schema):
     """Schema for dumping extra information for the UI."""
 
@@ -129,6 +136,11 @@ class UIObjectSchema(Schema):
     languages = fields.List(
         fields.Nested(LanguageL10NSchema),
         attribute='metadata.languages',
+    )
+
+    subjects = fields.List(
+        fields.Nested(SubjectL10NSchema),
+        attribute='metadata.subjects',
     )
 
     description_stripped = StrippedHTML(attribute="metadata.description")
