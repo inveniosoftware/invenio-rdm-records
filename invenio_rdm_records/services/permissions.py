@@ -84,6 +84,8 @@ class RDMRecordPermissionPolicy(RecordPermissionPolicy):
     can_new_version = can_curate
     # Allow publishing a new record or changes to an existing record.
     can_publish = can_curate
+    # Allow lifting a record or draft.
+    can_lift_embargo = can_manage
 
     #
     # Disabled actions (these should not be used or changed)

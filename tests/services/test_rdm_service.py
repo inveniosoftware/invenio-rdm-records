@@ -8,15 +8,18 @@
 # more details.
 
 """Service level tests for Invenio RDM Records."""
-
 from collections import namedtuple
+from datetime import datetime
+from unittest import mock
 
+import arrow
 import pytest
+from dateutil import tz
 from invenio_pidstore.errors import PIDDoesNotExistError
-from invenio_vocabularies.proxies import current_service as vocabulary_service
 from marshmallow import ValidationError
 
 from invenio_rdm_records.proxies import current_rdm_records
+from invenio_rdm_records.services.errors import EmbargoNotLiftedError
 
 RunningApp = namedtuple("RunningApp", [
     "app", "location", "superuser_identity", "resource_type_item"
@@ -246,3 +249,127 @@ def test_draft_w_languages_creation(
         'id': 'eng',
         'title': {'en': 'English', 'da': 'Engelsk'}
     }]
+
+
+#
+# Embargo lift
+#
+@mock.patch('arrow.utcnow')
+def test_embargo_lift_without_draft(
+        mock_arrow, running_app, es_clear, minimal_record, lang):
+    superuser_identity = running_app.superuser_identity
+    service = current_rdm_records.records_service
+    # Add embargo to record
+    minimal_record["access"]["files"] = 'restricted'
+    minimal_record["access"]["status"] = 'embargoed'
+    minimal_record["access"]["embargo"] = dict(
+        active=True, until='2020-06-01', reason=None
+    )
+    # We need to set the current date in the past to pass the validations
+    mock_arrow.return_value = arrow.get(datetime(1954, 9, 29), tz.gettz('UTC'))
+    draft = service.create(superuser_identity, minimal_record)
+    record = service.publish(id_=draft.id, identity=superuser_identity)
+    # Recover current date
+    mock_arrow.return_value = arrow.get(datetime.utcnow())
+
+    service.lift_embargo(_id=record['id'], identity=superuser_identity)
+    record_lifted = service.record_cls.pid.resolve(record['id'])
+
+    assert record_lifted.access.embargo.active is False
+    assert record_lifted.access.protection.files == 'public'
+    assert record_lifted.access.protection.record == 'public'
+    assert record_lifted.access.status.value == 'metadata-only'
+
+
+@mock.patch('arrow.utcnow')
+def test_embargo_lift_with_draft(
+        mock_arrow, running_app, es_clear, minimal_record, lang):
+    superuser_identity = running_app.superuser_identity
+    service = current_rdm_records.records_service
+    # Add embargo to record
+    minimal_record["access"]["files"] = 'restricted'
+    minimal_record["access"]["status"] = 'embargoed'
+    minimal_record["access"]["embargo"] = dict(
+        active=True, until='2020-06-01', reason=None
+    )
+    # We need to set the current date in the past to pass the validations
+    mock_arrow.return_value = arrow.get(datetime(1954, 9, 29), tz.gettz('UTC'))
+    draft = service.create(superuser_identity, minimal_record)
+    record = service.publish(id_=draft.id, identity=superuser_identity)
+    # This draft simulates an existing one while lifting the record
+    ongoing_draft = service.edit(id_=draft.id, identity=superuser_identity)
+    # Recover current date
+    mock_arrow.return_value = arrow.get(datetime.utcnow())
+
+    service.lift_embargo(_id=record['id'], identity=superuser_identity)
+    record_lifted = service.record_cls.pid.resolve(record['id'])
+    draft_lifted = service.draft_cls.pid.resolve(ongoing_draft['id'])
+
+    assert record_lifted.access.embargo.active is False
+    assert record_lifted.access.protection.files == 'public'
+    assert record_lifted.access.protection.record == 'public'
+
+    assert draft_lifted.access.embargo.active is False
+    assert draft_lifted.access.protection.files == 'public'
+    assert draft_lifted.access.protection.record == 'public'
+
+
+@mock.patch('arrow.utcnow')
+def test_embargo_lift_with_updated_draft(
+        mock_arrow, running_app, es_clear, minimal_record, lang):
+    superuser_identity = running_app.superuser_identity
+    service = current_rdm_records.records_service
+    # Add embargo to record
+    minimal_record["access"]["files"] = 'restricted'
+    minimal_record["access"]["status"] = 'embargoed'
+    minimal_record["access"]["embargo"] = dict(
+        active=True, until='2020-06-01', reason=None
+    )
+    # We need to set the current date in the past to pass the validations
+    mock_arrow.return_value = arrow.get(datetime(1954, 9, 29), tz.gettz('UTC'))
+    draft = service.create(superuser_identity, minimal_record)
+    record = service.publish(id_=draft.id, identity=superuser_identity)
+    # This draft simulates an existing one while lifting the record
+    service.edit(id_=draft.id, identity=superuser_identity)
+    # Recover current date
+    mock_arrow.return_value = arrow.get(datetime.utcnow())
+
+    # Change record's title and access field to be restricted
+    minimal_record["metadata"]["title"] = 'Record modified by the user'
+    minimal_record["access"]["status"] = 'restricted'
+    minimal_record["access"]["embargo"] = dict(
+        active=False, until=None, reason=None
+    )
+    # Update the ongoing draft with the new data simulating the user's input
+    ongoing_draft = service.update_draft(
+        id_=draft.id, identity=superuser_identity, data=minimal_record)
+
+    service.lift_embargo(_id=record['id'], identity=superuser_identity)
+    record_lifted = service.record_cls.pid.resolve(record['id'])
+    draft_lifted = service.draft_cls.pid.resolve(ongoing_draft['id'])
+
+    assert record_lifted.access.embargo.active is False
+    assert record_lifted.access.protection.files == 'public'
+    assert record_lifted.access.protection.record == 'public'
+
+    assert draft_lifted.access.embargo.active is False
+    assert draft_lifted.access.protection.files == 'restricted'
+    assert draft_lifted.access.protection.record == 'public'
+
+
+def test_embargo_lift_with_error(
+        running_app, es_clear, minimal_record, lang):
+    superuser_identity = running_app.superuser_identity
+    service = current_rdm_records.records_service
+    # Add embargo to record
+    minimal_record["access"]["files"] = 'restricted'
+    minimal_record["access"]["status"] = 'embargoed'
+    minimal_record["access"]["embargo"] = dict(
+        active=True, until='3220-06-01', reason=None
+    )
+    draft = service.create(superuser_identity, minimal_record)
+    record = service.publish(id_=draft.id, identity=superuser_identity)
+
+    # Record should not be lifted since it didn't expire (until 3220)
+    with pytest.raises(EmbargoNotLiftedError):
+        service.lift_embargo(_id=record['id'], identity=superuser_identity)
