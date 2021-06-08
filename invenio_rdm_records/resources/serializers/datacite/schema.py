@@ -184,6 +184,17 @@ class DataCite43Schema(Schema):
             system_identity
         )._record
 
+    def _read_language(self, id_):
+        """Retrieve resource type record using service."""
+        lang = vocabulary_service.read(
+            ('languages', id_),
+            system_identity
+        )._record
+
+        alpha_2 = lang["props"].get("alpha_2", None)
+
+        return alpha_2 or missing
+
     def get_type(self, obj):
         """Get resource type."""
         resource_type = obj["metadata"]["resource_type"]
@@ -208,7 +219,7 @@ class DataCite43Schema(Schema):
                 title["titleType"] = type_.capitalize()
             lang_id = add_title.get("lang", {}).get("id")
             if lang_id:
-                title["lang"] = lang_id
+                title["lang"] = self._read_language(lang_id)
 
             titles.append(title)
 
@@ -252,7 +263,7 @@ class DataCite43Schema(Schema):
 
         if languages:
             # PIDS-FIXME: How to choose? the first?
-            return languages[0]["id"]
+            return self._read_language(languages[0]["id"])
 
         return missing
 
@@ -321,11 +332,9 @@ class DataCite43Schema(Schema):
                 "descriptionType": add_desc["type"].capitalize()
             }
 
-            lang = add_desc.get("lang")
-            if lang:
-                id = lang.get("id")
-                if id:
-                    description["lang"] = id
+            lang_id = add_desc.get("lang", {}).get("id")
+            if lang_id:
+                description["lang"] = self._read_language(lang_id)
 
             descriptions.append(description)
 

@@ -18,7 +18,3 @@ class DataCite43JSONSerializer(MarshmallowJSONSerializer):
     def __init__(self, **options):
         """Constructor."""
         super().__init__(schema_cls=DataCite43Schema, **options)
-
-    def dump_one(self, obj):
-        """Dump the object with extra information."""
-        return self._schema_cls().dump(obj)

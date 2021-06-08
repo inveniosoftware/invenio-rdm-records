@@ -37,6 +37,9 @@ def iter_languages():
             "title": {
                 "en": lang.name
             },
+            "props": {
+                "alpha_2": getattr(lang, "alpha_2", '')
+            },
             "tags": [scope_map[lang.scope], type_map[lang.type]],
         }
         yield record
