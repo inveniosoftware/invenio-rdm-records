@@ -31,8 +31,7 @@
       "id": {
         "type": "string"
       }
-    },
-    "required": ["id"]
+    }
   },
   "longitude": {
     "type": "number",
@@ -132,15 +131,11 @@
       "id": {
         "type": "string"
       }
-    },
-    "required": ["id"]
+    }
   },
   "person_or_org": {
     "type": "object",
     "additionalProperties": false,
-    "required": [
-      "type"
-    ],
     "properties": {
       "name": {
         "type": "string"
@@ -180,10 +175,7 @@
           },
           "uniqueItems": true
         }
-      },
-      "required": [
-        "name"
-      ]
+      }
     }
   },
   "file": {
