@@ -125,7 +125,7 @@ class CreatorSchema(Schema):
 class ContributorSchema(Schema):
     """Contributor schema."""
 
-    person_or_org = fields.Nested(PersonOrOrganizationSchema)
+    person_or_org = fields.Nested(PersonOrOrganizationSchema, required=True)
     role = SanitizedUnicode(required=True)
     affiliations = fields.List(fields.Nested(AffiliationSchema))
 
