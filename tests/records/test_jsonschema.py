@@ -161,7 +161,6 @@ def test_metadata(appctx):
 
 def test_resource_type(appctx):
     """Test resource type."""
-    assert fails_meta({"resource_type": {}})
     assert validates_meta({"resource_type": {"id": "publication"}})
     assert fails_meta({"resource_type": {"id": 123}})
 
@@ -431,9 +430,7 @@ def test_locations_valid(appctx, features):
 
 @pytest.mark.parametrize("locations", [
     None,  # locations must be an object
-    {},  # Missing features
     {'features': []},  # Empty features
-    {'features': [{}]},  # Empty feature
     {
         'features': [{
             "properties": None,   # Additional props
