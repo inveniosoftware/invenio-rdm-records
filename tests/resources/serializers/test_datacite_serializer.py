@@ -43,7 +43,9 @@ def resource_type_dataset(resource_type_type):
 
 
 def test_datacite43_serializer(
-        running_app, full_record, resource_type_dataset, vocabulary_clear):
+    running_app, full_record, resource_type_dataset, laguanges_vocabulary,
+    vocabulary_clear
+):
     """Test serializer to DayaCide 4.3 JSON"""
     expected_data = {
         "types": {
@@ -75,7 +77,7 @@ def test_datacite43_serializer(
             {
                 "title": "a research data management platform",
                 "titleType": "Subtitle",
-                "lang": "eng",
+                "lang": "en",
             },
         ],
         "publisher": "InvenioRDM",
@@ -114,7 +116,7 @@ def test_datacite43_serializer(
                 "dateInformation": "A date"
             },
         ],
-        "language": "dan",
+        "language": "da",
         "identifiers": [
             {
                 "identifier": "1924MNRAS..84..308E",
@@ -149,7 +151,7 @@ def test_datacite43_serializer(
             {
                 "description": "Bla bla bla",
                 "descriptionType": "Methods",
-                "lang": "eng"
+                "lang": "en"
             },
         ],
         "geoLocations": [

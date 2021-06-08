@@ -67,6 +67,38 @@ def headers():
     }
 
 
+@pytest.fixture(scope="module")
+def laguanges_vocabulary(app, lang_type):
+    """Language vocabulary records."""
+    lang = []
+
+    lang.append(vocabulary_service.create(system_identity, {
+        "id": "eng",
+        "title": {
+            "en": "English",
+            "da": "Engelsk",
+        },
+        "props": {"alpha_2": "en"},
+        "tags": ["individual", "living"],
+        "type": "languages"
+    }))
+
+    lang.append(vocabulary_service.create(system_identity, {
+        "id": "dan",
+        "title": {
+            "en": "Danish",
+            "da": "Dansk",
+        },
+        "props": {"alpha_2": "da"},
+        "tags": ["individual", "living"],
+        "type": "languages"
+    }))
+
+    Vocabulary.index.refresh()
+
+    return lang
+
+
 @pytest.fixture(scope="function")
 def resource_type_type(app):
     """Resource type vocabulary type."""
