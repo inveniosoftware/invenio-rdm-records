@@ -77,10 +77,6 @@ def test_languages_invalid(running_app, minimal_record, lang):
     minimal_record["metadata"]["languages"] = [{"test": "eng"}]
     pytest.raises(ValidationError, RDMDraft.create, minimal_record)
 
-    # id key is required
-    minimal_record["metadata"]["languages"] = [{}]
-    pytest.raises(ValidationError, RDMDraft.create, minimal_record)
-
     # non-string types are not allowed as id values
     minimal_record["metadata"]["languages"] = [{"id": 1}]
     pytest.raises(ValidationError, RDMDraft.create, minimal_record)
