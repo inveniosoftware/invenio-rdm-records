@@ -69,6 +69,9 @@ class CachedVocabularies:
             for subj in subjects:
                 cls._subject_ids.append(subj["id"])
 
+        if not cls._subject_ids:
+            return []
+
         n = random.choice([0, 1, 2])
         random_ids = random.sample(cls._subject_ids, n)
         return [{"id": i} for i in random_ids]
