@@ -84,7 +84,7 @@ class CSLJSONSchema(Schema):
 
     def get_isbn(self, obj):
         """Get ISBN."""
-        identifiers = obj["metadata"]["identifiers"]
+        identifiers = obj["metadata"].get("identifiers", [])
         for identifier in identifiers:
             if identifier["scheme"] == "ISBN":
                 return identifier["identifier"]
@@ -93,7 +93,7 @@ class CSLJSONSchema(Schema):
 
     def get_issn(self, obj):
         """Get ISSN."""
-        identifiers = obj["metadata"]["identifiers"]
+        identifiers = obj["metadata"].get("identifiers", [])
         for identifier in identifiers:
             if identifier["scheme"] == "ISSN":
                 return identifier["identifier"]
