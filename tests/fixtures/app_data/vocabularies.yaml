@@ -4,4 +4,4 @@ resource_types:
 subjects:
   pid-type: sub
   data-file:
-    A: vocabularies/subjects_A.yaml
+    A: vocabularies/subjects.yaml

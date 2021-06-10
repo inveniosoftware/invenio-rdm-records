@@ -11,7 +11,6 @@
 import datetime
 import json
 import random
-from itertools import islice
 from pathlib import Path
 
 from edtf.parser.grammar import level0Expression
@@ -32,6 +31,18 @@ class CachedVocabularies:
     """
 
     _resource_type_ids = []
+    _subject_ids = []
+
+
+    @classmethod
+    def _read_vocabulary(cls, vocabulary):
+        dir_ = Path(__file__).parent
+
+        return VocabulariesFixture(
+            system_identity,
+            [Path("./app_data"), dir_ / "data"],
+            "vocabularies.yaml",
+        ).get_records_by_vocabulary(vocabulary)
 
     @classmethod
     def fake_resource_type(cls):
@@ -41,11 +52,7 @@ class CachedVocabularies:
 
             dir_ = Path(__file__).parent
 
-            res_types = VocabulariesFixture(
-                system_identity,
-                [Path("./app_data"), dir_ / "data"],
-                "vocabularies.yaml",
-            ).get_records_by_vocabulary("resource_types")
+            res_types = cls._read_vocabulary("resource_types")
 
             for res in res_types:
                 cls._resource_type_ids.append(res["id"])
@@ -55,20 +62,12 @@ class CachedVocabularies:
 
     @classmethod
     def fake_subjects(cls):
-        """Generate random subjects.
-
-        because this is fake data, we only load the 10 first entries found
-        """
+        """Generate random subjects."""
         if not cls._subject_ids:
-            dir_ = Path(__file__).parent
+            subjects = cls._read_vocabulary("subjects")
 
-            subjects = VocabulariesFixture(
-                system_identity,
-                [Path("./app_data"), dir_ / "data"],
-                "vocabularies.yaml",
-            ).get_records_by_vocabulary("subjects")
-
-            cls._subject_ids = [s["id"] for s in islice(subjects, 10)]
+            for subj in subjects:
+                cls._subject_ids.append(subj["id"])
 
         n = random.choice([0, 1, 2])
         random_ids = random.sample(cls._subject_ids, n)
