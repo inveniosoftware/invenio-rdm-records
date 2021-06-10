@@ -81,6 +81,7 @@ class JSONLinesIterator(DataIterator):
 
 
 def create_iterator(data_file):
+    """Creates an iterator from a file."""
     ext = splitext(data_file)[1].lower()
     if ext == '.yaml':
         return YamlIterator(data_file)

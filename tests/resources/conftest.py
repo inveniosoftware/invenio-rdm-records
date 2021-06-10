@@ -68,7 +68,7 @@ def headers():
 
 
 @pytest.fixture(scope="module")
-def laguanges_vocabulary(app, lang_type):
+def laguanges_v(app, languages_type):
     """Language vocabulary records."""
     lang = []
 
@@ -107,7 +107,7 @@ def resource_type_type(app):
 
 
 @pytest.fixture(scope="function")
-def resource_type_item(app, resource_type_type):
+def resource_type_v(app, resource_type_type):
     """Resource type vocabulary record."""
     vocabulary_service.create(system_identity, {  # create base resource type
         "id": "image",
@@ -157,15 +157,15 @@ def resource_type_item(app, resource_type_type):
 
 
 RunningApp = namedtuple("RunningApp", [
-    "app", "location", "resource_type_item"
+    "app", "location", "resource_type_v"
 ])
 
 
 @pytest.fixture
-def running_app(app, location, resource_type_item):
+def running_app(app, location, resource_type_v):
     """This fixture provides an app with the typically needed db data loaded.
 
     All of these fixtures are often needed together, so collecting them
     under a semantic umbrella makes sense.
     """
-    return RunningApp(app, location, resource_type_item)
+    return RunningApp(app, location, resource_type_v)

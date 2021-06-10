@@ -28,7 +28,7 @@ def test_languages_field(running_app, minimal_record):
     assert RDMDraft.relations.languages
 
 
-def test_languages_validation(running_app, minimal_record, lang):
+def test_languages_validation(running_app, minimal_record):
     """Test languages relationship."""
     minimal_record["metadata"]["languages"] = [{"id": "eng"}]
     draft = RDMDraft.create(minimal_record)
@@ -40,7 +40,7 @@ def test_languages_validation(running_app, minimal_record, lang):
     assert isinstance(lang, Vocabulary)
 
 
-def test_languages_indexing(running_app, minimal_record, lang):
+def test_languages_indexing(running_app, minimal_record):
     """Test languages relationship."""
     minimal_record["metadata"]["languages"] = [{"id": "eng"}]
     draft = RDMDraft.create(minimal_record).commit()
@@ -51,7 +51,7 @@ def test_languages_indexing(running_app, minimal_record, lang):
     assert dump["metadata"]["languages"] == [{
         "id": "eng",
         "title": {"en": "English", "da": "Engelsk"},
-        "@v": f"{lang._record.id}::1"
+        "@v": f"{running_app.languages_v._record.id}::1"
     }]
 
     # Load draft again - should produce an identical record.
@@ -63,7 +63,7 @@ def test_languages_indexing(running_app, minimal_record, lang):
     assert loaded_draft["metadata"]["languages"] == [{"id": "eng"}]
 
 
-def test_languages_invalid(running_app, minimal_record, lang):
+def test_languages_invalid(running_app, minimal_record):
     """Should fail on invalid id's and invalid structure."""
     # The id "invalid" does not exists.
     minimal_record["metadata"]["languages"] = [{"id": "invalid"}]

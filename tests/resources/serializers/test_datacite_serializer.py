@@ -19,8 +19,50 @@ from invenio_rdm_records.resources.serializers import DataCite43JSONSerializer
 
 
 @pytest.fixture(scope="function")
-def resource_type_dataset(resource_type_type):
+def resource_type_v(resource_type_type):
     """Resource type vocabulary record."""
+    vocabulary_service.create(system_identity, {  # create base resource type
+        "id": "image",
+        "props": {
+            "csl": "figure",
+            "datacite_general": "Image",
+            "datacite_type": "",
+            "openaire_resourceType": "25",
+            "openaire_type": "dataset",
+            "schema.org": "https://schema.org/ImageObject",
+            "subtype": "",
+            "subtype_name": "",
+            "type": "image",
+            "type_icon": "chart bar outline",
+            "type_name": "Image",
+        },
+        "title": {
+            "en": "Image"
+        },
+        "type": "resource_types"
+    })
+
+    vocabulary_service.create(system_identity, {
+        "id": "image-photo",
+        "props": {
+            "csl": "graphic",
+            "datacite_general": "Image",
+            "datacite_type": "Photo",
+            "openaire_resourceType": "25",
+            "openaire_type": "dataset",
+            "schema.org": "https://schema.org/Photograph",
+            "subtype": "image-photo",
+            "subtype_name": "Photo",
+            "type": "image",
+            "type_icon": "chart bar outline",
+            "type_name": "Image",
+        },
+        "title": {
+            "en": "Photo"
+        },
+        "type": "resource_types"
+    })
+
     vocab = vocabulary_service.create(system_identity, {
         "id": "dataset",
         "props": {
@@ -47,35 +89,9 @@ def resource_type_dataset(resource_type_type):
     return vocab
 
 
-@pytest.fixture(scope="module")
-def subject_type(app):
-    """Subject vocabulary type."""
-    return vocabulary_service.create_type(system_identity, "subjects", "sub")
-
-
-@pytest.fixture(scope="module")
-def subject_D000007(app, subject_type):
-    """Subject vocabulary record."""
-    vocab = vocabulary_service.create(system_identity, {
-        "id": "A-D000007",
-        "props": {
-            "subjectScheme": "MeSH"
-        },
-        "tags": ["mesh"],
-        "title": {
-            "en": "Abdominal Injuries"
-        },
-        "type": "subjects"
-    })
-
-    Vocabulary.index.refresh()
-
-    return vocab
-
-
 @pytest.fixture
-def running_app_plus(
-    running_app, resource_type_dataset, subject_D000007, laguanges_vocabulary
+def running_app(
+    app, location, resource_type_v, subject_v, laguanges_v
 ):
     """Return running_app but load everything for datacite serialization.
 
@@ -86,7 +102,7 @@ def running_app_plus(
 
 
 def test_datacite43_serializer(
-    running_app_plus, full_record, vocabulary_clear
+    running_app, full_record, vocabulary_clear
 ):
     """Test serializer to DataCite 4.3 JSON"""
     expected_data = {

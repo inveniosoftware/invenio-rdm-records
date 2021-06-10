@@ -22,18 +22,22 @@ from invenio_rdm_records.proxies import current_rdm_records
 from invenio_rdm_records.services.errors import EmbargoNotLiftedError
 
 RunningApp = namedtuple("RunningApp", [
-    "app", "location", "superuser_identity", "resource_type_item"
+    "app", "location", "superuser_identity", "resource_type_v",
+    "subject_v", "languages_v"
 ])
 
 
 @pytest.fixture
-def running_app(app, location, superuser_identity, resource_type_item):
+def running_app(
+    app, location, superuser_identity, resource_type_v, subject_v, languages_v
+):
     """This fixture provides an app with the typically needed db data loaded.
 
     All of these fixtures are often needed together, so collecting them
     under a semantic umbrella makes sense.
     """
-    return RunningApp(app, location, superuser_identity, resource_type_item)
+    return RunningApp(app, location, superuser_identity,
+                      resource_type_v, subject_v, languages_v)
 
 
 #
@@ -234,8 +238,7 @@ def test_minimal_draft_creation(running_app, es_clear, minimal_record):
     }
 
 
-def test_draft_w_languages_creation(
-        running_app, es_clear, minimal_record, lang):
+def test_draft_w_languages_creation(running_app, es_clear, minimal_record):
     superuser_identity = running_app.superuser_identity
     service = current_rdm_records.records_service
     minimal_record["metadata"]["languages"] = [{
@@ -256,7 +259,7 @@ def test_draft_w_languages_creation(
 #
 @mock.patch('arrow.utcnow')
 def test_embargo_lift_without_draft(
-        mock_arrow, running_app, es_clear, minimal_record, lang):
+        mock_arrow, running_app, es_clear, minimal_record):
     superuser_identity = running_app.superuser_identity
     service = current_rdm_records.records_service
     # Add embargo to record
@@ -283,7 +286,7 @@ def test_embargo_lift_without_draft(
 
 @mock.patch('arrow.utcnow')
 def test_embargo_lift_with_draft(
-        mock_arrow, running_app, es_clear, minimal_record, lang):
+        mock_arrow, running_app, es_clear, minimal_record):
     superuser_identity = running_app.superuser_identity
     service = current_rdm_records.records_service
     # Add embargo to record
@@ -316,7 +319,7 @@ def test_embargo_lift_with_draft(
 
 @mock.patch('arrow.utcnow')
 def test_embargo_lift_with_updated_draft(
-        mock_arrow, running_app, es_clear, minimal_record, lang):
+        mock_arrow, running_app, es_clear, minimal_record):
     superuser_identity = running_app.superuser_identity
     service = current_rdm_records.records_service
     # Add embargo to record
@@ -357,8 +360,7 @@ def test_embargo_lift_with_updated_draft(
     assert draft_lifted.access.protection.record == 'public'
 
 
-def test_embargo_lift_with_error(
-        running_app, es_clear, minimal_record, lang):
+def test_embargo_lift_with_error(running_app, es_clear, minimal_record):
     superuser_identity = running_app.superuser_identity
     service = current_rdm_records.records_service
     # Add embargo to record

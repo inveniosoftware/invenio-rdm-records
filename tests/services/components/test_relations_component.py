@@ -19,7 +19,7 @@ def service(running_app):
     return current_rdm_records.records_service
 
 
-def test_dereferencing(service, minimal_record, identity_simple, lang):
+def test_dereferencing(service, minimal_record, identity_simple):
     """Read and read draft should dereference the record."""
     idty = identity_simple
     minimal_record['metadata']['languages'] = [{'id': 'eng'}]

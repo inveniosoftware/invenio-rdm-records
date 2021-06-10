@@ -8,56 +8,10 @@
 
 """Test record relationships."""
 
-from collections import namedtuple
-
 import pytest
-from invenio_access.permissions import system_identity
 from invenio_records.systemfields.relations import InvalidRelationValue
-from invenio_vocabularies.proxies import current_service as vocabulary_service
-from invenio_vocabularies.records.api import Vocabulary
 
 from invenio_rdm_records.records.api import RDMDraft, RDMRecord
-
-
-@pytest.fixture(scope="module")
-def subject_type(app):
-    """Subject vocabulary type."""
-    return vocabulary_service.create_type(system_identity, "subjects", "sub")
-
-
-@pytest.fixture(scope="module")
-def subject_item(app, subject_type):
-    """Subject vocabulary record."""
-    vocab = vocabulary_service.create(system_identity, {
-        "id": "A-D000007",
-        "props": {
-            "subjectScheme": "MeSH"
-        },
-        "tags": ["mesh"],
-        "title": {
-            "en": "Abdominal Injuries"
-        },
-        "type": "subjects"
-    })
-
-    Vocabulary.index.refresh()
-
-    return vocab
-
-
-RunningApp = namedtuple("RunningApp", [
-    "app", "location", "resource_type_item", "subject_item"
-])
-
-
-@pytest.fixture
-def running_app_w_subject(running_app, subject_item):
-    return RunningApp(
-        running_app.app,
-        running_app.location,
-        running_app.resource_type_item,
-        subject_item
-    )
 
 
 #
@@ -70,7 +24,7 @@ def test_subjects_field(running_app, minimal_record):
     assert RDMDraft.relations.subjects
 
 
-def test_subjects_validation(running_app_w_subject, minimal_record):
+def test_subjects_validation(running_app, minimal_record):
     """Tests data content validation."""
     # Valid id
     minimal_record["metadata"]["subjects"] = [{"id": "A-D000007"}]
@@ -86,7 +40,7 @@ def test_subjects_validation(running_app_w_subject, minimal_record):
     pytest.raises(InvalidRelationValue, RDMDraft.create(minimal_record).commit)
 
 
-def test_subjects_indexing(running_app_w_subject, minimal_record):
+def test_subjects_indexing(running_app, minimal_record):
     """Test dereferencing characteristics/features really."""
     minimal_record["metadata"]["subjects"] = [{"id": "A-D000007"}]
     draft = RDMDraft.create(minimal_record).commit()
@@ -96,13 +50,13 @@ def test_subjects_indexing(running_app_w_subject, minimal_record):
     assert dump["metadata"]["subjects"] == [{
         "id": "A-D000007",
         "title": {"en": "Abdominal Injuries"},
-        "@v": f"{running_app_w_subject.subject_item._record.id}::1"
+        "@v": f"{running_app.subject_v._record.id}::1"
     }]
     # NOTE/WARNING: draft.dumps() modifies the draft too
     assert draft["metadata"]["subjects"] == [{
         "id": "A-D000007",
         "title": {"en": "Abdominal Injuries"},
-        "@v": f"{running_app_w_subject.subject_item._record.id}::1"
+        "@v": f"{running_app.subject_v._record.id}::1"
     }]
 
     # Loading draft again should produce an identical record.
