@@ -135,19 +135,19 @@ class ContributorSchema(Schema):
         validate_entry('contributors.role', data)
 
 
-class ResourceTypeSchema(Schema):
-    """Resource type schema."""
-
+class VocabularySchema(Schema):
+    """Invenio Vocabulary schema."""
     id = SanitizedUnicode(required=True)
     title = fields.Dict(dump_only=True)
 
 
-class LanguageSchema(Schema):
+class ResourceTypeSchema(VocabularySchema):
+    """Resource type schema."""
+
+
+class LanguageSchema(VocabularySchema):
     """Language schema."""
 
-    id = SanitizedUnicode(required=True)
-    title = fields.Raw(dump_only=True)
-    description = fields.Raw(dump_only=True)
 
 
 class TitleSchema(Schema):
@@ -208,11 +208,8 @@ class RightsSchema(IdentifierSchema):
     )
 
 
-class SubjectSchema(Schema):
+class SubjectSchema(VocabularySchema):
     """Subject schema."""
-
-    id = SanitizedUnicode(required=True)
-    title = fields.Dict(dump_only=True)  # for localization
 
 
 class DateSchema(Schema):

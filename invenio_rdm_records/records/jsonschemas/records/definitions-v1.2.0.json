@@ -16,10 +16,7 @@
           },
           "uniqueItems": true
         }
-      },
-      "required": [
-        "name"
-      ]
+      }
     }
   },
   "agent": {
@@ -383,8 +380,7 @@
       "id": {
         "type": "string"
       }
-    },
-    "required": ["id"]
+    }
   },
   "latitude": {
     "type": "number",
@@ -407,9 +403,6 @@
   "person_or_org": {
     "type": "object",
     "additionalProperties": false,
-    "required": [
-      "type"
-    ],
     "properties": {
       "name": {
         "type": "string"
@@ -443,8 +436,7 @@
       "id": {
         "type": "string"
       }
-    },
-    "required": ["id"]
+    }
   },
   "scheme": {
     "description": "A scheme.",
@@ -458,8 +450,7 @@
       "id": {
         "type": "string"
       }
-    },
-    "required": ["id"]
+    }
   },
   "titleType": {
     "description": "Type of title.",

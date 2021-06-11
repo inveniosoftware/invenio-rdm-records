@@ -382,6 +382,7 @@
             }
           },
           "subjects" : {
+            "type": "object",
             "properties" : {
               "@v" : {
                 "type" : "keyword"

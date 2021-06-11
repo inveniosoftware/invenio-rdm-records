@@ -364,10 +364,11 @@ class DataCite43Schema(Schema):
 
     def get_subjects(self, obj):
         """Get datacite subjects."""
-        if not obj["metadata"]["subjects"]:
+        subjects = obj["metadata"].get("subjects")
+        if not subjects:
             return missing
 
-        # TODO: Implement read_many for vocabulary_service
+        # FIXME: Implement read_many for vocabulary_service
         def create_datacite_subject(subject):
             """Generate datacite subject dict."""
             subject_record = vocabulary_service.read(
@@ -390,5 +391,5 @@ class DataCite43Schema(Schema):
             return datacite_subject
 
         return [
-            create_datacite_subject(s) for s in obj["metadata"]["subjects"]
+            create_datacite_subject(s) for s in subjects
         ]
