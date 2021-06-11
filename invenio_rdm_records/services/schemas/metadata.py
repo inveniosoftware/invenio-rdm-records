@@ -403,6 +403,12 @@ class LocationSchema(Schema):
             })
 
 
+class FeatureSchema(Schema):
+    """Location feature schema."""
+
+    features = fields.List(fields.Nested(LocationSchema))
+
+
 class MetadataSchema(Schema):
     """Schema for the record metadata."""
 
@@ -444,6 +450,6 @@ class MetadataSchema(Schema):
     rights = fields.List(fields.Nested(RightsSchema))
     description = SanitizedHTML(validate=validate.Length(min=3))
     additional_descriptions = fields.List(fields.Nested(DescriptionSchema))
-    locations = fields.List(fields.Nested(LocationSchema))
+    locations = fields.Nested(FeatureSchema)
     funding = fields.List(fields.Nested(FundingSchema))
     references = fields.List(fields.Nested(ReferenceSchema))

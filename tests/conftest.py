@@ -186,23 +186,25 @@ def full_record(users):
                     "id": "eng"
                 }
             }],
-            "locations": [{
-                "geometry": {
-                    "type": "Point",
-                    "coordinates": [-32.94682, -60.63932]
-                },
-                "place": "test location place",
-                "description": "test location description",
-                "identifiers": [
-                    {
-                        "identifier": "12345abcde",
-                        "scheme": "wikidata"
-                    }, {
-                        "identifier": "12345abcde",
-                        "scheme": "geonames"
-                    }
-                ],
-            }],
+            "locations": {
+                "features": [{
+                    "geometry": {
+                        "type": "Point",
+                        "coordinates": [-32.94682, -60.63932]
+                    },
+                    "place": "test location place",
+                    "description": "test location description",
+                    "identifiers": [
+                        {
+                            "identifier": "12345abcde",
+                            "scheme": "wikidata"
+                        }, {
+                            "identifier": "12345abcde",
+                            "scheme": "geonames"
+                        }
+                    ],
+                }]
+            },
             "funding": [{
                 "funder": {
                     "name": "European Commission",
