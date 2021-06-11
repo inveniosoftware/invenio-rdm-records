@@ -70,7 +70,6 @@ install_requires = [
     'ftfy>=4.4.3,<5.0.0',
     'invenio-drafts-resources>=0.13.0,<0.14.0',
     'invenio-vocabularies>=0.7.2,<0.8.0',
-    'invenio-communities>=2.3.0',
     'pytz>=2020.4',
     'pyyaml>=5.4.0',
 ]

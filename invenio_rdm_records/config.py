@@ -14,13 +14,6 @@ def _(x):
     return x
 
 
-# Records REST API endpoints.
-
-# NOTE: We have to keep this until invenio-records-files and
-#       invenio-communities use the new records-resources way of creating APIs
-RECORDS_REST_ENDPOINTS = {}
-"""REST API for invenio_rdm_records."""
-
 # Files REST
 
 # FILES_REST_PERMISSION_FACTORY = record_files_permission_factory

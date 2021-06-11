@@ -11,7 +11,6 @@
 import click
 from flask.cli import with_appcontext
 from invenio_access.permissions import system_identity
-from invenio_communities.proxies import current_communities
 from invenio_vocabularies.proxies import \
     current_service as current_vocabularies_service
 
@@ -25,7 +24,6 @@ from .fixtures.tasks import create_demo_record
 @click.group()
 def rdm_records():
     """InvenioRDM records commands."""
-    pass
 
 
 @rdm_records.command('demo')
@@ -55,7 +53,7 @@ def create_fixtures():
 @rdm_records.command("rebuild-index")
 @with_appcontext
 def rebuild_index():
-    """Reindex all drafts, records, communities and vocabularies."""
+    """Reindex all drafts, records and vocabularies."""
     click.secho("Reindexing records and drafts...", fg="green")
 
     rec_service = current_rdm_records.records_service
@@ -66,9 +64,4 @@ def rebuild_index():
     vocab_service = current_vocabularies_service
     vocab_service.rebuild_index(identity=system_identity)
 
-    click.secho("Reindexing communities...", fg="green")
-
-    communities_service = current_communities.service
-    communities_service.rebuild_index(identity=system_identity)
-
-    click.secho("Reindexed everything!", fg="green")
+    click.secho("Reindexed records and vocabularies!", fg="green")
