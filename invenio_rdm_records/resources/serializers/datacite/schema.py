@@ -343,7 +343,8 @@ class DataCite43Schema(Schema):
         """Get locations."""
         locations = []
 
-        for location in obj["metadata"].get("locations", []):
+        loc_list = obj["metadata"].get("locations", {}).get("features", [])
+        for location in loc_list:
             place = location.get("place")
             serialized_location = {}
             if place:

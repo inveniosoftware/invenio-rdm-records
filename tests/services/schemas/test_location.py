@@ -75,7 +75,7 @@ def test_valid_single_location(app, minimal_record, valid_full_location):
     metadata = minimal_record['metadata']
     # NOTE: this is done to get possible load transformations out of the way
     metadata = MetadataSchema().load(metadata)
-    metadata['locations'] = [valid_full_location]
+    metadata['locations'] = {"features": [valid_full_location]}
 
     assert metadata == MetadataSchema().load(metadata)
 
@@ -84,14 +84,18 @@ def test_valid_multiple_locations(app, minimal_record, valid_full_location):
     metadata = minimal_record['metadata']
     # NOTE: this is done to get possible load transformations out of the way
     metadata = MetadataSchema().load(metadata)
-    metadata['locations'] = [valid_full_location, valid_full_location]
+    metadata['locations'] = {
+        "features": [
+            valid_full_location, valid_full_location
+        ]
+    }
 
     assert metadata == MetadataSchema().load(metadata)
 
 
 def test_invalid_no_list_location(app, minimal_record, valid_full_location):
     metadata = minimal_record['metadata']
-    metadata['locations'] = valid_full_location
+    metadata['locations'] = {"features": valid_full_location}
 
     with pytest.raises(ValidationError):
         data = MetadataSchema().load(metadata)
