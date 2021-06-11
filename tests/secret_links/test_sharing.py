@@ -24,7 +24,7 @@ from invenio_rdm_records.secret_links.permissions import LinkNeed
 
 
 @pytest.fixture()
-def service(running_app, client, es_clear):
+def service(running_app, es_clear):
     """RDM Record Service."""
     return running_app.app.extensions['invenio-rdm-records'].records_service
 
@@ -184,10 +184,9 @@ def test_permission_levels(
 
 
 def test_read_restricted_record_with_secret_link(
-    running_app, client, minimal_record, es_clear, identity_simple
+    service, minimal_record, identity_simple, client
 ):
     """Test access to a restricted record via a shared link."""
-    service = current_rdm_records.records_service
     record_data = minimal_record.copy()
     record_data["access"]["files"] = "restricted"
     record_data["access"]["record"] = "restricted"

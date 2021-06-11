@@ -33,7 +33,6 @@ class CachedVocabularies:
     _resource_type_ids = []
     _subject_ids = []
 
-
     @classmethod
     def _read_vocabulary(cls, vocabulary):
         dir_ = Path(__file__).parent

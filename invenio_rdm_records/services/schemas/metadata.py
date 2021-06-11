@@ -137,6 +137,7 @@ class ContributorSchema(Schema):
 
 class VocabularySchema(Schema):
     """Invenio Vocabulary schema."""
+
     id = SanitizedUnicode(required=True)
     title = fields.Dict(dump_only=True)
 
@@ -147,7 +148,6 @@ class ResourceTypeSchema(VocabularySchema):
 
 class LanguageSchema(VocabularySchema):
     """Language schema."""
-
 
 
 class TitleSchema(Schema):
