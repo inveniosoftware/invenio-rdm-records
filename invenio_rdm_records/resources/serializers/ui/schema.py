@@ -94,6 +94,13 @@ class ResourceTypeL10NSchema(Schema):
     title = L10NString(data_key='title_l10n')
 
 
+class TitleTypeL10NSchema(Schema):
+    """Localization of title type title."""
+
+    id = fields.String()
+    title = L10NString(data_key='title_l10n')
+
+
 class LanguageL10NSchema(Schema):
     """Localization of language titles."""
 
@@ -136,6 +143,11 @@ class UIObjectSchema(Schema):
     resource_type = fields.Nested(
         ResourceTypeL10NSchema,
         attribute='metadata.resource_type'
+    )
+
+    title_type = fields.Nested(
+        TitleTypeL10NSchema,
+        attribute='metadata.title_type'
     )
 
     access_status = AccessStatusField(attribute='access')

@@ -425,8 +425,19 @@
                     "suggest_title"
                   ]
                 },
-                "type" : {
-                  "type" : "keyword"
+                "type": {
+                  "type": "object",
+                  "properties": {
+                    "@v": {
+                      "type": "keyword"
+                    },
+                    "id": {
+                      "type": "keyword"
+                    },
+                    "title": {
+                      "type": "object"
+                    }
+                  }
                 }
               }
             },

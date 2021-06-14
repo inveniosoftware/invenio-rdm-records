@@ -63,7 +63,7 @@
                   "description": "Additional title of the record.",
                   "type": "string"
                 },
-                "type": {"$ref": "local://records/definitions-v1.2.0.json#/titleType"},
+                "type": {"$ref": "local://records/definitions-v1.2.0.json#/title_type"},
                 "lang": {"$ref": "local://records/definitions-v1.2.0.json#/language"}
             }
           }
