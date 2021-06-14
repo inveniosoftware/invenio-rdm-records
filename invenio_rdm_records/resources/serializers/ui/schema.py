@@ -108,6 +108,18 @@ class SubjectL10NSchema(Schema):
     title = L10NString(data_key='title_l10n')
 
 
+class RelatedIdentifiersSchema(Schema):
+    """Localization of language titles."""
+
+    identifier = fields.String()
+    relation_type = fields.String()
+    scheme = fields.String()
+    resource_type = fields.Nested(
+        ResourceTypeL10NSchema,
+        attribute='resource_type'
+    )
+
+
 class UIObjectSchema(Schema):
     """Schema for dumping extra information for the UI."""
 
@@ -146,6 +158,11 @@ class UIObjectSchema(Schema):
     description_stripped = StrippedHTML(attribute="metadata.description")
 
     version = fields.Function(record_version)
+
+    related_identifiers = fields.List(
+        fields.Nested(RelatedIdentifiersSchema()),
+        attribute="metadata.related_identifiers"
+    )
 
 
 #
