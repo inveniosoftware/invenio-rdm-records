@@ -12,6 +12,8 @@ import pytest
 from flask_security import login_user
 from invenio_accounts.testutils import login_user_via_session
 
+from invenio_rdm_records.records import RDMDraft, RDMRecord
+
 
 @pytest.fixture
 def draft_json(running_app, client, minimal_record, users, headers):
@@ -22,6 +24,9 @@ def draft_json(running_app, client, minimal_record, users, headers):
     response = client.post(
         "/records", json=minimal_record, headers=headers
     )
+
+    RDMDraft.index.refresh()
+
     return response.json
 
 
@@ -38,6 +43,9 @@ def published_json(running_app, client_with_login, minimal_record, headers):
     response = client_with_login.post(
         f"/records/{pid_value}/draft/actions/publish", headers=headers
     )
+
+    RDMRecord.index.refresh()
+
     return response.json
 
 
