@@ -31,6 +31,17 @@ class CachedVocabularies:
     """
 
     _resource_type_ids = []
+    _subject_ids = []
+
+    @classmethod
+    def _read_vocabulary(cls, vocabulary):
+        dir_ = Path(__file__).parent
+
+        return VocabulariesFixture(
+            system_identity,
+            [Path("./app_data"), dir_ / "data"],
+            "vocabularies.yaml",
+        ).get_records_by_vocabulary(vocabulary)
 
     @classmethod
     def fake_resource_type(cls):
@@ -40,17 +51,29 @@ class CachedVocabularies:
 
             dir_ = Path(__file__).parent
 
-            res_types = VocabulariesFixture(
-                system_identity,
-                [Path("./app_data"), dir_ / "data"],
-                "vocabularies.yaml",
-            ).get_records_by_vocabulary("resource_types")
+            res_types = cls._read_vocabulary("resource_types")
 
             for res in res_types:
                 cls._resource_type_ids.append(res["id"])
 
         random_id = random.choice(cls._resource_type_ids)
         return {"id": random_id}
+
+    @classmethod
+    def fake_subjects(cls):
+        """Generate random subjects."""
+        if not cls._subject_ids:
+            subjects = cls._read_vocabulary("subjects")
+
+            for subj in subjects:
+                cls._subject_ids.append(subj["id"])
+
+        if not cls._subject_ids:
+            return []
+
+        n = random.choice([0, 1, 2])
+        random_ids = random.sample(cls._subject_ids, n)
+        return [{"id": i} for i in random_ids]
 
     @classmethod
     def fake_language(cls):
@@ -135,15 +158,7 @@ def create_fake_record():
             }],
             "publisher": "InvenioRDM",
             "publication_date": fake_edtf_level_0(),
-            "subjects": [{
-                "subject": fake.word(),
-                "identifier": "03yrm5c26",
-                "scheme": "ror"
-            }, {
-                "subject": fake.word(),
-                "identifier": "03yrm5c26",
-                "scheme": "ror"
-            }],
+            "subjects": CachedVocabularies.fake_subjects(),
             "contributors": [{
                 "person_or_org": {
                     "family_name": fake.last_name(),

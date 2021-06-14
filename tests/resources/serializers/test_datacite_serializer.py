@@ -13,14 +13,57 @@
 import pytest
 from invenio_access.permissions import system_identity
 from invenio_vocabularies.proxies import current_service as vocabulary_service
+from invenio_vocabularies.records.api import Vocabulary
 
 from invenio_rdm_records.resources.serializers import DataCite43JSONSerializer
 
 
 @pytest.fixture(scope="function")
-def resource_type_dataset(resource_type_type):
+def resource_type_v(resource_type_type):
     """Resource type vocabulary record."""
-    return vocabulary_service.create(system_identity, {
+    vocabulary_service.create(system_identity, {  # create base resource type
+        "id": "image",
+        "props": {
+            "csl": "figure",
+            "datacite_general": "Image",
+            "datacite_type": "",
+            "openaire_resourceType": "25",
+            "openaire_type": "dataset",
+            "schema.org": "https://schema.org/ImageObject",
+            "subtype": "",
+            "subtype_name": "",
+            "type": "image",
+            "type_icon": "chart bar outline",
+            "type_name": "Image",
+        },
+        "title": {
+            "en": "Image"
+        },
+        "type": "resource_types"
+    })
+
+    vocabulary_service.create(system_identity, {
+        "id": "image-photo",
+        "props": {
+            "csl": "graphic",
+            "datacite_general": "Image",
+            "datacite_type": "Photo",
+            "openaire_resourceType": "25",
+            "openaire_type": "dataset",
+            "schema.org": "https://schema.org/Photograph",
+            "subtype": "image-photo",
+            "subtype_name": "Photo",
+            "type": "image",
+            "type_icon": "chart bar outline",
+            "type_name": "Image",
+        },
+        "title": {
+            "en": "Photo"
+        },
+        "type": "resource_types"
+    })
+
+    vocab = vocabulary_service.create(system_identity, {
         "id": "dataset",
         "props": {
             "csl": "dataset",
@@ -41,12 +84,27 @@ def resource_type_dataset(resource_type_type):
         "type": "resource_types"
     })
 
+    Vocabulary.index.refresh()
+
+    return vocab
+
+
+@pytest.fixture
+def running_app(
+    app, location, resource_type_v, subject_v, laguanges_v
+):
+    """Return running_app but load everything for datacite serialization.
+
+    Since test_datacite43_serializer doesn't use content of running_app, we
+    don't bother with a new namedtuple.
+    """
+    return running_app
+
 
 def test_datacite43_serializer(
-    running_app, full_record, resource_type_dataset, laguanges_vocabulary,
-    vocabulary_clear
+    running_app, full_record, vocabulary_clear
 ):
-    """Test serializer to DayaCide 4.3 JSON"""
+    """Test serializer to DataCite 4.3 JSON"""
     expected_data = {
         "types": {
             "resourceTypeGeneral": "Image",
@@ -83,9 +141,8 @@ def test_datacite43_serializer(
         "publisher": "InvenioRDM",
         "publicationYear": "2018",
         "subjects": [{
-            "subject": "test",
-            "valueURI": "test",
-            "subjectScheme": "dewey"
+            "subject": "Abdominal Injuries",
+            "subjectScheme": "MeSH",
         }],
         "contributors": [
             {

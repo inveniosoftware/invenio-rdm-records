@@ -72,6 +72,7 @@ install_requires = [
     'invenio-vocabularies>=0.7.2,<0.8.0',
     'pytz>=2020.4',
     'pyyaml>=5.4.0',
+    'Werkzeug>=1.0.1,<2.0',
 ]
 
 packages = find_packages()

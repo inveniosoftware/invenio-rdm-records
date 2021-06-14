@@ -35,10 +35,8 @@ def _publish_record_with_file(file_id, file_content, identity, record):
 
 
 def test_image_opener(
-    app, location, es_clear, resource_type_item, client_with_login,
-    identity_simple, minimal_record
+    running_app, es_clear, client_with_login, identity_simple, minimal_record
 ):
-
     file_id = "test_file"
     file_content = b'test file content'
     recid = _publish_record_with_file(
@@ -52,8 +50,7 @@ def test_image_opener(
 
 
 def test_image_opener_not_found(
-    app, location, es_clear, resource_type_item, client_with_login,
-    identity_simple, minimal_record
+    running_app, es_clear, client_with_login, identity_simple, minimal_record
 ):
     file_id = "test_file"
     file_content = b'test file content'

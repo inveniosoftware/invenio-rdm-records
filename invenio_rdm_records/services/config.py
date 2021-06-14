@@ -51,6 +51,12 @@ language_facet = TermsFacet(
     value_labels=VocabularyLabels('languages')
 )
 
+subject_facet = TermsFacet(
+    field='metadata.subjects.id',
+    label=_('Subjects'),
+    value_labels=VocabularyLabels('subjects')
+)
+
 access_status_facet = TermsFacet(
     field='access.status',
     label=_("Access status"),
@@ -78,6 +84,7 @@ class RDMSearchOptions(SearchOptions):
     facets = {
         'resource_type': resource_type_facet,
         'languages': language_facet,
+        'subjects': subject_facet,
     }
 
 
@@ -87,6 +94,7 @@ class RDMSearchDraftsOptions(SearchDraftsOptions):
     facets = {
         'resource_type': resource_type_facet,
         'languages': language_facet,
+        'subjects': subject_facet,
         'access_status': access_status_facet,
         'is_published': is_published_facet,
     }

@@ -135,19 +135,19 @@ class ContributorSchema(Schema):
         validate_entry('contributors.role', data)
 
 
-class ResourceTypeSchema(Schema):
-    """Resource type schema."""
+class VocabularySchema(Schema):
+    """Invenio Vocabulary schema."""
 
     id = SanitizedUnicode(required=True)
     title = fields.Dict(dump_only=True)
 
 
-class LanguageSchema(Schema):
-    """Language schema."""
+class ResourceTypeSchema(VocabularySchema):
+    """Resource type schema."""
 
-    id = SanitizedUnicode(required=True)
-    title = fields.Raw(dump_only=True)
-    description = fields.Raw(dump_only=True)
+
+class LanguageSchema(VocabularySchema):
+    """Language schema."""
 
 
 class TitleSchema(Schema):
@@ -208,15 +208,8 @@ class RightsSchema(IdentifierSchema):
     )
 
 
-class SubjectSchema(IdentifierSchema):
+class SubjectSchema(VocabularySchema):
     """Subject schema."""
-
-    def __init__(self, **kwargs):
-        """Constructor."""
-        super().__init__(
-            fail_on_unknown=False, identifier_required=False, **kwargs)
-
-    subject = SanitizedUnicode(required=True)
 
 
 class DateSchema(Schema):

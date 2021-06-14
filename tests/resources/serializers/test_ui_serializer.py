@@ -35,6 +35,14 @@ def full_to_dict_record(full_record):
         "title": {"en": "Journal article"}
     }
 
+    to_dict_record["metadata"]["subjects"] = [{
+        "id": "A-D000007",
+        "title": {"en": "Abdominal Injuries"}
+    }, {
+        "id": "A-D000008",
+        "title": {"en": "Abdominal Neoplasms"}
+    }]
+
     to_dict_record['access']['status'] = 'embargoed'
 
     return to_dict_record
@@ -98,6 +106,10 @@ def test_ui_serializer(app, full_to_dict_record):
             {'id': 'eng', 'title_l10n': "English"}
         ],
         'description_stripped': 'Test',
+        'subjects': [
+            {'id': 'A-D000007', 'title_l10n': "Abdominal Injuries"},
+            {'id': 'A-D000008', 'title_l10n': "Abdominal Neoplasms"}
+        ],
         'version': 'v1.0',
     }
 

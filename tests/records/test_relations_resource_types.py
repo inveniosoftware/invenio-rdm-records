@@ -52,7 +52,7 @@ def test_resource_types_indexing(running_app, minimal_record):
     assert dump["metadata"]["resource_type"] == {
         "id": "image-photo",
         "title": {"en": "Photo"},
-        "@v": f"{running_app.resource_type_item._record.id}::1"
+        "@v": f"{running_app.resource_type_v._record.id}::1"
     }
 
     # Load draft again - should produce an identical record.

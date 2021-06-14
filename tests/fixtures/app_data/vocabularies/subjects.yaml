@@ -1,0 +1,14 @@
+- id: A-D000007
+  props:
+    subjectScheme: MeSH
+  tags:
+    - mesh
+  title:
+    en: Abdominal Injuries
+- id: A-D000008
+  props:
+    subjectScheme: MeSH
+  tags:
+    - mesh
+  title:
+    en: Abdominal Neoplasms
