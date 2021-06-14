@@ -43,6 +43,13 @@ def full_to_dict_record(full_record):
         "title": {"en": "Abdominal Neoplasms"}
     }]
 
+    to_dict_record["metadata"]["related_identifiers"] = [
+        {'identifier': '10.1234/foo.bar',
+         'relation_type': 'cites',
+         'resource_type': {'id': 'dataset', "title": {"en": "Dataset"}},
+         'scheme': 'doi'}
+    ]
+
     to_dict_record['access']['status'] = 'embargoed'
 
     return to_dict_record
@@ -104,6 +111,12 @@ def test_ui_serializer(app, full_to_dict_record):
         'languages': [
             {'id': 'dan', 'title_l10n': "Danish"},
             {'id': 'eng', 'title_l10n': "English"}
+        ],
+        'related_identifiers': [
+            {'identifier': '10.1234/foo.bar',
+             'relation_type': 'cites',
+             'resource_type': {'id': 'dataset', 'title_l10n': 'Dataset'},
+             'scheme': 'doi'}
         ],
         'description_stripped': 'Test',
         'subjects': [

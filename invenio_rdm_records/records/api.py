@@ -89,6 +89,13 @@ class CommonFieldsMixin:
             pid_field=Vocabulary.pid.with_type_ctx('subjects'),
             cache_key='subjects',
         ),
+        related_identifiers=PIDListRelation(
+            'metadata.related_identifiers',
+            attrs=['id', 'title'],
+            pid_field=Vocabulary.pid.with_type_ctx('resource_types'),
+            cache_key='resource_type',
+            relation_field='resource_type'
+        ),
     )
 
     bucket_id = ModelField(dump=False)
