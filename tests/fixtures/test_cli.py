@@ -27,6 +27,11 @@ def test_fake_demo_record_creation(app, location, db, es_clear, vocabularies):
             "lng",
             Path(__file__).parent / "data/vocabularies/languages.yaml"
         ),
+        (
+            'title_types',
+            "ttyp",
+            Path(__file__).parent / "data/vocabularies/title_types.yaml"
+        ),
     ]
     for id_, pid_type, filepath in vocabularies_meta:
         vocabularies.create_vocabulary_type(
@@ -37,5 +42,6 @@ def test_fake_demo_record_creation(app, location, db, es_clear, vocabularies):
             },
         )
         vocabularies.load_datafile(id_, filepath, delay=False)
+
 
     create_demo_record(create_fake_record())

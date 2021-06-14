@@ -116,7 +116,9 @@ def full_record(users):
             "title": "InvenioRDM",
             "additional_titles": [{
                 "title": "a research data management platform",
-                "type": "subtitle",
+                "type": {
+                    "id": "subtitle"
+                },
                 "lang": {
                     "id": "eng"
                 }
@@ -457,6 +459,32 @@ def resource_type_v(app, resource_type_type):
 
 
 @pytest.fixture(scope="module")
+def title_type(app):
+    """title vocabulary type."""
+    return vocabulary_service.create_type(system_identity,
+                                          "title_types", "ttyp")
+
+
+@pytest.fixture(scope="module")
+def title_type_v(app, subject_type):
+    """Title Type vocabulary record."""
+    vocab = vocabulary_service.create(system_identity, {
+        "id": "alternative-title",
+        "props": {
+            "datacite": "AlternativeTitle"
+         },
+        "title": {
+            "en": "Alternative Title"
+        },
+        "type": "title_types"
+    })
+
+    Vocabulary.index.refresh()
+
+    return vocab
+
+
+@pytest.fixture(scope="module")
 def subject_type(app):
     """Subject vocabulary type."""
     return vocabulary_service.create_type(system_identity, "subjects", "sub")
@@ -483,18 +511,21 @@ def subject_v(app, subject_type):
 
 
 RunningApp = namedtuple("RunningApp", [
-    "app", "location", "resource_type_v", "subject_v", "languages_v"
+    "app", "location", "resource_type_v", "subject_v",
+    "languages_v", "title_type_v"
 ])
 
 
 @pytest.fixture
-def running_app(app, location, resource_type_v, subject_v, languages_v):
+def running_app(app, location, resource_type_v,
+                subject_v, languages_v, title_type_v):
     """This fixture provides an app with the typically needed db data loaded.
 
     All of these fixtures are often needed together, so collecting them
     under a semantic umbrella makes sense.
     """
-    return RunningApp(app, location, resource_type_v, subject_v, languages_v)
+    return RunningApp(app, location, resource_type_v, subject_v, languages_v,
+                      title_type_v)
 
 
 @pytest.fixture(scope="function")

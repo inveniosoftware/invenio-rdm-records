@@ -16,3 +16,6 @@ resource_types:
 subjects:
   pid-type: sub
   data-file: vocabularies/subjects.yaml
+title_types:
+  pid-type: ttyp
+  data-file: vocabularies/title_types.yaml

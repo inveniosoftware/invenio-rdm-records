@@ -452,9 +452,15 @@
       }
     }
   },
-  "titleType": {
+  "title_type": {
     "description": "Type of title.",
-    "type": "string"
+    "type": "object",
+    "additionalProperties": false,
+    "properties": {
+      "id": {
+        "type": "string"
+      }
+    }
   },
   "user": {
     "type": "object",
