@@ -31,6 +31,7 @@ class CachedVocabularies:
     """
 
     _resource_type_ids = []
+    _title_type_ids = []
     _subject_ids = []
 
     @classmethod
@@ -74,6 +75,24 @@ class CachedVocabularies:
         n = random.choice([0, 1, 2])
         random_ids = random.sample(cls._subject_ids, n)
         return [{"id": i} for i in random_ids]
+
+    @classmethod
+    def fake_title_type(cls):
+        """Generate a random title_type."""
+        if not cls._title_type_ids:
+
+            cls._title_type_ids = []
+
+            title_types = cls._read_vocabulary("title_types")
+
+            for tt in title_types:
+                cls._title_type_ids.append(tt["id"])
+
+        if not cls._subject_ids:
+            return []
+
+        random_id = random.choice(cls._title_type_ids)
+        return {"id": random_id}
 
     @classmethod
     def fake_language(cls):
@@ -149,7 +168,7 @@ def create_fake_record():
             "title": fake.company() + "'s gallery",
             "additional_titles": [{
                 "title": "a research data management platform",
-                "type": "subtitle",
+                "title_type": CachedVocabularies.fake_title_type(),
                 "lang": "eng"
             }, {
                 "title": fake.company() + "'s gallery",

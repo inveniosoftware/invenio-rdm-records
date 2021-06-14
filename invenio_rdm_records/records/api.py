@@ -89,6 +89,12 @@ class CommonFieldsMixin:
             pid_field=Vocabulary.pid.with_type_ctx('subjects'),
             cache_key='subjects',
         ),
+        title_type=PIDRelation(
+            'metadata.title_type',
+            attrs=['id', 'title'],
+            pid_field=Vocabulary.pid.with_type_ctx('title_types'),
+            cache_key='title_type',
+        ),
     )
 
     bucket_id = ModelField(dump=False)

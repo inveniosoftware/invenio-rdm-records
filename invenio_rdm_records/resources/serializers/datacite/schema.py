@@ -183,6 +183,13 @@ class DataCite43Schema(Schema):
             system_identity
         )._record
 
+    def _read_title_type(self, id_):
+        """Retrieve title type record using service."""
+        return vocabulary_service.read(
+            ('title_types', id_),
+            system_identity
+        )._record
+
     def _read_language(self, id_):
         """Retrieve resource type record using service."""
         lang = vocabulary_service.read(
@@ -213,9 +220,11 @@ class DataCite43Schema(Schema):
 
         for add_title in additional_titles:
             title = {"title": add_title.get("title")}
-            type_ = add_title.get("type")
-            if type_:
-                title["titleType"] = type_.capitalize()
+            title_id = add_title.get("title_type", {}).get("id")
+            if title_id:
+                title_type_record = self._read_title_type(title_id)
+                props = title_type_record["props"]
+                title['titleType'] = props.get("datacite", "Other")
             lang_id = add_title.get("lang", {}).get("id")
             if lang_id:
                 title["lang"] = self._read_language(lang_id)

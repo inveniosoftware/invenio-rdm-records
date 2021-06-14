@@ -150,18 +150,16 @@ class LanguageSchema(VocabularySchema):
     """Language schema."""
 
 
+class TitleTypeSchema(VocabularySchema):
+    """Title type schema."""
+
+
 class TitleSchema(Schema):
     """Schema for the additional title."""
 
     title = SanitizedUnicode(required=True, validate=validate.Length(min=3))
-    type = SanitizedUnicode()
+    type = fields.Nested(TitleTypeSchema)
     lang = fields.Nested(LanguageSchema)
-
-    @validates_schema
-    def validate_data(self, data, **kwargs):
-        """Validate type."""
-        if data.get('type'):
-            validate_entry('titles.type', data)
 
 
 class DescriptionSchema(Schema):

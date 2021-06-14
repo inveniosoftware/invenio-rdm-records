@@ -52,8 +52,10 @@
     "title": "InvenioRDM",
     "additional_titles": [{
       "title": "a research data management platform",
-      "type": "subtitle",
-      "lang": {
+      "type": {
+        "id": "alternative-title"
+    },
+      "lang": { 
         "id": "eng"
       }
     }],

@@ -91,7 +91,7 @@ def resource_type_v(resource_type_type):
 
 @pytest.fixture
 def running_app(
-    app, location, resource_type_v, subject_v, laguanges_v
+    app, location, resource_type_v, subject_v, laguanges_v, title_type_v
 ):
     """Return running_app but load everything for datacite serialization.
 
@@ -134,7 +134,7 @@ def test_datacite43_serializer(
             {"title": "InvenioRDM"},
             {
                 "title": "a research data management platform",
-                "titleType": "Subtitle",
+                "titleType": "Alternative Title",
                 "lang": "en",
             },
         ],
