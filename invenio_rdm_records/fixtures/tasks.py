@@ -29,24 +29,3 @@ def create_demo_record(data):
     service = current_rdm_records.records_service
     draft = service.create(data=data, identity=system_identity)
     service.publish(id_=draft.id, identity=system_identity)
-
-
-@shared_task(ignore_result=True)
-def update_expired_embargos():
-    """Release expired embargoes."""
-    service = current_rdm_records.records_service
-    embargoed_q = f"access.embargo.active:true AND access.embargo.until:" \
-                  f"{{* TO {arrow.utcnow().datetime.strftime('%Y-%m-%d')}}}"
-    # Retrieve overdue embargoed records
-    restricted_records = service.scan(identity=system_identity, q=embargoed_q)
-    for restricted_record in restricted_records.to_dict()["hits"]["hits"]:
-        try:
-            service.lift_embargo(
-                _id=restricted_record['id'],
-                identity=system_identity
-            )
-        except EmbargoNotLiftedError:
-            current_app.logger.warning(f"Embargo from record with id"
-                                       f" {restricted_record['id']} was not"
-                                       f" lifted")
-            continue
