@@ -5,6 +5,7 @@
     datacite_type: ''
     openaire_resourceType: '17'
     openaire_type: publication
+    eurepo: info:eu-repo/semantics/other
     schema.org: https://schema.org/CreativeWork
     subtype: ''
     subtype_name: ''
@@ -20,6 +21,7 @@
     datacite_type: ''
     openaire_resourceType: '9'
     openaire_type: publication
+    eurepo: info:eu-repo/semantics/technicalDocumentation
     schema.org: https://schema.org/Collection
     subtype: publication-annotationcollection
     subtype_name: Annotation collection
@@ -35,6 +37,7 @@
     datacite_type: Book
     openaire_resourceType: '2'
     openaire_type: publication
+    eurepo: info:eu-repo/semantics/book
     schema.org: https://schema.org/Book
     subtype: publication-book
     subtype_name: Book
@@ -50,6 +53,7 @@
     datacite_type: Book section
     openaire_resourceType: '13'
     openaire_type: publication
+    eurepo: info:eu-repo/semantics/bookPart
     schema.org: https://schema.org/ScholarlyArticle
     subtype: publication-section
     subtype_name: Book section
@@ -65,6 +69,7 @@
     datacite_type: Conference paper
     openaire_resourceType: '4'
     openaire_type: publication
+    eurepo:
     schema.org: https://schema.org/ScholarlyArticle
     subtype: publication-conferencepaper
     subtype_name: Conference paper
@@ -80,6 +85,7 @@
     datacite_type: Data management plan
     openaire_resourceType: '9'
     openaire_type: publication
+    eurepo: info:eu-repo/semantics/conferencePaper
     schema.org: https://schema.org/CreativeWork
     subtype: publication-datamanagementplan
     subtype_name: Data management plan
@@ -95,6 +101,7 @@
     datacite_type: Journal article
     openaire_resourceType: '1'
     openaire_type: publication
+    eurepo: info:eu-repo/semantics/article
     schema.org: https://schema.org/ScholarlyArticle
     subtype: publication-article
     subtype_name: Journal article
@@ -110,6 +117,7 @@
     datacite_type: Patent
     openaire_resourceType: '19'
     openaire_type: publication
+    eurepo: info:eu-repo/semantics/patent
     schema.org: https://schema.org/CreativeWork
     subtype: publication-patent
     subtype_name: Patent
@@ -125,6 +133,7 @@
     datacite_type: Preprint
     openaire_resourceType: '16'
     openaire_type: publication
+    eurepo: info:eu-repo/semantics/preprint
     schema.org: https://schema.org/ScholarlyArticle
     subtype: publication-preprint
     subtype_name: Preprint
@@ -140,6 +149,7 @@
     datacite_type: Project deliverable
     openaire_resourceType: '34'
     openaire_type: publication
+    eurepo: info:eu-repo/semantics/report
     schema.org: https://schema.org/CreativeWork
     subtype: publication-deliverable
     subtype_name: Project deliverable
@@ -155,6 +165,7 @@
     datacite_type: Project milestone
     openaire_resourceType: '35'
     openaire_type: publication
+    eurepo: info:eu-repo/semantics/report
     schema.org: https://schema.org/CreativeWork
     subtype: publication-milestone
     subtype_name: Project milestone
@@ -170,6 +181,7 @@
     datacite_type: Proposal
     openaire_resourceType: '36'
     openaire_type: publication
+    eurepo: info:eu-repo/semantics/researchProposal
     schema.org: https://schema.org/CreativeWork
     subtype: publication-proposal
     subtype_name: Proposal
@@ -185,6 +197,7 @@
     datacite_type: Report
     openaire_resourceType: '17'
     openaire_type: publication
+    eurepo: info:eu-repo/semantics/report
     schema.org: https://schema.org/ScholarlyArticle
     subtype: publication-report
     subtype_name: Report
@@ -200,6 +213,7 @@
     datacite_type: Software documentation
     openaire_resourceType: '9'
     openaire_type: publication
+    eurepo: info:eu-repo/semantics/technicalDocumentation
     schema.org: https://schema.org/CreativeWork
     subtype: publication-softwaredocumentation
     subtype_name: Software documentation
@@ -215,6 +229,7 @@
     datacite_type: Taxonomic treatment
     openaire_resourceType: '20'
     openaire_type: publication
+    eurepo: info:eu-repo/semantics/other
     schema.org: https://schema.org/ScholarlyArticle
     subtype: publication-taxonomictreatment
     subtype_name: Taxonomic treatment
@@ -230,6 +245,7 @@
     datacite_type: Technical note
     openaire_resourceType: '9'
     openaire_type: publication
+    eurepo: info:eu-repo/semantics/technicalDocumentation
     schema.org: https://schema.org/ScholarlyArticle
     subtype: publication-technicalnote
     subtype_name: Technical note
@@ -245,6 +261,7 @@
     datacite_type: Thesis
     openaire_resourceType: '6'
     openaire_type: publication
+    eurepo: info:eu-repo/semantics/doctoralThesis
     schema.org: https://schema.org/ScholarlyArticle
     subtype: publication-thesis
     subtype_name: Thesis
@@ -260,6 +277,7 @@
     datacite_type: Working paper
     openaire_resourceType: '14'
     openaire_type: publication
+    eurepo: info:eu-repo/semantics/workingPaper
     schema.org: https://schema.org/ScholarlyArticle
     subtype: publication-workingpaper
     subtype_name: Working paper
@@ -275,6 +293,7 @@
     datacite_type: Other
     openaire_resourceType: '20'
     openaire_type: publication
+    eurepo: info:eu-repo/semantics/other
     schema.org: https://schema.org/CreativeWork
     subtype: publication-other
     subtype_name: Other
@@ -290,6 +309,7 @@
     datacite_type: Poster
     openaire_resourceType: '4'
     openaire_type: publication
+    eurepo:
     schema.org: https://schema.org/CreativeWork
     subtype: ''
     subtype_name: ''
@@ -305,6 +325,7 @@
     datacite_type: Presentation
     openaire_resourceType: '4'
     openaire_type: publication
+    eurepo: info:eu-repo/semantics/conferencePoster
     schema.org: https://schema.org/PresentationDigitalDocument
     subtype: ''
     subtype_name: ''
@@ -320,6 +341,7 @@
     datacite_type: ''
     openaire_resourceType: '21'
     openaire_type: dataset
+    eurepo: info:eu-repo/semantics/other
     schema.org: https://schema.org/Dataset
     subtype: ''
     subtype_name: ''
@@ -335,6 +357,7 @@
     datacite_type: ''
     openaire_resourceType: '25'
     openaire_type: dataset
+    eurepo: info:eu-repo/semantics/other
     schema.org: https://schema.org/ImageObject
     subtype: ''
     subtype_name: ''
@@ -350,6 +373,7 @@
     datacite_type: Figure
     openaire_resourceType: '25'
     openaire_type: dataset
+    eurepo: info:eu-repo/semantics/other
     schema.org: https://schema.org/ImageObject
     subtype: image-figure
     subtype_name: Figure
@@ -365,6 +389,7 @@
     datacite_type: Plot
     openaire_resourceType: '25'
     openaire_type: dataset
+    eurepo: info:eu-repo/semantics/other
     schema.org: https://schema.org/ImageObject
     subtype: image-plot
     subtype_name: Plot
@@ -380,6 +405,7 @@
     datacite_type: Drawing
     openaire_resourceType: '25'
     openaire_type: dataset
+    eurepo: info:eu-repo/semantics/other
     schema.org: https://schema.org/ImageObject
     subtype: image-drawing
     subtype_name: Drawing
@@ -395,6 +421,7 @@
     datacite_type: Diagram
     openaire_resourceType: '25'
     openaire_type: dataset
+    eurepo: info:eu-repo/semantics/other
     schema.org: https://schema.org/ImageObject
     subtype: image-diagram
     subtype_name: Diagram
@@ -410,6 +437,7 @@
     datacite_type: Photo
     openaire_resourceType: '25'
     openaire_type: dataset
+    eurepo: info:eu-repo/semantics/other
     schema.org: https://schema.org/Photograph
     subtype: image-photo
     subtype_name: Photo
@@ -425,6 +453,7 @@
     datacite_type: Other
     openaire_resourceType: '25'
     openaire_type: dataset
+    eurepo: info:eu-repo/semantics/other
     schema.org: https://schema.org/ImageObject
     subtype: image-other
     subtype_name: Other
@@ -440,6 +469,7 @@
     datacite_type: ''
     openaire_resourceType: '33'
     openaire_type: dataset
+    eurepo: info:eu-repo/semantics/other
     schema.org: https://schema.org/MediaObject
     subtype: ''
     subtype_name: ''
@@ -455,6 +485,7 @@
     datacite_type: ''
     openaire_resourceType: '29'
     openaire_type: software
+    eurepo: info:eu-repo/semantics/other
     schema.org: https://schema.org/SoftwareSourceCode
     subtype: ''
     subtype_name: ''
@@ -470,6 +501,7 @@
     datacite_type: ''
     openaire_resourceType: '10'
     openaire_type: other
+    eurepo: info:eu-repo/semantics/lecture
     schema.org: https://schema.org/CreativeWork
     subtype: ''
     subtype_name: ''
@@ -485,6 +517,7 @@
     datacite_type: ''
     openaire_resourceType: '20'
     openaire_type: other
+    eurepo: info:eu-repo/semantics/other
     schema.org: https://schema.org/CreativeWork
     subtype: ''
     subtype_name: ''

@@ -17,6 +17,8 @@ from invenio_drafts_resources.resources import RecordResourceConfig
 from invenio_records_resources.resources.files import FileResourceConfig
 
 from invenio_rdm_records.resources.args import RDMSearchRequestArgsSchema
+from invenio_rdm_records.resources.serializers.dublincore import \
+    DublinCoreXMLSerializer
 
 from .serializers import CSLJSONSerializer, DataCite43JSONSerializer, \
     DataCite43XMLSerializer, StringCitationSerializer, UIJSONSerializer
@@ -44,9 +46,10 @@ record_serializers = {
     "application/vnd.datacite.datacite+xml": ResponseHandler(
         DataCite43XMLSerializer()
     ),
+    "application/x-dc+xml": ResponseHandler(DublinCoreXMLSerializer()),
     "text/x-bibliography": ResponseHandler(
         StringCitationSerializer(url_args_retriever=csl_url_args_retriever),
-        headers={"content-type": "text/plain"}
+        headers={"content-type": "text/plain"},
     ),
 }
 
