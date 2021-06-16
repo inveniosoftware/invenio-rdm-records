@@ -67,6 +67,7 @@ install_requires = [
     'citeproc-py>=0.6.0',
     'citeproc-py-styles>=0.1.2',
     'datacite>=1.1.1',
+    'dcxml>=0.1.2',
     'Faker>=2.0.3',
     'ftfy>=4.4.3,<5.0.0',
     'invenio-drafts-resources>=0.13.2,<0.14.0',

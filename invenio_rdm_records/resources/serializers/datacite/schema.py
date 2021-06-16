@@ -19,18 +19,7 @@ from marshmallow import Schema, ValidationError, fields, missing, post_dump, \
     validate
 from marshmallow_utils.fields import SanitizedUnicode
 
-
-def _map_type(vocabulary, fields, id_):
-    """Maps an internal vocabulary type to DataCite type."""
-    res = vocabulary_service.read_all(
-        system_identity,
-        ['id'] + fields,
-        vocabulary
-    )
-
-    for h in res.hits:
-        if h["id"] == id_:
-            return h["props"]
+from ..utils import map_type
 
 
 class PersonOrOrgSchema43(Schema):
@@ -143,7 +132,7 @@ class ContributorSchema43(PersonOrOrgSchema43):
         if not role:
             return missing
 
-        props = _map_type(
+        props = map_type(
             'contributorsroles',
             ['props.datacite'],
             role["id"],
@@ -219,7 +208,7 @@ class DataCite43Schema(Schema):
 
     def get_type(self, obj):
         """Get resource type."""
-        props = _map_type(
+        props = map_type(
             'resourcetypes',
             ['props.datacite_general', 'props.datacite_type'],
             obj["metadata"]["resource_type"]["id"],
@@ -246,7 +235,7 @@ class DataCite43Schema(Schema):
             # Text type
             type_id = t.get("type", {}).get("id")
             if type_id:
-                props = _map_type(
+                props = map_type(
                     f"{field}types",
                     ["props.datacite"],
                     type_id)
@@ -291,7 +280,7 @@ class DataCite43Schema(Schema):
 
         for date in obj["metadata"].get("dates", []):
             date_type_id = date.get("type", {}).get("id")
-            props = _map_type('datetypes', ['props'], date_type_id)
+            props = map_type('datetypes', ['props'], date_type_id)
             to_append = {
                 "date": date["date"],
                 "dateType": props.get("datacite", "Other")
@@ -347,7 +336,7 @@ class DataCite43Schema(Schema):
         identifiers = metadata.get("related_identifiers", [])
         for rel_id in identifiers:
             relation_type_id = rel_id.get("relation_type", {}).get("id")
-            props = _map_type(
+            props = map_type(
                 "relationtypes",
                 ["props"],
                 relation_type_id
@@ -360,7 +349,7 @@ class DataCite43Schema(Schema):
 
             resource_type_id = rel_id.get("resource_type", {}).get("id")
             if resource_type_id:
-                props = _map_type(
+                props = map_type(
                     "resourcetypes",
                     ["props"],
                     resource_type_id
