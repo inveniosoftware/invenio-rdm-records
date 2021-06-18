@@ -19,7 +19,9 @@ import pytest
 from flask_principal import Identity, Need, UserNeed
 from flask_security import login_user
 from flask_security.utils import hash_password
-from invenio_access.permissions import system_identity
+from invenio_access.models import ActionRoles
+from invenio_access.permissions import superuser_access, system_identity
+from invenio_accounts.models import Role
 from invenio_accounts.testutils import login_user_via_session
 from invenio_app.factory import create_app as _create_app
 from invenio_vocabularies.proxies import current_service as vocabulary_service
@@ -491,3 +493,31 @@ def running_app(app, location, resource_type_v, subject_v, languages_v):
     under a semantic umbrella makes sense.
     """
     return RunningApp(app, location, resource_type_v, subject_v, languages_v)
+
+
+@pytest.fixture(scope="function")
+def superuser_role_need(db):
+    """Store 1 role with 'superuser-access' ActionNeed.
+
+    WHY: This is needed because expansion of ActionNeed is
+         done on the basis of a User/Role being associated with that Need.
+         If no User/Role is associated with that Need (in the DB), the
+         permission is expanded to an empty list.
+    """
+    role = Role(name="superuser-access")
+    db.session.add(role)
+
+    action_role = ActionRoles.create(action=superuser_access, role=role)
+    db.session.add(action_role)
+
+    db.session.commit()
+
+    return action_role.need
+
+
+@pytest.fixture(scope="function")
+def superuser_identity(superuser_role_need):
+    """Superuser identity fixture."""
+    identity = Identity(1)
+    identity.provides.add(superuser_role_need)
+    return identity
