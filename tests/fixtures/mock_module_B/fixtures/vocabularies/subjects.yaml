@@ -1,0 +1,7 @@
+- id: B-D000008
+  props:
+    subjectScheme: MeSH
+  tags:
+    - mesh
+  title:
+    en: Abdominal Neoplasms

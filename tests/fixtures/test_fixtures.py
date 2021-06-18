@@ -14,58 +14,60 @@ from invenio_pidstore.errors import PIDDoesNotExistError
 from invenio_vocabularies.proxies import current_service as vocabulary_service
 
 from invenio_rdm_records.fixtures.users import UsersFixture
-from invenio_rdm_records.fixtures.vocabularies import VocabulariesFixture
+from invenio_rdm_records.fixtures.vocabularies import \
+    PrioritizedVocabulariesFixtures
 
 
 def test_load_languages(app, db, vocabularies):
-    vocabularies.load_vocabulary(
-        'languages',
+    id_ = 'languages'
+    filepath = Path(__file__).parent / "data/vocabularies/languages.yaml"
+
+    vocabularies.create_vocabulary_type(
+        id_,
         {
             "pid-type": "lng",
-            "data-file": (
-                Path(__file__).parent / "data/vocabularies/languages.yaml"
-            )
+            "data-file": filepath
         },
-        delay=False
     )
+    vocabularies.load_datafile(id_, filepath, delay=False)
 
-    item = vocabulary_service.read(
-        ('languages', 'aae'), system_identity)
-
+    item = vocabulary_service.read((id_, 'aae'), system_identity)
     assert item.id == "aae"
 
 
 def test_load_resource_types(app, db, vocabularies):
-    vocabularies.load_vocabulary(
-        'resource_types',
+    id_ = 'resource_types'
+    filepath = Path(__file__).parent / "data/vocabularies/resource_types.yaml"
+
+    vocabularies.create_vocabulary_type(
+        id_,
         {
             "pid-type": "rsrct",
-            "data-file": (
-                Path(__file__).parent / "data/vocabularies/resource_types.yaml"
-            )
+            "data-file": filepath
         },
-        delay=False
     )
+    vocabularies.load_datafile(id_, filepath, delay=False)
 
     item = vocabulary_service.read(
-        ('resource_types', 'publication-annotationcollection'),
+        (id_, 'publication-annotationcollection'),
         system_identity
     )
     item_dict = item.to_dict()
-
     assert item_dict["id"] == "publication-annotationcollection"
     assert item_dict["props"]["datacite_general"] == "Collection"
 
 
 def test_loading_paths_traversal(app, db):
     dir_ = Path(__file__).parent
-    vocabularies = VocabulariesFixture(
+    fixtures = PrioritizedVocabulariesFixtures(
         system_identity,
-        [dir_ / "app_data", dir_ / "data"],
-        "vocabularies.yaml"
+        dir_ / "app_data",
+        dir_ / "data",
+        "vocabularies.yaml",
+        delay=False
     )
 
-    vocabularies.load()
+    fixtures.load()
 
     # app_data/vocabularies/resource_types.yaml only has image resource types
     with pytest.raises(PIDDoesNotExistError):
@@ -78,9 +80,18 @@ def test_loading_paths_traversal(app, db):
     item = vocabulary_service.read(('languages', 'aae'), system_identity)
     assert item.id == "aae"
 
-    # subjects A from app_data/ are loaded
+    # Only subjects A from app_data/ are loaded
     item = vocabulary_service.read(('subjects', 'A-D000008'), system_identity)
     assert item.id == "A-D000008"
+    with pytest.raises(PIDDoesNotExistError):
+        vocabulary_service.read(
+            ('subjects', 'A-D000015'),
+            system_identity
+        )
+
+    # subjects B from an extension are loaded
+    item = vocabulary_service.read(('subjects', 'B-D000008'), system_identity)
+    assert item.id == "B-D000008"
 
 
 def test_load_users(app, db, admin_role):

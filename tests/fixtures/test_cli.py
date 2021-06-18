@@ -16,25 +16,26 @@ from invenio_rdm_records.fixtures.tasks import create_demo_record
 
 def test_fake_demo_record_creation(app, location, db, es_clear, vocabularies):
     """Assert that demo record creation works without failing."""
-    vocabularies.load_vocabulary(
-        'resource_types',
-        {
-            "pid-type": "rsrct",
-            "data-file": (
-                Path(__file__).parent / "data/vocabularies/resource_types.yaml"
-            )
-        },
-        delay=False
-    )
-    vocabularies.load_vocabulary(
-        'languages',
-        {
-            "pid-type": "lng",
-            "data-file": (
-                Path(__file__).parent / "data/vocabularies/languages.yaml"
-            )
-        },
-        delay=False
-    )
+    vocabularies_meta = [
+        (
+            'resource_types',
+            "rsrct",
+            Path(__file__).parent / "data/vocabularies/resource_types.yaml"
+        ),
+        (
+            'languages',
+            "lng",
+            Path(__file__).parent / "data/vocabularies/languages.yaml"
+        ),
+    ]
+    for id_, pid_type, filepath in vocabularies_meta:
+        vocabularies.create_vocabulary_type(
+            id_,
+            {
+                "pid-type": pid_type,
+                "data-file": filepath
+            },
+        )
+        vocabularies.load_datafile(id_, filepath, delay=False)
 
     create_demo_record(create_fake_record())
