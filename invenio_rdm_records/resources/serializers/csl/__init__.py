@@ -14,10 +14,9 @@ from citeproc import Citation, CitationItem, CitationStylesBibliography, \
 from citeproc.source.json import CiteProcJSON
 from citeproc_styles import get_style_filepath
 from citeproc_styles.errors import StyleNotFoundError
-from flask import abort, request
+from flask import abort
 from flask_resources.serializers import MarshmallowJSONSerializer
 from webargs import fields
-from webargs.flaskparser import FlaskParser
 
 from .schema import CSLJSONSchema
 
@@ -51,6 +50,17 @@ def get_citation_string(json, id, style, locale):
     return _clean_result(str(bib.bibliography()[0]))
 
 
+def get_style_location(style):
+    """Return the path to the CSL style if exists or throw."""
+    try:
+        return get_style_filepath(style.lower())
+    except StyleNotFoundError:
+        abort(
+            400,
+            description=f"Style {style} could not be found.",
+        )
+
+
 class StringCitationSerializer(MarshmallowJSONSerializer):
     """CSL Citation Formatter serializer for records.
 
@@ -73,51 +83,41 @@ class StringCitationSerializer(MarshmallowJSONSerializer):
     _valid_formats = ("csl", "bibtex")
     """Supported formats by citeproc-py."""
 
-    def __init__(self, **options):
-        """Constructor."""
-        super().__init__(schema_cls=CSLJSONSchema, **options)
+    def __init__(self, url_args_retriever, **options):
+        """Constructor.
 
-    @classmethod
-    def _get_args(cls, **kwargs):
-        """Parse style and locale.
-
-        Argument location precedence: kwargs > view_args > query
+        :param url_args_retriever: callable func or object that return the
+                                   style and locale URL args
         """
-        csl_args = {"style": cls._default_style, "locale": cls._default_locale}
-        parser = FlaskParser(locations=("view_args", "query"))
-        csl_args.update(parser.parse(cls._user_args, request))
+        super().__init__(schema_cls=CSLJSONSchema, **options)
+        self.url_args_retriever = url_args_retriever
 
-        csl_args.update(
-            {k: kwargs[k] for k in ("style", "locale") if k in kwargs}
-        )
-
-        try:
-            csl_args["style"] = get_style_filepath(csl_args["style"].lower())
-        except StyleNotFoundError:
-            abort(
-                400,
-                description=f"Style {csl_args['style']} could not be found.",
-            )
-
-        return csl_args
-
-    def serialize_object(self, record, **kwargs):
+    def serialize_object(self, record):
         """Serialize a single record.
 
         :param record: Record instance.
         """
-        return get_citation_string(
-            self.dump_one(record), record["id"], **self._get_args(**kwargs)
+        style, locale = (
+            self.url_args_retriever()
+            if callable(self.url_args_retriever)
+            else self.url_args_retriever
         )
 
-    def serialize_object_list(self, records, **kwargs):
+        # set defaults if params are not provided
+        style = style or self._default_style
+        locale = locale or self._default_locale
+
+        style_filepath = get_style_location(style)
+
+        return get_citation_string(
+            self.dump_one(record), record["id"], style_filepath, locale
+        )
+
+    def serialize_object_list(self, records):
         """Serialize a list of records.
 
         :param records: List of records instance.
         """
         return "\n".join(
-            [
-                self.serialize_object(rec, **kwargs)
-                for rec in records["hits"]["hits"]
-            ]
+            [self.serialize_object(rec) for rec in records["hits"]["hits"]]
         )

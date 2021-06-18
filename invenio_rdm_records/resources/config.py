@@ -8,14 +8,25 @@
 
 """Resources configuration."""
 
+
 import marshmallow as ma
 from flask_resources import HTTPJSONException, JSONSerializer, \
-    ResponseHandler, create_error_handler
+    ResponseHandler, create_error_handler, resource_requestctx
 from invenio_drafts_resources.resources import RecordResourceConfig
 from invenio_records_resources.resources.files import FileResourceConfig
 
+from invenio_rdm_records.resources.args import RDMSearchRequestArgsSchema
+
 from .serializers import CSLJSONSerializer, StringCitationSerializer, \
     UIJSONSerializer
+
+
+def csl_url_args_retriever():
+    """Returns the style and locale passed as URL args for CSL export."""
+    style = resource_requestctx.args.get("style")
+    locale = resource_requestctx.args.get("locale")
+    return style, locale
+
 
 #
 # Response handlers
@@ -27,7 +38,8 @@ record_serializers = {
         CSLJSONSerializer()
     ),
     "text/x-bibliography": ResponseHandler(
-        StringCitationSerializer(), headers={"content-type": "text/plain"}
+        StringCitationSerializer(url_args_retriever=csl_url_args_retriever),
+        headers={"content-type": "text/plain"}
     ),
 }
 
@@ -50,6 +62,13 @@ class RDMRecordResourceConfig(RecordResourceConfig):
         "pid_value": ma.fields.Str(),
         "pid_type": ma.fields.Str(),
     }
+
+    request_read_args = {
+        "style": ma.fields.Str(),
+        "locale": ma.fields.Str(),
+    }
+
+    request_search_args = RDMSearchRequestArgsSchema
 
     response_handlers = record_serializers
 
