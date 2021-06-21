@@ -33,6 +33,7 @@ class CachedVocabularies:
     _resource_type_ids = []
     _title_type_ids = []
     _subject_ids = []
+    _creators_role_ids = []
 
     @classmethod
     def _read_vocabulary(cls, vocabulary):
@@ -113,6 +114,22 @@ class CachedVocabularies:
         random_id = random.choice(["eng", "aah", "aag"])
         return {"id": random_id}
 
+    @classmethod
+    def fake_creators_role(cls):
+        """Generate random creators_role."""
+        if not cls._creators_role_ids:
+            creators_role = cls._read_vocabulary("creators_role")
+
+            for role in creators_role:
+                cls._creators_role_ids.append(role["id"])
+
+        if not cls._creators_role_ids:
+            return []
+
+        n = random.choice([0, 1, 2])
+        random_ids = random.sample(cls._creators_role_ids, n)
+        return [{"id": i} for i in random_ids]
+
 
 def fake_edtf_level_0():
     """Generates a fake publication_date string."""
@@ -170,6 +187,7 @@ def create_fake_record():
                         "identifier": "0000-0002-1825-0097",
                     }],
                 },
+                "role": CachedVocabularies.fake_creators_role(),
                 "affiliations": [{
                     "name": fake.company(),
                     "identifiers": [{
