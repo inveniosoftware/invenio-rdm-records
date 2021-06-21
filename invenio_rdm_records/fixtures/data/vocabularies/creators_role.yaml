@@ -1,0 +1,63 @@
+- id: contactperson
+  title:
+    en: Contact Person
+- id: datacollector
+  title:
+    en: Data Collector
+- id: datacurator
+  title:
+    en: Data Curator
+- id: datamanager
+  title:
+    en: Data Manager
+- id: distributor
+  title:
+    en: Distributor
+- id: editor
+  title:
+    en: Editor
+- id: hostinginstitution
+  title:
+    en: Hosting Institution
+- id: producer
+  title:
+    en: Producer
+- id: projectleader
+  title:
+    en: Project Leader
+- id: projectmanager
+  title:
+    en: Project Manager
+- id: projectmember
+  title:
+    en: Project Member
+- id: registrationagency
+  title:
+    en: Registration Agency
+- id: registrationauthority
+  title:
+    en: Registration Authority
+- id: relatedperson
+  title:
+    en: Related Person
+- id: researcher
+  title:
+    en: Researcher
+- id: researchgroup
+  title:
+    en: Research Group
+- id: rightsholder
+  title:
+    en: Rights Holder
+- id: sponsor
+  title:
+    en: Sponsor
+- id: supervisor
+  title:
+    en: Supervisor
+- id: workpackageleader
+  title:
+    en: Work Package Leader
+- id: other
+  title:
+    en: Other

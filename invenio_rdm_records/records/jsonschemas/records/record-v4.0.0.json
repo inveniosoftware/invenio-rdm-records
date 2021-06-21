@@ -41,7 +41,7 @@
             "additionalProperties": false,
             "properties": {
                 "person_or_org": {"$ref": "local://records/definitions-v1.2.0.json#/person_or_org"},
-                "role": {"type": "string"},
+                "role": {"$ref": "local://records/definitions-v1.2.0.json#/creators_role"},
                 "affiliations": {"$ref": "local://records/definitions-v1.2.0.json#/affiliations"}
             }
           }

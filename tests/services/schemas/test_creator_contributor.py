@@ -143,7 +143,7 @@ def test_creator_valid_role(vocabulary_clear):
             "given_name": "Julio",
             "type": "personal",
         },
-        "role": "rightsholder"
+        "role": {"id": "editor"}
     }
     expected = {
         "person_or_org": {
@@ -152,7 +152,7 @@ def test_creator_valid_role(vocabulary_clear):
             "name": "Cesar, Julio",
             "type": "personal",
         },
-        "role": "rightsholder"
+        "role": {"id": "editor"}
     }
     assert expected == CreatorSchema().load(valid_role)
 

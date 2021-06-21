@@ -30,6 +30,16 @@
   "contributorType": {
     "type": "string"
   },
+  "creators_role": {
+    "description": "Role of creator.",
+    "type": "object",
+    "additionalProperties": false,
+    "properties": {
+      "id": {
+        "type": "string"
+      }
+    }
+  },
   "dateType": {
     "description": "Type of the date.",
     "type": "string"

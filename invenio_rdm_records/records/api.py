@@ -110,6 +110,13 @@ class CommonFieldsMixin:
             cache_key='languages',
             relation_field='lang',
         ),
+        creators_role=PIDListRelation(
+            'metadata.creators',
+            attrs=['id', 'title'],
+            pid_field=Vocabulary.pid.with_type_ctx('creators_role'),
+            cache_key='role',
+            relation_field='role'
+        ),
     )
 
     bucket_id = ModelField(dump=False)
