@@ -52,6 +52,10 @@ def test_resource_types_indexing(running_app, minimal_record):
     assert dump["metadata"]["resource_type"] == {
         "id": "image-photo",
         "title": {"en": "Photo"},
+        "props": {
+            "type": "image",
+            "subtype": "image-photo"
+        },
         "@v": f"{running_app.resource_type_v._record.id}::1"
     }
 
