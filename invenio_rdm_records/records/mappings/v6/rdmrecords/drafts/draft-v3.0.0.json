@@ -379,6 +379,17 @@
                 "title": {
                   "type": "object",
                   "dynamic": true
+                },
+                "props": {
+                  "type": "object",
+                  "properties": {
+                    "type" : {
+                      "type" : "keyword"
+                    },
+                    "subtype" : {
+                      "type" : "keyword"
+                    }
+                  }
                 }
               }
             },

@@ -79,7 +79,7 @@ class CommonFieldsMixin:
         ),
         resource_type=PIDRelation(
             'metadata.resource_type',
-            attrs=['id', 'title'],
+            attrs=['id', 'title', 'props.type', 'props.subtype'],
             pid_field=Vocabulary.pid.with_type_ctx('resource_types'),
             cache_key='resource_type',
         ),
