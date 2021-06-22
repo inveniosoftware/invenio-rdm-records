@@ -116,6 +116,7 @@ setup(
             'invenio_rdm_records_ext = invenio_rdm_records.views:blueprint',
             'invenio_rdm_records_parent_links = invenio_rdm_records.views:create_parent_record_links_bp',
             'invenio_rdm_records_record_files = invenio_rdm_records.views:create_record_files_bp',
+            'invenio_vocabularies_affiliations = invenio_rdm_records.vocabularies.views:create_affiliations_blueprint_from_app',
             'invenio_vocabularies_subjects = invenio_rdm_records.vocabularies.views:create_subjects_blueprint_from_app',
         ],
         "invenio_base.blueprints": [
@@ -126,6 +127,7 @@ setup(
         ],
         'invenio_db.models': [
             'invenio_rdm_records = invenio_rdm_records.records.models',
+            'affiliations = invenio_vocabularies.contrib.affiliations.models',
             'subjects = invenio_vocabularies.contrib.subjects.models',
         ],
         'invenio_db.alembic': [
@@ -133,10 +135,12 @@ setup(
         ],
         'invenio_jsonschemas.schemas': [
             'invenio_rdm_records = invenio_rdm_records.records.jsonschemas',
+            'affiliations = invenio_vocabularies.contrib.affiliations.jsonschemas',
             'subjects = invenio_vocabularies.contrib.subjects.jsonschemas',
         ],
         'invenio_search.mappings': [
             'rdmrecords = invenio_rdm_records.records.mappings',
+            'affiliations = invenio_vocabularies.contrib.affiliations.mappings',
             'subjects = invenio_vocabularies.contrib.subjects.mappings',
         ],
     },
