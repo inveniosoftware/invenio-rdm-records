@@ -26,6 +26,7 @@ def init(state):
     registry.register(
         ext.records_service.draft_files, service_id='rdm-draft-files')
     registry.register(ext.subjects_service, service_id='rdm-subjects')
+    registry.register(ext.affiliations_service, service_id='rdm-affiliations')
 
 
 def create_records_bp(app):

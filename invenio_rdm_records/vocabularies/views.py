@@ -10,6 +10,12 @@
 """Invenio vocabularies views."""
 
 
+def create_affiliations_blueprint_from_app(app):
+    """Create app blueprint."""
+    return app.extensions["invenio-rdm-records"].affiliations_resource \
+        .as_blueprint()
+
+
 def create_subjects_blueprint_from_app(app):
     """Create app blueprint."""
     return app.extensions["invenio-rdm-records"].subjects_resource \

@@ -13,6 +13,8 @@ from flask_babelex import _
 from flask_principal import identity_loaded
 from invenio_records_resources.resources.files import FileResource
 from invenio_records_resources.services import FileService
+from invenio_vocabularies.contrib.affiliations.affiliations import \
+    record_type as affiliations_record_type
 from invenio_vocabularies.contrib.subjects.subjects import subject_record_type
 from itsdangerous import SignatureExpired
 
@@ -111,6 +113,9 @@ class InvenioRDMRecords(object):
         self.subjects_service = subject_record_type.service_cls(
             config=subject_record_type.service_config_cls,
         )
+        self.affiliations_service = affiliations_record_type.service_cls(
+            config=affiliations_record_type.service_config_cls,
+        )
 
     def init_resource(self, app):
         """Initialize vocabulary resources."""
@@ -141,4 +146,9 @@ class InvenioRDMRecords(object):
         self.subjects_resource = subject_record_type.resource_cls(
             service=self.subjects_service,
             config=subject_record_type.resource_config_cls,
+        )
+
+        self.affiliations_resource = affiliations_record_type.resource_cls(
+            service=self.affiliations_service,
+            config=affiliations_record_type.resource_config_cls,
         )
