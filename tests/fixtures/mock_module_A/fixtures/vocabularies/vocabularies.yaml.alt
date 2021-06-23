@@ -1,0 +1,7 @@
+subjects:
+  pid-type: sub
+  subtypes:
+    - id: vocabulary-c
+      label: Vocabulary C
+      prefix_url: https://example.com/vocabulary-c/
+      data-file: subjects_c.yaml

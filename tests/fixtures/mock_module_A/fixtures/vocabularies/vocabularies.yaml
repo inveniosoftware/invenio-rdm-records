@@ -1,4 +1,7 @@
 subjects:
   pid-type: sub
-  data-file:
-    A: subjects.yaml
+  subtypes:
+    - id: vocabulary-a
+      label: Vocabulary A
+      prefix_url: https://example.com/vocabulary-a/
+      data-file: subjects.yaml

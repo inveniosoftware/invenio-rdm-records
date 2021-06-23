@@ -1,4 +1,4 @@
-resourcetypes:
+resource_types:
   pid-type: rsrct
   data-file: vocabularies/resource_types.yaml
 subjects:
@@ -8,6 +8,7 @@ subjects:
       label: Vocabulary A
       prefix_url: https://example.com/vocabulary-a/
       data-file: vocabularies/subjects.yaml
-titletypes:
-  pid-type: ttyp
-  data-file: vocabularies/title_types.yaml
+    - id: vocabulary-c
+      label: Vocabulary C
+      prefix_url: https://example.com/vocabulary-c/
+      data-file: vocabularies/subjects_c.yaml
