@@ -172,7 +172,7 @@ class SecretLink(db.Model):
             st = TimedSecretLinkSerializer(algorithm_name=algorithm)
 
             for serializer in (s, st):
-                # NOTE: serializer.validate_token() already handles BadData
+                # serializer.validate_token() already handles BadData
                 data = serializer.validate_token(
                     token, expected_data=expected_data, force=force
                 )

@@ -80,9 +80,9 @@ class Vocabulary(object):
         """Sets self.data with the filled rows."""
         with open(self.path) as f:
             reader = csv.DictReader(f, skipinitialspace=True)
-            # NOTE: We use an OrderedDict to preserve on file row order
+            # We use an OrderedDict to preserve on file row order
             self.data = OrderedDict([
-                # NOTE: unfilled cells return '' (empty string)
+                # unfilled cells return '' (empty string)
                 (self.key(row), row)
                 for row in hierarchized_rows(reader)
             ])
@@ -95,7 +95,7 @@ class Vocabulary(object):
         """Returns the vocabulary entry's human readable name."""
         entry = self.get_entry_by_dict(dict_key)
 
-        # NOTE: translations could also be done via the CSV file directly
+        # translations could also be done via the CSV file directly
         return entry.get(self.readable_key)
 
     def get_invalid(self, dict_key):

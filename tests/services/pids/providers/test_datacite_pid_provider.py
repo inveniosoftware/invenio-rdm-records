@@ -128,7 +128,7 @@ def test_datacite_provider_unregister_reserved(
             pid_value=created_pid.pid_value, pid_type="doi")
 
 
-def test_datacite_provider_unregister_regitered(
+def test_datacite_provider_unregister_registered(
     record, datacite_provider, mocker
 ):
     mocker.patch("invenio_rdm_records.services.pids.providers.datacite." +

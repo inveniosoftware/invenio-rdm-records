@@ -10,7 +10,7 @@
 from functools import partial
 
 import pytest
-from invenio_db import db
+from invenio_pidstore.errors import PIDDoesNotExistError
 from marshmallow import ValidationError
 
 from invenio_rdm_records.proxies import current_rdm_records
@@ -44,7 +44,7 @@ class TestServiceReqUnmanConfig(RDMRecordServiceConfig):
         "requman": {  # Required Unmanaged
             "requman": {
                 "provider": partial(
-                    RequiredUnmanagedPIDProvider, pid_type="requman"),
+                    RequiredUnmanagedPIDProvider, pid_type="requir"),
                 "required": True,
                 "system_managed": False,
             }
@@ -60,7 +60,7 @@ class TestServiceNReqUnmanConfig(RDMRecordServiceConfig):
         "nrequman": {  # Non required Unmanaged
             "nrequman": {
                 "provider": partial(
-                    NotRequiredUnmanagedPIDProvider, pid_type="nrequman"),
+                    NotRequiredUnmanagedPIDProvider, pid_type="notreq"),
                 "required": False,
                 "system_managed": False,
             }
@@ -109,6 +109,10 @@ def test_unmanaged_required_pid_value(
     component.publish(identity_simple, draft=draft, record=record)
     assert record.pids == pids
 
+    provider = RequiredUnmanagedPIDProvider("requir")
+    pid = provider.get_by_record(record.id, pid_value="value")
+    assert pid.is_registered()
+
 
 def test_unmanaged_required_no_pid_value(
     req_pid_unmanaged_cmp, minimal_record, identity_simple, location
@@ -154,10 +158,15 @@ def test_unmanaged_no_required_pid_value(
     draft = RDMDraft.create(data)
     component.create(identity_simple, data=data, record=draft)
     assert "pids" in draft and draft.pids == pids
+
     # publish
     record = RDMRecord.publish(draft)
     component.publish(identity_simple, draft=draft, record=record)
     assert record.pids == pids
+
+    provider = NotRequiredUnmanagedPIDProvider("notreq")
+    pid = provider.get_by_record(record.id, pid_value="value")
+    assert pid.is_registered()
 
 
 def test_unmanaged_no_required_no_partial_value(
@@ -207,6 +216,41 @@ def test_unmanaged_no_required_no_pids(
     # publish
     record = RDMRecord.publish(draft)
     component.publish(identity_simple, draft=draft, record=record)
+    with pytest.raises(PIDDoesNotExistError):
+        provider = NotRequiredUnmanagedPIDProvider("notreq")
+        assert provider.get_by_record(record.id, pid_value="value")
+
+
+def test_unmanaged_duplicated_doi(
+    not_req_unmanaged_pid_cmp, minimal_record, identity_simple, location
+):
+    component = not_req_unmanaged_pid_cmp
+    pids = {
+        "nrequman": {
+            "identifier": "avalues",
+            "provider": "nrequman",
+        }
+    }
+
+    # make sure `pids` field is added
+    data = minimal_record.copy()
+    data["pids"] = pids
+
+    # create a minimal draft
+    draft = RDMDraft.create(data)
+    component.create(identity_simple, data=data, record=draft)
+    assert "pids" in draft and draft.pids == pids
+    # publish
+    record = RDMRecord.publish(draft)
+    component.publish(identity_simple, draft=draft, record=record)
+    assert record.pids == pids
+
+    # create a second record with the same unmanaged DOI
+    data = minimal_record.copy()
+    data["pids"] = pids
+    draft = RDMDraft.create(data)
+    with pytest.raises(ValidationError):
+        component.create(identity_simple, data=data, record=draft)
 
 
 #
@@ -273,13 +317,16 @@ def test_non_configured_provider(
 
     # create a minimal draft
     draft = RDMDraft.create(data)
-    with pytest.raises(ValidationError):
+    with pytest.raises(Exception):
         component.create(identity_simple, data=data, record=draft)
 
 
 def test_create_managed_doi_empty_pids(
     req_managed_pid_cmp, minimal_record, identity_simple, mocker, location
 ):
+    client = mocker.patch(
+        "invenio_rdm_records.services.pids.providers.datacite."
+        "DOIDataCiteClient")
     mocker.patch("invenio_rdm_records.services.config.DOIDataCiteClient")
     mocker.patch("invenio_rdm_records.services.pids.providers.datacite." +
                  "DataCiteRESTClient")
@@ -301,14 +348,20 @@ def test_create_managed_doi_empty_pids(
     doi = record.pids.get("doi")
 
     assert doi
-    assert doi.get("identifier")
+    assert doi["identifier"]
     assert doi["provider"] == "datacite"
     assert doi["client"] == "datacite"  # default
+
+    provider = DOIDataCitePIDProvider(client)
+    assert provider.get_by_record(record.id, pid_value=doi["identifier"])
 
 
 def test_create_managed_doi_with_no_value(
     req_managed_pid_cmp, minimal_record, identity_simple, mocker, location
 ):
+    client = mocker.patch(
+        "invenio_rdm_records.services.pids.providers.datacite."
+        "DOIDataCiteClient")
     mocker.patch("invenio_rdm_records.services.pids.providers.datacite." +
                  "DataCiteRESTClient")
     mocker.patch("invenio_rdm_records.services.pids.providers.datacite." +
@@ -329,14 +382,18 @@ def test_create_managed_doi_with_no_value(
     draft = RDMDraft.create(data)
     component.create(identity_simple, data=data, record=draft)
     assert "pids" in draft and draft.pids == pids
+
     # publish
     record = RDMRecord.publish(draft)
     component.publish(identity_simple, draft=draft, record=record)
     doi = record.pids.get("doi")
     assert doi
-    assert doi.get("identifier")
+    assert doi["identifier"]
     assert doi["provider"] == "datacite"
     assert doi["client"] == "rdm"  # tests non-default client works
+
+    provider = DOIDataCitePIDProvider(client)
+    assert provider.get(doi["identifier"]).is_registered()
 
 
 def test_create_managed_doi_with_value(
@@ -360,7 +417,6 @@ def test_create_managed_doi_with_value(
     provider = DOIDataCitePIDProvider(client)
     pid = provider.create(draft)
     provider.reserve(pid, draft)
-    db.session.commit()
 
     pids = {
         "doi": {
@@ -375,7 +431,6 @@ def test_create_managed_doi_with_value(
     record = RDMRecord.publish(draft)
     component.publish(identity_simple, draft=draft, record=record)
     assert record.pids == pids
-
     assert provider.get(pid.pid_value).is_registered()
 
 

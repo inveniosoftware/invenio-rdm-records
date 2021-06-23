@@ -138,7 +138,7 @@ class RDMRecordServiceConfig(RecordServiceConfig):
                 "required": True,
                 "system_managed": True,
             },
-            "unmanaged": {
+            "external": {
                 "provider": partial(UnmanagedPIDProvider, pid_type="doi"),
                 "required": False,
                 "system_managed": False,

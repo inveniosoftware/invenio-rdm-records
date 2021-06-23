@@ -33,7 +33,7 @@ def test_valid_unmanaged(app, db, minimal_record, location):
     valid_full = {
         "doi": {
             "identifier": "10.5281/zenodo.1234",
-            "provider": "unmanaged",
+            "provider": "external",
         }
     }
 

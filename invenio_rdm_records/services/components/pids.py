@@ -9,8 +9,7 @@
 
 """RDM service component for pids."""
 
-import re
-
+from flask import current_app
 from flask_babelex import lazy_gettext as _
 from invenio_drafts_resources.services.records.components import \
     ServiceComponent
@@ -33,11 +32,11 @@ class ExternalPIDsComponent(ServiceComponent):
                     field_name="pids",
                 )
 
-        # NOTE: provider should not be None by now, if not configured should
+        # provider should not be None by now, if not configured should
         # fail in `_validate_pid_schemes`
         success, errors = provider.validate(record=record, **pid)
         if errors:
-            raise ValidationError(message=errors, field_name="pids")
+            raise ValidationError(message=errors, field_name=f"pids.{scheme}")
 
     def _validate_pids(self, pids, record):
         """Validate an iterator of PIDs."""
@@ -53,10 +52,9 @@ class ExternalPIDsComponent(ServiceComponent):
         all_pids = set(pids.keys())
         unknown_pids = all_pids - pids_providers
         if unknown_pids:
-            raise ValidationError(
-                message=_(f"No configuration defined for PIDs {unknown_pids}"),
-                field_name="pids",
-            )
+            current_app.logger.error("No configuration defined "
+                                     f"for PIDs {unknown_pids}")
+            raise
 
     def _remove_invalid_pids(self, pids, errors):
         """Remove pids that have validation errors."""
@@ -75,7 +73,7 @@ class ExternalPIDsComponent(ServiceComponent):
         self._remove_invalid_pids(pids, errors)
         self._validate_pid_schemes(pids)
         self._validate_pids(pids, record)
-        # NOTE: record is a draft because we hook to the draft service.
+        # record is a draft because we hook to the draft service.
         record.pids = pids
 
     def update_draft(self, identity, data=None, record=None,  errors=None):
@@ -87,7 +85,7 @@ class ExternalPIDsComponent(ServiceComponent):
         record.pids = pids
 
     def _publish_managed(self, scheme, provider, is_required, draft_pid,
-                         record_pids, draft=None):
+                         record_pids, draft):
         """Publish a system managed PID."""
         identifier_value = draft_pid.get("identifier")
         pid = None
@@ -98,12 +96,8 @@ class ExternalPIDsComponent(ServiceComponent):
             else:
                 pid = provider.get(identifier_value)
 
-            if not pid.is_registered():  # avoid dup registration
-                url = self.service.links_item_tpl.expand(draft)["record"]
-                provider.register(pid, draft, url)
-            else:
-                # PIDS-FIXME: this should update meta to datacite
-                pass
+            url = self.service.links_item_tpl.expand(draft)["record"]
+            provider.register(pid, draft, url=url)
         else:
             if identifier_value:
                 # must be already created and reserved
@@ -120,17 +114,19 @@ class ExternalPIDsComponent(ServiceComponent):
             }
 
     def _publish_unmanaged(self, scheme, provider, is_required, draft_pid,
-                           record_pids, draft=None):
+                           record_pids, draft):
         """Publish an unmanaged PID."""
         identifier_value = draft_pid.get("identifier")
 
         if identifier_value:
+            pid = provider.create(draft, value=identifier_value)
+            provider.register(pid, draft)
             record_pids[scheme] = {
                 "identifier": identifier_value,
                 "provider": provider.name,
             }
         elif draft_pid != {} or is_required:
-            # NOTE: Do not accept partial
+            # do not accept partial
             raise ValidationError(
                 f"Value required for {scheme} PID.",
                 field_name=f"pids.{scheme}")
@@ -169,7 +165,7 @@ class ExternalPIDsComponent(ServiceComponent):
                                       record_pids, draft=draft)
             else:
                 self._publish_unmanaged(scheme, provider, is_required,
-                                        draft_pid, record_pids)
+                                        draft_pid, record_pids, draft=draft)
 
         record.pids = record_pids
 

@@ -24,7 +24,7 @@ class Vocabularies:
 
     this_dir = dirname(__file__)
     vocabularies = {
-        # NOTE: dotted keys should parallel MetadataSchemaV1 fields
+        # dotted keys should parallel MetadataSchemaV1 fields
         'resource_type': {
             'path': join(this_dir, 'resource_types.csv'),
             'class': ResourceTypeVocabulary,

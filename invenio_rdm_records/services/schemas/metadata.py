@@ -56,7 +56,7 @@ class PersonOrOrganizationSchema(Schema):
             error=_(f'Invalid value. Choose one of {NAMES}.')
         ),
         error_messages={
-            # NOTE: [] needed to mirror above error message
+            # [] needed to mirror error message above
             "required": [_(f'Invalid value. Choose one of {NAMES}.')]
         }
     )
@@ -66,7 +66,7 @@ class PersonOrOrganizationSchema(Schema):
     identifiers = IdentifierSet(
         fields.Nested(partial(
             IdentifierSchema,
-            # It is intendedly allowing org schemes to be sent as personal
+            # It is intended to allow org schemes to be sent as personal
             # and viceversa. This is a trade off learnt from running
             # Zenodo in production.
             allowed_schemes=["orcid", "isni", "gnd", "ror"]

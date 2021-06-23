@@ -7,7 +7,6 @@
 
 """CSL JSON and  citation string serializers for Invenio RDM Records."""
 
-import logging
 import re
 
 from citeproc import Citation, CitationItem, CitationStylesBibliography, \
@@ -15,6 +14,7 @@ from citeproc import Citation, CitationItem, CitationStylesBibliography, \
 from citeproc.source.json import CiteProcJSON
 from citeproc_styles import get_style_filepath
 from citeproc_styles.errors import StyleNotFoundError
+from flask import current_app
 from flask_resources.serializers import MarshmallowJSONSerializer
 from webargs import fields
 
@@ -54,7 +54,7 @@ def get_style_location(style):
     try:
         return get_style_filepath(style.lower())
     except StyleNotFoundError as ex:
-        logging.warning(f"CSL style {style} not found.")
+        current_app.logger.warning(f"CSL style {style} not found.")
         raise ex
 
 
