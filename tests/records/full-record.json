@@ -38,16 +38,7 @@
           "identifier": "0000-0001-8135-3489"
         }]
       },
-      "affiliations": [{
-        "name": "CERN",
-        "identifiers": [{
-          "scheme": "ror",
-          "identifier": "01ggx4157"
-        }, {
-          "scheme": "isni",
-          "identifier": "000000012156142X"
-        }]
-      }]
+      "affiliations": [{"id": "cern"}]
     }],
     "title": "InvenioRDM",
     "additional_titles": [{
@@ -76,16 +67,7 @@
         }]
       },
       "role": {"id": "other"},
-      "affiliations": [{
-        "name": "CERN",
-        "identifiers": [{
-          "scheme": "ror",
-          "identifier": "01ggx4157"
-        }, {
-          "scheme": "isni",
-          "identifier": "000000012156142X"
-        }]
-      }]
+      "affiliations": [{"id": "cern"}]
     }],
     "dates": [{
       "date": "1939/1945",

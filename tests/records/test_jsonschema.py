@@ -62,16 +62,7 @@ def person():
                 "identifier": "0000-0001-8135-3489"
             }],
         },
-        "affiliations": [{
-            "name": "CERN",
-            "identifiers": [{
-                "scheme": "ror",
-                "identifier": "01ggx4157"
-            }, {
-                "scheme": "isni",
-                "identifier": "000000012156142X"
-            }]
-        }]
+        "affiliations": [{"id": "cern"}]
     }
 
 
@@ -87,13 +78,7 @@ def org():
                 "identifier": "01ggx4157"
             }],
         },
-        "affiliations": [{
-            "name": "CERN",
-            "identifiers": [{
-                "scheme": "ror",
-                "identifier": "..."
-            }],
-        }]
+        "affiliations": [{"id": "cern"}]
     }
 
 

@@ -110,8 +110,8 @@ def title_type_v(app, title_type):
 
 @pytest.fixture
 def running_app(
-    app, location, resource_type_v, subject_v, laguanges_v, title_type_v,
-    description_type_v
+    app, location, resource_type_v, subject_v, languages_v, title_type_v,
+    description_type_v, affiliations_v
 ):
     """Return running_app but load everything for datacite serialization.
 
@@ -121,9 +121,7 @@ def running_app(
     return running_app
 
 
-def test_datacite43_serializer(
-    running_app, full_record, vocabulary_clear
-):
+def test_datacite43_serializer(running_app, full_record, vocabulary_clear):
     """Test serializer to DataCite 4.3 JSON"""
     expected_data = {
         "types": {
@@ -146,7 +144,8 @@ def test_datacite43_serializer(
                         "name": "CERN",
                         "affiliationIdentifier": "https://ror.org/01ggx4157",
                         "affiliationIdentifierScheme": "ROR",
-                    }
+                    },
+                    {'name': 'free-text'}
                 ],
             }
         ],

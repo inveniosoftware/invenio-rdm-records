@@ -197,13 +197,7 @@ def create_fake_record():
                     }],
                 },
                 "role": CachedVocabularies.fake_creatibutor_role(),
-                "affiliations": [{
-                    "name": fake.company(),
-                    "identifiers": [{
-                        "scheme": "ror",
-                        "identifier": "03yrm5c26",
-                    }]
-                }]
+                "affiliations": []
             } for i in range(4)],
             "title": fake.company() + "'s gallery",
             "additional_titles": [{
@@ -225,13 +219,7 @@ def create_fake_record():
                     "type": "personal",
                 },
                 "role": CachedVocabularies.fake_creatibutor_role(),
-                "affiliations": [{
-                    "name": fake.company(),
-                    "identifiers": [{
-                        "scheme": "ror",
-                        "identifier": "03yrm5c26",
-                    }]
-                }],
+                "affiliations": [],
             } for i in range(3)],
             # "dates": [{
             #     # No end date to avoid computations based on start

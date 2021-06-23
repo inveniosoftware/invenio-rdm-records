@@ -119,19 +119,16 @@
           "contributors" : {
             "properties" : {
               "affiliations" : {
-                "properties" : {
-                  "identifiers" : {
-                    "properties": {
-                      "identifier" : {
-                        "type" : "keyword"
-                      },
-                      "scheme" : {
-                        "type" : "keyword"
-                      }
-                    }
+                "type": "object",
+                "properties": {
+                  "@v": {
+                    "type": "keyword"
                   },
-                  "name" : {
-                    "type" : "text"
+                  "id": {
+                    "type": "keyword"
+                  },
+                  "name": {
+                    "type": "text"
                   }
                 }
               },
@@ -181,19 +178,16 @@
           "creators" : {
             "properties" : {
               "affiliations" : {
-                "properties" : {
-                  "identifiers" : {
-                    "properties": {
-                      "identifier" : {
-                        "type" : "keyword"
-                      },
-                      "scheme" : {
-                        "type" : "keyword"
-                      }
-                    }
+                "type": "object",
+                "properties": {
+                  "@v": {
+                    "type": "keyword"
                   },
-                  "name" : {
-                    "type" : "text"
+                  "id": {
+                    "type": "keyword"
+                  },
+                  "name": {
+                    "type": "text"
                   }
                 }
               },

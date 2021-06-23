@@ -1,0 +1,431 @@
+{
+  "affiliation": {
+    "type": "object",
+    "additionalProperties": false,
+    "properties": {
+      "id": {
+        "$ref": "local://definitions-v1.0.0.json#/identifier"
+      },
+      "name": {
+        "type": "string"
+      }
+    }
+  },
+  "affiliations": {
+    "type": "array",
+    "items": {"$ref": "#/affiliation"},
+    "uniqueItems": true
+  },
+  "agent": {
+    "description": "An agent (user, software process, community, ...).",
+    "oneOf": [
+      {
+        "$ref": "#/user"
+      }
+    ]
+  },
+  "dateType": {
+    "description": "Type of the date.",
+    "type": "string"
+  },
+  "description_type": {
+    "type": "object",
+    "additionalProperties": false,
+    "description": "A description type.",
+    "properties": {
+      "id": {
+        "type": "string"
+      }
+    }
+  },
+  "external-pid": {
+    "type": "object",
+    "description": "An external persistent identifier object.",
+    "additionalProperties": false,
+    "properties": {
+      "identifier": {
+        "$ref": "local://definitions-v1.0.0.json#/identifier"
+      },
+      "provider": {
+        "description": "The provider of the persistent identifier.",
+        "type": "string"
+      },
+      "client": {
+        "description": "Client identifier for the specific PID.",
+        "type": "string"
+      }
+    }
+  },
+  "file": {
+    "type": "object",
+    "additionalProperties": false,
+    "description": "A file object.",
+    "properties": {
+      "version_id": {
+        "description": "Object version ID.",
+        "type": "string"
+      },
+      "bucket_id": {
+        "description": "Object verison bucket ID.",
+        "type": "string"
+      },
+      "mimetype": {
+        "description": "File MIMEType.",
+        "type": "string"
+      },
+      "uri": {
+        "description": "File URI.",
+        "type": "string"
+      },
+      "storage_class": {
+        "description": "File storage class.",
+        "type": "string"
+      },
+      "checksum": {
+        "description": "Checksum of the file.",
+        "type": "string"
+      },
+      "size": {
+        "description": "Size of the file in bytes.",
+        "type": "number"
+      },
+      "key": {
+        "description": "Key (filename) of the file.",
+        "type": "string"
+      },
+      "file_id": {
+        "$ref": "local://definitions-v1.0.0.json#/identifier"
+      }
+    }
+  },
+  "GeoJSON-Geometry": {
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "$id": "https://geojson.org/schema/Geometry.json",
+    "title": "GeoJSON Geometry",
+    "oneOf": [
+      {
+        "title": "GeoJSON Point",
+        "type": "object",
+        "required": [
+          "type",
+          "coordinates"
+        ],
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "Point"
+            ]
+          },
+          "coordinates": {
+            "type": "array",
+            "minItems": 2,
+            "items": {
+              "type": "number"
+            }
+          },
+          "bbox": {
+            "type": "array",
+            "minItems": 4,
+            "items": {
+              "type": "number"
+            }
+          }
+        }
+      },
+      {
+        "title": "GeoJSON LineString",
+        "type": "object",
+        "required": [
+          "type",
+          "coordinates"
+        ],
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "LineString"
+            ]
+          },
+          "coordinates": {
+            "type": "array",
+            "minItems": 2,
+            "items": {
+              "type": "array",
+              "minItems": 2,
+              "items": {
+                "type": "number"
+              }
+            }
+          },
+          "bbox": {
+            "type": "array",
+            "minItems": 4,
+            "items": {
+              "type": "number"
+            }
+          }
+        }
+      },
+      {
+        "title": "GeoJSON Polygon",
+        "type": "object",
+        "required": [
+          "type",
+          "coordinates"
+        ],
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "Polygon"
+            ]
+          },
+          "coordinates": {
+            "type": "array",
+            "items": {
+              "type": "array",
+              "minItems": 4,
+              "items": {
+                "type": "array",
+                "minItems": 2,
+                "items": {
+                  "type": "number"
+                }
+              }
+            }
+          },
+          "bbox": {
+            "type": "array",
+            "minItems": 4,
+            "items": {
+              "type": "number"
+            }
+          }
+        }
+      },
+      {
+        "title": "GeoJSON MultiPoint",
+        "type": "object",
+        "required": [
+          "type",
+          "coordinates"
+        ],
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "MultiPoint"
+            ]
+          },
+          "coordinates": {
+            "type": "array",
+            "items": {
+              "type": "array",
+              "minItems": 2,
+              "items": {
+                "type": "number"
+              }
+            }
+          },
+          "bbox": {
+            "type": "array",
+            "minItems": 4,
+            "items": {
+              "type": "number"
+            }
+          }
+        }
+      },
+      {
+        "title": "GeoJSON MultiLineString",
+        "type": "object",
+        "required": [
+          "type",
+          "coordinates"
+        ],
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "MultiLineString"
+            ]
+          },
+          "coordinates": {
+            "type": "array",
+            "items": {
+              "type": "array",
+              "minItems": 2,
+              "items": {
+                "type": "array",
+                "minItems": 2,
+                "items": {
+                  "type": "number"
+                }
+              }
+            }
+          },
+          "bbox": {
+            "type": "array",
+            "minItems": 4,
+            "items": {
+              "type": "number"
+            }
+          }
+        }
+      },
+      {
+        "title": "GeoJSON MultiPolygon",
+        "type": "object",
+        "required": [
+          "type",
+          "coordinates"
+        ],
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "MultiPolygon"
+            ]
+          },
+          "coordinates": {
+            "type": "array",
+            "items": {
+              "type": "array",
+              "items": {
+                "type": "array",
+                "minItems": 4,
+                "items": {
+                  "type": "array",
+                  "minItems": 2,
+                  "items": {
+                    "type": "number"
+                  }
+                }
+              }
+            }
+          },
+          "bbox": {
+            "type": "array",
+            "minItems": 4,
+            "items": {
+              "type": "number"
+            }
+          }
+        }
+      }
+    ]
+  },
+  "identifiers": {
+    "description": "Identifiers object (keys being scheme, value being the identifier).",
+    "type": "object",
+    "additionalProperties": {
+      "$ref": "local://definitions-v1.0.0.json#/identifier"
+    }
+  },
+  "language": {
+    "type": "object",
+    "additionalProperties": false,
+    "properties": {
+      "id": {
+        "$ref": "local://definitions-v1.0.0.json#/identifier"
+      }
+    }
+  },
+  "latitude": {
+    "type": "number",
+    "minimum": -90,
+    "maximum": 90
+  },
+  "longitude": {
+    "type": "number",
+    "minimum": -180,
+    "maximum": 180
+  },
+  "nameType": {
+    "description": "Type of name.",
+    "type": "string",
+    "enum": [
+      "personal",
+      "organizational"
+    ]
+  },
+  "person_or_org": {
+    "type": "object",
+    "additionalProperties": false,
+    "properties": {
+      "name": {
+        "type": "string"
+      },
+      "type": {
+        "$ref": "#/nameType"
+      },
+      "given_name": {
+        "type": "string"
+      },
+      "family_name": {
+        "type": "string"
+      },
+      "identifiers": {
+        "type": "array",
+        "items": {
+          "$ref": "local://definitions-v1.0.0.json#/identifiers_with_scheme"
+        },
+        "uniqueItems": true
+      }
+    }
+  },
+  "relationType": {
+    "type": "string"
+  },
+  "resource_type": {
+    "type": "object",
+    "additionalProperties": false,
+    "description": "A resource type.",
+    "properties": {
+      "id": {
+        "$ref": "local://definitions-v1.0.0.json#/identifier"
+      }
+    }
+  },
+  "role": {
+    "description": "Role of creator/contributor.",
+    "type": "object",
+    "additionalProperties": false,
+    "properties": {
+      "id": {
+        "type": "string"
+      }
+    }
+  },
+  "subject": {
+    "description": "Term related to entry.",
+    "type": "object",
+    "additionalProperties": false,
+    "properties": {
+      "id": {
+        "$ref": "local://definitions-v1.0.0.json#/identifier"
+      }
+    }
+  },
+  "title_type": {
+    "description": "Type of title.",
+    "type": "object",
+    "additionalProperties": false,
+    "properties": {
+      "id": {
+        "type": "string"
+      }
+    }
+  },
+  "user": {
+    "type": "object",
+    "description": "User object.",
+    "additionalProperties": false,
+    "properties": {
+      "user": {
+        "type": "integer"
+      }
+    }
+  }
+}
