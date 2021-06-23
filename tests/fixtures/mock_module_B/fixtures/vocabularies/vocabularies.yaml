@@ -1,0 +1,4 @@
+subjects:
+  pid-type: sub
+  data-file:
+    B: subjects.yaml

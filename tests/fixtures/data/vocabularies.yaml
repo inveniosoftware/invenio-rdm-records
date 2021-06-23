@@ -4,3 +4,6 @@ languages:
 resource_types:
   pid-type: rsrct
   data-file: vocabularies/resource_types.yaml
+resource_types:
+  pid-type: rsrct2
+  data-file: vocabularies/resource_types.yaml

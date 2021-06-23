@@ -11,7 +11,7 @@
 from pathlib import Path
 
 from .users import UsersFixture
-from .vocabularies import VocabulariesFixture
+from .vocabularies import PrioritizedVocabulariesFixtures, VocabulariesFixture
 
 
 class FixturesEngine:
@@ -29,13 +29,21 @@ class FixturesEngine:
         """Run the fixture loading."""
         dir_ = Path(__file__).parent
 
-        VocabulariesFixture(
+        PrioritizedVocabulariesFixtures(
             self._identity,
-            [Path("./app_data"), dir_ / "data"],
-            'vocabularies.yaml',
+            app_data_folder=Path("./app_data"),
+            pkg_data_folder=dir_ / "data",
+            filename='vocabularies.yaml'
         ).load()
 
         UsersFixture(
             [Path("./app_data"), dir_ / "data"],
             'users.yaml',
         ).load()
+
+
+__all__ = [
+    'FixturesEngine',
+    'PrioritizedVocabulariesFixtures',
+    'VocabulariesFixture'
+]

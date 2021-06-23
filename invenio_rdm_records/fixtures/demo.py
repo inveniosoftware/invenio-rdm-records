@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2019 CERN.
-# Copyright (C) 2019 Northwestern University.
+# Copyright (C) 2019-2021 CERN.
+# Copyright (C) 2019-2021 Northwestern University.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
@@ -35,12 +35,25 @@ class CachedVocabularies:
 
     @classmethod
     def _read_vocabulary(cls, vocabulary):
-        dir_ = Path(__file__).parent
+        """Iterate over records of a vocabulary."""
+        # Simplification: we don't consider extensions when generating demo
+        #                 data for now
+        filepath = Path("./app_data") / "vocabularies.yaml"
+        if filepath.exists():
+            app_fixture = VocabulariesFixture(
+                system_identity,
+                filepath
+            )
+            app_vocabulary_iter = (
+                app_fixture.get_records_by_vocabulary(vocabulary)
+            )
+            if any(True for _ in app_vocabulary_iter):
+                return app_fixture.get_records_by_vocabulary(vocabulary)
 
         return VocabulariesFixture(
             system_identity,
-            [Path("./app_data"), dir_ / "data"],
-            "vocabularies.yaml",
+            # We know this file exists
+            Path(__file__).parent / "data" / "vocabularies.yaml",
         ).get_records_by_vocabulary(vocabulary)
 
     @classmethod
@@ -58,22 +71,6 @@ class CachedVocabularies:
 
         random_id = random.choice(cls._resource_type_ids)
         return {"id": random_id}
-
-    @classmethod
-    def fake_subjects(cls):
-        """Generate random subjects."""
-        if not cls._subject_ids:
-            subjects = cls._read_vocabulary("subjects")
-
-            for subj in subjects:
-                cls._subject_ids.append(subj["id"])
-
-        if not cls._subject_ids:
-            return []
-
-        n = random.choice([0, 1, 2])
-        random_ids = random.sample(cls._subject_ids, n)
-        return [{"id": i} for i in random_ids]
 
     @classmethod
     def fake_language(cls):
@@ -158,7 +155,7 @@ def create_fake_record():
             }],
             "publisher": "InvenioRDM",
             "publication_date": fake_edtf_level_0(),
-            "subjects": CachedVocabularies.fake_subjects(),
+            "subjects": [],  # Too complex to generate for now
             "contributors": [{
                 "person_or_org": {
                     "family_name": fake.last_name(),
