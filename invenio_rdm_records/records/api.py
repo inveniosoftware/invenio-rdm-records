@@ -18,7 +18,9 @@ from invenio_records.systemfields import ConstantField, DictField, \
     ModelField, RelationsField
 from invenio_records_resources.records.api import FileRecord
 from invenio_records_resources.records.systemfields import FilesField, \
-    IndexField, PIDListRelation, PIDRelation, PIDStatusCheckField
+    IndexField, PIDListRelation, PIDNestedListRelation, PIDRelation, \
+    PIDStatusCheckField
+from invenio_vocabularies.contrib.affiliations.api import Affiliations
 from invenio_vocabularies.records.api import Vocabulary
 from werkzeug.local import LocalProxy
 
@@ -71,6 +73,20 @@ class CommonFieldsMixin:
     )
 
     relations = RelationsField(
+        creator_affiliations=PIDNestedListRelation(
+            'metadata.creators',
+            relation_field='affiliations',
+            attrs=['id', 'name'],
+            pid_field=Affiliations.pid,
+            cache_key='creator_affiliations',
+        ),
+        contributor_affiliations=PIDNestedListRelation(
+            'metadata.contributors',
+            relation_field='affiliations',
+            attrs=['id', 'name'],
+            pid_field=Affiliations.pid,
+            cache_key='contributor_affiliations',
+        ),
         languages=PIDListRelation(
             'metadata.languages',
             attrs=['id', 'title'],

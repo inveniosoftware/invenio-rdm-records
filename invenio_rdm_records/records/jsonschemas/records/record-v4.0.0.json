@@ -1,24 +1,22 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
   "id": "local://records/record-v4.0.0.json",
-  "title": "InvenioRDM Record Schema v3.0.0",
+  "title": "InvenioRDM Record Schema v4.0.0",
   "type": "object",
   "additionalProperties": false,
   "properties": {
     "$schema": {
-      "description": "JSONSchema declaration.",
-      "type": "string"
+      "$ref": "local://definitions-v1.0.0.json#/$schema"
     },
     "id": {
-      "description": "Persistent record identifier (alphanumeric).",
-      "type": "string"
+      "$ref": "local://definitions-v1.0.0.json#/identifier"
     },
-    "pid": {"$ref": "local://records/definitions-v1.2.0.json#/internal-pid"},
+    "pid": {"$ref": "local://definitions-v1.0.0.json#/internal-pid"},
 
     "pids": {
       "type": "object",
       "description": "External persistent identifiers for a record including e.g. OAI-PMH identifier, minted DOIs and more. PIDs are registered in the PIDStore.",
-      "additionalProperties": {"$ref": "local://records/definitions-v1.2.0.json#/external-pid"},
+      "additionalProperties": {"$ref": "local://records/definitions-v2.0.0.json#/external-pid"},
       "propertyNames": {
         "pattern": "^[a-z_-][a-z0-9_-]*$"
       },
@@ -31,7 +29,7 @@
       "additionalProperties": false,
       "properties": {
 
-        "resource_type": {"$ref": "local://records/definitions-v1.2.0.json#/resource_type"},
+        "resource_type": {"$ref": "local://records/definitions-v2.0.0.json#/resource_type"},
 
         "creators": {
           "description": "Creators of the resource.",
@@ -40,9 +38,9 @@
             "type": "object",
             "additionalProperties": false,
             "properties": {
-                "person_or_org": {"$ref": "local://records/definitions-v1.2.0.json#/person_or_org"},
-                "role": {"$ref": "local://records/definitions-v1.2.0.json#/role"},
-                "affiliations": {"$ref": "local://records/definitions-v1.2.0.json#/affiliations"}
+                "person_or_org": {"$ref": "local://records/definitions-v2.0.0.json#/person_or_org"},
+                "role": {"$ref": "local://records/definitions-v2.0.0.json#/role"},
+                "affiliations": {"$ref": "local://records/definitions-v2.0.0.json#/affiliations"}
             }
           }
         },
@@ -63,8 +61,8 @@
                   "description": "Additional title of the record.",
                   "type": "string"
                 },
-                "type": {"$ref": "local://records/definitions-v1.2.0.json#/title_type"},
-                "lang": {"$ref": "local://records/definitions-v1.2.0.json#/language"}
+                "type": {"$ref": "local://records/definitions-v2.0.0.json#/title_type"},
+                "lang": {"$ref": "local://records/definitions-v2.0.0.json#/language"}
             }
           }
         },
@@ -80,7 +78,7 @@
 
         "subjects": {
           "type": "array",
-          "items": {"$ref": "local://records/definitions-v1.2.0.json#/subject"},
+          "items": {"$ref": "local://records/definitions-v2.0.0.json#/subject"},
           "uniqueItems": true
         },
 
@@ -91,9 +89,9 @@
             "type": "object",
             "additionalProperties": false,
             "properties": {
-              "person_or_org": {"$ref": "local://records/definitions-v1.2.0.json#/person_or_org"},
-              "role": {"$ref": "local://records/definitions-v1.2.0.json#/role"},
-              "affiliations": {"$ref": "local://records/definitions-v1.2.0.json#/affiliations"}
+              "person_or_org": {"$ref": "local://records/definitions-v2.0.0.json#/person_or_org"},
+              "role": {"$ref": "local://records/definitions-v2.0.0.json#/role"},
+              "affiliations": {"$ref": "local://records/definitions-v2.0.0.json#/affiliations"}
             }
           }
         },
@@ -109,7 +107,7 @@
                 "description": "Date or date interval in EDTF level 0 format",
                 "type": "string"
               },
-              "type": {"$ref": "local://records/definitions-v1.2.0.json#/dateType"},
+              "type": {"$ref": "local://records/definitions-v2.0.0.json#/dateType"},
               "description": {
                 "description": "Description of the date or date interval e.g. 'Accepted' or 'Available' (CV).",
                 "type": "string"
@@ -121,14 +119,14 @@
         "languages": {
           "description": "The primary languages of the resource. ISO 639-3 language code.",
           "type": "array",
-          "items": {"$ref": "local://records/definitions-v1.2.0.json#/language"},
+          "items": {"$ref": "local://records/definitions-v2.0.0.json#/language"},
           "uniqueItems": true
         },
 
         "identifiers": {
           "description": "Alternate identifiers for the record.",
           "type": "array",
-          "items": {"$ref": "local://records/definitions-v1.2.0.json#/identifiers_with_scheme"},
+          "items": {"$ref": "local://definitions-v1.0.0.json#/identifiers_with_scheme"},
           "uniqueItems": true
         },
 
@@ -139,10 +137,10 @@
               "type": "object",
               "additionalProperties": false,
               "properties": {
-                "identifier": {"$ref": "local://records/definitions-v1.2.0.json#/identifier"},
-                "scheme": {"$ref": "local://records/definitions-v1.2.0.json#/scheme"},
-                "relation_type": {"$ref": "local://records/definitions-v1.2.0.json#/relationType"},
-                "resource_type": {"$ref": "local://records/definitions-v1.2.0.json#/resource_type"}
+                "identifier": {"$ref": "local://definitions-v1.0.0.json#/identifier"},
+                "scheme": {"$ref": "local://definitions-v1.0.0.json#/scheme"},
+                "relation_type": {"$ref": "local://records/definitions-v2.0.0.json#/relationType"},
+                "resource_type": {"$ref": "local://records/definitions-v2.0.0.json#/resource_type"}
               }
           }
         },
@@ -173,7 +171,7 @@
             "type": "object",
             "additionalProperties": false,
             "properties": {
-              "id": {"$ref": "local://records/definitions-v1.2.0.json#/identifier"},
+              "id": {"$ref": "local://definitions-v1.0.0.json#/identifier"},
               "title": {
                 "description": "The license name or license itself. Free text.",
                 "type": "string"
@@ -205,8 +203,8 @@
                   "description": "Description for record.",
                   "type": "string"
                 },
-                "type": {"$ref": "local://records/definitions-v1.2.0.json#/description_type"},
-                "lang": {"$ref": "local://records/definitions-v1.2.0.json#/language"}
+                "type": {"$ref": "local://records/definitions-v2.0.0.json#/description_type"},
+                "lang": {"$ref": "local://records/definitions-v2.0.0.json#/language"}
             }
           }
         },
@@ -227,7 +225,7 @@
                 "properties": {
                   "geometry": {
                     "allOf": [{
-                      "$ref": "local://records/definitions-v1.2.0.json#/GeoJSON-Geometry"
+                      "$ref": "local://records/definitions-v2.0.0.json#/GeoJSON-Geometry"
                     }, {
                       "$comment": "Bounding boxes (`bbox`) are forbidden on our geometries, even though they're allowed on GeoJSON geometries",
                       "properties": {
@@ -239,7 +237,7 @@
                   },
                   "identifiers": {
                     "type": "array",
-                    "items": {"$ref": "local://records/definitions-v1.2.0.json#/identifiers_with_scheme"},
+                    "items": {"$ref": "local://definitions-v1.0.0.json#/identifiers_with_scheme"},
                     "uniqueItems": true
                   },
                   "place": {
@@ -269,8 +267,8 @@
                 "additionalProperties": false,
                 "properties": {
                   "name": {"type": "string"},
-                  "identifier": {"$ref": "local://records/definitions-v1.2.0.json#/identifier"},
-                  "scheme": {"$ref": "local://records/definitions-v1.2.0.json#/scheme"}
+                  "identifier": {"$ref": "local://definitions-v1.0.0.json#/identifier"},
+                  "scheme": {"$ref": "local://definitions-v1.0.0.json#/scheme"}
                 }
               },
               "award": {
@@ -279,8 +277,8 @@
                 "properties": {
                   "title": {"type": "string"},
                   "number": {"type": "string"},
-                  "identifier": {"$ref": "local://records/definitions-v1.2.0.json#/identifier"},
-                  "scheme": {"$ref": "local://records/definitions-v1.2.0.json#/scheme"}
+                  "identifier": {"$ref": "local://definitions-v1.0.0.json#/identifier"},
+                  "scheme": {"$ref": "local://definitions-v1.0.0.json#/scheme"}
                 }
               }
             }
@@ -298,8 +296,8 @@
                 "type": "string",
                 "description": "A reference string."
               },
-              "identifier": {"$ref": "local://records/definitions-v1.2.0.json#/identifier"},
-              "scheme": {"$ref": "local://records/definitions-v1.2.0.json#/scheme"}
+              "identifier": {"$ref": "local://definitions-v1.0.0.json#/identifier"},
+              "scheme": {"$ref": "local://definitions-v1.0.0.json#/scheme"}
             }
           }
         }
@@ -324,7 +322,7 @@
           "type": "string",
           "description": "Category for the removal."
         },
-        "removed_by": {"$ref": "local://records/definitions-v1.2.0.json#/agent"},
+        "removed_by": {"$ref": "local://records/definitions-v2.0.0.json#/agent"},
         "timestamp": {
           "type": "string",
           "description": "ISO8601 formatted timestamp in UTC.",
@@ -338,8 +336,8 @@
       "description": "Record provenance.",
       "additionalProperties": false,
       "properties": {
-        "created_by": {"$ref": "local://records/definitions-v1.2.0.json#/agent"},
-        "on_behalf_of": {"$ref": "local://records/definitions-v1.2.0.json#/agent"}
+        "created_by": {"$ref": "local://records/definitions-v2.0.0.json#/agent"},
+        "on_behalf_of": {"$ref": "local://records/definitions-v2.0.0.json#/agent"}
       }
     },
 
@@ -405,7 +403,7 @@
         },
         "entries": {
           "type": "object",
-          "additionalProperties": {"$ref": "local://records/definitions-v1.2.0.json#/file"}
+          "additionalProperties": {"$ref": "local://records/definitions-v2.0.0.json#/file"}
         },
         "meta": {
           "type": "object",

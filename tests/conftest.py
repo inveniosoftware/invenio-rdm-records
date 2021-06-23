@@ -24,6 +24,8 @@ from invenio_access.permissions import superuser_access, system_identity
 from invenio_accounts.models import Role
 from invenio_accounts.testutils import login_user_via_session
 from invenio_app.factory import create_app as _create_app
+from invenio_records_resources.proxies import current_service_registry
+from invenio_vocabularies.contrib.affiliations.api import Affiliations
 from invenio_vocabularies.proxies import current_service as vocabulary_service
 from invenio_vocabularies.records.api import Vocabulary
 
@@ -102,16 +104,7 @@ def full_record(users):
                         "identifier": "0000-0001-8135-3489"
                     }],
                 },
-                "affiliations": [{
-                    "name": "CERN",
-                    "identifiers": [{
-                        "scheme": "ror",
-                        "identifier": "01ggx4157",
-                    }, {
-                        "scheme": "isni",
-                        "identifier": "000000012156142X",
-                    }]
-                }]
+                "affiliations": [{"id": "cern"}, {"name": "free-text"}]
             }],
             "title": "InvenioRDM",
             "additional_titles": [{
@@ -140,16 +133,7 @@ def full_record(users):
                     }],
                 },
                 "role": {"id": "other"},
-                "affiliations": [{
-                    "name": "CERN",
-                    "identifiers": [{
-                        "scheme": "ror",
-                        "identifier": "01ggx4157",
-                    }, {
-                        "scheme": "isni",
-                        "identifier": "000000012156142X",
-                    }]
-                }]
+                "affiliations": [{"id": "cern"}]
             }],
             "dates": [{
                 "date": "1939/1945",
@@ -533,22 +517,62 @@ def subject_v(app, subject_type):
     return vocab
 
 
+@pytest.fixture(scope="module")
+def affiliations_v(app):
+    """Affiliations vocabulary record."""
+    affiliations_service = (
+        current_service_registry.get("rdm-affiliations")
+    )
+    aff = affiliations_service.create(system_identity, {
+        "id": "cern",
+        "name": "CERN",
+        "acronym": "CERN",
+        "identifiers": [{
+            "scheme": "ror",
+            "identifier": "01ggx4157",
+        }, {
+            "scheme": "isni",
+            "identifier": "000000012156142X",
+        }]
+    })
+
+    Affiliations.index.refresh()
+
+    return aff
+
+
 RunningApp = namedtuple("RunningApp", [
-    "app", "location", "resource_type_v", "subject_v",
-    "languages_v", "title_type_v", "description_type_v"
+    "app",
+    "location",
+    "resource_type_v",
+    "subject_v",
+    "languages_v",
+    "affiliations_v",
+    "title_type_v",
+    "description_type_v",
 ])
 
 
 @pytest.fixture
-def running_app(app, location, resource_type_v,
-                subject_v, languages_v, title_type_v, description_type_v):
+def running_app(
+    app, location, resource_type_v, subject_v, languages_v, affiliations_v,
+    title_type_v, description_type_v
+):
     """This fixture provides an app with the typically needed db data loaded.
 
     All of these fixtures are often needed together, so collecting them
     under a semantic umbrella makes sense.
     """
-    return RunningApp(app, location, resource_type_v, subject_v, languages_v,
-                      title_type_v, description_type_v)
+    return RunningApp(
+        app,
+        location,
+        resource_type_v,
+        subject_v,
+        languages_v,
+        affiliations_v,
+        title_type_v,
+        description_type_v,
+    )
 
 
 @pytest.fixture(scope="function")

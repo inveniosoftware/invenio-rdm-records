@@ -16,6 +16,16 @@ import pytest
 from invenio_rdm_records.resources.serializers import UIJSONSerializer
 
 
+def _add_affiliation_name(creatibutors):
+    for idx_c, creator in enumerate(creatibutors):
+        affiliations = creatibutors[idx_c]["affiliations"]
+        for idx_aff, affiliation in enumerate(affiliations):
+            name = creatibutors[idx_c]["affiliations"][idx_aff].get("id")
+            if name:
+                name = name.upper()
+                creatibutors[idx_c]["affiliations"][idx_aff]["name"] = name
+
+
 @pytest.fixture(scope='function')
 def full_to_dict_record(full_record):
     """Full record dereferenced data, as is expected by the UI serializer."""
@@ -49,6 +59,9 @@ def full_to_dict_record(full_record):
          'resource_type': {'id': 'dataset', "title": {"en": "Dataset"}},
          'scheme': 'doi'}
     ]
+
+    _add_affiliation_name(to_dict_record["metadata"]["creators"])
+    _add_affiliation_name(to_dict_record["metadata"]["contributors"])
 
     to_dict_record['access']['status'] = 'embargoed'
 
@@ -86,9 +99,9 @@ def test_ui_serializer(app, full_to_dict_record):
             }]
         },
         'creators': {
-            'affiliations': [[1, 'CERN']],
+            'affiliations': [[1, 'CERN'], [2, 'free-text']],
             'creators': [{
-                'affiliations': [[1, 'CERN']],
+                'affiliations': [[1, 'CERN'], [2, 'free-text']],
                 'person_or_org': {
                     'family_name': 'Nielsen',
                     'given_name': 'Lars Holm',

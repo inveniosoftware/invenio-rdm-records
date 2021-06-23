@@ -14,6 +14,7 @@ from flask import current_app
 from flask_babelex import get_locale
 from flask_babelex import lazy_gettext as _
 from invenio_access.permissions import system_identity
+from invenio_records_resources.proxies import current_service_registry
 from invenio_vocabularies.proxies import current_service as vocabulary_service
 from marshmallow import Schema, ValidationError, fields, missing, post_dump
 from marshmallow_utils.fields import SanitizedUnicode
@@ -60,13 +61,23 @@ class PersonOrOrgSchema43(Schema):
 
         return serialized_identifiers
 
+    def _read_affiliation(self, id_):
+        """Retrieve affiliation record using service."""
+        affiliations_service = (
+            current_service_registry.get("rdm-affiliations")
+        )
+        return affiliations_service.read(id_, system_identity)
+
     def get_affiliation(self, obj):
         """Get affiliation list."""
         serialized_affiliations = []
         affiliations = obj.get("affiliations", [])
 
         for affiliation in affiliations:
-            name = affiliation["name"]
+            id_ = affiliation.get("id")
+            if id_:
+                affiliation = self._read_affiliation(id_).to_dict()
+            name = affiliation["name"]  # if no id, name is mandatory
             aff = {
                 "name": name,
             }

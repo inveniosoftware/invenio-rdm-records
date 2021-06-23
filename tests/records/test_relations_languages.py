@@ -11,7 +11,6 @@ import pytest
 from invenio_access.permissions import system_identity
 from invenio_db import db
 from invenio_records.systemfields.relations import InvalidRelationValue
-from invenio_vocabularies.proxies import current_service as vocabulary_service
 from invenio_vocabularies.records.api import Vocabulary
 from jsonschema.exceptions import ValidationError
 

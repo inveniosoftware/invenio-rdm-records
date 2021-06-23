@@ -51,13 +51,7 @@ def test_creator_person_valid_full():
                 "identifier": "0000-0002-1825-0097",
             }],
         },
-        "affiliations": [{
-            "name": "Entity One",
-            "identifiers": [{
-                "scheme": "ror",
-                "identifier": "03yrm5c26"
-            }]
-        }]
+        "affiliations": [{"id": "test"}]
     }
 
     loaded = CreatorSchema().load(valid_full_person)
@@ -75,13 +69,7 @@ def test_creator_person_valid_no_given_name():
                 "identifier": "0000-0002-1825-0097",
             }],
         },
-        "affiliations": [{
-            "name": "Entity One",
-            "identifiers": [{
-                "scheme": "ror",
-                "identifier": "03yrm5c26"
-            }]
-        }]
+        "affiliations": [{"id": "test"}]
     }
 
     loaded = CreatorSchema().load(valid_full_person)
@@ -167,13 +155,7 @@ def test_creator_person_invalid_no_family_name():
             }],
             "type": "personal"
         },
-        "affiliations": [{
-            "name": "Entity One",
-            "identifiers": [{
-                "scheme": "ror",
-                "identifier": "03yrm5c26"
-            }]
-        }],
+        "affiliations": [{"id": "test"}]
     }
 
     assert_raises_messages(
@@ -263,13 +245,7 @@ def test_creator_invalid_identifiers_ror():
 
 def test_contributor_person_valid_full(vocabulary_clear):
     valid_full = {
-        "affiliations": [{
-            "name": "Entity One",
-            "identifiers": [{
-                "scheme": "ror",
-                "identifier": "03yrm5c26"
-            }]
-        }],
+        "affiliations": [{"id": "test"}],
         "person_or_org": {
             "family_name": "Cesar",
             "given_name": "Julio",

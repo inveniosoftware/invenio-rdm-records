@@ -31,12 +31,24 @@ def _valid_url(error_msg):
 
 
 class AffiliationSchema(Schema):
-    """Affiliation of a creator/contributor."""
+    """Affiliation of a creator/contributor.
 
-    name = SanitizedUnicode(required=True)
-    identifiers = IdentifierSet(
-        fields.Nested(IdentifierSchema),
-    )
+    Cannot inherit VocabularySchema because id is optional.
+    """
+
+    id = SanitizedUnicode()
+    name = SanitizedUnicode()
+
+    @validates_schema
+    def validate_affiliation(self, data, **kwargs):
+        """Validates that either id either name are present."""
+        only_one = bool(data.get("id")) ^ bool(data.get("name"))
+        if not only_one:
+            raise ValidationError(
+                "Only existing affiliation id or a free text name can " +
+                "be present",
+                'affiliations'  # name of field to report error for
+            )
 
 
 class PersonOrOrganizationSchema(Schema):
