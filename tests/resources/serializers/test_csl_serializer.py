@@ -149,4 +149,4 @@ def test_citation_string_serializer_record(
         elif expected_status == 400:
             # in case of error, the response is JSON
             assert response.headers["content-type"] == "application/json"
-            assert f"Style {expected_style} could not be found." in body
+            assert f"Citation string style not found." in body
