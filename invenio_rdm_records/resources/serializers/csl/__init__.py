@@ -7,6 +7,7 @@
 
 """CSL JSON and  citation string serializers for Invenio RDM Records."""
 
+import logging
 import re
 
 from citeproc import Citation, CitationItem, CitationStylesBibliography, \
@@ -14,7 +15,6 @@ from citeproc import Citation, CitationItem, CitationStylesBibliography, \
 from citeproc.source.json import CiteProcJSON
 from citeproc_styles import get_style_filepath
 from citeproc_styles.errors import StyleNotFoundError
-from flask import abort
 from flask_resources.serializers import MarshmallowJSONSerializer
 from webargs import fields
 
@@ -30,13 +30,12 @@ class CSLJSONSerializer(MarshmallowJSONSerializer):
 
 
 def get_citation_string(json, id, style, locale):
-    """Get the citation string from Citeproc."""
+    """Get the citation string from CiteProc library."""
 
     def _clean_result(text):
-        """Remove double spaces, punctuation and escapes apostrophes."""
+        """Remove double spaces, punctuation."""
         text = re.sub(r"\s\s+", " ", text)
         text = re.sub(r"\.\.+", ".", text)
-        text = text.replace("'", "\\'")
         return text
 
     source = CiteProcJSON([json])
@@ -54,11 +53,9 @@ def get_style_location(style):
     """Return the path to the CSL style if exists or throw."""
     try:
         return get_style_filepath(style.lower())
-    except StyleNotFoundError:
-        abort(
-            400,
-            description=f"Style {style} could not be found.",
-        )
+    except StyleNotFoundError as ex:
+        logging.warning(f"CSL style {style} not found.")
+        raise ex
 
 
 class StringCitationSerializer(MarshmallowJSONSerializer):

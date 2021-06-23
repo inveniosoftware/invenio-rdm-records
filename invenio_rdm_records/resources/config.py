@@ -10,6 +10,7 @@
 
 
 import marshmallow as ma
+from citeproc_styles import StyleNotFoundError
 from flask_resources import HTTPJSONException, JSONSerializer, \
     ResponseHandler, create_error_handler, resource_requestctx
 from invenio_drafts_resources.resources import RecordResourceConfig
@@ -71,6 +72,15 @@ class RDMRecordResourceConfig(RecordResourceConfig):
     request_search_args = RDMSearchRequestArgsSchema
 
     response_handlers = record_serializers
+
+    error_handlers = {
+        StyleNotFoundError: create_error_handler(
+            HTTPJSONException(
+                code=400,
+                description="Citation string style not found.",
+            )
+        ),
+    }
 
 
 #
