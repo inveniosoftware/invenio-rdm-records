@@ -98,16 +98,27 @@ class CreatorSchema43(PersonOrOrgSchema43):
     """Creator schema for v4."""
 
 
+class RoleSchema(Schema):
+    """Role schema."""
+
+    id = fields.String()
+
+
 class ContributorSchema43(PersonOrOrgSchema43):
     """Contributor schema for v43."""
 
-    contributorType = fields.Str(attribute='role')
+    contributorType = fields.Nested(
+        RoleSchema,
+        attribute='role'
+    )
 
     @post_dump(pass_many=False)
     def capitalize_contributor_type(self, data, **kwargs):
         """Capitalize type."""
         if data.get("contributorType"):
-            data["contributorType"] = data["contributorType"].capitalize()
+            data["contributorType"] = data["contributorType"][
+                "id"
+            ].capitalize()
 
         return data
 

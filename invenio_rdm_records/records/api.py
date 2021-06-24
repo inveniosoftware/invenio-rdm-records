@@ -113,7 +113,14 @@ class CommonFieldsMixin:
         creators_role=PIDListRelation(
             'metadata.creators',
             attrs=['id', 'title'],
-            pid_field=Vocabulary.pid.with_type_ctx('creators_role'),
+            pid_field=Vocabulary.pid.with_type_ctx('creatorsroles'),
+            cache_key='role',
+            relation_field='role'
+        ),
+        contributors_role=PIDListRelation(
+            'metadata.contributors',
+            attrs=['id', 'title'],
+            pid_field=Vocabulary.pid.with_type_ctx('contributorsroles'),
             cache_key='role',
             relation_field='role'
         ),

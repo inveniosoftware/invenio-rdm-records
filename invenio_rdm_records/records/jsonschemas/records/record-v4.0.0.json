@@ -41,7 +41,7 @@
             "additionalProperties": false,
             "properties": {
                 "person_or_org": {"$ref": "local://records/definitions-v1.2.0.json#/person_or_org"},
-                "role": {"$ref": "local://records/definitions-v1.2.0.json#/creators_role"},
+                "role": {"$ref": "local://records/definitions-v1.2.0.json#/role"},
                 "affiliations": {"$ref": "local://records/definitions-v1.2.0.json#/affiliations"}
             }
           }
@@ -92,7 +92,7 @@
             "additionalProperties": false,
             "properties": {
               "person_or_org": {"$ref": "local://records/definitions-v1.2.0.json#/person_or_org"},
-              "role": {"$ref": "local://records/definitions-v1.2.0.json#/contributorType"},
+              "role": {"$ref": "local://records/definitions-v1.2.0.json#/role"},
               "affiliations": {"$ref": "local://records/definitions-v1.2.0.json#/affiliations"}
             }
           }

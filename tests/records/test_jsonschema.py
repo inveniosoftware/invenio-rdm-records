@@ -242,11 +242,11 @@ def test_contributors(appctx, person, org):
     assert validates_meta({"contributors": []})
     assert validates_meta({"contributors": [{
         "person_or_org": {"name": "test", "type": "organizational"},
-        "role": "other"
+        "role": {"id": "other"}
     }]})
 
-    person["role"] = "other"
-    org["role"] = "hosting_institution"
+    person["role"] = {"id": "other"}
+    org["role"] = {"id": "hosting_institution"}
 
     assert validates_meta({"contributors": [person]})
     assert validates_meta({"contributors": [org]})

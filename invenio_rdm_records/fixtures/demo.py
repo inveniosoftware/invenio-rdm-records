@@ -115,20 +115,10 @@ class CachedVocabularies:
         return {"id": random_id}
 
     @classmethod
-    def fake_creators_role(cls):
+    def fake_creatibutor_role(cls):
         """Generate random creators_role."""
-        if not cls._creators_role_ids:
-            creators_role = cls._read_vocabulary("creators_role")
-
-            for role in creators_role:
-                cls._creators_role_ids.append(role["id"])
-
-        if not cls._creators_role_ids:
-            return []
-
-        n = random.choice([0, 1, 2])
-        random_ids = random.sample(cls._creators_role_ids, n)
-        return [{"id": i} for i in random_ids]
+        random_id = random.choice(["other", "datacollector", "contactperson"])
+        return {"id": random_id}
 
 
 def fake_edtf_level_0():
@@ -187,7 +177,7 @@ def create_fake_record():
                         "identifier": "0000-0002-1825-0097",
                     }],
                 },
-                "role": CachedVocabularies.fake_creators_role(),
+                "role": CachedVocabularies.fake_creatibutor_role(),
                 "affiliations": [{
                     "name": fake.company(),
                     "identifiers": [{
@@ -215,6 +205,7 @@ def create_fake_record():
                     "given_name": fake.first_name(),
                     "type": "personal",
                 },
+                "role": CachedVocabularies.fake_creatibutor_role(),
                 "affiliations": [{
                     "name": fake.company(),
                     "identifiers": [{
@@ -222,7 +213,6 @@ def create_fake_record():
                         "identifier": "03yrm5c26",
                     }]
                 }],
-                "role": "rightsholder"
             } for i in range(3)],
             # "dates": [{
             #     # No end date to avoid computations based on start

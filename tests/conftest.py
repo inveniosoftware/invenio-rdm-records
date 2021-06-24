@@ -139,7 +139,7 @@ def full_record(users):
                         "identifier": "0000-0001-8135-3489"
                     }],
                 },
-                "role": "other",
+                "role": {"id": "other"},
                 "affiliations": [{
                     "name": "CERN",
                     "identifiers": [{

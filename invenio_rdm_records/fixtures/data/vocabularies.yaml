@@ -1,9 +1,12 @@
 affiliations:
   pid-type: aff
   data-file: vocabularies/affiliations.yaml
-creators_role:
+creatorsroles:
   pid-type: crr
-  data-file: vocabularies/creators_role.yaml
+  data-file: vocabularies/roles.yaml
+contributorsroles:
+  pid-type: cor
+  data-file: vocabularies/roles.yaml
 languages:
   pid-type: lng
   data-file: vocabularies/languages.yaml

@@ -279,7 +279,7 @@ def test_contributor_person_valid_full(vocabulary_clear):
             }],
             "type": "personal",
         },
-        "role": "rightsholder"
+        "role": {"id": "rightsholder"}
     }
 
     loaded = ContributorSchema().load(valid_full)
@@ -294,7 +294,7 @@ def test_contributor_person_valid_minimal(vocabulary_clear):
             "family_name": "Cesar",
             "type": "personal",
         },
-        "role": "rightsholder"
+        "role": {"id": "rightsholder"}
     }
     expected = {
         "person_or_org": {
@@ -302,7 +302,7 @@ def test_contributor_person_valid_minimal(vocabulary_clear):
             "name": "Cesar",
             "type": "personal",
         },
-        "role": "rightsholder",
+        "role": {"id": "rightsholder"},
     }
     assert expected == ContributorSchema().load(valid_minimal_family_name)
 
@@ -317,7 +317,7 @@ def test_contributor_person_invalid_no_family_name_nor_given_name(
                 "identifier": "0000-0002-1825-0097",
             }],
         },
-        "role": "rightsholder"
+        "role": {"id": "rightsholder"}
     }
 
     assert_raises_messages(
@@ -387,9 +387,7 @@ def test_contributor_invalid_role(custom_config, vocabulary_clear):
 
     assert_raises_messages(
         lambda: ContributorSchema().load(invalid_role),
-        {'role': [
-            "Invalid value. Choose one of ['DataCollector', 'Librarian']."
-        ]}
+        {'role': {'_schema': ['Invalid input type.']}}
     )
 
 
