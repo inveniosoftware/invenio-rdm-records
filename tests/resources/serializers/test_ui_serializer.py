@@ -82,7 +82,7 @@ def test_ui_serializer(app, full_to_dict_record):
                     'name': 'Nielsen, Lars Holm',
                     'type': 'personal'
                 },
-                'role': 'other',
+                'role': {'id': 'other'},
             }]
         },
         'creators': {

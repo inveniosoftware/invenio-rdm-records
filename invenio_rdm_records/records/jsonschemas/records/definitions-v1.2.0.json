@@ -27,11 +27,8 @@
       }
     ]
   },
-  "contributorType": {
-    "type": "string"
-  },
-  "creators_role": {
-    "description": "Role of creator.",
+  "role": {
+    "description": "Role of creator/contributor.",
     "type": "object",
     "additionalProperties": false,
     "properties": {

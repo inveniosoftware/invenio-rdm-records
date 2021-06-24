@@ -16,10 +16,8 @@ from flask_babelex import lazy_gettext as _
 from marshmallow import Schema, ValidationError, fields, post_load, validate, \
     validates_schema
 from marshmallow_utils.fields import EDTFDateString, IdentifierSet, \
-    ISOLangString, SanitizedHTML, SanitizedUnicode
+    SanitizedHTML, SanitizedUnicode
 from marshmallow_utils.schemas import GeometryObjectSchema, IdentifierSchema
-
-from .utils import validate_entry
 
 
 def _not_blank(error_msg):
@@ -123,8 +121,8 @@ class LanguageSchema(VocabularySchema):
     """Language schema."""
 
 
-class CreatorsRoleSchema(VocabularySchema):
-    """Subject schema."""
+class RoleSchema(VocabularySchema):
+    """Role schema."""
 
 
 class TitleTypeSchema(VocabularySchema):
@@ -135,7 +133,7 @@ class CreatorSchema(Schema):
     """Creator schema."""
 
     person_or_org = fields.Nested(PersonOrOrganizationSchema, required=True)
-    role = fields.Nested(CreatorsRoleSchema)
+    role = fields.Nested(RoleSchema)
     affiliations = fields.List(fields.Nested(AffiliationSchema))
 
 
@@ -143,13 +141,8 @@ class ContributorSchema(Schema):
     """Contributor schema."""
 
     person_or_org = fields.Nested(PersonOrOrganizationSchema, required=True)
-    role = SanitizedUnicode(required=True)
+    role = fields.Nested(RoleSchema, required=True)
     affiliations = fields.List(fields.Nested(AffiliationSchema))
-
-    @validates_schema
-    def validate_role(self, data, **kwargs):
-        """Validate role."""
-        validate_entry('contributors.role', data)
 
 
 class TitleSchema(Schema):

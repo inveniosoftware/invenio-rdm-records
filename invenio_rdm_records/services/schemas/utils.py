@@ -8,29 +8,9 @@
 
 """RDM record schema utilities."""
 
-import arrow
-from arrow.parser import ParserError
-from marshmallow import Schema, ValidationError, fields, missing
+from marshmallow import Schema, fields
 from marshmallow.schema import SchemaMeta
 from marshmallow_utils.fields import NestedAttribute
-
-from ...vocabularies import Vocabularies
-
-
-def validate_entry(vocabulary_key, entry_key):
-    """Validates if an entry is valid for a vocabulary.
-
-    :param vocabulary_key: str, Vocabulary key
-    :param entry_key: str, specific entry key
-
-    raises marshmallow.ValidationError if entry is not valid.
-    """
-    vocabulary = Vocabularies.get_vocabulary(vocabulary_key)
-    obj = vocabulary.get_entry_by_dict(entry_key)
-    if not obj:
-        raise ValidationError(
-            vocabulary.get_invalid(entry_key)
-        )
 
 
 def dump_empty(schema_or_field):

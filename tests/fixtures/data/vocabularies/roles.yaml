@@ -1,0 +1,9 @@
+- id: contactperson
+  title:
+    en: Contact Person
+- id: datacollector
+  title:
+    en: Data Collector
+- id: other
+  title:
+    en: Other
