@@ -9,12 +9,13 @@
 """Record response serializers."""
 
 from .csl import CSLJSONSerializer, StringCitationSerializer
-from .datacite import DataCite43JSONSerializer
+from .datacite import DataCite43JSONSerializer, DataCite43XMLSerializer
 from .ui import UIJSONSerializer
 
 __all__ = (
     "CSLJSONSerializer",
     "DataCite43JSONSerializer",
+    "DataCite43XMLSerializer",
     "StringCitationSerializer",
     "UIJSONSerializer",
 )

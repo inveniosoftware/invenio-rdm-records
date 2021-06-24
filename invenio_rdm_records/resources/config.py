@@ -18,8 +18,8 @@ from invenio_records_resources.resources.files import FileResourceConfig
 
 from invenio_rdm_records.resources.args import RDMSearchRequestArgsSchema
 
-from .serializers import CSLJSONSerializer, StringCitationSerializer, \
-    UIJSONSerializer
+from .serializers import CSLJSONSerializer, DataCite43JSONSerializer, \
+    DataCite43XMLSerializer, StringCitationSerializer, UIJSONSerializer
 
 
 def csl_url_args_retriever():
@@ -37,6 +37,12 @@ record_serializers = {
     "application/vnd.inveniordm.v1+json": ResponseHandler(UIJSONSerializer()),
     "application/vnd.citationstyles.csl+json": ResponseHandler(
         CSLJSONSerializer()
+    ),
+    "application/vnd.datacite.datacite+json": ResponseHandler(
+        DataCite43JSONSerializer()
+    ),
+    "application/vnd.datacite.datacite+xml": ResponseHandler(
+        DataCite43XMLSerializer()
     ),
     "text/x-bibliography": ResponseHandler(
         StringCitationSerializer(url_args_retriever=csl_url_args_retriever),
