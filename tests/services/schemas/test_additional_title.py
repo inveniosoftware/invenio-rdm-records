@@ -30,21 +30,28 @@ def test_valid_full(vocabulary_clear):
     assert valid_full == TitleSchema().load(valid_full)
 
 
-def test_valid_partial(vocabulary_clear):
+def test_valid_minimal(vocabulary_clear):
     valid_partial = {
+        "title": "A Romans story",
+        "type": {
+            "id": "other"
+        },
+    }
+    assert valid_partial == TitleSchema().load(valid_partial)
+
+
+def test_invalid_no_type(vocabulary_clear):
+    invalid_no_type = {
         "title": "A Romans story",
         "lang": {
             "id": "eng"
         }
     }
-    assert valid_partial == TitleSchema().load(valid_partial)
 
-
-def test_valid_minimal(vocabulary_clear):
-    valid_minimal = {
-        "title": "A Romans story"
-    }
-    assert valid_minimal == TitleSchema().load(valid_minimal)
+    assert_raises_messages(
+        lambda: TitleSchema().load(invalid_no_type),
+        {'type': ['Missing data for required field.']}
+    )
 
 
 def test_invalid_no_title(vocabulary_clear):

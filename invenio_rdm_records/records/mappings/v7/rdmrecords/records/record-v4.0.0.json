@@ -416,7 +416,18 @@
           "titles" : {
             "properties" : {
               "lang" : {
-                "type" : "keyword"
+                "type": "object",
+                "properties": {
+                  "@v": {
+                    "type": "keyword"
+                  },
+                  "id": {
+                    "type": "keyword"
+                  },
+                  "title": {
+                    "type": "object"
+                  }
+                }
               },
               "title" : {
                 "type" : "text",

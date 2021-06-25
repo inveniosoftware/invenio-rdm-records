@@ -43,5 +43,4 @@ def test_fake_demo_record_creation(app, location, db, es_clear, vocabularies):
         )
         vocabularies.load_datafile(id_, filepath, delay=False)
 
-
     create_demo_record(create_fake_record())

@@ -466,7 +466,7 @@ def title_type(app):
 
 
 @pytest.fixture(scope="module")
-def title_type_v(app, subject_type):
+def title_type_v(app, title_type):
     """Title Type vocabulary record."""
     vocab = vocabulary_service.create(system_identity, {
         "id": "alternative-title",

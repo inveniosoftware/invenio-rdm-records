@@ -158,7 +158,7 @@ class TitleSchema(Schema):
     """Schema for the additional title."""
 
     title = SanitizedUnicode(required=True, validate=validate.Length(min=3))
-    type = fields.Nested(TitleTypeSchema)
+    type = fields.Nested(TitleTypeSchema, required=True)
     lang = fields.Nested(LanguageSchema)
 
 

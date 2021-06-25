@@ -89,6 +89,25 @@ def resource_type_v(resource_type_type):
     return vocab
 
 
+@pytest.fixture(scope="function")
+def title_type_v(app, title_type):
+    """Title Type vocabulary record."""
+    vocab = vocabulary_service.create(system_identity, {
+        "id": "subtitle",
+        "props": {
+            "datacite": "Subtitle"
+         },
+        "title": {
+            "en": "Subtitle"
+        },
+        "type": "title_types"
+    })
+
+    Vocabulary.index.refresh()
+
+    return vocab
+
+
 @pytest.fixture
 def running_app(
     app, location, resource_type_v, subject_v, laguanges_v, title_type_v
@@ -134,7 +153,7 @@ def test_datacite43_serializer(
             {"title": "InvenioRDM"},
             {
                 "title": "a research data management platform",
-                "titleType": "Alternative Title",
+                "titleType": "Subtitle",
                 "lang": "en",
             },
         ],

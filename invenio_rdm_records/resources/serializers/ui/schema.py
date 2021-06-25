@@ -127,6 +127,20 @@ class RelatedIdentifiersSchema(Schema):
     )
 
 
+class AdditionalTitlesSchema(Schema):
+    """Additional titles schema."""
+
+    title = fields.String()
+    type = fields.Nested(
+        TitleTypeL10NSchema,
+        attribute='type'
+    )
+    lang = fields.Nested(
+        LanguageL10NSchema,
+        attribute='lang'
+    )
+
+
 class UIObjectSchema(Schema):
     """Schema for dumping extra information for the UI."""
 
@@ -145,9 +159,9 @@ class UIObjectSchema(Schema):
         attribute='metadata.resource_type'
     )
 
-    title_type = fields.Nested(
-        TitleTypeL10NSchema,
-        attribute='metadata.title_type'
+    additional_titles = fields.List(
+        fields.Nested(AdditionalTitlesSchema),
+        attribute='metadata.additional_titles'
     )
 
     access_status = AccessStatusField(attribute='access')
