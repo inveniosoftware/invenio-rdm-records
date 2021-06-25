@@ -101,7 +101,7 @@ class CachedVocabularies:
             for tt in title_types:
                 cls._title_type_ids.append(tt["id"])
 
-        if not cls._subject_ids:
+        if not cls._title_type_ids:
             return []
 
         random_id = random.choice(cls._title_type_ids)
@@ -181,12 +181,12 @@ def create_fake_record():
             "title": fake.company() + "'s gallery",
             "additional_titles": [{
                 "title": "a research data management platform",
-                "title_type": CachedVocabularies.fake_title_type(),
-                "lang": "eng"
+                "type": CachedVocabularies.fake_title_type(),
+                "lang": {"id": "eng"}
             }, {
                 "title": fake.company() + "'s gallery",
-                "type": "alternativetitle",
-                "lang": "eng"
+                "type": {"id": "alternative-title"},
+                "lang": CachedVocabularies.fake_language()
             }],
             "publisher": "InvenioRDM",
             "publication_date": fake_edtf_level_0(),

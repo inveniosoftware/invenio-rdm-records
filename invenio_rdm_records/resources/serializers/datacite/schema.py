@@ -222,7 +222,7 @@ class DataCite43Schema(Schema):
 
         for add_title in additional_titles:
             title = {"title": add_title.get("title")}
-            title_id = add_title.get("title_type", {}).get("id")
+            title_id = add_title.get("type", {}).get("id")
             if title_id:
                 title_type_record = self._read_title_type(title_id)
                 props = title_type_record["props"]
