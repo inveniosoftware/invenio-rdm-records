@@ -1,0 +1,82 @@
+- acronym: CERN
+  id: 01ggx4157
+  name: European Organization for Nuclear Research
+  title:
+    de: "\_Europ\xE4ische Organisation f\xFCr Kernforschung"
+    en: European Organization for Nuclear Research
+    fr: "Organisation europ\xE9enne pour la recherche nucl\xE9aire"
+- acronym: BNL
+  id: 02ex6cf31
+  name: Brookhaven National Laboratory
+  title:
+    en: Brookhaven National Laboratory
+- id: 047h63042
+  name: Eko-Konnect
+  title:
+    en: Eko-Konnect
+- acronym: HZDR
+  id: 01zy2cs03
+  name: Helmholtz-Zentrum Dresden-Rossendorf
+  title:
+    en: Helmholtz-Zentrum Dresden-Rossendorf
+- acronym: INFN
+  id: 005ta0471
+  name: National Institute for Nuclear Physics
+  title:
+    en: National Institute for Nuclear Physics
+    it: Istituto Nazionale di Fisica Nucleare
+- acronym: JRC
+  id: 04j5wtv36
+  name: Directorate-General Joint Research Centre
+  title:
+    de: Gemeinsame Forschungsstelle
+    en: Directorate-General Joint Research Centre
+    fr: Centre commun de recherche
+- acronym: NU
+  id: 000e0be47
+  name: Northwestern University
+  title:
+    en: Northwestern University
+- id: 04mcehe57
+  name: Tind Technologies (Norway)
+  title:
+    en: Tind Technologies (Norway)
+- acronym: ULAKBIM
+  id: 017k52s24
+  name: Turkish Academic Network and Information Center
+  title:
+    en: Turkish Academic Network and Information Center
+    tr: "Ulusal Akademik A\u011F ve Bilgi Merkezi"
+- id: 00d7xrm67
+  name: Graz University of Technology
+  title:
+    de: "Technische Universit\xE4t Graz"
+    en: Graz University of Technology
+- acronym: TUW
+  id: 04d836q62
+  name: TU Wien
+  title:
+    de: "Technische Universit\xE4t Wien"
+    en: TU Wien
+- acronym: UH
+  id: 00g30e956
+  name: "Universit\xE4t Hamburg"
+  title:
+    en: University of Hamburg
+- acronym: WWU
+  id: 00pd74e08
+  name: "University of M\xFCnster"
+  title:
+    de: "Westf\xE4lische Wilhelms-Universit\xE4t M\xFCnster"
+    en: "University of M\xFCnster"
+- acronym: WACREN
+  id: 006rqpt26
+  name: West and Central African Research and Education Network
+  title:
+    en: West and Central African Research and Education Network
+- acronym: CIT
+  id: 05dxps055
+  name: California Institute of Technology
+  title:
+    en: California Institute of Technology
+    es: "Instituto de Tecnolog\xEDa de California"

@@ -17,7 +17,7 @@ from edtf.parser.grammar import level0Expression
 from faker import Faker
 from invenio_access.permissions import system_identity
 
-from invenio_rdm_records.fixtures import VocabulariesFixture
+from .vocabularies import VocabulariesFixture
 
 
 class CachedVocabularies:

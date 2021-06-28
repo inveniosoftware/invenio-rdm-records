@@ -10,6 +10,8 @@
 
 from pathlib import Path
 
+from .affiliations import AffiliationsFixture
+from .fixture import FixtureMixin
 from .users import UsersFixture
 from .vocabularies import PrioritizedVocabulariesFixtures, VocabulariesFixture
 
@@ -41,9 +43,15 @@ class FixturesEngine:
             'users.yaml',
         ).load()
 
+        AffiliationsFixture(
+            [Path("./app_data"), dir_ / "data"],
+            'affiliations.yaml',
+        ).load()
 
-__all__ = [
+
+__all__ = (
     'FixturesEngine',
+    'FixtureMixin',
     'PrioritizedVocabulariesFixtures',
     'VocabulariesFixture'
-]
+)
