@@ -114,7 +114,7 @@ def test_ui_serializer(app, full_to_dict_record):
         ],
         'related_identifiers': [
             {'identifier': '10.1234/foo.bar',
-             'relation_type': 'cites',
+             'relation_type': 'Cites',
              'resource_type': {'id': 'dataset', 'title_l10n': 'Dataset'},
              'scheme': 'doi'}
         ],

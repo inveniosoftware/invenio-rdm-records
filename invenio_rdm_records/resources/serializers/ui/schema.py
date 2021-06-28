@@ -21,6 +21,7 @@ from marshmallow_utils.fields import FormatDate as FormatDate_
 from marshmallow_utils.fields import FormatEDTF as FormatEDTF_
 from marshmallow_utils.fields import StrippedHTML
 
+from ...utils import RELATED_IDENTIFIERS_RELATIONS
 from .fields import AccessStatusField
 
 
@@ -77,6 +78,17 @@ def make_affiliation_index(attr, obj, dummy_ctx):
     }
 
 
+def serialize_relation_type(attr, obj, dummy_ctx):
+    """Serializes relation_type for easier UI consumption."""
+    # Copy so we don't modify in place the existing dict.
+    relation_type = deepcopy(obj.get(attr, ""))
+
+    if not relation_type:
+        return missing
+
+    return RELATED_IDENTIFIERS_RELATIONS.get(relation_type)
+
+
 def record_version(obj):
     """Return record's version."""
     field_data = obj.get("metadata", {}).get("version")
@@ -112,7 +124,8 @@ class RelatedIdentifiersSchema(Schema):
     """Localization of language titles."""
 
     identifier = fields.String()
-    relation_type = fields.String()
+    relation_type = fields.Function(
+        partial(serialize_relation_type, 'relation_type'))
     scheme = fields.String()
     resource_type = fields.Nested(
         ResourceTypeL10NSchema,
