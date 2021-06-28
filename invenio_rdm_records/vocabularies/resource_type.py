@@ -71,7 +71,7 @@ class ResourceTypeVocabulary(Vocabulary):
             if type_option not in options['type']:
                 options['type'].append(type_option)
 
-            # NOTE: There isn't always a subtype
+            # There isn't always a subtype
             if subtype:
                 subtype_option = {
                     'parent-text': type_option['text'],

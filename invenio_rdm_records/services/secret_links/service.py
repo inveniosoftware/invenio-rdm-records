@@ -233,8 +233,8 @@ class SecretLinkService(RecordService):
         )
 
         # Update
-        # note: we can't update the link's extra data, as that is encoded
-        #       in the token and would thus require a new token
+        # we can't update the link's extra data, as that is encoded
+        # in the token and would thus require a new token
         link.expires_at = expires_at or link.expires_at
         link.permission_level = permission or link.permission_level
 

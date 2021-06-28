@@ -6,8 +6,10 @@
 # it under the terms of the MIT License; see LICENSE file for more details.
 
 """PID Base Provider."""
+
+from flask import current_app
 from flask_babelex import lazy_gettext as _
-from invenio_pidstore.errors import PIDDoesNotExistError
+from invenio_pidstore.errors import PIDAlreadyExists, PIDDoesNotExistError
 from invenio_pidstore.models import PersistentIdentifier, PIDStatus
 from sqlalchemy.orm.exc import NoResultFound
 
@@ -49,7 +51,7 @@ class BasePIDProvider:
         """
         return self.system_managed
 
-    def get(self, pid_value, pid_type=None):
+    def get(self, pid_value, pid_type=None, pid_provider=None):
         """Get a persistent identifier for this provider.
 
         :param pid_type: Persistent identifier type.
@@ -57,8 +59,14 @@ class BasePIDProvider:
         :returns: A :class:`invenio_pidstore.models.base.PersistentIdentifier`
             instance.
         """
-        return PersistentIdentifier.get(pid_type or self.pid_type, pid_value,
-                                        pid_provider=self.name)
+        args = {
+            "pid_type": pid_type or self.pid_type,
+            "pid_value": pid_value
+        }
+        if pid_provider:
+            args["pid_provider"] = pid_provider
+
+        return PersistentIdentifier.get(**args)
 
     def get_by_record(self, record_id, pid_type=None, pid_value=None,
                       object_type="rec"):
@@ -84,8 +92,34 @@ class BasePIDProvider:
         except NoResultFound:
             raise PIDDoesNotExistError(pid_type, None)
 
-    def create(self, pid_value=None, pid_type=None, status=None,
-               object_type=None, object_uuid=None, **kwargs):
+    def create(self, record, value, **kwargs):
+        """Get or create the PID with given value for the given record.
+
+        :param record: the record to create the PID for.
+        :param value: the PID value.
+        :returns: A :class:`invenio_pidstore.models.base.PersistentIdentifier`
+            instance.
+        """
+        try:
+            pid = self.get(value)
+        except PIDDoesNotExistError:
+            # not existing, create a new one
+            return self.create_by_pid(
+                pid_value=value,
+                object_type="rec",
+                object_uuid=record.id,
+                **kwargs
+            )
+
+        # re-activate if previously deleted
+        if pid.is_deleted():
+            pid.sync_status(PIDStatus.NEW)
+            return pid
+        else:
+            raise PIDAlreadyExists(self.pid_type, value)
+
+    def create_by_pid(self, pid_value=None, pid_type=None, status=None,
+                      object_type=None, object_uuid=None, **kwargs):
         """Create a new instance for the given type and pid.
 
         :param pid_value: Persistent identifier value. (Default: None).
@@ -152,7 +186,9 @@ class BasePIDProvider:
         """Get the status of the identifier."""
         return self.get(identifier, **kwargs).status
 
-    def validate(self, identifier=None, provider=None, client=None, **kwargs):
+    def validate(
+        self, record, identifier=None, provider=None, client=None, **kwargs
+    ):
         """Validate the attributes of the identifier.
 
         :returns: A tuple (success, errors). The first specifies if the
@@ -160,9 +196,27 @@ class BasePIDProvider:
                   array of error messages.
         """
         if provider and provider != self.name:
-            errors = [
-                _(f"Provider name {provider} does not match {self.name}")
-            ]
-            return False, errors
+            current_app.logger.error("Configuration error: provider "
+                                     f"name {provider} does not match "
+                                     f"{self.name}.")
+            raise   # configuration error
+
+        # deduplication check
+        try:
+            pid = self.get(pid_value=identifier, pid_type=self.pid_type)
+            if pid.object_uuid != record.id:
+                current_app.logger.warning(
+                    f"PID {self.pid_type}:{identifier} is already assigned " +
+                    f"to record {record.pid.pid_value}"
+                )
+                return False, [
+                    _(
+                        f"{self.pid_type}:{identifier} is already registered" +
+                        " to another record"
+                    )
+                ]
+
+        except PIDDoesNotExistError:
+            pass
 
         return True, []

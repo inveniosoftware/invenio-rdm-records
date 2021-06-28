@@ -37,9 +37,9 @@ def verify_token():
             if data:
                 session["rdm-records-token"] = data
 
-                # NOTE: the identity is loaded before this handler is executed
-                #       so if we want the initial request to be authorized,
-                #       we need to add the LinkNeed here
+                # the identity is loaded before this handler is executed
+                # so if we want the initial request to be authorized,
+                # we need to add the LinkNeed here
                 if hasattr(g, "identity"):
                     g.identity.provides.add(LinkNeed(data["id"]))
 

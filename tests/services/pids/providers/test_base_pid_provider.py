@@ -18,7 +18,7 @@ from invenio_rdm_records.services.pids.providers import BasePIDProvider
 def test_base_provider_create(app, db):
     provider = BasePIDProvider()
 
-    created_pid = provider.create(pid_value="1234", pid_type="testid")
+    created_pid = provider.create_by_pid(pid_value="1234", pid_type="testid")
     db_pid = PersistentIdentifier.get(pid_value="1234", pid_type="testid")
 
     assert created_pid == db_pid
@@ -27,10 +27,15 @@ def test_base_provider_create(app, db):
     assert created_pid.status == PIDStatus.NEW
 
 
-def test_base_provider_create_default_pid_type(app, db):
-    provider = BasePIDProvider(pid_type="testid")
+@pytest.fixture(scope='function')
+def base_provider():
+    """Application factory fixture."""
+    return BasePIDProvider(pid_type="testid")
 
-    created_pid = provider.create(pid_value="1234")
+
+def test_base_provider_create_default_pid_type(app, db, base_provider):
+    provider = base_provider
+    created_pid = provider.create_by_pid(pid_value="1234")
     # NOTE: DB level requires pid_type
     db_pid = PersistentIdentifier.get(pid_value="1234", pid_type="testid")
 
@@ -40,10 +45,12 @@ def test_base_provider_create_default_pid_type(app, db):
     assert created_pid.status == PIDStatus.NEW
 
 
-def test_base_provider_get_existing_different_pid_type(app, db):
-    provider = BasePIDProvider(pid_type="testid")
+def test_base_provider_get_existing_different_pid_type(
+    app, db, base_provider
+):
+    provider = base_provider
 
-    created_pid = provider.create(pid_value="1234", pid_type="diffid")
+    created_pid = provider.create_by_pid(pid_value="1234", pid_type="diffid")
     get_pid = provider.get(pid_value="1234", pid_type="diffid")
 
     assert created_pid == get_pid
@@ -52,10 +59,13 @@ def test_base_provider_get_existing_different_pid_type(app, db):
     assert get_pid.status == PIDStatus.NEW
 
 
-def test_base_provider_get_existing_different_status(app, db):
-    provider = BasePIDProvider(pid_type="testid")
+def test_base_provider_get_existing_different_status(
+    app, db, base_provider
+):
+    provider = base_provider
 
-    created_pid = provider.create(pid_value="1234", status=PIDStatus.RESERVED)
+    created_pid = provider.create_by_pid(pid_value="1234",
+                                         status=PIDStatus.RESERVED)
     get_pid = provider.get(pid_value="1234")
 
     assert created_pid == get_pid
@@ -64,10 +74,10 @@ def test_base_provider_get_existing_different_status(app, db):
     assert get_pid.status == PIDStatus.RESERVED
 
 
-def test_base_provider_reserve(app, db):
-    provider = BasePIDProvider(pid_type="testid")
+def test_base_provider_reserve(app, db, base_provider):
+    provider = base_provider
 
-    created_pid = provider.create(pid_value="1234")
+    created_pid = provider.create_by_pid(pid_value="1234")
     assert provider.reserve(created_pid, {})
 
     # NOTE: DB level requires pid_type
@@ -77,10 +87,10 @@ def test_base_provider_reserve(app, db):
     assert db_pid.pid_value == "1234"
 
 
-def test_base_provider_register(app, db):
-    provider = BasePIDProvider(pid_type="testid")
+def test_base_provider_register(app, db, base_provider):
+    provider = base_provider
 
-    created_pid = provider.create(pid_value="1234")
+    created_pid = provider.create_by_pid(pid_value="1234")
     assert provider.register(created_pid, {})
 
     # NOTE: DB level requires pid_type
@@ -90,10 +100,10 @@ def test_base_provider_register(app, db):
     assert db_pid.pid_value == "1234"
 
 
-def test_base_provider_hard_delete(app, db):
-    provider = BasePIDProvider(pid_type="testid")
+def test_base_provider_hard_delete(app, db, base_provider):
+    provider = base_provider
 
-    created_pid = provider.create(pid_value="1234")
+    created_pid = provider.create_by_pid(pid_value="1234")
     assert provider.delete(created_pid, {})
 
     # NOTE: DB level requires pid_type
@@ -101,10 +111,10 @@ def test_base_provider_hard_delete(app, db):
         PersistentIdentifier.get(pid_value="1234", pid_type="testid")
 
 
-def test_base_provider_soft_delete(app, db):
-    provider = BasePIDProvider(pid_type="testid")
+def test_base_provider_soft_delete(app, db, base_provider):
+    provider = base_provider
 
-    created_pid = provider.create(pid_value="1234")
+    created_pid = provider.create_by_pid(pid_value="1234")
     assert provider.reserve(created_pid, {})
     assert provider.delete(created_pid, {})
 
@@ -115,25 +125,28 @@ def test_base_provider_soft_delete(app, db):
     assert db_pid.pid_value == "1234"
 
 
-def test_base_provider_get_status(app, db):
-    provider = BasePIDProvider(pid_type="testid")
+def test_base_provider_get_status(app, db, base_provider):
+    provider = base_provider
 
-    created_pid = provider.create(pid_value="1234")
+    created_pid = provider.create_by_pid(pid_value="1234")
     assert provider.get_status(created_pid.pid_value) == PIDStatus.NEW
 
 
-def test_base_provider_validate_no_values_given(app, db):
-    provider = BasePIDProvider(pid_type="testid")
+def test_base_provider_validate_no_values_given(
+    running_app, db, base_provider, record
+):
+    provider = base_provider
     # base has name set to None
     success, errors = provider.validate(
-        identifier=None, client=None, provider=None)
+        record=record, identifier=None, client=None, provider=None)
     assert success
     assert not errors
 
 
-def test_base_provider_validate_failure(app, db):
-    provider = BasePIDProvider(pid_type="testid")
-    success, errors = provider.validate(
-        identifier=None, client=None, provider="fail")
-    assert not success
-    assert errors == [_("Provider name fail does not match None")]
+def test_base_provider_validate_failure(
+    running_app, db, base_provider, record
+):
+    provider = base_provider
+    with pytest.raises(Exception):
+        provider.validate(
+            record=record, identifier=None, client=None, provider="fail")

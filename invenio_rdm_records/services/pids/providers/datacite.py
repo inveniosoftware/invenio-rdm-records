@@ -8,15 +8,14 @@
 """DataCite DOI Provider."""
 
 import json
-import logging
 
 from datacite import DataCiteRESTClient
 from datacite.errors import DataCiteError
 from flask import current_app
-from invenio_pidstore.errors import PIDAlreadyExists, PIDDoesNotExistError
 from invenio_pidstore.models import PIDStatus
 
-from ....resources.serializers import DataCite43JSONSerializer
+from invenio_rdm_records.resources.serializers import DataCite43JSONSerializer
+
 from .base import BaseClient, BasePIDProvider
 
 
@@ -79,12 +78,12 @@ class DOIDataCitePIDProvider(BasePIDProvider):
     @staticmethod
     def _log_errors(errors):
         """Log errors from DataCiteError class."""
-        # NOTE: DataCiteError is a tuple with the errors on the first
+        # DataCiteError is a tuple with the errors on the first
         errors = json.loads(errors.args[0])["errors"]
         for error in errors:
             field = error["source"]
             reason = error["title"]
-            logging.warning(f"Error in {field}: {reason}")
+            current_app.logger.warning(f"Error in {field}: {reason}")
 
     @staticmethod
     def _generate_suffix(record, client, **kwargs):
@@ -103,25 +102,8 @@ class DOIDataCitePIDProvider(BasePIDProvider):
 
     def create(self, record, **kwargs):
         """Create a new unique DOI PID based on the record ID."""
-        doi = self.generate_id(record, **kwargs)
-
-        try:
-            pid = self.get(doi)
-        except PIDDoesNotExistError:
-            # not existing, create a new one
-            return super().create(
-                pid_value=doi,
-                object_type="rec",
-                object_uuid=record.id,
-                **kwargs
-            )
-
-        # re-activate if previously deleted
-        if pid.is_deleted():
-            pid.sync_status(PIDStatus.NEW)
-            return pid
-        else:
-            raise PIDAlreadyExists(self.pid_type, doi)
+        value = self.generate_id(record, **kwargs)
+        return super().create(record, value)
 
     def reserve(self, pid, record, **kwargs):
         """Constant True.
@@ -135,7 +117,7 @@ class DOIDataCitePIDProvider(BasePIDProvider):
         """
         return True
 
-    def register(self, pid, record, url, **kwargs):
+    def register(self, pid, record, **kwargs):
         """Register a DOI via the DataCite API.
 
         :param pid: the PID to register.
@@ -150,17 +132,18 @@ class DOIDataCitePIDProvider(BasePIDProvider):
             # PIDS-FIXME: move to async task, exception handling included
             try:
                 doc = DataCite43JSONSerializer().dump_one(record)
+                url = kwargs["url"]
                 self.api_client.public_doi(
                     metadata=doc, url=url, doi=pid.pid_value)
             except DataCiteError as e:
-                logging.warning("DataCite provider errored when updating " +
-                                f"DOI for {pid.pid_value}")
+                current_app.logger.warning("DataCite provider error when "
+                                           f"updating DOI for {pid.pid_value}")
                 self._log_errors(e)
 
                 return False
         else:
-            logging.warning("DataCite client not configured. " +
-                            f"Cannot register DOI for {pid.pid_value}")
+            current_app.logger.warning("DataCite client not configured. Cannot"
+                                       f" register DOI for {pid.pid_value}")
 
         return True
 
@@ -182,14 +165,14 @@ class DOIDataCitePIDProvider(BasePIDProvider):
                 self.api_client.update_doi(
                     metadata=doc, doi=pid.pid_value, url=url)
             except DataCiteError as e:
-                logging.warning("DataCite provider errored when updating " +
-                                f"DOI for {pid.pid_value}")
+                current_app.logger.warning("DataCite provider error when "
+                                           f"updating DOI for {pid.pid_value}")
                 self._log_errors(e)
 
                 return False
         else:
-            logging.warning("DataCite client not configured. " +
-                            f"Cannot update DOI for {pid.pid_value}")
+            current_app.logger.warning("DataCite client not configured. Cannot"
+                                       f" update DOI for {pid.pid_value}")
 
         if pid.is_deleted():
             return pid.sync_status(PIDStatus.REGISTERED)
@@ -209,33 +192,39 @@ class DOIDataCitePIDProvider(BasePIDProvider):
                 if self.is_api_client_setup:
                     self.api_client.delete_doi(pid.pid_value)
                 else:
-                    logging.warning("DataCite client not configured. " +
-                                    f"Cannot delete DOI for {pid.pid_value}")
+                    current_app.logger.warning("DataCite client not "
+                                               "configured. Cannot delete DOI "
+                                               f"for {pid.pid_value}")
             elif pid.is_registered():
                 if self.is_api_client_setup:
                     self.api_client.hide_doi(pid.pid_value)
                 else:
-                    logging.warning("DataCite client not configured. " +
-                                    f"Cannot delete DOI for {pid.pid_value}")
+                    current_app.logger.warning("DataCite client not "
+                                               "configured. Cannot delete DOI "
+                                               f"for {pid.pid_value}")
         except DataCiteError as e:
-            logging.warning("DataCite provider errored when deleting " +
-                            f"DOI for {pid.pid_value}")
+            current_app.logger.warning("DataCite provider error when deleting "
+                                       f"DOI for {pid.pid_value}")
             self._log_errors(e)
 
             return False
 
         return super().delete(pid, record)
 
-    def validate(self, identifier=None, provider=None, client=None, **kwargs):
+    def validate(
+        self, record, identifier=None, provider=None, client=None, **kwargs
+    ):
         """Validate the attributes of the identifier.
 
         :returns: A tuple (success, errors). The first specifies if the
                   validation was passed successfully. The second one is an
                   array of error messages.
         """
-        _, errors = super().validate(identifier, provider, client, **kwargs)
+        success, errors = super().validate(
+            record, identifier, provider, client, **kwargs)
 
         if identifier and self.is_api_client_setup:
+            # format check
             try:
                 self.api_client.check_doi(identifier)
             except ValueError as e:

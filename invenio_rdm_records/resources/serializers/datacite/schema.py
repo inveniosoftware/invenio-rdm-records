@@ -10,6 +10,8 @@
 
 from edtf import parse_edtf
 from edtf.parser.grammar import ParseException
+from flask import current_app
+from flask_babelex import lazy_gettext as _
 from invenio_access.permissions import system_identity
 from invenio_vocabularies.proxies import current_service as vocabulary_service
 from marshmallow import Schema, ValidationError, fields, missing, post_dump
@@ -231,9 +233,10 @@ class DataCite43Schema(Schema):
             parsed_date = parse_edtf(publication_date)
             return str(parsed_date.lower_strict().tm_year)
         except ParseException:
-            # NOTE: Should not fail since it was validated at service schema
-            raise ValidationError(
-                "Unable to parse publicationYear from publication_date")
+            # Should not fail since it was validated at service schema
+            current_app.logger.error("Error parsing publication_date field for"
+                                     f"record {obj['metadata']}")
+            raise ValidationError(_("Invalid publication date value."))
 
     def get_dates(self, obj):
         """Get dates."""

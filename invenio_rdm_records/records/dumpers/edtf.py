@@ -105,7 +105,7 @@ class EDTFListDumperExt(ElasticsearchDumperExt):
         try:
             date_list = dict_lookup(data, self.keys, parent=False)
 
-            # note: EDTF parse_edtf (using pyparsing) expects a string
+            # EDTF parse_edtf (using pyparsing) expects a string
             for item in date_list:
                 pd = parse_edtf(item[self.key])
                 item[self.range_key] = {

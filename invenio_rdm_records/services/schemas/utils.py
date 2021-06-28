@@ -43,9 +43,9 @@ def dump_empty(schema_or_field):
         schema = schema_or_field
         return {k: dump_empty(v) for (k, v) in schema.fields.items()}
     if isinstance(schema_or_field, SchemaMeta):
-        # NOTE: Nested fields can pass a Schema class (SchemaMeta)
-        #       or a Schema instance.
-        #       Schema classes need to be instantiated to get .fields
+        # Nested fields can pass a Schema class (SchemaMeta)
+        # or a Schema instance.
+        # Schema classes need to be instantiated to get .fields
         schema = schema_or_field()
         return {k: dump_empty(v) for (k, v) in schema.fields.items()}
     if isinstance(schema_or_field, fields.List):
