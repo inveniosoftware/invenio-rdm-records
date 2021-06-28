@@ -11,8 +11,10 @@ import pytest
 from invenio_access.permissions import system_identity
 from invenio_accounts.proxies import current_datastore
 from invenio_pidstore.errors import PIDDoesNotExistError
+from invenio_records_resources.proxies import current_service_registry
 from invenio_vocabularies.proxies import current_service as vocabulary_service
 
+from invenio_rdm_records.fixtures.affiliations import AffiliationsFixture
 from invenio_rdm_records.fixtures.users import UsersFixture
 from invenio_rdm_records.fixtures.vocabularies import \
     PrioritizedVocabulariesFixtures
@@ -111,3 +113,22 @@ def test_load_users(app, db, admin_role):
     assert u1 is None
     assert current_datastore.find_user(email="admin@example.com")
     assert current_datastore.find_user(email="user@example.com")
+
+
+def test_load_affiliations(app, db, admin_role):
+    dir_ = Path(__file__).parent
+    affiliations = AffiliationsFixture(
+        [
+            dir_ / "app_data",
+            dir_.parent.parent / "invenio_rdm_records/fixtures/data"
+        ],
+        "affiliations.yaml"
+    )
+
+    affiliations.load()
+
+    # app_data/users.yaml doesn't create an admin@inveniosoftware.org user
+    service = current_service_registry.get("rdm-affiliations")
+    cern = service.read(identity=system_identity, id_="01ggx4157")
+    assert cern["acronym"] == "CERN"
+    pytest.raises(PIDDoesNotExistError, service.read, "cern", system_identity)
