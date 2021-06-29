@@ -17,6 +17,8 @@ from invenio_vocabularies.proxies import current_service as vocabulary_service
 from marshmallow import Schema, ValidationError, fields, missing, post_dump
 from marshmallow_utils.fields import SanitizedUnicode
 
+from ...utils import RELATED_IDENTIFIERS_DATACITE_RELATIONS
+
 
 class PersonOrOrgSchema43(Schema):
     """Creator/contributor common schema for v4."""
@@ -310,7 +312,8 @@ class DataCite43Schema(Schema):
         for rel_id in identifiers:
             serialized_identifier = {
                 "relatedIdentifierType": rel_id["scheme"].upper(),
-                "relationType": rel_id["relation_type"].capitalize(),
+                "relationType": RELATED_IDENTIFIERS_DATACITE_RELATIONS.get(
+                    rel_id["relation_type"]),
                 "relatedIdentifier": rel_id["identifier"],
             }
 
