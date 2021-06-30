@@ -205,7 +205,7 @@
                   "description": "Description for record.",
                   "type": "string"
                 },
-                "type": {"$ref": "local://records/definitions-v1.2.0.json#/descriptionType"},
+                "type": {"$ref": "local://records/definitions-v1.2.0.json#/description_type"},
                 "lang": {"$ref": "local://records/definitions-v1.2.0.json#/language"}
             }
           }

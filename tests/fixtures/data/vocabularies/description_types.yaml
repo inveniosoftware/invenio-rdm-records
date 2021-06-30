@@ -1,0 +1,18 @@
+- id: abstract
+  title:
+    en: Abstract
+- id: methods
+  title:
+    en: Methods
+- id: series-information
+  title:
+    en: Series Information
+- id: table-of-contents
+  title:
+    en: Table of Contents
+- id: technical-info
+  title:
+    en: Technical Info
+- id: other
+  title:
+    en: Other

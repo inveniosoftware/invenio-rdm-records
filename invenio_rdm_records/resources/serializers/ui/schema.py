@@ -87,32 +87,31 @@ def record_version(obj):
     return field_data
 
 
-class ResourceTypeL10NSchema(Schema):
+class VocabularyL10Schema(Schema):
+    """Vocabulary schema."""
+
+    id = fields.String()
+    title = L10NString(data_key='title_l10n')
+
+
+class ResourceTypeL10NSchema(VocabularyL10Schema):
     """Localization of resource type title."""
 
-    id = fields.String()
-    title = L10NString(data_key='title_l10n')
 
-
-class TitleTypeL10NSchema(Schema):
+class TitleTypeL10NSchema(VocabularyL10Schema):
     """Localization of title type title."""
 
-    id = fields.String()
-    title = L10NString(data_key='title_l10n')
 
-
-class LanguageL10NSchema(Schema):
+class LanguageL10NSchema(VocabularyL10Schema):
     """Localization of language titles."""
 
-    id = fields.String()
-    title = L10NString(data_key='title_l10n')
 
-
-class SubjectL10NSchema(Schema):
+class SubjectL10NSchema(VocabularyL10Schema):
     """Localization of subject titles."""
 
-    id = fields.String()
-    title = L10NString(data_key='title_l10n')
+
+class DescriptionTypeL10NSchema(VocabularyL10Schema):
+    """Localization of description types."""
 
 
 class RelatedIdentifiersSchema(Schema):
@@ -133,6 +132,20 @@ class AdditionalTitlesSchema(Schema):
     title = fields.String()
     type = fields.Nested(
         TitleTypeL10NSchema,
+        attribute='type'
+    )
+    lang = fields.Nested(
+        LanguageL10NSchema,
+        attribute='lang'
+    )
+
+
+class AdditionalDescriptionsSchema(Schema):
+    """Localization of additional descriptions."""
+
+    description = StrippedHTML(attribute='description')
+    type = fields.Nested(
+        DescriptionTypeL10NSchema,
         attribute='type'
     )
     lang = fields.Nested(
@@ -188,6 +201,11 @@ class UIObjectSchema(Schema):
     related_identifiers = fields.List(
         fields.Nested(RelatedIdentifiersSchema()),
         attribute="metadata.related_identifiers"
+    )
+
+    additional_descriptions = fields.List(
+        fields.Nested(AdditionalDescriptionsSchema()),
+        attribute="metadata.additional_descriptions"
     )
 
 

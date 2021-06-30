@@ -129,6 +129,10 @@ class TitleTypeSchema(VocabularySchema):
     """Title type schema."""
 
 
+class DescriptionTypeSchema(VocabularySchema):
+    """Description type schema."""
+
+
 class CreatorSchema(Schema):
     """Creator schema."""
 
@@ -156,20 +160,9 @@ class TitleSchema(Schema):
 class DescriptionSchema(Schema):
     """Schema for the additional descriptions."""
 
-    DESCRIPTION_TYPES = [
-          "abstract",
-          "methods",
-          "seriesinformation",
-          "tableofcontents",
-          "technicalinfo",
-          "other"
-    ]
     description = SanitizedHTML(required=True,
                                 validate=validate.Length(min=3))
-    type = SanitizedUnicode(required=True, validate=validate.OneOf(
-            choices=DESCRIPTION_TYPES,
-            error=_('Invalid description type. {input} not one of {choices}.')
-        ))
+    type = fields.Nested(DescriptionTypeSchema, required=True)
     lang = fields.Nested(LanguageSchema)
 
 

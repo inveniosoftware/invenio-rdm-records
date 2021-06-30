@@ -110,7 +110,8 @@ def title_type_v(app, title_type):
 
 @pytest.fixture
 def running_app(
-    app, location, resource_type_v, subject_v, laguanges_v, title_type_v
+    app, location, resource_type_v, subject_v, laguanges_v, title_type_v,
+    description_type_v
 ):
     """Return running_app but load everything for datacite serialization.
 

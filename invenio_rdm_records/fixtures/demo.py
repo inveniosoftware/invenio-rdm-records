@@ -34,6 +34,7 @@ class CachedVocabularies:
     _title_type_ids = []
     _subject_ids = []
     _creators_role_ids = []
+    _description_type_ids = []
 
     @classmethod
     def _read_vocabulary(cls, vocabulary):
@@ -106,6 +107,24 @@ class CachedVocabularies:
             return []
 
         random_id = random.choice(cls._title_type_ids)
+        return {"id": random_id}
+
+    @classmethod
+    def fake_description_type(cls):
+        """Generate a random description type."""
+        if not cls._description_type_ids:
+
+            cls._description_type_ids = []
+
+            description_types = cls._read_vocabulary("descriptiontypes")
+
+            for tt in description_types:
+                cls._description_type_ids.append(tt["id"])
+
+        if not cls._description_type_ids:
+            return []
+
+        random_id = random.choice(cls._description_type_ids)
         return {"id": random_id}
 
     @classmethod
@@ -243,7 +262,7 @@ def create_fake_record():
             "description": fake.text(max_nb_chars=3000),
             "additional_descriptions": [{
                 "description": fake.text(max_nb_chars=200),
-                "type": "methods",
+                "type": CachedVocabularies.fake_description_type(),
                 "lang": "eng"
             } for i in range(2)],
             "funding": [{

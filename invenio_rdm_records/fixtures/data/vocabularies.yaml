@@ -16,6 +16,9 @@ licenses:
 resource_types:
   pid-type: rsrct
   data-file: vocabularies/resource_types.yaml
+descriptiontypes:
+  pid-type: dty
+  data-file: vocabularies/description_types.yaml
 # 'subjects' type needs to be created to prevent querying errors in the facets
 # but they are highly dependent on the kind of InvenioRDM instance, so no
 # defaults are provided

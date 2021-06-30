@@ -42,6 +42,11 @@ def test_fake_demo_record_creation(app, location, db, es_clear, vocabularies):
             "cor",
             Path(__file__).parent / "data/vocabularies/roles.yaml"
         ),
+        (
+            'descriptiontypes',
+            "dty",
+            Path(__file__).parent / "data/vocabularies/description_types.yaml"
+        ),
     ]
     for id_, pid_type, filepath in vocabularies_meta:
         vocabularies.create_vocabulary_type(
