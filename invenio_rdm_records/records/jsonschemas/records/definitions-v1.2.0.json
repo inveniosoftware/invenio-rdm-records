@@ -41,8 +41,15 @@
     "description": "Type of the date.",
     "type": "string"
   },
-  "descriptionType": {
-    "type": "string"
+  "description_type": {
+    "type": "object",
+    "additionalProperties": false,
+    "description": "A description type.",
+    "properties": {
+      "id": {
+        "type": "string"
+      }
+    }
   },
   "external-pid": {
     "type": "object",

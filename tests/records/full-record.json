@@ -55,7 +55,7 @@
       "type": {
         "id": "alternative-title"
     },
-      "lang": { 
+      "lang": {
         "id": "eng"
       }
     }],
@@ -128,7 +128,7 @@
     "description": "Test",
     "additional_descriptions": [{
       "description": "Bla bla bla",
-      "type": "methods",
+      "type": { "id" : "methods" },
       "lang": {
         "id": "eng"
       }

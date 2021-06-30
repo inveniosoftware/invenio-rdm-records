@@ -115,6 +115,13 @@ def test_ui_serializer(app, full_to_dict_record):
                 'type': {'id': 'subtitle'}
             }
         ],
+        'additional_descriptions': [
+            {
+                'description': 'Bla bla bla',
+                'lang': {'id': 'eng'},
+                'type': {'id': 'methods'}
+            }
+        ],
         'languages': [
             {'id': 'dan', 'title_l10n': "Danish"},
             {'id': 'eng', 'title_l10n': "English"}

@@ -11,6 +11,7 @@
 from edtf import parse_edtf
 from edtf.parser.grammar import ParseException
 from flask import current_app
+from flask_babelex import get_locale
 from flask_babelex import lazy_gettext as _
 from invenio_access.permissions import system_identity
 from invenio_vocabularies.proxies import current_service as vocabulary_service
@@ -194,21 +195,28 @@ class DataCite43Schema(Schema):
         return vocabulary_service.read(
             ('resource_types', id_),
             system_identity
-        )._record
+        )
 
     def _read_title_type(self, id_):
         """Retrieve title type record using service."""
         return vocabulary_service.read(
             ('title_types', id_),
             system_identity
-        )._record
+        )
+
+    def _read_description_type(self, id_):
+        """Retrieve description type record using service."""
+        return vocabulary_service.read(
+            ('descriptiontypes', id_),
+            system_identity
+        )
 
     def _read_language(self, id_):
         """Retrieve resource type record using service."""
         lang = vocabulary_service.read(
             ('languages', id_),
             system_identity
-        )._record
+        )
 
         alpha_2 = lang["props"].get("alpha_2", None)
 
@@ -217,7 +225,9 @@ class DataCite43Schema(Schema):
     def get_type(self, obj):
         """Get resource type."""
         resource_type = obj["metadata"]["resource_type"]
-        resource_type_record = self._read_resource_type(resource_type["id"])
+        resource_type_record = self._read_resource_type(
+            resource_type["id"]
+        ).to_dict()
         props = resource_type_record["props"]
         return {
             'resourceTypeGeneral': props.get("datacite_general", "Other"),
@@ -235,7 +245,7 @@ class DataCite43Schema(Schema):
             title = {"title": add_title.get("title")}
             title_id = add_title.get("type", {}).get("id")
             if title_id:
-                title_type_record = self._read_title_type(title_id)
+                title_type_record = self._read_title_type(title_id).to_dict()
                 props = title_type_record["props"]
                 title['titleType'] = props.get("datacite", "Other")
             lang_id = add_title.get("lang", {}).get("id")
@@ -327,7 +337,9 @@ class DataCite43Schema(Schema):
 
             resource_type_id = rel_id.get("resource_type", {}).get("id")
             if resource_type_id:
-                props = self._read_resource_type(resource_type_id)["props"]
+                props = self._read_resource_type(
+                    resource_type_id
+                ).to_dict()["props"]
                 serialized_identifier["resourceTypeGeneral"] = props.get(
                     "datacite_general", "Other")
 
@@ -349,9 +361,14 @@ class DataCite43Schema(Schema):
 
         additional_descriptions = metadata.get("additional_descriptions", [])
         for add_desc in additional_descriptions:
+            # TODO: Update when we know how to store Datacite values in vocabs
+            description_type_id = add_desc.get("type").get("id")
+            description_type = self._read_description_type(
+                description_type_id
+            ).to_dict().get("title")
             description = {
                 "description": add_desc["description"],
-                "descriptionType": add_desc["type"].capitalize()
+                "descriptionType": description_type.get(get_locale().language)
             }
 
             lang_id = add_desc.get("lang", {}).get("id")
@@ -398,15 +415,17 @@ class DataCite43Schema(Schema):
             subject_record = vocabulary_service.read(
                 ('subjects', subject["id"]),
                 system_identity,
-            )._record
+            )
 
             datacite_subject = {
-                "subject": subject_record.get("title", {}).get("en")
+                "subject": subject_record.to_dict().get("title", {}).get("en")
             }
 
             other_fields = ["subjectScheme", "schemeURI", "valueURI"]
             other_values = [
-                subject_record.get("props", {}).get(f) for f in other_fields
+                subject_record.to_dict().get(
+                    "props", {}
+                ).get(f) for f in other_fields
             ]
             datacite_subject.update({
                 k: v for k, v in zip(other_fields, other_values) if v

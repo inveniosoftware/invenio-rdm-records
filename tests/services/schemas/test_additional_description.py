@@ -20,7 +20,7 @@ from .test_utils import assert_raises_messages
 def test_valid_full(vocabulary_clear):
     valid_full = {
         "description": "A Romans story",
-        "type": "other",
+        "type": {"id": "other"},
         "lang": {
             "id": "eng"
         }
@@ -31,14 +31,14 @@ def test_valid_full(vocabulary_clear):
 def test_valid_minimal(vocabulary_clear):
     valid_minimal = {
         "description": "A Romans story",
-        "type": "other"
+        "type": {"id": "other"}
     }
     assert valid_minimal == DescriptionSchema().load(valid_minimal)
 
 
 def test_invalid_no_description(vocabulary_clear):
     invalid_no_description = {
-        "type": "other",
+        "type": {"id": "other"},
         "lang": {
             "id": "eng"
         }
@@ -53,7 +53,7 @@ def test_invalid_no_description(vocabulary_clear):
 def test_invalid_description_empty(vocabulary_clear):
     invalid_description_empty = {
         "description": "",
-        "type": "other",
+        "type": {"id": "other"},
         "lang": {
             "id": "eng"
         }
@@ -68,7 +68,7 @@ def test_invalid_description_empty(vocabulary_clear):
 def test_invalid_too_short(vocabulary_clear):
     too_short = {
         "description": "AA",
-        "type": "other",
+        "type": {"id": "other"},
         "lang": {
             "id": "eng"
         }
@@ -91,11 +91,7 @@ def test_invalid_description_type(vocabulary_clear):
 
     assert_raises_messages(
         lambda: DescriptionSchema().load(invalid_description_type),
-        {'type': [_(
-            "Invalid description type. Invalid not one of abstract, " +
-            "methods, seriesinformation, tableofcontents, technicalinfo, " +
-            "other."
-        )]}
+        {'type': {'_schema': ['Invalid input type.']}}
     )
 
 
@@ -103,7 +99,7 @@ def test_invalid_description_type(vocabulary_clear):
 def test_invalid_lang(vocabulary_clear):
     invalid_lang = {
         "description": "A Romans story",
-        "type": "other",
+        "type": {"id": "other"},
         "lang": "inv"
     }
 
