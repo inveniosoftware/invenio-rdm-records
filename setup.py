@@ -68,13 +68,11 @@ install_requires = [
     'citeproc-py-styles>=0.1.2',
     'datacite>=1.1.1',
     'Faker>=2.0.3',
-    'flask>=1.1,<2',
     'ftfy>=4.4.3,<5.0.0',
-    'invenio-drafts-resources>=0.13.1,<0.14.0',
-    'invenio-vocabularies>=0.7.3,<0.8.0',
+    'invenio-drafts-resources>=0.13.2,<0.14.0',
+    'invenio-vocabularies>=0.7.6,<0.8.0',
     'pytz>=2020.4',
     'pyyaml>=5.4.0',
-    'Werkzeug>=1.0.1,<2.0',
 ]
 
 packages = find_packages()
