@@ -11,29 +11,19 @@
 import pytest
 from marshmallow import ValidationError
 
-from invenio_rdm_records.services.schemas.metadata import SubjectSchema
+from invenio_rdm_records.services.schemas.metadata import MetadataSchema
 
 
-def test_valid_subject():
-    valid_full = {
-        "id": "A-D000007",
-    }
+def test_valid_subjects(app, minimal_record):
+    metadata = minimal_record['metadata']
+    metadata['subjects'] = [{"id": "A-D000007"}, {"id": "A-D000008"}]
+    data = MetadataSchema().load(metadata)
+    assert data['subjects'] == metadata['subjects']
 
-    assert valid_full == SubjectSchema().load(valid_full)
 
-
-def test_invalid_subject():
-    invalid_no_subject = {
-        "identifier": "A-D000007"
-    }
+def test_invalid_no_list_subjects(app, minimal_record):
+    metadata = minimal_record['metadata']
+    metadata['subjects'] = {"id": "A-D000007"}
 
     with pytest.raises(ValidationError):
-        SubjectSchema().load(invalid_no_subject)
-
-    # 'title' is dump_only, passing it in is invalid
-    invalid_title = {
-        "title": "Abdominal Injuries"
-    }
-
-    with pytest.raises(ValidationError):
-        SubjectSchema().load(invalid_title)
+        data = MetadataSchema().load(metadata)

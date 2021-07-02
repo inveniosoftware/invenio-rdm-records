@@ -157,15 +157,20 @@ def resource_type_v(app, resource_type_type):
 
 
 RunningApp = namedtuple("RunningApp", [
-    "app", "location", "resource_type_v", "languages_v", "subject_v"
+    "app", "location", "resource_type_v", "languages_v", "subject_v",
+    "date_type_v"
 ])
 
 
 @pytest.fixture
-def running_app(app, location, resource_type_v, languages_v, subject_v):
+def running_app(
+    app, location, resource_type_v, languages_v, subject_v, date_type_v
+):
     """This fixture provides an app with the typically needed db data loaded.
 
     All of these fixtures are often needed together, so collecting them
     under a semantic umbrella makes sense.
     """
-    return RunningApp(app, location, resource_type_v, languages_v, subject_v)
+    return RunningApp(
+        app, location, resource_type_v, languages_v, subject_v, date_type_v
+    )

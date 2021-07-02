@@ -139,6 +139,13 @@ def test_ui_serializer(app, full_to_dict_record):
             {'id': 'dan', 'title_l10n': "Danish"},
             {'id': 'eng', 'title_l10n': "English"}
         ],
+        'dates': [
+            {'date': '1939/1945',
+             'description': 'A date',
+             'type': {'id': 'other'}
+             }
+        ],
+
         'related_identifiers': [
             {'identifier': '10.1234/foo.bar',
              'relation_type': 'cites',

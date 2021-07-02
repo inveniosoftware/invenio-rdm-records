@@ -201,6 +201,16 @@ class DataCite43Schema(Schema):
         fields.Nested(FundingSchema43), attribute='metadata.funding')
     schemaVersion = fields.Constant("http://datacite.org/schema/kernel-4")
 
+    def _map_type(self, vocabulary, fields, id_):
+        """Maps an internal vocabulary type to DataCite type."""
+        res = vocabulary_service.read_all(
+            system_identity,
+            ['id'] + fields,
+            vocabulary
+        )
+        props = {h["id"]: h["props"] for h in res.hits}[id_]
+        return props
+
     def _read_resource_type(self, id_):
         """Retrieve resource type record using service."""
         return vocabulary_service.read(
@@ -287,9 +297,11 @@ class DataCite43Schema(Schema):
         }]
 
         for date in obj["metadata"].get("dates", []):
+            date_type_id = date.get("type", {}).get("id")
+            props = self._map_type('datetypes', ['props'], date_type_id)
             to_append = {
                 "date": date["date"],
-                "dateType": date["type"].capitalize()
+                "dateType": props.get("datacite", "Other")
             }
             desc = date.get("description")
             if desc:

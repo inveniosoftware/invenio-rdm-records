@@ -137,7 +137,7 @@ def full_record(users):
             }],
             "dates": [{
                 "date": "1939/1945",
-                "type": "other",
+                "type": {"id": "other"},
                 "description": "A date"
             }],
             "languages": [{"id": "dan"}, {"id": "eng"}],
@@ -518,6 +518,31 @@ def subject_v(app, subject_type):
 
 
 @pytest.fixture(scope="module")
+def date_type(app):
+    """Date vocabulary type."""
+    return vocabulary_service.create_type(system_identity, "datetypes", "dat")
+
+
+@pytest.fixture(scope="module")
+def date_type_v(app, date_type):
+    """Subject vocabulary record."""
+    vocab = vocabulary_service.create(system_identity, {
+        "id": "other",
+        "title": {
+            "en": "Other"
+        },
+        "props": {
+            "datacite": "Other"
+        },
+        "type": "datetypes"
+    })
+
+    Vocabulary.index.refresh()
+
+    return vocab
+
+
+@pytest.fixture(scope="module")
 def affiliations_v(app):
     """Affiliations vocabulary record."""
     affiliations_service = (
@@ -550,13 +575,14 @@ RunningApp = namedtuple("RunningApp", [
     "affiliations_v",
     "title_type_v",
     "description_type_v",
+    "date_type_v"
 ])
 
 
 @pytest.fixture
 def running_app(
     app, location, resource_type_v, subject_v, languages_v, affiliations_v,
-    title_type_v, description_type_v
+    title_type_v, description_type_v, date_type_v
 ):
     """This fixture provides an app with the typically needed db data loaded.
 
@@ -572,6 +598,7 @@ def running_app(
         affiliations_v,
         title_type_v,
         description_type_v,
+        date_type_v
     )
 
 

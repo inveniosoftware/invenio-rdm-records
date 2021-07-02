@@ -250,7 +250,7 @@ def test_dates(appctx):
     assert validates_meta({"dates": []})
     assert validates_meta({"dates": [{"date": "test"}, ]})
     assert validates_meta({"dates": [
-        {"date": "test", "type": "other", "description": "A date"}, ]})
+        {"date": "test", "type": {"id": "other"}, "description": "A date"}, ]})
     # Additional prop fails
     assert fails_meta({"dates": [{"date": "test", "invalid": "test"}, ]})
 

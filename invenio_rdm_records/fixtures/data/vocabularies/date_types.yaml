@@ -1,0 +1,55 @@
+- id: accepted
+  props:
+    datacite: Accepted
+  title:
+    en: Accepted
+- id: available
+  props:
+    datacite: Available
+  title:
+    en: Available
+- id: copyrighted
+  props:
+    datacite: Copyrighted
+  title:
+    en: Copyrighted
+- id: collected
+  props:
+    datacite: Collected
+  title:
+    en: Collected
+- id: created
+  props:
+    datacite: Created
+  title:
+    en: Created
+- id: issued
+  props:
+    datacite: Issued
+  title:
+    en: Issued
+- id: submitted
+  props:
+    datacite: Submitted
+  title:
+    en: Submitted
+- id: updated
+  props:
+    datacite: Updated
+  title:
+    en: Updated
+- id: valid
+  props:
+    datacite: Valid
+  title:
+    en: Valid
+- id: withdrawn
+  props:
+    datacite: Withdrawn
+  title:
+    en: Withdrawn
+- id: other
+  props:
+    datacite: Other
+  title:
+    en: Other
