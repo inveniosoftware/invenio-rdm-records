@@ -112,14 +112,14 @@ class CommonFieldsMixin:
             cache_key='resource_type',
             relation_field='resource_type'
         ),
-        title_type=PIDListRelation(
+        title_types=PIDListRelation(
             'metadata.additional_titles',
             attrs=['id', 'title'],
             pid_field=Vocabulary.pid.with_type_ctx('title_types'),
             cache_key='title_type',
             relation_field='type',
         ),
-        titles_languages=PIDListRelation(
+        title_languages=PIDListRelation(
             'metadata.additional_titles',
             attrs=['id', 'title'],
             pid_field=Vocabulary.pid.with_type_ctx('languages'),
