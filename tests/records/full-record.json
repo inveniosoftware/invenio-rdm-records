@@ -71,7 +71,7 @@
     }],
     "dates": [{
       "date": "1939/1945",
-      "type": "other",
+      "type": {"id": "other"},
       "description": "A date"
     }],
     "languages": [{

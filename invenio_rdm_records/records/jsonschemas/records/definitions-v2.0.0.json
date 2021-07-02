@@ -24,9 +24,15 @@
       }
     ]
   },
-  "dateType": {
+  "date_type": {
+    "type": "object",
+    "additionalProperties": false,
     "description": "Type of the date.",
-    "type": "string"
+    "properties": {
+      "id": {
+        "$ref": "local://definitions-v1.0.0.json#/identifier"
+      }
+    }
   },
   "description_type": {
     "type": "object",
@@ -394,7 +400,7 @@
     "additionalProperties": false,
     "properties": {
       "id": {
-        "type": "string"
+        "$ref": "local://definitions-v1.0.0.json#/identifier"
       }
     }
   },
@@ -414,7 +420,7 @@
     "additionalProperties": false,
     "properties": {
       "id": {
-        "type": "string"
+        "$ref": "local://definitions-v1.0.0.json#/identifier"
       }
     }
   },

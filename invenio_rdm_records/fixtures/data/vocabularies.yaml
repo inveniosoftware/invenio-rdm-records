@@ -16,6 +16,9 @@ resource_types:
 descriptiontypes:
   pid-type: dty
   data-file: vocabularies/description_types.yaml
+datetypes:
+  pid-type: dat
+  data-file: vocabularies/date_types.yaml
 # 'subjects' type needs to be created to prevent querying errors in the facets
 # but they are highly dependent on the kind of InvenioRDM instance, so no
 # defaults are provided

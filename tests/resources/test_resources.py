@@ -344,7 +344,10 @@ def test_publish_draft_w_dates(
     client = client_with_login
     dates = [{
         "date": "1939/1945",
-        "type": "other",
+        "type": {
+            "id": "other",
+            "title": {"en": "Other"}
+        },
         "description": "A date"
     }]
     minimal_record["metadata"]["dates"] = dates

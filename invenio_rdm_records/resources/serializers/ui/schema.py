@@ -13,8 +13,6 @@ from functools import partial
 
 from flask import current_app
 from flask_babelex import get_locale
-from flask_babelex import gettext as _
-from invenio_i18n.ext import current_i18n
 from marshmallow import Schema, fields, missing
 from marshmallow_utils.fields import BabelGettextDictField
 from marshmallow_utils.fields import FormatDate as FormatDate_
@@ -94,26 +92,6 @@ class VocabularyL10Schema(Schema):
     title = L10NString(data_key='title_l10n')
 
 
-class ResourceTypeL10NSchema(VocabularyL10Schema):
-    """Localization of resource type title."""
-
-
-class TitleTypeL10NSchema(VocabularyL10Schema):
-    """Localization of title type title."""
-
-
-class LanguageL10NSchema(VocabularyL10Schema):
-    """Localization of language titles."""
-
-
-class SubjectL10NSchema(VocabularyL10Schema):
-    """Localization of subject titles."""
-
-
-class DescriptionTypeL10NSchema(VocabularyL10Schema):
-    """Localization of description types."""
-
-
 class RelatedIdentifiersSchema(Schema):
     """Localization of language titles."""
 
@@ -121,7 +99,7 @@ class RelatedIdentifiersSchema(Schema):
     relation_type = fields.String()
     scheme = fields.String()
     resource_type = fields.Nested(
-        ResourceTypeL10NSchema,
+        VocabularyL10Schema,
         attribute='resource_type'
     )
 
@@ -131,11 +109,11 @@ class AdditionalTitlesSchema(Schema):
 
     title = fields.String()
     type = fields.Nested(
-        TitleTypeL10NSchema,
+        VocabularyL10Schema,
         attribute='type'
     )
     lang = fields.Nested(
-        LanguageL10NSchema,
+        VocabularyL10Schema,
         attribute='lang'
     )
 
@@ -145,13 +123,24 @@ class AdditionalDescriptionsSchema(Schema):
 
     description = StrippedHTML(attribute='description')
     type = fields.Nested(
-        DescriptionTypeL10NSchema,
+        VocabularyL10Schema,
         attribute='type'
     )
     lang = fields.Nested(
-        LanguageL10NSchema,
+        VocabularyL10Schema,
         attribute='lang'
     )
+
+
+class DatesSchema(Schema):
+    """Localization of dates."""
+
+    date = fields.String()
+    type = fields.Nested(
+        VocabularyL10Schema,
+        attribute='type'
+    )
+    description = StrippedHTML(attribute='description')
 
 
 class UIObjectSchema(Schema):
@@ -168,7 +157,7 @@ class UIObjectSchema(Schema):
     updated_date_l10n_long = FormatDate(attribute='updated', format='long')
 
     resource_type = fields.Nested(
-        ResourceTypeL10NSchema,
+        VocabularyL10Schema,
         attribute='metadata.resource_type'
     )
 
@@ -185,12 +174,12 @@ class UIObjectSchema(Schema):
         partial(make_affiliation_index, 'contributors'))
 
     languages = fields.List(
-        fields.Nested(LanguageL10NSchema),
+        fields.Nested(VocabularyL10Schema),
         attribute='metadata.languages',
     )
 
     subjects = fields.List(
-        fields.Nested(SubjectL10NSchema),
+        fields.Nested(VocabularyL10Schema),
         attribute='metadata.subjects',
     )
 
@@ -206,6 +195,11 @@ class UIObjectSchema(Schema):
     additional_descriptions = fields.List(
         fields.Nested(AdditionalDescriptionsSchema()),
         attribute="metadata.additional_descriptions"
+    )
+
+    dates = fields.List(
+        fields.Nested(DatesSchema()),
+        attribute="metadata.dates"
     )
 
 

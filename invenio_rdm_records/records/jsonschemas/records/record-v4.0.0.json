@@ -107,7 +107,7 @@
                 "description": "Date or date interval in EDTF level 0 format",
                 "type": "string"
               },
-              "type": {"$ref": "local://records/definitions-v2.0.0.json#/dateType"},
+              "type": {"$ref": "local://records/definitions-v2.0.0.json#/date_type"},
               "description": {
                 "description": "Description of the date or date interval e.g. 'Accepted' or 'Available' (CV).",
                 "type": "string"

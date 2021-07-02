@@ -125,31 +125,11 @@ class VocabularySchema(Schema):
     title = fields.Dict(dump_only=True)
 
 
-class ResourceTypeSchema(VocabularySchema):
-    """Resource type schema."""
-
-
-class LanguageSchema(VocabularySchema):
-    """Language schema."""
-
-
-class RoleSchema(VocabularySchema):
-    """Role schema."""
-
-
-class TitleTypeSchema(VocabularySchema):
-    """Title type schema."""
-
-
-class DescriptionTypeSchema(VocabularySchema):
-    """Description type schema."""
-
-
 class CreatorSchema(Schema):
     """Creator schema."""
 
     person_or_org = fields.Nested(PersonOrOrganizationSchema, required=True)
-    role = fields.Nested(RoleSchema)
+    role = fields.Nested(VocabularySchema)
     affiliations = fields.List(fields.Nested(AffiliationSchema))
 
 
@@ -157,7 +137,7 @@ class ContributorSchema(Schema):
     """Contributor schema."""
 
     person_or_org = fields.Nested(PersonOrOrganizationSchema, required=True)
-    role = fields.Nested(RoleSchema, required=True)
+    role = fields.Nested(VocabularySchema, required=True)
     affiliations = fields.List(fields.Nested(AffiliationSchema))
 
 
@@ -165,8 +145,8 @@ class TitleSchema(Schema):
     """Schema for the additional title."""
 
     title = SanitizedUnicode(required=True, validate=validate.Length(min=3))
-    type = fields.Nested(TitleTypeSchema, required=True)
-    lang = fields.Nested(LanguageSchema)
+    type = fields.Nested(VocabularySchema, required=True)
+    lang = fields.Nested(VocabularySchema)
 
 
 class DescriptionSchema(Schema):
@@ -174,8 +154,8 @@ class DescriptionSchema(Schema):
 
     description = SanitizedHTML(required=True,
                                 validate=validate.Length(min=3))
-    type = fields.Nested(DescriptionTypeSchema, required=True)
-    lang = fields.Nested(LanguageSchema)
+    type = fields.Nested(VocabularySchema, required=True)
+    lang = fields.Nested(VocabularySchema)
 
 
 def _is_uri(uri):
@@ -202,32 +182,11 @@ class RightsSchema(IdentifierSchema):
     )
 
 
-class SubjectSchema(VocabularySchema):
-    """Subject schema."""
-
-
 class DateSchema(Schema):
     """Schema for date intervals."""
 
-    DATE_TYPES = [
-        "accepted",
-        "available",
-        "copyrighted",
-        "collected",
-        "created",
-        "issued",
-        "submitted",
-        "updated",
-        "valid",
-        "withdrawn",
-        "other"
-    ]
-
     date = EDTFDateString(required=True)
-    type = fields.Str(required=True, validate=validate.OneOf(
-            choices=DATE_TYPES,
-            error=_('Invalid date type. {input} not one of {choices}.')
-        ))
+    type = fields.Nested(VocabularySchema, required=True)
     description = fields.Str()
 
 
@@ -300,7 +259,7 @@ class RelatedIdentifierSchema(IdentifierSchema):
             choices=RELATIONS,
             error=_('Invalid relation type. {input} not one of {choices}.')
         ))
-    resource_type = fields.Nested(ResourceTypeSchema)
+    resource_type = fields.Nested(VocabularySchema)
 
 
 class FunderSchema(IdentifierSchema):
@@ -415,7 +374,7 @@ class MetadataSchema(Schema):
     }
 
     # Metadata fields
-    resource_type = fields.Nested(ResourceTypeSchema, required=True)
+    resource_type = fields.Nested(VocabularySchema, required=True)
     creators = fields.List(
         fields.Nested(CreatorSchema),
         required=True,
@@ -427,10 +386,10 @@ class MetadataSchema(Schema):
     additional_titles = fields.List(fields.Nested(TitleSchema))
     publisher = SanitizedUnicode()
     publication_date = EDTFDateString(required=True)
-    subjects = fields.List(fields.Nested(SubjectSchema))
+    subjects = fields.List(fields.Nested(VocabularySchema))
     contributors = fields.List(fields.Nested(ContributorSchema))
     dates = fields.List(fields.Nested(DateSchema))
-    languages = fields.List(fields.Nested(LanguageSchema))
+    languages = fields.List(fields.Nested(VocabularySchema))
     # alternate identifiers
     identifiers = IdentifierSet(
         fields.Nested(partial(IdentifierSchema, fail_on_unknown=False))
