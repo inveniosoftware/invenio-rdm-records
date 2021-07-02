@@ -211,71 +211,59 @@ class DataCite43Schema(Schema):
         props = {h["id"]: h["props"] for h in res.hits}[id_]
         return props
 
-    def _read_resource_type(self, id_):
-        """Retrieve resource type record using service."""
-        return vocabulary_service.read(
-            ('resource_types', id_),
-            system_identity
-        )
-
-    def _read_title_type(self, id_):
-        """Retrieve title type record using service."""
-        return vocabulary_service.read(
-            ('title_types', id_),
-            system_identity
-        )
-
-    def _read_description_type(self, id_):
-        """Retrieve description type record using service."""
-        return vocabulary_service.read(
-            ('descriptiontypes', id_),
-            system_identity
-        )
-
-    def _read_language(self, id_):
-        """Retrieve resource type record using service."""
-        lang = vocabulary_service.read(
-            ('languages', id_),
-            system_identity
-        )
-
-        alpha_2 = lang["props"].get("alpha_2", None)
-
-        return alpha_2 or missing
-
     def get_type(self, obj):
         """Get resource type."""
-        resource_type = obj["metadata"]["resource_type"]
-        resource_type_record = self._read_resource_type(
-            resource_type["id"]
-        ).to_dict()
-        props = resource_type_record["props"]
+        props = self._map_type(
+            'resource_types',
+            ['props.datacite_general', 'props.datacite_type'],
+            obj["metadata"]["resource_type"]["id"],
+        )
         return {
             'resourceTypeGeneral': props.get("datacite_general", "Other"),
-            'resourceType': props.get("datacite_type", "Other"),
+            'resourceType': props.get("datacite_type", ""),
         }
+
+
+    def _get_text(self, obj, field, default_type=None):
+        """Get text list (for titles and descriptions)."""
+        text = []
+        main_value = obj["metadata"].get(field)
+
+        if main_value:
+            text = [{field: main_value}]
+            if default_type:
+                text[0][f"{field}Type"] = default_type
+
+
+        additional_text = obj["metadata"].get(f"additional_{field}", [])
+        for t in additional_text:
+            item = {field: t.get(field)}
+
+            # Text type
+            type_id = t.get("type", {}).get("id")
+            if type_id:
+                props = self._map_type(
+                    f"{field}_types", ["props.datacite"], type_id)
+                if "datacite" in props:
+                    item[f"{field}Type"] = props["datacite"]
+
+            # Language
+            lang_id = t.get("lang", {}).get("id")
+            if lang_id:
+                item["lang"] = lang_id
+
+            text.append(item)
+
+        return text or missing
+
 
     def get_titles(self, obj):
         """Get titles list."""
-        metadata = obj["metadata"]
+        return self._get_text(obj, "title")
 
-        titles = [{"title": metadata.get("title")}]
-        additional_titles = metadata.get("additional_titles", [])
-
-        for add_title in additional_titles:
-            title = {"title": add_title.get("title")}
-            title_id = add_title.get("type", {}).get("id")
-            if title_id:
-                title_type_record = self._read_title_type(title_id).to_dict()
-                props = title_type_record["props"]
-                title['titleType'] = props.get("datacite", "Other")
-            lang_id = add_title.get("lang", {}).get("id")
-            if lang_id:
-                title["lang"] = self._read_language(lang_id)
-
-            titles.append(title)
-
-        return titles
+    def get_descriptions(self, obj):
+        """Get descriptions list."""
+        return self._get_text(obj, "descriptions", default_type="Abstract")
 
     def get_publication_year(self, obj):
         """Get publication year from edtf date."""
@@ -313,17 +301,18 @@ class DataCite43Schema(Schema):
 
     def get_language(self, obj):
         """Get language."""
-        metadata = obj["metadata"]
-        languages = metadata.get("languages")
-
+        languages = obj["metadata"].get("languages", [])
         if languages:
-            # PIDS-FIXME: How to choose? the first?
-            return self._read_language(languages[0]["id"])
+            # DataCite support only one language, so we take the first.
+            return languages[0]["id"]
 
         return missing
 
     def get_identifiers(self, obj):
         """Get identifiers list."""
+        # TODO: This has to be reviewed, as DataCite JSON is not the same
+        # format as the datacite pypi package's JSON used for JSON -> XML
+        # transformation.
         serialized_identifiers = []
 
         # Identifiers field
@@ -369,38 +358,6 @@ class DataCite43Schema(Schema):
             serialized_identifiers.append(serialized_identifier)
 
         return serialized_identifiers or missing
-
-    def get_descriptions(self, obj):
-        """Get titles list."""
-        metadata = obj["metadata"]
-        descriptions = []
-
-        description = metadata.get("description")
-        if description:
-            descriptions.append({
-                "description": description,
-                "descriptionType": "Abstract"
-            })
-
-        additional_descriptions = metadata.get("additional_descriptions", [])
-        for add_desc in additional_descriptions:
-            # TODO: Update when we know how to store Datacite values in vocabs
-            description_type_id = add_desc.get("type").get("id")
-            description_type = self._read_description_type(
-                description_type_id
-            ).to_dict().get("title")
-            description = {
-                "description": add_desc["description"],
-                "descriptionType": description_type.get(get_locale().language)
-            }
-
-            lang_id = add_desc.get("lang", {}).get("id")
-            if lang_id:
-                description["lang"] = self._read_language(lang_id)
-
-            descriptions.append(description)
-
-        return descriptions or missing
 
     def get_locations(self, obj):
         """Get locations."""
