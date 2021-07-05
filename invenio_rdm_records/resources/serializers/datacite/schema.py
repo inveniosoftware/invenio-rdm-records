@@ -110,29 +110,25 @@ class CreatorSchema43(PersonOrOrgSchema43):
     """Creator schema for v4."""
 
 
-class RoleSchema(Schema):
-    """Role schema."""
-
-    id = fields.String()
-
-
 class ContributorSchema43(PersonOrOrgSchema43):
     """Contributor schema for v43."""
 
-    contributorType = fields.Nested(
-        RoleSchema,
-        attribute='role'
-    )
+    contributorType = fields.Method('get_role')
 
-    @post_dump(pass_many=False)
-    def capitalize_contributor_type(self, data, **kwargs):
-        """Capitalize type."""
-        if data.get("contributorType"):
-            data["contributorType"] = data["contributorType"][
-                "id"
-            ].capitalize()
+    def get_role(self, obj):
+        """Get datacite role."""
+        role = obj.get("role")
+        if not role:
+            return missing
 
-        return data
+        role_vocabulary = vocabulary_service.read_all(
+            system_identity,
+            ['id', 'props'],
+            "contributorsroles"
+        )
+        for h in role_vocabulary.hits:
+            if h["id"] == role["id"]:
+                return h["props"]["datacite"]
 
 
 class SubjectSchema43(Schema):
@@ -208,8 +204,10 @@ class DataCite43Schema(Schema):
             ['id'] + fields,
             vocabulary
         )
-        props = {h["id"]: h["props"] for h in res.hits}[id_]
-        return props
+
+        for h in res.hits:
+            if h["id"] == id_:
+                return h["props"]
 
     def get_type(self, obj):
         """Get resource type."""
@@ -223,7 +221,6 @@ class DataCite43Schema(Schema):
             'resourceType': props.get("datacite_type", ""),
         }
 
-
     def _get_text(self, obj, field, default_type=None):
         """Get text list (for titles and descriptions)."""
         text = []
@@ -234,8 +231,7 @@ class DataCite43Schema(Schema):
             if default_type:
                 text[0][f"{field}Type"] = default_type
 
-
-        additional_text = obj["metadata"].get(f"additional_{field}", [])
+        additional_text = obj["metadata"].get(f"additional_{field}s", [])
         for t in additional_text:
             item = {field: t.get(field)}
 
@@ -243,7 +239,9 @@ class DataCite43Schema(Schema):
             type_id = t.get("type", {}).get("id")
             if type_id:
                 props = self._map_type(
-                    f"{field}_types", ["props.datacite"], type_id)
+                    f"{field}types",
+                    ["props.datacite"],
+                    type_id)
                 if "datacite" in props:
                     item[f"{field}Type"] = props["datacite"]
 
@@ -256,14 +254,13 @@ class DataCite43Schema(Schema):
 
         return text or missing
 
-
     def get_titles(self, obj):
         """Get titles list."""
         return self._get_text(obj, "title")
 
     def get_descriptions(self, obj):
         """Get descriptions list."""
-        return self._get_text(obj, "descriptions", default_type="Abstract")
+        return self._get_text(obj, "description", default_type="Abstract")
 
     def get_publication_year(self, obj):
         """Get publication year from edtf date."""
@@ -349,9 +346,11 @@ class DataCite43Schema(Schema):
 
             resource_type_id = rel_id.get("resource_type", {}).get("id")
             if resource_type_id:
-                props = self._read_resource_type(
+                props = self._map_type(
+                    "resource_types",
+                    ["props"],
                     resource_type_id
-                ).to_dict()["props"]
+                )
                 serialized_identifier["resourceTypeGeneral"] = props.get(
                     "datacite_general", "Other")
 
@@ -389,23 +388,24 @@ class DataCite43Schema(Schema):
         if not subjects:
             return missing
 
-        # FIXME: Implement read_many for vocabulary_service
-        def create_datacite_subject(subject):
+        subject_vocabulary = vocabulary_service.read_all(
+            system_identity,
+            ['id', 'props'],
+            "subjects"
+        )
+        subjects_props = {h["id"]: h["props"] for h in subject_vocabulary.hits}
+
+        def create_datacite_subject(subject, subjects_props):
             """Generate datacite subject dict."""
-            subject_record = vocabulary_service.read(
-                ('subjects', subject["id"]),
-                system_identity,
-            )
+            subject_record = subjects_props[subject['id']]
 
             datacite_subject = {
-                "subject": subject_record.to_dict().get("title", {}).get("en")
+                "subject": subject_record['datacite']
             }
 
             other_fields = ["subjectScheme", "schemeURI", "valueURI"]
             other_values = [
-                subject_record.to_dict().get(
-                    "props", {}
-                ).get(f) for f in other_fields
+                subject_record.get(f) for f in other_fields
             ]
             datacite_subject.update({
                 k: v for k, v in zip(other_fields, other_values) if v
@@ -414,5 +414,5 @@ class DataCite43Schema(Schema):
             return datacite_subject
 
         return [
-            create_datacite_subject(s) for s in subjects
+            create_datacite_subject(s, subjects_props) for s in subjects
         ]

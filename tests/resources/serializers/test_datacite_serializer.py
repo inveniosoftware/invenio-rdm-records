@@ -100,7 +100,7 @@ def title_type_v(app, title_type):
         "title": {
             "en": "Subtitle"
         },
-        "type": "title_types"
+        "type": "titletypes"
     })
 
     Vocabulary.index.refresh()
@@ -111,7 +111,7 @@ def title_type_v(app, title_type):
 @pytest.fixture
 def running_app(
     app, location, resource_type_v, subject_v, languages_v, title_type_v,
-    description_type_v, affiliations_v, date_type_v
+    description_type_v, affiliations_v, date_type_v, contributors_role_v
 ):
     """Return running_app but load everything for datacite serialization.
 
@@ -154,7 +154,7 @@ def test_datacite43_serializer(running_app, full_record, vocabulary_clear):
             {
                 "title": "a research data management platform",
                 "titleType": "Subtitle",
-                "lang": "en",
+                "lang": "eng",
             },
         ],
         "publisher": "InvenioRDM",
@@ -192,7 +192,7 @@ def test_datacite43_serializer(running_app, full_record, vocabulary_clear):
                 "dateInformation": "A date"
             },
         ],
-        "language": "da",
+        "language": "dan",
         "identifiers": [
             {
                 "identifier": "1924MNRAS..84..308E",
@@ -227,7 +227,7 @@ def test_datacite43_serializer(running_app, full_record, vocabulary_clear):
             {
                 "description": "Bla bla bla",
                 "descriptionType": "Methods",
-                "lang": "en"
+                "lang": "eng"
             },
         ],
         "geoLocations": [

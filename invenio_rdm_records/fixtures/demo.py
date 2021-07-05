@@ -98,7 +98,7 @@ class CachedVocabularies:
 
             cls._title_type_ids = []
 
-            title_types = cls._read_vocabulary("title_types")
+            title_types = cls._read_vocabulary("titletypes")
 
             for tt in title_types:
                 cls._title_type_ids.append(tt["id"])
