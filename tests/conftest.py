@@ -446,7 +446,7 @@ def resource_type_v(app, resource_type_type):
 def title_type(app):
     """title vocabulary type."""
     return vocabulary_service.create_type(system_identity,
-                                          "title_types", "ttyp")
+                                          "titletypes", "ttyp")
 
 
 @pytest.fixture(scope="module")
@@ -458,9 +458,9 @@ def title_type_v(app, title_type):
             "datacite": "AlternativeTitle"
          },
         "title": {
-            "en": "Alternative Title"
+            "en": "Alternative title"
         },
-        "type": "title_types"
+        "type": "titletypes"
     })
 
     Vocabulary.index.refresh()
@@ -483,6 +483,9 @@ def description_type_v(app, description_type):
         "title": {
             "en": "Methods"
         },
+        "props": {
+            "datacite": "Methods"
+        },
         "type": "descriptiontypes"
     })
 
@@ -503,7 +506,8 @@ def subject_v(app, subject_type):
     vocab = vocabulary_service.create(system_identity, {
         "id": "A-D000007",
         "props": {
-            "subjectScheme": "MeSH"
+            "subjectScheme": "MeSH",
+            "datacite": "Abdominal Injuries"
         },
         "tags": ["mesh"],
         "title": {
@@ -535,6 +539,33 @@ def date_type_v(app, date_type):
             "datacite": "Other"
         },
         "type": "datetypes"
+    })
+
+    Vocabulary.index.refresh()
+
+    return vocab
+
+
+@pytest.fixture(scope="module")
+def contributors_role_type(app):
+    """Contributor role vocabulary type."""
+    return vocabulary_service.create_type(
+        system_identity, "contributorsroles", "cor"
+    )
+
+
+@pytest.fixture(scope="module")
+def contributors_role_v(app, contributors_role_type):
+    """Contributor role vocabulary record."""
+    vocab = vocabulary_service.create(system_identity, {
+        "id": "other",
+        "props": {
+            "datacite": "Other"
+        },
+        "title": {
+            "en": "Other"
+        },
+        "type": "contributorsroles"
     })
 
     Vocabulary.index.refresh()
@@ -575,14 +606,15 @@ RunningApp = namedtuple("RunningApp", [
     "affiliations_v",
     "title_type_v",
     "description_type_v",
-    "date_type_v"
+    "date_type_v",
+    "contributors_role_v"
 ])
 
 
 @pytest.fixture
 def running_app(
     app, location, resource_type_v, subject_v, languages_v, affiliations_v,
-    title_type_v, description_type_v, date_type_v
+    title_type_v, description_type_v, date_type_v, contributors_role_v
 ):
     """This fixture provides an app with the typically needed db data loaded.
 
@@ -598,7 +630,8 @@ def running_app(
         affiliations_v,
         title_type_v,
         description_type_v,
-        date_type_v
+        date_type_v,
+        contributors_role_v
     )
 
 

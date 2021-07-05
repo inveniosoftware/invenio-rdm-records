@@ -115,7 +115,7 @@ class CommonFieldsMixin:
         title_types=PIDListRelation(
             'metadata.additional_titles',
             attrs=['id', 'title'],
-            pid_field=Vocabulary.pid.with_type_ctx('title_types'),
+            pid_field=Vocabulary.pid.with_type_ctx('titletypes'),
             cache_key='title_type',
             relation_field='type',
         ),

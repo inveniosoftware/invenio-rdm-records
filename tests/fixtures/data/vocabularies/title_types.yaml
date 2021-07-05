@@ -2,7 +2,7 @@
   props:
     datacite: AlternativeTitle
   title:
-    en: Alternative Title
+    en: Alternative title
 - id: subtitle
   props:
     datacite: Subtitle
@@ -12,7 +12,7 @@
   props:
     datacite: TranslatedTitle
   title:
-    en: Translated Title
+    en: Translated title
 - id: other
   props:
     datacite: Other

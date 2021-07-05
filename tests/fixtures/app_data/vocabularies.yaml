@@ -5,6 +5,6 @@ subjects:
   pid-type: sub
   data-file:
     A: vocabularies/subjects.yaml
-title_types:
+titletypes:
   pid-type: ttyp
   data-file: vocabularies/title_types.yaml

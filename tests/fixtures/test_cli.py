@@ -28,7 +28,7 @@ def test_fake_demo_record_creation(app, location, db, es_clear, vocabularies):
             Path(__file__).parent / "data/vocabularies/languages.yaml"
         ),
         (
-            'title_types',
+            'titletypes',
             "ttyp",
             Path(__file__).parent / "data/vocabularies/title_types.yaml"
         ),
