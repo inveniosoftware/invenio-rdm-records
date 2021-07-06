@@ -67,7 +67,7 @@ class CachedVocabularies:
 
             dir_ = Path(__file__).parent
 
-            res_types = cls._read_vocabulary("resource_types")
+            res_types = cls._read_vocabulary("resourcetypes")
 
             for res in res_types:
                 cls._resource_type_ids.append(res["id"])

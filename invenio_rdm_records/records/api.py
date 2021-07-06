@@ -96,7 +96,7 @@ class CommonFieldsMixin:
         resource_type=PIDRelation(
             'metadata.resource_type',
             attrs=['id', 'title', 'props.type', 'props.subtype'],
-            pid_field=Vocabulary.pid.with_type_ctx('resource_types'),
+            pid_field=Vocabulary.pid.with_type_ctx('resourcetypes'),
             cache_key='resource_type',
         ),
         subjects=PIDListRelation(
@@ -108,7 +108,7 @@ class CommonFieldsMixin:
         related_identifiers=PIDListRelation(
             'metadata.related_identifiers',
             attrs=['id', 'title'],
-            pid_field=Vocabulary.pid.with_type_ctx('resource_types'),
+            pid_field=Vocabulary.pid.with_type_ctx('resourcetypes'),
             cache_key='resource_type',
             relation_field='resource_type'
         ),

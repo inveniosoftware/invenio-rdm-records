@@ -212,7 +212,7 @@ class DataCite43Schema(Schema):
     def get_type(self, obj):
         """Get resource type."""
         props = self._map_type(
-            'resource_types',
+            'resourcetypes',
             ['props.datacite_general', 'props.datacite_type'],
             obj["metadata"]["resource_type"]["id"],
         )
@@ -347,7 +347,7 @@ class DataCite43Schema(Schema):
             resource_type_id = rel_id.get("resource_type", {}).get("id")
             if resource_type_id:
                 props = self._map_type(
-                    "resource_types",
+                    "resourcetypes",
                     ["props"],
                     resource_type_id
                 )

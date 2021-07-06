@@ -38,7 +38,7 @@ def test_load_languages(app, db, vocabularies):
 
 
 def test_load_resource_types(app, db, vocabularies):
-    id_ = 'resource_types'
+    id_ = 'resourcetypes'
     filepath = Path(__file__).parent / "data/vocabularies/resource_types.yaml"
 
     vocabularies.create_vocabulary_type(
@@ -74,7 +74,7 @@ def test_loading_paths_traversal(app, db):
     # app_data/vocabularies/resource_types.yaml only has image resource types
     with pytest.raises(PIDDoesNotExistError):
         vocabulary_service.read(
-            ('resource_types', 'publication-annotationcollection'),
+            ('resourcetypes', 'publication-annotationcollection'),
             system_identity
         )
 

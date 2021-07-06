@@ -26,7 +26,7 @@ def test_conflicting_load(app):
 
     messages = e.value.errors
     expected_messages = [
-        "Vocabulary 'resource_types' cannot have multiple sources "
+        "Vocabulary 'resourcetypes' cannot have multiple sources "
         "['conflicting_module_A.fixtures.vocabularies', "
         "'conflicting_module_B.fixtures.vocabularies']",
         "Vocabulary 'subjects.bar' cannot have multiple sources "

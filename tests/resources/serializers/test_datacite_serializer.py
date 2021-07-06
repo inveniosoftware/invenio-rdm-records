@@ -39,7 +39,7 @@ def resource_type_v(resource_type_type):
         "title": {
             "en": "Image"
         },
-        "type": "resource_types"
+        "type": "resourcetypes"
     })
 
     vocabulary_service.create(system_identity, {
@@ -60,7 +60,7 @@ def resource_type_v(resource_type_type):
         "title": {
             "en": "Photo"
         },
-        "type": "resource_types"
+        "type": "resourcetypes"
     })
 
     vocab = vocabulary_service.create(system_identity, {
@@ -81,7 +81,7 @@ def resource_type_v(resource_type_type):
         "title": {
             "en": "Dataset"
         },
-        "type": "resource_types"
+        "type": "resourcetypes"
     })
 
     Vocabulary.index.refresh()

@@ -1,4 +1,4 @@
-resource_types:
+resourcetypes:
   pid-type: rsrct
   data-file: vocabularies/resource_types.yaml
 subjects:
