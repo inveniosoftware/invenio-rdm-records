@@ -18,7 +18,7 @@ def test_fake_demo_record_creation(app, location, db, es_clear, vocabularies):
     """Assert that demo record creation works without failing."""
     vocabularies_meta = [
         (
-            'resource_types',
+            'resourcetypes',
             "rsrct",
             Path(__file__).parent / "data/vocabularies/resource_types.yaml"
         ),

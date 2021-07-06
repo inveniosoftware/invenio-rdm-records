@@ -389,7 +389,7 @@ def languages_v(app, languages_type):
 def resource_type_type(app):
     """Resource type vocabulary type."""
     return vocabulary_service.create_type(
-        system_identity, "resource_types", "rsrct")
+        system_identity, "resourcetypes", "rsrct")
 
 
 @pytest.fixture(scope="module")
@@ -413,7 +413,7 @@ def resource_type_v(app, resource_type_type):
         "title": {
             "en": "Image"
         },
-        "type": "resource_types"
+        "type": "resourcetypes"
     })
 
     vocab = vocabulary_service.create(system_identity, {
@@ -434,7 +434,7 @@ def resource_type_v(app, resource_type_type):
         "title": {
             "en": "Photo"
         },
-        "type": "resource_types"
+        "type": "resourcetypes"
     })
 
     Vocabulary.index.refresh()

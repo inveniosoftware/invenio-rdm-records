@@ -45,7 +45,7 @@ resource_type_facet = NestedTermsFacet(
     subfield='metadata.resource_type.props.subtype',
     splitchar='::',
     label=_("Resource types"),
-    value_labels=VocabularyLabels('resource_types')
+    value_labels=VocabularyLabels('resourcetypes')
 )
 
 language_facet = TermsFacet(
