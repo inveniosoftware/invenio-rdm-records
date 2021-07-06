@@ -139,7 +139,7 @@
               "properties": {
                 "identifier": {"$ref": "local://definitions-v1.0.0.json#/identifier"},
                 "scheme": {"$ref": "local://definitions-v1.0.0.json#/scheme"},
-                "relation_type": {"$ref": "local://records/definitions-v2.0.0.json#/relationType"},
+                "relation_type": {"$ref": "local://records/definitions-v2.0.0.json#/relation_type"},
                 "resource_type": {"$ref": "local://records/definitions-v2.0.0.json#/resource_type"}
               }
           }

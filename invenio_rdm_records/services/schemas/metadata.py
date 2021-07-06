@@ -193,42 +193,6 @@ class DateSchema(Schema):
 class RelatedIdentifierSchema(IdentifierSchema):
     """Related identifier schema."""
 
-    RELATIONS = [
-        "iscitedby",
-        "cites",
-        "issupplementto",
-        "issupplementedby",
-        "iscontinuedby",
-        "continues",
-        "isdescribedby",
-        "describes",
-        "hasmetadata",
-        "ismetadatafor",
-        "hasversion",
-        "isversionof",
-        "isnewversionof",
-        "ispreviousversionof",
-        "ispartof",
-        "haspart",
-        "isreferencedby",
-        "references",
-        "isdocumentedby",
-        "documents",
-        "iscompiledby",
-        "compiles",
-        "isvariantformof",
-        "isoriginalformof",
-        "isidenticalto",
-        "isreviewedby",
-        "reviews",
-        "isderivedfrom",
-        "issourceof",
-        "isrequiredby",
-        "requires",
-        "isobsoletedby",
-        "obsoletes"
-    ]
-
     SCHEMES = [
         "ark",
         "arxiv",
@@ -255,10 +219,7 @@ class RelatedIdentifierSchema(IdentifierSchema):
         """Constructor."""
         super().__init__(allowed_schemes=self.SCHEMES, **kwargs)
 
-    relation_type = SanitizedUnicode(required=True, validate=validate.OneOf(
-            choices=RELATIONS,
-            error=_('Invalid relation type. {input} not one of {choices}.')
-        ))
+    relation_type = fields.Nested(VocabularySchema, required=True)
     resource_type = fields.Nested(VocabularySchema)
 
 

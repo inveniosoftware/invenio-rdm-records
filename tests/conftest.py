@@ -148,7 +148,7 @@ def full_record(users):
             "related_identifiers": [{
                 "identifier": "10.1234/foo.bar",
                 "scheme": "doi",
-                "relation_type": "cites",
+                "relation_type": {"id": "cites"},
                 "resource_type": {"id": "dataset"}
             }],
             "sizes": [
@@ -574,6 +574,33 @@ def contributors_role_v(app, contributors_role_type):
 
 
 @pytest.fixture(scope="module")
+def relation_type(app):
+    """Relation type vocabulary type."""
+    return vocabulary_service.create_type(
+        system_identity, "relationtypes", "rlt"
+    )
+
+
+@pytest.fixture(scope="module")
+def relation_type_v(app, relation_type):
+    """Relation type vocabulary record."""
+    vocab = vocabulary_service.create(system_identity, {
+        "id": "cites",
+        "props": {
+            "datacite": "Cites"
+        },
+        "title": {
+            "en": "Cites"
+        },
+        "type": "relationtypes"
+    })
+
+    Vocabulary.index.refresh()
+
+    return vocab
+
+
+@pytest.fixture(scope="module")
 def affiliations_v(app):
     """Affiliations vocabulary record."""
     affiliations_service = (
@@ -607,14 +634,16 @@ RunningApp = namedtuple("RunningApp", [
     "title_type_v",
     "description_type_v",
     "date_type_v",
-    "contributors_role_v"
+    "contributors_role_v",
+    "relation_type_v"
 ])
 
 
 @pytest.fixture
 def running_app(
     app, location, resource_type_v, subject_v, languages_v, affiliations_v,
-    title_type_v, description_type_v, date_type_v, contributors_role_v
+    title_type_v, description_type_v, date_type_v, contributors_role_v,
+    relation_type_v
 ):
     """This fixture provides an app with the typically needed db data loaded.
 
@@ -631,7 +660,8 @@ def running_app(
         title_type_v,
         description_type_v,
         date_type_v,
-        contributors_role_v
+        contributors_role_v,
+        relation_type_v
     )
 
 

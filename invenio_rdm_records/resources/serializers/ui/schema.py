@@ -96,7 +96,10 @@ class RelatedIdentifiersSchema(Schema):
     """Localization of language titles."""
 
     identifier = fields.String()
-    relation_type = fields.String()
+    relation_type = fields.Nested(
+        VocabularyL10Schema,
+        attribute='relation_type'
+    )
     scheme = fields.String()
     resource_type = fields.Nested(
         VocabularyL10Schema,

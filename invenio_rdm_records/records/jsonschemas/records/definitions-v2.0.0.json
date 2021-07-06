@@ -381,8 +381,15 @@
       }
     }
   },
-  "relationType": {
-    "type": "string"
+  "relation_type": {
+    "type": "object",
+    "additionalProperties": false,
+    "description": "A relation type.",
+    "properties": {
+      "id": {
+        "$ref": "local://definitions-v1.0.0.json#/identifier"
+      }
+    }
   },
   "resource_type": {
     "type": "object",

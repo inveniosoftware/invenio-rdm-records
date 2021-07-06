@@ -139,6 +139,12 @@ class CachedVocabularies:
         random_id = random.choice(["other", "datacollector", "contactperson"])
         return {"id": random_id}
 
+    @classmethod
+    def fake_relation_type(cls):
+        """Generate random relation_type."""
+        random_id = random.choice(["obsoletes", "isrequiredby", "cites"])
+        return {"id": random_id}
+
 
 def fake_edtf_level_0():
     """Generates a fake publication_date string."""
@@ -228,12 +234,12 @@ def create_fake_record():
             #     "type": "other"
             # }],
             "languages": [CachedVocabularies.fake_language()],
-            # "related_identifiers": [{
-            #     "identifier": "10.9999/rdm.9999988",
-            #     "scheme": "doi",
-            #     "relation_type": "requires",
-            #     "resource_type": fake_resource_type()
-            # }],
+            "related_identifiers": [{
+                "identifier": "10.9999/rdm.9999988",
+                "scheme": "doi",
+                "relation_type": CachedVocabularies.fake_relation_type(),
+                "resource_type": CachedVocabularies.fake_resource_type()
+            }],
             "sizes": [
                 "11 pages"
             ],
