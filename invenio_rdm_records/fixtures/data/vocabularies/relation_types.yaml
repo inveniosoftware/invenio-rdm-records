@@ -1,0 +1,165 @@
+- id: iscitedby
+  props:
+     datacite: Is cited by
+  title:
+     en: Is cited by
+- id: cites
+  props:
+     datacite: Cites
+  title:
+     en: Cites
+- id: issupplementto
+  props:
+     datacite: Is supplement to
+  title:
+     en: Is supplement to
+- id: issupplementedby
+  props:
+     datacite: Is supplemented by
+  title:
+     en: Is supplemented by
+- id: iscontinuedby
+  props:
+     datacite: Is continued by
+  title:
+     en: Is continued by
+- id: continues
+  props:
+     datacite: Continues
+  title:
+     en: Continues
+- id: isdescribedby
+  props:
+     datacite: Is described by
+  title:
+     en: Is described by
+- id: describes
+  props:
+     datacite: Describes
+  title:
+     en: Describes
+- id: hasmetadata
+  props:
+     datacite: Has metadata
+  title:
+     en: Has metadata
+- id: ismetadatafor
+  props:
+     datacite: Is metadata for
+  title:
+     en: Is metadata for
+- id: hasversion
+  props:
+     datacite: Has version
+  title:
+     en: Has version
+- id: isversionof
+  props:
+     datacite: Is version of
+  title:
+     en: Is version of
+- id: isnewversionof
+  props:
+     datacite: Is new version of
+  title:
+     en: Is new version of
+- id: ispreviousversionof
+  props:
+     datacite: Is previous version of
+  title:
+     en: Is previous version of
+- id: ispartof
+  props:
+     datacite: Is part of
+  title:
+     en: Is part of
+- id: haspart
+  props:
+     datacite: Has part
+  title:
+     en: Has part
+- id: isreferencedby
+  props:
+     datacite: Is referenced by
+  title:
+     en: Is referenced by
+- id: references
+  props:
+     datacite: References
+  title:
+     en: References
+- id: isdocumentedby
+  props:
+     datacite: Is documented by
+  title:
+     en: Is documented by
+- id: documents
+  props:
+     datacite: Documents
+  title:
+     en: Documents
+- id: iscompiledby
+  props:
+     datacite: Is compiled by
+  title:
+     en: Is compiled by
+- id: compiles
+  props:
+     datacite: Compiles
+  title:
+     en: Compiles
+- id: isvariantformof
+  props:
+     datacite: Is variant form of
+  title:
+     en: Is variant form of
+- id: isoriginalformof
+  props:
+     datacite: Is original form of
+  title:
+     en: Is original form of
+- id: isidenticalto
+  props:
+     datacite: Is identical to
+  title:
+     en: Is identical to
+- id: isreviewedby
+  props:
+     datacite: Is reviewed by
+  title:
+     en: Is reviewed by
+- id: reviews
+  props:
+     datacite: Reviews
+  title:
+     en: Reviews
+- id: isderivedfrom
+  props:
+     datacite: Is derived from
+  title:
+     en: Is derived from
+- id: issourceof
+  props:
+     datacite: Is source of
+  title:
+     en: Is source of
+- id: isrequiredby
+  props:
+     datacite: Is required by
+  title:
+     en: Is required by
+- id: requires
+  props:
+     datacite: Requires
+  title:
+     en: Requires
+- id: isobsoletedby
+  props:
+     datacite: Is obsoleted by
+  title:
+     en: Is obsoleted by
+- id: obsoletes
+  props:
+     datacite: Obsoletes
+  title:
+     en: Obsoletes

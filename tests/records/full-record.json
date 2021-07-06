@@ -86,7 +86,7 @@
     "related_identifiers": [{
       "identifier": "10.1234/foo.bar",
       "scheme": "doi",
-      "relation_type": "cites",
+      "relation_type": {"id": "cites"},
       "resource_type": {
         "id": "dataset"
       }

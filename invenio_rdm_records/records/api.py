@@ -161,6 +161,13 @@ class CommonFieldsMixin:
             cache_key='date_types',
             relation_field='type',
         ),
+        relation_types=PIDListRelation(
+            'metadata.related_identifiers',
+            attrs=['id', 'title'],
+            pid_field=Vocabulary.pid.with_type_ctx('relationtypes'),
+            cache_key='relation_types',
+            relation_field='relation_type',
+        ),
     )
 
     bucket_id = ModelField(dump=False)

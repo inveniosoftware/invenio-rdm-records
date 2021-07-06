@@ -1,0 +1,15 @@
+- id: cites
+  props:
+     datacite: Cites
+  title:
+     en: Cites
+- id: isrequiredby
+  props:
+     datacite: Is required by
+  title:
+     en: Is required by
+- id: obsoletes
+  props:
+     datacite: Obsoletes
+  title:
+     en: Obsoletes

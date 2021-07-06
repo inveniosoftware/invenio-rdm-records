@@ -19,7 +19,7 @@ def test_valid_related_identifiers():
     valid_full = {
         "identifier": "10.5281/zenodo.9999988",
         "scheme": "doi",
-        "relation_type": "requires",
+        "relation_type": {"id": "requires"},
         "resource_type": {
             "id": "image-photo"
         }
@@ -33,7 +33,7 @@ def test_valid_minimal_related_identifiers():
     valid_minimal = {
         "identifier": "10.5281/zenodo.9999988",
         "scheme": "doi",
-        "relation_type": "requires"
+        "relation_type": {"id": "requires"}
     }
 
     data = RelatedIdentifierSchema().load(valid_minimal)
@@ -44,7 +44,7 @@ def test_valid_no_scheme_related_identifiers(app):
     """It is valid becuase the schema is detected by the schema."""
     valid_no_scheme = {
         "identifier": "10.5281/zenodo.9999988",
-        "relation_type": "requires",
+        "relation_type": {"id": "requires"},
         "resource_type": {
             "id": "image-photo"
         }
@@ -57,7 +57,7 @@ def test_valid_no_scheme_related_identifiers(app):
 def test_invalid_no_identifiers_related_identifiers(app):
     invalid_no_identifier = {
         "scheme": "doi",
-        "relation_type": "requires",
+        "relation_type": {"id": "requires"},
         "resource_type": {
             "id": "image-photo"
         }
@@ -70,7 +70,7 @@ def test_invalid_scheme_related_identifiers(app):
     invalid_scheme = {
         "identifier": "10.5281/zenodo.9999988",
         "scheme": "INVALID",
-        "relation_type": "requires",
+        "relation_type": {"id": "requires"},
         "resource_type": {
             "id": "image-photo"
         }
@@ -110,7 +110,7 @@ def test_invalid_extra_field_related_identifiers(app):
     invalid_extra = {
         "identifier": "10.5281/zenodo.9999988",
         "scheme": "doi",
-        "relation_type": "INVALID",
+        "relation_type": {"id": "requires"},
         "resource_type": {
             "id": "image-photo"
         },
@@ -126,14 +126,14 @@ def test_valid_related_identifiers_in_schema(app, minimal_record):
         {
             "identifier": "10.5281/zenodo.9999988",
             "scheme": "doi",
-            "relation_type": "requires",
+            "relation_type": {"id": "requires"},
             "resource_type": {
                 "id": "image-photo"
             }
         }, {
             "identifier": "10.5281/zenodo.9999977",
             "scheme": "doi",
-            "relation_type": "requires"
+            "relation_type": {"id": "requires"}
         }
     ]
     data = MetadataSchema().load(metadata)['related_identifiers']
@@ -145,7 +145,7 @@ def test_invalid_related_identifiers(app, minimal_record):
     metadata['related_identifiers'] = {
         "identifier": "10.5281/zenodo.9999988",
         "scheme": "doi",
-        "relation_type": "requires",
+        "relation_type": {"id": "requires"},
         "resource_type": {
             "id": "image-photo"
         }

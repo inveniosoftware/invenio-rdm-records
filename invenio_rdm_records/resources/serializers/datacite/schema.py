@@ -338,9 +338,15 @@ class DataCite43Schema(Schema):
         metadata = obj["metadata"]
         identifiers = metadata.get("related_identifiers", [])
         for rel_id in identifiers:
+            relation_type_id = rel_id.get("relation_type", {}).get("id")
+            props = self._map_type(
+                "relationtypes",
+                ["props"],
+                relation_type_id
+            )
             serialized_identifier = {
                 "relatedIdentifierType": rel_id["scheme"].upper(),
-                "relationType": rel_id["relation_type"].capitalize(),
+                "relationType": props.get("datacite", ""),
                 "relatedIdentifier": rel_id["identifier"],
             }
 
