@@ -23,10 +23,6 @@ class DataCite43JSONSerializer(MarshmallowJSONSerializer):
 class DataCite43XMLSerializer(DataCite43JSONSerializer):
     """JSON based DataCite XML serializer for records."""
 
-    def __init__(self, **options):
-        """Constructor."""
-        super().__init__(**options)
-
     def serialize_object(self, record, **kwargs):
         """Serialize a single record."""
         data = self.dump_one(record, **kwargs)

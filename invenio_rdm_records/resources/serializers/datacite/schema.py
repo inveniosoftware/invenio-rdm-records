@@ -18,6 +18,7 @@ from invenio_vocabularies.proxies import current_service as vocabulary_service
 from marshmallow import Schema, ValidationError, fields, missing, post_dump, \
     validate
 from marshmallow_utils.fields import SanitizedUnicode
+from marshmallow_utils.html import strip_html
 
 from ..utils import map_type
 
@@ -179,7 +180,7 @@ class FundingSchema43(Schema):
 
 
 class DataCite43Schema(Schema):
-    """DataCite 4.3 Marshmallow Schema."""
+    """DataCite JSON 4.3 Marshmallow Schema."""
 
     # PIDS-FIXME: What about versioning links and related ids
     types = fields.Method('get_type')
@@ -224,13 +225,13 @@ class DataCite43Schema(Schema):
         main_value = obj["metadata"].get(field)
 
         if main_value:
-            text = [{field: main_value}]
+            text = [{field: strip_html(main_value)}]
             if default_type:
                 text[0][f"{field}Type"] = default_type
 
         additional_text = obj["metadata"].get(f"additional_{field}s", [])
         for t in additional_text:
-            item = {field: t.get(field)}
+            item = {field: strip_html(t.get(field))}
 
             # Text type
             type_id = t.get("type", {}).get("id")
@@ -304,21 +305,10 @@ class DataCite43Schema(Schema):
 
     def get_identifiers(self, obj):
         """Get identifiers list."""
-        # TODO: This has to be reviewed, as DataCite JSON is not the same
-        # format as the datacite pypi package's JSON used for JSON -> XML
-        # transformation.
         serialized_identifiers = []
 
-        # Identifiers field
-        metadata = obj["metadata"]
-        identifiers = metadata.get("identifiers", [])
-        for id_ in identifiers:
-            serialized_identifiers.append({
-                "identifier": id_["identifier"],
-                "identifierType": id_["scheme"]
-            })
-
-        # PIDs field
+        # pids go first so the DOI from the record is the main doi
+        # otherwise a doi from identifiers can be used
         pids = obj["pids"]
         for scheme, id_ in pids.items():
             serialized_identifiers.append({
@@ -326,11 +316,18 @@ class DataCite43Schema(Schema):
                 "identifierType": scheme.upper()
             })
 
+        # Identifiers field
+        identifiers = obj["metadata"].get("identifiers", [])
+        for id_ in identifiers:
+            serialized_identifiers.append({
+                "identifier": id_["identifier"],
+                "identifierType": id_["scheme"]
+            })
+
         return serialized_identifiers or missing
 
     def get_related_identifiers(self, obj):
         """Get related identifiers."""
-        # PIDS-FIXME: This might get much more complex depending on the id
         serialized_identifiers = []
         metadata = obj["metadata"]
         identifiers = metadata.get("related_identifiers", [])
@@ -396,7 +393,7 @@ class DataCite43Schema(Schema):
         for subject in subjects:
             sub_text = subject.get("subject")
             if sub_text:
-                serialized_subjects.append({"Subject": sub_text})
+                serialized_subjects.append({"subject": sub_text})
             else:
                 ids.append(subject.get("id"))
 
@@ -408,7 +405,7 @@ class DataCite43Schema(Schema):
             validator = validate.URL()
             for subject in subjects:
                 serialized_subj = {
-                    "Subject": subject.get("subject"),
+                    "subject": subject.get("subject"),
                     "subjectScheme": subject.get("scheme"),
                 }
                 id_ = subject.get("id")
