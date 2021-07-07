@@ -78,14 +78,14 @@ class CommonFieldsMixin:
             relation_field='affiliations',
             attrs=['id', 'name'],
             pid_field=Affiliations.pid,
-            cache_key='creator_affiliations',
+            cache_key='affiliations',
         ),
         contributor_affiliations=PIDNestedListRelation(
             'metadata.contributors',
             relation_field='affiliations',
             attrs=['id', 'name'],
             pid_field=Affiliations.pid,
-            cache_key='contributor_affiliations',
+            cache_key='affiliations',
         ),
         languages=PIDListRelation(
             'metadata.languages',
