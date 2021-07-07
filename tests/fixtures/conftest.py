@@ -23,8 +23,8 @@ def vocabularies():
     """Vocabularies object fixture."""
     return VocabulariesFixture(
         system_identity,
-        [pathlib.Path(__file__).parent / "data"],
-        'vocabularies.yaml',
+        pathlib.Path(__file__).parent / "data/vocabularies.yaml",
+        delay=False,
     )
 
 
