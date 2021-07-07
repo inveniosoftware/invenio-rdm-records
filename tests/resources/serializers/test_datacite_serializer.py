@@ -16,7 +16,8 @@ from invenio_records_resources.proxies import current_service_registry
 from invenio_vocabularies.proxies import current_service as vocabulary_service
 from invenio_vocabularies.records.api import Vocabulary
 
-from invenio_rdm_records.resources.serializers import DataCite43JSONSerializer
+from invenio_rdm_records.resources.serializers import \
+    DataCite43JSONSerializer, DataCite43XMLSerializer
 
 
 @pytest.fixture(scope="function")
@@ -97,7 +98,7 @@ def title_type_v(app, title_type):
         "id": "subtitle",
         "props": {
             "datacite": "Subtitle"
-         },
+        },
         "title": {
             "en": "Subtitle"
         },
@@ -125,6 +126,9 @@ def running_app(
 
 def test_datacite43_serializer(running_app, full_record):
     """Test serializer to DataCite 4.3 JSON"""
+    # for HTML stripping test purposes
+    full_record["metadata"]["description"] = "<h1><p>Test</p></h1>"
+
     expected_data = {
         "types": {
             "resourceTypeGeneral": "Image",
@@ -162,9 +166,9 @@ def test_datacite43_serializer(running_app, full_record):
         "publisher": "InvenioRDM",
         "publicationYear": "2018",
         "subjects": [{
-            "Subject": "custom"
+            "subject": "custom"
         }, {
-            "Subject": "Abdominal Injuries",
+            "subject": "Abdominal Injuries",
             "subjectScheme": "MeSH",
             "valueURI": "http://id.nlm.nih.gov/mesh/A-D000007",
         }],
@@ -200,12 +204,12 @@ def test_datacite43_serializer(running_app, full_record):
         "language": "dan",
         "identifiers": [
             {
-                "identifier": "1924MNRAS..84..308E",
-                "identifierType": "bibcode"
-            },
-            {
                 "identifier": "10.5281/inveniordm.1234",
                 "identifierType": "DOI"
+            },
+            {
+                "identifier": "1924MNRAS..84..308E",
+                "identifierType": "bibcode"
             },
         ],
         "relatedIdentifiers": [
@@ -257,3 +261,88 @@ def test_datacite43_serializer(running_app, full_record):
     serialized_record = serializer.dump_one(full_record)
 
     assert serialized_record == expected_data
+
+
+def test_datacite43_xml_serializer(running_app, full_record):
+    expected_data = [
+        "<?xml version='1.0' encoding='utf-8'?>",
+        "<resource xmlns=\"http://datacite.org/schema/kernel-4\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://datacite.org/schema/kernel-4 http://schema.datacite.org/meta/kernel-4.3/metadata.xsd\">",  # noqa
+        "  <identifier identifierType=\"DOI\">10.5281/inveniordm.1234</identifier>",  # noqa
+        "  <alternateIdentifiers>",
+        "    <alternateIdentifier alternateIdentifierType=\"bibcode\">1924MNRAS..84..308E</alternateIdentifier>",  # noqa
+        "  </alternateIdentifiers>",
+        "  <creators>",
+        "    <creator>",
+        "      <creatorName nameType=\"Personal\">Nielsen, Lars Holm</creatorName>",  # noqa
+        "      <givenName>Lars Holm</givenName>",
+        "      <familyName>Nielsen</familyName>",
+        "      <nameIdentifier nameIdentifierScheme=\"ORCID\">http://orcid.org/0000-0001-8135-3489</nameIdentifier>",  # noqa
+        "    </creator>",
+        "  </creators>",
+        "  <titles>",
+        "    <title>InvenioRDM</title>",
+        "    <title xml:lang=\"eng\" titleType=\"Subtitle\">a research data management platform</title>",  # noqa
+        "  </titles>",
+        "  <publisher>InvenioRDM</publisher>",
+        "  <publicationYear>2018</publicationYear>",
+        "  <subjects>",
+        "    <subject>custom</subject>",
+        "    <subject subjectScheme=\"MeSH\">Abdominal Injuries</subject>",
+        "  </subjects>",
+        "  <contributors>",
+        "    <contributor contributorType=\"Other\">",
+        "      <contributorName nameType=\"Personal\">Nielsen, Lars Holm</contributorName>",  # noqa
+        "      <givenName>Lars Holm</givenName>",
+        "      <familyName>Nielsen</familyName>",
+        "      <nameIdentifier nameIdentifierScheme=\"ORCID\">http://orcid.org/0000-0001-8135-3489</nameIdentifier>",  # noqa
+        "    </contributor>",
+        "  </contributors>",
+        "  <dates>",
+        "    <date dateType=\"Issued\">2018/2020-09</date>",
+        "    <date dateType=\"Other\" dateInformation=\"A date\">1939/1945</date>",  # noqa
+        "  </dates>",
+        "  <language>dan</language>",
+        "  <resourceType resourceTypeGeneral=\"Image\">Photo</resourceType>",
+        "  <relatedIdentifiers>",
+        "    <relatedIdentifier relatedIdentifierType=\"DOI\" relationType=\"Cites\" resourceTypeGeneral=\"Dataset\">10.1234/foo.bar</relatedIdentifier>",  # noqa
+        "  </relatedIdentifiers>",
+        "  <sizes>",
+        "    <size>11 pages</size>",
+        "  </sizes>",
+        "  <formats>",
+        "    <format>application/pdf</format>",
+        "  </formats>",
+        "  <version>v1.0</version>",
+        "  <rightsList>",
+        "    <rights rightsURI=\"https://creativecommons.org/licenses/by/4.0/\">Creative Commons Attribution 4.0 International</rights>",  # noqa
+        "  </rightsList>",
+        "  <descriptions>",
+        "    <description descriptionType=\"Abstract\">Test</description>",
+        "    <description descriptionType=\"Methods\" xml:lang=\"eng\">Bla bla bla</description>",  # noqa
+        "  </descriptions>",
+        "  <geoLocations>",
+        "    <geoLocation>",
+        "      <geoLocationPlace>test location place</geoLocationPlace>",
+        "      <geoLocationPoint>",
+        "        <pointLongitude>-60.63932</pointLongitude>",
+        "        <pointLatitude>-32.94682</pointLatitude>",
+        "      </geoLocationPoint>",
+        "    </geoLocation>",
+        "  </geoLocations>",
+        "  <fundingReferences>",
+        "    <fundingReference>",
+        "      <funderName>European Commission</funderName>",
+        "      <funderIdentifier funderIdentifierType=\"ROR\">1234</funderIdentifier>",  # noqa
+        "      <awardNumber>246686</awardNumber>",
+        "      <awardTitle>OpenAIRE</awardTitle>",
+        "    </fundingReference>",
+        "  </fundingReferences>",
+        "</resource>",
+        ""  # this is because of the split
+    ]
+
+    serializer = DataCite43XMLSerializer()
+    serialized_record = serializer.serialize_object(full_record)
+
+    # split by breaklines makes it easier to see diffs
+    assert serialized_record.split("\n") == expected_data
