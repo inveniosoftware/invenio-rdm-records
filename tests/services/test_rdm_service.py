@@ -80,6 +80,21 @@ def test_resolve_non_existing_pid(running_app, es_clear, minimal_record):
         )
 
 
+def test_oai_pid_default_created(running_app, es_clear, minimal_record):
+    superuser_identity = running_app.superuser_identity
+    service = current_rdm_records.records_service
+    minimal_record["pids"] = {}
+    # create the draft
+    draft = service.create(superuser_identity, minimal_record)
+    # publish the record
+    record = service.publish(draft.id, superuser_identity)
+    published_oai = record.to_dict()["pids"]["oai"]
+
+    assert published_oai["identifier"]
+    assert published_oai["provider"] == "oai"
+    assert published_oai["client"] == "oai"
+
+
 def test_pid_creation_default_required(running_app, es_clear, minimal_record):
     superuser_identity = running_app.superuser_identity
     service = current_rdm_records.records_service

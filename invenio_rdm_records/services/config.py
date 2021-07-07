@@ -3,6 +3,7 @@
 # Copyright (C) 2020-2021 CERN.
 # Copyright (C) 2020-2021 Northwestern University.
 # Copyright (C)      2021 TU Wien.
+# Copyright (C)      2021 Graz University of Technology.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
@@ -23,6 +24,8 @@ from invenio_records_resources.services.base.links import Link
 from invenio_records_resources.services.files.links import FileLink
 from invenio_records_resources.services.records.links import RecordLink
 
+from invenio_rdm_records.services.pids.providers.base import BasePIDProvider
+
 from ..records import RDMDraft, RDMRecord
 from . import facets
 from .components import AccessComponent, ExternalPIDsComponent, \
@@ -31,7 +34,7 @@ from .customizations import FileConfigMixin, RecordConfigMixin, \
     SearchOptionsMixin
 from .permissions import RDMRecordPermissionPolicy
 from .pids.providers import DOIDataCiteClient, DOIDataCitePIDProvider, \
-    UnmanagedPIDProvider
+    OAIPIDClient, OAIPIDProvider, UnmanagedPIDProvider
 from .result_items import SecretLinkItem, SecretLinkList
 from .schemas import RDMParentSchema, RDMRecordSchema
 from .schemas.parent.access import SecretLink
@@ -106,10 +109,18 @@ class RDMRecordServiceConfig(RecordServiceConfig, RecordConfigMixin):
                 "system_managed": False,
             },
         },
+        "oai": {
+            "oai": {
+                "provider": OAIPIDProvider,
+                "required": True,
+                "system_managed": True,
+            }
+        }
     }
 
     pids_providers_clients = {
-        "datacite": DOIDataCiteClient
+        "datacite": DOIDataCiteClient,
+        "oai": OAIPIDClient,
     }
 
     # Components - order matters!
