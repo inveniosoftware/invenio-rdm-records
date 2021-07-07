@@ -73,6 +73,7 @@ install_requires = [
     'Faker>=2.0.3',
     'ftfy>=4.4.3,<5.0.0',
     'invenio-drafts-resources>=0.14.0,<0.15.0',
+    'invenio-oaiserver>=1.2.2,<1.3.0',  # needed to get latest 1.2.2
     'invenio-vocabularies>=0.9.0,<0.10.0',
     'pytz>=2020.4',
     'pyyaml>=5.4.0',

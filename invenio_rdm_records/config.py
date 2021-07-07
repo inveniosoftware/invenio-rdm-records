@@ -2,6 +2,7 @@
 #
 # Copyright (C) 2019 CERN.
 # Copyright (C) 2019 Northwestern University.
+# Copyright (C) 2021 Graz University of Technology.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
@@ -150,6 +151,10 @@ RDM_RECORDS_RECORD_PID_SCHEMES = {
     "doi": {
         "label": _("DOI"),
         "validator": idutils.is_doi
+    },
+    "oai": {
+        "label": _("OAI"),
+        "validator": always_valid
     }
 }
 RDM_RECORDS_PERSONORG_SCHEMES = {
