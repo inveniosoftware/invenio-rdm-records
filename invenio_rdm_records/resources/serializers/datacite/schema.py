@@ -11,13 +11,25 @@
 from edtf import parse_edtf
 from edtf.parser.grammar import ParseException
 from flask import current_app
-from flask_babelex import get_locale
 from flask_babelex import lazy_gettext as _
 from invenio_access.permissions import system_identity
 from invenio_records_resources.proxies import current_service_registry
 from invenio_vocabularies.proxies import current_service as vocabulary_service
 from marshmallow import Schema, ValidationError, fields, missing, post_dump
 from marshmallow_utils.fields import SanitizedUnicode
+
+
+def _map_type(vocabulary, fields, id_):
+    """Maps an internal vocabulary type to DataCite type."""
+    res = vocabulary_service.read_all(
+        system_identity,
+        ['id'] + fields,
+        vocabulary
+    )
+
+    for h in res.hits:
+        if h["id"] == id_:
+            return h["props"]
 
 
 class PersonOrOrgSchema43(Schema):
@@ -121,14 +133,12 @@ class ContributorSchema43(PersonOrOrgSchema43):
         if not role:
             return missing
 
-        role_vocabulary = vocabulary_service.read_all(
-            system_identity,
-            ['id', 'props'],
-            "contributorsroles"
+        props = _map_type(
+            'contributorsroles',
+            ['props.datacite'],
+            role["id"],
         )
-        for h in role_vocabulary.hits:
-            if h["id"] == role["id"]:
-                return h["props"]["datacite"]
+        return props.get('datacite', '')
 
 
 class SubjectSchema43(Schema):
@@ -197,21 +207,9 @@ class DataCite43Schema(Schema):
         fields.Nested(FundingSchema43), attribute='metadata.funding')
     schemaVersion = fields.Constant("http://datacite.org/schema/kernel-4")
 
-    def _map_type(self, vocabulary, fields, id_):
-        """Maps an internal vocabulary type to DataCite type."""
-        res = vocabulary_service.read_all(
-            system_identity,
-            ['id'] + fields,
-            vocabulary
-        )
-
-        for h in res.hits:
-            if h["id"] == id_:
-                return h["props"]
-
     def get_type(self, obj):
         """Get resource type."""
-        props = self._map_type(
+        props = _map_type(
             'resourcetypes',
             ['props.datacite_general', 'props.datacite_type'],
             obj["metadata"]["resource_type"]["id"],
@@ -238,7 +236,7 @@ class DataCite43Schema(Schema):
             # Text type
             type_id = t.get("type", {}).get("id")
             if type_id:
-                props = self._map_type(
+                props = _map_type(
                     f"{field}types",
                     ["props.datacite"],
                     type_id)
@@ -283,7 +281,7 @@ class DataCite43Schema(Schema):
 
         for date in obj["metadata"].get("dates", []):
             date_type_id = date.get("type", {}).get("id")
-            props = self._map_type('datetypes', ['props'], date_type_id)
+            props = _map_type('datetypes', ['props'], date_type_id)
             to_append = {
                 "date": date["date"],
                 "dateType": props.get("datacite", "Other")
@@ -339,7 +337,7 @@ class DataCite43Schema(Schema):
         identifiers = metadata.get("related_identifiers", [])
         for rel_id in identifiers:
             relation_type_id = rel_id.get("relation_type", {}).get("id")
-            props = self._map_type(
+            props = _map_type(
                 "relationtypes",
                 ["props"],
                 relation_type_id
@@ -352,7 +350,7 @@ class DataCite43Schema(Schema):
 
             resource_type_id = rel_id.get("resource_type", {}).get("id")
             if resource_type_id:
-                props = self._map_type(
+                props = _map_type(
                     "resourcetypes",
                     ["props"],
                     resource_type_id
