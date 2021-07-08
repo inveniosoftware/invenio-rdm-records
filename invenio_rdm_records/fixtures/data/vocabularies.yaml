@@ -25,9 +25,6 @@ relationtypes:
 # 'subjects' type needs to be created to prevent querying errors in the facets
 # but they are highly dependent on the kind of InvenioRDM instance, so no
 # defaults are provided
-subjects:
-  pid-type: sub
-  data-file: vocabularies/subjects.yaml
 titletypes:
   pid-type: ttyp
   data-file: vocabularies/title_types.yaml

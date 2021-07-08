@@ -52,9 +52,7 @@
     }],
     "publisher": "InvenioRDM",
     "publication_date": "2018/2020-09",
-    "subjects": [{
-      "id": "A-D000007"
-    }],
+    "subjects": [{"id": "A-D000007"}, {"subject": "custom"}],
     "contributors": [{
       "person_or_org": {
         "name": "Nielsen, Lars Holm",
@@ -67,7 +65,7 @@
         }]
       },
       "role": {"id": "other"},
-      "affiliations": [{"id": "cern"}]
+      "affiliations": [{"id": "cern"}, {"name": "custom"}]
     }],
     "dates": [{
       "date": "1939/1945",

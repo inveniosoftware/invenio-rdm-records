@@ -27,13 +27,12 @@ def test_valid_name():
     assert valid_name == AffiliationSchema().load(valid_name)
 
 
-def test_invalid_both_id_name():
-    invalid_id_name = {
+def test_valid_both_id_name():
+    valid_id_name = {
         "id": "test",
         "name": "Entity One"
     }
-    with pytest.raises(ValidationError):
-        data = AffiliationSchema().load(invalid_id_name)
+    assert valid_id_name == AffiliationSchema().load(valid_id_name)
 
 
 def test_invalid_empty():

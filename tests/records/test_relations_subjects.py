@@ -27,12 +27,14 @@ def test_subjects_field(running_app, minimal_record):
 def test_subjects_validation(running_app, minimal_record):
     """Tests data content validation."""
     # Valid id
-    minimal_record["metadata"]["subjects"] = [{"id": "A-D000007"}]
+    minimal_record["metadata"]["subjects"] = [
+        {"id": "http://id.nlm.nih.gov/mesh/A-D000007"}]
 
     draft = RDMDraft.create(minimal_record)
     draft.commit()
 
-    assert draft["metadata"]["subjects"] == [{"id": "A-D000007"}]
+    assert draft["metadata"]["subjects"] == [
+        {"id": "http://id.nlm.nih.gov/mesh/A-D000007"}]
 
     # Invalid id
     minimal_record["metadata"]["subjects"] = [{"id": "invalid"}]
@@ -42,21 +44,24 @@ def test_subjects_validation(running_app, minimal_record):
 
 def test_subjects_indexing(running_app, minimal_record):
     """Test dereferencing characteristics/features really."""
-    minimal_record["metadata"]["subjects"] = [{"id": "A-D000007"}]
+    minimal_record["metadata"]["subjects"] = [
+        {"id": "http://id.nlm.nih.gov/mesh/A-D000007"}]
     draft = RDMDraft.create(minimal_record).commit()
 
     # Dumping should return dereferenced representation
     dump = draft.dumps()
     assert dump["metadata"]["subjects"] == [{
-        "id": "A-D000007",
-        "title": {"en": "Abdominal Injuries"},
-        "@v": f"{running_app.subject_v._record.id}::1"
+        "id": "http://id.nlm.nih.gov/mesh/A-D000007",
+        "subject": "Abdominal Injuries",
+        "@v": f"{running_app.subject_v._record.id}::1",
+        "scheme": "MeSH",
     }]
     # NOTE/WARNING: draft.dumps() modifies the draft too
     assert draft["metadata"]["subjects"] == [{
-        "id": "A-D000007",
-        "title": {"en": "Abdominal Injuries"},
-        "@v": f"{running_app.subject_v._record.id}::1"
+        "id": "http://id.nlm.nih.gov/mesh/A-D000007",
+        "subject": "Abdominal Injuries",
+        "@v": f"{running_app.subject_v._record.id}::1",
+        "scheme": "MeSH"
     }]
 
     # Loading draft again should produce an identical record.
@@ -65,8 +70,9 @@ def test_subjects_indexing(running_app, minimal_record):
 
     # Calling commit() should clear the dereferenced relation.
     draft.commit()
-    assert draft["metadata"]["subjects"] == [{"id": "A-D000007"}]
+    assert draft["metadata"]["subjects"] == [
+        {"id": "http://id.nlm.nih.gov/mesh/A-D000007"}]
 
     # subjects should be reachable through relations
     subject = next(draft.relations.subjects())
-    assert "A-D000007" == subject["id"]
+    assert "http://id.nlm.nih.gov/mesh/A-D000007" == subject["id"]

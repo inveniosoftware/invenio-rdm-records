@@ -13,10 +13,10 @@ from invenio_records_resources.proxies import current_service_registry
 from .fixture import FixtureMixin
 
 
-class AffiliationsFixture(FixtureMixin):
+class SubjectsFixture(FixtureMixin):
     """Affiliations fixture."""
 
     def create(self, entry):
-        """Load a single affiliation."""
-        service = current_service_registry.get("rdm-affiliations")
+        """Load a single subject."""
+        service = current_service_registry.get("rdm-subjects")
         service.create(identity=system_identity, data=entry)

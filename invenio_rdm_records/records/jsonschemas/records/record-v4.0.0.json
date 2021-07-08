@@ -77,9 +77,7 @@
         },
 
         "subjects": {
-          "type": "array",
-          "items": {"$ref": "local://records/definitions-v2.0.0.json#/subject"},
-          "uniqueItems": true
+          "$ref": "local://records/definitions-v2.0.0.json#/subjects"
         },
 
         "contributors": {
