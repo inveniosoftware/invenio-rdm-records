@@ -141,12 +141,12 @@ def test_datacite43_serializer(running_app, full_record, vocabulary_clear):
                     'schemeURI': 'http://orcid.org/'
                 }],
                 "affiliations": [
+                    {'name': 'free-text'},
                     {
                         "name": "CERN",
                         "affiliationIdentifier": "https://ror.org/01ggx4157",
                         "affiliationIdentifierScheme": "ROR",
-                    },
-                    {'name': 'free-text'}
+                    }
                 ],
             }
         ],
