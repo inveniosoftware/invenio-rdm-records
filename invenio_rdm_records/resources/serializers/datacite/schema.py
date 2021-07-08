@@ -74,39 +74,48 @@ class PersonOrOrgSchema43(Schema):
 
         return serialized_identifiers
 
-    def _read_affiliation(self, id_):
-        """Retrieve affiliation record using service."""
-        affiliations_service = (
-            current_service_registry.get("rdm-affiliations")
-        )
-        return affiliations_service.read(id_, system_identity)
-
     def get_affiliation(self, obj):
         """Get affiliation list."""
-        serialized_affiliations = []
         affiliations = obj.get("affiliations", [])
+
+        if not affiliations:
+            return missing
+
+        serialized_affiliations = []
+        ids = []
 
         for affiliation in affiliations:
             id_ = affiliation.get("id")
             if id_:
-                affiliation = self._read_affiliation(id_).to_dict()
-            name = affiliation["name"]  # if no id, name is mandatory
-            aff = {
-                "name": name,
-            }
-            identifier = affiliation.get("identifiers")
-            if identifier:
-                # PIDS-FIXME: DataCite accepts only one, how to decide
-                identifier = identifier[0]
-                scheme = identifier["scheme"]
-                id_value = identifier["identifier"]
-                aff["affiliationIdentifier"] = id_value
-                aff["affiliationIdentifierScheme"] = scheme.upper()
-                uri = self.URIS.get(scheme)
-                if uri:
-                    aff["affiliationIdentifier"] = uri + id_value
+                ids.append(id_)
+            else:
+                # if no id, name is mandatory
+                serialized_affiliations.append(
+                    {"name": affiliation["name"]}
+                )
+        if ids:
+            affiliations_service = (
+                current_service_registry.get("rdm-affiliations")
+            )
+            affiliations = affiliations_service.read_many(system_identity, ids)
 
-            serialized_affiliations.append(aff)
+            for affiliation in affiliations:
+                aff = {
+                    "name": affiliation["name"],
+                }
+                identifier = affiliation.get("identifiers")
+                if identifier:
+                    # PIDS-FIXME: DataCite accepts only one, how to decide
+                    identifier = identifier[0]
+                    scheme = identifier["scheme"]
+                    id_value = identifier["identifier"]
+                    aff["affiliationIdentifier"] = id_value
+                    aff["affiliationIdentifierScheme"] = scheme.upper()
+                    uri = self.URIS.get(scheme)
+                    if uri:
+                        aff["affiliationIdentifier"] = uri + id_value
+
+                serialized_affiliations.append(aff)
 
         return serialized_affiliations
 
