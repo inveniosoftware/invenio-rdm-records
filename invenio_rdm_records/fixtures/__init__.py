@@ -12,6 +12,7 @@ from pathlib import Path
 
 from .affiliations import AffiliationsFixture
 from .fixture import FixtureMixin
+from .subjects import SubjectsFixture
 from .users import UsersFixture
 from .vocabularies import PrioritizedVocabulariesFixtures, VocabulariesFixture
 
@@ -46,6 +47,11 @@ class FixturesEngine:
         AffiliationsFixture(
             [Path("./app_data"), dir_ / "data"],
             'affiliations.yaml',
+        ).load()
+
+        SubjectsFixture(
+            [Path("./app_data"), dir_ / "data"],
+            'subjects.yaml',
         ).load()
 
 

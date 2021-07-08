@@ -31,10 +31,7 @@ def _valid_url(error_msg):
 
 
 class AffiliationSchema(Schema):
-    """Affiliation of a creator/contributor.
-
-    Cannot inherit VocabularySchema because id is optional.
-    """
+    """Affiliation of a creator/contributor."""
 
     id = SanitizedUnicode()
     name = SanitizedUnicode()
@@ -42,12 +39,41 @@ class AffiliationSchema(Schema):
     @validates_schema
     def validate_affiliation(self, data, **kwargs):
         """Validates that either id either name are present."""
-        only_one = bool(data.get("id")) ^ bool(data.get("name"))
-        if not only_one:
+        id_ = data.get("id")
+        name = data.get("name")
+        if id_:
+            data = {"id": id_}
+        elif name:
+            data = {"name": name}
+
+        if not id_ and not name:
             raise ValidationError(
-                "Only existing affiliation id or a free text name can " +
-                "be present",
-                'affiliations'  # name of field to report error for
+                "An existing id or a free text name must be present",
+                "affiliations"
+            )
+
+
+class SubjectSchema(Schema):
+    """Subject schema."""
+
+    id = SanitizedUnicode()
+    subject = SanitizedUnicode()
+    scheme = SanitizedUnicode()
+
+    @validates_schema
+    def validate_subject(self, data, **kwargs):
+        """Validates that either id either name are present."""
+        id_ = data.get("id")
+        subject = data.get("subject")
+        if id_:
+            data = {"id": id_}
+        elif subject:
+            data = {"subject": subject}
+
+        if not id_ and not subject:
+            raise ValidationError(
+                "An existing id or a free text subject must be present",
+                "subjects"
             )
 
 
@@ -347,7 +373,7 @@ class MetadataSchema(Schema):
     additional_titles = fields.List(fields.Nested(TitleSchema))
     publisher = SanitizedUnicode()
     publication_date = EDTFDateString(required=True)
-    subjects = fields.List(fields.Nested(VocabularySchema))
+    subjects = fields.List(fields.Nested(SubjectSchema))
     contributors = fields.List(fields.Nested(ContributorSchema))
     dates = fields.List(fields.Nested(DateSchema))
     languages = fields.List(fields.Nested(VocabularySchema))

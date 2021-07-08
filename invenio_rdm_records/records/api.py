@@ -20,7 +20,8 @@ from invenio_records_resources.records.api import FileRecord
 from invenio_records_resources.records.systemfields import FilesField, \
     IndexField, PIDListRelation, PIDNestedListRelation, PIDRelation, \
     PIDStatusCheckField
-from invenio_vocabularies.contrib.affiliations.api import Affiliations
+from invenio_vocabularies.contrib.affiliations.api import Affiliation
+from invenio_vocabularies.contrib.subjects.api import Subject
 from invenio_vocabularies.records.api import Vocabulary
 from werkzeug.local import LocalProxy
 
@@ -77,14 +78,14 @@ class CommonFieldsMixin:
             'metadata.creators',
             relation_field='affiliations',
             attrs=['id', 'name'],
-            pid_field=Affiliations.pid,
+            pid_field=Affiliation.pid,
             cache_key='affiliations',
         ),
         contributor_affiliations=PIDNestedListRelation(
             'metadata.contributors',
             relation_field='affiliations',
             attrs=['id', 'name'],
-            pid_field=Affiliations.pid,
+            pid_field=Affiliation.pid,
             cache_key='affiliations',
         ),
         languages=PIDListRelation(
@@ -101,8 +102,8 @@ class CommonFieldsMixin:
         ),
         subjects=PIDListRelation(
             'metadata.subjects',
-            attrs=['id', 'title'],
-            pid_field=Vocabulary.pid.with_type_ctx('subjects'),
+            attrs=['id', 'subject', 'scheme'],
+            pid_field=Subject.pid,
             cache_key='subjects',
         ),
         related_identifiers=PIDListRelation(

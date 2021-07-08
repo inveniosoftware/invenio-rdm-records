@@ -15,7 +15,8 @@ from invenio_records_resources.resources.files import FileResource
 from invenio_records_resources.services import FileService
 from invenio_vocabularies.contrib.affiliations.affiliations import \
     record_type as affiliations_record_type
-from invenio_vocabularies.contrib.subjects.subjects import subject_record_type
+from invenio_vocabularies.contrib.subjects.subjects import \
+    record_type as subject_record_type
 from itsdangerous import SignatureExpired
 
 from . import config

@@ -145,7 +145,6 @@ def test_ui_serializer(app, full_to_dict_record):
              'type': {'id': 'other'}
              }
         ],
-
         'related_identifiers': [
             {'identifier': '10.1234/foo.bar',
              'relation_type': {'id': 'cites', 'title_l10n': 'Cites'},
@@ -153,10 +152,6 @@ def test_ui_serializer(app, full_to_dict_record):
              'scheme': 'doi'}
         ],
         'description_stripped': 'Test',
-        'subjects': [
-            {'id': 'A-D000007', 'title_l10n': "Abdominal Injuries"},
-            {'id': 'A-D000008', 'title_l10n': "Abdominal Neoplasms"}
-        ],
         'version': 'v1.0',
     }
 

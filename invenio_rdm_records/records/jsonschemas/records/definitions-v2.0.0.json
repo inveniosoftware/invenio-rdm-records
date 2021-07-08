@@ -418,8 +418,16 @@
     "properties": {
       "id": {
         "$ref": "local://definitions-v1.0.0.json#/identifier"
+      },
+      "subject": {
+        "type": "string"
       }
     }
+  },
+  "subjects": {
+    "type": "array",
+    "items": {"$ref": "#/subject"},
+    "uniqueItems": true
   },
   "title_type": {
     "description": "Type of title.",

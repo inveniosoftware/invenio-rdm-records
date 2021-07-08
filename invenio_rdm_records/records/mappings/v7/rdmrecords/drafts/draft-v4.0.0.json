@@ -467,9 +467,11 @@
               "id" : {
                 "type" : "keyword"
               },
-              "title" : {
-                "type" : "object",
-                "dynamic": true
+              "subject" : {
+                "type" : "text"
+              },
+              "scheme": {
+                "type": "keyword"
               }
             }
           },

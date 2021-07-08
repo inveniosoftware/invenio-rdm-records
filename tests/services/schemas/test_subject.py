@@ -11,19 +11,33 @@
 import pytest
 from marshmallow import ValidationError
 
-from invenio_rdm_records.services.schemas.metadata import MetadataSchema
+from invenio_rdm_records.services.schemas.metadata import SubjectSchema
 
 
-def test_valid_subjects(app, minimal_record):
-    metadata = minimal_record['metadata']
-    metadata['subjects'] = [{"id": "A-D000007"}, {"id": "A-D000008"}]
-    data = MetadataSchema().load(metadata)
-    assert data['subjects'] == metadata['subjects']
+def test_valid_id():
+    valid_id = {
+        "id": "test",
+    }
+    assert valid_id == SubjectSchema().load(valid_id)
 
 
-def test_invalid_no_list_subjects(app, minimal_record):
-    metadata = minimal_record['metadata']
-    metadata['subjects'] = {"id": "A-D000007"}
+def test_valid_subject():
+    valid_subject = {
+        "subject": "Entity One"
+    }
+    assert valid_subject == SubjectSchema().load(valid_subject)
 
+
+def test_valid_full():
+    valid_subject = {
+        "id": "test",
+        "subject": "Entity One",
+        "scheme": "MeSH"
+    }
+    assert valid_subject == SubjectSchema().load(valid_subject)
+
+
+def test_invalid_empty():
+    invalid_empty = {}
     with pytest.raises(ValidationError):
-        data = MetadataSchema().load(metadata)
+        data = SubjectSchema().load(invalid_empty)

@@ -12,6 +12,7 @@
 
 import pytest
 from invenio_access.permissions import system_identity
+from invenio_records_resources.proxies import current_service_registry
 from invenio_vocabularies.proxies import current_service as vocabulary_service
 from invenio_vocabularies.records.api import Vocabulary
 
@@ -161,8 +162,11 @@ def test_datacite43_serializer(running_app, full_record, vocabulary_clear):
         "publisher": "InvenioRDM",
         "publicationYear": "2018",
         "subjects": [{
-            "subject": "Abdominal Injuries",
+            "Subject": "custom"
+        }, {
+            "Subject": "Abdominal Injuries",
             "subjectScheme": "MeSH",
+            "valueURI": "http://id.nlm.nih.gov/mesh/A-D000007",
         }],
         "contributors": [
             {

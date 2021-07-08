@@ -87,7 +87,7 @@ class RDMSearchOptions(SearchOptions):
     facets = {
         'resource_type': resource_type_facet,
         'languages': language_facet,
-        'subjects': subject_facet,
+        # 'subjects': subject_facet,  FIXME
     }
 
 
@@ -97,7 +97,7 @@ class RDMSearchDraftsOptions(SearchDraftsOptions):
     facets = {
         'resource_type': resource_type_facet,
         'languages': language_facet,
-        'subjects': subject_facet,
+        # 'subjects': subject_facet,  FIXME
         'access_status': access_status_facet,
         'is_published': is_published_facet,
     }

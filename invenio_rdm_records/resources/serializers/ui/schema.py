@@ -181,11 +181,6 @@ class UIObjectSchema(Schema):
         attribute='metadata.languages',
     )
 
-    subjects = fields.List(
-        fields.Nested(VocabularyL10Schema),
-        attribute='metadata.subjects',
-    )
-
     description_stripped = StrippedHTML(attribute="metadata.description")
 
     version = fields.Function(record_version)

@@ -25,7 +25,8 @@ from invenio_accounts.models import Role
 from invenio_accounts.testutils import login_user_via_session
 from invenio_app.factory import create_app as _create_app
 from invenio_records_resources.proxies import current_service_registry
-from invenio_vocabularies.contrib.affiliations.api import Affiliations
+from invenio_vocabularies.contrib.affiliations.api import Affiliation
+from invenio_vocabularies.contrib.subjects.api import Subject
 from invenio_vocabularies.proxies import current_service as vocabulary_service
 from invenio_vocabularies.records.api import Vocabulary
 
@@ -118,9 +119,10 @@ def full_record(users):
             }],
             "publisher": "InvenioRDM",
             "publication_date": "2018/2020-09",
-            "subjects": [{
-                "id": "A-D000007"
-            }],
+            "subjects": [
+                {"id": "http://id.nlm.nih.gov/mesh/A-D000007"},
+                {"subject": "custom"}
+            ],
             "contributors": [{
                 "person_or_org": {
                     "name": "Nielsen, Lars Holm",
@@ -495,28 +497,18 @@ def description_type_v(app, description_type):
 
 
 @pytest.fixture(scope="module")
-def subject_type(app):
-    """Subject vocabulary type."""
-    return vocabulary_service.create_type(system_identity, "subjects", "sub")
-
-
-@pytest.fixture(scope="module")
-def subject_v(app, subject_type):
+def subject_v(app):
     """Subject vocabulary record."""
-    vocab = vocabulary_service.create(system_identity, {
-        "id": "A-D000007",
-        "props": {
-            "subjectScheme": "MeSH",
-            "datacite": "Abdominal Injuries"
-        },
-        "tags": ["mesh"],
-        "title": {
-            "en": "Abdominal Injuries"
-        },
-        "type": "subjects"
+    subjects_service = (
+        current_service_registry.get("rdm-subjects")
+    )
+    vocab = subjects_service.create(system_identity, {
+        "id": "http://id.nlm.nih.gov/mesh/A-D000007",
+        "scheme": "MeSH",
+        "subject": "Abdominal Injuries",
     })
 
-    Vocabulary.index.refresh()
+    Subject.index.refresh()
 
     return vocab
 
@@ -602,7 +594,7 @@ def relation_type_v(app, relation_type):
 
 @pytest.fixture(scope="module")
 def affiliations_v(app):
-    """Affiliations vocabulary record."""
+    """Affiliation vocabulary record."""
     affiliations_service = (
         current_service_registry.get("rdm-affiliations")
     )
@@ -619,7 +611,7 @@ def affiliations_v(app):
         }]
     })
 
-    Affiliations.index.refresh()
+    Affiliation.index.refresh()
 
     return aff
 

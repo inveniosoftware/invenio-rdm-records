@@ -5,11 +5,11 @@
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
 
-"""Affiliations resource tests."""
+"""Affiliation resource tests."""
 
 import pytest
 from invenio_records_resources.proxies import current_service_registry
-from invenio_vocabularies.contrib.affiliations.api import Affiliations
+from invenio_vocabularies.contrib.affiliations.api import Affiliation
 
 
 @pytest.fixture(scope="module")
@@ -35,7 +35,7 @@ def example_affiliation(
         }
     }
     aff = affiliations_service.create(superuser_identity, data)
-    Affiliations.index.refresh()  # Refresh the index
+    Affiliation.index.refresh()  # Refresh the index
 
     return aff
 

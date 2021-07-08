@@ -15,7 +15,8 @@ from flask_babelex import lazy_gettext as _
 from invenio_access.permissions import system_identity
 from invenio_records_resources.proxies import current_service_registry
 from invenio_vocabularies.proxies import current_service as vocabulary_service
-from marshmallow import Schema, ValidationError, fields, missing, post_dump
+from marshmallow import Schema, ValidationError, fields, missing, post_dump, \
+    validate
 from marshmallow_utils.fields import SanitizedUnicode
 
 
@@ -388,35 +389,38 @@ class DataCite43Schema(Schema):
 
     def get_subjects(self, obj):
         """Get datacite subjects."""
-        subjects = obj["metadata"].get("subjects")
+        subjects = obj["metadata"].get("subjects", [])
         if not subjects:
             return missing
 
-        subject_vocabulary = vocabulary_service.read_all(
-            system_identity,
-            ['id', 'props'],
-            "subjects"
-        )
-        subjects_props = {h["id"]: h["props"] for h in subject_vocabulary.hits}
+        serialized_subjects = []
+        ids = []
+        for subject in subjects:
+            sub_text = subject.get("subject")
+            if sub_text:
+                serialized_subjects.append({"Subject": sub_text})
+            else:
+                ids.append(subject.get("id"))
 
-        def create_datacite_subject(subject, subjects_props):
-            """Generate datacite subject dict."""
-            subject_record = subjects_props[subject['id']]
+        if ids:
+            subjects_service = (
+                current_service_registry.get("rdm-subjects")
+            )
+            subjects = subjects_service.read_many(system_identity, ids)
+            validator = validate.URL()
+            for subject in subjects:
+                serialized_subj = {
+                    "Subject": subject.get("subject"),
+                    "subjectScheme": subject.get("scheme"),
+                }
+                id_ = subject.get("id")
 
-            datacite_subject = {
-                "subject": subject_record['datacite']
-            }
+                try:
+                    validator(id_)
+                    serialized_subj["valueURI"] = id_
+                except ValidationError:
+                    pass
 
-            other_fields = ["subjectScheme", "schemeURI", "valueURI"]
-            other_values = [
-                subject_record.get(f) for f in other_fields
-            ]
-            datacite_subject.update({
-                k: v for k, v in zip(other_fields, other_values) if v
-            })
+                serialized_subjects.append(serialized_subj)
 
-            return datacite_subject
-
-        return [
-            create_datacite_subject(s, subjects_props) for s in subjects
-        ]
+        return serialized_subjects if serialized_subjects else missing
