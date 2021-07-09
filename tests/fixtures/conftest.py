@@ -8,24 +8,11 @@
 
 """Test fixtures for application vocabulary fixtures."""
 
-import pathlib
-
 import pytest
-from invenio_access.permissions import system_identity
 from invenio_accounts.models import Role
 from invenio_app.factory import create_app as _create_app
 
 from invenio_rdm_records.fixtures.vocabularies import VocabulariesFixture
-
-
-@pytest.fixture()
-def vocabularies():
-    """Vocabularies object fixture."""
-    return VocabulariesFixture(
-        system_identity,
-        [pathlib.Path(__file__).parent / "data"],
-        'vocabularies.yaml',
-    )
 
 
 @pytest.fixture(scope="function")

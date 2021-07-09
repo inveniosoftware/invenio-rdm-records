@@ -3,5 +3,8 @@ resourcetypes:
   data-file: resource_types.yaml
 subjects:
   pid-type: sub
-  data-file:
-    bar: subjects_bar.yaml
+  schemes:
+    - id: MeSH
+      name: Medical Subject Headings
+      uri: "https://www.nlm.nih.gov/mesh/meshhome.html"
+      data-file: vocabularies/subjects.yaml
