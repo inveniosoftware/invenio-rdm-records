@@ -3,6 +3,12 @@ resourcetypes:
   data-file: vocabularies/resource_types.yaml
 subjects:
   pid-type: sub
-  data-file:
-    foo: subjects_foo.yaml
-    bar: subjects_bar.yaml
+  subtypes:
+    - id: MeSH
+      name: Medical Subject Headings
+      uri: "https://www.nlm.nih.gov/mesh/meshhome.html"
+      data-file: vocabularies/subjects.yaml
+    - id: ANZSRC
+      name: Australian and New Zealand Standard Research Classification
+      uri: "https://www.abs.gov.au/statistics/classifications/australian-and-new-zealand-standard-research-classification-anzsrc"
+      data-file: vocabularies/subjects_anzsrc.yaml

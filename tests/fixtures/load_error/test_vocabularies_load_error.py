@@ -25,12 +25,12 @@ def test_conflicting_load(app):
         vocabularies.load()
 
     messages = e.value.errors
-    expected_messages = [
+    expected_messages = set([
         "Vocabulary 'resourcetypes' cannot have multiple sources "
         "['conflicting_module_A.fixtures.vocabularies', "
         "'conflicting_module_B.fixtures.vocabularies']",
-        "Vocabulary 'subjects.bar' cannot have multiple sources "
+        "Vocabulary 'MeSH' cannot have multiple sources "
         "['conflicting_module_A.fixtures.vocabularies', "
         "'conflicting_module_B.fixtures.vocabularies']",
-    ]
-    assert expected_messages == messages
+    ])
+    assert expected_messages == set(messages)
