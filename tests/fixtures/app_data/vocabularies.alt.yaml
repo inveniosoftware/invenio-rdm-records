@@ -7,7 +7,7 @@ subjects:
     - id: MeSH
       name: Medical Subject Headings
       uri: "https://www.nlm.nih.gov/mesh/meshhome.html"
-      data-file: vocabularies/subjects.yaml
+      data-file: vocabularies/subjects_mesh.yaml
     - id: ANZSRC
       name: Australian and New Zealand Standard Research Classification
       uri: "https://www.abs.gov.au/statistics/classifications/australian-and-new-zealand-standard-research-classification-anzsrc"

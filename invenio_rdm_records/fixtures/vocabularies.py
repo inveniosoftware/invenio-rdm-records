@@ -16,10 +16,12 @@ from pathlib import Path
 
 import pkg_resources
 import yaml
-from flask import current_app
 from invenio_vocabularies.proxies import current_service
-from sqlalchemy.exc import IntegrityError
+from invenio_vocabularies.records.models import VocabularyScheme, \
+    VocabularyType
+from sqlalchemy.orm import load_only
 
+from ..proxies import current_rdm_records
 from .tasks import create_vocabulary_record
 
 
@@ -95,19 +97,6 @@ def create_iterator(data_file):
     raise RuntimeError(f'Unknown data format: {ext}')
 
 
-class DataIteratorIterator:
-    """Iterator over iterators."""
-
-    def __init__(self, data_files):
-        """Initialize iterator."""
-        self._data_files = data_files
-
-    def __iter__(self):
-        """Iterate over iterators."""
-        for data_file in self._data_files.values():
-            yield from create_iterator(data_file)
-
-
 #
 # Exceptions
 #
@@ -122,7 +111,7 @@ class ConflictingFixturesError(Exception):
 
 
 #
-# Fixture
+# Fixture Loading
 #
 class PrioritizedVocabulariesFixtures:
     """Concept of Vocabulary fixtures across locations.
@@ -159,6 +148,7 @@ class PrioritizedVocabulariesFixtures:
         )
         self._filename = filename
         self._delay = delay
+        self._loaded_vocabularies = set()
 
     def _entry_points(self):
         """List entrypoints.
@@ -188,7 +178,17 @@ class PrioritizedVocabulariesFixtures:
 
         Fixtures found later are ignored.
         """
-        self._loaded_vocabularies = set()
+        # Prime with existing (sub)vocabularies
+        v_type_ids = [
+            v.id for v in VocabularyType.query.options(load_only("id")).all()
+        ]
+        v_subtype_ids = [
+            f"{v.parent_id}.{v.id}" for v in
+            VocabularyScheme.query.options(
+                load_only("id", "parent_id")
+            ).all()
+        ]
+        self._loaded_vocabularies = set(v_type_ids + v_subtype_ids)
 
         # 1- Load from app_data_folder
         filepath = self._app_data_folder / self._filename
@@ -239,13 +239,7 @@ class PrioritizedVocabulariesFixtures:
         vocabularies = []
         fixture = VocabulariesFixture(self._identity, filepath)
         for id_, entry in fixture.read():
-            if isinstance(entry["data-file"], dict):
-                subvocabularies = [
-                    f"{id_}.{k}" for k in entry["data-file"].keys()
-                ]
-                vocabularies.extend(subvocabularies)
-            else:
-                vocabularies.append(id_)
+            vocabularies.extend(entry.covered_ids)
         return vocabularies
 
     def load_vocabularies(self, filepath):
@@ -269,22 +263,21 @@ class VocabulariesFixture:
 
     def __init__(self, identity, filepath, delay=True):
         """Initialize the fixture."""
-        self._filepath = filepath
         self._identity = identity
+        self._filepath = filepath
         self._delay = delay
 
     def read(self):
-        """Return content of vocabulary file."""
+        """Return content of vocabularies file."""
         dir_ = self._filepath.parent
         with open(self._filepath) as f:
             data = yaml.safe_load(f) or {}
             for id_, entry in data.items():
-                if isinstance(entry["data-file"], dict):
-                    entry["data-file"] = {
-                        k: dir_ / v for k, v in entry["data-file"].items()
-                    }
+                # Some vocabularies are non-generic
+                if id_ == "subjects":
+                    entry = SubjectsVocabularyEntry(dir_, id_, entry)
                 else:
-                    entry["data-file"] = dir_ / entry["data-file"]
+                    entry = GenericVocabularyEntry(dir_, id_, entry)
 
                 yield id_, entry
 
@@ -293,64 +286,135 @@ class VocabulariesFixture:
         for id_, entry in self.read():
             if vocabulary_id != id_:
                 continue
-            for record in self.iter_datafile(entry["data-file"]):
+            for record in entry:
                 yield record
 
     def load(self, ignore=None):
-        """Load the fixture.
+        """Load the whole fixture.
 
         ignore: iterable of ids to ignore
 
         For subjects (or any vocabulary with a dict of data-file), the id
         that counts is ``<vocabulary id>.<dict key>``.
+
+        Returns all vocabulary ids loaded so far.
         """
         ids = set().union(ignore) if ignore else set()
 
         for id_, entry in self.read():
-            # TODO: We need to carefully think about what the workflow for
-            #       adding new subjects later is and then modify the code to
-            #       allow for it.
-            if id_ not in ids:
-                try:
-                    self.create_vocabulary_type(id_, entry)
-                except IntegrityError:
-                    # Can only get here when running the code multiple times
-                    # on same database. To keep the code simple for now, we
-                    # simply skip previously existing types.
-                    current_app.logger.info(
-                        f"Skipping creation and loading of pre-existing {id_}"
-                    )
-                    continue
-
-            if isinstance(entry["data-file"], dict):
-                # The subvocabularies may not have been loaded
-                for key, filepath in entry["data-file"].items():
-                    sub_id = f"{id_}.{key}"
-                    if sub_id not in ids:
-                        self.load_datafile(id_, filepath)
-                        ids.add(sub_id)
-                ids.add(id_)
-            elif id_ not in ids:
-                self.load_datafile(id_, entry["data-file"])
-                ids.add(id_)
+            ids.update(
+                entry.load(self._identity, ignore=ids, delay=self._delay)
+            )
 
         return ids
 
-    def create_vocabulary_type(self, id_, entry):
+
+class GenericVocabularyEntry:
+    """Vocabulary fixture with single data-file."""
+
+    def __init__(self, directory, id_, entry):
+        """Constructor."""
+        self._dir = directory
+        self._id = id_
+        self._entry = entry
+        # There is logic to take care of this choice in tasks.py
+        self._service_str = "vocabulary_service"
+
+    def __iter__(self):
+        """Iterator."""
+        filepath = self._dir / self._entry["data-file"]
+        yield from create_iterator(filepath)
+
+    @property
+    def covered_ids(self):
+        """Just the id of the vocabulary covered by this entry as a list."""
+        return [self._id]
+
+    def create_vocabulary_type(self, identity):
         """Create the vocabulary type."""
-        pid_type = entry['pid-type']
-        current_service.create_type(self._identity, id_, pid_type)
+        pid_type = self._entry['pid-type']
+        current_service.create_type(identity, self._id, pid_type)
 
-    def load_datafile(self, id_, filepath, delay=None):
-        """Load the records from the data file."""
-        for record in self.iter_datafile(filepath):
-            record['type'] = id_
-            delay = delay if delay is not None else self._delay
-            if delay:
-                create_vocabulary_record.delay(record)
-            else:  # mostly for tests
-                create_vocabulary_record(record)
+    def load(self, identity, ignore=None, delay=None):
+        """Load the data file if self._id not in ignore.
 
-    def iter_datafile(self, filepath):
-        """Get an entry iterator for a given "data file" entry."""
-        return create_iterator(filepath)
+        Return the loaded id as 1 item list.
+        """
+        ignore = ignore or set()
+
+        if self._id not in ignore:
+            self.create_vocabulary_type(identity)
+
+            for record in self:
+                record['type'] = self._id
+                if delay:
+                    create_vocabulary_record.delay(self._service_str, record)
+                else:  # mostly for tests
+                    create_vocabulary_record(self._service_str, record)
+            return [self._id]
+
+        return []
+
+
+class SubjectsVocabularyEntry:
+    """Vocabulary fixture for subjects vocabulary."""
+
+    def __init__(self, directory, id_, entry):
+        """Constructor."""
+        self._dir = directory
+        self._parent_id = id_
+        self._entry = entry
+
+        ids = [s["id"] for s in self.schemes()]
+        # Raise if duplicate (conflicting)
+        if len(ids) != len(set(ids)):
+            raise ConflictingFixturesError(
+                f"Duplicate subtypes found for {self._parent_id}"
+            )
+
+        self._service_str = "subjects_service"
+        self._service = getattr(current_rdm_records, self._service_str)
+
+    def schemes(self):
+        """Return schemes."""
+        return self._entry.get("schemes", [])
+
+    def __iter__(self):
+        """Iterator."""
+        for scheme in self.schemes():
+            filepath = self.dir_ / scheme.get("data-file")
+            yield from create_iterator(filepath)
+
+    @property
+    def covered_ids(self):
+        """List of ids of the subvocabularies covered by this entry."""
+        return [f"{s['id']}" for s in self.schemes()]
+
+    def create_scheme(self, identity, metadata):
+        """Create the vocabulary scheme row."""
+        id_ = metadata["id"]
+        name = metadata.get("name", "")
+        uri = metadata.get("uri", "")
+        self._service.create_scheme(identity, id_, name=name, uri=uri)
+
+    def load(self, identity, ignore=None, delay=None):
+        """Load the data files whose ids are not in ignore."""
+        ignore = ignore or set()
+        loaded = []
+
+        for scheme in self.schemes():
+            id_ = f"{self._parent_id}.{scheme['id']}"
+            if id_ not in ignore:
+                self.create_scheme(identity, scheme)
+
+                filepath = self._dir / scheme.get("data-file")
+                for record in create_iterator(filepath):
+                    if delay:
+                        create_vocabulary_record.delay(
+                            self._service_str, record)
+                    else:  # mostly for tests
+                        create_vocabulary_record(self._service_str, record)
+
+                loaded.append(id_)
+
+        return loaded

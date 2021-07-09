@@ -5,6 +5,7 @@
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
+from contextlib import contextmanager
 from pathlib import Path
 
 import pytest
@@ -16,39 +17,46 @@ from invenio_vocabularies.proxies import current_service as vocabulary_service
 
 from invenio_rdm_records.fixtures.affiliations import AffiliationsFixture
 from invenio_rdm_records.fixtures.users import UsersFixture
-from invenio_rdm_records.fixtures.vocabularies import \
+from invenio_rdm_records.fixtures.vocabularies import GenericVocabularyEntry, \
     PrioritizedVocabulariesFixtures
+from invenio_rdm_records.proxies import current_rdm_records
 
 
-def test_load_languages(app, db, vocabularies):
+@pytest.fixture(scope="module")
+def subjects_service(app):
+    """Subjects service."""
+    return getattr(current_rdm_records, "subjects_service")
+
+
+def test_load_languages(app, db, es_clear):
     id_ = 'languages'
-    filepath = Path(__file__).parent / "data/vocabularies/languages.yaml"
-
-    vocabularies.create_vocabulary_type(
+    languages = GenericVocabularyEntry(
+        Path(__file__).parent / "data",
         id_,
         {
             "pid-type": "lng",
-            "data-file": filepath
-        },
+            "data-file": "vocabularies/languages.yaml"
+        }
     )
-    vocabularies.load_datafile(id_, filepath, delay=False)
+
+    languages.load(system_identity, delay=False)
 
     item = vocabulary_service.read((id_, 'aae'), system_identity)
     assert item.id == "aae"
 
 
-def test_load_resource_types(app, db, vocabularies):
+def test_load_resource_types(app, db, es_clear):
     id_ = 'resourcetypes'
-    filepath = Path(__file__).parent / "data/vocabularies/resource_types.yaml"
-
-    vocabularies.create_vocabulary_type(
+    resource_types = GenericVocabularyEntry(
+        Path(__file__).parent / "data",
         id_,
         {
             "pid-type": "rsrct",
-            "data-file": filepath
+            "data-file": "vocabularies/resource_types.yaml"
         },
     )
-    vocabularies.load_datafile(id_, filepath, delay=False)
+
+    resource_types.load(system_identity, delay=False)
 
     item = vocabulary_service.read(
         (id_, 'publication-annotationcollection'),
@@ -59,7 +67,7 @@ def test_load_resource_types(app, db, vocabularies):
     assert item_dict["props"]["datacite_general"] == "Collection"
 
 
-def test_loading_paths_traversal(app, db):
+def test_loading_paths_traversal(app, db, es_clear, subjects_service):
     dir_ = Path(__file__).parent
     fixtures = PrioritizedVocabulariesFixtures(
         system_identity,
@@ -82,18 +90,67 @@ def test_loading_paths_traversal(app, db):
     item = vocabulary_service.read(('languages', 'aae'), system_identity)
     assert item.id == "aae"
 
-    # Only subjects A from app_data/ are loaded
-    item = vocabulary_service.read(('subjects', 'A-D000008'), system_identity)
-    assert item.id == "A-D000008"
+    # Only subjects from app_data/ are loaded
+    item = subjects_service.read(
+        "https://id.nlm.nih.gov/mesh/D000001", system_identity)
+    assert item.id == "https://id.nlm.nih.gov/mesh/D000001"
+    # - subjects in extension but from already loaded scheme are not loaded
     with pytest.raises(PIDDoesNotExistError):
-        vocabulary_service.read(
-            ('subjects', 'A-D000015'),
+        subjects_service.read(
+            "https://id.nlm.nih.gov/mesh/D000015",
             system_identity
         )
+    # - subjects in extension from not already loaded scheme are loaded
+    item = subjects_service.read(
+        "https://id.loc.gov/authorities/subjects/sh85118623", system_identity)
+    assert item.id == "https://id.loc.gov/authorities/subjects/sh85118623"
 
-    # subjects B from an extension are loaded
-    item = vocabulary_service.read(('subjects', 'B-D000008'), system_identity)
-    assert item.id == "B-D000008"
+
+@contextmanager
+def filepath_replaced_by(filepath, replacement):
+    backup = filepath.with_suffix(".bkp")
+    filepath.replace(backup)
+    replacement.replace(filepath)
+
+    try:
+        yield
+    except Exception:
+        raise
+    finally:
+        filepath.replace(replacement)
+        backup.replace(filepath)
+
+
+def test_reloading_paths_traversal(app, db, es_clear, subjects_service):
+    dir_ = Path(__file__).parent
+    fixtures = PrioritizedVocabulariesFixtures(
+        system_identity,
+        dir_ / "app_data",
+        dir_ / "data",
+        "vocabularies.yaml",
+        delay=False
+    )
+    fixtures.load()
+
+    # Scenario 1: Add subjects from a subject type not existing before
+    # temporarily switch vocabularies.yaml.alt in app_data/
+    filepath = dir_ / "app_data" / "vocabularies.yaml"
+    with filepath_replaced_by(filepath, filepath.with_suffix(".alt.yaml")):
+        fixtures.load()
+
+    # Added subjects from altered vocabularies.yaml should be loaded
+    item = subjects_service.read("310607", system_identity)
+    assert item.id == "310607"
+
+    # Scenario 2: Add subjects from subject type existing before
+    # temporarily switch vocabularies.yaml.alt in mock_module_A/
+    filepath = dir_ / "mock_module_A/fixtures/vocabularies/vocabularies.yaml"
+    with filepath_replaced_by(filepath, filepath.with_suffix(".alt.yaml")):
+        fixtures.load()
+
+    # Added subjects from altered vocabularies.yaml should be ignored
+    with pytest.raises(PIDDoesNotExistError):
+        subjects_service.read("310801", system_identity)
 
 
 def test_load_users(app, db, admin_role):
@@ -115,7 +172,7 @@ def test_load_users(app, db, admin_role):
     assert current_datastore.find_user(email="user@example.com")
 
 
-def test_load_affiliations(app, db, admin_role):
+def test_load_affiliations(app, db, admin_role, es_clear):
     dir_ = Path(__file__).parent
     affiliations = AffiliationsFixture(
         [
