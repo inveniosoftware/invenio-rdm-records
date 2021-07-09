@@ -48,7 +48,7 @@ class AffiliationSchema(Schema):
 
         if not id_ and not name:
             raise ValidationError(
-                "An existing id or a free text name must be present",
+                _("An existing id or a free text name must be present"),
                 "affiliations"
             )
 
@@ -72,7 +72,7 @@ class SubjectSchema(Schema):
 
         if not id_ and not subject:
             raise ValidationError(
-                "An existing id or a free text subject must be present",
+                _("An existing id or a free text subject must be present"),
                 "subjects"
             )
 
