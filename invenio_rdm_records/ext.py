@@ -17,6 +17,9 @@ from invenio_vocabularies.contrib.affiliations.affiliations import \
     record_type as affiliations_record_type
 from invenio_vocabularies.contrib.subjects.subjects import \
     record_type as subject_record_type
+from invenio_vocabularies.contrib.subjects.services import \
+    SubjectsService, SubjectsServiceConfig
+
 from itsdangerous import SignatureExpired
 
 from . import config
@@ -111,9 +114,7 @@ class InvenioRDMRecords(object):
             draft_files_service=FileService(RDMFileDraftServiceConfig),
             secret_links_service=SecretLinkService(RDMRecordServiceConfig)
         )
-        self.subjects_service = subject_record_type.service_cls(
-            config=subject_record_type.service_config_cls,
-        )
+        self.subjects_service = SubjectsService(config=SubjectsServiceConfig)
         self.affiliations_service = affiliations_record_type.service_cls(
             config=affiliations_record_type.service_config_cls,
         )

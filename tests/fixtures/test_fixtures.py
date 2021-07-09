@@ -14,16 +14,17 @@ from invenio_accounts.proxies import current_datastore
 from invenio_pidstore.errors import PIDDoesNotExistError
 from invenio_records_resources.proxies import current_service_registry
 from invenio_vocabularies.proxies import current_service as vocabulary_service
+from invenio_vocabularies.proxies import subjects_service
 
 from invenio_rdm_records.fixtures.affiliations import AffiliationsFixture
 from invenio_rdm_records.fixtures.users import UsersFixture
-from invenio_rdm_records.fixtures.vocabularies import \
-    PrioritizedVocabulariesFixtures, SingleVocabularyEntry
+from invenio_rdm_records.fixtures.vocabularies import GenericVocabularyEntry, \
+    PrioritizedVocabulariesFixtures
 
 
 def test_load_languages(app, db):
     id_ = 'languages'
-    languages = SingleVocabularyEntry(
+    languages = GenericVocabularyEntry(
         Path(__file__).parent,
         id_,
         {
@@ -40,7 +41,7 @@ def test_load_languages(app, db):
 
 def test_load_resource_types(app, db):
     id_ = 'resourcetypes'
-    resource_types = SingleVocabularyEntry(
+    resource_types = GenericVocabularyEntry(
         Path(__file__).parent,
         id_,
         {
@@ -72,7 +73,7 @@ def test_loading_paths_traversal(app, db):
 
     fixtures.load()
 
-    # app_data/vocabularies/resource_types.yaml only has image resource types
+    # app_data/vocabularies/resourcetypes.yaml only has image resource types
     with pytest.raises(PIDDoesNotExistError):
         vocabulary_service.read(
             ('resourcetypes', 'publication-annotationcollection'),
@@ -83,18 +84,20 @@ def test_loading_paths_traversal(app, db):
     item = vocabulary_service.read(('languages', 'aae'), system_identity)
     assert item.id == "aae"
 
-    # Only subjects A from app_data/ are loaded
-    item = vocabulary_service.read(('subjects', 'A-D000008'), system_identity)
-    assert item.id == "A-D000008"
+    # Only subjects from app_data/ are loaded
+    item = subjects_service.read(
+        "https://id.nlm.nih.gov/mesh/D000001", system_identity)
+    assert item.id == "https://id.nlm.nih.gov/mesh/D000001"
+    # - subjects from same subtype but in extension are not
     with pytest.raises(PIDDoesNotExistError):
-        vocabulary_service.read(
-            ('subjects', 'A-D000015'),
+        subjects_service.read(
+            "https://id.nlm.nih.gov/mesh/D000015",
             system_identity
         )
-
-    # subjects B from an extension are loaded
-    item = vocabulary_service.read(('subjects', 'B-D000008'), system_identity)
-    assert item.id == "B-D000008"
+    # - subjects from different subtype but in extension are loaded
+    item = subjects_service.read(
+        "https://id.loc.gov/authorities/subjects/sh85118623", system_identity)
+    assert item.id == "https://id.loc.gov/authorities/subjects/sh85118623"
 
 
 @contextmanager
@@ -123,29 +126,25 @@ def test_reloading_paths_traversal(app, db):
     )
     fixtures.load()
 
-    # Scenario 1: added subject type not existing before, so should be loaded
+    # Scenario 1: Add subjects from a subject type not existing before
     # temporarily switch vocabularies.yaml.alt in app_data/
     filepath = dir_ / "app_data" / "vocabularies.yaml"
     with filepath_replaced_by(filepath, filepath.with_suffix(".yaml.alt")):
         fixtures.load()
 
-    # subjects C from altered vocabularies.yaml are loaded
-    item = vocabulary_service.read(('subjects', 'C-D000008'), system_identity)
-    assert item.id == "C-D000008"
+    # Added subjects from altered vocabularies.yaml should be loaded
+    item = subjects_service.read("310607", system_identity)
+    assert item.id == "310607"
 
-    # Scenario 2: added subject type existing before, so should be ignored
+    # Scenario 2: Add subjects from subject type existing before
     # temporarily switch vocabularies.yaml.alt in mock_module_A/
     filepath = dir_ / "mock_module_A/fixtures/vocabularies/vocabularies.yaml"
     with filepath_replaced_by(filepath, filepath.with_suffix(".yaml.alt")):
         fixtures.load()
 
-    # subjects C from altered vocabularies.yaml are ignored
-    # 'C-D000015' is only present in vocabularies.yaml.alt of mock_module_A/
+    # Added subjects from altered vocabularies.yaml should be ignored
     with pytest.raises(PIDDoesNotExistError):
-        vocabulary_service.read(
-            ('subjects', 'C-D000015'),
-            system_identity
-        )
+        subjects_service.read("310801", system_identity)
 
 
 def test_load_users(app, db, admin_role):
@@ -184,3 +183,8 @@ def test_load_affiliations(app, db, admin_role):
     cern = service.read(identity=system_identity, id_="01ggx4157")
     assert cern["acronym"] == "CERN"
     pytest.raises(PIDDoesNotExistError, service.read, "cern", system_identity)
+
+
+# PrioritizedVocabulariesFixtures will go down the vocabularies.yaml
+# detect what kind of vocabularies it's facing (subjects/affiliations/other)
+# let that one load itself while still respecting the hierarchy.

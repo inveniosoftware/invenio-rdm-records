@@ -16,6 +16,7 @@ from pathlib import Path
 
 import pkg_resources
 import yaml
+from invenio_records_resources.proxies import current_service_registry
 from invenio_vocabularies.proxies import current_service
 from invenio_vocabularies.records.models import VocabularySubtype, \
     VocabularyType
@@ -112,6 +113,64 @@ class ConflictingFixturesError(Exception):
 #
 # Fixture
 #
+class GenericVocabularyCase:
+    """Case for generic vocabulary."""
+
+    def __init__(self):
+        """Constructor."""
+        pass
+
+    def existing_vocabularies(self):
+        """Return set of existing vocabularies id."""
+        return set([
+            v.id for v in VocabularyType.query.options(load_only("id")).all()
+        ])
+        # Below might go away
+        # v_subtype_ids = [
+        #     f"{v.vocabulary_id}.{v.id}" for v in
+        #     VocabularySubtype.query.options(
+        #         load_only("id", "vocabulary_id")
+        #     ).all()
+        # ]
+        # return set(v_type_ids + v_subtype_ids)
+
+
+# class AffiliationsVocabularyCase(GenericVocabularyCase):
+#     """Case for affiliations vocabulary."""
+#     pass
+
+
+class SubjectsVocabularyCase:
+    """Case for subjects vocabulary."""
+
+    def __init__(self):
+        """Constructor."""
+        pass
+
+    def existing_vocabularies(self):
+        """Return set of existing vocabularies id."""
+        return set()
+        # for now
+        # return set([
+        #     f"{ss.id}" for ss in
+        #     SubjectsScheme.query.options(load_only("id")).all()
+        # ])
+
+class Cases:
+    """Cases."""
+
+    def __init__(self, cases):
+        """Constructor."""
+        self._cases = cases
+
+    def prime(self):
+        """Return set of all pre-existing ids."""
+        from functools import reduce
+        return reduce(
+            lambda c1, c2: c1.exisiting_ids().union(c2.existing_ids()),
+            set()
+        )
+
 class PrioritizedVocabulariesFixtures:
     """Concept of Vocabulary fixtures across locations.
 
@@ -182,9 +241,9 @@ class PrioritizedVocabulariesFixtures:
             v.id for v in VocabularyType.query.options(load_only("id")).all()
         ]
         v_subtype_ids = [
-            f"{v.vocabulary_id}.{v.id}" for v in
+            f"{v.parent_id}.{v.id}" for v in
             VocabularySubtype.query.options(
-                load_only("id", "vocabulary_id")
+                load_only("id", "parent_id")
             ).all()
         ]
         self._loaded_vocabularies = set(v_type_ids + v_subtype_ids)
@@ -272,10 +331,11 @@ class VocabulariesFixture:
         with open(self._filepath) as f:
             data = yaml.safe_load(f) or {}
             for id_, entry in data.items():
-                if entry.get("subtypes"):
-                    entry = MultiVocabularyEntry(dir_, id_, entry)
+                # Some vocabularies are non-generic
+                if id_ == "subjects":
+                    entry = SubjectsVocabularyEntry(dir_, id_, entry)
                 else:
-                    entry = SingleVocabularyEntry(dir_, id_, entry)
+                    entry = GenericVocabularyEntry(dir_, id_, entry)
 
                 yield id_, entry
 
@@ -294,6 +354,8 @@ class VocabulariesFixture:
 
         For subjects (or any vocabulary with a dict of data-file), the id
         that counts is ``<vocabulary id>.<dict key>``.
+
+        Returns all vocabulary ids loaded so far.
         """
         ids = set().union(ignore) if ignore else set()
 
@@ -305,8 +367,7 @@ class VocabulariesFixture:
         return ids
 
 
-
-class SingleVocabularyEntry:
+class GenericVocabularyEntry:
     """Vocabulary fixture with single data-file."""
 
     def __init__(self, directory, id_, entry):
@@ -314,6 +375,8 @@ class SingleVocabularyEntry:
         self._dir = directory
         self._id = id_
         self._entry = entry
+        # There is logic to take care of this strange choice until discussion
+        self._service_str = "vocabulary_service"
 
     def __iter__(self):
         """Iterator."""
@@ -343,16 +406,16 @@ class SingleVocabularyEntry:
             for record in self:
                 record['type'] = self._id
                 if delay:
-                    create_vocabulary_record.delay(record)
+                    create_vocabulary_record.delay(self._service_str, record)
                 else:  # mostly for tests
-                    create_vocabulary_record(record)
+                    create_vocabulary_record(self._service_str, record)
             return [self._id]
 
         return []
 
 
-class MultiVocabularyEntry:
-    """Vocabulary fixture with subtypes i.e. multiple data-files."""
+class SubjectsVocabularyEntry:
+    """Vocabulary fixture for subjects vocabulary."""
 
     def __init__(self, directory, id_, entry):
         """Constructor."""
@@ -360,12 +423,22 @@ class MultiVocabularyEntry:
         self._parent_id = id_
         self._entry = entry
 
-        ids = [s["id"] for s in entry.get("subtypes")]
+        ids = [s["id"] for s in entry.get("subtypes", [])]
         # Raise if duplicate (conflicting)
         if len(ids) != len(set(ids)):
             raise ConflictingFixturesError(
                 f"Duplicate subtypes found for {self._parent_id}"
             )
+
+        # Determine the service to use
+        # Discussion: where should these affiliations/subjects/... services
+        #             reside for access? They are now in invenio-vocabularies
+        #             proxies, in InvenioRDMRecords (ext.py), in a registry...
+        # Using the registry for now, but would rather not unless it becomes
+        # *the* way to access services
+        self._service_str = "rdm-subjects"
+        self._service = current_service_registry.get(self._service_str)
+        # future: we may get the service string from vocabularies.yaml
 
     def __iter__(self):
         """Iterator."""
@@ -377,44 +450,33 @@ class MultiVocabularyEntry:
     def covered_ids(self):
         """List of ids of the subvocabularies covered by this entry."""
         return [
-            f"{self._parent_id}.{v['id']}" for v in self._entry["subtypes"]
+            f"{v['id']}" for v in self._entry["subtypes"]
         ]
 
-    def create_vocabulary_type(self, identity):
-        """Create the vocabulary type."""
-        pid_type = self._entry['pid-type']
-        current_service.create_type(identity, self._parent_id, pid_type)
-
-    def create_vocabulary_subtype(self, identity, subtype):
-        """Create the vocabulary subtype."""
-        id_ = subtype["id"]
-        label = subtype.get("label", "")
-        prefix_url = subtype.get("prefix_url", "")
-        current_service.create_subtype(
-            identity, id_, self._parent_id, label=label, prefix_url=prefix_url
-        )
+    def create_scheme(self, identity, metadata):
+        """Create the vocabulary scheme row."""
+        id_ = metadata["id"]
+        name = metadata.get("name", "")
+        uri = metadata.get("uri", "")
+        self._service.create_scheme(identity, id_, name=name, uri=uri)
 
     def load(self, identity, ignore=None, delay=None):
         """Load the data files whose ids are not in ignore."""
         ignore = ignore or set()
         loaded = []
 
-        if self._parent_id not in ignore:
-            self.create_vocabulary_type(identity)
-            loaded.append(self._parent_id)
-
         for subtype in self._entry["subtypes"]:
             id_ = f"{self._parent_id}.{subtype['id']}"
             if id_ not in ignore:
-                self.create_vocabulary_subtype(identity, subtype)
+                self.create_scheme(identity, subtype)
 
                 filepath = self._dir / subtype.get("data-file")
                 for record in create_iterator(filepath):
-                    record['type'] = self._parent_id
                     if delay:
-                        create_vocabulary_record.delay(record)
+                        create_vocabulary_record.delay(
+                            self._service_str, record)
                     else:  # mostly for tests
-                        create_vocabulary_record(record)
+                        create_vocabulary_record(self._service_str, record)
 
                 loaded.append(id_)
 

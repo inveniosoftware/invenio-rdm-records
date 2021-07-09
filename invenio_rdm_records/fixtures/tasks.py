@@ -7,20 +7,23 @@
 # it under the terms of the MIT License; see LICENSE file for more details.
 
 """Celery tasks for fixtures."""
-import arrow
 from celery import shared_task
-from flask import current_app
 from invenio_access.permissions import system_identity
+from invenio_records_resources.proxies import current_service_registry
 from invenio_vocabularies.proxies import current_service as vocabulary_service
 
 from ..proxies import current_rdm_records
-from ..services.errors import EmbargoNotLiftedError
 
 
 @shared_task
-def create_vocabulary_record(data):
+def create_vocabulary_record(service_str, data):
     """Create a vocabulary record."""
-    vocabulary_service.create(system_identity, data)
+    # NiceTodo: current_service_registry should have an interface like a dict
+    if service_str == "vocabulary_service":
+        service = vocabulary_service
+    else:
+        service = current_service_registry.get(service_str)
+    service.create(system_identity, data)
 
 
 @shared_task

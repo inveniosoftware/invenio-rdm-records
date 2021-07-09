@@ -4,10 +4,10 @@ resourcetypes:
 subjects:
   pid-type: sub
   subtypes:
-    - id: vocabulary-a
-      label: Vocabulary A
-      prefix_url: https://example.com/vocabulary-a/
-      data-file: vocabularies/subjects.yaml
+    - id: MeSH
+      name: Medical Subject Headings
+      uri: "https://www.nlm.nih.gov/mesh/meshhome.html"
+      data-file: vocabularies/subjects_mesh.yaml
 titletypes:
   pid-type: ttyp
   data-file: vocabularies/title_types.yaml

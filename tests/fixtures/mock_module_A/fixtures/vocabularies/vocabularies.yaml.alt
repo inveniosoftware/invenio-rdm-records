@@ -1,7 +1,7 @@
 subjects:
   pid-type: sub
   subtypes:
-    - id: vocabulary-c
-      label: Vocabulary C
-      prefix_url: https://example.com/vocabulary-c/
-      data-file: subjects_c.yaml
+    - id: ANZSRC
+      name: Australian and New Zealand Standard Research Classification
+      uri: "https://www.abs.gov.au/statistics/classifications/australian-and-new-zealand-standard-research-classification-anzsrc"
+      data-file: vocabularies/subjects_anzsrc.yaml
