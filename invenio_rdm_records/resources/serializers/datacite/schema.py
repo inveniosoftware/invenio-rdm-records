@@ -407,7 +407,7 @@ class DataCite43Schema(Schema):
         for subject in subjects:
             sub_text = subject.get("subject")
             if sub_text:
-                serialized_subjects.append({"Subject": sub_text})
+                serialized_subjects.append({"subject": sub_text})
             else:
                 ids.append(subject.get("id"))
 
@@ -419,7 +419,7 @@ class DataCite43Schema(Schema):
             validator = validate.URL()
             for subject in subjects:
                 serialized_subj = {
-                    "Subject": subject.get("subject"),
+                    "subject": subject.get("subject"),
                     "subjectScheme": subject.get("scheme"),
                 }
                 id_ = subject.get("id")

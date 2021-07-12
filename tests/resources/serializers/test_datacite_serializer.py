@@ -162,9 +162,9 @@ def test_datacite43_serializer(running_app, full_record, vocabulary_clear):
         "publisher": "InvenioRDM",
         "publicationYear": "2018",
         "subjects": [{
-            "Subject": "custom"
+            "subject": "custom"
         }, {
-            "Subject": "Abdominal Injuries",
+            "subject": "Abdominal Injuries",
             "subjectScheme": "MeSH",
             "valueURI": "http://id.nlm.nih.gov/mesh/A-D000007",
         }],
