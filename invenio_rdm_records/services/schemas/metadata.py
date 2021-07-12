@@ -89,11 +89,14 @@ class PersonOrOrganizationSchema(Schema):
         required=True,
         validate=validate.OneOf(
             choices=NAMES,
-            error=_(f'Invalid value. Choose one of {NAMES}.')
+            error=_('Invalid value. Choose one of {NAMES}.')
+            .format(NAMES=NAMES)
         ),
         error_messages={
             # [] needed to mirror error message above
-            "required": [_(f'Invalid value. Choose one of {NAMES}.')]
+            "required": [
+                _('Invalid value. Choose one of {NAMES}.').format(
+                    NAMES=NAMES)]
         }
     )
     name = SanitizedUnicode()
