@@ -2,6 +2,7 @@
 #
 # Copyright (C) 2020 CERN.
 # Copyright (C) 2020 Northwestern University.
+# Copyright (C) 2021 Graz University of Technology.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
@@ -102,7 +103,9 @@ class Vocabulary(object):
         """Returns the user facing error message for the given dict key."""
         choices = sorted([self.key(e) for e in self.data.values()])
         return {
-            self.key_field: [_(f"Invalid value. Choose one of {choices}.")]
+            self.key_field: [
+                _("Invalid value. Choose one of {choices}.").format(
+                    choices=choices)]
         }
 
     def dump_options(self):

@@ -2,6 +2,7 @@
 #
 # Copyright (C) 2020 CERN.
 # Copyright (C) 2020 Northwestern University.
+# Copyright (C) 2021 Graz University of Technology.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
@@ -48,7 +49,7 @@ class ResourceTypeVocabulary(Vocabulary):
 
     def get_invalid(self, type_subtype):
         """Returns the {<field>: <messages>} error dict for the given key."""
-        return [_(f"Invalid value.")]
+        return [_("Invalid value.")]
 
     def dump_options(self):
         """Returns json-compatible dict of options for type and subtype.

@@ -3,6 +3,7 @@
 # Copyright (C) 2020-2021 CERN.
 # Copyright (C) 2020 Northwestern University.
 # Copyright (C) 2021 TU Wien.
+# Copyright (C) 2021 Graz University of Technology.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
@@ -27,8 +28,9 @@ class ExternalPIDsComponent(ServiceComponent):
             provider = self.service.get_provider(scheme, provider_name, client)
             if not provider:
                 raise ValidationError(
-                    message=_(f"Provider {provider_name} not found for PID " +
-                              f"type {scheme}"),
+                    message=_("Provider {provider_name} not found for PID " +
+                              "type {scheme}").format(
+                                  provider_name=provider_name, scheme=scheme),
                     field_name="pids",
                 )
 

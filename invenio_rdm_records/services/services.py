@@ -3,6 +3,7 @@
 # Copyright (C) 2020-2021 CERN.
 # Copyright (C) 2020-2021 Northwestern University.
 # Copyright (C) 2021 TU Wien.
+# Copyright (C) 2021 Graz University of Technology.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
@@ -73,7 +74,8 @@ class RDMRecordService(RecordService):
             provider_class = provider_config["provider"]
         except ValueError:
             raise ValidationError(
-                message=_(f"Unknown PID provider for {scheme}"),
+                message=_("Unknown PID provider for {scheme}").format(
+                    scheme=scheme),
                 field_name=f"pids.{scheme}",
             )
 
@@ -90,7 +92,8 @@ class RDMRecordService(RecordService):
             return provider_class()
         except ValueError:
             raise ValidationError(
-                message=_(f"{client_name} not supported for PID {scheme}"),
+                message=_("{client_name} not supported for PID {scheme}")
+                .format(client_name=client_name, scheme=scheme),
                 ield_name=f"pids.{scheme}",
             )
 
@@ -176,7 +179,8 @@ class RDMRecordService(RecordService):
             )
         except PIDDoesNotExistError:
             raise ValidationError(
-                message=_(f"No registered PID found for type {pid_type}"),
+                message=_("No registered PID found for type {pid_type}")
+                .format(pid_type=pid_type),
                 field_name=f"pids.{pid_type}",
             )
 
