@@ -127,8 +127,6 @@ def running_app(
 def test_datacite43_serializer(running_app, full_record):
     """Test serializer to DataCite 4.3 JSON"""
     # for HTML stripping test purposes
-    full_record["metadata"]["description"] = "<h1><p>Test</p></h1>"
-
     expected_data = {
         "types": {
             "resourceTypeGeneral": "Image",
@@ -228,8 +226,10 @@ def test_datacite43_serializer(running_app, full_record):
             "rightsUri": "https://creativecommons.org/licenses/by/4.0/",
         }],
         "descriptions": [
-            {"description": "Test", "descriptionType": "Abstract"},
             {
+                "description": "A description with HTML tags",
+                "descriptionType": "Abstract"
+            }, {
                 "description": "Bla bla bla",
                 "descriptionType": "Methods",
                 "lang": "eng"
@@ -317,7 +317,7 @@ def test_datacite43_xml_serializer(running_app, full_record):
         "    <rights rightsURI=\"https://creativecommons.org/licenses/by/4.0/\">Creative Commons Attribution 4.0 International</rights>",  # noqa
         "  </rightsList>",
         "  <descriptions>",
-        "    <description descriptionType=\"Abstract\">Test</description>",
+        "    <description descriptionType=\"Abstract\">A description with HTML tags</description>",  # noqa
         "    <description descriptionType=\"Methods\" xml:lang=\"eng\">Bla bla bla</description>",  # noqa
         "  </descriptions>",
         "  <geoLocations>",

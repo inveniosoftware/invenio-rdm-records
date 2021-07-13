@@ -164,7 +164,7 @@ def full_record(users):
                 "id": "cc-by-4.0",
                 "link": "https://creativecommons.org/licenses/by/4.0/"
             }],
-            "description": "Test",
+            "description": "<h1>A description</h1> <p>with HTML tags</p>",
             "additional_descriptions": [{
                 "description": "Bla bla bla",
                 "type": {"id": "methods"},
@@ -447,7 +447,7 @@ def title_type_v(app, title_type):
         "id": "alternative-title",
         "props": {
             "datacite": "AlternativeTitle"
-         },
+        },
         "title": {
             "en": "Alternative title"
         },
