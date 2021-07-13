@@ -149,6 +149,16 @@ def test_ui_serializer(app, full_to_dict_record):
              'type': {'id': 'other'}
              }
         ],
+        'rights': [
+            {
+                'description_l10n': 'A description',
+                'link': 'https://customlicense.org/licenses/by/4.0/',
+                'title_l10n': 'A custom license'
+            },
+            {
+                'id': 'cc-by-4.0'
+            }
+        ],
         'related_identifiers': [
             {'identifier': '10.1234/foo.bar',
              'relation_type': {'id': 'iscitedby', 'title_l10n': 'Is cited by'},

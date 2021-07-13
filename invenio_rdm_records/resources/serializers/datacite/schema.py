@@ -20,6 +20,9 @@ from marshmallow import Schema, ValidationError, fields, missing, post_dump, \
 from marshmallow_utils.fields import SanitizedUnicode
 from marshmallow_utils.html import strip_html
 
+from invenio_rdm_records.resources.serializers.ui.schema import \
+    current_default_locale
+
 from ..utils import map_type
 
 
@@ -149,15 +152,6 @@ class SubjectSchema43(Schema):
     subjectScheme = fields.Str(attribute="scheme")
 
 
-class RightSchema43(Schema):
-    """Rights schema for v43."""
-
-    rights = fields.Str(attribute="title")
-    rightsIdentifierScheme = fields.Str(attribute="scheme")
-    rightsIdentifier = fields.Str(attribute="identifier")
-    rightsUri = fields.Str(attribute="link")
-
-
 class FundingSchema43(Schema):
     """Funding schema for v43."""
 
@@ -199,8 +193,7 @@ class DataCite43Schema(Schema):
     sizes = fields.List(SanitizedUnicode(), attribute="metadata.sizes")
     formats = fields.List(SanitizedUnicode(), attribute="metadata.formats")
     version = SanitizedUnicode(attribute="metadata.version")
-    rightsList = fields.List(
-        fields.Nested(RightSchema43), attribute='metadata.rights')
+    rightsList = fields.Method('get_rights')
     descriptions = fields.Method('get_descriptions')
     geoLocations = fields.Method("get_locations")
     fundingReferences = fields.List(
@@ -419,3 +412,43 @@ class DataCite43Schema(Schema):
                 serialized_subjects.append(serialized_subj)
 
         return serialized_subjects if serialized_subjects else missing
+
+    def get_rights(self, obj):
+        """Get datacite rigths."""
+        rights = obj["metadata"].get("rights", [])
+        if not rights:
+            return missing
+
+        serialized_rights = []
+        ids = []
+        for right in rights:
+            _id = right.get("id")
+            if _id:
+                ids.append(_id)
+            else:
+                serialized_rights.append(
+                    {
+                        "rights": right.get("title").get(
+                            current_default_locale()
+                        ),
+                        "rightsUri": right.get("link")
+                    }
+                )
+
+        if ids:
+            rights = vocabulary_service.read_many(
+                system_identity, "licenses", ids
+            )
+            for right in rights:
+                serialized_right = {
+                    "rights": right.get("title").get(
+                            current_default_locale()
+                        ),
+                    "rightsIdentifierScheme": right.get("props").get("scheme"),
+                    "rightsIdentifier": right.get("id"),
+                    "rightsUri": right.get("props").get("url"),
+                }
+
+                serialized_rights.append(serialized_right)
+
+        return serialized_rights if serialized_rights else missing

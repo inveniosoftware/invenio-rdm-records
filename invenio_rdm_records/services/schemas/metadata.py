@@ -217,15 +217,43 @@ def _is_uri(uri):
         return False
 
 
+class PropsSchema(Schema):
+    """Schema for the URL schema."""
+
+    url = SanitizedUnicode(
+        validate=_valid_url(_('Not a valid URL.'))
+    )
+    scheme = SanitizedUnicode()
+
+
 class RightsSchema(Schema):
     """License schema."""
 
     id = SanitizedUnicode()
-    title = SanitizedUnicode()
-    description = SanitizedUnicode()
+    title = fields.Dict()
+    description = fields.Dict()
+    props = fields.Nested(PropsSchema)
     link = SanitizedUnicode(
         validate=_valid_url(_('Not a valid URL.'))
     )
+
+    @validates_schema
+    def validate_rights(self, data, **kwargs):
+        """Validates that id xor name are present."""
+        id_ = data.get("id")
+        title = data.get("title")
+
+        if not id_ and not title:
+            raise ValidationError(
+                _("An existing id or a free text title must be present"),
+                "rights"
+            )
+        elif id_ and len(data.values()) > 1:
+            raise ValidationError(
+                _("Only an existing id or free text title/description/link" +
+                  " is accepted, but not both cases at the same time"),
+                "rights"
+            )
 
 
 class DateSchema(Schema):

@@ -159,11 +159,20 @@ def full_record(users):
                 "application/pdf"
             ],
             "version": "v1.0",
-            "rights": [{
-                "title": "Creative Commons Attribution 4.0 International",
-                "id": "cc-by-4.0",
-                "link": "https://creativecommons.org/licenses/by/4.0/"
-            }],
+            "rights": [
+                {
+                    "title": {
+                        "en": "A custom license"
+                    },
+                    "description": {
+                        "en": "A description"
+                    },
+                    "link": "https://customlicense.org/licenses/by/4.0/"
+                 },
+                {
+                    "id": "cc-by-4.0"
+                }
+            ],
             "description": "<h1>A description</h1> <p>with HTML tags</p>",
             "additional_descriptions": [{
                 "description": "Bla bla bla",
@@ -582,6 +591,44 @@ def relation_type_v(app, relation_type):
 
 
 @pytest.fixture(scope="module")
+def licenses(app):
+    """Licenses vocabulary type."""
+    return vocabulary_service.create_type(
+        system_identity, "licenses", "lic"
+    )
+
+
+@pytest.fixture(scope="module")
+def licenses_v(app, licenses):
+    """Licenses vocabulary record."""
+    vocab = vocabulary_service.create(system_identity, {
+        "id": "cc-by-4.0",
+        "props": {
+            "url": "https://creativecommons.org/licenses/by/4.0/legalcode",
+            "scheme": "spdx",
+            "osi_approved": ""
+        },
+        "title": {
+            "en": "Creative Commons Attribution 4.0 International"
+        },
+        "tags": [
+            "recommended",
+            "all"
+        ],
+        "description": {
+            "en": "The Creative Commons Attribution license allows"
+                  " re-distribution and re-use of a licensed work on"
+                  " the condition that the creator is appropriately credited."
+        },
+        "type": "licenses"
+    })
+
+    Vocabulary.index.refresh()
+
+    return vocab
+
+
+@pytest.fixture(scope="module")
 def affiliations_v(app):
     """Affiliation vocabulary record."""
     affiliations_service = (
@@ -616,7 +663,8 @@ RunningApp = namedtuple("RunningApp", [
     "description_type_v",
     "date_type_v",
     "contributors_role_v",
-    "relation_type_v"
+    "relation_type_v",
+    "licenses_v"
 ])
 
 
@@ -624,7 +672,7 @@ RunningApp = namedtuple("RunningApp", [
 def running_app(
     app, location, resource_type_v, subject_v, languages_v, affiliations_v,
     title_type_v, description_type_v, date_type_v, contributors_role_v,
-    relation_type_v
+    relation_type_v, licenses_v
 ):
     """This fixture provides an app with the typically needed db data loaded.
 
@@ -642,7 +690,8 @@ def running_app(
         description_type_v,
         date_type_v,
         contributors_role_v,
-        relation_type_v
+        relation_type_v,
+        licenses_v
     )
 
 

@@ -8,11 +8,13 @@
 
 """Record response serializers."""
 
+from ast import literal_eval
 from copy import deepcopy
 from functools import partial
 
 from flask import current_app
 from flask_babelex import get_locale
+from invenio_i18n.ext import current_i18n
 from marshmallow import Schema, fields, missing
 from marshmallow_utils.fields import BabelGettextDictField
 from marshmallow_utils.fields import FormatDate as FormatDate_
@@ -153,6 +155,14 @@ class DatesSchema(Schema):
     description = StrippedHTML(attribute='description')
 
 
+class RightsSchema(VocabularyL10Schema):
+    """Rights schema."""
+
+    description = L10NString(data_key='description_l10n')
+    link = fields.String()
+    props = fields.Dict()
+
+
 class UIObjectSchema(Schema):
     """Schema for dumping extra information for the UI."""
 
@@ -205,6 +215,11 @@ class UIObjectSchema(Schema):
     dates = fields.List(
         fields.Nested(DatesSchema()),
         attribute="metadata.dates"
+    )
+
+    rights = fields.List(
+        fields.Nested(RightsSchema()),
+        attribute="metadata.rights"
     )
 
 

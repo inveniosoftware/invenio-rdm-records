@@ -97,9 +97,9 @@
     ],
     "version": "v1.0",
     "rights": [{
-        "title": "Creative Commons Attribution 4.0 International",
-        "description": "A description.",
-        "link": "https://creativecommons.org/licenses/by/4.0/"
+        "title": {"en": "A custom license" },
+        "description": {"en": "A description."},
+        "link": "https://customlicense.org/licenses/by/4.0/"
       },
       {
         "id": "cc-by-4.0"
