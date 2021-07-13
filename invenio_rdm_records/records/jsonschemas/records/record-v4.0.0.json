@@ -172,11 +172,11 @@
               "id": {"$ref": "local://definitions-v1.0.0.json#/identifier"},
               "title": {
                 "description": "The license name or license itself. Free text.",
-                "type": "string"
+                "type": "object"
               },
               "description": {
                 "description": "The license description Free text.",
-                "type": "string"
+                "type": "object"
               },
               "link": {
                 "type": "string",

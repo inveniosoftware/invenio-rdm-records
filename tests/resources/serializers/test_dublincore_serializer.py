@@ -52,8 +52,10 @@ def test_dublincorejson_serializer(running_app, updated_full_record):
         "dates": ["2018/2020-09", "info:eu-repo/date/embargoEnd/2131-01-01"],
         "rights": [
             "info:eu-repo/semantics/embargoedAccess",
-            "Creative Commons Attribution 4.0 International",
-            "https://creativecommons.org/licenses/by/4.0/",
+            "A custom license",
+            "https://customlicense.org/licenses/by/4.0/",
+            'Creative Commons Attribution 4.0 International',
+            'https://creativecommons.org/licenses/by/4.0/legalcode',
         ],
     }
 
@@ -106,9 +108,12 @@ def test_dublincorexml_serializer(running_app, updated_full_record):
         "<dc:publisher>InvenioRDM</dc:publisher>",
         "<dc:relation>doi:10.1234/foo.bar</dc:relation>",
         "<dc:rights>info:eu-repo/semantics/embargoedAccess</dc:rights>",
+        "<dc:rights>A custom license</dc:rights>",
+        "<dc:rights>https://customlicense.org/licenses/by/4.0/</dc:rights>",
         "<dc:rights>Creative Commons Attribution 4.0 "
         + "International</dc:rights>",
-        "<dc:rights>https://creativecommons.org/licenses/by/4.0/</dc:rights>",
+        "<dc:rights>https://creativecommons.org/licenses/by/4.0/legalcode"
+        + "</dc:rights>",
         "<dc:title>InvenioRDM</dc:title>",
         "<dc:type>info:eu-repo/semantic/other</dc:type>",
     ]
@@ -156,9 +161,12 @@ def test_dublincorexml_serializer_list(
         "<dc:publisher>InvenioRDM</dc:publisher>",
         "<dc:relation>doi:10.1234/foo.bar</dc:relation>",
         "<dc:rights>info:eu-repo/semantics/embargoedAccess</dc:rights>",
+        "<dc:rights>A custom license</dc:rights>",
+        "<dc:rights>https://customlicense.org/licenses/by/4.0/</dc:rights>",
         "<dc:rights>Creative Commons Attribution 4.0 "
         + "International</dc:rights>",
-        "<dc:rights>https://creativecommons.org/licenses/by/4.0/</dc:rights>",
+        "<dc:rights>https://creativecommons.org/licenses/by/4.0/legalcode"
+        + "</dc:rights>",
         "<dc:title>InvenioRDM</dc:title>",
         "<dc:type>info:eu-repo/semantic/other</dc:type>",
     ]

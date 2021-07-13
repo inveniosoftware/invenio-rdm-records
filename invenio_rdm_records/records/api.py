@@ -106,6 +106,12 @@ class CommonFieldsMixin:
             pid_field=Subject.pid,
             cache_key='subjects',
         ),
+        licenses=PIDListRelation(
+            'metadata.rights',
+            attrs=['id', 'title', 'description', 'props.url', 'props.scheme'],
+            pid_field=Vocabulary.pid.with_type_ctx('licenses'),
+            cache_key='licenses',
+        ),
         related_identifiers=PIDListRelation(
             'metadata.related_identifiers',
             attrs=['id', 'title'],

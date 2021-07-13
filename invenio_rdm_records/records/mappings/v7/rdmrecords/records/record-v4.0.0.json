@@ -324,19 +324,37 @@
               }
             }
           },
-          "licenses" : {
+          "rights" : {
+            "type": "object",
             "properties" : {
-              "identifier" : {
-                "type" : "keyword"
+              "@v": {
+                "type": "keyword"
               },
-              "license" : {
-                "type" : "text"
+              "id": {
+                "type": "keyword"
               },
-              "scheme" : {
-                "type" : "keyword"
+              "title": {
+                "type": "object",
+                "dynamic": true
               },
-              "uri" : {
-                "type" : "keyword"
+              "description" : {
+                "type" : "object",
+                "dynamic": true
+              },
+              "props": {
+                "type": "object",
+                "properties": {
+                  "url": {
+                    "type": "keyword"
+                  },
+                  "scheme": {
+                    "type": "keyword"
+                  }
+                }
+              },
+              "link": {
+                "type": "keyword",
+                "index": false
               }
             }
           },

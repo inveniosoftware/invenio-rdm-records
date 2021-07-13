@@ -12,6 +12,7 @@ from invenio_access.permissions import system_identity
 from invenio_vocabularies.proxies import current_service as vocabulary_service
 from marshmallow import Schema, fields, missing
 
+from ..ui.schema import current_default_locale
 from ..utils import map_type
 
 
@@ -82,14 +83,36 @@ class DublinCoreSchema(Schema):
 
         rights.append(f"info:eu-repo/semantics/{access_right}Access")
 
+        ids = []
         for right in obj['metadata'].get('rights', []):
-            title = right.get('title')
-            if title:
-                rights.append(title)
+            _id = right.get("id")
+            if _id:
+                ids.append(_id)
+            else:
+                title = right.get('title').get(
+                            current_default_locale()
+                        )
+                if title:
+                    rights.append(title)
 
-            license_url = right.get('link')
-            if license_url:
-                rights.append(license_url)
+                license_url = right.get('link')
+                if license_url:
+                    rights.append(license_url)
+
+        if ids:
+            vocab_rights = vocabulary_service.read_many(
+                system_identity, "licenses", ids
+            )
+            for right in vocab_rights:
+                title = right.get('title').get(
+                            current_default_locale()
+                        )
+                if title:
+                    rights.append(title)
+
+                license_url = right.get('props').get('url')
+                if license_url:
+                    rights.append(license_url)
 
         return rights or missing
 

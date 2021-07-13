@@ -334,12 +334,12 @@ def test_rights(appctx):
     assert fails_meta({"rights": 1})
     assert validates_meta({"rights": []})
     lic_full = {
-        "title": "Creative Commons Attribution 4.0 International",
-        "description": "A Description",
+        "title": {"en": "Creative Commons Attribution 4.0 International"},
+        "description": {"en": "A Description"},
         "link": "https://creativecommons.org/licenses/by/4.0/"
     }
     lic_min = {
-        "title": "Copyright (C) 2020. All rights reserved.",
+        "title":  {"en": "Copyright (C) 2020. All rights reserved."},
     }
     lic_linked = {
         "id": "cc-by-4.0"

@@ -114,7 +114,7 @@ def title_type_v(app, title_type):
 def running_app(
     app, location, resource_type_v, subject_v, languages_v, title_type_v,
     description_type_v, affiliations_v, date_type_v, contributors_role_v,
-    relation_type_v
+    relation_type_v, licenses_v
 ):
     """Return running_app but load everything for datacite serialization.
 
@@ -221,10 +221,19 @@ def test_datacite43_serializer(running_app, full_record):
         "sizes": ["11 pages"],
         "formats": ["application/pdf"],
         "version": "v1.0",
-        "rightsList": [{
-            "rights": "Creative Commons Attribution 4.0 International",
-            "rightsUri": "https://creativecommons.org/licenses/by/4.0/",
-        }],
+        "rightsList": [
+            {
+                'rights': 'A custom license',
+                'rightsUri': 'https://customlicense.org/licenses/by/4.0/'
+            },
+            {
+                "rights": "Creative Commons Attribution 4.0 International",
+                "rightsIdentifierScheme": "spdx",
+                "rightsIdentifier": "cc-by-4.0",
+                "rightsUri": "https://creativecommons.org/licenses/by/4.0/"
+                             "legalcode",
+            }
+        ],
         "descriptions": [
             {
                 "description": "A description with HTML tags",
@@ -314,7 +323,8 @@ def test_datacite43_xml_serializer(running_app, full_record):
         "  </formats>",
         "  <version>v1.0</version>",
         "  <rightsList>",
-        "    <rights rightsURI=\"https://creativecommons.org/licenses/by/4.0/\">Creative Commons Attribution 4.0 International</rights>",  # noqa
+        "    <rights rightsURI=\"https://customlicense.org/licenses/by/4.0/\">A custom license</rights>",  # noqa
+        "    <rights rightsURI=\"https://creativecommons.org/licenses/by/4.0/legalcode\" rightsIdentifierScheme=\"spdx\" rightsIdentifier=\"cc-by-4.0\">Creative Commons Attribution 4.0 International</rights>",  # noqa
         "  </rightsList>",
         "  <descriptions>",
         "    <description descriptionType=\"Abstract\">A description with HTML tags</description>",  # noqa
