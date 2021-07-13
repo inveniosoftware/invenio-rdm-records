@@ -13,7 +13,7 @@ from edtf.parser.parser_classes import Date, Interval
 from invenio_access.permissions import system_identity
 from invenio_vocabularies.proxies import current_service as vocabulary_service
 from marshmallow import Schema, fields, missing
-from marshmallow_utils.fields import SanitizedUnicode
+from marshmallow_utils.fields import SanitizedUnicode, StrippedHTML
 
 
 class CSLCreatorSchema(Schema):
@@ -37,7 +37,7 @@ class CSLJSONSchema(Schema):
     id_ = SanitizedUnicode(data_key="id", attribute="id")
     type_ = fields.Method("get_type", data_key="type")
     title = SanitizedUnicode(attribute="metadata.title")
-    abstract = SanitizedUnicode(attribute="metadata.description")
+    abstract = StrippedHTML(attribute="metadata.description")
     author = fields.List(fields.Nested(CSLCreatorSchema),
                          attribute="metadata.creators")
     issued = fields.Method("get_issued")

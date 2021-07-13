@@ -151,7 +151,7 @@ def test_ui_serializer(app, full_to_dict_record):
              'resource_type': {'id': 'dataset', 'title_l10n': 'Dataset'},
              'scheme': 'doi'}
         ],
-        'description_stripped': 'Test',
+        'description_stripped': 'A description with HTML tags',
         'version': 'v1.0',
     }
 

@@ -30,7 +30,7 @@ def test_csl_json_serializer(running_app, full_record):
         "language": "dan",
         "title": "InvenioRDM",
         "issued": {"date-parts": [["2018"], ["2020", "09"]]},
-        "abstract": "Test",
+        "abstract": "A description with HTML tags",
         "author": [
             {
                 "family": "Nielsen, Lars Holm",
