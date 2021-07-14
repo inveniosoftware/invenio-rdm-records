@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # Copyright (C) 2019-2021 CERN.
-# Copyright (C) 2019 Northwestern University.
+# Copyright (C) 2019-2021 Northwestern University.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
@@ -13,8 +13,9 @@ from flask_babelex import _
 from flask_principal import identity_loaded
 from invenio_records_resources.resources.files import FileResource
 from invenio_records_resources.services import FileService
-from invenio_vocabularies.contrib.affiliations.affiliations import \
-    record_type as affiliations_record_type
+from invenio_vocabularies.contrib.affiliations import AffiliationsResource, \
+    AffiliationsResourceConfig, AffiliationsService, \
+    AffiliationsServiceConfig
 from invenio_vocabularies.contrib.subjects import SubjectsResource, \
     SubjectsResourceConfig, SubjectsService, SubjectsServiceConfig
 from itsdangerous import SignatureExpired
@@ -111,10 +112,10 @@ class InvenioRDMRecords(object):
             draft_files_service=FileService(RDMFileDraftServiceConfig),
             secret_links_service=SecretLinkService(RDMRecordServiceConfig)
         )
-        self.subjects_service = SubjectsService(config=SubjectsServiceConfig)
-        self.affiliations_service = affiliations_record_type.service_cls(
-            config=affiliations_record_type.service_config_cls,
+        self.affiliations_service = AffiliationsService(
+            config=AffiliationsServiceConfig,
         )
+        self.subjects_service = SubjectsService(config=SubjectsServiceConfig)
 
     def init_resource(self, app):
         """Initialize vocabulary resources."""
@@ -142,12 +143,11 @@ class InvenioRDMRecords(object):
         )
 
         # Vocabularies
+        self.affiliations_resource = AffiliationsResource(
+            service=self.affiliations_service,
+            config=AffiliationsResourceConfig,
+        )
         self.subjects_resource = SubjectsResource(
             service=self.subjects_service,
             config=SubjectsResourceConfig,
-        )
-
-        self.affiliations_resource = affiliations_record_type.resource_cls(
-            service=self.affiliations_service,
-            config=affiliations_record_type.resource_config_cls,
         )
