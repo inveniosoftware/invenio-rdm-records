@@ -172,7 +172,7 @@ RDM_RECORDS_DOI_DATACITE_PASSWORD = ""
 RDM_RECORDS_DOI_DATACITE_PREFIX = "10.1234"
 RDM_RECORDS_DOI_DATACITE_TEST_MODE = True
 
-#: PID Schemes
+# PID Schemes
 
 RDM_RECORDS_RECORD_PID_SCHEMES = ["doi"]
 RDM_RECORDS_PERSONORG_SCHEMES = ["orcid", "isni", "gnd", "ror"]
@@ -207,3 +207,4 @@ RDM_RECORDS_LOCATION_SCHEMES = [
     ("wikidata", lambda x: True),
     ("geonames", lambda x: True)
 ]
+RDM_RECORDS_DOI_DATACITE_FORMAT = "{prefix}/{id}"

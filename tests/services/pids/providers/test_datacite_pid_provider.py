@@ -8,6 +8,7 @@
 """DataCite datacite_provider tests."""
 
 import pytest
+from flask import current_app
 from invenio_pidstore.errors import PIDDoesNotExistError
 from invenio_pidstore.models import PersistentIdentifier, PIDStatus
 
@@ -148,3 +149,37 @@ def test_datacite_provider_get_status(record, datacite_provider):
     created_pid = datacite_provider.create(record)
     status = datacite_provider.get_status(created_pid.pid_value)
     assert status == PIDStatus.NEW
+
+
+def test_datacite_provider_configuration(record, mocker):
+    client = mocker.patch(
+        "invenio_rdm_records.services.pids.providers.datacite."
+        "DOIDataCiteClient")
+
+    def custom_format_func(record, **kwargs):
+        return "10.123/custom.func"
+
+    def custom_format_func_2(record, **kwargs):
+        return "10.125/custom.func"
+
+    current_app.config['RDM_RECORDS_DOI_DATACITE_FORMAT'] = custom_format_func
+    datacite_provider = DOIDataCitePIDProvider(name="datacite", client=client)
+    assert datacite_provider.create(record).pid_value == "10.123/custom.func"
+
+    prefix = client.prefix
+    id = datacite_provider.generate_id(record)
+    expected_result = f"{prefix}/datacite.{id}"
+    current_app.config['RDM_RECORDS_DOI_DATACITE_FORMAT'] = None
+    datacite_provider = DOIDataCitePIDProvider(name="datacite", client=client)
+    assert datacite_provider.create(record).pid_value == expected_result
+
+    datacite_provider = DOIDataCitePIDProvider(
+        name="datacite", client=client, generate_doi_func=custom_format_func_2)  # noqa
+    assert datacite_provider.create(record).pid_value == "10.125/custom.func"
+
+    prefix = client.prefix
+    id = datacite_provider.generate_id(record)
+    expected_result = f"{prefix}/datacite2.{id}"
+    current_app.config['RDM_RECORDS_DOI_DATACITE_FORMAT'] = "{prefix}/datacite2.{id}"  # noqa
+    datacite_provider = DOIDataCitePIDProvider(name="datacite", client=client)
+    assert datacite_provider.create(record).pid_value == expected_result
