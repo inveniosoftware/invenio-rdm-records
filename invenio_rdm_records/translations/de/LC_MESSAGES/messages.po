@@ -1,0 +1,241 @@
+# Translations template for invenio-rdm-records.
+# Copyright (C) 2021 CERN
+# Copyright (C) 2021 Graz University of Technology
+# This file is distributed under the same license as the invenio-rdm-records
+# project.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2021.
+# 
+# Translators:
+# Mojib Wali <mojib.wali@tugraz.at>, 2021
+# Alexander Gruber <alexander.gruber@tugraz.at>, 2021
+# Hermann Schranzhofer <hermann.schranzhofer@tugraz.at>, 2021
+# 
+msgid ""
+msgstr ""
+"Project-Id-Version: invenio-rdm-records 0.31.8\n"
+"Report-Msgid-Bugs-To: info@inveniosoftware.org\n"
+"POT-Creation-Date: 2021-07-12 15:34+0200\n"
+"PO-Revision-Date: 2021-07-12 14:31+0000\n"
+"Last-Translator: Hermann Schranzhofer <hermann.schranzhofer@tugraz.at>, 2021\n"
+"Language-Team: German (https://www.transifex.com/inveniosoftware/teams/23537/de/)\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.9.1\n"
+"Language: de\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: invenio_rdm_records/ext.py:49
+msgid "Your shared link has expired."
+msgstr "Ihr freigegebener Link ist abgelaufen."
+
+#: invenio_rdm_records/resources/serializers/datacite/schema.py:283
+msgid "Invalid publication date value."
+msgstr "Ungültiger Wert für das Veröffentlichungsdatum."
+
+#: invenio_rdm_records/resources/serializers/ui/fields.py:35
+#: invenio_rdm_records/services/config.py:67
+msgid "Open"
+msgstr "Offen"
+
+#: invenio_rdm_records/resources/serializers/ui/fields.py:36
+#: invenio_rdm_records/services/config.py:68
+msgid "Embargoed"
+msgstr "Gesperrt"
+
+#: invenio_rdm_records/resources/serializers/ui/fields.py:37
+#: invenio_rdm_records/services/config.py:69
+msgid "Restricted"
+msgstr "Eingeschränkt"
+
+#: invenio_rdm_records/resources/serializers/ui/fields.py:38
+#: invenio_rdm_records/services/config.py:70
+msgid "Metadata-only"
+msgstr "Nur Metadaten"
+
+#: invenio_rdm_records/resources/serializers/ui/fields.py:65
+msgid "The record and files are publicly accessible."
+msgstr "Der Eintrag und die Dateien sind öffentlich zugänglich."
+
+#: invenio_rdm_records/resources/serializers/ui/fields.py:67
+msgid "No files are available for this record."
+msgstr "Für diesen Eintrag sind keine Dateien verfügbar."
+
+#: invenio_rdm_records/resources/serializers/ui/fields.py:74
+#, python-format
+msgid "The record and files will be made publicly available on %(date)s."
+msgstr ""
+"Der Eintrag und die Dateien werden am %(date)s öffentlich zugänglich gemacht"
+" ."
+
+#: invenio_rdm_records/resources/serializers/ui/fields.py:77
+msgid "The record and files are restricted to users with access."
+msgstr "Der Eintrag und die Dateien sind auf Benutzer mit Zugriff beschränkt."
+
+#: invenio_rdm_records/resources/serializers/ui/fields.py:83
+#, python-format
+msgid "The record will be made publicly available on %(date)s."
+msgstr "Der Eintrag wird am %(date)s öffentlich zugänglich gemacht. "
+
+#: invenio_rdm_records/resources/serializers/ui/fields.py:86
+msgid "The record is restricted to users with access."
+msgstr "Der Eintrag ist auf Benutzer mit Zugriff beschränkt."
+
+#: invenio_rdm_records/resources/serializers/ui/fields.py:91
+#, python-format
+msgid "The files will be made publicly available on %(date)s."
+msgstr "Die Dateien werden am %(date)s öffentlich zugänglich gemacht am."
+
+#: invenio_rdm_records/resources/serializers/ui/fields.py:94
+msgid ""
+"The record is publicly accessible, but files are restricted to users with "
+"access."
+msgstr ""
+"Der Eintrag ist öffentlich zugänglich, aber die Dateien sind auf Benutzer "
+"mit Zugriff beschränkt."
+
+#: invenio_rdm_records/services/config.py:47
+msgid "Resource types"
+msgstr "Arten von Ressourcen"
+
+#: invenio_rdm_records/services/config.py:53
+msgid "Languages"
+msgstr "Sprachen"
+
+#: invenio_rdm_records/services/config.py:59
+msgid "Subjects"
+msgstr "Themen"
+
+#: invenio_rdm_records/services/config.py:65
+msgid "Access status"
+msgstr "Zugriffsstatus"
+
+#: invenio_rdm_records/services/config.py:76
+msgid "State"
+msgstr "Status"
+
+#: invenio_rdm_records/services/config.py:77
+msgid "Published"
+msgstr "Veröffentlicht"
+
+#: invenio_rdm_records/services/config.py:77
+msgid "Unpublished"
+msgstr "Unveröffentlicht"
+
+#: invenio_rdm_records/services/services.py:77
+msgid "Unknown PID provider for {scheme}"
+msgstr "Unbekannter PID-Provider für {scheme}"
+
+#: invenio_rdm_records/services/services.py:95
+msgid "{client_name} not supported for PID {scheme}"
+msgstr "{client_name} nicht unterstützt für PID {scheme}"
+
+#: invenio_rdm_records/services/services.py:182
+msgid "No registered PID found for type {pid_type}"
+msgstr "Keine registrierte PID für Typ {pid_type} gefunden"
+
+#: invenio_rdm_records/services/components/pids.py:31
+msgid "Provider {provider_name} not found for PID type {scheme}"
+msgstr "Provider {provider_name} nicht gefunden für PID-Typ {scheme}"
+
+#: invenio_rdm_records/services/pids/providers/base.py:214
+msgid "{pid_type}:{identifier} is already registered to another record"
+msgstr ""
+"{pid_type}:{identifier} ist bereits für einen anderen Eintrag registriert"
+
+#: invenio_rdm_records/services/schemas/__init__.py:98
+msgid "Invalid value for scheme {scheme}"
+msgstr "Ungültiger Wert für Schema {scheme}"
+
+#: invenio_rdm_records/services/schemas/access.py:40
+msgid "Embargo end date must be set to a future date if active is True."
+msgstr ""
+"Das Enddatum für die Sperre muss auf ein zukünftiges Datum gesetzt werden, "
+"wenn \"Aktiv\" auf \"Wahr\" steht."
+
+#: invenio_rdm_records/services/schemas/access.py:50
+msgid "Embargo end date must be unset or in the past if active is False."
+msgstr ""
+"Das Enddatum für die Sperre darf entweder nicht gesetzt sein, oder muss in "
+"der Vergangenheit liegen, wenn \"Aktiv\" auf \"Falsch\" steht."
+
+#: invenio_rdm_records/services/schemas/access.py:68
+msgid "'{field_name}' must be either 'public' or 'restricted'"
+msgstr "'{field_name}' muss entweder 'öffentlich' oder 'beschränkt' sein"
+
+#: invenio_rdm_records/services/schemas/metadata.py:51
+msgid "An existing id or a free text name must be present"
+msgstr "Es muss eine vorhandene ID oder ein Freitextname vorhanden sein"
+
+#: invenio_rdm_records/services/schemas/metadata.py:75
+msgid "An existing id or a free text subject must be present"
+msgstr "Eine vorhandene ID oder ein Freitext-Betreff muss vorhanden sein"
+
+#: invenio_rdm_records/services/schemas/metadata.py:92
+#: invenio_rdm_records/services/schemas/metadata.py:98
+msgid "Invalid value. Choose one of {NAMES}."
+msgstr "Ungültiger Wert. Wählen Sie einen von {NAMEN}."
+
+#: invenio_rdm_records/services/schemas/metadata.py:120
+msgid "Family name must be filled."
+msgstr "Der Familienname muss ausgefüllt werden."
+
+#: invenio_rdm_records/services/schemas/metadata.py:127
+#: invenio_rdm_records/services/schemas/metadata.py:265
+#: invenio_rdm_records/services/schemas/metadata.py:279
+#: invenio_rdm_records/services/schemas/metadata.py:283
+msgid "Name cannot be blank."
+msgstr "Name kann nicht leer sein."
+
+#: invenio_rdm_records/services/schemas/metadata.py:210
+msgid "Not a valid URL."
+msgstr "Keine gültige URL."
+
+#: invenio_rdm_records/services/schemas/metadata.py:300
+msgid "At least award or funder shold be present."
+msgstr "Zumindest sollten Auftraggeber oder Geldgeber vorhanden sein."
+
+#: invenio_rdm_records/services/schemas/metadata.py:344
+msgid ""
+"At least one of ['geometry', 'place',                 'identifiers', "
+"'description'] shold be present."
+msgstr ""
+"Mindestens eines von ['geometry', 'place', 'identifiers', 'description'] "
+"muss vorhanden sein."
+
+#: invenio_rdm_records/services/schemas/metadata.py:372
+msgid "Missing data for required field."
+msgstr "Fehlende Daten für Pflichtfeld."
+
+#: invenio_rdm_records/services/schemas/metadata.py:389
+msgid "Size cannot be a blank string."
+msgstr "Größe kann keine leere Zeichenkette sein."
+
+#: invenio_rdm_records/services/schemas/metadata.py:391
+msgid "Format cannot be a blank string."
+msgstr "Format kann keine leere Zeichenkette sein."
+
+#: invenio_rdm_records/services/secret_links/service.py:61
+#: invenio_rdm_records/services/secret_links/service.py:93
+msgid "Expiration date must be set to the future"
+msgstr "Ablaufdatum muss in der Zukunft liegen"
+
+#: invenio_rdm_records/services/secret_links/service.py:87
+msgid "Cannot postpone expiration of links"
+msgstr "Ablauf von Links kann nicht verschoben werden"
+
+#: invenio_rdm_records/services/secret_links/service.py:121
+msgid "An access permission level is required"
+msgstr "Eine Zugriffsberechtigungsstufe ist erforderlich"
+
+#: invenio_rdm_records/services/secret_links/service.py:134
+msgid "Invalid access permission level."
+msgstr "Ungültige Zugriffsberechtigungsstufe."
+
+#: invenio_rdm_records/vocabularies/resource_type.py:52
+msgid "Invalid value."
+msgstr "Ungültiger Wert."
+
+#: invenio_rdm_records/vocabularies/vocabulary.py:107
+msgid "Invalid value. Choose one of {choices}."
+msgstr "Ungültiger Wert. Wählen Sie einen von {choices}."
