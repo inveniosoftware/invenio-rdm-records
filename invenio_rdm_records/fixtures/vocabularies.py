@@ -16,6 +16,7 @@ from pathlib import Path
 
 import pkg_resources
 import yaml
+from invenio_db import db
 from invenio_vocabularies.proxies import current_service
 from invenio_vocabularies.records.models import VocabularyScheme, \
     VocabularyType
@@ -272,12 +273,18 @@ class VocabulariesFixture:
         dir_ = self._filepath.parent
         with open(self._filepath) as f:
             data = yaml.safe_load(f) or {}
-            for id_, entry in data.items():
+            for id_, yaml_entry in data.items():
                 # Some vocabularies are non-generic
                 if id_ == "subjects":
-                    entry = SubjectsVocabularyEntry(dir_, id_, entry)
+                    entry = VocabularyEntryWithSchemes(
+                        "subjects_service", dir_, id_, yaml_entry
+                    )
+                elif id_ == "affiliations":
+                    entry = VocabularyEntryWithSchemes(
+                        "affiliations_service", dir_, id_, yaml_entry
+                    )
                 else:
-                    entry = GenericVocabularyEntry(dir_, id_, entry)
+                    entry = GenericVocabularyEntry(dir_, id_, yaml_entry)
 
                 yield id_, entry
 
@@ -286,8 +293,8 @@ class VocabulariesFixture:
         for id_, entry in self.read():
             if vocabulary_id != id_:
                 continue
-            for record in entry:
-                yield record
+            for data in entry.iterate(set()):
+                yield data
 
     def load(self, ignore=None):
         """Load the whole fixture.
@@ -309,112 +316,112 @@ class VocabulariesFixture:
         return ids
 
 
-class GenericVocabularyEntry:
-    """Vocabulary fixture with single data-file."""
+class VocabularyEntry:
+    """Loading vocabulary superclass."""
 
-    def __init__(self, directory, id_, entry):
+    def __init__(self, service_str, directory, id_, entry):
         """Constructor."""
         self._dir = directory
         self._id = id_
         self._entry = entry
-        # There is logic to take care of this choice in tasks.py
-        self._service_str = "vocabulary_service"
+        self.service_str = service_str
 
-    def __iter__(self):
-        """Iterator."""
-        filepath = self._dir / self._entry["data-file"]
-        yield from create_iterator(filepath)
+    def load(self, identity, ignore=None, delay=False):
+        """Template method design pattern for loading entries."""
+        ignore = ignore or set()
+        self.pre_load(identity, ignore=ignore)
+        for data in self.iterate(ignore=ignore):
+            self.create_record(data, delay=delay)
+        return self.loaded()
 
+    def create_record(self, data, delay=False):
+        """Create the record."""
+        if delay:
+            create_vocabulary_record.delay(self.service_str, data)
+        else:  # mostly for tests
+            create_vocabulary_record(self.service_str, data)
+
+
+class GenericVocabularyEntry(VocabularyEntry):
+    """Vocabulary fixture with single data-file."""
+
+    def __init__(self, directory, id_, entry):
+        """Constructor."""
+        super().__init__("vocabulary_service", directory, id_, entry)
+
+    # Template methods
+    def pre_load(self, identity, ignore):
+        """Actions taken before iteratively creating records."""
+        if self._id not in ignore:
+            pid_type = self._entry['pid-type']
+            current_service.create_type(identity, self._id, pid_type)
+
+    def iterate(self, ignore):
+        """Iterate over dicts of file content."""
+        if self._id not in ignore:
+            filepath = self._dir / self._entry["data-file"]
+            for data in create_iterator(filepath):
+                data['type'] = self._id
+                yield data
+
+    def loaded(self):
+        """Vocabularies actually loaded."""
+        return [self._id]
+
+    # Other interface methods
     @property
     def covered_ids(self):
         """Just the id of the vocabulary covered by this entry as a list."""
         return [self._id]
 
-    def create_vocabulary_type(self, identity):
-        """Create the vocabulary type."""
-        pid_type = self._entry['pid-type']
-        current_service.create_type(identity, self._id, pid_type)
 
-    def load(self, identity, ignore=None, delay=None):
-        """Load the data file if self._id not in ignore.
+class VocabularyEntryWithSchemes(VocabularyEntry):
+    """Vocabulary fixture for specific vocabulary with schemes."""
 
-        Return the loaded id as 1 item list.
-        """
-        ignore = ignore or set()
-
-        if self._id not in ignore:
-            self.create_vocabulary_type(identity)
-
-            for record in self:
-                record['type'] = self._id
-                if delay:
-                    create_vocabulary_record.delay(self._service_str, record)
-                else:  # mostly for tests
-                    create_vocabulary_record(self._service_str, record)
-            return [self._id]
-
-        return []
-
-
-class SubjectsVocabularyEntry:
-    """Vocabulary fixture for subjects vocabulary."""
-
-    def __init__(self, directory, id_, entry):
+    def __init__(self, service_str, directory, id_, entry):
         """Constructor."""
-        self._dir = directory
-        self._parent_id = id_
-        self._entry = entry
+        super().__init__(service_str, directory, id_, entry)
+        self._loaded = []
 
-        ids = [s["id"] for s in self.schemes()]
-        # Raise if duplicate (conflicting)
-        if len(ids) != len(set(ids)):
-            raise ConflictingFixturesError(
-                f"Duplicate subtypes found for {self._parent_id}"
-            )
-
-        self._service_str = "subjects_service"
-        self._service = getattr(current_rdm_records, self._service_str)
-
-    def schemes(self):
-        """Return schemes."""
-        return self._entry.get("schemes", [])
-
-    def __iter__(self):
-        """Iterator."""
+    # Template methods
+    def pre_load(self, identity, ignore):
+        """Actions taken before iteratively creating records."""
         for scheme in self.schemes():
-            filepath = self.dir_ / scheme.get("data-file")
-            yield from create_iterator(filepath)
+            id_ = f"{self._id}.{scheme['id']}"
+            if id_ not in ignore:
+                self.create_scheme(scheme)
 
+    def iterate(self, ignore):
+        """Iterate over dicts of file content."""
+        self._loaded = []
+
+        for scheme in self.schemes():
+            id_ = f"{self._id}.{scheme['id']}"
+            if id_ not in ignore:
+                self._loaded.append(id_)
+                filepath = self._dir / scheme.get("data-file")
+                yield from create_iterator(filepath)
+
+    def loaded(self):
+        """Vocabularies actually loaded."""
+        return self._loaded
+
+    # Other interface methods
     @property
     def covered_ids(self):
         """List of ids of the subvocabularies covered by this entry."""
         return [f"{s['id']}" for s in self.schemes()]
 
-    def create_scheme(self, identity, metadata):
+    # Helpers
+    def schemes(self):
+        """Return schemes."""
+        return self._entry.get("schemes", [])
+
+    def create_scheme(self, metadata):
         """Create the vocabulary scheme row."""
         id_ = metadata["id"]
         name = metadata.get("name", "")
         uri = metadata.get("uri", "")
-        self._service.create_scheme(identity, id_, name=name, uri=uri)
-
-    def load(self, identity, ignore=None, delay=None):
-        """Load the data files whose ids are not in ignore."""
-        ignore = ignore or set()
-        loaded = []
-
-        for scheme in self.schemes():
-            id_ = f"{self._parent_id}.{scheme['id']}"
-            if id_ not in ignore:
-                self.create_scheme(identity, scheme)
-
-                filepath = self._dir / scheme.get("data-file")
-                for record in create_iterator(filepath):
-                    if delay:
-                        create_vocabulary_record.delay(
-                            self._service_str, record)
-                    else:  # mostly for tests
-                        create_vocabulary_record(self._service_str, record)
-
-                loaded.append(id_)
-
-        return loaded
+        VocabularyScheme.create(
+            id=id_, parent_id=self._id, name=name, uri=uri)
+        db.session.commit()
