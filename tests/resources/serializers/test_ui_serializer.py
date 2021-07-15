@@ -24,6 +24,10 @@ def _add_affiliation_name(creatibutors):
             if name:
                 name = name.upper()
                 creatibutors[idx_c]["affiliations"][idx_aff]["name"] = name
+            if "role" in creatibutors[idx_c]:
+                creatibutors[idx_c]["role"]["title"] = {
+                    "en": creatibutors[idx_c]["role"]["id"]
+                }
 
 
 @pytest.fixture(scope='function')
@@ -95,7 +99,7 @@ def test_ui_serializer(app, full_to_dict_record):
                     'name': 'Nielsen, Lars Holm',
                     'type': 'personal'
                 },
-                'role': {'id': 'other'},
+                'role': {'id': 'other', 'title': 'other'},
             }]
         },
         'creators': {

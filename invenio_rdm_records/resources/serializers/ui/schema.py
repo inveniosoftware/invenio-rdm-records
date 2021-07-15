@@ -18,6 +18,7 @@ from marshmallow_utils.fields import BabelGettextDictField
 from marshmallow_utils.fields import FormatDate as FormatDate_
 from marshmallow_utils.fields import FormatEDTF as FormatEDTF_
 from marshmallow_utils.fields import StrippedHTML
+from marshmallow_utils.fields.babel import gettext_from_dict
 
 from .fields import AccessStatusField
 
@@ -64,6 +65,12 @@ def make_affiliation_index(attr, obj, dummy_ctx):
                 apply_idx,
                 creator['affiliations']
             ))
+        if 'role' in creator:
+            creator['role']['title'] = gettext_from_dict(
+                creator['role']['title'],
+                get_locale(),
+                current_default_locale
+            )
 
     # Create a full list of affiliations.
     affiliation_list = [[v, k] for k, v in affiliations_idx.items()]
