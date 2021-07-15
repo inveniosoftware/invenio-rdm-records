@@ -71,7 +71,7 @@ def test_invalid_extra_right(app):
         "reference": "Reference to something et al."
     }])
 ])
-def test_valid_rights(app, references, minimal_record, vocabulary_clear):
+def test_valid_rights(app, references, minimal_record):
     metadata = minimal_record['metadata']
     # NOTE: this is done to get possible load transformations out of the way
     metadata = MetadataSchema().load(metadata)

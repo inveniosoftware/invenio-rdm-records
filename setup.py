@@ -115,8 +115,8 @@ setup(
             'invenio_rdm_records_ext = invenio_rdm_records.views:blueprint',
             'invenio_rdm_records_parent_links = invenio_rdm_records.views:create_parent_record_links_bp',
             'invenio_rdm_records_record_files = invenio_rdm_records.views:create_record_files_bp',
-            'invenio_vocabularies_affiliations = invenio_rdm_records.vocabularies.views:create_affiliations_blueprint_from_app',
-            'invenio_vocabularies_subjects = invenio_rdm_records.vocabularies.views:create_subjects_blueprint_from_app',
+            'invenio_vocabularies_affiliations = invenio_rdm_records.views:create_affiliations_blueprint_from_app',
+            'invenio_vocabularies_subjects = invenio_rdm_records.views:create_subjects_blueprint_from_app',
         ],
         "invenio_base.blueprints": [
             'invenio_rdm_records_ext = invenio_rdm_records.views:blueprint',

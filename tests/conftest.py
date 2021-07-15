@@ -32,7 +32,6 @@ from invenio_vocabularies.records.api import Vocabulary
 
 from invenio_rdm_records import config
 from invenio_rdm_records.records.api import RDMParent
-from invenio_rdm_records.vocabularies import Vocabularies
 
 
 @pytest.fixture(scope='module')
@@ -351,15 +350,6 @@ def identity_simple(users):
     i.provides.add(Need(method='system_role', value='any_user'))
     i.provides.add(Need(method='system_role', value='authenticated_user'))
     return i
-
-
-@pytest.fixture(scope='function')
-def vocabulary_clear(app):
-    """Clears the Vocabulary singleton and pushes an application context.
-
-    NOTE: app fixture pushes an application context
-    """
-    Vocabularies.clear()
 
 
 @pytest.fixture(scope="module")

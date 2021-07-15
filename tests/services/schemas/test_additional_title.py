@@ -17,7 +17,7 @@ from invenio_rdm_records.services.schemas.metadata import TitleSchema
 from .test_utils import assert_raises_messages
 
 
-def test_valid_full(vocabulary_clear):
+def test_valid_full():
     valid_full = {
         "title": "A Romans story",
         "type": {
@@ -30,7 +30,7 @@ def test_valid_full(vocabulary_clear):
     assert valid_full == TitleSchema().load(valid_full)
 
 
-def test_valid_minimal(vocabulary_clear):
+def test_valid_minimal():
     valid_partial = {
         "title": "A Romans story",
         "type": {
@@ -40,7 +40,7 @@ def test_valid_minimal(vocabulary_clear):
     assert valid_partial == TitleSchema().load(valid_partial)
 
 
-def test_invalid_no_type(vocabulary_clear):
+def test_invalid_no_type():
     invalid_no_type = {
         "title": "A Romans story",
         "lang": {
@@ -54,7 +54,7 @@ def test_invalid_no_type(vocabulary_clear):
     )
 
 
-def test_invalid_no_title(vocabulary_clear):
+def test_invalid_no_title():
     invalid_no_title = {
         "type": {
             "id": "other"
@@ -70,7 +70,7 @@ def test_invalid_no_title(vocabulary_clear):
     )
 
 
-def test_invalid_title_empty(vocabulary_clear):
+def test_invalid_title_empty():
     invalid_title_empty = {
         "title": "",
         "type": {
@@ -87,7 +87,7 @@ def test_invalid_title_empty(vocabulary_clear):
     )
 
 
-def test_invalid_too_short(vocabulary_clear):
+def test_invalid_too_short():
     too_short = {
         "title": "AA",
         "type": {
@@ -105,7 +105,7 @@ def test_invalid_too_short(vocabulary_clear):
 
 
 @pytest.mark.skip(reason="currently don't know how to test this")
-def test_invalid_title_type(vocabulary_clear):
+def test_invalid_title_type():
     invalid_title_type = {
         "title": "A Romans story",
         "type": {
@@ -121,7 +121,7 @@ def test_invalid_title_type(vocabulary_clear):
 
 
 @pytest.mark.skip(reason="currently don't know how to test this")
-def test_invalid_lang(vocabulary_clear):
+def test_invalid_lang():
     invalid_lang = {
         "title": "A Romans story",
         "type": {

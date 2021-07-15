@@ -17,7 +17,7 @@ from invenio_rdm_records.services.schemas.metadata import DescriptionSchema
 from .test_utils import assert_raises_messages
 
 
-def test_valid_full(vocabulary_clear):
+def test_valid_full():
     valid_full = {
         "description": "A Romans story",
         "type": {"id": "other"},
@@ -28,7 +28,7 @@ def test_valid_full(vocabulary_clear):
     assert valid_full == DescriptionSchema().load(valid_full)
 
 
-def test_valid_minimal(vocabulary_clear):
+def test_valid_minimal():
     valid_minimal = {
         "description": "A Romans story",
         "type": {"id": "other"}
@@ -36,7 +36,7 @@ def test_valid_minimal(vocabulary_clear):
     assert valid_minimal == DescriptionSchema().load(valid_minimal)
 
 
-def test_invalid_no_description(vocabulary_clear):
+def test_invalid_no_description():
     invalid_no_description = {
         "type": {"id": "other"},
         "lang": {
@@ -50,7 +50,7 @@ def test_invalid_no_description(vocabulary_clear):
     )
 
 
-def test_invalid_description_empty(vocabulary_clear):
+def test_invalid_description_empty():
     invalid_description_empty = {
         "description": "",
         "type": {"id": "other"},
@@ -65,7 +65,7 @@ def test_invalid_description_empty(vocabulary_clear):
     )
 
 
-def test_invalid_too_short(vocabulary_clear):
+def test_invalid_too_short():
     too_short = {
         "description": "AA",
         "type": {"id": "other"},
@@ -80,7 +80,7 @@ def test_invalid_too_short(vocabulary_clear):
     )
 
 
-def test_invalid_description_type(vocabulary_clear):
+def test_invalid_description_type():
     invalid_description_type = {
         "description": "A Romans story",
         "type": "Invalid",
@@ -96,7 +96,7 @@ def test_invalid_description_type(vocabulary_clear):
 
 
 @pytest.mark.skip(reason="currently don't know how to test this")
-def test_invalid_lang(vocabulary_clear):
+def test_invalid_lang():
     invalid_lang = {
         "description": "A Romans story",
         "type": {"id": "other"},

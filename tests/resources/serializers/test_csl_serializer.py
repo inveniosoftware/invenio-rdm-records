@@ -19,7 +19,7 @@ from invenio_rdm_records.resources.serializers.csl import get_citation_string
 from invenio_rdm_records.resources.serializers.csl.schema import CSLJSONSchema
 
 
-def test_csl_json_serializer(running_app, full_record, vocabulary_clear):
+def test_csl_json_serializer(running_app, full_record):
     """Test JSON CLS Serializer."""
     # if the record is created this field will be present
     full_record["id"] = "12345-abcde"
@@ -57,7 +57,6 @@ def test_csl_json_serializer(running_app, full_record, vocabulary_clear):
 
 def test_citation_string_serializer_records_list(
     running_app,
-    vocabulary_clear,
     client,
     es_clear,
     minimal_record,
@@ -95,7 +94,6 @@ def test_citation_string_serializer_records_list(
 
 def test_citation_string_serializer_record(
     running_app,
-    vocabulary_clear,
     client,
     es_clear,
     minimal_record,

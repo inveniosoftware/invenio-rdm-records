@@ -124,7 +124,7 @@ def test_creatibutor_name_edge_cases(app):
         valid_org_name_and_family_name)
 
 
-def test_creator_valid_role(app, vocabulary_clear):
+def test_creator_valid_role(app):
     valid_role = {
         "person_or_org": {
             "family_name": "Cesar",
@@ -254,7 +254,7 @@ def test_creator_invalid_identifiers_ror(app):
     )
 
 
-def test_contributor_person_valid_full(app, vocabulary_clear):
+def test_contributor_person_valid_full(app):
     valid_full = {
         "affiliations": [{"id": "test"}],
         "person_or_org": {
@@ -275,7 +275,7 @@ def test_contributor_person_valid_full(app, vocabulary_clear):
     assert loaded == valid_full
 
 
-def test_contributor_person_valid_minimal(app, vocabulary_clear):
+def test_contributor_person_valid_minimal(app):
     valid_minimal_family_name = {
         "person_or_org": {
             "family_name": "Cesar",
@@ -295,7 +295,7 @@ def test_contributor_person_valid_minimal(app, vocabulary_clear):
 
 
 def test_contributor_person_invalid_no_family_name_nor_given_name(
-    app, vocabulary_clear
+    app
 ):
     invalid_no_family_name_nor_given_name = {
         "person_or_org": {
@@ -318,7 +318,7 @@ def test_contributor_person_invalid_no_family_name_nor_given_name(
     )
 
 
-def test_contributor_invalid_no_role(app, vocabulary_clear):
+def test_contributor_invalid_no_role(app):
     invalid_no_role = {
         "person_or_org": {
             "name": "Julio Cesar",
@@ -357,7 +357,7 @@ def custom_config(config):
     config['RDM_RECORDS_CUSTOM_VOCABULARIES'] = prev_custom_vocabularies
 
 
-def test_contributor_invalid_role(app, custom_config, vocabulary_clear):
+def test_contributor_invalid_role(app, custom_config):
     # Doubles as a test of custom roles
     invalid_role = {
         "person_or_org": {
@@ -380,7 +380,7 @@ def test_contributor_invalid_role(app, custom_config, vocabulary_clear):
 
 
 def test_metadata_requires_non_empty_creators(
-    app, minimal_metadata, vocabulary_clear
+    app, minimal_metadata
 ):
     del minimal_metadata["creators"]
     assert_raises_messages(
