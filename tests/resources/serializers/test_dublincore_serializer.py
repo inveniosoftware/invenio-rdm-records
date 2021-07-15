@@ -11,6 +11,8 @@ import pytest
 
 from invenio_rdm_records.resources.serializers.dublincore import \
     DublinCoreJSONSerializer, DublinCoreXMLSerializer
+from invenio_rdm_records.resources.serializers.errors import \
+    VocabularyItemNotFoundError
 
 
 @pytest.fixture(scope="function")
@@ -77,6 +79,14 @@ def test_dublincorejson_serializer_minimal(
     serialized_record = serializer.dump_one(updated_minimal_record)
 
     assert serialized_record == expected_data
+
+
+def test_vocabulary_type_error(running_app, updated_minimal_record):
+    """Test error thrown on missing resource type."""
+    updated_minimal_record['metadata']['resource_type']['id'] = 'invalid'
+
+    with pytest.raises(VocabularyItemNotFoundError):
+        DublinCoreJSONSerializer().dump_one(updated_minimal_record)
 
 
 def test_dublincorexml_serializer(running_app, updated_full_record):
