@@ -12,6 +12,7 @@ import json
 from datacite import DataCiteRESTClient
 from datacite.errors import DataCiteError
 from flask import current_app
+from invenio_pidstore.errors import PIDAlreadyExists, PIDDoesNotExistError
 from invenio_pidstore.models import PIDStatus
 
 from invenio_rdm_records.resources.serializers import DataCite43JSONSerializer
@@ -55,8 +56,8 @@ class DOIDataCitePIDProvider(BasePIDProvider):
     name = "datacite"
 
     def __init__(self, client, pid_type="doi",
-                 default_status=PIDStatus.NEW, generate_suffix_func=None,
-                 generate_id_func=None, **kwargs):
+                 default_status=PIDStatus.NEW, generate_id_func=None,
+                 generate_doi_func=None, **kwargs):
         """Constructor."""
         self.client = client
         self.api_client = None
@@ -71,9 +72,14 @@ class DOIDataCitePIDProvider(BasePIDProvider):
 
         super().__init__(self.api_client, pid_type, default_status)
 
-        self.generate_suffix = generate_suffix_func or \
-            DOIDataCitePIDProvider._generate_suffix
-        self.generate_id = generate_id_func or self._generate_id
+        self.generate_id = generate_id_func or \
+            DOIDataCitePIDProvider._generate_id
+
+        default_generate_doi = self._generate_doi
+        format_func = current_app.config['RDM_RECORDS_DOI_DATACITE_FORMAT']
+        if format_func and callable(format_func):
+            default_generate_doi = format_func
+        self.generate_doi = generate_doi_func or default_generate_doi
 
     @staticmethod
     def _log_errors(errors):
@@ -86,24 +92,28 @@ class DOIDataCitePIDProvider(BasePIDProvider):
             current_app.logger.warning(f"Error in {field}: {reason}")
 
     @staticmethod
-    def _generate_suffix(record, client, **kwargs):
+    def _generate_id(record, **kwargs):
         """Generate a unique DOI suffix.
 
         The content after the slash.
         """
         recid = record.pid.pid_value
-        return f"{client.name}.{recid}"
+        return f"{recid}"
 
-    def _generate_id(self, record, **kwargs):
+    def _generate_doi(self, record, **kwargs):
         """Generate a unique DOI."""
         prefix = self.client.prefix
-        suffix = self.generate_suffix(record, self.client, **kwargs)
-        return f"{prefix}/{suffix}"
+        id = self.generate_id(record, **kwargs)
+        format_string = current_app.config['RDM_RECORDS_DOI_DATACITE_FORMAT']
+        if format_string:
+            return format_string.format(prefix=prefix, id=id)
+        else:
+            return f"{prefix}/datacite.{id}"
 
     def create(self, record, **kwargs):
         """Create a new unique DOI PID based on the record ID."""
-        value = self.generate_id(record, **kwargs)
-        return super().create(record, value)
+        doi = self.generate_doi(record, **kwargs)
+        return super().create(record, doi, **kwargs)
 
     def reserve(self, pid, record, **kwargs):
         """Constant True.
