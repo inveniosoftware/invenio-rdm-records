@@ -123,7 +123,7 @@ def running_app(
     return running_app
 
 
-def test_datacite43_serializer(running_app, full_record, vocabulary_clear):
+def test_datacite43_serializer(running_app, full_record):
     """Test serializer to DataCite 4.3 JSON"""
     expected_data = {
         "types": {

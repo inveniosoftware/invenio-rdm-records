@@ -64,7 +64,7 @@ def test_invalid_url():
         "title": "Copyright (C) 2020. All rights reserved."
     }])
 ])
-def test_valid_rights(rights, minimal_record, vocabulary_clear):
+def test_valid_rights(rights, minimal_record):
     metadata = minimal_record['metadata']
     # NOTE: this is done to get possible load transformations out of the way
     metadata = MetadataSchema().load(metadata)

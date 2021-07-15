@@ -104,7 +104,7 @@ def test_extensions(app, minimal_record):
     )
 
 
-def test_full_metadata_schema(app, vocabulary_clear, full_metadata):
+def test_full_metadata_schema(app, full_metadata):
     """Test metadata schema."""
     # Test full attributes
 
@@ -113,14 +113,14 @@ def test_full_metadata_schema(app, vocabulary_clear, full_metadata):
 
 
 def test_minimal_metadata_schema(
-    app, vocabulary_clear, minimal_metadata, expected_minimal_metadata
+    app, minimal_metadata, expected_minimal_metadata
 ):
     metadata = MetadataSchema().load(minimal_metadata)
 
     assert expected_minimal_metadata == metadata
 
 
-def test_additional_field_raises(app, vocabulary_clear, minimal_metadata):
+def test_additional_field_raises(app, minimal_metadata):
 
     minimal_metadata["foo"] = "FOO"
 

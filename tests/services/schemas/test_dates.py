@@ -81,7 +81,7 @@ def test_invalid_range():
 
 
 def test_dates_in_metadata_schema(
-        minimal_metadata, expected_minimal_metadata, vocabulary_clear):
+        minimal_metadata, expected_minimal_metadata):
     minimal_metadata["dates"] = expected_minimal_metadata["dates"] = [{
         "date": "1939/1945",
         "type": {"id": "other"},

@@ -59,7 +59,7 @@ def test_invalid_empty_funding():
     ([]),
     ([{"funder": FUNDER}, {"award": AWARD}])
 ])
-def test_valid_rights(funding, minimal_record, vocabulary_clear):
+def test_valid_rights(funding, minimal_record):
     metadata = minimal_record['metadata']
     # NOTE: this is done to get possible load transformations out of the way
     metadata = MetadataSchema().load(metadata)
