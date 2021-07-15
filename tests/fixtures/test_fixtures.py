@@ -15,10 +15,9 @@ from invenio_pidstore.errors import PIDDoesNotExistError
 from invenio_records_resources.proxies import current_service_registry
 from invenio_vocabularies.proxies import current_service as vocabulary_service
 
-from invenio_rdm_records.fixtures.affiliations import AffiliationsFixture
 from invenio_rdm_records.fixtures.users import UsersFixture
 from invenio_rdm_records.fixtures.vocabularies import GenericVocabularyEntry, \
-    PrioritizedVocabulariesFixtures
+    PrioritizedVocabulariesFixtures, VocabularyEntryWithSchemes
 from invenio_rdm_records.proxies import current_rdm_records
 
 
@@ -26,6 +25,12 @@ from invenio_rdm_records.proxies import current_rdm_records
 def subjects_service(app):
     """Subjects service."""
     return getattr(current_rdm_records, "subjects_service")
+
+
+@pytest.fixture(scope="module")
+def affiliations_service(app):
+    """Affiliations service."""
+    return getattr(current_rdm_records, "affiliations_service")
 
 
 def test_load_languages(app, db, es_clear):
@@ -172,20 +177,28 @@ def test_load_users(app, db, admin_role):
     assert current_datastore.find_user(email="user@example.com")
 
 
-def test_load_affiliations(app, db, admin_role, es_clear):
+def test_load_affiliations(
+        app, db, admin_role, es_clear, affiliations_service):
     dir_ = Path(__file__).parent
-    affiliations = AffiliationsFixture(
-        [
-            dir_ / "app_data",
-            dir_.parent.parent / "invenio_rdm_records/fixtures/data"
-        ],
-        "affiliations.yaml"
+    affiliations = VocabularyEntryWithSchemes(
+        "affiliations_service",
+        Path(__file__).parent / "app_data",
+        "affiliations",
+        {
+            "pid-type": "aff",
+            "schemes": [{
+                "id": "ROR",
+                "name": "Research Organization Registry",
+                "uri": "https://ror.org/",
+                "data-file": "vocabularies/affiliations_ror.yaml"
+            }]
+        }
     )
 
-    affiliations.load()
+    affiliations.load(system_identity, delay=False)
 
-    # app_data/users.yaml doesn't create an admin@inveniosoftware.org user
-    service = current_service_registry.get("rdm-affiliations")
-    cern = service.read(identity=system_identity, id_="01ggx4157")
+    cern = affiliations_service.read(identity=system_identity, id_="01ggx4157")
     assert cern["acronym"] == "CERN"
-    pytest.raises(PIDDoesNotExistError, service.read, "cern", system_identity)
+
+    with pytest.raises(PIDDoesNotExistError):
+        affiliations_service.read("cern", system_identity)
