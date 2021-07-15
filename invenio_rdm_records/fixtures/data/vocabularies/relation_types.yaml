@@ -38,16 +38,6 @@
      datacite: Describes
   title:
      en: Describes
-- id: hasmetadata
-  props:
-     datacite: HasMetadata
-  title:
-     en: Has metadata
-- id: ismetadatafor
-  props:
-     datacite: IsMetadataFor
-  title:
-     en: Is metadata for
 - id: hasversion
   props:
      datacite: HasVersion
