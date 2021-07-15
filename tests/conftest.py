@@ -149,7 +149,7 @@ def full_record(users):
             "related_identifiers": [{
                 "identifier": "10.1234/foo.bar",
                 "scheme": "doi",
-                "relation_type": {"id": "cites"},
+                "relation_type": {"id": "iscitedby"},
                 "resource_type": {"id": "dataset"}
             }],
             "sizes": [
@@ -566,12 +566,12 @@ def relation_type(app):
 def relation_type_v(app, relation_type):
     """Relation type vocabulary record."""
     vocab = vocabulary_service.create(system_identity, {
-        "id": "cites",
+        "id": "iscitedby",
         "props": {
-            "datacite": "Cites"
+            "datacite": "IsCitedBy"
         },
         "title": {
-            "en": "Cites"
+            "en": "Is cited by"
         },
         "type": "relationtypes"
     })

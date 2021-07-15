@@ -1,6 +1,6 @@
 - id: iscitedby
   props:
-     datacite: Is cited by
+     datacite: IsCitedBy
   title:
      en: Is cited by
 - id: cites
@@ -10,17 +10,17 @@
      en: Cites
 - id: issupplementto
   props:
-     datacite: Is supplement to
+     datacite: IsSupplementTo
   title:
      en: Is supplement to
 - id: issupplementedby
   props:
-     datacite: Is supplemented by
+     datacite: IsSupplementedBy
   title:
      en: Is supplemented by
 - id: iscontinuedby
   props:
-     datacite: Is continued by
+     datacite: IsContinuedBy
   title:
      en: Is continued by
 - id: continues
@@ -30,7 +30,7 @@
      en: Continues
 - id: isdescribedby
   props:
-     datacite: Is described by
+     datacite: IsDescribedBy
   title:
      en: Is described by
 - id: describes
@@ -40,47 +40,47 @@
      en: Describes
 - id: hasmetadata
   props:
-     datacite: Has metadata
+     datacite: HasMetadata
   title:
      en: Has metadata
 - id: ismetadatafor
   props:
-     datacite: Is metadata for
+     datacite: IsMetadataFor
   title:
      en: Is metadata for
 - id: hasversion
   props:
-     datacite: Has version
+     datacite: HasVersion
   title:
      en: Has version
 - id: isversionof
   props:
-     datacite: Is version of
+     datacite: IsVersionOf
   title:
      en: Is version of
 - id: isnewversionof
   props:
-     datacite: Is new version of
+     datacite: IsNewVersionOf
   title:
      en: Is new version of
 - id: ispreviousversionof
   props:
-     datacite: Is previous version of
+     datacite: IsPreviousVersionOf
   title:
      en: Is previous version of
 - id: ispartof
   props:
-     datacite: Is part of
+     datacite: IsPartOf
   title:
      en: Is part of
 - id: haspart
   props:
      datacite: Has part
   title:
-     en: Has part
+     en: HasPart
 - id: isreferencedby
   props:
-     datacite: Is referenced by
+     datacite: IsReferencedBy
   title:
      en: Is referenced by
 - id: references
@@ -90,7 +90,7 @@
      en: References
 - id: isdocumentedby
   props:
-     datacite: Is documented by
+     datacite: IsDocumentedBy
   title:
      en: Is documented by
 - id: documents
@@ -100,7 +100,7 @@
      en: Documents
 - id: iscompiledby
   props:
-     datacite: Is compiled by
+     datacite: IsCompiledBy
   title:
      en: Is compiled by
 - id: compiles
@@ -110,22 +110,22 @@
      en: Compiles
 - id: isvariantformof
   props:
-     datacite: Is variant form of
+     datacite: IsVariantFormOf
   title:
      en: Is variant form of
 - id: isoriginalformof
   props:
-     datacite: Is original form of
+     datacite: IsOriginalFormOf
   title:
      en: Is original form of
 - id: isidenticalto
   props:
-     datacite: Is identical to
+     datacite: IsIdenticalTo
   title:
      en: Is identical to
 - id: isreviewedby
   props:
-     datacite: Is reviewed by
+     datacite: IsReviewedBy
   title:
      en: Is reviewed by
 - id: reviews
@@ -135,17 +135,17 @@
      en: Reviews
 - id: isderivedfrom
   props:
-     datacite: Is derived from
+     datacite: IsDerivedFrom
   title:
      en: Is derived from
 - id: issourceof
   props:
-     datacite: Is source of
+     datacite: IsSourceOf
   title:
      en: Is source of
 - id: isrequiredby
   props:
-     datacite: Is required by
+     datacite: IsRequiredBy
   title:
      en: Is required by
 - id: requires
@@ -155,7 +155,7 @@
      en: Requires
 - id: isobsoletedby
   props:
-     datacite: Is obsoleted by
+     datacite: IsObsoletedBy
   title:
      en: Is obsoleted by
 - id: obsoletes
