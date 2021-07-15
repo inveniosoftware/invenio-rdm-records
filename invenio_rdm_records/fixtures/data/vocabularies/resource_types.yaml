@@ -69,7 +69,7 @@
     datacite_type: Conference paper
     openaire_resourceType: '4'
     openaire_type: publication
-    eurepo:
+    eurepo: info:eu-repo/semantics/conferencePaper
     schema.org: https://schema.org/ScholarlyArticle
     subtype: publication-conferencepaper
     subtype_name: Conference paper
@@ -85,7 +85,7 @@
     datacite_type: Data management plan
     openaire_resourceType: '9'
     openaire_type: publication
-    eurepo: info:eu-repo/semantics/conferencePaper
+    eurepo: info:eu-repo/semantics/technicalDocumentation
     schema.org: https://schema.org/CreativeWork
     subtype: publication-datamanagementplan
     subtype_name: Data management plan
@@ -309,7 +309,7 @@
     datacite_type: Poster
     openaire_resourceType: '4'
     openaire_type: publication
-    eurepo:
+    eurepo: info:eu-repo/semantics/conferencePoster
     schema.org: https://schema.org/CreativeWork
     subtype: ''
     subtype_name: ''
