@@ -214,7 +214,7 @@ def test_datacite43_serializer(running_app, full_record):
             {
                 "relatedIdentifier": "10.1234/foo.bar",
                 "relatedIdentifierType": "DOI",
-                "relationType": "Cites",
+                "relationType": "IsCitedBy",
                 "resourceTypeGeneral": "Dataset",
             }
         ],
@@ -304,7 +304,7 @@ def test_datacite43_xml_serializer(running_app, full_record):
         "  <language>dan</language>",
         "  <resourceType resourceTypeGeneral=\"Image\">Photo</resourceType>",
         "  <relatedIdentifiers>",
-        "    <relatedIdentifier relatedIdentifierType=\"DOI\" relationType=\"Cites\" resourceTypeGeneral=\"Dataset\">10.1234/foo.bar</relatedIdentifier>",  # noqa
+        "    <relatedIdentifier relatedIdentifierType=\"DOI\" relationType=\"IsCitedBy\" resourceTypeGeneral=\"Dataset\">10.1234/foo.bar</relatedIdentifier>",  # noqa
         "  </relatedIdentifiers>",
         "  <sizes>",
         "    <size>11 pages</size>",

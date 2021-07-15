@@ -56,7 +56,7 @@ def full_to_dict_record(full_record):
     to_dict_record["metadata"]["related_identifiers"] = [
         {'identifier': '10.1234/foo.bar',
          'resource_type': {'id': 'dataset', "title": {"en": "Dataset"}},
-         'relation_type': {'id': 'cites', "title": {"en": "Cites"}},
+         'relation_type': {'id': 'iscitedby', "title": {"en": "Is cited by"}},
          'scheme': 'doi'}
     ]
 
@@ -147,7 +147,7 @@ def test_ui_serializer(app, full_to_dict_record):
         ],
         'related_identifiers': [
             {'identifier': '10.1234/foo.bar',
-             'relation_type': {'id': 'cites', 'title_l10n': 'Cites'},
+             'relation_type': {'id': 'iscitedby', 'title_l10n': 'Is cited by'},
              'resource_type': {'id': 'dataset', 'title_l10n': 'Dataset'},
              'scheme': 'doi'}
         ],
