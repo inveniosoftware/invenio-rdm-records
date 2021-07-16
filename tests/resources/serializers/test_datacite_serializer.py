@@ -143,7 +143,7 @@ def test_datacite43_serializer(running_app, full_record):
                     "nameIdentifierScheme": "ORCID",
                     'schemeURI': 'http://orcid.org/'
                 }],
-                "affiliations": [
+                "affiliation": [
                     {'name': 'free-text'},
                     {
                         "name": "CERN",
@@ -182,7 +182,7 @@ def test_datacite43_serializer(running_app, full_record):
                     "nameIdentifierScheme": "ORCID",
                     'schemeURI': 'http://orcid.org/'
                 }],
-                "affiliations": [
+                "affiliation": [
                     {
                         "name": "CERN",
                         "affiliationIdentifier": "https://ror.org/01ggx4157",
@@ -277,6 +277,8 @@ def test_datacite43_xml_serializer(running_app, full_record):
         "      <givenName>Lars Holm</givenName>",
         "      <familyName>Nielsen</familyName>",
         "      <nameIdentifier nameIdentifierScheme=\"ORCID\">http://orcid.org/0000-0001-8135-3489</nameIdentifier>",  # noqa
+        "      <affiliation>free-text</affiliation>",
+        "      <affiliation affiliationIdentifier=\"https://ror.org/01ggx4157\" affiliationIdentifierScheme=\"ROR\">CERN</affiliation>",  # noqa
         "    </creator>",
         "  </creators>",
         "  <titles>",
@@ -295,6 +297,7 @@ def test_datacite43_xml_serializer(running_app, full_record):
         "      <givenName>Lars Holm</givenName>",
         "      <familyName>Nielsen</familyName>",
         "      <nameIdentifier nameIdentifierScheme=\"ORCID\">http://orcid.org/0000-0001-8135-3489</nameIdentifier>",  # noqa
+        "      <affiliation affiliationIdentifier=\"https://ror.org/01ggx4157\" affiliationIdentifierScheme=\"ROR\">CERN</affiliation>",  # noqa
         "    </contributor>",
         "  </contributors>",
         "  <dates>",
