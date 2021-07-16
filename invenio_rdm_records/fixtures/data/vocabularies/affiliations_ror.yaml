@@ -5,26 +5,41 @@
     de: "\_Europ\xE4ische Organisation f\xFCr Kernforschung"
     en: European Organization for Nuclear Research
     fr: "Organisation europ\xE9enne pour la recherche nucl\xE9aire"
+  identifiers:
+    - scheme: ror
+      identifier: 01ggx4157
 - acronym: BNL
   id: 02ex6cf31
   name: Brookhaven National Laboratory
   title:
     en: Brookhaven National Laboratory
+  identifiers:
+    - scheme: ror
+      identifier: 02ex6cf31
 - id: 047h63042
   name: Eko-Konnect
   title:
     en: Eko-Konnect
+  identifiers:
+    - scheme: ror
+      identifier: 047h63042
 - acronym: HZDR
   id: 01zy2cs03
   name: Helmholtz-Zentrum Dresden-Rossendorf
   title:
     en: Helmholtz-Zentrum Dresden-Rossendorf
+  identifiers:
+    - scheme: ror
+      identifier: 01zy2cs03
 - acronym: INFN
   id: 005ta0471
   name: National Institute for Nuclear Physics
   title:
     en: National Institute for Nuclear Physics
     it: Istituto Nazionale di Fisica Nucleare
+  identifiers:
+    - scheme: ror
+      identifier: 005ta0471
 - acronym: JRC
   id: 04j5wtv36
   name: Directorate-General Joint Research Centre
@@ -32,51 +47,81 @@
     de: Gemeinsame Forschungsstelle
     en: Directorate-General Joint Research Centre
     fr: Centre commun de recherche
+  identifiers:
+    - scheme: ror
+      identifier: 04j5wtv36
 - acronym: NU
   id: 000e0be47
   name: Northwestern University
   title:
     en: Northwestern University
+  identifiers:
+    - scheme: ror
+      identifier: 000e0be47
 - id: 04mcehe57
   name: Tind Technologies (Norway)
   title:
     en: Tind Technologies (Norway)
+  identifiers:
+    - scheme: ror
+      identifier: 04mcehe57
 - acronym: ULAKBIM
   id: 017k52s24
   name: Turkish Academic Network and Information Center
   title:
     en: Turkish Academic Network and Information Center
     tr: "Ulusal Akademik A\u011F ve Bilgi Merkezi"
+  identifiers:
+    - scheme: ror
+      identifier: 017k52s24
 - id: 00d7xrm67
   name: Graz University of Technology
   title:
     de: "Technische Universit\xE4t Graz"
     en: Graz University of Technology
+  identifiers:
+    - scheme: ror
+      identifier: 00d7xrm67
 - acronym: TUW
   id: 04d836q62
   name: TU Wien
   title:
     de: "Technische Universit\xE4t Wien"
     en: TU Wien
+  identifiers:
+    - scheme: ror
+      identifier: 04d836q62
 - acronym: UH
   id: 00g30e956
   name: "Universit\xE4t Hamburg"
   title:
     en: University of Hamburg
+  identifiers:
+    - scheme: ror
+      identifier: 00g30e956
 - acronym: WWU
   id: 00pd74e08
   name: "University of M\xFCnster"
   title:
     de: "Westf\xE4lische Wilhelms-Universit\xE4t M\xFCnster"
     en: "University of M\xFCnster"
+  identifiers:
+    - scheme: ror
+      identifier: 00pd74e08
 - acronym: WACREN
   id: 006rqpt26
   name: West and Central African Research and Education Network
   title:
     en: West and Central African Research and Education Network
+  identifiers:
+    - scheme: ror
+      identifier: 006rqpt26
 - acronym: CIT
   id: 05dxps055
   name: California Institute of Technology
   title:
     en: California Institute of Technology
     es: "Instituto de Tecnolog\xEDa de California"
+  identifiers:
+    - scheme: ror
+      identifier: 05dxps055

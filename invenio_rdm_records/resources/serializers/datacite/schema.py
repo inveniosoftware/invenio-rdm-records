@@ -86,6 +86,7 @@ class PersonOrOrgSchema43(Schema):
                 serialized_affiliations.append(
                     {"name": affiliation["name"]}
                 )
+
         if ids:
             affiliations_service = (
                 current_service_registry.get("rdm-affiliations")
