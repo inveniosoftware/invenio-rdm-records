@@ -39,7 +39,7 @@ class PersonOrOrgSchema43(Schema):
     givenName = fields.Str(attribute="person_or_org.given_name")
     familyName = fields.Str(attribute="person_or_org.family_name")
     nameIdentifiers = fields.Method('get_name_identifiers')
-    affiliations = fields.Method('get_affiliation')
+    affiliation = fields.Method('get_affiliation')
 
     def get_name_identifiers(self, obj):
         """Get name identifier list."""
