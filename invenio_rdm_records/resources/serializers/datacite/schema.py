@@ -27,6 +27,11 @@ from invenio_rdm_records.resources.serializers.ui.schema import \
 from ..utils import map_type
 
 
+def get_scheme_label(scheme, labels):
+    """Returns a scheme label."""
+    return current_app.config[labels][scheme]["label"]
+
+
 class PersonOrOrgSchema43(Schema):
     """Creator/contributor common schema for v4."""
 
@@ -48,13 +53,17 @@ class PersonOrOrgSchema43(Schema):
 
             name_id = {
                 "nameIdentifier": value,
-                "nameIdentifierScheme": scheme.upper(),
+                "nameIdentifierScheme": get_scheme_label(
+                    scheme,
+                    "RDM_RECORDS_PERSONORG_SCHEMES"
+                ),
             }
 
             uri = to_url(value, scheme)
             if uri:
                 name_id["nameIdentifier"] = uri
-                name_id["schemeURI"] = LANDING_URLS.get(scheme)
+                name_id["schemeURI"] = LANDING_URLS.get(scheme).format(
+                    scheme="http", pid="")
 
             serialized_identifiers.append(name_id)
 
@@ -96,7 +105,9 @@ class PersonOrOrgSchema43(Schema):
                     scheme = identifier["scheme"]
                     id_value = identifier["identifier"]
                     aff["affiliationIdentifier"] = id_value
-                    aff["affiliationIdentifierScheme"] = scheme.upper()
+                    aff["affiliationIdentifierScheme"] = get_scheme_label(
+                        scheme, "VOCABULARIES_AFFILIATION_SCHEMES"
+                    )
                     uri = to_url(id_value, scheme)
                     if uri:
                         aff["affiliationIdentifier"] = uri
@@ -299,7 +310,9 @@ class DataCite43Schema(Schema):
         for scheme, id_ in pids.items():
             serialized_identifiers.append({
                 "identifier": id_["identifier"],
-                "identifierType": scheme.upper()
+                "identifierType": get_scheme_label(
+                    scheme, "RDM_RECORDS_IDENTIFIERS_SCHEMES"
+                )
             })
 
         # Identifiers field
@@ -307,7 +320,9 @@ class DataCite43Schema(Schema):
         for id_ in identifiers:
             serialized_identifiers.append({
                 "identifier": id_["identifier"],
-                "identifierType": id_["scheme"]
+                "identifierType": get_scheme_label(
+                    id_["scheme"], "RDM_RECORDS_IDENTIFIERS_SCHEMES"
+                )
             })
 
         return serialized_identifiers or missing
@@ -325,7 +340,9 @@ class DataCite43Schema(Schema):
                 relation_type_id
             )
             serialized_identifier = {
-                "relatedIdentifierType": rel_id["scheme"].upper(),
+                "relatedIdentifierType": get_scheme_label(
+                    rel_id["scheme"], "RDM_RECORDS_IDENTIFIERS_SCHEMES"
+                ),
                 "relationType": props.get("datacite", ""),
                 "relatedIdentifier": rel_id["identifier"],
             }

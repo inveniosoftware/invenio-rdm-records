@@ -147,7 +147,7 @@ def test_datacite43_serializer(running_app, full_record):
                     {'name': 'free-text'},
                     {
                         "name": "CERN",
-                        "affiliationIdentifier": "https://ror.org/01ggx4157",
+                        "affiliationIdentifier": "http://ror.org/01ggx4157",
                         "affiliationIdentifierScheme": "ROR",
                     }
                 ],
@@ -185,7 +185,7 @@ def test_datacite43_serializer(running_app, full_record):
                 "affiliation": [
                     {
                         "name": "CERN",
-                        "affiliationIdentifier": "https://ror.org/01ggx4157",
+                        "affiliationIdentifier": "http://ror.org/01ggx4157",
                         "affiliationIdentifierScheme": "ROR",
                     }
                 ],
@@ -207,7 +207,7 @@ def test_datacite43_serializer(running_app, full_record):
             },
             {
                 "identifier": "1924MNRAS..84..308E",
-                "identifierType": "bibcode"
+                "identifierType": "Bibcode"
             },
         ],
         "relatedIdentifiers": [
@@ -278,7 +278,7 @@ def test_datacite43_xml_serializer(running_app, full_record):
         "<resource xmlns=\"http://datacite.org/schema/kernel-4\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://datacite.org/schema/kernel-4 http://schema.datacite.org/meta/kernel-4.3/metadata.xsd\">",  # noqa
         "  <identifier identifierType=\"DOI\">10.5281/inveniordm.1234</identifier>",  # noqa
         "  <alternateIdentifiers>",
-        "    <alternateIdentifier alternateIdentifierType=\"bibcode\">1924MNRAS..84..308E</alternateIdentifier>",  # noqa
+        "    <alternateIdentifier alternateIdentifierType=\"Bibcode\">1924MNRAS..84..308E</alternateIdentifier>",  # noqa
         "  </alternateIdentifiers>",
         "  <creators>",
         "    <creator>",
@@ -287,7 +287,7 @@ def test_datacite43_xml_serializer(running_app, full_record):
         "      <familyName>Nielsen</familyName>",
         "      <nameIdentifier nameIdentifierScheme=\"ORCID\">http://orcid.org/0000-0001-8135-3489</nameIdentifier>",  # noqa
         "      <affiliation>free-text</affiliation>",
-        "      <affiliation affiliationIdentifier=\"https://ror.org/01ggx4157\" affiliationIdentifierScheme=\"ROR\">CERN</affiliation>",  # noqa
+        "      <affiliation affiliationIdentifier=\"http://ror.org/01ggx4157\" affiliationIdentifierScheme=\"ROR\">CERN</affiliation>",  # noqa
         "    </creator>",
         "  </creators>",
         "  <titles>",
@@ -306,7 +306,7 @@ def test_datacite43_xml_serializer(running_app, full_record):
         "      <givenName>Lars Holm</givenName>",
         "      <familyName>Nielsen</familyName>",
         "      <nameIdentifier nameIdentifierScheme=\"ORCID\">http://orcid.org/0000-0001-8135-3489</nameIdentifier>",  # noqa
-        "      <affiliation affiliationIdentifier=\"https://ror.org/01ggx4157\" affiliationIdentifierScheme=\"ROR\">CERN</affiliation>",  # noqa
+        "      <affiliation affiliationIdentifier=\"http://ror.org/01ggx4157\" affiliationIdentifierScheme=\"ROR\">CERN</affiliation>",  # noqa
         "    </contributor>",
         "  </contributors>",
         "  <dates>",
