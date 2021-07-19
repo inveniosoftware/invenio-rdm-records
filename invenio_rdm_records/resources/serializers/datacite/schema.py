@@ -26,16 +26,13 @@ from invenio_rdm_records.resources.serializers.ui.schema import \
 from ..utils import map_type
 
 
+def get_scheme_label(scheme, labels):
+    """Returns a scheme label."""
+    return current_app.config[labels][scheme].get("label", scheme)
+
+
 class PersonOrOrgSchema43(Schema):
     """Creator/contributor common schema for v4."""
-
-    # PIDS-FIXME: need a more escalable solution for URIs
-    URIS = {
-        "orcid": "http://orcid.org/",
-        "gnd": "http://d-nb.info/",  # PIDS-FIXME: is this correct?
-        "ror": "https://ror.org/",
-        "isni": "https://isni.org",
-    }
 
     name = fields.Str(attribute="person_or_org.name")
     nameType = fields.Str(attribute="person_or_org.type")
@@ -50,19 +47,13 @@ class PersonOrOrgSchema43(Schema):
         identifiers = obj["person_or_org"].get("identifiers", [])
 
         for identifier in identifiers:
-            scheme = identifier["scheme"]
-            value = identifier["identifier"]
-            uri = self.URIS.get(scheme)
-
             name_id = {
-                "nameIdentifier": value,
-                "nameIdentifierScheme": scheme.upper(),
+                "nameIdentifier": identifier["identifier"],
+                "nameIdentifierScheme": get_scheme_label(
+                    identifier["scheme"],
+                    "RDM_RECORDS_PERSONORG_SCHEMES"
+                ),
             }
-
-            if uri:
-                name_id["nameIdentifier"] = uri + value
-                name_id["schemeURI"] = uri
-
             serialized_identifiers.append(name_id)
 
         return serialized_identifiers
@@ -101,13 +92,11 @@ class PersonOrOrgSchema43(Schema):
                 if identifier:
                     # PIDS-FIXME: DataCite accepts only one, how to decide
                     identifier = identifier[0]
-                    scheme = identifier["scheme"]
-                    id_value = identifier["identifier"]
-                    aff["affiliationIdentifier"] = id_value
-                    aff["affiliationIdentifierScheme"] = scheme.upper()
-                    uri = self.URIS.get(scheme)
-                    if uri:
-                        aff["affiliationIdentifier"] = uri + id_value
+                    aff["affiliationIdentifier"] = identifier["identifier"]
+                    aff["affiliationIdentifierScheme"] = get_scheme_label(
+                        identifier["scheme"],
+                        "VOCABULARIES_AFFILIATION_SCHEMES"
+                    )
 
                 serialized_affiliations.append(aff)
 
@@ -307,7 +296,9 @@ class DataCite43Schema(Schema):
         for scheme, id_ in pids.items():
             serialized_identifiers.append({
                 "identifier": id_["identifier"],
-                "identifierType": scheme.upper()
+                "identifierType": get_scheme_label(
+                    scheme, "RDM_RECORDS_IDENTIFIERS_SCHEMES"
+                )
             })
 
         # Identifiers field
@@ -315,7 +306,9 @@ class DataCite43Schema(Schema):
         for id_ in identifiers:
             serialized_identifiers.append({
                 "identifier": id_["identifier"],
-                "identifierType": id_["scheme"]
+                "identifierType": get_scheme_label(
+                    id_["scheme"], "RDM_RECORDS_IDENTIFIERS_SCHEMES"
+                )
             })
 
         return serialized_identifiers or missing
@@ -333,9 +326,11 @@ class DataCite43Schema(Schema):
                 relation_type_id
             )
             serialized_identifier = {
-                "relatedIdentifierType": rel_id["scheme"].upper(),
-                "relationType": props.get("datacite", ""),
                 "relatedIdentifier": rel_id["identifier"],
+                "relationType": props.get("datacite", ""),
+                "relatedIdentifierType": get_scheme_label(
+                    rel_id["scheme"], "RDM_RECORDS_IDENTIFIERS_SCHEMES"
+                )
             }
 
             resource_type_id = rel_id.get("resource_type", {}).get("id")
