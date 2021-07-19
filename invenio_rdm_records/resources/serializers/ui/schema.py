@@ -8,19 +8,19 @@
 
 """Record response serializers."""
 
-from ast import literal_eval
 from copy import deepcopy
 from functools import partial
 
 from flask import current_app
 from flask_babelex import get_locale
-from invenio_i18n.ext import current_i18n
 from marshmallow import Schema, fields, missing
 from marshmallow_utils.fields import BabelGettextDictField
 from marshmallow_utils.fields import FormatDate as FormatDate_
 from marshmallow_utils.fields import FormatEDTF as FormatEDTF_
 from marshmallow_utils.fields import StrippedHTML
 from marshmallow_utils.fields.babel import gettext_from_dict
+
+from invenio_vocabularies.records.models import VocabularyScheme
 
 from .fields import AccessStatusField
 
@@ -163,6 +163,28 @@ class RightsSchema(VocabularyL10Schema):
     props = fields.Dict()
 
 
+class SubjectsSchema(Schema):
+    """Returning subjects schemes long names."""
+
+    scheme = fields.String(missing="Keywords")
+    subject = fields.String()
+    name = fields.Method("subjects_long_names")
+
+    def subjects_long_names(self, subject):
+        """Return subject's long scheme name."""
+        subj_schemes_map = self.context.setdefault(
+            'subj_schemes_map', {'Keywords': 'Keywords'})
+        if subj_schemes_map.get(subject.get('scheme', 'Keywords')):
+            return subj_schemes_map[subject.get("scheme", "Keywords")]
+        else:
+            subj_schemes_name = VocabularyScheme.query.filter(
+                VocabularyScheme.id==subject["scheme"]).one()
+            subj_schemes_map[subject["scheme"]] = subj_schemes_name.name
+            # Cache result in marshmallow context
+            self.context["subj_schemes_map"][subject["scheme"]] = \
+                subj_schemes_name.name
+
+
 class UIObjectSchema(Schema):
     """Schema for dumping extra information for the UI."""
 
@@ -220,6 +242,11 @@ class UIObjectSchema(Schema):
     rights = fields.List(
         fields.Nested(RightsSchema()),
         attribute="metadata.rights"
+    )
+
+    subjects = fields.List(
+        fields.Nested(SubjectsSchema()),
+        attribute="metadata.subjects"
     )
 
 
