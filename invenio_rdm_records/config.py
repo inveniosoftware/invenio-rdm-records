@@ -174,37 +174,140 @@ RDM_RECORDS_DOI_DATACITE_TEST_MODE = True
 
 # PID Schemes
 
-RDM_RECORDS_RECORD_PID_SCHEMES = ["doi"]
-RDM_RECORDS_PERSONORG_SCHEMES = ["orcid", "isni", "gnd", "ror"]
-RDM_RECORDS_IDENTIFIERS_SCHEMES = [
-    "ark",
-    "arxiv",
-    ("bibcode", idutils.is_ads),
-    "doi",
-    "ean13",
-    ("eissn", lambda x: True),  # FIXME: is this an issn
-    "handle",
-    ("igsn", lambda x: True),
-    "isbn",
-    "issn",
-    "istc",
-    ("lissn", lambda x: True),
-    "lsid",
-    "pmid",
-    "purl",
-    ("upc", lambda x: True),
-    "url",
-    "urn",
-    ("w3id", lambda x: True),
-]
-RDM_RECORDS_REFERENCES_SCHEMES = [
-    "isni",
-    ("grid", lambda x: True),
-    ("crossreffunderid", lambda x: True),
-    ("other", lambda x: True)
-]
-RDM_RECORDS_LOCATION_SCHEMES = [
-    ("wikidata", lambda x: True),
-    ("geonames", lambda x: True)
-]
+
+def always_valid(identifier):
+    """Gives every identifier as valid."""
+    return True
+
+
+RDM_RECORDS_RECORD_PID_SCHEMES = {
+    "doi": {
+        "label": _("DOI"),
+        "validator": idutils.is_doi
+    }
+}
+RDM_RECORDS_PERSONORG_SCHEMES = {
+    "orcid": {
+        "label": _("ORCID"),
+        "validator": idutils.is_orcid
+    },
+    "isni": {
+        "label": _("ISNI"),
+        "validator": idutils.is_isni
+    },
+    "gnd": {
+        "label": _("GND"),
+        "validator": idutils.is_gnd
+    },
+    "ror": {
+        "label": _("ROR"),
+        "validator": idutils.is_ror
+    },
+}
+RDM_RECORDS_IDENTIFIERS_SCHEMES = {
+    "ark": {
+        "label": _("ARK"),
+        "validator": idutils.is_ark
+    },
+    "arxiv": {
+        "label": _("arXiv"),
+        "validator": idutils.is_arxiv
+    },
+    "bibcode": {
+        "label": _("Bibcode"),
+        "validator": idutils.is_ads
+    },
+    "doi": {
+        "label": _("DOI"),
+        "validator": idutils.is_doi
+    },
+    "ean13": {
+        "label": _("EAN13"),
+        "validator": idutils.is_ean13
+    },
+    "eissn": {
+        "label": _("EISSN"),
+        "validator": idutils.is_issn
+    },
+    "handle": {
+        "label": _("Handle"),
+        "validator": idutils.is_handle
+    },
+    "igsn": {
+        "label": _("IGSN"),
+        "validator": always_valid
+    },
+    "isbn": {
+        "label": _("ISBN"),
+        "validator": idutils.is_isbn
+    },
+    "issn": {
+        "label": _("ISSN"),
+        "validator": idutils.is_issn
+    },
+    "istc": {
+        "label": _("ISTC"),
+        "validator": idutils.is_istc
+    },
+    "lissn": {
+        "label": _("LISSN"),
+        "validator": idutils.is_issn
+    },
+    "lsid": {
+        "label": _("LSID"),
+        "validator": idutils.is_lsid
+    },
+    "pmid": {
+        "label": _("PMID"),
+        "validator": idutils.is_pmid
+    },
+    "purl": {
+        "label": _("PURL"),
+        "validator": idutils.is_purl
+    },
+    "upc": {
+        "label": _("UPC"),
+        "validator": always_valid
+    },
+    "url": {
+        "label": _("URL"),
+        "validator": idutils.is_url
+    },
+    "urn": {
+        "label": _("URN"),
+        "validator": idutils.is_urn
+    },
+    "w3id": {
+        "label": _("W3ID"),
+        "validator": always_valid
+    },
+}
+RDM_RECORDS_REFERENCES_SCHEMES = {
+    "isni": {
+        "label": _("ISNI"),
+        "validator": idutils.is_isni
+    },
+    "grid": {
+        "label": _("GRID"),
+        "validator": always_valid
+    },
+    "crossreffunderid": {
+        "label": _("Crossref Funder ID"),
+        "validator": always_valid
+    },
+    "other": {
+        "label": _("Other"),
+        "validator": always_valid
+    }
+}
+RDM_RECORDS_LOCATION_SCHEMES = {
+    "wikidata": {
+        "label": _("Wikidata"),
+        "validator": always_valid
+    },
+    "geonames": {
+        "label": _("GeoNames"),
+        "validator": always_valid
+    }
+}
 RDM_RECORDS_DOI_DATACITE_FORMAT = "{prefix}/{id}"

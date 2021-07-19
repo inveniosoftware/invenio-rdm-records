@@ -7,11 +7,19 @@
 
 """Test identifier schema."""
 
+import idutils
 import pytest
 from marshmallow import ValidationError
 
 from invenio_rdm_records.services.schemas.metadata import IdentifierSchema, \
     MetadataSchema
+
+allowed_schemes = {
+    "doi": {
+        "label": "DOI",
+        "validator": idutils.is_doi
+    }
+}
 
 
 def test_valid_identifier():
@@ -19,7 +27,7 @@ def test_valid_identifier():
         "identifier": "10.5281/rdm.9999999",
         "scheme": "doi"
     }
-    loaded = IdentifierSchema(allowed_schemes=["doi"]).load(valid)
+    loaded = IdentifierSchema(allowed_schemes=allowed_schemes).load(valid)
     assert valid == loaded
 
 
@@ -28,7 +36,9 @@ def test_valid_no_schema():
     valid_identifier = {
         "identifier": "10.5281/rdm.9999999",
     }
-    loaded = IdentifierSchema(allowed_schemes=["doi"]).load(valid_identifier)
+    loaded = IdentifierSchema(
+        allowed_schemes=allowed_schemes
+    ).load(valid_identifier)
     valid_identifier["scheme"] = "doi"
     assert valid_identifier == loaded
 
@@ -38,7 +48,9 @@ def test_invalid_no_identifier():
         "scheme": "doi"
     }
     with pytest.raises(ValidationError):
-        data = IdentifierSchema(allowed_schemes=["doi"]).load(invalid)
+        data = IdentifierSchema(
+            allowed_schemes=allowed_schemes
+        ).load(invalid)
 
 
 def test_valid_empty_list(app, minimal_record):

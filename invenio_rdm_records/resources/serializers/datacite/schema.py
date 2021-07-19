@@ -12,6 +12,7 @@ from edtf import parse_edtf
 from edtf.parser.grammar import ParseException
 from flask import current_app
 from flask_babelex import lazy_gettext as _
+from idutils import LANDING_URLS, to_url
 from invenio_access.permissions import system_identity
 from invenio_records_resources.proxies import current_service_registry
 from invenio_vocabularies.proxies import current_service as vocabulary_service
@@ -29,14 +30,6 @@ from ..utils import map_type
 class PersonOrOrgSchema43(Schema):
     """Creator/contributor common schema for v4."""
 
-    # PIDS-FIXME: need a more escalable solution for URIs
-    URIS = {
-        "orcid": "http://orcid.org/",
-        "gnd": "http://d-nb.info/",  # PIDS-FIXME: is this correct?
-        "ror": "https://ror.org/",
-        "isni": "https://isni.org",
-    }
-
     name = fields.Str(attribute="person_or_org.name")
     nameType = fields.Str(attribute="person_or_org.type")
     givenName = fields.Str(attribute="person_or_org.given_name")
@@ -52,16 +45,16 @@ class PersonOrOrgSchema43(Schema):
         for identifier in identifiers:
             scheme = identifier["scheme"]
             value = identifier["identifier"]
-            uri = self.URIS.get(scheme)
 
             name_id = {
                 "nameIdentifier": value,
                 "nameIdentifierScheme": scheme.upper(),
             }
 
+            uri = to_url(value, scheme)
             if uri:
-                name_id["nameIdentifier"] = uri + value
-                name_id["schemeURI"] = uri
+                name_id["nameIdentifier"] = uri
+                name_id["schemeURI"] = LANDING_URLS.get(scheme)
 
             serialized_identifiers.append(name_id)
 
@@ -104,9 +97,9 @@ class PersonOrOrgSchema43(Schema):
                     id_value = identifier["identifier"]
                     aff["affiliationIdentifier"] = id_value
                     aff["affiliationIdentifierScheme"] = scheme.upper()
-                    uri = self.URIS.get(scheme)
+                    uri = to_url(id_value, scheme)
                     if uri:
-                        aff["affiliationIdentifier"] = uri + id_value
+                        aff["affiliationIdentifier"] = uri
 
                 serialized_affiliations.append(aff)
 

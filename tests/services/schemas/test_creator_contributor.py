@@ -231,7 +231,7 @@ def test_creator_invalid_identifiers_orcid(app):
     assert_raises_messages(
         lambda: PersonOrOrganizationSchema().load(invalid_orcid_identifier),
         {'identifiers': {0: {
-            '_schema': ['Invalid value 9999-9999-9999-9999 for scheme orcid.']
+            '_schema': ['Invalid value 9999-9999-9999-9999 for scheme ORCID.']
         }}}
     )
 
@@ -249,7 +249,7 @@ def test_creator_invalid_identifiers_ror(app):
     assert_raises_messages(
         lambda: PersonOrOrganizationSchema().load(invalid_ror_identifier),
         {'identifiers': {0: {
-            '_schema': ['Invalid value 9999-9999-9999-9999 for scheme ror.']
+            '_schema': ['Invalid value 9999-9999-9999-9999 for scheme ROR.']
         }}}
     )
 
