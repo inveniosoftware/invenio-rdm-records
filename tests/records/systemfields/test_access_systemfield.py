@@ -72,9 +72,9 @@ def test_embargo_lift():
     new_embargo = Embargo.from_dict(embargo_dict1)
     old_embargo = Embargo.from_dict(embargo_dict2)
 
-    assert old_embargo.lift()
+    assert old_embargo._lift()
     assert not old_embargo.active
-    assert not new_embargo.lift()
+    assert not new_embargo._lift()
     assert new_embargo.active
 
 
@@ -302,6 +302,29 @@ def test_access_field_clear_embargo(minimal_record, parent):
 
     rec.access.embargo.clear()
     assert not rec.access.embargo
+
+
+def test_access_field_lift_embargo(minimal_record, parent):
+    tomorrow = arrow.utcnow().datetime + timedelta(days=+1)
+    minimal_record["access"]["record"] = "public"
+    minimal_record["access"]["files"] = "restricted"
+    minimal_record["access"]["embargo"] = {
+        "until": tomorrow.strftime("%Y-%m-%d"),
+        "active": True,
+        "reason": "nothing in particular",
+    }
+    rec = RDMRecord.create(minimal_record, parent=parent)
+    assert not rec.access.lift_embargo()
+    assert rec["access"]["record"] == "public"
+    assert rec["access"]["files"] == "restricted"
+    assert rec["access"]["embargo"]["active"] is True
+
+    today = arrow.utcnow().datetime
+    rec.access.embargo.until = today
+    assert rec.access.lift_embargo()
+    assert rec.access.protection.record == "public"
+    assert rec.access.protection.record == "public"
+    assert rec.access.embargo.active is False
 
 
 def test_access_field_update_protection(

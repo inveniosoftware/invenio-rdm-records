@@ -39,8 +39,8 @@ class Embargo:
         """Set the Embargo's (boolean) active state."""
         self._active = bool(value)
 
-    def lift(self):
-        """Update the embargo active status if it has expired.
+    def _lift(self):
+        """Internal method to lift the embargo.
 
         Returns ``True`` if the embargo was actually lifted (i.e. it was
         expired but still marked as active).

@@ -10,6 +10,7 @@
 
 """RDM Record Service."""
 
+import arrow
 from flask_babelex import lazy_gettext as _
 from invenio_db import db
 from invenio_drafts_resources.services.records import RecordService
@@ -198,44 +199,42 @@ class RDMRecordService(RecordService):
             links_tpl=self.links_item_tpl,
         )
 
-    def _lift_embargo_from(self, rdm_record):
-        """Lifts embargo from record or draft."""
-        if not rdm_record.access.embargo.lift():
-            raise EmbargoNotLiftedError(rdm_record["id"])
-        rdm_record.access.protection.record = "public"
-        rdm_record.access.protection.files = "public"
-
     def lift_embargo(self, _id, identity):
-        """Lifts embargo from the record and updates draft."""
+        """Lifts embargo from the record and draft (if exists).
 
-        def draft_access_field_was_modified(draft, record):
-            """Returns True if draft's access field was modified."""
-            return draft.get('access') == record.get('access')
-
+        It's an error if you try to lift an embargo that has not yet expired.
+        Use this method in combination with scan_expired_embargos().
+        """
         # Get the record
         record = self.record_cls.pid.resolve(_id)
 
         # Check permissions
         self.require_permission(identity, "lift_embargo", record=record)
 
-        lifted_embargo_from_draft = False
-        # Check if record has already a draft
+        # Modify draft embargo if draft exists and it's the same as the record.
+        draft = None
         if record.has_draft:
             draft = self.draft_cls.pid.resolve(_id, registered_only=False)
-            # If the draft has no modifications in the access field the
-            # embargo is lifted
-            if draft_access_field_was_modified(draft, record):
-                # Lifts embargo from draft
-                self._lift_embargo_from(draft)
-                lifted_embargo_from_draft = True
+            if record.access == draft.access:
+                if not draft.access.lift_embargo():
+                    raise EmbargoNotLiftedError(_id)
+                draft.commit()
 
-        # Lifts embargo from record
-        self._lift_embargo_from(record)
-        # Commit and index
+        if not record.access.lift_embargo():
+            raise EmbargoNotLiftedError(_id)
         record.commit()
-        if record.has_draft and lifted_embargo_from_draft:
-            draft.commit()
+
         db.session.commit()
         self.indexer.index(record)
-        if record.has_draft and lifted_embargo_from_draft:
+        if draft:
             self.indexer.index(draft)
+
+    def scan_expired_embargos(self, identity):
+        """Scan for records with an expired embargo."""
+        today = arrow.utcnow().date().isoformat()
+
+        embargoed_q = \
+            f"access.embargo.active:true " \
+            f"AND access.embargo.until:[* TO {today}]"
+
+        return self.scan(identity=identity, q=embargoed_q)
