@@ -87,6 +87,18 @@ class RecordAccess:
 
         return access
 
+    def lift_embargo(self):
+        """Update the embargo active status if it has expired.
+
+        Returns ``True`` if the embargo was actually lifted (i.e. it was
+        expired but still marked as active).
+        """
+        if self.embargo._lift():
+            self.protection.set(record="public", files="public")
+            return True
+
+        return False
+
     def refresh_from_dict(self, access_dict):
         """Re-initialize the Access object with the data in the access_dict."""
         new_access = self.from_dict(access_dict)
@@ -137,6 +149,16 @@ class RecordAccess:
         access.errors = errors
 
         return access
+
+    def __eq__(self, other):
+        """Compare access objects."""
+        if type(self) != type(other):
+            return False
+
+        return (
+            self.embargo == other.embargo
+            and self.protection == other.protection
+        )
 
     def __repr__(self):
         """Return repr(self)."""

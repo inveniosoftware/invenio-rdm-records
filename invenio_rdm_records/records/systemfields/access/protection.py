@@ -68,6 +68,16 @@ class Protection:
             "files": self.files,
         }
 
+    def __eq__(self, other):
+        """Compare protection objects."""
+        if type(self) != type(other):
+            return False
+
+        return (
+            self.record == other.record
+            and self.files == other.files
+        )
+
     def __repr__(self):
         """Return repr(self)."""
         return "<{} (record: {}, files: {})>".format(
