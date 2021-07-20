@@ -13,7 +13,7 @@ from invenio_vocabularies.proxies import current_service as vocabulary_service
 from marshmallow import Schema, fields, missing
 
 from ..ui.schema import current_default_locale
-from ..utils import map_type
+from ..utils import get_vocabulary_props
 
 
 class DublinCoreSchema(Schema):
@@ -183,7 +183,7 @@ class DublinCoreSchema(Schema):
 
     def get_types(self, obj):
         """Get resource type."""
-        props = map_type(
+        props = get_vocabulary_props(
             'resourcetypes',
             ['props.eurepo', ],
             obj["metadata"]["resource_type"]["id"],

@@ -23,7 +23,7 @@ from marshmallow_utils.html import strip_html
 from invenio_rdm_records.resources.serializers.ui.schema import \
     current_default_locale
 
-from ..utils import map_type
+from ..utils import get_vocabulary_props
 
 
 def get_scheme_label(scheme, labels):
@@ -35,11 +35,15 @@ class PersonOrOrgSchema43(Schema):
     """Creator/contributor common schema for v4."""
 
     name = fields.Str(attribute="person_or_org.name")
-    nameType = fields.Str(attribute="person_or_org.type")
+    nameType = fields.Method('get_name_type', attribute="person_or_org.type")
     givenName = fields.Str(attribute="person_or_org.given_name")
     familyName = fields.Str(attribute="person_or_org.family_name")
     nameIdentifiers = fields.Method('get_name_identifiers')
     affiliation = fields.Method('get_affiliation')
+
+    def get_name_type(self, obj):
+        """Get name type."""
+        return obj["person_or_org"]["type"].title()
 
     def get_name_identifiers(self, obj):
         """Get name identifier list."""
@@ -126,11 +130,8 @@ class ContributorSchema43(PersonOrOrgSchema43):
         if not role:
             return missing
 
-        props = map_type(
-            'contributorsroles',
-            ['props.datacite'],
-            role["id"],
-        )
+        props = get_vocabulary_props(
+            'contributorsroles', ['props.datacite'], role["id"])
         return props.get('datacite', '')
 
 
@@ -147,20 +148,26 @@ class FundingSchema43(Schema):
 
     funderName = fields.Str(attribute="funder.name")
     funderIdentifier = fields.Str(attribute="funder.identifier")
-    funderIdentifierType = fields.Str(attribute="funder.scheme")
+    funderIdentifierType = fields.Method('get_identifier_type')
     awardTitle = fields.Str(attribute="award.title")
     awardNumber = fields.Str(attribute="award.number")
     # PIDS-FIXME: URI should be processed depending on the schema
     awardURI = fields.Str(attribute="award.identifier")
 
-    @post_dump(pass_many=False)
-    def uppercase(self, data, **kwargs):
-        """Upper case the type."""
-        if data.get("funderIdentifierType"):
-            upper_type = data["funderIdentifierType"].upper()
-            data["funderIdentifierType"] = upper_type
+    TO_FUNDER_IDENTIFIER_TYPES = {
+        "ISNI": "ISNI",
+        "GRID": "GRID",
+        "ROR": "ROR",
+        "CROSSREF FUNDER ID": "Crossref Funder ID",
+        "OTHER": "Other",
+    }
 
-        return data
+    def get_identifier_type(self, obj):
+        """Upper case the type."""
+        # TODO: Likely has to be revisted when the form support deposit.
+        id_type = obj.get("funder", {}).get("scheme", "Other")
+        key = id_type.upper()
+        return self.TO_FUNDER_IDENTIFIER_TYPES.get(key, "Other")
 
 
 class DataCite43Schema(Schema):
@@ -192,7 +199,7 @@ class DataCite43Schema(Schema):
 
     def get_type(self, obj):
         """Get resource type."""
-        props = map_type(
+        props = get_vocabulary_props(
             'resourcetypes',
             ['props.datacite_general', 'props.datacite_type'],
             obj["metadata"]["resource_type"]["id"],
@@ -202,46 +209,47 @@ class DataCite43Schema(Schema):
             'resourceType': props.get("datacite_type", ""),
         }
 
-    def _get_text(self, obj, field, default_type=None):
-        """Get text list (for titles and descriptions)."""
-        text = []
+    def _merge_main_and_additional(self, obj, field, default_type=None):
+        """Return merged list of main + additional titles/descriptions."""
+        result = []
         main_value = obj["metadata"].get(field)
 
         if main_value:
-            text = [{field: strip_html(main_value)}]
+            item = {field: strip_html(main_value)}
             if default_type:
-                text[0][f"{field}Type"] = default_type
+                item[f"{field}Type"] = default_type
+            result.append(item)
 
-        additional_text = obj["metadata"].get(f"additional_{field}s", [])
-        for t in additional_text:
-            item = {field: strip_html(t.get(field))}
+        additional_values = obj["metadata"].get(f"additional_{field}s", [])
+        for v in additional_values:
+            item = {field: strip_html(v.get(field))}
 
-            # Text type
-            type_id = t.get("type", {}).get("id")
+            # Type
+            type_id = v.get("type", {}).get("id")
             if type_id:
-                props = map_type(
-                    f"{field}types",
-                    ["props.datacite"],
-                    type_id)
+                props = get_vocabulary_props(
+                    f"{field}types", ["props.datacite"], type_id)
                 if "datacite" in props:
                     item[f"{field}Type"] = props["datacite"]
 
             # Language
-            lang_id = t.get("lang", {}).get("id")
+            lang_id = v.get("lang", {}).get("id")
             if lang_id:
                 item["lang"] = lang_id
 
-            text.append(item)
+            result.append(item)
 
-        return text or missing
+        return result or missing
 
     def get_titles(self, obj):
         """Get titles list."""
-        return self._get_text(obj, "title")
+        return self._merge_main_and_additional(obj, "title")
 
     def get_descriptions(self, obj):
         """Get descriptions list."""
-        return self._get_text(obj, "description", default_type="Abstract")
+        return self._merge_main_and_additional(
+            obj, "description", default_type="Abstract"
+        )
 
     def get_publication_year(self, obj):
         """Get publication year from edtf date."""
@@ -264,7 +272,8 @@ class DataCite43Schema(Schema):
 
         for date in obj["metadata"].get("dates", []):
             date_type_id = date.get("type", {}).get("id")
-            props = map_type('datetypes', ['props'], date_type_id)
+            props = get_vocabulary_props(
+                'datetypes', ["props.datacite"], date_type_id)
             to_append = {
                 "date": date["date"],
                 "dateType": props.get("datacite", "Other")
@@ -320,11 +329,8 @@ class DataCite43Schema(Schema):
         identifiers = metadata.get("related_identifiers", [])
         for rel_id in identifiers:
             relation_type_id = rel_id.get("relation_type", {}).get("id")
-            props = map_type(
-                "relationtypes",
-                ["props"],
-                relation_type_id
-            )
+            props = get_vocabulary_props(
+                "relationtypes", ["props.datacite"], relation_type_id)
             serialized_identifier = {
                 "relatedIdentifier": rel_id["identifier"],
                 "relationType": props.get("datacite", ""),
@@ -335,9 +341,11 @@ class DataCite43Schema(Schema):
 
             resource_type_id = rel_id.get("resource_type", {}).get("id")
             if resource_type_id:
-                props = map_type(
+                props = get_vocabulary_props(
                     "resourcetypes",
-                    ["props"],
+                    # Cache is on both keys so query datacite_type as well
+                    # even though it's not accessed.
+                    ["props.datacite_general", "props.datacite_type"],
                     resource_type_id
                 )
                 serialized_identifier["resourceTypeGeneral"] = props.get(

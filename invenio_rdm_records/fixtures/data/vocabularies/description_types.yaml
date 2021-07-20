@@ -10,17 +10,17 @@
     en: Methods
 - id: series-information
   props:
-    datacite: Series information
+    datacite: SeriesInformation
   title:
     en: Series information
 - id: table-of-contents
   props:
-    datacite: Table of contents
+    datacite: TableOfContents
   title:
     en: Table of contents
 - id: technical-info
   props:
-    datacite: Technical info
+    datacite: TechnicalInfo
   title:
     en: Technical info
 - id: other
