@@ -14,17 +14,19 @@ from invenio_vocabularies.proxies import current_service as vocabulary_service
 from .errors import VocabularyItemNotFoundError
 
 
-def map_type(vocabulary, fields, id_):
-    """Maps an internal vocabulary type to external vocabulary type."""
-    res = vocabulary_service.read_all(
+def get_vocabulary_props(vocabulary, fields, id_):
+    """Returns props associated with a vocabulary, id_."""
+    # This is ok given that read_all is cached per vocabulary+fields and
+    # is reused overtime
+    results = vocabulary_service.read_all(
         system_identity,
         ['id'] + fields,
         vocabulary
     )
 
-    for h in res.hits:
+    for h in results.hits:
         if h["id"] == id_:
-            return h["props"] if "props" in h else {}
+            return h.get("props", {})
 
     raise VocabularyItemNotFoundError(
-        f"The '{vocabulary}' vocabulary item  '{id_}' was not found.")
+        f"The '{vocabulary}' vocabulary item '{id_}' was not found.")

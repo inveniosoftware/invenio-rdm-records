@@ -5,7 +5,7 @@
      en: Cites
 - id: isrequiredby
   props:
-     datacite: Is required by
+     datacite: IsRequiredBy
   title:
      en: Is required by
 - id: obsoletes

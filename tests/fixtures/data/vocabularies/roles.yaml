@@ -1,11 +1,11 @@
 - id: contactperson
   props:
-    datacite: Contact person
+    datacite: ContactPerson
   title:
     en: Contact person
 - id: datacollector
   props:
-    datacite: Data collector
+    datacite: DataCollector
   title:
     en: Data collector
 - id: other

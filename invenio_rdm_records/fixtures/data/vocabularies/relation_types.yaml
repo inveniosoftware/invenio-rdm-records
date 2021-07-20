@@ -65,7 +65,7 @@
      en: Is part of
 - id: haspart
   props:
-     datacite: Has part
+     datacite: HasPart
   title:
      en: HasPart
 - id: isreferencedby

@@ -8,16 +8,16 @@
     datacite: Available
   title:
     en: Available
-- id: copyrighted
-  props:
-    datacite: Copyrighted
-  title:
-    en: Copyrighted
 - id: collected
   props:
     datacite: Collected
   title:
     en: Collected
+- id: copyrighted
+  props:
+    datacite: Copyrighted
+  title:
+    en: Copyrighted
 - id: created
   props:
     datacite: Created
@@ -28,6 +28,11 @@
     datacite: Issued
   title:
     en: Issued
+- id: other
+  props:
+    datacite: Other
+  title:
+    en: Other
 - id: submitted
   props:
     datacite: Submitted
@@ -48,8 +53,3 @@
     datacite: Withdrawn
   title:
     en: Withdrawn
-- id: other
-  props:
-    datacite: Other
-  title:
-    en: Other

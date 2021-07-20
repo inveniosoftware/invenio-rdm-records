@@ -1,21 +1,21 @@
 - id: contactperson
   props:
-    datacite: Contact person
+    datacite: ContactPerson
   title:
     en: Contact person
 - id: datacollector
   props:
-    datacite: Data collector
+    datacite: DataCollector
   title:
     en: Data collector
 - id: datacurator
   props:
-    datacite: Data curator
+    datacite: DataCurator
   title:
     en: Data curator
 - id: datamanager
   props:
-    datacite: Data manager
+    datacite: DataManager
   title:
     en: Data manager
 - id: distributor
@@ -30,7 +30,7 @@
     en: Editor
 - id: hostinginstitution
   props:
-    datacite: Hosting institution
+    datacite: HostingInstitution
   title:
     en: Hosting institution
 - id: producer
@@ -40,32 +40,32 @@
     en: Producer
 - id: projectleader
   props:
-    datacite: Project leader
+    datacite: ProjectLeader
   title:
     en: Project leader
 - id: projectmanager
   props:
-    datacite: Project manager
+    datacite: ProjectManager
   title:
     en: Project manager
 - id: projectmember
   props:
-    datacite: Project member
+    datacite: ProjectMember
   title:
     en: Project member
 - id: registrationagency
   props:
-    datacite: Registration agency
+    datacite: RegistrationAgency
   title:
     en: Registration agency
 - id: registrationauthority
   props:
-    datacite: Registration authority
+    datacite: RegistrationAuthority
   title:
     en: Registration authority
 - id: relatedperson
   props:
-    datacite: Related person
+    datacite: RelatedPerson
   title:
     en: Related person
 - id: researcher
@@ -75,12 +75,12 @@
     en: Researcher
 - id: researchgroup
   props:
-    datacite: Research group
+    datacite: ResearchGroup
   title:
     en: Research group
 - id: rightsholder
   props:
-    datacite: Rights holder
+    datacite: RightsHolder
   title:
     en: Rights holder
 - id: sponsor
@@ -95,7 +95,7 @@
     en: Supervisor
 - id: workpackageleader
   props:
-    datacite: Work package leader
+    datacite: WorkPackageLeader
   title:
     en: Work package leader
 - id: other
