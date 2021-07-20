@@ -10,12 +10,8 @@
 """Service level tests for Invenio RDM Records."""
 
 from collections import namedtuple
-from datetime import datetime
-from unittest import mock
 
-import arrow
 import pytest
-from dateutil import tz
 from flask_babelex import lazy_gettext as _
 from invenio_pidstore.errors import PIDDoesNotExistError
 from marshmallow import ValidationError
@@ -359,31 +355,6 @@ def test_draft_w_languages_creation(running_app, es_clear, minimal_record):
 #
 # Embargo lift
 #
-@pytest.fixture()
-@mock.patch('arrow.utcnow')
-def embargoed_record(mock_arrow, running_app, minimal_record):
-
-    superuser_identity = running_app.superuser_identity
-    service = current_rdm_records.records_service
-
-    # Add embargo to record
-    minimal_record["access"]["files"] = 'restricted'
-    minimal_record["access"]["status"] = 'embargoed'
-    minimal_record["access"]["embargo"] = dict(
-        active=True, until='2020-06-01', reason=None
-    )
-
-    # We need to set the current date in the past to pass the validations
-    mock_arrow.return_value = arrow.get(datetime(1954, 9, 29), tz.gettz('UTC'))
-    draft = service.create(superuser_identity, minimal_record)
-    record = service.publish(id_=draft.id, identity=superuser_identity)
-
-    # Recover current date
-    mock_arrow.return_value = arrow.get(datetime.utcnow())
-
-    return record
-
-
 def test_embargo_lift_without_draft(embargoed_record, running_app, es_clear):
     record = embargoed_record
     service = current_rdm_records.records_service

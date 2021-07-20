@@ -14,8 +14,12 @@ fixtures are available.
 """
 
 from collections import namedtuple
+from datetime import datetime
+from unittest import mock
 
+import arrow
 import pytest
+from dateutil import tz
 from flask_principal import Identity, Need, UserNeed
 from flask_security import login_user
 from flask_security.utils import hash_password
@@ -31,7 +35,8 @@ from invenio_vocabularies.proxies import current_service as vocabulary_service
 from invenio_vocabularies.records.api import Vocabulary
 
 from invenio_rdm_records import config
-from invenio_rdm_records.records.api import RDMParent
+from invenio_rdm_records.proxies import current_rdm_records
+from invenio_rdm_records.records.api import RDMParent, RDMRecord
 
 
 @pytest.fixture(scope='module')
@@ -721,3 +726,31 @@ def superuser_identity(superuser_role_need):
     identity = Identity(1)
     identity.provides.add(superuser_role_need)
     return identity
+
+
+@pytest.fixture()
+@mock.patch('arrow.utcnow')
+def embargoed_record(
+    mock_arrow, running_app, minimal_record, superuser_identity
+):
+    """Embargoed record."""
+    service = current_rdm_records.records_service
+
+    # Add embargo to record
+    minimal_record["access"]["files"] = 'restricted'
+    minimal_record["access"]["status"] = 'embargoed'
+    minimal_record["access"]["embargo"] = dict(
+        active=True, until='2020-06-01', reason=None
+    )
+
+    # We need to set the current date in the past to pass the validations
+    mock_arrow.return_value = arrow.get(datetime(1954, 9, 29), tz.gettz('UTC'))
+    draft = service.create(superuser_identity, minimal_record)
+    record = service.publish(id_=draft.id, identity=superuser_identity)
+
+    RDMRecord.index.refresh()
+
+    # Recover current date
+    mock_arrow.return_value = arrow.get(datetime.utcnow())
+
+    return record
