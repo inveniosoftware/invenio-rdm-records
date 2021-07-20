@@ -12,14 +12,25 @@ from edtf.parser.edtf_exceptions import EDTFParseException
 from edtf.parser.parser_classes import Date, Interval
 from invenio_access.permissions import system_identity
 from invenio_vocabularies.proxies import current_service as vocabulary_service
-from marshmallow import Schema, fields, missing
+from marshmallow import Schema, fields, missing, pre_dump
 from marshmallow_utils.fields import SanitizedUnicode, StrippedHTML
 
 
 class CSLCreatorSchema(Schema):
     """Creator/contributor common schema."""
 
-    family = fields.Str(attribute="person_or_org.name")
+    family = fields.Str(attribute="person_or_org.family_name")
+    given = fields.Str(attribute="person_or_org.given_name")
+
+    @pre_dump
+    def update_names(self, data, **kwargs):
+        """Organizational creators do not have family/given name."""
+        # family is required by CSL
+        if not data.get("person_or_org").get("family_name"):
+            name = data["person_or_org"]["name"]
+            data["person_or_org"]["family_name"] = name
+
+        return data
 
 
 def add_if_not_none(year, month, day):
