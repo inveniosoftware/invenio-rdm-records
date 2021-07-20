@@ -33,7 +33,8 @@ def test_csl_json_serializer(running_app, full_record):
         "abstract": "A description with HTML tags",
         "author": [
             {
-                "family": "Nielsen, Lars Holm",
+                "family": "Nielsen",
+                "given": "Lars Holm",
             }
         ],
         "note": "Funding by European Commission ROR 1234.",
