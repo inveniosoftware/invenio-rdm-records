@@ -37,8 +37,7 @@ class EmbargoSchema(Schema):
             # 'active' is set to True => 'until' must be set to a future date
             if until_date is None or until_date < arrow.utcnow():
                 raise ValidationError(
-                    _("Embargo end date must be set to a future date "
-                      "if active is True."),
+                    _("Embargo end date must be set to a future date."),
                     field_name="until",
                 )
 
@@ -47,8 +46,7 @@ class EmbargoSchema(Schema):
             #                             date, or not set at all
             if until_date is not None and until_date > arrow.utcnow():
                 raise ValidationError(
-                    _("Embargo end date must be unset or in the past "
-                      "if active is False."),
+                    _("Embargo end date must be unset or in the past."),
                     field_name="until",
                 )
 
