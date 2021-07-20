@@ -3,6 +3,7 @@
 # Copyright (C) 2019-2021 CERN.
 # Copyright (C) 2019-2021 Northwestern University.
 # Copyright (C)      2021 TU Wien.
+# Copyright (C)      2021 Graz University of Technology.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
@@ -141,6 +142,9 @@ setup(
             'rdmrecords = invenio_rdm_records.records.mappings',
             'affiliations = invenio_vocabularies.contrib.affiliations.mappings',
             'subjects = invenio_vocabularies.contrib.subjects.mappings',
+        ],
+        'invenio_i18n.translations': [
+            'invenio_rdm_records = invenio_rdm_records',
         ],
     },
     extras_require=extras_require,
