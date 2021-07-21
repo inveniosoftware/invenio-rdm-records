@@ -26,9 +26,9 @@ from invenio_rdm_records.resources.serializers.ui.schema import \
 from ..utils import get_vocabulary_props
 
 
-def get_scheme_label(scheme, labels):
-    """Returns a scheme label."""
-    return current_app.config[labels][scheme].get("label", scheme)
+def get_scheme_datacite(scheme, labels):
+    """Returns the datacite equivalent of a scheme."""
+    return current_app.config[labels][scheme].get("datacite", scheme)
 
 
 class PersonOrOrgSchema43(Schema):
@@ -53,7 +53,7 @@ class PersonOrOrgSchema43(Schema):
         for identifier in identifiers:
             name_id = {
                 "nameIdentifier": identifier["identifier"],
-                "nameIdentifierScheme": get_scheme_label(
+                "nameIdentifierScheme": get_scheme_datacite(
                     identifier["scheme"],
                     "RDM_RECORDS_PERSONORG_SCHEMES"
                 ),
@@ -97,10 +97,13 @@ class PersonOrOrgSchema43(Schema):
                     # PIDS-FIXME: DataCite accepts only one, how to decide
                     identifier = identifier[0]
                     aff["affiliationIdentifier"] = identifier["identifier"]
-                    aff["affiliationIdentifierScheme"] = get_scheme_label(
+                    aff["affiliationIdentifierScheme"] = get_scheme_datacite(
                         identifier["scheme"],
                         "VOCABULARIES_AFFILIATION_SCHEMES"
-                    )
+                    ).upper()
+                    # upper() is fine since this field is free text. It
+                    # saves us from having to modify invenio-vocabularies
+                    # or do config overrides.
 
                 serialized_affiliations.append(aff)
 
@@ -296,7 +299,7 @@ class DataCite43Schema(Schema):
         return missing
 
     def get_identifiers(self, obj):
-        """Get identifiers list."""
+        """Get (main and alternate) identifiers list."""
         serialized_identifiers = []
 
         # pids go first so the DOI from the record is the main doi
@@ -305,7 +308,7 @@ class DataCite43Schema(Schema):
         for scheme, id_ in pids.items():
             serialized_identifiers.append({
                 "identifier": id_["identifier"],
-                "identifierType": get_scheme_label(
+                "identifierType": get_scheme_datacite(
                     scheme, "RDM_RECORDS_IDENTIFIERS_SCHEMES"
                 )
             })
@@ -315,7 +318,7 @@ class DataCite43Schema(Schema):
         for id_ in identifiers:
             serialized_identifiers.append({
                 "identifier": id_["identifier"],
-                "identifierType": get_scheme_label(
+                "identifierType": get_scheme_datacite(
                     id_["scheme"], "RDM_RECORDS_IDENTIFIERS_SCHEMES"
                 )
             })
@@ -334,7 +337,7 @@ class DataCite43Schema(Schema):
             serialized_identifier = {
                 "relatedIdentifier": rel_id["identifier"],
                 "relationType": props.get("datacite", ""),
-                "relatedIdentifierType": get_scheme_label(
+                "relatedIdentifierType": get_scheme_datacite(
                     rel_id["scheme"], "RDM_RECORDS_IDENTIFIERS_SCHEMES"
                 )
             }
@@ -430,14 +433,17 @@ class DataCite43Schema(Schema):
             if _id:
                 ids.append(_id)
             else:
-                serialized_rights.append(
-                    {
-                        "rights": right.get("title").get(
-                            current_default_locale()
-                        ),
-                        "rightsUri": right.get("link")
-                    }
-                )
+                serialized_right = {
+                    "rights": right.get("title").get(
+                        current_default_locale()
+                    ),
+                }
+
+                link = right.get("link")
+                if link:
+                    serialized_right["rightsUri"] = link
+
+                serialized_rights.append(serialized_right)
 
         if ids:
             rights = vocabulary_service.read_many(
@@ -450,8 +456,10 @@ class DataCite43Schema(Schema):
                         ),
                     "rightsIdentifierScheme": right.get("props").get("scheme"),
                     "rightsIdentifier": right.get("id"),
-                    "rightsUri": right.get("props").get("url"),
                 }
+                link = right.get("props").get("url")
+                if link:
+                    serialized_right["rightsUri"] = link
 
                 serialized_rights.append(serialized_right)
 
