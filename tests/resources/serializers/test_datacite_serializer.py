@@ -126,6 +126,13 @@ def running_app(
 
 def test_datacite43_serializer(running_app, full_record):
     """Test serializer to DataCite 4.3 JSON"""
+    full_record["metadata"]["rights"].append(
+        {
+            "title": {
+                "en": "No rightsUri license"
+            },
+        }
+    )
     # for HTML stripping test purposes
     expected_data = {
         "types": {
@@ -205,7 +212,7 @@ def test_datacite43_serializer(running_app, full_record):
             },
             {
                 "identifier": "1924MNRAS..84..308E",
-                "identifierType": "Bibcode"
+                "identifierType": "bibcode"
             },
         ],
         "relatedIdentifiers": [
@@ -225,12 +232,15 @@ def test_datacite43_serializer(running_app, full_record):
                 'rightsUri': 'https://customlicense.org/licenses/by/4.0/'
             },
             {
+                'rights': 'No rightsUri license'
+            },
+            {
                 "rights": "Creative Commons Attribution 4.0 International",
                 "rightsIdentifierScheme": "spdx",
                 "rightsIdentifier": "cc-by-4.0",
                 "rightsUri": "https://creativecommons.org/licenses/by/4.0/"
                              "legalcode",
-            }
+            },
         ],
         "descriptions": [
             {
@@ -276,7 +286,7 @@ def test_datacite43_xml_serializer(running_app, full_record):
         "<resource xmlns=\"http://datacite.org/schema/kernel-4\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://datacite.org/schema/kernel-4 http://schema.datacite.org/meta/kernel-4.3/metadata.xsd\">",  # noqa
         "  <identifier identifierType=\"DOI\">10.5281/inveniordm.1234</identifier>",  # noqa
         "  <alternateIdentifiers>",
-        "    <alternateIdentifier alternateIdentifierType=\"Bibcode\">1924MNRAS..84..308E</alternateIdentifier>",  # noqa
+        "    <alternateIdentifier alternateIdentifierType=\"bibcode\">1924MNRAS..84..308E</alternateIdentifier>",  # noqa
         "  </alternateIdentifiers>",
         "  <creators>",
         "    <creator>",
