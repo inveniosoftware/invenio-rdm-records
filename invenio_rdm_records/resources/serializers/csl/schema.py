@@ -67,7 +67,11 @@ class CSLJSONSchema(Schema):
 
     def get_type(self, obj):
         """Get resource type."""
-        resource_type = obj["metadata"]["resource_type"]
+        resource_type = obj["metadata"].get(
+            "resource_type",
+            {"id": "publication-article"}
+        )
+
         resource_type_record = self._read_resource_type(resource_type["id"])
         props = resource_type_record["props"]
         return props.get("csl", "article")  # article is CSL "Other"
