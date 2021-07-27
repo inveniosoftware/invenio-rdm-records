@@ -84,7 +84,7 @@ def test_ui_serializer(app, full_to_dict_record):
             'message_class': 'warning',
         },
         'contributors': {
-            'affiliations': [[1, 'CERN']],
+            'affiliations': [[1, 'CERN', 'cern']],
             'contributors': [{
                 'affiliations': [[1, 'CERN']],
                 'person_or_org': {
@@ -103,7 +103,7 @@ def test_ui_serializer(app, full_to_dict_record):
             }]
         },
         'creators': {
-            'affiliations': [[1, 'CERN'], [2, 'free-text']],
+            'affiliations': [[1, 'CERN', 'cern'], [2, 'free-text', None]],
             'creators': [{
                 'affiliations': [[1, 'CERN'], [2, 'free-text']],
                 'person_or_org': {

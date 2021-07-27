@@ -50,12 +50,15 @@ def make_affiliation_index(attr, obj, dummy_ctx):
     # Below is a trick to make sure we can increment in the index inside
     # the apply_idx function without overwriting the outer scope.
     index = {'val': 1}
+    affiliation_list = []
 
     def apply_idx(affiliation):
         """Map an affiliation into list of (index, affiliation string)."""
         name = affiliation.get('name')
+        id_value = affiliation.get('id')
         if name not in affiliations_idx:
             affiliations_idx[name] = index['val']
+            affiliation_list.append([index['val'], name, id_value])
             index['val'] += 1
         idx = affiliations_idx[name]
         return [idx, name]
@@ -73,10 +76,6 @@ def make_affiliation_index(attr, obj, dummy_ctx):
                 get_locale(),
                 current_default_locale
             )
-
-    # Create a full list of affiliations.
-    affiliation_list = [[v, k] for k, v in affiliations_idx.items()]
-    affiliation_list.sort(key=lambda x: x[0])
 
     return {
         attr: creators,
