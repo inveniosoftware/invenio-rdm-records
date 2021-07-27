@@ -291,8 +291,20 @@ class RelatedIdentifierSchema(IdentifierSchema):
         """Constructor."""
         super().__init__(allowed_schemes=record_identifiers_schemes, **kwargs)
 
-    relation_type = fields.Nested(VocabularySchema, required=True)
+    relation_type = fields.Nested(VocabularySchema)
     resource_type = fields.Nested(VocabularySchema)
+
+    @validates_schema
+    def validate_related_identifier(self, data, **kwargs):
+        """Validate the related identifiers."""
+        relation_type = data.get("relation_type")
+        errors = dict()
+
+        if not relation_type:
+            errors['relation_type'] = self.error_messages["required"]
+
+        if errors:
+            raise ValidationError(errors)
 
 
 class FunderSchema(Schema):
@@ -334,7 +346,7 @@ class FundingSchema(Schema):
         award = data.get('award')
         if not funder and not award:
             raise ValidationError(
-                {"funding": _("At least award or funder shold be present.")})
+                {"funding": _("At least award or funder should be present.")})
 
 
 class ReferenceSchema(IdentifierSchema):
