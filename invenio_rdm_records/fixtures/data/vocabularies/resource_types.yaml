@@ -14,6 +14,9 @@
     type_name: Publication
   title:
     en: Publication
+  tags:
+    - depositable
+    - linkable
 - id: publication-annotationcollection
   props:
     csl: report
@@ -30,6 +33,9 @@
     type_name: Publication
   title:
     en: Annotation collection
+  tags:
+    - depositable
+    - linkable
 - id: publication-book
   props:
     csl: book
@@ -46,6 +52,9 @@
     type_name: Publication
   title:
     en: Book
+  tags:
+    - depositable
+    - linkable
 - id: publication-section
   props:
     csl: chapter
@@ -62,6 +71,9 @@
     type_name: Publication
   title:
     en: Book section
+  tags:
+    - depositable
+    - linkable
 - id: publication-conferencepaper
   props:
     csl: paper-conference
@@ -78,6 +90,9 @@
     type_name: Publication
   title:
     en: Conference paper
+  tags:
+    - depositable
+    - linkable
 - id: publication-datamanagementplan
   props:
     csl: report
@@ -94,6 +109,9 @@
     type_name: Publication
   title:
     en: Data management plan
+  tags:
+    - depositable
+    - linkable
 - id: publication-article
   props:
     csl: article-journal
@@ -110,6 +128,9 @@
     type_name: Publication
   title:
     en: Journal article
+  tags:
+    - depositable
+    - linkable
 - id: publication-patent
   props:
     csl: patent
@@ -126,6 +147,9 @@
     type_name: Publication
   title:
     en: Patent
+  tags:
+    - depositable
+    - linkable
 - id: publication-preprint
   props:
     csl: article
@@ -142,6 +166,9 @@
     type_name: Publication
   title:
     en: Preprint
+  tags:
+    - depositable
+    - linkable
 - id: publication-deliverable
   props:
     csl: report
@@ -158,6 +185,9 @@
     type_name: Publication
   title:
     en: Project deliverable
+  tags:
+    - depositable
+    - linkable
 - id: publication-milestone
   props:
     csl: report
@@ -174,6 +204,9 @@
     type_name: Publication
   title:
     en: Project milestone
+  tags:
+    - depositable
+    - linkable
 - id: publication-proposal
   props:
     csl: article
@@ -190,6 +223,9 @@
     type_name: Publication
   title:
     en: Proposal
+  tags:
+    - depositable
+    - linkable
 - id: publication-report
   props:
     csl: article
@@ -206,6 +242,9 @@
     type_name: Publication
   title:
     en: Report
+  tags:
+    - depositable
+    - linkable
 - id: publication-softwaredocumentation
   props:
     csl: article
@@ -222,6 +261,9 @@
     type_name: Publication
   title:
     en: Software documentation
+  tags:
+    - depositable
+    - linkable
 - id: publication-taxonomictreatment
   props:
     csl: article
@@ -238,6 +280,9 @@
     type_name: Publication
   title:
     en: Taxonomic treatment
+  tags:
+    - depositable
+    - linkable
 - id: publication-technicalnote
   props:
     csl: article
@@ -254,6 +299,9 @@
     type_name: Publication
   title:
     en: Technical note
+  tags:
+    - depositable
+    - linkable
 - id: publication-thesis
   props:
     csl: thesis
@@ -270,6 +318,9 @@
     type_name: Publication
   title:
     en: Thesis
+  tags:
+    - depositable
+    - linkable
 - id: publication-workingpaper
   props:
     csl: article
@@ -286,6 +337,9 @@
     type_name: Publication
   title:
     en: Working paper
+  tags:
+    - depositable
+    - linkable
 - id: publication-other
   props:
     csl: article
@@ -302,6 +356,9 @@
     type_name: Publication
   title:
     en: Other
+  tags:
+    - depositable
+    - linkable
 - id: poster
   props:
     csl: graphic
@@ -318,6 +375,9 @@
     type_name: Poster
   title:
     en: Poster
+  tags:
+    - depositable
+    - linkable
 - id: presentation
   props:
     csl: speech
@@ -334,6 +394,9 @@
     type_name: Presentation
   title:
     en: Presentation
+  tags:
+    - depositable
+    - linkable
 - id: dataset
   props:
     csl: dataset
@@ -350,6 +413,9 @@
     type_name: Dataset
   title:
     en: Dataset
+  tags:
+    - depositable
+    - linkable
 - id: image
   props:
     csl: figure
@@ -366,6 +432,9 @@
     type_name: Image
   title:
     en: Image
+  tags:
+    - depositable
+    - linkable
 - id: image-figure
   props:
     csl: figure
@@ -382,6 +451,9 @@
     type_name: Image
   title:
     en: Figure
+  tags:
+    - depositable
+    - linkable
 - id: image-plot
   props:
     csl: figure
@@ -398,6 +470,9 @@
     type_name: Image
   title:
     en: Plot
+  tags:
+    - depositable
+    - linkable
 - id: image-drawing
   props:
     csl: graphic
@@ -414,6 +489,9 @@
     type_name: Image
   title:
     en: Drawing
+  tags:
+    - depositable
+    - linkable
 - id: image-diagram
   props:
     csl: figure
@@ -430,6 +508,9 @@
     type_name: Image
   title:
     en: Diagram
+  tags:
+    - depositable
+    - linkable
 - id: image-photo
   props:
     csl: graphic
@@ -446,6 +527,9 @@
     type_name: Image
   title:
     en: Photo
+  tags:
+    - depositable
+    - linkable
 - id: image-other
   props:
     csl: graphic
@@ -462,6 +546,9 @@
     type_name: Image
   title:
     en: Other
+  tags:
+    - depositable
+    - linkable
 - id: video
   props:
     csl: motion_picture
@@ -478,6 +565,9 @@
     type_name: Video/Audio
   title:
     en: Video/Audio
+  tags:
+    - depositable
+    - linkable
 - id: software
   props:
     csl: article
@@ -494,6 +584,9 @@
     type_name: Software
   title:
     en: Software
+  tags:
+    - depositable
+    - linkable
 - id: lesson
   props:
     csl: speech
@@ -510,6 +603,9 @@
     type_name: Lesson
   title:
     en: Lesson
+  tags:
+    - depositable
+    - linkable
 - id: other
   props:
     csl: article
@@ -526,3 +622,6 @@
     type_name: Other
   title:
     en: Other
+  tags:
+    - depositable
+    - linkable
