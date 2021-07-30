@@ -12,11 +12,10 @@
 from functools import partial
 from urllib import parse
 
-import idutils
 from flask import current_app
 from flask_babelex import lazy_gettext as _
 from marshmallow import Schema, ValidationError, fields, post_load, validate, \
-    validates_schema
+    validates, validates_schema
 from marshmallow_utils.fields import EDTFDateString, IdentifierSet, \
     SanitizedHTML, SanitizedUnicode
 from marshmallow_utils.schemas import GeometryObjectSchema, IdentifierSchema
@@ -50,6 +49,17 @@ def _not_blank(error_msg):
 def _valid_url(error_msg):
     """Returns a URL validation rule with custom error message."""
     return validate.URL(error=error_msg)
+
+
+def locale_validation(value, field_name):
+    """Validates the locale value."""
+    valid_locales = current_app.extensions['invenio-i18n'].get_locales()
+    valid_locales_code = [v.language for v in valid_locales]
+    if value:
+        if len(value.keys()) > 1:
+            raise ValidationError(_("Only one value is accepted."), field_name)
+        elif list(value.keys())[0] not in valid_locales_code:
+            raise ValidationError(_("Not a valid locale."), field_name)
 
 
 class AffiliationSchema(Schema):
@@ -236,6 +246,16 @@ class RightsSchema(Schema):
     link = SanitizedUnicode(
         validate=_valid_url(_('Not a valid URL.'))
     )
+
+    @validates("title")
+    def validate_title(self, value):
+        """Validates that title contains only one valid locale."""
+        locale_validation(value, "title")
+
+    @validates("description")
+    def validate_description(self, value):
+        """Validates that description contains only one valid locale."""
+        locale_validation(value, "description")
 
     @validates_schema
     def validate_rights(self, data, **kwargs):
