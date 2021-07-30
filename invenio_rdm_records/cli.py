@@ -64,4 +64,14 @@ def rebuild_index():
     vocab_service = current_vocabularies_service
     vocab_service.rebuild_index(identity=system_identity)
 
+    click.secho("Reindexing subjects...", fg="green")
+
+    subj_service = current_rdm_records.subjects_service
+    subj_service.rebuild_index(identity=system_identity)
+
+    click.secho("Reindexing affiliations...", fg="green")
+
+    affs_service = current_rdm_records.affiliations_service
+    affs_service.rebuild_index(identity=system_identity)
+
     click.secho("Reindexed records and vocabularies!", fg="green")
