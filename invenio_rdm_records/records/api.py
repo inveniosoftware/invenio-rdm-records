@@ -99,7 +99,7 @@ class CommonFieldsMixin:
             attrs=['id', 'title', 'props.type', 'props.subtype'],
             pid_field=Vocabulary.pid.with_type_ctx('resourcetypes'),
             cache_key='resource_type',
-            value_check=dict(props=dict(relation_type='depositable')),
+            value_check=dict(tags=['depositable']),
         ),
         subjects=PIDListRelation(
             'metadata.subjects',
@@ -119,7 +119,7 @@ class CommonFieldsMixin:
             pid_field=Vocabulary.pid.with_type_ctx('resourcetypes'),
             cache_key='resource_type',
             relation_field='resource_type',
-            value_check=dict(props=dict(relation_type='linkable')),
+            value_check=dict(tags=['linkable']),
         ),
         title_types=PIDListRelation(
             'metadata.additional_titles',

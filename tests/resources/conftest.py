@@ -120,14 +120,13 @@ def resource_type_v(app, resource_type_type):
             "eurepo": "info:eu-repo/semantic/other",
             "schema.org": "https://schema.org/ImageObject",
             "subtype": "",
-            "subtype_name": "",
             "type": "image",
-            "type_icon": "chart bar outline",
-            "type_name": "Image",
         },
         "title": {
             "en": "Image"
         },
+        "icon": "chart bar outline",
+        "tags": ["depositable", "linkable"],
         "type": "resourcetypes"
     })
 
@@ -142,14 +141,13 @@ def resource_type_v(app, resource_type_type):
             "eurepo": "info:eu-repo/semantic/other",
             "schema.org": "https://schema.org/Photograph",
             "subtype": "image-photo",
-            "subtype_name": "Photo",
             "type": "image",
-            "type_icon": "chart bar outline",
-            "type_name": "Image",
         },
         "title": {
             "en": "Photo"
         },
+        "icon": "chart bar outline",
+        "tags": ["depositable", "linkable"],
         "type": "resourcetypes"
     })
 

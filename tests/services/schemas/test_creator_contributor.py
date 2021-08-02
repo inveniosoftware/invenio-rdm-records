@@ -209,9 +209,7 @@ def test_creator_invalid_identifiers_scheme(app):
     assert_raises_messages(
         lambda: PersonOrOrganizationSchema().load(invalid_scheme),
         {'identifiers': {0: {
-            'scheme': [
-                'Invalid scheme for identifier 0000-0002-1825-0097.'
-            ]
+            'scheme': 'Invalid scheme.'
         }}}
     )
 
@@ -230,7 +228,7 @@ def test_creator_invalid_identifiers_orcid(app):
 
     assert_raises_messages(
         lambda: PersonOrOrganizationSchema().load(invalid_orcid_identifier),
-        {'identifiers': {0: {'identifier': ['Invalid ORCID identifier.']}}}
+        {'identifiers': {0: {'identifier': 'Invalid ORCID identifier.'}}}
     )
 
 
@@ -246,7 +244,7 @@ def test_creator_invalid_identifiers_ror(app):
 
     assert_raises_messages(
         lambda: PersonOrOrganizationSchema().load(invalid_ror_identifier),
-        {'identifiers': {0: {'identifier': ['Invalid ROR identifier.']}}}
+        {'identifiers': {0: {'identifier': 'Invalid ROR identifier.'}}}
     )
 
 
