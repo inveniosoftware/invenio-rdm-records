@@ -13,28 +13,10 @@ from flask_babelex import gettext as _
 from invenio_records_resources.services.records.facets import \
     NestedTermsFacet, TermsFacet
 from invenio_vocabularies.services.facets import VocabularyLabels
+from invenio_vocabularies.contrib.subjects import SubjectsLabels
 
 from ..records.systemfields.access.field.record import AccessStatusEnum
 
-resource_type = NestedTermsFacet(
-    field='metadata.resource_type.props.type',
-    subfield='metadata.resource_type.props.subtype',
-    splitchar='::',
-    label=_("Resource types"),
-    value_labels=VocabularyLabels('resourcetypes')
-)
-
-language = TermsFacet(
-    field='metadata.languages.id',
-    label=_('Languages'),
-    value_labels=VocabularyLabels('languages')
-)
-
-subject = TermsFacet(
-    field='metadata.subjects.id',
-    label=_('Subjects'),
-    value_labels=VocabularyLabels('subjects')
-)
 
 access_status = TermsFacet(
     field='access.status',
@@ -47,8 +29,38 @@ access_status = TermsFacet(
     }
 )
 
+
 is_published = TermsFacet(
     field='is_published',
     label=_('Status'),
     value_labels={"true": _("Published"), "false": _("Unpublished")}
+)
+
+
+language = TermsFacet(
+    field='metadata.languages.id',
+    label=_('Languages'),
+    value_labels=VocabularyLabels('languages')
+)
+
+
+resource_type = NestedTermsFacet(
+    field='metadata.resource_type.props.type',
+    subfield='metadata.resource_type.props.subtype',
+    splitchar='::',
+    label=_("Resource types"),
+    value_labels=VocabularyLabels('resourcetypes')
+)
+
+
+subject_nested = NestedTermsFacet(
+    field='metadata.subjects.scheme',
+    subfield='metadata.subjects.subject.keyword',
+    label=_('Subjects'),
+    value_labels=SubjectsLabels()
+)
+
+subject = TermsFacet(
+    field='metadata.subjects.subject.keyword',
+    label=_('Subjects'),
 )

@@ -487,7 +487,12 @@
                   "type" : "keyword"
                 },
                 "subject" : {
-                  "type" : "text"
+                  "type": "text",
+                  "fields": {
+                    "keyword": {
+                      "type": "keyword"
+                    }
+                  }
                 },
                 "scheme": {
                   "type": "keyword"
