@@ -12,11 +12,10 @@
 from flask_babelex import gettext as _
 from invenio_records_resources.services.records.facets import \
     NestedTermsFacet, TermsFacet
-from invenio_vocabularies.services.facets import VocabularyLabels
 from invenio_vocabularies.contrib.subjects import SubjectsLabels
+from invenio_vocabularies.services.facets import VocabularyLabels
 
 from ..records.systemfields.access.field.record import AccessStatusEnum
-
 
 access_status = TermsFacet(
     field='access.status',
