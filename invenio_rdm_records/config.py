@@ -317,21 +317,6 @@ RDM_PERMISSION_POLICY = None
 # Search configuration
 #
 RDM_FACETS = {
-    'resource_type': {
-        'facet': facets.resource_type,
-        'ui': {
-            'field': 'resource_type.type',
-            'childAgg': {
-                'field': 'resource_type.subtype',
-            }
-        }
-    },
-    'languages': {
-        'facet': facets.language,
-        'ui': {
-            'field': 'languages',
-        }
-    },
     'access_status': {
         'facet': facets.access_status,
         'ui': {
@@ -343,7 +328,37 @@ RDM_FACETS = {
         'ui': {
             'field': 'is_published',
         }
-    }
+    },
+    'language': {
+        'facet': facets.language,
+        'ui': {
+            'field': 'languages',
+        }
+    },
+    'resource_type': {
+        'facet': facets.resource_type,
+        'ui': {
+            'field': 'resource_type.type',
+            'childAgg': {
+                'field': 'resource_type.subtype',
+            }
+        }
+    },
+    'subject': {
+        'facet': facets.subject,
+        'ui': {
+            'field': 'subjects.subject',
+        }
+    },
+    'subject_nested': {
+        'facet': facets.subject_nested,
+        'ui': {
+            'field': 'subjects.scheme',
+            'childAgg': {
+                'field': 'subjects.subject',
+            }
+        }
+    },
 }
 
 RDM_SORT_OPTIONS = {
@@ -384,7 +399,7 @@ RDM_SORT_OPTIONS = {
 """
 
 RDM_SEARCH = {
-    'facets': ['resource_type', 'languages'],
+    'facets': ['access_status', 'resource_type'],
     'sort': ['bestmatch', 'newest', 'oldest', 'version']
 }
 """Record search configuration.
@@ -406,7 +421,7 @@ The configuration has two possible keys:
 """
 
 RDM_SEARCH_DRAFTS = {
-    'facets': ['access_status', 'is_published', 'resource_type', 'languages'],
+    'facets': ['access_status', 'is_published', 'resource_type'],
     'sort': ['bestmatch', 'updated-desc', 'updated-asc', 'newest', 'oldest',
              'version'],
 }
