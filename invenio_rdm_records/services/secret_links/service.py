@@ -18,6 +18,7 @@ from invenio_drafts_resources.services.records import RecordService
 from invenio_records_resources.services.records.schema import \
     ServiceSchemaWrapper
 from marshmallow.exceptions import ValidationError
+from sqlalchemy.orm.exc import NoResultFound
 
 from ...secret_links.errors import InvalidPermissionLevelError
 
@@ -32,6 +33,14 @@ class SecretLinkService(RecordService):
     def link_result_list(self, *args, **kwargs):
         """Create a new instance of the resource list."""
         return self.config.link_result_list_cls(*args, **kwargs)
+
+    def get_parent_and_record_or_draft(self, _id):
+        """Return parent and (record or draft)."""
+        try:
+            record, parent = self._get_record_and_parent_by_id(_id)
+        except NoResultFound:
+            record, parent = self._get_draft_and_parent_by_id(_id)
+        return record, parent
 
     @property
     def schema_secret_link(self):
@@ -104,7 +113,7 @@ class SecretLinkService(RecordService):
         links_config=None,
     ):
         """Create a secret link for a record (resp. its parent)."""
-        record, parent = self._get_record_and_parent_by_id(id_)
+        record, parent = self.get_parent_and_record_or_draft(id_)
 
         # Permissions
         self.require_permission(identity, "manage", record=record)
@@ -157,7 +166,7 @@ class SecretLinkService(RecordService):
         links_config=None,
     ):
         """Read the secret links of a record (resp. its parent)."""
-        record, parent = self._get_record_and_parent_by_id(id_)
+        record, parent = self.get_parent_and_record_or_draft(id_)
 
         # Permissions
         self.require_permission(identity, "manage", record=record)
@@ -179,7 +188,7 @@ class SecretLinkService(RecordService):
         links_config=None,
     ):
         """Read a specific secret link of a record (resp. its parent)."""
-        record, parent = self._get_record_and_parent_by_id(id_)
+        record, parent = self.get_parent_and_record_or_draft(id_)
 
         # Permissions
         self.require_permission(identity, "manage", record=record)
@@ -208,7 +217,7 @@ class SecretLinkService(RecordService):
         links_config=None,
     ):
         """Update a secret link for a record (resp. its parent)."""
-        record, parent = self._get_record_and_parent_by_id(id_)
+        record, parent = self.get_parent_and_record_or_draft(id_)
 
         # Permissions
         self.require_permission(identity, "manage", record=record)
@@ -261,7 +270,7 @@ class SecretLinkService(RecordService):
         links_config=None,
     ):
         """Delete a secret link for a record (resp. its parent)."""
-        record, parent = self._get_record_and_parent_by_id(id_)
+        record, parent = self.get_parent_and_record_or_draft(id_)
 
         # Permissions
         self.require_permission(identity, "manage", record=record)
