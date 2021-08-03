@@ -25,6 +25,7 @@ def resource_type_v(resource_type_type):
     """Resource type vocabulary record."""
     vocabulary_service.create(system_identity, {  # create base resource type
         "id": "image",
+        "icon": "chart bar outline",
         "props": {
             "csl": "figure",
             "datacite_general": "Image",
@@ -33,19 +34,18 @@ def resource_type_v(resource_type_type):
             "openaire_type": "dataset",
             "schema.org": "https://schema.org/ImageObject",
             "subtype": "",
-            "subtype_name": "",
             "type": "image",
-            "type_icon": "chart bar outline",
-            "type_name": "Image",
         },
         "title": {
             "en": "Image"
         },
+        "tags": ["depositable", "linkable"],
         "type": "resourcetypes"
     })
 
     vocabulary_service.create(system_identity, {
         "id": "image-photo",
+        "icon": "chart bar outline",
         "props": {
             "csl": "graphic",
             "datacite_general": "Image",
@@ -54,19 +54,18 @@ def resource_type_v(resource_type_type):
             "openaire_type": "dataset",
             "schema.org": "https://schema.org/Photograph",
             "subtype": "image-photo",
-            "subtype_name": "Photo",
             "type": "image",
-            "type_icon": "chart bar outline",
-            "type_name": "Image",
         },
         "title": {
             "en": "Photo"
         },
+        "tags": ["depositable", "linkable"],
         "type": "resourcetypes"
     })
 
     vocab = vocabulary_service.create(system_identity, {
         "id": "dataset",
+        "icon": "table",
         "props": {
             "csl": "dataset",
             "datacite_general": "Dataset",
@@ -75,14 +74,12 @@ def resource_type_v(resource_type_type):
             "openaire_type": "dataset",
             "schema.org": "https://schema.org/Dataset",
             "subtype": '',
-            "subtype_name": '',
             "type": "dataset",
-            "type_icon": "table",
-            "type_name": "Dataset",
         },
         "title": {
             "en": "Dataset"
         },
+        "tags": ["depositable", "linkable"],
         "type": "resourcetypes"
     })
 

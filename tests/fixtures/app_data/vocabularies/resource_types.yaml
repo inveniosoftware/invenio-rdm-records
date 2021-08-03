@@ -1,4 +1,5 @@
 - id: image
+  icon: chart bar outline
   props:
     csl: figure
     datacite_general: Image
@@ -7,13 +8,14 @@
     openaire_type: dataset
     schema.org: https://schema.org/ImageObject
     subtype: ''
-    subtype_name: ''
     type: image
-    type_icon: chart bar outline
-    type_name: Image
   title:
     en: Image
+  tags:
+    - depositable
+    - linkable
 - id: image-figure
+  icon: chart bar outline
   props:
     csl: figure
     datacite_general: Image
@@ -22,13 +24,14 @@
     openaire_type: dataset
     schema.org: https://schema.org/ImageObject
     subtype: image-figure
-    subtype_name: Figure
     type: image
-    type_icon: chart bar outline
-    type_name: Image
   title:
     en: Figure
+  tags:
+    - depositable
+    - linkable
 - id: image-plot
+  icon: chart bar outline
   props:
     csl: figure
     datacite_general: Image
@@ -37,13 +40,14 @@
     openaire_type: dataset
     schema.org: https://schema.org/ImageObject
     subtype: image-plot
-    subtype_name: Plot
     type: image
-    type_icon: chart bar outline
-    type_name: Image
   title:
     en: Plot
+  tags:
+    - depositable
+    - linkable
 - id: image-drawing
+  icon: chart bar outline
   props:
     csl: graphic
     datacite_general: Image
@@ -52,13 +56,14 @@
     openaire_type: dataset
     schema.org: https://schema.org/ImageObject
     subtype: image-drawing
-    subtype_name: Drawing
     type: image
-    type_icon: chart bar outline
-    type_name: Image
   title:
     en: Drawing
+  tags:
+    - depositable
+    - linkable
 - id: image-diagram
+  icon: chart bar outline
   props:
     csl: figure
     datacite_general: Image
@@ -67,13 +72,14 @@
     openaire_type: dataset
     schema.org: https://schema.org/ImageObject
     subtype: image-diagram
-    subtype_name: Diagram
     type: image
-    type_icon: chart bar outline
-    type_name: Image
   title:
     en: Diagram
+  tags:
+    - depositable
+    - linkable
 - id: image-photo
+  icon: chart bar outline
   props:
     csl: graphic
     datacite_general: Image
@@ -82,13 +88,14 @@
     openaire_type: dataset
     schema.org: https://schema.org/Photograph
     subtype: image-photo
-    subtype_name: Photo
     type: image
-    type_icon: chart bar outline
-    type_name: Image
   title:
     en: Photo
+  tags:
+    - depositable
+    - linkable
 - id: image-other
+  icon: chart bar outline
   props:
     csl: graphic
     datacite_general: Image
@@ -97,9 +104,9 @@
     openaire_type: dataset
     schema.org: https://schema.org/ImageObject
     subtype: image-other
-    subtype_name: Other
     type: image
-    type_icon: chart bar outline
-    type_name: Image
   title:
     en: Other
+  tags:
+    - depositable
+    - linkable
