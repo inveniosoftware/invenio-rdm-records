@@ -2,6 +2,7 @@
 #
 # Copyright (C) 2020 CERN.
 # Copyright (C) 2020 Northwestern University.
+# Copyright (C) 2021 Graz University of Technology.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
@@ -74,7 +75,7 @@ def make_affiliation_index(attr, obj, dummy_ctx):
             creator['role']['title'] = gettext_from_dict(
                 creator['role']['title'],
                 get_locale(),
-                current_default_locale
+                current_default_locale()
             )
 
     return {
