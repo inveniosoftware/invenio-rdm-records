@@ -139,6 +139,7 @@ class RDMRecordServiceConfig(RecordServiceConfig, RecordConfigMixin):
         # TODO: only include link when DOI support is enabled.
         "self_doi": Link(
             "{+ui}/doi/{pid_doi}",
+            # when=lambda record, ctx: "doi" in record.pids.keys(),
             when=is_record,
             vars=lambda record, vars: vars.update({
                 f"pid_{scheme}": pid["identifier"]
@@ -154,6 +155,9 @@ class RDMRecordServiceConfig(RecordServiceConfig, RecordConfigMixin):
         "latest_html": RecordLink("{+ui}/records/{id}/latest"),
         "draft": RecordLink("{+api}/records/{id}/draft", when=is_record),
         "record": RecordLink("{+api}/records/{id}", when=is_draft),
+        # TODO: record_html temporarily needed for DOI registration, until
+        # problems with self_doi has been fixed
+        "record_html": RecordLink("{+ui}/records/{id}", when=is_draft),
         "publish": RecordLink(
             "{+api}/records/{id}/draft/actions/publish",
             when=is_draft
