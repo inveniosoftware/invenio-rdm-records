@@ -21,15 +21,14 @@ from invenio_records_resources.services import ConditionalLink, \
     FileServiceConfig
 from invenio_records_resources.services.base.links import Link
 from invenio_records_resources.services.files.links import FileLink
-from invenio_records_resources.services.records.facets import \
-    NestedTermsFacet, RecordRelationLabels, TermsFacet
 from invenio_records_resources.services.records.links import RecordLink
-from invenio_vocabularies.services.facets import VocabularyLabels
 
 from ..records import RDMDraft, RDMRecord
-from ..records.systemfields.access.field.record import AccessStatusEnum
+from . import facets
 from .components import AccessComponent, ExternalPIDsComponent, \
     MetadataComponent, RelationsComponent
+from .customizations import FileConfigMixin, RecordConfigMixin, \
+    SearchOptionsMixin
 from .permissions import RDMRecordPermissionPolicy
 from .pids.providers import DOIDataCiteClient, DOIDataCitePIDProvider, \
     UnmanagedPIDProvider
@@ -37,76 +36,39 @@ from .result_items import SecretLinkItem, SecretLinkList
 from .schemas import RDMParentSchema, RDMRecordSchema
 from .schemas.parent.access import SecretLink
 
-#
-# Facet definitions
-#
-resource_type_facet = NestedTermsFacet(
-    field='metadata.resource_type.props.type',
-    subfield='metadata.resource_type.props.subtype',
-    splitchar='::',
-    label=_("Resource types"),
-    value_labels=VocabularyLabels('resourcetypes')
-)
-
-language_facet = TermsFacet(
-    field='metadata.languages.id',
-    label=_('Languages'),
-    value_labels=VocabularyLabels('languages')
-)
-
-subject_facet = TermsFacet(
-    field='metadata.subjects.id',
-    label=_('Subjects'),
-    value_labels=VocabularyLabels('subjects')
-)
-
-access_status_facet = TermsFacet(
-    field='access.status',
-    label=_("Access status"),
-    value_labels={
-        AccessStatusEnum.OPEN.value: _("Open"),
-        AccessStatusEnum.EMBARGOED.value: _("Embargoed"),
-        AccessStatusEnum.RESTRICTED.value: _("Restricted"),
-        AccessStatusEnum.METADATA_ONLY.value: _("Metadata-only"),
-    }
-)
-
-is_published_facet = TermsFacet(
-    field='is_published',
-    label=_('State'),
-    value_labels={"true": _("Published"), "false": _("Unpublished")}
-)
-
 
 #
-# Search options
+# Default search configuration
 #
-class RDMSearchOptions(SearchOptions):
+class RDMSearchOptions(SearchOptions, SearchOptionsMixin):
     """Search options for record search."""
 
     facets = {
-        'resource_type': resource_type_facet,
-        'languages': language_facet,
-        # 'subjects': subject_facet,  FIXME
+        'resource_type': facets.resource_type,
+        'languages': facets.language,
+        'access_status': facets.access_status,
     }
 
 
-class RDMSearchDraftsOptions(SearchDraftsOptions):
+class RDMSearchDraftsOptions(SearchDraftsOptions, SearchOptionsMixin):
     """Search options for drafts search."""
 
     facets = {
-        'resource_type': resource_type_facet,
-        'languages': language_facet,
-        # 'subjects': subject_facet,  FIXME
-        'access_status': access_status_facet,
-        'is_published': is_published_facet,
+        'resource_type': facets.resource_type,
+        'languages': facets.language,
+        'access_status': facets.access_status,
+        'is_published': facets.is_published,
     }
 
 
+class RDMSearchVersionsOptions(SearchVersionsOptions, SearchOptionsMixin):
+    """Search options for record versioning search."""
+
+
 #
-# Service configuration
+# Default service configuration
 #
-class RDMRecordServiceConfig(RecordServiceConfig):
+class RDMRecordServiceConfig(RecordServiceConfig, RecordConfigMixin):
     """RDM record draft service config."""
 
     # Record and draft classes
@@ -128,7 +90,7 @@ class RDMRecordServiceConfig(RecordServiceConfig):
     # Search configuration
     search = RDMSearchOptions
     search_drafts = RDMSearchDraftsOptions
-    search_versions = SearchVersionsOptions
+    search_versions = RDMSearchVersionsOptions
 
     # PIDs providers
     pids_providers = {
@@ -203,14 +165,14 @@ class RDMRecordServiceConfig(RecordServiceConfig):
     }
 
 
-class RDMFileRecordServiceConfig(FileServiceConfig):
+class RDMFileRecordServiceConfig(FileServiceConfig, FileConfigMixin):
     """Configuration for record files."""
 
     record_cls = RDMRecord
     permission_policy_cls = RDMRecordPermissionPolicy
 
 
-class RDMFileDraftServiceConfig(FileServiceConfig):
+class RDMFileDraftServiceConfig(FileServiceConfig, FileConfigMixin):
     """Configuration for draft files."""
 
     record_cls = RDMDraft

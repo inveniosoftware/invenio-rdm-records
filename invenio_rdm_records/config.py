@@ -10,6 +10,8 @@
 
 import idutils
 
+from .services import facets
+
 
 def _(x):
     """Identity function for string extraction."""
@@ -134,6 +136,7 @@ RDM_RECORDS_DOI_DATACITE_USERNAME = ""
 RDM_RECORDS_DOI_DATACITE_PASSWORD = ""
 RDM_RECORDS_DOI_DATACITE_PREFIX = "10.1234"
 RDM_RECORDS_DOI_DATACITE_TEST_MODE = True
+RDM_RECORDS_DOI_DATACITE_FORMAT = "{prefix}/{id}"
 
 # PID Schemes
 
@@ -301,4 +304,118 @@ RDM_RECORDS_LOCATION_SCHEMES = {
         "validator": always_valid
     }
 }
-RDM_RECORDS_DOI_DATACITE_FORMAT = "{prefix}/{id}"
+
+
+#
+# Record permission policy
+#
+RDM_PERMISSION_POLICY = None
+"""Override the default record permission policy."""
+
+
+#
+# Search configuration
+#
+RDM_FACETS = {
+    'resource_type': {
+        'facet': facets.resource_type,
+        'ui': {
+            'field': 'resource_type.type',
+            'childAgg': {
+                'field': 'resource_type.subtype',
+            }
+        }
+    },
+    'languages': {
+        'facet': facets.language,
+        'ui': {
+            'field': 'languages',
+        }
+    },
+    'access_status': {
+        'facet': facets.access_status,
+        'ui': {
+            'field': 'access.status',
+        }
+    },
+    'is_published': {
+        'facet': facets.is_published,
+        'ui': {
+            'field': 'is_published',
+        }
+    }
+}
+
+RDM_SORT_OPTIONS = {
+    "bestmatch": dict(
+        title=_('Best match'),
+        fields=['_score'],  # ES defaults to desc on `_score` field
+    ),
+    "newest": dict(
+        title=_('Newest'),
+        fields=['-created'],
+    ),
+    "oldest": dict(
+        title=_('Oldest'),
+        fields=['created'],
+    ),
+    "version": dict(
+        title=_('Version'),
+        fields=['-versions.index'],
+    ),
+    "updated-desc": dict(
+        title=_('Recently updated'),
+        fields=['-updated'],
+    ),
+    "updated-asc": dict(
+        title=_('Least recently updated'),
+        fields=['updated'],
+    ),
+}
+"""Definitions of available record sort options.
+
+.. code-block:
+
+    "<option name>": dict(
+        title=_('<title>'),
+        fields=['-updated'],
+    ),
+
+"""
+
+RDM_SEARCH = {
+    'facets': ['resource_type', 'languages'],
+    'sort': ['bestmatch', 'newest', 'oldest', 'version']
+}
+"""Record search configuration.
+
+The configuration has two possible keys:
+
+- ``facets`` - A list of facet names which must have been defined in
+  ``RDM_FACETS``.
+- ``sort`` -  A list of sort option names which must have been defined in
+  ``RDM_SORT_OPTIONS``.
+- ``sort_default`` - The default sort option when a query is provided. Must be
+  a single sort option name which must have been defined in
+  ``RDM_SORT_OPTIONS``. If not provided, will use the first element of
+  the ``sort`` list.
+- ``sort_default_no_query`` - The default sort option when no query is
+  provided. Must be a single sort option name which must have been defined in
+  ``RDM_SORT_OPTIONS``. If not provided, will use the second element of
+  the ``sort`` list.
+"""
+
+RDM_SEARCH_DRAFTS = {
+    'facets': ['access_status', 'is_published', 'resource_type', 'languages'],
+    'sort': ['bestmatch', 'updated-desc', 'updated-asc', 'newest', 'oldest',
+             'version'],
+}
+"""User records search configuration (i.e. list of uploads)."""
+
+RDM_SEARCH_VERSIONING = {
+    'facets': [],
+    'sort': ['version'],
+    'sort_default': 'version',
+    'sort_default_no_query': 'version',
+}
+"""Records versions search configuration (list of versions for a record)."""

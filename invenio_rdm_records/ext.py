@@ -24,6 +24,7 @@ from . import config
 from .resources import RDMDraftFilesResourceConfig, \
     RDMParentRecordLinksResource, RDMParentRecordLinksResourceConfig, \
     RDMRecordFilesResourceConfig, RDMRecordResource, RDMRecordResourceConfig
+from .searchconfig import SearchConfig
 from .secret_links import LinkNeed, SecretLink
 from .services import RDMFileDraftServiceConfig, RDMFileRecordServiceConfig, \
     RDMRecordService, RDMRecordServiceConfig, SecretLinkService
@@ -92,30 +93,74 @@ class InvenioRDMRecords(object):
         ]
 
         for k in dir(config):
-            if k in supported_configurations or k.startswith('RDM_RECORDS_'):
+            if k in supported_configurations or k.startswith('RDM_'):
                 app.config.setdefault(k, getattr(config, k))
             if k in overriding_configurations and not app.config.get(k):
                 app.config[k] = getattr(config, k)
 
-    def _filter_record_service_config(self, app, service_config_cls):
-        """Filter record service config based on app global config."""
-        if not app.config["RDM_RECORDS_DOI_DATACITE_ENABLED"]:
-            service_config_cls.pids_providers.pop("doi", None)
-        return service_config_cls
+    def service_configs(self, app):
+        """Customized service configs."""
+        # Overall record permission policy
+        permission_policy = app.config.get('RDM_PERMISSION_POLICY')
+        doi_registration = app.config['RDM_RECORDS_DOI_DATACITE_ENABLED']
+
+        # Available facets and sort options
+        sort_opts = app.config.get('RDM_SORT_OPTIONS')
+        facet_opts = app.config.get('RDM_FACETS')
+
+        # Specific configuration for each search endpoint
+        search_opts = SearchConfig(
+            app.config.get('RDM_SEARCH'),
+            sort=sort_opts,
+            facets=facet_opts,
+        )
+        search_drafts_opts = SearchConfig(
+            app.config.get('RDM_SEARCH_DRAFTS'),
+            sort=sort_opts,
+            facets=facet_opts,
+        )
+        search_versions_opts = SearchConfig(
+            app.config.get('RDM_SEARCH_VERSIONING'),
+            sort=sort_opts,
+            facets=facet_opts,
+        )
+
+        class ServiceConfigs:
+            record = RDMRecordServiceConfig.customize(
+                permission_policy=permission_policy,
+                doi_registration=doi_registration,
+                search=search_opts,
+                search_drafts=search_drafts_opts,
+                search_versions=search_versions_opts,
+            )
+            file = RDMFileRecordServiceConfig.customize(
+                permission_policy=permission_policy,
+            )
+            file_draft = RDMFileDraftServiceConfig.customize(
+                permission_policy=permission_policy,
+            )
+            affiliations = AffiliationsServiceConfig
+            subjects = SubjectsServiceConfig
+
+        return ServiceConfigs
 
     def init_services(self, app):
         """Initialize vocabulary resources."""
+        service_configs = self.service_configs(app)
+
         # Services
         self.records_service = RDMRecordService(
-            self._filter_record_service_config(app, RDMRecordServiceConfig),
-            files_service=FileService(RDMFileRecordServiceConfig),
-            draft_files_service=FileService(RDMFileDraftServiceConfig),
-            secret_links_service=SecretLinkService(RDMRecordServiceConfig)
+            service_configs.record,
+            files_service=FileService(service_configs.file),
+            draft_files_service=FileService(service_configs.file_draft),
+            secret_links_service=SecretLinkService(service_configs.record)
         )
         self.affiliations_service = AffiliationsService(
-            config=AffiliationsServiceConfig,
+            config=service_configs.affiliations,
         )
-        self.subjects_service = SubjectsService(config=SubjectsServiceConfig)
+        self.subjects_service = SubjectsService(
+            config=service_configs.subjects
+        )
 
     def init_resource(self, app):
         """Initialize vocabulary resources."""
