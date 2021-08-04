@@ -98,7 +98,7 @@ class ExternalPIDsComponent(ServiceComponent):
             else:
                 pid = provider.get(identifier_value)
 
-            url = self.service.links_item_tpl.expand(draft)["record"]
+            url = self.service.links_item_tpl.expand(draft)["record_html"]
             provider.register(pid, draft, url=url)
         else:
             if identifier_value:
