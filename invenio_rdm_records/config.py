@@ -108,43 +108,6 @@ metadata_extensions.MetadataExtensions` for
 allowed types and how this configuration variable is used.
 """
 
-RDM_RECORDS_CUSTOM_VOCABULARIES = {}
-"""Paths to custom controlled vocabularies.
-
-Of the shape:
-
-.. code-block:: python
-
-    {
-        '<dotted>.<path>.<to field1>': {
-            'path': '<absolute path to CSV file containing it>'
-        },
-        # ...
-        '<dotted>.<path>.<to fieldN>': {
-            'path': '<absolute path to CSV file containing it>'
-        }
-    }
-
-For example:
-
-.. code-block:: python
-
-    {
-        'resource_type': {
-            'path': os.path.join(
-                os.path.dirname(os.path.abspath(__file__)),
-                'my_resource_types.csv'
-            )
-        },
-        'contributors.role': {
-            'path': os.path.join(
-                os.path.dirname(os.path.abspath(__file__)),
-                'my_contributor_roles.csv'
-            )
-        }
-    }
-"""
-
 RDM_RECORDS_USER_FIXTURE_PASSWORDS = {
     "admin@inveniosoftware.org": None
 }

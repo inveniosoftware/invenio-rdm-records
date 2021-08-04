@@ -332,26 +332,7 @@ def test_contributor_invalid_no_role(app):
     )
 
 
-@pytest.fixture
-def custom_config(config):
-    prev_custom_vocabularies = config['RDM_RECORDS_CUSTOM_VOCABULARIES']
-
-    config['RDM_RECORDS_CUSTOM_VOCABULARIES'] = {
-        'contributors.role': {
-            'path': os.path.join(
-                os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
-                'data',
-                'contributor_role.csv'
-            )
-        }
-    }
-
-    yield config
-
-    config['RDM_RECORDS_CUSTOM_VOCABULARIES'] = prev_custom_vocabularies
-
-
-def test_contributor_invalid_role(app, custom_config):
+def test_contributor_invalid_role(app):
     # Doubles as a test of custom roles
     invalid_role = {
         "person_or_org": {
