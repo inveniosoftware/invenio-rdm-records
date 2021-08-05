@@ -61,8 +61,8 @@ class SearchConfig:
     def __init__(self, config, sort=None, facets=None):
         """Initialize search config."""
         config = config or {}
-        self._sort = None
-        self._facets = None
+        self._sort = []
+        self._facets = []
 
         if 'sort' in config:
             self._sort = SortOptionsSelector(
