@@ -66,8 +66,6 @@ def test_draft_links(client, draft_json, minimal_record, headers):
         "record": f"https://127.0.0.1:5000/api/records/{pid_value}",
         "record_html": f"https://127.0.0.1:5000/records/{pid_value}",
         "versions": f"https://127.0.0.1:5000/api/records/{pid_value}/versions",
-        "latest": f"https://127.0.0.1:5000/api/records/{pid_value}/versions/latest",  # noqa
-        "latest_html": f"https://127.0.0.1:5000/records/{pid_value}/latest",  # noqa
         "access_links": f"https://127.0.0.1:5000/api/records/{pid_value}/access/links",  # noqa
         "files": f"https://127.0.0.1:5000/api/records/{pid_value}/draft/files",
         "reserve_doi": f"https://127.0.0.1:5000/api/records/{pid_value}/draft/pids/doi",  # noqa
