@@ -151,8 +151,14 @@ class RDMRecordServiceConfig(RecordServiceConfig, RecordConfigMixin):
             if_=RecordLink("{+api}/records/{id}/files"),
             else_=RecordLink("{+api}/records/{id}/draft/files"),
         ),
-        "latest": RecordLink("{+api}/records/{id}/versions/latest"),
-        "latest_html": RecordLink("{+ui}/records/{id}/latest"),
+        "latest": RecordLink(
+            "{+api}/records/{id}/versions/latest",
+            when=is_record
+        ),
+        "latest_html": RecordLink(
+            "{+ui}/records/{id}/latest",
+            when=is_record
+        ),
         "draft": RecordLink("{+api}/records/{id}/draft", when=is_record),
         "record": RecordLink("{+api}/records/{id}", when=is_draft),
         # TODO: record_html temporarily needed for DOI registration, until
