@@ -124,7 +124,8 @@ setup(
             'invenio_rdm_records_ext = invenio_rdm_records.views:blueprint',
         ],
         'invenio_celery.tasks': [
-            'invenio_rdm_records = invenio_rdm_records.fixtures.tasks',
+            'invenio_rdm_records_fixtures = invenio_rdm_records.fixtures.tasks',
+            'invenio_rdm_records_services = invenio_rdm_records.services.tasks',
         ],
         'invenio_db.models': [
             'invenio_rdm_records = invenio_rdm_records.records.models',
