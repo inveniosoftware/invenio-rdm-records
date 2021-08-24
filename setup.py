@@ -67,7 +67,6 @@ install_requires = [
     'arrow>=0.17.0',
     'citeproc-py-styles>=0.1.2',
     'citeproc-py>=0.6.0',
-    'citeproc-py-styles>=0.1.2',
     'datacite>=1.1.1',
     'dcxml>=0.1.2',
     'Faker>=2.0.3',
