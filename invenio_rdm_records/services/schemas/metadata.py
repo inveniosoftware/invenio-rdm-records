@@ -323,11 +323,11 @@ class AwardSchema(Schema):
 
     title = SanitizedUnicode(
         required=True,
-        validate=_not_blank(_('Name cannot be blank.'))
+        validate=_not_blank(_('Title cannot be blank.'))
     )
     number = SanitizedUnicode(
         required=True,
-        validate=_not_blank(_('Name cannot be blank.'))
+        validate=_not_blank(_('Number cannot be blank.'))
     )
     scheme = SanitizedUnicode()
     identifier = SanitizedUnicode()
