@@ -302,8 +302,7 @@ class DataCite43Schema(Schema):
         """Get (main and alternate) identifiers list."""
         serialized_identifiers = []
 
-        # pids go first so the DOI from the record is the main doi
-        # otherwise a doi from identifiers can be used
+        # pids go first so the DOI from the record is included
         pids = obj["pids"]
         for scheme, id_ in pids.items():
             serialized_identifiers.append({
@@ -316,12 +315,16 @@ class DataCite43Schema(Schema):
         # Identifiers field
         identifiers = obj["metadata"].get("identifiers", [])
         for id_ in identifiers:
-            serialized_identifiers.append({
-                "identifier": id_["identifier"],
-                "identifierType": get_scheme_datacite(
-                    id_["scheme"], "RDM_RECORDS_IDENTIFIERS_SCHEMES"
-                )
-            })
+            if id_["scheme"] != 'doi':
+                # DataCite only accepts a DOI identifier that is the official
+                # registered DOI - ones in the alternate identifier field are
+                # dropped
+                serialized_identifiers.append({
+                    "identifier": id_["identifier"],
+                    "identifierType": get_scheme_datacite(
+                        id_["scheme"], "RDM_RECORDS_IDENTIFIERS_SCHEMES"
+                    )
+                })
 
         return serialized_identifiers or missing
 
