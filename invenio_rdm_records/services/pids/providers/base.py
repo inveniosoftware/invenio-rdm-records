@@ -35,11 +35,11 @@ class BasePIDProvider:
         """Generates an identifier value."""
         raise NotImplementedError
 
-    def __init__(self, api_client=None, pid_type=None,
+    def __init__(self, client=None, pid_type=None,
                  default_status=PIDStatus.NEW, system_managed=True,
                  required=False, **kwargs):
         """Constructor."""
-        self.api_client = api_client
+        self.client = client
         self.pid_type = pid_type
         self.default_status = default_status
         self.system_managed = system_managed
@@ -65,6 +65,7 @@ class BasePIDProvider:
             "pid_value": pid_value
         }
         if pid_provider:
+            # FIXME: should be pid_provider or self.name?
             args["pid_provider"] = pid_provider
 
         return PersistentIdentifier.get(**args)
@@ -151,7 +152,7 @@ class BasePIDProvider:
             status=status,
         )
 
-    def reserve(self, pid, record, **kwargs):
+    def reserve(self, pid, **kwargs):
         """Reserve a persistent identifier.
 
         This might or might not be useful depending on the service of the
@@ -163,7 +164,7 @@ class BasePIDProvider:
             return pid.reserve()
         return True
 
-    def register(self, pid, record, **kwargs):
+    def register(self, pid, **kwargs):
         """Register a persistent identifier.
 
         See: :meth:`invenio_pidstore.models.PersistentIdentifier.register`.
@@ -172,11 +173,11 @@ class BasePIDProvider:
             return pid.register()
         return True
 
-    def update(self, pid, record, **kwargs):
+    def update(self, pid, **kwargs):
         """Update information about the persistent identifier."""
         raise NotImplementedError
 
-    def delete(self, pid, record, **kwargs):
+    def delete(self, pid, **kwargs):
         """Delete a persistent identifier.
 
         See: :meth:`invenio_pidstore.models.PersistentIdentifier.delete`.

@@ -175,7 +175,7 @@ def test_permission_levels(
     data['metadata']['title'] = 'allow it'
     service.update_draft(id_, i, data)
     service.delete_draft(id_, i)
-    service.edit(id_, i)
+    test = service.edit(id_, i)
     service.publish(id_, i)
     new_draft = service.new_version(id_, i)
     new_id = new_draft.id

@@ -16,6 +16,7 @@ from itertools import chain
 from elasticsearch_dsl import Q
 from flask_principal import UserNeed
 from invenio_access.permissions import authenticated_user
+from invenio_pidstore.models import PersistentIdentifier, PIDStatus
 from invenio_records_permissions.generators import Generator
 
 from invenio_rdm_records.records import RDMDraft
@@ -170,3 +171,45 @@ class SecretLinks(Generator):
 
         if secret_links:
             return Q("terms", **{"parent.access.links.id": secret_links})
+
+
+class OwnerIfExternalPID(Generator):
+    """Owner if pid is external."""
+
+    def needs(self, record=None, **kwargs):
+        """Set of Needs granting permission."""
+        scheme = kwargs.get("scheme")
+        if not scheme or not record:
+            return []
+
+        provider = record.pids.get(scheme, {}).get("provider")
+        if provider == "external":
+            return [
+                UserNeed(owner.owner_id) for
+                owner in record.parent.access.owners
+            ]
+
+        return []
+
+
+class OwnerIfManagedPIDNotReserved(Generator):
+    """Owner if a managed pid is in status NEW."""
+
+    def needs(self, record=None, **kwargs):
+        """Set of Needs granting permission."""
+        scheme = kwargs.get("scheme")
+        if not scheme or not record:
+            return []
+
+        pid_attrs = record.pids.get(scheme, {})
+        provider = pid_attrs.get("provider")
+        value = pid_attrs.get("identifier")
+        if value and provider and provider != "external":
+            pid = PersistentIdentifier.get(pid_value=value, pid_type=scheme)
+            if pid.status == PIDStatus.NEW:
+                return [
+                    UserNeed(owner.owner_id) for
+                    owner in record.parent.access.owners
+                ]
+
+        return []

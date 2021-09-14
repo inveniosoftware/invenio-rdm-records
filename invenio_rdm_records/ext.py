@@ -28,6 +28,7 @@ from .searchconfig import SearchConfig
 from .secret_links import LinkNeed, SecretLink
 from .services import RDMFileDraftServiceConfig, RDMFileRecordServiceConfig, \
     RDMRecordService, RDMRecordServiceConfig, SecretLinkService
+from .services.pids import PIDsService
 from .services.schemas.metadata_extensions import MetadataExtensions
 
 
@@ -153,7 +154,8 @@ class InvenioRDMRecords(object):
             service_configs.record,
             files_service=FileService(service_configs.file),
             draft_files_service=FileService(service_configs.file_draft),
-            secret_links_service=SecretLinkService(service_configs.record)
+            secret_links_service=SecretLinkService(service_configs.record),
+            pids_service=PIDsService(service_configs.record)
         )
         self.affiliations_service = AffiliationsService(
             config=service_configs.affiliations,

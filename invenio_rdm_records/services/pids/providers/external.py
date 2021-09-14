@@ -25,29 +25,9 @@ class ExternalPIDProvider(BasePIDProvider):
         """Constructor."""
         super().__init__(pid_type=pid_type, system_managed=False)
 
-    def create(self, record, value, **kwargs):
-        """Create PID."""
-        return super().create(record, value)
-
-    def reserve(self, pid, record, **kwargs):
-        """Not allowed for unmanaged PIDs."""
-        raise NotImplementedError
-
-    def register(self, pid, record, **kwargs):
-        """Register PID."""
-        return super().register(pid, record)
-
     def update(self, pid, record, **kwargs):
         """Not allowed for unmanaged PIDs."""
         raise NotImplementedError
-
-    def delete(self, pid, record, **kwargs):
-        """Delete PID."""
-        return pid.delete()
-
-    def get_status(self, identifier, **kwargs):
-        """Not allowed for unmanaged PIDs."""
-        return self.get(identifier, **kwargs).status
 
     def validate(
         self, record, identifier=None, client=None, provider=None, **kwargs
