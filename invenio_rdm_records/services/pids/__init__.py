@@ -6,3 +6,9 @@
 # it under the terms of the MIT License; see LICENSE file for more details.
 
 """PID module."""
+
+from .service import PIDsService
+
+__all__ = (
+    "PIDsService",
+)
