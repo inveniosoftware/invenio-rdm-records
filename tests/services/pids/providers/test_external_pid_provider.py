@@ -5,20 +5,20 @@
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
 
-"""Unmanaged provider tests."""
+"""External provider tests."""
 
 import pytest
 from flask_babelex import lazy_gettext as _
 from invenio_pidstore.models import PersistentIdentifier, PIDStatus
 
 from invenio_rdm_records.records import RDMDraft, RDMRecord
-from invenio_rdm_records.services.pids.providers import UnmanagedPIDProvider
+from invenio_rdm_records.services.pids.providers import ExternalPIDProvider
 
 
 @pytest.fixture(scope="function")
-def unmanaged_provider():
+def external_provider():
     """Application factory fixture."""
-    return UnmanagedPIDProvider(pid_type="testid")
+    return ExternalPIDProvider(pid_type="testid")
 
 
 @pytest.fixture(scope="function")
@@ -29,8 +29,8 @@ def record(location):
     return record
 
 
-def test_unmanaged_provider_create(record, unmanaged_provider):
-    created_pid = unmanaged_provider.create(record, "avalue")
+def test_external_provider_create(record, external_provider):
+    created_pid = external_provider.create(record, "avalue")
     db_pid = PersistentIdentifier.get(
         pid_value=created_pid.pid_value, pid_type="testid"
     )
@@ -41,9 +41,9 @@ def test_unmanaged_provider_create(record, unmanaged_provider):
     assert created_pid.status == PIDStatus.NEW
 
 
-def test_unmanaged_provider_get(record, unmanaged_provider):
-    created_pid = unmanaged_provider.create(record, "avalue")
-    get_pid = unmanaged_provider.get(created_pid.pid_value)
+def test_external_provider_get(record, external_provider):
+    created_pid = external_provider.create(record, "avalue")
+    get_pid = external_provider.get(created_pid.pid_value)
 
     assert created_pid == get_pid
     assert get_pid.pid_value
@@ -51,9 +51,9 @@ def test_unmanaged_provider_get(record, unmanaged_provider):
     assert get_pid.status == PIDStatus.NEW
 
 
-def test_unmanaged_provider_register(record, unmanaged_provider):
-    created_pid = unmanaged_provider.create(record, "avalue")
-    assert unmanaged_provider.register(pid=created_pid, record=record)
+def test_external_provider_register(record, external_provider):
+    created_pid = external_provider.create(record, "avalue")
+    assert external_provider.register(pid=created_pid, record=record)
 
     db_pid = PersistentIdentifier.get(
         pid_value=created_pid.pid_value, pid_type="testid"
@@ -65,25 +65,25 @@ def test_unmanaged_provider_register(record, unmanaged_provider):
     assert db_pid.status == PIDStatus.REGISTERED
 
 
-def test_unmanaged_provider_validate(
-    running_app, db, unmanaged_provider, record
+def test_external_provider_validate(
+    running_app, db, external_provider, record
 ):
-    success, errors = unmanaged_provider.validate(
+    success, errors = external_provider.validate(
         record=record, provider="external"
     )
     assert success
     assert not errors
 
 
-def test_unmanaged_provider_validate_failure(
-    running_app, db, unmanaged_provider, record
+def test_external_provider_validate_failure(
+    running_app, db, external_provider, record
 ):
     with pytest.raises(Exception):
-        unmanaged_provider.validate(
+        external_provider.validate(
             record=record, client="someclient", provider="external"
         )
 
     with pytest.raises(Exception):
-        unmanaged_provider.validate(
+        external_provider.validate(
             record=record, provider="wrong"
         )

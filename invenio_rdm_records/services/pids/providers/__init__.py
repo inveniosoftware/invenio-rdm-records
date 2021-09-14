@@ -10,15 +10,15 @@
 
 from .base import BaseClient, BasePIDProvider
 from .datacite import DOIDataCiteClient, DOIDataCitePIDProvider
+from .external import ExternalPIDProvider
 from .oai import OAIPIDClient, OAIPIDProvider
-from .unmanaged import UnmanagedPIDProvider
 
 __all__ = (
     "BaseClient",
     "BasePIDProvider",
     "DOIDataCiteClient",
     "DOIDataCitePIDProvider",
+    "ExternalPIDProvider",
     "OAIPIDClient",
     "OAIPIDProvider",
-    "UnmanagedPIDProvider",
 )

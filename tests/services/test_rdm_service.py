@@ -185,7 +185,7 @@ def test_pid_creation_invalid_scheme_managed(
     assert draft.to_dict()["pids"] == {}
 
 
-def test_pid_creation_valid_unmanaged(running_app, es_clear, minimal_record):
+def test_pid_creation_valid_external(running_app, es_clear, minimal_record):
     superuser_identity = running_app.superuser_identity
     service = current_rdm_records.records_service
     # set the pids field
@@ -205,7 +205,7 @@ def test_pid_creation_valid_unmanaged(running_app, es_clear, minimal_record):
     assert doi["provider"] == published_doi["provider"]
 
 
-def test_pid_creation_invalid_format_unmanaged(
+def test_pid_creation_invalid_format_external(
     running_app, es_clear, minimal_record
 ):
     superuser_identity = running_app.superuser_identity
@@ -224,7 +224,7 @@ def test_pid_creation_invalid_format_unmanaged(
     assert draft.to_dict()["pids"] == {}
 
 
-def test_pid_creation_invalid_scheme_unmanaged(
+def test_pid_creation_invalid_scheme_external(
     running_app, es_clear, minimal_record
 ):
     superuser_identity = running_app.superuser_identity
@@ -258,7 +258,7 @@ def _publish_record(identity, record):
     return published_doi
 
 
-def test_pid_creation_duplicated_unmanaged(
+def test_pid_creation_duplicated_external(
     running_app, es_clear, superuser_identity, minimal_record
 ):
     service = current_rdm_records.records_service
@@ -277,7 +277,7 @@ def test_pid_creation_duplicated_unmanaged(
         service.create(superuser_identity, minimal_record)
 
 
-def test_pid_update_duplicated_unmanaged(
+def test_pid_update_duplicated_external(
     running_app, es_clear, superuser_identity, minimal_record
 ):
     service = current_rdm_records.records_service

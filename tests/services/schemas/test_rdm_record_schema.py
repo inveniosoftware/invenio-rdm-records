@@ -29,7 +29,7 @@ def test_valid_pid(app, db, minimal_record, location):
     assert valid_full == RDMRecordSchema().load(minimal_record)["pids"]
 
 
-def test_valid_unmanaged(app, db, minimal_record, location):
+def test_valid_external(app, db, minimal_record, location):
     valid_full = {
         "doi": {
             "identifier": "10.5281/zenodo.1234",
