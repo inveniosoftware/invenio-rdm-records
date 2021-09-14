@@ -110,7 +110,7 @@ class RDMRecordSchema(RecordSchema, FieldPermissionsMixin):
 
     @post_dump
     def default_nested(self, data, many, **kwargs):
-        """Serialize metadata as empty dict for partial drafts.
+        """Serialize fields as empty dict for partial drafts.
 
         Cannot use marshmallow for Nested fields due to issue:
         https://github.com/marshmallow-code/marshmallow/issues/1566
@@ -119,6 +119,8 @@ class RDMRecordSchema(RecordSchema, FieldPermissionsMixin):
         """
         if not data.get("metadata"):
             data["metadata"] = {}
+        if not data.get("pids"):
+            data["pids"] = {}
 
         return data
 

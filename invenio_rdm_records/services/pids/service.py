@@ -11,32 +11,16 @@ from datetime import datetime
 
 from flask_babelex import lazy_gettext as _
 from invenio_db import db
+from invenio_drafts_resources.services.records import RecordService
 from invenio_pidstore.errors import PIDDoesNotExistError
 from invenio_pidstore.models import PersistentIdentifier
-from invenio_drafts_resources.services.records import RecordService
 from marshmallow import ValidationError
 
 from .errors import ProviderNotSupportedError
 
+
 class PIDsService(RecordService):
     """RDM PIDs service."""
-
-    # def get_client(self, client_name):
-    #     """Get the provider client from config."""
-    #     client_class = self.config.pids_providers_clients[client_name]
-    #     return client_class(name=client_name)
-
-    # def get_managed_provider(self, providers_dict):
-    #     """Get the provider set as system managed."""
-    #     for name, attrs in providers_dict.items():
-    #         if attrs["system_managed"]:
-    #             return name, attrs
-
-    # def get_required_provider(self, providers_dict):
-    #     """Get the provider set as required."""
-    #     for name, attrs in providers_dict.items():
-    #         if attrs["required"]:
-    #             return name, attrs
 
     def get_provider(self, scheme, provider_name=None):
         """Get a provider from config."""
@@ -44,12 +28,10 @@ class PIDsService(RecordService):
         if not provider_name:
             provider_name = providers["default"]  # mandatory default
         try:
-            provider_config = providers[provider_name]
+            provider_cls = providers[provider_name]
+            return provider_cls()
         except KeyError:
             raise ProviderNotSupportedError(provider_name, scheme)
-
-        provider_cls = provider_config["provider"]
-        return provider_cls()
 
     def create(self, id_, identity, pid_type, pid_provider=None):
         """Create a `NEW` PID for a given record."""
@@ -58,6 +40,12 @@ class PIDsService(RecordService):
         # Permissions
         self.require_permission(identity, "pid_create", record=draft)
 
+        if draft.pids.get(pid_type):
+            raise ValidationError(
+                message=_("A PID already exists for type {pid_type}")
+                .format(pid_type=pid_type),
+                field_name=f"pids.{pid_type}",
+            )
         provider = self.get_provider(pid_type, pid_provider)
         pid = provider.create(draft)
         draft.pids[pid_type] = {
@@ -82,6 +70,7 @@ class PIDsService(RecordService):
     def resolve(self, id_, identity, pid_type):
         """Resolve PID to a record (not draft)."""
         # get the pid object
+        # FIXME: Should not use model class but go through provider?
         pid = PersistentIdentifier.get(pid_type=pid_type, pid_value=id_)
 
         # get related record
@@ -106,17 +95,18 @@ class PIDsService(RecordService):
         draft = self.draft_cls.pid.resolve(id_, registered_only=False)
 
         # Permissions
-        self.require_permission(identity, "pid_delete", record=draft)
+        self.require_permission(identity, "pid_discard", record=draft)
         provider = self.get_provider(pid_type, pid_provider)
-        pid_attr = draft.pids[pid_type]
-
         try:
+            pid_attr = draft.pids[pid_type]
             pid = provider.get_by_record(
                 draft.id,
                 pid_type=pid_type,
                 pid_value=pid_attr["identifier"],
             )
-        except PIDDoesNotExistError:
+        # KeyError if the pid is not present in the draft
+        # PIDDoesNotExistError if not present in DB
+        except (KeyError, PIDDoesNotExistError):
             raise ValidationError(
                 message=_("No PID found for type {pid_type}")
                 .format(pid_type=pid_type),

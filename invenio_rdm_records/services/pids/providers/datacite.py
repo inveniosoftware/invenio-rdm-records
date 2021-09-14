@@ -26,7 +26,7 @@ class DOIDataCiteClient(BaseClient):
     It Loads the values from config.
     """
 
-    def __init__(self, name, url=None, config_key=None, **kwargs):
+    def __init__(self, name="datacite", url=None, config_key=None, **kwargs):
         """Constructor."""
         config_key = config_key or f"RDM_RECORDS_DOI_DATACITE"
 
@@ -55,22 +55,22 @@ class DOIDataCitePIDProvider(BasePIDProvider):
 
     name = "datacite"
 
-    def __init__(self, client, pid_type="doi",
+    def __init__(self, client_cls, pid_type="doi",
                  default_status=PIDStatus.NEW, generate_id_func=None,
                  generate_doi_func=None, **kwargs):
         """Constructor."""
-        self.client = client
+        super().__init__(pid_type=pid_type, default_status=default_status)
+
+        self.client = client_cls()
         self.api_client = None
         self.is_api_client_setup = False
 
-        if client and client.has_credentials():
+        if self.client and self.client.has_credentials():
             self.api_client = DataCiteRESTClient(
-                client.username, client.password,
-                client.prefix, client.test_mode
+                self.client.username, self.client.password,
+                self.client.prefix, self.client.test_mode
             )
             self.is_api_client_setup = True
-
-        super().__init__(self.api_client, pid_type, default_status)
 
         self.generate_id = generate_id_func or \
             DOIDataCitePIDProvider._generate_id
@@ -115,18 +115,6 @@ class DOIDataCitePIDProvider(BasePIDProvider):
         doi = self.generate_doi(record, **kwargs)
         return super().create(record, doi, **kwargs)
 
-    def reserve(self, pid, record, **kwargs):
-        """Constant True.
-
-        It does not reserve locally, nor externally. This is to avoid storing
-        many PIDs as cause of reserve/discard, which would then be soft
-        deleted. Therefore we want to pass from status.NEW to status.RESERVED.
-        :param pid: the PID to reserve.
-        :param record: the record.
-        :returns: `True`
-        """
-        return True
-
     def register(self, pid, record, **kwargs):
         """Register a DOI via the DataCite API.
 
@@ -134,7 +122,7 @@ class DOIDataCitePIDProvider(BasePIDProvider):
         :param record: the record metadata for the DOI.
         :returns: `True` if is registered successfully.
         """
-        local_success = super().register(pid, record)
+        local_success = super().register(pid)
         if not local_success:
             return False
 
@@ -219,7 +207,7 @@ class DOIDataCitePIDProvider(BasePIDProvider):
 
             return False
 
-        return super().delete(pid, record)
+        return super().delete(pid, **kwargs)
 
     def validate(
         self, record, identifier=None, provider=None, client=None, **kwargs

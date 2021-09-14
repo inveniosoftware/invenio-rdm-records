@@ -10,16 +10,11 @@
 """Bibliographic Record Resource."""
 
 from flask import abort, g
-from flask_resources import request_parser, resource_requestctx, \
-    response_handler, route
+from flask_resources import resource_requestctx, response_handler, route
 from invenio_drafts_resources.resources import RecordResource
 from invenio_records_resources.resources.records.resource import \
     request_data, request_search_args, request_view_args
 from marshmallow_utils.fields import SanitizedUnicode
-
-request_pids_args = request_parser(
-    {"client": SanitizedUnicode()}, location='args'
-)
 
 
 class RDMRecordResource(RecordResource):
@@ -41,29 +36,25 @@ class RDMRecordResource(RecordResource):
 
         return url_rules
 
-    @request_pids_args
     @request_view_args
     @response_handler()
     def pids_reserve(self):
         """Reserve a PID."""
-        item = self.service.reserve_pid(
+        item = self.service.pids.create(
             id_=resource_requestctx.view_args["pid_value"],
             pid_type=resource_requestctx.view_args["pid_type"],
-            pid_client=resource_requestctx.args.get("client"),
             identity=g.identity,
         )
 
         return item.to_dict(), 201
 
-    @request_pids_args
     @request_view_args
     @response_handler()
     def pids_discard(self):
         """Discard a previously reserved PID."""
-        item = self.service.discard_pid(
+        item = self.service.pids.discard(
             id_=resource_requestctx.view_args["pid_value"],
             pid_type=resource_requestctx.view_args["pid_type"],
-            pid_client=resource_requestctx.args.get("client"),
             identity=g.identity,
         )
 

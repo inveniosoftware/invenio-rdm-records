@@ -34,7 +34,7 @@ from .customizations import FileConfigMixin, RecordConfigMixin, \
     SearchOptionsMixin
 from .permissions import RDMRecordPermissionPolicy
 from .pids.providers import DOIDataCiteClient, DOIDataCitePIDProvider, \
-    OAIPIDClient, OAIPIDProvider, UnmanagedPIDProvider
+    ExternalPIDProvider, OAIPIDClient, OAIPIDProvider
 from .result_items import SecretLinkItem, SecretLinkList
 from .schemas import RDMParentSchema, RDMRecordSchema
 from .schemas.parent.access import SecretLink
@@ -98,30 +98,22 @@ class RDMRecordServiceConfig(RecordServiceConfig, RecordConfigMixin):
     # PIDs providers
     pids_providers = {
         "doi": {
-            "datacite": {
-                "provider": DOIDataCitePIDProvider,
-                "required": True,
-                "system_managed": True,
-            },
-            "external": {
-                "provider": partial(UnmanagedPIDProvider, pid_type="doi"),
-                "required": False,
-                "system_managed": False,
-            },
+            "default": "datacite",
+            "datacite": partial(
+                DOIDataCitePIDProvider,
+                client_cls=DOIDataCiteClient
+            ),
+            "external": partial(ExternalPIDProvider, pid_type="doi"),
         },
         "oai": {
             "oai": {
-                "provider": OAIPIDProvider,
-                "required": True,
-                "system_managed": True,
+                "default": "oai",
+                "oai": OAIPIDProvider,
             }
         }
     }
 
-    pids_providers_clients = {
-        "datacite": DOIDataCiteClient,
-        "oai": OAIPIDClient,
-    }
+    pids_required = ["doi", "oai"]
 
     # Components - order matters!
     components = [
