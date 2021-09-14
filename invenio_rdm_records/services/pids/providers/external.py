@@ -12,7 +12,7 @@ from flask import current_app
 from .base import BasePIDProvider
 
 
-class UnmanagedPIDProvider(BasePIDProvider):
+class ExternalPIDProvider(BasePIDProvider):
     """This provider is validates PIDs to unmanaged constraints.
 
     It does not support any other type of operation. However, it helps

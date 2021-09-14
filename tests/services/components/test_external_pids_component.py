@@ -19,21 +19,21 @@ from invenio_rdm_records.services import RDMRecordService
 from invenio_rdm_records.services.components import ExternalPIDsComponent
 from invenio_rdm_records.services.config import RDMRecordServiceConfig
 from invenio_rdm_records.services.pids.providers import DOIDataCiteClient, \
-    DOIDataCitePIDProvider, UnmanagedPIDProvider
+    DOIDataCitePIDProvider, ExternalPIDProvider
 
 #
-# Unmanaged Provider
+# external Provider
 #
 
 
-class RequiredUnmanagedPIDProvider(UnmanagedPIDProvider):
-    """Custom unmanaged PID provider."""
+class RequiredExternalPIDProvider(ExternalPIDProvider):
+    """Custom external PID provider."""
 
     name = "requman"
 
 
-class NotRequiredUnmanagedPIDProvider(UnmanagedPIDProvider):
-    """Custom unmanaged PID provider."""
+class NotRequiredExternalPIDProvider(ExternalPIDProvider):
+    """Custom external PID provider."""
 
     name = "nrequman"
 
@@ -41,10 +41,10 @@ class NotRequiredUnmanagedPIDProvider(UnmanagedPIDProvider):
 class TestServiceReqUnmanConfig(RDMRecordServiceConfig):
     """Custom service config with only pid providers."""
     pids_providers = {
-        "requman": {  # Required Unmanaged
+        "requman": {  # Required external
             "requman": {
                 "provider": partial(
-                    RequiredUnmanagedPIDProvider, pid_type="requir"),
+                    RequiredExternalPIDProvider, pid_type="requir"),
                 "required": True,
                 "system_managed": False,
             }
@@ -57,10 +57,10 @@ class TestServiceReqUnmanConfig(RDMRecordServiceConfig):
 class TestServiceNReqUnmanConfig(RDMRecordServiceConfig):
     """Custom service config with only pid providers."""
     pids_providers = {
-        "nrequman": {  # Non required Unmanaged
+        "nrequman": {  # Non required external
             "nrequman": {
                 "provider": partial(
-                    NotRequiredUnmanagedPIDProvider, pid_type="notreq"),
+                    NotRequiredExternalPIDProvider, pid_type="notreq"),
                 "required": False,
                 "system_managed": False,
             }
@@ -71,23 +71,23 @@ class TestServiceNReqUnmanConfig(RDMRecordServiceConfig):
 
 
 @pytest.fixture(scope="function")
-def req_pid_unmanaged_cmp():
+def req_pid_external_cmp():
     service = RDMRecordService(config=TestServiceReqUnmanConfig())
 
     return ExternalPIDsComponent(service=service)
 
 
 @pytest.fixture(scope="function")
-def not_req_unmanaged_pid_cmp():
+def not_req_external_pid_cmp():
     service = RDMRecordService(config=TestServiceNReqUnmanConfig())
 
     return ExternalPIDsComponent(service=service)
 
 
-def test_unmanaged_required_pid_value(
-    req_pid_unmanaged_cmp, minimal_record, identity_simple, location
+def test_external_required_pid_value(
+    req_pid_external_cmp, minimal_record, identity_simple, location
 ):
-    component = req_pid_unmanaged_cmp
+    component = req_pid_external_cmp
     pids = {
         "requman": {
             "identifier": "value",
@@ -109,15 +109,15 @@ def test_unmanaged_required_pid_value(
     component.publish(identity_simple, draft=draft, record=record)
     assert record.pids == pids
 
-    provider = RequiredUnmanagedPIDProvider("requir")
+    provider = RequiredExternalPIDProvider("requir")
     pid = provider.get_by_record(record.id, pid_value="value")
     assert pid.is_registered()
 
 
-def test_unmanaged_required_no_pid_value(
-    req_pid_unmanaged_cmp, minimal_record, identity_simple, location
+def test_external_required_no_pid_value(
+    req_pid_external_cmp, minimal_record, identity_simple, location
 ):
-    component = req_pid_unmanaged_cmp
+    component = req_pid_external_cmp
     pids = {
         "requman": {
             "provider": "requman",
@@ -139,10 +139,10 @@ def test_unmanaged_required_no_pid_value(
         component.publish(identity_simple, draft=draft, record=record)
 
 
-def test_unmanaged_no_required_pid_value(
-    not_req_unmanaged_pid_cmp, minimal_record, identity_simple, location
+def test_external_no_required_pid_value(
+    not_req_external_pid_cmp, minimal_record, identity_simple, location
 ):
-    component = not_req_unmanaged_pid_cmp
+    component = not_req_external_pid_cmp
     pids = {
         "nrequman": {
             "identifier": "value",
@@ -164,15 +164,15 @@ def test_unmanaged_no_required_pid_value(
     component.publish(identity_simple, draft=draft, record=record)
     assert record.pids == pids
 
-    provider = NotRequiredUnmanagedPIDProvider("notreq")
+    provider = NotRequiredExternalPIDProvider("notreq")
     pid = provider.get_by_record(record.id, pid_value="value")
     assert pid.is_registered()
 
 
-def test_unmanaged_no_required_no_partial_value(
-    not_req_unmanaged_pid_cmp, minimal_record, identity_simple, location
+def test_external_no_required_no_partial_value(
+    not_req_external_pid_cmp, minimal_record, identity_simple, location
 ):
-    component = not_req_unmanaged_pid_cmp
+    component = not_req_external_pid_cmp
     # if no name provided, one of the configured must be required
     # since is not required we need to pass the provider name
     pids = {
@@ -197,11 +197,11 @@ def test_unmanaged_no_required_no_partial_value(
         component.publish(identity_simple, draft=draft, record=record)
 
 
-def test_unmanaged_no_required_no_pids(
-    not_req_unmanaged_pid_cmp, minimal_record, identity_simple, location
+def test_external_no_required_no_pids(
+    not_req_external_pid_cmp, minimal_record, identity_simple, location
 ):
     # NOTE: Since is {} should simply be ignored
-    component = not_req_unmanaged_pid_cmp
+    component = not_req_external_pid_cmp
     pids = {}
 
     # make sure `pids` field is added
@@ -217,14 +217,14 @@ def test_unmanaged_no_required_no_pids(
     record = RDMRecord.publish(draft)
     component.publish(identity_simple, draft=draft, record=record)
     with pytest.raises(PIDDoesNotExistError):
-        provider = NotRequiredUnmanagedPIDProvider("notreq")
+        provider = NotRequiredExternalPIDProvider("notreq")
         assert provider.get_by_record(record.id, pid_value="value")
 
 
-def test_unmanaged_duplicated_doi(
-    not_req_unmanaged_pid_cmp, minimal_record, identity_simple, location
+def test_external_duplicated_doi(
+    not_req_external_pid_cmp, minimal_record, identity_simple, location
 ):
-    component = not_req_unmanaged_pid_cmp
+    component = not_req_external_pid_cmp
     pids = {
         "nrequman": {
             "identifier": "avalues",
@@ -245,7 +245,7 @@ def test_unmanaged_duplicated_doi(
     component.publish(identity_simple, draft=draft, record=record)
     assert record.pids == pids
 
-    # create a second record with the same unmanaged DOI
+    # create a second record with the same external DOI
     data = minimal_record.copy()
     data["pids"] = pids
     draft = RDMDraft.create(data)
