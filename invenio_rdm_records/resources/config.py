@@ -14,6 +14,7 @@ from flask_babelex import lazy_gettext as _
 from flask_resources import HTTPJSONException, JSONSerializer, \
     ResponseHandler, create_error_handler, resource_requestctx
 from invenio_drafts_resources.resources import RecordResourceConfig
+from invenio_records.systemfields.relations import InvalidRelationValue
 from invenio_records_resources.resources.files import FileResourceConfig
 
 from ..services.errors import ReviewExistsError, ReviewNotFoundError, \
@@ -110,6 +111,12 @@ class RDMRecordResourceConfig(RecordResourceConfig):
                 description=str(e),
             )
         ),
+        InvalidRelationValue: create_error_handler(
+            lambda exc: HTTPJSONException(
+                code=400,
+                description=exc.args[0],
+            )
+        )
     }
 
 
