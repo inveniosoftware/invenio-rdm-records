@@ -12,8 +12,8 @@ from invenio_records_permissions.generators import Admin, AnyUser, \
     AuthenticatedUser, Disable, SuperUser, SystemProcess
 from invenio_records_permissions.policies.records import RecordPermissionPolicy
 
-from .generators import IfDraft, IfRestricted, OwnerIfExternalPID, \
-    OwnerIfManagedPIDNotReserved, RecordOwners, SecretLinks
+from .generators import IfDraft, IfRestricted, RecordOwners, \
+    RecordOwnersIfExternalPID, RecordOwnersIfPIDNew, SecretLinks
 
 
 class RDMRecordPermissionPolicy(RecordPermissionPolicy):
@@ -77,8 +77,8 @@ class RDMRecordPermissionPolicy(RecordPermissionPolicy):
         Admin(),
         SuperUser(),
         SystemProcess(),
-        OwnerIfExternalPID(),
-        OwnerIfManagedPIDNotReserved()
+        RecordOwnersIfExternalPID(),
+        RecordOwnersIfPIDNew()
     ]
 
     #
