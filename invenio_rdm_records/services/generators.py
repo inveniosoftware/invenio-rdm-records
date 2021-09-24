@@ -16,6 +16,7 @@ from itertools import chain
 from elasticsearch_dsl import Q
 from flask_principal import UserNeed
 from invenio_access.permissions import authenticated_user
+from invenio_pidstore.errors import PIDDoesNotExistError
 from invenio_pidstore.models import PersistentIdentifier, PIDStatus
 from invenio_records_permissions.generators import Generator
 
@@ -173,8 +174,8 @@ class SecretLinks(Generator):
             return Q("terms", **{"parent.access.links.id": secret_links})
 
 
-class OwnerIfExternalPID(Generator):
-    """Owner if pid is external."""
+class RecordOwnersIfExternalPID(Generator):
+    """Record owners if pid is external."""
 
     def needs(self, record=None, **kwargs):
         """Set of Needs granting permission."""
@@ -192,8 +193,8 @@ class OwnerIfExternalPID(Generator):
         return []
 
 
-class OwnerIfManagedPIDNotReserved(Generator):
-    """Owner if a managed pid is in status NEW."""
+class RecordOwnersIfPIDNew(Generator):
+    """Record owners if a managed pid is in status NEW."""
 
     def needs(self, record=None, **kwargs):
         """Set of Needs granting permission."""
@@ -205,11 +206,16 @@ class OwnerIfManagedPIDNotReserved(Generator):
         provider = pid_attrs.get("provider")
         value = pid_attrs.get("identifier")
         if value and provider and provider != "external":
-            pid = PersistentIdentifier.get(pid_value=value, pid_type=scheme)
-            if pid.status == PIDStatus.NEW:
-                return [
-                    UserNeed(owner.owner_id) for
-                    owner in record.parent.access.owners
-                ]
+            try:
+                pid = PersistentIdentifier.get(
+                    pid_value=value, pid_type=scheme
+                )
+                if pid.status == PIDStatus.NEW:
+                    return [
+                        UserNeed(owner.owner_id) for
+                        owner in record.parent.access.owners
+                    ]
+            except PIDDoesNotExistError:
+                pass  # return empty if not found
 
         return []

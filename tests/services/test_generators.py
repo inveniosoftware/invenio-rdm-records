@@ -14,15 +14,20 @@ See https://pytest-invenio.readthedocs.io/ for documentation on which test
 fixtures are available.
 """
 
+from typing import Pattern
+
 import pytest
 from flask_principal import Identity, UserNeed
 from invenio_access.permissions import any_user, authenticated_user, \
     system_process
+from invenio_db import db
+from invenio_pidstore.models import PersistentIdentifier, PIDStatus
 from invenio_records_permissions.generators import AnyUser, \
     AuthenticatedUser, SystemProcess
 
 from invenio_rdm_records.records import RDMParent, RDMRecord
-from invenio_rdm_records.services.generators import IfRestricted, RecordOwners
+from invenio_rdm_records.services.generators import IfRestricted, \
+    RecordOwners, RecordOwnersIfExternalPID, RecordOwnersIfPIDNew
 
 
 def _public_record():
@@ -38,17 +43,10 @@ def _restricted_record():
 
 
 def _owned_record():
-    data = {
-        "access": {
-            "owned_by": [
-                {"user": 16},
-                {"user": 17},
-            ]
-        }
-    }
-
-    record = RDMRecord.create({}, access={})
-    record.parent = RDMParent(data)
+    parent = RDMParent.create({})
+    parent.access.owners.add({"user": 16})
+    parent.access.owners.add({"user": 17})
+    record = RDMRecord.create({}, parent=parent)
     return record
 
 
@@ -126,3 +124,69 @@ def test_record_owner(app, mocker):
         }
     }
     assert query_filter.to_dict() == expected_query_filter
+
+
+def test_owner_if_external(app):
+    generator = RecordOwnersIfExternalPID()
+    record = _owned_record()
+    record["pids"] = {
+        "doi": {
+            "identifier": "10.1234/test.1234",
+            "provider": "datacite"
+        }
+    }
+
+    assert generator.needs(record=record, scheme="doi") == []
+
+    record["pids"]["doi"] = {
+        "identifier": "10.1234/test.1234",
+        "provider": "external"
+    }
+
+    assert generator.needs(record=record, scheme="doi") == [
+        UserNeed(16),
+        UserNeed(17),
+    ]
+
+
+def test_owner_if_managed_is_new(app):
+    generator = RecordOwnersIfPIDNew()
+    record = _owned_record()
+
+    # Non existing in pidstore
+    record["pids"] = {
+        "doi": {
+            "identifier": "10.1234/test.1234",
+            "provider": "datacite"
+        }
+    }
+
+    assert generator.needs(record=record, scheme="doi") == []
+
+    # status NEW
+    pid = PersistentIdentifier.create(
+        pid_type="doi",
+        pid_value=record["pids"]["doi"]["identifier"],
+        status=PIDStatus.NEW,
+    )
+    assert pid
+    assert generator.needs(record=record, scheme="doi") == [
+        UserNeed(16),
+        UserNeed(17),
+    ]
+
+    # status RESERVED
+    assert pid.reserve()
+    assert generator.needs(record=record, scheme="doi") == []
+
+    # status REGISTERED
+    assert pid.register()
+    assert generator.needs(record=record, scheme="doi") == []
+
+    # Not meant for external pids
+    record["pids"]["doi"] = {
+        "identifier": "10.1234/test.1234",
+        "provider": "external"
+    }
+
+    assert generator.needs(record=record, scheme="doi") == []
