@@ -132,6 +132,8 @@ def test_discard_non_exisisting_pid(running_app, es_clear, minimal_record):
 # |--------------------------------------------------|---------------------------------------|  # noqa
 # | Publish with no pid (creation of mandatory ones) | basic_flow                            |  # noqa
 # |--------------------------------------------------|---------------------------------------|  # noqa
+# | Do not allow duplicates                          | duplicates                            |  # noqa
+# |--------------------------------------------------|---------------------------------------|  # noqa
 #
 # | Reservation
 # |--------------------------------------------------|---------------------------------------|  # noqa
@@ -217,6 +219,65 @@ def test_pids_basic_flow(running_app, es_clear, minimal_record):
     pid = provider.get(pid_value=published_doi["identifier"])
     assert pid.status == PIDStatus.RESERVED  # registration is async
 
+
+def test_pids_duplicates(running_app, es_clear, minimal_record):
+    superuser_identity = running_app.superuser_identity
+    service = current_rdm_records.records_service
+    provider = service.pids.get_provider("doi", "datacite")
+    # create an external pid for an already existing NEW managed one
+    draft = service.create(superuser_identity, minimal_record)
+    draft = service.pids.create(draft.id, superuser_identity, "doi")
+    doi = draft["pids"]["doi"]["identifier"]
+
+    data = minimal_record.copy()
+    data["pids"]["doi"] = {
+        "identifier": doi,
+        "provider": "external"
+    }
+
+    duplicated_draft = service.create(superuser_identity, data)
+    error_msg = {
+        'field': 'pids.doi',
+        'message': [f'doi:{doi} already exists.']
+    }
+    assert error_msg in duplicated_draft.errors
+
+    # create an external pid for an already existing RESERVED managed one
+    record = service.publish(draft.id, superuser_identity)
+
+    duplicated_draft = service.create(superuser_identity, data)
+    error_msg = {
+        'field': 'pids.doi',
+        'message': [f'doi:{doi} already exists.']
+    }
+    assert error_msg in duplicated_draft.errors
+
+    # create an external pid for an already existing external one
+    data = minimal_record.copy()
+    doi = "10.1234/test.1234"
+    data["pids"]["doi"] = {"identifier": doi, "provider": "external"}
+    draft = service.create(superuser_identity, data)
+    record = service.publish(draft.id, superuser_identity)
+
+    duplicated_draft = service.create(superuser_identity, data)
+    error_msg = {
+        'field': 'pids.doi',
+        'message': [f'doi:{doi} already exists.']
+    }
+    assert error_msg in duplicated_draft.errors
+
+    # create a managed pid for an already existing external one
+    draft = service.create(superuser_identity, minimal_record)
+    doi = draft["pids"]["doi"]["identifier"]
+    data = minimal_record.copy()
+    data["pids"]["doi"] = {"identifier": doi, "provider": "external"}
+
+    duplicated_draft = service.create(superuser_identity, data)
+    error_msg = {
+        'field': 'pids.doi',
+        'message': [f'doi:{doi} already exists.']
+    }
+    assert error_msg in duplicated_draft.errors
 
 # Reservation
 

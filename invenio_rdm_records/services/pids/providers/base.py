@@ -213,8 +213,7 @@ class BasePIDProvider:
                 )
                 return False, [
                     _(
-                        "{pid_type}:{identifier} is already registered" +
-                        " to another record"
+                        "{pid_type}:{identifier} already exists."
                     ).format(pid_type=self.pid_type, identifier=identifier)
                 ]
 
