@@ -134,6 +134,8 @@ def test_discard_non_exisisting_pid(running_app, es_clear, minimal_record):
 # |--------------------------------------------------|---------------------------------------|  # noqa
 # | Do not allow duplicates                          | duplicates                            |  # noqa
 # |--------------------------------------------------|---------------------------------------|  # noqa
+# | Fail on empty (invalid) value for external pid   | creation_invalid_external_payload     |  # noqa
+# |--------------------------------------------------|---------------------------------------|  # noqa
 #
 # | Reservation
 # |--------------------------------------------------|---------------------------------------|  # noqa
@@ -278,6 +280,25 @@ def test_pids_duplicates(running_app, es_clear, minimal_record):
         'message': [f'doi:{doi} already exists.']
     }
     assert error_msg in duplicated_draft.errors
+
+
+def test_pids_creation_invalid_external_payload(
+    running_app, es_clear, minimal_record
+):
+    superuser_identity = running_app.superuser_identity
+    service = current_rdm_records.records_service
+
+    data = minimal_record.copy()
+    data["pids"]["doi"] = {
+        "identifier": "",
+        "provider": "external",
+    }
+
+    draft = service.create(superuser_identity, data)
+    assert draft.errors == [
+        {'field': 'pids', 'messages': ['Invalid value for scheme doi']}
+    ]
+
 
 # Reservation
 
