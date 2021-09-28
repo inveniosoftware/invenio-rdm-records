@@ -12,10 +12,11 @@
 from invenio_drafts_resources.services.records.components import \
     ServiceComponent
 from invenio_pidstore.errors import PIDDoesNotExistError
-from invenio_pidstore.models import PIDStatus
+from invenio_pidstore.models import PersistentIdentifier, PIDStatus
 from invenio_records_resources.services.errors import PermissionDeniedError
 from marshmallow import ValidationError
 
+from ...proxies import current_rdm_records
 from ..pids.errors import PIDTypeNotSupportedError
 from ..pids.tasks import register_pid
 
@@ -96,7 +97,6 @@ class ExternalPIDsComponent(ServiceComponent):
                 args["value"] = value
             pid = provider.create(**args)
             provider.reserve(pid, record=draft)
-            register_pid(recid=draft.id, pid_type=scheme)
         else:  # managed and value, i.e. an already created pid, needs reserve
             # TODO: What should happen if via REST a non existing pid is sent
             pid = provider.get(pid_value=value, pid_type=scheme)
@@ -104,7 +104,6 @@ class ExternalPIDsComponent(ServiceComponent):
                 pid = provider.create(record=draft, value=pid.pid_value)
             if pid.is_new():  # not reserved and not registered
                 provider.reserve(pid, record=draft)
-                register_pid(recid=draft.id, pid_type=scheme)
 
         pid_attrs = {
             "identifier": pid.pid_value,
@@ -123,8 +122,8 @@ class ExternalPIDsComponent(ServiceComponent):
         # FIXME: this should be moved to marshmallow level
         # validation happens before to be able to fail before reserving pids
         # it means a double looping but validation should eventually be moved
-        # to marshmellow see invenio-rdm-records/issues/796
-        errors = {}
+        # to marshmallow see invenio-rdm-records/issues/796
+        errors = []
         self._validate_pids_schemes(draft_pids)
         self._validate_pids(draft_pids, record, errors)
         if errors:
@@ -152,7 +151,7 @@ class ExternalPIDsComponent(ServiceComponent):
         record.pids = record_pids
 
     # the delete hook is not implemented because record deletion is
-    # fobidden by permissions. In addition, the flow to when/how delete a
+    # forbidden by permissions. In addition, the flow to when/how delete a
     # reserved/registered pid is not trivial. It is dealt with by the
     # inactivate function at pids service level
     def delete_draft(self, identity, draft=None, record=None, force=False):
@@ -194,7 +193,7 @@ class ExternalPIDsComponent(ServiceComponent):
         since adding a new one has the same restrictions than the record
         update.
         """
-        # loop throuhg the record (draft) pids and see if they need updating
+        # loop through the record (draft) pids and see if they need updating
         # dict() forces copy to avoid modification during loop errors
         existing_pids = dict(record.get("pids", {}))
         data_pids = data.get("pids", {})
@@ -244,10 +243,24 @@ class ExternalPIDsComponent(ServiceComponent):
         # FIXME: this should be moved to marshmallow level
         # validation happens before to be able to fail before reserving pids
         # it means a double looping but validation should eventually be moved
-        # to marshmellow see invenio-rdm-records/issues/796
-        errors = {}
+        # to marshmallow see invenio-rdm-records/issues/796
+        errors = []
         self._validate_pids_schemes(record_pids)
         self._validate_pids(record_pids, record, errors)
         if errors:
             raise ValidationError(message=errors)
         draft.pids = record_pids
+
+    def post_publish(self, identity, record=None):
+        """Post publish handler."""
+        record_pids = record.get('pids', {})
+        for scheme, pid_dict in record_pids.items():
+            provider_name = pid_dict["provider"]
+            identifier_value = pid_dict["identifier"]
+            provider = self.service.pids.get_provider(scheme, provider_name)
+            pid = provider.get(pid_value=identifier_value, pid_type=scheme)
+            if pid.status == PIDStatus.RESERVED:
+                register_pid.delay(
+                    pid_type=pid.pid_type, pid_value=pid.pid_value,
+                    recid=record["id"], provider_name=provider_name
+                )

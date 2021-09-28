@@ -12,7 +12,6 @@ import json
 from datacite import DataCiteRESTClient
 from datacite.errors import DataCiteError
 from flask import current_app
-from invenio_pidstore.errors import PIDAlreadyExists, PIDDoesNotExistError
 from invenio_pidstore.models import PIDStatus
 
 from invenio_rdm_records.resources.serializers import DataCite43JSONSerializer

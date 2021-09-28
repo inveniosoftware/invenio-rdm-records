@@ -9,9 +9,11 @@
 
 import pytest
 from flask import current_app
+from invenio_access.permissions import system_identity
 from invenio_pidstore.errors import PIDDoesNotExistError
 from invenio_pidstore.models import PersistentIdentifier, PIDStatus
 
+from invenio_rdm_records.proxies import current_rdm_records
 from invenio_rdm_records.records import RDMDraft, RDMRecord
 from invenio_rdm_records.services.pids.providers import DOIDataCiteClient, \
     DOIDataCitePIDProvider
@@ -33,6 +35,16 @@ def record(location):
     """Creates an empty record."""
     draft = RDMDraft.create({})
     record = RDMRecord.publish(draft)
+
+    return record
+
+
+@pytest.fixture(scope="function")
+def record_w_links(running_app, minimal_record):
+    """Creates an empty record."""
+    service = current_rdm_records.records_service
+    draft = service.create(system_identity, minimal_record)
+    record = service.publish(draft.id, system_identity)
 
     return record
 
@@ -72,11 +84,14 @@ def test_datacite_provider_reserve(record, datacite_provider):
     assert db_pid.status == PIDStatus.RESERVED
 
 
-def test_datacite_provider_register(record, datacite_provider, mocker):
+def test_datacite_provider_register(record_w_links, datacite_provider, mocker):
     mocker.patch("invenio_rdm_records.services.pids.providers.datacite." +
                  "DataCite43JSONSerializer")
-    created_pid = datacite_provider.create(record)
-    assert datacite_provider.register(pid=created_pid, record=record, url=None)
+    created_pid = datacite_provider.create(record_w_links._record)
+    assert datacite_provider.register(
+        pid=created_pid, record=record_w_links._record,
+        url=record_w_links.links["self_html"]
+    )
 
     db_pid = PersistentIdentifier.get(
         pid_value=created_pid.pid_value, pid_type="doi")
@@ -87,13 +102,17 @@ def test_datacite_provider_register(record, datacite_provider, mocker):
     assert db_pid.status == PIDStatus.REGISTERED
 
 
-def test_datacite_provider_update(record, datacite_provider, mocker):
+def test_datacite_provider_update(record_w_links, datacite_provider, mocker):
     mocker.patch("invenio_rdm_records.services.pids.providers.datacite." +
                  "DataCite43JSONSerializer")
-    created_pid = datacite_provider.create(record)
+    created_pid = datacite_provider.create(record_w_links._record)
     assert datacite_provider.register(
-        pid=created_pid, record=record, url=None)
-    assert datacite_provider.update(pid=created_pid, record=record, url=None)
+        pid=created_pid, record=record_w_links,
+        url=record_w_links.links["self_html"]
+    )
+    assert datacite_provider.update(
+        pid=created_pid, record=record_w_links._record, url=None
+    )
 
     db_pid = PersistentIdentifier.get(
         pid_value=created_pid.pid_value, pid_type="doi")
@@ -132,13 +151,16 @@ def test_datacite_provider_unregister_reserved(
 
 
 def test_datacite_provider_unregister_registered(
-    record, datacite_provider, mocker
+    record_w_links, datacite_provider, mocker
 ):
     mocker.patch("invenio_rdm_records.services.pids.providers.datacite." +
                  "DataCite43JSONSerializer")
     # Unregister NEW is a soft delete
-    created_pid = datacite_provider.create(record)
-    assert datacite_provider.register(pid=created_pid, record=record, url=None)
+    created_pid = datacite_provider.create(record_w_links._record)
+    assert datacite_provider.register(
+        pid=created_pid, record=record_w_links,
+        url=record_w_links.links["self_html"]
+    )
     assert created_pid.status == PIDStatus.REGISTERED
     assert datacite_provider.delete(created_pid, record)
 
