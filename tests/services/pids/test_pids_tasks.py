@@ -15,7 +15,7 @@ import pytest
 from invenio_pidstore.models import PIDStatus
 
 from invenio_rdm_records.proxies import current_rdm_records
-from invenio_rdm_records.services.pids.tasks import register_pid
+from invenio_rdm_records.services.pids.tasks import register_or_update_pid
 
 RunningApp = namedtuple("RunningApp", [
     "app", "location", "superuser_identity", "resource_type_v",
@@ -36,10 +36,10 @@ def running_app(
                       resource_type_v, subject_v, languages_v, title_type_v)
 
 
-def test_publish_record_w_created_doi(
+def test_register_pid(
     running_app, es_clear, minimal_record, mocker
 ):
-    """Publish a record with an already created datacite DOI."""
+    """Registers a PID."""
     def public_doi(self, metadata, url, doi):
         """Mock doi deletion."""
         pass
@@ -54,23 +54,42 @@ def test_publish_record_w_created_doi(
     doi = draft["pids"]["doi"]["identifier"]
     provider = service.pids.get_provider("doi", "datacite")
     pid = provider.get(pid_value=doi)
-
+    record = service.record_cls.publish(draft._record)
+    record.pids = {
+        pid.pid_type: {
+            "identifier": pid.pid_value,
+            "provider": "datacite"
+        }
+    }
+    record.metadata = draft['metadata']
+    record.register()
+    record.commit()
     assert pid.status == PIDStatus.NEW
-    record = service.publish(draft.id, superuser_identity)
+    pid.reserve()
     assert pid.status == PIDStatus.RESERVED
-    register_pid(pid_type="doi", pid_value=pid.pid_value,
-                 recid=record["id"], provider_name="datacite")
+    register_or_update_pid(pid_type="doi", pid_value=pid.pid_value,
+                           recid=record["id"], provider_name="datacite")
     assert pid.status == PIDStatus.REGISTERED
 
 
-def test_publish_record(running_app, es_clear, minimal_record, mocker):
+def test_update_pid(running_app, es_clear, minimal_record, mocker):
     """No pid provided, creating one by default."""
     def public_doi(self, metadata, url, doi):
         """Mock doi deletion."""
         pass
 
+    def update(self, pid, record, url=None, **kwargs):
+        """Mock doi update."""
+        pass
+
     mocker.patch("invenio_rdm_records.services.pids.providers.datacite." +
                  "DataCiteRESTClient.public_doi", public_doi)
+    mocked_update = mocker.patch(
+        "invenio_rdm_records.services.pids.providers.datacite." +
+        "DOIDataCitePIDProvider.update"
+    )
+
+    mocked_update.side_effect = update
 
     service = current_rdm_records.records_service
     superuser_identity = running_app.superuser_identity
@@ -79,27 +98,8 @@ def test_publish_record(running_app, es_clear, minimal_record, mocker):
     doi = record["pids"]["doi"]["identifier"]
     provider = service.pids.get_provider("doi", "datacite")
     pid = provider.get(pid_value=doi)
-    assert pid.status == PIDStatus.RESERVED
-    register_pid(pid_type="doi", pid_value=pid.pid_value,
-                 recid=record["id"], provider_name="datacite")
     assert pid.status == PIDStatus.REGISTERED
-
-
-def test_register_external_pid(running_app, es_clear, minimal_record):
-    """Registering external pid."""
-    minimal_record["pids"]["doi"] = {
-        "identifier": "10.1234/dummy.12345",
-        "provider": "external"
-    }
-    service = current_rdm_records.records_service
-    superuser_identity = running_app.superuser_identity
-    draft = service.create(superuser_identity, minimal_record)
-    doi = draft["pids"]["doi"]["identifier"]
-
-    record = service.publish(draft.id, superuser_identity)
-    provider = service.pids.get_provider("doi", "external")
-    pid = provider.get(pid_value=doi)
-    assert pid.status == PIDStatus.RESERVED
-    register_pid(pid_type="doi", pid_value=pid.pid_value,
-                 recid=record["id"], provider_name="external")
-    assert pid.status == PIDStatus.REGISTERED
+    record_edited = service.edit(record.id, superuser_identity)
+    assert mocked_update.called is False
+    service.publish(record_edited.id, superuser_identity)
+    assert mocked_update.called is True

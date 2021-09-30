@@ -15,8 +15,8 @@ from invenio_rdm_records.proxies import current_rdm_records
 
 
 @shared_task(ignore_result=True)
-def register_pid(pid_type, pid_value, recid, provider_name=None):
-    """Registers a PID."""
+def register_or_update_pid(pid_type, pid_value, recid, provider_name=None):
+    """Registers a PID or updates it if already registered."""
     provider = current_rdm_records.records_service.pids.get_provider(
         pid_type, provider_name
     )
@@ -24,7 +24,11 @@ def register_pid(pid_type, pid_value, recid, provider_name=None):
     record = current_rdm_records.records_service.read(
         recid, system_identity
     )
-    provider.register(
-        pid, record=record._record, url=record.to_dict()["links"]["self_html"]
-    )
-    db.session.commit()
+    if pid.is_reserved():
+        provider.register(
+            pid, record=record._record,
+            url=record.to_dict()["links"]["self_html"]
+        )
+        db.session.commit()
+    elif pid.is_registered():
+        provider.update(pid, record=record._record)
