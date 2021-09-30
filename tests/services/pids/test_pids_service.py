@@ -553,8 +553,15 @@ def test_pids_records_updates_external_to_managed(
 
 
 def test_pids_records_updates_managed_to_external(
-    running_app, es_clear, minimal_record, identity_simple
+    running_app, es_clear, minimal_record, identity_simple, mocker
 ):
+    def delete_doi(self, doi):
+        """Mock doi deletion."""
+        pass
+
+    mocker.patch("invenio_rdm_records.services.pids.providers.datacite." +
+                 "DataCiteRESTClient.delete_doi", delete_doi)
+
     service = current_rdm_records.records_service
     superuser_identity = running_app.superuser_identity
     provider = service.pids.get_provider("doi", "datacite")
@@ -608,8 +615,15 @@ def test_pids_records_updates_managed_to_external_perm_fail(
 
 
 def test_pids_records_updates_managed_to_no_pid(
-    running_app, es_clear, minimal_record, identity_simple
+    running_app, es_clear, minimal_record, identity_simple, mocker
 ):
+    def delete_doi(self, doi):
+        """Mock doi deletion."""
+        pass
+
+    mocker.patch("invenio_rdm_records.services.pids.providers.datacite." +
+                 "DataCiteRESTClient.delete_doi", delete_doi)
+
     service = current_rdm_records.records_service
     superuser_identity = running_app.superuser_identity
     provider = service.pids.get_provider("doi", "datacite")

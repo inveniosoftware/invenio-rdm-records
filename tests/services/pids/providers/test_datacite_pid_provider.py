@@ -27,7 +27,7 @@ def datacite_provider(mocker):
     mocker.patch("invenio_rdm_records.services.pids.providers.datacite." +
                  "DataCiteRESTClient")
 
-    return DOIDataCitePIDProvider(name="datacite", client_cls=client)
+    return DOIDataCitePIDProvider(client_cls=client)
 
 
 @pytest.fixture(scope="function")
@@ -186,32 +186,48 @@ def test_datacite_provider_configuration(record, mocker):
 
     # check with default func
     current_app.config['RDM_RECORDS_DOI_DATACITE_FORMAT'] = None
-    datacite_provider = DOIDataCitePIDProvider(
-        name="datacite", client_cls=client_cls)
+    datacite_provider = DOIDataCitePIDProvider(client_cls=client_cls)
     id_val = datacite_provider.generate_id(record)
     expected_result = f"{datacite_provider.client.prefix}/datacite.{id_val}"
     assert datacite_provider.create(record).pid_value == expected_result
 
     # check id generation from env func
     current_app.config['RDM_RECORDS_DOI_DATACITE_FORMAT'] = custom_format_func
-    datacite_provider = DOIDataCitePIDProvider(
-        name="datacite", client_cls=client_cls)
+    datacite_provider = DOIDataCitePIDProvider(client_cls=client_cls)
     assert datacite_provider.create(record).pid_value == "10.123/custom.func"
 
     # check id generation from env f-string
     prefix = datacite_provider.client.prefix
     current_app.config['RDM_RECORDS_DOI_DATACITE_FORMAT'] = "{prefix}/datacite2.{id}"  # noqa
-    datacite_provider = DOIDataCitePIDProvider(
-        name="datacite", client_cls=client_cls
-    )
+    datacite_provider = DOIDataCitePIDProvider(client_cls=client_cls)
     id_val = datacite_provider.generate_id(record)
     expected_result = f"{prefix}/datacite2.{id_val}"
     assert datacite_provider.create(record).pid_value == expected_result
 
     # check id generation from func parameter
     datacite_provider = DOIDataCitePIDProvider(
-        name="datacite",
         client_cls=client_cls,
         generate_doi_func=custom_format_func_2
     )
     assert datacite_provider.create(record).pid_value == "10.125/custom.func"
+
+
+def test_datacite_provider_validation(record, mocker):
+    client_cls = DOIDataCiteClient
+
+    # check with default func
+    current_app.config['RDM_RECORDS_DOI_DATACITE_PREFIX'] = "10.1000"
+    datacite_provider = DOIDataCitePIDProvider(client_cls=client_cls)
+    success, errors = datacite_provider.validate(
+        record=record, identifier="10.1000/valid.1234", provider="datacite"
+    )
+    assert success
+    assert errors == []
+
+    success, errors = datacite_provider.validate(
+        record=record, identifier="10.2000/invalid.1234", provider="datacite"
+    )
+
+    assert not success
+    assert errors == ['Wrong DOI 10.2000 prefix provided, ' +
+                      'it should be 10.1000 as defined in the rest client']

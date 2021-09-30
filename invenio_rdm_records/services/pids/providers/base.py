@@ -189,7 +189,7 @@ class BasePIDProvider:
         return self.get(identifier, **kwargs).status
 
     def validate(
-        self, record, identifier=None, provider=None, client=None, **kwargs
+        self, record, identifier=None, provider=None, **kwargs
     ):
         """Validate the attributes of the identifier.
 

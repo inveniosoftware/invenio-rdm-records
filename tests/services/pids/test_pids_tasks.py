@@ -36,8 +36,17 @@ def running_app(
                       resource_type_v, subject_v, languages_v, title_type_v)
 
 
-def test_publish_record_w_created_doi(running_app, es_clear, minimal_record):
+def test_publish_record_w_created_doi(
+    running_app, es_clear, minimal_record, mocker
+):
     """Publish a record with an already created datacite DOI."""
+    def public_doi(self, metadata, url, doi):
+        """Mock doi deletion."""
+        pass
+
+    mocker.patch("invenio_rdm_records.services.pids.providers.datacite." +
+                 "DataCiteRESTClient.public_doi", public_doi)
+
     service = current_rdm_records.records_service
     superuser_identity = running_app.superuser_identity
     draft = service.create(superuser_identity, minimal_record)
@@ -54,8 +63,15 @@ def test_publish_record_w_created_doi(running_app, es_clear, minimal_record):
     assert pid.status == PIDStatus.REGISTERED
 
 
-def test_publish_record(running_app, es_clear, minimal_record):
+def test_publish_record(running_app, es_clear, minimal_record, mocker):
     """No pid provided, creating one by default."""
+    def public_doi(self, metadata, url, doi):
+        """Mock doi deletion."""
+        pass
+
+    mocker.patch("invenio_rdm_records.services.pids.providers.datacite." +
+                 "DataCiteRESTClient.public_doi", public_doi)
+
     service = current_rdm_records.records_service
     superuser_identity = running_app.superuser_identity
     draft = service.create(superuser_identity, minimal_record)

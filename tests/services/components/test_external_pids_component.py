@@ -47,11 +47,11 @@ class TestManagedPIDProvider(BasePIDProvider):
         return super().create(record, str(value), **kwargs)
 
     def validate(
-        self, record, identifier=None, client=None, provider=None, **kwargs
+        self, record, identifier=None, provider=None, **kwargs
     ):
         """Validate the attributes of the identifier."""
         success, errors = super().validate(
-            record, identifier, provider, client, **kwargs)
+            record, identifier, provider, **kwargs)
         try:
             int(identifier)
         except ValueError:
