@@ -139,7 +139,7 @@ class DOIDataCitePIDProvider(BasePIDProvider):
 
             return False
 
-    def update(self, pid, record, url, **kwargs):
+    def update(self, pid, record, url=None, **kwargs):
         """Update metadata associated with a DOI.
 
         This can be called before/after a DOI is registered.

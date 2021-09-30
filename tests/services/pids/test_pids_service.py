@@ -219,7 +219,7 @@ def test_pids_basic_flow(running_app, es_clear, minimal_record):
     assert published_doi["provider"] == "datacite"  # default
     provider = service.pids.get_provider("doi", "datacite")
     pid = provider.get(pid_value=published_doi["identifier"])
-    assert pid.status == PIDStatus.RESERVED  # registration is async
+    assert pid.status == PIDStatus.REGISTERED  # registration is async
 
 
 def test_pids_duplicates(running_app, es_clear, minimal_record):
@@ -504,7 +504,7 @@ def _create_and_publish_external(service, provider, identity, data):
     # publish and check the doi is in pidstore
     record = service.publish(draft.id, identity)
     pid = provider.get(pid_value="10.1234/dummy.1234")
-    assert pid.status == PIDStatus.RESERVED
+    assert pid.status == PIDStatus.REGISTERED
 
     return record
 
@@ -520,7 +520,7 @@ def _create_and_publish_managed(service, provider, identity, data):
     assert pid.status == PIDStatus.NEW
     # publish and check the doi is in pidstore
     record = service.publish(draft.id, identity)
-    assert provider.get(pid_value=doi).status == PIDStatus.RESERVED
+    assert provider.get(pid_value=doi).status == PIDStatus.REGISTERED
 
     return record
 
@@ -555,12 +555,13 @@ def test_pids_records_updates_external_to_managed(
 def test_pids_records_updates_managed_to_external(
     running_app, es_clear, minimal_record, identity_simple, mocker
 ):
-    def delete_doi(self, doi):
-        """Mock doi deletion."""
+
+    def hide_doi(self, doi):
+        """Mock doi hide."""
         pass
 
     mocker.patch("invenio_rdm_records.services.pids.providers.datacite." +
-                 "DataCiteRESTClient.delete_doi", delete_doi)
+                 "DataCiteRESTClient.hide_doi", hide_doi)
 
     service = current_rdm_records.records_service
     superuser_identity = running_app.superuser_identity
@@ -611,18 +612,18 @@ def test_pids_records_updates_managed_to_external_perm_fail(
     assert pids_error in draft.errors
     doi = draft["pids"]["doi"]["identifier"]
     assert doi
-    assert provider.get(pid_value=doi).status == PIDStatus.RESERVED
+    assert provider.get(pid_value=doi).status == PIDStatus.REGISTERED
 
 
 def test_pids_records_updates_managed_to_no_pid(
     running_app, es_clear, minimal_record, identity_simple, mocker
 ):
-    def delete_doi(self, doi):
-        """Mock doi deletion."""
+    def hide_doi(self, doi):
+        """Mock doi hide."""
         pass
 
     mocker.patch("invenio_rdm_records.services.pids.providers.datacite." +
-                 "DataCiteRESTClient.delete_doi", delete_doi)
+                 "DataCiteRESTClient.hide_doi", hide_doi)
 
     service = current_rdm_records.records_service
     superuser_identity = running_app.superuser_identity
@@ -665,7 +666,7 @@ def test_pids_records_updates_managed_to_no_pid_perm_fail(
     assert pids_error in draft.errors
     doi = draft["pids"]["doi"]["identifier"]
     assert doi
-    assert provider.get(pid_value=doi).status == PIDStatus.RESERVED
+    assert provider.get(pid_value=doi).status == PIDStatus.REGISTERED
 
 
 # Publishing
@@ -684,7 +685,7 @@ def test_pids_publish_managed(running_app, es_clear, minimal_record):
     # publish
     record = service.publish(draft.id, superuser_identity)
     # registration is async
-    assert provider.get(pid_value=doi).status == PIDStatus.RESERVED
+    assert provider.get(pid_value=doi).status == PIDStatus.REGISTERED
 
 
 def test_pids_publish_external(running_app, es_clear, minimal_record):
@@ -713,7 +714,7 @@ def test_pids_publish_external(running_app, es_clear, minimal_record):
     )
     assert pid.pid_value == record["pids"]["doi"]["identifier"]
     # registration is async
-    assert pid.status == PIDStatus.RESERVED
+    assert pid.status == PIDStatus.REGISTERED
 
 
 # Deletion
@@ -781,7 +782,7 @@ def test_pids_delete_external_pid_from_record(
         pid_value=record["pids"]["doi"]["identifier"],
         pid_provider=record["pids"]["doi"]["provider"]
     )
-    assert pid.status == PIDStatus.RESERVED
+    assert pid.status == PIDStatus.REGISTERED
     assert pid.pid_value == record["pids"]["doi"]["identifier"]
     # create new draft
     draft = service.edit(record.id, superuser_identity)
@@ -789,7 +790,7 @@ def test_pids_delete_external_pid_from_record(
         pid_value=draft["pids"]["doi"]["identifier"],
         pid_provider=draft["pids"]["doi"]["provider"]
     )
-    assert pid.status == PIDStatus.RESERVED
+    assert pid.status == PIDStatus.REGISTERED
     assert pid.pid_value == draft["pids"]["doi"]["identifier"]
     # delete draft (should not delete pid since it is part of an active record)
     assert service.delete_draft(draft.id, superuser_identity)
@@ -797,7 +798,7 @@ def test_pids_delete_external_pid_from_record(
         pid_value=record["pids"]["doi"]["identifier"],
         pid_provider=record["pids"]["doi"]["provider"]
     )
-    assert pid.status == PIDStatus.RESERVED
+    assert pid.status == PIDStatus.REGISTERED
     assert pid.pid_value == record["pids"]["doi"]["identifier"]
 
 
@@ -815,17 +816,17 @@ def test_pids_delete_managed_pid_from_record(
     # publish
     record = service.publish(draft.id, superuser_identity)
     pid = provider.get(pid_value=record["pids"]["doi"]["identifier"])
-    assert pid.status == PIDStatus.RESERVED
+    assert pid.status == PIDStatus.REGISTERED
     assert pid.pid_value == record["pids"]["doi"]["identifier"]
     # create new draft
     draft = service.edit(record.id, superuser_identity)
     pid = provider.get(pid_value=draft["pids"]["doi"]["identifier"])
-    assert pid.status == PIDStatus.RESERVED
+    assert pid.status == PIDStatus.REGISTERED
     assert pid.pid_value == draft["pids"]["doi"]["identifier"]
     # delete draft (should not delete pid since it is part of an active record)
     assert service.delete_draft(draft.id, superuser_identity)
     pid = provider.get(pid_value=record["pids"]["doi"]["identifier"])
-    assert pid.status == PIDStatus.RESERVED
+    assert pid.status == PIDStatus.REGISTERED
     assert pid.pid_value == record["pids"]["doi"]["identifier"]
 
 

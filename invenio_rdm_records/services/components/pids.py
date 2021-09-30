@@ -18,7 +18,7 @@ from marshmallow import ValidationError
 
 from ...proxies import current_rdm_records
 from ..pids.errors import PIDTypeNotSupportedError
-from ..pids.tasks import register_pid
+from ..pids.tasks import register_or_update_pid
 
 
 class ExternalPIDsComponent(ServiceComponent):
@@ -259,8 +259,7 @@ class ExternalPIDsComponent(ServiceComponent):
             identifier_value = pid_dict["identifier"]
             provider = self.service.pids.get_provider(scheme, provider_name)
             pid = provider.get(pid_value=identifier_value, pid_type=scheme)
-            if pid.status == PIDStatus.RESERVED:
-                register_pid.delay(
-                    pid_type=pid.pid_type, pid_value=pid.pid_value,
-                    recid=record["id"], provider_name=provider_name
-                )
+            register_or_update_pid.delay(
+                pid_type=pid.pid_type, pid_value=pid.pid_value,
+                recid=record["id"], provider_name=provider_name
+            )
