@@ -30,7 +30,7 @@ class ExternalPIDProvider(BasePIDProvider):
         raise NotImplementedError
 
     def validate(
-        self, record, identifier=None, client=None, provider=None, **kwargs
+        self, record, identifier=None, provider=None, client=None, **kwargs
     ):
         """Validate the attributes of the identifier.
 
@@ -44,6 +44,6 @@ class ExternalPIDProvider(BasePIDProvider):
             raise  # configuration error
 
         success, errors = super().validate(
-            record, identifier, provider, client, **kwargs)
+            record, identifier, provider, **kwargs)
 
         return (True, []) if not errors else (False, errors)

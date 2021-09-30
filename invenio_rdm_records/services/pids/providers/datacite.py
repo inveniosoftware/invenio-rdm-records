@@ -40,7 +40,10 @@ class DOIDataCiteClient(BaseClient):
         self.test_mode = test_mode
 
     def has_credentials(self, **kwargs):
-        """Returns if the client has the credentials properly set up."""
+        """Returns if the client has the credentials properly set up.
+
+        If the client is running on test mode the credentials are not required.
+        """
         return self.username and self.password and self.prefix
 
 
@@ -61,15 +64,10 @@ class DOIDataCitePIDProvider(BasePIDProvider):
         super().__init__(pid_type=pid_type, default_status=default_status)
 
         self.client = client_cls()
-        self.api_client = None
-        self.is_api_client_setup = False
-
-        if self.client and self.client.has_credentials():
-            self.api_client = DataCiteRESTClient(
-                self.client.username, self.client.password,
-                self.client.prefix, self.client.test_mode
-            )
-            self.is_api_client_setup = True
+        self.api_client = DataCiteRESTClient(
+            self.client.username, self.client.password,
+            self.client.prefix, self.client.test_mode
+        )
 
         self.generate_id = generate_id_func or \
             DOIDataCitePIDProvider._generate_id
@@ -111,8 +109,11 @@ class DOIDataCitePIDProvider(BasePIDProvider):
 
     def create(self, record, **kwargs):
         """Create a new unique DOI PID based on the record ID."""
+        # managed provider should not receive a value
+        assert not kwargs.get("value")
+
         doi = self.generate_doi(record, **kwargs)
-        return super().create(record, doi, **kwargs)
+        return super().create(record, value=doi, **kwargs)
 
     def register(self, pid, record, **kwargs):
         """Register a DOI via the DataCite API.
@@ -125,24 +126,18 @@ class DOIDataCitePIDProvider(BasePIDProvider):
         if not local_success:
             return False
 
-        if self.is_api_client_setup:
-            # PIDS-FIXME: move to async task, exception handling included
-            try:
-                doc = DataCite43JSONSerializer().dump_one(record)
-                url = kwargs["url"]
-                self.api_client.public_doi(
-                    metadata=doc, url=url, doi=pid.pid_value)
-            except DataCiteError as e:
-                current_app.logger.warning("DataCite provider error when "
-                                           f"updating DOI for {pid.pid_value}")
-                self._log_errors(e)
+        try:
+            doc = DataCite43JSONSerializer().dump_one(record)
+            url = kwargs["url"]
+            self.api_client.public_doi(
+                metadata=doc, url=url, doi=pid.pid_value)
+            return True
+        except DataCiteError as e:
+            current_app.logger.warning("DataCite provider error when "
+                                       f"updating DOI for {pid.pid_value}")
+            self._log_errors(e)
 
-                return False
-        else:
-            current_app.logger.warning("DataCite client not configured. Cannot"
-                                       f" register DOI for {pid.pid_value}")
-
-        return True
+            return False
 
     def update(self, pid, record, url, **kwargs):
         """Update metadata associated with a DOI.
@@ -153,23 +148,17 @@ class DOIDataCitePIDProvider(BasePIDProvider):
         :returns: `True` if is updated successfully.
         """
         # PIDS-FIXME: Do we want to log when reactivate the DOI
-        # if pid.is_deleted():
-        if self.is_api_client_setup:
-            try:
-                # PIDS-FIXME: move to async task, exception handling included
-                # Set metadata
-                doc = DataCite43JSONSerializer().dump_one(record)
-                self.api_client.update_doi(
-                    metadata=doc, doi=pid.pid_value, url=url)
-            except DataCiteError as e:
-                current_app.logger.warning("DataCite provider error when "
-                                           f"updating DOI for {pid.pid_value}")
-                self._log_errors(e)
+        try:
+            # Set metadata
+            doc = DataCite43JSONSerializer().dump_one(record)
+            self.api_client.update_doi(
+                metadata=doc, doi=pid.pid_value, url=url)
+        except DataCiteError as e:
+            current_app.logger.warning("DataCite provider error when "
+                                       f"updating DOI for {pid.pid_value}")
+            self._log_errors(e)
 
-                return False
-        else:
-            current_app.logger.warning("DataCite client not configured. Cannot"
-                                       f" update DOI for {pid.pid_value}")
+            return False
 
         if pid.is_deleted():
             return pid.sync_status(PIDStatus.REGISTERED)
@@ -183,22 +172,11 @@ class DOIDataCitePIDProvider(BasePIDProvider):
         Otherwise, also it's deleted also remotely.
         :returns: `True` if is deleted successfully.
         """
-        # PIDS-FIXME: move to async task, exception handling included
         try:
             if pid.is_reserved():  # Delete only works for draft DOIs
-                if self.is_api_client_setup:
-                    self.api_client.delete_doi(pid.pid_value)
-                else:
-                    current_app.logger.warning("DataCite client not "
-                                               "configured. Cannot delete DOI "
-                                               f"for {pid.pid_value}")
+                self.api_client.delete_doi(pid.pid_value)
             elif pid.is_registered():
-                if self.is_api_client_setup:
-                    self.api_client.hide_doi(pid.pid_value)
-                else:
-                    current_app.logger.warning("DataCite client not "
-                                               "configured. Cannot delete DOI "
-                                               f"for {pid.pid_value}")
+                self.api_client.hide_doi(pid.pid_value)
         except DataCiteError as e:
             current_app.logger.warning("DataCite provider error when deleting "
                                        f"DOI for {pid.pid_value}")
@@ -208,9 +186,7 @@ class DOIDataCitePIDProvider(BasePIDProvider):
 
         return super().delete(pid, **kwargs)
 
-    def validate(
-        self, record, identifier=None, provider=None, client=None, **kwargs
-    ):
+    def validate(self, record, identifier=None, provider=None, **kwargs):
         """Validate the attributes of the identifier.
 
         :returns: A tuple (success, errors). The first specifies if the
@@ -218,13 +194,12 @@ class DOIDataCitePIDProvider(BasePIDProvider):
                   array of error messages.
         """
         success, errors = super().validate(
-            record, identifier, provider, client, **kwargs)
+            record, identifier, provider, **kwargs)
 
-        if identifier and self.is_api_client_setup:
-            # format check
-            try:
-                self.api_client.check_doi(identifier)
-            except ValueError as e:
-                errors.append(str(e))
+        # format check
+        try:
+            self.api_client.check_doi(identifier)
+        except ValueError as e:
+            errors.append(str(e))
 
         return (True, []) if not errors else (False, errors)
