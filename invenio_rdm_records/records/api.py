@@ -23,7 +23,6 @@ from invenio_records_resources.records.systemfields import FilesField, \
 from invenio_vocabularies.contrib.affiliations.api import Affiliation
 from invenio_vocabularies.contrib.subjects.api import Subject
 from invenio_vocabularies.records.api import Vocabulary
-from werkzeug.local import LocalProxy
 
 from . import models
 from .dumpers import EDTFDumperExt, EDTFListDumperExt, GrantTokensDumperExt
@@ -197,7 +196,7 @@ class RDMFileDraft(FileRecord):
     """File associated with a draft."""
 
     model_cls = models.RDMFileDraftMetadata
-    record_cls = LocalProxy(lambda: RDMDraft)
+    record_cls = None  # defined below
 
 
 class RDMDraft(CommonFieldsMixin, Draft):
@@ -219,6 +218,9 @@ class RDMDraft(CommonFieldsMixin, Draft):
     has_draft = HasDraftCheckField()
 
 
+RDMFileDraft.record_cls = RDMDraft
+
+
 #
 # Record API
 #
@@ -226,7 +228,7 @@ class RDMFileRecord(FileRecord):
     """Example record file API."""
 
     model_cls = models.RDMFileRecordMetadata
-    record_cls = LocalProxy(lambda: RDMRecord)
+    record_cls = None  # defined below
 
 
 class RDMRecord(CommonFieldsMixin, Record):
@@ -248,3 +250,6 @@ class RDMRecord(CommonFieldsMixin, Record):
     )
 
     has_draft = HasDraftCheckField(RDMDraft)
+
+
+RDMFileRecord.record_cls = RDMRecord
