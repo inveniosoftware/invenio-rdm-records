@@ -165,7 +165,7 @@ class DOIDataCitePIDProvider(BasePIDProvider):
 
         return True
 
-    def delete(self, pid, record, **kwargs):
+    def delete(self, pid, **kwargs):
         """Delete/unregister a registered DOI.
 
         If the PID has not been reserved then it's deleted only locally.

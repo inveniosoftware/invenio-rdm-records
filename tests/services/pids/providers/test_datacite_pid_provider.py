@@ -127,7 +127,7 @@ def test_datacite_provider_unregister_new(record, datacite_provider):
     # Unregister NEW is a hard delete
     created_pid = datacite_provider.create(record)
     assert created_pid.status == PIDStatus.NEW
-    assert datacite_provider.delete(created_pid, record)
+    assert datacite_provider.delete(created_pid)
 
     with pytest.raises(PIDDoesNotExistError):
         PersistentIdentifier.get(
@@ -141,7 +141,7 @@ def test_datacite_provider_unregister_reserved(
     created_pid = datacite_provider.create(record)
     assert datacite_provider.reserve(pid=created_pid, record=record)
     assert created_pid.status == PIDStatus.RESERVED
-    assert datacite_provider.delete(created_pid, record)
+    assert datacite_provider.delete(created_pid)
 
     # reserve keeps status as RESERVED so is soft deleted
     pid = PersistentIdentifier.get(
@@ -162,7 +162,7 @@ def test_datacite_provider_unregister_registered(
         url=record_w_links.links["self_html"]
     )
     assert created_pid.status == PIDStatus.REGISTERED
-    assert datacite_provider.delete(created_pid, record)
+    assert datacite_provider.delete(created_pid)
 
     deleted_pid = PersistentIdentifier.get(
             pid_value=created_pid.pid_value, pid_type="doi")

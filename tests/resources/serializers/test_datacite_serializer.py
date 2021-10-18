@@ -10,6 +10,8 @@
 
 """Resources serializers tests."""
 
+from collections import namedtuple
+
 import pytest
 from invenio_access.permissions import system_identity
 from invenio_records_resources.proxies import current_service_registry
@@ -137,6 +139,12 @@ def title_type_v(app, title_type):
     return vocab
 
 
+RunningApp = namedtuple("RunningApp", [
+    "app", "location", "resource_type_v", "subject_v", "languages_v", "title_type_v",
+    "description_type_v", "affiliations_v", "date_type_v", "contributors_role_v",
+    "relation_type_v", "licenses_v"
+])
+
 @pytest.fixture
 def running_app(
     app, location, resource_type_v, subject_v, languages_v, title_type_v,
@@ -148,7 +156,20 @@ def running_app(
     Since test_datacite43_serializer doesn't use content of running_app, we
     don't bother with a new namedtuple.
     """
-    return running_app
+    return RunningApp(
+        app,
+        location,
+        resource_type_v,
+        subject_v,
+        languages_v,
+        title_type_v,
+        description_type_v,
+        affiliations_v,
+        date_type_v,
+        contributors_role_v,
+        relation_type_v,
+        licenses_v
+    )
 
 
 def test_datacite43_serializer(running_app, full_record):
