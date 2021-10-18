@@ -17,27 +17,9 @@ from invenio_pidstore.models import PIDStatus
 from invenio_rdm_records.proxies import current_rdm_records
 from invenio_rdm_records.services.pids.tasks import register_or_update_pid
 
-RunningApp = namedtuple("RunningApp", [
-    "app", "location", "superuser_identity", "resource_type_v",
-    "subject_v", "languages_v", "title_type_v"
-])
-
-
-@pytest.fixture
-def running_app(
-    app, location, superuser_identity, resource_type_v, subject_v, languages_v,
-        title_type_v):
-    """This fixture provides an app with the typically needed db data loaded.
-
-    All of these fixtures are often needed together, so collecting them
-    under a semantic umbrella makes sense.
-    """
-    return RunningApp(app, location, superuser_identity,
-                      resource_type_v, subject_v, languages_v, title_type_v)
-
 
 def test_register_pid(
-    running_app, es_clear, minimal_record, mocker
+    running_app, es_clear, minimal_record, mocker, superuser_identity
 ):
     """Registers a PID."""
     def public_doi(self, metadata, url, doi):
@@ -48,11 +30,10 @@ def test_register_pid(
                  "DataCiteRESTClient.public_doi", public_doi)
 
     service = current_rdm_records.records_service
-    superuser_identity = running_app.superuser_identity
     draft = service.create(superuser_identity, minimal_record)
-    draft = service.pids.create(draft.id, superuser_identity, "doi")
+    draft = service.pids.create_by_type(draft.id, superuser_identity, "doi")
     doi = draft["pids"]["doi"]["identifier"]
-    provider = service.pids.get_provider("doi", "datacite")
+    provider = service.pids._get_provider("doi", "datacite")
     pid = provider.get(pid_value=doi)
     record = service.record_cls.publish(draft._record)
     record.pids = {
@@ -72,7 +53,9 @@ def test_register_pid(
     assert pid.status == PIDStatus.REGISTERED
 
 
-def test_update_pid(running_app, es_clear, minimal_record, mocker):
+def test_update_pid(
+    running_app, es_clear, minimal_record, mocker, superuser_identity
+):
     """No pid provided, creating one by default."""
     def public_doi(self, metadata, url, doi):
         """Mock doi deletion."""
@@ -92,11 +75,10 @@ def test_update_pid(running_app, es_clear, minimal_record, mocker):
     mocked_update.side_effect = update
 
     service = current_rdm_records.records_service
-    superuser_identity = running_app.superuser_identity
     draft = service.create(superuser_identity, minimal_record)
     record = service.publish(draft.id, superuser_identity)
     doi = record["pids"]["doi"]["identifier"]
-    provider = service.pids.get_provider("doi", "datacite")
+    provider = service.pids._get_provider("doi", "datacite")
     pid = provider.get(pid_value=doi)
     assert pid.status == PIDStatus.REGISTERED
     record_edited = service.edit(record.id, superuser_identity)

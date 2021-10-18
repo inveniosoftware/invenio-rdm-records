@@ -208,8 +208,7 @@ class BasePIDProvider:
             pid = self.get(pid_value=identifier, pid_type=self.pid_type)
             if pid.object_uuid != record.id:
                 current_app.logger.warning(
-                    f"PID {self.pid_type}:{identifier} is already assigned " +
-                    f"to record {record.pid.pid_value}"
+                    f"PID {self.pid_type}:{identifier} already exists"
                 )
                 return False, [
                     _(

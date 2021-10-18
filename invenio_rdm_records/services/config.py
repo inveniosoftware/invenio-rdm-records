@@ -28,8 +28,8 @@ from invenio_rdm_records.services.pids.providers.base import BasePIDProvider
 
 from ..records import RDMDraft, RDMRecord
 from . import facets
-from .components import AccessComponent, PIDsComponent, \
-    MetadataComponent, RelationsComponent
+from .components import AccessComponent, MetadataComponent, PIDsComponent, \
+    RelationsComponent
 from .customizations import FileConfigMixin, RecordConfigMixin, \
     SearchOptionsMixin
 from .permissions import RDMRecordPermissionPolicy

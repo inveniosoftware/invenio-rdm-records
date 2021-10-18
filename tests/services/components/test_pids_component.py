@@ -303,7 +303,7 @@ def test_publish_no_required_pids(
     component.publish(identity_simple, draft=draft, record=record)
     assert record.get("pids") == pids
     for schema, pid in pids.items():
-        provider = no_required_pids_service.pids.get_provider(
+        provider = no_required_pids_service.pids._get_provider(
             schema, pid["provider"]
         )
         pid = provider.get_by_record(
