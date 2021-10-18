@@ -21,7 +21,7 @@ from ..pids.errors import PIDTypeNotSupportedError
 from ..pids.tasks import register_or_update_pid
 
 
-class ExternalPIDsComponent(ServiceComponent):
+class PIDsComponent(ServiceComponent):
     """Service component for pids."""
 
     def _validate_pids_schemes(self, pids):

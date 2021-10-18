@@ -5,7 +5,7 @@
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
 
-"""Tests for the service ExternalPIDsComponent."""
+"""Tests for the service PIDsComponent."""
 
 from functools import partial
 
@@ -16,7 +16,7 @@ from marshmallow import ValidationError
 
 from invenio_rdm_records.records import RDMDraft, RDMRecord
 from invenio_rdm_records.services import RDMRecordService
-from invenio_rdm_records.services.components import ExternalPIDsComponent
+from invenio_rdm_records.services.components import PIDsComponent
 from invenio_rdm_records.services.config import RDMRecordServiceConfig
 from invenio_rdm_records.services.pids import PIDsService
 from invenio_rdm_records.services.pids.errors import PIDTypeNotSupportedError
@@ -109,7 +109,7 @@ def no_pids_cmp():
         config=TestServiceConfigNoPIDs,
         pids_service=PIDsService(config=TestServiceConfigNoPIDs)
     )
-    return ExternalPIDsComponent(service=service)
+    return PIDsComponent(service=service)
 
 
 @pytest.fixture(scope="module")
@@ -122,7 +122,7 @@ def no_required_pids_service():
 
 @pytest.fixture(scope="module")
 def no_required_pids_cmp(no_required_pids_service):
-    return ExternalPIDsComponent(service=no_required_pids_service)
+    return PIDsComponent(service=no_required_pids_service)
 
 
 @pytest.fixture(scope="module")
@@ -131,7 +131,7 @@ def required_managed_pids_cmp():
         config=TestServiceConfigRequiredManagedPID,
         pids_service=PIDsService(config=TestServiceConfigRequiredManagedPID)
     )
-    return ExternalPIDsComponent(service=service)
+    return PIDsComponent(service=service)
 
 
 @pytest.fixture(scope="module")
@@ -140,7 +140,7 @@ def required_external_pids_cmp():
         config=TestServiceConfigRequiredExternalPID,
         pids_service=PIDsService(config=TestServiceConfigRequiredExternalPID)
     )
-    return ExternalPIDsComponent(service=service)
+    return PIDsComponent(service=service)
 
 
 # PID Creation

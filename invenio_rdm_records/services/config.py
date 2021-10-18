@@ -28,7 +28,7 @@ from invenio_rdm_records.services.pids.providers.base import BasePIDProvider
 
 from ..records import RDMDraft, RDMRecord
 from . import facets
-from .components import AccessComponent, ExternalPIDsComponent, \
+from .components import AccessComponent, PIDsComponent, \
     MetadataComponent, RelationsComponent
 from .customizations import FileConfigMixin, RecordConfigMixin, \
     SearchOptionsMixin
@@ -123,7 +123,7 @@ class RDMRecordServiceConfig(RecordServiceConfig, RecordConfigMixin):
         # for the internal `pid` field
         PIDComponent,
         # for the `pids` field (external PIDs)
-        ExternalPIDsComponent,
+        PIDsComponent,
         RelationsComponent,
     ]
 
