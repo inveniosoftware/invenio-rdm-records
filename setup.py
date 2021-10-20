@@ -18,8 +18,8 @@ readme = open('README.rst').read()
 history = open('CHANGES.rst').read()
 
 tests_require = [
-    'invenio-app>=1.3.0,<2.0.0',
-    'pytest-invenio>=1.4.1,<2.0.0',
+    'invenio-app>=1.3.1,<2.0.0',
+    'pytest-invenio>=1.4.2,<2.0.0',
     'pytest-mock>=1.6.0',
 ]
 
@@ -67,14 +67,13 @@ install_requires = [
     'arrow>=0.17.0',
     'citeproc-py-styles>=0.1.2',
     'citeproc-py>=0.6.0',
-    'citeproc-py-styles>=0.1.2',
     'datacite>=1.1.1',
     'dcxml>=0.1.2',
     'Faker>=2.0.3',
     'ftfy>=4.4.3,<5.0.0',
-    'invenio-drafts-resources>=0.14.0,<0.15.0',
-    'invenio-oaiserver>=1.2.2,<1.3.0',  # needed to get latest 1.2.2
-    'invenio-vocabularies>=0.9.0,<0.10.0',
+    'invenio-drafts-resources>=0.14.2,<0.15.0',
+    'invenio-oaiserver>=1.3.0',
+    'invenio-vocabularies>=0.9.1,<0.10.0',
     'pytz>=2020.4',
     'pyyaml>=5.4.0',
 ]
