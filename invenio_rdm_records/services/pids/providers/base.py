@@ -18,7 +18,7 @@ from sqlalchemy.orm.exc import NoResultFound
 class BaseClient:
     """PID Client base class."""
 
-    def __init__(self, name, username, password, url=None, **kwargs):
+    def __init__(self, name, username=None, password=None, url=None, **kwargs):
         """Constructor."""
         self.name = name
         self.username = username

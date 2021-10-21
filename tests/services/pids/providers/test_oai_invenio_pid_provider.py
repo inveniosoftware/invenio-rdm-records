@@ -22,7 +22,7 @@ def invenio_provider(mocker):
     )
     mocker.patch("invenio_rdm_records.services.pids.providers.OAIPIDProvider")
 
-    return OAIPIDProvider(client=client)
+    return OAIPIDProvider(client_cls=client)
 
 
 @pytest.fixture(scope="function")

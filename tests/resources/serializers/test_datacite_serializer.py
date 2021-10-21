@@ -140,10 +140,11 @@ def title_type_v(app, title_type):
 
 
 RunningApp = namedtuple("RunningApp", [
-    "app", "location", "resource_type_v", "subject_v", "languages_v", "title_type_v",
-    "description_type_v", "affiliations_v", "date_type_v", "contributors_role_v",
-    "relation_type_v", "licenses_v"
+    "app", "location", "resource_type_v", "subject_v", "languages_v",
+    "title_type_v", "description_type_v", "affiliations_v", "date_type_v",
+    "contributors_role_v", "relation_type_v", "licenses_v"
 ])
+
 
 @pytest.fixture
 def running_app(

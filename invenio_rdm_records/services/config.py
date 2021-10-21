@@ -100,16 +100,13 @@ class RDMRecordServiceConfig(RecordServiceConfig, RecordConfigMixin):
         "doi": {
             "default": "datacite",
             "datacite": partial(
-                DOIDataCitePIDProvider,
-                client_cls=DOIDataCiteClient
+                DOIDataCitePIDProvider, client_cls=DOIDataCiteClient
             ),
             "external": partial(ExternalPIDProvider, pid_type="doi"),
         },
         "oai": {
-            "oai": {
-                "default": "oai",
-                "oai": OAIPIDProvider,
-            }
+            "default": "oai",
+            "oai": partial(OAIPIDProvider, client_cls=OAIPIDClient)
         }
     }
 
