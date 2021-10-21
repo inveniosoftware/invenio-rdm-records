@@ -73,6 +73,9 @@ def app_config(app_config):
     app_config['RECORDS_REFRESOLVER_STORE'] = \
         "invenio_jsonschemas.proxies.current_refresolver_store"
 
+    # OAI Server
+    app_config["OAISERVER_ID_PREFIX"] = 'oai:inveniosoftware.org:recid/'
+
     # Variable not used. We set it to silent warnings
     app_config['JSONSCHEMAS_HOST'] = 'not-used'
 

@@ -22,9 +22,9 @@ class OAIPIDClient(BaseClient):
     Loads the value from config.
     """
 
-    def __init__(self, name, url=None, config_key=None, **kwargs):
+    def __init__(self, name="oai", url=None, config_key=None, **kwargs):
         """Constructor."""
-        super().__init__(name, None, None, url=url, **kwargs)
+        super().__init__(name, url=url, **kwargs)
 
         # TODO: OAISERVER_ID_PREFIX already has oai: at the beginning.
         # guess this should be removed and only the domain name should remain?
@@ -47,21 +47,14 @@ class OAIPIDProvider(BasePIDProvider):
 
     def __init__(
         self,
-        client,
+        client_cls,
         pid_type="oai",
         default_status=PIDStatus.REGISTERED,
-        system_managed=True,
-        required=True,
         **kwargs,
     ):
         """Constructor."""
-        self.client = client
-        super().__init__(
-            pid_type=pid_type,
-            default_status=default_status,
-            system_managed=system_managed,
-            required=required,
-        )
+        super().__init__(pid_type=pid_type, default_status=default_status)
+        self.client = client_cls()
 
     def create(self, record, **kwargs):
         """Get or create OAI PID.
