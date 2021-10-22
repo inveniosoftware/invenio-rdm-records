@@ -18,7 +18,7 @@ from invenio_records_resources.services.errors import PermissionDeniedError
 from marshmallow import ValidationError
 
 from .errors import PIDTypeNotSupportedError, ProviderNotSupportedError
-from .tasks import register_or_update_pid
+from .tasks import register_pid, update_pid
 
 
 class PIDsService(RecordService):
@@ -284,6 +284,35 @@ class PIDsService(RecordService):
             errors=errors
         )
 
+    def update_remote(self, id_, identity, pid_type):
+        """Update a registered PID on a remote provider."""
+        record = self.record_cls.pid.resolve(id_, registered_only=False)
+        self.require_permission(identity, "pid_update", record=record)
+
+        pid_attrs = record.pids.get(pid_type, None)
+
+        if not pid_attrs:
+            raise ValidationError(
+                message=_("PID not found for type {pid_type}")
+                .format(pid_type=pid_type),
+                field_name=f"pids",
+            )
+
+        provider_name = pid_attrs["provider"]
+        provider = self._get_provider(pid_type, provider_name)
+        pid_value = pid_attrs["identifier"]
+        pid = provider.get(pid_value=pid_value, pid_type=pid_type)
+
+        provider.update(pid, record=record)
+        db.session.commit()  # no need for record.commit, it does not change
+
+        return self.result_item(
+            self,
+            identity,
+            record,
+            links_tpl=self.links_item_tpl,
+        )
+
     def _reserve(self, draft, pids):
         """Reserve PIDs from a list."""
         for scheme, pid in pids.items():
@@ -310,6 +339,7 @@ class PIDsService(RecordService):
             links_tpl=self.links_item_tpl,
         )
 
+    # FIXME: This logic should move to the cmp.post_publish
     def register_or_update(self, record, delay=False):
         """Registers or updates PIDs.
 
@@ -323,21 +353,50 @@ class PIDsService(RecordService):
             provider = self._get_provider(scheme, provider_name)
             pid = provider.get(pid_value=identifier_value, pid_type=scheme)
             if delay:
-                register_or_update_pid.delay(
-                    pid_type=pid.pid_type,
-                    pid_value=pid.pid_value,
-                    recid=record["id"],
-                    provider_name=provider_name
-                )
+                if pid.is_registered():
+                    update_pid.delay(record["id"], pid.pid_type)
+                else:
+                    register_pid.delay(record["id"], pid.pid_type)
             else:
-                register_or_update_pid(
-                    pid_type=pid.pid_type,
-                    pid_value=pid.pid_value,
-                    recid=record["id"],
-                    provider_name=provider_name
-                )
+                if pid.is_registered():
+                    update_pid(record["id"], pid.pid_type)
+                else:
+                    register_pid(record["id"], pid.pid_type)
 
         return True
+
+    def register_by_type(self, id_, identity, pid_type):
+        """Register a PID of a record."""
+        record = self.record_cls.pid.resolve(id_, registered_only=False)
+        self.require_permission(identity, "pid_register", record=record)
+
+        pid_attrs = record.pids.get(pid_type, None)
+
+        if not pid_attrs:
+            raise ValidationError(
+                message=_("PID not found for type {pid_type}")
+                .format(pid_type=pid_type),
+                field_name=f"pids",
+            )
+
+        provider_name = pid_attrs["provider"]
+        provider = self._get_provider(pid_type, provider_name)
+        pid_value = pid_attrs["identifier"]
+        pid = provider.get(pid_value=pid_value, pid_type=pid_type)
+
+        links = self.links_item_tpl.expand(record)
+        provider.register(
+            pid, record=record, url=links["self_html"]
+        )
+
+        db.session.commit()  # no need for record.commit, it does not change
+
+        return self.result_item(
+            self,
+            identity,
+            record,
+            links_tpl=self.links_item_tpl,
+        )
 
     def discard_by_type(self, id_, identity, pid_type, pid_provider=None):
         """Discard a PID for a given draft.
