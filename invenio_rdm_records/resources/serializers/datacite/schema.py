@@ -26,9 +26,10 @@ from invenio_rdm_records.resources.serializers.ui.schema import \
 from ..utils import get_vocabulary_props
 
 
-def get_scheme_datacite(scheme, labels):
+def get_scheme_datacite(scheme, config_name, default=None):
     """Returns the datacite equivalent of a scheme."""
-    return current_app.config[labels][scheme].get("datacite", scheme)
+    config_item = current_app.config[config_name]
+    return config_item.get(scheme, {}).get("datacite", default)
 
 
 class PersonOrOrgSchema43(Schema):
@@ -51,14 +52,17 @@ class PersonOrOrgSchema43(Schema):
         identifiers = obj["person_or_org"].get("identifiers", [])
 
         for identifier in identifiers:
-            name_id = {
-                "nameIdentifier": identifier["identifier"],
-                "nameIdentifierScheme": get_scheme_datacite(
-                    identifier["scheme"],
-                    "RDM_RECORDS_PERSONORG_SCHEMES"
-                ),
-            }
-            serialized_identifiers.append(name_id)
+            scheme = identifier["scheme"]
+            id_scheme = get_scheme_datacite(
+                scheme, "RDM_RECORDS_PERSONORG_SCHEMES", default=scheme,
+            )
+
+            if id_scheme:
+                name_id = {
+                    "nameIdentifier": identifier["identifier"],
+                    "nameIdentifierScheme": id_scheme,
+                }
+                serialized_identifiers.append(name_id)
 
         return serialized_identifiers
 
@@ -92,18 +96,22 @@ class PersonOrOrgSchema43(Schema):
                 aff = {
                     "name": affiliation["name"],
                 }
-                identifier = affiliation.get("identifiers")
-                if identifier:
+                identifiers = affiliation.get("identifiers")
+                if identifiers:
                     # PIDS-FIXME: DataCite accepts only one, how to decide
-                    identifier = identifier[0]
-                    aff["affiliationIdentifier"] = identifier["identifier"]
-                    aff["affiliationIdentifierScheme"] = get_scheme_datacite(
+                    identifier = identifiers[0]
+                    id_scheme = get_scheme_datacite(
                         identifier["scheme"],
-                        "VOCABULARIES_AFFILIATION_SCHEMES"
-                    ).upper()
-                    # upper() is fine since this field is free text. It
-                    # saves us from having to modify invenio-vocabularies
-                    # or do config overrides.
+                        "VOCABULARIES_AFFILIATION_SCHEMES",
+                        default=identifier["scheme"]
+                    )
+
+                    if id_scheme:
+                        aff["affiliationIdentifier"] = identifier["identifier"]
+                        aff["affiliationIdentifierScheme"] = id_scheme.upper()
+                        # upper() is fine since this field is free text. It
+                        # saves us from having to modify invenio-vocabularies
+                        # or do config overrides.
 
                 serialized_affiliations.append(aff)
 
@@ -306,22 +314,29 @@ class DataCite43Schema(Schema):
         # otherwise a doi from identifiers can be used
         pids = obj["pids"]
         for scheme, id_ in pids.items():
-            serialized_identifiers.append({
-                "identifier": id_["identifier"],
-                "identifierType": get_scheme_datacite(
-                    scheme, "RDM_RECORDS_IDENTIFIERS_SCHEMES"
-                )
-            })
+            id_scheme = get_scheme_datacite(
+                scheme, "RDM_RECORDS_IDENTIFIERS_SCHEMES", default=scheme,
+            )
+
+            if id_scheme:
+                serialized_identifiers.append({
+                    "identifier": id_["identifier"],
+                    "identifierType": id_scheme,
+                })
 
         # Identifiers field
         identifiers = obj["metadata"].get("identifiers", [])
         for id_ in identifiers:
-            serialized_identifiers.append({
-                "identifier": id_["identifier"],
-                "identifierType": get_scheme_datacite(
-                    id_["scheme"], "RDM_RECORDS_IDENTIFIERS_SCHEMES"
-                )
-            })
+            scheme = id_["scheme"]
+            id_scheme = get_scheme_datacite(
+                scheme, "RDM_RECORDS_IDENTIFIERS_SCHEMES", default=scheme
+            )
+
+            if id_scheme:
+                serialized_identifiers.append({
+                    "identifier": id_["identifier"],
+                    "identifierType": id_scheme,
+                })
 
         return serialized_identifiers or missing
 
@@ -334,27 +349,32 @@ class DataCite43Schema(Schema):
             relation_type_id = rel_id.get("relation_type", {}).get("id")
             props = get_vocabulary_props(
                 "relationtypes", ["props.datacite"], relation_type_id)
-            serialized_identifier = {
-                "relatedIdentifier": rel_id["identifier"],
-                "relationType": props.get("datacite", ""),
-                "relatedIdentifierType": get_scheme_datacite(
-                    rel_id["scheme"], "RDM_RECORDS_IDENTIFIERS_SCHEMES"
-                )
-            }
 
-            resource_type_id = rel_id.get("resource_type", {}).get("id")
-            if resource_type_id:
-                props = get_vocabulary_props(
-                    "resourcetypes",
-                    # Cache is on both keys so query datacite_type as well
-                    # even though it's not accessed.
-                    ["props.datacite_general", "props.datacite_type"],
-                    resource_type_id
-                )
-                serialized_identifier["resourceTypeGeneral"] = props.get(
-                    "datacite_general", "Other")
+            scheme = rel_id["scheme"]
+            id_scheme = get_scheme_datacite(
+                scheme, "RDM_RECORDS_IDENTIFIERS_SCHEMES", default=scheme,
+            )
 
-            serialized_identifiers.append(serialized_identifier)
+            if id_scheme:
+                serialized_identifier = {
+                    "relatedIdentifier": rel_id["identifier"],
+                    "relationType": props.get("datacite", ""),
+                    "relatedIdentifierType": id_scheme,
+                }
+
+                resource_type_id = rel_id.get("resource_type", {}).get("id")
+                if resource_type_id:
+                    props = get_vocabulary_props(
+                        "resourcetypes",
+                        # Cache is on both keys so query datacite_type as well
+                        # even though it's not accessed.
+                        ["props.datacite_general", "props.datacite_type"],
+                        resource_type_id
+                    )
+                    serialized_identifier["resourceTypeGeneral"] = props.get(
+                        "datacite_general", "Other")
+
+                serialized_identifiers.append(serialized_identifier)
 
         return serialized_identifiers or missing
 
