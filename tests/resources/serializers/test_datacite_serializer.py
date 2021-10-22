@@ -10,11 +10,8 @@
 
 """Resources serializers tests."""
 
-from collections import namedtuple
-
 import pytest
 from invenio_access.permissions import system_identity
-from invenio_records_resources.proxies import current_service_registry
 from invenio_vocabularies.proxies import current_service as vocabulary_service
 from invenio_vocabularies.records.api import Vocabulary
 
@@ -52,98 +49,25 @@ def full_modified_record(full_record):
     return full_record
 
 
+# FIXME: These two fixtures should not be present here.
+# Could not find where they are being deleted
 @pytest.fixture(scope="function")
-def resource_type_v(resource_type_type):
-    """Resource type vocabulary record."""
-    vocabulary_service.create(system_identity, {  # create base resource type
-        "id": "image",
-        "icon": "chart bar outline",
-        "props": {
-            "csl": "figure",
-            "datacite_general": "Image",
-            "datacite_type": "",
-            "openaire_resourceType": "25",
-            "openaire_type": "dataset",
-            "schema.org": "https://schema.org/ImageObject",
-            "subtype": "",
-            "type": "image",
-        },
-        "title": {
-            "en": "Image"
-        },
-        "tags": ["depositable", "linkable"],
-        "type": "resourcetypes"
-    })
-
-    vocabulary_service.create(system_identity, {
-        "id": "image-photo",
-        "icon": "chart bar outline",
-        "props": {
-            "csl": "graphic",
-            "datacite_general": "Image",
-            "datacite_type": "Photo",
-            "openaire_resourceType": "25",
-            "openaire_type": "dataset",
-            "schema.org": "https://schema.org/Photograph",
-            "subtype": "image-photo",
-            "type": "image",
-        },
-        "title": {
-            "en": "Photo"
-        },
-        "tags": ["depositable", "linkable"],
-        "type": "resourcetypes"
-    })
-
+def relation_type_v(app, relation_type):
+    """Relation type vocabulary record."""
     vocab = vocabulary_service.create(system_identity, {
-        "id": "dataset",
-        "icon": "table",
+        "id": "iscitedby",
         "props": {
-            "csl": "dataset",
-            "datacite_general": "Dataset",
-            "datacite_type": '',
-            "openaire_resourceType": '21',
-            "openaire_type": "dataset",
-            "schema.org": "https://schema.org/Dataset",
-            "subtype": '',
-            "type": "dataset",
+            "datacite": "IsCitedBy"
         },
         "title": {
-            "en": "Dataset"
+            "en": "Is cited by"
         },
-        "tags": ["depositable", "linkable"],
-        "type": "resourcetypes"
+        "type": "relationtypes"
     })
 
     Vocabulary.index.refresh()
 
     return vocab
-
-
-@pytest.fixture(scope="function")
-def title_type_v(app, title_type):
-    """Title Type vocabulary record."""
-    vocab = vocabulary_service.create(system_identity, {
-        "id": "subtitle",
-        "props": {
-            "datacite": "Subtitle"
-        },
-        "title": {
-            "en": "Subtitle"
-        },
-        "type": "titletypes"
-    })
-
-    Vocabulary.index.refresh()
-
-    return vocab
-
-
-RunningApp = namedtuple("RunningApp", [
-    "app", "location", "resource_type_v", "subject_v", "languages_v",
-    "title_type_v", "description_type_v", "affiliations_v", "date_type_v",
-    "contributors_role_v", "relation_type_v", "licenses_v"
-])
 
 
 @pytest.fixture
@@ -153,24 +77,10 @@ def running_app(
     relation_type_v, licenses_v
 ):
     """Return running_app but load everything for datacite serialization.
-
     Since test_datacite43_serializer doesn't use content of running_app, we
     don't bother with a new namedtuple.
     """
-    return RunningApp(
-        app,
-        location,
-        resource_type_v,
-        subject_v,
-        languages_v,
-        title_type_v,
-        description_type_v,
-        affiliations_v,
-        date_type_v,
-        contributors_role_v,
-        relation_type_v,
-        licenses_v
-    )
+    return running_app
 
 
 def test_datacite43_serializer(running_app, full_record):

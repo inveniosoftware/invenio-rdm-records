@@ -36,7 +36,7 @@ from invenio_vocabularies.records.api import Vocabulary
 
 from invenio_rdm_records import config
 from invenio_rdm_records.proxies import current_rdm_records
-from invenio_rdm_records.records.api import RDMParent, RDMRecord
+from invenio_rdm_records.records.api import RDMDraft, RDMParent, RDMRecord
 
 
 @pytest.fixture(scope='module')
@@ -86,6 +86,41 @@ def app_config(app_config):
 def create_app():
     """Create app fixture for UI+API app."""
     return _create_app
+
+
+def _es_create_indexes(current_search, current_search_client):
+    """Create all registered Elasticsearch indexes."""
+    to_create = [
+        RDMRecord.index._name,
+        RDMDraft.index._name
+    ]
+    # list to trigger iter
+    list(current_search.create(ignore_existing=True, index_list=to_create))
+    current_search_client.indices.refresh()
+
+
+def _es_delete_indexes(current_search):
+    """Delete all registered Elasticsearch indexes."""
+    to_delete = [
+        RDMRecord.index._name,
+        RDMDraft.index._name
+    ]
+    list(current_search.delete(index_list=to_delete))
+
+
+# overwrite pytest_invenio.fixture to only delete record indices
+# keeping vocabularies.
+@pytest.fixture(scope='function')
+def es_clear(es):
+    """Clear Elasticsearch indices after test finishes (function scope).
+
+    This fixture rollback any changes performed to the indexes during a test,
+    in order to leave Elasticsearch in a clean state for the next test.
+    """
+    from invenio_search import current_search, current_search_client
+    yield es
+    _es_delete_indexes(current_search)
+    _es_create_indexes(current_search, current_search_client)
 
 
 @pytest.fixture(scope='function')
@@ -378,6 +413,17 @@ def languages_type(app):
 @pytest.fixture(scope="module")
 def languages_v(app, languages_type):
     """Language vocabulary record."""
+    vocabulary_service.create(system_identity, {
+        "id": "dan",
+        "title": {
+            "en": "Danish",
+            "da": "Dansk",
+        },
+        "props": {"alpha_2": "da"},
+        "tags": ["individual", "living"],
+        "type": "languages"
+    })
+
     vocab = vocabulary_service.create(system_identity, {
         "id": "eng",
         "title": {
@@ -403,6 +449,27 @@ def resource_type_type(app):
 @pytest.fixture(scope="module")
 def resource_type_v(app, resource_type_type):
     """Resource type vocabulary record."""
+    vocabulary_service.create(system_identity, {
+        "id": "dataset",
+        "icon": "table",
+        "props": {
+            "csl": "dataset",
+            "datacite_general": "Dataset",
+            "datacite_type": '',
+            "openaire_resourceType": '21',
+            "openaire_type": "dataset",
+            "eurepo": "info:eu-repo/semantics/other",
+            "schema.org": "https://schema.org/Dataset",
+            "subtype": '',
+            "type": "dataset",
+        },
+        "title": {
+            "en": "Dataset"
+        },
+        "tags": ["depositable", "linkable"],
+        "type": "resourcetypes"
+    })
+
     vocabulary_service.create(system_identity, {  # create base resource type
         "id": "image",
         "props": {
@@ -411,6 +478,7 @@ def resource_type_v(app, resource_type_type):
             "datacite_type": "",
             "openaire_resourceType": "25",
             "openaire_type": "dataset",
+            "eurepo": "info:eu-repo/semantic/other",
             "schema.org": "https://schema.org/ImageObject",
             "subtype": "",
             "type": "image",
@@ -431,6 +499,7 @@ def resource_type_v(app, resource_type_type):
             "datacite_type": "Photo",
             "openaire_resourceType": "25",
             "openaire_type": "dataset",
+            "eurepo": "info:eu-repo/semantic/other",
             "schema.org": "https://schema.org/Photograph",
             "subtype": "image-photo",
             "type": "image",
@@ -458,6 +527,17 @@ def title_type(app):
 @pytest.fixture(scope="module")
 def title_type_v(app, title_type):
     """Title Type vocabulary record."""
+    vocabulary_service.create(system_identity, {
+        "id": "subtitle",
+        "props": {
+            "datacite": "Subtitle"
+        },
+        "title": {
+            "en": "Subtitle"
+        },
+        "type": "titletypes"
+    })
+
     vocab = vocabulary_service.create(system_identity, {
         "id": "alternative-title",
         "props": {
@@ -660,6 +740,7 @@ def affiliations_v(app):
 
 RunningApp = namedtuple("RunningApp", [
     "app",
+    "superuser_identity",
     "location",
     "resource_type_v",
     "subject_v",
@@ -676,9 +757,9 @@ RunningApp = namedtuple("RunningApp", [
 
 @pytest.fixture
 def running_app(
-    app, location, resource_type_v, subject_v, languages_v, affiliations_v,
-    title_type_v, description_type_v, date_type_v, contributors_role_v,
-    relation_type_v, licenses_v
+    app, superuser_identity, location, resource_type_v, subject_v,
+    languages_v, affiliations_v, title_type_v, description_type_v,
+    date_type_v, contributors_role_v, relation_type_v, licenses_v
 ):
     """This fixture provides an app with the typically needed db data loaded.
 
@@ -687,6 +768,7 @@ def running_app(
     """
     return RunningApp(
         app,
+        superuser_identity,
         location,
         resource_type_v,
         subject_v,

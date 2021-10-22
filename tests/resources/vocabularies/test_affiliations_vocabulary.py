@@ -37,7 +37,9 @@ def example_affiliation(
     aff = affiliations_service.create(superuser_identity, data)
     Affiliation.index.refresh()  # Refresh the index
 
-    return aff
+    yield aff
+
+    affiliations_service.delete(aff.id, superuser_identity)
 
 
 def test_affiliations_get(client, example_affiliation, headers):
