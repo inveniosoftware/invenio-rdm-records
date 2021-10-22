@@ -15,7 +15,7 @@ import pytest
 from invenio_pidstore.models import PIDStatus
 
 from invenio_rdm_records.proxies import current_rdm_records
-from invenio_rdm_records.services.pids.tasks import register_or_update_pid
+from invenio_rdm_records.services.pids.tasks import register_pid
 
 
 def test_register_pid(
@@ -48,8 +48,7 @@ def test_register_pid(
     assert pid.status == PIDStatus.NEW
     pid.reserve()
     assert pid.status == PIDStatus.RESERVED
-    register_or_update_pid(pid_type="doi", pid_value=pid.pid_value,
-                           recid=record["id"], provider_name="datacite")
+    register_pid(recid=record["id"], pid_type="doi")
     assert pid.status == PIDStatus.REGISTERED
 
 
@@ -81,6 +80,8 @@ def test_update_pid(
     provider = service.pids._get_provider("doi", "datacite")
     pid = provider.get(pid_value=doi)
     assert pid.status == PIDStatus.REGISTERED
+    # we do not explicitly call the update_pid task
+    # we check that the lower level provider update is called
     record_edited = service.edit(record.id, superuser_identity)
     assert mocked_update.called is False
     service.publish(record_edited.id, superuser_identity)

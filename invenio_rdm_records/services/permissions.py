@@ -72,6 +72,8 @@ class RDMRecordPermissionPolicy(RecordPermissionPolicy):
     # PIDs
     #
     can_pid_create = can_curate
+    can_pid_register = can_curate
+    can_pid_update = can_curate
     can_pid_discard = can_curate  # discard an unregistered pid
     can_pid_delete = [
         Admin(),
