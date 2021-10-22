@@ -11,8 +11,6 @@
 This tests both the PIDsService and the RDMService behaviour related to pids.
 """
 
-from collections import namedtuple
-
 import pytest
 from invenio_pidstore.errors import PIDDoesNotExistError
 from invenio_pidstore.models import PIDStatus
@@ -20,28 +18,10 @@ from marshmallow import ValidationError
 
 from invenio_rdm_records.proxies import current_rdm_records
 
-RunningApp = namedtuple("RunningApp", [
-    "app", "location", "superuser_identity", "resource_type_v",
-    "subject_v", "languages_v", "title_type_v"
-])
-
-
-@pytest.fixture
-def running_app(
-    app, location, superuser_identity, resource_type_v, subject_v, languages_v,
-        title_type_v):
-    """This fixture provides an app with the typically needed db data loaded.
-
-    All of these fixtures are often needed together, so collecting them
-    under a semantic umbrella makes sense.
-    """
-    return RunningApp(app, location, superuser_identity,
-                      resource_type_v, subject_v, languages_v, title_type_v)
-
-
 #
 # Reserve & Discard
 #
+
 
 def test_resolve_pid(running_app, es_clear, minimal_record):
     service = current_rdm_records.records_service
