@@ -20,6 +20,36 @@ from invenio_rdm_records.resources.serializers import \
     DataCite43JSONSerializer, DataCite43XMLSerializer
 
 
+@pytest.fixture
+def full_modified_record(full_record):
+    full_record["pids"]["unknown-scheme"] = {
+        "identifier": "unknown-1234",
+        "provider": "unknown",
+        "client": "unknown"
+    }
+
+    full_record["metadata"]["identifiers"] = [
+        {"identifier": "unknown-1234-a", "scheme": "unknown-scheme"}
+    ]
+
+    full_record["metadata"]["related_identifiers"] = [
+        {
+            "identifier": "unknown-1234-b",
+            "scheme": "unknown-scheme",
+            "relation_type": {
+                "id": "iscitedby",
+                "title": {"en": "Is cited by"},
+            },
+        }
+    ]
+
+    full_record["metadata"]["creators"][0]["person_or_org"]["identifiers"] = [
+        {"identifier": "unknown-2345", "scheme": "unknown-scheme"}
+    ]
+
+    return full_record
+
+
 @pytest.fixture(scope="function")
 def resource_type_v(resource_type_type):
     """Resource type vocabulary record."""
@@ -364,3 +394,62 @@ def test_datacite43_xml_serializer(running_app, full_record):
 
     # split by breaklines makes it easier to see diffs
     assert serialized_record.split("\n") == expected_data
+
+
+def test_datacite43_serializer_with_unknown_id_schemes(
+    running_app, full_modified_record
+):
+    """Test if the DataCite 4.3 JSON serializer can handle unknown schemes."""
+    # this test is there to ensure that there are no KeyErrors during the
+    # lookup of unknown PID schemes during DataCite 4.3 serialization
+    # if the behaviour of the datacite serializer is changed, the asserts
+    # below should probably be adjusted accordingly
+
+    expected_pid_id = {
+        "identifier": "unknown-1234",
+        "identifierType": "unknown-scheme",
+    }
+    expected_pid_id_2 = {
+        "identifier": "unknown-1234-a",
+        "identifierType": "unknown-scheme",
+    }
+    expected_related_id = {
+        "relatedIdentifier": "unknown-1234-b",
+        "relatedIdentifierType": "unknown-scheme",
+        "relationType": "IsCitedBy",
+    }
+    expected_creator_id = {
+        "nameIdentifier": "unknown-2345",
+        "nameIdentifierScheme": "unknown-scheme"
+    }
+
+    serializer = DataCite43JSONSerializer()
+    serialized_record = serializer.dump_one(full_modified_record)
+
+    assert expected_pid_id in serialized_record["identifiers"]
+    assert expected_pid_id_2 in serialized_record["identifiers"]
+    assert len(serialized_record["identifiers"]) == 3
+
+    assert expected_related_id in serialized_record["relatedIdentifiers"]
+    assert len(serialized_record["relatedIdentifiers"]) == 1
+
+    creator_ids = serialized_record["creators"][0]["nameIdentifiers"]
+    assert expected_creator_id in creator_ids
+    assert len(creator_ids) == 1
+
+
+def test_datacite43_xml_serializer_with_unknown_id_schemes(
+    running_app, full_modified_record
+):
+    """Test if the DataCite 4.3 XML serializer can handle unknown schemes."""
+    serializer = DataCite43XMLSerializer()
+    serialized_record = serializer.serialize_object(full_modified_record)
+    expected_pid_id = '<alternateIdentifier alternateIdentifierType="unknown-scheme">unknown-1234</alternateIdentifier>'  # noqa
+    expected_pid_id_2 = '<alternateIdentifier alternateIdentifierType="unknown-scheme">unknown-1234-a</alternateIdentifier>'  # noqa
+    expected_related_id = '<relatedIdentifier relatedIdentifierType="unknown-scheme" relationType="IsCitedBy">unknown-1234-b</relatedIdentifier>'  # noqa
+    expected_creator_id = '<nameIdentifier nameIdentifierScheme="unknown-scheme">unknown-2345</nameIdentifier>'  # noqa
+
+    assert expected_pid_id in serialized_record
+    assert expected_pid_id_2 in serialized_record
+    assert expected_related_id in serialized_record
+    assert expected_creator_id in serialized_record
