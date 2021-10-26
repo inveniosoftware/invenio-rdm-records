@@ -11,18 +11,18 @@
 from ..errors import RDMRecordsException
 
 
-class PIDTypeNotSupportedError(RDMRecordsException):
-    """One or more PID type is not supported by the system."""
+class PIDSchemeNotSupportedError(RDMRecordsException):
+    """One or more PID schemes is not supported by the system."""
 
-    def __init__(self, pid_types):
+    def __init__(self, schemes):
         """Initialise error."""
         super().__init__(
-            f"No configuration defined for PIDs {pid_types}"
+            f"No configuration defined for PIDs {schemes}"
         )
 
 
 class ProviderNotSupportedError(RDMRecordsException):
-    """One or more PID type is not supported by the system."""
+    """Provider not supported by the system."""
 
     def __init__(self, provider, scheme):
         """Initialise error."""

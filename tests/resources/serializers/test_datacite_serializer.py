@@ -11,9 +11,6 @@
 """Resources serializers tests."""
 
 import pytest
-from invenio_access.permissions import system_identity
-from invenio_vocabularies.proxies import current_service as vocabulary_service
-from invenio_vocabularies.records.api import Vocabulary
 
 from invenio_rdm_records.resources.serializers import \
     DataCite43JSONSerializer, DataCite43XMLSerializer
@@ -47,40 +44,6 @@ def full_modified_record(full_record):
     ]
 
     return full_record
-
-
-# FIXME: These two fixtures should not be present here.
-# Could not find where they are being deleted
-@pytest.fixture(scope="function")
-def relation_type_v(app, relation_type):
-    """Relation type vocabulary record."""
-    vocab = vocabulary_service.create(system_identity, {
-        "id": "iscitedby",
-        "props": {
-            "datacite": "IsCitedBy"
-        },
-        "title": {
-            "en": "Is cited by"
-        },
-        "type": "relationtypes"
-    })
-
-    Vocabulary.index.refresh()
-
-    return vocab
-
-
-@pytest.fixture
-def running_app(
-    app, location, resource_type_v, subject_v, languages_v, title_type_v,
-    description_type_v, affiliations_v, date_type_v, contributors_role_v,
-    relation_type_v, licenses_v
-):
-    """Return running_app but load everything for datacite serialization.
-    Since test_datacite43_serializer doesn't use content of running_app, we
-    don't bother with a new namedtuple.
-    """
-    return running_app
 
 
 def test_datacite43_serializer(running_app, full_record):

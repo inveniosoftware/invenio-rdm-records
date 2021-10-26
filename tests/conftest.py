@@ -28,6 +28,7 @@ from invenio_access.permissions import superuser_access, system_identity
 from invenio_accounts.models import Role
 from invenio_accounts.testutils import login_user_via_session
 from invenio_app.factory import create_app as _create_app
+from invenio_cache import current_cache
 from invenio_records_resources.proxies import current_service_registry
 from invenio_vocabularies.contrib.affiliations.api import Affiliation
 from invenio_vocabularies.contrib.subjects.api import Subject
@@ -738,10 +739,21 @@ def affiliations_v(app):
     return aff
 
 
+@pytest.fixture(scope="function")
+def cache():
+    """Empty cache."""
+    try:
+        current_cache.clear()
+        yield current_cache
+    finally:
+        current_cache.clear()
+
+
 RunningApp = namedtuple("RunningApp", [
     "app",
     "superuser_identity",
     "location",
+    "cache",
     "resource_type_v",
     "subject_v",
     "languages_v",
@@ -757,7 +769,7 @@ RunningApp = namedtuple("RunningApp", [
 
 @pytest.fixture
 def running_app(
-    app, superuser_identity, location, resource_type_v, subject_v,
+    app, superuser_identity, location, cache, resource_type_v, subject_v,
     languages_v, affiliations_v, title_type_v, description_type_v,
     date_type_v, contributors_role_v, relation_type_v, licenses_v
 ):
@@ -770,6 +782,7 @@ def running_app(
         app,
         superuser_identity,
         location,
+        cache,
         resource_type_v,
         subject_v,
         languages_v,
