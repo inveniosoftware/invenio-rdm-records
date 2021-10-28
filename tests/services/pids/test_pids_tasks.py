@@ -31,9 +31,9 @@ def test_register_pid(
 
     service = current_rdm_records.records_service
     draft = service.create(superuser_identity, minimal_record)
-    draft = service.pids.create_by_type(draft.id, superuser_identity, "doi")
+    draft = service.pids.create(draft.id, superuser_identity, "doi")
     doi = draft["pids"]["doi"]["identifier"]
-    provider = service.pids._get_provider("doi", "datacite")
+    provider = service.pids.pid_manager._get_provider("doi", "datacite")
     pid = provider.get(pid_value=doi)
     record = service.record_cls.publish(draft._record)
     record.pids = {

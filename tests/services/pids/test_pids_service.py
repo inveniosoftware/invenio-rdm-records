@@ -65,9 +65,10 @@ def test_reserve_pid(running_app, es_clear, minimal_record):
     superuser_identity = running_app.superuser_identity
     # create the draft
     draft = service.create(superuser_identity, minimal_record)
-    draft = service.pids.create_by_scheme(draft.id, superuser_identity, "doi")
+    draft = service.pids.create(draft.id, superuser_identity, "doi")
     # publish the record
     doi = draft["pids"]["doi"]["identifier"]
+    # FIXME: remove all occurences of _ methods, create methods in manager
     provider = service.pids.pid_manager._get_provider("doi", "datacite")
     pid = provider.get(pid_value=doi)
     assert pid.status == PIDStatus.NEW
@@ -80,13 +81,13 @@ def test_discard_exisisting_pid(running_app, es_clear, minimal_record):
     superuser_identity = running_app.superuser_identity
     # create the draft
     draft = service.create(superuser_identity, minimal_record)
-    draft = service.pids.create_by_scheme(draft.id, superuser_identity, "doi")
+    draft = service.pids.create(draft.id, superuser_identity, "doi")
     # publish the record
     doi = draft["pids"]["doi"]["identifier"]
     provider = service.pids.pid_manager._get_provider("doi", "datacite")
     pid = provider.get(pid_value=doi)
     assert pid.status == PIDStatus.NEW
-    draft = service.pids.discard_by_scheme(draft.id, superuser_identity, "doi")
+    draft = service.pids.discard(draft.id, superuser_identity, "doi")
     assert not draft["pids"].get("doi")
     with pytest.raises(PIDDoesNotExistError):
         pid = provider.get(pid_value=doi)
@@ -97,8 +98,8 @@ def test_discard_non_exisisting_pid(running_app, es_clear, minimal_record):
     superuser_identity = running_app.superuser_identity
     # create the draft
     draft = service.create(superuser_identity, minimal_record)
-    with pytest.raises(ValidationError):
-        service.pids.discard_by_scheme(draft.id, superuser_identity, "doi")
+    with pytest.raises(PIDDoesNotExistError):
+        service.pids.discard(draft.id, superuser_identity, "doi")
 
 
 def test_oai_pid_default_created(running_app, es_clear, minimal_record):
@@ -222,7 +223,7 @@ def test_pids_duplicates(running_app, es_clear, minimal_record):
     provider = service.pids.pid_manager._get_provider("doi", "datacite")
     # create an external pid for an already existing NEW managed one
     draft = service.create(superuser_identity, minimal_record)
-    draft = service.pids.create_by_scheme(draft.id, superuser_identity, "doi")
+    draft = service.pids.create(draft.id, superuser_identity, "doi")
     doi = draft["pids"]["doi"]["identifier"]
 
     data = minimal_record.copy()
@@ -304,7 +305,7 @@ def test_pids_reserve_managed(running_app, es_clear, minimal_record):
     # create the draft
     draft = service.create(superuser_identity, minimal_record)
     # "reserve" pid
-    draft = service.pids.create_by_scheme(draft.id, superuser_identity, "doi")
+    draft = service.pids.create(draft.id, superuser_identity, "doi")
     doi = draft["pids"]["doi"]["identifier"]
     pid = provider.get(pid_value=doi)
     assert pid.status == PIDStatus.NEW
@@ -320,13 +321,13 @@ def test_pids_reserve_fail_existing_managed(
     # create the draft
     draft = service.create(superuser_identity, minimal_record)
     # "reserve" pid (first assignation)
-    draft = service.pids.create_by_scheme(draft.id, superuser_identity, "doi")
+    draft = service.pids.create(draft.id, superuser_identity, "doi")
     doi = draft["pids"]["doi"]["identifier"]
     pid = provider.get(pid_value=doi)
     assert pid.status == PIDStatus.NEW
     # reserve again
     with pytest.raises(ValidationError):
-        service.pids.create_by_scheme(draft.id, superuser_identity, "doi")
+        service.pids.create(draft.id, superuser_identity, "doi")
 
 
 def test_pids_reserve_fail_existing_external(
@@ -345,7 +346,7 @@ def test_pids_reserve_fail_existing_external(
     draft = service.create(superuser_identity, minimal_record)
     # reserve again
     with pytest.raises(ValidationError):
-        service.pids.create_by_scheme(draft.id, superuser_identity, "doi")
+        service.pids.create(draft.id, superuser_identity, "doi")
 
 
 # Update on drafts
@@ -377,7 +378,7 @@ def test_pids_drafts_updates_external_to_managed(
         id_=draft.id, identity=superuser_identity, data=draft.data)
     assert not draft["pids"].get("doi")
 
-    draft = service.pids.create_by_scheme(draft.id, superuser_identity, "doi")
+    draft = service.pids.create(draft.id, superuser_identity, "doi")
     doi = draft["pids"]["doi"]["identifier"]
     assert provider.get(pid_value=doi).status == PIDStatus.NEW
 
@@ -391,10 +392,12 @@ def test_pids_drafts_updates_managed_to_external(
 
     # create the draft
     draft = service.create(superuser_identity, minimal_record)
-    draft = service.pids.create_by_scheme(draft.id, superuser_identity, "doi")
+    draft = service.pids.create(draft.id, superuser_identity, "doi")
     doi = draft["pids"]["doi"]["identifier"]
     assert provider.get(pid_value=doi).status == PIDStatus.NEW
 
+    # remove doi: mandatory delete action, press the X in the UI
+    draft = service.pids.discard(draft.id, superuser_identity, "doi")
     # replace by external
     draft["pids"]["doi"] = {
         "identifier": "10.1234/dummy.1234",
@@ -425,14 +428,12 @@ def test_pids_drafts_updates_managed_to_no_pid(
 
     # create the draft
     draft = service.create(superuser_identity, minimal_record)
-    draft = service.pids.create_by_scheme(draft.id, superuser_identity, "doi")
+    draft = service.pids.create(draft.id, superuser_identity, "doi")
     doi = draft["pids"]["doi"]["identifier"]
     assert provider.get(pid_value=doi).status == PIDStatus.NEW
 
-    # remove doi
-    draft["pids"].pop("doi")
-    draft = service.update_draft(
-        id_=draft.id, identity=superuser_identity, data=draft.data)
+    # remove doi: mandatory delete action, press the X in the UI
+    draft = service.pids.discard(draft.id, superuser_identity, "doi")
 
     assert not draft["pids"].get("doi")
     with pytest.raises(PIDDoesNotExistError):  # original doi was also deleted
@@ -480,7 +481,7 @@ def test_pids_drafts_updates_no_pid_to_managed(
     assert draft["pids"] == {}
 
     # add managed
-    draft = service.pids.create_by_scheme(draft.id, superuser_identity, "doi")
+    draft = service.pids.create(draft.id, superuser_identity, "doi")
     doi = draft["pids"]["doi"]["identifier"]
     assert provider.get(pid_value=doi).status == PIDStatus.NEW
 
@@ -508,7 +509,7 @@ def _create_and_publish_managed(service, provider, identity, data):
     # create the draft
     draft = service.create(identity, data)
     # "reserve" pid if not given
-    draft = service.pids.create_by_scheme(draft.id, identity, "doi")
+    draft = service.pids.create(draft.id, identity, "doi")
     doi = draft["pids"]["doi"]["identifier"]
     pid = provider.get(pid_value=doi)
     assert pid.status == PIDStatus.NEW
@@ -531,19 +532,27 @@ def test_pids_records_updates_external_to_managed(
     # create draft
     draft = service.edit(record.id, superuser_identity)
     # remove external pid allowed
-    doi = draft["pids"].pop("doi")
+    old_doi = draft["pids"].pop("doi")
     draft = service.update_draft(
         id_=draft.id, identity=superuser_identity, data=draft.data)
     assert not draft["pids"].get("doi")
-    pid = provider.get(
-        pid_value=doi["identifier"], pid_provider=doi["provider"]
-    )
-    assert pid.status == PIDStatus.DELETED
     # add a new managed doi
-    draft = service.pids.create_by_scheme(draft.id, superuser_identity, "doi")
+    draft = service.pids.create(draft.id, superuser_identity, "doi")
     doi = draft["pids"]["doi"]["identifier"]
     pid = provider.get(pid_value=doi)
     assert pid.status == PIDStatus.NEW
+    # publish with managed doi
+    record = service.publish(draft.id, superuser_identity)
+    pid = provider.get(pid_value=doi)
+    # FIXME: fails because the update does not register the pid,
+    # because it assumes it was updated only content but not that
+    # the actual pid changed (from ext ot managed)
+    assert pid.status == PIDStatus.REGISTERED
+    # the old external should be deleted
+    pid = provider.get(
+        pid_value=old_doi["identifier"], pid_provider=old_doi["provider"]
+    )
+    assert pid.status == PIDStatus.DELETED
 
 
 def test_pids_records_updates_managed_to_external(
@@ -565,6 +574,8 @@ def test_pids_records_updates_managed_to_external(
 
     # create draft
     draft = service.edit(record.id, superuser_identity)
+    # remove doi: mandatory delete action, press the X in the UI
+    draft = service.pids.discard(draft.id, superuser_identity, "doi")
     # replace by external doi
     ext_pid = {
         "identifier": "10.1234/dummy.1234",
@@ -627,10 +638,9 @@ def test_pids_records_updates_managed_to_no_pid(
 
     # create draft
     draft = service.edit(record.id, superuser_identity)
-    # remove doi
-    draft["pids"].pop("doi")
-    draft = service.update_draft(
-        id_=draft.id, identity=superuser_identity, data=draft.data)
+    # remove doi: mandatory delete action, press the X in the UI
+    draft = service.pids.discard(draft.id, superuser_identity, "doi")
+    # no need to call update_draft, discard updates it
     assert not draft["pids"].get("doi")
     # previous managed doi deleted
     pid = provider.get(pid_value=record["pids"]["doi"]["identifier"])
@@ -672,7 +682,7 @@ def test_pids_publish_managed(running_app, es_clear, minimal_record):
 
     # create the draft
     draft = service.create(superuser_identity, minimal_record)
-    draft = service.pids.create_by_scheme(draft.id, superuser_identity, "doi")
+    draft = service.pids.create(draft.id, superuser_identity, "doi")
     doi = draft["pids"]["doi"]["identifier"]
     assert provider.get(pid_value=doi).status == PIDStatus.NEW
 
@@ -745,7 +755,7 @@ def test_pids_delete_managed_pid_from_draft(
 
     # create draft and doi
     draft = service.create(superuser_identity, minimal_record)
-    draft = service.pids.create_by_scheme(draft.id, superuser_identity, "doi")
+    draft = service.pids.create(draft.id, superuser_identity, "doi")
     pid = provider.get(pid_value=draft["pids"]["doi"]["identifier"])
     assert pid.status == PIDStatus.NEW
     assert pid.pid_value == draft["pids"]["doi"]["identifier"]
@@ -805,8 +815,9 @@ def test_pids_delete_managed_pid_from_record(
     provider = service.pids.pid_manager._get_provider("doi", "datacite")
 
     # create draft and managed doi
+
     draft = service.create(superuser_identity, minimal_record)
-    draft = service.pids.create_by_scheme(draft.id, superuser_identity, "doi")
+    draft = service.pids.create(draft.id, superuser_identity, "doi")
     # publish
     record = service.publish(draft.id, superuser_identity)
     pid = provider.get(pid_value=record["pids"]["doi"]["identifier"])
