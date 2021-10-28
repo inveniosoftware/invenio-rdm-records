@@ -38,7 +38,7 @@ class RDMRecordService(RecordService):
 
     @property
     def pids(self):
-        """Record secret link service."""
+        """Record PIDs service."""
         return self._pids
 
     def lift_embargo(self, _id, identity):

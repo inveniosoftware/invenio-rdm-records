@@ -29,14 +29,9 @@ class PIDsService(RecordService):
 
     def resolve(self, id_, identity, scheme):
         """Resolve PID to a record (not draft)."""
-        # get the pid object
         # FIXME: Should not use model class but go through provider?
         pid = PersistentIdentifier.get(pid_type=scheme, pid_value=id_)
-
-        # get related record
         record = self.record_cls.get_record(pid.object_uuid)
-
-        # permissions
         self.require_permission(identity, "read", record=record)
 
         return self.result_item(
@@ -46,12 +41,12 @@ class PIDsService(RecordService):
             links_tpl=self.links_item_tpl,
         )
 
-    def create_by_scheme(self, id_, identity, scheme, pid_provider=None):
+    def create(self, id_, identity, scheme, provider=None):
         """Create a `NEW` PID for a given record."""
         draft = self.draft_cls.pid.resolve(id_, registered_only=False)
         self.require_permission(identity, "pid_create", record=draft)
-        draft.pids[scheme] = self._manager.create_by_scheme(
-            draft, scheme, pid_provider
+        draft.pids[scheme] = self._manager.create(
+            draft, scheme, provider_name=provider
         )
 
         draft.commit()
@@ -63,83 +58,6 @@ class PIDsService(RecordService):
             identity,
             draft,
             links_tpl=self.links_item_tpl,
-        )
-
-    def create_many(self, id_, identity, pids):
-        """Create many PIDs for a given draft.
-
-        This method assumes all pids have a value, otherwise
-        use `create_many_by_type`.
-        """
-        draft = self.draft_cls.pid.resolve(id_, registered_only=False)
-        self.require_permission(identity, "pid_create", record=draft)
-        pids, errors = self._manager.validate(pids, draft, raise_errors=True)
-        draft.pids = self._manager.create_many(draft, pids)
-
-        draft.commit()
-        db.session.commit()
-        self.indexer.index(draft)
-
-        return self.result_item(
-            self,
-            identity,
-            draft,
-            links_tpl=self.links_item_tpl,
-            errors=errors
-        )
-
-    def create_required(self, id_, identity):
-        """Create the required PIDs for a given draft."""
-        draft = self.draft_cls.pid.resolve(id_, registered_only=False)
-        self.require_permission(identity, "pid_create", record=draft)
-        draft.pids = self.create_many_by_scheme(
-            draft, self.config.pids_required
-        )
-
-        draft.commit()
-        db.session.commit()
-        self.indexer.index(draft)
-
-        return self.result_item(
-            self,
-            identity,
-            draft,
-            links_tpl=self.links_item_tpl,
-        )
-
-    def update(self, id_, identity, pids):
-        """Update draft PIDs."""
-        draft = self.draft_cls.pid.resolve(id_, registered_only=False)
-        # check for creation, deletion is scheme specific
-        self.require_permission(identity, "pid_create", record=draft)
-
-        new_pids = dict(pids)  # force copy
-        errors = []
-        for scheme in pids.keys():
-            try:  # record and scheme reach the generator as "over"
-                self.require_permission(
-                    identity, 'pid_delete', record=draft, scheme=scheme
-                )
-            except PermissionDeniedError:
-                new_pids.pop(scheme)
-                errors.append({
-                    "field": f"pids.{scheme}",
-                    "message": _("Permission denied: cannot update PID.")
-                })
-        pids, errors = self._manager.validate(new_pids, draft, raise_errors=True)
-
-        draft.pids = self.manager.update(draft, new_pids)
-
-        draft.commit()
-        db.session.commit()
-        self.indexer.index(draft)
-
-        return self.result_item(
-            self,
-            identity,
-            draft,
-            links_tpl=self.links_item_tpl,
-            errors=errors
         )
 
     def update_remote(self, id_, identity, scheme):
@@ -148,7 +66,7 @@ class PIDsService(RecordService):
         self.require_permission(identity, "pid_update", record=record)
         self._manager.update_remote(record, scheme)
 
-        db.session.commit()  # no need for record.commit, it does not change
+        db.session.commit()  # draft and index do not need commit/refresh
 
         return self.result_item(
             self,
@@ -161,7 +79,7 @@ class PIDsService(RecordService):
         """Reserve PIDs of a record."""
         draft = self.draft_cls.pid.resolve(id_, registered_only=False)
         self.require_permission(identity, "pid_manage", record=draft)
-        self._manager.reserve_many(draft, draft.pids)
+        self._manager.reserve_all(draft, draft.pids)
 
         db.session.commit()  # draft and index do not need commit/refresh
 
@@ -172,15 +90,15 @@ class PIDsService(RecordService):
             links_tpl=self.links_item_tpl,
         )
 
-    def register_by_scheme(self, id_, identity, scheme):
+    def register(self, id_, identity, scheme):
         """Register a PID of a record."""
         record = self.record_cls.pid.resolve(id_, registered_only=False)
         self.require_permission(identity, "pid_register", record=record)
-        self._manager.register_by_scheme(
-            record, scheme, links_tpl=self.links_item_tpl
+        self._manager.register(
+            record, scheme, url=self.links_item_tpl.expand(record)["self_html"]
         )
 
-        db.session.commit()  # no need for record.commit, it does not change
+        db.session.commit()  # draft and index do not need commit/refresh
 
         return self.result_item(
             self,
@@ -189,7 +107,7 @@ class PIDsService(RecordService):
             links_tpl=self.links_item_tpl,
         )
 
-    def discard_by_scheme(self, id_, identity, scheme, pid_provider=None):
+    def discard(self, id_, identity, scheme, provider=None):
         """Discard a PID for a given draft.
 
         If the status was `NEW` it will be hard deleted. Otherwise,
@@ -197,31 +115,8 @@ class PIDsService(RecordService):
         """
         draft = self.draft_cls.pid.resolve(id_, registered_only=False)
         self.require_permission(identity, "pid_discard", record=draft)
-        self._manager.discard_by_scheme(draft, scheme, pid_provider)
+        self._manager.discard(scheme, provider, draft=draft)
         draft.pids.pop(scheme)
-
-        draft.commit()
-        db.session.commit()
-        self.indexer.index(draft)
-
-        return self.result_item(
-            self,
-            identity,
-            draft,
-            links_tpl=self.links_item_tpl,
-        )
-
-    def discard_all(self, id_, identity):
-        """Discard all PIDs for a given draft.
-
-        If the status was `NEW` it will be hard deleted. Otherwise,
-        it will be soft deleted (`RESERVED`/`REGISTERED`).
-        """
-        # draft_cls because we cannot delete on a published record
-        draft = self.draft_cls.pid.resolve(id_, registered_only=False)
-        self.require_permission(identity, "pid_discard", record=draft)
-        self._manager.discard_all(draft.get('pids', {}))
-        draft.pids = {}
 
         draft.commit()
         db.session.commit()

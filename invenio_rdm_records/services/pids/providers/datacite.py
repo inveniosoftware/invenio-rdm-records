@@ -12,6 +12,7 @@ import json
 from datacite import DataCiteRESTClient
 from datacite.errors import DataCiteError
 from flask import current_app
+from flask_babelex import lazy_gettext as _
 from invenio_pidstore.models import PIDStatus
 
 from invenio_rdm_records.resources.serializers import DataCite43JSONSerializer
@@ -186,7 +187,8 @@ class DOIDataCitePIDProvider(BasePIDProvider):
 
         return super().delete(pid, **kwargs)
 
-    def validate(self, record, identifier=None, provider=None, **kwargs):
+    def validate(
+        self, record, identifier=None, provider=None, **kwargs):
         """Validate the attributes of the identifier.
 
         :returns: A tuple (success, errors). The first specifies if the
@@ -195,6 +197,17 @@ class DOIDataCitePIDProvider(BasePIDProvider):
         """
         success, errors = super().validate(
             record, identifier, provider, **kwargs)
+        if identifier:
+            pid = self.get(
+                pid_value=identifier,
+                pid_type=self.pid_type,
+                pid_provider=provider
+            )
+            if pid.is_registered() or pid.is_reserved():
+                errors.append({
+                    "field": f"pids.{self.pid_type}",
+                    "message": _("Cannot delete a reserved or registered PID.")
+                })
 
         # format check
         try:

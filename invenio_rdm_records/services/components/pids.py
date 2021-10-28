@@ -26,12 +26,9 @@ class PIDsComponent(ServiceComponent):
 
         It should validate and add the pids to the draft.
         """
-        # cant use or cuz [] is false
-        errors = [] if errors is None else errors
-        pids = self.service.pids.pid_manager.validate(
-            data.get('pids', {}), record, errors
-        )
-        record.pids = pids  # the record is a draft
+        pids = data.get('pids', {})
+        self.service.pids.pid_manager.validate(pids, record, errors)
+        record.pids = pids
 
     def new_version(self, identity, draft=None, record=None):
         """A new draft should not have any pids from the previous record."""
@@ -39,12 +36,10 @@ class PIDsComponent(ServiceComponent):
 
     def publish(self, identity, draft=None, record=None):
         """Publish handler."""
-        errors = []
-        pids = self.service.pids.pid_manager.validate(
-            draft.get('pids', {}), record, errors
+        pids = draft.get('pids', {})
+        self.service.pids.pid_manager.validate(
+           pids, record, raise_errors=True
         )
-        if errors:
-            raise ValidationError(message=errors)
 
         # Internally the following is done by the PIDs service
         #
@@ -52,18 +47,28 @@ class PIDsComponent(ServiceComponent):
         # |----------|----------------|----------------|
         # | managed  |     reserve    | create+reserve |
         # |----------|----------------|----------------|
-        # | external | create+reserve |      fail      |
+        # | external | create+reserve |      fail      |  TODO: check fail case
         # |----------|------- --------|----------------|
 
-        # TODO: check creation of required exernal without value
-        pids = self.service.pids.pid_manager.create_many(draft, pids)
-        pids = {
-            **pids,
-            **self.service.pids.pid_manager.create_many_by_scheme(
-                draft, self.service.config.pids_required
+        old_pids = record.get('pids', {})
+        new_schemes = set(pids.keys())
+        old_schemes = set(old_pids.keys())
+
+        to_remove = new_schemes.intersection(old_schemes)
+        for scheme in to_remove:
+            pid_attrs = old_pids[scheme]
+            self.service.pids.pid_manager.discard(
+                scheme, pid_attrs["identifier"], pid_attrs["provider"]
             )
+
+        required_schemes = \
+            set(self.service.config.pids_required) - old_schemes - new_schemes
+        pids = {
+            **self.service.pids.pid_manager.create_all(draft, pids),
+            **self.service.pids.pid_manager.create_all(draft, required_schemes)
         }
-        self.service.pids.pid_manager.reserve_many(draft, pids)
+
+        self.service.pids.pid_manager.reserve_all(draft, pids)
 
         record.pids = pids
 
@@ -77,25 +82,14 @@ class PIDsComponent(ServiceComponent):
         It should only delete pids with status `NEW`, other pids would
         belong to previous versions of the record.
         """
-        # FIXME: per pid permissions like in update, now no perm check
+        # will not delete registered/reserved PIDs
         self.service.pids.pid_manager.discard_all(draft.pids)
         draft.pids = {}
 
     def update_draft(self, identity, data=None, record=None, errors=None):
-        """Update draft handler.
-
-        The permission check is performed on pid updates, no new additions.
-        In addition, they check only if it is allowed to remove the pid
-        since adding a new one has the same restrictions than the record
-        update.
-        """
-        errors = [] if errors is None else errors
-        pids = self.service.pids.pid_manager.validate(
-            data.get('pids', {}), record, errors
-        )
-        # FIXME: permissions check? global? it is done at pidsservice not manager
-        pids = self.service.pids.pid_manager.update(record, pids)
-
+        """Update draft handler."""
+        pids = data.get('pids', {})
+        self.service.pids.pid_manager.validate(pids, record, errors)
         record.pids = pids
 
     def edit(self, identity, draft=None, record=None):
@@ -104,10 +98,8 @@ class PIDsComponent(ServiceComponent):
         PIDS are taken from the published record so that cannot be changed in
         the draft.
         """
-        # errors are not used because we do not want to fail on create
-        pids = self.service.pids.pid_manager.validate(
-            record.get('pids', {}), record
-        )
+        pids = record.get('pids', {})
+        self.service.pids.pid_manager.validate(pids, record)
         draft.pids = pids
 
     def post_publish(self, identity, record=None, is_published=False):

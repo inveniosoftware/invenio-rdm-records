@@ -27,7 +27,7 @@ def update_pid(recid, pid_type):
 @shared_task(ignore_result=True)
 def register_pid(recid, pid_type):
     """Registers a PID of a record."""
-    current_rdm_records.records_service.pids.register_by_scheme(
+    current_rdm_records.records_service.pids.register(
         id_=recid,
         identity=system_identity,
         scheme=pid_type,
