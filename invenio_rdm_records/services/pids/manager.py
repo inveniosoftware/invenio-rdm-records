@@ -14,7 +14,6 @@ from invenio_db import db
 from invenio_drafts_resources.services.records import RecordService
 from invenio_pidstore.errors import PIDDoesNotExistError
 from invenio_pidstore.models import PersistentIdentifier, PIDStatus
-from invenio_records_resources.services.errors import PermissionDeniedError
 from marshmallow import ValidationError
 
 from .errors import PIDSchemeNotSupportedError, ProviderNotSupportedError
@@ -68,11 +67,14 @@ class PIDManager:
                     "message": val_errors
                 })
 
-    def validate(self, identity, pids, record, errors=None):
+    def validate(self, pids, record, errors=None, raise_errors=False):
         """Validate PIDs."""
         errors = [] if errors is None else errors
         self._validate_pids_schemes(pids)
         self._validate_pids(pids, record, errors)
+
+        if raise_errors and errors:
+            raise ValidationError(message=errors)
 
         return pids
 
@@ -102,6 +104,13 @@ class PIDManager:
 
     def create_by_scheme(self, draft, scheme, pid_provider=None):
         """Creates a pid for a specified scheme."""
+        if draft.pids.get(scheme):
+            raise ValidationError(
+                message=_("A PID already exists for type {scheme}")
+                .format(scheme=scheme),
+                field_name=f"pids.{scheme}",
+            )
+
         provider = self._get_provider(scheme, pid_provider)
         pid = provider.create(draft)
         pid_attrs = {
@@ -144,40 +153,28 @@ class PIDManager:
 
         return pids
 
-    def update(self, identity, draft, pids, errors):
+    def update(self, draft, pids):
         """Update a list of PIDs based on a draft."""
         updated_pids = dict(draft.get("pids", {}))  # force copy
 
         for scheme, old_pid in draft.get("pids", {}).items():
             updated_pid = pids.get(scheme)
             if old_pid != updated_pid:
-                try:  # record and scheme reach the generator as "over"
-                    self.require_permission(
-                        identity, 'pid_delete', record=draft, scheme=scheme
+                # delete if existant in db
+                pid_value = old_pid.get("identifier")
+                if pid_value:  # e.g. remove external and incomplete pid
+                    provider = self._get_provider(
+                        scheme, old_pid.get("provider")
                     )
-
-                    # delete if existant in db
-                    pid_value = old_pid.get("identifier")
-                    if pid_value:  # e.g. remove external and incomplete pid
-                        provider = self._get_provider(
-                            scheme, old_pid.get("provider")
-                        )
-                        try:
-                            pid = provider.get(pid_value=pid_value)
-                            provider.delete(pid, record=draft)
-                        except PIDDoesNotExistError:
-                            pass  # does not exist, no need to delete it
-                    # remove or replace by the new pid
-                    updated_pids.pop(scheme, None)
-                    if updated_pid:  # an update could be a removal
-                        updated_pids[scheme] = updated_pid
-
-                except PermissionDeniedError:
-                    errors.append({
-                        "field": f"pids.{scheme}",
-                        "message": _("Permission denied: cannot update PID.")
-                    })
-                    continue
+                    try:
+                        pid = provider.get(pid_value=pid_value)
+                        provider.delete(pid, record=draft)
+                    except PIDDoesNotExistError:
+                        pass  # does not exist, no need to delete it
+                # remove or replace by the new pid
+                updated_pids.pop(scheme, None)
+                if updated_pid:  # an update could be a removal
+                    updated_pids[scheme] = updated_pid
 
         # add new pids to the draft
         new_pids = set(pids.keys()) - set(updated_pids.keys())
@@ -185,6 +182,22 @@ class PIDManager:
             updated_pids[new_pid] = pids[new_pid]
 
         return updated_pids
+
+    def update_remote(self, record, scheme):
+        """Update a registered PID on a remote provider."""
+        pid_attrs = record.pids.get(scheme, None)
+        if not pid_attrs:
+            raise ValidationError(
+                message=_("PID not found for type {scheme}")
+                .format(scheme=scheme),
+                field_name=f"pids",
+            )
+
+        provider_name = pid_attrs["provider"]
+        provider = self._get_provider(scheme, provider_name)
+        pid_value = pid_attrs["identifier"]
+        pid = provider.get(pid_value=pid_value, pid_type=scheme)
+        provider.update(pid, record=record)
 
     def reserve(self, draft, pid_attrs, scheme):
         """Reserve a PID."""
@@ -198,7 +211,7 @@ class PIDManager:
         for scheme, pid_attrs in pids.items():
             self.reserve(draft, pid_attrs, scheme)
 
-    def register_by_scheme(self, record, scheme):
+    def register_by_scheme(self, record, scheme, links_tpl):
         """Register a PID of a record."""
         pid_attrs = record.pids.get(scheme, None)
         if not pid_attrs:
@@ -210,9 +223,9 @@ class PIDManager:
 
         provider = self._get_provider(scheme, pid_attrs["provider"])
         pid_value = pid_attrs["identifier"]
-        pid = provider.get(pid_value=pid_value, scheme=scheme)
+        pid = provider.get(pid_value=pid_value, pid_type=scheme)
 
-        links = self.links_item_tpl.expand(record)
+        links = links_tpl.expand(record)
         provider.register(
             pid, record=record, url=links["self_html"]
         )

@@ -18,8 +18,8 @@ from invenio_rdm_records.records import RDMDraft, RDMRecord
 from invenio_rdm_records.services import RDMRecordService
 from invenio_rdm_records.services.components import PIDsComponent
 from invenio_rdm_records.services.config import RDMRecordServiceConfig
-from invenio_rdm_records.services.pids import PIDsService
-from invenio_rdm_records.services.pids.errors import PIDTypeNotSupportedError
+from invenio_rdm_records.services.pids import PIDManager, PIDsService
+from invenio_rdm_records.services.pids.errors import PIDSchemeNotSupportedError
 from invenio_rdm_records.services.pids.providers import BasePIDProvider, \
     ExternalPIDProvider
 
@@ -107,7 +107,9 @@ class TestServiceConfigRequiredExternalPID(RDMRecordServiceConfig):
 def no_pids_cmp():
     service = RDMRecordService(
         config=TestServiceConfigNoPIDs,
-        pids_service=PIDsService(config=TestServiceConfigNoPIDs)
+        pids_service=PIDsService(
+            config=TestServiceConfigNoPIDs, manager_cls=PIDManager
+        )
     )
     return PIDsComponent(service=service)
 
@@ -116,7 +118,9 @@ def no_pids_cmp():
 def no_required_pids_service():
     return RDMRecordService(
         config=TestServiceConfigNoRequiredPIDs,
-        pids_service=PIDsService(config=TestServiceConfigNoRequiredPIDs)
+        pids_service=PIDsService(
+            config=TestServiceConfigNoRequiredPIDs, manager_cls=PIDManager
+        )
     )
 
 
@@ -129,7 +133,9 @@ def no_required_pids_cmp(no_required_pids_service):
 def required_managed_pids_cmp():
     service = RDMRecordService(
         config=TestServiceConfigRequiredManagedPID,
-        pids_service=PIDsService(config=TestServiceConfigRequiredManagedPID)
+        pids_service=PIDsService(
+            config=TestServiceConfigRequiredManagedPID, manager_cls=PIDManager
+        )
     )
     return PIDsComponent(service=service)
 
@@ -138,7 +144,10 @@ def required_managed_pids_cmp():
 def required_external_pids_cmp():
     service = RDMRecordService(
         config=TestServiceConfigRequiredExternalPID,
-        pids_service=PIDsService(config=TestServiceConfigRequiredExternalPID)
+        pids_service=PIDsService(
+            config=TestServiceConfigRequiredExternalPID,
+            manager_cls=PIDManager
+        )
     )
     return PIDsComponent(service=service)
 
@@ -180,7 +189,7 @@ def test_create_pid_type_not_supported(
     draft = RDMDraft.create(data)
     # note that something like {"test": {}} should be caught at marshmallow
     # level, which is tested at service level
-    with pytest.raises(PIDTypeNotSupportedError):
+    with pytest.raises(PIDSchemeNotSupportedError):
         component.create(identity_simple, data=data, record=draft)
 
 

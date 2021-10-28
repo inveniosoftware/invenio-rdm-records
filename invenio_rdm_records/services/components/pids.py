@@ -14,6 +14,7 @@ from invenio_drafts_resources.services.records.components import \
 from marshmallow import ValidationError
 
 from ...proxies import current_rdm_records
+from ..pids.tasks import register_pid, update_pid
 
 
 class PIDsComponent(ServiceComponent):
@@ -27,8 +28,8 @@ class PIDsComponent(ServiceComponent):
         """
         # cant use or cuz [] is false
         errors = [] if errors is None else errors
-        pids = self.service.pids.validate(
-            identity, data.get('pids', {}), record, errors
+        pids = self.service.pids.pid_manager.validate(
+            data.get('pids', {}), record, errors
         )
         record.pids = pids  # the record is a draft
 
@@ -39,8 +40,8 @@ class PIDsComponent(ServiceComponent):
     def publish(self, identity, draft=None, record=None):
         """Publish handler."""
         errors = []
-        pids = self.service.pids.validate(
-            identity, draft.get('pids', {}), record, errors
+        pids = self.service.pids.pid_manager.validate(
+            draft.get('pids', {}), record, errors
         )
         if errors:
             raise ValidationError(message=errors)
@@ -55,9 +56,14 @@ class PIDsComponent(ServiceComponent):
         # |----------|------- --------|----------------|
 
         # TODO: check creation of required exernal without value
-        pids = self.service.pids._create_many(draft, pids)
-        pids = {**pids, **self.service.pids._create_required(draft)}
-        self.service.pids._reserve(draft, pids)
+        pids = self.service.pids.pid_manager.create_many(draft, pids)
+        pids = {
+            **pids,
+            **self.service.pids.pid_manager.create_many_by_scheme(
+                draft, self.service.config.pids_required
+            )
+        }
+        self.service.pids.pid_manager.reserve_many(draft, pids)
 
         record.pids = pids
 
@@ -72,7 +78,7 @@ class PIDsComponent(ServiceComponent):
         belong to previous versions of the record.
         """
         # FIXME: per pid permissions like in update, now no perm check
-        self.service.pids._discard_all(draft.pids)
+        self.service.pids.pid_manager.discard_all(draft.pids)
         draft.pids = {}
 
     def update_draft(self, identity, data=None, record=None, errors=None):
@@ -84,10 +90,11 @@ class PIDsComponent(ServiceComponent):
         update.
         """
         errors = [] if errors is None else errors
-        pids = self.service.pids.validate(
-            identity, data.get('pids', {}), record, errors
+        pids = self.service.pids.pid_manager.validate(
+            data.get('pids', {}), record, errors
         )
-        pids = self.service.pids._update(identity, record, pids, errors)
+        # FIXME: permissions check? global? it is done at pidsservice not manager
+        pids = self.service.pids.pid_manager.update(record, pids)
 
         record.pids = pids
 
@@ -98,12 +105,16 @@ class PIDsComponent(ServiceComponent):
         the draft.
         """
         # errors are not used because we do not want to fail on create
-        pids = self.service.pids.validate(
-            identity, record.get('pids', {}), record
+        pids = self.service.pids.pid_manager.validate(
+            record.get('pids', {}), record
         )
         draft.pids = pids
 
-    def post_publish(self, identity, record=None):
+    def post_publish(self, identity, record=None, is_published=False):
         """Post publish handler."""
         # no need to validate since it was published already
-        self.service.pids.register_or_update(record, delay=True)
+        for scheme in record.get('pids', {}).keys():
+            if is_published:
+                update_pid.delay(record["id"], scheme)
+            else:
+                register_pid.delay(record["id"], scheme)
