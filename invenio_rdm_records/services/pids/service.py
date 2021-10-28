@@ -7,17 +7,11 @@
 
 """RDM PIDs Service."""
 
-from datetime import datetime
-
 from flask_babelex import lazy_gettext as _
 from invenio_db import db
 from invenio_drafts_resources.services.records import RecordService
-from invenio_pidstore.errors import PIDDoesNotExistError
-from invenio_pidstore.models import PersistentIdentifier, PIDStatus
+from invenio_pidstore.models import PersistentIdentifier
 from invenio_records_resources.services.errors import PermissionDeniedError
-from marshmallow import ValidationError
-
-from .tasks import register_pid, update_pid
 
 
 class PIDsService(RecordService):
@@ -26,7 +20,12 @@ class PIDsService(RecordService):
     def __init__(self, config, manager_cls):
         """Constructor for RecordService."""
         super().__init__(config)
-        self._manager = manager_cls(self.config.pid_providers)
+        self._manager = manager_cls(self.config.pids_providers)
+
+    @property
+    def pid_manager(self):
+        """PID Manager."""
+        return self._manager
 
     def resolve(self, id_, identity, scheme):
         """Resolve PID to a record (not draft)."""
@@ -47,19 +46,11 @@ class PIDsService(RecordService):
             links_tpl=self.links_item_tpl,
         )
 
-    def create_by_type(self, id_, identity, scheme, pid_provider=None):
+    def create_by_scheme(self, id_, identity, scheme, pid_provider=None):
         """Create a `NEW` PID for a given record."""
         draft = self.draft_cls.pid.resolve(id_, registered_only=False)
         self.require_permission(identity, "pid_create", record=draft)
-
-        if draft.pids.get(scheme):
-            raise ValidationError(
-                message=_("A PID already exists for type {scheme}")
-                .format(scheme=scheme),
-                field_name=f"pids.{scheme}",
-            )
-
-        draft.pids[scheme] = self._manager.create_by_type(
+        draft.pids[scheme] = self._manager.create_by_scheme(
             draft, scheme, pid_provider
         )
 
@@ -82,11 +73,7 @@ class PIDsService(RecordService):
         """
         draft = self.draft_cls.pid.resolve(id_, registered_only=False)
         self.require_permission(identity, "pid_create", record=draft)
-
-        pids, errors = self.validate(identity, pids, draft)
-        if errors:
-            raise ValidationError(message=errors)
-
+        pids, errors = self._manager.validate(pids, draft, raise_errors=True)
         draft.pids = self._manager.create_many(draft, pids)
 
         draft.commit()
@@ -126,11 +113,22 @@ class PIDsService(RecordService):
         # check for creation, deletion is scheme specific
         self.require_permission(identity, "pid_create", record=draft)
 
-        pids, errors = self.validate(identity, pids, draft)
-        if errors:
-            raise ValidationError(message=errors)
+        new_pids = dict(pids)  # force copy
+        errors = []
+        for scheme in pids.keys():
+            try:  # record and scheme reach the generator as "over"
+                self.require_permission(
+                    identity, 'pid_delete', record=draft, scheme=scheme
+                )
+            except PermissionDeniedError:
+                new_pids.pop(scheme)
+                errors.append({
+                    "field": f"pids.{scheme}",
+                    "message": _("Permission denied: cannot update PID.")
+                })
+        pids, errors = self._manager.validate(new_pids, draft, raise_errors=True)
 
-        draft.pids, errors = self.manager.update(identity, draft, pids, errors)
+        draft.pids = self.manager.update(draft, new_pids)
 
         draft.commit()
         db.session.commit()
@@ -148,22 +146,8 @@ class PIDsService(RecordService):
         """Update a registered PID on a remote provider."""
         record = self.record_cls.pid.resolve(id_, registered_only=False)
         self.require_permission(identity, "pid_update", record=record)
+        self._manager.update_remote(record, scheme)
 
-        pid_attrs = record.pids.get(scheme, None)
-
-        if not pid_attrs:
-            raise ValidationError(
-                message=_("PID not found for type {scheme}")
-                .format(scheme=scheme),
-                field_name=f"pids",
-            )
-
-        provider_name = pid_attrs["provider"]
-        provider = self._get_provider(scheme, provider_name)
-        pid_value = pid_attrs["identifier"]
-        pid = provider.get(pid_value=pid_value, pid_type=scheme)
-
-        provider.update(pid, record=record)
         db.session.commit()  # no need for record.commit, it does not change
 
         return self.result_item(
@@ -188,37 +172,13 @@ class PIDsService(RecordService):
             links_tpl=self.links_item_tpl,
         )
 
-    # FIXME: This logic should move to the cmp.post_publish
-    def register_or_update(self, record, delay=False):
-        """Registers or updates PIDs.
-
-        Triggers an asynchronous task.
-        """
-        pids = record.get('pids', {})
-
-        for scheme, pid_attrs in pids.items():
-            provider_name = pid_attrs["provider"]
-            identifier_value = pid_attrs["identifier"]
-            provider = self._get_provider(scheme, provider_name)
-            pid = provider.get(pid_value=identifier_value, pid_type=scheme)
-            if delay:
-                if pid.is_registered():
-                    update_pid.delay(record["id"], pid.pid_type)
-                else:
-                    register_pid.delay(record["id"], pid.pid_type)
-            else:
-                if pid.is_registered():
-                    update_pid(record["id"], pid.pid_type)
-                else:
-                    register_pid(record["id"], pid.pid_type)
-
-        return True
-
     def register_by_scheme(self, id_, identity, scheme):
         """Register a PID of a record."""
         record = self.record_cls.pid.resolve(id_, registered_only=False)
         self.require_permission(identity, "pid_register", record=record)
-        self._manager.register_by_scheme(record, scheme)
+        self._manager.register_by_scheme(
+            record, scheme, links_tpl=self.links_item_tpl
+        )
 
         db.session.commit()  # no need for record.commit, it does not change
 
@@ -229,7 +189,7 @@ class PIDsService(RecordService):
             links_tpl=self.links_item_tpl,
         )
 
-    def discard_by_type(self, id_, identity, scheme, pid_provider=None):
+    def discard_by_scheme(self, id_, identity, scheme, pid_provider=None):
         """Discard a PID for a given draft.
 
         If the status was `NEW` it will be hard deleted. Otherwise,

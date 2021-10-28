@@ -66,11 +66,11 @@ class RDMRecordResourceConfig(RecordResourceConfig):
     routes = RecordResourceConfig.routes
 
     # PIDs
-    routes["item-pids-reserve"] = "/<pid_value>/draft/pids/<pid_type>"
+    routes["item-pids-reserve"] = "/<pid_value>/draft/pids/<scheme>"
 
     request_view_args = {
         "pid_value": ma.fields.Str(),
-        "pid_type": ma.fields.Str(),
+        "scheme": ma.fields.Str(),
     }
 
     request_read_args = {

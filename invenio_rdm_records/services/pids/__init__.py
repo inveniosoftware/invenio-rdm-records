@@ -7,8 +7,10 @@
 
 """PID module."""
 
+from .manager import PIDManager
 from .service import PIDsService
 
 __all__ = (
+    "PIDManager",
     "PIDsService",
 )
