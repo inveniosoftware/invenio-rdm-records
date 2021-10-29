@@ -543,8 +543,6 @@ def test_pids_records_updates_external_to_managed(
     pid = provider.get(pid_value=doi)
     assert pid.status == PIDStatus.REGISTERED
     # the old external should be deleted
-    # FIXME: The pid got replaced but not removed and the publish
-    # does not have knowledge about it
     pid = provider.get(
         pid_value=old_doi["identifier"], pid_provider=old_doi["provider"]
     )

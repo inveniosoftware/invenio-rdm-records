@@ -220,3 +220,7 @@ class BasePIDProvider:
             pass
 
         return True, []
+
+    def can_modify(self, pid, **kwargs):
+        """Checks if the PID can be modified."""
+        return True

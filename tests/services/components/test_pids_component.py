@@ -444,10 +444,7 @@ def test_update_managed_to_empty(
     # run the delete hook and check the pid is not in the system anymore
     component.update_draft(superuser_identity, data=data, record=draft)
     assert draft.pids == {}
-    # note that the old pid will still exist in the db
-    # it has to explicitly be removed
-    # FIXME: see this case, we risk way to many DOIs in the DB if we do
-    # not enforce delete somehow but no context on publish
+    # note that the old pid will still exist in the db until publish time
 
 
 def test_update_external_to_managed(
@@ -497,7 +494,4 @@ def test_update_managed_to_external(
     # run the delete hook and check the pid is not in the system anymore
     component.update_draft(superuser_identity, data=data, record=draft)
     assert draft.pids == ext_pids
-    # note that the old pid will still exist in the db
-    # it has to explicitly be removed
-    # FIXME: see this case, we risk way to many DOIs in the DB if
-    # we do not enforce delete somehow but no context on publish
+    # note that the old pid will still exist in the db until publish time

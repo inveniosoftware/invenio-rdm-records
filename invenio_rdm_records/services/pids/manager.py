@@ -46,11 +46,11 @@ class PIDManager:
         correct. This function validates that the given pids are actually
         supported.
         """
-        pids_providers = set(self._providers.keys())
-        all_pids = set(pids.keys())
-        unknown_pids = all_pids - pids_providers
-        if unknown_pids:
-            raise PIDSchemeNotSupportedError(unknown_pids)
+        provider_schemes = set(self._providers.keys())
+        all_schemes = set(pids.keys())
+        unknown_schemes = all_schemes - provider_schemes
+        if unknown_schemes:
+            raise PIDSchemeNotSupportedError(unknown_schemes)
 
     def _validate_pids(self, pids, record, errors):
         """Validate an iterator of PIDs.
@@ -198,8 +198,13 @@ class PIDManager:
         """Discard a PID."""
         provider = self._get_provider(scheme, provider_name)
         pid = provider.get(pid_value=identifier)
-        if pid.is_new():
-            provider.delete(pid)
+        if not provider.can_modify(pid):
+            raise ValidationError(message=[{
+                    "field": f"pids.{scheme}",
+                    "message": _("Cannot modify a reserved or registered PID.")
+                }])
+
+        provider.delete(pid)
 
     def discard_all(self, pids):
         """Discard all PIDs."""
