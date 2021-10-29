@@ -77,7 +77,7 @@ def test_update_pid(
     draft = service.create(superuser_identity, minimal_record)
     record = service.publish(draft.id, superuser_identity)
     doi = record["pids"]["doi"]["identifier"]
-    provider = service.pids._get_provider("doi", "datacite")
+    provider = service.pids.pid_manager._get_provider("doi", "datacite")
     pid = provider.get(pid_value=doi)
     assert pid.status == PIDStatus.REGISTERED
     # we do not explicitly call the update_pid task

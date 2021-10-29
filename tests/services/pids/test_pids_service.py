@@ -122,76 +122,76 @@ def test_oai_pid_default_created(running_app, es_clear, minimal_record):
 #  Use cases list:
 #
 # | Creation
-# |--------------------------------------------------|---------------------------------------|  # noqa
-# | Draft creation from scratch (no pid)             | basic_flow                            |  # noqa
-# |--------------------------------------------------|---------------------------------------|  # noqa
-# | Publish with no pid (creation of mandatory ones) | basic_flow                            |  # noqa
-# |--------------------------------------------------|---------------------------------------|  # noqa
-# | Do not allow duplicates                          | duplicates                            |  # noqa
-# |--------------------------------------------------|---------------------------------------|  # noqa
-# | Fail on empty (invalid) value for external pid   | creation_invalid_external_payload     |  # noqa
-# |--------------------------------------------------|---------------------------------------|  # noqa
+# |--------------------------------------------------|-----------------------------------|  # noqa
+# | Draft creation from scratch (no pid)             | basic_flow                        |  # noqa
+# |--------------------------------------------------|-----------------------------------|  # noqa
+# | Publish with no pid (creation of mandatory ones) | basic_flow                        |  # noqa
+# |--------------------------------------------------|-----------------------------------|  # noqa
+# | Do not allow duplicates                          | duplicates                        |  # noqa
+# |--------------------------------------------------|-----------------------------------|  # noqa
+# | Fail on empty (invalid) value for external pid   | creation_invalid_external_payload |  # noqa
+# |--------------------------------------------------|-----------------------------------|  # noqa
 #
 # | Reservation
-# |--------------------------------------------------|---------------------------------------|  # noqa
-# | Reserve pid                                      | reserve_managed                       |  # noqa
-# |--------------------------------------------------|---------------------------------------|  # noqa
-# | Fail to reserve with already existing managed    | reserve_fail_existing_managed         |  # noqa
-# |--------------------------------------------------|---------------------------------------|  # noqa
-# | Fail to reserve with already existing external   | reserve_fail_existing_external        |  # noqa
-# |--------------------------------------------------|---------------------------------------|  # noqa
+# |--------------------------------------------------|-----------------------------------|  # noqa
+# | Reserve pid                                      | reserve_managed                   |  # noqa
+# |--------------------------------------------------|-----------------------------------|  # noqa
+# | Fail to reserve with already existing managed    | reserve_fail_existing_managed     |  # noqa
+# |--------------------------------------------------|-----------------------------------|  # noqa
+# | Fail to reserve with already existing external   | reserve_fail_existing_external    |  # noqa
+# |--------------------------------------------------|-----------------------------------|  # noqa
 #
 # | Update on drafts (prefix test_pids_drafts)
-# |--------------------------------------------------|---------------------------------------|  # noqa
-# | Update from external to managed on a draft       | updates_external_to_managed           |  # noqa
-# |--------------------------------------------------|---------------------------------------|  # noqa
-# | Update from external to no pid on a draft        | updates_external_to_managed           |  # noqa
-# |--------------------------------------------------|---------------------------------------|  # noqa
-# | Update from managed to external on a draft       | updates_managed_to_external           |  # noqa
-# |--------------------------------------------------|---------------------------------------|  # noqa
-# | Update from managed to no pid on a draft         | updates_managed_to_no_pid             |  # noqa
-# |--------------------------------------------------|---------------------------------------|  # noqa
-# | Update from no pid to external on a draft        | updates_no_pid_to_external            |  # noqa
-# |--------------------------------------------------|---------------------------------------|  # noqa
-# | Update from no pid to managed on a draft         | updates_no_pid_to_managed             |  # noqa
-# |--------------------------------------------------|---------------------------------------|  # noqa
+# |--------------------------------------------------|-----------------------------------|  # noqa
+# | Update from external to managed on a draft       | updates_external_to_managed       |  # noqa
+# |--------------------------------------------------|-----------------------------------|  # noqa
+# | Update from external to no pid on a draft        | updates_external_to_managed       |  # noqa
+# |--------------------------------------------------|-----------------------------------|  # noqa
+# | Update from managed to external on a draft       | updates_managed_to_external       |  # noqa
+# |--------------------------------------------------|-----------------------------------|  # noqa
+# | Update from managed to no pid on a draft         | updates_managed_to_no_pid         |  # noqa
+# |--------------------------------------------------|-----------------------------------|  # noqa
+# | Update from no pid to external on a draft        | updates_no_pid_to_external        |  # noqa
+# |--------------------------------------------------|-----------------------------------|  # noqa
+# | Update from no pid to managed on a draft         | updates_no_pid_to_managed         |  # noqa
+# |--------------------------------------------------|-----------------------------------|  # noqa
 #
 # | Update on records
 # | Note that cases with no function assigned are not testable because doi is mandatory and     # noqa
 # | one will always be assinged on publishing.
-# |--------------------------------------------------|---------------------------------------|  # noqa
-# | Update from external to managed on a record      | updates_flow_external_to_managed      |  # noqa
-# |--------------------------------------------------|---------------------------------------|  # noqa
-# | Update from external to no pid on a record       | updates_flow_external_to_managed      |  # noqa
-# |--------------------------------------------------|---------------------------------------|  # noqa
-# | Update from managed to external on a record      | updates_flow_managed_to_external      |  # noqa
-# |                                                  | updates_managed_to_external_perm_fail |  # noqa
-# |--------------------------------------------------|---------------------------------------|  # noqa
-# | Update from managed to no pid on a record        | updates_flow_managed_to_no_pid        |  # noqa
-# |                                                  | updates_managed_to_no_pid_perm_fail   |  # noqa
-# |--------------------------------------------------|---------------------------------------|  # noqa
-# | Update from no pid to external on a record       |                                       |  # noqa
-# |--------------------------------------------------|---------------------------------------|  # noqa
-# | Update from no pid to managed on a record        |                                       |  # noqa
-# |--------------------------------------------------|---------------------------------------|  # noqa
+# |--------------------------------------------------|-----------------------------------|  # noqa
+# | Update from external to managed on a record      | updates_flow_external_to_managed  |  # noqa
+# |--------------------------------------------------|-----------------------------------|  # noqa
+# | Update from external to no pid on a record       | updates_flow_external_to_managed  |  # noqa
+# |--------------------------------------------------|-----------------------------------|  # noqa
+# | Update from managed to external on a record      | updates_flow_managed_to_external  |  # noqa
+# |                                                  | updates_managed_to_external_fail  |  # noqa
+# |--------------------------------------------------|-----------------------------------|  # noqa
+# | Update from managed to no pid on a record        | updates_flow_managed_to_no_pid    |  # noqa
+# |                                                  | updates_managed_to_no_pid_fail    |  # noqa
+# |--------------------------------------------------|-----------------------------------|  # noqa
+# | Update from no pid to external on a record       |                                   |  # noqa
+# |--------------------------------------------------|-----------------------------------|  # noqa
+# | Update from no pid to managed on a record        |                                   |  # noqa
+# |--------------------------------------------------|-----------------------------------|  # noqa
 #
 # | Publishing
-# |--------------------------------------------------|---------------------------------------|  # noqa
-# | Publish with a managed pid (from reserve)        | publish_managed                       |  # noqa
-# |--------------------------------------------------|---------------------------------------|  # noqa
-# | Publish with an external pid                     | publish_external                      |  # noqa
-# |--------------------------------------------------|---------------------------------------|  # noqa
+# |--------------------------------------------------|-----------------------------------|  # noqa
+# | Publish with a managed pid (from reserve)        | publish_managed                   |  # noqa
+# |--------------------------------------------------|-----------------------------------|  # noqa
+# | Publish with an external pid                     | publish_external                  |  # noqa
+# |--------------------------------------------------|-----------------------------------|  # noqa
 #
 # | Deletion
-# |--------------------------------------------------|---------------------------------------|  # noqa
-# | Delete a draft with a managed pid                | delete_managed_pid_from_draft         |  # noqa
-# |--------------------------------------------------|---------------------------------------|  # noqa
-# | Delete a draft with an external pid              | delete_external_pid_from_draft        |  # noqa
-# |--------------------------------------------------|---------------------------------------|  # noqa
-# | Delete an edit (draft) with a managed pid        | delete_managed_pid_from_record        |  # noqa
-# |--------------------------------------------------|---------------------------------------|  # noqa
-# | Delete an edit (draft) with an external pid      | delete_external_pid_from_record       |  # noqa
-# |--------------------------------------------------|---------------------------------------|  # noqa
+# |--------------------------------------------------|-----------------------------------|  # noqa
+# | Delete a draft with a managed pid                | delete_managed_pid_from_draft     |  # noqa
+# |--------------------------------------------------|-----------------------------------|  # noqa
+# | Delete a draft with an external pid              | delete_external_pid_from_draft    |  # noqa
+# |--------------------------------------------------|-----------------------------------|  # noqa
+# | Delete an edit (draft) with a managed pid        | delete_managed_pid_from_record    |  # noqa
+# |--------------------------------------------------|-----------------------------------|  # noqa
+# | Delete an edit (draft) with an external pid      | delete_external_pid_from_record   |  # noqa
+# |--------------------------------------------------|-----------------------------------|  # noqa
 
 
 # Creation
@@ -372,12 +372,11 @@ def test_pids_drafts_updates_external_to_managed(
         )
 
     # remove and reserve a managed one
-    # managed pids needs to first be created (reserve)
     draft["pids"].pop("doi")
     draft = service.update_draft(
         id_=draft.id, identity=superuser_identity, data=draft.data)
     assert not draft["pids"].get("doi")
-
+    # managed pids needs to first be created (reserve)
     draft = service.pids.create(draft.id, superuser_identity, "doi")
     doi = draft["pids"]["doi"]["identifier"]
     assert provider.get(pid_value=doi).status == PIDStatus.NEW
@@ -590,9 +589,16 @@ def test_pids_records_updates_managed_to_external(
     assert pid.status == PIDStatus.DELETED
 
 
-def test_pids_records_updates_managed_to_external_perm_fail(
-    running_app, es_clear, minimal_record, authenticated_identity
+def test_pids_records_updates_managed_to_external_fail(
+    running_app, es_clear, minimal_record, authenticated_identity, mocker
 ):
+    def hide_doi(self, doi):
+        """Mock doi hide."""
+        pass
+
+    mocker.patch("invenio_rdm_records.services.pids.providers.datacite." +
+                 "DataCiteRESTClient.hide_doi", hide_doi)
+
     service = current_rdm_records.records_service
     superuser_identity = running_app.superuser_identity
     provider = service.pids.pid_manager._get_provider("doi", "datacite")
@@ -601,20 +607,10 @@ def test_pids_records_updates_managed_to_external_perm_fail(
 
     # create draft
     draft = service.edit(record.id, authenticated_identity)
-    # replace by external doi
-    ext_pid = {
-        "identifier": "10.1234/dummy.1234",
-        "provider": "external"
-    }
-    draft["pids"]["doi"] = ext_pid
-    draft = service.update_draft(
-        id_=draft.id, identity=authenticated_identity, data=draft.data)
-    # authenticated user is owner but is not superuser/admin
-    pids_error = {
-        'field': 'pids.doi',
-        'message': 'Permission denied: cannot update PID.'
-    }
-    assert pids_error in draft.errors
+    # fail to remove doi due to lack of permissions (validation error)
+    with pytest.raises(ValidationError):
+        service.pids.discard(draft.id, authenticated_identity, "doi")
+
     doi = draft["pids"]["doi"]["identifier"]
     assert doi
     assert provider.get(pid_value=doi).status == PIDStatus.REGISTERED
@@ -647,7 +643,7 @@ def test_pids_records_updates_managed_to_no_pid(
     assert pid.status == PIDStatus.DELETED
 
 
-def test_pids_records_updates_managed_to_no_pid_perm_fail(
+def test_pids_records_updates_managed_to_no_pid_fail(
     running_app, es_clear, minimal_record, authenticated_identity
 ):
     service = current_rdm_records.records_service
@@ -658,16 +654,10 @@ def test_pids_records_updates_managed_to_no_pid_perm_fail(
 
     # create draft
     draft = service.edit(record.id, authenticated_identity)
-    # fail to remove doi due to lack of permissions
-    draft["pids"].pop("doi")
-    draft = service.update_draft(
-        id_=draft.id, identity=authenticated_identity, data=draft.data)
-    # authenticated user is owner but is not superuser/admin
-    pids_error = {
-        'field': 'pids.doi',
-        'message': 'Permission denied: cannot update PID.'
-    }
-    assert pids_error in draft.errors
+    # fail to remove doi due to lack of permissions (validation error)
+    with pytest.raises(ValidationError):
+        service.pids.discard(draft.id, authenticated_identity, "doi")
+
     doi = draft["pids"]["doi"]["identifier"]
     assert doi
     assert provider.get(pid_value=doi).status == PIDStatus.REGISTERED

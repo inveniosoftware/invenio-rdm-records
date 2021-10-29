@@ -69,7 +69,7 @@ def test_external_provider_validate(
     running_app, db, external_provider, record
 ):
     success, errors = external_provider.validate(
-        record=record, provider="external"
+        identifier="somevalue", record=record, provider="external"
     )
     assert success
     assert not errors
@@ -87,3 +87,9 @@ def test_external_provider_validate_failure(
         external_provider.validate(
             record=record, provider="wrong"
         )
+
+    success, errors = external_provider.validate(
+        record=record, provider="external"
+    )
+    assert not success
+    assert "PID value is required for external provider." in errors
