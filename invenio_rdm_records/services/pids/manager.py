@@ -76,6 +76,12 @@ class PIDManager:
         if raise_errors and errors:
             raise ValidationError(message=errors)
 
+    def read(self, scheme, identifier, provider_name):
+        """Read a pid."""
+        provider = self._get_provider(scheme, provider_name)
+
+        return provider.get(identifier)
+
     def create(self, draft, scheme, identifier=None, provider_name=None):
         """Create a pid for a draft.
 
@@ -188,17 +194,12 @@ class PIDManager:
             pid, record=record, url=url
         )
 
-    def discard(self, scheme, identifier=None, provider_name=None, draft=None):
+    def discard(self, scheme, identifier, provider_name=None):
         """Discard a PID."""
         provider = self._get_provider(scheme, provider_name)
-        try:
-            identifier = identifier or draft.pids[scheme]["identifier"]
-            pid = provider.get(pid_value=identifier)
-            if pid.is_new():
-                provider.delete(pid)
-        # KeyError if the pid is not present in the draft
-        except (KeyError):
-            raise PIDDoesNotExistError(pid_type=scheme, pid_value=None)
+        pid = provider.get(pid_value=identifier)
+        if pid.is_new():
+            provider.delete(pid)
 
     def discard_all(self, pids):
         """Discard all PIDs."""
