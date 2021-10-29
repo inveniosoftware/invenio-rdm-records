@@ -164,11 +164,9 @@ def test_oai_pid_default_created(running_app, es_clear, minimal_record):
 # |--------------------------------------------------|-----------------------------------|  # noqa
 # | Update from external to no pid on a record       | updates_flow_external_to_managed  |  # noqa
 # |--------------------------------------------------|-----------------------------------|  # noqa
-# | Update from managed to external on a record      | updates_flow_managed_to_external  |  # noqa
-# |                                                  | updates_managed_to_external_fail  |  # noqa
+# | Update from managed to external on a record      | updates_managed_to_external_fail  |  # noqa
 # |--------------------------------------------------|-----------------------------------|  # noqa
-# | Update from managed to no pid on a record        | updates_flow_managed_to_no_pid    |  # noqa
-# |                                                  | updates_managed_to_no_pid_fail    |  # noqa
+# | Update from managed to no pid on a record        | updates_managed_to_no_pid_fail    |  # noqa
 # |--------------------------------------------------|-----------------------------------|  # noqa
 # | Update from no pid to external on a record       |                                   |  # noqa
 # |--------------------------------------------------|-----------------------------------|  # noqa
@@ -543,49 +541,13 @@ def test_pids_records_updates_external_to_managed(
     # publish with managed doi
     record = service.publish(draft.id, superuser_identity)
     pid = provider.get(pid_value=doi)
-    # FIXME: fails because the update does not register the pid,
-    # because it assumes it was updated only content but not that
-    # the actual pid changed (from ext ot managed)
     assert pid.status == PIDStatus.REGISTERED
     # the old external should be deleted
+    # FIXME: The pid got replaced but not removed and the publish
+    # does not have knowledge about it
     pid = provider.get(
         pid_value=old_doi["identifier"], pid_provider=old_doi["provider"]
     )
-    assert pid.status == PIDStatus.DELETED
-
-
-def test_pids_records_updates_managed_to_external(
-    running_app, es_clear, minimal_record, identity_simple, mocker
-):
-
-    def hide_doi(self, doi):
-        """Mock doi hide."""
-        pass
-
-    mocker.patch("invenio_rdm_records.services.pids.providers.datacite." +
-                 "DataCiteRESTClient.hide_doi", hide_doi)
-
-    service = current_rdm_records.records_service
-    superuser_identity = running_app.superuser_identity
-    provider = service.pids.pid_manager._get_provider("doi", "datacite")
-    record = _create_and_publish_managed(
-        service, provider, superuser_identity, minimal_record)
-
-    # create draft
-    draft = service.edit(record.id, superuser_identity)
-    # remove doi: mandatory delete action, press the X in the UI
-    draft = service.pids.discard(draft.id, superuser_identity, "doi")
-    # replace by external doi
-    ext_pid = {
-        "identifier": "10.1234/dummy.1234",
-        "provider": "external"
-    }
-    draft["pids"]["doi"] = ext_pid
-    draft = service.update_draft(
-        id_=draft.id, identity=superuser_identity, data=draft.data)
-    assert draft["pids"]["doi"] == ext_pid
-    # previous managed doi deleted
-    pid = provider.get(pid_value=record["pids"]["doi"]["identifier"])
     assert pid.status == PIDStatus.DELETED
 
 
@@ -614,33 +576,6 @@ def test_pids_records_updates_managed_to_external_fail(
     doi = draft["pids"]["doi"]["identifier"]
     assert doi
     assert provider.get(pid_value=doi).status == PIDStatus.REGISTERED
-
-
-def test_pids_records_updates_managed_to_no_pid(
-    running_app, es_clear, minimal_record, identity_simple, mocker
-):
-    def hide_doi(self, doi):
-        """Mock doi hide."""
-        pass
-
-    mocker.patch("invenio_rdm_records.services.pids.providers.datacite." +
-                 "DataCiteRESTClient.hide_doi", hide_doi)
-
-    service = current_rdm_records.records_service
-    superuser_identity = running_app.superuser_identity
-    provider = service.pids.pid_manager._get_provider("doi", "datacite")
-    record = _create_and_publish_managed(
-        service, provider, superuser_identity, minimal_record)
-
-    # create draft
-    draft = service.edit(record.id, superuser_identity)
-    # remove doi: mandatory delete action, press the X in the UI
-    draft = service.pids.discard(draft.id, superuser_identity, "doi")
-    # no need to call update_draft, discard updates it
-    assert not draft["pids"].get("doi")
-    # previous managed doi deleted
-    pid = provider.get(pid_value=record["pids"]["doi"]["identifier"])
-    assert pid.status == PIDStatus.DELETED
 
 
 def test_pids_records_updates_managed_to_no_pid_fail(

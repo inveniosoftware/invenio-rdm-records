@@ -109,6 +109,37 @@ class PIDsService(RecordService):
             links_tpl=self.links_item_tpl,
         )
 
+    def register_or_update(self, id_, identity, scheme):
+        """Register a PID of a record or update.
+
+        If the PID has already been register it updates the remote.
+        """
+        record = self.record_cls.pid.resolve(id_, registered_only=False)
+        # no need to validate since the record class was already published
+        pid_attrs = record.pids.get(scheme)
+        pid = self._manager.read(
+            scheme, pid_attrs["identifier"], pid_attrs["provider"]
+        )
+        if pid.is_registered():
+            self.require_permission(identity, "pid_update", record=record)
+            self._manager.update_remote(record, scheme)
+        else:
+            self.require_permission(identity, "pid_register", record=record)
+            self._manager.register(
+                record,
+                scheme,
+                url=self.links_item_tpl.expand(record)["self_html"]
+            )
+
+        db.session.commit()  # draft and index do not need commit/refresh
+
+        return self.result_item(
+            self,
+            identity,
+            record,
+            links_tpl=self.links_item_tpl,
+        )
+
     def discard(self, id_, identity, scheme, provider=None):
         """Discard a PID for a given draft.
 
@@ -116,8 +147,12 @@ class PIDsService(RecordService):
         it will be soft deleted (`RESERVED`/`REGISTERED`).
         """
         draft = self.draft_cls.pid.resolve(id_, registered_only=False)
-        self.require_permission(identity, "pid_discard", record=draft)
-        self._manager.discard(scheme, provider, draft=draft)
+        self.require_permission(
+            identity, "pid_discard", record=draft, scheme=scheme
+        )
+        self.pid_manager.validate(draft.pids, draft, raise_errors=True)
+        identifier = draft.pids.get(scheme, {}).get("identifier")
+        self._manager.discard(scheme, identifier, provider)
         draft.pids.pop(scheme)
 
         draft.commit()

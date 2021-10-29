@@ -48,7 +48,7 @@ def test_register_pid(
     assert pid.status == PIDStatus.NEW
     pid.reserve()
     assert pid.status == PIDStatus.RESERVED
-    register_pid(recid=record["id"], pid_type="doi")
+    register_pid(recid=record["id"], scheme="doi")
     assert pid.status == PIDStatus.REGISTERED
 
 
