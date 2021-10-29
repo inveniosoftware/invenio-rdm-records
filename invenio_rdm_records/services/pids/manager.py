@@ -105,6 +105,11 @@ class PIDManager:
                     .format(scheme=scheme),
                     field_name=f"pids.{scheme}",
                 )
+            if not provider.is_managed():
+                raise ValidationError(
+                    message=_("External identifier value is required."),
+                    field_name=f"pids.{scheme}"
+                )
             pid = provider.create(draft)
             pid_attrs = {
                 "identifier": pid.pid_value,
@@ -186,32 +191,23 @@ class PIDManager:
     def discard(self, scheme, identifier=None, provider_name=None, draft=None):
         """Discard a PID."""
         provider = self._get_provider(scheme, provider_name)
-        if identifier:
-            try:
-                pid = provider.get(pid_value=identifier)
-                if pid.is_new():  # pids should be status NEW at this point
-                    provider.delete(pid)
-            except PIDDoesNotExistError:
-                pass  # pid was not saved to pidstore yet, no deletion needed
-        else:
-            try:
-                identifier = draft.pids[scheme]["identifier"]
-                pid = provider.get_by_record(
-                    draft.id,
-                    pid_type=scheme,
-                    pid_value=identifier,
-                )
+        try:
+            identifier = identifier or draft.pids[scheme]["identifier"]
+            pid = provider.get(pid_value=identifier)
+            if pid.is_new():
                 provider.delete(pid)
-            # KeyError if the pid is not present in the draft
-            # PIDDoesNotExistError if not present in DB
-            except (KeyError, PIDDoesNotExistError):
-                raise PIDDoesNotExistError(pid_type=scheme, pid_value=None)
+        # KeyError if the pid is not present in the draft
+        except (KeyError):
+            raise PIDDoesNotExistError(pid_type=scheme, pid_value=None)
 
     def discard_all(self, pids):
         """Discard all PIDs."""
         for scheme, pid_attrs in pids.items():
-            self.discard(
-                scheme,
-                pid_attrs["identifier"],
-                pid_attrs["provider"],
-            )
+            try:
+                self.discard(
+                    scheme,
+                    pid_attrs["identifier"],
+                    pid_attrs["provider"],
+                )
+            except PIDDoesNotExistError:
+                pass  # might not have been saved to DB yet

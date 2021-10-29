@@ -17,11 +17,15 @@ from invenio_rdm_records.proxies import current_rdm_records
 @shared_task(ignore_result=True)
 def update_pid(recid, pid_type):
     """Update a PID on the remote provider."""
-    current_rdm_records.records_service.pids.update_remote(
-        id_=recid,
-        identity=system_identity,
-        scheme=pid_type,
-    )
+    get_pid
+    if pid.is_new:
+        register_pi
+    else:
+        current_rdm_records.records_service.pids.update_remote(
+            id_=recid,
+            identity=system_identity,
+            scheme=pid_type,
+        )
 
 
 @shared_task(ignore_result=True)

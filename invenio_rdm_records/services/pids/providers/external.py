@@ -8,6 +8,7 @@
 """PID Base Provider."""
 
 from flask import current_app
+from flask_babelex import lazy_gettext as _
 
 from .base import BasePIDProvider
 
@@ -45,5 +46,8 @@ class ExternalPIDProvider(BasePIDProvider):
 
         success, errors = super().validate(
             record, identifier, provider, **kwargs)
+
+        if not identifier:
+            errors.append(_("PID value is required for external provider."))
 
         return (True, []) if not errors else (False, errors)

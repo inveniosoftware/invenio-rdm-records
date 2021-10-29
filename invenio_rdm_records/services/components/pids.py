@@ -47,7 +47,7 @@ class PIDsComponent(ServiceComponent):
         # |----------|----------------|----------------|
         # | managed  |     reserve    | create+reserve |
         # |----------|----------------|----------------|
-        # | external | create+reserve |      fail      |  TODO: check fail case
+        # | external | create+reserve |      fail      |
         # |----------|------- --------|----------------|
 
         old_pids = record.get('pids', {})
@@ -83,6 +83,9 @@ class PIDsComponent(ServiceComponent):
         belong to previous versions of the record.
         """
         # will not delete registered/reserved PIDs
+        # self.service.pids.pid_manager.validate(
+        #     draft.pids, record, raise_errors=True
+        # )
         self.service.pids.pid_manager.discard_all(draft.pids)
         draft.pids = {}
 

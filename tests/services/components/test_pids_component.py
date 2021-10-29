@@ -246,7 +246,10 @@ def test_create_with_required_managed(
     ),
     (
         {"test": {"identifier": "", "provider": "external"}},
-        []
+        [{
+            'field': 'pids.test',
+            'message': ['PID value is required for external provider.']
+        }]
     )
 ])
 def test_create_with_incomplete_payload(
@@ -312,7 +315,7 @@ def test_publish_no_required_pids(
     component.publish(identity_simple, draft=draft, record=record)
     assert record.get("pids") == pids
     for schema, pid in pids.items():
-        provider = no_required_pids_service.pids.pid_manager_get_provider(
+        provider = no_required_pids_service.pids.pid_manager._get_provider(
             schema, pid["provider"]
         )
         pid = provider.get_by_record(
@@ -441,10 +444,10 @@ def test_update_managed_to_empty(
     # run the delete hook and check the pid is not in the system anymore
     component.update_draft(superuser_identity, data=data, record=draft)
     assert draft.pids == {}
-    with pytest.raises(PIDDoesNotExistError):
-        pid = provider.get(
-            pid_value=pid_value, pid_type="test", pid_provider="managed"
-        )
+    # note that the old pid will still exist in the db
+    # it has to explicitly be removed
+    # FIXME: see this case, we risk way to many DOIs in the DB if we do
+    # not enforce delete somehow but no context on publish
 
 
 def test_update_external_to_managed(
@@ -494,7 +497,7 @@ def test_update_managed_to_external(
     # run the delete hook and check the pid is not in the system anymore
     component.update_draft(superuser_identity, data=data, record=draft)
     assert draft.pids == ext_pids
-    with pytest.raises(PIDDoesNotExistError):
-        pid = provider.get(
-            pid_value=pid_value, pid_type="test", pid_provider="managed"
-        )
+    # note that the old pid will still exist in the db
+    # it has to explicitly be removed
+    # FIXME: see this case, we risk way to many DOIs in the DB if
+    # we do not enforce delete somehow but no context on publish

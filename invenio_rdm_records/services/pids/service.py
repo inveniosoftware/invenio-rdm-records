@@ -79,6 +79,7 @@ class PIDsService(RecordService):
         """Reserve PIDs of a record."""
         draft = self.draft_cls.pid.resolve(id_, registered_only=False)
         self.require_permission(identity, "pid_manage", record=draft)
+        self.pid_manager.validate(draft.pids, draft, raise_errors=True)
         self._manager.reserve_all(draft, draft.pids)
 
         db.session.commit()  # draft and index do not need commit/refresh
@@ -94,6 +95,7 @@ class PIDsService(RecordService):
         """Register a PID of a record."""
         record = self.record_cls.pid.resolve(id_, registered_only=False)
         self.require_permission(identity, "pid_register", record=record)
+        # no need to validate since the record class was already published
         self._manager.register(
             record, scheme, url=self.links_item_tpl.expand(record)["self_html"]
         )
