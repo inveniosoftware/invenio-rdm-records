@@ -200,23 +200,6 @@ class DOIDataCitePIDProvider(BasePIDProvider):
         success, errors = super().validate(
             record, identifier, provider, **kwargs)
 
-        if identifier:
-            try:
-                pid = self.get(
-                    pid_value=identifier,
-                    pid_type=self.pid_type,
-                    pid_provider=provider
-                )
-                if pid.is_registered() or pid.is_reserved():
-                    errors.append({
-                        "field": f"pids.{self.pid_type}",
-                        "message": _(
-                            "Cannot modify a reserved or registered PID."
-                        )
-                    })
-            except PIDDoesNotExistError:
-                pass  # does not exist, we continue to check format
-
         # format check
         try:
             self.api_client.check_doi(identifier)
@@ -224,3 +207,7 @@ class DOIDataCitePIDProvider(BasePIDProvider):
             errors.append(str(e))
 
         return (True, []) if not errors else (False, errors)
+
+    def can_modify(self, pid, **kwargs):
+        """Checks if the PID can be modified."""
+        return not pid.is_registered() and not pid.is_reserved()

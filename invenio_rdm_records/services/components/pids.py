@@ -36,9 +36,9 @@ class PIDsComponent(ServiceComponent):
 
     def publish(self, identity, draft=None, record=None):
         """Publish handler."""
-        pids = draft.get('pids', {})
+        new_pids = draft.get('pids', {})
         self.service.pids.pid_manager.validate(
-           pids, record, raise_errors=True
+           new_pids, record, raise_errors=True
         )
 
         # Internally the following is done by the PIDs service
@@ -50,21 +50,23 @@ class PIDsComponent(ServiceComponent):
         # | external | create+reserve |      fail      |
         # |----------|------- --------|----------------|
 
-        old_pids = record.get('pids', {})
-        new_schemes = set(pids.keys())
+        old_pids = dict(record.get('pids', {}))  # force copy
+        new_schemes = set(new_pids.keys())
         old_schemes = set(old_pids.keys())
 
-        to_remove = new_schemes.intersection(old_schemes)
-        for scheme in to_remove:
-            pid_attrs = old_pids[scheme]
-            self.service.pids.pid_manager.discard(
-                scheme, pid_attrs["identifier"], pid_attrs["provider"]
-            )
+        remove_schemes = new_schemes.intersection(old_schemes)
+        for scheme in remove_schemes:
+            old_id = old_pids[scheme]["identifier"]
+            new_id = new_pids[scheme]["identifier"]
+            if old_id == new_id:
+                old_pids.pop(scheme)  # no need for removal
+
+        self.service.pids.pid_manager.discard_all(old_pids)
 
         required_schemes = \
             set(self.service.config.pids_required) - old_schemes - new_schemes
         pids = {
-            **self.service.pids.pid_manager.create_all(draft, pids),
+            **self.service.pids.pid_manager.create_all(draft, new_pids),
             **self.service.pids.pid_manager.create_all(draft, required_schemes)
         }
 
@@ -82,11 +84,12 @@ class PIDsComponent(ServiceComponent):
         It should only delete pids with status `NEW`, other pids would
         belong to previous versions of the record.
         """
-        # will not delete registered/reserved PIDs
-        # self.service.pids.pid_manager.validate(
-        #     draft.pids, record, raise_errors=True
-        # )
-        self.service.pids.pid_manager.discard_all(draft.pids)
+        to_remove = dict(draft.get('pids', {}))  # force copy
+        old_pids = record.get('pids', {}).keys() if record else []
+        for scheme in old_pids:
+            to_remove.pop(scheme)
+
+        self.service.pids.pid_manager.discard_all(to_remove)
         draft.pids = {}
 
     def update_draft(self, identity, data=None, record=None, errors=None):
