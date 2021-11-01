@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2020 CERN.
-# Copyright (C) 2020 Northwestern University.
+# Copyright (C) 2020-2021 CERN.
+# Copyright (C) 2020-2021 Northwestern University.
 # Copyright (C) 2021 TU Wien.
 # Copyright (C) 2021 Graz University of Technology.
 #
@@ -21,9 +21,9 @@ from marshmallow_utils.fields.nestedattr import NestedAttribute
 class EmbargoSchema(Schema):
     """Schema for an embargo on the record."""
 
-    active = fields.Bool(allow_none=True, missing=None)
-    until = ISODateString(allow_none=True, missing=None)
-    reason = SanitizedUnicode(allow_none=True, missing=None)
+    active = fields.Bool(allow_none=True, load_default=None)
+    until = ISODateString(allow_none=True, load_default=None)
+    reason = SanitizedUnicode(allow_none=True, load_default=None)
 
     @validates_schema
     def validate_embargo(self, data, **kwargs):

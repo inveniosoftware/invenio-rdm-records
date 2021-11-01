@@ -72,8 +72,8 @@ class StringCitationSerializer(MarshmallowJSONSerializer):
     """The `citeproc-py` library supports by default the 'harvard1' style."""
 
     _user_args = {
-        "style": fields.Str(missing=_default_style),
-        "locale": fields.Str(missing=_default_locale),
+        "style": fields.Str(load_default=_default_style),
+        "locale": fields.Str(load_default=_default_locale),
     }
     """Arguments for the webargs parser."""
 
