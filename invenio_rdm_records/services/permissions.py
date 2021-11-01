@@ -12,8 +12,7 @@ from invenio_records_permissions.generators import Admin, AnyUser, \
     AuthenticatedUser, Disable, SuperUser, SystemProcess
 from invenio_records_permissions.policies.records import RecordPermissionPolicy
 
-from .generators import IfDraft, IfRestricted, RecordOwners, \
-    RecordOwnersIfExternalPID, RecordOwnersIfPIDNew, SecretLinks
+from .generators import IfDraft, IfRestricted, RecordOwners, SecretLinks
 
 
 class RDMRecordPermissionPolicy(RecordPermissionPolicy):
@@ -75,13 +74,7 @@ class RDMRecordPermissionPolicy(RecordPermissionPolicy):
     can_pid_register = can_curate
     can_pid_update = can_curate
     can_pid_discard = can_curate  # discard an unregistered pid
-    can_pid_delete = [
-        Admin(),
-        SuperUser(),
-        SystemProcess(),
-        RecordOwnersIfExternalPID(),
-        RecordOwnersIfPIDNew()
-    ]
+    can_pid_delete = can_curate
 
     #
     # Actions
