@@ -7,6 +7,7 @@
 
 """Record and draft database models."""
 
+from invenio_communities.records.records.models import CommunityRelationMixin
 from invenio_db import db
 from invenio_drafts_resources.records import DraftMetadataBase, \
     ParentRecordMixin, ParentRecordStateMixin
@@ -23,6 +24,14 @@ class RDMParentMetadata(db.Model, RecordMetadataBase):
     """Metadata store for the parent record."""
 
     __tablename__ = 'rdm_parents_metadata'
+
+
+class RDMParentCommunity(db.Model, CommunityRelationMixin):
+    """Relationship between parent record and communities."""
+
+    __tablename__ = 'rdm_parents_community'
+    __record_model__ = RDMParentMetadata
+    # __request_model__ = RequestMetadata
 
 
 #

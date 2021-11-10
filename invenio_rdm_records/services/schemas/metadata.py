@@ -62,6 +62,8 @@ def locale_validation(value, field_name):
             raise ValidationError(_("Not a valid locale."), field_name)
 
 
+# TODO: Replace with
+# invenio_vocabularies.contrib.affiliations.schema:AffiliationRelationSchema
 class AffiliationSchema(Schema):
     """Affiliation of a creator/contributor."""
 
@@ -307,6 +309,8 @@ class RelatedIdentifierSchema(IdentifierSchema):
             raise ValidationError(errors)
 
 
+# TODO: Replace with
+# invenio_vocabularies.contrib.funders/awards.schema
 class FunderSchema(Schema):
     """Funder schema."""
 

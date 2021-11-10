@@ -67,6 +67,10 @@
           }
         }
       }
+    },
+
+    "communities": {
+      "$ref": "local://communities/definitions-v2.0.0.json#/communities"
     }
   }
 }
