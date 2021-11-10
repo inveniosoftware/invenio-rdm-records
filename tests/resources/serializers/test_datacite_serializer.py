@@ -396,6 +396,33 @@ def test_datacite43_xml_serializer(running_app, full_record):
     assert serialized_record.split("\n") == expected_data
 
 
+def test_datacite43_identifiers(running_app, minimal_record):
+    """Test serialization of records with DOI alternate identifiers"""
+    # Mimic user putting DOI in alternate identifier field
+    minimal_record["metadata"]["identifiers"] = [{
+                "identifier": "10.5281/inveniordm.1234",
+                "scheme": "doi"
+            }]
+
+    serializer = DataCite43JSONSerializer()
+    serialized_record = serializer.dump_one(minimal_record)
+
+    assert 'identifiers' not in serialized_record
+
+    minimal_record["pids"] = {
+            "doi": {
+                "identifier": "10.5281/inveniordm.1234",
+                "provider": "datacite",
+                "client": "inveniordm"
+            },
+        }
+
+    serialized_record = serializer.dump_one(minimal_record)
+    assert len(serialized_record['identifiers']) == 1
+    identifier = serialized_record['identifiers'][0]['identifier']
+    assert identifier == "10.5281/inveniordm.1234"
+
+
 def test_datacite43_serializer_with_unknown_id_schemes(
     running_app, full_modified_record
 ):
