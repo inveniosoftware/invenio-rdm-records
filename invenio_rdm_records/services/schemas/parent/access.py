@@ -9,6 +9,8 @@
 
 """Access schema for RDM parent record."""
 
+# TODO: Replace with invenio_records_resources.services.base.schema import *
+
 
 from datetime import timezone
 

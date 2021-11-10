@@ -8,6 +8,7 @@
 
 """RDM Record and Draft API."""
 
+from invenio_communities.records.records.systemfields import CommunitiesField
 from invenio_drafts_resources.records import Draft, Record
 from invenio_drafts_resources.records.api import \
     ParentRecord as ParentRecordBase
@@ -50,6 +51,8 @@ class RDMParent(ParentRecordBase):
         '$schema', 'local://records/parent-v1.0.0.json')
 
     access = ParentRecordAccessField()
+
+    communities = CommunitiesField(models.RDMParentCommunity)
 
 
 #
