@@ -11,8 +11,6 @@
 """RDM Record Service."""
 
 import arrow
-from flask_babelex import lazy_gettext as _
-from invenio_db import db
 from invenio_drafts_resources.services.records import RecordService
 from invenio_records_resources.services.uow import RecordCommitOp, unit_of_work
 
@@ -23,14 +21,16 @@ class RDMRecordService(RecordService):
     """RDM record service."""
 
     def __init__(self, config, files_service=None, draft_files_service=None,
-                 secret_links_service=None, pids_service=None):
+                 secret_links_service=None, pids_service=None,
+                 review_service=None):
         """Constructor for RecordService."""
         super().__init__(config, files_service, draft_files_service)
         self._secret_links = secret_links_service
         self._pids = pids_service
+        self._review = review_service
 
     #
-    # Subservice
+    # Subservices
     #
     @property
     def secret_links(self):
@@ -42,6 +42,14 @@ class RDMRecordService(RecordService):
         """Record PIDs service."""
         return self._pids
 
+    @property
+    def review(self):
+        """Record PIDs service."""
+        return self._review
+
+    #
+    # Service methods
+    #
     @unit_of_work()
     def lift_embargo(self, _id, identity, uow=None):
         """Lifts embargo from the record and draft (if exists).

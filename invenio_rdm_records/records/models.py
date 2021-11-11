@@ -14,6 +14,7 @@ from invenio_drafts_resources.records import DraftMetadataBase, \
 from invenio_files_rest.models import Bucket
 from invenio_records.models import RecordMetadataBase
 from invenio_records_resources.records import FileRecordModelMixin
+# from invenio_requests.records.models import RequestRelationMixin
 from sqlalchemy_utils.types import UUIDType
 
 
@@ -31,8 +32,13 @@ class RDMParentCommunity(db.Model, CommunityRelationMixin):
 
     __tablename__ = 'rdm_parents_community'
     __record_model__ = RDMParentMetadata
-    # __request_model__ = RequestMetadata
 
+
+# class RDMParentRequest(db.Model, RequestRelationMixin):
+#     """Relationship between parent record and request."""
+
+#     __tablename__ = 'rdm_parent_request'
+#     __record_model__ = RDMParentMetadata
 
 #
 # Records

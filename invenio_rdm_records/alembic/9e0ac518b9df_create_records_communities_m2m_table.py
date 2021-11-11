@@ -32,6 +32,11 @@ def upgrade():
             UUIDType(),
             nullable=False
         ),
+        sa.Column(
+            'request_id',
+            UUIDType(),
+            nullable=True
+        ),
         sa.ForeignKeyConstraint(
             ['community_id'],
             ['communities_metadata.id'],
@@ -45,6 +50,13 @@ def upgrade():
             name=op.f(
                 'fk_rdm_parents_community_record_id_rdm_parents_metadata'),
             ondelete='CASCADE'
+        ),
+        sa.ForeignKeyConstraint(
+            ['request_id'],
+            ['request_metadata.id'],
+            name=op.f(
+                'fk_rdm_parents_community_request_id_request_metadata'),
+            ondelete='SET NULL'
         ),
         sa.PrimaryKeyConstraint(
             'community_id',
