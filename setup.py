@@ -149,6 +149,12 @@ setup(
         'invenio_i18n.translations': [
             'invenio_rdm_records = invenio_rdm_records',
         ],
+        'invenio_requests.types': [
+            'community_submission = invenio_rdm_records.requests:CommunitySubmission',
+        ],
+        'invenio_requests.entity_resolvers': [
+            'records = invenio_rdm_records.requests.resolver:RDMRecordResolver',
+        ],
     },
     extras_require=extras_require,
     install_requires=install_requires,

@@ -319,6 +319,13 @@ RDM_PERMISSION_POLICY = None
 
 
 #
+# Record review requests
+#
+RDM_RECORDS_REVIEWS = [
+    'invenio-rdm-records.community_submission',
+]
+
+#
 # Search configuration
 #
 RDM_FACETS = {

@@ -11,8 +11,6 @@
 
 
 import pytest
-from invenio_pidstore.errors import PIDDoesNotExistError
-from marshmallow import ValidationError
 
 from invenio_rdm_records.proxies import current_rdm_records
 from invenio_rdm_records.services.errors import EmbargoNotLiftedError

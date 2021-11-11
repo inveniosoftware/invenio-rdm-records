@@ -48,7 +48,7 @@ class RDMParent(ParentRecordBase):
 
     # System fields
     schema = ConstantField(
-        '$schema', 'local://records/parent-v1.0.0.json')
+        '$schema', 'local://records/parent-v2.0.0.json')
 
     access = ParentRecordAccessField()
 

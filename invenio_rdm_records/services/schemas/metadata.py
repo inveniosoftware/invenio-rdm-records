@@ -402,14 +402,6 @@ class FeatureSchema(Schema):
 class MetadataSchema(Schema):
     """Schema for the record metadata."""
 
-    field_load_permissions = {
-        # TODO: define "can_admin" action
-    }
-
-    field_dump_permissions = {
-        # TODO: define "can_admin" action
-    }
-
     # Metadata fields
     resource_type = fields.Nested(VocabularySchema, required=True)
     creators = fields.List(

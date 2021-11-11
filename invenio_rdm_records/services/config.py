@@ -24,12 +24,12 @@ from invenio_records_resources.services.base.links import Link
 from invenio_records_resources.services.files.links import FileLink
 from invenio_records_resources.services.records.links import RecordLink
 
-from invenio_rdm_records.services.pids.providers.base import BasePIDProvider
+from invenio_rdm_records.services.components.review import ReviewComponent
 
 from ..records import RDMDraft, RDMRecord
 from . import facets
 from .components import AccessComponent, MetadataComponent, PIDsComponent, \
-    RelationsComponent
+    RelationsComponent, ReviewComponent
 from .customizations import FileConfigMixin, RecordConfigMixin, \
     SearchOptionsMixin
 from .permissions import RDMRecordPermissionPolicy
@@ -122,6 +122,7 @@ class RDMRecordServiceConfig(RecordServiceConfig, RecordConfigMixin):
         # for the `pids` field (external PIDs)
         PIDsComponent,
         RelationsComponent,
+        ReviewComponent,
     ]
 
     # Links

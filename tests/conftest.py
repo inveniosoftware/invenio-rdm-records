@@ -80,6 +80,9 @@ def app_config(app_config):
     # Variable not used. We set it to silent warnings
     app_config['JSONSCHEMAS_HOST'] = 'not-used'
 
+    # Enable communities while in preview
+    app_config['COMMUNITIES_ENABLED'] = True
+
     return app_config
 
 
