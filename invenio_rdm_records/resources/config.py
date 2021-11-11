@@ -67,6 +67,9 @@ class RDMRecordResourceConfig(RecordResourceConfig):
 
     # PIDs
     routes["item-pids-reserve"] = "/<pid_value>/draft/pids/<scheme>"
+    # Review
+    routes["item-review"] = "/<pid_value>/draft/review"
+    routes["item-actions-review"] = "/<pid_value>/draft/actions/submit-review"
 
     request_view_args = {
         "pid_value": ma.fields.Str(),

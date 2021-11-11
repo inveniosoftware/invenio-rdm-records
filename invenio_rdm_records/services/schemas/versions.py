@@ -15,8 +15,6 @@ from marshmallow_utils.permissions import FieldPermissionsMixin
 class VersionsSchema(VersionsSchemaBase, FieldPermissionsMixin):
     """Version schema with field-level permissions."""
 
-    field_load_permissions = {}
-
     # the field is defined in the superclass
     field_dump_permissions = {
         "is_latest_draft": "edit",
