@@ -71,9 +71,9 @@ install_requires = [
     'dcxml>=0.1.2',
     'Faker>=2.0.3',
     'ftfy>=4.4.3,<5.0.0',
-    'invenio-drafts-resources>=0.14.3,<0.15.0',
+    'invenio-drafts-resources>=0.14.5,<0.15.0',
     'invenio-oaiserver>=1.3.0',
-    'invenio-vocabularies>=0.9.1,<0.10.0',
+    'invenio-vocabularies>=0.9.3,<0.10.0',
     'pytz>=2020.4',
     'pyyaml>=5.4.0',
 ]

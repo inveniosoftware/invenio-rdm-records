@@ -42,7 +42,6 @@ class AccessComponent(ServiceComponent):
         if not record.parent.access.owners and not is_sys_id:
             owner_dict = {"user": identity.id}
             record.parent.access.owners.add(owner_dict)
-            record.parent.commit()
 
     def create(self, identity, data=None, record=None, **kwargs):
         """Add basic ownership fields to the record."""

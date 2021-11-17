@@ -14,6 +14,7 @@ import arrow
 from flask_babelex import lazy_gettext as _
 from invenio_db import db
 from invenio_drafts_resources.services.records import RecordService
+from invenio_records_resources.services.uow import RecordCommitOp, unit_of_work
 
 from invenio_rdm_records.services.errors import EmbargoNotLiftedError
 
@@ -41,7 +42,8 @@ class RDMRecordService(RecordService):
         """Record PIDs service."""
         return self._pids
 
-    def lift_embargo(self, _id, identity):
+    @unit_of_work()
+    def lift_embargo(self, _id, identity, uow=None):
         """Lifts embargo from the record and draft (if exists).
 
         It's an error if you try to lift an embargo that has not yet expired.
@@ -60,16 +62,12 @@ class RDMRecordService(RecordService):
             if record.access == draft.access:
                 if not draft.access.lift_embargo():
                     raise EmbargoNotLiftedError(_id)
-                draft.commit()
+                uow.register(RecordCommitOp(draft, indexer=self.indexer))
 
         if not record.access.lift_embargo():
             raise EmbargoNotLiftedError(_id)
-        record.commit()
 
-        db.session.commit()
-        self.indexer.index(record)
-        if draft:
-            self.indexer.index(draft)
+        uow.register(RecordCommitOp(record, indexer=self.indexer))
 
     def scan_expired_embargos(self, identity):
         """Scan for records with an expired embargo."""
