@@ -9,11 +9,11 @@
 # it under the terms of the MIT License; see LICENSE file for more details.
 
 """RDM service component for pids."""
+
 from invenio_drafts_resources.services.records.components import \
     ServiceComponent
-from marshmallow import ValidationError
+from invenio_records_resources.services.uow import TaskOp
 
-from ...proxies import current_rdm_records
 from ..pids.tasks import register_pid, update_pid
 
 
@@ -74,6 +74,13 @@ class PIDsComponent(ServiceComponent):
 
         record.pids = pids
 
+        # Run register/update tasks after transaction commit.
+        for scheme in pids.keys():
+            if draft.is_published:
+                self.uow.register(TaskOp(update_pid, record["id"], scheme))
+            else:
+                self.uow.register(TaskOp(register_pid, record["id"], scheme))
+
     # the delete hook is not implemented because record deletion is
     # forbidden by permissions. In addition, the flow to when/how delete a
     # reserved/registered pid is not trivial. It is dealt with by the
@@ -107,12 +114,3 @@ class PIDsComponent(ServiceComponent):
         pids = record.get('pids', {})
         self.service.pids.pid_manager.validate(pids, record)
         draft.pids = pids
-
-    def post_publish(self, identity, record=None, is_published=False):
-        """Post publish handler."""
-        # no need to validate since it was published already
-        for scheme in record.get('pids', {}).keys():
-            if is_published:
-                update_pid.delay(record["id"], scheme)
-            else:
-                register_pid.delay(record["id"], scheme)

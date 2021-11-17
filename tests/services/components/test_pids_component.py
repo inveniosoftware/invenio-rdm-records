@@ -12,6 +12,7 @@ from functools import partial
 import pytest
 from invenio_pidstore.errors import PIDDoesNotExistError
 from invenio_pidstore.models import PIDStatus
+from invenio_records_resources.services.uow import UnitOfWork
 from marshmallow import ValidationError
 
 from invenio_rdm_records.records import RDMDraft, RDMRecord
@@ -111,7 +112,9 @@ def no_pids_cmp():
             config=TestServiceConfigNoPIDs, manager_cls=PIDManager
         )
     )
-    return PIDsComponent(service=service)
+    c = PIDsComponent(service=service)
+    c.uow = UnitOfWork()
+    return c
 
 
 @pytest.fixture(scope="module")
@@ -126,7 +129,9 @@ def no_required_pids_service():
 
 @pytest.fixture(scope="module")
 def no_required_pids_cmp(no_required_pids_service):
-    return PIDsComponent(service=no_required_pids_service)
+    c = PIDsComponent(service=no_required_pids_service)
+    c.uow = UnitOfWork()
+    return c
 
 
 @pytest.fixture(scope="module")
@@ -137,7 +142,9 @@ def required_managed_pids_cmp():
             config=TestServiceConfigRequiredManagedPID, manager_cls=PIDManager
         )
     )
-    return PIDsComponent(service=service)
+    c = PIDsComponent(service=service)
+    c.uow = UnitOfWork()
+    return c
 
 
 @pytest.fixture(scope="module")
@@ -149,7 +156,9 @@ def required_external_pids_cmp():
             manager_cls=PIDManager
         )
     )
-    return PIDsComponent(service=service)
+    c = PIDsComponent(service=service)
+    c.uow = UnitOfWork()
+    return c
 
 
 # PID Creation

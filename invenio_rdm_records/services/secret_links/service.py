@@ -17,6 +17,7 @@ from invenio_db import db
 from invenio_drafts_resources.services.records import RecordService
 from invenio_records_resources.services.records.schema import \
     ServiceSchemaWrapper
+from invenio_records_resources.services.uow import RecordCommitOp, unit_of_work
 from marshmallow.exceptions import ValidationError
 from sqlalchemy.orm.exc import NoResultFound
 
@@ -105,12 +106,14 @@ class SecretLinkService(RecordService):
 
         return expires_at
 
+    @unit_of_work()
     def create(
         self,
         id_,
         identity,
         data,
         links_config=None,
+        uow=None
     ):
         """Create a secret link for a record (resp. its parent)."""
         record, parent = self.get_parent_and_record_or_draft(id_)
@@ -144,13 +147,13 @@ class SecretLinkService(RecordService):
                 field_name="permission",
             )
 
-        # Commit and index
-        parent.commit()
+        # Commit
+        uow.register(RecordCommitOp(parent))
         if record:
-            record.commit()
+            uow.register(RecordCommitOp(record))
 
-        db.session.commit()
-        self._index_related_records(record, parent)
+        # Index all child records of the parent
+        self._index_related_records(record, parent, uow=uow)
 
         return self.link_result_item(
             self,
@@ -208,6 +211,8 @@ class SecretLinkService(RecordService):
             links_config=links_config,
         )
 
+
+    @unit_of_work()
     def update(
         self,
         id_,
@@ -215,6 +220,7 @@ class SecretLinkService(RecordService):
         link_id,
         data,
         links_config=None,
+        uow=None,
     ):
         """Update a secret link for a record (resp. its parent)."""
         record, parent = self.get_parent_and_record_or_draft(id_)
@@ -247,13 +253,13 @@ class SecretLinkService(RecordService):
         link.expires_at = expires_at or link.expires_at
         link.permission_level = permission or link.permission_level
 
-        # Commit and index
-        parent.commit()
+        # Commit
+        uow.register(RecordCommitOp(parent))
         if record:
-            record.commit()
+            uow.register(RecordCommitOp(record))
 
-        db.session.commit()
-        self._index_related_records(record, parent)
+        # Index all child records of the parent
+        self._index_related_records(record, parent, uow=uow)
 
         return self.link_result_item(
             self,
@@ -262,12 +268,14 @@ class SecretLinkService(RecordService):
             links_config=links_config,
         )
 
+    @unit_of_work()
     def delete(
         self,
         id_,
         identity,
         link_id,
         links_config=None,
+        uow=None
     ):
         """Delete a secret link for a record (resp. its parent)."""
         record, parent = self.get_parent_and_record_or_draft(id_)
@@ -287,12 +295,12 @@ class SecretLinkService(RecordService):
         parent.access.links.pop(link_idx)
         link.revoke()
 
-        # Commit and index
-        parent.commit()
+        # Commit
+        uow.register(RecordCommitOp(parent))
         if record:
-            record.commit()
+            uow.register(RecordCommitOp(record))
 
-        db.session.commit()
-        self._index_related_records(record, parent)
+        # Index all child records of the parent
+        self._index_related_records(record, parent, uow=uow)
 
         return True

@@ -59,12 +59,9 @@ class SecretLink(db.Model):
             return self.permission_level == "edit"
         return False
 
-    def revoke(self, commit=False):
+    def revoke(self):
         """Revoke (i.e. delete) this secret link."""
         db.session.delete(self)
-        if commit:
-            db.session.commit()
-
         link_revoked.send(self)
 
     def to_dict(self):

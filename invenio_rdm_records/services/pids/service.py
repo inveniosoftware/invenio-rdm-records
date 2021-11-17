@@ -8,10 +8,9 @@
 """RDM PIDs Service."""
 
 from flask_babelex import lazy_gettext as _
-from invenio_db import db
 from invenio_drafts_resources.services.records import RecordService
 from invenio_pidstore.models import PersistentIdentifier
-from invenio_records_resources.services.errors import PermissionDeniedError
+from invenio_records_resources.services.uow import RecordCommitOp, unit_of_work
 
 
 class PIDsService(RecordService):
@@ -41,7 +40,8 @@ class PIDsService(RecordService):
             links_tpl=self.links_item_tpl,
         )
 
-    def create(self, id_, identity, scheme, provider=None):
+    @unit_of_work()
+    def create(self, id_, identity, scheme, provider=None, uow=None):
         """Create a `NEW` PID for a given record."""
         draft = self.draft_cls.pid.resolve(id_, registered_only=False)
         self.require_permission(identity, "pid_create", record=draft)
@@ -49,9 +49,7 @@ class PIDsService(RecordService):
             draft, scheme, provider_name=provider
         )
 
-        draft.commit()
-        db.session.commit()
-        self.indexer.index(draft)
+        uow.register(RecordCommitOp(draft, indexer=self.indexer))
 
         return self.result_item(
             self,
@@ -60,13 +58,14 @@ class PIDsService(RecordService):
             links_tpl=self.links_item_tpl,
         )
 
-    def update_remote(self, id_, identity, scheme):
+    @unit_of_work()
+    def update_remote(self, id_, identity, scheme, uow=None):
         """Update a registered PID on a remote provider."""
         record = self.record_cls.pid.resolve(id_, registered_only=False)
         self.require_permission(identity, "pid_update", record=record)
         self._manager.update_remote(record, scheme)
 
-        db.session.commit()  # draft and index do not need commit/refresh
+        # draft and index do not need commit/refresh
 
         return self.result_item(
             self,
@@ -75,14 +74,15 @@ class PIDsService(RecordService):
             links_tpl=self.links_item_tpl,
         )
 
-    def reserve(self, id_, identity):
+    @unit_of_work()
+    def reserve(self, id_, identity, uow=None):
         """Reserve PIDs of a record."""
         draft = self.draft_cls.pid.resolve(id_, registered_only=False)
         self.require_permission(identity, "pid_manage", record=draft)
         self.pid_manager.validate(draft.pids, draft, raise_errors=True)
         self._manager.reserve_all(draft, draft.pids)
 
-        db.session.commit()  # draft and index do not need commit/refresh
+        # draft and index do not need commit/refresh
 
         return self.result_item(
             self,
@@ -91,7 +91,8 @@ class PIDsService(RecordService):
             links_tpl=self.links_item_tpl,
         )
 
-    def register(self, id_, identity, scheme):
+    @unit_of_work()
+    def register(self, id_, identity, scheme, uow=None):
         """Register a PID of a record."""
         record = self.record_cls.pid.resolve(id_, registered_only=False)
         self.require_permission(identity, "pid_register", record=record)
@@ -100,7 +101,7 @@ class PIDsService(RecordService):
             record, scheme, url=self.links_item_tpl.expand(record)["self_html"]
         )
 
-        db.session.commit()  # draft and index do not need commit/refresh
+        # draft and index do not need commit/refresh
 
         return self.result_item(
             self,
@@ -109,7 +110,8 @@ class PIDsService(RecordService):
             links_tpl=self.links_item_tpl,
         )
 
-    def register_or_update(self, id_, identity, scheme):
+    @unit_of_work()
+    def register_or_update(self, id_, identity, scheme, uow=None):
         """Register a PID of a record or update.
 
         If the PID has already been register it updates the remote.
@@ -131,7 +133,7 @@ class PIDsService(RecordService):
                 url=self.links_item_tpl.expand(record)["self_html"]
             )
 
-        db.session.commit()  # draft and index do not need commit/refresh
+        # draft and index do not need commit/refresh
 
         return self.result_item(
             self,
@@ -140,7 +142,8 @@ class PIDsService(RecordService):
             links_tpl=self.links_item_tpl,
         )
 
-    def discard(self, id_, identity, scheme, provider=None):
+    @unit_of_work()
+    def discard(self, id_, identity, scheme, provider=None, uow=None):
         """Discard a PID for a given draft.
 
         If the status was `NEW` it will be hard deleted. Otherwise,
@@ -155,9 +158,7 @@ class PIDsService(RecordService):
         self._manager.discard(scheme, identifier, provider)
         draft.pids.pop(scheme)
 
-        draft.commit()
-        db.session.commit()
-        self.indexer.index(draft)
+        uow.register(RecordCommitOp(draft, indexer=self.indexer))
 
         return self.result_item(
             self,
