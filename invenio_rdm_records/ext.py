@@ -18,6 +18,8 @@ from invenio_records_resources.services import FileService
 from invenio_vocabularies.contrib.affiliations import AffiliationsResource, \
     AffiliationsResourceConfig, AffiliationsService, \
     AffiliationsServiceConfig
+from invenio_vocabularies.contrib.names import NamesResource, \
+    NamesResourceConfig, NamesService, NamesServiceConfig
 from invenio_vocabularies.contrib.subjects import SubjectsResource, \
     SubjectsResourceConfig, SubjectsService, SubjectsServiceConfig
 from itsdangerous import SignatureExpired
@@ -173,6 +175,7 @@ class InvenioRDMRecords(object):
                 permission_policy=permission_policy,
             )
             affiliations = AffiliationsServiceConfig
+            names = NamesServiceConfig
             subjects = SubjectsServiceConfig
 
         return ServiceConfigs
@@ -192,6 +195,9 @@ class InvenioRDMRecords(object):
         )
         self.affiliations_service = AffiliationsService(
             config=service_configs.affiliations,
+        )
+        self.names_service = NamesService(
+            config=service_configs.names
         )
         self.subjects_service = SubjectsService(
             config=service_configs.subjects
@@ -226,6 +232,10 @@ class InvenioRDMRecords(object):
         self.affiliations_resource = AffiliationsResource(
             service=self.affiliations_service,
             config=AffiliationsResourceConfig,
+        )
+        self.names_resource = NamesResource(
+            service=self.names_service,
+            config=NamesResourceConfig,
         )
         self.subjects_resource = SubjectsResource(
             service=self.subjects_service,
