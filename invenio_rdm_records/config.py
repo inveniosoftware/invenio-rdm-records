@@ -11,6 +11,9 @@
 
 import idutils
 
+from invenio_vocabularies.contrib.names.datastreams import OrcidXMLTransformer
+from invenio_vocabularies.datastreams.transformers import XMLTransformer
+
 from .services import facets
 from .services.pids import providers
 
@@ -522,3 +525,11 @@ You can also provide a callable instead:
 
     DATACITE_FORMAT = make_doi
 """
+# Invenio-Vocabularies
+# ====================
+
+VOCABULARIES_DATASTREAM_TRANSFORMERS = {
+    "xml": XMLTransformer,
+    "orcid-xml": OrcidXMLTransformer,
+}
+"""RDM Records datastream transformers."""

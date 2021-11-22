@@ -94,11 +94,17 @@ class InvenioRDMRecords(object):
             'RECORDS_UI_ENDPOINTS',
             'THEME_SITEURL',
         ]
+        overriding_configurations = [
+            'PREVIEWER_RECORD_FILE_FACTORY',
+            'VOCABULARIES_DATASTREAM_TRANSFORMERS',
+        ]
 
         for k in dir(config):
             if k in supported_configurations or k.startswith('RDM_') \
                     or k.startswith('DATACITE_'):
                 app.config.setdefault(k, getattr(config, k))
+            if k in overriding_configurations and app.config.get(k):
+                app.config[k] = getattr(config, k)
 
         # Deprecations
         # Remove when v6.0 LTS is no longer supported.
@@ -128,6 +134,7 @@ class InvenioRDMRecords(object):
                     )
 
         self.fix_datacite_configs(app)
+
 
     def service_configs(self, app):
         """Customized service configs."""
