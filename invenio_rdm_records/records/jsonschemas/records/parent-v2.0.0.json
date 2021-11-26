@@ -76,7 +76,7 @@
     },
 
     "review": {
-      "$ref": "local://requests/definitions-v1.0.0.json#/request_reference"
+      "$ref": "local://requests/request-v1.0.0.json"
     }
   }
 }

@@ -8,8 +8,12 @@
 """RDM service component for request integration."""
 
 
+from flask_babelex import lazy_gettext as _
 from invenio_drafts_resources.services.records.components import \
     ServiceComponent
+from invenio_requests import current_requests_service
+
+from ..errors import ReviewExistsError, ReviewStateError
 
 
 class ReviewComponent(ServiceComponent):
@@ -23,29 +27,31 @@ class ReviewComponent(ServiceComponent):
 
     def delete_draft(self, identity, draft=None, record=None, force=False):
         """Delete a draft."""
-        # TODO: prevent deletion (similar to prevent publish if open requests
-        # exists)
-        # you can delete draft if in request in state: draft, cancelled,
-        # declined, expired.
-        # When you delete something that was cancelled, can the receiver still
-        # see the request?
-        pass
+        review = draft.parent.review
+        if review is None:
+            return
+        # TODO: once draft status has been changed to not be considered open
+        # the condition "review.status !=" can be removed.
+        if review.is_open and review.status != 'draft':
+            raise ReviewStateError(
+                _("You cannot delete a draft with an open review. Please "
+                  "cancel the review first.")
+            )
+
+        # Delete draft request's. A request in any other state is left as-is,
+        # to allow users to see the request even if it was removed.
+        if review.status == 'draft':
+            current_requests_service.delete(
+                draft.parent.review.id,
+                identity,
+                uow=self.uow
+            )
 
     def publish(self, identity, draft=None, record=None, **kwargs):
-        """Update draft metadata."""
-        # TODO:
-        # Block publishing if:
-        # - a request exists AND
-        # - the request type blocks publishing AND
-        # - the request is in state draft, open.
-        # What if request was declined, expired, cancelled and it's published?
-        # Do we keep the association with the declined review.
-        pass
-
-    def edit(self, identity, draft=None, record=None, **kwargs):
-        """Update draft metadata."""
-        # Do nothing
-
-    def new_version(self, identity, draft=None, record=None, **kwargs):
-        """Update draft metadata."""
-        # Do nothing
+        """Block publishing if required.."""
+        review = draft.parent.review
+        if review is None:
+            return
+        if getattr(review.type, 'block_publish', True) and \
+                review.status in ['draft', 'open']:
+            raise ReviewExistsError()

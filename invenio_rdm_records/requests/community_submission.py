@@ -26,16 +26,16 @@ class SubmitAction(RequestAction):
 
     def can_execute(self, identity):
         """Validate if action can be executed."""
-        # TODO:
-        # Validate the draft - i.e. make sure it's ready to submit (similar to
-        # what publish() does).
-        # service._validate_draft(identity, draft)
+        draft = self.request.topic.resolve()
+        service._validate_draft(identity, draft)
         return super().can_execute(identity)
 
     def execute(self, identity, uow):
         """Execute the submit action."""
+        # Set the record's title as the request title.
+        draft = self.request.topic.resolve()
+        self.request['title'] = draft.metadata['title']
         super().execute(identity, uow)
-        # Send an event (e.g. needed later for sending notifications)
 
 
 class AcceptAction(RequestAction):
@@ -46,11 +46,8 @@ class AcceptAction(RequestAction):
 
     def can_execute(self, identity):
         """Check of the accpet action can be executed."""
-        # TODO:
-        # 1) Validate the draft again to ensure that it's still ready to be
-        # published since it might have been updated in the mean time.
-        # service._validate_draft(identity, draft)
-        # 2) How would we report an error?
+        draft = self.request.topic.resolve()
+        service._validate_draft(identity, draft)
         return True
 
     def execute(self, identity, uow):
@@ -60,12 +57,15 @@ class AcceptAction(RequestAction):
         draft = self.request.topic.resolve()
         community = self.request.receiver.resolve()
 
+        # Unset review from record (still accessible from request)
+        draft.parent.review = None
+
         # TODO:
         # - Put below into a service method
         # - Check permissions
 
         # Add community to record.
-        is_default = self.request.request_type.set_as_default
+        is_default = self.request.type.set_as_default
         draft.parent.communities.add(
             community, request=self.request, default=is_default)
         uow.register(RecordCommitOp(draft.parent))
@@ -73,7 +73,6 @@ class AcceptAction(RequestAction):
         # Publish the record
         # TODO: Ensure that the accpeting user has permissions to publish.
         service.publish(draft.pid.pid_value, identity, uow=uow)
-
         super().execute(identity, uow)
 
 
@@ -101,9 +100,10 @@ class CancelAction(RequestAction):
 
     def execute(self, identity, uow):
         """Execute action."""
-        # TODO: Remove association of the request with the record. This way
-        # the request is still available for the curators/creator to see, but
-        # the link to the record is removed?
+        # Remove draft from request
+        draft = self.request.topic.resolve()
+        draft.parent.review = None
+        uow.register(RecordCommitOp(draft.parent))
         super().execute(identity, uow)
 
 
@@ -126,11 +126,8 @@ class ExpireAction(RequestAction):
 class CommunitySubmission(ReviewRequest):
     """Review request for submitting a record to a community."""
 
-    type_id = 'invenio-rdm-records.community_submission'
-    # TODO: Name should be translated (i18n) but that results in
-    # elasticsearch.exceptions.SerializationError or do we need a title
-    # somewhere?
-    name = "community-submission"
+    type_id = 'community-submission'
+    name = _('Community submission')
 
     block_publish = True
     set_as_default = True

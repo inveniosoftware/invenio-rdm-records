@@ -9,8 +9,8 @@
 """RDM parent record schema."""
 
 from invenio_drafts_resources.services.records.schema import ParentSchema
-from invenio_requests.services.schemas import RequestSchema
-from marshmallow import fields, pre_load
+from invenio_requests.services.schemas import GenericRequestSchema
+from marshmallow import fields, post_dump, pre_load
 from marshmallow_utils.permissions import FieldPermissionsMixin
 
 from .access import ParentAccessSchema
@@ -29,10 +29,10 @@ class RDMParentSchema(ParentSchema, FieldPermissionsMixin):
     }
 
     access = fields.Nested(ParentAccessSchema, dump_only=True)
-    review = fields.Nested(RequestSchema)
+    review = fields.Nested(GenericRequestSchema, allow_none=False)
     communities = fields.Nested(CommunitiesSchema, dump_only=True)
 
-    # TOOD: make nicer
+    # TODO: move to a reusable place (taken from records-resources)
     @pre_load
     def clean(self, data, **kwargs):
         """Removes dump_only fields.
@@ -43,6 +43,23 @@ class RDMParentSchema(ParentSchema, FieldPermissionsMixin):
         for name, field in self.fields.items():
             if field.dump_only:
                 data.pop(name, None)
+        return data
+
+    @pre_load
+    def clean_review(self, data, **kwargs):
+        """Clear review if None."""
+        # draft.parent.review returns None when not set, causing the serializer
+        # to dump {'review': None}. As a workaround we pop it if it's none
+        # here.
+        if data.get('review', None) is None:
+            data.pop('review', None)
+        return data
+
+    @post_dump()
+    def pop_review_if_none(self, data, many, **kwargs):
+        """Clear review if None."""
+        if data.get('review', None) is None:
+            data.pop('review', None)
         return data
 
 

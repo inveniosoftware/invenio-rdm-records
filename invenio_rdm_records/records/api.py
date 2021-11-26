@@ -21,6 +21,8 @@ from invenio_records_resources.records.api import FileRecord
 from invenio_records_resources.records.systemfields import FilesField, \
     IndexField, PIDListRelation, PIDNestedListRelation, PIDRelation, \
     PIDStatusCheckField
+from invenio_requests.records.api import Request
+from invenio_requests.records.systemfields.relatedrecord import RelatedRecord
 from invenio_vocabularies.contrib.affiliations.api import Affiliation
 from invenio_vocabularies.contrib.subjects.api import Subject
 from invenio_vocabularies.records.api import Vocabulary
@@ -51,6 +53,11 @@ class RDMParent(ParentRecordBase):
         '$schema', 'local://records/parent-v2.0.0.json')
 
     access = ParentRecordAccessField()
+
+    review = RelatedRecord(
+        Request,
+        keys=['type', 'receiver']
+    )
 
     communities = CommunitiesField(models.RDMParentCommunity)
 

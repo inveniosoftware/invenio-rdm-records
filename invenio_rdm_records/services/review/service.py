@@ -9,12 +9,14 @@
 
 from flask import current_app
 from flask_babelex import lazy_gettext as _
-from invenio_access.permissions import system_process
 from invenio_drafts_resources.services.records import RecordService
-from invenio_records_resources.services.uow import RecordCommitOp, unit_of_work
+from invenio_records_resources.services.uow import RecordCommitOp, \
+    RecordIndexOp, unit_of_work
 from invenio_requests import current_registry, current_requests_service
 from invenio_requests.resolvers import ResolverRegistry
 from marshmallow import ValidationError
+
+from ..errors import ReviewExistsError, ReviewNotFoundError, ReviewStateError
 
 
 class ReviewService(RecordService):
@@ -41,59 +43,97 @@ class ReviewService(RecordService):
     @unit_of_work()
     def create(self, identity, data, record, uow=None):
         """Create a new review request in draft state (to be completed."""
+        if record.parent.review is not None:
+            raise ReviewExistsError(
+                _('A review already exists for this record'))
+        # Validate that record has not been published.
+        if record.is_published or record.versions.index > 1:
+            raise ReviewStateError(
+                _("You cannot create a review for an already published "
+                  "record.")
+            )
+
         # Validate the review type (only review requests are valid)
-        type_ = current_registry.lookup(
-            data.pop('request_type', None),
-            quiet=True
-        )
+        type_ = current_registry.lookup(data.pop('type', None), quiet=True)
         if type_ is None or type_.type_id not in self.supported_types:
             raise ValidationError(_('Invalid review type.'))
 
         # Resolve receiver
-        # TODO: problem - blr is not as persistent as the uuid (people can
-        # change it)
         receiver = ResolverRegistry.resolve_entity_proxy(
-            data.pop('receiver', None))
-
-        # TODO: remove so it's not needed Defaults
-        data['title'] = ''
+            data.pop('receiver', None)).resolve()
 
         # Delgate to requests service to create the request
         request_item = current_requests_service.create(
             identity,
             data,
             type_,
-            receiver.resolve(),
+            receiver,
             topic=record,
             uow=uow,
         )
 
         # Set the request on the record and commit the record
-        # TODO: make a system field - record.parent.review = ...
-        record.parent['review'] = {'id': request_item.id}
+        record.parent.review = request_item._request
         uow.register(RecordCommitOp(record.parent))
-
         return request_item
 
     def read(self, id_, identity):
-        """."""
-        pass
+        """Read the review."""
+        # Delgate to requests service to create the request
+        draft = self.draft_cls.pid.resolve(id_, registered_only=False)
+        self.require_permission(identity, 'read_draft', record=draft)
+
+        if draft.parent.review is None:
+            raise ReviewNotFoundError()
+
+        return current_requests_service.read(draft.parent.review.id, identity)
 
     @unit_of_work()
     def update(self, id_, identity, data, revision_id=None, uow=None):
-        """."""
-        pass
+        """Create or update an existing review."""
+        draft = self.draft_cls.pid.resolve(id_, registered_only=False)
+        self.require_permission(identity, 'update_draft', record=draft)
+
+        # If an existing review exists, delete it.
+        if draft.parent.review is not None:
+            self.delete(id_, identity, uow=uow)
+            draft = self.draft_cls.pid.resolve(id_, registered_only=False)
+
+        return self.create(identity, data, draft, uow=uow)
 
     @unit_of_work()
     def delete(self, id_, identity, revision_id=None, uow=None):
-        """."""
-        # Only allow deletion if never published
-        # Allow deletion in draft, declined, expired, cancelled, state
-        # Disallow deletion in open, accepted state
-        # record.parent.review = None
-        # record
-        # requesttype.delete()
-        pass
+        """Delete a review."""
+        draft = self.draft_cls.pid.resolve(id_, registered_only=False)
+        self.require_permission(identity, 'update_draft', record=draft)
+
+        # Preconditions
+        if draft.parent.review is None:
+            raise ReviewNotFoundError()
+
+        if draft.is_published:
+            raise ReviewStateError(
+                _("You cannot delete a review for a draft that has already "
+                  "been published.")
+            )
+
+        # TODO: once draft status has been changed to not be considered open
+        # the condition "review.status !=" can be removed.
+        if draft.parent.review.status != 'draft' \
+                and draft.parent.review.is_open:
+            raise ReviewStateError(_("An open review cannot be deleted."))
+
+        # Delete request
+        current_requests_service.delete(
+            draft.parent.review.id,
+            identity,
+            uow=uow
+        )
+        # Unset on record
+        draft.parent.review = None
+        uow.register(RecordCommitOp(draft.parent))
+        uow.register(RecordIndexOp(draft, indexer=self.indexer))
+        return True
 
     @unit_of_work()
     def submit(self, id_, identity, data=None, revision_id=None, uow=None):
@@ -102,16 +142,12 @@ class ReviewService(RecordService):
         draft = self.draft_cls.pid.resolve(id_, registered_only=False)
         self.require_permission(identity, 'update_draft', record=draft)
 
-        # Get request id
-        request_id = draft.parent['review']['id']
+        # Preconditions
+        if draft.parent.review is None:
+            raise ReviewNotFoundError()
 
-        # - validate_draft
-        # Delegate to service to submit request which should do:
-        # - change state and send request to receiver (i.e. send an event:
-        #   state change)
-        # - Send a redirect to /api/records/:id/draft/request?
-        # - Validate comment data.
-        # - Set request title to record title.
+        # All other preconditions can be checked by the action itself which can
+        # raise appropriate exceptions.
         request = current_requests_service.execute_action(
-            identity, request_id, 'submit', data=data, uow=uow)
+            identity, draft.parent.review.id, 'submit', data=data, uow=uow)
         return request
