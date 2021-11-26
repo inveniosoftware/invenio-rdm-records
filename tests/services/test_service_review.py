@@ -53,10 +53,54 @@ def community(running_app, minimal_community):
 def test_creation(running_app, community, minimal_record, service,
                   requests_service):
     """Test basic creation with review."""
+
+    minimal_record['parent'] = {
+        'review': {
+            'type': 'community-submission',
+            'receiver': {'community': community.data['uuid']}
+        }
+    }
+
+    # Create draft review
+    data = service.create(
+        running_app.superuser_identity,
+        minimal_record
+    )
+    record_id = data.id
+    parent = data.to_dict()['parent']
+
+    assert 'id' in parent['review']
+    assert parent['review']['type'] == 'community-submission'
+    assert parent['review']['receiver'] == {'community': community.data['uuid']}
+
+    # Read review request
+    review = requests_service.read(
+        parent['review']['id'], running_app.superuser_identity
+    ).to_dict()
+
+    assert review['id'] == parent['review']['id']
+    assert review['type'] == 'community-submission'
+    assert review['receiver'] == {'community': community.data['uuid']}
+    assert review['created_by'] == {
+        'user': str(running_app.superuser_identity.id)
+    }
+    assert review['topic'] == {'record': record_id}
+
+    review = service.review.read(
+        record_id,
+        running_app.superuser_identity
+    ).to_dict()
+    assert review['id'] == parent['review']['id']
+
+
+
+def test_simple_flow(running_app, community, minimal_record, service,
+                     requests_service):
+    """Test basic creation with review."""
     # Create draft review
     minimal_record['parent'] = {
         'review': {
-            'request_type': 'invenio-rdm-records.community_submission',
+            'type': 'community-submission',
             'receiver': {'community': community.id}
         }
     }
@@ -69,7 +113,7 @@ def test_creation(running_app, community, minimal_record, service,
 
     review = data['parent']['review']
     # assert review['request_type'] == 'community-submission'
-    # assert review['receiver'] == {'communities': 'blr'}
+    # assert review['receiver'] == {'community': 'blr'}
     # assert review['created_by'] == {
     #    'user': running_app.superuser_identity.get_id()
     # }
