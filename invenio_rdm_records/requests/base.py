@@ -7,10 +7,10 @@
 
 """Base class for review requests."""
 
-from invenio_requests.customizations import BaseRequestType
+from invenio_requests.customizations import DefaultRequestType
 
 
-class ReviewRequest(BaseRequestType):
+class ReviewRequest(DefaultRequestType):
     """Base class for all review requests."""
 
     block_publish = True
