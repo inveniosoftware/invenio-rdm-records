@@ -12,7 +12,8 @@ from invenio_records_permissions.generators import Admin, AnyUser, \
     AuthenticatedUser, Disable, SuperUser, SystemProcess
 from invenio_records_permissions.policies.records import RecordPermissionPolicy
 
-from .generators import IfDraft, IfRestricted, RecordOwners, SecretLinks
+from .generators import IfDraft, IfRestricted, RecordOwners, SecretLinks, \
+    SubmissionReviewer
 
 
 class RDMRecordPermissionPolicy(RecordPermissionPolicy):
@@ -45,7 +46,10 @@ class RDMRecordPermissionPolicy(RecordPermissionPolicy):
     # Allow searching of records
     can_search = can_all
     # Allow reading metadata of a record
-    can_read = [IfRestricted('record', then_=can_view, else_=can_all)]
+    can_read = [
+        IfRestricted('record', then_=can_view, else_=can_all),
+        SubmissionReviewer()
+    ]
     # Allow reading the files of a record
     can_read_files = [IfRestricted('files', then_=can_view, else_=can_all)]
     # Allow submitting new record
@@ -57,7 +61,7 @@ class RDMRecordPermissionPolicy(RecordPermissionPolicy):
     # Allow ability to search drafts
     can_search_drafts = can_authenticated
     # Allow reading metadata of a draft
-    can_read_draft = can_preview
+    can_read_draft = can_preview + [SubmissionReviewer()]
     # Allow reading files of a draft
     can_draft_read_files = can_preview
     # Allow updating metadata of a draft

@@ -58,6 +58,9 @@ class AcceptAction(RequestAction):
         community = self.request.receiver.resolve()
 
         # Unset review from record (still accessible from request)
+        # The curator (receiver) should still have access, via the community
+        # The creator (uploader) should also still have access, because
+        # they're the uploader
         draft.parent.review = None
 
         # TODO:
@@ -67,7 +70,8 @@ class AcceptAction(RequestAction):
         # Add community to record.
         is_default = self.request.type.set_as_default
         draft.parent.communities.add(
-            community, request=self.request, default=is_default)
+            community, request=self.request, default=is_default
+        )
         uow.register(RecordCommitOp(draft.parent))
 
         # Publish the record
@@ -84,11 +88,11 @@ class DeclineAction(RequestAction):
 
     def execute(self, identity, uow):
         """Execute action."""
-        # TODO: The requestor/creator should still be able to see the request
-        # from the upload form (so we likely cannot remove the request id from
-        # the record). Probably the user has to manually delete/update the
-        # the review? I.e. how does the user submit the record to a new
-        # community.
+        # Unset review from record (still accessible from request)
+        # This means that the receiver (curator) won't have access anymore
+        # The creator (uploader) should still have access to the record/draft
+        draft = self.request.topic.resolve()
+        draft.parent.review = None
         super().execute(identity, uow)
 
 
@@ -101,6 +105,7 @@ class CancelAction(RequestAction):
     def execute(self, identity, uow):
         """Execute action."""
         # Remove draft from request
+        # Same reasoning as in 'decline'
         draft = self.request.topic.resolve()
         draft.parent.review = None
         uow.register(RecordCommitOp(draft.parent))
@@ -115,8 +120,13 @@ class ExpireAction(RequestAction):
 
     def execute(self, identity, uow):
         """Execute action."""
-        # TODO: What to do? simply close the request? Similarly to decline, how
-        # does a user resubmits the request to the same community.
+        # Remove draft from request
+        # Same reasoning as in 'decline'
+        draft = self.request.topic.resolve()
+        draft.parent.review = None
+
+        # TODO: What more to do? simply close the request? Similarly to
+        # decline, how does a user resubmits the request to the same community.
         super().execute(identity, uow)
 
 
