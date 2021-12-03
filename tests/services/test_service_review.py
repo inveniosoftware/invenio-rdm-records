@@ -8,14 +8,30 @@
 """Test of the review deposit integration."""
 
 import pytest
+from flask_principal import Identity
+from invenio_access.permissions import any_user, authenticated_user
 from invenio_communities import current_communities
+from invenio_communities.communities import CommunityNeed
+from invenio_communities.communities.records.api import Community
+from invenio_records_resources.services.errors import PermissionDeniedError
 from invenio_requests import current_requests_service
 from marshmallow.exceptions import ValidationError
 from sqlalchemy.orm.exc import NoResultFound
 
 from invenio_rdm_records.proxies import current_rdm_records
+from invenio_rdm_records.records.api import RDMDraft
 from invenio_rdm_records.services.errors import ReviewExistsError, \
     ReviewNotFoundError, ReviewStateError
+
+
+def get_community_owner_identity(community):
+    """Get the identity for the first owner of the community."""
+    owner_id = community.access.owned_by[0].owner_id
+    identity = Identity(owner_id)
+    identity.provides.add(any_user)
+    identity.provides.add(authenticated_user)
+    identity.provides.add(CommunityNeed(str(community.id)))
+    return identity
 
 
 @pytest.fixture()
@@ -463,6 +479,40 @@ def test_accept_with_validation_errors(
     )
 
 
+def test_review_gives_access_to_curator(
+    running_app, draft, service, requests_service
+):
+    """Test if a submission review request does give the curator access."""
+    request_item = service.review.submit(
+        draft.id, running_app.superuser_identity
+    )
+    request = request_item._request
+
+    # the draft is the request's topic
+    draft = request.topic.resolve()
+    assert isinstance(draft, RDMDraft)
+
+    # get the community from the request, and build the owner's identity
+    community = request.receiver.resolve()
+    assert isinstance(community, Community)
+    identity = get_community_owner_identity(community)
+
+    # the owner of the community should have access to the draft in question
+    item = service.read_draft(draft.pid.pid_value, identity)
+    assert item._record.id == draft.id
+
+    # close the request
+    request = requests_service.execute_action(
+        running_app.superuser_identity, request.id, "cancel"
+    )._request
+    assert request.status == "cancelled"
+
+    # the owner of the community should not have access anymore
+    with pytest.raises(PermissionDeniedError):
+        item = service.read_draft(draft.pid.pid_value, identity)
+
+
 # TODO tests:
-# - Test submit to restricted community not allowed by user
+# - Test: submit to restricted community not allowed by user
+#         (likely requires members structure in communities?)
 # - Test: That another user cannot e.g. read reviews service.reviews.read
