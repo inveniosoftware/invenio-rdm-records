@@ -16,8 +16,7 @@ from itertools import chain
 from elasticsearch_dsl import Q
 from flask_principal import UserNeed
 from invenio_access.permissions import authenticated_user
-from invenio_pidstore.errors import PIDDoesNotExistError
-from invenio_pidstore.models import PersistentIdentifier, PIDStatus
+from invenio_communities.communities.services.permissions import CommunityNeed
 from invenio_records_permissions.generators import Generator
 from invenio_requests.resolvers import ResolverRegistry
 
@@ -188,14 +187,28 @@ class SubmissionReviewer(Generator):
         # and the topic to be a record
         receiver = record.parent.review.receiver
         if receiver is not None:
-            assert isinstance(receiver, dict)
-            assert "community" in receiver
+            if hasattr(receiver, 'get_need'):
+                need = receiver.get_need()
+            else:
+                assert isinstance(receiver, dict)
+                assert "community" in receiver
 
-            # TODO this should be revisited when the community membership
-            #      is implemented, as the community resolver is likely
-            #      subject to change then
-            need = ResolverRegistry.resolve_need(receiver)
+                # TODO this should be revisited when the community membership
+                #      is implemented, as the community resolver is likely
+                #      subject to change then
+                need = ResolverRegistry.resolve_need(receiver)
             if need is not None:
                 return [need]
 
         return []
+
+
+class CommunityCurator(Generator):
+    """Curators of a community."""
+
+    def needs(self, record=None, **kwargs):
+        """Set of Needs granting permission."""
+        if record is None:
+            return []
+
+        return [CommunityNeed(c) for c in record.parent.communities.ids]

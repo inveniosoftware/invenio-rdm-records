@@ -8,20 +8,20 @@
 
 """Resources configuration."""
 
-
 import marshmallow as ma
 from citeproc_styles import StyleNotFoundError
+from flask_babelex import lazy_gettext as _
 from flask_resources import HTTPJSONException, JSONSerializer, \
     ResponseHandler, create_error_handler, resource_requestctx
 from invenio_drafts_resources.resources import RecordResourceConfig
 from invenio_records_resources.resources.files import FileResourceConfig
 
-from invenio_rdm_records.resources.args import RDMSearchRequestArgsSchema
-from invenio_rdm_records.resources.serializers.dublincore import \
-    DublinCoreXMLSerializer
-
+from ..services.errors import ReviewExistsError, ReviewNotFoundError, \
+    ReviewStateError
+from .args import RDMSearchRequestArgsSchema
 from .serializers import CSLJSONSerializer, DataCite43JSONSerializer, \
-    DataCite43XMLSerializer, StringCitationSerializer, UIJSONSerializer
+    DataCite43XMLSerializer, DublinCoreXMLSerializer, \
+    StringCitationSerializer, UIJSONSerializer
 
 
 def csl_url_args_retriever():
@@ -89,7 +89,25 @@ class RDMRecordResourceConfig(RecordResourceConfig):
         StyleNotFoundError: create_error_handler(
             HTTPJSONException(
                 code=400,
-                description="Citation string style not found.",
+                description=_("Citation string style not found."),
+            )
+        ),
+        ReviewNotFoundError: create_error_handler(
+            HTTPJSONException(
+                code=404,
+                description=_("Review for draft not found"),
+            )
+        ),
+        ReviewStateError: create_error_handler(
+            lambda e: HTTPJSONException(
+                code=400,
+                description=str(e),
+            )
+        ),
+        ReviewExistsError: create_error_handler(
+            lambda e: HTTPJSONException(
+                code=400,
+                description=str(e),
             )
         ),
     }

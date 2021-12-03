@@ -14,14 +14,16 @@ fixtures are available.
 """
 
 from collections import namedtuple
+from copy import deepcopy
 from datetime import datetime
 from unittest import mock
 
 import arrow
 import pytest
 from dateutil import tz
+from flask import g
 from flask_principal import Identity, Need, UserNeed
-from flask_security import login_user
+from flask_security import login_user, logout_user
 from flask_security.utils import hash_password
 from invenio_access.models import ActionRoles
 from invenio_access.permissions import superuser_access, system_identity
@@ -29,6 +31,8 @@ from invenio_accounts.models import Role
 from invenio_accounts.testutils import login_user_via_session
 from invenio_app.factory import create_app as _create_app
 from invenio_cache import current_cache
+from invenio_communities import current_communities
+from invenio_communities.communities.records.api import Community
 from invenio_records_resources.proxies import current_service_registry
 from invenio_vocabularies.contrib.affiliations.api import Affiliation
 from invenio_vocabularies.contrib.subjects.api import Subject
@@ -38,6 +42,140 @@ from invenio_vocabularies.records.api import Vocabulary
 from invenio_rdm_records import config
 from invenio_rdm_records.proxies import current_rdm_records
 from invenio_rdm_records.records.api import RDMDraft, RDMParent, RDMRecord
+
+
+#
+# User fixture helper - move to pytest-invenio
+#
+#
+# Helper
+#
+class UserFixture_:
+    """A user fixture for easy test user creation."""
+
+    def __init__(self, email=None, password=None, active=True):
+        """Constructor."""
+        self._email = email
+        self._active = active
+        self._password = password
+        self._identity = None
+        self._user = None
+        self._client = None
+
+    #
+    # Creation
+    #
+    def create(self, app, db):
+        """Create the user."""
+        with db.session.begin_nested():
+            datastore = app.extensions["security"].datastore
+            user = datastore.create_user(
+                email=self.email,
+                password=hash_password(self.password),
+                active=self._active,
+            )
+        db.session.commit()
+        self._user = user
+        return self
+
+    #
+    # Properties
+    #
+    @property
+    def user(self):
+        """Get the user."""
+        return self._user
+
+    @property
+    def id(self):
+        """Get the user id as a string."""
+        return str(self._user.id)
+
+    @property
+    def email(self):
+        """Get the user."""
+        return self._email
+
+    @property
+    def password(self):
+        """Get the user."""
+        return self._password
+
+    #
+    # App context helpers
+    #
+    @property
+    def identity(self):
+        """Create identity for the user."""
+        if self._identity is None:
+            # Simulate a full login
+            assert login_user(self.user)
+            self._identity = deepcopy(g.identity)
+            # Clean up - we just want the identity object.
+            logout_user()
+        return self._identity
+
+    @identity.deleter
+    def identity(self):
+        """Delete the user."""
+        self._identity = None
+
+    def app_login(self):
+        """Create identity for the user."""
+        assert login_user(self.user)
+
+    def app_logout(self):
+        """Create identity for the user."""
+        assert logout_user()
+
+    @identity.deleter
+    def identity(self):
+        """Delete the user."""
+        self._identity = None
+
+    #
+    # Test client helpers
+    #
+    def login(self, client, logout_first=False):
+        """Login the given client."""
+        return self._login(client, '/', logout_first)
+
+    def api_login(self, client, logout_first=False):
+        """Login the given client."""
+        return self._login(client, '/api/', logout_first)
+
+    def logout(self, client):
+        """Logout the given client."""
+        return self._logout(client, '/')
+
+    def api_logout(self, client):
+        """Logout the given client."""
+        return self._logout(client, '/api/')
+
+    def _login(self, client, base_path, logout):
+        """Login the given client."""
+        if logout:
+            self._logout(client, base_path)
+        res = client.post(
+            f'{base_path}login',
+            data=dict(email=self.email, password=self.password),
+            environ_base={'REMOTE_ADDR': '127.0.0.1'},
+            follow_redirects=True,
+        )
+        assert res.status_code == 200
+        return client
+
+    def _logout(self, client, base_path):
+        """Logout the client."""
+        res = client.get(f'{base_path}logout')
+        assert res.status_code < 400
+        return client
+
+
+@pytest.fixture(scope='session')
+def UserFixture():
+    """Class to create user fixtures from."""
+    return UserFixture_
 
 
 @pytest.fixture(scope='module')
@@ -347,6 +485,21 @@ def minimal_record():
                 },
             }],
             "title": "A Romans story"
+        }
+    }
+
+
+@pytest.fixture()
+def minimal_community():
+    """Data for a minimal community."""
+    return {
+        "id": "blr",
+        "access": {
+            "visibility": "public",
+        },
+        "metadata": {
+            "title": "Biodiversity Literature Repository",
+            "type": "topic"
         }
     }
 
@@ -853,3 +1006,36 @@ def embargoed_record(
     mock_arrow.return_value = arrow.get(datetime.utcnow())
 
     return record
+
+
+@pytest.fixture()
+def uploader(UserFixture, app, db):
+    """Curator."""
+    u = UserFixture(
+        email="uploader@inveniosoftware.org",
+        password="uploader",
+    )
+    u.create(app, db)
+    return u
+
+
+@pytest.fixture()
+def curator(UserFixture, app, db):
+    """Curator."""
+    u = UserFixture(
+        email="curator@inveniosoftware.org",
+        password="curator",
+    )
+    u.create(app, db)
+    return u
+
+
+@pytest.fixture()
+def community(running_app, curator, minimal_community):
+    """Get the current RDM records service."""
+    c = current_communities.service.create(
+        curator.identity,
+        minimal_community,
+    )
+    Community.index.refresh()
+    return c

@@ -56,7 +56,10 @@ class ReviewService(RecordService):
         # Validate the review type (only review requests are valid)
         type_ = current_registry.lookup(data.pop('type', None), quiet=True)
         if type_ is None or type_.type_id not in self.supported_types:
-            raise ValidationError(_('Invalid review type.'))
+            raise ValidationError(
+                _('Invalid review type.'),
+                field_name='type'
+            )
 
         # Resolve receiver
         receiver = ResolverRegistry.resolve_entity_proxy(
@@ -86,7 +89,7 @@ class ReviewService(RecordService):
         if draft.parent.review is None:
             raise ReviewNotFoundError()
 
-        return current_requests_service.read(draft.parent.review.id, identity)
+        return current_requests_service.read(identity, draft.parent.review.id)
 
     @unit_of_work()
     def update(self, id_, identity, data, revision_id=None, uow=None):
@@ -125,8 +128,8 @@ class ReviewService(RecordService):
 
         # Delete request
         current_requests_service.delete(
-            draft.parent.review.id,
             identity,
+            draft.parent.review.id,
             uow=uow
         )
         # Unset on record

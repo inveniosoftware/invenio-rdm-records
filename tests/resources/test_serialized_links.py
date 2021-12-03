@@ -61,6 +61,7 @@ def test_draft_links(client, draft_json, minimal_record, headers):
 
     expected_links = {
         "self": f"https://127.0.0.1:5000/api/records/{pid_value}/draft",
+        "review": f"https://127.0.0.1:5000/api/records/{pid_value}/draft/review",  # noqa
         "self_html": f"https://127.0.0.1:5000/uploads/{pid_value}",
         "publish": f"https://127.0.0.1:5000/api/records/{pid_value}/draft/actions/publish",  # noqa
         "record": f"https://127.0.0.1:5000/api/records/{pid_value}",

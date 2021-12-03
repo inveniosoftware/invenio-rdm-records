@@ -42,8 +42,8 @@ class ReviewComponent(ServiceComponent):
         # to allow users to see the request even if it was removed.
         if review.status == 'draft':
             current_requests_service.delete(
-                draft.parent.review.id,
                 identity,
+                draft.parent.review.id,
                 uow=self.uow
             )
 
