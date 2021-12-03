@@ -8,17 +8,15 @@
 
 """PID Providers module."""
 
-from .base import BaseClient, BasePIDProvider
-from .datacite import DOIDataCiteClient, DOIDataCitePIDProvider
+from .base import PIDProvider
+from .datacite import DataCiteClient, DataCitePIDProvider
 from .external import ExternalPIDProvider
-from .oai import OAIPIDClient, OAIPIDProvider
+from .oai import OAIPIDProvider
 
 __all__ = (
-    "BaseClient",
-    "BasePIDProvider",
-    "DOIDataCiteClient",
-    "DOIDataCitePIDProvider",
+    "DataCiteClient",
+    "DataCitePIDProvider",
     "ExternalPIDProvider",
-    "OAIPIDClient",
     "OAIPIDProvider",
+    "PIDProvider",
 )

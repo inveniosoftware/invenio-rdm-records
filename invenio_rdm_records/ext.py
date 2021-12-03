@@ -90,21 +90,18 @@ class InvenioRDMRecords(object):
             'RECORDS_UI_ENDPOINTS',
             'THEME_SITEURL',
         ]
-        overriding_configurations = [
-            'PREVIEWER_RECORD_FILE_FACTORY',
-        ]
 
         for k in dir(config):
-            if k in supported_configurations or k.startswith('RDM_'):
+            if k in supported_configurations or k.startswith('RDM_') \
+                    or k.startswith('DATACITE_'):
                 app.config.setdefault(k, getattr(config, k))
-            if k in overriding_configurations and not app.config.get(k):
-                app.config[k] = getattr(config, k)
 
     def service_configs(self, app):
         """Customized service configs."""
         # Overall record permission policy
         permission_policy = app.config.get('RDM_PERMISSION_POLICY')
-        doi_registration = app.config['RDM_RECORDS_DOI_DATACITE_ENABLED']
+        pid_providers = app.config['RDM_PERSISTENT_IDENTIFIER_PROVIDERS']
+        pids = app.config['RDM_PERSISTENT_IDENTIFIERS']
 
         # Available facets and sort options
         sort_opts = app.config.get('RDM_SORT_OPTIONS')
@@ -130,7 +127,8 @@ class InvenioRDMRecords(object):
         class ServiceConfigs:
             record = RDMRecordServiceConfig.customize(
                 permission_policy=permission_policy,
-                doi_registration=doi_registration,
+                pid_providers=pid_providers,
+                pids=pids,
                 search=search_opts,
                 search_drafts=search_drafts_opts,
                 search_versions=search_versions_opts,

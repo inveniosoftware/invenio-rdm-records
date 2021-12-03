@@ -12,6 +12,7 @@
 import idutils
 
 from .services import facets
+from .services.pids import providers
 
 
 def _(x):
@@ -138,8 +139,6 @@ RDM_RECORDS_DOI_DATACITE_PASSWORD = ""
 RDM_RECORDS_DOI_DATACITE_PREFIX = "10.1234"
 RDM_RECORDS_DOI_DATACITE_TEST_MODE = True
 RDM_RECORDS_DOI_DATACITE_FORMAT = "{prefix}/{id}"
-
-# PID Schemes
 
 
 def always_valid(identifier):
@@ -416,7 +415,7 @@ RDM_SEARCH = {
 }
 """Record search configuration.
 
-The configuration has two possible keys:
+The configuration has four possible keys:
 
 - ``facets`` - A list of facet names which must have been defined in
   ``RDM_FACETS``.
@@ -446,3 +445,82 @@ RDM_SEARCH_VERSIONING = {
     'sort_default_no_query': 'version',
 }
 """Records versions search configuration (list of versions for a record)."""
+
+#
+# Persistent identifiers configuration
+#
+RDM_PERSISTENT_IDENTIFIER_PROVIDERS = [
+    # DataCite DOI provider
+    providers.DataCitePIDProvider(
+        "datacite",
+        client=providers.DataCiteClient("datacite", config_prefix="DATACITE"),
+    ),
+    # DOI provider for externally managed DOIs
+    providers.ExternalPIDProvider("external", pid_type="doi"),
+    # OAI identifier
+    providers.OAIPIDProvider("oai"),
+]
+"""A list of configured persistent identifier providers.
+
+ATTENTION: All providers (and clients) takes a name as the first parameter.
+This name is stored in the database and used in the REST API in order to
+identify the given provider and client.
+
+The name is further used to configure the desired persistent identifiers (see
+``RDM_PERSISTENT_IDENTIFIERS`` below)
+"""
+
+
+RDM_PERSISTENT_IDENTIFIERS = {
+    "doi": {
+        "providers": ["datacite", "external"],
+        "required": True,
+    },
+    "oai": {
+        "providers": ["oai"],
+        "required": True,
+    },
+}
+"""
+The configured persistent identifiers for records.
+
+.. code-block:: python
+
+    "<scheme>": {
+        "providers": ["<default-provider-name>", "<provider-name>", ...],
+        "required": True/False,
+    }
+"""
+
+# Configuration for the DataCiteClient used by the DataCitePIDProvider
+
+DATACITE_USERNAME = ""
+"""DataCite username."""
+
+
+DATACITE_PASSWORD = ""
+"""DataCite password."""
+
+
+DATACITE_PREFIX = "10.1234"
+"""DataCite DOI prefix."""
+
+
+DATACITE_TEST_MODE = True
+"""DataCite test mode enabled."""
+
+
+DATACITE_FORMAT = "{prefix}/{id}"
+"""A string used for formatting the DOI or a callable.
+
+If set to a string, you can used ``{prefix}`` and ``{id}`` inside the string.
+
+You can also provide a callable instead:
+
+.. code-block:: python
+
+    def make_doi(prefix, record):
+        return f"{prefix}/{record.pid.pid_value}"
+
+    DATACITE_FORMAT = make_doi
+"""

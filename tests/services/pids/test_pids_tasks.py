@@ -68,7 +68,7 @@ def test_update_pid(
                  "DataCiteRESTClient.public_doi", public_doi)
     mocked_update = mocker.patch(
         "invenio_rdm_records.services.pids.providers.datacite." +
-        "DOIDataCitePIDProvider.update"
+        "DataCitePIDProvider.update"
     )
 
     mocked_update.side_effect = update

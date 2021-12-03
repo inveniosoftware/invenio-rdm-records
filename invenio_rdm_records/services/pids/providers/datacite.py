@@ -13,43 +13,60 @@ from datacite import DataCiteRESTClient
 from datacite.errors import DataCiteError
 from flask import current_app
 from flask_babelex import lazy_gettext as _
-from invenio_pidstore.errors import PIDDoesNotExistError
 from invenio_pidstore.models import PIDStatus
 
 from invenio_rdm_records.resources.serializers import DataCite43JSONSerializer
 
-from .base import BaseClient, BasePIDProvider
+from .base import PIDProvider
 
 
-class DOIDataCiteClient(BaseClient):
-    """DataCite Client.
+class DataCiteClient:
+    """DataCite Client."""
 
-    It Loads the values from config.
-    """
-
-    def __init__(self, name="datacite", url=None, config_key=None, **kwargs):
+    def __init__(self, name, config_prefix=None, **kwargs):
         """Constructor."""
-        config_key = config_key or f"RDM_RECORDS_DOI_DATACITE"
+        self.name = name
+        self._config_prefix = config_prefix or "DATACITE"
+        self._api = None
 
-        username = current_app.config.get(f"{config_key}_USERNAME")
-        password = current_app.config.get(f"{config_key}_PASSWORD")
-        prefix = current_app.config.get(f"{config_key}_PREFIX")
-        test_mode = current_app.config.get(f"{config_key}_TEST_MODE", True)
+    def cfg(self, key, default=None):
+        """Get a application config value."""
+        name = f"{self._config_prefix}_{key.upper()}"
+        return current_app.config.get(name, default)
 
-        super().__init__(name, username, password, url=url, **kwargs)
-
-        self.prefix = prefix
-        self.test_mode = test_mode
+    def generate_doi(self, record):
+        """Generate a DOI."""
+        doi_format = self.cfg('format', '{prefix}/{id}')
+        if callable(doi_format):
+            return doi_format(self.cfg('prefix'), record)
+        else:
+            return doi_format.format(
+                prefix=self.cfg('prefix'),
+                id=record.pid.pid_value
+            )
 
     def has_credentials(self, **kwargs):
         """Returns if the client has the credentials properly set up.
 
         If the client is running on test mode the credentials are not required.
         """
-        return self.username and self.password and self.prefix
+        return self.cfg('username') and self.cfg('password') \
+            and self.cfg('prefix')
+
+    @property
+    def api(self):
+        """DataCite REST API client instance."""
+        if self._api is None:
+            self._api = DataCiteRESTClient(
+                self.cfg('username'),
+                self.cfg('password'),
+                self.cfg('prefix'),
+                self.cfg('test_mode', True),
+            )
+        return self._api
 
 
-class DOIDataCitePIDProvider(BasePIDProvider):
+class DataCitePIDProvider(PIDProvider):
     """DataCite Provider class.
 
     Note that DataCite is only contacted when a DOI is reserved or
@@ -57,28 +74,23 @@ class DOIDataCitePIDProvider(BasePIDProvider):
     only at PIDStore level.
     """
 
-    name = "datacite"
-
-    def __init__(self, client_cls, pid_type="doi",
-                 default_status=PIDStatus.NEW, generate_id_func=None,
-                 generate_doi_func=None, **kwargs):
+    def __init__(
+            self,
+            id_,
+            client=None,
+            serializer=None,
+            pid_type="doi",
+            default_status=PIDStatus.NEW,
+            **kwargs):
         """Constructor."""
-        super().__init__(pid_type=pid_type, default_status=default_status)
-
-        self.client = client_cls()
-        self.api_client = DataCiteRESTClient(
-            self.client.username, self.client.password,
-            self.client.prefix, self.client.test_mode
+        super().__init__(
+            id_,
+            client=(client or
+                    DataCiteClient("datacite", config_prefix="DATACITE")),
+            pid_type=pid_type,
+            default_status=default_status
         )
-
-        self.generate_id = generate_id_func or \
-            DOIDataCitePIDProvider._generate_id
-
-        default_generate_doi = self._generate_doi
-        format_func = current_app.config['RDM_RECORDS_DOI_DATACITE_FORMAT']
-        if format_func and callable(format_func):
-            default_generate_doi = format_func
-        self.generate_doi = generate_doi_func or default_generate_doi
+        self.serializer = serializer or DataCite43JSONSerializer()
 
     @staticmethod
     def _log_errors(errors):
@@ -90,32 +102,14 @@ class DOIDataCitePIDProvider(BasePIDProvider):
             reason = error["title"]
             current_app.logger.warning(f"Error in {field}: {reason}")
 
-    @staticmethod
-    def _generate_id(record, **kwargs):
-        """Generate a unique DOI suffix.
-
-        The content after the slash.
-        """
-        recid = record.pid.pid_value
-        return f"{recid}"
-
-    def _generate_doi(self, record, **kwargs):
+    def generate_id(self, record, **kwargs):
         """Generate a unique DOI."""
-        prefix = self.client.prefix
-        id = self.generate_id(record, **kwargs)
-        format_string = current_app.config['RDM_RECORDS_DOI_DATACITE_FORMAT']
-        if format_string:
-            return format_string.format(prefix=prefix, id=id)
-        else:
-            return f"{prefix}/datacite.{id}"
+        # Delegate to client
+        return self.client.generate_doi(record)
 
-    def create(self, record, **kwargs):
-        """Create a new unique DOI PID based on the record ID."""
-        # managed provider should not receive a value
-        assert not kwargs.get("value")
-
-        doi = self.generate_doi(record, **kwargs)
-        return super().create(record, value=doi, **kwargs)
+    def can_modify(self, pid, **kwargs):
+        """Checks if the PID can be modified."""
+        return not pid.is_registered() and not pid.is_reserved()
 
     def register(self, pid, record, **kwargs):
         """Register a DOI via the DataCite API.
@@ -129,9 +123,9 @@ class DOIDataCitePIDProvider(BasePIDProvider):
             return False
 
         try:
-            doc = DataCite43JSONSerializer().dump_one(record)
+            doc = self.serializer.dump_one(record)
             url = kwargs["url"]
-            self.api_client.public_doi(
+            self.client.api.public_doi(
                 metadata=doc, url=url, doi=pid.pid_value)
             return True
         except DataCiteError as e:
@@ -149,11 +143,10 @@ class DOIDataCitePIDProvider(BasePIDProvider):
         :param record: the record metadata for the DOI.
         :returns: `True` if is updated successfully.
         """
-        # PIDS-FIXME: Do we want to log when reactivate the DOI
         try:
             # Set metadata
-            doc = DataCite43JSONSerializer().dump_one(record)
-            self.api_client.update_doi(
+            doc = self.serializer.dump_one(record)
+            self.client.api.update_doi(
                 metadata=doc, doi=pid.pid_value, url=url)
         except DataCiteError as e:
             current_app.logger.warning("DataCite provider error when "
@@ -176,9 +169,9 @@ class DOIDataCitePIDProvider(BasePIDProvider):
         """
         try:
             if pid.is_reserved():  # Delete only works for draft DOIs
-                self.api_client.delete_doi(pid.pid_value)
+                self.client.api.delete_doi(pid.pid_value)
             elif pid.is_registered():
-                self.api_client.hide_doi(pid.pid_value)
+                self.client.api.hide_doi(pid.pid_value)
         except DataCiteError as e:
             current_app.logger.warning("DataCite provider error when deleting "
                                        f"DOI for {pid.pid_value}")
@@ -197,17 +190,12 @@ class DOIDataCitePIDProvider(BasePIDProvider):
                   validation was passed successfully. The second one is an
                   array of error messages.
         """
-        success, errors = super().validate(
-            record, identifier, provider, **kwargs)
+        _, errors = super().validate(record, identifier, provider, **kwargs)
 
-        # format check
+        # Format check
         try:
-            self.api_client.check_doi(identifier)
+            self.client.api.check_doi(identifier)
         except ValueError as e:
             errors.append(str(e))
 
         return (True, []) if not errors else (False, errors)
-
-    def can_modify(self, pid, **kwargs):
-        """Checks if the PID can be modified."""
-        return not pid.is_registered() and not pid.is_reserved()
