@@ -47,21 +47,6 @@ def requests_service():
 
 
 @pytest.fixture()
-def minimal_community():
-    """Data for a minimal community"""
-    return {
-        "id": "blr",
-        "access": {
-            "visibility": "public",
-        },
-        "metadata": {
-            "title": "Biodiversity Literature Repository",
-            "type": "topic"
-        }
-    }
-
-
-@pytest.fixture()
 def minimal_community2():
     """Data for a minimal community"""
     return {
@@ -74,15 +59,6 @@ def minimal_community2():
             "type": "topic"
         }
     }
-
-
-@pytest.fixture()
-def community(running_app, minimal_community):
-    """Get the current RDM records service."""
-    return current_communities.service.create(
-        running_app.superuser_identity,
-        minimal_community,
-    )
 
 
 @pytest.fixture()
@@ -173,7 +149,7 @@ def test_creation(draft, running_app, community, service, requests_service):
 
     # Read review request (via request service)
     review = requests_service.read(
-        parent['review']['id'], running_app.superuser_identity
+        running_app.superuser_identity, parent['review']['id']
     ).to_dict()
 
     assert review['id'] == parent['review']['id']
@@ -415,8 +391,8 @@ def test_delete_draft_unsubmitted(
     pytest.raises(
         NoResultFound,
         requests_service.read,
+        running_app.superuser_identity,
         req_id,
-        running_app.superuser_identity
     )
 
 

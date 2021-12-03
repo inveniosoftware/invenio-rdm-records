@@ -36,6 +36,11 @@ from .schemas import RDMParentSchema, RDMRecordSchema
 from .schemas.parent.access import SecretLink
 
 
+def is_draft_and_has_review(record, ctx):
+    """Determine if submit review link should be included."""
+    return is_draft(record, ctx) and record.parent.review is not None
+
+
 #
 # Default search configuration
 #
@@ -151,6 +156,14 @@ class RDMRecordServiceConfig(RecordServiceConfig, RecordConfigMixin):
         "publish": RecordLink(
             "{+api}/records/{id}/draft/actions/publish",
             when=is_draft
+        ),
+        "review": RecordLink(
+            "{+api}/records/{id}/draft/review",
+            when=is_draft
+        ),
+        "submit-review": RecordLink(
+            "{+api}/records/{id}/draft/actions/submit-review",
+            when=is_draft_and_has_review,
         ),
         "versions": RecordLink("{+api}/records/{id}/versions"),
         "access_links": RecordLink("{+api}/records/{id}/access/links"),
