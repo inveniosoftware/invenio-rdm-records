@@ -95,7 +95,7 @@ def test_reserve_pid(running_app, es_clear, minimal_record):
     assert pid.status == PIDStatus.NEW
 
 
-def test_discard_exisisting_pid(running_app, es_clear, minimal_record):
+def test_discard_existing_pid(running_app, es_clear, minimal_record):
     # note discard is only performed over NEW pids for pids in status RESERVED
     # or REGISTERED the invalidate function must be used
     service = current_rdm_records.records_service
@@ -135,7 +135,7 @@ def test_oai_pid_default_created(running_app, es_clear, minimal_record):
 
     assert published_oai["identifier"]
     assert published_oai["provider"] == "oai"
-    assert published_oai["client"] == "oai"
+    assert "client" not in published_oai
 
 #
 # Workflows

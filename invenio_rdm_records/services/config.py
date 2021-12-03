@@ -10,8 +10,6 @@
 
 """RDM Record Service."""
 
-from functools import partial
-
 from flask_babelex import gettext as _
 from invenio_drafts_resources.services.records.components import \
     DraftFilesComponent, PIDComponent
@@ -33,8 +31,6 @@ from .components import AccessComponent, MetadataComponent, PIDsComponent, \
 from .customizations import FileConfigMixin, RecordConfigMixin, \
     SearchOptionsMixin
 from .permissions import RDMRecordPermissionPolicy
-from .pids.providers import DOIDataCiteClient, DOIDataCitePIDProvider, \
-    ExternalPIDProvider, OAIPIDClient, OAIPIDProvider
 from .result_items import SecretLinkItem, SecretLinkList
 from .schemas import RDMParentSchema, RDMRecordSchema
 from .schemas.parent.access import SecretLink
@@ -95,22 +91,9 @@ class RDMRecordServiceConfig(RecordServiceConfig, RecordConfigMixin):
     search_drafts = RDMSearchDraftsOptions
     search_versions = RDMSearchVersionsOptions
 
-    # PIDs providers
-    pids_providers = {
-        "doi": {
-            "default": "datacite",
-            "datacite": partial(
-                DOIDataCitePIDProvider, client_cls=DOIDataCiteClient
-            ),
-            "external": partial(ExternalPIDProvider, pid_type="doi"),
-        },
-        "oai": {
-            "default": "oai",
-            "oai": partial(OAIPIDProvider, client_cls=OAIPIDClient)
-        }
-    }
-
-    pids_required = ["doi", "oai"]
+    # PIDs providers - set from config in customizations.
+    pids_providers = {}
+    pids_required = []
 
     # Components - order matters!
     components = [

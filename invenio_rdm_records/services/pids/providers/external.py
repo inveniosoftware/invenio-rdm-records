@@ -10,21 +10,19 @@
 from flask import current_app
 from flask_babelex import lazy_gettext as _
 
-from .base import BasePIDProvider
+from .base import PIDProvider
 
 
-class ExternalPIDProvider(BasePIDProvider):
+class ExternalPIDProvider(PIDProvider):
     """This provider is validates PIDs to unmanaged constraints.
 
     It does not support any other type of operation. However, it helps
     generalize the service code by using polymorphism.
     """
 
-    name = "external"
-
-    def __init__(self, pid_type, **kwargs):
+    def __init__(self, name, pid_type, **kwargs):
         """Constructor."""
-        super().__init__(pid_type=pid_type, system_managed=False)
+        super().__init__(name, pid_type=pid_type, managed=False, **kwargs)
 
     def update(self, pid, record, **kwargs):
         """Not allowed for unmanaged PIDs."""
@@ -40,8 +38,9 @@ class ExternalPIDProvider(BasePIDProvider):
                   array of error messages.
         """
         if client:
-            current_app.error("Configuration error: client attribute not "
-                              f"supported for provider {self.name}")
+            current_app.logger.error(
+                "Configuration error: client attribute not supported for "
+                f"provider {self.name}")
             raise  # configuration error
 
         success, errors = super().validate(

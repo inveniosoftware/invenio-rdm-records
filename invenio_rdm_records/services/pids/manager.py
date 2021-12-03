@@ -11,13 +11,11 @@ from datetime import datetime
 
 from flask_babelex import lazy_gettext as _
 from invenio_db import db
-from invenio_drafts_resources.services.records import RecordService
 from invenio_pidstore.errors import PIDDoesNotExistError
-from invenio_pidstore.models import PersistentIdentifier, PIDStatus
+from invenio_pidstore.models import PIDStatus
 from marshmallow import ValidationError
 
 from .errors import PIDSchemeNotSupportedError, ProviderNotSupportedError
-from .tasks import register_pid, update_pid
 
 
 class PIDManager:
@@ -33,22 +31,21 @@ class PIDManager:
         if not provider_name:
             provider_name = providers["default"]  # mandatory default
         try:
-            provider_cls = providers[provider_name]
-            return provider_cls()
+            return providers[provider_name]
         except KeyError:
             raise ProviderNotSupportedError(provider_name, scheme)
 
     def _validate_pids_schemes(self, pids):
-        """Validate the pid schemes are supported by the service.
+        """Validate the pid schemes that are supported by the service.
 
         This would only fail on the REST API or a misconfigured web UI.
         The marshmallow schema validates that the structure of the data is
-        correct. This function validates that the given pids are actually
-        supported.
+        correct. This function validates that the given pids schemes are
+        actually supported.
         """
-        provider_schemes = set(self._providers.keys())
-        all_schemes = set(pids.keys())
-        unknown_schemes = all_schemes - provider_schemes
+        supported_schemes = set(self._providers.keys())
+        input_schemes = set(pids.keys())
+        unknown_schemes = input_schemes - supported_schemes
         if unknown_schemes:
             raise PIDSchemeNotSupportedError(unknown_schemes)
 
@@ -58,8 +55,7 @@ class PIDManager:
         This function assumes all pid schemes are supported by the system.
         """
         for scheme, pid in pids.items():
-            provider_name = pid.get("provider")
-            provider = self._get_provider(scheme, provider_name)
+            provider = self._get_provider(scheme, pid.get("provider"))
             success, val_errors = provider.validate(record=record, **pid)
             if not success:
                 errors.append({
@@ -92,13 +88,15 @@ class PIDManager:
         pid_attrs = {}
         if identifier:
             try:
-                pid = provider.get(pid_value=identifier)
+                pid = provider.get(identifier)
             except PIDDoesNotExistError:
                 pid = None
             # the pid will be reactivated if it was deleted
             if not pid or pid.is_deleted():
                 pid = provider.create(
-                    record=draft, value=identifier, status=PIDStatus.RESERVED
+                    record=draft,
+                    pid_value=identifier,
+                    status=PIDStatus.RESERVED,
                 )
             pid_attrs = {
                 "identifier": identifier,
@@ -127,24 +125,24 @@ class PIDManager:
 
         return pid_attrs
 
-    def create_all(self, draft, pids):
+    def create_all(self, draft, pids=None, schemes=None):
         """Create many PIDs for a draft."""
-        if isinstance(pids, dict):
-            for scheme, pid_attrs in pids.items():
-                pids[scheme] = self.create(
-                    draft,
-                    scheme,
-                    pid_attrs["identifier"],
-                    pid_attrs.get("provider"),
-                )
-            return pids
+        result = {}
 
-        else:  # list
-            _pids = {}
-            for scheme in pids:
-                _pids[scheme] = self.create(draft, scheme)
+        # Create with an identifier value provided
+        for scheme, pid_attrs in (pids or {}).items():
+            result[scheme] = self.create(
+                draft,
+                scheme,
+                pid_attrs["identifier"],
+                pid_attrs.get("provider"),
+            )
 
-            return _pids
+        # Create without an identifier value provided (only the scheme)
+        for scheme in (schemes or []):
+            result[scheme] = self.create(draft, scheme)
+
+        return result
 
     def update_remote(self, record, scheme):
         """Update a registered PID on a remote provider."""
@@ -156,10 +154,9 @@ class PIDManager:
                 field_name=f"pids",
             )
 
-        provider_name = pid_attrs["provider"]
-        provider = self._get_provider(scheme, provider_name)
-        pid_value = pid_attrs["identifier"]
-        pid = provider.get(pid_value=pid_value, pid_type=scheme)
+        provider = self._get_provider(scheme, pid_attrs["provider"])
+        pid = provider.get(pid_attrs["identifier"])
+
         provider.update(pid, record=record)
 
     def reserve(self, draft, scheme, identifier, provider_name):
@@ -187,21 +184,21 @@ class PIDManager:
             )
 
         provider = self._get_provider(scheme, pid_attrs["provider"])
-        pid_value = pid_attrs["identifier"]
-        pid = provider.get(pid_value=pid_value, pid_type=scheme)
+        pid = provider.get(pid_attrs["identifier"])
 
-        provider.register(
-            pid, record=record, url=url
-        )
+        provider.register(pid, record=record, url=url)
 
     def discard(self, scheme, identifier, provider_name=None):
         """Discard a PID."""
         provider = self._get_provider(scheme, provider_name)
-        pid = provider.get(pid_value=identifier)
+        pid = provider.get(identifier)
         if not provider.can_modify(pid):
             raise ValidationError(message=[{
                     "field": f"pids.{scheme}",
-                    "message": _("Cannot modify a reserved or registered PID.")
+                    "message": _(
+                        "Cannot discard a reserved or registered persistent "
+                        "identifier."
+                    )
                 }])
 
         provider.delete(pid)

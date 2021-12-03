@@ -18,7 +18,7 @@ from invenio_rdm_records.services.pids.providers import ExternalPIDProvider
 @pytest.fixture(scope="function")
 def external_provider():
     """Application factory fixture."""
-    return ExternalPIDProvider(pid_type="testid")
+    return ExternalPIDProvider("external", pid_type="testid")
 
 
 @pytest.fixture(scope="function")

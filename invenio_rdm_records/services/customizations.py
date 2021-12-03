@@ -59,7 +59,7 @@ class RecordConfigMixin:
     """Shared customization for record service configs."""
 
     @classmethod
-    def customize(cls, permission_policy=None, doi_registration=False,
+    def customize(cls, permission_policy=None, pid_providers=None, pids=None,
                   **kwargs):
         """Class method to customize the config for an instance."""
         attrs = {}
@@ -74,12 +74,22 @@ class RecordConfigMixin:
                 search_opt_cls = getattr(cls, opt)
                 attrs[opt] = search_opt_cls.customize(kwargs[opt])
 
+        # PID Providers and required PIDs
+        attrs['pids_providers'] = {}
+        attrs['pids_required'] = []
+        providers = {p.name: p for p in pid_providers}
+
+        for scheme, conf in pids.items():
+            if conf.get('required', False):
+                attrs['pids_required'].append(scheme)
+
+            attrs['pids_providers'][scheme] = {
+                "default": None,
+            }
+            for name in conf.get("providers", []):
+                attrs['pids_providers'][scheme][name] = providers[name]
+                if attrs['pids_providers'][scheme]['default'] is None:
+                    attrs['pids_providers'][scheme]['default'] = name
+
         # Create the config class
-        new_cls = _make_cls(cls, attrs)
-
-        # TODO: Change how to customize PID providers. Was moved here from
-        # ext.py
-        if not doi_registration:
-            new_cls.pids_providers.pop("doi", None)
-
-        return new_cls
+        return _make_cls(cls, attrs)

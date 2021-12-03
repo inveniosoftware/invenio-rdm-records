@@ -17,12 +17,7 @@ from invenio_rdm_records.services.pids.providers import OAIPIDProvider
 
 @pytest.fixture()
 def invenio_provider(mocker):
-    client = mocker.patch(
-        "invenio_rdm_records.services.pids.providers.OAIPIDClient"
-    )
-    mocker.patch("invenio_rdm_records.services.pids.providers.OAIPIDProvider")
-
-    return OAIPIDProvider(client_cls=client)
+    return OAIPIDProvider("oai")
 
 
 @pytest.fixture(scope="function")
@@ -76,9 +71,3 @@ def test_invenio_provider_update(record, invenio_provider, mocker):
 
     with pytest.raises(NotImplementedError):
         invenio_provider.update(pid=created_pid, record=record, url=None)
-
-
-def test_invenio_provider_get_status(record, invenio_provider):
-    created_pid = invenio_provider.create(record)
-    status = invenio_provider.get_status(created_pid.pid_value)
-    assert status == PIDStatus.REGISTERED

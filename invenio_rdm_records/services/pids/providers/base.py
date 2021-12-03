@@ -6,62 +6,52 @@
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
 
-"""PID Base Provider."""
+"""PID Provider."""
 
 from flask import current_app
 from flask_babelex import lazy_gettext as _
 from invenio_pidstore.errors import PIDAlreadyExists, PIDDoesNotExistError
 from invenio_pidstore.models import PersistentIdentifier, PIDStatus
-from sqlalchemy.orm.exc import NoResultFound
 
 
-class BaseClient:
-    """PID Client base class."""
+class PIDProvider:
+    """Base class for PID providers."""
 
-    def __init__(self, name, username=None, password=None, url=None, **kwargs):
+    def __init__(self, name, client=None, pid_type=None,
+                 default_status=PIDStatus.NEW, managed=True, **kwargs):
         """Constructor."""
         self.name = name
-        self.username = username
-        self.password = password
-        self.url = url
-
-
-class BasePIDProvider:
-    """Base Provider class."""
-
-    name = None
-
-    def _generate_id(self, record, **kwargs):
-        """Generates an identifier value."""
-        raise NotImplementedError
-
-    def __init__(self, client=None, pid_type=None,
-                 default_status=PIDStatus.NEW, system_managed=True,
-                 required=False, **kwargs):
-        """Constructor."""
         self.client = client
         self.pid_type = pid_type
         self.default_status = default_status
-        self.system_managed = system_managed
-        self.required = required
+        self.managed = managed
+
+    def generate_id(self, record, **kwargs):
+        """Generates an identifier value."""
+        raise NotImplementedError
 
     def is_managed(self):
-        """Returns if the PIDs from the provider are managed by the system.
+        """Determine if the provider is managed or unmanaged.
 
-        This helps differentiate external providers.
+        Managed providers auto-generate identifiers, while unmanaged providers
+        a user must supply it with the identifier value.
         """
-        return self.system_managed
+        return self.managed
 
-    def get(self, pid_value, pid_type=None, pid_provider=None):
+    def can_modify(self, pid, **kwargs):
+        """Checks if the given PID can be modified."""
+        return True
+
+    def get(self, pid_value, pid_provider=None):
         """Get a persistent identifier for this provider.
 
         :param pid_type: Persistent identifier type.
         :param pid_value: Persistent identifier value.
         :returns: A :class:`invenio_pidstore.models.base.PersistentIdentifier`
-            instance.
+            instance.x
         """
         args = {
-            "pid_type": pid_type or self.pid_type,
+            "pid_type": self.pid_type,
             "pid_value": pid_value
         }
         if pid_provider:
@@ -70,31 +60,7 @@ class BasePIDProvider:
 
         return PersistentIdentifier.get(**args)
 
-    def get_by_record(self, record_id, pid_type=None, pid_value=None,
-                      object_type="rec"):
-        """Get a persistent identifier for this provider.
-
-        :param record_id: the record UUID.
-        :param pid_type: Persistent identifier type.
-        :param pid_value: Persistent identifier value.
-        :param object_type: Persistent identifier object_type.
-        :returns: A :class:`invenio_pidstore.models.base.PersistentIdentifier`
-            instance.
-        """
-        query = PersistentIdentifier.query.filter_by(
-            pid_type=pid_type or self.pid_type,
-            object_type=object_type,
-            object_uuid=record_id
-        )
-        if pid_value:
-            query.filter_by(pid_value=pid_value)
-
-        try:
-            return query.one()
-        except NoResultFound:
-            raise PIDDoesNotExistError(pid_type, None)
-
-    def create(self, record, value, **kwargs):
+    def create(self, record, pid_value=None, status=None, **kwargs):
         """Get or create the PID with given value for the given record.
 
         :param record: the record to create the PID for.
@@ -102,15 +68,22 @@ class BasePIDProvider:
         :returns: A :class:`invenio_pidstore.models.base.PersistentIdentifier`
             instance.
         """
+        if pid_value is None:
+            if not self.is_managed():
+                raise ValueError("You must provide a pid value.")
+            pid_value = self.generate_id(record)
+
         try:
-            pid = self.get(value)
+            pid = self.get(pid_value)
         except PIDDoesNotExistError:
             # not existing, create a new one
-            return self.create_by_pid(
-                pid_value=value,
+            return PersistentIdentifier.create(
+                self.pid_type,
+                pid_value,
+                pid_provider=self.name,
                 object_type="rec",
                 object_uuid=record.id,
-                **kwargs
+                status=status or self.default_status,
             )
 
         # re-activate if previously deleted
@@ -118,45 +91,14 @@ class BasePIDProvider:
             pid.sync_status(PIDStatus.NEW)
             return pid
         else:
-            raise PIDAlreadyExists(self.pid_type, value)
-
-    def create_by_pid(self, pid_value=None, pid_type=None, status=None,
-                      object_type=None, object_uuid=None, **kwargs):
-        """Create a new instance for the given type and pid.
-
-        :param pid_value: Persistent identifier value. (Default: None).
-        :param pid_type: Persistent identifier type. (Default: None).
-        :param status: Status for the created PID (Default:
-            :attr:`invenio_pidstore.models.PIDStatus.NEW`).
-        :param object_type: The object type is a string that identify its type.
-            (Default: None).
-        :param object_uuid: The object UUID. (Default: None).
-        :returns: A :class:`invenio_pidstore.models.PersistentIdentifier`
-            instance.
-        """
-        pid_type = pid_type or self.pid_type
-        assert pid_type
-
-        pid_value = pid_value or self._generate_id(**kwargs)
-        assert pid_value
-
-        status = status or self.default_status
-        assert status
-
-        return PersistentIdentifier.create(
-            pid_type,
-            pid_value,
-            pid_provider=self.name,
-            object_type=object_type,
-            object_uuid=object_uuid,
-            status=status,
-        )
+            raise PIDAlreadyExists(self.pid_type, pid_value)
 
     def reserve(self, pid, **kwargs):
         """Reserve a persistent identifier.
 
         This might or might not be useful depending on the service of the
         provider.
+
         See: :meth:`invenio_pidstore.models.PersistentIdentifier.reserve`.
         """
         is_reserved_or_registered = pid.is_reserved() or pid.is_registered()
@@ -184,10 +126,6 @@ class BasePIDProvider:
         """
         return pid.delete()
 
-    def get_status(self, identifier, **kwargs):
-        """Get the status of the identifier."""
-        return self.get(identifier, **kwargs).status
-
     def validate(
         self, record, identifier=None, provider=None, **kwargs
     ):
@@ -205,7 +143,7 @@ class BasePIDProvider:
 
         # deduplication check
         try:
-            pid = self.get(pid_value=identifier, pid_type=self.pid_type)
+            pid = self.get(pid_value=identifier)
             if pid.object_uuid != record.id:
                 current_app.logger.warning(
                     f"PID {self.pid_type}:{identifier} already exists"
@@ -220,7 +158,3 @@ class BasePIDProvider:
             pass
 
         return True, []
-
-    def can_modify(self, pid, **kwargs):
-        """Checks if the PID can be modified."""
-        return True
