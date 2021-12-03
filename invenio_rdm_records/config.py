@@ -132,14 +132,6 @@ RDM_RECORDS_UI_EDIT_URL = "/uploads/<pid_value>"
 #: Default site URL (used only when not in a context - e.g. like celery tasks).
 THEME_SITEURL = "http://127.0.0.1:5000"
 
-#: DataCite DOI credentials
-RDM_RECORDS_DOI_DATACITE_ENABLED = True
-RDM_RECORDS_DOI_DATACITE_USERNAME = ""
-RDM_RECORDS_DOI_DATACITE_PASSWORD = ""
-RDM_RECORDS_DOI_DATACITE_PREFIX = "10.1234"
-RDM_RECORDS_DOI_DATACITE_TEST_MODE = True
-RDM_RECORDS_DOI_DATACITE_FORMAT = "{prefix}/{id}"
-
 
 def always_valid(identifier):
     """Gives every identifier as valid."""

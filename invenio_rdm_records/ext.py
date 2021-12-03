@@ -8,6 +8,8 @@
 
 """DataCite-based data model for Invenio."""
 
+import warnings
+
 from flask import flash, g, request, session
 from flask_babelex import _
 from flask_principal import identity_loaded
@@ -95,6 +97,22 @@ class InvenioRDMRecords(object):
             if k in supported_configurations or k.startswith('RDM_') \
                     or k.startswith('DATACITE_'):
                 app.config.setdefault(k, getattr(config, k))
+
+        # Deprecations
+        deprecated = [
+            ('RDM_RECORDS_DOI_DATACITE_USERNAME', 'DATACITE_USERNAME'),
+            ('RDM_RECORDS_DOI_DATACITE_PASSWORD', 'DATACITE_PASSWORD'),
+            ('RDM_RECORDS_DOI_DATACITE_PREFIX', 'DATACITE_PREFIX'),
+            ('RDM_RECORDS_DOI_DATACITE_TEST_MODE', 'DATACITE_TEST_MODE'),
+            ('RDM_RECORDS_DOI_DATACITE_FORMAT', 'DATACITE_FORMAT'),
+            ('RDM_RECORDS_DOI_DATACITE_ENABLED', 'RDM_PERSISTENT_IDENTIFIERS'),
+        ]
+        for old, new in deprecated:
+            if old in app.config:
+                warnings.warn(
+                    f"{old} has been replaced with {new}.",
+                    DeprecationWarning
+                )
 
     def service_configs(self, app):
         """Customized service configs."""
