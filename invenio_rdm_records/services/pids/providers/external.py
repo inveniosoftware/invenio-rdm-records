@@ -24,10 +24,6 @@ class ExternalPIDProvider(PIDProvider):
         """Constructor."""
         super().__init__(name, pid_type=pid_type, managed=False, **kwargs)
 
-    def update(self, pid, record, **kwargs):
-        """Not allowed for unmanaged PIDs."""
-        raise NotImplementedError
-
     def validate(
         self, record, identifier=None, provider=None, client=None, **kwargs
     ):

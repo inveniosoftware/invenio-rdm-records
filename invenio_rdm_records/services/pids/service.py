@@ -59,11 +59,11 @@ class PIDsService(RecordService):
         )
 
     @unit_of_work()
-    def update_remote(self, id_, identity, scheme, uow=None):
+    def update(self, id_, identity, scheme, uow=None):
         """Update a registered PID on a remote provider."""
         record = self.record_cls.pid.resolve(id_, registered_only=False)
         self.require_permission(identity, "pid_update", record=record)
-        self._manager.update_remote(record, scheme)
+        self._manager.update(record, scheme)
 
         # draft and index do not need commit/refresh
 
@@ -92,27 +92,8 @@ class PIDsService(RecordService):
         )
 
     @unit_of_work()
-    def register(self, id_, identity, scheme, uow=None):
-        """Register a PID of a record."""
-        record = self.record_cls.pid.resolve(id_, registered_only=False)
-        self.require_permission(identity, "pid_register", record=record)
-        # no need to validate since the record class was already published
-        self._manager.register(
-            record, scheme, url=self.links_item_tpl.expand(record)["self_html"]
-        )
-
-        # draft and index do not need commit/refresh
-
-        return self.result_item(
-            self,
-            identity,
-            record,
-            links_tpl=self.links_item_tpl,
-        )
-
-    @unit_of_work()
     def register_or_update(self, id_, identity, scheme, uow=None):
-        """Register a PID of a record or update.
+        """Register or update a PID of a record.
 
         If the PID has already been register it updates the remote.
         """
@@ -124,7 +105,7 @@ class PIDsService(RecordService):
         )
         if pid.is_registered():
             self.require_permission(identity, "pid_update", record=record)
-            self._manager.update_remote(record, scheme)
+            self._manager.update(record, scheme)
         else:
             self.require_permission(identity, "pid_register", record=record)
             self._manager.register(
@@ -170,6 +151,6 @@ class PIDsService(RecordService):
     def invalidate(self, *args, **kwargs):
         """Invalidates a registered PID of a Record.
 
-        This operation can only be perfomed by an admin.
+        This operation can only be performed by an admin.
         """
         raise NotImplementedError()

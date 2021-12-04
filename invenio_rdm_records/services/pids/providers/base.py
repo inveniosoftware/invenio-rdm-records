@@ -117,7 +117,7 @@ class PIDProvider:
 
     def update(self, pid, **kwargs):
         """Update information about the persistent identifier."""
-        raise NotImplementedError
+        pass
 
     def delete(self, pid, **kwargs):
         """Delete a persistent identifier.

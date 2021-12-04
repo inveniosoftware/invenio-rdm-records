@@ -144,7 +144,7 @@ class PIDManager:
 
         return result
 
-    def update_remote(self, record, scheme):
+    def update(self, record, scheme):
         """Update a registered PID on a remote provider."""
         pid_attrs = record.pids.get(scheme, None)
         if not pid_attrs:

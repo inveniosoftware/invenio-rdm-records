@@ -16,7 +16,7 @@ from invenio_drafts_resources.services.records.components import \
     ServiceComponent
 from invenio_records_resources.services.uow import TaskOp
 
-from ..pids.tasks import register_pid, update_pid
+from ..pids.tasks import register_or_update_pid
 
 
 class PIDsComponent(ServiceComponent):
@@ -107,10 +107,8 @@ class PIDsComponent(ServiceComponent):
 
         # Async register/update tasks after transaction commit.
         for scheme in pids.keys():
-            if draft.is_published:
-                self.uow.register(TaskOp(update_pid, record["id"], scheme))
-            else:
-                self.uow.register(TaskOp(register_pid, record["id"], scheme))
+            self.uow.register(
+                TaskOp(register_or_update_pid, record["id"], scheme))
 
     def new_version(self, identity, draft=None, record=None):
         """A new draft should not have any pids from the previous record."""
