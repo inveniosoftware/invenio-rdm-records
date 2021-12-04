@@ -9,25 +9,14 @@
 
 from celery import shared_task
 from invenio_access.permissions import system_identity
-from invenio_db import db
 
 from invenio_rdm_records.proxies import current_rdm_records
 
 
 @shared_task(ignore_result=True)
-def update_pid(recid, scheme):
+def register_or_update_pid(recid, scheme):
     """Update a PID on the remote provider."""
     current_rdm_records.records_service.pids.register_or_update(
-        id_=recid,
-        identity=system_identity,
-        scheme=scheme,
-    )
-
-
-@shared_task(ignore_result=True)
-def register_pid(recid, scheme):
-    """Registers a PID of a record."""
-    current_rdm_records.records_service.pids.register(
         id_=recid,
         identity=system_identity,
         scheme=scheme,

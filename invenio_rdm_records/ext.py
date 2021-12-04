@@ -99,6 +99,7 @@ class InvenioRDMRecords(object):
                 app.config.setdefault(k, getattr(config, k))
 
         # Deprecations
+        # Remove when v6.0 LTS is no longer supported.
         deprecated = [
             ('RDM_RECORDS_DOI_DATACITE_USERNAME', 'DATACITE_USERNAME'),
             ('RDM_RECORDS_DOI_DATACITE_PASSWORD', 'DATACITE_PASSWORD'),
@@ -109,10 +110,19 @@ class InvenioRDMRecords(object):
         ]
         for old, new in deprecated:
             if old in app.config:
-                warnings.warn(
-                    f"{old} has been replaced with {new}.",
-                    DeprecationWarning
-                )
+                if new in app.config:
+                    app.config[new] = app.config[old]
+                    warnings.warn(
+                        f"{old} has been replaced with {new}. "
+                        "Please update your config.",
+                        DeprecationWarning
+                    )
+                else:
+                    warnings.warn(
+                        f"{old} is deprecated. Please remove it from your "
+                        "config.",
+                        DeprecationWarning
+                    )
 
     def service_configs(self, app):
         """Customized service configs."""

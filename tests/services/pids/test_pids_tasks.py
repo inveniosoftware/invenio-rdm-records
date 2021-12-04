@@ -8,14 +8,10 @@
 
 """PID service tasks tests."""
 
-
-from collections import namedtuple
-
-import pytest
 from invenio_pidstore.models import PIDStatus
 
 from invenio_rdm_records.proxies import current_rdm_records
-from invenio_rdm_records.services.pids.tasks import register_pid
+from invenio_rdm_records.services.pids.tasks import register_or_update_pid
 
 
 def test_register_pid(
@@ -48,7 +44,7 @@ def test_register_pid(
     assert pid.status == PIDStatus.NEW
     pid.reserve()
     assert pid.status == PIDStatus.RESERVED
-    register_pid(recid=record["id"], scheme="doi")
+    register_or_update_pid(recid=record["id"], scheme="doi")
     assert pid.status == PIDStatus.REGISTERED
 
 

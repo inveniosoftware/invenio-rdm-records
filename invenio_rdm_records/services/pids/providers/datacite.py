@@ -8,6 +8,7 @@
 """DataCite DOI Provider."""
 
 import json
+import warnings
 
 from datacite import DataCiteRESTClient
 from datacite.errors import DataCiteError
@@ -57,6 +58,12 @@ class DataCiteClient:
     def api(self):
         """DataCite REST API client instance."""
         if self._api is None:
+            if not self.has_credentials():
+                warnings.warn(
+                    f"The {self.__class__.name} is misconfigured. Please "
+                    "provide credentials via the configration variables.",
+                    UserWarning
+                )
             self._api = DataCiteRESTClient(
                 self.cfg('username'),
                 self.cfg('password'),
