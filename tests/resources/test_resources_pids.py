@@ -1,0 +1,114 @@
+# -*- coding: utf-8 -*-
+#
+# Copyright (C) 2021 CERN.
+#
+# Invenio-RDM-Records is free software; you can redistribute it and/or modify
+# it under the terms of the MIT License; see LICENSE file for more details.
+
+"""PIDs resource level tests."""
+
+from copy import deepcopy
+
+import pytest
+
+
+def link(url):
+    """Strip the host part of a link."""
+    api_prefix = 'https://127.0.0.1:5000/api'
+    if url.startswith(api_prefix):
+        return url[len(api_prefix):]
+
+
+@pytest.fixture()
+def ui_headers():
+    """Default headers for making requests."""
+    return {
+        'content-type': 'application/json',
+        'accept': 'application/vnd.inveniordm.v1+json',
+    }
+
+
+def publish_record(client, record, headers):
+    """Publish a record."""
+    draft = client.post('/records', headers=headers, json=record)
+    assert draft.status_code == 201
+    record = client.post(link(draft.json['links']['publish']), headers=headers)
+    assert record.status_code == 202
+    record = client.get(link(record.json['links']['self']), headers=headers)
+    assert record.status_code == 200
+    return record.json
+
+
+def test_external_doi_cleanup(
+        running_app, client, minimal_record, headers, es_clear, uploader):
+    """Tests for issue #845."""
+    client = uploader.login(client)
+    doi1 = '10.1234/1'
+    doi2 = '10.1234/2'
+    doi3 = '10.1234/3'
+
+    # Publish two record with different external DOIs.
+    r1_data = deepcopy(minimal_record)
+    r2_data = deepcopy(minimal_record)
+    r1_data['pids'] = {'doi': {'provider': 'external', 'identifier': doi1}}
+    r2_data['pids'] = {'doi': {'provider': 'external', 'identifier': doi2}}
+    record1 = publish_record(client, r1_data, headers)
+    record2 = publish_record(client, r2_data, headers)
+
+    def _change_doi(record, doi):
+        # Edit mode
+        draft = client.post(link(record['links']['draft']))
+        assert draft.status_code == 201
+        # Update
+        data = draft.json
+        data['pids']['doi']['identifier'] = doi
+        res = client.put(
+            link(draft.json['links']['self']),
+            headers=headers,
+            json=data)
+        assert res.status_code == 200
+        # Publish
+        record = client.post(
+            link(draft.json['links']['publish']), headers=headers)
+        assert record.status_code == 202
+        return record
+
+    # Edit record 1 to use a DOI 3, and edit record 2 to use doi 1 (should be
+    # possible because it was just released from record 1)
+    record1 = _change_doi(record1, doi3)
+    record2 = _change_doi(record2, doi1)
+
+
+def test_external_doi_duplicate_detection(
+        running_app, client, minimal_record, headers, es_clear, uploader):
+    """Tests for issue #845."""
+    client = uploader.login(client)
+    doi1 = '10.1234/1'
+
+    # Publish one record with  DOIs.
+    r1_data = deepcopy(minimal_record)
+    r2_data = deepcopy(minimal_record)
+    r1_data['pids'] = {'doi': {'provider': 'external', 'identifier': doi1}}
+    r2_data['pids'] = {'doi': {'provider': 'external', 'identifier': doi1}}
+    # Publish record 1 with doi 1
+    record1 = publish_record(client, r1_data, headers)
+
+    # Try to create records 2 with doi 1 - should report errors because
+    # it's already assigned to another record.
+    draft = client.post('/records', headers=headers, json=r2_data)
+    assert draft.status_code == 201
+    assert draft.json['errors'] == [
+        {'field': 'pids.doi', 'message': ['doi:10.1234/1 already exists.']}]
+    assert draft.json["pids"] == \
+        {'doi': {'identifier': '10.1234/1', 'provider': 'external'}}
+
+    # Update DOI and publishing again
+    data = draft.json
+    data['pids']['doi']['identifier'] = '10.1234/2'
+    res = client.put(
+        link(draft.json['links']['self']),
+        headers=headers,
+        json=data)
+    assert res.status_code == 200
+    record = client.post(link(draft.json['links']['publish']), headers=headers)
+    assert record.status_code == 202

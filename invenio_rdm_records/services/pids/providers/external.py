@@ -9,6 +9,7 @@
 
 from flask import current_app
 from flask_babelex import lazy_gettext as _
+from invenio_db import db
 
 from .base import PIDProvider
 
@@ -46,3 +47,12 @@ class ExternalPIDProvider(PIDProvider):
             errors.append(_("PID value is required for external provider."))
 
         return (True, []) if not errors else (False, errors)
+
+    def delete(self, pid, **kwargs):
+        """Delete a persistent identifier."""
+        # PID is in REGISTERED status and we don't want to keep it around, so
+        # force delete the PID (only supported for NEW status in the API so we
+        # circumvent the API interface here).
+        with db.session.begin_nested():
+            db.session.delete(pid)
+        return True
