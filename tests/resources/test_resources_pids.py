@@ -43,9 +43,9 @@ def test_external_doi_cleanup(
         running_app, client, minimal_record, headers, es_clear, uploader):
     """Tests for issue #845."""
     client = uploader.login(client)
-    doi1 = '10.1234/1'
-    doi2 = '10.1234/2'
-    doi3 = '10.1234/3'
+    doi1 = '10.4321/1'
+    doi2 = '10.4321/2'
+    doi3 = '10.4321/3'
 
     # Publish two record with different external DOIs.
     r1_data = deepcopy(minimal_record)
@@ -83,7 +83,7 @@ def test_external_doi_duplicate_detection(
         running_app, client, minimal_record, headers, es_clear, uploader):
     """Tests for issue #845."""
     client = uploader.login(client)
-    doi1 = '10.1234/1'
+    doi1 = '10.4321/1'
 
     # Publish one record with  DOIs.
     r1_data = deepcopy(minimal_record)
@@ -98,13 +98,13 @@ def test_external_doi_duplicate_detection(
     draft = client.post('/records', headers=headers, json=r2_data)
     assert draft.status_code == 201
     assert draft.json['errors'] == [
-        {'field': 'pids.doi', 'message': ['doi:10.1234/1 already exists.']}]
+        {'field': 'pids.doi', 'message': ['doi:10.4321/1 already exists.']}]
     assert draft.json["pids"] == \
-        {'doi': {'identifier': '10.1234/1', 'provider': 'external'}}
+        {'doi': {'identifier': '10.4321/1', 'provider': 'external'}}
 
     # Update DOI and publishing again
     data = draft.json
-    data['pids']['doi']['identifier'] = '10.1234/2'
+    data['pids']['doi']['identifier'] = '10.4321/2'
     res = client.put(
         link(draft.json['links']['self']),
         headers=headers,
@@ -112,3 +112,23 @@ def test_external_doi_duplicate_detection(
     assert res.status_code == 200
     record = client.post(link(draft.json['links']['publish']), headers=headers)
     assert record.status_code == 202
+
+
+def test_external_doi_blocked_prefix(
+        running_app, client, minimal_record, headers, es_clear, uploader):
+    """Tests for issue #845."""
+    client = uploader.login(client)
+    # Make a DOI in the datacite prefix
+    datacite_prefix = running_app.app.config['DATACITE_PREFIX']
+    doi = f'{datacite_prefix}/1'
+
+    # Publish one record with  DOIs.
+    minimal_record['pids'] = {
+        'doi': {'provider': 'external', 'identifier': doi}}
+    draft = client.post('/records', headers=headers, json=minimal_record)
+    assert draft.status_code == 201
+    # The invalid prefix should be reported.
+    assert draft.json['errors'] == [{
+        'field': 'pids.doi',
+         'message': ["The prefix '10.4321' is administrated locally."]
+    }]
