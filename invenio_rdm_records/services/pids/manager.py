@@ -60,7 +60,7 @@ class PIDManager:
             if not success:
                 errors.append({
                     "field": f"pids.{scheme}",
-                    "message": val_errors
+                    "messages": val_errors
                 })
 
     def validate(self, pids, record, errors=None, raise_errors=False):

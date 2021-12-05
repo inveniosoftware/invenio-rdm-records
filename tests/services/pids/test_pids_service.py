@@ -255,7 +255,7 @@ def test_pids_duplicates(running_app, es_clear, minimal_record):
     duplicated_draft = service.create(superuser_identity, data)
     error_msg = {
         'field': 'pids.doi',
-        'message': [
+        'messages': [
             f'doi:{doi} already exists.',
             'The prefix \'10.1234\' is administrated locally.',
         ]
@@ -268,7 +268,7 @@ def test_pids_duplicates(running_app, es_clear, minimal_record):
     duplicated_draft = service.create(superuser_identity, data)
     error_msg = {
         'field': 'pids.doi',
-        'message': [
+        'messages': [
             f'doi:{doi} already exists.',
             'The prefix \'10.1234\' is administrated locally.',
         ]
@@ -285,7 +285,7 @@ def test_pids_duplicates(running_app, es_clear, minimal_record):
     duplicated_draft = service.create(superuser_identity, data)
     error_msg = {
         'field': 'pids.doi',
-        'message': [f'doi:{doi} already exists.']
+        'messages': [f'doi:{doi} already exists.']
     }
     assert error_msg in duplicated_draft.errors
 
@@ -298,7 +298,7 @@ def test_pids_duplicates(running_app, es_clear, minimal_record):
     duplicated_draft = service.create(superuser_identity, data)
     error_msg = {
         'field': 'pids.doi',
-        'message': [f'doi:{doi} already exists.']
+        'messages': [f'doi:{doi} already exists.']
     }
     assert error_msg in duplicated_draft.errors
 
@@ -317,7 +317,7 @@ def test_pids_creation_invalid_external_payload(
 
     draft = service.create(superuser_identity, data)
     assert draft.errors == [
-        {'field': 'pids.doi', 'message': ['Missing DOI for required field.']}
+        {'field': 'pids.doi', 'messages': ['Missing DOI for required field.']}
     ]
 
 
