@@ -8,15 +8,13 @@
 
 """RDM record schemas."""
 
-from marshmallow import Schema, fields
+from marshmallow import Schema
+from marshmallow_utils.fields import SanitizedUnicode
 
 
-#
-# PIDs
-#
 class PIDSchema(Schema):
     """PIDs schema."""
 
-    identifier = fields.Str(required=True)
-    provider = fields.Str(required=True)
-    client = fields.Str()
+    identifier = SanitizedUnicode(required=True)
+    provider = SanitizedUnicode(required=True)
+    client = SanitizedUnicode()
