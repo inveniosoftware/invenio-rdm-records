@@ -14,7 +14,7 @@ from flask import current_app
 from flask_babelex import lazy_gettext as _
 from invenio_drafts_resources.services.records.schema import RecordSchema
 from marshmallow import ValidationError, fields, post_dump, validates
-from marshmallow_utils.fields import NestedAttribute
+from marshmallow_utils.fields import NestedAttribute, SanitizedUnicode
 from marshmallow_utils.permissions import FieldPermissionsMixin
 from marshmallow_utils.schemas import IdentifierSchema
 from werkzeug.local import LocalProxy
@@ -43,7 +43,10 @@ class RDMRecordSchema(RecordSchema, FieldPermissionsMixin):
     # ensures that the nested schema will receive the system field instead of
     # the record dict (i.e. record.myattr instead of record['myattr']).
 
-    pids = fields.Dict(keys=fields.String(), values=fields.Nested(PIDSchema))
+    pids = fields.Dict(
+        keys=SanitizedUnicode(),
+        values=fields.Nested(PIDSchema)
+    )
     metadata = NestedAttribute(MetadataSchema)
     # ext = fields.Method('dump_extensions', 'load_extensions')
     # tombstone
