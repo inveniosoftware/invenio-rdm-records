@@ -109,18 +109,19 @@ class InvenioRDMRecords(object):
             ('RDM_RECORDS_DOI_DATACITE_FORMAT', 'DATACITE_FORMAT'),
         ]
         for old, new in deprecated:
-            if old in app.config:
-                if new in app.config:
+            if new not in app.config:
+                if old in app.config:
                     app.config[new] = app.config[old]
                     warnings.warn(
                         f"{old} has been replaced with {new}. "
                         "Please update your config.",
                         DeprecationWarning
                     )
-                else:
+            else:
+                if old in app.config:
                     warnings.warn(
                         f"{old} is deprecated. Please remove it from your "
-                        "config.",
+                        "config as {new} is already set.",
                         DeprecationWarning
                     )
 

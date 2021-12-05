@@ -12,6 +12,37 @@ from flask_babelex import lazy_gettext as _
 from invenio_db import db
 
 from .base import PIDProvider
+from flask import current_app
+
+class BlockedPrefixes:
+    """Blocked prefixes validator."""
+
+    def __init__(self, prefixes=None, config_names=None):
+        """Initialize the prefixes."""
+        self._config_names = config_names
+        self._prefixes = prefixes or []
+
+    @property
+    def prefixes(self):
+        """Get list of blocked prefixes."""
+        _prefixes = []
+        for name in self._config_names:
+            val = current_app.config[name]
+            if isinstance(val, str):
+                _prefixes += [val]
+            else:
+                _prefixes += val
+        return _prefixes + self._prefixes
+
+    def __call__(self, record, identifier, provider, errors):
+        """Validator call."""
+        for p in self.prefixes:
+            if identifier.startswith(p):
+                errors.append(_(
+                    "The prefix '{prefix}' is administrated locally.").format(
+                        prefix=p))
+                # Bail early
+                return
 
 
 class ExternalPIDProvider(PIDProvider):
@@ -21,9 +52,10 @@ class ExternalPIDProvider(PIDProvider):
     generalize the service code by using polymorphism.
     """
 
-    def __init__(self, name, pid_type, **kwargs):
+    def __init__(self, name, pid_type, validators=None, **kwargs):
         """Constructor."""
         super().__init__(name, pid_type=pid_type, managed=False, **kwargs)
+        self._validators = validators or []
 
     def validate(
         self, record, identifier=None, provider=None, client=None, **kwargs
@@ -45,6 +77,9 @@ class ExternalPIDProvider(PIDProvider):
 
         if not identifier:
             errors.append(_("PID value is required for external provider."))
+
+        for v in self._validators:
+            v(record, identifier, provider, errors)
 
         return (True, []) if not errors else (False, errors)
 

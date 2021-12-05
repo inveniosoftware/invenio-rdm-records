@@ -448,7 +448,13 @@ RDM_PERSISTENT_IDENTIFIER_PROVIDERS = [
         client=providers.DataCiteClient("datacite", config_prefix="DATACITE"),
     ),
     # DOI provider for externally managed DOIs
-    providers.ExternalPIDProvider("external", pid_type="doi"),
+    providers.ExternalPIDProvider(
+        "external",
+        "doi",
+        validators=[
+            providers.BlockedPrefixes(config_names=['DATACITE_PREFIX'])
+        ]
+    ),
     # OAI identifier
     providers.OAIPIDProvider("oai"),
 ]
