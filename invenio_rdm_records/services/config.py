@@ -41,6 +41,11 @@ def is_draft_and_has_review(record, ctx):
     return is_draft(record, ctx) and record.parent.review is not None
 
 
+def is_record_and_has_doi(record, ctx):
+    """Determine if submit review link should be included."""
+    return is_record(record, ctx) and 'doi' in record.pids
+
+
 #
 # Default search configuration
 #
@@ -125,11 +130,9 @@ class RDMRecordServiceConfig(RecordServiceConfig, RecordConfigMixin):
             if_=RecordLink("{+ui}/records/{id}"),
             else_=RecordLink("{+ui}/uploads/{id}"),
         ),
-        # TODO: only include link when DOI support is enabled.
         "self_doi": Link(
             "{+ui}/doi/{pid_doi}",
-            # when=lambda record, ctx: "doi" in record.pids.keys(),
-            when=is_record,
+            when=is_record_and_has_doi,
             vars=lambda record, vars: vars.update({
                 f"pid_{scheme}": pid["identifier"]
                 for (scheme, pid) in record.pids.items()
