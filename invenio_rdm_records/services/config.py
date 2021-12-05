@@ -43,7 +43,12 @@ def is_draft_and_has_review(record, ctx):
 
 def is_record_and_has_doi(record, ctx):
     """Determine if submit review link should be included."""
-    return is_record(record, ctx) and 'doi' in record.pids
+    return is_record(record, ctx) and has_doi(record, ctx)
+
+
+def has_doi(record, ctx):
+    """Determine if a record has a DOI."""
+    return 'doi' in record.pids
 
 
 #
@@ -131,8 +136,16 @@ class RDMRecordServiceConfig(RecordServiceConfig, RecordConfigMixin):
             else_=RecordLink("{+ui}/uploads/{id}"),
         ),
         "self_doi": Link(
-            "{+ui}/doi/{pid_doi}",
+            "{+ui}/doi/{+pid_doi}",
             when=is_record_and_has_doi,
+            vars=lambda record, vars: vars.update({
+                f"pid_{scheme}": pid["identifier"]
+                for (scheme, pid) in record.pids.items()
+            })
+        ),
+        "doi": Link(
+            "https://doi.org/{+pid_doi}",
+            when=has_doi,
             vars=lambda record, vars: vars.update({
                 f"pid_{scheme}": pid["identifier"]
                 for (scheme, pid) in record.pids.items()
