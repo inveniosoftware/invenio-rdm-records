@@ -98,7 +98,7 @@ def test_external_doi_duplicate_detection(
     draft = client.post('/records', headers=headers, json=r2_data)
     assert draft.status_code == 201
     assert draft.json['errors'] == [
-        {'field': 'pids.doi', 'message': ['doi:10.4321/1 already exists.']}]
+        {'field': 'pids.doi', 'messages': ['doi:10.4321/1 already exists.']}]
     assert draft.json["pids"] == \
         {'doi': {'identifier': '10.4321/1', 'provider': 'external'}}
 
@@ -130,7 +130,7 @@ def test_external_doi_blocked_prefix(
     # The invalid prefix should be reported.
     assert draft.json['errors'] == [{
         'field': 'pids.doi',
-        'message': ["The prefix '10.1234' is administrated locally."]
+        'messages': ["The prefix '10.1234' is administrated locally."]
     }]
 
 
@@ -146,7 +146,7 @@ def test_external_doi_required(
     # The required identifier should be reported
     assert draft.json['errors'] == [{
         'field': 'pids.doi',
-        'message': ["Missing DOI for required field."]
+        'messages': ["Missing DOI for required field."]
     }]
     assert draft.json['pids'] == {'doi': {
         "provider": "external",

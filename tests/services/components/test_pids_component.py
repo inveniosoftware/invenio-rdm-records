@@ -249,13 +249,16 @@ def test_create_with_required_managed(
 @pytest.mark.parametrize("pids,expected_errors", [
     (
         {"test": {"identifier": "", "provider": "managed"}},
-        [{'field': 'pids.test', 'message': ['Identifier must be an integer.']}]
+        [{
+            'field': 'pids.test',
+            'messages': ['Identifier must be an integer.']
+        }]
     ),
     (
         {"test": {"identifier": "", "provider": "external"}},
         [{
             'field': 'pids.test',
-            'message': ['Missing external for required field.']
+            'messages': ['Missing external for required field.']
         }]
     )
 ])
