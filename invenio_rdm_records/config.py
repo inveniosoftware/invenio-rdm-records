@@ -464,6 +464,7 @@ The name is further used to configure the desired persistent identifiers (see
 
 
 RDM_PERSISTENT_IDENTIFIERS = {
+    # DOI automatically removed if DATACITE_ENABLED is False.
     "doi": {
         "providers": ["datacite", "external"],
         "required": True,
@@ -473,8 +474,7 @@ RDM_PERSISTENT_IDENTIFIERS = {
         "required": True,
     },
 }
-"""
-The configured persistent identifiers for records.
+"""The configured persistent identifiers for records.
 
 .. code-block:: python
 
@@ -486,6 +486,10 @@ The configured persistent identifiers for records.
 
 # Configuration for the DataCiteClient used by the DataCitePIDProvider
 
+DATACITE_ENABLED = False
+"""Flag to enable/disable DOI registration."""
+
+
 DATACITE_USERNAME = ""
 """DataCite username."""
 
@@ -494,7 +498,7 @@ DATACITE_PASSWORD = ""
 """DataCite password."""
 
 
-DATACITE_PREFIX = "10.1234"
+DATACITE_PREFIX = ""
 """DataCite DOI prefix."""
 
 

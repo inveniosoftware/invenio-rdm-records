@@ -221,6 +221,12 @@ def app_config(app_config):
     # Enable communities while in preview
     app_config['COMMUNITIES_ENABLED'] = True
 
+    # Enable DOI miting
+    app_config['DATACITE_ENABLED'] = True
+    app_config['DATACITE_USERNAME'] = 'INVALID'
+    app_config['DATACITE_PASSWORD'] = 'INVALID'
+    app_config['DATACITE_PREFIX'] = '10.1234'
+
     return app_config
 
 
