@@ -30,40 +30,48 @@ class DataCiteClient:
         self._config_prefix = config_prefix or "DATACITE"
         self._api = None
 
+    def cfgkey(self, key):
+        """Generate a configuration key."""
+        return f"{self._config_prefix}_{key.upper()}"
+
     def cfg(self, key, default=None):
         """Get a application config value."""
-        name = f"{self._config_prefix}_{key.upper()}"
-        return current_app.config.get(name, default)
+        return current_app.config.get(self.cfgkey(key), default)
 
     def generate_doi(self, record):
         """Generate a DOI."""
+        self.check_credentials()
+        prefix = self.cfg('prefix')
+        if not prefix:
+            raise RuntimeError("Invalid DOI prefix configured.")
         doi_format = self.cfg('format', '{prefix}/{id}')
         if callable(doi_format):
-            return doi_format(self.cfg('prefix'), record)
+            return doi_format(prefix, record)
         else:
             return doi_format.format(
-                prefix=self.cfg('prefix'),
+                prefix=prefix,
                 id=record.pid.pid_value
             )
 
-    def has_credentials(self, **kwargs):
+    def check_credentials(self, **kwargs):
         """Returns if the client has the credentials properly set up.
 
         If the client is running on test mode the credentials are not required.
         """
-        return self.cfg('username') and self.cfg('password') \
-            and self.cfg('prefix')
+        if not (self.cfg('username') and self.cfg('password')
+                and self.cfg('prefix')):
+            warnings.warn(
+                f"The {self.__class__.__name__} is misconfigured. Please "
+                f"set {self.cfgkey('username')}, {self.cfgkey('password')}"
+                f" and {self.cfgkey('prefix')} in your configuration.",
+                UserWarning
+            )
 
     @property
     def api(self):
         """DataCite REST API client instance."""
         if self._api is None:
-            if not self.has_credentials():
-                warnings.warn(
-                    f"The {self.__class__.name} is misconfigured. Please "
-                    "provide credentials via the configration variables.",
-                    UserWarning
-                )
+            self.check_credentials()
             self._api = DataCiteRESTClient(
                 self.cfg('username'),
                 self.cfg('password'),

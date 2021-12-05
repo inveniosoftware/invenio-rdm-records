@@ -101,12 +101,12 @@ class InvenioRDMRecords(object):
         # Deprecations
         # Remove when v6.0 LTS is no longer supported.
         deprecated = [
+            ('RDM_RECORDS_DOI_DATACITE_ENABLED', 'DATACITE_ENABLED'),
             ('RDM_RECORDS_DOI_DATACITE_USERNAME', 'DATACITE_USERNAME'),
             ('RDM_RECORDS_DOI_DATACITE_PASSWORD', 'DATACITE_PASSWORD'),
             ('RDM_RECORDS_DOI_DATACITE_PREFIX', 'DATACITE_PREFIX'),
             ('RDM_RECORDS_DOI_DATACITE_TEST_MODE', 'DATACITE_TEST_MODE'),
             ('RDM_RECORDS_DOI_DATACITE_FORMAT', 'DATACITE_FORMAT'),
-            ('RDM_RECORDS_DOI_DATACITE_ENABLED', 'RDM_PERSISTENT_IDENTIFIERS'),
         ]
         for old, new in deprecated:
             if old in app.config:
@@ -130,6 +130,7 @@ class InvenioRDMRecords(object):
         permission_policy = app.config.get('RDM_PERMISSION_POLICY')
         pid_providers = app.config['RDM_PERSISTENT_IDENTIFIER_PROVIDERS']
         pids = app.config['RDM_PERSISTENT_IDENTIFIERS']
+        doi_enabled = app.config['DATACITE_ENABLED']
 
         # Available facets and sort options
         sort_opts = app.config.get('RDM_SORT_OPTIONS')
@@ -157,6 +158,7 @@ class InvenioRDMRecords(object):
                 permission_policy=permission_policy,
                 pid_providers=pid_providers,
                 pids=pids,
+                doi_enabled=doi_enabled,
                 search=search_opts,
                 search_drafts=search_drafts_opts,
                 search_versions=search_versions_opts,

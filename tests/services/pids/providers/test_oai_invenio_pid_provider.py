@@ -64,10 +64,3 @@ def test_invenio_provider_reserve(record, invenio_provider):
     assert db_pid.pid_value
     assert db_pid.pid_type == "oai"
     assert db_pid.status == PIDStatus.REGISTERED
-
-
-def test_invenio_provider_update(record, invenio_provider, mocker):
-    created_pid = invenio_provider.create(record)
-
-    with pytest.raises(NotImplementedError):
-        invenio_provider.update(pid=created_pid, record=record, url=None)

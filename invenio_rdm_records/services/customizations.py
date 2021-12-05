@@ -60,7 +60,7 @@ class RecordConfigMixin:
 
     @classmethod
     def customize(cls, permission_policy=None, pid_providers=None, pids=None,
-                  **kwargs):
+                  doi_enabled=False, **kwargs):
         """Class method to customize the config for an instance."""
         attrs = {}
 
@@ -80,6 +80,8 @@ class RecordConfigMixin:
         providers = {p.name: p for p in pid_providers}
 
         for scheme, conf in pids.items():
+            if scheme == 'doi' and not doi_enabled:
+                continue
             if conf.get('required', False):
                 attrs['pids_required'].append(scheme)
 
