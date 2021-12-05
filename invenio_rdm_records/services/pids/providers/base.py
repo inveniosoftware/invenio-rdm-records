@@ -18,9 +18,11 @@ class PIDProvider:
     """Base class for PID providers."""
 
     def __init__(self, name, client=None, pid_type=None,
-                 default_status=PIDStatus.NEW, managed=True, **kwargs):
+                 default_status=PIDStatus.NEW, managed=True, label=None,
+                 *kwargs):
         """Constructor."""
         self.name = name
+        self.label = label or name
         self.client = client
         self.pid_type = pid_type
         self.default_status = default_status

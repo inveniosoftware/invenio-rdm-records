@@ -138,16 +138,6 @@ def always_valid(identifier):
     return True
 
 
-RDM_RECORDS_RECORD_PID_SCHEMES = {
-    "doi": {
-        "label": _("DOI"),
-        "validator": idutils.is_doi
-    },
-    "oai": {
-        "label": _("OAI"),
-        "validator": always_valid
-    }
-}
 RDM_RECORDS_PERSONORG_SCHEMES = {
     "orcid": {
         "label": _("ORCID"),
@@ -446,6 +436,7 @@ RDM_PERSISTENT_IDENTIFIER_PROVIDERS = [
     providers.DataCitePIDProvider(
         "datacite",
         client=providers.DataCiteClient("datacite", config_prefix="DATACITE"),
+        label=_("DOI"),
     ),
     # DOI provider for externally managed DOIs
     providers.ExternalPIDProvider(
@@ -453,10 +444,11 @@ RDM_PERSISTENT_IDENTIFIER_PROVIDERS = [
         "doi",
         validators=[
             providers.BlockedPrefixes(config_names=['DATACITE_PREFIX'])
-        ]
+        ],
+        label=_("DOI"),
     ),
     # OAI identifier
-    providers.OAIPIDProvider("oai"),
+    providers.OAIPIDProvider("oai", label=_("OAI ID"),),
 ]
 """A list of configured persistent identifier providers.
 
@@ -474,10 +466,14 @@ RDM_PERSISTENT_IDENTIFIERS = {
     "doi": {
         "providers": ["datacite", "external"],
         "required": True,
+        "label": _("DOI"),
+        "validator": idutils.is_doi,
     },
     "oai": {
         "providers": ["oai"],
         "required": True,
+        "label": _("OAI"),
+        "validator": always_valid,
     },
 }
 """The configured persistent identifiers for records.

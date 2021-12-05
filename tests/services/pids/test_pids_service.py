@@ -317,7 +317,7 @@ def test_pids_creation_invalid_external_payload(
 
     draft = service.create(superuser_identity, data)
     assert draft.errors == [
-        {'field': 'pids', 'messages': ['Invalid value for scheme doi']}
+        {'field': 'pids.doi', 'message': ['Missing DOI for required field.']}
     ]
 
 
