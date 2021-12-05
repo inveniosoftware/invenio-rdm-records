@@ -10,7 +10,7 @@
 
 from .base import PIDProvider
 from .datacite import DataCiteClient, DataCitePIDProvider
-from .external import ExternalPIDProvider, BlockedPrefixes
+from .external import BlockedPrefixes, ExternalPIDProvider
 from .oai import OAIPIDProvider
 
 __all__ = (

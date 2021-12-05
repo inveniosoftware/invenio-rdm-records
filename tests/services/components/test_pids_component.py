@@ -255,7 +255,7 @@ def test_create_with_required_managed(
         {"test": {"identifier": "", "provider": "external"}},
         [{
             'field': 'pids.test',
-            'message': ['PID value is required for external provider.']
+            'message': ['Missing external for required field.']
         }]
     )
 ])

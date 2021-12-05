@@ -18,7 +18,7 @@ from invenio_rdm_records.services.pids.providers import ExternalPIDProvider
 @pytest.fixture(scope="function")
 def external_provider():
     """Application factory fixture."""
-    return ExternalPIDProvider("external", pid_type="testid")
+    return ExternalPIDProvider("external", "testid", label="DOI")
 
 
 @pytest.fixture(scope="function")
@@ -92,4 +92,4 @@ def test_external_provider_validate_failure(
         record=record, provider="external"
     )
     assert not success
-    assert "PID value is required for external provider." in errors
+    assert "Missing DOI for required field." in errors

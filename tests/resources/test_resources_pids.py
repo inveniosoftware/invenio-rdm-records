@@ -116,7 +116,7 @@ def test_external_doi_duplicate_detection(
 
 def test_external_doi_blocked_prefix(
         running_app, client, minimal_record, headers, es_clear, uploader):
-    """Tests for issue #845."""
+    """Tests for issue #847."""
     client = uploader.login(client)
     # Make a DOI in the datacite prefix
     datacite_prefix = running_app.app.config['DATACITE_PREFIX']
@@ -130,5 +130,25 @@ def test_external_doi_blocked_prefix(
     # The invalid prefix should be reported.
     assert draft.json['errors'] == [{
         'field': 'pids.doi',
-         'message': ["The prefix '10.4321' is administrated locally."]
+        'message': ["The prefix '10.1234' is administrated locally."]
     }]
+
+
+def test_external_doi_required(
+        running_app, client, minimal_record, headers, es_clear, uploader):
+    """Tests for issue #847."""
+    client = uploader.login(client)
+    # Create a record with no external DOI
+    minimal_record['pids'] = {
+        'doi': {'provider': 'external', 'identifier': ''}}
+    draft = client.post('/records', headers=headers, json=minimal_record)
+    assert draft.status_code == 201
+    # The required identifier should be reported
+    assert draft.json['errors'] == [{
+        'field': 'pids.doi',
+        'message': ["Missing DOI for required field."]
+    }]
+    assert draft.json['pids'] == {'doi': {
+        "provider": "external",
+        "identifier": ""
+    }}

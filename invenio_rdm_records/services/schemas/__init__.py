@@ -27,7 +27,7 @@ from .pids import PIDSchema
 from .versions import VersionsSchema
 
 record_pids_schemes = LocalProxy(
-    lambda: current_app.config["RDM_RECORDS_RECORD_PID_SCHEMES"]
+    lambda: current_app.config["RDM_PERSISTENT_IDENTIFIERS"]
 )
 
 
@@ -95,15 +95,21 @@ class RDMRecordSchema(RecordSchema, FieldPermissionsMixin):
         id_schema = IdentifierSchema(
                 allowed_schemes=record_pids_schemes, identifier_required=True)
         for scheme, pid_attrs in value.items():
+            # Skip validation if no identifier is provided. Up to the provider
+            # to determine what to do.
+            if not pid_attrs.get("identifier"):
+                pid_attrs["identifier"] = ""
+                continue
+
             try:
                 id_schema.load({
                     "scheme": scheme,
-                    "identifier": pid_attrs.get("identifier")
+                    "identifier": pid_attrs["identifier"]
                 })
-            except ValidationError:
+            except ValidationError as e:
                 # cannot raise in case more than one pid presents errors
                 error_messages.append(
-                    _("Invalid value for scheme {scheme}")
+                    _("Invalid identifier for scheme {scheme}")
                     .format(scheme=scheme)
                 )
 

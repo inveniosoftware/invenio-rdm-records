@@ -12,7 +12,7 @@ from flask_babelex import lazy_gettext as _
 from invenio_db import db
 
 from .base import PIDProvider
-from flask import current_app
+
 
 class BlockedPrefixes:
     """Blocked prefixes validator."""
@@ -76,7 +76,8 @@ class ExternalPIDProvider(PIDProvider):
             record, identifier, provider, **kwargs)
 
         if not identifier:
-            errors.append(_("PID value is required for external provider."))
+            errors.append(_("Missing {scheme} for required field.").format(
+                scheme=self.label))
 
         for v in self._validators:
             v(record, identifier, provider, errors)
