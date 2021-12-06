@@ -7,10 +7,8 @@
 
 """RDM PIDs Service."""
 
-from datetime import datetime
-
+from flask.globals import current_app
 from flask_babelex import lazy_gettext as _
-from invenio_db import db
 from invenio_pidstore.errors import PIDDoesNotExistError
 from invenio_pidstore.models import PIDStatus
 from marshmallow import ValidationError
@@ -63,10 +61,40 @@ class PIDManager:
                     "messages": val_errors
                 })
 
+    def _validate_identifiers(self, pids, errors):
+        """Validate and normalize identifiers."""
+        # TODO: Refactor to get it injected instead.
+        conf = current_app.config['RDM_PERSISTENT_IDENTIFIERS']
+
+        identifiers = []
+        for scheme, pids_attrs in pids.items():
+            identifier = pids_attrs.get('identifier')
+
+            validator = conf.get(scheme, {}).get('validator', lambda x: True)
+            normalizer = conf.get(scheme, {}).get('normalizer')
+            label = conf.get(scheme, {}).get('label', scheme)
+
+            if identifier:
+                if not validator(identifier):
+                    errors.append({
+                        "field": f"pids.{scheme}",
+                        "messages": [_("Invalid {scheme}").format(
+                            scheme=label
+                        )]
+                    })
+                else:
+                    if normalizer is not None:
+                        identifiers.append((scheme, normalizer(identifier)))
+
+        # Modify outside of iteration - updates the pids globally
+        for scheme, id_ in identifiers:
+            pids[scheme]['identifier'] = id_
+
     def validate(self, pids, record, errors=None, raise_errors=False):
         """Validate PIDs."""
         errors = [] if errors is None else errors
         self._validate_pids_schemes(pids)
+        self._validate_identifiers(pids, errors)
         self._validate_pids(pids, record, errors)
 
         if raise_errors and errors:

@@ -112,7 +112,12 @@ class PIDsComponent(ServiceComponent):
 
     def new_version(self, identity, draft=None, record=None):
         """A new draft should not have any pids from the previous record."""
-        draft.pids = {}
+        # This makes the draft use the same identifier as the previous
+        # version
+        if record.pids.get('doi', {}).get('provider') == 'external':
+            draft.pids = {'doi': {'provider': 'external', 'identifier': ''}}
+        else:
+            draft.pids = {}
 
     def edit(self, identity, draft=None, record=None):
         """Add current pids from the record to the draft.

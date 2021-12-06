@@ -468,12 +468,12 @@ RDM_PERSISTENT_IDENTIFIERS = {
         "required": True,
         "label": _("DOI"),
         "validator": idutils.is_doi,
+        "normalizer": idutils.normalize_doi,
     },
     "oai": {
         "providers": ["oai"],
         "required": True,
         "label": _("OAI"),
-        "validator": always_valid,
     },
 }
 """The configured persistent identifiers for records.

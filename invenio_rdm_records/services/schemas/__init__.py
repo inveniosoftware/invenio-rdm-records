@@ -13,11 +13,9 @@
 from flask import current_app
 from flask_babelex import lazy_gettext as _
 from invenio_drafts_resources.services.records.schema import RecordSchema
-from marshmallow import ValidationError, fields, post_dump, validates
+from marshmallow import ValidationError, fields, post_dump
 from marshmallow_utils.fields import NestedAttribute, SanitizedUnicode
 from marshmallow_utils.permissions import FieldPermissionsMixin
-from marshmallow_utils.schemas import IdentifierSchema
-from werkzeug.local import LocalProxy
 
 from .access import AccessSchema
 from .files import FilesSchema
@@ -26,9 +24,11 @@ from .parent import RDMParentSchema
 from .pids import PIDSchema
 from .versions import VersionsSchema
 
-record_pids_schemes = LocalProxy(
-    lambda: current_app.config["RDM_PERSISTENT_IDENTIFIERS"]
-)
+
+def validate_scheme(scheme):
+    """Validate a PID scheme."""
+    if scheme not in current_app.config["RDM_PERSISTENT_IDENTIFIERS"]:
+        raise ValidationError(_("Invalid persistent identifier scheme."))
 
 
 class RDMRecordSchema(RecordSchema, FieldPermissionsMixin):
@@ -44,8 +44,8 @@ class RDMRecordSchema(RecordSchema, FieldPermissionsMixin):
     # the record dict (i.e. record.myattr instead of record['myattr']).
 
     pids = fields.Dict(
-        keys=SanitizedUnicode(),
-        values=fields.Nested(PIDSchema)
+        keys=SanitizedUnicode(validate=validate_scheme),
+        values=fields.Nested(PIDSchema),
     )
     metadata = NestedAttribute(MetadataSchema)
     # ext = fields.Method('dump_extensions', 'load_extensions')
@@ -85,36 +85,6 @@ class RDMRecordSchema(RecordSchema, FieldPermissionsMixin):
     #     ExtensionSchema = current_app_metadata_extensions.to_schema()
 
     #     return ExtensionSchema().load(value)
-
-    @validates("pids")
-    def validate_pids(self, value):
-        """Validates the keys of the pids are supported providers."""
-        error_messages = []
-        # The required flag applies to the identifier value
-        # It won't fail for empty allowing the components to reserve one
-        id_schema = IdentifierSchema(
-                allowed_schemes=record_pids_schemes, identifier_required=True)
-        for scheme, pid_attrs in value.items():
-            # Skip validation if no identifier is provided. Up to the provider
-            # to determine what to do.
-            if not pid_attrs.get("identifier"):
-                pid_attrs["identifier"] = ""
-                continue
-
-            try:
-                id_schema.load({
-                    "scheme": scheme,
-                    "identifier": pid_attrs["identifier"]
-                })
-            except ValidationError as e:
-                # cannot raise in case more than one pid presents errors
-                error_messages.append(
-                    _("Invalid identifier for scheme {scheme}")
-                    .format(scheme=scheme)
-                )
-
-        if error_messages:
-            raise ValidationError(message=error_messages)
 
     @post_dump
     def default_nested(self, data, many, **kwargs):
