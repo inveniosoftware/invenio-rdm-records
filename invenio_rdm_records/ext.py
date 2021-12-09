@@ -125,6 +125,8 @@ class InvenioRDMRecords(object):
                         DeprecationWarning
                     )
 
+        self.fix_datacite_configs(app)
+
     def service_configs(self, app):
         """Customized service configs."""
         # Overall record permission policy
@@ -229,3 +231,15 @@ class InvenioRDMRecords(object):
             service=self.subjects_service,
             config=SubjectsResourceConfig,
         )
+
+    def fix_datacite_configs(self, app):
+        """Make sure that the DataCite config items are strings."""
+        datacite_config_items = [
+            'DATACITE_USERNAME',
+            'DATACITE_PASSWORD',
+            'DATACITE_FORMAT',
+            'DATACITE_PREFIX',
+        ]
+        for config_item in datacite_config_items:
+            if config_item in app.config:
+                app.config[config_item] = str(app.config[config_item])
