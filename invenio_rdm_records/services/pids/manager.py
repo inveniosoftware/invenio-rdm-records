@@ -132,11 +132,11 @@ class PIDManager:
             }
         else:
             if draft.pids.get(scheme):
-                raise ValidationError(
-                    message=_("A PID already exists for type {scheme}")
-                    .format(scheme=scheme),
-                    field_name=f"pids.{scheme}",
-                )
+                try:
+                    self.discard(scheme, identifier)
+                except PIDDoesNotExistError:
+                    # Nothing to discard
+                    pass
             if not provider.is_managed():
                 raise ValidationError(
                     message=_("External identifier value is required."),

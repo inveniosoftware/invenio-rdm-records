@@ -152,3 +152,50 @@ def test_external_doi_required(
         "provider": "external",
         "identifier": ""
     }}
+
+
+def test_save_draft_then_reserve_pid_issue(
+        running_app, client, minimal_record, headers, es_clear, uploader):
+    """Tests for issue #856."""
+    client = uploader.login(client)
+    # Emulate that user click's save draft
+    minimal_record['pids'] = {
+        'doi': {'provider': 'external', 'identifier': ''}}
+    draft = client.post('/records', headers=headers, json=minimal_record)
+    assert draft.status_code == 201
+    links = draft.json['links']
+    # Next, user changes widget to "no" and press "Get DOI"
+    req = client.post(link(links['reserve_doi']), headers=headers)
+    assert req.status_code == 201
+
+    # TODO assert number of PIDS in PIDSTORE
+
+
+def test_reserve_doi_on_published_record(
+        running_app, client, minimal_record, headers, es_clear, uploader):
+    """Tests for issue #856."""
+    client = uploader.login(client)
+
+    def _run_test(data, expected_code):
+        # Emulate that user click's save draft
+        record = publish_record(client, data, headers)
+        # Edit published record
+        draft = client.post(link(record['links']['draft']))
+        assert draft.status_code == 201
+        # Get DOI button
+        links = draft.json['links']
+        req = client.post(link(links['reserve_doi']), headers=headers)
+        assert req.status_code == expected_code
+
+    # Case 1: It's NOT possible to reserve a DOI on a published record that
+    # has a DataCite DOI.
+    minimal_record['pids'] = {}
+    _run_test(minimal_record, 400)
+
+    # Case 2: It's possible to reserve a DOI on a published record that
+    # has an external DOI
+    minimal_record['pids'] = {
+        'doi': {'provider': 'external', 'identifier': '10.4321/foo.bar'}}
+    _run_test(minimal_record, 201)
+
+    # TODO assert number of PIDS in PIDSTORE
