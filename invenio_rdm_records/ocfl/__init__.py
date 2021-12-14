@@ -38,7 +38,7 @@ class RDMRecordBuilder(OCFLObjectBuilder):
                 item = self.service.files.get_file_content(record['id'], f['key'], system_identity)
 
                 bytes = StreamDigest(BytesIO(JSONSerializer().serialize_object(item.to_dict()).encode('utf8')))
-                yield "files.json", bytes.stream, bytes.digest
+                yield join('meta', f['key']+".json"), bytes.stream, bytes.digest
 
                 file_stream = StreamDigest(item.get_stream('rb'))
                 yield join("data", f['key']), file_stream.stream, file_stream.digest
