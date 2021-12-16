@@ -109,8 +109,8 @@ class SecretLinkService(RecordService):
     @unit_of_work()
     def create(
         self,
-        id_,
         identity,
+        id_,
         data,
         links_config=None,
         uow=None
@@ -164,8 +164,8 @@ class SecretLinkService(RecordService):
 
     def read_all(
         self,
-        id_,
         identity,
+        id_,
         links_config=None,
     ):
         """Read the secret links of a record (resp. its parent)."""
@@ -185,8 +185,8 @@ class SecretLinkService(RecordService):
 
     def read(
         self,
-        id_,
         identity,
+        id_,
         link_id,
         links_config=None,
     ):
@@ -214,8 +214,8 @@ class SecretLinkService(RecordService):
     @unit_of_work()
     def update(
         self,
-        id_,
         identity,
+        id_,
         link_id,
         data,
         links_config=None,
@@ -270,8 +270,8 @@ class SecretLinkService(RecordService):
     @unit_of_work()
     def delete(
         self,
-        id_,
         identity,
+        id_,
         link_id,
         links_config=None,
         uow=None

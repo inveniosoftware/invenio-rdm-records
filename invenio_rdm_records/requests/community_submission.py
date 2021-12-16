@@ -76,7 +76,7 @@ class AcceptAction(RequestAction):
 
         # Publish the record
         # TODO: Ensure that the accpeting user has permissions to publish.
-        service.publish(draft.pid.pid_value, identity, uow=uow)
+        service.publish(identity, draft.pid.pid_value, uow=uow)
         super().execute(identity, uow)
 
 

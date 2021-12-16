@@ -23,13 +23,13 @@ def _publish_record_with_file(file_id, file_content, identity, record):
     # add files
 
     service.draft_files.init_files(
-        draft.id, identity, data=[{'key': file_id}])
+        identity, draft.id, data=[{'key': file_id}])
     service.draft_files.set_file_content(
-        draft.id, file_id, identity, BytesIO(file_content)
+        identity, draft.id, file_id, BytesIO(file_content)
     )
-    service.draft_files.commit_file(draft.id, file_id, identity)
+    service.draft_files.commit_file(identity, draft.id, file_id)
     # publish the record
-    record = service.publish(draft.id, identity)
+    record = service.publish(identity, draft.id)
 
     return record.id
 

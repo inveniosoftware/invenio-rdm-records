@@ -42,18 +42,17 @@ def restricted_record(service, minimal_record, identity_simple):
 
     # Add a file
     service.draft_files.init_files(
-        draft.id, identity_simple, data=[{'key': 'test.pdf'}])
+        identity_simple, draft.id, data=[{'key': 'test.pdf'}])
     service.draft_files.set_file_content(
-        draft.id, 'test.pdf', identity_simple, BytesIO(b'test file')
+        identity_simple, draft.id, 'test.pdf', BytesIO(b'test file')
     )
-    service.draft_files.commit_file(
-        draft.id, 'test.pdf', identity_simple)
+    service.draft_files.commit_file(identity_simple, draft.id, 'test.pdf')
 
     # Publish
-    record = service.publish(draft.id, identity_simple)
+    record = service.publish(identity_simple, draft.id)
 
     # Put in edit mode so that draft exists
-    draft = service.edit(draft.id, identity_simple)
+    draft = service.edit(identity_simple, draft.id)
 
     return record
 
@@ -62,7 +61,7 @@ def test_invalid_level(service, restricted_record, identity_simple):
     """Test invalid permission level."""
     record = restricted_record
     with pytest.raises(ValidationError):
-        service.secret_links.create(record.id, identity_simple, {
+        service.secret_links.create(identity_simple, record.id, {
             "permission": "invalid"})
 
 
@@ -71,71 +70,65 @@ def test_permission_levels(
     """Test invalid permission level."""
     id_ = restricted_record.id
     view_link = service.secret_links.create(
-        id_, identity_simple, {"permission": "view"})
+        identity_simple, id_, {"permission": "view"})
     preview_link = service.secret_links.create(
-        id_, identity_simple, {"permission": "preview"})
+        identity_simple, id_, {"permission": "preview"})
     edit_link = service.secret_links.create(
-        id_, identity_simple, {"permission": "edit"})
+        identity_simple, id_, {"permission": "edit"})
 
     # == Anonymous user
     anon = AnonymousIdentity()
     anon.provides.add(any_user)
 
     # Deny anonymous to read restricted record and draft
-    pytest.raises(PermissionDeniedError, service.read, id_, anon)
-    pytest.raises(PermissionDeniedError, service.files.list_files, id_, anon)
-    pytest.raises(PermissionDeniedError, service.read_draft, id_, anon)
-    pytest.raises(
-        PermissionDeniedError, service.draft_files.list_files, id_, anon)
+    pytest.raises(PermissionDeniedError, service.read, anon, id_)
+    pytest.raises(PermissionDeniedError, service.files.list_files, anon, id_)
+    pytest.raises(PermissionDeniedError, service.read_draft, anon, id_)
+    with pytest.raises(PermissionDeniedError):
+        service.draft_files.list_files(anon, id_)
 
     # === Anonymous user with view link ===
     anon.provides.add(LinkNeed(view_link.id))
 
     # Allow anonymous with view link to read record
-    service.read(id_, anon)
-    service.files.list_files(id_, anon)
+    service.read(anon, id_)
+    service.files.list_files(anon, id_)
 
     # Deny anonymous with view link to read draft
-    pytest.raises(PermissionDeniedError, service.read_draft, id_, anon)
-    pytest.raises(
-        PermissionDeniedError, service.draft_files.list_files, id_, anon)
+    pytest.raises(PermissionDeniedError, service.read_draft, anon, id_)
+    with pytest.raises(PermissionDeniedError):
+        service.draft_files.list_files(anon, id_)
 
     # === Anonymous user with preview link ===
     anon.provides.remove(LinkNeed(view_link.id))
     anon.provides.add(LinkNeed(preview_link.id))
 
     # Allow anonymous with preview link to read record and draft
-    service.read(id_, anon)
-    service.files.list_files(id_, anon)
-    service.read_draft(id_, anon)
-    service.draft_files.list_files(id_, anon)
-    service.draft_files.get_file_content(id_, 'test.pdf', anon)
-    service.draft_files.read_file_metadata(id_, 'test.pdf', anon)
+    service.read(anon, id_)
+    service.files.list_files(anon, id_)
+    service.read_draft(anon, id_)
+    service.draft_files.list_files(anon, id_)
+    service.draft_files.get_file_content(anon, id_, 'test.pdf')
+    service.draft_files.read_file_metadata(anon, id_, 'test.pdf')
 
     # Deny anonymous with preview link to update/delete/edit/publish draft
-    pytest.raises(PermissionDeniedError, service.update_draft, id_, anon, {})
-    pytest.raises(PermissionDeniedError, service.edit, id_, anon)
-    pytest.raises(PermissionDeniedError, service.delete_draft, id_, anon)
-    pytest.raises(PermissionDeniedError, service.new_version, id_, anon)
-    pytest.raises(PermissionDeniedError, service.publish, id_, anon)
-    pytest.raises(
-        PermissionDeniedError,
-        service.draft_files.init_files, id_, anon, {})
-    pytest.raises(
-        PermissionDeniedError,
-        service.draft_files.update_file_metadata, id_, 'test.pdf', anon, {})
-    pytest.raises(
-        PermissionDeniedError,
-        service.draft_files.commit_file, id_, 'test.pdf', anon)
-    pytest.raises(
-        PermissionDeniedError,
-        service.draft_files.delete_file, id_, 'test.pdf', anon)
-    pytest.raises(
-        PermissionDeniedError,
-        service.draft_files.delete_all_files, id_, anon)
-    pytest.raises(
-        PermissionDeniedError,
-        service.draft_files.set_file_content, id_, 'test.pdf', anon, None)
+    pytest.raises(PermissionDeniedError, service.update_draft, anon, id_, {})
+    pytest.raises(PermissionDeniedError, service.edit, anon, id_)
+    pytest.raises(PermissionDeniedError, service.delete_draft, anon, id_)
+    pytest.raises(PermissionDeniedError, service.new_version, anon, id_)
+    pytest.raises(PermissionDeniedError, service.publish, anon, id_)
+    with pytest.raises(PermissionDeniedError):
+        service.draft_files.init_files(anon, id_, {})
+    with pytest.raises(PermissionDeniedError):
+        service.draft_files.update_file_metadata(anon, id_, 'test.pdf', {})
+    with pytest.raises(PermissionDeniedError):
+        service.draft_files.commit_file(anon, id_, 'test.pdf')
+    with pytest.raises(PermissionDeniedError):
+        service.draft_files.delete_file(anon, id_, 'test.pdf')
+    with pytest.raises(PermissionDeniedError):
+        service.draft_files.delete_all_files(anon, id_)
+    with pytest.raises(PermissionDeniedError):
+        service.draft_files.set_file_content(anon, id_, 'test.pdf', None)
 
     # === Authenticated user with edit link ===
     i = Identity(100)
@@ -144,43 +137,37 @@ def test_permission_levels(
     i.provides.add(LinkNeed(edit_link.id))
 
     # Allow user with edit link to read record and draft
-    service.read(id_, i)
-    service.files.list_files(id_, i)
-    service.read_draft(id_, i)
-    service.draft_files.list_files(id_, i)
-    service.draft_files.get_file_content(id_, 'test.pdf', i)
-    service.draft_files.read_file_metadata(id_, 'test.pdf', i)
+    service.read(i, id_)
+    service.files.list_files(i, id_)
+    service.read_draft(i, id_)
+    service.draft_files.list_files(i, id_)
+    service.draft_files.get_file_content(i, id_, 'test.pdf')
+    service.draft_files.read_file_metadata(i, id_, 'test.pdf')
 
     # Deny user with edit link to share the links
-    pytest.raises(
-        PermissionDeniedError,
-        service.secret_links.create, id_, i, {})
-    pytest.raises(
-        PermissionDeniedError, service.secret_links.read_all,
-        id_, i)
-    pytest.raises(
-        PermissionDeniedError, service.secret_links.read,
-        id_, i, edit_link.id)
-    pytest.raises(
-        PermissionDeniedError,
-        service.secret_links.update, id_, i, edit_link.id,
-        {})
-    pytest.raises(
-        PermissionDeniedError,
-        service.secret_links.delete, id_, i, edit_link.id)
+    with pytest.raises(PermissionDeniedError):
+        service.secret_links.create(i, id_, {})
+    with pytest.raises(PermissionDeniedError):
+        service.secret_links.read_all(i, id_)
+    with pytest.raises(PermissionDeniedError):
+        service.secret_links.read(i, id_, edit_link.id)
+    with pytest.raises(PermissionDeniedError):
+        service.secret_links.update(i, id_, edit_link.id, {})
+    with pytest.raises(PermissionDeniedError):
+        service.secret_links.delete(i, id_, edit_link.id)
 
     # Allow user with edit link to update, delete, edit, publish
-    draft = service.read_draft(id_, i)
+    draft = service.read_draft(i, id_)
     data = draft.data
     data['metadata']['title'] = 'allow it'
-    service.update_draft(id_, i, data)
-    service.delete_draft(id_, i)
-    test = service.edit(id_, i)
-    service.publish(id_, i)
-    new_draft = service.new_version(id_, i)
+    service.update_draft(i, id_, data)
+    service.delete_draft(i, id_)
+    test = service.edit(i, id_)
+    service.publish(i, id_)
+    new_draft = service.new_version(i, id_)
     new_id = new_draft.id
-    service.import_files(new_id, i)
-    service.draft_files.delete_file(new_id, 'test.pdf', i)
+    service.import_files(i, new_id)
+    service.draft_files.delete_file(i, new_id, 'test.pdf')
 
 
 def test_read_restricted_record_with_secret_link(

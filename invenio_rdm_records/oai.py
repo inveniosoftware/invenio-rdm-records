@@ -53,7 +53,7 @@ def getrecord_fetcher(record_id):
 
     try:
         result = current_rdm_records.records_service.read(
-            recid.pid_value, g.identity
+            g.identity, recid.pid_value
         )
     except PermissionDeniedError:
         # if it is a restricted record.

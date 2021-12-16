@@ -26,7 +26,7 @@ class PIDsService(RecordService):
         """PID Manager."""
         return self._manager
 
-    def resolve(self, id_, identity, scheme):
+    def resolve(self, identity, id_, scheme):
         """Resolve PID to a record (not draft)."""
         # FIXME: Should not use model class but go through provider?
         pid = PersistentIdentifier.get(pid_type=scheme, pid_value=id_)
@@ -41,7 +41,7 @@ class PIDsService(RecordService):
         )
 
     @unit_of_work()
-    def create(self, id_, identity, scheme, provider=None, uow=None):
+    def create(self, identity, id_, scheme, provider=None, uow=None):
         """Create a `NEW` PID for a given record."""
         draft = self.draft_cls.pid.resolve(id_, registered_only=False)
         self.require_permission(identity, "pid_create", record=draft)
@@ -59,7 +59,7 @@ class PIDsService(RecordService):
         )
 
     @unit_of_work()
-    def update(self, id_, identity, scheme, uow=None):
+    def update(self, identity, id_, scheme, uow=None):
         """Update a registered PID on a remote provider."""
         record = self.record_cls.pid.resolve(id_, registered_only=False)
         self.require_permission(identity, "pid_update", record=record)
@@ -75,7 +75,7 @@ class PIDsService(RecordService):
         )
 
     @unit_of_work()
-    def reserve(self, id_, identity, uow=None):
+    def reserve(self, identity, id_, uow=None):
         """Reserve PIDs of a record."""
         draft = self.draft_cls.pid.resolve(id_, registered_only=False)
         self.require_permission(identity, "pid_manage", record=draft)
@@ -92,7 +92,7 @@ class PIDsService(RecordService):
         )
 
     @unit_of_work()
-    def register_or_update(self, id_, identity, scheme, uow=None):
+    def register_or_update(self, identity, id_, scheme, uow=None):
         """Register or update a PID of a record.
 
         If the PID has already been register it updates the remote.
@@ -129,7 +129,7 @@ class PIDsService(RecordService):
         )
 
     @unit_of_work()
-    def discard(self, id_, identity, scheme, provider=None, uow=None):
+    def discard(self, identity, id_, scheme, provider=None, uow=None):
         """Discard a PID for a given draft.
 
         If the status was `NEW` it will be hard deleted. Otherwise,

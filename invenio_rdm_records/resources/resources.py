@@ -48,8 +48,8 @@ class RDMRecordResource(RecordResource):
     def review_read(self):
         """Read the related review request."""
         item = self.service.review.read(
-            resource_requestctx.view_args["pid_value"],
             g.identity,
+            resource_requestctx.view_args["pid_value"],
         )
 
         return item.to_dict(), 200
@@ -60,8 +60,8 @@ class RDMRecordResource(RecordResource):
     def review_update(self):
         """Update a review request."""
         item = self.service.review.update(
-            resource_requestctx.view_args["pid_value"],
             g.identity,
+            resource_requestctx.view_args["pid_value"],
             resource_requestctx.data,
             revision_id=resource_requestctx.headers.get("if_match"),
         )
@@ -73,8 +73,8 @@ class RDMRecordResource(RecordResource):
     def review_delete(self):
         """Delete a review request."""
         self.service.review.delete(
-            resource_requestctx.view_args["pid_value"],
             g.identity,
+            resource_requestctx.view_args["pid_value"],
             revision_id=resource_requestctx.headers.get("if_match"),
         )
         return "", 204
@@ -86,8 +86,8 @@ class RDMRecordResource(RecordResource):
     def review_submit(self):
         """Submit a draft for review."""
         item = self.service.review.submit(
-            resource_requestctx.view_args["pid_value"],
             g.identity,
+            resource_requestctx.view_args["pid_value"],
             resource_requestctx.data,
         )
 
@@ -101,9 +101,9 @@ class RDMRecordResource(RecordResource):
     def pids_reserve(self):
         """Reserve a PID."""
         item = self.service.pids.create(
+            identity=g.identity,
             id_=resource_requestctx.view_args["pid_value"],
             scheme=resource_requestctx.view_args["scheme"],
-            identity=g.identity,
         )
 
         return item.to_dict(), 201
@@ -113,9 +113,9 @@ class RDMRecordResource(RecordResource):
     def pids_discard(self):
         """Discard a previously reserved PID."""
         item = self.service.pids.discard(
+            identity=g.identity,
             id_=resource_requestctx.view_args["pid_value"],
             scheme=resource_requestctx.view_args["scheme"],
-            identity=g.identity,
         )
 
         return item.to_dict(), 200
@@ -162,8 +162,8 @@ class RDMParentRecordLinksResource(RecordResource):
     def read(self):
         """Read a secret link for a record."""
         item = self.service.secret_links.read(
-            id_=resource_requestctx.view_args["pid_value"],
             identity=g.identity,
+            id_=resource_requestctx.view_args["pid_value"],
             link_id=resource_requestctx.view_args["link_id"],
         )
         return item.to_dict(), 200
