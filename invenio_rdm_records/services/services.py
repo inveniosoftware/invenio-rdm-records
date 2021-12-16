@@ -51,7 +51,7 @@ class RDMRecordService(RecordService):
     # Service methods
     #
     @unit_of_work()
-    def lift_embargo(self, _id, identity, uow=None):
+    def lift_embargo(self, identity, _id, uow=None):
         """Lifts embargo from the record and draft (if exists).
 
         It's an error if you try to lift an embargo that has not yet expired.

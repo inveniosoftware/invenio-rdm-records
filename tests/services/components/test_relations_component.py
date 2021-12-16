@@ -29,13 +29,13 @@ def test_dereferencing(service, minimal_record, identity_simple):
     assert 'title' in draft.data['metadata']['languages'][0]
 
     # Read draft
-    draft = service.read_draft(draft.id, idty)
+    draft = service.read_draft(idty, draft.id)
     assert 'title' in draft.data['metadata']['languages'][0]
 
     # Update draft
-    draft = service.update_draft(draft.id, idty, draft.data)
+    draft = service.update_draft(idty, draft.id, draft.data)
     assert 'title' in draft.data['metadata']['languages'][0]
 
     # Publish
-    record = service.publish(draft.id, idty)
+    record = service.publish(idty, draft.id)
     assert 'title' in record.data['metadata']['languages'][0]

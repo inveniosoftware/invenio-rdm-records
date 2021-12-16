@@ -62,7 +62,7 @@ class CSLJSONSchema(Schema):
 
     def _read_resource_type(self, id_):
         """Retrieve resource type record using service."""
-        rec = vocabulary_service.read(("resourcetypes", id_), system_identity)
+        rec = vocabulary_service.read(system_identity, ("resourcetypes", id_))
         return rec._record
 
     def get_type(self, obj):

@@ -94,7 +94,7 @@ def test_simple_flow(draft, running_app, community, service,
     """Test basic creation with review."""
     # ### Submit draft for review
     req = service.review.submit(
-        draft.id, running_app.superuser_identity).to_dict()
+        running_app.superuser_identity, draft.id).to_dict()
     assert req['status'] == 'open'
     assert req['title'] == draft['metadata']['title']
 
@@ -113,23 +113,19 @@ def test_simple_flow(draft, running_app, community, service,
     assert req['is_open'] is False
 
     # ### Read the record
-    record = service.read(draft.id, running_app.superuser_identity).to_dict()
+    record = service.read(running_app.superuser_identity, draft.id).to_dict()
     assert 'review' not in record["parent"]  # Review was desassociated
     assert record["is_published"] is True
     assert record['parent']['communities']['ids'] == [community.data['uuid']]
     assert record['parent']['communities']['default'] == community.data['uuid']
 
     # ### Read draft (which should have been removed)
-    pytest.raises(
-        NoResultFound,
-        service.read_draft,
-        draft.id,
-        running_app.superuser_identity
-    )
+    with pytest.raises(NoResultFound):
+        service.read_draft(running_app.superuser_identity, draft.id)
 
     # ### Create a new version (still part of community)
     draft = service.new_version(
-        draft.id, running_app.superuser_identity).to_dict()
+        running_app.superuser_identity, draft.id).to_dict()
     assert 'review' not in draft['parent']
     assert draft['parent']['communities']['ids'] == [community.data['uuid']]
     assert draft['parent']['communities']['default'] == community.data['uuid']
@@ -163,8 +159,8 @@ def test_creation(draft, running_app, community, service, requests_service):
 
     # Read review request (via record review subservice)
     review = service.review.read(
+        running_app.superuser_identity,
         record_id,
-        running_app.superuser_identity
     ).to_dict()
     assert review['id'] == parent['review']['id']
 
@@ -211,8 +207,8 @@ def test_create_review_after_draft(
         'receiver': {'community': community.data['uuid']}
     }
     req = service.review.update(
-        draft.id,
         running_app.superuser_identity,
+        draft.id,
         data,
         revision_id=draft.data['revision_id']
     ).to_dict()
@@ -227,21 +223,20 @@ def test_create_when_already_published(
     # Create draft
     draft = service.create(running_app.superuser_identity, minimal_record)
     # Publish and edit the record.
-    service.publish(draft.id, running_app.superuser_identity)
-    draft = service.edit(draft.id, running_app.superuser_identity)
+    service.publish(running_app.superuser_identity, draft.id)
+    draft = service.edit(running_app.superuser_identity, draft.id)
     # Then try to create a review (you use update, not create for this).
     data = {
         'type': 'community-submission',
         'receiver': {'community': community.data['uuid']}
     }
-    pytest.raises(
-        ReviewStateError,
-        service.review.update,
-        draft.id,
-        running_app.superuser_identity,
-        data,
-        revision_id=draft.data['revision_id']
-    )
+    with pytest.raises(ReviewStateError):
+        service.review.update(
+            running_app.superuser_identity,
+            draft.id,
+            data,
+            revision_id=draft.data['revision_id']
+        )
 
 
 def test_create_with_new_version(
@@ -250,21 +245,20 @@ def test_create_with_new_version(
     # Create draft
     draft = service.create(running_app.superuser_identity, minimal_record)
     # Publish and create new version of the record.
-    service.publish(draft.id, running_app.superuser_identity)
-    draft = service.new_version(draft.id, running_app.superuser_identity)
+    service.publish(running_app.superuser_identity, draft.id)
+    draft = service.new_version(running_app.superuser_identity, draft.id)
     # Then try to create a review (you use update, not create for this).
     data = {
         'type': 'community-submission',
         'receiver': {'community': community.data['uuid']}
     }
-    pytest.raises(
-        ReviewStateError,
-        service.review.update,
-        draft.id,
-        running_app.superuser_identity,
-        data,
-        revision_id=draft.data['revision_id']
-    )
+    with pytest.raises(ReviewStateError):
+        service.review.update(
+            running_app.superuser_identity,
+            draft.id,
+            data,
+            revision_id=draft.data['revision_id']
+        )
 
 
 def test_update(draft, running_app, community2, service):
@@ -276,8 +270,8 @@ def test_update(draft, running_app, community2, service):
         'receiver': {'community': community2.data['uuid']}
     }
     req = service.review.update(
-        draft.id,
         running_app.superuser_identity,
+        draft.id,
         data,
         revision_id=draft.data['revision_id']
     ).to_dict()
@@ -289,46 +283,34 @@ def test_update(draft, running_app, community2, service):
 
 def test_publish_when_review_exists(draft, running_app, community, service):
     """Publish should fail if review exists."""
-    pytest.raises(
-        ReviewExistsError,
-        service.publish,
-        draft.id,
-        running_app.superuser_identity,
-    )
+    with pytest.raises(ReviewExistsError):
+        service.publish(running_app.superuser_identity, draft.id)
 
 
 def test_delete(draft, running_app, service):
     """Test delete an open request."""
     # Delete the request
-    res = service.review.delete(draft.id, running_app.superuser_identity)
+    res = service.review.delete(running_app.superuser_identity, draft.id)
     assert res is True
 
     # Review should not be found
-    pytest.raises(
-        ReviewNotFoundError,
-        service.review.read,
-        draft.id,
-        running_app.superuser_identity
-    )
+    with pytest.raises(ReviewNotFoundError):
+        service.review.read(running_app.superuser_identity, draft.id)
 
 
 def test_delete_when_submitted(draft, running_app, service):
     """Test delete an open request."""
-    service.review.submit(draft.id, running_app.superuser_identity)
+    service.review.submit(running_app.superuser_identity, draft.id)
 
     # Review is submitted (i.e. open) so not possible to delete.
-    pytest.raises(
-        ReviewStateError,
-        service.review.delete,
-        draft.id,
-        running_app.superuser_identity
-    )
+    with pytest.raises(ReviewStateError):
+        service.review.delete(running_app.superuser_identity, draft.id)
 
 
 def test_delete_when_accepted(draft, running_app, service, requests_service):
     """Test delete an open request."""
     # Submit and accept
-    service.review.submit(draft.id, running_app.superuser_identity)
+    service.review.submit(running_app.superuser_identity, draft.id)
     requests_service.execute_action(
         running_app.superuser_identity,
         draft['parent']['review']['id'],
@@ -337,12 +319,8 @@ def test_delete_when_accepted(draft, running_app, service, requests_service):
     )
 
     # Review was already desassociated so nothing to delete.
-    pytest.raises(
-        NoResultFound,
-        service.review.delete,
-        draft.id,
-        running_app.superuser_identity
-    )
+    with pytest.raises(NoResultFound):
+        service.review.delete(running_app.superuser_identity, draft.id)
 
 
 def test_read_delete_submit_no_review(minimal_record, running_app, service):
@@ -354,30 +332,18 @@ def test_read_delete_submit_no_review(minimal_record, running_app, service):
     )
 
     # Read review
-    pytest.raises(
-        ReviewNotFoundError,
-        service.review.read,
-        draft.id,
-        running_app.superuser_identity
-    )
+    with pytest.raises(ReviewNotFoundError):
+        service.review.read(running_app.superuser_identity, draft.id)
 
     # Update is used for creation so not tested here
 
     # Delete review
-    pytest.raises(
-        ReviewNotFoundError,
-        service.review.delete,
-        draft.id,
-        running_app.superuser_identity
-    )
+    with pytest.raises(ReviewNotFoundError):
+        service.review.delete(running_app.superuser_identity, draft.id)
 
     # Submit review
-    pytest.raises(
-        ReviewNotFoundError,
-        service.review.submit,
-        draft.id,
-        running_app.superuser_identity
-    )
+    with pytest.raises(ReviewNotFoundError):
+        service.review.submit(running_app.superuser_identity, draft.id)
 
 
 def test_delete_draft_unsubmitted(
@@ -385,29 +351,21 @@ def test_delete_draft_unsubmitted(
     """Draft request should be deleted when the draft is deleted."""
     # Delete the draft
     req_id = draft.data['parent']['review']['id']
-    res = service.delete_draft(draft.id, running_app.superuser_identity)
+    res = service.delete_draft(running_app.superuser_identity, draft.id)
 
     # Request was also deleted
-    pytest.raises(
-        NoResultFound,
-        requests_service.read,
-        running_app.superuser_identity,
-        req_id,
-    )
+    with pytest.raises(NoResultFound):
+        requests_service.read(running_app.superuser_identity, req_id)
 
 
 def test_delete_draft_when_submitted(
         draft, running_app, service):
     """Delete draft should fail when an open review exists."""
-    service.review.submit(draft.id, running_app.superuser_identity).to_dict()
+    service.review.submit(running_app.superuser_identity, draft.id).to_dict()
 
     # Delete the draft
-    pytest.raises(
-        ReviewStateError,
-        service.delete_draft,
-        draft.id,
-        running_app.superuser_identity
-    )
+    with pytest.raises(ReviewStateError):
+        service.delete_draft(running_app.superuser_identity, draft.id)
 
 
 def test_submit_with_validation_errors(
@@ -424,25 +382,21 @@ def test_submit_with_validation_errors(
     # Create draft
     draft = service.create(running_app.superuser_identity, minimal_record)
     # Submit review - fails because of validation error
-    pytest.raises(
-        ValidationError,
-        service.review.submit,
-        draft.id,
-        running_app.superuser_identity,
-    )
+    with pytest.raises(ValidationError):
+        service.review.submit(running_app.superuser_identity, draft.id)
 
 
 def test_accept_with_validation_errors(
         draft, running_app, service, requests_service):
     # Submit review - fails because of validation error
     req = service.review.submit(
-        draft.id, running_app.superuser_identity).to_dict()
+        running_app.superuser_identity, draft.id).to_dict()
 
     # Make a validation error change.
-    draft = service.read_draft(draft.id, running_app.superuser_identity)
+    draft = service.read_draft(running_app.superuser_identity, draft.id)
     data = draft.data
     del data['metadata']['title']
-    service.update_draft(draft.id, running_app.superuser_identity, data)
+    service.update_draft(running_app.superuser_identity, draft.id, data)
 
     # Accept request
     pytest.raises(
@@ -460,7 +414,7 @@ def test_review_gives_access_to_curator(
 ):
     """Test if a submission review request does give the curator access."""
     request_item = service.review.submit(
-        draft.id, running_app.superuser_identity
+        running_app.superuser_identity, draft.id
     )
     request = request_item._request
 
@@ -474,7 +428,7 @@ def test_review_gives_access_to_curator(
     identity = get_community_owner_identity(community)
 
     # the owner of the community should have access to the draft in question
-    item = service.read_draft(draft.pid.pid_value, identity)
+    item = service.read_draft(identity, draft.pid.pid_value)
     assert item._record.id == draft.id
 
     # close the request
@@ -485,7 +439,7 @@ def test_review_gives_access_to_curator(
 
     # the owner of the community should not have access anymore
     with pytest.raises(PermissionDeniedError):
-        item = service.read_draft(draft.pid.pid_value, identity)
+        item = service.read_draft(identity, draft.pid.pid_value)
 
 
 # TODO tests:

@@ -42,10 +42,9 @@ def image_opener(key):
 
     recid = key_parts[0]
     filename = key_parts[1]
-    identity = g.identity
     service = current_rdm_records.records_service
     try:
-        file_item = service.files.get_file_content(recid, filename, identity)
+        file_item = service.files.get_file_content(g.identity, recid, filename)
     except KeyError:
         return None  # FIXME: throw custom exception `FileNotFound`?
 

@@ -41,7 +41,7 @@ def record_w_links(running_app, minimal_record):
     """Creates an empty record."""
     service = current_rdm_records.records_service
     draft = service.create(system_identity, minimal_record)
-    record = service.publish(draft.id, system_identity)
+    record = service.publish(system_identity, draft.id)
 
     return record
 

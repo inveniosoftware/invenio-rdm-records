@@ -46,7 +46,7 @@ def test_load_languages(app, db, es_clear):
 
     languages.load(system_identity, delay=False)
 
-    item = vocabulary_service.read((id_, 'aae'), system_identity)
+    item = vocabulary_service.read(system_identity, (id_, 'aae'))
     assert item.id == "aae"
 
 
@@ -64,8 +64,8 @@ def test_load_resource_types(app, db, es_clear):
     resource_types.load(system_identity, delay=False)
 
     item = vocabulary_service.read(
+        system_identity,
         (id_, 'publication-annotationcollection'),
-        system_identity
     )
     item_dict = item.to_dict()
     assert item_dict["id"] == "publication-annotationcollection"
@@ -87,27 +87,27 @@ def test_loading_paths_traversal(app, db, es_clear, subjects_service):
     # app_data/vocabularies/resource_types.yaml only has image resource types
     with pytest.raises(PIDDoesNotExistError):
         vocabulary_service.read(
+            system_identity,
             ('resourcetypes', 'publication-annotationcollection'),
-            system_identity
         )
 
     # languages are found
-    item = vocabulary_service.read(('languages', 'aae'), system_identity)
+    item = vocabulary_service.read(system_identity, ('languages', 'aae'))
     assert item.id == "aae"
 
     # Only subjects from app_data/ are loaded
     item = subjects_service.read(
-        "https://id.nlm.nih.gov/mesh/D000001", system_identity)
+        system_identity, "https://id.nlm.nih.gov/mesh/D000001")
     assert item.id == "https://id.nlm.nih.gov/mesh/D000001"
     # - subjects in extension but from already loaded scheme are not loaded
     with pytest.raises(PIDDoesNotExistError):
         subjects_service.read(
+            system_identity,
             "https://id.nlm.nih.gov/mesh/D000015",
-            system_identity
         )
     # - subjects in extension from not already loaded scheme are loaded
     item = subjects_service.read(
-        "https://id.loc.gov/authorities/subjects/sh85118623", system_identity)
+        system_identity, "https://id.loc.gov/authorities/subjects/sh85118623")
     assert item.id == "https://id.loc.gov/authorities/subjects/sh85118623"
 
 
@@ -144,7 +144,7 @@ def test_reloading_paths_traversal(app, db, es_clear, subjects_service):
         fixtures.load()
 
     # Added subjects from altered vocabularies.yaml should be loaded
-    item = subjects_service.read("310607", system_identity)
+    item = subjects_service.read(system_identity, "310607")
     assert item.id == "310607"
 
     # Scenario 2: Add subjects from subject type existing before
@@ -155,7 +155,7 @@ def test_reloading_paths_traversal(app, db, es_clear, subjects_service):
 
     # Added subjects from altered vocabularies.yaml should be ignored
     with pytest.raises(PIDDoesNotExistError):
-        subjects_service.read("310801", system_identity)
+        subjects_service.read(system_identity, "310801")
 
 
 def test_load_users(app, db, admin_role):
@@ -201,4 +201,4 @@ def test_load_affiliations(
     assert cern["acronym"] == "CERN"
 
     with pytest.raises(PIDDoesNotExistError):
-        affiliations_service.read("cern", system_identity)
+        affiliations_service.read(system_identity, "cern")

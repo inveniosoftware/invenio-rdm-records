@@ -24,18 +24,18 @@ def service(running_app):
 def test_sort_by_versions(service, superuser_identity, minimal_record):
     # Create version 1
     draft = service.create(superuser_identity, minimal_record)
-    record = service.publish(draft.id, superuser_identity)
+    record = service.publish(superuser_identity, draft.id)
 
     # Create version 2
-    draft = service.new_version(record.id, superuser_identity)
+    draft = service.new_version(superuser_identity, record.id)
     # NOTE: needed because publication_date is stripped from draft
-    service.update_draft(draft.id, superuser_identity, minimal_record)
-    record_2 = service.publish(draft.id, superuser_identity)
+    service.update_draft(superuser_identity, draft.id, minimal_record)
+    record_2 = service.publish(superuser_identity, draft.id)
 
     # Create version 3
-    draft = service.new_version(record_2.id, superuser_identity)
-    service.update_draft(draft.id, superuser_identity, minimal_record)
-    record_3 = service.publish(draft.id, superuser_identity)
+    draft = service.new_version(superuser_identity, record_2.id)
+    service.update_draft(superuser_identity, draft.id, minimal_record)
+    record_3 = service.publish(superuser_identity, draft.id)
 
     # NOTE: we swap version 2 and 3, so that "newest" order is different
     #       than "versions" order

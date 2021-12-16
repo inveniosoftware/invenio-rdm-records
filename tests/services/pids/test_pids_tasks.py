@@ -27,7 +27,7 @@ def test_register_pid(
 
     service = current_rdm_records.records_service
     draft = service.create(superuser_identity, minimal_record)
-    draft = service.pids.create(draft.id, superuser_identity, "doi")
+    draft = service.pids.create(superuser_identity, draft.id, "doi")
     doi = draft["pids"]["doi"]["identifier"]
     provider = service.pids.pid_manager._get_provider("doi", "datacite")
     pid = provider.get(pid_value=doi)
@@ -71,14 +71,14 @@ def test_update_pid(
 
     service = current_rdm_records.records_service
     draft = service.create(superuser_identity, minimal_record)
-    record = service.publish(draft.id, superuser_identity)
+    record = service.publish(superuser_identity, draft.id)
     doi = record["pids"]["doi"]["identifier"]
     provider = service.pids.pid_manager._get_provider("doi", "datacite")
     pid = provider.get(pid_value=doi)
     assert pid.status == PIDStatus.REGISTERED
     # we do not explicitly call the update_pid task
     # we check that the lower level provider update is called
-    record_edited = service.edit(record.id, superuser_identity)
+    record_edited = service.edit(superuser_identity, record.id)
     assert mocked_update.called is False
-    service.publish(record_edited.id, superuser_identity)
+    service.publish(superuser_identity, record_edited.id)
     assert mocked_update.called is True

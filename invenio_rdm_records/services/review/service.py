@@ -80,7 +80,7 @@ class ReviewService(RecordService):
         uow.register(RecordCommitOp(record.parent))
         return request_item
 
-    def read(self, id_, identity):
+    def read(self, identity, id_):
         """Read the review."""
         # Delgate to requests service to create the request
         draft = self.draft_cls.pid.resolve(id_, registered_only=False)
@@ -92,20 +92,20 @@ class ReviewService(RecordService):
         return current_requests_service.read(identity, draft.parent.review.id)
 
     @unit_of_work()
-    def update(self, id_, identity, data, revision_id=None, uow=None):
+    def update(self, identity, id_, data, revision_id=None, uow=None):
         """Create or update an existing review."""
         draft = self.draft_cls.pid.resolve(id_, registered_only=False)
         self.require_permission(identity, 'update_draft', record=draft)
 
         # If an existing review exists, delete it.
         if draft.parent.review is not None:
-            self.delete(id_, identity, uow=uow)
+            self.delete(identity, id_, uow=uow)
             draft = self.draft_cls.pid.resolve(id_, registered_only=False)
 
         return self.create(identity, data, draft, uow=uow)
 
     @unit_of_work()
-    def delete(self, id_, identity, revision_id=None, uow=None):
+    def delete(self, identity, id_, revision_id=None, uow=None):
         """Delete a review."""
         draft = self.draft_cls.pid.resolve(id_, registered_only=False)
         self.require_permission(identity, 'update_draft', record=draft)
@@ -139,7 +139,7 @@ class ReviewService(RecordService):
         return True
 
     @unit_of_work()
-    def submit(self, id_, identity, data=None, revision_id=None, uow=None):
+    def submit(self, identity, id_, data=None, revision_id=None, uow=None):
         """Submit record for review."""
         # Get record and check permission
         draft = self.draft_cls.pid.resolve(id_, registered_only=False)

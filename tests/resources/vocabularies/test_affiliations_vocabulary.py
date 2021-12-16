@@ -39,7 +39,7 @@ def example_affiliation(
 
     yield aff
 
-    affiliations_service.delete(aff.id, superuser_identity)
+    affiliations_service.delete(superuser_identity, aff.id)
 
 
 def test_affiliations_get(client, example_affiliation, headers):

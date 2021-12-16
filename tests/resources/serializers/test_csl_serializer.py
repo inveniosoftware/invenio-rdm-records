@@ -72,7 +72,7 @@ def test_citation_string_serializer_records_list(
     expected_data = []
     for _ in range(3):
         draft = service.create(superuser_identity, minimal_record)
-        record = service.publish(draft.id, superuser_identity)
+        record = service.publish(superuser_identity, draft.id)
         expected_record_data = get_citation_string(
             CSLJSONSchema().dump(record),
             record.id,
@@ -103,7 +103,7 @@ def test_citation_string_serializer_record(
     """Test Citation String Serializer for single records."""
     service = current_rdm_records.records_service
     draft = service.create(superuser_identity, minimal_record)
-    record = service.publish(draft.id, superuser_identity)
+    record = service.publish(superuser_identity, draft.id)
     _id = record.id
     _url = f"/records/{_id}"
     headers = {"Accept": "text/x-bibliography"}
