@@ -28,7 +28,6 @@ from . import config
 from .resources import RDMDraftFilesResourceConfig, \
     RDMParentRecordLinksResource, RDMParentRecordLinksResourceConfig, \
     RDMRecordFilesResourceConfig, RDMRecordResource, RDMRecordResourceConfig
-from .searchconfig import SearchConfig
 from .secret_links import LinkNeed, SecretLink
 from .services import RDMFileDraftServiceConfig, RDMFileRecordServiceConfig, \
     RDMRecordService, RDMRecordServiceConfig, SecretLinkService
@@ -131,49 +130,11 @@ class InvenioRDMRecords(object):
 
     def service_configs(self, app):
         """Customized service configs."""
-        # Overall record permission policy
-        permission_policy = app.config.get('RDM_PERMISSION_POLICY')
-        pid_providers = app.config['RDM_PERSISTENT_IDENTIFIER_PROVIDERS']
-        pids = app.config['RDM_PERSISTENT_IDENTIFIERS']
-        doi_enabled = app.config['DATACITE_ENABLED']
-
-        # Available facets and sort options
-        sort_opts = app.config.get('RDM_SORT_OPTIONS')
-        facet_opts = app.config.get('RDM_FACETS')
-
-        # Specific configuration for each search endpoint
-        search_opts = SearchConfig(
-            app.config.get('RDM_SEARCH'),
-            sort=sort_opts,
-            facets=facet_opts,
-        )
-        search_drafts_opts = SearchConfig(
-            app.config.get('RDM_SEARCH_DRAFTS'),
-            sort=sort_opts,
-            facets=facet_opts,
-        )
-        search_versions_opts = SearchConfig(
-            app.config.get('RDM_SEARCH_VERSIONING'),
-            sort=sort_opts,
-            facets=facet_opts,
-        )
 
         class ServiceConfigs:
-            record = RDMRecordServiceConfig.customize(
-                permission_policy=permission_policy,
-                pid_providers=pid_providers,
-                pids=pids,
-                doi_enabled=doi_enabled,
-                search=search_opts,
-                search_drafts=search_drafts_opts,
-                search_versions=search_versions_opts,
-            )
-            file = RDMFileRecordServiceConfig.customize(
-                permission_policy=permission_policy,
-            )
-            file_draft = RDMFileDraftServiceConfig.customize(
-                permission_policy=permission_policy,
-            )
+            record = RDMRecordServiceConfig.build()
+            file = RDMFileRecordServiceConfig.build()
+            file_draft = RDMFileDraftServiceConfig.build()
             affiliations = AffiliationsServiceConfig
             names = NamesServiceConfig
             subjects = SubjectsServiceConfig

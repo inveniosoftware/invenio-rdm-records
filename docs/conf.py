@@ -320,3 +320,9 @@ intersphinx_mapping = {
 
 # Autodoc configuraton.
 autoclass_content = 'both'
+
+# To address <unknown>:1:py:class reference target not found
+# (better ideas welcomed)
+nitpick_ignore = [
+    ('py:class', 'invenio_rdm_records.services.permissions.RDMRecordPermissionPolicy'),  # noqa
+]

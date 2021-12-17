@@ -19,7 +19,19 @@ class PIDsService(RecordService):
     def __init__(self, config, manager_cls):
         """Constructor for RecordService."""
         super().__init__(config)
-        self._manager = manager_cls(self.config.pids_providers)
+        self.manager_cls = manager_cls
+
+    @property
+    def _manager(self):
+        """Transitive manager property.
+
+        This is done to:
+        - only access self.config attributes when in an application context
+        - limit code change
+        - limit side-effects (in case using pre-existing `pid_manager` would
+                              cause some.)
+        """
+        return self.manager_cls(self.config.pids_providers)
 
     @property
     def pid_manager(self):

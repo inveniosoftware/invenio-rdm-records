@@ -28,7 +28,8 @@ from ..records import RDMDraft, RDMRecord
 from . import facets
 from .components import AccessComponent, MetadataComponent, PIDsComponent, \
     RelationsComponent, ReviewComponent
-from .customizations import FileConfigMixin, RecordConfigMixin, \
+from .customizations import ConfiguratorMixin, FromConfig, \
+    FromConfigPIDsProviders, FromConfigRequiredPIDs, FromConfigSearchOptions, \
     SearchOptionsMixin
 from .permissions import RDMRecordPermissionPolicy
 from .result_items import SecretLinkItem, SecretLinkList
@@ -82,7 +83,7 @@ class RDMSearchVersionsOptions(SearchVersionsOptions, SearchOptionsMixin):
 #
 # Default service configuration
 #
-class RDMRecordServiceConfig(RecordServiceConfig, RecordConfigMixin):
+class RDMRecordServiceConfig(RecordServiceConfig, ConfiguratorMixin):
     """RDM record draft service config."""
 
     # Record and draft classes
@@ -95,20 +96,29 @@ class RDMRecordServiceConfig(RecordServiceConfig, RecordConfigMixin):
     schema_secret_link = SecretLink
 
     # Permission policy
-    permission_policy_cls = RDMRecordPermissionPolicy
+    permission_policy_cls = FromConfig(
+        "RDM_PERMISSION_POLICY", default=RDMRecordPermissionPolicy,
+        import_string=True
+    )
 
     # Result classes
     link_result_item_cls = SecretLinkItem
     link_result_list_cls = SecretLinkList
 
     # Search configuration
-    search = RDMSearchOptions
-    search_drafts = RDMSearchDraftsOptions
-    search_versions = RDMSearchVersionsOptions
+    search = FromConfigSearchOptions(
+        'RDM_SEARCH', search_option_cls=RDMSearchOptions
+    )
+    search_drafts = FromConfigSearchOptions(
+        'RDM_SEARCH_DRAFTS', search_option_cls=RDMSearchDraftsOptions
+    )
+    search_versions = FromConfigSearchOptions(
+        'RDM_SEARCH_VERSIONING', search_option_cls=RDMSearchVersionsOptions
+    )
 
-    # PIDs providers - set from config in customizations.
-    pids_providers = {}
-    pids_required = []
+    # PIDs configuration
+    pids_providers = FromConfigPIDsProviders()
+    pids_required = FromConfigRequiredPIDs()
 
     # Components - order matters!
     components = [
@@ -188,19 +198,23 @@ class RDMRecordServiceConfig(RecordServiceConfig, RecordConfigMixin):
     }
 
 
-class RDMFileRecordServiceConfig(FileServiceConfig, FileConfigMixin):
+class RDMFileRecordServiceConfig(FileServiceConfig, ConfiguratorMixin):
     """Configuration for record files."""
 
     record_cls = RDMRecord
-    permission_policy_cls = RDMRecordPermissionPolicy
+    permission_policy_cls = FromConfig(
+        "RDM_PERMISSION_POLICY", default=RDMRecordPermissionPolicy
+    )
 
 
-class RDMFileDraftServiceConfig(FileServiceConfig, FileConfigMixin):
+class RDMFileDraftServiceConfig(FileServiceConfig, ConfiguratorMixin):
     """Configuration for draft files."""
 
     record_cls = RDMDraft
     permission_action_prefix = "draft_"
-    permission_policy_cls = RDMRecordPermissionPolicy
+    permission_policy_cls = FromConfig(
+        "RDM_PERMISSION_POLICY", default=RDMRecordPermissionPolicy
+    )
 
     file_links_list = {
         "self": RecordLink("{+api}/records/{id}/draft/files"),
