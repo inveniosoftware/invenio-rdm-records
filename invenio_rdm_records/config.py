@@ -12,6 +12,7 @@
 import idutils
 
 from .services import facets
+from .services.permissions import RDMRecordPermissionPolicy
 from .services.pids import providers
 
 
@@ -295,7 +296,7 @@ RDM_RECORDS_LOCATION_SCHEMES = {
 #
 # Record permission policy
 #
-RDM_PERMISSION_POLICY = None
+RDM_PERMISSION_POLICY = RDMRecordPermissionPolicy
 """Override the default record permission policy."""
 
 
