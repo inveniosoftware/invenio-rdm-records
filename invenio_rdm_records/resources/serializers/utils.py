@@ -8,6 +8,7 @@
 
 """Helpers for serializers."""
 
+from elasticsearch_dsl.query import Q
 from invenio_access.permissions import system_identity
 from invenio_vocabularies.proxies import current_service as vocabulary_service
 
@@ -21,12 +22,12 @@ def get_vocabulary_props(vocabulary, fields, id_):
     results = vocabulary_service.read_all(
         system_identity,
         ['id'] + fields,
-        vocabulary
+        vocabulary,
+        extra_filter=Q('term', id=id_),
     )
 
     for h in results.hits:
-        if h["id"] == id_:
-            return h.get("props", {})
+        return h.get("props", {})
 
     raise VocabularyItemNotFoundError(
         f"The '{vocabulary}' vocabulary item '{id_}' was not found.")
