@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # Copyright (C) 2019-2021 CERN.
-# Copyright (C) 2019-2021 Northwestern University.
+# Copyright (C) 2019-2022 Northwestern University.
 # Copyright (C) 2021 TU Wien.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
@@ -42,6 +42,9 @@ from invenio_vocabularies.records.api import Vocabulary
 from invenio_rdm_records import config
 from invenio_rdm_records.proxies import current_rdm_records
 from invenio_rdm_records.records.api import RDMDraft, RDMParent, RDMRecord
+from invenio_rdm_records.services.pids import providers
+
+from .fake_datacite_client import FakeDataCiteClient
 
 
 #
@@ -184,6 +187,11 @@ def celery_config():
     return {}
 
 
+def _(x):
+    """Identity function for string extraction."""
+    return x
+
+
 @pytest.fixture(scope='module')
 def app_config(app_config):
     """Override pytest-invenio app_config fixture.
@@ -221,11 +229,32 @@ def app_config(app_config):
     # Enable communities while in preview
     app_config['COMMUNITIES_ENABLED'] = True
 
-    # Enable DOI miting
+    # Enable DOI minting...
     app_config['DATACITE_ENABLED'] = True
     app_config['DATACITE_USERNAME'] = 'INVALID'
     app_config['DATACITE_PASSWORD'] = 'INVALID'
     app_config['DATACITE_PREFIX'] = '10.1234'
+    # ...but fake it
+
+    app_config['RDM_PERSISTENT_IDENTIFIER_PROVIDERS'] = [
+        # DataCite DOI provider with fake client
+        providers.DataCitePIDProvider(
+            "datacite",
+            client=FakeDataCiteClient("datacite", config_prefix="DATACITE"),
+            label=_("DOI"),
+        ),
+        # DOI provider for externally managed DOIs
+        providers.ExternalPIDProvider(
+            "external",
+            "doi",
+            validators=[
+                providers.BlockedPrefixes(config_names=['DATACITE_PREFIX'])
+            ],
+            label=_("DOI"),
+        ),
+        # OAI identifier
+        providers.OAIPIDProvider("oai", label=_("OAI ID"),),
+    ]
 
     return app_config
 

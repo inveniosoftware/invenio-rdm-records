@@ -513,6 +513,12 @@ def test_pids_drafts_updates_no_pid_to_managed(
 
 
 # Update on records
+# There is a slight race condition in these tests between assertions and the
+# celery task because DOI publish() moves the status from NEW to RESERVED
+# synchronously and RESERVED to REGISTERED asynchronously. So
+# tests are made to account for that by checking for either RESERVED
+# or REGISTERED.
+
 
 def _create_and_publish_external(service, provider, identity, data):
     """Creates a draft with a managed doi and publishes it."""
@@ -541,7 +547,8 @@ def _create_and_publish_managed(service, provider, identity, data):
     assert pid.status == PIDStatus.NEW
     # publish and check the doi is in pidstore
     record = service.publish(identity, draft.id)
-    assert provider.get(pid_value=doi).status == PIDStatus.RESERVED
+    pid = provider.get(pid_value=doi)
+    assert pid.status in [PIDStatus.RESERVED, PIDStatus.REGISTERED]
 
     return record
 
@@ -562,22 +569,22 @@ def test_pids_records_updates_external_to_managed(
     draft = service.update_draft(
         id_=draft.id, identity=superuser_identity, data=draft.data)
     assert not draft["pids"].get("doi")
+
     # add a new managed doi
     draft = service.pids.create(superuser_identity, draft.id, "doi")
     doi = draft["pids"]["doi"]["identifier"]
     pid = provider.get(pid_value=doi)
     assert pid.status == PIDStatus.NEW
+
     # publish with managed doi
     record = service.publish(superuser_identity, draft.id)
     pid = provider.get(pid_value=doi)
-    assert pid.status == PIDStatus.RESERVED
+    assert pid.status in [PIDStatus.RESERVED, PIDStatus.REGISTERED]
     # the old external should be completely deleted
-    assert pytest.raises(
-        PIDDoesNotExistError,
-        provider.get,
-        pid_value=old_doi["identifier"],
-        pid_provider=old_doi["provider"]
-    )
+    with pytest.raises(PIDDoesNotExistError):
+        provider.get(
+            pid_value=old_doi["identifier"], pid_provider=old_doi["provider"]
+        )
 
 
 def test_pids_records_updates_managed_to_external_fail(
@@ -598,7 +605,8 @@ def test_pids_records_updates_managed_to_external_fail(
 
     doi = draft["pids"]["doi"]["identifier"]
     assert doi
-    assert provider.get(pid_value=doi).status == PIDStatus.RESERVED
+    pid = provider.get(pid_value=doi)
+    assert pid.status in [PIDStatus.RESERVED, PIDStatus.REGISTERED]
 
 
 def test_pids_records_updates_managed_to_no_pid_fail(
@@ -618,7 +626,8 @@ def test_pids_records_updates_managed_to_no_pid_fail(
 
     doi = draft["pids"]["doi"]["identifier"]
     assert doi
-    assert provider.get(pid_value=doi).status == PIDStatus.RESERVED
+    pid = provider.get(pid_value=doi)
+    assert pid.status in [PIDStatus.RESERVED, PIDStatus.REGISTERED]
 
 
 # Publishing
@@ -637,7 +646,8 @@ def test_pids_publish_managed(running_app, es_clear, minimal_record):
     # publish
     record = service.publish(superuser_identity, draft.id)
     # registration is async
-    assert provider.get(pid_value=doi).status == PIDStatus.RESERVED
+    pid = provider.get(pid_value=doi)
+    assert pid.status in [PIDStatus.RESERVED, PIDStatus.REGISTERED]
 
 
 def test_pids_publish_external(running_app, es_clear, minimal_record):
@@ -763,23 +773,25 @@ def test_pids_delete_managed_pid_from_record(
     provider = service.pids.pid_manager._get_provider("doi", "datacite")
 
     # create draft and managed doi
-
     draft = service.create(superuser_identity, minimal_record)
     draft = service.pids.create(superuser_identity, draft.id, "doi")
+
     # publish
     record = service.publish(superuser_identity, draft.id)
     pid = provider.get(pid_value=record["pids"]["doi"]["identifier"])
-    assert pid.status == PIDStatus.RESERVED
+    assert pid.status in [PIDStatus.RESERVED, PIDStatus.REGISTERED]
     assert pid.pid_value == record["pids"]["doi"]["identifier"]
+
     # create new draft
     draft = service.edit(superuser_identity, record.id)
     pid = provider.get(pid_value=draft["pids"]["doi"]["identifier"])
-    assert pid.status == PIDStatus.RESERVED
+    assert pid.status in [PIDStatus.RESERVED, PIDStatus.REGISTERED]
     assert pid.pid_value == draft["pids"]["doi"]["identifier"]
+
     # delete draft (should not delete pid since it is part of an active record)
     assert service.delete_draft(superuser_identity, draft.id)
     pid = provider.get(pid_value=record["pids"]["doi"]["identifier"])
-    assert pid.status == PIDStatus.RESERVED
+    assert pid.status in [PIDStatus.RESERVED, PIDStatus.REGISTERED]
     assert pid.pid_value == record["pids"]["doi"]["identifier"]
 
 

@@ -76,7 +76,7 @@ class PIDsComponent(ServiceComponent):
 
         # Validate the draft PIDs
         self.service.pids.pid_manager.validate(
-           draft_pids, record, raise_errors=True
+            draft_pids, record, raise_errors=True
         )
 
         # Detect which PIDs on a published record that has been changed.
