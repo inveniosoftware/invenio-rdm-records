@@ -37,7 +37,8 @@ def current_default_locale():
 # Partial to make short definitions in below schema.
 FormatEDTF = partial(FormatEDTF_, locale=get_locale)
 FormatDate = partial(FormatDate_, locale=get_locale)
-L10NString = partial(BabelGettextDictField, get_locale, current_default_locale)
+L10NString = partial(BabelGettextDictField, get_locale,
+                     current_default_locale())
 
 
 def make_affiliation_index(attr, obj, dummy_ctx):
