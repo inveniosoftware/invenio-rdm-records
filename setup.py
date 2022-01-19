@@ -74,7 +74,7 @@ install_requires = [
     'invenio-communities>=2.7.0.dev2,<2.8.0',
     'invenio-drafts-resources>=0.15.2,<0.16.0',
     'invenio-oaiserver>=1.3.0',
-    'invenio-vocabularies>=0.10.2,<0.11.0',
+    'invenio-vocabularies>=0.10.3,<0.11.0',
     'pytz>=2020.4',
     'pyyaml>=5.4.0',
 ]
