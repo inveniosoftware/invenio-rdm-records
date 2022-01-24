@@ -17,8 +17,11 @@ from invenio_vocabularies.proxies import \
 from invenio_rdm_records.proxies import current_rdm_records
 
 from .fixtures import FixturesEngine
-from .fixtures.demo import create_fake_record
-from .fixtures.tasks import create_demo_record
+from .fixtures.demo import create_fake_record, create_fake_request
+from .fixtures.tasks import create_demo_record, create_demo_request
+from invenio_communities.fixtures.demo import create_fake_community
+from invenio_communities.fixtures.tasks import create_demo_community
+from faker import Faker
 
 
 @click.group()
@@ -29,14 +32,20 @@ def rdm_records():
 @rdm_records.command('demo')
 @with_appcontext
 def demo():
-    """Create 100 fake records for demo purposes."""
+    """Create 100 fake records and requests for demo purposes."""
     click.secho('Creating demo records...', fg='green')
 
-    for _ in range(100):
-        fake_data = create_fake_record()
-        create_demo_record.delay(fake_data)
+    faker = Faker()
+    community = create_fake_community(faker)
+    create_demo_community(community)
 
-    click.secho('Created records!', fg='green')
+    for index in range(100):
+        fake_data = create_fake_record()
+        draft_id = create_demo_record.delay(fake_data)
+        fake_data = create_fake_request(draft_id, community.id, index)
+        create_demo_request.delay(fake_data)
+
+    click.secho('Created records and requests!', fg='green')
 
 
 @rdm_records.command('fixtures')

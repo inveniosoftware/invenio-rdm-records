@@ -12,6 +12,8 @@ from celery import shared_task
 from flask import current_app
 from invenio_access.permissions import system_identity
 from invenio_vocabularies.proxies import current_service as vocabulary_service
+from invenio_requests.proxies import current_requests
+from invenio_requests.customizations import DefaultRequestType
 
 from ..proxies import current_rdm_records
 from ..services.errors import EmbargoNotLiftedError
@@ -29,7 +31,31 @@ def create_demo_record(data):
     service = current_rdm_records.records_service
     draft = service.create(data=data, identity=system_identity)
     service.publish(id_=draft.id, identity=system_identity)
+    return draft.id
 
+
+@shared_task
+def create_demo_request(data):
+    """Create a demo request."""
+
+    def request_record_input_data():
+        """Input data to a Request record."""
+        return {"title": "Demo", "receiver": {"user": "1"}}
+
+    def create_request(identity, request_record_input_data, requests_service):
+        input_data = request_record_input_data
+        receiver = identity[1]
+        # Need to use the service to get the id
+        item = requests_service.create(
+            identity, input_data, DefaultRequestType, receiver=receiver
+        )
+        return item._request
+
+    requests_service = current_requests.requests_service
+    request = create_request(system_identity, request_record_input_data(), requests_service)
+    id_ = request.id
+    data.id = id_
+    requests_service.execute_action(system_identity, id_, "submit", data)
 
 @shared_task(ignore_result=True)
 def update_expired_embargos():

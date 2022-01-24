@@ -259,3 +259,34 @@ def create_fake_record():
     }
 
     return json.loads(json.dumps(data_to_use))
+
+def create_fake_request(draft_id, community, index):
+    """Create requests for demo purposes."""
+    status_enum =  ["DRAFT", "OPEN", "CANCELLED", "DECLINED", "ACCEPTED", "EXPIRED"]
+    status = random.choice(status_enum)
+    open = True if status == "DRAFT" or status == "OPEN" else False
+    updated = fake_edtf_level_0()
+    created = fake_edtf_level_0()
+    fake = Faker()
+    data = {
+        "number": community + ":" + index,
+        "created": created,
+        "updated": updated,
+        "expires_at": None,
+        "is_expired": False,
+        "revision_id": 3,
+        "status": status,
+        "is_open": open,
+        "title": fake.text(max_nb_chars=50),
+        "request_type": "Generic Request",
+        "receiver": {
+            "community": community
+        },
+        "created_by": {
+            "user": "1"
+        },
+        "subject": {
+            "record": draft_id
+        }
+    }
+    return data
