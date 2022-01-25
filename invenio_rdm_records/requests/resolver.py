@@ -8,8 +8,8 @@
 """Entity resolver for records aware of drafts and records."""
 
 from invenio_pidstore.errors import PIDUnregistered
-from invenio_requests.resolvers.default import RecordResolver
-from invenio_requests.resolvers.default.records import RecordProxy
+from invenio_records_resources.references.resolvers.records import \
+    RecordProxy, RecordResolver
 
 from ..records.api import RDMDraft, RDMRecord
 

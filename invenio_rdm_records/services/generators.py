@@ -18,7 +18,7 @@ from flask_principal import UserNeed
 from invenio_access.permissions import authenticated_user
 from invenio_communities.communities.services.permissions import CommunityNeed
 from invenio_records_permissions.generators import Generator
-from invenio_requests.resolvers import ResolverRegistry
+from invenio_requests.resolvers.registry import ResolverRegistry
 
 from invenio_rdm_records.records import RDMDraft
 
