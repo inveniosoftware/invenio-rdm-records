@@ -13,7 +13,7 @@ from invenio_drafts_resources.services.records import RecordService
 from invenio_records_resources.services.uow import RecordCommitOp, \
     RecordIndexOp, unit_of_work
 from invenio_requests import current_registry, current_requests_service
-from invenio_requests.resolvers import ResolverRegistry
+from invenio_requests.resolvers.registry import ResolverRegistry
 from marshmallow import ValidationError
 
 from ..errors import ReviewExistsError, ReviewNotFoundError, ReviewStateError
