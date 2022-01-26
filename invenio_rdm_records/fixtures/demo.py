@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2019-2021 CERN.
-# Copyright (C) 2019-2021 Northwestern University.
+# Copyright (C) 2019-2022 CERN.
+# Copyright (C) 2019-2022 Northwestern University.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
@@ -16,8 +16,7 @@ from pathlib import Path
 from edtf.parser.grammar import level0Expression
 from faker import Faker
 from invenio_access.permissions import system_identity
-
-from .vocabularies import VocabulariesFixture
+from invenio_requests.records.api import RequestEventFormat, RequestEventType
 
 
 class CachedVocabularies:
@@ -39,6 +38,8 @@ class CachedVocabularies:
     @classmethod
     def _read_vocabulary(cls, vocabulary):
         """Iterate over records of a vocabulary."""
+        from .vocabularies import VocabulariesFixture
+
         # Simplification: we don't consider extensions when generating demo
         #                 data for now
         filepath = Path("./app_data") / "vocabularies.yaml"
@@ -312,3 +313,34 @@ def create_fake_record():
     }
 
     return json.loads(json.dumps(data_to_use))
+
+
+def create_fake_community():
+    """Create minimal community for demo purposes."""
+    fake = Faker()
+    return {
+        "id": fake.unique.domain_word(),
+        "access": {
+            "visibility": "public",
+        },
+        "metadata": {
+            "title": fake.sentence(nb_words=5, variable_nb_words=True),
+            "type": random.choice([
+                "organization", "event", "topic", "project"
+            ]),
+        }
+    }
+
+
+def create_fake_comment():
+    """Create a fake comment for demo purposes."""
+    fake = Faker()
+    comment = {
+        "content": fake.sentence(nb_words=20, variable_nb_words=True),
+        "format": RequestEventFormat.HTML.value,
+    }
+    with_type = {
+        "payload": comment,
+        "type": RequestEventType.COMMENT.value
+    }
+    return comment, with_type

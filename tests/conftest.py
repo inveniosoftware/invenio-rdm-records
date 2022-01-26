@@ -269,7 +269,8 @@ def _es_create_indexes(current_search, current_search_client):
     """Create all registered Elasticsearch indexes."""
     to_create = [
         RDMRecord.index._name,
-        RDMDraft.index._name
+        RDMDraft.index._name,
+        Community.index._name,
     ]
     # list to trigger iter
     list(current_search.create(ignore_existing=True, index_list=to_create))
@@ -280,7 +281,8 @@ def _es_delete_indexes(current_search):
     """Delete all registered Elasticsearch indexes."""
     to_delete = [
         RDMRecord.index._name,
-        RDMDraft.index._name
+        RDMDraft.index._name,
+        Community.index._name,
     ]
     list(current_search.delete(index_list=to_delete))
 

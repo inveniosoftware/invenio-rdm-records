@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2021 CERN.
+# Copyright (C) 2022 CERN.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
@@ -65,7 +65,7 @@ class ReviewService(RecordService):
         receiver = ResolverRegistry.resolve_entity_proxy(
             data.pop('receiver', None)).resolve()
 
-        # Delgate to requests service to create the request
+        # Delegate to requests service to create the request
         request_item = current_requests_service.create(
             identity,
             data,
