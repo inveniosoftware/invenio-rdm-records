@@ -145,7 +145,7 @@ class DataCitePIDProvider(PIDProvider):
             return True
         except DataCiteError as e:
             current_app.logger.warning("DataCite provider error when "
-                                       f"updating DOI for {pid.pid_value}")
+                                       f"registering DOI for {pid.pid_value}")
             self._log_errors(e)
 
             return False
