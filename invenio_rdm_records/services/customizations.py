@@ -1,15 +1,14 @@
 # -*- coding: utf-8 -*-
 #
 # Copyright (C) 2021 CERN.
+# Copyright (C) 2022 Northwestern University.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
 
 """Helpers for customizing the configuration in a controlled manner."""
 
-from flask import current_app
 from invenio_base.utils import load_or_import_from_config
-from invenio_records_resources.services.records import config
 
 from ..searchconfig import SearchConfig
 
@@ -56,7 +55,7 @@ class FromConfig:
         FOO = 2
 
         # ext.py
-        c = ServiceConfig.build()
+        c = ServiceConfig.build(app)
         c.foo  # 2
     """
 
@@ -70,10 +69,10 @@ class FromConfig:
         """Return value that was grafted on obj (descriptor protocol)."""
         if self.import_string:
             return load_or_import_from_config(
-                key=self.config_key, default=self.default
+                app=obj._app, key=self.config_key, default=self.default
             )
         else:
-            return current_app.config.get(self.config_key, self.default)
+            return obj._app.config.get(self.config_key, self.default)
 
     def __set_name__(self, owner, name):
         """Store name of grafted field (descriptor protocol)."""
@@ -108,12 +107,12 @@ class FromConfigPIDsProviders:
 
             return provider_dict
 
-        pids = current_app.config.get("RDM_PERSISTENT_IDENTIFIERS", {})
+        pids = obj._app.config.get("RDM_PERSISTENT_IDENTIFIERS", {})
         providers = {
             p.name: p for p in
-            current_app.config.get("RDM_PERSISTENT_IDENTIFIER_PROVIDERS", [])
+            obj._app.config.get("RDM_PERSISTENT_IDENTIFIER_PROVIDERS", [])
         }
-        doi_enabled = current_app.config.get("DATACITE_ENABLED", False)
+        doi_enabled = obj._app.config.get("DATACITE_ENABLED", False)
 
         return {
             scheme: get_provider_dict(conf, providers)
@@ -127,8 +126,8 @@ class FromConfigRequiredPIDs:
 
     def __get__(self, obj, objtype=None):
         """Return required pids (descriptor protocol)."""
-        pids = current_app.config.get("RDM_PERSISTENT_IDENTIFIERS", {})
-        doi_enabled = current_app.config.get("DATACITE_ENABLED", False)
+        pids = obj._app.config.get("RDM_PERSISTENT_IDENTIFIERS", {})
+        doi_enabled = obj._app.config.get("DATACITE_ENABLED", False)
 
         pids = {
             scheme: conf for (scheme, conf) in pids.items()
@@ -151,9 +150,9 @@ class FromConfigSearchOptions:
 
     def __get__(self, obj, objtype=None):
         """Return value that was grafted on obj (descriptor protocol)."""
-        search_opts = current_app.config.get(self.config_key, self.default)
-        sort_opts = current_app.config.get('RDM_SORT_OPTIONS')
-        facet_opts = current_app.config.get('RDM_FACETS')
+        search_opts = obj._app.config.get(self.config_key, self.default)
+        sort_opts = obj._app.config.get('RDM_SORT_OPTIONS')
+        facet_opts = obj._app.config.get('RDM_FACETS')
 
         search_config = SearchConfig(
             search_opts,
@@ -168,6 +167,6 @@ class ConfiguratorMixin:
     """Shared customization for requests service config."""
 
     @classmethod
-    def build(cls):
+    def build(cls, app):
         """Build the config object."""
-        return type(f"Custom{cls.__name__}", (cls,), {})
+        return type(f"Custom{cls.__name__}", (cls,), {"_app": app})()

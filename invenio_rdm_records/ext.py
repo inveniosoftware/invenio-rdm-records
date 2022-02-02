@@ -132,9 +132,9 @@ class InvenioRDMRecords(object):
         """Customized service configs."""
 
         class ServiceConfigs:
-            record = RDMRecordServiceConfig.build()
-            file = RDMFileRecordServiceConfig.build()
-            file_draft = RDMFileDraftServiceConfig.build()
+            record = RDMRecordServiceConfig.build(app)
+            file = RDMFileRecordServiceConfig.build(app)
+            file_draft = RDMFileDraftServiceConfig.build(app)
             affiliations = AffiliationsServiceConfig
             names = NamesServiceConfig
             subjects = SubjectsServiceConfig
