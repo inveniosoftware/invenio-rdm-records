@@ -222,7 +222,24 @@ def app_config(app_config):
 
     # OAI Server
     app_config["OAISERVER_ID_PREFIX"] = 'oai:inveniosoftware.org:recid/'
-
+    app_config['OAISERVER_METADATA_FORMATS'] = {
+        'oai_dc': {
+            'serializer': 'invenio_rdm_records.oai:dublincore_etree',
+            'schema': 'http://www.openarchives.org/OAI/2.0/oai_dc.xsd',
+            'namespace': 'http://www.openarchives.org/OAI/2.0/oai_dc/',
+        },
+        'datacite': {
+            'serializer': 'invenio_rdm_records.oai:datacite_etree',
+            'schema': 'http://schema.datacite.orgmeta/nonexistant/nonexistant.xsd',  # noqa
+            'namespace': 'http://datacite.org/schema/nonexistant',
+        },
+        'oai_datacite': {
+            'serializer': 'invenio_rdm_records.oai:oai_datacite_etree',
+            'schema': 'http://schema.datacite.org/oai/oai-1.1/oai.xsd',
+            'namespace': 'http://schema.datacite.org/oai/oai-1.1/',
+        },
+    }
+    app_config["INDEXER_DEFAULT_INDEX"] = "rdmrecords-records-record-v4.0.0"
     # Variable not used. We set it to silent warnings
     app_config['JSONSCHEMAS_HOST'] = 'not-used'
 
@@ -234,6 +251,7 @@ def app_config(app_config):
     app_config['DATACITE_USERNAME'] = 'INVALID'
     app_config['DATACITE_PASSWORD'] = 'INVALID'
     app_config['DATACITE_PREFIX'] = '10.1234'
+    app_config['DATACITE_DATACENTER_SYMBOL'] = 'TEST'
     # ...but fake it
 
     app_config['RDM_PERSISTENT_IDENTIFIER_PROVIDERS'] = [
@@ -260,8 +278,8 @@ def app_config(app_config):
 
 
 @pytest.fixture(scope='module')
-def create_app():
-    """Create app fixture for UI+API app."""
+def create_app(instance_path):
+    """Application factory fixture."""
     return _create_app
 
 
@@ -464,7 +482,7 @@ def full_record(users):
                 "active": True,
                 "until": "2131-01-01",
                 "reason": "Only for medical doctors."
-            }
+            },
         },
         "files": {
             "enabled": True,
@@ -1076,3 +1094,12 @@ def community(running_app, curator, minimal_community):
     )
     Community.index.refresh()
     return c
+
+
+@pytest.fixture(scope="session")
+def headers():
+    """Default headers for making requests."""
+    return {
+        'content-type': 'application/json',
+        'accept': 'application/json',
+    }

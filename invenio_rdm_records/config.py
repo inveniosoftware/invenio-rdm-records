@@ -523,3 +523,6 @@ You can also provide a callable instead:
 
     DATACITE_FORMAT = make_doi
 """
+
+DATACITE_DATACENTER_SYMBOL = ""
+"""DataCite test mode enabled."""
