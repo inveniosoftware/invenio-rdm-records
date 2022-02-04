@@ -21,7 +21,7 @@
     datacite: DataManager
   title:
     en: Data manager
-    de: Datenmanager
+    de: DatenmanagerIn
 - id: distributor
   props:
     datacite: Distributor
@@ -33,7 +33,7 @@
     datacite: Editor
   title:
     en: Editor
-    de: Editor
+    de: EditorIn
 - id: hostinginstitution
   props:
     datacite: HostingInstitution
@@ -45,7 +45,7 @@
     datacite: Producer
   title:
     en: Producer
-    de: Produzent
+    de: ProduzentIn
 - id: projectleader
   props:
     datacite: ProjectLeader
@@ -63,25 +63,25 @@
     datacite: ProjectMember
   title:
     en: Project member
-    de: ProjektmitarbeiterIn
+    de: Projektmitglied
 - id: registrationagency
   props:
     datacite: RegistrationAgency
   title:
     en: Registration agency
-    de: Registrierende Einrichtung
+    de: Registrierungsstelle
 - id: registrationauthority
   props:
     datacite: RegistrationAuthority
   title:
     en: Registration authority
-    de: Registrierende Authorität
+    de: Registrierungsbehörde
 - id: relatedperson
   props:
     datacite: RelatedPerson
   title:
     en: Related person
-    de: relperson
+    de: Verwandte Personen
 - id: researcher
   props:
     datacite: Researcher
@@ -117,7 +117,7 @@
     datacite: WorkPackageLeader
   title:
     en: Work package leader
-    de: Leiter des Arbeitspacketes
+    de: ArbeitspaketleiterIn
 - id: other
   props:
     datacite: Other
