@@ -21,12 +21,3 @@ from invenio_app.factory import create_api
 def create_app(instance_path):
     """Application factory fixture."""
     return create_api
-
-
-@pytest.fixture()
-def headers():
-    """Default headers for making requests."""
-    return {
-        'content-type': 'application/json',
-        'accept': 'application/json',
-    }
