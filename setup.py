@@ -121,6 +121,7 @@ setup(
             'invenio_vocabularies_affiliations = invenio_rdm_records.views:create_affiliations_blueprint_from_app',
             'invenio_vocabularies_names = invenio_rdm_records.views:create_names_blueprint_from_app',
             'invenio_vocabularies_subjects = invenio_rdm_records.views:create_subjects_blueprint_from_app',
+            'invenio_oaipmh_server = invenio_rdm_records.views:create_oaipmh_server_blueprint_from_app',
         ],
         "invenio_base.blueprints": [
             'invenio_rdm_records_ext = invenio_rdm_records.views:blueprint',

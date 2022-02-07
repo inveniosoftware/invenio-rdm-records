@@ -28,6 +28,7 @@ def init(state):
     registry.register(ext.affiliations_service, service_id='rdm-affiliations')
     registry.register(ext.names_service, service_id='rdm-names')
     registry.register(ext.subjects_service, service_id='rdm-subjects')
+    registry.register(ext.oaipmh_server_service, service_id='oaipmh-server')
 
 
 def create_records_bp(app):
@@ -74,4 +75,10 @@ def create_names_blueprint_from_app(app):
 def create_subjects_blueprint_from_app(app):
     """Create app blueprint."""
     return app.extensions["invenio-rdm-records"].subjects_resource \
+        .as_blueprint()
+
+
+def create_oaipmh_server_blueprint_from_app(app):
+    """Create app blueprint."""
+    return app.extensions["invenio-rdm-records"].oaipmh_server_resource \
         .as_blueprint()
