@@ -1,10 +1,22 @@
-from invenio_records_permissions import BasePermissionPolicy
+# -*- coding: utf-8 -*-
+#
+# Copyright (C) 2022 Graz University of Technology.
+#
+# Invenio-RDM-Records is free software; you can redistribute it and/or modify
+# it under the terms of the MIT License; see LICENSE file for more details.
 
-from invenio_records_permissions.generators import AnyUser, SystemProcess
+"""Permissions for OAI-PMH service."""
+
+from invenio_records_permissions import BasePermissionPolicy
+from invenio_records_permissions.generators import AnyUser, Admin, SystemProcess
+
 
 class OAIPMHServerPermissionPolicy(BasePermissionPolicy):
+    """OAI-PMH permission policy."""
+
     can_read = [AnyUser(), SystemProcess()]
-    can_create = [AnyUser(), SystemProcess()]
-    can_delete = [AnyUser(), SystemProcess()]
-    can_update = [AnyUser(), SystemProcess()]
+    can_create = [Admin(), SystemProcess()]
+    can_delete = [Admin(), SystemProcess()]
+    can_update = [Admin(), SystemProcess()]
     can_search = [AnyUser(), SystemProcess()]
+    can_read_format = [AnyUser(), SystemProcess()]
