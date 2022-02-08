@@ -5,31 +5,35 @@
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
 
-"""Bibliographic Record Resource."""
+"""OAI-PMH resource."""
 
 from flask import abort, g
 from flask.globals import request
-from flask_resources import Resource, resource_requestctx, response_handler, route
-
-from invenio_records_resources.resources.records.resource import \
-    request_data, request_headers, request_search_args, request_view_args
-
+from flask_resources import (
+    Resource,
+    resource_requestctx,
+    response_handler,
+    route,
+)
 from invenio_records_resources.resources.errors import ErrorHandlersMixin
+from invenio_records_resources.resources.records.resource import (
+    request_data,
+    request_headers,
+    request_search_args,
+    request_view_args,
+)
 from invenio_records_resources.resources.records.utils import es_preference
 
+
 class OAIPMHServerResource(ErrorHandlersMixin, Resource):
-    """OAI server resource."""
+    """OAI-PMH server resource."""
 
     def __init__(self, config, service):
         super().__init__(config)
         self.service = service
 
     def create_url_rules(self):
-        """Create the URL rules for the OAIServer resource."""
-
-        def p(route):
-            """Prefix a route with the URL prefix."""
-            return f"{self.config.url_prefix}{route}"
+        """Create the URL rules for the OAI-PMH server resource."""
 
         routes = self.config.routes
         url_rules = [
@@ -38,12 +42,14 @@ class OAIPMHServerResource(ErrorHandlersMixin, Resource):
             route("GET", routes["set-prefix"] + routes["item"], self.read),
             route("PUT", routes["set-prefix"] + routes["item"], self.update),
             route("DELETE", routes["set-prefix"] + routes["item"], self.delete),
-
-            # route("GET", p(routes["format-prefix"] + routes["list"]), self.search_format),
+            route(
+                "GET",
+                routes["format-prefix"] + routes["list"],
+                self.read_formats,
+            ),
         ]
 
         return url_rules
-
 
     #
     # Primary Interface
@@ -56,7 +62,6 @@ class OAIPMHServerResource(ErrorHandlersMixin, Resource):
         hits = self.service.search(
             identity=identity,
             params=resource_requestctx.args,
-            es_preference=es_preference()
         )
         return hits.to_dict(), 200
 
@@ -75,7 +80,6 @@ class OAIPMHServerResource(ErrorHandlersMixin, Resource):
     @response_handler()
     def read(self):
         """Read an item."""
-        print(resource_requestctx.view_args)
         item = self.service.read(
             g.identity,
             resource_requestctx.view_args["id"],
@@ -107,12 +111,10 @@ class OAIPMHServerResource(ErrorHandlersMixin, Resource):
 
     @request_search_args
     @response_handler(many=True)
-    def search_format(self):
+    def read_formats(self):
         """Perform a search over the formats."""
         identity = g.identity
-        hits = self.service.search_format(
+        hits = self.service.read_all_formats(
             identity=identity,
-            params=resource_requestctx.args,
-            es_preference=es_preference()
         )
-        return hits.to_dict(), 200
+        return hits, 200

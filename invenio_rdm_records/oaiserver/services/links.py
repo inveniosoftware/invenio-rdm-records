@@ -16,7 +16,14 @@ class OAIPMHSetLink(Link):
     @staticmethod
     def vars(set, vars):
         """Variables for the URI template."""
-        vars.update({
-            "id": set.id,
-            "spec": set.spec,
-        })
+        vars.update(
+            {
+                "id": set.id,
+                "spec": set.spec,
+            }
+        )
+
+
+class OAIPMHLink(Link):
+    def __init__(self, verb, metadataFormat=None, params=None):
+        super().__init__()
