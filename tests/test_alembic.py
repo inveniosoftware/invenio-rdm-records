@@ -9,7 +9,7 @@
 """Test alembic recipes for Invenio-RDM-Records."""
 
 import pytest
-from invenio_db.utils import drop_alembic_version_table
+from invenio_db.utils import alembic_test_context, drop_alembic_version_table
 from sqlalchemy_continuum import version_class
 from sqlalchemy_utils.functions import get_class_by_table
 
@@ -21,6 +21,8 @@ def test_alembic(base_app, database):
 
     if db.engine.name == 'sqlite':
         raise pytest.skip('Upgrades are not supported on SQLite.')
+
+    base_app.config['ALEMBIC_CONTEXT'] = alembic_test_context()
 
     # Check that this package's SQLAlchemy models have been properly registered
     tables = [x.name for x in db.get_tables_for_bind()]
