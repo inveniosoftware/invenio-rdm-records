@@ -9,6 +9,7 @@
 
 from flask import current_app
 from flask_babelex import lazy_gettext as _
+from flask_sqlalchemy import Pagination
 from invenio_oaiserver.models import OAISet
 from invenio_records_resources.services import Service
 from invenio_records_resources.services.base import LinksTemplate
@@ -16,17 +17,16 @@ from invenio_records_resources.services.records.schema import (
     ServiceSchemaWrapper,
 )
 from invenio_records_resources.services.uow import unit_of_work
-from invenio_requests import current_registry, current_requests_service
 from sqlalchemy.orm.exc import NoResultFound
+from sqlalchemy.sql import text
 
-from invenio_rdm_records.oaiserver.services.config import OAIPMHSetUpdateSchema
 from invenio_rdm_records.oaiserver.services.errors import (
     OAIPMHSetDoesNotExistError,
     OAIPMHSetIDDoesNotExistError,
     OAIPMHSetSpecAlreadyExistsError,
 )
 
-from .uow import OAISetCommitOp, OAISetDeleteOp
+from invenio_rdm_records.oaiserver.services.uow import OAISetCommitOp, OAISetDeleteOp
 
 
 class OAIPMHServerService(Service):
@@ -85,7 +85,7 @@ class OAIPMHServerService(Service):
         return self.result_item(
             service=self,
             identity=identity,
-            set=new_set,
+            item=new_set,
             links_tpl=self.links_item_tpl,
         )
 
@@ -97,35 +97,30 @@ class OAIPMHServerService(Service):
         return self.result_item(
             service=self,
             identity=identity,
-            set=oai_set,
+            item=oai_set,
             links_tpl=self.links_item_tpl,
         )
 
     def search(self, identity, params):
-        self.require_permission(identity, 'search')
-        page = params.get("page", 1)
-        size = params.get(
-            "size",
-            self.config.search.pagination_options.get(
-                "default_results_per_page"
-            ),
+        self.require_permission(identity, 'read')
+
+        search_params = self._get_search_params(params)
+
+        oai_sets = OAISet.query.order_by(
+            search_params["sort_direction"](
+                text(",".join(search_params["sort"]))
+            )
+        ).paginate(
+            page=search_params["page"],
+            per_page=search_params["size"],
+            error_out=False,
         )
 
-        params.update(
-            {
-                "page": page,
-                "size": size,
-            }
-        )
-
-        oai_sets = OAISet.query.paginate(
-            page=page, per_page=size, error_out=False
-        )
         return self.result_list(
             self,
             identity,
             oai_sets,
-            params,
+            params=search_params,
             links_tpl=LinksTemplate(
                 self.config.links_search, context={"args": params}
             ),
@@ -151,7 +146,7 @@ class OAIPMHServerService(Service):
         return self.result_item(
             service=self,
             identity=identity,
-            set=oai_set,
+            item=oai_set,
             links_tpl=self.links_item_tpl,
         )
 
@@ -167,6 +162,65 @@ class OAIPMHServerService(Service):
     def read_all_formats(self, identity):
         """Read available metadata formats."""
         self.require_permission(identity, 'read_format')
-        # TODO: create ResultItem and schema for formats
-        formats = list(current_app.config.get('OAISERVER_METADATA_FORMATS').keys())
-        return formats
+        formats = [
+            {
+                "id": k,
+                "schema": v.get("schema", None),
+                "namespace": v.get("namespace", None),
+            }
+            for k, v in current_app.config.get(
+                'OAISERVER_METADATA_FORMATS'
+            ).items()
+        ]
+
+        results = Pagination(
+            query=None,
+            page=1,
+            per_page=None,
+            total=len(formats),
+            items=formats,
+        )
+
+        return self.config.metadata_format_result_list_cls(
+            self,
+            identity,
+            results,
+            schema=ServiceSchemaWrapper(
+                self, schema=self.config.metadata_format_schema
+            ),
+        )
+
+    def _get_search_params(self, params):
+        page = params.get("page", 1)
+        size = params.get(
+            "size",
+            self.config.search.pagination_options.get(
+                "default_results_per_page"
+            ),
+        )
+
+        _search_cls = self.config.search
+
+        _sort_name = (
+            params.get("sort")
+            if params.get("sort") in _search_cls.sort_options
+            else _search_cls.sort_default
+        )
+        _sort_direction_name = (
+            params.get("sort_direction")
+            if params.get("sort_direction")
+            in _search_cls.sort_direction_options
+            else _search_cls.sort_direction_default
+        )
+
+        sort = _search_cls.sort_options.get(_sort_name)
+        sort_direction = _search_cls.sort_direction_options.get(
+            _sort_direction_name
+        )
+
+        return {
+            "page": page,
+            "size": size,
+            "sort": sort.get("fields"),
+            "sort_direction": sort_direction.get("fn"),
+        }

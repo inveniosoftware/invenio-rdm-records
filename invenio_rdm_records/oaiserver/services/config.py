@@ -2,33 +2,27 @@
 #
 # Copyright (C) 2022 Graz University of Technology.
 #
-# Invenio-Records-Resources is free software; you can redistribute it and/or
-# modify it under the terms of the MIT License; see LICENSE file for more
-# details.
+# Invenio-RDM-Records is free software; you can redistribute it and/or modify
+# it under the terms of the MIT License; see LICENSE file for more details.
 
 """OAI-PMH service API configuration."""
 
 from flask_babelex import gettext as _
-from invenio_indexer.api import RecordIndexer
 from invenio_oaiserver.models import OAISet
 from invenio_records_resources.services import ServiceConfig
 from invenio_records_resources.services.base import Link
 from invenio_records_resources.services.records.links import pagination_links
-from invenio_records_resources.services.records.params import (
-    FacetsParam,
-    PaginationParam,
-    QueryParser,
-    QueryStrParam,
-    SortParam,
-)
-from invenio_search import RecordsSearchV2
 from marshmallow import Schema, fields, validate
+from marshmallow_utils.fields import SanitizedUnicode
+from sqlalchemy import asc, desc
 
-from invenio_rdm_records.oaiserver.services.links import OAIPMHSetLink
-from invenio_rdm_records.oaiserver.services.permissions import (
+from ..services.links import OAIPMHSetLink
+from ..services.permissions import (
     OAIPMHServerPermissionPolicy,
 )
-from invenio_rdm_records.oaiserver.services.results import (
+from ..services.results import (
+    OAIMetadataFormatItem,
+    OAIMetadataFormatList,
     OAISetItem,
     OAISetList,
 )
@@ -37,45 +31,58 @@ from invenio_rdm_records.oaiserver.services.results import (
 class SearchOptions:
     """Search options."""
 
-    search_cls = RecordsSearchV2
-    query_parser_cls = QueryParser
-    suggest_parser_cls = None
-    sort_default = 'bestmatch'
-    sort_default_no_query = 'newest'
+    sort_default = 'created'
+    sort_direction_default = 'asc'
+
+    sort_direction_options = {
+        "asc": dict(
+            title=_('Ascending'),
+            fn=asc,
+        ),
+        "desc": dict(
+            title=_('Descending'),
+            fn=desc,
+        ),
+    }
+
     sort_options = {
-        "bestmatch": dict(
-            title=_('Best match'),
-            fields=['_score'],  # ES defaults to desc on `_score` field
+        "name": dict(
+            title=_('Name'),
+            fields=['name'],
         ),
-        "newest": dict(
-            title=_('Newest'),
-            fields=['-created'],
+        "spec": dict(
+            title=_('Spec'),
+            fields=['spec'],
         ),
-        "oldest": dict(
-            title=_('Oldest'),
+        "created": dict(
+            title=_('Created'),
             fields=['created'],
         ),
+        "updated": dict(
+            title=_('Updated'),
+            fields=['updated'],
+        ),
     }
-    facets = {}
     pagination_options = {
         "default_results_per_page": 25,
-        "default_max_results": 10000,
     }
-    params_interpreters_cls = [
-        QueryStrParam,
-        PaginationParam,
-        SortParam,
-        FacetsParam,
-    ]
+
+
+class OAIPMHMetadataFormat(Schema):
+    """Marshmallow schema for OAI-PMH metadata format."""
+
+    id = fields.Str(read_only=True)
+    schema = fields.URL(read_only=True)
+    namespace = fields.URL(read_only=True)
 
 
 class OAIPMHSetSchema(Schema):
     """Marshmallow schema for OAI-PMH set."""
 
-    description = fields.Str(required=True)
-    name = fields.Str(required=True, validate=validate.Length(min=1))
-    search_pattern = fields.Str(required=True, validate=validate.Length(min=1))
-    spec = fields.Str(required=True, validate=validate.Length(min=1))
+    description = SanitizedUnicode(missing=None, default=None)
+    name = SanitizedUnicode(required=True, validate=validate.Length(min=1))
+    search_pattern = SanitizedUnicode(required=True)
+    spec = SanitizedUnicode(required=True, validate=validate.Length(min=1))
     created = fields.DateTime(read_only=True)
     updated = fields.DateTime(read_only=True)
     id = fields.Int(read_only=True)
@@ -84,9 +91,9 @@ class OAIPMHSetSchema(Schema):
 class OAIPMHSetUpdateSchema(Schema):
     """Marshmallow schema for OAI-PMH set update request."""
 
-    description = fields.Str(validate=validate.Length(min=1))
-    name = fields.Str(validate=validate.Length(min=1))
-    search_pattern = fields.Str(validate=validate.Length(min=1))
+    description = SanitizedUnicode(missing=None)
+    name = fields.Str(required=True, validate=validate.Length(min=1))
+    search_pattern = fields.Str(required=True)
 
 
 class OAIPMHServerServiceConfig(ServiceConfig):
@@ -97,10 +104,11 @@ class OAIPMHServerServiceConfig(ServiceConfig):
     result_item_cls = OAISetItem
     result_list_cls = OAISetList
 
+    metadata_format_result_item_cls = OAIMetadataFormatItem
+    metadata_format_result_list_cls = OAIMetadataFormatList
+
     # Record specific configuration
     record_cls = OAISet
-    indexer_cls = None
-    index_dumper = None
 
     # Search configuration
     search = SearchOptions
@@ -108,6 +116,8 @@ class OAIPMHServerServiceConfig(ServiceConfig):
     # Service schema
     schema = OAIPMHSetSchema
     update_schema = OAIPMHSetUpdateSchema
+
+    metadata_format_schema = OAIPMHMetadataFormat
 
     links_item = {
         "self": OAIPMHSetLink("{+api}/oaipmh/sets/{id}"),

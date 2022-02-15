@@ -31,4 +31,4 @@ class OAISetDeleteOp(Operation):
         self._oai_set = oai_set
 
     def on_register(self, uow):
-        db.session.remove(self._oai_set)
+        db.session.delete(self._oai_set)

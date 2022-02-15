@@ -8,7 +8,11 @@
 """Permissions for OAI-PMH service."""
 
 from invenio_records_permissions import BasePermissionPolicy
-from invenio_records_permissions.generators import AnyUser, Admin, SystemProcess
+from invenio_records_permissions.generators import (
+    Admin,
+    AnyUser,
+    SystemProcess,
+)
 
 
 class OAIPMHServerPermissionPolicy(BasePermissionPolicy):
@@ -18,5 +22,4 @@ class OAIPMHServerPermissionPolicy(BasePermissionPolicy):
     can_create = [Admin(), SystemProcess()]
     can_delete = [Admin(), SystemProcess()]
     can_update = [Admin(), SystemProcess()]
-    can_search = [AnyUser(), SystemProcess()]
     can_read_format = [AnyUser(), SystemProcess()]
