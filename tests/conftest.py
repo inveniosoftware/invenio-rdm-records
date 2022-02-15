@@ -3,6 +3,7 @@
 # Copyright (C) 2019-2021 CERN.
 # Copyright (C) 2019-2022 Northwestern University.
 # Copyright (C) 2021 TU Wien.
+# Copyright (C) 2022 Graz University of Technology.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
@@ -29,6 +30,7 @@ from invenio_access.models import ActionRoles
 from invenio_access.permissions import superuser_access, system_identity
 from invenio_accounts.models import Role
 from invenio_accounts.testutils import login_user_via_session
+from invenio_admin.permissions import action_admin_access
 from invenio_app.factory import create_app as _create_app
 from invenio_cache import current_cache
 from invenio_communities import current_communities
@@ -560,6 +562,17 @@ def minimal_community():
 
 
 @pytest.fixture()
+def minimal_oai_set():
+    """Data for a minimal OAI-PMH set"""
+    return {
+        "name": "name",
+        "spec": "spec",
+        "search_pattern": "is_published:true",
+        "description": None,
+    }
+
+
+@pytest.fixture()
 def parent(app, db):
     """A parent record."""
     # The parent record is not automatically created when using RDMRecord.
@@ -1035,6 +1048,26 @@ def superuser_identity(superuser_role_need):
     return identity
 
 
+@pytest.fixture(scope="function")
+def admin_role_need(db):
+    """Store 1 role with 'superuser-access' ActionNeed.
+
+    WHY: This is needed because expansion of ActionNeed is
+         done on the basis of a User/Role being associated with that Need.
+         If no User/Role is associated with that Need (in the DB), the
+         permission is expanded to an empty list.
+    """
+    role = Role(name="admin-access")
+    db.session.add(role)
+
+    action_role = ActionRoles.create(action=action_admin_access, role=role)
+    db.session.add(action_role)
+
+    db.session.commit()
+
+    return action_role.need
+
+
 @pytest.fixture()
 def embargoed_record(running_app, minimal_record, superuser_identity):
     """Embargoed record."""
@@ -1104,3 +1137,20 @@ def headers():
         'content-type': 'application/json',
         'accept': 'application/json',
     }
+
+
+@pytest.fixture()
+def admin(UserFixture, app, db, admin_role_need):
+    """Admin user for requests."""
+    u = UserFixture(
+        email="admin@inveniosoftware.org",
+        password="admin",
+    )
+    u.create(app, db)
+
+    datastore = app.extensions["security"].datastore
+    _, role = datastore._prepare_role_modify_args(u.user, "admin-access")
+
+    datastore.add_role_to_user(u.user, role)
+    db.session.commit()
+    return u

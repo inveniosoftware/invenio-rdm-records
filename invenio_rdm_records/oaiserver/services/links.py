@@ -22,8 +22,3 @@ class OAIPMHSetLink(Link):
                 "spec": set.spec,
             }
         )
-
-
-class OAIPMHLink(Link):
-    def __init__(self, verb, metadataFormat=None, params=None):
-        super().__init__()

@@ -14,12 +14,12 @@ from invenio_records_resources.services.base.results import (
 )
 
 
-class OAISetItem(ServiceItemResult):
-    """Single OAI-PMH set result item."""
+class BaseServiceItemResult(ServiceItemResult):
+    """Single result item."""
 
-    def __init__(self, service, identity, set, links_tpl, schema=None):
+    def __init__(self, service, identity, item, links_tpl, schema=None):
         self._identity = identity
-        self._set = set
+        self._item = item
         self._schema = schema or service.schema
         self._links_tpl = links_tpl
         self._data = None
@@ -27,7 +27,7 @@ class OAISetItem(ServiceItemResult):
     @property
     def links(self):
         """Get links for this result item."""
-        return self._links_tpl.expand(self._set)
+        return self._links_tpl.expand(self._item)
 
     @property
     def data(self):
@@ -36,7 +36,7 @@ class OAISetItem(ServiceItemResult):
             return self._data
 
         self._data = self._schema.dump(
-            self._set,
+            self._item,
             context=dict(
                 identity=self._identity,
             ),
@@ -52,8 +52,8 @@ class OAISetItem(ServiceItemResult):
         return res
 
 
-class OAISetList(ServiceListResult):
-    """List of records result."""
+class BaseServiceListResult(ServiceListResult):
+    """List of result items."""
 
     def __init__(
         self,
@@ -69,7 +69,7 @@ class OAISetList(ServiceListResult):
 
         :params service: a service instance
         :params identity: an identity that performed the service request
-        :params results: the search results
+        :params results: the db search results
         :params params: dictionary of the query parameters
         """
         self._identity = identity
@@ -122,6 +122,7 @@ class OAISetList(ServiceListResult):
         """Return result as a dictionary."""
         # TODO: This part should imitate the result item above. I.e. add a
         # "data" property which uses a ServiceSchema to dump the entire object.
+
         res = {
             "hits": {
                 "hits": list(self.hits),
@@ -134,3 +135,19 @@ class OAISetList(ServiceListResult):
                 res['links'] = self._links_tpl.expand(self.pagination)
 
         return res
+
+
+class OAISetItem(BaseServiceItemResult):
+    """Single OAI-PMH set result item."""
+
+
+class OAISetList(BaseServiceListResult):
+    """List of OAI-PMH set result items."""
+
+
+class OAIMetadataFormatItem(BaseServiceItemResult):
+    """Single OAI-PMH metadata format result item."""
+
+
+class OAIMetadataFormatList(BaseServiceListResult):
+    """List of OAI-PMH metadata format result items."""

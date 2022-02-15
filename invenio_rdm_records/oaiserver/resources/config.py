@@ -19,13 +19,29 @@ from invenio_records_resources.resources.records.args import (
     SearchRequestArgsSchema,
 )
 
-from ..services.errors import OAIPMHError
+from ..services.errors import (
+    OAIPMHError,
+    OAIPMHSetDoesNotExistError,
+    OAIPMHSetIDDoesNotExistError,
+)
 
 oaipmh_error_handlers = {
     **ErrorHandlersMixin.error_handlers,
-    OAIPMHError: create_error_handler(
+    OAIPMHSetDoesNotExistError: create_error_handler(
         lambda e: HTTPJSONException(
             code=404,
+            description=e.description,
+        )
+    ),
+    OAIPMHSetIDDoesNotExistError: create_error_handler(
+        lambda e: HTTPJSONException(
+            code=404,
+            description=e.description,
+        )
+    ),
+    OAIPMHError: create_error_handler(
+        lambda e: HTTPJSONException(
+            code=400,
             description=e.description,
         )
     ),
@@ -36,6 +52,7 @@ class OAIPMHServerSearchRequestArgsSchema(SearchRequestArgsSchema):
     """OAI-PMH request parameters."""
 
     managed = ma.fields.Boolean()
+    sort_direction = ma.fields.Str()
 
 
 class OAIPMHServerResourceConfig(ResourceConfig):

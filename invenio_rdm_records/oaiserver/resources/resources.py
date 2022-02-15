@@ -41,7 +41,9 @@ class OAIPMHServerResource(ErrorHandlersMixin, Resource):
             route("POST", routes["set-prefix"], self.create),
             route("GET", routes["set-prefix"] + routes["item"], self.read),
             route("PUT", routes["set-prefix"] + routes["item"], self.update),
-            route("DELETE", routes["set-prefix"] + routes["item"], self.delete),
+            route(
+                "DELETE", routes["set-prefix"] + routes["item"], self.delete
+            ),
             route(
                 "GET",
                 routes["format-prefix"] + routes["list"],
@@ -117,4 +119,4 @@ class OAIPMHServerResource(ErrorHandlersMixin, Resource):
         hits = self.service.read_all_formats(
             identity=identity,
         )
-        return hits, 200
+        return hits.to_dict(), 200
