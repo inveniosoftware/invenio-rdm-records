@@ -244,6 +244,7 @@ class RightsSchema(Schema):
     id = SanitizedUnicode()
     title = fields.Dict()
     description = fields.Dict()
+    icon = fields.Str(dump_only=True)
     props = fields.Nested(PropsSchema)
     link = SanitizedUnicode(
         validate=_valid_url(_('Not a valid URL.'))

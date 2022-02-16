@@ -118,7 +118,8 @@ class CommonFieldsMixin:
         ),
         licenses=PIDListRelation(
             'metadata.rights',
-            attrs=['id', 'title', 'description', 'props.url', 'props.scheme'],
+            attrs=['id', 'title', 'description',
+                   'icon', 'props.url', 'props.scheme'],
             pid_field=Vocabulary.pid.with_type_ctx('licenses'),
             cache_key='licenses',
         ),
