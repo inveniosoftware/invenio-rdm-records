@@ -160,6 +160,7 @@ class RightsSchema(VocabularyL10Schema):
     """Rights schema."""
 
     description = L10NString(data_key='description_l10n')
+    icon = fields.Str(dump_only=True)
     link = fields.String()
     props = fields.Dict()
 
