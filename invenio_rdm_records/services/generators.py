@@ -3,6 +3,7 @@
 # Copyright (C) 2021 Graz University of Technology.
 # Copyright (C) 2021 CERN.
 # Copyright (C) 2021 TU Wien.
+# Copyright (C) 2022 Northwestern University.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
@@ -16,9 +17,8 @@ from itertools import chain
 from elasticsearch_dsl import Q
 from flask_principal import UserNeed
 from invenio_access.permissions import authenticated_user
-from invenio_communities.communities.services.permissions import CommunityNeed
+from invenio_communities.permissions import CommunityRoleManager
 from invenio_records_permissions.generators import Generator
-from invenio_requests.resolvers.registry import ResolverRegistry
 
 from invenio_rdm_records.records import RDMDraft
 
@@ -174,41 +174,42 @@ class SecretLinks(Generator):
             return Q("terms", **{"parent.access.links.id": secret_links})
 
 
-class SubmissionReviewer(Generator):
-    """Curators for community submission requests."""
+class RecordCommunityRole(Generator):
+    """Allows community role."""
+
+    def __init__(self, role):
+        """Constructor."""
+        self.role = role
 
     def needs(self, record=None, **kwargs):
-        """Set of Needs granting permission."""
-        if record is None or record.parent.review is None:
-            return []
-
-        # we only expect submission review requests here
-        # and as such, we expect the receiver to be a community
-        # and the topic to be a record
-        receiver = record.parent.review.receiver
-        if receiver is not None:
-            if hasattr(receiver, 'get_need'):
-                need = receiver.get_need()
-            else:
-                assert isinstance(receiver, dict)
-                assert "community" in receiver
-
-                # TODO this should be revisited when the community membership
-                #      is implemented, as the community resolver is likely
-                #      subject to change then
-                need = ResolverRegistry.resolve_need(receiver)
-            if need is not None:
-                return [need]
-
-        return []
-
-
-class CommunityCurator(Generator):
-    """Curators of a community."""
-
-    def needs(self, record=None, **kwargs):
-        """Set of Needs granting permission."""
+        """Enabling Needs."""
+        # if no passed record, generator does nothing
         if record is None:
             return []
 
-        return [CommunityNeed(c) for c in record.parent.communities.ids]
+        # Is a draft under review
+        if record.parent.review:
+            # TODO: Investigate why receiver is not always same type
+            if not isinstance(record.parent.review.receiver, dict):
+                # this chaining is calcifying
+                receiver = record.parent.review.receiver.reference_dict
+            else:
+                receiver = record.parent.review.receiver
+
+            community_uuid = receiver.get("community")
+            if community_uuid:
+                return [
+                    CommunityRoleManager(community_uuid, self.role).to_need()
+                ]
+
+        # Is a record part of a community
+        if record.parent.communities.ids:
+            # Allowing role from any community
+            return [
+                CommunityRoleManager(community_uuid, self.role).to_need()
+                for community_uuid in record.parent.communities.ids
+            ]
+
+        return []
+
+    # TODO query_filter

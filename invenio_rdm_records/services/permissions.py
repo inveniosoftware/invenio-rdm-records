@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # Copyright (C) 2019 CERN.
-# Copyright (C) 2019 Northwestern University.
+# Copyright (C) 2019-2022 Northwestern University.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
@@ -12,8 +12,8 @@ from invenio_records_permissions.generators import AnyUser, \
     AuthenticatedUser, Disable, SystemProcess
 from invenio_records_permissions.policies.records import RecordPermissionPolicy
 
-from .generators import CommunityCurator, IfRestricted, RecordOwners, \
-    SecretLinks, SubmissionReviewer
+from .generators import IfRestricted, RecordCommunityRole, RecordOwners, \
+    SecretLinks
 
 
 class RDMRecordPermissionPolicy(RecordPermissionPolicy):
@@ -32,11 +32,15 @@ class RDMRecordPermissionPolicy(RecordPermissionPolicy):
     #
     # High-level permissions (used by low-level)
     #
-    can_manage = [RecordOwners(), SystemProcess(), CommunityCurator()]
-    can_curate = can_manage + [SecretLinks("edit")]
-    can_review = can_curate + [SubmissionReviewer()]
-    can_preview = can_manage + [SecretLinks("preview"), SubmissionReviewer()]
-    can_view = can_manage + [SecretLinks("view"), SubmissionReviewer()]
+    can_own = [RecordOwners(), RecordCommunityRole("owner")]
+    can_manage = can_own + [SystemProcess(), RecordCommunityRole("manager")]
+    can_curate = can_manage + [
+        SecretLinks("edit"), RecordCommunityRole("curator")
+    ]
+    can_preview = can_curate + [SecretLinks("preview")]
+    can_view = can_curate + [
+        SecretLinks("view"), RecordCommunityRole("member")
+    ]
 
     can_authenticated = [AuthenticatedUser(), SystemProcess()]
     can_all = [AnyUser(), SystemProcess()]
@@ -67,20 +71,20 @@ class RDMRecordPermissionPolicy(RecordPermissionPolicy):
     # Allow reading files of a draft
     can_draft_read_files = can_preview
     # Allow updating metadata of a draft
-    can_update_draft = can_review
+    can_update_draft = can_curate
     # Allow uploading, updating and deleting files in drafts
-    can_draft_create_files = can_review
-    can_draft_update_files = can_review
-    can_draft_delete_files = can_review
+    can_draft_create_files = can_curate
+    can_draft_update_files = can_curate
+    can_draft_delete_files = can_curate
 
     #
     # PIDs
     #
-    can_pid_create = can_review
-    can_pid_register = can_review
-    can_pid_update = can_review
-    can_pid_discard = can_review
-    can_pid_delete = can_review
+    can_pid_create = can_curate
+    can_pid_register = can_curate
+    can_pid_update = can_curate
+    can_pid_discard = can_curate
+    can_pid_delete = can_curate
 
     #
     # Actions
@@ -92,7 +96,7 @@ class RDMRecordPermissionPolicy(RecordPermissionPolicy):
     # Allow creating a new version of an existing published record.
     can_new_version = can_curate
     # Allow publishing a new record or changes to an existing record.
-    can_publish = can_review
+    can_publish = can_curate
     # Allow lifting a record or draft.
     can_lift_embargo = can_manage
 

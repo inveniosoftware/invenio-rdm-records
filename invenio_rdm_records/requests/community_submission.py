@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # Copyright (C) 2021 CERN.
+# Copyright (C) 2022 Northwestern University.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
@@ -13,6 +14,7 @@ from invenio_requests.customizations import RequestAction
 
 from ..proxies import current_rdm_records_service as service
 from .base import ReviewRequest
+from .permissions import CommunitySubmissionPermissionPolicy
 
 
 #
@@ -155,3 +157,5 @@ class CommunitySubmission(ReviewRequest):
         "decline": DeclineAction,
         "expire": ExpireAction,
     }
+
+    permission_policy_cls = CommunitySubmissionPermissionPolicy

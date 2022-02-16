@@ -33,6 +33,7 @@ from invenio_app.factory import create_app as _create_app
 from invenio_cache import current_cache
 from invenio_communities import current_communities
 from invenio_communities.communities.records.api import Community
+from invenio_communities.members import Member
 from invenio_records_resources.proxies import current_service_registry
 from invenio_vocabularies.contrib.affiliations.api import Affiliation
 from invenio_vocabularies.contrib.subjects.api import Subject
@@ -130,11 +131,6 @@ class UserFixture_:
     def app_logout(self):
         """Create identity for the user."""
         assert logout_user()
-
-    @identity.deleter
-    def identity(self):
-        """Delete the user."""
-        self._identity = None
 
     #
     # Test client helpers
@@ -1047,7 +1043,7 @@ def embargoed_record(
 
 @pytest.fixture()
 def uploader(UserFixture, app, db):
-    """Curator."""
+    """Uploader."""
     u = UserFixture(
         email="uploader@inveniosoftware.org",
         password="uploader",
@@ -1057,22 +1053,23 @@ def uploader(UserFixture, app, db):
 
 
 @pytest.fixture()
-def curator(UserFixture, app, db):
-    """Curator."""
+def owner(UserFixture, app, db):
+    """Owner."""
     u = UserFixture(
-        email="curator@inveniosoftware.org",
-        password="curator",
+        email="owner@inveniosoftware.org",
+        password="owner",
     )
     u.create(app, db)
     return u
 
 
 @pytest.fixture()
-def community(running_app, curator, minimal_community):
+def community(running_app, owner, minimal_community):
     """Get the current RDM records service."""
     c = current_communities.service.create(
-        curator.identity,
+        owner.identity,
         minimal_community,
     )
     Community.index.refresh()
+    Member.index.refresh()
     return c

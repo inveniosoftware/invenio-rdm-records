@@ -2,6 +2,7 @@
 #
 # Copyright (C) 2021 Graz University of Technology.
 # Copyright (C) 2021 TU Wien.
+# Copyright (C) 2022 Northwestern University.
 #
 # Invenio-RDM-Records is free software; you can redistribute it
 # and/or modify it under the terms of the MIT License; see LICENSE file for
@@ -12,13 +13,12 @@
 
 import pytest
 
-from invenio_rdm_records.proxies import current_rdm_records
 from invenio_rdm_records.services.errors import EmbargoNotLiftedError
 
 
-def test_minimal_draft_creation(running_app, es_clear, minimal_record):
+def test_minimal_draft_creation(
+        running_app, es_clear, minimal_record, service):
     superuser_identity = running_app.superuser_identity
-    service = current_rdm_records.records_service
 
     record_item = service.create(superuser_identity, minimal_record)
     record_dict = record_item.to_dict()
@@ -29,9 +29,9 @@ def test_minimal_draft_creation(running_app, es_clear, minimal_record):
     }
 
 
-def test_draft_w_languages_creation(running_app, es_clear, minimal_record):
+def test_draft_w_languages_creation(
+        running_app, es_clear, minimal_record, service):
     superuser_identity = running_app.superuser_identity
-    service = current_rdm_records.records_service
     minimal_record["metadata"]["languages"] = [{
         "id": "eng",
     }]
@@ -48,9 +48,9 @@ def test_draft_w_languages_creation(running_app, es_clear, minimal_record):
 #
 # Embargo lift
 #
-def test_embargo_lift_without_draft(embargoed_record, running_app, es_clear):
+def test_embargo_lift_without_draft(
+        embargoed_record, running_app, es_clear, service):
     record = embargoed_record
-    service = current_rdm_records.records_service
 
     service.lift_embargo(
         _id=record['id'],
@@ -65,9 +65,8 @@ def test_embargo_lift_without_draft(embargoed_record, running_app, es_clear):
 
 
 def test_embargo_lift_with_draft(
-        embargoed_record, es_clear, superuser_identity):
+        embargoed_record, es_clear, superuser_identity, service):
     record = embargoed_record
-    service = current_rdm_records.records_service
 
     # Edit a draft
     ongoing_draft = service.edit(
@@ -87,9 +86,8 @@ def test_embargo_lift_with_draft(
 
 
 def test_embargo_lift_with_updated_draft(
-        embargoed_record, superuser_identity, es_clear):
+        embargoed_record, superuser_identity, es_clear, service):
     record = embargoed_record
-    service = current_rdm_records.records_service
 
     # This draft simulates an existing one while lifting the record
     draft = service.edit(id_=record['id'], identity=superuser_identity).data
@@ -117,9 +115,9 @@ def test_embargo_lift_with_updated_draft(
     assert draft_lifted.access.protection.record == 'public'
 
 
-def test_embargo_lift_with_error(running_app, es_clear, minimal_record):
+def test_embargo_lift_with_error(
+        running_app, es_clear, minimal_record, service):
     superuser_identity = running_app.superuser_identity
-    service = current_rdm_records.records_service
     # Add embargo to record
     minimal_record["access"]["files"] = 'restricted'
     minimal_record["access"]["status"] = 'embargoed'

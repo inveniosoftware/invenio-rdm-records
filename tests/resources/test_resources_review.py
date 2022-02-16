@@ -10,7 +10,6 @@
 import json
 
 import pytest
-from flask_principal import Need
 from invenio_communities import current_communities
 from invenio_communities.communities.records.api import Community
 from invenio_requests.records.api import RequestEvent
@@ -50,10 +49,10 @@ def minimal_community2():
 
 
 @pytest.fixture()
-def community2(running_app, curator, minimal_community2):
+def community2(running_app, owner, minimal_community2):
     """Get the current RDM records service."""
     c = current_communities.service.create(
-        curator.identity,
+        owner.identity,
         minimal_community2,
     )
     Community.index.refresh()
@@ -61,7 +60,7 @@ def community2(running_app, curator, minimal_community2):
 
 
 def test_simple_flow(running_app, client, minimal_record, community, headers,
-                     es_clear, curator, uploader):
+                     es_clear, owner, uploader):
     """Test a simple REST API flow."""
     client = uploader.login(client)
 
@@ -105,8 +104,7 @@ def test_simple_flow(running_app, client, minimal_record, community, headers,
     assert timeline.json['hits']['total'] == 1
 
     # Accept request
-    client = curator.login(client, logout_first=True)
-
+    client = owner.login(client, logout_first=True)
     comment = {'payload': {'content': 'Awesome stuff', 'format': 'html'}}
     accept_link = link(req.json['links']['actions']['accept'])
     req = client.post(accept_link, json=comment, headers=headers)
@@ -146,7 +144,7 @@ def test_simple_flow(running_app, client, minimal_record, community, headers,
 
 
 def test_review_endpoints(running_app, client, minimal_record, community,
-                          headers, es_clear, curator, uploader, community2):
+                          headers, es_clear, owner, uploader, community2):
     """Test a simple REST API flow."""
     # Create draft
     client = uploader.login(client)
@@ -190,7 +188,7 @@ def test_review_endpoints(running_app, client, minimal_record, community,
 
 
 def test_review_errors(running_app, client, minimal_record, community,
-                       headers, es_clear, curator, uploader):
+                       headers, es_clear, owner, uploader):
     client = uploader.login(client)
 
     # Invalid request type
@@ -205,7 +203,7 @@ def test_review_errors(running_app, client, minimal_record, community,
 
 
 def test_delete_no_review(running_app, client, minimal_record, community,
-                          headers, es_clear, curator, uploader):
+                          headers, es_clear, owner, uploader):
     """."""
     # Create draft
     client = uploader.login(client)

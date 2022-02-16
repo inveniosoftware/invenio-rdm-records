@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # Copyright (C) 2021 CERN.
+# Copyright (C) 2022 Northwestern University.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
@@ -11,14 +12,12 @@ import pytest
 from flask_principal import Identity
 from invenio_access.permissions import any_user, authenticated_user
 from invenio_communities import current_communities
-from invenio_communities.communities import CommunityNeed
 from invenio_communities.communities.records.api import Community
+from invenio_communities.permissions import CommunityRoleManager
 from invenio_records_resources.services.errors import PermissionDeniedError
-from invenio_requests import current_requests_service
 from marshmallow.exceptions import ValidationError
 from sqlalchemy.orm.exc import NoResultFound
 
-from invenio_rdm_records.proxies import current_rdm_records
 from invenio_rdm_records.records.api import RDMDraft
 from invenio_rdm_records.services.errors import ReviewExistsError, \
     ReviewNotFoundError, ReviewStateError
@@ -30,20 +29,10 @@ def get_community_owner_identity(community):
     identity = Identity(owner_id)
     identity.provides.add(any_user)
     identity.provides.add(authenticated_user)
-    identity.provides.add(CommunityNeed(str(community.id)))
+    identity.provides.add(
+        CommunityRoleManager(community.id, "owner").to_need()
+    )
     return identity
-
-
-@pytest.fixture()
-def service():
-    """Get the current RDM records service."""
-    return current_rdm_records.records_service
-
-
-@pytest.fixture()
-def requests_service():
-    """Get the current RDM records service."""
-    return current_requests_service
 
 
 @pytest.fixture()
@@ -62,10 +51,10 @@ def minimal_community2():
 
 
 @pytest.fixture()
-def community2(running_app, minimal_community2):
+def community2(running_app, minimal_community2, owner):
     """Get the current RDM records service."""
     return current_communities.service.create(
-        running_app.superuser_identity,
+        owner.identity,
         minimal_community2,
     )
 

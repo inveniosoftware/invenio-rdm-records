@@ -14,10 +14,10 @@ from invenio_rdm_records.records.api import RDMDraft
 from invenio_rdm_records.services.tasks import update_expired_embargos
 
 
-def test_embargo_lift_without_draft(embargoed_record, running_app, es_clear):
+def test_embargo_lift_without_draft(
+        embargoed_record, running_app, es_clear, service):
     update_expired_embargos()
 
-    service = current_rdm_records.records_service
     record_lifted = service.record_cls.pid.resolve(embargoed_record['id'])
     assert record_lifted.access.embargo.active is False
     assert record_lifted.access.protection.files == 'public'
@@ -26,9 +26,8 @@ def test_embargo_lift_without_draft(embargoed_record, running_app, es_clear):
 
 
 def test_embargo_lift_with_draft(
-        embargoed_record, es_clear, superuser_identity):
+        embargoed_record, es_clear, superuser_identity, service):
     record = embargoed_record
-    service = current_rdm_records.records_service
 
     # Edit a draft
     ongoing_draft = service.edit(
@@ -50,9 +49,8 @@ def test_embargo_lift_with_draft(
 
 
 def test_embargo_lift_with_updated_draft(
-        embargoed_record, superuser_identity, es_clear):
+        embargoed_record, superuser_identity, es_clear, service):
     record = embargoed_record
-    service = current_rdm_records.records_service
 
     # This draft simulates an existing one while lifting the record
     draft = service.edit(id_=record['id'], identity=superuser_identity).data

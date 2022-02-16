@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # Copyright (C) 2021 CERN.
-# Copyright (C) 2021 Northwestern University.
+# Copyright (C) 2021-2022 Northwestern University.
 #
 # Invenio-Records-Resources is free software; you can redistribute it and/or
 # modify it under the terms of the MIT License; see LICENSE file for more
@@ -10,18 +10,8 @@
 """Sort tests."""
 
 
-import pytest
-
-from invenio_rdm_records.proxies import current_rdm_records
-
-
-@pytest.fixture()
-def service(running_app):
-    """Service fixture."""
-    return current_rdm_records.records_service
-
-
-def test_sort_by_versions(service, superuser_identity, minimal_record):
+def test_sort_by_versions(
+        minimal_record, running_app, service, superuser_identity):
     # Create version 1
     draft = service.create(superuser_identity, minimal_record)
     record = service.publish(superuser_identity, draft.id)
