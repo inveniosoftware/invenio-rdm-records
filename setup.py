@@ -73,10 +73,15 @@ install_requires = [
     'ftfy>=4.4.3,<5.0.0',
     'invenio-communities>=2.7.0.dev6,<2.8.0',
     'invenio-drafts-resources>=0.15.2,<0.16.0',
-    'invenio-oaiserver>=1.3.0',
+    'invenio-oaiserver==1.3.0',
     'invenio-vocabularies>=0.10.3,<0.11.0',
     'pytz>=2020.4',
     'pyyaml>=5.4.0',
+    'invenio-base==1.2.5',
+    'invenio-db==1.0.12	',
+    'invenio-requests==0.2.4',
+    'invenio-theme==1.3.14',
+    'lxml==4.7.1',
 ]
 
 packages = find_packages()
