@@ -79,7 +79,6 @@ install_requires = [
     'pyyaml>=5.4.0',
     'invenio-base==1.2.5',
     'invenio-db==1.0.12	',
-    'invenio-requests==0.2.4',
     'invenio-theme==1.3.14',
     'lxml==4.7.1',
 ]
