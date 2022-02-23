@@ -150,6 +150,7 @@ def inclusion_requests(user_email, n_requests):
     click.secho("Demo inclusion requests task submitted...", fg="green")
 
 
+# Disabling until invitation implementation is set
 @demo.command("invitation-requests")
 @click.option("-u", "--user", "user_email", default=USER_EMAIL,
               show_default=True, help=HELP_MSG_USER)

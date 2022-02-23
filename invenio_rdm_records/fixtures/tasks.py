@@ -14,10 +14,11 @@ from celery import shared_task
 from flask_principal import Identity, UserNeed
 from invenio_access.permissions import any_user, authenticated_user, \
     system_identity
-from invenio_communities.communities import CommunityNeed
+from invenio_communities.permissions import CommunityRoleManager
 from invenio_communities.invitations.services.request_types import \
     CommunityMemberInvitation
 from invenio_communities.members.errors import AlreadyMemberError
+from invenio_communities.invitations import AlreadyInvitedError
 from invenio_communities.proxies import current_communities
 from invenio_requests import current_events_service, current_requests_service
 from invenio_vocabularies.proxies import current_service as vocabulary_service
@@ -73,7 +74,7 @@ def _get_random_community(communities):
     # create community owner identity
     owner_id = communities[r]["access"]["owned_by"][0]["user"]
     owner_identity = get_authenticated_identity(owner_id)
-    owner_identity.provides.add(CommunityNeed(uuid))
+    owner_identity.provides.add(CommunityRoleManager(uuid, "owner").to_need())
     return uuid, owner_id, owner_identity
 
 
@@ -146,9 +147,12 @@ def create_demo_inclusion_requests(user_id, n_requests):
 
 @shared_task
 def create_demo_invitation_requests(user_id, n_requests):
-    """Create requests to invite a user to a community."""
-    user_identity = get_authenticated_identity(user_id)
-    comm_results = current_communities.service.search(user_identity)
+    """Create requests to invite a user to a community.
+
+    This creates AT MOST n_requests but potentially less.
+    """
+    # user_identity = get_authenticated_identity(user_id)
+    comm_results = current_communities.service.search(system_identity)
     communities = comm_results.to_dict()["hits"]["hits"]
 
     for _ in range(n_requests):
@@ -168,29 +172,30 @@ def create_demo_invitation_requests(user_id, n_requests):
             req = current_communities.service.invitations.create(
                 comm_owner_identity, invitation_data
             )
-        except AlreadyMemberError:
+        except (AlreadyMemberError, AlreadyInvitedError):
             continue
 
-        _add_comments_to_request(req, user_identity, comm_owner_identity)
+# skipping until invitations are set
+#         _add_comments_to_request(req, user_identity, comm_owner_identity)
 
-        # at this moment, only admins can accept requests. Add back when
-        # backend implemented.
-        continue
+#         # at this moment, only admins can accept requests. Add back when
+#         # backend implemented.
+#         continue
 
-        # Randomly set if the request should be open, or an action happened
-        # only "accept" action implemented at this moment
-        _action, _identity = random.choice([
-            (None, None),
-            # ("cancel", user_identity),
-            ("accept", comm_owner_identity),
-            # ("decline", comm_owner_identity),
-            # ("expire", system_identity)
-        ])
-        if _action:
-            _, comment_with_type = create_fake_comment()
-            current_requests_service.execute_action(
-                _identity,
-                req.id,
-                _action,
-                comment_with_type
-            )
+#         # Randomly set if the request should be open, or an action happened
+#         # only "accept" action implemented at this moment
+#         _action, _identity = random.choice([
+#             (None, None),
+#             # ("cancel", user_identity),
+#             ("accept", comm_owner_identity),
+#             # ("decline", comm_owner_identity),
+#             # ("expire", system_identity)
+#         ])
+#         if _action:
+#             _, comment_with_type = create_fake_comment()
+#             current_requests_service.execute_action(
+#                 _identity,
+#                 req.id,
+#                 _action,
+#                 comment_with_type
+#             )

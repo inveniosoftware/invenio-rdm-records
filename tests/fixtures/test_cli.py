@@ -95,15 +95,18 @@ def test_create_fake_demo_inclusion_requests(app, location, db, es_clear,
 def test_create_fake_demo_invitation_requests(app, location, db, es_clear,
                                               vocabularies, users):
     """Assert that demo invitation requests creation works without failing."""
-    user_id = users[0].id
+    user_id1 = users[0].id
+    user_id2 = users[1].id
 
-    create_demo_community(user_id, create_fake_community())
+    create_demo_community(user_id1, create_fake_community())
     Community.index.refresh()
 
-    create_demo_invitation_requests(user_id, 1)
+    # can only invite users that are not part of community and creating a
+    # community automatically makes you part of it
+    create_demo_invitation_requests(user_id2, 1)
     Request.index.refresh()
 
-    user_identity = get_authenticated_identity(user_id)
     _t = CommunityMemberInvitation.type_id
-    reqs = current_requests_service.search(user_identity, type=_t)
+
+    reqs = current_requests_service.search(system_identity, type=_t)
     assert reqs.total > 0
