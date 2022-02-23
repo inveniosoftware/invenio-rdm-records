@@ -8,10 +8,9 @@
 """Test of the review deposit integration."""
 
 import pytest
-from flask_principal import Identity
+from flask_principal import Identity, Need
 from invenio_access.permissions import any_user, authenticated_user
 from invenio_communities import current_communities
-from invenio_communities.communities import CommunityNeed
 from invenio_communities.communities.records.api import Community
 from invenio_records_resources.services.errors import PermissionDeniedError
 from invenio_requests import current_requests_service
@@ -30,7 +29,7 @@ def get_community_owner_identity(community):
     identity = Identity(owner_id)
     identity.provides.add(any_user)
     identity.provides.add(authenticated_user)
-    identity.provides.add(CommunityNeed(str(community.id)))
+    identity.provides.add(Need("community", str(community.id)))
     return identity
 
 

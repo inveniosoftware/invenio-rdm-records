@@ -14,9 +14,8 @@ from functools import reduce
 from itertools import chain
 
 from elasticsearch_dsl import Q
-from flask_principal import UserNeed
+from flask_principal import Need, UserNeed
 from invenio_access.permissions import authenticated_user
-from invenio_communities.communities.services.permissions import CommunityNeed
 from invenio_records_permissions.generators import Generator
 from invenio_requests.resolvers.registry import ResolverRegistry
 
@@ -210,5 +209,4 @@ class CommunityCurator(Generator):
         """Set of Needs granting permission."""
         if record is None:
             return []
-
-        return [CommunityNeed(c) for c in record.parent.communities.ids]
+        return [Need("community", c) for c in record.parent.communities.ids]
