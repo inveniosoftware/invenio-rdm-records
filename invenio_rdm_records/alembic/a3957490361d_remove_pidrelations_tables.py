@@ -21,11 +21,11 @@ depends_on = None
 
 def upgrade():
     """Upgrade database."""
-    try:
-        # The table is not used and has no data.
+    ctx = op.get_context()
+    inspector = Inspector.from_engine(ctx.connection.engine)
+    tables = inspector.get_table_names()
+    if "pidrelations_pidrelation" in tables:
         op.drop_table("pidrelations_pidrelation")
-    except Exception:
-        pass
 
 
 def downgrade():
