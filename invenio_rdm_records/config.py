@@ -10,16 +10,11 @@
 """DataCite-based data model for Invenio."""
 
 import idutils
+from flask_babelex import lazy_gettext as _
 
 from .services import facets
 from .services.permissions import RDMRecordPermissionPolicy
 from .services.pids import providers
-
-
-def _(x):
-    """Identity function for string extraction."""
-    return x
-
 
 # Files REST
 
