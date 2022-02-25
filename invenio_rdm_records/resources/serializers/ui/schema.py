@@ -224,6 +224,8 @@ class UIObjectSchema(Schema):
         attribute="metadata.rights"
     )
 
+    is_draft = fields.Boolean(attribute="is_draft")
+
 
 #
 # List schema
