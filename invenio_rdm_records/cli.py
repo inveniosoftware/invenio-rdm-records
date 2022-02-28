@@ -15,6 +15,10 @@ from invenio_access.permissions import system_identity
 from invenio_accounts.proxies import current_datastore
 from invenio_communities import current_communities
 from invenio_db import db
+from invenio_users_resources.proxies import \
+    current_groups_service as groups_service
+from invenio_users_resources.proxies import \
+    current_users_service as users_service
 from invenio_vocabularies.proxies import \
     current_service as current_vocabularies_service
 
@@ -211,4 +215,9 @@ def rebuild_index():
     affs_service = current_rdm_records.affiliations_service
     affs_service.rebuild_index(identity=system_identity)
 
-    click.secho("Reindexed records and vocabularies!", fg="green")
+    click.secho("Reindexing users and groups...", fg="green")
+
+    users_service.rebuild_index(identity=system_identity)
+    groups_service.rebuild_index(identity=system_identity)
+
+    click.secho("Reindexing done!", fg="green")
