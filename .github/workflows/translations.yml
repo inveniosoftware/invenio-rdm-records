@@ -9,7 +9,7 @@ name: i18n:extract,push,pull translations
 on:
   push:
     branches:
-      - main
+      - master
 
 jobs:
   translations:
