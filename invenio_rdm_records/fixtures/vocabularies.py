@@ -282,6 +282,10 @@ class VocabulariesFixture:
                     entry = VocabularyEntryWithSchemes(
                         "affiliations_service", dir_, id_, yaml_entry
                     )
+                elif id_ == "names":
+                    entry = VocabularyEntry(
+                        "names_service", dir_, id_, yaml_entry
+                    )
                 else:
                     entry = GenericVocabularyEntry(dir_, id_, yaml_entry)
 
@@ -305,7 +309,7 @@ class VocabulariesFixture:
 
         Returns all vocabulary ids loaded so far.
         """
-        ids = set().union(ignore) if ignore else set()
+        ids = set(ignore) if ignore else set()
 
         for id_, entry in self.read():
             ids.update(
@@ -324,6 +328,30 @@ class VocabularyEntry:
         self._id = id_
         self._entry = entry
         self.service_str = service_str
+
+    # Interface properties
+    @property
+    def covered_ids(self):
+        """Just the id of the vocabulary covered by this entry as a list."""
+        return [self._id]
+
+    # Template methods
+    def pre_load(self, identity, ignore):
+        """Actions taken before iteratively creating records."""
+        if self._id not in ignore:
+            pid_type = self._entry['pid-type']
+            current_service.create_type(identity, self._id, pid_type)
+
+    def iterate(self, ignore):
+        """Iterate over dicts of file content."""
+        if self._id not in ignore:
+            filepath = self._dir / self._entry["data-file"]
+            for data in create_iterator(filepath):
+                yield data
+
+    def loaded(self):
+        """Vocabularies actually loaded."""
+        return [self._id]
 
     def load(self, identity, ignore=None, delay=False):
         """Template method design pattern for loading entries."""
@@ -349,12 +377,6 @@ class GenericVocabularyEntry(VocabularyEntry):
         super().__init__("vocabulary_service", directory, id_, entry)
 
     # Template methods
-    def pre_load(self, identity, ignore):
-        """Actions taken before iteratively creating records."""
-        if self._id not in ignore:
-            pid_type = self._entry['pid-type']
-            current_service.create_type(identity, self._id, pid_type)
-
     def iterate(self, ignore):
         """Iterate over dicts of file content."""
         if self._id not in ignore:
@@ -362,16 +384,6 @@ class GenericVocabularyEntry(VocabularyEntry):
             for data in create_iterator(filepath):
                 data['type'] = self._id
                 yield data
-
-    def loaded(self):
-        """Vocabularies actually loaded."""
-        return [self._id]
-
-    # Other interface methods
-    @property
-    def covered_ids(self):
-        """Just the id of the vocabulary covered by this entry as a list."""
-        return [self._id]
 
 
 class VocabularyEntryWithSchemes(VocabularyEntry):
