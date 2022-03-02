@@ -520,4 +520,8 @@ You can also provide a callable instead:
 """
 
 DATACITE_DATACENTER_SYMBOL = ""
-"""DataCite test mode enabled."""
+"""DataCite data center symbol.
+
+This is only required if you want your records to be harvestable (OAI-PMH)
+in DataCite XML format.
+"""
