@@ -100,6 +100,26 @@ def test_create_set_duplicate(client, admin, minimal_oai_set, headers):
     _create_set(client, minimal_oai_set, headers, 400)
 
 
+def test_create_set_missing_data(client, admin, minimal_oai_set, headers):
+    """Try to create a set with missing params."""
+    client = admin.login(client)
+
+    # without search_pattern
+    s = minimal_oai_set.copy()
+    del s["search_pattern"]
+    _create_set(client, s, headers, 400)
+
+    # without name
+    s = minimal_oai_set.copy()
+    del s["name"]
+    _create_set(client, s, headers, 400)
+
+    # without spec
+    s = minimal_oai_set.copy()
+    del s["spec"]
+    _create_set(client, s, headers, 400)
+
+
 def test_get_set(client, admin, minimal_oai_set, headers):
     """Retrieve a set."""
     client = admin.login(client)

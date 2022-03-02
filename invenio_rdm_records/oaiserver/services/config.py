@@ -71,27 +71,27 @@ class SearchOptions:
 class OAIPMHMetadataFormat(Schema):
     """Marshmallow schema for OAI-PMH metadata format."""
 
-    id = fields.Str(read_only=True)
-    schema = fields.URL(read_only=True)
-    namespace = fields.URL(read_only=True)
+    id = fields.Str(metadata={'read_only':True} )
+    schema = fields.URL(metadata={'read_only':True})
+    namespace = fields.URL(metadata={'read_only':True})
 
 
 class OAIPMHSetSchema(Schema):
     """Marshmallow schema for OAI-PMH set."""
 
-    description = SanitizedUnicode(missing=None, default=None)
+    description = SanitizedUnicode(load_default=None, dump_default=None)
     name = SanitizedUnicode(required=True, validate=validate.Length(min=1))
     search_pattern = SanitizedUnicode(required=True)
     spec = SanitizedUnicode(required=True, validate=validate.Length(min=1))
-    created = fields.DateTime(read_only=True)
-    updated = fields.DateTime(read_only=True)
-    id = fields.Int(read_only=True)
+    created = fields.DateTime(metadata={'read_only':True})
+    updated = fields.DateTime(metadata={'read_only':True})
+    id = fields.Int(metadata={'read_only':True})
 
 
 class OAIPMHSetUpdateSchema(Schema):
     """Marshmallow schema for OAI-PMH set update request."""
 
-    description = SanitizedUnicode(missing=None)
+    description = SanitizedUnicode(load_default=None)
     name = fields.Str(required=True, validate=validate.Length(min=1))
     search_pattern = fields.Str(required=True)
 
