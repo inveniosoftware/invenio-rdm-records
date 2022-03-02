@@ -1036,29 +1036,30 @@ def superuser_identity(superuser_role_need):
 
 
 @pytest.fixture()
-@mock.patch('arrow.utcnow')
-def embargoed_record(
-    mock_arrow, running_app, minimal_record, superuser_identity
-):
+def embargoed_record(running_app, minimal_record, superuser_identity):
     """Embargoed record."""
     service = current_rdm_records.records_service
+    today = arrow.utcnow().date().isoformat()
 
     # Add embargo to record
-    minimal_record["access"]["files"] = 'restricted'
-    minimal_record["access"]["status"] = 'embargoed'
-    minimal_record["access"]["embargo"] = dict(
-        active=True, until='2020-06-01', reason=None
-    )
+    with mock.patch('arrow.utcnow') as mock_arrow:
+        minimal_record["access"]["files"] = 'restricted'
+        minimal_record["access"]["status"] = 'embargoed'
+        minimal_record["access"]["embargo"] = dict(
+            active=True, until=today, reason=None
+        )
 
-    # We need to set the current date in the past to pass the validations
-    mock_arrow.return_value = arrow.get(datetime(1954, 9, 29), tz.gettz('UTC'))
-    draft = service.create(superuser_identity, minimal_record)
-    record = service.publish(id_=draft.id, identity=superuser_identity)
+        # We need to set the current date in the past to pass the validations
+        mock_arrow.return_value = arrow.get(
+            datetime(1954, 9, 29), tz.gettz('UTC')
+        )
+        draft = service.create(superuser_identity, minimal_record)
+        record = service.publish(id_=draft.id, identity=superuser_identity)
 
-    RDMRecord.index.refresh()
+        RDMRecord.index.refresh()
 
-    # Recover current date
-    mock_arrow.return_value = arrow.get(datetime.utcnow())
+        # Recover current date
+        mock_arrow.return_value = arrow.get(datetime.utcnow())
 
     return record
 
