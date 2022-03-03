@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2019-2021 CERN.
-# Copyright (C) 2019-2021 Northwestern University.
-# Copyright (C)      2021 TU Wien.
-# Copyright (C)      2021 Graz University of Technology.
+# Copyright (C) 2019-2022 CERN.
+# Copyright (C) 2019-2022 Northwestern University.
+# Copyright (C)      2022 TU Wien.
+# Copyright (C)      2022 Graz University of Technology.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
@@ -71,10 +71,10 @@ install_requires = [
     'dcxml>=0.1.2',
     'Faker>=2.0.3',
     'ftfy>=4.4.3,<5.0.0',
-    'invenio-communities>=2.7.0.dev8,<2.8.0',
-    'invenio-drafts-resources>=0.15.2,<0.16.0',
+    'invenio-communities>=2.8.0.dev0,<2.9.0',
+    'invenio-drafts-resources>=0.16.0,<0.17.0',
     'invenio-oaiserver>=1.4.0',
-    'invenio-vocabularies>=0.10.3,<0.11.0',
+    'invenio-vocabularies>=0.11.0,<0.12.0',
     'pytz>=2020.4',
     'pyyaml>=5.4.0',
 ]
