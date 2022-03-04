@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2020 CERN.
+# Copyright (C) 2020-2022 CERN.
 # Copyright (C) 2020 Northwestern University.
 # Copyright (C) 2021 Graz University of Technology.
 #
@@ -14,6 +14,9 @@ from urllib import parse
 
 from flask import current_app
 from flask_babelex import lazy_gettext as _
+from invenio_vocabularies.contrib.affiliations.schema import \
+    AffiliationRelationSchema
+from invenio_vocabularies.contrib.subjects.schema import SubjectRelationSchema
 from marshmallow import Schema, ValidationError, fields, post_load, validate, \
     validates, validates_schema
 from marshmallow_utils.fields import EDTFDateString, IdentifierSet, \
@@ -60,55 +63,6 @@ def locale_validation(value, field_name):
             raise ValidationError(_("Only one value is accepted."), field_name)
         elif list(value.keys())[0] not in valid_locales_code:
             raise ValidationError(_("Not a valid locale."), field_name)
-
-
-# TODO: Replace with
-# invenio_vocabularies.contrib.affiliations.schema:AffiliationRelationSchema
-class AffiliationSchema(Schema):
-    """Affiliation of a creator/contributor."""
-
-    id = SanitizedUnicode()
-    name = SanitizedUnicode()
-
-    @validates_schema
-    def validate_affiliation(self, data, **kwargs):
-        """Validates that either id either name are present."""
-        id_ = data.get("id")
-        name = data.get("name")
-        if id_:
-            data = {"id": id_}
-        elif name:
-            data = {"name": name}
-
-        if not id_ and not name:
-            raise ValidationError(
-                _("An existing id or a free text name must be present"),
-                "affiliations"
-            )
-
-
-class SubjectSchema(Schema):
-    """Subject schema."""
-
-    id = SanitizedUnicode()
-    subject = SanitizedUnicode()
-    scheme = SanitizedUnicode()
-
-    @validates_schema
-    def validate_subject(self, data, **kwargs):
-        """Validates that either id either name are present."""
-        id_ = data.get("id")
-        subject = data.get("subject")
-        if id_:
-            data = {"id": id_}
-        elif subject:
-            data = {"subject": subject}
-
-        if not id_ and not subject:
-            raise ValidationError(
-                _("An existing id or a free text subject must be present"),
-                "subjects"
-            )
 
 
 class PersonOrOrganizationSchema(Schema):
@@ -193,7 +147,7 @@ class CreatorSchema(Schema):
 
     person_or_org = fields.Nested(PersonOrOrganizationSchema, required=True)
     role = fields.Nested(VocabularySchema)
-    affiliations = fields.List(fields.Nested(AffiliationSchema))
+    affiliations = fields.List(fields.Nested(AffiliationRelationSchema))
 
 
 class ContributorSchema(Schema):
@@ -201,7 +155,7 @@ class ContributorSchema(Schema):
 
     person_or_org = fields.Nested(PersonOrOrganizationSchema, required=True)
     role = fields.Nested(VocabularySchema, required=True)
-    affiliations = fields.List(fields.Nested(AffiliationSchema))
+    affiliations = fields.List(fields.Nested(AffiliationRelationSchema))
 
 
 class TitleSchema(Schema):
@@ -416,7 +370,7 @@ class MetadataSchema(Schema):
     additional_titles = fields.List(fields.Nested(TitleSchema))
     publisher = SanitizedUnicode()
     publication_date = EDTFDateString(required=True)
-    subjects = fields.List(fields.Nested(SubjectSchema))
+    subjects = fields.List(fields.Nested(SubjectRelationSchema))
     contributors = fields.List(fields.Nested(ContributorSchema))
     dates = fields.List(fields.Nested(DateSchema))
     languages = fields.List(fields.Nested(VocabularySchema))
