@@ -13,26 +13,24 @@ from flask_sqlalchemy import Pagination
 from invenio_oaiserver.models import OAISet
 from invenio_records_resources.services import Service
 from invenio_records_resources.services.base import LinksTemplate
-from invenio_records_resources.services.records.schema import (
-    ServiceSchemaWrapper,
-)
+from invenio_records_resources.services.records.schema import \
+    ServiceSchemaWrapper
 from invenio_records_resources.services.uow import unit_of_work
 from sqlalchemy.orm.exc import NoResultFound
 from sqlalchemy.sql import text
 
-from invenio_rdm_records.oaiserver.services.errors import (
-    OAIPMHSetDoesNotExistError,
-    OAIPMHSetIDDoesNotExistError,
-    OAIPMHSetSpecAlreadyExistsError,
-)
-
-from invenio_rdm_records.oaiserver.services.uow import OAISetCommitOp, OAISetDeleteOp
+from invenio_rdm_records.oaiserver.services.errors import \
+    OAIPMHSetDoesNotExistError, OAIPMHSetIDDoesNotExistError, \
+    OAIPMHSetSpecAlreadyExistsError
+from invenio_rdm_records.oaiserver.services.uow import OAISetCommitOp, \
+    OAISetDeleteOp
 
 
 class OAIPMHServerService(Service):
     """OAI-PMH service."""
 
     def __init__(self, config):
+        """Init service with config."""
         super().__init__(config)
 
     @property
@@ -53,6 +51,7 @@ class OAIPMHServerService(Service):
         )
 
     def _get_one(self, raise_error=True, **kwargs):
+        """Retrieve set based on provided arguments."""
         set = None
         errors = []
         try:
@@ -102,6 +101,7 @@ class OAIPMHServerService(Service):
         )
 
     def search(self, identity, params):
+        """Perform search over OAI sets."""
         self.require_permission(identity, 'read')
 
         search_params = self._get_search_params(params)

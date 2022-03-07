@@ -8,16 +8,15 @@
 """Result items for OAI-PMH services."""
 
 from invenio_records_resources.pagination import Pagination
-from invenio_records_resources.services.base.results import (
-    ServiceItemResult,
-    ServiceListResult,
-)
+from invenio_records_resources.services.base.results import \
+    ServiceItemResult, ServiceListResult
 
 
 class BaseServiceItemResult(ServiceItemResult):
     """Single result item."""
 
     def __init__(self, service, identity, item, links_tpl, schema=None):
+        """Constructor."""
         self._identity = identity
         self._item = item
         self._schema = schema or service.schema

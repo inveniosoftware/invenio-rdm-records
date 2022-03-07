@@ -15,6 +15,7 @@ class OAIPMHError(Exception):
     """Base class for OAI-PMH errors."""
 
     def __init__(self, description, *args: object):
+        """Constructor."""
         self.description = description
         super().__init__(*args)
 

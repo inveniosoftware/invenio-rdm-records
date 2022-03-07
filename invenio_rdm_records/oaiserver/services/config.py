@@ -17,15 +17,9 @@ from marshmallow_utils.fields import SanitizedUnicode
 from sqlalchemy import asc, desc
 
 from ..services.links import OAIPMHSetLink
-from ..services.permissions import (
-    OAIPMHServerPermissionPolicy,
-)
-from ..services.results import (
-    OAIMetadataFormatItem,
-    OAIMetadataFormatList,
-    OAISetItem,
-    OAISetList,
-)
+from ..services.permissions import OAIPMHServerPermissionPolicy
+from ..services.results import OAIMetadataFormatItem, OAIMetadataFormatList, \
+    OAISetItem, OAISetList
 
 
 class SearchOptions:
@@ -71,9 +65,9 @@ class SearchOptions:
 class OAIPMHMetadataFormat(Schema):
     """Marshmallow schema for OAI-PMH metadata format."""
 
-    id = fields.Str(metadata={'read_only':True} )
-    schema = fields.URL(metadata={'read_only':True})
-    namespace = fields.URL(metadata={'read_only':True})
+    id = fields.Str(metadata={'read_only': True})
+    schema = fields.URL(metadata={'read_only': True})
+    namespace = fields.URL(metadata={'read_only': True})
 
 
 class OAIPMHSetSchema(Schema):
@@ -83,9 +77,9 @@ class OAIPMHSetSchema(Schema):
     name = SanitizedUnicode(required=True, validate=validate.Length(min=1))
     search_pattern = SanitizedUnicode(required=True)
     spec = SanitizedUnicode(required=True, validate=validate.Length(min=1))
-    created = fields.DateTime(metadata={'read_only':True})
-    updated = fields.DateTime(metadata={'read_only':True})
-    id = fields.Int(metadata={'read_only':True})
+    created = fields.DateTime(metadata={'read_only': True})
+    updated = fields.DateTime(metadata={'read_only': True})
+    id = fields.Int(metadata={'read_only': True})
 
 
 class OAIPMHSetUpdateSchema(Schema):
