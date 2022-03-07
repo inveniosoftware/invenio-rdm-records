@@ -9,19 +9,11 @@
 
 from flask import abort, g
 from flask.globals import request
-from flask_resources import (
-    Resource,
-    resource_requestctx,
-    response_handler,
-    route,
-)
+from flask_resources import Resource, resource_requestctx, response_handler, \
+    route
 from invenio_records_resources.resources.errors import ErrorHandlersMixin
-from invenio_records_resources.resources.records.resource import (
-    request_data,
-    request_headers,
-    request_search_args,
-    request_view_args,
-)
+from invenio_records_resources.resources.records.resource import \
+    request_data, request_headers, request_search_args, request_view_args
 from invenio_records_resources.resources.records.utils import es_preference
 
 
@@ -29,12 +21,12 @@ class OAIPMHServerResource(ErrorHandlersMixin, Resource):
     """OAI-PMH server resource."""
 
     def __init__(self, config, service):
+        """Constructor."""
         super().__init__(config)
         self.service = service
 
     def create_url_rules(self):
         """Create the URL rules for the OAI-PMH server resource."""
-
         routes = self.config.routes
         url_rules = [
             route("GET", routes["set-prefix"] + routes["list"], self.search),

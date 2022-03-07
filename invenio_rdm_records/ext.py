@@ -13,10 +13,6 @@ import warnings
 from flask import flash, g, request, session
 from flask_babelex import _
 from flask_principal import identity_loaded
-from invenio_rdm_records.oaiserver.resources.config import OAIPMHServerResourceConfig
-from invenio_rdm_records.oaiserver.resources.resources import OAIPMHServerResource
-from invenio_rdm_records.oaiserver.services.config import OAIPMHServerServiceConfig
-from invenio_rdm_records.oaiserver.services.services import OAIPMHServerService
 from invenio_records_resources.resources.files import FileResource
 from invenio_records_resources.services import FileService
 from invenio_vocabularies.contrib.affiliations import AffiliationsResource, \
@@ -27,6 +23,14 @@ from invenio_vocabularies.contrib.names import NamesResource, \
 from invenio_vocabularies.contrib.subjects import SubjectsResource, \
     SubjectsResourceConfig, SubjectsService, SubjectsServiceConfig
 from itsdangerous import SignatureExpired
+
+from invenio_rdm_records.oaiserver.resources.config import \
+    OAIPMHServerResourceConfig
+from invenio_rdm_records.oaiserver.resources.resources import \
+    OAIPMHServerResource
+from invenio_rdm_records.oaiserver.services.config import \
+    OAIPMHServerServiceConfig
+from invenio_rdm_records.oaiserver.services.services import OAIPMHServerService
 
 from . import config
 from .resources import RDMDraftFilesResourceConfig, \

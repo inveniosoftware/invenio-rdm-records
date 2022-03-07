@@ -563,7 +563,7 @@ def minimal_community():
 
 @pytest.fixture()
 def minimal_oai_set():
-    """Data for a minimal OAI-PMH set"""
+    """Data for a minimal OAI-PMH set."""
     return {
         "name": "name",
         "spec": "spec",
