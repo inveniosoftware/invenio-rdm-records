@@ -7,7 +7,9 @@
 
 """OAI-PMH resource level tests."""
 
+import pytest
 from flask import current_app
+from invenio_oaiserver.errors import OAISetSpecUpdateError
 
 
 def _create_set(client, data, headers, status_code):
@@ -100,23 +102,27 @@ def test_create_set_duplicate(client, admin, minimal_oai_set, headers):
     _create_set(client, minimal_oai_set, headers, 400)
 
 
-def test_create_set_missing_data(client, admin, minimal_oai_set, headers):
+def test_create_set_invalid_data(client, admin, minimal_oai_set, headers):
     """Try to create a set with missing params."""
     client = admin.login(client)
 
-    # without search_pattern
+    key = "name"
     s = minimal_oai_set.copy()
-    del s["search_pattern"]
+    s[key] *= 256
+    _create_set(client, s, headers, 400)
+    del s[key]
     _create_set(client, s, headers, 400)
 
-    # without name
+    key = "spec"
     s = minimal_oai_set.copy()
-    del s["name"]
+    s[key] *= 256
+    _create_set(client, s, headers, 400)
+    del s[key]
     _create_set(client, s, headers, 400)
 
-    # without spec
+    key = "search_pattern"
     s = minimal_oai_set.copy()
-    del s["spec"]
+    del s[key]
     _create_set(client, s, headers, 400)
 
 
@@ -144,8 +150,9 @@ def test_get_set(client, admin, minimal_oai_set, headers):
     assert created_set["description"] == retrieved_set["description"]
 
 
-def test_get_set_not_existing(client, headers):
+def test_get_set_not_existing(client, admin, headers):
     """Retrieve not existing set."""
+    client = admin.login(client)
     _get_set(client, 9001, headers, 404).json
 
 
@@ -156,7 +163,6 @@ def test_update_set(client, admin, minimal_oai_set, headers):
     s1 = _create_set(client, minimal_oai_set, headers, 201).json
 
     update = minimal_oai_set.copy()
-    del update["spec"]
     update["name"] = "updated"
     update["description"] = "updated"
     update["search_pattern"] = "updated"
@@ -167,6 +173,34 @@ def test_update_set(client, admin, minimal_oai_set, headers):
     assert s1_updated["search_pattern"] == update["search_pattern"]
     assert s1_updated["id"] == s1["id"]
     assert s1_updated["spec"] == s1["spec"]
+
+
+def test_update_set_invalid_data(client, admin, minimal_oai_set, headers):
+    """Update a set with invalid data.
+
+    Most cases are already handled in test_create_set_invalid_data
+    """
+    client = admin.login(client)
+
+    s1 = _create_set(client, minimal_oai_set, headers, 201).json
+    s = minimal_oai_set.copy()
+    # changing spec is not allowed
+    s["spec"] = "should raise an error"
+    with pytest.raises(OAISetSpecUpdateError):
+        _update_set(client, s1["id"], s, headers, 400)
+
+    # trying to set data which is read_only
+    s = s1.copy()
+    s["id"] = 200
+    _update_set(client, s1["id"], s, headers, 400)
+
+    s = s1.copy()
+    s["created"] = 200
+    _update_set(client, s1["id"], s, headers, 400)
+
+    s = s1.copy()
+    s["updated"] = 200
+    _update_set(client, s1["id"], s, headers, 400)
 
 
 def test_delete_set(client, admin, minimal_oai_set, headers):
@@ -219,8 +253,10 @@ def test_search_sets(client, admin, minimal_oai_set, headers):
         )
 
 
-def test_search_formats(client, headers):
+def test_search_metadata_formats(client, admin, headers):
     """Retrieve metadata formats."""
+    client = admin.login(client)
+
     available_formats = current_app.config.get(
         "OAISERVER_METADATA_FORMATS", {}
     )
