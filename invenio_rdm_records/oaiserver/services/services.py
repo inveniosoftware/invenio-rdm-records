@@ -39,11 +39,6 @@ class OAIPMHServerService(Service):
         return ServiceSchemaWrapper(self, schema=self.config.schema)
 
     @property
-    def update_schema(self):
-        """Returns the data schema instance for update request."""
-        return ServiceSchemaWrapper(self, schema=self.config.update_schema)
-
-    @property
     def links_item_tpl(self):
         """Item links template."""
         return LinksTemplate(
@@ -133,7 +128,7 @@ class OAIPMHServerService(Service):
         self.require_permission(identity, 'update')
         oai_set, errors = self._get_one(id=id_)
 
-        valid_data, errors = self.update_schema.load(
+        valid_data, errors = self.schema.load(
             data,
             context={"identity": identity},
             raise_errors=True,

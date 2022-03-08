@@ -12,9 +12,10 @@ from invenio_oaiserver.models import OAISet
 from invenio_records_resources.services import ServiceConfig
 from invenio_records_resources.services.base import Link
 from invenio_records_resources.services.records.links import pagination_links
-from marshmallow import Schema, fields, validate
-from marshmallow_utils.fields import SanitizedUnicode
 from sqlalchemy import asc, desc
+
+from invenio_rdm_records.oaiserver.services.schema import \
+    OAIPMHMetadataFormat, OAIPMHSetSchema
 
 from ..services.links import OAIPMHSetLink
 from ..services.permissions import OAIPMHServerPermissionPolicy
@@ -62,34 +63,6 @@ class SearchOptions:
     }
 
 
-class OAIPMHMetadataFormat(Schema):
-    """Marshmallow schema for OAI-PMH metadata format."""
-
-    id = fields.Str(metadata={'read_only': True})
-    schema = fields.URL(metadata={'read_only': True})
-    namespace = fields.URL(metadata={'read_only': True})
-
-
-class OAIPMHSetSchema(Schema):
-    """Marshmallow schema for OAI-PMH set."""
-
-    description = SanitizedUnicode(load_default=None, dump_default=None)
-    name = SanitizedUnicode(required=True, validate=validate.Length(min=1))
-    search_pattern = SanitizedUnicode(required=True)
-    spec = SanitizedUnicode(required=True, validate=validate.Length(min=1))
-    created = fields.DateTime(metadata={'read_only': True})
-    updated = fields.DateTime(metadata={'read_only': True})
-    id = fields.Int(metadata={'read_only': True})
-
-
-class OAIPMHSetUpdateSchema(Schema):
-    """Marshmallow schema for OAI-PMH set update request."""
-
-    description = SanitizedUnicode(load_default=None)
-    name = fields.Str(required=True, validate=validate.Length(min=1))
-    search_pattern = fields.Str(required=True)
-
-
 class OAIPMHServerServiceConfig(ServiceConfig):
     """Service factory configuration."""
 
@@ -109,7 +82,6 @@ class OAIPMHServerServiceConfig(ServiceConfig):
 
     # Service schema
     schema = OAIPMHSetSchema
-    update_schema = OAIPMHSetUpdateSchema
 
     metadata_format_schema = OAIPMHMetadataFormat
 
@@ -134,8 +106,3 @@ class OAIPMHServerServiceConfig(ServiceConfig):
         ),
         "oai-identify": Link("{+ui}/oai2d?verb=Identify"),
     }
-
-    # Service components
-    components = [
-        # MetadataComponent,
-    ]
