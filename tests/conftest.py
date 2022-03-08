@@ -224,6 +224,7 @@ def app_config(app_config):
 
     # OAI Server
     app_config["OAISERVER_ID_PREFIX"] = 'oai:inveniosoftware.org:recid/'
+    app_config["OAISERVER_RECORD_INDEX"] = 'rdmrecords-records'
     app_config['OAISERVER_METADATA_FORMATS'] = {
         'oai_dc': {
             'serializer': 'invenio_rdm_records.oai:dublincore_etree',
