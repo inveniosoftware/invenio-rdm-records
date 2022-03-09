@@ -14,7 +14,7 @@ from celery import shared_task
 from flask_principal import Identity, UserNeed
 from invenio_access.permissions import any_user, authenticated_user, \
     system_identity
-from invenio_communities.communities import CommunityNeed
+from invenio_communities.generators import CommunityRoleNeed
 from invenio_communities.invitations.services.request_types import \
     CommunityMemberInvitation
 from invenio_communities.members.errors import AlreadyMemberError
@@ -73,7 +73,7 @@ def _get_random_community(communities):
     # create community owner identity
     owner_id = communities[r]["access"]["owned_by"][0]["user"]
     owner_identity = get_authenticated_identity(owner_id)
-    owner_identity.provides.add(CommunityNeed(uuid))
+    owner_identity.provides.add(CommunityRoleNeed(uuid, 'owner'))
     return uuid, owner_id, owner_identity
 
 

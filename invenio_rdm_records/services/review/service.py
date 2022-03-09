@@ -120,10 +120,7 @@ class ReviewService(RecordService):
                   "been published.")
             )
 
-        # TODO: once draft status has been changed to not be considered open
-        # the condition "review.status !=" can be removed.
-        if draft.parent.review.status != 'draft' \
-                and draft.parent.review.is_open:
+        if draft.parent.review.is_open:
             raise ReviewStateError(_("An open review cannot be deleted."))
 
         # Delete request

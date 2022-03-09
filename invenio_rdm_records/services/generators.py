@@ -16,9 +16,8 @@ from itertools import chain
 from elasticsearch_dsl import Q
 from flask_principal import UserNeed
 from invenio_access.permissions import authenticated_user
-from invenio_communities.communities.services.permissions import CommunityNeed
+from invenio_communities.generators import CommunityRoleNeed
 from invenio_records_permissions.generators import Generator
-from invenio_requests.resolvers.registry import ResolverRegistry
 
 from invenio_rdm_records.records import RDMDraft
 
@@ -185,21 +184,10 @@ class SubmissionReviewer(Generator):
         # we only expect submission review requests here
         # and as such, we expect the receiver to be a community
         # and the topic to be a record
-        receiver = record.parent.review.receiver
+        request = record.parent.review
+        receiver = request.receiver
         if receiver is not None:
-            if hasattr(receiver, 'get_need'):
-                need = receiver.get_need()
-            else:
-                assert isinstance(receiver, dict)
-                assert "community" in receiver
-
-                # TODO this should be revisited when the community membership
-                #      is implemented, as the community resolver is likely
-                #      subject to change then
-                need = ResolverRegistry.resolve_need(receiver)
-            if need is not None:
-                return [need]
-
+            return receiver.get_needs(ctx=request.type.needs_context)
         return []
 
 
@@ -211,4 +199,7 @@ class CommunityCurator(Generator):
         if record is None:
             return []
 
-        return [CommunityNeed(c) for c in record.parent.communities.ids]
+        return [
+            CommunityRoleNeed(c, 'owner')
+            for c in record.parent.communities.ids
+        ]

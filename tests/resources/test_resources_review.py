@@ -90,7 +90,7 @@ def test_simple_flow(running_app, client, minimal_record, community, headers,
     req = client.post(
         link(links['submit-review']), json=comment, headers=headers)
     assert req.status_code == 202
-    assert req.json['status'] == 'open'
+    assert req.json['status'] == 'submitted'
     assert req.json['is_open'] is True
     assert req.json['title'] == minimal_record['metadata']['title']
     assert req.json['created_by'] == {'user': str(uploader.id)}
@@ -106,6 +106,7 @@ def test_simple_flow(running_app, client, minimal_record, community, headers,
 
     # Accept request
     client = curator.login(client, logout_first=True)
+    req = client.get(link(req.json['links']['self']), headers=headers)
 
     comment = {'payload': {'content': 'Awesome stuff', 'format': 'html'}}
     accept_link = link(req.json['links']['actions']['accept'])
@@ -162,7 +163,7 @@ def test_review_endpoints(running_app, client, minimal_record, community,
     }
     req = client.put(review_link, headers=headers, json=review)
     assert req.status_code == 200
-    assert req.json['status'] == 'draft'
+    assert req.json['status'] == 'created'
     assert req.json['is_open'] is False
     assert req.json['is_closed'] is False
     assert req.json['created_by'] == {'user': str(uploader.id)}
