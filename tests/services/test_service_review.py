@@ -11,8 +11,8 @@ import pytest
 from flask_principal import Identity
 from invenio_access.permissions import any_user, authenticated_user
 from invenio_communities import current_communities
-from invenio_communities.communities import CommunityNeed
 from invenio_communities.communities.records.api import Community
+from invenio_communities.generators import CommunityRoleNeed
 from invenio_records_resources.services.errors import PermissionDeniedError
 from invenio_requests import current_requests_service
 from marshmallow.exceptions import ValidationError
@@ -30,7 +30,7 @@ def get_community_owner_identity(community):
     identity = Identity(owner_id)
     identity.provides.add(any_user)
     identity.provides.add(authenticated_user)
-    identity.provides.add(CommunityNeed(str(community.id)))
+    identity.provides.add(CommunityRoleNeed(str(community.id), 'owner'))
     return identity
 
 
@@ -95,7 +95,7 @@ def test_simple_flow(draft, running_app, community, service,
     # ### Submit draft for review
     req = service.review.submit(
         running_app.superuser_identity, draft.id).to_dict()
-    assert req['status'] == 'open'
+    assert req['status'] == 'submitted'
     assert req['title'] == draft['metadata']['title']
 
     # ### Read request as curator
@@ -149,7 +149,7 @@ def test_creation(draft, running_app, community, service, requests_service):
     ).to_dict()
 
     assert review['id'] == parent['review']['id']
-    assert review['status'] == 'draft'
+    assert review['status'] == 'created'
     assert review['type'] == 'community-submission'
     assert review['receiver'] == {'community': community.data['uuid']}
     assert review['created_by'] == {
@@ -168,7 +168,7 @@ def test_creation(draft, running_app, community, service, requests_service):
 
 
 def test_create_with_invalid_community(minimal_record, running_app, service):
-    """Test with invalid communities"""
+    """Test with invalid communities."""
     minimal_record['parent'] = {
         'review': {
             'type': 'community-submission',
@@ -212,7 +212,7 @@ def test_create_review_after_draft(
         data,
         revision_id=draft.data['revision_id']
     ).to_dict()
-    assert req['status'] == 'draft'
+    assert req['status'] == 'created'
     assert req['topic'] == {'record': draft.id}
     assert req['receiver'] == {'community': community.data['uuid']}
 
@@ -276,7 +276,7 @@ def test_update(draft, running_app, community2, service):
         revision_id=draft.data['revision_id']
     ).to_dict()
     assert req['id'] != previous_id
-    assert req['status'] == 'draft'
+    assert req['status'] == 'created'
     assert req['topic'] == {'record': draft.id}
     assert req['receiver'] == {'community': community2.data['uuid']}
 

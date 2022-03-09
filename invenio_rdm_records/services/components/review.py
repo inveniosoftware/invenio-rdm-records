@@ -32,7 +32,7 @@ class ReviewComponent(ServiceComponent):
             return
         # TODO: once draft status has been changed to not be considered open
         # the condition "review.status !=" can be removed.
-        if review.is_open and review.status != 'draft':
+        if review.is_open:
             raise ReviewStateError(
                 _("You cannot delete a draft with an open review. Please "
                   "cancel the review first.")
@@ -40,7 +40,7 @@ class ReviewComponent(ServiceComponent):
 
         # Delete draft request's. A request in any other state is left as-is,
         # to allow users to see the request even if it was removed.
-        if review.status == 'draft':
+        if review.status == 'created':
             current_requests_service.delete(
                 identity,
                 draft.parent.review.id,
@@ -53,5 +53,5 @@ class ReviewComponent(ServiceComponent):
         if review is None:
             return
         if getattr(review.type, 'block_publish', True) and \
-                review.status in ['draft', 'open']:
+                not review.is_closed:
             raise ReviewExistsError()

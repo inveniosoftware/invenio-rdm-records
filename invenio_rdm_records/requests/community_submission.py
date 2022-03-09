@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2021 CERN.
+# Copyright (C) 2021-2022 CERN.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
@@ -9,7 +9,7 @@
 
 from flask_babelex import lazy_gettext as _
 from invenio_records_resources.services.uow import RecordCommitOp
-from invenio_requests.customizations import RequestAction
+from invenio_requests.customizations import actions
 
 from ..proxies import current_rdm_records_service as service
 from .base import ReviewRequest
@@ -18,37 +18,20 @@ from .base import ReviewRequest
 #
 # Actions
 #
-class SubmitAction(RequestAction):
+class SubmitAction(actions.SubmitAction):
     """Submit action."""
-
-    status_from = ['draft']
-    status_to = 'open'
-
-    def can_execute(self, identity):
-        """Validate if action can be executed."""
-        draft = self.request.topic.resolve()
-        service._validate_draft(identity, draft)
-        return super().can_execute(identity)
 
     def execute(self, identity, uow):
         """Execute the submit action."""
-        # Set the record's title as the request title.
         draft = self.request.topic.resolve()
+        service._validate_draft(identity, draft)
+        # Set the record's title as the request title.
         self.request['title'] = draft.metadata['title']
         super().execute(identity, uow)
 
 
-class AcceptAction(RequestAction):
+class AcceptAction(actions.AcceptAction):
     """Accept action."""
-
-    status_from = ['open']
-    status_to = 'accepted'
-
-    def can_execute(self, identity):
-        """Check of the accpet action can be executed."""
-        draft = self.request.topic.resolve()
-        service._validate_draft(identity, draft)
-        return True
 
     def execute(self, identity, uow):
         """Accept record into community."""
@@ -56,6 +39,7 @@ class AcceptAction(RequestAction):
         # community receivers and record topics.
         draft = self.request.topic.resolve()
         community = self.request.receiver.resolve()
+        service._validate_draft(identity, draft)
 
         # Unset review from record (still accessible from request)
         # The curator (receiver) should still have access, via the community
@@ -80,11 +64,8 @@ class AcceptAction(RequestAction):
         super().execute(identity, uow)
 
 
-class DeclineAction(RequestAction):
+class DeclineAction(actions.DeclineAction):
     """Decline action."""
-
-    status_from = ['open']
-    status_to = 'declined'
 
     def execute(self, identity, uow):
         """Execute action."""
@@ -96,11 +77,8 @@ class DeclineAction(RequestAction):
         super().execute(identity, uow)
 
 
-class CancelAction(RequestAction):
+class CancelAction(actions.CancelAction):
     """Decline action."""
-
-    status_from = ['open']
-    status_to = 'cancelled'
 
     def execute(self, identity, uow):
         """Execute action."""
@@ -112,11 +90,8 @@ class CancelAction(RequestAction):
         super().execute(identity, uow)
 
 
-class ExpireAction(RequestAction):
+class ExpireAction(actions.CancelAction):
     """Expire action."""
-
-    status_from = ['open']
-    status_to = 'expired'
 
     def execute(self, identity, uow):
         """Execute action."""
@@ -147,9 +122,14 @@ class CommunitySubmission(ReviewRequest):
     allowed_creator_ref_types = ['user']
     allowed_receiver_ref_types = ['community']
     allowed_topic_ref_types = ['record']
+    needs_context = {
+        'community_roles': ['owner', 'manager', 'curator'],
+    }
 
     available_actions = {
+        "create": actions.CreateAction,
         "submit": SubmitAction,
+        "delete": actions.DeleteAction,
         "accept": AcceptAction,
         "cancel": CancelAction,
         "decline": DeclineAction,
