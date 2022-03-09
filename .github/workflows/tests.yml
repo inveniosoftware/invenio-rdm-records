@@ -31,20 +31,13 @@ jobs:
           python-version: [3.7, 3.8, 3.9]
           requirements-level: [pypi]
           db-service: [postgresql12]
-          search-service: [elasticsearch6, elasticsearch7]
+          search-service: [elasticsearch7]
           exclude:
           - python-version: 3.7
             search-service: elasticsearch7
-          - python-version: 3.8
-            search-service: elasticsearch6
-          - python-version: 3.9
-            search-service: elasticsearch6
           include:
           - db-service: postgresql12
             DB_EXTRAS: "postgresql"
-
-          - search-service: elasticsearch6
-            SEARCH_EXTRAS: "elasticsearch6"
 
           - search-service: elasticsearch7
             SEARCH_EXTRAS: "elasticsearch7"
