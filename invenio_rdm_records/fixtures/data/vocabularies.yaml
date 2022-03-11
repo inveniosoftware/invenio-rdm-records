@@ -26,6 +26,9 @@ descriptiontypes:
 datetypes:
   pid-type: dat
   data-file: vocabularies/date_types.yaml
+funders:
+  pid-type: fun
+  data-file: vocabularies/funders.yaml
 names:
   pid-type: names
   data-file: vocabularies/names_orcid.yaml

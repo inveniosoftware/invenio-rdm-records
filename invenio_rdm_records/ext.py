@@ -18,6 +18,8 @@ from invenio_records_resources.services import FileService
 from invenio_vocabularies.contrib.affiliations import AffiliationsResource, \
     AffiliationsResourceConfig, AffiliationsService, \
     AffiliationsServiceConfig
+from invenio_vocabularies.contrib.funders import FundersResource, \
+    FundersResourceConfig, FundersService, FundersServiceConfig
 from invenio_vocabularies.contrib.names import NamesResource, \
     NamesResourceConfig, NamesService, NamesServiceConfig
 from invenio_vocabularies.contrib.subjects import SubjectsResource, \
@@ -144,6 +146,7 @@ class InvenioRDMRecords(object):
             file = RDMFileRecordServiceConfig.build(app)
             file_draft = RDMFileDraftServiceConfig.build(app)
             affiliations = AffiliationsServiceConfig
+            funders = FundersServiceConfig
             names = NamesServiceConfig
             subjects = SubjectsServiceConfig
             oaipmh_server = OAIPMHServerServiceConfig
@@ -165,6 +168,9 @@ class InvenioRDMRecords(object):
         )
         self.affiliations_service = AffiliationsService(
             config=service_configs.affiliations,
+        )
+        self.funders_service = FundersService(
+            config=service_configs.funders
         )
         self.names_service = NamesService(
             config=service_configs.names
@@ -206,6 +212,10 @@ class InvenioRDMRecords(object):
         self.affiliations_resource = AffiliationsResource(
             service=self.affiliations_service,
             config=AffiliationsResourceConfig,
+        )
+        self.funders_resource = FundersResource(
+            service=self.funders_service,
+            config=FundersResourceConfig,
         )
         self.names_resource = NamesResource(
             service=self.names_service,
