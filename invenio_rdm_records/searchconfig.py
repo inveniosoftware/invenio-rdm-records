@@ -12,47 +12,7 @@
 # the ones in Invenio-App-RDM used for the frontend and try to lower the number
 # of classes used for passing config around.
 
-
-class OptionsSelector:
-    """Generic helper to select and validate facet/sort options."""
-
-    def __init__(self, available_options, selected_options):
-        """Initialize selector."""
-        # Ensure all selected options are availabe.
-        for o in selected_options:
-            assert o in available_options, \
-                    f"Selected option '{o}' is undefined."
-
-        self.available_options = available_options
-        self.selected_options = selected_options
-
-    def __iter__(self):
-        """Iterate over options to produce RSK options."""
-        for o in self.selected_options:
-            yield self.map_option(o, self.available_options[o])
-
-    def map_option(self, key, option):
-        """Map an option."""
-        # This interface is used in Invenio-App-RDM.
-        return (key, option)
-
-
-class SortOptionsSelector(OptionsSelector):
-    """Sort options for the search configuration."""
-
-    def __init__(self, available_options, selected_options, default=None,
-                 default_no_query=None):
-        """Initialize sort options."""
-        super().__init__(available_options, selected_options)
-
-        self.default = selected_options[0] if default is None else default
-        self.default_no_query = selected_options[1] \
-            if default_no_query is None else default_no_query
-
-        assert self.default in self.available_options, \
-            f"Default sort with query {self.default} is undefined."
-        assert self.default_no_query in self.available_options, \
-            f"Default sort without query {self.default_no_query} is undefined."
+from invenio_search_ui.searchconfig import SortOptionsSelector, OptionsSelector
 
 
 class SearchConfig:
