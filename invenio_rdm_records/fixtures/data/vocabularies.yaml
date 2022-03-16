@@ -28,7 +28,7 @@ datetypes:
   data-file: vocabularies/date_types.yaml
 names:
   pid-type: names
-  data-file: vocabularies/names.yaml
+  data-file: vocabularies/names_orcid.yaml
 relationtypes:
   pid-type: rlt
   data-file: vocabularies/relation_types.yaml

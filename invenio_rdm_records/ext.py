@@ -24,6 +24,14 @@ from invenio_vocabularies.contrib.subjects import SubjectsResource, \
     SubjectsResourceConfig, SubjectsService, SubjectsServiceConfig
 from itsdangerous import SignatureExpired
 
+from invenio_rdm_records.oaiserver.resources.config import \
+    OAIPMHServerResourceConfig
+from invenio_rdm_records.oaiserver.resources.resources import \
+    OAIPMHServerResource
+from invenio_rdm_records.oaiserver.services.config import \
+    OAIPMHServerServiceConfig
+from invenio_rdm_records.oaiserver.services.services import OAIPMHServerService
+
 from . import config
 from .resources import RDMDraftFilesResourceConfig, \
     RDMParentRecordLinksResource, RDMParentRecordLinksResourceConfig, \
@@ -138,6 +146,7 @@ class InvenioRDMRecords(object):
             affiliations = AffiliationsServiceConfig
             names = NamesServiceConfig
             subjects = SubjectsServiceConfig
+            oaipmh_server = OAIPMHServerServiceConfig
 
         return ServiceConfigs
 
@@ -162,6 +171,10 @@ class InvenioRDMRecords(object):
         )
         self.subjects_service = SubjectsService(
             config=service_configs.subjects
+        )
+
+        self.oaipmh_server_service = OAIPMHServerService(
+            config=service_configs.oaipmh_server,
         )
 
     def init_resource(self, app):
@@ -201,6 +214,12 @@ class InvenioRDMRecords(object):
         self.subjects_resource = SubjectsResource(
             service=self.subjects_service,
             config=SubjectsResourceConfig,
+        )
+
+        # OAI-PMH
+        self.oaipmh_server_resource = OAIPMHServerResource(
+            service=self.oaipmh_server_service,
+            config=OAIPMHServerResourceConfig,
         )
 
     def fix_datacite_configs(self, app):

@@ -9,6 +9,7 @@
 """DataCite-based data model for Invenio."""
 
 from .ext import InvenioRDMRecords
-from .version import __version__
+
+__version__ = '0.35.1'
 
 __all__ = ('__version__', 'InvenioRDMRecords')

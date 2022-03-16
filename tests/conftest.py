@@ -3,6 +3,7 @@
 # Copyright (C) 2019-2021 CERN.
 # Copyright (C) 2019-2022 Northwestern University.
 # Copyright (C) 2021 TU Wien.
+# Copyright (C) 2022 Graz University of Technology.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
@@ -29,6 +30,7 @@ from invenio_access.models import ActionRoles
 from invenio_access.permissions import superuser_access, system_identity
 from invenio_accounts.models import Role
 from invenio_accounts.testutils import login_user_via_session
+from invenio_admin.permissions import action_admin_access
 from invenio_app.factory import create_app as _create_app
 from invenio_cache import current_cache
 from invenio_communities import current_communities
@@ -222,6 +224,7 @@ def app_config(app_config):
 
     # OAI Server
     app_config["OAISERVER_ID_PREFIX"] = 'oai:inveniosoftware.org:recid/'
+    app_config["OAISERVER_RECORD_INDEX"] = 'rdmrecords-records'
     app_config['OAISERVER_METADATA_FORMATS'] = {
         'oai_dc': {
             'serializer': 'invenio_rdm_records.oai:dublincore_etree',
@@ -556,6 +559,17 @@ def minimal_community():
             "title": "Biodiversity Literature Repository",
             "type": "topic"
         }
+    }
+
+
+@pytest.fixture()
+def minimal_oai_set():
+    """Data for a minimal OAI-PMH set."""
+    return {
+        "name": "name",
+        "spec": "spec",
+        "search_pattern": "is_published:true",
+        "description": None,
     }
 
 
@@ -1035,30 +1049,51 @@ def superuser_identity(superuser_role_need):
     return identity
 
 
+@pytest.fixture(scope="function")
+def admin_role_need(db):
+    """Store 1 role with 'superuser-access' ActionNeed.
+
+    WHY: This is needed because expansion of ActionNeed is
+         done on the basis of a User/Role being associated with that Need.
+         If no User/Role is associated with that Need (in the DB), the
+         permission is expanded to an empty list.
+    """
+    role = Role(name="admin-access")
+    db.session.add(role)
+
+    action_role = ActionRoles.create(action=action_admin_access, role=role)
+    db.session.add(action_role)
+
+    db.session.commit()
+
+    return action_role.need
+
+
 @pytest.fixture()
-@mock.patch('arrow.utcnow')
-def embargoed_record(
-    mock_arrow, running_app, minimal_record, superuser_identity
-):
+def embargoed_record(running_app, minimal_record, superuser_identity):
     """Embargoed record."""
     service = current_rdm_records.records_service
+    today = arrow.utcnow().date().isoformat()
 
     # Add embargo to record
-    minimal_record["access"]["files"] = 'restricted'
-    minimal_record["access"]["status"] = 'embargoed'
-    minimal_record["access"]["embargo"] = dict(
-        active=True, until='2020-06-01', reason=None
-    )
+    with mock.patch('arrow.utcnow') as mock_arrow:
+        minimal_record["access"]["files"] = 'restricted'
+        minimal_record["access"]["status"] = 'embargoed'
+        minimal_record["access"]["embargo"] = dict(
+            active=True, until=today, reason=None
+        )
 
-    # We need to set the current date in the past to pass the validations
-    mock_arrow.return_value = arrow.get(datetime(1954, 9, 29), tz.gettz('UTC'))
-    draft = service.create(superuser_identity, minimal_record)
-    record = service.publish(id_=draft.id, identity=superuser_identity)
+        # We need to set the current date in the past to pass the validations
+        mock_arrow.return_value = arrow.get(
+            datetime(1954, 9, 29), tz.gettz('UTC')
+        )
+        draft = service.create(superuser_identity, minimal_record)
+        record = service.publish(id_=draft.id, identity=superuser_identity)
 
-    RDMRecord.index.refresh()
+        RDMRecord.index.refresh()
 
-    # Recover current date
-    mock_arrow.return_value = arrow.get(datetime.utcnow())
+        # Recover current date
+        mock_arrow.return_value = arrow.get(datetime.utcnow())
 
     return record
 
@@ -1103,3 +1138,20 @@ def headers():
         'content-type': 'application/json',
         'accept': 'application/json',
     }
+
+
+@pytest.fixture()
+def admin(UserFixture, app, db, admin_role_need):
+    """Admin user for requests."""
+    u = UserFixture(
+        email="admin@inveniosoftware.org",
+        password="admin",
+    )
+    u.create(app, db)
+
+    datastore = app.extensions["security"].datastore
+    _, role = datastore._prepare_role_modify_args(u.user, "admin-access")
+
+    datastore.add_role_to_user(u.user, role)
+    db.session.commit()
+    return u
