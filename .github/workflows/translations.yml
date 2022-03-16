@@ -5,11 +5,8 @@
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
 
-name: i18n:extract,push,pull translations
-on:
-  push:
-    branches:
-      - master
+name: i18n:pull,extract,push translations
+on: workflow_dispatch # manually trigger 
 
 jobs:
   translations:
@@ -19,11 +16,6 @@ jobs:
         with:
           fetch-depth: 0
 
-      # extract
-      - name: extract_messages
-        run: |
-          python setup.py extract_messages
-
       # install transifex client
       - name: transifex-client
         run: |
@@ -32,23 +24,39 @@ jobs:
       # store token
       - name: store token
         run: |
-          tx init --token ${{ secrets.TRANS_TOKEN }} --force --no-interactive
+          touch ~/.transifexrc
+          echo [https://www.transifex.com] >> ~/.transifexrc
+          echo api_hostname=https://api.transifex.com >> ~/.transifexrc
+          echo hostname=https://www.transifex.com >> ~/.transifexrc
+          echo password=${{ secrets.TRANSIFEX_TOKEN }} >> ~/.transifexrc
+          echo username=api  >> ~/.transifexrc
 
-      # push
-      - name: push_messages
-        run: |
-          tx push -s -t
-  
       # pull all lang
       - name: pull translations
         run: |
           tx pull -a
 
+      # extract
+      - name: extract_messages
+        run: |
+          python setup.py extract_messages
+
+      # push
+      - name: push_messages
+        run: |
+          tx push -s -t
+
+      # remove transifex credential file
+      - name: remove transifexrc file
+        uses: JesseTG/rm@v1.0.2
+        with:
+          path: ~/.transifexrc
+
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v3
         with:
-          commit-message: i18n:extract,push,pull translations
-          title: i18n:extract,push,pull translations
-          body: i18n:extract,push,pull translations
+          commit-message: i18n:pull,extract,push translations
+          title: i18n:pull,extract,push translations
+          body: i18n:pull,extract,push translations
           branch: 101-translations  # name of branch which PR is created from
           delete-branch: true  # delete branch once merged,closed
