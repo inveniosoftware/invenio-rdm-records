@@ -26,7 +26,7 @@ def init(state):
     registry.register(
         ext.records_service.draft_files, service_id='rdm-draft-files')
     registry.register(ext.affiliations_service, service_id='rdm-affiliations')
-    registry.register(ext.awards_service, service_id='rdm-affiliations')
+    registry.register(ext.awards_service, service_id='rdm-awards')
     registry.register(ext.names_service, service_id='rdm-names')
     registry.register(ext.subjects_service, service_id='rdm-subjects')
     registry.register(ext.oaipmh_server_service, service_id='oaipmh-server')

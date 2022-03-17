@@ -23,11 +23,11 @@ def example_award(
 ):
     """Example award."""
     data = {
-        "id": "dfb258a9e388b53d5b89c7085795fe88",
+        "id": "755021",
         "identifiers": [
             {
-                "identifier": "corda__h2020::dfb258a9e388b53d5b89c7085795fe88",
-                "scheme": "oaf"
+                "identifier": "https://cordis.europa.eu/project/id/755021",
+                "scheme": "url"
             }
         ],
         "number": "755021",
@@ -53,8 +53,7 @@ def test_awards_get(client, example_award, headers):
     assert res.json["id"] == id_
     # Test links
     assert res.json["links"] == {
-        "self": "https://127.0.0.1:5000/api/awards/dfb258a9e388b53d5b89c708579\
-            5fe88"
+        "self": "https://127.0.0.1:5000/api/awards/755021"
     }
 
 
@@ -64,4 +63,4 @@ def test_awards_search(client, example_award, headers):
 
     assert res.status_code == 200
     assert res.json["hits"]["total"] == 1
-    assert res.json["sortBy"] == "name"
+    assert res.json["sortBy"] == "newest"
