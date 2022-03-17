@@ -262,15 +262,7 @@ def create_fake_record():
             } for i in range(2)],
             "funding": [{
                 "funder": {
-                    "name": "European Commission",
-                    "identifier": "03yrm5c26",
-                    "scheme": "ror"
-                },
-                "award": {
-                    "title": "OpenAIRE",
-                    "number": "246686",
-                    "identifier": "0000-0002-1825-0097",
-                    "scheme": "orcid"
+                    "id": "00k4n6c32",
                 }
             }],
             # "locations": [{

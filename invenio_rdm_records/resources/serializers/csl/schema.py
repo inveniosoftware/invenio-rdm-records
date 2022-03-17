@@ -11,9 +11,12 @@ from edtf import parse_edtf
 from edtf.parser.edtf_exceptions import EDTFParseException
 from edtf.parser.parser_classes import Date, Interval
 from flask import g
+from invenio_records_resources.proxies import current_service_registry
 from invenio_vocabularies.proxies import current_service as vocabulary_service
 from marshmallow import Schema, fields, missing, pre_dump
 from marshmallow_utils.fields import SanitizedUnicode, StrippedHTML
+
+from ..utils import get_preferred_identifier
 
 
 class CSLCreatorSchema(Schema):
@@ -132,15 +135,23 @@ class CSLJSONSchema(Schema):
         funding = obj["metadata"].get("funding")
         if funding:
             funder = funding[0]["funder"]
+            id_ = funder.get("id")
+            if id_:
+                funder_service = current_service_registry.get("funders")
+                funder = funder_service.read(g.identity, id_).to_dict()
+
             note = f"Funding by {funder['name']}"
-            scheme = funder.get("scheme", "").upper()
-            identifier = funder.get("identifier", "")
+            identifiers = funder.get("identifiers", [])
+            identifier = get_preferred_identifier(
+                priority=("ror", "grid", "doi", "isni", "gnd"),
+                identifiers=identifiers
+            )
 
-            if scheme:
-                note = note + " " + scheme
             if identifier:
-                note = note + " " + identifier + "."
-
+                note += (
+                    f" {identifier['scheme'].upper()} "
+                    f"{identifier['identifier']}."
+                )
             return note
 
         return missing

@@ -306,6 +306,52 @@
               }
             }
           },
+          "funding": {
+            "properties": {
+              "award": {
+                "type": "object",
+                "properties": {
+                  "@v": {
+                    "type": "keyword"
+                  },
+                  "id": {
+                    "type": "keyword"
+                  },
+                  "title": {
+                    "type": "object",
+                    "dynamic": true
+                  },
+                  "number": {
+                    "type": "text"
+                  },
+                  "identifiers": {
+                    "properties": {
+                      "identifier": {
+                        "type": "text"
+                      },
+                      "scheme": {
+                        "type": "keyword"
+                      }
+                    }
+                  }
+                }
+              },
+              "funder": {
+                "type": "object",
+                "properties": {
+                  "@v": {
+                    "type": "keyword"
+                  },
+                  "id": {
+                    "type": "keyword"
+                  },
+                  "name": {
+                    "type": "text"
+                  }
+                }
+              }
+            }
+          },
           "identifiers" : {
             "properties": {
               "identifier" : {

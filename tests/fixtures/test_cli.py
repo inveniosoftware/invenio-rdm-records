@@ -17,6 +17,9 @@ from invenio_communities.communities.records.api import Community
 from invenio_communities.members import Member
 from invenio_requests import current_requests_service
 from invenio_requests.records import Request
+from invenio_vocabularies.contrib.awards.api import Award
+from invenio_vocabularies.contrib.funders.api import Funder
+from invenio_vocabularies.records.api import Vocabulary
 
 from invenio_rdm_records.fixtures.demo import create_fake_community, \
     create_fake_record
@@ -38,6 +41,9 @@ def vocabularies():
         delay=False,
     )
     vocabularies.load()
+    Vocabulary.index.refresh()
+    Award.index.refresh()
+    Funder.index.refresh()
 
 
 def test_create_fake_demo_draft_record(app, location, db, es_clear,

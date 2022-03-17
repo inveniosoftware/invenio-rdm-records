@@ -53,6 +53,8 @@ from invenio_communities import current_communities
 from invenio_communities.communities.records.api import Community
 from invenio_records_resources.proxies import current_service_registry
 from invenio_vocabularies.contrib.affiliations.api import Affiliation
+from invenio_vocabularies.contrib.awards.api import Award
+from invenio_vocabularies.contrib.funders.api import Funder
 from invenio_vocabularies.contrib.subjects.api import Subject
 from invenio_vocabularies.proxies import current_service as vocabulary_service
 from invenio_vocabularies.records.api import Vocabulary
@@ -258,7 +260,7 @@ def app_config(app_config):
             'namespace': 'http://schema.datacite.org/oai/oai-1.1/',
         },
     }
-    app_config["INDEXER_DEFAULT_INDEX"] = "rdmrecords-records-record-v4.0.0"
+    app_config["INDEXER_DEFAULT_INDEX"] = "rdmrecords-records-record-v5.0.0"
     # Variable not used. We set it to silent warnings
     app_config['JSONSCHEMAS_HOST'] = 'not-used'
 
@@ -461,15 +463,10 @@ def full_record(users):
             },
             "funding": [{
                 "funder": {
-                    "name": "European Commission",
-                    "identifier": "1234",
-                    "scheme": "ror"
+                    "id": "00k4n6c32",
                 },
                 "award": {
-                    "title": "OpenAIRE",
-                    "number": "246686",
-                    "identifier": ".../246686",
-                    "scheme": "openaire"
+                    "id": "00k4n6c32::755021"
                 }
             }],
             "references": [{
@@ -993,6 +990,65 @@ def affiliations_v(app):
     return aff
 
 
+@pytest.fixture(scope="module")
+def funders_v(app):
+    """Funder vocabulary record."""
+    funders_service = current_service_registry.get("funders")
+    funder = funders_service.create(system_identity, {
+        "id": "00k4n6c32",
+        "identifiers": [
+            {
+                "identifier": "000000012156142X",
+                "scheme": "isni",
+            },
+            {
+                "identifier": "00k4n6c32",
+                "scheme": "ror",
+            }
+        ],
+        "name": "European Commission",
+        "title": {
+            "en": "European Commission",
+            "fr": "Commission européenne",
+        },
+        "country": "BE"
+    })
+
+    Funder.index.refresh()
+
+    return funder
+
+
+@pytest.fixture(scope="module")
+def awards_v(app, funders_v):
+    """Funder vocabulary record."""
+    awards_service = current_service_registry.get("awards")
+    award = awards_service.create(system_identity, {
+        "id": "755021",
+        "identifiers": [
+            {
+                "identifier": "https://cordis.europa.eu/project/id/755021",
+                "scheme": "url"
+            }
+        ],
+        "number": "755021",
+        "title": {
+            "en": (
+                "Personalised Treatment For Cystic Fibrosis Patients With "
+                "Ultra-rare CFTR Mutations (and beyond)"
+            ),
+        },
+        "funder": {
+            "id": "00k4n6c32"
+        },
+        "acronym": "HIT-CF",
+    })
+
+    Award.index.refresh()
+
+    return award
+
+
 @pytest.fixture(scope="function")
 def cache():
     """Empty cache."""
@@ -1017,7 +1073,9 @@ RunningApp = namedtuple("RunningApp", [
     "date_type_v",
     "contributors_role_v",
     "relation_type_v",
-    "licenses_v"
+    "licenses_v",
+    "funders_v",
+    "awards_v",
 ])
 
 
@@ -1025,7 +1083,8 @@ RunningApp = namedtuple("RunningApp", [
 def running_app(
     app, superuser_identity, location, cache, resource_type_v, subject_v,
     languages_v, affiliations_v, title_type_v, description_type_v,
-    date_type_v, contributors_role_v, relation_type_v, licenses_v
+    date_type_v, contributors_role_v, relation_type_v, licenses_v,
+    funders_v, awards_v,
 ):
     """This fixture provides an app with the typically needed db data loaded.
 
@@ -1046,7 +1105,9 @@ def running_app(
         date_type_v,
         contributors_role_v,
         relation_type_v,
-        licenses_v
+        licenses_v,
+        funders_v,
+        awards_v,
     )
 
 

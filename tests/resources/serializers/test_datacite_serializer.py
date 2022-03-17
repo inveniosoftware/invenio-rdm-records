@@ -186,11 +186,14 @@ def test_datacite43_serializer(running_app, full_record):
         "fundingReferences": [
             {
                 "funderName": "European Commission",
-                "funderIdentifier": "1234",
+                "funderIdentifier": "00k4n6c32",
                 "funderIdentifierType": "ROR",
-                "awardTitle": "OpenAIRE",
-                "awardNumber": "246686",
-                "awardURI": ".../246686",
+                "awardTitle": (
+                    "Personalised Treatment For Cystic Fibrosis Patients With "
+                    "Ultra-rare CFTR Mutations (and beyond)"
+                ),
+                "awardNumber": "755021",
+                "awardURI": "https://cordis.europa.eu/project/id/755021",
             }
         ],
         "schemaVersion": "http://datacite.org/schema/kernel-4",
@@ -276,9 +279,9 @@ def test_datacite43_xml_serializer(running_app, full_record):
         "  <fundingReferences>",
         "    <fundingReference>",
         "      <funderName>European Commission</funderName>",
-        "      <funderIdentifier funderIdentifierType=\"ROR\">1234</funderIdentifier>",  # noqa
-        "      <awardNumber>246686</awardNumber>",
-        "      <awardTitle>OpenAIRE</awardTitle>",
+        "      <funderIdentifier funderIdentifierType=\"ROR\">00k4n6c32</funderIdentifier>",  # noqa
+        "      <awardNumber>755021</awardNumber>",
+        "      <awardTitle>Personalised Treatment For Cystic Fibrosis Patients With Ultra-rare CFTR Mutations (and beyond)</awardTitle>",  # noqa
         "    </fundingReference>",
         "  </fundingReferences>",
         "</resource>",

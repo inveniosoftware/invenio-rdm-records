@@ -129,9 +129,9 @@ def test_datacite_serializer(running_app, full_record):
         '  <fundingReferences>\n'
         '    <fundingReference>\n'
         '      <funderName>European Commission</funderName>\n'
-        '      <funderIdentifier funderIdentifierType="ROR">1234</funderIdentifier>\n'  # noqa
-        '      <awardNumber>246686</awardNumber>\n'
-        '      <awardTitle>OpenAIRE</awardTitle>\n'
+        '      <funderIdentifier funderIdentifierType="ROR">00k4n6c32</funderIdentifier>\n'  # noqa
+        '      <awardNumber>755021</awardNumber>\n'
+        '      <awardTitle>Personalised Treatment For Cystic Fibrosis Patients With Ultra-rare CFTR Mutations (and beyond)</awardTitle>\n'  # noqa
         '    </fundingReference>\n'
         '  </fundingReferences>\n'
         '</resource>\n'
@@ -221,9 +221,9 @@ def test_oai_datacite_serializer(running_app, full_record):
         '      <fundingReferences>\n'
         '        <fundingReference>\n'
         '          <funderName>European Commission</funderName>\n'
-        '          <funderIdentifier funderIdentifierType="ROR">1234</funderIdentifier>\n'  # noqa
-        '          <awardNumber>246686</awardNumber>\n'
-        '          <awardTitle>OpenAIRE</awardTitle>\n'
+        '          <funderIdentifier funderIdentifierType="ROR">00k4n6c32</funderIdentifier>\n'  # noqa
+        '          <awardNumber>755021</awardNumber>\n'
+        '          <awardTitle>Personalised Treatment For Cystic Fibrosis Patients With Ultra-rare CFTR Mutations (and beyond)</awardTitle>\n'  # noqa
         '        </fundingReference>\n'
         '      </fundingReferences>\n'
         '    </resource>\n'

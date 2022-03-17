@@ -1,5 +1,5 @@
 {
-  "$schema": "local://records/record-v4.0.0.json",
+  "$schema": "local://records/record-v5.0.0.json",
   "id": "abcde-12345",
   "pid": {
     "pk": 1,

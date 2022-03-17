@@ -16,6 +16,8 @@ from flask import current_app
 from flask_babelex import lazy_gettext as _
 from invenio_vocabularies.contrib.affiliations.schema import \
     AffiliationRelationSchema
+from invenio_vocabularies.contrib.awards.schema import AwardRelationSchema
+from invenio_vocabularies.contrib.funders.schema import FunderRelationSchema
 from invenio_vocabularies.contrib.subjects.schema import SubjectRelationSchema
 from marshmallow import Schema, ValidationError, fields, post_load, validate, \
     validates, validates_schema
@@ -264,48 +266,11 @@ class RelatedIdentifierSchema(IdentifierSchema):
             raise ValidationError(errors)
 
 
-# TODO: Replace with
-# invenio_vocabularies.contrib.funders/awards.schema
-class FunderSchema(Schema):
-    """Funder schema."""
-
-    name = SanitizedUnicode(
-        required=True,
-        validate=_not_blank(_('Name cannot be blank.'))
-    )
-    scheme = SanitizedUnicode()
-    identifier = SanitizedUnicode()
-
-
-class AwardSchema(Schema):
-    """Award schema."""
-
-    title = SanitizedUnicode(
-        required=True,
-        validate=_not_blank(_('Title cannot be blank.'))
-    )
-    number = SanitizedUnicode(
-        required=True,
-        validate=_not_blank(_('Number cannot be blank.'))
-    )
-    scheme = SanitizedUnicode()
-    identifier = SanitizedUnicode()
-
-
 class FundingSchema(Schema):
     """Funding schema."""
 
-    funder = fields.Nested(FunderSchema)
-    award = fields.Nested(AwardSchema)
-
-    @validates_schema
-    def validate_data(self, data, **kwargs):
-        """Validate either funder or award is present."""
-        funder = data.get('funder')
-        award = data.get('award')
-        if not funder and not award:
-            raise ValidationError(
-                {"funding": _("At least award or funder should be present.")})
+    funder = fields.Nested(FunderRelationSchema, required=True)
+    award = fields.Nested(AwardRelationSchema)
 
 
 class ReferenceSchema(IdentifierSchema):
