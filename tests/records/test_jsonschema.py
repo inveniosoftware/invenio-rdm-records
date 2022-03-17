@@ -23,7 +23,7 @@ from invenio_rdm_records.records.api import RDMRecord as Record
 #
 def validates(data):
     """Assertion function used to validate according to the schema."""
-    data["$schema"] = "local://records/record-v4.0.0.json"
+    data["$schema"] = "local://records/record-v5.0.0.json"
     Record(data).validate()
     return True
 
@@ -439,26 +439,44 @@ def test_locations_invalid(appctx, locations):
 
 def test_funding(appctx):
     """Test funding references property."""
-    f = {
+    custom_funder = {
         "name": "European Commission",
-        "identifier": "1234",
-        "scheme": "ror",
     }
-    a = {
-        "title": "OpenAIRE",
-        "number": "246686",
-        "identifier": ".../246686",
-        "scheme": "openaire"
+    related_funder = {
+        "id": "00k4n6c32",
     }
 
-    assert validates_meta({"funding": [{"funder": f}]})
-    assert validates_meta({"funding": [{"award": a}]})
-    assert validates_meta({"funding": [{"funder": f, "award": a}]})
+    custom_award = {
+        "title": {
+            "en": "OpenAIRE",
+        },
+        "number": "246686",
+        "identifiers": [
+            {
+                "identifier": "https://cordis.europa.eu/project/id/755021",
+                "scheme": "url",
+            },
+        ],
+    }
+    related_award = {
+        "id": "755021",
+    }
+
+    assert validates_meta({"funding": [{"funder": custom_funder}]})
+    assert validates_meta({"funding": [{"funder": related_funder}]})
+    assert validates_meta(
+        {"funding": [{"funder": related_funder, "award": related_award}]}
+    )
+    assert validates_meta(
+        {"funding": [{"funder": related_funder, "award": custom_award}]}
+    )
     # Additional props
-    f["invalid"] = "test"
-    assert fails_meta({"funding": [{"funder": f}]})
-    a["invalid"] = "test"
-    assert fails_meta({"funding": [{"award": a}]})
+    custom_funder["invalid"] = "test"
+    assert fails_meta({"funding": [{"funder": custom_funder}]})
+    custom_award["invalid"] = "test"
+    assert fails_meta(
+        {"funding": [{"funder": related_funder, "award": custom_award}]}
+    )
 
 
 def test_reference(appctx):

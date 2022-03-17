@@ -22,7 +22,7 @@ from marshmallow_utils.html import strip_html
 from invenio_rdm_records.resources.serializers.ui.schema import \
     current_default_locale
 
-from ..utils import get_vocabulary_props
+from ..utils import get_preferred_identifier, get_vocabulary_props
 
 
 def get_scheme_datacite(scheme, config_name, default=None):
@@ -153,33 +153,6 @@ class SubjectSchema43(Schema):
     subjectScheme = fields.Str(attribute="scheme")
 
 
-class FundingSchema43(Schema):
-    """Funding schema for v43."""
-
-    funderName = fields.Str(attribute="funder.name")
-    funderIdentifier = fields.Str(attribute="funder.identifier")
-    funderIdentifierType = fields.Method('get_identifier_type')
-    awardTitle = fields.Str(attribute="award.title")
-    awardNumber = fields.Str(attribute="award.number")
-    # PIDS-FIXME: URI should be processed depending on the schema
-    awardURI = fields.Str(attribute="award.identifier")
-
-    TO_FUNDER_IDENTIFIER_TYPES = {
-        "ISNI": "ISNI",
-        "GRID": "GRID",
-        "ROR": "ROR",
-        "CROSSREF FUNDER ID": "Crossref Funder ID",
-        "OTHER": "Other",
-    }
-
-    def get_identifier_type(self, obj):
-        """Upper case the type."""
-        # TODO: Likely has to be revisted when the form support deposit.
-        id_type = obj.get("funder", {}).get("scheme", "Other")
-        key = id_type.upper()
-        return self.TO_FUNDER_IDENTIFIER_TYPES.get(key, "Other")
-
-
 class DataCite43Schema(Schema):
     """DataCite JSON 4.3 Marshmallow Schema."""
 
@@ -203,8 +176,7 @@ class DataCite43Schema(Schema):
     rightsList = fields.Method('get_rights')
     descriptions = fields.Method('get_descriptions')
     geoLocations = fields.Method("get_locations")
-    fundingReferences = fields.List(
-        fields.Nested(FundingSchema43), attribute='metadata.funding')
+    fundingReferences = fields.Method("get_funding")
     schemaVersion = fields.Constant("http://datacite.org/schema/kernel-4")
 
     def get_type(self, obj):
@@ -483,3 +455,72 @@ class DataCite43Schema(Schema):
                 serialized_rights.append(serialized_right)
 
         return serialized_rights if serialized_rights else missing
+
+    def get_funding(self, obj):
+        """Get funding references."""
+        # constants
+        # FIXME: Make configurable
+        FUNDER_IDENTIFIER_TYPES_PREFERENCE = (
+            "ror", "grid", "doi", "isni", "gnd"
+        )
+        AWARD_IDENTIFIER_TYPES_PREFERENCE = ("doi", "url")
+        TO_FUNDER_IDENTIFIER_TYPES = {
+            "isni": "ISNI",
+            "gnd": "GND",
+            "grid": "GRID",
+            "ror": "ROR",
+            "doi": "Crossref Funder ID",  # from FundRef
+        }
+        funding_references = []
+        funding_list = obj["metadata"].get("funding", [])
+        for funding in funding_list:
+            # funder
+            funding_ref = {}
+            funder = funding.get("funder", {})
+            id_ = funder.get("id")
+            if id_:
+                funder_service = current_service_registry.get("funders")
+                funder = funder_service.read(g.identity, id_).to_dict()
+
+            funding_ref["funderName"] = funder["name"]
+            identifiers = funder.get("identifiers", [])
+            if identifiers:
+                identifier = get_preferred_identifier(
+                    FUNDER_IDENTIFIER_TYPES_PREFERENCE, identifiers
+                )
+                if not identifier:
+                    identifier = identifiers[0]
+                    identifier["scheme"] = "Other"
+
+                id_type = TO_FUNDER_IDENTIFIER_TYPES.get(
+                    identifier["scheme"], "Other"
+                )
+
+                funding_ref["funderIdentifier"] = identifier["identifier"]
+                funding_ref["funderIdentifierType"] = id_type
+
+            # award
+            award = funding.get("award", {})
+            id_ = award.get("id")
+            if id_:
+                # FIXME: should this be implemented at awards service read
+                # level since all ids are loaded into the system with this
+                # format?
+                id_ = id_.split("::")[1]
+                award_service = current_service_registry.get("awards")
+                award = award_service.read(g.identity, id_).to_dict()
+
+            title = award.get("title", {})
+            funding_ref["awardTitle"] = title.get("en", missing)
+            funding_ref["awardNumber"] = award["number"]
+
+            identifiers = award.get("identifiers", [])
+            if identifiers:
+                identifier = get_preferred_identifier(
+                    AWARD_IDENTIFIER_TYPES_PREFERENCE, identifiers
+                )
+                if identifier:
+                    funding_ref["awardURI"] = identifier["identifier"]
+
+            funding_references.append(funding_ref)
+        return funding_references or missing

@@ -37,7 +37,7 @@ def test_csl_json_serializer(running_app, full_record):
                 "given": "Lars Holm",
             }
         ],
-        "note": "Funding by European Commission ROR 1234.",
+        "note": "Funding by European Commission ROR 00k4n6c32.",
         "version": "v1.0",
         "type": "graphic",
         "id": "12345-abcde",

@@ -1,5 +1,5 @@
 {
-  "$schema": "local://records/record-v4.0.0.json",
+  "$schema": "local://records/record-v5.0.0.json",
   "id": "abcde-12345",
   "pid": {
     "pk": 1,
@@ -132,15 +132,10 @@
     },
     "funding": [{
       "funder": {
-        "name": "European Commission",
-        "identifier": "01ggx4157",
-        "scheme": "ror"
+        "id": "00k4n6c32"
       },
       "award": {
-        "title": "OpenAIRE",
-        "number": "246686",
-        "identifier": ".../246686",
-        "scheme": "openaire"
+          "id": "00k4n6c32::755021"
       }
     }],
     "references": [{

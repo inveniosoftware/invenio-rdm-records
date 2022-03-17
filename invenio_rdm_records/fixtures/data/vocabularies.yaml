@@ -5,6 +5,9 @@ affiliations:
       name: Research Organization Registry
       uri: "https://ror.org/"
       data-file: vocabularies/affiliations_ror.yaml
+awards:
+  pid-type: awa
+  data-file: vocabularies/awards.yaml
 creatorsroles:
   pid-type: crr
   data-file: vocabularies/roles.yaml
@@ -26,6 +29,9 @@ descriptiontypes:
 datetypes:
   pid-type: dat
   data-file: vocabularies/date_types.yaml
+funders:
+  pid-type: fun
+  data-file: vocabularies/funders.yaml
 names:
   pid-type: names
   data-file: vocabularies/names_orcid.yaml

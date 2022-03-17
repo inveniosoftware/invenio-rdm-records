@@ -1,0 +1,10 @@
+- id: "755021"
+  identifiers:
+    - identifier: https://cordis.europa.eu/project/id/755021
+      scheme: url
+  number: "755021"
+  title:
+    en: Personalised Treatment For Cystic Fibrosis Patients With Ultra-rare CFTR Mutations (and beyond)
+  funder:
+    id: 00k4n6c32
+  acronym: HIT-CF

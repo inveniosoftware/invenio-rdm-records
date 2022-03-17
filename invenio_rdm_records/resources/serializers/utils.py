@@ -31,3 +31,19 @@ def get_vocabulary_props(vocabulary, fields, id_):
 
     raise VocabularyItemNotFoundError(
         f"The '{vocabulary}' vocabulary item '{id_}' was not found.")
+
+
+def get_preferred_identifier(priority, identifiers):
+    """Get the preferred identifier."""
+    scheme_to_idx = {}
+
+    for idx, identifier in enumerate(identifiers):
+        scheme_to_idx[identifier.get("scheme", "Other")] = idx
+
+    found_schemes = scheme_to_idx.keys()
+    for scheme in priority:
+        if scheme in found_schemes:
+            idx = scheme_to_idx[scheme]
+            return identifiers[idx]
+
+    return None
