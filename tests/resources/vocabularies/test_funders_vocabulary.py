@@ -23,13 +23,13 @@ def example_funder(
 ):
     """Example funder."""
     data = {
-        "id": "cern",
+        "pid": "01ggx4157",
         "identifiers": [
-            {"identifier": "03yrm5c26", "scheme": "ror"}
+            {"identifier": "01ggx4157", "scheme": "ror"}
         ],
-        "name": "Test funder",
+        "name": "CERN",
         "title": {
-            "en": "Test funder",
+            "en": "European Organization for Nuclear Research",
         }
     }
     fun = funders_service.create(superuser_identity, data)
@@ -46,10 +46,10 @@ def test_funders_get(client, example_funder, headers):
 
     res = client.get(f"/funders/{id_}", headers=headers)
     assert res.status_code == 200
-    assert res.json["id"] == id_
+    assert res.json["pid"] == id_
     # Test links
     assert res.json["links"] == {
-        "self": "https://127.0.0.1:5000/api/funders/cern"
+        "self": "https://127.0.0.1:5000/api/funders/01ggx4157"
     }
 
 
