@@ -23,7 +23,7 @@ def example_award(
 ):
     """Example award."""
     data = {
-        "id": "755021",
+        "pid": "755021",
         "identifiers": [
             {
                 "identifier": "https://cordis.europa.eu/project/id/755021",
@@ -50,7 +50,7 @@ def test_awards_get(client, example_award, headers):
 
     res = client.get(f"/awards/{id_}", headers=headers)
     assert res.status_code == 200
-    assert res.json["id"] == id_
+    assert res.json["pid"] == id_
     # Test links
     assert res.json["links"] == {
         "self": "https://127.0.0.1:5000/api/awards/755021"
