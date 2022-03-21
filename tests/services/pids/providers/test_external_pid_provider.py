@@ -22,14 +22,14 @@ def external_provider():
 
 
 @pytest.fixture(scope="function")
-def record(location):
+def record(location, db):
     """Creates an empty record."""
     draft = RDMDraft.create({})
     record = RDMRecord.publish(draft)
     return record
 
 
-def test_external_provider_create(record, external_provider):
+def test_external_provider_create(record, external_provider, db):
     created_pid = external_provider.create(record, "avalue")
     db_pid = PersistentIdentifier.get(
         pid_value=created_pid.pid_value, pid_type="testid"
@@ -41,7 +41,7 @@ def test_external_provider_create(record, external_provider):
     assert created_pid.status == PIDStatus.NEW
 
 
-def test_external_provider_get(record, external_provider):
+def test_external_provider_get(record, external_provider, db):
     created_pid = external_provider.create(record, "avalue")
     get_pid = external_provider.get(created_pid.pid_value)
 
@@ -51,7 +51,7 @@ def test_external_provider_get(record, external_provider):
     assert get_pid.status == PIDStatus.NEW
 
 
-def test_external_provider_register(record, external_provider):
+def test_external_provider_register(record, external_provider, db):
     created_pid = external_provider.create(record, "avalue")
     assert external_provider.register(pid=created_pid, record=record)
 

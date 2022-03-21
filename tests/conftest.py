@@ -1042,9 +1042,9 @@ def superuser_role_need(db):
 
 
 @pytest.fixture(scope="function")
-def superuser_identity(superuser_role_need):
+def superuser_identity(admin, superuser_role_need):
     """Superuser identity fixture."""
-    identity = Identity(1)
+    identity = admin.identity
     identity.provides.add(superuser_role_need)
     return identity
 

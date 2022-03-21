@@ -14,15 +14,14 @@ import pytest
 from invenio_access.permissions import system_identity
 from invenio_communities import current_communities
 from invenio_communities.communities.records.api import Community
-from invenio_communities.invitations import CommunityMemberInvitation
 from invenio_requests import current_requests_service
 from invenio_requests.records import Request
 
 from invenio_rdm_records.fixtures.demo import create_fake_community, \
     create_fake_record
 from invenio_rdm_records.fixtures.tasks import create_demo_community, \
-    create_demo_inclusion_requests, create_demo_invitation_requests, \
-    create_demo_record, get_authenticated_identity
+    create_demo_inclusion_requests, create_demo_record, \
+    get_authenticated_identity
 from invenio_rdm_records.fixtures.vocabularies import VocabulariesFixture
 from invenio_rdm_records.proxies import current_rdm_records_service
 from invenio_rdm_records.records import RDMDraft, RDMRecord
@@ -88,22 +87,5 @@ def test_create_fake_demo_inclusion_requests(app, location, db, es_clear,
 
     user_identity = get_authenticated_identity(user_id)
     _t = CommunitySubmission.type_id
-    reqs = current_requests_service.search(user_identity, type=_t)
-    assert reqs.total > 0
-
-
-def test_create_fake_demo_invitation_requests(app, location, db, es_clear,
-                                              vocabularies, users):
-    """Assert that demo invitation requests creation works without failing."""
-    user_id = users[0].id
-
-    create_demo_community(user_id, create_fake_community())
-    Community.index.refresh()
-
-    create_demo_invitation_requests(user_id, 1)
-    Request.index.refresh()
-
-    user_identity = get_authenticated_identity(user_id)
-    _t = CommunityMemberInvitation.type_id
     reqs = current_requests_service.search(user_identity, type=_t)
     assert reqs.total > 0
