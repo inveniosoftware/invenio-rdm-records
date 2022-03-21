@@ -14,10 +14,9 @@ from celery import shared_task
 from flask_principal import Identity, UserNeed
 from invenio_access.permissions import any_user, authenticated_user, \
     system_identity
+from invenio_communities import current_communities
 from invenio_communities.generators import CommunityRoleNeed
-from invenio_communities.invitations.services.request_types import \
-    CommunityMemberInvitation
-from invenio_communities.members.errors import AlreadyMemberError
+from invenio_communities.members.records.api import Member
 from invenio_communities.proxies import current_communities
 from invenio_requests import current_events_service, current_requests_service
 from invenio_vocabularies.proxies import current_service as vocabulary_service
@@ -71,7 +70,10 @@ def _get_random_community(communities):
     r = random.randint(0, len(communities) - 1)
     uuid = communities[r]["uuid"]
     # create community owner identity
-    owner_id = communities[r]["access"]["owned_by"][0]["user"]
+    members = current_communities.service.members
+    Member.index.refresh()
+    res = members.search(system_identity, uuid, role="owner").to_dict()
+    owner_id = int(res['hits']['hits'][0]['member']['id'])
     owner_identity = get_authenticated_identity(owner_id)
     owner_identity.provides.add(CommunityRoleNeed(uuid, 'owner'))
     return uuid, owner_id, owner_identity
@@ -151,46 +153,48 @@ def create_demo_invitation_requests(user_id, n_requests):
     comm_results = current_communities.service.search(user_identity)
     communities = comm_results.to_dict()["hits"]["hits"]
 
-    for _ in range(n_requests):
-        community_uuid, comm_owner_id, comm_owner_identity = \
-            _get_random_community(communities)
+    # Disable for now.
 
-        invitation_data = {
-            "type": CommunityMemberInvitation.type_id,
-            "receiver": {"user": user_id},
-            "payload": {
-                "role": "reader",
-            },
-            "topic": {"community": community_uuid}
-        }
+    # for _ in range(n_requests):
+    #     community_uuid, comm_owner_id, comm_owner_identity = \
+    #         _get_random_community(communities)
 
-        try:
-            req = current_communities.service.invitations.create(
-                comm_owner_identity, invitation_data
-            )
-        except AlreadyMemberError:
-            continue
+    #     invitation_data = {
+    #         "type": CommunityMemberInvitation.type_id,
+    #         "receiver": {"user": user_id},
+    #         "payload": {
+    #             "role": "reader",
+    #         },
+    #         "topic": {"community": community_uuid}
+    #     }
 
-        _add_comments_to_request(req, user_identity, comm_owner_identity)
+    #     try:
+    #         req = current_communities.service.invitations.create(
+    #             comm_owner_identity, invitation_data
+    #         )
+    #     except AlreadyMemberError:
+    #         continue
 
-        # at this moment, only admins can accept requests. Add back when
-        # backend implemented.
-        continue
+    #     _add_comments_to_request(req, user_identity, comm_owner_identity)
 
-        # Randomly set if the request should be open, or an action happened
-        # only "accept" action implemented at this moment
-        _action, _identity = random.choice([
-            (None, None),
-            # ("cancel", user_identity),
-            ("accept", comm_owner_identity),
-            # ("decline", comm_owner_identity),
-            # ("expire", system_identity)
-        ])
-        if _action:
-            _, comment_with_type = create_fake_comment()
-            current_requests_service.execute_action(
-                _identity,
-                req.id,
-                _action,
-                comment_with_type
-            )
+    #     # at this moment, only admins can accept requests. Add back when
+    #     # backend implemented.
+    #     continue
+
+    #     # Randomly set if the request should be open, or an action happened
+    #     # only "accept" action implemented at this moment
+    #     _action, _identity = random.choice([
+    #         (None, None),
+    #         # ("cancel", user_identity),
+    #         ("accept", comm_owner_identity),
+    #         # ("decline", comm_owner_identity),
+    #         # ("expire", system_identity)
+    #     ])
+    #     if _action:
+    #         _, comment_with_type = create_fake_comment()
+    #         current_requests_service.execute_action(
+    #             _identity,
+    #             req.id,
+    #             _action,
+    #             comment_with_type
+    #         )

@@ -13,6 +13,7 @@ from invenio_access.permissions import any_user, authenticated_user
 from invenio_communities import current_communities
 from invenio_communities.communities.records.api import Community
 from invenio_communities.generators import CommunityRoleNeed
+from invenio_communities.members.records.api import Member
 from invenio_records_resources.services.errors import PermissionDeniedError
 from invenio_requests import current_requests_service
 from marshmallow.exceptions import ValidationError
@@ -26,12 +27,16 @@ from invenio_rdm_records.services.errors import ReviewExistsError, \
 
 def get_community_owner_identity(community):
     """Get the identity for the first owner of the community."""
-    owner_id = community.access.owned_by[0].owner_id
-    identity = Identity(owner_id)
-    identity.provides.add(any_user)
-    identity.provides.add(authenticated_user)
-    identity.provides.add(CommunityRoleNeed(str(community.id), 'owner'))
-    return identity
+    members = Member.get_members(community.id)
+    for m in members:
+        if m.role == "owner":
+            owner_id = m.user_id
+            identity = Identity(owner_id)
+            identity.provides.add(any_user)
+            identity.provides.add(authenticated_user)
+            identity.provides.add(
+                CommunityRoleNeed(str(community.id), 'owner'))
+            return identity
 
 
 @pytest.fixture()
@@ -62,7 +67,7 @@ def minimal_community2():
 
 
 @pytest.fixture()
-def community2(running_app, minimal_community2):
+def community2(running_app, minimal_community2, db):
     """Get the current RDM records service."""
     return current_communities.service.create(
         running_app.superuser_identity,
@@ -71,7 +76,7 @@ def community2(running_app, minimal_community2):
 
 
 @pytest.fixture()
-def draft(minimal_record, community, service, running_app):
+def draft(minimal_record, community, service, running_app, db):
     minimal_record['parent'] = {
         'review': {
             'type': 'community-submission',
@@ -261,7 +266,7 @@ def test_create_with_new_version(
         )
 
 
-def test_update(draft, running_app, community2, service):
+def test_update(draft, running_app, community2, service, db):
     """Change to a different community."""
     previous_id = draft.data['parent']['review']['id']
     # Change to a different community
