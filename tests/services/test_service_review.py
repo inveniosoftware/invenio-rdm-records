@@ -21,6 +21,7 @@ from sqlalchemy.orm.exc import NoResultFound
 
 from invenio_rdm_records.proxies import current_rdm_records
 from invenio_rdm_records.records.api import RDMDraft
+from invenio_rdm_records.records.systemfields.draft_status import DraftStatus
 from invenio_rdm_records.services.errors import ReviewExistsError, \
     ReviewNotFoundError, ReviewStateError
 
@@ -97,11 +98,20 @@ def draft(minimal_record, community, service, running_app, db):
 def test_simple_flow(draft, running_app, community, service,
                      requests_service):
     """Test basic creation with review."""
+    # check draft status
+    assert draft["status"] == \
+        DraftStatus.available_review_to_draft_status["created"]
+
     # ### Submit draft for review
     req = service.review.submit(
         running_app.superuser_identity, draft.id).to_dict()
     assert req['status'] == 'submitted'
     assert req['title'] == draft['metadata']['title']
+
+    # check draft status
+    draft = service.read_draft(running_app.superuser_identity, draft.id)
+    assert draft.to_dict()["status"] == \
+        DraftStatus.available_review_to_draft_status["submitted"]
 
     # ### Read request as curator
     # TODO: test that curator can search/read the request
@@ -123,6 +133,7 @@ def test_simple_flow(draft, running_app, community, service,
     assert record["is_published"] is True
     assert record['parent']['communities']['ids'] == [community.data['uuid']]
     assert record['parent']['communities']['default'] == community.data['uuid']
+    assert record["status"] == "published"
 
     # ### Read draft (which should have been removed)
     with pytest.raises(NoResultFound):
@@ -134,6 +145,7 @@ def test_simple_flow(draft, running_app, community, service,
     assert 'review' not in draft['parent']
     assert draft['parent']['communities']['ids'] == [community.data['uuid']]
     assert draft['parent']['communities']['default'] == community.data['uuid']
+    assert draft["status"] == "new_version_draft"
 
 
 def test_creation(draft, running_app, community, service, requests_service):
@@ -206,10 +218,14 @@ def test_create_review_after_draft(
     """Test creation of review after draft was created."""
     # Create draft
     draft = service.create(running_app.superuser_identity, minimal_record)
+    assert draft.to_dict()["status"] == "draft"
+
     # Then create review (you use update, not create for this).
     data = {
         'type': 'community-submission',
-        'receiver': {'community': community.data['uuid']}
+        'receiver': {
+            'community': community.data['uuid']
+        }
     }
     req = service.review.update(
         running_app.superuser_identity,
@@ -220,6 +236,12 @@ def test_create_review_after_draft(
     assert req['status'] == 'created'
     assert req['topic'] == {'record': draft.id}
     assert req['receiver'] == {'community': community.data['uuid']}
+
+    # check draft status
+    draft = service.read_draft(
+        running_app.superuser_identity, draft.id).to_dict()
+    assert draft["status"] == \
+        DraftStatus.available_review_to_draft_status[req['status']]
 
 
 def test_create_when_already_published(

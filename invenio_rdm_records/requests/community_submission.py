@@ -69,12 +69,18 @@ class DeclineAction(actions.DeclineAction):
 
     def execute(self, identity, uow):
         """Execute action."""
-        # Unset review from record (still accessible from request)
-        # This means that the receiver (curator) won't have access anymore
+        # Keeps the record and the review connected so the user can see the
+        # outcome of the request
+        # The receiver (curator) won't have access anymore to the draft
         # The creator (uploader) should still have access to the record/draft
         draft = self.request.topic.resolve()
-        draft.parent.review = None
         super().execute(identity, uow)
+
+        # TODO: this shouldn't be required BUT because of the caching mechanism
+        # in the review systemfield, the review should be set with the updated
+        # request object
+        draft.parent.review = self.request
+        uow.register(RecordCommitOp(draft.parent))
 
 
 class CancelAction(actions.CancelAction):
@@ -95,14 +101,18 @@ class ExpireAction(actions.CancelAction):
 
     def execute(self, identity, uow):
         """Execute action."""
-        # Remove draft from request
         # Same reasoning as in 'decline'
         draft = self.request.topic.resolve()
-        draft.parent.review = None
 
         # TODO: What more to do? simply close the request? Similarly to
         # decline, how does a user resubmits the request to the same community.
         super().execute(identity, uow)
+
+        # TODO: this shouldn't be required BUT because of the caching mechanism
+        # in the review systemfield, the review should be set with the updated
+        # request object
+        draft.parent.review = self.request
+        uow.register(RecordCommitOp(draft.parent))
 
 
 #

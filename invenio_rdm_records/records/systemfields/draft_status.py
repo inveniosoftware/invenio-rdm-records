@@ -1,0 +1,79 @@
+# -*- coding: utf-8 -*-
+#
+# Copyright (C) 2020 CERN.
+# Copyright (C) 2020 Northwestern University.
+#
+# Invenio-Records-Resources is free software; you can redistribute it and/or
+# modify it under the terms of the MIT License; see LICENSE file for more
+# details.
+
+"""Draft status field.
+
+The DraftStatus is used to calculate the status of the draft based on its
+associated review request.
+
+For instance:
+
+.. code-block:: python
+
+    class Record():
+        draft_status = DraftStatus()
+
+"""
+
+from flask_babelex import gettext as _
+from invenio_records.systemfields import SystemField
+
+from invenio_rdm_records.services.errors import ReviewStateError
+
+
+class DraftStatus(SystemField):
+    """Draft status field which checks the `parent.review` state."""
+
+    available_review_to_draft_status = dict(
+        created="draft_with_review",
+        submitted="in_review",
+        declined="declined",
+        expired="expired",
+        published="published",
+    )
+    """Available statuses that a draft can have. It maps review status to
+    draft."""
+
+    def __init__(self, draft_cls=None, key=None):
+        """Initialize the DraftStatus.
+
+        It stores the `draft.draft_status` value in the record metadata.
+
+        :param key: Attribute name to store the DraftStatus value.
+        :param draft_cls: The draft class to check against e.g RDMDraft.
+        """
+        super().__init__(key=key)
+        self.draft_cls = draft_cls
+
+    #
+    # Data descriptor methods (i.e. attribute access)
+    #
+    def __get__(self, record, owner=None):
+        """Get the persistent identifier."""
+        if record is None:
+            return self  # returns the field itself.
+
+        review = getattr(record.parent, 'review')
+        is_published = getattr(record, 'is_published')
+
+        if is_published:
+            return "published"
+        elif not is_published and record.versions.index > 1:
+            return "new_version_draft"
+
+        if not is_published and record.versions.index == 1:
+            if review is None:
+                return "draft"
+
+            try:
+                return self.available_review_to_draft_status[review.status]
+            except KeyError:
+                raise ReviewStateError(
+                    _(f"Unknown draft status for review: {review.status}.")
+                )

@@ -27,6 +27,8 @@ from invenio_vocabularies.contrib.affiliations.api import Affiliation
 from invenio_vocabularies.contrib.subjects.api import Subject
 from invenio_vocabularies.records.api import Vocabulary
 
+from invenio_rdm_records.records.systemfields.draft_status import DraftStatus
+
 from . import models
 from .dumpers import EDTFDumperExt, EDTFListDumperExt, GrantTokensDumperExt
 from .systemfields import HasDraftCheckField, ParentRecordAccessField, \
@@ -56,7 +58,7 @@ class RDMParent(ParentRecordBase):
 
     review = RelatedRecord(
         Request,
-        keys=['type', 'receiver']
+        keys=['type', 'receiver', 'status'],
     )
 
     communities = CommunitiesField(models.RDMParentCommunity)
@@ -228,6 +230,8 @@ class RDMDraft(CommonFieldsMixin, Draft):
 
     has_draft = HasDraftCheckField()
 
+    status = DraftStatus()
+
 
 RDMFileDraft.record_cls = RDMDraft
 
@@ -261,6 +265,8 @@ class RDMRecord(CommonFieldsMixin, Record):
     )
 
     has_draft = HasDraftCheckField(RDMDraft)
+
+    status = DraftStatus()
 
 
 RDMFileRecord.record_cls = RDMRecord
