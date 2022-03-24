@@ -123,12 +123,15 @@ class ReviewService(RecordService):
         if draft.parent.review.is_open:
             raise ReviewStateError(_("An open review cannot be deleted."))
 
-        # Delete request
-        current_requests_service.delete(
-            identity,
-            draft.parent.review.id,
-            uow=uow
-        )
+        # Delete request if request not in ['expired', 'declined']
+        # we keep the request in this case so the user can see the outcome of
+        # the request
+        if not (draft.parent.review.is_closed or draft.parent.review.is_open):
+            current_requests_service.delete(
+                identity,
+                draft.parent.review.id,
+                uow=uow
+            )
         # Unset on record
         draft.parent.review = None
         uow.register(RecordCommitOp(draft.parent))
@@ -148,6 +151,8 @@ class ReviewService(RecordService):
 
         # All other preconditions can be checked by the action itself which can
         # raise appropriate exceptions.
-        request = current_requests_service.execute_action(
+        request_item = current_requests_service.execute_action(
             identity, draft.parent.review.id, 'submit', data=data, uow=uow)
-        return request
+        draft.parent.review = request_item._request
+        uow.register(RecordCommitOp(draft.parent))
+        return request_item

@@ -9,9 +9,11 @@
 """System Fields for RDM Records."""
 
 from .access import ParentRecordAccessField, RecordAccessField
+from .draft_status import DraftStatus
 from .has_draftcheck import HasDraftCheckField
 
 __all__ = (
+    "DraftStatus",
     "HasDraftCheckField",
     "ParentRecordAccessField",
     "RecordAccessField",
