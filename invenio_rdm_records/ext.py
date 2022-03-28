@@ -19,7 +19,7 @@ from invenio_vocabularies.contrib.affiliations import AffiliationsResource, \
     AffiliationsResourceConfig, AffiliationsService, \
     AffiliationsServiceConfig
 from invenio_vocabularies.contrib.awards import AwardsResource, \
-    AwardsResourceConfig, AwardsService, AwardsServiceConfig
+    AwardsResourceConfig, AwardsService
 from invenio_vocabularies.contrib.names import NamesResource, \
     NamesResourceConfig, NamesService, NamesServiceConfig
 from invenio_vocabularies.contrib.subjects import SubjectsResource, \
@@ -44,6 +44,7 @@ from .services import RDMFileDraftServiceConfig, RDMFileRecordServiceConfig, \
 from .services.pids import PIDManager, PIDsService
 from .services.review.service import ReviewService
 from .services.schemas.metadata_extensions import MetadataExtensions
+from .vocabularies.awards import AwardsServiceConfig
 
 
 def verify_token():

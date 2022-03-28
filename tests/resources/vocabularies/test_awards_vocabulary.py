@@ -34,6 +34,10 @@ def example_award(
         "title": {
             "en": "Personalised Treatment For Cystic Fibrosis Patients With \
                 Ultra-rare CFTR Mutations (and beyond)",
+        },
+        "funder": {
+            # FIXME: add appropriate value when funders has been integrated
+            "id": "0....."
         }
     }
     awa = awards_service.create(superuser_identity, data)
@@ -64,3 +68,10 @@ def test_awards_search(client, example_award, headers):
     assert res.status_code == 200
     assert res.json["hits"]["total"] == 1
     assert res.json["sortBy"] == "newest"
+    assert res.json["aggregations"]["funders"]
+
+    funders_agg = res.json["aggregations"]["funders"]["buckets"][0]
+    assert funders_agg["key"] == "01ggx4157"
+    assert funders_agg["doc_count"] == 1
+    assert funders_agg["label"] == \
+        "European Organization for Nuclear Research (CH)"
