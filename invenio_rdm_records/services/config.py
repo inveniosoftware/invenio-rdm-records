@@ -12,7 +12,7 @@
 
 from flask_babelex import gettext as _
 from invenio_drafts_resources.services.records.components import \
-    DraftFilesComponent, PIDComponent
+    DraftFilesComponent, PIDComponent, RelationsComponent
 from invenio_drafts_resources.services.records.config import \
     RecordServiceConfig, SearchDraftsOptions, SearchOptions, \
     SearchVersionsOptions, is_draft, is_record
@@ -22,12 +22,10 @@ from invenio_records_resources.services.base.links import Link
 from invenio_records_resources.services.files.links import FileLink
 from invenio_records_resources.services.records.links import RecordLink
 
-from invenio_rdm_records.services.components.review import ReviewComponent
-
 from ..records import RDMDraft, RDMRecord
 from . import facets
 from .components import AccessComponent, MetadataComponent, PIDsComponent, \
-    RelationsComponent, ReviewComponent
+    ReviewComponent
 from .customizations import ConfiguratorMixin, FromConfig, \
     FromConfigPIDsProviders, FromConfigRequiredPIDs, FromConfigSearchOptions, \
     SearchOptionsMixin
