@@ -2,6 +2,7 @@
 #
 # Copyright (C) 2020 CERN.
 # Copyright (C) 2021 TU Wien.
+# Copyright (C) 2022 Universität Hamburg.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
@@ -30,6 +31,7 @@ def init(state):
     sregistry.register(ext.names_service, service_id='names')
     sregistry.register(ext.subjects_service, service_id='subjects')
     sregistry.register(ext.oaipmh_server_service, service_id='oaipmh-server')
+    sregistry.register(ext.iiif_service, service_id="rdm-iiif")
     # Register indexers
     iregistry = app.extensions['invenio-indexer'].registry
     iregistry.register(ext.records_service.indexer, indexer_id='records')
@@ -91,3 +93,9 @@ def create_oaipmh_server_blueprint_from_app(app):
     """Create app blueprint."""
     return app.extensions["invenio-rdm-records"].oaipmh_server_resource \
         .as_blueprint()
+
+
+def create_iiif_bp(app):
+    """Create IIIF blueprint."""
+    ext = app.extensions["invenio-rdm-records"]
+    return ext.iiif_resource.as_blueprint()

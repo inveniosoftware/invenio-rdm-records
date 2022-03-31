@@ -2,6 +2,7 @@
 #
 # Copyright (C) 2019-2021 CERN.
 # Copyright (C) 2019-2021 Northwestern University.
+# Copyright (C) 2022 Universität Hamburg.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
@@ -12,6 +13,7 @@ import warnings
 
 from flask import flash, g, request, session
 from flask_babelex import _
+from flask_iiif import IIIF
 from flask_principal import identity_loaded
 from invenio_records_resources.resources.files import FileResource
 from invenio_records_resources.services import FileService
@@ -33,12 +35,14 @@ from invenio_rdm_records.oaiserver.services.config import \
 from invenio_rdm_records.oaiserver.services.services import OAIPMHServerService
 
 from . import config
-from .resources import RDMDraftFilesResourceConfig, \
-    RDMParentRecordLinksResource, RDMParentRecordLinksResourceConfig, \
-    RDMRecordFilesResourceConfig, RDMRecordResource, RDMRecordResourceConfig
+from .resources import IIIFResource, IIIFResourceConfig, \
+    RDMDraftFilesResourceConfig, RDMParentRecordLinksResource, \
+    RDMParentRecordLinksResourceConfig, RDMRecordFilesResourceConfig, \
+    RDMRecordResource, RDMRecordResourceConfig
 from .secret_links import LinkNeed, SecretLink
-from .services import RDMFileDraftServiceConfig, RDMFileRecordServiceConfig, \
-    RDMRecordService, RDMRecordServiceConfig, SecretLinkService
+from .services import IIIFService, RDMFileDraftServiceConfig, \
+    RDMFileRecordServiceConfig, RDMRecordService, RDMRecordServiceConfig, \
+    SecretLinkService
 from .services.pids import PIDManager, PIDsService
 from .services.review.service import ReviewService
 from .services.schemas.metadata_extensions import MetadataExtensions
@@ -91,6 +95,8 @@ class InvenioRDMRecords(object):
         self.init_resource(app)
         app.before_request(verify_token)
         app.extensions['invenio-rdm-records'] = self
+        # Load flask IIIF
+        IIIF(app)
 
     def init_config(self, app):
         """Initialize configuration."""
@@ -172,6 +178,9 @@ class InvenioRDMRecords(object):
         self.subjects_service = SubjectsService(
             config=service_configs.subjects
         )
+        self.iiif_service = IIIFService(
+            records_service=self.records_service, config=None
+        )
 
         self.oaipmh_server_service = OAIPMHServerService(
             config=service_configs.oaipmh_server,
@@ -220,6 +229,12 @@ class InvenioRDMRecords(object):
         self.oaipmh_server_resource = OAIPMHServerResource(
             service=self.oaipmh_server_service,
             config=OAIPMHServerResourceConfig,
+        )
+
+        # IIIF
+        self.iiif_resource = IIIFResource(
+            service=self.iiif_service,
+            config=IIIFResourceConfig,
         )
 
     def fix_datacite_configs(self, app):

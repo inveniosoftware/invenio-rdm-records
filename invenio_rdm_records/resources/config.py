@@ -2,6 +2,7 @@
 #
 # Copyright (C) 2020-2021 CERN.
 # Copyright (C) 2020-2021 Northwestern University.
+# Copyright (C) 2022 Universität Hamburg.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
@@ -12,7 +13,8 @@ import marshmallow as ma
 from citeproc_styles import StyleNotFoundError
 from flask_babelex import lazy_gettext as _
 from flask_resources import HTTPJSONException, JSONSerializer, \
-    ResponseHandler, create_error_handler, resource_requestctx
+    ResourceConfig, ResponseHandler, create_error_handler, \
+    resource_requestctx
 from invenio_drafts_resources.resources import RecordResourceConfig
 from invenio_records.systemfields.relations import InvalidRelationValue
 from invenio_records_resources.resources.files import FileResourceConfig
@@ -183,3 +185,44 @@ class RDMParentRecordLinksResourceConfig(RecordResourceConfig):
     response_handlers = {"application/json": ResponseHandler(JSONSerializer())}
 
     error_handlers = record_links_error_handlers
+
+
+class IIIFResourceConfig(ResourceConfig):
+    """IIIF resource configuration."""
+
+    blueprint_name = "iiif"
+
+    url_prefix = "/iiif"
+
+    routes = {
+        "manifest": "/<uuid>/manifest",
+        "sequence": "/<uuid>/sequence/default",
+        "canvas": "/<uuid>/canvas/<file_name>",
+        "image_base": "/<uuid>",
+        "image_info": "/<uuid>/info.json",
+        "image_api":
+        "/<uuid>/<region>/<size>/<rotation>/<quality>.<image_format>",
+    }
+
+    request_view_args = {
+        "uuid": ma.fields.Str(),
+        "file_name": ma.fields.Str(),
+        "region": ma.fields.Str(),
+        "size": ma.fields.Str(),
+        "rotation": ma.fields.Str(),
+        "quality": ma.fields.Str(),
+        "image_format": ma.fields.Str(),
+    }
+
+    response_handler = {"application/json": ResponseHandler(JSONSerializer())}
+
+    supported_formats = {
+        "gif": "image/gif",
+        "jp2": "image/jp2",
+        "jpeg": "image/jpeg",
+        "jpg": "image/jpeg",
+        "pdf": "application/pdf",
+        "png": "image/png",
+        "tif": "image/tiff",
+        "tiff": "image/tiff",
+    }

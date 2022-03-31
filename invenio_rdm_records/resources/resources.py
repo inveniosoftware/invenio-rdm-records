@@ -3,19 +3,33 @@
 # Copyright (C) 2020-2021 CERN.
 # Copyright (C) 2020 Northwestern University.
 # Copyright (C) 2021 TU Wien.
+# Copyright (C) 2021 data-futures.
+# Copyright (C) 2022 Universität Hamburg.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
 
 """Bibliographic Record Resource."""
 
-from flask import abort, g
-from flask.globals import request
-from flask_resources import resource_requestctx, response_handler, route
+import datetime
+from email.utils import parsedate
+
+from flask import abort, g, request, send_file
+from flask_cors import cross_origin
+from flask_resources import HTTPJSONException, Resource, ResponseHandler, \
+    from_conf, request_parser, resource_requestctx, response_handler, route, \
+    with_content_negotiation
 from invenio_drafts_resources.resources import RecordResource
+from invenio_drafts_resources.resources.records.errors import RedirectException
+from invenio_records_resources.resources.errors import ErrorHandlersMixin
 from invenio_records_resources.resources.records.resource import \
     request_data, request_headers, request_search_args, request_view_args
 from invenio_records_resources.resources.records.utils import es_preference
+from werkzeug.utils import secure_filename
+
+from .serializers import IIIFCanvasV2JSONSerializer, \
+    IIIFInfoV2JSONSerializer, IIIFManifestV2JSONSerializer, \
+    IIIFSequenceV2JSONSerializer
 
 
 class RDMRecordResource(RecordResource):
@@ -29,7 +43,7 @@ class RDMRecordResource(RecordResource):
             return f"{self.config.url_prefix}{route}"
 
         routes = self.config.routes
-        url_rules = super(RDMRecordResource, self).create_url_rules()
+        url_rules = super().create_url_rules()
         url_rules += [
             route("POST", p(routes["item-pids-reserve"]), self.pids_reserve),
             route("DELETE", p(routes["item-pids-reserve"]), self.pids_discard),
@@ -227,3 +241,167 @@ class RDMParentRecordLinksResource(RecordResource):
             identity=g.identity,
         )
         return items.to_dict(), 200
+
+
+# IIIF decorators
+
+iiif_request_view_args = request_parser(
+    from_conf("request_view_args"), location="view_args"
+)
+
+
+def with_iiif_content_negotiation(serializer):
+    """Always response as JSON LD regardless of the request type."""
+    return with_content_negotiation(
+        response_handlers={
+            "application/ld+json": ResponseHandler(serializer()),
+        },
+        default_accept_mimetype="application/ld+json",
+    )
+
+
+class IIIFResource(ErrorHandlersMixin, Resource):
+    """IIIF resource."""
+
+    def __init__(self, config, service):
+        """Constructor."""
+        super().__init__(config)
+        self.service = service
+
+    def create_url_rules(self):
+        """Create the URL rules for the IIIF resource."""
+        routes = self.config.routes
+        return [
+            route("GET", routes["manifest"], self.manifest),
+            route("GET", routes["sequence"], self.sequence),
+            route("GET", routes["canvas"], self.canvas),
+            route("GET", routes["image_base"], self.base),
+            route("GET", routes["image_info"], self.info),
+            route("GET", routes["image_api"], self.image_api),
+        ]
+
+    def _get_record_with_files(self):
+        uuid = resource_requestctx.view_args["uuid"]
+        return self.service.read_record(uuid=uuid, identity=g.identity)
+
+    #
+    # IIIF Manifest - not all clients support content-negotiation so we need a
+    # full endpoint.
+    #
+    # See https://iiif.io/api/presentation/2.1/#responses on
+    # "Access-Control-Allow-Origin: *"
+    #
+    @cross_origin(origin="*", methods=["GET"])
+    @with_iiif_content_negotiation(IIIFManifestV2JSONSerializer)
+    @iiif_request_view_args
+    @response_handler()
+    def manifest(self):
+        """Manifest."""
+        return self._get_record_with_files(), 200
+
+    @cross_origin(origin="*", methods=["GET"])
+    @with_iiif_content_negotiation(IIIFSequenceV2JSONSerializer)
+    @iiif_request_view_args
+    @response_handler()
+    def sequence(self):
+        """Sequence."""
+        return self._get_record_with_files(), 200
+
+    @cross_origin(origin="*", methods=["GET"])
+    @with_iiif_content_negotiation(IIIFCanvasV2JSONSerializer)
+    @iiif_request_view_args
+    @response_handler()
+    def canvas(self):
+        """Canvas."""
+        uuid = resource_requestctx.view_args["uuid"]
+        key = resource_requestctx.view_args["file_name"]
+        file_ = self.service.get_file(uuid=uuid, identity=g.identity, key=key)
+        return file_, 200
+
+    @cross_origin(origin="*", methods=["GET"])
+    @with_iiif_content_negotiation(IIIFInfoV2JSONSerializer)
+    @iiif_request_view_args
+    @response_handler()
+    def base(self):
+        """Base."""
+        item = self.service.get_file(
+                identity=g.identity,
+                uuid=resource_requestctx.view_args["uuid"],
+            )
+        raise RedirectException(item["links"]["iiif_info"])
+
+    @cross_origin(origin="*", methods=["GET"])
+    @with_iiif_content_negotiation(IIIFInfoV2JSONSerializer)
+    @iiif_request_view_args
+    @response_handler()
+    def info(self):
+        """Get IIIF image info."""
+        item = self.service.get_file(
+                identity=g.identity,
+                uuid=resource_requestctx.view_args["uuid"],
+            )
+        return item.to_dict(), 200
+
+    @cross_origin(origin="*", methods=["GET"])
+    @iiif_request_view_args
+    def image_api(self):
+        """IIIF API Implementation.
+
+        .. note::
+            * IIF IMAGE API v1.0
+                * For more infos please visit <http://iiif.io/api/image/>.
+            * IIIF Image API v2.0
+                * For more infos please visit <http://iiif.io/api/image/2.0/>.
+            * The API works only for GET requests
+            * The image process must follow strictly the following workflow:
+                * Region
+                * Size
+                * Rotation
+                * Quality
+                * Format
+        """
+        image_format = resource_requestctx.view_args["image_format"]
+        uuid = resource_requestctx.view_args["uuid"]
+        region = resource_requestctx.view_args["region"]
+        size = resource_requestctx.view_args["size"]
+        rotation = resource_requestctx.view_args["rotation"]
+        quality = resource_requestctx.view_args["quality"]
+        to_serve = self.service.image_api(
+            identity=g.identity,
+            uuid=uuid,
+            region=region,
+            size=size,
+            rotation=rotation,
+            quality=quality,
+            image_format=image_format,
+        )
+        # decide the mime_type from the requested image_format
+        mimetype = self.config.supported_formats.get(
+            image_format, "image/jpeg"
+        )
+        # TODO: get from cache on the service image.last_modified
+        last_modified = None
+        send_file_kwargs = {"mimetype": mimetype}
+        # last_modified is not supported before flask 0.12
+        if last_modified:
+            send_file_kwargs.update(last_modified=last_modified)
+
+        if "dl" in request.args:
+            filename = secure_filename(request.args.get("dl", ""))
+            if filename.lower() in {"", "1", "true"}:
+                filename = "{0}-{1}-{2}-{3}-{4}.{5}".format(
+                    uuid, region, size, quality, rotation, image_format
+                )
+            send_file_kwargs.update(
+                as_attachment=True,
+                attachment_filename=secure_filename(filename),
+            )
+        if_modified_since_raw = request.headers.get("If-Modified-Since")
+        if if_modified_since_raw:
+            if_modified_since = datetime.datetime(
+                *parsedate(if_modified_since_raw)[:6]
+            )
+            if if_modified_since and if_modified_since >= last_modified:
+                raise HTTPJSONException(code=304)
+        response = send_file(to_serve, **send_file_kwargs)
+        return response

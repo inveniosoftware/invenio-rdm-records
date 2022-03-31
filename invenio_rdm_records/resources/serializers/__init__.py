@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2020 CERN.
+# Copyright (C) 2020, 2021 CERN.
 # Copyright (C) 2020 Northwestern University.
 # Copyright (C) 2021 Graz University of Technology.
 #
@@ -12,6 +12,8 @@
 from .csl import CSLJSONSerializer, StringCitationSerializer
 from .datacite import DataCite43JSONSerializer, DataCite43XMLSerializer
 from .dublincore import DublinCoreJSONSerializer, DublinCoreXMLSerializer
+from .iiif import IIIFCanvasV2JSONSerializer, IIIFInfoV2JSONSerializer, \
+    IIIFManifestV2JSONSerializer, IIIFSequenceV2JSONSerializer
 from .ui import UIJSONSerializer
 
 __all__ = (
@@ -20,6 +22,10 @@ __all__ = (
     "DataCite43XMLSerializer",
     "DublinCoreJSONSerializer",
     "DublinCoreXMLSerializer",
+    "IIIFCanvasV2JSONSerializer",
+    "IIIFInfoV2JSONSerializer",
+    "IIIFManifestV2JSONSerializer",
+    "IIIFSequenceV2JSONSerializer",
     "StringCitationSerializer",
     "UIJSONSerializer",
 )

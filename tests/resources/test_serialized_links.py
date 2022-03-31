@@ -70,6 +70,8 @@ def test_draft_links(client, draft_json, minimal_record, headers):
         "access_links": f"https://127.0.0.1:5000/api/records/{pid_value}/access/links",  # noqa
         "files": f"https://127.0.0.1:5000/api/records/{pid_value}/draft/files",
         "reserve_doi": f"https://127.0.0.1:5000/api/records/{pid_value}/draft/pids/doi",  # noqa
+        "self_iiif_manifest": f"https://127.0.0.1:5000/api/iiif/draft:{pid_value}/manifest",  # noqa
+        "self_iiif_sequence": f"https://127.0.0.1:5000/api/iiif/draft:{pid_value}/sequence/default",  # noqa
     }
     assert expected_links == created_draft_links == read_draft_links
 
@@ -94,6 +96,8 @@ def test_record_links(client, published_json, headers):
         "latest_html": f"https://127.0.0.1:5000/records/{pid_value}/latest",  # noqa
         "access_links": f"https://127.0.0.1:5000/api/records/{pid_value}/access/links",  # noqa
         "reserve_doi": f"https://127.0.0.1:5000/api/records/{pid_value}/draft/pids/doi",  # noqa
+        "self_iiif_manifest": f"https://127.0.0.1:5000/api/iiif/record:{pid_value}/manifest",  # noqa
+        "self_iiif_sequence": f"https://127.0.0.1:5000/api/iiif/record:{pid_value}/sequence/default",  # noqa
     }
     assert expected_links == published_record_links == read_record_links
 
