@@ -4,6 +4,7 @@
 # Copyright (C) 2020-2021 Northwestern University.
 # Copyright (C)      2021 TU Wien.
 # Copyright (C)      2021 Graz University of Technology.
+# Copyright (C) 2022 Universität Hamburg
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
@@ -161,6 +162,16 @@ class RDMRecordServiceConfig(RecordServiceConfig, ConfiguratorMixin):
                 for (scheme, pid) in record.pids.items()
             })
         ),
+        'self_iiif_manifest': ConditionalLink(
+            cond=is_record,
+            if_=RecordLink("{+api}/iiif/record:{id}/manifest"),
+            else_=RecordLink("{+api}/iiif/draft:{id}/manifest")
+        ),
+        'self_iiif_sequence': ConditionalLink(
+            cond=is_record,
+            if_=RecordLink("{+api}/iiif/record:{id}/sequence/default"),
+            else_=RecordLink("{+api}/iiif/draft:{id}/sequence/default")
+        ),
         "files": ConditionalLink(
             cond=is_record,
             if_=RecordLink("{+api}/records/{id}/files"),
@@ -209,6 +220,19 @@ class RDMFileRecordServiceConfig(FileServiceConfig, ConfiguratorMixin):
         "RDM_PERMISSION_POLICY", default=RDMRecordPermissionPolicy
     )
 
+    file_links_item = {
+        **FileServiceConfig.file_links_item,
+        # FIXME: should we check if the file is IIIF compatible?
+        # FIXME: filename instead
+        "iiif_canvas": FileLink("{+api}/iiif/record:{id}/canvas/{key}"),
+        "iiif_base": FileLink("{+api}/iiif/record:{id}:{key}"),
+        "iiif_info": FileLink("{+api}/iiif/record:{id}:{key}/info.json"),
+        "iiif_api": FileLink(
+            "{+api}/iiif/record:{id}:{key}/{region=full}"
+            "/{size=full}/{rotation=0}/{quality=default}.{format=png}"
+        ),
+    }
+
 
 class RDMFileDraftServiceConfig(FileServiceConfig, ConfiguratorMixin):
     """Configuration for draft files."""
@@ -227,4 +251,15 @@ class RDMFileDraftServiceConfig(FileServiceConfig, ConfiguratorMixin):
         "self": FileLink("{+api}/records/{id}/draft/files/{key}"),
         "content": FileLink("{+api}/records/{id}/draft/files/{key}/content"),
         "commit": FileLink("{+api}/records/{id}/draft/files/{key}/commit"),
+        # FIXME: should we check if the file is IIIF compatible?
+        # FIXME: filename instead
+        "iiif_canvas": FileLink("{+api}/iiif/draft:{id}/canvas/{key}"),
+        "iiif_base": FileLink("{+api}/iiif/draft:{id}:{key}"),
+        "iiif_info": FileLink(
+            "{+api}/iiif/draft:{id}:{key}/info.json"
+        ),
+        "iiif_api": FileLink(
+            "{+api}/iiif/draft:{id}:{key}/{region=full}"
+            "/{size=full}/{rotation=0}/{quality=default}.{format=png}"
+        ),
     }
