@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2019-2021 CERN.
+# Copyright (C) 2019-2022 CERN.
 # Copyright (C) 2019-2022 Northwestern University.
 # Copyright (C) 2021 TU Wien.
 # Copyright (C) 2022 Graz University of Technology.
@@ -13,6 +13,22 @@
 See https://pytest-invenio.readthedocs.io/ for documentation on which test
 fixtures are available.
 """
+
+# Monkey patch Werkzeug 2.1
+# Flask-Login uses the safe_str_cmp method which has been removed in Werkzeug
+# 2.1. Flask-Login v0.6.0 (yet to be released at the time of writing) fixes the
+# issue. Once we depend on Flask-Login v0.6.0 as the minimal version in
+# Flask-Security-Invenio/Invenio-Accounts we can remove this patch again.
+try:
+    # Werkzeug <2.1
+    from werkzeug import security
+    security.safe_str_cmp
+except AttributeError:
+    # Werkzeug >=2.1
+    import hmac
+
+    from werkzeug import security
+    security.safe_str_cmp = hmac.compare_digest
 
 from collections import namedtuple
 from copy import deepcopy
