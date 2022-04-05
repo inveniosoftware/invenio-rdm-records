@@ -93,6 +93,13 @@ def test_create_set(client, admin, minimal_oai_set, headers):
     assert s2["description"] == minimal_oai_set["description"]
     assert s2["search_pattern"] == minimal_oai_set["search_pattern"]
 
+    valid = ["-", "_", ".", "!", "~", "*", "'", "(", ")"]
+    for vs in valid:
+        s = minimal_oai_set.copy()
+        s["spec"] = vs
+        cs = _create_set(client, s, headers, 201).json
+        assert s["spec"] == cs["spec"]
+
 
 def test_create_set_duplicate(client, admin, minimal_oai_set, headers):
     """Create two sets with same spec."""
@@ -103,7 +110,7 @@ def test_create_set_duplicate(client, admin, minimal_oai_set, headers):
 
 
 def test_create_set_invalid_data(client, admin, minimal_oai_set, headers):
-    """Try to create a set with missing params."""
+    """Try to create a set with invalid params."""
     client = admin.login(client)
 
     key = "name"
@@ -119,6 +126,12 @@ def test_create_set_invalid_data(client, admin, minimal_oai_set, headers):
     _create_set(client, s, headers, 400)
     del s[key]
     _create_set(client, s, headers, 400)
+
+    invalid = [";", "/", "?", ":", "@", "&", "=", "+", "$", ",", "community-"]
+    for ivs in invalid:
+        s = minimal_oai_set.copy()
+        s["spec"] = ivs
+        _create_set(client, s, headers, 400).json
 
     key = "search_pattern"
     s = minimal_oai_set.copy()
