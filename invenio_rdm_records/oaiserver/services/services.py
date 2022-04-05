@@ -7,6 +7,8 @@
 
 """OAI-PMH service."""
 
+import re
+
 from flask import current_app
 from flask_babelex import lazy_gettext as _
 from flask_sqlalchemy import Pagination
@@ -16,6 +18,7 @@ from invenio_records_resources.services.base import LinksTemplate
 from invenio_records_resources.services.records.schema import \
     ServiceSchemaWrapper
 from invenio_records_resources.services.uow import unit_of_work
+from marshmallow import ValidationError
 from sqlalchemy.orm.exc import NoResultFound
 from sqlalchemy.sql import text
 
@@ -58,6 +61,26 @@ class OAIPMHServerService(Service):
             errors.append(str(e))
         return set, errors
 
+    def _validate_spec(self, spec):
+        """Checks the validity of the provided spec."""
+        # Reserved for community integration
+        if spec.startswith("community-"):
+            raise ValidationError(
+                "The spec must not start with 'communities-'",
+                field_name="spec",
+            )
+
+        # See https://www.openarchives.org/OAI/openarchivesprotocol.html#Set
+        blop = re.compile(r"[-_.!~*'()\w]+")
+        if not bool(blop .match(spec)):
+            raise ValidationError(
+                "The spec should only consist of letters, numbers or {marks}"
+                .format(marks=",".join(
+                    ["-", "_", ".", "!", "~", "*", "'", "(", ")"])
+                ),
+                field_name="spec",
+            )
+
     @unit_of_work()
     def create(self, identity, data, uow=None):
         """Create a new OAI set."""
@@ -67,6 +90,8 @@ class OAIPMHServerService(Service):
             context={"identity": identity},
             raise_errors=True,
         )
+
+        self._validate_spec(valid_data["spec"])
 
         new_set = OAISet(**valid_data)
         existing_set, errors = self._get_one(
