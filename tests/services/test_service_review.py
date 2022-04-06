@@ -100,7 +100,7 @@ def test_simple_flow(draft, running_app, community, service,
     """Test basic creation with review."""
     # check draft status
     assert draft["status"] == \
-        DraftStatus.available_review_to_draft_status["created"]
+        DraftStatus.review_to_draft_statuses["created"]
 
     # ### Submit draft for review
     req = service.review.submit(
@@ -111,7 +111,7 @@ def test_simple_flow(draft, running_app, community, service,
     # check draft status
     draft = service.read_draft(running_app.superuser_identity, draft.id)
     assert draft.to_dict()["status"] == \
-        DraftStatus.available_review_to_draft_status["submitted"]
+        DraftStatus.review_to_draft_statuses["submitted"]
 
     # ### Read request as curator
     # TODO: test that curator can search/read the request
@@ -241,7 +241,7 @@ def test_create_review_after_draft(
     draft = service.read_draft(
         running_app.superuser_identity, draft.id).to_dict()
     assert draft["status"] == \
-        DraftStatus.available_review_to_draft_status[req['status']]
+        DraftStatus.review_to_draft_statuses[req['status']]
 
 
 def test_create_when_already_published(
