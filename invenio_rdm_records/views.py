@@ -19,16 +19,25 @@ def init(state):
     app = state.app
     # Register services - cannot be done in extension because
     # Invenio-Records-Resources might not have been initialized.
-    registry = app.extensions['invenio-records-resources'].registry
+    sregistry = app.extensions['invenio-records-resources'].registry
     ext = app.extensions['invenio-rdm-records']
-    registry.register(ext.records_service, service_id='records')
-    registry.register(ext.records_service.files, service_id='files')
-    registry.register(
-        ext.records_service.draft_files, service_id='draft-files')
-    registry.register(ext.affiliations_service, service_id='affiliations')
-    registry.register(ext.names_service, service_id='names')
-    registry.register(ext.subjects_service, service_id='subjects')
-    registry.register(ext.oaipmh_server_service, service_id='oaipmh-server')
+    sregistry.register(ext.records_service, service_id='records')
+    sregistry.register(ext.records_service.files, service_id='files')
+    sregistry.register(
+        ext.records_service.draft_files, service_id='draft-files'
+    )
+    sregistry.register(ext.affiliations_service, service_id='affiliations')
+    sregistry.register(ext.names_service, service_id='names')
+    sregistry.register(ext.subjects_service, service_id='subjects')
+    sregistry.register(ext.oaipmh_server_service, service_id='oaipmh-server')
+    # Register indexers
+    iregistry = app.extensions['invenio-indexer'].registry
+    iregistry.register(ext.records_service.indexer, indexer_id='records')
+    iregistry.register(
+        ext.affiliations_service.indexer, indexer_id='affiliations'
+    )
+    iregistry.register(ext.names_service.indexer, indexer_id='names')
+    iregistry.register(ext.subjects_service.indexer, indexer_id='subjects')
 
 
 def create_records_bp(app):
