@@ -88,7 +88,7 @@ class PersonOrOrgSchema43(Schema):
 
         if ids:
             affiliations_service = (
-                current_service_registry.get("rdm-affiliations")
+                current_service_registry.get("affiliations")
             )
             affiliations = affiliations_service.read_many(system_identity, ids)
 
@@ -421,7 +421,7 @@ class DataCite43Schema(Schema):
 
         if ids:
             subjects_service = (
-                current_service_registry.get("rdm-subjects")
+                current_service_registry.get("subjects")
             )
             subjects = subjects_service.read_many(system_identity, ids)
             validator = validate.URL()

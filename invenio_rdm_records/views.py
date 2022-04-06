@@ -21,13 +21,13 @@ def init(state):
     # Invenio-Records-Resources might not have been initialized.
     registry = app.extensions['invenio-records-resources'].registry
     ext = app.extensions['invenio-rdm-records']
-    registry.register(ext.records_service, service_id='rdm-records')
-    registry.register(ext.records_service.files, service_id='rdm-files')
+    registry.register(ext.records_service, service_id='records')
+    registry.register(ext.records_service.files, service_id='files')
     registry.register(
-        ext.records_service.draft_files, service_id='rdm-draft-files')
-    registry.register(ext.affiliations_service, service_id='rdm-affiliations')
-    registry.register(ext.names_service, service_id='rdm-names')
-    registry.register(ext.subjects_service, service_id='rdm-subjects')
+        ext.records_service.draft_files, service_id='draft-files')
+    registry.register(ext.affiliations_service, service_id='affiliations')
+    registry.register(ext.names_service, service_id='names')
+    registry.register(ext.subjects_service, service_id='subjects')
     registry.register(ext.oaipmh_server_service, service_id='oaipmh-server')
 
 
