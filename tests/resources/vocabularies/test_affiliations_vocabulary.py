@@ -14,7 +14,7 @@ from invenio_vocabularies.contrib.affiliations.api import Affiliation
 
 @pytest.fixture(scope="module")
 def affiliations_service():
-    return current_service_registry.get("rdm-affiliations")
+    return current_service_registry.get("affiliations")
 
 
 @pytest.fixture()

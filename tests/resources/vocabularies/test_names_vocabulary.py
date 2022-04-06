@@ -14,7 +14,7 @@ from invenio_vocabularies.contrib.names.api import Name
 
 @pytest.fixture(scope="module")
 def names_service():
-    return current_service_registry.get("rdm-names")
+    return current_service_registry.get("names")
 
 
 @pytest.fixture()

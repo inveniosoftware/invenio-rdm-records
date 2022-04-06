@@ -14,7 +14,7 @@ from invenio_vocabularies.contrib.subjects.api import Subject
 
 @pytest.fixture(scope="module")
 def subjects_service():
-    return current_service_registry.get("rdm-subjects")
+    return current_service_registry.get("subjects")
 
 
 @pytest.fixture()

@@ -826,7 +826,7 @@ def description_type_v(app, description_type):
 def subject_v(app):
     """Subject vocabulary record."""
     subjects_service = (
-        current_service_registry.get("rdm-subjects")
+        current_service_registry.get("subjects")
     )
     vocab = subjects_service.create(system_identity, {
         "id": "http://id.nlm.nih.gov/mesh/A-D000007",
@@ -960,7 +960,7 @@ def licenses_v(app, licenses):
 def affiliations_v(app):
     """Affiliation vocabulary record."""
     affiliations_service = (
-        current_service_registry.get("rdm-affiliations")
+        current_service_registry.get("affiliations")
     )
     aff = affiliations_service.create(system_identity, {
         "id": "cern",
