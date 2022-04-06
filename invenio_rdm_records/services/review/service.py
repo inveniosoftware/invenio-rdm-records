@@ -123,9 +123,9 @@ class ReviewService(RecordService):
         if draft.parent.review.is_open:
             raise ReviewStateError(_("An open review cannot be deleted."))
 
-        # Delete request if request not in ['expired', 'declined']
-        # we keep the request in this case so the user can see the outcome of
-        # the request
+        # Keep the request when not open or not closed so that the user can see
+        # the request's events. The request is deleted only when in `draft`
+        # status
         if not (draft.parent.review.is_closed or draft.parent.review.is_open):
             current_requests_service.delete(
                 identity,
@@ -153,6 +153,11 @@ class ReviewService(RecordService):
         # raise appropriate exceptions.
         request_item = current_requests_service.execute_action(
             identity, draft.parent.review.id, 'submit', data=data, uow=uow)
+
+        # TODO: this shouldn't be required BUT because of the caching mechanism
+        # in the review systemfield, the review should be set with the updated
+        # request object
         draft.parent.review = request_item._request
         uow.register(RecordCommitOp(draft.parent))
+
         return request_item

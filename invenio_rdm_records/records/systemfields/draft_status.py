@@ -24,13 +24,14 @@ For instance:
 from flask_babelex import gettext as _
 from invenio_records.systemfields import SystemField
 
-from invenio_rdm_records.services.errors import ReviewStateError
+from invenio_rdm_records.services.errors import RDMRecordsException, \
+    ReviewStateError
 
 
 class DraftStatus(SystemField):
     """Draft status field which checks the `parent.review` state."""
 
-    available_review_to_draft_status = dict(
+    review_to_draft_statuses = dict(
         created="draft_with_review",
         submitted="in_review",
         declined="declined",
@@ -59,21 +60,26 @@ class DraftStatus(SystemField):
         if record is None:
             return self  # returns the field itself.
 
-        review = getattr(record.parent, 'review')
-        is_published = getattr(record, 'is_published')
+        review = getattr(record.parent, "review")
+        is_published = getattr(record, "is_published")
 
         if is_published:
             return "published"
-        elif not is_published and record.versions.index > 1:
+
+        is_new_version_draft = not is_published and record.versions.index > 1
+        if is_new_version_draft:
             return "new_version_draft"
 
-        if not is_published and record.versions.index == 1:
+        is_draft = not is_published and record.versions.index == 1
+        if is_draft:
             if review is None:
                 return "draft"
 
             try:
-                return self.available_review_to_draft_status[review.status]
+                return self.review_to_draft_statuses[review.status]
             except KeyError:
                 raise ReviewStateError(
                     _(f"Unknown draft status for review: {review.status}.")
                 )
+
+        raise RDMRecordsException(_("Unknown draft status."))
