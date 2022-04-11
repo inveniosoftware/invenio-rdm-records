@@ -64,9 +64,11 @@ class OAIPMHServerService(Service):
     def _validate_spec(self, spec):
         """Checks the validity of the provided spec."""
         # Reserved for community integration
-        if spec.startswith("community-"):
+        reserved_prefix = "community-"
+        if spec.startswith(reserved_prefix):
             raise ValidationError(
-                "The spec must not start with 'communities-'",
+                _("The spec must not start with '{prefix}'"
+                    .format(prefix=reserved_prefix)),
                 field_name="spec",
             )
 
@@ -74,10 +76,10 @@ class OAIPMHServerService(Service):
         blop = re.compile(r"[-_.!~*'()\w]+")
         if not bool(blop .match(spec)):
             raise ValidationError(
-                "The spec should only consist of letters, numbers or {marks}"
-                .format(marks=",".join(
-                    ["-", "_", ".", "!", "~", "*", "'", "(", ")"])
-                ),
+                _("The spec should only consist of letters, numbers or {marks}"
+                    .format(marks=",".join(
+                        ["-", "_", ".", "!", "~", "*", "'", "(", ")"])
+                    )),
                 field_name="spec",
             )
 
