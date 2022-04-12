@@ -11,7 +11,9 @@
 """RDM Record Service."""
 
 import arrow
+from elasticsearch_dsl.query import Q
 from invenio_drafts_resources.services.records import RecordService
+from invenio_records_resources.services import LinksTemplate
 from invenio_records_resources.services.uow import RecordCommitOp, unit_of_work
 
 from invenio_rdm_records.services.errors import EmbargoNotLiftedError
@@ -86,3 +88,37 @@ class RDMRecordService(RecordService):
             f"AND access.embargo.until:[* TO {today}]"
 
         return self.scan(identity=identity, q=embargoed_q)
+
+    def search_community_records(self, identity, community_uuid, params=None,
+                                 es_preference=None, **kwargs):
+        """Search for drafts records matching the querystring."""
+        self.require_permission(identity, "read")
+
+        # Prepare and execute the search
+        params = params or {}
+
+        search_result = self._search(
+            "search",
+            identity,
+            params,
+            es_preference,
+            record_cls=self.record_cls,
+            search_opts=self.config.search,
+            extra_filter=Q(
+                "term", **{"parent.communities.ids": str(community_uuid)}
+            ),
+            permission_action="read",
+            **kwargs,
+        ).execute()
+
+        return self.result_list(
+            self,
+            identity,
+            search_result,
+            params,
+            links_tpl=LinksTemplate(
+                self.config.links_search,
+                context={"id": community_uuid, "args": params}
+            ),
+            links_item_tpl=self.links_item_tpl,
+        )

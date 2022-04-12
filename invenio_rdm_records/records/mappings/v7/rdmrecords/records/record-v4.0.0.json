@@ -37,6 +37,16 @@
           "id" : {
             "type" : "keyword"
           },
+          "communities": {
+            "properties": {
+              "default": {
+                "type": "keyword"
+              },
+              "ids": {
+                "type": "keyword"
+              }
+            }
+          },
           "access": {
             "properties" : {
               "owned_by" : {
