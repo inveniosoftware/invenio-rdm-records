@@ -15,6 +15,7 @@ from flask_resources import resource_requestctx, response_handler, route
 from invenio_drafts_resources.resources import RecordResource
 from invenio_records_resources.resources.records.resource import \
     request_data, request_headers, request_search_args, request_view_args
+from invenio_records_resources.resources.records.utils import es_preference
 
 
 class RDMRecordResource(RecordResource):
@@ -35,7 +36,12 @@ class RDMRecordResource(RecordResource):
             route("GET", p(routes["item-review"]), self.review_read),
             route("PUT", p(routes["item-review"]), self.review_update),
             route("DELETE", p(routes["item-review"]), self.review_delete),
-            route("POST", p(routes["item-actions-review"]), self.review_submit)
+            route("POST", p(routes[
+                "item-actions-review"
+                ]), self.review_submit),
+            route("GET", routes[
+                "community-records"
+                ], self.search_community_records)
         ]
 
         return url_rules
@@ -119,6 +125,22 @@ class RDMRecordResource(RecordResource):
         )
 
         return item.to_dict(), 200
+
+    #
+    # Community records
+    #
+    @request_search_args
+    @request_view_args
+    @response_handler(many=True)
+    def search_community_records(self):
+        """Perform a search over the community's records."""
+        hits = self.service.search_community_records(
+            identity=g.identity,
+            community_uuid=resource_requestctx.view_args["pid_value"],
+            params=resource_requestctx.args,
+            es_preference=es_preference(),
+        )
+        return hits.to_dict(), 200
 
 
 #
