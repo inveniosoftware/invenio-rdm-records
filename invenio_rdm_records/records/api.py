@@ -19,11 +19,13 @@ from invenio_records.systemfields import ConstantField, DictField, \
     ModelField, RelationsField
 from invenio_records_resources.records.api import FileRecord
 from invenio_records_resources.records.systemfields import FilesField, \
-    IndexField, PIDListRelation, PIDNestedListRelation, PIDRelation, \
-    PIDStatusCheckField
+    IndexField, PIDListRelation, PIDNestedListRelation, PIDNestedRelation, \
+    PIDRelation, PIDStatusCheckField
 from invenio_requests.records.api import Request
 from invenio_requests.records.systemfields.relatedrecord import RelatedRecord
 from invenio_vocabularies.contrib.affiliations.api import Affiliation
+from invenio_vocabularies.contrib.funders.api import Funder
+from invenio_vocabularies.contrib.awards .api import Award
 from invenio_vocabularies.contrib.subjects.api import Subject
 from invenio_vocabularies.records.api import Vocabulary
 
@@ -98,6 +100,20 @@ class CommonFieldsMixin:
             attrs=['name'],
             pid_field=Affiliation.pid,
             cache_key='affiliations',
+        ),
+        funding_funder=PIDNestedRelation(
+            'metadata.funding',
+            relation_field='funder',
+            attrs=['name'],
+            pid_field=Funder.pid,
+            cache_key='funders',
+        ),
+        funding_award=PIDNestedRelation(
+            'metadata.funding',
+            relation_field='award',
+            attrs=['title', 'number'],
+            pid_field=Award.pid,
+            cache_key='awards',
         ),
         languages=PIDListRelation(
             'metadata.languages',

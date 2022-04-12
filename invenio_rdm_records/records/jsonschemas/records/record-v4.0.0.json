@@ -265,18 +265,16 @@
                 "additionalProperties": false,
                 "properties": {
                   "name": {"type": "string"},
-                  "identifier": {"$ref": "local://definitions-v1.0.0.json#/identifier"},
-                  "scheme": {"$ref": "local://definitions-v1.0.0.json#/scheme"}
+                  "id": {"$ref": "local://definitions-v1.0.0.json#/identifier"}
                 }
               },
               "award": {
                 "type": "object",
                 "additionalProperties": false,
                 "properties": {
-                  "title": {"type": "string"},
+                  "title": {"type": "object"},
                   "number": {"type": "string"},
-                  "identifier": {"$ref": "local://definitions-v1.0.0.json#/identifier"},
-                  "scheme": {"$ref": "local://definitions-v1.0.0.json#/scheme"}
+                  "id": {"$ref": "local://definitions-v1.0.0.json#/identifier"}
                 }
               }
             }
