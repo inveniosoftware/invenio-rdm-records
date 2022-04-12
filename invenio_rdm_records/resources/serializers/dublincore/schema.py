@@ -146,7 +146,6 @@ class DublinCoreSchema(Schema):
                 strip_comments=True,
                 tags=[],
                 attributes=[],
-                styles=[],
             )
             for desc in descriptions
         ]
