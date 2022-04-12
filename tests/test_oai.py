@@ -30,7 +30,7 @@ def test_dublincore_serializer(running_app, full_record):
         '  <dc:creator>Nielsen, Lars Holm</dc:creator>\n'
         '  <dc:date>2018/2020-09</dc:date>\n'
         '  <dc:date>info:eu-repo/date/embargoEnd/2131-01-01</dc:date>\n'
-        '  <dc:description>A description with HTML tags</dc:description>\n'
+        '  <dc:description>A description \nwith HTML tags</dc:description>\n'
         '  <dc:description>Bla bla bla</dc:description>\n'
         '  <dc:format>application/pdf</dc:format>\n'
         '  <dc:identifier>1924MNRAS..84..308E</dc:identifier>\n'
@@ -114,7 +114,7 @@ def test_datacite_serializer(running_app, full_record):
         '    <rights rightsURI="https://creativecommons.org/licenses/by/4.0/legalcode" rightsIdentifierScheme="spdx" rightsIdentifier="cc-by-4.0">Creative Commons Attribution 4.0 International</rights>\n'  # noqa
         '  </rightsList>\n'
         '  <descriptions>\n'
-        '    <description descriptionType="Abstract">A description with HTML tags</description>\n'  # noqa
+        '    <description descriptionType="Abstract">A description \nwith HTML tags</description>\n'  # noqa
         '    <description descriptionType="Methods" xml:lang="eng">Bla bla bla</description>\n'  # noqa
         '  </descriptions>\n'
         '  <geoLocations>\n'
@@ -206,7 +206,7 @@ def test_oai_datacite_serializer(running_app, full_record):
         '        <rights rightsURI="https://creativecommons.org/licenses/by/4.0/legalcode" rightsIdentifierScheme="spdx" rightsIdentifier="cc-by-4.0">Creative Commons Attribution 4.0 International</rights>\n'  # noqa
         '      </rightsList>\n'
         '      <descriptions>\n'
-        '        <description descriptionType="Abstract">A description with HTML tags</description>\n'  # noqa
+        '        <description descriptionType="Abstract">A description \nwith HTML tags</description>\n'  # noqa
         '        <description descriptionType="Methods" xml:lang="eng">Bla bla bla</description>\n'  # noqa
         '      </descriptions>\n'
         '      <geoLocations>\n'

@@ -166,7 +166,7 @@ def test_datacite43_serializer(running_app, full_record):
         ],
         "descriptions": [
             {
-                "description": "A description with HTML tags",
+                "description": "A description \nwith HTML tags",
                 "descriptionType": "Abstract"
             }, {
                 "description": "Bla bla bla",
@@ -260,7 +260,8 @@ def test_datacite43_xml_serializer(running_app, full_record):
         "    <rights rightsURI=\"https://creativecommons.org/licenses/by/4.0/legalcode\" rightsIdentifierScheme=\"spdx\" rightsIdentifier=\"cc-by-4.0\">Creative Commons Attribution 4.0 International</rights>",  # noqa
         "  </rightsList>",
         "  <descriptions>",
-        "    <description descriptionType=\"Abstract\">A description with HTML tags</description>",  # noqa
+        "    <description descriptionType=\"Abstract\">A description ",
+        "with HTML tags</description>",
         "    <description descriptionType=\"Methods\" xml:lang=\"eng\">Bla bla bla</description>",  # noqa
         "  </descriptions>",
         "  <geoLocations>",
@@ -287,8 +288,7 @@ def test_datacite43_xml_serializer(running_app, full_record):
     serializer = DataCite43XMLSerializer()
     serialized_record = serializer.serialize_object(full_record)
 
-    # split by breaklines makes it easier to see diffs
-    assert serialized_record.split("\n") == expected_data
+    assert serialized_record == "\n".join(expected_data)
 
 
 def test_datacite43_identifiers(running_app, minimal_record):
