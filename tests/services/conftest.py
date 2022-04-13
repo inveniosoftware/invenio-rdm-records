@@ -15,7 +15,6 @@ fixtures are available.
 
 import pytest
 from flask_principal import Identity, UserNeed
-from invenio_access import any_user
 from invenio_access.permissions import any_user, authenticated_user
 from invenio_app.factory import create_api
 

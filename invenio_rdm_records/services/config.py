@@ -20,7 +20,8 @@ from invenio_records_resources.services import ConditionalLink, \
     FileServiceConfig
 from invenio_records_resources.services.base.links import Link
 from invenio_records_resources.services.files.links import FileLink
-from invenio_records_resources.services.records.links import RecordLink
+from invenio_records_resources.services.records.links import RecordLink, \
+    pagination_links
 
 from ..records import RDMDraft, RDMRecord
 from . import facets
@@ -47,7 +48,8 @@ def is_record_and_has_doi(record, ctx):
 
 def has_doi(record, ctx):
     """Determine if a record has a DOI."""
-    return 'doi' in record.pids
+    pids = record.pids or {}
+    return 'doi' in pids
 
 
 #
@@ -194,6 +196,9 @@ class RDMRecordServiceConfig(RecordServiceConfig, ConfiguratorMixin):
         # TODO: only include link when DOI support is enabled.
         "reserve_doi": RecordLink("{+api}/records/{id}/draft/pids/doi")
     }
+
+    links_search_community_records = pagination_links(
+        "{+api}/communities/{id}/records{?args*}")
 
 
 class RDMFileRecordServiceConfig(FileServiceConfig, ConfiguratorMixin):
