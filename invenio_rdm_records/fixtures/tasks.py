@@ -11,11 +11,12 @@
 import random
 
 from celery import shared_task
+from flask import current_app
 from flask_principal import Identity, UserNeed
 from invenio_access.permissions import any_user, authenticated_user, \
     system_identity
-from invenio_communities import current_communities
 from invenio_communities.generators import CommunityRoleNeed
+from invenio_communities.members.errors import AlreadyMemberError
 from invenio_communities.members.records.api import Member
 from invenio_communities.proxies import current_communities
 from invenio_requests import current_events_service, current_requests_service
@@ -62,7 +63,7 @@ def create_demo_record(user_id, data, publish=True):
 def create_demo_community(user_id, data):
     """Create demo community."""
     identity = get_authenticated_identity(user_id)
-    current_communities.service.create(identity, data)
+    return current_communities.service.create(identity, data)
 
 
 def _get_random_community(communities):
@@ -101,7 +102,7 @@ def create_demo_inclusion_requests(user_id, n_requests):
     drafts = results.to_dict()["hits"]["hits"]
 
     for _ in range(n_requests):
-        community_uuid, comm_owner_id, comm_owner_identity = \
+        community_uuid, _, comm_owner_identity = \
             _get_random_community(communities)
 
         # get a random draft
@@ -145,6 +146,9 @@ def create_demo_inclusion_requests(user_id, n_requests):
                 comment_with_type
             )
 
+        print(f"Created request {req.id} and action {_action} "
+              f"for community {community_uuid}")
+
 
 @shared_task
 def create_demo_invitation_requests(user_id, n_requests):
@@ -152,49 +156,47 @@ def create_demo_invitation_requests(user_id, n_requests):
     user_identity = get_authenticated_identity(user_id)
     comm_results = current_communities.service.search(user_identity)
     communities = comm_results.to_dict()["hits"]["hits"]
+    role_names = list(current_app.config["COMMUNITIES_ROLES"].keys())
 
-    # Disable for now.
+    for _ in range(n_requests):
+        community_uuid, comm_owner_id, comm_owner_identity = \
+            _get_random_community(communities)
+        random_role = random.choice(role_names)
+        invitation_data = {
+            "members": [
+                {
+                    "type": "user",
+                    "id": str(user_id),
+                }
+            ],
+            "role": random_role,
+            "visible": True,
+        }
 
-    # for _ in range(n_requests):
-    #     community_uuid, comm_owner_id, comm_owner_identity = \
-    #         _get_random_community(communities)
+        try:
+            current_communities.service.members.invite(
+                system_identity, community_uuid, invitation_data
+            )
+        except AlreadyMemberError:
+            continue
 
-    #     invitation_data = {
-    #         "type": CommunityMemberInvitation.type_id,
-    #         "receiver": {"user": user_id},
-    #         "payload": {
-    #             "role": "reader",
-    #         },
-    #         "topic": {"community": community_uuid}
-    #     }
+        # # Randomly set if the request should be open, or an action happened
+        # # only "accept" action implemented at this moment
+        # _action, _identity = random.choice([
+        #     (None, None),
+        #     ("cancel", user_identity),
+        #     ("accept", comm_owner_identity),
+        #     ("decline", comm_owner_identity),
+        #     ("expire", system_identity)
+        # ])
+        # if _action:
+        #     _, comment_with_type = create_fake_comment()
+        #     current_requests_service.execute_action(
+        #         _identity,
+        #         req.id,
+        #         _action,
+        #         comment_with_type
+        #     )
 
-    #     try:
-    #         req = current_communities.service.invitations.create(
-    #             comm_owner_identity, invitation_data
-    #         )
-    #     except AlreadyMemberError:
-    #         continue
-
-    #     _add_comments_to_request(req, user_identity, comm_owner_identity)
-
-    #     # at this moment, only admins can accept requests. Add back when
-    #     # backend implemented.
-    #     continue
-
-    #     # Randomly set if the request should be open, or an action happened
-    #     # only "accept" action implemented at this moment
-    #     _action, _identity = random.choice([
-    #         (None, None),
-    #         # ("cancel", user_identity),
-    #         ("accept", comm_owner_identity),
-    #         # ("decline", comm_owner_identity),
-    #         # ("expire", system_identity)
-    #     ])
-    #     if _action:
-    #         _, comment_with_type = create_fake_comment()
-    #         current_requests_service.execute_action(
-    #             _identity,
-    #             req.id,
-    #             _action,
-    #             comment_with_type
-    #         )
+        print(f"Created request for user {user_id} and "
+              f"community {community_uuid}")
