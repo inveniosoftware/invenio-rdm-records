@@ -91,7 +91,7 @@ class RDMRecordService(RecordService):
 
     def search_community_records(self, identity, community_uuid, params=None,
                                  es_preference=None, **kwargs):
-        """Search for drafts records matching the querystring."""
+        """Search for records published in the given community."""
         self.require_permission(identity, "read")
 
         # Prepare and execute the search

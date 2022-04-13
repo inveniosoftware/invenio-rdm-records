@@ -15,8 +15,10 @@ from io import BytesIO
 
 import arrow
 import pytest
+from invenio_requests import current_requests_service
 
 from invenio_rdm_records.records import RDMDraft, RDMRecord
+from invenio_rdm_records.requests import CommunitySubmission
 
 
 @pytest.fixture()
@@ -835,3 +837,48 @@ def test_publish_pid_flow(
     assert response.status_code == 202
     assert response.json["pids"]["doi"]["identifier"]
     assert response.json["pids"]["doi"]["client"] == "datacite"  # default
+
+
+def test_search_community_records(running_app, client, client_with_login,
+                                  minimal_record, headers, community,
+                                  es_clear):
+    """Test searching for records in a community."""
+    superuser_identity = running_app.superuser_identity
+
+    def _create_and_include_in_community():
+        """Create a draft and include it in a community."""
+        _client = client_with_login
+        # Create the draft with review
+        review = {
+            "parent": {
+                "review": {
+                    "type": CommunitySubmission.type_id,
+                    "receiver": {"community": community['uuid']}
+                }
+            }
+        }
+        resp = _client.post("/records", json={**minimal_record, **review},
+                            headers=headers)
+        assert resp.status_code == 201
+        recid = resp.json['id']
+
+        # Submit for review
+        resp = _client.post(
+            f"/records/{recid}/draft/actions/submit-review", headers=headers)
+        assert resp.status_code == 202
+        reqid = resp.json['id']
+
+        # Accept the request
+        current_requests_service.execute_action(superuser_identity, reqid,
+                                                'accept', {})
+        RDMRecord.index.refresh()
+
+    res = client.get(
+        f"/communities/{community['uuid']}/records", headers=headers)
+    assert res.json['hits']['total'] == 0
+
+    _create_and_include_in_community()
+
+    res = client.get(
+        f"/communities/{community['uuid']}/records", headers=headers)
+    assert res.json['hits']['total'] == 1
