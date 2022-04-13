@@ -10,11 +10,10 @@
 """Service level tests for Invenio RDM Records."""
 
 import pytest
-from invenio_communities.communities.records.api import Community
 
 from invenio_rdm_records.proxies import current_rdm_records, \
     current_rdm_records_service
-from invenio_rdm_records.records import RDMRecord, RDMDraft
+from invenio_rdm_records.records import RDMDraft, RDMRecord
 from invenio_rdm_records.services.errors import EmbargoNotLiftedError
 
 
