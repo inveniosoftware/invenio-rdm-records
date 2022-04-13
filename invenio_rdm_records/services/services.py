@@ -117,8 +117,11 @@ class RDMRecordService(RecordService):
             search_result,
             params,
             links_tpl=LinksTemplate(
-                self.config.links_search,
-                context={"id": community_uuid, "args": params}
+                self.config.links_search_community_records,
+                context={
+                    "args": params,
+                    "id": community_uuid,
+                }
             ),
             links_item_tpl=self.links_item_tpl,
         )

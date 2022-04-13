@@ -53,8 +53,6 @@ class AcceptAction(actions.AcceptAction):
 
         # Add community to record.
         is_default = self.request.type.set_as_default
-        import pdb
-        pdb.set_trace()
         draft.parent.communities.add(
             community, request=self.request, default=is_default
         )

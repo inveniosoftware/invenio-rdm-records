@@ -10,92 +10,12 @@
 """Service level tests for Invenio RDM Records."""
 
 import pytest
-from invenio_requests import current_requests_service
-
-from invenio_communities import current_communities
 from invenio_communities.communities.records.api import Community
-from invenio_rdm_records.proxies import current_rdm_records
-from invenio_rdm_records.records import RDMRecord
+
+from invenio_rdm_records.proxies import current_rdm_records, \
+    current_rdm_records_service
+from invenio_rdm_records.records import RDMRecord, RDMDraft
 from invenio_rdm_records.services.errors import EmbargoNotLiftedError
-from invenio_requests.customizations import RequestActions
-
-
-
-@pytest.fixture()
-def minimal_community2():
-    """Data for a minimal community"""
-    return {
-        "id": "rdm",
-        "access": {
-            "visibility": "public",
-        },
-        "metadata": {
-            "title": "Research Data Management",
-            "type": "topic"
-        }
-    }
-
-
-@pytest.fixture()
-def community2(running_app, curator, minimal_community2):
-    """Get the current RDM records service."""
-    c = current_communities.service.create(
-        curator.identity,
-        minimal_community2,
-    )
-    Community.index.refresh()
-    return c
-
-
-@pytest.fixture()
-def draft(minimal_record, community, service, running_app, db):
-    minimal_record['parent'] = {
-        'review': {
-            'type': 'community-submission',
-            'receiver': {'community': community.data['uuid']}
-        }
-    }
-
-    # Create draft with review
-    return service.create(
-        running_app.superuser_identity,
-        minimal_record
-    )
-
-
-@pytest.fixture()
-def draft2(minimal_record, community, community2, service, running_app, db):
-    minimal_record['parent'] = {
-        'review': {
-            'type': 'community-submission',
-            'receiver': {'community': community2.data['uuid']}
-        },
-        'communities': {
-            'ids': [
-                {'community': community2.data['uuid']},
-                {'community': community.data['uuid']}
-            ],
-            'default': {'community': community2.data['uuid']}
-        }
-    }
-
-    # Create draft with review
-    return service.create(
-        running_app.superuser_identity,
-        minimal_record
-    )
-
-
-@pytest.fixture()
-def service():
-    """Get the current RDM records service."""
-    return current_rdm_records.records_service
-
-
-@pytest.fixture()
-def requests_service():
-    """Get the current RDM records service."""
-    return current_requests_service
 
 
 def test_minimal_draft_creation(running_app, es_clear, minimal_record):
@@ -216,79 +136,58 @@ def test_embargo_lift_with_error(running_app, es_clear, minimal_record):
         service.lift_embargo(_id=record['id'], identity=superuser_identity)
 
 
-def test_search_community_records(draft, running_app, community, service,
-                                  requests_service):
-    req = service.review.submit(
-        running_app.superuser_identity, draft.id).to_dict()
-    req = requests_service.execute_action(
-        running_app.superuser_identity,
-        req['id'],
-        'accept',
-        {}
-    ).to_dict()
+def test_search_community_records(db, running_app, minimal_record,
+                                  community, anyuser_identity):
+    """Test search for records in a community."""
+    service = current_rdm_records_service
+    community = community._record
 
-    RDMRecord.index.refresh()
+    def _create_record():
+        """Create a record."""
+        # create draft
+        draft = RDMDraft.create(minimal_record)
+        draft.commit()
+        db.session.commit()
+        # publish and get record
+        record = RDMRecord.publish(draft)
+        record.commit()
+        db.session.commit()
+        return record
 
-    records = service.search_community_records(
-        running_app.superuser_identity,
-        community_uuid=community.to_dict()['uuid'],
+    def _add_to_community(record, community, default):
+        """Add record to community."""
+        record.parent.communities.add(community, default=default)
+        record.parent.commit()
+        record.commit()
+        db.session.commit()
+        service.indexer.index(record)
+        RDMRecord.index.refresh()
+
+    # ensure that there no records in the community
+    results = service.search_community_records(
+        anyuser_identity,
+        community_uuid=community.id,
     )
+    assert results.to_dict()["hits"]["total"] == 0
 
-    assert records.to_dict()["hits"]["total"] == 1
+    # add record to community, with default false
+    record1 = _create_record()
+    _add_to_community(record1, community, False)
 
-def test_search_community_records2(draft, running_app, community, service,
-                                  requests_service, db):
-    draft = draft._record
-    draft.parent.communities.add(community, request=None, default=True)
-    draft.parent.commit()
-    service.publish(running_app.superuser_identity, draft.pid.pid_value)
-    RDMRecord.index.refresh()
-
-    records = service.search_community_records(
-        running_app.superuser_identity,
-        community_uuid=community.to_dict()['uuid'],
+    # ensure that the record is in the community
+    results = service.search_community_records(
+        anyuser_identity,
+        community_uuid=community.id,
     )
+    assert results.to_dict()["hits"]["total"] == 1
 
-    assert records.to_dict()["hits"]["total"] == 1
+    # add another record to community, with default true
+    record2 = _create_record()
+    _add_to_community(record2, community, True)
 
-
-def test_search_community_records_multiple(draft, draft2, running_app, community, service,
-                                  requests_service):
-
-    data = {
-        "parent": {
-            "communities": {
-                "ids": {}
-            }
-        }
-    }
-    data['parent']['communities']['ids'] = {
-        'community': community.data['uuid']
-    }
-
-    req = service.review.submit(
-        running_app.superuser_identity, draft.id).to_dict()
-    req = requests_service.execute_action(
-        running_app.superuser_identity,
-        req['id'],
-        'accept',
-        {}
-    ).to_dict()
-
-    req = service.review.submit(
-        running_app.superuser_identity, draft2.id).to_dict()
-
-    service.update_draft(
-        running_app.superuser_identity,
-        draft2.id,
-        data
+    # ensure that the record is in the community
+    results = service.search_community_records(
+        anyuser_identity,
+        community_uuid=community.id,
     )
-
-    RDMRecord.index.refresh()
-
-    records = service.search_community_records(
-        running_app.superuser_identity,
-        community_uuid=community.to_dict()['uuid'],
-    )
-
-    assert records.to_dict()["hits"]["total"] == 2
+    assert results.to_dict()["hits"]["total"] == 2
