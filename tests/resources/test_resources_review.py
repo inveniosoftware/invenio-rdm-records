@@ -10,7 +10,6 @@
 import json
 
 import pytest
-from flask_principal import Need
 from invenio_communities import current_communities
 from invenio_communities.communities.records.api import Community
 from invenio_requests.records.api import RequestEvent
@@ -122,7 +121,8 @@ def test_simple_flow(running_app, client, minimal_record, community, headers,
     timeline_link = link('{}/timeline'.format(req.json['links']['self']))
     timeline = client.get(timeline_link, headers=headers)
     assert timeline.status_code == 200
-    assert timeline.json['hits']['total'] == 2
+    # submit comment + accept log event + accept comment
+    assert timeline.json['hits']['total'] == 3
 
     # Read it - and assert community membership and publication status
     record = client.get(link(links['record']), headers=headers)

@@ -16,7 +16,7 @@ from pathlib import Path
 from edtf.parser.grammar import level0Expression
 from faker import Faker
 from invenio_access.permissions import system_identity
-from invenio_requests.records.api import RequestEventFormat, RequestEventType
+from invenio_requests.records.api import RequestEventFormat
 
 
 class CachedVocabularies:
@@ -335,12 +335,11 @@ def create_fake_community():
 def create_fake_comment():
     """Create a fake comment for demo purposes."""
     fake = Faker()
-    comment = {
+    payload = {
         "content": fake.sentence(nb_words=20, variable_nb_words=True),
         "format": RequestEventFormat.HTML.value,
     }
-    with_type = {
-        "payload": comment,
-        "type": RequestEventType.COMMENT.value
+    comment = {
+        "payload": payload,
     }
-    return comment, with_type
+    return comment

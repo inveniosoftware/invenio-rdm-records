@@ -20,6 +20,7 @@ from invenio_communities.members.errors import AlreadyMemberError
 from invenio_communities.members.records.api import Member
 from invenio_communities.proxies import current_communities
 from invenio_requests import current_events_service, current_requests_service
+from invenio_requests.customizations import CommentEventType
 from invenio_vocabularies.proxies import current_service as vocabulary_service
 
 from ..proxies import current_rdm_records, current_rdm_records_service
@@ -84,8 +85,9 @@ def _add_comments_to_request(request, user_identity, comm_identity):
     """Add a random number of comments to the request."""
     for _ in range(random.randint(0, 9)):
         identity = random.choice([user_identity, comm_identity])
-        _, comment_with_type = create_fake_comment()
-        current_events_service.create(identity, request.id, comment_with_type)
+        comment = create_fake_comment()
+        current_events_service.create(
+            identity, request.id, comment, CommentEventType)
 
 
 @shared_task
@@ -138,12 +140,12 @@ def create_demo_inclusion_requests(user_id, n_requests):
             ("expire", system_identity)
         ])
         if _action:
-            _, comment_with_type = create_fake_comment()
+            comment = create_fake_comment()
             current_requests_service.execute_action(
                 _identity,
                 req.id,
                 _action,
-                comment_with_type
+                comment
             )
 
         print(f"Created request {req.id} and action {_action} "
