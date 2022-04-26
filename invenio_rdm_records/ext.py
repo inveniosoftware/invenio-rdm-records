@@ -95,8 +95,7 @@ class InvenioRDMRecords(object):
         self.init_resource(app)
         app.before_request(verify_token)
         app.extensions['invenio-rdm-records'] = self
-        # Load flask IIIF
-        IIIF(app)
+
 
     def init_config(self, app):
         """Initialize configuration."""
