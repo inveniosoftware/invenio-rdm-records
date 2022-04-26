@@ -156,7 +156,7 @@ def create_demo_invitation_requests(user_id, n_requests):
     user_identity = get_authenticated_identity(user_id)
     comm_results = current_communities.service.search(user_identity)
     communities = comm_results.to_dict()["hits"]["hits"]
-    role_names = list(current_app.config["COMMUNITIES_ROLES"].keys())
+    role_names = current_app.config["COMMUNITIES_ROLES"]
 
     for _ in range(n_requests):
         community_uuid, comm_owner_id, comm_owner_identity = \
@@ -169,7 +169,7 @@ def create_demo_invitation_requests(user_id, n_requests):
                     "id": str(user_id),
                 }
             ],
-            "role": random_role,
+            "role": random_role["name"],
             "visible": True,
         }
 
