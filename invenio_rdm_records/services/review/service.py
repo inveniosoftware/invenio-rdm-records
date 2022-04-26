@@ -12,7 +12,8 @@ from flask_babelex import lazy_gettext as _
 from invenio_drafts_resources.services.records import RecordService
 from invenio_records_resources.services.uow import RecordCommitOp, \
     RecordIndexOp, unit_of_work
-from invenio_requests import current_registry, current_requests_service
+from invenio_requests import current_request_type_registry, \
+    current_requests_service
 from invenio_requests.resolvers.registry import ResolverRegistry
 from marshmallow import ValidationError
 
@@ -54,7 +55,8 @@ class ReviewService(RecordService):
             )
 
         # Validate the review type (only review requests are valid)
-        type_ = current_registry.lookup(data.pop('type', None), quiet=True)
+        type_ = current_request_type_registry.lookup(
+            data.pop('type', None), quiet=True)
         if type_ is None or type_.type_id not in self.supported_types:
             raise ValidationError(
                 _('Invalid review type.'),
