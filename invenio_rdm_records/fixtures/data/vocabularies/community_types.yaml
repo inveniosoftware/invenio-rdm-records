@@ -1,0 +1,8 @@
+- id: "organization"
+  type: "organization"
+- id: "event"
+  type: "event"
+- id: "topic"
+  type: "topic"
+- id: "project"
+  type: "project"
