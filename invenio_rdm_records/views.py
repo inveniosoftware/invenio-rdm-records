@@ -34,12 +34,13 @@ def init(state):
     sregistry.register(ext.iiif_service, service_id="rdm-iiif")
     # Register indexers
     iregistry = app.extensions['invenio-indexer'].registry
-    iregistry.register(ext.records_service.indexer, indexer_id='records')
-    iregistry.register(
-        ext.affiliations_service.indexer, indexer_id='affiliations'
-    )
-    iregistry.register(ext.names_service.indexer, indexer_id='names')
-    iregistry.register(ext.subjects_service.indexer, indexer_id='subjects')
+    with app.app_context():
+        iregistry.register(ext.records_service.indexer, indexer_id='records')
+        iregistry.register(
+            ext.affiliations_service.indexer, indexer_id='affiliations'
+        )
+        iregistry.register(ext.names_service.indexer, indexer_id='names')
+        iregistry.register(ext.subjects_service.indexer, indexer_id='subjects')
 
 
 def create_records_bp(app):
