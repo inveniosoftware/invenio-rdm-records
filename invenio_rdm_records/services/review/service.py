@@ -161,5 +161,6 @@ class ReviewService(RecordService):
         # request object
         draft.parent.review = request_item._request
         uow.register(RecordCommitOp(draft.parent))
+        uow.register(RecordIndexOp(draft, indexer=self.indexer))
 
         return request_item
