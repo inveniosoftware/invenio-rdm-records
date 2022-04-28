@@ -91,6 +91,7 @@ def test_load_community_types(app, db, es_clear):
     )
     item_dict = item.to_dict()
     assert item_dict["id"] == "organization"
+    assert item_dict["title"]["en"] == "Organization"
 
 
 def test_loading_paths_traversal(app, db, es_clear, subjects_service):
