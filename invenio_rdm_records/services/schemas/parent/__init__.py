@@ -24,8 +24,8 @@ class RDMParentSchema(ParentSchema, FieldPermissionsMixin):
         # omit the 'access' field from dumps, except for users with
         # 'manage' permissions
         "access": "manage",
-        # omit 'review' from dumps execpt for users with curate permission
-        "review": "curate",
+        # omit 'review' from dumps except for users with curate permission
+        "review": "review",
     }
 
     access = fields.Nested(ParentAccessSchema, dump_only=True)
