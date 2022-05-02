@@ -420,9 +420,7 @@ class DataCite43Schema(Schema):
                 ids.append(subject.get("id"))
 
         if ids:
-            subjects_service = (
-                current_service_registry.get("subjects")
-            )
+            subjects_service = current_service_registry.get("subjects")
             subjects = subjects_service.read_many(system_identity, ids)
             validator = validate.URL()
             for subject in subjects:

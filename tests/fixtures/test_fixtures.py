@@ -18,19 +18,18 @@ from invenio_vocabularies.proxies import current_service as vocabulary_service
 from invenio_rdm_records.fixtures.users import UsersFixture
 from invenio_rdm_records.fixtures.vocabularies import GenericVocabularyEntry, \
     PrioritizedVocabulariesFixtures, VocabularyEntryWithSchemes
-from invenio_rdm_records.proxies import current_rdm_records
 
 
 @pytest.fixture(scope="module")
 def subjects_service(app):
     """Subjects service."""
-    return getattr(current_rdm_records, "subjects_service")
+    return current_service_registry.get("subjects")
 
 
 @pytest.fixture(scope="module")
 def affiliations_service(app):
     """Affiliations service."""
-    return getattr(current_rdm_records, "affiliations_service")
+    return current_service_registry.get("affiliations")
 
 
 def test_load_languages(app, db, es_clear):
@@ -181,7 +180,7 @@ def test_load_affiliations(
         app, db, admin_role, es_clear, affiliations_service):
     dir_ = Path(__file__).parent
     affiliations = VocabularyEntryWithSchemes(
-        "affiliations_service",
+        "affiliations",
         Path(__file__).parent / "app_data",
         "affiliations",
         {
