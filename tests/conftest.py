@@ -825,9 +825,7 @@ def description_type_v(app, description_type):
 @pytest.fixture(scope="module")
 def subject_v(app):
     """Subject vocabulary record."""
-    subjects_service = (
-        current_service_registry.get("subjects")
-    )
+    subjects_service = current_service_registry.get("subjects")
     vocab = subjects_service.create(system_identity, {
         "id": "http://id.nlm.nih.gov/mesh/A-D000007",
         "scheme": "MeSH",

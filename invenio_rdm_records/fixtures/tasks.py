@@ -19,11 +19,11 @@ from invenio_communities.generators import CommunityRoleNeed
 from invenio_communities.members.errors import AlreadyMemberError
 from invenio_communities.members.records.api import Member
 from invenio_communities.proxies import current_communities
+from invenio_records_resources.proxies import current_service_registry
 from invenio_requests import current_events_service, current_requests_service
 from invenio_requests.customizations import CommentEventType
-from invenio_vocabularies.proxies import current_service as vocabulary_service
 
-from ..proxies import current_rdm_records, current_rdm_records_service
+from ..proxies import current_rdm_records_service
 from ..requests import CommunitySubmission
 from ..services.errors import ReviewNotFoundError
 from .demo import create_fake_comment
@@ -41,10 +41,7 @@ def get_authenticated_identity(user_id):
 @shared_task
 def create_vocabulary_record(service_str, data):
     """Create a vocabulary record."""
-    if service_str == "vocabulary_service":
-        service = vocabulary_service
-    else:
-        service = getattr(current_rdm_records, service_str)
+    service = current_service_registry.get(service_str)
     service.create(system_identity, data)
 
 

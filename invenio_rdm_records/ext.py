@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2019-2021 CERN.
+# Copyright (C) 2019-2022 CERN.
 # Copyright (C) 2019-2021 Northwestern University.
 # Copyright (C) 2022 Universität Hamburg.
 #
@@ -17,13 +17,6 @@ from flask_iiif import IIIF
 from flask_principal import identity_loaded
 from invenio_records_resources.resources.files import FileResource
 from invenio_records_resources.services import FileService
-from invenio_vocabularies.contrib.affiliations import AffiliationsResource, \
-    AffiliationsResourceConfig, AffiliationsService, \
-    AffiliationsServiceConfig
-from invenio_vocabularies.contrib.names import NamesResource, \
-    NamesResourceConfig, NamesService, NamesServiceConfig
-from invenio_vocabularies.contrib.subjects import SubjectsResource, \
-    SubjectsResourceConfig, SubjectsService, SubjectsServiceConfig
 from itsdangerous import SignatureExpired
 
 from invenio_rdm_records.oaiserver.resources.config import \
@@ -149,15 +142,12 @@ class InvenioRDMRecords(object):
             record = RDMRecordServiceConfig.build(app)
             file = RDMFileRecordServiceConfig.build(app)
             file_draft = RDMFileDraftServiceConfig.build(app)
-            affiliations = AffiliationsServiceConfig
-            names = NamesServiceConfig
-            subjects = SubjectsServiceConfig
             oaipmh_server = OAIPMHServerServiceConfig
 
         return ServiceConfigs
 
     def init_services(self, app):
-        """Initialize vocabulary resources."""
+        """Initialize services."""
         service_configs = self.service_configs(app)
 
         # Services
@@ -169,15 +159,6 @@ class InvenioRDMRecords(object):
             pids_service=PIDsService(service_configs.record, PIDManager),
             review_service=ReviewService(service_configs.record),
         )
-        self.affiliations_service = AffiliationsService(
-            config=service_configs.affiliations,
-        )
-        self.names_service = NamesService(
-            config=service_configs.names
-        )
-        self.subjects_service = SubjectsService(
-            config=service_configs.subjects
-        )
         self.iiif_service = IIIFService(
             records_service=self.records_service, config=None
         )
@@ -187,7 +168,7 @@ class InvenioRDMRecords(object):
         )
 
     def init_resource(self, app):
-        """Initialize vocabulary resources."""
+        """Initialize resources."""
         self.records_resource = RDMRecordResource(
             RDMRecordResourceConfig,
             self.records_service,
@@ -209,20 +190,6 @@ class InvenioRDMRecords(object):
         self.parent_record_links_resource = RDMParentRecordLinksResource(
             service=self.records_service,
             config=RDMParentRecordLinksResourceConfig
-        )
-
-        # Vocabularies
-        self.affiliations_resource = AffiliationsResource(
-            service=self.affiliations_service,
-            config=AffiliationsResourceConfig,
-        )
-        self.names_resource = NamesResource(
-            service=self.names_service,
-            config=NamesResourceConfig,
-        )
-        self.subjects_resource = SubjectsResource(
-            service=self.subjects_service,
-            config=SubjectsResourceConfig,
         )
 
         # OAI-PMH
