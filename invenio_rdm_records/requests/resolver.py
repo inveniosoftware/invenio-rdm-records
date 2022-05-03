@@ -19,7 +19,7 @@ class RDMRecordProxy(RecordProxy):
 
     def _resolve(self):
         """Resolve the Record from the proxy's reference dict."""
-        pid_value = self._parse_ref_dict_id(self._ref_dict)
+        pid_value = self._parse_ref_dict_id()
 
         try:
             return RDMDraft.pid.resolve(pid_value, registered_only=False)
@@ -34,4 +34,5 @@ class RDMRecordResolver(RecordResolver):
 
     def __init__(self):
         """Initialize the resolver."""
-        super().__init__(RDMDraft, type_key="record", proxy_cls=RDMRecordProxy)
+        super().__init__(RDMDraft, "records", type_key="record",
+                         proxy_cls=RDMRecordProxy)
