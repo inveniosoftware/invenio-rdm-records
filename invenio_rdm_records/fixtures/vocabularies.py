@@ -274,17 +274,13 @@ class VocabulariesFixture:
             data = yaml.safe_load(f) or {}
             for id_, yaml_entry in data.items():
                 # Some vocabularies are non-generic
-                if id_ == "subjects":
+                if id_ in ("subjects", "affiliations"):
                     entry = VocabularyEntryWithSchemes(
-                        "subjects", dir_, id_, yaml_entry
+                        id_, dir_, id_, yaml_entry
                     )
-                elif id_ == "affiliations":
-                    entry = VocabularyEntryWithSchemes(
-                        "affiliations", dir_, id_, yaml_entry
-                    )
-                elif id_ == "names":
+                elif id_ in ("names", "funders", "awards"):
                     entry = VocabularyEntry(
-                        "names", dir_, id_, yaml_entry
+                        id_, dir_, id_, yaml_entry
                     )
                 else:
                     entry = GenericVocabularyEntry(dir_, id_, yaml_entry)

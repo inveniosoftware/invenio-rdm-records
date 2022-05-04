@@ -1,0 +1,126 @@
+- id: 00rbzpz17
+  country: FR
+  identifiers:
+    - identifier: 00rbzpz17
+      scheme: ror
+  name: Agence Nationale de la Recherche
+- id: 05k73zm37
+  country: FI
+  identifiers:
+    - identifier: 05k73zm37
+      scheme: ror
+  name: Academy of Finland
+- id: 05mmh0f86
+  country: AU
+  identifiers:
+    - identifier: 05mmh0f86
+      scheme: ror
+  name: Australian Research Council
+- id: 01gavpb45
+  country: CA
+  identifiers:
+    - identifier: 01gavpb45
+      scheme: ror
+  name: Canadian Institutes of Health Research
+- id: 00k4n6c32
+  country: BE
+  identifiers:
+    - identifier: 00k4n6c32
+      scheme: ror
+  name: European Commission
+- id: 02k4b9v70
+  country: DK
+  identifiers:
+    - identifier: 02k4b9v70
+      scheme: ror
+  name: European Environment Agency
+- id: 00snfqn58
+  country: PT
+  identifiers:
+    - identifier: 00snfqn58
+      scheme: ror
+  name: Fundação para a Ciência e e Tecnologia
+- id: 013tf3c58
+  country: AT
+  identifiers:
+    - identifier: 013tf3c58
+      scheme: ror
+  name: FWF Austrian Science Fund
+- id: 01cwqze88
+  country: US
+  identifiers:
+    - identifier: 01cwqze88
+      scheme: ror
+  name: National Institutes of Health
+- id: 03n51vw80
+  country: HR
+  identifiers:
+    - identifier: 03n51vw80
+      scheme: ror
+  name: Croatian Science Foundation
+- id: 01znas443
+  country: RS
+  identifiers:
+    - identifier: 01znas443
+      scheme: ror
+  name: Ministry of Education, Science and Technological Development
+- id: 011kf5r70
+  country: AU
+  identifiers:
+    - identifier: 011kf5r70
+      scheme: ror
+  name: National Health and Medical Research Council
+- id: 01h531d29
+  country: CA
+  identifiers:
+    - identifier: 01h531d29
+      scheme: ror
+  name: Natural Sciences and Engineering Research Council
+- id: 021nxhr62
+  country: US
+  identifiers:
+    - identifier: 021nxhr62
+      scheme: ror
+  name: National Science Foundation
+- id: 04jsz6e67
+  country: NL
+  identifiers:
+    - identifier: 04jsz6e67
+      scheme: ror
+  name: Dutch Research Council
+- id: 001aqnf71
+  country: GB
+  identifiers:
+    - identifier: 001aqnf71
+      scheme: ror
+  name: UK Research and Innovation
+- id: 0271asj38
+  country: IE
+  identifiers:
+    - identifier: 0271asj38
+      scheme: ror
+  name: Science Foundation Ireland
+- id: 00yjd3n13
+  country: CH
+  identifiers:
+    - identifier: 00yjd3n13
+      scheme: ror
+  name: Swiss National Science Foundation
+- id: 04w9kkr77
+  country: TR
+  identifiers:
+    - identifier: 04w9kkr77
+      scheme: ror
+  name: Scientific and Technological Research Council of Turkey
+- id: 006cvnv84
+  country: US
+  identifiers:
+    - identifier: 006cvnv84
+      scheme: ror
+  name: Social Science Research Council
+- id: 029chgv08
+  country: GB
+  identifiers:
+    - identifier: 029chgv08
+      scheme: ror
+  name: Wellcome Trust
