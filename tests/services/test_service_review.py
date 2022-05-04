@@ -53,21 +53,6 @@ def requests_service():
 
 
 @pytest.fixture()
-def minimal_community2():
-    """Data for a minimal community"""
-    return {
-        "id": "rdm",
-        "access": {
-            "visibility": "public",
-        },
-        "metadata": {
-            "title": "RDM",
-            "type": "topic"
-        }
-    }
-
-
-@pytest.fixture()
 def community2(running_app, minimal_community2, db):
     """Get the current RDM records service."""
     return current_communities.service.create(

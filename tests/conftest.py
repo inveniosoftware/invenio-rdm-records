@@ -573,7 +573,22 @@ def minimal_community():
         },
         "metadata": {
             "title": "Biodiversity Literature Repository",
-            "type": "topic"
+            "type": {"id": "topic"}
+        }
+    }
+
+
+@pytest.fixture()
+def minimal_community2():
+    """Data for a minimal community too."""
+    return {
+        "id": "rdm",
+        "access": {
+            "visibility": "public",
+        },
+        "metadata": {
+            "title": "Research Data Management",
+            "type": {"id": "topic"}
         }
     }
 
@@ -1135,7 +1150,31 @@ def curator(UserFixture, app, db):
 
 
 @pytest.fixture()
-def community(running_app, curator, minimal_community):
+def community_type_type(superuser_identity):
+    """Creates and retrieves a language vocabulary type."""
+    v = vocabulary_service.create_type(
+        superuser_identity, "communitytypes", "comtyp")
+    return v
+
+
+@pytest.fixture()
+def community_type_record(superuser_identity, community_type_type):
+    """Creates a d retrieves community type records."""
+    record = vocabulary_service.create(
+        identity=superuser_identity,
+        data={
+            "id": 'topic',
+            "title": {"en": "Topic"},
+            'type': 'communitytypes',
+        },
+    )
+    Vocabulary.index.refresh()  # Refresh the index
+
+    return record
+
+
+@pytest.fixture()
+def community(running_app, community_type_record, curator, minimal_community):
     """Get the current RDM records service."""
     c = current_communities.service.create(
         curator.identity,

@@ -325,9 +325,9 @@ def create_fake_community():
         },
         "metadata": {
             "title": fake.sentence(nb_words=5, variable_nb_words=True),
-            "type": random.choice([
+            "type": {"id": random.choice([
                 "organization", "event", "topic", "project"
-            ]),
+            ])},
         }
     }
 
