@@ -34,21 +34,6 @@ def ui_headers():
 
 
 @pytest.fixture()
-def minimal_community2():
-    """Data for a minimal community"""
-    return {
-        "id": "rdm",
-        "access": {
-            "visibility": "public",
-        },
-        "metadata": {
-            "title": "Research Data Management",
-            "type": "topic"
-        }
-    }
-
-
-@pytest.fixture()
 def community2(running_app, curator, minimal_community2):
     """Get the current RDM records service."""
     c = current_communities.service.create(

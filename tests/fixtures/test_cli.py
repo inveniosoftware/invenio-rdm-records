@@ -61,7 +61,9 @@ def test_create_fake_demo_draft_record(app, location, db, es_clear,
     assert records.total > 0
 
 
-def test_create_fake_demo_communities(app, location, db, es_clear, users):
+def test_create_fake_demo_communities(
+    app, location, db, es_clear, vocabularies, users
+):
     """Assert that demo communities creation works without failing."""
     user_id = users[0].id
 
@@ -73,8 +75,9 @@ def test_create_fake_demo_communities(app, location, db, es_clear, users):
     assert communities.total > 0
 
 
-def test_create_fake_demo_inclusion_requests(app, location, db, es_clear,
-                                             vocabularies, users):
+def test_create_fake_demo_inclusion_requests(
+    app, location, db, es_clear, vocabularies, users
+):
     """Assert that demo inclusion requests creation works without failing."""
     user_id = users[0].id
 
@@ -92,8 +95,9 @@ def test_create_fake_demo_inclusion_requests(app, location, db, es_clear,
     assert reqs.total > 0
 
 
-def test_create_fake_demo_invitation_requests(app, location, db, es_clear,
-                                              vocabularies, users):
+def test_create_fake_demo_invitation_requests(
+    app, location, db, es_clear, vocabularies, users
+):
     """Assert that demo invitation requests creation works without failing."""
     first_user_id = users[0].id
 
