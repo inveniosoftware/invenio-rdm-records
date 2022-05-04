@@ -38,3 +38,6 @@ relationtypes:
 titletypes:
   pid-type: ttyp
   data-file: vocabularies/title_types.yaml
+communitytypes:
+  pid-type: comtyp
+  data-file: vocabularies/community_types.yaml

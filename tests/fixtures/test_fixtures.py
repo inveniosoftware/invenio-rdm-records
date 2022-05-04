@@ -71,6 +71,28 @@ def test_load_resource_types(app, db, es_clear):
     assert item_dict["props"]["datacite_general"] == "Collection"
 
 
+def test_load_community_types(app, db, es_clear):
+    id_ = 'communitytypes'
+    resource_types = GenericVocabularyEntry(
+        Path(__file__).parent / "data",
+        id_,
+        {
+            "pid-type": "comtyp",
+            "data-file": "vocabularies/community_types.yaml"
+        },
+    )
+
+    resource_types.load(system_identity, delay=False)
+
+    item = vocabulary_service.read(
+        system_identity,
+        (id_, 'organization'),
+    )
+    item_dict = item.to_dict()
+    assert item_dict["id"] == "organization"
+    assert item_dict["title"]["en"] == "Organization"
+
+
 def test_loading_paths_traversal(app, db, es_clear, subjects_service):
     dir_ = Path(__file__).parent
     fixtures = PrioritizedVocabulariesFixtures(
