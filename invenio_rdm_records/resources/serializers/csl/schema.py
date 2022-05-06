@@ -10,7 +10,7 @@
 from edtf import parse_edtf
 from edtf.parser.edtf_exceptions import EDTFParseException
 from edtf.parser.parser_classes import Date, Interval
-from invenio_access.permissions import system_identity
+from flask import g
 from invenio_vocabularies.proxies import current_service as vocabulary_service
 from marshmallow import Schema, fields, missing, pre_dump
 from marshmallow_utils.fields import SanitizedUnicode, StrippedHTML
@@ -62,7 +62,7 @@ class CSLJSONSchema(Schema):
 
     def _read_resource_type(self, id_):
         """Retrieve resource type record using service."""
-        rec = vocabulary_service.read(system_identity, ("resourcetypes", id_))
+        rec = vocabulary_service.read(g.identity, ("resourcetypes", id_))
         return rec._record
 
     def get_type(self, obj):
