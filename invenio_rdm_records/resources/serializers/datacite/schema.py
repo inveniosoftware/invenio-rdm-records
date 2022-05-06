@@ -10,9 +10,8 @@
 
 from edtf import parse_edtf
 from edtf.parser.grammar import ParseException
-from flask import current_app
+from flask import current_app, g
 from flask_babelex import lazy_gettext as _
-from invenio_access.permissions import system_identity
 from invenio_records_resources.proxies import current_service_registry
 from invenio_vocabularies.proxies import current_service as vocabulary_service
 from marshmallow import Schema, ValidationError, fields, missing, post_dump, \
@@ -90,7 +89,7 @@ class PersonOrOrgSchema43(Schema):
             affiliations_service = (
                 current_service_registry.get("affiliations")
             )
-            affiliations = affiliations_service.read_many(system_identity, ids)
+            affiliations = affiliations_service.read_many(g.identity, ids)
 
             for affiliation in affiliations:
                 aff = {
@@ -421,7 +420,7 @@ class DataCite43Schema(Schema):
 
         if ids:
             subjects_service = current_service_registry.get("subjects")
-            subjects = subjects_service.read_many(system_identity, ids)
+            subjects = subjects_service.read_many(g.identity, ids)
             validator = validate.URL()
             for subject in subjects:
                 serialized_subj = {
@@ -467,7 +466,7 @@ class DataCite43Schema(Schema):
 
         if ids:
             rights = vocabulary_service.read_many(
-                system_identity, "licenses", ids
+                g.identity, "licenses", ids
             )
             for right in rights:
                 serialized_right = {
