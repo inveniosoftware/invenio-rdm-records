@@ -108,7 +108,7 @@ class RDMRecordService(RecordService):
 
         return self.scan(identity=identity, q=embargoed_q)
 
-    def search_community_records(self, identity, community_uuid, params=None,
+    def search_community_records(self, identity, community_id, params=None,
                                  es_preference=None, **kwargs):
         """Search for records published in the given community."""
         self.require_permission(identity, "read")
@@ -124,7 +124,7 @@ class RDMRecordService(RecordService):
             record_cls=self.record_cls,
             search_opts=self.config.search,
             extra_filter=Q(
-                "term", **{"parent.communities.ids": str(community_uuid)}
+                "term", **{"parent.communities.ids": str(community_id)}
             ),
             permission_action="read",
             **kwargs,
@@ -139,7 +139,7 @@ class RDMRecordService(RecordService):
                 self.config.links_search_community_records,
                 context={
                     "args": params,
-                    "id": community_uuid,
+                    "id": community_id,
                 }
             ),
             links_item_tpl=self.links_item_tpl,

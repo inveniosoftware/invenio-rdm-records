@@ -66,7 +66,7 @@ def draft(minimal_record, community, service, running_app, db):
     minimal_record['parent'] = {
         'review': {
             'type': 'community-submission',
-            'receiver': {'community': community.data['uuid']}
+            'receiver': {'community': community.data['id']}
         }
     }
 
@@ -116,8 +116,8 @@ def test_simple_flow(draft, running_app, community, service,
     record = service.read(running_app.superuser_identity, draft.id).to_dict()
     assert 'review' not in record["parent"]  # Review was desassociated
     assert record["is_published"] is True
-    assert record['parent']['communities']['ids'] == [community.data['uuid']]
-    assert record['parent']['communities']['default'] == community.data['uuid']
+    assert record['parent']['communities']['ids'] == [community.data['id']]
+    assert record['parent']['communities']['default'] == community.data['id']
     assert record["status"] == "published"
 
     # ### Read draft (which should have been removed)
@@ -128,8 +128,8 @@ def test_simple_flow(draft, running_app, community, service,
     draft = service.new_version(
         running_app.superuser_identity, draft.id).to_dict()
     assert 'review' not in draft['parent']
-    assert draft['parent']['communities']['ids'] == [community.data['uuid']]
-    assert draft['parent']['communities']['default'] == community.data['uuid']
+    assert draft['parent']['communities']['ids'] == [community.data['id']]
+    assert draft['parent']['communities']['default'] == community.data['id']
     assert draft["status"] == "new_version_draft"
 
 
@@ -142,7 +142,7 @@ def test_creation(draft, running_app, community, service, requests_service):
     assert 'id' in parent['review']
     assert parent['review']['type'] == 'community-submission'
     assert parent['review']['receiver'] == {
-        'community': community.data['uuid']}
+        'community': community.data['id']}
     assert '@v' not in parent['review']  # internals should not be exposed
 
     # Read review request (via request service)
@@ -153,7 +153,7 @@ def test_creation(draft, running_app, community, service, requests_service):
     assert review['id'] == parent['review']['id']
     assert review['status'] == 'created'
     assert review['type'] == 'community-submission'
-    assert review['receiver'] == {'community': community.data['uuid']}
+    assert review['receiver'] == {'community': community.data['id']}
     assert review['created_by'] == {
         'user': str(running_app.superuser_identity.id)
     }
@@ -209,7 +209,7 @@ def test_create_review_after_draft(
     data = {
         'type': 'community-submission',
         'receiver': {
-            'community': community.data['uuid']
+            'community': community.data['id']
         }
     }
     req = service.review.update(
@@ -220,7 +220,7 @@ def test_create_review_after_draft(
     ).to_dict()
     assert req['status'] == 'created'
     assert req['topic'] == {'record': draft.id}
-    assert req['receiver'] == {'community': community.data['uuid']}
+    assert req['receiver'] == {'community': community.data['id']}
 
     # check draft status
     draft = service.read_draft(
@@ -240,7 +240,7 @@ def test_create_when_already_published(
     # Then try to create a review (you use update, not create for this).
     data = {
         'type': 'community-submission',
-        'receiver': {'community': community.data['uuid']}
+        'receiver': {'community': community.data['id']}
     }
     with pytest.raises(ReviewStateError):
         service.review.update(
@@ -262,7 +262,7 @@ def test_create_with_new_version(
     # Then try to create a review (you use update, not create for this).
     data = {
         'type': 'community-submission',
-        'receiver': {'community': community.data['uuid']}
+        'receiver': {'community': community.data['id']}
     }
     with pytest.raises(ReviewStateError):
         service.review.update(
@@ -279,7 +279,7 @@ def test_update(draft, running_app, community2, service, db):
     # Change to a different community
     data = {
         'type': 'community-submission',
-        'receiver': {'community': community2.data['uuid']}
+        'receiver': {'community': community2.data['id']}
     }
     req = service.review.update(
         running_app.superuser_identity,
@@ -290,7 +290,7 @@ def test_update(draft, running_app, community2, service, db):
     assert req['id'] != previous_id
     assert req['status'] == 'created'
     assert req['topic'] == {'record': draft.id}
-    assert req['receiver'] == {'community': community2.data['uuid']}
+    assert req['receiver'] == {'community': community2.data['id']}
 
 
 def test_publish_when_review_exists(draft, running_app, community, service):
@@ -386,7 +386,7 @@ def test_submit_with_validation_errors(
     minimal_record['parent'] = {
         'review': {
             'type': 'community-submission',
-            'receiver': {'community': community.data['uuid']}
+            'receiver': {'community': community.data['id']}
         }
     }
     # Make a mistake in the record.

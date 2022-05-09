@@ -165,7 +165,7 @@ def test_search_community_records(db, running_app, minimal_record,
     # ensure that there no records in the community
     results = service.search_community_records(
         anyuser_identity,
-        community_uuid=community.id,
+        community_id=community.id,
     )
     assert results.to_dict()["hits"]["total"] == 0
 
@@ -176,7 +176,7 @@ def test_search_community_records(db, running_app, minimal_record,
     # ensure that the record is in the community
     results = service.search_community_records(
         anyuser_identity,
-        community_uuid=community.id,
+        community_id=community.id,
     )
     assert results.to_dict()["hits"]["total"] == 1
 
@@ -187,6 +187,6 @@ def test_search_community_records(db, running_app, minimal_record,
     # ensure that the record is in the community
     results = service.search_community_records(
         anyuser_identity,
-        community_uuid=community.id,
+        community_id=community.id,
     )
     assert results.to_dict()["hits"]["total"] == 2

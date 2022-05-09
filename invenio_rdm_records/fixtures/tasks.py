@@ -61,21 +61,21 @@ def create_demo_record(user_id, data, publish=True):
 def create_demo_community(user_id, data):
     """Create demo community."""
     identity = get_authenticated_identity(user_id)
-    return current_communities.service.create(identity, data)
+    current_communities.service.create(identity, data)
 
 
 def _get_random_community(communities):
     """Get random community."""
     r = random.randint(0, len(communities) - 1)
-    uuid = communities[r]["uuid"]
+    id = communities[r]["id"]
     # create community owner identity
     members = current_communities.service.members
     Member.index.refresh()
-    res = members.search(system_identity, uuid, role="owner").to_dict()
+    res = members.search(system_identity, id, role="owner").to_dict()
     owner_id = int(res['hits']['hits'][0]['member']['id'])
     owner_identity = get_authenticated_identity(owner_id)
-    owner_identity.provides.add(CommunityRoleNeed(uuid, 'owner'))
-    return uuid, owner_id, owner_identity
+    owner_identity.provides.add(CommunityRoleNeed(id, 'owner'))
+    return id, owner_id, owner_identity
 
 
 def _add_comments_to_request(request, user_identity, comm_identity):
@@ -101,7 +101,7 @@ def create_demo_inclusion_requests(user_id, n_requests):
     drafts = results.to_dict()["hits"]["hits"]
 
     for _ in range(n_requests):
-        community_uuid, _, comm_owner_identity = \
+        community_id, _, comm_owner_identity = \
             _get_random_community(communities)
 
         # get a random draft
@@ -112,7 +112,7 @@ def create_demo_inclusion_requests(user_id, n_requests):
         # with the `community-submission` review in the parent
         data = {
             "type": CommunitySubmission.type_id,
-            "receiver": {"community": community_uuid}
+            "receiver": {"community": community_id}
         }
 
         # ensure this draft does not have a review yet
@@ -146,7 +146,7 @@ def create_demo_inclusion_requests(user_id, n_requests):
             )
 
         print(f"Created request {req.id} and action {_action} "
-              f"for community {community_uuid}")
+              f"for community {community_id}")
 
 
 @shared_task
@@ -158,8 +158,7 @@ def create_demo_invitation_requests(user_id, n_requests):
     role_names = current_app.config["COMMUNITIES_ROLES"]
 
     for _ in range(n_requests):
-        community_uuid, comm_owner_id, comm_owner_identity = \
-            _get_random_community(communities)
+        community_id, _, _ = _get_random_community(communities)
         random_role = random.choice(role_names)
         invitation_data = {
             "members": [
@@ -174,7 +173,7 @@ def create_demo_invitation_requests(user_id, n_requests):
 
         try:
             current_communities.service.members.invite(
-                system_identity, community_uuid, invitation_data
+                system_identity, community_id, invitation_data
             )
         except AlreadyMemberError:
             continue
@@ -198,4 +197,4 @@ def create_demo_invitation_requests(user_id, n_requests):
         #     )
 
         print(f"Created request for user {user_id} and "
-              f"community {community_uuid}")
+              f"community {community_id}")

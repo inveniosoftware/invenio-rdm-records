@@ -853,7 +853,7 @@ def test_search_community_records(running_app, client, client_with_login,
             "parent": {
                 "review": {
                     "type": CommunitySubmission.type_id,
-                    "receiver": {"community": community['uuid']}
+                    "receiver": {"community": community['id']}
                 }
             }
         }
@@ -874,11 +874,11 @@ def test_search_community_records(running_app, client, client_with_login,
         RDMRecord.index.refresh()
 
     res = client.get(
-        f"/communities/{community['uuid']}/records", headers=headers)
+        f"/communities/{community['id']}/records", headers=headers)
     assert res.json['hits']['total'] == 0
 
     _create_and_include_in_community()
 
     res = client.get(
-        f"/communities/{community['uuid']}/records", headers=headers)
+        f"/communities/{community['id']}/records", headers=headers)
     assert res.json['hits']['total'] == 1

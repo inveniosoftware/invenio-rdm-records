@@ -150,7 +150,7 @@ class RDMRecordResource(RecordResource):
         """Perform a search over the community's records."""
         hits = self.service.search_community_records(
             identity=g.identity,
-            community_uuid=resource_requestctx.view_args["pid_value"],
+            community_id=resource_requestctx.view_args["pid_value"],
             params=resource_requestctx.args,
             es_preference=es_preference(),
         )
