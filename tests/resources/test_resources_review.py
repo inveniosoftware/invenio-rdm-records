@@ -53,7 +53,7 @@ def test_simple_flow(running_app, client, minimal_record, community, headers,
     minimal_record['parent'] = {
         'review': {
             'type': 'community-submission',
-            'receiver': {'community': community.data['uuid']}
+            'receiver': {'community': community.data['id']}
         }
     }
 
@@ -65,7 +65,7 @@ def test_simple_flow(running_app, client, minimal_record, community, headers,
     assert draft.status_code == 201
     assert 'submit-review' in links
     assert 'id' in review
-    assert review['receiver'] == {'community': community.data['uuid']}
+    assert review['receiver'] == {'community': community.data['id']}
     assert review['type'] == 'community-submission'
     assert draft.json['parent']['communities'] == {}
 
@@ -79,7 +79,7 @@ def test_simple_flow(running_app, client, minimal_record, community, headers,
     assert req.json['title'] == minimal_record['metadata']['title']
     assert req.json['created_by'] == {'user': str(uploader.id)}
     assert req.json['topic'] == {'record': draft.json['id']}
-    assert req.json['receiver'] == {'community': community.data['uuid']}
+    assert req.json['receiver'] == {'community': community.data['id']}
     assert 'number' in req.json
 
     # Read timeline
@@ -115,8 +115,8 @@ def test_simple_flow(running_app, client, minimal_record, community, headers,
     assert record.json['is_published'] is True
     assert 'review' not in record.json['parent']
     comms = record.json['parent']['communities']
-    assert comms['ids'] == [community.data['uuid']]
-    assert comms['default'] == community.data['uuid']
+    assert comms['ids'] == [community.data['id']]
+    assert comms['default'] == community.data['id']
     comm_id = comms['default']
 
     RDMRecord.index.refresh()
@@ -144,7 +144,7 @@ def test_review_endpoints(running_app, client, minimal_record, community,
     review_link = link(links['review'])
     review = {
         'type': 'community-submission',
-        'receiver': {'community': community.data['uuid']}
+        'receiver': {'community': community.data['id']}
     }
     req = client.put(review_link, headers=headers, json=review)
     assert req.status_code == 200
@@ -153,17 +153,17 @@ def test_review_endpoints(running_app, client, minimal_record, community,
     assert req.json['is_closed'] is False
     assert req.json['created_by'] == {'user': str(uploader.id)}
     assert req.json['topic'] == {'record': draft.json['id']}
-    assert req.json['receiver'] == {'community': community.data['uuid']}
+    assert req.json['receiver'] == {'community': community.data['id']}
     assert 'number' in req.json
 
     # Update to another review
     review = {
         'type': 'community-submission',
-        'receiver': {'community': community2.data['uuid']}
+        'receiver': {'community': community2.data['id']}
     }
     req = client.put(review_link, headers=headers, json=review)
     assert req.status_code == 200
-    assert req.json['receiver'] == {'community': community2.data['uuid']}
+    assert req.json['receiver'] == {'community': community2.data['id']}
 
     # Delete the review
     req = client.delete(review_link, headers=headers)
@@ -183,7 +183,7 @@ def test_review_errors(running_app, client, minimal_record, community,
     minimal_record['parent'] = {
         'review': {
             'type': 'invalid',
-            'receiver': {'community': community.data['uuid']}
+            'receiver': {'community': community.data['id']}
         }
     }
     draft = client.post('/records', headers=headers, json=minimal_record)
@@ -207,7 +207,7 @@ def test_delete_no_review(running_app, client, minimal_record, community,
     # Create the review and submit
     review = {
         'type': 'community-submission',
-        'receiver': {'community': community.data['uuid']}
+        'receiver': {'community': community.data['id']}
     }
     req = client.put(review_link, headers=headers, json=review)
     assert req.status_code == 200

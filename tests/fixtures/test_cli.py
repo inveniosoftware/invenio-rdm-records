@@ -105,11 +105,14 @@ def test_create_fake_demo_invitation_requests(
     RDMDraft.index.refresh()
     comm = create_demo_community(first_user_id, create_fake_community())
     Community.index.refresh()
+    user_identity = get_authenticated_identity(first_user_id)
+    communities = current_communities.service.search(user_identity)
+    comm = communities.to_dict()["hits"]["hits"][0]
 
     other_user_id = users[1].id
     create_demo_invitation_requests(other_user_id, 1)
     Member.index.refresh()
 
     service = current_communities.service.members
-    reqs = service.search_invitations(system_identity, comm["uuid"])
+    reqs = service.search_invitations(system_identity, comm["id"])
     assert reqs.total > 0

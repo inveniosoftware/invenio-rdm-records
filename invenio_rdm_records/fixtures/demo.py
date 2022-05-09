@@ -319,7 +319,7 @@ def create_fake_community():
     """Create minimal community for demo purposes."""
     fake = Faker()
     return {
-        "id": fake.unique.domain_word(),
+        "slug": fake.unique.slug(),
         "access": {
             "visibility": "public",
         },

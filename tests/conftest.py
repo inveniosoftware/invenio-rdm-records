@@ -567,7 +567,7 @@ def minimal_record():
 def minimal_community():
     """Data for a minimal community."""
     return {
-        "id": "blr",
+        "slug": "blr",
         "access": {
             "visibility": "public",
         },
@@ -582,7 +582,7 @@ def minimal_community():
 def minimal_community2():
     """Data for a minimal community too."""
     return {
-        "id": "rdm",
+        "slug": "rdm",
         "access": {
             "visibility": "public",
         },
