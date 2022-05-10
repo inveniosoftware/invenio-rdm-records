@@ -23,7 +23,8 @@ from invenio_drafts_resources.resources import RecordResource
 from invenio_drafts_resources.resources.records.errors import RedirectException
 from invenio_records_resources.resources.errors import ErrorHandlersMixin
 from invenio_records_resources.resources.records.resource import \
-    request_data, request_headers, request_search_args, request_view_args
+    request_data, request_extra_args, request_headers, request_search_args, \
+    request_view_args
 from invenio_records_resources.resources.records.utils import es_preference
 from werkzeug.utils import secure_filename
 
@@ -116,6 +117,7 @@ class RDMRecordResource(RecordResource):
     #
     # PIDs
     #
+    @request_extra_args
     @request_view_args
     @response_handler()
     def pids_reserve(self):
@@ -124,10 +126,12 @@ class RDMRecordResource(RecordResource):
             identity=g.identity,
             id_=resource_requestctx.view_args["pid_value"],
             scheme=resource_requestctx.view_args["scheme"],
+            expand=resource_requestctx.args.get("expand", False),
         )
 
         return item.to_dict(), 201
 
+    @request_extra_args
     @request_view_args
     @response_handler()
     def pids_discard(self):
@@ -136,6 +140,7 @@ class RDMRecordResource(RecordResource):
             identity=g.identity,
             id_=resource_requestctx.view_args["pid_value"],
             scheme=resource_requestctx.view_args["scheme"],
+            expand=resource_requestctx.args.get("expand", False),
         )
 
         return item.to_dict(), 200
