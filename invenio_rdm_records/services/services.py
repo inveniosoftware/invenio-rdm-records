@@ -20,8 +20,11 @@ from flask_iiif.api import IIIFImageAPIWrapper
 from invenio_drafts_resources.services.records import RecordService
 from invenio_records_resources.services import LinksTemplate, Service
 from invenio_records_resources.services.uow import RecordCommitOp, unit_of_work
+from invenio_requests.services.results import EntityResolverExpandableField
 
 from invenio_rdm_records.services.errors import EmbargoNotLiftedError
+from invenio_rdm_records.services.results import \
+    ParentCommunitiesExpandableField
 
 try:
     from importlib import metadata
@@ -67,6 +70,20 @@ class RDMRecordService(RecordService):
     def review(self):
         """Record PIDs service."""
         return self._review
+
+    #
+    # Properties
+    #
+    @property
+    def expandable_fields(self):
+        """Get expandable fields.
+
+        Expand community field to return community details.
+        """
+        return [
+            EntityResolverExpandableField("parent.review.receiver"),
+            ParentCommunitiesExpandableField("parent.communities.default"),
+        ]
 
     #
     # Service methods
