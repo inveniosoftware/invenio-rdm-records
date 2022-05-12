@@ -8,7 +8,7 @@
 """Dublin Core based Schema for Invenio RDM Records."""
 
 import bleach
-from flask import g
+from invenio_access.permissions import system_identity
 from invenio_vocabularies.proxies import current_service as vocabulary_service
 from marshmallow import Schema, fields, missing
 
@@ -101,7 +101,7 @@ class DublinCoreSchema(Schema):
 
         if ids:
             vocab_rights = vocabulary_service.read_many(
-                g.identity, "licenses", ids
+                system_identity, "licenses", ids
             )
             for right in vocab_rights:
                 title = right.get('title').get(

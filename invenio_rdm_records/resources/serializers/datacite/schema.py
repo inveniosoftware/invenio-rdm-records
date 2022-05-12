@@ -10,8 +10,9 @@
 
 from edtf import parse_edtf
 from edtf.parser.grammar import ParseException
-from flask import current_app, g
+from flask import current_app
 from flask_babelex import lazy_gettext as _
+from invenio_access.permissions import system_identity
 from invenio_records_resources.proxies import current_service_registry
 from invenio_vocabularies.proxies import current_service as vocabulary_service
 from marshmallow import Schema, ValidationError, fields, missing, post_dump, \
@@ -89,7 +90,7 @@ class PersonOrOrgSchema43(Schema):
             affiliations_service = (
                 current_service_registry.get("affiliations")
             )
-            affiliations = affiliations_service.read_many(g.identity, ids)
+            affiliations = affiliations_service.read_many(system_identity, ids)
 
             for affiliation in affiliations:
                 aff = {
@@ -392,7 +393,7 @@ class DataCite43Schema(Schema):
 
         if ids:
             subjects_service = current_service_registry.get("subjects")
-            subjects = subjects_service.read_many(g.identity, ids)
+            subjects = subjects_service.read_many(system_identity, ids)
             validator = validate.URL()
             for subject in subjects:
                 serialized_subj = {
@@ -438,7 +439,7 @@ class DataCite43Schema(Schema):
 
         if ids:
             rights = vocabulary_service.read_many(
-                g.identity, "licenses", ids
+                system_identity, "licenses", ids
             )
             for right in rights:
                 serialized_right = {
@@ -480,7 +481,7 @@ class DataCite43Schema(Schema):
             id_ = funder.get("id")
             if id_:
                 funder_service = current_service_registry.get("funders")
-                funder = funder_service.read(g.identity, id_).to_dict()
+                funder = funder_service.read(system_identity, id_).to_dict()
 
             funding_ref["funderName"] = funder["name"]
             identifiers = funder.get("identifiers", [])
@@ -508,7 +509,7 @@ class DataCite43Schema(Schema):
                 # format?
                 id_ = id_.split("::")[1]
                 award_service = current_service_registry.get("awards")
-                award = award_service.read(g.identity, id_).to_dict()
+                award = award_service.read(system_identity, id_).to_dict()
 
             title = award.get("title", {})
             funding_ref["awardTitle"] = title.get("en", missing)
