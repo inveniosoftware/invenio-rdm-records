@@ -475,7 +475,7 @@ class DataCite43Schema(Schema):
         funding_references = []
         funding_list = obj["metadata"].get("funding", [])
         for funding in funding_list:
-            # funder
+            # funder, if there is an item in the list  it must have a funder
             funding_ref = {}
             funder = funding.get("funder", {})
             id_ = funder.get("id")
@@ -501,27 +501,28 @@ class DataCite43Schema(Schema):
                 funding_ref["funderIdentifierType"] = id_type
 
             # award
-            award = funding.get("award", {})
-            id_ = award.get("id")
-            if id_:
-                # FIXME: should this be implemented at awards service read
-                # level since all ids are loaded into the system with this
-                # format?
-                id_ = id_.split("::")[1]
-                award_service = current_service_registry.get("awards")
-                award = award_service.read(system_identity, id_).to_dict()
+            award = funding.get("award")
+            if award:  # having an award is optional
+                id_ = award.get("id")
+                if id_:
+                    # FIXME: should this be implemented at awards service read
+                    # level since all ids are loaded into the system with this
+                    # format?
+                    id_ = id_.split("::")[1]
+                    award_service = current_service_registry.get("awards")
+                    award = award_service.read(system_identity, id_).to_dict()
 
-            title = award.get("title", {})
-            funding_ref["awardTitle"] = title.get("en", missing)
-            funding_ref["awardNumber"] = award["number"]
+                title = award.get("title", {})
+                funding_ref["awardTitle"] = title.get("en", missing)
+                funding_ref["awardNumber"] = award["number"]
 
-            identifiers = award.get("identifiers", [])
-            if identifiers:
-                identifier = get_preferred_identifier(
-                    AWARD_IDENTIFIER_TYPES_PREFERENCE, identifiers
-                )
-                if identifier:
-                    funding_ref["awardURI"] = identifier["identifier"]
+                identifiers = award.get("identifiers", [])
+                if identifiers:
+                    identifier = get_preferred_identifier(
+                        AWARD_IDENTIFIER_TYPES_PREFERENCE, identifiers
+                    )
+                    if identifier:
+                        funding_ref["awardURI"] = identifier["identifier"]
 
             funding_references.append(funding_ref)
         return funding_references or missing
