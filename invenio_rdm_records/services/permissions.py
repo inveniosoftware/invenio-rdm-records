@@ -12,7 +12,7 @@ from invenio_records_permissions.generators import AnyUser, \
     AuthenticatedUser, Disable, SystemProcess
 from invenio_records_permissions.policies.records import RecordPermissionPolicy
 
-from .generators import CommunityCurator, IfRestricted, RecordOwners, \
+from .generators import CommunityAction, IfRestricted, RecordOwners, \
     SecretLinks, SubmissionReviewer
 
 
@@ -32,11 +32,19 @@ class RDMRecordPermissionPolicy(RecordPermissionPolicy):
     #
     # High-level permissions (used by low-level)
     #
-    can_manage = [RecordOwners(), SystemProcess(), CommunityCurator()]
+    can_manage = [
+        RecordOwners(),
+        CommunityAction('curate'),
+        SystemProcess(),
+    ]
     can_curate = can_manage + [SecretLinks("edit")]
     can_review = can_curate + [SubmissionReviewer()]
     can_preview = can_manage + [SecretLinks("preview"), SubmissionReviewer()]
-    can_view = can_manage + [SecretLinks("view"), SubmissionReviewer()]
+    can_view = can_manage + [
+        SecretLinks("view"),
+        SubmissionReviewer(),
+        CommunityAction('view'),
+    ]
 
     can_authenticated = [AuthenticatedUser(), SystemProcess()]
     can_all = [AnyUser(), SystemProcess()]
@@ -46,6 +54,7 @@ class RDMRecordPermissionPolicy(RecordPermissionPolicy):
     #
     # Allow searching of records
     can_search = can_all
+
     # Allow reading metadata of a record
     can_read = [
         IfRestricted('record', then_=can_view, else_=can_all),
