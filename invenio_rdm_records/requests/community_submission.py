@@ -8,7 +8,8 @@
 """Community submission request."""
 
 from flask_babelex import lazy_gettext as _
-from invenio_records_resources.services.uow import RecordCommitOp
+from invenio_records_resources.services.uow import RecordCommitOp, \
+    RecordIndexOp
 from invenio_requests.customizations import actions
 
 from ..proxies import current_rdm_records_service as service
@@ -81,6 +82,8 @@ class DeclineAction(actions.DeclineAction):
         # request object
         draft.parent.review = self.request
         uow.register(RecordCommitOp(draft.parent))
+        # update draft to reflect the new status
+        uow.register(RecordIndexOp(draft, indexer=service.indexer))
 
 
 class CancelAction(actions.CancelAction):
@@ -93,6 +96,8 @@ class CancelAction(actions.CancelAction):
         draft = self.request.topic.resolve()
         draft.parent.review = None
         uow.register(RecordCommitOp(draft.parent))
+        # update draft to reflect the new status
+        uow.register(RecordIndexOp(draft, indexer=service.indexer))
         super().execute(identity, uow)
 
 
@@ -113,6 +118,8 @@ class ExpireAction(actions.CancelAction):
         # request object
         draft.parent.review = self.request
         uow.register(RecordCommitOp(draft.parent))
+        # update draft to reflect the new status
+        uow.register(RecordIndexOp(draft, indexer=service.indexer))
 
 
 #
