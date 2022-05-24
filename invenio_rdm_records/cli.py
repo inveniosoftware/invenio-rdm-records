@@ -10,12 +10,14 @@
 
 import click
 from flask.cli import with_appcontext
+from flask_security.confirmable import confirm_user
 from flask_security.utils import hash_password
 from invenio_access.permissions import system_identity
 from invenio_accounts.proxies import current_datastore
 from invenio_communities import current_communities
 from invenio_db import db
 from invenio_records_resources.proxies import current_service_registry
+from invenio_users_resources.services.users.tasks import reindex_user
 
 from invenio_rdm_records.proxies import current_rdm_records, \
     current_rdm_records_service
@@ -38,9 +40,15 @@ def _get_or_create_user(email):
             user = current_datastore.create_user(
                 email=email,
                 password=hash_password("123456"),
-                active=True
+                active=True,
+                preferences=dict(
+                    visibility="public",
+                    email_visibility="public"
+                )
             )
+        confirm_user(user)
         db.session.commit()
+        reindex_user(user.id)
     return user
 
 
