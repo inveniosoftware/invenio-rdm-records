@@ -79,7 +79,8 @@ class DraftStatus(SystemField):
                 return self.review_to_draft_statuses[review.status]
             except KeyError:
                 raise ReviewStateError(
-                    _(f"Unknown draft status for review: {review.status}.")
+                    _("Unknown draft status for review: {reviewstatus}."
+                      .format(reviewstatus=review.status))
                 )
 
         raise RDMRecordsException(_("Unknown draft status."))
