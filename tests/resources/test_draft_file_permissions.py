@@ -14,22 +14,9 @@ Not every case is tested, but enough high-level ones for it to be useful.
 
 from io import BytesIO
 
-import flask_security
 import pytest
-from invenio_accounts.testutils import login_user_via_session
 
-
-def login_user(client, user):
-    """Log user in."""
-    flask_security.login_user(user, remember=True)
-    login_user_via_session(client, email=user.email)
-
-
-def logout_user(client):
-    """Log current user out."""
-    flask_security.logout_user()
-    with client.session_transaction() as session:
-        session.pop("user_id", None)
+from tests.helpers import login_user, logout_user
 
 
 def create_draft(client, record, headers):

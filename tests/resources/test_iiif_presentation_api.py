@@ -9,25 +9,10 @@
 
 from io import BytesIO
 
-import flask_security
-from invenio_accounts.testutils import login_user_via_session
 from PIL import Image
 from tripoli import IIIFValidator
 
-from invenio_rdm_records.proxies import current_rdm_records
-
-
-def login_user(client, user):
-    """Log user in."""
-    flask_security.login_user(user, remember=True)
-    login_user_via_session(client, email=user.email)
-
-
-def logout_user(client):
-    """Log current user out."""
-    flask_security.logout_user()
-    with client.session_transaction() as session:
-        session.pop("user_id", None)
+from tests.helpers import login_user, logout_user
 
 
 def publish_record_with_images(
