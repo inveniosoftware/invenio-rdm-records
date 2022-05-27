@@ -26,8 +26,11 @@ class OAIPMHSetDoesNotExistError(OAIPMHError):
     def __init__(self, query_arguments):
         """Initialise error."""
         super().__init__(
-            description=_("A set where {query_arguments} does not exist."
-            .format(query_arguments=query_arguments))
+            description=_(
+                "A set where {query_arguments} does not exist.".format(
+                    query_arguments=query_arguments
+                )
+            )
         )
 
 
@@ -37,8 +40,7 @@ class OAIPMHSetIDDoesNotExistError(OAIPMHError):
     def __init__(self, id):
         """Initialise error."""
         super().__init__(
-            description=_("A set with id {id} does not exist."
-            .format(id=id))
+            description=_("A set with id {id} does not exist.".format(id=id))
         )
 
 
@@ -48,6 +50,7 @@ class OAIPMHSetSpecAlreadyExistsError(OAIPMHError):
     def __init__(self, spec):
         """Initialise error."""
         super().__init__(
-            description=_("A set with spec '{spec}' already exists."
-            .format(spec=spec))
+            description=_(
+                "A set with spec '{spec}' already exists.".format(spec=spec)
+            )
         )
