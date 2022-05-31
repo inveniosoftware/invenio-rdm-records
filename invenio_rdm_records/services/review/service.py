@@ -9,6 +9,7 @@
 
 from flask import current_app
 from flask_babelex import lazy_gettext as _
+from invenio_communities.communities.records.systemfields.access import CommunityAccess
 from invenio_drafts_resources.services.records import RecordService
 from invenio_records_resources.services.uow import (
     RecordCommitOp,
@@ -19,7 +20,13 @@ from invenio_requests import current_request_type_registry, current_requests_ser
 from invenio_requests.resolvers.registry import ResolverRegistry
 from marshmallow import ValidationError
 
-from ..errors import ReviewExistsError, ReviewNotFoundError, ReviewStateError
+from ...records.systemfields.access.field.record import AccessStatusEnum
+from ..errors import (
+    ReviewExistsError,
+    ReviewInconsistentAccessRestrictions,
+    ReviewNotFoundError,
+    ReviewStateError,
+)
 
 
 class ReviewService(RecordService):
@@ -145,6 +152,19 @@ class ReviewService(RecordService):
         # Preconditions
         if draft.parent.review is None:
             raise ReviewNotFoundError()
+
+        # since it is submit review action, assume the receiver is community
+        resolved_community = draft.parent.review.receiver.resolve()
+
+        assert "restricted" in CommunityAccess.VISIBILITY_LEVELS
+        community_is_restricted = (
+            resolved_community["access"]["visibility"] == "restricted"
+        )
+
+        record_is_restricted = draft.access.status == AccessStatusEnum.RESTRICTED
+
+        if community_is_restricted and not record_is_restricted:
+            raise ReviewInconsistentAccessRestrictions()
 
         # All other preconditions can be checked by the action itself which can
         # raise appropriate exceptions.

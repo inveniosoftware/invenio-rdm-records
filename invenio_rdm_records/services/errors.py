@@ -40,3 +40,15 @@ class ReviewStateError(ReviewException):
 
 class ReviewExistsError(ReviewException):
     """Review exists - for operations which should when a review exists."""
+
+
+class ReviewInconsistentAccessRestrictions(ReviewException):
+    """Review has inconsistent record vs community access restrictions."""
+
+    def __init__(self, *args, **kwargs):
+        """Initialize exception."""
+        super().__init__(
+            _("Record submitted to restricted community cannot be public."),
+            *args,
+            **kwargs,
+        )

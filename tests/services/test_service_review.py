@@ -24,6 +24,7 @@ from invenio_rdm_records.records.api import RDMDraft
 from invenio_rdm_records.records.systemfields.draft_status import DraftStatus
 from invenio_rdm_records.services.errors import (
     ReviewExistsError,
+    ReviewInconsistentAccessRestrictions,
     ReviewNotFoundError,
     ReviewStateError,
 )
@@ -74,6 +75,36 @@ def draft(minimal_record, community, service, running_app, db):
 
     # Create draft with review
     return service.create(running_app.superuser_identity, minimal_record)
+
+
+@pytest.fixture()
+def public_draft_review_restricted(
+    minimal_record, restricted_community, service, running_app, db
+):
+    minimal_record["parent"] = {
+        "review": {
+            "type": "community-submission",
+            "receiver": {"community": restricted_community.data["id"]},
+        }
+    }
+
+    # Create draft with review
+    return service.create(running_app.superuser_identity, minimal_record)
+
+
+@pytest.fixture()
+def restricted_draft_review_restricted(
+    minimal_restricted_record, restricted_community, service, running_app, db
+):
+    minimal_restricted_record["parent"] = {
+        "review": {
+            "type": "community-submission",
+            "receiver": {"community": restricted_community.data["id"]},
+        }
+    }
+
+    # Create draft with review
+    return service.create(running_app.superuser_identity, minimal_restricted_record)
 
 
 #
@@ -209,6 +240,29 @@ def test_create_review_after_draft(running_app, community, service, minimal_reco
     # check draft status
     draft = service.read_draft(running_app.superuser_identity, draft.id).to_dict()
     assert draft["status"] == DraftStatus.review_to_draft_statuses[req["status"]]
+
+
+def test_submit_public_record_review_to_restricted_community(
+    running_app, public_draft_review_restricted, service
+):
+    """Test creation of review after draft was created."""
+    # Create draft
+    with pytest.raises(ReviewInconsistentAccessRestrictions):
+        req = service.review.submit(
+            running_app.superuser_identity, public_draft_review_restricted.id
+        ).to_dict()
+
+
+def test_submit_restricted_record_review_to_restricted_community(
+    running_app, restricted_draft_review_restricted, service
+):
+    """Test creation of review after draft was created."""
+    # Create draft
+    req = service.review.submit(
+        running_app.superuser_identity, restricted_draft_review_restricted.id
+    ).to_dict()
+    assert req["status"] == "submitted"
+    assert req["title"] == restricted_draft_review_restricted["metadata"]["title"]
 
 
 def test_create_when_already_published(minimal_record, running_app, community, service):
