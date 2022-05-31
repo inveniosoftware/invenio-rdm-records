@@ -542,6 +542,14 @@ def minimal_record():
     }
 
 
+@pytest.fixture(scope="function")
+def minimal_restricted_record(minimal_record):
+    """Data for restricted record."""
+    minimal_record["access"]["record"] = "restricted"
+    minimal_record["access"]["files"] = "restricted"
+    return minimal_record
+
+
 @pytest.fixture()
 def minimal_community():
     """Data for a minimal community."""
@@ -566,6 +574,21 @@ def minimal_community2():
             "visibility": "public",
         },
         "metadata": {"title": "Research Data Management", "type": {"id": "topic"}},
+    }
+
+
+@pytest.fixture(scope="function")
+def restricted_minimal_community():
+    """Data for a minimal community."""
+    return {
+        "slug": "restricted-blr",
+        "access": {
+            "visibility": "restricted",
+        },
+        "metadata": {
+            "title": "Biodiversity Literature Repository",
+            "type": {"id": "topic"},
+        },
     }
 
 
@@ -1238,6 +1261,19 @@ def community(running_app, community_type_record, curator, minimal_community):
     c = current_communities.service.create(
         curator.identity,
         minimal_community,
+    )
+    Community.index.refresh()
+    return c
+
+
+@pytest.fixture()
+def restricted_community(
+    running_app, community_type_record, curator, restricted_minimal_community
+):
+    """Get the current RDM records service."""
+    c = current_communities.service.create(
+        curator.identity,
+        restricted_minimal_community,
     )
     Community.index.refresh()
     return c
