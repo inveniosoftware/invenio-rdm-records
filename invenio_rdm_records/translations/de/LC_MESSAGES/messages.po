@@ -5,195 +5,247 @@
 # FIRST AUTHOR <EMAIL@ADDRESS>, 2022.
 # 
 # Translators:
-# Hermann Schranzhofer <hermann.schranzhofer@tugraz.at>, 2021
-# Alizee Pace <alizee.pace@gmail.com>, 2021
 # Tibor Simko <tibor.simko@cern.ch>, 2021
-# Mojib Wali <mojib.wali@tugraz.at>, 2021
-# chriz_uniba <christina.zeller@uni-bamberg.de>, 2021
 # Alexander Gruber <alexander.gruber@tugraz.at>, 2021
 # David Eckhard <dabombeeer@gmail.com>, 2022
+# Mojib Wali <mojib.wali@tugraz.at>, 2022
+# Alizee Pace <alizee.pace@gmail.com>, 2022
+# Hermann Schranzhofer <hermann.schranzhofer@tugraz.at>, 2022
+# chriz_uniba <christina.zeller@uni-bamberg.de>, 2022
 # 
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: invenio-rdm-records 0.34.4\n"
+"Project-Id-Version: invenio-rdm-records 0.35.16\n"
 "Report-Msgid-Bugs-To: info@inveniosoftware.org\n"
-"POT-Creation-Date: 2022-02-14 11:56+0100\n"
+"POT-Creation-Date: 2022-05-25 19:12+0200\n"
 "PO-Revision-Date: 2021-07-12 14:31+0000\n"
-"Last-Translator: David Eckhard <dabombeeer@gmail.com>, 2022\n"
+"Last-Translator: chriz_uniba <christina.zeller@uni-bamberg.de>, 2022\n"
 "Language-Team: German (https://www.transifex.com/inveniosoftware/teams/23537/de/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 2.9.1\n"
+"Generated-By: Babel 2.10.1\n"
 "Language: de\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: invenio_rdm_records/config.py:183 invenio_rdm_records/config.py:440
-#: invenio_rdm_records/config.py:449 invenio_rdm_records/config.py:470
-#: tests/conftest.py:244 tests/conftest.py:253
+#: invenio_rdm_records/config.py:178 invenio_rdm_records/config.py:435
+#: invenio_rdm_records/config.py:444 invenio_rdm_records/config.py:465
+#: tests/conftest.py:280 tests/conftest.py:289
 msgid "DOI"
 msgstr "DOI"
 
-#: invenio_rdm_records/config.py:452 tests/conftest.py:256
+#: invenio_rdm_records/config.py:447 tests/conftest.py:292
 msgid "OAI ID"
-msgstr "OAI ID"
+msgstr "OAI-ID"
 
-#: invenio_rdm_records/config.py:144
+#: invenio_rdm_records/config.py:139
 msgid "ORCID"
 msgstr "ORCID"
 
-#: invenio_rdm_records/config.py:149 invenio_rdm_records/config.py:268
+#: invenio_rdm_records/config.py:144 invenio_rdm_records/config.py:263
 msgid "ISNI"
 msgstr "ISNI"
 
-#: invenio_rdm_records/config.py:154
+#: invenio_rdm_records/config.py:149
 msgid "GND"
 msgstr "GND"
 
-#: invenio_rdm_records/config.py:159
+#: invenio_rdm_records/config.py:154
 msgid "ROR"
 msgstr "ROR"
 
-#: invenio_rdm_records/config.py:168
+#: invenio_rdm_records/config.py:163
 msgid "ARK"
 msgstr "ARK"
 
-#: invenio_rdm_records/config.py:173
+#: invenio_rdm_records/config.py:168
 msgid "arXiv"
 msgstr "arXiv"
 
-#: invenio_rdm_records/config.py:178
+#: invenio_rdm_records/config.py:173
 msgid "Bibcode"
 msgstr "Bibcode"
 
-#: invenio_rdm_records/config.py:188
+#: invenio_rdm_records/config.py:183
 msgid "EAN13"
 msgstr "EAN13"
 
-#: invenio_rdm_records/config.py:193
+#: invenio_rdm_records/config.py:188
 msgid "EISSN"
 msgstr "EISSN"
 
-#: invenio_rdm_records/config.py:198
+#: invenio_rdm_records/config.py:193
 msgid "Handle"
 msgstr "Handle"
 
-#: invenio_rdm_records/config.py:203
+#: invenio_rdm_records/config.py:198
 msgid "IGSN"
 msgstr "IGSN"
 
-#: invenio_rdm_records/config.py:208
+#: invenio_rdm_records/config.py:203
 msgid "ISBN"
 msgstr "ISBN"
 
-#: invenio_rdm_records/config.py:213
+#: invenio_rdm_records/config.py:208
 msgid "ISSN"
 msgstr "ISSN"
 
-#: invenio_rdm_records/config.py:218
+#: invenio_rdm_records/config.py:213
 msgid "ISTC"
 msgstr "ISTC"
 
-#: invenio_rdm_records/config.py:223
+#: invenio_rdm_records/config.py:218
 msgid "LISSN"
 msgstr "LISSN"
 
-#: invenio_rdm_records/config.py:228
+#: invenio_rdm_records/config.py:223
 msgid "LSID"
 msgstr "LSID"
 
-#: invenio_rdm_records/config.py:233
+#: invenio_rdm_records/config.py:228
 msgid "PMID"
 msgstr "PMID"
 
-#: invenio_rdm_records/config.py:238
+#: invenio_rdm_records/config.py:233
 msgid "PURL"
 msgstr "PURL"
 
-#: invenio_rdm_records/config.py:243
+#: invenio_rdm_records/config.py:238
 msgid "UPC"
 msgstr "UPC"
 
-#: invenio_rdm_records/config.py:248
+#: invenio_rdm_records/config.py:243
 msgid "URL"
 msgstr "URL"
 
-#: invenio_rdm_records/config.py:253
+#: invenio_rdm_records/config.py:248
 msgid "URN"
 msgstr "URN"
 
-#: invenio_rdm_records/config.py:258
+#: invenio_rdm_records/config.py:253
 msgid "W3ID"
 msgstr "W3ID"
 
-#: invenio_rdm_records/config.py:272
+#: invenio_rdm_records/config.py:267
 msgid "GRID"
 msgstr "GRID"
 
-#: invenio_rdm_records/config.py:276
+#: invenio_rdm_records/config.py:271
 msgid "Crossref Funder ID"
 msgstr "Crossref Funder ID"
 
-#: invenio_rdm_records/config.py:280
+#: invenio_rdm_records/config.py:275
 msgid "Other"
 msgstr "Andere"
 
-#: invenio_rdm_records/config.py:286
+#: invenio_rdm_records/config.py:281
 msgid "Wikidata"
 msgstr "Wikidata"
 
-#: invenio_rdm_records/config.py:290
+#: invenio_rdm_records/config.py:285
 msgid "GeoNames"
 msgstr "GeoNames"
 
-#: invenio_rdm_records/config.py:360
+#: invenio_rdm_records/config.py:355
 msgid "Best match"
 msgstr "Höchste Übereinstimmung"
 
-#: invenio_rdm_records/config.py:364
+#: invenio_rdm_records/config.py:359
 msgid "Newest"
 msgstr "Neuester"
 
-#: invenio_rdm_records/config.py:368
+#: invenio_rdm_records/config.py:363
 msgid "Oldest"
 msgstr "Ältester"
 
-#: invenio_rdm_records/config.py:372
+#: invenio_rdm_records/config.py:367
 msgid "Version"
 msgstr "Version"
 
-#: invenio_rdm_records/config.py:376
+#: invenio_rdm_records/config.py:371
 msgid "Recently updated"
 msgstr "Kürzlich aktualisiert"
 
-#: invenio_rdm_records/config.py:380
+#: invenio_rdm_records/config.py:375
 msgid "Least recently updated"
 msgstr "Am wenigsten aktuell"
 
-#: invenio_rdm_records/config.py:477
+#: invenio_rdm_records/config.py:472
 msgid "OAI"
 msgstr "OAI"
 
-#: invenio_rdm_records/ext.py:56
+#: invenio_rdm_records/ext.py:61
 msgid "Your shared link has expired."
 msgstr "Ihr freigegebener Link ist abgelaufen."
 
-#: invenio_rdm_records/requests/community_submission.py:140
+#: invenio_rdm_records/oaiserver/services/config.py:34
+msgid "Ascending"
+msgstr "Aufsteigend"
+
+#: invenio_rdm_records/oaiserver/services/config.py:38
+msgid "Descending"
+msgstr "Absteigend"
+
+#: invenio_rdm_records/oaiserver/services/config.py:45
+msgid "Name"
+msgstr "Name"
+
+#: invenio_rdm_records/oaiserver/services/config.py:49
+msgid "Spec"
+msgstr "\"Spec\""
+
+#: invenio_rdm_records/oaiserver/services/config.py:53
+msgid "Created"
+msgstr "Erstellt"
+
+#: invenio_rdm_records/oaiserver/services/config.py:57
+msgid "Updated"
+msgstr "Aktualisiert"
+
+#: invenio_rdm_records/oaiserver/services/errors.py:30
+msgid "A set where {query_arguments} does not exist."
+msgstr "Ein OAI-PMH-set mit {query_arguments} existiert nicht."
+
+#: invenio_rdm_records/oaiserver/services/errors.py:41
+msgid "A set with id {id} does not exist."
+msgstr "Ein OAI-PMH-set mit der ID {id} existiert nicht."
+
+#: invenio_rdm_records/oaiserver/services/errors.py:52
+msgid "A set with spec '{spec}' already exists."
+msgstr "Ein OAI-PMH-set mit der Spezifikation '{spec}' existiert bereits."
+
+#: invenio_rdm_records/oaiserver/services/services.py:71
+msgid "The spec must not start with '{prefix}'"
+msgstr "Die \"Spec\" darf nicht mit '{prefix}' beginnen."
+
+#: invenio_rdm_records/oaiserver/services/services.py:80
+msgid "The spec should only consist of letters, numbers or {marks}"
+msgstr "Die \"Spec\" darf nur Buchstaben, Zahlen und {marks} enthalten."
+
+#: invenio_rdm_records/records/systemfields/draft_status.py:83
+msgid "Unknown draft status for review: {reviewstatus}."
+msgstr "Unbekannter Entwurfsstatus zur Begutachtung: {reviewstatus}."
+
+#: invenio_rdm_records/records/systemfields/draft_status.py:86
+msgid "Unknown draft status."
+msgstr "Unbekannter Entwurfsstatus."
+
+#: invenio_rdm_records/requests/community_submission.py:132
 msgid "Community submission"
 msgstr "Community Einreichung"
 
-#: invenio_rdm_records/resources/config.py:93
+#: invenio_rdm_records/resources/config.py:97
 msgid "Citation string style not found."
 msgstr "Zitierungsstil nicht gefunden."
 
-#: invenio_rdm_records/resources/config.py:99
+#: invenio_rdm_records/resources/config.py:103
 msgid "Review for draft not found"
-msgstr "Rezension für Entwurf nicht gefunden"
+msgstr "Begutachtung für den Entwurf nicht gefunden."
 
-#: invenio_rdm_records/resources/serializers/datacite/schema.py:275
+#: invenio_rdm_records/resources/serializers/datacite/schema.py:247
 msgid "Invalid publication date value."
-msgstr "Ungültiger Wert für das Veröffentlichungsdatum."
+msgstr "Ungültiges Veröffentlichungsdatum."
 
 #: invenio_rdm_records/resources/serializers/ui/fields.py:35
 #: invenio_rdm_records/services/facets.py:24
@@ -213,7 +265,7 @@ msgstr "Eingeschränkt"
 #: invenio_rdm_records/resources/serializers/ui/fields.py:38
 #: invenio_rdm_records/services/facets.py:27
 msgid "Metadata-only"
-msgstr "Nur Metadaten"
+msgstr "Reiner-Metadateneintrag"
 
 #: invenio_rdm_records/resources/serializers/ui/fields.py:65
 msgid "The record and files are publicly accessible."
@@ -232,7 +284,8 @@ msgstr ""
 
 #: invenio_rdm_records/resources/serializers/ui/fields.py:77
 msgid "The record and files are restricted to users with access."
-msgstr "Der Eintrag und die Dateien sind auf Benutzer mit Zugriff beschränkt."
+msgstr ""
+"Der Eintrag und die Dateien sind auf BenutzerInnen mit Zugriff beschränkt."
 
 #: invenio_rdm_records/resources/serializers/ui/fields.py:83
 #, python-format
@@ -241,7 +294,7 @@ msgstr "Der Eintrag wird am %(date)s öffentlich zugänglich gemacht. "
 
 #: invenio_rdm_records/resources/serializers/ui/fields.py:86
 msgid "The record is restricted to users with access."
-msgstr "Der Eintrag ist auf Benutzer mit Zugriff beschränkt."
+msgstr "Der Eintrag ist auf BenutzerInnen mit Zugriff beschränkt."
 
 #: invenio_rdm_records/resources/serializers/ui/fields.py:91
 #, python-format
@@ -253,12 +306,12 @@ msgid ""
 "The record is publicly accessible, but files are restricted to users with "
 "access."
 msgstr ""
-"Der Eintrag ist öffentlich zugänglich, aber die Dateien sind auf Benutzer "
-"mit Zugriff beschränkt."
+"Der Eintrag ist öffentlich zugänglich, aber die Dateien sind auf "
+"BenutzerInnen mit Zugriff beschränkt."
 
 #: invenio_rdm_records/services/errors.py:36
 msgid "Review not found."
-msgstr "Rezension nicht gefunden."
+msgstr "Begutachtung nicht gefunden."
 
 #: invenio_rdm_records/services/facets.py:22
 msgid "Access status"
@@ -287,15 +340,15 @@ msgstr "Arten von Ressourcen"
 #: invenio_rdm_records/services/facets.py:58
 #: invenio_rdm_records/services/facets.py:64
 msgid "Subjects"
-msgstr "Themen"
+msgstr "Schlagworte"
 
 #: invenio_rdm_records/services/components/review.py:37
 msgid ""
 "You cannot delete a draft with an open review. Please cancel the review "
 "first."
 msgstr ""
-"Ein Entwurf mit einer ausstehenden Rezension kann nicht gelöscht werden. "
-"Bitte brechen Sie die Rezension zuerst ab."
+"Ein Entwurf mit einer ausstehenden Begutachtung kann nicht gelöscht werden. "
+"Bitte brechen Sie die Begutachtung zuerst ab."
 
 #: invenio_rdm_records/services/pids/manager.py:81
 msgid "Invalid {scheme}"
@@ -307,12 +360,12 @@ msgstr "Es existiert bereits ein PID vom Typ {scheme}"
 
 #: invenio_rdm_records/services/pids/manager.py:142
 msgid "External identifier value is required."
-msgstr "Wert für externen Kennzeichner ist erforderlich."
+msgstr "Externe Kennung ist ein Pflichtfeld."
 
 #: invenio_rdm_records/services/pids/manager.py:180
 #: invenio_rdm_records/services/pids/manager.py:209
 msgid "PID not found for type {scheme}"
-msgstr "PID vom Typ {scheme} nicht gefunden"
+msgstr "PID für Typ {scheme} nicht gefunden."
 
 #: invenio_rdm_records/services/pids/manager.py:226
 msgid "Cannot discard a reserved or registered persistent identifier."
@@ -326,36 +379,36 @@ msgstr "{pid_type}:{identifier} existiert bereits."
 
 #: invenio_rdm_records/services/pids/providers/external.py:41
 msgid "The prefix '{prefix}' is administrated locally."
-msgstr "Präfix \"{prefix}\" wird lokal verwaltet."
+msgstr "Das Präfix \"{prefix}\" wird lokal verwaltet."
 
 #: invenio_rdm_records/services/pids/providers/external.py:79
 msgid "Missing {scheme} for required field."
-msgstr "Fehlende {scheme} für Pflichtfeld."
+msgstr "Fehlender {scheme} für Pflichtfeld."
 
-#: invenio_rdm_records/services/review/service.py:48
+#: invenio_rdm_records/services/review/service.py:49
 msgid "A review already exists for this record"
-msgstr "Für diesen Eintrag existiert bereits eine Rezension"
+msgstr "Für diesen Eintrag existiert bereits eine Begutachtung."
 
-#: invenio_rdm_records/services/review/service.py:52
+#: invenio_rdm_records/services/review/service.py:53
 msgid "You cannot create a review for an already published record."
 msgstr ""
-"Für einen bereits veröffentlichten Eintrag kann keine Rezension erstellt "
+"Für einen bereits veröffentlichten Eintrag kann keine Begutachtung erstellt "
 "werden."
 
-#: invenio_rdm_records/services/review/service.py:60
+#: invenio_rdm_records/services/review/service.py:62
 msgid "Invalid review type."
-msgstr "Ungültiger Rezensions-Typ."
+msgstr "Ungültiger Begutachtungtyp."
 
-#: invenio_rdm_records/services/review/service.py:119
+#: invenio_rdm_records/services/review/service.py:121
 msgid ""
 "You cannot delete a review for a draft that has already been published."
 msgstr ""
-"Eine Rezension für einen bereits veröffentlichten Entwurf kann nicht "
+"Eine Begutachtung für einen bereits veröffentlichten Eintrag kann nicht "
 "gelöscht werden."
 
-#: invenio_rdm_records/services/review/service.py:127
+#: invenio_rdm_records/services/review/service.py:126
 msgid "An open review cannot be deleted."
-msgstr "Eine offene Rezension kann nicht gelöscht werden."
+msgstr "Eine offene Begutachtung kann nicht gelöscht werden."
 
 #: invenio_rdm_records/services/schemas/__init__.py:31
 msgid "Invalid persistent identifier scheme."
@@ -364,58 +417,49 @@ msgstr "Ungültiges Schema für permanente Kennung."
 #: invenio_rdm_records/services/schemas/access.py:40
 msgid "Embargo end date must be set to a future date."
 msgstr ""
-"Das Enddatum für die Sperre muss auf ein zukünftiges Datum gesetzt werden."
+"Das Enddatum für das Embargo muss auf ein zukünftiges Datum gesetzt werden."
 
 #: invenio_rdm_records/services/schemas/access.py:49
 msgid "Embargo end date must be unset or in the past."
 msgstr ""
-"Das Enddatum für die Sperre muss entweder nicht gesetzt sein oder in der "
+"Das Enddatum für das Embargo muss entweder nicht gesetzt sein oder in der "
 "Vergangenheit liegen."
 
 #: invenio_rdm_records/services/schemas/access.py:66
 msgid "'{field_name}' must be either 'public' or 'restricted'"
-msgstr "'{field_name}' muss entweder 'öffentlich' oder 'beschränkt' sein"
+msgstr "'{field_name}' muss entweder \"Öffentlich\" oder \"Eingeschränkt\" sein."
 
-#: invenio_rdm_records/services/schemas/metadata.py:60
+#: invenio_rdm_records/services/schemas/metadata.py:65
 msgid "Only one value is accepted."
 msgstr "Es wird nur ein Wert akzeptiert."
 
-#: invenio_rdm_records/services/schemas/metadata.py:62
+#: invenio_rdm_records/services/schemas/metadata.py:67
 msgid "Not a valid locale."
 msgstr "Keine gültiges Gebietsschema."
 
-#: invenio_rdm_records/services/schemas/metadata.py:85
-msgid "An existing id or a free text name must be present"
-msgstr "Es muss eine vorhandene ID oder ein Freitextname vorhanden sein"
-
-#: invenio_rdm_records/services/schemas/metadata.py:109
-msgid "An existing id or a free text subject must be present"
-msgstr "Eine vorhandene ID oder ein Freitext-Betreff muss vorhanden sein"
-
-#: invenio_rdm_records/services/schemas/metadata.py:126
-#: invenio_rdm_records/services/schemas/metadata.py:132
+#: invenio_rdm_records/services/schemas/metadata.py:82
+#: invenio_rdm_records/services/schemas/metadata.py:88
 msgid "Invalid value. Choose one of {NAMES}."
-msgstr "Ungültiger Wert. Wählen Sie einen von {NAMEN}."
+msgstr "Ungültiger Wert. Wählen Sie aus {NAMEN}."
 
-#: invenio_rdm_records/services/schemas/metadata.py:154
+#: invenio_rdm_records/services/schemas/metadata.py:110
 msgid "Family name must be filled."
-msgstr "Der Familienname muss ausgefüllt werden."
+msgstr "Der Familienname darf nicht leer sein."
 
-#: invenio_rdm_records/services/schemas/metadata.py:161
-#: invenio_rdm_records/services/schemas/metadata.py:319
+#: invenio_rdm_records/services/schemas/metadata.py:117
 msgid "Name cannot be blank."
-msgstr "Name kann nicht leer sein."
+msgstr "Der Name darf nicht leer sein."
 
-#: invenio_rdm_records/services/schemas/metadata.py:236
-#: invenio_rdm_records/services/schemas/metadata.py:249
+#: invenio_rdm_records/services/schemas/metadata.py:192
+#: invenio_rdm_records/services/schemas/metadata.py:206
 msgid "Not a valid URL."
 msgstr "Keine gültige URL."
 
-#: invenio_rdm_records/services/schemas/metadata.py:270
+#: invenio_rdm_records/services/schemas/metadata.py:227
 msgid "An existing id or a free text title must be present"
 msgstr "Es muss eine vorhandene ID oder ein Freitextname vorhanden sein"
 
-#: invenio_rdm_records/services/schemas/metadata.py:275
+#: invenio_rdm_records/services/schemas/metadata.py:232
 msgid ""
 "Only an existing id or free text title/description/link is accepted, but not"
 " both cases at the same time"
@@ -423,50 +467,38 @@ msgstr ""
 "Entweder eine vorhandene ID oder Freitext Titel/Beschreibung/Link wird "
 "akzeptiert, jedoch nicht beides zusammen."
 
-#: invenio_rdm_records/services/schemas/metadata.py:330
-msgid "Title cannot be blank."
-msgstr "Titel kann nicht leer sein."
-
-#: invenio_rdm_records/services/schemas/metadata.py:334
-msgid "Number cannot be blank."
-msgstr "Zahl kann nicht leer sein."
-
-#: invenio_rdm_records/services/schemas/metadata.py:353
-msgid "At least award or funder should be present."
-msgstr "Zumindest Auftraggeber oder Geldgeber sollte vorhanden sein."
-
-#: invenio_rdm_records/services/schemas/metadata.py:391
+#: invenio_rdm_records/services/schemas/metadata.py:311
 msgid ""
 "At least one of ['geometry', 'place',                 'identifiers', "
 "'description'] shold be present."
 msgstr ""
-"Mindestens eines von ['geometry', 'place', 'identifiers', 'description'] "
-"muss vorhanden sein."
+"Mindestens eines der folgenden Felder muss vorhanden sein: ['geometry', "
+"'place', 'identifiers', 'description']"
 
-#: invenio_rdm_records/services/schemas/metadata.py:411
+#: invenio_rdm_records/services/schemas/metadata.py:331
 msgid "Missing data for required field."
 msgstr "Fehlende Daten für Pflichtfeld."
 
-#: invenio_rdm_records/services/schemas/metadata.py:429
+#: invenio_rdm_records/services/schemas/metadata.py:349
 msgid "Size cannot be a blank string."
-msgstr "Größe kann keine leere Zeichenkette sein."
+msgstr "Die Größe darf keine leere Zeichenkette sein."
 
-#: invenio_rdm_records/services/schemas/metadata.py:431
+#: invenio_rdm_records/services/schemas/metadata.py:351
 msgid "Format cannot be a blank string."
-msgstr "Format kann keine leere Zeichenkette sein."
+msgstr "Das Format darf keine leere Zeichenkette sein."
 
 #: invenio_rdm_records/services/secret_links/service.py:71
 #: invenio_rdm_records/services/secret_links/service.py:103
 msgid "Expiration date must be set to the future"
-msgstr "Ablaufdatum muss in der Zukunft liegen"
+msgstr "Das Ablaufdatum muss in der Zukunft liegen."
 
 #: invenio_rdm_records/services/secret_links/service.py:97
 msgid "Cannot postpone expiration of links"
-msgstr "Ablauf von Links kann nicht verschoben werden"
+msgstr "Das Ablaufdatum von Links kann nicht verändert werden."
 
 #: invenio_rdm_records/services/secret_links/service.py:133
 msgid "An access permission level is required"
-msgstr "Eine Zugriffsberechtigungsstufe ist erforderlich"
+msgstr "Eine Zugriffsberechtigungsstufe ist erforderlich."
 
 #: invenio_rdm_records/services/secret_links/service.py:146
 msgid "Invalid access permission level."
