@@ -8,7 +8,6 @@
 # it under the terms of the MIT License; see LICENSE file for more details.
 
 """RDM record schemas."""
-
 from functools import partial
 from urllib import parse
 
@@ -21,6 +20,7 @@ from invenio_vocabularies.contrib.funders.schema import FunderRelationSchema
 from invenio_vocabularies.contrib.subjects.schema import SubjectRelationSchema
 from marshmallow import Schema, ValidationError, fields, post_load, validate, \
     validates, validates_schema
+from marshmallow.fields import List
 from marshmallow_utils.fields import EDTFDateString, IdentifierSet, \
     SanitizedHTML, SanitizedUnicode
 from marshmallow_utils.schemas import GeometryObjectSchema, IdentifierSchema
@@ -340,7 +340,7 @@ class MetadataSchema(Schema):
     dates = fields.List(fields.Nested(DateSchema))
     languages = fields.List(fields.Nested(VocabularySchema))
     # alternate identifiers
-    identifiers = IdentifierSet(
+    identifiers = List(
         fields.Nested(partial(
             IdentifierSchema, allowed_schemes=record_identifiers_schemes))
     )
@@ -356,3 +356,15 @@ class MetadataSchema(Schema):
     locations = fields.Nested(FeatureSchema)
     funding = fields.List(fields.Nested(FundingSchema))
     references = fields.List(fields.Nested(ReferenceSchema))
+
+    @validates('identifiers')
+    def validate_non_duplicated_schemes(self, data, **kwargs):
+        """Checks for duplicated schemes in identifiers."""
+        schemes = [identifier["scheme"] for identifier in data]
+        if not len(data) == len(set(schemes)):
+            raise ValidationError(
+                {
+                    'identifiers':
+                        _('Only one identifier per scheme is allowed.')
+                }
+            )
