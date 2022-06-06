@@ -52,7 +52,7 @@ if [[ ${keep_services} -eq 0 ]]; then
 fi
 
 export LC_TIME=en_US.UTF-8
-python -m check_manifest --ignore ".*-requirements.txt"
+python -m check_manifest
 python -m sphinx.cmd.build -qnNW docs docs/_build/html
 eval "$(docker-services-cli up --db ${DB:-postgresql} --search ${SEARCH:-elasticsearch} --mq ${MQ:-redis} --env)"
 # Note: expansion of pytest_args looks like below to not cause an unbound
