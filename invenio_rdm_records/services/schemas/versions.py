@@ -7,8 +7,9 @@
 
 """RDM record schemas."""
 
-from invenio_drafts_resources.services.records.schema import \
-    VersionsSchema as VersionsSchemaBase
+from invenio_drafts_resources.services.records.schema import (
+    VersionsSchema as VersionsSchemaBase,
+)
 from marshmallow_utils.permissions import FieldPermissionsMixin
 
 

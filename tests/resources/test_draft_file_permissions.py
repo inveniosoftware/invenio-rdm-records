@@ -24,15 +24,13 @@ def create_draft(client, record, headers):
     record["files"] = {"enabled": True}
     response = client.post("/records", json=record, headers=headers)
     assert response.status_code == 201
-    return response.json['id']
+    return response.json["id"]
 
 
 def init_file(client, recid, headers):
     """Init a file for draft with given recid."""
     return client.post(
-        f'/records/{recid}/draft/files',
-        headers=headers,
-        json=[{'key': 'test.pdf'}]
+        f"/records/{recid}/draft/files", headers=headers, json=[{"key": "test.pdf"}]
     )
 
 
@@ -41,23 +39,21 @@ def upload_file(client, recid):
     return client.put(
         f"/records/{recid}/draft/files/test.pdf/content",
         headers={
-            'content-type': 'application/octet-stream',
-            'accept': 'application/json',
+            "content-type": "application/octet-stream",
+            "accept": "application/json",
         },
-        data=BytesIO(b'testfile'),
+        data=BytesIO(b"testfile"),
     )
 
 
 def commit_file(client, recid, headers):
     """Create draft and return its id."""
-    return client.post(
-        f"/records/{recid}/draft/files/test.pdf/commit",
-        headers=headers
-    )
+    return client.post(f"/records/{recid}/draft/files/test.pdf/commit", headers=headers)
 
 
 def test_only_owners_can_init_file_upload(
-        client, headers, running_app, minimal_record, users):
+    client, headers, running_app, minimal_record, users
+):
     login_user(client, users[0])
 
     recid = create_draft(client, minimal_record, headers)
@@ -80,7 +76,8 @@ def test_only_owners_can_init_file_upload(
 
 
 def test_only_owners_can_upload_file(
-        client, headers, running_app, minimal_record, users):
+    client, headers, running_app, minimal_record, users
+):
     login_user(client, users[0])
 
     recid = create_draft(client, minimal_record, headers)
@@ -104,7 +101,8 @@ def test_only_owners_can_upload_file(
 
 
 def test_only_owners_can_commit_file(
-        client, headers, running_app, minimal_record, users):
+    client, headers, running_app, minimal_record, users
+):
     login_user(client, users[0])
 
     recid = create_draft(client, minimal_record, headers)
@@ -140,9 +138,8 @@ def create_draft_w_file(client, record, headers):
     return recid
 
 
-@pytest.fixture(scope='function')
-def draft_w_restricted_file(
-        client, headers, running_app, minimal_record, users):
+@pytest.fixture(scope="function")
+def draft_w_restricted_file(client, headers, running_app, minimal_record, users):
     # Login
     login_user(client, users[0])
 
@@ -159,7 +156,7 @@ def draft_w_restricted_file(
     return recid
 
 
-@pytest.fixture(scope='function')
+@pytest.fixture(scope="function")
 def draft_w_public_file(client, headers, running_app, minimal_record, users):
     # Login
     login_user(client, users[0])
@@ -174,7 +171,8 @@ def draft_w_public_file(client, headers, running_app, minimal_record, users):
 
 
 def test_only_owners_can_list_restricted_files(
-        client, headers, draft_w_restricted_file, users):
+    client, headers, draft_w_restricted_file, users
+):
     recid = draft_w_restricted_file
     url = f"/records/{recid}/draft/files"
 
@@ -195,7 +193,8 @@ def test_only_owners_can_list_restricted_files(
 
 
 def test_only_owners_can_read_restricted_file_metadata(
-        client, headers, draft_w_restricted_file, users):
+    client, headers, draft_w_restricted_file, users
+):
     recid = draft_w_restricted_file
     url = f"/records/{recid}/draft/files/test.pdf"
 
@@ -216,7 +215,8 @@ def test_only_owners_can_read_restricted_file_metadata(
 
 
 def test_only_owners_can_download_restricted_file(
-        client, headers, draft_w_restricted_file, users):
+    client, headers, draft_w_restricted_file, users
+):
     recid = draft_w_restricted_file
     url = f"/records/{recid}/draft/files/test.pdf/content"
 
@@ -236,14 +236,12 @@ def test_only_owners_can_download_restricted_file(
     assert response.status_code == 200
 
 
-def test_only_owners_can_import_files(
-        client, headers, draft_w_public_file, users):
+def test_only_owners_can_import_files(client, headers, draft_w_public_file, users):
     recid = draft_w_public_file
 
     # Login with owner and publish draft with files
     login_user(client, users[0])
-    response = client.post(
-        f"/records/{recid}/draft/actions/publish", headers=headers)
+    response = client.post(f"/records/{recid}/draft/actions/publish", headers=headers)
     assert response.status_code == 202
     assert response.json["id"] == recid
     assert response.json["is_published"] is True
@@ -281,8 +279,7 @@ def test_only_owners_can_import_files(
     assert response.json["entries"][0]["key"] == "test.pdf"
 
 
-def test_only_owners_can_delete_file(
-        client, headers, draft_w_public_file, users):
+def test_only_owners_can_delete_file(client, headers, draft_w_public_file, users):
     recid = draft_w_public_file
     url = f"/records/{recid}/draft/files/test.pdf"
 
@@ -302,8 +299,7 @@ def test_only_owners_can_delete_file(
     assert response.status_code == 204
 
 
-def test_only_owners_can_delete_all_files(
-        client, headers, draft_w_public_file, users):
+def test_only_owners_can_delete_all_files(client, headers, draft_w_public_file, users):
     recid = draft_w_public_file
     url = f"/records/{recid}/draft/files"
 
@@ -324,7 +320,8 @@ def test_only_owners_can_delete_all_files(
 
 
 def test_only_owners_can_update_file_options(
-        client, headers, draft_w_public_file, minimal_record, users):
+    client, headers, draft_w_public_file, minimal_record, users
+):
     recid = draft_w_public_file
     url = f"/records/{recid}/draft"
     minimal_record["files"] = {
@@ -350,7 +347,8 @@ def test_only_owners_can_update_file_options(
 
 
 def test_only_owners_can_list_draft_w_public_files(
-        client, headers, draft_w_public_file, users):
+    client, headers, draft_w_public_file, users
+):
     # Indeed drafts should only be seen by their owners (+ shared with soon)
     recid = draft_w_public_file
     url = f"/records/{recid}/draft/files"

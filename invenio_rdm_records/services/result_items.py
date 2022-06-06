@@ -10,24 +10,24 @@
 
 from flask import current_app
 from flask_babelex import lazy_gettext as _
-from invenio_records_resources.services.base.results import \
-    ServiceItemResult, ServiceListResult
+from invenio_records_resources.services.base.results import (
+    ServiceItemResult,
+    ServiceListResult,
+)
 from marshmallow_utils.links import LinksFactory
 
 
 def _current_host():
     """Function used to provide the current hostname to the link store."""
     if current_app:
-        return current_app.config['SITE_API_URL']
+        return current_app.config["SITE_API_URL"]
     return None
 
 
 class SecretLinkItem(ServiceItemResult):
     """Single link result."""
 
-    def __init__(
-        self, service, identity, link, errors=None, links_config=None
-    ):
+    def __init__(self, service, identity, link, errors=None, links_config=None):
         """Constructor."""
         self._errors = errors
         self._identity = identity
@@ -55,7 +55,7 @@ class SecretLinkItem(ServiceItemResult):
                 # TODO is this required in any way?
                 links_namespace="secret_link",
                 links_factory=links,
-            )
+            ),
         )
 
         return self._data
@@ -100,7 +100,7 @@ class SecretLinkList(ServiceListResult):
                     identity=self._identity,
                     links_namespace="secret_link",
                     links_factory=links,
-                )
+                ),
             )
             yield projection
 

@@ -37,8 +37,8 @@ def test_community_integration(db, c, running_app, minimal_record):
     record.parent.communities.add(c, default=True)
     record.parent.commit()
     record.commit()
-    assert record.dumps()['parent']['communities'] == {
-        'default': str(c.id),
-        'ids': [str(c.id)],
+    assert record.dumps()["parent"]["communities"] == {
+        "default": str(c.id),
+        "ids": [str(c.id)],
     }
     db.session.commit()

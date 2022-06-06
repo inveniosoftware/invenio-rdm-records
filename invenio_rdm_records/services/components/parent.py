@@ -10,8 +10,7 @@
 """RDM service component for access integration in parent records."""
 
 
-from invenio_drafts_resources.services.records.components import \
-    ServiceComponent
+from invenio_drafts_resources.services.records.components import ServiceComponent
 from marshmallow import ValidationError
 
 

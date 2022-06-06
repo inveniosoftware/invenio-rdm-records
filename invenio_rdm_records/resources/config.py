@@ -12,19 +12,28 @@
 import marshmallow as ma
 from citeproc_styles import StyleNotFoundError
 from flask_babelex import lazy_gettext as _
-from flask_resources import HTTPJSONException, JSONSerializer, \
-    ResourceConfig, ResponseHandler, create_error_handler, \
-    resource_requestctx
+from flask_resources import (
+    HTTPJSONException,
+    JSONSerializer,
+    ResourceConfig,
+    ResponseHandler,
+    create_error_handler,
+    resource_requestctx,
+)
 from invenio_drafts_resources.resources import RecordResourceConfig
 from invenio_records.systemfields.relations import InvalidRelationValue
 from invenio_records_resources.resources.files import FileResourceConfig
 
-from ..services.errors import ReviewExistsError, ReviewNotFoundError, \
-    ReviewStateError
+from ..services.errors import ReviewExistsError, ReviewNotFoundError, ReviewStateError
 from .args import RDMSearchRequestArgsSchema
-from .serializers import CSLJSONSerializer, DataCite43JSONSerializer, \
-    DataCite43XMLSerializer, DublinCoreXMLSerializer, \
-    StringCitationSerializer, UIJSONSerializer
+from .serializers import (
+    CSLJSONSerializer,
+    DataCite43JSONSerializer,
+    DataCite43XMLSerializer,
+    DublinCoreXMLSerializer,
+    StringCitationSerializer,
+    UIJSONSerializer,
+)
 
 
 def csl_url_args_retriever():
@@ -40,15 +49,11 @@ def csl_url_args_retriever():
 record_serializers = {
     "application/json": ResponseHandler(JSONSerializer()),
     "application/vnd.inveniordm.v1+json": ResponseHandler(UIJSONSerializer()),
-    "application/vnd.citationstyles.csl+json": ResponseHandler(
-        CSLJSONSerializer()
-    ),
+    "application/vnd.citationstyles.csl+json": ResponseHandler(CSLJSONSerializer()),
     "application/vnd.datacite.datacite+json": ResponseHandler(
         DataCite43JSONSerializer()
     ),
-    "application/vnd.datacite.datacite+xml": ResponseHandler(
-        DataCite43XMLSerializer()
-    ),
+    "application/vnd.datacite.datacite+xml": ResponseHandler(DataCite43XMLSerializer()),
     "application/x-dc+xml": ResponseHandler(DublinCoreXMLSerializer()),
     "text/x-bibliography": ResponseHandler(
         StringCitationSerializer(url_args_retriever=csl_url_args_retriever),
@@ -120,7 +125,7 @@ class RDMRecordResourceConfig(RecordResourceConfig):
                 code=400,
                 description=exc.args[0],
             )
-        )
+        ),
     }
 
 
@@ -200,8 +205,7 @@ class IIIFResourceConfig(ResourceConfig):
         "canvas": "/<uuid>/canvas/<file_name>",
         "image_base": "/<uuid>",
         "image_info": "/<uuid>/info.json",
-        "image_api":
-        "/<uuid>/<region>/<size>/<rotation>/<quality>.<image_format>",
+        "image_api": "/<uuid>/<region>/<size>/<rotation>/<quality>.<image_format>",
     }
 
     request_view_args = {

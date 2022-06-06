@@ -16,8 +16,15 @@ import arrow
 import pytest
 
 from invenio_rdm_records.records import RDMRecord
-from invenio_rdm_records.records.systemfields.access import Embargo, Grant, \
-    Grants, Owner, Owners, Protection, RecordAccess
+from invenio_rdm_records.records.systemfields.access import (
+    Embargo,
+    Grant,
+    Grants,
+    Owner,
+    Owners,
+    Protection,
+    RecordAccess,
+)
 
 #
 # Protection
@@ -272,8 +279,7 @@ def test_access_field_on_record(running_app, minimal_record, parent, users):
     assert isinstance(rec.access.embargo, Embargo)
 
 
-def test_access_field_update_embargo(
-        running_app, minimal_record, parent, users):
+def test_access_field_update_embargo(running_app, minimal_record, parent, users):
     next_year = arrow.utcnow().datetime + timedelta(days=+365)
     minimal_record["access"]["embargo"] = {
         "until": next_year.strftime("%Y-%m-%d"),
@@ -327,8 +333,7 @@ def test_access_field_lift_embargo(minimal_record, parent):
     assert rec.access.embargo.active is False
 
 
-def test_access_field_update_protection(
-        running_app, minimal_record, parent, users):
+def test_access_field_update_protection(running_app, minimal_record, parent, users):
     minimal_record["access"]["record"] = "restricted"
     minimal_record["access"]["files"] = "restricted"
 
@@ -348,8 +353,7 @@ def test_access_field_update_protection(
 #
 
 
-def test_access_field_update_owners(
-        running_app, minimal_record, parent, users):
+def test_access_field_update_owners(running_app, minimal_record, parent, users):
     rec = RDMRecord.create(minimal_record.copy(), parent=parent)
     parent = rec.parent
     new_owner = {"user": 1337}

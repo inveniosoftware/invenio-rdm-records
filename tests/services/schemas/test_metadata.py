@@ -14,8 +14,7 @@ from marshmallow.fields import Bool, Integer, List
 from marshmallow_utils.fields import ISODateString, SanitizedUnicode
 
 from invenio_rdm_records.services.schemas.metadata import MetadataSchema
-from invenio_rdm_records.services.schemas.metadata_extensions import \
-    MetadataExtensions
+from invenio_rdm_records.services.schemas.metadata_extensions import MetadataExtensions
 
 
 @pytest.mark.skip()
@@ -23,85 +22,66 @@ def test_extensions(app, minimal_record):
     """Test metadata extensions schema."""
     # Setup metadata extensions
     RDM_RECORDS_METADATA_NAMESPACES = {
-        'dwc': {
-            '@context': 'https://example.com/dwc/terms'
-        },
-        'nubiomed': {
-            '@context': 'https://example.com/nubiomed/terms'
-        }
+        "dwc": {"@context": "https://example.com/dwc/terms"},
+        "nubiomed": {"@context": "https://example.com/nubiomed/terms"},
     }
 
     RDM_RECORDS_METADATA_EXTENSIONS = {
-        'dwc:family': {
-            'elasticsearch': 'keyword',
-            'marshmallow': SanitizedUnicode(required=True)
+        "dwc:family": {
+            "elasticsearch": "keyword",
+            "marshmallow": SanitizedUnicode(required=True),
         },
-        'dwc:behavior': {
-            'elasticsearch': 'text',
-            'marshmallow': SanitizedUnicode()
+        "dwc:behavior": {"elasticsearch": "text", "marshmallow": SanitizedUnicode()},
+        "nubiomed:number_in_sequence": {
+            "elasticsearch": "long",
+            "marshmallow": Integer(),
         },
-        'nubiomed:number_in_sequence': {
-            'elasticsearch': 'long',
-            'marshmallow': Integer()
+        "nubiomed:scientific_sequence": {
+            "elasticsearch": "long",
+            "marshmallow": List(Integer()),
         },
-        'nubiomed:scientific_sequence': {
-            'elasticsearch': 'long',
-            'marshmallow': List(Integer())
+        "nubiomed:original_presentation_date": {
+            "elasticsearch": "date",
+            "marshmallow": ISODateString(),
         },
-        'nubiomed:original_presentation_date': {
-            'elasticsearch': 'date',
-            'marshmallow': ISODateString()
-        },
-        'nubiomed:right_or_wrong': {
-            'elasticsearch': 'boolean',
-            'marshmallow': Bool()
-        }
+        "nubiomed:right_or_wrong": {"elasticsearch": "boolean", "marshmallow": Bool()},
     }
 
-    orig_metadata_extensions = (
-        app.extensions['invenio-rdm-records'].metadata_extensions
-    )
+    orig_metadata_extensions = app.extensions["invenio-rdm-records"].metadata_extensions
 
-    app.extensions['invenio-rdm-records'].metadata_extensions = (
-        MetadataExtensions(
-            RDM_RECORDS_METADATA_NAMESPACES,
-            RDM_RECORDS_METADATA_EXTENSIONS
-        )
+    app.extensions["invenio-rdm-records"].metadata_extensions = MetadataExtensions(
+        RDM_RECORDS_METADATA_NAMESPACES, RDM_RECORDS_METADATA_EXTENSIONS
     )
 
     # Minimal if not absent
-    valid_minimal = {
-        'dwc:family': 'Felidae'
-    }
-    minimal_record['extensions'] = valid_minimal
+    valid_minimal = {"dwc:family": "Felidae"}
+    minimal_record["extensions"] = valid_minimal
     data = MetadataSchema().load(minimal_record)
-    assert valid_minimal == data.get('extensions')
+    assert valid_minimal == data.get("extensions")
 
     # Full
     valid_full = {
-        'dwc:family': 'Felidae',
-        'dwc:behavior': 'Plays with yarn, sleeps in cardboard box.',
-        'nubiomed:number_in_sequence': 3,
-        'nubiomed:scientific_sequence': [1, 1, 2, 3, 5, 8],
-        'nubiomed:original_presentation_date': '2019-02-14',
-        'nubiomed:right_or_wrong': True,
+        "dwc:family": "Felidae",
+        "dwc:behavior": "Plays with yarn, sleeps in cardboard box.",
+        "nubiomed:number_in_sequence": 3,
+        "nubiomed:scientific_sequence": [1, 1, 2, 3, 5, 8],
+        "nubiomed:original_presentation_date": "2019-02-14",
+        "nubiomed:right_or_wrong": True,
     }
-    minimal_record['extensions'] = valid_full
+    minimal_record["extensions"] = valid_full
     data = MetadataSchema().load(minimal_record)
-    assert valid_full == data.get('extensions')
+    assert valid_full == data.get("extensions")
 
     # Invalid
     invalid_number_in_sequence = {
-        'dwc:family': 'Felidae',
-        'nubiomed:scientific_sequence': [1, 'l', 2, 3, 5, 8],
+        "dwc:family": "Felidae",
+        "nubiomed:scientific_sequence": [1, "l", 2, 3, 5, 8],
     }
-    minimal_record['extensions'] = invalid_number_in_sequence
+    minimal_record["extensions"] = invalid_number_in_sequence
     with pytest.raises(ValidationError):
         data = MetadataSchema().load(minimal_record)
 
-    app.extensions['invenio-rdm-records'].metadata_extensions = (
-        orig_metadata_extensions
-    )
+    app.extensions["invenio-rdm-records"].metadata_extensions = orig_metadata_extensions
 
 
 def test_full_metadata_schema(app, full_metadata):
@@ -112,9 +92,7 @@ def test_full_metadata_schema(app, full_metadata):
     assert data == full_metadata
 
 
-def test_minimal_metadata_schema(
-    app, minimal_metadata, expected_minimal_metadata
-):
+def test_minimal_metadata_schema(app, minimal_metadata, expected_minimal_metadata):
     metadata = MetadataSchema().load(minimal_metadata)
 
     assert expected_minimal_metadata == metadata

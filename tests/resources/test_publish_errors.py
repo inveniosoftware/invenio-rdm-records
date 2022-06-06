@@ -25,30 +25,27 @@ def save_partial_draft(client, partial_record, headers):
 
 
 def test_simple_field_error(
-        client_with_login, minimal_record, running_app, es_clear, headers
+    client_with_login, minimal_record, running_app, es_clear, headers
 ):
     client = client_with_login
     minimal_record["metadata"]["publication_date"] = ""
     response = save_partial_draft(client, minimal_record, headers)
-    recid = response.json['id']
+    recid = response.json["id"]
 
-    response = client.post(
-        f"/records/{recid}/draft/actions/publish",
-        headers=headers
-    )
+    response = client.post(f"/records/{recid}/draft/actions/publish", headers=headers)
 
     assert 400 == response.status_code
     expected = [
         {
             "field": "metadata.publication_date",
-            "messages": ["Missing data for required field."]
+            "messages": ["Missing data for required field."],
         },
     ]
     assert expected == response.json["errors"]
 
 
 def test_nested_field_error(
-        client_with_login, minimal_record, running_app, es_clear, headers
+    client_with_login, minimal_record, running_app, es_clear, headers
 ):
     client = client_with_login
     minimal_record["metadata"]["creators"] = [
@@ -65,21 +62,18 @@ def test_nested_field_error(
             "person_or_org": {
                 "type": "organizational",
             }
-        }
+        },
     ]
     response = save_partial_draft(client, minimal_record, headers)
-    recid = response.json['id']
+    recid = response.json["id"]
 
-    response = client.post(
-        f"/records/{recid}/draft/actions/publish",
-        headers=headers
-    )
+    response = client.post(f"/records/{recid}/draft/actions/publish", headers=headers)
 
     assert 400 == response.status_code
     expected = [
         {
             "field": "metadata.creators.1.person_or_org.name",
-            "messages": ["Name cannot be blank."]
+            "messages": ["Name cannot be blank."],
         }
     ]
     assert expected == response.json["errors"]
@@ -91,35 +85,28 @@ def test_multiple_errors(
 ):
     client = client_with_login
     minimal_record["metadata"]["publication_date"] = ""
-    minimal_record["metadata"]["additional_titles"] = [{
-        "title": "A Romans story",
-        "type": "invalid",
-        "lang": {
-            "id": "eng"
-        }
-    }]
+    minimal_record["metadata"]["additional_titles"] = [
+        {"title": "A Romans story", "type": "invalid", "lang": {"id": "eng"}}
+    ]
     response = save_partial_draft(client, minimal_record, headers)
-    recid = response.json['id']
+    recid = response.json["id"]
 
-    response = client.post(
-        f"/records/{recid}/draft/actions/publish",
-        headers=headers
-    )
+    response = client.post(f"/records/{recid}/draft/actions/publish", headers=headers)
 
     assert 400 == response.status_code
     errors = response.json["errors"]
     expected_errors = [
         {
             "field": "metadata.publication_date",
-            "messages": ["Missing data for required field."]
+            "messages": ["Missing data for required field."],
         },
         {
             "field": "metadata.additional_titles.0.type",
             "messages": [
                 "Invalid value. Choose one of ['alternativetitle', "
                 "'other', 'subtitle', 'translatedtitle']."
-            ]
-        }
+            ],
+        },
     ]
     assert len(expected_errors) == len(errors)
     assert all([e in errors for e in expected_errors])

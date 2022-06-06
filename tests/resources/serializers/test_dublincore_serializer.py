@@ -9,10 +9,11 @@
 
 import pytest
 
-from invenio_rdm_records.resources.serializers.dublincore import \
-    DublinCoreJSONSerializer, DublinCoreXMLSerializer
-from invenio_rdm_records.resources.serializers.errors import \
-    VocabularyItemNotFoundError
+from invenio_rdm_records.resources.serializers.dublincore import (
+    DublinCoreJSONSerializer,
+    DublinCoreXMLSerializer,
+)
+from invenio_rdm_records.resources.serializers.errors import VocabularyItemNotFoundError
 
 
 @pytest.fixture(scope="function")
@@ -54,8 +55,8 @@ def test_dublincorejson_serializer(running_app, updated_full_record):
             "info:eu-repo/semantics/embargoedAccess",
             "A custom license",
             "https://customlicense.org/licenses/by/4.0/",
-            'Creative Commons Attribution 4.0 International',
-            'https://creativecommons.org/licenses/by/4.0/legalcode',
+            "Creative Commons Attribution 4.0 International",
+            "https://creativecommons.org/licenses/by/4.0/legalcode",
         ],
     }
 
@@ -65,9 +66,7 @@ def test_dublincorejson_serializer(running_app, updated_full_record):
     assert serialized_record == expected_data
 
 
-def test_dublincorejson_serializer_minimal(
-    running_app, updated_minimal_record
-):
+def test_dublincorejson_serializer_minimal(running_app, updated_minimal_record):
     """Test serializer to Dublin Core JSON with minimal record"""
     expected_data = {
         "types": ["info:eu-repo/semantic/other"],
@@ -85,7 +84,7 @@ def test_dublincorejson_serializer_minimal(
 
 def test_vocabulary_type_error(running_app, updated_minimal_record):
     """Test error thrown on missing resource type."""
-    updated_minimal_record['metadata']['resource_type']['id'] = 'invalid'
+    updated_minimal_record["metadata"]["resource_type"]["id"] = "invalid"
 
     with pytest.raises(VocabularyItemNotFoundError):
         DublinCoreJSONSerializer().dump_one(updated_minimal_record)
@@ -110,8 +109,7 @@ def test_dublincorexml_serializer(running_app, updated_full_record):
         "<dc:rights>info:eu-repo/semantics/embargoedAccess</dc:rights>",
         "<dc:rights>A custom license</dc:rights>",
         "<dc:rights>https://customlicense.org/licenses/by/4.0/</dc:rights>",
-        "<dc:rights>Creative Commons Attribution 4.0 "
-        + "International</dc:rights>",
+        "<dc:rights>Creative Commons Attribution 4.0 " + "International</dc:rights>",
         "<dc:rights>https://creativecommons.org/licenses/by/4.0/legalcode"
         + "</dc:rights>",
         "<dc:title>InvenioRDM</dc:title>",
@@ -163,8 +161,7 @@ def test_dublincorexml_serializer_list(
         "<dc:rights>info:eu-repo/semantics/embargoedAccess</dc:rights>",
         "<dc:rights>A custom license</dc:rights>",
         "<dc:rights>https://customlicense.org/licenses/by/4.0/</dc:rights>",
-        "<dc:rights>Creative Commons Attribution 4.0 "
-        + "International</dc:rights>",
+        "<dc:rights>Creative Commons Attribution 4.0 " + "International</dc:rights>",
         "<dc:rights>https://creativecommons.org/licenses/by/4.0/legalcode"
         + "</dc:rights>",
         "<dc:title>InvenioRDM</dc:title>",

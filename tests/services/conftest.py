@@ -19,7 +19,7 @@ from invenio_access.permissions import any_user, authenticated_user
 from invenio_app.factory import create_api
 
 
-@pytest.fixture(scope='module')
+@pytest.fixture(scope="module")
 def create_app(instance_path):
     """Application factory fixture."""
     return create_api

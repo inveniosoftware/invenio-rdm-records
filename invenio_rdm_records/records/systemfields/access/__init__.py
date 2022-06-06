@@ -8,8 +8,12 @@
 """Access system field for RDM Records."""
 
 from .embargo import Embargo
-from .field import ParentRecordAccess, ParentRecordAccessField, RecordAccess, \
-    RecordAccessField
+from .field import (
+    ParentRecordAccess,
+    ParentRecordAccessField,
+    RecordAccess,
+    RecordAccessField,
+)
 from .grants import Grant, Grants
 from .links import Link, Links
 from .owners import Owner, Owners

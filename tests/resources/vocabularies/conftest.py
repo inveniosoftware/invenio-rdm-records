@@ -24,15 +24,11 @@ def funders_service(app):
 
 
 @pytest.fixture()
-def example_funder(
-    app, db, es_clear, superuser_identity, funders_service
-):
+def example_funder(app, db, es_clear, superuser_identity, funders_service):
     """Example funder."""
     data = {
         "id": "01ggx4157",
-        "identifiers": [
-            {"identifier": "01ggx4157", "scheme": "ror"}
-        ],
+        "identifiers": [{"identifier": "01ggx4157", "scheme": "ror"}],
         "name": "CERN",
         "title": {
             "en": "European Organization for Nuclear Research",
@@ -55,7 +51,12 @@ def awards_service(app):
 
 @pytest.fixture()
 def example_award(
-    app, db, es_clear, superuser_identity, awards_service, example_funder,
+    app,
+    db,
+    es_clear,
+    superuser_identity,
+    awards_service,
+    example_funder,
 ):
     """Example award."""
     data = {
@@ -63,7 +64,7 @@ def example_award(
         "identifiers": [
             {
                 "identifier": "https://cordis.europa.eu/project/id/755021",
-                "scheme": "url"
+                "scheme": "url",
             }
         ],
         "number": "755021",
@@ -71,9 +72,7 @@ def example_award(
             "en": "Personalised Treatment For Cystic Fibrosis Patients With \
                 Ultra-rare CFTR Mutations (and beyond)",
         },
-        "funder": {
-            "id": "01ggx4157"
-        }
+        "funder": {"id": "01ggx4157"},
     }
     awa = awards_service.create(superuser_identity, data)
     Award.index.refresh()  # Refresh the index

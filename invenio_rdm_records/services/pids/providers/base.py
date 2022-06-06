@@ -17,9 +17,16 @@ from invenio_pidstore.models import PersistentIdentifier, PIDStatus
 class PIDProvider:
     """Base class for PID providers."""
 
-    def __init__(self, name, client=None, pid_type=None,
-                 default_status=PIDStatus.NEW, managed=True, label=None,
-                 *kwargs):
+    def __init__(
+        self,
+        name,
+        client=None,
+        pid_type=None,
+        default_status=PIDStatus.NEW,
+        managed=True,
+        label=None,
+        *kwargs,
+    ):
         """Constructor."""
         self.name = name
         self.label = label or name
@@ -52,10 +59,7 @@ class PIDProvider:
         :returns: A :class:`invenio_pidstore.models.base.PersistentIdentifier`
             instance.x
         """
-        args = {
-            "pid_type": self.pid_type,
-            "pid_value": pid_value
-        }
+        args = {"pid_type": self.pid_type, "pid_value": pid_value}
         if pid_provider:
             # FIXME: should be pid_provider or self.name?
             args["pid_provider"] = pid_provider
@@ -128,9 +132,7 @@ class PIDProvider:
         """
         return pid.delete()
 
-    def validate(
-        self, record, identifier=None, provider=None, **kwargs
-    ):
+    def validate(self, record, identifier=None, provider=None, **kwargs):
         """Validate the attributes of the identifier.
 
         :returns: A tuple (success, errors). The first specifies if the
@@ -138,10 +140,12 @@ class PIDProvider:
                   array of error messages.
         """
         if provider and provider != self.name:
-            current_app.logger.error("Configuration error: provider "
-                                     f"name {provider} does not match "
-                                     f"{self.name}.")
-            raise   # configuration error
+            current_app.logger.error(
+                "Configuration error: provider "
+                f"name {provider} does not match "
+                f"{self.name}."
+            )
+            raise  # configuration error
 
         # deduplication check
         try:
@@ -151,9 +155,9 @@ class PIDProvider:
                     f"PID {self.pid_type}:{identifier} already exists"
                 )
                 return False, [
-                    _(
-                        "{pid_type}:{identifier} already exists."
-                    ).format(pid_type=self.pid_type, identifier=identifier)
+                    _("{pid_type}:{identifier} already exists.").format(
+                        pid_type=self.pid_type, identifier=identifier
+                    )
                 ]
 
         except PIDDoesNotExistError:

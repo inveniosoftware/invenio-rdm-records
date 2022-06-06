@@ -10,8 +10,10 @@
 import pytest
 from marshmallow import ValidationError
 
-from invenio_rdm_records.services.schemas.metadata import MetadataSchema, \
-    ReferenceSchema
+from invenio_rdm_records.services.schemas.metadata import (
+    MetadataSchema,
+    ReferenceSchema,
+)
 
 
 def test_valid_reference(app):
@@ -19,23 +21,18 @@ def test_valid_reference(app):
     valid_full = {
         "reference": "Reference to something et al.",
         "identifier": "0000 0001 1456 7559",
-        "scheme": "isni"
+        "scheme": "isni",
     }
     assert valid_full == ReferenceSchema().load(valid_full)
 
 
 def test_valid_minimal_reference(app):
-    valid_minimal = {
-        "reference": "Reference to something et al."
-    }
+    valid_minimal = {"reference": "Reference to something et al."}
     assert valid_minimal == ReferenceSchema().load(valid_minimal)
 
 
 def test_invalid_no_reference(app):
-    invalid_no_reference = {
-        "identifier": "0000 0001 1456 7559",
-        "scheme": "isni"
-    }
+    invalid_no_reference = {"identifier": "0000 0001 1456 7559", "scheme": "isni"}
     with pytest.raises(ValidationError):
         data = ReferenceSchema().load(invalid_no_reference)
 
@@ -44,7 +41,7 @@ def test_invalid_scheme_reference(app):
     invalid_scheme = {
         "reference": "Reference to something et al.",
         "identifier": "0000 0001 1456 7559",
-        "scheme": "Invalid"
+        "scheme": "Invalid",
     }
     with pytest.raises(ValidationError):
         data = ReferenceSchema().load(invalid_scheme)
@@ -55,26 +52,32 @@ def test_invalid_extra_right(app):
         "reference": "Reference to something et al.",
         "identifier": "0000 0001 1456 7559",
         "scheme": "Invalid",
-        "extra": "field"
+        "extra": "field",
     }
     with pytest.raises(ValidationError):
         data = ReferenceSchema().load(invalid_extra)
 
 
-@pytest.mark.parametrize("references", [
-    ([]),
-    ([{
-        "reference": "Reference to something et al.",
-        "identifier": "0000 0001 1456 7559",
-        "scheme": "isni"
-    }, {
-        "reference": "Reference to something et al."
-    }])
-])
+@pytest.mark.parametrize(
+    "references",
+    [
+        ([]),
+        (
+            [
+                {
+                    "reference": "Reference to something et al.",
+                    "identifier": "0000 0001 1456 7559",
+                    "scheme": "isni",
+                },
+                {"reference": "Reference to something et al."},
+            ]
+        ),
+    ],
+)
 def test_valid_rights(app, references, minimal_record):
-    metadata = minimal_record['metadata']
+    metadata = minimal_record["metadata"]
     # NOTE: this is done to get possible load transformations out of the way
     metadata = MetadataSchema().load(metadata)
-    metadata['references'] = references
+    metadata["references"] = references
 
     assert metadata == MetadataSchema().load(metadata)

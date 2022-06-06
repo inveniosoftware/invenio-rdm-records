@@ -10,10 +10,12 @@
 from flask import current_app
 from flask_babelex import lazy_gettext as _
 from invenio_drafts_resources.services.records import RecordService
-from invenio_records_resources.services.uow import RecordCommitOp, \
-    RecordIndexOp, unit_of_work
-from invenio_requests import current_request_type_registry, \
-    current_requests_service
+from invenio_records_resources.services.uow import (
+    RecordCommitOp,
+    RecordIndexOp,
+    unit_of_work,
+)
+from invenio_requests import current_request_type_registry, current_requests_service
 from invenio_requests.resolvers.registry import ResolverRegistry
 from marshmallow import ValidationError
 
@@ -39,33 +41,28 @@ class ReviewService(RecordService):
     @property
     def supported_types(self):
         """Supported review types."""
-        return current_app.config.get('RDM_RECORDS_REVIEWS', [])
+        return current_app.config.get("RDM_RECORDS_REVIEWS", [])
 
     @unit_of_work()
     def create(self, identity, data, record, uow=None):
         """Create a new review request in draft state (to be completed."""
         if record.parent.review is not None:
-            raise ReviewExistsError(
-                _('A review already exists for this record'))
+            raise ReviewExistsError(_("A review already exists for this record"))
         # Validate that record has not been published.
         if record.is_published or record.versions.index > 1:
             raise ReviewStateError(
-                _("You cannot create a review for an already published "
-                  "record.")
+                _("You cannot create a review for an already published " "record.")
             )
 
         # Validate the review type (only review requests are valid)
-        type_ = current_request_type_registry.lookup(
-            data.pop('type', None), quiet=True)
+        type_ = current_request_type_registry.lookup(data.pop("type", None), quiet=True)
         if type_ is None or type_.type_id not in self.supported_types:
-            raise ValidationError(
-                _('Invalid review type.'),
-                field_name='type'
-            )
+            raise ValidationError(_("Invalid review type."), field_name="type")
 
         # Resolve receiver
         receiver = ResolverRegistry.resolve_entity_proxy(
-            data.pop('receiver', None)).resolve()
+            data.pop("receiver", None)
+        ).resolve()
 
         # Delegate to requests service to create the request
         request_item = current_requests_service.create(
@@ -86,7 +83,7 @@ class ReviewService(RecordService):
         """Read the review."""
         # Delgate to requests service to create the request
         draft = self.draft_cls.pid.resolve(id_, registered_only=False)
-        self.require_permission(identity, 'read_draft', record=draft)
+        self.require_permission(identity, "read_draft", record=draft)
 
         if draft.parent.review is None:
             raise ReviewNotFoundError()
@@ -97,7 +94,7 @@ class ReviewService(RecordService):
     def update(self, identity, id_, data, revision_id=None, uow=None):
         """Create or update an existing review."""
         draft = self.draft_cls.pid.resolve(id_, registered_only=False)
-        self.require_permission(identity, 'update_draft', record=draft)
+        self.require_permission(identity, "update_draft", record=draft)
 
         # If an existing review exists, delete it.
         if draft.parent.review is not None:
@@ -110,7 +107,7 @@ class ReviewService(RecordService):
     def delete(self, identity, id_, revision_id=None, uow=None):
         """Delete a review."""
         draft = self.draft_cls.pid.resolve(id_, registered_only=False)
-        self.require_permission(identity, 'update_draft', record=draft)
+        self.require_permission(identity, "update_draft", record=draft)
 
         # Preconditions
         if draft.parent.review is None:
@@ -118,8 +115,10 @@ class ReviewService(RecordService):
 
         if draft.is_published:
             raise ReviewStateError(
-                _("You cannot delete a review for a draft that has already "
-                  "been published.")
+                _(
+                    "You cannot delete a review for a draft that has already "
+                    "been published."
+                )
             )
 
         if draft.parent.review.is_open:
@@ -129,11 +128,7 @@ class ReviewService(RecordService):
         # the request's events. The request is deleted only when in `draft`
         # status
         if not (draft.parent.review.is_closed or draft.parent.review.is_open):
-            current_requests_service.delete(
-                identity,
-                draft.parent.review.id,
-                uow=uow
-            )
+            current_requests_service.delete(identity, draft.parent.review.id, uow=uow)
         # Unset on record
         draft.parent.review = None
         uow.register(RecordCommitOp(draft.parent))
@@ -145,7 +140,7 @@ class ReviewService(RecordService):
         """Submit record for review."""
         # Get record and check permission
         draft = self.draft_cls.pid.resolve(id_, registered_only=False)
-        self.require_permission(identity, 'update_draft', record=draft)
+        self.require_permission(identity, "update_draft", record=draft)
 
         # Preconditions
         if draft.parent.review is None:
@@ -154,7 +149,8 @@ class ReviewService(RecordService):
         # All other preconditions can be checked by the action itself which can
         # raise appropriate exceptions.
         request_item = current_requests_service.execute_action(
-            identity, draft.parent.review.id, 'submit', data=data, uow=uow)
+            identity, draft.parent.review.id, "submit", data=data, uow=uow
+        )
 
         # TODO: this shouldn't be required BUT because of the caching mechanism
         # in the review systemfield, the review should be set with the updated

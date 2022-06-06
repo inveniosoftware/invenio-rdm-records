@@ -12,8 +12,7 @@
 
 import arrow
 from flask_babelex import lazy_gettext as _
-from marshmallow import Schema, ValidationError, fields, validates, \
-    validates_schema
+from marshmallow import Schema, ValidationError, fields, validates, validates_schema
 from marshmallow_utils.fields import ISODateString, SanitizedUnicode
 from marshmallow_utils.fields.nestedattr import NestedAttribute
 
@@ -63,9 +62,10 @@ class AccessSchema(Schema):
         """Check that the protection value is valid."""
         if value not in ["public", "restricted"]:
             raise ValidationError(
-                _("'{field_name}' must be either 'public' or 'restricted'")
-                .format(field_name=field_name),
-                "record"
+                _("'{field_name}' must be either 'public' or 'restricted'").format(
+                    field_name=field_name
+                ),
+                "record",
             )
 
     def get_attribute(self, obj, key, default):

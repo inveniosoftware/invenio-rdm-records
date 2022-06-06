@@ -22,8 +22,8 @@ from invenio_rdm_records.records.api import RDMDraft, RDMRecord
 #
 def test_languages_field(running_app, minimal_record):
     """Languages should be defined as a relation."""
-    assert 'languages' in RDMDraft.relations
-    assert 'languages' in RDMRecord.relations
+    assert "languages" in RDMDraft.relations
+    assert "languages" in RDMRecord.relations
     assert RDMDraft.relations.languages
 
 
@@ -47,11 +47,13 @@ def test_languages_indexing(running_app, minimal_record):
     # Dump draft - dumps will dereference relations which inturn updates the
     # internal record dict so dump and record should be identical.
     dump = draft.dumps()
-    assert dump["metadata"]["languages"] == [{
-        "id": "eng",
-        "title": {"en": "English", "da": "Engelsk"},
-        "@v": f"{running_app.languages_v._record.id}::1"
-    }]
+    assert dump["metadata"]["languages"] == [
+        {
+            "id": "eng",
+            "title": {"en": "English", "da": "Engelsk"},
+            "@v": f"{running_app.languages_v._record.id}::1",
+        }
+    ]
 
     # Load draft again - should produce an identical record.
     loaded_draft = RDMDraft.loads(dump)

@@ -20,9 +20,7 @@ from invenio_rdm_records.records import RDMRecord
 from invenio_rdm_records.services.components import AccessComponent
 
 
-def test_access_component_valid(
-    minimal_record, parent, identity_simple, users
-):
+def test_access_component_valid(minimal_record, parent, identity_simple, users):
     record = RDMRecord.create(minimal_record, parent=parent)
     component = AccessComponent(current_rdm_records.records_service)
     component.create(identity_simple, minimal_record, record)
@@ -32,9 +30,7 @@ def test_access_component_valid(
 
 # TODO this test doesn't currently make sense (the parents will handle owners)
 @pytest.mark.skip
-def test_access_component_unknown_owner(
-    minimal_record, parent, identity_simple, users
-):
+def test_access_component_unknown_owner(minimal_record, parent, identity_simple, users):
     record = RDMRecord.create(minimal_record, parent=parent)
     record.parent["access"]["owned_by"] = [{"user": -1337}]
     component = AccessComponent(RDMRecordService())

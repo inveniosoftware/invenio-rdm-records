@@ -19,9 +19,7 @@ class EmbargoNotLiftedError(RDMRecordsException):
 
     def __init__(self, record_id):
         """Initialise error."""
-        super().__init__(
-            f"Embargo could not be lifted for record: {record_id}"
-        )
+        super().__init__(f"Embargo could not be lifted for record: {record_id}")
 
 
 class ReviewException(RDMRecordsException):

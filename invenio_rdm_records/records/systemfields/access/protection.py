@@ -28,9 +28,7 @@ class Protection:
     def record(self, value):
         """Set the record's overall protection level."""
         if not self._validate_protection_level(value):
-            raise ValueError(
-                "unknown record protection level: {}".format(value)
-            )
+            raise ValueError("unknown record protection level: {}".format(value))
 
         if value == "restricted":
             self._files = "restricted"
@@ -46,9 +44,7 @@ class Protection:
     def files(self, value):
         """Set the record's files protection level."""
         if not self._validate_protection_level(value):
-            raise ValueError(
-                "unknown files protection level: {}".format(value)
-            )
+            raise ValueError("unknown files protection level: {}".format(value))
 
         if self.record == "restricted":
             self._files = "restricted"
@@ -73,10 +69,7 @@ class Protection:
         if type(self) != type(other):
             return False
 
-        return (
-            self.record == other.record
-            and self.files == other.files
-        )
+        return self.record == other.record and self.files == other.files
 
     def __repr__(self):
         """Return repr(self)."""

@@ -14,62 +14,59 @@ import pytest
 
 def link(url):
     """Strip the host part of a link."""
-    api_prefix = 'https://127.0.0.1:5000/api'
+    api_prefix = "https://127.0.0.1:5000/api"
     if url.startswith(api_prefix):
-        return url[len(api_prefix):]
+        return url[len(api_prefix) :]
 
 
 @pytest.fixture()
 def ui_headers():
     """Default headers for making requests."""
     return {
-        'content-type': 'application/json',
-        'accept': 'application/vnd.inveniordm.v1+json',
+        "content-type": "application/json",
+        "accept": "application/vnd.inveniordm.v1+json",
     }
 
 
 def publish_record(client, record, headers):
     """Publish a record."""
-    draft = client.post('/records', headers=headers, json=record)
+    draft = client.post("/records", headers=headers, json=record)
     assert draft.status_code == 201
-    record = client.post(link(draft.json['links']['publish']), headers=headers)
+    record = client.post(link(draft.json["links"]["publish"]), headers=headers)
     assert record.status_code == 202
-    record = client.get(link(record.json['links']['self']), headers=headers)
+    record = client.get(link(record.json["links"]["self"]), headers=headers)
     assert record.status_code == 200
     return record.json
 
 
 def test_external_doi_cleanup(
-        running_app, client, minimal_record, headers, es_clear, uploader):
+    running_app, client, minimal_record, headers, es_clear, uploader
+):
     """Tests for issue #845."""
     client = uploader.login(client)
-    doi1 = '10.4321/1'
-    doi2 = '10.4321/2'
-    doi3 = '10.4321/3'
+    doi1 = "10.4321/1"
+    doi2 = "10.4321/2"
+    doi3 = "10.4321/3"
 
     # Publish two record with different external DOIs.
     r1_data = deepcopy(minimal_record)
     r2_data = deepcopy(minimal_record)
-    r1_data['pids'] = {'doi': {'provider': 'external', 'identifier': doi1}}
-    r2_data['pids'] = {'doi': {'provider': 'external', 'identifier': doi2}}
+    r1_data["pids"] = {"doi": {"provider": "external", "identifier": doi1}}
+    r2_data["pids"] = {"doi": {"provider": "external", "identifier": doi2}}
     record1 = publish_record(client, r1_data, headers)
     record2 = publish_record(client, r2_data, headers)
 
     def _change_doi(record, doi):
         # Edit mode
-        draft = client.post(link(record['links']['draft']))
+        draft = client.post(link(record["links"]["draft"]))
         assert draft.status_code == 201
         # Update
         data = draft.json
-        data['pids']['doi']['identifier'] = doi
-        res = client.put(
-            link(draft.json['links']['self']),
-            headers=headers,
-            json=data)
+        data["pids"]["doi"]["identifier"] = doi
+        res = client.put(link(draft.json["links"]["self"]), headers=headers, json=data)
         assert res.status_code == 200
         # Publish
-        record = client.post(
-            link(draft.json['links']['publish']), headers=headers)
+        record = client.post(link(draft.json["links"]["publish"]), headers=headers)
         assert record.status_code == 202
         return record
 
@@ -80,75 +77,73 @@ def test_external_doi_cleanup(
 
 
 def test_external_doi_duplicate_detection(
-        running_app, client, minimal_record, headers, es_clear, uploader):
+    running_app, client, minimal_record, headers, es_clear, uploader
+):
     """Tests for issue #845."""
     client = uploader.login(client)
-    doi1 = '10.4321/1'
+    doi1 = "10.4321/1"
 
     # Publish one record with  DOIs.
     r1_data = deepcopy(minimal_record)
     r2_data = deepcopy(minimal_record)
-    r1_data['pids'] = {'doi': {'provider': 'external', 'identifier': doi1}}
-    r2_data['pids'] = {'doi': {'provider': 'external', 'identifier': doi1}}
+    r1_data["pids"] = {"doi": {"provider": "external", "identifier": doi1}}
+    r2_data["pids"] = {"doi": {"provider": "external", "identifier": doi1}}
     # Publish record 1 with doi 1
     record1 = publish_record(client, r1_data, headers)
 
     # Try to create records 2 with doi 1 - should report errors because
     # it's already assigned to another record.
-    draft = client.post('/records', headers=headers, json=r2_data)
+    draft = client.post("/records", headers=headers, json=r2_data)
     assert draft.status_code == 201
-    assert draft.json['errors'] == [
-        {'field': 'pids.doi', 'messages': ['doi:10.4321/1 already exists.']}]
-    assert draft.json["pids"] == \
-        {'doi': {'identifier': '10.4321/1', 'provider': 'external'}}
+    assert draft.json["errors"] == [
+        {"field": "pids.doi", "messages": ["doi:10.4321/1 already exists."]}
+    ]
+    assert draft.json["pids"] == {
+        "doi": {"identifier": "10.4321/1", "provider": "external"}
+    }
 
     # Update DOI and publishing again
     data = draft.json
-    data['pids']['doi']['identifier'] = '10.4321/2'
-    res = client.put(
-        link(draft.json['links']['self']),
-        headers=headers,
-        json=data)
+    data["pids"]["doi"]["identifier"] = "10.4321/2"
+    res = client.put(link(draft.json["links"]["self"]), headers=headers, json=data)
     assert res.status_code == 200
-    record = client.post(link(draft.json['links']['publish']), headers=headers)
+    record = client.post(link(draft.json["links"]["publish"]), headers=headers)
     assert record.status_code == 202
 
 
 def test_external_doi_blocked_prefix(
-        running_app, client, minimal_record, headers, es_clear, uploader):
+    running_app, client, minimal_record, headers, es_clear, uploader
+):
     """Tests for issue #847."""
     client = uploader.login(client)
     # Make a DOI in the datacite prefix
-    datacite_prefix = running_app.app.config['DATACITE_PREFIX']
-    doi = f'{datacite_prefix}/1'
+    datacite_prefix = running_app.app.config["DATACITE_PREFIX"]
+    doi = f"{datacite_prefix}/1"
 
     # Publish one record with  DOIs.
-    minimal_record['pids'] = {
-        'doi': {'provider': 'external', 'identifier': doi}}
-    draft = client.post('/records', headers=headers, json=minimal_record)
+    minimal_record["pids"] = {"doi": {"provider": "external", "identifier": doi}}
+    draft = client.post("/records", headers=headers, json=minimal_record)
     assert draft.status_code == 201
     # The invalid prefix should be reported.
-    assert draft.json['errors'] == [{
-        'field': 'pids.doi',
-        'messages': ["The prefix '10.1234' is administrated locally."]
-    }]
+    assert draft.json["errors"] == [
+        {
+            "field": "pids.doi",
+            "messages": ["The prefix '10.1234' is administrated locally."],
+        }
+    ]
 
 
 def test_external_doi_required(
-        running_app, client, minimal_record, headers, es_clear, uploader):
+    running_app, client, minimal_record, headers, es_clear, uploader
+):
     """Tests for issue #847."""
     client = uploader.login(client)
     # Create a record with no external DOI
-    minimal_record['pids'] = {
-        'doi': {'provider': 'external', 'identifier': ''}}
-    draft = client.post('/records', headers=headers, json=minimal_record)
+    minimal_record["pids"] = {"doi": {"provider": "external", "identifier": ""}}
+    draft = client.post("/records", headers=headers, json=minimal_record)
     assert draft.status_code == 201
     # The required identifier should be reported
-    assert draft.json['errors'] == [{
-        'field': 'pids.doi',
-        'messages': ["Missing DOI for required field."]
-    }]
-    assert draft.json['pids'] == {'doi': {
-        "provider": "external",
-        "identifier": ""
-    }}
+    assert draft.json["errors"] == [
+        {"field": "pids.doi", "messages": ["Missing DOI for required field."]}
+    ]
+    assert draft.json["pids"] == {"doi": {"provider": "external", "identifier": ""}}

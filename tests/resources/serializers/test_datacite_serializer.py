@@ -1,4 +1,3 @@
-
 # -*- coding: utf-8 -*-
 #
 # Copyright (C) 2021 CERN.
@@ -12,8 +11,10 @@
 
 import pytest
 
-from invenio_rdm_records.resources.serializers import \
-    DataCite43JSONSerializer, DataCite43XMLSerializer
+from invenio_rdm_records.resources.serializers import (
+    DataCite43JSONSerializer,
+    DataCite43XMLSerializer,
+)
 
 
 @pytest.fixture
@@ -21,7 +22,7 @@ def full_modified_record(full_record):
     full_record["pids"]["unknown-scheme"] = {
         "identifier": "unknown-1234",
         "provider": "unknown",
-        "client": "unknown"
+        "client": "unknown",
     }
 
     full_record["metadata"]["identifiers"] = [
@@ -50,34 +51,31 @@ def test_datacite43_serializer(running_app, full_record):
     """Test serializer to DataCite 4.3 JSON"""
     full_record["metadata"]["rights"].append(
         {
-            "title": {
-                "en": "No rightsUri license"
-            },
+            "title": {"en": "No rightsUri license"},
         }
     )
     # for HTML stripping test purposes
     expected_data = {
-        "types": {
-            "resourceTypeGeneral": "Image",
-            "resourceType": "Photo"
-        },
+        "types": {"resourceTypeGeneral": "Image", "resourceType": "Photo"},
         "creators": [
             {
                 "name": "Nielsen, Lars Holm",
                 "nameType": "Personal",
                 "givenName": "Lars Holm",
                 "familyName": "Nielsen",
-                "nameIdentifiers": [{
-                    "nameIdentifier": "0000-0001-8135-3489",
-                    "nameIdentifierScheme": "ORCID",
-                }],
+                "nameIdentifiers": [
+                    {
+                        "nameIdentifier": "0000-0001-8135-3489",
+                        "nameIdentifierScheme": "ORCID",
+                    }
+                ],
                 "affiliation": [
-                    {'name': 'free-text'},
+                    {"name": "free-text"},
                     {
                         "name": "CERN",
                         "affiliationIdentifier": "01ggx4157",
                         "affiliationIdentifierScheme": "ROR",
-                    }
+                    },
                 ],
             }
         ],
@@ -91,13 +89,14 @@ def test_datacite43_serializer(running_app, full_record):
         ],
         "publisher": "InvenioRDM",
         "publicationYear": "2018",
-        "subjects": [{
-            "subject": "custom"
-        }, {
-            "subject": "Abdominal Injuries",
-            "subjectScheme": "MeSH",
-            "valueURI": "http://id.nlm.nih.gov/mesh/A-D000007",
-        }],
+        "subjects": [
+            {"subject": "custom"},
+            {
+                "subject": "Abdominal Injuries",
+                "subjectScheme": "MeSH",
+                "valueURI": "http://id.nlm.nih.gov/mesh/A-D000007",
+            },
+        ],
         "contributors": [
             {
                 "name": "Nielsen, Lars Holm",
@@ -105,10 +104,12 @@ def test_datacite43_serializer(running_app, full_record):
                 "contributorType": "Other",
                 "givenName": "Lars Holm",
                 "familyName": "Nielsen",
-                "nameIdentifiers": [{
-                    "nameIdentifier": "0000-0001-8135-3489",
-                    "nameIdentifierScheme": "ORCID",
-                }],
+                "nameIdentifiers": [
+                    {
+                        "nameIdentifier": "0000-0001-8135-3489",
+                        "nameIdentifierScheme": "ORCID",
+                    }
+                ],
                 "affiliation": [
                     {
                         "name": "CERN",
@@ -120,22 +121,12 @@ def test_datacite43_serializer(running_app, full_record):
         ],
         "dates": [
             {"date": "2018/2020-09", "dateType": "Issued"},
-            {
-                "date": "1939/1945",
-                "dateType": "Other",
-                "dateInformation": "A date"
-            },
+            {"date": "1939/1945", "dateType": "Other", "dateInformation": "A date"},
         ],
         "language": "dan",
         "identifiers": [
-            {
-                "identifier": "10.5281/inveniordm.1234",
-                "identifierType": "DOI"
-            },
-            {
-                "identifier": "1924MNRAS..84..308E",
-                "identifierType": "bibcode"
-            },
+            {"identifier": "10.5281/inveniordm.1234", "identifierType": "DOI"},
+            {"identifier": "1924MNRAS..84..308E", "identifierType": "bibcode"},
         ],
         "relatedIdentifiers": [
             {
@@ -150,35 +141,29 @@ def test_datacite43_serializer(running_app, full_record):
         "version": "v1.0",
         "rightsList": [
             {
-                'rights': 'A custom license',
-                'rightsUri': 'https://customlicense.org/licenses/by/4.0/'
+                "rights": "A custom license",
+                "rightsUri": "https://customlicense.org/licenses/by/4.0/",
             },
-            {
-                'rights': 'No rightsUri license'
-            },
+            {"rights": "No rightsUri license"},
             {
                 "rights": "Creative Commons Attribution 4.0 International",
                 "rightsIdentifierScheme": "spdx",
                 "rightsIdentifier": "cc-by-4.0",
-                "rightsUri": "https://creativecommons.org/licenses/by/4.0/"
-                             "legalcode",
+                "rightsUri": "https://creativecommons.org/licenses/by/4.0/" "legalcode",
             },
         ],
         "descriptions": [
             {
                 "description": "A description \nwith HTML tags",
-                "descriptionType": "Abstract"
-            }, {
-                "description": "Bla bla bla",
-                "descriptionType": "Methods",
-                "lang": "eng"
+                "descriptionType": "Abstract",
             },
+            {"description": "Bla bla bla", "descriptionType": "Methods", "lang": "eng"},
         ],
         "geoLocations": [
             {
                 "geoLocationPoint": {
-                    'pointLatitude': -32.94682,
-                    'pointLongitude': -60.63932
+                    "pointLatitude": -32.94682,
+                    "pointLongitude": -60.63932,
                 },
                 "geoLocationPlace": "test location place",
             }
@@ -208,48 +193,48 @@ def test_datacite43_serializer(running_app, full_record):
 def test_datacite43_xml_serializer(running_app, full_record):
     expected_data = [
         "<?xml version='1.0' encoding='utf-8'?>",
-        "<resource xmlns=\"http://datacite.org/schema/kernel-4\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://datacite.org/schema/kernel-4 http://schema.datacite.org/meta/kernel-4.3/metadata.xsd\">",  # noqa
-        "  <identifier identifierType=\"DOI\">10.5281/inveniordm.1234</identifier>",  # noqa
+        '<resource xmlns="http://datacite.org/schema/kernel-4" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://datacite.org/schema/kernel-4 http://schema.datacite.org/meta/kernel-4.3/metadata.xsd">',  # noqa
+        '  <identifier identifierType="DOI">10.5281/inveniordm.1234</identifier>',  # noqa
         "  <alternateIdentifiers>",
-        "    <alternateIdentifier alternateIdentifierType=\"bibcode\">1924MNRAS..84..308E</alternateIdentifier>",  # noqa
+        '    <alternateIdentifier alternateIdentifierType="bibcode">1924MNRAS..84..308E</alternateIdentifier>',  # noqa
         "  </alternateIdentifiers>",
         "  <creators>",
         "    <creator>",
-        "      <creatorName nameType=\"Personal\">Nielsen, Lars Holm</creatorName>",  # noqa
+        '      <creatorName nameType="Personal">Nielsen, Lars Holm</creatorName>',  # noqa
         "      <givenName>Lars Holm</givenName>",
         "      <familyName>Nielsen</familyName>",
-        "      <nameIdentifier nameIdentifierScheme=\"ORCID\">0000-0001-8135-3489</nameIdentifier>",  # noqa
+        '      <nameIdentifier nameIdentifierScheme="ORCID">0000-0001-8135-3489</nameIdentifier>',  # noqa
         "      <affiliation>free-text</affiliation>",
-        "      <affiliation affiliationIdentifier=\"01ggx4157\" affiliationIdentifierScheme=\"ROR\">CERN</affiliation>",  # noqa
+        '      <affiliation affiliationIdentifier="01ggx4157" affiliationIdentifierScheme="ROR">CERN</affiliation>',  # noqa
         "    </creator>",
         "  </creators>",
         "  <titles>",
         "    <title>InvenioRDM</title>",
-        "    <title xml:lang=\"eng\" titleType=\"Subtitle\">a research data management platform</title>",  # noqa
+        '    <title xml:lang="eng" titleType="Subtitle">a research data management platform</title>',  # noqa
         "  </titles>",
         "  <publisher>InvenioRDM</publisher>",
         "  <publicationYear>2018</publicationYear>",
         "  <subjects>",
         "    <subject>custom</subject>",
-        "    <subject subjectScheme=\"MeSH\">Abdominal Injuries</subject>",
+        '    <subject subjectScheme="MeSH">Abdominal Injuries</subject>',
         "  </subjects>",
         "  <contributors>",
-        "    <contributor contributorType=\"Other\">",
-        "      <contributorName nameType=\"Personal\">Nielsen, Lars Holm</contributorName>",  # noqa
+        '    <contributor contributorType="Other">',
+        '      <contributorName nameType="Personal">Nielsen, Lars Holm</contributorName>',  # noqa
         "      <givenName>Lars Holm</givenName>",
         "      <familyName>Nielsen</familyName>",
-        "      <nameIdentifier nameIdentifierScheme=\"ORCID\">0000-0001-8135-3489</nameIdentifier>",  # noqa
-        "      <affiliation affiliationIdentifier=\"01ggx4157\" affiliationIdentifierScheme=\"ROR\">CERN</affiliation>",  # noqa
+        '      <nameIdentifier nameIdentifierScheme="ORCID">0000-0001-8135-3489</nameIdentifier>',  # noqa
+        '      <affiliation affiliationIdentifier="01ggx4157" affiliationIdentifierScheme="ROR">CERN</affiliation>',  # noqa
         "    </contributor>",
         "  </contributors>",
         "  <dates>",
-        "    <date dateType=\"Issued\">2018/2020-09</date>",
-        "    <date dateType=\"Other\" dateInformation=\"A date\">1939/1945</date>",  # noqa
+        '    <date dateType="Issued">2018/2020-09</date>',
+        '    <date dateType="Other" dateInformation="A date">1939/1945</date>',  # noqa
         "  </dates>",
         "  <language>dan</language>",
-        "  <resourceType resourceTypeGeneral=\"Image\">Photo</resourceType>",
+        '  <resourceType resourceTypeGeneral="Image">Photo</resourceType>',
         "  <relatedIdentifiers>",
-        "    <relatedIdentifier relatedIdentifierType=\"DOI\" relationType=\"IsCitedBy\" resourceTypeGeneral=\"Dataset\">10.1234/foo.bar</relatedIdentifier>",  # noqa
+        '    <relatedIdentifier relatedIdentifierType="DOI" relationType="IsCitedBy" resourceTypeGeneral="Dataset">10.1234/foo.bar</relatedIdentifier>',  # noqa
         "  </relatedIdentifiers>",
         "  <sizes>",
         "    <size>11 pages</size>",
@@ -259,13 +244,13 @@ def test_datacite43_xml_serializer(running_app, full_record):
         "  </formats>",
         "  <version>v1.0</version>",
         "  <rightsList>",
-        "    <rights rightsURI=\"https://customlicense.org/licenses/by/4.0/\">A custom license</rights>",  # noqa
-        "    <rights rightsURI=\"https://creativecommons.org/licenses/by/4.0/legalcode\" rightsIdentifierScheme=\"spdx\" rightsIdentifier=\"cc-by-4.0\">Creative Commons Attribution 4.0 International</rights>",  # noqa
+        '    <rights rightsURI="https://customlicense.org/licenses/by/4.0/">A custom license</rights>',  # noqa
+        '    <rights rightsURI="https://creativecommons.org/licenses/by/4.0/legalcode" rightsIdentifierScheme="spdx" rightsIdentifier="cc-by-4.0">Creative Commons Attribution 4.0 International</rights>',  # noqa
         "  </rightsList>",
         "  <descriptions>",
-        "    <description descriptionType=\"Abstract\">A description ",
+        '    <description descriptionType="Abstract">A description ',
         "with HTML tags</description>",
-        "    <description descriptionType=\"Methods\" xml:lang=\"eng\">Bla bla bla</description>",  # noqa
+        '    <description descriptionType="Methods" xml:lang="eng">Bla bla bla</description>',  # noqa
         "  </descriptions>",
         "  <geoLocations>",
         "    <geoLocation>",
@@ -279,13 +264,13 @@ def test_datacite43_xml_serializer(running_app, full_record):
         "  <fundingReferences>",
         "    <fundingReference>",
         "      <funderName>European Commission</funderName>",
-        "      <funderIdentifier funderIdentifierType=\"ROR\">00k4n6c32</funderIdentifier>",  # noqa
+        '      <funderIdentifier funderIdentifierType="ROR">00k4n6c32</funderIdentifier>',  # noqa
         "      <awardNumber>755021</awardNumber>",
         "      <awardTitle>Personalised Treatment For Cystic Fibrosis Patients With Ultra-rare CFTR Mutations (and beyond)</awardTitle>",  # noqa
         "    </fundingReference>",
         "  </fundingReferences>",
         "</resource>",
-        ""  # this is because of the split
+        "",  # this is because of the split
     ]
 
     serializer = DataCite43XMLSerializer()
@@ -297,27 +282,26 @@ def test_datacite43_xml_serializer(running_app, full_record):
 def test_datacite43_identifiers(running_app, minimal_record):
     """Test serialization of records with DOI alternate identifiers"""
     # Mimic user putting DOI in alternate identifier field
-    minimal_record["metadata"]["identifiers"] = [{
-                "identifier": "10.5281/inveniordm.1234",
-                "scheme": "doi"
-            }]
+    minimal_record["metadata"]["identifiers"] = [
+        {"identifier": "10.5281/inveniordm.1234", "scheme": "doi"}
+    ]
 
     serializer = DataCite43JSONSerializer()
     serialized_record = serializer.dump_one(minimal_record)
 
-    assert 'identifiers' not in serialized_record
+    assert "identifiers" not in serialized_record
 
     minimal_record["pids"] = {
-            "doi": {
-                "identifier": "10.5281/inveniordm.1234",
-                "provider": "datacite",
-                "client": "inveniordm"
-            },
-        }
+        "doi": {
+            "identifier": "10.5281/inveniordm.1234",
+            "provider": "datacite",
+            "client": "inveniordm",
+        },
+    }
 
     serialized_record = serializer.dump_one(minimal_record)
-    assert len(serialized_record['identifiers']) == 1
-    identifier = serialized_record['identifiers'][0]['identifier']
+    assert len(serialized_record["identifiers"]) == 1
+    identifier = serialized_record["identifiers"][0]["identifier"]
     assert identifier == "10.5281/inveniordm.1234"
 
 
@@ -345,7 +329,7 @@ def test_datacite43_serializer_with_unknown_id_schemes(
     }
     expected_creator_id = {
         "nameIdentifier": "unknown-2345",
-        "nameIdentifierScheme": "unknown-scheme"
+        "nameIdentifierScheme": "unknown-scheme",
     }
 
     serializer = DataCite43JSONSerializer()

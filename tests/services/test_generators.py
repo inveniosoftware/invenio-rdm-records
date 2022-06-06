@@ -18,12 +18,14 @@ from typing import Pattern
 
 import pytest
 from flask_principal import Identity, UserNeed
-from invenio_access.permissions import any_user, authenticated_user, \
-    system_process
+from invenio_access.permissions import any_user, authenticated_user, system_process
 from invenio_db import db
 from invenio_pidstore.models import PersistentIdentifier, PIDStatus
-from invenio_records_permissions.generators import AnyUser, \
-    AuthenticatedUser, SystemProcess
+from invenio_records_permissions.generators import (
+    AnyUser,
+    AuthenticatedUser,
+    SystemProcess,
+)
 
 from invenio_rdm_records.records import RDMParent, RDMRecord
 from invenio_rdm_records.services.generators import IfRestricted, RecordOwners
@@ -61,19 +63,20 @@ def _else_needs():
 # Tests
 #
 @pytest.mark.parametrize(
-    "field,record_fun,expected_needs_fun", [
+    "field,record_fun,expected_needs_fun",
+    [
         ("record", _public_record, _else_needs),
         ("record", _restricted_record, _then_needs),
         ("files", _public_record, _else_needs),
         ("files", _restricted_record, _then_needs),
-    ]
+    ],
 )
 def test_ifrestricted_needs(field, record_fun, expected_needs_fun):
     """Test the IfRestricted generator."""
     generator = IfRestricted(
-            field,
-            then_=[AuthenticatedUser(), SystemProcess()],
-            else_=[AnyUser(), SystemProcess()]
+        field,
+        then_=[AuthenticatedUser(), SystemProcess()],
+        else_=[AnyUser(), SystemProcess()],
     )
     assert generator.needs(record=record_fun()) == expected_needs_fun()
     assert generator.excludes(record=record_fun()) == set()
@@ -81,16 +84,12 @@ def test_ifrestricted_needs(field, record_fun, expected_needs_fun):
 
 def test_ifrestricted_query():
     """Test the query generation."""
-    generator = IfRestricted(
-            "record",
-            then_=[AuthenticatedUser()],
-            else_=[AnyUser()]
-    )
+    generator = IfRestricted("record", then_=[AuthenticatedUser()], else_=[AnyUser()])
     assert generator.query_filter(identity=any_user).to_dict() == {
-        'bool': {
-            'should': [
-                {'match': {'access.record': 'restricted'}},
-                {'match': {'access.record': 'public'}}
+        "bool": {
+            "should": [
+                {"match": {"access.record": "restricted"}},
+                {"match": {"access.record": "public"}},
             ]
         }
     }
@@ -112,14 +111,8 @@ def test_record_owner(app, mocker):
 
     # Authenticated identity
     query_filter = generator.query_filter(
-        identity=mocker.Mock(
-            provides=[mocker.Mock(method='id', value=15)]
-        )
+        identity=mocker.Mock(provides=[mocker.Mock(method="id", value=15)])
     )
 
-    expected_query_filter = {
-        "terms": {
-            "parent.access.owned_by.user": [15]
-        }
-    }
+    expected_query_filter = {"terms": {"parent.access.owned_by.user": [15]}}
     assert query_filter.to_dict() == expected_query_filter

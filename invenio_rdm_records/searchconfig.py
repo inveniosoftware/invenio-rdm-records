@@ -20,8 +20,7 @@ class OptionsSelector:
         """Initialize selector."""
         # Ensure all selected options are availabe.
         for o in selected_options:
-            assert o in available_options, \
-                    f"Selected option '{o}' is undefined."
+            assert o in available_options, f"Selected option '{o}' is undefined."
 
         self.available_options = available_options
         self.selected_options = selected_options
@@ -40,19 +39,23 @@ class OptionsSelector:
 class SortOptionsSelector(OptionsSelector):
     """Sort options for the search configuration."""
 
-    def __init__(self, available_options, selected_options, default=None,
-                 default_no_query=None):
+    def __init__(
+        self, available_options, selected_options, default=None, default_no_query=None
+    ):
         """Initialize sort options."""
         super().__init__(available_options, selected_options)
 
         self.default = selected_options[0] if default is None else default
-        self.default_no_query = selected_options[1] \
-            if default_no_query is None else default_no_query
+        self.default_no_query = (
+            selected_options[1] if default_no_query is None else default_no_query
+        )
 
-        assert self.default in self.available_options, \
-            f"Default sort with query {self.default} is undefined."
-        assert self.default_no_query in self.available_options, \
-            f"Default sort without query {self.default_no_query} is undefined."
+        assert (
+            self.default in self.available_options
+        ), f"Default sort with query {self.default} is undefined."
+        assert (
+            self.default_no_query in self.available_options
+        ), f"Default sort without query {self.default_no_query} is undefined."
 
 
 class SearchConfig:
@@ -64,15 +67,15 @@ class SearchConfig:
         self._sort = []
         self._facets = []
 
-        if 'sort' in config:
+        if "sort" in config:
             self._sort = SortOptionsSelector(
                 sort,
-                config['sort'],
-                default=config.get('sort_default'),
-                default_no_query=config.get('sort_default_no_query')
+                config["sort"],
+                default=config.get("sort_default"),
+                default_no_query=config.get("sort_default_no_query"),
             )
-        if 'facets' in config:
-            self._facets = OptionsSelector(facets, config.get('facets'))
+        if "facets" in config:
+            self._facets = OptionsSelector(facets, config.get("facets"))
 
     @property
     def sort_options(self):
@@ -92,4 +95,4 @@ class SearchConfig:
     @property
     def facets(self):
         """Get facets for search."""
-        return {k: v['facet'] for (k, v) in self._facets}
+        return {k: v["facet"] for (k, v) in self._facets}

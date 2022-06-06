@@ -57,12 +57,9 @@ def person():
             "type": "personal",
             "given_name": "Lars Holm",
             "family_name": "Nielsen",
-            "identifiers": [{
-                "scheme": "orcid",
-                "identifier": "0000-0001-8135-3489"
-            }],
+            "identifiers": [{"scheme": "orcid", "identifier": "0000-0001-8135-3489"}],
         },
-        "affiliations": [{"id": "cern"}]
+        "affiliations": [{"id": "cern"}],
     }
 
 
@@ -73,17 +70,14 @@ def org():
         "person_or_org": {
             "name": "CERN",
             "type": "organizational",
-            "identifiers": [{
-                "scheme": "ror",
-                "identifier": "01ggx4157"
-            }],
+            "identifiers": [{"scheme": "ror", "identifier": "01ggx4157"}],
         },
-        "affiliations": [{"id": "cern"}]
+        "affiliations": [{"id": "cern"}],
     }
 
 
 def _load_json(filename):
-    with open(join(dirname(__file__), filename), 'rb') as fp:
+    with open(join(dirname(__file__), filename), "rb") as fp:
         return json.load(fp)
 
 
@@ -92,12 +86,12 @@ def _load_json(filename):
 #
 def test_full_record(appctx):
     """Test validation of a full record example."""
-    assert validates(_load_json('full-record.json'))
+    assert validates(_load_json("full-record.json"))
 
 
 def test_tombstone_record(appctx):
     """Test validation of a tombstone record example."""
-    assert validates(_load_json('tombstone.json'))
+    assert validates(_load_json("tombstone.json"))
 
 
 #
@@ -111,29 +105,43 @@ def test_id(appctx):
 
 def test_pids(appctx):
     """Test external pids."""
-    assert validates({"pids": {
-        "doi": {
-            "identifier": "10.12345", "provider": "datacite", "client": "test"
+    assert validates(
+        {
+            "pids": {
+                "doi": {
+                    "identifier": "10.12345",
+                    "provider": "datacite",
+                    "client": "test",
+                }
+            }
         }
-    }})
-    assert validates({"pids": {
-        "doi": {
-            "identifier": "10.12345", "provider": "datacite", "client": "test"
-        },
-        "oai": {"identifier": "oai:10.12345", "provider": "local"},
-    }})
+    )
+    assert validates(
+        {
+            "pids": {
+                "doi": {
+                    "identifier": "10.12345",
+                    "provider": "datacite",
+                    "client": "test",
+                },
+                "oai": {"identifier": "oai:10.12345", "provider": "local"},
+            }
+        }
+    )
     # Extra property
-    assert fails({"pids": {
-        "oai": {
-            "identifier": "oai:10.12345",
-            "provider": "local",
-            "invalid": "test"
+    assert fails(
+        {
+            "pids": {
+                "oai": {
+                    "identifier": "oai:10.12345",
+                    "provider": "local",
+                    "invalid": "test",
+                }
+            }
         }
-    }})
+    )
     # Not a string
-    assert fails({"pids": {
-        "oai": {"identifier": 1, "provider": "local"}
-    }})
+    assert fails({"pids": {"oai": {"identifier": 1, "provider": "local"}}})
 
 
 #
@@ -154,21 +162,25 @@ def test_creators(appctx, person, org):
     """Test creators."""
     assert fails_meta({"creators": {}})
     assert validates_meta({"creators": []})
-    assert validates_meta({"creators": [{"person_or_org": {
-        "name": "test", "type": "organizational"}}]})
+    assert validates_meta(
+        {"creators": [{"person_or_org": {"name": "test", "type": "organizational"}}]}
+    )
 
     assert validates_meta({"creators": [person]})
     assert validates_meta({"creators": [org]})
     assert validates_meta({"creators": [person, org]})
 
     # Additional prop fails
-    assert fails_meta({"creators": [{
-        "person_or_org": {
-            "name": "test",
-            "type": "organizational"
-        },
-        "invalid": "test"
-    }]})
+    assert fails_meta(
+        {
+            "creators": [
+                {
+                    "person_or_org": {"name": "test", "type": "organizational"},
+                    "invalid": "test",
+                }
+            ]
+        }
+    )
     person["affiliations"][0]["invalid"] = "test"
     assert fails_meta({"creators": [person]})
 
@@ -183,15 +195,15 @@ def test_additional_titles(appctx):
     """Test additional titles property."""
     assert fails_meta({"additional_titles": "Test"})
     assert validates_meta({"additional_titles": []})
-    assert validates_meta({"additional_titles": [
-        {"title": "Test"}
-    ]})
-    assert validates_meta({"additional_titles": [
-        {"title": "Test", "type": {"id": "subtitle"}, "lang": {"id": "dan"}},
-    ]})
-    assert fails_meta({"additional_titles": [
-        {"title": "Test", "invalid": "invalid"}
-    ]})
+    assert validates_meta({"additional_titles": [{"title": "Test"}]})
+    assert validates_meta(
+        {
+            "additional_titles": [
+                {"title": "Test", "type": {"id": "subtitle"}, "lang": {"id": "dan"}},
+            ]
+        }
+    )
+    assert fails_meta({"additional_titles": [{"title": "Test", "invalid": "invalid"}]})
 
 
 def test_publisher(appctx):
@@ -225,10 +237,16 @@ def test_contributors(appctx, person, org):
     """Test contributors."""
     assert fails_meta({"contributors": {}})
     assert validates_meta({"contributors": []})
-    assert validates_meta({"contributors": [{
-        "person_or_org": {"name": "test", "type": "organizational"},
-        "role": {"id": "other"}
-    }]})
+    assert validates_meta(
+        {
+            "contributors": [
+                {
+                    "person_or_org": {"name": "test", "type": "organizational"},
+                    "role": {"id": "other"},
+                }
+            ]
+        }
+    )
 
     person["role"] = {"id": "other"}
     org["role"] = {"id": "hosting_institution"}
@@ -238,8 +256,9 @@ def test_contributors(appctx, person, org):
     assert validates_meta({"contributors": [person, org]})
 
     # Additional prop fails
-    assert fails_meta({"contributors": [
-        {"person_or_org": {"name": "test"}, "invalid": "test"}]})
+    assert fails_meta(
+        {"contributors": [{"person_or_org": {"name": "test"}, "invalid": "test"}]}
+    )
     person["affiliations"][0]["invalid"] = "test"
     assert fails_meta({"contributors": [person]})
 
@@ -248,11 +267,28 @@ def test_dates(appctx):
     """Test dates."""
     assert fails_meta({"dates": {}})
     assert validates_meta({"dates": []})
-    assert validates_meta({"dates": [{"date": "test"}, ]})
-    assert validates_meta({"dates": [
-        {"date": "test", "type": {"id": "other"}, "description": "A date"}, ]})
+    assert validates_meta(
+        {
+            "dates": [
+                {"date": "test"},
+            ]
+        }
+    )
+    assert validates_meta(
+        {
+            "dates": [
+                {"date": "test", "type": {"id": "other"}, "description": "A date"},
+            ]
+        }
+    )
     # Additional prop fails
-    assert fails_meta({"dates": [{"date": "test", "invalid": "test"}, ]})
+    assert fails_meta(
+        {
+            "dates": [
+                {"date": "test", "invalid": "test"},
+            ]
+        }
+    )
 
 
 def test_languages(appctx):
@@ -267,45 +303,74 @@ def test_identifiers(appctx):
     """Test alternate identifiers property."""
     assert fails_meta({"identifiers": 1})
     assert validates_meta({"identifiers": []})
-    assert validates_meta({"identifiers": [
-        {"identifier": "10.1234/test", "scheme": "doi"}
-    ]})
+    assert validates_meta(
+        {"identifiers": [{"identifier": "10.1234/test", "scheme": "doi"}]}
+    )
     # Additional property
-    assert fails_meta({"identifiers": [
-        {"identifier": "10.1234/test", "invalid": "doi"}
-    ]})
+    assert fails_meta(
+        {"identifiers": [{"identifier": "10.1234/test", "invalid": "doi"}]}
+    )
     # Unique
-    assert fails_meta({"identifiers": [
-        {"identifier": "10.1234/test", "scheme": "doi"},
-        {"identifier": "10.1234/test", "scheme": "doi"}
-    ]})
+    assert fails_meta(
+        {
+            "identifiers": [
+                {"identifier": "10.1234/test", "scheme": "doi"},
+                {"identifier": "10.1234/test", "scheme": "doi"},
+            ]
+        }
+    )
 
 
 def test_related_identifiers(appctx):
     """Test alternate identifiers property."""
     assert fails_meta({"related_identifiers": 1})
     assert validates_meta({"related_identifiers": []})
-    assert validates_meta({"related_identifiers": [
-        {"identifier": "10.1234/test", "scheme": "doi",
-         "relation_type": {"id": "cites"}}
-    ]})
-    assert validates_meta({"related_identifiers": [
-        {"identifier": "10.1234/test", "relation_type": {"id": "cites"}}
-    ]})
-    assert validates_meta({"related_identifiers": [
-        {"identifier": "10.1234/test", "relation_type": {"id": "cites"}}
-    ]})
+    assert validates_meta(
+        {
+            "related_identifiers": [
+                {
+                    "identifier": "10.1234/test",
+                    "scheme": "doi",
+                    "relation_type": {"id": "cites"},
+                }
+            ]
+        }
+    )
+    assert validates_meta(
+        {
+            "related_identifiers": [
+                {"identifier": "10.1234/test", "relation_type": {"id": "cites"}}
+            ]
+        }
+    )
+    assert validates_meta(
+        {
+            "related_identifiers": [
+                {"identifier": "10.1234/test", "relation_type": {"id": "cites"}}
+            ]
+        }
+    )
     # Additional property
-    assert fails_meta({"related_identifiers": [
-        {"identifier": "10.1234/test", "invalid": "doi"}
-    ]})
+    assert fails_meta(
+        {"related_identifiers": [{"identifier": "10.1234/test", "invalid": "doi"}]}
+    )
     # Unique
-    assert fails_meta({"related_identifiers": [
-        {"identifier": "10.1234/test", "scheme": "doi",
-         "relation_type": {"id": "cites"}},
-        {"identifier": "10.1234/test", "scheme": "doi",
-         "relation_type": {"id": "cites"}}
-    ]})
+    assert fails_meta(
+        {
+            "related_identifiers": [
+                {
+                    "identifier": "10.1234/test",
+                    "scheme": "doi",
+                    "relation_type": {"id": "cites"},
+                },
+                {
+                    "identifier": "10.1234/test",
+                    "scheme": "doi",
+                    "relation_type": {"id": "cites"},
+                },
+            ]
+        }
+    )
 
 
 def test_sizes(appctx):
@@ -336,14 +401,12 @@ def test_rights(appctx):
     lic_full = {
         "title": {"en": "Creative Commons Attribution 4.0 International"},
         "description": {"en": "A Description"},
-        "link": "https://creativecommons.org/licenses/by/4.0/"
+        "link": "https://creativecommons.org/licenses/by/4.0/",
     }
     lic_min = {
-        "title":  {"en": "Copyright (C) 2020. All rights reserved."},
+        "title": {"en": "Copyright (C) 2020. All rights reserved."},
     }
-    lic_linked = {
-        "id": "cc-by-4.0"
-    }
+    lic_linked = {"id": "cc-by-4.0"}
     assert validates_meta({"rights": [lic_full]})
     assert validates_meta({"rights": [lic_min]})
     assert validates_meta({"rights": [lic_linked]})
@@ -367,44 +430,49 @@ def test_additional_descriptions(appctx):
     """Test dditional_descriptions property."""
     assert fails_meta({"additional_descriptions": 1})
     assert fails_meta({"additional_descriptions": {}})
-    desc = {
-        "description": "bla bla",
-        "type": {"id": "other"},
-        "lang": {"id": "dan"}
-    }
+    desc = {"description": "bla bla", "type": {"id": "other"}, "lang": {"id": "dan"}}
     assert validates_meta({"additional_descriptions": [desc]})
     desc["invalid"] = "invalid"
     assert fails_meta({"additional_descriptions": [desc]})
 
 
-@pytest.mark.parametrize('features', [
-    [{
-        "geometry": {"type": "Point", "coordinates": [6.05, 46.23333]},
-    }], [{
-        "identifiers": [{
-            "scheme": "geonames",
-            "identifier": "2661235"
-        }, {
-            "scheme": "tgn",
-            "identifier": "http://vocab.getty.edu/tgn/8703679"
-        }],
-    }], [{
-        "place": "CERN"
-    }], [{
-        "description": "Invenio birth place."
-    }], [{
-        "geometry": {"type": "Point", "coordinates": [6.05, 46.23333]},
-        "identifiers": [{
-            "scheme": "geonames",
-            "identifier": "2661235"
-        }, {
-            "scheme": "tgn",
-            "identifier": "http://vocab.getty.edu/tgn/8703679"
-        }],
-        "place": "CERN",
-        "description": "Invenio birth place."
-    }],
-])
+@pytest.mark.parametrize(
+    "features",
+    [
+        [
+            {
+                "geometry": {"type": "Point", "coordinates": [6.05, 46.23333]},
+            }
+        ],
+        [
+            {
+                "identifiers": [
+                    {"scheme": "geonames", "identifier": "2661235"},
+                    {
+                        "scheme": "tgn",
+                        "identifier": "http://vocab.getty.edu/tgn/8703679",
+                    },
+                ],
+            }
+        ],
+        [{"place": "CERN"}],
+        [{"description": "Invenio birth place."}],
+        [
+            {
+                "geometry": {"type": "Point", "coordinates": [6.05, 46.23333]},
+                "identifiers": [
+                    {"scheme": "geonames", "identifier": "2661235"},
+                    {
+                        "scheme": "tgn",
+                        "identifier": "http://vocab.getty.edu/tgn/8703679",
+                    },
+                ],
+                "place": "CERN",
+                "description": "Invenio birth place.",
+            }
+        ],
+    ],
+)
 def test_locations_valid(appctx, features):
     """Test locations property.
 
@@ -413,26 +481,35 @@ def test_locations_valid(appctx, features):
     assert validates_meta({"locations": {"features": features}})
 
 
-@pytest.mark.parametrize("locations", [
-    None,  # locations must be an object
-    {'features': []},  # Empty features
-    {
-        'features': [{
-            "properties": None,   # Additional props
-            "place": "CERN",
-        }]
-    },
-    {
-        'features': [{
-            "place": None,  # place should be a string
-        }],
-    },
-    {
-        'features': [{
-            "place": "",  # place should have at least one character
-        }],
-    }
-])
+@pytest.mark.parametrize(
+    "locations",
+    [
+        None,  # locations must be an object
+        {"features": []},  # Empty features
+        {
+            "features": [
+                {
+                    "properties": None,  # Additional props
+                    "place": "CERN",
+                }
+            ]
+        },
+        {
+            "features": [
+                {
+                    "place": None,  # place should be a string
+                }
+            ],
+        },
+        {
+            "features": [
+                {
+                    "place": "",  # place should have at least one character
+                }
+            ],
+        },
+    ],
+)
 def test_locations_invalid(appctx, locations):
     assert fails_meta({"locations": locations})
 
@@ -474,32 +551,37 @@ def test_funding(appctx):
     custom_funder["invalid"] = "test"
     assert fails_meta({"funding": [{"funder": custom_funder}]})
     custom_award["invalid"] = "test"
-    assert fails_meta(
-        {"funding": [{"funder": related_funder, "award": custom_award}]}
-    )
+    assert fails_meta({"funding": [{"funder": related_funder, "award": custom_award}]})
 
 
 def test_reference(appctx):
     """Test references property."""
-    assert validates_meta({"references": [
+    assert validates_meta(
         {
-            "reference": "Nielsen et al,..",
-            "identifier": "101.234",
-            "scheme": "doi",
-        },
-    ]})
+            "references": [
+                {
+                    "reference": "Nielsen et al,..",
+                    "identifier": "101.234",
+                    "scheme": "doi",
+                },
+            ]
+        }
+    )
     # Additional props
-    assert fails_meta({"references": [
+    assert fails_meta(
         {
-            "invalid": "Nielsen et al,..",
-        },
-    ]})
+            "references": [
+                {
+                    "invalid": "Nielsen et al,..",
+                },
+            ]
+        }
+    )
 
 
 def test_subjects(appctx):
     """Test subjects property."""
-    assert validates_meta(
-        {"subjects": [{"id": "A-D000007"}, {"id": "A-D000008"}]})
+    assert validates_meta({"subjects": [{"id": "A-D000007"}, {"id": "A-D000008"}]})
     assert fails_meta({"subjects": ["A-D000007"]})
     assert fails_meta({"subjects": "A-D000007"})
     assert fails_meta({"subjects": ["invalid"]})
@@ -530,22 +612,30 @@ def test_ext(appctx):
 #
 def test_tombstones(appctx):
     """Test a tombstone."""
-    assert validates({"tombstone": {
-        "reason": "Spam record, removed by InvenioRDM staff.",
-        "category": "spam_manual",
-        "removed_by": {"user": 1},
-        "timestamp": "2020-09-01T12:02:00+0000"
-    }})
-    assert fails({"tombstone": {
-        "reason": "Spam record, removed by InvenioRDM staff.",
-        "invalid": "test"
-    }})
+    assert validates(
+        {
+            "tombstone": {
+                "reason": "Spam record, removed by InvenioRDM staff.",
+                "category": "spam_manual",
+                "removed_by": {"user": 1},
+                "timestamp": "2020-09-01T12:02:00+0000",
+            }
+        }
+    )
+    assert fails(
+        {
+            "tombstone": {
+                "reason": "Spam record, removed by InvenioRDM staff.",
+                "invalid": "test",
+            }
+        }
+    )
 
 
 def test_no_external_resolution(appctx):
-    with unittest.mock.patch('requests.get') as requests_get:
+    with unittest.mock.patch("requests.get") as requests_get:
         requests_get.side_effect = AssertionError(
             "Attempted to resolve a URL using requests"
         )
 
-        assert validates(_load_json('full-record.json'))
+        assert validates(_load_json("full-record.json"))

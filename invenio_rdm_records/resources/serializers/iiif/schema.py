@@ -64,17 +64,13 @@ class IIIFInfoV2Schema(Schema):
         """Marshmallow meta class."""
 
         include = {
-            "@context": fields.Constant(
-                "http://iiif.io/api/image/2/context.json"
-            ),
+            "@context": fields.Constant("http://iiif.io/api/image/2/context.json"),
             "@id": fields.String(attribute="links.iiif_base"),
         }
 
     protocol = fields.Constant("http://iiif.io/api/image")
     profile = fields.Constant(["http://iiif.io/api/image/2/level2.json"])
-    tiles = fields.Constant(
-        [{"width": 256, "scaleFactors": [1, 2, 4, 8, 16, 32, 64]}]
-    )
+    tiles = fields.Constant([{"width": 256, "scaleFactors": [1, 2, 4, 8, 16, 32, 64]}])
 
     width = fields.Integer(attribute="metadata.width")
     height = fields.Integer(attribute="metadata.height")
@@ -87,13 +83,9 @@ class IIIFImageServiceV2Schema(Schema):
         """Marshmallow meta class."""
 
         include = {
-            "@context": fields.Constant(
-                "http://iiif.io/api/image/2/context.json"
-            ),
+            "@context": fields.Constant("http://iiif.io/api/image/2/context.json"),
             "@id": fields.String(attribute="links.iiif_info"),
-            "profile": fields.Constant(
-                "http://iiif.io/api/image/2/level1.json"
-            ),
+            "profile": fields.Constant("http://iiif.io/api/image/2/level1.json"),
         }
 
 
@@ -222,5 +214,5 @@ class IIIFManifestV2Schema(Schema):
 
         TODO: should sorting be done elsewhere?
         """
-        manifest['sequences'][0]['canvases'].sort(key=lambda x: x['@id'])
+        manifest["sequences"][0]["canvases"].sort(key=lambda x: x["@id"])
         return manifest

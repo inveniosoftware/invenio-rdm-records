@@ -35,7 +35,7 @@ class RDMRecordSchema(RecordSchema, FieldPermissionsMixin):
     """Record schema."""
 
     field_load_permissions = {
-        'files': 'update_draft',
+        "files": "update_draft",
     }
 
     # ATTENTION: In this schema you should be using the ``NestedAttribute``
@@ -105,6 +105,6 @@ class RDMRecordSchema(RecordSchema, FieldPermissionsMixin):
 
 
 __all__ = (
-    'RDMParentSchema',
-    'RDMRecordSchema',
+    "RDMParentSchema",
+    "RDMRecordSchema",
 )

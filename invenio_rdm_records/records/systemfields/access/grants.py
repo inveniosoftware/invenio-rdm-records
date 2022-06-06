@@ -18,9 +18,7 @@ from invenio_accounts.models import Role, User
 class Grant:
     """Grant for a specific permission level on a record."""
 
-    def __init__(
-        self, subject, permission_level, subject_type=None, subject_id=None
-    ):
+    def __init__(self, subject, permission_level, subject_type=None, subject_id=None):
         """Permission grant for a specific subject (e.g. a user).
 
         :param subject: The subject of the permission grant.
@@ -59,9 +57,7 @@ class Grant:
             subject = Role.query.get(self._subject_id)
 
         if self._subject_type in ["user", "role"] and subject is None:
-            raise LookupError(
-                "could not find grant subject: {}".format(self.to_dict())
-            )
+            raise LookupError("could not find grant subject: {}".format(self.to_dict()))
 
         return subject
 
@@ -168,9 +164,7 @@ class Grant:
             b64decode(val, b"-_").decode() for val in token.split(".")
         )
 
-        return cls.from_string_parts(
-            subject_type, subject_id, permission_level
-        )
+        return cls.from_string_parts(subject_type, subject_id, permission_level)
 
     @classmethod
     def from_dict(cls, dict_):
@@ -179,9 +173,7 @@ class Grant:
         subject_id = dict_["id"]
         permission_level = dict_["level"]
 
-        return cls.from_string_parts(
-            subject_type, subject_id, permission_level
-        )
+        return cls.from_string_parts(subject_type, subject_id, permission_level)
 
     def __hash__(self):
         """Return hash(self)."""

@@ -47,14 +47,10 @@ class Owner:
                 self._entity = User.query.get(self.owner_id)
 
             else:
-                raise ValueError(
-                    "unknown owner type: {}".format(self.owner_type)
-                )
+                raise ValueError("unknown owner type: {}".format(self.owner_type))
 
             if self._entity is None and raise_exc:
-                raise LookupError(
-                    "could not find owner: {}".format(self.dump())
-                )
+                raise LookupError("could not find owner: {}".format(self.dump()))
 
         return self._entity
 
@@ -67,10 +63,7 @@ class Owner:
         if type(self) != type(other):
             return False
 
-        return (
-            self.owner_type == other.owner_type
-            and self.owner_id == other.owner_id
-        )
+        return self.owner_type == other.owner_type and self.owner_id == other.owner_id
 
     def __ne__(self, other):
         """Return self != other."""

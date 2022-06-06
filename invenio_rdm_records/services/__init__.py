@@ -8,8 +8,11 @@
 
 """High-level API for wokring with RDM records, files, pids and search."""
 
-from .config import RDMFileDraftServiceConfig, RDMFileRecordServiceConfig, \
-    RDMRecordServiceConfig
+from .config import (
+    RDMFileDraftServiceConfig,
+    RDMFileRecordServiceConfig,
+    RDMRecordServiceConfig,
+)
 from .permissions import RDMRecordPermissionPolicy
 from .secret_links import SecretLinkService
 from .services import IIIFService, RDMRecordService
