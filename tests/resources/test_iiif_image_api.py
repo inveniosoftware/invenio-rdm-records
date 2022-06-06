@@ -23,12 +23,12 @@ def publish_record_with_images(
 
     # Create a draft
     res = client.post("/records", headers=headers, json=record)
-    id_ = res.json['id']
+    id_ = res.json["id"]
 
     # create a new image
-    res = client.post(f"/records/{id_}/draft/files", headers=headers, json=[
-        {'key': file_id}
-    ])
+    res = client.post(
+        f"/records/{id_}/draft/files", headers=headers, json=[{"key": file_id}]
+    )
 
     # Upload a file
     image_file = BytesIO()
@@ -37,14 +37,12 @@ def publish_record_with_images(
     image_file.seek(0)
     res = client.put(
         f"/records/{id_}/draft/files/{file_id}/content",
-        headers={'content-type': 'application/octet-stream'},
+        headers={"content-type": "application/octet-stream"},
         data=image_file,
     )
 
     # Commit the file
-    res = client.post(
-        f"/records/{id_}/draft/files/{file_id}/commit", headers=headers
-    )
+    res = client.post(f"/records/{id_}/draft/files/{file_id}/commit", headers=headers)
 
     # Publish the record
     res = client.post(f"/records/{id_}/draft/actions/publish", headers=headers)
@@ -52,39 +50,29 @@ def publish_record_with_images(
     return id_
 
 
-def test_iiif_base(
-    running_app, es_clear, client_with_login, headers, minimal_record
-):
+def test_iiif_base(running_app, es_clear, client_with_login, headers, minimal_record):
     client = client_with_login
     file_id = "test_image.png"
-    recid = publish_record_with_images(
-        client, file_id, minimal_record, headers
-    )
+    recid = publish_record_with_images(client, file_id, minimal_record, headers)
     response = client.get(f"/iiif/record:{recid}:{file_id}")
     assert response.status_code == 301
     assert (
         response.json["location"]
-        ==
-        f"https://127.0.0.1:5000/api/iiif/record:{recid}:{file_id}/info.json"
+        == f"https://127.0.0.1:5000/api/iiif/record:{recid}:{file_id}/info.json"
     )
 
 
-def test_iiif_info(
-    running_app, es_clear, client_with_login, headers, minimal_record
-):
+def test_iiif_info(running_app, es_clear, client_with_login, headers, minimal_record):
     client = client_with_login
     file_id = "test_image.png"
-    recid = publish_record_with_images(
-        client, file_id, minimal_record, headers
-    )
+    recid = publish_record_with_images(client, file_id, minimal_record, headers)
     response = client.get(f"/iiif/record:{recid}:{file_id}/info.json")
     assert response.status_code == 200
     assert response.json == {
         "@context": "http://iiif.io/api/image/2/context.json",
-        'profile': ['http://iiif.io/api/image/2/level2.json'],
-        'protocol': 'http://iiif.io/api/image',
-        "@id":
-        f"https://127.0.0.1:5000/api/iiif/record:{recid}:{file_id}",
+        "profile": ["http://iiif.io/api/image/2/level2.json"],
+        "protocol": "http://iiif.io/api/image",
+        "@id": f"https://127.0.0.1:5000/api/iiif/record:{recid}:{file_id}",
         "tiles": [{"width": 256, "scaleFactors": [1, 2, 4, 8, 16, 32, 64]}],
         "width": 1280,
         "height": 1024,
@@ -147,9 +135,7 @@ def test_iiif_image_api(
 ):
     client = client_with_login
     file_id = "test_image.png"
-    recid = publish_record_with_images(
-        client, file_id, minimal_record, headers
-    )
+    recid = publish_record_with_images(client, file_id, minimal_record, headers)
 
     # create a new image equal to the one in the record
     tmp_file = BytesIO()
@@ -157,9 +143,7 @@ def test_iiif_image_api(
     image.save(tmp_file, "png")
     tmp_file.seek(0)
 
-    response = client.get(
-        f"/iiif/record:{recid}:{file_id}/full/full/0/default.png"
-    )
+    response = client.get(f"/iiif/record:{recid}:{file_id}/full/full/0/default.png")
     assert response.status_code == 200
     assert response.data == tmp_file.getvalue()
 
@@ -181,7 +165,4 @@ def test_iiif_image_api(
             f"200,200,200,200/300,300/!50/color.pdf?dl={dl}"
         )
         assert response.status_code == 200
-        assert (
-            response.headers["Content-Disposition"]
-            == f"attachment; filename={name}"
-        )
+        assert response.headers["Content-Disposition"] == f"attachment; filename={name}"

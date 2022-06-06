@@ -15,9 +15,9 @@ from .pids import PIDsComponent
 from .review import ReviewComponent
 
 __all__ = (
-    'AccessComponent',
-    'MetadataComponent',
-    'ParentRecordAccessComponent',
-    'PIDsComponent',
-    'ReviewComponent',
+    "AccessComponent",
+    "MetadataComponent",
+    "ParentRecordAccessComponent",
+    "PIDsComponent",
+    "ReviewComponent",
 )

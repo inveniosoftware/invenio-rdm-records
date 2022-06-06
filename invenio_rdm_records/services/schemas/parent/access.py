@@ -32,12 +32,12 @@ class SecretLink(Schema):
 
     id = fields.String(dump_only=True)
     created_at = TZDateTime(
-        timezone=timezone.utc, format='iso', required=False, dump_only=True)
-    expires_at = TZDateTime(
-        timezone=timezone.utc, format='iso', required=False)
+        timezone=timezone.utc, format="iso", required=False, dump_only=True
+    )
+    expires_at = TZDateTime(timezone=timezone.utc, format="iso", required=False)
     permission = fields.String(
-        required=False,
-        validate=validate.OneOf(["view", "preview", "edit"]))
+        required=False, validate=validate.OneOf(["view", "preview", "edit"])
+    )
     token = SanitizedUnicode(dump_only=True)
 
 

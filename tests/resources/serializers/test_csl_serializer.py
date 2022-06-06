@@ -13,8 +13,10 @@ from citeproc_styles import get_style_filepath
 
 from invenio_rdm_records.proxies import current_rdm_records
 from invenio_rdm_records.records.api import RDMRecord
-from invenio_rdm_records.resources.serializers import CSLJSONSerializer, \
-    StringCitationSerializer
+from invenio_rdm_records.resources.serializers import (
+    CSLJSONSerializer,
+    StringCitationSerializer,
+)
 from invenio_rdm_records.resources.serializers.csl import get_citation_string
 from invenio_rdm_records.resources.serializers.csl.schema import CSLJSONSchema
 

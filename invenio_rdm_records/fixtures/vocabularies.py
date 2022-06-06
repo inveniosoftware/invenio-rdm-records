@@ -18,8 +18,7 @@ import pkg_resources
 import yaml
 from invenio_db import db
 from invenio_vocabularies.proxies import current_service
-from invenio_vocabularies.records.models import VocabularyScheme, \
-    VocabularyType
+from invenio_vocabularies.records.models import VocabularyScheme, VocabularyType
 from sqlalchemy.orm import load_only
 
 from .tasks import create_vocabulary_record
@@ -55,9 +54,9 @@ class CSVIterator(DataIterator):
         """Map a CSV row into a record."""
         entry = {}
         for attr, value in zip(header, row):
-            if attr == 'tags':
-                value = [x.strip() for x in value.split(',')]
-            keys = attr.split('__')
+            if attr == "tags":
+                value = [x.strip() for x in value.split(",")]
+            keys = attr.split("__")
             if len(keys) == 1:
                 entry[keys[0]] = value
             elif len(keys) == 2:
@@ -69,7 +68,7 @@ class CSVIterator(DataIterator):
     def __iter__(self):
         """Iterate over records."""
         with open(self._data_file) as fp:
-            reader = csv.reader(fp, delimiter=';', quotechar='"')
+            reader = csv.reader(fp, delimiter=";", quotechar='"')
             header = next(reader)
             for row in reader:
                 yield self.map_row(header, row)
@@ -88,13 +87,13 @@ class JSONLinesIterator(DataIterator):
 def create_iterator(data_file):
     """Creates an iterator from a file."""
     ext = splitext(data_file)[1].lower()
-    if ext == '.yaml':
+    if ext == ".yaml":
         return YamlIterator(data_file)
-    elif ext == '.csv':
+    elif ext == ".csv":
         return CSVIterator(data_file)
-    elif ext == '.jsonl':
+    elif ext == ".jsonl":
         return JSONLinesIterator(data_file)
-    raise RuntimeError(f'Unknown data format: {ext}')
+    raise RuntimeError(f"Unknown data format: {ext}")
 
 
 #
@@ -129,8 +128,14 @@ class PrioritizedVocabulariesFixtures:
     Another MeSH subject encountered down the hierarchy is ignored however.
     """
 
-    def __init__(self, identity, app_data_folder=None, pkg_data_folder=None,
-                 filename="vocabularies.yaml", delay=True):
+    def __init__(
+        self,
+        identity,
+        app_data_folder=None,
+        pkg_data_folder=None,
+        filename="vocabularies.yaml",
+        delay=True,
+    ):
         """Constructor.
 
         identity: Identity to use when loading
@@ -143,9 +148,7 @@ class PrioritizedVocabulariesFixtures:
         self._identity = identity
         # Path("./app_data") assumes app_data is in current working directory
         self._app_data_folder = app_data_folder or Path("./app_data")
-        self._pkg_data_folder = (
-            pkg_data_folder or Path(__file__).parent / "data"
-        )
+        self._pkg_data_folder = pkg_data_folder or Path(__file__).parent / "data"
         self._filename = filename
         self._delay = delay
         self._loaded_vocabularies = set()
@@ -163,9 +166,7 @@ class PrioritizedVocabulariesFixtures:
         fixture assumes it). So we use pkg_resources for now until
         _entry_points implementation can be changed.
         """
-        return list(
-            pkg_resources.iter_entry_points('invenio_rdm_records.fixtures')
-        )
+        return list(pkg_resources.iter_entry_points("invenio_rdm_records.fixtures"))
 
     def load(self):
         """Load the fixtures.
@@ -179,14 +180,10 @@ class PrioritizedVocabulariesFixtures:
         Fixtures found later are ignored.
         """
         # Prime with existing (sub)vocabularies
-        v_type_ids = [
-            v.id for v in VocabularyType.query.options(load_only("id")).all()
-        ]
+        v_type_ids = [v.id for v in VocabularyType.query.options(load_only("id")).all()]
         v_subtype_ids = [
-            f"{v.parent_id}.{v.id}" for v in
-            VocabularyScheme.query.options(
-                load_only("id", "parent_id")
-            ).all()
+            f"{v.parent_id}.{v.id}"
+            for v in VocabularyScheme.query.options(load_only("id", "parent_id")).all()
         ]
         self._loaded_vocabularies = set(v_type_ids + v_subtype_ids)
 
@@ -220,7 +217,8 @@ class PrioritizedVocabulariesFixtures:
 
         errors = [
             f"Vocabulary '{v}' cannot have multiple sources {ms}"
-            for v, ms in vocabulary_modules.items() if len(ms) > 1
+            for v, ms in vocabulary_modules.items()
+            if len(ms) > 1
         ]
         if errors:
             raise ConflictingFixturesError(errors)
@@ -244,14 +242,8 @@ class PrioritizedVocabulariesFixtures:
 
     def load_vocabularies(self, filepath):
         """Load vocabularies listed in vocabularies file."""
-        fixture = VocabulariesFixture(
-            self._identity,
-            filepath,
-            delay=self._delay
-        )
-        self._loaded_vocabularies = fixture.load(
-            ignore=self._loaded_vocabularies
-        )
+        fixture = VocabulariesFixture(self._identity, filepath, delay=self._delay)
+        self._loaded_vocabularies = fixture.load(ignore=self._loaded_vocabularies)
 
 
 class VocabulariesFixture:
@@ -275,13 +267,9 @@ class VocabulariesFixture:
             for id_, yaml_entry in data.items():
                 # Some vocabularies are non-generic
                 if id_ in ("subjects", "affiliations"):
-                    entry = VocabularyEntryWithSchemes(
-                        id_, dir_, id_, yaml_entry
-                    )
+                    entry = VocabularyEntryWithSchemes(id_, dir_, id_, yaml_entry)
                 elif id_ in ("names", "funders", "awards"):
-                    entry = VocabularyEntry(
-                        id_, dir_, id_, yaml_entry
-                    )
+                    entry = VocabularyEntry(id_, dir_, id_, yaml_entry)
                 else:
                     entry = GenericVocabularyEntry(dir_, id_, yaml_entry)
 
@@ -308,9 +296,7 @@ class VocabulariesFixture:
         ids = set(ignore) if ignore else set()
 
         for id_, entry in self.read():
-            ids.update(
-                entry.load(self._identity, ignore=ids, delay=self._delay)
-            )
+            ids.update(entry.load(self._identity, ignore=ids, delay=self._delay))
 
         return ids
 
@@ -335,7 +321,7 @@ class VocabularyEntry:
     def pre_load(self, identity, ignore):
         """Actions taken before iteratively creating records."""
         if self._id not in ignore:
-            pid_type = self._entry['pid-type']
+            pid_type = self._entry["pid-type"]
             current_service.create_type(identity, self._id, pid_type)
 
     def iterate(self, ignore):
@@ -378,7 +364,7 @@ class GenericVocabularyEntry(VocabularyEntry):
         if self._id not in ignore:
             filepath = self._dir / self._entry["data-file"]
             for data in create_iterator(filepath):
-                data['type'] = self._id
+                data["type"] = self._id
                 yield data
 
 
@@ -429,6 +415,5 @@ class VocabularyEntryWithSchemes(VocabularyEntry):
         id_ = metadata["id"]
         name = metadata.get("name", "")
         uri = metadata.get("uri", "")
-        VocabularyScheme.create(
-            id=id_, parent_id=self._id, name=name, uri=uri)
+        VocabularyScheme.create(id=id_, parent_id=self._id, name=name, uri=uri)
         db.session.commit()

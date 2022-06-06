@@ -61,9 +61,7 @@ def test_grant_tokens_dumper_query(
     id2 = str(users[1].id)
     grant1 = Grant.from_dict({"subject": "user", "id": id1, "level": "view"})
     grant2 = Grant.from_dict({"subject": "user", "id": id2, "level": "manage"})
-    grant3 = Grant.from_dict(
-        {"subject": "user", "id": id1, "level": "viewfull"}
-    )
+    grant3 = Grant.from_dict({"subject": "user", "id": id1, "level": "viewfull"})
 
     minimal_record["access"]["grants"] = [
         grant1.to_dict(),

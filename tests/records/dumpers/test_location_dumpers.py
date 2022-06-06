@@ -17,17 +17,12 @@ from invenio_rdm_records.records.dumpers import LocationsDumper
 
 
 def test_locationsdumper_with_point_geometry(app, db, minimal_record, parent):
-    dumper = ElasticsearchDumper(
-        extensions=[LocationsDumper()]
-    )
+    dumper = ElasticsearchDumper(extensions=[LocationsDumper()])
 
-    minimal_record['metadata']['locations'] = {
-        'features': [{
-            'geometry': {
-                'type': 'Point',
-                'coordinates': [6.052778, 46.234167]
-            }
-        }]
+    minimal_record["metadata"]["locations"] = {
+        "features": [
+            {"geometry": {"type": "Point", "coordinates": [6.052778, 46.234167]}}
+        ]
     }
 
     record = RDMRecord.create(minimal_record, parent=parent)
@@ -36,25 +31,19 @@ def test_locationsdumper_with_point_geometry(app, db, minimal_record, parent):
     dump = record.dumps(dumper=dumper)
 
     # Centroid has been inferred
-    dumped_feature = dump['metadata']['locations']['features'][0]
-    expected_feature = minimal_record['metadata']['locations']['features'][0]
-    assert (
-        dumped_feature['centroid'] ==
-        expected_feature['geometry']['coordinates']
-    )
+    dumped_feature = dump["metadata"]["locations"]["features"][0]
+    expected_feature = minimal_record["metadata"]["locations"]["features"][0]
+    assert dumped_feature["centroid"] == expected_feature["geometry"]["coordinates"]
 
     # And it round-trips
     assert (
-        record.loads(dump, loader=dumper)['metadata']['locations'] ==
-        minimal_record['metadata']['locations']
+        record.loads(dump, loader=dumper)["metadata"]["locations"]
+        == minimal_record["metadata"]["locations"]
     )
 
 
-def test_locationsdumper_with_no_featurecollection(
-        app, db, minimal_record, parent):
-    dumper = ElasticsearchDumper(
-        extensions=[LocationsDumper()]
-    )
+def test_locationsdumper_with_no_featurecollection(app, db, minimal_record, parent):
+    dumper = ElasticsearchDumper(extensions=[LocationsDumper()])
 
     record = RDMRecord.create(minimal_record, parent=parent)
 
@@ -62,28 +51,27 @@ def test_locationsdumper_with_no_featurecollection(
     dump = record.dumps(dumper=dumper)
 
 
-@unittest.mock.patch(
-    'invenio_rdm_records.records.dumpers.locations.shapely',
-    None
-)
-def test_locationsdumper_with_polygon_and_no_shapely(
-        app, db, minimal_record, parent):
-    dumper = ElasticsearchDumper(
-        extensions=[LocationsDumper()]
-    )
+@unittest.mock.patch("invenio_rdm_records.records.dumpers.locations.shapely", None)
+def test_locationsdumper_with_polygon_and_no_shapely(app, db, minimal_record, parent):
+    dumper = ElasticsearchDumper(extensions=[LocationsDumper()])
 
-    minimal_record['metadata']['locations'] = {
-        'features': [{
-            'geometry': {
-                'type': 'Polygon',
-                'coordinates': [
-                    [
-                        [100.0, 0.0], [101.0, 0.0], [101.0, 1.0], [100.0, 1.0],
-                        [100.0, 0.0],
-                    ]
-                ]
+    minimal_record["metadata"]["locations"] = {
+        "features": [
+            {
+                "geometry": {
+                    "type": "Polygon",
+                    "coordinates": [
+                        [
+                            [100.0, 0.0],
+                            [101.0, 0.0],
+                            [101.0, 1.0],
+                            [100.0, 1.0],
+                            [100.0, 0.0],
+                        ]
+                    ],
+                }
             }
-        }],
+        ],
     }
 
     record = RDMRecord.create(minimal_record, parent=parent)
@@ -91,31 +79,32 @@ def test_locationsdumper_with_polygon_and_no_shapely(
     with pytest.warns(UserWarning):
         dump = record.dumps(dumper=dumper)
 
-    assert 'centroid' not in dump['metadata']['locations']['features'][0]
+    assert "centroid" not in dump["metadata"]["locations"]["features"][0]
 
 
-def test_locationsdumper_with_polygon_and_mock_shapely(
-    app, db, minimal_record, parent
-):
+def test_locationsdumper_with_polygon_and_mock_shapely(app, db, minimal_record, parent):
     with unittest.mock.patch(
-        'invenio_rdm_records.records.dumpers.locations.shapely'
+        "invenio_rdm_records.records.dumpers.locations.shapely"
     ) as shapely:
-        dumper = ElasticsearchDumper(
-            extensions=[LocationsDumper()]
-        )
+        dumper = ElasticsearchDumper(extensions=[LocationsDumper()])
 
-        minimal_record['metadata']['locations'] = {
-            'features': [{
-                'geometry': {
-                    'type': 'Polygon',
-                    'coordinates': [
-                        [
-                            [100.0, 0.0], [101.0, 0.0], [101.0, 1.0],
-                            [100.0, 1.0], [100.0, 0.0],
-                        ]
-                    ]
+        minimal_record["metadata"]["locations"] = {
+            "features": [
+                {
+                    "geometry": {
+                        "type": "Polygon",
+                        "coordinates": [
+                            [
+                                [100.0, 0.0],
+                                [101.0, 0.0],
+                                [101.0, 1.0],
+                                [100.0, 1.0],
+                                [100.0, 0.0],
+                            ]
+                        ],
+                    }
                 }
-            }],
+            ],
         }
 
         record = RDMRecord.create(minimal_record, parent=parent)
@@ -127,33 +116,34 @@ def test_locationsdumper_with_polygon_and_mock_shapely(
         dump = record.dumps(dumper=dumper)
 
         shapely.geometry.shape.assert_called_once_with(
-            minimal_record['metadata']['locations']['features'][0]['geometry']
+            minimal_record["metadata"]["locations"]["features"][0]["geometry"]
         )
-        assert dump['metadata']['locations']['features'][0]['centroid'] == \
-            [100.5, 0.5]
+        assert dump["metadata"]["locations"]["features"][0]["centroid"] == [100.5, 0.5]
 
 
-def test_locationsdumper_with_polygon_and_shapely(
-        app, db, minimal_record, parent):
-    pytest.importorskip('shapely')
+def test_locationsdumper_with_polygon_and_shapely(app, db, minimal_record, parent):
+    pytest.importorskip("shapely")
 
-    dumper = ElasticsearchDumper(
-        extensions=[LocationsDumper()]
-    )
+    dumper = ElasticsearchDumper(extensions=[LocationsDumper()])
 
     # This also tests shapes with elevations
-    minimal_record['locations'] = {
-        'features': [{
-            'geometry': {
-                'type': 'Polygon',
-                'coordinates': [
-                    [
-                        [100.0, 0.0, 10], [101.0, 0.0, 10], [101.0, 1.0, 30],
-                        [100.0, 1.0, 30], [100.0, 0.0, 10],
-                    ]
-                ]
+    minimal_record["locations"] = {
+        "features": [
+            {
+                "geometry": {
+                    "type": "Polygon",
+                    "coordinates": [
+                        [
+                            [100.0, 0.0, 10],
+                            [101.0, 0.0, 10],
+                            [101.0, 1.0, 30],
+                            [100.0, 1.0, 30],
+                            [100.0, 0.0, 10],
+                        ]
+                    ],
+                }
             }
-        }],
+        ],
     }
 
     record = RDMRecord.create(minimal_record, parent=parent)
@@ -161,4 +151,4 @@ def test_locationsdumper_with_polygon_and_shapely(
     dump = record.dumps(dumper=dumper)
 
     # 3D geometries still lead to 2D centroids
-    assert dump['locations']['features'][0]['centroid'] == [100.5, 0.5]
+    assert dump["locations"]["features"][0]["centroid"] == [100.5, 0.5]

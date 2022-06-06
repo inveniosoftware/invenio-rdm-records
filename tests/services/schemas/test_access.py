@@ -12,16 +12,11 @@
 import pytest
 from marshmallow.exceptions import ValidationError
 
-from invenio_rdm_records.services.schemas.access import AccessSchema, \
-    EmbargoSchema
+from invenio_rdm_records.services.schemas.access import AccessSchema, EmbargoSchema
 
 
 def test_embargo_load_no_until_is_valid():
-    expected = {
-        "active": False,
-        "until": None,
-        "reason": None
-    }
+    expected = {"active": False, "until": None, "reason": None}
 
     valid_no_until = {
         "active": False,
@@ -55,35 +50,74 @@ def test_valid_full():
     valid_full = {
         "record": "public",
         "files": "restricted",
-        "embargo": {
-            "active": True,
-            "until": "2120-10-06",
-            "reason": "espionage"
-        },
+        "embargo": {"active": True, "until": "2120-10-06", "reason": "espionage"},
     }
     assert valid_full == AccessSchema().load(valid_full)
 
 
-@pytest.mark.parametrize("invalid_access,invalid_attr", [
-    ({"files": "restricted",
-     "embargo": {"active": True, "until": "2131-01-01", "reason": "secret!"}},
-     "record"),
-    ({"record": "public",
-     "embargo": {"active": True, "until": "2131-01-01", "reason": "secret!"}},
-     "files"),
-    ({"record": "public", "files": "restricted",
-     "embargo": {"active": False, "until": "2131-01-01", "reason": "secret!"}},
-     "embargo"),
-    ({"record": "public", "files": "restricted",
-     "embargo": {"active": True, "until": "1999-01-01", "reason": "secret!"}},
-     "embargo"),
-    ({"record": "invalid", "files": "restricted",
-     "embargo": {"active": False, "until": "1999-01-01", "reason": "secret!"}},
-     "record"),
-    ({"record": "public", "files": "invalid",
-     "embargo": {"active": False, "until": "1999-01-01", "reason": "secret!"}},
-     "files"),
-])
+@pytest.mark.parametrize(
+    "invalid_access,invalid_attr",
+    [
+        (
+            {
+                "files": "restricted",
+                "embargo": {"active": True, "until": "2131-01-01", "reason": "secret!"},
+            },
+            "record",
+        ),
+        (
+            {
+                "record": "public",
+                "embargo": {"active": True, "until": "2131-01-01", "reason": "secret!"},
+            },
+            "files",
+        ),
+        (
+            {
+                "record": "public",
+                "files": "restricted",
+                "embargo": {
+                    "active": False,
+                    "until": "2131-01-01",
+                    "reason": "secret!",
+                },
+            },
+            "embargo",
+        ),
+        (
+            {
+                "record": "public",
+                "files": "restricted",
+                "embargo": {"active": True, "until": "1999-01-01", "reason": "secret!"},
+            },
+            "embargo",
+        ),
+        (
+            {
+                "record": "invalid",
+                "files": "restricted",
+                "embargo": {
+                    "active": False,
+                    "until": "1999-01-01",
+                    "reason": "secret!",
+                },
+            },
+            "record",
+        ),
+        (
+            {
+                "record": "public",
+                "files": "invalid",
+                "embargo": {
+                    "active": False,
+                    "until": "1999-01-01",
+                    "reason": "secret!",
+                },
+            },
+            "files",
+        ),
+    ],
+)
 def test_invalid(invalid_access, invalid_attr):
 
     with pytest.raises(ValidationError) as e:

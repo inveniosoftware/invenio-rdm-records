@@ -9,11 +9,14 @@
 
 from flask import abort, g
 from flask.globals import request
-from flask_resources import Resource, resource_requestctx, response_handler, \
-    route
+from flask_resources import Resource, resource_requestctx, response_handler, route
 from invenio_records_resources.resources.errors import ErrorHandlersMixin
-from invenio_records_resources.resources.records.resource import \
-    request_data, request_headers, request_search_args, request_view_args
+from invenio_records_resources.resources.records.resource import (
+    request_data,
+    request_headers,
+    request_search_args,
+    request_view_args,
+)
 from invenio_records_resources.resources.records.utils import es_preference
 
 
@@ -33,9 +36,7 @@ class OAIPMHServerResource(ErrorHandlersMixin, Resource):
             route("POST", routes["set-prefix"], self.create),
             route("GET", routes["set-prefix"] + routes["item"], self.read),
             route("PUT", routes["set-prefix"] + routes["item"], self.update),
-            route(
-                "DELETE", routes["set-prefix"] + routes["item"], self.delete
-            ),
+            route("DELETE", routes["set-prefix"] + routes["item"], self.delete),
             route(
                 "GET",
                 routes["format-prefix"] + routes["list"],

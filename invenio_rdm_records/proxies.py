@@ -11,13 +11,11 @@
 from flask import current_app
 from werkzeug.local import LocalProxy
 
-current_rdm_records = LocalProxy(
-    lambda: current_app.extensions['invenio-rdm-records']
-)
+current_rdm_records = LocalProxy(lambda: current_app.extensions["invenio-rdm-records"])
 """Helper proxy to get the current RDM-Records extension."""
 
 
 current_rdm_records_service = LocalProxy(
-    lambda: current_app.extensions['invenio-rdm-records'].records_service
+    lambda: current_app.extensions["invenio-rdm-records"].records_service
 )
 """Helper proxy to get the current RDM-Records records service extension."""

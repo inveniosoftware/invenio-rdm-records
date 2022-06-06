@@ -18,8 +18,9 @@ from invenio_rdm_records.services.pids import providers
 class FakeDataCiteRESTClient:
     """DataCite REST API client wrapper."""
 
-    def __init__(self, username, password, prefix, test_mode=False, url=None,
-                 timeout=None):
+    def __init__(
+        self, username, password, prefix, test_mode=False, url=None, timeout=None
+    ):
         """Initialize the REST client wrapper.
 
         :param username: DataCite username.
@@ -39,8 +40,8 @@ class FakeDataCiteRESTClient:
         else:
             self.api_url = url or "https://api.datacite.org/"
 
-        if not self.api_url.endswith('/'):
-            self.api_url += '/'
+        if not self.api_url.endswith("/"):
+            self.api_url += "/"
 
         self.timeout = timeout
 
@@ -91,21 +92,22 @@ class FakeDataCiteRESTClient:
         12.12345/123 with the prefix defined
         """
         # If prefix is in doi
-        if '/' in doi:
-            split = doi.split('/')
+        if "/" in doi:
+            split = doi.split("/")
             prefix = split[0]
             if prefix != self.prefix:
                 # Provided a DOI with the wrong prefix
-                raise ValueError('Wrong DOI {0} prefix provided, it should be '
-                                 '{1} as defined in the rest client'
-                                 .format(prefix, self.prefix))
+                raise ValueError(
+                    "Wrong DOI {0} prefix provided, it should be "
+                    "{1} as defined in the rest client".format(prefix, self.prefix)
+                )
         else:
-            doi = f'{self.prefix}/{doi}'
+            doi = f"{self.prefix}/{doi}"
         return normalize_doi(doi)
 
     def __repr__(self):
         """Create string representation of object."""
-        return f'<FakeDataCiteRESTClient: {self.username}>'
+        return f"<FakeDataCiteRESTClient: {self.username}>"
 
 
 class FakeDataCiteClient(providers.DataCiteClient):
@@ -117,9 +119,9 @@ class FakeDataCiteClient(providers.DataCiteClient):
         if self._api is None:
             self.check_credentials()
             self._api = FakeDataCiteRESTClient(
-                self.cfg('username'),
-                self.cfg('password'),
-                self.cfg('prefix'),
-                self.cfg('test_mode', True),
+                self.cfg("username"),
+                self.cfg("password"),
+                self.cfg("prefix"),
+                self.cfg("test_mode", True),
             )
         return self._api

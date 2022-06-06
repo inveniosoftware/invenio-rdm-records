@@ -31,8 +31,5 @@ class DataCite43XMLSerializer(DataCite43JSONSerializer):
     def serialize_object_list(self, records, **kwargs):
         """Serialize a list of records."""
         return "\n".join(
-            [
-                self.serialize_object(rec, **kwargs)
-                for rec in records["hits"]["hits"]
-            ]
+            [self.serialize_object(rec, **kwargs) for rec in records["hits"]["hits"]]
         )

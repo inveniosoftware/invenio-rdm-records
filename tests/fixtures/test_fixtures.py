@@ -16,8 +16,11 @@ from invenio_records_resources.proxies import current_service_registry
 from invenio_vocabularies.proxies import current_service as vocabulary_service
 
 from invenio_rdm_records.fixtures.users import UsersFixture
-from invenio_rdm_records.fixtures.vocabularies import GenericVocabularyEntry, \
-    PrioritizedVocabulariesFixtures, VocabularyEntryWithSchemes
+from invenio_rdm_records.fixtures.vocabularies import (
+    GenericVocabularyEntry,
+    PrioritizedVocabulariesFixtures,
+    VocabularyEntryWithSchemes,
+)
 
 
 @pytest.fixture(scope="module")
@@ -33,38 +36,32 @@ def affiliations_service(app):
 
 
 def test_load_languages(app, db, es_clear):
-    id_ = 'languages'
+    id_ = "languages"
     languages = GenericVocabularyEntry(
         Path(__file__).parent / "data",
         id_,
-        {
-            "pid-type": "lng",
-            "data-file": "vocabularies/languages.yaml"
-        }
+        {"pid-type": "lng", "data-file": "vocabularies/languages.yaml"},
     )
 
     languages.load(system_identity, delay=False)
 
-    item = vocabulary_service.read(system_identity, (id_, 'aae'))
+    item = vocabulary_service.read(system_identity, (id_, "aae"))
     assert item.id == "aae"
 
 
 def test_load_resource_types(app, db, es_clear):
-    id_ = 'resourcetypes'
+    id_ = "resourcetypes"
     resource_types = GenericVocabularyEntry(
         Path(__file__).parent / "data",
         id_,
-        {
-            "pid-type": "rsrct",
-            "data-file": "vocabularies/resource_types.yaml"
-        },
+        {"pid-type": "rsrct", "data-file": "vocabularies/resource_types.yaml"},
     )
 
     resource_types.load(system_identity, delay=False)
 
     item = vocabulary_service.read(
         system_identity,
-        (id_, 'publication-annotationcollection'),
+        (id_, "publication-annotationcollection"),
     )
     item_dict = item.to_dict()
     assert item_dict["id"] == "publication-annotationcollection"
@@ -72,21 +69,18 @@ def test_load_resource_types(app, db, es_clear):
 
 
 def test_load_community_types(app, db, es_clear):
-    id_ = 'communitytypes'
+    id_ = "communitytypes"
     resource_types = GenericVocabularyEntry(
         Path(__file__).parent / "data",
         id_,
-        {
-            "pid-type": "comtyp",
-            "data-file": "vocabularies/community_types.yaml"
-        },
+        {"pid-type": "comtyp", "data-file": "vocabularies/community_types.yaml"},
     )
 
     resource_types.load(system_identity, delay=False)
 
     item = vocabulary_service.read(
         system_identity,
-        (id_, 'organization'),
+        (id_, "organization"),
     )
     item_dict = item.to_dict()
     assert item_dict["id"] == "organization"
@@ -100,7 +94,7 @@ def test_loading_paths_traversal(app, db, es_clear, subjects_service):
         dir_ / "app_data",
         dir_ / "data",
         "vocabularies.yaml",
-        delay=False
+        delay=False,
     )
 
     fixtures.load()
@@ -109,16 +103,15 @@ def test_loading_paths_traversal(app, db, es_clear, subjects_service):
     with pytest.raises(PIDDoesNotExistError):
         vocabulary_service.read(
             system_identity,
-            ('resourcetypes', 'publication-annotationcollection'),
+            ("resourcetypes", "publication-annotationcollection"),
         )
 
     # languages are found
-    item = vocabulary_service.read(system_identity, ('languages', 'aae'))
+    item = vocabulary_service.read(system_identity, ("languages", "aae"))
     assert item.id == "aae"
 
     # Only subjects from app_data/ are loaded
-    item = subjects_service.read(
-        system_identity, "https://id.nlm.nih.gov/mesh/D000001")
+    item = subjects_service.read(system_identity, "https://id.nlm.nih.gov/mesh/D000001")
     assert item.id == "https://id.nlm.nih.gov/mesh/D000001"
     # - subjects in extension but from already loaded scheme are not loaded
     with pytest.raises(PIDDoesNotExistError):
@@ -128,7 +121,8 @@ def test_loading_paths_traversal(app, db, es_clear, subjects_service):
         )
     # - subjects in extension from not already loaded scheme are loaded
     item = subjects_service.read(
-        system_identity, "https://id.loc.gov/authorities/subjects/sh85118623")
+        system_identity, "https://id.loc.gov/authorities/subjects/sh85118623"
+    )
     assert item.id == "https://id.loc.gov/authorities/subjects/sh85118623"
 
 
@@ -154,7 +148,7 @@ def test_reloading_paths_traversal(app, db, es_clear, subjects_service):
         dir_ / "app_data",
         dir_ / "data",
         "vocabularies.yaml",
-        delay=False
+        delay=False,
     )
     fixtures.load()
 
@@ -182,11 +176,8 @@ def test_reloading_paths_traversal(app, db, es_clear, subjects_service):
 def test_load_users(app, db, admin_role):
     dir_ = Path(__file__).parent
     users = UsersFixture(
-        [
-            dir_ / "app_data",
-            dir_.parent.parent / "invenio_rdm_records/fixtures/data"
-        ],
-        "users.yaml"
+        [dir_ / "app_data", dir_.parent.parent / "invenio_rdm_records/fixtures/data"],
+        "users.yaml",
     )
 
     users.load()
@@ -198,8 +189,7 @@ def test_load_users(app, db, admin_role):
     assert current_datastore.find_user(email="user@example.com")
 
 
-def test_load_affiliations(
-        app, db, admin_role, es_clear, affiliations_service):
+def test_load_affiliations(app, db, admin_role, es_clear, affiliations_service):
     dir_ = Path(__file__).parent
     affiliations = VocabularyEntryWithSchemes(
         "affiliations",
@@ -207,13 +197,15 @@ def test_load_affiliations(
         "affiliations",
         {
             "pid-type": "aff",
-            "schemes": [{
-                "id": "ROR",
-                "name": "Research Organization Registry",
-                "uri": "https://ror.org/",
-                "data-file": "vocabularies/affiliations_ror.yaml"
-            }]
-        }
+            "schemes": [
+                {
+                    "id": "ROR",
+                    "name": "Research Organization Registry",
+                    "uri": "https://ror.org/",
+                    "data-file": "vocabularies/affiliations_ror.yaml",
+                }
+            ],
+        },
     )
 
     affiliations.load(system_identity, delay=False)

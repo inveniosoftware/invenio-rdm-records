@@ -17,19 +17,22 @@ from invenio_records.dumpers import ElasticsearchDumper
 from invenio_rdm_records.proxies import current_rdm_records
 from invenio_rdm_records.records import RDMDraft, RDMRecord
 from invenio_rdm_records.records.api import RDMParent
-from invenio_rdm_records.records.dumpers import EDTFDumperExt, \
-    EDTFListDumperExt
+from invenio_rdm_records.records.dumpers import EDTFDumperExt, EDTFListDumperExt
 
 
-@pytest.mark.parametrize("date, expected_start, expected_end", [
-    ("2021-01-01", "2021-01-01", "2021-01-01"),
-    ("2021-01", "2021-01-01", "2021-01-31"),
-    ("2021", "2021-01-01", "2021-12-31"),
-    ("1776", "1776-01-01", "1776-12-31"),
-    ("2021-01/2021-03", "2021-01-01", "2021-03-31")
-])
-def test_esdumper_with_edtfext(running_app, db, minimal_record,
-                               date, expected_start, expected_end):
+@pytest.mark.parametrize(
+    "date, expected_start, expected_end",
+    [
+        ("2021-01-01", "2021-01-01", "2021-01-01"),
+        ("2021-01", "2021-01-01", "2021-01-31"),
+        ("2021", "2021-01-01", "2021-12-31"),
+        ("1776", "1776-01-01", "1776-12-31"),
+        ("2021-01/2021-03", "2021-01-01", "2021-03-31"),
+    ],
+)
+def test_esdumper_with_edtfext(
+    running_app, db, minimal_record, date, expected_start, expected_end
+):
     """Test edft extension implementation."""
     # Create a simple extension that adds a computed field.
 
@@ -89,8 +92,7 @@ def test_esdumper_with_edtfext_not_defined(running_app, db, minimal_record):
     assert "non_existing_field" not in new_record["metadata"]
 
 
-def test_eslistdumper_with_edtfext_not_defined(
-        running_app, db, minimal_record):
+def test_eslistdumper_with_edtfext_not_defined(running_app, db, minimal_record):
     """Test edft extension implementation."""
     # Create a simple extension that adds a computed field.
 
@@ -140,8 +142,7 @@ def test_esdumper_with_edtfext_parse_error(running_app, db, minimal_record):
     assert "id" in new_record["metadata"]["resource_type"]
 
 
-def test_eslistdumper_with_edtfext_parse_error(
-        running_app, db, minimal_record):
+def test_eslistdumper_with_edtfext_parse_error(running_app, db, minimal_record):
     """Test edft extension implementation."""
     dumper = ElasticsearchDumper(
         extensions=[
@@ -162,8 +163,8 @@ def test_eslistdumper_with_edtfext_parse_error(
     # Load it
     new_record = RDMRecord.loads(dump, loader=dumper)
     person_or_org = dump["metadata"]["creators"][0]["person_or_org"]
-    assert 'family_name_range' not in person_or_org
-    assert 'family_name' in person_or_org
-    assert 'type_start' not in new_record['metadata']['resource_type']
-    assert 'type_end' not in new_record['metadata']['resource_type']
-    assert 'id' in new_record['metadata']['resource_type']
+    assert "family_name_range" not in person_or_org
+    assert "family_name" in person_or_org
+    assert "type_start" not in new_record["metadata"]["resource_type"]
+    assert "type_end" not in new_record["metadata"]["resource_type"]
+    assert "id" in new_record["metadata"]["resource_type"]

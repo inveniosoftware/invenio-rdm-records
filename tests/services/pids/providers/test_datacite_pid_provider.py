@@ -15,14 +15,17 @@ from invenio_pidstore.models import PersistentIdentifier, PIDStatus
 
 from invenio_rdm_records.proxies import current_rdm_records
 from invenio_rdm_records.records import RDMDraft, RDMRecord
-from invenio_rdm_records.services.pids.providers import DataCiteClient, \
-    DataCitePIDProvider
+from invenio_rdm_records.services.pids.providers import (
+    DataCiteClient,
+    DataCitePIDProvider,
+)
 
 
 @pytest.fixture()
 def datacite_provider(mocker):
-    mocker.patch("invenio_rdm_records.services.pids.providers.datacite." +
-                 "DataCiteRESTClient")
+    mocker.patch(
+        "invenio_rdm_records.services.pids.providers.datacite." + "DataCiteRESTClient"
+    )
 
     return DataCitePIDProvider("datacite", client=DataCiteClient("datacite"))
 
@@ -49,8 +52,7 @@ def record_w_links(running_app, minimal_record):
 def test_datacite_provider_create(record, datacite_provider):
 
     created_pid = datacite_provider.create(record)
-    db_pid = PersistentIdentifier.get(
-        pid_value=created_pid.pid_value, pid_type="doi")
+    db_pid = PersistentIdentifier.get(pid_value=created_pid.pid_value, pid_type="doi")
 
     assert created_pid == db_pid
     assert created_pid.pid_value
@@ -72,8 +74,7 @@ def test_datacite_provider_reserve(record, datacite_provider):
     created_pid = datacite_provider.create(record)
     assert datacite_provider.reserve(pid=created_pid, record=record)
 
-    db_pid = PersistentIdentifier.get(
-        pid_value=created_pid.pid_value, pid_type="doi")
+    db_pid = PersistentIdentifier.get(pid_value=created_pid.pid_value, pid_type="doi")
 
     assert created_pid == db_pid
     assert db_pid.pid_value
@@ -82,17 +83,20 @@ def test_datacite_provider_reserve(record, datacite_provider):
 
 
 def test_datacite_provider_register(record_w_links, datacite_provider, mocker):
-    mocker.patch("invenio_rdm_records.services.pids.providers.datacite." +
-                 "DataCite43JSONSerializer")
+    mocker.patch(
+        "invenio_rdm_records.services.pids.providers.datacite."
+        + "DataCite43JSONSerializer"
+    )
     created_pid = datacite_provider.get(
-        record_w_links._record.pids['doi']['identifier'])
+        record_w_links._record.pids["doi"]["identifier"]
+    )
     assert datacite_provider.register(
-        pid=created_pid, record=record_w_links._record,
-        url=record_w_links.links["self_html"]
+        pid=created_pid,
+        record=record_w_links._record,
+        url=record_w_links.links["self_html"],
     )
 
-    db_pid = PersistentIdentifier.get(
-        pid_value=created_pid.pid_value, pid_type="doi")
+    db_pid = PersistentIdentifier.get(pid_value=created_pid.pid_value, pid_type="doi")
 
     assert created_pid == db_pid
     assert db_pid.pid_value
@@ -101,20 +105,21 @@ def test_datacite_provider_register(record_w_links, datacite_provider, mocker):
 
 
 def test_datacite_provider_update(record_w_links, datacite_provider, mocker):
-    mocker.patch("invenio_rdm_records.services.pids.providers.datacite." +
-                 "DataCite43JSONSerializer")
+    mocker.patch(
+        "invenio_rdm_records.services.pids.providers.datacite."
+        + "DataCite43JSONSerializer"
+    )
     created_pid = datacite_provider.get(
-        record_w_links._record.pids['doi']['identifier'])
+        record_w_links._record.pids["doi"]["identifier"]
+    )
     assert datacite_provider.register(
-        pid=created_pid, record=record_w_links,
-        url=record_w_links.links["self_html"]
+        pid=created_pid, record=record_w_links, url=record_w_links.links["self_html"]
     )
     assert datacite_provider.update(
         pid=created_pid, record=record_w_links._record, url=None
     )
 
-    db_pid = PersistentIdentifier.get(
-        pid_value=created_pid.pid_value, pid_type="doi")
+    db_pid = PersistentIdentifier.get(pid_value=created_pid.pid_value, pid_type="doi")
 
     assert created_pid == db_pid
     assert db_pid.pid_value
@@ -129,13 +134,10 @@ def test_datacite_provider_unregister_new(record, datacite_provider):
     assert datacite_provider.delete(created_pid)
 
     with pytest.raises(PIDDoesNotExistError):
-        PersistentIdentifier.get(
-            pid_value=created_pid.pid_value, pid_type="doi")
+        PersistentIdentifier.get(pid_value=created_pid.pid_value, pid_type="doi")
 
 
-def test_datacite_provider_unregister_reserved(
-    record, datacite_provider
-):
+def test_datacite_provider_unregister_reserved(record, datacite_provider):
     # Unregister NEW is a soft delete
     created_pid = datacite_provider.create(record)
     assert datacite_provider.reserve(pid=created_pid, record=record)
@@ -143,29 +145,30 @@ def test_datacite_provider_unregister_reserved(
     assert datacite_provider.delete(created_pid)
 
     # reserve keeps status as RESERVED so is soft deleted
-    pid = PersistentIdentifier.get(
-            pid_value=created_pid.pid_value, pid_type="doi"
-        )
+    pid = PersistentIdentifier.get(pid_value=created_pid.pid_value, pid_type="doi")
     assert pid.status == PIDStatus.DELETED
 
 
 def test_datacite_provider_unregister_registered(
     record_w_links, datacite_provider, mocker
 ):
-    mocker.patch("invenio_rdm_records.services.pids.providers.datacite." +
-                 "DataCite43JSONSerializer")
+    mocker.patch(
+        "invenio_rdm_records.services.pids.providers.datacite."
+        + "DataCite43JSONSerializer"
+    )
     # Unregister NEW is a soft delete
     created_pid = datacite_provider.get(
-        record_w_links._record.pids['doi']['identifier'])
+        record_w_links._record.pids["doi"]["identifier"]
+    )
     assert datacite_provider.register(
-        pid=created_pid, record=record_w_links,
-        url=record_w_links.links["self_html"]
+        pid=created_pid, record=record_w_links, url=record_w_links.links["self_html"]
     )
     assert created_pid.status == PIDStatus.REGISTERED
     assert datacite_provider.delete(created_pid)
 
     deleted_pid = PersistentIdentifier.get(
-            pid_value=created_pid.pid_value, pid_type="doi")
+        pid_value=created_pid.pid_value, pid_type="doi"
+    )
     assert deleted_pid.status == PIDStatus.DELETED
 
 
@@ -181,12 +184,12 @@ def test_datacite_provider_configuration(record, mocker):
     assert datacite_provider.create(record).pid_value == expected_result
 
     # check id generation from env func
-    current_app.config['DATACITE_FORMAT'] = custom_format_func
+    current_app.config["DATACITE_FORMAT"] = custom_format_func
     datacite_provider = DataCitePIDProvider("datacite", client=client)
     assert datacite_provider.create(record).pid_value == "10.123/custom.func"
 
     # check id generation from env f-string
-    current_app.config['DATACITE_FORMAT'] = "{prefix}/datacite2.{id}"  # noqa
+    current_app.config["DATACITE_FORMAT"] = "{prefix}/datacite2.{id}"  # noqa
     datacite_provider = DataCitePIDProvider("datacite", client=client)
     expected_result = datacite_provider.generate_id(record)
     assert datacite_provider.create(record).pid_value == expected_result
@@ -196,7 +199,7 @@ def test_datacite_provider_validation(record, mocker):
     client = DataCiteClient("datacite")
 
     # check with default func
-    current_app.config['DATACITE_PREFIX'] = "10.1000"
+    current_app.config["DATACITE_PREFIX"] = "10.1000"
     datacite_provider = DataCitePIDProvider("datacite", client=client)
     success, errors = datacite_provider.validate(
         record=record, identifier="10.1000/valid.1234", provider="datacite"
@@ -209,5 +212,7 @@ def test_datacite_provider_validation(record, mocker):
     )
 
     assert not success
-    assert errors == ['Wrong DOI 10.2000 prefix provided, ' +
-                      'it should be 10.1000 as defined in the rest client']
+    assert errors == [
+        "Wrong DOI 10.2000 prefix provided, "
+        + "it should be 10.1000 as defined in the rest client"
+    ]

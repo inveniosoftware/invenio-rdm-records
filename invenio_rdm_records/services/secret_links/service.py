@@ -15,8 +15,7 @@ import arrow
 from flask_babelex import lazy_gettext as _
 from invenio_db import db
 from invenio_drafts_resources.services.records import RecordService
-from invenio_records_resources.services.records.schema import \
-    ServiceSchemaWrapper
+from invenio_records_resources.services.records.schema import ServiceSchemaWrapper
 from invenio_records_resources.services.uow import RecordCommitOp, unit_of_work
 from marshmallow.exceptions import ValidationError
 from sqlalchemy.orm.exc import NoResultFound
@@ -46,9 +45,7 @@ class SecretLinkService(RecordService):
     @property
     def schema_secret_link(self):
         """Schema for secret links."""
-        return ServiceSchemaWrapper(
-            self, schema=self.config.schema_secret_link
-        )
+        return ServiceSchemaWrapper(self, schema=self.config.schema_secret_link)
 
     def _validate_secret_link_expires_at(
         self, expires_at, is_specified=True, secret_link=None
@@ -107,14 +104,7 @@ class SecretLinkService(RecordService):
         return expires_at
 
     @unit_of_work()
-    def create(
-        self,
-        identity,
-        id_,
-        data,
-        links_config=None,
-        uow=None
-    ):
+    def create(self, identity, id_, data, links_config=None, uow=None):
         """Create a secret link for a record (resp. its parent)."""
         record, parent = self.get_parent_and_record_or_draft(id_)
 
@@ -125,9 +115,7 @@ class SecretLinkService(RecordService):
         data, __ = self.schema_secret_link.load(
             data, context=dict(identity=identity), raise_errors=True
         )
-        expires_at = self._validate_secret_link_expires_at(
-            data.get("expires_at")
-        )
+        expires_at = self._validate_secret_link_expires_at(data.get("expires_at"))
         if "permission" not in data:
             raise ValidationError(
                 _("An access permission level is required"),
@@ -268,14 +256,7 @@ class SecretLinkService(RecordService):
         )
 
     @unit_of_work()
-    def delete(
-        self,
-        identity,
-        id_,
-        link_id,
-        links_config=None,
-        uow=None
-    ):
+    def delete(self, identity, id_, link_id, links_config=None, uow=None):
         """Delete a secret link for a record (resp. its parent)."""
         record, parent = self.get_parent_and_record_or_draft(id_)
 

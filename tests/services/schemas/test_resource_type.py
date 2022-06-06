@@ -44,11 +44,11 @@ def test_invalid_no_resource_type(minimal_metadata):
     minimal_metadata["resource_type"] = {}
     assert_raises_messages(
         lambda: MetadataSchema().load(minimal_metadata),
-        {"resource_type": {'id': ["Missing data for required field."]}}
+        {"resource_type": {"id": ["Missing data for required field."]}},
     )
 
     del minimal_metadata["resource_type"]
     assert_raises_messages(
         lambda: MetadataSchema().load(minimal_metadata),
-        {"resource_type": ["Missing data for required field."]}
+        {"resource_type": ["Missing data for required field."]},
     )

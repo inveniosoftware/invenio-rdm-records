@@ -16,9 +16,7 @@ class PIDSchemeNotSupportedError(RDMRecordsException):
 
     def __init__(self, schemes):
         """Initialise error."""
-        super().__init__(
-            f"No configuration defined for PIDs {schemes}"
-        )
+        super().__init__(f"No configuration defined for PIDs {schemes}")
 
 
 class ProviderNotSupportedError(RDMRecordsException):
@@ -26,6 +24,4 @@ class ProviderNotSupportedError(RDMRecordsException):
 
     def __init__(self, provider, scheme):
         """Initialise error."""
-        super().__init__(
-            f"Unknown PID provider {provider} for {scheme}"
-        )
+        super().__init__(f"Unknown PID provider {provider} for {scheme}")

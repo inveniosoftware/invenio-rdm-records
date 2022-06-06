@@ -19,14 +19,17 @@ from invenio_db import db
 from invenio_records_resources.proxies import current_service_registry
 from invenio_users_resources.services.users.tasks import reindex_user
 
-from invenio_rdm_records.proxies import current_rdm_records, \
-    current_rdm_records_service
+from invenio_rdm_records.proxies import current_rdm_records, current_rdm_records_service
 
 from .fixtures import FixturesEngine
 from .fixtures.demo import create_fake_community, create_fake_record
-from .fixtures.tasks import create_demo_community, \
-    create_demo_inclusion_requests, create_demo_invitation_requests, \
-    create_demo_record, get_authenticated_identity
+from .fixtures.tasks import (
+    create_demo_community,
+    create_demo_inclusion_requests,
+    create_demo_invitation_requests,
+    create_demo_record,
+    get_authenticated_identity,
+)
 
 COMMUNITY_OWNER_EMAIL = "community@demo.org"
 USER_EMAIL = "user@demo.org"
@@ -41,10 +44,7 @@ def _get_or_create_user(email):
                 email=email,
                 password=hash_password("123456"),
                 active=True,
-                preferences=dict(
-                    visibility="public",
-                    email_visibility="public"
-                )
+                preferences=dict(visibility="public", email_visibility="public"),
             )
         confirm_user(user)
         db.session.commit()
@@ -70,10 +70,22 @@ def demo(ctx):
 
 
 @demo.command("records")
-@click.option("-u", "--user", "user_email", default=USER_EMAIL,
-              show_default=True, help=HELP_MSG_USER)
-@click.option("-r", "--records", "n_records", default=100,
-              show_default=True, help="Number of fake records to create")
+@click.option(
+    "-u",
+    "--user",
+    "user_email",
+    default=USER_EMAIL,
+    show_default=True,
+    help=HELP_MSG_USER,
+)
+@click.option(
+    "-r",
+    "--records",
+    "n_records",
+    default=100,
+    show_default=True,
+    help="Number of fake records to create",
+)
 @with_appcontext
 def records(user_email, n_records):
     """Create fake records."""
@@ -88,10 +100,22 @@ def records(user_email, n_records):
 
 
 @demo.command("drafts")
-@click.option("-u", "--user", "user_email", default=USER_EMAIL,
-              show_default=True, help=HELP_MSG_USER)
-@click.option("-d", "--drafts", "n_drafts", default=20,
-              show_default=True, help="Number of fake drafts to create")
+@click.option(
+    "-u",
+    "--user",
+    "user_email",
+    default=USER_EMAIL,
+    show_default=True,
+    help=HELP_MSG_USER,
+)
+@click.option(
+    "-d",
+    "--drafts",
+    "n_drafts",
+    default=20,
+    show_default=True,
+    help="Number of fake drafts to create",
+)
 @with_appcontext
 def drafts(user_email, n_drafts):
     """Create fake drafts."""
@@ -106,16 +130,27 @@ def drafts(user_email, n_drafts):
 
 
 @demo.command("communities")
-@click.option("-u", "--user", "user_email", default=COMMUNITY_OWNER_EMAIL,
-              show_default=True, help=HELP_MSG_USER)
-@click.option("-c", "--communities", "n_communities", default=5,
-              show_default=True, help="Number of fake communities to create")
+@click.option(
+    "-u",
+    "--user",
+    "user_email",
+    default=COMMUNITY_OWNER_EMAIL,
+    show_default=True,
+    help=HELP_MSG_USER,
+)
+@click.option(
+    "-c",
+    "--communities",
+    "n_communities",
+    default=5,
+    show_default=True,
+    help="Number of fake communities to create",
+)
 @with_appcontext
 def communities(user_email, n_communities):
     """Create fake communities."""
     user = _get_or_create_user(user_email)
-    click.secho("Creating demo communities for owner {0}...".format(user),
-                fg="green")
+    click.secho("Creating demo communities for owner {0}...".format(user), fg="green")
 
     for _ in range(n_communities):
         fake_data = create_fake_community()
@@ -125,31 +160,45 @@ def communities(user_email, n_communities):
 
 
 @demo.command("inclusion-requests")
-@click.option("-u", "--user", "user_email", default=USER_EMAIL,
-              show_default=True, help=HELP_MSG_USER)
-@click.option("-i", "--requests", "n_requests", default=5,
-              show_default=True,
-              help="Number of fake inclusion requests to create")
+@click.option(
+    "-u",
+    "--user",
+    "user_email",
+    default=USER_EMAIL,
+    show_default=True,
+    help=HELP_MSG_USER,
+)
+@click.option(
+    "-i",
+    "--requests",
+    "n_requests",
+    default=5,
+    show_default=True,
+    help="Number of fake inclusion requests to create",
+)
 @with_appcontext
 def inclusion_requests(user_email, n_requests):
     """Create fake requests to include drafts to communities."""
     user = _get_or_create_user(user_email)
-    click.secho("Creating demo inclusions requests for {0}...".format(user),
-                fg="green")
+    click.secho("Creating demo inclusions requests for {0}...".format(user), fg="green")
 
     identity = get_authenticated_identity(user.id)
-    drafts = current_rdm_records_service.search_drafts(identity,
-                                                       is_published=False,
-                                                       q="versions.index:1")
+    drafts = current_rdm_records_service.search_drafts(
+        identity, is_published=False, q="versions.index:1"
+    )
     if drafts.total == 0:
-        click.secho("Failed! Create fake drafts first "
-                    "with `rdm-records demo drafts`.", fg="red")
+        click.secho(
+            "Failed! Create fake drafts first " "with `rdm-records demo drafts`.",
+            fg="red",
+        )
         return
 
     communities = current_communities.service.search(system_identity)
     if communities.total == 0:
-        click.secho("Failed! Create fake communities "
-                    "first `rdm-records demo communities`.", fg="red")
+        click.secho(
+            "Failed! Create fake communities " "first `rdm-records demo communities`.",
+            fg="red",
+        )
         return
 
     create_demo_inclusion_requests.delay(user.id, n_requests)
@@ -158,24 +207,34 @@ def inclusion_requests(user_email, n_requests):
 
 
 @demo.command("invitation-requests")
-@click.option("-u", "--user", "user_email", default=USER_EMAIL,
-              show_default=True, help=HELP_MSG_USER)
-@click.option("-m", "--requests", "n_requests", default=5,
-              show_default=True,
-              help="Number of fake invitation requests to create")
+@click.option(
+    "-u",
+    "--user",
+    "user_email",
+    default=USER_EMAIL,
+    show_default=True,
+    help=HELP_MSG_USER,
+)
+@click.option(
+    "-m",
+    "--requests",
+    "n_requests",
+    default=5,
+    show_default=True,
+    help="Number of fake invitation requests to create",
+)
 @with_appcontext
 def invitation_requests(user_email, n_requests):
     """Create fake invitation requests to a community."""
     user = _get_or_create_user(user_email)
-    click.secho("Creating demo invitation requests for {0}...".format(user),
-                fg="green")
+    click.secho("Creating demo invitation requests for {0}...".format(user), fg="green")
 
     communities = current_communities.service.search(system_identity)
     if communities.total == 0:
         click.secho(
-            "Failed! Create fake communities "
-            "first `rdm-records demo communities`.",
-            fg="red")
+            "Failed! Create fake communities " "first `rdm-records demo communities`.",
+            fg="red",
+        )
         return
 
     create_demo_invitation_requests.delay(user.id, n_requests)
@@ -183,15 +242,15 @@ def invitation_requests(user_email, n_requests):
     click.secho("Demo invitation requests task submitted...", fg="green")
 
 
-@rdm_records.command('fixtures')
+@rdm_records.command("fixtures")
 @with_appcontext
 def create_fixtures():
     """Create the fixtures required for record creation."""
-    click.secho('Creating required fixtures...', fg='green')
+    click.secho("Creating required fixtures...", fg="green")
 
     FixturesEngine(system_identity).run()
 
-    click.secho('Created required fixtures!', fg='green')
+    click.secho("Created required fixtures!", fg="green")
 
 
 @rdm_records.command("rebuild-index")

@@ -34,12 +34,8 @@ def iter_languages():
     for lang in pycountry.languages:
         record = {
             "id": lang.alpha_3,
-            "title": {
-                "en": lang.name
-            },
-            "props": {
-                "alpha_2": getattr(lang, "alpha_2", '')
-            },
+            "title": {"en": lang.name},
+            "props": {"alpha_2": getattr(lang, "alpha_2", "")},
             "tags": [scope_map[lang.scope], type_map[lang.type]],
         }
         yield record
@@ -47,7 +43,7 @@ def iter_languages():
 
 def create_yaml_languages():
     """Create languages to yaml file."""
-    with open(join(dirname(__file__), 'languages.yaml'), 'w') as f:
+    with open(join(dirname(__file__), "languages.yaml"), "w") as f:
         yaml.dump(list(iter_languages()), f)
 
 

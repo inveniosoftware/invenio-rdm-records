@@ -130,9 +130,7 @@ class ParentRecordAccess:
 
     def __repr__(self):
         """Return repr(self)."""
-        return (
-            "<{} (owners: {}, grants: {}, links: {})>"
-        ).format(
+        return ("<{} (owners: {}, grants: {}, links: {})>").format(
             type(self).__name__,
             len(self.owners or []),
             len(self.grants or []),

@@ -33,17 +33,13 @@ class FixturesEngine:
             self._identity,
             app_data_folder=Path("./app_data"),
             pkg_data_folder=dir_ / "data",
-            filename='vocabularies.yaml'
+            filename="vocabularies.yaml",
         ).load()
 
         UsersFixture(
             [Path("./app_data"), dir_ / "data"],
-            'users.yaml',
+            "users.yaml",
         ).load()
 
 
-__all__ = (
-    'FixturesEngine',
-    'PrioritizedVocabulariesFixtures',
-    'VocabulariesFixture'
-)
+__all__ = ("FixturesEngine", "PrioritizedVocabulariesFixtures", "VocabulariesFixture")

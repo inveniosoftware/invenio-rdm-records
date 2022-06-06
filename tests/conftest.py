@@ -22,12 +22,14 @@ fixtures are available.
 try:
     # Werkzeug <2.1
     from werkzeug import security
+
     security.safe_str_cmp
 except AttributeError:
     # Werkzeug >=2.1
     import hmac
 
     from werkzeug import security
+
     security.safe_str_cmp = hmac.compare_digest
 
 from collections import namedtuple
@@ -161,28 +163,28 @@ class UserFixture_:
     #
     def login(self, client, logout_first=False):
         """Login the given client."""
-        return self._login(client, '/', logout_first)
+        return self._login(client, "/", logout_first)
 
     def api_login(self, client, logout_first=False):
         """Login the given client."""
-        return self._login(client, '/api/', logout_first)
+        return self._login(client, "/api/", logout_first)
 
     def logout(self, client):
         """Logout the given client."""
-        return self._logout(client, '/')
+        return self._logout(client, "/")
 
     def api_logout(self, client):
         """Logout the given client."""
-        return self._logout(client, '/api/')
+        return self._logout(client, "/api/")
 
     def _login(self, client, base_path, logout):
         """Login the given client."""
         if logout:
             self._logout(client, base_path)
         res = client.post(
-            f'{base_path}login',
+            f"{base_path}login",
             data=dict(email=self.email, password=self.password),
-            environ_base={'REMOTE_ADDR': '127.0.0.1'},
+            environ_base={"REMOTE_ADDR": "127.0.0.1"},
             follow_redirects=True,
         )
         assert res.status_code == 200
@@ -190,18 +192,18 @@ class UserFixture_:
 
     def _logout(self, client, base_path):
         """Logout the client."""
-        res = client.get(f'{base_path}logout')
+        res = client.get(f"{base_path}logout")
         assert res.status_code < 400
         return client
 
 
-@pytest.fixture(scope='session')
+@pytest.fixture(scope="session")
 def UserFixture():
     """Class to create user fixtures from."""
     return UserFixture_
 
 
-@pytest.fixture(scope='module')
+@pytest.fixture(scope="module")
 def celery_config():
     """Override pytest-invenio fixture."""
     return {}
@@ -212,7 +214,7 @@ def _(x):
     return x
 
 
-@pytest.fixture(scope='module')
+@pytest.fixture(scope="module")
 def app_config(app_config):
     """Override pytest-invenio app_config fixture.
 
@@ -226,53 +228,55 @@ def app_config(app_config):
     config.py to apply in tests.
     """
     supported_configurations = [
-        'FILES_REST_PERMISSION_FACTORY',
-        'PIDSTORE_RECID_FIELD',
-        'RECORDS_PERMISSIONS_RECORD_POLICY',
-        'RECORDS_REST_ENDPOINTS',
+        "FILES_REST_PERMISSION_FACTORY",
+        "PIDSTORE_RECID_FIELD",
+        "RECORDS_PERMISSIONS_RECORD_POLICY",
+        "RECORDS_REST_ENDPOINTS",
     ]
 
     for config_key in supported_configurations:
         app_config[config_key] = getattr(config, config_key, None)
 
-    app_config['RECORDS_REFRESOLVER_CLS'] = \
-        "invenio_records.resolver.InvenioRefResolver"
-    app_config['RECORDS_REFRESOLVER_STORE'] = \
-        "invenio_jsonschemas.proxies.current_refresolver_store"
+    app_config[
+        "RECORDS_REFRESOLVER_CLS"
+    ] = "invenio_records.resolver.InvenioRefResolver"
+    app_config[
+        "RECORDS_REFRESOLVER_STORE"
+    ] = "invenio_jsonschemas.proxies.current_refresolver_store"
 
     # OAI Server
-    app_config["OAISERVER_ID_PREFIX"] = 'oai:inveniosoftware.org:recid/'
-    app_config["OAISERVER_RECORD_INDEX"] = 'rdmrecords-records'
-    app_config['OAISERVER_METADATA_FORMATS'] = {
-        'oai_dc': {
-            'serializer': 'invenio_rdm_records.oai:dublincore_etree',
-            'schema': 'http://www.openarchives.org/OAI/2.0/oai_dc.xsd',
-            'namespace': 'http://www.openarchives.org/OAI/2.0/oai_dc/',
+    app_config["OAISERVER_ID_PREFIX"] = "oai:inveniosoftware.org:recid/"
+    app_config["OAISERVER_RECORD_INDEX"] = "rdmrecords-records"
+    app_config["OAISERVER_METADATA_FORMATS"] = {
+        "oai_dc": {
+            "serializer": "invenio_rdm_records.oai:dublincore_etree",
+            "schema": "http://www.openarchives.org/OAI/2.0/oai_dc.xsd",
+            "namespace": "http://www.openarchives.org/OAI/2.0/oai_dc/",
         },
-        'datacite': {
-            'serializer': 'invenio_rdm_records.oai:datacite_etree',
-            'schema': 'http://schema.datacite.orgmeta/nonexistant/nonexistant.xsd',  # noqa
-            'namespace': 'http://datacite.org/schema/nonexistant',
+        "datacite": {
+            "serializer": "invenio_rdm_records.oai:datacite_etree",
+            "schema": "http://schema.datacite.orgmeta/nonexistant/nonexistant.xsd",  # noqa
+            "namespace": "http://datacite.org/schema/nonexistant",
         },
-        'oai_datacite': {
-            'serializer': 'invenio_rdm_records.oai:oai_datacite_etree',
-            'schema': 'http://schema.datacite.org/oai/oai-1.1/oai.xsd',
-            'namespace': 'http://schema.datacite.org/oai/oai-1.1/',
+        "oai_datacite": {
+            "serializer": "invenio_rdm_records.oai:oai_datacite_etree",
+            "schema": "http://schema.datacite.org/oai/oai-1.1/oai.xsd",
+            "namespace": "http://schema.datacite.org/oai/oai-1.1/",
         },
     }
     app_config["INDEXER_DEFAULT_INDEX"] = "rdmrecords-records-record-v5.0.0"
     # Variable not used. We set it to silent warnings
-    app_config['JSONSCHEMAS_HOST'] = 'not-used'
+    app_config["JSONSCHEMAS_HOST"] = "not-used"
 
     # Enable DOI minting...
-    app_config['DATACITE_ENABLED'] = True
-    app_config['DATACITE_USERNAME'] = 'INVALID'
-    app_config['DATACITE_PASSWORD'] = 'INVALID'
-    app_config['DATACITE_PREFIX'] = '10.1234'
-    app_config['DATACITE_DATACENTER_SYMBOL'] = 'TEST'
+    app_config["DATACITE_ENABLED"] = True
+    app_config["DATACITE_USERNAME"] = "INVALID"
+    app_config["DATACITE_PASSWORD"] = "INVALID"
+    app_config["DATACITE_PREFIX"] = "10.1234"
+    app_config["DATACITE_DATACENTER_SYMBOL"] = "TEST"
     # ...but fake it
 
-    app_config['RDM_PERSISTENT_IDENTIFIER_PROVIDERS'] = [
+    app_config["RDM_PERSISTENT_IDENTIFIER_PROVIDERS"] = [
         # DataCite DOI provider with fake client
         providers.DataCitePIDProvider(
             "datacite",
@@ -283,19 +287,20 @@ def app_config(app_config):
         providers.ExternalPIDProvider(
             "external",
             "doi",
-            validators=[
-                providers.BlockedPrefixes(config_names=['DATACITE_PREFIX'])
-            ],
+            validators=[providers.BlockedPrefixes(config_names=["DATACITE_PREFIX"])],
             label=_("DOI"),
         ),
         # OAI identifier
-        providers.OAIPIDProvider("oai", label=_("OAI ID"),),
+        providers.OAIPIDProvider(
+            "oai",
+            label=_("OAI ID"),
+        ),
     ]
 
     return app_config
 
 
-@pytest.fixture(scope='module')
+@pytest.fixture(scope="module")
 def create_app(instance_path):
     """Application factory fixture."""
     return _create_app
@@ -325,7 +330,7 @@ def _es_delete_indexes(current_search):
 
 # overwrite pytest_invenio.fixture to only delete record indices
 # keeping vocabularies.
-@pytest.fixture(scope='function')
+@pytest.fixture(scope="function")
 def es_clear(es):
     """Clear Elasticsearch indices after test finishes (function scope).
 
@@ -333,12 +338,13 @@ def es_clear(es):
     in order to leave Elasticsearch in a clean state for the next test.
     """
     from invenio_search import current_search, current_search_client
+
     yield es
     _es_delete_indexes(current_search)
     _es_create_indexes(current_search, current_search_client)
 
 
-@pytest.fixture(scope='function')
+@pytest.fixture(scope="function")
 def full_record(users):
     """Full record data as dict coming from the external world."""
     return {
@@ -346,147 +352,129 @@ def full_record(users):
             "doi": {
                 "identifier": "10.5281/inveniordm.1234",
                 "provider": "datacite",
-                "client": "inveniordm"
+                "client": "inveniordm",
             },
         },
         "metadata": {
             "resource_type": {"id": "image-photo"},
-            "creators": [{
-                "person_or_org": {
-                    "name": "Nielsen, Lars Holm",
-                    "type": "personal",
-                    "given_name": "Lars Holm",
-                    "family_name": "Nielsen",
-                    "identifiers": [{
-                        "scheme": "orcid",
-                        "identifier": "0000-0001-8135-3489"
-                    }],
-                },
-                "affiliations": [{"id": "cern"}, {"name": "free-text"}]
-            }],
-            "title": "InvenioRDM",
-            "additional_titles": [{
-                "title": "a research data management platform",
-                "type": {
-                    "id": "subtitle"
-                },
-                "lang": {
-                    "id": "eng"
+            "creators": [
+                {
+                    "person_or_org": {
+                        "name": "Nielsen, Lars Holm",
+                        "type": "personal",
+                        "given_name": "Lars Holm",
+                        "family_name": "Nielsen",
+                        "identifiers": [
+                            {"scheme": "orcid", "identifier": "0000-0001-8135-3489"}
+                        ],
+                    },
+                    "affiliations": [{"id": "cern"}, {"name": "free-text"}],
                 }
-            }],
+            ],
+            "title": "InvenioRDM",
+            "additional_titles": [
+                {
+                    "title": "a research data management platform",
+                    "type": {"id": "subtitle"},
+                    "lang": {"id": "eng"},
+                }
+            ],
             "publisher": "InvenioRDM",
             "publication_date": "2018/2020-09",
             "subjects": [
                 {"id": "http://id.nlm.nih.gov/mesh/A-D000007"},
-                {"subject": "custom"}
+                {"subject": "custom"},
             ],
-            "contributors": [{
-                "person_or_org": {
-                    "name": "Nielsen, Lars Holm",
-                    "type": "personal",
-                    "given_name": "Lars Holm",
-                    "family_name": "Nielsen",
-                    "identifiers": [{
-                        "scheme": "orcid",
-                        "identifier": "0000-0001-8135-3489"
-                    }],
-                },
-                "role": {"id": "other"},
-                "affiliations": [{"id": "cern"}]
-            }],
-            "dates": [{
-                "date": "1939/1945",
-                "type": {"id": "other"},
-                "description": "A date"
-            }],
+            "contributors": [
+                {
+                    "person_or_org": {
+                        "name": "Nielsen, Lars Holm",
+                        "type": "personal",
+                        "given_name": "Lars Holm",
+                        "family_name": "Nielsen",
+                        "identifiers": [
+                            {"scheme": "orcid", "identifier": "0000-0001-8135-3489"}
+                        ],
+                    },
+                    "role": {"id": "other"},
+                    "affiliations": [{"id": "cern"}],
+                }
+            ],
+            "dates": [
+                {"date": "1939/1945", "type": {"id": "other"}, "description": "A date"}
+            ],
             "languages": [{"id": "dan"}, {"id": "eng"}],
-            "identifiers": [{
-                "identifier": "1924MNRAS..84..308E",
-                "scheme": "bibcode"
-            }],
-            "related_identifiers": [{
-                "identifier": "10.1234/foo.bar",
-                "scheme": "doi",
-                "relation_type": {"id": "iscitedby"},
-                "resource_type": {"id": "dataset"}
-            }],
-            "sizes": [
-                "11 pages"
+            "identifiers": [{"identifier": "1924MNRAS..84..308E", "scheme": "bibcode"}],
+            "related_identifiers": [
+                {
+                    "identifier": "10.1234/foo.bar",
+                    "scheme": "doi",
+                    "relation_type": {"id": "iscitedby"},
+                    "resource_type": {"id": "dataset"},
+                }
             ],
-            "formats": [
-                "application/pdf"
-            ],
+            "sizes": ["11 pages"],
+            "formats": ["application/pdf"],
             "version": "v1.0",
             "rights": [
                 {
-                    "title": {
-                        "en": "A custom license"
-                    },
-                    "description": {
-                        "en": "A description"
-                    },
-                    "link": "https://customlicense.org/licenses/by/4.0/"
-                 },
-                {
-                    "id": "cc-by-4.0"
-                }
+                    "title": {"en": "A custom license"},
+                    "description": {"en": "A description"},
+                    "link": "https://customlicense.org/licenses/by/4.0/",
+                },
+                {"id": "cc-by-4.0"},
             ],
             "description": "<h1>A description</h1> <p>with HTML tags</p>",
-            "additional_descriptions": [{
-                "description": "Bla bla bla",
-                "type": {"id": "methods"},
-                "lang": {
-                    "id": "eng"
+            "additional_descriptions": [
+                {
+                    "description": "Bla bla bla",
+                    "type": {"id": "methods"},
+                    "lang": {"id": "eng"},
                 }
-            }],
+            ],
             "locations": {
-                "features": [{
-                    "geometry": {
-                        "type": "Point",
-                        "coordinates": [-32.94682, -60.63932]
-                    },
-                    "place": "test location place",
-                    "description": "test location description",
-                    "identifiers": [
-                        {
-                            "identifier": "12345abcde",
-                            "scheme": "wikidata"
-                        }, {
-                            "identifier": "12345abcde",
-                            "scheme": "geonames"
-                        }
-                    ],
-                }]
+                "features": [
+                    {
+                        "geometry": {
+                            "type": "Point",
+                            "coordinates": [-32.94682, -60.63932],
+                        },
+                        "place": "test location place",
+                        "description": "test location description",
+                        "identifiers": [
+                            {"identifier": "12345abcde", "scheme": "wikidata"},
+                            {"identifier": "12345abcde", "scheme": "geonames"},
+                        ],
+                    }
+                ]
             },
-            "funding": [{
-                "funder": {
-                    "id": "00k4n6c32",
-                },
-                "award": {
-                    "id": "00k4n6c32::755021"
+            "funding": [
+                {
+                    "funder": {
+                        "id": "00k4n6c32",
+                    },
+                    "award": {"id": "00k4n6c32::755021"},
                 }
-            }],
-            "references": [{
-                "reference": "Nielsen et al,..",
-                "identifier": "0000 0001 1456 7559",
-                "scheme": "isni"
-            }]
+            ],
+            "references": [
+                {
+                    "reference": "Nielsen et al,..",
+                    "identifier": "0000 0001 1456 7559",
+                    "scheme": "isni",
+                }
+            ],
         },
         "ext": {
             "dwc": {
                 "collectionCode": "abc",
                 "collectionCode2": 1.1,
                 "collectionCode3": True,
-                "test": ["abc", 1, True]
+                "test": ["abc", 1, True],
             }
         },
         "provenance": {
-            "created_by": {
-                "user": users[0].id
-            },
-            "on_behalf_of": {
-                "user": users[1].id
-            }
+            "created_by": {"user": users[0].id},
+            "on_behalf_of": {"user": users[1].id},
         },
         "access": {
             "record": "public",
@@ -494,7 +482,7 @@ def full_record(users):
             "embargo": {
                 "active": True,
                 "until": "2131-01-01",
-                "reason": "Only for medical doctors."
+                "reason": "Only for medical doctors.",
             },
         },
         "files": {
@@ -510,22 +498,16 @@ def full_record(users):
                     "mimetype": "application/zip",
                     "size": 1114324524355,
                     "key": "big-dataset.zip",
-                    "file_id": "445aaacd-9de1-41ab-af52-25ab6cb93df7"
+                    "file_id": "445aaacd-9de1-41ab-af52-25ab6cb93df7",
                 }
             },
-            "meta": {
-                "big-dataset.zip": {
-                    "description": "File containing the data."
-                }
-            }
+            "meta": {"big-dataset.zip": {"description": "File containing the data."}},
         },
-        "notes": [
-            "Under investigation for copyright infringement."
-        ]
+        "notes": ["Under investigation for copyright infringement."],
     }
 
 
-@pytest.fixture(scope='function')
+@pytest.fixture(scope="function")
 def minimal_record():
     """Minimal record data as dict coming from the external world."""
     return {
@@ -540,20 +522,23 @@ def minimal_record():
         "metadata": {
             "publication_date": "2020-06-01",
             "resource_type": {"id": "image-photo"},
-            "creators": [{
-                "person_or_org": {
-                    "family_name": "Brown",
-                    "given_name": "Troy",
-                    "type": "personal"
-                }
-            }, {
-                "person_or_org": {
-                    "name": "Troy Inc.",
-                    "type": "organizational",
+            "creators": [
+                {
+                    "person_or_org": {
+                        "family_name": "Brown",
+                        "given_name": "Troy",
+                        "type": "personal",
+                    }
                 },
-            }],
-            "title": "A Romans story"
-        }
+                {
+                    "person_or_org": {
+                        "name": "Troy Inc.",
+                        "type": "organizational",
+                    },
+                },
+            ],
+            "title": "A Romans story",
+        },
     }
 
 
@@ -567,8 +552,8 @@ def minimal_community():
         },
         "metadata": {
             "title": "Biodiversity Literature Repository",
-            "type": {"id": "topic"}
-        }
+            "type": {"id": "topic"},
+        },
     }
 
 
@@ -580,10 +565,7 @@ def minimal_community2():
         "access": {
             "visibility": "public",
         },
-        "metadata": {
-            "title": "Research Data Management",
-            "type": {"id": "topic"}
-        }
+        "metadata": {"title": "Research Data Management", "type": {"id": "topic"}},
     }
 
 
@@ -610,12 +592,16 @@ def users(app, db):
     """Create example user."""
     with db.session.begin_nested():
         datastore = app.extensions["security"].datastore
-        user1 = datastore.create_user(email="info@inveniosoftware.org",
-                                      password=hash_password("password"),
-                                      active=True)
-        user2 = datastore.create_user(email="ser-testalot@inveniosoftware.org",
-                                      password=hash_password("beetlesmasher"),
-                                      active=True)
+        user1 = datastore.create_user(
+            email="info@inveniosoftware.org",
+            password=hash_password("password"),
+            active=True,
+        )
+        user2 = datastore.create_user(
+            email="ser-testalot@inveniosoftware.org",
+            password=hash_password("beetlesmasher"),
+            active=True,
+        )
 
     db.session.commit()
     return [user1, user2]
@@ -635,10 +621,10 @@ def roles(app, db):
     """Create example user."""
     with db.session.begin_nested():
         datastore = app.extensions["security"].datastore
-        role1 = datastore.create_role(name="test",
-                                      description="role for testing purposes")
-        role2 = datastore.create_role(name="strong",
-                                      description="tests are coming")
+        role1 = datastore.create_role(
+            name="test", description="role for testing purposes"
+        )
+        role2 = datastore.create_role(name="strong", description="tests are coming")
 
     db.session.commit()
     return [role1, role2]
@@ -650,8 +636,8 @@ def identity_simple(users):
     user = users[0]
     i = Identity(user.id)
     i.provides.add(UserNeed(user.id))
-    i.provides.add(Need(method='system_role', value='any_user'))
-    i.provides.add(Need(method='system_role', value='authenticated_user'))
+    i.provides.add(Need(method="system_role", value="any_user"))
+    i.provides.add(Need(method="system_role", value="authenticated_user"))
     return i
 
 
@@ -664,26 +650,32 @@ def languages_type(app):
 @pytest.fixture(scope="module")
 def languages_v(app, languages_type):
     """Language vocabulary record."""
-    vocabulary_service.create(system_identity, {
-        "id": "dan",
-        "title": {
-            "en": "Danish",
-            "da": "Dansk",
+    vocabulary_service.create(
+        system_identity,
+        {
+            "id": "dan",
+            "title": {
+                "en": "Danish",
+                "da": "Dansk",
+            },
+            "props": {"alpha_2": "da"},
+            "tags": ["individual", "living"],
+            "type": "languages",
         },
-        "props": {"alpha_2": "da"},
-        "tags": ["individual", "living"],
-        "type": "languages"
-    })
+    )
 
-    vocab = vocabulary_service.create(system_identity, {
-        "id": "eng",
-        "title": {
-            "en": "English",
-            "da": "Engelsk",
+    vocab = vocabulary_service.create(
+        system_identity,
+        {
+            "id": "eng",
+            "title": {
+                "en": "English",
+                "da": "Engelsk",
+            },
+            "tags": ["individual", "living"],
+            "type": "languages",
         },
-        "tags": ["individual", "living"],
-        "type": "languages"
-    })
+    )
 
     Vocabulary.index.refresh()
 
@@ -693,75 +685,77 @@ def languages_v(app, languages_type):
 @pytest.fixture(scope="module")
 def resource_type_type(app):
     """Resource type vocabulary type."""
-    return vocabulary_service.create_type(
-        system_identity, "resourcetypes", "rsrct")
+    return vocabulary_service.create_type(system_identity, "resourcetypes", "rsrct")
 
 
 @pytest.fixture(scope="module")
 def resource_type_v(app, resource_type_type):
     """Resource type vocabulary record."""
-    vocabulary_service.create(system_identity, {
-        "id": "dataset",
-        "icon": "table",
-        "props": {
-            "csl": "dataset",
-            "datacite_general": "Dataset",
-            "datacite_type": '',
-            "openaire_resourceType": '21',
-            "openaire_type": "dataset",
-            "eurepo": "info:eu-repo/semantics/other",
-            "schema.org": "https://schema.org/Dataset",
-            "subtype": '',
-            "type": "dataset",
+    vocabulary_service.create(
+        system_identity,
+        {
+            "id": "dataset",
+            "icon": "table",
+            "props": {
+                "csl": "dataset",
+                "datacite_general": "Dataset",
+                "datacite_type": "",
+                "openaire_resourceType": "21",
+                "openaire_type": "dataset",
+                "eurepo": "info:eu-repo/semantics/other",
+                "schema.org": "https://schema.org/Dataset",
+                "subtype": "",
+                "type": "dataset",
+            },
+            "title": {"en": "Dataset"},
+            "tags": ["depositable", "linkable"],
+            "type": "resourcetypes",
         },
-        "title": {
-            "en": "Dataset"
-        },
-        "tags": ["depositable", "linkable"],
-        "type": "resourcetypes"
-    })
+    )
 
-    vocabulary_service.create(system_identity, {  # create base resource type
-        "id": "image",
-        "props": {
-            "csl": "figure",
-            "datacite_general": "Image",
-            "datacite_type": "",
-            "openaire_resourceType": "25",
-            "openaire_type": "dataset",
-            "eurepo": "info:eu-repo/semantic/other",
-            "schema.org": "https://schema.org/ImageObject",
-            "subtype": "",
-            "type": "image",
+    vocabulary_service.create(
+        system_identity,
+        {  # create base resource type
+            "id": "image",
+            "props": {
+                "csl": "figure",
+                "datacite_general": "Image",
+                "datacite_type": "",
+                "openaire_resourceType": "25",
+                "openaire_type": "dataset",
+                "eurepo": "info:eu-repo/semantic/other",
+                "schema.org": "https://schema.org/ImageObject",
+                "subtype": "",
+                "type": "image",
+            },
+            "icon": "chart bar outline",
+            "title": {"en": "Image"},
+            "tags": ["depositable", "linkable"],
+            "type": "resourcetypes",
         },
-        "icon": "chart bar outline",
-        "title": {
-            "en": "Image"
-        },
-        "tags": ["depositable", "linkable"],
-        "type": "resourcetypes"
-    })
+    )
 
-    vocab = vocabulary_service.create(system_identity, {
-        "id": "image-photo",
-        "props": {
-            "csl": "graphic",
-            "datacite_general": "Image",
-            "datacite_type": "Photo",
-            "openaire_resourceType": "25",
-            "openaire_type": "dataset",
-            "eurepo": "info:eu-repo/semantic/other",
-            "schema.org": "https://schema.org/Photograph",
-            "subtype": "image-photo",
-            "type": "image",
+    vocab = vocabulary_service.create(
+        system_identity,
+        {
+            "id": "image-photo",
+            "props": {
+                "csl": "graphic",
+                "datacite_general": "Image",
+                "datacite_type": "Photo",
+                "openaire_resourceType": "25",
+                "openaire_type": "dataset",
+                "eurepo": "info:eu-repo/semantic/other",
+                "schema.org": "https://schema.org/Photograph",
+                "subtype": "image-photo",
+                "type": "image",
+            },
+            "icon": "chart bar outline",
+            "title": {"en": "Photo"},
+            "tags": ["depositable", "linkable"],
+            "type": "resourcetypes",
         },
-        "icon": "chart bar outline",
-        "title": {
-            "en": "Photo"
-        },
-        "tags": ["depositable", "linkable"],
-        "type": "resourcetypes"
-    })
+    )
 
     Vocabulary.index.refresh()
 
@@ -771,34 +765,31 @@ def resource_type_v(app, resource_type_type):
 @pytest.fixture(scope="module")
 def title_type(app):
     """title vocabulary type."""
-    return vocabulary_service.create_type(system_identity,
-                                          "titletypes", "ttyp")
+    return vocabulary_service.create_type(system_identity, "titletypes", "ttyp")
 
 
 @pytest.fixture(scope="module")
 def title_type_v(app, title_type):
     """Title Type vocabulary record."""
-    vocabulary_service.create(system_identity, {
-        "id": "subtitle",
-        "props": {
-            "datacite": "Subtitle"
+    vocabulary_service.create(
+        system_identity,
+        {
+            "id": "subtitle",
+            "props": {"datacite": "Subtitle"},
+            "title": {"en": "Subtitle"},
+            "type": "titletypes",
         },
-        "title": {
-            "en": "Subtitle"
-        },
-        "type": "titletypes"
-    })
+    )
 
-    vocab = vocabulary_service.create(system_identity, {
-        "id": "alternative-title",
-        "props": {
-            "datacite": "AlternativeTitle"
+    vocab = vocabulary_service.create(
+        system_identity,
+        {
+            "id": "alternative-title",
+            "props": {"datacite": "AlternativeTitle"},
+            "title": {"en": "Alternative title"},
+            "type": "titletypes",
         },
-        "title": {
-            "en": "Alternative title"
-        },
-        "type": "titletypes"
-    })
+    )
 
     Vocabulary.index.refresh()
 
@@ -808,23 +799,21 @@ def title_type_v(app, title_type):
 @pytest.fixture(scope="module")
 def description_type(app):
     """title vocabulary type."""
-    return vocabulary_service.create_type(system_identity,
-                                          "descriptiontypes", "dty")
+    return vocabulary_service.create_type(system_identity, "descriptiontypes", "dty")
 
 
 @pytest.fixture(scope="module")
 def description_type_v(app, description_type):
     """Title Type vocabulary record."""
-    vocab = vocabulary_service.create(system_identity, {
-        "id": "methods",
-        "title": {
-            "en": "Methods"
+    vocab = vocabulary_service.create(
+        system_identity,
+        {
+            "id": "methods",
+            "title": {"en": "Methods"},
+            "props": {"datacite": "Methods"},
+            "type": "descriptiontypes",
         },
-        "props": {
-            "datacite": "Methods"
-        },
-        "type": "descriptiontypes"
-    })
+    )
 
     Vocabulary.index.refresh()
 
@@ -835,11 +824,14 @@ def description_type_v(app, description_type):
 def subject_v(app):
     """Subject vocabulary record."""
     subjects_service = current_service_registry.get("subjects")
-    vocab = subjects_service.create(system_identity, {
-        "id": "http://id.nlm.nih.gov/mesh/A-D000007",
-        "scheme": "MeSH",
-        "subject": "Abdominal Injuries",
-    })
+    vocab = subjects_service.create(
+        system_identity,
+        {
+            "id": "http://id.nlm.nih.gov/mesh/A-D000007",
+            "scheme": "MeSH",
+            "subject": "Abdominal Injuries",
+        },
+    )
 
     Subject.index.refresh()
 
@@ -855,16 +847,15 @@ def date_type(app):
 @pytest.fixture(scope="module")
 def date_type_v(app, date_type):
     """Subject vocabulary record."""
-    vocab = vocabulary_service.create(system_identity, {
-        "id": "other",
-        "title": {
-            "en": "Other"
+    vocab = vocabulary_service.create(
+        system_identity,
+        {
+            "id": "other",
+            "title": {"en": "Other"},
+            "props": {"datacite": "Other"},
+            "type": "datetypes",
         },
-        "props": {
-            "datacite": "Other"
-        },
-        "type": "datetypes"
-    })
+    )
 
     Vocabulary.index.refresh()
 
@@ -874,24 +865,21 @@ def date_type_v(app, date_type):
 @pytest.fixture(scope="module")
 def contributors_role_type(app):
     """Contributor role vocabulary type."""
-    return vocabulary_service.create_type(
-        system_identity, "contributorsroles", "cor"
-    )
+    return vocabulary_service.create_type(system_identity, "contributorsroles", "cor")
 
 
 @pytest.fixture(scope="module")
 def contributors_role_v(app, contributors_role_type):
     """Contributor role vocabulary record."""
-    vocab = vocabulary_service.create(system_identity, {
-        "id": "other",
-        "props": {
-            "datacite": "Other"
+    vocab = vocabulary_service.create(
+        system_identity,
+        {
+            "id": "other",
+            "props": {"datacite": "Other"},
+            "title": {"en": "Other"},
+            "type": "contributorsroles",
         },
-        "title": {
-            "en": "Other"
-        },
-        "type": "contributorsroles"
-    })
+    )
 
     Vocabulary.index.refresh()
 
@@ -901,24 +889,21 @@ def contributors_role_v(app, contributors_role_type):
 @pytest.fixture(scope="module")
 def relation_type(app):
     """Relation type vocabulary type."""
-    return vocabulary_service.create_type(
-        system_identity, "relationtypes", "rlt"
-    )
+    return vocabulary_service.create_type(system_identity, "relationtypes", "rlt")
 
 
 @pytest.fixture(scope="module")
 def relation_type_v(app, relation_type):
     """Relation type vocabulary record."""
-    vocab = vocabulary_service.create(system_identity, {
-        "id": "iscitedby",
-        "props": {
-            "datacite": "IsCitedBy"
+    vocab = vocabulary_service.create(
+        system_identity,
+        {
+            "id": "iscitedby",
+            "props": {"datacite": "IsCitedBy"},
+            "title": {"en": "Is cited by"},
+            "type": "relationtypes",
         },
-        "title": {
-            "en": "Is cited by"
-        },
-        "type": "relationtypes"
-    })
+    )
 
     Vocabulary.index.refresh()
 
@@ -928,35 +913,31 @@ def relation_type_v(app, relation_type):
 @pytest.fixture(scope="module")
 def licenses(app):
     """Licenses vocabulary type."""
-    return vocabulary_service.create_type(
-        system_identity, "licenses", "lic"
-    )
+    return vocabulary_service.create_type(system_identity, "licenses", "lic")
 
 
 @pytest.fixture(scope="module")
 def licenses_v(app, licenses):
     """Licenses vocabulary record."""
-    vocab = vocabulary_service.create(system_identity, {
-        "id": "cc-by-4.0",
-        "props": {
-            "url": "https://creativecommons.org/licenses/by/4.0/legalcode",
-            "scheme": "spdx",
-            "osi_approved": ""
+    vocab = vocabulary_service.create(
+        system_identity,
+        {
+            "id": "cc-by-4.0",
+            "props": {
+                "url": "https://creativecommons.org/licenses/by/4.0/legalcode",
+                "scheme": "spdx",
+                "osi_approved": "",
+            },
+            "title": {"en": "Creative Commons Attribution 4.0 International"},
+            "tags": ["recommended", "all"],
+            "description": {
+                "en": "The Creative Commons Attribution license allows"
+                " re-distribution and re-use of a licensed work on"
+                " the condition that the creator is appropriately credited."
+            },
+            "type": "licenses",
         },
-        "title": {
-            "en": "Creative Commons Attribution 4.0 International"
-        },
-        "tags": [
-            "recommended",
-            "all"
-        ],
-        "description": {
-            "en": "The Creative Commons Attribution license allows"
-                  " re-distribution and re-use of a licensed work on"
-                  " the condition that the creator is appropriately credited."
-        },
-        "type": "licenses"
-    })
+    )
 
     Vocabulary.index.refresh()
 
@@ -966,21 +947,25 @@ def licenses_v(app, licenses):
 @pytest.fixture(scope="module")
 def affiliations_v(app):
     """Affiliation vocabulary record."""
-    affiliations_service = (
-        current_service_registry.get("affiliations")
+    affiliations_service = current_service_registry.get("affiliations")
+    aff = affiliations_service.create(
+        system_identity,
+        {
+            "id": "cern",
+            "name": "CERN",
+            "acronym": "CERN",
+            "identifiers": [
+                {
+                    "scheme": "ror",
+                    "identifier": "01ggx4157",
+                },
+                {
+                    "scheme": "isni",
+                    "identifier": "000000012156142X",
+                },
+            ],
+        },
     )
-    aff = affiliations_service.create(system_identity, {
-        "id": "cern",
-        "name": "CERN",
-        "acronym": "CERN",
-        "identifiers": [{
-            "scheme": "ror",
-            "identifier": "01ggx4157",
-        }, {
-            "scheme": "isni",
-            "identifier": "000000012156142X",
-        }]
-    })
 
     Affiliation.index.refresh()
 
@@ -991,25 +976,28 @@ def affiliations_v(app):
 def funders_v(app):
     """Funder vocabulary record."""
     funders_service = current_service_registry.get("funders")
-    funder = funders_service.create(system_identity, {
-        "id": "00k4n6c32",
-        "identifiers": [
-            {
-                "identifier": "000000012156142X",
-                "scheme": "isni",
+    funder = funders_service.create(
+        system_identity,
+        {
+            "id": "00k4n6c32",
+            "identifiers": [
+                {
+                    "identifier": "000000012156142X",
+                    "scheme": "isni",
+                },
+                {
+                    "identifier": "00k4n6c32",
+                    "scheme": "ror",
+                },
+            ],
+            "name": "European Commission",
+            "title": {
+                "en": "European Commission",
+                "fr": "Commission européenne",
             },
-            {
-                "identifier": "00k4n6c32",
-                "scheme": "ror",
-            }
-        ],
-        "name": "European Commission",
-        "title": {
-            "en": "European Commission",
-            "fr": "Commission européenne",
+            "country": "BE",
         },
-        "country": "BE"
-    })
+    )
 
     Funder.index.refresh()
 
@@ -1020,26 +1008,27 @@ def funders_v(app):
 def awards_v(app, funders_v):
     """Funder vocabulary record."""
     awards_service = current_service_registry.get("awards")
-    award = awards_service.create(system_identity, {
-        "id": "755021",
-        "identifiers": [
-            {
-                "identifier": "https://cordis.europa.eu/project/id/755021",
-                "scheme": "url"
-            }
-        ],
-        "number": "755021",
-        "title": {
-            "en": (
-                "Personalised Treatment For Cystic Fibrosis Patients With "
-                "Ultra-rare CFTR Mutations (and beyond)"
-            ),
+    award = awards_service.create(
+        system_identity,
+        {
+            "id": "755021",
+            "identifiers": [
+                {
+                    "identifier": "https://cordis.europa.eu/project/id/755021",
+                    "scheme": "url",
+                }
+            ],
+            "number": "755021",
+            "title": {
+                "en": (
+                    "Personalised Treatment For Cystic Fibrosis Patients With "
+                    "Ultra-rare CFTR Mutations (and beyond)"
+                ),
+            },
+            "funder": {"id": "00k4n6c32"},
+            "acronym": "HIT-CF",
         },
-        "funder": {
-            "id": "00k4n6c32"
-        },
-        "acronym": "HIT-CF",
-    })
+    )
 
     Award.index.refresh()
 
@@ -1056,32 +1045,47 @@ def cache():
         current_cache.clear()
 
 
-RunningApp = namedtuple("RunningApp", [
-    "app",
-    "superuser_identity",
-    "location",
-    "cache",
-    "resource_type_v",
-    "subject_v",
-    "languages_v",
-    "affiliations_v",
-    "title_type_v",
-    "description_type_v",
-    "date_type_v",
-    "contributors_role_v",
-    "relation_type_v",
-    "licenses_v",
-    "funders_v",
-    "awards_v",
-])
+RunningApp = namedtuple(
+    "RunningApp",
+    [
+        "app",
+        "superuser_identity",
+        "location",
+        "cache",
+        "resource_type_v",
+        "subject_v",
+        "languages_v",
+        "affiliations_v",
+        "title_type_v",
+        "description_type_v",
+        "date_type_v",
+        "contributors_role_v",
+        "relation_type_v",
+        "licenses_v",
+        "funders_v",
+        "awards_v",
+    ],
+)
 
 
 @pytest.fixture
 def running_app(
-    app, superuser_identity, location, cache, resource_type_v, subject_v,
-    languages_v, affiliations_v, title_type_v, description_type_v,
-    date_type_v, contributors_role_v, relation_type_v, licenses_v,
-    funders_v, awards_v,
+    app,
+    superuser_identity,
+    location,
+    cache,
+    resource_type_v,
+    subject_v,
+    languages_v,
+    affiliations_v,
+    title_type_v,
+    description_type_v,
+    date_type_v,
+    contributors_role_v,
+    relation_type_v,
+    licenses_v,
+    funders_v,
+    awards_v,
 ):
     """This fixture provides an app with the typically needed db data loaded.
 
@@ -1163,17 +1167,15 @@ def embargoed_record(running_app, minimal_record, superuser_identity):
     today = arrow.utcnow().date().isoformat()
 
     # Add embargo to record
-    with mock.patch('arrow.utcnow') as mock_arrow:
-        minimal_record["access"]["files"] = 'restricted'
-        minimal_record["access"]["status"] = 'embargoed'
+    with mock.patch("arrow.utcnow") as mock_arrow:
+        minimal_record["access"]["files"] = "restricted"
+        minimal_record["access"]["status"] = "embargoed"
         minimal_record["access"]["embargo"] = dict(
             active=True, until=today, reason=None
         )
 
         # We need to set the current date in the past to pass the validations
-        mock_arrow.return_value = arrow.get(
-            datetime(1954, 9, 29), tz.gettz('UTC')
-        )
+        mock_arrow.return_value = arrow.get(datetime(1954, 9, 29), tz.gettz("UTC"))
         draft = service.create(superuser_identity, minimal_record)
         record = service.publish(id_=draft.id, identity=superuser_identity)
 
@@ -1210,8 +1212,7 @@ def curator(UserFixture, app, db):
 @pytest.fixture()
 def community_type_type(superuser_identity):
     """Creates and retrieves a language vocabulary type."""
-    v = vocabulary_service.create_type(
-        superuser_identity, "communitytypes", "comtyp")
+    v = vocabulary_service.create_type(superuser_identity, "communitytypes", "comtyp")
     return v
 
 
@@ -1221,9 +1222,9 @@ def community_type_record(superuser_identity, community_type_type):
     record = vocabulary_service.create(
         identity=superuser_identity,
         data={
-            "id": 'topic',
+            "id": "topic",
             "title": {"en": "Topic"},
-            'type': 'communitytypes',
+            "type": "communitytypes",
         },
     )
     Vocabulary.index.refresh()  # Refresh the index
@@ -1246,8 +1247,8 @@ def community(running_app, community_type_record, curator, minimal_community):
 def headers():
     """Default headers for making requests."""
     return {
-        'content-type': 'application/json',
-        'accept': 'application/json',
+        "content-type": "application/json",
+        "accept": "application/json",
     }
 
 

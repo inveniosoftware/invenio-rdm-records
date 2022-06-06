@@ -28,9 +28,9 @@ def admin_role(db):
 def extra_entry_points():
     """Vocabularies entry points."""
     return {
-        'invenio_rdm_records.fixtures': [
-            'vocabularies_A = mock_module_A.fixtures.vocabularies',
-            'vocabularies_B = mock_module_B.fixtures.vocabularies',
+        "invenio_rdm_records.fixtures": [
+            "vocabularies_A = mock_module_A.fixtures.vocabularies",
+            "vocabularies_B = mock_module_B.fixtures.vocabularies",
         ],
     }
 

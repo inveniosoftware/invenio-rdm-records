@@ -26,7 +26,7 @@ from invenio_rdm_records.secret_links.permissions import LinkNeed
 @pytest.fixture()
 def service(running_app, es_clear):
     """RDM Record Service."""
-    return running_app.app.extensions['invenio-rdm-records'].records_service
+    return running_app.app.extensions["invenio-rdm-records"].records_service
 
 
 @pytest.fixture()
@@ -42,11 +42,12 @@ def restricted_record(service, minimal_record, identity_simple):
 
     # Add a file
     service.draft_files.init_files(
-        identity_simple, draft.id, data=[{'key': 'test.pdf'}])
-    service.draft_files.set_file_content(
-        identity_simple, draft.id, 'test.pdf', BytesIO(b'test file')
+        identity_simple, draft.id, data=[{"key": "test.pdf"}]
     )
-    service.draft_files.commit_file(identity_simple, draft.id, 'test.pdf')
+    service.draft_files.set_file_content(
+        identity_simple, draft.id, "test.pdf", BytesIO(b"test file")
+    )
+    service.draft_files.commit_file(identity_simple, draft.id, "test.pdf")
 
     # Publish
     record = service.publish(identity_simple, draft.id)
@@ -61,20 +62,23 @@ def test_invalid_level(service, restricted_record, identity_simple):
     """Test invalid permission level."""
     record = restricted_record
     with pytest.raises(ValidationError):
-        service.secret_links.create(identity_simple, record.id, {
-            "permission": "invalid"})
+        service.secret_links.create(
+            identity_simple, record.id, {"permission": "invalid"}
+        )
 
 
-def test_permission_levels(
-        service, restricted_record, identity_simple, client):
+def test_permission_levels(service, restricted_record, identity_simple, client):
     """Test invalid permission level."""
     id_ = restricted_record.id
     view_link = service.secret_links.create(
-        identity_simple, id_, {"permission": "view"})
+        identity_simple, id_, {"permission": "view"}
+    )
     preview_link = service.secret_links.create(
-        identity_simple, id_, {"permission": "preview"})
+        identity_simple, id_, {"permission": "preview"}
+    )
     edit_link = service.secret_links.create(
-        identity_simple, id_, {"permission": "edit"})
+        identity_simple, id_, {"permission": "edit"}
+    )
 
     # == Anonymous user
     anon = AnonymousIdentity()
@@ -108,8 +112,8 @@ def test_permission_levels(
     service.files.list_files(anon, id_)
     service.read_draft(anon, id_)
     service.draft_files.list_files(anon, id_)
-    service.draft_files.get_file_content(anon, id_, 'test.pdf')
-    service.draft_files.read_file_metadata(anon, id_, 'test.pdf')
+    service.draft_files.get_file_content(anon, id_, "test.pdf")
+    service.draft_files.read_file_metadata(anon, id_, "test.pdf")
 
     # Deny anonymous with preview link to update/delete/edit/publish draft
     pytest.raises(PermissionDeniedError, service.update_draft, anon, id_, {})
@@ -120,15 +124,15 @@ def test_permission_levels(
     with pytest.raises(PermissionDeniedError):
         service.draft_files.init_files(anon, id_, {})
     with pytest.raises(PermissionDeniedError):
-        service.draft_files.update_file_metadata(anon, id_, 'test.pdf', {})
+        service.draft_files.update_file_metadata(anon, id_, "test.pdf", {})
     with pytest.raises(PermissionDeniedError):
-        service.draft_files.commit_file(anon, id_, 'test.pdf')
+        service.draft_files.commit_file(anon, id_, "test.pdf")
     with pytest.raises(PermissionDeniedError):
-        service.draft_files.delete_file(anon, id_, 'test.pdf')
+        service.draft_files.delete_file(anon, id_, "test.pdf")
     with pytest.raises(PermissionDeniedError):
         service.draft_files.delete_all_files(anon, id_)
     with pytest.raises(PermissionDeniedError):
-        service.draft_files.set_file_content(anon, id_, 'test.pdf', None)
+        service.draft_files.set_file_content(anon, id_, "test.pdf", None)
 
     # === Authenticated user with edit link ===
     i = Identity(100)
@@ -141,8 +145,8 @@ def test_permission_levels(
     service.files.list_files(i, id_)
     service.read_draft(i, id_)
     service.draft_files.list_files(i, id_)
-    service.draft_files.get_file_content(i, id_, 'test.pdf')
-    service.draft_files.read_file_metadata(i, id_, 'test.pdf')
+    service.draft_files.get_file_content(i, id_, "test.pdf")
+    service.draft_files.read_file_metadata(i, id_, "test.pdf")
 
     # Deny user with edit link to share the links
     with pytest.raises(PermissionDeniedError):
@@ -159,7 +163,7 @@ def test_permission_levels(
     # Allow user with edit link to update, delete, edit, publish
     draft = service.read_draft(i, id_)
     data = draft.data
-    data['metadata']['title'] = 'allow it'
+    data["metadata"]["title"] = "allow it"
     service.update_draft(i, id_, data)
     service.delete_draft(i, id_)
     test = service.edit(i, id_)
@@ -167,7 +171,7 @@ def test_permission_levels(
     new_draft = service.new_version(i, id_)
     new_id = new_draft.id
     service.import_files(i, new_id)
-    service.draft_files.delete_file(i, new_id, 'test.pdf')
+    service.draft_files.delete_file(i, new_id, "test.pdf")
 
 
 def test_read_restricted_record_with_secret_link(
@@ -205,8 +209,6 @@ def test_read_restricted_record_with_secret_link(
 
     # the record shouldn't be showing up in search results, however
     RDMRecord.index.refresh()
-    res = client.get(
-        "/records", query_string={"q": f"id:{recid}"}
-    )
+    res = client.get("/records", query_string={"q": f"id:{recid}"})
     assert res.status_code == 200
     assert res.json["hits"]["total"] == 0

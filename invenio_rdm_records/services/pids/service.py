@@ -12,8 +12,7 @@ from invenio_pidstore.models import PersistentIdentifier
 from invenio_records_resources.services.uow import RecordCommitOp, unit_of_work
 from invenio_requests.services.results import EntityResolverExpandableField
 
-from invenio_rdm_records.services.results import \
-    ParentCommunitiesExpandableField
+from invenio_rdm_records.services.results import ParentCommunitiesExpandableField
 
 
 class PIDsService(RecordService):
@@ -69,14 +68,11 @@ class PIDsService(RecordService):
         )
 
     @unit_of_work()
-    def create(self, identity, id_, scheme, provider=None, uow=None,
-               expand=False):
+    def create(self, identity, id_, scheme, provider=None, uow=None, expand=False):
         """Create a `NEW` PID for a given record."""
         draft = self.draft_cls.pid.resolve(id_, registered_only=False)
         self.require_permission(identity, "pid_create", record=draft)
-        draft.pids[scheme] = self._manager.create(
-            draft, scheme, provider_name=provider
-        )
+        draft.pids[scheme] = self._manager.create(draft, scheme, provider_name=provider)
 
         uow.register(RecordCommitOp(draft, indexer=self.indexer))
 
@@ -127,8 +123,7 @@ class PIDsService(RecordService):
         )
 
     @unit_of_work()
-    def register_or_update(self, identity, id_, scheme, uow=None,
-                           expand=False):
+    def register_or_update(self, identity, id_, scheme, uow=None, expand=False):
         """Register or update a PID of a record.
 
         If the PID has already been register it updates the remote.
@@ -136,9 +131,7 @@ class PIDsService(RecordService):
         record = self.record_cls.pid.resolve(id_, registered_only=False)
         # no need to validate since the record class was already published
         pid_attrs = record.pids.get(scheme)
-        pid = self._manager.read(
-            scheme, pid_attrs["identifier"], pid_attrs["provider"]
-        )
+        pid = self._manager.read(scheme, pid_attrs["identifier"], pid_attrs["provider"])
         if pid.is_registered():
             self.require_permission(identity, "pid_update", record=record)
             self._manager.update(record, scheme)
@@ -146,14 +139,10 @@ class PIDsService(RecordService):
             self.require_permission(identity, "pid_register", record=record)
             # Determine landing page (use scheme specific if available)
             links = self.links_item_tpl.expand(record)
-            url = links['self_html']
-            if f'self_{scheme}' in links:
-                url = links[f'self_{scheme}']
-            self._manager.register(
-                record,
-                scheme,
-                url
-            )
+            url = links["self_html"]
+            if f"self_{scheme}" in links:
+                url = links[f"self_{scheme}"]
+            self._manager.register(record, scheme, url)
 
         # draft and index do not need commit/refresh
 
@@ -167,17 +156,14 @@ class PIDsService(RecordService):
         )
 
     @unit_of_work()
-    def discard(self, identity, id_, scheme, provider=None, uow=None,
-                expand=False):
+    def discard(self, identity, id_, scheme, provider=None, uow=None, expand=False):
         """Discard a PID for a given draft.
 
         If the status was `NEW` it will be hard deleted. Otherwise,
         it will be soft deleted (`RESERVED`/`REGISTERED`).
         """
         draft = self.draft_cls.pid.resolve(id_, registered_only=False)
-        self.require_permission(
-            identity, "pid_discard", record=draft, scheme=scheme
-        )
+        self.require_permission(identity, "pid_discard", record=draft, scheme=scheme)
         self.pid_manager.validate(draft.pids, draft, raise_errors=True)
         identifier = draft.pids.get(scheme, {}).get("identifier")
         self._manager.discard(scheme, identifier, provider)

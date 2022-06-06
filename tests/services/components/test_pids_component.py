@@ -21,8 +21,7 @@ from invenio_rdm_records.services.components import PIDsComponent
 from invenio_rdm_records.services.config import RDMRecordServiceConfig
 from invenio_rdm_records.services.pids import PIDManager, PIDsService
 from invenio_rdm_records.services.pids.errors import PIDSchemeNotSupportedError
-from invenio_rdm_records.services.pids.providers import ExternalPIDProvider, \
-    PIDProvider
+from invenio_rdm_records.services.pids.providers import ExternalPIDProvider, PIDProvider
 
 # providers
 
@@ -45,12 +44,9 @@ class TestManagedPIDProvider(PIDProvider):
             self.id_counter += 1
         return super().create(record, pid_value=str(pid_value), **kwargs)
 
-    def validate(
-        self, record, identifier=None, provider=None, **kwargs
-    ):
+    def validate(self, record, identifier=None, provider=None, **kwargs):
         """Validate the attributes of the identifier."""
-        success, errors = super().validate(
-            record, identifier, provider, **kwargs)
+        success, errors = super().validate(record, identifier, provider, **kwargs)
         try:
             int(identifier)
         except ValueError:
@@ -60,14 +56,17 @@ class TestManagedPIDProvider(PIDProvider):
 
 # configs
 
+
 class TestServiceConfigNoPIDs(RDMRecordServiceConfig):
     """Custom service config with only pid providers."""
+
     pids_providers = {}
     pids_required = []
 
 
 class TestServiceConfigNoRequiredPIDs(RDMRecordServiceConfig):
     """Custom service config with only pid providers."""
+
     pids_providers = {
         "test": {
             "default": "managed",
@@ -80,6 +79,7 @@ class TestServiceConfigNoRequiredPIDs(RDMRecordServiceConfig):
 
 class TestServiceConfigRequiredManagedPID(RDMRecordServiceConfig):
     """Custom service config with only pid providers."""
+
     pids_providers = {
         "test": {
             "default": "managed",
@@ -91,6 +91,7 @@ class TestServiceConfigRequiredManagedPID(RDMRecordServiceConfig):
 
 class TestServiceConfigRequiredExternalPID(RDMRecordServiceConfig):
     """Custom service config with only pid providers."""
+
     pids_providers = {
         "test": {
             "default": "external",
@@ -102,13 +103,14 @@ class TestServiceConfigRequiredExternalPID(RDMRecordServiceConfig):
 
 # components
 
+
 @pytest.fixture(scope="module")
 def no_pids_cmp():
     service = RDMRecordService(
         config=TestServiceConfigNoPIDs,
         pids_service=PIDsService(
             config=TestServiceConfigNoPIDs, manager_cls=PIDManager
-        )
+        ),
     )
     c = PIDsComponent(service=service)
     c.uow = UnitOfWork()
@@ -121,7 +123,7 @@ def no_required_pids_service():
         config=TestServiceConfigNoRequiredPIDs,
         pids_service=PIDsService(
             config=TestServiceConfigNoRequiredPIDs, manager_cls=PIDManager
-        )
+        ),
     )
 
 
@@ -138,7 +140,7 @@ def required_managed_pids_cmp():
         config=TestServiceConfigRequiredManagedPID,
         pids_service=PIDsService(
             config=TestServiceConfigRequiredManagedPID, manager_cls=PIDManager
-        )
+        ),
     )
     c = PIDsComponent(service=service)
     c.uow = UnitOfWork()
@@ -150,9 +152,8 @@ def required_external_pids_cmp():
     service = RDMRecordService(
         config=TestServiceConfigRequiredExternalPID,
         pids_service=PIDsService(
-            config=TestServiceConfigRequiredExternalPID,
-            manager_cls=PIDManager
-        )
+            config=TestServiceConfigRequiredExternalPID, manager_cls=PIDManager
+        ),
     )
     c = PIDsComponent(service=service)
     c.uow = UnitOfWork()
@@ -161,9 +162,8 @@ def required_external_pids_cmp():
 
 # PID Creation
 
-def test_create_no_pids(
-    no_pids_cmp, minimal_record, identity_simple, location
-):
+
+def test_create_no_pids(no_pids_cmp, minimal_record, identity_simple, location):
     component = no_pids_cmp
     # empty pids field
     pids = {}
@@ -182,12 +182,7 @@ def test_create_pid_type_not_supported(
 ):
     component = no_pids_cmp
     # managed pid
-    pids = {
-        "test": {
-            "identifier": "1234",
-            "provider": "managed"
-        }
-    }
+    pids = {"test": {"identifier": "1234", "provider": "managed"}}
     # make sure `pids` field is added
     data = minimal_record.copy()
     data["pids"] = pids
@@ -200,17 +195,14 @@ def test_create_pid_type_not_supported(
         component.create(identity_simple, data=data, record=draft)
 
 
-@pytest.mark.parametrize("pids", [
-    {},
-    {"test": {
-        "identifier": "1234",
-        "provider": "managed"
-    }},
-    {"test": {
-        "identifier": "1234",
-        "provider": "external"
-    }},
-])
+@pytest.mark.parametrize(
+    "pids",
+    [
+        {},
+        {"test": {"identifier": "1234", "provider": "managed"}},
+        {"test": {"identifier": "1234", "provider": "external"}},
+    ],
+)
 def test_create_no_required_pids(
     pids, no_required_pids_cmp, minimal_record, identity_simple, location
 ):
@@ -225,13 +217,9 @@ def test_create_no_required_pids(
     assert "pids" in draft and draft.pids == pids
 
 
-@pytest.mark.parametrize("pids", [
-    {},
-    {"test": {
-        "identifier": "1234",
-        "provider": "managed"
-    }}
-])
+@pytest.mark.parametrize(
+    "pids", [{}, {"test": {"identifier": "1234", "provider": "managed"}}]
+)
 def test_create_with_required_managed(
     pids, required_managed_pids_cmp, minimal_record, identity_simple, location
 ):
@@ -246,25 +234,31 @@ def test_create_with_required_managed(
     assert "pids" in draft and draft.pids == pids
 
 
-@pytest.mark.parametrize("pids,expected_errors", [
-    (
-        {"test": {"identifier": "", "provider": "managed"}},
-        [{
-            'field': 'pids.test',
-            'messages': ['Identifier must be an integer.']
-        }]
-    ),
-    (
-        {"test": {"identifier": "", "provider": "external"}},
-        [{
-            'field': 'pids.test',
-            'messages': ['Missing external for required field.']
-        }]
-    )
-])
+@pytest.mark.parametrize(
+    "pids,expected_errors",
+    [
+        (
+            {"test": {"identifier": "", "provider": "managed"}},
+            [{"field": "pids.test", "messages": ["Identifier must be an integer."]}],
+        ),
+        (
+            {"test": {"identifier": "", "provider": "external"}},
+            [
+                {
+                    "field": "pids.test",
+                    "messages": ["Missing external for required field."],
+                }
+            ],
+        ),
+    ],
+)
 def test_create_with_incomplete_payload(
-    pids, expected_errors, no_required_pids_cmp, minimal_record,
-    identity_simple, location
+    pids,
+    expected_errors,
+    no_required_pids_cmp,
+    minimal_record,
+    identity_simple,
+    location,
 ):
     component = no_required_pids_cmp
     # make sure `pids` field is added
@@ -281,9 +275,8 @@ def test_create_with_incomplete_payload(
 
 # PID Publishing
 
-def test_publish_no_pids(
-    no_pids_cmp, minimal_record, identity_simple, location
-):
+
+def test_publish_no_pids(no_pids_cmp, minimal_record, identity_simple, location):
     component = no_pids_cmp
     # empty pids field
     pids = {}
@@ -299,16 +292,20 @@ def test_publish_no_pids(
     assert record.get("pids") == {}
 
 
-@pytest.mark.parametrize("pids", [
-    {},
-    {"test": {
-        "identifier": "1234",
-        "provider": "external"
-    }},
-])
+@pytest.mark.parametrize(
+    "pids",
+    [
+        {},
+        {"test": {"identifier": "1234", "provider": "external"}},
+    ],
+)
 def test_publish_no_required_pids(
-    pids, no_required_pids_service, no_required_pids_cmp,
-    minimal_record, identity_simple, location
+    pids,
+    no_required_pids_service,
+    no_required_pids_cmp,
+    minimal_record,
+    identity_simple,
+    location,
 ):
     # a managed pid is not accepted in this case since it would need to be
     # created/reserved before hand. that flow is tested at service level.
@@ -380,6 +377,7 @@ def test_publish_non_existing_required_external(
 # PID Deletion
 # Ad-hoc PID deletion happens in the PIDs subservice. These tests are only
 # meant to test the chain of deletion that happens when deleting a record
+
 
 def _create_managed_pid(draft, pid_value, provider):
     pid = provider.create(draft, pid_value=pid_value)

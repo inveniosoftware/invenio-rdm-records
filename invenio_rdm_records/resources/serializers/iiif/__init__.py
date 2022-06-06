@@ -11,8 +11,12 @@
 
 from flask_resources.serializers import MarshmallowJSONSerializer
 
-from .schema import IIIFCanvasV2Schema, IIIFInfoV2Schema, \
-    IIIFManifestV2Schema, IIIFSequenceV2Schema
+from .schema import (
+    IIIFCanvasV2Schema,
+    IIIFInfoV2Schema,
+    IIIFManifestV2Schema,
+    IIIFSequenceV2Schema,
+)
 
 
 class IIIFInfoV2JSONSerializer(MarshmallowJSONSerializer):

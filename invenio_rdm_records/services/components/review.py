@@ -9,8 +9,7 @@
 
 
 from flask_babelex import lazy_gettext as _
-from invenio_drafts_resources.services.records.components import \
-    ServiceComponent
+from invenio_drafts_resources.services.records.components import ServiceComponent
 from invenio_requests import current_requests_service
 
 from ..errors import ReviewExistsError, ReviewStateError
@@ -34,17 +33,17 @@ class ReviewComponent(ServiceComponent):
         # the condition "review.status !=" can be removed.
         if review.is_open:
             raise ReviewStateError(
-                _("You cannot delete a draft with an open review. Please "
-                  "cancel the review first.")
+                _(
+                    "You cannot delete a draft with an open review. Please "
+                    "cancel the review first."
+                )
             )
 
         # Delete draft request's. A request in any other state is left as-is,
         # to allow users to see the request even if it was removed.
-        if review.status == 'created':
+        if review.status == "created":
             current_requests_service.delete(
-                identity,
-                draft.parent.review.id,
-                uow=self.uow
+                identity, draft.parent.review.id, uow=self.uow
             )
 
     def publish(self, identity, draft=None, record=None, **kwargs):
@@ -52,6 +51,5 @@ class ReviewComponent(ServiceComponent):
         review = draft.parent.review
         if review is None:
             return
-        if getattr(review.type, 'block_publish', True) and \
-                not review.is_closed:
+        if getattr(review.type, "block_publish", True) and not review.is_closed:
             raise ReviewExistsError()

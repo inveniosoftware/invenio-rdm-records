@@ -21,7 +21,7 @@ def test_valid_pid(app, db, minimal_record, location):
         "doi": {
             "identifier": "10.5281/zenodo.1234",
             "provider": "datacite",
-            "client": "zenodo"
+            "client": "zenodo",
         }
     }
 

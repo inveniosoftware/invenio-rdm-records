@@ -16,7 +16,7 @@ import pytest
 from invenio_rdm_records.proxies import current_rdm_records
 
 
-@pytest.fixture(scope='function')
+@pytest.fixture(scope="function")
 def record(app, location, db, superuser_identity, minimal_record):
     """Application factory fixture."""
     service = current_rdm_records.records_service

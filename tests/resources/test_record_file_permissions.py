@@ -25,42 +25,36 @@ def create_record_w_file(client, record, headers):
     record["files"] = {"enabled": True}
     response = client.post("/records", json=record, headers=headers)
     assert response.status_code == 201
-    recid = response.json['id']
+    recid = response.json["id"]
 
     # Attach a file to it
     response = client.post(
-        f'/records/{recid}/draft/files',
-        headers=headers,
-        json=[{'key': 'test.pdf'}]
+        f"/records/{recid}/draft/files", headers=headers, json=[{"key": "test.pdf"}]
     )
     assert response.status_code == 201
     response = client.put(
         f"/records/{recid}/draft/files/test.pdf/content",
         headers={
-            'content-type': 'application/octet-stream',
-            'accept': 'application/json',
+            "content-type": "application/octet-stream",
+            "accept": "application/json",
         },
-        data=BytesIO(b'testfile'),
+        data=BytesIO(b"testfile"),
     )
     assert response.status_code == 200
     response = client.post(
-        f"/records/{recid}/draft/files/test.pdf/commit",
-        headers=headers
+        f"/records/{recid}/draft/files/test.pdf/commit", headers=headers
     )
     assert response.status_code == 200
 
     # Publish it
-    response = client.post(
-        f"/records/{recid}/draft/actions/publish", headers=headers
-    )
+    response = client.post(f"/records/{recid}/draft/actions/publish", headers=headers)
     assert response.status_code == 202
 
     return recid
 
 
-@pytest.fixture(scope='function')
-def record_w_restricted_file(
-        client, headers, running_app, minimal_record, users):
+@pytest.fixture(scope="function")
+def record_w_restricted_file(client, headers, running_app, minimal_record, users):
     # Login
     login_user(client, users[0])
 
@@ -78,7 +72,8 @@ def record_w_restricted_file(
 
 
 def test_only_owners_can_list_restricted_files(
-        client, headers, record_w_restricted_file, users):
+    client, headers, record_w_restricted_file, users
+):
     recid = record_w_restricted_file
     url = f"/records/{recid}/files"
 
@@ -99,7 +94,8 @@ def test_only_owners_can_list_restricted_files(
 
 
 def test_only_owners_can_read_restricted_file_metadata(
-        client, headers, record_w_restricted_file, users):
+    client, headers, record_w_restricted_file, users
+):
     recid = record_w_restricted_file
     url = f"/records/{recid}/files/test.pdf"
 
@@ -120,7 +116,8 @@ def test_only_owners_can_read_restricted_file_metadata(
 
 
 def test_only_owners_can_download_restricted_file(
-        client, headers, record_w_restricted_file, users):
+    client, headers, record_w_restricted_file, users
+):
     recid = record_w_restricted_file
     logout_user(client)
 
@@ -143,7 +140,8 @@ def test_only_owners_can_download_restricted_file(
 
 
 def test_record_files_cannot_be_deleted(
-        client, headers, record_w_restricted_file, users):
+    client, headers, record_w_restricted_file, users
+):
     recid = record_w_restricted_file
     url = f"/records/{recid}/files/test.pdf"
 
@@ -164,55 +162,52 @@ def test_record_files_cannot_be_deleted(
 
 
 def test_files_cannot_be_uploaded_to_records(
-        client, headers, record_w_restricted_file, users):
+    client, headers, record_w_restricted_file, users
+):
     recid = record_w_restricted_file
     url = f"/records/{recid}/files"
 
     # Anonymous user can't upload a file
-    response = client.post(url, headers=headers, json=[{'key': 'test.pdf'}])
+    response = client.post(url, headers=headers, json=[{"key": "test.pdf"}])
     assert response.status_code == 405
 
     # Different user can't upload a file
     login_user(client, users[1])
-    response = client.post(url, headers=headers, json=[{'key': 'test.pdf'}])
+    response = client.post(url, headers=headers, json=[{"key": "test.pdf"}])
     assert response.status_code == 405
     logout_user(client)
 
     # Owner can't upload a file
     login_user(client, users[0])
-    response = client.post(url, headers=headers, json=[{'key': 'test.pdf'}])
+    response = client.post(url, headers=headers, json=[{"key": "test.pdf"}])
     assert response.status_code == 405
 
 
 def test_record_files_options_cannot_be_modified(
-        client, headers, record_w_restricted_file, users):
+    client, headers, record_w_restricted_file, users
+):
     recid = record_w_restricted_file
     url = f"/records/{recid}/files"
 
     # Anonymous user can't modify record file options
-    response = client.put(
-        url, headers=headers, json=[{'default_preview': 'test.pdf'}]
-    )
+    response = client.put(url, headers=headers, json=[{"default_preview": "test.pdf"}])
     assert response.status_code == 405
 
     # Different user can't modify record file options
     login_user(client, users[1])
-    response = client.put(
-        url, headers=headers, json=[{'default_preview': 'test.pdf'}]
-    )
+    response = client.put(url, headers=headers, json=[{"default_preview": "test.pdf"}])
     assert response.status_code == 405
     logout_user(client)
 
     # Owner can't modify record file options
     login_user(client, users[0])
-    response = client.put(
-        url, headers=headers, json=[{'default_preview': 'test.pdf'}]
-    )
+    response = client.put(url, headers=headers, json=[{"default_preview": "test.pdf"}])
     assert response.status_code == 405
 
 
 def test_record_files_cannot_be_imported(
-        client, headers, record_w_restricted_file, users):
+    client, headers, record_w_restricted_file, users
+):
     recid = record_w_restricted_file
     url = f"/records/{recid}/actions/files-import"
 

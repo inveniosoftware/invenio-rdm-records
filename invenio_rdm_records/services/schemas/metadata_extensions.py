@@ -70,13 +70,12 @@ class MetadataExtensions(object):
 
     def _validate_marshmallow_type(self, field_cfg):
         """Make sure the Marshmallow type is one we support."""
+
         def validate_basic_marshmallow_type(_type):
-            allowed_types = (
-                Bool, ISODateString, Integer, SanitizedUnicode
-            )
+            allowed_types = (Bool, ISODateString, Integer, SanitizedUnicode)
             assert isinstance(_type, allowed_types)
 
-        marshmallow_type = field_cfg['marshmallow']
+        marshmallow_type = field_cfg["marshmallow"]
         if isinstance(marshmallow_type, List):
             validate_basic_marshmallow_type(marshmallow_type.inner)
         else:
@@ -84,10 +83,8 @@ class MetadataExtensions(object):
 
     def _validate_elasticsearch_type(self, field_cfg):
         """Make sure the Elasticsearch type is one we support."""
-        allowed_types = [
-            'boolean', 'date', 'long', 'keyword', 'text'
-        ]
-        assert field_cfg['elasticsearch'] in allowed_types
+        allowed_types = ["boolean", "date", "long", "keyword", "text"]
+        assert field_cfg["elasticsearch"] in allowed_types
 
     def _validate(self):
         """Validates extension configuration.
@@ -98,8 +95,8 @@ class MetadataExtensions(object):
         # Validate namespaces
         contexts = set()
         for settings in self.namespaces.values():
-            assert settings['@context'] not in contexts
-            contexts.add(settings['@context'])
+            assert settings["@context"] not in contexts
+            contexts.add(settings["@context"])
 
         # Validate extensions
         prefixes = self.namespaces.keys()
@@ -112,7 +109,7 @@ class MetadataExtensions(object):
     def to_schema(self):
         """Dynamically creates and returns the extensions Schema."""
         schema_dict = {
-            field_key: field_cfg['marshmallow']
+            field_key: field_cfg["marshmallow"]
             for field_key, field_cfg in self.extensions.items()
         }
         return Schema.from_dict(schema_dict)
@@ -123,11 +120,7 @@ class MetadataExtensions(object):
         :params field_key: str formatted as <prefix>:<field_id>
         :params _type: str 'elasticsearch' or 'marshmallow'
         """
-        return (
-            self.extensions
-                .get(field_key, {})
-                .get(_type)
-        )
+        return self.extensions.get(field_key, {}).get(_type)
 
 
 def add_es_metadata_extensions(record_dict):
@@ -135,20 +128,20 @@ def add_es_metadata_extensions(record_dict):
 
     :param record_dict: dumped Record dict
     """
-    current_app_metadata_extensions = (
-        current_app.extensions['invenio-rdm-records'].metadata_extensions
-    )
+    current_app_metadata_extensions = current_app.extensions[
+        "invenio-rdm-records"
+    ].metadata_extensions
 
-    for key, value in record_dict.get('extensions', {}).items():
+    for key, value in record_dict.get("extensions", {}).items():
         field_type = current_app_metadata_extensions.get_field_type(
-            key, 'elasticsearch'
+            key, "elasticsearch"
         )
         if not field_type:
             continue
 
-        es_field = 'extensions_{}s'.format(field_type)
+        es_field = "extensions_{}s".format(field_type)
 
         if es_field not in record_dict:
             record_dict[es_field] = []
 
-        record_dict[es_field].append({'key': key, 'value': value})
+        record_dict[es_field].append({"key": key, "value": value})
