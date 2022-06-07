@@ -126,7 +126,7 @@ class RDMRecordService(RecordService):
         today = arrow.utcnow().date().isoformat()
 
         embargoed_q = (
-            f"access.embargo.active:true " f"AND access.embargo.until:[* TO {today}]"
+            f"access.embargo.active:true AND access.embargo.until:[* TO {today}]"
         )
 
         return self.scan(identity=identity, q=embargoed_q)
