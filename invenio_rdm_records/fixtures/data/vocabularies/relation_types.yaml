@@ -3,153 +3,184 @@
      datacite: IsCitedBy
   title:
      en: Is cited by
+     de: Wird zitiert von
 - id: cites
   props:
      datacite: Cites
   title:
      en: Cites
+     de: Zitiert
 - id: issupplementto
   props:
      datacite: IsSupplementTo
   title:
      en: Is supplement to
+     de: Ergänzt
 - id: issupplementedby
   props:
      datacite: IsSupplementedBy
   title:
      en: Is supplemented by
+     de: Wird ergänzt durch
 - id: iscontinuedby
   props:
      datacite: IsContinuedBy
   title:
      en: Is continued by
+     de: Wird fortgesetzt durch
 - id: continues
   props:
      datacite: Continues
   title:
      en: Continues
+     de: Setzt fort
 - id: isdescribedby
   props:
      datacite: IsDescribedBy
   title:
      en: Is described by
+     de: Wird beschrieben von
 - id: describes
   props:
      datacite: Describes
   title:
      en: Describes
+     de: Beschreibt
 - id: hasversion
   props:
      datacite: HasVersion
   title:
      en: Has version
+     de: Hat versionierte Instanz
 - id: isversionof
   props:
      datacite: IsVersionOf
   title:
      en: Is version of
+     de: Ist eine Version von
 - id: isnewversionof
   props:
      datacite: IsNewVersionOf
   title:
      en: Is new version of
+     de: Ist eine neue Version von
 - id: ispreviousversionof
   props:
      datacite: IsPreviousVersionOf
   title:
      en: Is previous version of
+     de: Ist eine vorherige Version von
 - id: ispartof
   props:
      datacite: IsPartOf
   title:
      en: Is part of
+     de: Ist Teil von
 - id: haspart
   props:
      datacite: HasPart
   title:
-     en: HasPart
+     en: Has part
+     de: Umfasst folgenden Teil
 - id: isreferencedby
   props:
      datacite: IsReferencedBy
   title:
      en: Is referenced by
+     de: Wird referenziert von
 - id: references
   props:
      datacite: References
   title:
      en: References
+     de: Referenziert
 - id: isdocumentedby
   props:
      datacite: IsDocumentedBy
   title:
      en: Is documented by
+     de: Wird dokumentiert von
 - id: documents
   props:
      datacite: Documents
   title:
      en: Documents
+     de: Dokumentiert
 - id: iscompiledby
   props:
      datacite: IsCompiledBy
   title:
      en: Is compiled by
+     de: Kompiliert durch
 - id: compiles
   props:
      datacite: Compiles
   title:
      en: Compiles
+     de: Kompiliert
 - id: isvariantformof
   props:
      datacite: IsVariantFormOf
   title:
      en: Is variant form of
+     de: Ist eine Variante von
 - id: isoriginalformof
   props:
      datacite: IsOriginalFormOf
   title:
      en: Is original form of
+     de: Ist das Orginal von
 - id: isidenticalto
   props:
      datacite: IsIdenticalTo
   title:
      en: Is identical to
+     de: Ist identisch mit
 - id: isreviewedby
   props:
      datacite: IsReviewedBy
   title:
      en: Is reviewed by
+     de: Wird begutachtet von
 - id: reviews
   props:
      datacite: Reviews
   title:
      en: Reviews
+     de: Begutachtet
 - id: isderivedfrom
   props:
      datacite: IsDerivedFrom
   title:
      en: Is derived from
+     de: Wird abgeleitet von
 - id: issourceof
   props:
      datacite: IsSourceOf
   title:
      en: Is source of
+     de: Ist Quelle von
 - id: isrequiredby
   props:
      datacite: IsRequiredBy
   title:
      en: Is required by
+     de: Wird gefordert von
 - id: requires
   props:
      datacite: Requires
   title:
      en: Requires
+     de: Setzt voraus
 - id: isobsoletedby
   props:
      datacite: IsObsoletedBy
   title:
      en: Is obsoleted by
+     de: Wird ersetzt durch
 - id: obsoletes
   props:
      datacite: Obsoletes
   title:
      en: Obsoletes
+     de: Ersetzt

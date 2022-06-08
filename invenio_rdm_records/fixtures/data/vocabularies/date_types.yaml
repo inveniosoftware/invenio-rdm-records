@@ -3,53 +3,64 @@
     datacite: Accepted
   title:
     en: Accepted
+    de: Angenommen
 - id: available
   props:
     datacite: Available
   title:
     en: Available
+    de: Verfügbar
 - id: collected
   props:
     datacite: Collected
   title:
     en: Collected
+    de: Gesammelt
 - id: copyrighted
   props:
     datacite: Copyrighted
   title:
     en: Copyrighted
+    de: Mit Copyright versehen
 - id: created
   props:
     datacite: Created
   title:
     en: Created
+    de: Erstellt
 - id: issued
   props:
     datacite: Issued
   title:
     en: Issued
+    de: Veröffentlicht
 - id: other
   props:
     datacite: Other
   title:
     en: Other
+    de: Sonstiges
 - id: submitted
   props:
     datacite: Submitted
   title:
     en: Submitted
+    de: Eingereicht
 - id: updated
   props:
     datacite: Updated
   title:
     en: Updated
+    de: Aktualisiert
 - id: valid
   props:
     datacite: Valid
   title:
     en: Valid
+    de: Gültig
 - id: withdrawn
   props:
     datacite: Withdrawn
   title:
     en: Withdrawn
+    de: Zurückgezogen
