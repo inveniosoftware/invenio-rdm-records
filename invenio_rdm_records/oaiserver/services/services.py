@@ -68,7 +68,7 @@ class OAIPMHServerService(Service):
         if spec.startswith(reserved_prefix):
             raise ValidationError(
                 _(
-                    "The spec must not start with '{prefix}'".format(
+                    "The spec must not start with '{prefix}'.".format(
                         prefix=reserved_prefix
                     )
                 ),
@@ -80,7 +80,7 @@ class OAIPMHServerService(Service):
         if not bool(blop.match(spec)):
             raise ValidationError(
                 _(
-                    "The spec should only consist of letters, numbers or {marks}".format(
+                    "The spec should only consist of letters, numbers or {marks}.".format(
                         marks=",".join(["-", "_", ".", "!", "~", "*", "'", "(", ")"])
                     )
                 ),
