@@ -84,7 +84,7 @@ class IIIFImageServiceV2Schema(Schema):
 
         include = {
             "@context": fields.Constant("http://iiif.io/api/image/2/context.json"),
-            "@id": fields.String(attribute="links.iiif_info"),
+            "@id": fields.String(attribute="links.iiif_base"),
             "profile": fields.Constant("http://iiif.io/api/image/2/level1.json"),
         }
 

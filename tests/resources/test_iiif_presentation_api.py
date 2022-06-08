@@ -108,7 +108,7 @@ def test_iiif_manifest(
     )
     assert (
         image["resource"]["service"]["@id"]
-        == f"https://127.0.0.1:5000/api/iiif/record:{recid}:{file_id}/info.json"
+        == f"https://127.0.0.1:5000/api/iiif/record:{recid}:{file_id}"
     )
 
 
