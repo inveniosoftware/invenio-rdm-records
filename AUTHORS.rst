@@ -14,3 +14,9 @@ Authors
 DataCite-based data model for Invenio.
 
 - CERN <info@inveniosoftware.org>
+
+Translation:
+
+- German
+  - Graz University of Technology
+  - University of Bamberg
