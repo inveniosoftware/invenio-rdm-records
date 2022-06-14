@@ -156,8 +156,6 @@ def test_create_draft_w_extra_fields_reports_error_doesnt_save_field(
 
     assert response.status_code == 201
     assert "foo" not in response.json
-    errors = [{"field": "foo", "messages": ["Unknown field."]}]
-    assert errors == response.json["errors"]
 
 
 def test_read_draft(running_app, client_with_login, minimal_record, headers, es_clear):
