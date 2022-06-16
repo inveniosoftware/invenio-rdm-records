@@ -60,6 +60,36 @@ def full_to_dict_record(full_record):
         }
     ]
 
+    to_dict_record["metadata"]["funding"] = [
+        {
+            "funder": {
+                "id": "00k4n6c32",
+                "name": "EC",
+                "title": {"en": "European Commission", "fr": "Commission Européenne"},
+                "country": "BE",
+            },
+            "award": {
+                "id": "00k4n6c32",
+                "identifiers": [
+                    {
+                        "identifier": "000000012156142X",
+                        "scheme": "isni",
+                    },
+                    {
+                        "identifier": "00k4n6c32",
+                        "scheme": "ror",
+                    },
+                ],
+                "name": "European Commission",
+                "title": {
+                    "en": "European Commission",
+                    "fr": "Commission européenne",
+                },
+                "country": "BE",
+            },
+        }
+    ]
+
     _add_affiliation_name(to_dict_record["metadata"]["creators"])
     _add_affiliation_name(to_dict_record["metadata"]["contributors"])
 
@@ -156,9 +186,27 @@ def test_ui_serializer(app, full_to_dict_record):
         ],
         "description_stripped": "A description \nwith HTML tags",
         "version": "v1.0",
+        "funding": [
+            {
+                "award": {
+                    "id": "00k4n6c32",
+                    "identifiers": [
+                        {"identifier": "000000012156142X", "scheme": "isni"},
+                        {"identifier": "00k4n6c32", "scheme": "ror"},
+                    ],
+                    "title_l10n": "European Commission",
+                },
+                "funder": {
+                    "country": "BE",
+                    "id": "00k4n6c32",
+                    "name": "EC",
+                    "title_l10n": "European Commission",
+                },
+            }
+        ],
     }
 
-    serialized_record = UIJSONSerializer().serialize_object_to_dict(full_to_dict_record)
+    serialized_record = UIJSONSerializer().dump_obj(full_to_dict_record)
     assert serialized_record["ui"] == expected_data
 
     serialized_records = UIJSONSerializer().serialize_object_list(
