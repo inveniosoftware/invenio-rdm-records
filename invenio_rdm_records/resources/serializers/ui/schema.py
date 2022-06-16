@@ -9,15 +9,16 @@
 
 """Record response serializers."""
 
-from ast import literal_eval
 from copy import deepcopy
 from functools import partial
 
 from flask import current_app
 from flask_babelex import get_locale
-from invenio_i18n.ext import current_i18n
+from flask_resources import BaseObjectSchema
+from invenio_vocabularies.contrib.awards.serializer import AwardL10NItemSchema
+from invenio_vocabularies.contrib.funders.serializer import FunderL10NItemSchema
+from invenio_vocabularies.resources import L10NString, VocabularyL10Schema
 from marshmallow import Schema, fields, missing
-from marshmallow_utils.fields import BabelGettextDictField
 from marshmallow_utils.fields import FormatDate as FormatDate_
 from marshmallow_utils.fields import FormatEDTF as FormatEDTF_
 from marshmallow_utils.fields import StrippedHTML
@@ -37,7 +38,6 @@ def current_default_locale():
 # Partial to make short definitions in below schema.
 FormatEDTF = partial(FormatEDTF_, locale=get_locale)
 FormatDate = partial(FormatDate_, locale=get_locale)
-L10NString = partial(BabelGettextDictField, get_locale, current_default_locale())
 
 
 def make_affiliation_index(attr, obj, dummy_ctx):
@@ -89,13 +89,6 @@ def record_version(obj):
     return field_data
 
 
-class VocabularyL10Schema(Schema):
-    """Vocabulary schema."""
-
-    id = fields.String()
-    title = L10NString(data_key="title_l10n")
-
-
 class RelatedIdentifiersSchema(Schema):
     """Localization of language titles."""
 
@@ -138,7 +131,14 @@ class RightsSchema(VocabularyL10Schema):
     props = fields.Dict()
 
 
-class UIObjectSchema(Schema):
+class FundingSchema(Schema):
+    """Schema for dumping funding in the UI."""
+
+    award = fields.Nested(AwardL10NItemSchema)
+    funder = fields.Nested(FunderL10NItemSchema)
+
+
+class UIRecordSchema(BaseObjectSchema):
     """Schema for dumping extra information for the UI."""
 
     publication_date_l10n_medium = FormatEDTF(
@@ -192,26 +192,7 @@ class UIObjectSchema(Schema):
 
     is_draft = fields.Boolean(attribute="is_draft")
 
-
-#
-# List schema
-class UIListSchema(Schema):
-    """Schema for dumping extra information in the UI."""
-
-    hits = fields.Method("get_hits")
-    aggregations = fields.Method("get_aggs")
-
-    def get_hits(self, obj_list):
-        """Apply hits transformation."""
-        for obj in obj_list["hits"]["hits"]:
-            obj[self.context["object_key"]] = self.context["object_schema_cls"]().dump(
-                obj
-            )
-        return obj_list["hits"]
-
-    def get_aggs(self, obj_list):
-        """Apply aggregations transformation."""
-        aggs = obj_list.get("aggregations")
-        if not aggs:
-            return missing
-        return aggs
+    funding = fields.List(
+        fields.Nested(FundingSchema()),
+        attribute="metadata.funding",
+    )
