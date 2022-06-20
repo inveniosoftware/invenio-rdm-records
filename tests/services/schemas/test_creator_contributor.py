@@ -161,7 +161,7 @@ def test_creator_person_invalid_no_family_name(app):
 
     assert_raises_messages(
         lambda: CreatorSchema().load(invalid_no_family_name),
-        {"person_or_org": {"family_name": ["Family name must be filled."]}},
+        {"person_or_org": {"family_name": ["Family name cannot be blank."]}},
     )
 
 
@@ -305,7 +305,7 @@ def test_contributor_person_invalid_no_family_name_nor_given_name(app):
 
     assert_raises_messages(
         lambda: ContributorSchema().load(invalid_no_family_name_nor_given_name),
-        {"person_or_org": {"family_name": ["Family name must be filled."]}},
+        {"person_or_org": {"family_name": ["Family name cannot be blank."]}},
     )
 
 

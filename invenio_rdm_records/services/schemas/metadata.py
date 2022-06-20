@@ -113,7 +113,7 @@ class PersonOrOrganizationSchema(Schema):
         """Validate names based on type."""
         if data["type"] == "personal":
             if not data.get("family_name"):
-                messages = [_("Family name must be filled.")]
+                messages = [_("Family name cannot be blank.")]
                 raise ValidationError({"family_name": messages})
 
         elif data["type"] == "organizational":
@@ -319,7 +319,7 @@ class LocationSchema(Schema):
                 {
                     "locations": _(
                         "At least one of ['geometry', 'place', \
-                'identifiers', 'description'] shold be present."
+                identifiers', 'description'] must be present."
                     )
                 }
             )
