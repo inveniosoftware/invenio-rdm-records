@@ -80,7 +80,7 @@ class OAIPMHServerService(Service):
         if not bool(blop.match(spec)):
             raise ValidationError(
                 _(
-                    "The spec should only consist of letters, numbers or {marks}.".format(
+                    "The spec must only consist of letters, numbers or {marks}.".format(
                         marks=",".join(["-", "_", ".", "!", "~", "*", "'", "(", ")"])
                     )
                 ),
