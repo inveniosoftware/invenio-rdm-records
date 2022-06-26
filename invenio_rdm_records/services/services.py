@@ -15,6 +15,7 @@
 import tempfile
 
 import arrow
+import importlib_metadata as metadata
 from elasticsearch_dsl.query import Q
 from flask_iiif.api import IIIFImageAPIWrapper
 from invenio_drafts_resources.services.records import RecordService
@@ -24,12 +25,6 @@ from invenio_requests.services.results import EntityResolverExpandableField
 
 from invenio_rdm_records.services.errors import EmbargoNotLiftedError
 from invenio_rdm_records.services.results import ParentCommunitiesExpandableField
-
-try:
-    from importlib import metadata
-except ImportError:
-    # Running on pre-3.8 Python; use importlib-metadata package
-    import importlib_metadata as metadata
 
 try:
     metadata.distribution("wand")
