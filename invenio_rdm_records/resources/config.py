@@ -218,6 +218,14 @@ class IIIFResourceConfig(ResourceConfig):
         "image_format": ma.fields.Str(),
     }
 
+    request_read_args = {
+        "dl": ma.fields.Str(),
+    }
+
+    request_headers = {
+        "If-Modified-Since": ma.fields.DateTime(),
+    }
+
     response_handler = {"application/json": ResponseHandler(JSONSerializer())}
 
     supported_formats = {
