@@ -11,6 +11,9 @@
 
 """RDM Record Service."""
 
+from os.path import splitext
+
+from flask import current_app
 from flask_babelex import gettext as _
 from invenio_drafts_resources.services.records.components import (
     DraftFilesComponent,
@@ -69,6 +72,12 @@ def has_doi(record, ctx):
     """Determine if a record has a DOI."""
     pids = record.pids or {}
     return "doi" in pids
+
+
+def is_iiif_conpatible(file_, ctx):
+    """Determine if a file is IIIF compatible."""
+    file_ext = splitext(file_.key)[1].replace('.', '').lower()
+    return file_ext in current_app.config['IIIF_FORMATS']
 
 
 #
@@ -232,14 +241,20 @@ class RDMFileRecordServiceConfig(FileServiceConfig, ConfiguratorMixin):
 
     file_links_item = {
         **FileServiceConfig.file_links_item,
-        # FIXME: should we check if the file is IIIF compatible?
         # FIXME: filename instead
-        "iiif_canvas": FileLink("{+api}/iiif/record:{id}/canvas/{key}"),
-        "iiif_base": FileLink("{+api}/iiif/record:{id}:{key}"),
-        "iiif_info": FileLink("{+api}/iiif/record:{id}:{key}/info.json"),
+        "iiif_canvas": FileLink(
+            "{+api}/iiif/record:{id}/canvas/{key}", when=is_iiif_conpatible
+        ),
+        "iiif_base": FileLink(
+            "{+api}/iiif/record:{id}:{key}", when=is_iiif_conpatible
+        ),
+        "iiif_info": FileLink(
+            "{+api}/iiif/record:{id}:{key}/info.json", when=is_iiif_conpatible
+        ),
         "iiif_api": FileLink(
             "{+api}/iiif/record:{id}:{key}/{region=full}"
-            "/{size=full}/{rotation=0}/{quality=default}.{format=png}"
+            "/{size=full}/{rotation=0}/{quality=default}.{format=png}",
+            when=is_iiif_conpatible,
         ),
     }
 
@@ -261,13 +276,19 @@ class RDMFileDraftServiceConfig(FileServiceConfig, ConfiguratorMixin):
         "self": FileLink("{+api}/records/{id}/draft/files/{key}"),
         "content": FileLink("{+api}/records/{id}/draft/files/{key}/content"),
         "commit": FileLink("{+api}/records/{id}/draft/files/{key}/commit"),
-        # FIXME: should we check if the file is IIIF compatible?
         # FIXME: filename instead
-        "iiif_canvas": FileLink("{+api}/iiif/draft:{id}/canvas/{key}"),
-        "iiif_base": FileLink("{+api}/iiif/draft:{id}:{key}"),
-        "iiif_info": FileLink("{+api}/iiif/draft:{id}:{key}/info.json"),
+        "iiif_canvas": FileLink(
+            "{+api}/iiif/draft:{id}/canvas/{key}", when=is_iiif_conpatible
+        ),
+        "iiif_base": FileLink(
+            "{+api}/iiif/draft:{id}:{key}", when=is_iiif_conpatible
+        ),
+        "iiif_info": FileLink(
+            "{+api}/iiif/draft:{id}:{key}/info.json", when=is_iiif_conpatible
+        ),
         "iiif_api": FileLink(
             "{+api}/iiif/draft:{id}:{key}/{region=full}"
-            "/{size=full}/{rotation=0}/{quality=default}.{format=png}"
+            "/{size=full}/{rotation=0}/{quality=default}.{format=png}",
+            when=is_iiif_conpatible,
         ),
     }
