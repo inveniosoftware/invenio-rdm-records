@@ -34,6 +34,7 @@ from invenio_records_resources.resources.records.resource import (
     request_data,
     request_extra_args,
     request_headers,
+    request_read_args,
     request_search_args,
     request_view_args,
 )
@@ -359,6 +360,8 @@ class IIIFResource(ErrorHandlersMixin, Resource):
         return item.to_dict(), 200
 
     @cross_origin(origin="*", methods=["GET"])
+    @request_headers
+    @request_read_args
     @iiif_request_view_args
     def image_api(self):
         """IIIF API Implementation.
@@ -400,8 +403,9 @@ class IIIFResource(ErrorHandlersMixin, Resource):
         if last_modified:
             send_file_kwargs.update(last_modified=last_modified)
 
-        if "dl" in request.args:
-            filename = secure_filename(request.args.get("dl", ""))
+        dl = resource_requestctx.args.get("dl")
+        if dl is not None:
+            filename = secure_filename(dl)
             if filename.lower() in {"", "1", "true"}:
                 filename = "{0}-{1}-{2}-{3}-{4}.{5}".format(
                     uuid, region, size, quality, rotation, image_format
@@ -410,10 +414,12 @@ class IIIFResource(ErrorHandlersMixin, Resource):
                 as_attachment=True,
                 attachment_filename=secure_filename(filename),
             )
-        if_modified_since_raw = request.headers.get("If-Modified-Since")
-        if if_modified_since_raw:
-            if_modified_since = datetime.datetime(*parsedate(if_modified_since_raw)[:6])
-            if if_modified_since and if_modified_since >= last_modified:
-                raise HTTPJSONException(code=304)
+        if_modified_since = resource_requestctx.headers.get("If-Modified-Since")
+        if (
+            if_modified_since
+            and last_modified
+            and if_modified_since >= last_modified
+        ):
+            raise HTTPJSONException(code=304)
         response = send_file(to_serve, **send_file_kwargs)
         return response
