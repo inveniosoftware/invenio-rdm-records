@@ -48,6 +48,27 @@ def publish_record_with_images(
     return id_
 
 
+def test_file_links_depending_on_file_extensions(
+    running_app, es_clear, client, uploader, headers, minimal_record
+):
+    client = uploader.login(client)
+    file_id = "test_image.zip"
+    recid = publish_record_with_images(client, file_id, minimal_record, headers)
+    response = client.get(f"/records/{recid}/files/{file_id}")
+    assert "iiif_canvas" not in response.json["links"]
+    assert "iiif_base" not in response.json["links"]
+    assert "iiif_info" not in response.json["links"]
+    assert "iiif_api" not in response.json["links"]
+
+    file_id = "test_image.png"
+    recid = publish_record_with_images(client, file_id, minimal_record, headers)
+    response = client.get(f"/records/{recid}/files/{file_id}")
+    assert "iiif_canvas" in response.json["links"]
+    assert "iiif_base" in response.json["links"]
+    assert "iiif_info" in response.json["links"]
+    assert "iiif_api" in response.json["links"]
+
+
 def test_iiif_base(running_app, es_clear, client, uploader, headers, minimal_record):
     client = uploader.login(client)
     file_id = "test_image.png"
