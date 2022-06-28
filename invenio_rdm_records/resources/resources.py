@@ -415,11 +415,7 @@ class IIIFResource(ErrorHandlersMixin, Resource):
                 attachment_filename=secure_filename(filename),
             )
         if_modified_since = resource_requestctx.headers.get("If-Modified-Since")
-        if (
-            if_modified_since
-            and last_modified
-            and if_modified_since >= last_modified
-        ):
+        if if_modified_since and last_modified and if_modified_since >= last_modified:
             raise HTTPJSONException(code=304)
         response = send_file(to_serve, **send_file_kwargs)
         return response

@@ -42,9 +42,7 @@ def publish_record_with_images(
     )
 
     # Commit the file
-    res = client.post(
-        f"/records/{id_}/draft/files/{file_id}/commit", headers=headers
-    )
+    res = client.post(f"/records/{id_}/draft/files/{file_id}/commit", headers=headers)
 
     # Publish the record
     res = client.post(f"/records/{id_}/draft/actions/publish", headers=headers)
@@ -57,9 +55,7 @@ def test_iiif_manifest_schema(
 ):
     client = uploader.login(client)
     file_id = "test_image.png"
-    recid = publish_record_with_images(
-        client, file_id, minimal_record, headers
-    )
+    recid = publish_record_with_images(client, file_id, minimal_record, headers)
     response = client.get(f"/iiif/record:{recid}/manifest")
     manifest = response.json
     validator = IIIFValidator(fail_fast=False)
@@ -72,17 +68,12 @@ def test_iiif_manifest(
 ):
     client = uploader.login(client)
     file_id = "test_image.png"
-    recid = publish_record_with_images(
-        client, file_id, minimal_record, headers
-    )
+    recid = publish_record_with_images(client, file_id, minimal_record, headers)
     response = client.get(f"/iiif/record:{recid}/manifest")
     assert response.status_code == 200
 
     manifest = response.json
-    assert (
-        manifest["@id"]
-        == f"https://127.0.0.1:5000/api/iiif/record:{recid}/manifest"
-    )
+    assert manifest["@id"] == f"https://127.0.0.1:5000/api/iiif/record:{recid}/manifest"
     assert manifest["label"] == "A Romans story"
     assert "sequences" in manifest
     assert len(manifest["sequences"]) == 1
