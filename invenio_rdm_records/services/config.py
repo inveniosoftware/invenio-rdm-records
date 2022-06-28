@@ -76,8 +76,8 @@ def has_doi(record, ctx):
 
 def is_iiif_conpatible(file_, ctx):
     """Determine if a file is IIIF compatible."""
-    file_ext = splitext(file_.key)[1].replace('.', '').lower()
-    return file_ext in current_app.config['IIIF_FORMATS']
+    file_ext = splitext(file_.key)[1].replace(".", "").lower()
+    return file_ext in current_app.config["IIIF_FORMATS"]
 
 
 #
@@ -245,9 +245,7 @@ class RDMFileRecordServiceConfig(FileServiceConfig, ConfiguratorMixin):
         "iiif_canvas": FileLink(
             "{+api}/iiif/record:{id}/canvas/{key}", when=is_iiif_conpatible
         ),
-        "iiif_base": FileLink(
-            "{+api}/iiif/record:{id}:{key}", when=is_iiif_conpatible
-        ),
+        "iiif_base": FileLink("{+api}/iiif/record:{id}:{key}", when=is_iiif_conpatible),
         "iiif_info": FileLink(
             "{+api}/iiif/record:{id}:{key}/info.json", when=is_iiif_conpatible
         ),
@@ -280,9 +278,7 @@ class RDMFileDraftServiceConfig(FileServiceConfig, ConfiguratorMixin):
         "iiif_canvas": FileLink(
             "{+api}/iiif/draft:{id}/canvas/{key}", when=is_iiif_conpatible
         ),
-        "iiif_base": FileLink(
-            "{+api}/iiif/draft:{id}:{key}", when=is_iiif_conpatible
-        ),
+        "iiif_base": FileLink("{+api}/iiif/draft:{id}:{key}", when=is_iiif_conpatible),
         "iiif_info": FileLink(
             "{+api}/iiif/draft:{id}:{key}/info.json", when=is_iiif_conpatible
         ),
