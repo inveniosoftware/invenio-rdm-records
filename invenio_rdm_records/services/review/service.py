@@ -9,11 +9,16 @@
 """RDM Review Service."""
 
 from flask import current_app
+from invenio_communities import current_communities
+from invenio_communities.communities.records.systemfields.access import CommunityAccess
+from invenio_communities.members.records.api import Member
+from invenio_communities.proxies import current_communities
 from invenio_drafts_resources.services.records import RecordService
 from invenio_i18n import lazy_gettext as _
 from invenio_records_resources.services.uow import (
     RecordCommitOp,
     RecordIndexOp,
+    TaskOp,
     unit_of_work,
 )
 from invenio_requests import current_request_type_registry, current_requests_service
@@ -24,6 +29,9 @@ from invenio_rdm_records.proxies import current_rdm_records
 from invenio_rdm_records.requests.decorators import request_next_link
 
 from ..errors import ReviewExistsError, ReviewNotFoundError, ReviewStateError
+
+from invenio_requests.notifications.proxies import current_notifications_manager
+from invenio_requests.notifications.models import Notification, CommunitySubmissionSubmittedEvent, CommunitySubmissionCreatedEvent
 
 
 class ReviewService(RecordService):
@@ -86,6 +94,14 @@ class ReviewService(RecordService):
         # Set the request on the record and commit the record
         record.parent.review = request_item._request
         uow.register(RecordCommitOp(record.parent))
+
+        self._send_notification(
+            CommunitySubmissionCreatedEvent,
+            request_item._request,
+            uow,
+            community = request_item._request.receiver.resolve(),
+        )
+
         return request_item
 
     def read(self, identity, id_):
@@ -192,3 +208,40 @@ class ReviewService(RecordService):
 
         uow.register(RecordIndexOp(draft, indexer=self.indexer))
         return request_item
+
+
+    def _send_notification(self, type, request, uow, **kwargs):
+
+        def create_trigger():
+            created_by = request.created_by.resolve()
+            # should dump the user
+            return {
+                "email": created_by.email,
+            }
+
+        notification = Notification()
+        notification.type = type.handling_key    
+        notification.trigger = create_trigger()
+
+        if type == CommunitySubmissionCreatedEvent:
+            from invenio_communities.proxies import current_communities
+            from invenio_access.permissions import system_identity
+            community = kwargs.get("community")
+            # TODO: get curator members and dump
+            # members = Member.get_members(community.id)
+            # recipients = [m.dumps() for m in members]
+            recipients = [{
+                "email": "test@test.com"
+            }]
+            notification.data = {
+                "community": community.dumps(),
+                "record": {}
+            }
+            notification.recipients = recipients
+
+        
+        if not notification.recipients:
+            return
+
+        # should register in uow
+        current_notifications_manager.broadcast(notification=notification)
