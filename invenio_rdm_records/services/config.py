@@ -74,7 +74,7 @@ def has_doi(record, ctx):
     return "doi" in pids
 
 
-def is_iiif_conpatible(file_, ctx):
+def is_iiif_compatible(file_, ctx):
     """Determine if a file is IIIF compatible."""
     file_ext = splitext(file_.key)[1].replace(".", "").lower()
     return file_ext in current_app.config["IIIF_FORMATS"]
@@ -243,16 +243,16 @@ class RDMFileRecordServiceConfig(FileServiceConfig, ConfiguratorMixin):
         **FileServiceConfig.file_links_item,
         # FIXME: filename instead
         "iiif_canvas": FileLink(
-            "{+api}/iiif/record:{id}/canvas/{key}", when=is_iiif_conpatible
+            "{+api}/iiif/record:{id}/canvas/{key}", when=is_iiif_compatible
         ),
-        "iiif_base": FileLink("{+api}/iiif/record:{id}:{key}", when=is_iiif_conpatible),
+        "iiif_base": FileLink("{+api}/iiif/record:{id}:{key}", when=is_iiif_compatible),
         "iiif_info": FileLink(
-            "{+api}/iiif/record:{id}:{key}/info.json", when=is_iiif_conpatible
+            "{+api}/iiif/record:{id}:{key}/info.json", when=is_iiif_compatible
         ),
         "iiif_api": FileLink(
             "{+api}/iiif/record:{id}:{key}/{region=full}"
             "/{size=full}/{rotation=0}/{quality=default}.{format=png}",
-            when=is_iiif_conpatible,
+            when=is_iiif_compatible,
         ),
     }
 
@@ -276,15 +276,15 @@ class RDMFileDraftServiceConfig(FileServiceConfig, ConfiguratorMixin):
         "commit": FileLink("{+api}/records/{id}/draft/files/{key}/commit"),
         # FIXME: filename instead
         "iiif_canvas": FileLink(
-            "{+api}/iiif/draft:{id}/canvas/{key}", when=is_iiif_conpatible
+            "{+api}/iiif/draft:{id}/canvas/{key}", when=is_iiif_compatible
         ),
-        "iiif_base": FileLink("{+api}/iiif/draft:{id}:{key}", when=is_iiif_conpatible),
+        "iiif_base": FileLink("{+api}/iiif/draft:{id}:{key}", when=is_iiif_compatible),
         "iiif_info": FileLink(
-            "{+api}/iiif/draft:{id}:{key}/info.json", when=is_iiif_conpatible
+            "{+api}/iiif/draft:{id}:{key}/info.json", when=is_iiif_compatible
         ),
         "iiif_api": FileLink(
             "{+api}/iiif/draft:{id}:{key}/{region=full}"
             "/{size=full}/{rotation=0}/{quality=default}.{format=png}",
-            when=is_iiif_conpatible,
+            when=is_iiif_compatible,
         ),
     }
