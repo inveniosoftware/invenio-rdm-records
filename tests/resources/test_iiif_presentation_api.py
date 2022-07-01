@@ -110,6 +110,18 @@ def test_iiif_manifest(
     )
 
 
+def test_empty_iiif_manifest(
+    running_app, es_clear, client, uploader, headers, minimal_record
+):
+    client = uploader.login(client)
+    file_id = "test_image.zip"
+    recid = publish_record_with_images(client, file_id, minimal_record, headers)
+    response = client.get(f"/iiif/record:{recid}/manifest")
+    assert response.status_code == 200
+    manifest = response.json
+    assert not manifest["sequences"][0]["canvases"]
+
+
 def test_iiif_manifest_restricted_files(
     running_app,
     es_clear,

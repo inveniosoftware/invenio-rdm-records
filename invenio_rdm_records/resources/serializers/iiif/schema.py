@@ -9,6 +9,9 @@
 
 """IIIF Presentation API Schema for Invenio RDM Records."""
 
+from posixpath import splitext
+
+from flask import current_app
 from marshmallow import Schema, fields, missing, post_dump
 
 
@@ -33,27 +36,6 @@ class SelfNested(fields.Nested):
 
     def get_value(self, obj, attr, accessor=None, default=missing):
         """Return the value for a given key from an object attribute."""
-        return obj
-
-
-class ListAttribute(fields.List):
-    """Similar to ``NestedAttribute`` but for lists.
-
-    It also allows for ``.`` attributes, i.e. ``a.b``.
-    # TODO: move to marshmallow-utils
-    """
-
-    def get_value(self, obj, attr, accessor=None, default=missing):
-        """Return the value for a given key from an object attribute."""
-        attribute = getattr(self, "attribute", None)
-        check_key = attr if attribute is None else attribute
-        if "." not in check_key:
-            return getattr(obj, check_key, default)
-
-        for key in check_key.split("."):
-            obj = getattr(obj, key, default)
-            if obj == default:
-                return obj
         return obj
 
 
@@ -146,6 +128,19 @@ class IIIFCanvasV2Schema(Schema):
     images = SelfList(SelfNested(IIIFImageV2Schema))
 
 
+class ListIIIFFilesAttribute(fields.List):
+    """Similar to ``NestedAttribute`` but for lists."""
+
+    def get_value(self, obj, *args, **kwargs):
+        """Return the value for a given key from an object attribute."""
+        return [
+            f
+            for f in obj.files.entries
+            if splitext(f["key"])[1].replace(".", "").lower()
+            in current_app.config["IIIF_FORMATS"]
+        ]
+
+
 class IIIFSequenceV2Schema(Schema):
     """IIIF sequence schema."""
 
@@ -161,7 +156,7 @@ class IIIFSequenceV2Schema(Schema):
     viewingDirection = fields.Constant("left-to-right")
     viewingHint = fields.Constant("paged")
 
-    canvases = ListAttribute(
+    canvases = ListIIIFFilesAttribute(
         fields.Nested(IIIFCanvasV2Schema), attribute="files.entries"
     )
 
