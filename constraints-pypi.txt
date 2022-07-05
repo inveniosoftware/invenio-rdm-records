@@ -1,0 +1,2 @@
+# Empty on purpose
+flask-login==0.6.1
