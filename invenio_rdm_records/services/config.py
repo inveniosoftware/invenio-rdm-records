@@ -40,6 +40,7 @@ from ..records import RDMDraft, RDMRecord
 from . import facets
 from .components import (
     AccessComponent,
+    CustomFieldsComponent,
     MetadataComponent,
     PIDsComponent,
     ReviewComponent,
@@ -148,6 +149,7 @@ class RDMRecordServiceConfig(RecordServiceConfig, ConfiguratorMixin):
     # Components - order matters!
     components = [
         MetadataComponent,
+        CustomFieldsComponent,
         AccessComponent,
         DraftFilesComponent,
         # for the internal `pid` field
