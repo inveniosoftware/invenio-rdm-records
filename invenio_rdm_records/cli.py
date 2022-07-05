@@ -278,3 +278,59 @@ def rebuild_index():
     affs_service.rebuild_index(identity=system_identity)
 
     click.secho("Reindexed records and vocabularies!", fg="green")
+
+
+# CUSTOM FIELDS
+
+@click.group()
+def custom_fields():
+    """InvenioRDM custom fields commands."""
+
+
+
+@custom_fields.command()
+@click.option(
+    "-f",
+    "--field-name",
+    type=str,
+    required=False,
+    multiple=True,
+    help="A custom field name to create. If not provided, all custom fields will be created.",
+)
+@with_appcontext
+def create(field_name):
+    """Creates one or all custom fields.
+
+    $ invenio custom-fields create [field].
+    """
+    click.secho("Creating all custom fields...", fg="green")
+    # multiple=True makes it an iterable
+    success, reason = current_rdm_records_service.custom_fields.create(field_name)
+    if success:
+        click.secho("Created all custom fields!", fg="green")
+    else:
+        click.secho("An error occured while creating custom fields.", fg="red")
+        click.secho(reason, fg="red")
+
+
+@custom_fields.command()
+@click.option(
+    "-f",
+    "--field-name",
+    type=str,
+    required=True,
+    multiple=False,
+    help="A custom field name to check.",
+)
+@with_appcontext
+def exists(field_name):
+    """Checks if a custom field exists in ES.
+
+    $ invenio custom-fields exists <field name>.
+    """
+    click.secho("Checking custom field...", fg="green")
+    success = current_rdm_records_service.custom_fields.exists(field_name)
+    if success:
+        click.secho(f"Field {field_name} exists", fg="green")
+    else:
+        click.secho(f"Field {field_name} does not exist", fg="red")
