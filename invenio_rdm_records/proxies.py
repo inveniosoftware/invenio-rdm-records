@@ -19,3 +19,8 @@ current_rdm_records_service = LocalProxy(
     lambda: current_app.extensions["invenio-rdm-records"].records_service
 )
 """Helper proxy to get the current RDM-Records records service extension."""
+
+current_custom_fields_registry = LocalProxy(
+    lambda: current_app.extensions["invenio-rdm-records"].custom_fields_registry
+)
+"""Helper proxy to get the current RDM-Records custom fields registry."""
