@@ -25,6 +25,7 @@ from invenio_rdm_records.oaiserver.services.config import OAIPMHServerServiceCon
 from invenio_rdm_records.oaiserver.services.services import OAIPMHServerService
 
 from . import config
+from .custom_fields import CustomFieldsRegistry
 from .resources import (
     IIIFResource,
     IIIFResourceConfig,
@@ -44,6 +45,7 @@ from .services import (
     RDMRecordServiceConfig,
     SecretLinkService,
 )
+from .services.custom_fields import CustomFieldsService
 from .services.pids import PIDManager, PIDsService
 from .services.review.service import ReviewService
 from .services.schemas.metadata_extensions import MetadataExtensions
@@ -94,6 +96,7 @@ class InvenioRDMRecords(object):
         )
         self.init_services(app)
         self.init_resource(app)
+        self.init_registries(app)
         app.before_request(verify_token)
         app.extensions["invenio-rdm-records"] = self
         # Load flask IIIF
@@ -169,6 +172,7 @@ class InvenioRDMRecords(object):
             secret_links_service=SecretLinkService(service_configs.record),
             pids_service=PIDsService(service_configs.record, PIDManager),
             review_service=ReviewService(service_configs.record),
+            custom_fields_service=CustomFieldsService(service_configs.record),
         )
         self.iiif_service = IIIFService(
             records_service=self.records_service, config=None
@@ -211,6 +215,10 @@ class InvenioRDMRecords(object):
             service=self.iiif_service,
             config=IIIFResourceConfig,
         )
+
+    def init_registries(self, app):
+        """Initialize registries."""
+        self.custom_fields_registry = CustomFieldsRegistry()
 
     def fix_datacite_configs(self, app):
         """Make sure that the DataCite config items are strings."""
