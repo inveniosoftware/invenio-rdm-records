@@ -12,6 +12,3 @@ API Docs
 
 .. automodule:: invenio_rdm_records.ext
    :members:
-
-.. automodule:: invenio_rdm_records.services.schemas.metadata_extensions
-  :members:

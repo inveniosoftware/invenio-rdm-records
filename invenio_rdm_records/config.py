@@ -24,90 +24,6 @@ from .services.pids import providers
 # Invenio-RDM-Records
 # ===================
 
-RDM_RECORDS_METADATA_NAMESPACES = {}
-"""Namespaces for fields *added* to the metadata schema.
-
-Of the shape:
-
-.. code-block:: python
-
-    {
-        '<prefix1>': {
-            '@context': '<url>'
-        },
-        # ...
-        '<prefixN>': {
-            '@context': '<url>'
-        }
-    }
-
-For example:
-
-.. code-block:: python
-
-    {
-        'dwc': {
-            '@context': 'http://rs.tdwg.org/dwc/terms/'
-        },
-        'z':{
-            '@context': 'https://zenodo.org/terms'
-        }
-    }
-
-Use :const:`invenio_rdm_records.config.RDM_RECORDS_METADATA_EXTENSIONS` to
-define the added fields.
-
-See :class:`invenio_rdm_records.services.schemas.\
-metadata_extensions.MetadataExtensions` for
-how this configuration variable is used.
-"""
-
-RDM_RECORDS_METADATA_EXTENSIONS = {}
-"""Fields added to the metadata schema.
-
-Of the shape:
-
-.. code-block:: python
-
-    {
-        '<prefix1>:<field1>': {
-            'elasticsearch': '<allowed elasticsearch type>'
-            'marshmallow': '<allowed marshmallow type>'
-        },
-        # ...
-        '<prefixN>:<fieldN>': {
-            'elasticsearch': '<allowed elasticsearch type>'
-            'marshmallow': '<allowed marshmallow type>'
-        }
-    }
-
-For example:
-
-.. code-block:: python
-
-    {
-        'dwc:family': {
-            'elasticsearch': 'keyword',
-            'marshmallow': SanitizedUnicode()
-        },
-        'dwc:behavior': {
-            'elasticsearch': 'text',
-            'marshmallow': SanitizedUnicode()
-        },
-        'z:department': {
-            'elasticsearch': 'text',
-            'marshmallow': SanitizedUnicode()
-        }
-    }
-
-Use :const:`invenio_rdm_records.config.RDM_RECORDS_METADATA_NAMESPACES` to
-define the prefixes.
-
-See :class:`invenio_rdm_records.services.schemas.\
-metadata_extensions.MetadataExtensions` for
-allowed types and how this configuration variable is used.
-"""
-
 RDM_RECORDS_USER_FIXTURE_PASSWORDS = {"admin@inveniosoftware.org": None}
 """Overrides for the user fixtures' passwords.
 
@@ -420,4 +336,140 @@ DATACITE_DATACENTER_SYMBOL = ""
 
 This is only required if you want your records to be harvestable (OAI-PMH)
 in DataCite XML format.
+"""
+
+
+"""Custom fields."""
+RDM_CUSTOM_FIELDS = {}
+"""Records custom fields definition.
+
+Of the shape:
+
+.. code-block:: python
+
+    {
+        '<field1>': <custom-field-class-type>,
+        # ...
+        '<fieldN>': '<custom-field-class-type>'
+    }
+
+For example:
+
+.. code-block:: python
+
+    {
+        'experiment': {
+            'type': TextCF(name="experiment"),
+        },
+        ...
+    }
+"""
+
+
+RDM_CUSTOM_FIELDS_UI = {}
+"""Upload form custom fields UI configuration.
+
+Of the shape:
+
+.. code-block:: python
+
+    [{
+        section: <section_name>,
+        fields: [
+            {
+                field="path-to-field",  # this should be validated against the defined fields in `RDM_CUSTOM_FIELDS`
+                ui_widget="<ui-widget-name>",  # predefined or user defined ui widget
+                label="<ui-label-to-display>",
+                placeholder="<placeholder-passed-to-widget>",
+                icon="<icon-passed-to-widget>",
+                description="<description-passed-to-widget>",
+            },
+        ],
+
+        # ...
+    }]
+
+For example:
+
+.. code-block:: python
+
+    [{
+        "section": "CERN Experiment"
+        "fields" : [{
+            field="experiment",  # this should be validated against the defined fields in `RDM_CUSTOM_FIELDS`
+            ui_widget="CustomTextField",  # user defined widget in my-site
+            label="Experiment",
+            placeholder="Type an experiment...",
+            icon="pencil",
+            description="You should fill this field with one of the experiments e.g LHC, ATLAS etc.",
+        },
+        ...
+    }]
+"""
+
+
+COMMUNITIES_CUSTOM_FIELDS = {}
+"""Communities custom fields definition.
+
+Of the shape:
+
+.. code-block:: python
+
+    {
+        '<field1>': <custom-field-class-type>,
+        # ...
+        '<fieldN>': '<custom-field-class-type>'
+    }
+
+For example:
+
+.. code-block:: python
+
+    {
+        'experiment': {
+            'type': TextCF(name="experiment"),
+        },
+        ...
+    }
+"""
+
+COMMUNITIES_CUSTOM_FIELDS_UI = {}
+"""Communities custom fields UI configuration.
+
+Of the shape:
+
+.. code-block:: python
+
+    [{
+        section: <section_name>,
+        fields: [
+            {
+                field="path-to-field",  # this should be validated against the defined fields in `RDM_CUSTOM_FIELDS`
+                ui_widget="<ui-widget-name>",  # predefined or user defined ui widget
+                label="<ui-label-to-display>",
+                placeholder="<placeholder-passed-to-widget>",
+                icon="<icon-passed-to-widget>",
+                description="<description-passed-to-widget>",
+            },
+        ],
+
+        # ...
+    }]
+
+For example:
+
+.. code-block:: python
+
+    [{
+        "section": "CERN Experiment"
+        "fields" : [{
+            field="experiment",  # this should be validated against the defined fields in `RDM_CUSTOM_FIELDS`
+            ui_widget="CustomTextField",  # user defined widget in my-site
+            label="Experiment",
+            placeholder="Type an experiment...",
+            icon="pencil",
+            description="You should fill this field with one of the experiments e.g LHC, ATLAS etc.",
+        },
+        ...
+    }]
 """

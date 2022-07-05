@@ -588,26 +588,6 @@ def test_subjects(appctx):
 
 
 #
-# Test ext
-#
-def test_ext(appctx):
-    """Test references property."""
-    data_types = [
-        "string",
-        1234,
-        1234.2,
-        True,
-        ["string"],
-        [1.2],
-        [False],
-        ["string", -132.4, True],
-    ]
-
-    for val in data_types:
-        assert validates({"ext": {"dwc": {"afield": val}}})
-
-
-#
 # Tombstones
 #
 def test_tombstones(appctx):

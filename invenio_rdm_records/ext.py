@@ -46,7 +46,6 @@ from .services import (
 )
 from .services.pids import PIDManager, PIDsService
 from .services.review.service import ReviewService
-from .services.schemas.metadata_extensions import MetadataExtensions
 
 
 def verify_token():
@@ -88,10 +87,6 @@ class InvenioRDMRecords(object):
     def init_app(self, app):
         """Flask application initialization."""
         self.init_config(app)
-        self.metadata_extensions = MetadataExtensions(
-            app.config["RDM_RECORDS_METADATA_NAMESPACES"],
-            app.config["RDM_RECORDS_METADATA_EXTENSIONS"],
-        )
         self.init_services(app)
         self.init_resource(app)
         app.before_request(verify_token)
