@@ -7,21 +7,34 @@
 
 """Custom Fields for InvenioRDM."""
 
+from marshmallow_utils.fields import SanitizedUnicode
 from .base import BaseCF
 
 
 class TextCF(BaseCF):
     """Text custom field."""
 
-    def __init__(self, name, exact_match=False):
+    def __init__(self, name, use_as_filter=False):
         """Constructor."""
-        self._exact_match = exact_match
+        self.use_as_filter = use_as_filter
         super().__init__(name)
 
-    def mapping_type(self):
-        """Return the mapping type."""
-        return "text"
+    @property
+    def mapping(self):
+        """Return the mapping."""
+        _mapping = {"type": "text"}
+        if self.use_as_filter:
+            _mapping["fields"] = {"keyword": {"type": "keyword"}}
+        return _mapping
 
-    def validate(self):
+    def schema(self):
         """Validate the custom field."""
-        return True
+        return SanitizedUnicode()
+
+
+class KeywordCF(TextCF):
+    """Keyword custom field"""
+
+    def mapping(self):
+        """Return mapping"""
+        return {"type": "keyword"}

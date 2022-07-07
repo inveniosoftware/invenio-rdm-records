@@ -53,7 +53,8 @@ class RDMRecordSchema(RecordSchema, FieldPermissionsMixin):
         values=fields.Nested(PIDSchema),
     )
     metadata = NestedAttribute(MetadataSchema)
-    # ext = fields.Method('dump_extensions', 'load_extensions')
+    # TODO: change this to `custom` and change the jsonschema too
+    custom = fields.Method("dump_custom_fields", "load_custom_fields")
     # tombstone
     # provenance
     access = NestedAttribute(AccessSchema)
@@ -69,28 +70,25 @@ class RDMRecordSchema(RecordSchema, FieldPermissionsMixin):
     # relations = NestedAttribute(RelationsSchema, dump_only=True)
     # schema_version = fields.Interger(dump_only=True)
 
-    # def dump_extensions(self, obj):
-    #     """Dumps the extensions value.
+    def dump_custom_fields(self, obj):
+        """Dumps the extensions value.
 
-    #     :params obj: invenio_records_files.api.Record instance
-    #     """
-    #     current_app_metadata_extensions = (
-    #         current_app.extensions['invenio-rdm-records'].metadata_extensions
-    #     )
-    #     ExtensionSchema = current_app_metadata_extensions.to_schema()
-    #     return ExtensionSchema().dump(obj.get('extensions', {}))
+        :params obj: invenio_records_files.api.Record instance
+        """
+        from invenio_rdm_records.proxies import current_custom_fields_registry
 
-    # def load_extensions(self, value):
-    #     """Loads the 'extensions' field.
+        CustomFieldsSchema = current_custom_fields_registry.to_schema()
+        return CustomFieldsSchema().dump(obj.get("custom", {"experiment": "default"}))
 
-    #     :params value: content of the input's 'extensions' field
-    #     """
-    #     current_app_metadata_extensions = (
-    #         current_app.extensions['invenio-rdm-records'].metadata_extensions
-    #     )
-    #     ExtensionSchema = current_app_metadata_extensions.to_schema()
+    def load_custom_fields(self, value):
+        """Loads the 'extensions' field.
 
-    #     return ExtensionSchema().load(value)
+        :params value: content of the input's 'extensions' field
+        """
+        from invenio_rdm_records.proxies import current_custom_fields_registry
+
+        CustomFieldsSchema = current_custom_fields_registry.to_schema()
+        return CustomFieldsSchema().load(value)
 
     @post_dump
     def default_nested(self, data, many, **kwargs):

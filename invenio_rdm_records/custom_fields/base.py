@@ -9,6 +9,7 @@
 
 from abc import ABC, abstractmethod
 
+
 class BaseCF(ABC):
     """Base Custom Field class."""
 
@@ -18,11 +19,11 @@ class BaseCF(ABC):
         super().__init__()
 
     @abstractmethod
-    def mapping_type(self):
-        """Return the mapping type."""
+    def mapping(self):
+        """Return the mapping."""
         pass
 
     @abstractmethod
-    def validate(self):
-        """Validate the custom field."""
+    def schema(self):
+        """Validate the custom field returning a marshmallow schema."""
         pass

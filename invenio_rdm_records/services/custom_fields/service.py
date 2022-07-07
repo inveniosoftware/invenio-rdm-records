@@ -20,6 +20,7 @@ class CustomFieldsService(RecordService):
         """Create custom fields."""
 
         fields = []
+
         if fields_name:
             for field_name in fields_name:
                 fields.append(cf_registry.get(field_name))
@@ -32,10 +33,11 @@ class CustomFieldsService(RecordService):
 
         properties = {}
         for field in fields:
-            properties[field.name] = {"type": field.mapping_type()}
+            # TODO: custom is binded to json schema. Do we define config to control it?
+            properties[f"custom.{field.name}"] = field.mapping
 
         try:
-            res = index.put_mapping(body={ "properties": properties })
+            res = index.put_mapping(body={"properties": properties})
         except RequestError as e:
             return False, e.info["error"]["reason"]
 

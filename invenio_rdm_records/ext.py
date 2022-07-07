@@ -219,6 +219,10 @@ class InvenioRDMRecords(object):
     def init_registries(self, app):
         """Initialize registries."""
         self.custom_fields_registry = CustomFieldsRegistry()
+        for field_key, field_type in app.config.get(
+            "RDM_RECORDS_CUSTOM_FIELDS", {}
+        ).items():
+            self.custom_fields_registry.register(field_key, field_type)
 
     def fix_datacite_configs(self, app):
         """Make sure that the DataCite config items are strings."""

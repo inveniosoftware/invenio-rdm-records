@@ -161,6 +161,9 @@ class UIRecordSchema(BaseObjectSchema):
         fields.Nested(AdditionalTitlesSchema), attribute="metadata.additional_titles"
     )
 
+    # Custom fields
+    custom = fields.Dict()
+
     access_status = AccessStatusField(attribute="access")
 
     creators = fields.Function(partial(make_affiliation_index, "creators"))
