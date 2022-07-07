@@ -7,7 +7,7 @@
 
 """Module tests."""
 
-from invenio_records.dumpers import ElasticsearchDumper
+from invenio_records.dumpers import SearchDumper
 
 from invenio_rdm_records.records import RDMRecord
 from invenio_rdm_records.records.api import RDMParent
@@ -17,7 +17,7 @@ from invenio_rdm_records.records.dumpers import PIDsDumperExt
 def test_esdumper_with_externalpidsext(app, db, minimal_record, location):
     # Create a simple extension that adds a computed field.
 
-    dumper = ElasticsearchDumper(extensions=[PIDsDumperExt()])
+    dumper = SearchDumper(extensions=[PIDsDumperExt()])
 
     minimal_record["pids"] = {
         "doi": {

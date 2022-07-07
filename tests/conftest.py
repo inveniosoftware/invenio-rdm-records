@@ -310,8 +310,8 @@ def create_app(instance_path):
     return _create_app
 
 
-def _es_create_indexes(current_search, current_search_client):
-    """Create all registered Elasticsearch indexes."""
+def _search_create_indexes(current_search, current_search_client):
+    """Create all registered search indexes."""
     to_create = [
         RDMRecord.index._name,
         RDMDraft.index._name,
@@ -322,8 +322,8 @@ def _es_create_indexes(current_search, current_search_client):
     current_search_client.indices.refresh()
 
 
-def _es_delete_indexes(current_search):
-    """Delete all registered Elasticsearch indexes."""
+def _search_delete_indexes(current_search):
+    """Delete all registered search indexes."""
     to_delete = [
         RDMRecord.index._name,
         RDMDraft.index._name,
@@ -335,17 +335,17 @@ def _es_delete_indexes(current_search):
 # overwrite pytest_invenio.fixture to only delete record indices
 # keeping vocabularies.
 @pytest.fixture(scope="function")
-def es_clear(es):
-    """Clear Elasticsearch indices after test finishes (function scope).
+def search_clear(search):
+    """Clear search indices after test finishes (function scope).
 
     This fixture rollback any changes performed to the indexes during a test,
-    in order to leave Elasticsearch in a clean state for the next test.
+    in order to leave search in a clean state for the next test.
     """
     from invenio_search import current_search, current_search_client
 
-    yield es
-    _es_delete_indexes(current_search)
-    _es_create_indexes(current_search, current_search_client)
+    yield search
+    _search_delete_indexes(current_search)
+    _search_create_indexes(current_search, current_search_client)
 
 
 @pytest.fixture(scope="function")

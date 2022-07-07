@@ -16,7 +16,7 @@ from invenio_rdm_records.records import RDMDraft, RDMRecord
 from invenio_rdm_records.services.errors import EmbargoNotLiftedError
 
 
-def test_minimal_draft_creation(running_app, es_clear, minimal_record):
+def test_minimal_draft_creation(running_app, search_clear, minimal_record):
     superuser_identity = running_app.superuser_identity
     service = current_rdm_records.records_service
 
@@ -29,7 +29,7 @@ def test_minimal_draft_creation(running_app, es_clear, minimal_record):
     }
 
 
-def test_draft_w_languages_creation(running_app, es_clear, minimal_record):
+def test_draft_w_languages_creation(running_app, search_clear, minimal_record):
     superuser_identity = running_app.superuser_identity
     service = current_rdm_records.records_service
     minimal_record["metadata"]["languages"] = [
@@ -49,7 +49,7 @@ def test_draft_w_languages_creation(running_app, es_clear, minimal_record):
 #
 # Embargo lift
 #
-def test_embargo_lift_without_draft(embargoed_record, running_app, es_clear):
+def test_embargo_lift_without_draft(embargoed_record, running_app, search_clear):
     record = embargoed_record
     service = current_rdm_records.records_service
 
@@ -62,7 +62,7 @@ def test_embargo_lift_without_draft(embargoed_record, running_app, es_clear):
     assert record_lifted.access.status.value == "metadata-only"
 
 
-def test_embargo_lift_with_draft(embargoed_record, es_clear, superuser_identity):
+def test_embargo_lift_with_draft(embargoed_record, search_clear, superuser_identity):
     record = embargoed_record
     service = current_rdm_records.records_service
 
@@ -83,7 +83,7 @@ def test_embargo_lift_with_draft(embargoed_record, es_clear, superuser_identity)
 
 
 def test_embargo_lift_with_updated_draft(
-    embargoed_record, superuser_identity, es_clear
+    embargoed_record, superuser_identity, search_clear
 ):
     record = embargoed_record
     service = current_rdm_records.records_service
@@ -113,7 +113,7 @@ def test_embargo_lift_with_updated_draft(
     assert draft_lifted.access.protection.record == "public"
 
 
-def test_embargo_lift_with_error(running_app, es_clear, minimal_record):
+def test_embargo_lift_with_error(running_app, search_clear, minimal_record):
     superuser_identity = running_app.superuser_identity
     service = current_rdm_records.records_service
     # Add embargo to record

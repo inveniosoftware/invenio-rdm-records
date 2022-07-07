@@ -20,7 +20,7 @@ def test_idempotence_dumps_loads(running_app, minimal_record):
     # record.
 
     # If this tests fails likely either a system fields pre/post_dump/load
-    # method is having an issue, or it might be an Elasticsearch dumper.
+    # method is having an issue, or it might be a search dumper.
 
     # DO NOT CHANGE TEST UNLESS YOU ABSOLUTELY KNOW WHAT YOU'RE DOING
     draft = RDMDraft.create(minimal_record)

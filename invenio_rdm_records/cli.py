@@ -9,8 +9,6 @@
 """Command-line tools for demo module."""
 
 import click
-from elasticsearch.exceptions import RequestError
-from elasticsearch_dsl import Index
 from flask import current_app
 from flask.cli import with_appcontext
 from flask_security.confirmable import confirm_user
@@ -28,6 +26,7 @@ from invenio_records_resources.services.custom_fields.validate import (
     validate_custom_fields,
 )
 from invenio_search import current_search_client
+from invenio_search.engine import dsl, search
 from invenio_search.utils import build_alias_name
 from invenio_users_resources.services.users.tasks import reindex_user
 
@@ -370,13 +369,13 @@ def create_records_custom_field(field_name):
     properties = Mapping.properties_for_fields(field_name, available_fields)
 
     try:
-        record_index = Index(
+        record_index = dsl.Index(
             build_alias_name(
                 current_rdm_records.records_service.config.record_cls.index._name,
             ),
             using=current_search_client,
         )
-        draft_index = Index(
+        draft_index = dsl.Index(
             build_alias_name(
                 current_rdm_records.records_service.config.draft_cls.index._name,
             ),
@@ -386,7 +385,7 @@ def create_records_custom_field(field_name):
         record_index.put_mapping(body={"properties": properties})
         draft_index.put_mapping(body={"properties": properties})
         click.secho("Created all custom fields!", fg="green")
-    except RequestError as e:
+    except search.RequestError as e:
         click.secho("An error occured while creating custom fields.", fg="red")
         click.secho(e.info["error"]["reason"], fg="red")
 
@@ -402,18 +401,18 @@ def create_records_custom_field(field_name):
 )
 @with_appcontext
 def custom_field_exists_in_records(field_name):
-    """Checks if a custom field exists in records ES mapping.
+    """Checks if a custom field exists in records search mapping.
 
     $ invenio custom-fields records exists <field name>.
     """
     click.secho("Checking custom field...", fg="green")
-    record_index = Index(
+    record_index = dsl.Index(
         build_alias_name(
             current_rdm_records.records_service.config.record_cls.index._name,
         ),
         using=current_search_client,
     )
-    draft_index = Index(
+    draft_index = dsl.Index(
         build_alias_name(
             current_rdm_records.records_service.config.draft_cls.index._name,
         ),

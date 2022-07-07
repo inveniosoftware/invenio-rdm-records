@@ -40,7 +40,7 @@ def publish_record(client, record, headers):
 
 
 def test_external_doi_cleanup(
-    running_app, client, minimal_record, headers, es_clear, uploader
+    running_app, client, minimal_record, headers, search_clear, uploader
 ):
     """Tests for issue #845."""
     client = uploader.login(client)
@@ -77,7 +77,7 @@ def test_external_doi_cleanup(
 
 
 def test_external_doi_duplicate_detection(
-    running_app, client, minimal_record, headers, es_clear, uploader
+    running_app, client, minimal_record, headers, search_clear, uploader
 ):
     """Tests for issue #845."""
     client = uploader.login(client)
@@ -112,7 +112,7 @@ def test_external_doi_duplicate_detection(
 
 
 def test_external_doi_blocked_prefix(
-    running_app, client, minimal_record, headers, es_clear, uploader
+    running_app, client, minimal_record, headers, search_clear, uploader
 ):
     """Tests for issue #847."""
     client = uploader.login(client)
@@ -134,7 +134,7 @@ def test_external_doi_blocked_prefix(
 
 
 def test_external_doi_required(
-    running_app, client, minimal_record, headers, es_clear, uploader
+    running_app, client, minimal_record, headers, search_clear, uploader
 ):
     """Tests for issue #847."""
     client = uploader.login(client)

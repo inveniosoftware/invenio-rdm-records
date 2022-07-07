@@ -24,7 +24,7 @@ from invenio_rdm_records.secret_links.permissions import LinkNeed
 
 
 @pytest.fixture()
-def service(running_app, es_clear):
+def service(running_app, search_clear):
     """RDM Record Service."""
     return running_app.app.extensions["invenio-rdm-records"].records_service
 

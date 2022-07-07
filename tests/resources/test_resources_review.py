@@ -45,7 +45,14 @@ def community2(running_app, curator, minimal_community2):
 
 
 def test_simple_flow(
-    running_app, client, minimal_record, community, headers, es_clear, curator, uploader
+    running_app,
+    client,
+    minimal_record,
+    community,
+    headers,
+    search_clear,
+    curator,
+    uploader,
 ):
     """Test a simple REST API flow."""
     client = uploader.login(client)
@@ -136,7 +143,7 @@ def test_review_endpoints(
     minimal_record,
     community,
     headers,
-    es_clear,
+    search_clear,
     curator,
     uploader,
     community2,
@@ -184,7 +191,14 @@ def test_review_endpoints(
 
 
 def test_review_errors(
-    running_app, client, minimal_record, community, headers, es_clear, curator, uploader
+    running_app,
+    client,
+    minimal_record,
+    community,
+    headers,
+    search_clear,
+    curator,
+    uploader,
 ):
     client = uploader.login(client)
 
@@ -197,7 +211,14 @@ def test_review_errors(
 
 
 def test_delete_no_review(
-    running_app, client, minimal_record, community, headers, es_clear, curator, uploader
+    running_app,
+    client,
+    minimal_record,
+    community,
+    headers,
+    search_clear,
+    curator,
+    uploader,
 ):
     """."""
     # Create draft

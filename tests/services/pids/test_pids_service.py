@@ -51,7 +51,7 @@ def mock_hide_doi(mocker):
 #
 
 
-def test_resolve_pid(running_app, es_clear, minimal_record):
+def test_resolve_pid(running_app, search_clear, minimal_record):
     service = current_rdm_records.records_service
     superuser_identity = running_app.superuser_identity
     # create the draft
@@ -68,7 +68,7 @@ def test_resolve_pid(running_app, es_clear, minimal_record):
     assert resolved_record["pids"]["doi"]["identifier"] == doi
 
 
-def test_resolve_non_existing_pid(running_app, es_clear, minimal_record):
+def test_resolve_non_existing_pid(running_app, search_clear, minimal_record):
     service = current_rdm_records.records_service
     superuser_identity = running_app.superuser_identity
     # create the draft
@@ -82,7 +82,7 @@ def test_resolve_non_existing_pid(running_app, es_clear, minimal_record):
         service.pids.resolve(identity=superuser_identity, id_=fake_doi, scheme="doi")
 
 
-def test_reserve_pid(running_app, es_clear, minimal_record):
+def test_reserve_pid(running_app, search_clear, minimal_record):
     service = current_rdm_records.records_service
     superuser_identity = running_app.superuser_identity
     # create the draft
@@ -96,7 +96,7 @@ def test_reserve_pid(running_app, es_clear, minimal_record):
     assert pid.status == PIDStatus.NEW
 
 
-def test_discard_existing_pid(running_app, es_clear, minimal_record):
+def test_discard_existing_pid(running_app, search_clear, minimal_record):
     # note discard is only performed over NEW pids for pids in status RESERVED
     # or REGISTERED the invalidate function must be used
     service = current_rdm_records.records_service
@@ -115,7 +115,7 @@ def test_discard_existing_pid(running_app, es_clear, minimal_record):
         pid = provider.get(pid_value=doi)
 
 
-def test_discard_non_exisisting_pid(running_app, es_clear, minimal_record):
+def test_discard_non_exisisting_pid(running_app, search_clear, minimal_record):
     service = current_rdm_records.records_service
     superuser_identity = running_app.superuser_identity
     # create the draft
@@ -124,7 +124,7 @@ def test_discard_non_exisisting_pid(running_app, es_clear, minimal_record):
         service.pids.discard(superuser_identity, draft.id, "doi")
 
 
-def test_oai_pid_default_created(running_app, es_clear, minimal_record):
+def test_oai_pid_default_created(running_app, search_clear, minimal_record):
     superuser_identity = running_app.superuser_identity
     service = current_rdm_records.records_service
     minimal_record["pids"] = {}
@@ -218,7 +218,7 @@ def test_oai_pid_default_created(running_app, es_clear, minimal_record):
 # Creation
 
 
-def test_pids_basic_flow(running_app, es_clear, minimal_record, mock_public_doi):
+def test_pids_basic_flow(running_app, search_clear, minimal_record, mock_public_doi):
     # external doi and mandatory assignation when empty pids
     # is tested at resources level
     superuser_identity = running_app.superuser_identity
@@ -239,7 +239,7 @@ def test_pids_basic_flow(running_app, es_clear, minimal_record, mock_public_doi)
     assert pid.status == PIDStatus.REGISTERED  # registration is async
 
 
-def test_pids_duplicates(running_app, es_clear, minimal_record):
+def test_pids_duplicates(running_app, search_clear, minimal_record):
     superuser_identity = running_app.superuser_identity
     service = current_rdm_records.records_service
     provider = service.pids.pid_manager._get_provider("doi", "datacite")
@@ -296,7 +296,9 @@ def test_pids_duplicates(running_app, es_clear, minimal_record):
     assert error_msg in duplicated_draft.errors
 
 
-def test_pids_creation_invalid_external_payload(running_app, es_clear, minimal_record):
+def test_pids_creation_invalid_external_payload(
+    running_app, search_clear, minimal_record
+):
     superuser_identity = running_app.superuser_identity
     service = current_rdm_records.records_service
 
@@ -315,7 +317,7 @@ def test_pids_creation_invalid_external_payload(running_app, es_clear, minimal_r
 # Reservation
 
 
-def test_pids_reserve_managed(running_app, es_clear, minimal_record):
+def test_pids_reserve_managed(running_app, search_clear, minimal_record):
     service = current_rdm_records.records_service
     superuser_identity = running_app.superuser_identity
     provider = service.pids.pid_manager._get_provider("doi", "datacite")
@@ -329,7 +331,7 @@ def test_pids_reserve_managed(running_app, es_clear, minimal_record):
     assert pid.status == PIDStatus.NEW
 
 
-def test_pids_reserve_fail_existing_managed(running_app, es_clear, minimal_record):
+def test_pids_reserve_fail_existing_managed(running_app, search_clear, minimal_record):
     service = current_rdm_records.records_service
     superuser_identity = running_app.superuser_identity
     provider = service.pids.pid_manager._get_provider("doi", "datacite")
@@ -346,7 +348,7 @@ def test_pids_reserve_fail_existing_managed(running_app, es_clear, minimal_recor
         service.pids.create(superuser_identity, draft.id, "doi")
 
 
-def test_pids_reserve_fail_existing_external(running_app, es_clear, minimal_record):
+def test_pids_reserve_fail_existing_external(running_app, search_clear, minimal_record):
     service = current_rdm_records.records_service
     superuser_identity = running_app.superuser_identity
     provider = service.pids.pid_manager._get_provider("doi", "datacite")
@@ -363,7 +365,9 @@ def test_pids_reserve_fail_existing_external(running_app, es_clear, minimal_reco
 # Update on drafts
 
 
-def test_pids_drafts_updates_external_to_managed(running_app, es_clear, minimal_record):
+def test_pids_drafts_updates_external_to_managed(
+    running_app, search_clear, minimal_record
+):
     service = current_rdm_records.records_service
     superuser_identity = running_app.superuser_identity
     provider = service.pids.pid_manager._get_provider("doi", "datacite")
@@ -389,7 +393,9 @@ def test_pids_drafts_updates_external_to_managed(running_app, es_clear, minimal_
     assert provider.get(pid_value=doi).status == PIDStatus.NEW
 
 
-def test_pids_drafts_updates_managed_to_external(running_app, es_clear, minimal_record):
+def test_pids_drafts_updates_managed_to_external(
+    running_app, search_clear, minimal_record
+):
     service = current_rdm_records.records_service
     superuser_identity = running_app.superuser_identity
     provider = service.pids.pid_manager._get_provider("doi", "datacite")
@@ -420,7 +426,9 @@ def test_pids_drafts_updates_managed_to_external(running_app, es_clear, minimal_
         provider.get(pid_value=doi)
 
 
-def test_pids_drafts_updates_managed_to_no_pid(running_app, es_clear, minimal_record):
+def test_pids_drafts_updates_managed_to_no_pid(
+    running_app, search_clear, minimal_record
+):
     service = current_rdm_records.records_service
     superuser_identity = running_app.superuser_identity
     provider = service.pids.pid_manager._get_provider("doi", "datacite")
@@ -439,7 +447,9 @@ def test_pids_drafts_updates_managed_to_no_pid(running_app, es_clear, minimal_re
         provider.get(pid_value=doi)
 
 
-def test_pids_drafts_updates_no_pid_to_external(running_app, es_clear, minimal_record):
+def test_pids_drafts_updates_no_pid_to_external(
+    running_app, search_clear, minimal_record
+):
     service = current_rdm_records.records_service
     superuser_identity = running_app.superuser_identity
     provider = service.pids.pid_manager._get_provider("doi", "datacite")
@@ -463,7 +473,9 @@ def test_pids_drafts_updates_no_pid_to_external(running_app, es_clear, minimal_r
         )
 
 
-def test_pids_drafts_updates_no_pid_to_managed(running_app, es_clear, minimal_record):
+def test_pids_drafts_updates_no_pid_to_managed(
+    running_app, search_clear, minimal_record
+):
     service = current_rdm_records.records_service
     superuser_identity = running_app.superuser_identity
     provider = service.pids.pid_manager._get_provider("doi", "datacite")
@@ -517,7 +529,7 @@ def _create_and_publish_managed(service, provider, identity, data):
 
 
 def test_pids_records_updates_external_to_managed(
-    running_app, es_clear, minimal_record, identity_simple
+    running_app, search_clear, minimal_record, identity_simple
 ):
     service = current_rdm_records.records_service
     superuser_identity = running_app.superuser_identity
@@ -551,7 +563,7 @@ def test_pids_records_updates_external_to_managed(
 
 
 def test_pids_records_updates_managed_to_external_fail(
-    running_app, es_clear, minimal_record, authenticated_identity, mock_hide_doi
+    running_app, search_clear, minimal_record, authenticated_identity, mock_hide_doi
 ):
     service = current_rdm_records.records_service
     superuser_identity = running_app.superuser_identity
@@ -573,7 +585,7 @@ def test_pids_records_updates_managed_to_external_fail(
 
 
 def test_pids_records_updates_managed_to_no_pid_fail(
-    running_app, es_clear, minimal_record, authenticated_identity
+    running_app, search_clear, minimal_record, authenticated_identity
 ):
     service = current_rdm_records.records_service
     superuser_identity = running_app.superuser_identity
@@ -597,7 +609,7 @@ def test_pids_records_updates_managed_to_no_pid_fail(
 # Publishing
 
 
-def test_pids_publish_managed(running_app, es_clear, minimal_record):
+def test_pids_publish_managed(running_app, search_clear, minimal_record):
     superuser_identity = running_app.superuser_identity
     service = current_rdm_records.records_service
     provider = service.pids.pid_manager._get_provider("doi", "datacite")
@@ -615,7 +627,7 @@ def test_pids_publish_managed(running_app, es_clear, minimal_record):
     assert pid.status in [PIDStatus.RESERVED, PIDStatus.REGISTERED]
 
 
-def test_pids_publish_external(running_app, es_clear, minimal_record):
+def test_pids_publish_external(running_app, search_clear, minimal_record):
     superuser_identity = running_app.superuser_identity
     service = current_rdm_records.records_service
     provider = service.pids.pid_manager._get_provider("doi", "datacite")
@@ -642,7 +654,7 @@ def test_pids_publish_external(running_app, es_clear, minimal_record):
 # Deletion
 
 
-def test_pids_delete_external_pid_from_draft(running_app, es_clear, minimal_record):
+def test_pids_delete_external_pid_from_draft(running_app, search_clear, minimal_record):
     service = current_rdm_records.records_service
     superuser_identity = running_app.superuser_identity
     provider = service.pids.pid_manager._get_provider("doi", "datacite")
@@ -660,7 +672,7 @@ def test_pids_delete_external_pid_from_draft(running_app, es_clear, minimal_reco
         )
 
 
-def test_pids_delete_managed_pid_from_draft(running_app, es_clear, minimal_record):
+def test_pids_delete_managed_pid_from_draft(running_app, search_clear, minimal_record):
     service = current_rdm_records.records_service
     superuser_identity = running_app.superuser_identity
     provider = service.pids.pid_manager._get_provider("doi", "datacite")
@@ -678,7 +690,9 @@ def test_pids_delete_managed_pid_from_draft(running_app, es_clear, minimal_recor
         provider.get(pid_value=pid.pid_value, pid_provider="external")
 
 
-def test_pids_delete_external_pid_from_record(running_app, es_clear, minimal_record):
+def test_pids_delete_external_pid_from_record(
+    running_app, search_clear, minimal_record
+):
     # This test aims to delete from a draft created out of a published record
     service = current_rdm_records.records_service
     superuser_identity = running_app.superuser_identity
@@ -714,7 +728,7 @@ def test_pids_delete_external_pid_from_record(running_app, es_clear, minimal_rec
     assert pid.pid_value == record["pids"]["doi"]["identifier"]
 
 
-def test_pids_delete_managed_pid_from_record(running_app, es_clear, minimal_record):
+def test_pids_delete_managed_pid_from_record(running_app, search_clear, minimal_record):
     # This test aims to delete from a draft created out of a published record
     service = current_rdm_records.records_service
     superuser_identity = running_app.superuser_identity

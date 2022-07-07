@@ -15,7 +15,7 @@ from invenio_rdm_records.services.pids.tasks import register_or_update_pid
 
 
 def test_register_pid(
-    running_app, es_clear, minimal_record, mocker, superuser_identity
+    running_app, search_clear, minimal_record, mocker, superuser_identity
 ):
     """Registers a PID."""
 
@@ -47,7 +47,9 @@ def test_register_pid(
     assert pid.status == PIDStatus.REGISTERED
 
 
-def test_update_pid(running_app, es_clear, minimal_record, mocker, superuser_identity):
+def test_update_pid(
+    running_app, search_clear, minimal_record, mocker, superuser_identity
+):
     """No pid provided, creating one by default."""
 
     def public_doi(self, metadata, url, doi):

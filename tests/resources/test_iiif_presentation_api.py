@@ -51,7 +51,7 @@ def publish_record_with_images(
 
 
 def test_iiif_manifest_schema(
-    running_app, es_clear, client, uploader, headers, minimal_record
+    running_app, search_clear, client, uploader, headers, minimal_record
 ):
     client = uploader.login(client)
     file_id = "test_image.png"
@@ -64,7 +64,7 @@ def test_iiif_manifest_schema(
 
 
 def test_iiif_manifest(
-    running_app, es_clear, client, uploader, headers, minimal_record
+    running_app, search_clear, client, uploader, headers, minimal_record
 ):
     client = uploader.login(client)
     file_id = "test_image.png"
@@ -111,7 +111,7 @@ def test_iiif_manifest(
 
 
 def test_empty_iiif_manifest(
-    running_app, es_clear, client, uploader, headers, minimal_record
+    running_app, search_clear, client, uploader, headers, minimal_record
 ):
     client = uploader.login(client)
     file_id = "test_image.zip"
@@ -124,7 +124,7 @@ def test_empty_iiif_manifest(
 
 def test_iiif_manifest_restricted_files(
     running_app,
-    es_clear,
+    search_clear,
     client,
     uploader,
     headers,

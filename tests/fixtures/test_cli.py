@@ -54,7 +54,7 @@ def vocabularies():
 
 
 def test_create_fake_demo_draft_record(
-    app, location, db, es_clear, vocabularies, users
+    app, location, db, search_clear, vocabularies, users
 ):
     """Assert that demo record creation works without failing."""
     user_id = users[0].id
@@ -75,7 +75,9 @@ def test_create_fake_demo_draft_record(
     assert records.total > 0
 
 
-def test_create_fake_demo_communities(app, location, db, es_clear, vocabularies, users):
+def test_create_fake_demo_communities(
+    app, location, db, search_clear, vocabularies, users
+):
     """Assert that demo communities creation works without failing."""
     user_id = users[0].id
 
@@ -88,7 +90,7 @@ def test_create_fake_demo_communities(app, location, db, es_clear, vocabularies,
 
 
 def test_create_fake_demo_inclusion_requests(
-    app, location, db, es_clear, vocabularies, users
+    app, location, db, search_clear, vocabularies, users
 ):
     """Assert that demo inclusion requests creation works without failing."""
     user_id = users[0].id
@@ -108,7 +110,7 @@ def test_create_fake_demo_inclusion_requests(
 
 
 def test_create_fake_demo_invitation_requests(
-    app, location, db, es_clear, vocabularies, users
+    app, location, db, search_clear, vocabularies, users
 ):
     """Assert that demo invitation requests creation works without failing."""
     first_user_id = users[0].id
@@ -130,7 +132,7 @@ def test_create_fake_demo_invitation_requests(
     assert reqs.total > 0
 
 
-def test_create_records_custom_fields(app, location, db, es_clear, cli_runner):
+def test_create_records_custom_fields(app, location, db, search_clear, cli_runner):
     """Assert that custom fields mappings are created for records."""
     result = cli_runner(create_records_custom_field, "-f", "cern:myfield")
     assert result.exit_code == 0

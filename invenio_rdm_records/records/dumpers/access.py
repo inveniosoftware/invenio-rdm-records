@@ -5,14 +5,14 @@
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
 
-"""Elasticsearch dumpers for access-control information."""
+"""Search dumpers for access-control information."""
 
 from invenio_records.dictutils import dict_lookup, parse_lookup_key
-from invenio_records.dumpers import ElasticsearchDumperExt
+from invenio_records.dumpers import SearchDumperExt
 
 
-class GrantTokensDumperExt(ElasticsearchDumperExt):
-    """Elasticsearch dumper extension for access grant tokens support.
+class GrantTokensDumperExt(SearchDumperExt):
+    """Search dumper extension for access grant tokens support.
 
     On dump, it uses the record's ``Access`` system field to generate tokens
     from the record's (access) ``Grants`` and dump them in the specified target

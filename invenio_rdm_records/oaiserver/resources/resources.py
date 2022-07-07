@@ -7,8 +7,7 @@
 
 """OAI-PMH resource."""
 
-from flask import abort, g
-from flask.globals import request
+from flask import g
 from flask_resources import Resource, resource_requestctx, response_handler, route
 from invenio_records_resources.resources.errors import ErrorHandlersMixin
 from invenio_records_resources.resources.records.resource import (
@@ -17,7 +16,6 @@ from invenio_records_resources.resources.records.resource import (
     request_search_args,
     request_view_args,
 )
-from invenio_records_resources.resources.records.utils import es_preference
 
 
 class OAIPMHServerResource(ErrorHandlersMixin, Resource):
