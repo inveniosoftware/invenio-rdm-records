@@ -7,6 +7,7 @@
 # more details.
 
 """Service level tests for OAI Sets."""
+
 import pytest
 from invenio_db import db
 from invenio_oaiserver.models import OAISet
@@ -18,7 +19,7 @@ from invenio_rdm_records.oaiserver.services.services import OAIPMHServerService
 from invenio_rdm_records.proxies import current_oaipmh_server_service
 
 
-def test_minimal_set_creation_and_edit(running_app, es_clear, minimal_oai_set):
+def test_minimal_set_creation_and_edit(running_app, search_clear, minimal_oai_set):
     superuser_identity = running_app.superuser_identity
     service = current_oaipmh_server_service
 
@@ -34,7 +35,7 @@ def test_minimal_set_creation_and_edit(running_app, es_clear, minimal_oai_set):
 
 
 def test_raise_error_on_edit_and_delete(
-    running_app, es_clear, minimal_oai_set, anyuser_identity
+    running_app, search_clear, minimal_oai_set, anyuser_identity
 ):
     superuser_identity = running_app.superuser_identity
     service = current_oaipmh_server_service
@@ -62,7 +63,7 @@ def test_raise_error_on_edit_and_delete(
         service.delete(superuser_identity, system_created_oai_set.id)
 
 
-def test_reserved_prefixes(running_app, es_clear, minimal_oai_set):
+def test_reserved_prefixes(running_app, search_clear, minimal_oai_set):
     superuser_identity = running_app.superuser_identity
 
     service = OAIPMHServerService(

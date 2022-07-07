@@ -8,7 +8,7 @@
 """Tests for the access-control dumpers."""
 
 import pytest
-from invenio_records.dumpers import ElasticsearchDumper
+from invenio_records.dumpers import SearchDumper
 
 from invenio_rdm_records.proxies import current_rdm_records
 from invenio_rdm_records.records import RDMDraft, RDMParent
@@ -18,9 +18,7 @@ from invenio_rdm_records.records.systemfields.access import Grant
 
 def test_grant_tokens_dumper(app, db, minimal_record, location):
     """Test grant token dumper extension implementation."""
-    dumper = ElasticsearchDumper(
-        extensions=[GrantTokensDumperExt("access.grant_tokens")]
-    )
+    dumper = SearchDumper(extensions=[GrantTokensDumperExt("access.grant_tokens")])
 
     data = {
         "access": {

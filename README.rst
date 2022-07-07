@@ -34,13 +34,13 @@ Development
 Install
 -------
 
-Choose a version of elasticsearch and a DB, then run:
+Choose a version of search and database, then run:
 
 .. code-block:: console
 
     pipenv run pip install -e .[all]
-    pipenv run pip install invenio-search[<elasticsearch[5|6|7]>]
-    pipenv run pip install invenio-db[<[mysql|postgresql|]>,versioning]
+    pipenv run pip install invenio-search[<opensearch[1]>]
+    pipenv run pip install invenio-db[<[mysql|postgresql|]>]
 
 
 Tests

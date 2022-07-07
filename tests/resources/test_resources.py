@@ -61,7 +61,9 @@ def _validate_access(response, original):
         assert embargo.get("active") == orig_embargo.get("active")
 
 
-def test_simple_flow(running_app, client_with_login, minimal_record, headers, es_clear):
+def test_simple_flow(
+    running_app, client_with_login, minimal_record, headers, search_clear
+):
     client = client_with_login
     """Test a simple REST API flow."""
     # Create a draft
@@ -114,7 +116,7 @@ def test_simple_flow(running_app, client_with_login, minimal_record, headers, es
 
 
 def test_create_draft(
-    running_app, client_with_login, minimal_record, headers, es_clear
+    running_app, client_with_login, minimal_record, headers, search_clear
 ):
     """Test draft creation of a non-existing record."""
     client = client_with_login
@@ -126,7 +128,7 @@ def test_create_draft(
 
 
 def test_create_partial_draft(
-    running_app, client_with_login, minimal_record, headers, es_clear
+    running_app, client_with_login, minimal_record, headers, search_clear
 ):
     """Test partial draft creation of a non-existing record.
 
@@ -146,7 +148,7 @@ def test_create_partial_draft(
 
 
 def test_create_draft_w_extra_fields_reports_error_doesnt_save_field(
-    running_app, client_with_login, minimal_record, headers, es_clear
+    running_app, client_with_login, minimal_record, headers, search_clear
 ):
     """Extra fields are reported in errors but not saved."""
     client = client_with_login
@@ -158,7 +160,9 @@ def test_create_draft_w_extra_fields_reports_error_doesnt_save_field(
     assert "foo" not in response.json
 
 
-def test_read_draft(running_app, client_with_login, minimal_record, headers, es_clear):
+def test_read_draft(
+    running_app, client_with_login, minimal_record, headers, search_clear
+):
     """Test draft read."""
     client = client_with_login
     response = client.post("/records", data=json.dumps(minimal_record), headers=headers)
@@ -175,7 +179,7 @@ def test_read_draft(running_app, client_with_login, minimal_record, headers, es_
 
 
 def test_update_draft(
-    running_app, client_with_login, minimal_record, headers, es_clear
+    running_app, client_with_login, minimal_record, headers, search_clear
 ):
     """Test draft update."""
     client = client_with_login
@@ -213,7 +217,7 @@ def test_update_draft(
 
 
 def test_update_partial_draft(
-    running_app, client_with_login, minimal_record, headers, es_clear
+    running_app, client_with_login, minimal_record, headers, search_clear
 ):
     """Test partial draft update.
 
@@ -245,7 +249,7 @@ def test_update_partial_draft(
 
 
 def test_delete_draft(
-    running_app, client_with_login, minimal_record, headers, es_clear
+    running_app, client_with_login, minimal_record, headers, search_clear
 ):
     """Test draft deletion."""
     client = client_with_login
@@ -284,7 +288,7 @@ def _create_and_publish(client, minimal_record, headers):
 
 
 def test_publish_draft(
-    running_app, client_with_login, minimal_record, headers, es_clear
+    running_app, client_with_login, minimal_record, headers, search_clear
 ):
     """Test publication of a new draft.
 
@@ -306,7 +310,7 @@ def test_publish_draft(
 
 
 def test_publish_draft_w_dates(
-    running_app, client_with_login, minimal_record, headers, es_clear
+    running_app, client_with_login, minimal_record, headers, search_clear
 ):
     """Test publication of a draft with dates."""
     client = client_with_login
@@ -331,7 +335,7 @@ def test_publish_draft_w_dates(
 
 
 def test_user_records_and_drafts(
-    running_app, client_with_login, headers, minimal_record, es_clear
+    running_app, client_with_login, headers, minimal_record, search_clear
 ):
     """Tests the search over the drafts search alias."""
     client = client_with_login
@@ -432,7 +436,7 @@ def _create_and_assert_file(client, h, recid, filename, file_content):
 
 
 def test_multiple_files_record(
-    running_app, client_with_login, headers, minimal_record, es_clear
+    running_app, client_with_login, headers, minimal_record, search_clear
 ):
     client = client_with_login
     minimal_record["files"]["enabled"] = True
@@ -465,10 +469,6 @@ def test_create_publish_new_revision(
     """Test draft creation of an existing record and publish it."""
     client = client_with_login
     recid = _create_and_publish(client, minimal_record, headers)
-
-    # # FIXME: Allow ES to clean deleted documents.
-    # # Flush is not the same. Default collection time is 1 minute.
-    # time.sleep(70)
 
     # Create new draft of said record
     orig_title = minimal_record["metadata"]["title"]
@@ -553,7 +553,7 @@ def test_link_creation(
     client_with_login,
     minimal_record,
     headers,
-    es_clear,
+    search_clear,
 ):
     """Test the creation of secret links."""
     client = client_with_login
@@ -626,7 +626,7 @@ def test_link_creation(
 
 
 def test_link_deletion(
-    running_app, client_with_login, minimal_record, headers, es_clear
+    running_app, client_with_login, minimal_record, headers, search_clear
 ):
     """Test the deletion of a secret link."""
     client = client_with_login
@@ -667,7 +667,9 @@ def test_link_deletion(
     assert len(links_result.json["hits"]["hits"]) == 0
 
 
-def test_link_update(running_app, client_with_login, minimal_record, headers, es_clear):
+def test_link_update(
+    running_app, client_with_login, minimal_record, headers, search_clear
+):
     """Test the deletion of a secret link."""
     client = client_with_login
     # Note, we test with and without timezone aware timestamps.
@@ -731,7 +733,7 @@ def test_link_update(running_app, client_with_login, minimal_record, headers, es
 
 
 def test_reserve_pid_with_login(
-    running_app, client_with_login, minimal_record, headers, es_clear
+    running_app, client_with_login, minimal_record, headers, search_clear
 ):
     """Test the reserve function with client logged in."""
     # GET with client login
@@ -748,7 +750,7 @@ def test_reserve_pid_with_login(
 
 
 def test_discard_pid_with_login(
-    running_app, client_with_login, minimal_record, headers, es_clear
+    running_app, client_with_login, minimal_record, headers, search_clear
 ):
     """Test the discard function."""
     # GET with client login
@@ -773,7 +775,7 @@ def test_discard_pid_with_login(
 
 
 def test_publish_pid_flow(
-    running_app, client_with_login, minimal_record, headers, es_clear
+    running_app, client_with_login, minimal_record, headers, search_clear
 ):
     """Test the reserve function with client logged in."""
     # GET with client login
@@ -798,7 +800,13 @@ def test_publish_pid_flow(
 
 
 def test_search_community_records(
-    running_app, client, client_with_login, minimal_record, headers, community, es_clear
+    running_app,
+    client,
+    client_with_login,
+    minimal_record,
+    headers,
+    community,
+    search_clear,
 ):
     """Test searching for records in a community."""
     superuser_identity = running_app.superuser_identity

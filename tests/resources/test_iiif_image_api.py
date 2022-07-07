@@ -49,7 +49,7 @@ def publish_record_with_images(
 
 
 def test_file_links_depending_on_file_extensions(
-    running_app, es_clear, client, uploader, headers, minimal_record
+    running_app, search_clear, client, uploader, headers, minimal_record
 ):
     client = uploader.login(client)
     file_id = "test_image.zip"
@@ -69,7 +69,9 @@ def test_file_links_depending_on_file_extensions(
     assert "iiif_api" in response.json["links"]
 
 
-def test_iiif_base(running_app, es_clear, client, uploader, headers, minimal_record):
+def test_iiif_base(
+    running_app, search_clear, client, uploader, headers, minimal_record
+):
     client = uploader.login(client)
     file_id = "test_image.png"
     recid = publish_record_with_images(client, file_id, minimal_record, headers)
@@ -81,7 +83,9 @@ def test_iiif_base(running_app, es_clear, client, uploader, headers, minimal_rec
     )
 
 
-def test_iiif_info(running_app, es_clear, client, uploader, headers, minimal_record):
+def test_iiif_info(
+    running_app, search_clear, client, uploader, headers, minimal_record
+):
     client = uploader.login(client)
     file_id = "test_image.png"
     recid = publish_record_with_images(client, file_id, minimal_record, headers)
@@ -98,14 +102,14 @@ def test_iiif_info(running_app, es_clear, client, uploader, headers, minimal_rec
     }
 
 
-def test_api_info_not_found(running_app, es_clear, client):
+def test_api_info_not_found(running_app, search_clear, client):
     response = client.get(f"/iiif/record:1234-abcd:notfound.png/info.json")
     assert response.status_code == 404
 
 
 def test_iiif_base_restricted_files(
     running_app,
-    es_clear,
+    search_clear,
     client,
     uploader,
     headers,
@@ -129,7 +133,7 @@ def test_iiif_base_restricted_files(
 
 def test_iiif_info_restricted_files(
     running_app,
-    es_clear,
+    search_clear,
     client,
     uploader,
     headers,
@@ -152,7 +156,7 @@ def test_iiif_info_restricted_files(
 
 
 def test_iiif_image_api(
-    running_app, es_clear, client, uploader, headers, minimal_record
+    running_app, search_clear, client, uploader, headers, minimal_record
 ):
     client = uploader.login(client)
     file_id = "test_image.png"

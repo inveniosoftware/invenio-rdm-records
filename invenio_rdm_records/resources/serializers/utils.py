@@ -8,8 +8,8 @@
 
 """Helpers for serializers."""
 
-from elasticsearch_dsl.query import Q
 from invenio_access.permissions import system_identity
+from invenio_search.engine import dsl
 from invenio_vocabularies.proxies import current_service as vocabulary_service
 
 from .errors import VocabularyItemNotFoundError
@@ -23,7 +23,7 @@ def get_vocabulary_props(vocabulary, fields, id_):
         system_identity,
         ["id"] + fields,
         vocabulary,
-        extra_filter=Q("term", id=id_),
+        extra_filter=dsl.Q("term", id=id_),
     )
 
     for h in results.hits:

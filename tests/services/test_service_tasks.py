@@ -14,7 +14,7 @@ from invenio_rdm_records.records.api import RDMDraft
 from invenio_rdm_records.services.tasks import update_expired_embargos
 
 
-def test_embargo_lift_without_draft(embargoed_record, running_app, es_clear):
+def test_embargo_lift_without_draft(embargoed_record, running_app, search_clear):
     update_expired_embargos()
 
     service = current_rdm_records.records_service
@@ -25,7 +25,7 @@ def test_embargo_lift_without_draft(embargoed_record, running_app, es_clear):
     assert record_lifted.access.status.value == "metadata-only"
 
 
-def test_embargo_lift_with_draft(embargoed_record, es_clear, superuser_identity):
+def test_embargo_lift_with_draft(embargoed_record, search_clear, superuser_identity):
     record = embargoed_record
     service = current_rdm_records.records_service
 
@@ -48,7 +48,7 @@ def test_embargo_lift_with_draft(embargoed_record, es_clear, superuser_identity)
 
 
 def test_embargo_lift_with_updated_draft(
-    embargoed_record, superuser_identity, es_clear
+    embargoed_record, superuser_identity, search_clear
 ):
     record = embargoed_record
     service = current_rdm_records.records_service

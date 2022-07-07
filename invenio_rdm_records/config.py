@@ -165,7 +165,7 @@ RDM_FACETS = {
 RDM_SORT_OPTIONS = {
     "bestmatch": dict(
         title=_("Best match"),
-        fields=["_score"],  # ES defaults to desc on `_score` field
+        fields=["_score"],  # search defaults to desc on `_score` field
     ),
     "newest": dict(
         title=_("Newest"),

@@ -9,15 +9,14 @@
 import unittest.mock
 
 import pytest
-from invenio_db import db
-from invenio_records.dumpers import ElasticsearchDumper
+from invenio_records.dumpers import SearchDumper
 
 from invenio_rdm_records.records import RDMRecord
 from invenio_rdm_records.records.dumpers import LocationsDumper
 
 
 def test_locationsdumper_with_point_geometry(app, db, minimal_record, parent):
-    dumper = ElasticsearchDumper(extensions=[LocationsDumper()])
+    dumper = SearchDumper(extensions=[LocationsDumper()])
 
     minimal_record["metadata"]["locations"] = {
         "features": [
@@ -43,7 +42,7 @@ def test_locationsdumper_with_point_geometry(app, db, minimal_record, parent):
 
 
 def test_locationsdumper_with_no_featurecollection(app, db, minimal_record, parent):
-    dumper = ElasticsearchDumper(extensions=[LocationsDumper()])
+    dumper = SearchDumper(extensions=[LocationsDumper()])
 
     record = RDMRecord.create(minimal_record, parent=parent)
 
@@ -53,7 +52,7 @@ def test_locationsdumper_with_no_featurecollection(app, db, minimal_record, pare
 
 @unittest.mock.patch("invenio_rdm_records.records.dumpers.locations.shapely", None)
 def test_locationsdumper_with_polygon_and_no_shapely(app, db, minimal_record, parent):
-    dumper = ElasticsearchDumper(extensions=[LocationsDumper()])
+    dumper = SearchDumper(extensions=[LocationsDumper()])
 
     minimal_record["metadata"]["locations"] = {
         "features": [
@@ -86,7 +85,7 @@ def test_locationsdumper_with_polygon_and_mock_shapely(app, db, minimal_record, 
     with unittest.mock.patch(
         "invenio_rdm_records.records.dumpers.locations.shapely"
     ) as shapely:
-        dumper = ElasticsearchDumper(extensions=[LocationsDumper()])
+        dumper = SearchDumper(extensions=[LocationsDumper()])
 
         minimal_record["metadata"]["locations"] = {
             "features": [
@@ -124,7 +123,7 @@ def test_locationsdumper_with_polygon_and_mock_shapely(app, db, minimal_record, 
 def test_locationsdumper_with_polygon_and_shapely(app, db, minimal_record, parent):
     pytest.importorskip("shapely")
 
-    dumper = ElasticsearchDumper(extensions=[LocationsDumper()])
+    dumper = SearchDumper(extensions=[LocationsDumper()])
 
     # This also tests shapes with elevations
     minimal_record["locations"] = {

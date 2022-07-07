@@ -5,11 +5,11 @@
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
 
-"""Elasticsearch dumpers for location information."""
+"""Search dumpers for location information."""
 
 import warnings
 
-from invenio_records.dumpers import ElasticsearchDumperExt
+from invenio_records.dumpers import SearchDumperExt
 
 try:
     import shapely.geometry
@@ -17,8 +17,8 @@ except ImportError:
     shapely = None
 
 
-class LocationsDumper(ElasticsearchDumperExt):
-    """ElasticSearch dumper for location data.
+class LocationsDumper(SearchDumperExt):
+    """Search dumper for location data.
 
     This does a few things:
 

@@ -18,7 +18,7 @@ def subjects_service():
 
 
 @pytest.fixture()
-def example_subject(app, db, es_clear, superuser_identity, subjects_service):
+def example_subject(app, db, search_clear, superuser_identity, subjects_service):
     """Example subject."""
     data = {
         "id": "https://id.nlm.nih.gov/mesh/D000001",

@@ -13,12 +13,12 @@ import operator
 from functools import reduce
 from itertools import chain
 
-from elasticsearch_dsl import Q
 from flask_principal import UserNeed
 from invenio_access.permissions import authenticated_user
 from invenio_communities.generators import CommunityRoleNeed, CommunityRoles
 from invenio_communities.proxies import current_roles
 from invenio_records_permissions.generators import Generator
+from invenio_search.engine import dsl
 
 from invenio_rdm_records.records import RDMDraft
 
@@ -71,8 +71,8 @@ class IfRestricted(Generator):
 
     def query_filter(self, **kwargs):
         """Filters for current identity as super user."""
-        q_restricted = Q("match", **{f"access.{self.field}": "restricted"})
-        q_public = Q("match", **{f"access.{self.field}": "public"})
+        q_restricted = dsl.Q("match", **{f"access.{self.field}": "restricted"})
+        q_public = dsl.Q("match", **{f"access.{self.field}": "public"})
         then_query = self.make_query(self.then_, **kwargs)
         else_query = self.make_query(self.else_, **kwargs)
 
@@ -102,7 +102,7 @@ class RecordOwners(Generator):
         """Filters for current identity as owner."""
         users = [n.value for n in identity.provides if n.method == "id"]
         if users:
-            return Q("terms", **{"parent.access.owned_by.user": users})
+            return dsl.Q("terms", **{"parent.access.owned_by.user": users})
 
 
 class IfDraft(Generator):
@@ -168,7 +168,7 @@ class SecretLinks(Generator):
         secret_links = [n.value for n in identity.provides if n.method == "link"]
 
         if secret_links:
-            return Q("terms", **{"parent.access.links.id": secret_links})
+            return dsl.Q("terms", **{"parent.access.links.id": secret_links})
 
 
 class SubmissionReviewer(Generator):
@@ -222,4 +222,4 @@ class CommunityAction(CommunityRoles):
 
     def query_filter(self, identity=None, **kwargs):
         """Filters for current identity as member."""
-        return Q("terms", **{"parent.communities.ids": self.communities(identity)})
+        return dsl.Q("terms", **{"parent.communities.ids": self.communities(identity)})

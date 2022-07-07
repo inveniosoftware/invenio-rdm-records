@@ -24,7 +24,7 @@ def funders_service(app):
 
 
 @pytest.fixture()
-def example_funder(app, db, es_clear, superuser_identity, funders_service):
+def example_funder(app, db, search_clear, superuser_identity, funders_service):
     """Example funder."""
     data = {
         "id": "01ggx4157",
@@ -53,7 +53,7 @@ def awards_service(app):
 def example_award(
     app,
     db,
-    es_clear,
+    search_clear,
     superuser_identity,
     awards_service,
     example_funder,

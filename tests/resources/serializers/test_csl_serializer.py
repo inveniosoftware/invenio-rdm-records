@@ -61,7 +61,7 @@ def test_csl_json_serializer(running_app, full_record):
 def test_citation_string_serializer_records_list(
     running_app,
     client,
-    es_clear,
+    search_clear,
     minimal_record,
     superuser_identity,
 ):
@@ -98,7 +98,7 @@ def test_citation_string_serializer_records_list(
 def test_citation_string_serializer_record(
     running_app,
     client,
-    es_clear,
+    search_clear,
     minimal_record,
     superuser_identity,
 ):

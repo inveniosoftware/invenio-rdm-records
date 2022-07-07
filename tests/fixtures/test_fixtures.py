@@ -35,7 +35,7 @@ def affiliations_service(app):
     return current_service_registry.get("affiliations")
 
 
-def test_load_languages(app, db, es_clear):
+def test_load_languages(app, db, search_clear):
     id_ = "languages"
     languages = GenericVocabularyEntry(
         Path(__file__).parent / "data",
@@ -49,7 +49,7 @@ def test_load_languages(app, db, es_clear):
     assert item.id == "aae"
 
 
-def test_load_resource_types(app, db, es_clear):
+def test_load_resource_types(app, db, search_clear):
     id_ = "resourcetypes"
     resource_types = GenericVocabularyEntry(
         Path(__file__).parent / "data",
@@ -68,7 +68,7 @@ def test_load_resource_types(app, db, es_clear):
     assert item_dict["props"]["datacite_general"] == "Collection"
 
 
-def test_load_community_types(app, db, es_clear):
+def test_load_community_types(app, db, search_clear):
     id_ = "communitytypes"
     resource_types = GenericVocabularyEntry(
         Path(__file__).parent / "data",
@@ -87,7 +87,7 @@ def test_load_community_types(app, db, es_clear):
     assert item_dict["title"]["en"] == "Organization"
 
 
-def test_loading_paths_traversal(app, db, es_clear, subjects_service):
+def test_loading_paths_traversal(app, db, search_clear, subjects_service):
     dir_ = Path(__file__).parent
     fixtures = PrioritizedVocabulariesFixtures(
         system_identity,
@@ -141,7 +141,7 @@ def filepath_replaced_by(filepath, replacement):
         backup.replace(filepath)
 
 
-def test_reloading_paths_traversal(app, db, es_clear, subjects_service):
+def test_reloading_paths_traversal(app, db, search_clear, subjects_service):
     dir_ = Path(__file__).parent
     fixtures = PrioritizedVocabulariesFixtures(
         system_identity,
@@ -189,7 +189,7 @@ def test_load_users(app, db, admin_role):
     assert current_datastore.find_user(email="user@example.com")
 
 
-def test_load_affiliations(app, db, admin_role, es_clear, affiliations_service):
+def test_load_affiliations(app, db, admin_role, search_clear, affiliations_service):
     dir_ = Path(__file__).parent
     affiliations = VocabularyEntryWithSchemes(
         "affiliations",

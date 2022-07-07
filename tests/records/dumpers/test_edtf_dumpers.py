@@ -9,13 +9,9 @@
 """Module tests."""
 
 import pytest
-from flask_principal import Identity, UserNeed
-from flask_security import login_user
-from invenio_access.permissions import SystemRoleNeed
-from invenio_records.dumpers import ElasticsearchDumper
+from invenio_records.dumpers import SearchDumper
 
-from invenio_rdm_records.proxies import current_rdm_records
-from invenio_rdm_records.records import RDMDraft, RDMRecord
+from invenio_rdm_records.records import RDMRecord
 from invenio_rdm_records.records.api import RDMParent
 from invenio_rdm_records.records.dumpers import EDTFDumperExt, EDTFListDumperExt
 
@@ -36,7 +32,7 @@ def test_esdumper_with_edtfext(
     """Test edft extension implementation."""
     # Create a simple extension that adds a computed field.
 
-    dumper = ElasticsearchDumper(
+    dumper = SearchDumper(
         extensions=[
             EDTFDumperExt("metadata.publication_date"),
             EDTFListDumperExt("metadata.dates", "date"),
@@ -71,7 +67,7 @@ def test_esdumper_with_edtfext_not_defined(running_app, db, minimal_record):
     """Test edft extension implementation."""
     # Create a simple extension that adds a computed field.
 
-    dumper = ElasticsearchDumper(
+    dumper = SearchDumper(
         extensions=[
             EDTFDumperExt("metadata.non_existing_field"),
         ]
@@ -96,7 +92,7 @@ def test_eslistdumper_with_edtfext_not_defined(running_app, db, minimal_record):
     """Test edft extension implementation."""
     # Create a simple extension that adds a computed field.
 
-    dumper = ElasticsearchDumper(
+    dumper = SearchDumper(
         extensions=[
             EDTFListDumperExt("metadata.non_existing_array_field", "date"),
         ]
@@ -121,7 +117,7 @@ def test_esdumper_with_edtfext_parse_error(running_app, db, minimal_record):
     """Test edft extension implementation."""
     # NOTE: We cannot trigger this on publication_date because it is checked
     # by marshmallow on record creation. We can simply give a non date field.
-    dumper = ElasticsearchDumper(
+    dumper = SearchDumper(
         extensions=[
             EDTFDumperExt("metadata.resource_type.type"),
         ]
@@ -144,7 +140,7 @@ def test_esdumper_with_edtfext_parse_error(running_app, db, minimal_record):
 
 def test_eslistdumper_with_edtfext_parse_error(running_app, db, minimal_record):
     """Test edft extension implementation."""
-    dumper = ElasticsearchDumper(
+    dumper = SearchDumper(
         extensions=[
             EDTFListDumperExt("metadata.creators", "family_name"),
         ]

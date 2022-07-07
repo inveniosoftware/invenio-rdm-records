@@ -9,13 +9,13 @@
 """Invenio-RDM-Records OAI Functionality."""
 
 from datacite import schema43
-from elasticsearch_dsl import Q
 from flask import current_app, g
 from invenio_pidstore.errors import PersistentIdentifierError, PIDDoesNotExistError
 from invenio_pidstore.fetchers import FetchedPID
 from invenio_pidstore.models import PersistentIdentifier
 from invenio_records_resources.services.errors import PermissionDeniedError
 from invenio_search import RecordsSearch
+from invenio_search.engine import dsl
 from lxml import etree
 
 from .proxies import current_rdm_records
@@ -114,6 +114,6 @@ class OAIRecordSearch(RecordsSearch):
         """Configuration for OAI server search."""
 
         default_filter = [
-            Q("exists", field="pids.oai.identifier"),
-            Q("term", **{"access.record": "public"}),
+            dsl.Q("exists", field="pids.oai.identifier"),
+            dsl.Q("term", **{"access.record": "public"}),
         ]

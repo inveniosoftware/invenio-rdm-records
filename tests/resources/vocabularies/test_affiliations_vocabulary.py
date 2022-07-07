@@ -18,7 +18,9 @@ def affiliations_service():
 
 
 @pytest.fixture()
-def example_affiliation(app, db, es_clear, superuser_identity, affiliations_service):
+def example_affiliation(
+    app, db, search_clear, superuser_identity, affiliations_service
+):
     """Example affiliation."""
     data = {
         "acronym": "TEST",

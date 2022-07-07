@@ -39,7 +39,7 @@ from invenio_records_resources.resources.records.resource import (
     request_search_args,
     request_view_args,
 )
-from invenio_records_resources.resources.records.utils import es_preference
+from invenio_records_resources.resources.records.utils import search_preference
 from werkzeug.utils import secure_filename
 
 from .serializers import (
@@ -170,7 +170,7 @@ class RDMRecordResource(RecordResource):
             identity=g.identity,
             community_id=resource_requestctx.view_args["pid_value"],
             params=resource_requestctx.args,
-            es_preference=es_preference(),
+            search_preference=search_preference(),
         )
         return hits.to_dict(), 200
 

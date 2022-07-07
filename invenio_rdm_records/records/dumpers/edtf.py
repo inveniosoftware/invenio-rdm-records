@@ -5,7 +5,7 @@
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
 
-"""Elasticsearch dumpers for ETDF dates."""
+"""Search dumpers for ETDF dates."""
 
 import calendar
 
@@ -13,7 +13,7 @@ from arrow import Arrow
 from edtf import parse_edtf
 from edtf.parser.edtf_exceptions import EDTFParseException
 from invenio_records.dictutils import dict_lookup, parse_lookup_key
-from invenio_records.dumpers import ElasticsearchDumperExt
+from invenio_records.dumpers import SearchDumperExt
 from pytz import utc
 
 
@@ -23,8 +23,8 @@ def _format_date(date):
     return arrow.date().isoformat()
 
 
-class EDTFDumperExt(ElasticsearchDumperExt):
-    """Elasticsearch dumper extension for EDTF dates support.
+class EDTFDumperExt(SearchDumperExt):
+    """Search dumper extension for EDTF dates support.
 
     It parses the value (i.e. the EDTF level 0 string) of the specified
     field in the document and adds a dictionary holding the values
@@ -72,8 +72,8 @@ class EDTFDumperExt(ElasticsearchDumperExt):
             return data
 
 
-class EDTFListDumperExt(ElasticsearchDumperExt):
-    """Elasticsearch dumper extension for support of EDTF date lists.
+class EDTFListDumperExt(SearchDumperExt):
+    """Search dumper extension for support of EDTF date lists.
 
     It iterates over the items at the specified field in the
     document and adds dictionaries holding the values

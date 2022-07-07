@@ -12,7 +12,7 @@ from invenio_communities.records.records.systemfields import CommunitiesField
 from invenio_drafts_resources.records import Draft, Record
 from invenio_drafts_resources.records.api import ParentRecord as ParentRecordBase
 from invenio_pidstore.models import PIDStatus
-from invenio_records.dumpers import ElasticsearchDumper
+from invenio_records.dumpers import SearchDumper
 from invenio_records.dumpers.relations import RelationDumperExt
 from invenio_records.systemfields import ConstantField, DictField, ModelField
 from invenio_records.systemfields.relations import MultiRelationsField
@@ -50,7 +50,7 @@ class RDMParent(ParentRecordBase):
     # Configuration
     model_cls = models.RDMParentMetadata
 
-    dumper = ElasticsearchDumper(
+    dumper = SearchDumper(
         extensions=[
             GrantTokensDumperExt("access.grant_tokens"),
         ]
@@ -80,7 +80,7 @@ class CommonFieldsMixin:
 
     schema = ConstantField("$schema", "local://records/record-v5.0.0.json")
 
-    dumper = ElasticsearchDumper(
+    dumper = SearchDumper(
         extensions=[
             EDTFDumperExt("metadata.publication_date"),
             EDTFListDumperExt("metadata.dates", "date"),

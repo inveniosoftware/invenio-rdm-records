@@ -18,7 +18,7 @@ def names_service():
 
 
 @pytest.fixture()
-def example_name(app, db, es_clear, superuser_identity, names_service):
+def example_name(app, db, search_clear, superuser_identity, names_service):
     """Example name."""
     data = {
         "name": "Doe, John",

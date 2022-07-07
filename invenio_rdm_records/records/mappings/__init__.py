@@ -6,13 +6,13 @@
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
 
-"""Elasticsearch mappings for InvenioRDM records and drafts.
+"""Search mappings for InvenioRDM records and drafts.
 
-The mappings must be identical for both drafts/records and Elasticsearch
-v6/v7. Thus for one JSONSchema version four mappings exists, e.g. for v1.0.0:
+The mappings must be identical for both drafts/records and search mappings.
+Thus for one JSONSchema version four mappings exists, e.g. for v1.0.0:
 
-- ``v6/rdmrecords/drafts/draft-v1.0.0.json``
-- ``v6/rdmrecords/records/record-v1.0.0.json``
+- ``os-v1/rdmrecords/drafts/draft-v1.0.0.json``
+- ``os-v1/rdmrecords/records/record-v1.0.0.json``
 - ``v7/rdmrecords/drafts/draft-v1.0.0.json``
 - ``v7/rdmrecords/records/record-v1.0.0.json``
 
@@ -47,5 +47,5 @@ Example of v7 mapping:
         }
     }
 
-The difference is due to the ``doctype`` being removed from Elasticsearch v7.
+The difference is due to the ``doctype`` being removed from Search v7.
 """
