@@ -24,7 +24,12 @@ from invenio_drafts_resources.resources import RecordResourceConfig
 from invenio_records.systemfields.relations import InvalidRelationValue
 from invenio_records_resources.resources.files import FileResourceConfig
 
-from ..services.errors import ReviewExistsError, ReviewNotFoundError, ReviewStateError
+from ..services.errors import (
+    ReviewExistsError,
+    ReviewInconsistentAccessRestrictions,
+    ReviewNotFoundError,
+    ReviewStateError,
+)
 from .args import RDMSearchRequestArgsSchema
 from .serializers import (
     CSLJSONSerializer,
@@ -121,6 +126,12 @@ class RDMRecordResourceConfig(RecordResourceConfig):
             )
         ),
         InvalidRelationValue: create_error_handler(
+            lambda exc: HTTPJSONException(
+                code=400,
+                description=exc.args[0],
+            )
+        ),
+        ReviewInconsistentAccessRestrictions: create_error_handler(
             lambda exc: HTTPJSONException(
                 code=400,
                 description=exc.args[0],
