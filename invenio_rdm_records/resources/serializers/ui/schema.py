@@ -15,6 +15,7 @@ from functools import partial
 from flask import current_app
 from flask_babelex import get_locale
 from flask_resources import BaseObjectSchema
+from invenio_records_resources.services.custom_fields import CustomFieldsSchemaUI
 from invenio_vocabularies.contrib.awards.serializer import AwardL10NItemSchema
 from invenio_vocabularies.contrib.funders.serializer import FunderL10NItemSchema
 from invenio_vocabularies.resources import L10NString, VocabularyL10Schema
@@ -159,6 +160,12 @@ class UIRecordSchema(BaseObjectSchema):
 
     additional_titles = fields.List(
         fields.Nested(AdditionalTitlesSchema), attribute="metadata.additional_titles"
+    )
+
+    # Custom fields
+    # TODO: take into account vocabularies and localization of titles
+    custom = fields.Nested(
+        partial(CustomFieldsSchemaUI, config_var="RDM_RECORDS_CUSTOM_FIELDS")
     )
 
     access_status = AccessStatusField(attribute="access")
