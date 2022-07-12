@@ -7,25 +7,37 @@
 
 """Custom Fields sub service for InvenioRDM."""
 
+from flask import current_app
 from elasticsearch.exceptions import RequestError
-from invenio_drafts_resources.services.records import RecordService
+from invenio_drafts_resources.services.records import RecordService, RecordServiceConfig
 
-from invenio_rdm_records.proxies import current_custom_fields_registry as cf_registry
+from .schema import CustomFieldsSchema
+
+ # TODO: move to records-resources so communites can use it.
+
+class CustomFieldsServiceConfig(RecordServiceConfig):
+    """Configuration for the Custom Fields service."""
+    schema = CustomFieldsSchema
+    schema_parent = None
 
 
 class CustomFieldsService(RecordService):
     """Custom Fields service."""
 
+
     def create(self, fields_name):
         """Create custom fields."""
 
         fields = []
+        available_fields = current_app.config.get(
+            "RDM_RECORDS_CUSTOM_FIELDS", {}
+        )
 
         if fields_name:
             for field_name in fields_name:
-                fields.append(cf_registry.get(field_name))
+                fields.append(available_fields.get(field_name))
         else:
-            fields = cf_registry.all().values()
+            fields = available_fields.values()
 
         # this means we do not have to choose a write index
         # we update only the latest mapping/alias

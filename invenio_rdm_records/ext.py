@@ -25,7 +25,6 @@ from invenio_rdm_records.oaiserver.services.config import OAIPMHServerServiceCon
 from invenio_rdm_records.oaiserver.services.services import OAIPMHServerService
 
 from . import config
-from .custom_fields import CustomFieldsRegistry
 from .resources import (
     IIIFResource,
     IIIFResourceConfig,
@@ -45,10 +44,12 @@ from .services import (
     RDMRecordServiceConfig,
     SecretLinkService,
 )
-from .services.custom_fields import CustomFieldsService
+from .services.custom_fields import (
+    CustomFieldsService,
+    CustomFieldsServiceConfig
+)
 from .services.pids import PIDManager, PIDsService
 from .services.review.service import ReviewService
-from .services.schemas.metadata_extensions import MetadataExtensions
 
 
 def verify_token():
@@ -90,13 +91,8 @@ class InvenioRDMRecords(object):
     def init_app(self, app):
         """Flask application initialization."""
         self.init_config(app)
-        self.metadata_extensions = MetadataExtensions(
-            app.config["RDM_RECORDS_METADATA_NAMESPACES"],
-            app.config["RDM_RECORDS_METADATA_EXTENSIONS"],
-        )
         self.init_services(app)
         self.init_resource(app)
-        self.init_registries(app)
         app.before_request(verify_token)
         app.extensions["invenio-rdm-records"] = self
         # Load flask IIIF
@@ -157,6 +153,7 @@ class InvenioRDMRecords(object):
             file = RDMFileRecordServiceConfig.build(app)
             file_draft = RDMFileDraftServiceConfig.build(app)
             oaipmh_server = OAIPMHServerServiceConfig
+            custom_service = CustomFieldsServiceConfig
 
         return ServiceConfigs
 
@@ -172,7 +169,7 @@ class InvenioRDMRecords(object):
             secret_links_service=SecretLinkService(service_configs.record),
             pids_service=PIDsService(service_configs.record, PIDManager),
             review_service=ReviewService(service_configs.record),
-            custom_fields_service=CustomFieldsService(service_configs.record),
+            custom_fields_service=CustomFieldsService(service_configs.custom_service),
         )
         self.iiif_service = IIIFService(
             records_service=self.records_service, config=None
@@ -215,14 +212,6 @@ class InvenioRDMRecords(object):
             service=self.iiif_service,
             config=IIIFResourceConfig,
         )
-
-    def init_registries(self, app):
-        """Initialize registries."""
-        self.custom_fields_registry = CustomFieldsRegistry()
-        for field_key, field_type in app.config.get(
-            "RDM_RECORDS_CUSTOM_FIELDS", {}
-        ).items():
-            self.custom_fields_registry.register(field_key, field_type)
 
     def fix_datacite_configs(self, app):
         """Make sure that the DataCite config items are strings."""

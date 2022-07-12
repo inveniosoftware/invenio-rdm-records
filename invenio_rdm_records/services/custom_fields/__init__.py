@@ -7,13 +7,10 @@
 
 """Custom Fields sub service for InvenioRDM."""
 
-# TODO: This should be a subservice of the main service.
-# to be able to access record_cls without hardcoding it.
-# - Should the `custom_fields` root package be inside the service?
-# - What about the registry?
 
-from .service import CustomFieldsService
+from .service import CustomFieldsService, CustomFieldsServiceConfig
 
 __all__ = (
     "CustomFieldsService",
+    "CustomFieldsServiceConfig"
 )

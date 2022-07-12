@@ -17,6 +17,7 @@ from marshmallow import EXCLUDE, ValidationError, fields, post_dump
 from marshmallow_utils.fields import NestedAttribute, SanitizedUnicode
 from marshmallow_utils.permissions import FieldPermissionsMixin
 
+from ..custom_fields.schema import CustomFieldsSchema
 from .access import AccessSchema
 from .files import FilesSchema
 from .metadata import MetadataSchema
@@ -53,8 +54,9 @@ class RDMRecordSchema(RecordSchema, FieldPermissionsMixin):
         values=fields.Nested(PIDSchema),
     )
     metadata = NestedAttribute(MetadataSchema)
-    # TODO: change this to `custom` and change the jsonschema too
-    custom = fields.Method("dump_custom_fields", "load_custom_fields")
+    # FIXME: with NestedAttribute it does not work
+    # does not call inned dump/_serialize
+    custom = fields.Nested(CustomFieldsSchema)
     # tombstone
     # provenance
     access = NestedAttribute(AccessSchema)
@@ -67,28 +69,7 @@ class RDMRecordSchema(RecordSchema, FieldPermissionsMixin):
     status = fields.String(dump_only=True)
 
     # stats = NestedAttribute(StatsSchema, dump_only=True)
-    # relations = NestedAttribute(RelationsSchema, dump_only=True)
     # schema_version = fields.Interger(dump_only=True)
-
-    def dump_custom_fields(self, obj):
-        """Dumps the extensions value.
-
-        :params obj: invenio_records_files.api.Record instance
-        """
-        from invenio_rdm_records.proxies import current_custom_fields_registry
-
-        CustomFieldsSchema = current_custom_fields_registry.to_schema()
-        return CustomFieldsSchema().dump(obj.get("custom"))
-
-    def load_custom_fields(self, value):
-        """Loads the 'extensions' field.
-
-        :params value: content of the input's 'extensions' field
-        """
-        from invenio_rdm_records.proxies import current_custom_fields_registry
-
-        CustomFieldsSchema = current_custom_fields_registry.to_schema()
-        return CustomFieldsSchema().load(value)
 
     @post_dump
     def default_nested(self, data, many, **kwargs):
@@ -103,6 +84,8 @@ class RDMRecordSchema(RecordSchema, FieldPermissionsMixin):
             data["metadata"] = {}
         if not data.get("pids"):
             data["pids"] = {}
+        # if not data.get("custom"):
+        #     data["custom"] = {}
 
         return data
 

@@ -7,8 +7,11 @@
 
 """Custom Fields for InvenioRDM."""
 
-from .registry import CustomFieldsRegistry
+from .text import KeywordCF, TextCF
+from .vocabulary import VocabularyCF
 
 __all__ = (
-    "CustomFieldsRegistry",
+    "KeywordCF",
+    "TextCF",
+    "VocabularyCF",
 )

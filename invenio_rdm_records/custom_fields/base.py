@@ -27,5 +27,5 @@ class BaseCF(ABC):
 
     @abstractmethod
     def schema(self):
-        """Validate the custom field returning a marshmallow schema."""
+        """Marshmallow schema for vocabulary custom fields."""
         pass
