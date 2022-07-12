@@ -18,7 +18,6 @@ from flask_principal import identity_loaded
 from invenio_records_resources.resources.files import FileResource
 from invenio_records_resources.services.custom_fields import (
     CustomFieldsService,
-    CustomFieldsServiceConfig
 )
 from invenio_records_resources.services import FileService
 from itsdangerous import SignatureExpired
@@ -48,6 +47,7 @@ from .services import (
     RDMRecordServiceConfig,
     SecretLinkService,
 )
+from .services.custom_fields import CustomFieldsServiceConfig
 from .services.pids import PIDManager, PIDsService
 from .services.review.service import ReviewService
 
