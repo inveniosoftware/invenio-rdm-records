@@ -78,7 +78,7 @@ class RDMRecordSchema(RecordSchema, FieldPermissionsMixin):
         from invenio_rdm_records.proxies import current_custom_fields_registry
 
         CustomFieldsSchema = current_custom_fields_registry.to_schema()
-        return CustomFieldsSchema().dump(obj.get("custom", {"experiment": "default"}))
+        return CustomFieldsSchema().dump(obj.get("custom"))
 
     def load_custom_fields(self, value):
         """Loads the 'extensions' field.
