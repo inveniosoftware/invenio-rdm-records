@@ -95,11 +95,13 @@ class ReviewService(RecordService):
         record.parent.review = request_item._request
         uow.register(RecordCommitOp(record.parent))
 
+        # During dev only
         self._send_notification(
             CommunitySubmissionCreatedEvent,
-            request_item._request,
+            request_item,
             uow,
             community = request_item._request.receiver.resolve(),
+            record=record,
         )
 
         return request_item
@@ -210,36 +212,45 @@ class ReviewService(RecordService):
         return request_item
 
 
-    def _send_notification(self, type, request, uow, **kwargs):
+    def _send_notification(self, type, request_item, uow, **kwargs):
+        from invenio_access.permissions import system_identity
+        from invenio_users_resources.records.api import UserAggregate
+
+        request = request_item._request
 
         def create_trigger():
             created_by = request.created_by.resolve()
-            # should dump the user
-            return {
-                "email": created_by.email,
-            }
+            # User class does not have a dumps method
+            return UserAggregate.from_user(created_by).dumps()
 
         notification = Notification()
         notification.type = type.handling_key    
         notification.trigger = create_trigger()
+        recipients = []
 
-        if type == CommunitySubmissionCreatedEvent:
-            from invenio_communities.proxies import current_communities
-            from invenio_access.permissions import system_identity
-            community = kwargs.get("community")
-            # TODO: get curator members and dump
-            # members = Member.get_members(community.id)
-            # recipients = [m.dumps() for m in members]
-            recipients = [{
-                "email": "test@test.com"
-            }]
-            notification.data = {
-                "community": community.dumps(),
-                "record": {}
-            }
-            notification.recipients = recipients
+        community = kwargs.get("community")
+        record = kwargs.get("record")
+
+        notification.data.update({
+            "community": current_communities.service.read(identity=system_identity, id_=community.id).to_dict(),
+            "request": request_item.to_dict(),
+            # Probably want to dump via service schema, so it has all the links in it as well (if the record is needed at all?)
+            "record": record.dumps(),
+        })
 
         
+        # fetching members based on event (ideally would be defined in the policy as a callable and pass the uow and kwargs?)
+        # passing the notification would allow the callable to modify it, which is undesired
+        if type in [CommunitySubmissionCreatedEvent, CommunitySubmissionSubmittedEvent]:
+            members = Member.get_members(community.id)
+            # get owner, managers and curators. There should be an easier way
+            recipients = [
+                m.relations.user.dereference() for m in members
+                if m.user_id
+                and m.role in ["owner", "manager", "curator"] #
+            ]
+
+        notification.recipients = recipients
         if not notification.recipients:
             return
 
