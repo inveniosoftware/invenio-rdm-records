@@ -162,6 +162,7 @@ class UIRecordSchema(BaseObjectSchema):
     )
 
     # Custom fields
+    # TODO: take into account vocabularies and localization of titles
     custom = fields.Dict()
 
     access_status = AccessStatusField(attribute="access")
