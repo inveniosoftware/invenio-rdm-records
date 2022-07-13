@@ -36,7 +36,10 @@ from invenio_vocabularies.contrib.awards.api import Award
 from invenio_vocabularies.contrib.funders.api import Funder
 from invenio_vocabularies.contrib.subjects.api import Subject
 from invenio_vocabularies.records.api import Vocabulary
-from invenio_rdm_records.records.custom_fields import CustomFieldsRelation
+from invenio_rdm_records.records.custom_fields import (
+    CustomFieldsRelation,
+    MultiRelationsField,
+)
 
 from invenio_rdm_records.records.systemfields.draft_status import DraftStatus
 
@@ -92,7 +95,7 @@ class CommonFieldsMixin:
         ]
     )
 
-    relations = RelationsField(
+    relations = MultiRelationsField(
         creator_affiliations=PIDNestedListRelation(
             "metadata.creators",
             relation_field="affiliations",
