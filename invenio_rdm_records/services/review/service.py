@@ -31,7 +31,8 @@ from invenio_rdm_records.requests.decorators import request_next_link
 from ..errors import ReviewExistsError, ReviewNotFoundError, ReviewStateError
 
 from invenio_requests.notifications.proxies import current_notifications_manager
-from invenio_requests.notifications.models import Notification, CommunitySubmissionSubmittedEvent, CommunitySubmissionCreatedEvent
+from invenio_requests.notifications.models import Notification
+from invenio_requests.notifications.events import CommunitySubmissionSubmittedEvent, CommunitySubmissionCreatedEvent
 
 
 class ReviewService(RecordService):
@@ -238,6 +239,10 @@ class ReviewService(RecordService):
             "record": record.dumps(),
         })
 
+        # construct UI link of request review for use in template (there are request links for API but none for UI)
+        notification.data["request"]["links"].setdefault(
+            "self_html", f'{notification.data["community"]["links"]["self_html"]}/requests/{notification.data["request"]["id"]}',
+        )
         
         # fetching members based on event (ideally would be defined in the policy as a callable and pass the uow and kwargs?)
         # passing the notification would allow the callable to modify it, which is undesired
