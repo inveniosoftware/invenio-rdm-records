@@ -12,7 +12,6 @@ from invenio_records_resources.services.custom_fields import (
 )
 
 
-# FIXME: does not feel clean to create a class just for this
 class CustomFieldsServiceConfig(Schema):
     """Configuration for the Custom Fields service."""
 

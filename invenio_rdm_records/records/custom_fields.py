@@ -35,7 +35,6 @@ class CustomFieldsRelation(RelationsField):
 
         relations = {}
         for cf in cfs.values():
-            # FIXME: how to abstract this so relation_cls is not present in BaseCF
             if cf.relation_cls:
                 relations[cf.name] = cf.relation_cls(
                     f"custom.{cf.name}",
