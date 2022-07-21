@@ -81,13 +81,13 @@
     datacite: RelatedPerson
   title:
     en: Related person
-    de: Verwandte Personen
+    de: Verwandte Person
 - id: researcher
   props:
     datacite: Researcher
   title:
     en: Researcher
-    de: WissenschafterIn
+    de: WissenschaftlerIn
 - id: researchgroup
   props:
     datacite: ResearchGroup
