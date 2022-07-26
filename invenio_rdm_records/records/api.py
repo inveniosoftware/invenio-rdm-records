@@ -15,6 +15,7 @@ from invenio_pidstore.models import PIDStatus
 from invenio_records.dumpers import ElasticsearchDumper
 from invenio_records.dumpers.relations import RelationDumperExt
 from invenio_records.systemfields import ConstantField, DictField, ModelField
+from invenio_records.systemfields.relations import MultiRelationsField
 from invenio_records_resources.records.api import FileRecord
 from invenio_records_resources.records.systemfields import (
     FilesField,
@@ -31,9 +32,9 @@ from invenio_vocabularies.contrib.awards.api import Award
 from invenio_vocabularies.contrib.funders.api import Funder
 from invenio_vocabularies.contrib.subjects.api import Subject
 from invenio_vocabularies.records.api import Vocabulary
+from invenio_vocabularies.records.systemfields import CustomFieldsRelation
 
 from . import models
-from .custom_fields import CustomFieldsRelation, MultiRelationsField
 from .dumpers import EDTFDumperExt, EDTFListDumperExt, GrantTokensDumperExt
 from .systemfields import HasDraftCheckField, ParentRecordAccessField, RecordAccessField
 from .systemfields.draft_status import DraftStatus
