@@ -39,3 +39,13 @@ def extra_entry_points():
 def create_app(instance_path, entry_points):
     """Application factory fixture."""
     return _create_app
+
+
+@pytest.fixture(scope="module")
+def cli_runner(base_app):
+    """Create a CLI runner for testing a CLI command."""
+
+    def cli_invoke(command, *args, input=None):
+        return base_app.test_cli_runner().invoke(command, args, input=input)
+
+    return cli_invoke

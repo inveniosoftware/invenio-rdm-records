@@ -65,6 +65,7 @@ target/
 # Editors
 *.sublime-*
 .vscode/
+*.DS_Store
 
 # pipenv
 # This project is a library and not an application.
