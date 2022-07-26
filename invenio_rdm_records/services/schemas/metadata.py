@@ -18,6 +18,9 @@ from invenio_vocabularies.contrib.affiliations.schema import AffiliationRelation
 from invenio_vocabularies.contrib.awards.schema import AwardRelationSchema
 from invenio_vocabularies.contrib.funders.schema import FunderRelationSchema
 from invenio_vocabularies.contrib.subjects.schema import SubjectRelationSchema
+from invenio_vocabularies.services.schema import (
+    VocabularyRelationSchema as VocabularySchema,
+)
 from marshmallow import (
     Schema,
     ValidationError,
@@ -139,13 +142,6 @@ class PersonOrOrganizationSchema(Schema):
                 del data["given_name"]
 
         return data
-
-
-class VocabularySchema(Schema):
-    """Invenio Vocabulary schema."""
-
-    id = SanitizedUnicode(required=True)
-    title = fields.Dict(dump_only=True)
 
 
 class CreatorSchema(Schema):
