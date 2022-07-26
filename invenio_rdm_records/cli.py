@@ -282,10 +282,10 @@ def rebuild_index():
 
 # CUSTOM FIELDS
 
+
 @click.group()
 def custom_fields():
     """InvenioRDM custom fields commands."""
-
 
 
 @custom_fields.command()

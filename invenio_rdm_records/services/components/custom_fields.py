@@ -33,8 +33,4 @@ class CustomFieldsComponent(ServiceComponent):
 
     def new_version(self, identity, draft=None, record=None, **kwargs):
         """Update draft metadata."""
-        draft["custom"] = copy(record.get("custom"), {})
-        # Remove fields that should not be copied to the new version
-        # (publication date and version)
-        for f in self.new_version_skip_fields:
-            draft.metadata.pop(f, None)
+        draft["custom"] = copy(record.get("custom", {}))

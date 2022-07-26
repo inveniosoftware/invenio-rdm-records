@@ -59,7 +59,7 @@ class RDMRecordSchema(RecordSchema, FieldPermissionsMixin):
     # FIXME: with NestedAttribute it does not work
     # does not call inner dump/_serialize
     custom = fields.Nested(
-        partial(CustomFieldsSchema, config_var = "RDM_RECORDS_CUSTOM_FIELDS")
+        partial(CustomFieldsSchema, config_var="RDM_RECORDS_CUSTOM_FIELDS")
     )
     # tombstone
     # provenance

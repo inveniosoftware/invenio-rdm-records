@@ -12,14 +12,13 @@ a record.
 """
 
 from flask import current_app
-from werkzeug.local import LocalProxy
-
 from invenio_records.systemfields.relations import (
-    RelationsField,
     RelationBase,
+    RelationsField,
     RelationsMapping,
 )
 from invenio_vocabularies.records.api import Vocabulary
+from werkzeug.local import LocalProxy
 
 
 class CustomFieldsRelation(RelationsField):
