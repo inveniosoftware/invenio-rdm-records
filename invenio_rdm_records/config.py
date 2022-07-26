@@ -340,9 +340,8 @@ in DataCite XML format.
 
 
 """Custom fields."""
-
-RDM_RECORDS_CUSTOM_FIELDS = {}
-"""RDM custom fields definition.
+RDM_CUSTOM_FIELDS = {}
+"""Records custom fields definition.
 
 Of the shape:
 
@@ -366,8 +365,76 @@ For example:
     }
 """
 
-RDM_RECORDS_CUSTOM_FIELDS_UI = {}
-"""Custom fields configuration for the UI.
+
+RDM_CUSTOM_FIELDS_UI = {}
+"""Upload form custom fields UI configuration.
+
+Of the shape:
+
+.. code-block:: python
+
+    [{
+        section: <section_name>,
+        fields: [
+            {
+                field="path-to-field",  # this should be validated against the defined fields in `RDM_CUSTOM_FIELDS`
+                ui_widget="<ui-widget-name>",  # predefined or user defined ui widget
+                label="<ui-label-to-display>",
+                placeholder="<placeholder-passed-to-widget>",
+                icon="<icon-passed-to-widget>",
+                description="<description-passed-to-widget>",
+            },
+        ],
+
+        # ...
+    }]
+
+For example:
+
+.. code-block:: python
+
+    [{
+        "section": "CERN Experiment"
+        "fields" : [{
+            field="experiment",  # this should be validated against the defined fields in `RDM_CUSTOM_FIELDS`
+            ui_widget="CustomTextField",  # user defined widget in my-site
+            label="Experiment",
+            placeholder="Type an experiment...",
+            icon="pencil",
+            description="You should fill this field with one of the experiments e.g LHC, ATLAS etc.",
+        },
+        ...
+    }]
+"""
+
+
+COMMUNITIES_CUSTOM_FIELDS = {}
+"""Communities custom fields definition.
+
+Of the shape:
+
+.. code-block:: python
+
+    {
+        '<field1>': <custom-field-class-type>,
+        # ...
+        '<fieldN>': '<custom-field-class-type>'
+    }
+
+For example:
+
+.. code-block:: python
+
+    {
+        'experiment': {
+            'type': TextCF(name="experiment"),
+        },
+        ...
+    }
+"""
+
+COMMUNITIES_CUSTOM_FIELDS_UI = {}
+"""Communities custom fields UI configuration.
 
 Of the shape:
 

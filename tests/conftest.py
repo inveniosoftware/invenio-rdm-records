@@ -54,6 +54,7 @@ from invenio_cache import current_cache
 from invenio_communities import current_communities
 from invenio_communities.communities.records.api import Community
 from invenio_records_resources.proxies import current_service_registry
+from invenio_records_resources.services.custom_fields import TextCF
 from invenio_vocabularies.contrib.affiliations.api import Affiliation
 from invenio_vocabularies.contrib.awards.api import Award
 from invenio_vocabularies.contrib.funders.api import Funder
@@ -296,6 +297,14 @@ def app_config(app_config):
             label=_("OAI ID"),
         ),
     ]
+
+    # Custom fields
+    app_config["RDM_CUSTOM_FIELDS"] = {
+        "myfield": TextCF(name="myfield", use_as_filter=True),
+    }
+    app_config["COMMUNITIES_CUSTOM_FIELDS"] = {
+        "mycommunityfield": TextCF(name="mycommunityfield", use_as_filter=True),
+    }
 
     return app_config
 
