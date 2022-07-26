@@ -16,10 +16,8 @@ from flask_babelex import _
 from flask_iiif import IIIF
 from flask_principal import identity_loaded
 from invenio_records_resources.resources.files import FileResource
-from invenio_records_resources.services.custom_fields import (
-    CustomFieldsService,
-)
 from invenio_records_resources.services import FileService
+from invenio_records_resources.services.custom_fields import CustomFieldsService
 from itsdangerous import SignatureExpired
 
 from invenio_rdm_records.oaiserver.resources.config import OAIPMHServerResourceConfig

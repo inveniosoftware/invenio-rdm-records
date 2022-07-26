@@ -52,7 +52,7 @@ class RDMRecordService(RecordService):
         secret_links_service=None,
         pids_service=None,
         review_service=None,
-        custom_fields_service=None
+        custom_fields_service=None,
     ):
         """Constructor for RecordService."""
         super().__init__(config, files_service, draft_files_service)

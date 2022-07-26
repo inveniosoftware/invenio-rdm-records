@@ -27,78 +27,94 @@
     "resource_type": {
       "id": "publication-article"
     },
-    "creators": [{
-      "person_or_org": {
-        "name": "Nielsen, Lars Holm",
-        "type": "personal",
-        "given_name": "Lars Holm",
-        "family_name": "Nielsen",
-        "identifiers": [{
-          "scheme": "orcid",
-          "identifier": "0000-0001-8135-3489"
-        }]
-      },
-      "affiliations": [{"id": "cern"}]
-    }],
-    "title": "InvenioRDM",
-    "additional_titles": [{
-      "title": "a research data management platform",
-      "type": {
-        "id": "alternative-title"
-    },
-      "lang": {
-        "id": "eng"
+    "creators": [
+      {
+        "person_or_org": {
+          "name": "Nielsen, Lars Holm",
+          "type": "personal",
+          "given_name": "Lars Holm",
+          "family_name": "Nielsen",
+          "identifiers": [
+            {
+              "scheme": "orcid",
+              "identifier": "0000-0001-8135-3489"
+            }
+          ]
+        },
+        "affiliations": [{ "id": "cern" }]
       }
-    }],
+    ],
+    "title": "InvenioRDM",
+    "additional_titles": [
+      {
+        "title": "a research data management platform",
+        "type": {
+          "id": "alternative-title"
+        },
+        "lang": {
+          "id": "eng"
+        }
+      }
+    ],
     "publisher": "InvenioRDM",
     "publication_date": "2018/2020-09",
-    "subjects": [{"id": "A-D000007"}, {"subject": "custom"}],
-    "contributors": [{
-      "person_or_org": {
-        "name": "Nielsen, Lars Holm",
-        "type": "personal",
-        "given_name": "Lars Holm",
-        "family_name": "Nielsen",
-        "identifiers": [{
-          "scheme": "orcid",
-          "identifier": "0000-0001-8135-3489"
-        }]
-      },
-      "role": {"id": "other"},
-      "affiliations": [{"id": "cern"}, {"name": "custom"}]
-    }],
-    "dates": [{
-      "date": "1939/1945",
-      "type": {"id": "other"},
-      "description": "A date"
-    }],
-    "languages": [{
-      "id": "dan"
-    }, {
-      "id": "eng"
-    }],
-    "identifiers": [{
-      "identifier": "1924MNRAS..84..308E",
-      "scheme": "bibcode"
-    }],
-    "related_identifiers": [{
-      "identifier": "10.1234/foo.bar",
-      "scheme": "doi",
-      "relation_type": {"id": "cites"},
-      "resource_type": {
-        "id": "dataset"
+    "subjects": [{ "id": "A-D000007" }, { "subject": "custom" }],
+    "contributors": [
+      {
+        "person_or_org": {
+          "name": "Nielsen, Lars Holm",
+          "type": "personal",
+          "given_name": "Lars Holm",
+          "family_name": "Nielsen",
+          "identifiers": [
+            {
+              "scheme": "orcid",
+              "identifier": "0000-0001-8135-3489"
+            }
+          ]
+        },
+        "role": { "id": "other" },
+        "affiliations": [{ "id": "cern" }, { "name": "custom" }]
       }
-    }],
-    "sizes": [
-      "11 pages"
     ],
-    "formats": [
-      "application/pdf"
+    "dates": [
+      {
+        "date": "1939/1945",
+        "type": { "id": "other" },
+        "description": "A date"
+      }
     ],
+    "languages": [
+      {
+        "id": "dan"
+      },
+      {
+        "id": "eng"
+      }
+    ],
+    "identifiers": [
+      {
+        "identifier": "1924MNRAS..84..308E",
+        "scheme": "bibcode"
+      }
+    ],
+    "related_identifiers": [
+      {
+        "identifier": "10.1234/foo.bar",
+        "scheme": "doi",
+        "relation_type": { "id": "cites" },
+        "resource_type": {
+          "id": "dataset"
+        }
+      }
+    ],
+    "sizes": ["11 pages"],
+    "formats": ["application/pdf"],
     "version": "v1.0",
-    "rights": [{
-        "title": {"en": "A custom license" },
-        "description": {"en": "A description."},
+    "rights": [
+      {
+        "title": { "en": "A custom license" },
+        "description": { "en": "A description." },
         "link": "https://customlicense.org/licenses/by/4.0/"
       },
       {
@@ -106,51 +122,54 @@
       }
     ],
     "description": "Test",
-    "additional_descriptions": [{
-      "description": "Bla bla bla",
-      "type": { "id" : "methods" },
-      "lang": {
-        "id": "eng"
+    "additional_descriptions": [
+      {
+        "description": "Bla bla bla",
+        "type": { "id": "methods" },
+        "lang": {
+          "id": "eng"
+        }
       }
-    }],
+    ],
     "locations": {
-      "features": [{
-        "geometry": {
-          "type": "Point",
-          "coordinates": [6.05, 46.23333]
-        },
-        "identifiers": [{
-          "scheme": "geonames",
-          "identifier": "2661235"
-        }, {
-          "scheme": "tgn",
-          "identifier": "http://vocab.getty.edu/tgn/8703679"
-        }],
-        "place": "CERN",
-        "description": "Invenio birth place."
-      }]
+      "features": [
+        {
+          "geometry": {
+            "type": "Point",
+            "coordinates": [6.05, 46.23333]
+          },
+          "identifiers": [
+            {
+              "scheme": "geonames",
+              "identifier": "2661235"
+            },
+            {
+              "scheme": "tgn",
+              "identifier": "http://vocab.getty.edu/tgn/8703679"
+            }
+          ],
+          "place": "CERN",
+          "description": "Invenio birth place."
+        }
+      ]
     },
-    "funding": [{
-      "funder": {
-        "id": "00k4n6c32"
-      },
-      "award": {
+    "funding": [
+      {
+        "funder": {
+          "id": "00k4n6c32"
+        },
+        "award": {
           "id": "00k4n6c32::755021"
+        }
       }
-    }],
-    "references": [{
-      "reference": "Nielsen et al,..",
-      "identifier": "101.234",
-      "scheme": "doi"
-    }]
-  },
-  "ext": {
-    "dwc": {
-      "collectionCode": "abc",
-      "collectionCode2": 1.1,
-      "collectionCode3": true,
-      "test": ["abc", 1, true]
-    }
+    ],
+    "references": [
+      {
+        "reference": "Nielsen et al,..",
+        "identifier": "101.234",
+        "scheme": "doi"
+      }
+    ]
   },
   "provenance": {
     "created_by": {
@@ -189,7 +208,5 @@
     }
   },
 
-  "notes": [
-    "Under investigation for copyright infringement."
-  ]
+  "notes": ["Under investigation for copyright infringement."]
 }
