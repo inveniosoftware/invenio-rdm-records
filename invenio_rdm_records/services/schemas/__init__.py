@@ -58,9 +58,7 @@ class RDMRecordSchema(RecordSchema, FieldPermissionsMixin):
     metadata = NestedAttribute(MetadataSchema)
     # FIXME: with NestedAttribute it does not work
     # does not call inner dump/_serialize
-    custom = fields.Nested(
-        partial(CustomFieldsSchema, config_var="RDM_RECORDS_CUSTOM_FIELDS")
-    )
+    custom = fields.Nested(partial(CustomFieldsSchema, fields_var="RDM_CUSTOM_FIELDS"))
     # tombstone
     # provenance
     access = NestedAttribute(AccessSchema)
