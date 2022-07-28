@@ -165,7 +165,7 @@ class UIRecordSchema(BaseObjectSchema):
     # Custom fields
     # TODO: take into account vocabularies and localization of titles
     custom = fields.Nested(
-        partial(CustomFieldsSchemaUI, config_var="RDM_RECORDS_CUSTOM_FIELDS")
+        partial(CustomFieldsSchemaUI, fields_var="RDM_CUSTOM_FIELDS")
     )
 
     access_status = AccessStatusField(attribute="access")
