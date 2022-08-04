@@ -1,36 +1,17 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2020-2021 CERN.
+# Copyright (C) 2022 CERN.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
 
-"""RDM service component for metadata."""
+"""RDM service component for custom fields."""
 
-from copy import copy
-
-from invenio_drafts_resources.services.records.components import ServiceComponent
+from .metadata import MetadataComponent
 
 
-class CustomFieldsComponent(ServiceComponent):
+class CustomFieldsComponent(MetadataComponent):
     """Service component for custom fields."""
 
-    def create(self, identity, data=None, record=None, **kwargs):
-        """Inject parsed metadata to the record."""
-        record["custom"] = data.get("custom", {})
-
-    def update_draft(self, identity, data=None, record=None, **kwargs):
-        """Inject parsed metadata to the record."""
-        record["custom"] = data.get("custom", {})
-
-    def publish(self, identity, draft=None, record=None, **kwargs):
-        """Update draft metadata."""
-        record["custom"] = draft.get("custom", {})
-
-    def edit(self, identity, draft=None, record=None, **kwargs):
-        """Update draft metadata."""
-        draft["custom"] = record.get("custom", {})
-
-    def new_version(self, identity, draft=None, record=None, **kwargs):
-        """Update draft metadata."""
-        draft["custom"] = copy(record.get("custom", {}))
+    field = "custom"
+    new_version_skip_fields = []
