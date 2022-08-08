@@ -164,7 +164,7 @@ class UIRecordSchema(BaseObjectSchema):
 
     # Custom fields
     # TODO: take into account vocabularies and localization of titles
-    custom = fields.Nested(
+    custom_fields = fields.Nested(
         partial(CustomFieldsSchemaUI, fields_var="RDM_CUSTOM_FIELDS")
     )
 
