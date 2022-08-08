@@ -346,7 +346,7 @@
         }
       }
     },
-    "custom": {
+    "custom_fields": {
       "type": "object",
       "description": "Configured additional metadata"
     },

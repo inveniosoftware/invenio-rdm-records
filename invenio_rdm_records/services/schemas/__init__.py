@@ -58,7 +58,9 @@ class RDMRecordSchema(RecordSchema, FieldPermissionsMixin):
     metadata = NestedAttribute(MetadataSchema)
     # FIXME: with NestedAttribute it does not work
     # does not call inner dump/_serialize
-    custom = fields.Nested(partial(CustomFieldsSchema, fields_var="RDM_CUSTOM_FIELDS"))
+    custom_fields = NestedAttribute(
+        partial(CustomFieldsSchema, fields_var="RDM_CUSTOM_FIELDS")
+    )
     # tombstone
     # provenance
     access = NestedAttribute(AccessSchema)
@@ -86,8 +88,8 @@ class RDMRecordSchema(RecordSchema, FieldPermissionsMixin):
             data["metadata"] = {}
         if not data.get("pids"):
             data["pids"] = {}
-        # if not data.get("custom"):
-        #     data["custom"] = {}
+        if not data.get("custom_fields"):
+            data["custom_fields"] = {}
 
         return data
 

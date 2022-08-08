@@ -139,7 +139,7 @@ def test_create_records_custom_fields(app, location, db, es_clear, cli_runner):
 
     record_mapping_field = list(RDMRecord.index.get_mapping().values())[0]["mappings"][
         "properties"
-    ]["custom"]
+    ]["custom_fields"]
     draft_mapping_field = list(RDMDraft.index.get_mapping().values())[0]["mappings"][
         "properties"
     ]["custom"]
@@ -168,7 +168,7 @@ def test_create_records_custom_fields(app, location, db, es_clear, cli_runner):
 
     community_mapping_field = list(Community.index.get_mapping().values())[0][
         "mappings"
-    ]["properties"]["custom"]
+    ]["properties"]["custom_fields"]
     expected_value = {
         "properties": {
             "mycommunityfield": {
