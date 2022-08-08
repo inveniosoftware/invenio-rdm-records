@@ -3,4 +3,3 @@
 -e git+https://github.com/inveniosoftware/invenio-communities.git@feature/custom-fields#egg=invenio-communities
 -e git+https://github.com/inveniosoftware/invenio-vocabularies.git@feature/custom-fields#egg=invenio-vocabularies
 -e git+https://github.com/inveniosoftware/invenio-records-resources.git@feature/custom-fields#egg=invenio-records-resources
--e git+https://github.com/inveniosoftware/pytest-invenio.git@feature/custom-fields#egg=pytest-invenio

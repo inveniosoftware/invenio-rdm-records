@@ -307,7 +307,7 @@ def _prepare_mapping(fields_names, available_fields):
 
     properties = {}
     for field in fields:
-        properties[f"custom.{field.name}"] = field.mapping
+        properties[f"custom_fields.{field.name}"] = field.mapping
 
     return properties
 
@@ -382,7 +382,7 @@ def custom_field_exists_in_records(field_name):
     draft_index = current_rdm_records.records_service.config.draft_cls.index
 
     # check if exists in all both records and draft indices
-    field_exists = _exists(f"custom.{field_name}", record_index) and _exists(
+    field_exists = _exists(f"custom_fields.{field_name}", record_index) and _exists(
         field_name, draft_index
     )
     if field_exists:
@@ -447,7 +447,7 @@ def custom_field_exists_in_communities(field_name):
     click.secho("Checking custom field...", fg="green")
     communities_index = current_communities.service.config.record_cls.index
 
-    field_exists = _exists(f"custom.{field_name}", communities_index)
+    field_exists = _exists(f"custom_fields.{field_name}", communities_index)
     if field_exists:
         click.secho(f"Field {field_name} exists", fg="green")
     else:
