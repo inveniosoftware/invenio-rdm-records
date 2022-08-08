@@ -218,6 +218,9 @@ class CommonFieldsMixin:
 
     pids = DictField("pids")
 
+    #: Custom fields system field.
+    custom_fields = DictField(clear_none=True, create_if_missing=True)
+
 
 #
 # Draft API

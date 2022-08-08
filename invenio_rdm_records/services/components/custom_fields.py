@@ -13,5 +13,5 @@ from .metadata import MetadataComponent
 class CustomFieldsComponent(MetadataComponent):
     """Service component for custom fields."""
 
-    field = "custom"
+    field = "custom_fields"
     new_version_skip_fields = []
