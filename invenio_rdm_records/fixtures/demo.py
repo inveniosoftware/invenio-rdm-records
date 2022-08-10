@@ -312,7 +312,7 @@ def create_fake_record():
         },
     }
 
-    return json.loads(json.dumps(data_to_use))
+    return data_to_use
 
 
 def create_fake_community():
@@ -343,3 +343,19 @@ def create_fake_comment():
         "payload": payload,
     }
     return comment
+
+
+def create_fake_oai_set():
+    """Create fake oai set as demo data."""
+
+    fake = Faker()
+
+    payload = {
+        "name": fake.sentence(nb_words=3, variable_nb_words=True),
+        "spec": fake.unique.slug(),
+        "search_pattern": fake.unique.slug(),
+        "description": fake.sentence(nb_words=50, variable_nb_words=True),
+
+    }
+
+    return payload
