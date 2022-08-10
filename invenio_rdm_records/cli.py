@@ -34,19 +34,20 @@ from invenio_users_resources.services.users.tasks import reindex_user
 from invenio_rdm_records.proxies import current_rdm_records, current_rdm_records_service
 
 from .fixtures import FixturesEngine
-from .fixtures.demo import create_fake_community, create_fake_record
+from .fixtures.demo import create_fake_community, create_fake_record, \
+    create_fake_oai_set
 from .fixtures.tasks import (
     create_demo_community,
     create_demo_inclusion_requests,
     create_demo_invitation_requests,
     create_demo_record,
-    get_authenticated_identity,
+    get_authenticated_identity, create_demo_oaiset,
 )
 
 COMMUNITY_OWNER_EMAIL = "community@demo.org"
 USER_EMAIL = "user@demo.org"
 HELP_MSG_USER = "User e-mail of an already existing user."
-
+ADMIN_EMAIL = "admin@inveniosoftware.org"
 
 def _get_or_create_user(email):
     user = current_datastore.get_user(email)
@@ -107,6 +108,36 @@ def records(user_email, n_records):
     for _ in range(n_records):
         fake_data = create_fake_record()
         create_demo_record.delay(user.id, fake_data, publish=True)
+
+    click.secho("Demo records task submitted...", fg="green")
+
+
+@demo.command("oai-sets")
+@click.option(
+    "-u",
+    "--user",
+    "user_email",
+    default=ADMIN_EMAIL,
+    show_default=True,
+    help=HELP_MSG_USER,
+)
+@click.option(
+    "-r",
+    "--records",
+    "n_records",
+    default=100,
+    show_default=True,
+    help="Number of fake oai sets to create",
+)
+@with_appcontext
+def oai_sets(user_email, n_records):
+    """Create fake records."""
+    user = _get_or_create_user(user_email)
+    click.secho("Creating demo oaipmh sets for {0}...".format(user), fg="green")
+
+    for _ in range(n_records):
+        fake_data = create_fake_oai_set()
+        create_demo_oaiset.delay(user.id, fake_data)
 
     click.secho("Demo records task submitted...", fg="green")
 

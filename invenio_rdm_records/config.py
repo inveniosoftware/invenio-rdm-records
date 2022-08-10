@@ -236,6 +236,37 @@ RDM_SEARCH_VERSIONING = {
 """Records versions search configuration (list of versions for a record)."""
 
 #
+# OAI-PMH Search configuration
+#
+RDM_OAI_PMH_FACETS = {}
+
+RDM_OAI_PMH_SORT_OPTIONS = {
+    "newest": dict(
+        title=_("Newest"),
+        fields=["-created"],
+    ),
+    "oldest": dict(
+        title=_("Oldest"),
+        fields=["created"],
+    ),
+    "title": dict(
+        title=_("Title"),
+        fields=["name"],
+    ),
+    "modified": dict(
+        title=_("Modified"),
+        fields=["updated"],
+    ),
+}
+"""Definitions of available OAI-PMH sort options. """
+
+RDM_OAI_PMH_SEARCH = {
+    "facets": [],
+    "sort": ["newest", "oldest", "title", "modified"],
+}
+"""OAI-PMH search configuration."""
+
+#
 # Persistent identifiers configuration
 #
 RDM_PERSISTENT_IDENTIFIER_PROVIDERS = [
