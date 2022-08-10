@@ -22,7 +22,7 @@ from invenio_records_resources.proxies import current_service_registry
 from invenio_requests import current_events_service, current_requests_service
 from invenio_requests.customizations import CommentEventType
 
-from ..proxies import current_rdm_records_service
+from ..proxies import current_rdm_records_service, current_oaipmh_server_service
 from ..requests import CommunitySubmission
 from ..services.errors import ReviewNotFoundError
 from .demo import create_fake_comment
@@ -54,6 +54,16 @@ def create_demo_record(user_id, data, publish=True):
     draft = service.create(data=data, identity=identity)
     if publish:
         service.publish(id_=draft.id, identity=identity)
+
+
+@shared_task
+def create_demo_oaiset(user_id, data):
+    """Create demo record."""
+    service = current_oaipmh_server_service
+    identity = get_authenticated_identity(user_id)
+    identity.provides.add(UserNeed(user_id))
+
+    set = service.create(data=data, identity=identity)
 
 
 @shared_task
