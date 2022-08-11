@@ -47,6 +47,36 @@ class PIDManager:
         if unknown_schemes:
             raise PIDSchemeNotSupportedError(unknown_schemes)
 
+    def _validate_identifiers(self, pids, errors):
+        """Validate and normalize identifiers."""
+        # TODO: Refactor to get it injected instead.
+        configured_identifiers = current_app.config["RDM_PERSISTENT_IDENTIFIERS"]
+
+        scheme_ids = []
+        for scheme, pids_attrs in pids.items():
+            id_ = pids_attrs.get("identifier")
+            if not id_:
+                continue
+
+            configured_identifier = configured_identifiers.get(scheme, {})
+            validator = configured_identifier.get("validator", lambda x: True)
+            normalizer = configured_identifier.get("normalizer", lambda x: x)
+            label = configured_identifier.get("label", scheme)
+
+            if not validator(id_):
+                errors.append(
+                    {
+                        "field": f"pids.{scheme}",
+                        "messages": [_("Invalid {scheme}").format(scheme=label)],
+                    }
+                )
+            else:
+                scheme_ids.append((scheme, normalizer(id_)))
+
+        # Modify outside of iteration - updates the pids globally
+        for scheme, id_ in scheme_ids:
+            pids[scheme]["identifier"] = id_
+
     def _validate_pids(self, pids, record, errors):
         """Validate an iterator of PIDs.
 
@@ -57,35 +87,6 @@ class PIDManager:
             success, val_errors = provider.validate(record=record, **pid)
             if not success:
                 errors.append({"field": f"pids.{scheme}", "messages": val_errors})
-
-    def _validate_identifiers(self, pids, errors):
-        """Validate and normalize identifiers."""
-        # TODO: Refactor to get it injected instead.
-        conf = current_app.config["RDM_PERSISTENT_IDENTIFIERS"]
-
-        identifiers = []
-        for scheme, pids_attrs in pids.items():
-            identifier = pids_attrs.get("identifier")
-
-            validator = conf.get(scheme, {}).get("validator", lambda x: True)
-            normalizer = conf.get(scheme, {}).get("normalizer")
-            label = conf.get(scheme, {}).get("label", scheme)
-
-            if identifier:
-                if not validator(identifier):
-                    errors.append(
-                        {
-                            "field": f"pids.{scheme}",
-                            "messages": [_("Invalid {scheme}").format(scheme=label)],
-                        }
-                    )
-                else:
-                    if normalizer is not None:
-                        identifiers.append((scheme, normalizer(identifier)))
-
-        # Modify outside of iteration - updates the pids globally
-        for scheme, id_ in identifiers:
-            pids[scheme]["identifier"] = id_
 
     def validate(self, pids, record, errors=None, raise_errors=False):
         """Validate PIDs."""

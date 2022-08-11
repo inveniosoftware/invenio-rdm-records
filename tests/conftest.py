@@ -521,6 +521,7 @@ def minimal_record():
         },
         "metadata": {
             "publication_date": "2020-06-01",
+            "publisher": "InvenioRDM",
             "resource_type": {"id": "image-photo"},
             "creators": [
                 {

@@ -343,7 +343,7 @@ class MetadataSchema(Schema):
     )
     title = SanitizedUnicode(required=True, validate=validate.Length(min=3))
     additional_titles = fields.List(fields.Nested(TitleSchema))
-    publisher = SanitizedUnicode()
+    publisher = SanitizedUnicode(required=True)
     publication_date = EDTFDateString(required=True)
     subjects = fields.List(fields.Nested(SubjectRelationSchema))
     contributors = fields.List(fields.Nested(ContributorSchema))

@@ -74,6 +74,7 @@ def test_dublincorejson_serializer_minimal(running_app, updated_minimal_record):
         "creators": ["Name", "Troy Inc."],
         "dates": ["2020-06-01"],
         "rights": ["info:eu-repo/semantics/openAccess"],
+        "publishers": ["InvenioRDM"],
     }
 
     serializer = DublinCoreJSONSerializer()
