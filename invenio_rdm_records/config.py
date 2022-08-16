@@ -339,34 +339,22 @@ in DataCite XML format.
 """
 
 
-"""Custom fields."""
-RDM_CUSTOM_FIELDS = {}
+RDM_CUSTOM_FIELDS = []
 """Records custom fields definition.
-
-Of the shape:
 
 .. code-block:: python
 
-    {
-        '<field1>': <custom-field-class-type>,
-        # ...
-        '<fieldN>': '<custom-field-class-type>'
-    }
+    [<custom-field-class-type>, <custom-field-class-type>, ...]
 
 For example:
 
 .. code-block:: python
 
-    {
-        'experiment': {
-            'type': TextCF(name="experiment"),
-        },
-        ...
-    }
+    [TextCF(name="experiment"), ...]
 """
 
 
-RDM_CUSTOM_FIELDS_UI = {}
+RDM_CUSTOM_FIELDS_UI = []
 """Upload form custom fields UI configuration.
 
 Of the shape:
@@ -377,12 +365,14 @@ Of the shape:
         section: <section_name>,
         fields: [
             {
-                field="path-to-field",  # this should be validated against the defined fields in `RDM_CUSTOM_FIELDS`
-                ui_widget="<ui-widget-name>",  # predefined or user defined ui widget
-                label="<ui-label-to-display>",
-                placeholder="<placeholder-passed-to-widget>",
-                icon="<icon-passed-to-widget>",
-                description="<description-passed-to-widget>",
+                field: "path-to-field",  # this should be validated against the defined fields in `RDM_CUSTOM_FIELDS`
+                ui_widget: "<ui-widget-name>",  # predefined or user defined ui widget
+                props: {
+                    label:"<ui-label-to-display>",
+                    placeholder:"<placeholder-passed-to-widget>",
+                    icon:"<icon-passed-to-widget>",
+                    description:"<description-passed-to-widget>",
+                }
             },
         ],
 
@@ -396,17 +386,18 @@ For example:
     [{
         "section": "CERN Experiment"
         "fields" : [{
-            field="experiment",  # this should be validated against the defined fields in `RDM_CUSTOM_FIELDS`
-            ui_widget="CustomTextField",  # user defined widget in my-site
-            label="Experiment",
-            placeholder="Type an experiment...",
-            icon="pencil",
-            description="You should fill this field with one of the experiments e.g LHC, ATLAS etc.",
+            field: "experiment",  # this should be validated against the defined fields in `RDM_CUSTOM_FIELDS`
+            ui_widget: "CustomTextField",  # user defined widget in my-site
+            props: {
+                label: "Experiment",
+                placeholder: "Type an experiment...",
+                icon: "pencil",
+                description: "You should fill this field with one of the experiments e.g LHC, ATLAS etc.",
+            }
         },
         ...
     }]
 """
-
 
 COMMUNITIES_CUSTOM_FIELDS = {}
 """Communities custom fields definition.
@@ -415,22 +406,20 @@ Of the shape:
 
 .. code-block:: python
 
-    {
-        '<field1>': <custom-field-class-type>,
+    [
+        <custom-field-class-type(name='field')>,
         # ...
-        '<fieldN>': '<custom-field-class-type>'
-    }
+        <custom-field-class-type(name='fieldN')>'
+    ]
 
 For example:
 
 .. code-block:: python
 
-    {
-        'experiment': {
-            'type': TextCF(name="experiment"),
-        },
+    [
+        TextCF(name="experiment"),
         ...
-    }
+    ]
 """
 
 COMMUNITIES_CUSTOM_FIELDS_UI = {}
@@ -444,12 +433,14 @@ Of the shape:
         section: <section_name>,
         fields: [
             {
-                field="path-to-field",  # this should be validated against the defined fields in `RDM_CUSTOM_FIELDS`
-                ui_widget="<ui-widget-name>",  # predefined or user defined ui widget
-                label="<ui-label-to-display>",
-                placeholder="<placeholder-passed-to-widget>",
-                icon="<icon-passed-to-widget>",
-                description="<description-passed-to-widget>",
+                field: "path-to-field",  # this should be validated against the defined fields in `RDM_CUSTOM_FIELDS`
+                ui_widget: "<ui-widget-name>",  # predefined or user defined ui widget
+                props: {
+                    label:"<ui-label-to-display>",
+                    placeholder:"<placeholder-passed-to-widget>",
+                    icon:"<icon-passed-to-widget>",
+                    description:"<description-passed-to-widget>",
+                }
             },
         ],
 
@@ -463,12 +454,14 @@ For example:
     [{
         "section": "CERN Experiment"
         "fields" : [{
-            field="experiment",  # this should be validated against the defined fields in `RDM_CUSTOM_FIELDS`
-            ui_widget="CustomTextField",  # user defined widget in my-site
-            label="Experiment",
-            placeholder="Type an experiment...",
-            icon="pencil",
-            description="You should fill this field with one of the experiments e.g LHC, ATLAS etc.",
+            field: "experiment",  # this should be validated against the defined fields in `RDM_CUSTOM_FIELDS`
+            ui_widget: "CustomTextField",  # user defined widget in my-site
+            props: {
+                label: "Experiment",
+                placeholder: "Type an experiment...",
+                icon: "pencil",
+                description: "You should fill this field with one of the experiments e.g LHC, ATLAS etc.",
+            }
         },
         ...
     }]
