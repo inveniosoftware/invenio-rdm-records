@@ -1,5 +1,1 @@
 # This file is adding constraints to be used when a PR is targeting a feature/* branch
--e git+https://github.com/inveniosoftware/invenio-records.git@feature/custom-fields#egg=invenio-records
--e git+https://github.com/inveniosoftware/invenio-communities.git@feature/custom-fields#egg=invenio-communities
--e git+https://github.com/inveniosoftware/invenio-vocabularies.git@feature/custom-fields#egg=invenio-vocabularies
--e git+https://github.com/inveniosoftware/invenio-records-resources.git@feature/custom-fields#egg=invenio-records-resources

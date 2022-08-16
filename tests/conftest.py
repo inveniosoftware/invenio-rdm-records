@@ -294,12 +294,12 @@ def app_config(app_config):
     ]
 
     # Custom fields
-    app_config["RDM_CUSTOM_FIELDS"] = {
-        "myfield": TextCF(name="myfield", use_as_filter=True),
-    }
-    app_config["COMMUNITIES_CUSTOM_FIELDS"] = {
-        "mycommunityfield": TextCF(name="mycommunityfield", use_as_filter=True),
-    }
+    app_config["RDM_CUSTOM_FIELDS"] = [
+        TextCF(name="cern:myfield", use_as_filter=True),
+    ]
+    app_config["COMMUNITIES_CUSTOM_FIELDS"] = [
+        TextCF(name="mycommunityfield", use_as_filter=True),
+    ]
 
     return app_config
 
