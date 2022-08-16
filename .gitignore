@@ -74,5 +74,3 @@ Pipfile.lock
 
 # pip wheel
 pip-wheel-metadata/
-
-*.DS_Store

@@ -134,7 +134,7 @@ def test_create_fake_demo_invitation_requests(
 
 def test_create_records_custom_fields(app, location, db, es_clear, cli_runner):
     """Assert that custom fields mappings are created for records."""
-    result = cli_runner(create_records_custom_field, "-f", "myfield")
+    result = cli_runner(create_records_custom_field, "-f", "cern:myfield")
     assert result.exit_code == 0
 
     record_mapping_field = list(RDMRecord.index.get_mapping().values())[0]["mappings"][
@@ -142,26 +142,29 @@ def test_create_records_custom_fields(app, location, db, es_clear, cli_runner):
     ]["custom_fields"]
     draft_mapping_field = list(RDMDraft.index.get_mapping().values())[0]["mappings"][
         "properties"
-    ]["custom"]
+    ]["custom_fields"]
     expected_value = {
         "properties": {
-            "myfield": {"type": "text", "fields": {"keyword": {"type": "keyword"}}}
+            "cern:myfield": {"type": "text", "fields": {"keyword": {"type": "keyword"}}}
         }
     }
     assert record_mapping_field == expected_value
     assert draft_mapping_field == expected_value
 
     # check for existence
-    result = cli_runner(custom_field_exists_in_records, "-f", "myfield")
+    RDMRecord.index.refresh()
+    RDMDraft.index.refresh()
+
+    result = cli_runner(custom_field_exists_in_records, "-f", "cern:myfield")
     assert result.exit_code == 0
-    assert "Field myfield exists" in result.output
+    assert "Field cern:myfield exists" in result.output
 
     result = cli_runner(custom_field_exists_in_records, "-f", "unknownfield")
     assert result.exit_code == 0
     assert "Field unknownfield does not exist" in result.output
 
 
-def test_create_records_custom_fields(app, location, db, es_clear, cli_runner):
+def test_create_communities_custom_fields(app, location, db, es_clear, cli_runner):
     """Assert that custom fields mappings are created for communities."""
     result = cli_runner(create_communities_custom_field, "-f", "mycommunityfield")
     assert result.exit_code == 0
