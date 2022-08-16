@@ -298,6 +298,7 @@ def records():
 # helper functions
 def _prepare_mapping(fields_names, available_fields):
     """Prepare ES mapping properties for each field."""
+    available_fields = {field.name: field for field in available_fields}
     fields = []
     if fields_names:
         for field_name in fields_names:
@@ -341,7 +342,7 @@ def create_records_custom_field(field_name):
 
     $ invenio custom-fields records create [field].
     """
-    available_fields = current_app.config.get("RDM_CUSTOM_FIELDS", {})
+    available_fields = current_app.config.get("RDM_CUSTOM_FIELDS", [])
     if not available_fields:
         click.secho("No custom fields were configured. Exiting...", fg="green")
         return
@@ -411,19 +412,19 @@ def create_communities_custom_field(field_name):
 
     $ invenio custom-fields communities create [field].
     """
-    available_fields = current_app.config.get("COMMUNITIES_CUSTOM_FIELDS", {})
+    available_fields = current_app.config.get("COMMUNITIES_CUSTOM_FIELDS", [])
     if not available_fields:
         click.secho("No custom fields were configured. Exiting...", fg="green")
         return
 
-    click.secho("Creating all custom fields...", fg="green")
+    click.secho("Creating all communities custom fields...", fg="green")
     # multiple=True makes it an iterable
     properties = _prepare_mapping(field_name, available_fields)
 
     try:
         communities_index = current_communities.service.config.record_cls.index
         communities_index.put_mapping(body={"properties": properties})
-        click.secho("Created all custom fields!", fg="green")
+        click.secho("Created all communities custom fields!", fg="green")
     except RequestError as e:
         click.secho("An error occured while creating custom fields.", fg="red")
         click.secho(e.info["error"]["reason"], fg="red")

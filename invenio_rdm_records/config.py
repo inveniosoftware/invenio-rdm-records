@@ -340,33 +340,32 @@ in DataCite XML format.
 
 
 """Custom fields."""
-RDM_CUSTOM_FIELDS = {}
+
+RDM_CUSTOM_FIELDS = []
 """Records custom fields definition.
 
 Of the shape:
 
 .. code-block:: python
 
-    {
-        '<field1>': <custom-field-class-type>,
+    [
+        <custom-field-class-type(name='field')>,
         # ...
-        '<fieldN>': '<custom-field-class-type>'
-    }
+        <custom-field-class-type(name='fieldN')>'
+    ]
 
 For example:
 
 .. code-block:: python
 
-    {
-        'experiment': {
-            'type': TextCF(name="experiment"),
-        },
+    [
+        TextCF(name="experiment"),
         ...
-    }
+    ]
 """
 
 
-RDM_CUSTOM_FIELDS_UI = {}
+RDM_CUSTOM_FIELDS_UI = []
 """Upload form custom fields UI configuration.
 
 Of the shape:
@@ -415,22 +414,20 @@ Of the shape:
 
 .. code-block:: python
 
-    {
-        '<field1>': <custom-field-class-type>,
+    [
+        <custom-field-class-type(name='field')>,
         # ...
-        '<fieldN>': '<custom-field-class-type>'
-    }
+        <custom-field-class-type(name='fieldN')>'
+    ]
 
 For example:
 
 .. code-block:: python
 
-    {
-        'experiment': {
-            'type': TextCF(name="experiment"),
-        },
+    [
+        TextCF(name="experiment"),
         ...
-    }
+    ]
 """
 
 COMMUNITIES_CUSTOM_FIELDS_UI = {}

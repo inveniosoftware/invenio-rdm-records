@@ -134,7 +134,7 @@ def test_create_fake_demo_invitation_requests(
 
 def test_create_records_custom_fields(app, location, db, es_clear, cli_runner):
     """Assert that custom fields mappings are created for records."""
-    result = cli_runner(create_records_custom_field, "-f", "myfield")
+    result = cli_runner(create_records_custom_field, "-f", "cern:myfield")
     assert result.exit_code == 0
 
     record_mapping_field = list(RDMRecord.index.get_mapping().values())[0]["mappings"][
@@ -145,7 +145,7 @@ def test_create_records_custom_fields(app, location, db, es_clear, cli_runner):
     ]["custom"]
     expected_value = {
         "properties": {
-            "myfield": {"type": "text", "fields": {"keyword": {"type": "keyword"}}}
+            "cern:myfield": {"type": "text", "fields": {"keyword": {"type": "keyword"}}}
         }
     }
     assert record_mapping_field == expected_value
