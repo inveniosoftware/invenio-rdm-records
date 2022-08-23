@@ -153,11 +153,6 @@ class UserFixture_:
         """Create identity for the user."""
         assert logout_user()
 
-    @identity.deleter
-    def identity(self):
-        """Delete the user."""
-        self._identity = None
-
     #
     # Test client helpers
     #
