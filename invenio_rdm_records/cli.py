@@ -257,24 +257,20 @@ def create_fixtures():
 @with_appcontext
 def rebuild_index():
     """Reindex all drafts, records and vocabularies."""
-    click.secho("Reindexing records and drafts...", fg="green")
-
-    rec_service = current_rdm_records.records_service
-    rec_service.rebuild_index(identity=system_identity)
-
     click.secho("Reindexing vocabularies...", fg="green")
-
     vocab_service = current_service_registry.get("vocabularies")
     vocab_service.rebuild_index(identity=system_identity)
 
     click.secho("Reindexing subjects...", fg="green")
-
     subj_service = current_service_registry.get("subjects")
     subj_service.rebuild_index(identity=system_identity)
 
     click.secho("Reindexing affiliations...", fg="green")
-
     affs_service = current_service_registry.get("affiliations")
     affs_service.rebuild_index(identity=system_identity)
+
+    click.secho("Reindexing records and drafts...", fg="green")
+    rec_service = current_rdm_records.records_service
+    rec_service.rebuild_index(identity=system_identity)
 
     click.secho("Reindexed records and vocabularies!", fg="green")
