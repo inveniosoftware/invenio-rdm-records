@@ -7,7 +7,8 @@
 # details.
 
 """Invenio administration OAI-PMH view module."""
-from invenio_administration.views.base import AdminResourceListView
+from invenio_administration.views.base import AdminResourceListView,\
+    AdminResourceEditView
 
 
 class OaiPmhListView(AdminResourceListView):
@@ -16,10 +17,13 @@ class OaiPmhListView(AdminResourceListView):
     search_request_headers = {"Accept": "application/json"}
     name = "OAI-PMH"
     resource_config = "oaipmh_server_resource"
-    list_title = "OAI-PMH Sets"
+    title = "OAI-PMH Sets"
+    category = "Exports"
+    pid_path = "id"
 
     # OAI sets are not searchable in ES
     display_search = False
+    display_delete = True
 
     item_field_list = {
         "id": {
