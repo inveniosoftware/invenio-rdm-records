@@ -22,9 +22,7 @@ from invenio_vocabularies.contrib.funders.api import Funder
 from invenio_vocabularies.records.api import Vocabulary
 
 from invenio_rdm_records.cli import (
-    create_communities_custom_field,
     create_records_custom_field,
-    custom_field_exists_in_communities,
     custom_field_exists_in_records,
 )
 from invenio_rdm_records.fixtures.demo import create_fake_community, create_fake_record
@@ -160,33 +158,5 @@ def test_create_records_custom_fields(app, location, db, es_clear, cli_runner):
     assert "Field cern:myfield exists" in result.output
 
     result = cli_runner(custom_field_exists_in_records, "-f", "unknownfield")
-    assert result.exit_code == 0
-    assert "Field unknownfield does not exist" in result.output
-
-
-def test_create_communities_custom_fields(app, location, db, es_clear, cli_runner):
-    """Assert that custom fields mappings are created for communities."""
-    result = cli_runner(create_communities_custom_field, "-f", "mycommunityfield")
-    assert result.exit_code == 0
-
-    community_mapping_field = list(Community.index.get_mapping().values())[0][
-        "mappings"
-    ]["properties"]["custom_fields"]
-    expected_value = {
-        "properties": {
-            "mycommunityfield": {
-                "type": "text",
-                "fields": {"keyword": {"type": "keyword"}},
-            }
-        }
-    }
-    assert community_mapping_field == expected_value
-
-    # check for existence
-    result = cli_runner(custom_field_exists_in_communities, "-f", "mycommunityfield")
-    assert result.exit_code == 0
-    assert "Field mycommunityfield exists" in result.output
-
-    result = cli_runner(custom_field_exists_in_communities, "-f", "unknownfield")
     assert result.exit_code == 0
     assert "Field unknownfield does not exist" in result.output
