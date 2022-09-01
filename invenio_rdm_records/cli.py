@@ -312,14 +312,9 @@ def rebuild_index():
 # CUSTOM FIELDS
 
 
-@click.group()
+@rdm_records.group()
 def custom_fields():
     """InvenioRDM custom fields commands."""
-
-
-@custom_fields.group()
-def records():
-    """InvenioRDM custom fields records commands."""
 
 
 # helper functions
@@ -362,7 +357,7 @@ def _exists(field_name, index):
     return True
 
 
-@records.command("init")
+@custom_fields.command("init")
 @click.option(
     "-f",
     "--field-name",
@@ -398,7 +393,7 @@ def create_records_custom_field(field_name):
         click.secho(e.info["error"]["reason"], fg="red")
 
 
-@records.command("exists")
+@custom_fields.command("exists")
 @click.option(
     "-f",
     "--field-name",
@@ -421,69 +416,6 @@ def custom_field_exists_in_records(field_name):
     field_exists = _exists(f"custom_fields.{field_name}", record_index) and _exists(
         f"custom_fields.{field_name}", draft_index
     )
-    if field_exists:
-        click.secho(f"Field {field_name} exists", fg="green")
-    else:
-        click.secho(f"Field {field_name} does not exist", fg="red")
-
-
-@custom_fields.group()
-def communities():
-    """InvenioRDM custom fields communities commands."""
-
-
-@communities.command("init")
-@click.option(
-    "-f",
-    "--field-name",
-    type=str,
-    required=False,
-    multiple=True,
-    help="A custom field name to create. If not provided, all custom fields will be created.",
-)
-@with_appcontext
-def create_communities_custom_field(field_name):
-    """Creates one or all custom fields for communities.
-
-    $ invenio custom-fields communities create [field].
-    """
-    available_fields = current_app.config.get("COMMUNITIES_CUSTOM_FIELDS")
-    if not available_fields:
-        click.secho("No custom fields were configured. Exiting...", fg="green")
-        return
-
-    click.secho("Creating communities custom fields...", fg="green")
-    # multiple=True makes it an iterable
-    properties = _prepare_mapping(field_name, available_fields)
-
-    try:
-        communities_index = current_communities.service.config.record_cls.index
-        communities_index.put_mapping(body={"properties": properties})
-        click.secho("Created all communities custom fields!", fg="green")
-    except RequestError as e:
-        click.secho("An error occured while creating custom fields.", fg="red")
-        click.secho(e.info["error"]["reason"], fg="red")
-
-
-@communities.command("exists")
-@click.option(
-    "-f",
-    "--field-name",
-    type=str,
-    required=True,
-    multiple=False,
-    help="A custom field name to check.",
-)
-@with_appcontext
-def custom_field_exists_in_communities(field_name):
-    """Checks if a custom field exists in communities ES mapping.
-
-    $ invenio custom-fields communities exists <field name>.
-    """
-    click.secho("Checking custom field...", fg="green")
-    communities_index = current_communities.service.config.record_cls.index
-
-    field_exists = _exists(f"custom_fields.{field_name}", communities_index)
     if field_exists:
         click.secho(f"Field {field_name} exists", fg="green")
     else:
