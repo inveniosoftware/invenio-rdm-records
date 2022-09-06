@@ -18,6 +18,7 @@ from invenio_records_resources.services.base import LinksTemplate
 from invenio_records_resources.services.records.schema import ServiceSchemaWrapper
 from invenio_records_resources.services.uow import unit_of_work
 from marshmallow import ValidationError
+from sqlalchemy import or_
 from sqlalchemy.orm.exc import NoResultFound
 from sqlalchemy.sql import text
 
@@ -130,7 +131,13 @@ class OAIPMHServerService(Service):
 
         search_params = self._get_search_params(params)
 
-        oai_sets = OAISet.query.order_by(
+        query_param = search_params["q"]
+        filters = []
+
+        if query_param:
+            filters.extend([OAISet.name.ilike(f"%{query_param}%"), OAISet.spec.ilike(f"%{query_param}%")])
+
+        oai_sets = OAISet.query.filter(or_(*filters)).order_by(
             search_params["sort_direction"](text(",".join(search_params["sort"])))
         ).paginate(
             page=search_params["page"],
@@ -231,9 +238,12 @@ class OAIPMHServerService(Service):
         sort = _search_cls.sort_options.get(_sort_name)
         sort_direction = _search_cls.sort_direction_options.get(_sort_direction_name)
 
+        query_params = params.get("q", "")
+
         return {
             "page": page,
             "size": size,
             "sort": sort.get("fields"),
             "sort_direction": sort_direction.get("fn"),
+            "q": query_params
         }
