@@ -467,9 +467,7 @@
             "properties": {
               "identifier": {
                 "type": "keyword",
-                "copy_to": [
-                  "related.identifier"
-                ]
+                "copy_to": ["related.identifier"]
               },
               "relation_type": {
                 "type": "object",
@@ -580,9 +578,7 @@
               },
               "title": {
                 "type": "text",
-                "copy_to": [
-                  "suggest_title"
-                ]
+                "copy_to": ["suggest_title"]
               },
               "type": {
                 "type": "object",
@@ -603,56 +599,6 @@
           },
           "version": {
             "type": "keyword"
-          },
-          "extensions_booleans": {
-            "properties": {
-              "key": {
-                "type": "keyword"
-              },
-              "value": {
-                "type": "boolean"
-              }
-            }
-          },
-          "extensions_dates": {
-            "properties": {
-              "key": {
-                "type": "keyword"
-              },
-              "value": {
-                "type": "date"
-              }
-            }
-          },
-          "extensions_keywords": {
-            "properties": {
-              "key": {
-                "type": "keyword"
-              },
-              "value": {
-                "type": "keyword"
-              }
-            }
-          },
-          "extensions_longs": {
-            "properties": {
-              "key": {
-                "type": "keyword"
-              },
-              "value": {
-                "type": "long"
-              }
-            }
-          },
-          "extensions_texts": {
-            "properties": {
-              "key": {
-                "type": "keyword"
-              },
-              "value": {
-                "type": "text"
-              }
-            }
           }
         }
       },
