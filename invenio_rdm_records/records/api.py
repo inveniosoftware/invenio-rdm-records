@@ -17,6 +17,7 @@ from invenio_records.dumpers.relations import RelationDumperExt
 from invenio_records.systemfields import ConstantField, DictField, ModelField
 from invenio_records.systemfields.relations import MultiRelationsField
 from invenio_records_resources.records.api import FileRecord
+from invenio_records_resources.records.dumpers import CustomFieldsDumperExt
 from invenio_records_resources.records.systemfields import (
     FilesField,
     IndexField,
@@ -84,6 +85,7 @@ class CommonFieldsMixin:
             EDTFDumperExt("metadata.publication_date"),
             EDTFListDumperExt("metadata.dates", "date"),
             RelationDumperExt("relations"),
+            CustomFieldsDumperExt(fields_var="RDM_CUSTOM_FIELDS"),
         ]
     )
 
