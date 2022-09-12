@@ -369,6 +369,24 @@ This is only required if you want your records to be harvestable (OAI-PMH)
 in DataCite XML format.
 """
 
+RDM_NAMESPACES = {}
+"""Custom fields namespaces.
+
+.. code-block:: python
+
+    {<namespace>: <uri>, ...}
+
+For example:
+
+.. code-block:: python
+
+    {
+        "cern": "https://cern.ch/terms",
+        "dwc": "http://rs.tdwg.org/dwc/terms/"
+    }
+
+"""
+
 
 RDM_CUSTOM_FIELDS = []
 """Records custom fields definition.
