@@ -19,6 +19,12 @@ from invenio_accounts.proxies import current_datastore
 from invenio_communities import current_communities
 from invenio_db import db
 from invenio_records_resources.proxies import current_service_registry
+from invenio_records_resources.services.custom_fields.errors import (
+    CustomFieldsException,
+)
+from invenio_records_resources.services.custom_fields.validate import (
+    validate_custom_fields,
+)
 from invenio_users_resources.services.users.tasks import reindex_user
 
 from invenio_rdm_records.proxies import current_rdm_records, current_rdm_records_service
@@ -224,7 +230,7 @@ def inclusion_requests(user_email, n_requests):
             "Failed! Create fake drafts first " "with `rdm-records demo drafts`.",
             fg="red",
         )
-        return
+        exit(1)
 
     communities = current_communities.service.search(system_identity)
     if communities.total == 0:
@@ -232,7 +238,7 @@ def inclusion_requests(user_email, n_requests):
             "Failed! Create fake communities " "first `rdm-records demo communities`.",
             fg="red",
         )
-        return
+        exit(1)
 
     create_demo_inclusion_requests.delay(user.id, n_requests)
 
@@ -268,7 +274,7 @@ def invitation_requests(user_email, n_requests):
             "Failed! Create fake communities " "first `rdm-records demo communities`.",
             fg="red",
         )
-        return
+        exit(1)
 
     create_demo_invitation_requests.delay(user.id, n_requests)
 
@@ -318,23 +324,20 @@ def custom_fields():
 
 
 # helper functions
-def _prepare_mapping(fields_name, available_fields):
+def _prepare_mapping(given_fields_name, available_fields):
     """Prepare ES mapping properties for each field."""
-    available_fields = {field.name: field for field in available_fields}
     fields = []
-    if fields_name:  # create only specified fields
-        for field_name in fields_name:
-            if field_name in available_fields.keys():
-                fields.append(available_fields[field_name])
-            else:
-                click.secho(
-                    "Field {0} not found. Available fields: {1}".format(
-                        field_name, ", ".join(available_fields.keys())
-                    ),
-                    fg="red",
-                )
+    if given_fields_name:  # create only specified fields
+        given_fields_name = set(given_fields_name)
+        for a_field in available_fields:
+            if a_field.name in given_fields_name:
+                fields.append(a_field)
+
+            given_fields_name.remove(a_field.name)
+            if len(given_fields_name) == 0:
+                break
     else:  # create all fields
-        fields = available_fields.values()
+        fields = available_fields
 
     properties = {}
     for field in fields:
@@ -375,7 +378,20 @@ def create_records_custom_field(field_name):
     available_fields = current_app.config.get("RDM_CUSTOM_FIELDS")
     if not available_fields:
         click.secho("No custom fields were configured. Exiting...", fg="green")
-        return
+        exit(1)
+
+    namespaces = set(current_app.config.get("RDM_NAMESPACES").keys())
+    try:
+        validate_custom_fields(
+            given_fields=field_name,
+            available_fields=available_fields,
+            namespaces=namespaces,
+        )
+    except CustomFieldsException as e:
+        click.secho(
+            f"Custom fields configuration is not valid. {e.description}", fg="red"
+        )
+        exit(1)
 
     click.secho("Creating custom fields...", fg="green")
     # multiple=True makes it an iterable

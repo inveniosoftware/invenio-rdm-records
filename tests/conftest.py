@@ -297,6 +297,9 @@ def app_config(app_config):
     app_config["RDM_CUSTOM_FIELDS"] = [
         TextCF(name="cern:myfield", use_as_filter=True),
     ]
+    app_config["RDM_NAMESPACES"] = {
+        "cern": "https://home.cern/",
+    }
 
     return app_config
 
