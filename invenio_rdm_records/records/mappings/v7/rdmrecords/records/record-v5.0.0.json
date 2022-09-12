@@ -1,5 +1,6 @@
 {
   "mappings": {
+    "dynamic": false,
     "date_detection": false,
     "numeric_detection": false,
     "properties": {
@@ -33,7 +34,8 @@
         }
       },
       "custom_fields": {
-        "type": "object"
+        "type": "object",
+        "dynamic": true
       },
       "parent": {
         "properties": {

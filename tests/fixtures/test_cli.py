@@ -142,9 +142,10 @@ def test_create_records_custom_fields(app, location, db, es_clear, cli_runner):
         "properties"
     ]["custom_fields"]
     expected_value = {
+        "dynamic": "true",
         "properties": {
             "cern:myfield": {"type": "text", "fields": {"keyword": {"type": "keyword"}}}
-        }
+        },
     }
     assert record_mapping_field == expected_value
     assert draft_mapping_field == expected_value
