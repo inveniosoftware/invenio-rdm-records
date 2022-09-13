@@ -75,6 +75,14 @@ def on_identity_loaded(sender, identity):
     if token_data:
         identity.provides.add(LinkNeed(token_data["id"]))
 
+from flask import Blueprint
+blueprint = Blueprint(
+    "invenio_rdm_records",
+    __name__,
+    template_folder="templates",
+    static_folder="static",
+)
+
 
 class InvenioRDMRecords(object):
     """Invenio-RDM-Records extension."""
@@ -91,6 +99,7 @@ class InvenioRDMRecords(object):
         self.init_resource(app)
         app.before_request(verify_token)
         app.extensions["invenio-rdm-records"] = self
+        app.register_blueprint(blueprint)
         # Load flask IIIF
         IIIF(app)
 
