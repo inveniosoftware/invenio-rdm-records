@@ -8,11 +8,10 @@
 
 """Invenio administration OAI-PMH view module."""
 from invenio_administration.views.base import AdminResourceListView,\
-    AdminResourceEditView
-
+    AdminResourceDetailView
 
 class OaiPmhListView(AdminResourceListView):
-
+    url = "/oaipmh"
     api_endpoint = "/oaipmh/sets"
     search_request_headers = {"Accept": "application/json"}
     name = "OAI-PMH"
@@ -22,7 +21,7 @@ class OaiPmhListView(AdminResourceListView):
     pid_path = "id"
 
     # OAI sets are not searchable in ES
-    display_search = False
+    display_search = True
     display_delete = True
 
     item_field_list = {
@@ -51,3 +50,43 @@ class OaiPmhListView(AdminResourceListView):
     search_config_name = "RDM_OAI_PMH_SEARCH"
     search_facets_config_name = "RDM_OAI_PMH_FACETS"
     search_sort_config_name = "RDM_OAI_PMH_SORT_OPTIONS"
+
+
+class OaiPmhDetailView(AdminResourceDetailView):
+    url="/oaipmh/<pid_value>/"
+    api_endpoint = "/oaipmh/sets"
+    search_request_headers = {"Accept": "application/json"}
+    name = "OAI-PMH details"
+    resource_config = "oaipmh_server_resource"
+    title = "OAI-PMH Details"
+
+    template = "invenio_rdm_records/oai-details.html"
+    display_delete = True
+    display_edit = True
+
+    item_field_list = {
+        "id": {
+          "text": "ID",
+          "order": 1
+        },
+        "name": {
+            "text": "Title",
+            "order": 2
+        },
+        "spec": {
+            "text": "Spec",
+            "order": 3
+        },
+        "search_pattern": {
+            "text": "Search Query",
+            "order": 4
+        },
+        "updated": {
+            "text": "Modified",
+            "order": 5
+        },
+        "created": {
+            "text": "Created",
+            "order": 6
+        }
+    }
