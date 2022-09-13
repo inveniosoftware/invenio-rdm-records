@@ -21,10 +21,12 @@ class OaiPmhListView(AdminResourceListView):
     title = "OAI-PMH Sets"
     category = "Site management"
     pid_path = "id"
+    icon = "exchange"
 
     # OAI sets are not searchable in ES
     display_search = True
     display_delete = True
+    display_edit = True
 
     item_field_list = {
         "id": {
