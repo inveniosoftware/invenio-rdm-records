@@ -332,8 +332,7 @@ def _prepare_mapping(given_fields_name, available_fields):
         for a_field in available_fields:
             if a_field.name in given_fields_name:
                 fields.append(a_field)
-
-            given_fields_name.remove(a_field.name)
+                given_fields_name.remove(a_field.name)
             if len(given_fields_name) == 0:
                 break
     else:  # create all fields
