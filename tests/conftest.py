@@ -547,6 +547,17 @@ def minimal_record():
 
 
 @pytest.fixture(scope="function")
+def minimal_oai_set():
+    """Minimal OAI set data as dict coming from the external world."""
+    return {
+        "name": "Test set",
+        "spec": "test-set",
+        "search_pattern": "metadata.title:test",
+        "description": "Just a test set",
+    }
+
+
+@pytest.fixture(scope="function")
 def minimal_restricted_record(minimal_record):
     """Data for restricted record."""
     minimal_record["access"]["record"] = "restricted"

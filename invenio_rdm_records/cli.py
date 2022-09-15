@@ -34,20 +34,25 @@ from invenio_users_resources.services.users.tasks import reindex_user
 from invenio_rdm_records.proxies import current_rdm_records, current_rdm_records_service
 
 from .fixtures import FixturesEngine
-from .fixtures.demo import create_fake_community, create_fake_record, \
-    create_fake_oai_set
+from .fixtures.demo import (
+    create_fake_community,
+    create_fake_oai_set,
+    create_fake_record,
+)
 from .fixtures.tasks import (
     create_demo_community,
     create_demo_inclusion_requests,
     create_demo_invitation_requests,
+    create_demo_oaiset,
     create_demo_record,
-    get_authenticated_identity, create_demo_oaiset,
+    get_authenticated_identity,
 )
 
 COMMUNITY_OWNER_EMAIL = "community@demo.org"
 USER_EMAIL = "user@demo.org"
 HELP_MSG_USER = "User e-mail of an already existing user."
 ADMIN_EMAIL = "admin@inveniosoftware.org"
+
 
 def _get_or_create_user(email):
     user = current_datastore.get_user(email)
