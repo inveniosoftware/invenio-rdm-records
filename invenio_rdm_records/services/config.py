@@ -29,6 +29,12 @@ from invenio_drafts_resources.services.records.config import (
     is_record,
 )
 from invenio_records_resources.services import ConditionalLink, FileServiceConfig
+from invenio_records_resources.services.base.config import (
+    ConfiguratorMixin,
+    FromConfig,
+    FromConfigSearchOptions,
+    SearchOptionsMixin,
+)
 from invenio_records_resources.services.base.links import Link
 from invenio_records_resources.services.files.links import FileLink
 from invenio_records_resources.services.records.links import (
@@ -45,14 +51,7 @@ from .components import (
     PIDsComponent,
     ReviewComponent,
 )
-from .customizations import (
-    ConfiguratorMixin,
-    FromConfig,
-    FromConfigPIDsProviders,
-    FromConfigRequiredPIDs,
-    FromConfigSearchOptions,
-    SearchOptionsMixin,
-)
+from .customizations import FromConfigPIDsProviders, FromConfigRequiredPIDs
 from .permissions import RDMRecordPermissionPolicy
 from .result_items import SecretLinkItem, SecretLinkList
 from .schemas import RDMParentSchema, RDMRecordSchema
@@ -134,12 +133,23 @@ class RDMRecordServiceConfig(RecordServiceConfig, ConfiguratorMixin):
     link_result_list_cls = SecretLinkList
 
     # Search configuration
-    search = FromConfigSearchOptions("RDM_SEARCH", search_option_cls=RDMSearchOptions)
+    search = FromConfigSearchOptions(
+        "RDM_SEARCH",
+        "RDM_SORT_OPTIONS",
+        "RDM_FACETS",
+        search_option_cls=RDMSearchOptions,
+    )
     search_drafts = FromConfigSearchOptions(
-        "RDM_SEARCH_DRAFTS", search_option_cls=RDMSearchDraftsOptions
+        "RDM_SEARCH_DRAFTS",
+        "RDM_SORT_OPTIONS",
+        "RDM_FACETS",
+        search_option_cls=RDMSearchDraftsOptions,
     )
     search_versions = FromConfigSearchOptions(
-        "RDM_SEARCH_VERSIONING", search_option_cls=RDMSearchVersionsOptions
+        "RDM_SEARCH_VERSIONING",
+        "RDM_SORT_OPTIONS",
+        "RDM_FACETS",
+        search_option_cls=RDMSearchVersionsOptions,
     )
 
     # PIDs configuration
