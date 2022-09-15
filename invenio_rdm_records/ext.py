@@ -75,7 +75,9 @@ def on_identity_loaded(sender, identity):
     if token_data:
         identity.provides.add(LinkNeed(token_data["id"]))
 
+
 from flask import Blueprint
+
 blueprint = Blueprint(
     "invenio_rdm_records",
     __name__,
