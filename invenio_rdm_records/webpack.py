@@ -19,8 +19,8 @@ theme = WebpackThemeBundle(
     themes={
         "semantic-ui": dict(
             entry={
-                "invenio-oai-pmh-details":
-                    "./js/invenio_rdm_records/oai-details.js"
+                "invenio-oai-pmh-details": "./js/invenio_rdm_records/oaipmh/details/index.js",
+                "invenio-oai-pmh-search": "./js/invenio_rdm_records/oaipmh/search/index.js",
             },
             dependencies={
                 "@babel/runtime": "^7.9.0",

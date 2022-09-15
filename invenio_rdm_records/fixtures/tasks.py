@@ -22,7 +22,7 @@ from invenio_records_resources.proxies import current_service_registry
 from invenio_requests import current_events_service, current_requests_service
 from invenio_requests.customizations import CommentEventType
 
-from ..proxies import current_rdm_records_service, current_oaipmh_server_service
+from ..proxies import current_oaipmh_server_service, current_rdm_records_service
 from ..requests import CommunitySubmission
 from ..services.errors import ReviewNotFoundError
 from .demo import create_fake_comment

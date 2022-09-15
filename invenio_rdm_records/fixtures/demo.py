@@ -355,7 +355,6 @@ def create_fake_oai_set():
         "spec": fake.unique.slug(),
         "search_pattern": fake.unique.slug(),
         "description": fake.sentence(nb_words=50, variable_nb_words=True),
-
     }
 
     return payload
