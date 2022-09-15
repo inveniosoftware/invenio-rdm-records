@@ -7,7 +7,7 @@
 
 """OAI-PMH API schemas."""
 
-from marshmallow import Schema, fields, validate, EXCLUDE
+from marshmallow import EXCLUDE, Schema, fields, validate
 from marshmallow_utils.fields import SanitizedUnicode
 
 
@@ -24,16 +24,21 @@ class OAIPMHSetSchema(Schema):
 
     description = SanitizedUnicode(load_default=None, dump_default=None)
     name = SanitizedUnicode(required=True, validate=validate.Length(min=1, max=255))
-    search_pattern = SanitizedUnicode(required=True,
-                                      metadata={"title": "Search pattern"})
-    spec = SanitizedUnicode(required=True,
-                            metadata={"create_only": True},
-                            validate=validate.Length(min=1, max=255))
+    search_pattern = SanitizedUnicode(
+        required=True, metadata={"title": "Search pattern"}
+    )
+    spec = SanitizedUnicode(
+        required=True,
+        metadata={"create_only": True},
+        validate=validate.Length(min=1, max=255),
+    )
     created = fields.DateTime(dump_only=True)
     updated = fields.DateTime(dump_only=True)
+    system_created = fields.Boolean(dump_only=True)
     id = fields.Int(dump_only=True)
 
     class Meta:
         """Meta attributes for the schema."""
+
         unknown = EXCLUDE
         ordered = True

@@ -7,8 +7,12 @@
 # details.
 
 """Invenio administration OAI-PMH view module."""
-from invenio_administration.views.base import AdminResourceListView,\
-    AdminResourceDetailView, AdminResourceEditView, AdminResourceCreateView
+from invenio_administration.views.base import (
+    AdminResourceCreateView,
+    AdminResourceDetailView,
+    AdminResourceEditView,
+    AdminResourceListView,
+)
 
 
 class OaiPmhListView(AdminResourceListView):
@@ -21,6 +25,7 @@ class OaiPmhListView(AdminResourceListView):
     category = "Site management"
     pid_path = "id"
     icon = "exchange"
+    template = "invenio_rdm_records/oai-search.html"
 
     # OAI sets are not searchable in ES
     display_search = True
@@ -28,30 +33,12 @@ class OaiPmhListView(AdminResourceListView):
     display_edit = True
 
     item_field_list = {
-        "id": {
-          "text": "ID",
-          "order": 1
-        },
-        "name": {
-            "text": "Name",
-            "order": 2
-        },
-        "spec": {
-            "text": "Spec",
-            "order": 3
-        },
-        "search_pattern": {
-            "text": "Search query",
-            "order": 4
-        },
-        "updated": {
-            "text": "Updated",
-            "order": 5
-        },
-        "created": {
-            "text": "Created",
-            "order": 6
-        }
+        "id": {"text": "ID", "order": 1},
+        "name": {"text": "Name", "order": 2},
+        "spec": {"text": "Spec", "order": 3},
+        "search_pattern": {"text": "Search query", "order": 4},
+        "updated": {"text": "Updated", "order": 5},
+        "created": {"text": "Created", "order": 6},
     }
 
     search_config_name = "RDM_OAI_PMH_SEARCH"
@@ -104,28 +91,10 @@ class OaiPmhDetailView(AdminResourceDetailView):
     pid_path = "id"
 
     item_field_list = {
-        "id": {
-          "text": "ID",
-          "order": 1
-        },
-        "name": {
-            "text": "Title",
-            "order": 2
-        },
-        "spec": {
-            "text": "Spec",
-            "order": 3
-        },
-        "search_pattern": {
-            "text": "Search Query",
-            "order": 4
-        },
-        "updated": {
-            "text": "Modified",
-            "order": 5
-        },
-        "created": {
-            "text": "Created",
-            "order": 6
-        }
+        "id": {"text": "ID", "order": 1},
+        "name": {"text": "Title", "order": 2},
+        "spec": {"text": "Spec", "order": 3},
+        "search_pattern": {"text": "Search Query", "order": 4},
+        "updated": {"text": "Modified", "order": 5},
+        "created": {"text": "Created", "order": 6},
     }

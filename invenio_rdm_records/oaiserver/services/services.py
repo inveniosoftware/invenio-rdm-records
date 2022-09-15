@@ -25,6 +25,7 @@ from sqlalchemy.sql import text
 from invenio_rdm_records.oaiserver.services.errors import (
     OAIPMHSetDoesNotExistError,
     OAIPMHSetIDDoesNotExistError,
+    OAIPMHSetNotEditable,
     OAIPMHSetSpecAlreadyExistsError,
 )
 from invenio_rdm_records.oaiserver.services.uow import OAISetCommitOp, OAISetDeleteOp
@@ -33,9 +34,10 @@ from invenio_rdm_records.oaiserver.services.uow import OAISetCommitOp, OAISetDel
 class OAIPMHServerService(Service):
     """OAI-PMH service."""
 
-    def __init__(self, config):
+    def __init__(self, config, reserved_prefix="community-"):
         """Init service with config."""
         super().__init__(config)
+        self.reserved_prefix = reserved_prefix
 
     @property
     def schema(self):
@@ -65,12 +67,11 @@ class OAIPMHServerService(Service):
     def _validate_spec(self, spec):
         """Checks the validity of the provided spec."""
         # Reserved for community integration
-        reserved_prefix = "community-"
-        if spec.startswith(reserved_prefix):
+        if spec.startswith(self.reserved_prefix):
             raise ValidationError(
                 _(
                     "The spec must not start with '{prefix}'.".format(
-                        prefix=reserved_prefix
+                        prefix=self.reserved_prefix
                     )
                 ),
                 field_name="spec",
@@ -97,10 +98,10 @@ class OAIPMHServerService(Service):
             context={"identity": identity},
             raise_errors=True,
         )
-
         self._validate_spec(valid_data["spec"])
+        system_created = valid_data["spec"].startswith(self.reserved_prefix)
 
-        new_set = OAISet(**valid_data)
+        new_set = OAISet(**valid_data, system_created=system_created)
         existing_set, errors = self._get_one(spec=new_set.spec, raise_error=False)
         if existing_set:
             raise OAIPMHSetSpecAlreadyExistsError(new_set.spec)
@@ -135,14 +136,23 @@ class OAIPMHServerService(Service):
         filters = []
 
         if query_param:
-            filters.extend([OAISet.name.ilike(f"%{query_param}%"), OAISet.spec.ilike(f"%{query_param}%")])
+            filters.extend(
+                [
+                    OAISet.name.ilike(f"%{query_param}%"),
+                    OAISet.spec.ilike(f"%{query_param}%"),
+                ]
+            )
 
-        oai_sets = OAISet.query.filter(or_(*filters)).order_by(
-            search_params["sort_direction"](text(",".join(search_params["sort"])))
-        ).paginate(
-            page=search_params["page"],
-            per_page=search_params["size"],
-            error_out=False,
+        oai_sets = (
+            OAISet.query.filter(or_(*filters))
+            .order_by(
+                search_params["sort_direction"](text(",".join(search_params["sort"])))
+            )
+            .paginate(
+                page=search_params["page"],
+                per_page=search_params["size"],
+                error_out=False,
+            )
         )
 
         return self.result_list(
@@ -159,6 +169,8 @@ class OAIPMHServerService(Service):
         """Update an OAI set."""
         self.require_permission(identity, "update")
         oai_set, errors = self._get_one(id=id_)
+        if oai_set.system_created:
+            raise OAIPMHSetNotEditable(oai_set.id)
 
         valid_data, errors = self.schema.load(
             data,
@@ -182,6 +194,8 @@ class OAIPMHServerService(Service):
         """Delete an OAI set."""
         self.require_permission(identity, "delete")
         oai_set, errors = self._get_one(id=id_)
+        if oai_set.system_created:
+            raise OAIPMHSetNotEditable(oai_set.id)
         uow.register(OAISetDeleteOp(oai_set))
 
         return True
@@ -245,5 +259,5 @@ class OAIPMHServerService(Service):
             "size": size,
             "sort": sort.get("fields"),
             "sort_direction": sort_direction.get("fn"),
-            "q": query_params
+            "q": query_params,
         }

@@ -52,3 +52,13 @@ class OAIPMHSetSpecAlreadyExistsError(OAIPMHError):
         super().__init__(
             description=_("A set with spec '{spec}' already exists.".format(spec=spec))
         )
+
+
+class OAIPMHSetNotEditable(OAIPMHError):
+    """The provided set is not editable."""
+
+    def __init__(self, id):
+        """Initialise error."""
+        super().__init__(
+            description=_("The set with id {id} is not editable.".format(id=id))
+        )
