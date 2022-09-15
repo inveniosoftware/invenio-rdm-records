@@ -311,7 +311,7 @@ def create_records_custom_field(field_name):
     available_fields = current_app.config.get("RDM_CUSTOM_FIELDS")
     if not available_fields:
         click.secho("No custom fields were configured. Exiting...", fg="green")
-        exit(1)
+        exit(0)
 
     namespaces = set(current_app.config.get("RDM_NAMESPACES").keys())
     try:
