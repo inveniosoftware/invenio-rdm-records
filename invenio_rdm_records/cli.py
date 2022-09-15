@@ -22,6 +22,7 @@ from invenio_records_resources.proxies import current_service_registry
 from invenio_records_resources.services.custom_fields.errors import (
     CustomFieldsException,
 )
+from invenio_records_resources.services.custom_fields.mappings import Mapping
 from invenio_records_resources.services.custom_fields.validate import (
     validate_custom_fields,
 )
@@ -323,42 +324,6 @@ def custom_fields():
     """InvenioRDM custom fields commands."""
 
 
-# helper functions
-def _prepare_mapping(given_fields_name, available_fields):
-    """Prepare ES mapping properties for each field."""
-    fields = []
-    if given_fields_name:  # create only specified fields
-        given_fields_name = set(given_fields_name)
-        for a_field in available_fields:
-            if a_field.name in given_fields_name:
-                fields.append(a_field)
-                given_fields_name.remove(a_field.name)
-            if len(given_fields_name) == 0:
-                break
-    else:  # create all fields
-        fields = available_fields
-
-    properties = {}
-    for field in fields:
-        properties[f"custom_fields.{field.name}"] = field.mapping
-
-    return properties
-
-
-def _exists(field_name, index):
-    """Check if a field exists in `index`'s mapping."""
-    mapping = list(index.get_mapping().values())[0]["mappings"]
-
-    parts = field_name.split(".")
-    for part in parts:
-        mapping = mapping["properties"]  # here to avoid last field access
-        if part not in mapping.keys():
-            return False
-        mapping = mapping[part]
-
-    return True
-
-
 @custom_fields.command("init")
 @click.option(
     "-f",
@@ -394,7 +359,7 @@ def create_records_custom_field(field_name):
 
     click.secho("Creating custom fields...", fg="green")
     # multiple=True makes it an iterable
-    properties = _prepare_mapping(field_name, available_fields)
+    properties = Mapping.properties_for_fields(field_name, available_fields)
 
     try:
         record_index = current_rdm_records.records_service.config.record_cls.index
@@ -428,10 +393,9 @@ def custom_field_exists_in_records(field_name):
     draft_index = current_rdm_records.records_service.config.draft_cls.index
 
     # check if exists in all both records and draft indices
-    field_exists = _exists(f"custom_fields.{field_name}", record_index) and _exists(
-        f"custom_fields.{field_name}", draft_index
-    )
-    if field_exists:
+    exists_in_record = Mapping.field_exists(f"custom_fields.{field_name}", record_index)
+    exists_in_draft = Mapping.field_exists(f"custom_fields.{field_name}", draft_index)
+    if exists_in_record and exists_in_draft:
         click.secho(f"Field {field_name} exists", fg="green")
     else:
         click.secho(f"Field {field_name} does not exist", fg="red")
