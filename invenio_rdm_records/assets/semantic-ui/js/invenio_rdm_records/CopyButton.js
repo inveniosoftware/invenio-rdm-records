@@ -22,7 +22,7 @@ class SimpleCopyButton extends React.Component {
         }}
       >
         <Button
-          className="copy"
+          floated="right"
           basic
           icon="copy"
           aria-label={i18next.t("Copy to clipboard")}
@@ -81,8 +81,8 @@ export default class CopyButton extends Component {
 
   hoverStateHandler = (event) => {
     event.persist();
-    if (event.type == "mouseenter") this.setState({ hoverPopupIsOpen: true });
-    if (event.type == "mouseleave") this.setState({ hoverPopupIsOpen: false });
+    if (event.type === "mouseenter") this.setState({ hoverPopupIsOpen: true });
+    if (event.type === "mouseleave") this.setState({ hoverPopupIsOpen: false });
   };
 
   render() {
