@@ -5,14 +5,12 @@
 // under the terms of the MIT License; see LICENSE file for more details.
 
 import PropTypes from "prop-types";
-import React, { useContext } from "react";
+import React from "react";
 import { i18next } from "@translations/invenio_administration/i18next";
 import CopyButton from "./CopyButton";
-import { Table, Header, Grid } from "semantic-ui-react";
-import AdminDetailsContext from "@js/invenio_administration/details/AdminDetailsContext.js";
+import { Table, Header } from "semantic-ui-react";
 
-function LinksTable({ }) {
-
+function LinksTable({ data }) {
   /**
    * WIP: this method should remove metadataPrefix from the url once the attribute is listed
    * as a dropdown.
@@ -22,14 +20,11 @@ function LinksTable({ }) {
    */
   const sanitizeLink = (url) => {
     return url;
-  }
+  };
 
-  const ctx = useContext(AdminDetailsContext);
-  const data = ctx.data;
-  const links = data.links;
-  const pidValue = data.id;
+  const { links, id: pidValue } = data;
 
-  let linkElems = [];
+  const linkElems = [];
 
   Object.entries(links).forEach(([key, link]) => {
     link = sanitizeLink(link, pidValue);
@@ -55,9 +50,7 @@ function LinksTable({ }) {
         <>
           <Header as="h2">{i18next.t("Links")}</Header>
           <Table unstackable>
-            <Table.Body>
-              {linkElems}
-            </Table.Body>
+            <Table.Body>{linkElems}</Table.Body>
           </Table>
         </>
       )}
@@ -67,8 +60,6 @@ function LinksTable({ }) {
 
 LinksTable.propTypes = {
   data: PropTypes.object.isRequired,
-  columns: PropTypes.array.isRequired,
 };
-
 
 export default LinksTable;
