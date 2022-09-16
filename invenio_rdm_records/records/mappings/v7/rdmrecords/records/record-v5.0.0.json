@@ -180,6 +180,9 @@
             "properties": {
               "ids": {
                 "type": "keyword"
+              },
+              "default": {
+                "type": "keyword"
               }
             }
           },
