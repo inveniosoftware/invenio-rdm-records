@@ -13,7 +13,6 @@ from invenio_administration.views.base import AdminResourceListView,\
 
 class OaiPmhListView(AdminResourceListView):
 
-    url = "/oaipmh"
     api_endpoint = "/oaipmh/sets"
     search_request_headers = {"Accept": "application/json"}
     name = "OAI-PMH"
@@ -42,7 +41,7 @@ class OaiPmhListView(AdminResourceListView):
             "order": 3
         },
         "search_pattern": {
-            "text": "Search Query",
+            "text": "Search query",
             "order": 4
         },
         "updated": {
@@ -57,6 +56,7 @@ class OaiPmhListView(AdminResourceListView):
 
     create_view_name = "oaipmh_create"
     list_view_name = "OAI-PMH"
+    resource_name = "name"
 
 
 class OaiPmhEditView(AdminResourceEditView):
@@ -85,7 +85,7 @@ class OaiPmhCreateView(AdminResourceCreateView):
 
 class OaiPmhDetailView(AdminResourceDetailView):
 
-    url = "/oaipmh/<pid_value>/"
+    url = "/oai-pmh/<pid_value>"
     api_endpoint = "/oaipmh/sets"
     search_request_headers = {"Accept": "application/json"}
     name = "OAI-PMH details"
@@ -95,6 +95,9 @@ class OaiPmhDetailView(AdminResourceDetailView):
     template = "invenio_rdm_records/oai-details.html"
     display_delete = True
     display_edit = True
+
+    list_view_name = "OAI-PMH"
+    pid_path = "id"
 
     item_field_list = {
         "id": {

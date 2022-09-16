@@ -10,30 +10,33 @@ import _get from "lodash/get";
 import LinksTable from "./LinksTable";
 import AdminDetailsView from "@js/invenio_administration/details/AdminDetailsView.js";
 
-const mainDomContainer = document.getElementById("invenio-details-config");
-const fields = JSON.parse(mainDomContainer.dataset.fields);
-const apiEndpoint = _get(mainDomContainer.dataset, "apiEndpoint");
-const pidValue = JSON.parse(mainDomContainer.dataset.pid);
-const title = mainDomContainer.dataset.title;
-const actions = JSON.parse(mainDomContainer.dataset.actions);
-const displayEdit = JSON.parse(mainDomContainer.dataset.displayEdit);
-const displayDelete = JSON.parse(mainDomContainer.dataset.displayDelete);
+const domContainer = document.getElementById("invenio-details-config");
+const title = domContainer.dataset.title;
+const fields = JSON.parse(domContainer.dataset.fields);
+const pidValue = JSON.parse(domContainer.dataset.pid);
+const resourceName = JSON.parse(domContainer.dataset.resourceName);
+const displayEdit = JSON.parse(domContainer.dataset.displayEdit);
+const displayDelete = JSON.parse(domContainer.dataset.displayDelete);
+const actions = JSON.parse(domContainer.dataset.actions);
+const apiEndpoint = _get(domContainer.dataset, "apiEndpoint");
+const idKeyPath = JSON.parse(_get(domContainer.dataset, "pidPath", "pid"));
+const listUIEndpoint = domContainer.dataset.listEndpoint;
 
-
-mainDomContainer &&
+domContainer &&
   ReactDOM.render(
-      <AdminDetailsView
-        title={title}
-        actions={actions}
-        apiEndpoint={apiEndpoint}
-        columns={fields}
-        displayDelete={displayDelete}
-        displayEdit={displayEdit}
-        pid={pidValue}
-      >
-        <LinksTable />
-      </AdminDetailsView>
-    ,mainDomContainer
+    <AdminDetailsView
+      title={title}
+      actions={actions}
+      apiEndpoint={apiEndpoint}
+      columns={fields}
+      displayDelete={displayDelete}
+      displayEdit={displayEdit}
+      pid={pidValue}
+      idKeyPath={idKeyPath}
+      resourceName={resourceName}
+      listUIEndpoint={listUIEndpoint}
+    >
+      <LinksTable />
+    </AdminDetailsView>,
+    domContainer
   );
-
-
