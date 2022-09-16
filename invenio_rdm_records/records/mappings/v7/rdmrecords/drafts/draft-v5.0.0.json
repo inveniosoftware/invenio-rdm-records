@@ -1,5 +1,33 @@
 {
   "mappings": {
+    "dynamic_templates": [
+      {
+        "pids": {
+          "path_match": "pids.*",
+          "match_mapping_type": "object",
+          "mapping": {
+            "type": "object",
+            "properties": {
+              "identifier": {
+                "type": "text",
+                "fields": {
+                  "keyword": {
+                    "type": "keyword",
+                    "ignore_above": 256
+                  }
+                }
+              },
+              "provider": {
+                "type": "keyword"
+              },
+              "client": {
+                "type": "keyword"
+              }
+            }
+          }
+        }
+      }
+    ],
     "dynamic": "strict",
     "date_detection": false,
     "numeric_detection": false,
@@ -151,22 +179,8 @@
         }
       },
       "pids": {
-        "properties": {
-          "identifier": {
-            "type": "keyword"
-          },
-          "scheme": {
-            "type": "keyword"
-          },
-          "client": {
-            "type": "keyword",
-            "index": false
-          },
-          "provider": {
-            "type": "keyword",
-            "index": false
-          }
-        }
+        "type": "object",
+        "dynamic": true
       },
       "has_draft": {
         "type": "boolean"
