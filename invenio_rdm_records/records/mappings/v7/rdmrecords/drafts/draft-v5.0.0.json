@@ -180,6 +180,52 @@
             "properties": {
               "ids": {
                 "type": "keyword"
+              },
+              "default": {
+                "type": "keyword"
+              }
+            }
+          },
+          "review": {
+            "type": "object",
+            "properties": {
+              "$schema": {
+                "type": "keyword",
+                "index": false
+              },
+              "id": {
+                "type": "keyword"
+              },
+              "type": {
+                "type": "keyword"
+              },
+              "title": {
+                "type": "text"
+              },
+              "description": {
+                "type": "text"
+              },
+              "status": {
+                "type": "keyword"
+              },
+              "payload": {
+                "type": "object",
+                "dynamic": true
+              },
+              "topic": {
+                "type": "object",
+                "dynamic": true
+              },
+              "receiver": {
+                "type": "object",
+                "dynamic": true
+              },
+              "created_by": {
+                "type": "object",
+                "dynamic": true
+              },
+              "@v": {
+                "type": "keyword"
               }
             }
           },
