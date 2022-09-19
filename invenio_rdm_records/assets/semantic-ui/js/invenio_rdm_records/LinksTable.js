@@ -32,7 +32,7 @@ function LinksTable({ data }) {
     if (key !== "self") {
       linkElems.push(
         <Table.Row key={key}>
-          <Table.Cell>
+          <Table.Cell width={3}>
             <b>{key}</b>
           </Table.Cell>
           <Table.Cell textAlign="left">
