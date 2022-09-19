@@ -33,7 +33,7 @@ class OaiPmhListView(AdminResourceListView):
           "order": 1
         },
         "name": {
-            "text": "Title",
+            "text": "Name",
             "order": 2
         },
         "spec": {
@@ -45,8 +45,12 @@ class OaiPmhListView(AdminResourceListView):
             "order": 4
         },
         "updated": {
-            "text": "Modified",
+            "text": "Updated",
             "order": 5
+        },
+        "created": {
+            "text": "Created",
+            "order": 6
         }
     }
 
