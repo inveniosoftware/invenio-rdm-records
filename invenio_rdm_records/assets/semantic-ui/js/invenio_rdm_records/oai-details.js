@@ -8,7 +8,7 @@ import React from "react";
 import ReactDOM from "react-dom";
 import _get from "lodash/get";
 import LinksTable from "./LinksTable";
-import AdminDetailsView from "@js/invenio_administration/details/AdminDetailsView.js";
+import AdminDetailsView from "@js/invenio_administration/src/details/AdminDetailsView.js";
 
 const domContainer = document.getElementById("invenio-details-config");
 const title = domContainer.dataset.title;
@@ -21,6 +21,7 @@ const actions = JSON.parse(domContainer.dataset.actions);
 const apiEndpoint = _get(domContainer.dataset, "apiEndpoint");
 const idKeyPath = JSON.parse(_get(domContainer.dataset, "pidPath", "pid"));
 const listUIEndpoint = domContainer.dataset.listEndpoint;
+const resourceSchema = JSON.parse(domContainer.dataset.resourceSchema);
 
 domContainer &&
   ReactDOM.render(
@@ -35,6 +36,7 @@ domContainer &&
       idKeyPath={idKeyPath}
       resourceName={resourceName}
       listUIEndpoint={listUIEndpoint}
+      resourceSchema={resourceSchema}
     >
       <LinksTable />
     </AdminDetailsView>,
