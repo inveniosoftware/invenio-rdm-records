@@ -13,6 +13,12 @@ import isEmpty from "lodash/isEmpty";
 import { withState } from "react-searchkit";
 import { Actions } from "@js/invenio_administration/src/actions/Actions.js";
 import { AdminUIRoutes } from "@js/invenio_administration/src/routes.js";
+import { OverridableContext } from "react-overridable";
+import { DeleteModal } from "./DeleteModal";
+
+const overridenComponents = {
+  "DeleteModal.layout": DeleteModal,
+};
 
 class SearchResultItemComponent extends Component {
   refreshAfterAction = () => {
@@ -42,44 +48,47 @@ class SearchResultItemComponent extends Component {
     const resourceHasActions =
       displayEdit || displayDelete || !isEmpty(actions);
     return (
-      <Table.Row>
-        {columns.map(([property, { text, order }], index) => {
-          return (
-            <Table.Cell key={`${text}-${order}`} data-label={text}>
-              {index === 0 && (
-                <a
-                  href={AdminUIRoutes.detailsView(
-                    listUIEndpoint,
-                    result,
-                    idKeyPath
-                  )}
-                >
-                  {_get(result, property)}
-                </a>
-              )}
-              {index !== 0 && _get(result, property)}
+      <OverridableContext.Provider value={overridenComponents}>
+        <Table.Row>
+          {columns.map(([property, { text, order }], index) => {
+            return (
+              <Table.Cell key={`${text}-${order}`} data-label={text}>
+                {index === 0 ? (
+                  <a
+                    href={AdminUIRoutes.detailsView(
+                      listUIEndpoint,
+                      result,
+                      idKeyPath
+                    )}
+                  >
+                    {_get(result, property)}
+                  </a>
+                ) : (
+                  _get(result, property)
+                )}
+              </Table.Cell>
+            );
+          })}
+          {resourceHasActions && (
+            <Table.Cell>
+              <Actions
+                title={title}
+                resourceName={resourceName}
+                apiEndpoint={apiEndpoint}
+                displayEdit={displayEdit}
+                disableEdit={this.createdBySystem()}
+                displayDelete={displayDelete}
+                disableDelete={this.createdBySystem()}
+                actions={actions}
+                resource={result}
+                idKeyPath={idKeyPath}
+                successCallback={this.refreshAfterAction}
+                listUIEndpoint={listUIEndpoint}
+              />
             </Table.Cell>
-          );
-        })}
-        {resourceHasActions && (
-          <Table.Cell>
-            <Actions
-              title={title}
-              resourceName={resourceName}
-              apiEndpoint={apiEndpoint}
-              displayEdit={displayEdit}
-              disableEdit={this.createdBySystem()}
-              displayDelete={displayDelete}
-              disableDelete={this.createdBySystem()}
-              actions={actions}
-              resource={result}
-              idKeyPath={idKeyPath}
-              successCallback={this.refreshAfterAction}
-              listUIEndpoint={listUIEndpoint}
-            />
-          </Table.Cell>
-        )}
-      </Table.Row>
+          )}
+        </Table.Row>
+      </OverridableContext.Provider>
     );
   }
 }

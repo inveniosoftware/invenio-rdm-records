@@ -34,10 +34,10 @@ from invenio_rdm_records.oaiserver.services.uow import OAISetCommitOp, OAISetDel
 class OAIPMHServerService(Service):
     """OAI-PMH service."""
 
-    def __init__(self, config, reserved_prefix="community-"):
+    def __init__(self, config, extra_reserved_prefixes={}):
         """Init service with config."""
         super().__init__(config)
-        self.reserved_prefix = reserved_prefix
+        self.reserved_prefixes = config.reserved_prefixes.union(extra_reserved_prefixes)
 
     @property
     def schema(self):
@@ -67,11 +67,11 @@ class OAIPMHServerService(Service):
     def _validate_spec(self, spec):
         """Checks the validity of the provided spec."""
         # Reserved for community integration
-        if spec.startswith(self.reserved_prefix):
+        if spec.startswith(tuple(self.reserved_prefixes)):
             raise ValidationError(
                 _(
-                    "The spec must not start with '{prefix}'.".format(
-                        prefix=self.reserved_prefix
+                    "The spec must not start with any of the following list '{prefix}'.".format(
+                        prefix=list(self.reserved_prefixes)
                     )
                 ),
                 field_name="spec",
@@ -99,7 +99,7 @@ class OAIPMHServerService(Service):
             raise_errors=True,
         )
         self._validate_spec(valid_data["spec"])
-        system_created = valid_data["spec"].startswith(self.reserved_prefix)
+        system_created = valid_data["spec"].startswith(tuple(self.reserved_prefixes))
 
         new_set = OAISet(**valid_data, system_created=system_created)
         existing_set, errors = self._get_one(spec=new_set.spec, raise_error=False)
