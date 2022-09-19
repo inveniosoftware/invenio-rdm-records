@@ -10,8 +10,11 @@
 import pytest
 from invenio_db import db
 from invenio_oaiserver.models import OAISet
+from marshmallow import ValidationError
 
+from invenio_rdm_records.oaiserver.services.config import OAIPMHServerServiceConfig
 from invenio_rdm_records.oaiserver.services.errors import OAIPMHSetNotEditable
+from invenio_rdm_records.oaiserver.services.services import OAIPMHServerService
 from invenio_rdm_records.proxies import current_oaipmh_server_service
 
 
@@ -57,3 +60,16 @@ def test_raise_error_on_edit_and_delete(
     # Cannot delete
     with pytest.raises(OAIPMHSetNotEditable):
         service.delete(superuser_identity, system_created_oai_set.id)
+
+
+def test_reserved_prefixes(running_app, es_clear, minimal_oai_set):
+    superuser_identity = running_app.superuser_identity
+
+    service = OAIPMHServerService(
+        config=OAIPMHServerServiceConfig, extra_reserved_prefixes={"cds-"}
+    )
+    minimal_oai_set["spec"] = "cds-test"
+
+    # Must fail as "cds-" is a reserved prefix
+    with pytest.raises(ValidationError):
+        service.create(superuser_identity, minimal_oai_set)
