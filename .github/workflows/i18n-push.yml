@@ -2,19 +2,31 @@
 #
 # Copyright (C) 2022 Graz University of Technology.
 #
-# Invenio-RDM-Records is free software; you can redistribute it and/or modify
+# Invenio-rdm-records is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
 
-name: i18n:pull,extract,push translations
-on: workflow_dispatch # manually trigger 
+name: i18n:push translations
+on: workflow_dispatch # manually trigger
 
 jobs:
-  translations:
-    runs-on: ubuntu-latest
+  i18n-extract:
+    runs-on: ubuntu-20.04
+    env:
+      PYTHON-VERSION: 3.9
     steps:
-      - uses: actions/checkout@v2
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      # setup python
+      - name: Set up Python ${{ env.PYTHON-VERSION }}
+        uses: actions/setup-python@v2
         with:
-          fetch-depth: 0
+          python-version: ${{ env.PYTHON-VERSION }}
+
+      # install dependencies
+      - name: Install dependencies
+        run: |
+          pip install -e ".[all]"  
 
       # install transifex client
       - name: transifex-client
@@ -31,20 +43,15 @@ jobs:
           echo password=${{ secrets.TRANSIFEX_TOKEN }} >> ~/.transifexrc
           echo username=api  >> ~/.transifexrc
 
-      # pull all lang
-      - name: pull translations
-        run: |
-          tx pull -a
-
       # extract
       - name: extract_messages
         run: |
           python setup.py extract_messages
 
-      # push
+      # push source
       - name: push_messages
         run: |
-          tx push -s -t
+          tx push -s
 
       # remove transifex credential file
       - name: remove transifexrc file
@@ -55,8 +62,8 @@ jobs:
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v3
         with:
-          commit-message: i18n:pull,extract,push translations
-          title: i18n:pull,extract,push translations
-          body: i18n:pull,extract,push translations
-          branch: 101-translations  # name of branch which PR is created from
+          commit-message: i18n:push translations
+          title: i18n:push translations
+          body: i18n:push translations
+          branch: 101-translations-push  # name of branch which PR is created from
           delete-branch: true  # delete branch once merged,closed
