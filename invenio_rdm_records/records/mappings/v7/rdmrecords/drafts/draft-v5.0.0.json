@@ -590,8 +590,7 @@
           "related_identifiers": {
             "properties": {
               "identifier": {
-                "type": "keyword",
-                "copy_to": ["related.identifier"]
+                "type": "keyword"
               },
               "relation_type": {
                 "type": "object",
@@ -745,8 +744,7 @@
                 }
               },
               "title": {
-                "type": "text",
-                "copy_to": ["suggest_title"]
+                "type": "text"
               },
               "type": {
                 "type": "object",
@@ -820,21 +818,6 @@
             "type": "keyword"
           }
         }
-      },
-      "related": {
-        "type": "object",
-        "properties": {
-          "identifier": {
-            "type": "keyword"
-          }
-        }
-      },
-      "suggest_title": {
-        "type": "completion",
-        "analyzer": "simple",
-        "preserve_separators": true,
-        "preserve_position_increments": true,
-        "max_input_length": 50
       }
     }
   }
