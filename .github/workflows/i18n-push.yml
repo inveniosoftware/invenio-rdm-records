@@ -1,0 +1,69 @@
+# -*- coding: utf-8 -*-
+#
+# Copyright (C) 2022 Graz University of Technology.
+#
+# Invenio-rdm-records is free software; you can redistribute it and/or modify
+# it under the terms of the MIT License; see LICENSE file for more details.
+
+name: i18n:push translations
+on: workflow_dispatch # manually trigger
+
+jobs:
+  i18n-extract:
+    runs-on: ubuntu-20.04
+    env:
+      PYTHON-VERSION: 3.9
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      # setup python
+      - name: Set up Python ${{ env.PYTHON-VERSION }}
+        uses: actions/setup-python@v2
+        with:
+          python-version: ${{ env.PYTHON-VERSION }}
+
+      # install dependencies
+      - name: Install dependencies
+        run: |
+          pip install -e ".[all]"  
+
+      # install transifex client
+      - name: transifex-client
+        run: |
+          pip install transifex-client
+
+      # store token
+      - name: store token
+        run: |
+          touch ~/.transifexrc
+          echo [https://www.transifex.com] >> ~/.transifexrc
+          echo api_hostname=https://api.transifex.com >> ~/.transifexrc
+          echo hostname=https://www.transifex.com >> ~/.transifexrc
+          echo password=${{ secrets.TRANSIFEX_TOKEN }} >> ~/.transifexrc
+          echo username=api  >> ~/.transifexrc
+
+      # extract
+      - name: extract_messages
+        run: |
+          python setup.py extract_messages
+
+      # push source
+      - name: push_messages
+        run: |
+          tx push -s
+
+      # remove transifex credential file
+      - name: remove transifexrc file
+        uses: JesseTG/rm@v1.0.2
+        with:
+          path: ~/.transifexrc
+
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v3
+        with:
+          commit-message: i18n:push translations
+          title: i18n:push translations
+          body: i18n:push translations
+          branch: 101-translations-push  # name of branch which PR is created from
+          delete-branch: true  # delete branch once merged,closed
