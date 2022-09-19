@@ -202,19 +202,6 @@ def test_update_set_invalid_data(client, admin, minimal_oai_set, headers):
     with pytest.raises(OAISetSpecUpdateError):
         _update_set(client, s1["id"], s, headers, 400)
 
-    # trying to set data which is read_only
-    s = s1.copy()
-    s["id"] = 200
-    _update_set(client, s1["id"], s, headers, 400)
-
-    s = s1.copy()
-    s["created"] = 200
-    _update_set(client, s1["id"], s, headers, 400)
-
-    s = s1.copy()
-    s["updated"] = 200
-    _update_set(client, s1["id"], s, headers, 400)
-
 
 def test_delete_set(client, admin, minimal_oai_set, headers):
     """Retrieve a set."""
