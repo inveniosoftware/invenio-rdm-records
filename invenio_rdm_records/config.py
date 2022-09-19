@@ -241,20 +241,20 @@ RDM_SEARCH_VERSIONING = {
 RDM_OAI_PMH_FACETS = {}
 
 RDM_OAI_PMH_SORT_OPTIONS = {
-    "newest": dict(
-        title=_("Newest"),
-        fields=["-created"],
-    ),
-    "oldest": dict(
-        title=_("Oldest"),
-        fields=["created"],
-    ),
-    "title": dict(
-        title=_("Title"),
+    "name": dict(
+        title=_("Name"),
         fields=["name"],
     ),
-    "modified": dict(
-        title=_("Modified"),
+    "spec": dict(
+        title=_("Spec"),
+        fields=["spec"],
+    ),
+    "created": dict(
+        title=_("Created"),
+        fields=["created"],
+    ),
+    "updated": dict(
+        title=_("Updated"),
         fields=["updated"],
     ),
 }
@@ -262,7 +262,7 @@ RDM_OAI_PMH_SORT_OPTIONS = {
 
 RDM_OAI_PMH_SEARCH = {
     "facets": [],
-    "sort": ["newest", "oldest", "title", "modified"],
+    "sort": ["name", "spec", "created", "updated"],
 }
 """OAI-PMH search configuration."""
 
