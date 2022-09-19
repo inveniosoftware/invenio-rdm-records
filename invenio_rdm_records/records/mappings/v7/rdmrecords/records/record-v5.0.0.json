@@ -766,6 +766,9 @@
         "properties": {
           "enabled": {
             "type": "boolean"
+          },
+          "default_preview": {
+            "type": "keyword"
           }
         }
       },
