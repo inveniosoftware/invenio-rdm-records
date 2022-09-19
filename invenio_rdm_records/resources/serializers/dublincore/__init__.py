@@ -8,8 +8,7 @@
 """Dublin Core Serializers for Invenio RDM Records."""
 
 from dcxml import simpledc
-from flask_resources.serializers import MarshmallowJSONSerializer, \
-    SerializerMixin
+from flask_resources.serializers import MarshmallowJSONSerializer, SerializerMixin
 
 from .schema import DublinCoreSchema
 

@@ -31,9 +31,7 @@ def record(location):
 
 def test_invenio_provider_create(record, invenio_provider):
     created_pid = invenio_provider.create(record)
-    db_pid = PersistentIdentifier.get(
-        pid_value=created_pid.pid_value, pid_type="oai"
-    )
+    db_pid = PersistentIdentifier.get(pid_value=created_pid.pid_value, pid_type="oai")
 
     assert created_pid == db_pid
     assert created_pid.pid_value
@@ -56,9 +54,7 @@ def test_invenio_provider_reserve(record, invenio_provider):
     created_pid = invenio_provider.create(record)
     assert invenio_provider.reserve(pid=created_pid, record=record)
 
-    db_pid = PersistentIdentifier.get(
-        pid_value=created_pid.pid_value, pid_type="oai"
-    )
+    db_pid = PersistentIdentifier.get(pid_value=created_pid.pid_value, pid_type="oai")
 
     assert created_pid == db_pid
     assert db_pid.pid_value

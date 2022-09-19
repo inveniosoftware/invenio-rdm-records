@@ -19,13 +19,13 @@ from ..protection import Protection
 class AccessStatusEnum(Enum):
     """Enum defining access statuses."""
 
-    OPEN = 'open'
+    OPEN = "open"
 
-    EMBARGOED = 'embargoed'
+    EMBARGOED = "embargoed"
 
-    RESTRICTED = 'restricted'
+    RESTRICTED = "restricted"
 
-    METADATA_ONLY = 'metadata-only'
+    METADATA_ONLY = "metadata-only"
 
 
 class RecordAccess:
@@ -68,11 +68,7 @@ class RecordAccess:
             status = AccessStatusEnum.EMBARGOED
         elif self.protection.record == "public" and not self.has_files:
             status = AccessStatusEnum.METADATA_ONLY
-        elif (
-            self.protection.record
-            == self.protection.files
-            == "public"
-        ):
+        elif self.protection.record == self.protection.files == "public":
             status = AccessStatusEnum.OPEN
 
         return status
@@ -108,11 +104,7 @@ class RecordAccess:
 
     @classmethod
     def from_dict(
-        cls,
-        access_dict,
-        protection_cls=None,
-        embargo_cls=None,
-        has_files=None
+        cls, access_dict, protection_cls=None, embargo_cls=None, has_files=None
     ):
         """Create a new Access object from the specified 'access' property.
 
@@ -131,9 +123,7 @@ class RecordAccess:
 
         if access_dict:
             try:
-                protection = protection_cls(
-                    access_dict["record"], access_dict["files"]
-                )
+                protection = protection_cls(access_dict["record"], access_dict["files"])
             except Exception as e:
                 errors.append(e)
 
@@ -155,20 +145,13 @@ class RecordAccess:
         if type(self) != type(other):
             return False
 
-        return (
-            self.embargo == other.embargo
-            and self.protection == other.protection
-        )
+        return self.embargo == other.embargo and self.protection == other.protection
 
     def __repr__(self):
         """Return repr(self)."""
-        protection_str = "{}/{}".format(
-            self.protection.record, self.protection.files
-        )
+        protection_str = "{}/{}".format(self.protection.record, self.protection.files)
 
-        return (
-            "<{} (protection: {}, {})>"
-        ).format(
+        return ("<{} (protection: {}, {})>").format(
             type(self).__name__,
             protection_str,
             self.embargo,
@@ -191,10 +174,7 @@ class RecordAccessField(SystemField):
 
         data = self.get_dictkey(instance)
         if data:
-            obj = self._access_obj_class.from_dict(
-                data,
-                has_files=len(instance.files)
-            )
+            obj = self._access_obj_class.from_dict(data, has_files=len(instance.files))
         else:
             obj = self._access_obj_class()
 
@@ -242,5 +222,5 @@ class RecordAccessField(SystemField):
 
     def pre_load(self, data, loader=None):
         """Called before a record is dumped."""
-        if data.get('access') and isinstance(data.get('access'), dict):
-            data['access'].pop('status', None)
+        if data.get("access") and isinstance(data.get("access"), dict):
+            data["access"].pop("status", None)

@@ -38,9 +38,11 @@ class BlockedPrefixes:
         """Validator call."""
         for p in self.prefixes:
             if identifier.startswith(p):
-                errors.append(_(
-                    "The prefix '{prefix}' is administrated locally.").format(
-                        prefix=p))
+                errors.append(
+                    _("The prefix '{prefix}' is administrated locally.").format(
+                        prefix=p
+                    )
+                )
                 # Bail early
                 return
 
@@ -57,9 +59,7 @@ class ExternalPIDProvider(PIDProvider):
         super().__init__(name, pid_type=pid_type, managed=False, **kwargs)
         self._validators = validators or []
 
-    def validate(
-        self, record, identifier=None, provider=None, client=None, **kwargs
-    ):
+    def validate(self, record, identifier=None, provider=None, client=None, **kwargs):
         """Validate the attributes of the identifier.
 
         :returns: A tuple (success, errors). The first specifies if the
@@ -69,15 +69,16 @@ class ExternalPIDProvider(PIDProvider):
         if client:
             current_app.logger.error(
                 "Configuration error: client attribute not supported for "
-                f"provider {self.name}")
+                f"provider {self.name}"
+            )
             raise  # configuration error
 
-        success, errors = super().validate(
-            record, identifier, provider, **kwargs)
+        success, errors = super().validate(record, identifier, provider, **kwargs)
 
         if not identifier:
-            errors.append(_("Missing {scheme} for required field.").format(
-                scheme=self.label))
+            errors.append(
+                _("Missing {scheme} for required field.").format(scheme=self.label)
+            )
 
         for v in self._validators:
             v(record, identifier, provider, errors)

@@ -12,8 +12,9 @@ from babel_edtf import format_edtf
 from flask_babelex import gettext as _
 from marshmallow import fields
 
-from invenio_rdm_records.records.systemfields.access.field.record import \
-    AccessStatusEnum
+from invenio_rdm_records.records.systemfields.access.field.record import (
+    AccessStatusEnum,
+)
 
 
 class UIAccessStatus(object):
@@ -56,54 +57,67 @@ class UIObjectAccessStatus(UIAccessStatus):
         """Build access status object."""
         self.record_access_dict = record_access_dict
         self.has_files = has_files
-        super().__init__(record_access_dict.get('status'))
+        super().__init__(record_access_dict.get("status"))
 
     @property
     def description(self):
         """Record access status description."""
         options = {
-            AccessStatusEnum.OPEN: _(
-                "The record and files are publicly accessible."),
+            AccessStatusEnum.OPEN: _("The record and files are publicly accessible."),
             AccessStatusEnum.METADATA_ONLY: _(
-                "No files are available for this record.")
+                "No files are available for this record."
+            ),
         }
 
-        if self.record_access_dict.get('record') == 'restricted':
+        if self.record_access_dict.get("record") == "restricted":
             if self.has_files:
-                options.update({
-                    AccessStatusEnum.EMBARGOED: _(
-                        "The record and files will be made publicly available "
-                        "on %(date)s.") % {"date": self.embargo_date},
-                    AccessStatusEnum.RESTRICTED: _(
-                        "The record and files are restricted to users with "
-                        "access."),
-                })
+                options.update(
+                    {
+                        AccessStatusEnum.EMBARGOED: _(
+                            "The record and files will be made publicly available "
+                            "on %(date)s."
+                        )
+                        % {"date": self.embargo_date},
+                        AccessStatusEnum.RESTRICTED: _(
+                            "The record and files are restricted to users with "
+                            "access."
+                        ),
+                    }
+                )
             else:
-                options.update({
-                    AccessStatusEnum.EMBARGOED: _(
-                        "The record will be made publicly available on "
-                        "%(date)s.") % {"date": self.embargo_date},
-                    AccessStatusEnum.RESTRICTED: _(
-                        "The record is restricted to users with access."),
-                })
+                options.update(
+                    {
+                        AccessStatusEnum.EMBARGOED: _(
+                            "The record will be made publicly available on " "%(date)s."
+                        )
+                        % {"date": self.embargo_date},
+                        AccessStatusEnum.RESTRICTED: _(
+                            "The record is restricted to users with access."
+                        ),
+                    }
+                )
         else:
-            options.update({
-                AccessStatusEnum.EMBARGOED: _(
-                    "The files will be made publicly available on "
-                    "%(date)s.") % {"date": self.embargo_date},
-                AccessStatusEnum.RESTRICTED: _(
-                    "The record is publicly accessible, but files are "
-                    "restricted to users with access."),
-            })
+            options.update(
+                {
+                    AccessStatusEnum.EMBARGOED: _(
+                        "The files will be made publicly available on " "%(date)s."
+                    )
+                    % {"date": self.embargo_date},
+                    AccessStatusEnum.RESTRICTED: _(
+                        "The record is publicly accessible, but files are "
+                        "restricted to users with access."
+                    ),
+                }
+            )
 
         return options.get(self.access_status)
 
     @property
     def embargo_date(self):
         """Embargo date."""
-        until = self.record_access_dict.get('embargo').get('until')
+        until = self.record_access_dict.get("embargo").get("until")
         if until:
-            return format_edtf(until, format='long')
+            return format_edtf(until, format="long")
         return until
 
     @property
@@ -122,11 +136,12 @@ class AccessStatusField(fields.Field):
 
     def _serialize(self, value, attr, obj, **kwargs):
         """Serialise access status."""
-        record_access_dict = obj.get('access')
-        has_files = obj.get('files').get('enabled', False)
+        record_access_dict = obj.get("access")
+        has_files = obj.get("files").get("enabled", False)
         if record_access_dict:
-            record_access_status_ui = \
-                UIObjectAccessStatus(record_access_dict, has_files)
+            record_access_status_ui = UIObjectAccessStatus(
+                record_access_dict, has_files
+            )
             return {
                 "id": record_access_status_ui.id,
                 "title_l10n": record_access_status_ui.title,

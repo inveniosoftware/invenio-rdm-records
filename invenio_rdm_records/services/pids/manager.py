@@ -56,39 +56,36 @@ class PIDManager:
             provider = self._get_provider(scheme, pid.get("provider"))
             success, val_errors = provider.validate(record=record, **pid)
             if not success:
-                errors.append({
-                    "field": f"pids.{scheme}",
-                    "messages": val_errors
-                })
+                errors.append({"field": f"pids.{scheme}", "messages": val_errors})
 
     def _validate_identifiers(self, pids, errors):
         """Validate and normalize identifiers."""
         # TODO: Refactor to get it injected instead.
-        conf = current_app.config['RDM_PERSISTENT_IDENTIFIERS']
+        conf = current_app.config["RDM_PERSISTENT_IDENTIFIERS"]
 
         identifiers = []
         for scheme, pids_attrs in pids.items():
-            identifier = pids_attrs.get('identifier')
+            identifier = pids_attrs.get("identifier")
 
-            validator = conf.get(scheme, {}).get('validator', lambda x: True)
-            normalizer = conf.get(scheme, {}).get('normalizer')
-            label = conf.get(scheme, {}).get('label', scheme)
+            validator = conf.get(scheme, {}).get("validator", lambda x: True)
+            normalizer = conf.get(scheme, {}).get("normalizer")
+            label = conf.get(scheme, {}).get("label", scheme)
 
             if identifier:
                 if not validator(identifier):
-                    errors.append({
-                        "field": f"pids.{scheme}",
-                        "messages": [_("Invalid {scheme}").format(
-                            scheme=label
-                        )]
-                    })
+                    errors.append(
+                        {
+                            "field": f"pids.{scheme}",
+                            "messages": [_("Invalid {scheme}").format(scheme=label)],
+                        }
+                    )
                 else:
                     if normalizer is not None:
                         identifiers.append((scheme, normalizer(identifier)))
 
         # Modify outside of iteration - updates the pids globally
         for scheme, id_ in identifiers:
-            pids[scheme]['identifier'] = id_
+            pids[scheme]["identifier"] = id_
 
     def validate(self, pids, record, errors=None, raise_errors=False):
         """Validate PIDs."""
@@ -126,27 +123,22 @@ class PIDManager:
                     pid_value=identifier,
                     status=PIDStatus.RESERVED,
                 )
-            pid_attrs = {
-                "identifier": identifier,
-                "provider": provider.name
-            }
+            pid_attrs = {"identifier": identifier, "provider": provider.name}
         else:
             if draft.pids.get(scheme):
                 raise ValidationError(
-                    message=_("A PID already exists for type {scheme}")
-                    .format(scheme=scheme),
+                    message=_("A PID already exists for type {scheme}").format(
+                        scheme=scheme
+                    ),
                     field_name=f"pids.{scheme}",
                 )
             if not provider.is_managed():
                 raise ValidationError(
                     message=_("External identifier value is required."),
-                    field_name=f"pids.{scheme}"
+                    field_name=f"pids.{scheme}",
                 )
             pid = provider.create(draft)
-            pid_attrs = {
-                "identifier": pid.pid_value,
-                "provider": provider.name
-            }
+            pid_attrs = {"identifier": pid.pid_value, "provider": provider.name}
 
         if provider.client:  # provider and identifier already in dict
             pid_attrs["client"] = provider.client.name
@@ -167,7 +159,7 @@ class PIDManager:
             )
 
         # Create without an identifier value provided (only the scheme)
-        for scheme in (schemes or []):
+        for scheme in schemes or []:
             result[scheme] = self.create(draft, scheme)
 
         return result
@@ -177,8 +169,7 @@ class PIDManager:
         pid_attrs = record.pids.get(scheme, None)
         if not pid_attrs:
             raise ValidationError(
-                message=_("PID not found for type {scheme}")
-                .format(scheme=scheme),
+                message=_("PID not found for type {scheme}").format(scheme=scheme),
                 field_name=f"pids",
             )
 
@@ -197,17 +188,14 @@ class PIDManager:
     def reserve_all(self, draft, pids):
         """Reserve PIDs from a list."""
         for scheme, pid_attrs in pids.items():
-            self.reserve(
-                draft, scheme, pid_attrs["identifier"], pid_attrs["provider"]
-            )
+            self.reserve(draft, scheme, pid_attrs["identifier"], pid_attrs["provider"])
 
     def register(self, record, scheme, url):
         """Register a PID of a record."""
         pid_attrs = record.pids.get(scheme, None)
         if not pid_attrs:
             raise ValidationError(
-                message=_("PID not found for type {scheme}")
-                .format(scheme=scheme),
+                message=_("PID not found for type {scheme}").format(scheme=scheme),
                 field_name=f"pids",
             )
 
@@ -221,13 +209,17 @@ class PIDManager:
         provider = self._get_provider(scheme, provider_name)
         pid = provider.get(identifier)
         if not provider.can_modify(pid):
-            raise ValidationError(message=[{
-                    "field": f"pids.{scheme}",
-                    "message": _(
-                        "Cannot discard a reserved or registered persistent "
-                        "identifier."
-                    )
-                }])
+            raise ValidationError(
+                message=[
+                    {
+                        "field": f"pids.{scheme}",
+                        "message": _(
+                            "Cannot discard a reserved or registered persistent "
+                            "identifier."
+                        ),
+                    }
+                ]
+            )
 
         provider.delete(pid)
 

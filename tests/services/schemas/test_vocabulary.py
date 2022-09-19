@@ -23,17 +23,13 @@ def test_valid_vocabulary():
 
 
 def test_invalid_vocabulary():
-    invalid_no_vocabulary = {
-        "identifier": "A-D000007"
-    }
+    invalid_no_vocabulary = {"identifier": "A-D000007"}
 
     with pytest.raises(ValidationError):
         VocabularySchema().load(invalid_no_vocabulary)
 
     # 'title' is dump_only, passing it in is invalid
-    invalid_title = {
-        "title": "Abdominal Injuries"
-    }
+    invalid_title = {"title": "Abdominal Injuries"}
 
     with pytest.raises(ValidationError):
         VocabularySchema().load(invalid_title)

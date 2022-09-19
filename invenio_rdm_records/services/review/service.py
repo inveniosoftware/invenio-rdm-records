@@ -9,14 +9,24 @@
 
 from flask import current_app
 from flask_babelex import lazy_gettext as _
+from invenio_communities.communities.records.systemfields.access import CommunityAccess
 from invenio_drafts_resources.services.records import RecordService
-from invenio_records_resources.services.uow import RecordCommitOp, \
-    RecordIndexOp, unit_of_work
-from invenio_requests import current_registry, current_requests_service
+from invenio_records_resources.services.uow import (
+    RecordCommitOp,
+    RecordIndexOp,
+    unit_of_work,
+)
+from invenio_requests import current_request_type_registry, current_requests_service
 from invenio_requests.resolvers.registry import ResolverRegistry
 from marshmallow import ValidationError
 
-from ..errors import ReviewExistsError, ReviewNotFoundError, ReviewStateError
+from ...records.systemfields.access.field.record import AccessStatusEnum
+from ..errors import (
+    ReviewExistsError,
+    ReviewInconsistentAccessRestrictions,
+    ReviewNotFoundError,
+    ReviewStateError,
+)
 
 
 class ReviewService(RecordService):
@@ -38,32 +48,28 @@ class ReviewService(RecordService):
     @property
     def supported_types(self):
         """Supported review types."""
-        return current_app.config.get('RDM_RECORDS_REVIEWS', [])
+        return current_app.config.get("RDM_RECORDS_REVIEWS", [])
 
     @unit_of_work()
     def create(self, identity, data, record, uow=None):
         """Create a new review request in draft state (to be completed."""
         if record.parent.review is not None:
-            raise ReviewExistsError(
-                _('A review already exists for this record'))
+            raise ReviewExistsError(_("A review already exists for this record"))
         # Validate that record has not been published.
         if record.is_published or record.versions.index > 1:
             raise ReviewStateError(
-                _("You cannot create a review for an already published "
-                  "record.")
+                _("You cannot create a review for an already published " "record.")
             )
 
         # Validate the review type (only review requests are valid)
-        type_ = current_registry.lookup(data.pop('type', None), quiet=True)
+        type_ = current_request_type_registry.lookup(data.pop("type", None), quiet=True)
         if type_ is None or type_.type_id not in self.supported_types:
-            raise ValidationError(
-                _('Invalid review type.'),
-                field_name='type'
-            )
+            raise ValidationError(_("Invalid review type."), field_name="type")
 
         # Resolve receiver
         receiver = ResolverRegistry.resolve_entity_proxy(
-            data.pop('receiver', None)).resolve()
+            data.pop("receiver", None)
+        ).resolve()
 
         # Delegate to requests service to create the request
         request_item = current_requests_service.create(
@@ -84,7 +90,7 @@ class ReviewService(RecordService):
         """Read the review."""
         # Delgate to requests service to create the request
         draft = self.draft_cls.pid.resolve(id_, registered_only=False)
-        self.require_permission(identity, 'read_draft', record=draft)
+        self.require_permission(identity, "read_draft", record=draft)
 
         if draft.parent.review is None:
             raise ReviewNotFoundError()
@@ -95,7 +101,7 @@ class ReviewService(RecordService):
     def update(self, identity, id_, data, revision_id=None, uow=None):
         """Create or update an existing review."""
         draft = self.draft_cls.pid.resolve(id_, registered_only=False)
-        self.require_permission(identity, 'update_draft', record=draft)
+        self.require_permission(identity, "update_draft", record=draft)
 
         # If an existing review exists, delete it.
         if draft.parent.review is not None:
@@ -108,7 +114,7 @@ class ReviewService(RecordService):
     def delete(self, identity, id_, revision_id=None, uow=None):
         """Delete a review."""
         draft = self.draft_cls.pid.resolve(id_, registered_only=False)
-        self.require_permission(identity, 'update_draft', record=draft)
+        self.require_permission(identity, "update_draft", record=draft)
 
         # Preconditions
         if draft.parent.review is None:
@@ -116,19 +122,20 @@ class ReviewService(RecordService):
 
         if draft.is_published:
             raise ReviewStateError(
-                _("You cannot delete a review for a draft that has already "
-                  "been published.")
+                _(
+                    "You cannot delete a review for a draft that has already "
+                    "been published."
+                )
             )
 
         if draft.parent.review.is_open:
             raise ReviewStateError(_("An open review cannot be deleted."))
 
-        # Delete request
-        current_requests_service.delete(
-            identity,
-            draft.parent.review.id,
-            uow=uow
-        )
+        # Keep the request when not open or not closed so that the user can see
+        # the request's events. The request is deleted only when in `draft`
+        # status
+        if not (draft.parent.review.is_closed or draft.parent.review.is_open):
+            current_requests_service.delete(identity, draft.parent.review.id, uow=uow)
         # Unset on record
         draft.parent.review = None
         uow.register(RecordCommitOp(draft.parent))
@@ -140,14 +147,36 @@ class ReviewService(RecordService):
         """Submit record for review."""
         # Get record and check permission
         draft = self.draft_cls.pid.resolve(id_, registered_only=False)
-        self.require_permission(identity, 'update_draft', record=draft)
+        self.require_permission(identity, "update_draft", record=draft)
 
         # Preconditions
         if draft.parent.review is None:
             raise ReviewNotFoundError()
 
+        # since it is submit review action, assume the receiver is community
+        resolved_community = draft.parent.review.receiver.resolve()
+
+        assert "restricted" in CommunityAccess.VISIBILITY_LEVELS
+        community_is_restricted = (
+            resolved_community["access"]["visibility"] == "restricted"
+        )
+
+        record_is_restricted = draft.access.status == AccessStatusEnum.RESTRICTED
+
+        if community_is_restricted and not record_is_restricted:
+            raise ReviewInconsistentAccessRestrictions()
+
         # All other preconditions can be checked by the action itself which can
         # raise appropriate exceptions.
-        request = current_requests_service.execute_action(
-            identity, draft.parent.review.id, 'submit', data=data, uow=uow)
-        return request
+        request_item = current_requests_service.execute_action(
+            identity, draft.parent.review.id, "submit", data=data, uow=uow
+        )
+
+        # TODO: this shouldn't be required BUT because of the caching mechanism
+        # in the review systemfield, the review should be set with the updated
+        # request object
+        draft.parent.review = request_item._request
+        uow.register(RecordCommitOp(draft.parent))
+        uow.register(RecordIndexOp(draft, indexer=self.indexer))
+
+        return request_item

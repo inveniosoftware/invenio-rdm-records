@@ -24,16 +24,16 @@ class OAIPIDProvider(PIDProvider):
         """Constructor."""
         super().__init__(
             name,
-            pid_type='oai',
+            pid_type="oai",
             default_status=PIDStatus.REGISTERED,
             managed=True,
-            **kwargs
+            **kwargs,
         )
 
     def generate_id(self, record, **kwargs):
         """Generates an identifier value."""
         # http://www.openarchives.org/OAI/2.0/guidelines-oai-identifier.htm
-        prefix = current_app.config.get('OAISERVER_ID_PREFIX', '')
+        prefix = current_app.config.get("OAISERVER_ID_PREFIX", "")
         return f"oai:{prefix}:{record.pid.pid_value}"
 
     def reserve(self, pid, record, **kwargs):

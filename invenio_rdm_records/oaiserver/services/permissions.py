@@ -8,8 +8,7 @@
 """Permissions for OAI-PMH service."""
 
 from invenio_records_permissions import BasePermissionPolicy
-from invenio_records_permissions.generators import Admin, AnyUser, \
-    SystemProcess
+from invenio_records_permissions.generators import Admin, AnyUser, SystemProcess
 
 
 class OAIPMHServerPermissionPolicy(BasePermissionPolicy):

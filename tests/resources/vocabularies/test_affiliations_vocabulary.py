@@ -14,25 +14,18 @@ from invenio_vocabularies.contrib.affiliations.api import Affiliation
 
 @pytest.fixture(scope="module")
 def affiliations_service():
-    return current_service_registry.get("rdm-affiliations")
+    return current_service_registry.get("affiliations")
 
 
 @pytest.fixture()
-def example_affiliation(
-    app, db, es_clear, superuser_identity, affiliations_service
-):
+def example_affiliation(app, db, es_clear, superuser_identity, affiliations_service):
     """Example affiliation."""
     data = {
         "acronym": "TEST",
         "id": "cern",
-        "identifiers": [
-            {"identifier": "03yrm5c26", "scheme": "ror"}
-        ],
+        "identifiers": [{"identifier": "03yrm5c26", "scheme": "ror"}],
         "name": "Test affiliation",
-        "title": {
-            "en": "Test affiliation",
-            "es": "Afiliacion de test"
-        }
+        "title": {"en": "Test affiliation", "es": "Afiliacion de test"},
     }
     aff = affiliations_service.create(superuser_identity, data)
     Affiliation.index.refresh()  # Refresh the index
@@ -50,9 +43,7 @@ def test_affiliations_get(client, example_affiliation, headers):
     assert res.status_code == 200
     assert res.json["id"] == id_
     # Test links
-    assert res.json["links"] == {
-        "self": "https://127.0.0.1:5000/api/affiliations/cern"
-    }
+    assert res.json["links"] == {"self": "https://127.0.0.1:5000/api/affiliations/cern"}
 
 
 def test_affiliations_search(client, example_affiliation, headers):

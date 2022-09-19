@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2019-2021 CERN.
+# Copyright (C) 2019-2022 CERN.
 # Copyright (C) 2019-2021 Northwestern University.
+# Copyright (C) 2022 Universität Hamburg.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
@@ -12,36 +13,39 @@ import warnings
 
 from flask import flash, g, request, session
 from flask_babelex import _
+from flask_iiif import IIIF
 from flask_principal import identity_loaded
 from invenio_records_resources.resources.files import FileResource
 from invenio_records_resources.services import FileService
-from invenio_vocabularies.contrib.affiliations import AffiliationsResource, \
-    AffiliationsResourceConfig, AffiliationsService, \
-    AffiliationsServiceConfig
-from invenio_vocabularies.contrib.names import NamesResource, \
-    NamesResourceConfig, NamesService, NamesServiceConfig
-from invenio_vocabularies.contrib.subjects import SubjectsResource, \
-    SubjectsResourceConfig, SubjectsService, SubjectsServiceConfig
 from itsdangerous import SignatureExpired
 
-from invenio_rdm_records.oaiserver.resources.config import \
-    OAIPMHServerResourceConfig
-from invenio_rdm_records.oaiserver.resources.resources import \
-    OAIPMHServerResource
-from invenio_rdm_records.oaiserver.services.config import \
-    OAIPMHServerServiceConfig
+from invenio_rdm_records.oaiserver.resources.config import OAIPMHServerResourceConfig
+from invenio_rdm_records.oaiserver.resources.resources import OAIPMHServerResource
+from invenio_rdm_records.oaiserver.services.config import OAIPMHServerServiceConfig
 from invenio_rdm_records.oaiserver.services.services import OAIPMHServerService
 
 from . import config
-from .resources import RDMDraftFilesResourceConfig, \
-    RDMParentRecordLinksResource, RDMParentRecordLinksResourceConfig, \
-    RDMRecordFilesResourceConfig, RDMRecordResource, RDMRecordResourceConfig
+from .resources import (
+    IIIFResource,
+    IIIFResourceConfig,
+    RDMDraftFilesResourceConfig,
+    RDMParentRecordLinksResource,
+    RDMParentRecordLinksResourceConfig,
+    RDMRecordFilesResourceConfig,
+    RDMRecordResource,
+    RDMRecordResourceConfig,
+)
 from .secret_links import LinkNeed, SecretLink
-from .services import RDMFileDraftServiceConfig, RDMFileRecordServiceConfig, \
-    RDMRecordService, RDMRecordServiceConfig, SecretLinkService
+from .services import (
+    IIIFService,
+    RDMFileDraftServiceConfig,
+    RDMFileRecordServiceConfig,
+    RDMRecordService,
+    RDMRecordServiceConfig,
+    SecretLinkService,
+)
 from .services.pids import PIDManager, PIDsService
 from .services.review.service import ReviewService
-from .services.schemas.metadata_extensions import MetadataExtensions
 
 
 def verify_token():
@@ -83,39 +87,40 @@ class InvenioRDMRecords(object):
     def init_app(self, app):
         """Flask application initialization."""
         self.init_config(app)
-        self.metadata_extensions = MetadataExtensions(
-            app.config['RDM_RECORDS_METADATA_NAMESPACES'],
-            app.config['RDM_RECORDS_METADATA_EXTENSIONS']
-        )
         self.init_services(app)
         self.init_resource(app)
         app.before_request(verify_token)
-        app.extensions['invenio-rdm-records'] = self
+        app.extensions["invenio-rdm-records"] = self
+        # Load flask IIIF
+        IIIF(app)
 
     def init_config(self, app):
         """Initialize configuration."""
         supported_configurations = [
-            'FILES_REST_PERMISSION_FACTORY',
-            'RECORDS_REFRESOLVER_CLS',
-            'RECORDS_REFRESOLVER_STORE',
-            'RECORDS_UI_ENDPOINTS',
-            'THEME_SITEURL',
+            "FILES_REST_PERMISSION_FACTORY",
+            "RECORDS_REFRESOLVER_CLS",
+            "RECORDS_REFRESOLVER_STORE",
+            "RECORDS_UI_ENDPOINTS",
+            "THEME_SITEURL",
         ]
 
         for k in dir(config):
-            if k in supported_configurations or k.startswith('RDM_') \
-                    or k.startswith('DATACITE_'):
+            if (
+                k in supported_configurations
+                or k.startswith("RDM_")
+                or k.startswith("DATACITE_")
+            ):
                 app.config.setdefault(k, getattr(config, k))
 
         # Deprecations
         # Remove when v6.0 LTS is no longer supported.
         deprecated = [
-            ('RDM_RECORDS_DOI_DATACITE_ENABLED', 'DATACITE_ENABLED'),
-            ('RDM_RECORDS_DOI_DATACITE_USERNAME', 'DATACITE_USERNAME'),
-            ('RDM_RECORDS_DOI_DATACITE_PASSWORD', 'DATACITE_PASSWORD'),
-            ('RDM_RECORDS_DOI_DATACITE_PREFIX', 'DATACITE_PREFIX'),
-            ('RDM_RECORDS_DOI_DATACITE_TEST_MODE', 'DATACITE_TEST_MODE'),
-            ('RDM_RECORDS_DOI_DATACITE_FORMAT', 'DATACITE_FORMAT'),
+            ("RDM_RECORDS_DOI_DATACITE_ENABLED", "DATACITE_ENABLED"),
+            ("RDM_RECORDS_DOI_DATACITE_USERNAME", "DATACITE_USERNAME"),
+            ("RDM_RECORDS_DOI_DATACITE_PASSWORD", "DATACITE_PASSWORD"),
+            ("RDM_RECORDS_DOI_DATACITE_PREFIX", "DATACITE_PREFIX"),
+            ("RDM_RECORDS_DOI_DATACITE_TEST_MODE", "DATACITE_TEST_MODE"),
+            ("RDM_RECORDS_DOI_DATACITE_FORMAT", "DATACITE_FORMAT"),
         ]
         for old, new in deprecated:
             if new not in app.config:
@@ -124,14 +129,14 @@ class InvenioRDMRecords(object):
                     warnings.warn(
                         f"{old} has been replaced with {new}. "
                         "Please update your config.",
-                        DeprecationWarning
+                        DeprecationWarning,
                     )
             else:
                 if old in app.config:
                     warnings.warn(
                         f"{old} is deprecated. Please remove it from your "
                         "config as {new} is already set.",
-                        DeprecationWarning
+                        DeprecationWarning,
                     )
 
         self.fix_datacite_configs(app)
@@ -143,15 +148,12 @@ class InvenioRDMRecords(object):
             record = RDMRecordServiceConfig.build(app)
             file = RDMFileRecordServiceConfig.build(app)
             file_draft = RDMFileDraftServiceConfig.build(app)
-            affiliations = AffiliationsServiceConfig
-            names = NamesServiceConfig
-            subjects = SubjectsServiceConfig
             oaipmh_server = OAIPMHServerServiceConfig
 
         return ServiceConfigs
 
     def init_services(self, app):
-        """Initialize vocabulary resources."""
+        """Initialize services."""
         service_configs = self.service_configs(app)
 
         # Services
@@ -163,14 +165,8 @@ class InvenioRDMRecords(object):
             pids_service=PIDsService(service_configs.record, PIDManager),
             review_service=ReviewService(service_configs.record),
         )
-        self.affiliations_service = AffiliationsService(
-            config=service_configs.affiliations,
-        )
-        self.names_service = NamesService(
-            config=service_configs.names
-        )
-        self.subjects_service = SubjectsService(
-            config=service_configs.subjects
+        self.iiif_service = IIIFService(
+            records_service=self.records_service, config=None
         )
 
         self.oaipmh_server_service = OAIPMHServerService(
@@ -178,7 +174,7 @@ class InvenioRDMRecords(object):
         )
 
     def init_resource(self, app):
-        """Initialize vocabulary resources."""
+        """Initialize resources."""
         self.records_resource = RDMRecordResource(
             RDMRecordResourceConfig,
             self.records_service,
@@ -186,34 +182,17 @@ class InvenioRDMRecords(object):
 
         # Record files resource
         self.record_files_resource = FileResource(
-            service=self.records_service.files,
-            config=RDMRecordFilesResourceConfig
+            service=self.records_service.files, config=RDMRecordFilesResourceConfig
         )
 
         # Draft files resource
         self.draft_files_resource = FileResource(
-            service=self.records_service.draft_files,
-            config=RDMDraftFilesResourceConfig
+            service=self.records_service.draft_files, config=RDMDraftFilesResourceConfig
         )
 
         # Parent Records
         self.parent_record_links_resource = RDMParentRecordLinksResource(
-            service=self.records_service,
-            config=RDMParentRecordLinksResourceConfig
-        )
-
-        # Vocabularies
-        self.affiliations_resource = AffiliationsResource(
-            service=self.affiliations_service,
-            config=AffiliationsResourceConfig,
-        )
-        self.names_resource = NamesResource(
-            service=self.names_service,
-            config=NamesResourceConfig,
-        )
-        self.subjects_resource = SubjectsResource(
-            service=self.subjects_service,
-            config=SubjectsResourceConfig,
+            service=self.records_service, config=RDMParentRecordLinksResourceConfig
         )
 
         # OAI-PMH
@@ -222,13 +201,19 @@ class InvenioRDMRecords(object):
             config=OAIPMHServerResourceConfig,
         )
 
+        # IIIF
+        self.iiif_resource = IIIFResource(
+            service=self.iiif_service,
+            config=IIIFResourceConfig,
+        )
+
     def fix_datacite_configs(self, app):
         """Make sure that the DataCite config items are strings."""
         datacite_config_items = [
-            'DATACITE_USERNAME',
-            'DATACITE_PASSWORD',
-            'DATACITE_FORMAT',
-            'DATACITE_PREFIX',
+            "DATACITE_USERNAME",
+            "DATACITE_PASSWORD",
+            "DATACITE_FORMAT",
+            "DATACITE_PREFIX",
         ]
         for config_item in datacite_config_items:
             if config_item in app.config:

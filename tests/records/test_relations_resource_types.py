@@ -19,8 +19,8 @@ from invenio_rdm_records.records.api import RDMDraft, RDMRecord
 # Tests
 #
 def test_resource_types_field(running_app):
-    assert 'resource_type' in RDMDraft.relations
-    assert 'resource_type' in RDMRecord.relations
+    assert "resource_type" in RDMDraft.relations
+    assert "resource_type" in RDMRecord.relations
     assert RDMDraft.relations.resource_type
     assert RDMRecord.relations.resource_type
 
@@ -52,11 +52,8 @@ def test_resource_types_indexing(running_app, minimal_record):
     assert dump["metadata"]["resource_type"] == {
         "id": "image-photo",
         "title": {"en": "Photo"},
-        "props": {
-            "type": "image",
-            "subtype": "image-photo"
-        },
-        "@v": f"{running_app.resource_type_v._record.id}::1"
+        "props": {"type": "image", "subtype": "image-photo"},
+        "@v": f"{running_app.resource_type_v._record.id}::1",
     }
 
     # Load draft again - should produce an identical record.

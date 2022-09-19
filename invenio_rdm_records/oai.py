@@ -11,8 +11,7 @@
 from datacite import schema43
 from elasticsearch_dsl import Q
 from flask import current_app, g
-from invenio_pidstore.errors import PersistentIdentifierError, \
-    PIDDoesNotExistError
+from invenio_pidstore.errors import PersistentIdentifierError, PIDDoesNotExistError
 from invenio_pidstore.fetchers import FetchedPID
 from invenio_pidstore.models import PersistentIdentifier
 from invenio_records_resources.services.errors import PermissionDeniedError
@@ -70,9 +69,7 @@ def oai_datacite_etree(pid, record):
 
     # set up the elements' contents
     schema_version.text = "4.3"
-    datacentre_symbol.text = current_app.config.get(
-        'DATACITE_DATACENTER_SYMBOL'
-    )
+    datacentre_symbol.text = current_app.config.get("DATACITE_DATACENTER_SYMBOL")
 
     return oai_datacite
 
@@ -84,7 +81,7 @@ def oaiid_fetcher(record_uuid, data):
     :param data: The record data.
     :returns: A :class:`invenio_pidstore.fetchers.FetchedPID` instance.
     """
-    pid_value = data.get('pids', {}).get('oai', {}).get('identifier')
+    pid_value = data.get("pids", {}).get("oai", {}).get("identifier")
     if pid_value is None:
         raise PersistentIdentifierError()
 
@@ -98,16 +95,14 @@ def oaiid_fetcher(record_uuid, data):
 def getrecord_fetcher(record_id):
     """Fetch record data as dict with identity check for serialization."""
     recid = PersistentIdentifier.get_by_object(
-        pid_type='recid', object_uuid=record_id, object_type='rec'
+        pid_type="recid", object_uuid=record_id, object_type="rec"
     )
 
     try:
-        result = current_rdm_records.records_service.read(
-            g.identity, recid.pid_value
-        )
+        result = current_rdm_records.records_service.read(g.identity, recid.pid_value)
     except PermissionDeniedError:
         # if it is a restricted record.
-        raise PIDDoesNotExistError('recid', None)
+        raise PIDDoesNotExistError("recid", None)
 
     return result.to_dict()
 
@@ -119,6 +114,6 @@ class OAIRecordSearch(RecordsSearch):
         """Configuration for OAI server search."""
 
         default_filter = [
-            Q('exists', field='pids.oai.identifier'),
-            Q('term', **{'access.record': 'public'}),
+            Q("exists", field="pids.oai.identifier"),
+            Q("term", **{"access.record": "public"}),
         ]

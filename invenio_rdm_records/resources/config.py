@@ -2,6 +2,7 @@
 #
 # Copyright (C) 2020-2021 CERN.
 # Copyright (C) 2020-2021 Northwestern University.
+# Copyright (C) 2022 Universität Hamburg.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
@@ -11,18 +12,33 @@
 import marshmallow as ma
 from citeproc_styles import StyleNotFoundError
 from flask_babelex import lazy_gettext as _
-from flask_resources import HTTPJSONException, JSONSerializer, \
-    ResponseHandler, create_error_handler, resource_requestctx
+from flask_resources import (
+    HTTPJSONException,
+    JSONSerializer,
+    ResourceConfig,
+    ResponseHandler,
+    create_error_handler,
+    resource_requestctx,
+)
 from invenio_drafts_resources.resources import RecordResourceConfig
 from invenio_records.systemfields.relations import InvalidRelationValue
 from invenio_records_resources.resources.files import FileResourceConfig
 
-from ..services.errors import ReviewExistsError, ReviewNotFoundError, \
-    ReviewStateError
+from ..services.errors import (
+    ReviewExistsError,
+    ReviewInconsistentAccessRestrictions,
+    ReviewNotFoundError,
+    ReviewStateError,
+)
 from .args import RDMSearchRequestArgsSchema
-from .serializers import CSLJSONSerializer, DataCite43JSONSerializer, \
-    DataCite43XMLSerializer, DublinCoreXMLSerializer, \
-    StringCitationSerializer, UIJSONSerializer
+from .serializers import (
+    CSLJSONSerializer,
+    DataCite43JSONSerializer,
+    DataCite43XMLSerializer,
+    DublinCoreXMLSerializer,
+    StringCitationSerializer,
+    UIJSONSerializer,
+)
 
 
 def csl_url_args_retriever():
@@ -38,15 +54,11 @@ def csl_url_args_retriever():
 record_serializers = {
     "application/json": ResponseHandler(JSONSerializer()),
     "application/vnd.inveniordm.v1+json": ResponseHandler(UIJSONSerializer()),
-    "application/vnd.citationstyles.csl+json": ResponseHandler(
-        CSLJSONSerializer()
-    ),
+    "application/vnd.citationstyles.csl+json": ResponseHandler(CSLJSONSerializer()),
     "application/vnd.datacite.datacite+json": ResponseHandler(
         DataCite43JSONSerializer()
     ),
-    "application/vnd.datacite.datacite+xml": ResponseHandler(
-        DataCite43XMLSerializer()
-    ),
+    "application/vnd.datacite.datacite+xml": ResponseHandler(DataCite43XMLSerializer()),
     "application/x-dc+xml": ResponseHandler(DublinCoreXMLSerializer()),
     "text/x-bibliography": ResponseHandler(
         StringCitationSerializer(url_args_retriever=csl_url_args_retriever),
@@ -71,6 +83,8 @@ class RDMRecordResourceConfig(RecordResourceConfig):
     # Review
     routes["item-review"] = "/<pid_value>/draft/review"
     routes["item-actions-review"] = "/<pid_value>/draft/actions/submit-review"
+    # Community records
+    routes["community-records"] = "/communities/<pid_value>/records"
 
     request_view_args = {
         "pid_value": ma.fields.Str(),
@@ -116,7 +130,13 @@ class RDMRecordResourceConfig(RecordResourceConfig):
                 code=400,
                 description=exc.args[0],
             )
-        )
+        ),
+        ReviewInconsistentAccessRestrictions: create_error_handler(
+            lambda exc: HTTPJSONException(
+                code=400,
+                description=exc.args[0],
+            )
+        ),
     }
 
 
@@ -181,3 +201,51 @@ class RDMParentRecordLinksResourceConfig(RecordResourceConfig):
     response_handlers = {"application/json": ResponseHandler(JSONSerializer())}
 
     error_handlers = record_links_error_handlers
+
+
+class IIIFResourceConfig(ResourceConfig):
+    """IIIF resource configuration."""
+
+    blueprint_name = "iiif"
+
+    url_prefix = "/iiif"
+
+    routes = {
+        "manifest": "/<uuid>/manifest",
+        "sequence": "/<uuid>/sequence/default",
+        "canvas": "/<uuid>/canvas/<file_name>",
+        "image_base": "/<uuid>",
+        "image_info": "/<uuid>/info.json",
+        "image_api": "/<uuid>/<region>/<size>/<rotation>/<quality>.<image_format>",
+    }
+
+    request_view_args = {
+        "uuid": ma.fields.Str(),
+        "file_name": ma.fields.Str(),
+        "region": ma.fields.Str(),
+        "size": ma.fields.Str(),
+        "rotation": ma.fields.Str(),
+        "quality": ma.fields.Str(),
+        "image_format": ma.fields.Str(),
+    }
+
+    request_read_args = {
+        "dl": ma.fields.Str(),
+    }
+
+    request_headers = {
+        "If-Modified-Since": ma.fields.DateTime(),
+    }
+
+    response_handler = {"application/json": ResponseHandler(JSONSerializer())}
+
+    supported_formats = {
+        "gif": "image/gif",
+        "jp2": "image/jp2",
+        "jpeg": "image/jpeg",
+        "jpg": "image/jpeg",
+        "pdf": "application/pdf",
+        "png": "image/png",
+        "tif": "image/tiff",
+        "tiff": "image/tiff",
+    }

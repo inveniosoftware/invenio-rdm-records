@@ -11,8 +11,13 @@ import secrets
 from datetime import datetime
 
 from flask import current_app
-from itsdangerous import BadData, JSONWebSignatureSerializer, Serializer, \
-    SignatureExpired, TimedJSONWebSignatureSerializer
+from itsdangerous import (
+    BadData,
+    JSONWebSignatureSerializer,
+    Serializer,
+    SignatureExpired,
+    TimedJSONWebSignatureSerializer,
+)
 
 
 class TokenSerializerMixin(Serializer):
@@ -89,9 +94,7 @@ class TokenSerializerMixin(Serializer):
         return data
 
 
-class TimedSecretLinkSerializer(
-    TimedJSONWebSignatureSerializer, TokenSerializerMixin
-):
+class TimedSecretLinkSerializer(TimedJSONWebSignatureSerializer, TokenSerializerMixin):
     """Serializer for expiring secret links."""
 
     def __init__(self, expires_at=None, **kwargs):

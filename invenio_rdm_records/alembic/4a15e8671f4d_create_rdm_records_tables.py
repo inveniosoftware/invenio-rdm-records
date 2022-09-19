@@ -35,9 +35,7 @@ def upgrade():
             sa.DateTime().with_variant(mysql.DATETIME(fsp=6), "mysql"),
             nullable=False,
         ),
-        sa.Column(
-            "id", sqlalchemy_utils.types.uuid.UUIDType(), nullable=False
-        ),
+        sa.Column("id", sqlalchemy_utils.types.uuid.UUIDType(), nullable=False),
         sa.Column(
             "json",
             sa.JSON()
@@ -56,9 +54,7 @@ def upgrade():
             sa.DateTime().with_variant(mysql.DATETIME(fsp=6), "mysql"),
             nullable=True,
         ),
-        sa.Column(
-            "bucket_id", sqlalchemy_utils.types.uuid.UUIDType(), nullable=True
-        ),
+        sa.Column("bucket_id", sqlalchemy_utils.types.uuid.UUIDType(), nullable=True),
         sa.ForeignKeyConstraint(
             ["bucket_id"],
             ["files_bucket.id"],
@@ -78,9 +74,7 @@ def upgrade():
             sa.DateTime().with_variant(mysql.DATETIME(fsp=6), "mysql"),
             nullable=False,
         ),
-        sa.Column(
-            "id", sqlalchemy_utils.types.uuid.UUIDType(), nullable=False
-        ),
+        sa.Column("id", sqlalchemy_utils.types.uuid.UUIDType(), nullable=False),
         sa.Column(
             "json",
             sa.JSON()
@@ -93,9 +87,7 @@ def upgrade():
             nullable=True,
         ),
         sa.Column("version_id", sa.Integer(), nullable=False),
-        sa.Column(
-            "bucket_id", sqlalchemy_utils.types.uuid.UUIDType(), nullable=True
-        ),
+        sa.Column("bucket_id", sqlalchemy_utils.types.uuid.UUIDType(), nullable=True),
         sa.ForeignKeyConstraint(
             ["bucket_id"],
             ["files_bucket.id"],
@@ -109,83 +101,64 @@ def upgrade():
             "created",
             sa.DateTime().with_variant(mysql.DATETIME(fsp=6), "mysql"),
             autoincrement=False,
-            nullable=True
+            nullable=True,
         ),
         sa.Column(
             "updated",
             sa.DateTime().with_variant(mysql.DATETIME(fsp=6), "mysql"),
             autoincrement=False,
-            nullable=True
+            nullable=True,
         ),
         sa.Column(
             "id",
             sqlalchemy_utils.types.uuid.UUIDType(),
             autoincrement=False,
-            nullable=False
+            nullable=False,
         ),
         sa.Column(
             "json",
             sa.JSON()
             .with_variant(sqlalchemy_utils.types.json.JSONType(), "mysql")
             .with_variant(
-                    postgresql.JSONB(none_as_null=True, astext_type=sa.Text()),
-                    "postgresql"
+                postgresql.JSONB(none_as_null=True, astext_type=sa.Text()), "postgresql"
             )
             .with_variant(sqlalchemy_utils.types.json.JSONType(), "sqlite"),
             autoincrement=False,
-            nullable=True
+            nullable=True,
         ),
-        sa.Column(
-            "version_id",
-            sa.Integer(),
-            autoincrement=False,
-            nullable=True
-        ),
+        sa.Column("version_id", sa.Integer(), autoincrement=False, nullable=True),
         sa.Column(
             "bucket_id",
             sqlalchemy_utils.types.uuid.UUIDType(),
             autoincrement=False,
-            nullable=True
+            nullable=True,
         ),
         sa.Column(
-            "transaction_id",
-            sa.BigInteger(),
-            autoincrement=False,
-            nullable=False
+            "transaction_id", sa.BigInteger(), autoincrement=False, nullable=False
         ),
-        sa.Column(
-            "end_transaction_id",
-            sa.BigInteger(),
-            nullable=True
-        ),
-        sa.Column(
-            "operation_type",
-            sa.SmallInteger(),
-            nullable=False
-        ),
+        sa.Column("end_transaction_id", sa.BigInteger(), nullable=True),
+        sa.Column("operation_type", sa.SmallInteger(), nullable=False),
         sa.PrimaryKeyConstraint(
-            "id",
-            "transaction_id",
-            name=op.f("pk_rdm_records_metadata_version")
-        )
+            "id", "transaction_id", name=op.f("pk_rdm_records_metadata_version")
+        ),
     )
     op.create_index(
         "ix_rdm_records_metadata_version_end_transaction_id",
         "rdm_records_metadata_version",
         ["end_transaction_id"],
-        unique=False
+        unique=False,
     )
     op.create_index(
         "ix_rdm_records_metadata_version_operation_type",
         "rdm_records_metadata_version",
         ["operation_type"],
-        unique=False
+        unique=False,
     )
     op.create_index(
         "ix_rdm_records_metadata_version_transaction_id",
         "rdm_records_metadata_version",
         ["transaction_id"],
-        unique=False
+        unique=False,
     )
     op.create_table(
         "rdm_drafts_files",
@@ -199,9 +172,7 @@ def upgrade():
             sa.DateTime().with_variant(mysql.DATETIME(fsp=6), "mysql"),
             nullable=False,
         ),
-        sa.Column(
-            "id", sqlalchemy_utils.types.uuid.UUIDType(), nullable=False
-        ),
+        sa.Column("id", sqlalchemy_utils.types.uuid.UUIDType(), nullable=False),
         sa.Column(
             "json",
             sa.JSON()
@@ -219,9 +190,7 @@ def upgrade():
             sa.Text().with_variant(mysql.VARCHAR(length=255), "mysql"),
             nullable=False,
         ),
-        sa.Column(
-            "record_id", sqlalchemy_utils.types.uuid.UUIDType(), nullable=False
-        ),
+        sa.Column("record_id", sqlalchemy_utils.types.uuid.UUIDType(), nullable=False),
         sa.Column(
             "object_version_id",
             sqlalchemy_utils.types.uuid.UUIDType(),
@@ -259,9 +228,7 @@ def upgrade():
             sa.DateTime().with_variant(mysql.DATETIME(fsp=6), "mysql"),
             nullable=False,
         ),
-        sa.Column(
-            "id", sqlalchemy_utils.types.uuid.UUIDType(), nullable=False
-        ),
+        sa.Column("id", sqlalchemy_utils.types.uuid.UUIDType(), nullable=False),
         sa.Column(
             "json",
             sa.JSON()
@@ -279,9 +246,7 @@ def upgrade():
             sa.Text().with_variant(mysql.VARCHAR(length=255), "mysql"),
             nullable=False,
         ),
-        sa.Column(
-            "record_id", sqlalchemy_utils.types.uuid.UUIDType(), nullable=False
-        ),
+        sa.Column("record_id", sqlalchemy_utils.types.uuid.UUIDType(), nullable=False),
         sa.Column(
             "object_version_id",
             sqlalchemy_utils.types.uuid.UUIDType(),
@@ -313,24 +278,20 @@ def downgrade():
     """Downgrade database."""
     op.drop_index(
         "ix_rdm_records_metadata_version_end_transaction_id",
-        table_name="rdm_records_metadata_version"
+        table_name="rdm_records_metadata_version",
     )
     op.drop_index(
         "ix_rdm_records_metadata_version_operation_type",
-        table_name="rdm_records_metadata_version"
+        table_name="rdm_records_metadata_version",
     )
     op.drop_index(
         "ix_rdm_records_metadata_version_transaction_id",
-        table_name="rdm_records_metadata_version"
+        table_name="rdm_records_metadata_version",
     )
     op.drop_table("rdm_records_metadata_version")
-    op.drop_index(
-        "uidx_rdm_records_files_id_key", table_name="rdm_records_files"
-    )
+    op.drop_index("uidx_rdm_records_files_id_key", table_name="rdm_records_files")
     op.drop_table("rdm_records_files")
-    op.drop_index(
-        "uidx_rdm_drafts_files_id_key", table_name="rdm_drafts_files"
-    )
+    op.drop_index("uidx_rdm_drafts_files_id_key", table_name="rdm_drafts_files")
     op.drop_table("rdm_drafts_files")
     op.drop_table("rdm_records_metadata")
     op.drop_table("rdm_drafts_metadata")

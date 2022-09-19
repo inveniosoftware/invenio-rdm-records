@@ -10,10 +10,13 @@
 
 """RDM record schemas."""
 
+from functools import partial
+
 from flask import current_app
 from flask_babelex import lazy_gettext as _
 from invenio_drafts_resources.services.records.schema import RecordSchema
-from marshmallow import ValidationError, fields, post_dump
+from invenio_records_resources.services.custom_fields import CustomFieldsSchema
+from marshmallow import EXCLUDE, ValidationError, fields, post_dump
 from marshmallow_utils.fields import NestedAttribute, SanitizedUnicode
 from marshmallow_utils.permissions import FieldPermissionsMixin
 
@@ -34,8 +37,13 @@ def validate_scheme(scheme):
 class RDMRecordSchema(RecordSchema, FieldPermissionsMixin):
     """Record schema."""
 
+    class Meta:
+        """Meta attributes for the schema."""
+
+        unknown = EXCLUDE
+
     field_load_permissions = {
-        'files': 'update_draft',
+        "files": "update_draft",
     }
 
     # ATTENTION: In this schema you should be using the ``NestedAttribute``
@@ -48,7 +56,9 @@ class RDMRecordSchema(RecordSchema, FieldPermissionsMixin):
         values=fields.Nested(PIDSchema),
     )
     metadata = NestedAttribute(MetadataSchema)
-    # ext = fields.Method('dump_extensions', 'load_extensions')
+    custom_fields = NestedAttribute(
+        partial(CustomFieldsSchema, fields_var="RDM_CUSTOM_FIELDS")
+    )
     # tombstone
     # provenance
     access = NestedAttribute(AccessSchema)
@@ -58,33 +68,10 @@ class RDMRecordSchema(RecordSchema, FieldPermissionsMixin):
     versions = NestedAttribute(VersionsSchema, dump_only=True)
     parent = NestedAttribute(RDMParentSchema)
     is_published = fields.Boolean(dump_only=True)
+    status = fields.String(dump_only=True)
 
     # stats = NestedAttribute(StatsSchema, dump_only=True)
-    # relations = NestedAttribute(RelationsSchema, dump_only=True)
     # schema_version = fields.Interger(dump_only=True)
-
-    # def dump_extensions(self, obj):
-    #     """Dumps the extensions value.
-
-    #     :params obj: invenio_records_files.api.Record instance
-    #     """
-    #     current_app_metadata_extensions = (
-    #         current_app.extensions['invenio-rdm-records'].metadata_extensions
-    #     )
-    #     ExtensionSchema = current_app_metadata_extensions.to_schema()
-    #     return ExtensionSchema().dump(obj.get('extensions', {}))
-
-    # def load_extensions(self, value):
-    #     """Loads the 'extensions' field.
-
-    #     :params value: content of the input's 'extensions' field
-    #     """
-    #     current_app_metadata_extensions = (
-    #         current_app.extensions['invenio-rdm-records'].metadata_extensions
-    #     )
-    #     ExtensionSchema = current_app_metadata_extensions.to_schema()
-
-    #     return ExtensionSchema().load(value)
 
     @post_dump
     def default_nested(self, data, many, **kwargs):
@@ -99,11 +86,13 @@ class RDMRecordSchema(RecordSchema, FieldPermissionsMixin):
             data["metadata"] = {}
         if not data.get("pids"):
             data["pids"] = {}
+        if not data.get("custom_fields"):
+            data["custom_fields"] = {}
 
         return data
 
 
 __all__ = (
-    'RDMParentSchema',
-    'RDMRecordSchema',
+    "RDMParentSchema",
+    "RDMRecordSchema",
 )

@@ -9,17 +9,17 @@
 """High-level API for working with RDM service components."""
 
 from .access import AccessComponent
+from .custom_fields import CustomFieldsComponent
 from .metadata import MetadataComponent
 from .parent import ParentRecordAccessComponent
 from .pids import PIDsComponent
-from .relations import RelationsComponent
 from .review import ReviewComponent
 
 __all__ = (
-    'AccessComponent',
-    'MetadataComponent',
-    'ParentRecordAccessComponent',
-    'PIDsComponent',
-    'RelationsComponent',
-    'ReviewComponent',
+    "AccessComponent",
+    "CustomFieldsComponent",
+    "MetadataComponent",
+    "ParentRecordAccessComponent",
+    "PIDsComponent",
+    "ReviewComponent",
 )

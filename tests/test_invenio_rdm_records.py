@@ -19,4 +19,5 @@ from invenio_rdm_records import InvenioRDMRecords
 def test_version():
     """Test version import."""
     from invenio_rdm_records import __version__
+
     assert __version__

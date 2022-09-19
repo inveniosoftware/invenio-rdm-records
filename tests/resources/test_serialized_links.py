@@ -21,9 +21,7 @@ def draft_json(running_app, client, minimal_record, users, headers):
     login_user(users[0], remember=True)
     login_user_via_session(client, email=users[0].email)
 
-    response = client.post(
-        "/records", json=minimal_record, headers=headers
-    )
+    response = client.post("/records", json=minimal_record, headers=headers)
 
     RDMDraft.index.refresh()
 
@@ -36,9 +34,7 @@ def published_json(running_app, client_with_login, minimal_record, headers):
 
     Can't depend on draft_json since publication deletes draft.
     """
-    response = client_with_login.post(
-        "/records", json=minimal_record, headers=headers
-    )
+    response = client_with_login.post("/records", json=minimal_record, headers=headers)
     pid_value = response.json["id"]
     response = client_with_login.post(
         f"/records/{pid_value}/draft/actions/publish", headers=headers
@@ -54,9 +50,7 @@ def test_draft_links(client, draft_json, minimal_record, headers):
     created_draft_links = draft_json["links"]
     pid_value = draft_json["id"]
 
-    response = client.get(
-        f"/records/{pid_value}/draft", headers=headers
-    )
+    response = client.get(f"/records/{pid_value}/draft", headers=headers)
     read_draft_links = response.json["links"]
 
     expected_links = {
@@ -70,6 +64,8 @@ def test_draft_links(client, draft_json, minimal_record, headers):
         "access_links": f"https://127.0.0.1:5000/api/records/{pid_value}/access/links",  # noqa
         "files": f"https://127.0.0.1:5000/api/records/{pid_value}/draft/files",
         "reserve_doi": f"https://127.0.0.1:5000/api/records/{pid_value}/draft/pids/doi",  # noqa
+        "self_iiif_manifest": f"https://127.0.0.1:5000/api/iiif/draft:{pid_value}/manifest",  # noqa
+        "self_iiif_sequence": f"https://127.0.0.1:5000/api/iiif/draft:{pid_value}/sequence/default",  # noqa
     }
     assert expected_links == created_draft_links == read_draft_links
 
@@ -94,6 +90,8 @@ def test_record_links(client, published_json, headers):
         "latest_html": f"https://127.0.0.1:5000/records/{pid_value}/latest",  # noqa
         "access_links": f"https://127.0.0.1:5000/api/records/{pid_value}/access/links",  # noqa
         "reserve_doi": f"https://127.0.0.1:5000/api/records/{pid_value}/draft/pids/doi",  # noqa
+        "self_iiif_manifest": f"https://127.0.0.1:5000/api/iiif/record:{pid_value}/manifest",  # noqa
+        "self_iiif_sequence": f"https://127.0.0.1:5000/api/iiif/record:{pid_value}/sequence/default",  # noqa
     }
     assert expected_links == published_record_links == read_record_links
 

@@ -39,9 +39,7 @@ class Link:
             self._entity = SecretLink.query.get(self.link_id)
 
             if self._entity is None and raise_exc:
-                raise LookupError(
-                    "could not find link: {}".format(self.dump())
-                )
+                raise LookupError("could not find link: {}".format(self.dump()))
 
         return self._entity
 

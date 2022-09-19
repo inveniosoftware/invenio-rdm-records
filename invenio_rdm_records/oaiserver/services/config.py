@@ -14,48 +14,54 @@ from invenio_records_resources.services.base import Link
 from invenio_records_resources.services.records.links import pagination_links
 from sqlalchemy import asc, desc
 
-from invenio_rdm_records.oaiserver.services.schema import \
-    OAIPMHMetadataFormat, OAIPMHSetSchema
+from invenio_rdm_records.oaiserver.services.schema import (
+    OAIPMHMetadataFormat,
+    OAIPMHSetSchema,
+)
 
 from ..services.links import OAIPMHSetLink
 from ..services.permissions import OAIPMHServerPermissionPolicy
-from ..services.results import OAIMetadataFormatItem, OAIMetadataFormatList, \
-    OAISetItem, OAISetList
+from ..services.results import (
+    OAIMetadataFormatItem,
+    OAIMetadataFormatList,
+    OAISetItem,
+    OAISetList,
+)
 
 
 class SearchOptions:
     """Search options."""
 
-    sort_default = 'created'
-    sort_direction_default = 'asc'
+    sort_default = "created"
+    sort_direction_default = "asc"
 
     sort_direction_options = {
         "asc": dict(
-            title=_('Ascending'),
+            title=_("Ascending"),
             fn=asc,
         ),
         "desc": dict(
-            title=_('Descending'),
+            title=_("Descending"),
             fn=desc,
         ),
     }
 
     sort_options = {
         "name": dict(
-            title=_('Name'),
-            fields=['name'],
+            title=_("Name"),
+            fields=["name"],
         ),
         "spec": dict(
-            title=_('Spec'),
-            fields=['spec'],
+            title=_("Spec"),
+            fields=["spec"],
         ),
         "created": dict(
-            title=_('Created'),
-            fields=['created'],
+            title=_("Created"),
+            fields=["created"],
         ),
         "updated": dict(
-            title=_('Updated'),
-            fields=['updated'],
+            title=_("Updated"),
+            fields=["updated"],
         ),
     }
     pagination_options = {
@@ -98,9 +104,7 @@ class OAIPMHServerServiceConfig(ServiceConfig):
     links_search = {
         **pagination_links("{+api}/oaipmh/sets{?args*}"),
         "oai-listsets": Link("{+ui}/oai2d?verb=ListSets"),
-        "oai-listrecords": Link(
-            "{+ui}/oai2d?verb=ListRecords&metadataPrefix=oai_dc"
-        ),
+        "oai-listrecords": Link("{+ui}/oai2d?verb=ListRecords&metadataPrefix=oai_dc"),
         "oai-listidentifiers": Link(
             "{+ui}/oai2d?verb=ListIdentifiers&metadataPrefix=oai_dc"
         ),

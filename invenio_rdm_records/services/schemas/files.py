@@ -40,8 +40,8 @@ class FilesSchema(Schema, FieldPermissionsMixin):
     """Files metadata schema."""
 
     field_dump_permissions = {
-        'default_preview': 'read_files',
-        'order': 'read_files',
+        "default_preview": "read_files",
+        "order": "read_files",
     }
 
     enabled = fields.Bool()

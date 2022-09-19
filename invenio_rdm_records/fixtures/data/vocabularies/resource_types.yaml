@@ -12,6 +12,7 @@
     type: publication
   title:
     en: Publication
+    de: Publikation
   tags:
     - depositable
     - linkable
@@ -29,6 +30,7 @@
     type: publication
   title:
     en: Annotation collection
+    de: Anmerkungssammlung
   tags:
     - depositable
     - linkable
@@ -46,6 +48,7 @@
     type: publication
   title:
     en: Book
+    de: Buch
   tags:
     - depositable
     - linkable
@@ -63,6 +66,7 @@
     type: publication
   title:
     en: Book section
+    de: Buchkapitel
   tags:
     - depositable
     - linkable
@@ -80,6 +84,7 @@
     type: publication
   title:
     en: Conference paper
+    de: Konferenzbeitrag
   tags:
     - depositable
     - linkable
@@ -97,6 +102,7 @@
     type: publication
   title:
     en: Data management plan
+    de: Datenmanagementplan
   tags:
     - depositable
     - linkable
@@ -114,6 +120,7 @@
     type: publication
   title:
     en: Journal article
+    de: Zeitschriftenartikel
   tags:
     - depositable
     - linkable
@@ -131,6 +138,7 @@
     type: publication
   title:
     en: Patent
+    de: Patent
   tags:
     - depositable
     - linkable
@@ -148,6 +156,7 @@
     type: publication
   title:
     en: Preprint
+    de: Preprint
   tags:
     - depositable
     - linkable
@@ -165,6 +174,7 @@
     type: publication
   title:
     en: Project deliverable
+    de: Projektergebnis
   tags:
     - depositable
     - linkable
@@ -182,6 +192,7 @@
     type: publication
   title:
     en: Project milestone
+    de: Projektmeilenstein
   tags:
     - depositable
     - linkable
@@ -199,6 +210,7 @@
     type: publication
   title:
     en: Proposal
+    de: Antrag
   tags:
     - depositable
     - linkable
@@ -216,6 +228,7 @@
     type: publication
   title:
     en: Report
+    de: Bericht
   tags:
     - depositable
     - linkable
@@ -233,6 +246,7 @@
     type: publication
   title:
     en: Software documentation
+    de: Softwaredokumentation
   tags:
     - depositable
     - linkable
@@ -250,6 +264,7 @@
     type: publication
   title:
     en: Taxonomic treatment
+    de: Taxonomische Behandlung
   tags:
     - depositable
     - linkable
@@ -267,6 +282,7 @@
     type: publication
   title:
     en: Technical note
+    de: Technische Anmerkung
   tags:
     - depositable
     - linkable
@@ -284,6 +300,7 @@
     type: publication
   title:
     en: Thesis
+    de: Abschlussarbeit
   tags:
     - depositable
     - linkable
@@ -301,6 +318,7 @@
     type: publication
   title:
     en: Working paper
+    de: Arbeitspapier
   tags:
     - depositable
     - linkable
@@ -318,6 +336,7 @@
     type: publication
   title:
     en: Other
+    de: Sonstige
   tags:
     - depositable
     - linkable
@@ -335,6 +354,7 @@
     type: poster
   title:
     en: Poster
+    de: Poster
   tags:
     - depositable
     - linkable
@@ -352,6 +372,7 @@
     type: presentation
   title:
     en: Presentation
+    de: Präsentation
   tags:
     - depositable
     - linkable
@@ -369,6 +390,7 @@
     type: dataset
   title:
     en: Dataset
+    de: Datensatz
   tags:
     - depositable
     - linkable
@@ -386,6 +408,7 @@
     type: image
   title:
     en: Image
+    de: Bild
   tags:
     - depositable
     - linkable
@@ -403,6 +426,7 @@
     type: image
   title:
     en: Figure
+    de: Abbildung
   tags:
     - depositable
     - linkable
@@ -420,6 +444,7 @@
     type: image
   title:
     en: Plot
+    de: Plot
   tags:
     - depositable
     - linkable
@@ -437,6 +462,7 @@
     type: image
   title:
     en: Drawing
+    de: Zeichnung
   tags:
     - depositable
     - linkable
@@ -454,6 +480,7 @@
     type: image
   title:
     en: Diagram
+    de: Diagramm
   tags:
     - depositable
     - linkable
@@ -471,6 +498,7 @@
     type: image
   title:
     en: Photo
+    de: Foto
   tags:
     - depositable
     - linkable
@@ -488,6 +516,7 @@
     type: image
   title:
     en: Other
+    de: Sonstiges
   tags:
     - depositable
     - linkable
@@ -505,6 +534,7 @@
     type: video
   title:
     en: Video/Audio
+    de: Video/Audio
   tags:
     - depositable
     - linkable
@@ -522,6 +552,7 @@
     type: software
   title:
     en: Software
+    de: Software
   tags:
     - depositable
     - linkable
@@ -539,6 +570,7 @@
     type: lesson
   title:
     en: Lesson
+    de: Unterrichtseinheit
   tags:
     - depositable
     - linkable
@@ -556,6 +588,7 @@
     type: other
   title:
     en: Other
+    de: Sonstige
   tags:
     - depositable
     - linkable

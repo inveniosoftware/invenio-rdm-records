@@ -8,8 +8,10 @@
 """Entity resolver for records aware of drafts and records."""
 
 from invenio_pidstore.errors import PIDUnregistered
-from invenio_records_resources.references.resolvers.records import \
-    RecordProxy, RecordResolver
+from invenio_records_resources.references.resolvers.records import (
+    RecordProxy,
+    RecordResolver,
+)
 
 from ..records.api import RDMDraft, RDMRecord
 
@@ -19,7 +21,7 @@ class RDMRecordProxy(RecordProxy):
 
     def _resolve(self):
         """Resolve the Record from the proxy's reference dict."""
-        pid_value = self._parse_ref_dict_id(self._ref_dict)
+        pid_value = self._parse_ref_dict_id()
 
         try:
             return RDMDraft.pid.resolve(pid_value, registered_only=False)
@@ -30,8 +32,10 @@ class RDMRecordProxy(RecordProxy):
 class RDMRecordResolver(RecordResolver):
     """RDM Record entity resolver."""
 
-    type_id = 'record'
+    type_id = "record"
 
     def __init__(self):
         """Initialize the resolver."""
-        super().__init__(RDMDraft, type_key="record", proxy_cls=RDMRecordProxy)
+        super().__init__(
+            RDMDraft, "records", type_key="record", proxy_cls=RDMRecordProxy
+        )

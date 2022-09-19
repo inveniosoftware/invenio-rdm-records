@@ -8,7 +8,7 @@
 """Community submission request."""
 
 from flask_babelex import lazy_gettext as _
-from invenio_records_resources.services.uow import RecordCommitOp
+from invenio_records_resources.services.uow import RecordCommitOp, RecordIndexOp
 from invenio_requests.customizations import actions
 
 from ..proxies import current_rdm_records_service as service
@@ -26,7 +26,7 @@ class SubmitAction(actions.SubmitAction):
         draft = self.request.topic.resolve()
         service._validate_draft(identity, draft)
         # Set the record's title as the request title.
-        self.request['title'] = draft.metadata['title']
+        self.request["title"] = draft.metadata["title"]
         super().execute(identity, uow)
 
 
@@ -69,12 +69,20 @@ class DeclineAction(actions.DeclineAction):
 
     def execute(self, identity, uow):
         """Execute action."""
-        # Unset review from record (still accessible from request)
-        # This means that the receiver (curator) won't have access anymore
+        # Keeps the record and the review connected so the user can see the
+        # outcome of the request
+        # The receiver (curator) won't have access anymore to the draft
         # The creator (uploader) should still have access to the record/draft
         draft = self.request.topic.resolve()
-        draft.parent.review = None
         super().execute(identity, uow)
+
+        # TODO: this shouldn't be required BUT because of the caching mechanism
+        # in the review systemfield, the review should be set with the updated
+        # request object
+        draft.parent.review = self.request
+        uow.register(RecordCommitOp(draft.parent))
+        # update draft to reflect the new status
+        uow.register(RecordIndexOp(draft, indexer=service.indexer))
 
 
 class CancelAction(actions.CancelAction):
@@ -87,6 +95,8 @@ class CancelAction(actions.CancelAction):
         draft = self.request.topic.resolve()
         draft.parent.review = None
         uow.register(RecordCommitOp(draft.parent))
+        # update draft to reflect the new status
+        uow.register(RecordIndexOp(draft, indexer=service.indexer))
         super().execute(identity, uow)
 
 
@@ -95,14 +105,20 @@ class ExpireAction(actions.CancelAction):
 
     def execute(self, identity, uow):
         """Execute action."""
-        # Remove draft from request
         # Same reasoning as in 'decline'
         draft = self.request.topic.resolve()
-        draft.parent.review = None
 
         # TODO: What more to do? simply close the request? Similarly to
         # decline, how does a user resubmits the request to the same community.
         super().execute(identity, uow)
+
+        # TODO: this shouldn't be required BUT because of the caching mechanism
+        # in the review systemfield, the review should be set with the updated
+        # request object
+        draft.parent.review = self.request
+        uow.register(RecordCommitOp(draft.parent))
+        # update draft to reflect the new status
+        uow.register(RecordIndexOp(draft, indexer=service.indexer))
 
 
 #
@@ -111,19 +127,19 @@ class ExpireAction(actions.CancelAction):
 class CommunitySubmission(ReviewRequest):
     """Review request for submitting a record to a community."""
 
-    type_id = 'community-submission'
-    name = _('Community submission')
+    type_id = "community-submission"
+    name = _("Community submission")
 
     block_publish = True
     set_as_default = True
 
     creator_can_be_none = False
     topic_can_be_none = False
-    allowed_creator_ref_types = ['user']
-    allowed_receiver_ref_types = ['community']
-    allowed_topic_ref_types = ['record']
+    allowed_creator_ref_types = ["user"]
+    allowed_receiver_ref_types = ["community"]
+    allowed_topic_ref_types = ["record"]
     needs_context = {
-        'community_roles': ['owner', 'manager', 'curator'],
+        "community_roles": ["owner", "manager", "curator"],
     }
 
     available_actions = {

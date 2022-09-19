@@ -14,32 +14,21 @@ from invenio_vocabularies.contrib.names.api import Name
 
 @pytest.fixture(scope="module")
 def names_service():
-    return current_service_registry.get("rdm-names")
+    return current_service_registry.get("names")
 
 
 @pytest.fixture()
-def example_name(
-    app, db, es_clear, superuser_identity, names_service
-):
+def example_name(app, db, es_clear, superuser_identity, names_service):
     """Example name."""
     data = {
         "name": "Doe, John",
         "given_name": "John",
         "family_name": "Doe",
         "identifiers": [
-            {
-                "identifier": "0000-0001-8135-3489",
-                "scheme": "orcid"
-            }, {
-                "identifier": "gnd:4079154-3",
-                "scheme": "gnd"
-            }
+            {"identifier": "0000-0001-8135-3489", "scheme": "orcid"},
+            {"identifier": "gnd:4079154-3", "scheme": "gnd"},
         ],
-        "affiliations": [
-            {
-                "name": "CustomORG"
-            }
-        ]
+        "affiliations": [{"name": "CustomORG"}],
     }
     name = names_service.create(superuser_identity, data)
     Name.index.refresh()  # Refresh the index
@@ -57,9 +46,7 @@ def test_names_get(client, example_name, headers):
     assert res.status_code == 200
     assert res.json["id"] == id_
     # Test links
-    assert res.json["links"] == {
-        "self": f"https://127.0.0.1:5000/api/names/{id_}"
-    }
+    assert res.json["links"] == {"self": f"https://127.0.0.1:5000/api/names/{id_}"}
 
 
 def test_names_search(client, example_name, headers):

@@ -18,12 +18,16 @@ def test_register_pid(
     running_app, es_clear, minimal_record, mocker, superuser_identity
 ):
     """Registers a PID."""
+
     def public_doi(self, metadata, url, doi):
         """Mock doi deletion."""
         pass
 
-    mocker.patch("invenio_rdm_records.services.pids.providers.datacite." +
-                 "DataCiteRESTClient.public_doi", public_doi)
+    mocker.patch(
+        "invenio_rdm_records.services.pids.providers.datacite."
+        + "DataCiteRESTClient.public_doi",
+        public_doi,
+    )
 
     service = current_rdm_records.records_service
     draft = service.create(superuser_identity, minimal_record)
@@ -32,13 +36,8 @@ def test_register_pid(
     provider = service.pids.pid_manager._get_provider("doi", "datacite")
     pid = provider.get(pid_value=doi)
     record = service.record_cls.publish(draft._record)
-    record.pids = {
-        pid.pid_type: {
-            "identifier": pid.pid_value,
-            "provider": "datacite"
-        }
-    }
-    record.metadata = draft['metadata']
+    record.pids = {pid.pid_type: {"identifier": pid.pid_value, "provider": "datacite"}}
+    record.metadata = draft["metadata"]
     record.register()
     record.commit()
     assert pid.status == PIDStatus.NEW
@@ -48,10 +47,9 @@ def test_register_pid(
     assert pid.status == PIDStatus.REGISTERED
 
 
-def test_update_pid(
-    running_app, es_clear, minimal_record, mocker, superuser_identity
-):
+def test_update_pid(running_app, es_clear, minimal_record, mocker, superuser_identity):
     """No pid provided, creating one by default."""
+
     def public_doi(self, metadata, url, doi):
         """Mock doi deletion."""
         pass
@@ -60,11 +58,14 @@ def test_update_pid(
         """Mock doi update."""
         pass
 
-    mocker.patch("invenio_rdm_records.services.pids.providers.datacite." +
-                 "DataCiteRESTClient.public_doi", public_doi)
+    mocker.patch(
+        "invenio_rdm_records.services.pids.providers.datacite."
+        + "DataCiteRESTClient.public_doi",
+        public_doi,
+    )
     mocked_update = mocker.patch(
-        "invenio_rdm_records.services.pids.providers.datacite." +
-        "DataCitePIDProvider.update"
+        "invenio_rdm_records.services.pids.providers.datacite."
+        + "DataCitePIDProvider.update"
     )
 
     mocked_update.side_effect = update

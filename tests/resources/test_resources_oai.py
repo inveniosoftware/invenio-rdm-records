@@ -15,7 +15,7 @@ from invenio_oaiserver.errors import OAISetSpecUpdateError
 def _create_set(client, data, headers, status_code):
     """Send POST request."""
     s = client.post(
-        '/oaipmh/sets',
+        "/oaipmh/sets",
         headers=headers,
         json=data,
     )
@@ -26,7 +26,7 @@ def _create_set(client, data, headers, status_code):
 def _get_set(client, id, headers, status_code):
     """Send GET request."""
     s = client.get(
-        f'/oaipmh/sets/{id}',
+        f"/oaipmh/sets/{id}",
         headers=headers,
     )
     assert s.status_code == status_code
@@ -36,7 +36,7 @@ def _get_set(client, id, headers, status_code):
 def _update_set(client, id, data, headers, status_code):
     """Send PUT request."""
     s = client.put(
-        f'/oaipmh/sets/{id}',
+        f"/oaipmh/sets/{id}",
         headers=headers,
         json=data,
     )
@@ -47,7 +47,7 @@ def _update_set(client, id, data, headers, status_code):
 def _delete_set(client, id, headers, status_code):
     """Send DELETE request."""
     s = client.delete(
-        f'/oaipmh/sets/{id}',
+        f"/oaipmh/sets/{id}",
         headers=headers,
     )
     assert s.status_code == status_code
@@ -56,7 +56,7 @@ def _delete_set(client, id, headers, status_code):
 
 def _search_sets(client, query, headers, status_code):
     s = client.get(
-        '/oaipmh/sets',
+        "/oaipmh/sets",
         headers=headers,
         query_string=query,
     )
@@ -66,7 +66,7 @@ def _search_sets(client, query, headers, status_code):
 
 def _search_formats(client, headers, status_code):
     s = client.get(
-        '/oaipmh/formats',
+        "/oaipmh/formats",
         headers=headers,
     )
     assert s.status_code == status_code
@@ -93,6 +93,13 @@ def test_create_set(client, admin, minimal_oai_set, headers):
     assert s2["description"] == minimal_oai_set["description"]
     assert s2["search_pattern"] == minimal_oai_set["search_pattern"]
 
+    valid = ["-", "_", ".", "!", "~", "*", "'", "(", ")"]
+    for vs in valid:
+        s = minimal_oai_set.copy()
+        s["spec"] = vs
+        cs = _create_set(client, s, headers, 201).json
+        assert s["spec"] == cs["spec"]
+
 
 def test_create_set_duplicate(client, admin, minimal_oai_set, headers):
     """Create two sets with same spec."""
@@ -103,7 +110,7 @@ def test_create_set_duplicate(client, admin, minimal_oai_set, headers):
 
 
 def test_create_set_invalid_data(client, admin, minimal_oai_set, headers):
-    """Try to create a set with missing params."""
+    """Try to create a set with invalid params."""
     client = admin.login(client)
 
     key = "name"
@@ -119,6 +126,12 @@ def test_create_set_invalid_data(client, admin, minimal_oai_set, headers):
     _create_set(client, s, headers, 400)
     del s[key]
     _create_set(client, s, headers, 400)
+
+    invalid = [";", "/", "?", ":", "@", "&", "=", "+", "$", ",", "community-"]
+    for ivs in invalid:
+        s = minimal_oai_set.copy()
+        s["spec"] = ivs
+        _create_set(client, s, headers, 400).json
 
     key = "search_pattern"
     s = minimal_oai_set.copy()
@@ -237,19 +250,14 @@ def test_search_sets(client, admin, minimal_oai_set, headers):
     assert "next" not in search["links"]
     assert "prev" not in search["links"]
 
-    search = _search_sets(
-        client, {"size": "1", "page": "2"}, headers, 200
-    ).json
+    search = _search_sets(client, {"size": "1", "page": "2"}, headers, 200).json
     assert "next" in search["links"]
     assert "prev" in search["links"]
 
-    search = _search_sets(
-        client, {"sort_direction": "desc"}, headers, 200
-    ).json
+    search = _search_sets(client, {"sort_direction": "desc"}, headers, 200).json
     for i in range(num_sets):
         assert (
-            search["hits"]["hits"][num_sets - 1 - i]["spec"]
-            == created_sets[i]["spec"]
+            search["hits"]["hits"][num_sets - 1 - i]["spec"] == created_sets[i]["spec"]
         )
 
 
@@ -257,9 +265,7 @@ def test_search_metadata_formats(client, admin, headers):
     """Retrieve metadata formats."""
     client = admin.login(client)
 
-    available_formats = current_app.config.get(
-        "OAISERVER_METADATA_FORMATS", {}
-    )
+    available_formats = current_app.config.get("OAISERVER_METADATA_FORMATS", {})
     search = _search_formats(client, headers, 200).json
     assert search["hits"]["total"] == len(available_formats)
     for hit in search["hits"]["hits"]:

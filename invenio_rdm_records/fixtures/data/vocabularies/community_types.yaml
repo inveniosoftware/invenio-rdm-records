@@ -1,0 +1,16 @@
+- id: "organization"
+  title:
+    en: "Organization"
+    de: "Organisation"
+- id: "event"
+  title:
+    en: "Event"
+    de: "Event"
+- id: "topic"
+  title:
+    en: "Topic"
+    de: "Thema"
+- id: "project"
+  title:
+    en: "Project"
+    de: "Projekt"

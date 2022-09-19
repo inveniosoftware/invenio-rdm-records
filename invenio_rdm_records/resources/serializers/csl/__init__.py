@@ -9,8 +9,13 @@
 
 import re
 
-from citeproc import Citation, CitationItem, CitationStylesBibliography, \
-    CitationStylesStyle, formatter
+from citeproc import (
+    Citation,
+    CitationItem,
+    CitationStylesBibliography,
+    CitationStylesStyle,
+    formatter,
+)
 from citeproc.source.json import CiteProcJSON
 from citeproc_styles import get_style_filepath
 from citeproc_styles.errors import StyleNotFoundError
@@ -39,9 +44,7 @@ def get_citation_string(json, id, style, locale):
         return text
 
     source = CiteProcJSON([json])
-    citation_style = CitationStylesStyle(
-        validate=False, style=style, locale=locale
-    )
+    citation_style = CitationStylesStyle(validate=False, style=style, locale=locale)
     bib = CitationStylesBibliography(citation_style, source, formatter.plain)
     citation = Citation([CitationItem(id)])
     bib.register(citation)

@@ -12,8 +12,10 @@ from datetime import datetime, timedelta
 import pytest
 from itsdangerous import SignatureExpired
 
-from invenio_rdm_records.secret_links.serializers import \
-    SecretLinkSerializer, TimedSecretLinkSerializer
+from invenio_rdm_records.secret_links.serializers import (
+    SecretLinkSerializer,
+    TimedSecretLinkSerializer,
+)
 
 
 def test_serializer(base_app):
@@ -53,9 +55,7 @@ def test_serializer_validate_token(base_app):
             obj_id="someid", extra_data={"hello": "world"}
         )
 
-        tkn_dict = serializer.validate_token(
-            tkn_str, expected_data={"hello": "world"}
-        )
+        tkn_dict = serializer.validate_token(tkn_str, expected_data={"hello": "world"})
         assert tkn_dict
 
 

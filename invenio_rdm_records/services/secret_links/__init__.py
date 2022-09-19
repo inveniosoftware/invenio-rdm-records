@@ -9,6 +9,4 @@
 
 from .service import SecretLinkService
 
-__all__ = (
-    "SecretLinkService",
-)
+__all__ = ("SecretLinkService",)

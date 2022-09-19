@@ -15,25 +15,25 @@ from io import BytesIO
 
 import arrow
 import pytest
+from invenio_requests import current_requests_service
 
 from invenio_rdm_records.records import RDMDraft, RDMRecord
+from invenio_rdm_records.requests import CommunitySubmission
 
 
 @pytest.fixture()
 def ui_headers():
     """Default headers for making requests."""
     return {
-        'content-type': 'application/json',
-        'accept': 'application/vnd.inveniordm.v1+json',
+        "content-type": "application/json",
+        "accept": "application/vnd.inveniordm.v1+json",
     }
 
 
 def _assert_single_item_response(response):
     """Assert the fields present on a single item response."""
     response_fields = response.json.keys()
-    fields_to_check = [
-        'access', 'created', 'id', 'links', 'metadata', 'updated'
-    ]
+    fields_to_check = ["access", "created", "id", "links", "metadata", "updated"]
 
     for field in fields_to_check:
         assert field in response_fields
@@ -61,38 +61,37 @@ def _validate_access(response, original):
         assert embargo.get("active") == orig_embargo.get("active")
 
 
-def test_simple_flow(
-    running_app, client_with_login, minimal_record, headers, es_clear
-):
+def test_simple_flow(running_app, client_with_login, minimal_record, headers, es_clear):
     client = client_with_login
     """Test a simple REST API flow."""
     # Create a draft
     created_draft = client.post(
-        '/records', headers=headers, data=json.dumps(minimal_record))
+        "/records", headers=headers, data=json.dumps(minimal_record)
+    )
     assert created_draft.status_code == 201
     _assert_single_item_response(created_draft)
     _validate_access(created_draft.json, minimal_record)
     id_ = created_draft.json["id"]
 
     # Read the draft
-    read_draft = client.get(f'/records/{id_}/draft', headers=headers)
+    read_draft = client.get(f"/records/{id_}/draft", headers=headers)
     assert read_draft.status_code == 200
-    assert read_draft.json['metadata'] == created_draft.json['metadata']
+    assert read_draft.json["metadata"] == created_draft.json["metadata"]
     _validate_access(read_draft.json, minimal_record)
 
     # Update and save draft
     data = read_draft.json
-    data["metadata"]["title"] = 'New title'
+    data["metadata"]["title"] = "New title"
 
-    res = client.put(
-        f'/records/{id_}/draft', headers=headers, data=json.dumps(data))
+    res = client.put(f"/records/{id_}/draft", headers=headers, data=json.dumps(data))
     assert res.status_code == 200
-    assert res.json['metadata']["title"] == 'New title'
+    assert res.json["metadata"]["title"] == "New title"
     _validate_access(res.json, minimal_record)
 
     # Publish it
     response = client.post(
-        "/records/{}/draft/actions/publish".format(id_), headers=headers)
+        "/records/{}/draft/actions/publish".format(id_), headers=headers
+    )
 
     # Check record was created
     recid = response.json["id"]
@@ -105,14 +104,12 @@ def test_simple_flow(
     RDMRecord.index.refresh()
 
     # Search it
-    res = client.get(
-        f'/records', query_string={'q': f'id:{recid}'}, headers=headers)
+    res = client.get(f"/records", query_string={"q": f"id:{recid}"}, headers=headers)
     assert res.status_code == 200
-    assert res.json['hits']['total'] == 1
-    assert res.json['hits']['hits'][0]['metadata'] == \
-        created_record['metadata']
-    data = res.json['hits']['hits'][0]
-    assert data['metadata']['title'] == 'New title'
+    assert res.json["hits"]["total"] == 1
+    assert res.json["hits"]["hits"][0]["metadata"] == created_record["metadata"]
+    data = res.json["hits"]["hits"][0]
+    assert data["metadata"]["title"] == "New title"
     _validate_access(data, minimal_record)
 
 
@@ -121,8 +118,7 @@ def test_create_draft(
 ):
     """Test draft creation of a non-existing record."""
     client = client_with_login
-    response = client.post(
-        "/records", data=json.dumps(minimal_record), headers=headers)
+    response = client.post("/records", data=json.dumps(minimal_record), headers=headers)
 
     assert response.status_code == 201
     _assert_single_item_response(response)
@@ -138,16 +134,13 @@ def test_create_partial_draft(
           intentions specific to this module.
     """
     client = client_with_login
-    minimal_record['metadata']["title"] = ""
+    minimal_record["metadata"]["title"] = ""
     response = client.post("/records", json=minimal_record, headers=headers)
 
     assert 201 == response.status_code
     _assert_single_item_response(response)
     errors = [
-        {
-            "field": "metadata.title",
-            "messages": ["Shorter than minimum length 3."]
-        },
+        {"field": "metadata.title", "messages": ["Shorter than minimum length 3."]},
     ]
     assert errors == response.json["errors"]
 
@@ -163,28 +156,17 @@ def test_create_draft_w_extra_fields_reports_error_doesnt_save_field(
 
     assert response.status_code == 201
     assert "foo" not in response.json
-    errors = [
-        {
-            "field": "foo",
-            "messages": ["Unknown field."]
-        }
-    ]
-    assert errors == response.json["errors"]
 
 
-def test_read_draft(
-    running_app, client_with_login, minimal_record, headers, es_clear
-):
+def test_read_draft(running_app, client_with_login, minimal_record, headers, es_clear):
     """Test draft read."""
     client = client_with_login
-    response = client.post(
-        "/records", data=json.dumps(minimal_record), headers=headers)
+    response = client.post("/records", data=json.dumps(minimal_record), headers=headers)
 
     assert response.status_code == 201
 
-    recid = response.json['id']
-    response = client.get(
-        "/records/{}/draft".format(recid), headers=headers)
+    recid = response.json["id"]
+    response = client.get("/records/{}/draft".format(recid), headers=headers)
 
     assert response.status_code == 200
 
@@ -197,40 +179,35 @@ def test_update_draft(
 ):
     """Test draft update."""
     client = client_with_login
-    response = client.post(
-        "/records", data=json.dumps(minimal_record), headers=headers)
+    response = client.post("/records", data=json.dumps(minimal_record), headers=headers)
 
     assert response.status_code == 201
-    assert response.json['metadata']["title"] == \
-        minimal_record['metadata']["title"]
+    assert response.json["metadata"]["title"] == minimal_record["metadata"]["title"]
     _validate_access(response.json, minimal_record)
 
-    recid = response.json['id']
+    recid = response.json["id"]
 
-    orig_title = minimal_record['metadata']["title"]
+    orig_title = minimal_record["metadata"]["title"]
     edited_title = "Edited title"
-    minimal_record['metadata']["title"] = edited_title
+    minimal_record["metadata"]["title"] = edited_title
 
     # Update draft content
     update_response = client.put(
         "/records/{}/draft".format(recid),
         data=json.dumps(minimal_record),
-        headers=headers
+        headers=headers,
     )
 
     assert update_response.status_code == 200
-    assert update_response.json["metadata"]["title"] == \
-        edited_title
+    assert update_response.json["metadata"]["title"] == edited_title
     assert update_response.json["id"] == recid
     _validate_access(update_response.json, minimal_record)
 
     # Check the updates were saved
-    update_response = client.get(
-        "/records/{}/draft".format(recid), headers=headers)
+    update_response = client.get("/records/{}/draft".format(recid), headers=headers)
 
     assert update_response.status_code == 200
-    assert update_response.json["metadata"]["title"] == \
-        edited_title
+    assert update_response.json["metadata"]["title"] == edited_title
     assert update_response.json["id"] == recid
     _validate_access(update_response.json, minimal_record)
 
@@ -246,23 +223,18 @@ def test_update_partial_draft(
     client = client_with_login
     response = client.post("/records", json=minimal_record, headers=headers)
     assert 201 == response.status_code
-    recid = response.json['id']
-    minimal_record['metadata']["title"] = ""
+    recid = response.json["id"]
+    minimal_record["metadata"]["title"] = ""
 
     # Update draft content
     response = client.put(
-        f"/records/{recid}/draft",
-        json=minimal_record,
-        headers=headers
+        f"/records/{recid}/draft", json=minimal_record, headers=headers
     )
 
     assert 200 == response.status_code
     _assert_single_item_response(response)
     errors = [
-        {
-            "field": "metadata.title",
-            "messages": ["Shorter than minimum length 3."]
-        },
+        {"field": "metadata.title", "messages": ["Shorter than minimum length 3."]},
     ]
     assert errors == response.json["errors"]
 
@@ -277,20 +249,17 @@ def test_delete_draft(
 ):
     """Test draft deletion."""
     client = client_with_login
-    response = client.post(
-        "/records", data=json.dumps(minimal_record), headers=headers)
+    response = client.post("/records", data=json.dumps(minimal_record), headers=headers)
 
     assert response.status_code == 201
 
-    recid = response.json['id']
+    recid = response.json["id"]
 
-    update_response = client.delete(
-        "/records/{}/draft".format(recid), headers=headers)
+    update_response = client.delete("/records/{}/draft".format(recid), headers=headers)
 
     assert update_response.status_code == 204
 
-    update_response = client.get(
-        "/records/{}/draft".format(recid), headers=headers)
+    update_response = client.get("/records/{}/draft".format(recid), headers=headers)
 
     assert update_response.status_code == 404
 
@@ -301,12 +270,11 @@ def _create_and_publish(client, minimal_record, headers):
     response = client.post("/records", json=minimal_record, headers=headers)
 
     assert response.status_code == 201
-    recid = response.json['id']
+    recid = response.json["id"]
     _validate_access(response.json, minimal_record)
 
     # Publish it
-    response = client.post(
-        f"/records/{recid}/draft/actions/publish", headers=headers)
+    response = client.post(f"/records/{recid}/draft/actions/publish", headers=headers)
 
     assert response.status_code == 202
     _assert_single_item_response(response)
@@ -342,14 +310,13 @@ def test_publish_draft_w_dates(
 ):
     """Test publication of a draft with dates."""
     client = client_with_login
-    dates = [{
-        "date": "1939/1945",
-        "type": {
-            "id": "other",
-            "title": {"en": "Other"}
-        },
-        "description": "A date"
-    }]
+    dates = [
+        {
+            "date": "1939/1945",
+            "type": {"id": "other", "title": {"en": "Other"}},
+            "description": "A date",
+        }
+    ]
     minimal_record["metadata"]["dates"] = dates
 
     recid = _create_and_publish(client, minimal_record, headers)
@@ -369,10 +336,9 @@ def test_user_records_and_drafts(
     """Tests the search over the drafts search alias."""
     client = client_with_login
     # Create a draft
-    response = client.post(
-        "/records", data=json.dumps(minimal_record), headers=headers)
+    response = client.post("/records", data=json.dumps(minimal_record), headers=headers)
     assert response.status_code == 201
-    draftid = response.json['id']
+    draftid = response.json["id"]
 
     RDMDraft.index.refresh()
     RDMRecord.index.refresh()
@@ -380,8 +346,8 @@ def test_user_records_and_drafts(
     # Search user records
     response = client.get("/user/records", headers=headers)
     assert response.status_code == 200
-    assert response.json['hits']['total'] == 1
-    assert response.json['hits']['hits'][0]['id'] == draftid
+    assert response.json["hits"]["total"] == 1
+    assert response.json["hits"]["hits"][0]["id"] == draftid
 
     # Create and publish new draft
     recid = _create_and_publish(client, minimal_record, headers)
@@ -392,37 +358,47 @@ def test_user_records_and_drafts(
     # Search user records
     response = client.get("/user/records", headers=headers)
     assert response.status_code == 200
-    assert response.json['hits']['total'] == 2
-    assert response.json['hits']['hits'][0]['id'] == recid
-    assert response.json['hits']['hits'][1]['id'] == draftid
+    assert response.json["hits"]["total"] == 2
+    assert response.json["hits"]["hits"][0]["id"] == recid
+    assert response.json["hits"]["hits"][1]["id"] == draftid
 
     # Search only for user published records and drafts
     response = client.get("/user/records?is_published=true", headers=headers)
     assert response.status_code == 200
-    assert response.json['hits']['total'] == 1
+    assert response.json["hits"]["total"] == 1
     # the published record of this draft is excluded versus the filter
     # `has_draft: False`
-    assert response.json['hits']['hits'][0]['id'] == recid
+    assert response.json["hits"]["hits"][0]["id"] == recid
 
     # Search only for user new drafts
     response = client.get("/user/records?is_published=false", headers=headers)
     assert response.status_code == 200
-    assert response.json['hits']['total'] == 1
-    assert response.json['hits']['hits'][0]['id'] == draftid
+    assert response.json["hits"]["total"] == 1
+    assert response.json["hits"]["hits"][0]["id"] == draftid
 
 
 def _assert_file_entry(entry, recid, filename):
     assert entry["key"] == filename
 
     links = entry["links"]
-    assert links["self"] == f'https://127.0.0.1:5000/api/records/{recid}/draft/files/{filename}'  # noqa
-    assert links["content"] == f'https://127.0.0.1:5000/api/records/{recid}/draft/files/{filename}/content'  # noqa
-    assert links["commit"] == f'https://127.0.0.1:5000/api/records/{recid}/draft/files/{filename}/commit'  # noqa
+    assert (
+        links["self"]
+        == f"https://127.0.0.1:5000/api/records/{recid}/draft/files/{filename}"
+    )  # noqa
+    assert (
+        links["content"]
+        == f"https://127.0.0.1:5000/api/records/{recid}/draft/files/{filename}/content"
+    )  # noqa
+    assert (
+        links["commit"]
+        == f"https://127.0.0.1:5000/api/records/{recid}/draft/files/{filename}/commit"
+    )  # noqa
 
 
 def _create_and_assert_file(client, h, recid, filename, file_content):
     response = client.post(
-        f'/records/{recid}/draft/files', headers=h, json=[{'key': filename}])
+        f"/records/{recid}/draft/files", headers=h, json=[{"key": filename}]
+    )
 
     assert response.status_code == 201
     entries = response.json["entries"]
@@ -440,8 +416,8 @@ def _create_and_assert_file(client, h, recid, filename, file_content):
     response = client.put(
         f"/records/{recid}/draft/files/{filename}/content",
         headers={
-            'content-type': 'application/octet-stream',
-            'accept': 'application/json',
+            "content-type": "application/octet-stream",
+            "accept": "application/json",
         },
         data=BytesIO(file_content),
     )
@@ -449,8 +425,7 @@ def _create_and_assert_file(client, h, recid, filename, file_content):
     assert response.status_code == 200
     _assert_file_entry(entry, recid, filename)
 
-    response = client.post(
-        f"/records/{recid}/draft/files/{filename}/commit", headers=h)
+    response = client.post(f"/records/{recid}/draft/files/{filename}/commit", headers=h)
 
     assert response.status_code == 200
     _assert_file_entry(entry, recid, filename)
@@ -461,21 +436,19 @@ def test_multiple_files_record(
 ):
     client = client_with_login
     minimal_record["files"]["enabled"] = True
-    response = client.post(
-        '/records', headers=headers, data=json.dumps(minimal_record))
+    response = client.post("/records", headers=headers, data=json.dumps(minimal_record))
     assert response.status_code == 201
-    recid = response.json['id']
+    recid = response.json["id"]
 
-    filename1 = 'test.txt'
-    file_content1 = b'testfile1'
-    filename2 = 'test2.txt'
-    file_content2 = b'testfile2'
+    filename1 = "test.txt"
+    file_content1 = b"testfile1"
+    filename2 = "test2.txt"
+    file_content2 = b"testfile2"
 
     _create_and_assert_file(client, headers, recid, filename1, file_content2)
     _create_and_assert_file(client, headers, recid, filename2, file_content2)
 
-    response = client.post(
-        f"/records/{recid}/draft/actions/publish", headers=headers)
+    response = client.post(f"/records/{recid}/draft/actions/publish", headers=headers)
 
     assert response.status_code == 202
 
@@ -501,52 +474,46 @@ def test_create_publish_new_revision(
     orig_title = minimal_record["metadata"]["title"]
     minimal_record["metadata"]["title"] = "Edited title"
 
-    response = client.post(
-        "/records/{}/draft".format(recid),
-        headers=headers
-    )
+    response = client.post("/records/{}/draft".format(recid), headers=headers)
 
     assert response.status_code == 201
-    assert response.json['revision_id'] == 5
+    assert response.json["revision_id"] == 5
     _assert_single_item_response(response)
 
     # Update that new draft
     response = client.put(
         "/records/{}/draft".format(recid),
         data=json.dumps(minimal_record),
-        headers=headers
+        headers=headers,
     )
 
     assert response.status_code == 200
 
     # Check the actual record was not modified
-    response = client.get(
-        "/records/{}".format(recid), headers=headers)
+    response = client.get("/records/{}".format(recid), headers=headers)
 
     assert response.status_code == 200
     _assert_single_item_response(response)
-    assert response.json['metadata']["title"] == orig_title
+    assert response.json["metadata"]["title"] == orig_title
 
     # Publish it to check the increment in reversion
     response = client.post(
-        "/records/{}/draft/actions/publish".format(recid), headers=headers)
+        "/records/{}/draft/actions/publish".format(recid), headers=headers
+    )
 
     assert response.status_code == 202
     _assert_single_item_response(response)
 
     # TODO: Because of seting the `.bucket`/`.bucket_id` fields on the record
     # there are extra revision bumps.
-    assert response.json['id'] == recid
-    assert response.json['revision_id'] == 4
-    assert response.json['metadata']["title"] == \
-        minimal_record["metadata"]["title"]
+    assert response.json["id"] == recid
+    assert response.json["revision_id"] == 4
+    assert response.json["metadata"]["title"] == minimal_record["metadata"]["title"]
 
     # Check it was actually edited
-    response = client.get(
-        "/records/{}".format(recid), headers=headers)
+    response = client.get("/records/{}".format(recid), headers=headers)
 
-    assert response.json["metadata"]["title"] == \
-        minimal_record["metadata"]["title"]
+    assert response.json["metadata"]["title"] == minimal_record["metadata"]["title"]
 
 
 # TODO
@@ -567,12 +534,13 @@ def test_ui_data_in_record(
 
     # Check if list results contain UI data
     response = client.get(
-        '/records', query_string={'q': f'id:{recid}'}, headers=ui_headers)
-    assert response.json['hits']['hits'][0]['ui']
+        "/records", query_string={"q": f"id:{recid}"}, headers=ui_headers
+    )
+    assert response.json["hits"]["hits"][0]["ui"]
 
     # Check if item results contain UI data
-    response = client.get(f'/records/{recid}', headers=ui_headers)
-    assert response.json['ui']
+    response = client.get(f"/records/{recid}", headers=ui_headers)
+    assert response.json["ui"]
 
 
 #
@@ -581,7 +549,11 @@ def test_ui_data_in_record(
 
 
 def test_link_creation(
-    running_app, client_with_login, minimal_record, headers, es_clear,
+    running_app,
+    client_with_login,
+    minimal_record,
+    headers,
+    es_clear,
 ):
     """Test the creation of secret links."""
     client = client_with_login
@@ -592,17 +564,16 @@ def test_link_creation(
     recid = _create_and_publish(client, minimal_record, headers)
 
     # check that there are no links yet (and the endpoint works)
-    links_result = client.get(
-        f"/records/{recid}/access/links", headers=headers
-    )
+    links_result = client.get(f"/records/{recid}/access/links", headers=headers)
     assert links_result.status_code == 200
     assert int(links_result.json["hits"]["total"]) == 0
     assert len(links_result.json["hits"]["hits"]) == 0
 
     # create a secret link
     link_result = client.post(
-        f"/records/{recid}/access/links", headers=headers,
-        data=json.dumps({"permission": "view"})
+        f"/records/{recid}/access/links",
+        headers=headers,
+        data=json.dumps({"permission": "view"}),
     )
 
     assert link_result.status_code == 201
@@ -616,9 +587,7 @@ def test_link_creation(
     assert not link_json.get("expires_at")
 
     # check that the created link is findable
-    links_result = client.get(
-        f"/records/{recid}/access/links", headers=headers
-    )
+    links_result = client.get(f"/records/{recid}/access/links", headers=headers)
     assert links_result.status_code == 200
     assert int(links_result.json["hits"]["total"]) == 1
     assert len(links_result.json["hits"]["hits"]) == 1
@@ -636,10 +605,9 @@ def test_link_creation(
 
     # create an expiring link
     link_result = client.post(
-        f"/records/{recid}/access/links", headers=headers,
-        data=json.dumps(
-            {"permission": "preview", "expires_at": in_10_days_str}
-        )
+        f"/records/{recid}/access/links",
+        headers=headers,
+        data=json.dumps({"permission": "preview", "expires_at": in_10_days_str}),
     )
 
     link_json = link_result.json
@@ -651,9 +619,7 @@ def test_link_creation(
     assert link_json["expires_at"]
 
     # check that both links exist
-    links_result = client.get(
-        f"/records/{recid}/access/links", headers=headers
-    )
+    links_result = client.get(f"/records/{recid}/access/links", headers=headers)
     assert links_result.status_code == 200
     assert int(links_result.json["hits"]["total"]) == 2
     assert len(links_result.json["hits"]["hits"]) == 2
@@ -670,8 +636,9 @@ def test_link_deletion(
 
     # create a link and delete it again
     link_result = client.post(
-        f"/records/{recid}/access/links", headers=headers,
-        data=json.dumps({"permission": "view"})
+        f"/records/{recid}/access/links",
+        headers=headers,
+        data=json.dumps({"permission": "view"}),
     )
     link_id = link_result.json["id"]
 
@@ -694,17 +661,13 @@ def test_link_deletion(
     assert link_result.status_code == 404
 
     # check that there are no links left
-    links_result = client.get(
-        f"/records/{recid}/access/links", headers=headers
-    )
+    links_result = client.get(f"/records/{recid}/access/links", headers=headers)
     assert links_result.status_code == 200
     assert int(links_result.json["hits"]["total"]) == 0
     assert len(links_result.json["hits"]["hits"]) == 0
 
 
-def test_link_update(
-    running_app, client_with_login, minimal_record, headers, es_clear
-):
+def test_link_update(running_app, client_with_login, minimal_record, headers, es_clear):
     """Test the deletion of a secret link."""
     client = client_with_login
     # Note, we test with and without timezone aware timestamps.
@@ -720,37 +683,42 @@ def test_link_update(
 
     # create a link and delete it again
     link_result = client.post(
-        f"/records/{recid}/access/links", headers=headers,
-        data=json.dumps({"permission": "view"})
+        f"/records/{recid}/access/links",
+        headers=headers,
+        data=json.dumps({"permission": "view"}),
     )
     link_id = link_result.json["id"]
 
     # reducing the lifespan of a link should work...
     link_result = client.patch(
-        f"/records/{recid}/access/links/{link_id}", headers=headers,
-        data=json.dumps({"expires_at": in_10_days_str})
+        f"/records/{recid}/access/links/{link_id}",
+        headers=headers,
+        data=json.dumps({"expires_at": in_10_days_str}),
     )
     assert link_result.status_code == 200
     assert link_result.json["expires_at"] == in_10_days_str
 
     # ... but extending the lifespan shouldn't work
     link_result = client.patch(
-        f"/records/{recid}/access/links/{link_id}", headers=headers,
-        data=json.dumps({"expires_at": in_20_days_str})
+        f"/records/{recid}/access/links/{link_id}",
+        headers=headers,
+        data=json.dumps({"expires_at": in_20_days_str}),
     )
     assert link_result.status_code == 400
 
     # also, past dates shouldn't work either
     link_result = client.patch(
-        f"/records/{recid}/access/links/{link_id}", headers=headers,
-        data=json.dumps({"expires_at": _10_days_ago_str})
+        f"/records/{recid}/access/links/{link_id}",
+        headers=headers,
+        data=json.dumps({"expires_at": _10_days_ago_str}),
     )
     assert link_result.status_code == 400
 
     # permission level update should work fine
     link_result = client.patch(
-        f"/records/{recid}/access/links/{link_id}", headers=headers,
-        data=json.dumps({"permission": "preview"})
+        f"/records/{recid}/access/links/{link_id}",
+        headers=headers,
+        data=json.dumps({"permission": "preview"}),
     )
     assert link_result.status_code == 200
     assert link_result.json["expires_at"] == in_10_days_str
@@ -769,14 +737,12 @@ def test_reserve_pid_with_login(
     # GET with client login
     client = client_with_login
     # Create the draft
-    response = client.post(
-        "/records", data=json.dumps(minimal_record), headers=headers)
+    response = client.post("/records", data=json.dumps(minimal_record), headers=headers)
 
     assert response.status_code == 201
-    recid = response.json['id']
+    recid = response.json["id"]
 
-    response = client.post(
-        f"/records/{recid}/draft/pids/doi", headers=headers)
+    response = client.post(f"/records/{recid}/draft/pids/doi", headers=headers)
     assert response.status_code == 201
     assert response.json["pids"]["doi"]["identifier"]
 
@@ -788,23 +754,20 @@ def test_discard_pid_with_login(
     # GET with client login
     client = client_with_login
     # Create the draft
-    response = client.post(
-        "/records", data=json.dumps(minimal_record), headers=headers)
+    response = client.post("/records", data=json.dumps(minimal_record), headers=headers)
 
     assert response.status_code == 201
-    recid = response.json['id']
+    recid = response.json["id"]
 
     # reserve a doi
-    response = client.post(
-        f"/records/{recid}/draft/pids/doi", headers=headers)
+    response = client.post(f"/records/{recid}/draft/pids/doi", headers=headers)
     assert response.status_code == 201
     assert response.json["pids"]["doi"]["identifier"]
 
     # remove the doi
     pids = response.json["pids"]
     pids.pop("doi")
-    response = client.delete(
-        f"/records/{recid}/draft/pids/doi", headers=headers)
+    response = client.delete(f"/records/{recid}/draft/pids/doi", headers=headers)
     assert response.status_code == 200
     assert response.json["pids"] == {}
 
@@ -816,22 +779,63 @@ def test_publish_pid_flow(
     # GET with client login
     client = client_with_login
     # Create the draft
-    response = client.post(
-        "/records", data=json.dumps(minimal_record), headers=headers)
+    response = client.post("/records", data=json.dumps(minimal_record), headers=headers)
 
     assert response.status_code == 201
-    recid = response.json['id']
+    recid = response.json["id"]
 
     # Reserve DOI
-    response = client.post(
-        f"/records/{recid}/draft/pids/doi", headers=headers)
+    response = client.post(f"/records/{recid}/draft/pids/doi", headers=headers)
     assert response.status_code == 201
     assert response.json["pids"]["doi"]["identifier"]
     assert response.json["pids"]["doi"]["client"] == "datacite"  # default
 
     # Publish it, will register DOI
-    response = client.post(
-        f"/records/{recid}/draft/actions/publish", headers=headers)
+    response = client.post(f"/records/{recid}/draft/actions/publish", headers=headers)
     assert response.status_code == 202
     assert response.json["pids"]["doi"]["identifier"]
     assert response.json["pids"]["doi"]["client"] == "datacite"  # default
+
+
+def test_search_community_records(
+    running_app, client, client_with_login, minimal_record, headers, community, es_clear
+):
+    """Test searching for records in a community."""
+    superuser_identity = running_app.superuser_identity
+
+    def _create_and_include_in_community():
+        """Create a draft and include it in a community."""
+        _client = client_with_login
+        # Create the draft with review
+        review = {
+            "parent": {
+                "review": {
+                    "type": CommunitySubmission.type_id,
+                    "receiver": {"community": community["id"]},
+                }
+            }
+        }
+        resp = _client.post(
+            "/records", json={**minimal_record, **review}, headers=headers
+        )
+        assert resp.status_code == 201
+        recid = resp.json["id"]
+
+        # Submit for review
+        resp = _client.post(
+            f"/records/{recid}/draft/actions/submit-review", headers=headers
+        )
+        assert resp.status_code == 202
+        reqid = resp.json["id"]
+
+        # Accept the request
+        current_requests_service.execute_action(superuser_identity, reqid, "accept", {})
+        RDMRecord.index.refresh()
+
+    res = client.get(f"/communities/{community['id']}/records", headers=headers)
+    assert res.json["hits"]["total"] == 0
+
+    _create_and_include_in_community()
+
+    res = client.get(f"/communities/{community['id']}/records", headers=headers)
+    assert res.json["hits"]["total"] == 1

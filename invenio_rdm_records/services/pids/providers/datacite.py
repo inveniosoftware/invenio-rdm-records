@@ -41,30 +41,26 @@ class DataCiteClient:
     def generate_doi(self, record):
         """Generate a DOI."""
         self.check_credentials()
-        prefix = self.cfg('prefix')
+        prefix = self.cfg("prefix")
         if not prefix:
             raise RuntimeError("Invalid DOI prefix configured.")
-        doi_format = self.cfg('format', '{prefix}/{id}')
+        doi_format = self.cfg("format", "{prefix}/{id}")
         if callable(doi_format):
             return doi_format(prefix, record)
         else:
-            return doi_format.format(
-                prefix=prefix,
-                id=record.pid.pid_value
-            )
+            return doi_format.format(prefix=prefix, id=record.pid.pid_value)
 
     def check_credentials(self, **kwargs):
         """Returns if the client has the credentials properly set up.
 
         If the client is running on test mode the credentials are not required.
         """
-        if not (self.cfg('username') and self.cfg('password')
-                and self.cfg('prefix')):
+        if not (self.cfg("username") and self.cfg("password") and self.cfg("prefix")):
             warnings.warn(
                 f"The {self.__class__.__name__} is misconfigured. Please "
                 f"set {self.cfgkey('username')}, {self.cfgkey('password')}"
                 f" and {self.cfgkey('prefix')} in your configuration.",
-                UserWarning
+                UserWarning,
             )
 
     @property
@@ -73,10 +69,10 @@ class DataCiteClient:
         if self._api is None:
             self.check_credentials()
             self._api = DataCiteRESTClient(
-                self.cfg('username'),
-                self.cfg('password'),
-                self.cfg('prefix'),
-                self.cfg('test_mode', True),
+                self.cfg("username"),
+                self.cfg("password"),
+                self.cfg("prefix"),
+                self.cfg("test_mode", True),
             )
         return self._api
 
@@ -90,20 +86,20 @@ class DataCitePIDProvider(PIDProvider):
     """
 
     def __init__(
-            self,
-            id_,
-            client=None,
-            serializer=None,
-            pid_type="doi",
-            default_status=PIDStatus.NEW,
-            **kwargs):
+        self,
+        id_,
+        client=None,
+        serializer=None,
+        pid_type="doi",
+        default_status=PIDStatus.NEW,
+        **kwargs,
+    ):
         """Constructor."""
         super().__init__(
             id_,
-            client=(client or
-                    DataCiteClient("datacite", config_prefix="DATACITE")),
+            client=(client or DataCiteClient("datacite", config_prefix="DATACITE")),
             pid_type=pid_type,
-            default_status=default_status
+            default_status=default_status,
         )
         self.serializer = serializer or DataCite43JSONSerializer()
 
@@ -140,12 +136,12 @@ class DataCitePIDProvider(PIDProvider):
         try:
             doc = self.serializer.dump_one(record)
             url = kwargs["url"]
-            self.client.api.public_doi(
-                metadata=doc, url=url, doi=pid.pid_value)
+            self.client.api.public_doi(metadata=doc, url=url, doi=pid.pid_value)
             return True
         except DataCiteError as e:
-            current_app.logger.warning("DataCite provider error when "
-                                       f"registering DOI for {pid.pid_value}")
+            current_app.logger.warning(
+                "DataCite provider error when " f"registering DOI for {pid.pid_value}"
+            )
             self._log_errors(e)
 
             return False
@@ -161,11 +157,11 @@ class DataCitePIDProvider(PIDProvider):
         try:
             # Set metadata
             doc = self.serializer.dump_one(record)
-            self.client.api.update_doi(
-                metadata=doc, doi=pid.pid_value, url=url)
+            self.client.api.update_doi(metadata=doc, doi=pid.pid_value, url=url)
         except DataCiteError as e:
-            current_app.logger.warning("DataCite provider error when "
-                                       f"updating DOI for {pid.pid_value}")
+            current_app.logger.warning(
+                "DataCite provider error when " f"updating DOI for {pid.pid_value}"
+            )
             self._log_errors(e)
 
             return False
@@ -188,17 +184,16 @@ class DataCitePIDProvider(PIDProvider):
             elif pid.is_registered():
                 self.client.api.hide_doi(pid.pid_value)
         except DataCiteError as e:
-            current_app.logger.warning("DataCite provider error when deleting "
-                                       f"DOI for {pid.pid_value}")
+            current_app.logger.warning(
+                "DataCite provider error when deleting " f"DOI for {pid.pid_value}"
+            )
             self._log_errors(e)
 
             return False
 
         return super().delete(pid, **kwargs)
 
-    def validate(
-        self, record, identifier=None, provider=None, **kwargs
-    ):
+    def validate(self, record, identifier=None, provider=None, **kwargs):
         """Validate the attributes of the identifier.
 
         :returns: A tuple (success, errors). The first specifies if the

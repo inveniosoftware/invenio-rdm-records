@@ -22,14 +22,14 @@ def external_provider():
 
 
 @pytest.fixture(scope="function")
-def record(location):
+def record(location, db):
     """Creates an empty record."""
     draft = RDMDraft.create({})
     record = RDMRecord.publish(draft)
     return record
 
 
-def test_external_provider_create(record, external_provider):
+def test_external_provider_create(record, external_provider, db):
     created_pid = external_provider.create(record, "avalue")
     db_pid = PersistentIdentifier.get(
         pid_value=created_pid.pid_value, pid_type="testid"
@@ -41,7 +41,7 @@ def test_external_provider_create(record, external_provider):
     assert created_pid.status == PIDStatus.NEW
 
 
-def test_external_provider_get(record, external_provider):
+def test_external_provider_get(record, external_provider, db):
     created_pid = external_provider.create(record, "avalue")
     get_pid = external_provider.get(created_pid.pid_value)
 
@@ -51,7 +51,7 @@ def test_external_provider_get(record, external_provider):
     assert get_pid.status == PIDStatus.NEW
 
 
-def test_external_provider_register(record, external_provider):
+def test_external_provider_register(record, external_provider, db):
     created_pid = external_provider.create(record, "avalue")
     assert external_provider.register(pid=created_pid, record=record)
 
@@ -65,9 +65,7 @@ def test_external_provider_register(record, external_provider):
     assert db_pid.status == PIDStatus.REGISTERED
 
 
-def test_external_provider_validate(
-    running_app, db, external_provider, record
-):
+def test_external_provider_validate(running_app, db, external_provider, record):
     success, errors = external_provider.validate(
         identifier="somevalue", record=record, provider="external"
     )
@@ -75,21 +73,15 @@ def test_external_provider_validate(
     assert not errors
 
 
-def test_external_provider_validate_failure(
-    running_app, db, external_provider, record
-):
+def test_external_provider_validate_failure(running_app, db, external_provider, record):
     with pytest.raises(Exception):
         external_provider.validate(
             record=record, client="someclient", provider="external"
         )
 
     with pytest.raises(Exception):
-        external_provider.validate(
-            record=record, provider="wrong"
-        )
+        external_provider.validate(record=record, provider="wrong")
 
-    success, errors = external_provider.validate(
-        record=record, provider="external"
-    )
+    success, errors = external_provider.validate(record=record, provider="external")
     assert not success
     assert "Missing DOI for required field." in errors

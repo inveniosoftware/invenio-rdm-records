@@ -52,11 +52,7 @@ class HasDraftCheckField(SystemField):
 
     def pre_dump(self, record, data, **kwargs):
         """Called before a record is dumped in a secondary storage system."""
-        dict_set(
-            data,
-            self.key,
-            record.has_draft
-        )
+        dict_set(data, self.key, record.has_draft)
 
     def post_load(self, record, data, **kwargs):
         """Called after a record is loaded from a secondary storage system."""

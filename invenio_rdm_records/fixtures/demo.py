@@ -16,7 +16,7 @@ from pathlib import Path
 from edtf.parser.grammar import level0Expression
 from faker import Faker
 from invenio_access.permissions import system_identity
-from invenio_requests.records.api import RequestEventFormat, RequestEventType
+from invenio_requests.records.api import RequestEventFormat
 
 
 class CachedVocabularies:
@@ -44,13 +44,8 @@ class CachedVocabularies:
         #                 data for now
         filepath = Path("./app_data") / "vocabularies.yaml"
         if filepath.exists():
-            app_fixture = VocabulariesFixture(
-                system_identity,
-                filepath
-            )
-            app_vocabulary_iter = (
-                app_fixture.get_records_by_vocabulary(vocabulary)
-            )
+            app_fixture = VocabulariesFixture(system_identity, filepath)
+            app_vocabulary_iter = app_fixture.get_records_by_vocabulary(vocabulary)
             if any(True for _ in app_vocabulary_iter):
                 return app_fixture.get_records_by_vocabulary(vocabulary)
 
@@ -149,9 +144,10 @@ class CachedVocabularies:
 
 def fake_edtf_level_0():
     """Generates a fake publication_date string."""
+
     def fake_date(end_date=None):
         fake = Faker()
-        date_pattern = ['%Y', '%m', '%d']
+        date_pattern = ["%Y", "%m", "%d"]
         # make it less and less likely to get less and less parts of the date
 
         if random.choice([True, False]):
@@ -186,48 +182,58 @@ def create_fake_record():
             "record": "public",
             "files": "public",
         },
-        "files":  {
+        "files": {
             "enabled": False,
         },
-        "pids": {
-        },
+        "pids": {},
         "metadata": {
             "resource_type": CachedVocabularies.fake_resource_type(),
-            "creators": [{
-                "person_or_org": {
-                    "family_name": fake.last_name(),
-                    "given_name": fake.first_name(),
-                    "type": "personal",
-                    "identifiers": [{
-                        "scheme": "orcid",
-                        "identifier": "0000-0002-1825-0097",
-                    }],
-                },
-                "role": CachedVocabularies.fake_creatibutor_role(),
-                "affiliations": []
-            } for i in range(4)],
+            "creators": [
+                {
+                    "person_or_org": {
+                        "family_name": fake.last_name(),
+                        "given_name": fake.first_name(),
+                        "type": "personal",
+                        "identifiers": [
+                            {
+                                "scheme": "orcid",
+                                "identifier": "0000-0002-1825-0097",
+                            }
+                        ],
+                    },
+                    "role": CachedVocabularies.fake_creatibutor_role(),
+                    "affiliations": [],
+                }
+                for i in range(4)
+            ],
             "title": fake.company() + "'s gallery",
-            "additional_titles": [{
-                "title": "a research data management platform",
-                "type": CachedVocabularies.fake_title_type(),
-                "lang": {"id": "eng"}
-            }, {
-                "title": fake.company() + "'s gallery",
-                "type": {"id": "alternative-title"},
-                "lang": CachedVocabularies.fake_language()
-            }],
+            "additional_titles": [
+                {
+                    "title": "a research data management platform",
+                    "type": CachedVocabularies.fake_title_type(),
+                    "lang": {"id": "eng"},
+                },
+                {
+                    "title": fake.company() + "'s gallery",
+                    "type": {"id": "alternative-title"},
+                    "lang": CachedVocabularies.fake_language(),
+                },
+            ],
             "publisher": "InvenioRDM",
             "publication_date": fake_edtf_level_0(),
             "subjects": [],  # Too complex to generate for now
-            "contributors": [{
-                "person_or_org": {
-                    "family_name": fake.last_name(),
-                    "given_name": fake.first_name(),
-                    "type": "personal",
-                },
-                "role": CachedVocabularies.fake_creatibutor_role(),
-                "affiliations": [],
-            } for i in range(3)],
+            "contributors": [
+                {
+                    "person_or_org": {
+                        "family_name": fake.last_name(),
+                        "given_name": fake.first_name(),
+                        "type": "personal",
+                    },
+                    "role": CachedVocabularies.fake_creatibutor_role(),
+                    "affiliations": [],
+                }
+                for i in range(3)
+            ],
             # "dates": [{
             #     # No end date to avoid computations based on start
             #     "date": fake.date(pattern='%Y-%m-%d'),
@@ -235,18 +241,16 @@ def create_fake_record():
             #     "type": "other"
             # }],
             "languages": [CachedVocabularies.fake_language()],
-            "related_identifiers": [{
-                "identifier": "10.9999/rdm.9999988",
-                "scheme": "doi",
-                "relation_type": CachedVocabularies.fake_relation_type(),
-                "resource_type": CachedVocabularies.fake_resource_type()
-            }],
-            "sizes": [
-                "11 pages"
+            "related_identifiers": [
+                {
+                    "identifier": "10.9999/rdm.9999988",
+                    "scheme": "doi",
+                    "relation_type": CachedVocabularies.fake_relation_type(),
+                    "resource_type": CachedVocabularies.fake_resource_type(),
+                }
             ],
-            "formats": [
-                "application/pdf"
-            ],
+            "sizes": ["11 pages"],
+            "formats": ["application/pdf"],
             "version": "v0.0.1",
             # "rights": [{
             #     "rights": "Berkeley Software Distribution 3",
@@ -255,24 +259,21 @@ def create_fake_record():
             #     "scheme": "ror",
             # }],
             "description": fake.text(max_nb_chars=3000),
-            "additional_descriptions": [{
-                "description": fake.text(max_nb_chars=200),
-                "type": CachedVocabularies.fake_description_type(),
-                "lang": "eng"
-            } for i in range(2)],
-            "funding": [{
-                "funder": {
-                    "name": "European Commission",
-                    "identifier": "03yrm5c26",
-                    "scheme": "ror"
-                },
-                "award": {
-                    "title": "OpenAIRE",
-                    "number": "246686",
-                    "identifier": "0000-0002-1825-0097",
-                    "scheme": "orcid"
+            "additional_descriptions": [
+                {
+                    "description": fake.text(max_nb_chars=200),
+                    "type": CachedVocabularies.fake_description_type(),
+                    "lang": "eng",
                 }
-            }],
+                for i in range(2)
+            ],
+            "funding": [
+                {
+                    "funder": {
+                        "id": "00k4n6c32",
+                    }
+                }
+            ],
             # "locations": [{
             #     'geometry': {
             #         'type': 'Point',
@@ -300,16 +301,15 @@ def create_fake_record():
             #     "place": fake.location_on_land()[2],
             # }
             # ],
-            "references": [{
-                "reference": "Reference to something et al.",
-                "identifier": "0000000114559647",
-                "scheme": "isni"
-            }],
-            "identifiers": [{
-                "identifier": "ark:/123/456",
-                "scheme": "ark"
-            }],
-        }
+            "references": [
+                {
+                    "reference": "Reference to something et al.",
+                    "identifier": "0000000114559647",
+                    "scheme": "isni",
+                }
+            ],
+            "identifiers": [{"identifier": "ark:/123/456", "scheme": "ark"}],
+        },
     }
 
     return json.loads(json.dumps(data_to_use))
@@ -319,28 +319,27 @@ def create_fake_community():
     """Create minimal community for demo purposes."""
     fake = Faker()
     return {
-        "id": fake.unique.domain_word(),
+        "slug": fake.unique.slug(),
         "access": {
             "visibility": "public",
         },
         "metadata": {
             "title": fake.sentence(nb_words=5, variable_nb_words=True),
-            "type": random.choice([
-                "organization", "event", "topic", "project"
-            ]),
-        }
+            "type": {
+                "id": random.choice(["organization", "event", "topic", "project"])
+            },
+        },
     }
 
 
 def create_fake_comment():
     """Create a fake comment for demo purposes."""
     fake = Faker()
-    comment = {
+    payload = {
         "content": fake.sentence(nb_words=20, variable_nb_words=True),
         "format": RequestEventFormat.HTML.value,
     }
-    with_type = {
-        "payload": comment,
-        "type": RequestEventType.COMMENT.value
+    comment = {
+        "payload": payload,
     }
-    return comment, with_type
+    return comment

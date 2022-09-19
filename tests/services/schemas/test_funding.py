@@ -10,59 +10,49 @@
 import pytest
 from marshmallow import ValidationError
 
-from invenio_rdm_records.services.schemas.metadata import FundingSchema, \
-    MetadataSchema
+from invenio_rdm_records.services.schemas.metadata import FundingSchema, MetadataSchema
 
 AWARD = {
-    "title": "Some award",
+    "title": {"en": "Some award"},
     "number": "100",
-    "identifier": "10.5281/zenodo.9999999",
-    "scheme": "doi"
+    "identifiers": [{"scheme": "url", "identifier": "https://example.com"}],
 }
 
 FUNDER = {
-    "name": "Someone",
-    "identifier": "10.5281/zenodo.9999999",
-    "scheme": "doi"
+    "id": "00k4n6c32",
 }
 
 
-def test_valid_award_funding():
-    valid_funding = {
-        "award": AWARD
-    }
+def test_valid_funder_funding(app):
+    valid_funding = {"funder": FUNDER}
     assert valid_funding == FundingSchema().load(valid_funding)
 
 
-def test_valid_funder_funding():
-    valid_funding = {
-        "funder": FUNDER
-    }
+def test_valid_award_funder_funding(app):
+    valid_funding = {"funder": FUNDER, "award": AWARD}
     assert valid_funding == FundingSchema().load(valid_funding)
 
 
-def test_valid_award_funder_funding():
-    valid_funding = {
-        "funder": FUNDER,
-        "award": AWARD
-    }
+def test_valid_award_id(app):
+    valid_funding = {"funder": FUNDER, "award": {"id": "00k4n6c32::100"}}
     assert valid_funding == FundingSchema().load(valid_funding)
 
 
-def test_invalid_empty_funding():
-    invalid_funding = {}
+def test_invalid_empty_funding(app):
+    invalid_funding = {
+        "award": AWARD,
+    }
     with pytest.raises(ValidationError):
         data = FundingSchema().load(invalid_funding)
 
 
-@pytest.mark.parametrize("funding", [
-    ([]),
-    ([{"funder": FUNDER}, {"award": AWARD}])
-])
-def test_valid_rights(funding, minimal_record):
-    metadata = minimal_record['metadata']
+@pytest.mark.parametrize(
+    "funding", [([]), ([{"funder": FUNDER}, {"funder": FUNDER, "award": AWARD}])]
+)
+def test_valid_funding(funding, minimal_record):
+    metadata = minimal_record["metadata"]
     # NOTE: this is done to get possible load transformations out of the way
     metadata = MetadataSchema().load(metadata)
-    metadata['funding'] = funding
+    metadata["funding"] = funding
 
     assert metadata == MetadataSchema().load(metadata)

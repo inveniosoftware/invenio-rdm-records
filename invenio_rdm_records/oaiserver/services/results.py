@@ -8,8 +8,10 @@
 """Result items for OAI-PMH services."""
 
 from invenio_records_resources.pagination import Pagination
-from invenio_records_resources.services.base.results import \
-    ServiceItemResult, ServiceListResult
+from invenio_records_resources.services.base.results import (
+    ServiceItemResult,
+    ServiceListResult,
+)
 
 
 class BaseServiceItemResult(ServiceItemResult):
@@ -104,7 +106,7 @@ class BaseServiceListResult(ServiceListResult):
                 ),
             )
             if self._links_item_tpl:
-                projection['links'] = self._links_item_tpl.expand(hit)
+                projection["links"] = self._links_item_tpl.expand(hit)
 
             yield projection
 
@@ -112,8 +114,8 @@ class BaseServiceListResult(ServiceListResult):
     def pagination(self):
         """Create a pagination object."""
         return Pagination(
-            self._params['size'],
-            self._params['page'],
+            self._params["size"],
+            self._params["page"],
             self.total,
         )
 
@@ -131,7 +133,7 @@ class BaseServiceListResult(ServiceListResult):
 
         if self._params:
             if self._links_tpl:
-                res['links'] = self._links_tpl.expand(self.pagination)
+                res["links"] = self._links_tpl.expand(self.pagination)
 
         return res
 

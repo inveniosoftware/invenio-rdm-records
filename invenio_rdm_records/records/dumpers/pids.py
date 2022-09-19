@@ -24,24 +24,21 @@ class PIDsDumperExt(ElasticsearchDumperExt):
 
     def dump(self, record, data):
         """Dump the data."""
-        pids = data.get('pids', {})
+        pids = data.get("pids", {})
         if pids:
             dumped_pids = []
             for scheme, pid_attrs in pids.items():
-                dumped_pids.append({
-                    "scheme": scheme,
-                    **pid_attrs
-                })
+                dumped_pids.append({"scheme": scheme, **pid_attrs})
 
-            data['pids'] = dumped_pids
+            data["pids"] = dumped_pids
 
     def load(self, data, record_cls):
         """Load the data."""
-        pids = data.get('pids', {})
+        pids = data.get("pids", {})
         if pids:
             loaded_pids = {}
             for pid_attrs in pids:
-                scheme = pid_attrs.pop('scheme')
+                scheme = pid_attrs.pop("scheme")
                 loaded_pids[scheme] = pid_attrs
 
-            data['pids'] = loaded_pids
+            data["pids"] = loaded_pids

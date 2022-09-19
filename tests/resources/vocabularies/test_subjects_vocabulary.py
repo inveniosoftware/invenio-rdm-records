@@ -14,13 +14,11 @@ from invenio_vocabularies.contrib.subjects.api import Subject
 
 @pytest.fixture(scope="module")
 def subjects_service():
-    return current_service_registry.get("rdm-subjects")
+    return current_service_registry.get("subjects")
 
 
 @pytest.fixture()
-def example_subject(
-    app, db, es_clear, superuser_identity, subjects_service
-):
+def example_subject(app, db, es_clear, superuser_identity, subjects_service):
     """Example subject."""
     data = {
         "id": "https://id.nlm.nih.gov/mesh/D000001",

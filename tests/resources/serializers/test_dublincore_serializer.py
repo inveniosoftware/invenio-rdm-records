@@ -9,10 +9,11 @@
 
 import pytest
 
-from invenio_rdm_records.resources.serializers.dublincore import \
-    DublinCoreJSONSerializer, DublinCoreXMLSerializer
-from invenio_rdm_records.resources.serializers.errors import \
-    VocabularyItemNotFoundError
+from invenio_rdm_records.resources.serializers.dublincore import (
+    DublinCoreJSONSerializer,
+    DublinCoreXMLSerializer,
+)
+from invenio_rdm_records.resources.serializers.errors import VocabularyItemNotFoundError
 
 
 @pytest.fixture(scope="function")
@@ -41,7 +42,7 @@ def test_dublincorejson_serializer(running_app, updated_full_record):
         "contributors": ["Nielsen, Lars Holm"],
         "types": ["info:eu-repo/semantic/other"],
         "relations": ["doi:10.1234/foo.bar"],
-        "descriptions": ["A description with HTML tags", "Bla bla bla"],
+        "descriptions": ["A description \nwith HTML tags", "Bla bla bla"],
         "identifiers": ["1924MNRAS..84..308E", "10.5281/inveniordm.1234"],
         "publishers": ["InvenioRDM"],
         "languages": ["dan", "eng"],
@@ -54,8 +55,8 @@ def test_dublincorejson_serializer(running_app, updated_full_record):
             "info:eu-repo/semantics/embargoedAccess",
             "A custom license",
             "https://customlicense.org/licenses/by/4.0/",
-            'Creative Commons Attribution 4.0 International',
-            'https://creativecommons.org/licenses/by/4.0/legalcode',
+            "Creative Commons Attribution 4.0 International",
+            "https://creativecommons.org/licenses/by/4.0/legalcode",
         ],
     }
 
@@ -65,9 +66,7 @@ def test_dublincorejson_serializer(running_app, updated_full_record):
     assert serialized_record == expected_data
 
 
-def test_dublincorejson_serializer_minimal(
-    running_app, updated_minimal_record
-):
+def test_dublincorejson_serializer_minimal(running_app, updated_minimal_record):
     """Test serializer to Dublin Core JSON with minimal record"""
     expected_data = {
         "types": ["info:eu-repo/semantic/other"],
@@ -85,7 +84,7 @@ def test_dublincorejson_serializer_minimal(
 
 def test_vocabulary_type_error(running_app, updated_minimal_record):
     """Test error thrown on missing resource type."""
-    updated_minimal_record['metadata']['resource_type']['id'] = 'invalid'
+    updated_minimal_record["metadata"]["resource_type"]["id"] = "invalid"
 
     with pytest.raises(VocabularyItemNotFoundError):
         DublinCoreJSONSerializer().dump_one(updated_minimal_record)
@@ -98,7 +97,7 @@ def test_dublincorexml_serializer(running_app, updated_full_record):
         "<dc:creator>Nielsen, Lars Holm</dc:creator>",
         "<dc:date>2018/2020-09</dc:date>",
         "<dc:date>info:eu-repo/date/embargoEnd/2131-01-01</dc:date>",
-        "<dc:description>A description with HTML tags</dc:description>",
+        "<dc:description>A description \nwith HTML tags</dc:description>",
         "<dc:description>Bla bla bla</dc:description>",
         "<dc:format>application/pdf</dc:format>",
         "<dc:identifier>1924MNRAS..84..308E</dc:identifier>",
@@ -110,8 +109,7 @@ def test_dublincorexml_serializer(running_app, updated_full_record):
         "<dc:rights>info:eu-repo/semantics/embargoedAccess</dc:rights>",
         "<dc:rights>A custom license</dc:rights>",
         "<dc:rights>https://customlicense.org/licenses/by/4.0/</dc:rights>",
-        "<dc:rights>Creative Commons Attribution 4.0 "
-        + "International</dc:rights>",
+        "<dc:rights>Creative Commons Attribution 4.0 " + "International</dc:rights>",
         "<dc:rights>https://creativecommons.org/licenses/by/4.0/legalcode"
         + "</dc:rights>",
         "<dc:title>InvenioRDM</dc:title>",
@@ -151,7 +149,7 @@ def test_dublincorexml_serializer_list(
         "<dc:creator>Nielsen, Lars Holm</dc:creator>",
         "<dc:date>2018/2020-09</dc:date>",
         "<dc:date>info:eu-repo/date/embargoEnd/2131-01-01</dc:date>",
-        "<dc:description>A description with HTML tags</dc:description>",
+        "<dc:description>A description \nwith HTML tags</dc:description>",
         "<dc:description>Bla bla bla</dc:description>",
         "<dc:format>application/pdf</dc:format>",
         "<dc:identifier>1924MNRAS..84..308E</dc:identifier>",
@@ -163,8 +161,7 @@ def test_dublincorexml_serializer_list(
         "<dc:rights>info:eu-repo/semantics/embargoedAccess</dc:rights>",
         "<dc:rights>A custom license</dc:rights>",
         "<dc:rights>https://customlicense.org/licenses/by/4.0/</dc:rights>",
-        "<dc:rights>Creative Commons Attribution 4.0 "
-        + "International</dc:rights>",
+        "<dc:rights>Creative Commons Attribution 4.0 " + "International</dc:rights>",
         "<dc:rights>https://creativecommons.org/licenses/by/4.0/legalcode"
         + "</dc:rights>",
         "<dc:title>InvenioRDM</dc:title>",

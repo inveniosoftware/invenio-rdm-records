@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2020 CERN.
+# Copyright (C) 2020-2022 CERN.
 # Copyright (C) 2021 TU Wien.
+# Copyright (C) 2022 Universität Hamburg.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
@@ -10,7 +11,7 @@
 
 from flask import Blueprint
 
-blueprint = Blueprint('invenio_rdm_records_ext', __name__)
+blueprint = Blueprint("invenio_rdm_records_ext", __name__)
 
 
 @blueprint.record_once
@@ -19,16 +20,16 @@ def init(state):
     app = state.app
     # Register services - cannot be done in extension because
     # Invenio-Records-Resources might not have been initialized.
-    registry = app.extensions['invenio-records-resources'].registry
-    ext = app.extensions['invenio-rdm-records']
-    registry.register(ext.records_service, service_id='rdm-records')
-    registry.register(ext.records_service.files, service_id='rdm-files')
-    registry.register(
-        ext.records_service.draft_files, service_id='rdm-draft-files')
-    registry.register(ext.affiliations_service, service_id='rdm-affiliations')
-    registry.register(ext.names_service, service_id='rdm-names')
-    registry.register(ext.subjects_service, service_id='rdm-subjects')
-    registry.register(ext.oaipmh_server_service, service_id='oaipmh-server')
+    sregistry = app.extensions["invenio-records-resources"].registry
+    ext = app.extensions["invenio-rdm-records"]
+    sregistry.register(ext.records_service, service_id="records")
+    sregistry.register(ext.records_service.files, service_id="files")
+    sregistry.register(ext.records_service.draft_files, service_id="draft-files")
+    sregistry.register(ext.oaipmh_server_service, service_id="oaipmh-server")
+    sregistry.register(ext.iiif_service, service_id="rdm-iiif")
+    # Register indexers
+    iregistry = app.extensions["invenio-indexer"].registry
+    iregistry.register(ext.records_service.indexer, indexer_id="records")
 
 
 def create_records_bp(app):
@@ -61,24 +62,12 @@ def create_pid_resolver_resource_bp(app):
     return ext.pid_resolver_resource.as_blueprint()
 
 
-def create_affiliations_blueprint_from_app(app):
-    """Create app blueprint."""
-    return app.extensions["invenio-rdm-records"].affiliations_resource \
-        .as_blueprint()
-
-
-def create_names_blueprint_from_app(app):
-    """Create app blueprint."""
-    return app.extensions["invenio-rdm-records"].names_resource.as_blueprint()
-
-
-def create_subjects_blueprint_from_app(app):
-    """Create app blueprint."""
-    return app.extensions["invenio-rdm-records"].subjects_resource \
-        .as_blueprint()
-
-
 def create_oaipmh_server_blueprint_from_app(app):
     """Create app blueprint."""
-    return app.extensions["invenio-rdm-records"].oaipmh_server_resource \
-        .as_blueprint()
+    return app.extensions["invenio-rdm-records"].oaipmh_server_resource.as_blueprint()
+
+
+def create_iiif_bp(app):
+    """Create IIIF blueprint."""
+    ext = app.extensions["invenio-rdm-records"]
+    return ext.iiif_resource.as_blueprint()

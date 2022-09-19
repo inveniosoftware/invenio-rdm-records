@@ -19,42 +19,37 @@ from ..utils import get_vocabulary_props
 class DublinCoreSchema(Schema):
     """Schema for Dublin Core in JSON."""
 
-    contributors = fields.Method('get_contributors')
-    titles = fields.Method('get_titles')
-    creators = fields.Method('get_creators')
-    identifiers = fields.Method('get_identifiers')
-    relations = fields.Method('get_relations')
-    rights = fields.Method('get_rights')
-    dates = fields.Method('get_dates')
-    subjects = fields.Method('get_subjects')
-    descriptions = fields.Method('get_descriptions')
-    publishers = fields.Method('get_publishers')
-    types = fields.Method('get_types')
-    sources = fields.Method('get_sources')
-    languages = fields.Method('get_languages')
-    coverage = fields.Method('get_locations')
-    formats = fields.Method('get_formats')
+    contributors = fields.Method("get_contributors")
+    titles = fields.Method("get_titles")
+    creators = fields.Method("get_creators")
+    identifiers = fields.Method("get_identifiers")
+    relations = fields.Method("get_relations")
+    rights = fields.Method("get_rights")
+    dates = fields.Method("get_dates")
+    subjects = fields.Method("get_subjects")
+    descriptions = fields.Method("get_descriptions")
+    publishers = fields.Method("get_publishers")
+    types = fields.Method("get_types")
+    sources = fields.Method("get_sources")
+    languages = fields.Method("get_languages")
+    coverage = fields.Method("get_locations")
+    formats = fields.Method("get_formats")
 
     def get_titles(self, obj):
         """Get titles."""
-        return [obj['metadata']['title']]
+        return [obj["metadata"]["title"]]
 
     def get_identifiers(self, obj):
         """Get identifiers."""
         items = []
-        items.extend(
-            i['identifier'] for i in obj['metadata'].get('identifiers', [])
-        )
-        items.extend(p['identifier'] for p in obj.get('pids', {}).values())
+        items.extend(i["identifier"] for i in obj["metadata"].get("identifiers", []))
+        items.extend(p["identifier"] for p in obj.get("pids", {}).values())
 
         return items or missing
 
     def get_creators(self, obj):
         """Get creators."""
-        return [
-            c['person_or_org']['name']
-            for c in obj['metadata'].get('creators', [])
-        ]
+        return [c["person_or_org"]["name"] for c in obj["metadata"].get("creators", [])]
 
     def get_relations(self, obj):
         """Get relations."""
@@ -64,11 +59,11 @@ class DublinCoreSchema(Schema):
         # FIXME: Add after UI support is there
 
         # Alternate identifiers
-        for a in obj['metadata'].get('alternate_identifiers', []):
+        for a in obj["metadata"].get("alternate_identifiers", []):
             rels.append(f"{a['scheme']}:{a['identifier']}")
 
         # Related identifiers
-        for a in obj['metadata'].get('related_identifiers', []):
+        for a in obj["metadata"].get("related_identifiers", []):
             rels.append(f"{a['scheme']}:{a['identifier']}")
 
         return rels or missing
@@ -77,25 +72,23 @@ class DublinCoreSchema(Schema):
         """Get rights."""
         rights = []
 
-        access_right = obj['access']['status']
+        access_right = obj["access"]["status"]
         if access_right == "metadata-only":
             access_right = "closed"
 
         rights.append(f"info:eu-repo/semantics/{access_right}Access")
 
         ids = []
-        for right in obj['metadata'].get('rights', []):
+        for right in obj["metadata"].get("rights", []):
             _id = right.get("id")
             if _id:
                 ids.append(_id)
             else:
-                title = right.get('title').get(
-                            current_default_locale()
-                        )
+                title = right.get("title").get(current_default_locale())
                 if title:
                     rights.append(title)
 
-                license_url = right.get('link')
+                license_url = right.get("link")
                 if license_url:
                     rights.append(license_url)
 
@@ -104,13 +97,11 @@ class DublinCoreSchema(Schema):
                 system_identity, "licenses", ids
             )
             for right in vocab_rights:
-                title = right.get('title').get(
-                            current_default_locale()
-                        )
+                title = right.get("title").get(current_default_locale())
                 if title:
                     rights.append(title)
 
-                license_url = right.get('props').get('url')
+                license_url = right.get("props").get("url")
                 if license_url:
                     rights.append(license_url)
 
@@ -120,15 +111,15 @@ class DublinCoreSchema(Schema):
         """Get dates."""
         dates = [obj["metadata"]["publication_date"]]
 
-        if obj['access']['status'] == 'embargoed':
-            date = obj['access']['embargo']['until']
+        if obj["access"]["status"] == "embargoed":
+            date = obj["access"]["embargo"]["until"]
             dates.append(f"info:eu-repo/date/embargoEnd/{date}")
 
         return dates or missing
 
     def get_descriptions(self, obj):
         """Get descriptions."""
-        metadata = obj['metadata']
+        metadata = obj["metadata"]
         descriptions = []
 
         description = metadata.get("description")
@@ -137,7 +128,7 @@ class DublinCoreSchema(Schema):
 
         additional_descriptions = metadata.get("additional_descriptions", [])
         for add_desc in additional_descriptions:
-            descriptions.append(add_desc['description'])
+            descriptions.append(add_desc["description"])
 
         descriptions = [
             bleach.clean(
@@ -146,7 +137,6 @@ class DublinCoreSchema(Schema):
                 strip_comments=True,
                 tags=[],
                 attributes=[],
-                styles=[],
             )
             for desc in descriptions
         ]
@@ -155,20 +145,16 @@ class DublinCoreSchema(Schema):
 
     def get_subjects(self, obj):
         """Get subjects."""
-        metadata = obj['metadata']
+        metadata = obj["metadata"]
         subjects = []
         subjects.extend(
-            (
-                s['subject']
-                for s in metadata.get('subjects', [])
-                if s.get('subject')
-            )
+            (s["subject"] for s in metadata.get("subjects", []) if s.get("subject"))
         )
         return subjects or missing
 
     def get_publishers(self, obj):
         """Get publishers."""
-        publisher = obj['metadata'].get('publisher')
+        publisher = obj["metadata"].get("publisher")
         if publisher:
             return [publisher]
 
@@ -177,18 +163,19 @@ class DublinCoreSchema(Schema):
     def get_contributors(self, obj):
         """Get contributors."""
         return [
-            c['person_or_org']['name']
-            for c in obj['metadata'].get('contributors', [])
+            c["person_or_org"]["name"] for c in obj["metadata"].get("contributors", [])
         ] or missing
 
     def get_types(self, obj):
         """Get resource type."""
         props = get_vocabulary_props(
-            'resourcetypes',
-            ['props.eurepo', ],
+            "resourcetypes",
+            [
+                "props.eurepo",
+            ],
             obj["metadata"]["resource_type"]["id"],
         )
-        t = props.get('eurepo')
+        t = props.get("eurepo")
         return [t] if t else missing
 
     def get_sources(self, obj):
@@ -200,7 +187,7 @@ class DublinCoreSchema(Schema):
         languages = obj["metadata"].get("languages")
 
         if languages:
-            return [language['id'] for language in languages]
+            return [language["id"] for language in languages]
 
         return missing
 
@@ -226,5 +213,5 @@ class DublinCoreSchema(Schema):
 
     def get_formats(self, obj):
         """Get data formats."""
-        formats = obj['metadata'].get('formats', missing)
+        formats = obj["metadata"].get("formats", missing)
         return formats

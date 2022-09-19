@@ -32,16 +32,16 @@ class LocationsDumper(ElasticsearchDumperExt):
 
     def dump(self, record, data):
         """Dump the data."""
-        if 'locations' not in data.get('metadata', {}):
+        if "locations" not in data.get("metadata", {}):
             return data
-        for feature in data['metadata']['locations']['features']:
-            geometry = feature.get('geometry')
+        for feature in data["metadata"]["locations"]["features"]:
+            geometry = feature.get("geometry")
             if geometry:
-                if geometry['type'] == 'Point':
-                    feature['centroid'] = geometry['coordinates']
+                if geometry["type"] == "Point":
+                    feature["centroid"] = geometry["coordinates"]
                 elif shapely:
                     centroid = shapely.geometry.shape(geometry).centroid
-                    feature['centroid'] = [centroid.x, centroid.y]
+                    feature["centroid"] = [centroid.x, centroid.y]
                 else:
                     warnings.warn(
                         "Trying to find centroid for non-point geometry, but "
@@ -50,7 +50,7 @@ class LocationsDumper(ElasticsearchDumperExt):
 
     def load(self, data, record_cls):
         """Load the data."""
-        if 'locations' not in data.get('metadata', {}):
+        if "locations" not in data.get("metadata", {}):
             return
-        for feature in data['metadata']['locations']['features']:
-            feature.pop('centroid', None)
+        for feature in data["metadata"]["locations"]["features"]:
+            feature.pop("centroid", None)

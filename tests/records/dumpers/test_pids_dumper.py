@@ -17,21 +17,19 @@ from invenio_rdm_records.records.dumpers import PIDsDumperExt
 def test_esdumper_with_externalpidsext(app, db, minimal_record, location):
     # Create a simple extension that adds a computed field.
 
-    dumper = ElasticsearchDumper(
-        extensions=[PIDsDumperExt()]
-    )
+    dumper = ElasticsearchDumper(extensions=[PIDsDumperExt()])
 
     minimal_record["pids"] = {
         "doi": {
             "identifier": "10.5281/zenodo.1234",
             "provider": "datacite",
-            "client": "zenodo"
+            "client": "zenodo",
         },
         "handle": {
             "identifier": "9.12314",
             "provider": "cern-handle",
-            "client": "zenodo"
-        }
+            "client": "zenodo",
+        },
     }
 
     # Create the record

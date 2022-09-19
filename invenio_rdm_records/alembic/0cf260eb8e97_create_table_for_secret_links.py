@@ -22,16 +22,12 @@ def upgrade():
     """Upgrade database."""
     op.create_table(
         "rdm_records_secret_links",
-        sa.Column(
-            "id", sqlalchemy_utils.types.uuid.UUIDType(), nullable=False
-        ),
+        sa.Column("id", sqlalchemy_utils.types.uuid.UUIDType(), nullable=False),
         sa.Column("token", sa.Text, nullable=False),
         sa.Column("created", sa.DateTime(), nullable=False),
         sa.Column("expires_at", sa.DateTime(), nullable=True),
         sa.Column("permission_level", sa.String(), nullable=False),
-        sa.PrimaryKeyConstraint(
-            "id", name=op.f("pk_rdm_records_secret_links")
-        ),
+        sa.PrimaryKeyConstraint("id", name=op.f("pk_rdm_records_secret_links")),
     )
     op.create_index(
         op.f("ix_rdm_records_secret_links_created"),

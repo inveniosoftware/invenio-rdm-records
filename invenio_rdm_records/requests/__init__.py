@@ -9,6 +9,4 @@
 
 from .community_submission import CommunitySubmission
 
-__all__ = (
-    'CommunitySubmission',
-)
+__all__ = ("CommunitySubmission",)

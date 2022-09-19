@@ -3,103 +3,124 @@
     datacite: ContactPerson
   title:
     en: Contact person
+    de: Kontaktperson
 - id: datacollector
   props:
     datacite: DataCollector
   title:
     en: Data collector
+    de: DatensammlerIn
 - id: datacurator
   props:
     datacite: DataCurator
   title:
     en: Data curator
+    de: DatenkuratorIn
 - id: datamanager
   props:
     datacite: DataManager
   title:
     en: Data manager
+    de: DatenmanagerIn
 - id: distributor
   props:
     datacite: Distributor
   title:
     en: Distributor
+    de: VerteilerIn
 - id: editor
   props:
     datacite: Editor
   title:
     en: Editor
+    de: EditorIn
 - id: hostinginstitution
   props:
     datacite: HostingInstitution
   title:
     en: Hosting institution
+    de: Bereitstellende Institution
 - id: producer
   props:
     datacite: Producer
   title:
     en: Producer
+    de: ProduzentIn
 - id: projectleader
   props:
     datacite: ProjectLeader
   title:
     en: Project leader
+    de: ProjektleiterIn
 - id: projectmanager
   props:
     datacite: ProjectManager
   title:
     en: Project manager
+    de: ProjektmanagerIn
 - id: projectmember
   props:
     datacite: ProjectMember
   title:
     en: Project member
+    de: Projektmitglied
 - id: registrationagency
   props:
     datacite: RegistrationAgency
   title:
     en: Registration agency
+    de: Registrierungsstelle
 - id: registrationauthority
   props:
     datacite: RegistrationAuthority
   title:
     en: Registration authority
+    de: Registrierungsbehörde
 - id: relatedperson
   props:
     datacite: RelatedPerson
   title:
     en: Related person
+    de: Verwandte Person
 - id: researcher
   props:
     datacite: Researcher
   title:
     en: Researcher
+    de: WissenschaftlerIn
 - id: researchgroup
   props:
     datacite: ResearchGroup
   title:
     en: Research group
+    de: Forschungsgruppe
 - id: rightsholder
   props:
     datacite: RightsHolder
   title:
     en: Rights holder
+    de: RechteinhaberIn
 - id: sponsor
   props:
     datacite: Sponsor
   title:
     en: Sponsor
+    de: Sponsor
 - id: supervisor
   props:
     datacite: Supervisor
   title:
     en: Supervisor
+    de: SupervisorIn
 - id: workpackageleader
   props:
     datacite: WorkPackageLeader
   title:
     en: Work package leader
+    de: ArbeitspaketleiterIn
 - id: other
   props:
     datacite: Other
   title:
     en: Other
+    de: Andere

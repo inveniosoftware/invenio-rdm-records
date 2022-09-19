@@ -19,9 +19,7 @@ class EmbargoNotLiftedError(RDMRecordsException):
 
     def __init__(self, record_id):
         """Initialise error."""
-        super().__init__(
-            f"Embargo could not be lifted for record: {record_id}"
-        )
+        super().__init__(f"Embargo could not be lifted for record: {record_id}")
 
 
 class ReviewException(RDMRecordsException):
@@ -42,3 +40,15 @@ class ReviewStateError(ReviewException):
 
 class ReviewExistsError(ReviewException):
     """Review exists - for operations which should when a review exists."""
+
+
+class ReviewInconsistentAccessRestrictions(ReviewException):
+    """Review has inconsistent record vs community access restrictions."""
+
+    def __init__(self, *args, **kwargs):
+        """Initialize exception."""
+        super().__init__(
+            _("Record submitted to restricted community cannot be public."),
+            *args,
+            **kwargs,
+        )

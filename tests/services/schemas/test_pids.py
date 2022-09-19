@@ -18,32 +18,24 @@ def test_valid_pid():
     valid_full = {
         "identifier": "10.5281/zenodo.1234",
         "provider": "datacite",
-        "client": "zenodo"
+        "client": "zenodo",
     }
     assert valid_full == PIDSchema().load(valid_full)
 
 
 def test_valid_minimal_pid():
-    valid_minimal = {
-        "identifier": "oai:zenodo.org:12345", "provider": "zenodo"
-    }
+    valid_minimal = {"identifier": "oai:zenodo.org:12345", "provider": "zenodo"}
     assert valid_minimal == PIDSchema().load(valid_minimal)
 
 
 def test_invalid_no_identifier():
-    invalid_no_identifier = {
-        "provider": "datacite",
-        "client": "zenodo"
-    }
+    invalid_no_identifier = {"provider": "datacite", "client": "zenodo"}
     with pytest.raises(ValidationError):
         data = PIDSchema().load(invalid_no_identifier)
 
 
 def test_invalid_no_provider():
-    invalid_no_provider = {
-        "identifier": "10.5281/zenodo.1234",
-        "client": "zenodo"
-    }
+    invalid_no_provider = {"identifier": "10.5281/zenodo.1234", "client": "zenodo"}
     with pytest.raises(ValidationError):
         data = PIDSchema().load(invalid_no_provider)
 
@@ -53,7 +45,7 @@ def test_invalid_extra_field():
         "identifier": "10.5281/zenodo.1234",
         "provider": "datacite",
         "client": "zenodo",
-        "extra": "field"
+        "extra": "field",
     }
     with pytest.raises(ValidationError):
         data = PIDSchema().load(invalid_extra)
