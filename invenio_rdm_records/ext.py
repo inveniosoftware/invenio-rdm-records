@@ -123,6 +123,10 @@ class InvenioRDMRecords(object):
             ):
                 app.config.setdefault(k, getattr(config, k))
 
+        # set default communities namespaces to the global RDM_NAMESPACES
+        if not app.config.get("COMMUNITIES_NAMESPACES"):
+            app.config["COMMUNITIES_NAMESPACES"] = app.config["RDM_NAMESPACES"]
+
         # Deprecations
         # Remove when v6.0 LTS is no longer supported.
         deprecated = [
