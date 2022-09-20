@@ -22,38 +22,43 @@ function LinksTable({ data }) {
     return url;
   };
 
-  const { links, id: pidValue } = data;
-
-  const linkElems = [];
-
-  Object.entries(links).forEach(([key, link]) => {
-    link = sanitizeLink(link, pidValue);
-
-    if (key !== "self") {
-      linkElems.push(
-        <Table.Row key={key}>
-          <Table.Cell width={3}>
-            <b>{key}</b>
-          </Table.Cell>
-          <Table.Cell textAlign="left">
-            {link}
-            <CopyButton text={link} />
-          </Table.Cell>
-        </Table.Row>
-      );
-    }
-  });
+  const { links } = data;
+  const listRecords = sanitizeLink(links["oai-listrecords"]);
+  const listIdentifiers = sanitizeLink(links["oai-listidentifiers"]);
 
   return (
     <>
-      {linkElems && (
+      {
         <>
           <Header as="h2">{i18next.t("Links")}</Header>
           <Table unstackable>
-            <Table.Body>{linkElems}</Table.Body>
+            <Table.Body>
+              <Table.Row key="list-records">
+                <Table.Cell width={3}>
+                  <b>List records</b>
+                </Table.Cell>
+                <Table.Cell textAlign="left">
+                  <a href={listRecords} target="_blank">
+                    {listRecords}
+                  </a>
+                  <CopyButton text={listRecords} />
+                </Table.Cell>
+              </Table.Row>
+              <Table.Row key="list-records">
+                <Table.Cell width={3}>
+                  <b>List identifiers</b>
+                </Table.Cell>
+                <Table.Cell textAlign="left">
+                  <a href={listIdentifiers} target="_blank">
+                    {listIdentifiers}
+                  </a>
+                  <CopyButton text={listIdentifiers} />
+                </Table.Cell>
+              </Table.Row>
+            </Table.Body>
           </Table>
         </>
-      )}
+      }
     </>
   );
 }
