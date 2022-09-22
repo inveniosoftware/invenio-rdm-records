@@ -11,8 +11,8 @@ import _get from "lodash/get";
 import { Table } from "semantic-ui-react";
 import isEmpty from "lodash/isEmpty";
 import { withState } from "react-searchkit";
-import { Actions } from "@js/invenio_administration/src/actions/Actions.js";
-import { AdminUIRoutes } from "@js/invenio_administration/src/routes.js";
+import { Actions } from "@js/invenio_administration";
+import { AdminUIRoutes } from "@js/invenio_administration";
 import { OverridableContext } from "react-overridable";
 import { DeleteModal } from "./DeleteModal";
 

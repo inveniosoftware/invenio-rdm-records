@@ -8,7 +8,7 @@ import React from "react";
 import ReactDOM from "react-dom";
 import _get from "lodash/get";
 import LinksTable from "./LinksTable";
-import AdminDetailsView from "@js/invenio_administration/src/details/AdminDetailsView.js";
+import { AdminDetailsView } from "@js/invenio_administration";
 
 const domContainer = document.getElementById("invenio-details-config");
 const title = domContainer.dataset.title;
