@@ -4,7 +4,7 @@
 // Invenio RDM is free software; you can redistribute it and/or modify it
 // under the terms of the MIT License; see LICENSE file for more details.
 
-import defaultComponents from "@js/invenio_administration/search/search.js";
+import defaultComponents from "@js/invenio_administration/src/search/search.js";
 import { createSearchAppInit } from "@js/invenio_search_ui";
 import { SearchResultItem } from "./SearchResultItem";
 import { parametrize } from "react-overridable";
