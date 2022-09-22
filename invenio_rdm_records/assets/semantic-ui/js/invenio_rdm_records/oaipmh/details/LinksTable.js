@@ -5,32 +5,48 @@
 // under the terms of the MIT License; see LICENSE file for more details.
 
 import PropTypes from "prop-types";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { i18next } from "@translations/invenio_administration/i18next";
 import CopyButton from "./CopyButton";
 import { Table, Header, Dropdown, Grid } from "semantic-ui-react";
-import { prefixes } from "./formats";
+import { http } from "@js/invenio_administration/src/api/config.js";
+import { capitalize } from "lodash";
 
-const prefixFormats = [
-  {
-    key: prefixes.DUBLIN_CORE,
-    text: "OAI Dublin Core",
-    value: prefixes.DUBLIN_CORE
-  },
-  {
-    key: prefixes.OAI_DATACITE,
-    text: "OAI DataCite",
-    value: prefixes.OAI_DATACITE
-  },
-  {
-    key: prefixes.DATACITE,
-    text: "DataCite",
-    value: prefixes.DATACITE
-  }
-]
+/** Map of known formats and their name. */
+const knownFormats = {
+  "oai_dc": "OAI Dublin Core",
+  "datacite": "DataCite",
+  "oai_datacite": "OAI DataCite",
+}
 
 function LinksTable({ data }) {
   const [links, setLinks] = useState(data.links);
+  const [formats, setFormats] = useState([]);
+
+  useEffect(() => {
+    async function getFormats() {
+      try {
+        const response = await http.get(
+          '/api/oaipmh/formats'
+        );
+        const formats = response.data?.hits?.hits;
+        if (Array.isArray(formats) && formats.length > 0) {
+          const serialized = formats.map((formt) => {
+            return {
+              key: formt.id,
+              value: formt.id,
+              text: knownFormats[formt.id] ?? formatKeyToName(formt.id)
+            }
+          });
+          setFormats(serialized);
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    }
+    getFormats();
+
+  }, []);
 
   /**
    * Replaces the metadata prefix in the link.
@@ -47,7 +63,8 @@ function LinksTable({ data }) {
   /**
    * Retrieves metadata prefix from a link.
    * Uses a regex to retrieve the prefix, matching "&metadataPrefix=...&".
-   * Returns null if not found.
+   *
+   * Returns null if pattern not found.
    */
   const getPrefixFromLink = (link) => {
     const prefixRegex = /\&metadataPrefix\=(.*)\&/;
@@ -60,13 +77,25 @@ function LinksTable({ data }) {
   };
 
   /**
+   * Transforms a key into a readable name.
+   * @example
+   *  // returns Oai Datacite
+   *  formateKeytoName('oai_datacite')
+   */
+  const formatKeyToName = (formatKey) => {
+    const whiteSpaced = formatKey.replace("_", " ");
+    const capitalised = capitalize(whiteSpaced);
+    return capitalised;
+  };
+
+  /**
    * Dropdown's on change handler.
    * This method will update the following states if the new prefix is known:
    * - 'links', each link with its prefix replaced by the new prefix.
    */
   const prefixOnChange = (event, data) => {
     const newPrefix = data.value;
-    if (Object.values(prefixes).includes(newPrefix)) {
+    if (formats.some(obj => obj.key === newPrefix)) {
       const newLinks = {};
       Object.keys(links).map((key) => {
         let link = links[key];
@@ -82,8 +111,8 @@ function LinksTable({ data }) {
 
   // Set default prefix based on backend link, use dublin core if unknown.
   let defaultPrefix = getPrefixFromLink(listRecords)
-  if (!Object.prototype.hasOwnProperty.call(prefixes, defaultPrefix)) {
-    defaultPrefix = prefixes.DUBLIN_CORE;
+  if (!Object.prototype.hasOwnProperty.call(formats, defaultPrefix)) {
+    defaultPrefix = 'oai_dc';
   }
 
   return (
@@ -96,15 +125,16 @@ function LinksTable({ data }) {
               <Grid.Column width={3}>
                 <Header as="h2">{i18next.t("Links")}</Header>
               </Grid.Column>
-              <Grid.Column width={13}>
+              <Grid.Column width={13} textAlign="right">
                 <span className="mr-10" basic>
-                  { i18next.t("Format") }
+                  {i18next.t("Format")}
                 </span>
                 <Dropdown
-                  options={prefixFormats}
+                  options={formats}
                   floating
-                  button
+                  selection
                   defaultValue={defaultPrefix}
+                  selectOnNavigaion={false}
                   onChange={prefixOnChange}
                 />
               </Grid.Column>
@@ -114,23 +144,27 @@ function LinksTable({ data }) {
             <Table.Body>
               <Table.Row key="list-records">
                 <Table.Cell width={3}>
-                  <b>List records</b>
+                  <b>{i18next.t("List records")}</b>
                 </Table.Cell>
-                <Table.Cell textAlign="left">
-                  <a href={listRecords} target="_blank">
+                <Table.Cell width={10} textAlign="left">
+                  <a href={listRecords} target="_blank" title={i18next.t("Opens in new tab")}>
                     {listRecords}
                   </a>
+                </Table.Cell>
+                <Table.Cell width={3} textAlign="right">
                   <CopyButton text={listRecords} />
                 </Table.Cell>
               </Table.Row>
-              <Table.Row key="list-records">
+              <Table.Row key="list-identifiers">
                 <Table.Cell width={3}>
-                  <b>List identifiers</b>
+                  <b>{i18next.t("List identifiers")}</b>
                 </Table.Cell>
-                <Table.Cell textAlign="left">
-                  <a href={listIdentifiers} target="_blank">
+                <Table.Cell width={10} textAlign="left">
+                  <a href={listIdentifiers} target="_blank" title={i18next.t("Opens in new tab")}>
                     {listIdentifiers}
                   </a>
+                </Table.Cell>
+                <Table.Cell width={3} textAlign="right">
                   <CopyButton text={listIdentifiers} />
                 </Table.Cell>
               </Table.Row>
