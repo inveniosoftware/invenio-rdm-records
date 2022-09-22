@@ -11,8 +11,7 @@ import { i18next } from "@translations/invenio_administration/i18next";
 import { Modal } from "semantic-ui-react";
 import { Trans } from "react-i18next";
 import isEmpty from "lodash/isEmpty";
-import { ErrorMessage } from "@js/invenio_administration/src/ui_messages/messages";
-import { NotificationContext } from "@js/invenio_administration/src/ui_messages/context";
+import { ErrorMessage } from "@js/invenio_administration";
 
 export class DeleteModal extends Component {
   constructor(props) {
