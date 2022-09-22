@@ -15,6 +15,7 @@ import { Actions } from "@js/invenio_administration/src/actions/Actions.js";
 import { AdminUIRoutes } from "@js/invenio_administration/src/routes.js";
 import { OverridableContext } from "react-overridable";
 import { DeleteModal } from "./DeleteModal";
+import Formatter from "@js/invenio_administration/src/components/Formatter";
 
 const overridenComponents = {
   "DeleteModal.layout": DeleteModal,
@@ -29,6 +30,29 @@ class SearchResultItemComponent extends Component {
   createdBySystem = () => {
     const { result } = this.props;
     return result.system_created;
+  };
+
+  displayAsPre = (result, property) => {
+    const { resourceSchema } = this.props;
+    if (property === "spec") {
+      return (
+        <pre>
+          <Formatter
+            result={result}
+            resourceSchema={resourceSchema}
+            property={property}
+          />
+        </pre>
+      );
+    } else {
+      return (
+        <Formatter
+          result={result}
+          resourceSchema={resourceSchema}
+          property={property}
+        />
+      );
+    }
   };
 
   render() {
@@ -61,10 +85,10 @@ class SearchResultItemComponent extends Component {
                       idKeyPath
                     )}
                   >
-                    {_get(result, property)}
+                    {this.displayAsPre(result, property)}
                   </a>
                 ) : (
-                  _get(result, property)
+                  this.displayAsPre(result, property)
                 )}
               </Table.Cell>
             );
@@ -106,6 +130,7 @@ SearchResultItemComponent.propTypes = {
   currentQueryState: PropTypes.object.isRequired,
   idKeyPath: PropTypes.string.isRequired,
   listUIEndpoint: PropTypes.string.isRequired,
+  resourceSchema: PropTypes.object.isRequired,
 };
 
 SearchResultItemComponent.defaultProps = {
