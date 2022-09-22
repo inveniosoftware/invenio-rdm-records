@@ -347,7 +347,6 @@ def create_fake_comment():
 
 def create_fake_oai_set():
     """Create fake oai set as demo data."""
-
     fake = Faker()
 
     payload = {
