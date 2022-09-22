@@ -7,5 +7,6 @@
 {% extends "invenio_administration/search.html" %}
 
 {% block javascript %}
+  {{ super() }}
   {{ webpack['invenio-oai-pmh-search.js'] }}
 {% endblock %}

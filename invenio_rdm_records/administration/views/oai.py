@@ -16,6 +16,7 @@ from invenio_administration.views.base import (
 
 
 class OaiPmhListView(AdminResourceListView):
+    """Configuration for OAI-PMH sets list view."""
 
     api_endpoint = "/oaipmh/sets"
     name = "OAI-PMH"
@@ -48,6 +49,7 @@ class OaiPmhListView(AdminResourceListView):
 
 
 class OaiPmhEditView(AdminResourceEditView):
+    """Configuration for OAI-PMH sets edit view."""
 
     name = "oaipmh_edit"
     url = "/oai-pmh/<pid_value>/edit"
@@ -68,6 +70,7 @@ class OaiPmhEditView(AdminResourceEditView):
 
 
 class OaiPmhCreateView(AdminResourceCreateView):
+    """Configuration for OAI-PMH sets create view."""
 
     name = "oaipmh_create"
     url = "/oai-pmh/create"
@@ -86,6 +89,7 @@ class OaiPmhCreateView(AdminResourceCreateView):
 
 
 class OaiPmhDetailView(AdminResourceDetailView):
+    """Configuration for OAI-PMH sets detail view."""
 
     url = "/oai-pmh/<pid_value>"
     api_endpoint = "/oaipmh/sets"
