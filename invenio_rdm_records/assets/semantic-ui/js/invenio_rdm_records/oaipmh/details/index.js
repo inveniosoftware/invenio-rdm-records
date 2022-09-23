@@ -9,6 +9,7 @@ import ReactDOM from "react-dom";
 import _get from "lodash/get";
 import LinksTable from "./LinksTable";
 import { AdminDetailsView } from "@js/invenio_administration";
+import { i18next } from "@translations/invenio_app_rdm/i18next";
 
 const domContainer = document.getElementById("invenio-details-config");
 const title = domContainer.dataset.title;
@@ -23,6 +24,10 @@ const idKeyPath = JSON.parse(_get(domContainer.dataset, "pidPath", "pid"));
 const listUIEndpoint = domContainer.dataset.listEndpoint;
 const resourceSchema = JSON.parse(domContainer.dataset.resourceSchema);
 
+const createdBySystem = (data) => {
+  return data?.system_created;
+};
+
 domContainer &&
   ReactDOM.render(
     <AdminDetailsView
@@ -30,7 +35,20 @@ domContainer &&
       actions={actions}
       apiEndpoint={apiEndpoint}
       columns={fields}
-      displayDelete={displayDelete}
+      editAction={{
+        display: displayEdit,
+        disable: createdBySystem,
+        disabledMessage: i18next.t(
+          "This set is not editable as it was created by the system."
+        ),
+      }}
+      deleteAction={{
+        display: displayDelete,
+        disable: createdBySystem,
+        disabledMessage: i18next.t(
+          "This set is not deletable as it was created by the system."
+        ),
+      }}
       displayEdit={displayEdit}
       pid={pidValue}
       idKeyPath={idKeyPath}
