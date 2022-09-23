@@ -16,6 +16,7 @@ import { AdminUIRoutes } from "@js/invenio_administration";
 import { OverridableContext } from "react-overridable";
 import { DeleteModal } from "./DeleteModal";
 import Formatter from "@js/invenio_administration/src/components/Formatter";
+import { i18next } from "@translations/invenio_app_rdm/i18next";
 
 const overridenComponents = {
   "DeleteModal.layout": DeleteModal,
@@ -103,10 +104,20 @@ class SearchResultItemComponent extends Component {
                 title={title}
                 resourceName={resourceName}
                 apiEndpoint={apiEndpoint}
-                displayEdit={displayEdit}
-                disableEdit={this.createdBySystem()}
-                displayDelete={displayDelete}
-                disableDelete={this.createdBySystem()}
+                editAction={{
+                  display: displayEdit,
+                  disabled: this.createdBySystem(),
+                  disabledMessage: i18next.t(
+                    "This set is not editable as it was created by the system."
+                  ),
+                }}
+                deleteAction={{
+                  display: displayDelete,
+                  disabled: this.createdBySystem(),
+                  disabledMessage: i18next.t(
+                    "This set is not deletable as it was created by the system."
+                  ),
+                }}
                 actions={actions}
                 resource={result}
                 idKeyPath={idKeyPath}
