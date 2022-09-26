@@ -76,7 +76,11 @@ class SearchResultItemComponent extends Component {
         <Table.Row>
           {columns.map(([property, { text, order }], index) => {
             return (
-              <Table.Cell key={`${text}-${order}`} data-label={text}>
+              <Table.Cell
+                key={`${text}-${order}`}
+                data-label={text}
+                className="word-break-all"
+              >
                 {index === 0 ? (
                   <a
                     href={AdminUIRoutes.detailsView(
