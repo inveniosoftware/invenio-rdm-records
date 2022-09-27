@@ -2,6 +2,8 @@
 #
 # Copyright (C) 2021 CERN.
 # Copyright (C) 2022 Northwestern University.
+# Copyright (C) 2022 PNNL.
+# Copyright (C) 2022 BNL.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
@@ -116,7 +118,10 @@ class FromConfigPIDsProviders:
             p.name: p
             for p in obj._app.config.get("RDM_PERSISTENT_IDENTIFIER_PROVIDERS", [])
         }
-        doi_enabled = obj._app.config.get("DATACITE_ENABLED", False)
+        # TODO test this - don't know how doi_enabled is used or why it's returned
+        datacite_enabled = obj._app.config.get("DATACITE_ENABLED", False)
+        osti_enabled = obj._app.config.get("OSTI_ENABLED", False)
+        doi_enabled = datacite_enabled | osti_enabled
 
         return {
             scheme: get_provider_dict(conf, providers)
@@ -131,7 +136,9 @@ class FromConfigRequiredPIDs:
     def __get__(self, obj, objtype=None):
         """Return required pids (descriptor protocol)."""
         pids = obj._app.config.get("RDM_PERSISTENT_IDENTIFIERS", {})
-        doi_enabled = obj._app.config.get("DATACITE_ENABLED", False)
+        datacite_enabled = obj._app.config.get("DATACITE_ENABLED", False)
+        osti_enabled = obj._app.config.get("OSTI_ENABLED", False)
+        doi_enabled = datacite_enabled | osti_enabled
 
         pids = {
             scheme: conf

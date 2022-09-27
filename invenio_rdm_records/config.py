@@ -3,6 +3,8 @@
 # Copyright (C) 2019 CERN.
 # Copyright (C) 2019 Northwestern University.
 # Copyright (C) 2021 Graz University of Technology.
+# Copyright (C) 2022 PNNL.
+# Copyright (C) 2022 BNL.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
@@ -329,6 +331,11 @@ RDM_PERSISTENT_IDENTIFIER_PROVIDERS = [
         client=providers.DataCiteClient("datacite", config_prefix="DATACITE"),
         label=_("DOI"),
     ),
+    providers.OSTIPIDProvider(
+        "osti",
+        client=providers.OSTIClient("osti", config_prefix="OSTI"),
+        label=_("DOI"),
+    ),
     # DOI provider for externally managed DOIs
     providers.ExternalPIDProvider(
         "external",
@@ -352,7 +359,9 @@ The name is further used to configure the desired persistent identifiers (see
 ``RDM_PERSISTENT_IDENTIFIERS`` below)
 """
 
-
+# TODO find the logic that automatically removes the DOI if datacite_enabled 
+# is false and add if osti_enabled is also false before removing DOI not 
+# adding "osti" to the list of providers below as we don't want it used by default
 RDM_PERSISTENT_IDENTIFIERS = {
     # DOI automatically removed if DATACITE_ENABLED is False.
     "doi": {
@@ -377,6 +386,29 @@ RDM_PERSISTENT_IDENTIFIERS = {
         "required": True/False,
     }
 """
+
+# Configuration for the OSTIClient used by the OSTIPIDProvider
+OSTI_ENABLED = False
+"""Flag to enable/disable DOI registration to OSTI."""
+
+
+OSTI_USERNAME = ""
+"""OSTI username."""
+
+
+OSTI_PASSWORD = ""
+"""OSTI password."""
+
+OSTI_ACCESSION_NUMBER_PREFIX = ""
+"""Prefix to use to generate OSTI accession_num to uniquely identify records that have gotten DOI's reserved"""
+
+OSTI_TEST_MODE = True
+"""OSTI test mode enabled."""
+
+# until changes can be made in the the UI require RDM instances to set in their invenio.cfg these 2 OSTI required metadata fields
+# this means that all records that have DOI's minted will have the same value set for contract numbers and sponsor orgs
+OSTI_CONTRACT_NOS = ""
+OSTI_SPONSOR_ORG = ""
 
 # Configuration for the DataCiteClient used by the DataCitePIDProvider
 
