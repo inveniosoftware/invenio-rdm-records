@@ -4,7 +4,7 @@
 // Invenio RDM is free software; you can redistribute it and/or modify it
 // under the terms of the MIT License; see LICENSE file for more details.
 
-import { searchDefaultComponents } from "@js/invenio_administration";
+import { initDefaultSearchComponents } from "@js/invenio_administration";
 import { createSearchAppInit } from "@js/invenio_search_ui";
 import { SearchResultItem } from "./SearchResultItem";
 import { parametrize } from "react-overridable";
@@ -28,6 +28,7 @@ const idKeyPath = JSON.parse(_get(domContainer.dataset, "pidPath", "pid"));
 const listUIEndpoint = domContainer.dataset.listEndpoint;
 const resourceSchema = JSON.parse(domContainer.dataset.resourceSchema);
 
+const defaultComponents = initDefaultSearchComponents(domContainer);
 const SearchResultItemWithConfig = parametrize(SearchResultItem, {
   title: title,
   resourceName: resourceName,
@@ -43,7 +44,7 @@ const SearchResultItemWithConfig = parametrize(SearchResultItem, {
 });
 
 const overridenComponents = {
-  ...searchDefaultComponents,
+  ...defaultComponents,
   "ResultsList.item": SearchResultItemWithConfig,
 };
 

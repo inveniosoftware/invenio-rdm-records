@@ -14,10 +14,10 @@ import { capitalize } from "lodash";
 
 /** Map of known formats and their name. */
 const knownFormats = {
-  "oai_dc": "OAI Dublin Core",
-  "datacite": "DataCite",
-  "oai_datacite": "OAI DataCite",
-}
+  oai_dc: "OAI Dublin Core",
+  datacite: "DataCite",
+  oai_datacite: "OAI DataCite",
+};
 
 function LinksTable({ data }) {
   const [links, setLinks] = useState(data.links);
@@ -26,17 +26,15 @@ function LinksTable({ data }) {
   useEffect(() => {
     async function getFormats() {
       try {
-        const response = await http.get(
-          '/api/oaipmh/formats'
-        );
+        const response = await http.get("/api/oaipmh/formats");
         const formats = response.data?.hits?.hits;
         if (Array.isArray(formats) && formats.length > 0) {
           const serialized = formats.map((formt) => {
             return {
               key: formt.id,
               value: formt.id,
-              text: knownFormats[formt.id] ?? formatKeyToName(formt.id)
-            }
+              text: knownFormats[formt.id] ?? formatKeyToName(formt.id),
+            };
           });
           setFormats(serialized);
         }
@@ -45,7 +43,6 @@ function LinksTable({ data }) {
       }
     }
     getFormats();
-
   }, []);
 
   /**
@@ -55,7 +52,7 @@ function LinksTable({ data }) {
   const replaceLinkPrefix = (link, newPrefix) => {
     const oldPrefix = getPrefixFromLink(link);
     if (oldPrefix) {
-      return link.replace(oldPrefix, newPrefix)
+      return link.replace(oldPrefix, newPrefix);
     }
     return link;
   };
@@ -95,7 +92,7 @@ function LinksTable({ data }) {
    */
   const prefixOnChange = (event, data) => {
     const newPrefix = data.value;
-    if (formats.some(obj => obj.key === newPrefix)) {
+    if (formats.some((obj) => obj.key === newPrefix)) {
       const newLinks = {};
       Object.keys(links).map((key) => {
         let link = links[key];
@@ -110,9 +107,9 @@ function LinksTable({ data }) {
   const listIdentifiers = links["oai-listidentifiers"];
 
   // Set default prefix based on backend link, use dublin core if unknown.
-  let defaultPrefix = getPrefixFromLink(listRecords)
+  let defaultPrefix = getPrefixFromLink(listRecords);
   if (!Object.prototype.hasOwnProperty.call(formats, defaultPrefix)) {
-    defaultPrefix = 'oai_dc';
+    defaultPrefix = "oai_dc";
   }
 
   return (
@@ -126,15 +123,12 @@ function LinksTable({ data }) {
                 <Header as="h2">{i18next.t("Links")}</Header>
               </Grid.Column>
               <Grid.Column width={13} textAlign="right">
-                <span className="mr-10" basic>
-                  {i18next.t("Format")}
-                </span>
+                <span className="mr-10">{i18next.t("Format")}</span>
                 <Dropdown
                   options={formats}
                   floating
                   selection
                   defaultValue={defaultPrefix}
-                  selectOnNavigaion={false}
                   onChange={prefixOnChange}
                 />
               </Grid.Column>
@@ -147,7 +141,11 @@ function LinksTable({ data }) {
                   <b>{i18next.t("List records")}</b>
                 </Table.Cell>
                 <Table.Cell width={10} textAlign="left">
-                  <a href={listRecords} target="_blank" title={i18next.t("Opens in new tab")}>
+                  <a
+                    href={listRecords}
+                    target="_blank"
+                    title={i18next.t("Opens in new tab")}
+                  >
                     {listRecords}
                   </a>
                 </Table.Cell>
@@ -160,7 +158,11 @@ function LinksTable({ data }) {
                   <b>{i18next.t("List identifiers")}</b>
                 </Table.Cell>
                 <Table.Cell width={10} textAlign="left">
-                  <a href={listIdentifiers} target="_blank" title={i18next.t("Opens in new tab")}>
+                  <a
+                    href={listIdentifiers}
+                    target="_blank"
+                    title={i18next.t("Opens in new tab")}
+                  >
                     {listIdentifiers}
                   </a>
                 </Table.Cell>
