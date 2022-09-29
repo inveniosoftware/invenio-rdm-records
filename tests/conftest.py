@@ -1034,7 +1034,7 @@ def awards_v(app, funders_v):
     award = awards_service.create(
         system_identity,
         {
-            "id": "755021",
+            "id": "00k4n6c32::755021",
             "identifiers": [
                 {
                     "identifier": "https://cordis.europa.eu/project/id/755021",
