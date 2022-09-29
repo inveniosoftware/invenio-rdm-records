@@ -308,6 +308,18 @@ def rebuild_index():
     vocab_service = current_service_registry.get("vocabularies")
     vocab_service.rebuild_index(identity=system_identity)
 
+    click.secho("Reindexing names...", fg="green")
+    names_service = current_service_registry.get("names")
+    names_service.rebuild_index(identity=system_identity)
+
+    click.secho("Reindexing funders...", fg="green")
+    funders_service = current_service_registry.get("funders")
+    funders_service.rebuild_index(identity=system_identity)
+
+    click.secho("Reindexing awards...", fg="green")
+    awards_service = current_service_registry.get("awards")
+    awards_service.rebuild_index(identity=system_identity)
+
     click.secho("Reindexing subjects...", fg="green")
     subj_service = current_service_registry.get("subjects")
     subj_service.rebuild_index(identity=system_identity)
