@@ -100,7 +100,7 @@ class CancelAction(actions.CancelAction):
         super().execute(identity, uow)
 
 
-class ExpireAction(actions.CancelAction):
+class ExpireAction(actions.ExpireAction):
     """Expire action."""
 
     def execute(self, identity, uow):
