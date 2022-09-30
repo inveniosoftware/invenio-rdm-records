@@ -82,9 +82,21 @@ class OaiPmhCreateView(AdminResourceCreateView):
     list_view_name = "OAI-PMH"
 
     form_fields = {
-        "name": {"order": 1, "text": "Set name"},
-        "spec": {"order": 2, "text": "Set spec"},
-        "search_pattern": {"order": 3, "text": "Search query"},
+        "name": {
+            "order": 1,
+            "text": "Set name",
+            "description": "A short human-readable string naming the set.",
+        },
+        "spec": {
+            "order": 2,
+            "text": "Set spec",
+            "description": "An identifier for the set, which cannot be edited after the set is created.",
+        },
+        "search_pattern": {
+            "order": 3,
+            "text": "Search query",
+            "description": "See the support query syntax in the <a href='/help/search'>Search Guide</a>.",
+        },
     }
 
 
