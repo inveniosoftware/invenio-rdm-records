@@ -242,11 +242,11 @@ RDM_OAI_PMH_FACETS = {}
 
 RDM_OAI_PMH_SORT_OPTIONS = {
     "name": dict(
-        title=_("Name"),
+        title=_("Set name"),
         fields=["name"],
     ),
     "spec": dict(
-        title=_("Spec"),
+        title=_("Set spec"),
         fields=["spec"],
     ),
     "created": dict(
