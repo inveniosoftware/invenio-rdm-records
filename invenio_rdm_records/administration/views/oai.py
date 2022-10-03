@@ -7,6 +7,7 @@
 # details.
 
 """Invenio administration OAI-PMH view module."""
+from flask_babelex import lazy_gettext as _
 from invenio_administration.views.base import (
     AdminResourceCreateView,
     AdminResourceDetailView,
@@ -33,11 +34,11 @@ class OaiPmhListView(AdminResourceListView):
     display_edit = True
 
     item_field_list = {
-        "spec": {"text": "Set spec", "order": 1},
-        "name": {"text": "Set name", "order": 2},
-        "search_pattern": {"text": "Search query", "order": 3},
-        "created": {"text": "Created", "order": 4},
-        "updated": {"text": "Updated", "order": 5},
+        "spec": {"text": _("Set spec"), "order": 1},
+        "name": {"text": _("Set name"), "order": 2},
+        "search_pattern": {"text": _("Search query"), "order": 3},
+        "created": {"text": _("Created"), "order": 4},
+        "updated": {"text": _("Updated"), "order": 5},
     }
 
     search_config_name = "RDM_OAI_PMH_SEARCH"
@@ -61,11 +62,30 @@ class OaiPmhEditView(AdminResourceEditView):
     list_view_name = "OAI-PMH"
 
     form_fields = {
-        "name": {"order": 2, "text": "Set name"},
-        "spec": {"order": 3, "text": "Set spec"},
-        "search_pattern": {"order": 4, "text": "Search query"},
-        "created": {"order": 5},
-        "updated": {"order": 6},
+        "name": {
+            "order": 1,
+            "text": _("Set name"),
+            "description": _("A short human-readable string naming the set."),
+        },
+        "spec": {
+            "order": 2,
+            "text": _("Set spec"),
+            "description": _(
+                "An identifier for the set, "
+                "which cannot be edited after the set is created."
+            ),
+        },
+        "search_pattern": {
+            "order": 3,
+            "text": _("Search query"),
+            "description": _(
+                "See the supported query "
+                "syntax in the "
+                "<a href='/help/search'>Search Guide</a>."
+            ),
+        },
+        "created": {"order": 4},
+        "updated": {"order": 5},
     }
 
 
@@ -84,18 +104,24 @@ class OaiPmhCreateView(AdminResourceCreateView):
     form_fields = {
         "name": {
             "order": 1,
-            "text": "Set name",
-            "description": "A short human-readable string naming the set.",
+            "text": _("Set name"),
+            "description": _("A short human-readable string naming the set."),
         },
         "spec": {
             "order": 2,
-            "text": "Set spec",
-            "description": "An identifier for the set, which cannot be edited after the set is created.",
+            "text": _("Set spec"),
+            "description": _(
+                "An identifier for the set, "
+                "which cannot be edited after the set is created."
+            ),
         },
         "search_pattern": {
             "order": 3,
-            "text": "Search query",
-            "description": "See the support query syntax in the <a href='/help/search'>Search Guide</a>.",
+            "text": _("Search query"),
+            "description": _(
+                "See the supported query "
+                "syntax in the <a href='/help/search'>Search Guide</a>."
+            ),
         },
     }
 
@@ -118,9 +144,9 @@ class OaiPmhDetailView(AdminResourceDetailView):
     pid_path = "id"
 
     item_field_list = {
-        "name": {"text": "Set name", "order": 1},
-        "spec": {"text": "Set spec", "order": 2},
-        "search_pattern": {"text": "Search query", "order": 3},
-        "created": {"text": "Created", "order": 4},
-        "updated": {"text": "Updated", "order": 5},
+        "name": {"text": _("Set name"), "order": 1},
+        "spec": {"text": _("Set spec"), "order": 2},
+        "search_pattern": {"text": _("Search query"), "order": 3},
+        "created": {"text": _("Created"), "order": 4},
+        "updated": {"text": _("Updated"), "order": 5},
     }
