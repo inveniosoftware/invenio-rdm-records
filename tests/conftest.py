@@ -48,7 +48,7 @@ from invenio_access.models import ActionRoles
 from invenio_access.permissions import superuser_access, system_identity
 from invenio_accounts.models import Role
 from invenio_accounts.testutils import login_user_via_session
-from invenio_admin.permissions import action_admin_access
+from invenio_administration.permissions import administration_access_action
 from invenio_app.factory import create_app as _create_app
 from invenio_cache import current_cache
 from invenio_communities import current_communities
@@ -1176,10 +1176,10 @@ def admin_role_need(db):
          If no User/Role is associated with that Need (in the DB), the
          permission is expanded to an empty list.
     """
-    role = Role(name="admin-access")
+    role = Role(name="administration-access")
     db.session.add(role)
 
-    action_role = ActionRoles.create(action=action_admin_access, role=role)
+    action_role = ActionRoles.create(action=administration_access_action, role=role)
     db.session.add(action_role)
 
     db.session.commit()
@@ -1302,7 +1302,7 @@ def admin(UserFixture, app, db, admin_role_need):
     u.create(app, db)
 
     datastore = app.extensions["security"].datastore
-    _, role = datastore._prepare_role_modify_args(u.user, "admin-access")
+    _, role = datastore._prepare_role_modify_args(u.user, "administration-access")
 
     datastore.add_role_to_user(u.user, role)
     db.session.commit()
