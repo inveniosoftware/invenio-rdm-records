@@ -20,3 +20,6 @@ Translation:
 - German
   - Graz University of Technology
   - University of Bamberg
+
+- Swedish
+  - KTH Royal Institute of Technology <info@kth.se>
