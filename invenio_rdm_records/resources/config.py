@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2020-2021 CERN.
+# Copyright (C) 2020-2022 CERN.
 # Copyright (C) 2020-2021 Northwestern University.
 # Copyright (C) 2022 Universität Hamburg.
 #
@@ -14,7 +14,9 @@ from citeproc_styles import StyleNotFoundError
 from flask_babelex import lazy_gettext as _
 from flask_resources import (
     HTTPJSONException,
+    JSONDeserializer,
     JSONSerializer,
+    RequestBodyParser,
     ResourceConfig,
     ResponseHandler,
     create_error_handler,
@@ -31,6 +33,8 @@ from ..services.errors import (
     ReviewStateError,
 )
 from .args import RDMSearchRequestArgsSchema
+from .deserializers import ROCrateJSONDeserializer
+from .deserializers.errors import DeserializerError
 from .serializers import (
     CSLJSONSerializer,
     DataCite43JSONSerializer,
@@ -96,11 +100,24 @@ class RDMRecordResourceConfig(RecordResourceConfig):
         "locale": ma.fields.Str(),
     }
 
+    request_body_parsers = {
+        "application/json": RequestBodyParser(JSONDeserializer()),
+        'application/ld+json;profile="https://w3id.org/ro/crate/1.1"': RequestBodyParser(
+            ROCrateJSONDeserializer()
+        ),
+    }
+
     request_search_args = RDMSearchRequestArgsSchema
 
     response_handlers = record_serializers
 
     error_handlers = {
+        DeserializerError: create_error_handler(
+            lambda exc: HTTPJSONException(
+                code=400,
+                description=exc.args[0],
+            )
+        ),
         StyleNotFoundError: create_error_handler(
             HTTPJSONException(
                 code=400,
