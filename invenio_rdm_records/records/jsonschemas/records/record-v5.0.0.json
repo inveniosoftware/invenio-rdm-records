@@ -460,7 +460,7 @@
         "entries": {
           "type": "object",
           "additionalProperties": {
-            "$ref": "local://records/definitions-v2.0.0.json#/file"
+            "$ref": "local://definitions-v1.0.0.json#/file"
           }
         },
         "meta": {
