@@ -62,48 +62,6 @@
       }
     }
   },
-  "file": {
-    "type": "object",
-    "additionalProperties": false,
-    "description": "A file object.",
-    "properties": {
-      "version_id": {
-        "description": "Object version ID.",
-        "type": "string"
-      },
-      "bucket_id": {
-        "description": "Object verison bucket ID.",
-        "type": "string"
-      },
-      "mimetype": {
-        "description": "File MIMEType.",
-        "type": "string"
-      },
-      "uri": {
-        "description": "File URI.",
-        "type": "string"
-      },
-      "storage_class": {
-        "description": "File storage class.",
-        "type": "string"
-      },
-      "checksum": {
-        "description": "Checksum of the file.",
-        "type": "string"
-      },
-      "size": {
-        "description": "Size of the file in bytes.",
-        "type": "number"
-      },
-      "key": {
-        "description": "Key (filename) of the file.",
-        "type": "string"
-      },
-      "file_id": {
-        "$ref": "local://definitions-v1.0.0.json#/identifier"
-      }
-    }
-  },
   "GeoJSON-Geometry": {
     "$schema": "http://json-schema.org/draft-07/schema#",
     "$id": "https://geojson.org/schema/Geometry.json",
