@@ -77,6 +77,9 @@ jobs:
           docker --version
           docker-compose --version
 
+      - name: Run translations test
+        run: ./run-i18n-tests.sh
+
       - name: Run tests
         run: |
           ./run-tests.sh
