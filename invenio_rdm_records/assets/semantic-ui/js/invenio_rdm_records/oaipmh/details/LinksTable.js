@@ -12,58 +12,69 @@ import { Table, Header, Dropdown, Grid } from "semantic-ui-react";
 import { http } from "@js/invenio_administration/src/api/config.js";
 import { capitalize, isEmpty } from "lodash";
 import { ErrorMessage } from "@js/invenio_administration/src/ui_messages/messages";
+import { withCancel } from "react-invenio-forms";
+import _isEmpty from "lodash/isEmpty";
+import _get from "lodash/get";
 
 /** Map of known formats and their name. */
 const knownFormats = {
-  "oai_dc": "OAI Dublin Core",
-  "datacite": "DataCite",
-  "oai_datacite": "OAI DataCite",
-}
+  oai_dc: "OAI Dublin Core",
+  datacite: "DataCite",
+  oai_datacite: "OAI DataCite",
+};
 
 class LinksTable extends Component {
   constructor(props) {
     super(props);
     const { links: passedLinks } = props.data;
 
-    let defaultPrefix = this.getPrefixFromLink(passedLinks["oai-listrecords"] || []);
-    const isPrefixKnown = Object.prototype.hasOwnProperty.call(knownFormats, defaultPrefix);
-    if (!isPrefixKnown) {
-      defaultPrefix = 'oai_dc';
-    }
+    const defaultPrefix = knownFormats["oai_dc"];
+    const currentPrefix = this.getPrefixFromLink(passedLinks["oai-listrecords"]);
+
+    const prefix = _get(knownFormats, currentPrefix, defaultPrefix);
 
     this.state = {
       links: passedLinks || [],
       formats: [],
-      currentFormat: defaultPrefix,
+      currentFormat: prefix,
       error: undefined,
-    }
+    };
   }
 
-  async componentDidMount() {
+  fetchFormats = async () => {
+    const cancellableFetchFormats = withCancel(http.get("/api/oaipmh/formats"));
+
     try {
-      const response = await http.get(
-        '/api/oaipmh/formats'
-      );
+      const response = await cancellableFetchFormats.promise;
+
       const formats = response.data?.hits?.hits;
-      if (Array.isArray(formats) && formats.length > 0) {
-        const serialized = formats.map((formt) => {
-          return {
-            key: formt.id,
-            value: formt.id,
-            text: knownFormats[formt.id] ?? this.formatKeyToName(formt.id)
-          }
-        });
+
+      if (!_isEmpty(formats)) {
+        const serialized = formats.map((formt) => ({
+          key: formt.id,
+          value: formt.id,
+          text: knownFormats[formt.id] ?? this.formatKeyToName(formt.id),
+        }));
+
         this.setState({
-          formats: serialized
+          formats: serialized,
         });
       }
     } catch (error) {
       console.error(error);
 
       this.setState({
-        error: { header: "Fetch error", content: "Error fetching OAI set formats.", id: error.code },
+        error: {
+          header: "Fetch error",
+          content: "Error fetching OAI set formats.",
+          id: error.code,
+        },
       });
     }
+  };
+
+  componentDidMount() {
+    this.fetchFormats();
   }
 
   /**
@@ -84,9 +95,8 @@ class LinksTable extends Component {
    * Returns null if parameter not found.
    */
   getPrefixFromLink = (link) => {
-    if (!link)
-      return null;
-    const prefixParam = 'metadataPrefix';
+    if (_isEmpty(link)) return null;
+    const prefixParam = "metadataPrefix";
     const params = new URLSearchParams(link);
     const prefix = params.get(prefixParam);
 
@@ -101,8 +111,7 @@ class LinksTable extends Component {
    */
   formatKeyToName = (formatKey) => {
     const whiteSpaced = formatKey.replace("_", " ");
-    const capitalised = capitalize(whiteSpaced);
-    return capitalised;
+    return capitalize(whiteSpaced);
   };
 
   /**
@@ -114,12 +123,11 @@ class LinksTable extends Component {
     const newFormat = data.value;
     const { formats, links } = this.state;
 
-    if (formats.some(obj => obj.key === newFormat)) {
+    if (formats.some((obj) => obj.key === newFormat)) {
       const newLinks = {};
       Object.keys(links).map((key) => {
-        let link = links[key];
-        let newLink = this.replaceLinkPrefix(link, newFormat);
-        newLinks[key] = newLink;
+        const link = links[key];
+        newLinks[key] = this.replaceLinkPrefix(link, newFormat);
       });
       this.setState({ links: newLinks, currentFormat: newFormat });
     }
@@ -145,7 +153,7 @@ class LinksTable extends Component {
                   <Header as="h2">{i18next.t("Links")}</Header>
                 </Grid.Column>
                 <Grid.Column width={13} textAlign="right">
-                  <span className="mr-10" basic>
+                  <span className="mr-10">
                     {i18next.t("Format")}
                   </span>
                   <Dropdown
@@ -166,7 +174,11 @@ class LinksTable extends Component {
                     <b>{i18next.t("List records")}</b>
                   </Table.Cell>
                   <Table.Cell width={10} textAlign="left">
-                    <a href={listRecords} target="_blank" title={i18next.t("Opens in new tab")}>
+                    <a
+                      href={listRecords}
+                      target="_blank"
+                      title={i18next.t("Opens in new tab")}
+                    >
                       {listRecords}
                     </a>
                   </Table.Cell>
@@ -179,7 +191,11 @@ class LinksTable extends Component {
                     <b>{i18next.t("List identifiers")}</b>
                   </Table.Cell>
                   <Table.Cell width={10} textAlign="left">
-                    <a href={listIdentifiers} target="_blank" title={i18next.t("Opens in new tab")}>
+                    <a
+                      href={listIdentifiers}
+                      target="_blank"
+                      title={i18next.t("Opens in new tab")}
+                    >
                       {listIdentifiers}
                     </a>
                   </Table.Cell>
@@ -190,7 +206,10 @@ class LinksTable extends Component {
               </Table.Body>
             </Table>
             {!isEmpty(error) && (
-              <ErrorMessage {...error} removeNotification={this.resetErrorState} />
+              <ErrorMessage
+                {...error}
+                removeNotification={this.resetErrorState}
+              />
             )}
           </>
         }
