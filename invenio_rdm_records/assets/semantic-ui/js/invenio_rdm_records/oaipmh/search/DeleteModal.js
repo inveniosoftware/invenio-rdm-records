@@ -7,7 +7,7 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
 import { Button, Icon, Message, Checkbox } from "semantic-ui-react";
-import { i18next } from "@translations/invenio_administration/i18next";
+import { i18next } from "@translations/invenio_rdm_records/i18next";
 import { Modal } from "semantic-ui-react";
 import { Trans } from "react-i18next";
 import isEmpty from "lodash/isEmpty";

@@ -9,7 +9,7 @@ import ReactDOM from "react-dom";
 import _get from "lodash/get";
 import LinksTable from "./LinksTable";
 import { AdminDetailsView } from "@js/invenio_administration";
-import { i18next } from "@translations/invenio_app_rdm/i18next";
+import { i18next } from "@translations/invenio_rdm_records/i18next";
 
 const domContainer = document.getElementById("invenio-details-config");
 const title = domContainer.dataset.title;

@@ -16,7 +16,7 @@ import { AdminUIRoutes } from "@js/invenio_administration";
 import { OverridableContext } from "react-overridable";
 import { DeleteModal } from "./DeleteModal";
 import Formatter from "@js/invenio_administration/src/components/Formatter";
-import { i18next } from "@translations/invenio_app_rdm/i18next";
+import { i18next } from "@translations/invenio_rdm_records/i18next";
 
 const overridenComponents = {
   "DeleteModal.layout": DeleteModal,

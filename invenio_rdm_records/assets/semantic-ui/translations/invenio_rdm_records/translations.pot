@@ -1,0 +1,59 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: i18next-conv\n"
+"mime-version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1)\n"
+"POT-Creation-Date: 2022-10-19T15:04:53.186Z\n"
+"PO-Revision-Date: 2022-10-19T15:04:53.186Z\n"
+"Language: en\n"
+
+msgid "Copy to clipboard"
+msgstr "Copy to clipboard"
+
+msgid "Copied!"
+msgstr "Copied!"
+
+msgid "This set is not editable as it was created by the system."
+msgstr "This set is not editable as it was created by the system."
+
+msgid "This set is not deletable as it was created by the system."
+msgstr "This set is not deletable as it was created by the system."
+
+msgid "Links"
+msgstr "Links"
+
+msgid "Format"
+msgstr "Format"
+
+msgid "List records"
+msgstr "List records"
+
+msgid "Opens in new tab"
+msgstr "Opens in new tab"
+
+msgid "List identifiers"
+msgstr "List identifiers"
+
+msgid ""
+"Before deleting, make sure to alert all harvesters that this set will no "
+"longer be available."
+msgstr ""
+"Before deleting, make sure to alert all harvesters that this set will no "
+"longer be available."
+
+msgid "I have alerted all harvesters that this set will no longer be available."
+msgstr "I have alerted all harvesters that this set will no longer be available."
+
+msgid "Cancel"
+msgstr "Cancel"
+
+msgid "Delete"
+msgstr "Delete"
+
+msgid "Delete {{title}}"
+msgstr "Delete {{title}}"
+
+msgid "This will delete the set '{{title}}'."
+msgstr "This will delete the set '{{title}}'."
