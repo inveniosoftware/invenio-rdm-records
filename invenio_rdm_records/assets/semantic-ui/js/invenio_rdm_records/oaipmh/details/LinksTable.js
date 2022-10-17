@@ -9,12 +9,11 @@ import React, { Component } from "react";
 import { i18next } from "@translations/invenio_rdm_records/i18next";
 import CopyButton from "./CopyButton";
 import { Table, Header, Dropdown, Grid } from "semantic-ui-react";
-import { http } from "react-invenio-forms";
-import { capitalize, isEmpty } from "lodash";
 import { ErrorMessage } from "@js/invenio_administration";
 import { withCancel } from "react-invenio-forms";
 import _isEmpty from "lodash/isEmpty";
-import _get from "lodash/get";
+import { http } from "react-invenio-forms";
+import { capitalize } from "lodash";
 
 /** Map of known formats and their name. */
 const knownFormats = {
@@ -200,7 +199,7 @@ class LinksTable extends Component {
             </Table.Row>
           </Table.Body>
         </Table>
-        {!isEmpty(error) && (
+        {!_isEmpty(error) && (
           <ErrorMessage {...error} removeNotification={this.resetErrorState} />
         )}
       </>
