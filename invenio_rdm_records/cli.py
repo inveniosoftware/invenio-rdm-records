@@ -38,6 +38,7 @@ from .fixtures.demo import (
     create_fake_oai_set,
     create_fake_record,
 )
+from .fixtures.static_pages import StaticPages
 from .fixtures.tasks import (
     create_demo_community,
     create_demo_inclusion_requests,
@@ -298,6 +299,17 @@ def create_fixtures():
     FixturesEngine(system_identity).run()
 
     click.secho("Created required fixtures!", fg="green")
+
+
+@rdm_records.command("static-pages")
+@with_appcontext
+def create_static_pages():
+    """Create the fixtures required for record creation."""
+    click.secho("Creating static pages...", fg="green")
+
+    StaticPages().run()
+
+    click.secho("Created static pages!", fg="green")
 
 
 @rdm_records.command("rebuild-index")
