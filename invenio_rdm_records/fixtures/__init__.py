@@ -10,6 +10,7 @@
 
 from pathlib import Path
 
+from .communities import CommunitiesFixture
 from .users import UsersFixture
 from .vocabularies import PrioritizedVocabulariesFixtures, VocabulariesFixture
 
@@ -39,6 +40,11 @@ class FixturesEngine:
         UsersFixture(
             [Path("./app_data"), dir_ / "data"],
             "users.yaml",
+        ).load()
+
+        CommunitiesFixture(
+            [Path("./app_data"), dir_ / "data"],
+            "communities.yaml",
         ).load()
 
 
