@@ -10,6 +10,8 @@
 
 from pathlib import Path
 
+from flask import current_app
+
 from .communities import CommunitiesFixture
 from .users import UsersFixture
 from .vocabularies import PrioritizedVocabulariesFixtures, VocabulariesFixture
@@ -29,22 +31,24 @@ class FixturesEngine:
     def run(self):
         """Run the fixture loading."""
         dir_ = Path(__file__).parent
+        app_data_folder = Path(current_app.instance_path) / "app_data"
 
         PrioritizedVocabulariesFixtures(
             self._identity,
-            app_data_folder=Path("./app_data"),
+            app_data_folder=app_data_folder,
             pkg_data_folder=dir_ / "data",
             filename="vocabularies.yaml",
         ).load()
 
         UsersFixture(
-            [Path("./app_data"), dir_ / "data"],
+            [app_data_folder, dir_ / "data"],
             "users.yaml",
         ).load()
 
         CommunitiesFixture(
-            [Path("./app_data"), dir_ / "data"],
+            [app_data_folder, dir_ / "data"],
             "communities.yaml",
+            app_data_folder / "img",
         ).load()
 
 

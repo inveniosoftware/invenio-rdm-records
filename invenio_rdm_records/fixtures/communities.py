@@ -7,9 +7,9 @@
 
 """Communities fixture module."""
 
-from invenio_access.permissions import system_identity
-from invenio_communities.proxies import current_communities
-from invenio_pidstore.errors import PIDAlreadyExists
+from pathlib import Path
+
+from invenio_communities.fixtures.tasks import create_demo_community
 
 from .fixture import FixtureMixin
 
@@ -17,24 +17,17 @@ from .fixture import FixtureMixin
 class CommunitiesFixture(FixtureMixin):
     """Communities fixture."""
 
+    def __init__(self, search_paths, filename, logo_path):
+        """Initialize the communities fixture."""
+        super().__init__(search_paths, filename)
+        self.logo_path = logo_path
+
     def create(self, entry):
         """Load a single community."""
-        access_visibility = entry.get("access").get("visibility")
-        slug = entry.get("slug")
-        metadata_title = entry.get("metadata").get("title")
+        logo = entry.pop("logo", None)
 
-        community_data = {
-            "access": {
-                "visibility": access_visibility,
-            },
-            "slug": slug,
-            "metadata": {
-                "title": metadata_title,
-            },
-        }
-
-        service = current_communities.service
-        try:
-            service.create(data=community_data, identity=system_identity)
-        except PIDAlreadyExists:
-            pass
+        if logo:
+            logo_file_path = self.logo_path / logo
+            create_demo_community(entry, logo_file_path)
+        else:
+            create_demo_community(entry)
