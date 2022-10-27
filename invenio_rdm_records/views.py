@@ -30,6 +30,7 @@ def init(state):
     # Register indexers
     iregistry = app.extensions["invenio-indexer"].registry
     iregistry.register(ext.records_service.indexer, indexer_id="records")
+    iregistry.register(ext.records_service.draft_indexer, indexer_id="records-drafts")
 
 
 def create_records_bp(app):
