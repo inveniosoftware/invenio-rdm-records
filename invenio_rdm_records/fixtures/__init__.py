@@ -32,21 +32,22 @@ class FixturesEngine:
         """Run the fixture loading."""
         dir_ = Path(__file__).parent
         app_data_folder = Path(current_app.instance_path) / "app_data"
+        data_folder = dir_ / "data"
 
         PrioritizedVocabulariesFixtures(
             self._identity,
             app_data_folder=app_data_folder,
-            pkg_data_folder=dir_ / "data",
+            pkg_data_folder=data_folder,
             filename="vocabularies.yaml",
         ).load()
 
         UsersFixture(
-            [app_data_folder, dir_ / "data"],
+            [app_data_folder, data_folder],
             "users.yaml",
         ).load()
 
         CommunitiesFixture(
-            [app_data_folder, dir_ / "data"],
+            [app_data_folder, data_folder],
             "communities.yaml",
             app_data_folder / "img",
         ).load()
