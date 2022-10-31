@@ -1,0 +1,11 @@
+- access:
+    visibility: public
+  slug: community1
+  logo: community1.png
+  metadata:
+    title: Title
+- access:
+    visibility: public
+  slug: community2
+  metadata:
+    title: Title
