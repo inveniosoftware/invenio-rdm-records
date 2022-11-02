@@ -7,30 +7,24 @@
  */
 import PropTypes from "prop-types";
 import React, { Component } from "react";
-import _get from "lodash/get";
 import { Table } from "semantic-ui-react";
 import isEmpty from "lodash/isEmpty";
 import { withState } from "react-searchkit";
-import { Actions } from "@js/invenio_administration";
+import { Actions, Edit, Delete } from "@js/invenio_administration";
 import { AdminUIRoutes } from "@js/invenio_administration";
-import { OverridableContext } from "react-overridable";
+import { OverridableContext, parametrize } from "react-overridable";
 import { DeleteModal } from "./DeleteModal";
 import Formatter from "@js/invenio_administration/src/components/Formatter";
 import { i18next } from "@translations/invenio_rdm_records/i18next";
 
 const overridenComponents = {
-  "DeleteModal.layout": DeleteModal,
+  "InvenioAdministration.DeleteModal.layout": DeleteModal,
 };
 
 class SearchResultItemComponent extends Component {
   refreshAfterAction = () => {
     const { updateQueryState, currentQueryState } = this.props;
     updateQueryState(currentQueryState);
-  };
-
-  createdBySystem = () => {
-    const { result } = this.props;
-    return result.system_created;
   };
 
   displayAsPre = (result, property) => {
@@ -72,6 +66,27 @@ class SearchResultItemComponent extends Component {
 
     const resourceHasActions =
       displayEdit || displayDelete || !isEmpty(actions);
+
+    overridenComponents["InvenioAdministration.EditAction"] = parametrize(
+      Edit,
+      {
+        disable: () => result.system_created,
+        disabledMessage: i18next.t(
+          "This set is not editable as it was created by the system."
+        ),
+      }
+    );
+
+    overridenComponents["InvenioAdministration.DeleteAction"] = parametrize(
+      Delete,
+      {
+        disable: () => result.system_created,
+        disabledMessage: i18next.t(
+          "This set is not deletable as it was created by the system."
+        ),
+      }
+    );
+
     return (
       <OverridableContext.Provider value={overridenComponents}>
         <Table.Row>
@@ -104,21 +119,14 @@ class SearchResultItemComponent extends Component {
                 title={title}
                 resourceName={resourceName}
                 apiEndpoint={apiEndpoint}
-                editAction={{
-                  display: displayEdit,
-                  disabled: this.createdBySystem(),
-                  disabledMessage: i18next.t(
-                    "This set is not editable as it was created by the system."
-                  ),
-                }}
-                deleteAction={{
-                  display: displayDelete,
-                  disabled: this.createdBySystem(),
-                  disabledMessage: i18next.t(
-                    "This set is not deletable as it was created by the system."
-                  ),
-                }}
                 actions={actions}
+                editUrl={AdminUIRoutes.editView(
+                  listUIEndpoint,
+                  result,
+                  idKeyPath
+                )}
+                displayEdit={displayEdit}
+                displayDelete={displayDelete}
                 resource={result}
                 idKeyPath={idKeyPath}
                 successCallback={this.refreshAfterAction}
