@@ -7,8 +7,9 @@
 import React from "react";
 import ReactDOM from "react-dom";
 import _get from "lodash/get";
+import { OverridableContext, parametrize } from "react-overridable";
 import LinksTable from "./LinksTable";
-import { AdminDetailsView } from "@js/invenio_administration";
+import { AdminDetailsView, Edit, Delete } from "@js/invenio_administration";
 import { i18next } from "@translations/invenio_rdm_records/i18next";
 
 const domContainer = document.getElementById("invenio-details-config");
@@ -24,39 +25,41 @@ const idKeyPath = JSON.parse(_get(domContainer.dataset, "pidPath", "pid"));
 const listUIEndpoint = domContainer.dataset.listEndpoint;
 const resourceSchema = JSON.parse(domContainer.dataset.resourceSchema);
 
-const createdBySystem = (data) => {
-  return data?.system_created;
+const createdBySystem = (data) => data?.system_created;
+
+const overridenComponents = {
+  "InvenioAdministration.EditAction": parametrize(Edit, {
+    disable: createdBySystem,
+    disabledMessage: i18next.t(
+      "This set is not editable as it was created by the system."
+    ),
+  }),
+  "InvenioAdministration.DeleteAction": parametrize(Delete, {
+    disable: createdBySystem,
+    disabledMessage: i18next.t(
+      "This set is not deletable as it was created by the system."
+    ),
+  }),
 };
 
 domContainer &&
   ReactDOM.render(
-    <AdminDetailsView
-      title={title}
-      actions={actions}
-      apiEndpoint={apiEndpoint}
-      columns={fields}
-      editAction={{
-        display: displayEdit,
-        disable: createdBySystem,
-        disabledMessage: i18next.t(
-          "This set is not editable as it was created by the system."
-        ),
-      }}
-      deleteAction={{
-        display: displayDelete,
-        disable: createdBySystem,
-        disabledMessage: i18next.t(
-          "This set is not deletable as it was created by the system."
-        ),
-      }}
-      displayEdit={displayEdit}
-      pid={pidValue}
-      idKeyPath={idKeyPath}
-      resourceName={resourceName}
-      listUIEndpoint={listUIEndpoint}
-      resourceSchema={resourceSchema}
-    >
-      <LinksTable />
-    </AdminDetailsView>,
+    <OverridableContext.Provider value={overridenComponents}>
+      <AdminDetailsView
+        title={title}
+        actions={actions}
+        apiEndpoint={apiEndpoint}
+        columns={fields}
+        displayEdit={displayEdit}
+        displayDelete={displayDelete}
+        pid={pidValue}
+        idKeyPath={idKeyPath}
+        resourceName={resourceName}
+        listUIEndpoint={listUIEndpoint}
+        resourceSchema={resourceSchema}
+      >
+        <LinksTable />
+      </AdminDetailsView>
+    </OverridableContext.Provider>,
     domContainer
   );
