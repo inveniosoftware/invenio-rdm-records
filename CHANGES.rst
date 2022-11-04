@@ -10,6 +10,13 @@
 Changes
 =======
 
+Version 1.0.1 (released 2022-11-04)
+
+- upgrade invenio-vocabularies
+- upgrade invenio-drafts-resources
+- add dynamic formats to administration of oai sets
+- add RO-Crate serializer
+
 Version 1.0.0
 
 - Initial public release.
