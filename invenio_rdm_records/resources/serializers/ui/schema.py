@@ -3,6 +3,7 @@
 # Copyright (C) 2020 CERN.
 # Copyright (C) 2020 Northwestern University.
 # Copyright (C) 2021 Graz University of Technology.
+# Copyright (C) 2022 TU Wien.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
@@ -22,7 +23,7 @@ from invenio_vocabularies.resources import L10NString, VocabularyL10Schema
 from marshmallow import Schema, fields, missing
 from marshmallow_utils.fields import FormatDate as FormatDate_
 from marshmallow_utils.fields import FormatEDTF as FormatEDTF_
-from marshmallow_utils.fields import StrippedHTML
+from marshmallow_utils.fields import SanitizedHTML, StrippedHTML
 from marshmallow_utils.fields.babel import gettext_from_dict
 
 from .fields import AccessStatusField
@@ -110,7 +111,7 @@ class AdditionalTitlesSchema(Schema):
 class AdditionalDescriptionsSchema(Schema):
     """Localization of additional descriptions."""
 
-    description = StrippedHTML(attribute="description")
+    description = SanitizedHTML(attribute="description")
     type = fields.Nested(VocabularyL10Schema, attribute="type")
     lang = fields.Nested(VocabularyL10Schema, attribute="lang")
 
