@@ -72,6 +72,8 @@ class SearchOptions:
 class OAIPMHServerServiceConfig(ServiceConfig):
     """Service factory configuration."""
 
+    service_id = "oaipmh-server"
+
     # Common configuration
     permission_policy_cls = OAIPMHServerPermissionPolicy
     result_item_cls = OAISetItem

@@ -272,6 +272,8 @@ class RDMFileRecordServiceConfig(FileServiceConfig, ConfiguratorMixin):
 class RDMFileDraftServiceConfig(FileServiceConfig, ConfiguratorMixin):
     """Configuration for draft files."""
 
+    service_id = "draft-files"
+
     record_cls = RDMDraft
     permission_action_prefix = "draft_"
     permission_policy_cls = FromConfig(
