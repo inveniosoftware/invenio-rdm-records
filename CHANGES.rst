@@ -10,6 +10,11 @@
 Changes
 =======
 
+Version 1.0.2 (released 2022-11-15)
+
+- fix service_id config values
+- sanitize html in additional descriptions instead of stripping html
+
 Version 1.0.1 (released 2022-11-04)
 
 - upgrade invenio-vocabularies
