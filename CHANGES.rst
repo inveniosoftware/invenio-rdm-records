@@ -10,6 +10,11 @@
 Changes
 =======
 
+Version 1.0.3 (released 2022-11-16)
+
+- add draft indexer in registry
+
+
 Version 1.0.2 (released 2022-11-15)
 
 - fix service_id config values
