@@ -1,5 +1,5 @@
 ..
-    Copyright (C) 2019 CERN.
+    Copyright (C) 2019-2022 CERN.
     Copyright (C) 2019 Northwestern University.
 
 
@@ -10,10 +10,16 @@
 Changes
 =======
 
+Version 1.1.0 (released 2022-11-25)
+
+- use communities v4
+- use Axios centralized configuration
+- add i18n translations
+- refactor OAI sets view
+
 Version 1.0.3 (released 2022-11-16)
 
 - add draft indexer in registry
-
 
 Version 1.0.2 (released 2022-11-15)
 
