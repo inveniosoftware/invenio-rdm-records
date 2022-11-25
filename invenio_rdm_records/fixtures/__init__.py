@@ -11,8 +11,11 @@
 from pathlib import Path
 
 from flask import current_app
+from invenio_communities.fixtures.tasks import create_demo_community
 
 from .communities import CommunitiesFixture
+from .records import RecordsFixture
+from .tasks import create_demo_record
 from .users import UsersFixture
 from .vocabularies import PrioritizedVocabulariesFixtures, VocabulariesFixture
 
@@ -49,7 +52,14 @@ class FixturesEngine:
         CommunitiesFixture(
             [app_data_folder, data_folder],
             "communities.yaml",
+            create_demo_community,
             app_data_folder / "img",
+        ).load()
+
+        RecordsFixture(
+            [app_data_folder, data_folder],
+            "records.yaml",
+            create_demo_record,
         ).load()
 
 

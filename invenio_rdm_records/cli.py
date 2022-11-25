@@ -11,12 +11,8 @@
 import click
 from flask import current_app
 from flask.cli import with_appcontext
-from flask_security.confirmable import confirm_user
-from flask_security.utils import hash_password
 from invenio_access.permissions import system_identity
-from invenio_accounts.proxies import current_datastore
 from invenio_communities import current_communities
-from invenio_db import db
 from invenio_records_resources.proxies import current_service_registry
 from invenio_records_resources.services.custom_fields.errors import (
     CustomFieldsException,
@@ -28,7 +24,6 @@ from invenio_records_resources.services.custom_fields.validate import (
 from invenio_search import current_search_client
 from invenio_search.engine import dsl, search
 from invenio_search.utils import build_alias_name
-from invenio_users_resources.services.users.tasks import reindex_user
 
 from invenio_rdm_records.proxies import current_rdm_records, current_rdm_records_service
 
@@ -46,27 +41,12 @@ from .fixtures.tasks import (
     create_demo_record,
     get_authenticated_identity,
 )
+from .utils import get_or_create_user
 
 COMMUNITY_OWNER_EMAIL = "community@demo.org"
 USER_EMAIL = "user@demo.org"
 HELP_MSG_USER = "User e-mail of an already existing user."
 ADMIN_EMAIL = "admin@inveniosoftware.org"
-
-
-def _get_or_create_user(email):
-    user = current_datastore.get_user(email)
-    if not user:
-        with db.session.begin_nested():
-            user = current_datastore.create_user(
-                email=email,
-                password=hash_password("123456"),
-                active=True,
-                preferences=dict(visibility="public", email_visibility="public"),
-            )
-        confirm_user(user)
-        db.session.commit()
-        reindex_user(user.id)
-    return user
 
 
 @click.group()
@@ -106,7 +86,7 @@ def demo(ctx):
 @with_appcontext
 def records(user_email, n_records):
     """Create fake records."""
-    user = _get_or_create_user(user_email)
+    user = get_or_create_user(user_email)
     click.secho("Creating demo records for {0}...".format(user), fg="green")
 
     for _ in range(n_records):
@@ -136,7 +116,7 @@ def records(user_email, n_records):
 @with_appcontext
 def oai_sets(user_email, n_records):
     """Create fake records."""
-    user = _get_or_create_user(user_email)
+    user = get_or_create_user(user_email)
     click.secho("Creating demo oaipmh sets for {0}...".format(user), fg="green")
 
     for _ in range(n_records):
@@ -166,7 +146,7 @@ def oai_sets(user_email, n_records):
 @with_appcontext
 def drafts(user_email, n_drafts):
     """Create fake drafts."""
-    user = _get_or_create_user(user_email)
+    user = get_or_create_user(user_email)
     click.secho("Creating demo drafts for {0}...".format(user), fg="green")
 
     for _ in range(n_drafts):
@@ -196,7 +176,7 @@ def drafts(user_email, n_drafts):
 @with_appcontext
 def communities(user_email, n_communities):
     """Create fake communities."""
-    user = _get_or_create_user(user_email)
+    user = get_or_create_user(user_email)
     click.secho("Creating demo communities for owner {0}...".format(user), fg="green")
 
     for _ in range(n_communities):
@@ -226,7 +206,7 @@ def communities(user_email, n_communities):
 @with_appcontext
 def inclusion_requests(user_email, n_requests):
     """Create fake requests to include drafts to communities."""
-    user = _get_or_create_user(user_email)
+    user = get_or_create_user(user_email)
     click.secho("Creating demo inclusions requests for {0}...".format(user), fg="green")
 
     identity = get_authenticated_identity(user.id)
@@ -273,7 +253,7 @@ def inclusion_requests(user_email, n_requests):
 @with_appcontext
 def invitation_requests(user_email, n_requests):
     """Create fake invitation requests to a community."""
-    user = _get_or_create_user(user_email)
+    user = get_or_create_user(user_email)
     click.secho("Creating demo invitation requests for {0}...".format(user), fg="green")
 
     communities = current_communities.service.search(system_identity)

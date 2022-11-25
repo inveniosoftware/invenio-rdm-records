@@ -1,0 +1,34 @@
+- access:
+    record: public
+    files: public
+  files:
+    enabled: false
+  metadata:
+    resource_type:
+      id: image
+    creators:
+      - person_or_org:
+          name: CERN
+          type: organizational
+        role:
+          id: contactperson
+    title: Record1
+    publisher: CERN
+    publication_date: "2020-01-01"
+- access:
+    record: public
+    files: public
+  files:
+    enabled: false
+  metadata:
+    resource_type:
+      id: image
+    creators:
+      - person_or_org:
+          name: CERN
+          type: organizational
+        role:
+          id: contactperson
+    title: Record2
+    publisher: CERN
+    publication_date: "2020-01-01"

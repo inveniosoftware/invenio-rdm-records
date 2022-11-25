@@ -13,10 +13,12 @@ import yaml
 class FixtureMixin:
     """Fixture loading mixin."""
 
-    def __init__(self, search_paths, filename):
+    def __init__(self, search_paths, filename, create_record_func=None, delay=True):
         """Initialize the fixture."""
         self._search_paths = search_paths
         self._filename = filename
+        self.create_record_func = create_record_func
+        self._delay = delay
 
     def load(self):
         """Load the fixture.
@@ -53,3 +55,10 @@ class FixtureMixin:
 
             with open(filepath) as fp:
                 return list(yaml.safe_load(fp)) or []
+
+    def create_record(self, *args, **kwargs):
+        """Creates record."""
+        if self._delay:
+            self.create_record_func.delay(*args, **kwargs)
+        else:
+            self.create_record_func(*args, **kwargs)
