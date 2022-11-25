@@ -7,27 +7,25 @@
 
 """Communities fixture module."""
 
-from pathlib import Path
-
-from invenio_communities.fixtures.tasks import create_demo_community
-
 from .fixture import FixtureMixin
 
 
 class CommunitiesFixture(FixtureMixin):
     """Communities fixture."""
 
-    def __init__(self, search_paths, filename, logo_path):
+    def __init__(
+        self, search_paths, filename, create_record_func, logo_path=None, delay=True
+    ):
         """Initialize the communities fixture."""
-        super().__init__(search_paths, filename)
+        super().__init__(search_paths, filename, create_record_func, delay)
         self.logo_path = logo_path
 
     def create(self, entry):
         """Load a single community."""
         logo = entry.pop("logo", None)
-
+        feature = entry.pop("feature", False)
+        logo_file_path = None
         if logo:
-            logo_file_path = self.logo_path / logo
-            create_demo_community(entry, logo_file_path)
-        else:
-            create_demo_community(entry)
+            logo_file_path = str(self.logo_path / logo)
+
+        self.create_record(entry, logo_path=logo_file_path, feature=feature)

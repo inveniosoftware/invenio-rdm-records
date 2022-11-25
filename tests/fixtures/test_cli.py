@@ -8,18 +8,13 @@
 
 """Tests for the CLI."""
 
-from pathlib import Path
 
-import pytest
 from invenio_access.permissions import system_identity
 from invenio_communities import current_communities
 from invenio_communities.communities.records.api import Community
 from invenio_communities.members import Member
 from invenio_requests import current_requests_service
 from invenio_requests.records import Request
-from invenio_vocabularies.contrib.awards.api import Award
-from invenio_vocabularies.contrib.funders.api import Funder
-from invenio_vocabularies.records.api import Vocabulary
 
 from invenio_rdm_records.cli import (
     create_records_custom_field,
@@ -33,24 +28,9 @@ from invenio_rdm_records.fixtures.tasks import (
     create_demo_record,
     get_authenticated_identity,
 )
-from invenio_rdm_records.fixtures.vocabularies import VocabulariesFixture
 from invenio_rdm_records.proxies import current_rdm_records_service
 from invenio_rdm_records.records import RDMDraft, RDMRecord
 from invenio_rdm_records.requests import CommunitySubmission
-
-
-@pytest.fixture
-def vocabularies():
-    """Load vocabularies."""
-    vocabularies = VocabulariesFixture(
-        system_identity,
-        Path(__file__).parent / "data/vocabularies.yaml",
-        delay=False,
-    )
-    vocabularies.load()
-    Vocabulary.index.refresh()
-    Award.index.refresh()
-    Funder.index.refresh()
 
 
 def test_create_fake_demo_draft_record(

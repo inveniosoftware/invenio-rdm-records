@@ -1,6 +1,7 @@
 - email: admin@example.com
   active: False
   password: $ecurep4ssw0rd
+  confirmed: True
   roles:
     - admin
   allow:

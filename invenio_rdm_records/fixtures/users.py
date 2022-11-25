@@ -11,8 +11,8 @@
 import secrets
 import string
 
-import yaml
 from flask import current_app
+from flask_security.confirmable import confirm_user
 from flask_security.utils import hash_password
 from invenio_access.models import ActionUsers
 from invenio_access.proxies import current_access
@@ -52,6 +52,7 @@ class UsersFixture(FixtureMixin):
         full_name = entry.get("full_name", "")
         affiliations = entry.get("affiliations", "")
         active = entry.get("active", False)
+        confirmed = entry.get("confirmed", False)
         hashed_password = hash_password(password)
 
         user_data = {
@@ -71,6 +72,9 @@ class UsersFixture(FixtureMixin):
             for action in entry.get("allow", []) or []:
                 action = current_access.actions[action]
                 db.session.add(ActionUsers.allow(action, user_id=user.id))
+
+            if confirmed:
+                confirm_user(user)
 
             db.session.commit()
             reindex_user(user.id)

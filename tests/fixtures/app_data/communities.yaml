@@ -2,6 +2,7 @@
     visibility: public
   slug: community1
   logo: community1.png
+  feature: True
   metadata:
     title: Title
 - access:

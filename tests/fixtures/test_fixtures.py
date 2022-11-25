@@ -12,11 +12,12 @@ import pytest
 from invenio_access.permissions import system_identity
 from invenio_accounts.proxies import current_datastore
 from invenio_communities import current_communities
-from invenio_files_rest.models import Location
+from invenio_communities.fixtures.tasks import create_demo_community
 from invenio_pidstore.errors import PIDDoesNotExistError
 from invenio_records_resources.proxies import current_service_registry
 from invenio_vocabularies.proxies import current_service as vocabulary_service
 
+from invenio_rdm_records.fixtures import RecordsFixture, create_demo_record
 from invenio_rdm_records.fixtures.communities import CommunitiesFixture
 from invenio_rdm_records.fixtures.users import UsersFixture
 from invenio_rdm_records.fixtures.vocabularies import (
@@ -24,6 +25,7 @@ from invenio_rdm_records.fixtures.vocabularies import (
     PrioritizedVocabulariesFixtures,
     VocabularyEntryWithSchemes,
 )
+from invenio_rdm_records.proxies import current_rdm_records
 
 
 @pytest.fixture(scope="module")
@@ -186,10 +188,17 @@ def test_load_users(app, db, admin_role):
     users.load()
 
     # app_data/users.yaml doesn't create an admin@inveniosoftware.org user
-    u1 = current_datastore.find_user(email="admin@inveniosoftware.org")
-    assert u1 is None
-    assert current_datastore.find_user(email="admin@example.com")
-    assert current_datastore.find_user(email="user@example.com")
+    non_existing_user = current_datastore.find_user(email="admin@inveniosoftware.org")
+    admin = current_datastore.find_user(email="admin@example.com")
+    user = current_datastore.find_user(email="user@example.com")
+
+    assert non_existing_user is None
+
+    assert admin
+    assert admin.confirmed_at
+
+    assert user
+    assert user.confirmed_at is None
 
 
 def test_load_communities(app, db, location):
@@ -198,7 +207,9 @@ def test_load_communities(app, db, location):
     communities = CommunitiesFixture(
         [dir_ / "app_data", dir_.parent.parent / "invenio_rdm_records/fixtures/data"],
         "communities.yaml",
+        create_demo_community,
         dir_ / "app_data" / "img",
+        delay=False,
     )
 
     communities.load()
@@ -208,11 +219,22 @@ def test_load_communities(app, db, location):
 
     community1 = service.search(system_identity, q=f"slug:community1")
     community2 = service.search(system_identity, q=f"slug:community2")
+
     assert community1.total == 1
     assert community2.total == 1
 
-    # make sure the right logo was uploaded for community1
     community1_id = list(community1.hits)[0]["id"]
+    community2_id = list(community2.hits)[0]["id"]
+
+    # Check that community1 is featured
+    community1_featured_entry = service.featured_list(system_identity, community1_id)
+    assert community1_featured_entry.total == 1
+
+    # Check that community2 is not featured
+    community2_featured_entry = service.featured_list(system_identity, community2_id)
+    assert community2_featured_entry.total == 0
+
+    # make sure the right logo was uploaded for community1
     logo = service.read_logo(system_identity, community1_id)
     with logo.open_stream("rb") as fs1, open(
         Path(communities.logo_path) / "community1.png", "rb"
@@ -220,9 +242,30 @@ def test_load_communities(app, db, location):
         assert fs1.read() == fs2.read()
 
     # make sure community2 has no logo
-    community2_id = list(community2.hits)[0]["id"]
     with pytest.raises(FileNotFoundError):
         service.read_logo(system_identity, community2_id)
+
+
+def test_load_records(app, db, location, vocabularies):
+    dir_ = Path(__file__).parent
+    service = current_rdm_records.records_service
+    records = RecordsFixture(
+        [dir_ / "app_data", dir_.parent.parent / "invenio_rdm_records/fixtures/data"],
+        "records.yaml",
+        create_demo_record,
+        delay=False,
+    )
+
+    records.load()
+
+    # Refresh to make changes live
+    service.record_cls.index.refresh()
+
+    record1 = service.search(system_identity, q=f"Record1")
+    record2 = service.search(system_identity, q=f"Record2")
+
+    assert record1.total == 1
+    assert record2.total == 1
 
 
 def test_load_affiliations(app, db, admin_role, search_clear, affiliations_service):
