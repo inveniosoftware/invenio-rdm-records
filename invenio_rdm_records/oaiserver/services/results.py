@@ -28,7 +28,7 @@ class BaseServiceItemResult(ServiceItemResult):
     @property
     def links(self):
         """Get links for this result item."""
-        return self._links_tpl.expand(self._item)
+        return self._links_tpl.expand(self._identity, self._item)
 
     @property
     def data(self):
@@ -106,7 +106,7 @@ class BaseServiceListResult(ServiceListResult):
                 ),
             )
             if self._links_item_tpl:
-                projection["links"] = self._links_item_tpl.expand(hit)
+                projection["links"] = self._links_item_tpl.expand(self._identity, hit)
 
             yield projection
 
@@ -133,7 +133,7 @@ class BaseServiceListResult(ServiceListResult):
 
         if self._params:
             if self._links_tpl:
-                res["links"] = self._links_tpl.expand(self.pagination)
+                res["links"] = self._links_tpl.expand(self._identity, self.pagination)
 
         return res
 
