@@ -10,6 +10,10 @@
 Changes
 =======
 
+Version 1.2.0 (released 2022-11-29)
+
+- add records fixtures
+
 Version 1.1.0 (released 2022-11-25)
 
 - use communities v4
