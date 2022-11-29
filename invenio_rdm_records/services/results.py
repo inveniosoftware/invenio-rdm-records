@@ -19,6 +19,6 @@ class ParentCommunitiesExpandableField(ExpandableField):
         """Return the value and the service via entity resolvers."""
         return value, current_communities.service
 
-    def pick(self, resolved_rec):
+    def pick(self, identity, resolved_rec):
         """Pick fields defined in the entity resolver."""
-        return pick_fields(resolved_rec)
+        return pick_fields(identity, resolved_rec)

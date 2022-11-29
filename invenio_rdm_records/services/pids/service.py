@@ -138,7 +138,7 @@ class PIDsService(RecordService):
         else:
             self.require_permission(identity, "pid_register", record=record)
             # Determine landing page (use scheme specific if available)
-            links = self.links_item_tpl.expand(record)
+            links = self.links_item_tpl.expand(identity, record)
             url = links["self_html"]
             if f"self_{scheme}" in links:
                 url = links[f"self_{scheme}"]
