@@ -10,6 +10,10 @@
 Changes
 =======
 
+Version 1.2.1 (released 2022-12-01)
+
+- Add identity to links template expand method.
+
 Version 1.2.0 (released 2022-11-29)
 
 - add records fixtures
