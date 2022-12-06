@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2020-2021 CERN.
+# Copyright (C) 2020-2022 CERN.
 # Copyright (C) 2020 Northwestern University.
 # Copyright (C) 2021 TU Wien.
 # Copyright (C) 2021 Graz University of Technology.
@@ -26,15 +26,21 @@ class PIDsComponent(ServiceComponent):
 
         It validates and add the pids to the draft.
         """
-        pids = data.get("pids", {})
-        self.service.pids.pid_manager.validate(pids, record, errors)
-        record.pids = pids
+        pids_data = record.pids or {}  # current pids state
+        if "pids" in data:  # there is new input data for PIDs
+            pids_data = data.get("pids", {})
+
+        self.service.pids.pid_manager.validate(pids_data, record, errors)
+        record.pids = pids_data
 
     def update_draft(self, identity, data=None, record=None, errors=None):
         """Update draft handler."""
-        pids = data.get("pids", {})
-        self.service.pids.pid_manager.validate(pids, record, errors)
-        record.pids = pids
+        pids_data = record.pids or {}  # current pids state
+        if "pids" in data:  # there is new input data for PIDs
+            pids_data = data.get("pids", {})
+
+        self.service.pids.pid_manager.validate(pids_data, record, errors)
+        record.pids = pids_data
 
     def delete_draft(self, identity, draft=None, record=None, force=False):
         """This method deletes PIDs of a draft.
