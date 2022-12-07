@@ -147,3 +147,23 @@ def test_external_doi_required(
         {"field": "pids.doi", "messages": ["Missing DOI for required field."]}
     ]
     assert draft.json["pids"] == {"doi": {"provider": "external", "identifier": ""}}
+
+
+def test_pids_publish_validation_error(
+    running_app, client, minimal_record, headers, search_clear, uploader
+):
+    """Ensure that errors raised by Pids component at publish time serialize well."""
+    client = uploader.login(client)
+    del minimal_record["metadata"]["publisher"]
+    draft = client.post("/records", headers=headers, json=minimal_record)
+
+    record = client.post(link(draft.json["links"]["publish"]), headers=headers)
+
+    assert record.status_code == 400
+    expected = [
+        {
+            "field": "metadata.publisher",
+            "messages": ["Missing publisher field required for DOI registration."],
+        }
+    ]
+    assert expected == record.json["errors"]

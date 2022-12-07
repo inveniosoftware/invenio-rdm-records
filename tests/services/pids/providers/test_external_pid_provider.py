@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # Copyright (C) 2021 CERN.
+# Copyright (C) 2023 Northwestern University.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
@@ -67,21 +68,24 @@ def test_external_provider_register(record, external_provider, db):
 
 def test_external_provider_validate(running_app, db, external_provider, record):
     success, errors = external_provider.validate(
-        identifier="somevalue", record=record, provider="external"
+        record=record, identifier="somevalue", provider="external"
     )
     assert success
     assert not errors
 
 
 def test_external_provider_validate_failure(running_app, db, external_provider, record):
+    # Case - client not supported for provider
     with pytest.raises(Exception):
         external_provider.validate(
             record=record, client="someclient", provider="external"
         )
 
+    # Case - provider name invalid
     with pytest.raises(Exception):
         external_provider.validate(record=record, provider="wrong")
 
+    # Case - missing identifier
     success, errors = external_provider.validate(record=record, provider="external")
     assert not success
-    assert "Missing DOI for required field." in errors
+    assert "Missing DOI for required field." in errors[0]["messages"]

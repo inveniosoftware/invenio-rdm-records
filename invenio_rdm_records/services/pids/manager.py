@@ -13,15 +13,17 @@ from invenio_pidstore.errors import PIDDoesNotExistError
 from invenio_pidstore.models import PIDStatus
 from marshmallow import ValidationError
 
+from ..errors import ValidationErrorWithMessageAsList
 from .errors import PIDSchemeNotSupportedError, ProviderNotSupportedError
 
 
 class PIDManager:
     """RDM PIDs Manager."""
 
-    def __init__(self, providers):
+    def __init__(self, providers, required_schemes=None):
         """Constructor for RecordService."""
         self._providers = providers
+        self._required_schemes = required_schemes
 
     def _get_provider(self, scheme, provider_name=None):
         """Get a provider."""
@@ -46,17 +48,6 @@ class PIDManager:
         unknown_schemes = input_schemes - supported_schemes
         if unknown_schemes:
             raise PIDSchemeNotSupportedError(unknown_schemes)
-
-    def _validate_pids(self, pids, record, errors):
-        """Validate an iterator of PIDs.
-
-        This function assumes all pid schemes are supported by the system.
-        """
-        for scheme, pid in pids.items():
-            provider = self._get_provider(scheme, pid.get("provider"))
-            success, val_errors = provider.validate(record=record, **pid)
-            if not success:
-                errors.append({"field": f"pids.{scheme}", "messages": val_errors})
 
     def _validate_identifiers(self, pids, errors):
         """Validate and normalize identifiers."""
@@ -87,15 +78,50 @@ class PIDManager:
         for scheme, id_ in identifiers:
             pids[scheme]["identifier"] = id_
 
+    def _validate_pids(self, pids, record, errors):
+        """Validate an iterator of PIDs.
+
+        This function assumes all pid schemes are supported by the system.
+
+        Here we check if the record is compatible from the point of
+        view of the pids...
+            - ... it contains
+            - ... it would contain according to configured required pids
+
+        The responsibility lies with each provider since they are the ones
+        that know their criteria for a record that is complete enough to get
+        a PID.
+        """
+        # Validate according to the schemes that the draft has and the schemes that
+        # the draft would be given. _required_schemes are schemes that would be given
+        # (if not already on the draft).
+        schemes = set(pids.keys()) | set(self._required_schemes)
+        scheme_provider_names = [
+            # provider_name for an absent-but-required pid will be None which will
+            # in turn select the default provider below
+            (scheme, pids.get(scheme, {}).get("provider"))
+            for scheme in schemes
+        ]
+        provider_pid_dicts = [
+            (self._get_provider(scheme, provider_name), pids.get(scheme, {}))
+            for scheme, provider_name in scheme_provider_names
+        ]
+
+        for provider, pid_dict in provider_pid_dicts:
+            success, provider_errors = provider.validate(record=record, **pid_dict)
+            if not success:
+                errors.extend(provider_errors)
+
     def validate(self, pids, record, errors=None, raise_errors=False):
         """Validate PIDs."""
+        # if errors is [] we have to use it
         errors = [] if errors is None else errors
         self._validate_pids_schemes(pids)
         self._validate_identifiers(pids, errors)
         self._validate_pids(pids, record, errors)
 
         if raise_errors and errors:
-            raise ValidationError(message=errors)
+            raise ValidationErrorWithMessageAsList(message=errors)
 
     def read(self, scheme, identifier, provider_name):
         """Read a pid."""

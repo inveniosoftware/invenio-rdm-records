@@ -1,24 +1,24 @@
 # -*- coding: utf-8 -*-
 #
 # Copyright (C) 2021 CERN.
+# Copyright (C) 2023 Northwestern University.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
 
 """Tests for the service PIDsComponent."""
 
-from functools import partial
 
 import pytest
 from invenio_pidstore.errors import PIDDoesNotExistError
 from invenio_pidstore.models import PIDStatus
 from invenio_records_resources.services.uow import UnitOfWork
-from marshmallow import ValidationError
 
 from invenio_rdm_records.records import RDMDraft, RDMRecord
 from invenio_rdm_records.services import RDMRecordService
 from invenio_rdm_records.services.components import PIDsComponent
 from invenio_rdm_records.services.config import RDMRecordServiceConfig
+from invenio_rdm_records.services.errors import ValidationErrorWithMessageAsList
 from invenio_rdm_records.services.pids import PIDManager, PIDsService
 from invenio_rdm_records.services.pids.errors import PIDSchemeNotSupportedError
 from invenio_rdm_records.services.pids.providers import ExternalPIDProvider, PIDProvider
@@ -45,13 +45,30 @@ class TestManagedPIDProvider(PIDProvider):
         return super().create(record, pid_value=str(pid_value), **kwargs)
 
     def validate(self, record, identifier=None, provider=None, **kwargs):
-        """Validate the attributes of the identifier."""
+        """Validate the attributes of the pid and the record.
+
+        Here we make missing a publisher an error.
+        """
         success, errors = super().validate(record, identifier, provider, **kwargs)
-        try:
-            int(identifier)
-        except ValueError:
-            errors.append("Identifier must be an integer.")
-        return (True, []) if not errors else (False, errors)
+
+        if provider is not None:
+            try:
+                int(identifier)
+            except ValueError:
+                error = self._get_or_append_error_dict(errors)
+                error["messages"].append("Identifier must be an integer.")
+
+        if not record.get("metadata", {}).get("publisher"):
+            errors.append(
+                {
+                    "field": "metadata.publisher",
+                    "messages": [
+                        "Missing publisher field required for DOI registration."
+                    ],
+                }
+            )
+
+        return not bool(errors), errors
 
 
 # configs
@@ -340,11 +357,13 @@ def test_publish_non_existing_required_managed(
     # make sure `pids` field is added
     data = minimal_record.copy()
     data["pids"] = {}
-
     # create a minimal draft
     draft = RDMDraft.create(data)
     # no validation needed since /publish gets no payload (new data)
     record = RDMRecord.publish(draft)
+    # inject required publisher (this would be done by the MetadataComponent)
+    record["metadata"] = {"publisher": "Acme Inc"}
+
     component.publish(identity_simple, draft=draft, record=record)
     assert "pids" in record
     assert record.pids == {"test": {"identifier": "1", "provider": "managed"}}
@@ -370,7 +389,7 @@ def test_publish_non_existing_required_external(
     draft = RDMDraft.create(data)
     # no validation needed since /publish gets no payload (new data)
     record = RDMRecord.publish(draft)
-    with pytest.raises(ValidationError):
+    with pytest.raises(ValidationErrorWithMessageAsList):
         component.publish(identity_simple, draft=draft, record=record)
 
 

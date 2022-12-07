@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # Copyright (C) 2021 CERN.
+# Copyright (C) 2023 Northwestern University.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
@@ -60,11 +61,12 @@ class ExternalPIDProvider(PIDProvider):
         self._validators = validators or []
 
     def validate(self, record, identifier=None, provider=None, client=None, **kwargs):
-        """Validate the attributes of the identifier.
+        """Validate the pid attributes and record.
 
-        :returns: A tuple (success, errors). The first specifies if the
-                  validation was passed successfully. The second one is an
-                  array of error messages.
+        :returns: A tuple (success, errors). `success` is a bool that specifies
+                  if the validation was successful. `errors` is a list of
+                  error dicts of the form:
+                  `{"field": <field>, "messages: ["<msgA1>", ...]}`.
         """
         if client:
             current_app.logger.error(
@@ -76,12 +78,19 @@ class ExternalPIDProvider(PIDProvider):
         success, errors = super().validate(record, identifier, provider, **kwargs)
 
         if not identifier:
-            errors.append(
+            error = self._get_or_append_error_dict(errors)
+            error["messages"].append(
                 _("Missing {scheme} for required field.").format(scheme=self.label)
             )
 
         for v in self._validators:
-            v(record, identifier, provider, errors)
+            # Not very pretty but keeps original functionality without touching
+            # BlockedPrefixes
+            error_msgs = []
+            v(record, identifier, provider, error_msgs)
+            if error_msgs:
+                error = self._get_or_append_error_dict(errors)
+                error["messages"].extend(error_msgs)
 
         return (True, []) if not errors else (False, errors)
 

@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # Copyright (C) 2021 CERN.
+# Copyright (C) 2023 Northwestern University.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
@@ -196,16 +197,36 @@ class DataCitePIDProvider(PIDProvider):
     def validate(self, record, identifier=None, provider=None, **kwargs):
         """Validate the attributes of the identifier.
 
-        :returns: A tuple (success, errors). The first specifies if the
-                  validation was passed successfully. The second one is an
-                  array of error messages.
+        :returns: A tuple (success, errors). `success` is a bool that specifies
+                  if the validation was successful. `errors` is a list of
+                  error dicts of the form:
+                  `{"field": <field>, "messages: ["<msgA1>", ...]}`.
         """
-        _, errors = super().validate(record, identifier, provider, **kwargs)
+        # success is unused, but naming it _ would interfere with lazy_gettext as _
+        success, errors = super().validate(record, identifier, provider, **kwargs)
 
-        # Format check
-        try:
-            self.client.api.check_doi(identifier)
-        except ValueError as e:
-            errors.append(str(e))
+        # Validate identifier
+        # Checking if the identifier is not None is crucial because not all records at
+        # this point will have a DOI identifier (and that is fine in the case of initial
+        # creation)
+        if identifier is not None:
+            # Format check
+            try:
+                self.client.api.check_doi(identifier)
+            except ValueError as e:
+                # modifies the error in errors in-place
+                error = self._get_or_append_error_dict(errors)
+                error["messages"].append(str(e))
 
-        return (True, []) if not errors else (False, errors)
+        # Validate record
+        if not record.get("metadata", {}).get("publisher"):
+            errors.append(
+                {
+                    "field": "metadata.publisher",
+                    "messages": [
+                        _("Missing publisher field required for DOI registration.")
+                    ],
+                }
+            )
+
+        return not bool(errors), errors
