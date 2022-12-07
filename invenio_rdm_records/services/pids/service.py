@@ -44,7 +44,7 @@ class PIDsService(RecordService):
         - limit side-effects (in case using pre-existing `pid_manager` would
                               cause some.)
         """
-        return self.manager_cls(self.config.pids_providers)
+        return self.manager_cls(self.config.pids_providers, self.config.pids_required)
 
     @property
     def pid_manager(self):

@@ -19,9 +19,10 @@ from .errors import PIDSchemeNotSupportedError, ProviderNotSupportedError
 class PIDManager:
     """RDM PIDs Manager."""
 
-    def __init__(self, providers):
+    def __init__(self, providers, required_schemes=None):
         """Constructor for RecordService."""
         self._providers = providers
+        self._required_schemes = required_schemes
 
     def _get_provider(self, scheme, provider_name=None):
         """Get a provider."""
@@ -46,17 +47,6 @@ class PIDManager:
         unknown_schemes = input_schemes - supported_schemes
         if unknown_schemes:
             raise PIDSchemeNotSupportedError(unknown_schemes)
-
-    def _validate_pids(self, pids, record, errors):
-        """Validate an iterator of PIDs.
-
-        This function assumes all pid schemes are supported by the system.
-        """
-        for scheme, pid in pids.items():
-            provider = self._get_provider(scheme, pid.get("provider"))
-            success, val_errors = provider.validate(record=record, **pid)
-            if not success:
-                errors.append({"field": f"pids.{scheme}", "messages": val_errors})
 
     def _validate_identifiers(self, pids, errors):
         """Validate and normalize identifiers."""
@@ -87,12 +77,60 @@ class PIDManager:
         for scheme, id_ in identifiers:
             pids[scheme]["identifier"] = id_
 
+    def _validate_pids(self, pids, record, errors):
+        """Validate an iterator of PIDs.
+
+        This function assumes all pid schemes are supported by the system.
+        """
+        for scheme, pid in pids.items():
+            provider = self._get_provider(scheme, pid.get("provider"))
+            success, val_errors = provider.validate(record=record, **pid)
+            if not success:
+                errors.append({"field": f"pids.{scheme}", "messages": val_errors})
+
     def validate(self, pids, record, errors=None, raise_errors=False):
         """Validate PIDs."""
         errors = [] if errors is None else errors
         self._validate_pids_schemes(pids)
         self._validate_identifiers(pids, errors)
         self._validate_pids(pids, record, errors)
+
+        if raise_errors and errors:
+            raise ValidationError(message=errors)
+
+    def validate_record(self, record, raise_errors=False):
+        """Validate the record according to the PIDs' requirements.
+
+        Here we check if the record is compatible from the point of
+        view of the pids...
+            - ... it contains
+            - ... it would contain according to configured required pids
+
+        The responsibility lies with each provider since they are the ones
+        that know their criteria for a record that is complete enough to get
+        a PID.
+        """
+        errors = {}
+
+        # scheme, provider_name for record's pids
+        scheme_names = [
+            (scheme, pid.get("provider"))
+            for scheme, pid in record.get("pids", {}).items()
+        ]
+        # scheme, None for required pids
+        scheme_names += [(scheme, None) for scheme in self._required_schemes]
+        providers = [
+            self._get_provider(scheme, provider_name)
+            for scheme, provider_name in scheme_names
+        ]
+
+        for provider in providers:
+            success, provider_errors = provider.validate_record(record)
+            if not success:
+                # This is not perfect as one provider may override the error of another
+                # but a proper dict merging algorithm is out-of-bounds here and as long
+                # as an error is raised we are good.
+                errors.update(provider_errors)
 
         if raise_errors and errors:
             raise ValidationError(message=errors)

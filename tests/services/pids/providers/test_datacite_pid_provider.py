@@ -195,24 +195,57 @@ def test_datacite_provider_configuration(record, mocker):
     assert datacite_provider.create(record).pid_value == expected_result
 
 
-def test_datacite_provider_validation(record, mocker):
-    client = DataCiteClient("datacite")
-
-    # check with default func
+def test_datacite_provider_validate(record):
     current_app.config["DATACITE_PREFIX"] = "10.1000"
+    client = DataCiteClient("datacite")
     datacite_provider = DataCitePIDProvider("datacite", client=client)
+
+    # Case - Valid identifier (doi)
     success, errors = datacite_provider.validate(
         record=record, identifier="10.1000/valid.1234", provider="datacite"
     )
     assert success
-    assert errors == []
+    assert [] == errors
 
+    # Case - Invalid identifier (doi)
     success, errors = datacite_provider.validate(
         record=record, identifier="10.2000/invalid.1234", provider="datacite"
     )
-
     assert not success
-    assert errors == [
+    expected = [
         "Wrong DOI 10.2000 prefix provided, "
         + "it should be 10.1000 as defined in the rest client"
     ]
+    assert expected == errors
+
+
+def test_datacite_provider_validate_record(record):
+    record["metadata"] = {"publisher": "Acme Inc"}
+    current_app.config["DATACITE_PREFIX"] = "10.1000"
+    client = DataCiteClient("datacite")
+    datacite_provider = DataCitePIDProvider("datacite", client=client)
+
+    # Case - valid new record without pids.doi
+    success, errors = datacite_provider.validate_record(record)
+    assert {} == errors
+    assert success
+
+    # Case - valid record with pre-existing pids.doi
+    record["pids"] = {
+        "doi": {"provider": "datacite", "identifier": "10.1000/pre-existing.1234"}
+    }
+    success, errors = datacite_provider.validate_record(record)
+    assert {} == errors
+    assert success
+
+    # Case - invalid record
+    del record["metadata"]["publisher"]
+    success, errors = datacite_provider.validate_record(record)
+    expected = {
+        "metadata.publisher": [
+            "Missing publisher field required for DOI registration."
+        ],
+    }
+
+    assert expected == errors
+    assert not success
