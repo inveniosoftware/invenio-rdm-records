@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # Copyright (C) 2021 CERN.
+# Copyright (C) 2023 Northwestern University.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
@@ -195,24 +196,55 @@ def test_datacite_provider_configuration(record, mocker):
     assert datacite_provider.create(record).pid_value == expected_result
 
 
-def test_datacite_provider_validation(record, mocker):
-    client = DataCiteClient("datacite")
-
-    # check with default func
+def test_datacite_provider_validation(record):
     current_app.config["DATACITE_PREFIX"] = "10.1000"
+    client = DataCiteClient("datacite")
     datacite_provider = DataCitePIDProvider("datacite", client=client)
+    record["metadata"] = {"publisher": "Acme Inc"}
+
+    # Case - Valid identifier (doi) + record
     success, errors = datacite_provider.validate(
         record=record, identifier="10.1000/valid.1234", provider="datacite"
     )
     assert success
-    assert errors == []
+    assert [] == errors
 
+    # Case - Invalid identifier (doi)
     success, errors = datacite_provider.validate(
         record=record, identifier="10.2000/invalid.1234", provider="datacite"
     )
-
     assert not success
-    assert errors == [
-        "Wrong DOI 10.2000 prefix provided, "
-        + "it should be 10.1000 as defined in the rest client"
+    expected = [
+        {
+            "field": "pids.doi",
+            "messages": [
+                "Wrong DOI 10.2000 prefix provided, "
+                + "it should be 10.1000 as defined in the rest client"
+            ],
+        }
     ]
+    assert expected == errors
+
+    current_app.config["DATACITE_PREFIX"] = "10.1000"
+    client = DataCiteClient("datacite")
+    datacite_provider = DataCitePIDProvider("datacite", client=client)
+
+    # Case - valid new record without pids.doi (empty pid_dict)
+    assert not record.get("pids", {}).get("doi")
+    success, errors = datacite_provider.validate(record=record, **{})
+    assert [] == errors
+    assert success
+
+    # Case - invalid record
+    del record["metadata"]["publisher"]
+    success, errors = datacite_provider.validate(
+        record=record, identifier="10.1000/valid.1234", provider="datacite"
+    )
+    expected = [
+        {
+            "field": "metadata.publisher",
+            "messages": ["Missing publisher field required for DOI registration."],
+        }
+    ]
+    assert expected == errors
+    assert not success

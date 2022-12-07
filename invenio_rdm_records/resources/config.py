@@ -31,10 +31,12 @@ from ..services.errors import (
     ReviewInconsistentAccessRestrictions,
     ReviewNotFoundError,
     ReviewStateError,
+    ValidationErrorWithMessageAsList,
 )
 from .args import RDMSearchRequestArgsSchema
 from .deserializers import ROCrateJSONDeserializer
 from .deserializers.errors import DeserializerError
+from .errors import HTTPJSONValidationWithMessageAsListException
 from .serializers import (
     CSLJSONSerializer,
     DataCite43JSONSerializer,
@@ -153,6 +155,9 @@ class RDMRecordResourceConfig(RecordResourceConfig):
                 code=400,
                 description=exc.args[0],
             )
+        ),
+        ValidationErrorWithMessageAsList: create_error_handler(
+            lambda e: HTTPJSONValidationWithMessageAsListException(e)
         ),
     }
 

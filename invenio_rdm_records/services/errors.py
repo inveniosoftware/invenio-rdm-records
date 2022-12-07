@@ -52,3 +52,44 @@ class ReviewInconsistentAccessRestrictions(ReviewException):
             *args,
             **kwargs,
         )
+
+
+class ValidationErrorWithMessageAsList(Exception):
+    """Record Validation error where the messages are already a list.
+
+    There is a large context around this to understand. Field errors are
+    sent to the frontend by either:
+
+    - raising a marshmallow ValidationError that is then caught by an error
+      handler and converted to a list of
+      `{field: <fieldpath>, messages: <error msg array>}` in the returned JSON.
+      (See invenio_records_resources/resources/errors.py)
+    - not raising an error but filling out an `errors` list that is
+      serialzed out in JSON normally.
+
+    The conversion process in the first case expects a dict of error messages
+    inside the ValidationError. But these dict errors are converted to list
+    as soon as the schema is loaded. The rest of the codebase works with the
+    resulting list of errors. So for an error *raised* after schema
+    validation, one would have to construct it by converting the list back to
+    a dict, only for the error handler to reconvert it back again to that list
+    in the end. (Note that passing the list of errors directly would result in
+    `errors: {"_schema": <list of errors>}` passed to the frontend which
+    isn't what it expects.)
+
+    This error along with accompanying error_handler foregoes the need for
+    that.
+    """
+
+    def __init__(self, message):
+        """Constructor.
+
+        Note that we keep the `message` parameter as interface to look like
+        a marshmallow ValidationError even though it is annoying that the field
+        is then called by `self.messages`.
+
+        :param message: list of dicts in the shape:
+                        `{"<fieldA>": ["<msgA1>", ...], ...}`
+        """
+        assert isinstance(message, list)
+        self.messages = message

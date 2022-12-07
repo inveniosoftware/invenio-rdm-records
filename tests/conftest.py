@@ -533,8 +533,6 @@ def minimal_record():
             "enabled": False,  # Most tests don't care about files
         },
         "metadata": {
-            "publication_date": "2020-06-01",
-            "resource_type": {"id": "image-photo"},
             "creators": [
                 {
                     "person_or_org": {
@@ -550,6 +548,10 @@ def minimal_record():
                     },
                 },
             ],
+            "publication_date": "2020-06-01",
+            # because DATACITE_ENABLED is True, this field is required
+            "publisher": "Acme Inc",
+            "resource_type": {"id": "image-photo"},
             "title": "A Romans story",
         },
     }
