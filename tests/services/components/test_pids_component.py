@@ -53,6 +53,10 @@ class TestManagedPIDProvider(PIDProvider):
             errors.append("Identifier must be an integer.")
         return (True, []) if not errors else (False, errors)
 
+    def validate_record(self, record):
+        """Validate the record according to PID rules i.e. always good."""
+        return True, []
+
 
 # configs
 

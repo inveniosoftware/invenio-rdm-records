@@ -164,3 +164,17 @@ class PIDProvider:
             pass
 
         return True, []
+
+    def validate_record(self, record):
+        """Validate the record according to the provider's rules.
+
+        By default it always validates. Descendants should override this method with
+        their own validation logic if need be.
+
+        :param record: A record-like (draft or published record)
+        :returns: A tuple (success, errors). `success` is a bool that specifies
+                  if the validation was successful. `errors` is a list of
+                  error dicts of the form:
+                  `{"field": <field>, "messages: ["<msgA1>", ...]}`.
+        """
+        return True, []

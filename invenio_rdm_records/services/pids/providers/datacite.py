@@ -208,4 +208,28 @@ class DataCitePIDProvider(PIDProvider):
         except ValueError as e:
             errors.append(str(e))
 
-        return (True, []) if not errors else (False, errors)
+        return not bool(errors), errors
+
+    def validate_record(self, record):
+        """Validate the record according to DataCite rules.
+
+        We only add check for values not already covered by the record schema.
+
+        :returns: A tuple (success, errors). `success` is a bool that specifies
+                  if the validation was successful. `errors` is a list of
+                  error dicts of the form:
+                  `{"field": <field>, "messages: ["<msgA1>", ...]}`.
+        """
+        errors = []
+
+        if not record["metadata"].get("publisher"):
+            errors.append(
+                {
+                    "field": "metadata.publisher",
+                    "messages": [
+                        _("Missing publisher field required for DOI registration.")
+                    ],
+                }
+            )
+
+        return not bool(errors), errors

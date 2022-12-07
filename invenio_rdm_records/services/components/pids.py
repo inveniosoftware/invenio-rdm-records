@@ -65,11 +65,7 @@ class PIDsComponent(ServiceComponent):
         record_pids = copy(record.get("pids", {}))
         draft_schemes = set(draft_pids.keys())
         record_schemes = set(record_pids.keys())
-
-        # Determine schemes which are required, but not yet created.
-        missing_required_schemes = (
-            set(self.service.config.pids_required) - record_schemes - draft_schemes
-        )
+        required_schemes = set(self.service.config.pids_required)
 
         # Validate the draft PIDs
         self.service.pids.pid_manager.validate(draft_pids, record, raise_errors=True)
@@ -88,8 +84,9 @@ class PIDsComponent(ServiceComponent):
 
         self.service.pids.pid_manager.discard_all(changed_pids)
 
-        # Create all PIDs specified on draft or which PIDs schemes which are
-        # require
+        # Determine schemes which are required, but not yet created.
+        missing_required_schemes = required_schemes - record_schemes - draft_schemes
+        # Create all PIDs specified on draft and all missing required PIDs
         pids = self.service.pids.pid_manager.create_all(
             draft,
             pids=draft_pids,
