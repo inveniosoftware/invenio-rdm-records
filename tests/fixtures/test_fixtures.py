@@ -13,11 +13,16 @@ from invenio_access.permissions import system_identity
 from invenio_accounts.proxies import current_datastore
 from invenio_communities import current_communities
 from invenio_communities.fixtures.tasks import create_demo_community
+from invenio_pages import Page
 from invenio_pidstore.errors import PIDDoesNotExistError
 from invenio_records_resources.proxies import current_service_registry
 from invenio_vocabularies.proxies import current_service as vocabulary_service
 
-from invenio_rdm_records.fixtures import RecordsFixture, create_demo_record
+from invenio_rdm_records.fixtures import (
+    PagesFixture,
+    RecordsFixture,
+    create_demo_record,
+)
 from invenio_rdm_records.fixtures.communities import CommunitiesFixture
 from invenio_rdm_records.fixtures.users import UsersFixture
 from invenio_rdm_records.fixtures.vocabularies import (
@@ -294,3 +299,18 @@ def test_load_affiliations(app, db, admin_role, search_clear, affiliations_servi
 
     with pytest.raises(PIDDoesNotExistError):
         affiliations_service.read(system_identity, "cern")
+
+
+def test_load_pages(app, db, admin_role):
+    dir_ = Path(__file__).parent
+    PagesFixture(
+        [dir_ / "app_data", dir_.parent.parent / "invenio_rdm_records/fixtures/data"],
+        "pages.yaml",
+        [dir_ / "app_data/pages", dir_ / "pages"],
+    ).load()
+
+    pages = Page.query.all()
+
+    assert len(pages) == 1
+
+    assert pages[0].title == "About"

@@ -25,12 +25,12 @@ recursive-include docs Makefile
 recursive-include examples *.py
 recursive-include examples *.sh
 recursive-include invenio_rdm_records *.html *.js *.less
+recursive-include invenio_rdm_records *.gitkeep
 recursive-include invenio_rdm_records *.json *.csv
 recursive-include invenio_rdm_records *.png *.svg
 recursive-include invenio_rdm_records *.po *.pot *.mo
 recursive-include invenio_rdm_records *.yaml
-recursive-include tests *.py *.csv *.json *.yaml *.png
-
+recursive-include tests *.py *.csv *.json *.yaml *.png *.html
 # added by check-manifest
 recursive-include invenio_rdm_records *.py
 include .git-blame-ignore-revs

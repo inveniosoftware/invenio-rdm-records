@@ -5,11 +5,10 @@
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
 
-"""Communities fixture module."""
+"""Records fixture module."""
 
 from ..utils import get_or_create_user
 from .fixture import FixtureMixin
-from .tasks import create_demo_record
 
 
 class RecordsFixture(FixtureMixin):

@@ -14,6 +14,7 @@ from flask import current_app
 from invenio_communities.fixtures.tasks import create_demo_community
 
 from .communities import CommunitiesFixture
+from .pages import PagesFixture
 from .records import RecordsFixture
 from .tasks import create_demo_record
 from .users import UsersFixture
@@ -60,6 +61,29 @@ class FixturesEngine:
             [app_data_folder, data_folder],
             "records.yaml",
             create_demo_record,
+        ).load()
+
+        PagesFixture(
+            [app_data_folder, dir_ / data_folder],
+            "pages.yaml",
+            [Path("./app_data/pages"), dir_ / "pages"],
+        ).load()
+
+
+class Pages:
+    """Pages engine."""
+
+    def run(self, force=False):
+        """Run the pages loading."""
+        dir_ = Path(__file__).parent
+        app_data_folder = Path(current_app.instance_path) / "app_data"
+        data_folder = dir_ / "data"
+
+        PagesFixture(
+            [app_data_folder, data_folder],
+            "pages.yaml",
+            [Path("./app_data/pages"), dir_ / "pages"],
+            force,
         ).load()
 
 

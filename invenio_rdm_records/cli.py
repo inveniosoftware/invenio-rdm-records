@@ -27,7 +27,7 @@ from invenio_search.utils import build_alias_name
 
 from invenio_rdm_records.proxies import current_rdm_records, current_rdm_records_service
 
-from .fixtures import FixturesEngine
+from .fixtures import FixturesEngine, Pages
 from .fixtures.demo import (
     create_fake_community,
     create_fake_oai_set,
@@ -418,3 +418,28 @@ def custom_field_exists_in_records(field_name):
         click.secho(f"Field {field_name} exists", fg="green")
     else:
         click.secho(f"Field {field_name} does not exist", fg="red")
+
+
+@rdm_records.group()
+def pages():
+    """Static pages."""
+
+
+@pages.command("create")
+@click.option(
+    "-f",
+    "--force",
+    "force",
+    default=False,
+    is_flag=True,
+    show_default=True,
+    help="Creates static pages.",
+)
+@with_appcontext
+def create_static_pages(force):
+    """Create static pages."""
+    click.secho("Creating static pages...", fg="green")
+
+    Pages().run(force=force)
+
+    click.secho("Created static pages!", fg="green")
