@@ -80,9 +80,7 @@ class PersonOrOrgSchema43(Schema):
         for identifier in identifiers:
             scheme = identifier["scheme"]
             id_scheme = get_scheme_datacite(
-                scheme,
-                "RDM_RECORDS_PERSONORG_SCHEMES",
-                default=scheme,
+                scheme, "RDM_RECORDS_PERSONORG_SCHEMES", default=scheme
             )
 
             if id_scheme:
@@ -117,9 +115,7 @@ class PersonOrOrgSchema43(Schema):
             affiliations = affiliations_service.read_many(system_identity, ids)
 
             for affiliation in affiliations:
-                aff = {
-                    "name": affiliation["name"],
-                }
+                aff = {"name": affiliation["name"]}
                 identifiers = affiliation.get("identifiers")
                 if identifiers:
                     # FIXME: Make configurable
@@ -294,8 +290,12 @@ class DataCite43Schema(BaseSerializerSchema):
         """Get dates."""
         dates = [{"date": obj["metadata"]["publication_date"], "dateType": "Issued"}]
 
+        updated = False
+
         for date in obj["metadata"].get("dates", []):
             date_type_id = date.get("type", {}).get("id")
+            if date_type_id == "updated":
+                updated = True
             props = get_vocabulary_props("datetypes", ["props.datacite"], date_type_id)
             to_append = {
                 "date": date["date"],
@@ -306,6 +306,19 @@ class DataCite43Schema(BaseSerializerSchema):
                 to_append["dateInformation"] = desc
 
             dates.append(to_append)
+
+        if not updated:
+            try:
+                updated_date = obj["updated"]
+            except KeyError:
+                pass
+                # If no update date is present, do nothing. Happens with some tests, but should not in live repository
+            else:
+                to_append = {
+                    "date": updated_date.split("T")[0],
+                    "dateType": "Updated",
+                }
+                dates.append(to_append)
 
         return dates or missing
 
@@ -334,17 +347,12 @@ class DataCite43Schema(BaseSerializerSchema):
         pids = obj["pids"]
         for scheme, id_ in pids.items():
             id_scheme = get_scheme_datacite(
-                scheme,
-                "RDM_RECORDS_IDENTIFIERS_SCHEMES",
-                default=scheme,
+                scheme, "RDM_RECORDS_IDENTIFIERS_SCHEMES", default=scheme
             )
 
             if id_scheme:
                 serialized_identifiers.append(
-                    {
-                        "identifier": id_["identifier"],
-                        "identifierType": id_scheme,
-                    }
+                    {"identifier": id_["identifier"], "identifierType": id_scheme}
                 )
 
         # Identifiers field
@@ -360,10 +368,7 @@ class DataCite43Schema(BaseSerializerSchema):
                 # dropped
                 if id_scheme != "DOI":
                     serialized_identifiers.append(
-                        {
-                            "identifier": id_["identifier"],
-                            "identifierType": id_scheme,
-                        }
+                        {"identifier": id_["identifier"], "identifierType": id_scheme}
                     )
 
         return serialized_identifiers or missing
@@ -381,9 +386,7 @@ class DataCite43Schema(BaseSerializerSchema):
 
             scheme = rel_id["scheme"]
             id_scheme = get_scheme_datacite(
-                scheme,
-                "RDM_RECORDS_IDENTIFIERS_SCHEMES",
-                default=scheme,
+                scheme, "RDM_RECORDS_IDENTIFIERS_SCHEMES", default=scheme
             )
 
             # Only serialize related identifiers with a valid scheme for DataCite.
@@ -579,7 +582,7 @@ class DataCite43Schema(BaseSerializerSchema):
                 ids.append(_id)
             else:
                 serialized_right = {
-                    "rights": right.get("title").get(current_default_locale()),
+                    "rights": right.get("title").get(current_default_locale())
                 }
 
                 link = right.get("link")
