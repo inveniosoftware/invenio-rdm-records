@@ -59,7 +59,9 @@ class ExternalPIDProvider(PIDProvider):
         super().__init__(name, pid_type=pid_type, managed=False, **kwargs)
         self._validators = validators or []
 
-    def validate(self, record, identifier=None, provider=None, client=None, **kwargs):
+    def validate_pid(
+        self, record, identifier=None, provider=None, client=None, **kwargs
+    ):
         """Validate the attributes of the identifier.
 
         :returns: A tuple (success, errors). The first specifies if the
@@ -73,7 +75,7 @@ class ExternalPIDProvider(PIDProvider):
             )
             raise  # configuration error
 
-        success, errors = super().validate(record, identifier, provider, **kwargs)
+        success, errors = super().validate_pid(record, identifier, provider, **kwargs)
 
         if not identifier:
             errors.append(

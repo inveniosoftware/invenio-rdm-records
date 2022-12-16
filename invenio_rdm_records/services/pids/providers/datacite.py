@@ -193,14 +193,14 @@ class DataCitePIDProvider(PIDProvider):
 
         return super().delete(pid, **kwargs)
 
-    def validate(self, record, identifier=None, provider=None, **kwargs):
+    def validate_pid(self, record, identifier=None, provider=None, **kwargs):
         """Validate the attributes of the identifier.
 
         :returns: A tuple (success, errors). The first specifies if the
                   validation was passed successfully. The second one is an
                   array of error messages.
         """
-        _, errors = super().validate(record, identifier, provider, **kwargs)
+        _, errors = super().validate_pid(record, identifier, provider, **kwargs)
 
         # Format check
         try:

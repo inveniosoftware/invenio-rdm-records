@@ -195,20 +195,20 @@ def test_datacite_provider_configuration(record, mocker):
     assert datacite_provider.create(record).pid_value == expected_result
 
 
-def test_datacite_provider_validate(record):
+def test_datacite_provider_validate_pid(record):
     current_app.config["DATACITE_PREFIX"] = "10.1000"
     client = DataCiteClient("datacite")
     datacite_provider = DataCitePIDProvider("datacite", client=client)
 
     # Case - Valid identifier (doi)
-    success, errors = datacite_provider.validate(
+    success, errors = datacite_provider.validate_pid(
         record=record, identifier="10.1000/valid.1234", provider="datacite"
     )
     assert success
     assert [] == errors
 
     # Case - Invalid identifier (doi)
-    success, errors = datacite_provider.validate(
+    success, errors = datacite_provider.validate_pid(
         record=record, identifier="10.2000/invalid.1234", provider="datacite"
     )
     assert not success

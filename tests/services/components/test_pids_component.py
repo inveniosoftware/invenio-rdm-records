@@ -44,9 +44,9 @@ class TestManagedPIDProvider(PIDProvider):
             self.id_counter += 1
         return super().create(record, pid_value=str(pid_value), **kwargs)
 
-    def validate(self, record, identifier=None, provider=None, **kwargs):
+    def validate_pid(self, record, identifier=None, provider=None, **kwargs):
         """Validate the attributes of the identifier."""
-        success, errors = super().validate(record, identifier, provider, **kwargs)
+        success, errors = super().validate_pid(record, identifier, provider, **kwargs)
         try:
             int(identifier)
         except ValueError:

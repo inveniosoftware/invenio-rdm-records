@@ -132,7 +132,7 @@ class PIDProvider:
         """
         return pid.delete()
 
-    def validate(self, record, identifier=None, provider=None, **kwargs):
+    def validate_pid(self, record, identifier=None, provider=None, **kwargs):
         """Validate the attributes of the identifier.
 
         :returns: A tuple (success, errors). The first specifies if the

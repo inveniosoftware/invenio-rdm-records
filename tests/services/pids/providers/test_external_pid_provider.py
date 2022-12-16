@@ -65,8 +65,8 @@ def test_external_provider_register(record, external_provider, db):
     assert db_pid.status == PIDStatus.REGISTERED
 
 
-def test_external_provider_validate(running_app, db, external_provider, record):
-    success, errors = external_provider.validate(
+def test_external_provider_validate_pid(running_app, db, external_provider, record):
+    success, errors = external_provider.validate_pid(
         identifier="somevalue", record=record, provider="external"
     )
     assert success
@@ -75,13 +75,13 @@ def test_external_provider_validate(running_app, db, external_provider, record):
 
 def test_external_provider_validate_failure(running_app, db, external_provider, record):
     with pytest.raises(Exception):
-        external_provider.validate(
+        external_provider.validate_pid(
             record=record, client="someclient", provider="external"
         )
 
     with pytest.raises(Exception):
-        external_provider.validate(record=record, provider="wrong")
+        external_provider.validate_pid(record=record, provider="wrong")
 
-    success, errors = external_provider.validate(record=record, provider="external")
+    success, errors = external_provider.validate_pid(record=record, provider="external")
     assert not success
     assert "Missing DOI for required field." in errors

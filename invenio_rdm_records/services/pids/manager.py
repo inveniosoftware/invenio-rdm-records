@@ -85,7 +85,7 @@ class PIDManager:
         """
         for scheme, pid in pids.items():
             provider = self._get_provider(scheme, pid.get("provider"))
-            success, val_errors = provider.validate(record=record, **pid)
+            success, val_errors = provider.validate_pid(record=record, **pid)
             if not success:
                 errors.append({"field": f"pids.{scheme}", "messages": val_errors})
 
