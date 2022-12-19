@@ -3,7 +3,7 @@
 # Copyright (C) 2021 CERN.
 # Copyright (C) 2021 Northwestern University.
 # Copyright (C) 2023 Graz University of Technology.
-# Copyright (C) 2022 Caltech.
+# Copyright (C) 2023 Caltech.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
@@ -393,10 +393,10 @@ class DataCite43Schema(BaseSerializerSchema):
                 # PIDS-FIXME: Scalable enough?
                 if geo_type == "Point":
                     serialized_location["geoLocationPoint"] = {
-                        "pointLatitude": str(geometry["coordinates"][0]),
-                        "pointLongitude": str(geometry["coordinates"][1]),
+                        "pointLongitude": str(geometry["coordinates"][0]),
+                        "pointLatitude": str(geometry["coordinates"][1]),
                     }
-                if geo_type == "Polygon":
+                elif geo_type == "Polygon":
                     # geojson has a layer of nesting before actual coordinates
                     coords = geometry["coordinates"][0]
                     # First we see if we have a box

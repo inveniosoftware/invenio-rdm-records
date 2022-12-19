@@ -54,11 +54,11 @@ def full_geolocation_box_record(full_record):
             "geometry": {
                 "coordinates": [
                     [
-                        [33.17, -105.92],
-                        [33.17, -106.0],
-                        [33.0, -106.0],
-                        [33.0, -105.92],
-                        [33.17, -105.92],
+                        [-105.92, 33.17],
+                        [-106.0, 33.17],
+                        [-106.0, 33.0],
+                        [-105.92, 33.0],
+                        [-105.92, 33.17],
                     ]
                 ],
                 "type": "Polygon",
@@ -206,8 +206,8 @@ def test_datacite43_serializer(running_app, full_record):
         "geoLocations": [
             {
                 "geoLocationPoint": {
-                    "pointLatitude": "-32.94682",
-                    "pointLongitude": "-60.63932",
+                    "pointLongitude": "-32.94682",
+                    "pointLatitude": "-60.63932",
                 },
                 "geoLocationPlace": "test location place",
             }
@@ -301,8 +301,8 @@ def test_datacite43_xml_serializer(running_app, full_record):
         "    <geoLocation>",
         "      <geoLocationPlace>test location place</geoLocationPlace>",
         "      <geoLocationPoint>",
-        "        <pointLongitude>-60.63932</pointLongitude>",
-        "        <pointLatitude>-32.94682</pointLatitude>",
+        "        <pointLongitude>-32.94682</pointLongitude>",
+        "        <pointLatitude>-60.63932</pointLatitude>",
         "      </geoLocationPoint>",
         "    </geoLocation>",
         "  </geoLocations>",

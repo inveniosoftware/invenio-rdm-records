@@ -124,9 +124,9 @@ def test_dcat_serializer(running_app, enhanced_full_record):
         '        <rdf:type rdf:resource="http://www.w3.org/2004/02/skos/core#Concept"/>',  # noqa
         "        <skos:prefLabel>test location place</skos:prefLabel>",
         "        <locn:geographicName>test location place</locn:geographicName>",
-        '        <dcat:centroid rdf:datatype="http://www.opengis.net/ont/geosparql#wktLiteral"><![CDATA[POINT(-60.63932 -32.94682)]]></dcat:centroid>',  # noqa
-        '        <dcat:centroid rdf:datatype="http://www.opengis.net/ont/geosparql#gmlLiteral"><![CDATA[<gml:Point srsName="http://www.opengis.net/def/crs/OGC/1.3/CRS84"><gml:pos srsDimension="2">-60.63932 -32.94682</gml:pos></gml:Point>]]></dcat:centroid>',  # noqa
-        '        <dcat:centroid rdf:datatype="http://www.opengis.net/ont/geosparql#geoJSONLiteral"><![CDATA[{"type":"Point","coordinates":[-60.63932,-32.94682]}]]></dcat:centroid>',  # noqa
+        '        <dcat:centroid rdf:datatype="http://www.opengis.net/ont/geosparql#wktLiteral"><![CDATA[POINT(-32.94682 -60.63932)]]></dcat:centroid>',  # noqa
+        '        <dcat:centroid rdf:datatype="http://www.opengis.net/ont/geosparql#gmlLiteral"><![CDATA[<gml:Point srsName="http://www.opengis.net/def/crs/OGC/1.3/CRS84"><gml:pos srsDimension="2">-32.94682 -60.63932</gml:pos></gml:Point>]]></dcat:centroid>',  # noqa
+        '        <dcat:centroid rdf:datatype="http://www.opengis.net/ont/geosparql#geoJSONLiteral"><![CDATA[{"type":"Point","coordinates":[-32.94682,-60.63932]}]]></dcat:centroid>',  # noqa
         "      </dct:Location>",
         "    </dct:spatial>",
         "    <dcat:distribution>",
