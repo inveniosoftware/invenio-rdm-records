@@ -78,9 +78,9 @@ class ExternalPIDProvider(PIDProvider):
         success, errors = super().validate(record, identifier, provider, **kwargs)
 
         if not identifier:
-            error = self._get_or_append_error_dict(errors)
-            error["messages"].append(
-                _("Missing {scheme} for required field.").format(scheme=self.label)
+            error = self._insert_pid_type_error_msg(
+                errors,
+                _("Missing {scheme} for required field.").format(scheme=self.label),
             )
 
         for v in self._validators:
@@ -89,8 +89,7 @@ class ExternalPIDProvider(PIDProvider):
             error_msgs = []
             v(record, identifier, provider, error_msgs)
             if error_msgs:
-                error = self._get_or_append_error_dict(errors)
-                error["messages"].extend(error_msgs)
+                self._insert_pid_type_error_msg(errors, error_msgs)
 
         return (True, []) if not errors else (False, errors)
 

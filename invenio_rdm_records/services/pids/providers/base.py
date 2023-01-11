@@ -173,16 +173,19 @@ class PIDProvider:
 
         return True, []
 
-    def _get_or_append_error_dict(self, errors):
-        """Returns an error dict with scheme == pid_type.
+    def _insert_pid_type_error_msg(self, errors, error_msg):
+        """Adds error_msg to "messages" field of pid_type's error_dict in errors.
 
         This error dict is either:
-        - retrieved from errors
+        - retrieved from errors OR
         - created and appended to errors
 
         This is really a utility method for children providers in order
         to append pid identifier error messages to the pid identifier error_dict
         (as opposed to creating a new error dict).
+
+        :param errors: list of error dicts of the form `{"field": ..., "messages": ...}`
+        :param error_msg: string OR list of strings
         """
         field = f"pids.{self.pid_type}"
         error = next((error for error in errors if error.get("field") == field), None)
@@ -191,4 +194,7 @@ class PIDProvider:
             error = {"field": field, "messages": []}
             errors.append(error)
 
-        return error
+        if isinstance(error_msg, list):
+            error["messages"].extend(error_msg)
+        else:
+            error["messages"].append(error_msg)
