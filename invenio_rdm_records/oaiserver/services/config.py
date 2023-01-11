@@ -1,13 +1,13 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2022 Graz University of Technology.
+# Copyright (C) 2022-2023 Graz University of Technology.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
 
 """OAI-PMH service API configuration."""
 
-from flask_babelex import gettext as _
+from invenio_i18n import gettext as _
 from invenio_oaiserver.models import OAISet
 from invenio_records_resources.services import ServiceConfig
 from invenio_records_resources.services.base import Link

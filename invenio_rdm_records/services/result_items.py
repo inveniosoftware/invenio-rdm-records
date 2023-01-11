@@ -2,6 +2,7 @@
 #
 # Copyright (C) 2021 TU Wien.
 # Copyright (C) 2021 Northwestern University.
+# Copyright (C) 2023 Graz University of Technology.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
@@ -9,7 +10,6 @@
 """Result items for secret link operations of the services."""
 
 from flask import current_app
-from flask_babelex import lazy_gettext as _
 from invenio_records_resources.services.base.results import (
     ServiceItemResult,
     ServiceListResult,

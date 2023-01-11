@@ -2,6 +2,7 @@
 #
 # Copyright (C) 2020 CERN.
 # Copyright (C) 2020 Northwestern University.
+# Copyright (C) 2023 Graz University of Technology.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
@@ -9,7 +10,7 @@
 """Record response serializers."""
 
 from babel_edtf import format_edtf
-from flask_babelex import gettext as _
+from invenio_i18n import gettext as _
 from marshmallow import fields
 
 from invenio_rdm_records.records.systemfields.access.field.record import (

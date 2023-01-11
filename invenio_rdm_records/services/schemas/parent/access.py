@@ -14,7 +14,6 @@
 
 from datetime import timezone
 
-from flask_babelex import lazy_gettext as _
 from marshmallow import Schema, fields, validate
 from marshmallow_utils.fields import SanitizedUnicode, TZDateTime
 

@@ -2,6 +2,7 @@
 #
 # Copyright (C) 2020 CERN.
 # Copyright (C) 2020 Northwestern University.
+# Copyright (C) 2023 Graz University of Technology.
 #
 # Invenio-Records-Resources is free software; you can redistribute it and/or
 # modify it under the terms of the MIT License; see LICENSE file for more
@@ -21,7 +22,7 @@ For instance:
 
 """
 
-from flask_babelex import gettext as _
+from invenio_i18n import gettext as _
 from invenio_records.systemfields import SystemField
 
 from invenio_rdm_records.services.errors import RDMRecordsException, ReviewStateError
