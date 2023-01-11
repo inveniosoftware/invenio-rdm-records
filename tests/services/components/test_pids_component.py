@@ -55,8 +55,10 @@ class TestManagedPIDProvider(PIDProvider):
             try:
                 int(identifier)
             except ValueError:
-                error = self._get_or_append_error_dict(errors)
-                error["messages"].append("Identifier must be an integer.")
+                self._insert_pid_type_error_msg(
+                    errors,
+                    "Identifier must be an integer.",
+                )
 
         if not record.get("metadata", {}).get("publisher"):
             errors.append(

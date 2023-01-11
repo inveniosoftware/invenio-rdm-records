@@ -215,8 +215,7 @@ class DataCitePIDProvider(PIDProvider):
                 self.client.api.check_doi(identifier)
             except ValueError as e:
                 # modifies the error in errors in-place
-                error = self._get_or_append_error_dict(errors)
-                error["messages"].append(str(e))
+                self._insert_pid_type_error_msg(errors, str(e))
 
         # Validate record
         if not record.get("metadata", {}).get("publisher"):
