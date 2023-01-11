@@ -2,6 +2,7 @@
 #
 # Copyright (C) 2021 CERN.
 # Copyright (C) 2023 Northwestern University.
+# Copyright (C) 2023 Graz University of Technology.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
@@ -9,7 +10,6 @@
 """External provider tests."""
 
 import pytest
-from flask_babelex import lazy_gettext as _
 from invenio_pidstore.models import PersistentIdentifier, PIDStatus
 
 from invenio_rdm_records.records import RDMDraft, RDMRecord

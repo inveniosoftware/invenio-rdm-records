@@ -9,7 +9,6 @@
 
 from unittest.mock import Mock
 
-from flask_babelex import lazy_gettext as _
 from idutils import normalize_doi
 
 from invenio_rdm_records.services.pids import providers

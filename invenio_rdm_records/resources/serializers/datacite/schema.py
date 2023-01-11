@@ -2,6 +2,7 @@
 #
 # Copyright (C) 2021 CERN.
 # Copyright (C) 2021 Northwestern University.
+# Copyright (C) 2023 Graz University of Technology.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
@@ -11,8 +12,8 @@
 from edtf import parse_edtf
 from edtf.parser.grammar import ParseException
 from flask import current_app
-from flask_babelex import lazy_gettext as _
 from invenio_access.permissions import system_identity
+from invenio_i18n import lazy_gettext as _
 from invenio_records_resources.proxies import current_service_registry
 from invenio_vocabularies.proxies import current_service as vocabulary_service
 from marshmallow import Schema, ValidationError, fields, missing, post_dump, validate

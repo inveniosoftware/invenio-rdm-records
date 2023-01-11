@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # Copyright (C) 2022 CERN.
+# Copyright (C) 2023 Graz University of Technology.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
@@ -8,10 +9,10 @@
 """RDM Review Service."""
 
 from flask import current_app
-from flask_babelex import lazy_gettext as _
 from invenio_communities import current_communities
 from invenio_communities.communities.records.systemfields.access import CommunityAccess
 from invenio_drafts_resources.services.records import RecordService
+from invenio_i18n import lazy_gettext as _
 from invenio_records_resources.services.errors import PermissionDeniedError
 from invenio_records_resources.services.uow import (
     RecordCommitOp,

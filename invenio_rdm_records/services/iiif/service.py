@@ -2,6 +2,7 @@
 #
 # Copyright (C) 2023 CERN.
 # Copyright (C) 2022 Universität Hamburg.
+# Copyright (C) 2023 Graz University of Technology.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
@@ -11,7 +12,6 @@
 import tempfile
 
 import importlib_metadata as metadata
-from flask_babelex import lazy_gettext as _
 from flask_iiif.api import IIIFImageAPIWrapper
 from invenio_records_resources.services import Service
 

@@ -3,6 +3,7 @@
 # Copyright (C) 2019-2022 CERN.
 # Copyright (C) 2019-2021 Northwestern University.
 # Copyright (C) 2022 Universität Hamburg.
+# Copyright (C) 2023 Graz University of Technology.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
@@ -12,9 +13,9 @@
 import warnings
 
 from flask import flash, g, request, session
-from flask_babelex import _
 from flask_iiif import IIIF
 from flask_principal import identity_loaded
+from invenio_i18n import _
 from invenio_records_resources.resources.files import FileResource
 from invenio_records_resources.services import FileService
 from itsdangerous import SignatureExpired

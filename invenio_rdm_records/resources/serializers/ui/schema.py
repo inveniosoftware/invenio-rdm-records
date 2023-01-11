@@ -2,7 +2,7 @@
 #
 # Copyright (C) 2020 CERN.
 # Copyright (C) 2020 Northwestern University.
-# Copyright (C) 2021 Graz University of Technology.
+# Copyright (C) 2021-2023 Graz University of Technology.
 # Copyright (C) 2022 TU Wien.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
@@ -14,11 +14,11 @@ from copy import deepcopy
 from functools import partial
 
 from flask import current_app, g
-from flask_babelex import get_locale
 from flask_resources import BaseObjectSchema
 from invenio_communities.communities.resources.ui_schema import (
     _community_permission_check,
 )
+from invenio_i18n import get_locale
 from invenio_records_resources.services.custom_fields import CustomFieldsSchemaUI
 from invenio_vocabularies.contrib.awards.serializer import AwardL10NItemSchema
 from invenio_vocabularies.contrib.funders.serializer import FunderL10NItemSchema
