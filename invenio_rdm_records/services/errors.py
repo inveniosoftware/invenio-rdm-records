@@ -22,6 +22,10 @@ class EmbargoNotLiftedError(RDMRecordsException):
         super().__init__(f"Embargo could not be lifted for record: {record_id}")
 
 
+class PersistenIdentifierNotFoundError(RDMRecordsException):
+    def __init__(self):
+        super().__init__("The persistent identifier does not exist.")
+
 class ReviewException(RDMRecordsException):
     """Base class for review errors."""
 
@@ -32,7 +36,6 @@ class ReviewNotFoundError(ReviewException):
     def __init__(self, *args, **kwargs):
         """Initialize exception."""
         super().__init__(_("Review not found."), *args, **kwargs)
-
 
 class ReviewStateError(ReviewException):
     """Review was not found for record/draft."""
