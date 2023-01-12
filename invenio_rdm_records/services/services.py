@@ -24,8 +24,8 @@ from invenio_requests.services.results import EntityResolverExpandableField
 from invenio_search.engine import dsl
 
 from invenio_rdm_records.services.errors import EmbargoNotLiftedError
+from invenio_rdm_records.services.errors import PersistenIdentifierNotFoundError
 from invenio_rdm_records.services.results import ParentCommunitiesExpandableField
-
 try:
     metadata.distribution("wand")
     from wand.image import Image
@@ -146,6 +146,10 @@ class RDMRecordService(RecordService):
             permission_action="read",
             **kwargs,
         ).execute()
+
+        if search_result.hits.total.value == 0:
+            raise PersistenIdentifierNotFoundError()
+
 
         return self.result_list(
             self,

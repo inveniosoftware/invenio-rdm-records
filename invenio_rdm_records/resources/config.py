@@ -30,6 +30,7 @@ from ..services.errors import (
     ReviewExistsError,
     ReviewInconsistentAccessRestrictions,
     ReviewNotFoundError,
+    PersistenIdentifierNotFoundError,
     ReviewStateError,
     ValidationErrorWithMessageAsList,
 )
@@ -130,6 +131,12 @@ class RDMRecordResourceConfig(RecordResourceConfig):
             HTTPJSONException(
                 code=404,
                 description=_("Review for draft not found"),
+            )
+        ),
+        PersistenIdentifierNotFoundError: create_error_handler(
+            lambda exc: HTTPJSONException(
+                code=404,
+                description=exc.args[0],
             )
         ),
         ReviewStateError: create_error_handler(
