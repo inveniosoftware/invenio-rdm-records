@@ -24,8 +24,10 @@ from invenio_requests.services.results import EntityResolverExpandableField
 from invenio_search.engine import dsl
 
 from invenio_rdm_records.services.errors import EmbargoNotLiftedError
-from invenio_rdm_records.services.errors import PersistenIdentifierNotFoundError
 from invenio_rdm_records.services.results import ParentCommunitiesExpandableField
+
+from invenio_communities import current_communities
+
 try:
     metadata.distribution("wand")
     from wand.image import Image
@@ -132,6 +134,10 @@ class RDMRecordService(RecordService):
         """Search for records published in the given community."""
         self.require_permission(identity, "read")
 
+        current_communities.service.read(
+            identity, community_id
+        )  # Checks wether community exists
+
         # Prepare and execute the search
         params = params or {}
 
@@ -146,10 +152,6 @@ class RDMRecordService(RecordService):
             permission_action="read",
             **kwargs,
         ).execute()
-
-        if search_result.hits.total.value == 0:
-            raise PersistenIdentifierNotFoundError()
-
 
         return self.result_list(
             self,

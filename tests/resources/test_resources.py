@@ -840,7 +840,15 @@ def test_search_community_records(
         current_requests_service.execute_action(superuser_identity, reqid, "accept", {})
         RDMRecord.index.refresh()
 
-    res = client.get(f"/communities/{community['id']}/records", headers=headers)
+    res = client.get(
+        f"/communities/abcdef/records", headers=headers
+    )  # Random ID -> should return 404 Not Found
+    assert res.status_code == 404
+
+    res = client.get(
+        f"/communities/{community['id']}/records", headers=headers
+    )  # Valid ID should return 200 with a number of total hits = 0
+    assert res.status_code == 200
     assert res.json["hits"]["total"] == 0
 
     _create_and_include_in_community()
