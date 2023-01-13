@@ -16,7 +16,6 @@ from flask_principal import Identity, UserNeed
 from invenio_access.permissions import any_user, authenticated_user, system_identity
 from invenio_communities.generators import CommunityRoleNeed
 from invenio_communities.members.errors import AlreadyMemberError
-from invenio_communities.members.records.api import Member
 from invenio_communities.proxies import current_communities
 from invenio_records_resources.proxies import current_service_registry
 from invenio_requests import current_events_service, current_requests_service
@@ -79,7 +78,7 @@ def _get_random_community(communities):
     id = communities[r]["id"]
     # create community owner identity
     members = current_communities.service.members
-    Member.index.refresh()
+    members.indexer.refresh()
     res = members.search(system_identity, id, role="owner").to_dict()
     owner_id = int(res["hits"]["hits"][0]["member"]["id"])
     owner_identity = get_authenticated_identity(owner_id)
