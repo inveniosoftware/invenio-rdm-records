@@ -164,7 +164,6 @@ class PIDsService(RecordService):
         """
         draft = self.draft_cls.pid.resolve(id_, registered_only=False)
         self.require_permission(identity, "pid_discard", record=draft, scheme=scheme)
-        self.pid_manager.validate(draft.pids, draft, raise_errors=True)
         identifier = draft.pids.get(scheme, {}).get("identifier")
         self._manager.discard(scheme, identifier, provider)
         draft.pids.pop(scheme)
