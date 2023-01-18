@@ -28,7 +28,7 @@ class PIDsComponent(ServiceComponent):
         """
         pids_data = record.pids or {}  # current pids state
         if "pids" in data:  # there is new input data for PIDs
-            pids_data = data.get("pids", {})
+            pids_data = data["pids"]
 
         self.service.pids.pid_manager.validate(pids_data, record, errors)
         record.pids = pids_data
@@ -37,7 +37,7 @@ class PIDsComponent(ServiceComponent):
         """Update draft handler."""
         pids_data = record.pids or {}  # current pids state
         if "pids" in data:  # there is new input data for PIDs
-            pids_data = data.get("pids", {})
+            pids_data = data["pids"]
 
         self.service.pids.pid_manager.validate(pids_data, record, errors)
         record.pids = pids_data
