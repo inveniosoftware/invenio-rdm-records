@@ -67,7 +67,7 @@ def test_datacite_serializer(running_app, full_record):
         "      <familyName>Nielsen</familyName>\n"
         '      <nameIdentifier nameIdentifierScheme="ORCID">0000-0001-8135-3489</nameIdentifier>\n'  # noqa
         "      <affiliation>free-text</affiliation>\n"
-        '      <affiliation affiliationIdentifier="01ggx4157" affiliationIdentifierScheme="ROR">CERN</affiliation>\n'  # noqa
+        '      <affiliation affiliationIdentifier="https://ror.org/01ggx4157" affiliationIdentifierScheme="ROR">CERN</affiliation>\n'  # noqa
         "    </creator>\n"
         "  </creators>\n"
         "  <titles>\n"
@@ -86,7 +86,7 @@ def test_datacite_serializer(running_app, full_record):
         "      <givenName>Lars Holm</givenName>\n"
         "      <familyName>Nielsen</familyName>\n"
         '      <nameIdentifier nameIdentifierScheme="ORCID">0000-0001-8135-3489</nameIdentifier>\n'  # noqa
-        '      <affiliation affiliationIdentifier="01ggx4157" affiliationIdentifierScheme="ROR">CERN</affiliation>\n'  # noqa
+        '      <affiliation affiliationIdentifier="https://ror.org/01ggx4157" affiliationIdentifierScheme="ROR">CERN</affiliation>\n'  # noqa
         "    </contributor>\n"
         "  </contributors>\n"
         "  <dates>\n"
@@ -156,7 +156,7 @@ def test_oai_datacite_serializer(running_app, full_record):
         "          <familyName>Nielsen</familyName>\n"
         '          <nameIdentifier nameIdentifierScheme="ORCID">0000-0001-8135-3489</nameIdentifier>\n'  # noqa
         "          <affiliation>free-text</affiliation>\n"
-        '          <affiliation affiliationIdentifier="01ggx4157" affiliationIdentifierScheme="ROR">CERN</affiliation>\n'  # noqa
+        '          <affiliation affiliationIdentifier="https://ror.org/01ggx4157" affiliationIdentifierScheme="ROR">CERN</affiliation>\n'  # noqa
         "        </creator>\n"
         "      </creators>\n"
         "      <titles>\n"
@@ -175,7 +175,7 @@ def test_oai_datacite_serializer(running_app, full_record):
         "          <givenName>Lars Holm</givenName>\n"
         "          <familyName>Nielsen</familyName>\n"
         '          <nameIdentifier nameIdentifierScheme="ORCID">0000-0001-8135-3489</nameIdentifier>\n'  # noqa
-        '          <affiliation affiliationIdentifier="01ggx4157" affiliationIdentifierScheme="ROR">CERN</affiliation>\n'  # noqa
+        '          <affiliation affiliationIdentifier="https://ror.org/01ggx4157" affiliationIdentifierScheme="ROR">CERN</affiliation>\n'  # noqa
         "        </contributor>\n"
         "      </contributors>\n"
         "      <dates>\n"
