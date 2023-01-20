@@ -10,6 +10,14 @@
 Changes
 =======
 
+Version 1.3.0 (released 2023-01-20)
+
+- add mechanism to validate a record based on each PID provider
+- fix demo records creation adding missing search index prefix on index refresh
+- Fix response status when searching for records of a non-existing community
+- remove validation on DOI discard action
+- skips PIDs modification when no data is passed
+
 Version 1.2.1 (released 2022-12-01)
 
 - Add identity to links template expand method.
