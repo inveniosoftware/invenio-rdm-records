@@ -94,20 +94,36 @@ class PersonOrOrgSchema43(Schema):
                 }
                 identifiers = affiliation.get("identifiers")
                 if identifiers:
-                    # PIDS-FIXME: DataCite accepts only one, how to decide
-                    identifier = identifiers[0]
+                    # FIXME: Make configurable
+                    DATACITE_AFFILIATION_IDENTIFIER_TYPES_PREFERENCE = (
+                        "ror",
+                        "isni",
+                        "gnd",
+                    )
+                    identifier = get_preferred_identifier(
+                        DATACITE_AFFILIATION_IDENTIFIER_TYPES_PREFERENCE, identifiers
+                    )
+                    if not identifier:
+                        identifier = identifiers[0]
+                        identifier["scheme"] = "Other"
+
                     id_scheme = get_scheme_datacite(
                         identifier["scheme"],
                         "VOCABULARIES_AFFILIATION_SCHEMES",
-                        default=identifier["scheme"],
-                    )
-
-                    if id_scheme:
-                        aff["affiliationIdentifier"] = identifier["identifier"]
-                        aff["affiliationIdentifierScheme"] = id_scheme.upper()
+                        default=identifier["scheme"].upper(),
                         # upper() is fine since this field is free text. It
                         # saves us from having to modify invenio-vocabularies
                         # or do config overrides.
+                    )
+
+                    if id_scheme == "ROR":
+                        identifier_value = "https://ror.org/" + identifier["identifier"]
+                    else:
+                        identifier_value = identifier["identifier"]
+
+                    if id_scheme:
+                        aff["affiliationIdentifier"] = identifier_value
+                        aff["affiliationIdentifierScheme"] = id_scheme
 
                 serialized_affiliations.append(aff)
 
@@ -462,8 +478,14 @@ class DataCite43Schema(Schema):
         """Get funding references."""
         # constants
         # FIXME: Make configurable
-        FUNDER_IDENTIFIER_TYPES_PREFERENCE = ("ror", "grid", "doi", "isni", "gnd")
-        AWARD_IDENTIFIER_TYPES_PREFERENCE = ("doi", "url")
+        DATACITE_FUNDER_IDENTIFIER_TYPES_PREFERENCE = (
+            "ror",
+            "grid",
+            "doi",
+            "isni",
+            "gnd",
+        )
+        DATACITE_AWARD_IDENTIFIER_TYPES_PREFERENCE = ("doi", "url")
         TO_FUNDER_IDENTIFIER_TYPES = {
             "isni": "ISNI",
             "gnd": "GND",
@@ -486,7 +508,7 @@ class DataCite43Schema(Schema):
             identifiers = funder.get("identifiers", [])
             if identifiers:
                 identifier = get_preferred_identifier(
-                    FUNDER_IDENTIFIER_TYPES_PREFERENCE, identifiers
+                    DATACITE_FUNDER_IDENTIFIER_TYPES_PREFERENCE, identifiers
                 )
                 if not identifier:
                     identifier = identifiers[0]
@@ -515,7 +537,7 @@ class DataCite43Schema(Schema):
                 identifiers = award.get("identifiers", [])
                 if identifiers:
                     identifier = get_preferred_identifier(
-                        AWARD_IDENTIFIER_TYPES_PREFERENCE, identifiers
+                        DATACITE_AWARD_IDENTIFIER_TYPES_PREFERENCE, identifiers
                     )
                     if identifier:
                         funding_ref["awardURI"] = identifier["identifier"]
