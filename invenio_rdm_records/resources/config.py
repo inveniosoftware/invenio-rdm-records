@@ -25,6 +25,7 @@ from flask_resources import (
 from invenio_drafts_resources.resources import RecordResourceConfig
 from invenio_records.systemfields.relations import InvalidRelationValue
 from invenio_records_resources.resources.files import FileResourceConfig
+from invenio_records_resources.services.base.config import ConfiguratorMixin, FromConfig
 
 from ..services.errors import (
     ReviewExistsError,
@@ -76,7 +77,7 @@ record_serializers = {
 #
 # Records and record versions
 #
-class RDMRecordResourceConfig(RecordResourceConfig):
+class RDMRecordResourceConfig(RecordResourceConfig, ConfiguratorMixin):
     """Record resource configuration."""
 
     blueprint_name = "records"
@@ -165,7 +166,7 @@ class RDMRecordResourceConfig(RecordResourceConfig):
 #
 # Record files
 #
-class RDMRecordFilesResourceConfig(FileResourceConfig):
+class RDMRecordFilesResourceConfig(FileResourceConfig, ConfiguratorMixin):
     """Bibliographic record files resource config."""
 
     allow_upload = False
@@ -176,7 +177,7 @@ class RDMRecordFilesResourceConfig(FileResourceConfig):
 #
 # Draft files
 #
-class RDMDraftFilesResourceConfig(FileResourceConfig):
+class RDMDraftFilesResourceConfig(FileResourceConfig, ConfiguratorMixin):
     """Bibliographic record files resource config."""
 
     blueprint_name = "draft_files"
@@ -201,7 +202,7 @@ record_links_error_handlers.update(
 )
 
 
-class RDMParentRecordLinksResourceConfig(RecordResourceConfig):
+class RDMParentRecordLinksResourceConfig(RecordResourceConfig, ConfiguratorMixin):
     """User records resource configuration."""
 
     blueprint_name = "record_access"
@@ -225,7 +226,7 @@ class RDMParentRecordLinksResourceConfig(RecordResourceConfig):
     error_handlers = record_links_error_handlers
 
 
-class IIIFResourceConfig(ResourceConfig):
+class IIIFResourceConfig(ResourceConfig, ConfiguratorMixin):
     """IIIF resource configuration."""
 
     blueprint_name = "iiif"

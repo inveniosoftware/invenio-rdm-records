@@ -191,35 +191,38 @@ class InvenioRDMRecords(object):
     def init_resource(self, app):
         """Initialize resources."""
         self.records_resource = RDMRecordResource(
-            RDMRecordResourceConfig,
-            self.records_service,
+            service=self.records_service,
+            config=RDMRecordResourceConfig.build(app),
         )
 
         # Record files resource
         self.record_files_resource = FileResource(
-            service=self.records_service.files, config=RDMRecordFilesResourceConfig
+            service=self.records_service.files,
+            config=RDMRecordFilesResourceConfig.build(app),
         )
 
         # Draft files resource
         self.draft_files_resource = FileResource(
-            service=self.records_service.draft_files, config=RDMDraftFilesResourceConfig
+            service=self.records_service.draft_files,
+            config=RDMDraftFilesResourceConfig.build(app),
         )
 
         # Parent Records
         self.parent_record_links_resource = RDMParentRecordLinksResource(
-            service=self.records_service, config=RDMParentRecordLinksResourceConfig
+            service=self.records_service,
+            config=RDMParentRecordLinksResourceConfig.build(app),
         )
 
         # OAI-PMH
         self.oaipmh_server_resource = OAIPMHServerResource(
             service=self.oaipmh_server_service,
-            config=OAIPMHServerResourceConfig,
+            config=OAIPMHServerResourceConfig.build(app),
         )
 
         # IIIF
         self.iiif_resource = IIIFResource(
             service=self.iiif_service,
-            config=IIIFResourceConfig,
+            config=IIIFResourceConfig.build(app),
         )
 
     def fix_datacite_configs(self, app):

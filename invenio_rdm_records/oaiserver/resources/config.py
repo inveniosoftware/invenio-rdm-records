@@ -12,6 +12,7 @@ from flask_babelex import lazy_gettext as _
 from flask_resources import HTTPJSONException, ResourceConfig, create_error_handler
 from invenio_records_resources.resources.errors import ErrorHandlersMixin
 from invenio_records_resources.resources.records.args import SearchRequestArgsSchema
+from invenio_records_resources.services.base.config import ConfiguratorMixin
 
 from ..services.errors import (
     OAIPMHError,
@@ -49,7 +50,7 @@ class OAIPMHServerSearchRequestArgsSchema(SearchRequestArgsSchema):
     sort_direction = ma.fields.Str()
 
 
-class OAIPMHServerResourceConfig(ResourceConfig):
+class OAIPMHServerResourceConfig(ResourceConfig, ConfiguratorMixin):
     """OAI-PMH resource config."""
 
     # Blueprint configuration
