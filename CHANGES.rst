@@ -1,5 +1,5 @@
 ..
-    Copyright (C) 2019-2022 CERN.
+    Copyright (C) 2019-2023 CERN.
     Copyright (C) 2019 Northwestern University.
 
 
@@ -9,6 +9,10 @@
 
 Changes
 =======
+
+Version 1.3.1 (released 2023-01-23)
+
+- Add feature flag for archive download endpoint on record and draft resources
 
 Version 1.3.0 (released 2023-01-20)
 
