@@ -15,6 +15,7 @@ from flask_sqlalchemy import Pagination
 from invenio_oaiserver.models import OAISet
 from invenio_records_resources.services import Service
 from invenio_records_resources.services.base import LinksTemplate
+from invenio_records_resources.services.base.utils import map_search_params
 from invenio_records_resources.services.records.schema import ServiceSchemaWrapper
 from invenio_records_resources.services.uow import unit_of_work
 from marshmallow import ValidationError
@@ -130,7 +131,7 @@ class OAIPMHServerService(Service):
         """Perform search over OAI sets."""
         self.require_permission(identity, "read")
 
-        search_params = self._get_search_params(params)
+        search_params = map_search_params(self.config.search, params)
 
         query_param = search_params["q"]
         filters = []
@@ -228,36 +229,3 @@ class OAIPMHServerService(Service):
                 self, schema=self.config.metadata_format_schema
             ),
         )
-
-    def _get_search_params(self, params):
-        page = params.get("page", 1)
-        size = params.get(
-            "size",
-            self.config.search.pagination_options.get("default_results_per_page"),
-        )
-
-        _search_cls = self.config.search
-
-        _sort_name = (
-            params.get("sort")
-            if params.get("sort") in _search_cls.sort_options
-            else _search_cls.sort_default
-        )
-        _sort_direction_name = (
-            params.get("sort_direction")
-            if params.get("sort_direction") in _search_cls.sort_direction_options
-            else _search_cls.sort_direction_default
-        )
-
-        sort = _search_cls.sort_options.get(_sort_name)
-        sort_direction = _search_cls.sort_direction_options.get(_sort_direction_name)
-
-        query_params = params.get("q", "")
-
-        return {
-            "page": page,
-            "size": size,
-            "sort": sort.get("fields"),
-            "sort_direction": sort_direction.get("fn"),
-            "q": query_params,
-        }
