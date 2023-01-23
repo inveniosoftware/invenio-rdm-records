@@ -170,6 +170,7 @@ class RDMRecordFilesResourceConfig(FileResourceConfig, ConfiguratorMixin):
     """Bibliographic record files resource config."""
 
     allow_upload = False
+    allow_archive_download = FromConfig("RDM_ARCHIVE_DOWNLOAD_ENABLED", True)
     blueprint_name = "record_files"
     url_prefix = "/records/<pid_value>"
 
@@ -180,6 +181,7 @@ class RDMRecordFilesResourceConfig(FileResourceConfig, ConfiguratorMixin):
 class RDMDraftFilesResourceConfig(FileResourceConfig, ConfiguratorMixin):
     """Bibliographic record files resource config."""
 
+    allow_archive_download = FromConfig("RDM_ARCHIVE_DOWNLOAD_ENABLED", True)
     blueprint_name = "draft_files"
     url_prefix = "/records/<pid_value>/draft"
 

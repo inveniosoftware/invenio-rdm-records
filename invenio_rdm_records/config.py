@@ -16,11 +16,6 @@ from .services import facets
 from .services.permissions import RDMRecordPermissionPolicy
 from .services.pids import providers
 
-# Files REST
-
-# FILES_REST_PERMISSION_FACTORY = record_files_permission_factory
-"""Set default files permission factory."""
-
 # Invenio-RDM-Records
 # ===================
 
@@ -38,6 +33,9 @@ will be generated randomly.
 
 RDM_RECORDS_UI_EDIT_URL = "/uploads/<pid_value>"
 """Default UI URL for the edit page of a Bibliographic Record."""
+
+RDM_ARCHIVE_DOWNLOAD_ENABLED = True
+"""Flag to enable/disable the all-in-one download endpoint."""
 
 #: Default site URL (used only when not in a context - e.g. like celery tasks).
 THEME_SITEURL = "http://127.0.0.1:5000"
@@ -369,6 +367,9 @@ This is only required if you want your records to be harvestable (OAI-PMH)
 in DataCite XML format.
 """
 
+#
+# Custom fields
+#
 RDM_NAMESPACES = {}
 """Custom fields namespaces.
 
@@ -387,7 +388,6 @@ For example:
 
 """
 
-
 RDM_CUSTOM_FIELDS = []
 """Records custom fields definition.
 
@@ -401,7 +401,6 @@ For example:
 
     [TextCF(name="experiment"), ...]
 """
-
 
 RDM_CUSTOM_FIELDS_UI = []
 """Upload form custom fields UI configuration.

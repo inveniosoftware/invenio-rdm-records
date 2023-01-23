@@ -80,6 +80,11 @@ def is_iiif_compatible(file_, ctx):
     return file_ext in current_app.config["IIIF_FORMATS"]
 
 
+def archive_download_enabled(record, ctx):
+    """Return if the archive download feature is enabled."""
+    return current_app.config["RDM_ARCHIVE_DOWNLOAD_ENABLED"]
+
+
 #
 # Default search configuration
 #
@@ -217,6 +222,17 @@ class RDMRecordServiceConfig(RecordServiceConfig, ConfiguratorMixin):
             if_=RecordLink("{+api}/records/{id}/files"),
             else_=RecordLink("{+api}/records/{id}/draft/files"),
         ),
+        "archive": ConditionalLink(
+            cond=is_record,
+            if_=RecordLink(
+                "{+api}/records/{id}/files-archive",
+                when=archive_download_enabled,
+            ),
+            else_=RecordLink(
+                "{+api}/records/{id}/draft/files-archive",
+                when=archive_download_enabled,
+            ),
+        ),
         "latest": RecordLink("{+api}/records/{id}/versions/latest", when=is_record),
         "latest_html": RecordLink("{+ui}/records/{id}/latest", when=is_record),
         "draft": RecordLink("{+api}/records/{id}/draft", when=is_record),
@@ -251,6 +267,14 @@ class RDMFileRecordServiceConfig(FileServiceConfig, ConfiguratorMixin):
         "RDM_PERMISSION_POLICY", default=RDMRecordPermissionPolicy
     )
 
+    file_links_list = {
+        **FileServiceConfig.file_links_list,
+        "archive": RecordLink(
+            "{+api}/records/{id}/files-archive",
+            when=archive_download_enabled,
+        ),
+    }
+
     file_links_item = {
         **FileServiceConfig.file_links_item,
         # FIXME: filename instead
@@ -282,6 +306,10 @@ class RDMFileDraftServiceConfig(FileServiceConfig, ConfiguratorMixin):
 
     file_links_list = {
         "self": RecordLink("{+api}/records/{id}/draft/files"),
+        "archive": RecordLink(
+            "{+api}/records/{id}/draft/files-archive",
+            when=archive_download_enabled,
+        ),
     }
 
     file_links_item = {

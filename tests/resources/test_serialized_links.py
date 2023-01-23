@@ -63,6 +63,7 @@ def test_draft_links(client, draft_json, minimal_record, headers):
         "versions": f"https://127.0.0.1:5000/api/records/{pid_value}/versions",
         "access_links": f"https://127.0.0.1:5000/api/records/{pid_value}/access/links",  # noqa
         "files": f"https://127.0.0.1:5000/api/records/{pid_value}/draft/files",
+        "archive": f"https://127.0.0.1:5000/api/records/{pid_value}/draft/files-archive",  # noqa
         "reserve_doi": f"https://127.0.0.1:5000/api/records/{pid_value}/draft/pids/doi",  # noqa
         "self_iiif_manifest": f"https://127.0.0.1:5000/api/iiif/draft:{pid_value}/manifest",  # noqa
         "self_iiif_sequence": f"https://127.0.0.1:5000/api/iiif/draft:{pid_value}/sequence/default",  # noqa
@@ -85,6 +86,7 @@ def test_record_links(client, published_json, headers):
         "doi": f"https://doi.org/{doi_value}",
         "draft": f"https://127.0.0.1:5000/api/records/{pid_value}/draft",
         "files": f"https://127.0.0.1:5000/api/records/{pid_value}/files",
+        "archive": f"https://127.0.0.1:5000/api/records/{pid_value}/files-archive",
         "versions": f"https://127.0.0.1:5000/api/records/{pid_value}/versions",
         "latest": f"https://127.0.0.1:5000/api/records/{pid_value}/versions/latest",  # noqa
         "latest_html": f"https://127.0.0.1:5000/records/{pid_value}/latest",  # noqa
