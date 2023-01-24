@@ -3,6 +3,8 @@
 # Copyright (C) 2020, 2021 CERN.
 # Copyright (C) 2020 Northwestern University.
 # Copyright (C) 2021 Graz University of Technology.
+# Copyright (C) 2022 PNNL.
+# Copyright (C) 2022 BNL.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
@@ -11,6 +13,7 @@
 
 from .csl import CSLJSONSerializer, StringCitationSerializer
 from .datacite import DataCite43JSONSerializer, DataCite43XMLSerializer
+from .osti import OSTIJSONSerializer
 from .dublincore import DublinCoreJSONSerializer, DublinCoreXMLSerializer
 from .iiif import (
     IIIFCanvasV2JSONSerializer,
@@ -21,6 +24,7 @@ from .iiif import (
 from .ui import UIJSONSerializer
 
 __all__ = (
+    "OSTIJSONSerializer",
     "CSLJSONSerializer",
     "DataCite43JSONSerializer",
     "DataCite43XMLSerializer",
