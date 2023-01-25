@@ -28,6 +28,7 @@ class OaiPmhListView(AdminResourceListView):
     pid_path = "id"
     icon = "exchange"
     template = "invenio_rdm_records/oai-search.html"
+    app_id = "InvenioRdmRecords.AdministrationOaipmhListView"
 
     display_search = True
     display_delete = True
@@ -58,6 +59,7 @@ class OaiPmhEditView(AdminResourceEditView):
     pid_path = "id"
     api_endpoint = "/oaipmh/sets"
     title = "Edit OAI-PMH set"
+    app_id = "InvenioRdmRecords.AdministrationOaipmhEditView"
 
     list_view_name = "OAI-PMH"
 
@@ -98,6 +100,7 @@ class OaiPmhCreateView(AdminResourceCreateView):
     pid_path = "id"
     api_endpoint = "/oaipmh/sets"
     title = "Create OAI-PMH set"
+    app_id = "InvenioRdmRecords.AdministrationOaipmhCreateView"
 
     list_view_name = "OAI-PMH"
 
@@ -135,7 +138,7 @@ class OaiPmhDetailView(AdminResourceDetailView):
     name = "OAI-PMH details"
     resource_config = "oaipmh_server_resource"
     title = "OAI-PMH Details"
-
+    app_id = "InvenioRdmRecords.AdministrationOaipmhDetailView"
     template = "invenio_rdm_records/oai-details.html"
     display_delete = True
     display_edit = True
