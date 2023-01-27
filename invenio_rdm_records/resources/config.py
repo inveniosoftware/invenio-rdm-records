@@ -43,6 +43,7 @@ from .serializers import (
     DataCite43JSONSerializer,
     DataCite43XMLSerializer,
     DublinCoreXMLSerializer,
+    GeoJSONSerializer,
     StringCitationSerializer,
     UIJSONSerializer,
 )
@@ -65,6 +66,7 @@ record_serializers = {
     "application/vnd.datacite.datacite+json": ResponseHandler(
         DataCite43JSONSerializer()
     ),
+    "application/vnd.geo+json": ResponseHandler(GeoJSONSerializer()),
     "application/vnd.datacite.datacite+xml": ResponseHandler(DataCite43XMLSerializer()),
     "application/x-dc+xml": ResponseHandler(DublinCoreXMLSerializer()),
     "text/x-bibliography": ResponseHandler(
