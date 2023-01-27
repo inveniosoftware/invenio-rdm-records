@@ -91,6 +91,8 @@ class RDMRecordResourceConfig(RecordResourceConfig, ConfiguratorMixin):
     routes["item-review"] = "/<pid_value>/draft/review"
     routes["item-actions-review"] = "/<pid_value>/draft/actions/submit-review"
     # Community records
+    routes["item-remove-community"] = "/<pid_value>/communities"
+    routes["item-remove-community-list"] = "/<pid_value>/communities/<community_id>"
     routes["community-records"] = "/communities/<pid_value>/records"
 
     request_view_args = {

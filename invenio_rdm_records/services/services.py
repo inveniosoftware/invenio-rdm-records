@@ -166,6 +166,24 @@ class RDMRecordService(RecordService):
             links_item_tpl=self.links_item_tpl,
         )
 
+    def remove_community_record(self, identity, id_, community_id, **kwargs):
+        """Removes a record from a community."""
+        record = self.record_cls.pid.resolve(id_)
+        # FIXME: the permission check requires also the community
+        # to check for curators
+        self.require_permission(identity, "edit", record=record)
+
+        # raises a ValueError if the record is not in the community
+        record.parent.communities.remove(community_id)
+        self.uow.register(RecordCommitOp(record.parent))
+
+        return self.result_item(  # FIXME: expand?
+            self,
+            identity,
+            record,
+            links_tpl=self.links_item_tpl,
+        )
+
 
 class IIIFService(Service):
     """IIIF service.

@@ -130,33 +130,38 @@ def test_embargo_lift_with_error(running_app, search_clear, minimal_record):
         service.lift_embargo(_id=record["id"], identity=superuser_identity)
 
 
+#
+# Communities
+#
+def _create_record(db, data):
+    """Create a record."""
+    # create draft
+    draft = RDMDraft.create(data)
+    draft.commit()
+    db.session.commit()
+    # publish and get record
+    record = RDMRecord.publish(draft)
+    record.commit()
+    db.session.commit()
+    return record
+
+
+def _add_to_community(db, service, record, community, default):
+    """Add record to community."""
+    record.parent.communities.add(community, default=default)
+    record.parent.commit()
+    record.commit()
+    db.session.commit()
+    service.indexer.index(record)
+    RDMRecord.index.refresh()
+
+
 def test_search_community_records(
     db, running_app, minimal_record, community, anyuser_identity
 ):
     """Test search for records in a community."""
     service = current_rdm_records_service
     community = community._record
-
-    def _create_record():
-        """Create a record."""
-        # create draft
-        draft = RDMDraft.create(minimal_record)
-        draft.commit()
-        db.session.commit()
-        # publish and get record
-        record = RDMRecord.publish(draft)
-        record.commit()
-        db.session.commit()
-        return record
-
-    def _add_to_community(record, community, default):
-        """Add record to community."""
-        record.parent.communities.add(community, default=default)
-        record.parent.commit()
-        record.commit()
-        db.session.commit()
-        service.indexer.index(record)
-        RDMRecord.index.refresh()
 
     # ensure that there no records in the community
     results = service.search_community_records(
@@ -166,8 +171,8 @@ def test_search_community_records(
     assert results.to_dict()["hits"]["total"] == 0
 
     # add record to community, with default false
-    record1 = _create_record()
-    _add_to_community(record1, community, False)
+    record1 = _create_record(db, minimal_record)
+    _add_to_community(db, service, record1, community, False)
 
     # ensure that the record is in the community
     results = service.search_community_records(
@@ -177,8 +182,8 @@ def test_search_community_records(
     assert results.to_dict()["hits"]["total"] == 1
 
     # add another record to community, with default true
-    record2 = _create_record()
-    _add_to_community(record2, community, True)
+    record2 = _create_record(db, minimal_record)
+    _add_to_community(db, service, record2, community, True)
 
     # ensure that the record is in the community
     results = service.search_community_records(
@@ -186,3 +191,35 @@ def test_search_community_records(
         community_id=community.id,
     )
     assert results.to_dict()["hits"]["total"] == 2
+
+
+def test_remove_record_from_community(
+    db, running_app, minimal_record, community, anyuser_identity
+):
+    """Test record removal from a community."""
+    # TODO test the following use cases
+    # community exists
+    # community does not exist
+    # record not in community
+    service = current_rdm_records_service
+    community = community._record
+
+    # add record to community, with default false
+    record1 = _create_record(db, minimal_record)
+    _add_to_community(db, service, record1, community, False)
+
+    service.remove_community_record()
+
+    # ensure that the record is in the community
+    results = service.search_community_records(
+        anyuser_identity,
+        community_id=community.id,
+    )
+    assert results.to_dict()["hits"]["total"] == 2
+
+    # ensure that there no records in the community
+    results = service.search_community_records(
+        anyuser_identity,
+        community_id=community.id,
+    )
+    assert results.to_dict()["hits"]["total"] == 0

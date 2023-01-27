@@ -70,6 +70,14 @@ class RDMRecordResource(RecordResource):
             route("DELETE", p(routes["item-review"]), self.review_delete),
             route("POST", p(routes["item-actions-review"]), self.review_submit),
             route("GET", routes["community-records"], self.search_community_records),
+            route(
+                "DELETE", routes["item-remove-community"], self.remove_community_record
+            ),
+            # route(
+            #     "DELETE",
+            #     routes["item-remove-community-list"],
+            #     self.remove_community_list_record,
+            # ),
         ]
 
         return url_rules
@@ -173,6 +181,22 @@ class RDMRecordResource(RecordResource):
             search_preference=search_preference(),
         )
         return hits.to_dict(), 200
+
+    @request_extra_args
+    @request_view_args
+    @response_handler()
+    def remove_community_record(self):
+        """Remove a record from a community.
+
+        :returns: The updated record, without the community.
+        """
+        item = self.service.remove_community_record(
+            identity=g.identity,
+            record_id=resource_requestctx.view_args["pid_value"],
+            community_id=resource_requestctx.view_args["community_id"],
+            params=resource_requestctx.args,
+        )
+        return item.to_dict(), 200
 
 
 #
