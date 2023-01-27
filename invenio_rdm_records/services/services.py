@@ -134,7 +134,7 @@ class RDMRecordService(RecordService):
         self.require_permission(identity, "read")
         current_communities.service.record_cls.pid.resolve(
             community_id
-        )  # Checks weather community exists
+        )  # Checks wether community exists
 
         # Prepare and execute the search
         params = params or {}

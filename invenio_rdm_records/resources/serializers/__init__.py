@@ -12,6 +12,7 @@
 from .csl import CSLJSONSerializer, StringCitationSerializer
 from .datacite import DataCite43JSONSerializer, DataCite43XMLSerializer
 from .dublincore import DublinCoreJSONSerializer, DublinCoreXMLSerializer
+from .geojson import GeoJSONSerializer
 from .iiif import (
     IIIFCanvasV2JSONSerializer,
     IIIFInfoV2JSONSerializer,
@@ -26,6 +27,7 @@ __all__ = (
     "DataCite43XMLSerializer",
     "DublinCoreJSONSerializer",
     "DublinCoreXMLSerializer",
+    "GeoJSONSerializer",
     "IIIFCanvasV2JSONSerializer",
     "IIIFInfoV2JSONSerializer",
     "IIIFManifestV2JSONSerializer",
