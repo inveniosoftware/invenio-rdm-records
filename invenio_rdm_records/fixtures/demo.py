@@ -91,7 +91,6 @@ class CachedVocabularies:
     def fake_title_type(cls):
         """Generate a random title_type."""
         if not cls._title_type_ids:
-
             cls._title_type_ids = []
 
             title_types = cls._read_vocabulary("titletypes")
@@ -109,7 +108,6 @@ class CachedVocabularies:
     def fake_description_type(cls):
         """Generate a random description type."""
         if not cls._description_type_ids:
-
             cls._description_type_ids = []
 
             description_types = cls._read_vocabulary("descriptiontypes")

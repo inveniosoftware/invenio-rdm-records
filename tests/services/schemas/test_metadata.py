@@ -31,7 +31,6 @@ def test_minimal_metadata_schema(app, minimal_metadata, expected_minimal_metadat
 
 
 def test_additional_field_raises(app, minimal_metadata):
-
     minimal_metadata["foo"] = "FOO"
 
     with pytest.raises(ValidationError):
