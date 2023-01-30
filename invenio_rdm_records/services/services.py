@@ -129,6 +129,7 @@ class RDMRecordService(RecordService):
     ):
         """Search for records published in the given community."""
         self.require_permission(identity, "read")
+
         current_communities.service.record_cls.pid.resolve(
             community_id
         )  # Ensure community's existence
