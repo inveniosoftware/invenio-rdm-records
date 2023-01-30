@@ -37,7 +37,7 @@ class MARCXMLSchema(Schema):
     sources = fields.Method(
         "get_sources"
     )  # Corresponds to references in the metadata schema
-    coverage = fields.Method(
+    locations = fields.Method(
         "get_locations"
     )  # Corresponds to locations in the metadata schema
     formats = fields.Method("get_formats")
