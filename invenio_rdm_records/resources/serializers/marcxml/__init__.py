@@ -7,13 +7,9 @@
 
 """MARCXML Serializer for Invenio RDM Records."""
 
-
-import traceback
-from copy import deepcopy
-
 from dojson.contrib.to_marc21.utils import dumps_etree
 from flask_resources import BaseListSchema, MarshmallowSerializer
-from flask_resources.serializers import XMLSerializer
+from flask_resources.serializers import SimpleSerializer
 from lxml import etree
 
 from .schema import MARCXMLSchema
@@ -29,10 +25,10 @@ class MARCXMLSerializer(MarshmallowSerializer):
     def __init__(self, **options):
         """Constructor."""
         super().__init__(
-            format_serializer_cls=XMLSerializer,
+            format_serializer_cls=SimpleSerializer,
             object_schema_cls=MARCXMLSchema,
             list_schema_cls=BaseListSchema,
-            string_encoder=self.marcxml_tostring,
+            encoder=self.marcxml_tostring,
         )
 
     @classmethod
