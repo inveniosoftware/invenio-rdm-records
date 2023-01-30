@@ -70,7 +70,7 @@ class MARCXMLSerializer(SerializerMixin):
                 ],  # Publication Information - Publisher Name
                 "types": ["901  ", "u"],  # Local Implementation
                 "sources": ["246i ", "x"],  # Source
-                "coverage": ["510  ", "a"],  # Location
+                "locations": ["510  ", "a"],  # Location
                 "formats": ["520 1", "a"],  # Abstract
                 "parent_id": ["024 1", "a"],  # ID
                 "community_id": ["024 2", "a"],  # ID
