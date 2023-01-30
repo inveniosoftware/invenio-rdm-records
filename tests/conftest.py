@@ -259,6 +259,11 @@ def app_config(app_config):
             "schema": "http://schema.datacite.org/oai/oai-1.1/oai.xsd",
             "namespace": "http://schema.datacite.org/oai/oai-1.1/",
         },
+        "oai_marcxml": {
+            "serializer": "invenio_rdm_records.oai:oai_marcxml_etree",
+            "schema": "https://www.loc.gov/standards/marcxml/schema/MARC21slim.xsd",
+            "namespace": "https://www.loc.gov/standards/marcxml/",
+        },
     }
     app_config["INDEXER_DEFAULT_INDEX"] = "rdmrecords-records-record-v5.0.0"
     # Variable not used. We set it to silent warnings

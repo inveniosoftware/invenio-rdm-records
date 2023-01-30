@@ -10,13 +10,40 @@
 
 from copy import deepcopy
 
+from dojson.contrib.marc21.utils import GroupableOrderedDict, create_record
 from lxml import etree
 
-from invenio_rdm_records.oai import datacite_etree, dublincore_etree, oai_datacite_etree
+from invenio_rdm_records.oai import (
+    datacite_etree,
+    dublincore_etree,
+    oai_datacite_etree,
+    oai_marcxml_etree,
+)
+
+from .resources.serializers.test_marcxml_serializer import (
+    flatten,
+    record_to_string_list,
+)
 
 # This tests would ideally be E2E. However, due to the lack of assets building
 # in tests we cannot safely query the `/oai2d` endpoint, it will fail due to
 # the lack of the `manifest.json` file.
+
+
+def test_marcxml_serializer(running_app, full_record):
+    expected_value = '<record xmlns="http://www.loc.gov/MARC21/slim"><datafield tag="856" ind1=" " ind2="1"><subfield code="a">award_identifiers_scheme=null; award_identifiers_identifier=null; award_title=null; award_number=null; funder_id=00k4n6c32; funder_name=null; </subfield></datafield><datafield tag="856" ind1=" " ind2="2"><subfield code="a">doi:10.1234/foo.bar</subfield></datafield><datafield tag="245" ind1="a" ind2=" "><subfield code="a">InvenioRDM</subfield></datafield><datafield tag="520" ind1=" " ind2="2"><subfield code="a">11 pages</subfield></datafield><datafield tag="100" ind1="a" ind2=" "><subfield code="a">Nielsen, Lars Holm</subfield></datafield><datafield tag="520" ind1=" " ind2="1"><subfield code="a">application/pdf</subfield></datafield><datafield tag="653" ind1=" " ind2=" "><subfield code="a">custom</subfield></datafield><datafield tag="540" ind1=" " ind2=" "><subfield code="a">A custom license</subfield><subfield code="a">https://customlicense.org/licenses/by/4.0/</subfield><subfield code="a">Creative Commons Attribution 4.0 International</subfield><subfield code="a">https://creativecommons.org/licenses/by/4.0/legalcode</subfield></datafield><datafield tag="260" ind1="b" ind2=" "><subfield code="a">InvenioRDM</subfield></datafield><datafield tag="520" ind1=" " ind2=" "><subfield code="a">A description \nwith HTML tags</subfield><subfield code="a">Bla bla bla</subfield></datafield><datafield tag="024" ind1=" " ind2="3"><subfield code="a">v1.0</subfield></datafield><datafield tag="024" ind1=" " ind2=" "><subfield code="a">1924MNRAS..84..308E</subfield><subfield code="a">10.5281/inveniordm.1234</subfield></datafield><datafield tag="700" ind1="a" ind2=" "><subfield code="u">Nielsen, Lars Holm</subfield></datafield><datafield tag="510" ind1=" " ind2=" "><subfield code="a">name=test location place; description=test location description; lat=-32.94682; lon=-60.63932</subfield></datafield><datafield tag="260" ind1="c" ind2=" "><subfield code="c">2018/2020-09</subfield></datafield><datafield tag="901" ind1=" " ind2=" "><subfield code="u">info:eu-repo/semantic/other</subfield></datafield></record>'
+    expected_value = create_record(expected_value)
+
+    record = {"_source": full_record}
+    ser_rec = create_record(oai_marcxml_etree(None, record))
+
+    record1 = flatten(record_to_string_list(expected_value))
+    record2 = flatten(record_to_string_list(ser_rec))
+
+    record1 = set(record1)
+    record2 = set(record2)
+
+    assert record1 == record2
 
 
 def test_dublincore_serializer(running_app, full_record):
