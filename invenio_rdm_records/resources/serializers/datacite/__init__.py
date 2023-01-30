@@ -8,7 +8,7 @@
 """DataCite Serializers for Invenio RDM Records."""
 from datacite import schema43
 from flask_resources import BaseListSchema, MarshmallowSerializer
-from flask_resources.serializers import JSONSerializer, XMLSerializer
+from flask_resources.serializers import JSONSerializer, SimpleSerializer
 
 from .schema import DataCite43Schema
 
@@ -32,8 +32,8 @@ class DataCite43XMLSerializer(MarshmallowSerializer):
     def __init__(self, **options):
         """Constructor."""
         super().__init__(
-            format_serializer_cls=XMLSerializer,
+            format_serializer_cls=SimpleSerializer,
             object_schema_cls=DataCite43Schema,
             list_schema_cls=BaseListSchema,
-            string_encoder=schema43.tostring,
+            encoder=schema43.tostring,
         )

@@ -9,7 +9,7 @@
 
 from dcxml import simpledc
 from flask_resources import BaseListSchema, MarshmallowSerializer
-from flask_resources.serializers import JSONSerializer, XMLSerializer
+from flask_resources.serializers import JSONSerializer, SimpleSerializer
 
 from .schema import DublinCoreSchema
 
@@ -37,8 +37,8 @@ class DublinCoreXMLSerializer(MarshmallowSerializer):
     def __init__(self, **options):
         """Constructor."""
         super().__init__(
-            format_serializer_cls=XMLSerializer,
+            format_serializer_cls=SimpleSerializer,
             object_schema_cls=DublinCoreSchema,
             list_schema_cls=BaseListSchema,
-            string_encoder=simpledc.tostring,
+            encoder=simpledc.tostring,
         )

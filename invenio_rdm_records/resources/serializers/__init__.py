@@ -9,6 +9,7 @@
 
 """Record response serializers."""
 
+from .bibtex import BibtexSerializer
 from .csl import CSLJSONSerializer, StringCitationSerializer
 from .datacite import DataCite43JSONSerializer, DataCite43XMLSerializer
 from .dublincore import DublinCoreJSONSerializer, DublinCoreXMLSerializer
@@ -23,6 +24,7 @@ from .marcxml import MARCXMLSerializer
 from .ui import UIJSONSerializer
 
 __all__ = (
+    "BibtexSerializer",
     "CSLJSONSerializer",
     "DataCite43JSONSerializer",
     "DataCite43XMLSerializer",

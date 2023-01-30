@@ -34,13 +34,11 @@ class MARCXMLSchema(BaseSchema):
     publishers = fields.Method("get_publishers")
     types = fields.Method(
         "get_types"
-    )  # Corresponds to ressource_type in the metadata schema
+    )  # Corresponds to resource_type in the metadata schema
     sources = fields.Method(
         "get_sources"
     )  # Corresponds to references in the metadata schema
-    locations = fields.Method(
-        "get_locations"
-    )  # Corresponds to locations in the metadata schema
+    locations = fields.Method("get_locations")
     formats = fields.Method("get_formats")
     parent_id = fields.Method("get_id")
     community_id = fields.Method("get_id_community")
