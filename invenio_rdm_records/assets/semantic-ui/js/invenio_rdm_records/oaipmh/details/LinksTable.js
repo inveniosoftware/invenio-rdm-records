@@ -20,6 +20,7 @@ const knownFormats = {
   oai_dc: "OAI Dublin Core",
   datacite: "DataCite",
   oai_datacite: "OAI DataCite",
+  oai_marcxml: "OAI MARCXML",
 };
 
 class LinksTable extends Component {

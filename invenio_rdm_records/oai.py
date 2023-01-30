@@ -21,12 +21,21 @@ from lxml import etree
 from .proxies import current_rdm_records
 from .resources.serializers.datacite import DataCite43XMLSerializer
 from .resources.serializers.dublincore import DublinCoreXMLSerializer
+from .resources.serializers.marcxml import MARCXMLSerializer
 from .services.pids.providers.oai import OAIPIDProvider
 
 
 def dublincore_etree(pid, record):
     """Get DublinCore XML etree for OAI-PMH."""
     return DublinCoreXMLSerializer().serialize_object_xml(record["_source"])
+
+
+def oai_marcxml_etree(pid, record):
+    """OAI MARCXML format for OAI-PMH.
+
+    It assumes that record is a search result.
+    """
+    return etree.fromstring(MARCXMLSerializer().serialize_object(record["_source"]))
 
 
 def datacite_etree(pid, record):
