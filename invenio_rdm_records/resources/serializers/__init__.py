@@ -19,6 +19,7 @@ from .iiif import (
     IIIFManifestV2JSONSerializer,
     IIIFSequenceV2JSONSerializer,
 )
+from .marcxml import MARCXMLSerializer
 from .ui import UIJSONSerializer
 
 __all__ = (
@@ -32,6 +33,7 @@ __all__ = (
     "IIIFInfoV2JSONSerializer",
     "IIIFManifestV2JSONSerializer",
     "IIIFSequenceV2JSONSerializer",
+    "MARCXMLSerializer",
     "StringCitationSerializer",
     "UIJSONSerializer",
 )
