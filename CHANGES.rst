@@ -10,6 +10,10 @@
 Changes
 =======
 
+Version 1.3.2 (released 2023-01-30)
+
+- records: remove double permission check on community records search
+
 Version 1.3.1 (released 2023-01-23)
 
 - Add feature flag for archive download endpoint on record and draft resources
