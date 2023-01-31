@@ -112,15 +112,19 @@ class RDMRecordResource(RecordResource):
     @request_headers
     @request_view_args
     @request_data
-    @response_handler()  # TODO: probably needs to change
+    @response_handler()
     def review_submit(self):
-        """Submit a draft for review."""
+        """Submit a draft for review or directly publish it."""
+        require_review = False
+        if resource_requestctx.data:
+            require_review = resource_requestctx.data.pop("require_review", False)
+
         item = self.service.review.submit(
             g.identity,
             resource_requestctx.view_args["pid_value"],
             resource_requestctx.data,
+            require_review=require_review,
         )
-
         return item.to_dict(), 202
 
     #

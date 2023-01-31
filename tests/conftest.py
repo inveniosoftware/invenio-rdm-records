@@ -53,6 +53,7 @@ from invenio_app.factory import create_app as _create_app
 from invenio_cache import current_cache
 from invenio_communities import current_communities
 from invenio_communities.communities.records.api import Community
+from invenio_pidstore.errors import PIDDoesNotExistError
 from invenio_records_resources.proxies import current_service_registry
 from invenio_records_resources.services.custom_fields import TextCF
 from invenio_vocabularies.contrib.affiliations.api import Affiliation
@@ -348,7 +349,7 @@ def _search_delete_indexes(current_search):
 
 # overwrite pytest_invenio.fixture to only delete record indices
 # keeping vocabularies.
-@pytest.fixture(scope="function")
+@pytest.fixture()
 def search_clear(search):
     """Clear search indices after test finishes (function scope).
 
@@ -362,7 +363,7 @@ def search_clear(search):
     _search_create_indexes(current_search, current_search_client)
 
 
-@pytest.fixture(scope="function")
+@pytest.fixture()
 def full_record(users):
     """Full record data as dict coming from the external world."""
     return {
@@ -525,7 +526,7 @@ def full_record(users):
     }
 
 
-@pytest.fixture(scope="function")
+@pytest.fixture()
 def minimal_record():
     """Minimal record data as dict coming from the external world."""
     return {
@@ -562,7 +563,7 @@ def minimal_record():
     }
 
 
-@pytest.fixture(scope="function")
+@pytest.fixture()
 def minimal_restricted_record(minimal_record):
     """Data for restricted record."""
     minimal_record["access"]["record"] = "restricted"
@@ -597,7 +598,7 @@ def minimal_community2():
     }
 
 
-@pytest.fixture(scope="function")
+@pytest.fixture()
 def restricted_minimal_community():
     """Data for a minimal community."""
     return {
@@ -610,6 +611,20 @@ def restricted_minimal_community():
             "type": {"id": "topic"},
         },
     }
+
+
+@pytest.fixture()
+def open_review_minimal_community(minimal_community):
+    """Data for a minimal community that allows direct publish."""
+    minimal_community["access"]["review_policy"] = "open"
+    return minimal_community
+
+
+@pytest.fixture()
+def closed_review_minimal_community(minimal_community):
+    """Data for a minimal community that allows direct publish."""
+    minimal_community["access"]["review_policy"] = "closed"
+    return minimal_community
 
 
 @pytest.fixture()
@@ -673,7 +688,7 @@ def roles(app, db):
     return [role1, role2]
 
 
-@pytest.fixture(scope="function")
+@pytest.fixture()
 def identity_simple(users):
     """Simple identity fixture."""
     user = users[0]
@@ -1078,7 +1093,7 @@ def awards_v(app, funders_v):
     return award
 
 
-@pytest.fixture(scope="function")
+@pytest.fixture()
 def cache():
     """Empty cache."""
     try:
@@ -1155,7 +1170,7 @@ def running_app(
     )
 
 
-@pytest.fixture(scope="function")
+@pytest.fixture()
 def superuser_role_need(db):
     """Store 1 role with 'superuser-access' ActionNeed.
 
@@ -1175,7 +1190,7 @@ def superuser_role_need(db):
     return action_role.need
 
 
-@pytest.fixture(scope="function")
+@pytest.fixture()
 def superuser_identity(admin, superuser_role_need):
     """Superuser identity fixture."""
     identity = admin.identity
@@ -1183,7 +1198,7 @@ def superuser_identity(admin, superuser_role_need):
     return identity
 
 
-@pytest.fixture(scope="function")
+@pytest.fixture()
 def admin_role_need(db):
     """Store 1 role with 'superuser-access' ActionNeed.
 
@@ -1264,6 +1279,31 @@ def community_owner(UserFixture, app, db):
 
 
 @pytest.fixture()
+def curator(UserFixture, community, app, db):
+    """Creates a curator of the community fixture."""
+    curator = UserFixture(
+        email="curatoruser@inveniosoftware.org",
+        password="curatoruser",
+    )
+    curator.create(app, db)
+    invitation_data = {
+        "members": [
+            {
+                "type": "user",
+                "id": curator.id,
+            }
+        ],
+        "role": "curator",
+        "visible": True,
+    }
+
+    current_communities.service.members.add(
+        system_identity, community.id, invitation_data
+    )
+    return curator
+
+
+@pytest.fixture()
 def community_type_type(superuser_identity):
     """Creates and retrieves a language vocabulary type."""
     v = vocabulary_service.create_type(superuser_identity, "communitytypes", "comtyp")
@@ -1286,26 +1326,30 @@ def community_type_record(superuser_identity, community_type_type):
     return record
 
 
+def _community_get_or_create(community_dict, identity):
+    """Util to get or create community, to avoid duplicate error."""
+    slug = community_dict["slug"]
+    try:
+        c = current_communities.service.record_cls.pid.resolve(slug)
+    except PIDDoesNotExistError:
+        c = current_communities.service.create(
+            identity,
+            community_dict,
+        )
+        Community.index.refresh()
+    return c
+
+
 @pytest.fixture()
 def community(running_app, community_type_record, community_owner, minimal_community):
     """Get the current RDM records service."""
-    c = current_communities.service.create(
-        community_owner.identity,
-        minimal_community,
-    )
-    Community.index.refresh()
-    return c
+    return _community_get_or_create(minimal_community, community_owner.identity)
 
 
 @pytest.fixture()
 def community2(running_app, community_type_record, community_owner, minimal_community2):
     """Get the current RDM records service."""
-    c = current_communities.service.create(
-        community_owner.identity,
-        minimal_community2,
-    )
-    Community.index.refresh()
-    return c
+    return _community_get_or_create(minimal_community2, community_owner.identity)
 
 
 @pytest.fixture()
@@ -1313,12 +1357,29 @@ def restricted_community(
     running_app, community_type_record, community_owner, restricted_minimal_community
 ):
     """Get the current RDM records service."""
-    c = current_communities.service.create(
-        community_owner.identity,
-        restricted_minimal_community,
+    return _community_get_or_create(
+        restricted_minimal_community, community_owner.identity
     )
-    Community.index.refresh()
-    return c
+
+
+@pytest.fixture()
+def open_review_community(
+    running_app, community_type_record, community_owner, open_review_minimal_community
+):
+    """Create community with open review policy i.e allow direct publishes."""
+    return _community_get_or_create(
+        open_review_minimal_community, community_owner.identity
+    )
+
+
+@pytest.fixture()
+def closed_review_community(
+    running_app, community_type_record, community_owner, closed_review_minimal_community
+):
+    """Create community with open review policy i.e allow direct publishes."""
+    return _community_get_or_create(
+        closed_review_minimal_community, community_owner.identity
+    )
 
 
 @pytest.fixture(scope="session")
