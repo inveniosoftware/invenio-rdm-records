@@ -9,8 +9,10 @@
 
 from flask import current_app
 from flask_babelex import lazy_gettext as _
+from invenio_communities import current_communities
 from invenio_communities.communities.records.systemfields.access import CommunityAccess
 from invenio_drafts_resources.services.records import RecordService
+from invenio_records_resources.services.errors import PermissionDeniedError
 from invenio_records_resources.services.uow import (
     RecordCommitOp,
     RecordIndexOp,
@@ -143,18 +145,52 @@ class ReviewService(RecordService):
         return True
 
     @unit_of_work()
-    def submit(self, identity, id_, data=None, revision_id=None, uow=None):
-        """Submit record for review."""
-        # Get record and check permission
-        draft = self.draft_cls.pid.resolve(id_, registered_only=False)
-        self.require_permission(identity, "update_draft", record=draft)
+    def submit(
+        self, identity, id_, data=None, require_review=False, revision_id=None, uow=None
+    ):
+        """Submit record for review or direct publish to the community."""
+        if not isinstance(require_review, bool):
+            raise ValidationError(
+                _("Must be a boolean, true or false"),
+                field_name="require_review",
+            )
 
+        draft = self.draft_cls.pid.resolve(id_, registered_only=False)
         # Preconditions
         if draft.parent.review is None:
             raise ReviewNotFoundError()
 
         # since it is submit review action, assume the receiver is community
         resolved_community = draft.parent.review.receiver.resolve()
+
+        # create review request
+        request_item = self._submit(
+            identity, draft, resolved_community, data, revision_id, uow
+        )
+
+        try:
+            # check if can direct publish
+            current_communities.service.require_permission(
+                identity, "direct_publish", record=resolved_community
+            )
+        except PermissionDeniedError:
+            # review request is required
+            require_review = True
+
+        if not require_review:
+            # Direct publish: auto-accept request, without any payload
+            request_item = current_requests_service.execute_action(
+                identity, request_item.data["id"], "accept", data=None, uow=uow
+            )
+
+        return request_item
+
+    def _submit(
+        self, identity, draft, resolved_community, data=None, revision_id=None, uow=None
+    ):
+        """Submit record for review."""
+        # Get record and check permission
+        self.require_permission(identity, "update_draft", record=draft)
 
         assert "restricted" in CommunityAccess.VISIBILITY_LEVELS
         community_is_restricted = (

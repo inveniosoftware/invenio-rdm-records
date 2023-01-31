@@ -8,7 +8,7 @@
 """Test of the review deposit integration."""
 
 import pytest
-from flask_principal import Identity
+from flask_principal import Identity, UserNeed
 from invenio_access.permissions import any_user, authenticated_user
 from invenio_communities import current_communities
 from invenio_communities.communities.records.api import Community
@@ -40,6 +40,7 @@ def get_community_owner_identity(community):
             identity.provides.add(any_user)
             identity.provides.add(authenticated_user)
             identity.provides.add(CommunityRoleNeed(str(community.id), "owner"))
+            identity.provides.add(UserNeed(owner_id))
             return identity
 
 
@@ -75,6 +76,36 @@ def draft(minimal_record, community, service, running_app, db):
 
     # Create draft with review
     return service.create(running_app.superuser_identity, minimal_record)
+
+
+@pytest.fixture()
+def draft_for_open_review(
+    minimal_record, open_review_community, service, community_owner, db
+):
+    minimal_record["parent"] = {
+        "review": {
+            "type": "community-submission",
+            "receiver": {"community": open_review_community.data["id"]},
+        }
+    }
+
+    # Create draft with review
+    return service.create(community_owner.identity, minimal_record)
+
+
+@pytest.fixture()
+def draft_for_closed_review(
+    minimal_record, closed_review_community, service, community_owner, db
+):
+    minimal_record["parent"] = {
+        "review": {
+            "type": "community-submission",
+            "receiver": {"community": closed_review_community.data["id"]},
+        }
+    }
+
+    # Create draft with review
+    return service.create(community_owner.identity, minimal_record)
 
 
 @pytest.fixture()
@@ -155,6 +186,106 @@ def test_simple_flow(draft, running_app, community, service, requests_service):
     assert draft["parent"]["communities"]["ids"] == [community.data["id"]]
     assert draft["parent"]["communities"]["default"] == community.data["id"]
     assert draft["status"] == "new_version_draft"
+
+
+def test_direct_publish_to_open_review_community(
+    draft_for_open_review,
+    open_review_community,
+    service,
+):
+    """Test direct publish review for community owner."""
+    # check draft status
+    assert (
+        draft_for_open_review["status"]
+        == DraftStatus.review_to_draft_statuses["created"]
+    )
+    identity = get_community_owner_identity(open_review_community)
+
+    # ### Publish draft to community
+    req = service.review.submit(identity, draft_for_open_review.id).to_dict()
+    assert req["status"] == "accepted"
+    assert req["title"] == draft_for_open_review["metadata"]["title"]
+    assert req["is_open"] is False
+
+    # check record is published
+    record = service.read(identity, draft_for_open_review.id).to_dict()
+    assert "review" not in record["parent"]  # Review was desassociated
+    assert record["is_published"] is True
+    assert record["parent"]["communities"]["ids"] == [open_review_community.data["id"]]
+    assert (
+        record["parent"]["communities"]["default"] == open_review_community.data["id"]
+    )
+    assert record["status"] == "published"
+
+    # ### Create a new version (still part of community)
+    draft = service.new_version(identity, draft_for_open_review.id).to_dict()
+    assert "review" not in draft["parent"]
+    assert draft["parent"]["communities"]["ids"] == [open_review_community.data["id"]]
+    assert draft["parent"]["communities"]["default"] == open_review_community.data["id"]
+    assert draft["status"] == "new_version_draft"
+
+
+def test_direct_publish_to_open_review_community_with_require_review(
+    draft_for_open_review,
+    open_review_community,
+    service,
+):
+    """Test direct publish review for community owner but requiring request."""
+    # check draft status
+    assert (
+        draft_for_open_review["status"]
+        == DraftStatus.review_to_draft_statuses["created"]
+    )
+    identity = get_community_owner_identity(open_review_community)
+
+    # ### Publish draft to community
+    req = service.review.submit(
+        identity, draft_for_open_review.id, require_review=True
+    ).to_dict()
+    assert req["status"] == "submitted"
+    assert req["title"] == draft_for_open_review["metadata"]["title"]
+    assert req["is_open"] is True
+
+
+def test_non_owner_direct_publish_to_open_review_community(
+    uploader,
+    draft_for_open_review,
+    service,
+):
+    """Test direct publish review for a non member of community."""
+    # check draft status
+    assert (
+        draft_for_open_review["status"]
+        == DraftStatus.review_to_draft_statuses["created"]
+    )
+
+    # ### Publish draft to community
+    with pytest.raises(PermissionDeniedError):
+        service.review.submit(
+            uploader.identity,
+            draft_for_open_review.id,
+        ).to_dict()
+
+
+def test_direct_publish_to_closed_review_community(
+    draft_for_closed_review,
+    closed_review_community,
+    service,
+):
+    """Test direct publish review for community owner."""
+    # check draft status
+    assert (
+        draft_for_closed_review["status"]
+        == DraftStatus.review_to_draft_statuses["created"]
+    )
+    identity = get_community_owner_identity(closed_review_community)
+
+    # ### Publish draft to community is not possible because of the community
+    # closed review policy. A review request should be created instead
+    req = service.review.submit(identity, draft_for_closed_review.id).to_dict()
+    assert req["status"] == "submitted"
+    assert req["title"] == draft_for_closed_review["metadata"]["title"]
+    assert req["is_open"] is True
 
 
 def test_creation(draft, running_app, community, service, requests_service):

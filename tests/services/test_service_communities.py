@@ -53,31 +53,6 @@ def record_community(db, uploader, minimal_record, community, service):
     return record
 
 
-@pytest.fixture()
-def curator(UserFixture, community, app, db):
-    """Creates a curator of the community fixture."""
-    curator = UserFixture(
-        email="curatoruser@inveniosoftware.org",
-        password="curatoruser",
-    )
-    curator.create(app, db)
-    invitation_data = {
-        "members": [
-            {
-                "type": "user",
-                "id": curator.id,
-            }
-        ],
-        "role": "curator",
-        "visible": True,
-    }
-
-    current_communities.service.members.add(
-        system_identity, community.id, invitation_data
-    )
-    return curator
-
-
 def test_remove_community_from_record_success(
     running_app, community, record_community, service, record_communities_service
 ):

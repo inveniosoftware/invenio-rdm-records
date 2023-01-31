@@ -13,14 +13,17 @@
 from copy import deepcopy
 from functools import partial
 
-from flask import current_app
+from flask import current_app, g
 from flask_babelex import get_locale
 from flask_resources import BaseObjectSchema
+from invenio_communities.communities.resources.ui_schema import (
+    _community_permission_check,
+)
 from invenio_records_resources.services.custom_fields import CustomFieldsSchemaUI
 from invenio_vocabularies.contrib.awards.serializer import AwardL10NItemSchema
 from invenio_vocabularies.contrib.funders.serializer import FunderL10NItemSchema
 from invenio_vocabularies.resources import L10NString, VocabularyL10Schema
-from marshmallow import Schema, fields, missing
+from marshmallow import Schema, fields, missing, pre_dump
 from marshmallow_utils.fields import FormatDate as FormatDate_
 from marshmallow_utils.fields import FormatEDTF as FormatEDTF_
 from marshmallow_utils.fields import SanitizedHTML, StrippedHTML
@@ -203,3 +206,21 @@ class UIRecordSchema(BaseObjectSchema):
         fields.Nested(FundingSchema()),
         attribute="metadata.funding",
     )
+
+    @pre_dump
+    def add_communities_permissions_and_roles(self, obj, **kwargs):
+        """Inject current user's permission to community receiver."""
+        receiver = (
+            obj.get("expanded", {}).get("parent", {}).get("review", {}).get("receiver")
+        )
+        if receiver:
+            can_direct_publish = _community_permission_check(
+                "direct_publish", community=receiver, identity=g.identity
+            )
+
+            # use `ui` key to indicate that the extra information is injected only on
+            # UIJSONSerializer
+            receiver.setdefault("ui", {})["permissions"] = {
+                "can_direct_publish": can_direct_publish
+            }
+        return obj
