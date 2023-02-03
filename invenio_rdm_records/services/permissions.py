@@ -2,6 +2,7 @@
 #
 # Copyright (C) 2019 CERN.
 # Copyright (C) 2019 Northwestern University.
+# Copyright (C) 2023 TU Wien.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
@@ -75,8 +76,9 @@ class RDMRecordPermissionPolicy(RecordPermissionPolicy):
         IfRestricted("files", then_=can_view, else_=can_all),
     ]
     can_get_content_files = [
-        # preview is same as read_files
-        IfFileIsLocal(then_=can_preview, else_=[SystemProcess()])
+        # note: even though this is closer to business logic than permissions,
+        # it was simpler and less coupling to implement this as permission check
+        IfFileIsLocal(then_=can_read_files, else_=[SystemProcess()])
     ]
     # Allow submitting new record
     can_create = can_authenticated
