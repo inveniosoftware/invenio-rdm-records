@@ -11,10 +11,7 @@
 
 """Bibliographic Record Resource."""
 
-import datetime
-from email.utils import parsedate
-
-from flask import abort, g, request, send_file
+from flask import abort, g, send_file
 from flask_cors import cross_origin
 from flask_resources import (
     HTTPJSONException,
@@ -69,7 +66,10 @@ class RDMRecordResource(RecordResource):
             route("PUT", p(routes["item-review"]), self.review_update),
             route("DELETE", p(routes["item-review"]), self.review_delete),
             route("POST", p(routes["item-actions-review"]), self.review_submit),
-            route("GET", routes["community-records"], self.search_community_records),
+            route("POST", p(routes["item-communities"]), self.record_communities_add),
+            route(
+                "DELETE", p(routes["item-communities"]), self.record_communities_remove
+            ),
         ]
 
         return url_rules
@@ -158,21 +158,13 @@ class RDMRecordResource(RecordResource):
 
         return item.to_dict(), 200
 
-    #
-    # Community records
-    #
-    @request_search_args
-    @request_view_args
-    @response_handler(many=True)
-    def search_community_records(self):
-        """Perform a search over the community's records."""
-        hits = self.service.search_community_records(
-            identity=g.identity,
-            community_id=resource_requestctx.view_args["pid_value"],
-            params=resource_requestctx.args,
-            search_preference=search_preference(),
-        )
-        return hits.to_dict(), 200
+    def record_communities_add(self):
+        """Add communities to a record."""
+        return {}, 200
+
+    def record_communities_remove(self):
+        """Remove communities from the record."""
+        return {}, 200
 
 
 #
@@ -259,6 +251,40 @@ class RDMParentRecordLinksResource(RecordResource):
             identity=g.identity,
         )
         return items.to_dict(), 200
+
+
+#
+# Community's records
+#
+class RDMCommunityRecordsResource(RecordResource):
+    """RDM community's records resource."""
+
+    def create_url_rules(self):
+        """Create the URL rules for the record resource."""
+
+        def p(route):
+            """Prefix a route with the URL prefix."""
+            return f"{self.config.url_prefix}{route}"
+
+        routes = self.config.routes
+        url_rules = [
+            route("GET", p(routes["list"]), self.search_community_records),
+        ]
+
+        return url_rules
+
+    @request_search_args
+    @request_view_args
+    @response_handler(many=True)
+    def search_community_records(self):
+        """Perform a search over the community's records."""
+        hits = self.service.search_community_records(
+            identity=g.identity,
+            community_id=resource_requestctx.view_args["pid_value"],
+            params=resource_requestctx.args,
+            search_preference=search_preference(),
+        )
+        return hits.to_dict(), 200
 
 
 # IIIF decorators

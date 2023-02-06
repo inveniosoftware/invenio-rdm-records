@@ -13,9 +13,10 @@ from .config import (
     RDMFileRecordServiceConfig,
     RDMRecordServiceConfig,
 )
+from .iiif import IIIFService
 from .permissions import RDMRecordPermissionPolicy
 from .secret_links import SecretLinkService
-from .services import IIIFService, RDMRecordService
+from .services import RDMRecordService
 
 __all__ = (
     "IIIFService",

@@ -63,6 +63,12 @@ def create_pid_resolver_resource_bp(app):
     return ext.pid_resolver_resource.as_blueprint()
 
 
+def create_community_records_bp(app):
+    """Create community's records blueprint."""
+    ext = app.extensions["invenio-rdm-records"]
+    return ext.community_records_resource.as_blueprint()
+
+
 def create_oaipmh_server_blueprint_from_app(app):
     """Create app blueprint."""
     return app.extensions["invenio-rdm-records"].oaipmh_server_resource.as_blueprint()

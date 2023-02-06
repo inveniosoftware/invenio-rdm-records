@@ -10,16 +10,24 @@
 
 from .config import (
     IIIFResourceConfig,
+    RDMCommunityRecordsResourceConfig,
     RDMDraftFilesResourceConfig,
     RDMParentRecordLinksResourceConfig,
     RDMRecordFilesResourceConfig,
     RDMRecordResourceConfig,
 )
-from .resources import IIIFResource, RDMParentRecordLinksResource, RDMRecordResource
+from .resources import (
+    IIIFResource,
+    RDMCommunityRecordsResource,
+    RDMParentRecordLinksResource,
+    RDMRecordResource,
+)
 
 __all__ = (
     "IIIFResource",
     "IIIFResourceConfig",
+    "RDMCommunityRecordsResourceConfig",
+    "RDMCommunityRecordsResource",
     "RDMDraftFilesResourceConfig",
     "RDMParentRecordLinksResource",
     "RDMParentRecordLinksResourceConfig",
