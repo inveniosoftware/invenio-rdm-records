@@ -8,13 +8,6 @@
 
 """Module tests."""
 
-import json
-
-from flask import Flask
-from invenio_search import current_search
-
-from invenio_rdm_records import InvenioRDMRecords
-
 
 def test_version():
     """Test version import."""

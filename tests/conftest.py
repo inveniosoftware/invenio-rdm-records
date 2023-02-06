@@ -1256,7 +1256,7 @@ def community_type_type(superuser_identity):
 
 @pytest.fixture()
 def community_type_record(superuser_identity, community_type_type):
-    """Creates a d retrieves community type records."""
+    """Creates and retrieves community type records."""
     record = vocabulary_service.create(
         identity=superuser_identity,
         data={
@@ -1276,6 +1276,17 @@ def community(running_app, community_type_record, curator, minimal_community):
     c = current_communities.service.create(
         curator.identity,
         minimal_community,
+    )
+    Community.index.refresh()
+    return c
+
+
+@pytest.fixture()
+def community2(running_app, community_type_record, curator, minimal_community2):
+    """Get the current RDM records service."""
+    c = current_communities.service.create(
+        curator.identity,
+        minimal_community2,
     )
     Community.index.refresh()
     return c

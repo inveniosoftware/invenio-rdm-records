@@ -12,29 +12,16 @@
 """RDM Record Service."""
 
 
-import tempfile
-
 import arrow
-import importlib_metadata as metadata
-from flask_iiif.api import IIIFImageAPIWrapper
 from invenio_communities import current_communities
 from invenio_drafts_resources.services.records import RecordService
-from invenio_records_resources.services import LinksTemplate, Service
+from invenio_records_resources.services import LinksTemplate
 from invenio_records_resources.services.uow import RecordCommitOp, unit_of_work
 from invenio_requests.services.results import EntityResolverExpandableField
 from invenio_search.engine import dsl
 
 from invenio_rdm_records.services.errors import EmbargoNotLiftedError
 from invenio_rdm_records.services.results import ParentCommunitiesExpandableField
-
-try:
-    metadata.distribution("wand")
-    from wand.image import Image
-
-    HAS_IMAGEMAGICK = True
-except (metadata.PackageNotFoundError, ImportError):
-    # ImageMagick notinstalled
-    HAS_IMAGEMAGICK = False
 
 
 class RDMRecordService(RecordService):
@@ -48,19 +35,21 @@ class RDMRecordService(RecordService):
         secret_links_service=None,
         pids_service=None,
         review_service=None,
+        record_communities_service=None,
     ):
         """Constructor for RecordService."""
         super().__init__(config, files_service, draft_files_service)
         self._secret_links = secret_links_service
         self._pids = pids_service
         self._review = review_service
+        self._record_communities = record_communities_service
 
     #
     # Subservices
     #
     @property
     def secret_links(self):
-        """Record secret link service."""
+        """Record secret links service."""
         return self._secret_links
 
     @property
@@ -70,8 +59,13 @@ class RDMRecordService(RecordService):
 
     @property
     def review(self):
-        """Record PIDs service."""
+        """Record review service."""
         return self._review
+
+    @property
+    def record_communities(self):
+        """Record communities service."""
+        return self._record_communities
 
     #
     # Properties
@@ -127,6 +121,9 @@ class RDMRecordService(RecordService):
 
         return self.scan(identity=identity, q=embargoed_q)
 
+    #
+    # Community's records search
+    #
     def search_community_records(
         self, identity, community_id, params=None, search_preference=None, **kwargs
     ):
@@ -134,9 +131,8 @@ class RDMRecordService(RecordService):
         self.require_permission(identity, "read")
         current_communities.service.record_cls.pid.resolve(
             community_id
-        )  # Checks wether community exists
+        )  # Ensure community's existence
 
-        # Prepare and execute the search
         params = params or {}
 
         search_result = self._search(
@@ -165,119 +161,3 @@ class RDMRecordService(RecordService):
             ),
             links_item_tpl=self.links_item_tpl,
         )
-
-
-class IIIFService(Service):
-    """IIIF service.
-
-    This is just a thin layer on top of Flask-IIIF API.
-    """
-
-    def __init__(self, config, records_service):
-        """Constructor."""
-        super().__init__(config)
-        self._records_service = records_service
-
-    def _iiif_uuid(self, uuid):
-        """Split the uuid content.
-
-        We assume the uuid is build as ``<record|draft>:<pid_value>``.
-        """
-        type_, id_ = uuid.split(":", 1)
-        return type_, id_
-
-    def _iiif_image_uuid(self, uuid):
-        """Split the uuid content.
-
-        We assume the uuid is build as ``<record|draft>:<pid_value>:<key>``.
-        """
-        type_, id_, key = uuid.split(":", 2)
-        return type_, id_, key
-
-    def file_service(self, type_):
-        """Get the correct instance of the file service, draft vs record."""
-        return (
-            self._records_service.files
-            if type_ == "record"
-            else self._records_service.draft_files
-        )
-
-    def read_record(self, identity, uuid):
-        """Read the correct version of the record and its files."""
-        type_, id_ = self._iiif_uuid(uuid)
-        read = (
-            self._records_service.read
-            if type_ == "record"
-            else self._records_service.read_draft
-        )
-        # Kids, don't do this at home
-        # If you find yourself wanting to copy this, ask for help first
-        record = read(identity=identity, id_=id_)
-        file_service = self.file_service(type_)
-        files = file_service.list_files(identity=identity, id_=id_)
-        record.files = files
-        return record
-
-    def _open_image(self, file_):
-        fp = file_.get_stream("rb")
-        # If ImageMagick with Wand is installed, extract first page
-        # for PDF/text.
-        pages_mimetypes = {"application/pdf", "text/plain"}
-        if HAS_IMAGEMAGICK and file_.data["mimetype"] in pages_mimetypes:
-            first_page = Image(Image(fp).sequence[0])
-            tempfile_ = tempfile.TemporaryFile()
-            with first_page.convert(format="png") as converted:
-                converted.save(file=tempfile_)
-            return tempfile_
-
-        return fp
-
-    def get_file(self, identity, uuid, key=None):
-        """."""
-        if key:
-            type_, id_ = self._iiif_uuid(uuid)
-        else:
-            type_, id_, key = self._iiif_image_uuid(uuid)
-
-        service = self.file_service(type_)
-        # TODO: add cache and check if the metadata is present
-        return service.get_file_content(id_=id_, file_key=key, identity=identity)
-
-    def image_api(
-        self,
-        identity,
-        uuid,
-        region,
-        size,
-        rotation,
-        quality,
-        image_format,
-    ):
-        """Run the IIIF image API workflow."""
-        # Validate IIIF parameters
-        IIIFImageAPIWrapper.validate_api(
-            uuid=uuid,
-            region=region,
-            size=size,
-            rotation=rotation,
-            quality=quality,
-            image_format=image_format,
-        )
-
-        type_, id_, key = self._iiif_image_uuid(uuid)
-        service = self.file_service(type_)
-        # TODO: check cache before this
-        file_ = service.get_file_content(id_=id_, file_key=key, identity=identity)
-        data = self._open_image(file_)
-        # TODO: include image magic for pdf
-        image = IIIFImageAPIWrapper.open_image(data)
-        image.apply_api(
-            region=region,
-            size=size,
-            rotation=rotation,
-            quality=quality,
-        )
-        # prepare image to be serve
-        to_serve = image.serve(image_format=image_format)
-        image.close_image()
-        return to_serve

@@ -92,8 +92,8 @@ class RDMRecordResourceConfig(RecordResourceConfig, ConfiguratorMixin):
     # Review
     routes["item-review"] = "/<pid_value>/draft/review"
     routes["item-actions-review"] = "/<pid_value>/draft/actions/submit-review"
-    # Community records
-    routes["community-records"] = "/communities/<pid_value>/records"
+    # Record communities
+    routes["item-communities"] = "/<pid_value>/communities"
 
     request_view_args = {
         "pid_value": ma.fields.Str(),
@@ -206,6 +206,9 @@ record_links_error_handlers.update(
 )
 
 
+#
+# Parent Record Links
+#
 class RDMParentRecordLinksResourceConfig(RecordResourceConfig, ConfiguratorMixin):
     """User records resource configuration."""
 
@@ -230,6 +233,25 @@ class RDMParentRecordLinksResourceConfig(RecordResourceConfig, ConfiguratorMixin
     error_handlers = record_links_error_handlers
 
 
+#
+# Community's records
+#
+class RDMCommunityRecordsResourceConfig(RecordResourceConfig, ConfiguratorMixin):
+    """Community's records resource config."""
+
+    blueprint_name = "community-records"
+
+    url_prefix = "/communities"
+
+    # Community records
+    routes = {"list": "/<pid_value>/records"}
+
+    response_handlers = record_serializers
+
+
+#
+# IIIF
+#
 class IIIFResourceConfig(ResourceConfig, ConfiguratorMixin):
     """IIIF resource configuration."""
 

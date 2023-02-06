@@ -33,17 +33,6 @@ def ui_headers():
     }
 
 
-@pytest.fixture()
-def community2(running_app, curator, minimal_community2):
-    """Get the current RDM records service."""
-    c = current_communities.service.create(
-        curator.identity,
-        minimal_community2,
-    )
-    Community.index.refresh()
-    return c
-
-
 def test_simple_flow(
     running_app,
     client,

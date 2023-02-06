@@ -23,11 +23,14 @@ from invenio_rdm_records.oaiserver.resources.config import OAIPMHServerResourceC
 from invenio_rdm_records.oaiserver.resources.resources import OAIPMHServerResource
 from invenio_rdm_records.oaiserver.services.config import OAIPMHServerServiceConfig
 from invenio_rdm_records.oaiserver.services.services import OAIPMHServerService
+from invenio_rdm_records.services.communities.service import RecordCommunitiesService
 
 from . import config
 from .resources import (
     IIIFResource,
     IIIFResourceConfig,
+    RDMCommunityRecordsResource,
+    RDMCommunityRecordsResourceConfig,
     RDMDraftFilesResourceConfig,
     RDMParentRecordLinksResource,
     RDMParentRecordLinksResourceConfig,
@@ -179,6 +182,7 @@ class InvenioRDMRecords(object):
             secret_links_service=SecretLinkService(service_configs.record),
             pids_service=PIDsService(service_configs.record, PIDManager),
             review_service=ReviewService(service_configs.record),
+            record_communities_service=RecordCommunitiesService(service_configs.record),
         )
         self.iiif_service = IIIFService(
             records_service=self.records_service, config=None
@@ -211,6 +215,12 @@ class InvenioRDMRecords(object):
         self.parent_record_links_resource = RDMParentRecordLinksResource(
             service=self.records_service,
             config=RDMParentRecordLinksResourceConfig.build(app),
+        )
+
+        # Community's records
+        self.community_records_resource = RDMCommunityRecordsResource(
+            service=self.records_service,
+            config=RDMCommunityRecordsResourceConfig.build(app),
         )
 
         # OAI-PMH

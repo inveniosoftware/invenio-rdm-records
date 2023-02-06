@@ -51,7 +51,7 @@ def service():
 
 @pytest.fixture()
 def requests_service():
-    """Get the current RDM records service."""
+    """Get the current RDM requests service."""
     return current_requests_service
 
 
