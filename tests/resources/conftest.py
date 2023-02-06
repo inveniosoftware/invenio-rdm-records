@@ -31,30 +31,6 @@ def rdm_record_service():
     return current_rdm_records_service
 
 
-@pytest.fixture()
-def record_community(uploader, minimal_record, community, rdm_record_service, db):
-    """Record that belongs to a community."""
-
-    class Record:
-        """Test record class."""
-
-        def create_record(self):
-            """Creates new record that belongs to the same community."""
-            # create draft
-            draft = rdm_record_service.create(uploader.identity, minimal_record)
-            # Publish
-            record = rdm_record_service.publish(uploader.identity, draft.id)
-            # TODO: remove this extra func when the `add` to a community is implemented
-            community_record = community._record
-            record._record.parent.communities.add(community_record, default=False)
-            record._record.parent.commit()
-            db.session.commit()
-            rdm_record_service.indexer.index(record._record)
-            return record
-
-    return Record()
-
-
 def link(url):
     """Strip the host part of a link."""
     api_prefix = "https://127.0.0.1:5000/api"

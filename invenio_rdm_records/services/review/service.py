@@ -9,14 +9,8 @@
 """RDM Review Service."""
 
 from flask import current_app
-from invenio_communities import current_communities
-from invenio_communities.communities.records.systemfields.access import (
-    CommunityAccess,
-    VisibilityEnum,
-)
 from invenio_drafts_resources.services.records import RecordService
 from invenio_i18n import lazy_gettext as _
-from invenio_records_resources.services.errors import PermissionDeniedError
 from invenio_records_resources.services.uow import (
     RecordCommitOp,
     RecordIndexOp,
@@ -24,17 +18,12 @@ from invenio_records_resources.services.uow import (
 )
 from invenio_requests import current_request_type_registry, current_requests_service
 from invenio_requests.resolvers.registry import ResolverRegistry
-from invenio_requests.services.requests.links import RequestLink, RequestLinksTemplate
 from marshmallow import ValidationError
 
-from ...records.systemfields.access.field.record import AccessStatusEnum
-from ..errors import (
-    ReviewExistsError,
-    ReviewInconsistentAccessRestrictions,
-    ReviewNotFoundError,
-    ReviewStateError,
-)
-from .links import RequestRecordLink
+from invenio_rdm_records.proxies import current_rdm_records
+from invenio_rdm_records.requests.decorators import request_next_link
+
+from ..errors import ReviewExistsError, ReviewNotFoundError, ReviewStateError
 
 
 class ReviewService(RecordService):
@@ -58,7 +47,7 @@ class ReviewService(RecordService):
         """Supported review types."""
         return current_app.config.get("RDM_RECORDS_REVIEWS", [])
 
-    def validate_request_type(self, request_type):
+    def _validate_request_type(self, request_type):
         """Validates the request type."""
         type_ = current_request_type_registry.lookup(request_type, quiet=True)
         if type_ is None or type_.type_id not in self.supported_types:
@@ -77,7 +66,7 @@ class ReviewService(RecordService):
             )
 
         # Validate the review type (only review requests are valid)
-        type_ = self.validate_request_type(data.pop("type", None))
+        type_ = self._validate_request_type(data.pop("type", None))
 
         # Resolve receiver
         receiver = ResolverRegistry.resolve_entity_proxy(
@@ -109,7 +98,7 @@ class ReviewService(RecordService):
             raise ReviewNotFoundError()
 
         request_type = draft.parent.review.get_object()["type"]
-        self.validate_request_type(request_type)
+        self._validate_request_type(request_type)
 
         return current_requests_service.read(identity, draft.parent.review.id)
 
@@ -136,7 +125,7 @@ class ReviewService(RecordService):
         if draft.parent.review is None:
             raise ReviewNotFoundError()
         request_type = draft.parent.review.get_object()["type"]
-        self.validate_request_type(request_type)
+        self._validate_request_type(request_type)
 
         if draft.is_published:
             raise ReviewStateError(
@@ -160,10 +149,9 @@ class ReviewService(RecordService):
         uow.register(RecordIndexOp(draft, indexer=self.indexer))
         return True
 
+    @request_next_link()
     @unit_of_work()
-    def submit(
-        self, identity, id_, data=None, require_review=False, revision_id=None, uow=None
-    ):
+    def submit(self, identity, id_, data=None, require_review=False, uow=None):
         """Submit record for review or direct publish to the community."""
         if not isinstance(require_review, bool):
             raise ValidationError(
@@ -177,77 +165,30 @@ class ReviewService(RecordService):
             raise ReviewNotFoundError()
 
         request_type = draft.parent.review.get_object()["type"]
-        self.validate_request_type(request_type)
+        self._validate_request_type(request_type)
 
         # since it is submit review action, assume the receiver is community
-        resolved_community = draft.parent.review.receiver.resolve()
+        community = draft.parent.review.receiver.resolve()
 
-        # create review request
-        request_item = self._submit(
-            identity, draft, resolved_community, data, revision_id, uow
-        )
-
-        try:
-            # check if can direct publish
-            current_communities.service.require_permission(
-                identity, "direct_publish", record=resolved_community
-            )
-        except PermissionDeniedError:
-            # review request is required
-            require_review = True
-
-        if not require_review:
-            # Direct publish: auto-accept request, without any payload
-            request_item = current_requests_service.execute_action(
-                identity, request_item.data["id"], "accept", data=None, uow=uow
-            )
-
-        links_item = dict(
-            current_requests_service.config.links_item,
-            next_html=RequestRecordLink("{+ui}/records/{record_id}"),
-        )
-        if require_review:
-            links_item.update(next_html=RequestLink("{+ui}/me/requests/{id}"))
-
-        links_item_tpl = RequestLinksTemplate(
-            links_item,
-            current_requests_service.config.action_link,
-            context={
-                "permission_policy_cls": current_requests_service.config.permission_policy_cls,
-            },
-        )
-
-        request_item.links_tpl = links_item_tpl
-        return request_item
-
-    def _submit(
-        self, identity, draft, resolved_community, data=None, revision_id=None, uow=None
-    ):
-        """Submit record for review."""
-        # Get record and check permission
+        # Check permission
         self.require_permission(identity, "update_draft", record=draft)
 
-        assert CommunityAccess.validate_visibility_level(VisibilityEnum.RESTRICTED)
-        community_is_restricted = resolved_community["access"]["visibility"] == str(
-            VisibilityEnum.RESTRICTED
+        # create review request
+        request_item = current_rdm_records.community_inclusion_service.submit(
+            identity, draft, community, draft.parent.review, data, uow
         )
+        request = request_item._request
 
-        record_is_restricted = draft.access.status == AccessStatusEnum.RESTRICTED
-
-        if community_is_restricted and not record_is_restricted:
-            raise ReviewInconsistentAccessRestrictions()
-
-        # All other preconditions can be checked by the action itself which can
-        # raise appropriate exceptions.
-        request_item = current_requests_service.execute_action(
-            identity, draft.parent.review.id, "submit", data=data, uow=uow
-        )
-
-        # TODO: this shouldn't be required BUT because of the caching mechanism
+        # This shouldn't be required BUT because of the caching mechanism
         # in the review systemfield, the review should be set with the updated
         # request object
-        draft.parent.review = request_item._request
+        draft.parent.review = request
         uow.register(RecordCommitOp(draft.parent))
-        uow.register(RecordIndexOp(draft, indexer=self.indexer))
 
+        if not require_review:
+            request_item = current_rdm_records.community_inclusion_service.include(
+                identity, community, request, uow
+            )
+
+        uow.register(RecordIndexOp(draft, indexer=self.indexer))
         return request_item

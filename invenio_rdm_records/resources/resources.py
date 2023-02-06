@@ -171,14 +171,38 @@ class RDMRecordCommunitiesResource(ErrorHandlersMixin, Resource):
         """Create the URL rules for the record resource."""
         routes = self.config.routes
         url_rules = [
-            route("POST", routes["item-communities"], self.add),
-            route("DELETE", routes["item-communities"], self.remove),
+            route("GET", routes["list"], self.search),
+            route("POST", routes["list"], self.add),
+            route("DELETE", routes["list"], self.remove),
         ]
         return url_rules
 
+    @request_search_args
+    @request_view_args
+    @response_handler(many=True)
+    def search(self):
+        """Search for record's communities."""
+        items = self.service.search(
+            identity=g.identity,
+            id_=resource_requestctx.view_args["pid_value"],
+            params=resource_requestctx.args,
+            search_preference=search_preference(),
+            expand=resource_requestctx.args.get("expand", False),
+        )
+        return items.to_dict(), 200
+
+    @request_view_args
+    @response_handler()
+    @request_data
     def add(self):
-        """Add communities to a record."""
-        raise NotImplementedError()
+        """Include record in communities."""
+        response = self.service.add(
+            identity=g.identity,
+            id_=resource_requestctx.view_args["pid_value"],
+            data=resource_requestctx.data,
+        )
+
+        return response, 200
 
     @request_view_args
     @request_data
@@ -187,12 +211,14 @@ class RDMRecordCommunitiesResource(ErrorHandlersMixin, Resource):
         """Remove communities from the record."""
         errors = self.service.remove(
             identity=g.identity,
-            record_id=resource_requestctx.view_args["pid_value"],
+            id_=resource_requestctx.view_args["pid_value"],
             data=resource_requestctx.data,
         )
+
         response = {}
         if errors:
             response["errors"] = errors
+
         return response, 200
 
 

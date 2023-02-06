@@ -6,6 +6,8 @@
 # it under the terms of the MIT License; see LICENSE file for more details.
 
 """RDM Community Records Service."""
+
+from invenio_i18n import lazy_gettext as _
 from invenio_pidstore.errors import PIDDoesNotExistError
 from invenio_records_resources.services import (
     LinksTemplate,
@@ -45,7 +47,8 @@ class CommunityRecordsService(RecordService):
         **kwargs
     ):
         """Search for records published in the given community."""
-        self.require_permission(identity, "read")
+        self.require_permission(identity, "search")
+
         community = self.community_cls.pid.resolve(
             community_id
         )  # Ensure community's existence
@@ -58,17 +61,16 @@ class CommunityRecordsService(RecordService):
         if extra_filter is not None:
             community_filter = community_filter & extra_filter
 
-        search_result = self._search(
+        search = self._search(
             "search",
             identity,
             params,
             search_preference,
-            record_cls=self.record_cls,
-            search_opts=self.config.search,
             extra_filter=community_filter,
             permission_action="read",
             **kwargs,
-        ).execute()
+        )
+        search_result = search.execute()
 
         return self.result_list(
             self,
@@ -89,7 +91,7 @@ class CommunityRecordsService(RecordService):
         """Remove a community from the record."""
         data = dict(communities=[dict(id=str(community.id))])
         errors = current_record_communities_service.remove(
-            identity, record_id=record.pid.pid_value, data=data
+            identity, id_=record.pid.pid_value, data=data
         )
 
         return errors
@@ -120,14 +122,14 @@ class CommunityRecordsService(RecordService):
                 errors.append(
                     {
                         "record": record_id,
-                        "message": "The record does not exist.",
+                        "message": _("The record does not exist."),
                     }
                 )
             except PermissionDeniedError:
                 errors.append(
                     {
                         "record": record_id,
-                        "message": "Permission denied.",
+                        "message": _("Permission denied."),
                     }
                 )
 

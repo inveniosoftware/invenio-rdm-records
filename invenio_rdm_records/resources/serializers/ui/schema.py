@@ -214,13 +214,13 @@ class UIRecordSchema(BaseObjectSchema):
             obj.get("expanded", {}).get("parent", {}).get("review", {}).get("receiver")
         )
         if receiver:
-            can_direct_publish = _community_permission_check(
-                "direct_publish", community=receiver, identity=g.identity
+            can_include_directly = _community_permission_check(
+                "include_directly", community=receiver, identity=g.identity
             )
 
             # use `ui` key to indicate that the extra information is injected only on
             # UIJSONSerializer
             receiver.setdefault("ui", {})["permissions"] = {
-                "can_direct_publish": can_direct_publish
+                "can_include_directly": can_include_directly
             }
         return obj

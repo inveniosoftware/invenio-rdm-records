@@ -10,7 +10,6 @@
 import pytest
 from flask_principal import Identity, UserNeed
 from invenio_access.permissions import any_user, authenticated_user
-from invenio_communities import current_communities
 from invenio_communities.communities.records.api import Community
 from invenio_communities.generators import CommunityRoleNeed
 from invenio_communities.members.records.api import Member
@@ -22,9 +21,10 @@ from sqlalchemy.orm.exc import NoResultFound
 from invenio_rdm_records.proxies import current_rdm_records
 from invenio_rdm_records.records.api import RDMDraft
 from invenio_rdm_records.records.systemfields.draft_status import DraftStatus
+from invenio_rdm_records.requests.community_submission import CommunitySubmission
 from invenio_rdm_records.services.errors import (
+    CommunityInclusionInconsistentAccessRestrictions,
     ReviewExistsError,
-    ReviewInconsistentAccessRestrictions,
     ReviewNotFoundError,
     ReviewStateError,
 )
@@ -60,7 +60,7 @@ def requests_service():
 def draft(minimal_record, community, service, running_app, db):
     minimal_record["parent"] = {
         "review": {
-            "type": "community-submission",
+            "type": CommunitySubmission.type_id,
             "receiver": {"community": community.data["id"]},
         }
     }
@@ -75,7 +75,7 @@ def draft_for_open_review(
 ):
     minimal_record["parent"] = {
         "review": {
-            "type": "community-submission",
+            "type": CommunitySubmission.type_id,
             "receiver": {"community": open_review_community.data["id"]},
         }
     }
@@ -90,7 +90,7 @@ def draft_for_closed_review(
 ):
     minimal_record["parent"] = {
         "review": {
-            "type": "community-submission",
+            "type": CommunitySubmission.type_id,
             "receiver": {"community": closed_review_community.data["id"]},
         }
     }
@@ -105,7 +105,7 @@ def public_draft_review_restricted(
 ):
     minimal_record["parent"] = {
         "review": {
-            "type": "community-submission",
+            "type": CommunitySubmission.type_id,
             "receiver": {"community": restricted_community.data["id"]},
         }
     }
@@ -120,7 +120,7 @@ def restricted_draft_review_restricted(
 ):
     minimal_restricted_record["parent"] = {
         "review": {
-            "type": "community-submission",
+            "type": CommunitySubmission.type_id,
             "receiver": {"community": restricted_community.data["id"]},
         }
     }
@@ -179,7 +179,7 @@ def test_simple_flow(draft, running_app, community, service, requests_service):
     assert draft["status"] == "new_version_draft"
 
 
-def test_direct_publish_to_open_review_community(
+def test_direct_include_to_open_review_community(
     draft_for_open_review,
     open_review_community,
     service,
@@ -197,6 +197,8 @@ def test_direct_publish_to_open_review_community(
     assert req["status"] == "accepted"
     assert req["title"] == draft_for_open_review["metadata"]["title"]
     assert req["is_open"] is False
+    # ensure that the next_html point to the record landing page
+    assert "/records/" in req["links"]["next_html"]
 
     # check record is published
     record = service.read(identity, draft_for_open_review.id).to_dict()
@@ -216,7 +218,7 @@ def test_direct_publish_to_open_review_community(
     assert draft["status"] == "new_version_draft"
 
 
-def test_direct_publish_to_open_review_community_with_require_review(
+def test_direct_include_to_open_review_community_with_require_review(
     draft_for_open_review,
     open_review_community,
     service,
@@ -236,9 +238,11 @@ def test_direct_publish_to_open_review_community_with_require_review(
     assert req["status"] == "submitted"
     assert req["title"] == draft_for_open_review["metadata"]["title"]
     assert req["is_open"] is True
+    # ensure that the next_html point to the requests details page
+    assert "/requests/" in req["links"]["next_html"]
 
 
-def test_non_owner_direct_publish_to_open_review_community(
+def test_non_owner_direct_include_to_open_review_community(
     uploader,
     draft_for_open_review,
     service,
@@ -258,7 +262,7 @@ def test_non_owner_direct_publish_to_open_review_community(
         ).to_dict()
 
 
-def test_direct_publish_to_closed_review_community(
+def test_direct_include_to_closed_review_community(
     draft_for_closed_review,
     closed_review_community,
     service,
@@ -286,7 +290,7 @@ def test_creation(draft, running_app, community, service, requests_service):
     parent = draft.to_dict()["parent"]
 
     assert "id" in parent["review"]
-    assert parent["review"]["type"] == "community-submission"
+    assert parent["review"]["type"] == CommunitySubmission.type_id
     assert parent["review"]["receiver"] == {"community": community.data["id"]}
     assert "@v" not in parent["review"]  # internals should not be exposed
 
@@ -297,7 +301,7 @@ def test_creation(draft, running_app, community, service, requests_service):
 
     assert review["id"] == parent["review"]["id"]
     assert review["status"] == "created"
-    assert review["type"] == "community-submission"
+    assert review["type"] == CommunitySubmission.type_id
     assert review["receiver"] == {"community": community.data["id"]}
     assert review["created_by"] == {"user": str(running_app.superuser_identity.id)}
     assert review["topic"] == {"record": record_id}
@@ -316,7 +320,7 @@ def test_create_with_invalid_community(minimal_record, running_app, service):
     """Test with invalid communities."""
     minimal_record["parent"] = {
         "review": {
-            "type": "community-submission",
+            "type": CommunitySubmission.type_id,
             "receiver": {"community": "00000000-0000-0000-0000-000000000000"},
         }
     }
@@ -328,7 +332,10 @@ def test_create_with_invalid_community(minimal_record, running_app, service):
     )
 
     minimal_record["parent"] = {
-        "review": {"type": "community-submission", "receiver": {"community": "invalid"}}
+        "review": {
+            "type": CommunitySubmission.type_id,
+            "receiver": {"community": "invalid"},
+        }
     }
     pytest.raises(
         NoResultFound,
@@ -346,7 +353,7 @@ def test_create_review_after_draft(running_app, community, service, minimal_reco
 
     # Then create review (you use update, not create for this).
     data = {
-        "type": "community-submission",
+        "type": CommunitySubmission.type_id,
         "receiver": {"community": community.data["id"]},
     }
     req = service.review.update(
@@ -369,10 +376,10 @@ def test_submit_public_record_review_to_restricted_community(
 ):
     """Test creation of review after draft was created."""
     # Create draft
-    with pytest.raises(ReviewInconsistentAccessRestrictions):
-        req = service.review.submit(
+    with pytest.raises(CommunityInclusionInconsistentAccessRestrictions):
+        service.review.submit(
             running_app.superuser_identity, public_draft_review_restricted.id
-        ).to_dict()
+        )
 
 
 def test_submit_restricted_record_review_to_restricted_community(
@@ -396,7 +403,7 @@ def test_create_when_already_published(minimal_record, running_app, community, s
     draft = service.edit(running_app.superuser_identity, draft.id)
     # Then try to create a review (you use update, not create for this).
     data = {
-        "type": "community-submission",
+        "type": CommunitySubmission.type_id,
         "receiver": {"community": community.data["id"]},
     }
     with pytest.raises(ReviewStateError):
@@ -417,7 +424,7 @@ def test_create_with_new_version(minimal_record, running_app, community, service
     draft = service.new_version(running_app.superuser_identity, draft.id)
     # Then try to create a review (you use update, not create for this).
     data = {
-        "type": "community-submission",
+        "type": CommunitySubmission.type_id,
         "receiver": {"community": community.data["id"]},
     }
     with pytest.raises(ReviewStateError):
@@ -434,7 +441,7 @@ def test_update(draft, running_app, community2, service, db):
     previous_id = draft.data["parent"]["review"]["id"]
     # Change to a different community
     data = {
-        "type": "community-submission",
+        "type": CommunitySubmission.type_id,
         "receiver": {"community": community2.data["id"]},
     }
     req = service.review.update(
@@ -532,7 +539,7 @@ def test_submit_with_validation_errors(running_app, community, service, minimal_
     """Fail to submit when draft has validation errors."""
     minimal_record["parent"] = {
         "review": {
-            "type": "community-submission",
+            "type": CommunitySubmission.type_id,
             "receiver": {"community": community.data["id"]},
         }
     }

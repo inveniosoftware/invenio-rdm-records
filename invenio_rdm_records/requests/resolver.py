@@ -12,6 +12,7 @@ from invenio_records_resources.references.resolvers.records import (
     RecordProxy,
     RecordResolver,
 )
+from sqlalchemy.orm.exc import NoResultFound
 
 from ..records.api import RDMDraft, RDMRecord
 
@@ -25,7 +26,8 @@ class RDMRecordProxy(RecordProxy):
 
         try:
             return RDMDraft.pid.resolve(pid_value, registered_only=False)
-        except PIDUnregistered:
+        except (PIDUnregistered, NoResultFound):
+            # try checking if it is a published record before failing
             return RDMRecord.pid.resolve(pid_value)
 
 
@@ -39,3 +41,7 @@ class RDMRecordResolver(RecordResolver):
         super().__init__(
             RDMDraft, "records", type_key="record", proxy_cls=RDMRecordProxy
         )
+
+    def matches_entity(self, entity):
+        """Check if the entity is a draft or a record."""
+        return isinstance(entity, (RDMDraft, RDMRecord))
