@@ -51,7 +51,6 @@ def record_w_links(running_app, minimal_record):
 
 
 def test_datacite_provider_create(record, datacite_provider):
-
     created_pid = datacite_provider.create(record)
     db_pid = PersistentIdentifier.get(pid_value=created_pid.pid_value, pid_type="doi")
 
