@@ -477,7 +477,6 @@ class DataCite43Schema(Schema):
     def get_funding(self, obj):
         """Get funding references."""
         # constants
-        # FIXME: Make configurable
         DATACITE_FUNDER_IDENTIFIER_TYPES_PREFERENCE = (
             "ror",
             "grid",

@@ -119,7 +119,6 @@ def test_valid_full():
     ],
 )
 def test_invalid(invalid_access, invalid_attr):
-
     with pytest.raises(ValidationError) as e:
         AccessSchema().load(invalid_access)
 
