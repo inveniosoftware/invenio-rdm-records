@@ -572,9 +572,10 @@ def minimal_record():
 @pytest.fixture()
 def minimal_restricted_record(minimal_record):
     """Data for restricted record."""
-    minimal_record["access"]["record"] = "restricted"
-    minimal_record["access"]["files"] = "restricted"
-    return minimal_record
+    record = deepcopy(minimal_record)
+    record["access"]["record"] = "restricted"
+    record["access"]["files"] = "restricted"
+    return record
 
 
 @pytest.fixture()
@@ -622,15 +623,19 @@ def restricted_minimal_community():
 @pytest.fixture()
 def open_review_minimal_community(minimal_community):
     """Data for a minimal community that allows direct publish."""
-    minimal_community["access"]["review_policy"] = "open"
-    return minimal_community
+    community = deepcopy(minimal_community)
+    community["slug"] = "open-review-community"
+    community["access"]["review_policy"] = "open"
+    return community
 
 
 @pytest.fixture()
 def closed_review_minimal_community(minimal_community):
     """Data for a minimal community that allows direct publish."""
-    minimal_community["access"]["review_policy"] = "closed"
-    return minimal_community
+    community = deepcopy(minimal_community)
+    community["slug"] = "closed-review-community"
+    community["access"]["review_policy"] = "closed"
+    return community
 
 
 @pytest.fixture()
@@ -1302,27 +1307,38 @@ def community_owner(UserFixture, app, db):
 
 
 @pytest.fixture()
-def curator(UserFixture, community, app, db):
+def inviter():
+    """Add/invite a user to a community with a specific role."""
+
+    def invite(user_id, community_id, role):
+        """Add/invite a user to a community with a specific role."""
+        assert role in ["curator", "owner"]
+        invitation_data = {
+            "members": [
+                {
+                    "type": "user",
+                    "id": user_id,
+                }
+            ],
+            "role": role,
+            "visible": True,
+        }
+        current_communities.service.members.add(
+            system_identity, community_id, invitation_data
+        )
+
+    return invite
+
+
+@pytest.fixture()
+def curator(UserFixture, community, inviter, app, db):
     """Creates a curator of the community fixture."""
     curator = UserFixture(
         email="curatoruser@inveniosoftware.org",
         password="curatoruser",
     )
     curator.create(app, db)
-    invitation_data = {
-        "members": [
-            {
-                "type": "user",
-                "id": curator.id,
-            }
-        ],
-        "role": "curator",
-        "visible": True,
-    }
-
-    current_communities.service.members.add(
-        system_identity, community.id, invitation_data
-    )
+    inviter(curator.id, community.id, "curator")
     return curator
 
 
@@ -1403,6 +1419,33 @@ def closed_review_community(
     return _community_get_or_create(
         closed_review_minimal_community, community_owner.identity
     )
+
+
+@pytest.fixture()
+def record_community(db, uploader, minimal_record, community, rdm_record_service):
+    """Creates a record that belongs to a community."""
+
+    class Record:
+        """Test record class."""
+
+        def create_record(
+            self, record_dict=minimal_record, uploader=uploader, community=community
+        ):
+            """Creates new record that belongs to the same community."""
+            # create draft
+            community_record = community._record
+            draft = rdm_record_service.create(uploader.identity, record_dict)
+            # publish and get record
+            result_item = rdm_record_service.publish(uploader.identity, draft.id)
+            record = result_item._record
+            # add the record to the community
+            record.parent.communities.add(community_record, default=False)
+            record.parent.commit()
+            db.session.commit()
+            rdm_record_service.indexer.index(record, arguments={"refresh": True})
+            return record
+
+    return Record()
 
 
 @pytest.fixture(scope="session")

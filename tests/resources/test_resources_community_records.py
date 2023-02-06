@@ -21,7 +21,7 @@ def test_remove_community(client, curator, record_community, headers, community)
     """Remove a record from the community."""
     client = curator.login(client)
     record = record_community.create_record()
-    data = {"records": [{"id": record.id}]}
+    data = {"records": [{"id": record.pid.pid_value}]}
 
     response = client.delete(
         f"/communities/{community.id}/records",
@@ -37,7 +37,7 @@ def test_permission_denied(
 ):
     """Missing permissions when removing a record from the community."""
     record = record_community.create_record()
-    data = {"records": [{"id": record.id}]}
+    data = {"records": [{"id": record.pid.pid_value}]}
 
     test_user_client = test_user.login(client)
 
@@ -74,9 +74,9 @@ def test_removal_of_multiple_communities_success(
     record3 = record_community.create_record()
     data = {
         "records": [
-            {"id": record1.id},
-            {"id": record2.id},
-            {"id": record3.id},
+            {"id": record1.pid.pid_value},
+            {"id": record2.pid.pid_value},
+            {"id": record3.pid.pid_value},
         ]
     }
 

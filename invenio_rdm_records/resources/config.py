@@ -22,6 +22,7 @@ from flask_resources import (
     create_error_handler,
     resource_requestctx,
 )
+from invenio_communities.communities.resources import CommunityResourceConfig
 from invenio_drafts_resources.resources import RecordResourceConfig
 from invenio_i18n import lazy_gettext as _
 from invenio_records.systemfields.relations import InvalidRelationValue
@@ -29,10 +30,10 @@ from invenio_records_resources.resources.files import FileResourceConfig
 from invenio_records_resources.services.base.config import ConfiguratorMixin, FromConfig
 
 from ..services.errors import (
+    CommunityInclusionInconsistentAccessRestrictions,
     MaxNumberCommunitiesExceeded,
     MaxNumberOfRecordsExceed,
     ReviewExistsError,
-    ReviewInconsistentAccessRestrictions,
     ReviewNotFoundError,
     ReviewStateError,
     ValidationErrorWithMessageAsList,
@@ -97,8 +98,6 @@ class RDMRecordResourceConfig(RecordResourceConfig, ConfiguratorMixin):
     # Review
     routes["item-review"] = "/<pid_value>/draft/review"
     routes["item-actions-review"] = "/<pid_value>/draft/actions/submit-review"
-    # Record communities
-    routes["item-communities"] = "/<pid_value>/communities"
 
     request_view_args = {
         "pid_value": ma.fields.Str(),
@@ -158,7 +157,7 @@ class RDMRecordResourceConfig(RecordResourceConfig, ConfiguratorMixin):
                 description=exc.args[0],
             )
         ),
-        ReviewInconsistentAccessRestrictions: create_error_handler(
+        CommunityInclusionInconsistentAccessRestrictions: create_error_handler(
             lambda exc: HTTPJSONException(
                 code=400,
                 description=exc.args[0],
@@ -248,7 +247,7 @@ class RDMCommunityRecordsResourceConfig(RecordResourceConfig, ConfiguratorMixin)
 
     url_prefix = "/communities"
 
-    # Community records
+    # Community's records
     routes = {"list": "/<pid_value>/records"}
 
     response_handlers = record_serializers
@@ -263,21 +262,15 @@ class RDMCommunityRecordsResourceConfig(RecordResourceConfig, ConfiguratorMixin)
     }
 
 
-class RDMRecordCommunitiesResourceConfig(ResourceConfig, ConfiguratorMixin):
+class RDMRecordCommunitiesResourceConfig(CommunityResourceConfig, ConfiguratorMixin):
     """Record communities resource config."""
 
     blueprint_name = "records-community"
-
     url_prefix = "/records"
-
-    # Community records
-    routes = {"item-communities": "/<pid_value>/communities"}
-
-    response_handlers = record_serializers
-
-    request_view_args = {"pid_value": ma.fields.Str()}
+    routes = {"list": "/<pid_value>/communities"}
 
     error_handlers = {
+        **CommunityResourceConfig.error_handlers,
         MaxNumberCommunitiesExceeded: create_error_handler(
             lambda e: HTTPJSONException(
                 code=400,
