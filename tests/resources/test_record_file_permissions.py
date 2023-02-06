@@ -2,6 +2,7 @@
 #
 # Copyright (C) 2021 CERN.
 # Copyright (C) 2021 Northwestern University.
+# Copyright (C) 2023 TU Wien.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
@@ -225,3 +226,22 @@ def test_record_files_cannot_be_imported(
     login_user(client, users[0])
     response = response = client.post(url, headers=headers)
     assert response.status_code == 404
+
+
+def test_everybody_can_download_public_files(client, headers, minimal_record, users):
+    # Create minimal record with public files
+    login_user(client, users[0])
+    recid = create_record_w_file(client, minimal_record, headers)
+    logout_user(client)
+
+    # Unauthenticated user can list files
+    url = f"/records/{recid}/files"
+    response = client.get(url, headers=headers)
+    assert response.status_code == 200
+    assert response.json["entries"]
+
+    # Check if we can download every file
+    for file_entry in response.json["entries"]:
+        file_key = file_entry["key"]
+        resp = client.get(f"/records/{recid}/files/{file_key}/content", headers=headers)
+        assert resp.status_code == 200
