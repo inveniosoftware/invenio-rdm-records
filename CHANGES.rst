@@ -10,6 +10,10 @@
 Changes
 =======
 
+Version 2.0.0 (released 2023-02-07)
+
+- export: add GEOJSON serializer
+
 Version 1.3.3 (released 2023-02-06)
 
 - datacite: fix reversion in affiliation ROR handling and cleanup
