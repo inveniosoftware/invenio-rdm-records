@@ -10,18 +10,10 @@
 import json
 
 import pytest
-from invenio_communities import current_communities
-from invenio_communities.communities.records.api import Community
 from invenio_requests.records.api import RequestEvent
 
 from invenio_rdm_records.records import RDMRecord
-
-
-def link(url):
-    """Strip the host part of a link."""
-    api_prefix = "https://127.0.0.1:5000/api"
-    if url.startswith(api_prefix):
-        return url[len(api_prefix) :]
+from tests.resources.conftest import link
 
 
 @pytest.fixture()
@@ -40,7 +32,7 @@ def test_simple_flow(
     community,
     headers,
     search_clear,
-    curator,
+    community_owner,
     uploader,
 ):
     """Test a simple REST API flow."""
@@ -84,7 +76,7 @@ def test_simple_flow(
     assert timeline.json["hits"]["total"] == 1
 
     # Accept request
-    client = curator.login(client, logout_first=True)
+    client = community_owner.login(client, logout_first=True)
     req = client.get(link(req.json["links"]["self"]), headers=headers)
 
     comment = {"payload": {"content": "Awesome stuff", "format": "html"}}
@@ -133,7 +125,6 @@ def test_review_endpoints(
     community,
     headers,
     search_clear,
-    curator,
     uploader,
     community2,
 ):
@@ -186,7 +177,6 @@ def test_review_errors(
     community,
     headers,
     search_clear,
-    curator,
     uploader,
 ):
     client = uploader.login(client)
@@ -206,7 +196,6 @@ def test_delete_no_review(
     community,
     headers,
     search_clear,
-    curator,
     uploader,
 ):
     """."""

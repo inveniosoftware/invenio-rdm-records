@@ -1226,8 +1226,19 @@ def embargoed_record(running_app, minimal_record, superuser_identity):
 
 
 @pytest.fixture()
+def test_user(UserFixture, app, db):
+    """User meant to test permissions."""
+    u = UserFixture(
+        email="testuser@inveniosoftware.org",
+        password="testuser",
+    )
+    u.create(app, db)
+    return u
+
+
+@pytest.fixture()
 def uploader(UserFixture, app, db):
-    """Curator."""
+    """Uploader."""
     u = UserFixture(
         email="uploader@inveniosoftware.org",
         password="uploader",
@@ -1237,11 +1248,11 @@ def uploader(UserFixture, app, db):
 
 
 @pytest.fixture()
-def curator(UserFixture, app, db):
-    """Curator."""
+def community_owner(UserFixture, app, db):
+    """Community owner."""
     u = UserFixture(
-        email="curator@inveniosoftware.org",
-        password="curator",
+        email="community_owner@inveniosoftware.org",
+        password="community_owner",
     )
     u.create(app, db)
     return u
@@ -1271,10 +1282,10 @@ def community_type_record(superuser_identity, community_type_type):
 
 
 @pytest.fixture()
-def community(running_app, community_type_record, curator, minimal_community):
+def community(running_app, community_type_record, community_owner, minimal_community):
     """Get the current RDM records service."""
     c = current_communities.service.create(
-        curator.identity,
+        community_owner.identity,
         minimal_community,
     )
     Community.index.refresh()
@@ -1282,10 +1293,10 @@ def community(running_app, community_type_record, curator, minimal_community):
 
 
 @pytest.fixture()
-def community2(running_app, community_type_record, curator, minimal_community2):
+def community2(running_app, community_type_record, community_owner, minimal_community2):
     """Get the current RDM records service."""
     c = current_communities.service.create(
-        curator.identity,
+        community_owner.identity,
         minimal_community2,
     )
     Community.index.refresh()
@@ -1294,11 +1305,11 @@ def community2(running_app, community_type_record, curator, minimal_community2):
 
 @pytest.fixture()
 def restricted_community(
-    running_app, community_type_record, curator, restricted_minimal_community
+    running_app, community_type_record, community_owner, restricted_minimal_community
 ):
     """Get the current RDM records service."""
     c = current_communities.service.create(
-        curator.identity,
+        community_owner.identity,
         restricted_minimal_community,
     )
     Community.index.refresh()

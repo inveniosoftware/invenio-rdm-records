@@ -28,6 +28,7 @@ from invenio_records_resources.resources.files import FileResourceConfig
 from invenio_records_resources.services.base.config import ConfiguratorMixin, FromConfig
 
 from ..services.errors import (
+    MaxNumberCommunitiesExceeded,
     ReviewExistsError,
     ReviewInconsistentAccessRestrictions,
     ReviewNotFoundError,
@@ -247,6 +248,30 @@ class RDMCommunityRecordsResourceConfig(RecordResourceConfig, ConfiguratorMixin)
     routes = {"list": "/<pid_value>/records"}
 
     response_handlers = record_serializers
+
+
+class RDMRecordCommunitiesResourceConfig(ResourceConfig, ConfiguratorMixin):
+    """Record communities resource config."""
+
+    blueprint_name = "records-community"
+
+    url_prefix = "/records"
+
+    # Community records
+    routes = {"item-communities": "/<pid_value>/communities"}
+
+    response_handlers = record_serializers
+
+    request_view_args = {"pid_value": ma.fields.Str()}
+
+    error_handlers = {
+        MaxNumberCommunitiesExceeded: create_error_handler(
+            lambda e: HTTPJSONException(
+                code=400,
+                description=str(e),
+            )
+        ),
+    }
 
 
 #

@@ -93,3 +93,23 @@ class ValidationErrorWithMessageAsList(Exception):
         """
         assert isinstance(message, list)
         self.messages = message
+
+
+class RecordCommunityMissing(Exception):
+    """Record does not belong to the community."""
+
+    def __init__(self, record_id, communities_id):
+        """Initialise error."""
+        super().__init__(
+            f"The record {record_id} does not belong to any of the listed communities {communities_id}."
+        )
+
+
+class MaxNumberCommunitiesExceeded(Exception):
+    """Maximum number of communities exceed."""
+
+    def __init__(self, allowed_number):
+        """Initialise error."""
+        super().__init__(
+            f"Exceeded maximum amount of communities that can be updated at once: {allowed_number}."
+        )

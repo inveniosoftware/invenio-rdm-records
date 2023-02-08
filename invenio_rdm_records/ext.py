@@ -34,15 +34,18 @@ from .resources import (
     RDMDraftFilesResourceConfig,
     RDMParentRecordLinksResource,
     RDMParentRecordLinksResourceConfig,
+    RDMRecordCommunitiesResourceConfig,
     RDMRecordFilesResourceConfig,
     RDMRecordResource,
     RDMRecordResourceConfig,
 )
+from .resources.resources import RDMRecordCommunitiesResource
 from .secret_links import LinkNeed, SecretLink
 from .services import (
     IIIFService,
     RDMFileDraftServiceConfig,
     RDMFileRecordServiceConfig,
+    RDMRecordCommunitiesConfig,
     RDMRecordService,
     RDMRecordServiceConfig,
     SecretLinkService,
@@ -167,6 +170,7 @@ class InvenioRDMRecords(object):
             file = RDMFileRecordServiceConfig.build(app)
             file_draft = RDMFileDraftServiceConfig.build(app)
             oaipmh_server = OAIPMHServerServiceConfig
+            record_communities = RDMRecordCommunitiesConfig.build(app)
 
         return ServiceConfigs
 
@@ -182,10 +186,14 @@ class InvenioRDMRecords(object):
             secret_links_service=SecretLinkService(service_configs.record),
             pids_service=PIDsService(service_configs.record, PIDManager),
             review_service=ReviewService(service_configs.record),
-            record_communities_service=RecordCommunitiesService(service_configs.record),
         )
+
         self.iiif_service = IIIFService(
             records_service=self.records_service, config=None
+        )
+
+        self.record_communities_service = RecordCommunitiesService(
+            config=service_configs.record_communities,
         )
 
         self.oaipmh_server_service = OAIPMHServerService(
@@ -215,6 +223,11 @@ class InvenioRDMRecords(object):
         self.parent_record_links_resource = RDMParentRecordLinksResource(
             service=self.records_service,
             config=RDMParentRecordLinksResourceConfig.build(app),
+        )
+
+        self.record_communities_resource = RDMRecordCommunitiesResource(
+            service=self.record_communities_service,
+            config=RDMRecordCommunitiesResourceConfig.build(app),
         )
 
         # Community's records

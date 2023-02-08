@@ -23,4 +23,9 @@ current_rdm_records_service = LocalProxy(
 current_oaipmh_server_service = LocalProxy(
     lambda: current_app.extensions["invenio-rdm-records"].oaipmh_server_service
 )
-"""Helper proxy to get the current RDM-Records records service extension."""
+"""Helper proxy to get the current OAI-PMH service extension."""
+
+current_record_communities_service = LocalProxy(
+    lambda: current_app.extensions["invenio-rdm-records"].record_communities_service
+)
+"""Helper proxy to get the current Records Communities service extension."""

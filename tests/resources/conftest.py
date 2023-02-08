@@ -21,3 +21,10 @@ from invenio_app.factory import create_api
 def create_app(instance_path):
     """Application factory fixture."""
     return create_api
+
+
+def link(url):
+    """Strip the host part of a link."""
+    api_prefix = "https://127.0.0.1:5000/api"
+    if url.startswith(api_prefix):
+        return url[len(api_prefix) :]
