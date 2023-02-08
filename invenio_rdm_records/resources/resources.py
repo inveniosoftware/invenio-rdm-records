@@ -66,10 +66,6 @@ class RDMRecordResource(RecordResource):
             route("PUT", p(routes["item-review"]), self.review_update),
             route("DELETE", p(routes["item-review"]), self.review_delete),
             route("POST", p(routes["item-actions-review"]), self.review_submit),
-            route("POST", p(routes["item-communities"]), self.record_communities_add),
-            route(
-                "DELETE", p(routes["item-communities"]), self.record_communities_remove
-            ),
         ]
 
         return url_rules
@@ -158,13 +154,42 @@ class RDMRecordResource(RecordResource):
 
         return item.to_dict(), 200
 
-    def record_communities_add(self):
-        """Add communities to a record."""
-        return {}, 200
 
-    def record_communities_remove(self):
+class RDMRecordCommunitiesResource(ErrorHandlersMixin, Resource):
+    """Record communities resource."""
+
+    def __init__(self, config, service):
+        """Constructor."""
+        super().__init__(config)
+        self.service = service
+
+    def create_url_rules(self):
+        """Create the URL rules for the record resource."""
+        routes = self.config.routes
+        url_rules = [
+            route("POST", routes["item-communities"], self.add),
+            route("DELETE", routes["item-communities"], self.remove),
+        ]
+        return url_rules
+
+    def add(self):
+        """Add communities to a record."""
+        raise NotImplementedError()
+
+    @request_view_args
+    @request_data
+    @response_handler()
+    def remove(self):
         """Remove communities from the record."""
-        return {}, 200
+        errors = self.service.delete(
+            identity=g.identity,
+            record_id=resource_requestctx.view_args["pid_value"],
+            data=resource_requestctx.data,
+        )
+        response = {}
+        if errors:
+            response["errors"] = errors
+        return response, 200
 
 
 #

@@ -13,6 +13,7 @@ from .config import (
     RDMCommunityRecordsResourceConfig,
     RDMDraftFilesResourceConfig,
     RDMParentRecordLinksResourceConfig,
+    RDMRecordCommunitiesResourceConfig,
     RDMRecordFilesResourceConfig,
     RDMRecordResourceConfig,
 )
@@ -34,4 +35,5 @@ __all__ = (
     "RDMRecordFilesResourceConfig",
     "RDMRecordResource",
     "RDMRecordResourceConfig",
+    "RDMRecordCommunitiesResourceConfig",
 )

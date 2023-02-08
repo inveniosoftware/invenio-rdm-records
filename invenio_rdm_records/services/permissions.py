@@ -132,6 +132,12 @@ class RDMRecordPermissionPolicy(RecordPermissionPolicy):
     can_lift_embargo = can_manage
 
     #
+    # Record communities
+    #
+    # Allow to remove a community from a record
+    can_delete_community = can_manage
+
+    #
     # Disabled actions (these should not be used or changed)
     #
     # - Records/files are updated/deleted via drafts so we don't support

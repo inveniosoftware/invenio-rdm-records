@@ -11,6 +11,7 @@
 from .config import (
     RDMFileDraftServiceConfig,
     RDMFileRecordServiceConfig,
+    RDMRecordCommunitiesConfig,
     RDMRecordServiceConfig,
 )
 from .iiif import IIIFService
@@ -26,4 +27,5 @@ __all__ = (
     "RDMRecordService",
     "RDMRecordServiceConfig",
     "SecretLinkService",
+    "RDMRecordCommunitiesConfig",
 )

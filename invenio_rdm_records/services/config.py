@@ -28,12 +28,14 @@ from invenio_drafts_resources.services.records.config import (
     is_draft,
     is_record,
 )
+from invenio_indexer.api import RecordIndexer
 from invenio_records_resources.services import ConditionalLink, FileServiceConfig
 from invenio_records_resources.services.base.config import (
     ConfiguratorMixin,
     FromConfig,
     FromConfigSearchOptions,
     SearchOptionsMixin,
+    ServiceConfig,
 )
 from invenio_records_resources.services.base.links import Link
 from invenio_records_resources.services.files.links import FileLink
@@ -55,6 +57,7 @@ from .customizations import FromConfigPIDsProviders, FromConfigRequiredPIDs
 from .permissions import RDMRecordPermissionPolicy
 from .result_items import SecretLinkItem, SecretLinkList
 from .schemas import RDMParentSchema, RDMRecordSchema
+from .schemas.community_records import RecordCommunitiesSchema
 from .schemas.parent.access import SecretLink
 
 
@@ -111,6 +114,25 @@ class RDMSearchDraftsOptions(SearchDraftsOptions, SearchOptionsMixin):
 
 class RDMSearchVersionsOptions(SearchVersionsOptions, SearchOptionsMixin):
     """Search options for record versioning search."""
+
+
+class RDMRecordCommunitiesConfig(ServiceConfig, ConfiguratorMixin):
+    """Record communities service config."""
+
+    service_id = "record-community"
+    record_cls = RDMRecord
+    permission_policy_cls = FromConfig(
+        "RDM_PERMISSION_POLICY", default=RDMRecordPermissionPolicy, import_string=True
+    )
+    # Service schema
+    schema = RecordCommunitiesSchema
+
+    indexer_cls = RecordIndexer
+    indexer_queue_name = service_id
+    index_dumper = None
+
+    # Limits
+    max_number_of_removals = 100
 
 
 #
