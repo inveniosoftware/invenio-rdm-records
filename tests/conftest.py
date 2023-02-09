@@ -373,7 +373,6 @@ def full_record(users):
             "creators": [
                 {
                     "person_or_org": {
-                        "name": "Nielsen, Lars Holm",
                         "type": "personal",
                         "given_name": "Lars Holm",
                         "family_name": "Nielsen",
@@ -401,7 +400,6 @@ def full_record(users):
             "contributors": [
                 {
                     "person_or_org": {
-                        "name": "Nielsen, Lars Holm",
                         "type": "personal",
                         "given_name": "Lars Holm",
                         "family_name": "Nielsen",
