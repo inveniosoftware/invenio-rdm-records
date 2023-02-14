@@ -65,19 +65,21 @@ class MARCXMLSchema(Schema):
         for funder in all_funders:
             funder_string = ""
 
-            identifiers = funder.get("award", {}).get("identifiers", [{}])[0]
-            scheme = identifiers.get("scheme", "null")
-            identifier = identifiers.get("identifier", "null")
+            award = funder.get("award", {})
 
-            title = funder.get("award", {}).get("title", {})
-            title = list(title.values())[0] if title != {} else "null"
+            identifier = award.get("identifiers", [{}])[0]
+            scheme = identifier.get("scheme", "null")
+            identifier_value = identifier.get("identifier", "null")
 
-            number = funder.get("award", {}).get("number", "null")
+            title = award.get("title", {})
+            title = list(title.values())[0] if title else "null"
+
+            number = award.get("number", "null")
             id = funder["funder"]["id"]
             name = funder["funder"].get("name", "null")
 
             funder_string += f"award_identifiers_scheme={scheme}; "
-            funder_string += f"award_identifiers_identifier={identifier}; "
+            funder_string += f"award_identifiers_identifier={identifier_value}; "
             funder_string += f"award_title={title}; "
             funder_string += f"award_number={number}; "
             funder_string += f"funder_id={id}; "
@@ -94,11 +96,11 @@ class MARCXMLSchema(Schema):
         """Get locations."""
         locations = []
 
-        access_location = obj["metadata"].get("locations", {})
-        if access_location == {}:
+        access_location = obj["metadata"].get("locations", [])
+        if not access_location:
             return missing
 
-        for location in obj["metadata"].get("locations", []).get("features", []):
+        for location in access_location.get("features", []):
             location_string = ""
 
             place = location.get("place")
