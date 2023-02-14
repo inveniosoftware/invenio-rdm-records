@@ -113,3 +113,13 @@ class MaxNumberCommunitiesExceeded(Exception):
         super().__init__(
             f"Exceeded maximum amount of communities that can be updated at once: {allowed_number}."
         )
+
+
+class MaxNumberOfRecordsExceed(Exception):
+    """Maximum number of records exceed."""
+
+    def __init__(self, allowed_number):
+        """Initialise error."""
+        super().__init__(
+            f"Exceeded maximum amount of records that can be updated at once: {allowed_number}."
+        )

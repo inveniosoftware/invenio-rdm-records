@@ -53,7 +53,7 @@ class RecordCommunitiesService(Service, RecordIndexerMixin):
     def delete(self, identity, record_id, data, revision_id=None, uow=None):
         """Remove communities from the record."""
         record = self.record_cls.pid.resolve(record_id)
-        self.require_permission(identity, "delete_community", record=record)
+        self.require_permission(identity, "remove_community", record=record)
 
         valid_data, errors = self.schema.load(
             data,

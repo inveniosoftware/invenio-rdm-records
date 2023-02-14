@@ -42,7 +42,9 @@ from .resources import (
 from .resources.resources import RDMRecordCommunitiesResource
 from .secret_links import LinkNeed, SecretLink
 from .services import (
+    CommunityRecordsService,
     IIIFService,
+    RDMCommunityRecordsConfig,
     RDMFileDraftServiceConfig,
     RDMFileRecordServiceConfig,
     RDMRecordCommunitiesConfig,
@@ -171,6 +173,7 @@ class InvenioRDMRecords(object):
             file_draft = RDMFileDraftServiceConfig.build(app)
             oaipmh_server = OAIPMHServerServiceConfig
             record_communities = RDMRecordCommunitiesConfig.build(app)
+            community_records = RDMCommunityRecordsConfig.build(app)
 
         return ServiceConfigs
 
@@ -194,6 +197,10 @@ class InvenioRDMRecords(object):
 
         self.record_communities_service = RecordCommunitiesService(
             config=service_configs.record_communities,
+        )
+
+        self.community_records_service = CommunityRecordsService(
+            config=service_configs.community_records,
         )
 
         self.oaipmh_server_service = OAIPMHServerService(
@@ -232,7 +239,7 @@ class InvenioRDMRecords(object):
 
         # Community's records
         self.community_records_resource = RDMCommunityRecordsResource(
-            service=self.records_service,
+            service=self.community_records_service,
             config=RDMCommunityRecordsResourceConfig.build(app),
         )
 
