@@ -122,7 +122,7 @@ class RDMRecordService(RecordService):
     ):
         """Search for records published in the given community."""
         self.require_permission(identity, "read")
-        current_communities.service.record_cls.pid.resolve(
+        community = current_communities.service.record_cls.pid.resolve(
             community_id
         )  # Ensure community's existence
 
@@ -135,7 +135,7 @@ class RDMRecordService(RecordService):
             search_preference,
             record_cls=self.record_cls,
             search_opts=self.config.search,
-            extra_filter=dsl.Q("term", **{"parent.communities.ids": str(community_id)}),
+            extra_filter=dsl.Q("term", **{"parent.communities.ids": str(community.id)}),
             permission_action="read",
             **kwargs,
         ).execute()
