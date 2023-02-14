@@ -1345,3 +1345,28 @@ def admin(UserFixture, app, db, admin_role_need):
     datastore.add_role_to_user(u.user, role)
     db.session.commit()
     return u
+
+
+@pytest.fixture()
+def curator(UserFixture, community, app, db):
+    """Creates a curator of the community fixture."""
+    curator = UserFixture(
+        email="curatoruser@inveniosoftware.org",
+        password="curatoruser",
+    )
+    curator.create(app, db)
+    invitation_data = {
+        "members": [
+            {
+                "type": "user",
+                "id": curator.id,
+            }
+        ],
+        "role": "curator",
+        "visible": True,
+    }
+
+    current_communities.service.members.add(
+        system_identity, community.id, invitation_data
+    )
+    return curator

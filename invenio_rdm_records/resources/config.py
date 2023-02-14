@@ -29,6 +29,7 @@ from invenio_records_resources.services.base.config import ConfiguratorMixin, Fr
 
 from ..services.errors import (
     MaxNumberCommunitiesExceeded,
+    MaxNumberOfRecordsExceed,
     ReviewExistsError,
     ReviewInconsistentAccessRestrictions,
     ReviewNotFoundError,
@@ -248,6 +249,15 @@ class RDMCommunityRecordsResourceConfig(RecordResourceConfig, ConfiguratorMixin)
     routes = {"list": "/<pid_value>/records"}
 
     response_handlers = record_serializers
+
+    error_handlers = {
+        MaxNumberOfRecordsExceed: create_error_handler(
+            lambda e: HTTPJSONException(
+                code=400,
+                description=str(e),
+            )
+        ),
+    }
 
 
 class RDMRecordCommunitiesResourceConfig(ResourceConfig, ConfiguratorMixin):

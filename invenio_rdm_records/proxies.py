@@ -29,3 +29,8 @@ current_record_communities_service = LocalProxy(
     lambda: current_app.extensions["invenio-rdm-records"].record_communities_service
 )
 """Helper proxy to get the current Records Communities service extension."""
+
+current_community_records_service = LocalProxy(
+    lambda: current_app.extensions["invenio-rdm-records"].community_records_service
+)
+"""Helper proxy to get the current Communities Records service extension."""
