@@ -10,6 +10,11 @@
 Changes
 =======
 
+Version 2.1.0 (released 2023-02-14)
+
+- export: add MARCXML serializer, including in OAI-PMH
+- resources: add stubs for records' communities
+
 Version 2.0.0 (released 2023-02-07)
 
 - export: add GEOJSON serializer
