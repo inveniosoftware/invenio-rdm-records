@@ -49,3 +49,7 @@ funders:
 awards:
   pid-type: awa
   data-file: vocabularies/awards.yaml
+# code meta controlled vocabularies
+code:developmentStatus:
+  pid-type: ds
+  data-file: vocabularies/contrib/codemeta/development_status.yaml

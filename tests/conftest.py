@@ -1431,3 +1431,13 @@ def curator(UserFixture, community, app, db):
         system_identity, community.id, invitation_data
     )
     return curator
+
+
+@pytest.fixture(scope="module")
+def cli_runner(base_app):
+    """Create a CLI runner for testing a CLI command."""
+
+    def cli_invoke(command, *args, input=None):
+        return base_app.test_cli_runner().invoke(command, args, input=input)
+
+    return cli_invoke
