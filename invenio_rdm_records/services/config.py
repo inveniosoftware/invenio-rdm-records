@@ -14,7 +14,7 @@
 from os.path import splitext
 
 from flask import current_app
-from flask_babelex import gettext as _
+from invenio_communities.communities.records.api import Community
 from invenio_drafts_resources.services.records.components import (
     DraftFilesComponent,
     PIDComponent,
@@ -39,6 +39,9 @@ from invenio_records_resources.services.base.config import (
 )
 from invenio_records_resources.services.base.links import Link
 from invenio_records_resources.services.files.links import FileLink
+from invenio_records_resources.services.records.config import (
+    RecordServiceConfig as BaseRecordServiceConfig,
+)
 from invenio_records_resources.services.records.links import (
     RecordLink,
     pagination_links,
@@ -59,6 +62,7 @@ from .result_items import SecretLinkItem, SecretLinkList
 from .schemas import RDMParentSchema, RDMRecordSchema
 from .schemas.community_records import RecordCommunitiesSchema
 from .schemas.parent.access import SecretLink
+from .schemas.record_communities import CommunityRecordsSchema
 
 
 def is_draft_and_has_review(record, ctx):
@@ -133,6 +137,28 @@ class RDMRecordCommunitiesConfig(ServiceConfig, ConfiguratorMixin):
 
     # Limits
     max_number_of_removals = 100
+
+
+class RDMCommunityRecordsConfig(BaseRecordServiceConfig, ConfiguratorMixin):
+    """Community records service config."""
+
+    service_id = "community-records"
+    record_cls = RDMRecord
+    community_cls = Community
+    permission_policy_cls = FromConfig(
+        "RDM_PERMISSION_POLICY", default=RDMRecordPermissionPolicy, import_string=True
+    )
+
+    # Service schemas
+    community_record_schema = CommunityRecordsSchema
+    schema = RDMRecordSchema
+
+    # Limits
+    max_number_of_removals = 10
+
+    links_search_community_records = pagination_links(
+        "{+api}/communities/{id}/records{?args*}"
+    )
 
 
 #
@@ -275,10 +301,6 @@ class RDMRecordServiceConfig(RecordServiceConfig, ConfiguratorMixin):
         # TODO: only include link when DOI support is enabled.
         "reserve_doi": RecordLink("{+api}/records/{id}/draft/pids/doi"),
     }
-
-    links_search_community_records = pagination_links(
-        "{+api}/communities/{id}/records{?args*}"
-    )
 
 
 class RDMFileRecordServiceConfig(FileServiceConfig, ConfiguratorMixin):

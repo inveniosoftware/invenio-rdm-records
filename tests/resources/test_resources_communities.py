@@ -7,39 +7,16 @@
 
 """Tests record's communities resources."""
 
-import pytest
-
-from invenio_rdm_records.proxies import current_rdm_records_service
+from invenio_rdm_records.proxies import current_record_communities_service
 from tests.resources.conftest import link
 
 
-@pytest.fixture()
-def service():
-    """Get the current RDM records service."""
-    return current_rdm_records_service
-
-
-@pytest.fixture()
-def record(uploader, minimal_record, community, service, running_app, db):
-    """Record that belongs to a community."""
-    # Create draft with review
-    draft = service.create(uploader.identity, minimal_record)
-    # Publish
-    record = service.publish(uploader.identity, draft.id)
-    # TODO replace the following code by the service func that adds the record to a community
-    community = community._record
-    record._record.parent.communities.add(community, default=False)
-    record._record.parent.commit()
-    db.session.commit()
-    service.indexer.index(record._record)
-    return record
-
-
-def test_remove_community(client, uploader, record, headers, community):
+def test_remove_community(client, uploader, community_record, headers, community):
     """Remove a community from the record."""
     client = uploader.login(client)
 
     data = {"communities": [{"id": community.id}]}
+    record = community_record.create_record()
     response = client.delete(
         f"/records/{record.id}/communities",
         headers=headers,
@@ -51,11 +28,14 @@ def test_remove_community(client, uploader, record, headers, community):
     assert not record_saved.json["parent"]["communities"]
 
 
-def test_permission_denied(client, uploader, test_user, record, headers, community):
+def test_permission_denied(
+    client, uploader, test_user, community_record, headers, community
+):
     """Remove a community from the record."""
     data = {"communities": [{"id": community.id}]}
 
     test_user_client = test_user.login(client)
+    record = community_record.create_record()
 
     response_403 = test_user_client.delete(
         f"/records/{record.id}/communities",
@@ -67,11 +47,12 @@ def test_permission_denied(client, uploader, test_user, record, headers, communi
     assert record_saved.json["parent"]["communities"] == {"ids": [str(community.id)]}
 
 
-def test_error_data(client, uploader, record, headers, community):
+def test_error_data(client, uploader, community_record, headers, community):
     """Remove a community from the record."""
     data = {"communities": [{"id": "wrong-id"}]}
 
     uploader_client = uploader.login(client)
+    record = community_record.create_record()
 
     response = uploader_client.delete(
         f"/records/{record.id}/communities",
@@ -82,6 +63,29 @@ def test_error_data(client, uploader, record, headers, community):
     assert response.json["errors"]
     record_saved = client.get(link(record.links["self"]), headers=headers)
     assert record_saved.json["parent"]["communities"] == {"ids": [str(community.id)]}
+
+
+def test_exceeded_max_number_of_communities(
+    client, uploader, community_record, headers, community
+):
+    """Test raise exceeded max number of communities."""
+    client = uploader.login(client)
+    record = community_record.create_record()
+
+    random_community = {"id": "random-id"}
+    lots_of_communities = []
+    while (
+        len(lots_of_communities)
+        <= current_record_communities_service.config.max_number_of_removals
+    ):
+        lots_of_communities.append(random_community)
+    data = {"communities": lots_of_communities}
+    response = client.delete(
+        f"/records/{record.id}/communities",
+        headers=headers,
+        json=data,
+    )
+    assert response.status_code == 400
 
 
 # TODO once upload to multiple communities is implemented

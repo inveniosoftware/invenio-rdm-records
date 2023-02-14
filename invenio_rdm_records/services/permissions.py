@@ -8,6 +8,7 @@
 
 """Permissions for Invenio RDM Records."""
 
+from invenio_communities.generators import CommunityCurators
 from invenio_records_permissions.generators import (
     AnyUser,
     AuthenticatedUser,
@@ -135,7 +136,9 @@ class RDMRecordPermissionPolicy(RecordPermissionPolicy):
     # Record communities
     #
     # Allow to remove a community from a record
-    can_delete_community = can_manage
+    can_remove_community = can_manage
+    # Allow to remove records from a community
+    can_remove_record = [CommunityCurators()]
 
     #
     # Disabled actions (these should not be used or changed)
