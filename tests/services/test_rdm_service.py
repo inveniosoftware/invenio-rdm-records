@@ -186,3 +186,10 @@ def test_search_community_records(
         community_id=community.id,
     )
     assert results.to_dict()["hits"]["total"] == 2
+
+    # ensure that searching by community slug also works
+    results = service.search_community_records(
+        anyuser_identity,
+        community_id=community.slug,
+    )
+    assert results.to_dict()["hits"]["total"] == 2
