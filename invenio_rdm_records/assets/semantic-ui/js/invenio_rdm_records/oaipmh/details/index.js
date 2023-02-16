@@ -24,6 +24,7 @@ const apiEndpoint = _get(domContainer.dataset, "apiEndpoint");
 const idKeyPath = JSON.parse(_get(domContainer.dataset, "pidPath", "pid"));
 const listUIEndpoint = domContainer.dataset.listEndpoint;
 const resourceSchema = JSON.parse(domContainer.dataset.resourceSchema);
+const uiSchema = JSON.parse(domContainer.dataset.uiConfig);
 
 const createdBySystem = (data) => data?.system_created;
 
@@ -57,6 +58,7 @@ domContainer &&
         resourceName={resourceName}
         listUIEndpoint={listUIEndpoint}
         resourceSchema={resourceSchema}
+        uiSchema={uiSchema}
       >
         <LinksTable />
       </AdminDetailsView>
