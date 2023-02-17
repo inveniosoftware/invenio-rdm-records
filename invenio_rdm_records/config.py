@@ -11,8 +11,10 @@
 
 import idutils
 from flask_babelex import lazy_gettext as _
+from invenio_communities.communities import DefaultCommunityComponents
 
 from .services import facets
+from .services.community_records.components import CommunityRecordsComponent
 from .services.permissions import RDMRecordPermissionPolicy
 from .services.pids import providers
 
@@ -446,3 +448,7 @@ For example:
         ...
     }]
 """
+
+
+COMMUNITY_SERVICE_COMPONENTS = [*DefaultCommunityComponents, CommunityRecordsComponent]
+"""Invenio communities service components."""

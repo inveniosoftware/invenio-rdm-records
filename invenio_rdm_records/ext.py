@@ -121,6 +121,7 @@ class InvenioRDMRecords(object):
             "RECORDS_REFRESOLVER_STORE",
             "RECORDS_UI_ENDPOINTS",
             "THEME_SITEURL",
+            "COMMUNITY_SERVICE_COMPONENTS",
         ]
 
         for k in dir(config):

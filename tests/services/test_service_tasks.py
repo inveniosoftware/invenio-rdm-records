@@ -7,11 +7,18 @@
 
 """Service tasks tests."""
 
-import pytest
+from invenio_access.permissions import system_identity
 
-from invenio_rdm_records.proxies import current_rdm_records
-from invenio_rdm_records.records.api import RDMDraft
-from invenio_rdm_records.services.tasks import update_expired_embargos
+from invenio_rdm_records.proxies import (
+    current_community_records_service,
+    current_rdm_records,
+)
+from invenio_rdm_records.records.api import RDMDraft, RDMRecord
+from invenio_rdm_records.services.tasks import (
+    remove_community_from_record,
+    remove_community_from_records,
+    update_expired_embargos,
+)
 
 
 def test_embargo_lift_without_draft(embargoed_record, running_app, search_clear):
@@ -78,3 +85,41 @@ def test_embargo_lift_with_updated_draft(
     assert draft_lifted.access.embargo.active is False
     assert draft_lifted.access.protection.files == "restricted"
     assert draft_lifted.access.protection.record == "public"
+
+
+def test_remove_community_from_records(record_community, community):
+    """Tests removal of all records that belong to a community."""
+    number_of_records = 0
+    while number_of_records < 10:
+        record_community.create_record()
+        number_of_records += 1
+    records = current_community_records_service.search(
+        identity=system_identity, community_id=str(community.id)
+    )
+    assert records.total == 10
+
+    remove_community_from_records(str(community.id), delay=False)
+    RDMRecord.index.refresh()
+
+    community_records = current_community_records_service.search(
+        identity=system_identity, community_id=str(community.id)
+    )
+    assert community_records.total == 0
+
+
+def test_remove_community_from_record(record_community, community):
+    """Tests removal of a record from a community."""
+
+    record = record_community.create_record()
+    records = current_community_records_service.search(
+        identity=system_identity, community_id=str(community.id)
+    )
+    assert records.total == 1
+
+    remove_community_from_record(str(record.parent.id), str(community.id))
+    RDMRecord.index.refresh()
+
+    community_records = current_community_records_service.search(
+        identity=system_identity, community_id=str(community.id)
+    )
+    assert community_records.total == 0
