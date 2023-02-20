@@ -10,16 +10,10 @@ import React, { Component } from "react";
 import { Table } from "semantic-ui-react";
 import isEmpty from "lodash/isEmpty";
 import { withState } from "react-searchkit";
-import { Actions, Edit, Delete } from "@js/invenio_administration";
+import { Actions } from "@js/invenio_administration";
 import { AdminUIRoutes } from "@js/invenio_administration";
-import { OverridableContext, parametrize } from "react-overridable";
-import { DeleteModal } from "./DeleteModal";
 import Formatter from "@js/invenio_administration/src/components/Formatter";
-import { i18next } from "@translations/invenio_rdm_records/i18next";
 
-const overridenComponents = {
-  "InvenioAdministration.DeleteModal.layout": DeleteModal,
-};
 
 class SearchResultItemComponent extends Component {
   refreshAfterAction = () => {
@@ -62,80 +56,61 @@ class SearchResultItemComponent extends Component {
       apiEndpoint,
       idKeyPath,
       listUIEndpoint,
+      appName
     } = this.props;
 
     const resourceHasActions =
       displayEdit || displayDelete || !isEmpty(actions);
 
-    overridenComponents["InvenioAdministration.EditAction"] = parametrize(
-      Edit,
-      {
-        disable: () => result.system_created,
-        disabledMessage: i18next.t(
-          "This set is not editable as it was created by the system."
-        ),
-      }
-    );
-
-    overridenComponents["InvenioAdministration.DeleteAction"] = parametrize(
-      Delete,
-      {
-        disable: () => result.system_created,
-        disabledMessage: i18next.t(
-          "This set is not deletable as it was created by the system."
-        ),
-      }
-    );
 
     return (
-      <OverridableContext.Provider value={overridenComponents}>
-        <Table.Row>
-          {columns.map(([property, { text, order }], index) => {
-            return (
-              <Table.Cell
-                key={`${text}-${order}`}
-                data-label={text}
-                className="word-break-all"
-              >
-                {index === 0 ? (
-                  <a
-                    href={AdminUIRoutes.detailsView(
-                      listUIEndpoint,
-                      result,
-                      idKeyPath
-                    )}
-                  >
-                    {this.displayAsPre(result, property)}
-                  </a>
-                ) : (
-                  this.displayAsPre(result, property)
-                )}
-              </Table.Cell>
-            );
-          })}
-          {resourceHasActions && (
-            <Table.Cell>
-              <Actions
-                title={title}
-                resourceName={resourceName}
-                apiEndpoint={apiEndpoint}
-                actions={actions}
-                editUrl={AdminUIRoutes.editView(
-                  listUIEndpoint,
-                  result,
-                  idKeyPath
-                )}
-                displayEdit={displayEdit}
-                displayDelete={displayDelete}
-                resource={result}
-                idKeyPath={idKeyPath}
-                successCallback={this.refreshAfterAction}
-                listUIEndpoint={listUIEndpoint}
-              />
+      <Table.Row>
+        {columns.map(([property, { text, order }], index) => {
+          return (
+            <Table.Cell
+              key={`${text}-${order}`}
+              data-label={text}
+              className="word-break-all"
+            >
+              {index === 0 ? (
+                <a
+                  href={AdminUIRoutes.detailsView(
+                    listUIEndpoint,
+                    result,
+                    idKeyPath
+                  )}
+                >
+                  {this.displayAsPre(result, property)}
+                </a>
+              ) : (
+                this.displayAsPre(result, property)
+              )}
             </Table.Cell>
-          )}
-        </Table.Row>
-      </OverridableContext.Provider>
+          );
+        })}
+        {resourceHasActions && (
+          <Table.Cell>
+            <Actions
+              title={title}
+              resourceName={resourceName}
+              apiEndpoint={apiEndpoint}
+              actions={actions}
+              editUrl={AdminUIRoutes.editView(
+                listUIEndpoint,
+                result,
+                idKeyPath
+              )}
+              displayEdit={displayEdit}
+              displayDelete={displayDelete}
+              resource={result}
+              idKeyPath={idKeyPath}
+              successCallback={this.refreshAfterAction}
+              listUIEndpoint={listUIEndpoint}
+              appName={appName}
+            />
+          </Table.Cell>
+        )}
+      </Table.Row>
     );
   }
 }
@@ -154,6 +129,7 @@ SearchResultItemComponent.propTypes = {
   idKeyPath: PropTypes.string.isRequired,
   listUIEndpoint: PropTypes.string.isRequired,
   resourceSchema: PropTypes.object.isRequired,
+  appName: PropTypes.string,
 };
 
 SearchResultItemComponent.defaultProps = {
@@ -161,6 +137,7 @@ SearchResultItemComponent.defaultProps = {
   displayEdit: true,
   apiEndpoint: undefined,
   actions: {},
+  appName: "",
 };
 
 export const SearchResultItem = withState(SearchResultItemComponent);
