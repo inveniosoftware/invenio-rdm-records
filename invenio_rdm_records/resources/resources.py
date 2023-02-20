@@ -295,9 +295,23 @@ class RDMCommunityRecordsResource(RecordResource):
         url_rules = [
             route("GET", p(routes["list"]), self.search),
             route("DELETE", p(routes["list"]), self.delete),
+            route("GET", p(routes["count"]), self.count),
         ]
 
         return url_rules
+
+    @request_search_args
+    @request_view_args
+    @response_handler(many=True)
+    def count(self):
+        """Perform a count over the community's records."""
+        result = self.service.count(
+            identity=g.identity,
+            community_id=resource_requestctx.view_args["pid_value"],
+            params=resource_requestctx.args,
+            search_preference=search_preference(),
+        )
+        return result, 200
 
     @request_search_args
     @request_view_args

@@ -73,6 +73,32 @@ class CommunityRecordsService(RecordService):
             links_item_tpl=self.links_item_tpl,
         )
 
+    def count(
+        self, identity, community_id, params=None, search_preference=None, **kwargs
+    ):
+        """Counts the records published in a community."""
+        self.require_permission(identity, "read")
+        community = self.community_cls.pid.resolve(
+            community_id
+        )  # Ensure community's existence
+
+        params = params or dict()
+
+        search_result = self._search(
+            "count",
+            identity,
+            params,
+            search_preference,
+            record_cls=self.record_cls,
+            search_opts=self.config.search,
+            extra_filter=dsl.Q("term", **{"parent.communities.ids": str(community.id)}),
+            permission_action="read",
+            versioning=False,
+            **kwargs,
+        ).count()
+
+        return search_result
+
     def _remove(self, community, record, identity):
         """Remove a community from the record."""
         data = dict(communities=[dict(id=str(community.id))])

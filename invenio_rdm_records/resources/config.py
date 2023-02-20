@@ -246,7 +246,7 @@ class RDMCommunityRecordsResourceConfig(RecordResourceConfig, ConfiguratorMixin)
     url_prefix = "/communities"
 
     # Community records
-    routes = {"list": "/<pid_value>/records"}
+    routes = {"list": "/<pid_value>/records", "count": "/<pid_value>/records/count"}
 
     response_handlers = record_serializers
 
