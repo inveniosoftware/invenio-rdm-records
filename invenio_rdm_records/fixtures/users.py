@@ -80,3 +80,4 @@ class UsersFixture(FixtureMixin):
             reindex_user(user.id)
         except IntegrityError:
             current_app.logger.info(f"skipping creation of {email}, already existing")
+            db.session.rollback()
