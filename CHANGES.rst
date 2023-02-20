@@ -10,6 +10,13 @@
 Changes
 =======
 
+Version 2.2.0 (released 2023-02-20)
+
+- records: remove communities from a record
+- communities: support both slug (id) and uuid in communities endpoints
+- communities: support direct publish (without review)
+- fixtures: fix duplicated user creation
+
 Version 2.1.0 (released 2023-02-14)
 
 - export: add MARCXML serializer, including in OAI-PMH
