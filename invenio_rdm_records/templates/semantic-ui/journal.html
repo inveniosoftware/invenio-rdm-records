@@ -1,0 +1,26 @@
+
+{% if field_value.get('title') %}
+  <dt class="ui tiny header">{{ _("Title")}}</dt>
+  <dd>{{field_value.get('title')}}</dd>
+{% endif %}
+
+{% if field_value.get('volume') %}
+<dt class="ui tiny header">{{ _("Volume")}}</dt>
+<dd>{{field_value.get('volume')}}</dd>
+{% endif %}
+
+{% if field_value.get('issue') %}
+  <dt class="ui tiny header">{{ _("Issue")}}</dt>
+  <dd>{{field_value.get('issue')}}</dd>
+{% endif %}
+
+{% if field_value.get('pages') %}
+  <dt class="ui tiny header">{{ _("Pages")}}</dt>
+  <dd>{{field_value.get('pages')}}</dd>
+{% endif %}
+
+{% if field_value.get('issn') %}
+  <dt class="ui tiny header">{{ _("ISSN")}}</dt>
+  <dd>{{field_value.get('issn')}}</dd>
+{% endif %}
+
