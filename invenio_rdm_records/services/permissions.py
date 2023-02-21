@@ -20,6 +20,7 @@ from invenio_records_permissions.generators import (
 from invenio_records_permissions.policies.records import RecordPermissionPolicy
 
 from .generators import (
+    IfConfig,
     IfFileIsLocal,
     IfRestricted,
     RecordCommunitiesAction,
@@ -111,6 +112,10 @@ class RDMRecordPermissionPolicy(RecordPermissionPolicy):
     ]
     can_draft_update_files = can_review
     can_draft_delete_files = can_review
+    # Allow enabling/disabling files
+    can_manage_files = [
+        IfConfig("RDM_ALLOW_METADATA_ONLY_RECORDS", then_=can_review, else_=[]),
+    ]
 
     #
     # PIDs

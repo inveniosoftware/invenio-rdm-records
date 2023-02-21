@@ -113,6 +113,12 @@ RDM_RECORDS_REVIEWS = [
 ]
 
 #
+# Record files configuration
+#
+RDM_ALLOW_METADATA_ONLY_RECORDS = True
+"""Allow users to publish metadata-only records."""
+
+#
 # Search configuration
 #
 RDM_FACETS = {
