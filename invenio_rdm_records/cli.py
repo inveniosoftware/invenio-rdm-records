@@ -215,7 +215,7 @@ def inclusion_requests(user_email, n_requests):
     )
     if drafts.total == 0:
         click.secho(
-            "Failed! Create fake drafts first " "with `rdm-records demo drafts`.",
+            "Failed! Create fake drafts first with `rdm-records demo drafts`.",
             fg="red",
         )
         exit(1)
@@ -223,7 +223,7 @@ def inclusion_requests(user_email, n_requests):
     communities = current_communities.service.search(system_identity)
     if communities.total == 0:
         click.secho(
-            "Failed! Create fake communities " "first `rdm-records demo communities`.",
+            "Failed! Create fake communities first `rdm-records demo communities`.",
             fg="red",
         )
         exit(1)
@@ -259,7 +259,7 @@ def invitation_requests(user_email, n_requests):
     communities = current_communities.service.search(system_identity)
     if communities.total == 0:
         click.secho(
-            "Failed! Create fake communities " "first `rdm-records demo communities`.",
+            "Failed! Create fake communities first `rdm-records demo communities`.",
             fg="red",
         )
         exit(1)

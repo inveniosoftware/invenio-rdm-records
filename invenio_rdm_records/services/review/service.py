@@ -61,7 +61,7 @@ class ReviewService(RecordService):
         # Validate that record has not been published.
         if record.is_published or record.versions.index > 1:
             raise ReviewStateError(
-                _("You cannot create a review for an already published " "record.")
+                _("You cannot create a review for an already published record.")
             )
 
         # Validate the review type (only review requests are valid)

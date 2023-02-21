@@ -149,7 +149,7 @@ def test_datacite43_serializer(running_app, full_record):
                 "rights": "Creative Commons Attribution 4.0 International",
                 "rightsIdentifierScheme": "spdx",
                 "rightsIdentifier": "cc-by-4.0",
-                "rightsUri": "https://creativecommons.org/licenses/by/4.0/" "legalcode",
+                "rightsUri": "https://creativecommons.org/licenses/by/4.0/legalcode",
             },
         ],
         "descriptions": [
