@@ -1199,6 +1199,23 @@ def superuser_identity(admin, superuser_role_need):
 
 
 @pytest.fixture()
+def superuser(UserFixture, app, db, superuser_role_need):
+    """Superuser."""
+    u = UserFixture(
+        email="superuser@inveniosoftware.org",
+        password="superuser",
+    )
+    u.create(app, db)
+
+    datastore = app.extensions["security"].datastore
+    _, role = datastore._prepare_role_modify_args(u.user, "superuser-access")
+
+    datastore.add_role_to_user(u.user, role)
+    db.session.commit()
+    return u
+
+
+@pytest.fixture()
 def admin_role_need(db):
     """Store 1 role with 'superuser-access' ActionNeed.
 

@@ -367,3 +367,43 @@ def test_only_owners_can_list_draft_w_public_files(
     login_user(client, users[0])
     response = client.get(url, headers=headers)
     assert 200 == response.status_code
+
+
+@pytest.fixture()
+def metadata_only_records_disabled(app):
+    old_value = app.config.get("RDM_ALLOW_METADATA_ONLY_RECORDS", True)
+    app.config["RDM_ALLOW_METADATA_ONLY_RECORDS"] = False
+    yield
+    app.config["RDM_ALLOW_METADATA_ONLY_RECORDS"] = old_value
+
+
+def test_metadata_only_records_disabled(
+    client,
+    headers,
+    minimal_record,
+    users,
+    superuser,
+    metadata_only_records_disabled,
+):
+    login_user(client, users[0])
+
+    recid = create_draft(client, minimal_record, headers)
+    url = f"/records/{recid}/draft"
+    minimal_record["files"] = {"enabled": False}
+
+    # Owner can't disable files
+    response = client.put(url, json=minimal_record, headers=headers)
+    assert response.status_code == 200
+    assert response.json["files"]["enabled"] is True
+    assert response.json["errors"][0]["field"] == "files.enabled"
+    assert response.json["errors"][0]["messages"] == [
+        "You don't have permissions to manage files options.",
+    ]
+
+    # Admins though can disable files
+    logout_user(client)
+    login_user(client, superuser.user)
+    response = client.put(url, json=minimal_record, headers=headers)
+    assert response.status_code == 200
+    assert response.json["files"]["enabled"] is False
+    assert "errors" not in response.json

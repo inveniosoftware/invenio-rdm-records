@@ -14,6 +14,7 @@ from abc import abstractmethod
 from functools import reduce
 from itertools import chain
 
+from flask import current_app
 from flask_principal import UserNeed
 from invenio_access.permissions import authenticated_user
 from invenio_communities.generators import CommunityRoleNeed, CommunityRoles
@@ -247,3 +248,17 @@ class RecordCommunitiesAction(CommunityRoles):
     def query_filter(self, identity=None, **kwargs):
         """Filters for current identity as member."""
         return dsl.Q("terms", **{"parent.communities.ids": self.communities(identity)})
+
+
+class IfConfig(ConditionalGenerator):
+    """Config-based conditional generator."""
+
+    def __init__(self, config_key, accept_values=[True], **kwargs):
+        """Initialize generator."""
+        self.accept_values = accept_values
+        self.config_key = config_key
+        super().__init__(**kwargs)
+
+    def _condition(self, **_):
+        """Check if the config value is truthy."""
+        return current_app.config.get(self.config_key) in self.accept_values
