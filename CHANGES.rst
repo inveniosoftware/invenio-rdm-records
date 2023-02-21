@@ -10,6 +10,10 @@
 Changes
 =======
 
+Version 1.3.4 (released 2023-02-21)
+
+- communities: fix search by slug
+
 Version 1.3.3 (released 2023-02-06)
 
 - datacite: fix reversion in affiliation ROR handling and cleanup
