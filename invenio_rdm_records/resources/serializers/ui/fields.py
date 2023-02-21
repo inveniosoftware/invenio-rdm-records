@@ -89,7 +89,7 @@ class UIObjectAccessStatus(UIAccessStatus):
                 options.update(
                     {
                         AccessStatusEnum.EMBARGOED: _(
-                            "The record will be made publicly available on " "%(date)s."
+                            "The record will be made publicly available on %(date)s."
                         )
                         % {"date": self.embargo_date},
                         AccessStatusEnum.RESTRICTED: _(
@@ -101,7 +101,7 @@ class UIObjectAccessStatus(UIAccessStatus):
             options.update(
                 {
                     AccessStatusEnum.EMBARGOED: _(
-                        "The files will be made publicly available on " "%(date)s."
+                        "The files will be made publicly available on %(date)s."
                     )
                     % {"date": self.embargo_date},
                     AccessStatusEnum.RESTRICTED: _(
