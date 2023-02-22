@@ -733,11 +733,11 @@ def test_response_handlers(running_app, minimal_record, client_with_login):
 
     accept = [
         "application/json",
-        # "application/marcxml+xml",  # Fails on search (not implemented)
+        "application/marcxml+xml",
         "application/vnd.inveniordm.v1+json",
-        # "application/vnd.citationstyles.csl+json",  # Fails on search
-        # "application/vnd.datacite.v43+json",  # Fails on search
-        # "application/vnd.geo+json",  # Fails on search
+        "application/vnd.citationstyles.csl+json",
+        "application/vnd.datacite.v43+json",
+        "application/vnd.geo+json",
         "application/vnd.datacite.v43+xml",
         "application/x-dc+xml",
         "text/x-bibliography",

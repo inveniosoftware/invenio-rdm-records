@@ -91,4 +91,15 @@ class MARCXMLSerializer(SerializerMixin):
             return dict
 
         json = changeKeysToTags(json)
-        return etree.tostring(dumps_etree(json))
+        return etree.tostring(
+            dumps_etree(json),
+            pretty_print=True,
+            xml_declaration=True,
+            encoding="utf-8",
+        ).decode("utf-8")
+
+    def serialize_object_list(self, records, **kwargs):
+        """Serialize a list of records."""
+        return "\n".join(
+            [self.serialize_object(rec, **kwargs) for rec in records["hits"]["hits"]]
+        )

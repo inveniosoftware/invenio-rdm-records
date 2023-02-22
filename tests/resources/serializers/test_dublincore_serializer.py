@@ -61,7 +61,7 @@ def test_dublincorejson_serializer(running_app, updated_full_record):
     }
 
     serializer = DublinCoreJSONSerializer()
-    serialized_record = serializer.dump_one(updated_full_record)
+    serialized_record = serializer.dump_obj(updated_full_record)
 
     assert serialized_record == expected_data
 
@@ -78,7 +78,7 @@ def test_dublincorejson_serializer_minimal(running_app, updated_minimal_record):
     }
 
     serializer = DublinCoreJSONSerializer()
-    serialized_record = serializer.dump_one(updated_minimal_record)
+    serialized_record = serializer.dump_obj(updated_minimal_record)
 
     assert serialized_record == expected_data
 
@@ -88,7 +88,7 @@ def test_vocabulary_type_error(running_app, updated_minimal_record):
     updated_minimal_record["metadata"]["resource_type"]["id"] = "invalid"
 
     with pytest.raises(VocabularyItemNotFoundError):
-        DublinCoreJSONSerializer().dump_one(updated_minimal_record)
+        DublinCoreJSONSerializer().dump_obj(updated_minimal_record)
 
 
 def test_dublincorexml_serializer(running_app, updated_full_record):
