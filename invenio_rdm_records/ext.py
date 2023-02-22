@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2019-2022 CERN.
+# Copyright (C) 2019-2023 CERN.
 # Copyright (C) 2019-2021 Northwestern University.
 # Copyright (C) 2022 Universität Hamburg.
 # Copyright (C) 2023 Graz University of Technology.
@@ -9,8 +9,6 @@
 # it under the terms of the MIT License; see LICENSE file for more details.
 
 """DataCite-based data model for Invenio."""
-
-import warnings
 
 from flask import flash, g, request, session
 from flask_iiif import IIIF
@@ -135,33 +133,6 @@ class InvenioRDMRecords(object):
         # set default communities namespaces to the global RDM_NAMESPACES
         if not app.config.get("COMMUNITIES_NAMESPACES"):
             app.config["COMMUNITIES_NAMESPACES"] = app.config["RDM_NAMESPACES"]
-
-        # Deprecations
-        # Remove when v6.0 LTS is no longer supported.
-        deprecated = [
-            ("RDM_RECORDS_DOI_DATACITE_ENABLED", "DATACITE_ENABLED"),
-            ("RDM_RECORDS_DOI_DATACITE_USERNAME", "DATACITE_USERNAME"),
-            ("RDM_RECORDS_DOI_DATACITE_PASSWORD", "DATACITE_PASSWORD"),
-            ("RDM_RECORDS_DOI_DATACITE_PREFIX", "DATACITE_PREFIX"),
-            ("RDM_RECORDS_DOI_DATACITE_TEST_MODE", "DATACITE_TEST_MODE"),
-            ("RDM_RECORDS_DOI_DATACITE_FORMAT", "DATACITE_FORMAT"),
-        ]
-        for old, new in deprecated:
-            if new not in app.config:
-                if old in app.config:
-                    app.config[new] = app.config[old]
-                    warnings.warn(
-                        f"{old} has been replaced with {new}. "
-                        "Please update your config.",
-                        DeprecationWarning,
-                    )
-            else:
-                if old in app.config:
-                    warnings.warn(
-                        f"{old} is deprecated. Please remove it from your "
-                        "config as {new} is already set.",
-                        DeprecationWarning,
-                    )
 
         self.fix_datacite_configs(app)
 
