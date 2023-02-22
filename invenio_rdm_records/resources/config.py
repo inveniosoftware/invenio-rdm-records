@@ -46,6 +46,7 @@ from .serializers import (
     DataCite43XMLSerializer,
     DublinCoreXMLSerializer,
     GeoJSONSerializer,
+    MARCXMLSerializer,
     StringCitationSerializer,
     UIJSONSerializer,
 )
@@ -63,13 +64,12 @@ def csl_url_args_retriever():
 #
 record_serializers = {
     "application/json": ResponseHandler(JSONSerializer()),
+    "application/marcxml+xml": ResponseHandler(MARCXMLSerializer()),
     "application/vnd.inveniordm.v1+json": ResponseHandler(UIJSONSerializer()),
     "application/vnd.citationstyles.csl+json": ResponseHandler(CSLJSONSerializer()),
-    "application/vnd.datacite.datacite+json": ResponseHandler(
-        DataCite43JSONSerializer()
-    ),
+    "application/vnd.datacite.v43+json": ResponseHandler(DataCite43JSONSerializer()),
     "application/vnd.geo+json": ResponseHandler(GeoJSONSerializer()),
-    "application/vnd.datacite.datacite+xml": ResponseHandler(DataCite43XMLSerializer()),
+    "application/vnd.datacite.v43+xml": ResponseHandler(DataCite43XMLSerializer()),
     "application/x-dc+xml": ResponseHandler(DublinCoreXMLSerializer()),
     "text/x-bibliography": ResponseHandler(
         StringCitationSerializer(url_args_retriever=csl_url_args_retriever),

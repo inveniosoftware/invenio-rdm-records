@@ -727,6 +727,39 @@ def test_link_update(
     assert link_result.json["permission"] == "preview"
 
 
+def test_response_handlers(running_app, minimal_record, client_with_login):
+    # Check that the response handlers are correctly configured.
+    # The correctness of its serialization is tested in /tests/serializers
+
+    accept = [
+        "application/json",
+        # "application/marcxml+xml",  # Fails on search (not implemented)
+        "application/vnd.inveniordm.v1+json",
+        # "application/vnd.citationstyles.csl+json",  # Fails on search
+        # "application/vnd.datacite.v43+json",  # Fails on search
+        # "application/vnd.geo+json",  # Fails on search
+        "application/vnd.datacite.v43+xml",
+        "application/x-dc+xml",
+        "text/x-bibliography",
+    ]
+
+    headers = {
+        "content-type": "application/json",
+        "accept": "application/json",
+    }
+    client = client_with_login
+    recid = _create_and_publish(client, minimal_record, headers)
+    RDMRecord.index.refresh()
+
+    for format in accept:
+        headers["accept"] = format
+        assert (
+            200 == client.get("/records/{}".format(recid), headers=headers).status_code
+        )
+
+        assert 200 == client.get(f"/records", headers=headers).status_code
+
+
 #
 # DOI API
 #
