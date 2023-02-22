@@ -8,9 +8,10 @@
 """MARCXML based Schema for Invenio RDM Records."""
 
 import bleach
+from copy import deepcopy
 from invenio_access.permissions import system_identity
 from invenio_vocabularies.proxies import current_service as vocabulary_service
-from marshmallow import Schema, fields, missing
+from marshmallow import Schema, fields, missing, post_dump
 
 from ..ui.schema import current_default_locale
 from ..utils import get_vocabulary_props
@@ -286,3 +287,58 @@ class MARCXMLSchema(Schema):
         """Get data formats."""
         formats = obj["metadata"].get("formats", missing)
         return formats
+
+    @post_dump()
+    def changeKeysToTags(self, data, many, **kwargs):
+        """Changes the key name to the corresponding MARCXML tag (number)."""
+        # [!] The string in the first array corresponds to the tag[0:4] + ind1[4] + ind2[5]
+        # [!] The first string needs to be length *5* (this is to do with the dojson parser)
+        # [!] The second string corresponds to the subfield code
+
+        # Example: "creators" : ["100a ", "a"]
+
+        #   <datafield tag="100" ind1="a" ind2=" ">
+        #       <subfield code="a">Tarocco, Nicola</subfield>
+        #   </datafield>
+
+        # To add support for more tags, use the corresponding codes from here
+        # https://scoap3.org/scoap3-repository/marcxml/
+
+        changes = {
+            "contributors": ["700a ", "u"],  # Abstract
+            "titles": ["245a ", "a"],  # Title
+            "creators": ["100a ", "a"],  # First author
+            "identifiers": ["024  ", "a"],  # DOI
+            "relations": ["856 2", "a"],  # Related Ressource
+            "rights": ["540  ", "a"],  # License
+            "dates": [
+                "260c ",
+                "c",
+            ],  # Publication Information - Date of Publication
+            "subjects": ["653  ", "a"],  # Keywords
+            "descriptions": ["520  ", "a"],  # Abstract
+            "publishers": [
+                "260b ",
+                "a",
+            ],  # Publication Information - Publisher Name
+            "types": ["901  ", "u"],  # Local Implementation
+            "sources": ["246i ", "x"],  # Source
+            "coverage": ["510  ", "a"],  # Location
+            "formats": ["520 1", "a"],  # Abstract
+            "parent_id": ["024 1", "a"],  # ID
+            "community_id": ["024 2", "a"],  # ID
+            "last_updated": [
+                "260ca",
+                "c",
+            ],  # Publication Information - Date of Publication
+            "sizes": ["520 2", "a"],  # Abstract
+            "version": ["024 3", "a"],  # ID
+            "funding": ["856 1", "a"],  # Related Ressource
+        }
+
+        data_copy = deepcopy(data)
+        for key in data_copy:
+            if key in changes:
+                data[changes[key][0]] = {changes[key][1]: data.pop(key)}
+
+        return data

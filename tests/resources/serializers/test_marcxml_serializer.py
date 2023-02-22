@@ -39,7 +39,7 @@ def test_marcxml_serializer_minimal_record(running_app, updated_minimal_record):
     """Test serializer for MARCXML"""
     serializer = MARCXMLSerializer()
     serialized_record = create_record(
-        serializer.serialize_object(updated_minimal_record)
+        bytes(serializer.serialize_object(updated_minimal_record), "utf-8")
     )
 
     expected_data = '<record xmlns="http://www.loc.gov/MARC21/slim"><datafield tag="245" ind1="a" ind2=" "><subfield code="a">A Romans story</subfield></datafield><datafield tag="260" ind1="c" ind2=" "><subfield code="c">2020-06-01</subfield></datafield><datafield tag="260" ind1="b" ind2=" "><subfield code="a">Acme Inc</subfield></datafield><datafield tag="901" ind1=" " ind2=" "><subfield code="u">info:eu-repo/semantic/other</subfield></datafield><datafield tag="100" ind1="a" ind2=" "><subfield code="a">Name</subfield><subfield code="a">Troy Inc.</subfield></datafield><datafield tag="540" ind1=" " ind2=" "><subfield code="a">info:eu-repo/semantics/openAccess</subfield></datafield></record>'
