@@ -46,7 +46,7 @@ def test_csl_json_serializer(running_app, full_record):
     }
 
     serializer = CSLJSONSerializer()
-    serialized_record = serializer.dump_one(full_record)
+    serialized_record = serializer.dump_obj(full_record)
     assert serialized_record == expected_data
 
     # test wrong publication date

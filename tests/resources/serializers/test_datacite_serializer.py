@@ -185,7 +185,7 @@ def test_datacite43_serializer(running_app, full_record):
     }
 
     serializer = DataCite43JSONSerializer()
-    serialized_record = serializer.dump_one(full_record)
+    serialized_record = serializer.dump_obj(full_record)
 
     assert serialized_record == expected_data
 
@@ -287,7 +287,7 @@ def test_datacite43_identifiers(running_app, minimal_record):
     ]
 
     serializer = DataCite43JSONSerializer()
-    serialized_record = serializer.dump_one(minimal_record)
+    serialized_record = serializer.dump_obj(minimal_record)
 
     assert "identifiers" not in serialized_record
 
@@ -299,7 +299,7 @@ def test_datacite43_identifiers(running_app, minimal_record):
         },
     }
 
-    serialized_record = serializer.dump_one(minimal_record)
+    serialized_record = serializer.dump_obj(minimal_record)
     assert len(serialized_record["identifiers"]) == 1
     identifier = serialized_record["identifiers"][0]["identifier"]
     assert identifier == "10.5281/inveniordm.1234"
@@ -333,7 +333,7 @@ def test_datacite43_serializer_with_unknown_id_schemes(
     }
 
     serializer = DataCite43JSONSerializer()
-    serialized_record = serializer.dump_one(full_modified_record)
+    serialized_record = serializer.dump_obj(full_modified_record)
 
     assert expected_pid_id in serialized_record["identifiers"]
     assert expected_pid_id_2 in serialized_record["identifiers"]

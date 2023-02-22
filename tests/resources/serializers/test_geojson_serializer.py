@@ -40,7 +40,7 @@ def test_geojson_serializer_no_records():
     expected_data = {"type": "FeatureCollection", "features": []}
 
     serializer = GeoJSONSerializer()
-    serialized_record = serializer.dump_one(input_data)
+    serialized_record = serializer.dump_obj(input_data)
 
     assert serialized_record == expected_data
 
@@ -98,7 +98,7 @@ def test_geojson_serializer_single_records():
     }
 
     serializer = GeoJSONSerializer()
-    serialized_record = serializer.dump_one(input_data)
+    serialized_record = serializer.dump_obj(input_data)
 
     assert serialized_record == expected_data
 
@@ -171,6 +171,6 @@ def test_geojson_serializer_multiple_records():
     }
 
     serializer = GeoJSONSerializer()
-    serialized_record = serializer.dump_one(input_data)
+    serialized_record = serializer.dump_obj(input_data)
 
     assert serialized_record == expected_data

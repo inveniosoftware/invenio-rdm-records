@@ -135,7 +135,7 @@ class DataCitePIDProvider(PIDProvider):
             return False
 
         try:
-            doc = self.serializer.dump_one(record)
+            doc = self.serializer.dump_obj(record)
             url = kwargs["url"]
             self.client.api.public_doi(metadata=doc, url=url, doi=pid.pid_value)
             return True
@@ -157,7 +157,7 @@ class DataCitePIDProvider(PIDProvider):
         """
         try:
             # Set metadata
-            doc = self.serializer.dump_one(record)
+            doc = self.serializer.dump_obj(record)
             self.client.api.update_doi(metadata=doc, doi=pid.pid_value, url=url)
         except DataCiteError as e:
             current_app.logger.warning(

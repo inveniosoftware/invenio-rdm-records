@@ -20,18 +20,24 @@ from citeproc.source.json import CiteProcJSON
 from citeproc_styles import get_style_filepath
 from citeproc_styles.errors import StyleNotFoundError
 from flask import current_app
-from flask_resources.serializers import MarshmallowJSONSerializer
+from flask_resources import BaseListSchema, MarshmallowSerializer
+from flask_resources.serializers import JSONSerializer
 from webargs import fields
 
 from .schema import CSLJSONSchema
 
 
-class CSLJSONSerializer(MarshmallowJSONSerializer):
+class CSLJSONSerializer(MarshmallowSerializer):
     """Marshmallow based CSL JSON serializer for records."""
 
     def __init__(self, **options):
         """Constructor."""
-        super().__init__(schema_cls=CSLJSONSchema, **options)
+        super().__init__(
+            format_serializer_cls=JSONSerializer,
+            object_schema_cls=CSLJSONSchema,
+            list_schema_cls=BaseListSchema,
+            **options,
+        )
 
 
 def get_citation_string(json, id, style, locale):
@@ -61,7 +67,7 @@ def get_style_location(style):
         raise ex
 
 
-class StringCitationSerializer(MarshmallowJSONSerializer):
+class StringCitationSerializer(MarshmallowSerializer):
     """CSL Citation Formatter serializer for records.
 
     In order to produce a formatted citation of a record through citeproc-py,
@@ -89,7 +95,12 @@ class StringCitationSerializer(MarshmallowJSONSerializer):
         :param url_args_retriever: callable func or object that return the
                                    style and locale URL args
         """
-        super().__init__(schema_cls=CSLJSONSchema, **options)
+        super().__init__(
+            format_serializer_cls=JSONSerializer,
+            object_schema_cls=CSLJSONSchema,
+            list_schema_cls=BaseListSchema,
+            **options,
+        )
         self.url_args_retriever = url_args_retriever
 
     def serialize_object(self, record):
@@ -110,7 +121,7 @@ class StringCitationSerializer(MarshmallowJSONSerializer):
         style_filepath = get_style_location(style)
 
         return get_citation_string(
-            self.dump_one(record), record["id"], style_filepath, locale
+            self.dump_obj(record), record["id"], style_filepath, locale
         )
 
     def serialize_object_list(self, records):

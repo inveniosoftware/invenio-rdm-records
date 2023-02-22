@@ -9,6 +9,7 @@
 """Invenio-RDM-Records OAI Functionality."""
 
 from datacite import schema43
+from dcxml import simpledc
 from flask import current_app, g
 from invenio_pidstore.errors import PersistentIdentifierError, PIDDoesNotExistError
 from invenio_pidstore.fetchers import FetchedPID
@@ -27,7 +28,8 @@ from .services.pids.providers.oai import OAIPIDProvider
 
 def dublincore_etree(pid, record):
     """Get DublinCore XML etree for OAI-PMH."""
-    return DublinCoreXMLSerializer().serialize_object_xml(record["_source"])
+    json = DublinCoreXMLSerializer().dump_obj(record["_source"])
+    return simpledc.dump_etree(json)
 
 
 def oai_marcxml_etree(pid, record):
@@ -43,7 +45,7 @@ def datacite_etree(pid, record):
 
     It assumes that record is a search result.
     """
-    data_dict = DataCite43XMLSerializer().dump_one(record["_source"])
+    data_dict = DataCite43XMLSerializer().dump_obj(record["_source"])
     return schema43.dump_etree(data_dict)
 
 
@@ -52,7 +54,7 @@ def oai_datacite_etree(pid, record):
 
     It assumes that record is a search result.
     """
-    resource_dict = DataCite43XMLSerializer().dump_one(record["_source"])
+    resource_dict = DataCite43XMLSerializer().dump_obj(record["_source"])
 
     nsmap = {
         None: "http://schema.datacite.org/oai/oai-1.1/",
