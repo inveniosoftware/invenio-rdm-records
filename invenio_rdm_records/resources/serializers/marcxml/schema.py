@@ -7,8 +7,9 @@
 
 """MARCXML based Schema for Invenio RDM Records."""
 
-import bleach
 from copy import deepcopy
+
+import bleach
 from invenio_access.permissions import system_identity
 from invenio_vocabularies.proxies import current_service as vocabulary_service
 from marshmallow import Schema, fields, missing, post_dump
@@ -289,7 +290,7 @@ class MARCXMLSchema(Schema):
         return formats
 
     @post_dump()
-    def changeKeysToTags(self, data, many, **kwargs):
+    def keys_to_tags(self, data, many, **kwargs):
         """Changes the key name to the corresponding MARCXML tag (number)."""
         # [!] The string in the first array corresponds to the tag[0:4] + ind1[4] + ind2[5]
         # [!] The first string needs to be length *5* (this is to do with the dojson parser)
