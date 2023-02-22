@@ -728,6 +728,7 @@ def test_link_update(
 
 
 def test_response_handlers(running_app, minimal_record, client_with_login):
+    """Test that all configured response handlers succeed on item and search."""
     # Check that the response handlers are correctly configured.
     # The correctness of its serialization is tested in /tests/serializers
 
@@ -736,9 +737,9 @@ def test_response_handlers(running_app, minimal_record, client_with_login):
         "application/marcxml+xml",
         "application/vnd.inveniordm.v1+json",
         "application/vnd.citationstyles.csl+json",
-        "application/vnd.datacite.v43+json",
+        "application/vnd.datacite.datacite+json",
         "application/vnd.geo+json",
-        "application/vnd.datacite.v43+xml",
+        "application/vnd.datacite.datacite+xml",
         "application/x-dc+xml",
         "text/x-bibliography",
     ]

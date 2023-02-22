@@ -9,7 +9,7 @@
 
 from dcxml import simpledc
 from flask_resources import BaseListSchema, MarshmallowSerializer
-from flask_resources.serializers import JSONSerializer, SerializerMixin
+from flask_resources.serializers import JSONSerializer, XMLSerializer
 
 from .schema import DublinCoreSchema
 
@@ -27,24 +27,18 @@ class DublinCoreJSONSerializer(MarshmallowSerializer):
         )
 
 
-class DublinCoreXMLSerializer(DublinCoreJSONSerializer):
+class DublinCoreXMLSerializer(MarshmallowSerializer):
     """Marshmallow based Dublin Core serializer for records.
 
     Note: This serializer is not suitable for serializing large number of
     records.
     """
 
-    def serialize_object(self, record, **kwargs):
-        """Serialize a single record and persistent identifier.
-
-        :param obj: Record instance
-        """
-        json = self.dump_obj(record, **kwargs)
-        return simpledc.tostring(json)
-
-    def serialize_object_list(self, records, **kwargs):
-        """Serialize a list of records."""
-        # TODO: multiple records should be wrapped in a single root tag.
-        return "\n".join(
-            [self.serialize_object(rec, **kwargs) for rec in records["hits"]["hits"]]
+    def __init__(self, **options):
+        """Constructor."""
+        super().__init__(
+            format_serializer_cls=XMLSerializer,
+            object_schema_cls=DublinCoreSchema,
+            list_schema_cls=BaseListSchema,
+            string_encoder=simpledc.tostring,
         )
