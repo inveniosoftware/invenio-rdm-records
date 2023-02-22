@@ -10,6 +10,10 @@
 Changes
 =======
 
+Version 1.3.5 (released 2023-02-22)
+
+- permissions: update get_content_files permissions
+
 Version 1.3.4 (released 2023-02-21)
 
 - communities: fix search by slug
