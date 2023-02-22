@@ -43,9 +43,12 @@ def test_dublincorejson_serializer(running_app, updated_full_record):
         "types": ["info:eu-repo/semantic/other"],
         "relations": ["doi:10.1234/foo.bar"],
         "descriptions": ["A description \nwith HTML tags", "Bla bla bla"],
-        "identifiers": ["1924MNRAS..84..308E", "10.5281/inveniordm.1234"],
         "publishers": ["InvenioRDM"],
         "languages": ["dan", "eng"],
+        "locations": [
+            "name=test location place; description=test location description; lat=-32.94682; lon=-60.63932"
+        ],
+        "identifiers": ["1924MNRAS..84..308E", "10.5281/inveniordm.1234"],
         "formats": ["application/pdf"],
         "titles": ["InvenioRDM"],
         "creators": ["Nielsen, Lars Holm"],
