@@ -14,11 +14,12 @@ from invenio_access.permissions import system_identity
 from invenio_vocabularies.proxies import current_service as vocabulary_service
 from marshmallow import Schema, fields, missing, post_dump
 
+from ..schemas import BaseSchema
 from ..ui.schema import current_default_locale
 from ..utils import get_vocabulary_props
 
 
-class MARCXMLSchema(Schema):
+class MARCXMLSchema(BaseSchema):
     """Schema for records in MARC."""
 
     contributors = fields.Method("get_contributors")
@@ -41,16 +42,12 @@ class MARCXMLSchema(Schema):
         "get_locations"
     )  # Corresponds to locations in the metadata schema
     formats = fields.Method("get_formats")
-    parent_id = fields.Method("get_id")  # No GOOD
+    parent_id = fields.Method("get_id")
     community_id = fields.Method("get_id_community")
     last_updated = fields.Method("last_updated")
     sizes = fields.Method("get_sizes")
     version = fields.Method("get_version")
     funding = fields.Method("get_funding")
-
-    def get_version(self, obj):
-        """Get the version of the record."""
-        return obj["metadata"].get("version", missing)
 
     def get_sizes(self, obj):
         """Get the size of the record."""
@@ -94,34 +91,6 @@ class MARCXMLSchema(Schema):
         """Get date last updated."""
         return [obj["updated"]]
 
-    def get_locations(self, obj):
-        """Get locations."""
-        locations = []
-
-        access_location = obj["metadata"].get("locations", [])
-        if not access_location:
-            return missing
-
-        for location in access_location.get("features", []):
-            location_string = ""
-
-            place = location.get("place")
-            description = location.get("description")
-            if place:
-                location_string += f"name={place}; "
-            if description:
-                location_string += f"description={description}"
-            geometry = location.get("geometry")
-            if geometry:
-                geo_type = geometry["type"]
-                if geo_type == "Point":
-                    coords = geometry["coordinates"]
-                    location_string += f"; lat={coords[0]}; lon={coords[1]}"
-
-            locations.append(location_string)
-
-        return locations
-
     def get_id_community(self, obj):
         """Get community IDs."""
         if "parent" in obj:
@@ -133,22 +102,6 @@ class MARCXMLSchema(Schema):
         if "parent" in obj:
             return obj["parent"]["id"]
         return missing
-
-    def get_titles(self, obj):
-        """Get titles."""
-        return [obj["metadata"]["title"]]
-
-    def get_identifiers(self, obj):
-        """Get identifiers."""
-        items = []
-        items.extend(i["identifier"] for i in obj["metadata"].get("identifiers", []))
-        items.extend(p["identifier"] for p in obj.get("pids", {}).values())
-
-        return items or missing
-
-    def get_creators(self, obj):
-        """Get creators."""
-        return [c["person_or_org"]["name"] for c in obj["metadata"].get("creators", [])]
 
     def get_relations(self, obj):
         """Get relations."""
@@ -253,20 +206,6 @@ class MARCXMLSchema(Schema):
             (s["subject"] for s in metadata.get("subjects", []) if s.get("subject"))
         )
         return subjects or missing
-
-    def get_publishers(self, obj):
-        """Get publishers."""
-        publisher = obj["metadata"].get("publisher")
-        if publisher:
-            return [publisher]
-
-        return missing
-
-    def get_contributors(self, obj):
-        """Get contributors."""
-        return [
-            c["person_or_org"]["name"] for c in obj["metadata"].get("contributors", [])
-        ] or missing
 
     def get_types(self, obj):
         """Get resource type."""

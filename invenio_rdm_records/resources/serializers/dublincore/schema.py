@@ -12,11 +12,12 @@ from invenio_access.permissions import system_identity
 from invenio_vocabularies.proxies import current_service as vocabulary_service
 from marshmallow import Schema, fields, missing
 
+from ..schemas import BaseSchema
 from ..ui.schema import current_default_locale
 from ..utils import get_vocabulary_props
 
 
-class DublinCoreSchema(Schema):
+class DublinCoreSchema(BaseSchema):
     """Schema for Dublin Core in JSON."""
 
     contributors = fields.Method("get_contributors")
@@ -32,7 +33,7 @@ class DublinCoreSchema(Schema):
     types = fields.Method("get_types")
     sources = fields.Method("get_sources")
     languages = fields.Method("get_languages")
-    coverage = fields.Method("get_locations")
+    locations = fields.Method("get_locations")
     formats = fields.Method("get_formats")
 
     def get_titles(self, obj):
@@ -189,26 +190,6 @@ class DublinCoreSchema(Schema):
         if languages:
             return [language["id"] for language in languages]
 
-        return missing
-
-    def get_locations(self, obj):
-        """Get locations."""
-        # FIXME: Add after UI support is there
-        # locations = []
-        # for location in obj['metadata'].get('locations', []):
-        #     location_string = ""
-        #     place = location.get('place')
-        #     if place:
-        #         location_string += f"name={place}"
-
-        #     geometry = location.get('geometry')
-        #     if geometry:
-        #         geo_type = geometry['type']
-        #         if geo_type == "Point":
-        #             coords = geometry['coordinates']
-        #             location_string += f"; lat={coords[0]}; lon={coords[1]}"
-
-        #     locations.append(location_string)
         return missing
 
     def get_formats(self, obj):
