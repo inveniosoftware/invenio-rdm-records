@@ -1,0 +1,36 @@
+
+
+{% if field_value.get('title') %}
+  <dt class="ui tiny header">{{ _("Title")}}</dt>
+  <dd>{{field_value.get('title')}}</dd>
+{% endif %}
+
+{% if field_value.get('acronym') %}
+<dt class="ui tiny header">{{ _("Acronym")}}</dt>
+<dd>{{field_value.get('acronym')}}</dd>
+{% endif %}
+
+{% if field_value.get('dates') %}
+  <dt class="ui tiny header">{{ _("Dates")}}</dt>
+  <dd>{{field_value.get('dates')}}</dd>
+{% endif %}
+
+{% if field_value.get('place') %}
+  <dt class="ui tiny header">{{ _("Place")}}</dt>
+  <dd>{{field_value.get('place')}}</dd>
+{% endif %}
+
+{% if field_value.get('url') %}
+  <dt class="ui tiny header">{{ _("Website")}}</dt>
+  <dd>{{field_value.get('url')}}</dd>
+{% endif %}
+
+{% if field_value.get('session') %}
+  <dt class="ui tiny header">{{ _("Session")}}</dt>
+  <dd>{{field_value.get('session')}}</dd>
+{% endif %}
+
+{% if field_value.get('session_part') %}
+  <dt class="ui tiny header">{{ _("Session part")}}</dt>
+  <dd>{{field_value.get('session_part')}}</dd>
+{% endif %}
