@@ -119,6 +119,12 @@ RDM_ALLOW_METADATA_ONLY_RECORDS = True
 """Allow users to publish metadata-only records."""
 
 #
+# Record access
+#
+RDM_ALLOW_RESTRICTED_RECORDS = True
+"""Allow users to set restricted/private records."""
+
+#
 # Search configuration
 #
 RDM_FACETS = {
