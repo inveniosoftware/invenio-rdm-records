@@ -1,0 +1,39 @@
+# -*- coding: utf-8 -*-
+#
+# Copyright (C) 2023 CERN.
+#
+# Invenio-RDM-Records is free software; you can redistribute it and/or modify
+# it under the terms of the MIT License; see LICENSE file for more details.
+"""Thesis specific custom fields.
+
+Implements the following fields:
+
+- thesis.university
+"""
+from invenio_i18n import lazy_gettext as _
+from invenio_records_resources.services.custom_fields import TextCF
+
+THESIS_NAMESPACE = {
+    # Thesis
+    "thesis": "",
+}
+
+THESIS_CUSTOM_FIELDS = [
+    TextCF(name="thesis:university"),
+]
+
+THESIS_CUSTOM_FIELDS_UI = {
+    "section": _("Thesis"),
+    "fields": [
+        dict(
+            field="thesis:university",
+            ui_widget="Input",
+            props=dict(
+                label="Awarding university",
+                icon="building",
+                description="University name",
+                placeholder="",
+            ),
+        )
+    ],
+}
