@@ -11,6 +11,7 @@
 
 from invenio_access.permissions import system_process
 from invenio_drafts_resources.services.records.components import ServiceComponent
+from invenio_i18n import gettext as _
 from marshmallow import ValidationError
 
 
@@ -19,13 +20,31 @@ class AccessComponent(ServiceComponent):
 
     def _populate_access_and_validate(self, identity, data, record, **kwargs):
         """Populate and validate the record's access field."""
+        errors = []
         if record is not None and "access" in data:
+            access = data.get("access", {})
+
+            # Explicit permission check for modifying record access. This is inflexible,
+            # but generalizing management permissions per-field is difficult.
+            new_record_access = access.get("record")
+            if record.access.protection.record != new_record_access:
+                can_manage = self.service.check_permission(
+                    identity, "manage_record_access"
+                )
+                if not can_manage:
+                    # Set the data to what it was before
+                    if "record" in access:
+                        access["record"] = record.access.protection.record
+                    errors.append(
+                        _("You don't have permissions to manage record access.")
+                    )
+
             # populate the record's access field with the data already
             # validated by marshmallow
-            record.update({"access": data.get("access")})
+            record.update({"access": access})
             record.access.refresh_from_dict(record.get("access"))
 
-        errors = record.access.errors
+        errors.extend(record.access.errors)
         if errors:
             # filter out duplicate error messages
             messages = list({str(e) for e in errors})

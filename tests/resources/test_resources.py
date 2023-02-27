@@ -457,6 +457,59 @@ def test_multiple_files_record(
     assert response.status_code == 202
 
 
+@pytest.fixture()
+def restricted_records_disabled(app):
+    old_value = app.config.get("RDM_ALLOW_RESTRICTED_RECORDS", True)
+    app.config["RDM_ALLOW_RESTRICTED_RECORDS"] = False
+    yield
+    app.config["RDM_ALLOW_RESTRICTED_RECORDS"] = old_value
+
+
+def test_restricted_records_disabled(
+    running_app,
+    client_with_login,
+    headers,
+    minimal_record,
+    search_clear,
+    superuser,
+    restricted_records_disabled,
+):
+    client = client_with_login
+    response = client.post("/records", json=minimal_record, headers=headers)
+    recid = response.json["id"]
+
+    assert response.status_code == 201
+    assert response.json["access"]["record"] == "public"
+
+    # Trying to change record access to restricted will fail
+    minimal_record["access"]["record"] = "restricted"
+    response = client.put(
+        f"/records/{recid}/draft",
+        json=minimal_record,
+        headers=headers,
+    )
+    assert response.status_code == 400
+    assert response.json["errors"][0]["field"] == "access"
+    assert response.json["errors"][0]["messages"] == [
+        "You don't have permissions to manage record access.",
+    ]
+    # Record access should still be "public"
+    response = client.get(f"/records/{recid}/draft", headers=headers)
+    assert response.json["access"]["record"] == "public"
+
+    # Superuser can change record access
+    superuser.login(client, logout_first=True)
+    minimal_record["access"]["record"] = "restricted"
+    response = client.put(
+        f"/records/{recid}/draft",
+        json=minimal_record,
+        headers=headers,
+    )
+    assert response.status_code == 200
+    assert response.json["access"]["record"] == "restricted"
+    assert "errors" not in response.json
+
+
 # TODO
 @pytest.mark.skip()
 def test_create_publish_new_revision(

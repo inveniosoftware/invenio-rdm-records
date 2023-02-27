@@ -116,6 +116,10 @@ class RDMRecordPermissionPolicy(RecordPermissionPolicy):
     can_manage_files = [
         IfConfig("RDM_ALLOW_METADATA_ONLY_RECORDS", then_=can_review, else_=[]),
     ]
+    # Allow managing record access
+    can_manage_record_access = [
+        IfConfig("RDM_ALLOW_RESTRICTED_RECORDS", then_=can_review, else_=[]),
+    ]
 
     #
     # PIDs
