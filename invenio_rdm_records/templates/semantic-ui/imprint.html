@@ -1,0 +1,30 @@
+{% if field_value.get('publisher') %}
+  <dt class="ui tiny header">{{ _("Publisher")}}</dt>
+  <dd>{{field_value.get('publisher')}}</dd>
+{% endif %}
+
+{% if field_value.get('place') %}
+<dt class="ui tiny header">{{ _("Place")}}</dt>
+<dd>{{field_value.get('place')}}</dd>
+{% endif %}
+
+{% if field_value.get('isbn') %}
+  <dt class="ui tiny header">{{ _("ISBN")}}</dt>
+  <dd>{{field_value.get('isbn')}}</dd>
+{% endif %}
+
+{% if field_value.get('pages') %}
+  <dt class="ui tiny header">{{ _("Pages")}}</dt>
+  <dd>{{field_value.get('pages')}}</dd>
+{% endif %}
+
+{% if field_value.get('title') %}
+  <dt class="ui tiny header">{{ _("Title")}}</dt>
+  <dd>{{field_value.get('title')}}</dd>
+{% endif %}
+
+{% if field_value.get('pages') %}
+  <dt class="ui tiny header">{{ _("Pages")}}</dt>
+  <dd>{{field_value.get('pages')}}</dd>
+{% endif %}
+
