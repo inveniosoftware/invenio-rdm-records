@@ -196,7 +196,7 @@ class SecretLinks(Generator):
 
 
 class SubmissionReviewer(Generator):
-    """Curators for community submission requests."""
+    """Roles for community's reviewers."""
 
     def needs(self, record=None, **kwargs):
         """Set of Needs granting permission."""
@@ -213,8 +213,8 @@ class SubmissionReviewer(Generator):
         return []
 
 
-class CommunityAction(CommunityRoles):
-    """Member of a community with a given action."""
+class RecordCommunitiesAction(CommunityRoles):
+    """Roles generators of all record's communities for a given member's action."""
 
     def __init__(self, action):
         """Initialize generator."""

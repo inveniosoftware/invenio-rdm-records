@@ -11,12 +11,12 @@ from invenio_rdm_records.proxies import current_record_communities_service
 from tests.resources.conftest import link
 
 
-def test_remove_community(client, uploader, community_record, headers, community):
-    """Remove a community from the record."""
+def test_remove_community(client, uploader, record_community, headers, community):
+    """Test removal of a community from the record."""
     client = uploader.login(client)
 
     data = {"communities": [{"id": community.id}]}
-    record = community_record.create_record()
+    record = record_community.create_record()
     response = client.delete(
         f"/records/{record.id}/communities",
         headers=headers,
@@ -29,30 +29,31 @@ def test_remove_community(client, uploader, community_record, headers, community
 
 
 def test_permission_denied(
-    client, uploader, test_user, community_record, headers, community
+    client, uploader, test_user, record_community, headers, community
 ):
-    """Remove a community from the record."""
+    """Test remove of a community from the record by an unauthorized user."""
     data = {"communities": [{"id": community.id}]}
 
     test_user_client = test_user.login(client)
-    record = community_record.create_record()
+    record = record_community.create_record()
 
-    response_403 = test_user_client.delete(
+    response = test_user_client.delete(
         f"/records/{record.id}/communities",
         headers=headers,
         json=data,
     )
-    assert response_403.status_code == 403
+    assert response.status_code == 200
+    assert len(response.json["errors"]) == 1
     record_saved = client.get(link(record.links["self"]), headers=headers)
     assert record_saved.json["parent"]["communities"] == {"ids": [str(community.id)]}
 
 
-def test_error_data(client, uploader, community_record, headers, community):
-    """Remove a community from the record."""
+def test_error_data(client, uploader, record_community, headers, community):
+    """Test remove of a non-existing community from the record."""
     data = {"communities": [{"id": "wrong-id"}]}
 
     uploader_client = uploader.login(client)
-    record = community_record.create_record()
+    record = record_community.create_record()
 
     response = uploader_client.delete(
         f"/records/{record.id}/communities",
@@ -60,17 +61,17 @@ def test_error_data(client, uploader, community_record, headers, community):
         json=data,
     )
     assert response.status_code == 200
-    assert response.json["errors"]
+    assert len(response.json["errors"]) == 1
     record_saved = client.get(link(record.links["self"]), headers=headers)
     assert record_saved.json["parent"]["communities"] == {"ids": [str(community.id)]}
 
 
 def test_exceeded_max_number_of_communities(
-    client, uploader, community_record, headers, community
+    client, uploader, record_community, headers, community
 ):
     """Test raise exceeded max number of communities."""
     client = uploader.login(client)
-    record = community_record.create_record()
+    record = record_community.create_record()
 
     random_community = {"id": "random-id"}
     lots_of_communities = []

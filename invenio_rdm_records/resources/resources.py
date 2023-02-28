@@ -185,7 +185,7 @@ class RDMRecordCommunitiesResource(ErrorHandlersMixin, Resource):
     @response_handler()
     def remove(self):
         """Remove communities from the record."""
-        errors = self.service.delete(
+        errors = self.service.remove(
             identity=g.identity,
             record_id=resource_requestctx.view_args["pid_value"],
             data=resource_requestctx.data,

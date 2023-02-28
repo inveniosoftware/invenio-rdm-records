@@ -10,6 +10,7 @@
 """Permissions for Invenio RDM Records."""
 
 from invenio_communities.generators import CommunityCurators
+from invenio_records import Record
 from invenio_records_permissions.generators import (
     AnyUser,
     AuthenticatedUser,
@@ -19,9 +20,9 @@ from invenio_records_permissions.generators import (
 from invenio_records_permissions.policies.records import RecordPermissionPolicy
 
 from .generators import (
-    CommunityAction,
     IfFileIsLocal,
     IfRestricted,
+    RecordCommunitiesAction,
     RecordOwners,
     SecretLinks,
     SubmissionReviewer,
@@ -46,7 +47,7 @@ class RDMRecordPermissionPolicy(RecordPermissionPolicy):
     #
     can_manage = [
         RecordOwners(),
-        CommunityAction("curate"),
+        RecordCommunitiesAction("curate"),
         SystemProcess(),
     ]
     can_curate = can_manage + [SecretLinks("edit")]
@@ -55,7 +56,7 @@ class RDMRecordPermissionPolicy(RecordPermissionPolicy):
     can_view = can_manage + [
         SecretLinks("view"),
         SubmissionReviewer(),
-        CommunityAction("view"),
+        RecordCommunitiesAction("view"),
     ]
 
     can_authenticated = [AuthenticatedUser(), SystemProcess()]
@@ -138,7 +139,13 @@ class RDMRecordPermissionPolicy(RecordPermissionPolicy):
     # Record communities
     #
     # Allow to remove a community from a record
-    can_remove_community = can_manage
+    can_add_community = [RecordOwners()]
+    # Allow to remove a community from a record
+    can_remove_community = [
+        RecordOwners(),
+        CommunityCurators(),
+        SystemProcess(),
+    ]
     # Allow to remove records from a community
     can_remove_record = [CommunityCurators()]
 

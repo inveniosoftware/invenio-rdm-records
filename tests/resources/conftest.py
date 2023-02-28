@@ -32,9 +32,7 @@ def rdm_record_service():
 
 
 @pytest.fixture()
-def community_record(
-    uploader, minimal_record, community, rdm_record_service, running_app, db
-):
+def record_community(uploader, minimal_record, community, rdm_record_service, db):
     """Record that belongs to a community."""
 
     class Record:
@@ -46,7 +44,7 @@ def community_record(
             draft = rdm_record_service.create(uploader.identity, minimal_record)
             # Publish
             record = rdm_record_service.publish(uploader.identity, draft.id)
-            # TODO replace the following code by the service func that adds the record to a community
+            # TODO: remove this extra func when the `add` to a community is implemented
             community_record = community._record
             record._record.parent.communities.add(community_record, default=False)
             record._record.parent.commit()
