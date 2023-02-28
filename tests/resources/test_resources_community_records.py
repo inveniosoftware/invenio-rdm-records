@@ -17,10 +17,10 @@ def service():
     return current_community_records_service
 
 
-def test_remove_community(client, curator, community_record, headers, community):
+def test_remove_community(client, curator, record_community, headers, community):
     """Remove a record from the community."""
     client = curator.login(client)
-    record = community_record.create_record()
+    record = record_community.create_record()
     data = {"records": [{"id": record.id}]}
 
     response = client.delete(
@@ -33,10 +33,10 @@ def test_remove_community(client, curator, community_record, headers, community)
 
 
 def test_permission_denied(
-    client, uploader, test_user, community_record, headers, community
+    client, uploader, test_user, record_community, headers, community
 ):
     """Missing permissions when removing a record from the community."""
-    record = community_record.create_record()
+    record = record_community.create_record()
     data = {"records": [{"id": record.id}]}
 
     test_user_client = test_user.login(client)
@@ -65,13 +65,13 @@ def test_error_data(client, curator, headers, community):
 
 
 def test_removal_of_multiple_communities_success(
-    client, curator, community_record, headers, community
+    client, curator, record_community, headers, community
 ):
     """Remove multiple records from a community."""
     client = curator.login(client)
-    record1 = community_record.create_record()
-    record2 = community_record.create_record()
-    record3 = community_record.create_record()
+    record1 = record_community.create_record()
+    record2 = record_community.create_record()
+    record3 = record_community.create_record()
     data = {
         "records": [
             {"id": record1.id},
@@ -90,7 +90,7 @@ def test_removal_of_multiple_communities_success(
 
 
 def test_exceeded_max_number_of_records(
-    client, curator, community_record, headers, community, service
+    client, curator, record_community, headers, community, service
 ):
     """Test raise exceeded max number of records."""
     client = curator.login(client)

@@ -66,6 +66,7 @@ def record_community(db, uploader, minimal_record, community, rdm_record_service
             # publish and get record
             record = RDMRecord.publish(draft._record)
             record.commit()
+            # TODO: remove this extra func when the `add` to a community is implemented
             record.parent.communities.add(community_record, default=False)
             record.parent.commit()
             record.commit()

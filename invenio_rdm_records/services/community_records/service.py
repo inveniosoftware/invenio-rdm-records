@@ -76,7 +76,7 @@ class CommunityRecordsService(RecordService):
     def _remove(self, community, record, identity):
         """Remove a community from the record."""
         data = dict(communities=[dict(id=str(community.id))])
-        errors = current_record_communities_service.delete(
+        errors = current_record_communities_service.remove(
             identity, record_id=record.pid.pid_value, data=data
         )
 
@@ -86,7 +86,9 @@ class CommunityRecordsService(RecordService):
     def delete(self, identity, community_id, data, revision_id=None, uow=None):
         """Remove records from a community."""
         community = self.community_cls.pid.resolve(community_id)
+
         self.require_permission(identity, "remove_record", record=community)
+
         valid_data, errors = self.community_record_schema.load(
             data,
             context={
@@ -102,19 +104,18 @@ class CommunityRecordsService(RecordService):
             try:
                 record = self.record_cls.pid.resolve(record_id)
                 errors += self._remove(community, record, identity)
-
             except PIDDoesNotExistError:
                 errors.append(
                     {
                         "record": record_id,
-                        "message": f"The record does not exist.",
+                        "message": "The record does not exist.",
                     }
                 )
             except PermissionDeniedError:
                 errors.append(
                     {
                         "record": record_id,
-                        "message": f"Permission denied.",
+                        "message": "Permission denied.",
                     }
                 )
 

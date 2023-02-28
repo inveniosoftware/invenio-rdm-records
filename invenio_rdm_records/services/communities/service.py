@@ -11,6 +11,7 @@ from invenio_records_resources.services import (
     Service,
     ServiceSchemaWrapper,
 )
+from invenio_records_resources.services.errors import PermissionDeniedError
 from invenio_records_resources.services.uow import (
     RecordCommitOp,
     RecordIndexOp,
@@ -41,19 +42,23 @@ class RecordCommunitiesService(Service, RecordIndexerMixin):
         """Include the record in the given communities."""
         pass
 
-    def _remove(self, community_id, record):
+    def _remove(self, identity, community_id, record):
         """Remove a community from the record."""
         if community_id not in record.parent.communities.ids:
             raise RecordCommunityMissing(record.id, community_id)
+
+        # check permission here, per community: curator cannot remove another community
+        self.require_permission(
+            identity, "remove_community", record=record, community_id=community_id
+        )
 
         # Default community is deleted when the exact same community is removed from the record
         record.parent.communities.remove(community_id)
 
     @unit_of_work()
-    def delete(self, identity, record_id, data, revision_id=None, uow=None):
+    def remove(self, identity, record_id, data, revision_id=None, uow=None):
         """Remove communities from the record."""
         record = self.record_cls.pid.resolve(record_id)
-        self.require_permission(identity, "remove_community", record=record)
 
         valid_data, errors = self.schema.load(
             data,
@@ -68,14 +73,21 @@ class RecordCommunitiesService(Service, RecordIndexerMixin):
         for community in communities:
             community_id = community["id"]
             try:
-                self._remove(community_id, record)
+                self._remove(identity, community_id, record)
                 uow.register(RecordCommitOp(record.parent))
                 uow.register(RecordIndexOp(record, indexer=self.indexer))
             except RecordCommunityMissing:
                 errors.append(
                     {
                         "community": community_id,
-                        "message": f"The record {record_id} does not belong to the community {community_id}",
+                        "message": "The record does not belong to the community.",
+                    }
+                )
+            except PermissionDeniedError:
+                errors.append(
+                    {
+                        "community": community_id,
+                        "message": "Permission denied.",
                     }
                 )
 

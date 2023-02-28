@@ -1408,31 +1408,6 @@ def admin(UserFixture, app, db, admin_role_need):
     return u
 
 
-@pytest.fixture()
-def curator(UserFixture, community, app, db):
-    """Creates a curator of the community fixture."""
-    curator = UserFixture(
-        email="curatoruser@inveniosoftware.org",
-        password="curatoruser",
-    )
-    curator.create(app, db)
-    invitation_data = {
-        "members": [
-            {
-                "type": "user",
-                "id": curator.id,
-            }
-        ],
-        "role": "curator",
-        "visible": True,
-    }
-
-    current_communities.service.members.add(
-        system_identity, community.id, invitation_data
-    )
-    return curator
-
-
 @pytest.fixture(scope="module")
 def cli_runner(base_app):
     """Create a CLI runner for testing a CLI command."""

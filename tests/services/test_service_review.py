@@ -57,15 +57,6 @@ def requests_service():
 
 
 @pytest.fixture()
-def community2(running_app, minimal_community2, db):
-    """Get the current RDM records service."""
-    return current_communities.service.create(
-        running_app.superuser_identity,
-        minimal_community2,
-    )
-
-
-@pytest.fixture()
 def draft(minimal_record, community, service, running_app, db):
     minimal_record["parent"] = {
         "review": {
