@@ -144,8 +144,8 @@ def test_ui_serializer(app, full_to_dict_record):
                 }
             ],
         },
-        "publication_date_l10n_long": "January 2018 – September 2020",
-        "publication_date_l10n_medium": "Jan 2018 – Sep 2020",
+        "publication_date_l10n_long": "January 2018\u2009–\u2009September 2020",
+        "publication_date_l10n_medium": "Jan 2018\u2009–\u2009Sep 2020",
         "resource_type": {"id": "publication-article", "title_l10n": "Journal article"},
         "additional_titles": [
             {
