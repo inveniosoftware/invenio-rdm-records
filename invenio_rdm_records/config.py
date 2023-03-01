@@ -76,6 +76,7 @@ RDM_RECORDS_IDENTIFIERS_SCHEMES = {
     "istc": {"label": _("ISTC"), "validator": idutils.is_istc, "datacite": "ISTC"},
     "lissn": {"label": _("LISSN"), "validator": idutils.is_issn, "datacite": "LISSN"},
     "lsid": {"label": _("LSID"), "validator": idutils.is_lsid, "datacite": "LSID"},
+    "pmcid": {"label": _("PMCID"), "validator": idutils.is_pmcid, "datacite": "PMCID"},
     "pmid": {"label": _("PMID"), "validator": idutils.is_pmid, "datacite": "PMID"},
     "purl": {"label": _("PURL"), "validator": idutils.is_purl, "datacite": "PURL"},
     "upc": {"label": _("UPC"), "validator": always_valid, "datacite": "UPC"},
