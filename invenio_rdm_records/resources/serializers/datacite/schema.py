@@ -3,6 +3,7 @@
 # Copyright (C) 2021 CERN.
 # Copyright (C) 2021 Northwestern University.
 # Copyright (C) 2023 Graz University of Technology.
+# Copyright (C) 2022 Caltech.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
@@ -390,12 +391,45 @@ class DataCite43Schema(BaseSerializerSchema):
             if geometry:
                 geo_type = geometry["type"]
                 # PIDS-FIXME: Scalable enough?
-                # PIDS-FIXME: Implement Box and Polygon serialization
                 if geo_type == "Point":
                     serialized_location["geoLocationPoint"] = {
-                        "pointLatitude": geometry["coordinates"][0],
-                        "pointLongitude": geometry["coordinates"][1],
+                        "pointLatitude": str(geometry["coordinates"][0]),
+                        "pointLongitude": str(geometry["coordinates"][1]),
                     }
+                if geo_type == "Polygon":
+                    # geojson has a layer of nesting before actual coordinates
+                    coords = geometry["coordinates"][0]
+                    # First we see if we have a box
+                    box = False
+                    if len(coords) in [4, 5]:
+                        # A box polygon may wrap around with 5 coordinates
+                        x_coords = set()
+                        y_coords = set()
+                        for coord in coords:
+                            x_coords.add(coord[0])
+                            y_coords.add(coord[1])
+                        if len(x_coords) == 2 and len(y_coords) == 2:
+                            x_coords = sorted(x_coords)
+                            y_coords = sorted(y_coords)
+                            serialized_location["geoLocationBox"] = {
+                                "westBoundLongitude": str(x_coords[0]),
+                                "eastBoundLongitude": str(x_coords[1]),
+                                "southBoundLatitude": str(y_coords[0]),
+                                "northBoundLatitude": str(y_coords[1]),
+                            }
+                            box = True
+                    if not box:
+                        polygon = []
+                        for coord in coords:
+                            polygon.append(
+                                {
+                                    "polygonPoint": {
+                                        "pointLongitude": str(coord[0]),
+                                        "pointLatitude": str(coord[1]),
+                                    }
+                                }
+                            )
+                        serialized_location["geoLocationPolygon"] = polygon
 
             locations.append(serialized_location)
         return locations or missing

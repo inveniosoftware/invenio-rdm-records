@@ -47,6 +47,49 @@ def full_modified_record(full_record):
     return full_record
 
 
+@pytest.fixture
+def full_geolocation_box_record(full_record):
+    full_record["metadata"]["locations"]["features"] = [
+        {
+            "geometry": {
+                "coordinates": [
+                    [
+                        [33.17, -105.92],
+                        [33.17, -106.0],
+                        [33.0, -106.0],
+                        [33.0, -105.92],
+                        [33.17, -105.92],
+                    ]
+                ],
+                "type": "Polygon",
+            }
+        }
+    ]
+    return full_record
+
+
+@pytest.fixture
+def full_geolocation_polygon_record(full_record):
+    full_record["metadata"]["locations"]["features"] = [
+        {
+            "geometry": {
+                "coordinates": [
+                    [
+                        [33.17, -105.92],
+                        [33.17, -106.0],
+                        [33.0, -106.0],
+                        [33.0, -105.92],
+                        [33.12, -105.92],
+                        [33.17, -105.32],
+                    ]
+                ],
+                "type": "Polygon",
+            }
+        }
+    ]
+    return full_record
+
+
 def test_datacite43_serializer(running_app, full_record):
     """Test serializer to DataCite 4.3 JSON"""
     full_record["metadata"]["rights"].append(
@@ -163,8 +206,8 @@ def test_datacite43_serializer(running_app, full_record):
         "geoLocations": [
             {
                 "geoLocationPoint": {
-                    "pointLatitude": -32.94682,
-                    "pointLongitude": -60.63932,
+                    "pointLatitude": "-32.94682",
+                    "pointLongitude": "-60.63932",
                 },
                 "geoLocationPlace": "test location place",
             }
@@ -364,3 +407,45 @@ def test_datacite43_xml_serializer_with_unknown_id_schemes(
     assert expected_pid_id_2 in serialized_record
     assert expected_related_id in serialized_record
     assert expected_creator_id in serialized_record
+
+
+def test_datacite43_serializer_with_box(running_app, full_geolocation_box_record):
+    """Test if the DataCite 4.3 JSON serializer handles geolocation boxes."""
+
+    expected_box = {
+        "geoLocationBox": {
+            "eastBoundLongitude": "-105.92",
+            "northBoundLatitude": "33.17",
+            "southBoundLatitude": "33.0",
+            "westBoundLongitude": "-106.0",
+        }
+    }
+
+    serializer = DataCite43JSONSerializer()
+
+    serialized_record_box = serializer.dump_obj(full_geolocation_box_record)
+
+    assert expected_box in serialized_record_box["geoLocations"]
+
+
+def test_datacite43_serializer_with_polygon(
+    running_app, full_geolocation_polygon_record
+):
+    """Test if the DataCite 4.3 JSON serializer handles geolocation polygons."""
+
+    expected_polygon = {
+        "geoLocationPolygon": [
+            {"polygonPoint": {"pointLongitude": "33.17", "pointLatitude": "-105.92"}},
+            {"polygonPoint": {"pointLongitude": "33.17", "pointLatitude": "-106.0"}},
+            {"polygonPoint": {"pointLongitude": "33.0", "pointLatitude": "-106.0"}},
+            {"polygonPoint": {"pointLongitude": "33.0", "pointLatitude": "-105.92"}},
+            {"polygonPoint": {"pointLongitude": "33.12", "pointLatitude": "-105.92"}},
+            {"polygonPoint": {"pointLongitude": "33.17", "pointLatitude": "-105.32"}},
+        ]
+    }
+
+    serializer = DataCite43JSONSerializer()
+
+    serialized_record_polygon = serializer.dump_obj(full_geolocation_polygon_record)
+
+    assert expected_polygon in serialized_record_polygon["geoLocations"]
