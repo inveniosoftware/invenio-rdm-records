@@ -10,6 +10,15 @@
 Changes
 =======
 
+Version 2.3.0 (released 2023-03-03)
+
+- records: remove from community
+- oai-sets admin: frontend fixes
+- contrib: add code meta as custom fields
+- serializers: support search export in different formats
+- serializers: refactoring to provide better abstraction
+- remove deprecated flask_babelex dependency and imports
+
 Version 2.2.0 (released 2023-02-20)
 
 - records: remove communities from a record
