@@ -10,6 +10,11 @@
 Changes
 =======
 
+Version 2.4.0 (released 2023-03-06)
+
+- contrib custom fields: add journal, meeting
+- configure metadata only records by feature flag and permissions
+
 Version 2.3.0 (released 2023-03-03)
 
 - records: remove from community
