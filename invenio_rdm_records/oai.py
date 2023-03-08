@@ -21,6 +21,7 @@ from lxml import etree
 
 from .proxies import current_rdm_records
 from .resources.serializers.datacite import DataCite43XMLSerializer
+from .resources.serializers.dcat import DCATSerializer
 from .resources.serializers.dublincore import DublinCoreXMLSerializer
 from .resources.serializers.marcxml import MARCXMLSerializer
 from .services.pids.providers.oai import OAIPIDProvider
@@ -38,6 +39,16 @@ def oai_marcxml_etree(pid, record):
     It assumes that record is a search result.
     """
     return etree.fromstring(MARCXMLSerializer().serialize_object(record["_source"]))
+
+
+def oai_dcat_etree(pid, record):
+    """OAI DCAT-AP format for OAI-PMH.
+
+    It assumes that record is a search result.
+    """
+    return etree.fromstring(
+        DCATSerializer().serialize_object(record["_source"]).encode(encoding="utf-8")
+    )
 
 
 def datacite_etree(pid, record):
