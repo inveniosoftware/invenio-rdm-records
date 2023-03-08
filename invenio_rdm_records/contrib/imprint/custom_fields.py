@@ -10,10 +10,10 @@ Implements the following fields:
 - imprint.isbn
 - imprint.pages
 - imprint.place
-- imprint.publisher
 - imprint.title
 """
 
+from idutils import is_isbn
 from invenio_i18n import lazy_gettext as _
 from invenio_records_resources.services.custom_fields import BaseCF
 from marshmallow import fields
@@ -29,8 +29,12 @@ class ImprintCF(BaseCF):
         return fields.Nested(
             {
                 "title": SanitizedUnicode(),
-                "isbn": SanitizedUnicode(),
-                "publisher": SanitizedUnicode(),
+                "isbn": SanitizedUnicode(
+                    validate=is_isbn,
+                    error_messages={
+                        "validator_failed": _("Please provide a valid ISBN.")
+                    },
+                ),
                 "pages": SanitizedUnicode(),
                 "year": SanitizedUnicode(),
                 "place": SanitizedUnicode(),
@@ -48,7 +52,6 @@ class ImprintCF(BaseCF):
                     "fields": {"keyword": {"type": "keyword"}},
                 },
                 "isbn": {"type": "keyword"},
-                "publisher": {"type": "keyword"},
                 "pages": {"type": "keyword"},
                 "place": {"type": "keyword"},
             },
@@ -72,35 +75,30 @@ IMPRINT_CUSTOM_FIELDS_UI = {
             "template": "imprint.html",
             "props": {
                 "label": _("Imprint"),
-                "publisher": {
-                    "label": _("Publisher"),
-                    "placeholder": _(""),
-                    "description": _("Book's publisher"),
-                },
                 "place": {
                     "label": _("Place"),
                     "placeholder": _("e.g. city, country"),
-                    "description": _("Place where the book was published"),
+                    "description": _("Place where the imprint was published"),
                 },
                 "isbn": {
                     "label": _("ISBN"),
                     "placeholder": _("e.g. 0-06-251587-X"),
-                    "description": _("International Standard Book Number (ISBN)"),
+                    "description": _("International Standard Book Number"),
                 },
                 "title": {
                     "label": _("Book title"),
-                    "placeholder": _("Add the book title..."),
+                    "placeholder": "",
                     "description": _(
                         "Title of the book or report which this upload is part of."
                     ),
                 },
                 "pages": {
                     "label": _("Pages"),
-                    "placeholder": _(""),
-                    "description": _("Book pages on which this record was published"),
+                    "placeholder": "",
+                    "description": "",
                 },
-                "icon": "lab",
-                "description": "For parts of books (e.g. chapters) and reports.",
+                "icon": "book",
+                "description": "Imprint",
             },
         }
     ],

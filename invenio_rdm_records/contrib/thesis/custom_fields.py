@@ -25,15 +25,18 @@ THESIS_CUSTOM_FIELDS = [
 THESIS_CUSTOM_FIELDS_UI = {
     "section": _("Thesis"),
     "fields": [
-        dict(
-            field="thesis:university",
-            ui_widget="Input",
-            props=dict(
-                label="Awarding university",
-                icon="building",
-                description="University name",
-                placeholder="",
-            ),
-        )
+        {
+            "field": "thesis:university",
+            "ui_widget": "Thesis",
+            "props": {
+                "label": _("Thesis"),
+                "icon": "university",
+                "university": {
+                    "label": _("Awarding university"),
+                    "placeholder": "",
+                    "description": "",
+                },
+            },
+        }
     ],
 }
