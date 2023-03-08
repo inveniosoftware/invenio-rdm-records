@@ -66,6 +66,9 @@ from invenio_vocabularies.records.api import Vocabulary
 from invenio_rdm_records import config
 from invenio_rdm_records.proxies import current_rdm_records
 from invenio_rdm_records.records.api import RDMDraft, RDMParent, RDMRecord
+from invenio_rdm_records.services.communities.components import (
+    CommunityServiceComponents,
+)
 from invenio_rdm_records.services.pids import providers
 
 from .fake_datacite_client import FakeDataCiteClient
@@ -315,6 +318,9 @@ def app_config(app_config):
     }
 
     app_config["FILES_REST_DEFAULT_STORAGE_CLASS"] = "L"
+
+    # Communities
+    app_config["COMMUNITY_SERVICE_COMPONENTS"] = CommunityServiceComponents
 
     return app_config
 

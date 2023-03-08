@@ -36,7 +36,13 @@ class CommunityRecordsService(RecordService):
         return self.config.community_cls
 
     def search(
-        self, identity, community_id, params=None, search_preference=None, **kwargs
+        self,
+        identity,
+        community_id,
+        params=None,
+        search_preference=None,
+        extra_filter=None,
+        **kwargs
     ):
         """Search for records published in the given community."""
         self.require_permission(identity, "read")
@@ -46,6 +52,12 @@ class CommunityRecordsService(RecordService):
 
         params = params or {}
 
+        community_filter = dsl.Q(
+            "term", **{"parent.communities.ids": str(community.id)}
+        )
+        if extra_filter is not None:
+            community_filter = community_filter & extra_filter
+
         search_result = self._search(
             "search",
             identity,
@@ -53,7 +65,7 @@ class CommunityRecordsService(RecordService):
             search_preference,
             record_cls=self.record_cls,
             search_opts=self.config.search,
-            extra_filter=dsl.Q("term", **{"parent.communities.ids": str(community.id)}),
+            extra_filter=community_filter,
             permission_action="read",
             **kwargs,
         ).execute()

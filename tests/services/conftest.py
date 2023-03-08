@@ -78,3 +78,33 @@ def record_community(db, uploader, minimal_record, community, rdm_record_service
             return record
 
     return Record()
+
+
+# @pytest.fixture()
+# def record_community(db, uploader, minimal_record, community, rdm_record_service):
+#     """Creates a record that belongs to a community."""
+#     return _create_record(db, uploader, minimal_record, community, rdm_record_service)
+
+
+# @pytest.fixture()
+# def restricted_record_community(
+#     db, uploader, minimal_restricted_record, community, rdm_record_service
+# ):
+#     """Creates a restricted record that belongs to a community."""
+#     return _create_record(
+#         db, uploader, minimal_restricted_record, community, rdm_record_service
+#     )
+
+
+# @pytest.fixture()
+# def restricted_record_restricted_community(
+#     db, uploader, minimal_restricted_record, restricted_community, rdm_record_service
+# ):
+#     """Creates a restricted record that belongs to a restricted community."""
+#     return _create_record(
+#         db,
+#         uploader,
+#         minimal_restricted_record,
+#         restricted_community,
+#         rdm_record_service,
+#     )
