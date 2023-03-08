@@ -43,7 +43,10 @@ class ImprintCF(BaseCF):
         return {
             "type": "object",
             "properties": {
-                "title": {"type": "keyword"},
+                "title": {
+                    "type": "text",
+                    "fields": {"keyword": {"type": "keyword"}},
+                },
                 "isbn": {"type": "keyword"},
                 "publisher": {"type": "keyword"},
                 "pages": {"type": "keyword"},
