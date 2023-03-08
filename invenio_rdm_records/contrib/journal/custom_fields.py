@@ -12,6 +12,7 @@ Implements the following fields:
 - journal.volume
 """
 
+from idutils import is_issn
 from invenio_i18n import lazy_gettext as _
 from invenio_records_resources.services.custom_fields import BaseCF
 from invenio_records_resources.services.records.facets import CFTermsFacet
@@ -31,7 +32,12 @@ class JournalCF(BaseCF):
                 "issue": SanitizedUnicode(),
                 "volume": SanitizedUnicode(),
                 "pages": SanitizedUnicode(),
-                "issn": SanitizedUnicode(),
+                "issn": SanitizedUnicode(
+                    validate=is_issn,
+                    error_messages={
+                        "validator_failed": _("Please provide a valid ISSN.")
+                    },
+                ),
             }
         )
 
@@ -74,35 +80,32 @@ JOURNAL_CUSTOM_FIELDS_UI = {
                 "label": _("Journal"),
                 "title": {
                     "label": _("Title"),
-                    "placeholder": _(""),
-                    "description": _("Journal title"),
+                    "placeholder": "",
+                    "description": _(
+                        "Title of the journal on which the article was published"
+                    ),
                 },
                 "volume": {
                     "label": _("Volume"),
-                    "placeholder": _(""),
-                    "description": _("Journal volume"),
+                    "placeholder": "",
+                    "description": "",
                 },
                 "issue": {
                     "label": _("Issue"),
-                    "placeholder": _(""),
-                    "description": _("Journal issue"),
+                    "placeholder": "",
+                    "description": "",
                 },
                 "pages": {
                     "label": _("Pages"),
-                    "placeholder": _(""),
-                    "description": _(
-                        "Journal pages on which this record was published"
-                    ),
+                    "placeholder": "",
+                    "description": "",
                 },
                 "issn": {
                     "label": _("ISSN"),
-                    "placeholder": _(""),
-                    "description": _(
-                        "Journal International Standard Serial Number (ISSN)"
-                    ),
+                    "placeholder": "",
+                    "description": _("International Standard Serial Number"),
                 },
-                "icon": "lab",
-                "description": "Journal in which this record was published.",
+                "icon": "newspaper outline",
             },
         }
     ],
