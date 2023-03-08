@@ -17,6 +17,7 @@ from invenio_rdm_records.oai import (
     datacite_etree,
     dublincore_etree,
     oai_datacite_etree,
+    oai_dcat_etree,
     oai_marcxml_etree,
 )
 
@@ -318,4 +319,136 @@ def test_oai_datacite_serializer(running_app, full_record):
     )
     record = {"_source": full_record}
     ser_rec = etree.tostring(oai_datacite_etree(None, record), pretty_print=True)
+    assert expected_value == ser_rec.decode("utf-8")
+
+
+def test_oai_dcat_serializer(running_app, full_record):
+    expected_value = (
+        '<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:adms="http://www.w3.org/ns/adms#" xmlns:bibo="http://purl.org/ontology/bibo/" xmlns:citedcat="https://w3id.org/citedcat-ap/" xmlns:dct="http://purl.org/dc/terms/" xmlns:dctype="http://purl.org/dc/dcmitype/" xmlns:dcat="http://www.w3.org/ns/dcat#" xmlns:foaf="http://xmlns.com/foaf/0.1/" xmlns:gsp="http://www.opengis.net/ont/geosparql#" xmlns:locn="http://www.w3.org/ns/locn#" xmlns:org="http://www.w3.org/ns/org#" xmlns:owl="http://www.w3.org/2002/07/owl#" xmlns:prov="http://www.w3.org/ns/prov#" xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#" xmlns:skos="http://www.w3.org/2004/02/skos/core#" xmlns:vcard="http://www.w3.org/2006/vcard/ns#" xmlns:wdrs="http://www.w3.org/2007/05/powder-s#">\n'  # noqa
+        '  <rdf:Description rdf:about="https://doi.org/10.5281/inveniordm.1234">\n'  # noqa
+        '    <rdf:type rdf:resource="http://www.w3.org/ns/dcat#Dataset"/>\n'  # noqa
+        '    <dct:type rdf:resource="http://purl.org/dc/dcmitype/Image"/>\n'  # noqa
+        '    <dct:identifier rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://doi.org/10.5281/inveniordm.1234</dct:identifier>\n'  # noqa
+        '    <foaf:page rdf:resource="https://doi.org/10.5281/inveniordm.1234"/>\n'  # noqa
+        "    <dct:creator>\n"
+        '      <rdf:Description rdf:about="https://orcid.org/0000-0001-8135-3489">\n'  # noqa
+        '        <rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Person"/>\n'  # noqa
+        "        <foaf:name>Nielsen, Lars Holm</foaf:name>\n"
+        "        <foaf:givenName>Lars Holm</foaf:givenName>\n"
+        "        <foaf:familyName>Nielsen</foaf:familyName>\n"
+        "        <org:memberOf>\n"
+        "          <foaf:Organization>\n"
+        "            <foaf:name>free-text</foaf:name>\n"
+        "          </foaf:Organization>\n"
+        "        </org:memberOf>\n"
+        "        <org:memberOf>\n"
+        '          <foaf:Organization rdf:about="https://ror.org/https://ror.org/01ggx4157">\n'  # noqa
+        '            <dct:identifier rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://ror.org/01ggx4157</dct:identifier>\n'  # noqa
+        "            <foaf:name>CERN</foaf:name>\n"
+        "          </foaf:Organization>\n"
+        "        </org:memberOf>\n"
+        "      </rdf:Description>\n"
+        "    </dct:creator>\n"
+        "    <dct:title>InvenioRDM</dct:title>\n"
+        "    <dct:publisher>\n"
+        "      <foaf:Agent>\n"
+        "        <foaf:name>InvenioRDM</foaf:name>\n"
+        "      </foaf:Agent>\n"
+        "    </dct:publisher>\n"
+        '    <dct:issued rdf:datatype="http://www.w3.org/2001/XMLSchema#gYear">2018</dct:issued>\n'  # noqa
+        "    <dcat:keyword>custom</dcat:keyword>\n"
+        "    <dct:subject>\n"
+        "      <skos:Concept>\n"
+        "        <skos:prefLabel>Abdominal Injuries</skos:prefLabel>\n"
+        "        <skos:inScheme>\n"
+        "          <skos:ConceptScheme>\n"
+        "            <dct:title>MeSH</dct:title>\n"
+        "          </skos:ConceptScheme>\n"
+        "        </skos:inScheme>\n"
+        "      </skos:Concept>\n"
+        "    </dct:subject>\n"
+        "    <citedcat:isFundedBy>\n"
+        "      <foaf:Project>\n"
+        '        <dct:identifier rdf:datatype="http://www.w3.org/2001/XMLSchema#string">755021</dct:identifier>\n'  # noqa
+        "        <dct:title>Personalised Treatment For Cystic Fibrosis Patients With Ultra-rare CFTR Mutations (and beyond)</dct:title>\n"
+        '        <citedcat:isAwardedBy rdf:resource="https://ror.org/00k4n6c32"/>\n'  # noqa
+        "      </foaf:Project>\n"
+        "    </citedcat:isFundedBy>\n"
+        '    <citedcat:funder rdf:resource="https://ror.org/00k4n6c32"/>\n'  # noqa
+        "    <dct:contributor>\n"
+        '      <rdf:Description rdf:about="https://orcid.org/0000-0001-8135-3489">\n'  # noqa
+        '        <rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Person"/>\n'  # noqa
+        "        <foaf:name>Nielsen, Lars Holm</foaf:name>\n"
+        "        <foaf:givenName>Lars Holm</foaf:givenName>\n"
+        "        <foaf:familyName>Nielsen</foaf:familyName>\n"
+        "        <org:memberOf>\n"
+        '          <foaf:Organization rdf:about="https://ror.org/https://ror.org/01ggx4157">\n'  # noqa
+        '            <dct:identifier rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://ror.org/01ggx4157</dct:identifier>\n'  # noqa
+        "            <foaf:name>CERN</foaf:name>\n"
+        "          </foaf:Organization>\n"
+        "        </org:memberOf>\n"
+        "      </rdf:Description>\n"
+        "    </dct:contributor>\n"
+        '    <dct:issued rdf:datatype="http://www.w3.org/2001/XMLSchema#dateTime">2018/2020-09</dct:issued>\n'  # noqa
+        '    <dct:date rdf:datatype="http://www.w3.org/2001/XMLSchema#date">1939/1945</dct:date>\n'  # noqa
+        '    <dct:language rdf:resource="http://publications.europa.eu/resource/authority/language/DAN"/>\n'  # noqa
+        "    <adms:identifier>\n"
+        "      <adms:Identifier>\n"
+        "        <skos:notation>oai:vvv.com:abcde-fghij</skos:notation>\n"
+        "        <adms:schemeAgency>oai</adms:schemeAgency>\n"
+        "      </adms:Identifier>\n"
+        "    </adms:identifier>\n"
+        '    <owl:sameAs rdf:resource="http://adsabs.harvard.edu/abs/1924MNRAS..84..308E"/>\n'  # noqa
+        "    <adms:identifier>\n"
+        "      <adms:Identifier>\n"
+        '        <skos:notation rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">http://adsabs.harvard.edu/abs/1924MNRAS..84..308E</skos:notation>\n'  # noqa
+        "        <adms:schemeAgency>bibcode</adms:schemeAgency>\n"
+        "      </adms:Identifier>\n"
+        "    </adms:identifier>\n"
+        "    <dct:isReferencedBy>\n"
+        '      <rdf:Description rdf:about="https://doi.org/10.1234/foo.bar">\n'  # noqa
+        "        <dct:identifier>https://doi.org/10.1234/foo.bar</dct:identifier>\n"
+        '        <rdf:type rdf:resource="http://www.w3.org/ns/dcat#Dataset"/>\n'  # noqa
+        '        <dct:type rdf:resource="http://purl.org/dc/dcmitype/Dataset"/>\n'  # noqa
+        "      </rdf:Description>\n"
+        "    </dct:isReferencedBy>\n"
+        "    <owl:versionInfo>v1.0</owl:versionInfo>\n"
+        "    <dct:description>A description with HTML tags</dct:description>\n"
+        "    <dct:provenance>\n"
+        "      <dct:ProvenanceStatement>\n"
+        "        <rdfs:label>Bla bla bla</rdfs:label>\n"
+        "      </dct:ProvenanceStatement>\n"
+        "    </dct:provenance>\n"
+        "    <dct:spatial>\n"
+        "      <dct:Location>\n"
+        '        <rdf:type rdf:resource="http://www.w3.org/2004/02/skos/core#Concept"/>\n'  # noqa
+        "        <skos:prefLabel>test location place</skos:prefLabel>\n"
+        "        <locn:geographicName>test location place</locn:geographicName>\n"
+        '        <dcat:centroid rdf:datatype="http://www.opengis.net/ont/geosparql#wktLiteral">POINT(-60.63932 -32.94682)</dcat:centroid>\n'  # noqa
+        '        <dcat:centroid rdf:datatype="http://www.opengis.net/ont/geosparql#gmlLiteral">&lt;gml:Point srsName="http://www.opengis.net/def/crs/OGC/1.3/CRS84"&gt;&lt;gml:pos srsDimension="2"&gt;-60.63932 -32.94682&lt;/gml:pos&gt;&lt;/gml:Point&gt;</dcat:centroid>\n'  # noqa
+        '        <dcat:centroid rdf:datatype="http://www.opengis.net/ont/geosparql#geoJSONLiteral">{"type":"Point","coordinates":[-60.63932,-32.94682]}</dcat:centroid>\n'  # noqa
+        "      </dct:Location>\n"
+        "    </dct:spatial>\n"
+        "    <dcat:distribution>\n"
+        "      <dcat:Distribution>\n"
+        "        <dct:extent>\n"
+        "          <dct:SizeOrDuration>\n"
+        "            <rdfs:label>11 pages</rdfs:label>\n"
+        "          </dct:SizeOrDuration>\n"
+        "        </dct:extent>\n"
+        '        <dcat:mediaType rdf:resource="https://www.iana.org/assignments/media-types/application/pdf"/>\n'  # noqa
+        "        <dct:rights>\n"
+        '          <dct:RightsStatement rdf:about="https://customlicense.org/licenses/by/4.0/">\n'  # noqa
+        "            <rdfs:label>A custom license</rdfs:label>\n"
+        "          </dct:RightsStatement>\n"
+        "        </dct:rights>\n"
+        '        <dct:license rdf:resource="https://creativecommons.org/licenses/by/4.0/legalcode"/>\n'  # noqa
+        '        <dcat:accessURL rdf:resource="https://doi.org/10.5281/inveniordm.1234"/>\n'  # noqa
+        "      </dcat:Distribution>\n"
+        "    </dcat:distribution>\n"
+        "  </rdf:Description>\n"
+        "</rdf:RDF>\n"
+    )
+    record = {"_source": full_record}
+    ser_rec = etree.tostring(oai_dcat_etree(None, record), pretty_print=True)
     assert expected_value == ser_rec.decode("utf-8")

@@ -21,6 +21,7 @@ const knownFormats = {
   datacite: "DataCite",
   oai_datacite: "OAI DataCite",
   oai_marcxml: "OAI MARCXML",
+  oai_dcat: "OAI DCAT-AP",
 };
 
 class LinksTable extends Component {
