@@ -41,7 +41,10 @@ class JournalCF(BaseCF):
         return {
             "type": "object",
             "properties": {
-                "title": {"type": "keyword"},
+                "title": {
+                    "type": "text",
+                    "fields": {"keyword": {"type": "keyword"}},
+                },
                 "issue": {"type": "keyword"},
                 "pages": {"type": "keyword"},
                 "volume": {"type": "keyword"},

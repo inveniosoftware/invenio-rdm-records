@@ -55,7 +55,10 @@ class MeetingCF(BaseCF):
                 "place": {"type": "text"},
                 "session_part": {"type": "keyword"},
                 "session": {"type": "keyword"},
-                "title": {"type": "text"},
+                "title": {
+                    "type": "text",
+                    "fields": {"keyword": {"type": "keyword"}},
+                },
                 "url": {"type": "keyword"},
             },
         }
