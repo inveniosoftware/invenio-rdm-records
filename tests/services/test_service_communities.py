@@ -164,3 +164,48 @@ def test_remove_empty_communities(curator, record_community, service):
 
     with pytest.raises(ValidationError):
         service.remove(curator.identity, record.pid.pid_value, data)
+
+
+# def test_restricted_community_with_public_record(
+#     running_app, search_clear, community, record_community, community_service
+# ):
+#     """Change a community with public records from public to restricted."""
+#     identity = running_app.superuser_identity
+#     data = community.to_dict()
+#     assert data["access"]["visibility"] == "public"
+#     data["access"]["visibility"] = "restricted"
+
+#     with pytest.raises(InvalidCommunityVisibility):
+#         community_service.update(identity, community.id, data)
+
+
+# def test_restricted_community_with_restricted_record(
+#     running_app, search_clear, community, restricted_record_community, community_service
+# ):
+#     """Change a community with restricted records from public to restricted."""
+#     identity = running_app.superuser_identity
+#     # edit the community
+#     data = community.to_dict()
+#     assert data["access"]["visibility"] == "public"
+#     data["access"]["visibility"] = "restricted"
+
+#     comm = community_service.update(identity, community.id, data)
+#     assert comm["access"]["visibility"] == "restricted"
+
+
+# def test_public_community_with_restricted_record(
+#     running_app,
+#     search_clear,
+#     restricted_community,
+#     restricted_record_restricted_community,
+#     community_service,
+# ):
+#     """Change a community with restricted records from restricted to public."""
+#     identity = running_app.superuser_identity
+#     # edit the community
+#     data = restricted_community.to_dict()
+#     assert data["access"]["visibility"] == "restricted"
+#     data["access"]["visibility"] = "public"
+
+#     comm = community_service.update(identity, restricted_community.id, data)
+#     assert comm["access"]["visibility"] == "public"

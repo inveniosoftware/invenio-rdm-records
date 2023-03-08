@@ -10,7 +10,10 @@
 
 from flask import current_app
 from invenio_communities import current_communities
-from invenio_communities.communities.records.systemfields.access import CommunityAccess
+from invenio_communities.communities.records.systemfields.access import (
+    CommunityAccess,
+    VisibilityEnum,
+)
 from invenio_drafts_resources.services.records import RecordService
 from invenio_i18n import lazy_gettext as _
 from invenio_records_resources.services.errors import PermissionDeniedError
@@ -224,9 +227,9 @@ class ReviewService(RecordService):
         # Get record and check permission
         self.require_permission(identity, "update_draft", record=draft)
 
-        assert "restricted" in CommunityAccess.VISIBILITY_LEVELS
-        community_is_restricted = (
-            resolved_community["access"]["visibility"] == "restricted"
+        assert CommunityAccess.validate_visibility_level(VisibilityEnum.RESTRICTED)
+        community_is_restricted = resolved_community["access"]["visibility"] == str(
+            VisibilityEnum.RESTRICTED
         )
 
         record_is_restricted = draft.access.status == AccessStatusEnum.RESTRICTED

@@ -124,3 +124,11 @@ class MaxNumberOfRecordsExceed(Exception):
         super().__init__(
             f"Exceeded maximum amount of records that can be updated at once: {allowed_number}."
         )
+
+
+class InvalidCommunityVisibility(Exception):
+    """Community visibility does not match the content."""
+
+    def __init__(self, reason):
+        """Constructor."""
+        super().__init__(f"Cannot modify community visibility. {reason}")
