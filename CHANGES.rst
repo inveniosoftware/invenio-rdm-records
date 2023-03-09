@@ -10,6 +10,12 @@
 Changes
 =======
 
+Version 2.5.0 (released 2023-03-09)
+
+- serializer: add bibtex
+- serializer: rename coverage to locations in dublincore schema
+- contrib custom fields: index titles both as text and keyword
+
 Version 2.4.0 (released 2023-03-06)
 
 - contrib custom fields: add journal, meeting
