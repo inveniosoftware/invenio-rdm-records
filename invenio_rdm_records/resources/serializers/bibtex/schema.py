@@ -39,15 +39,6 @@ class BibTexSchema(BaseSchema):
         year = date_obj.strftime("%Y")
         return {"month": month, "year": year}
 
-    def get_doi(self, obj):
-        """Get DOI."""
-        item = [
-            i["identifier"]
-            for i in obj["metadata"].get("identifiers", [])
-            if i["scheme"] == "doi"
-        ]
-        return item[0] if item else missing
-
     def get_creator(self, obj):
         """Get creator."""
         creator = obj["metadata"]["creators"][0]["person_or_org"]

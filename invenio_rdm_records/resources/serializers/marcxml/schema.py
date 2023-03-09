@@ -22,10 +22,11 @@ from ..utils import get_vocabulary_props
 class MARCXMLSchema(BaseSchema):
     """Schema for records in MARC."""
 
+    doi = fields.Method("get_doi")
+    oai = fields.Str(attribute="pids.oai.identifier")
     contributors = fields.Method("get_contributors")
     titles = fields.Method("get_titles")
     creators = fields.Method("get_creators")
-    identifiers = fields.Method("get_identifiers")
     relations = fields.Method("get_relations")
     rights = fields.Method("get_rights")
     dates = fields.Method("get_dates")
@@ -39,7 +40,6 @@ class MARCXMLSchema(BaseSchema):
     sources = fields.Constant(
         missing
     )  # Corresponds to references in the metadata schema
-    locations = fields.Method("get_locations")
     formats = fields.List(fields.Str(), attribute="metadata.formats")
     parent_id = fields.Str(attribute="parent.id")
     community_id = fields.List(fields.Str(), attribute="parent.communities.ids")
@@ -222,7 +222,7 @@ class MARCXMLSchema(BaseSchema):
             "contributors": ["700a ", "u"],  # Abstract
             "titles": ["245a ", "a"],  # Title
             "creators": ["100a ", "a"],  # First author
-            "identifiers": ["024  ", "a"],  # DOI
+            "oai": ["909CO", "o"],  # OAI
             "relations": ["856 2", "a"],  # Related Ressource
             "rights": ["540  ", "a"],  # License
             "dates": [
@@ -254,5 +254,9 @@ class MARCXMLSchema(BaseSchema):
         for key in data_copy:
             if key in changes:
                 data[changes[key][0]] = {changes[key][1]: data.pop(key)}
+
+        doi = data.pop("doi", None)
+        if doi:
+            data["024  "] = {"a": doi, "2": "doi"}
 
         return data

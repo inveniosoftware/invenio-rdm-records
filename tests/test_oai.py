@@ -31,7 +31,67 @@ from .resources.serializers.test_marcxml_serializer import (
 
 
 def test_marcxml_serializer(running_app, full_record):
-    expected_value = '<record xmlns="http://www.loc.gov/MARC21/slim">\n  <datafield tag="loc" ind1="a" ind2="t">\n    <subfield>name=test location place; description=test location description; lat=-32.94682; lon=-60.63932</subfield>\n  </datafield>\n  <datafield tag="024" ind1=" " ind2=" ">\n    <subfield code="a">1924MNRAS..84..308E</subfield>\n    <subfield code="a">10.5281/inveniordm.1234</subfield>\n  </datafield>\n  <datafield tag="100" ind1="a" ind2=" ">\n    <subfield code="a">Nielsen, Lars Holm</subfield>\n  </datafield>\n  <datafield tag="260" ind1="c" ind2=" ">\n    <subfield code="c">2018/2020-09</subfield>\n  </datafield>\n  <datafield tag="520" ind1=" " ind2="1">\n    <subfield code="a">application/pdf</subfield>\n  </datafield>\n  <datafield tag="540" ind1=" " ind2=" ">\n    <subfield code="a">A custom license</subfield>\n    <subfield code="a">https://customlicense.org/licenses/by/4.0/</subfield>\n    <subfield code="a">Creative Commons Attribution 4.0 International</subfield>\n    <subfield code="a">https://creativecommons.org/licenses/by/4.0/legalcode</subfield>\n  </datafield>\n  <datafield tag="901" ind1=" " ind2=" ">\n    <subfield code="u">info:eu-repo/semantic/other</subfield>\n  </datafield>\n  <datafield tag="520" ind1=" " ind2=" ">\n    <subfield code="a">A description \nwith HTML tags</subfield>\n    <subfield code="a">Bla bla bla</subfield>\n  </datafield>\n  <datafield tag="653" ind1=" " ind2=" ">\n    <subfield code="a">custom</subfield>\n  </datafield>\n  <datafield tag="245" ind1="a" ind2=" ">\n    <subfield code="a">InvenioRDM</subfield>\n  </datafield>\n  <datafield tag="024" ind1=" " ind2="3">\n    <subfield code="a">v1.0</subfield>\n  </datafield>\n  <datafield tag="856" ind1=" " ind2="1">\n    <subfield code="a">award_identifiers_scheme=null; award_identifiers_identifier=null; award_title=null; award_number=null; funder_id=00k4n6c32; funder_name=null; </subfield>\n  </datafield>\n  <datafield tag="700" ind1="a" ind2=" ">\n    <subfield code="u">Nielsen, Lars Holm</subfield>\n  </datafield>\n  <datafield tag="520" ind1=" " ind2="2">\n    <subfield code="a">11 pages</subfield>\n  </datafield>\n  <datafield tag="856" ind1=" " ind2="2">\n    <subfield code="a">doi:10.1234/foo.bar</subfield>\n  </datafield>\n  <datafield tag="260" ind1="b" ind2=" ">\n    <subfield code="a">InvenioRDM</subfield>\n  </datafield>\n</record>'
+    expected_value = "\n".join(
+        [
+            '<record xmlns="http://www.loc.gov/MARC21/slim">',
+            '  <datafield tag="100" ind1="a" ind2=" ">',
+            '    <subfield code="a">Nielsen, Lars Holm</subfield>',
+            "  </datafield>",
+            '  <datafield tag="901" ind1=" " ind2=" ">',
+            '    <subfield code="u">info:eu-repo/semantic/other</subfield>',
+            "  </datafield>",
+            '  <datafield tag="520" ind1=" " ind2=" ">',
+            '    <subfield code="a">A description ',
+            "with HTML tags</subfield>",
+            '    <subfield code="a">Bla bla bla</subfield>',
+            "  </datafield>",
+            '  <datafield tag="856" ind1=" " ind2="1">',
+            '    <subfield code="a">award_identifiers_scheme=null; award_identifiers_identifier=null; award_title=null; award_number=null; funder_id=00k4n6c32; funder_name=null; </subfield>',
+            "  </datafield>",
+            '  <datafield tag="909" ind1="C" ind2="O">',
+            '    <subfield code="o">oai:vvv.com:abcde-fghij</subfield>',
+            "  </datafield>",
+            '  <datafield tag="700" ind1="a" ind2=" ">',
+            '    <subfield code="u">Nielsen, Lars Holm</subfield>',
+            "  </datafield>",
+            '  <datafield tag="856" ind1=" " ind2="2">',
+            '    <subfield code="a">doi:10.1234/foo.bar</subfield>',
+            "  </datafield>",
+            '  <datafield tag="540" ind1=" " ind2=" ">',
+            '    <subfield code="a">A custom license</subfield>',
+            '    <subfield code="a">https://customlicense.org/licenses/by/4.0/</subfield>',
+            '    <subfield code="a">Creative Commons Attribution 4.0 International</subfield>',
+            '    <subfield code="a">https://creativecommons.org/licenses/by/4.0/legalcode</subfield>',
+            "  </datafield>",
+            '  <datafield tag="520" ind1=" " ind2="2">',
+            '    <subfield code="a">11 pages</subfield>',
+            "  </datafield>",
+            '  <datafield tag="260" ind1="b" ind2=" ">',
+            '    <subfield code="a">InvenioRDM</subfield>',
+            "  </datafield>",
+            '  <datafield tag="520" ind1=" " ind2="1">',
+            '    <subfield code="a">application/pdf</subfield>',
+            "  </datafield>",
+            '  <datafield tag="653" ind1=" " ind2=" ">',
+            '    <subfield code="a">custom</subfield>',
+            "  </datafield>",
+            '  <datafield tag="260" ind1="c" ind2=" ">',
+            '    <subfield code="c">2018/2020-09</subfield>',
+            "  </datafield>",
+            '  <datafield tag="024" ind1=" " ind2="3">',
+            '    <subfield code="a">v1.0</subfield>',
+            "  </datafield>",
+            '  <datafield tag="245" ind1="a" ind2=" ">',
+            '    <subfield code="a">InvenioRDM</subfield>',
+            "  </datafield>",
+            '  <datafield tag="024" ind1=" " ind2=" ">',
+            '    <subfield code="a">10.5281/inveniordm.1234</subfield>',
+            '    <subfield code="2">doi</subfield>',
+            "  </datafield>",
+            "</record>",
+        ]
+    )
+
     expected_value = create_record(expected_value)
 
     record = {"_source": full_record}
@@ -61,6 +121,7 @@ def test_dublincore_serializer(running_app, full_record):
         "  <dc:format>application/pdf</dc:format>\n"
         "  <dc:identifier>1924MNRAS..84..308E</dc:identifier>\n"
         "  <dc:identifier>10.5281/inveniordm.1234</dc:identifier>\n"
+        "  <dc:identifier>oai:vvv.com:abcde-fghij</dc:identifier>\n"
         "  <dc:language>dan</dc:language>\n"
         "  <dc:language>eng</dc:language>\n"
         "  <dc:publisher>InvenioRDM</dc:publisher>\n"
@@ -75,8 +136,10 @@ def test_dublincore_serializer(running_app, full_record):
         "  <dc:type>info:eu-repo/semantic/other</dc:type>\n"
         "</oai_dc:dc>\n"
     )
+
     record = {"_source": full_record}
     ser_rec = etree.tostring(dublincore_etree(None, record), pretty_print=True)
+
     assert expected_value == ser_rec.decode("utf-8")
 
 
@@ -85,6 +148,7 @@ def test_datacite_serializer(running_app, full_record):
         '<resource xmlns="http://datacite.org/schema/kernel-4" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://datacite.org/schema/kernel-4 http://schema.datacite.org/meta/kernel-4.3/metadata.xsd">\n'  # noqa
         '  <identifier identifierType="DOI">10.5281/inveniordm.1234</identifier>\n'  # noqa
         "  <alternateIdentifiers>\n"
+        '    <alternateIdentifier alternateIdentifierType="oai">oai:vvv.com:abcde-fghij</alternateIdentifier>\n'
         '    <alternateIdentifier alternateIdentifierType="bibcode">1924MNRAS..84..308E</alternateIdentifier>\n'  # noqa
         "  </alternateIdentifiers>\n"
         "  <creators>\n"
@@ -162,6 +226,7 @@ def test_datacite_serializer(running_app, full_record):
 
     record = {"_source": full_record}
     ser_rec = etree.tostring(datacite_etree(None, record), pretty_print=True)
+
     assert expected_value == ser_rec.decode("utf-8")
 
 
@@ -174,6 +239,7 @@ def test_oai_datacite_serializer(running_app, full_record):
         '    <resource xmlns="http://datacite.org/schema/kernel-4" xsi:schemaLocation="http://datacite.org/schema/kernel-4 http://schema.datacite.org/meta/kernel-4.3/metadata.xsd">\n'  # noqa
         '      <identifier identifierType="DOI">10.5281/inveniordm.1234</identifier>\n'  # noqa
         "      <alternateIdentifiers>\n"
+        '        <alternateIdentifier alternateIdentifierType="oai">oai:vvv.com:abcde-fghij</alternateIdentifier>\n'
         '        <alternateIdentifier alternateIdentifierType="bibcode">1924MNRAS..84..308E</alternateIdentifier>\n'  # noqa
         "      </alternateIdentifiers>\n"
         "      <creators>\n"
