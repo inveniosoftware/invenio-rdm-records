@@ -9,7 +9,7 @@
 
 import datetime
 
-from marshmallow import Schema, fields, missing, post_dump
+from marshmallow import fields, missing, post_dump
 from slugify import slugify
 
 from ..schemas import BaseSchema
@@ -21,7 +21,7 @@ class BibTexSchema(BaseSchema):
 
     id = fields.Str()
     resource_id = fields.Str(attribute="metadata.resource_type.id")
-    version = fields.Method("get_version")
+    version = fields.Str(attribute="metadata.version")
     date_created = fields.Method("get_date_created")
     locations = fields.Method("get_locations")
     titles = fields.Method("get_titles")

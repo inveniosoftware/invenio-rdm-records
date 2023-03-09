@@ -57,7 +57,7 @@ class CSLJSONSchema(Schema):
     language = fields.Method("get_language")
     version = SanitizedUnicode(attribute="metadata.version")
     note = fields.Method("get_note")
-    doi = fields.Method("get_doi", data_key="DOI")
+    doi = fields.Str(attribute="pids.doi.identifier", data_key="DOI")
     isbn = fields.Method("get_isbn", data_key="ISBN")
     issn = fields.Method("get_issn", data_key="ISSN")
     publisher = SanitizedUnicode(attribute="metadata.publisher")
@@ -105,10 +105,6 @@ class CSLJSONSchema(Schema):
         languages = metadata.get("languages")
 
         return languages[0]["id"] if languages else missing
-
-    def get_doi(self, obj):
-        """Get DOI."""
-        return obj["pids"].get("doi", {}).get("identifier", missing)
 
     def get_isbn(self, obj):
         """Get ISBN."""

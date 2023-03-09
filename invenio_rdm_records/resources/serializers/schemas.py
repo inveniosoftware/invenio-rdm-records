@@ -40,10 +40,6 @@ class BaseSchema(Schema):
 
         return locations
 
-    def get_version(self, obj):
-        """Get the version of the record."""
-        return obj["metadata"].get("version", missing)
-
     def get_titles(self, obj):
         """Get titles."""
         return [obj["metadata"]["title"]]
