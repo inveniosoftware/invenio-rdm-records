@@ -379,6 +379,7 @@ def full_record(users):
                 "provider": "datacite",
                 "client": "inveniordm",
             },
+            "oai": {"identifier": "oai:vvv.com:abcde-fghij", "provider": "oai"},
         },
         "metadata": {
             "resource_type": {"id": "image-photo"},

@@ -45,15 +45,18 @@ def test_bibtex_serializer_minimal_record(running_app, updated_minimal_record):
     serializer = BibtexSerializer()
     serialized_record = serializer.serialize_object(updated_minimal_record)
 
-    expected_data = "\
-@misc{brown_2023_abcde-fghij,\n\
-  author       = {Name and\n\
-                  Troy Inc.},\n\
-  title        = {A Romans story},\n\
-  month        = mar,\n\
-  year         = 2023,\n\
-  publisher    = {Acme Inc},\n\
-}"
+    expected_data = "\n".join(
+        [
+            "@misc{brown_2023_abcde-fghij,",
+            "  author       = {Name and",
+            "                  Troy Inc.},",
+            "  title        = {A Romans story},",
+            "  month        = mar,",
+            "  year         = 2023,",
+            "  publisher    = {Acme Inc},",
+            "}",
+        ]
+    )
 
     assert serialized_record == expected_data
 
@@ -63,14 +66,18 @@ def test_bibtex_serializer_full_record(running_app, updated_full_record):
     serializer = BibtexSerializer()
     serialized_record = serializer.serialize_object(updated_full_record)
 
-    expected_data = "\
-@misc{nielsen_2023_abcde-fghij,\n\
-  author       = {Nielsen, Lars Holm},\n\
-  title        = {InvenioRDM},\n\
-  month        = mar,\n\
-  year         = 2023,\n\
-  publisher    = {InvenioRDM},\n\
-  version      = {v1.0},\n\
-}"
+    expected_data = "\n".join(
+        [
+            "@misc{nielsen_2023_abcde-fghij,",
+            "  author       = {Nielsen, Lars Holm},",
+            "  title        = {InvenioRDM},",
+            "  month        = mar,",
+            "  year         = 2023,",
+            "  publisher    = {InvenioRDM},",
+            "  version      = {v1.0},",
+            "  doi          = {10.5281/inveniordm.1234},",
+            "}",
+        ]
+    )
 
     assert serialized_record == expected_data

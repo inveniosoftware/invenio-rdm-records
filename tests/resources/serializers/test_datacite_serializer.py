@@ -126,6 +126,7 @@ def test_datacite43_serializer(running_app, full_record):
         "language": "dan",
         "identifiers": [
             {"identifier": "10.5281/inveniordm.1234", "identifierType": "DOI"},
+            {"identifier": "oai:vvv.com:abcde-fghij", "identifierType": "oai"},
             {"identifier": "1924MNRAS..84..308E", "identifierType": "bibcode"},
         ],
         "relatedIdentifiers": [
@@ -196,6 +197,7 @@ def test_datacite43_xml_serializer(running_app, full_record):
         '<resource xmlns="http://datacite.org/schema/kernel-4" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://datacite.org/schema/kernel-4 http://schema.datacite.org/meta/kernel-4.3/metadata.xsd">',  # noqa
         '  <identifier identifierType="DOI">10.5281/inveniordm.1234</identifier>',  # noqa
         "  <alternateIdentifiers>",
+        '    <alternateIdentifier alternateIdentifierType="oai">oai:vvv.com:abcde-fghij</alternateIdentifier>',
         '    <alternateIdentifier alternateIdentifierType="bibcode">1924MNRAS..84..308E</alternateIdentifier>',  # noqa
         "  </alternateIdentifiers>",
         "  <creators>",
@@ -337,7 +339,7 @@ def test_datacite43_serializer_with_unknown_id_schemes(
 
     assert expected_pid_id in serialized_record["identifiers"]
     assert expected_pid_id_2 in serialized_record["identifiers"]
-    assert len(serialized_record["identifiers"]) == 3
+    assert len(serialized_record["identifiers"]) == 4
 
     assert expected_related_id in serialized_record["relatedIdentifiers"]
     assert len(serialized_record["relatedIdentifiers"]) == 1

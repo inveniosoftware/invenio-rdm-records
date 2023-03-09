@@ -12,6 +12,17 @@ from marshmallow import Schema, fields, missing
 class BaseSchema(Schema):
     """BaseSchema for serializers in JSON."""
 
+    def get_doi(self, obj):
+        """Get DOI."""
+        if "doi" in obj["pids"]:
+            return obj["pids"]["doi"]["identifier"]
+
+        for identifier in obj["metadata"].get("identifiers", []):
+            if identifier["scheme"] == "doi":
+                return identifier["identifier"]
+
+        return missing
+
     def get_locations(self, obj):
         """Get locations."""
         locations = []

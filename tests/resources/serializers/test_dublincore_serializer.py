@@ -48,7 +48,11 @@ def test_dublincorejson_serializer(running_app, updated_full_record):
         "locations": [
             "name=test location place; description=test location description; lat=-32.94682; lon=-60.63932"
         ],
-        "identifiers": ["1924MNRAS..84..308E", "10.5281/inveniordm.1234"],
+        "identifiers": [
+            "1924MNRAS..84..308E",
+            "10.5281/inveniordm.1234",
+            "oai:vvv.com:abcde-fghij",
+        ],
         "formats": ["application/pdf"],
         "titles": ["InvenioRDM"],
         "creators": ["Nielsen, Lars Holm"],
@@ -106,6 +110,7 @@ def test_dublincorexml_serializer(running_app, updated_full_record):
         "<dc:format>application/pdf</dc:format>",
         "<dc:identifier>1924MNRAS..84..308E</dc:identifier>",
         "<dc:identifier>10.5281/inveniordm.1234</dc:identifier>",
+        "<dc:identifier>oai:vvv.com:abcde-fghij</dc:identifier>",
         "<dc:language>dan</dc:language>",
         "<dc:language>eng</dc:language>",
         "<dc:publisher>InvenioRDM</dc:publisher>",
