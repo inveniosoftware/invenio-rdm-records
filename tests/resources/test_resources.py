@@ -742,6 +742,7 @@ def test_response_handlers(running_app, minimal_record, client_with_login):
         "application/vnd.datacite.datacite+xml",
         "application/x-dc+xml",
         "text/x-bibliography",
+        "text/turtle",
     ]
 
     headers = {
