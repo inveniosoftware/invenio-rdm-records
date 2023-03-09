@@ -31,9 +31,13 @@ class DataCite43XMLSerializer(MarshmallowSerializer):
 
     def __init__(self, **options):
         """Constructor."""
+        if options:
+            encoder = options.get("encoder", schema43.tostring)
+        else:
+            encoder = schema43.tostring
         super().__init__(
             format_serializer_cls=SimpleSerializer,
             object_schema_cls=DataCite43Schema,
             list_schema_cls=BaseListSchema,
-            encoder=schema43.tostring,
+            encoder=encoder,
         )

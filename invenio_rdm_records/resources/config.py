@@ -45,6 +45,7 @@ from .serializers import (
     CSLJSONSerializer,
     DataCite43JSONSerializer,
     DataCite43XMLSerializer,
+    DCATSerializer,
     DublinCoreXMLSerializer,
     GeoJSONSerializer,
     MARCXMLSerializer,
@@ -78,6 +79,7 @@ record_serializers = {
         StringCitationSerializer(url_args_retriever=csl_url_args_retriever),
         headers={"content-type": "text/plain"},
     ),
+    "text/turtle": ResponseHandler(DCATSerializer()),
 }
 
 

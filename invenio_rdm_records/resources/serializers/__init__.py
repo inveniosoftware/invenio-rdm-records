@@ -12,6 +12,7 @@
 from .bibtex import BibtexSerializer
 from .csl import CSLJSONSerializer, StringCitationSerializer
 from .datacite import DataCite43JSONSerializer, DataCite43XMLSerializer
+from .dcat import DCATSerializer
 from .dublincore import DublinCoreJSONSerializer, DublinCoreXMLSerializer
 from .geojson import GeoJSONSerializer
 from .iiif import (
@@ -38,4 +39,5 @@ __all__ = (
     "MARCXMLSerializer",
     "StringCitationSerializer",
     "UIJSONSerializer",
+    "DCATSerializer",
 )

@@ -409,11 +409,11 @@ class DataCite43Schema(Schema):
         serialized_subjects = []
         ids = []
         for subject in subjects:
-            sub_text = subject.get("subject")
-            if sub_text:
-                serialized_subjects.append({"subject": sub_text})
+            _id = subject.get("id")
+            if _id:
+                ids.append(_id)
             else:
-                ids.append(subject.get("id"))
+                serialized_subjects.append({"subject": subject.get("subject")})
 
         if ids:
             subjects_service = current_service_registry.get("subjects")
