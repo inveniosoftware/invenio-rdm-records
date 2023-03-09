@@ -10,6 +10,12 @@
 Changes
 =======
 
+Version 2.6.0 (released 2023-03-09)
+
+- review service: expand links
+- review service: validate request type
+
+
 Version 2.5.0 (released 2023-03-09)
 
 - serializer: add bibtex
