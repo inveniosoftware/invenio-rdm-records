@@ -91,7 +91,14 @@ class IIIFService(Service):
         return fp
 
     def get_file(self, identity, uuid, key=None):
-        """."""
+        """Get the file for the given ``uuid``.
+
+        If the ``uuid`` has the shape ``<record|draft>:<pid_value>:<key>``, then the
+        ``key`` argument is ignored.
+        If it is of the shape ``<record|draft>:<pid_value>`` however, the ``key``
+        argument is required.
+        :raises FileKeyNotFoundError: If the record has no file for the ``key``
+        """
         if key:
             type_, id_ = self._iiif_uuid(uuid)
         else:
@@ -111,7 +118,10 @@ class IIIFService(Service):
         quality,
         image_format,
     ):
-        """Run the IIIF image API workflow."""
+        """Run the IIIF image API workflow.
+
+        :raises FileKeyNotFoundError: If the record has no file for the ``key``
+        """
         # Validate IIIF parameters
         IIIFImageAPIWrapper.validate_api(
             uuid=uuid,
