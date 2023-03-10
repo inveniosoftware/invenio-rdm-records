@@ -12,6 +12,7 @@
 
 from functools import partial
 
+import idutils
 from flask import current_app
 from invenio_drafts_resources.services.records.schema import RecordSchema
 from invenio_i18n import lazy_gettext as _
@@ -73,6 +74,17 @@ class RDMRecordSchema(RecordSchema, FieldPermissionsMixin):
     # stats = NestedAttribute(StatsSchema, dump_only=True)
     # schema_version = fields.Interger(dump_only=True)
 
+    def _to_url(self, identifier, scheme):
+        value = idutils.to_url(identifier, scheme, url_scheme="https")
+        return value or identifier
+
+    def _identifiers_to_url(self, data):
+        for scheme, id_dict in data["pids"].items():
+            id_dict["identifier"] = self._to_url(id_dict["identifier"], scheme)
+
+        for id_ in data["metadata"].get("identifiers", []):
+            id_["identifier"] = self._to_url(id_["identifier"], id_["scheme"])
+
     @post_dump
     def default_nested(self, data, many, **kwargs):
         """Serialize fields as empty dict for partial drafts.
@@ -88,6 +100,8 @@ class RDMRecordSchema(RecordSchema, FieldPermissionsMixin):
             data["pids"] = {}
         if not data.get("custom_fields"):
             data["custom_fields"] = {}
+
+        self._identifiers_to_url(data)
 
         return data
 

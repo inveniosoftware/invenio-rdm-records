@@ -7,6 +7,7 @@
 
 """CSL based Schema for Invenio RDM Records."""
 
+import idutils
 from edtf import parse_edtf
 from edtf.parser.edtf_exceptions import EDTFParseException
 from edtf.parser.parser_classes import Date, Interval
@@ -108,7 +109,11 @@ class CSLJSONSchema(Schema):
 
     def get_doi(self, obj):
         """Get DOI."""
-        return obj["pids"].get("doi", {}).get("identifier", missing)
+        doi = obj["pids"].get("doi", {}).get("identifier", None)
+        if doi:
+            return idutils.normalize_doi(doi)
+        else:
+            return missing
 
     def get_isbn(self, obj):
         """Get ISBN."""
