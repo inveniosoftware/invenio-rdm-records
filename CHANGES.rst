@@ -10,6 +10,12 @@
 Changes
 =======
 
+Version 2.7.0 (released 2023-03-13)
+
+- record: implement multiple communities inclusion via new request type
+- communities: allow overwriting access component
+- serializers: refactor accessing fields in the schema
+
 Version 2.6.0 (released 2023-03-09)
 
 - review service: expand links
