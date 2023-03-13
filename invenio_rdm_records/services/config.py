@@ -123,20 +123,22 @@ class RDMSearchVersionsOptions(SearchVersionsOptions, SearchOptionsMixin):
 class RDMRecordCommunitiesConfig(ServiceConfig, ConfiguratorMixin):
     """Record communities service config."""
 
-    service_id = "record-community"
+    service_id = "record-communities"
     record_cls = RDMRecord
     permission_policy_cls = FromConfig(
         "RDM_PERMISSION_POLICY", default=RDMRecordPermissionPolicy, import_string=True
     )
-    # Service schema
+
     schema = RecordCommunitiesSchema
 
     indexer_cls = RecordIndexer
     indexer_queue_name = service_id
     index_dumper = None
 
-    # Limits
-    max_number_of_removals = 100
+    # Max n. communities that can be added at once
+    max_number_of_additions = 10
+    # Max n. communities that can be removed at once
+    max_number_of_removals = 10
 
 
 class RDMCommunityRecordsConfig(BaseRecordServiceConfig, ConfiguratorMixin):
@@ -153,7 +155,7 @@ class RDMCommunityRecordsConfig(BaseRecordServiceConfig, ConfiguratorMixin):
     community_record_schema = CommunityRecordsSchema
     schema = RDMRecordSchema
 
-    # Limits
+    # Max n. records that can be removed at once
     max_number_of_removals = 10
 
     links_search_community_records = pagination_links(
@@ -300,6 +302,7 @@ class RDMRecordServiceConfig(RecordServiceConfig, ConfiguratorMixin):
         "access_links": RecordLink("{+api}/records/{id}/access/links"),
         # TODO: only include link when DOI support is enabled.
         "reserve_doi": RecordLink("{+api}/records/{id}/draft/pids/doi"),
+        "communities": RecordLink("{+api}/records/{id}/communities"),
     }
 
 

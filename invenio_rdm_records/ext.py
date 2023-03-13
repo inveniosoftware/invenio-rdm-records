@@ -23,6 +23,9 @@ from invenio_rdm_records.oaiserver.resources.resources import OAIPMHServerResour
 from invenio_rdm_records.oaiserver.services.config import OAIPMHServerServiceConfig
 from invenio_rdm_records.oaiserver.services.services import OAIPMHServerService
 from invenio_rdm_records.services.communities.service import RecordCommunitiesService
+from invenio_rdm_records.services.community_inclusion.service import (
+    CommunityInclusionService,
+)
 
 from . import config
 from .resources import (
@@ -175,6 +178,8 @@ class InvenioRDMRecords(object):
             config=service_configs.community_records,
         )
 
+        self.community_inclusion_service = CommunityInclusionService()
+
         self.oaipmh_server_service = OAIPMHServerService(
             config=service_configs.oaipmh_server,
         )
@@ -204,6 +209,7 @@ class InvenioRDMRecords(object):
             config=RDMParentRecordLinksResourceConfig.build(app),
         )
 
+        # Record's communities
         self.record_communities_resource = RDMRecordCommunitiesResource(
             service=self.record_communities_service,
             config=RDMRecordCommunitiesResourceConfig.build(app),

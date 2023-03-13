@@ -12,7 +12,7 @@ from copy import deepcopy
 import bleach
 from invenio_access.permissions import system_identity
 from invenio_vocabularies.proxies import current_service as vocabulary_service
-from marshmallow import Schema, fields, missing, post_dump
+from marshmallow import fields, missing, post_dump
 
 from ..schemas import BaseSchema
 from ..ui.schema import current_default_locale
@@ -35,21 +35,18 @@ class MARCXMLSchema(BaseSchema):
     types = fields.Method(
         "get_types"
     )  # Corresponds to resource_type in the metadata schema
-    sources = fields.Method(
-        "get_sources"
+    # TODO: sources = fields.List(fields.Str(), attribute="metadata.references")
+    sources = fields.Constant(
+        missing
     )  # Corresponds to references in the metadata schema
     locations = fields.Method("get_locations")
-    formats = fields.Method("get_formats")
-    parent_id = fields.Method("get_id")
-    community_id = fields.Method("get_id_community")
+    formats = fields.List(fields.Str(), attribute="metadata.formats")
+    parent_id = fields.Str(attribute="parent.id")
+    community_id = fields.List(fields.Str(), attribute="parent.communities.ids")
     last_updated = fields.Method("last_updated")
-    sizes = fields.Method("get_sizes")
-    version = fields.Method("get_version")
+    sizes = fields.List(fields.Str(), attribute="metadata.sizes")
+    version = fields.Str(attribute="metadata.version")
     funding = fields.Method("get_funding")
-
-    def get_sizes(self, obj):
-        """Get the size of the record."""
-        return obj["metadata"].get("sizes", missing)
 
     def get_funding(self, obj):
         """Get funding information."""
@@ -88,18 +85,6 @@ class MARCXMLSchema(BaseSchema):
     def last_updated(self, obj):
         """Get date last updated."""
         return [obj["updated"]]
-
-    def get_id_community(self, obj):
-        """Get community IDs."""
-        if "parent" in obj:
-            return obj["parent"]["communities"].get("ids", missing)
-        return missing
-
-    def get_id(self, obj):
-        """Get ID."""
-        if "parent" in obj:
-            return obj["parent"]["id"]
-        return missing
 
     def get_relations(self, obj):
         """Get relations."""
@@ -216,15 +201,6 @@ class MARCXMLSchema(BaseSchema):
         )
         t = props.get("eurepo")
         return [t] if t else missing
-
-    def get_sources(self, obj):
-        """Get sources."""
-        return missing
-
-    def get_formats(self, obj):
-        """Get data formats."""
-        formats = obj["metadata"].get("formats", missing)
-        return formats
 
     @post_dump()
     def keys_to_tags(self, data, many, **kwargs):

@@ -13,6 +13,7 @@ import pytest
 from invenio_requests.records.api import RequestEvent
 
 from invenio_rdm_records.records import RDMRecord
+from invenio_rdm_records.requests.community_submission import CommunitySubmission
 from tests.resources.conftest import link
 
 
@@ -41,7 +42,7 @@ def test_simple_flow(
     # Request a review
     minimal_record["parent"] = {
         "review": {
-            "type": "community-submission",
+            "type": CommunitySubmission.type_id,
             "receiver": {"community": community.data["id"]},
         }
     }
@@ -54,7 +55,7 @@ def test_simple_flow(
     assert "submit-review" in links
     assert "id" in review
     assert review["receiver"] == {"community": community.data["id"]}
-    assert review["type"] == "community-submission"
+    assert review["type"] == CommunitySubmission.type_id
     assert draft.json["parent"]["communities"] == {}
 
     # Submit for review
@@ -138,7 +139,7 @@ def test_review_endpoints(
     # Create the review
     review_link = link(links["review"])
     review = {
-        "type": "community-submission",
+        "type": CommunitySubmission.type_id,
         "receiver": {"community": community.data["id"]},
     }
     req = client.put(review_link, headers=headers, json=review)
@@ -153,7 +154,7 @@ def test_review_endpoints(
 
     # Update to another review
     review = {
-        "type": "community-submission",
+        "type": CommunitySubmission.type_id,
         "receiver": {"community": community2.data["id"]},
     }
     req = client.put(review_link, headers=headers, json=review)
@@ -212,7 +213,7 @@ def test_delete_no_review(
 
     # Create the review and submit
     review = {
-        "type": "community-submission",
+        "type": CommunitySubmission.type_id,
         "receiver": {"community": community.data["id"]},
     }
     req = client.put(review_link, headers=headers, json=review)

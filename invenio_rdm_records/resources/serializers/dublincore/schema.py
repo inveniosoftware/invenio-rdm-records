@@ -10,7 +10,7 @@
 import bleach
 from invenio_access.permissions import system_identity
 from invenio_vocabularies.proxies import current_service as vocabulary_service
-from marshmallow import Schema, fields, missing
+from marshmallow import fields, missing
 
 from ..schemas import BaseSchema
 from ..ui.schema import current_default_locale
@@ -31,14 +31,13 @@ class DublinCoreSchema(BaseSchema):
     descriptions = fields.Method("get_descriptions")
     publishers = fields.Method("get_publishers")
     types = fields.Method("get_types")
-    sources = fields.Method("get_sources")
+    # TODO: sources = fields.List(fields.Str(), attribute="metadata.references")
+    sources = fields.Constant(
+        missing
+    )  # Corresponds to references in the metadata schema
     languages = fields.Method("get_languages")
     locations = fields.Method("get_locations")
     formats = fields.Method("get_formats")
-
-    def get_titles(self, obj):
-        """Get titles."""
-        return [obj["metadata"]["title"]]
 
     def get_identifiers(self, obj):
         """Get identifiers."""
@@ -47,10 +46,6 @@ class DublinCoreSchema(BaseSchema):
         items.extend(p["identifier"] for p in obj.get("pids", {}).values())
 
         return items or missing
-
-    def get_creators(self, obj):
-        """Get creators."""
-        return [c["person_or_org"]["name"] for c in obj["metadata"].get("creators", [])]
 
     def get_relations(self, obj):
         """Get relations."""
@@ -153,20 +148,6 @@ class DublinCoreSchema(BaseSchema):
         )
         return subjects or missing
 
-    def get_publishers(self, obj):
-        """Get publishers."""
-        publisher = obj["metadata"].get("publisher")
-        if publisher:
-            return [publisher]
-
-        return missing
-
-    def get_contributors(self, obj):
-        """Get contributors."""
-        return [
-            c["person_or_org"]["name"] for c in obj["metadata"].get("contributors", [])
-        ] or missing
-
     def get_types(self, obj):
         """Get resource type."""
         props = get_vocabulary_props(
@@ -178,10 +159,6 @@ class DublinCoreSchema(BaseSchema):
         )
         t = props.get("eurepo")
         return [t] if t else missing
-
-    def get_sources(self, obj):
-        """Get sources."""
-        return missing
 
     def get_languages(self, obj):
         """Get languages."""

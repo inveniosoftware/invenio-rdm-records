@@ -43,16 +43,37 @@ class ReviewExistsError(ReviewException):
     """Review exists - for operations which should when a review exists."""
 
 
-class ReviewInconsistentAccessRestrictions(ReviewException):
-    """Review has inconsistent record vs community access restrictions."""
+class CommunitySubmissionException(Exception):
+    """Base exception for community submission requests."""
+
+
+class CommunityAlreadyExists(CommunitySubmissionException):
+    """The record is already in the community."""
+
+
+class CommunityInclusionException(Exception):
+    """Base exception for community inclusion requests."""
+
+
+class CommunityInclusionInconsistentAccessRestrictions(CommunityInclusionException):
+    """Inclusion has inconsistent record vs community access restrictions."""
 
     def __init__(self, *args, **kwargs):
         """Initialize exception."""
         super().__init__(
-            _("Record submitted to restricted community cannot be public."),
+            _("A public record cannot be included in a restricted community."),
             *args,
             **kwargs,
         )
+
+
+class OpenRequestAlreadyExists(CommunitySubmissionException):
+    """An open request already exists."""
+
+    def __init__(self, request_id):
+        """Initialize exception."""
+        self.request_id = request_id
+        super().__init__()
 
 
 class ValidationErrorWithMessageAsList(Exception):
@@ -124,3 +145,11 @@ class MaxNumberOfRecordsExceed(Exception):
         super().__init__(
             f"Exceeded maximum amount of records that can be updated at once: {allowed_number}."
         )
+
+
+class InvalidCommunityVisibility(Exception):
+    """Community visibility does not match the content."""
+
+    def __init__(self, reason):
+        """Constructor."""
+        super().__init__(f"Cannot modify community visibility. {reason}")

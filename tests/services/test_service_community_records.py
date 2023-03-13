@@ -11,11 +11,8 @@ import pytest
 from invenio_records_resources.services.errors import PermissionDeniedError
 from marshmallow import ValidationError
 
-from invenio_rdm_records.proxies import (
-    current_community_records_service,
-    current_rdm_records_service,
-)
-from invenio_rdm_records.records import RDMDraft, RDMRecord
+from invenio_rdm_records.proxies import current_community_records_service
+from invenio_rdm_records.records import RDMRecord
 from invenio_rdm_records.services.errors import MaxNumberOfRecordsExceed
 
 
@@ -139,7 +136,7 @@ def test_remove_w_empty_payload(curator, community, service):
 
 
 def test_search_community_records(
-    community, record_community, service, anyuser_identity
+    community, record_community, service, anyuser_identity, uploader
 ):
     """Test search for records in a community."""
     results = service.search(
@@ -152,8 +149,9 @@ def test_search_community_records(
     record_community.create_record()
     record_community.create_record()
 
-    results = service.search(
-        anyuser_identity,
-        community_id=str(community.id),
-    )
-    assert results.to_dict()["hits"]["total"] == 3
+    for identity in [anyuser_identity, uploader.identity]:
+        results = service.search(
+            identity,
+            community_id=str(community.id),
+        )
+        assert results.to_dict()["hits"]["total"] == 3

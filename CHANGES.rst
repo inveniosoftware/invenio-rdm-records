@@ -10,6 +10,24 @@
 Changes
 =======
 
+Version 2.7.0 (released 2023-03-13)
+
+- record: implement multiple communities inclusion via new request type
+- communities: allow overwriting access component
+- serializers: refactor accessing fields in the schema
+
+Version 2.6.0 (released 2023-03-09)
+
+- review service: expand links
+- review service: validate request type
+
+
+Version 2.5.0 (released 2023-03-09)
+
+- serializer: add bibtex
+- serializer: rename coverage to locations in dublincore schema
+- contrib custom fields: index titles both as text and keyword
+
 Version 2.4.0 (released 2023-03-06)
 
 - contrib custom fields: add journal, meeting
