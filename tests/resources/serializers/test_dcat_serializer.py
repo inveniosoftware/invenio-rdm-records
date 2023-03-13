@@ -7,115 +7,10 @@
 
 """Resources serializers tests."""
 
-import pytest
-
 from invenio_rdm_records.resources.serializers import DCATSerializer
 
 
-@pytest.fixture
-def full_modified_record(full_record):
-    full_record["metadata"]["additional_descriptions"][0]["lang"]["title"] = {
-        "en": "English",
-    }
-    full_record["metadata"]["additional_descriptions"][0]["type"]["title"] = {
-        "de": "Technische Informationen",
-        "en": "Technical info",
-    }
-    full_record["metadata"]["additional_titles"][0]["lang"]["title"] = {
-        "en": "English",
-    }
-    full_record["metadata"]["additional_titles"][0]["type"]["title"] = {
-        "de": "Alternativer Titel",
-        "en": "Alternative title",
-    }
-    full_record["metadata"]["contributors"][0]["affiliations"].append(
-        {
-            "name": "TU Wien",
-        }
-    )
-    full_record["metadata"]["contributors"][0]["role"]["title"] = {
-        "de": "DatenmanagerIn",
-        "en": "Data manager",
-    }
-    # additional contributor without ORCID
-    full_record["metadata"]["contributors"].append(
-        {
-            "person_or_org": {
-                "family_name": "Dirk",
-                "given_name": "Dirkin",
-                "name": "Dirk, Dirkin",
-                "type": "personal",
-            },
-            "role": {
-                "id": "other",
-                "title": {
-                    "de": "VerteilerIn",
-                    "en": "Other",
-                },
-            },
-        }
-    )
-    # additional creator without ORCID
-    full_record["metadata"]["creators"].append(
-        {
-            "person_or_org": {
-                "family_name": "Tom",
-                "given_name": "Blabin",
-                "name": "Tom, Blabin",
-                "type": "personal",
-            }
-        }
-    )
-    full_record["metadata"]["dates"][0]["type"]["title"] = {
-        "de": "Verfgbar",
-        "en": "Available",
-    }
-    full_record["metadata"]["funding"][0]["award"] = {
-        "identifiers": [
-            {
-                "identifier": "https://sandbox.zenodo.org/",
-                "scheme": "url",
-            }
-        ],
-        "number": "111023",
-        "title": {
-            "en": "Launching of the research program on meaning processing",
-        },
-    }
-    full_record["metadata"]["funding"][0]["funder"]["name"] = "Academy of Finland"
-    full_record["metadata"]["languages"][0]["title"] = {
-        "en": "Danish",
-    }
-    full_record["metadata"]["languages"][1]["title"] = {
-        "en": "English",
-    }
-    full_record["metadata"]["related_identifiers"][0]["relation_type"]["title"] = {
-        "de": "Setzt fort",
-        "en": "Continues",
-    }
-    full_record["metadata"]["related_identifiers"][0]["resource_type"]["title"] = {
-        "de": "Unterrichtseinheit",
-        "en": "Lesson",
-    }
-    full_record["metadata"]["rights"][1]["icon"] = "cc-by-icon"
-    full_record["metadata"]["rights"][1]["props"] = {
-        "scheme": "spdx",
-        "url": "https://creativecommons.org/licenses/by/4.0/legalcode",
-    }
-    full_record["metadata"]["subjects"][0] = {
-        "id": "http://www.oecd.org/science/inno/38235147.pdf?1.6",
-        "scheme": "FOS",
-        "subject": "Biological sciences",
-    }
-    full_record["pids"]["oai"] = {
-        "identifier": "oai:invenio-rdm.com:vs40t-1br10",
-        "provider": "oai",
-    }
-
-    return full_record
-
-
-def test_dcat_serializer(running_app, full_modified_record):
+def test_dcat_serializer(running_app, enhanced_full_record):
     expected_data = [
         "<?xml version='1.0' encoding='utf-8'?>",
         '<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:adms="http://www.w3.org/ns/adms#" xmlns:bibo="http://purl.org/ontology/bibo/" xmlns:citedcat="https://w3id.org/citedcat-ap/" xmlns:dct="http://purl.org/dc/terms/" xmlns:dctype="http://purl.org/dc/dcmitype/" xmlns:dcat="http://www.w3.org/ns/dcat#" xmlns:foaf="http://xmlns.com/foaf/0.1/" xmlns:gsp="http://www.opengis.net/ont/geosparql#" xmlns:locn="http://www.w3.org/ns/locn#" xmlns:org="http://www.w3.org/ns/org#" xmlns:owl="http://www.w3.org/2002/07/owl#" xmlns:prov="http://www.w3.org/ns/prov#" xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#" xmlns:skos="http://www.w3.org/2004/02/skos/core#" xmlns:vcard="http://www.w3.org/2006/vcard/ns#" xmlns:wdrs="http://www.w3.org/2007/05/powder-s#">',  # noqa
@@ -257,5 +152,5 @@ def test_dcat_serializer(running_app, full_modified_record):
     ]
 
     serializer = DCATSerializer()
-    serialized_record = serializer.serialize_object(full_modified_record)
+    serialized_record = serializer.serialize_object(enhanced_full_record)
     assert serialized_record == "\n".join(expected_data)

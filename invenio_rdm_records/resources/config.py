@@ -80,7 +80,7 @@ record_serializers = {
         StringCitationSerializer(url_args_retriever=csl_url_args_retriever),
         headers={"content-type": "text/plain"},
     ),
-    "text/turtle": ResponseHandler(DCATSerializer()),
+    "application/dcat+xml": ResponseHandler(DCATSerializer()),
 }
 
 
