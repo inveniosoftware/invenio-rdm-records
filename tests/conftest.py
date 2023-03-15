@@ -325,7 +325,7 @@ def app_config(app_config):
     app_config["FILES_REST_DEFAULT_STORAGE_CLASS"] = "L"
 
     # Communities
-    app_config["COMMUNITY_SERVICE_COMPONENTS"] = CommunityServiceComponents
+    app_config["COMMUNITIES_SERVICE_COMPONENTS"] = CommunityServiceComponents
 
     # TODO: Remove when https://github.com/inveniosoftware/pytest-invenio/pull/95 is
     #       merged and released.
