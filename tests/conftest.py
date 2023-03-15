@@ -320,7 +320,7 @@ def app_config(app_config):
     app_config["FILES_REST_DEFAULT_STORAGE_CLASS"] = "L"
 
     # Communities
-    app_config["COMMUNITY_SERVICE_COMPONENTS"] = CommunityServiceComponents
+    app_config["COMMUNITIES_SERVICE_COMPONENTS"] = CommunityServiceComponents
 
     return app_config
 
