@@ -23,6 +23,7 @@ from flask_resources import (
     resource_requestctx,
 )
 from invenio_communities.communities.resources import CommunityResourceConfig
+from invenio_communities.communities.resources.config import community_error_handlers
 from invenio_drafts_resources.resources import RecordResourceConfig
 from invenio_i18n import lazy_gettext as _
 from invenio_records.systemfields.relations import InvalidRelationValue
@@ -270,7 +271,7 @@ class RDMRecordCommunitiesResourceConfig(CommunityResourceConfig, ConfiguratorMi
     routes = {"list": "/<pid_value>/communities"}
 
     error_handlers = {
-        **CommunityResourceConfig.error_handlers,
+        **community_error_handlers,
         MaxNumberCommunitiesExceeded: create_error_handler(
             lambda e: HTTPJSONException(
                 code=400,
