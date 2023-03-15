@@ -17,6 +17,7 @@ from invenio_vocabularies.proxies import current_service as vocabulary_service
 from marshmallow import Schema, fields, missing, pre_dump
 from marshmallow_utils.fields import SanitizedUnicode, StrippedHTML
 
+from ..schemas import CommonFieldsMixin
 from ..utils import get_preferred_identifier
 
 
@@ -46,7 +47,7 @@ def add_if_not_none(year, month, day):
     return _list
 
 
-class CSLJSONSchema(BaseSerializerSchema):
+class CSLJSONSchema(BaseSerializerSchema, CommonFieldsMixin):
     """CSL Marshmallow Schema."""
 
     id_ = SanitizedUnicode(data_key="id", attribute="id")
@@ -58,7 +59,7 @@ class CSLJSONSchema(BaseSerializerSchema):
     language = fields.Method("get_language")
     version = SanitizedUnicode(attribute="metadata.version")
     note = fields.Method("get_note")
-    doi = fields.Str(attribute="pids.doi.identifier", data_key="DOI")
+    doi = fields.Method("get_doi", data_key="DOI")
     isbn = fields.Method("get_isbn", data_key="ISBN")
     issn = fields.Method("get_issn", data_key="ISSN")
     publisher = SanitizedUnicode(attribute="metadata.publisher")
@@ -111,7 +112,7 @@ class CSLJSONSchema(BaseSerializerSchema):
         """Get ISBN."""
         identifiers = obj["metadata"].get("identifiers", [])
         for identifier in identifiers:
-            if identifier["scheme"] == "ISBN":
+            if identifier["scheme"] == "isbn":
                 return identifier["identifier"]
 
         return missing
@@ -120,7 +121,7 @@ class CSLJSONSchema(BaseSerializerSchema):
         """Get ISSN."""
         identifiers = obj["metadata"].get("identifiers", [])
         for identifier in identifiers:
-            if identifier["scheme"] == "ISSN":
+            if identifier["scheme"] == "issn":
                 return identifier["identifier"]
 
         return missing
