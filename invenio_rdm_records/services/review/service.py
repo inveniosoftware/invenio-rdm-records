@@ -9,30 +9,27 @@
 """RDM Review Service."""
 
 from flask import current_app
-from invenio_communities import current_communities
-from invenio_communities.communities.records.systemfields.access import CommunityAccess
-from invenio_communities.members.records.api import Member
-from invenio_communities.proxies import current_communities
 from invenio_drafts_resources.services.records import RecordService
 from invenio_i18n import lazy_gettext as _
 from invenio_records_resources.services.uow import (
+    NotificationOp,
     RecordCommitOp,
     RecordIndexOp,
-    TaskOp,
     unit_of_work,
 )
 from invenio_requests import current_request_type_registry, current_requests_service
 from invenio_requests.resolvers.registry import ResolverRegistry
+from invenio_users_resources.records.api import UserAggregate
 from marshmallow import ValidationError
 
 from invenio_rdm_records.proxies import current_rdm_records
 from invenio_rdm_records.requests.decorators import request_next_link
 
+from ...notifications.utils import (
+    CommunitySubmissionNotificationBuilder,
+    CommunitySubmissionSubmittedNotificationBuilder,
+)
 from ..errors import ReviewExistsError, ReviewNotFoundError, ReviewStateError
-
-from invenio_requests.notifications.proxies import current_notifications_manager
-from invenio_requests.notifications.models import Notification
-from invenio_requests.notifications.events import CommunitySubmissionSubmittedEvent, CommunitySubmissionCreatedEvent
 
 
 class ReviewService(RecordService):
@@ -97,13 +94,13 @@ class ReviewService(RecordService):
         uow.register(RecordCommitOp(record.parent))
 
         # During dev only
-        self._send_notification(
-            CommunitySubmissionCreatedEvent,
-            request_item,
-            uow,
-            community = request_item._request.receiver.resolve(),
+        notification = CommunitySubmissionNotificationBuilder(
+            trigger=self._create_notification_trigger(request_item._request),
             record=record,
-        )
+            community=request_item._request.receiver.resolve(),
+            request=request_item._request,
+        ).build()
+        uow.register(NotificationOp(notification))
 
         return request_item
 
@@ -208,56 +205,20 @@ class ReviewService(RecordService):
             request_item = current_rdm_records.community_inclusion_service.include(
                 identity, community, request, uow
             )
+        else:
+            notification = CommunitySubmissionSubmittedNotificationBuilder(
+                trigger=self.create_notification_trigger(request_item._request),
+                record=draft,
+                community=community,
+                request=request_item._request,
+            )
+
+            uow.register(NotificationOp(notification=notification))
 
         uow.register(RecordIndexOp(draft, indexer=self.indexer))
         return request_item
 
-
-    def _send_notification(self, type, request_item, uow, **kwargs):
-        from invenio_access.permissions import system_identity
-        from invenio_users_resources.records.api import UserAggregate
-
-        request = request_item._request
-
-        def create_trigger():
-            created_by = request.created_by.resolve()
-            # User class does not have a dumps method
-            return UserAggregate.from_user(created_by).dumps()
-
-        notification = Notification()
-        notification.type = type.handling_key    
-        notification.trigger = create_trigger()
-        recipients = []
-
-        community = kwargs.get("community")
-        record = kwargs.get("record")
-
-        notification.data.update({
-            "community": current_communities.service.read(identity=system_identity, id_=community.id).to_dict(),
-            "request": request_item.to_dict(),
-            # Probably want to dump via service schema, so it has all the links in it as well (if the record is needed at all?)
-            "record": record.dumps(),
-        })
-
-        # construct UI link of request review for use in template (there are request links for API but none for UI)
-        notification.data["request"]["links"].setdefault(
-            "self_html", f'{notification.data["community"]["links"]["self_html"]}/requests/{notification.data["request"]["id"]}',
-        )
-        
-        # fetching members based on event (ideally would be defined in the policy as a callable and pass the uow and kwargs?)
-        # passing the notification would allow the callable to modify it, which is undesired
-        if type in [CommunitySubmissionCreatedEvent, CommunitySubmissionSubmittedEvent]:
-            members = Member.get_members(community.id)
-            # get owner, managers and curators. There should be an easier way
-            recipients = [
-                m.relations.user.dereference() for m in members
-                if m.user_id
-                and m.role in ["owner", "manager", "curator"] #
-            ]
-
-        notification.recipients = recipients
-        if not notification.recipients:
-            return
-
-        # should register in uow
-        current_notifications_manager.broadcast(notification=notification)
+    def _create_notification_trigger(self, request):
+        created_by = request.created_by.resolve()
+        # User class does not have a dumps method
+        return UserAggregate.from_user(created_by).dumps()
