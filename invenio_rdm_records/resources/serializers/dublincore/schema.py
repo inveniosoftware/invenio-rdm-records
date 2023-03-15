@@ -8,6 +8,7 @@
 """Dublin Core based Schema for Invenio RDM Records."""
 
 import bleach
+import idutils
 from invenio_access.permissions import system_identity
 from invenio_vocabularies.proxies import current_service as vocabulary_service
 from marshmallow import fields, missing
@@ -39,11 +40,31 @@ class DublinCoreSchema(BaseSchema):
     locations = fields.Method("get_locations")
     formats = fields.Method("get_formats")
 
+    def _transform_identifier(self, identifier, scheme, prefix_scheme=True):
+        """Transform the raw identifier into a URL.
+
+        If the identifier can't be transformed into a URL and ``prefix_scheme`` is set
+        to ``True``, the identifier will take the shape ``{scheme}:{identifier}``.
+        Otherwise, the original identifier will be returned.
+        """
+        result = idutils.to_url(identifier, scheme, url_scheme="https")
+        if not result:
+            if prefix_scheme and not identifier.startswith(scheme):
+                result = f"{scheme}:{identifier}"
+            else:
+                result = identifier
+
+        return result
+
     def get_identifiers(self, obj):
         """Get identifiers."""
         items = []
-        items.extend(i["identifier"] for i in obj["metadata"].get("identifiers", []))
-        items.extend(p["identifier"] for p in obj.get("pids", {}).values())
+
+        for scheme, pid in obj.get("pids", {}).items():
+            items.append(self._transform_identifier(pid["identifier"], scheme))
+
+        for id_ in obj["metadata"].get("identifiers", []):
+            items.append(self._transform_identifier(id_["identifier"], id_["scheme"]))
 
         return items or missing
 
@@ -56,11 +77,11 @@ class DublinCoreSchema(BaseSchema):
 
         # Alternate identifiers
         for a in obj["metadata"].get("alternate_identifiers", []):
-            rels.append(f"{a['scheme']}:{a['identifier']}")
+            rels.append(self._transform_identifier(a["identifier"], a["scheme"]))
 
         # Related identifiers
         for a in obj["metadata"].get("related_identifiers", []):
-            rels.append(f"{a['scheme']}:{a['identifier']}")
+            rels.append(self._transform_identifier(a["identifier"], a["scheme"]))
 
         return rels or missing
 
