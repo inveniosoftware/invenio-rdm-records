@@ -769,6 +769,48 @@
             "type": "keyword"
           }
         }
+      },
+      "stats": {
+        "properties": {
+          "this_version": {
+            "properties": {
+              "views": {
+                "type": "integer"
+              },
+              "unique_views": {
+                "type": "integer"
+              },
+              "downloads": {
+                "type": "integer"
+              },
+              "unique_downloads": {
+                "type": "integer"
+              },
+              "data_volume": {
+                "type": "double"
+              }
+            }
+          },
+          "all_versions": {
+            "properties": {
+              "views": {
+                "type": "integer"
+              },
+              "unique_views": {
+                "type": "integer"
+              },
+              "downloads": {
+                "type": "integer"
+              },
+              "unique_downloads": {
+                "type": "integer"
+              },
+              "data_volume": {
+                "type": "double"
+              }
+            }
+          }
+        }
       }
     }
   }
