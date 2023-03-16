@@ -8,7 +8,7 @@
 """Entity resolver for records aware of drafts and records."""
 
 from invenio_pidstore.errors import PIDUnregistered
-from invenio_records_resources.references.resolvers.records import (
+from invenio_records_resources.references.entity_resolvers import (
     RecordProxy,
     RecordResolver,
 )
