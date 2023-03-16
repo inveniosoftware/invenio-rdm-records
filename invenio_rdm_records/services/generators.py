@@ -43,7 +43,7 @@ class ConditionalGenerator(Generator):
     @abstractmethod
     def _condition(self, **kwargs):
         """Condition to choose generators set."""
-        pass
+        raise NotImplementedError()
 
     def _generators(self, record, **kwargs):
         """Get the "then" or "else" generators."""
