@@ -11,6 +11,7 @@ from .access import GrantTokensDumperExt
 from .edtf import EDTFDumperExt, EDTFListDumperExt
 from .locations import LocationsDumper
 from .pids import PIDsDumperExt
+from .statistics import StatisticsDumperExt
 
 __all__ = (
     "EDTFDumperExt",
@@ -18,4 +19,5 @@ __all__ = (
     "PIDsDumperExt",
     "GrantTokensDumperExt",
     "LocationsDumper",
+    "StatisticsDumperExt",
 )

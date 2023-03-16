@@ -36,7 +36,12 @@ from invenio_vocabularies.records.api import Vocabulary
 from invenio_vocabularies.records.systemfields.relations import CustomFieldsRelation
 
 from . import models
-from .dumpers import EDTFDumperExt, EDTFListDumperExt, GrantTokensDumperExt
+from .dumpers import (
+    EDTFDumperExt,
+    EDTFListDumperExt,
+    GrantTokensDumperExt,
+    StatisticsDumperExt,
+)
 from .systemfields import HasDraftCheckField, ParentRecordAccessField, RecordAccessField
 from .systemfields.draft_status import DraftStatus
 
@@ -86,6 +91,7 @@ class CommonFieldsMixin:
             EDTFListDumperExt("metadata.dates", "date"),
             RelationDumperExt("relations"),
             CustomFieldsDumperExt(fields_var="RDM_CUSTOM_FIELDS"),
+            StatisticsDumperExt("stats"),
         ]
     )
 
