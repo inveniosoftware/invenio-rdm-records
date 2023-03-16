@@ -322,6 +322,11 @@ def app_config(app_config):
     # Communities
     app_config["COMMUNITY_SERVICE_COMPONENTS"] = CommunityServiceComponents
 
+    # TODO: Remove when https://github.com/inveniosoftware/pytest-invenio/pull/95 is
+    #       merged and released.
+    # Disable rate-limiting
+    app_config["RATELIMIT_ENABLED"] = False
+
     return app_config
 
 
