@@ -19,7 +19,15 @@ from ..utils import get_vocabulary_props
 
 
 class DublinCoreSchema(BaseSchema):
-    """Schema for Dublin Core in JSON."""
+    """Schema for Dublin Core in JSON.
+
+    The identifier handling behavior is determined by the schema's ``context``,
+    particularly by the values ``urlize_identifiers`` and ``prefix_identifier_schemes``.
+    Both of them are expected to be boolean values, and determine whether or not
+    identifiers should be transformed into URLs if possible (like DOIs), and/or
+    whether the scheme should be used as prefix (i.e. ``{scheme}:{identifier}``)
+    for the identifier as fallback.
+    """
 
     contributors = fields.Method("get_contributors")
     titles = fields.Method("get_titles")
@@ -40,21 +48,28 @@ class DublinCoreSchema(BaseSchema):
     locations = fields.Method("get_locations")
     formats = fields.Method("get_formats")
 
-    def _transform_identifier(self, identifier, scheme, prefix_scheme=True):
-        """Transform the raw identifier into a URL.
+    def _transform_identifier(self, identifier, scheme):
+        """Transform the raw identifier according to the rules in the ``context``.
 
-        If the identifier can't be transformed into a URL and ``prefix_scheme`` is set
-        to ``True``, the identifier will take the shape ``{scheme}:{identifier}``.
-        Otherwise, the original identifier will be returned.
+        If the identifier can be turned into a URL (like DOIs and handles) and the
+        ``context`` doesn't have a falsy ``urlize_identifiers`` value, it will
+        be turned into a URL.
+        Otherwise, and if the ``context`` has a truthy value for
+        ``prefix_identifier_schemes``, the identifier will be prefixed with its scheme
+        if it isn't prefixed yet.
+        As a last resort, the original identifier will be returned as is.
         """
-        result = idutils.to_url(identifier, scheme, url_scheme="https")
-        if not result:
-            if prefix_scheme and not identifier.startswith(scheme):
-                result = f"{scheme}:{identifier}"
-            else:
-                result = identifier
+        urlize = self.context.get("urlize_identifiers", True)
+        prefix_scheme = self.context.get("prefix_identifier_schemes", True)
+        result = None
 
-        return result
+        if urlize:
+            result = idutils.to_url(identifier, scheme, url_scheme="https")
+
+        if not result and prefix_scheme and not identifier.startswith(scheme):
+            result = f"{scheme}:{identifier}"
+
+        return result or identifier
 
     def get_identifiers(self, obj):
         """Get identifiers."""

@@ -23,7 +23,7 @@ class DublinCoreJSONSerializer(MarshmallowSerializer):
             format_serializer_cls=JSONSerializer,
             object_schema_cls=DublinCoreSchema,
             list_schema_cls=BaseListSchema,
-            **options
+            **options,
         )
 
 
@@ -41,4 +41,5 @@ class DublinCoreXMLSerializer(MarshmallowSerializer):
             object_schema_cls=DublinCoreSchema,
             list_schema_cls=BaseListSchema,
             encoder=simpledc.tostring,
+            **options,
         )

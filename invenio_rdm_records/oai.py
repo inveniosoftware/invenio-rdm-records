@@ -27,9 +27,9 @@ from .resources.serializers.marcxml import MARCXMLSerializer
 from .services.pids.providers.oai import OAIPIDProvider
 
 
-def dublincore_etree(pid, record):
+def dublincore_etree(pid, record, **serializer_kwargs):
     """Get DublinCore XML etree for OAI-PMH."""
-    json = DublinCoreXMLSerializer().dump_obj(record["_source"])
+    json = DublinCoreXMLSerializer(**serializer_kwargs).dump_obj(record["_source"])
     return simpledc.dump_etree(json)
 
 
