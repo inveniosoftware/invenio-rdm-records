@@ -36,7 +36,6 @@ class ImprintCF(BaseCF):
                     },
                 ),
                 "pages": SanitizedUnicode(),
-                "year": SanitizedUnicode(),
                 "place": SanitizedUnicode(),
             }
         )

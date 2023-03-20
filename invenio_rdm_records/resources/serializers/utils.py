@@ -48,3 +48,4 @@ def get_preferred_identifier(priority, identifiers):
             return identifiers[idx]
 
     return None
+
