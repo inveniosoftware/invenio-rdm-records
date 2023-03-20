@@ -18,10 +18,35 @@ Implements the following fields:
 
 from invenio_i18n import lazy_gettext as _
 from invenio_records_resources.services.custom_fields import BaseCF
-from marshmallow import fields, validate
+from marshmallow import fields
 from marshmallow_utils.fields import SanitizedUnicode
 
+from invenio_rdm_records.contrib.journal.custom_fields import DumpProcessorMixin
 from invenio_rdm_records.services.schemas.metadata import _valid_url
+
+
+class MeetingDublinCoreProcessor(DumpProcessorMixin):
+    """Dump processor for dublin core serialization of 'Meeting' custom field."""
+
+    def post_dump(self, data, original={}, **kwargs):
+        """Adds serialized meeting data to the input data under the 'sources' key."""
+        custom_fields = original.get("custom_fields", {})
+        meeting_data = custom_fields.get("meeting:meeting", {})
+
+        parts = [
+            meeting_data.get("acronym"),
+            meeting_data.get("title"),
+            meeting_data.get("place"),
+            meeting_data.get("dates"),
+        ]
+
+        # Update input data with serialized data
+        serialized_data = ", ".join([x for x in parts if x])
+        sources = data.get("sources", [])
+        sources.append(serialized_data)
+        data["sources"] = sources
+
+        return data
 
 
 class MeetingCF(BaseCF):
