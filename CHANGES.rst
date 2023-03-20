@@ -10,6 +10,14 @@
 Changes
 =======
 
+Version 2.8.0 (released 2023-03-20)
+
+- fix marcxml format incompatibility
+- add DCAT-AP export format serializer
+- add record access configuration flag
+- normalize commmunity config variable names
+- configure community service error handlers
+
 Version 2.7.0 (released 2023-03-13)
 
 - record: implement multiple communities inclusion via new request type
