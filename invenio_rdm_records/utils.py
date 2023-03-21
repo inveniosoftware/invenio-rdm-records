@@ -7,6 +7,7 @@
 
 """Utility functions."""
 
+from flask import current_app
 from flask_security.confirmable import confirm_user
 from flask_security.utils import hash_password
 from invenio_accounts.proxies import current_datastore
@@ -23,7 +24,14 @@ def get_or_create_user(email):
             username=email.split("@")[0],
             password=hash_password("123456"),
             active=True,
-            preferences=dict(visibility="public", email_visibility="public"),
+            preferences=dict(
+                visibility="public",
+                email_visibility="public",
+                locale=current_app.config.get("BABEL_DEFAULT_LOCALE", "en"),
+                timezone=current_app.config.get(
+                    "BABEL_DEFAULT_TIMEZONE", "Europe/Zurich"
+                ),
+            ),
         )
         confirm_user(user)
         db.session.commit()
