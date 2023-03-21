@@ -3,6 +3,7 @@
 # Copyright (C) 2019 CERN.
 # Copyright (C) 2019 Northwestern University.
 # Copyright (C) 2021-2023 Graz University of Technology.
+# Copyright (C) 2023 TU Wien.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
@@ -197,6 +198,12 @@ RDM_SORT_OPTIONS = {
         title=_("Least recently updated"),
         fields=["updated"],
     ),
+    "mostviewed": dict(
+        title=_("Most viewed"), fields=["-stats.all_versions.unique_views"]
+    ),
+    "mostdownloaded": dict(
+        title=_("Most downloaded"), fields=["-stats.all_versions.unique_downloads"]
+    ),
 }
 """Definitions of available record sort options.
 
@@ -211,7 +218,14 @@ RDM_SORT_OPTIONS = {
 
 RDM_SEARCH = {
     "facets": ["access_status", "resource_type"],
-    "sort": ["bestmatch", "newest", "oldest", "version"],
+    "sort": [
+        "bestmatch",
+        "newest",
+        "oldest",
+        "version",
+        "mostviewed",
+        "mostdownloaded",
+    ],
 }
 """Record search configuration.
 
