@@ -2,7 +2,7 @@
 #
 # Copyright (C) 2020-2021 CERN.
 # Copyright (C) 2020-2021 Northwestern University.
-# Copyright (C) 2021 TU Wien.
+# Copyright (C) 2021-2023 TU Wien.
 # Copyright (C) 2021-2023 Graz University of Technology.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
@@ -25,6 +25,7 @@ from .files import FilesSchema
 from .metadata import MetadataSchema
 from .parent import RDMParentSchema
 from .pids import PIDSchema
+from .stats import StatsSchema
 from .versions import VersionsSchema
 
 
@@ -70,7 +71,7 @@ class RDMRecordSchema(RecordSchema, FieldPermissionsMixin):
     is_published = fields.Boolean(dump_only=True)
     status = fields.String(dump_only=True)
 
-    # stats = NestedAttribute(StatsSchema, dump_only=True)
+    stats = NestedAttribute(StatsSchema, dump_only=True)
     # schema_version = fields.Interger(dump_only=True)
 
     @post_dump
