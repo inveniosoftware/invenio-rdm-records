@@ -47,7 +47,7 @@ CODEMETA_CUSTOM_FIELDS = [
 ]
 
 CODEMETA_CUSTOM_FIELDS_UI = {
-    "section": _("CodeMeta"),
+    "section": _("Software"),
     "fields": [
         dict(
             field="code:codeRepository",
