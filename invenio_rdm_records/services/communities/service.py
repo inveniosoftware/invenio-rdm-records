@@ -70,7 +70,7 @@ class RecordCommunitiesService(Service, RecordIndexerMixin):
         )
         return next(results.hits)["id"] if results.total > 0 else None
 
-    def _include(self, identity, community_id, record, uow):
+    def _include(self, identity, community_id, comment, require_review, record, uow):
         """Create request to add the community to the record."""
         already_included = community_id in record.parent.communities
         if already_included:
@@ -89,10 +89,10 @@ class RecordCommunitiesService(Service, RecordIndexerMixin):
             {"community": community_id}
         ).resolve()
 
-        no_comments = {}  # empty `data` to avoid adding comments in the request
+        data = {"payload": {"content": comment, "format": "html"}} if comment else {}
         request_item = current_requests_service.create(
             identity,
-            no_comments,
+            data,
             type_,
             receiver,
             topic=record,
@@ -100,12 +100,14 @@ class RecordCommunitiesService(Service, RecordIndexerMixin):
         )
         # create review request
         request_item = current_rdm_records.community_inclusion_service.submit(
-            identity, record, community, request_item._request, no_comments, uow
+            identity, record, community, request_item._request, data, uow
         )
         # include directly when allowed
-        return current_rdm_records.community_inclusion_service.include(
-            identity, community, request_item._request, uow
-        )
+        if not require_review:
+            request_item = current_rdm_records.community_inclusion_service.include(
+                identity, community, request_item._request, uow
+            )
+        return request_item
 
     @unit_of_work()
     def add(self, identity, id_, data, uow):
@@ -126,12 +128,16 @@ class RecordCommunitiesService(Service, RecordIndexerMixin):
         success = []
         for community in communities:
             community_id = community["id"]
+            comment = community.get("comment", "")
+            require_review = community.get("require_review", False)
 
             result = {
                 "community": community_id,
             }
             try:
-                request_item = self._include(identity, community_id, record, uow)
+                request_item = self._include(
+                    identity, community_id, comment, require_review, record, uow
+                )
                 result["request"] = str(request_item.data["id"])
                 success.append(result)
             except (NoResultFound, PIDDoesNotExistError):
@@ -185,11 +191,12 @@ class RecordCommunitiesService(Service, RecordIndexerMixin):
             raise_errors=True,
         )
         communities = valid_data["communities"]
-
+        commit_changes = False
         for community in communities:
             community_id = community["id"]
             try:
                 self._remove(identity, community_id, record)
+                commit_changes = True
             except RecordCommunityMissing:
                 errors.append(
                     {
@@ -204,9 +211,11 @@ class RecordCommunitiesService(Service, RecordIndexerMixin):
                         "message": _("Permission denied."),
                     }
                 )
-
-        uow.register(RecordCommitOp(record.parent))
-        uow.register(RecordIndexOp(record, indexer=self.indexer, index_refresh=True))
+        if commit_changes:
+            uow.register(RecordCommitOp(record.parent))
+            uow.register(
+                RecordIndexOp(record, indexer=self.indexer, index_refresh=True)
+            )
 
         return errors
 

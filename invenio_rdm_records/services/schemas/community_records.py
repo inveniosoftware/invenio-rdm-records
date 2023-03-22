@@ -8,6 +8,7 @@
 """Record communities schema."""
 
 from marshmallow import Schema, fields, post_load, validate
+from marshmallow_utils.fields import StrippedHTML
 
 from invenio_rdm_records.services.errors import MaxNumberCommunitiesExceeded
 
@@ -15,7 +16,9 @@ from invenio_rdm_records.services.errors import MaxNumberCommunitiesExceeded
 class CommunitySchema(Schema):
     """Schema to define a community id."""
 
-    id = fields.String()
+    id = fields.String(required=True)
+    comment = StrippedHTML()
+    require_review = fields.Boolean()
 
 
 class RecordCommunitiesSchema(Schema):

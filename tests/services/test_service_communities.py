@@ -6,10 +6,11 @@
 # it under the terms of the MIT License; see LICENSE file for more details.
 
 """Test record's communities service."""
+import time
 
 import pytest
 from invenio_records_resources.services.errors import PermissionDeniedError
-from invenio_requests import current_requests_service
+from invenio_requests import current_events_service, current_requests_service
 from marshmallow import ValidationError
 
 from invenio_rdm_records.proxies import (
@@ -30,6 +31,12 @@ def service():
 def requests_service():
     """Get the current RDM requests service."""
     return current_requests_service
+
+
+@pytest.fixture()
+def events_service():
+    """Get the current RDM events service."""
+    return current_events_service
 
 
 @pytest.fixture()
@@ -157,6 +164,74 @@ def test_community_owner_add_record_to_communities(
         (community.id, 1),
         (open_review_community.id, 1),
         (closed_review_community.id, 0),
+    ]:
+        results = community_records_service.search(
+            anyuser_identity,
+            community_id=str(community_id),
+        )
+        assert results.to_dict()["hits"]["total"] == expected_n_results
+
+
+def test_community_owner_add_record_to_communities_forcing_review_with_comment(
+    curator,
+    inviter,
+    community,
+    open_review_community,
+    record_community,
+    service,
+    rdm_record_service,
+    requests_service,
+    events_service,
+    anyuser_identity,
+    community_records_service,
+):
+    """Test owner addition of record to open review by forcing a review with a comment."""
+    test_comment = "Could someone review it?"
+    data = {
+        "communities": [
+            {
+                "id": open_review_community.id,
+                "require_review": True,
+                "comment": test_comment,
+            },
+        ]
+    }
+    inviter(curator.id, open_review_community.id, "curator")
+    record = record_community.create_record(uploader=curator)
+
+    results = service.add(curator.identity, record.pid.pid_value, data)
+    assert not results["errors"]
+    assert len(results["success"]) == 1
+
+    record_item = rdm_record_service.read(curator.identity, record.pid.pid_value)
+    record_communities = record_item.data["parent"]["communities"]["ids"]
+    # assert that the community was not added
+    assert len(record_communities) == 1
+    assert community.id in record_communities
+    assert open_review_community.id not in record_communities
+
+    # assert that the request of the curator is in review ("submitted")
+    for result in results["success"]:
+        community_id = result["community"]
+        request_id = result["request"]
+        request = requests_service.read(curator.identity, request_id).to_dict()
+        assert request["type"] == CommunityInclusion.type_id
+        if community_id == open_review_community.id:
+            assert request["status"] == "submitted"
+            assert request["is_open"] is True
+        else:
+            raise
+        # TODO FIXME: Small delay to ensure that comment is indexed in ES
+        time.sleep(3)
+        comments = events_service.search(curator.identity, request_id)
+        assert comments.total == 1
+        comment_content = comments.to_dict()["hits"]["hits"][0]["payload"]["content"]
+        assert comment_content == test_comment
+
+    # check search results
+    for community_id, expected_n_results in [
+        (community.id, 1),
+        (open_review_community.id, 0),
     ]:
         results = community_records_service.search(
             anyuser_identity,

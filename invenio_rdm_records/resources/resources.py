@@ -202,7 +202,7 @@ class RDMRecordCommunitiesResource(ErrorHandlersMixin, Resource):
             data=resource_requestctx.data,
         )
 
-        return response, 200
+        return response, 200 if response["success"] else 400
 
     @request_view_args
     @request_data
