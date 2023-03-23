@@ -49,5 +49,9 @@ class StatisticsDumperExt(SearchDumperExt):
             current_app.logger.warning(e)
 
     def load(self, data, record_cls):
-        """Keep the download & view statistics in the data dictionary."""
+        """Keep the download & view statistics in the data dictionary.
+
+        This is relevant for the "RecordStatisticsField" system field,
+        which uses this entry in the record's data.
+        """
         pass

@@ -11,10 +11,12 @@
 from .access import ParentRecordAccessField, RecordAccessField
 from .draft_status import DraftStatus
 from .has_draftcheck import HasDraftCheckField
+from .statistics import RecordStatisticsField
 
 __all__ = (
     "DraftStatus",
     "HasDraftCheckField",
     "ParentRecordAccessField",
     "RecordAccessField",
+    "RecordStatisticsField",
 )
