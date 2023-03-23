@@ -58,12 +58,18 @@ def get_record_stats(recid, parent_recid):
 
     stats = {
         "this_version": {
-            **views,
-            **downloads,
+            "views": views["views"],
+            "unique_views": views["unique_views"],
+            "downloads": downloads["downloads"],
+            "unique_downloads": downloads["unique_downloads"],
+            "data_volume": downloads["data_volume"],
         },
         "all_versions": {
-            **views_all,
-            **downloads_all,
+            "views": views_all["views"],
+            "unique_views": views_all["unique_views"],
+            "downloads": downloads_all["downloads"],
+            "unique_downloads": downloads_all["unique_downloads"],
+            "data_volume": downloads_all["data_volume"],
         },
     }
 
