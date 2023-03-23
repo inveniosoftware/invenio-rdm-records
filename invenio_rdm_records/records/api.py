@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # Copyright (C) 2020 CERN.
-# Copyright (C) 2021 TU Wien.
+# Copyright (C) 2021-2023 TU Wien.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
@@ -42,7 +42,12 @@ from .dumpers import (
     GrantTokensDumperExt,
     StatisticsDumperExt,
 )
-from .systemfields import HasDraftCheckField, ParentRecordAccessField, RecordAccessField
+from .systemfields import (
+    HasDraftCheckField,
+    ParentRecordAccessField,
+    RecordAccessField,
+    RecordStatisticsField,
+)
 from .systemfields.draft_status import DraftStatus
 
 
@@ -293,6 +298,8 @@ class RDMRecord(CommonFieldsMixin, Record):
     has_draft = HasDraftCheckField(RDMDraft)
 
     status = DraftStatus()
+
+    stats = RecordStatisticsField()
 
 
 RDMFileRecord.record_cls = RDMRecord
