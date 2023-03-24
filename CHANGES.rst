@@ -10,6 +10,13 @@
 Changes
 =======
 
+Version 2.9.0 (released 2023-03-24)
+
+- communities: return ghost parent community when cannot be resolved
+- contrib: add journal and meeting sort options
+- contrib: updated custom fields UI widgets
+- custom_fields: rename CodeMeta to Software
+
 Version 2.8.0 (released 2023-03-20)
 
 - fix marcxml format incompatibility
