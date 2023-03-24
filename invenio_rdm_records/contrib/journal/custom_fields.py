@@ -12,19 +12,19 @@ Implements the following fields:
 - journal.volume
 """
 
-from idutils import is_issn
 from abc import ABC
 
+from idutils import is_issn
 from invenio_i18n import lazy_gettext as _
 from invenio_records_resources.services.custom_fields import BaseCF
 from marshmallow import fields, missing
 from marshmallow_utils.fields import SanitizedUnicode
 
 
-class DumpProcessorMixin(ABC):
-    """Mixin class that defines pre_dump and post_dump methods to extend records serialization."""
+class FieldDumper(ABC):
+    """Abstract class that defines an interface for pre_dump and post_dump methods to extend records serialization."""
 
-    def post_dump(self, data, original={}, **kwargs):
+    def post_dump(self, data, original=None, **kwargs):
         """Hook called after the marshmallow serialization of the record.
 
         :param data: The dumped record data.
@@ -34,7 +34,7 @@ class DumpProcessorMixin(ABC):
         """
         return data
 
-    def pre_dump(self, data, original={}, **kwargs):
+    def pre_dump(self, data, original=None, **kwargs):
         """
         Hook called before the marshmallow serialization of the record.
 
@@ -46,12 +46,35 @@ class DumpProcessorMixin(ABC):
         return data
 
 
-class JournalDataciteProcessor(DumpProcessorMixin):
+class FieldLoader(ABC):
+    """Abstract class that defines an interface for pre_load and post_load methods to extend records deserialization."""
+
+    def post_load(data, **kwargs):
+        """Hook called after the marshmallow deserialization of the record.
+
+        :param data: The loaded record data, already deserialized.
+        :param kwargs: Additional keyword arguments.
+        :returns: The deserialized record data.
+        """
+        return data
+
+    def pre_load(data, **kwargs):
+        """Hook called before the marshmallow deserialization of the record.
+
+        :param data: The record data before being deserialized.
+        :param kwargs: Additional keyword arguments.
+        :returns: The record data.
+        """
+        return data
+
+
+class JournalDataciteDumper(FieldDumper):
     """Dump processor for datacite serialization of 'Journal' custom field."""
 
-    def post_dump(self, data, original={}, **kwargs):
+    def post_dump(self, data, original=None, **kwargs):
         """Adds the journal information as a related identifier in the DataCite metadata."""
-        custom_fields = original.get("custom_fields", {})
+        _original = original or {}
+        custom_fields = _original.get("custom_fields", {})
         journal_data = custom_fields.get("journal:journal", {})
         issn = journal_data.get("issn")
 
@@ -79,18 +102,19 @@ class JournalDataciteProcessor(DumpProcessorMixin):
         return data
 
 
-class JournalDublinCoreProcessor(DumpProcessorMixin):
+class JournalDublinCoreDumper(FieldDumper):
     """Dump processor for dublin core serialization of 'Journal' custom field."""
 
-    def post_dump(self, data, original={}, **kwargs):
+    def post_dump(self, data, original=None, **kwargs):
         """Adds serialized journal data to the input data under the 'sources' key."""
-        custom_fields = original.get("custom_fields", {})
+        _original = original or {}
+        custom_fields = _original.get("custom_fields", {})
         journal_data = custom_fields.get("journal:journal", {})
         title = journal_data.get("title")
         volume = journal_data.get("volume")
         issue = journal_data.get("issue")
         pages = journal_data.get("pages")
-        year = original.get("metadata", {}).get("publication_date")
+        year = _original.get("metadata", {}).get("publication_date")
 
         if volume and issue:
             volume = f"{volume}({issue})"
@@ -102,7 +126,7 @@ class JournalDublinCoreProcessor(DumpProcessorMixin):
             title,
             volume,
             pages,
-            "({0})".format(year) if year else None,
+            f"({year})" if year else None,
         ]
 
         # Update input data with serialized data
@@ -114,12 +138,13 @@ class JournalDublinCoreProcessor(DumpProcessorMixin):
         return data
 
 
-class JournalMarcXMLProcessor(DumpProcessorMixin):
+class JournalMarcXMLDumper(FieldDumper):
     """Dump processor for MarcXML serialization of 'Journal' custom field."""
 
-    def post_dump(self, data, original={}, **kwargs):
+    def post_dump(self, data, original=None, **kwargs):
         """Adds serialized journal data to the input data under the '773' key."""
-        custom_fields = original.get("custom_fields", {})
+        _original = original or {}
+        custom_fields = _original.get("custom_fields", {})
         journal_data = custom_fields.get("journal:journal", {})
 
         if not journal_data:
@@ -128,24 +153,16 @@ class JournalMarcXMLProcessor(DumpProcessorMixin):
         items_dict = {}
 
         title = journal_data.get("title")
-        if title:
-            items_dict["p"] = title
-
         volume = journal_data.get("volume")
-        if volume:
-            items_dict["v"] = volume
-
         issue = journal_data.get("issue")
-        if issue:
-            items_dict["n"] = issue
-
         pages = journal_data.get("pages")
-        if pages:
-            items_dict["c"] = pages
+        year = _original.get("metadata", {}).get("publication_date")
 
-        year = original.get("metadata", {}).get("publication_date")
-        if year:
-            items_dict["y"] = year
+        field_keys = {"p": title, "v": volume, "n": issue, "c": pages, "y": year}
+        for key, field in field_keys.items():
+            value = journal_data.get(field)
+            if value:
+                items_dict[key] = value
 
         if not items_dict:
             return data
@@ -155,6 +172,35 @@ class JournalMarcXMLProcessor(DumpProcessorMixin):
         code = "773  "
 
         data[code] = items_dict
+        return data
+
+
+class JournalCSLDumper(FieldDumper):
+    """Dump processor for CSL serialization of 'Journal' custom field."""
+
+    def post_dump(self, data, original=None, **kwargs):
+        """Adds serialized journal data to the input data."""
+        _original = original or {}
+        custom_fields = _original.get("custom_fields", {})
+        journal_data = custom_fields.get("journal:journal", {})
+
+        if not journal_data:
+            return data
+
+        title = journal_data.get("title")
+        volume = journal_data.get("volume")
+        issue = journal_data.get("issue")
+        pages = journal_data.get("pages")
+
+        if title:
+            data["container_title"] = title
+        if pages:
+            data["page"] = pages
+        if volume:
+            data["volume"] = volume
+        if issue:
+            data["issue"] = issue
+
         return data
 
 

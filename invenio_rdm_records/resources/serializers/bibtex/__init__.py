@@ -12,6 +12,9 @@ from flask_resources.serializers import SimpleSerializer
 
 from .schema import BibTexSchema
 
+# Order matters
+bibtex_dumpers = []
+
 
 class BibtexSerializer(MarshmallowSerializer):
     """Marshmallow based BibTex serializer for records."""
@@ -22,6 +25,7 @@ class BibtexSerializer(MarshmallowSerializer):
             format_serializer_cls=SimpleSerializer,
             object_schema_cls=BibTexSchema,
             list_schema_cls=BaseListSchema,
+            schema_kwargs={"dumpers": bibtex_dumpers},
             encoder=self.bibtex_tostring,
         )
 

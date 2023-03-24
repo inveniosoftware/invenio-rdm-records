@@ -14,12 +14,12 @@ from invenio_access.permissions import system_identity
 from invenio_vocabularies.proxies import current_service as vocabulary_service
 from marshmallow import fields, missing, post_dump
 
-from ..schemas import BaseSchema
+from ..schemas import CommonFieldsMixin, DumperMixin
 from ..ui.schema import current_default_locale
 from ..utils import get_vocabulary_props
 
 
-class MARCXMLSchema(BaseSchema):
+class MARCXMLSchema(CommonFieldsMixin, DumperMixin):
     """Schema for records in MARC."""
 
     doi = fields.Method("get_doi")

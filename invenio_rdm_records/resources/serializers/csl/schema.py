@@ -16,6 +16,7 @@ from invenio_vocabularies.proxies import current_service as vocabulary_service
 from marshmallow import Schema, fields, missing, pre_dump
 from marshmallow_utils.fields import SanitizedUnicode, StrippedHTML
 
+from ..schemas import DumperMixin
 from ..utils import get_preferred_identifier
 
 
@@ -45,7 +46,7 @@ def add_if_not_none(year, month, day):
     return _list
 
 
-class CSLJSONSchema(Schema):
+class CSLJSONSchema(DumperMixin, Schema):
     """CSL Marshmallow Schema."""
 
     id_ = SanitizedUnicode(data_key="id", attribute="id")

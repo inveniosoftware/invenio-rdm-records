@@ -12,11 +12,11 @@ import datetime
 from marshmallow import fields, missing, post_dump
 from slugify import slugify
 
-from ..schemas import BaseSchema
+from ..schemas import CommonFieldsMixin, DumperMixin
 from .schema_formats import BibTexFormatter
 
 
-class BibTexSchema(BaseSchema):
+class BibTexSchema(CommonFieldsMixin, DumperMixin):
     """Schema for records in BibTex."""
 
     id = fields.Str()
