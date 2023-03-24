@@ -13,12 +13,12 @@ from invenio_access.permissions import system_identity
 from invenio_vocabularies.proxies import current_service as vocabulary_service
 from marshmallow import fields, missing
 
-from ..schemas import BaseSchema
+from ..schemas import CommonFieldsMixin, DumperMixin
 from ..ui.schema import current_default_locale
 from ..utils import get_vocabulary_props
 
 
-class DublinCoreSchema(BaseSchema):
+class DublinCoreSchema(CommonFieldsMixin, DumperMixin):
     """Schema for Dublin Core in JSON.
 
     The identifier handling behavior is determined by the schema's ``context``,

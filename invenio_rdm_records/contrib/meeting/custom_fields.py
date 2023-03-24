@@ -21,16 +21,17 @@ from invenio_records_resources.services.custom_fields import BaseCF
 from marshmallow import fields
 from marshmallow_utils.fields import SanitizedUnicode
 
-from invenio_rdm_records.contrib.journal.custom_fields import DumpProcessorMixin
+from invenio_rdm_records.contrib.journal.custom_fields import FieldDumper
 from invenio_rdm_records.services.schemas.metadata import _valid_url
 
 
-class MeetingDublinCoreProcessor(DumpProcessorMixin):
+class MeetingDublinCoreDumper(FieldDumper):
     """Dump processor for dublin core serialization of 'Meeting' custom field."""
 
-    def post_dump(self, data, original={}, **kwargs):
+    def post_dump(self, data, original=None, **kwargs):
         """Adds serialized meeting data to the input data under the 'sources' key."""
-        custom_fields = original.get("custom_fields", {})
+        _original = original or {}
+        custom_fields = _original.get("custom_fields", {})
         meeting_data = custom_fields.get("meeting:meeting", {})
 
         parts = [

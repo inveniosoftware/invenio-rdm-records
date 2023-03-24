@@ -65,7 +65,7 @@ class BibTexFormatter:
         name = "book"
         req_fields = ["author", "title", "publisher", "year"]
         opt_fields = ["volume", "address", "month", "note"]
-        return format(name, req_fields, opt_fields)
+        return BibTexFormatter.format(name, req_fields, opt_fields)
 
     # def publication_section():
     #     return BibTexFormatter.other()
@@ -81,7 +81,7 @@ class BibTexFormatter:
         name = "article"
         req_fields = ["author", "title", "journal", "year"]
         opt_fields = ["volume", "number", "pages", "month", "note"]
-        return format(name, req_fields, opt_fields)
+        return BibTexFormatter.format(name, req_fields, opt_fields)
 
     # def publication_patent():
     #     return BibTexFormatter.other()
@@ -115,7 +115,7 @@ class BibTexFormatter:
         name = "phdthesis"
         req_fields = ["author", "title", "school", "year"]
         opt_fields = ["address", "month", "note"]
-        return format(name, req_fields, opt_fields)
+        return BibTexFormatter.format(name, req_fields, opt_fields)
 
     # def publication_other():
     #     return BibTexFormatter().other()
@@ -139,7 +139,7 @@ class BibTexFormatter:
             "publisher",
             "version",
         ]
-        return format(name, req_fields, opt_fields)
+        return BibTexFormatter.format(name, req_fields, opt_fields)
 
     # def image_figure():
     #     return BibTexFormatter().other()
@@ -175,7 +175,7 @@ class BibTexFormatter:
             "publisher",
             "version",
         ]
-        return format(name, req_fields, opt_fields)
+        return BibTexFormatter.format(name, req_fields, opt_fields)
 
     # def lesson():
     #     return BibTexFormatter().other()

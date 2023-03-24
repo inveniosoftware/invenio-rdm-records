@@ -10,12 +10,12 @@ from datacite import schema43
 from flask_resources import BaseListSchema, MarshmallowSerializer
 from flask_resources.serializers import JSONSerializer, SimpleSerializer
 
-from invenio_rdm_records.contrib.journal.custom_fields import JournalDataciteProcessor
+from invenio_rdm_records.contrib.journal.custom_fields import JournalDataciteDumper
 
 from .schema import DataCite43Schema
 
 # Order matters
-datacite_post_dump_processors = [JournalDataciteProcessor()]
+datacite_dump_dumpers = [JournalDataciteDumper()]
 
 
 class DataCite43JSONSerializer(MarshmallowSerializer):
@@ -27,7 +27,7 @@ class DataCite43JSONSerializer(MarshmallowSerializer):
             format_serializer_cls=JSONSerializer,
             object_schema_cls=DataCite43Schema,
             list_schema_cls=BaseListSchema,
-            schema_kwargs={'processors': datacite_post_dump_processors},
+            schema_kwargs={"dumpers": datacite_dump_dumpers},
             **options
         )
 
@@ -42,6 +42,6 @@ class DataCite43XMLSerializer(MarshmallowSerializer):
             format_serializer_cls=SimpleSerializer,
             object_schema_cls=DataCite43Schema,
             list_schema_cls=BaseListSchema,
-            schema_kwargs={'processors': datacite_post_dump_processors},
+            schema_kwargs={"dumpers": datacite_dump_dumpers},
             encoder=encoder,
         )

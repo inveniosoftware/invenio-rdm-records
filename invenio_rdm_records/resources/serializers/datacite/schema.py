@@ -20,7 +20,10 @@ from marshmallow import Schema, ValidationError, fields, missing, post_dump, val
 from marshmallow_utils.fields import SanitizedUnicode
 from marshmallow_utils.html import strip_html
 
-from invenio_rdm_records.resources.serializers.schemas import BaseSchema
+from invenio_rdm_records.resources.serializers.schemas import (
+    CommonFieldsMixin,
+    DumperMixin,
+)
 from invenio_rdm_records.resources.serializers.ui.schema import current_default_locale
 
 from ..utils import get_preferred_identifier, get_vocabulary_props
@@ -169,7 +172,7 @@ class SubjectSchema43(Schema):
     subjectScheme = fields.Str(attribute="scheme")
 
 
-class DataCite43Schema(BaseSchema):
+class DataCite43Schema(DumperMixin):
     """DataCite JSON 4.3 Marshmallow Schema."""
 
     # PIDS-FIXME: What about versioning links and related ids
