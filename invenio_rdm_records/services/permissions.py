@@ -64,6 +64,14 @@ class RDMRecordPermissionPolicy(RecordPermissionPolicy):
     can_all = [AnyUser(), SystemProcess()]
 
     #
+    # Miscellaneous
+    #
+    # Allow for querying of statistics
+    # - This is currently disabled because it's not needed and could potentially
+    #   open up surface for denial of service attacks
+    can_query_stats = [Disable()]
+
+    #
     #  Records
     #
     # Allow searching of records
