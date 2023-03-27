@@ -46,6 +46,10 @@ from invenio_records_resources.services.records.links import (
     RecordLink,
     pagination_links,
 )
+from invenio_requests.services.permissions import PermissionPolicy
+from invenio_requests.services.requests import RequestItem, RequestList
+from invenio_requests.services.requests.config import RequestSearchOptions
+from requests import Request
 
 from ..records import RDMDraft, RDMRecord
 from . import facets
@@ -139,6 +143,25 @@ class RDMRecordCommunitiesConfig(ServiceConfig, ConfiguratorMixin):
     max_number_of_additions = 10
     # Max n. communities that can be removed at once
     max_number_of_removals = 10
+
+
+class RDMRecordRequestsConfig(ServiceConfig, ConfiguratorMixin):
+    """Record community inclusion config."""
+
+    request_record_cls = RDMRecord
+    service_id = "record-requests"
+    permission_policy_cls = FromConfig(
+        "RDM_PERMISSION_POLICY", default=RDMRecordPermissionPolicy, import_string=True
+    )
+    result_item_cls = RequestItem
+    result_list_cls = RequestList
+    search = RequestSearchOptions
+
+    # request-specific configuration
+    record_cls = Request  # needed for model queries
+    schema = None  # stored in the API classes, for customization
+    indexer_queue_name = "requests"
+    index_dumper = None
 
 
 class RDMCommunityRecordsConfig(BaseRecordServiceConfig, ConfiguratorMixin):
@@ -303,6 +326,7 @@ class RDMRecordServiceConfig(RecordServiceConfig, ConfiguratorMixin):
         # TODO: only include link when DOI support is enabled.
         "reserve_doi": RecordLink("{+api}/records/{id}/draft/pids/doi"),
         "communities": RecordLink("{+api}/records/{id}/communities"),
+        "requests": RecordLink("{+api}/records/{id}/requests"),
     }
 
 

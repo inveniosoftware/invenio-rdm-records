@@ -76,6 +76,11 @@ def create_record_communities_bp(app):
     ].record_communities_resource.as_blueprint()
 
 
+def create_record_requests_bp(app):
+    """Create record communities blueprint."""
+    return app.extensions["invenio-rdm-records"].record_requests_resource.as_blueprint()
+
+
 def create_oaipmh_server_blueprint_from_app(app):
     """Create app blueprint."""
     return app.extensions["invenio-rdm-records"].oaipmh_server_resource.as_blueprint()

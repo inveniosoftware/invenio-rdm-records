@@ -7,7 +7,6 @@
 
 """RDM Record Communities Service."""
 
-from invenio_communities.communities.records.api import Community
 from invenio_communities.proxies import current_communities
 from invenio_i18n import lazy_gettext as _
 from invenio_pidstore.errors import PIDDoesNotExistError

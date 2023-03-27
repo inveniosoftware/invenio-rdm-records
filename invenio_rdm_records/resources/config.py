@@ -29,6 +29,7 @@ from invenio_i18n import lazy_gettext as _
 from invenio_records.systemfields.relations import InvalidRelationValue
 from invenio_records_resources.resources.files import FileResourceConfig
 from invenio_records_resources.services.base.config import ConfiguratorMixin, FromConfig
+from invenio_requests.resources.requests.config import RequestSearchRequestArgsSchema
 
 from ..services.errors import (
     CommunityInclusionInconsistentAccessRestrictions,
@@ -280,6 +281,24 @@ class RDMRecordCommunitiesResourceConfig(CommunityResourceConfig, ConfiguratorMi
                 description=str(e),
             )
         ),
+    }
+
+
+class RDMRecordRequestsResourceConfig(ResourceConfig, ConfiguratorMixin):
+    """Record communities resource config."""
+
+    blueprint_name = "records-requests"
+    url_prefix = "/records"
+    routes = {"list": "/<record_pid>/requests"}
+
+    request_search_args = RequestSearchRequestArgsSchema
+
+    request_view_args = {
+        "record_pid": ma.fields.Str(),
+    }
+
+    request_extra_args = {
+        "expand": ma.fields.Boolean(),
     }
 
 
