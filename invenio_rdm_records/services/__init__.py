@@ -13,10 +13,12 @@ from .config import (
     RDMFileDraftServiceConfig,
     RDMFileRecordServiceConfig,
     RDMRecordCommunitiesConfig,
+    RDMRecordRequestsConfig,
     RDMRecordServiceConfig,
 )
 from .iiif import IIIFService
 from .permissions import RDMRecordPermissionPolicy
+from .requests import RecordRequestsService
 from .secret_links import SecretLinkService
 from .services import RDMRecordService
 
@@ -31,4 +33,6 @@ __all__ = (
     "RDMRecordCommunitiesConfig",
     "RDMCommunityRecordsConfig",
     "CommunityRecordsService",
+    "RDMRecordRequestsConfig",
+    "RecordRequestsService",
 )

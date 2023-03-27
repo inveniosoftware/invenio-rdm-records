@@ -222,6 +222,42 @@ class RDMRecordCommunitiesResource(ErrorHandlersMixin, Resource):
         return response, 200
 
 
+class RDMRecordRequestsResource(ErrorHandlersMixin, Resource):
+    """Record requests resource."""
+
+    def __init__(self, config, service):
+        """Constructor."""
+        super().__init__(config)
+        self.service = service
+
+    def create_url_rules(self):
+        """Create the URL rules for the record resource."""
+        routes = self.config.routes
+        url_rules = [
+            route("GET", routes["list"], self.search),
+        ]
+        return url_rules
+
+    @request_extra_args
+    @request_search_args
+    @request_view_args
+    @response_handler(many=True)
+    def search(self):
+        """Search for record's requests.
+
+        GET /records/<pid>/requests
+        """
+        items = self.service.search(
+            identity=g.identity,
+            params=resource_requestctx.args,
+            record_pid=resource_requestctx.view_args["record_pid"],
+            search_preference=search_preference(),
+            expand=resource_requestctx.args.get("expand", False),
+        )
+
+        return items.to_dict(), 200
+
+
 #
 # Parent Record Links
 #

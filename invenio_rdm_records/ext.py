@@ -38,10 +38,11 @@ from .resources import (
     RDMParentRecordLinksResourceConfig,
     RDMRecordCommunitiesResourceConfig,
     RDMRecordFilesResourceConfig,
+    RDMRecordRequestsResourceConfig,
     RDMRecordResource,
     RDMRecordResourceConfig,
 )
-from .resources.resources import RDMRecordCommunitiesResource
+from .resources.resources import RDMRecordCommunitiesResource, RDMRecordRequestsResource
 from .secret_links import LinkNeed, SecretLink
 from .services import (
     CommunityRecordsService,
@@ -50,8 +51,10 @@ from .services import (
     RDMFileDraftServiceConfig,
     RDMFileRecordServiceConfig,
     RDMRecordCommunitiesConfig,
+    RDMRecordRequestsConfig,
     RDMRecordService,
     RDMRecordServiceConfig,
+    RecordRequestsService,
     SecretLinkService,
 )
 from .services.pids import PIDManager, PIDsService
@@ -149,6 +152,7 @@ class InvenioRDMRecords(object):
             oaipmh_server = OAIPMHServerServiceConfig
             record_communities = RDMRecordCommunitiesConfig.build(app)
             community_records = RDMCommunityRecordsConfig.build(app)
+            record_requests = RDMRecordRequestsConfig.build(app)
 
         return ServiceConfigs
 
@@ -179,6 +183,9 @@ class InvenioRDMRecords(object):
         )
 
         self.community_inclusion_service = CommunityInclusionService()
+        self.record_requests_service = RecordRequestsService(
+            config=service_configs.record_requests
+        )
 
         self.oaipmh_server_service = OAIPMHServerService(
             config=service_configs.oaipmh_server,
@@ -213,6 +220,11 @@ class InvenioRDMRecords(object):
         self.record_communities_resource = RDMRecordCommunitiesResource(
             service=self.record_communities_service,
             config=RDMRecordCommunitiesResourceConfig.build(app),
+        )
+
+        self.record_requests_resource = RDMRecordRequestsResource(
+            service=self.record_requests_service,
+            config=RDMRecordRequestsResourceConfig.build(app),
         )
 
         # Community's records

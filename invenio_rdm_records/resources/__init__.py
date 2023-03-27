@@ -15,12 +15,14 @@ from .config import (
     RDMParentRecordLinksResourceConfig,
     RDMRecordCommunitiesResourceConfig,
     RDMRecordFilesResourceConfig,
+    RDMRecordRequestsResourceConfig,
     RDMRecordResourceConfig,
 )
 from .resources import (
     IIIFResource,
     RDMCommunityRecordsResource,
     RDMParentRecordLinksResource,
+    RDMRecordRequestsResource,
     RDMRecordResource,
 )
 
@@ -36,4 +38,6 @@ __all__ = (
     "RDMRecordResource",
     "RDMRecordResourceConfig",
     "RDMRecordCommunitiesResourceConfig",
+    "RDMRecordRequestsResourceConfig",
+    "RDMRecordRequestsResource",
 )
