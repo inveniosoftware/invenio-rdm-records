@@ -10,6 +10,12 @@
 Changes
 =======
 
+Version 2.10.0 (released 2023-03-28)
+
+- add requests endpoint to the record
+- dublincore: transform identifiers tu urls
+- record service: update community records
+
 Version 2.9.0 (released 2023-03-24)
 
 - communities: return ghost parent community when cannot be resolved
