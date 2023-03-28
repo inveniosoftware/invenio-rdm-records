@@ -34,12 +34,18 @@ class DublinCoreXMLSerializer(MarshmallowSerializer):
     records.
     """
 
-    def __init__(self, **options):
+    def __init__(self, schema_context=None, **options):
         """Constructor."""
+        # note: the superclass init will store the passed `schema_context` for
+        # later use (this controls some behavior of the `DublinCoreSchema` when
+        # dumping) and pass the remaining `options` to the `SimpleSerializer`.
+        # because the latter only accepts an `encoder` argument, we need to
+        # ignore the remaining keyword arguments.
+
         super().__init__(
             format_serializer_cls=SimpleSerializer,
             object_schema_cls=DublinCoreSchema,
             list_schema_cls=BaseListSchema,
+            schema_context=schema_context or {},
             encoder=simpledc.tostring,
-            **options,
         )
