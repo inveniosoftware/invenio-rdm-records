@@ -9,6 +9,10 @@
 
 import pytest
 from invenio_communities.proxies import current_communities
+from invenio_communities.generators import CommunityMembers
+from invenio_records_resources.services.errors import PermissionDeniedError
+from invenio_requests import current_events_service, current_requests_service
+from marshmallow import ValidationError
 
 from invenio_rdm_records.proxies import current_rdm_records
 from invenio_rdm_records.services.errors import InvalidCommunityVisibility
@@ -24,6 +28,85 @@ def community_records_service():
 def community_service():
     """Get the current communities service."""
     return current_communities.service
+
+
+def test_search_record_suggested_communities(
+    db,
+    service,
+    rdm_record_service,
+    community,
+    community2,
+    record_community,
+    open_review_community,
+    anyuser_identity,
+    uploader,
+    inviter,
+):
+    """Test search of suggested communities for a record."""
+    inviter(uploader.id, open_review_community.id, "curator")
+    record = record_community.create_record()
+
+    # Test permissions
+    with pytest.raises(PermissionDeniedError):
+        service.search_suggested_communities(
+            anyuser_identity,
+            record.pid.pid_value,
+        )
+
+    # Return user communities that are eligible to upload to.
+    results = service.search_suggested_communities(
+        uploader.identity,
+        record.pid.pid_value,
+        extra_filter=CommunityMembers().query_filter(uploader.identity),
+    )
+
+    # Check that the only community fetched is the one he was added to
+    hits = results.to_dict()["hits"]
+    assert hits["total"] == 1
+    assert hits["hits"][0]["id"] == open_review_community.id
+
+    # Return communities that are eligible to upload to.
+    results = service.search_suggested_communities(
+        uploader.identity,
+        record.pid.pid_value,
+    )
+    hits = results
+    assert hits.total == 2
+
+    data = {"communities": [{"id": open_review_community.id}]}
+    service.add(uploader.identity, record.pid.pid_value, data)
+
+    # Fetch the record again
+    fetched_record = rdm_record_service.read(uploader.identity, record.pid.pid_value)
+    assert (
+        open_review_community.id in fetched_record.data["parent"]["communities"]["ids"]
+    )
+
+    results = service.search_suggested_communities(
+        uploader.identity,
+        record.pid.pid_value,
+    )
+    # Check that the community recently added is not anymore eligible
+    hits = results.to_dict()["hits"]
+    assert hits["total"] == 1
+    assert hits["hits"][0]["id"] == community2.id
+
+    data = {"communities": [{"id": community2.id}]}
+    service.add(uploader.identity, record.pid.pid_value, data)
+
+    # Fetch the record again
+    fetched_record = rdm_record_service.read(uploader.identity, record.pid.pid_value)
+
+    assert community2.id not in fetched_record.data["parent"]["communities"]["ids"]
+
+    # Community was not added but request was created thus the community is not anymore eligible to be added.
+    results = service.search_suggested_communities(
+        uploader.identity,
+        record.pid.pid_value,
+    )
+
+    hits = results
+    assert hits.total == 0
 
 
 def test_make_community_restricted_with_public_record(

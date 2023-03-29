@@ -257,7 +257,17 @@ class RDMRecordCommunitiesResourceConfig(CommunityResourceConfig, ConfiguratorMi
 
     blueprint_name = "records-community"
     url_prefix = "/records"
-    routes = {"list": "/<pid_value>/communities"}
+    routes = {
+        "list": "/<pid_value>/communities",
+        "suggestions": "/<pid_value>/communities-suggestions",
+        "user-suggestions": "/<pid_value>/user/communities-suggestions",
+    }
+
+    request_extra_args = {
+        "expand": ma.fields.Boolean(),
+        "refresh": ma.fields.Boolean(),
+        "user_is_member": ma.fields.Boolean(),
+    }
 
     error_handlers = community_error_handlers
 

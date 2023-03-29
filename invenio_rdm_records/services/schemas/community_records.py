@@ -8,7 +8,15 @@
 """Community records schema."""
 
 from invenio_i18n import lazy_gettext as _
+from marshmallow_utils.fields import StrippedHTML
 from marshmallow import Schema, ValidationError, fields, validate, validates
+
+
+class CommentSchema(Schema):
+    """Schema to define a comment."""
+
+    content = StrippedHTML(required=True)
+    format = StrippedHTML(required=True)
 
 
 class RecordSchema(Schema):

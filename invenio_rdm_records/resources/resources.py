@@ -25,6 +25,7 @@ from flask_resources import (
     with_content_negotiation,
 )
 from importlib_metadata import version
+from invenio_communities.generators import CommunityMembers
 from invenio_drafts_resources.resources import RecordResource
 from invenio_drafts_resources.resources.records.errors import RedirectException
 from invenio_records_resources.resources.errors import ErrorHandlersMixin
@@ -174,6 +175,7 @@ class RDMRecordCommunitiesResource(ErrorHandlersMixin, Resource):
             route("GET", routes["list"], self.search),
             route("POST", routes["list"], self.add),
             route("DELETE", routes["list"], self.remove),
+            route("GET", routes["suggestions"], self.get_suggestions),
         ]
         return url_rules
 
@@ -208,6 +210,7 @@ class RDMRecordCommunitiesResource(ErrorHandlersMixin, Resource):
         if errors:
             response["errors"] = errors
 
+        # TODO why not checking errors
         return response, 200 if len(processed) > 0 else 400
 
     @request_view_args
@@ -226,6 +229,26 @@ class RDMRecordCommunitiesResource(ErrorHandlersMixin, Resource):
             response["errors"] = errors
 
         return response, 200 if len(processed) > 0 else 400
+
+    @request_extra_args
+    @request_search_args
+    @request_view_args
+    @response_handler(many=True)
+    def get_suggestions(self):
+        """Search for record's communities."""
+        user_suggestions = resource_requestctx.args.get("user_is_member", False)
+        extra_filter = (
+            CommunityMembers().query_filter(g.identity) if user_suggestions else None
+        )
+        items = self.service.search_suggested_communities(
+            identity=g.identity,
+            id_=resource_requestctx.view_args["pid_value"],
+            params=resource_requestctx.args,
+            search_preference=search_preference(),
+            extra_filter=extra_filter,
+            expand=resource_requestctx.args.get("expand", False),
+        )
+        return items.to_dict(), 200
 
 
 class RDMRecordRequestsResource(ErrorHandlersMixin, Resource):
