@@ -7,6 +7,7 @@
 
 """RDM Record Communities Service."""
 
+from invenio_communities.generators import CommunityMembers
 from invenio_communities.proxies import current_communities
 from invenio_i18n import lazy_gettext as _
 from invenio_pidstore.errors import PIDDoesNotExistError
@@ -23,6 +24,7 @@ from invenio_records_resources.services.uow import (
     unit_of_work,
 )
 from invenio_requests import current_request_type_registry, current_requests_service
+from invenio_requests.customizations import CommentEventType
 from invenio_requests.resolvers.registry import ResolverRegistry
 from invenio_search.engine import dsl
 from sqlalchemy.orm.exc import NoResultFound
@@ -42,6 +44,10 @@ class RecordCommunitiesService(Service, RecordIndexerMixin):
 
     The communities service is in charge of managing communities of a given record.
     """
+
+    def _wrap_schema(self, schema):
+        """Wrap schema."""
+        return ServiceSchemaWrapper(self, schema)
 
     @property
     def schema(self):
@@ -89,10 +95,18 @@ class RecordCommunitiesService(Service, RecordIndexerMixin):
             {"community": com_id}
         ).resolve()
 
-        data = {"payload": {"content": comment, "format": "html"}} if comment else {}
+        comment_data = {}
+
+        if comment:
+            comment_schema = self._wrap_schema(CommentEventType.marshmallow_schema())
+            comment_data, errors = comment_schema.load(
+                comment,
+                context={"identity": identity},
+            )
+
         request_item = current_requests_service.create(
             identity,
-            data,
+            {},
             type_,
             receiver,
             topic=record,
@@ -100,7 +114,7 @@ class RecordCommunitiesService(Service, RecordIndexerMixin):
         )
         # create review request
         request_item = current_rdm_records.community_inclusion_service.submit(
-            identity, record, community, request_item._request, data, uow
+            identity, record, community, request_item._request, comment_data, uow
         )
         # include directly when allowed
         if not require_review:
@@ -128,17 +142,20 @@ class RecordCommunitiesService(Service, RecordIndexerMixin):
         processed = []
         for community in communities:
             community_id = community["id"]
-            comment = community.get("comment", "")
+            comment = community.get("comment", None)
+            if comment:
+                comment = dict(payload=community.get("comment", None))
             require_review = community.get("require_review", False)
 
             result = {
-                "community": community_id,
+                "community_id": community_id,
             }
             try:
                 request_item = self._include(
                     identity, community_id, comment, require_review, record, uow
                 )
-                result["request"] = str(request_item.data["id"])
+                result["request_id"] = str(request_item.data["id"])
+                result["request"] = request_item.to_dict()
                 processed.append(result)
             except (NoResultFound, PIDDoesNotExistError):
                 result["message"] = _("Community not found.")
@@ -220,6 +237,65 @@ class RecordCommunitiesService(Service, RecordIndexerMixin):
 
         communities_ids = record.parent.communities.ids
         communities_filter = dsl.Q("terms", **{"id": [id_ for id_ in communities_ids]})
+        if extra_filter is not None:
+            communities_filter = communities_filter & extra_filter
+
+        return current_communities.service.search(
+            identity,
+            params=params,
+            search_preference=search_preference,
+            expand=expand,
+            extra_filter=communities_filter,
+            **kwargs
+        )
+
+    @staticmethod
+    def _get_excluded_communities_filter(record, identity, id_):
+        """Return filter to exclude communities that should not be suggested."""
+        communities_to_exclude = []
+        communities_ids = record.parent.communities.ids
+        for community_id in communities_ids:
+            communities_to_exclude.append(dsl.Q("term", **{"id": community_id}))
+
+        open_requests = current_requests_service.search(
+            identity,
+            extra_filter=dsl.query.Bool(
+                "must",
+                must=[
+                    dsl.Q("term", **{"topic.record": id_}),
+                    dsl.Q("term", **{"type": CommunityInclusion.type_id}),
+                    dsl.Q("term", **{"is_open": True}),
+                ],
+            ),
+        )
+
+        for request in open_requests.hits:
+            communities_to_exclude.append(
+                dsl.Q("term", **{"id": request["receiver"]["community"]})
+            )
+
+        return dsl.query.Bool("must_not", must_not=communities_to_exclude)
+
+    def search_suggested_communities(
+        self,
+        identity,
+        id_,
+        params=None,
+        search_preference=None,
+        expand=False,
+        extra_filter=None,
+        **kwargs
+    ):
+        """Search for communities that can be added to a record."""
+        record = self.record_cls.pid.resolve(id_)
+        self.require_permission(
+            identity, "search_suggestion_communities", record=record
+        )
+
+        communities_filter = self._get_excluded_communities_filter(
+            record, identity, id_
+        )
+
         if extra_filter is not None:
             communities_filter = communities_filter & extra_filter
 

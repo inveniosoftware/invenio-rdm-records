@@ -1698,7 +1698,7 @@ def open_review_community(
 def closed_review_community(
     running_app, community_type_record, community_owner, closed_review_minimal_community
 ):
-    """Create community with open review policy i.e allow direct publishes."""
+    """Create community with close review policy i.e allow direct publishes."""
     return _community_get_or_create(
         closed_review_minimal_community, community_owner.identity
     )

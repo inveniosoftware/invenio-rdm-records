@@ -339,6 +339,12 @@ class RDMRecordServiceConfig(RecordServiceConfig, ConfiguratorMixin):
         # TODO: only include link when DOI support is enabled.
         "reserve_doi": RecordLink("{+api}/records/{id}/draft/pids/doi"),
         "communities": RecordLink("{+api}/records/{id}/communities"),
+        "communities-suggestions": RecordLink(
+            "{+api}/records/{id}/communities-suggestions"
+        ),
+        "user-communities-suggestions": RecordLink(
+            "{+api}/records/{id}/user/communities-suggestions"
+        ),
         "requests": RecordLink("{+api}/records/{id}/requests"),
     }
 

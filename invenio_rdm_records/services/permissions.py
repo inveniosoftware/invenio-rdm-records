@@ -166,6 +166,9 @@ class RDMRecordPermissionPolicy(RecordPermissionPolicy):
     # Who can remove records from a community
     can_remove_record = [CommunityCurators()]
 
+    # Who can search eligible communities to add the record to
+    can_search_suggestion_communities = can_manage
+
     #
     # Disabled actions (these should not be used or changed)
     #
