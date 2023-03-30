@@ -40,8 +40,8 @@ def file_download_event_builder(event, sender_app, **kwargs):
             "file_id": str(obj.file_id),
             "file_key": obj.key,
             "size": obj.file.size,
-            "recid": record.get("id", None),
-            "parent_recid": record.parent.get("id", None),
+            "recid": record["id"],
+            "parent_recid": record.parent["id"],
             # Who:
             "referrer": request.referrer,
             **get_user(),
@@ -64,8 +64,8 @@ def record_view_event_builder(event, sender_app, **kwargs):
             # When:
             "timestamp": datetime.utcnow().isoformat(),
             # What:
-            "recid": record.get("id", None),
-            "parent_recid": record.parent.get("id", None),
+            "recid": record["id"],
+            "parent_recid": record.parent["id"],
             # Who:
             "referrer": request.referrer,
             **get_user(),
