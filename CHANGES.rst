@@ -10,6 +10,12 @@
 Changes
 =======
 
+Version 2.11.0 (released 2023-03-30)
+
+- add usage statistics indexing (by system field)
+- add sorting by most viewed to the config
+- move statistics events from invenio-app-rdm
+
 Version 2.10.0 (released 2023-03-28)
 
 - add requests endpoint to the record
