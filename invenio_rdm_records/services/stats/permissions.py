@@ -5,16 +5,12 @@
 # Invenio RDM Records is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
 
-"""Permission factories for Invenio-Stats.
-
-In contrast to the very liberal defaults provided by Invenio-Stats, these permission
-factories deny access unless otherwise specified.
-"""
+"""Permissions for the statistics endpoint from Invenio-Stats."""
 
 from flask import g
 from invenio_stats import current_stats
 
-from ..proxies import current_rdm_records_service as records_service
+from ...proxies import current_rdm_records_service as records_service
 
 
 class StatsPermissionTranslator:
@@ -47,11 +43,12 @@ class StatsPermissionTranslator:
         )
 
 
-def default_deny_permission_factory(query_name, params):
-    """Default deny permission factory.
+def permissions_policy_lookup_factory(query_name, params):
+    """Factory that looks up the permissions from the permission policy per default.
 
-    It disables the statistics by default, unless the queries have a dedicated
-    configured permission factory.
+    If the query in question has a specific permission factory defined, this one will
+    be used. Otherwise, it will look up the 'query_stats' permission from the active
+    RDM records service.
     """
     if current_stats.queries[query_name].permission_factory is None:
         return StatsPermissionTranslator("query_stats", **params)
