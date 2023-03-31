@@ -5,7 +5,7 @@
 # Invenio RDM Records is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
 
-"""Invenio-Stats integration for InvenioRDM."""
+"""Statistics event builders for InvenioRDM."""
 
 from .event_builders import (
     build_record_unique_id,

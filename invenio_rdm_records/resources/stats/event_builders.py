@@ -19,6 +19,10 @@ from datetime import datetime
 from flask import current_app, request
 from invenio_stats.utils import get_user
 
+# note: the event builders are located under resources, because they access some
+#       information that is usually only available on the resources level (such as
+#       request context) and we haven't found a more suitable home for them so far
+
 
 def file_download_event_builder(event, sender_app, **kwargs):
     """Build a file-download event.
