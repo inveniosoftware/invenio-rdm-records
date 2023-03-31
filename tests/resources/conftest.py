@@ -25,12 +25,6 @@ def create_app(instance_path):
     return create_api
 
 
-@pytest.fixture()
-def rdm_record_service():
-    """Get the current RDM records service."""
-    return current_rdm_records_service
-
-
 def link(url):
     """Strip the host part of a link."""
     api_prefix = "https://127.0.0.1:5000/api"

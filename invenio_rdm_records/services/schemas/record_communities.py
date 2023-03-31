@@ -5,29 +5,51 @@
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
 
-"""Community records schema."""
+"""Record communities schema."""
 
-from marshmallow import Schema, fields, post_load, validate
+from invenio_i18n import lazy_gettext as _
+from marshmallow import Schema, ValidationError, fields, pre_load, validate, validates
+from marshmallow_utils.fields import StrippedHTML
 
-from invenio_rdm_records.services.errors import MaxNumberOfRecordsExceed
 
-
-class RecordSchema(Schema):
+class CommunitySchema(Schema):
     """Schema to define a community id."""
 
-    id = fields.String()
+    id = fields.String(required=True)
+    comment = StrippedHTML()
+    require_review = fields.Boolean()
 
 
-class CommunityRecordsSchema(Schema):
+class RecordCommunitiesSchema(Schema):
     """Record communities schema."""
 
-    records = fields.List(
-        fields.Nested(RecordSchema), validate=validate.Length(min=1), required=True
+    communities = fields.List(
+        fields.Nested(CommunitySchema), validate=validate.Length(min=1), required=True
     )
 
-    @post_load
-    def _check_max_size(self, data, **kwargs):
+    @validates("communities")
+    def validate_communities(self, value):
+        """Validate communities."""
         max_number = self.context["max_number"]
-        if max_number < len(data["records"]):
-            raise MaxNumberOfRecordsExceed(max_number)
-        return data
+        if max_number < len(value):
+            raise ValidationError(
+                _(
+                    "Too many communities passed, {max_number} max allowed.".format(
+                        max_number=max_number
+                    )
+                )
+            )
+
+        # check unique ids
+        uniques = set()
+        duplicated = set()
+        for community in value:
+            com_id = community["id"]
+            if com_id in uniques:
+                duplicated.add(com_id)
+            uniques.add(com_id)
+
+        if duplicated:
+            raise ValidationError(
+                _("Duplicated communities {com_ids}.".format(com_ids=duplicated))
+            )

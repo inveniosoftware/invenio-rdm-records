@@ -90,7 +90,7 @@ class CommunityRecordsService(RecordService):
     def _remove(self, community, record, identity):
         """Remove a community from the record."""
         data = dict(communities=[dict(id=str(community.id))])
-        errors = current_record_communities_service.remove(
+        _, errors = current_record_communities_service.remove(
             identity, id_=record.pid.pid_value, data=data
         )
 

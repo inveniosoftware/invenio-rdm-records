@@ -10,17 +10,14 @@
 from flask import current_app
 from invenio_communities import current_communities
 from invenio_i18n import lazy_gettext as _
-from invenio_records_resources.services.errors import PermissionDeniedError
 from invenio_requests import current_requests_service
 
-from invenio_rdm_records.records.systemfields.access.field.record import (
-    AccessStatusEnum,
+from invenio_rdm_records.requests.community_inclusion import (
+    CommunityInclusion,
+    is_access_restriction_valid,
 )
-from invenio_rdm_records.requests.community_inclusion import CommunityInclusion
 from invenio_rdm_records.requests.community_submission import CommunitySubmission
-from invenio_rdm_records.services.errors import (
-    CommunityInclusionInconsistentAccessRestrictions,
-)
+from invenio_rdm_records.services.errors import InvalidAccessRestrictions
 
 
 class CommunityInclusionService:
@@ -48,10 +45,9 @@ class CommunityInclusionService:
         if request.type.type_id not in self.supported_types:
             raise ValueError("Invalid request type.")
 
-        record_is_restricted = record.access.status == AccessStatusEnum.RESTRICTED
-
-        if community.access.visibility_is_restricted and not record_is_restricted:
-            raise CommunityInclusionInconsistentAccessRestrictions()
+        # validate record and community access
+        if not is_access_restriction_valid(record, community):
+            raise InvalidAccessRestrictions()
 
         # All other preconditions can be checked by the action itself which can
         # raise appropriate exceptions.

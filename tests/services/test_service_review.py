@@ -23,7 +23,7 @@ from invenio_rdm_records.records.api import RDMDraft
 from invenio_rdm_records.records.systemfields.draft_status import DraftStatus
 from invenio_rdm_records.requests.community_submission import CommunitySubmission
 from invenio_rdm_records.services.errors import (
-    CommunityInclusionInconsistentAccessRestrictions,
+    InvalidAccessRestrictions,
     ReviewExistsError,
     ReviewNotFoundError,
     ReviewStateError,
@@ -376,7 +376,7 @@ def test_submit_public_record_review_to_restricted_community(
 ):
     """Test creation of review after draft was created."""
     # Create draft
-    with pytest.raises(CommunityInclusionInconsistentAccessRestrictions):
+    with pytest.raises(InvalidAccessRestrictions):
         service.review.submit(
             running_app.superuser_identity, public_draft_review_restricted.id
         )

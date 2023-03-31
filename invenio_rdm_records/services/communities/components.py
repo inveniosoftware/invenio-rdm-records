@@ -7,10 +7,7 @@
 
 """Record communities service components."""
 
-from invenio_communities.communities.records.systemfields.access import (
-    CommunityAccess,
-    VisibilityEnum,
-)
+from invenio_communities.communities.records.systemfields.access import VisibilityEnum
 from invenio_communities.communities.services.components import (
     CommunityAccessComponent as BaseAccessComponent,
 )
@@ -21,6 +18,7 @@ from invenio_communities.communities.services.components import (
     OwnershipComponent,
     PIDComponent,
 )
+from invenio_i18n import lazy_gettext as _
 from invenio_records_resources.services.records.components import (
     MetadataComponent,
     RelationsComponent,
@@ -37,18 +35,14 @@ class CommunityAccessComponent(BaseAccessComponent):
     def _check_visibility(self, identity, record):
         """Checks if the visibility change is allowed."""
         if VisibilityEnum(record.access.visibility) == VisibilityEnum.RESTRICTED:
-            assert CommunityAccess.validate_visibility_level(VisibilityEnum.PUBLIC)
-
-            total = current_community_records_service.search(
+            count_public_records = current_community_records_service.search(
                 identity,
                 community_id=record.id,
-                extra_filter=dsl.Q(
-                    "term", **{"access.record": str(VisibilityEnum.PUBLIC)}
-                ),
+                extra_filter=dsl.Q("term", **{"access.record": "public"}),
             ).total
-            if total > 0:
+            if count_public_records > 0:
                 raise InvalidCommunityVisibility(
-                    reason="Cannot restrict a community with public records."
+                    reason=_("Cannot restrict a community with public records.")
                 )
 
     def update(self, identity, data=None, record=None, **kwargs):

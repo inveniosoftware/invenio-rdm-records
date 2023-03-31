@@ -24,8 +24,6 @@ def update_expired_embargos():
     for record in records.hits:
         try:
             service.lift_embargo(_id=record["id"], identity=system_identity)
-        except EmbargoNotLiftedError:
-            current_app.logger.warning(
-                f"Embargo from record with id {record['id']} was not lifted"
-            )
+        except EmbargoNotLiftedError as ex:
+            current_app.logger.warning(ex.description)
             continue
