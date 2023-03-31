@@ -11,7 +11,7 @@ from flask import current_app
 from invenio_records.dictutils import dict_lookup, parse_lookup_key
 from invenio_records.dumpers import SearchDumperExt
 
-from ...stats.utils import get_record_stats
+from ..stats.utils import get_record_stats
 
 
 class StatisticsDumperExt(SearchDumperExt):
