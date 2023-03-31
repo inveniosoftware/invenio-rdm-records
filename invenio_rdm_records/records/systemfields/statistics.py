@@ -11,7 +11,7 @@ from invenio_records.systemfields import SystemField
 from invenio_search.proxies import current_search_client
 from invenio_search.utils import build_alias_name
 
-from ...stats.utils import get_record_stats
+from ..stats.utils import get_record_stats
 
 
 class RecordStatisticsField(SystemField):
