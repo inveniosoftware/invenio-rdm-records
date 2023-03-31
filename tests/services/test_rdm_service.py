@@ -11,8 +11,7 @@
 
 import pytest
 
-from invenio_rdm_records.proxies import current_rdm_records, current_rdm_records_service
-from invenio_rdm_records.records import RDMDraft, RDMRecord
+from invenio_rdm_records.proxies import current_rdm_records
 from invenio_rdm_records.services.errors import EmbargoNotLiftedError
 
 

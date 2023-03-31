@@ -196,20 +196,26 @@ class RDMRecordCommunitiesResource(ErrorHandlersMixin, Resource):
     @request_data
     def add(self):
         """Include record in communities."""
-        response = self.service.add(
+        processed, errors = self.service.add(
             identity=g.identity,
             id_=resource_requestctx.view_args["pid_value"],
             data=resource_requestctx.data,
         )
 
-        return response, 200 if response["success"] else 400
+        response = {}
+        if processed:
+            response["processed"] = processed
+        if errors:
+            response["errors"] = errors
+
+        return response, 200 if len(processed) > 0 else 400
 
     @request_view_args
     @request_data
     @response_handler()
     def remove(self):
         """Remove communities from the record."""
-        errors = self.service.remove(
+        processed, errors = self.service.remove(
             identity=g.identity,
             id_=resource_requestctx.view_args["pid_value"],
             data=resource_requestctx.data,
@@ -219,7 +225,7 @@ class RDMRecordCommunitiesResource(ErrorHandlersMixin, Resource):
         if errors:
             response["errors"] = errors
 
-        return response, 200
+        return response, 200 if len(processed) > 0 else 400
 
 
 class RDMRecordRequestsResource(ErrorHandlersMixin, Resource):

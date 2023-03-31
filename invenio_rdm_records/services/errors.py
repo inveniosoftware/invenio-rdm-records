@@ -20,7 +20,16 @@ class EmbargoNotLiftedError(RDMRecordsException):
 
     def __init__(self, record_id):
         """Initialise error."""
-        super().__init__(f"Embargo could not be lifted for record: {record_id}")
+        self.record_id = record_id
+
+    @property
+    def description(self):
+        """Exception's description."""
+        return _(
+            "Embargo could not be lifted for record: {record_id}".format(
+                record_id=self.record_id
+            )
+        )
 
 
 class ReviewException(RDMRecordsException):
@@ -30,9 +39,7 @@ class ReviewException(RDMRecordsException):
 class ReviewNotFoundError(ReviewException):
     """Review was not found for record/draft."""
 
-    def __init__(self, *args, **kwargs):
-        """Initialize exception."""
-        super().__init__(_("Review not found."), *args, **kwargs)
+    description = _("Review not found.")
 
 
 class ReviewStateError(ReviewException):
@@ -50,21 +57,17 @@ class CommunitySubmissionException(Exception):
 class CommunityAlreadyExists(CommunitySubmissionException):
     """The record is already in the community."""
 
+    description = _("The record is already included in this community.")
+
 
 class CommunityInclusionException(Exception):
     """Base exception for community inclusion requests."""
 
 
-class CommunityInclusionInconsistentAccessRestrictions(CommunityInclusionException):
-    """Inclusion has inconsistent record vs community access restrictions."""
+class InvalidAccessRestrictions(CommunityInclusionException):
+    """Invalid access restrictions for record and community."""
 
-    def __init__(self, *args, **kwargs):
-        """Initialize exception."""
-        super().__init__(
-            _("A public record cannot be included in a restricted community."),
-            *args,
-            **kwargs,
-        )
+    description = _("A public record cannot be included in a restricted community.")
 
 
 class OpenRequestAlreadyExists(CommunitySubmissionException):
@@ -73,7 +76,11 @@ class OpenRequestAlreadyExists(CommunitySubmissionException):
     def __init__(self, request_id):
         """Initialize exception."""
         self.request_id = request_id
-        super().__init__()
+
+    @property
+    def description(self):
+        """Exception's description."""
+        return _("There is already an open inclusion request for this community.")
 
 
 class ValidationErrorWithMessageAsList(Exception):
@@ -120,30 +127,18 @@ class ValidationErrorWithMessageAsList(Exception):
 class RecordCommunityMissing(Exception):
     """Record does not belong to the community."""
 
-    def __init__(self, record_id, communities_id):
+    def __init__(self, record_id, community_id):
         """Initialise error."""
-        super().__init__(
-            f"The record {record_id} does not belong to any of the listed communities {communities_id}."
-        )
+        self.record_id = record_id
+        self.community_id = community_id
 
-
-class MaxNumberCommunitiesExceeded(Exception):
-    """Maximum number of communities exceed."""
-
-    def __init__(self, allowed_number):
-        """Initialise error."""
-        super().__init__(
-            f"Exceeded maximum amount of communities that can be updated at once: {allowed_number}."
-        )
-
-
-class MaxNumberOfRecordsExceed(Exception):
-    """Maximum number of records exceed."""
-
-    def __init__(self, allowed_number):
-        """Initialise error."""
-        super().__init__(
-            f"Exceeded maximum amount of records that can be updated at once: {allowed_number}."
+    @property
+    def description(self):
+        """Exception description."""
+        return _(
+            "The record {record_id} in not included in the community {community_id}.".format(
+                record_id=self.record_id, community_id=self.community_id
+            )
         )
 
 
@@ -152,4 +147,9 @@ class InvalidCommunityVisibility(Exception):
 
     def __init__(self, reason):
         """Constructor."""
-        super().__init__(f"Cannot modify community visibility. {reason}")
+        self.reason = reason
+
+    @property
+    def description(self):
+        """Exception description."""
+        return _("Cannot modify community visibility: {reason}".format(self.reason))

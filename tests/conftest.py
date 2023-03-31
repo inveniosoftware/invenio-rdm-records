@@ -64,7 +64,7 @@ from invenio_vocabularies.proxies import current_service as vocabulary_service
 from invenio_vocabularies.records.api import Vocabulary
 
 from invenio_rdm_records import config
-from invenio_rdm_records.proxies import current_rdm_records
+from invenio_rdm_records.proxies import current_rdm_records_service
 from invenio_rdm_records.records.api import RDMDraft, RDMParent, RDMRecord
 from invenio_rdm_records.services.communities.components import (
     CommunityServiceComponents,
@@ -1532,7 +1532,7 @@ def admin_role_need(db):
 @pytest.fixture()
 def embargoed_record(running_app, minimal_record, superuser_identity):
     """Embargoed record."""
-    service = current_rdm_records.records_service
+    service = current_rdm_records_service
     today = arrow.utcnow().date().isoformat()
 
     # Add embargo to record
@@ -1705,7 +1705,7 @@ def closed_review_community(
 
 
 @pytest.fixture()
-def record_community(db, uploader, minimal_record, community, rdm_record_service):
+def record_community(db, uploader, minimal_record, community):
     """Creates a record that belongs to a community."""
 
     class Record:
@@ -1717,15 +1717,19 @@ def record_community(db, uploader, minimal_record, community, rdm_record_service
             """Creates new record that belongs to the same community."""
             # create draft
             community_record = community._record
-            draft = rdm_record_service.create(uploader.identity, record_dict)
+            draft = current_rdm_records_service.create(uploader.identity, record_dict)
             # publish and get record
-            result_item = rdm_record_service.publish(uploader.identity, draft.id)
+            result_item = current_rdm_records_service.publish(
+                uploader.identity, draft.id
+            )
             record = result_item._record
             # add the record to the community
             record.parent.communities.add(community_record, default=False)
             record.parent.commit()
             db.session.commit()
-            rdm_record_service.indexer.index(record, arguments={"refresh": True})
+            current_rdm_records_service.indexer.index(
+                record, arguments={"refresh": True}
+            )
             return record
 
     return Record()

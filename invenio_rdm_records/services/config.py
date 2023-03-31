@@ -46,7 +46,6 @@ from invenio_records_resources.services.records.links import (
     RecordLink,
     pagination_links,
 )
-from invenio_requests.services.permissions import PermissionPolicy
 from invenio_requests.services.requests import RequestItem, RequestList
 from invenio_requests.services.requests.config import RequestSearchOptions
 from requests import Request
@@ -64,9 +63,9 @@ from .customizations import FromConfigPIDsProviders, FromConfigRequiredPIDs
 from .permissions import RDMRecordPermissionPolicy
 from .result_items import SecretLinkItem, SecretLinkList
 from .schemas import RDMParentSchema, RDMRecordSchema
-from .schemas.community_records import RecordCommunitiesSchema
+from .schemas.community_records import CommunityRecordsSchema
 from .schemas.parent.access import SecretLink
-from .schemas.record_communities import CommunityRecordsSchema
+from .schemas.record_communities import RecordCommunitiesSchema
 
 
 def is_draft_and_has_review(record, ctx):
@@ -172,6 +171,20 @@ class RDMCommunityRecordsConfig(BaseRecordServiceConfig, ConfiguratorMixin):
     community_cls = Community
     permission_policy_cls = FromConfig(
         "RDM_PERMISSION_POLICY", default=RDMRecordPermissionPolicy, import_string=True
+    )
+
+    # Search configuration
+    search = FromConfigSearchOptions(
+        "RDM_SEARCH",
+        "RDM_SORT_OPTIONS",
+        "RDM_FACETS",
+        search_option_cls=RDMSearchOptions,
+    )
+    search_versions = FromConfigSearchOptions(
+        "RDM_SEARCH_VERSIONING",
+        "RDM_SORT_OPTIONS",
+        "RDM_FACETS",
+        search_option_cls=RDMSearchVersionsOptions,
     )
 
     # Service schemas

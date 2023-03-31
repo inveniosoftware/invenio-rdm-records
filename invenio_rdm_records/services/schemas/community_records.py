@@ -5,32 +5,48 @@
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
 
-"""Record communities schema."""
+"""Community records schema."""
 
-from marshmallow import Schema, fields, post_load, validate
-from marshmallow_utils.fields import StrippedHTML
-
-from invenio_rdm_records.services.errors import MaxNumberCommunitiesExceeded
+from invenio_i18n import lazy_gettext as _
+from marshmallow import Schema, ValidationError, fields, validate, validates
 
 
-class CommunitySchema(Schema):
+class RecordSchema(Schema):
     """Schema to define a community id."""
 
-    id = fields.String(required=True)
-    comment = StrippedHTML()
-    require_review = fields.Boolean()
+    id = fields.String()
 
 
-class RecordCommunitiesSchema(Schema):
-    """Record communities schema."""
+class CommunityRecordsSchema(Schema):
+    """Record's communities schema."""
 
-    communities = fields.List(
-        fields.Nested(CommunitySchema), validate=validate.Length(min=1), required=True
+    records = fields.List(
+        fields.Nested(RecordSchema), validate=validate.Length(min=1), required=True
     )
 
-    @post_load
-    def _check_max_size(self, data, **kwargs):
+    @validates("records")
+    def validate_records(self, value):
+        """Validate communities."""
         max_number = self.context["max_number"]
-        if max_number < len(data["communities"]):
-            raise MaxNumberCommunitiesExceeded(max_number)
-        return data
+        if max_number < len(value):
+            raise ValidationError(
+                _(
+                    "Too many records passed, {max_number} max allowed.".format(
+                        max_number=max_number
+                    )
+                )
+            )
+
+        # check unique ids
+        uniques = set()
+        duplicated = set()
+        for record in value:
+            rec_id = record["id"]
+            if rec_id in uniques:
+                duplicated.add(rec_id)
+            uniques.add(rec_id)
+
+        if duplicated:
+            raise ValidationError(
+                _("Duplicated records {rec_ids}.".format(rec_ids=duplicated))
+            )

@@ -31,7 +31,7 @@ from invenio_rdm_records.proxies import current_rdm_records
 from invenio_rdm_records.requests import CommunityInclusion
 from invenio_rdm_records.services.errors import (
     CommunityAlreadyExists,
-    CommunityInclusionInconsistentAccessRestrictions,
+    InvalidAccessRestrictions,
     OpenRequestAlreadyExists,
     RecordCommunityMissing,
 )
@@ -71,21 +71,22 @@ class RecordCommunitiesService(Service, RecordIndexerMixin):
 
     def _include(self, identity, community_id, comment, require_review, record, uow):
         """Create request to add the community to the record."""
-        already_included = community_id in record.parent.communities
+        # check if the community exists
+        community = current_communities.service.record_cls.pid.resolve(community_id)
+        com_id = str(community.id)
+
+        already_included = com_id in record.parent.communities
         if already_included:
             raise CommunityAlreadyExists()
 
-        # check if the community exists
-        community = current_communities.service.record_cls.pid.resolve(community_id)
-
         # check if there is already an open request, to avoid duplications
-        existing_request_id = self._exists(identity, str(community.id), record)
+        existing_request_id = self._exists(identity, com_id, record)
         if existing_request_id:
             raise OpenRequestAlreadyExists(existing_request_id)
 
         type_ = current_request_type_registry.lookup(CommunityInclusion.type_id)
         receiver = ResolverRegistry.resolve_entity_proxy(
-            {"community": community_id}
+            {"community": com_id}
         ).resolve()
 
         data = {"payload": {"content": comment, "format": "html"}} if comment else {}
@@ -124,7 +125,7 @@ class RecordCommunitiesService(Service, RecordIndexerMixin):
         record = self.record_cls.pid.resolve(id_)
         self.require_permission(identity, "add_community", record=record)
 
-        success = []
+        processed = []
         for community in communities:
             community_id = community["id"]
             comment = community.get("comment", "")
@@ -138,30 +139,22 @@ class RecordCommunitiesService(Service, RecordIndexerMixin):
                     identity, community_id, comment, require_review, record, uow
                 )
                 result["request"] = str(request_item.data["id"])
-                success.append(result)
+                processed.append(result)
             except (NoResultFound, PIDDoesNotExistError):
                 result["message"] = _("Community not found.")
                 errors.append(result)
-            except CommunityAlreadyExists:
-                result["message"] = _(
-                    "The record is already included in this community."
-                )
-                errors.append(result)
-            except OpenRequestAlreadyExists:
-                result["message"] = _(
-                    "There is already an open inclusion request for this community."
-                )
-                errors.append(result)
-            except CommunityInclusionInconsistentAccessRestrictions as ex:
-                result["message"] = ex.args[0]
-                errors.append(result)
-            except PermissionDeniedError:
-                result["message"] = _("Permission denied.")
+            except (
+                CommunityAlreadyExists,
+                OpenRequestAlreadyExists,
+                InvalidAccessRestrictions,
+                PermissionDeniedError,
+            ) as ex:
+                result["message"] = ex.description
                 errors.append(result)
 
         uow.register(IndexRefreshOp(indexer=self.indexer))
 
-        return dict(success=success, errors=errors)
+        return processed, errors
 
     def _remove(self, identity, community_id, record):
         """Remove a community from the record."""
@@ -190,33 +183,26 @@ class RecordCommunitiesService(Service, RecordIndexerMixin):
             raise_errors=True,
         )
         communities = valid_data["communities"]
-        commit_changes = False
+        processed = []
         for community in communities:
             community_id = community["id"]
             try:
                 self._remove(identity, community_id, record)
-                commit_changes = True
-            except RecordCommunityMissing:
+                processed.append({"community": community_id})
+            except (RecordCommunityMissing, PermissionDeniedError) as ex:
                 errors.append(
                     {
                         "community": community_id,
-                        "message": _("The record does not belong to the community."),
+                        "message": ex.description,
                     }
                 )
-            except PermissionDeniedError:
-                errors.append(
-                    {
-                        "community": community_id,
-                        "message": _("Permission denied."),
-                    }
-                )
-        if commit_changes:
+        if processed:
             uow.register(RecordCommitOp(record.parent))
             uow.register(
                 RecordIndexOp(record, indexer=self.indexer, index_refresh=True)
             )
 
-        return errors
+        return processed, errors
 
     def search(
         self,

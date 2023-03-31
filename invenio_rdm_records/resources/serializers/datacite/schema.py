@@ -260,7 +260,7 @@ class DataCite43Schema(Schema):
         except ParseException:
             # Should not fail since it was validated at service schema
             current_app.logger.error(
-                "Error parsing publication_date field for" f"record {obj['metadata']}"
+                f"Error parsing publication_date field for record {obj['metadata']}"
             )
             raise ValidationError(_("Invalid publication date value."))
 

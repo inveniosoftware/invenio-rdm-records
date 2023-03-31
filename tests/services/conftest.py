@@ -18,8 +18,6 @@ from flask_principal import Identity, UserNeed
 from invenio_access.permissions import any_user, authenticated_user
 from invenio_app.factory import create_api
 
-from invenio_rdm_records.proxies import current_rdm_records_service
-
 
 @pytest.fixture(scope="module")
 def create_app(instance_path):
@@ -42,9 +40,3 @@ def authenticated_identity():
     identity.provides.add(UserNeed(1))
     identity.provides.add(authenticated_user)
     return identity
-
-
-@pytest.fixture()
-def rdm_record_service():
-    """Get the current RDM records service."""
-    return current_rdm_records_service

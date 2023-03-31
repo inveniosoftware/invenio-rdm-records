@@ -32,9 +32,7 @@ from invenio_records_resources.services.base.config import ConfiguratorMixin, Fr
 from invenio_requests.resources.requests.config import RequestSearchRequestArgsSchema
 
 from ..services.errors import (
-    CommunityInclusionInconsistentAccessRestrictions,
-    MaxNumberCommunitiesExceeded,
-    MaxNumberOfRecordsExceed,
+    InvalidAccessRestrictions,
     ReviewExistsError,
     ReviewNotFoundError,
     ReviewStateError,
@@ -161,7 +159,7 @@ class RDMRecordResourceConfig(RecordResourceConfig, ConfiguratorMixin):
                 description=exc.args[0],
             )
         ),
-        CommunityInclusionInconsistentAccessRestrictions: create_error_handler(
+        InvalidAccessRestrictions: create_error_handler(
             lambda exc: HTTPJSONException(
                 code=400,
                 description=exc.args[0],
@@ -248,22 +246,10 @@ class RDMCommunityRecordsResourceConfig(RecordResourceConfig, ConfiguratorMixin)
     """Community's records resource config."""
 
     blueprint_name = "community-records"
-
     url_prefix = "/communities"
-
-    # Community's records
     routes = {"list": "/<pid_value>/records"}
 
     response_handlers = record_serializers
-
-    error_handlers = {
-        MaxNumberOfRecordsExceed: create_error_handler(
-            lambda e: HTTPJSONException(
-                code=400,
-                description=str(e),
-            )
-        ),
-    }
 
 
 class RDMRecordCommunitiesResourceConfig(CommunityResourceConfig, ConfiguratorMixin):
@@ -273,15 +259,7 @@ class RDMRecordCommunitiesResourceConfig(CommunityResourceConfig, ConfiguratorMi
     url_prefix = "/records"
     routes = {"list": "/<pid_value>/communities"}
 
-    error_handlers = {
-        **community_error_handlers,
-        MaxNumberCommunitiesExceeded: create_error_handler(
-            lambda e: HTTPJSONException(
-                code=400,
-                description=str(e),
-            )
-        ),
-    }
+    error_handlers = community_error_handlers
 
 
 class RDMRecordRequestsResourceConfig(ResourceConfig, ConfiguratorMixin):

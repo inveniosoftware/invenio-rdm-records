@@ -11,9 +11,11 @@ import pytest
 from invenio_records_resources.services.errors import PermissionDeniedError
 from marshmallow import ValidationError
 
-from invenio_rdm_records.proxies import current_community_records_service
+from invenio_rdm_records.proxies import (
+    current_community_records_service,
+    current_rdm_records_service,
+)
 from invenio_rdm_records.records import RDMRecord
-from invenio_rdm_records.services.errors import MaxNumberOfRecordsExceed
 
 
 @pytest.fixture()
@@ -79,18 +81,17 @@ def test_remove_non_existing_record(curator, community, service):
 
 
 def test_remove_record_of_other_community(
-    db, curator, community, community2, record_community, service, rdm_record_service
+    db, curator, community, community2, record_community, service
 ):
     """Test error on removing a record that belongs to another community."""
 
-    # TODO: remove this extra func when the `add` to a community is implemented
     def add_to_community2(record):
         record.parent.communities.remove(community._record)
         record.parent.communities.add(community2._record, default=False)
         record.parent.commit()
         record.commit()
         db.session.commit()
-        rdm_record_service.indexer.index(record)
+        current_rdm_records_service.indexer.index(record)
         RDMRecord.index.refresh()
         return record
 
@@ -101,7 +102,7 @@ def test_remove_record_of_other_community(
     errors = service.delete(curator.identity, str(community.id), data)
 
     assert len(errors) == 1
-    assert errors[0]["message"] == "The record does not belong to the community."
+    assert "not included in the community" in errors[0]["message"]
 
 
 def test_remove_records_from_communities_success_w_errors(
@@ -124,7 +125,7 @@ def test_remove_too_many_records(curator, community, record_community, service):
     while len(lots_of_records) <= service.config.max_number_of_removals:
         lots_of_records.append(random_record)
     data = {"records": lots_of_records}
-    with pytest.raises(MaxNumberOfRecordsExceed):
+    with pytest.raises(ValidationError):
         service.delete(curator.identity, str(community.id), data)
 
 

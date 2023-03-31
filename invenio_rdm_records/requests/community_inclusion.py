@@ -10,8 +10,19 @@
 from invenio_i18n import lazy_gettext as _
 from invenio_records_resources.services.uow import RecordCommitOp, RecordIndexOp
 from invenio_requests.customizations import RequestType, actions
+from invenio_requests.errors import CannotExecuteActionError
+
+from invenio_rdm_records.services.errors import InvalidAccessRestrictions
 
 from ..proxies import current_rdm_records_service as service
+
+
+def is_access_restriction_valid(record, community):
+    """Validate that public record cannot be added to restricted community."""
+    is_record_public = record.access.protection.record == "public"
+    is_community_restricted = community.access.visibility_is_restricted
+    invalid = is_record_public and is_community_restricted
+    return not invalid
 
 
 #
@@ -40,6 +51,10 @@ class AcceptAction(actions.AcceptAction):
 
         # integrity check, it should never happen on a published record
         assert not record.parent.review
+
+        if not is_access_restriction_valid(record, community):
+            description = InvalidAccessRestrictions.description
+            raise CannotExecuteActionError(description)
 
         # set the community to `default` if it is the first
         default = not record.parent.communities
