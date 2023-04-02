@@ -88,7 +88,7 @@ class CommonFieldsMixin:
     versions_model_cls = models.RDMVersionsState
     parent_record_cls = RDMParent
 
-    schema = ConstantField("$schema", "local://records/record-v5.0.0.json")
+    schema = ConstantField("$schema", "local://records/record-v6.0.0.json")
 
     dumper = SearchDumper(
         extensions=[
@@ -250,10 +250,11 @@ class RDMDraft(CommonFieldsMixin, Draft):
 
     model_cls = models.RDMDraftMetadata
 
-    index = IndexField("rdmrecords-drafts-draft-v5.0.0", search_alias="rdmrecords")
+    index = IndexField("rdmrecords-drafts-draft-v6.0.0", search_alias="rdmrecords")
 
     files = FilesField(
         store=False,
+        dump=False,
         file_cls=RDMFileDraft,
         # Don't delete, we'll manage in the service
         delete=False,
@@ -283,11 +284,12 @@ class RDMRecord(CommonFieldsMixin, Record):
     model_cls = models.RDMRecordMetadata
 
     index = IndexField(
-        "rdmrecords-records-record-v5.0.0", search_alias="rdmrecords-records"
+        "rdmrecords-records-record-v6.0.0", search_alias="rdmrecords-records"
     )
 
     files = FilesField(
         store=False,
+        dump=False,
         file_cls=RDMFileRecord,
         # Don't create
         create=False,
