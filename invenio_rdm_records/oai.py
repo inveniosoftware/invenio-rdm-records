@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # Copyright (C) 2021 Graz University of Technology.
-# Copyright (C) 2021 CERN.
+# Copyright (C) 2021-2023 CERN.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
@@ -29,33 +29,27 @@ from .services.pids.providers.oai import OAIPIDProvider
 
 def dublincore_etree(pid, record, **serializer_kwargs):
     """Get DublinCore XML etree for OAI-PMH."""
-    item = current_rdm_records_service.oai_result_item(
-        g.identity, record["_source"])
+    item = current_rdm_records_service.oai_result_item(g.identity, record["_source"])
     # TODO: DublinCoreXMLSerializer should be able to dump an etree directly
-    # instead.
+    # instead. See https://github.com/inveniosoftware/flask-resources/issues/117
     obj = DublinCoreXMLSerializer(**serializer_kwargs).dump_obj(item.to_dict())
     return simpledc.dump_etree(obj)
 
 
 def oai_marcxml_etree(pid, record):
     """OAI MARCXML format for OAI-PMH."""
-    item = current_rdm_records_service.oai_result_item(
-        g.identity, record["_source"])
+    item = current_rdm_records_service.oai_result_item(g.identity, record["_source"])
     # TODO: MARCXMLSerializer should directly be able to dump an etree instead
     # of internally creating an etree, then dump to xml, then parse into an
-    # etree
+    # etree. See https://github.com/inveniosoftware/flask-resources/issues/117
     return etree.fromstring(MARCXMLSerializer().serialize_object(item.to_dict()))
 
 
 def oai_dcat_etree(pid, record):
     """OAI DCAT-AP format for OAI-PMH."""
-    item = current_rdm_records_service.oai_result_item(
-        g.identity, record["_source"])
-    # TODO: DCATSerializer should directly be able to dump an etree instead
-    # of internally creating an etree, then dump to xml, then parse into an
-    # etree
+    item = current_rdm_records_service.oai_result_item(g.identity, record["_source"])
+    # TODO: Ditto. See https://github.com/inveniosoftware/flask-resources/issues/117
     return etree.fromstring(
-        # It's wrong that serialize_object does not return a bytestring
         DCATSerializer().serialize_object(item.to_dict()).encode(encoding="utf-8")
     )
 
@@ -65,6 +59,7 @@ def datacite_etree(pid, record):
 
     It assumes that record is a search result.
     """
+    # TODO: Ditto. See https://github.com/inveniosoftware/flask-resources/issues/117
     data_dict = DataCite43XMLSerializer().dump_obj(record["_source"])
     return schema43.dump_etree(data_dict)
 
@@ -74,6 +69,8 @@ def oai_datacite_etree(pid, record):
 
     It assumes that record is a search result.
     """
+    # TODO: See https://github.com/inveniosoftware/flask-resources/issues/117
+    # This should be made into a serializer similar to the ones above.
     resource_dict = DataCite43XMLSerializer().dump_obj(record["_source"])
 
     nsmap = {

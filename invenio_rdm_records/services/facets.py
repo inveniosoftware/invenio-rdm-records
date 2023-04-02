@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2020-2021 CERN.
+# Copyright (C) 2020-2023 CERN.
 # Copyright (C) 2020-2021 Northwestern University.
 # Copyright (C)      2021 TU Wien.
 # Copyright (C) 2023 Graz University of Technology.
@@ -38,12 +38,11 @@ is_published = TermsFacet(
     value_labels={"true": _("Published"), "false": _("Unpublished")},
 )
 
+
 filetype = TermsFacet(
     field="files.types",
     label=_("File type"),
-    value_labels={
-        "png": "PNG"
-    },
+    value_labels=lambda ids: {id: id.upper() for id in ids},
 )
 
 

@@ -68,13 +68,7 @@ class IIIFService(Service):
             if type_ == "record"
             else self._records_service.read_draft
         )
-        # Kids, don't do this at home
-        # If you find yourself wanting to copy this, ask for help first
-        record = read(identity=identity, id_=id_)
-        file_service = self.file_service(type_)
-        files = file_service.list_files(identity=identity, id_=id_)
-        record.files = files
-        return record
+        return read(identity=identity, id_=id_)
 
     def _open_image(self, file_):
         fp = file_.get_stream("rb")
