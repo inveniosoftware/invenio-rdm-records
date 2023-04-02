@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2020-2021 CERN.
+# Copyright (C) 2020-2023 CERN.
 # Copyright (C) 2020-2021 Northwestern University.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
@@ -8,45 +8,56 @@
 
 """RDM record schemas."""
 
-from marshmallow import Schema, fields
-from marshmallow_utils.fields import SanitizedUnicode
+from marshmallow import Schema, fields, pre_load
+from marshmallow_utils.fields import NestedAttribute, SanitizedUnicode
 from marshmallow_utils.permissions import FieldPermissionsMixin
 
 
 class FileSchema(Schema):
     """File schema."""
 
-    type = fields.String()
     checksum = fields.String()
-    size = fields.Integer()
+    ext = fields.String(attribute="file.ext")
     key = SanitizedUnicode()
-    version_id = SanitizedUnicode()
-    bucket_id = SanitizedUnicode()
-    mimetype = SanitizedUnicode()
-    storage_class = SanitizedUnicode()
-
-    # TODO (Alex): See how this fits with using the refactored Linker
-    # links = fields.Method('get_links')
-
-    # def get_links(self, obj):
-    #     """Get links."""
-    #     return {
-    #         'self': api_link_for(
-    #             'object', bucket=obj['bucket'], key=obj['key'])
-    #     }
+    metadata = fields.Dict()
+    mimetype = fields.String(attribute="file.mimetype")
+    size = fields.Integer(attribute="file.size")
 
 
 class FilesSchema(Schema, FieldPermissionsMixin):
     """Files metadata schema."""
 
     field_dump_permissions = {
+        "count": "read_files",
         "default_preview": "read_files",
+        "entries": "read_files",
         "order": "read_files",
+        "total_bytes": "read_files",
     }
 
     enabled = fields.Bool()
     default_preview = SanitizedUnicode(allow_none=True)
     order = fields.List(SanitizedUnicode())
+
+    count = fields.Integer(dump_only=True)
+    total_bytes = fields.Integer(dump_only=True)
+
+    entries = fields.Dict(
+        keys=SanitizedUnicode(),
+        values=NestedAttribute(FileSchema),
+        dump_only=True,
+    )
+
+    @pre_load
+    def clean(self, data, **kwargs):
+        """Removes dump_only fields.
+
+        Why: We want to allow the output of a Schema dump, to be a valid input to a Schema load without causing strange issues.
+        """
+        for name, field in self.fields.items():
+            if field.dump_only:
+                data.pop(name, None)
+        return data
 
     def get_attribute(self, obj, attr, default):
         """Override how attributes are retrieved when dumping.
@@ -63,14 +74,3 @@ class FilesSchema(Schema, FieldPermissionsMixin):
             return default
 
         return value
-
-    # TODO: Used to store metadata for files (e.g. description, width/height)
-    # meta = fields.Dict(
-    #     keys=SanitizedUnicode(),
-    #     values=fields.Raw(),
-    # )
-    # entries = fields.Dict(
-    #     keys=SanitizedUnicode(),
-    #     values=fields.Nested(FileSchema),
-    #     dump_only=True,
-    # )

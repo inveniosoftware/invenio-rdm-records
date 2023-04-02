@@ -439,37 +439,7 @@
       }
     },
     "files": {
-      "type": "object",
-      "description": "Files associated with the record",
-      "additionalProperties": false,
-      "properties": {
-        "enabled": {
-          "type": "boolean",
-          "description": "Set to false for metadata only records."
-        },
-        "default_preview": {
-          "type": "string",
-          "description": "Key of the default previewed file."
-        },
-        "order": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
-        },
-        "entries": {
-          "type": "object",
-          "additionalProperties": {
-            "$ref": "local://definitions-v1.0.0.json#/file"
-          }
-        },
-        "meta": {
-          "type": "object",
-          "additionalProperties": {
-            "type": "object"
-          }
-        }
-      }
+      "$ref": "local://definitions-v2.0.0.json#/files-simple"
     },
     "notes": {
       "type": "array",

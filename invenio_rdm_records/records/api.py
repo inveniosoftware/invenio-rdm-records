@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2020 CERN.
+# Copyright (C) 2020-2023 CERN.
 # Copyright (C) 2021-2023 TU Wien.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
@@ -88,6 +88,8 @@ class CommonFieldsMixin:
     versions_model_cls = models.RDMVersionsState
     parent_record_cls = RDMParent
 
+    # Remember to update INDEXER_DEFAULT_INDEX in Invenio-App-RDM if you
+    # update the JSONSchema and mappings to a new version.
     schema = ConstantField("$schema", "local://records/record-v6.0.0.json")
 
     dumper = SearchDumper(
@@ -289,7 +291,7 @@ class RDMRecord(CommonFieldsMixin, Record):
 
     files = FilesField(
         store=False,
-        dump=False,
+        dump=True,
         file_cls=RDMFileRecord,
         # Don't create
         create=False,

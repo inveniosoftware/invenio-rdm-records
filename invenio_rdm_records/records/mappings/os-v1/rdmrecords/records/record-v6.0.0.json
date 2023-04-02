@@ -767,6 +767,54 @@
           },
           "default_preview": {
             "type": "keyword"
+          },
+          "count": {
+            "type": "integer"
+          },
+          "totalbytes": {
+            "type": "integer"
+          },
+          "mimetypes": {
+            "type": "keyword"
+          },
+          "types": {
+            "type": "keyword"
+          },
+          "entries": {
+            "type": "object",
+            "properties": {
+              "uuid": {
+                "enabled": false
+              },
+              "version_id": {
+                "enabled": false
+              },
+              "metadata": {
+                "type": "object",
+                "dynamic": true
+              },
+              "checksum": {
+                "type": "keyword"
+              },
+              "key": {
+                "type": "keyword"
+              },
+              "mimetype": {
+                "type": "keyword"
+              },
+              "size": {
+                "type": "integer"
+              },
+              "ext": {
+                "type": "keyword"
+              },
+              "object_version_id": {
+                "enabled": false
+              },
+              "file_id": {
+                "enabled": false
+              }
+            }
           }
         }
       },
