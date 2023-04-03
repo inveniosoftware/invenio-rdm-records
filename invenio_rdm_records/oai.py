@@ -19,7 +19,7 @@ from invenio_search import RecordsSearch
 from invenio_search.engine import dsl
 from lxml import etree
 
-from .proxies import current_rdm_records
+from .proxies import current_rdm_records, current_rdm_records_service
 from .resources.serializers.datacite import DataCite43XMLSerializer
 from .resources.serializers.dcat import DCATSerializer
 from .resources.serializers.dublincore import DublinCoreXMLSerializer
@@ -29,25 +29,34 @@ from .services.pids.providers.oai import OAIPIDProvider
 
 def dublincore_etree(pid, record, **serializer_kwargs):
     """Get DublinCore XML etree for OAI-PMH."""
-    json = DublinCoreXMLSerializer(**serializer_kwargs).dump_obj(record["_source"])
-    return simpledc.dump_etree(json)
+    item = current_rdm_records_service.oai_result_item(
+        g.identity, record["_source"])
+    # TODO: DublinCoreXMLSerializer should be able to dump an etree directly
+    # instead.
+    obj = DublinCoreXMLSerializer(**serializer_kwargs).dump_obj(item.to_dict())
+    return simpledc.dump_etree(obj)
 
 
 def oai_marcxml_etree(pid, record):
-    """OAI MARCXML format for OAI-PMH.
-
-    It assumes that record is a search result.
-    """
-    return etree.fromstring(MARCXMLSerializer().serialize_object(record["_source"]))
+    """OAI MARCXML format for OAI-PMH."""
+    item = current_rdm_records_service.oai_result_item(
+        g.identity, record["_source"])
+    # TODO: MARCXMLSerializer should directly be able to dump an etree instead
+    # of internally creating an etree, then dump to xml, then parse into an
+    # etree
+    return etree.fromstring(MARCXMLSerializer().serialize_object(item.to_dict()))
 
 
 def oai_dcat_etree(pid, record):
-    """OAI DCAT-AP format for OAI-PMH.
-
-    It assumes that record is a search result.
-    """
+    """OAI DCAT-AP format for OAI-PMH."""
+    item = current_rdm_records_service.oai_result_item(
+        g.identity, record["_source"])
+    # TODO: DCATSerializer should directly be able to dump an etree instead
+    # of internally creating an etree, then dump to xml, then parse into an
+    # etree
     return etree.fromstring(
-        DCATSerializer().serialize_object(record["_source"]).encode(encoding="utf-8")
+        # It's wrong that serialize_object does not return a bytestring
+        DCATSerializer().serialize_object(item.to_dict()).encode(encoding="utf-8")
     )
 
 
