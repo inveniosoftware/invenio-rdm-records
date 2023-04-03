@@ -8,3 +8,7 @@
 # it under the terms of the MIT License; see LICENSE file for more details.
 
 """Statistics integration for RDM records."""
+
+from .api import Statistics
+
+__all__ = Statistics

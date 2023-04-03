@@ -11,7 +11,7 @@ from invenio_records.systemfields import SystemField
 from invenio_search.proxies import current_search_client
 from invenio_search.utils import build_alias_name
 
-from ..stats.utils import get_record_stats
+from ..stats import Statistics
 
 
 class RecordStatisticsField(SystemField):
@@ -37,7 +37,9 @@ class RecordStatisticsField(SystemField):
             stats = None
 
         # as a fallback, use the more up-to-date aggregations indices
-        return stats or get_record_stats(recid=recid, parent_recid=parent_recid)
+        return stats or Statistics.get_record_stats(
+            recid=recid, parent_recid=parent_recid
+        )
 
     #
     # Data descriptor methods (i.e. attribute access)

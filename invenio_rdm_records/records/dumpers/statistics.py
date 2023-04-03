@@ -11,7 +11,7 @@ from flask import current_app
 from invenio_records.dictutils import dict_lookup, parse_lookup_key
 from invenio_records.dumpers import SearchDumperExt
 
-from ..stats.utils import get_record_stats
+from ..stats import Statistics
 
 
 class StatisticsDumperExt(SearchDumperExt):
@@ -42,7 +42,7 @@ class StatisticsDumperExt(SearchDumperExt):
 
         try:
             parent_data = dict_lookup(data, self.keys, parent=True)
-            parent_data[self.key] = get_record_stats(
+            parent_data[self.key] = Statistics.get_record_stats(
                 recid=recid, parent_recid=parent_recid
             )
         except KeyError as e:
