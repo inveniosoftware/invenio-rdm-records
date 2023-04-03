@@ -141,6 +141,12 @@ RDM_FACETS = {
             "field": "is_published",
         },
     },
+    "file_type": {
+        "facet": facets.filetype,
+        "ui": {
+            "field": "files.types",
+        },
+    },
     "language": {
         "facet": facets.language,
         "ui": {
@@ -217,7 +223,7 @@ RDM_SORT_OPTIONS = {
 """
 
 RDM_SEARCH = {
-    "facets": ["access_status", "resource_type"],
+    "facets": ["access_status", "file_type", "resource_type"],
     "sort": [
         "bestmatch",
         "newest",

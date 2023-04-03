@@ -113,3 +113,21 @@ class RDMRecordService(RecordService):
         )
 
         return self.scan(identity=identity, q=embargoed_q)
+
+    def oai_result_item(self, identity, oai_record_source):
+        """Get a result item from a record source in the OAI server.
+
+        This function is ONLY intended to be used by the OAI-PMH server because
+        the OAIServer does not use the service directly to retrieve records.
+        The OAIServer predates the the software architecture and thus to avoid
+        rewriting it, we allow exceptions to get data from the search index
+        and pass it into the service (normally the service must be responsible
+        for this).
+        """
+        record = self.record_cls.loads(oai_record_source)
+        return self.result_item(
+            self,
+            identity,
+            record,
+            links_tpl=self.links_item_tpl,
+        )

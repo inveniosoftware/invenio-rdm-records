@@ -38,6 +38,14 @@ is_published = TermsFacet(
     value_labels={"true": _("Published"), "false": _("Unpublished")},
 )
 
+filetype = TermsFacet(
+    field="files.types",
+    label=_("File type"),
+    value_labels={
+        "png": "PNG"
+    },
+)
+
 
 language = TermsFacet(
     field="metadata.languages.id",
