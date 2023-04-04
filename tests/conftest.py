@@ -500,14 +500,6 @@ def full_record(users):
                 }
             ],
         },
-        "ext": {
-            "dwc": {
-                "collectionCode": "abc",
-                "collectionCode2": 1.1,
-                "collectionCode3": True,
-                "test": ["abc", 1, True],
-            }
-        },
         "provenance": {
             "created_by": {"user": users[0].id},
             "on_behalf_of": {"user": users[1].id},
@@ -771,14 +763,6 @@ def enhanced_full_record(users):
                     "scheme": "isni",
                 }
             ],
-        },
-        "ext": {
-            "dwc": {
-                "collectionCode": "abc",
-                "collectionCode2": 1.1,
-                "collectionCode3": True,
-                "test": ["abc", 1, True],
-            }
         },
         "provenance": {
             "created_by": {"user": users[0].id},

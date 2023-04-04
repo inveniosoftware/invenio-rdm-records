@@ -12,6 +12,7 @@
 from edtf import parse_edtf
 from edtf.parser.grammar import ParseException
 from flask import current_app
+from flask_resources.serializers import BaseSerializerSchema
 from invenio_access.permissions import system_identity
 from invenio_i18n import lazy_gettext as _
 from invenio_records_resources.proxies import current_service_registry
@@ -20,12 +21,7 @@ from marshmallow import Schema, ValidationError, fields, missing, post_dump, val
 from marshmallow_utils.fields import SanitizedUnicode
 from marshmallow_utils.html import strip_html
 
-from invenio_rdm_records.resources.serializers.schemas import (
-    CommonFieldsMixin,
-    DumperMixin,
-)
-from invenio_rdm_records.resources.serializers.ui.schema import current_default_locale
-
+from ...serializers.ui.schema import current_default_locale
 from ..utils import get_preferred_identifier, get_vocabulary_props
 
 
@@ -172,7 +168,7 @@ class SubjectSchema43(Schema):
     subjectScheme = fields.Str(attribute="scheme")
 
 
-class DataCite43Schema(DumperMixin):
+class DataCite43Schema(BaseSerializerSchema):
     """DataCite JSON 4.3 Marshmallow Schema."""
 
     # PIDS-FIXME: What about versioning links and related ids

@@ -3,6 +3,7 @@
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
+
 """Meeting custom fields.
 
 Implements the following fields:
@@ -21,33 +22,7 @@ from invenio_records_resources.services.custom_fields import BaseCF
 from marshmallow import fields
 from marshmallow_utils.fields import SanitizedUnicode
 
-from invenio_rdm_records.contrib.journal.custom_fields import FieldDumper
-from invenio_rdm_records.services.schemas.metadata import _valid_url
-
-
-class MeetingDublinCoreDumper(FieldDumper):
-    """Dump processor for dublin core serialization of 'Meeting' custom field."""
-
-    def post_dump(self, data, original=None, **kwargs):
-        """Adds serialized meeting data to the input data under the 'sources' key."""
-        _original = original or {}
-        custom_fields = _original.get("custom_fields", {})
-        meeting_data = custom_fields.get("meeting:meeting", {})
-
-        parts = [
-            meeting_data.get("acronym"),
-            meeting_data.get("title"),
-            meeting_data.get("place"),
-            meeting_data.get("dates"),
-        ]
-
-        # Update input data with serialized data
-        serialized_data = ", ".join([x for x in parts if x])
-        sources = data.get("sources", [])
-        sources.append(serialized_data)
-        data["sources"] = sources
-
-        return data
+from ...services.schemas.metadata import _valid_url
 
 
 class MeetingCF(BaseCF):

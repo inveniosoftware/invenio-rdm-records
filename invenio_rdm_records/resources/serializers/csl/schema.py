@@ -10,13 +10,13 @@
 from edtf import parse_edtf
 from edtf.parser.edtf_exceptions import EDTFParseException
 from edtf.parser.parser_classes import Date, Interval
+from flask_resources.serializers import BaseSerializerSchema
 from invenio_access.permissions import system_identity
 from invenio_records_resources.proxies import current_service_registry
 from invenio_vocabularies.proxies import current_service as vocabulary_service
 from marshmallow import Schema, fields, missing, pre_dump
 from marshmallow_utils.fields import SanitizedUnicode, StrippedHTML
 
-from ..schemas import DumperMixin
 from ..utils import get_preferred_identifier
 
 
@@ -46,7 +46,7 @@ def add_if_not_none(year, month, day):
     return _list
 
 
-class CSLJSONSchema(DumperMixin, Schema):
+class CSLJSONSchema(BaseSerializerSchema):
     """CSL Marshmallow Schema."""
 
     id_ = SanitizedUnicode(data_key="id", attribute="id")

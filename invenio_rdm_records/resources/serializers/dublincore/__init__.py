@@ -11,13 +11,10 @@ from dcxml import simpledc
 from flask_resources import BaseListSchema, MarshmallowSerializer
 from flask_resources.serializers import JSONSerializer, SimpleSerializer
 
-from invenio_rdm_records.contrib.journal.custom_fields import JournalDublinCoreDumper
-from invenio_rdm_records.contrib.meeting.custom_fields import MeetingDublinCoreDumper
+from invenio_rdm_records.contrib.journal.processors import JournalDublinCoreDumper
+from invenio_rdm_records.contrib.meeting.processors import MeetingDublinCoreDumper
 
 from .schema import DublinCoreSchema
-
-# Order matters
-dublincore_dumpers = [JournalDublinCoreDumper(), MeetingDublinCoreDumper()]
 
 
 class DublinCoreJSONSerializer(MarshmallowSerializer):
@@ -29,7 +26,10 @@ class DublinCoreJSONSerializer(MarshmallowSerializer):
             format_serializer_cls=JSONSerializer,
             object_schema_cls=DublinCoreSchema,
             list_schema_cls=BaseListSchema,
-            schema_kwargs={"dumpers": dublincore_dumpers},
+            schema_kwargs={
+                # processors order matters
+                "dumpers": [JournalDublinCoreDumper(), MeetingDublinCoreDumper()]
+            },
             **options,
         )
 
@@ -47,7 +47,9 @@ class DublinCoreXMLSerializer(MarshmallowSerializer):
             format_serializer_cls=SimpleSerializer,
             object_schema_cls=DublinCoreSchema,
             list_schema_cls=BaseListSchema,
-            schema_kwargs={"dumpers": dublincore_dumpers},
+            schema_kwargs={
+                "dumpers": [JournalDublinCoreDumper(), MeetingDublinCoreDumper()]
+            },
             encoder=simpledc.tostring,
             **options,
         )
