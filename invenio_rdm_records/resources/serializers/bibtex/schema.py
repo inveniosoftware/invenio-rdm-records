@@ -9,14 +9,15 @@
 
 import datetime
 
-from marshmallow import fields, missing, post_dump
+from flask_resources.serializers import BaseSerializerSchema
+from marshmallow import fields, post_dump
 from slugify import slugify
 
-from ..schemas import CommonFieldsMixin, DumperMixin
+from ..schemas import CommonFieldsMixin
 from .schema_formats import BibTexFormatter
 
 
-class BibTexSchema(CommonFieldsMixin, DumperMixin):
+class BibTexSchema(BaseSerializerSchema, CommonFieldsMixin):
     """Schema for records in BibTex."""
 
     id = fields.Str()

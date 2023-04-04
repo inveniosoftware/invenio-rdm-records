@@ -10,16 +10,17 @@
 from copy import deepcopy
 
 import bleach
+from flask_resources.serializers import BaseSerializerSchema
 from invenio_access.permissions import system_identity
 from invenio_vocabularies.proxies import current_service as vocabulary_service
 from marshmallow import fields, missing, post_dump
 
-from ..schemas import CommonFieldsMixin, DumperMixin
+from ..schemas import CommonFieldsMixin
 from ..ui.schema import current_default_locale
 from ..utils import get_vocabulary_props
 
 
-class MARCXMLSchema(CommonFieldsMixin, DumperMixin):
+class MARCXMLSchema(BaseSerializerSchema, CommonFieldsMixin):
     """Schema for records in MARC."""
 
     doi = fields.Method("get_doi")
@@ -202,6 +203,8 @@ class MARCXMLSchema(CommonFieldsMixin, DumperMixin):
         t = props.get("eurepo")
         return [t] if t else missing
 
+    # FIXME should this be a processor? that's somehow the post_dump place
+    # otherwise we cannot guarantee order
     @post_dump()
     def keys_to_tags(self, data, many, **kwargs):
         """Changes the key name to the corresponding MARCXML tag (number)."""

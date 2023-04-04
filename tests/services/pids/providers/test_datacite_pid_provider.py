@@ -47,7 +47,7 @@ def record_w_links(running_app, minimal_record):
     draft = service.create(system_identity, minimal_record)
     record = service.publish(system_identity, draft.id)
 
-    return record
+    return record.to_dict()
 
 
 def test_datacite_provider_create(record, datacite_provider):
@@ -87,13 +87,11 @@ def test_datacite_provider_register(record_w_links, datacite_provider, mocker):
         "invenio_rdm_records.services.pids.providers.datacite."
         + "DataCite43JSONSerializer"
     )
-    created_pid = datacite_provider.get(
-        record_w_links._record.pids["doi"]["identifier"]
-    )
+    created_pid = datacite_provider.get(record_w_links["pids"]["doi"]["identifier"])
     assert datacite_provider.register(
         pid=created_pid,
-        record=record_w_links._record,
-        url=record_w_links.links["self_html"],
+        record=record_w_links,
+        url=record_w_links["links"]["self_html"],
     )
 
     db_pid = PersistentIdentifier.get(pid_value=created_pid.pid_value, pid_type="doi")
@@ -109,15 +107,11 @@ def test_datacite_provider_update(record_w_links, datacite_provider, mocker):
         "invenio_rdm_records.services.pids.providers.datacite."
         + "DataCite43JSONSerializer"
     )
-    created_pid = datacite_provider.get(
-        record_w_links._record.pids["doi"]["identifier"]
-    )
+    created_pid = datacite_provider.get(record_w_links["pids"]["doi"]["identifier"])
     assert datacite_provider.register(
-        pid=created_pid, record=record_w_links, url=record_w_links.links["self_html"]
+        pid=created_pid, record=record_w_links, url=record_w_links["links"]["self_html"]
     )
-    assert datacite_provider.update(
-        pid=created_pid, record=record_w_links._record, url=None
-    )
+    assert datacite_provider.update(pid=created_pid, record=record_w_links, url=None)
 
     db_pid = PersistentIdentifier.get(pid_value=created_pid.pid_value, pid_type="doi")
 
@@ -157,11 +151,9 @@ def test_datacite_provider_unregister_registered(
         + "DataCite43JSONSerializer"
     )
     # Unregister NEW is a soft delete
-    created_pid = datacite_provider.get(
-        record_w_links._record.pids["doi"]["identifier"]
-    )
+    created_pid = datacite_provider.get(record_w_links["pids"]["doi"]["identifier"])
     assert datacite_provider.register(
-        pid=created_pid, record=record_w_links, url=record_w_links.links["self_html"]
+        pid=created_pid, record=record_w_links, url=record_w_links["links"]["self_html"]
     )
     assert created_pid.status == PIDStatus.REGISTERED
     assert datacite_provider.delete(created_pid)

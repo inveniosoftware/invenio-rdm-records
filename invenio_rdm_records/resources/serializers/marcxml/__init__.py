@@ -12,11 +12,8 @@ from flask_resources import BaseListSchema, MarshmallowSerializer
 from flask_resources.serializers import SimpleSerializer
 from lxml import etree
 
-from invenio_rdm_records.contrib.journal.custom_fields import JournalMarcXMLDumper
-
+from ....contrib.journal.processors import JournalMarcXMLDumper
 from .schema import MARCXMLSchema
-
-marc_xml_dump_processors = [JournalMarcXMLDumper()]
 
 
 class MARCXMLSerializer(MarshmallowSerializer):
@@ -32,7 +29,7 @@ class MARCXMLSerializer(MarshmallowSerializer):
             format_serializer_cls=SimpleSerializer,
             object_schema_cls=MARCXMLSchema,
             list_schema_cls=BaseListSchema,
-            schema_kwargs={"dumpers": marc_xml_dump_processors},
+            schema_kwargs={"dumpers": [JournalMarcXMLDumper()]},
             encoder=self.marcxml_tostring,
         )
 

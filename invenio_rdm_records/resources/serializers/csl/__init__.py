@@ -24,12 +24,8 @@ from flask_resources import BaseListSchema, MarshmallowSerializer
 from flask_resources.serializers import JSONSerializer
 from webargs import fields
 
-from invenio_rdm_records.contrib.journal.custom_fields import JournalCSLDumper
-
+from ....contrib.journal.processors import JournalCSLDumper
 from .schema import CSLJSONSchema
-
-# Order matters
-csl_dump_dumpers = [JournalCSLDumper()]
 
 
 class CSLJSONSerializer(MarshmallowSerializer):
@@ -41,7 +37,7 @@ class CSLJSONSerializer(MarshmallowSerializer):
             format_serializer_cls=JSONSerializer,
             object_schema_cls=CSLJSONSchema,
             list_schema_cls=BaseListSchema,
-            schema_kwargs={"dumpers": csl_dump_dumpers},
+            schema_kwargs={"dumpers": [JournalCSLDumper()]},  # Order matters
             **options,
         )
 
