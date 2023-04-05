@@ -156,7 +156,7 @@ class RDMRecordPermissionPolicy(RecordPermissionPolicy):
     # Record communities
     #
     # Who can add record to a community
-    can_add_community = [RecordOwners()]
+    can_add_community = [RecordOwners(), SystemProcess()]
     # Who can remove a community from a record
     can_remove_community = [
         RecordOwners(),

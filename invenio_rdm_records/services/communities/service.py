@@ -293,9 +293,7 @@ class RecordCommunitiesService(Service, RecordIndexerMixin):
         """Search for communities that can be added to a record."""
         record = self.record_cls.pid.resolve(id_)
 
-        self.require_permission(
-            identity, "add_community", record=record
-        )
+        self.require_permission(identity, "add_community", record=record)
 
         communities_filter = self._get_excluded_communities_filter(
             record, identity, id_
