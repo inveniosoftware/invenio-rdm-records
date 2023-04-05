@@ -72,7 +72,7 @@ def test_uploader_add_record_to_communities(
 
     # assert that requests are "submitted", but not "accepted"
     for result in processed:
-        request_id = result["request"]
+        request_id = result["request_id"]
         response = client.get(
             f"/requests/{request_id}",
             headers=headers,
@@ -144,8 +144,8 @@ def test_community_owner_add_record_to_communities(
 
     # assert that the request of the curator is "accepted"
     for result in processed:
-        community_id = result["community"]
-        request_id = result["request"]
+        community_id = result["community_id"]
+        request_id = result["request_id"]
         response = client.get(
             f"/requests/{request_id}",
             headers=headers,
@@ -186,10 +186,10 @@ def test_community_owner_add_record_to_communities_forcing_review_with_comment(
     open_review_community,
     record_community,
 ):
-    """Test owner addition of record to open review by forcing a review with a comment."""
+    """Test owner addition of record to open review by forcing review with a comment."""
     client = curator.login(client)
 
-    expected_comment = "Could someone review it?"
+    expected_comment = {"content": "Could someone review it?", "format": "html"}
     data = {
         "communities": [
             {
@@ -226,7 +226,7 @@ def test_community_owner_add_record_to_communities_forcing_review_with_comment(
     # assert that the request of the curator is in review ("submitted")
     result = processed[0]
     community_id = result["community"]
-    request_id = result["request"]
+    request_id = result["request_id"]
 
     Request.index.refresh()
     RequestEvent.index.refresh()

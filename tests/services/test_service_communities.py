@@ -8,8 +8,8 @@
 """Test record's communities service."""
 
 import pytest
-from invenio_communities.proxies import current_communities
 from invenio_communities.generators import CommunityMembers
+from invenio_communities.proxies import current_communities
 from invenio_records_resources.services.errors import PermissionDeniedError
 from invenio_requests import current_events_service, current_requests_service
 from marshmallow import ValidationError
