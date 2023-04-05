@@ -254,6 +254,7 @@ class RecordCommunitiesService(Service, RecordIndexerMixin):
         """Return filter to exclude communities that should not be suggested."""
         communities_to_exclude = []
         communities_ids = record.parent.communities.ids
+
         for community_id in communities_ids:
             communities_to_exclude.append(dsl.Q("term", **{"id": community_id}))
 
@@ -274,7 +275,9 @@ class RecordCommunitiesService(Service, RecordIndexerMixin):
                 dsl.Q("term", **{"id": request["receiver"]["community"]})
             )
 
-        return dsl.query.Bool("must_not", must_not=communities_to_exclude)
+        exclusion_filter = dsl.query.Bool("must_not", must_not=communities_to_exclude)
+
+        return exclusion_filter
 
     def search_suggested_communities(
         self,
@@ -283,18 +286,29 @@ class RecordCommunitiesService(Service, RecordIndexerMixin):
         params=None,
         search_preference=None,
         expand=False,
+        by_membership=False,
         extra_filter=None,
         **kwargs
     ):
         """Search for communities that can be added to a record."""
         record = self.record_cls.pid.resolve(id_)
+
         self.require_permission(
-            identity, "search_suggestion_communities", record=record
+            identity, "add_community", record=record
         )
 
         communities_filter = self._get_excluded_communities_filter(
             record, identity, id_
         )
+
+        if by_membership:
+            return current_communities.service.search_user_communities(
+                identity,
+                params=params,
+                search_preference=search_preference,
+                extra_filter=communities_filter,
+                **kwargs
+            )
 
         if extra_filter is not None:
             communities_filter = communities_filter & extra_filter
