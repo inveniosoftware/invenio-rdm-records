@@ -7,7 +7,6 @@
 
 """RDM Record Communities Service."""
 
-from invenio_communities.generators import CommunityMembers
 from invenio_communities.proxies import current_communities
 from invenio_i18n import lazy_gettext as _
 from invenio_pidstore.errors import PIDDoesNotExistError
@@ -24,7 +23,6 @@ from invenio_records_resources.services.uow import (
     unit_of_work,
 )
 from invenio_requests import current_request_type_registry, current_requests_service
-from invenio_requests.customizations import CommentEventType
 from invenio_requests.resolvers.registry import ResolverRegistry
 from invenio_search.engine import dsl
 from sqlalchemy.orm.exc import NoResultFound
@@ -44,10 +42,6 @@ class RecordCommunitiesService(Service, RecordIndexerMixin):
 
     The communities service is in charge of managing communities of a given record.
     """
-
-    def _wrap_schema(self, schema):
-        """Wrap schema."""
-        return ServiceSchemaWrapper(self, schema)
 
     @property
     def schema(self):
@@ -95,15 +89,6 @@ class RecordCommunitiesService(Service, RecordIndexerMixin):
             {"community": com_id}
         ).resolve()
 
-        comment_data = {}
-
-        if comment:
-            comment_schema = self._wrap_schema(CommentEventType.marshmallow_schema())
-            comment_data, errors = comment_schema.load(
-                comment,
-                context={"identity": identity},
-            )
-
         request_item = current_requests_service.create(
             identity,
             {},
@@ -112,9 +97,10 @@ class RecordCommunitiesService(Service, RecordIndexerMixin):
             topic=record,
             uow=uow,
         )
+
         # create review request
         request_item = current_rdm_records.community_inclusion_service.submit(
-            identity, record, community, request_item._request, comment_data, uow
+            identity, record, community, request_item._request, comment, uow
         )
         # include directly when allowed
         if not require_review:
@@ -143,8 +129,6 @@ class RecordCommunitiesService(Service, RecordIndexerMixin):
         for community in communities:
             community_id = community["id"]
             comment = community.get("comment", None)
-            if comment:
-                comment = dict(payload=community.get("comment", None))
             require_review = community.get("require_review", False)
 
             result = {
@@ -270,6 +254,8 @@ class RecordCommunitiesService(Service, RecordIndexerMixin):
             ),
         )
 
+        # the assumption here is that there should be only a few open requests,
+        # so requests.hits (first page one) should be enough
         for request in open_requests.hits:
             communities_to_exclude.append(
                 dsl.Q("term", **{"id": request["receiver"]["community"]})
@@ -299,6 +285,9 @@ class RecordCommunitiesService(Service, RecordIndexerMixin):
             record, identity, id_
         )
 
+        if extra_filter is not None:
+            communities_filter = communities_filter & extra_filter
+
         if by_membership:
             return current_communities.service.search_user_communities(
                 identity,
@@ -307,9 +296,6 @@ class RecordCommunitiesService(Service, RecordIndexerMixin):
                 extra_filter=communities_filter,
                 **kwargs
             )
-
-        if extra_filter is not None:
-            communities_filter = communities_filter & extra_filter
 
         return current_communities.service.search(
             identity,

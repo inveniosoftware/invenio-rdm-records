@@ -189,7 +189,9 @@ def test_community_owner_add_record_to_communities_forcing_review_with_comment(
     """Test owner addition of record to open review by forcing review with a comment."""
     client = curator.login(client)
 
-    expected_comment = {"content": "Could someone review it?", "format": "html"}
+    expected_comment = {
+        "payload": {"content": "Could someone review it?", "format": "html"}
+    }
     data = {
         "communities": [
             {
@@ -225,7 +227,6 @@ def test_community_owner_add_record_to_communities_forcing_review_with_comment(
 
     # assert that the request of the curator is in review ("submitted")
     result = processed[0]
-    community_id = result["community"]
     request_id = result["request_id"]
 
     Request.index.refresh()
@@ -250,7 +251,7 @@ def test_community_owner_add_record_to_communities_forcing_review_with_comment(
     comments = response.json
     assert comments["hits"]["total"] == 1
     comment_content = comments["hits"]["hits"][0]["payload"]["content"]
-    assert comment_content == expected_comment
+    assert comment_content == expected_comment["payload"]["content"]
 
     client = curator.logout(client)
     # check search results
@@ -292,7 +293,7 @@ def test_restrict_community_before_accepting_inclusion(
     )
     assert response.status_code == 200
     assert len(response.json["processed"]) == 1
-    request_id = response.json["processed"][0]["request"]
+    request_id = response.json["processed"][0]["request_id"]
 
     # change the community to restricted
     client = uploader.logout(client)
@@ -339,7 +340,7 @@ def test_create_new_version_after_inclusion_request(
     )
     assert response.status_code == 200
     assert len(response.json["processed"]) == 1
-    request_id = response.json["processed"][0]["request"]
+    request_id = response.json["processed"][0]["request_id"]
 
     # create a new version of the record
     response = client.post(
@@ -385,7 +386,7 @@ def test_create_new_version_after_inclusion_request(
     assert hit["id"] == first_version_record["id"]
     assert hit["metadata"]["title"] == first_version_record["metadata"]["title"]
 
-    # publish the new version version of the record
+    # publish the new version of the record
     client = community_owner.logout(client)
     client = uploader.login(client)
     response = client.post(

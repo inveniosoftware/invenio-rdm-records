@@ -8,15 +8,15 @@
 """Record communities schema."""
 
 from invenio_i18n import lazy_gettext as _
-from marshmallow import Schema, ValidationError, fields, pre_load, validate, validates
-from marshmallow_utils.fields import StrippedHTML
+from invenio_requests.customizations import CommentEventType
+from marshmallow import Schema, ValidationError, fields, validate, validates
 
 
 class CommunitySchema(Schema):
     """Schema to define a community id."""
 
     id = fields.String(required=True)
-    comment = StrippedHTML()
+    comment = fields.Nested(CommentEventType.marshmallow_schema)
     require_review = fields.Boolean()
 
 
