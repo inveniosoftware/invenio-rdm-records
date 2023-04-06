@@ -10,6 +10,10 @@
 Changes
 =======
 
+Version 2.12.0 (released 2023-04-06)
+
+- api: add record community suggestion endpoint
+
 Version 2.11.0 (released 2023-03-30)
 
 - add usage statistics indexing (by system field)
