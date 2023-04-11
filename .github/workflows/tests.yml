@@ -34,6 +34,7 @@ jobs:
         requirements-level: [pypi]
         db-service: [postgresql13]
         search-service: [opensearch2,elasticsearch7]
+        node-version: [16.x]
         include:
           - db-service: postgresql13
             DB_EXTRAS: "postgresql"
@@ -51,6 +52,13 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2
+
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ matrix.node-version }}
+      - name: Run eslint test
+        run: ./run-js-linter.sh -i
 
       - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v2
@@ -83,3 +91,15 @@ jobs:
       - name: Run tests
         run: |
           ./run-tests.sh
+
+      - name: Install deps for frontend tests
+        working-directory: ./invenio_rdm_records/assets/semantic-ui/js/invenio_rdm_records
+        run: npm install
+
+      - name: Install deps for frontend tests - translations
+        working-directory: ./invenio_rdm_records/assets/semantic-ui/translations/invenio_rdm_records
+        run: npm install
+
+      - name: Run frontend tests
+        working-directory: ./invenio_rdm_records/assets/semantic-ui/js/invenio_rdm_records
+        run: npm test

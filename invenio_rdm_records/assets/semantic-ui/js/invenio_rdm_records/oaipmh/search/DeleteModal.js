@@ -51,7 +51,7 @@ export class DeleteModal extends Component {
             />
             <Checkbox
               className="ml-5"
-              value={true}
+              value
               checked={checked}
               onChange={(event, data) => {
                 this.setState({ checked: data.checked });
