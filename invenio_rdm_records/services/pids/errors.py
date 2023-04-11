@@ -8,6 +8,8 @@
 """RDM Record PIDs Service Errors."""
 
 
+from invenio_i18n import lazy_gettext as _
+
 from ..errors import RDMRecordsException
 
 
@@ -16,7 +18,9 @@ class PIDSchemeNotSupportedError(RDMRecordsException):
 
     def __init__(self, schemes):
         """Initialise error."""
-        super().__init__(f"No configuration defined for PIDs {schemes}")
+        super().__init__(
+            _("No configuration defined for PIDs {schemes}".format(schemes=schemes))
+        )
 
 
 class ProviderNotSupportedError(RDMRecordsException):
