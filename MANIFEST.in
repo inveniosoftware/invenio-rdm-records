@@ -30,7 +30,10 @@ recursive-include invenio_rdm_records *.png *.svg
 recursive-include invenio_rdm_records *.po *.pot *.mo
 recursive-include invenio_rdm_records *.yaml
 recursive-include invenio_rdm_records *.xsl
+recursive-include invenio_rdm_records *.prettierrc
+recursive-include invenio_rdm_records *.yml
 recursive-include tests *.py *.csv *.json *.yaml *.png
+
 
 # added by check-manifest
 recursive-include invenio_rdm_records *.py

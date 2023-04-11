@@ -29,9 +29,7 @@ class LinksTable extends Component {
     super(props);
     const { links: passedLinks } = props.data;
 
-    const currentPrefix = this.getPrefixFromLink(
-      passedLinks["oai-listrecords"]
-    );
+    const currentPrefix = this.getPrefixFromLink(passedLinks["oai-listrecords"]);
 
     this.state = {
       links: passedLinks || [],
@@ -174,6 +172,7 @@ class LinksTable extends Component {
                   href={listRecords}
                   target="_blank"
                   title={i18next.t("Opens in new tab")}
+                  rel="noreferrer"
                 >
                   {listRecords}
                 </a>
@@ -191,6 +190,7 @@ class LinksTable extends Component {
                   href={listIdentifiers}
                   target="_blank"
                   title={i18next.t("Opens in new tab")}
+                  rel="noreferrer"
                 >
                   {listIdentifiers}
                 </a>

@@ -64,28 +64,21 @@ class SearchResultItemComponent extends Component {
       listUIEndpoint,
     } = this.props;
 
-    const resourceHasActions =
-      displayEdit || displayDelete || !isEmpty(actions);
+    const resourceHasActions = displayEdit || displayDelete || !isEmpty(actions);
 
-    overridenComponents["InvenioAdministration.EditAction"] = parametrize(
-      Edit,
-      {
-        disable: () => result.system_created,
-        disabledMessage: i18next.t(
-          "This set is not editable as it was created by the system."
-        ),
-      }
-    );
+    overridenComponents["InvenioAdministration.EditAction"] = parametrize(Edit, {
+      disable: () => result.system_created,
+      disabledMessage: i18next.t(
+        "This set is not editable as it was created by the system."
+      ),
+    });
 
-    overridenComponents["InvenioAdministration.DeleteAction"] = parametrize(
-      Delete,
-      {
-        disable: () => result.system_created,
-        disabledMessage: i18next.t(
-          "This set is not deletable as it was created by the system."
-        ),
-      }
-    );
+    overridenComponents["InvenioAdministration.DeleteAction"] = parametrize(Delete, {
+      disable: () => result.system_created,
+      disabledMessage: i18next.t(
+        "This set is not deletable as it was created by the system."
+      ),
+    });
 
     return (
       <OverridableContext.Provider value={overridenComponents}>
@@ -99,11 +92,7 @@ class SearchResultItemComponent extends Component {
               >
                 {index === 0 ? (
                   <a
-                    href={AdminUIRoutes.detailsView(
-                      listUIEndpoint,
-                      result,
-                      idKeyPath
-                    )}
+                    href={AdminUIRoutes.detailsView(listUIEndpoint, result, idKeyPath)}
                   >
                     {this.displayAsPre(result, property)}
                   </a>
@@ -120,11 +109,7 @@ class SearchResultItemComponent extends Component {
                 resourceName={resourceName}
                 apiEndpoint={apiEndpoint}
                 actions={actions}
-                editUrl={AdminUIRoutes.editView(
-                  listUIEndpoint,
-                  result,
-                  idKeyPath
-                )}
+                editUrl={AdminUIRoutes.editView(listUIEndpoint, result, idKeyPath)}
                 displayEdit={displayEdit}
                 displayDelete={displayDelete}
                 resource={result}
