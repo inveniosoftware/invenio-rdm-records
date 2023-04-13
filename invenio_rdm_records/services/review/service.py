@@ -11,16 +11,13 @@
 from flask import current_app
 from invenio_drafts_resources.services.records import RecordService
 from invenio_i18n import lazy_gettext as _
+from invenio_notifications.services.uow import NotificationOp
 from invenio_records_resources.services.uow import (
-    NotificationOp,
     RecordCommitOp,
     RecordIndexOp,
     unit_of_work,
 )
-from invenio_requests import (
-    current_request_type_registry,
-    current_requests_service,
-)
+from invenio_requests import current_request_type_registry, current_requests_service
 from invenio_requests.resolvers.registry import ResolverRegistry
 from invenio_users_resources.records.api import UserAggregate
 from marshmallow import ValidationError
@@ -28,7 +25,7 @@ from marshmallow import ValidationError
 from invenio_rdm_records.proxies import current_rdm_records
 from invenio_rdm_records.requests.decorators import request_next_link
 
-from ...notifications.utils import CommunitySubmissionSubmittedNotificationBuilder
+from ...notifications.utils import CommunityInclusionNotificationBuilder
 from ..errors import ReviewExistsError, ReviewNotFoundError, ReviewStateError
 
 
@@ -64,15 +61,11 @@ class ReviewService(RecordService):
     def create(self, identity, data, record, uow=None):
         """Create a new review request in draft state (to be completed."""
         if record.parent.review is not None:
-            raise ReviewExistsError(
-                _("A review already exists for this record")
-            )
+            raise ReviewExistsError(_("A review already exists for this record"))
         # Validate that record has not been published.
         if record.is_published or record.versions.index > 1:
             raise ReviewStateError(
-                _(
-                    "You cannot create a review for an already published record."
-                )
+                _("You cannot create a review for an already published record.")
             )
 
         # Validate the review type (only review requests are valid)
@@ -97,14 +90,12 @@ class ReviewService(RecordService):
         record.parent.review = request_item._request
         uow.register(RecordCommitOp(record.parent))
 
-        # TODO: remove before merge. dev only
-        notification = CommunitySubmissionSubmittedNotificationBuilder(
-            trigger=self._create_notification_trigger(request_item._request),
-            record=record,
-            community=request_item._request.receiver.resolve(),
-            request=request_item._request,
-        ).build()
-        uow.register(NotificationOp(notification))
+        # # TODO: remove before merge. dev only
+        uow.register(
+            NotificationOp(
+                CommunityInclusionNotificationBuilder.build(request_item._request)
+            )
+        )
 
         return request_item
 
@@ -162,9 +153,7 @@ class ReviewService(RecordService):
         # the request's events. The request is deleted only when in `draft`
         # status
         if not (draft.parent.review.is_closed or draft.parent.review.is_open):
-            current_requests_service.delete(
-                identity, draft.parent.review.id, uow=uow
-            )
+            current_requests_service.delete(identity, draft.parent.review.id, uow=uow)
         # Unset on record
         draft.parent.review = None
         uow.register(RecordCommitOp(draft.parent))
@@ -208,22 +197,15 @@ class ReviewService(RecordService):
         uow.register(RecordCommitOp(draft.parent))
 
         if not require_review:
-            request_item = (
-                current_rdm_records.community_inclusion_service.include(
-                    identity, community, request, uow
-                )
+            request_item = current_rdm_records.community_inclusion_service.include(
+                identity, community, request, uow
             )
 
-            notification = CommunitySubmissionSubmittedNotificationBuilder(
-                trigger=self._create_notification_trigger(
-                    request_item._request
-                ),
-                record=draft,
-                community=request_item._request.receiver.resolve(),
-                request=request_item._request,
-            ).build()
-
-            uow.register(NotificationOp(notification=notification))
+            uow.register(
+                NotificationOp(
+                    CommunityInclusionNotificationBuilder.build(request_item._request)
+                )
+            )
 
         uow.register(RecordIndexOp(draft, indexer=self.indexer))
         return request_item
