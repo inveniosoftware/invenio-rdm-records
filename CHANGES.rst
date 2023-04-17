@@ -10,6 +10,11 @@
 Changes
 =======
 
+Version 2.13.0 (released 2023-04-17)
+
+- serializers: added schema processors (custom fields)
+- serializers: created dump and load mixins for custom fields
+
 Version 2.12.0 (released 2023-04-06)
 
 - api: add record community suggestion endpoint
