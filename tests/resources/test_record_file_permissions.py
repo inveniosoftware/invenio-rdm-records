@@ -12,11 +12,11 @@
 Not every case is tested, but enough high-level ones for it to be useful.
 """
 
-
 from io import BytesIO
 
 import pytest
 
+from invenio_rdm_records.proxies import current_rdm_records_service
 from tests.helpers import login_user, logout_user
 
 
@@ -70,6 +70,95 @@ def record_w_restricted_file(client, headers, running_app, minimal_record, users
     logout_user(client)
 
     return recid
+
+
+def _add_to_community(record, community, service, db):
+    """Add a record to a community."""
+    record.parent.communities.add(community._record, default=False)
+    record.parent.commit()
+    record.commit()
+    db.session.commit()
+    service.indexer.index(record, arguments={"refresh": True})
+    return record
+
+
+def test_community_access_restricted_files(
+    test_user,
+    client,
+    uploader,
+    community_owner,
+    headers,
+    community,
+    minimal_record,
+    db,
+):
+    """Test the access to restricted files of a record for record owner, community owner and a simple user ."""
+    service = current_rdm_records_service
+    record_owner = uploader.login(client)
+
+    # publish a record with restricted files
+    minimal_record["access"]["files"] = "restricted"
+    recid = create_record_w_file(record_owner, minimal_record, headers)
+
+    req_item = service.read(uploader.identity, recid)
+    _add_to_community(req_item._record, community, service, db)
+    url = f"/records/{recid}/files"
+
+    # record owner has access to files
+    response = record_owner.get(url, headers=headers)
+    assert response.status_code == 200
+    uploader.logout(client)
+
+    # community owner doesn't have access to file
+    comm_owner = community_owner.login(client)
+    response = comm_owner.get(url, headers=headers)
+    assert response.status_code == 403
+    community_owner.logout(client)
+
+    # random user doesn't have access to file
+    simple_user = test_user.login(client)
+    response = simple_user.get(url, headers=headers)
+    assert response.status_code == 403
+    test_user.logout(client)
+
+
+def test_everybody_can_access_public_files(
+    test_user,
+    client,
+    uploader,
+    community_owner,
+    headers,
+    community,
+    minimal_record,
+    db,
+):
+    """Test the access to public files of a record for record owner, community owner and a simple user ."""
+    service = current_rdm_records_service
+    record_owner = uploader.login(client)
+
+    # publish a record with public files
+    recid = create_record_w_file(record_owner, minimal_record, headers)
+
+    req_item = service.read(uploader.identity, recid)
+    _add_to_community(req_item._record, community, service, db)
+    url = f"/records/{recid}/files"
+
+    # record owner has access to files
+    response = record_owner.get(url, headers=headers)
+    assert response.status_code == 200
+    uploader.logout(client)
+
+    # community owner has access to files
+    comm_owner = community_owner.login(client)
+    response = comm_owner.get(url, headers=headers)
+    assert response.status_code == 200
+    community_owner.logout(client)
+
+    # random user has access to files
+    simple_user = test_user.login(client)
+    response = simple_user.get(url, headers=headers)
+    assert response.status_code == 200
+    test_user.logout(client)
 
 
 def test_only_owners_can_list_restricted_files(

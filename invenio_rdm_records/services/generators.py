@@ -117,6 +117,25 @@ class IfRestricted(ConditionalGenerator):
             return q_public
 
 
+class IfFilesRestrictedForCommunity(IfRestricted):
+    """Conditional generator for files restriction for community."""
+
+    def __init__(self, then_, else_):
+        """Constructor."""
+        super().__init__("files", then_, else_)
+
+    def _condition(self, record, **kwargs):
+        """Check if community can access restricted files of the migrated record."""
+        # can_community_read_files = getattr(record.parent, permission_flags.can_community_read_files, True)
+        can_community_read_files = False
+        is_restricted = super()._condition(record, **kwargs)
+
+        if is_restricted:
+            return not can_community_read_files
+        else:
+            return False
+
+
 class IfDraft(ConditionalGenerator):
     """Generator that depends on whether the record is a draft or not.
 

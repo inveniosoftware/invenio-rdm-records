@@ -22,6 +22,7 @@ from invenio_records_permissions.policies.records import RecordPermissionPolicy
 from .generators import (
     IfConfig,
     IfFileIsLocal,
+    IfFilesRestrictedForCommunity,
     IfRestricted,
     RecordCommunitiesAction,
     RecordOwners,
@@ -82,8 +83,16 @@ class RDMRecordPermissionPolicy(RecordPermissionPolicy):
         IfRestricted("record", then_=can_view, else_=can_all),
     ]
     # Allow reading the files of a record
-    can_read_files = [
+    # Hide record's files from community
+    can_read_files_owner = [RecordOwners(), SecretLinks("view"), SystemProcess()]
+    # Show record's files to community
+    can_read_files_community = [
         IfRestricted("files", then_=can_view, else_=can_all),
+    ]
+    can_read_files = [
+        IfFilesRestrictedForCommunity(
+            then_=can_read_files_owner, else_=can_read_files_community
+        ),
     ]
     can_get_content_files = [
         # note: even though this is closer to business logic than permissions,
