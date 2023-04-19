@@ -11,7 +11,6 @@
 from .access import AccessComponent
 from .custom_fields import CustomFieldsComponent
 from .metadata import MetadataComponent
-from .parent import ParentRecordAccessComponent
 from .pids import PIDsComponent
 from .review import ReviewComponent
 
@@ -19,7 +18,6 @@ __all__ = (
     "AccessComponent",
     "CustomFieldsComponent",
     "MetadataComponent",
-    "ParentRecordAccessComponent",
     "PIDsComponent",
     "ReviewComponent",
 )
