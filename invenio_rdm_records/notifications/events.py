@@ -9,7 +9,11 @@
 """Events used for notifications."""
 
 from dataclasses import dataclass
-from typing import ClassVar
+
+
+def _create_handling_key(type, action):
+    """Helper method to ease format updates."""
+    return f"{type}.{action}"
 
 
 # taken from event bus implementation.
@@ -21,7 +25,7 @@ class Event:
 
     type: str
     action: str
-    handling_key: str = f"{type}.{action}"
+    handling_key: str
 
 
 @dataclass
@@ -29,46 +33,50 @@ class CommunityRecordInclusionEvent(Event):
     """Community related events."""
 
     type = "community-submission"
-    action = ""
 
 
 @dataclass
 class CommunityInclusionSubmittedEvent(CommunityRecordInclusionEvent):
     """Record related events."""
 
-    action: ClassVar[str] = "submitted"
+    action = "submitted"
+    handling_key = _create_handling_key(CommunityRecordInclusionEvent.type, action)
 
 
 @dataclass
 class CommunityInclusionDeclinedEvent(CommunityRecordInclusionEvent):
     """Record related events."""
 
-    action: ClassVar[str] = "declined"
+    action = "declined"
+    handling_key = _create_handling_key(CommunityRecordInclusionEvent.type, action)
 
 
 @dataclass
 class CommunityInvitationEvent(Event):
     """Community related events."""
 
-    type: ClassVar[str] = "community-invitation"
+    type = "community-invitation"
 
 
 @dataclass
 class CommunityInvitationCreatedEvent(CommunityInvitationEvent):
     """Record related events."""
 
-    action: ClassVar[str] = "created"
+    action = "created"
+    handling_key = _create_handling_key(CommunityInvitationEvent.type, action)
 
 
 @dataclass
 class CommunityInvitationAcceptedEvent(CommunityInvitationEvent):
     """Record related events."""
 
-    action: ClassVar[str] = "accepted"
+    action = "accepted"
+    handling_key = _create_handling_key(CommunityInvitationEvent.type, action)
 
 
 @dataclass
 class CommunityInvitationDeclinedEvent(CommunityInvitationEvent):
     """Record related events."""
 
-    action: ClassVar[str] = "declined"
+    action = "declined"
+    handling_key = _create_handling_key(CommunityInvitationEvent.type, action)
