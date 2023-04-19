@@ -1,52 +1,80 @@
+# -*- coding: utf-8 -*-
+#
+# Copyright (C) 2023 CERN.
+# Copyright (C) 2023 Graz University of Technology.
+#
+# Invenio-RDM-Records is free software; you can redistribute it and/or modify
+# it under the terms of the MIT License; see LICENSE file for more details.
+
+"""Notification related utils for notifications."""
+
 from invenio_access.permissions import system_identity
-from invenio_communities.communities.records.api import Community
 from invenio_communities.proxies import current_communities
-from invenio_notifications.models import Notification
+from invenio_notifications.models import Notification, Recipient
 from invenio_notifications.registry import EntityResolverRegistry
 from invenio_notifications.services.builders import NotificationBuilder
 from invenio_notifications.services.generators import EntityResolve
+from invenio_records.dictutils import dict_lookup
 from invenio_users_resources.notifications import UserEmailBackend, UserRecipient
+from invenio_users_resources.proxies import current_users_service
 
 from .events import CommunityInclusionSubmittedEvent
 
 
+# TODO: move to invenio-communities?
 class CommunityMembersRecipient:
+    """Community member recipient generator for notifications."""
+
     def __init__(self, key, roles=None):
+        """Ctor."""
         self.key = key
         self.roles = roles
 
-    def __call___(self, notification, recipients: list):
-        community = notification[self.key]
-        if isinstance(community, Community):
-            members = current_communities.service.members.search(
-                system_identity,
-                community["id"],
-                roles=self.roles,
-            )
-            for m in members:
-                if not m.user_id:
-                    continue
-                if self.roles and m.role not in self.roles:
-                    continue
-                user = m.relations.user.dereference()
-                # notif_pref = user.preferences["notifications"]
-                # com_pref = notif_pref.get(community.id)
-                # if com_pref:
-                #     # check if notification is enabled/disabled for the member
-                #     # if ...:
-                #     #     continue
-                recipients.append(user)
+    def __call__(self, notification, recipients: dict):
+        """Fetch community and add members as recipients, based on roles."""
+        community = dict_lookup(notification.context, self.key)
+        members = current_communities.service.members.search(
+            system_identity,
+            community["id"],
+            roles=self.roles,
+        )
+
+        user_ids = []
+        for m in members:
+            if m["member"]["type"] != "user":
+                continue
+            if self.roles and m["role"] not in self.roles:
+                continue
+            user_ids.append(m["member"]["id"])
+
+        if not user_ids:
+            return recipients
+
+        users = current_users_service.read_many(system_identity, user_ids)
+        for u in users:
+            # NOTE: Community preferences are under construction See https://github.com/inveniosoftware/invenio-communities/issues/864
+            #       Might want to move this to a RecipientFilter?
+            # notif_pref = user.preferences.get("notifications", {})
+            # com_pref = notif_pref.get(community.id, {})
+            # if not com_pref.get("enabled"):
+            #     continue
+            recipients[u["id"]] = Recipient(data=u)
         return recipients
 
 
 class CommunityInclusionNotificationBuilder(NotificationBuilder):
+    """Base notification builder for record community inclusion events."""
+
     type = CommunityInclusionSubmittedEvent.handling_key
 
     @classmethod
     def build(cls, request):
+        """Build notification with request context."""
         return Notification(
             type=cls.type,
-            context=EntityResolverRegistry.reference_entity(request),
+            context={
+                "request": EntityResolverRegistry.reference_entity(request),
+            },
         )
 
     context = [
@@ -71,4 +99,6 @@ class CommunityInclusionNotificationBuilder(NotificationBuilder):
 class CommunityInclusionSubmittedNotificationBuilder(
     CommunityInclusionNotificationBuilder
 ):
+    """Notification builder for record community inclusion submitted."""
+
     type = CommunityInclusionSubmittedEvent.handling_key

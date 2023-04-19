@@ -1,3 +1,0 @@
-{{ _('New community submission') }}
-
-{{ _('View submission') }}: {{ notification.data['request']['links']['self_html'] }}

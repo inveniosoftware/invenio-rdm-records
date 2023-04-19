@@ -92,9 +92,7 @@ class ReviewService(RecordService):
 
         # # TODO: remove before merge. dev only
         uow.register(
-            NotificationOp(
-                CommunityInclusionNotificationBuilder.build(request_item._request)
-            )
+            NotificationOp(CommunityInclusionNotificationBuilder.build(request_item))
         )
 
         return request_item
@@ -203,7 +201,7 @@ class ReviewService(RecordService):
 
             uow.register(
                 NotificationOp(
-                    CommunityInclusionNotificationBuilder.build(request_item._request)
+                    CommunityInclusionNotificationBuilder.build(request_item)
                 )
             )
 
