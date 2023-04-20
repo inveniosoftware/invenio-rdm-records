@@ -10,6 +10,10 @@
 Changes
 =======
 
+Version 3.0.0 (released 2023-04-20)
+
+- usage statistics: refactor files structure
+
 Version 2.13.0 (released 2023-04-17)
 
 - serializers: added schema processors (custom fields)
