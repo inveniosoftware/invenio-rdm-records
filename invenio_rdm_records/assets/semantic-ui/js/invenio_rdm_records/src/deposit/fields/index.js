@@ -15,6 +15,7 @@ export { PIDField, IdentifiersField } from "./Identifiers";
 export { LicenseField } from "./License";
 export { PublicationDateField } from "./PublicationDateField";
 export { PublisherField } from "./PublisherField";
+export { ReferencesField } from "./ReferencesField";
 export { RelatedWorksField } from "./RelatedWorksField";
 export { ResourceTypeField } from "./ResourceTypeField";
 export { SubjectsField } from "./SubjectsField";

@@ -48,12 +48,6 @@ record_identifiers_schemes = LocalProxy(
     lambda: current_app.config["RDM_RECORDS_IDENTIFIERS_SCHEMES"]
 )
 
-
-record_references_schemes = LocalProxy(
-    lambda: current_app.config["RDM_RECORDS_REFERENCES_SCHEMES"]
-)
-
-
 record_location_schemes = LocalProxy(
     lambda: current_app.config["RDM_RECORDS_LOCATION_SCHEMES"]
 )
@@ -275,7 +269,7 @@ class ReferenceSchema(IdentifierSchema):
     def __init__(self, **kwargs):
         """Constructor."""
         super().__init__(
-            allowed_schemes=record_references_schemes,
+            allowed_schemes=record_identifiers_schemes,
             identifier_required=False,
             **kwargs
         )

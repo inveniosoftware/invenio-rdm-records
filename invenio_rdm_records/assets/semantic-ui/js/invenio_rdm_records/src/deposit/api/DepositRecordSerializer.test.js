@@ -9,6 +9,7 @@ import { RDMDepositRecordSerializer } from "./DepositRecordSerializer";
 import { emptyDate } from "../fields/DatesField/initialValues";
 import { emptyIdentifier } from "../fields/Identifiers/initialValues";
 import { emptyRelatedWork } from "../fields/RelatedWorksField/initialValues";
+import { emptyReference } from "../fields/ReferencesField/initialValues";
 
 describe("RDMDepositRecordSerializer tests", () => {
   const defaultLocale = "en";
@@ -137,6 +138,40 @@ describe("RDMDepositRecordSerializer tests", () => {
         expect(serializedRecord).toEqual({ metadata: {}, custom_fields: {}, pids: {} });
       });
     });
+
+    describe("references", () => {
+      it("serializes array as-is if filled", () => {
+        const record = {
+          metadata: {
+            references: [
+              {
+                reference: "Test reference",
+              },
+            ],
+          },
+        };
+
+        const serializedRecord = serializer.serialize(record);
+
+        expect(serializedRecord.metadata.references).toEqual([
+          {
+            reference: "Test reference",
+          },
+        ]);
+      });
+
+      it("doesn't serialize if only default is present", () => {
+        const record = {
+          metadata: {
+            references: [emptyReference],
+          },
+        };
+
+        const serializedRecord = serializer.serialize(record);
+
+        expect(serializedRecord).toEqual({ metadata: {}, custom_fields: {}, pids: {} });
+      });
+    });
   });
 
   describe("deserialize", () => {
@@ -161,6 +196,7 @@ describe("RDMDepositRecordSerializer tests", () => {
           languages: [],
           identifiers: [],
           related_identifiers: [],
+          references: [],
           subjects: [],
           rights: [],
           funding: [],
@@ -278,6 +314,11 @@ describe("RDMDepositRecordSerializer tests", () => {
               identifier: "10.5281/zenodo.9999988",
               resource_type: { id: "image-photo" },
               relation_type: "requires",
+            },
+          ],
+          references: [
+            {
+              reference: "Test reference",
             },
           ],
           subjects: [
@@ -408,6 +449,12 @@ describe("RDMDepositRecordSerializer tests", () => {
               identifier: "10.5281/zenodo.9999988",
               resource_type: "image-photo",
               relation_type: "requires",
+              __key: 0,
+            },
+          ],
+          references: [
+            {
+              reference: "Test reference",
               __key: 0,
             },
           ],

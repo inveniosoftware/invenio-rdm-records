@@ -46,6 +46,7 @@ const defaultLabels = {
   "metadata.version": i18next.t("Version"),
   "metadata.publisher": i18next.t("Publisher"),
   "metadata.related_identifiers": i18next.t("Related works"),
+  "metadata.references": i18next.t("References"),
   "metadata.identifiers": i18next.t("Alternate identifiers"),
   "access.embargo.until": i18next.t("Embargo until"),
   "pids.doi": i18next.t("DOI"),
