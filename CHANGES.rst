@@ -10,6 +10,10 @@
 Changes
 =======
 
+Version 3.1.0 (released 2023-04-21)
+
+- assets: move react deposit components
+
 Version 3.0.0 (released 2023-04-20)
 
 - usage statistics: refactor files structure
