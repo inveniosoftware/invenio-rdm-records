@@ -220,6 +220,15 @@ export class RDMDepositRecordSerializer extends DepositRecordSerializer {
         },
         deserializedDefault: [],
       }),
+      references: new SchemaField({
+        fieldpath: "metadata.references",
+        schema: {
+          reference: new Field({
+            fieldpath: "reference",
+          }),
+        },
+        deserializedDefault: [],
+      }),
       subjects: new AllowAdditionsVocabularyField({
         fieldpath: "metadata.subjects",
         deserializedDefault: [],

@@ -63,9 +63,15 @@ RDM_RECORDS_IDENTIFIERS_SCHEMES = {
         "validator": idutils.is_ads,
         "datacite": "bibcode",
     },
+    "crossreffunderid": {
+        "label": _("Crossref Funder ID"),
+        "validator": always_valid,
+        "datacite": "Crossref Funder ID",
+    },
     "doi": {"label": _("DOI"), "validator": idutils.is_doi, "datacite": "DOI"},
     "ean13": {"label": _("EAN13"), "validator": idutils.is_ean13, "datacite": "EAN13"},
     "eissn": {"label": _("EISSN"), "validator": idutils.is_issn, "datacite": "EISSN"},
+    "grid": {"label": _("GRID"), "validator": always_valid, "datacite": "GRID"},
     "handle": {
         "label": _("Handle"),
         "validator": idutils.is_handle,
@@ -73,6 +79,7 @@ RDM_RECORDS_IDENTIFIERS_SCHEMES = {
     },
     "igsn": {"label": _("IGSN"), "validator": always_valid, "datacite": "IGSN"},
     "isbn": {"label": _("ISBN"), "validator": idutils.is_isbn, "datacite": "ISBN"},
+    "isni": {"label": _("ISNI"), "validator": idutils.is_isni, "datacite": "ISNI"},
     "issn": {"label": _("ISSN"), "validator": idutils.is_issn, "datacite": "ISSN"},
     "istc": {"label": _("ISTC"), "validator": idutils.is_istc, "datacite": "ISTC"},
     "lissn": {"label": _("LISSN"), "validator": idutils.is_issn, "datacite": "LISSN"},
@@ -83,16 +90,10 @@ RDM_RECORDS_IDENTIFIERS_SCHEMES = {
     "url": {"label": _("URL"), "validator": idutils.is_url, "datacite": "URL"},
     "urn": {"label": _("URN"), "validator": idutils.is_urn, "datacite": "URN"},
     "w3id": {"label": _("W3ID"), "validator": always_valid, "datacite": "w3id"},
+    "other": {"label": _("Other"), "validator": always_valid, "datacite": "Other"},
 }
-"""These are used for main, alternate and related identifiers."""
+"""These are used for references, main, alternate and related identifiers."""
 
-
-RDM_RECORDS_REFERENCES_SCHEMES = {
-    "isni": {"label": _("ISNI"), "validator": idutils.is_isni},
-    "grid": {"label": _("GRID"), "validator": always_valid},
-    "crossreffunderid": {"label": _("Crossref Funder ID"), "validator": always_valid},
-    "other": {"label": _("Other"), "validator": always_valid},
-}
 RDM_RECORDS_LOCATION_SCHEMES = {
     "wikidata": {"label": _("Wikidata"), "validator": always_valid},
     "geonames": {"label": _("GeoNames"), "validator": always_valid},
