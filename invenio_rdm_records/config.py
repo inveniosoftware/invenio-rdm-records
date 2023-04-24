@@ -252,7 +252,7 @@ The configuration has four possible keys:
 """
 
 RDM_SEARCH_DRAFTS = {
-    "facets": ["access_status", "is_published", "resource_type"],
+    "facets": ["access_status", "is_published", "resource_type", "file_type"],
     "sort": ["bestmatch", "updated-desc", "updated-asc", "newest", "oldest", "version"],
 }
 """User records search configuration (i.e. list of uploads)."""
