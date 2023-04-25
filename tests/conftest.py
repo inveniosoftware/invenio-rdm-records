@@ -391,6 +391,10 @@ def full_record(users):
             },
             "oai": {"identifier": "oai:vvv.com:abcde-fghij", "provider": "oai"},
         },
+        "uuid": "445aaacd-9de1-41ab-af52-25ab6cb93df7",
+        "version_id": "1",
+        "created": "2023-01-01",
+        "updated": "2023-01-02",
         "metadata": {
             "resource_type": {"id": "image-photo"},
             "creators": [
@@ -520,15 +524,22 @@ def full_record(users):
             "bucket": "81983514-22e5-473a-b521-24254bd5e049",
             "default_preview": "big-dataset.zip",
             "order": ["big-dataset.zip"],
-            "entries": {
-                "big-dataset.zip": {
+            "entries": [
+                {
                     "checksum": "md5:234245234213421342",
                     "mimetype": "application/zip",
                     "size": 1114324524355,
                     "key": "big-dataset.zip",
                     "file_id": "445aaacd-9de1-41ab-af52-25ab6cb93df7",
+                    "uuid": "445aaacd-9de1-41ab-af52-25ab6cb93df7",
+                    "version_id": "1",
+                    "created": "2023-01-01",
+                    "updated": "2023-01-02",
+                    "object_version_id": "1",
+                    "metadata": {},
+                    "id": "445aaacd-9de1-41ab-af52-25ab6cb93df7",
                 }
-            },
+            ],
             "meta": {"big-dataset.zip": {"description": "File containing the data."}},
         },
         "notes": ["Under investigation for copyright infringement."],
@@ -551,6 +562,10 @@ def enhanced_full_record(users):
                 "provider": "oai",
             },
         },
+        "uuid": "445aaacd-9de1-41ab-af52-25ab6cb93df7",
+        "version_id": "1",
+        "created": "2023-01-01",
+        "updated": "2023-01-02",
         "metadata": {
             "resource_type": {"id": "image-photo"},
             "creators": [
@@ -784,15 +799,22 @@ def enhanced_full_record(users):
             "bucket": "81983514-22e5-473a-b521-24254bd5e049",
             "default_preview": "big-dataset.zip",
             "order": ["big-dataset.zip"],
-            "entries": {
-                "big-dataset.zip": {
+            "entries": [
+                {
                     "checksum": "md5:234245234213421342",
                     "mimetype": "application/zip",
                     "size": 1114324524355,
                     "key": "big-dataset.zip",
                     "file_id": "445aaacd-9de1-41ab-af52-25ab6cb93df7",
+                    "uuid": "445aaacd-9de1-41ab-af52-25ab6cb93df7",
+                    "version_id": "1",
+                    "created": "2023-01-01",
+                    "updated": "2023-01-02",
+                    "object_version_id": "1",
+                    "metadata": {},
+                    "id": "445aaacd-9de1-41ab-af52-25ab6cb93df7",
                 }
-            },
+            ],
             "meta": {"big-dataset.zip": {"description": "File containing the data."}},
         },
         "notes": ["Under investigation for copyright infringement."],
