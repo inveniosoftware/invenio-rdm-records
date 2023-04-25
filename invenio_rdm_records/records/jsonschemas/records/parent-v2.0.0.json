@@ -77,6 +77,12 @@
 
     "review": {
       "$ref": "local://requests/request-v1.0.0.json"
+    },
+
+    "permission_flags": {
+      "type": "object",
+      "additionalProperties": true,
+      "description": "Storage of permission flag fields."
     }
   }
 }

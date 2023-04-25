@@ -78,6 +78,8 @@ class RDMParent(ParentRecordBase):
 
     communities = CommunitiesField(models.RDMParentCommunity)
 
+    permission_flags = DictField("permission_flags")
+
 
 #
 # Common properties between records and drafts.

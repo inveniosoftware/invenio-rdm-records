@@ -9,7 +9,7 @@
 
 """RDM service component for access integration."""
 
-from invenio_access.permissions import system_process
+from invenio_access.permissions import system_identity
 from invenio_drafts_resources.services.records.components import ServiceComponent
 from invenio_i18n import gettext as _
 from marshmallow import ValidationError
@@ -56,7 +56,7 @@ class AccessComponent(ServiceComponent):
         # corresponding user to the owners
         # (record.parent.access.owners) and commit the parent
         # otherwise, the parent's owners stays empty
-        is_sys_id = system_process in identity.provides
+        is_sys_id = identity == system_identity
         if not record.parent.access.owners and not is_sys_id:
             owner_dict = {"user": identity.id}
             record.parent.access.owners.add(owner_dict)

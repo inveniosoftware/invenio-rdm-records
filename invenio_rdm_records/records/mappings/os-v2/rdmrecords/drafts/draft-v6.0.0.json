@@ -229,6 +229,10 @@
               }
             }
           },
+          "permission_flags": {
+            "type": "object",
+            "dynamic": true
+          },
           "created": {
             "type": "date"
           },
