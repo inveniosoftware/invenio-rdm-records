@@ -10,6 +10,11 @@
 Changes
 =======
 
+Version 4.0.0 (released 2023-04-25)
+
+- record: add file metadata to the indexing
+- fixtures: add user locale preferences
+
 Version 3.1.0 (released 2023-04-21)
 
 - assets: move react deposit components
