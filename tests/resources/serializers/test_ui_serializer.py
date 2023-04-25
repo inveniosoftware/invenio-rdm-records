@@ -186,6 +186,8 @@ def test_ui_serializer(app, full_to_dict_record):
         ],
         "description_stripped": "A description \nwith HTML tags",
         "version": "v1.0",
+        "created_date_l10n_long": "January 1, 2023",
+        "updated_date_l10n_long": "January 2, 2023",
         "funding": [
             {
                 "award": {
