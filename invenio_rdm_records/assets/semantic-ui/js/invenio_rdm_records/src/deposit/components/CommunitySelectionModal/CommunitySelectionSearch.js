@@ -64,8 +64,13 @@ export class CommunitySelectionSearch extends Component {
           <Grid>
             <Grid.Row verticalAlign="middle">
               <Grid.Column width={8} textAlign="left" floated="left">
-                <Menu compact>
+                <Menu role="tablist" compact>
                   <Menu.Item
+                    as="button"
+                    role="tab"
+                    id="all-communities-tab"
+                    aria-selected={selectedAppId === allCommunities.appId}
+                    aria-controls={allCommunities.appId}
                     name="All"
                     active={selectedAppId === allCommunities.appId}
                     onClick={() =>
@@ -77,6 +82,11 @@ export class CommunitySelectionSearch extends Component {
                     {i18next.t("All")}
                   </Menu.Item>
                   <Menu.Item
+                    as="button"
+                    role="tab"
+                    id="my-communities-tab"
+                    aria-selected={selectedAppId === myCommunities.appId}
+                    aria-controls={myCommunities.appId}
                     name="My communities"
                     active={selectedAppId === myCommunities.appId}
                     onClick={() =>
@@ -94,9 +104,10 @@ export class CommunitySelectionSearch extends Component {
                   placeholder={toggleText}
                   autofocus
                   actionProps={{
-                    icon: "search",
-                    content: null,
-                    className: "search",
+                    "icon": "search",
+                    "content": null,
+                    "className": "search",
+                    "aria-label": i18next.t("Search"),
                   }}
                 />
               </Grid.Column>
@@ -106,7 +117,12 @@ export class CommunitySelectionSearch extends Component {
               <Grid.Column>
                 <ResultsLoader>
                   <Segment className="community-list-container p-0">
-                    <Modal.Content scrolling className="community-list-results">
+                    <Modal.Content
+                      role="tabpanel"
+                      id={selectedAppId}
+                      scrolling
+                      className="community-list-results"
+                    >
                       <EmptyResults />
                       <Error />
                       <ResultsList />

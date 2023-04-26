@@ -8,7 +8,7 @@ import { i18next } from "@translations/invenio_rdm_records/i18next";
 import PropTypes from "prop-types";
 import React, { Component } from "react";
 import { connect } from "react-redux";
-import { Header, Modal } from "semantic-ui-react";
+import { Header, Modal, Button } from "semantic-ui-react";
 import { CommunityContext } from "./CommunityContext";
 import { CommunitySelectionSearch } from "./CommunitySelectionSearch";
 import _isEmpty from "lodash/isEmpty";
@@ -63,6 +63,7 @@ export class CommunitySelectionModalComponent extends Component {
       onModalChange,
       modalOpen,
       apiConfigs,
+      handleClose,
     } = this.props;
 
     return (
@@ -96,6 +97,10 @@ export class CommunitySelectionModalComponent extends Component {
             <CommunitySelectionSearch apiConfigs={apiConfigs} />
             {extraContentComponents}
           </Modal.Content>
+
+          <Modal.Actions>
+            <Button onClick={handleClose}>{i18next.t("Close")}</Button>
+          </Modal.Actions>
         </Modal>
       </CommunityContext.Provider>
     );
@@ -113,6 +118,7 @@ CommunitySelectionModalComponent.propTypes = {
   displaySelected: PropTypes.bool,
   modalOpen: PropTypes.bool,
   apiConfigs: PropTypes.object,
+  handleClose: PropTypes.func.isRequired,
 };
 
 CommunitySelectionModalComponent.defaultProps = {
