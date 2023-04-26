@@ -10,11 +10,23 @@ import _get from "lodash/get";
 import PropTypes from "prop-types";
 import React, { Component } from "react";
 import { Trans } from "react-i18next";
-import { ErrorLabel, RadioField, TextAreaField } from "react-invenio-forms";
+import {
+  ErrorLabel,
+  RadioField,
+  TextAreaField,
+  ErrorMessage,
+} from "react-invenio-forms";
 import { Button, Checkbox, Form, Icon, Message, Modal } from "semantic-ui-react";
 import * as Yup from "yup";
 
 export class SubmitReviewModal extends Component {
+  componentDidMount() {
+    // A11y: Focus the first input field in the form
+    const firstFormFieldWrap = document.getElementById("accept-access-checkbox");
+    const checkboxElem = firstFormFieldWrap.querySelector("input");
+    checkboxElem?.focus();
+  }
+
   ConfirmSubmitReviewSchema = Yup.object({
     acceptAccessToRecord: Yup.bool().oneOf([true], i18next.t("You must accept this.")),
     acceptAfterPublishRecord: Yup.bool().oneOf(
@@ -83,7 +95,7 @@ export class SubmitReviewModal extends Component {
             >
               <Modal.Header>{headerTitle}</Modal.Header>
               <Modal.Content>
-                {errors}
+                {errors && <ErrorMessage errors={errors} />}
                 <Message visible warning>
                   <p>
                     <Icon name="warning sign" />
@@ -91,7 +103,7 @@ export class SubmitReviewModal extends Component {
                   </p>
                 </Message>
                 <Form>
-                  <Form.Field>
+                  <Form.Field id="accept-access-checkbox">
                     <RadioField
                       control={Checkbox}
                       fieldPath="acceptAccessToRecord"
@@ -118,6 +130,7 @@ export class SubmitReviewModal extends Component {
                       optimized
                     />
                     <ErrorLabel
+                      role="alert"
                       fieldPath="acceptAccessToRecord"
                       className="mt-0 mb-5"
                     />
@@ -145,6 +158,7 @@ export class SubmitReviewModal extends Component {
                       optimized
                     />
                     <ErrorLabel
+                      role="alert"
                       fieldPath="acceptAfterPublishRecord"
                       className="mt-0 mb-5"
                     />
