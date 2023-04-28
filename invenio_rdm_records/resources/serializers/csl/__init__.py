@@ -24,7 +24,9 @@ from flask_resources import BaseListSchema, MarshmallowSerializer
 from flask_resources.serializers import JSONSerializer
 from webargs import fields
 
+from ....contrib.imprint.processors import ImprintCSLDumper
 from ....contrib.journal.processors import JournalCSLDumper
+from ....contrib.meeting.processors import MeetingCSLDumper
 from .schema import CSLJSONSchema
 
 
@@ -37,7 +39,9 @@ class CSLJSONSerializer(MarshmallowSerializer):
             format_serializer_cls=JSONSerializer,
             object_schema_cls=CSLJSONSchema,
             list_schema_cls=BaseListSchema,
-            schema_kwargs={"dumpers": [JournalCSLDumper()]},  # Order matters
+            schema_kwargs={
+                "dumpers": [JournalCSLDumper(), ImprintCSLDumper(), MeetingCSLDumper()]
+            },  # Order matters
             **options,
         )
 
@@ -101,7 +105,9 @@ class StringCitationSerializer(MarshmallowSerializer):
             format_serializer_cls=JSONSerializer,
             object_schema_cls=CSLJSONSchema,
             list_schema_cls=BaseListSchema,
-            schema_kwargs={"dumpers": [JournalCSLDumper()]},  # Order matters
+            schema_kwargs={
+                "dumpers": [JournalCSLDumper(), ImprintCSLDumper(), MeetingCSLDumper()]
+            },  # Order matters
             **options,
         )
         self.url_args_retriever = url_args_retriever
