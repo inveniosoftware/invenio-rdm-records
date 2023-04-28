@@ -9,13 +9,12 @@
 """Entity resolver for records aware of drafts and records."""
 
 from invenio_access.permissions import system_identity
-from invenio_communities.communities.services.config import CommunityServiceConfig
 from invenio_pidstore.errors import PIDDoesNotExistError, PIDUnregistered
 from invenio_records_resources.references.entity_resolvers import (
     RecordProxy,
     RecordResolver,
-    ResultItemProxy,
-    ResultItemResolver,
+    ServiceResultProxy,
+    ServiceResultResolver,
 )
 from sqlalchemy.orm.exc import NoResultFound
 
@@ -54,7 +53,7 @@ class RDMRecordResolver(RecordResolver):
         return isinstance(entity, (RDMDraft, RDMRecord))
 
 
-class RDMRecordResultItemProxy(ResultItemProxy):
+class RDMRecordServiceResultProxy(ServiceResultProxy):
     """Proxy to resolve RDMDraft and RDMRecord."""
 
     def _resolve(self):
@@ -67,7 +66,7 @@ class RDMRecordResultItemProxy(ResultItemProxy):
             return self.service.read(system_identity, pid_value).to_dict()
 
 
-class RDMRecordResultItemResolver(ResultItemResolver):
+class RDMRecordServiceResultResolver(ServiceResultResolver):
     """Resolver for rdm record result items."""
 
     type_id = "record"
@@ -75,22 +74,7 @@ class RDMRecordResultItemResolver(ResultItemResolver):
     def __init__(self):
         """Ctor."""
         super().__init__(
-            RDMRecordServiceConfig.result_item_cls,
-            RDMRecordServiceConfig.service_id,
+            service_id=RDMRecordServiceConfig.service_id,
             type_key=self.type_id,
-            proxy_cls=RDMRecordResultItemProxy,
-        )
-
-
-class CommunityResultItemResolver(ResultItemResolver):
-    """Resolver for community result items."""
-
-    type_id = "community"
-
-    def __init__(self):
-        """Ctor."""
-        super().__init__(
-            CommunityServiceConfig.result_item_cls,
-            CommunityServiceConfig.service_id,
-            type_key=self.type_id,
+            proxy_cls=RDMRecordServiceResultProxy,
         )
