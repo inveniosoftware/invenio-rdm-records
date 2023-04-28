@@ -101,6 +101,7 @@ class StringCitationSerializer(MarshmallowSerializer):
             format_serializer_cls=JSONSerializer,
             object_schema_cls=CSLJSONSchema,
             list_schema_cls=BaseListSchema,
+            schema_kwargs={"dumpers": [JournalCSLDumper()]},  # Order matters
             **options,
         )
         self.url_args_retriever = url_args_retriever
