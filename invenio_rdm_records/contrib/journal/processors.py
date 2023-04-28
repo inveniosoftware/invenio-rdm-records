@@ -140,6 +140,7 @@ class JournalCSLDumper(DumperMixin):
         volume = journal_data.get("volume")
         issue = journal_data.get("issue")
         pages = journal_data.get("pages")
+        issn = journal_data.get("issn")
 
         if title:
             data["container_title"] = title
@@ -149,5 +150,7 @@ class JournalCSLDumper(DumperMixin):
             data["volume"] = volume
         if issue:
             data["issue"] = issue
+        if issn:
+            data["ISSN"] = issn
 
         return data
