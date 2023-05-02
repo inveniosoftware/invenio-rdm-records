@@ -13,3 +13,4 @@ export * from "./api";
 export * from "./components";
 export { connect } from "./connect";
 export * from "./dom";
+export * from "./customFields";
