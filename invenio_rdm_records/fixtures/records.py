@@ -9,7 +9,6 @@
 
 from ..utils import get_or_create_user
 from .fixture import FixtureMixin
-from .tasks import create_demo_record
 
 
 class RecordsFixture(FixtureMixin):
@@ -18,8 +17,10 @@ class RecordsFixture(FixtureMixin):
     def __init__(self, search_paths, filename, create_record_func, delay=True):
         """Initialize the record's fixture."""
         super().__init__(search_paths, filename, create_record_func, delay)
-        self.admin = get_or_create_user("admin@inveniosoftware.org")
+        self.admin = None
 
     def create(self, entry):
         """Load a single record."""
+        if self.admin is None:
+            self.admin = get_or_create_user("admin@inveniosoftware.org")
         self.create_record(self.admin.id, entry, publish=True)
