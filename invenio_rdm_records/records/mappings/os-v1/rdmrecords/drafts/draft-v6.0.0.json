@@ -821,7 +821,7 @@
             "type": "integer"
           },
           "totalbytes": {
-            "type": "integer"
+            "type": "long"
           },
           "mimetypes": {
             "type": "keyword"
