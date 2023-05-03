@@ -13,7 +13,12 @@ import random
 from celery import shared_task
 from flask import current_app
 from flask_principal import Identity, UserNeed
-from invenio_access.permissions import any_user, authenticated_user, system_identity
+from invenio_access.permissions import (
+    any_user,
+    authenticated_user,
+    system_identity,
+    system_user_id,
+)
 from invenio_communities.generators import CommunityRoleNeed
 from invenio_communities.members.errors import AlreadyMemberError
 from invenio_communities.proxies import current_communities
@@ -47,8 +52,10 @@ def create_vocabulary_record(service_str, data):
 def create_demo_record(user_id, data, publish=True):
     """Create demo record."""
     service = current_rdm_records_service
-    identity = get_authenticated_identity(user_id)
-    identity.provides.add(UserNeed(user_id))
+    if user_id == system_user_id:
+        identity = system_identity
+    else:
+        identity = get_authenticated_identity(user_id)
 
     draft = service.create(data=data, identity=identity)
     if publish:
@@ -60,9 +67,8 @@ def create_demo_oaiset(user_id, data):
     """Create demo record."""
     service = current_oaipmh_server_service
     identity = get_authenticated_identity(user_id)
-    identity.provides.add(UserNeed(user_id))
 
-    set = service.create(data=data, identity=identity)
+    service.create(data=data, identity=identity)
 
 
 @shared_task
