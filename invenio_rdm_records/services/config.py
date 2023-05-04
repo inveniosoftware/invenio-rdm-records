@@ -50,11 +50,6 @@ from invenio_requests.services.requests import RequestItem, RequestList
 from invenio_requests.services.requests.config import RequestSearchOptions
 from requests import Request
 
-from invenio_rdm_records.services.results import (
-    RDMRecordResultItem,
-    RDMRecordResultList,
-)
-
 from ..records import RDMDraft, RDMRecord
 from . import facets
 from .components import (
@@ -232,8 +227,6 @@ class RDMRecordServiceConfig(RecordServiceConfig, ConfiguratorMixin):
     # Result classes
     link_result_item_cls = SecretLinkItem
     link_result_list_cls = SecretLinkList
-    result_item_cls = RDMRecordResultItem
-    result_list_cls = RDMRecordResultList
 
     # Search configuration
     search = FromConfigSearchOptions(

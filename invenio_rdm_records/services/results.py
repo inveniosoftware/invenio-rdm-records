@@ -10,11 +10,7 @@
 from invenio_communities.communities.entity_resolvers import pick_fields
 from invenio_communities.communities.schema import CommunityGhostSchema
 from invenio_communities.proxies import current_communities
-from invenio_records_resources.services.records.results import (
-    ExpandableField,
-    RecordItem,
-    RecordList,
-)
+from invenio_records_resources.services.records.results import ExpandableField
 
 
 class ParentCommunitiesExpandableField(ExpandableField):
@@ -35,21 +31,3 @@ class ParentCommunitiesExpandableField(ExpandableField):
     def pick(self, identity, resolved_rec):
         """Pick fields defined in the entity resolver."""
         return pick_fields(identity, resolved_rec)
-
-
-class RDMRecordResultItem(RecordItem):
-    """RDMRecord result item for service method.
-
-    Main purpose of this is to have a separate type. So type checks of different
-    result items (e.g. RDMRecordResultItem, RequestResultItem) evaluate to true, because both inherit
-    from RecordItem.
-    """
-
-
-class RDMRecordResultList(RecordList):
-    """RDMRecord result list for service method.
-
-    Main purpose of this is to have a separate type. So type checks of different
-    result items (e.g. RDMRecordResultItem, RequestResultItem) evaluate to true, because both inherit
-    from RecordItem.
-    """

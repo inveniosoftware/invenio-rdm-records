@@ -1,24 +1,29 @@
 {# notifications/community-submission.submitted.jinja #}
 
+{% set submission_request = notification["context"]["request"] %}
+{% set community = submission_request["receiver"] %}
+{% set creator = submission_request["created_by"] %}
+{% set record = submission_request["topic"] %}
+
 {%- block subject -%}
-New record submission for your community {{ notification.context.get("request").get("receiver").get("metadata").get("title") }} submitted by {{ notification.context.get("request").get("created_by").get("username") }}
+New record submission for your community {{ community["metadata"]["title"] }} submitted by {{ creator["username"] }}
 {%- endblock subject -%}
 
 {%- block html_body -%}
-<p>The record "{{ notification.context.get("request").get("topic").get("metadata").get("title") }}" was submitted to your community {{ notification.context.get("request").get("receiver").get("metadata").get("title") }} by {{ notification.context.get("request").get("created_by").get("username") }}.</p>
+<p>The record "{{ topic["metadata"]["title"] }}" was submitted to your community {{ community["metadata"]["title"] }} by {{ creator["username"] }}.</p>
 
-<a href="{{ notification.context.get("request").get("links").get("self_html") }}" class="button">Review the request</a>
+<a href="{{ submission_request["links"]["self_html"] }}" class="button">Review the submission_request</a>
 {%- endblock html_body -%}
 
 {%- block plain_body -%}
-The record "{{ notification.context.get("request").get("topic").get("metadata").get("title") }}" was submitted to your community {{ notification.context.get("request").get("receiver").get("metadata").get("title") }} by {{ notification.context.get("request").get("created_by").get("username") }}.
+The record {{ topic["metadata"]["title"] }} was submitted to your community {{ community["metadata"]["title"] }} by {{ creator["username"] }}.
 
-Review the request: {{ notification.context.get("request").get("links").get("self_html") }}
+Review the submission_request: {{ submission_request["links"]["self_html"] }}
 {%- endblock plain_body -%}
 
 {# Markdown for Slack/Mattermost/chat #}
 {%- block md_body -%}
-The record "{{ notification.context.get("request").get("topic").get("metadata").get("title") }}" was submitted to your community {{ notification.context.get("request").get("receiver").get("metadata").get("title") }} by {{ notification.context.get("request").get("created_by").get("username")}}.
+The record *{{ topic["metadata"]["title"] }}* was submitted to your community *{{ community["metadata"]["title"] }}* by *{{ creator["username"] }}*.
 
-[Review the request]({{ notification.context.get("request").get("links").get("self_html") }})
+[Review the submission_request]({{ submission_request["links"]["self_html"] }})
 {%- endblock md_body -%}

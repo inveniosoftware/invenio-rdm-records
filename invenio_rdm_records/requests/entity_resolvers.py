@@ -45,7 +45,10 @@ class RDMRecordResolver(RecordResolver):
     def __init__(self):
         """Initialize the resolver."""
         super().__init__(
-            RDMDraft, "records", type_key="record", proxy_cls=RDMRecordProxy
+            RDMDraft,
+            RDMRecordServiceConfig.service_id,
+            type_key=self.type_id,
+            proxy_cls=RDMRecordProxy,
         )
 
     def matches_entity(self, entity):
@@ -69,12 +72,10 @@ class RDMRecordServiceResultProxy(ServiceResultProxy):
 class RDMRecordServiceResultResolver(ServiceResultResolver):
     """Resolver for rdm record result items."""
 
-    type_id = "record"
-
     def __init__(self):
         """Ctor."""
         super().__init__(
             service_id=RDMRecordServiceConfig.service_id,
-            type_key=self.type_id,
+            type_key="record",
             proxy_cls=RDMRecordServiceResultProxy,
         )

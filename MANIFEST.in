@@ -24,7 +24,7 @@ recursive-include docs *.rst
 recursive-include docs Makefile
 recursive-include examples *.py
 recursive-include examples *.sh
-recursive-include invenio_rdm_records *.html *.js *.less
+recursive-include invenio_rdm_records *.html *.js *.less *.jinja
 recursive-include invenio_rdm_records *.json *.csv
 recursive-include invenio_rdm_records *.png *.svg
 recursive-include invenio_rdm_records *.po *.pot *.mo

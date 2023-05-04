@@ -19,13 +19,11 @@ from invenio_records_resources.services.uow import (
 )
 from invenio_requests import current_request_type_registry, current_requests_service
 from invenio_requests.resolvers.registry import ResolverRegistry
-from invenio_users_resources.records.api import UserAggregate
 from marshmallow import ValidationError
 
-from invenio_rdm_records.proxies import current_rdm_records
-from invenio_rdm_records.requests.decorators import request_next_link
-
-from ...notifications.utils import CommunityInclusionNotificationBuilder
+from ...notifications.builders import CommunityInclusionSubmittedNotificationBuilder
+from ...proxies import current_rdm_records
+from ...requests.decorators import request_next_link
 from ..errors import ReviewExistsError, ReviewNotFoundError, ReviewStateError
 
 
@@ -89,11 +87,6 @@ class ReviewService(RecordService):
         # Set the request on the record and commit the record
         record.parent.review = request_item._request
         uow.register(RecordCommitOp(record.parent))
-
-        # # TODO: remove before merge. dev only
-        uow.register(
-            NotificationOp(CommunityInclusionNotificationBuilder.build(request_item))
-        )
 
         return request_item
 
@@ -201,15 +194,11 @@ class ReviewService(RecordService):
 
             uow.register(
                 NotificationOp(
-                    CommunityInclusionNotificationBuilder.build(request_item)
+                    CommunityInclusionSubmittedNotificationBuilder.build(
+                        request_item._request
+                    )
                 )
             )
 
         uow.register(RecordIndexOp(draft, indexer=self.indexer))
         return request_item
-
-    # TODO: Move and generalize?
-    def _create_notification_trigger(self, request):
-        created_by = request.created_by.resolve()
-        # User class does not have a dumps method
-        return UserAggregate.from_user(created_by).dumps()
