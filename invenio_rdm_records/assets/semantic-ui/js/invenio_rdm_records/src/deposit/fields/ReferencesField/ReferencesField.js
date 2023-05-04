@@ -71,6 +71,6 @@ ReferencesField.propTypes = {
 ReferencesField.defaultProps = {
   label: i18next.t("References"),
   labelIcon: "bookmark",
-  required: undefined,
+  required: false,
   showEmptyValue: false,
 };
