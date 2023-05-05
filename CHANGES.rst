@@ -10,6 +10,12 @@
 Changes
 =======
 
+Version 4.1.0 (released 2023-05-05)
+
+- add reference fields to deposit components
+- fix records and drafts mappings
+- fix custom field components exports
+
 Version 4.0.0 (released 2023-04-25)
 
 - record: add file metadata to the indexing
