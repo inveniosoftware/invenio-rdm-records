@@ -16,9 +16,11 @@ from pathlib import Path
 
 import pkg_resources
 import yaml
+from flask import current_app
 from invenio_db import db
 from invenio_vocabularies.proxies import current_service
 from invenio_vocabularies.records.models import VocabularyScheme, VocabularyType
+from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import load_only
 
 from .tasks import create_vocabulary_record
@@ -168,7 +170,7 @@ class PrioritizedVocabulariesFixtures:
         """
         return list(pkg_resources.iter_entry_points("invenio_rdm_records.fixtures"))
 
-    def load(self):
+    def load(self, reload=None):
         """Load the fixtures.
 
         Loads in priority
@@ -186,7 +188,8 @@ class PrioritizedVocabulariesFixtures:
             for v in VocabularyScheme.query.options(load_only("id", "parent_id")).all()
         ]
         self._loaded_vocabularies = set(v_type_ids + v_subtype_ids)
-
+        if reload:
+            self._loaded_vocabularies.remove(reload)
         # 1- Load from app_data_folder
         filepath = self._app_data_folder / self._filename
         # An instance doesn't necessarily have custom vocabularies
@@ -322,7 +325,12 @@ class VocabularyEntry:
         """Actions taken before iteratively creating records."""
         if self._id not in ignore:
             pid_type = self._entry["pid-type"]
-            current_service.create_type(identity, self._id, pid_type)
+            try:
+                current_service.create_type(identity, self._id, pid_type)
+            except IntegrityError:
+                current_app.logger.info(
+                    f"skipping creation of {pid_type}, already existing"
+                )
 
     def iterate(self, ignore):
         """Iterate over dicts of file content."""
@@ -382,7 +390,12 @@ class VocabularyEntryWithSchemes(VocabularyEntry):
         for scheme in self.schemes():
             id_ = f"{self._id}.{scheme['id']}"
             if id_ not in ignore:
-                self.create_scheme(scheme)
+                try:
+                    self.create_scheme(scheme)
+                except IntegrityError:
+                    current_app.logger.info(
+                        f"skipping creation of {scheme}, already existing"
+                    )
 
     def iterate(self, ignore):
         """Iterate over dicts of file content."""

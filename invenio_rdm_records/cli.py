@@ -2,6 +2,7 @@
 #
 # Copyright (C) 2019-2022 CERN.
 # Copyright (C) 2019-2022 Northwestern University.
+# Copyright (C) 2023 California Institute of Technology.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
@@ -277,6 +278,25 @@ def create_fixtures():
     FixturesEngine(system_identity).run()
 
     click.secho("Created required fixtures!", fg="green")
+
+
+@rdm_records.command("add-to-fixture")
+@click.argument("fixture")
+@with_appcontext
+def add_to_fixture(fixture):
+    """Add or update new entries to existing fixture.
+
+    Takes a argument of a vocabulary
+    name (e.g. contributorsroles).
+
+    Example:
+    pipenv run invenio rdm-records add-to-fixture contributorsroles
+    """
+    click.secho("Adding or updating entries to fixtures...", fg="green")
+
+    FixturesEngine(system_identity).add_to(fixture)
+
+    click.secho("Sent all entry additions and updates to celery!", fg="green")
 
 
 @rdm_records.command("rebuild-index")
