@@ -184,11 +184,21 @@ def compute_publishing_information(obj, dummyctx):
 
     def _format_imprint(imprint, publisher):
         """Formats a imprint object into a string based on its attributes."""
-        place = imprint.get("place", "")
-        isbn = imprint.get("isbn", "")
-        formatted = "{publisher}{place} {isbn}".format(
-            publisher=publisher, place=f", {place}", isbn=f"({isbn})"
-        )
+        imprint_title = imprint.get("title")
+        imprint_place = imprint.get("place")
+        imprint_isbn = imprint.get("isbn")
+        imprint_pages = imprint.get("pages")
+        title_page = f"{imprint_title}" if imprint_title else None
+        if imprint_pages:
+            if title_page:
+                title_page += f", {imprint_pages}."
+            else:
+                title_page = f"{imprint_pages}."
+        else:
+            title_page += "."
+        place = f"{imprint_place}." if imprint_place else None
+        isbn = f"ISBN: {imprint_isbn}." if imprint_isbn else None
+        formatted = " ".join(filter(None, [title_page, place, isbn]))
         return formatted
 
     attr = "custom_fields"
