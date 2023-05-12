@@ -11,7 +11,7 @@ from flask_security.confirmable import confirm_user
 from flask_security.utils import hash_password
 from invenio_accounts.proxies import current_datastore
 from invenio_db import db
-from invenio_users_resources.services.users.tasks import reindex_user
+from invenio_users_resources.services.users.tasks import reindex_users
 
 
 def get_or_create_user(email):
@@ -27,5 +27,5 @@ def get_or_create_user(email):
         )
         confirm_user(user)
         db.session.commit()
-        reindex_user(user.id)
+        reindex_users([user.id])
     return user
