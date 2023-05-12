@@ -18,7 +18,7 @@ from invenio_access.models import ActionUsers
 from invenio_access.proxies import current_access
 from invenio_accounts.proxies import current_datastore
 from invenio_db import db
-from invenio_users_resources.services.users.tasks import reindex_user
+from invenio_users_resources.services.users.tasks import reindex_users
 from sqlalchemy.exc import IntegrityError
 
 from .fixture import FixtureMixin
@@ -77,7 +77,7 @@ class UsersFixture(FixtureMixin):
                 confirm_user(user)
 
             db.session.commit()
-            reindex_user(user.id)
+            reindex_users([user.id])
         except IntegrityError:
             current_app.logger.info(f"skipping creation of {email}, already existing")
             db.session.rollback()
