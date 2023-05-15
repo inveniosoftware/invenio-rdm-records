@@ -14,14 +14,12 @@ import { i18next } from "@translations/invenio_rdm_records/i18next";
 
 export class PublicationDateField extends Component {
   render() {
-    const { fieldPath, label, labelIcon, placeholder, required } = this.props;
+    const { fieldPath, helpText, label, labelIcon, placeholder, required } = this.props;
 
     return (
       <TextField
         fieldPath={fieldPath}
-        helpText={i18next.t(
-          "In case your upload was already published elsewhere, please use the date of the first publication. Format: YYYY-MM-DD, YYYY-MM, or YYYY. For intervals use DATE/DATE, e.g. 1939/1945."
-        )}
+        helpText={helpText}
         label={<FieldLabel htmlFor={fieldPath} icon={labelIcon} label={label} />}
         placeholder={placeholder}
         required={required}
@@ -32,6 +30,7 @@ export class PublicationDateField extends Component {
 
 PublicationDateField.propTypes = {
   fieldPath: PropTypes.string.isRequired,
+  helpText: PropTypes.string,
   label: PropTypes.string,
   labelIcon: PropTypes.string,
   placeholder: PropTypes.string,
@@ -39,6 +38,9 @@ PublicationDateField.propTypes = {
 };
 
 PublicationDateField.defaultProps = {
+  helpText: i18next.t(
+    "In case your upload was already published elsewhere, please use the date of the first publication. Format: YYYY-MM-DD, YYYY-MM, or YYYY. For intervals use DATE/DATE, e.g. 1939/1945."
+  ),
   label: i18next.t("Publication date"),
   labelIcon: "calendar",
   required: undefined,
