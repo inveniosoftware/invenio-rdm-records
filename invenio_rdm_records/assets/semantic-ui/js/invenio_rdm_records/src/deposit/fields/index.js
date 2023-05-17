@@ -10,7 +10,7 @@ export { DescriptionsField } from "./DescriptionsField";
 export { LanguagesField } from "./LanguagesField";
 export { CreatibutorsField } from "./CreatibutorsField";
 export { DatesField } from "./DatesField";
-export { FileUploader } from "./FileUploader";
+export * from "./FileUploader";
 export { PIDField, IdentifiersField } from "./Identifiers";
 export { LicenseField } from "./License";
 export { PublicationDateField } from "./PublicationDateField";
