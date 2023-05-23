@@ -852,7 +852,7 @@
                 "type": "keyword"
               },
               "size": {
-                "type": "integer"
+                "type": "long"
               },
               "ext": {
                 "type": "keyword"
