@@ -161,9 +161,9 @@ class RecordOwners(Generator):
     def needs(self, record=None, **kwargs):
         """Enabling Needs."""
         if record is None:
-            # 'record is None' means that this must be a 'create'
-            # this should be allowed for any authenticated user
-            return [authenticated_user]
+            # 'record' is required, so if not passed we default to empty array,
+            # i.e. superuser-access.
+            return []
 
         return [UserNeed(owner.owner_id) for owner in record.parent.access.owners]
 
