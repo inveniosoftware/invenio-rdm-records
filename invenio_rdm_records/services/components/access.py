@@ -29,7 +29,7 @@ class AccessComponent(ServiceComponent):
             new_record_access = access.get("record")
             if record.access.protection.record != new_record_access:
                 can_manage = self.service.check_permission(
-                    identity, "manage_record_access"
+                    identity, "manage_record_access", record=record
                 )
                 if not can_manage:
                     # Set the data to what it was before
@@ -63,8 +63,8 @@ class AccessComponent(ServiceComponent):
 
     def create(self, identity, data=None, record=None, **kwargs):
         """Add basic ownership fields to the record."""
-        self._populate_access_and_validate(identity, data, record, **kwargs)
         self._init_owners(identity, record, **kwargs)
+        self._populate_access_and_validate(identity, data, record, **kwargs)
 
     def update_draft(self, identity, data=None, record=None, **kwargs):
         """Update handler."""
