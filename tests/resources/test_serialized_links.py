@@ -86,7 +86,7 @@ def test_record_links(client, published_json, headers):
         "self": f"https://127.0.0.1:5000/api/records/{pid_value}",
         "self_html": f"https://127.0.0.1:5000/records/{pid_value}",
         "self_doi": f"https://127.0.0.1:5000/doi/{doi_value}",
-        "doi": f"https://doi.org/{doi_value}",
+        "doi": f"https://handle.stage.datacite.org/{doi_value}",
         "draft": f"https://127.0.0.1:5000/api/records/{pid_value}/draft",
         "files": f"https://127.0.0.1:5000/api/records/{pid_value}/files",
         "archive": f"https://127.0.0.1:5000/api/records/{pid_value}/files-archive",
