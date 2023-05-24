@@ -51,13 +51,13 @@
      datacite: HasMetadata
   title:
     en: Has metadata
-    de: Hat metadaten
+    de: Hat Metadaten in
 - id: ismetadatafor
   props:
      datacite: IsMetadataFor
   title:
     en: Is metadata for
-    de: Sind metadaten für
+    de: Hat Metadaten für
 - id: hasversion
   props:
      datacite: HasVersion
@@ -99,7 +99,7 @@
      datacite: IsPublishedIn
   title:
      en: Is published in
-     de: Wird veröffentlicht in
+     de: Ist veröffentlicht in
 - id: isreferencedby
   props:
      datacite: IsReferencedBy
