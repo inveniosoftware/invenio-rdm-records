@@ -46,6 +46,18 @@
   title:
      en: Describes
      de: Beschreibt
+- id: hasmetadata
+  props:
+     datacite: HasMetadata
+  title:
+    en: Has metadata
+    de: Hat metadaten
+- id: ismetadatafor
+  props:
+     datacite: IsMetadataFor
+  title:
+    en: Is metadata for
+    de: Sind metadaten für
 - id: hasversion
   props:
      datacite: HasVersion
@@ -82,6 +94,12 @@
   title:
      en: Has part
      de: Umfasst folgenden Teil
+- id: ispublishedin
+  props:
+     datacite: IsPublishedIn
+  title:
+     en: Is published in
+     de: Wird veröffentlicht in
 - id: isreferencedby
   props:
      datacite: IsReferencedBy
