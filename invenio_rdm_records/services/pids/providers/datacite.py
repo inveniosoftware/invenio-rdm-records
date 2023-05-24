@@ -111,9 +111,11 @@ class DataCitePIDProvider(PIDProvider):
         # DataCiteError is a tuple with the errors on the first
         errors = json.loads(errors.args[0])["errors"]
         for error in errors:
-            field = error["source"]
+            field = error.get("source", None)
             reason = error["title"]
-            current_app.logger.warning(f"Error in {field}: {reason}")
+            current_app.logger.warning(
+                f"Error in {field if field else 'Missing field'}: {reason}"
+            )
 
     def generate_id(self, record, **kwargs):
         """Generate a unique DOI."""

@@ -95,6 +95,11 @@ def archive_download_enabled(record, ctx):
     return current_app.config["RDM_ARCHIVE_DOWNLOAD_ENABLED"]
 
 
+def is_datacite_test(record, ctx):
+    """Return if the datacite test mode is being used."""
+    return current_app.config["DATACITE_TEST_MODE"]
+
+
 #
 # Default search configuration
 #
@@ -283,14 +288,27 @@ class RDMRecordServiceConfig(RecordServiceConfig, ConfiguratorMixin):
                 }
             ),
         ),
-        "doi": Link(
-            "https://doi.org/{+pid_doi}",
-            when=has_doi,
-            vars=lambda record, vars: vars.update(
-                {
-                    f"pid_{scheme}": pid["identifier"]
-                    for (scheme, pid) in record.pids.items()
-                }
+        "doi": ConditionalLink(
+            cond=is_datacite_test,
+            if_=Link(
+                "https://handle.stage.datacite.org/{+pid_doi}",
+                when=has_doi,
+                vars=lambda record, vars: vars.update(
+                    {
+                        f"pid_{scheme}": pid["identifier"]
+                        for (scheme, pid) in record.pids.items()
+                    }
+                ),
+            ),
+            else_=Link(
+                "https://doi.org/{+pid_doi}",
+                when=has_doi,
+                vars=lambda record, vars: vars.update(
+                    {
+                        f"pid_{scheme}": pid["identifier"]
+                        for (scheme, pid) in record.pids.items()
+                    }
+                ),
             ),
         ),
         "self_iiif_manifest": ConditionalLink(
