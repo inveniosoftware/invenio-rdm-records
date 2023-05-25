@@ -9,6 +9,7 @@
 
 from invenio_communities.proxies import current_communities
 from invenio_i18n import lazy_gettext as _
+from invenio_notifications.services.uow import NotificationOp
 from invenio_pidstore.errors import PIDDoesNotExistError
 from invenio_records_resources.services import (
     RecordIndexerMixin,
@@ -27,6 +28,9 @@ from invenio_requests.resolvers.registry import ResolverRegistry
 from invenio_search.engine import dsl
 from sqlalchemy.orm.exc import NoResultFound
 
+from invenio_rdm_records.notifications.builders import (
+    CommunityInclusionSubmittedNotificationBuilder,
+)
 from invenio_rdm_records.proxies import current_rdm_records
 from invenio_rdm_records.requests import CommunityInclusion
 from invenio_rdm_records.services.errors import (
@@ -141,6 +145,13 @@ class RecordCommunitiesService(Service, RecordIndexerMixin):
                 result["request_id"] = str(request_item.data["id"])
                 result["request"] = request_item.to_dict()
                 processed.append(result)
+                uow.register(
+                    NotificationOp(
+                        CommunityInclusionSubmittedNotificationBuilder.build(
+                            request_item._request
+                        )
+                    )
+                )
             except (NoResultFound, PIDDoesNotExistError):
                 result["message"] = _("Community not found.")
                 errors.append(result)
