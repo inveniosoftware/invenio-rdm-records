@@ -7,6 +7,8 @@
 
 """Test of the review deposit integration."""
 
+from unittest.mock import MagicMock
+
 import pytest
 from flask_principal import Identity, UserNeed
 from invenio_access.permissions import any_user, authenticated_user
@@ -18,6 +20,9 @@ from invenio_requests import current_requests_service
 from marshmallow.exceptions import ValidationError
 from sqlalchemy.orm.exc import NoResultFound
 
+from invenio_rdm_records.notifications.builders import (
+    CommunityInclusionSubmittedNotificationBuilder,
+)
 from invenio_rdm_records.proxies import current_rdm_records
 from invenio_rdm_records.records.api import RDMDraft
 from invenio_rdm_records.records.systemfields.draft_status import DraftStatus
@@ -132,10 +137,21 @@ def restricted_draft_review_restricted(
 #
 # Tests
 #
-def test_simple_flow(draft, running_app, community, service, requests_service):
+def test_simple_flow(
+    draft, running_app, community, service, requests_service, monkeypatch
+):
     """Test basic creation with review."""
+    mock_build = MagicMock()
+    mock_build.side_effect = CommunityInclusionSubmittedNotificationBuilder.build
+
+    # monkeypatch.setattr(notification_tasks, "broadcast_notification", task)
+    monkeypatch.setattr(
+        CommunityInclusionSubmittedNotificationBuilder, "build", mock_build
+    )
+
     # check draft status
     assert draft["status"] == DraftStatus.review_to_draft_statuses["created"]
+    assert not mock_build.called
 
     # ### Submit draft for review
     req = service.review.submit(running_app.superuser_identity, draft.id).to_dict()
@@ -147,6 +163,8 @@ def test_simple_flow(draft, running_app, community, service, requests_service):
     assert (
         draft.to_dict()["status"] == DraftStatus.review_to_draft_statuses["submitted"]
     )
+    # check notification is build on submit only
+    assert mock_build.called
 
     # ### Read request as curator
     # TODO: test that curator can search/read the request
@@ -183,8 +201,19 @@ def test_direct_include_to_open_review_community(
     draft_for_open_review,
     open_review_community,
     service,
+    monkeypatch,
 ):
     """Test direct publish review for community owner."""
+    mock_build = MagicMock()
+    mock_build.side_effect = CommunityInclusionSubmittedNotificationBuilder.build
+
+    # monkeypatch.setattr(notification_tasks, "broadcast_notification", task)
+    monkeypatch.setattr(
+        CommunityInclusionSubmittedNotificationBuilder, "build", mock_build
+    )
+
+    assert not mock_build.called
+
     # check draft status
     assert (
         draft_for_open_review["status"]
@@ -199,6 +228,9 @@ def test_direct_include_to_open_review_community(
     assert req["is_open"] is False
     # ensure that the next_html point to the record landing page
     assert "/records/" in req["links"]["next_html"]
+
+    # check if notification is build on direct publish
+    assert mock_build.called
 
     # check record is published
     record = service.read(identity, draft_for_open_review.id).to_dict()
