@@ -192,13 +192,12 @@ class ReviewService(RecordService):
                 identity, community, request, uow
             )
 
-            uow.register(
-                NotificationOp(
-                    CommunityInclusionSubmittedNotificationBuilder.build(
-                        request_item._request
-                    )
+        uow.register(
+            NotificationOp(
+                CommunityInclusionSubmittedNotificationBuilder.build(
+                    request_item._request
                 )
             )
-
+        )
         uow.register(RecordIndexOp(draft, indexer=self.indexer))
         return request_item
