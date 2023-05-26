@@ -10,6 +10,15 @@
 Changes
 =======
 
+Version 4.2.0 (released 2023-05-26)
+
+- update resource types vocabularies
+- add permission flag system field
+- change the mapping of files entries from integer to long
+- add dumpers for imprint and meeting in csl
+- add missing dumper to citation serializer
+- improve a11y for community modals
+
 Version 4.1.0 (released 2023-05-05)
 
 - add reference fields to deposit components
