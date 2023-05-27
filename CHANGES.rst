@@ -10,6 +10,10 @@
 Changes
 =======
 
+Version 4.2.1 (released 2023-05-27)
+
+- fix on resource types vocabularies
+
 Version 4.2.0 (released 2023-05-26)
 
 - update resource types vocabularies
