@@ -10,6 +10,11 @@
 Changes
 =======
 
+Version 4.2.2 (released 2023-05-30)
+
+- export all file-uploader components
+- resource types: fix wrongly mapped ids
+
 Version 4.2.1 (released 2023-05-27)
 
 - fix on resource types vocabularies
