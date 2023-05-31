@@ -98,7 +98,7 @@
     openaire_type: publication
     eurepo: info:eu-repo/semantics/conferenceProceedings
     schema.org: https://schema.org/ScholarlyArticle
-    subtype: publication-conferencepaper
+    subtype: publication-conferenceproceeding
     type: publication
   title:
     en: Conference proceeding
@@ -655,9 +655,9 @@
     openaire_resourceType: "0027"
     openaire_type: dataset
     eurepo: info:eu-repo/semantics/other
-    schema.org: https://schema.org/ImageObject
-    subtype: image-plot
-    type: image
+    schema.org: https://schema.org/CreativeWork
+    subtype: ""
+    type: model
   title:
     en: Model
     de: Modell
@@ -718,7 +718,7 @@
   tags:
     - depositable
     - linkable
-- id: computationalnotebook
+- id: software-computationalnotebook
   icon: code
   props:
     csl: software
@@ -728,7 +728,7 @@
     openaire_type: software
     eurepo: info:eu-repo/semantics/other
     schema.org: https://schema.org/SoftwareSourceCode
-    subtype: computational notebook
+    subtype: software-computationalnotebook
     type: software
   title:
     en: Computational notebook
