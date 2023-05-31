@@ -10,6 +10,10 @@
 Changes
 =======
 
+Version 4.2.3 (released 2023-05-31)
+
+- resource-types: more fixes on types/subtypes
+
 Version 4.2.2 (released 2023-05-30)
 
 - export all file-uploader components
