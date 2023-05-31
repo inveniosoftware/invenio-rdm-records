@@ -15,6 +15,7 @@ from invenio_access.permissions import any_user, authenticated_user
 from invenio_communities.communities.records.api import Community
 from invenio_communities.generators import CommunityRoleNeed
 from invenio_communities.members.records.api import Member
+from invenio_notifications.proxies import current_notifications_manager
 from invenio_records_resources.services.errors import PermissionDeniedError
 from invenio_requests import current_requests_service
 from marshmallow.exceptions import ValidationError
@@ -137,21 +138,10 @@ def restricted_draft_review_restricted(
 #
 # Tests
 #
-def test_simple_flow(
-    draft, running_app, community, service, requests_service, monkeypatch
-):
+def test_simple_flow(draft, running_app, community, service, requests_service):
     """Test basic creation with review."""
-    mock_build = MagicMock()
-    mock_build.side_effect = CommunityInclusionSubmittedNotificationBuilder.build
-
-    # monkeypatch.setattr(notification_tasks, "broadcast_notification", task)
-    monkeypatch.setattr(
-        CommunityInclusionSubmittedNotificationBuilder, "build", mock_build
-    )
-
     # check draft status
     assert draft["status"] == DraftStatus.review_to_draft_statuses["created"]
-    assert not mock_build.called
 
     # ### Submit draft for review
     req = service.review.submit(running_app.superuser_identity, draft.id).to_dict()
@@ -163,8 +153,6 @@ def test_simple_flow(
     assert (
         draft.to_dict()["status"] == DraftStatus.review_to_draft_statuses["submitted"]
     )
-    # check notification is build on submit only
-    assert mock_build.called
 
     # ### Read request as curator
     # TODO: test that curator can search/read the request
@@ -201,19 +189,8 @@ def test_direct_include_to_open_review_community(
     draft_for_open_review,
     open_review_community,
     service,
-    monkeypatch,
 ):
     """Test direct publish review for community owner."""
-    mock_build = MagicMock()
-    mock_build.side_effect = CommunityInclusionSubmittedNotificationBuilder.build
-
-    # monkeypatch.setattr(notification_tasks, "broadcast_notification", task)
-    monkeypatch.setattr(
-        CommunityInclusionSubmittedNotificationBuilder, "build", mock_build
-    )
-
-    assert not mock_build.called
-
     # check draft status
     assert (
         draft_for_open_review["status"]
@@ -228,9 +205,6 @@ def test_direct_include_to_open_review_community(
     assert req["is_open"] is False
     # ensure that the next_html point to the record landing page
     assert "/records/" in req["links"]["next_html"]
-
-    # check if notification is build on direct publish
-    assert mock_build.called
 
     # check record is published
     record = service.read(identity, draft_for_open_review.id).to_dict()
@@ -632,6 +606,43 @@ def test_review_gives_access_to_curator(running_app, draft, service, requests_se
     # the owner of the community should not have access anymore
     with pytest.raises(PermissionDeniedError):
         item = service.read_draft(identity, draft.pid.pid_value)
+
+
+def test_review_notification(
+    draft, running_app, community, service, requests_service, monkeypatch
+):
+    """Test notifcation being built on review submit."""
+
+    original_builder = CommunityInclusionSubmittedNotificationBuilder
+
+    # mock build to observe calls
+    mock_build = MagicMock()
+    mock_build.side_effect = original_builder.build
+    monkeypatch.setattr(original_builder, "build", mock_build)
+    # setting specific builder for test case
+    monkeypatch.setattr(
+        current_notifications_manager,
+        "builders",
+        {
+            **current_notifications_manager.builders,
+            original_builder.type: original_builder,
+        },
+    )
+
+    # check draft status
+    assert draft["status"] == DraftStatus.review_to_draft_statuses["created"]
+    assert not mock_build.called
+
+    mail = running_app.app.extensions.get("mail")
+    assert mail
+
+    with mail.record_messages() as outbox:
+        # Validate that email was sent
+        req = service.review.submit(running_app.superuser_identity, draft.id).to_dict()
+        assert len(outbox) == 1
+        assert req["status"] == "submitted"
+        # check notification is build on submit
+        assert mock_build.called
 
 
 # TODO tests:
