@@ -53,19 +53,32 @@ from invenio_app.factory import create_app as _create_app
 from invenio_cache import current_cache
 from invenio_communities import current_communities
 from invenio_communities.communities.records.api import Community
+from invenio_notifications.backends import EmailNotificationBackend
+from invenio_notifications.services.builders import NotificationBuilder
 from invenio_pidstore.errors import PIDDoesNotExistError
 from invenio_records_resources.proxies import current_service_registry
+from invenio_records_resources.references.entity_resolvers import ServiceResultResolver
 from invenio_records_resources.services.custom_fields import TextCF
+from invenio_users_resources.services.schemas import (
+    NotificationPreferences,
+    UserPreferencesSchema,
+    UserSchema,
+)
 from invenio_vocabularies.contrib.affiliations.api import Affiliation
 from invenio_vocabularies.contrib.awards.api import Award
 from invenio_vocabularies.contrib.funders.api import Funder
 from invenio_vocabularies.contrib.subjects.api import Subject
 from invenio_vocabularies.proxies import current_service as vocabulary_service
 from invenio_vocabularies.records.api import Vocabulary
+from marshmallow import fields
 
 from invenio_rdm_records import config
+from invenio_rdm_records.notifications.builders import (
+    CommunityInclusionSubmittedNotificationBuilder,
+)
 from invenio_rdm_records.proxies import current_rdm_records_service
 from invenio_rdm_records.records.api import RDMDraft, RDMParent, RDMRecord
+from invenio_rdm_records.requests.entity_resolvers import RDMRecordServiceResultResolver
 from invenio_rdm_records.services.communities.components import (
     CommunityServiceComponents,
 )
@@ -195,6 +208,30 @@ class UserFixture_:
         res = client.get(f"{base_path}logout")
         assert res.status_code < 400
         return client
+
+
+class UserPreferencesNotificationsSchema(UserPreferencesSchema):
+    """Schema extending preferences with notification preferences for model validation."""
+
+    notifications = fields.Nested(NotificationPreferences)
+
+
+class NotificationsUserSchema(UserSchema):
+    """Schema for dumping a user with preferences including notifications."""
+
+    preferences = fields.Nested(UserPreferencesNotificationsSchema)
+
+
+class DummyNotificationBuilder(NotificationBuilder):
+    """Dummy builder class to do nothing.
+
+    Specific test cases should override their respective builder to test functionality.
+    """
+
+    @classmethod
+    def build(cls, **kwargs):
+        """Build notification based on type and additional context."""
+        return {}
 
 
 @pytest.fixture(scope="session")
@@ -331,6 +368,33 @@ def app_config(app_config):
     #       merged and released.
     # Disable rate-limiting
     app_config["RATELIMIT_ENABLED"] = False
+
+    app_config["MAIL_DEFAULT_SENDER"] = "test@invenio-rdm-records.org"
+
+    # Specifying backend for notifications. Only used in specific testcases.
+    app_config["NOTIFICATIONS_BACKENDS"] = {
+        EmailNotificationBackend.id: EmailNotificationBackend(),
+    }
+
+    # Specifying dummy builders to avoid raising errors for most tests. Extend as needed.
+    app_config["NOTIFICATIONS_BUILDERS"] = {
+        CommunityInclusionSubmittedNotificationBuilder.type: DummyNotificationBuilder,
+    }
+
+    # Specifying default resolvers. Will only be used in specific test cases.
+    app_config["NOTIFICATIONS_ENTITY_RESOLVERS"] = [
+        RDMRecordServiceResultResolver(),
+        ServiceResultResolver(service_id="users", type_key="user"),
+        ServiceResultResolver(service_id="communities", type_key="community"),
+        ServiceResultResolver(service_id="requests", type_key="request"),
+        ServiceResultResolver(service_id="request_events", type_key="request_event"),
+    ]
+
+    # Extending preferences schemas, to include notification preferences. Should not matter for most test cases
+    app_config[
+        "ACCOUNTS_USER_PREFERENCES_SCHEMA"
+    ] = UserPreferencesNotificationsSchema()
+    app_config["USERS_RESOURCES_SERVICE_SCHEMA"] = NotificationsUserSchema
 
     return app_config
 
