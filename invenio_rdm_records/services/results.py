@@ -20,6 +20,10 @@ class ParentCommunitiesExpandableField(ExpandableField):
         """Return tombstone representation of not resolved community."""
         return CommunityGhostSchema().dump(value)
 
+    def system_record(self):
+        """Override default."""
+        raise NotImplementedError()
+
     def get_value_service(self, value):
         """Return the value and the service via entity resolvers."""
         return value, current_communities.service
