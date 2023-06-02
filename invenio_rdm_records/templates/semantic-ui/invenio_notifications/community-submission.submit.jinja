@@ -1,0 +1,27 @@
+{% set submission_request = notification.context["request"] %}
+{% set community = submission_request["receiver"] %}
+{% set creator = submission_request["created_by"] %}
+{% set record = submission_request["topic"] %}
+
+{%- block subject -%}
+    New record submission for your community {{ community["metadata"]["title"] }} submitted by {{ creator["username"] }}
+{%- endblock subject -%}
+
+{%- block html_body -%}
+<p>The record "{{ record["metadata"]["title"] }}" was submitted to your community "{{ community["metadata"]["title"] }}" by "{{ creator["username"] }}".</p>
+
+<a href="{{ submission_request["links"]["self_html"] }}" class="button">Review the submission_request</a>
+{%- endblock html_body -%}
+
+{%- block plain_body -%}
+The record "{{ record["metadata"]["title"] }}" was submitted to your community "{{ community["metadata"]["title"] }}" by "{{ creator["username"] }}".
+
+Review the submission request: {{ submission_request["links"]["self_html"] }}
+{%- endblock plain_body -%}
+
+{# Markdown for Slack/Mattermost/chat #}
+{%- block md_body -%}
+The record *{{ record["metadata"]["title"] }}* was submitted to your community *{{ community["metadata"]["title"] }}* by *{{ creator["username"] }}*.
+
+[Review the submission request]({{ submission_request["links"]["self_html"] }})
+{%- endblock md_body -%}
