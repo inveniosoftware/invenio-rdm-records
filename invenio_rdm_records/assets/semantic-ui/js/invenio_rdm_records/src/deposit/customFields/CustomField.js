@@ -42,9 +42,12 @@ export class CustomField extends Field {
       }
       // Add __key if i is passed i.e is an array. This is needed because of ArrayField
       // internal implementation
-      if (i) value.__key = i;
+      // Note: if i is an array of strings, then we exclude the above as you cannot set
+      // a property on a string
+      if (i && typeof value !== "string") value.__key = i;
       return value;
     };
+
     const _record = _cloneDeep(record);
     const customFields = _get(record, this.fieldpath, this.deserializedDefault);
     this.#mapCustomFields(_record, customFields, _deserialize);
