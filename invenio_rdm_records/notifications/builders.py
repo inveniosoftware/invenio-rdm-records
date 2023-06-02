@@ -58,4 +58,4 @@ class CommunityInclusionSubmittedNotificationBuilder(
 ):
     """Notification builder for record community inclusion submitted."""
 
-    type = "community-submission.submitted"
+    type = "community-submission.submit"
