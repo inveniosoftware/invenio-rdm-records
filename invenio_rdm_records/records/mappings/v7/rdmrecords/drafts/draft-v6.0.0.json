@@ -180,6 +180,19 @@
                     "type": "keyword"
                   }
                 }
+              },
+              "settings": {
+                "properties": {
+                  "allow_user_requests": {
+                    "type": "boolean"
+                  },
+                  "allow_guest_requests": {
+                    "type": "boolean"
+                  },
+                  "accept_conditions_text": {
+                    "type": "text"
+                  }
+                }
               }
             }
           },

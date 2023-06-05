@@ -57,9 +57,21 @@ class Agent(Schema):
     user = fields.Integer(required=True)
 
 
+class AccessSettingsSchema(Schema):
+    """Schema for a record's access settings."""
+
+    # enabling/disabling guests or users to send access requests
+    allow_user_requests = fields.Boolean()
+    allow_guest_requests = fields.Boolean()
+
+    # accept conditions text
+    accept_conditions_text = fields.String()
+
+
 class ParentAccessSchema(Schema):
     """Access schema."""
 
     grants = fields.List(fields.Nested(Grant))
     owned_by = fields.Nested(Agent)
     links = fields.List(fields.Nested(SecretLink))
+    settings = fields.Nested(AccessSettingsSchema)

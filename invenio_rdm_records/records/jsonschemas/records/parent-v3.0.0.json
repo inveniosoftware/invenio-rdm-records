@@ -72,6 +72,26 @@
               }
             }
           }
+        },
+
+        "settings": {
+          "description": "Access settings for the record.",
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "allow_user_requests": {
+              "description": "Whether or not access requests are enabled for authenticated users.",
+              "type": "boolean"
+            },
+            "allow_guest_requests": {
+              "description": "Whether or not access requests are enabled for unauthenticated guests.",
+              "type": "boolean"
+            },
+            "accept_conditions_text": {
+              "description": "Custom description for access conditions to be displayed rather than the default text.",
+              "type": ["string", "null"]
+            }
+          }
         }
       }
     },
