@@ -8,11 +8,39 @@
 
 """Access system field."""
 
+from flask import current_app
 from invenio_records.systemfields import SystemField
 
 from ..grants import Grants
 from ..links import Links
 from ..owners import Owner
+
+
+class AccessSettings:
+    """Access settings for a parent record."""
+
+    def __init__(self, settings_dict):
+        """Constructor."""
+        self.allow_user_requests = settings_dict.get("allow_user_requests", False)
+        self.allow_guest_requests = settings_dict.get("allow_guest_requests", False)
+        self.accept_conditions_text = settings_dict.get("accept_conditions_text", None)
+
+    def dump(self):
+        """Dump the record as dictionary."""
+        return {
+            "allow_user_requests": self.allow_user_requests,
+            "allow_guest_requests": self.allow_guest_requests,
+            "accept_conditions_text": self.accept_conditions_text,
+        }
+
+    def __repr__(self):
+        """Return repr(self)."""
+        return "<{} requests: {}/{}, text: {}>".format(
+            type(self).__name__,
+            self.allow_guest_requests,
+            self.allow_user_requests,
+            bool(self.accept_conditions_text),
+        )
 
 
 class ParentRecordAccess:
@@ -21,6 +49,7 @@ class ParentRecordAccess:
     grant_cls = Grants
     links_cls = Links
     owner_cls = Owner
+    settings_cls = AccessSettings
 
     def __init__(
         self,
@@ -28,8 +57,10 @@ class ParentRecordAccess:
         grants=None,
         links=None,
         owner_cls=None,
+        settings=None,
         grants_cls=None,
         links_cls=None,
+        settings_cls=None,
     ):
         """Create a new Access object for a record.
 
@@ -45,6 +76,7 @@ class ParentRecordAccess:
         owner_cls = owner_cls or ParentRecordAccess.owner_cls
         grants_cls = grants_cls or ParentRecordAccess.grant_cls
         links_cls = links_cls or ParentRecordAccess.links_cls
+        settings_cls = settings_cls or ParentRecordAccess.settings_cls
 
         # since owned_by and grants are basically sets and empty sets
         # evaluate to False, assigning 'self.x = x or x_cls()' could lead to
@@ -52,6 +84,7 @@ class ParentRecordAccess:
         self._owned_by = owned_by if owned_by else owner_cls(None)
         self.grants = grants if grants else grants_cls()
         self.links = links if links else links_cls()
+        self.settings = settings if settings else settings_cls({})
         self.errors = []
 
     @property
@@ -80,6 +113,7 @@ class ParentRecordAccess:
             "owned_by": self._owned_by.dump(),
             "links": self.links.dump(),
             "grants": self.grants.dump(),
+            "settings": self.settings.dump(),
         }
 
         return access
@@ -91,6 +125,7 @@ class ParentRecordAccess:
         self._owned_by = new_access.owned_by
         self.grants = new_access.grants
         self.links = new_access.links
+        self.settings = new_access.settings
 
     @classmethod
     def from_dict(
@@ -99,23 +134,27 @@ class ParentRecordAccess:
         owner_cls=None,
         grants_cls=None,
         links_cls=None,
+        settings_cls=None,
     ):
         """Create a new Access object from the specified 'access' property.
 
         The new ``ParentRecordAccess`` object will be populated with new
         instances from the configured classes.
         If ``access_dict`` is empty, the ``ParentRecordAccess`` object will
-        be populated with new instances of ``grants_cls``, and ``links_cls``.
+        be populated with new instances of ``grants_cls``, ``links_cls``, and
+        ``settings_cls``.
         """
         grants_cls = grants_cls or cls.grant_cls
         links_cls = links_cls or cls.links_cls
         owner_cls = owner_cls or cls.owner_cls
+        settings_cls = settings_cls or cls.settings_cls
         errors = []
 
         # provide defaults in case there is no 'access' property
         owner = owner_cls(None)
         grants = grants_cls()
         links = links_cls()
+        settings = settings_cls({})
 
         if access_dict:
             try:
@@ -135,21 +174,28 @@ class ParentRecordAccess:
                 except Exception as e:
                     errors.append(e)
 
+            try:
+                settings = settings_cls(access_dict.get("settings", {}))
+            except Exception as e:
+                errors.append(e)
+
         access = cls(
             owned_by=owner,
             grants=grants,
             links=links,
+            settings=settings,
         )
         access.errors = errors
         return access
 
     def __repr__(self):
         """Return repr(self)."""
-        return ("<{} (owner: {}, grants: {}, links: {})>").format(
+        return "<{} (owner: {}, grants: {}, links: {}, settings: {})>".format(
             type(self).__name__,
             self.owner,
             len(self.grants or []),
             len(self.links or []),
+            self.settings,
         )
 
 
