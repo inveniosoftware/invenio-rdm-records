@@ -45,8 +45,7 @@ def _restricted_record():
 
 def _owned_record():
     parent = RDMParent.create({})
-    parent.access.owners.add({"user": 16})
-    parent.access.owners.add({"user": 17})
+    parent.access.owner = {"user": 16}
     record = RDMRecord.create({}, parent=parent)
     return record
 
@@ -99,10 +98,7 @@ def test_record_owner(app, mocker):
     generator = RecordOwners()
     record = _owned_record()
 
-    assert generator.needs(record=record) == [
-        UserNeed(16),
-        UserNeed(17),
-    ]
+    assert generator.needs(record=record) == [UserNeed(16)]
 
     assert generator.excludes(record=record) == []
 

@@ -14,6 +14,7 @@ from invenio_records_resources.services.base.results import (
     ServiceItemResult,
     ServiceListResult,
 )
+from invenio_records_resources.services.records.results import FieldsResolver
 from marshmallow_utils.links import LinksFactory
 
 
@@ -61,7 +62,7 @@ class SecretLinkItem(ServiceItemResult):
         return self._data
 
     def to_dict(self):
-        """Get a dictionary for the record."""
+        """Get a dictionary for the grant."""
         res = self.data
         if self._errors:
             res["errors"] = self._errors
@@ -111,6 +112,113 @@ class SecretLinkList(ServiceListResult):
         res = {
             "hits": {
                 "hits": list(self.results),
+                "total": len(self),
+            },
+        }
+        return res
+
+
+class GrantItem(ServiceItemResult):
+    """Single grant result."""
+
+    def __init__(
+        self,
+        service,
+        identity,
+        grant,
+        errors=None,
+        expandable_fields=None,
+        expand=False,
+    ):
+        """Constructor."""
+        self._errors = errors
+        self._identity = identity
+        self._grant = grant
+        self._service = service
+        self._expand = expand
+        self._fields_resolver = FieldsResolver(expandable_fields or [])
+        self._data = None
+
+    @property
+    def data(self):
+        """Property to get the grant's dumped data."""
+        if self._data:
+            return self._data
+
+        self._data = self._service.schema_grant.dump(
+            self._grant.to_dict(),
+            context={"identity": self._identity},
+        )
+
+        if self._expand:
+            self._fields_resolver.resolve(self._identity, [self._data])
+            fields = self._fields_resolver.expand(self._identity, self._data)
+            self._data["expanded"] = fields
+
+        return self._data
+
+    def to_dict(self):
+        """Get a dictionary for the record."""
+        res = self.data
+        if self._errors:
+            res["errors"] = self._errors
+
+        return res
+
+
+class GrantList(ServiceListResult):
+    """List of grant results."""
+
+    def __init__(
+        self,
+        service,
+        identity,
+        results,
+        expandable_fields=None,
+        expand=False,
+    ):
+        """Constructor."""
+        self._service = service
+        self._identity = identity
+        self._results = results
+        self._fields_resolver = FieldsResolver(expandable_fields or [])
+        self._expand = expand
+
+    def __len__(self):
+        """Return the total numer of hits."""
+        return len(self._results)
+
+    def __iter__(self):
+        """Iterator over the hits."""
+        return iter(self.results)
+
+    @property
+    def results(self):
+        """Iterator over the hits."""
+        for i, res in enumerate(self._results):
+            # Project the record
+            projection = self._service.schema_grant.dump(
+                res.to_dict(),
+                context={"identity": self._identity},
+            )
+
+            # NOTE: the "id" is just the index
+            projection["id"] = i
+            yield projection
+
+    def to_dict(self):
+        """Return result as a dictionary."""
+        hits = list(self.results)
+
+        if self._expand:
+            self._fields_resolver.resolve(self._identity, hits)
+            for hit in hits:
+                fields = self._fields_resolver.expand(self._identity, hit)
+                hit["expanded"] = fields
+
+        res = {
+            "hits": {
+                "hits": hits,
                 "total": len(self),
             },
         }

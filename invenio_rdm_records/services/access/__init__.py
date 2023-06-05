@@ -7,6 +7,6 @@
 
 """module for Secret Link service."""
 
-from .service import SecretLinkService
+from .service import RecordAccessService
 
-__all__ = ("SecretLinkService",)
+__all__ = ("RecordAccessService",)

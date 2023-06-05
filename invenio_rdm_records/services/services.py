@@ -29,13 +29,13 @@ class RDMRecordService(RecordService):
         config,
         files_service=None,
         draft_files_service=None,
-        secret_links_service=None,
+        access_service=None,
         pids_service=None,
         review_service=None,
     ):
         """Constructor for RecordService."""
         super().__init__(config, files_service, draft_files_service)
-        self._secret_links = secret_links_service
+        self._access = access_service
         self._pids = pids_service
         self._review = review_service
 
@@ -43,9 +43,9 @@ class RDMRecordService(RecordService):
     # Subservices
     #
     @property
-    def secret_links(self):
-        """Record secret links service."""
-        return self._secret_links
+    def access(self):
+        """Record access service."""
+        return self._access
 
     @property
     def pids(self):

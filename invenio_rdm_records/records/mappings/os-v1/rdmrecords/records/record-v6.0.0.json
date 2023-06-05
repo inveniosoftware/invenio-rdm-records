@@ -154,12 +154,19 @@
               "grants": {
                 "properties": {
                   "subject": {
+                    "properties": {
+                      "type": {
+                        "type": "keyword"
+                      },
+                      "id": {
+                        "type": "keyword"
+                      }
+                    }
+                  },
+                  "permission": {
                     "type": "keyword"
                   },
-                  "id": {
-                    "type": "keyword"
-                  },
-                  "level": {
+                  "origin": {
                     "type": "keyword"
                   }
                 }

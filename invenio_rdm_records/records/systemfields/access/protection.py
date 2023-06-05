@@ -8,48 +8,60 @@
 
 """Protection class for the access system field."""
 
+from enum import Enum
+
+
+class Visibility(Enum):
+    """Enum for the available visibility settings of a record's metadata and files."""
+
+    PUBLIC = "public"
+    RESTRICTED = "restricted"
+
 
 class Protection:
     """Protection class for the access system field."""
 
     def __init__(self, record="public", files="public"):
         """Create a new protection levels instance."""
-        self.set(record=record, files=files)
-
-    def _validate_protection_level(self, level):
-        return level in ("public", "restricted")
+        self._record, self._files = Visibility.PUBLIC, Visibility.PUBLIC
+        self.set(record=record or Visibility.PUBLIC, files=files or Visibility.PUBLIC)
 
     @property
     def record(self):
         """Get the record's overall protection level."""
-        return self._record
+        return self._record.value
 
     @record.setter
     def record(self, value):
         """Set the record's overall protection level."""
-        if not self._validate_protection_level(value):
-            raise ValueError("unknown record protection level: {}".format(value))
+        try:
+            new_visibility = Visibility(value)
+            if new_visibility == Visibility.RESTRICTED:
+                self.files = new_visibility
 
-        if value == "restricted":
-            self._files = "restricted"
+            self._record = new_visibility
 
-        self._record = value
+        except ValueError:
+            raise ValueError(f"unknown record protection level: {value}")
 
     @property
     def files(self):
         """Get the record's files protection level."""
-        return self._files
+        return self._files.value
 
     @files.setter
     def files(self, value):
         """Set the record's files protection level."""
-        if not self._validate_protection_level(value):
-            raise ValueError("unknown files protection level: {}".format(value))
+        try:
+            new_visibility = Visibility(value)
 
-        if self.record == "restricted":
-            self._files = "restricted"
-        else:
-            self._files = value
+            if self._record == Visibility.RESTRICTED:
+                self._files = Visibility.RESTRICTED
+            else:
+                self._files = new_visibility
+
+        except ValueError:
+            raise ValueError("unknown files protection level: {}".format(value))
 
     def set(self, record, files=None):
         """Set the protection level for record and files."""

@@ -1,7 +1,7 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "id": "local://records/parent-v2.0.0.json",
-  "title": "InvenioRDM Parent Record Schema v2.0.0",
+  "id": "local://records/parent-v3.0.0.json",
+  "title": "InvenioRDM Parent Record Schema v3.0.0",
   "type": "object",
   "additionalProperties": false,
   "properties": {
@@ -15,7 +15,7 @@
       "type": "string"
     },
 
-    "pid": {"$ref": "local://records/definitions-v1.0.0.json#/internal-pid"},
+    "pid": {"$ref": "local://records/definitions-v1.2.0.json#/internal-pid"},
 
     "access": {
       "type": "object",
@@ -24,10 +24,8 @@
       "properties": {
 
         "owned_by": {
-          "description": "List of owners of the child records.",
-          "type": "array",
-          "uniqueItems": true,
-          "items": {"$ref": "local://records/definitions-v1.0.0.json#/agent"}
+          "description": "Owner of the child records.",
+          "$ref": "local://records/definitions-v2.0.0.json#/agent"
         },
 
         "grants": {
@@ -35,18 +33,27 @@
           "type": "array",
           "items": {
             "type": "object",
-            "required": ["subject", "id", "level"],
+            "required": ["subject", "permission"],
             "additionalProperties": false,
             "properties": {
               "subject": {
-                "type": "string",
-                "enum": ["user", "role", "sysrole"]
+                "type": "object",
+                "required": ["type", "id"],
+                "additionalProperties": false,
+                "properties": {
+                  "type": {
+                    "type": "string"
+                  },
+                  "id": {
+                    "type": "string"
+                  }
+                }
               },
-              "id": {
+              "permission": {
                 "type": "string"
               },
-              "level": {
-                "type": "string"
+              "origin": {
+                "type": ["string", "null"]
               }
             }
           }

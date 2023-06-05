@@ -17,11 +17,18 @@ from invenio_records_permissions.generators import (
     SystemProcess,
 )
 from invenio_records_permissions.policies.records import RecordPermissionPolicy
+from invenio_requests.services.permissions import (
+    PermissionPolicy as RequestPermissionPolicy,
+)
 
+from ..requests.access import GuestAccessRequest
 from .generators import (
+    AccessGrant,
+    GuestAccessRequestToken,
     IfConfig,
     IfFileIsLocal,
     IfNewRecord,
+    IfRequestType,
     IfRestricted,
     RecordCommunitiesAction,
     RecordOwners,
@@ -52,10 +59,15 @@ class RDMRecordPermissionPolicy(RecordPermissionPolicy):
         RecordCommunitiesAction("curate"),
         SystemProcess(),
     ]
-    can_curate = can_manage + [SecretLinks("edit")]
+    can_curate = can_manage + [AccessGrant("edit"), SecretLinks("edit")]
     can_review = can_curate + [SubmissionReviewer()]
-    can_preview = can_manage + [SecretLinks("preview"), SubmissionReviewer()]
-    can_view = can_manage + [
+    can_preview = can_curate + [
+        AccessGrant("preview"),
+        SecretLinks("preview"),
+        SubmissionReviewer(),
+    ]
+    can_view = can_preview + [
+        AccessGrant("view"),
         SecretLinks("view"),
         SubmissionReviewer(),
         RecordCommunitiesAction("view"),
@@ -207,3 +219,17 @@ class RDMRecordPermissionPolicy(RecordPermissionPolicy):
     can_commit_files = [Disable()]
     can_update_files = [Disable()]
     can_delete_files = [Disable()]
+
+
+guest_token = IfRequestType(
+    GuestAccessRequest, then_=[GuestAccessRequestToken()], else_=[]
+)
+
+
+class RDMRequestsPermissionPolicy(RequestPermissionPolicy):
+    """Permission policy for requets, adapted to the needs for RDM-Records."""
+
+    can_read = RequestPermissionPolicy.can_read + [guest_token]
+    can_update = RequestPermissionPolicy.can_update + [guest_token]
+    can_action_submit = RequestPermissionPolicy.can_action_submit + [guest_token]
+    can_action_cancel = RequestPermissionPolicy.can_action_cancel + [guest_token]

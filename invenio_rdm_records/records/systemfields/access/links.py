@@ -104,13 +104,17 @@ class Links(list):
     def create(
         self,
         permission_level,
-        extra_data=dict(),
+        origin=None,
+        description=None,
+        extra_data=None,
         expires_at=None,
     ):
         """Create a new secret link and add it to the list of links."""
         link = SecretLink.create(
             permission_level=permission_level,
-            extra_data=extra_data,
+            origin=origin,
+            description=description or "",
+            extra_data=extra_data or {},
             expires_at=expires_at,
         )
         self.add(link)
@@ -132,7 +136,7 @@ class Links(list):
         return [
             link.need
             for link in self.resolve_all()
-            if not link.is_expired and link.allows(permission)
+            if not link.is_expired and link.permission_level == permission
         ]
 
     def dump(self):

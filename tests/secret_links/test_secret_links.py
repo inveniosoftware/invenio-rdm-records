@@ -20,8 +20,7 @@ def test_secret_link_creation(app):
         link = SecretLink.create("preview")
         db.session.commit()
 
-        assert link.allows("view")
-        assert not link.allows("edit")
+        assert link.permission_level == "preview"
         assert not link.extra_data
         assert not link.is_expired
 

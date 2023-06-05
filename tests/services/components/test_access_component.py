@@ -25,7 +25,7 @@ def test_access_component_valid(minimal_record, parent, identity_simple, users):
     component = AccessComponent(current_rdm_records.records_service)
     component.create(identity_simple, minimal_record, record)
 
-    assert len(record.parent.access.owners) > 0
+    assert record.parent.access.owner
 
 
 # TODO this test doesn't currently make sense (the parents will handle owners)
@@ -87,8 +87,7 @@ def test_access_component_set_owner(minimal_record, parent, users):
     component = AccessComponent(current_rdm_records.records_service)
     component.create(identity, minimal_record, record)
 
-    assert len(record.access.owners) == 1
-    assert list(record.access.owners)[0].resolve() == user
+    assert record.access.owner.resolve() == user
 
 
 def test_access_component_update_access_via_json(

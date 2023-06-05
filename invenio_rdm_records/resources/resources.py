@@ -11,7 +11,7 @@
 
 """Bibliographic Record Resource."""
 
-from flask import abort, g, send_file
+from flask import abort, current_app, g, send_file
 from flask_cors import cross_origin
 from flask_resources import (
     HTTPJSONException,
@@ -27,6 +27,7 @@ from flask_resources import (
 from importlib_metadata import version
 from invenio_drafts_resources.resources import RecordResource
 from invenio_drafts_resources.resources.records.errors import RedirectException
+from invenio_mail.tasks import send_email
 from invenio_records_resources.resources.errors import ErrorHandlersMixin
 from invenio_records_resources.resources.records.resource import (
     request_data,
@@ -39,6 +40,7 @@ from invenio_records_resources.resources.records.resource import (
 from invenio_records_resources.resources.records.utils import search_preference
 from werkzeug.utils import secure_filename
 
+from ..requests.access import AccessRequestToken
 from .serializers import (
     IIIFCanvasV2JSONSerializer,
     IIIFInfoV2JSONSerializer,
@@ -66,6 +68,16 @@ class RDMRecordResource(RecordResource):
             route("PUT", p(routes["item-review"]), self.review_update),
             route("DELETE", p(routes["item-review"]), self.review_delete),
             route("POST", p(routes["item-actions-review"]), self.review_submit),
+            route(
+                "POST",
+                p(routes["user-access-request"]),
+                self.create_user_access_request,
+            ),
+            route(
+                "POST",
+                p(routes["guest-access-request"]),
+                self.create_guest_access_request_token,
+            ),
         ]
 
         return url_rules
@@ -157,6 +169,28 @@ class RDMRecordResource(RecordResource):
         )
 
         return item.to_dict(), 200
+
+    @request_view_args
+    @request_data
+    def create_user_access_request(self):
+        """Request access to a record as authenticated user."""
+        item = self.service.access.create_user_access_request(
+            id_=resource_requestctx.view_args["pid_value"],
+            identity=g.identity,
+            message=resource_requestctx.data.get("message", ""),
+        )
+        return item.to_dict(), 200
+
+    @request_view_args
+    @request_data
+    def create_guest_access_request_token(self):
+        """Request access to a record as unauthenticated guest."""
+        item = self.service.access.create_guest_access_request_token(
+            id_=resource_requestctx.view_args["pid_value"],
+            identity=g.identity,
+            data=resource_requestctx.data,
+        )
+        return item, 200
 
 
 class RDMRecordCommunitiesResource(ErrorHandlersMixin, Resource):
@@ -312,7 +346,7 @@ class RDMParentRecordLinksResource(RecordResource):
     @response_handler()
     def create(self):
         """Create a secret link for a record."""
-        item = self.service.secret_links.create(
+        item = self.service.access.create_secret_link(
             id_=resource_requestctx.view_args["pid_value"],
             identity=g.identity,
             data=resource_requestctx.data,
@@ -324,7 +358,7 @@ class RDMParentRecordLinksResource(RecordResource):
     @response_handler()
     def read(self):
         """Read a secret link for a record."""
-        item = self.service.secret_links.read(
+        item = self.service.access.read_secret_link(
             identity=g.identity,
             id_=resource_requestctx.view_args["pid_value"],
             link_id=resource_requestctx.view_args["link_id"],
@@ -340,7 +374,7 @@ class RDMParentRecordLinksResource(RecordResource):
     @response_handler()
     def partial_update(self):
         """Patch a secret link for a record."""
-        item = self.service.secret_links.update(
+        item = self.service.access.update_secret_link(
             id_=resource_requestctx.view_args["pid_value"],
             identity=g.identity,
             link_id=resource_requestctx.view_args["link_id"],
@@ -351,7 +385,7 @@ class RDMParentRecordLinksResource(RecordResource):
     @request_view_args
     def delete(self):
         """Delete a a secret link for a record."""
-        self.service.secret_links.delete(
+        self.service.access.delete_secret_link(
             id_=resource_requestctx.view_args["pid_value"],
             identity=g.identity,
             link_id=resource_requestctx.view_args["link_id"],
@@ -363,9 +397,113 @@ class RDMParentRecordLinksResource(RecordResource):
     @response_handler(many=True)
     def search(self):
         """List secret links for a record."""
-        items = self.service.secret_links.read_all(
+        items = self.service.access.read_all_secret_links(
             id_=resource_requestctx.view_args["pid_value"],
             identity=g.identity,
+        )
+        return items.to_dict(), 200
+
+
+class RDMParentGrantsResource(RecordResource):
+    """Access grants resource."""
+
+    def create_url_rules(self):
+        """Create the URL rules for the record resource."""
+
+        def p(route_name):
+            """Prefix a route with the URL prefix."""
+            return f"{self.config.url_prefix}{self.config.routes[route_name]}"
+
+        return [
+            route("GET", p("list"), self.search),
+            route("POST", p("list"), self.create),
+            route("GET", p("item"), self.read),
+            route("PUT", p("item"), self.update),
+            route("PATCH", p("item"), self.partial_update),
+            route("DELETE", p("item"), self.delete),
+        ]
+
+    @request_extra_args
+    @request_view_args
+    @response_handler()
+    def read(self):
+        """Read an access grant for a record."""
+        item = self.service.access.read_grant(
+            identity=g.identity,
+            id_=resource_requestctx.view_args["pid_value"],
+            grant_id=resource_requestctx.view_args["grant_id"],
+            expand=resource_requestctx.args.get("expand", False),
+        )
+        return item.to_dict(), 200
+
+    @request_extra_args
+    @request_view_args
+    @request_data
+    @response_handler()
+    def create(self):
+        """Create an access grant for a record."""
+        data = resource_requestctx.data
+        data["origin"] = f"api:{g.identity.id}"
+        item = self.service.access.create_grant(
+            identity=g.identity,
+            id_=resource_requestctx.view_args["pid_value"],
+            data=data,
+            expand=resource_requestctx.args.get("expand", False),
+        )
+        return item.to_dict(), 201
+
+    @request_extra_args
+    @request_view_args
+    @request_data
+    @response_handler()
+    def update(self):
+        """Update an access grant for a record."""
+        item = self.service.access.update_grant(
+            identity=g.identity,
+            id_=resource_requestctx.view_args["pid_value"],
+            grant_id=resource_requestctx.view_args["grant_id"],
+            data=resource_requestctx.data,
+            expand=resource_requestctx.args.get("expand", False),
+            partial=False,
+        )
+        return item.to_dict(), 200
+
+    @request_extra_args
+    @request_view_args
+    @request_data
+    @response_handler()
+    def partial_update(self):
+        """Patch an access grant for a record."""
+        item = self.service.access.update_grant(
+            identity=g.identity,
+            id_=resource_requestctx.view_args["pid_value"],
+            grant_id=resource_requestctx.view_args["grant_id"],
+            data=resource_requestctx.data,
+            expand=resource_requestctx.args.get("expand", False),
+            partial=True,
+        )
+        return item.to_dict(), 200
+
+    @request_view_args
+    def delete(self):
+        """Delete an access grant for a record."""
+        self.service.access.delete_grant(
+            identity=g.identity,
+            id_=resource_requestctx.view_args["pid_value"],
+            grant_id=resource_requestctx.view_args["grant_id"],
+        )
+        return "", 204
+
+    @request_extra_args
+    @request_search_args
+    @request_view_args
+    @response_handler(many=True)
+    def search(self):
+        """List access grants for a record."""
+        items = self.service.access.read_all_grants(
+            identity=g.identity,
+            id_=resource_requestctx.view_args["pid_value"],
+            expand=resource_requestctx.args.get("expand", False),
         )
         return items.to_dict(), 200
 

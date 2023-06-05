@@ -16,7 +16,7 @@ from .field import (
 )
 from .grants import Grant, Grants
 from .links import Link, Links
-from .owners import Owner, Owners
+from .owners import Owner
 from .protection import Protection
 
 __all__ = (
@@ -26,7 +26,6 @@ __all__ = (
     "Link",
     "Links",
     "Owner",
-    "Owners",
     "ParentRecordAccess",
     "ParentRecordAccessField",
     "Protection",

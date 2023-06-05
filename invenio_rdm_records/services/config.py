@@ -63,10 +63,11 @@ from .components import (
 )
 from .customizations import FromConfigPIDsProviders, FromConfigRequiredPIDs
 from .permissions import RDMRecordPermissionPolicy
-from .result_items import SecretLinkItem, SecretLinkList
+from .result_items import GrantItem, GrantList, SecretLinkItem, SecretLinkList
 from .schemas import RDMParentSchema, RDMRecordSchema
 from .schemas.community_records import CommunityRecordsSchema
-from .schemas.parent.access import SecretLink
+from .schemas.parent.access import Grant as GrantSchema
+from .schemas.parent.access import SecretLink as SecretLinkSchema
 from .schemas.record_communities import RecordCommunitiesSchema
 
 
@@ -219,7 +220,8 @@ class RDMRecordServiceConfig(RecordServiceConfig, ConfiguratorMixin):
     # Schemas
     schema = RDMRecordSchema
     schema_parent = RDMParentSchema
-    schema_secret_link = SecretLink
+    schema_secret_link = SecretLinkSchema
+    schema_grant = GrantSchema
 
     # Permission policy
     permission_policy_cls = FromConfig(
@@ -229,6 +231,8 @@ class RDMRecordServiceConfig(RecordServiceConfig, ConfiguratorMixin):
     # Result classes
     link_result_item_cls = SecretLinkItem
     link_result_list_cls = SecretLinkList
+    grant_result_item_cls = GrantItem
+    grant_result_list_cls = GrantList
 
     # Permission policy
     default_files_enabled = FromConfig("RDM_DEFAULT_FILES_ENABLED", default=True)

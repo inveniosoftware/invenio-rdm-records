@@ -25,6 +25,8 @@ from invenio_search.engine import dsl
 
 from invenio_rdm_records.records import RDMDraft
 
+from ..records.systemfields.access.grants import Grant
+from ..requests.access import AccessRequestTokenNeed
 from ..tokens.permissions import RATNeed
 
 
@@ -175,13 +177,65 @@ class RecordOwners(Generator):
             # i.e. superuser-access.
             return []
 
-        return [UserNeed(owner.owner_id) for owner in record.parent.access.owners]
+        return [UserNeed(record.parent.access.owner.owner_id)]
 
     def query_filter(self, identity=None, **kwargs):
         """Filters for current identity as owner."""
         users = [n.value for n in identity.provides if n.method == "id"]
         if users:
             return dsl.Q("terms", **{"parent.access.owned_by.user": users})
+
+
+class AccessGrant(Generator):
+    """Allows access according to the given access grants."""
+
+    def __init__(self, permission):
+        """Constructor."""
+        self._permission = permission
+
+    def needs(self, record=None, **kwargs):
+        """Enabling needs."""
+        if record is None:
+            return []
+
+        return record.parent.access.grants.needs(self._permission)
+
+    def _make_grant_token(self, subj_type, subj_id):
+        """Create a grant token from the specified parts."""
+        # NOTE: `Grant.to_token()` doesn't need the actual subject to be set
+        return Grant(
+            subject=None,
+            origin=None,
+            permission=self._permission,
+            subject_type=subj_type,
+            subject_id=subj_id,
+        ).to_token()
+
+    def _grant_tokens(self, identity):
+        """Parse a list of grant tokens provided by the given identity."""
+        tokens = []
+        for need in identity.provides:
+            token = None
+            if need.method == "id":
+                token = self._make_grant_token("user", need.value)
+            elif need.method == "role":
+                token = self._make_grant_token("role", need.value)
+            elif need.method == "system_role":
+                token = self._make_grant_token("system_role", need.value)
+
+            if token is not None:
+                tokens.append(token)
+
+        return tokens
+
+    def query_filter(self, identity=None, **kwargs):
+        """Filters for the current identity in access grants."""
+        if identity is not None:
+            tokens = self._grant_tokens(identity)
+            if tokens:
+                return dsl.Q("terms", **{"parent.access.grant_tokens": tokens})
+
+        return []
 
 
 class SecretLinks(Generator):
@@ -283,10 +337,37 @@ class ResourceAccessToken(Generator):
 
     def needs(self, record=None, file_key=None, **kwargs):
         """Enabling Needs."""
-        record_owner = next(iter(record.parent.access.owners), None)
+        record_owner = record.parent.access.owner
 
         if record_owner and record and file_key:
             signer_id = record_owner.owner_id
             return [RATNeed(signer_id, record["id"], file_key, self.access)]
+
+        return []
+
+
+class IfRequestType(ConditionalGenerator):
+    """Conditional generator for requests of a certain type."""
+
+    def __init__(self, request_type, then_, else_):
+        """Constructor."""
+        self.request_type = request_type
+        super().__init__(then_, else_)
+
+    def _condition(self, request=None, **kwargs):
+        """Check if the request type matches the configured one."""
+        if request is not None:
+            return isinstance(request.type, self.request_type)
+
+        return False
+
+
+class GuestAccessRequestToken(Generator):
+    """Require a ``AccessRequestTokenNeed(request['payload']['token'])``."""
+
+    def needs(self, request=None, **kwargs):
+        """Require a ``AccessRequestTokenNeed(request['payload']['token'])``."""
+        if request is not None:
+            return [AccessRequestTokenNeed(request["payload"]["token"])]
 
         return []

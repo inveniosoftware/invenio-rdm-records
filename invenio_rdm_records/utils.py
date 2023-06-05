@@ -7,7 +7,7 @@
 
 """Utility functions."""
 
-from flask import current_app, flash, request
+from flask import current_app, flash, request, session
 from flask_security.confirmable import confirm_user
 from flask_security.utils import hash_password
 from invenio_accounts.proxies import current_datastore
@@ -16,6 +16,7 @@ from invenio_i18n import _
 from invenio_users_resources.services.users.tasks import reindex_users
 from itsdangerous import SignatureExpired
 
+from .requests.access.permissions import AccessRequestTokenNeed
 from .secret_links import LinkNeed, SecretLink
 from .tokens import RATNeed, validate_rat
 from .tokens.errors import RATFeatureDisabledError
@@ -47,7 +48,8 @@ def get_or_create_user(email):
 
 def verify_token(identity):
     """Verify the token and provide identity with corresponding need."""
-    token = request.args.get("token", None)
+    token = request.args.get("token", session.get("token", None))
+    session["token"] = token
     if token:
         try:
             data = SecretLink.load_token(token)
@@ -69,3 +71,10 @@ def verify_token(identity):
                 rat_signer, payload["record_id"], payload["file"], payload["access"]
             )
         )
+
+    access_request_token = request.args.get(
+        "access_request_token", session.get("access_request_token", None)
+    )
+    session["access_request_token"] = access_request_token
+    if access_request_token:
+        identity.provides.add(AccessRequestTokenNeed(access_request_token))

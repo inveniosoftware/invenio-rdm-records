@@ -21,6 +21,9 @@
     "oneOf": [
       {
         "$ref": "#/user"
+      },
+      {
+        "type": "null"
       }
     ]
   },

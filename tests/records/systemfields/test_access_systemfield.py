@@ -21,7 +21,6 @@ from invenio_rdm_records.records.systemfields.access import (
     Grant,
     Grants,
     Owner,
-    Owners,
     Protection,
     RecordAccess,
 )
@@ -93,57 +92,84 @@ def test_embargo_lift():
 def test_grant_creation(users, roles):
     user = users[0]
     role = roles[0]
-    grant = Grant(user, "view")
+    grant = Grant("view", "N/A", subject=user)
     assert grant.subject_type == "user"
-    assert grant.subject_id == user.id
+    assert grant.subject_id == str(user.id)
     assert grant.subject == user
 
-    grant = Grant(role, "view")
+    grant = Grant("view", "N/A", subject=role)
     assert grant.subject_type == "role"
-    assert grant.subject_id == role.id
+    assert grant.subject_id == role.name
     assert grant.subject == role
 
-    grant = Grant(None, "view", subject_type="sysrole", subject_id="system")
-    assert grant.subject_type == "sysrole"
-    assert grant.subject_id == "system"
+    grant = Grant(
+        "view",
+        "N/A",
+        subject=None,
+        subject_type="system_role",
+        subject_id="authenticated_user",
+    )
+    assert grant.subject_type == "system_role"
+    assert grant.subject_id == "authenticated_user"
     assert grant.subject is None
+
+    with pytest.raises(LookupError):
+        grant = Grant(
+            "view",
+            "N/A",
+            subject_type="system_role",
+            subject_id="unregistered_system_role",
+        )
+        grant.subject
 
 
 def test_grant_from_dict(users):
     user = users[0]
-    grant_dict = {"subject": "user", "id": user.id, "level": "view"}
+    grant_dict = {
+        "subject": {"type": "user", "id": user.id},
+        "permission": "view",
+        "origin": "N/A",
+    }
     grant = Grant.from_dict(grant_dict)
     assert grant.subject_type == "user"
-    assert grant.subject_id == user.id
+    assert grant.subject_id == str(user.id)
     assert grant.subject == user
 
 
 def test_grant_to_need(users, roles):
     user = users[0]
     role = roles[0]
-    grant = Grant(user, "view")
+    grant = Grant("view", "N/A", subject=user)
     need = grant.to_need()
     assert need.method == "id"
     assert need.value == user.id
 
-    grant = Grant(role, "view")
+    grant = Grant("view", "N/A", subject=role)
     need = grant.to_need()
     assert need.method == "role"
     assert need.value == role.name
 
-    dict_ = {"subject": "sysrole", "id": "system", "level": "view"}
+    dict_ = {
+        "subject": {"type": "system_role", "id": "authenticated_user"},
+        "permission": "view",
+        "origin": "N/A",
+    }
     grant = Grant.from_dict(dict_)
     need = grant.to_need()
     assert need.method == "system_role"
-    assert need.value == "system"
+    assert need.value == "authenticated_user"
 
 
 def test_grant_to_token():
-    dict_ = {"subject": "sysrole", "id": "system", "level": "view"}
+    dict_ = {
+        "subject": {"type": "system_role", "id": "authenticated_user"},
+        "permission": "view",
+        "origin": "N/A",
+    }
     grant = Grant.from_dict(dict_)
     token = "{}.{}.{}".format(
-        b64encode("sysrole".encode()).decode(),
-        b64encode("system".encode()).decode(),
+        b64encode("system_role".encode()).decode(),
+        b64encode("authenticated_user".encode()).decode(),
         b64encode("view".encode()).decode(),
     )
     assert grant.to_token() == token
@@ -151,17 +177,25 @@ def test_grant_to_token():
 
 def test_grant_from_token():
     token = "{}.{}.{}".format(
-        b64encode("sysrole".encode()).decode(),
-        b64encode("system".encode()).decode(),
+        b64encode("system_role".encode()).decode(),
+        b64encode("authenticated_user".encode()).decode(),
         b64encode("view".encode()).decode(),
     )
     grant = Grant.from_token(token)
-    dict_ = {"subject": "sysrole", "id": "system", "level": "view"}
+    dict_ = {
+        "subject": {"type": "system_role", "id": "authenticated_user"},
+        "origin": None,
+        "permission": "view",
+    }
     assert grant.to_dict() == dict_
 
 
 def test_grant_to_and_from_token():
-    dict_ = {"subject": "sysrole", "id": "system", "level": "view"}
+    dict_ = {
+        "subject": {"type": "system_role", "id": "authenticated_user"},
+        "origin": None,
+        "permission": "view",
+    }
     grant = Grant.from_dict(dict_)
     assert Grant.from_token(grant.to_token()) == grant
 
@@ -169,9 +203,13 @@ def test_grant_to_and_from_token():
 def test_grants_creation(users, roles):
     user = users[0]
     role = roles[0]
-    grant1 = Grant(user, "manage")
-    grant2 = Grant(role, "view")
-    dict_ = {"subject": "sysrole", "id": "system", "level": "view"}
+    grant1 = Grant("manage", "N/A", subject=user)
+    grant2 = Grant("view", "N/A", subject=role)
+    dict_ = {
+        "subject": {"type": "system_role", "id": "authenticated_user"},
+        "origin": "N/A",
+        "permission": "view",
+    }
     grant3 = Grant.from_dict(dict_)
 
     grants = Grants([grant1, grant2, grant3, grant1])
@@ -184,9 +222,13 @@ def test_grants_creation(users, roles):
 def test_grants_dump(users, roles):
     user = users[0]
     role = roles[0]
-    grant1 = Grant(user, "manage")
-    grant2 = Grant(role, "view")
-    dict_ = {"subject": "sysrole", "id": "system", "level": "view"}
+    grant1 = Grant("manage", "N/A", subject=user)
+    grant2 = Grant("view", "N/A", subject=role)
+    dict_ = {
+        "subject": {"type": "user", "id": "system"},
+        "origin": "N/A",
+        "permission": "view",
+    }
     grant3 = Grant.from_dict(dict_)
     grants = Grants([grant1, grant2, grant3])
 
@@ -200,15 +242,18 @@ def test_grants_dump(users, roles):
 def test_grants_needs(users, roles):
     user = users[0]
     role = roles[0]
-    grant1 = Grant(user, "manage")
-    grant2 = Grant(role, "view")
-    dict_ = {"subject": "sysrole", "id": "system", "level": "view"}
+    grant1 = Grant("manage", "N/A", subject=user)
+    grant2 = Grant("view", "N/A", subject=role)
+    dict_ = {
+        "subject": {"type": "system_role", "id": "authenticated_user"},
+        "origin": "N/A",
+        "permission": "view",
+    }
     grant3 = Grant.from_dict(dict_)
     grants = Grants([grant1, grant2, grant3])
 
-    assert len(grants.needs("view")) == 3
-    # TODO check for higher permissions as well, once the permission
-    #      hierarchy is in place
+    assert len(grants.needs("view")) == 2
+    assert len(grants.needs("manage")) == 1
 
 
 #
@@ -241,21 +286,6 @@ def test_owner_dump():
     dict_ = {"user": 1}
     owner = Owner(dict_)
     assert owner.dump() == dict_
-
-
-def test_owners_creation(users):
-    user = users[0]
-    owner1 = Owner({"user": user.id})
-    owner2 = Owner(user)
-    owner3 = Owner({"user": 1337})
-    owners = Owners([owner1, owner2, owner1])
-    assert len(owners) == 1
-    owners.add(owner3)
-    assert len(owners) == 2
-    owners.add(owner3)
-    assert len(owners) == 2
-    owners.add(user)
-    assert len(owners) == 2
 
 
 #
@@ -353,23 +383,16 @@ def test_access_field_update_protection(running_app, minimal_record, parent, use
 #
 
 
-def test_access_field_update_owners(running_app, minimal_record, parent, users):
+def test_access_field_update_owner(running_app, minimal_record, parent, users):
     rec = RDMRecord.create(minimal_record.copy(), parent=parent)
     parent = rec.parent
+    parent.access.owner = users[0]
+    parent.commit()
+
+    assert parent.access.owner.resolve() == users[0]
+
     new_owner = {"user": 1337}
-    parent.access.owners.add(users[0])
-    parent.access.owners.add(new_owner)
+    parent.access.owner = new_owner
     parent.commit()
 
-    num_owners = len(parent.access.owners)
-    assert num_owners == len(parent["access"]["owned_by"])
-    assert num_owners == 2
-    assert new_owner in parent["access"]["owned_by"]
-
-    parent.access.owners.remove(new_owner)
-    parent.commit()
-
-    num_owners = len(parent.access.owners)
-    assert num_owners == len(parent["access"]["owned_by"])
-    assert num_owners == 1
-    assert new_owner not in parent["access"]["owned_by"]
+    assert new_owner == new_owner

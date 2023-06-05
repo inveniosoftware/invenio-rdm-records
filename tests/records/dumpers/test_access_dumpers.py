@@ -23,8 +23,8 @@ def test_grant_tokens_dumper(app, db, minimal_record, location):
     data = {
         "access": {
             "grants": [
-                {"subject": "user", "id": "1", "level": "view"},
-                {"subject": "user", "id": "2", "level": "manage"},
+                {"subject": {"type": "user", "id": "1"}, "permission": "view"},
+                {"subject": {"type": "user", "id": "2"}, "permission": "manage"},
             ]
         }
     }
