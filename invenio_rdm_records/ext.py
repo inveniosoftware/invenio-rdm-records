@@ -4,6 +4,7 @@
 # Copyright (C) 2019-2021 Northwestern University.
 # Copyright (C) 2022 Universität Hamburg.
 # Copyright (C) 2023 Graz University of Technology.
+# Copyright (C) 2023 TU Wien.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
@@ -30,6 +31,8 @@ from .resources import (
     RDMCommunityRecordsResource,
     RDMCommunityRecordsResourceConfig,
     RDMDraftFilesResourceConfig,
+    RDMParentGrantsResource,
+    RDMParentGrantsResourceConfig,
     RDMParentRecordLinksResource,
     RDMParentRecordLinksResourceConfig,
     RDMRecordCommunitiesResourceConfig,
@@ -53,8 +56,8 @@ from .services import (
     RDMRecordRequestsConfig,
     RDMRecordService,
     RDMRecordServiceConfig,
+    RecordAccessService,
     RecordRequestsService,
-    SecretLinkService,
 )
 from .services.config import (
     RDMMediaFileDraftServiceConfig,
@@ -150,7 +153,7 @@ class InvenioRDMRecords(object):
             service_configs.record,
             files_service=FileService(service_configs.file),
             draft_files_service=FileService(service_configs.file_draft),
-            secret_links_service=SecretLinkService(service_configs.record),
+            access_service=RecordAccessService(service_configs.record),
             pids_service=PIDsService(service_configs.record, PIDManager),
             review_service=ReviewService(service_configs.record),
         )
@@ -217,6 +220,11 @@ class InvenioRDMRecords(object):
         self.parent_record_links_resource = RDMParentRecordLinksResource(
             service=self.records_service,
             config=RDMParentRecordLinksResourceConfig.build(app),
+        )
+
+        self.parent_grants_resource = RDMParentGrantsResource(
+            service=self.records_service,
+            config=RDMParentGrantsResourceConfig.build(app),
         )
 
         # Record's communities

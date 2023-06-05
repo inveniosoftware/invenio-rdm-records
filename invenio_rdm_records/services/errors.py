@@ -153,3 +153,33 @@ class InvalidCommunityVisibility(Exception):
     def description(self):
         """Exception description."""
         return _("Cannot modify community visibility: {reason}".format(self.reason))
+
+
+class AccessRequestException(RDMRecordsException):
+    """Base class for errors related to access requests."""
+
+
+class DuplicateAccessRequestError(AccessRequestException):
+    """An identical access request already exists."""
+
+    def __init__(self, request_ids):
+        """Constructor."""
+        self.request_ids = request_ids or []
+
+    @property
+    def description(self):
+        """Exception description."""
+        if len(self.request_ids) > 1:
+            return _(
+                "Identical access requests already exist: %(request_ids)s",
+                request_id=self.request_ids,
+            )
+
+        elif self.request_ids:
+            return _(
+                "An identical access request already exists: %(request_id)s",
+                request_id=self.request_ids[0],
+            )
+
+        else:
+            return _("The access request is a duplicate")

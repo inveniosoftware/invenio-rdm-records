@@ -13,7 +13,6 @@
 import marshmallow as ma
 from citeproc_styles import StyleNotFoundError
 from flask_resources import (
-    HTTPJSONException,
     JSONDeserializer,
     JSONSerializer,
     RequestBodyParser,
@@ -32,6 +31,7 @@ from invenio_records_resources.services.base.config import ConfiguratorMixin, Fr
 from invenio_requests.resources.requests.config import RequestSearchRequestArgsSchema
 
 from ..services.errors import (
+    DuplicateAccessRequestError,
     InvalidAccessRestrictions,
     ReviewExistsError,
     ReviewNotFoundError,
@@ -41,7 +41,7 @@ from ..services.errors import (
 from .args import RDMSearchRequestArgsSchema
 from .deserializers import ROCrateJSONDeserializer
 from .deserializers.errors import DeserializerError
-from .errors import HTTPJSONValidationWithMessageAsListException
+from .errors import HTTPJSONException, HTTPJSONValidationWithMessageAsListException
 from .serializers import (
     CSLJSONSerializer,
     DataCite43JSONSerializer,
@@ -100,6 +100,9 @@ class RDMRecordResourceConfig(RecordResourceConfig, ConfiguratorMixin):
     # Review
     routes["item-review"] = "/<pid_value>/draft/review"
     routes["item-actions-review"] = "/<pid_value>/draft/actions/submit-review"
+    # Access requests
+    routes["user-access-request"] = "/<pid_value>/access/request"
+    routes["guest-access-request"] = "/<pid_value>/access/request/guest"
 
     request_view_args = {
         "pid_value": ma.fields.Str(),
@@ -167,6 +170,13 @@ class RDMRecordResourceConfig(RecordResourceConfig, ConfiguratorMixin):
         ),
         ValidationErrorWithMessageAsList: create_error_handler(
             lambda e: HTTPJSONValidationWithMessageAsListException(e)
+        ),
+        DuplicateAccessRequestError: create_error_handler(
+            lambda e: HTTPJSONException(
+                code=409,
+                description=e.description,
+                duplicates=e.request_ids,
+            )
         ),
     }
 
@@ -246,6 +256,16 @@ record_links_error_handlers.update(
     }
 )
 
+grants_error_handlers = RecordResourceConfig.error_handlers.copy()
+
+grants_error_handlers.update(
+    {
+        LookupError: create_error_handler(
+            HTTPJSONException(code=404, description="No grant found with the given ID.")
+        )
+    }
+)
+
 
 #
 # Parent Record Links
@@ -253,7 +273,7 @@ record_links_error_handlers.update(
 class RDMParentRecordLinksResourceConfig(RecordResourceConfig, ConfiguratorMixin):
     """User records resource configuration."""
 
-    blueprint_name = "record_access"
+    blueprint_name = "record_links"
 
     url_prefix = "/records/<pid_value>/access"
 
@@ -272,6 +292,34 @@ class RDMParentRecordLinksResourceConfig(RecordResourceConfig, ConfiguratorMixin
     response_handlers = {"application/json": ResponseHandler(JSONSerializer())}
 
     error_handlers = record_links_error_handlers
+
+
+class RDMParentGrantsResourceConfig(RecordResourceConfig, ConfiguratorMixin):
+    """Record grants resource configuration."""
+
+    blueprint_name = "record_grants"
+
+    url_prefix = "/records/<pid_value>/access"
+
+    routes = {
+        "list": "/grants",
+        "item": "/grants/<grant_id>",
+    }
+
+    links_config = {}
+
+    # NOTE: the `grant_id` is currently the index in the list of `parent.access.grants`
+    #       which should only change when the data model changes, and should thus
+    #       be good enough for our purposes
+    request_view_args = {
+        "pid_value": ma.fields.Str(),
+        "grant_id": ma.fields.Int(),
+    }
+    request_extra_args = {"expand": ma.fields.Bool()}
+
+    response_handlers = {"application/json": ResponseHandler(JSONSerializer())}
+
+    error_handlers = grants_error_handlers
 
 
 #

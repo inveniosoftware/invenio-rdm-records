@@ -18,12 +18,21 @@ from marshmallow import Schema, fields, validate
 from marshmallow_utils.fields import SanitizedUnicode, TZDateTime
 
 
+class GrantSubject(Schema):
+    """Schema for a grant subject."""
+
+    id = fields.String(required=True)
+    type = fields.String(
+        required=True, validate=validate.OneOf(["user", "role", "system_role"])
+    )
+
+
 class Grant(Schema):
     """Schema for an access grant."""
 
-    subject = fields.String()
-    id = fields.String()
-    level = fields.String()
+    permission = fields.String(required=True)
+    subject = fields.Nested(GrantSubject, required=True)
+    origin = fields.String(required=False)
 
 
 class SecretLink(Schema):
@@ -37,6 +46,8 @@ class SecretLink(Schema):
     permission = fields.String(
         required=False, validate=validate.OneOf(["view", "preview", "edit"])
     )
+    description = SanitizedUnicode(required=False)
+    origin = fields.String(required=False)
     token = SanitizedUnicode(dump_only=True)
 
 
@@ -50,5 +61,5 @@ class ParentAccessSchema(Schema):
     """Access schema."""
 
     grants = fields.List(fields.Nested(Grant))
-    owned_by = fields.List(fields.Nested(Agent))
+    owned_by = fields.Nested(Agent)
     links = fields.List(fields.Nested(SecretLink))

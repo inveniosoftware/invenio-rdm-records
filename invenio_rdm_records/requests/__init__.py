@@ -7,10 +7,13 @@
 
 """Review request types for InvenioRDM."""
 
+from .access import GuestAccessRequest, UserAccessRequest
 from .community_inclusion import CommunityInclusion
 from .community_submission import CommunitySubmission
 
 __all__ = (
     "CommunityInclusion",
     "CommunitySubmission",
+    "GuestAccessRequest",
+    "UserAccessRequest",
 )

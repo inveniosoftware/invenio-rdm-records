@@ -22,11 +22,10 @@ class ParentRecordAccessComponent(ServiceComponent):
         parent = record
         errors = []
 
-        for owner in parent.access.owners:
-            try:
-                owner.resolve(raise_exc=True)
-            except LookupError as e:
-                errors.append(e)
+        try:
+            parent.access.owner.resolve(raise_exc=True)
+        except LookupError as e:
+            errors.append(e)
 
         for grant in parent.access.grants:
             try:

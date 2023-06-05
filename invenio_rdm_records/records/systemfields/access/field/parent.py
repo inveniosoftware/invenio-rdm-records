@@ -12,7 +12,7 @@ from invenio_records.systemfields import SystemField
 
 from ..grants import Grants
 from ..links import Links
-from ..owners import Owners
+from ..owners import Owner
 
 
 class ParentRecordAccess:
@@ -20,49 +20,66 @@ class ParentRecordAccess:
 
     grant_cls = Grants
     links_cls = Links
-    owners_cls = Owners
+    owner_cls = Owner
 
     def __init__(
         self,
         owned_by=None,
         grants=None,
         links=None,
-        owners_cls=None,
+        owner_cls=None,
         grants_cls=None,
         links_cls=None,
     ):
         """Create a new Access object for a record.
 
-        If ``owned_by``, ``grants`` or ``links`` are not specified,
-        a new instance of ``owners_cls``, ``grants_cls`` or ``links_cls``
-        will be used, respectively.
-        :param owned_by: The set of record owners
+        If ``owned_by`` is not specified, it will be initialized with a new instance of
+        ``owner_cls(None)``.
+        If ``grants`` or ``links`` are not specified, a new instance of
+        ``grants_cls`` or ``links_cls`` will be used, respectively.
+
+        :param owned_by: The record owner
         :param grants: The grants permitting access to the record
         :param links: The secret links permitting access to the record
         """
-        owners_cls = owners_cls or ParentRecordAccess.owners_cls
+        owner_cls = owner_cls or ParentRecordAccess.owner_cls
         grants_cls = grants_cls or ParentRecordAccess.grant_cls
         links_cls = links_cls or ParentRecordAccess.links_cls
 
         # since owned_by and grants are basically sets and empty sets
         # evaluate to False, assigning 'self.x = x or x_cls()' could lead to
         # unwanted results
-        self.owned_by = owned_by if owned_by else owners_cls()
+        self._owned_by = owned_by if owned_by else owner_cls(None)
         self.grants = grants if grants else grants_cls()
         self.links = links if links else links_cls()
         self.errors = []
 
     @property
-    def owners(self):
+    def owned_by(self):
+        """Getter for the owned_by property."""
+        return self._owned_by
+
+    @owned_by.setter
+    def owned_by(self, value):
+        """Setter for the owned_by property."""
+        self._owned_by = self.owner_cls(value)
+
+    @property
+    def owner(self):
         """An alias for the owned_by property."""
-        return self.owned_by
+        return self._owned_by
+
+    @owner.setter
+    def owner(self, value):
+        """Setter for the owner property."""
+        self._owned_by = self.owner_cls(value)
 
     def dump(self):
         """Dump the field values as dictionary."""
         access = {
-            "owned_by": self.owned_by.dump(),
+            "owned_by": self._owned_by.dump(),
             "links": self.links.dump(),
-            # "grants": self.grants.dump(),  # TODO enable again when ready
+            "grants": self.grants.dump(),
         }
 
         return access
@@ -71,7 +88,7 @@ class ParentRecordAccess:
         """Re-initialize the Access object with the data in the access_dict."""
         new_access = self.from_dict(access_dict)
         self.errors = new_access.errors
-        self.owned_by = new_access.owned_by
+        self._owned_by = new_access.owned_by
         self.grants = new_access.grants
         self.links = new_access.links
 
@@ -79,7 +96,7 @@ class ParentRecordAccess:
     def from_dict(
         cls,
         access_dict,
-        owners_cls=None,
+        owner_cls=None,
         grants_cls=None,
         links_cls=None,
     ):
@@ -88,25 +105,23 @@ class ParentRecordAccess:
         The new ``ParentRecordAccess`` object will be populated with new
         instances from the configured classes.
         If ``access_dict`` is empty, the ``ParentRecordAccess`` object will
-        be populated with new instances of ``owners_cls``, ``grants_cls``,
-        and ``links_cls``.
+        be populated with new instances of ``grants_cls``, and ``links_cls``.
         """
         grants_cls = grants_cls or cls.grant_cls
         links_cls = links_cls or cls.links_cls
-        owners_cls = owners_cls or cls.owners_cls
+        owner_cls = owner_cls or cls.owner_cls
         errors = []
 
         # provide defaults in case there is no 'access' property
-        owners = owners_cls()
+        owner = owner_cls(None)
         grants = grants_cls()
         links = links_cls()
 
         if access_dict:
-            for owner_dict in access_dict.get("owned_by", []):
-                try:
-                    owners.add(owners.owner_cls(owner_dict))
-                except Exception as e:
-                    errors.append(e)
+            try:
+                owner = owner_cls(access_dict["owned_by"])
+            except Exception as e:
+                errors.append(e)
 
             for grant_dict in access_dict.get("grants", []):
                 try:
@@ -121,7 +136,7 @@ class ParentRecordAccess:
                     errors.append(e)
 
         access = cls(
-            owned_by=owners,
+            owned_by=owner,
             grants=grants,
             links=links,
         )
@@ -130,9 +145,9 @@ class ParentRecordAccess:
 
     def __repr__(self):
         """Return repr(self)."""
-        return ("<{} (owners: {}, grants: {}, links: {})>").format(
+        return ("<{} (owner: {}, grants: {}, links: {})>").format(
             type(self).__name__,
-            len(self.owners or []),
+            self.owner,
             len(self.grants or []),
             len(self.links or []),
         )

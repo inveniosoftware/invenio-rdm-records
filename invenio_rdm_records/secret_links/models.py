@@ -49,15 +49,11 @@ class SecretLink(db.Model):
     permission_level = db.Column(db.String, nullable=False, default="")
     """Permission level of the link."""
 
-    def allows(self, action):
-        """Check if the secret link covers the specified permission."""
-        if action == "view":
-            return self.permission_level in ["view", "preview", "edit"]
-        elif action == "preview":
-            return self.permission_level in ["preview", "edit"]
-        elif action == "edit":
-            return self.permission_level == "edit"
-        return False
+    origin = db.Column(db.String(255), nullable=False, default="N/A")
+    """Origin information for the secret link."""
+
+    description = db.Column(db.Text, nullable=False, default="")
+    """Description of the secret link, for identification purposes."""
 
     def revoke(self):
         """Revoke (i.e. delete) this secret link."""
@@ -111,8 +107,10 @@ class SecretLink(db.Model):
     def create(
         cls,
         permission_level,
-        extra_data=dict(),
+        extra_data=None,
         expires_at=None,
+        origin=None,
+        description=None,
     ):
         """Create a new secret link."""
         if permission_level not in ["view", "preview", "edit"]:
@@ -132,7 +130,9 @@ class SecretLink(db.Model):
             id=id_,
             permission_level=permission_level,
             expires_at=expires_at,
-            token=serializer.create_token(id_, extra_data),
+            token=serializer.create_token(id_, extra_data or {}),
+            origin=origin,
+            description=description,
         )
         db.session.add(link)
         link_created.send(link)

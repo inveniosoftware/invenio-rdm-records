@@ -33,17 +33,23 @@ class Owner:
             self.owner_id = owner.id
             self.owner_type = "user"
 
-        else:
+        elif owner is not None:
             raise TypeError("invalid owner type: {}".format(type(owner)))
 
     def dump(self):
         """Dump the owner to a dictionary."""
+        if self.owner_type is None and self.owner_id is None:
+            return None
+
         return {self.owner_type: self.owner_id}
 
     def resolve(self, raise_exc=False):
         """Resolve the owner entity (e.g. User) via a database query."""
         if self._entity is None:
-            if self.owner_type == "user":
+            if self.owner_type is None and self.owner_id is None:
+                return None
+
+            elif self.owner_type == "user":
                 self._entity = User.query.get(self.owner_id)
 
             else:
@@ -53,6 +59,10 @@ class Owner:
                 raise LookupError("could not find owner: {}".format(self.dump()))
 
         return self._entity
+
+    def __bool__(self):
+        """Return bool(self)."""
+        return self.owner_type is not None and self.owner_id is not None
 
     def __hash__(self):
         """Return hash(self)."""
@@ -76,49 +86,3 @@ class Owner:
     def __repr__(self):
         """Return repr(self)."""
         return repr(self.resolve())
-
-
-class Owners(list):
-    """A list of owners for a record."""
-
-    owner_cls = Owner
-
-    def __init__(self, owners=None, owner_cls=None):
-        """Create a new list of owners."""
-        self.owner_cls = owner_cls or Owners.owner_cls
-        for owner in owners or []:
-            self.add(owner)
-
-    def add(self, owner):
-        """Alias for self.append(owner)."""
-        self.append(owner)
-
-    def append(self, owner):
-        """Add the specified owner to the list of owners.
-
-        :param owner: The record's owner (either a dict, User or Owner).
-        """
-        if not isinstance(owner, self.owner_cls):
-            owner = self.owner_cls(owner)
-
-        if owner not in self:
-            super().append(owner)
-
-    def extend(self, owners):
-        """Add all new items from the specified owners to this list."""
-        for owner in owners:
-            self.add(owner)
-
-    def remove(self, owner):
-        """Remove the specified owner from the list of owners.
-
-        :param owner: The record's owner (either a dict, User or Owner).
-        """
-        if not isinstance(owner, self.owner_cls):
-            owner = self.owner_cls(owner)
-
-        super().remove(owner)
-
-    def dump(self):
-        """Dump the owners as a list of owner dictionaries."""
-        return [owner.dump() for owner in self]

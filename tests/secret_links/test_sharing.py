@@ -62,7 +62,7 @@ def test_invalid_level(service, restricted_record, identity_simple):
     """Test invalid permission level."""
     record = restricted_record
     with pytest.raises(ValidationError):
-        service.secret_links.create(
+        service.access.create_secret_link(
             identity_simple, record.id, {"permission": "invalid"}
         )
 
@@ -70,13 +70,13 @@ def test_invalid_level(service, restricted_record, identity_simple):
 def test_permission_levels(service, restricted_record, identity_simple, client):
     """Test invalid permission level."""
     id_ = restricted_record.id
-    view_link = service.secret_links.create(
+    view_link = service.access.create_secret_link(
         identity_simple, id_, {"permission": "view"}
     )
-    preview_link = service.secret_links.create(
+    preview_link = service.access.create_secret_link(
         identity_simple, id_, {"permission": "preview"}
     )
-    edit_link = service.secret_links.create(
+    edit_link = service.access.create_secret_link(
         identity_simple, id_, {"permission": "edit"}
     )
 
@@ -150,15 +150,15 @@ def test_permission_levels(service, restricted_record, identity_simple, client):
 
     # Deny user with edit link to share the links
     with pytest.raises(PermissionDeniedError):
-        service.secret_links.create(i, id_, {})
+        service.access.create_secret_link(i, id_, {})
     with pytest.raises(PermissionDeniedError):
-        service.secret_links.read_all(i, id_)
+        service.access.read_all_secret_links(i, id_)
     with pytest.raises(PermissionDeniedError):
-        service.secret_links.read(i, id_, edit_link.id)
+        service.access.read_secret_link(i, id_, edit_link.id)
     with pytest.raises(PermissionDeniedError):
-        service.secret_links.update(i, id_, edit_link.id, {})
+        service.access.update_secret_link(i, id_, edit_link.id, {})
     with pytest.raises(PermissionDeniedError):
-        service.secret_links.delete(i, id_, edit_link.id)
+        service.access.delete_secret_link(i, id_, edit_link.id)
 
     # Allow user with edit link to update, delete, edit, publish
     draft = service.read_draft(i, id_)

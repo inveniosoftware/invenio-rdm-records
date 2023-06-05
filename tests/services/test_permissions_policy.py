@@ -64,12 +64,12 @@ def test_permission_policy_generators(
     # TODO: add to fixture
     rest_record = RDMRecord.create({}, access={}, parent=RDMParent.create({}))
     rest_record.access.protection.set("restricted", "restricted")
-    rest_record.parent.access.owners.add({"user": 1})
+    rest_record.parent.access.owner = {"user": 1}
 
     # TODO: add to fixture
     pub_record = RDMRecord.create({}, access={}, parent=RDMParent.create({}))
     pub_record.access.protection.set("public", "public")
-    pub_record.parent.access.owners.add({"user": 21})
+    pub_record.parent.access.owner = {"user": 21}
 
     assert policy(action="search").allows(anyuser_identity)
     assert policy(action="search").allows(system_identity)

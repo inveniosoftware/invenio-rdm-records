@@ -50,20 +50,18 @@ class AccessComponent(ServiceComponent):
             messages = list({str(e) for e in errors})
             raise ValidationError(messages, field_name="access")
 
-    def _init_owners(self, identity, record, **kwargs):
-        """If the record has no owners yet, add the current user."""
-        # if the given identity is that of a user, we add the
-        # corresponding user to the owners
-        # (record.parent.access.owners) and commit the parent
-        # otherwise, the parent's owners stays empty
+    def _init_owner(self, identity, record, **kwargs):
+        """If the record has no owner yet, add the current user."""
+        # if the given identity is that of a user, we set the owner ot that user
+        # (record.parent.access.owner) and commit the parent record;
+        # otherwise, the parent's owner stays empty
         is_sys_id = identity == system_identity
-        if not record.parent.access.owners and not is_sys_id:
-            owner_dict = {"user": identity.id}
-            record.parent.access.owners.add(owner_dict)
+        if not record.parent.access.owner and not is_sys_id:
+            record.parent.access.owner = {"user": identity.id}
 
     def create(self, identity, data=None, record=None, **kwargs):
         """Add basic ownership fields to the record."""
-        self._init_owners(identity, record, **kwargs)
+        self._init_owner(identity, record, **kwargs)
         self._populate_access_and_validate(identity, data, record, **kwargs)
 
     def update_draft(self, identity, data=None, record=None, **kwargs):
