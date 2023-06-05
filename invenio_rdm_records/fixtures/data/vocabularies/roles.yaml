@@ -2,25 +2,25 @@
   props:
     datacite: ContactPerson
   title:
-    en: Contact person
+    en: Contact Person
     de: Kontaktperson
 - id: datacollector
   props:
     datacite: DataCollector
   title:
-    en: Data collector
+    en: Data Collector
     de: DatensammlerIn
 - id: datacurator
   props:
     datacite: DataCurator
   title:
-    en: Data curator
+    en: Data Curator
     de: DatenkuratorIn
 - id: datamanager
   props:
     datacite: DataManager
   title:
-    en: Data manager
+    en: Data Manager
     de: DatenmanagerIn
 - id: distributor
   props:
@@ -38,7 +38,7 @@
   props:
     datacite: HostingInstitution
   title:
-    en: Hosting institution
+    en: Hosting Institution
     de: Bereitstellende Institution
 - id: producer
   props:
@@ -50,37 +50,37 @@
   props:
     datacite: ProjectLeader
   title:
-    en: Project leader
+    en: Project Leader
     de: ProjektleiterIn
 - id: projectmanager
   props:
     datacite: ProjectManager
   title:
-    en: Project manager
+    en: Project Manager
     de: ProjektmanagerIn
 - id: projectmember
   props:
     datacite: ProjectMember
   title:
-    en: Project member
+    en: Project Member
     de: Projektmitglied
 - id: registrationagency
   props:
     datacite: RegistrationAgency
   title:
-    en: Registration agency
+    en: Registration Agency
     de: Registrierungsstelle
 - id: registrationauthority
   props:
     datacite: RegistrationAuthority
   title:
-    en: Registration authority
+    en: Registration Authority
     de: Registrierungsbehörde
 - id: relatedperson
   props:
     datacite: RelatedPerson
   title:
-    en: Related person
+    en: Related Person
     de: Verwandte Person
 - id: researcher
   props:
@@ -92,13 +92,13 @@
   props:
     datacite: ResearchGroup
   title:
-    en: Research group
+    en: Research Group
     de: Forschungsgruppe
 - id: rightsholder
   props:
     datacite: RightsHolder
   title:
-    en: Rights holder
+    en: Rights Holder
     de: RechteinhaberIn
 - id: sponsor
   props:
@@ -116,7 +116,7 @@
   props:
     datacite: WorkPackageLeader
   title:
-    en: Work package leader
+    en: Work Package Leader
     de: ArbeitspaketleiterIn
 - id: other
   props:
