@@ -10,6 +10,10 @@
 Changes
 =======
 
+Version 4.2.5 (released 2023-06-05)
+
+- custom-fields: fix deserialization for array of string values
+
 Version 4.2.4 (released 2023-06-02)
 
 - results: implement abstract method for system record
