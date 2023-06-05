@@ -639,10 +639,12 @@ def test_review_notification(
     with mail.record_messages() as outbox:
         # Validate that email was sent
         req = service.review.submit(running_app.superuser_identity, draft.id).to_dict()
-        assert len(outbox) == 1
         assert req["status"] == "submitted"
         # check notification is build on submit
         assert mock_build.called
+        assert len(outbox) == 1
+        # TODO: update to `req["links"]["self_html"]` when addressing https://github.com/inveniosoftware/invenio-rdm-records/issues/1327
+        assert "/me/requests/{}".format(req["id"]) in outbox[0].html
 
 
 # TODO tests:
