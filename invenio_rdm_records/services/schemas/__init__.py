@@ -43,10 +43,6 @@ class RDMRecordSchema(RecordSchema, FieldPermissionsMixin):
 
         unknown = EXCLUDE
 
-    field_load_permissions = {
-        "files": "update_draft",
-    }
-
     # ATTENTION: In this schema you should be using the ``NestedAttribute``
     # instead  of Marshmallow's ``fields.Nested``. Using NestedAttribute
     # ensures that the nested schema will receive the system field instead of
