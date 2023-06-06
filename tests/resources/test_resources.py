@@ -64,8 +64,8 @@ def _validate_access(response, original):
 def test_simple_flow(
     running_app, client_with_login, minimal_record, headers, search_clear
 ):
-    client = client_with_login
     """Test a simple REST API flow."""
+    client = client_with_login
     # Create a draft
     created_draft = client.post(
         "/records", headers=headers, data=json.dumps(minimal_record)
