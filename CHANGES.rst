@@ -10,6 +10,11 @@
 Changes
 =======
 
+Version 4.3.0 (released 2023-06-07)
+
+- add notification on community submission / community review request
+- add notification templates
+
 Version 4.2.5 (released 2023-06-05)
 
 - custom-fields: fix deserialization for array of string values
