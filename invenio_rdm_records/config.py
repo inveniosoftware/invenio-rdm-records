@@ -10,6 +10,8 @@
 
 """DataCite-based data model for Invenio."""
 
+from datetime import timedelta
+
 import idutils
 from invenio_i18n import lazy_gettext as _
 
@@ -479,3 +481,17 @@ For example:
         ...
     }]
 """
+
+# Feature flag to enable/disable Resource access tokens (RATs)
+RDM_RESOURCE_ACCESS_TOKENS_ENABLED = False
+"""Flag to show whether RATs feature should be enabled."""
+
+# Configuration for Resource Access Tokens.
+RDM_RESOURCE_ACCESS_TOKENS_JWT_LIFETIME = timedelta(minutes=30)
+"""Maximum tokens lifetime."""
+
+RDM_RESOURCE_ACCESS_TOKENS_WHITELISTED_JWT_ALGORITHMS = ["HS256", "HS384", "HS512"]
+"""Accepted JWT algorithms for decoding the RAT."""
+
+RDM_RESOURCE_ACCESS_TOKEN_REQUEST_ARG = "resource_access_token"
+"""URL argument to provide resource access token."""

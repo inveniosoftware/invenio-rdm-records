@@ -55,6 +55,7 @@ from invenio_communities import current_communities
 from invenio_communities.communities.records.api import Community
 from invenio_notifications.backends import EmailNotificationBackend
 from invenio_notifications.services.builders import NotificationBuilder
+from invenio_oauth2server.models import Client
 from invenio_pidstore.errors import PIDDoesNotExistError
 from invenio_records_resources.proxies import current_service_registry
 from invenio_records_resources.references.entity_resolvers import ServiceResultResolver
@@ -396,6 +397,7 @@ def app_config(app_config):
     ] = UserPreferencesNotificationsSchema()
     app_config["USERS_RESOURCES_SERVICE_SCHEMA"] = NotificationsUserSchema
 
+    app_config["RDM_RESOURCE_ACCESS_TOKENS_ENABLED"] = True
     return app_config
 
 
@@ -1839,3 +1841,23 @@ def cli_runner(base_app):
         return base_app.test_cli_runner().invoke(command, args, input=input)
 
     return cli_invoke
+
+
+@pytest.fixture()
+def oauth2_client(db, uploader):
+    """Create client."""
+    with db.session.begin_nested():
+        # create resource_owner -> client_1
+        client_ = Client(
+            client_id="client_test_u1c1",
+            client_secret="client_test_u1c1",
+            name="client_test_u1c1",
+            description="",
+            is_confidential=False,
+            user_id=uploader.id,
+            _redirect_uris="",
+            _default_scopes="",
+        )
+        db.session.add(client_)
+    db.session.commit()
+    return client_.client_id
