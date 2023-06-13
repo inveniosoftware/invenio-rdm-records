@@ -9,14 +9,10 @@
 # it under the terms of the MIT License; see LICENSE file for more details.
 
 """DataCite-based data model for Invenio."""
-
-from flask import flash, g, request, session
 from flask_iiif import IIIF
 from flask_principal import identity_loaded
-from invenio_i18n import _
 from invenio_records_resources.resources.files import FileResource
 from invenio_records_resources.services import FileService
-from itsdangerous import SignatureExpired
 
 from invenio_rdm_records.oaiserver.resources.config import OAIPMHServerResourceConfig
 from invenio_rdm_records.oaiserver.resources.resources import OAIPMHServerResource
@@ -43,7 +39,6 @@ from .resources import (
     RDMRecordResourceConfig,
 )
 from .resources.resources import RDMRecordCommunitiesResource, RDMRecordRequestsResource
-from .secret_links import LinkNeed, SecretLink
 from .services import (
     CommunityRecordsService,
     IIIFService,
@@ -59,34 +54,13 @@ from .services import (
 )
 from .services.pids import PIDManager, PIDsService
 from .services.review.service import ReviewService
-
-
-def verify_token():
-    """Verify the token and store it in the session if it's valid."""
-    token = request.args.get("token", None)
-    if token:
-        try:
-            data = SecretLink.load_token(token)
-            if data:
-                session["rdm-records-token"] = data
-
-                # the identity is loaded before this handler is executed
-                # so if we want the initial request to be authorized,
-                # we need to add the LinkNeed here
-                if hasattr(g, "identity"):
-                    g.identity.provides.add(LinkNeed(data["id"]))
-
-        except SignatureExpired:
-            session.pop("rdm-records-token", None)
-            flash(_("Your shared link has expired."))
+from .utils import verify_token
 
 
 @identity_loaded.connect
-def on_identity_loaded(sender, identity):
-    """Add the secret link token need to the freshly loaded Identity."""
-    token_data = session.get("rdm-records-token")
-    if token_data:
-        identity.provides.add(LinkNeed(token_data["id"]))
+def on_identity_loaded(_, identity):
+    """Add secret link token or resource access token need to the freshly loaded Identity."""
+    verify_token(identity)
 
 
 from flask import Blueprint
@@ -112,7 +86,6 @@ class InvenioRDMRecords(object):
         self.init_config(app)
         self.init_services(app)
         self.init_resource(app)
-        app.before_request(verify_token)
         app.extensions["invenio-rdm-records"] = self
         app.register_blueprint(blueprint)
         # Load flask IIIF

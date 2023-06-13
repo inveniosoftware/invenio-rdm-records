@@ -25,6 +25,7 @@ from .generators import (
     IfRestricted,
     RecordCommunitiesAction,
     RecordOwners,
+    ResourceAccessToken,
     SecretLinks,
     SubmissionReviewer,
 )
@@ -84,6 +85,7 @@ class RDMRecordPermissionPolicy(RecordPermissionPolicy):
     # Allow reading the files of a record
     can_read_files = [
         IfRestricted("files", then_=can_view, else_=can_all),
+        ResourceAccessToken("read"),
     ]
     can_get_content_files = [
         # note: even though this is closer to business logic than permissions,
@@ -101,7 +103,7 @@ class RDMRecordPermissionPolicy(RecordPermissionPolicy):
     # Allow reading metadata of a draft
     can_read_draft = can_preview
     # Allow reading files of a draft
-    can_draft_read_files = can_preview
+    can_draft_read_files = can_preview + [ResourceAccessToken("read")]
     # Allow updating metadata of a draft
     can_update_draft = can_review
     # Allow uploading, updating and deleting files in drafts
@@ -112,7 +114,7 @@ class RDMRecordPermissionPolicy(RecordPermissionPolicy):
     ]
     can_draft_get_content_files = [
         # preview is same as read_files
-        IfFileIsLocal(then_=can_preview, else_=[SystemProcess()])
+        IfFileIsLocal(then_=can_draft_read_files, else_=[SystemProcess()])
     ]
     can_draft_commit_files = [
         # review is the same as create_files

@@ -25,6 +25,8 @@ from invenio_search.engine import dsl
 
 from invenio_rdm_records.records import RDMDraft
 
+from ..tokens.permissions import RATNeed
+
 
 class ConditionalGenerator(Generator):
     """Generator that depends on whether a condition is true or not.
@@ -270,3 +272,21 @@ class IfConfig(ConditionalGenerator):
     def _condition(self, **_):
         """Check if the config value is truthy."""
         return current_app.config.get(self.config_key) in self.accept_values
+
+
+class ResourceAccessToken(Generator):
+    """Allow resource access tokens."""
+
+    def __init__(self, access):
+        """Constructor."""
+        self.access = access
+
+    def needs(self, record=None, file_key=None, **kwargs):
+        """Enabling Needs."""
+        record_owner = next(iter(record.parent.access.owners), None)
+
+        if record_owner and record and file_key:
+            signer_id = record_owner.owner_id
+            return [RATNeed(signer_id, record["id"], file_key, self.access)]
+
+        return []
