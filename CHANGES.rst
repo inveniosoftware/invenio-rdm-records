@@ -10,6 +10,12 @@
 Changes
 =======
 
+Version 4.4.0 (released 2023-06-15)
+
+- access: fix permissions check for managing access
+- schemas: remove redundant permission check
+- setup: upgrade invenio-communities
+
 Version 4.3.0 (released 2023-06-07)
 
 - add notification on community submission / community review request
