@@ -26,7 +26,7 @@ import {
 } from "semantic-ui-react";
 import { humanReadableBytes } from "react-invenio-forms";
 
-const FileTableHeader = ({ isDraftRecord }) => (
+const FileTableHeader = ({ isDraftRecord, externalDOI }) => (
   <Table.Header>
     <Table.Row>
       <Table.HeaderCell>
@@ -38,16 +38,17 @@ const FileTableHeader = ({ isDraftRecord }) => (
       </Table.HeaderCell>
       <Table.HeaderCell>{i18next.t("Filename")}</Table.HeaderCell>
       <Table.HeaderCell>{i18next.t("Size")}</Table.HeaderCell>
-      {isDraftRecord && (
+      {(isDraftRecord || externalDOI) && (
         <Table.HeaderCell textAlign="center">{i18next.t("Progress")}</Table.HeaderCell>
       )}
-      {isDraftRecord && <Table.HeaderCell />}
+      {(isDraftRecord || externalDOI) && <Table.HeaderCell />}
     </Table.Row>
   </Table.Header>
 );
 
 FileTableHeader.propTypes = {
   isDraftRecord: PropTypes.bool,
+  externalDOI: PropTypes.bool.isRequired,
 };
 
 FileTableHeader.defaultProps = {
@@ -61,6 +62,7 @@ const FileTableRow = ({
   defaultPreview,
   setDefaultPreview,
   decimalSizeDisplay,
+  externalDOI,
 }) => {
   const [isCancelling, setIsCancelling] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
@@ -125,7 +127,7 @@ const FileTableRow = ({
       <Table.Cell data-label={i18next.t("Size")} width={2}>
         {file.size ? humanReadableBytes(file.size, decimalSizeDisplay) : ""}
       </Table.Cell>
-      {isDraftRecord && (
+      {(isDraftRecord || externalDOI) && (
         <Table.Cell
           className="file-upload-pending"
           data-label={i18next.t("Progress")}
@@ -145,7 +147,7 @@ const FileTableRow = ({
           {file.uploadState?.isPending && <span>{i18next.t("Pending")}</span>}
         </Table.Cell>
       )}
-      {isDraftRecord && (
+      {(isDraftRecord || externalDOI) && (
         <Table.Cell textAlign="right" width={2}>
           {(file.uploadState?.isFinished || file.uploadState?.isFailed) &&
             (isDeleting ? (
@@ -186,6 +188,7 @@ FileTableRow.propTypes = {
   defaultPreview: PropTypes.string,
   setDefaultPreview: PropTypes.func.isRequired,
   decimalSizeDisplay: PropTypes.bool,
+  externalDOI: PropTypes.bool.isRequired,
 };
 
 FileTableRow.defaultProps = {
@@ -202,8 +205,9 @@ const FileUploadBox = ({
   uploadButtonIcon,
   uploadButtonText,
   openFileDialog,
+  externalDOI,
 }) =>
-  isDraftRecord && (
+  (isDraftRecord || externalDOI) && (
     <Segment
       basic
       padded="very"
@@ -242,6 +246,7 @@ FileUploadBox.propTypes = {
   uploadButtonIcon: PropTypes.node,
   uploadButtonText: PropTypes.string,
   openFileDialog: PropTypes.func,
+  externalDOI: PropTypes.bool.isRequired,
 };
 
 FileUploadBox.defaultProps = {
@@ -257,12 +262,13 @@ const FilesListTable = ({
   filesList,
   deleteFile,
   decimalSizeDisplay,
+  externalDOI,
 }) => {
   const { setFieldValue, values: formikDraft } = useFormikContext();
   const defaultPreview = _get(formikDraft, "files.default_preview", "");
   return (
     <Table>
-      <FileTableHeader isDraftRecord={isDraftRecord} />
+      <FileTableHeader isDraftRecord={isDraftRecord} externalDOI={externalDOI} />
       <Table.Body>
         {filesList.map((file) => {
           return (
@@ -276,6 +282,7 @@ const FilesListTable = ({
                 setFieldValue("files.default_preview", filename)
               }
               decimalSizeDisplay={decimalSizeDisplay}
+              externalDOI={externalDOI}
             />
           );
         })}
@@ -289,6 +296,7 @@ FilesListTable.propTypes = {
   filesList: PropTypes.array,
   deleteFile: PropTypes.func,
   decimalSizeDisplay: PropTypes.bool,
+  externalDOI: PropTypes.bool.isRequired,
 };
 
 FilesListTable.defaultProps = {
@@ -347,6 +355,7 @@ FileUploaderArea.propTypes = {
   uploadButtonIcon: PropTypes.string,
   uploadButtonText: PropTypes.string,
   decimalSizeDisplay: PropTypes.bool,
+  externalDOI: PropTypes.bool.isRequired,
 };
 
 FileUploaderArea.defaultProps = {

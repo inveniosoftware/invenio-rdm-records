@@ -479,3 +479,11 @@ For example:
         ...
     }]
 """
+
+# Feature flag to enable/disable locking file modifications for record with external DOIs on edit record action.
+RDM_LOCK_FILES_FOR_EXTERNAL_DOI = False
+"""Flag to show whether add/delete files of a record on edit action should be locked."""
+
+# Configuration for locking files for external DOIs.
+RDM_EXTERNAL_DOI_PROVIDER_KEY = "external"
+"""The keyword that represents external DOIs provider."""

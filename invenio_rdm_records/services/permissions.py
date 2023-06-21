@@ -19,7 +19,7 @@ from invenio_records_permissions.generators import (
 )
 from invenio_records_permissions.policies.records import RecordPermissionPolicy
 
-from .generators import (
+from .generators import (  # IfRecordWithExternalDOI,
     IfConfig,
     IfFileIsLocal,
     IfRestricted,
@@ -106,6 +106,7 @@ class RDMRecordPermissionPolicy(RecordPermissionPolicy):
     can_update_draft = can_review
     # Allow uploading, updating and deleting files in drafts
     can_draft_create_files = can_review
+    # can_draft_modify_files = [IfRecordWithExternalDOI(then_=can_review, else_=[])]
     can_draft_set_content_files = [
         # review is the same as create_files
         IfFileIsLocal(then_=can_review, else_=[SystemProcess()])

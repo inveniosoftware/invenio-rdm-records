@@ -16,9 +16,10 @@ from itertools import chain
 
 from flask import current_app
 from flask_principal import UserNeed
-from invenio_access.permissions import authenticated_user
 from invenio_communities.generators import CommunityRoleNeed, CommunityRoles
 from invenio_communities.proxies import current_roles
+
+# from invenio_records.dictutils import dict_lookup
 from invenio_records_permissions.generators import Generator
 from invenio_records_resources.services.files.transfer import TransferType
 from invenio_search.engine import dsl
@@ -134,7 +135,7 @@ class IfDraft(ConditionalGenerator):
 
 
 class IfFileIsLocal(ConditionalGenerator):
-    """Conditional generator for file storage class."""
+    """Generator for file storage class."""
 
     def _condition(self, record, file_key=None, **kwargs):
         """Check if the record is a draft."""
@@ -153,6 +154,26 @@ class IfFileIsLocal(ConditionalGenerator):
                     break
 
         return is_file_local
+
+
+# class IfRecordWithExternalDOI(ConditionalGenerator):
+#     """Generator that depends on whether the record has external DOI or not."""
+#
+#     def _condition(self, record, **kwargs):
+#         """Check if the record has external DOI."""
+#         is_feature_enabled = not current_app.config["RDM_LOCK_FILES_FOR_EXTERNAL_DOI"]
+#         if is_feature_enabled:
+#             try:
+#                 is_external_doi = (
+#                     dict_lookup(record, "pids.doi.provider")
+#                     == current_app.config["RDM_EXTERNAL_DOI_PROVIDER_KEY"]
+#                 )
+#             except KeyError:
+#                 is_external_doi = False
+#         else:
+#             return False
+#
+#         return is_external_doi
 
 
 class RecordOwners(Generator):

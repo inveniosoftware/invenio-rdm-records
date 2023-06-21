@@ -39,6 +39,7 @@ export const FileUploaderComponent = ({
   importButtonText,
   isFileImportInProgress,
   decimalSizeDisplay,
+  externalDOI,
   ...uiProps
 }) => {
   // We extract the working copy of the draft stored as `values` in formik
@@ -242,6 +243,7 @@ export const FileUploaderComponent = ({
                   filesEnabled={filesEnabled}
                   deleteFile={deleteFile}
                   decimalSizeDisplay={decimalSizeDisplay}
+                  externalDOI={externalDOI}
                 />
               </Grid.Row>
             )}
@@ -261,32 +263,34 @@ export const FileUploaderComponent = ({
                     <p>
                       <Icon name="warning sign" />
                       {i18next.t(
-                        "File addition, removal or modification are not allowed after you have published your upload."
+                        "If your record doesn't have existing DOI - file addition, removal or modification are not allowed after you have published your upload."
                       )}
                     </p>
                   </Message>
                 </Grid.Column>
               </Grid.Row>
             ) : (
-              <Grid.Row className="file-upload-note pt-5">
-                <Grid.Column width={16}>
-                  <Message info>
-                    <NewVersionButton
-                      record={record}
-                      onError={() => {}}
-                      className=""
-                      disabled={!permissions.can_new_version}
-                      style={{ float: "right" }}
-                    />
-                    <p style={{ marginTop: "5px", display: "inline-block" }}>
-                      <Icon name="info circle" size="large" />
-                      {i18next.t(
-                        "You must create a new version to add, modify or delete files."
-                      )}
-                    </p>
-                  </Message>
-                </Grid.Column>
-              </Grid.Row>
+              !externalDOI && (
+                <Grid.Row className="file-upload-note pt-5">
+                  <Grid.Column width={16}>
+                    <Message info>
+                      <NewVersionButton
+                        record={record}
+                        onError={() => {}}
+                        className=""
+                        disabled={!permissions.can_new_version}
+                        style={{ float: "right" }}
+                      />
+                      <p style={{ marginTop: "5px", display: "inline-block" }}>
+                        <Icon name="info circle" size="large" />
+                        {i18next.t(
+                          "You must create a new version to add, modify or delete files."
+                        )}
+                      </p>
+                    </Message>
+                  </Grid.Column>
+                </Grid.Row>
+              )
             )}
           </Overridable>
         </Grid>
@@ -343,6 +347,7 @@ FileUploaderComponent.propTypes = {
   deleteFile: PropTypes.func.isRequired,
   decimalSizeDisplay: PropTypes.bool,
   permissions: PropTypes.object,
+  externalDOI: PropTypes.bool,
 };
 
 FileUploaderComponent.defaultProps = {
