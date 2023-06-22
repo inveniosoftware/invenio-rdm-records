@@ -158,27 +158,30 @@ class MeetingSchema(Schema):
 def compute_publishing_information(obj, dummyctx):
     """Computes 'publishing information' string from custom fields."""
 
-    def _format_journal(journal, publication_date):
+    def _format_journal(journal):
         """Formats a journal object into a string based on its attributes.
 
         Example:
-            _format_journal({"title": "The Effects of Climate Change", "volume": 10, "issue": 2, "pages": "15-22", "issn": "1234-5678"}, "2022")
-            >>> 'The Effects of Climate Change: 10 (2022) no. 1234-5678 pp. 15-22 (2)'
+            _format_journal({"title": "The Effects of Climate Change", "volume": 10, "issue": 2, "pages": "15-22", "issn": "1234-5678"})
+            >>> 'The Effects of Climate Change, 10(2), 15-22, ISSN:1234-5678.'
         """
         journal_title = journal.get("title")
-        if not journal_title:
-            return ""
-
         journal_issn = journal.get("issn")
         journal_issue = journal.get("issue")
+        journal_volume = journal.get("volume")
         journal_pages = journal.get("pages")
-        publication_date = f"({publication_date})" if publication_date else None
-        title = f"{journal_title}:"
-        issn = f"no. {journal_issn}" if journal_issn else None
-        issue = f"({journal_issue})" if journal_issue else None
-        pages = f"pp. {journal_pages}" if journal_pages else None
-        fields = [title, journal.get("volume"), publication_date, issn, pages, issue]
-        formatted = " ".join(filter(None, fields))
+        title = f"{journal_title}" if journal_title else None
+        vol_issue = f"{journal_volume}" if journal_volume else None
+        if journal_issue:
+            if vol_issue:
+                vol_issue += f"({journal_issue})"
+            else:
+                vol_issue = f"{journal_issue}"
+        pages = f"{journal_pages}" if journal_pages else None
+        issn = f"ISSN: {journal_issn}" if journal_issn else None
+        fields = [title, vol_issue, pages, issn]
+        formatted = ", ".join(filter(None, fields))
+        formatted += "."
 
         return formatted if formatted else ""
 
@@ -193,7 +196,6 @@ def compute_publishing_information(obj, dummyctx):
 
     attr = "custom_fields"
     field = obj.get(attr, {})
-    publication_date = obj.get("metadata", {}).get("publication_date")
     publisher = obj.get("metadata", {}).get("publisher")
 
     # Retrieve publishing related custom fields
@@ -203,7 +205,7 @@ def compute_publishing_information(obj, dummyctx):
 
     result = {}
     if journal:
-        journal_string = _format_journal(journal, publication_date)
+        journal_string = _format_journal(journal)
         if journal_string:
             result.update({"journal": journal_string})
 
