@@ -229,6 +229,10 @@ class CommonFieldsMixin:
 
     bucket = ModelField(dump=False)
 
+    aux_bucket_id = ModelField(dump=False)
+
+    aux_bucket = ModelField(dump=False)
+
     access = RecordAccessField()
 
     is_published = PIDStatusCheckField(status=PIDStatus.REGISTERED, dump=True)
@@ -249,6 +253,13 @@ class RDMFileDraft(FileRecord):
     record_cls = None  # defined below
 
 
+class RDMAuxFileDraft(FileRecord):
+    """File associated with a draft."""
+
+    model_cls = models.RDMAuxFileDraftMetadata
+    record_cls = None  # defined below
+
+
 class RDMDraft(CommonFieldsMixin, Draft):
     """RDM draft API."""
 
@@ -264,12 +275,41 @@ class RDMDraft(CommonFieldsMixin, Draft):
         delete=False,
     )
 
+    aux_files = FilesField(
+        key="aux_files",
+        bucket_id_attr="aux_bucket_id",
+        bucket_attr="aux_bucket",
+        store=False,
+        dump=False,
+        file_cls=RDMAuxFileDraft,
+        # Don't delete, we'll manage in the service
+        delete=False,
+    )
+
     has_draft = HasDraftCheckField()
 
     status = DraftStatus()
 
 
 RDMFileDraft.record_cls = RDMDraft
+
+
+class RDMDraftAuxFiles(RDMDraft):
+    """RDM Draft aux file API."""
+
+    files = FilesField(
+        key="aux_files",
+        bucket_id_attr="aux_bucket_id",
+        bucket_attr="aux_bucket",
+        store=False,
+        dump=False,
+        file_cls=RDMAuxFileDraft,
+        # Don't delete, we'll manage in the service
+        delete=False,
+    )
+
+
+RDMAuxFileDraft.record_cls = RDMDraftAuxFiles
 
 
 #
@@ -279,6 +319,13 @@ class RDMFileRecord(FileRecord):
     """Example record file API."""
 
     model_cls = models.RDMFileRecordMetadata
+    record_cls = None  # defined below
+
+
+class RDMAuxFileRecord(FileRecord):
+    """Example record file API."""
+
+    model_cls = models.RDMAuxFileRecordMetadata
     record_cls = None  # defined below
 
 
@@ -309,3 +356,23 @@ class RDMRecord(CommonFieldsMixin, Record):
 
 
 RDMFileRecord.record_cls = RDMRecord
+
+
+class RDMRecordAuxFiles(RDMRecord):
+    """RDM Auxiliary file record API."""
+
+    files = FilesField(
+        key="aux_files",
+        bucket_id_attr="aux_bucket_id",
+        bucket_attr="aux_bucket",
+        store=False,
+        dump=False,
+        file_cls=RDMAuxFileRecord,
+        # Don't create
+        create=False,
+        # Don't delete, we'll manage in the service
+        delete=False,
+    )
+
+
+RDMAuxFileRecord.record_cls = RDMRecordAuxFiles

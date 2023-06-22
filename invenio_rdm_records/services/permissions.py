@@ -175,6 +175,24 @@ class RDMRecordPermissionPolicy(RecordPermissionPolicy):
     can_remove_record = [CommunityCurators()]
 
     #
+    # Auxiliary files
+    #
+    can_draft_aux_create_files = can_review
+    can_draft_aux_set_content_files = [
+        IfFileIsLocal(then_=can_review, else_=[SystemProcess()])
+    ]
+    can_draft_aux_get_content_files = [
+        # preview is same as read_files
+        IfFileIsLocal(then_=can_preview, else_=[SystemProcess()])
+    ]
+    can_draft_aux_commit_files = [
+        # review is the same as create_files
+        IfFileIsLocal(then_=can_review, else_=[SystemProcess()])
+    ]
+    can_draft_aux_update_files = can_review
+    can_draft_aux_delete_files = can_review
+
+    #
     # Disabled actions (these should not be used or changed)
     #
     # - Records/files are updated/deleted via drafts so we don't support

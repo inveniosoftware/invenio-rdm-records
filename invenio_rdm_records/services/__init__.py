@@ -15,6 +15,7 @@ from .config import (
     RDMRecordCommunitiesConfig,
     RDMRecordRequestsConfig,
     RDMRecordServiceConfig,
+    RDMRecordAuxFilesServiceConfig,
 )
 from .iiif import IIIFService
 from .permissions import RDMRecordPermissionPolicy
@@ -35,4 +36,5 @@ __all__ = (
     "CommunityRecordsService",
     "RDMRecordRequestsConfig",
     "RecordRequestsService",
+    "RDMRecordAuxFilesServiceConfig",
 )
