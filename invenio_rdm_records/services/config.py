@@ -19,6 +19,7 @@ from invenio_drafts_resources.services.records.components import (
     DraftFilesComponent,
     PIDComponent,
     RelationsComponent,
+    DraftAuxiliaryFilesComponent,
 )
 from invenio_drafts_resources.services.records.config import (
     RecordServiceConfig,
@@ -66,6 +67,7 @@ from .schemas import RDMParentSchema, RDMRecordSchema
 from .schemas.community_records import CommunityRecordsSchema
 from .schemas.parent.access import SecretLink
 from .schemas.record_communities import RecordCommunitiesSchema
+from ..records.api import RDMDraftAuxFiles, RDMRecordAuxFiles
 
 
 def is_draft_and_has_review(record, ctx):
@@ -329,6 +331,11 @@ class RDMRecordServiceConfig(RecordServiceConfig, ConfiguratorMixin):
             if_=RecordLink("{+api}/records/{id}/files"),
             else_=RecordLink("{+api}/records/{id}/draft/files"),
         ),
+        "auxiliary_files": ConditionalLink(
+            cond=is_record,
+            if_=RecordLink("{+api}/records/{id}/aux-files"),
+            else_=RecordLink("{+api}/records/{id}/draft/aux-files"),
+        ),
         "archive": ConditionalLink(
             cond=is_record,
             if_=RecordLink(
@@ -367,6 +374,16 @@ class RDMRecordServiceConfig(RecordServiceConfig, ConfiguratorMixin):
     }
 
 
+class RDMRecordAuxFilesServiceConfig(RDMRecordServiceConfig):
+    service_id = "record-aux-files"
+    record_cls = RDMRecordAuxFiles
+    draft_cls = RDMDraftAuxFiles
+
+    components = [
+        DraftAuxiliaryFilesComponent,
+    ]
+
+
 class RDMFileRecordServiceConfig(FileServiceConfig, ConfiguratorMixin):
     """Configuration for record files."""
 
@@ -398,6 +415,28 @@ class RDMFileRecordServiceConfig(FileServiceConfig, ConfiguratorMixin):
             "/{size=full}/{rotation=0}/{quality=default}.{format=png}",
             when=is_iiif_compatible,
         ),
+    }
+
+
+class RDMAuxFileRecordServiceConfig(FileServiceConfig, ConfiguratorMixin):
+    """Configuration for record auxiliary files."""
+
+    record_cls = RDMRecordAuxFiles
+    permission_policy_cls = FromConfig(
+        "RDM_PERMISSION_POLICY", default=RDMRecordPermissionPolicy
+    )
+
+    file_links_list = {
+        "self": RecordLink("{+api}/records/{id}/aux-files"),
+        "archive": RecordLink(
+            "{+api}/records/{id}/aux-files-archive",  # TODO needed?
+            when=archive_download_enabled,
+        ),
+    }
+
+    file_links_item = {
+        "self": FileLink("{+api}/records/{id}/aux-files/{key}"),
+        "content": FileLink("{+api}/records/{id}/aux-files/{key}/content"),
     }
 
 
@@ -437,4 +476,30 @@ class RDMFileDraftServiceConfig(FileServiceConfig, ConfiguratorMixin):
             "/{size=full}/{rotation=0}/{quality=default}.{format=png}",
             when=is_iiif_compatible,
         ),
+    }
+
+
+class RDMAuxFileDraftServiceConfig(FileServiceConfig, ConfiguratorMixin):
+    """Configuration for draft auxiliary files."""
+
+    service_id = "draft-aux-files"
+
+    record_cls = RDMDraftAuxFiles
+    permission_action_prefix = "draft_aux_"
+    permission_policy_cls = FromConfig(
+        "RDM_PERMISSION_POLICY", default=RDMRecordPermissionPolicy
+    )
+
+    file_links_list = {
+        "self": RecordLink("{+api}/records/{id}/draft/aux-files"),
+        "archive": RecordLink(
+            "{+api}/records/{id}/draft/aux-files-archive",  # TODO needed?
+            when=archive_download_enabled,
+        ),
+    }
+
+    file_links_item = {
+        "self": FileLink("{+api}/records/{id}/draft/aux-files/{key}"),
+        "content": FileLink("{+api}/records/{id}/draft/aux-files/{key}/content"),
+        "commit": FileLink("{+api}/records/{id}/draft/aux-files/{key}/commit"),
     }

@@ -13,12 +13,9 @@
 
 
 import arrow
-from invenio_communities import current_communities
 from invenio_drafts_resources.services.records import RecordService
-from invenio_records_resources.services import LinksTemplate
 from invenio_records_resources.services.uow import RecordCommitOp, unit_of_work
 from invenio_requests.services.results import EntityResolverExpandableField
-from invenio_search.engine import dsl
 
 from invenio_rdm_records.services.errors import EmbargoNotLiftedError
 from invenio_rdm_records.services.results import ParentCommunitiesExpandableField
@@ -119,7 +116,7 @@ class RDMRecordService(RecordService):
 
         This function is ONLY intended to be used by the OAI-PMH server because
         the OAIServer does not use the service directly to retrieve records.
-        The OAIServer predates the the software architecture and thus to avoid
+        The OAIServer predates the software architecture and thus to avoid
         rewriting it, we allow exceptions to get data from the search index
         and pass it into the service (normally the service must be responsible
         for this).

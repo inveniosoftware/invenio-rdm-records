@@ -38,6 +38,10 @@ from .resources import (
     RDMRecordResource,
     RDMRecordResourceConfig,
 )
+from .resources.config import (
+    RDMRecordAuxFilesResourceConfig,
+    RDMDraftAuxFilesResourceConfig,
+)
 from .resources.resources import RDMRecordCommunitiesResource, RDMRecordRequestsResource
 from .services import (
     CommunityRecordsService,
@@ -51,6 +55,11 @@ from .services import (
     RDMRecordServiceConfig,
     RecordRequestsService,
     SecretLinkService,
+)
+from .services.config import (
+    RDMAuxFileRecordServiceConfig,
+    RDMAuxFileDraftServiceConfig,
+    RDMRecordAuxFilesServiceConfig,
 )
 from .services.pids import PIDManager, PIDsService
 from .services.review.service import ReviewService
@@ -120,8 +129,11 @@ class InvenioRDMRecords(object):
 
         class ServiceConfigs:
             record = RDMRecordServiceConfig.build(app)
+            record_with_aux_files = RDMRecordAuxFilesServiceConfig.build(app)
             file = RDMFileRecordServiceConfig.build(app)
             file_draft = RDMFileDraftServiceConfig.build(app)
+            aux_file = RDMAuxFileRecordServiceConfig.build(app)
+            aux_file_draft = RDMAuxFileDraftServiceConfig.build(app)
             oaipmh_server = OAIPMHServerServiceConfig
             record_communities = RDMRecordCommunitiesConfig.build(app)
             community_records = RDMCommunityRecordsConfig.build(app)
@@ -141,6 +153,13 @@ class InvenioRDMRecords(object):
             secret_links_service=SecretLinkService(service_configs.record),
             pids_service=PIDsService(service_configs.record, PIDManager),
             review_service=ReviewService(service_configs.record),
+        )
+
+        self.records_aux_files_service = RDMRecordService(
+            service_configs.record_with_aux_files,
+            files_service=FileService(service_configs.aux_file),
+            draft_files_service=FileService(service_configs.aux_file_draft),
+            pids_service=PIDsService(service_configs.record, PIDManager),
         )
 
         self.iiif_service = IIIFService(
@@ -181,6 +200,17 @@ class InvenioRDMRecords(object):
         self.draft_files_resource = FileResource(
             service=self.records_service.draft_files,
             config=RDMDraftFilesResourceConfig.build(app),
+        )
+
+        self.record_aux_files_resource = FileResource(
+            service=self.records_aux_files_service.files,
+            config=RDMRecordAuxFilesResourceConfig.build(app),
+        )
+
+        # Draft files resource
+        self.draft_aux_files_resource = FileResource(
+            service=self.records_aux_files_service.draft_files,
+            config=RDMDraftAuxFilesResourceConfig.build(app),
         )
 
         # Parent Records
