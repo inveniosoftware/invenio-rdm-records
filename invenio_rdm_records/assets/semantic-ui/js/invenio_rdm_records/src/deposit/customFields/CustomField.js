@@ -41,7 +41,7 @@ export class CustomField extends Field {
     if (customFields !== null) {
       for (const [key, value] of Object.entries(customFields)) {
         const isVocabularyField = this.vocabularyFields.includes(key);
-        let _value = this.recursiveMapping(value, isVocabularyField, mapValue);
+        const _value = this.recursiveMapping(value, isVocabularyField, mapValue);
         record = _set(record, `custom_fields.${key}`, _value);
       }
     }
