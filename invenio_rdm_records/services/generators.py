@@ -137,7 +137,7 @@ class IfFileIsLocal(ConditionalGenerator):
     """Conditional generator for file storage class."""
 
     def _condition(self, record, file_key=None, **kwargs):
-        """Check if the record is a draft."""
+        """Check if the file is local."""
         is_file_local = True
         if file_key:
             file_record = record.files.get(file_key)
@@ -153,6 +153,14 @@ class IfFileIsLocal(ConditionalGenerator):
                     break
 
         return is_file_local
+
+
+class IfNewRecord(ConditionalGenerator):
+    """Conditional generator for cases where we have a new record/draft."""
+
+    def _condition(self, record=None, **kwargs):
+        """Check if there is a record."""
+        return record is None
 
 
 class RecordOwners(Generator):
