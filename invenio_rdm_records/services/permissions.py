@@ -10,7 +10,6 @@
 """Permissions for Invenio RDM Records."""
 
 from invenio_communities.generators import CommunityCurators
-from invenio_records import Record
 from invenio_records_permissions.generators import (
     AnyUser,
     AuthenticatedUser,
@@ -22,6 +21,7 @@ from invenio_records_permissions.policies.records import RecordPermissionPolicy
 from .generators import (
     IfConfig,
     IfFileIsLocal,
+    IfNewRecord,
     IfRestricted,
     RecordCommunitiesAction,
     RecordOwners,
@@ -122,11 +122,19 @@ class RDMRecordPermissionPolicy(RecordPermissionPolicy):
     can_draft_delete_files = can_review
     # Allow enabling/disabling files
     can_manage_files = [
-        IfConfig("RDM_ALLOW_METADATA_ONLY_RECORDS", then_=can_review, else_=[]),
+        IfConfig(
+            "RDM_ALLOW_METADATA_ONLY_RECORDS",
+            then_=[IfNewRecord(then_=can_authenticated, else_=can_review)],
+            else_=[],
+        ),
     ]
     # Allow managing record access
     can_manage_record_access = [
-        IfConfig("RDM_ALLOW_RESTRICTED_RECORDS", then_=can_review, else_=[]),
+        IfConfig(
+            "RDM_ALLOW_RESTRICTED_RECORDS",
+            then_=[IfNewRecord(then_=can_authenticated, else_=can_review)],
+            else_=[],
+        )
     ]
 
     #
