@@ -9,6 +9,7 @@ import _get from "lodash/get";
 import _set from "lodash/set";
 import _cloneDeep from "lodash/cloneDeep";
 import _isArray from "lodash/isArray";
+import _isObject from "lodash/isObject";
 import { Field } from "../serializers";
 
 export class CustomField extends Field {
@@ -23,13 +24,24 @@ export class CustomField extends Field {
     this.vocabularyFields = vocabularyFields;
   }
 
+  recursiveMapping(value, isVocabularyField, mapValue) {
+    // Since Arrays are a subset of Objects, if _isArray were the else if, we would never get to that condition.
+    let _value = null;
+    if (_isArray(value))
+      _value = value.map((v, i) => mapValue(v, i, isVocabularyField));
+    else if (_isObject(value) && !isVocabularyField) {
+      for (let key in value)
+        value[key] = this.recursiveMapping(value[key], isVocabularyField, mapValue);
+      _value = value;
+    } else _value = mapValue(value, null, isVocabularyField);
+    return _value;
+  }
+  
   #mapCustomFields(record, customFields, mapValue) {
     if (customFields !== null) {
       for (const [key, value] of Object.entries(customFields)) {
         const isVocabularyField = this.vocabularyFields.includes(key);
-        const _value = _isArray(value)
-          ? value.map((v, i) => mapValue(v, i, isVocabularyField))
-          : mapValue(value, null, isVocabularyField);
+        const _value = this.recursiveMapping(value, isVocabularyField, mapValue);
         record = _set(record, `custom_fields.${key}`, _value);
       }
     }
