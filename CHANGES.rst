@@ -10,6 +10,10 @@
 Changes
 =======
 
+Version 4.4.1 (released 2023-06-28)
+
+- Fixes permission checks when there is no record object to check i.e new record
+
 Version 4.4.0 (released 2023-06-15)
 
 - access: fix permissions check for managing access
