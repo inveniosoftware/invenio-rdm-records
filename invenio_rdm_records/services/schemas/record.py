@@ -60,7 +60,7 @@ class RDMRecordSchema(RecordSchema, FieldPermissionsMixin):
     # provenance
     access = NestedAttribute(AccessSchema)
     files = NestedAttribute(FilesSchema)
-    aux_files = NestedAttribute(FilesSchema)
+    media_files = NestedAttribute(FilesSchema)
     # notes = fields.List(fields.Nested(InternalNoteSchema))
     revision = fields.Integer(dump_only=True)
     versions = NestedAttribute(VersionsSchema, dump_only=True)

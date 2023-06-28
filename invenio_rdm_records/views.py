@@ -25,10 +25,10 @@ def init(state):
     sregistry.register(ext.records_service, service_id="records")
     sregistry.register(ext.records_service.files, service_id="files")
     sregistry.register(ext.records_service.draft_files, service_id="draft-files")
-    sregistry.register(ext.records_aux_files_service, service_id="record-aux-files")
-    sregistry.register(ext.records_aux_files_service.files, service_id="aux-files")
+    sregistry.register(ext.records_media_files_service, service_id="record-media-files")
+    sregistry.register(ext.records_media_files_service.files, service_id="media-files")
     sregistry.register(
-        ext.records_aux_files_service.draft_files, service_id="draft-aux-files"
+        ext.records_media_files_service.draft_files, service_id="draft-media-files"
     )
     sregistry.register(ext.oaipmh_server_service, service_id="oaipmh-server")
     sregistry.register(ext.iiif_service, service_id="rdm-iiif")
@@ -56,16 +56,16 @@ def create_draft_files_bp(app):
     return ext.draft_files_resource.as_blueprint()
 
 
-def create_record_aux_files_bp(app):
+def create_record_media_files_bp(app):
     """Create records files blueprint."""
     ext = app.extensions["invenio-rdm-records"]
-    return ext.record_aux_files_resource.as_blueprint()
+    return ext.record_media_files_resource.as_blueprint()
 
 
-def create_draft_aux_files_bp(app):
+def create_draft_media_files_bp(app):
     """Create draft files blueprint."""
     ext = app.extensions["invenio-rdm-records"]
-    return ext.draft_aux_files_resource.as_blueprint()
+    return ext.draft_media_files_resource.as_blueprint()
 
 
 def create_parent_record_links_bp(app):

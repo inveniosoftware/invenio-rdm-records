@@ -229,9 +229,9 @@ class CommonFieldsMixin:
 
     bucket = ModelField(dump=False)
 
-    aux_bucket_id = ModelField(dump=False)
+    media_bucket_id = ModelField(dump=False)
 
-    aux_bucket = ModelField(dump=False)
+    media_bucket = ModelField(dump=False)
 
     access = RecordAccessField()
 
@@ -253,10 +253,10 @@ class RDMFileDraft(FileRecord):
     record_cls = None  # defined below
 
 
-class RDMAuxFileDraft(FileRecord):
+class RDMMediaFileDraft(FileRecord):
     """File associated with a draft."""
 
-    model_cls = models.RDMAuxFileDraftMetadata
+    model_cls = models.RDMMediaFileDraftMetadata
     record_cls = None  # defined below
 
 
@@ -275,13 +275,13 @@ class RDMDraft(CommonFieldsMixin, Draft):
         delete=False,
     )
 
-    aux_files = FilesField(
-        key="aux_files",
-        bucket_id_attr="aux_bucket_id",
-        bucket_attr="aux_bucket",
+    media_files = FilesField(
+        key="media_files",
+        bucket_id_attr="media_bucket_id",
+        bucket_attr="media_bucket",
         store=False,
         dump=False,
-        file_cls=RDMAuxFileDraft,
+        file_cls=RDMMediaFileDraft,
         # Don't delete, we'll manage in the service
         delete=False,
     )
@@ -294,22 +294,22 @@ class RDMDraft(CommonFieldsMixin, Draft):
 RDMFileDraft.record_cls = RDMDraft
 
 
-class RDMDraftAuxFiles(RDMDraft):
-    """RDM Draft aux file API."""
+class RDMDraftMediaFiles(RDMDraft):
+    """RDM Draft media file API."""
 
     files = FilesField(
-        key="aux_files",
-        bucket_id_attr="aux_bucket_id",
-        bucket_attr="aux_bucket",
+        key="media_files",
+        bucket_id_attr="media_bucket_id",
+        bucket_attr="media_bucket",
         store=False,
         dump=False,
-        file_cls=RDMAuxFileDraft,
+        file_cls=RDMMediaFileDraft,
         # Don't delete, we'll manage in the service
         delete=False,
     )
 
 
-RDMAuxFileDraft.record_cls = RDMDraftAuxFiles
+RDMMediaFileDraft.record_cls = RDMDraftMediaFiles
 
 
 #
@@ -322,10 +322,10 @@ class RDMFileRecord(FileRecord):
     record_cls = None  # defined below
 
 
-class RDMAuxFileRecord(FileRecord):
+class RDMMediaFileRecord(FileRecord):
     """Example record file API."""
 
-    model_cls = models.RDMAuxFileRecordMetadata
+    model_cls = models.RDMMediaFileRecordMetadata
     record_cls = None  # defined below
 
 
@@ -348,6 +348,19 @@ class RDMRecord(CommonFieldsMixin, Record):
         delete=False,
     )
 
+    media_files = FilesField(
+        key="media_files",
+        bucket_id_attr="media_bucket_id",
+        bucket_attr="media_bucket",
+        store=False,
+        dump=False,
+        file_cls=RDMMediaFileRecord,
+        # Don't create
+        create=False,
+        # Don't delete, we'll manage in the service
+        delete=False,
+    )
+
     has_draft = HasDraftCheckField(RDMDraft)
 
     status = DraftStatus()
@@ -358,16 +371,16 @@ class RDMRecord(CommonFieldsMixin, Record):
 RDMFileRecord.record_cls = RDMRecord
 
 
-class RDMRecordAuxFiles(RDMRecord):
-    """RDM Auxiliary file record API."""
+class RDMRecordMediaFiles(RDMRecord):
+    """RDM Media file record API."""
 
     files = FilesField(
-        key="aux_files",
-        bucket_id_attr="aux_bucket_id",
-        bucket_attr="aux_bucket",
+        key="media_files",
+        bucket_id_attr="media_bucket_id",
+        bucket_attr="media_bucket",
         store=False,
         dump=False,
-        file_cls=RDMAuxFileRecord,
+        file_cls=RDMMediaFileRecord,
         # Don't create
         create=False,
         # Don't delete, we'll manage in the service
@@ -375,4 +388,4 @@ class RDMRecordAuxFiles(RDMRecord):
     )
 
 
-RDMAuxFileRecord.record_cls = RDMRecordAuxFiles
+RDMMediaFileRecord.record_cls = RDMRecordMediaFiles

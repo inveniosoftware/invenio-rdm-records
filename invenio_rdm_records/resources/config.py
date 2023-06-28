@@ -194,38 +194,38 @@ class RDMDraftFilesResourceConfig(FileResourceConfig, ConfiguratorMixin):
     url_prefix = "/records/<pid_value>/draft"
 
 
-class RDMRecordAuxFilesResourceConfig(FileResourceConfig, ConfiguratorMixin):
+class RDMRecordMediaFilesResourceConfig(FileResourceConfig, ConfiguratorMixin):
     """Bibliographic record files resource config."""
 
     allow_upload = False
     allow_archive_download = FromConfig("RDM_ARCHIVE_DOWNLOAD_ENABLED", True)
-    blueprint_name = "record_aux_files"
+    blueprint_name = "record_media_files"
     url_prefix = "/records/<pid_value>"
     routes = {
-        "list": "/aux-files",
-        "item": "/aux-files/<key>",
-        "item-content": "/aux-files/<key>/content",
-        "item-commit": "/aux-files/<key>/commit",
-        "list-archive": "/aux-files-archive",
+        "list": "/media-files",
+        "item": "/media-files/<key>",
+        "item-content": "/media-files/<key>/content",
+        "item-commit": "/media-files/<key>/commit",
+        "list-archive": "/media-files-archive",
     }
 
 
 #
 # Draft files
 #
-class RDMDraftAuxFilesResourceConfig(FileResourceConfig, ConfiguratorMixin):
+class RDMDraftMediaFilesResourceConfig(FileResourceConfig, ConfiguratorMixin):
     """Bibliographic record files resource config."""
 
     allow_archive_download = FromConfig("RDM_ARCHIVE_DOWNLOAD_ENABLED", True)
-    blueprint_name = "draft_aux_files"
+    blueprint_name = "draft_media_files"
     url_prefix = "/records/<pid_value>/draft"
 
     routes = {
-        "list": "/aux-files",
-        "item": "/aux-files/<key>",
-        "item-content": "/aux-files/<key>/content",
-        "item-commit": "/aux-files/<key>/commit",
-        "list-archive": "/aux-files-archive",
+        "list": "/media-files",
+        "item": "/media-files/<key>",
+        "item-content": "/media-files/<key>/content",
+        "item-commit": "/media-files/<key>/commit",
+        "list-archive": "/media-files-archive",
     }
 
 
