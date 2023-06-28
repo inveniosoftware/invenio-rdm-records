@@ -19,7 +19,7 @@ from invenio_drafts_resources.services.records.components import (
     DraftFilesComponent,
     PIDComponent,
     RelationsComponent,
-    DraftAuxiliaryFilesComponent,
+    DraftMediaFilesComponent,
 )
 from invenio_drafts_resources.services.records.config import (
     RecordServiceConfig,
@@ -67,7 +67,7 @@ from .schemas import RDMParentSchema, RDMRecordSchema
 from .schemas.community_records import CommunityRecordsSchema
 from .schemas.parent.access import SecretLink
 from .schemas.record_communities import RecordCommunitiesSchema
-from ..records.api import RDMDraftAuxFiles, RDMRecordAuxFiles
+from ..records.api import RDMDraftMediaFiles, RDMRecordMediaFiles
 
 
 def is_draft_and_has_review(record, ctx):
@@ -260,6 +260,7 @@ class RDMRecordServiceConfig(RecordServiceConfig, ConfiguratorMixin):
         CustomFieldsComponent,
         AccessComponent,
         DraftFilesComponent,
+        DraftMediaFilesComponent,
         # for the internal `pid` field
         PIDComponent,
         # for the `pids` field (external PIDs)
@@ -328,10 +329,10 @@ class RDMRecordServiceConfig(RecordServiceConfig, ConfiguratorMixin):
             if_=RecordLink("{+api}/records/{id}/files"),
             else_=RecordLink("{+api}/records/{id}/draft/files"),
         ),
-        "auxiliary_files": ConditionalLink(
+        "media_files": ConditionalLink(
             cond=is_record,
-            if_=RecordLink("{+api}/records/{id}/aux-files"),
-            else_=RecordLink("{+api}/records/{id}/draft/aux-files"),
+            if_=RecordLink("{+api}/records/{id}/media-files"),
+            else_=RecordLink("{+api}/records/{id}/draft/media-files"),
         ),
         "archive": ConditionalLink(
             cond=is_record,
@@ -371,13 +372,13 @@ class RDMRecordServiceConfig(RecordServiceConfig, ConfiguratorMixin):
     }
 
 
-class RDMRecordAuxFilesServiceConfig(RDMRecordServiceConfig):
-    service_id = "record-aux-files"
-    record_cls = RDMRecordAuxFiles
-    draft_cls = RDMDraftAuxFiles
+class RDMRecordMediaFilesServiceConfig(RDMRecordServiceConfig):
+    service_id = "record-media-files"
+    record_cls = RDMRecordMediaFiles
+    draft_cls = RDMDraftMediaFiles
 
     components = [
-        DraftAuxiliaryFilesComponent,
+        DraftMediaFilesComponent,
     ]
 
 
@@ -415,25 +416,25 @@ class RDMFileRecordServiceConfig(FileServiceConfig, ConfiguratorMixin):
     }
 
 
-class RDMAuxFileRecordServiceConfig(FileServiceConfig, ConfiguratorMixin):
-    """Configuration for record auxiliary files."""
+class RDMMediaFileRecordServiceConfig(FileServiceConfig, ConfiguratorMixin):
+    """Configuration for record media files."""
 
-    record_cls = RDMRecordAuxFiles
+    record_cls = RDMRecordMediaFiles
     permission_policy_cls = FromConfig(
         "RDM_PERMISSION_POLICY", default=RDMRecordPermissionPolicy
     )
 
     file_links_list = {
-        "self": RecordLink("{+api}/records/{id}/aux-files"),
+        "self": RecordLink("{+api}/records/{id}/media-files"),
         "archive": RecordLink(
-            "{+api}/records/{id}/aux-files-archive",  # TODO needed?
+            "{+api}/records/{id}/media-files-archive",  # TODO needed?
             when=archive_download_enabled,
         ),
     }
 
     file_links_item = {
-        "self": FileLink("{+api}/records/{id}/aux-files/{key}"),
-        "content": FileLink("{+api}/records/{id}/aux-files/{key}/content"),
+        "self": FileLink("{+api}/records/{id}/media-files/{key}"),
+        "content": FileLink("{+api}/records/{id}/media-files/{key}/content"),
     }
 
 
@@ -476,27 +477,27 @@ class RDMFileDraftServiceConfig(FileServiceConfig, ConfiguratorMixin):
     }
 
 
-class RDMAuxFileDraftServiceConfig(FileServiceConfig, ConfiguratorMixin):
-    """Configuration for draft auxiliary files."""
+class RDMMediaFileDraftServiceConfig(FileServiceConfig, ConfiguratorMixin):
+    """Configuration for draft media files."""
 
-    service_id = "draft-aux-files"
+    service_id = "draft-media-files"
 
-    record_cls = RDMDraftAuxFiles
-    permission_action_prefix = "draft_aux_"
+    record_cls = RDMDraftMediaFiles
+    permission_action_prefix = "draft_media_"
     permission_policy_cls = FromConfig(
         "RDM_PERMISSION_POLICY", default=RDMRecordPermissionPolicy
     )
 
     file_links_list = {
-        "self": RecordLink("{+api}/records/{id}/draft/aux-files"),
+        "self": RecordLink("{+api}/records/{id}/draft/media-files"),
         "archive": RecordLink(
-            "{+api}/records/{id}/draft/aux-files-archive",  # TODO needed?
+            "{+api}/records/{id}/draft/media-files-archive",  # TODO needed?
             when=archive_download_enabled,
         ),
     }
 
     file_links_item = {
-        "self": FileLink("{+api}/records/{id}/draft/aux-files/{key}"),
-        "content": FileLink("{+api}/records/{id}/draft/aux-files/{key}/content"),
-        "commit": FileLink("{+api}/records/{id}/draft/aux-files/{key}/commit"),
+        "self": FileLink("{+api}/records/{id}/draft/media-files/{key}"),
+        "content": FileLink("{+api}/records/{id}/draft/media-files/{key}/content"),
+        "commit": FileLink("{+api}/records/{id}/draft/media-files/{key}/commit"),
     }

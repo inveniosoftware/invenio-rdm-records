@@ -441,7 +441,7 @@
     "files": {
       "$ref": "local://definitions-v2.0.0.json#/files-simple"
     },
-    "aux_files": {
+    "media_files": {
       "$ref": "local://definitions-v2.0.0.json#/files-simple"
     },
     "notes": {

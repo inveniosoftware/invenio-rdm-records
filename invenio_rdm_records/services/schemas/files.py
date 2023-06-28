@@ -11,6 +11,9 @@
 from marshmallow import Schema, fields, pre_load
 from marshmallow_utils.fields import NestedAttribute, SanitizedUnicode
 from marshmallow_utils.permissions import FieldPermissionsMixin
+from invenio_vocabularies.services.schema import (
+    VocabularyRelationSchema as VocabularySchema,
+)
 
 
 class FileSchema(Schema):
@@ -74,3 +77,7 @@ class FilesSchema(Schema, FieldPermissionsMixin):
             return default
 
         return value
+
+
+class MediaFileSchema(FileSchema):
+    language = fields.Nested(VocabularySchema)

@@ -43,8 +43,8 @@ from .resources import (
     RDMRecordResourceConfig,
 )
 from .resources.config import (
-    RDMRecordAuxFilesResourceConfig,
-    RDMDraftAuxFilesResourceConfig,
+    RDMRecordMediaFilesResourceConfig,
+    RDMDraftMediaFilesResourceConfig,
 )
 from .resources.resources import RDMRecordCommunitiesResource, RDMRecordRequestsResource
 from .secret_links import LinkNeed, SecretLink
@@ -62,9 +62,9 @@ from .services import (
     SecretLinkService,
 )
 from .services.config import (
-    RDMAuxFileRecordServiceConfig,
-    RDMAuxFileDraftServiceConfig,
-    RDMRecordAuxFilesServiceConfig,
+    RDMMediaFileRecordServiceConfig,
+    RDMMediaFileDraftServiceConfig,
+    RDMRecordMediaFilesServiceConfig,
 )
 from .services.pids import PIDManager, PIDsService
 from .services.review.service import ReviewService
@@ -156,11 +156,11 @@ class InvenioRDMRecords(object):
 
         class ServiceConfigs:
             record = RDMRecordServiceConfig.build(app)
-            record_with_aux_files = RDMRecordAuxFilesServiceConfig.build(app)
+            record_with_media_files = RDMRecordMediaFilesServiceConfig.build(app)
             file = RDMFileRecordServiceConfig.build(app)
             file_draft = RDMFileDraftServiceConfig.build(app)
-            aux_file = RDMAuxFileRecordServiceConfig.build(app)
-            aux_file_draft = RDMAuxFileDraftServiceConfig.build(app)
+            media_file = RDMMediaFileRecordServiceConfig.build(app)
+            media_file_draft = RDMMediaFileDraftServiceConfig.build(app)
             oaipmh_server = OAIPMHServerServiceConfig
             record_communities = RDMRecordCommunitiesConfig.build(app)
             community_records = RDMCommunityRecordsConfig.build(app)
@@ -182,10 +182,10 @@ class InvenioRDMRecords(object):
             review_service=ReviewService(service_configs.record),
         )
 
-        self.records_aux_files_service = RDMRecordService(
-            service_configs.record_with_aux_files,
-            files_service=FileService(service_configs.aux_file),
-            draft_files_service=FileService(service_configs.aux_file_draft),
+        self.records_media_files_service = RDMRecordService(
+            service_configs.record_with_media_files,
+            files_service=FileService(service_configs.media_file),
+            draft_files_service=FileService(service_configs.media_file_draft),
             pids_service=PIDsService(service_configs.record, PIDManager),
         )
 
@@ -229,15 +229,15 @@ class InvenioRDMRecords(object):
             config=RDMDraftFilesResourceConfig.build(app),
         )
 
-        self.record_aux_files_resource = FileResource(
-            service=self.records_aux_files_service.files,
-            config=RDMRecordAuxFilesResourceConfig.build(app),
+        self.record_media_files_resource = FileResource(
+            service=self.records_media_files_service.files,
+            config=RDMRecordMediaFilesResourceConfig.build(app),
         )
 
         # Draft files resource
-        self.draft_aux_files_resource = FileResource(
-            service=self.records_aux_files_service.draft_files,
-            config=RDMDraftAuxFilesResourceConfig.build(app),
+        self.draft_media_files_resource = FileResource(
+            service=self.records_media_files_service.draft_files,
+            config=RDMDraftMediaFilesResourceConfig.build(app),
         )
 
         # Parent Records

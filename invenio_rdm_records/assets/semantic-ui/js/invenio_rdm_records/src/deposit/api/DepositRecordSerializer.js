@@ -58,6 +58,9 @@ export class RDMDepositRecordSerializer extends DepositRecordSerializer {
       files: new Field({
         fieldpath: "files",
       }),
+      media_files: new Field({
+        fieldpath: "media_files",
+      }),
       links: new Field({
         fieldpath: "links",
       }),
@@ -303,7 +306,7 @@ export class RDMDepositRecordSerializer extends DepositRecordSerializer {
    * @returns {object} frontend compatible record object
    */
   deserialize(record) {
-    // NOTE: cloning nows allows us to manipulate the copy with impunity
+    // NOTE: cloning now allows us to manipulate the copy with impunity
     //       without affecting the original
     const originalRecord = _pick(_cloneDeep(record), [
       "access",
@@ -312,6 +315,7 @@ export class RDMDepositRecordSerializer extends DepositRecordSerializer {
       "id",
       "links",
       "files",
+      "media_files",
       "is_published",
       "versions",
       "parent",
@@ -384,6 +388,7 @@ export class RDMDepositRecordSerializer extends DepositRecordSerializer {
       "id",
       "links",
       "files",
+      "media_files",
       "pids",
       "parent",
       "custom_fields",

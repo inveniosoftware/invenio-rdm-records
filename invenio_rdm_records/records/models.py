@@ -51,8 +51,8 @@ class RDMRecordMetadata(db.Model, RecordMetadataBase, ParentRecordMixin):
     bucket_id = db.Column(UUIDType, db.ForeignKey(Bucket.id))
     bucket = db.relationship(Bucket, foreign_keys=[bucket_id])
 
-    aux_bucket_id = db.Column(UUIDType, db.ForeignKey(Bucket.id))
-    aux_bucket = db.relationship(Bucket, foreign_keys=[aux_bucket_id])
+    media_bucket_id = db.Column(UUIDType, db.ForeignKey(Bucket.id))
+    media_bucket = db.relationship(Bucket, foreign_keys=[media_bucket_id])
 
 
 class RDMFileRecordMetadata(db.Model, RecordMetadataBase, FileRecordModelMixin):
@@ -63,12 +63,12 @@ class RDMFileRecordMetadata(db.Model, RecordMetadataBase, FileRecordModelMixin):
     __tablename__ = "rdm_records_files"
 
 
-class RDMAuxFileRecordMetadata(db.Model, RecordMetadataBase, FileRecordModelMixin):
+class RDMMediaFileRecordMetadata(db.Model, RecordMetadataBase, FileRecordModelMixin):
     """File associated with a record."""
 
     __record_model_cls__ = RDMRecordMetadata
 
-    __tablename__ = "rdm_records_auxiliary_files"
+    __tablename__ = "rdm_records_media_files"
 
 
 #
@@ -83,8 +83,8 @@ class RDMDraftMetadata(db.Model, DraftMetadataBase, ParentRecordMixin):
     bucket_id = db.Column(UUIDType, db.ForeignKey(Bucket.id))
     bucket = db.relationship(Bucket, foreign_keys=[bucket_id])
 
-    aux_bucket_id = db.Column(UUIDType, db.ForeignKey(Bucket.id))
-    aux_bucket = db.relationship(Bucket, foreign_keys=[aux_bucket_id])
+    media_bucket_id = db.Column(UUIDType, db.ForeignKey(Bucket.id))
+    media_bucket = db.relationship(Bucket, foreign_keys=[media_bucket_id])
 
 
 class RDMFileDraftMetadata(db.Model, RecordMetadataBase, FileRecordModelMixin):
@@ -95,12 +95,12 @@ class RDMFileDraftMetadata(db.Model, RecordMetadataBase, FileRecordModelMixin):
     __tablename__ = "rdm_drafts_files"
 
 
-class RDMAuxFileDraftMetadata(db.Model, RecordMetadataBase, FileRecordModelMixin):
+class RDMMediaFileDraftMetadata(db.Model, RecordMetadataBase, FileRecordModelMixin):
     """File associated with a draft."""
 
     __record_model_cls__ = RDMDraftMetadata
 
-    __tablename__ = "rdm_drafts_auxiliary_files"
+    __tablename__ = "rdm_drafts_media_files"
 
 
 #

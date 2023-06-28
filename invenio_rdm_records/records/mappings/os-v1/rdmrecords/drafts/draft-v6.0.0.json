@@ -871,7 +871,7 @@
           }
         }
       },
-      "aux_files": {
+      "media_files": {
         "type": "object",
         "properties": {
           "enabled": {
