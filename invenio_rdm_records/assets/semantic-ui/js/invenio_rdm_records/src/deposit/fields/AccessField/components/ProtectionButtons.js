@@ -8,11 +8,20 @@
 
 import React, { Component } from "react";
 import { Button } from "semantic-ui-react";
-import { Field } from "formik";
+import { FastField } from "formik";
 import { i18next } from "@translations/invenio_rdm_records/i18next";
 import PropTypes from "prop-types";
 
 class ProtectionButtonsComponent extends Component {
+  componentDidMount() {
+    const { formik, disabled, fieldPath } = this.props;
+    // If is disabled is set it means community is restricted and recort cannot be public
+    // thus it has to be restricted
+    if (disabled) {
+      formik.form.setFieldValue(fieldPath, "restricted");
+    }
+  }
+
   handlePublicButtonClick = () => {
     const { formik, fieldPath } = this.props;
     formik.form.setFieldValue(fieldPath, "public");
@@ -76,7 +85,7 @@ export class ProtectionButtons extends Component {
     const { fieldPath } = this.props;
 
     return (
-      <Field
+      <FastField
         name={fieldPath}
         component={(formikProps) => (
           <ProtectionButtonsComponent formik={formikProps} {...this.props} />
