@@ -403,7 +403,7 @@
     openaire_resourceType: "0044"
     openaire_type: publication
     eurepo: info:eu-repo/semantics/other
-    schema.org: https://schema.org/thesis
+    schema.org: https://schema.org/Thesis
     subtype: publication-dissertation
     type: publication
   title:
