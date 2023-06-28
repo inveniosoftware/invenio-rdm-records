@@ -349,7 +349,7 @@
     openaire_resourceType: "0006"
     openaire_type: publication
     eurepo: info:eu-repo/semantics/doctoralThesis
-    schema.org: https://schema.org/ScholarlyArticle
+    schema.org: https://schema.org/Thesis
     subtype: publication-thesis
     type: publication
   title:
