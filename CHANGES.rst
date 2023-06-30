@@ -10,6 +10,11 @@
 Changes
 =======
 
+Version 4.5.0 (2023-06-30)
+
+- fix custom fields issue with nested array in an object
+- use reindex_users method
+
 Version 4.4.1 (released 2023-06-28)
 
 - Fixes permission checks when there is no record object to check i.e new record
