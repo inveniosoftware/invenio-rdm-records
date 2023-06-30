@@ -10,6 +10,10 @@
 Changes
 =======
 
+Version 3.2.0 (released 2023-06-30)
+
+- use reindex_users method
+
 Version 3.1.0 (released 2023-04-21)
 
 - assets: move react deposit components
