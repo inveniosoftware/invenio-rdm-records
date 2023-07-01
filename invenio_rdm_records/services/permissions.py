@@ -178,6 +178,7 @@ class RDMRecordPermissionPolicy(RecordPermissionPolicy):
     # Media files
     #
     can_draft_media_create_files = can_review
+    can_draft_media_read_files = can_review
     can_draft_media_set_content_files = [
         IfFileIsLocal(then_=can_review, else_=[SystemProcess()])
     ]

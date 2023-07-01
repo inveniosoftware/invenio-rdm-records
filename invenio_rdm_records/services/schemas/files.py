@@ -8,12 +8,12 @@
 
 """RDM record schemas."""
 
-from marshmallow import Schema, fields, pre_load
-from marshmallow_utils.fields import NestedAttribute, SanitizedUnicode
-from marshmallow_utils.permissions import FieldPermissionsMixin
 from invenio_vocabularies.services.schema import (
     VocabularyRelationSchema as VocabularySchema,
 )
+from marshmallow import Schema, fields, pre_load
+from marshmallow_utils.fields import NestedAttribute, SanitizedUnicode
+from marshmallow_utils.permissions import FieldPermissionsMixin
 
 
 class FileSchema(Schema):
@@ -80,4 +80,6 @@ class FilesSchema(Schema, FieldPermissionsMixin):
 
 
 class MediaFileSchema(FileSchema):
+    """Media file schema."""
+
     language = fields.Nested(VocabularySchema)
