@@ -17,9 +17,9 @@ from flask import current_app
 from invenio_communities.communities.records.api import Community
 from invenio_drafts_resources.services.records.components import (
     DraftFilesComponent,
+    DraftMediaFilesComponent,
     PIDComponent,
     RelationsComponent,
-    DraftMediaFilesComponent,
 )
 from invenio_drafts_resources.services.records.config import (
     RecordServiceConfig,
@@ -52,6 +52,7 @@ from invenio_requests.services.requests.config import RequestSearchOptions
 from requests import Request
 
 from ..records import RDMDraft, RDMRecord
+from ..records.api import RDMDraftMediaFiles, RDMRecordMediaFiles
 from . import facets
 from .components import (
     AccessComponent,
@@ -67,7 +68,6 @@ from .schemas import RDMParentSchema, RDMRecordSchema
 from .schemas.community_records import CommunityRecordsSchema
 from .schemas.parent.access import SecretLink
 from .schemas.record_communities import RecordCommunitiesSchema
-from ..records.api import RDMDraftMediaFiles, RDMRecordMediaFiles
 
 
 def is_draft_and_has_review(record, ctx):
@@ -376,6 +376,8 @@ class RDMRecordServiceConfig(RecordServiceConfig, ConfiguratorMixin):
 
 
 class RDMRecordMediaFilesServiceConfig(RDMRecordServiceConfig):
+    """RDM Record with media files service config."""
+
     service_id = "record-media-files"
     record_cls = RDMRecordMediaFiles
     draft_cls = RDMDraftMediaFiles

@@ -11,6 +11,9 @@
 from invenio_communities.records.records.systemfields import CommunitiesField
 from invenio_drafts_resources.records import Draft, Record
 from invenio_drafts_resources.records.api import ParentRecord as ParentRecordBase
+from invenio_drafts_resources.services.records.components.media_files import (
+    MediaFilesAttrConfig,
+)
 from invenio_pidstore.models import PIDStatus
 from invenio_records.dumpers import SearchDumper
 from invenio_records.dumpers.relations import RelationDumperExt
@@ -276,9 +279,9 @@ class RDMDraft(CommonFieldsMixin, Draft):
     )
 
     media_files = FilesField(
-        key="media_files",
-        bucket_id_attr="media_bucket_id",
-        bucket_attr="media_bucket",
+        key=MediaFilesAttrConfig["_files_attr_key"],
+        bucket_id_attr=MediaFilesAttrConfig["_files_bucket_id_attr_key"],
+        bucket_attr=MediaFilesAttrConfig["_files_bucket_attr_key"],
         store=False,
         dump=False,
         file_cls=RDMMediaFileDraft,
@@ -298,9 +301,9 @@ class RDMDraftMediaFiles(RDMDraft):
     """RDM Draft media file API."""
 
     files = FilesField(
-        key="media_files",
-        bucket_id_attr="media_bucket_id",
-        bucket_attr="media_bucket",
+        key=MediaFilesAttrConfig["_files_attr_key"],
+        bucket_id_attr=MediaFilesAttrConfig["_files_bucket_id_attr_key"],
+        bucket_attr=MediaFilesAttrConfig["_files_bucket_attr_key"],
         store=False,
         dump=False,
         file_cls=RDMMediaFileDraft,
@@ -349,9 +352,9 @@ class RDMRecord(CommonFieldsMixin, Record):
     )
 
     media_files = FilesField(
-        key="media_files",
-        bucket_id_attr="media_bucket_id",
-        bucket_attr="media_bucket",
+        key=MediaFilesAttrConfig["_files_attr_key"],
+        bucket_id_attr=MediaFilesAttrConfig["_files_bucket_id_attr_key"],
+        bucket_attr=MediaFilesAttrConfig["_files_bucket_attr_key"],
         store=False,
         dump=False,
         file_cls=RDMMediaFileRecord,
@@ -375,9 +378,9 @@ class RDMRecordMediaFiles(RDMRecord):
     """RDM Media file record API."""
 
     files = FilesField(
-        key="media_files",
-        bucket_id_attr="media_bucket_id",
-        bucket_attr="media_bucket",
+        key=MediaFilesAttrConfig["_files_attr_key"],
+        bucket_id_attr=MediaFilesAttrConfig["_files_bucket_id_attr_key"],
+        bucket_attr=MediaFilesAttrConfig["_files_bucket_attr_key"],
         store=False,
         dump=False,
         file_cls=RDMMediaFileRecord,

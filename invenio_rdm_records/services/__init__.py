@@ -13,9 +13,9 @@ from .config import (
     RDMFileDraftServiceConfig,
     RDMFileRecordServiceConfig,
     RDMRecordCommunitiesConfig,
+    RDMRecordMediaFilesServiceConfig,
     RDMRecordRequestsConfig,
     RDMRecordServiceConfig,
-    RDMRecordMediaFilesServiceConfig,
 )
 from .iiif import IIIFService
 from .permissions import RDMRecordPermissionPolicy

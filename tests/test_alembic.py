@@ -34,6 +34,8 @@ def test_alembic(base_app, database):
     assert "rdm_parents_metadata" in tables
     assert "rdm_parents_community" in tables
     assert "rdm_versions_state" in tables
+    assert "rdm_drafts_media_files" in tables
+    assert "rdm_records_media_files" in tables
 
     # Check that Alembic agrees that there's no further tables to create.
     assert not ext.alembic.compare_metadata()

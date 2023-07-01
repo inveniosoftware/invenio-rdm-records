@@ -39,8 +39,8 @@ from .resources import (
     RDMRecordResourceConfig,
 )
 from .resources.config import (
-    RDMRecordMediaFilesResourceConfig,
     RDMDraftMediaFilesResourceConfig,
+    RDMRecordMediaFilesResourceConfig,
 )
 from .resources.resources import RDMRecordCommunitiesResource, RDMRecordRequestsResource
 from .services import (
@@ -57,8 +57,8 @@ from .services import (
     SecretLinkService,
 )
 from .services.config import (
-    RDMMediaFileRecordServiceConfig,
     RDMMediaFileDraftServiceConfig,
+    RDMMediaFileRecordServiceConfig,
     RDMRecordMediaFilesServiceConfig,
 )
 from .services.pids import PIDManager, PIDsService
