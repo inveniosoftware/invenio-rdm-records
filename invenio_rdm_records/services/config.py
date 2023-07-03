@@ -228,6 +228,9 @@ class RDMRecordServiceConfig(RecordServiceConfig, ConfiguratorMixin):
     link_result_item_cls = SecretLinkItem
     link_result_list_cls = SecretLinkList
 
+    # Permission policy
+    default_files_enabled = FromConfig("RDM_DEFAULT_FILES_ENABLED", default=True)
+
     # Search configuration
     search = FromConfigSearchOptions(
         "RDM_SEARCH",

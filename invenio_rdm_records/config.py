@@ -122,6 +122,9 @@ RDM_RECORDS_REVIEWS = [
 RDM_ALLOW_METADATA_ONLY_RECORDS = True
 """Allow users to publish metadata-only records."""
 
+RDM_DEFAULT_FILES_ENABLED = True
+"""Deposit page files enabled value on new records."""
+
 #
 # Record access
 #
