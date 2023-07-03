@@ -10,6 +10,11 @@
 Changes
 =======
 
+Version 4.6.0 (2023-07-03)
+
+- implement resource access (RAT) tokens
+- ui: fix deposit form access value when submitting to restricted community
+
 Version 4.5.0 (2023-06-30)
 
 - fix custom fields issue with nested array in an object
