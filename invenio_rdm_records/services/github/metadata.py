@@ -8,6 +8,7 @@
 import yaml
 from flask import current_app
 from invenio_github.errors import CustomGitHubMetadataError
+from invenio_i18n import _
 from marshmallow import Schema, ValidationError
 from mistune import markdown
 from nameparser import HumanName
@@ -55,7 +56,7 @@ class RDMReleaseMetadata(object):
             return markdown(self.rdm_release.release_payload["body"])
         elif self.rdm_release.repository_payload.get("description"):
             return self.rdm_release.repository_payload["description"]
-        return "No description provided."
+        return _("No description provided.")
 
     @property
     def default_metadata(self):
@@ -158,9 +159,9 @@ class RDMReleaseMetadata(object):
 
         citation_schema = current_app.config.get("GITHUB_CITATION_METADATA_SCHEMA")
 
-        assert isinstance(
-            citation_schema, Schema
-        ), "Citation schema is needed to load citation metadata."
+        assert isinstance(citation_schema, Schema), _(
+            "Citation schema is needed to load citation metadata."
+        )
 
         data = citation_schema().load(citation_data)
 
