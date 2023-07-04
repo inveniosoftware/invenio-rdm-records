@@ -5,9 +5,9 @@
 # FIRST AUTHOR <EMAIL@ADDRESS>, 2022.
 # 
 # Translators:
-# Salaheddine Ben Ali <salaheddine.benali@cnudst.tn>, 2022
 # Tibor Simko <tibor.simko@cern.ch>, 2022
 # Bessem Aamira <bessemamira@gmail.com>, 2022
+# Salaheddine Ben Ali <salaheddine.benali@cnudst.tn>, 2023
 # 
 #, fuzzy
 msgid ""
@@ -16,8 +16,8 @@ msgstr ""
 "Report-Msgid-Bugs-To: info@inveniosoftware.org\n"
 "POT-Creation-Date: 2022-10-12 09:35+0000\n"
 "PO-Revision-Date: 2021-07-12 14:31+0000\n"
-"Last-Translator: Bessem Aamira <bessemamira@gmail.com>, 2022\n"
-"Language-Team: Arabic (https://www.transifex.com/inveniosoftware/teams/23537/ar/)\n"
+"Last-Translator: Salaheddine Ben Ali <salaheddine.benali@cnudst.tn>, 2023\n"
+"Language-Team: Arabic (https://app.transifex.com/inveniosoftware/teams/23537/ar/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -65,7 +65,7 @@ msgstr "رقم EAN13"
 
 #: invenio_rdm_records/config.py:69
 msgid "EISSN"
-msgstr "الرقم التسلسلي الدولي الموحد للدوريات الإلكترونية ر.ت.د.م.د.إ "
+msgstr "EISSN"
 
 #: invenio_rdm_records/config.py:71
 msgid "Handle"
@@ -169,7 +169,7 @@ msgstr "الأقل تحيينا مؤخرًا"
 #: invenio_rdm_records/administration/views/oai.py:147
 #: invenio_rdm_records/config.py:245
 msgid "Set name"
-msgstr ""
+msgstr "اسم المجموعة"
 
 #: invenio_rdm_records/administration/views/oai.py:37
 #: invenio_rdm_records/administration/views/oai.py:72
@@ -177,7 +177,7 @@ msgstr ""
 #: invenio_rdm_records/administration/views/oai.py:148
 #: invenio_rdm_records/config.py:249
 msgid "Set spec"
-msgstr ""
+msgstr "خصائص المجموعة"
 
 #: invenio_rdm_records/administration/views/oai.py:40
 #: invenio_rdm_records/administration/views/oai.py:150
@@ -210,25 +210,25 @@ msgstr "انتهت صلاحية رابطك المشترك."
 #: invenio_rdm_records/administration/views/oai.py:120
 #: invenio_rdm_records/administration/views/oai.py:149
 msgid "Search query"
-msgstr ""
+msgstr "مقاربة البحث"
 
 #: invenio_rdm_records/administration/views/oai.py:68
 #: invenio_rdm_records/administration/views/oai.py:108
 msgid "A short human-readable string naming the set."
-msgstr ""
+msgstr "سلسلة قصيرة مقروءة تسمي المجموعة."
 
 #: invenio_rdm_records/administration/views/oai.py:73
 #: invenio_rdm_records/administration/views/oai.py:113
 msgid ""
 "An identifier for the set, which cannot be edited after the set is created."
-msgstr ""
+msgstr "معرّف للمجموعة ، لا يمكن تغييره بعد إنشاء المجموعة."
 
 #: invenio_rdm_records/administration/views/oai.py:81
 #: invenio_rdm_records/administration/views/oai.py:121
 msgid ""
 "See the supported query syntax in the <a href='/help/search'>Search "
 "Guide</a>."
-msgstr ""
+msgstr "راجع بناء جملة المقاربة في ملف <a href='/help/search'>دليل البخث</a>"
 
 #: invenio_rdm_records/oaiserver/services/config.py:40
 msgid "Ascending"
@@ -260,15 +260,15 @@ msgstr "توجد مجموعة بـنفس الخاصيات '{spec}' ."
 
 #: invenio_rdm_records/oaiserver/services/errors.py:63
 msgid "The set with id {id} is not editable."
-msgstr ""
+msgstr "المجموعة ذات المعرف {id} غير قابلة للتغيير."
 
 #: invenio_rdm_records/oaiserver/services/services.py:74
 msgid "The spec must not start with any of the following list '{prefix}'."
-msgstr ""
+msgstr "يجب ألا تبدأ المميزات بأي من القوائم التالية \"{prefix}\"."
 
 #: invenio_rdm_records/oaiserver/services/services.py:86
 msgid "The spec must only consist of letters, numbers or {marks}."
-msgstr ""
+msgstr "يجب أن تتكون المميزات من أحرف أو أرقام أو {marks} فقط ."
 
 #: invenio_rdm_records/records/systemfields/draft_status.py:82
 msgid "Unknown draft status for review: {reviewstatus}."
@@ -312,7 +312,7 @@ msgstr "مقيّد"
 #: invenio_rdm_records/resources/serializers/ui/fields.py:39
 #: invenio_rdm_records/services/facets.py:29
 msgid "Metadata-only"
-msgstr "البيانات الوصفية (الميتاداتا) فقط"
+msgstr "البيانات الوصفية فقط"
 
 #: invenio_rdm_records/resources/serializers/ui/fields.py:66
 msgid "The record and files are publicly accessible."
@@ -358,7 +358,7 @@ msgstr "التقييم غير موجود"
 
 #: invenio_rdm_records/services/errors.py:51
 msgid "Record submitted to restricted community cannot be public."
-msgstr ""
+msgstr "لا يمكن أن تكون التسجيلة المقدمة إلى المجتمع المقيد، عامّة."
 
 #: invenio_rdm_records/services/facets.py:24
 msgid "Access status"
@@ -463,7 +463,7 @@ msgstr "يجب أن يكون تاريخ انتهاء الحظر غير محدد 
 
 #: invenio_rdm_records/services/schemas/access.py:65
 msgid "'{field_name}' must be either 'public' or 'restricted'"
-msgstr "'{field_name}' يجب أن يكون إما 'عام' أو 'مقيّد'"
+msgstr "'{field_name}' يجب أن يكون إما 'مشاع' أو 'مقيّد'"
 
 #: invenio_rdm_records/services/schemas/metadata.py:78
 msgid "Only one value is accepted."
@@ -476,11 +476,11 @@ msgstr "لغة محلية خاطئة."
 #: invenio_rdm_records/services/schemas/metadata.py:92
 #: invenio_rdm_records/services/schemas/metadata.py:96
 msgid "Invalid value. Choose one of {NAMES}."
-msgstr "قيمة خاطئة. أختر إحدى خيارات {NAMES}."
+msgstr "قيمة خاطئة. إختر إحدى خيارات {NAMES}."
 
 #: invenio_rdm_records/services/schemas/metadata.py:119
 msgid "Family name cannot be blank."
-msgstr ""
+msgstr "لا يمكن أن يكون اسم العائلة فارغًا."
 
 #: invenio_rdm_records/services/schemas/metadata.py:124
 msgid "Name cannot be blank."
@@ -506,6 +506,8 @@ msgid ""
 "At least one of ['geometry', 'place',                 identifiers', "
 "'description'] must be present."
 msgstr ""
+"يجب أن يتوفر واحد على الأقل من [\"الهندسة\" ، \"المكان\" ، المعرفات \"،\" "
+"الوصف \"]."
 
 #: invenio_rdm_records/services/schemas/metadata.py:338
 msgid "Missing data for required field."
