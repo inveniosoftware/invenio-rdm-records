@@ -10,4 +10,4 @@
 # Usage:
 #   ./run-i18n-tests.sh
 
-python -m setup extract_messages --dry-run
+python -m setup extract_messages --output-file /dev/null
