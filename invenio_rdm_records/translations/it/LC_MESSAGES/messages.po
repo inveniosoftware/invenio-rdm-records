@@ -8,6 +8,7 @@
 # Jiří Kunčar <jiri.kuncar@gmail.com>, 2021
 # Tibor Simko <tibor.simko@cern.ch>, 2021
 # Alizee Pace <alizee.pace@gmail.com>, 2022
+# Fare Fare <fare@polito.it>, 2023
 # 
 #, fuzzy
 msgid ""
@@ -16,8 +17,8 @@ msgstr ""
 "Report-Msgid-Bugs-To: info@inveniosoftware.org\n"
 "POT-Creation-Date: 2022-10-12 09:35+0000\n"
 "PO-Revision-Date: 2021-07-12 14:31+0000\n"
-"Last-Translator: Alizee Pace <alizee.pace@gmail.com>, 2022\n"
-"Language-Team: Italian (https://www.transifex.com/inveniosoftware/teams/23537/it/)\n"
+"Last-Translator: Fare Fare <fare@polito.it>, 2023\n"
+"Language-Team: Italian (https://app.transifex.com/inveniosoftware/teams/23537/it/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -57,7 +58,7 @@ msgstr ""
 #: invenio_rdm_records/config.py:284 invenio_rdm_records/config.py:308
 #: tests/conftest.py:280 tests/conftest.py:287
 msgid "DOI"
-msgstr ""
+msgstr "DOI"
 
 #: invenio_rdm_records/config.py:68
 msgid "EAN13"
@@ -184,7 +185,7 @@ msgstr ""
 #: invenio_rdm_records/config.py:253
 #: invenio_rdm_records/oaiserver/services/config.py:59
 msgid "Created"
-msgstr ""
+msgstr "Creato"
 
 #: invenio_rdm_records/administration/views/oai.py:41
 #: invenio_rdm_records/administration/views/oai.py:151
@@ -361,7 +362,7 @@ msgstr ""
 
 #: invenio_rdm_records/services/facets.py:24
 msgid "Access status"
-msgstr ""
+msgstr "Stato di accesso"
 
 #: invenio_rdm_records/services/facets.py:36
 msgid "Status"
@@ -377,7 +378,7 @@ msgstr ""
 
 #: invenio_rdm_records/services/facets.py:43
 msgid "Languages"
-msgstr ""
+msgstr "Linguaggi"
 
 #: invenio_rdm_records/services/facets.py:52
 msgid "Resource types"

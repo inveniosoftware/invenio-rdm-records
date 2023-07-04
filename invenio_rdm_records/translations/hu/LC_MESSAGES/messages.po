@@ -6,6 +6,7 @@
 # 
 # Translators:
 # Andrea Dömötör, 2022
+# Dorottya Szemigán, 2023
 # 
 #, fuzzy
 msgid ""
@@ -14,8 +15,8 @@ msgstr ""
 "Report-Msgid-Bugs-To: info@inveniosoftware.org\n"
 "POT-Creation-Date: 2022-10-12 09:35+0000\n"
 "PO-Revision-Date: 2021-07-12 14:31+0000\n"
-"Last-Translator: Andrea Dömötör, 2022\n"
-"Language-Team: Hungarian (https://www.transifex.com/inveniosoftware/teams/23537/hu/)\n"
+"Last-Translator: Dorottya Szemigán, 2023\n"
+"Language-Team: Hungarian (https://app.transifex.com/inveniosoftware/teams/23537/hu/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -201,7 +202,7 @@ msgstr "OAI"
 
 #: invenio_rdm_records/ext.py:68
 msgid "Your shared link has expired."
-msgstr "Az ön megosztott linkje lejárt."
+msgstr "Az Ön megosztott linkje lejárt."
 
 #: invenio_rdm_records/administration/views/oai.py:39
 #: invenio_rdm_records/administration/views/oai.py:80
@@ -286,7 +287,7 @@ msgstr "Közösségi benyújtás"
 
 #: invenio_rdm_records/resources/config.py:107
 msgid "Citation string style not found."
-msgstr "Nem találtunk idézési stílus sztringet."
+msgstr "Nem találtunk idézési sztring stílust."
 
 #: invenio_rdm_records/resources/config.py:113
 msgid "Review for draft not found"

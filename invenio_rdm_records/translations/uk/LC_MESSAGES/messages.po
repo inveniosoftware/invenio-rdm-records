@@ -4,6 +4,9 @@
 # project.
 # FIRST AUTHOR <EMAIL@ADDRESS>, 2022.
 # 
+# Translators:
+# Vasyl Ostrovskyi <vasyusya@yahoo.com>, 2023
+# 
 #, fuzzy
 msgid ""
 msgstr ""
@@ -11,7 +14,8 @@ msgstr ""
 "Report-Msgid-Bugs-To: info@inveniosoftware.org\n"
 "POT-Creation-Date: 2022-10-12 09:35+0000\n"
 "PO-Revision-Date: 2021-07-12 14:31+0000\n"
-"Language-Team: Ukrainian (https://www.transifex.com/inveniosoftware/teams/23537/uk/)\n"
+"Last-Translator: Vasyl Ostrovskyi <vasyusya@yahoo.com>, 2023\n"
+"Language-Team: Ukrainian (https://app.transifex.com/inveniosoftware/teams/23537/uk/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -21,101 +25,101 @@ msgstr ""
 
 #: invenio_rdm_records/config.py:52
 msgid "ORCID"
-msgstr ""
+msgstr "ORCID"
 
 #: invenio_rdm_records/config.py:53 invenio_rdm_records/config.py:92
 msgid "ISNI"
-msgstr ""
+msgstr "ISNI"
 
 #: invenio_rdm_records/config.py:54
 msgid "GND"
-msgstr ""
+msgstr "GND"
 
 #: invenio_rdm_records/config.py:55
 msgid "ROR"
-msgstr ""
+msgstr "ROR"
 
 #: invenio_rdm_records/config.py:60
 msgid "ARK"
-msgstr ""
+msgstr "ARK"
 
 #: invenio_rdm_records/config.py:61
 msgid "arXiv"
-msgstr ""
+msgstr "arXiv"
 
 #: invenio_rdm_records/config.py:63
 msgid "Bibcode"
-msgstr ""
+msgstr "Bibcode"
 
 #: invenio_rdm_records/config.py:67 invenio_rdm_records/config.py:277
 #: invenio_rdm_records/config.py:284 invenio_rdm_records/config.py:308
 #: tests/conftest.py:280 tests/conftest.py:287
 msgid "DOI"
-msgstr ""
+msgstr "DOI"
 
 #: invenio_rdm_records/config.py:68
 msgid "EAN13"
-msgstr ""
+msgstr "EAN13"
 
 #: invenio_rdm_records/config.py:69
 msgid "EISSN"
-msgstr ""
+msgstr "EISSN"
 
 #: invenio_rdm_records/config.py:71
 msgid "Handle"
-msgstr ""
+msgstr "Handle"
 
 #: invenio_rdm_records/config.py:75
 msgid "IGSN"
-msgstr ""
+msgstr "IGSN"
 
 #: invenio_rdm_records/config.py:76
 msgid "ISBN"
-msgstr ""
+msgstr "ISBN"
 
 #: invenio_rdm_records/config.py:77
 msgid "ISSN"
-msgstr ""
+msgstr "ISSN"
 
 #: invenio_rdm_records/config.py:78
 msgid "ISTC"
-msgstr ""
+msgstr "ISTC"
 
 #: invenio_rdm_records/config.py:79
 msgid "LISSN"
-msgstr ""
+msgstr "LISSN"
 
 #: invenio_rdm_records/config.py:80
 msgid "LSID"
-msgstr ""
+msgstr "LSID"
 
 #: invenio_rdm_records/config.py:81
 msgid "PMID"
-msgstr ""
+msgstr "PMID"
 
 #: invenio_rdm_records/config.py:82
 msgid "PURL"
-msgstr ""
+msgstr "PURL"
 
 #: invenio_rdm_records/config.py:83
 msgid "UPC"
-msgstr ""
+msgstr "UPC"
 
 #: invenio_rdm_records/config.py:84
 msgid "URL"
-msgstr ""
+msgstr "URL"
 
 #: invenio_rdm_records/config.py:85
 msgid "URN"
-msgstr ""
+msgstr "URN"
 
 #: invenio_rdm_records/config.py:86
 msgid "W3ID"
-msgstr ""
+msgstr "W3ID"
 
 #: invenio_rdm_records/config.py:93
 msgid "GRID"
-msgstr ""
+msgstr "GRID"
 
 #: invenio_rdm_records/config.py:94
 msgid "Crossref Funder ID"
@@ -135,27 +139,27 @@ msgstr ""
 
 #: invenio_rdm_records/config.py:167
 msgid "Best match"
-msgstr ""
+msgstr "Найкраща відповідність"
 
 #: invenio_rdm_records/config.py:171
 msgid "Newest"
-msgstr ""
+msgstr "Найновіші"
 
 #: invenio_rdm_records/config.py:175
 msgid "Oldest"
-msgstr ""
+msgstr "Найстаріші"
 
 #: invenio_rdm_records/config.py:179
 msgid "Version"
-msgstr ""
+msgstr "Версія"
 
 #: invenio_rdm_records/config.py:183
 msgid "Recently updated"
-msgstr ""
+msgstr "Недавно оновлені"
 
 #: invenio_rdm_records/config.py:187
 msgid "Least recently updated"
-msgstr ""
+msgstr "Найбільш давно не оновлювались"
 
 #: invenio_rdm_records/administration/views/oai.py:38
 #: invenio_rdm_records/administration/views/oai.py:67
@@ -178,7 +182,7 @@ msgstr ""
 #: invenio_rdm_records/config.py:253
 #: invenio_rdm_records/oaiserver/services/config.py:59
 msgid "Created"
-msgstr ""
+msgstr "Створено"
 
 #: invenio_rdm_records/administration/views/oai.py:41
 #: invenio_rdm_records/administration/views/oai.py:151
@@ -189,11 +193,11 @@ msgstr ""
 
 #: invenio_rdm_records/config.py:289 tests/conftest.py:292
 msgid "OAI ID"
-msgstr ""
+msgstr "Ідентифікатор OAI"
 
 #: invenio_rdm_records/config.py:315
 msgid "OAI"
-msgstr ""
+msgstr "OAI"
 
 #: invenio_rdm_records/ext.py:68
 msgid "Your shared link has expired."
@@ -204,7 +208,7 @@ msgstr ""
 #: invenio_rdm_records/administration/views/oai.py:120
 #: invenio_rdm_records/administration/views/oai.py:149
 msgid "Search query"
-msgstr ""
+msgstr "Пошуковий запит"
 
 #: invenio_rdm_records/administration/views/oai.py:68
 #: invenio_rdm_records/administration/views/oai.py:108
@@ -234,7 +238,7 @@ msgstr ""
 
 #: invenio_rdm_records/oaiserver/services/config.py:51
 msgid "Name"
-msgstr ""
+msgstr "Назва"
 
 #: invenio_rdm_records/oaiserver/services/config.py:55
 msgid "Spec"
@@ -291,7 +295,7 @@ msgstr ""
 #: invenio_rdm_records/resources/serializers/ui/fields.py:36
 #: invenio_rdm_records/services/facets.py:26
 msgid "Open"
-msgstr ""
+msgstr "Відкритий"
 
 #: invenio_rdm_records/resources/serializers/ui/fields.py:37
 #: invenio_rdm_records/services/facets.py:27
@@ -301,7 +305,7 @@ msgstr ""
 #: invenio_rdm_records/resources/serializers/ui/fields.py:38
 #: invenio_rdm_records/services/facets.py:28
 msgid "Restricted"
-msgstr ""
+msgstr "Обмежений доступ"
 
 #: invenio_rdm_records/resources/serializers/ui/fields.py:39
 #: invenio_rdm_records/services/facets.py:29
@@ -310,7 +314,7 @@ msgstr ""
 
 #: invenio_rdm_records/resources/serializers/ui/fields.py:66
 msgid "The record and files are publicly accessible."
-msgstr ""
+msgstr "Запис та файли загальнодоступні."
 
 #: invenio_rdm_records/resources/serializers/ui/fields.py:67
 msgid "No files are available for this record."
@@ -355,15 +359,15 @@ msgstr ""
 
 #: invenio_rdm_records/services/facets.py:24
 msgid "Access status"
-msgstr ""
+msgstr "Стан доступу"
 
 #: invenio_rdm_records/services/facets.py:36
 msgid "Status"
-msgstr ""
+msgstr "Статус"
 
 #: invenio_rdm_records/services/facets.py:37
 msgid "Published"
-msgstr ""
+msgstr "Опубліковано"
 
 #: invenio_rdm_records/services/facets.py:37
 msgid "Unpublished"
@@ -371,7 +375,7 @@ msgstr ""
 
 #: invenio_rdm_records/services/facets.py:43
 msgid "Languages"
-msgstr ""
+msgstr "Мови"
 
 #: invenio_rdm_records/services/facets.py:52
 msgid "Resource types"
@@ -380,7 +384,7 @@ msgstr ""
 #: invenio_rdm_records/services/facets.py:60
 #: invenio_rdm_records/services/facets.py:66
 msgid "Subjects"
-msgstr ""
+msgstr "Дисципліни"
 
 #: invenio_rdm_records/services/components/review.py:36
 msgid ""
