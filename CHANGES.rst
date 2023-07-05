@@ -10,6 +10,11 @@
 Changes
 =======
 
+Version 4.7.0 (2023-07-05)
+
+- transifex: update config
+- conf: add variable to enable files by default
+
 Version 4.6.0 (2023-07-03)
 
 - implement resource access (RAT) tokens
