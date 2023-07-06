@@ -14,6 +14,7 @@ from invenio_github.models import ReleaseStatus
 from invenio_records_resources.services.uow import UnitOfWork
 
 from invenio_rdm_records.proxies import current_rdm_records_service
+from invenio_rdm_records.resources.serializers.ui import UIJSONSerializer
 from invenio_rdm_records.services.github.metadata import RDMReleaseMetadata
 from invenio_rdm_records.services.github.utils import retrieve_recid_by_uuid
 
@@ -31,6 +32,8 @@ class RDMGithubRelease(GitHubRelease):
 
     def resolve_record(self):
         """Resolves an RDM record from a release."""
+        if not self.release_object.record_id:
+            return None
         recid = retrieve_recid_by_uuid(self.release_object.record_id)
         return current_rdm_records_service.read(system_identity, recid.pid_value)
 
@@ -140,3 +143,7 @@ class RDMGithubRelease(GitHubRelease):
                 f"Error while processing GitHub release {self.release_object.id}: {str(ex)}"
             )
             raise ex
+
+    def serialize_record(self):
+        """Serializes an RDM record."""
+        return UIJSONSerializer().serialize_object(self.record.data)
