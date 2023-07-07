@@ -147,3 +147,25 @@ class RDMGithubRelease(GitHubRelease):
     def serialize_record(self):
         """Serializes an RDM record."""
         return UIJSONSerializer().serialize_object(self.record.data)
+
+    @property
+    def record_url(self):
+        """Release self url points to RDM record.
+
+        It points to DataCite URL if the integration is enabled, otherwise it points to the HTML URL.
+        """
+        html_url = self.record.data["links"]["self_html"]
+        doi_url = self.record.data["links"].get("doi")
+        return doi_url or html_url
+
+    @property
+    def badge_title(self):
+        """Returns the badge title."""
+        if current_app.config.get("DATACITE_ENABLED"):
+            return "DOI"
+
+    @property
+    def badge_value(self):
+        """Returns the badge value."""
+        if current_app.config.get("DATACITE_ENABLED"):
+            return self.record.data.get("pids", {}).get("doi", {}).get("identifier")
