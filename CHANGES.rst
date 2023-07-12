@@ -10,6 +10,10 @@
 Changes
 =======
 
+Version 4.8.0 (2023-07-12)
+
+- add media files
+
 Version 4.7.0 (2023-07-05)
 
 - transifex: update config
