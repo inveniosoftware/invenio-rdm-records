@@ -148,7 +148,7 @@ class CommunitySubmission(ReviewRequest):
         "submit": SubmitAction,
         "delete": actions.DeleteAction,
         "accept": AcceptAction,
-        "cancel": CancelAction,
         "decline": DeclineAction,
+        "cancel": CancelAction,
         "expire": ExpireAction,
     }

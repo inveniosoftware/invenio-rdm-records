@@ -88,7 +88,7 @@ class CommunityInclusion(RequestType):
         "submit": SubmitAction,
         "delete": actions.DeleteAction,
         "accept": AcceptAction,
-        "cancel": actions.CancelAction,
         "decline": actions.DeclineAction,
+        "cancel": actions.CancelAction,
         "expire": actions.ExpireAction,
     }
