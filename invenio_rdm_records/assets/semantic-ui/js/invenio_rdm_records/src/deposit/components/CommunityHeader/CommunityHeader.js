@@ -44,7 +44,7 @@ class CommunityHeaderComponent extends Component {
               <>
                 <div className="page-subheader-element">
                   <Image
-                    size="tiny"
+                    rounded
                     className="community-header-logo"
                     src={community.links?.logo || imagePlaceholderLink} // logo is undefined when new draft and no selection
                     fallbackSrc={imagePlaceholderLink}
@@ -61,7 +61,7 @@ class CommunityHeaderComponent extends Component {
                 )}
               </div>
             )}
-            <div className="community-header-element rel-ml-1">
+            <div className="community-header-element flex align-items-center rel-ml-1">
               {showCommunitySelectionButton && (
                 <>
                   <CommunitySelectionModal
@@ -93,8 +93,8 @@ class CommunityHeaderComponent extends Component {
                   {community && (
                     <Button
                       basic
-                      color="black"
                       size="mini"
+                      labelPosition="left"
                       className="community-header-button ml-5"
                       onClick={() => changeSelectedCommunity(null)}
                       content={i18next.t("Remove")}
