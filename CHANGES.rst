@@ -10,6 +10,10 @@
 Changes
 =======
 
+Version 4.9.0 (2023-07-13)
+
+- add access requests for users and guests
+
 Version 4.8.0 (2023-07-12)
 
 - add media files
