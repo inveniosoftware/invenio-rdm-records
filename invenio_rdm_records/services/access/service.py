@@ -669,7 +669,7 @@ class RecordAccessService(RecordService):
 
     @unit_of_work()
     def create_guest_access_request(self, identity, token, expand=False, uow=None):
-        """Use the access request token to create an access request."""
+        """Use the guest access request token to create an access request."""
         # Permissions
         if authenticated_user in identity.provides:
             raise PermissionDeniedError("request_guest_access")
