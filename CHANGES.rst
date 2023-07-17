@@ -10,6 +10,10 @@
 Changes
 =======
 
+Version 4.9.1 (2023-07-17)
+
+- available actions: reorder actions
+
 Version 4.9.0 (2023-07-13)
 
 - add access requests for users and guests
