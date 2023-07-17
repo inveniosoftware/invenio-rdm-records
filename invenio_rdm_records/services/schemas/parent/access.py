@@ -15,7 +15,7 @@
 from datetime import timezone
 
 from marshmallow import Schema, fields, validate
-from marshmallow_utils.fields import SanitizedUnicode, TZDateTime
+from marshmallow_utils.fields import ISODateString, SanitizedUnicode, TZDateTime
 
 
 class GrantSubject(Schema):
@@ -42,7 +42,7 @@ class SecretLink(Schema):
     created_at = TZDateTime(
         timezone=timezone.utc, format="iso", required=False, dump_only=True
     )
-    expires_at = TZDateTime(timezone=timezone.utc, format="iso", required=False)
+    expires_at = ISODateString(required=False)
     permission = fields.String(
         required=False, validate=validate.OneOf(["view", "preview", "edit"])
     )

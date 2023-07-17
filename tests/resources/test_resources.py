@@ -611,7 +611,7 @@ def test_link_creation(
     """Test the creation of secret links."""
     client = client_with_login
     in_10_days = datetime.utcnow() + timedelta(days=10)
-    in_10_days_str = in_10_days.strftime("%Y-%m-%dT00:00:00")
+    in_10_days_str = in_10_days.strftime("%Y-%m-%d")
 
     # Create and publish a draft
     recid = _create_and_publish(client, minimal_record, headers)
@@ -727,11 +727,11 @@ def test_link_update(
     client = client_with_login
     # Note, we test with and without timezone aware timestamps.
     in_10_days = datetime.utcnow() + timedelta(days=10)
-    in_10_days_str = in_10_days.replace(tzinfo=timezone.utc).isoformat()
+    in_10_days_str = in_10_days.replace(tzinfo=timezone.utc).strftime("%Y-%m-%d")
     in_20_days = arrow.utcnow() + timedelta(days=20)
-    in_20_days_str = in_20_days.isoformat()
+    in_20_days_str = in_20_days.strftime("%Y-%m-%d")
     _10_days_ago = datetime.utcnow() - timedelta(days=10)
-    _10_days_ago_str = _10_days_ago.isoformat()
+    _10_days_ago_str = _10_days_ago.strftime("%Y-%m-%d")
 
     # Create and publish a draft
     recid = _create_and_publish(client, minimal_record, headers)

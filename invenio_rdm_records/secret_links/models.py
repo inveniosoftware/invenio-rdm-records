@@ -68,6 +68,7 @@ class SecretLink(db.Model):
             "created_at": self.created,
             "expires_at": self.expires_at,
             "permission": self.permission_level,
+            "description": self.description,
         }
 
         return result_dict
