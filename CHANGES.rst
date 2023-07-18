@@ -10,6 +10,12 @@
 Changes
 =======
 
+Version 4.10.0 (2023-07-18)
+
+- access-requests: change expires_at to isodatestring
+- ui: align commmunity header logo with other community headers
+- github: add invenio github integration
+
 Version 4.9.1 (2023-07-17)
 
 - available actions: reorder actions
