@@ -83,6 +83,8 @@ class RDMParent(ParentRecordBase):
 
     permission_flags = DictField("permission_flags")
 
+    pids = DictField("pids")
+
 
 #
 # Common properties between records and drafts.

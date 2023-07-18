@@ -15,6 +15,7 @@ from datetime import timedelta
 import idutils
 from invenio_i18n import lazy_gettext as _
 
+from .resources.serializers import DataCite43JSONSerializer
 from .services import facets
 from .services.permissions import RDMRecordPermissionPolicy
 from .services.pids import providers
@@ -360,6 +361,32 @@ RDM_PERSISTENT_IDENTIFIERS = {
         "required": True/False,
     }
 """
+
+RDM_PARENT_PERSISTENT_IDENTIFIER_PROVIDERS = [
+    # DataCite Concept DOI provider
+    providers.DataCitePIDProvider(
+        "datacite",
+        client=providers.DataCiteClient("datacite", config_prefix="DATACITE"),
+        serializer=DataCite43JSONSerializer(schema_context={"is_parent": True}),
+        label=_("Concept DOI"),
+    ),
+]
+"""Persistent identifier providers for parent record."""
+
+RDM_PARENT_PERSISTENT_IDENTIFIERS = {
+    "doi": {
+        "providers": ["datacite"],
+        "required": True,
+        "condition": lambda record: record.pids["doi"]["provider"] == "datacite",
+        "label": _("Concept DOI"),
+        "validator": idutils.is_doi,
+        "normalizer": idutils.normalize_doi,
+    },
+}
+"""Persistent identifiers for parent record."""
+
+RDM_ALLOW_EXTERNAL_DOI_VERSIONING = True
+"""Allow records with external DOIs to be versioned."""
 
 # Configuration for the DataCiteClient used by the DataCitePIDProvider
 

@@ -13,6 +13,7 @@ from invenio_records_resources.services.uow import RecordCommitOp, unit_of_work
 from invenio_requests.services.results import EntityResolverExpandableField
 
 from invenio_rdm_records.services.results import ParentCommunitiesExpandableField
+from invenio_rdm_records.utils import ChainObject
 
 
 class PIDsService(RecordService):
@@ -50,6 +51,11 @@ class PIDsService(RecordService):
     def pid_manager(self):
         """PID Manager."""
         return self._manager
+
+    @property
+    def parent_pid_manager(self):
+        """Parent PID Manager."""
+        return self.manager_cls(self.config.parent_pids_providers)
 
     def resolve(self, identity, id_, scheme, expand=False):
         """Resolve PID to a record (not draft)."""
@@ -123,26 +129,58 @@ class PIDsService(RecordService):
         )
 
     @unit_of_work()
-    def register_or_update(self, identity, id_, scheme, uow=None, expand=False):
+    def register_or_update(
+        self,
+        identity,
+        id_,
+        scheme,
+        parent=False,
+        uow=None,
+        expand=False,
+    ):
         """Register or update a PID of a record.
 
         If the PID has already been register it updates the remote.
         """
         record = self.record_cls.pid.resolve(id_, registered_only=False)
+
+        if parent:
+            # We need the latest record version for the metadata of the parent
+            if not record.versions.is_latest:
+                record = self.record_cls.get_record(record.versions.latest_id)
+            # We're "extending" the attribute and index lookup of the parent
+            # to fallback to the record (e.g. for accessing `record.metadata`
+            # in the serializer).
+            pid_record = ChainObject(
+                record.parent,
+                record,
+                aliases={
+                    "_parent": record.parent,
+                    "_child": record,
+                },
+            )
+            pid_manager = self.parent_pid_manager
+        else:
+            pid_record = record
+            pid_manager = self.pid_manager
+
         # no need to validate since the record class was already published
-        pid_attrs = record.pids.get(scheme)
-        pid = self._manager.read(scheme, pid_attrs["identifier"], pid_attrs["provider"])
+        pid_attrs = pid_record.pids.get(scheme)
+        pid = pid_manager.read(scheme, pid_attrs["identifier"], pid_attrs["provider"])
+
+        # Determine landing page (use scheme specific if available)
+        links = self.links_item_tpl.expand(identity, record)
+        link_prefix = "parent" if parent else "self"
+        url = links[f"{link_prefix}_html"]
+        if f"{link_prefix}_{scheme}" in links:
+            url = links[f"{link_prefix}_{scheme}"]
+
         if pid.is_registered():
             self.require_permission(identity, "pid_update", record=record)
-            self._manager.update(record, scheme)
+            pid_manager.update(pid_record, scheme, url=url)
         else:
             self.require_permission(identity, "pid_register", record=record)
-            # Determine landing page (use scheme specific if available)
-            links = self.links_item_tpl.expand(identity, record)
-            url = links["self_html"]
-            if f"self_{scheme}" in links:
-                url = links[f"self_{scheme}"]
-            self._manager.register(record, scheme, url)
+            pid_manager.register(pid_record, scheme, url=url)
 
         # draft and index do not need commit/refresh
 

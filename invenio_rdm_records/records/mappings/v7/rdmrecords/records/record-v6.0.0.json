@@ -28,6 +28,32 @@
         }
       },
       {
+        "parent_pids": {
+          "path_match": "parent.pids.*",
+          "match_mapping_type": "object",
+          "mapping": {
+            "type": "object",
+            "properties": {
+              "identifier": {
+                "type": "text",
+                "fields": {
+                  "keyword": {
+                    "type": "keyword",
+                    "ignore_above": 256
+                  }
+                }
+              },
+              "provider": {
+                "type": "keyword"
+              },
+              "client": {
+                "type": "keyword"
+              }
+            }
+          }
+        }
+      },
+      {
         "i18n_title": {
           "path_match": "*.title.*",
           "unmatch": "(metadata.title)|(metadata.additional_titles.title)",
@@ -141,6 +167,10 @@
                 "index": false
               }
             }
+          },
+          "pids": {
+            "type": "object",
+            "dynamic": true
           },
           "access": {
             "properties": {

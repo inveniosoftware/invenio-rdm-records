@@ -12,6 +12,8 @@
 This tests both the PIDsService and the RDMService behaviour related to pids.
 """
 
+from copy import deepcopy
+
 import pytest
 from invenio_pidstore.errors import PIDDoesNotExistError
 from invenio_pidstore.models import PIDStatus
@@ -762,11 +764,117 @@ def test_pids_delete_managed_pid_from_record(running_app, search_clear, minimal_
 #
 
 
-def test_pids_versioning():
-    # TODO: implement
-    # versioning flow
-    # create draft and publish
-    # concept doi + doi
+def test_pids_versioning(running_app, search_clear, minimal_record, mock_public_doi):
+    """Test PIDs for multi-versioned records."""
     # new version + publish
-    # concept doi still the same, doi is different
-    pass
+    superuser_identity = running_app.superuser_identity
+    service = current_rdm_records.records_service
+    minimal_record["pids"] = {}
+
+    # create draft
+    draft = service.create(superuser_identity, minimal_record)
+    assert draft["pids"] == {}
+    assert draft["parent"]["pids"] == {}
+
+    # publish the record with a managed PID
+    record = service.publish(superuser_identity, draft.id)
+    parent = record._record.parent
+
+    # parent doi + doi
+    published_doi_v1 = record["pids"]["doi"]
+    assert published_doi_v1["identifier"] == f"10.1234/{record.id}"
+    assert published_doi_v1["provider"] == "datacite"
+    provider = service.pids.pid_manager._get_provider("doi", "datacite")
+    pid = provider.get(pid_value=published_doi_v1["identifier"])
+    assert pid.status == PIDStatus.REGISTERED
+
+    published_parent_doi = record["parent"]["pids"]["doi"]
+    assert published_parent_doi["identifier"] == f"10.1234/{parent.pid.pid_value}"
+    assert published_parent_doi["provider"] == "datacite"
+    provider = service.pids.pid_manager._get_provider("doi", "datacite")
+    pid = provider.get(pid_value=published_parent_doi["identifier"])
+    assert pid.status == PIDStatus.REGISTERED
+
+    # create new version
+    draft = service.new_version(superuser_identity, record.id)
+    draft_data = deepcopy(draft.data)
+    draft_data["metadata"]["publication_date"] = "2023-01-01"
+    draft = service.update_draft(superuser_identity, draft.id, data=draft_data)
+    record_v2 = service.publish(superuser_identity, draft.id)
+    parent = record_v2._record.parent
+
+    # new version doi
+    published_doi_v2 = record_v2["pids"]["doi"]
+    assert published_doi_v2["identifier"] == f"10.1234/{record_v2.id}"
+    assert published_doi_v2["provider"] == "datacite"
+    provider = service.pids.pid_manager._get_provider("doi", "datacite")
+    pid = provider.get(pid_value=published_doi_v2["identifier"])
+    assert pid.status == PIDStatus.REGISTERED
+
+    # parent doi should be the same
+    published_parent_doi = record_v2["parent"]["pids"]["doi"]
+    assert published_parent_doi["identifier"] == f"10.1234/{parent.pid.pid_value}"
+    assert published_parent_doi["provider"] == "datacite"
+    provider = service.pids.pid_manager._get_provider("doi", "datacite")
+    pid = provider.get(pid_value=published_parent_doi["identifier"])
+    assert pid.status == PIDStatus.REGISTERED
+
+
+def test_pids_versioning_external_doi(
+    running_app, search_clear, minimal_record, mock_public_doi
+):
+    """Test PIDs for multi-versioned records with external DOI."""
+    # new version + publish
+    superuser_identity = running_app.superuser_identity
+    service = current_rdm_records.records_service
+    minimal_record["pids"] = {}
+
+    # create draft with external DOI
+    data = minimal_record.copy()
+    data["pids"]["doi"] = {"identifier": "10.4321/external.v1", "provider": "external"}
+
+    draft = service.create(superuser_identity, data)
+    assert draft["pids"] == {
+        "doi": {"identifier": "10.4321/external.v1", "provider": "external"},
+    }
+    assert draft["parent"]["pids"] == {}
+
+    # publish the record with an external DOI
+    record = service.publish(superuser_identity, draft.id)
+    parent = record._record.parent
+
+    # external doi only
+    published_doi_v1 = record["pids"]["doi"]
+    assert published_doi_v1["identifier"] == "10.4321/external.v1"
+    assert published_doi_v1["provider"] == "external"
+    provider = service.pids.pid_manager._get_provider("doi", "external")
+    pid = provider.get(pid_value=published_doi_v1["identifier"])
+    assert pid.status == PIDStatus.REGISTERED
+
+    # parent doi shouldn't be registered when publishing external doi
+    assert "doi" not in record["parent"]["pids"]
+
+    # create new version with managed doi
+    draft = service.new_version(superuser_identity, record.id)
+    draft_data = deepcopy(draft.data)
+    draft_data["metadata"]["publication_date"] = "2023-01-01"
+    draft_data["pids"] = {}  # unset, so that we get a managed doi
+    draft = service.update_draft(superuser_identity, draft.id, data=draft_data)
+    record_v2 = service.publish(superuser_identity, draft.id)
+    parent = record_v2._record.parent
+
+    # new version managed doi + parent doi (since we have a managed doi now)
+    published_doi_v2 = record_v2["pids"]["doi"]
+    assert published_doi_v2["identifier"] == f"10.1234/{record_v2.id}"
+    assert published_doi_v2["provider"] == "datacite"
+    provider = service.pids.pid_manager._get_provider("doi", "datacite")
+    pid = provider.get(pid_value=published_doi_v2["identifier"])
+    assert pid.status == PIDStatus.REGISTERED
+
+    # parent doi should be now present
+    published_parent_doi = record_v2["parent"]["pids"]["doi"]
+    assert published_parent_doi["identifier"] == f"10.1234/{parent.pid.pid_value}"
+    assert published_parent_doi["provider"] == "datacite"
+    provider = service.pids.pid_manager._get_provider("doi", "datacite")
+    pid = provider.get(pid_value=published_parent_doi["identifier"])
+    assert pid.status == PIDStatus.REGISTERED

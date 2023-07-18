@@ -58,10 +58,15 @@ from .components import (
     AccessComponent,
     CustomFieldsComponent,
     MetadataComponent,
+    ParentPIDsComponent,
     PIDsComponent,
     ReviewComponent,
 )
-from .customizations import FromConfigPIDsProviders, FromConfigRequiredPIDs
+from .customizations import (
+    FromConfigConditionalPIDs,
+    FromConfigPIDsProviders,
+    FromConfigRequiredPIDs,
+)
 from .permissions import RDMRecordPermissionPolicy
 from .result_items import GrantItem, GrantList, SecretLinkItem, SecretLinkList
 from .schemas import RDMParentSchema, RDMRecordSchema
@@ -79,6 +84,11 @@ def is_draft_and_has_review(record, ctx):
 def is_record_and_has_doi(record, ctx):
     """Determine if submit review link should be included."""
     return is_record(record, ctx) and has_doi(record, ctx)
+
+
+def is_record_and_has_parent_doi(record, ctx):
+    """Determine if submit review link should be included."""
+    return is_record(record, ctx) and has_doi(record.parent, ctx)
 
 
 def has_doi(record, ctx):
@@ -261,6 +271,17 @@ class RDMRecordServiceConfig(RecordServiceConfig, ConfiguratorMixin):
     pids_providers = FromConfigPIDsProviders()
     pids_required = FromConfigRequiredPIDs()
 
+    parent_pids_providers = FromConfigPIDsProviders(
+        pids_key="RDM_PARENT_PERSISTENT_IDENTIFIERS",
+        providers_key="RDM_PARENT_PERSISTENT_IDENTIFIER_PROVIDERS",
+    )
+    parent_pids_required = FromConfigRequiredPIDs(
+        pids_key="RDM_PARENT_PERSISTENT_IDENTIFIERS",
+    )
+    parent_pids_conditional = FromConfigConditionalPIDs(
+        pids_key="RDM_PARENT_PERSISTENT_IDENTIFIERS",
+    )
+
     # Components - order matters!
     components = [
         MetadataComponent,
@@ -272,6 +293,7 @@ class RDMRecordServiceConfig(RecordServiceConfig, ConfiguratorMixin):
         PIDComponent,
         # for the `pids` field (external PIDs)
         PIDsComponent,
+        ParentPIDsComponent,
         RelationsComponent,
         ReviewComponent,
     ]
@@ -319,6 +341,31 @@ class RDMRecordServiceConfig(RecordServiceConfig, ConfiguratorMixin):
                         for (scheme, pid) in record.pids.items()
                     }
                 ),
+            ),
+        ),
+        # Parent
+        "parent": RecordLink(
+            "{+api}/records/{+parent_id}",
+            when=is_record,
+            vars=lambda record, vars: vars.update(
+                {"parent_id": record.parent.pid.pid_value}
+            ),
+        ),
+        "parent_html": RecordLink(
+            "{+ui}/records/{+parent_id}",
+            when=is_record,
+            vars=lambda record, vars: vars.update(
+                {"parent_id": record.parent.pid.pid_value}
+            ),
+        ),
+        "parent_doi": Link(
+            "{+ui}/doi/{+pid_doi}",
+            when=is_record_and_has_parent_doi,
+            vars=lambda record, vars: vars.update(
+                {
+                    f"pid_{scheme}": pid["identifier"]
+                    for (scheme, pid) in record.parent.pids.items()
+                }
             ),
         ),
         "self_iiif_manifest": ConditionalLink(

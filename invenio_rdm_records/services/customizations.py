@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2021 CERN.
+# Copyright (C) 2021-2023 CERN.
 # Copyright (C) 2022 Northwestern University.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
@@ -11,6 +11,11 @@
 
 class FromConfigPIDsProviders:
     """Data descriptor for pid providers configuration."""
+
+    def __init__(self, pids_key=None, providers_key=None):
+        """Initialize the config descriptor."""
+        self.pids_key = pids_key or "RDM_PERSISTENT_IDENTIFIERS"
+        self.providers_key = providers_key or "RDM_PERSISTENT_IDENTIFIER_PROVIDERS"
 
     def __get__(self, obj, objtype=None):
         """Return value that was grafted on obj (descriptor protocol)."""
@@ -31,11 +36,8 @@ class FromConfigPIDsProviders:
 
             return provider_dict
 
-        pids = obj._app.config.get("RDM_PERSISTENT_IDENTIFIERS", {})
-        providers = {
-            p.name: p
-            for p in obj._app.config.get("RDM_PERSISTENT_IDENTIFIER_PROVIDERS", [])
-        }
+        pids = obj._app.config.get(self.pids_key, {})
+        providers = {p.name: p for p in obj._app.config.get(self.providers_key, [])}
         doi_enabled = obj._app.config.get("DATACITE_ENABLED", False)
 
         return {
@@ -48,9 +50,13 @@ class FromConfigPIDsProviders:
 class FromConfigRequiredPIDs:
     """Data descriptor for required pids configuration."""
 
+    def __init__(self, pids_key=None):
+        """Initialize the config descriptor."""
+        self.pids_key = pids_key or "RDM_PERSISTENT_IDENTIFIERS"
+
     def __get__(self, obj, objtype=None):
         """Return required pids (descriptor protocol)."""
-        pids = obj._app.config.get("RDM_PERSISTENT_IDENTIFIERS", {})
+        pids = obj._app.config.get(self.pids_key, {})
         doi_enabled = obj._app.config.get("DATACITE_ENABLED", False)
 
         pids = {
@@ -61,3 +67,21 @@ class FromConfigRequiredPIDs:
         return [
             scheme for (scheme, conf) in pids.items() if conf.get("required", False)
         ]
+
+
+class FromConfigConditionalPIDs:
+    """Data descriptor for conditional pids."""
+
+    def __init__(self, pids_key=None):
+        """Initialize the config descriptor."""
+        self.pids_key = pids_key or "RDM_PERSISTENT_IDENTIFIERS"
+
+    def __get__(self, obj, objtype=None):
+        """Return conditional pids (descriptor protocol)."""
+        pids = obj._app.config.get(self.pids_key, {})
+        result = {}
+        for scheme, conf in pids.items():
+            condition_func = conf.get("condition")
+            if callable(condition_func):
+                result[scheme] = condition_func
+        return result

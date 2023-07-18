@@ -7,6 +7,8 @@
 
 """Utility functions."""
 
+from collections import ChainMap
+
 from flask import current_app, flash, request, session
 from flask_security.confirmable import confirm_user
 from flask_security.utils import hash_password
@@ -44,6 +46,38 @@ def get_or_create_user(email):
         db.session.commit()
         reindex_users([user.id])
     return user
+
+
+class ChainObject:
+    """Read-only wrapper to chain attribute/key lookup over multiple objects."""
+
+    def __init__(self, *objs, aliases=None):
+        """Constructor."""
+        self._objs = objs
+        self._aliases = aliases or {}
+
+    def __getattr__(self, name):
+        """Lookup attribute over all objects."""
+        # Check aliases first
+        aliases = super().__getattribute__("_aliases")
+        if name in aliases:
+            return aliases[name]
+
+        objs = super().__getattribute__("_objs")
+        for o in objs:
+            if getattr(o, name):
+                return getattr(o, name)
+        raise AttributeError()
+
+    def __getitem__(self, key):
+        """Index lookup over all objects."""
+        objs = super().__getattribute__("_objs")
+        return ChainMap(*objs)[key]
+
+    def get(self, key, default=None):
+        """Index lookup a la ``dict.get`` over all objects."""
+        objs = super().__getattribute__("_objs")
+        return ChainMap(*objs).get(key, default=default)
 
 
 def verify_token(identity):

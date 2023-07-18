@@ -11,6 +11,7 @@
 
 import json
 import warnings
+from collections import ChainMap
 
 from datacite import DataCiteRESTClient
 from datacite.errors import DataCiteError
@@ -26,10 +27,11 @@ from .base import PIDProvider
 class DataCiteClient:
     """DataCite Client."""
 
-    def __init__(self, name, config_prefix=None, **kwargs):
+    def __init__(self, name, config_prefix=None, config_overrides=None, **kwargs):
         """Constructor."""
         self.name = name
         self._config_prefix = config_prefix or "DATACITE"
+        self._config_overrides = config_overrides or {}
         self._api = None
 
     def cfgkey(self, key):
@@ -38,7 +40,8 @@ class DataCiteClient:
 
     def cfg(self, key, default=None):
         """Get a application config value."""
-        return current_app.config.get(self.cfgkey(key), default)
+        config = ChainMap(self._config_overrides, current_app.config)
+        return config.get(self.cfgkey(key), default)
 
     def generate_doi(self, record):
         """Generate a DOI."""

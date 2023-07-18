@@ -191,19 +191,19 @@ class PIDManager:
 
         return result
 
-    def update(self, record, scheme):
+    def update(self, record, scheme, url=None):
         """Update a registered PID on a remote provider."""
         pid_attrs = record.pids.get(scheme, None)
         if not pid_attrs:
             raise ValidationError(
                 message=_("PID not found for type {scheme}").format(scheme=scheme),
-                field_name=f"pids",
+                field_name="pids",
             )
 
         provider = self._get_provider(scheme, pid_attrs["provider"])
         pid = provider.get(pid_attrs["identifier"])
 
-        provider.update(pid, record=record)
+        provider.update(pid, record=record, url=url)
 
     def reserve(self, draft, scheme, identifier, provider_name):
         """Reserve a PID."""
@@ -223,7 +223,7 @@ class PIDManager:
         if not pid_attrs:
             raise ValidationError(
                 message=_("PID not found for type {scheme}").format(scheme=scheme),
-                field_name=f"pids",
+                field_name="pids",
             )
 
         provider = self._get_provider(scheme, pid_attrs["provider"])

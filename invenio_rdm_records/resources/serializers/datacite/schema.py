@@ -21,6 +21,7 @@ from marshmallow import Schema, ValidationError, fields, missing, post_dump, val
 from marshmallow_utils.fields import SanitizedUnicode
 from marshmallow_utils.html import strip_html
 
+from ....proxies import current_rdm_records_service
 from ...serializers.ui.schema import current_default_locale
 from ..utils import get_preferred_identifier, get_vocabulary_props
 
@@ -171,7 +172,6 @@ class SubjectSchema43(Schema):
 class DataCite43Schema(BaseSerializerSchema):
     """DataCite JSON 4.3 Marshmallow Schema."""
 
-    # PIDS-FIXME: What about versioning links and related ids
     types = fields.Method("get_type")
     titles = fields.Method("get_titles")
     creators = fields.List(
@@ -373,6 +373,53 @@ class DataCite43Schema(BaseSerializerSchema):
                     )
 
                 serialized_identifiers.append(serialized_identifier)
+
+        # Generate parent/child versioning relationships
+        if self.context.get("is_parent"):
+            # Fetch DOIs for all versions
+            # NOTE: The refresh is safe to do here since we'll be in Celery task
+            current_rdm_records_service.indexer.refresh()
+            record_versions = current_rdm_records_service.search_versions(
+                system_identity,
+                obj._child["id"],
+                params={"_source_includes": "pids.doi"},
+            )
+            for version in record_versions:
+                version_doi = version["pids"]["doi"]
+                id_scheme = get_scheme_datacite(
+                    "doi",
+                    "RDM_RECORDS_IDENTIFIERS_SCHEMES",
+                    default="DOI",
+                )
+
+                if version_doi:
+                    serialized_identifiers.append(
+                        {
+                            "relatedIdentifier": version_doi["identifier"],
+                            "relationType": "HasVersion",
+                            "relatedIdentifierType": id_scheme,
+                        }
+                    )
+        else:
+            if hasattr(obj, "parent"):
+                parent_record = obj.parent
+            else:
+                parent_record = obj["parent"]
+            parent_doi = parent_record.get("pids", {}).get("doi")
+
+            if parent_doi:
+                id_scheme = get_scheme_datacite(
+                    "doi",
+                    "RDM_RECORDS_IDENTIFIERS_SCHEMES",
+                    default="doi",
+                )
+                serialized_identifiers.append(
+                    {
+                        "relatedIdentifier": parent_doi["identifier"],
+                        "relationType": "IsVersionOf",
+                        "relatedIdentifierType": id_scheme,
+                    }
+                )
 
         return serialized_identifiers or missing
 

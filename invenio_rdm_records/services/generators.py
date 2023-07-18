@@ -16,7 +16,6 @@ from itertools import chain
 
 from flask import current_app
 from flask_principal import UserNeed
-from invenio_access.permissions import authenticated_user
 from invenio_communities.generators import CommunityRoleNeed, CommunityRoles
 from invenio_communities.proxies import current_roles
 from invenio_records_permissions.generators import Generator
@@ -165,6 +164,14 @@ class IfNewRecord(ConditionalGenerator):
     def _condition(self, record=None, **kwargs):
         """Check if there is a record."""
         return record is None
+
+
+class IfExternalDOIRecord(ConditionalGenerator):
+    """Conditional generator for external DOI records."""
+
+    def _condition(self, record=None, **kwargs):
+        """Check if the record has an external DOI."""
+        return record["pids"]["doi"]["provider"] == "external"
 
 
 class RecordOwners(Generator):

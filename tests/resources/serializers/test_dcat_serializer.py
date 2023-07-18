@@ -112,6 +112,11 @@ def test_dcat_serializer(running_app, enhanced_full_record):
         '        <dct:type rdf:resource="http://purl.org/dc/dcmitype/Dataset"/>',  # noqa
         "      </rdf:Description>",
         "    </dct:isReferencedBy>",
+        "    <dct:isVersionOf>",
+        '      <rdf:Description rdf:about="https://doi.org/10.5281/inveniordm.1234.parent">',  # noqa
+        "        <dct:identifier>https://doi.org/10.5281/inveniordm.1234.parent</dct:identifier>",  # noqa
+        "      </rdf:Description>",
+        "    </dct:isVersionOf>",
         "    <owl:versionInfo>v1.0</owl:versionInfo>",
         "    <dct:description>A description with HTML tags</dct:description>",
         "    <dct:provenance>",

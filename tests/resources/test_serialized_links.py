@@ -78,7 +78,9 @@ def test_draft_links(client, draft_json, minimal_record, headers):
 def test_record_links(client, published_json, headers):
     """Tests the links for a published RDM record."""
     pid_value = published_json["id"]
+    parent_pid_value = published_json["parent"]["id"]
     doi_value = published_json["pids"]["doi"]["identifier"]
+    parent_doi_value = published_json["parent"]["pids"]["doi"]["identifier"]
     published_record_links = published_json["links"]
     response = client.get(f"/records/{pid_value}", headers=headers)
     read_record_links = response.json["links"]
@@ -92,6 +94,9 @@ def test_record_links(client, published_json, headers):
         "files": f"https://127.0.0.1:5000/api/records/{pid_value}/files",
         "media_files": f"https://127.0.0.1:5000/api/records/{pid_value}/media-files",
         "archive": f"https://127.0.0.1:5000/api/records/{pid_value}/files-archive",
+        "parent": f"https://127.0.0.1:5000/api/records/{parent_pid_value}",
+        "parent_doi": f"https://127.0.0.1:5000/doi/{parent_doi_value}",
+        "parent_html": f"https://127.0.0.1:5000/records/{parent_pid_value}",
         "versions": f"https://127.0.0.1:5000/api/records/{pid_value}/versions",
         "latest": f"https://127.0.0.1:5000/api/records/{pid_value}/versions/latest",  # noqa
         "latest_html": f"https://127.0.0.1:5000/records/{pid_value}/latest",  # noqa
