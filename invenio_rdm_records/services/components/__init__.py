@@ -11,7 +11,7 @@
 from .access import AccessComponent
 from .custom_fields import CustomFieldsComponent
 from .metadata import MetadataComponent
-from .pids import PIDsComponent
+from .pids import ParentPIDsComponent, PIDsComponent
 from .review import ReviewComponent
 
 __all__ = (
@@ -19,5 +19,6 @@ __all__ = (
     "CustomFieldsComponent",
     "MetadataComponent",
     "PIDsComponent",
+    "ParentPIDsComponent",
     "ReviewComponent",
 )

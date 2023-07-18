@@ -13,7 +13,7 @@
 from copy import copy
 
 from invenio_drafts_resources.services.records.components import ServiceComponent
-from invenio_records_resources.services.uow import TaskOp
+from invenio_records_resources.services.uow import RecordCommitOp, TaskOp
 
 from ..pids.tasks import register_or_update_pid
 
@@ -125,3 +125,47 @@ class PIDsComponent(ServiceComponent):
         pids = record.get("pids", {})
         self.service.pids.pid_manager.validate(pids, record)
         draft.pids = pids
+
+
+class ParentPIDsComponent(ServiceComponent):
+    """Service component for record parent PIDs."""
+
+    def create(self, identity, data=None, record=None, errors=None):
+        """This method is called on draft creation."""
+        record.parent.pids = {}
+
+    def publish(self, identity, draft=None, record=None):
+        """Publish handler."""
+        # Extract all current PIDs/schemes from the parent record. These are coming from
+        # previously published record versions.
+        current_pids = copy(record.parent.get("pids", {}))
+        current_schemes = set(current_pids.keys())
+        required_schemes = set(self.service.config.parent_pids_required)
+
+        conditional_schemes = self.service.config.parent_pids_conditional
+        for scheme in set(required_schemes):
+            condition_func = conditional_schemes.get(scheme)
+            if condition_func and not condition_func(record):
+                required_schemes.remove(scheme)
+
+        # TODO: Maybe here we can check so that we don't create a Concept DOI for
+        #       already published records that don't have one (i.e. legacy records).
+        # Create all missing PIDs (this happens only on first publish)
+        missing_required_schemes = required_schemes - current_schemes
+        pids = self.service.pids.parent_pid_manager.create_all(
+            record.parent,
+            pids=current_pids,
+            schemes=missing_required_schemes,
+        )
+        # Reserve all created PIDs and store them on the parent record
+        self.service.pids.parent_pid_manager.reserve_all(record.parent, pids)
+        record.parent.pids = pids
+
+        # TODO: This should normally be done in `Service.publish`
+        self.uow.register(RecordCommitOp(record.parent))
+
+        # Async register/update tasks after transaction commit.
+        for scheme in pids.keys():
+            self.uow.register(
+                TaskOp(register_or_update_pid, record["id"], scheme, parent=True)
+            )

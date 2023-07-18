@@ -54,7 +54,6 @@ def test_datacite43_serializer(running_app, full_record):
             "title": {"en": "No rightsUri license"},
         }
     )
-    # for HTML stripping test purposes
     expected_data = {
         "types": {"resourceTypeGeneral": "Image", "resourceType": "Photo"},
         "creators": [
@@ -135,7 +134,12 @@ def test_datacite43_serializer(running_app, full_record):
                 "relatedIdentifierType": "DOI",
                 "relationType": "IsCitedBy",
                 "resourceTypeGeneral": "Dataset",
-            }
+            },
+            {
+                "relatedIdentifier": "10.5281/inveniordm.1234.parent",
+                "relatedIdentifierType": "DOI",
+                "relationType": "IsVersionOf",
+            },
         ],
         "sizes": ["11 pages"],
         "formats": ["application/pdf"],
@@ -237,6 +241,7 @@ def test_datacite43_xml_serializer(running_app, full_record):
         '  <resourceType resourceTypeGeneral="Image">Photo</resourceType>',
         "  <relatedIdentifiers>",
         '    <relatedIdentifier relatedIdentifierType="DOI" relationType="IsCitedBy" resourceTypeGeneral="Dataset">10.1234/foo.bar</relatedIdentifier>',  # noqa
+        '    <relatedIdentifier relatedIdentifierType="DOI" relationType="IsVersionOf">10.5281/inveniordm.1234.parent</relatedIdentifier>',  # noqa
         "  </relatedIdentifiers>",
         "  <sizes>",
         "    <size>11 pages</size>",
@@ -342,7 +347,7 @@ def test_datacite43_serializer_with_unknown_id_schemes(
     assert len(serialized_record["identifiers"]) == 4
 
     assert expected_related_id in serialized_record["relatedIdentifiers"]
-    assert len(serialized_record["relatedIdentifiers"]) == 1
+    assert len(serialized_record["relatedIdentifiers"]) == 2
 
     creator_ids = serialized_record["creators"][0]["nameIdentifiers"]
     assert expected_creator_id in creator_ids

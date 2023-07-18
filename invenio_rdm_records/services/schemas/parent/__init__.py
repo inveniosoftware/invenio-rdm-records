@@ -8,13 +8,25 @@
 
 """RDM parent record schema."""
 
+from flask import current_app
 from invenio_drafts_resources.services.records.schema import ParentSchema
+from invenio_i18n import lazy_gettext as _
 from invenio_requests.services.schemas import GenericRequestSchema
-from marshmallow import fields, post_dump, pre_load
+from marshmallow import ValidationError, fields, post_dump, pre_load
+from marshmallow_utils.fields import SanitizedUnicode
 from marshmallow_utils.permissions import FieldPermissionsMixin
 
+from ..pids import PIDSchema
 from .access import ParentAccessSchema
 from .communities import CommunitiesSchema
+
+
+def validate_scheme(scheme):
+    """Validate a PID scheme."""
+    if scheme not in current_app.config["RDM_PARENT_PERSISTENT_IDENTIFIERS"]:
+        raise ValidationError(
+            _("Invalid persistent identifier scheme {scheme}.".format(scheme=scheme))
+        )
 
 
 class RDMParentSchema(ParentSchema, FieldPermissionsMixin):
@@ -31,6 +43,12 @@ class RDMParentSchema(ParentSchema, FieldPermissionsMixin):
     access = fields.Nested(ParentAccessSchema, dump_only=True)
     review = fields.Nested(GenericRequestSchema, allow_none=False)
     communities = fields.Nested(CommunitiesSchema, dump_only=True)
+
+    pids = fields.Dict(
+        keys=SanitizedUnicode(validate=validate_scheme),
+        values=fields.Nested(PIDSchema),
+        dump_only=True,
+    )
 
     # TODO: move to a reusable place (taken from records-resources)
     @pre_load

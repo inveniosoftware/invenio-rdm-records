@@ -26,6 +26,7 @@ from .generators import (
     AccessGrant,
     GuestAccessRequestToken,
     IfConfig,
+    IfExternalDOIRecord,
     IfFileIsLocal,
     IfNewRecord,
     IfRequestType,
@@ -168,7 +169,13 @@ class RDMRecordPermissionPolicy(RecordPermissionPolicy):
     # Allow deleting/discarding a draft and all associated files
     can_delete_draft = can_curate
     # Allow creating a new version of an existing published record.
-    can_new_version = can_curate
+    can_new_version = [
+        IfConfig(
+            "RDM_ALLOW_EXTERNAL_DOI_VERSIONING",
+            then_=can_curate,
+            else_=[IfExternalDOIRecord(then_=[Disable()], else_=[can_curate])],
+        ),
+    ]
     # Allow publishing a new record or changes to an existing record.
     can_publish = can_review
     # Allow lifting a record or draft.

@@ -80,6 +80,7 @@ from invenio_rdm_records.notifications.builders import (
 from invenio_rdm_records.proxies import current_rdm_records_service
 from invenio_rdm_records.records.api import RDMDraft, RDMParent, RDMRecord
 from invenio_rdm_records.requests.entity_resolvers import RDMRecordServiceResultResolver
+from invenio_rdm_records.resources.serializers import DataCite43JSONSerializer
 from invenio_rdm_records.services.communities.components import (
     CommunityServiceComponents,
 )
@@ -253,7 +254,13 @@ def _(x):
 
 
 @pytest.fixture(scope="module")
-def app_config(app_config):
+def mock_datacite_client():
+    """Mock DataCite client."""
+    return FakeDataCiteClient
+
+
+@pytest.fixture(scope="module")
+def app_config(app_config, mock_datacite_client):
     """Override pytest-invenio app_config fixture.
 
     For test purposes we need to enforce the configuration variables set in
@@ -328,7 +335,7 @@ def app_config(app_config):
         # DataCite DOI provider with fake client
         providers.DataCitePIDProvider(
             "datacite",
-            client=FakeDataCiteClient("datacite", config_prefix="DATACITE"),
+            client=mock_datacite_client("datacite", config_prefix="DATACITE"),
             label=_("DOI"),
         ),
         # DOI provider for externally managed DOIs
@@ -342,6 +349,15 @@ def app_config(app_config):
         providers.OAIPIDProvider(
             "oai",
             label=_("OAI ID"),
+        ),
+    ]
+    app_config["RDM_PARENT_PERSISTENT_IDENTIFIER_PROVIDERS"] = [
+        # DataCite Concept DOI provider
+        providers.DataCitePIDProvider(
+            "datacite",
+            client=mock_datacite_client("datacite", config_prefix="DATACITE"),
+            serializer=DataCite43JSONSerializer(schema_context={"is_parent": True}),
+            label=_("Concept DOI"),
         ),
     ]
 

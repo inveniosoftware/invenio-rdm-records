@@ -14,10 +14,11 @@ from invenio_rdm_records.proxies import current_rdm_records
 
 
 @shared_task(ignore_result=True)
-def register_or_update_pid(recid, scheme):
+def register_or_update_pid(recid, scheme, parent=False):
     """Update a PID on the remote provider."""
     current_rdm_records.records_service.pids.register_or_update(
         id_=recid,
         identity=system_identity,
         scheme=scheme,
+        parent=parent,
     )

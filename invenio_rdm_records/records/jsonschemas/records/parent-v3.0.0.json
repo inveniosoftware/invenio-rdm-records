@@ -17,6 +17,18 @@
 
     "pid": {"$ref": "local://records/definitions-v1.2.0.json#/internal-pid"},
 
+    "pids": {
+      "type": "object",
+      "description": "External persistent identifiers for the parent record including e.g. OAI-PMH identifier, minted DOIs and more. PIDs are registered in the PIDStore.",
+      "additionalProperties": {
+        "$ref": "local://records/definitions-v2.0.0.json#/external-pid"
+      },
+      "propertyNames": {
+        "pattern": "^[a-z_-][a-z0-9_-]*$"
+      },
+      "uniqueItems": true
+    },
+
     "access": {
       "type": "object",
       "description": "Access control and ownership for all versions of a record.",
