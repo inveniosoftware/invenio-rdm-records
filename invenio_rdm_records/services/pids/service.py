@@ -8,9 +8,11 @@
 """RDM PIDs Service."""
 
 from invenio_drafts_resources.services.records import RecordService
+from invenio_pidstore.errors import PIDDoesNotExistError
 from invenio_pidstore.models import PersistentIdentifier
 from invenio_records_resources.services.uow import RecordCommitOp, unit_of_work
 from invenio_requests.services.results import EntityResolverExpandableField
+from sqlalchemy.orm.exc import NoResultFound
 
 from invenio_rdm_records.services.results import ParentCommunitiesExpandableField
 from invenio_rdm_records.utils import ChainObject
@@ -61,7 +63,23 @@ class PIDsService(RecordService):
         """Resolve PID to a record (not draft)."""
         # FIXME: Should not use model class but go through provider?
         pid = PersistentIdentifier.get(pid_type=scheme, pid_value=id_)
-        record = self.record_cls.get_record(pid.object_uuid)
+        record = None
+        try:
+            record = self.record_cls.get_record(pid.object_uuid)
+        except NoResultFound:
+            # Try to fetch the latest record version
+            try:
+                version_state = self.record_cls.versions.resolve(
+                    parent_id=pid.object_uuid
+                )
+                if version_state and version_state.latest_id:
+                    record = self.record_cls.get_record(version_state.latest_id)
+            except NoResultFound:
+                pass
+
+        if record is None:
+            raise PIDDoesNotExistError(scheme, id_)
+
         self.require_permission(identity, "read", record=record)
 
         return self.result_item(
