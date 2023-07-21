@@ -68,13 +68,16 @@ class RDMReleaseMetadata(object):
 
         return dict(
             description=self.description,
-            rights={"id": default_right},
+            rights=[{"id": default_right}],
             publication_date=self.rdm_release.release_payload["published_at"][:10],
             related_identifiers=[self.related_identifiers],
             version=version,
             title=self.title,
             resource_type={"id": "software"},
             creators=self.contributors,
+            publisher=current_app.config.get("APP_RDM_DEPOSIT_FORM_DEFAULTS").get(
+                "publisher", "CERN"
+            ),
         )
 
     @property
