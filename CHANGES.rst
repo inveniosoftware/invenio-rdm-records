@@ -10,6 +10,10 @@
 Changes
 =======
 
+Version 4.11.0 (2023-07-21)
+
+- add parent doi resolution
+
 Version 4.10.0 (2023-07-18)
 
 - access-requests: change expires_at to isodatestring
