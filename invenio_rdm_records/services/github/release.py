@@ -37,6 +37,27 @@ class RDMGithubRelease(GitHubRelease):
         recid = retrieve_recid_by_uuid(self.release_object.record_id)
         return current_rdm_records_service.read(system_identity, recid.pid_value)
 
+    def _upload_files_to_draft(self, draft, draft_file_service, uow):
+        """Upload files to draft."""
+        # Validate the release files are fetchable
+        self.test_zipball()
+
+        draft_file_service.init_files(
+            self.user_identity,
+            draft.id,
+            data=[{"key": self.release_file_name}],
+            uow=uow,
+        )
+
+        with self.fetch_zipball_file() as file_stream:
+            draft_file_service.set_file_content(
+                self.user_identity,
+                draft.id,
+                self.release_file_name,
+                file_stream,
+                uow=uow,
+            )
+
     def publish(self):
         """Publish GitHub release as record.
 
@@ -57,6 +78,8 @@ class RDMGithubRelease(GitHubRelease):
             # Commit state change, in case the publishing is stuck
             db.session.commit()
 
+            draft_file_service = current_rdm_records_service.draft_files
+
             with UnitOfWork(db.session) as uow:
                 data = {
                     "metadata": self.metadata,
@@ -68,6 +91,7 @@ class RDMGithubRelease(GitHubRelease):
                     draft = current_rdm_records_service.create(
                         self.user_identity, data, uow=uow
                     )
+                    self._upload_files_to_draft(draft, draft_file_service, uow)
                 else:
                     # Retrieve latest record id and its recid
                     latest_record_uuid = self.repository_object.latest_release(
@@ -80,30 +104,13 @@ class RDMGithubRelease(GitHubRelease):
                     new_version_draft = current_rdm_records_service.new_version(
                         self.user_identity, recid.pid_value, uow=uow
                     )
-                    draft = current_rdm_records_service.update_draft(
-                        self.user_identity, new_version_draft.id, data, uow=uow
+
+                    self._upload_files_to_draft(
+                        new_version_draft, draft_file_service, uow
                     )
 
-                # Validate the release files are fetchable
-                self.test_zipball()
-
-                # Upload files to draft
-                draft_file_service = current_rdm_records_service.draft_files
-
-                draft_file_service.init_files(
-                    self.user_identity,
-                    draft.id,
-                    data=[{"key": self.release_file_name}],
-                    uow=uow,
-                )
-
-                with self.fetch_zipball_file() as file_stream:
-                    draft_file_service.set_file_content(
-                        self.user_identity,
-                        draft.id,
-                        self.release_file_name,
-                        file_stream,
-                        uow=uow,
+                    draft = current_rdm_records_service.update_draft(
+                        self.user_identity, new_version_draft.id, data, uow=uow
                     )
 
                 draft_file_service.commit_file(
