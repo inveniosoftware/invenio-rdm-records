@@ -15,7 +15,12 @@
 from datetime import timezone
 
 from marshmallow import Schema, fields, validate
-from marshmallow_utils.fields import ISODateString, SanitizedUnicode, TZDateTime
+from marshmallow_utils.fields import (
+    ISODateString,
+    SanitizedHTML,
+    SanitizedUnicode,
+    TZDateTime,
+)
 from marshmallow_utils.permissions import FieldPermissionsMixin
 
 
@@ -65,8 +70,7 @@ class AccessSettingsSchema(Schema):
     allow_user_requests = fields.Boolean()
     allow_guest_requests = fields.Boolean()
 
-    # accept conditions text
-    accept_conditions_text = fields.String()
+    accept_conditions_text = SanitizedHTML()
 
 
 class ParentAccessSchema(Schema, FieldPermissionsMixin):
