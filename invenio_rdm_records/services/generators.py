@@ -171,7 +171,7 @@ class IfExternalDOIRecord(ConditionalGenerator):
 
     def _condition(self, record=None, **kwargs):
         """Check if the record has an external DOI."""
-        return record["pids"]["doi"]["provider"] == "external"
+        return record.get("pids", {}).get("doi", {}).get("provider") == "external"
 
 
 class RecordOwners(Generator):
