@@ -16,6 +16,7 @@ from datetime import timezone
 
 from marshmallow import Schema, fields, validate
 from marshmallow_utils.fields import ISODateString, SanitizedUnicode, TZDateTime
+from marshmallow_utils.permissions import FieldPermissionsMixin
 
 
 class GrantSubject(Schema):
@@ -68,8 +69,16 @@ class AccessSettingsSchema(Schema):
     accept_conditions_text = fields.String()
 
 
-class ParentAccessSchema(Schema):
+class ParentAccessSchema(Schema, FieldPermissionsMixin):
     """Access schema."""
+
+    field_dump_permissions = {
+        # omit fields from dumps except for users with 'manage' permissions
+        # allow only 'settings'
+        "grants": "manage",
+        "owned_by": "manage",
+        "links": "manage",
+    }
 
     grants = fields.List(fields.Nested(Grant))
     owned_by = fields.Nested(Agent)

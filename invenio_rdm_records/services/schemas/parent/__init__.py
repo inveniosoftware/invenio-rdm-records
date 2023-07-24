@@ -33,9 +33,6 @@ class RDMParentSchema(ParentSchema, FieldPermissionsMixin):
     """Record schema."""
 
     field_dump_permissions = {
-        # omit the 'access' field from dumps, except for users with
-        # 'manage' permissions
-        "access": "manage",
         # omit 'review' from dumps except for users with curate permission
         "review": "review",
     }
