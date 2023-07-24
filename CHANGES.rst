@@ -10,6 +10,13 @@
 Changes
 =======
 
+Version 4.12.0 (2023-07-24)
+
+- access: allow dump of parent.access.settings field
+- github: fix metadata validation issues
+- github: add badges support
+- records: add parent access settings schema
+
 Version 4.11.0 (2023-07-21)
 
 - add parent doi resolution
