@@ -10,6 +10,10 @@
 Changes
 =======
 
+Version 4.12.1 (2023-07-25)
+
+- permissions: fix external doi versioning generator
+
 Version 4.12.0 (2023-07-24)
 
 - access: allow dump of parent.access.settings field
