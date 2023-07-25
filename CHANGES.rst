@@ -10,6 +10,10 @@
 Changes
 =======
 
+Version 4.12.2 (2023-07-25)
+
+- permissions: fix permission syntax error
+
 Version 4.12.1 (2023-07-25)
 
 - permissions: fix external doi versioning generator
