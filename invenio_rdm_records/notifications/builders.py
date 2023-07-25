@@ -13,8 +13,8 @@ from invenio_notifications.models import Notification
 from invenio_notifications.registry import EntityResolverRegistry
 from invenio_notifications.services.builders import NotificationBuilder
 from invenio_notifications.services.generators import EntityResolve, UserEmailBackend
+from invenio_requests.notifications.filters import UserRecipientFilter
 from invenio_users_resources.notifications.filters import UserPreferencesRecipientFilter
-from invenio_users_resources.notifications.generators import UserRecipient
 
 
 class CommunityInclusionNotificationBuilder(NotificationBuilder):
@@ -41,11 +41,11 @@ class CommunityInclusionNotificationBuilder(NotificationBuilder):
 
     recipients = [
         CommunityMembersRecipient(key="request.receiver", roles=["curator", "owner"]),
-        UserRecipient(key="request.created_by"),
     ]
 
     recipient_filters = [
         UserPreferencesRecipientFilter(),
+        UserRecipientFilter(key="request.created_by"),
     ]
 
     recipient_backends = [
