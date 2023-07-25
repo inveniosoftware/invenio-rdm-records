@@ -15,24 +15,26 @@
 %}
 
 {%- block subject -%}
-    New record submission for your community {{ community_title }} submitted by {{ creator_name }}
+   {{ _("New record submission for your community '{community_title}' submitted by '{creator_name}'").format(community_title=community_title, creator_name=creator_name) }}
 {%- endblock subject -%}
 
 {%- block html_body -%}
-<p>The record "{{ record_title }}" was submitted to your community "{{ community_title }}" by "{{ creator_name }}".</p>
+<p>
+    {{ _("The record '{record_title}' was submitted to your community '{community_title}' by '{creator_name}'.").format(record_title=record_title, community_title=community_title, creator_name=creator_name) }}
+</p>
 
-<a href="{{ request_link }}" class="button">Review the submission_request</a>
+<a href="{{ request_link }}" class="button"> {{ _("Review the submission request") }}</a>
 {%- endblock html_body -%}
 
 {%- block plain_body -%}
-The record "{{ record_title }}" was submitted to your community "{{ community_title }}" by "{{ creator_name }}".
+    {{ _("The record '{record_title}' was submitted to your community '{community_title}' by '{creator_name}'.").format(record_title=record_title, community_title=community_title, creator_name=creator_name) }}
 
-Review the submission request: {{ request_link }}
+    {{ _("Review the submission request: {request_link}").format(request_link=request_link) }}
 {%- endblock plain_body -%}
 
 {# Markdown for Slack/Mattermost/chat #}
 {%- block md_body -%}
-The record *{{ record_title }}* was submitted to your community *{{ community_title }}* by *{{ creator_name }}*.
+    {{ _("The record *{record_title}* was submitted to your community *{community_title}* by *{creator_name}*.").format(record_title=record_title, community_title=community_title, creator_name=creator_name) }}
 
-[Review the submission request]({{ request_link }})
+    [{{ _("Review the submission request") }}]({{ request_link }})
 {%- endblock md_body -%}
