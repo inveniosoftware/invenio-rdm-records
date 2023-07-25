@@ -609,7 +609,14 @@ def test_review_gives_access_to_curator(running_app, draft, service, requests_se
 
 
 def test_review_notification(
-    draft, running_app, community, service, requests_service, monkeypatch
+    draft_for_open_review,
+    running_app,
+    open_review_community,
+    curator,
+    community_owner,
+    service,
+    inviter,
+    monkeypatch,
 ):
     """Test notifcation being built on review submit."""
 
@@ -629,8 +636,13 @@ def test_review_notification(
         },
     )
 
+    inviter(curator.id, open_review_community.id, "curator")
+
     # check draft status
-    assert draft["status"] == DraftStatus.review_to_draft_statuses["created"]
+    assert (
+        draft_for_open_review["status"]
+        == DraftStatus.review_to_draft_statuses["created"]
+    )
     assert not mock_build.called
 
     mail = running_app.app.extensions.get("mail")
@@ -638,13 +650,18 @@ def test_review_notification(
 
     with mail.record_messages() as outbox:
         # Validate that email was sent
-        req = service.review.submit(running_app.superuser_identity, draft.id).to_dict()
+        req = service.review.submit(
+            community_owner.identity, draft_for_open_review.id
+        ).to_dict()
         assert req["status"] == "submitted"
         # check notification is build on submit
         assert mock_build.called
         assert len(outbox) == 1
+        sent_mail = outbox[0]
         # TODO: update to `req["links"]["self_html"]` when addressing https://github.com/inveniosoftware/invenio-rdm-records/issues/1327
-        assert "/me/requests/{}".format(req["id"]) in outbox[0].html
+        assert "/me/requests/{}".format(req["id"]) in sent_mail.html
+        assert community_owner.email not in sent_mail.recipients
+        assert curator.email in sent_mail.recipients
 
 
 # TODO tests:
