@@ -221,6 +221,9 @@
                   },
                   "accept_conditions_text": {
                     "type": "text"
+                  },
+                  "secret_link_expiration": {
+                    "type": "integer"
                   }
                 }
               }
