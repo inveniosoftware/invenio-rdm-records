@@ -78,6 +78,11 @@ class RDMRecordResource(RecordResource):
                 p(routes["guest-access-request"]),
                 self.create_guest_access_request_token,
             ),
+            route(
+                "PUT",
+                p(routes["access-request-settings"]),
+                self.update_access_settings,
+            ),
         ]
 
         return url_rules
@@ -191,6 +196,17 @@ class RDMRecordResource(RecordResource):
             data=resource_requestctx.data,
         )
         return item, 200
+
+    @request_view_args
+    @request_data
+    def update_access_settings(self):
+        """Update record access settings."""
+        item = self.service.access.update_access_settings(
+            id_=resource_requestctx.view_args["pid_value"],
+            identity=g.identity,
+            data=resource_requestctx.data,
+        )
+        return item.to_dict(), 200
 
 
 class RDMRecordCommunitiesResource(ErrorHandlersMixin, Resource):

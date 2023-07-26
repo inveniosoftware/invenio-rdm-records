@@ -9,7 +9,6 @@
 # it under the terms of the MIT License; see LICENSE file for more details.
 
 """RDM record access settings service."""
-
 from datetime import datetime, timedelta
 
 import arrow
@@ -70,6 +69,11 @@ class RecordAccessService(RecordService):
     def schema_grant(self):
         """Schema for secret links."""
         return ServiceSchemaWrapper(self, schema=self.config.schema_grant)
+
+    @property
+    def schema_access_settings(self):
+        """Schema for record parent."""
+        return ServiceSchemaWrapper(self, schema=self.config.schema_access_settings)
 
     @property
     def expandable_fields(self):
@@ -748,4 +752,39 @@ class RecordAccessService(RecordService):
             "submit",
             data=comment,
             uow=uow,
+        )
+
+    @unit_of_work()
+    def update_access_settings(
+        self,
+        identity,
+        id_,
+        data,
+        uow=None,
+    ):
+        """Update access settings for a record (resp. its parent)."""
+        record, parent = self.get_parent_and_record_or_draft(id_)
+
+        # Permissions
+        self.require_permission(identity, "manage", record=record)
+
+        # Validation
+        data, __ = self.schema_access_settings.load(
+            data, context=dict(identity=identity), raise_errors=True
+        )
+
+        # Update
+        setattr(parent.access, "settings", data)
+
+        # Commit
+        uow.register(RecordCommitOp(parent))
+
+        # Index all child records of the parent
+        self._index_related_records(record, parent, uow=uow)
+
+        return self.result_item(
+            self,
+            identity,
+            record,
+            links_tpl=self.links_item_tpl,
         )

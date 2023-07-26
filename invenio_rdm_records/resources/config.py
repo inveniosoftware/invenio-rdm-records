@@ -103,6 +103,7 @@ class RDMRecordResourceConfig(RecordResourceConfig, ConfiguratorMixin):
     # Access requests
     routes["user-access-request"] = "/<pid_value>/access/request"
     routes["guest-access-request"] = "/<pid_value>/access/request/guest"
+    routes["access-request-settings"] = "/<pid_value>/access"
 
     request_view_args = {
         "pid_value": ma.fields.Str(),
