@@ -102,6 +102,10 @@
             "accept_conditions_text": {
               "description": "Custom description for access conditions to be displayed rather than the default text.",
               "type": ["string", "null"]
+            },
+            "secret_link_expiration": {
+              "description": "The default amount of days before secret link expires.",
+              "type": ["number", "null"]
             }
           }
         }
