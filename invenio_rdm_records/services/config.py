@@ -71,6 +71,7 @@ from .permissions import RDMRecordPermissionPolicy
 from .result_items import GrantItem, GrantList, SecretLinkItem, SecretLinkList
 from .schemas import RDMParentSchema, RDMRecordSchema
 from .schemas.community_records import CommunityRecordsSchema
+from .schemas.parent.access import AccessSettingsSchema
 from .schemas.parent.access import Grant as GrantSchema
 from .schemas.parent.access import SecretLink as SecretLinkSchema
 from .schemas.record_communities import RecordCommunitiesSchema
@@ -230,6 +231,7 @@ class RDMRecordServiceConfig(RecordServiceConfig, ConfiguratorMixin):
     # Schemas
     schema = RDMRecordSchema
     schema_parent = RDMParentSchema
+    schema_access_settings = AccessSettingsSchema
     schema_secret_link = SecretLinkSchema
     schema_grant = GrantSchema
 

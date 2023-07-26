@@ -8,39 +8,12 @@
 
 """Access system field."""
 
-from flask import current_app
 from invenio_records.systemfields import SystemField
 
+from ..access_settings import AccessSettings
 from ..grants import Grants
 from ..links import Links
 from ..owners import Owner
-
-
-class AccessSettings:
-    """Access settings for a parent record."""
-
-    def __init__(self, settings_dict):
-        """Constructor."""
-        self.allow_user_requests = settings_dict.get("allow_user_requests", False)
-        self.allow_guest_requests = settings_dict.get("allow_guest_requests", False)
-        self.accept_conditions_text = settings_dict.get("accept_conditions_text", None)
-
-    def dump(self):
-        """Dump the record as dictionary."""
-        return {
-            "allow_user_requests": self.allow_user_requests,
-            "allow_guest_requests": self.allow_guest_requests,
-            "accept_conditions_text": self.accept_conditions_text,
-        }
-
-    def __repr__(self):
-        """Return repr(self)."""
-        return "<{} requests: {}/{}, text: {}>".format(
-            type(self).__name__,
-            self.allow_guest_requests,
-            self.allow_user_requests,
-            bool(self.accept_conditions_text),
-        )
 
 
 class ParentRecordAccess:
@@ -84,7 +57,7 @@ class ParentRecordAccess:
         self._owned_by = owned_by if owned_by else owner_cls(None)
         self.grants = grants if grants else grants_cls()
         self.links = links if links else links_cls()
-        self.settings = settings if settings else settings_cls({})
+        self._settings = settings if settings else settings_cls({})
         self.errors = []
 
     @property
@@ -106,6 +79,16 @@ class ParentRecordAccess:
     def owner(self, value):
         """Setter for the owner property."""
         self._owned_by = self.owner_cls(value)
+
+    @property
+    def settings(self):
+        """An alias for the settings property."""
+        return self._settings
+
+    @settings.setter
+    def settings(self, value):
+        """Setter for the settings property."""
+        self._settings = self.settings_cls(value)
 
     def dump(self):
         """Dump the field values as dictionary."""

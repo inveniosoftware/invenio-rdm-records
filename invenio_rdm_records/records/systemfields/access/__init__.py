@@ -7,6 +7,7 @@
 
 """Access system field for RDM Records."""
 
+from .access_settings import AccessSettings
 from .embargo import Embargo
 from .field import (
     ParentRecordAccess,
@@ -26,6 +27,7 @@ __all__ = (
     "Link",
     "Links",
     "Owner",
+    "AccessSettings",
     "ParentRecordAccess",
     "ParentRecordAccessField",
     "Protection",

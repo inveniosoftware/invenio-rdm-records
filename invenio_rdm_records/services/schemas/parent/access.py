@@ -70,7 +70,7 @@ class AccessSettingsSchema(Schema):
     allow_user_requests = fields.Boolean()
     allow_guest_requests = fields.Boolean()
 
-    accept_conditions_text = SanitizedHTML()
+    accept_conditions_text = SanitizedHTML(allow_none=True)
 
 
 class ParentAccessSchema(Schema, FieldPermissionsMixin):
