@@ -7,7 +7,7 @@
 
 """Test record."""
 
-from invenio_rdm_records.records.api import RDMDraft
+from invenio_rdm_records.records.api import RDMDraft, RDMRecord
 
 
 def test_idempotence_dumps_loads(running_app, minimal_record):

@@ -32,6 +32,9 @@ names:
 relationtypes:
   pid-type: rlt
   data-file: vocabularies/relation_types.yaml
+removalreasons:
+  pid-type: rem
+  data-file: vocabularies/removal_reasons.yaml
 # 'subjects' type needs to be created to prevent querying errors in the facets
 # but they are highly dependent on the kind of InvenioRDM instance, so no
 # defaults are provided

@@ -1,0 +1,48 @@
+- id: duplicate
+  title:
+    en: Duplicate of another record
+    de: Duplikat eines anderen Eintrags
+- id: retracted
+  title:
+    en: Retraction/Withdrawal of a record
+    de: Widerruf eines Eintrags
+- id: replaced
+  title:
+    en: Substitution
+    de: Ersetzung
+- id: spam
+  title:
+    en: Spam
+    de: Spam
+- id: test-record
+  title:
+    en: Test upload of a record
+    de: Test-Upload eines Eintrags
+- id: copyright
+  title:
+    en: Copyright infringement
+    de: Urheberrechtsverletzung
+- id: personal-data
+  title:
+    en: Personal data issue
+    de: Problem mit personenbezogenen Daten
+- id: take-down-request
+  title:
+    en: Take-down request
+    de: Deaktivierungsanfrage
+- id: disputed-authorship
+  title:
+    en: Disputed authorship
+    de: Umstrittene Urheberschaft
+- id: misconduct
+  title:
+    en: Misconduct
+    de: Fehlverhalten
+- id: fraud
+  title:
+    en: Fraud
+    de: Betrug
+- id: out-of-scope
+  title:
+    en: Content out of scope for repository
+    de: Inhalt außerhalb des Rahmens des Repositoriums

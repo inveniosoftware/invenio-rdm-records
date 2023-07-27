@@ -49,7 +49,9 @@ from .systemfields import (
     HasDraftCheckField,
     ParentRecordAccessField,
     RecordAccessField,
+    RecordDeletionStatusField,
     RecordStatisticsField,
+    TombstoneField,
 )
 from .systemfields.draft_status import DraftStatus
 
@@ -227,6 +229,12 @@ class CommonFieldsMixin:
             cache_key="relation_types",
             relation_field="relation_type",
         ),
+        removal_reason=PIDRelation(
+            "tombstone.removal_reason",
+            keys=["title"],
+            pid_field=Vocabulary.pid.with_type_ctx("removalreasons"),
+            cache_key="removal_reason",
+        ),
         custom=CustomFieldsRelation("RDM_CUSTOM_FIELDS"),
     )
 
@@ -371,6 +379,10 @@ class RDMRecord(CommonFieldsMixin, Record):
     status = DraftStatus()
 
     stats = RecordStatisticsField()
+
+    deletion_status = RecordDeletionStatusField()
+
+    tombstone = TombstoneField()
 
 
 RDMFileRecord.record_cls = RDMRecord
