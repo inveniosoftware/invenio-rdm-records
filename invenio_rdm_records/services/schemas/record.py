@@ -26,6 +26,7 @@ from .metadata import MetadataSchema
 from .parent import RDMParentSchema
 from .pids import PIDSchema
 from .stats import StatsSchema
+from .tombstone import DeletionStatusSchema, TombstoneSchema
 from .versions import VersionsSchema
 
 
@@ -56,7 +57,6 @@ class RDMRecordSchema(RecordSchema, FieldPermissionsMixin):
     custom_fields = NestedAttribute(
         partial(CustomFieldsSchema, fields_var="RDM_CUSTOM_FIELDS")
     )
-    # tombstone
     # provenance
     access = NestedAttribute(AccessSchema)
     files = NestedAttribute(FilesSchema)
@@ -65,14 +65,16 @@ class RDMRecordSchema(RecordSchema, FieldPermissionsMixin):
     revision = fields.Integer(dump_only=True)
     versions = NestedAttribute(VersionsSchema, dump_only=True)
     parent = NestedAttribute(RDMParentSchema)
-    is_published = fields.Boolean(dump_only=True)
+    is_deleted = fields.Boolean(dump_only=True)
     status = fields.String(dump_only=True)
+
+    tombstone = fields.Nested(TombstoneSchema, dump_only=True)
+    deletion_status = fields.Nested(DeletionStatusSchema, dump_only=True)
 
     stats = NestedAttribute(StatsSchema, dump_only=True)
     # schema_version = fields.Integer(dump_only=True)
 
-    @post_dump
-    def default_nested(self, data, many, **kwargs):
+    def default_nested(self, data):
         """Serialize fields as empty dict for partial drafts.
 
         Cannot use marshmallow for Nested fields due to issue:
@@ -87,4 +89,25 @@ class RDMRecordSchema(RecordSchema, FieldPermissionsMixin):
         if not data.get("custom_fields"):
             data["custom_fields"] = {}
 
+        return data
+
+    def hide_tombstone_or_metadata(self, data):
+        """Hide tombstone info if the record isn't deleted and metadata if it is."""
+        is_deleted = data.get("deletion_status", {}).get("is_deleted", False)
+
+        if is_deleted:
+            keys_to_keep = ["tombstone", "deletion_status", "id", "pids", "links"]
+            for key in [k for k in data if k in keys_to_keep]:
+                data.pop(key, None)
+
+        else:
+            data.pop("tombstone", None)
+
+        return data
+
+    @post_dump
+    def post_dump(self, data, many, **kwargs):
+        """Perform some updates on the dumped data."""
+        data = self.default_nested(data)
+        data = self.hide_tombstone_or_metadata(data)
         return data

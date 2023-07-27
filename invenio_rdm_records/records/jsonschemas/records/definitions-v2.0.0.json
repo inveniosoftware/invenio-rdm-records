@@ -406,7 +406,17 @@
     "additionalProperties": false,
     "properties": {
       "user": {
-        "type": "integer"
+        "type": ["string", "integer"]
+      }
+    }
+  },
+  "removal_reason": {
+    "type": "object",
+    "additionalProperties": false,
+    "description": "Reason for the removal of a record.",
+    "properties": {
+      "id": {
+        "$ref": "local://definitions-v1.0.0.json#/identifier"
       }
     }
   }

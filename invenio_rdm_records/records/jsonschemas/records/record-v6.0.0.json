@@ -352,24 +352,32 @@
     },
     "tombstone": {
       "type": "object",
-      "description": "Tombstone for the record.",
+      "description": "Tombstone information for the record.",
       "additionalProperties": false,
       "properties": {
-        "reason": {
-          "type": "string",
-          "description": "Reason for removal."
+        "removal_reason": {
+          "$ref": "local://records/definitions-v2.0.0.json#/removal_reason",
+          "description": "Reason for record removal."
         },
-        "category": {
+        "note": {
           "type": "string",
-          "description": "Category for the removal."
+          "description": "Public note about the removal."
         },
         "removed_by": {
           "$ref": "local://records/definitions-v2.0.0.json#/agent"
         },
-        "timestamp": {
+        "removal_date": {
           "type": "string",
           "description": "ISO8601 formatted timestamp in UTC.",
           "format": "date-time"
+        },
+        "citation_text": {
+          "type": "string",
+          "description": "The record citation text to be displayed on the tombstone page."
+        },
+        "is_visible": {
+          "type": "boolean",
+          "description": "Whether or not the tombstone page is publicly visible."
         }
       }
     },
