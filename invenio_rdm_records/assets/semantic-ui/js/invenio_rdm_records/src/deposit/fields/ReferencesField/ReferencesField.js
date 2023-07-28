@@ -20,42 +20,40 @@ export class ReferencesField extends Component {
     const { fieldPath, label, labelIcon, required, showEmptyValue } = this.props;
 
     return (
-      <>
-        <ArrayField
-          addButtonLabel={i18next.t("Add reference")}
-          defaultNewValue={emptyReference}
-          fieldPath={fieldPath}
-          label={<FieldLabel htmlFor={fieldPath} icon={labelIcon} label={label} />}
-          required={required}
-          showEmptyValue={showEmptyValue}
-        >
-          {({ arrayHelpers, indexPath }) => {
-            const fieldPathPrefix = `${fieldPath}.${indexPath}`;
+      <ArrayField
+        addButtonLabel={i18next.t("Add reference")}
+        defaultNewValue={emptyReference}
+        fieldPath={fieldPath}
+        label={<FieldLabel htmlFor={fieldPath} icon={labelIcon} label={label} />}
+        required={required}
+        showEmptyValue={showEmptyValue}
+      >
+        {({ arrayHelpers, indexPath }) => {
+          const fieldPathPrefix = `${fieldPath}.${indexPath}`;
 
-            return (
-              <GroupField optimized>
-                <TextField
-                  fieldPath={`${fieldPathPrefix}.reference`}
-                  label={i18next.t("Reference string")}
-                  required
-                  width={16}
-                />
+          return (
+            <GroupField optimized>
+              <TextField
+                fieldPath={`${fieldPathPrefix}.reference`}
+                label={i18next.t("Reference string")}
+                required
+                width={16}
+              />
 
-                <Form.Field>
-                  <Button
-                    aria-label={i18next.t("Remove field")}
-                    className="close-btn"
-                    icon
-                    onClick={() => arrayHelpers.remove(indexPath)}
-                  >
-                    <Icon name="close" />
-                  </Button>
-                </Form.Field>
-              </GroupField>
-            );
-          }}
-        </ArrayField>
-      </>
+              <Form.Field>
+                <Button
+                  aria-label={i18next.t("Remove field")}
+                  className="close-btn"
+                  icon
+                  onClick={() => arrayHelpers.remove(indexPath)}
+                >
+                  <Icon name="close" />
+                </Button>
+              </Form.Field>
+            </GroupField>
+          );
+        }}
+      </ArrayField>
     );
   }
 }

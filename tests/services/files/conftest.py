@@ -16,33 +16,6 @@ fixtures are available.
 from io import BytesIO
 
 import pytest
-from invenio_app.factory import create_api
-
-
-@pytest.fixture(scope="module")
-def create_app(instance_path):
-    """Application factory fixture."""
-    return create_api
-
-
-def link(url):
-    """Strip the host part of a link."""
-    api_prefix = "https://127.0.0.1:5000/api"
-    if url.startswith(api_prefix):
-        return url[len(api_prefix) :]
-
-
-@pytest.fixture(scope="function")
-def app_with_allowed_edits(running_app):
-    """Allow editing of published records."""
-    running_app.app.config["RDM_LOCK_EDIT_PUBLISHED_FILES"] = lambda x: False
-    return running_app
-
-
-@pytest.fixture(scope="function")
-def app_with_deny_edits(running_app):
-    """Deny editing of published records."""
-    running_app.app.config["RDM_LOCK_EDIT_PUBLISHED_FILES"] = lambda x: True
 
 
 def init_file(client, recid, key, headers):
@@ -52,6 +25,30 @@ def init_file(client, recid, key, headers):
         headers=headers,
         json=[{"key": key}],
     )
+
+
+@pytest.fixture(scope="function")
+def db(database):
+    """Overrides the `pytest_invenio.db` to force db recreation.
+
+    Scope: function
+
+    Force the recreation of the database as nested sessions are misbehaving with
+    sqlalchemy-continuum.
+    """
+    yield database
+
+
+@pytest.fixture(scope="function")
+def app_with_allowed_edits(running_app):
+    """This app allows the edit of files after publish.
+
+    Note: this fixture utilizes an overriden `db` fixture that doesn't use nested
+    sessions as we want to test sqlalchemy-continuum and the latter misbehaves when the
+    default `pytest_invenio.db` fixture is used. Thus,
+    """
+    running_app.app.config["RDM_LOCK_EDIT_PUBLISHED_FILES"] = lambda x: False
+    return running_app
 
 
 def upload_file(client, recid, key):

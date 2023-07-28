@@ -39,6 +39,7 @@ export const NewVersionButton = ({ onError, record, disabled, ...uiProps }) => {
           loading={loading}
           icon
           labelPosition="left"
+          disabled={disabled}
           {...uiProps}
         >
           <Icon name="tag" />

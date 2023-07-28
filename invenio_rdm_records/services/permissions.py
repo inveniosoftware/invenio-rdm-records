@@ -196,7 +196,7 @@ class RDMRecordPermissionPolicy(RecordPermissionPolicy):
     can_remove_record = [CommunityCurators()]
 
     #
-    # Media files
+    # Media files - draft
     #
     can_draft_media_create_files = can_review
     can_draft_media_read_files = can_review
@@ -213,6 +213,24 @@ class RDMRecordPermissionPolicy(RecordPermissionPolicy):
     ]
     can_draft_media_update_files = can_review
     can_draft_media_delete_files = can_review
+
+    #
+    # Media files - record
+    #
+    can_media_read_files = [
+        IfRestricted("record", then_=can_view, else_=can_all),
+        ResourceAccessToken("read"),
+    ]
+    can_media_get_content_files = [
+        # note: even though this is closer to business logic than permissions,
+        # it was simpler and less coupling to implement this as permission check
+        IfFileIsLocal(then_=can_read, else_=[SystemProcess()])
+    ]
+    can_media_create__files = [Disable()]
+    can_media_set_content_files = [Disable()]
+    can_media_commit_files = [Disable()]
+    can_media_update_files = [Disable()]
+    can_media_delete_files = [Disable()]
 
     #
     # Disabled actions (these should not be used or changed)
