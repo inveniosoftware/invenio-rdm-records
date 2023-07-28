@@ -26,7 +26,7 @@ import {
 } from "semantic-ui-react";
 import { humanReadableBytes } from "react-invenio-forms";
 
-const FileTableHeader = ({ isDraftRecord }) => (
+const FileTableHeader = ({ filesLocked }) => (
   <Table.Header>
     <Table.Row>
       <Table.HeaderCell>
@@ -38,24 +38,24 @@ const FileTableHeader = ({ isDraftRecord }) => (
       </Table.HeaderCell>
       <Table.HeaderCell>{i18next.t("Filename")}</Table.HeaderCell>
       <Table.HeaderCell>{i18next.t("Size")}</Table.HeaderCell>
-      {isDraftRecord && (
+      {!filesLocked && (
         <Table.HeaderCell textAlign="center">{i18next.t("Progress")}</Table.HeaderCell>
       )}
-      {isDraftRecord && <Table.HeaderCell />}
+      {!filesLocked && <Table.HeaderCell />}
     </Table.Row>
   </Table.Header>
 );
 
 FileTableHeader.propTypes = {
-  isDraftRecord: PropTypes.bool,
+  filesLocked: PropTypes.bool,
 };
 
 FileTableHeader.defaultProps = {
-  isDraftRecord: false,
+  filesLocked: false,
 };
 
 const FileTableRow = ({
-  isDraftRecord,
+  filesLocked,
   file,
   deleteFile,
   defaultPreview,
@@ -125,7 +125,7 @@ const FileTableRow = ({
       <Table.Cell data-label={i18next.t("Size")} width={2}>
         {file.size ? humanReadableBytes(file.size, decimalSizeDisplay) : ""}
       </Table.Cell>
-      {isDraftRecord && (
+      {!filesLocked && (
         <Table.Cell
           className="file-upload-pending"
           data-label={i18next.t("Progress")}
@@ -145,7 +145,7 @@ const FileTableRow = ({
           {file.uploadState?.isPending && <span>{i18next.t("Pending")}</span>}
         </Table.Cell>
       )}
-      {isDraftRecord && (
+      {!filesLocked && (
         <Table.Cell textAlign="right" width={2}>
           {(file.uploadState?.isFinished || file.uploadState?.isFailed) &&
             (isDeleting ? (
@@ -180,7 +180,7 @@ const FileTableRow = ({
 };
 
 FileTableRow.propTypes = {
-  isDraftRecord: PropTypes.bool,
+  filesLocked: PropTypes.bool,
   file: PropTypes.object,
   deleteFile: PropTypes.func.isRequired,
   defaultPreview: PropTypes.string,
@@ -189,21 +189,21 @@ FileTableRow.propTypes = {
 };
 
 FileTableRow.defaultProps = {
-  isDraftRecord: false,
+  filesLocked: false,
   file: undefined,
   defaultPreview: undefined,
   decimalSizeDisplay: false,
 };
 
 const FileUploadBox = ({
-  isDraftRecord,
+  filesLocked,
   filesList,
   dragText,
   uploadButtonIcon,
   uploadButtonText,
   openFileDialog,
 }) =>
-  isDraftRecord && (
+  !filesLocked && (
     <Segment
       basic
       padded="very"
@@ -236,7 +236,7 @@ const FileUploadBox = ({
   );
 
 FileUploadBox.propTypes = {
-  isDraftRecord: PropTypes.bool.isRequired,
+  filesLocked: PropTypes.bool.isRequired,
   filesList: PropTypes.array,
   dragText: PropTypes.string,
   uploadButtonIcon: PropTypes.node,
@@ -252,23 +252,18 @@ FileUploadBox.defaultProps = {
   openFileDialog: null,
 };
 
-const FilesListTable = ({
-  isDraftRecord,
-  filesList,
-  deleteFile,
-  decimalSizeDisplay,
-}) => {
+const FilesListTable = ({ filesLocked, filesList, deleteFile, decimalSizeDisplay }) => {
   const { setFieldValue, values: formikDraft } = useFormikContext();
   const defaultPreview = _get(formikDraft, "files.default_preview", "");
   return (
     <Table>
-      <FileTableHeader isDraftRecord={isDraftRecord} />
+      <FileTableHeader filesLocked={filesLocked} />
       <Table.Body>
         {filesList.map((file) => {
           return (
             <FileTableRow
               key={file.name}
-              isDraftRecord={isDraftRecord}
+              filesLocked={filesLocked}
               file={file}
               deleteFile={deleteFile}
               defaultPreview={defaultPreview}
@@ -285,14 +280,14 @@ const FilesListTable = ({
 };
 
 FilesListTable.propTypes = {
-  isDraftRecord: PropTypes.bool,
+  filesLocked: PropTypes.bool,
   filesList: PropTypes.array,
   deleteFile: PropTypes.func,
   decimalSizeDisplay: PropTypes.bool,
 };
 
 FilesListTable.defaultProps = {
-  isDraftRecord: undefined,
+  filesLocked: undefined,
   filesList: undefined,
   deleteFile: undefined,
   decimalSizeDisplay: undefined,
@@ -341,7 +336,7 @@ FileUploaderArea.propTypes = {
   dropzoneParams: PropTypes.object,
   filesEnabled: PropTypes.bool.isRequired,
   filesList: PropTypes.array,
-  isDraftRecord: PropTypes.bool,
+  filesLocked: PropTypes.bool,
   links: PropTypes.object,
   setDefaultPreviewFile: PropTypes.func,
   uploadButtonIcon: PropTypes.string,
@@ -354,7 +349,7 @@ FileUploaderArea.defaultProps = {
   dragText: undefined,
   dropzoneParams: undefined,
   filesList: undefined,
-  isDraftRecord: false,
+  filesLocked: false,
   links: undefined,
   setDefaultPreviewFile: undefined,
   uploadButtonIcon: undefined,
