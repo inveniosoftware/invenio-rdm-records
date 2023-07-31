@@ -1,6 +1,6 @@
 #
 # This file is part of Invenio.
-# Copyright (C) 2016-2018 CERN.
+# Copyright (C) 2023 CERN.
 #
 # Invenio is free software; you can redistribute it and/or modify it
 # under the terms of the MIT License; see LICENSE file for more details.
@@ -14,7 +14,7 @@ from sqlalchemy_utils import JSONType, UUIDType
 
 # revision identifiers, used by Alembic.
 revision = "ff860d48fb4b"
-down_revision = "9e0ac518b9df"
+down_revision = "cfcb8cb78708"
 branch_labels = ()
 depends_on = None
 
