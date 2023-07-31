@@ -9,6 +9,7 @@
 """DataCite datacite_provider tests."""
 
 import pytest
+from datacite.errors import DataCiteError
 from flask import current_app
 from invenio_access.permissions import system_identity
 from invenio_pidstore.errors import PIDDoesNotExistError
@@ -25,7 +26,7 @@ from invenio_rdm_records.services.pids.providers import (
 @pytest.fixture()
 def datacite_provider(mocker):
     mocker.patch(
-        "invenio_rdm_records.services.pids.providers.datacite." + "DataCiteRESTClient"
+        "invenio_rdm_records.services.pids.providers.datacite.DataCiteRESTClient"
     )
 
     return DataCitePIDProvider("datacite", client=DataCiteClient("datacite"))
@@ -239,3 +240,37 @@ def test_datacite_provider_validation(record):
     ]
     assert expected == errors
     assert not success
+
+
+def test_log_error_msg(app, mocker):
+    """Test that error msgs are logged correctly."""
+
+    def _test(mock_fn, err, expected_msg):
+        DataCitePIDProvider._log_errors(err)
+        mock_fn.assert_called_once()
+        _, args, _ = mock_fn.mock_calls[0]
+        assert expected_msg in args[0]  # first arg contains the exception msg
+        mock_fn.reset_mock()
+
+    _log_fn = (
+        "invenio_rdm_records.services.pids.providers.datacite.current_app.logger.error"
+    )
+    with app.app_context():
+        _mocked_fn = mocker.patch(_log_fn)
+
+        err = DataCiteError.factory(204, "")
+        _test(_mocked_fn, err, "No content error:")
+
+        err = DataCiteError.factory(500, "down")
+        _test(_mocked_fn, err, "DataCite internal server error: down")
+
+        err = DataCiteError.factory(400, "{[")  # wrong json
+        _test(_mocked_fn, err, "Unknown error:")
+
+        err = DataCiteError.factory(
+            400, '{"errors": [{"source": "creator", "title": "reason"}]}'
+        )
+        _test(_mocked_fn, err, "Error in `creator`: reason")
+
+        err = DataCiteError.factory(403, '{"errors": [{"title": "Unauthorized"}]}')
+        _test(_mocked_fn, err, "Error: Unauthorized")
