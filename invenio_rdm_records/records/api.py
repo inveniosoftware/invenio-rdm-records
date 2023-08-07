@@ -47,6 +47,7 @@ from .dumpers import (
 )
 from .systemfields import (
     HasDraftCheckField,
+    IsVerifiedField,
     ParentRecordAccessField,
     RecordAccessField,
     RecordDeletionStatusField,
@@ -86,6 +87,8 @@ class RDMParent(ParentRecordBase):
     permission_flags = DictField("permission_flags")
 
     pids = DictField("pids")
+
+    is_verified = IsVerifiedField("is_verified")
 
 
 #
