@@ -46,6 +46,7 @@ class RDMParentSchema(ParentSchema, FieldPermissionsMixin):
         values=fields.Nested(PIDSchema),
         dump_only=True,
     )
+    is_verified = fields.Boolean(dump_only=True)
 
     # TODO: move to a reusable place (taken from records-resources)
     @pre_load

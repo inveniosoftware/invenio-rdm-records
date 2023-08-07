@@ -41,7 +41,7 @@ import arrow
 import pytest
 from dateutil import tz
 from flask import g
-from flask_principal import Identity, Need, UserNeed
+from flask_principal import Identity, Need, RoleNeed, UserNeed
 from flask_security import login_user
 from flask_security.utils import hash_password
 from invenio_access.models import ActionRoles
@@ -67,6 +67,9 @@ from invenio_requests.notifications.builders import (
     CommentRequestEventCreateNotificationBuilder,
 )
 from invenio_users_resources.proxies import current_users_service
+from invenio_requests.proxies import current_user_moderation_service as mod_service
+from invenio_users_resources.permissions import user_management_action
+from invenio_users_resources.records.api import UserAggregate
 from invenio_users_resources.services.schemas import (
     NotificationPreferences,
     UserPreferencesSchema,
@@ -927,6 +930,63 @@ def parent(app, db):
     """A parent record."""
     # The parent record is not automatically created when using RDMRecord.
     return RDMParent.create({})
+
+
+@pytest.fixture(scope="module")
+def moderator_role(app, database):
+    """Moderator role."""
+    REQUESTS_MODERATION_ROLE = app.config["REQUESTS_MODERATION_ROLE"]
+    mod_role = Role(name=REQUESTS_MODERATION_ROLE)
+    database.session.add(mod_role)
+
+    action_role = ActionRoles.create(action=user_management_action, role=mod_role)
+    database.session.add(action_role)
+    database.session.commit()
+    return mod_role
+
+
+@pytest.fixture(scope="module")
+def moderator_user(UserFixture, app, database, moderator_role):
+    """Admin user for requests."""
+    u = UserFixture(
+        email="mod@example.org",
+        password=hash_password("password"),
+        active=True,
+    )
+    u.create(app, database)
+    u.user.roles.append(moderator_role)
+
+    database.session.commit()
+    UserAggregate.index.refresh()
+    return u
+
+
+@pytest.fixture(scope="module")
+def mod_identity(app, moderator_user):
+    """Admin user for requests."""
+    idt = Identity(moderator_user.id)
+    REQUESTS_MODERATION_ROLE = app.config["REQUESTS_MODERATION_ROLE"]
+
+    # Add Role user_moderator
+    idt.provides.add(RoleNeed(REQUESTS_MODERATION_ROLE))
+    # Search requires user to be authenticated
+    idt.provides.add(Need(method="system_role", value="authenticated_user"))
+    return idt
+
+
+@pytest.fixture
+def mod_request_create(running_app, mod_identity):
+    """Yields a fixture that encloses a function to create a moderation request."""
+
+    def _request(user_id):
+        """Creates the request."""
+        request_item = mod_service.request_moderation(mod_identity, user_id=user_id)
+        assert request_item
+
+        return request_item
+
+    # Pass this closure to the test
+    yield _request
 
 
 @pytest.fixture()

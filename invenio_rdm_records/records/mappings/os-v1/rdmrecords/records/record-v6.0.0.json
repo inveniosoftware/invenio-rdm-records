@@ -239,6 +239,9 @@
               }
             }
           },
+          "is_verified": {
+            "type": "boolean"
+          },
           "permission_flags": {
             "type": "object",
             "dynamic": true

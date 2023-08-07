@@ -229,6 +229,9 @@
               }
             }
           },
+          "is_verified": {
+            "type": "boolean"
+          },
           "communities": {
             "properties": {
               "ids": {

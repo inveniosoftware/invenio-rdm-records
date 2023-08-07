@@ -10,6 +10,7 @@
 """Service level tests for Invenio RDM Records."""
 
 import pytest
+from invenio_records_resources.services.errors import PermissionDeniedError
 
 from invenio_rdm_records.proxies import current_rdm_records
 from invenio_rdm_records.services.errors import EmbargoNotLiftedError
@@ -127,3 +128,42 @@ def test_embargo_lift_with_error(running_app, search_clear, minimal_record):
     # Record should not be lifted since it didn't expire (until 3220)
     with pytest.raises(EmbargoNotLiftedError):
         service.lift_embargo(_id=record["id"], identity=superuser_identity)
+
+
+def test_reindex_user_records(running_app, uploader, minimal_record, search_clear):
+    """Tests reindexing of records belonging to a user.
+
+    Tests include:
+    - Reindexing does not fail and search results are the same
+    - Permissions - regular users can't trigger a reindex.
+    """
+    service = current_rdm_records.records_service
+    superuser_identity = running_app.superuser_identity
+    uploader_identity = uploader.identity
+
+    # Create a record
+    draft = service.create(uploader_identity, minimal_record)
+    assert draft
+    record = service.publish(id_=draft.id, identity=uploader_identity)
+    assert record
+
+    user_records_q = f"parent.access.owned_by.user:{uploader.id}"
+    res = service.search(uploader_identity, params={"q": user_records_q})
+    assert res.total == 1
+
+    # Reindex records
+    reindex_success = service.reindex_user_records(
+        identity=superuser_identity, id_=uploader.id
+    )
+    assert reindex_success
+
+    user_records_q = f"parent.access.owned_by.user:{uploader.id}"
+    res = service.search(uploader_identity, params={"q": user_records_q})
+    assert res.total == 1
+
+    # Permissions
+    with pytest.raises(PermissionDeniedError):
+        # Regular users can't trigger a reindex
+        reindex_success = service.reindex_user_records(
+            identity=uploader_identity, id_=uploader.id
+        )

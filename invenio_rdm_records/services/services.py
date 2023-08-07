@@ -128,3 +128,19 @@ class RDMRecordService(RecordService):
             record,
             links_tpl=self.links_item_tpl,
         )
+
+    @unit_of_work()
+    def reindex_user_records(self, identity, id_, uow=None):
+        """Reindexes all the records from a given user."""
+        self.require_permission(identity, "manage")
+
+        user_records_q = f"parent.access.owned_by.user:{id_}"
+        params = {"allversions": True, "q": user_records_q}
+
+        records = self.scan(identity, params=params)
+
+        for record in records:
+            record, parent = self._get_record_and_parent_by_id(record["id"])
+            self._index_related_records(record, parent, uow=uow)
+
+        return True

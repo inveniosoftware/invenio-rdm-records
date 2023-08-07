@@ -239,6 +239,9 @@
               }
             }
           },
+          "is_verified": {
+            "type": "boolean"
+          },
           "review": {
             "type": "object",
             "properties": {
