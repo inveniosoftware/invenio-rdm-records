@@ -29,7 +29,7 @@ export const CommunityListItem = ({ result }) => {
       content={
         displaySelected && itemSelected ? i18next.t("Selected") : i18next.t("Select")
       }
-      size="small"
+      size="tiny"
       positive={displaySelected && itemSelected}
       onClick={() => setLocalCommunity(result)}
       aria-label={i18next.t("Select {{title}}", { title: metadata.title })}
