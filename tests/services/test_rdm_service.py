@@ -130,40 +130,50 @@ def test_embargo_lift_with_error(running_app, search_clear, minimal_record):
         service.lift_embargo(_id=record["id"], identity=superuser_identity)
 
 
-def test_reindex_user_records(running_app, uploader, minimal_record, search_clear):
-    """Tests reindexing of records belonging to a user.
+def test_search_sort_verified_enabled(
+    running_app,
+    uploader,
+    minimal_record,
+    search_clear,
+    monkeypatch,
+    verified_user,
+):
+    """Tests sort by 'is_verified' field, when enabled.
 
-    Tests include:
-    - Reindexing does not fail and search results are the same
-    - Permissions - regular users can't trigger a reindex.
+    The flag "RDM_SEARCH_SORT_BY_VERIFIED" is monkeypatched (only modified for this test).
     """
     service = current_rdm_records.records_service
-    superuser_identity = running_app.superuser_identity
-    uploader_identity = uploader.identity
 
-    # Create a record
-    draft = service.create(uploader_identity, minimal_record)
-    assert draft
-    record = service.publish(id_=draft.id, identity=uploader_identity)
-    assert record
+    # NV : non-verified
+    nv_user = uploader
+    # V  : verified
+    v_user = verified_user
 
-    user_records_q = f"parent.access.owned_by.user:{uploader.id}"
-    res = service.search(uploader_identity, params={"q": user_records_q})
-    assert res.total == 1
+    # Create two records for two distinct users (verified record is published first)
+    v_draft = service.create(v_user.identity, minimal_record)
+    assert v_draft
+    v_record = service.publish(id_=v_draft.id, identity=v_user.identity)
+    assert v_record
 
-    # Reindex records
-    reindex_success = service.reindex_user_records(
-        identity=superuser_identity, id_=uploader.id
-    )
-    assert reindex_success
+    nv_draft = service.create(nv_user.identity, minimal_record)
+    assert nv_draft
+    nv_record = service.publish(id_=nv_draft.id, identity=nv_user.identity)
+    assert nv_record
 
-    user_records_q = f"parent.access.owned_by.user:{uploader.id}"
-    res = service.search(uploader_identity, params={"q": user_records_q})
-    assert res.total == 1
+    # Disable sort by 'verified' and sort by 'latest': unverified record will be the first
+    monkeypatch.setitem(running_app.app.config, "RDM_SEARCH_SORT_BY_VERIFIED", False)
+    res = service.search(nv_user.identity, sort="newest")
+    assert res.total == 2
+    hits = res.to_dict()["hits"]["hits"]
 
-    # Permissions
-    with pytest.raises(PermissionDeniedError):
-        # Regular users can't trigger a reindex
-        reindex_success = service.reindex_user_records(
-            identity=uploader_identity, id_=uploader.id
-        )
+    expected_order = [nv_record.id, v_record.id]
+    assert expected_order == [h["id"] for h in hits]
+
+    # Enable sort by 'verified' and sort by 'latest': unverified record will be the last
+    monkeypatch.setitem(running_app.app.config, "RDM_SEARCH_SORT_BY_VERIFIED", True)
+    res = service.search(nv_user.identity, sort="newest")
+    assert res.total == 2
+    hits = res.to_dict()["hits"]["hits"]
+
+    expected_order = [v_record.id, nv_record.id]
+    assert expected_order == [h["id"] for h in hits]

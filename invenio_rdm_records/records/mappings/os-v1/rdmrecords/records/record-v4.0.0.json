@@ -47,6 +47,9 @@
               }
             }
           },
+          "is_verified": {
+            "type": "boolean"
+          },
           "access": {
             "properties" : {
               "owned_by" : {

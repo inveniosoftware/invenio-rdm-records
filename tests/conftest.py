@@ -66,9 +66,9 @@ from invenio_records_resources.services.custom_fields import TextCF
 from invenio_requests.notifications.builders import (
     CommentRequestEventCreateNotificationBuilder,
 )
-from invenio_users_resources.proxies import current_users_service
 from invenio_requests.proxies import current_user_moderation_service as mod_service
 from invenio_users_resources.permissions import user_management_action
+from invenio_users_resources.proxies import current_users_service
 from invenio_users_resources.records.api import UserAggregate
 from invenio_users_resources.services.schemas import (
     NotificationPreferences,
@@ -1615,6 +1615,18 @@ def test_user(UserFixture, app, db, index_users):
     )
     u.create(app, db)
     index_users()
+    return u
+
+
+@pytest.fixture()
+def verified_user(UserFixture, app, db):
+    """User meant to test 'verified' property of records."""
+    u = UserFixture(
+        email="testuser@inveniosoftware.org",
+        password="testuser",
+    )
+    u.create(app, db)
+    u.user.verified_at = datetime.utcnow()
     return u
 
 
