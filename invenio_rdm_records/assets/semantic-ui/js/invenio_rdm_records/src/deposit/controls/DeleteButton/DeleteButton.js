@@ -119,7 +119,7 @@ export class DeleteButtonComponent extends Component {
               {i18next.t("Cancel")}
             </Button>
             <Button
-              {...color}
+              className={color}
               onClick={this.handleDelete}
               loading={isSubmitting && actionState === DRAFT_DELETE_STARTED}
               icon="trash alternate outline"
