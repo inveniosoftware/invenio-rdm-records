@@ -18,7 +18,7 @@ import {
   ResultsLoader,
   SearchBar,
 } from "react-searchkit";
-import { Container, Grid, Menu, Modal, Segment } from "semantic-ui-react";
+import { Grid, Menu, Modal } from "semantic-ui-react";
 import { CommunityListItem } from "./CommunityListItem";
 import PropTypes from "prop-types";
 
@@ -61,9 +61,16 @@ export class CommunitySelectionSearch extends Component {
           key={selectedAppId}
           initialQueryState={selectedInitialQueryState}
         >
-          <Grid>
-            <Grid.Row verticalAlign="middle">
-              <Grid.Column width={8} textAlign="left" floated="left">
+          <>
+            <Modal.Content as={Grid} className="m-0 pb-0">
+              <Grid.Column
+                mobile={16}
+                tablet={8}
+                computer={8}
+                textAlign="left"
+                floated="left"
+                className="pt-0 pl-0"
+              >
                 <Menu role="tablist" compact>
                   <Menu.Item
                     as="button"
@@ -99,7 +106,14 @@ export class CommunitySelectionSearch extends Component {
                   </Menu.Item>
                 </Menu>
               </Grid.Column>
-              <Grid.Column width={8} floated="right" verticalAlign="middle">
+              <Grid.Column
+                mobile={16}
+                tablet={8}
+                computer={8}
+                floated="right"
+                verticalAlign="middle"
+                className="pt-0 pr-0 pl-0"
+              >
                 <SearchBar
                   placeholder={toggleText}
                   autofocus
@@ -111,30 +125,25 @@ export class CommunitySelectionSearch extends Component {
                   }}
                 />
               </Grid.Column>
-            </Grid.Row>
+            </Modal.Content>
 
-            <Grid.Row verticalAlign="middle">
-              <Grid.Column>
-                <ResultsLoader>
-                  <Segment className="community-list-container p-0">
-                    <Modal.Content
-                      role="tabpanel"
-                      id={selectedAppId}
-                      scrolling
-                      className="community-list-results"
-                    >
-                      <EmptyResults />
-                      <Error />
-                      <ResultsList />
-                    </Modal.Content>
-                  </Segment>
-                  <Container textAlign="center">
-                    <Pagination />
-                  </Container>
-                </ResultsLoader>
-              </Grid.Column>
-            </Grid.Row>
-          </Grid>
+            <Modal.Content
+              role="tabpanel"
+              id={selectedAppId}
+              scrolling
+              className="community-list-results"
+            >
+              <ResultsLoader>
+                <EmptyResults />
+                <Error />
+                <ResultsList />
+              </ResultsLoader>
+            </Modal.Content>
+
+            <Modal.Content className="text-align-center">
+              <Pagination />
+            </Modal.Content>
+          </>
         </ReactSearchKit>
       </OverridableContext.Provider>
     );

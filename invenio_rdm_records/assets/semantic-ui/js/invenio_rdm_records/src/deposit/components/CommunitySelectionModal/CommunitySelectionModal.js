@@ -88,15 +88,16 @@ export class CommunitySelectionModalComponent extends Component {
           trigger={this.modalTrigger()}
         >
           <Modal.Header>
-            <Header as="h2" id="community-modal-header">
+            <Header as="h2" size="small" id="community-modal-header" className="mt-5">
               {modalHeader}
             </Header>
           </Modal.Header>
 
-          <Modal.Content>
-            <CommunitySelectionSearch apiConfigs={apiConfigs} />
-            {extraContentComponents}
-          </Modal.Content>
+          <CommunitySelectionSearch apiConfigs={apiConfigs} />
+
+          {extraContentComponents && (
+            <Modal.Content>{extraContentComponents}</Modal.Content>
+          )}
 
           <Modal.Actions>
             <Button onClick={handleClose}>{i18next.t("Close")}</Button>
