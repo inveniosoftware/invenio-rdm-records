@@ -359,6 +359,12 @@ def app_config(app_config, mock_datacite_client):
     app_config["REQUESTS_PERMISSION_POLICY"] = RDMRequestsPermissionPolicy
 
     app_config["COMMUNITIES_OAI_SETS_PREFIX"] = "community-"
+
+    app_config["APP_RDM_ROUTES"] = {
+        "record_detail": "/records/<pid_value>",
+        "record_file_download": "/records/<pid_value>/files/<path:filename>",
+    }
+
     return app_config
 
 

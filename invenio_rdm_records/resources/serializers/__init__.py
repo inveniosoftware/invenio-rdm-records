@@ -26,6 +26,7 @@ from .iiif import (
 )
 from .marcxml import MARCXMLSerializer
 from .schemaorg import SchemaorgJSONLDSerializer
+from .signposting import FAIRSignpostingProfileLvl2Serializer
 from .ui import UIJSONSerializer
 
 __all__ = (
@@ -37,6 +38,7 @@ __all__ = (
     "DataCite43XMLSerializer",
     "DublinCoreJSONSerializer",
     "DublinCoreXMLSerializer",
+    "FAIRSignpostingProfileLvl2Serializer",
     "GeoJSONSerializer",
     "IIIFCanvasV2JSONSerializer",
     "IIIFInfoV2JSONSerializer",

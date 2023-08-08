@@ -272,7 +272,6 @@ def _create_and_publish(client, minimal_record, headers):
     """Create a draft and publish it."""
     # Create the draft
     response = client.post("/records", json=minimal_record, headers=headers)
-
     assert response.status_code == 201
     recid = response.json["id"]
     _validate_access(response.json, minimal_record)
@@ -449,7 +448,7 @@ def test_multiple_files_record(
     filename2 = "test2.txt"
     file_content2 = b"testfile2"
 
-    _create_and_assert_file(client, headers, recid, filename1, file_content2)
+    _create_and_assert_file(client, headers, recid, filename1, file_content1)
     _create_and_assert_file(client, headers, recid, filename2, file_content2)
 
     response = client.post(f"/records/{recid}/draft/actions/publish", headers=headers)
@@ -796,6 +795,7 @@ def test_response_handlers(running_app, minimal_record, client_with_login):
         "application/x-dc+xml",
         "text/x-bibliography",
         "application/dcat+xml",
+        "application/linkset+json",
     ]
 
     headers = {
