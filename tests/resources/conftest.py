@@ -73,3 +73,19 @@ def upload_file(client, recid, key):
 def commit_file(client, recid, key, headers):
     """Create draft and return its id."""
     return client.post(f"/records/{recid}/draft/files/{key}/commit", headers=headers)
+
+
+@pytest.fixture()
+def publish_record(headers):
+    """Factory fixture that publishes a record."""
+
+    def _publish_record(client, json):
+        draft = client.post("/records", headers=headers, json=json)
+        assert 201 == draft.status_code
+        record = client.post(link(draft.json["links"]["publish"]), headers=headers)
+        assert 202 == record.status_code
+        record = client.get(link(record.json["links"]["self"]), headers=headers)
+        assert 200 == record.status_code
+        return record.json
+
+    return _publish_record

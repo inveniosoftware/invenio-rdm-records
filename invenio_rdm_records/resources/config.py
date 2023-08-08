@@ -53,6 +53,7 @@ from .serializers import (
     DataCite43XMLSerializer,
     DCATSerializer,
     DublinCoreXMLSerializer,
+    FAIRSignpostingProfileLvl2Serializer,
     GeoJSONSerializer,
     MARCXMLSerializer,
     SchemaorgJSONLDSerializer,
@@ -126,6 +127,7 @@ record_serializers = {
     ),
     "application/x-bibtex": ResponseHandler(BibtexSerializer(), headers=etag_headers),
     "application/dcat+xml": ResponseHandler(DCATSerializer(), headers=etag_headers),
+    "application/linkset+json": ResponseHandler(FAIRSignpostingProfileLvl2Serializer()),
 }
 
 

@@ -237,7 +237,7 @@ class RightsSchema(Schema):
 
     @validates_schema
     def validate_rights(self, data, **kwargs):
-        """Validates that id xor name are present."""
+        """Validates that id xor title are present."""
         id_ = data.get("id")
         title = data.get("title")
 
