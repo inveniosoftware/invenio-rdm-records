@@ -30,6 +30,7 @@ from invenio_records_resources.records.systemfields import (
     PIDStatusCheckField,
 )
 from invenio_requests.records.api import Request
+from invenio_requests.records.dumpers import CalculatedFieldDumperExt
 from invenio_requests.records.systemfields.relatedrecord import RelatedRecord
 from invenio_vocabularies.contrib.affiliations.api import Affiliation
 from invenio_vocabularies.contrib.awards.api import Award
@@ -69,6 +70,7 @@ class RDMParent(ParentRecordBase):
     dumper = SearchDumper(
         extensions=[
             GrantTokensDumperExt("access.grant_tokens"),
+            CalculatedFieldDumperExt("is_verified"),
         ]
     )
 

@@ -17,11 +17,8 @@ class IsVerifiedField(CalculatedField):
         super().__init__(key=key, use_cache=False)
 
     def calculate(self, record):
-        """Calculate the ``is_expired`` property of the request."""
-        owner = record.access.owner
+        """Calculate the ``is_verified`` property of the record."""
+        owner = record.access.owner.resolve()
         if not owner:
             return False
-        is_verified = (
-            owner.resolve().verified_at is not None
-        )  # TODO property is_verified in user
-        return is_verified
+        return owner.verified_at is not None

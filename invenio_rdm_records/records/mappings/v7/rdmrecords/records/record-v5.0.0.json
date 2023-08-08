@@ -186,6 +186,9 @@
               }
             }
           },
+          "is_verified": {
+            "type": "boolean"
+          },
           "created": {
             "type": "date"
           },

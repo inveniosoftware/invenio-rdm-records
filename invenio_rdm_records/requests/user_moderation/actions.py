@@ -21,11 +21,14 @@ def on_restore(user_id, uow=None, **kwargs):
     pass
 
 
-def on_approve(user_id, **kwargs):
+def on_approve(user_id, uow=None, **kwargs):
     """Execute on user approve.
 
     Re-index user records and dump verified field into records.
     """
-    current_rdm_records_service.reindex_user_records(
-        identity=system_identity, id_=user_id
+    from invenio_search.engine import dsl
+
+    user_records_q = dsl.Q("term", **{"parent.access.owned_by.user": user_id})
+    current_rdm_records_service.reindex_latest_first(
+        identity=system_identity, extra_filter=user_records_q, uow=uow
     )

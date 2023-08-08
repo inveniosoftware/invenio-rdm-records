@@ -29,6 +29,7 @@ from invenio_drafts_resources.services.records.config import (
     is_draft,
     is_record,
 )
+from invenio_drafts_resources.services.records.search_params import AllVersionsParam
 from invenio_indexer.api import RecordIndexer
 from invenio_records_resources.services import ConditionalLink, FileServiceConfig
 from invenio_records_resources.services.base.config import (
@@ -46,6 +47,11 @@ from invenio_records_resources.services.records.config import (
 from invenio_records_resources.services.records.links import (
     RecordLink,
     pagination_links,
+)
+from invenio_records_resources.services.records.params import (
+    FacetsParam,
+    PaginationParam,
+    QueryStrParam,
 )
 from invenio_requests.services.requests import RequestItem, RequestList
 from invenio_requests.services.requests.config import RequestSearchOptions
@@ -75,6 +81,7 @@ from .schemas.parent.access import AccessSettingsSchema
 from .schemas.parent.access import Grant as GrantSchema
 from .schemas.parent.access import SecretLink as SecretLinkSchema
 from .schemas.record_communities import RecordCommunitiesSchema
+from .sort import VerifiedRecordsSortParam
 
 
 def is_draft_and_has_review(record, ctx):
@@ -125,6 +132,15 @@ class RDMSearchOptions(SearchOptions, SearchOptionsMixin):
         "languages": facets.language,
         "access_status": facets.access_status,
     }
+
+    # Override params interpreters to avoid having duplicated SortParam.
+    params_interpreters_cls = [
+        AllVersionsParam.factory("versions.is_latest"),
+        QueryStrParam,
+        PaginationParam,
+        FacetsParam,
+        VerifiedRecordsSortParam,
+    ]
 
 
 class RDMSearchDraftsOptions(SearchDraftsOptions, SearchOptionsMixin):

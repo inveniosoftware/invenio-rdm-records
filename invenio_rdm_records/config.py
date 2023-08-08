@@ -186,6 +186,9 @@ RDM_FACETS = {
     },
 }
 
+RDM_SEARCH_SORT_BY_VERIFIED = False
+"""Sort records by 'verified' first."""
+
 RDM_SORT_OPTIONS = {
     "bestmatch": dict(
         title=_("Best match"),
