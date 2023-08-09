@@ -754,3 +754,39 @@
   tags:
     - depositable
     - linkable
+- id: physicalobject
+  icon: cube
+  props:
+    csl: graphic
+    datacite_general: PhysicalObject
+    datacite_type: ""
+    openaire_resourceType: "0010"
+    openaire_type: other
+    eurepo: info:eu-repo/semantics/other
+    schema.org: https://schema.org/CreativeWork
+    subtype: ""
+    type: physicalobject
+  title:
+    en: Physical object
+    de: Physikalisches Objekt
+  tags:
+    - depositable
+    - linkable
+- id: workflow
+  icon: code fork
+  props:
+    csl: software
+    datacite_general: Workflow
+    datacite_type: ""
+    openaire_resourceType: "0020"
+    openaire_type: other
+    eurepo: info:eu-repo/semantics/other
+    schema.org: https://schema.org/CreativeWork
+    subtype: ""
+    type: workflow
+  title:
+    en: Workflow
+    de: Workflow
+  tags:
+    - depositable
+    - linkable
