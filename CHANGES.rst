@@ -10,6 +10,16 @@
 Changes
 =======
 
+Version 4.13.0 (2023-08-09)
+
+- alembic: fix wrong revision id
+- access requests: new endpoint to update access request settings
+- doi: fix exception logging
+- tasks: discover missing celery task for access requests
+- notifications: filter out creator when creating requests
+- user moderation: add empty actions hooks
+- ui: fix layout issues with community modals
+
 Version 4.12.2 (2023-07-25)
 
 - permissions: fix permission syntax error
