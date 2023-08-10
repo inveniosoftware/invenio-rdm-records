@@ -6,16 +6,19 @@
 # it under the terms of the MIT License; see LICENSE file for more details.
 
 """Access requests for records."""
+from datetime import datetime
 
+import arrow
 from flask import current_app, g
 from invenio_access.permissions import authenticated_user, system_identity
 from invenio_i18n import lazy_gettext as _
 from invenio_mail.tasks import send_email
 from invenio_records_resources.services.uow import Operation, RecordCommitOp
 from invenio_requests.customizations import RequestType, actions
-from marshmallow import fields
+from marshmallow import ValidationError, fields
 
 from ...proxies import current_rdm_records_service as service
+from ...records import RDMRecord
 
 
 class EmailOp(Operation):
@@ -59,6 +62,14 @@ class GuestSubmitAction(actions.SubmitAction):
     def execute(self, identity, uow):
         """Execute the submit action."""
         self.request["title"] = self.request.topic.resolve().metadata["title"]
+
+        record = RDMRecord.pid.resolve(self.request["topic"]["record"])
+        exp = record.parent.access.settings.secret_link_expiration
+        expires_at = (
+            arrow.now().shift(days=exp).date().isoformat() if exp is not None else ""
+        )
+        self.request["payload"]["secret_link_expiration"] = expires_at
+
         super().execute(identity, uow)
 
 
@@ -81,6 +92,11 @@ class GuestAcceptAction(actions.AcceptAction):
             ),
             "origin": f"request:{self.request.id}",
         }
+
+        # secret link will never expire if secret_link_expiration is empty
+        secret_link_expiration = payload["secret_link_expiration"]
+        if secret_link_expiration != "":
+            data["expires_at"] = secret_link_expiration
 
         link = service.access.create_secret_link(identity, record.id, data)
         access_url = f"{record.links['self_html']}?token={link._link.token}"
@@ -184,6 +200,24 @@ class GuestAccessRequest(RequestType):
 
         return {"ui": context_vars["ui"] + prefix}
 
+    def _validate_date(value):
+        if value == "":
+            return True
+
+        try:
+            expires_at = datetime.fromisoformat(value)
+
+            if expires_at < datetime.now():
+                raise ValidationError(
+                    message="Expiration date must be set to the future",
+                    field_name="secret_link_expiration",
+                )
+        except ValueError:
+            raise ValidationError(
+                message="Not a valid date.",
+                field_name="secret_link_expiration",
+            )
+
     available_actions = {
         "create": actions.CreateAction,
         "submit": GuestSubmitAction,
@@ -200,4 +234,5 @@ class GuestAccessRequest(RequestType):
         "full_name": fields.String(required=True),
         "token": fields.String(required=True),
         "message": fields.String(required=False),
+        "secret_link_expiration": fields.String(required=True, validate=_validate_date),
     }

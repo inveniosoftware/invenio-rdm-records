@@ -122,6 +122,7 @@ def read_request(request, **kwargs):
         f"invenio_requests/{request_type}/index.html",
         user_avatar="",
         record=None,
+        permissions={},
         invenio_request=request.to_dict(),
         request_is_accepted=request_is_accepted,
     )
