@@ -60,13 +60,14 @@ export class LicenseModal extends Component {
     this.setState({ open: false });
   };
 
-  onSubmit = (values) => {
+  onSubmit = (values, formikBag) => {
     // We have to close the modal first because onLicenseChange and passing
     // license as an object makes React get rid of this component. Otherwise
     // we get a memory leak warning.
     const { onLicenseChange } = this.props;
     this.closeModal();
     onLicenseChange(values.selectedLicense);
+    formikBag.resetForm();
   };
 
   render() {
@@ -103,7 +104,10 @@ export class LicenseModal extends Component {
             onOpen={() => this.openModal()}
             open={open}
             trigger={trigger}
-            onClose={this.closeModal}
+            onClose={() => {
+              this.closeModal();
+              resetForm();
+            }}
             closeIcon
             closeOnDimmerClick={false}
           >
