@@ -9,6 +9,9 @@
 
 Changes
 =======
+Version 4.13.1 (2023-08-11)
+
+- vocabularies: add new values to resource types
 
 Version 4.13.0 (2023-08-09)
 
