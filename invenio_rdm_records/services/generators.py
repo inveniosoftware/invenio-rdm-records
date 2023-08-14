@@ -9,16 +9,10 @@
 
 """Invenio-RDM-Records Permissions Generators."""
 
-import operator
-from abc import abstractmethod
-from functools import reduce
-from itertools import chain
-
-from flask import current_app
 from flask_principal import UserNeed
 from invenio_communities.generators import CommunityRoleNeed, CommunityRoles
 from invenio_communities.proxies import current_roles
-from invenio_records_permissions.generators import Generator
+from invenio_records_permissions.generators import ConditionalGenerator, Generator
 from invenio_records_resources.services.files.transfer import TransferType
 from invenio_search.engine import dsl
 
@@ -27,45 +21,6 @@ from invenio_rdm_records.records import RDMDraft
 from ..records.systemfields.access.grants import Grant
 from ..requests.access import AccessRequestTokenNeed
 from ..tokens.permissions import RATNeed
-
-
-class ConditionalGenerator(Generator):
-    """Generator that depends on whether a condition is true or not.
-
-    If...(
-        then_=[...],
-        else_=[...],
-    )
-    """
-
-    def __init__(self, then_, else_):
-        """Constructor."""
-        self.then_ = then_
-        self.else_ = else_
-
-    @abstractmethod
-    def _condition(self, **kwargs):
-        """Condition to choose generators set."""
-        raise NotImplementedError()
-
-    def _generators(self, record, **kwargs):
-        """Get the "then" or "else" generators."""
-        return self.then_ if self._condition(record=record, **kwargs) else self.else_
-
-    def needs(self, record=None, **kwargs):
-        """Set of Needs granting permission."""
-        needs = [
-            g.needs(record=record, **kwargs) for g in self._generators(record, **kwargs)
-        ]
-        return set(chain.from_iterable(needs))
-
-    def excludes(self, record=None, **kwargs):
-        """Set of Needs denying permission."""
-        excludes = [
-            g.excludes(record=record, **kwargs)
-            for g in self._generators(record, **kwargs)
-        ]
-        return set(chain.from_iterable(excludes))
 
 
 class IfRestricted(ConditionalGenerator):
@@ -97,18 +52,12 @@ class IfRestricted(ConditionalGenerator):
         is_restricted = getattr(record.access.protection, self.field, "restricted")
         return is_restricted == "restricted"
 
-    def make_query(self, generators, **kwargs):
-        """Make a query for one set of generators."""
-        queries = [g.query_filter(**kwargs) for g in generators]
-        queries = [q for q in queries if q]
-        return reduce(operator.or_, queries) if queries else None
-
     def query_filter(self, **kwargs):
         """Filters for current identity as super user."""
         q_restricted = dsl.Q("match", **{f"access.{self.field}": "restricted"})
         q_public = dsl.Q("match", **{f"access.{self.field}": "public"})
-        then_query = self.make_query(self.then_, **kwargs)
-        else_query = self.make_query(self.else_, **kwargs)
+        then_query = self._make_query(self.then_, **kwargs)
+        else_query = self._make_query(self.else_, **kwargs)
 
         if then_query and else_query:
             return (q_restricted & then_query) | (q_public & else_query)
@@ -319,20 +268,6 @@ class RecordCommunitiesAction(CommunityRoles):
     def query_filter(self, identity=None, **kwargs):
         """Filters for current identity as member."""
         return dsl.Q("terms", **{"parent.communities.ids": self.communities(identity)})
-
-
-class IfConfig(ConditionalGenerator):
-    """Config-based conditional generator."""
-
-    def __init__(self, config_key, accept_values=[True], **kwargs):
-        """Initialize generator."""
-        self.accept_values = accept_values
-        self.config_key = config_key
-        super().__init__(**kwargs)
-
-    def _condition(self, **_):
-        """Check if the config value is truthy."""
-        return current_app.config.get(self.config_key) in self.accept_values
 
 
 class ResourceAccessToken(Generator):
