@@ -14,6 +14,7 @@ from invenio_records_permissions.generators import (
     AnyUser,
     AuthenticatedUser,
     Disable,
+    IfConfig,
     SystemProcess,
 )
 from invenio_records_permissions.policies.records import RecordPermissionPolicy
@@ -25,7 +26,6 @@ from ..requests.access import GuestAccessRequest
 from .generators import (
     AccessGrant,
     GuestAccessRequestToken,
-    IfConfig,
     IfExternalDOIRecord,
     IfFileIsLocal,
     IfNewRecord,
