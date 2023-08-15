@@ -19,7 +19,7 @@ from invenio_rdm_records.services.schemas.metadata import (
 
 def test_valid_related_identifiers(app):
     valid_full = {
-        "identifier": "10.5281/rdm.9999988",
+        "identifier": "10.1234/rdm.9999988",
         "scheme": "doi",
         "relation_type": {"id": "requires"},
         "resource_type": {"id": "image-photo"},
@@ -31,7 +31,7 @@ def test_valid_related_identifiers(app):
 
 def test_valid_minimal_related_identifiers(app):
     valid_minimal = {
-        "identifier": "10.5281/rdm.9999988",
+        "identifier": "10.1234/rdm.9999988",
         "scheme": "doi",
         "relation_type": {"id": "requires"},
     }
@@ -43,7 +43,7 @@ def test_valid_minimal_related_identifiers(app):
 def test_valid_no_scheme_related_identifiers(app):
     """It is valid becuase the schema is detected by the schema."""
     valid_no_scheme = {
-        "identifier": "10.5281/zenodo.9999988",
+        "identifier": "10.1234/zenodo.9999988",
         "relation_type": {"id": "requires"},
         "resource_type": {"id": "image-photo"},
     }
@@ -64,7 +64,7 @@ def test_invalid_no_identifiers_related_identifiers(app):
 
 def test_invalid_scheme_related_identifiers(app):
     invalid_scheme = {
-        "identifier": "10.5281/rdm.9999988",
+        "identifier": "10.1234/rdm.9999988",
         "scheme": "INVALID",
         "relation_type": {"id": "requires"},
         "resource_type": {"id": "image-photo"},
@@ -76,7 +76,7 @@ def test_invalid_scheme_related_identifiers(app):
 
 def test_invalid_no_type_related_identifiers(app):
     invalid_no_relation_type = {
-        "identifier": "10.5281/rdm.9999988",
+        "identifier": "10.1234/rdm.9999988",
         "scheme": "doi",
         "resource_type": {"id": "image-photo"},
     }
@@ -86,7 +86,7 @@ def test_invalid_no_type_related_identifiers(app):
 
 def test_invalid_relation_type_related_identifiers(app):
     invalid_relation_type = {
-        "identifier": "10.5281/rdm.9999988",
+        "identifier": "10.1234/rdm.9999988",
         "scheme": "doi",
         "relation_type": "INVALID",
         "resource_type": {"id": "image-photo"},
@@ -97,7 +97,7 @@ def test_invalid_relation_type_related_identifiers(app):
 
 def test_invalid_extra_field_related_identifiers(app):
     invalid_extra = {
-        "identifier": "10.5281/rdm.9999988",
+        "identifier": "10.1234/rdm.9999988",
         "scheme": "doi",
         "relation_type": {"id": "requires"},
         "resource_type": {"id": "image-photo"},
@@ -111,13 +111,13 @@ def test_valid_related_identifiers_in_schema(app, minimal_record):
     metadata = minimal_record["metadata"]
     metadata["related_identifiers"] = [
         {
-            "identifier": "10.5281/rdm.9999988",
+            "identifier": "10.1234/rdm.9999988",
             "scheme": "doi",
             "relation_type": {"id": "requires"},
             "resource_type": {"id": "image-photo"},
         },
         {
-            "identifier": "10.5281/rdm.9999977",
+            "identifier": "10.1234/rdm.9999977",
             "scheme": "doi",
             "relation_type": {"id": "requires"},
         },
@@ -129,7 +129,7 @@ def test_valid_related_identifiers_in_schema(app, minimal_record):
 def test_invalid_related_identifiers(app, minimal_record):
     metadata = minimal_record["metadata"]
     metadata["related_identifiers"] = {
-        "identifier": "10.5281/rdm.9999988",
+        "identifier": "10.1234/rdm.9999988",
         "scheme": "doi",
         "relation_type": {"id": "requires"},
         "resource_type": {"id": "image-photo"},

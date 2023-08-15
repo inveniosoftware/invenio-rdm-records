@@ -39,5 +39,6 @@ class MARCXMLSerializer(MarshmallowSerializer):
         return etree.tostring(
             dumps_etree(record),
             pretty_print=True,
+            xml_declaration=True,
             encoding="utf-8",
         ).decode("utf-8")

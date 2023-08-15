@@ -17,6 +17,21 @@ from invenio_rdm_records.resources.serializers import (
 )
 
 
+@pytest.fixture(scope="function")
+def minimal_record(minimal_record, parent_record):
+    """Minimal record metadata with added parent metadata."""
+    minimal_record["parent"] = parent_record
+    minimal_record["links"] = dict(self_html="https://self-link.com")
+    return minimal_record
+
+
+@pytest.fixture(scope="function")
+def full_record(full_record, parent_record):
+    """Minimal record metadata with added parent metadata."""
+    full_record["links"] = dict(self_html="https://self-link.com")
+    return full_record
+
+
 @pytest.fixture
 def full_modified_record(full_record):
     full_record["pids"]["unknown-scheme"] = {
@@ -124,7 +139,8 @@ def test_datacite43_serializer(running_app, full_record):
         ],
         "language": "dan",
         "identifiers": [
-            {"identifier": "10.5281/inveniordm.1234", "identifierType": "DOI"},
+            {"identifier": "https://self-link.com", "identifierType": "URL"},
+            {"identifier": "10.1234/inveniordm.1234", "identifierType": "DOI"},
             {"identifier": "oai:vvv.com:abcde-fghij", "identifierType": "oai"},
             {"identifier": "1924MNRAS..84..308E", "identifierType": "bibcode"},
         ],
@@ -136,7 +152,7 @@ def test_datacite43_serializer(running_app, full_record):
                 "resourceTypeGeneral": "Dataset",
             },
             {
-                "relatedIdentifier": "10.5281/inveniordm.1234.parent",
+                "relatedIdentifier": "10.1234/inveniordm.1234.parent",
                 "relatedIdentifierType": "DOI",
                 "relationType": "IsVersionOf",
             },
@@ -199,8 +215,9 @@ def test_datacite43_xml_serializer(running_app, full_record):
     expected_data = [
         "<?xml version='1.0' encoding='utf-8'?>",
         '<resource xmlns="http://datacite.org/schema/kernel-4" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://datacite.org/schema/kernel-4 http://schema.datacite.org/meta/kernel-4.3/metadata.xsd">',  # noqa
-        '  <identifier identifierType="DOI">10.5281/inveniordm.1234</identifier>',  # noqa
+        '  <identifier identifierType="DOI">10.1234/inveniordm.1234</identifier>',  # noqa
         "  <alternateIdentifiers>",
+        '    <alternateIdentifier alternateIdentifierType="URL">https://self-link.com</alternateIdentifier>',
         '    <alternateIdentifier alternateIdentifierType="oai">oai:vvv.com:abcde-fghij</alternateIdentifier>',
         '    <alternateIdentifier alternateIdentifierType="bibcode">1924MNRAS..84..308E</alternateIdentifier>',  # noqa
         "  </alternateIdentifiers>",
@@ -241,7 +258,7 @@ def test_datacite43_xml_serializer(running_app, full_record):
         '  <resourceType resourceTypeGeneral="Image">Photo</resourceType>',
         "  <relatedIdentifiers>",
         '    <relatedIdentifier relatedIdentifierType="DOI" relationType="IsCitedBy" resourceTypeGeneral="Dataset">10.1234/foo.bar</relatedIdentifier>',  # noqa
-        '    <relatedIdentifier relatedIdentifierType="DOI" relationType="IsVersionOf">10.5281/inveniordm.1234.parent</relatedIdentifier>',  # noqa
+        '    <relatedIdentifier relatedIdentifierType="DOI" relationType="IsVersionOf">10.1234/inveniordm.1234.parent</relatedIdentifier>',  # noqa
         "  </relatedIdentifiers>",
         "  <sizes>",
         "    <size>11 pages</size>",
@@ -290,26 +307,28 @@ def test_datacite43_identifiers(running_app, minimal_record):
     """Test serialization of records with DOI alternate identifiers"""
     # Mimic user putting DOI in alternate identifier field
     minimal_record["metadata"]["identifiers"] = [
-        {"identifier": "10.5281/inveniordm.1234", "scheme": "doi"}
+        {"identifier": "10.1234/inveniordm.1234", "scheme": "doi"}
     ]
 
     serializer = DataCite43JSONSerializer()
     serialized_record = serializer.dump_obj(minimal_record)
 
-    assert "identifiers" not in serialized_record
+    assert len(serialized_record["identifiers"]) == 1
 
     minimal_record["pids"] = {
         "doi": {
-            "identifier": "10.5281/inveniordm.1234",
+            "identifier": "10.1234/inveniordm.1234",
             "provider": "datacite",
             "client": "inveniordm",
         },
     }
 
     serialized_record = serializer.dump_obj(minimal_record)
-    assert len(serialized_record["identifiers"]) == 1
+    assert len(serialized_record["identifiers"]) == 2
     identifier = serialized_record["identifiers"][0]["identifier"]
-    assert identifier == "10.5281/inveniordm.1234"
+    assert identifier == "https://self-link.com"
+    identifier = serialized_record["identifiers"][1]["identifier"]
+    assert identifier == "10.1234/inveniordm.1234"
 
 
 def test_datacite43_serializer_with_unknown_id_schemes(
@@ -344,7 +363,7 @@ def test_datacite43_serializer_with_unknown_id_schemes(
 
     assert expected_pid_id in serialized_record["identifiers"]
     assert expected_pid_id_2 in serialized_record["identifiers"]
-    assert len(serialized_record["identifiers"]) == 4
+    assert len(serialized_record["identifiers"]) == 5
 
     assert expected_related_id in serialized_record["relatedIdentifiers"]
     assert len(serialized_record["relatedIdentifiers"]) == 2

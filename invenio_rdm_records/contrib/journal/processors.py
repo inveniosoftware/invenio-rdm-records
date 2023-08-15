@@ -108,8 +108,7 @@ class JournalMarcXMLDumper(DumperMixin):
             "c": journal_data.get("pages"),
             "y": _original.get("metadata", {}).get("publication_date"),
         }
-        for key, field in field_keys.items():
-            value = journal_data.get(field)
+        for key, value in field_keys.items():
             if value:
                 items_dict[key] = value
 
@@ -119,8 +118,10 @@ class JournalMarcXMLDumper(DumperMixin):
         # TODO in zenodo, journal field serializes to
         # TODO code 909, C, 4 but that's not in the specification
         code = "773  "
-
-        data[code] = items_dict
+        if data[code] and isinstance(data[code], list):
+            data[code].append(items_dict)
+        else:
+            data[code] = items_dict
         return data
 
 

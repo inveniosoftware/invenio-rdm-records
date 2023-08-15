@@ -16,7 +16,7 @@ from invenio_rdm_records.services.schemas.pids import PIDSchema
 def test_valid_pid():
     """Test pids schema."""
     valid_full = {
-        "identifier": "10.5281/zenodo.1234",
+        "identifier": "10.1234/zenodo.1234",
         "provider": "datacite",
         "client": "zenodo",
     }
@@ -35,14 +35,14 @@ def test_invalid_no_identifier():
 
 
 def test_invalid_no_provider():
-    invalid_no_provider = {"identifier": "10.5281/zenodo.1234", "client": "zenodo"}
+    invalid_no_provider = {"identifier": "10.1234/zenodo.1234", "client": "zenodo"}
     with pytest.raises(ValidationError):
         data = PIDSchema().load(invalid_no_provider)
 
 
 def test_invalid_extra_field():
     invalid_extra = {
-        "identifier": "10.5281/zenodo.1234",
+        "identifier": "10.1234/zenodo.1234",
         "provider": "datacite",
         "client": "zenodo",
         "extra": "field",

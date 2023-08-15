@@ -8,12 +8,14 @@
 """BibTex based Schema for Invenio RDM Records."""
 
 import datetime
+import textwrap
 
 from flask_resources.serializers import BaseSerializerSchema
 from marshmallow import fields, post_dump
 from slugify import slugify
 
 from ..schemas import CommonFieldsMixin
+from .errors import MissingRequiredFieldError
 from .schema_formats import BibTexFormatter
 
 
@@ -28,9 +30,24 @@ class BibTexSchema(BaseSerializerSchema, CommonFieldsMixin):
     titles = fields.Method("get_titles")
     doi = fields.Method("get_doi")
     creators = fields.Method("get_creators")
-    creator = fields.Method("get_creator")
+    creator_name = fields.Method("get_creator_name")
     publishers = fields.Method("get_publishers")
     contributors = fields.Method("get_contributors")
+    school = fields.Str(attribute="custom_fields.thesis:university")
+    journal_title = fields.Str(attribute="custom_fields.journal:journal.title")
+    journal_volume = fields.Str(attribute="custom_fields.journal:journal.volume")
+    journal_issue = fields.Str(attribute="custom_fields.journal:journal.issue")
+    journal_pages = fields.Method("get_journal_or_imprint_pages")
+
+    def get_journal_or_imprint_pages(self, obj):
+        """Get journal or imprint pages."""
+        journal_pages = (
+            obj.get("custom_fields", {}).get("journal:journal", {}).get("pages")
+        )
+        imprint_pages = (
+            obj.get("custom_fields", {}).get("imprint:imprint", {}).get("pages")
+        )
+        return journal_pages or imprint_pages
 
     def get_date_created(self, obj):
         """Get date last updated."""
@@ -40,13 +57,9 @@ class BibTexSchema(BaseSerializerSchema, CommonFieldsMixin):
         year = date_obj.strftime("%Y")
         return {"month": month, "year": year}
 
-    def get_creator(self, obj):
-        """Get creator."""
-        creator = obj["metadata"]["creators"][0]["person_or_org"]
-        return {
-            "given_name": creator["given_name"],
-            "family_name": creator["family_name"],
-        }
+    def get_creator_name(self, obj):
+        """Get creator name."""
+        return obj["metadata"]["creators"][0]["person_or_org"]["name"]
 
     @post_dump()
     def format_record(self, data, many, **kwargs):
@@ -62,7 +75,11 @@ class BibTexSchema(BaseSerializerSchema, CommonFieldsMixin):
 
         out = "@" + bib_fields.pop("name") + "{"
         out += self._get_citation_key(data) + ",\n"
-        inp = self._fetch_fields(data, bib_fields)
+        try:
+            inp = self._fetch_fields(data, bib_fields)
+        except MissingRequiredFieldError:
+            # Fallback to default
+            inp = self._fetch_fields(data, BibTexFormatter.other())
         out += self._clean_input(inp)
         out += "}"
         return out
@@ -90,20 +107,11 @@ class BibTexSchema(BaseSerializerSchema, CommonFieldsMixin):
             "url": (lambda doi: None if doi is None else "https://doi.org/" + doi)(
                 data.get("doi", None)
             ),  # Done
-            "school": data.get(
-                "school", None
-            ),  # [TODO] Implement once thesis is merged
-            "journal": data.get(
-                "journal", None
-            ),  # [TODO] Implement once journal is merged
-            "volume": data.get(
-                "volume", None
-            ),  # [TODO] Implement once journal is merged
-            "booktitle": data.get(
-                "booktitle", None
-            ),  # [TODO] implement book optional params
-            "number": data.get("number", None),  # [TODO] implement book optional params
-            "pages": data.get("pages", None),  # [TODO] implement book optional params
+            "school": data.get("school", None),
+            "journal": data.get("journal_title", None),
+            "volume": data.get("journal_volume", None),
+            "number": data.get("journal_issue", None),
+            "pages": data.get("journal_pages", None),
             "note": data.get("note", None),  # [TODO] Implement once notes are merged
             "venue": data.get(
                 "venue", None
@@ -115,9 +123,8 @@ class BibTexSchema(BaseSerializerSchema, CommonFieldsMixin):
             value = fields[field]
             if value is not None:
                 out += self._format_output_row(field, value)
-            elif value is None and value in req_fields:
-                raise ValueError("Required value not found: {0}".format(value))
-
+            elif value is None and field in req_fields:
+                raise MissingRequiredFieldError(field)
         return out
 
     def _format_output_row(self, field, value):
@@ -152,12 +159,7 @@ class BibTexSchema(BaseSerializerSchema, CommonFieldsMixin):
     def _get_citation_key(self, data):
         """Return citation key."""
         id = data["id"]
-
-        creator = data.get("creator", None)
-        if creator is None:
-            return id
-
-        name = creator.get("family_name", creator.get("given_name"))
+        name = data["creator_name"]
         pubdate = data.get("date_created", {}).get("year", None)
         year = id
         if pubdate is not None:

@@ -19,7 +19,7 @@ def test_valid_pid(app, db, minimal_record, location):
     # based on the scheme value
     valid_full = {
         "doi": {
-            "identifier": "10.5281/zenodo.1234",
+            "identifier": "10.1234/zenodo.1234",
             "provider": "datacite",
             "client": "zenodo",
         }
@@ -32,7 +32,7 @@ def test_valid_pid(app, db, minimal_record, location):
 def test_valid_external(app, db, minimal_record, location):
     valid_full = {
         "doi": {
-            "identifier": "10.5281/zenodo.1234",
+            "identifier": "10.1234/zenodo.1234",
             "provider": "external",
         }
     }

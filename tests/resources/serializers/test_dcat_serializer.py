@@ -11,14 +11,15 @@ from invenio_rdm_records.resources.serializers import DCATSerializer
 
 
 def test_dcat_serializer(running_app, enhanced_full_record):
+    enhanced_full_record["links"] = dict(self_html="https://self-link.com")
     expected_data = [
         "<?xml version='1.0' encoding='utf-8'?>",
         '<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:adms="http://www.w3.org/ns/adms#" xmlns:bibo="http://purl.org/ontology/bibo/" xmlns:citedcat="https://w3id.org/citedcat-ap/" xmlns:dct="http://purl.org/dc/terms/" xmlns:dctype="http://purl.org/dc/dcmitype/" xmlns:dcat="http://www.w3.org/ns/dcat#" xmlns:foaf="http://xmlns.com/foaf/0.1/" xmlns:gsp="http://www.opengis.net/ont/geosparql#" xmlns:locn="http://www.w3.org/ns/locn#" xmlns:org="http://www.w3.org/ns/org#" xmlns:owl="http://www.w3.org/2002/07/owl#" xmlns:prov="http://www.w3.org/ns/prov#" xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#" xmlns:skos="http://www.w3.org/2004/02/skos/core#" xmlns:vcard="http://www.w3.org/2006/vcard/ns#" xmlns:wdrs="http://www.w3.org/2007/05/powder-s#">',  # noqa
-        '  <rdf:Description rdf:about="https://doi.org/10.5281/inveniordm.1234">',  # noqa
+        '  <rdf:Description rdf:about="https://doi.org/10.1234/inveniordm.1234">',  # noqa
         '    <rdf:type rdf:resource="http://www.w3.org/ns/dcat#Dataset"/>',  # noqa
         '    <dct:type rdf:resource="http://purl.org/dc/dcmitype/Image"/>',  # noqa
-        '    <dct:identifier rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://doi.org/10.5281/inveniordm.1234</dct:identifier>',  # noqa
-        '    <foaf:page rdf:resource="https://doi.org/10.5281/inveniordm.1234"/>',  # noqa
+        '    <dct:identifier rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://doi.org/10.1234/inveniordm.1234</dct:identifier>',  # noqa
+        '    <foaf:page rdf:resource="https://doi.org/10.1234/inveniordm.1234"/>',  # noqa
         "    <dct:creator>",
         '      <rdf:Description rdf:about="https://orcid.org/0000-0001-8135-3489">',  # noqa
         '        <rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Person"/>',  # noqa
@@ -92,6 +93,13 @@ def test_dcat_serializer(running_app, enhanced_full_record):
         '    <dct:issued rdf:datatype="http://www.w3.org/2001/XMLSchema#dateTime">2018/2020-09</dct:issued>',  # noqa
         '    <dct:date rdf:datatype="http://www.w3.org/2001/XMLSchema#date">1939/1945</dct:date>',  # noqa
         '    <dct:language rdf:resource="http://publications.europa.eu/resource/authority/language/DAN"/>',  # noqa
+        '    <owl:sameAs rdf:resource="https://self-link.com"/>',  # noqa
+        "    <adms:identifier>",
+        "      <adms:Identifier>",
+        '        <skos:notation rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://self-link.com</skos:notation>',  # noqa
+        "        <adms:schemeAgency>URL</adms:schemeAgency>",
+        "      </adms:Identifier>",
+        "    </adms:identifier>",
         "    <adms:identifier>",
         "      <adms:Identifier>",
         "        <skos:notation>oai:invenio-rdm.com:vs40t-1br10</skos:notation>",
@@ -113,8 +121,8 @@ def test_dcat_serializer(running_app, enhanced_full_record):
         "      </rdf:Description>",
         "    </dct:isReferencedBy>",
         "    <dct:isVersionOf>",
-        '      <rdf:Description rdf:about="https://doi.org/10.5281/inveniordm.1234.parent">',  # noqa
-        "        <dct:identifier>https://doi.org/10.5281/inveniordm.1234.parent</dct:identifier>",  # noqa
+        '      <rdf:Description rdf:about="https://doi.org/10.1234/inveniordm.1234.parent">',  # noqa
+        "        <dct:identifier>https://doi.org/10.1234/inveniordm.1234.parent</dct:identifier>",  # noqa
         "      </rdf:Description>",
         "    </dct:isVersionOf>",
         "    <owl:versionInfo>v1.0</owl:versionInfo>",
@@ -148,7 +156,15 @@ def test_dcat_serializer(running_app, enhanced_full_record):
         "          </dct:RightsStatement>",
         "        </dct:rights>",
         '        <dct:license rdf:resource="https://creativecommons.org/licenses/by/4.0/legalcode"/>',  # noqa
-        '        <dcat:accessURL rdf:resource="https://doi.org/10.5281/inveniordm.1234"/>',  # noqa
+        '        <dcat:accessURL rdf:resource="https://doi.org/10.1234/inveniordm.1234"/>',  # noqa
+        "      </dcat:Distribution>",
+        "    </dcat:distribution>",
+        "    <dcat:distribution>",
+        "      <dcat:Distribution>",
+        '        <dcat:downloadURL rdf:resource="https://127.0.0.1:5000/records/w502q-xzh22/files/big-dataset.zip"/>',  # noqa
+        "        <dcat:mediaType>application/zip</dcat:mediaType>",  # noqa
+        "        <dcat:byteSize>1114324524355</dcat:byteSize>",  # noqa
+        '        <dcat:accessURL rdf:resource="https://doi.org/10.1234/inveniordm.1234"/>',  # noqa
         "      </dcat:Distribution>",
         "    </dcat:distribution>",
         "  </rdf:Description>",

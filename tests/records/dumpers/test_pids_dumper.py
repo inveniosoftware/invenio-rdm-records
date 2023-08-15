@@ -21,7 +21,7 @@ def test_esdumper_with_externalpidsext(app, db, minimal_record, location):
 
     minimal_record["pids"] = {
         "doi": {
-            "identifier": "10.5281/zenodo.1234",
+            "identifier": "10.1234/zenodo.1234",
             "provider": "datacite",
             "client": "zenodo",
         },
