@@ -23,6 +23,19 @@ import {
 export class AccessRightFieldCmp extends Component {
   /** Top-level Access Right Component */
 
+  componentDidMount() {
+    const { community, formik } = this.props;
+    const { setFieldValue } = formik.form;
+    // If is disabled is set it means community is restricted and record cannot be public
+    // thus it has to be restricted
+    const communityAccess =
+      (community && community?.is_ghost && community?.access?.visibility) || "public";
+
+    if (communityAccess == "restricted") {
+      setFieldValue("access.record", "restricted");
+    }
+  }
+
   render() {
     const {
       fieldPath,
