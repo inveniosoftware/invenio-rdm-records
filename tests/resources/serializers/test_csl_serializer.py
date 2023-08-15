@@ -28,7 +28,7 @@ def test_csl_json_serializer(running_app, full_record):
 
     expected_data = {
         "publisher": "InvenioRDM",
-        "DOI": "10.5281/inveniordm.1234",
+        "DOI": "10.1234/inveniordm.1234",
         "language": "dan",
         "title": "InvenioRDM",
         "issued": {"date-parts": [["2018"], ["2020", "09"]]},

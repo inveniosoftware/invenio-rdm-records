@@ -16,7 +16,7 @@ def parent_record():
     return {
         "pids": {
             "doi": {
-                "identifier": "10.5281/inveniordm.1234.parent",
+                "identifier": "10.1234/inveniordm.1234.parent",
                 "provider": "datacite",
                 "client": "inveniordm",
             },
@@ -29,13 +29,6 @@ def full_record(full_record, parent_record):
     """Full record metadata with added parent metadata."""
     full_record["parent"] = parent_record
     return full_record
-
-
-@pytest.fixture
-def minimal_record(minimal_record, parent_record):
-    """Minimal record metadata with added parent metadata."""
-    minimal_record["parent"] = parent_record
-    return minimal_record
 
 
 @pytest.fixture

@@ -28,6 +28,7 @@ def updated_full_record(full_record):
 def updated_minimal_record(minimal_record):
     """Update fields (done after record create) for Dublin Core serializer."""
     minimal_record["access"]["status"] = "open"
+    minimal_record["parent"] = dict()
     for creator in minimal_record["metadata"]["creators"]:
         name = creator["person_or_org"].get("name")
         if not name:
@@ -41,7 +42,10 @@ def test_dublincorejson_serializer(running_app, updated_full_record):
     expected_data = {
         "contributors": ["Nielsen, Lars Holm"],
         "types": ["info:eu-repo/semantic/other"],
-        "relations": ["https://doi.org/10.1234/foo.bar"],
+        "relations": [
+            "https://doi.org/10.1234/foo.bar",
+            "https://doi.org/10.1234/inveniordm.1234.parent",
+        ],
         "descriptions": ["A description \nwith HTML tags", "Bla bla bla"],
         "publishers": ["InvenioRDM"],
         "languages": ["dan", "eng"],
@@ -49,7 +53,7 @@ def test_dublincorejson_serializer(running_app, updated_full_record):
             "name=test location place; description=test location description; lat=-32.94682; lon=-60.63932"
         ],
         "identifiers": [
-            "https://doi.org/10.5281/inveniordm.1234",
+            "https://doi.org/10.1234/inveniordm.1234",
             "oai:vvv.com:abcde-fghij",
             "bibcode:1924MNRAS..84..308E",
         ],
@@ -108,7 +112,7 @@ def test_dublincorexml_serializer(running_app, updated_full_record):
         "<dc:description>A description \nwith HTML tags</dc:description>",
         "<dc:description>Bla bla bla</dc:description>",
         "<dc:format>application/pdf</dc:format>",
-        "<dc:identifier>https://doi.org/10.5281/inveniordm.1234</dc:identifier>",
+        "<dc:identifier>https://doi.org/10.1234/inveniordm.1234</dc:identifier>",
         "<dc:identifier>oai:vvv.com:abcde-fghij</dc:identifier>",
         "<dc:identifier>bibcode:1924MNRAS..84..308E</dc:identifier>",
         "<dc:language>dan</dc:language>",
@@ -160,7 +164,7 @@ def test_dublincorexml_serializer_list(
         "<dc:description>A description \nwith HTML tags</dc:description>",
         "<dc:description>Bla bla bla</dc:description>",
         "<dc:format>application/pdf</dc:format>",
-        "<dc:identifier>https://doi.org/10.5281/inveniordm.1234</dc:identifier>",
+        "<dc:identifier>https://doi.org/10.1234/inveniordm.1234</dc:identifier>",
         "<dc:identifier>bibcode:1924MNRAS..84..308E</dc:identifier>",
         "<dc:language>dan</dc:language>",
         "<dc:language>eng</dc:language>",
