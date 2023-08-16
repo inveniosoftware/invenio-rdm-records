@@ -62,6 +62,7 @@ from ..records.api import RDMDraftMediaFiles, RDMRecordMediaFiles
 from . import facets
 from .components import (
     AccessComponent,
+    ContentModerationComponent,
     CustomFieldsComponent,
     MetadataComponent,
     ParentPIDsComponent,
@@ -330,6 +331,7 @@ class RDMRecordServiceConfig(RecordServiceConfig, ConfiguratorMixin):
         ParentPIDsComponent,
         RelationsComponent,
         ReviewComponent,
+        ContentModerationComponent,
     ]
 
     # Links

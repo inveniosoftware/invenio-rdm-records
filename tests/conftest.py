@@ -297,6 +297,10 @@ def app_config(app_config, mock_datacite_client):
     app_config["USERS_RESOURCES_SERVICE_SCHEMA"] = NotificationsUserSchema
 
     app_config["RDM_RESOURCE_ACCESS_TOKENS_ENABLED"] = True
+
+    # Users are verified by default. This will disable the automatic creation of moderation requests after publishing a record.
+    # When testing unverified users, there is a "unverified_user" fixture for that purpose.
+    app_config["ACCOUNTS_DEFAULT_USERS_VERIFIED"] = True
     return app_config
 
 
@@ -974,21 +978,6 @@ def mod_identity(app, moderator_user):
     return idt
 
 
-@pytest.fixture
-def mod_request_create(running_app, mod_identity):
-    """Yields a fixture that encloses a function to create a moderation request."""
-
-    def _request(user_id):
-        """Creates the request."""
-        request_item = mod_service.request_moderation(mod_identity, user_id=user_id)
-        assert request_item
-
-        return request_item
-
-    # Pass this closure to the test
-    yield _request
-
-
 @pytest.fixture()
 def users(app, db):
     """Create example user."""
@@ -1466,6 +1455,7 @@ RunningApp = namedtuple(
         "licenses_v",
         "funders_v",
         "awards_v",
+        "moderator_role",  # Add moderator role by default to the app
     ],
 )
 
@@ -1488,6 +1478,7 @@ def running_app(
     licenses_v,
     funders_v,
     awards_v,
+    moderator_role,
 ):
     """This fixture provides an app with the typically needed db data loaded.
 
@@ -1511,6 +1502,7 @@ def running_app(
         licenses_v,
         funders_v,
         awards_v,
+        moderator_role,
     )
 
 
@@ -1622,11 +1614,23 @@ def test_user(UserFixture, app, db, index_users):
 def verified_user(UserFixture, app, db):
     """User meant to test 'verified' property of records."""
     u = UserFixture(
-        email="testuser@inveniosoftware.org",
+        email="verified@inveniosoftware.org",
         password="testuser",
     )
     u.create(app, db)
     u.user.verified_at = datetime.utcnow()
+    return u
+
+
+@pytest.fixture()
+def unverified_user(UserFixture, app, db):
+    """User meant to test 'verified' property of records."""
+    u = UserFixture(
+        email="unverified@inveniosoftware.org",
+        password="testuser",
+    )
+    u.create(app, db)
+    u.user.verified_at = None
     return u
 
 
