@@ -13,6 +13,7 @@ from .custom_fields import CustomFieldsComponent
 from .metadata import MetadataComponent
 from .pids import ParentPIDsComponent, PIDsComponent
 from .review import ReviewComponent
+from .verified import ContentModerationComponent
 
 __all__ = (
     "AccessComponent",
@@ -21,4 +22,5 @@ __all__ = (
     "PIDsComponent",
     "ParentPIDsComponent",
     "ReviewComponent",
+    "ContentModerationComponent",
 )

@@ -565,20 +565,23 @@ def test_pids_records_updates_external_to_managed(
 
 
 def test_pids_records_updates_managed_to_external_fail(
-    running_app, search_clear, minimal_record, authenticated_identity, mock_hide_doi
+    running_app,
+    search_clear,
+    minimal_record,
+    identity_simple,
+    mock_hide_doi,
 ):
     service = current_rdm_records.records_service
-    superuser_identity = running_app.superuser_identity
     provider = service.pids.pid_manager._get_provider("doi", "datacite")
     record = _create_and_publish_managed(
-        service, provider, authenticated_identity, minimal_record
+        service, provider, identity_simple, minimal_record
     )
 
     # create draft
-    draft = service.edit(authenticated_identity, record.id)
+    draft = service.edit(identity_simple, record.id)
     # fail to remove doi due to lack of permissions (validation error)
     with pytest.raises(ValidationError):
-        service.pids.discard(authenticated_identity, draft.id, "doi")
+        service.pids.discard(identity_simple, draft.id, "doi")
 
     doi = draft["pids"]["doi"]["identifier"]
     assert doi
@@ -587,20 +590,19 @@ def test_pids_records_updates_managed_to_external_fail(
 
 
 def test_pids_records_updates_managed_to_no_pid_fail(
-    running_app, search_clear, minimal_record, authenticated_identity
+    running_app, search_clear, minimal_record, identity_simple
 ):
     service = current_rdm_records.records_service
-    superuser_identity = running_app.superuser_identity
     provider = service.pids.pid_manager._get_provider("doi", "datacite")
     record = _create_and_publish_managed(
-        service, provider, authenticated_identity, minimal_record
+        service, provider, identity_simple, minimal_record
     )
 
     # create draft
-    draft = service.edit(authenticated_identity, record.id)
+    draft = service.edit(identity_simple, record.id)
     # fail to remove doi due to lack of permissions (validation error)
     with pytest.raises(ValidationError):
-        service.pids.discard(authenticated_identity, draft.id, "doi")
+        service.pids.discard(identity_simple, draft.id, "doi")
 
     doi = draft["pids"]["doi"]["identifier"]
     assert doi
