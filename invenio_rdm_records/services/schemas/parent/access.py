@@ -71,20 +71,7 @@ class AccessSettingsSchema(Schema):
     allow_guest_requests = fields.Boolean()
 
     accept_conditions_text = SanitizedHTML(allow_none=True)
-    secret_link_expiration = fields.Integer(
-        validate=validate.Range(max=365), allow_none=True
-    )
-
-    @pre_load
-    def translate_expiration_date(self, data, **kwargs):
-        """Translate secret_link_expiration from ui dropdown value."""
-        expiration_days = data["secret_link_expiration"]
-        if expiration_days == 0:
-            data["secret_link_expiration"] = None
-        else:
-            data["secret_link_expiration"] = expiration_days
-
-        return data
+    secret_link_expiration = fields.Integer(validate=validate.Range(max=365))
 
 
 class ParentAccessSchema(Schema, FieldPermissionsMixin):

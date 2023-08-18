@@ -6,19 +6,19 @@
 # it under the terms of the MIT License; see LICENSE file for more details.
 
 """Access requests for records."""
-from datetime import datetime
+from datetime import datetime, timedelta
 
-import arrow
 from flask import current_app, g
 from invenio_access.permissions import authenticated_user, system_identity
 from invenio_i18n import lazy_gettext as _
 from invenio_mail.tasks import send_email
 from invenio_records_resources.services.uow import Operation, RecordCommitOp
 from invenio_requests.customizations import RequestType, actions
-from marshmallow import ValidationError, fields
+from marshmallow import ValidationError, fields, validates
+import marshmallow as ma
+from marshmallow_utils.permissions import FieldPermissionsMixin
 
 from ...proxies import current_rdm_records_service as service
-from ...records import RDMRecord
 
 
 class EmailOp(Operation):
@@ -61,14 +61,12 @@ class GuestSubmitAction(actions.SubmitAction):
 
     def execute(self, identity, uow):
         """Execute the submit action."""
-        self.request["title"] = self.request.topic.resolve().metadata["title"]
 
-        record = RDMRecord.pid.resolve(self.request["topic"]["record"])
-        exp = record.parent.access.settings.secret_link_expiration
-        expires_at = (
-            arrow.now().shift(days=exp).date().isoformat() if exp is not None else ""
-        )
-        self.request["payload"]["secret_link_expiration"] = expires_at
+        record = self.request.topic.resolve()
+        self.request["title"] = record.metadata["title"]
+
+        days = str(record.parent.access.settings.secret_link_expiration)
+        self.request["payload"]["secret_link_expiration"] = days
 
         super().execute(identity, uow)
 
@@ -94,12 +92,15 @@ class GuestAcceptAction(actions.AcceptAction):
         }
 
         # secret link will never expire if secret_link_expiration is empty
-        secret_link_expiration = payload["secret_link_expiration"]
-        if secret_link_expiration != "":
-            data["expires_at"] = secret_link_expiration
-
+        days = int(payload["secret_link_expiration"])
+        # TODO date calculation could be done elsewhere ?
+        if days:
+            data["expires_at"] = (
+                    datetime.utcnow() + timedelta(days=days)).date().isoformat()
         link = service.access.create_secret_link(identity, record.id, data)
+
         access_url = f"{record.links['self_html']}?token={link._link.token}"
+
         plain_message = _("Access the record here: %(url)s", url=access_url)
         message = _(
             'Click <a href="%(url)s">here</a> to access the record.', url=access_url
@@ -191,6 +192,18 @@ class GuestAccessRequest(RequestType):
     allowed_receiver_ref_types = ["user", "community"]
     allowed_topic_ref_types = ["record"]
 
+    @classmethod
+    def _create_payload_cls(cls):
+        class PayloadBaseSchema(ma.Schema, FieldPermissionsMixin):
+            field_load_permissions = {
+                "secret_link_expiration": "update_payload",
+            }
+
+            class Meta:
+                unknown = ma.RAISE
+
+        cls.payload_schema_cls = PayloadBaseSchema
+
     def _update_link_config(self, **context_vars):
         """Fix the prefix required for "self_html"."""
         identity = context_vars.get("identity", g.identity)
@@ -200,21 +213,17 @@ class GuestAccessRequest(RequestType):
 
         return {"ui": context_vars["ui"] + prefix}
 
-    def _validate_date(value):
-        if value == "":
-            return True
-
+    @validates("secret_link_expiration")
+    def _validate_days(self, value):
         try:
-            expires_at = datetime.fromisoformat(value)
-
-            if expires_at < datetime.now():
+            if int(value) < 0:
                 raise ValidationError(
-                    message="Expiration date must be set to the future",
+                    message="Not a valid number of days.",
                     field_name="secret_link_expiration",
                 )
         except ValueError:
             raise ValidationError(
-                message="Not a valid date.",
+                message="Not a valid number of days.",
                 field_name="secret_link_expiration",
             )
 
@@ -234,5 +243,5 @@ class GuestAccessRequest(RequestType):
         "full_name": fields.String(required=True),
         "token": fields.String(required=True),
         "message": fields.String(required=False),
-        "secret_link_expiration": fields.String(required=True, validate=_validate_date),
+        "secret_link_expiration": fields.String(required=True),
     }

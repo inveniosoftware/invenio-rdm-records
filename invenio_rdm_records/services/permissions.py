@@ -18,6 +18,7 @@ from invenio_records_permissions.generators import (
     SystemProcess,
 )
 from invenio_records_permissions.policies.records import RecordPermissionPolicy
+from invenio_requests.services.generators import Creator, Status, Receiver
 from invenio_requests.services.permissions import (
     PermissionPolicy as RequestPermissionPolicy,
 )
@@ -262,3 +263,11 @@ class RDMRequestsPermissionPolicy(RequestPermissionPolicy):
     can_update = RequestPermissionPolicy.can_update + [guest_token]
     can_action_submit = RequestPermissionPolicy.can_action_submit + [guest_token]
     can_action_cancel = RequestPermissionPolicy.can_action_cancel + [guest_token]
+    can_create_comment = can_read
+    can_update_comment = RequestPermissionPolicy.can_update_comment + [guest_token]
+    can_delete_comment = RequestPermissionPolicy.can_delete_comment + [guest_token]
+
+    can_update_payload = [IfRequestType(GuestAccessRequest,
+                                       then_=[Status(["created"], [Creator()]),
+                                              Status(["submitted"], [Receiver()])],
+                                       else_=can_update)]
