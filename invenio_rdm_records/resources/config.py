@@ -33,6 +33,7 @@ from invenio_requests.resources.requests.config import RequestSearchRequestArgsS
 from ..services.errors import (
     AccessRequestExistsError,
     InvalidAccessRestrictions,
+    RecordDeletedException,
     ReviewExistsError,
     ReviewNotFoundError,
     ReviewStateError,
@@ -175,6 +176,17 @@ class RDMRecordResourceConfig(RecordResourceConfig, ConfiguratorMixin):
             lambda e: HTTPJSONException(
                 code=400,
                 description=e.description,
+            )
+        ),
+        RecordDeletedException: create_error_handler(
+            lambda e: (
+                HTTPJSONException(code=404, description=_("Record not found"))
+                if not e.record.tombstone.is_visible
+                else HTTPJSONException(
+                    code=410,
+                    description=_("Record deleted"),
+                    tombstone=e.record.tombstone.dump(),
+                )
             )
         ),
     }

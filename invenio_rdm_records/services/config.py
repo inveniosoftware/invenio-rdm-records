@@ -67,6 +67,7 @@ from .components import (
     MetadataComponent,
     ParentPIDsComponent,
     PIDsComponent,
+    RecordDeletionComponent,
     ReviewComponent,
 )
 from .customizations import (
@@ -83,6 +84,7 @@ from .schemas.parent.access import Grant as GrantSchema
 from .schemas.parent.access import RequestAccessSchema
 from .schemas.parent.access import SecretLink as SecretLinkSchema
 from .schemas.record_communities import RecordCommunitiesSchema
+from .schemas.tombstone import TombstoneSchema
 from .sort import VerifiedRecordsSortParam
 
 
@@ -261,6 +263,7 @@ class RDMRecordServiceConfig(RecordServiceConfig, ConfiguratorMixin):
     schema_secret_link = SecretLinkSchema
     schema_grant = GrantSchema
     schema_request_access = RequestAccessSchema
+    schema_tombstone = TombstoneSchema
 
     # Permission policy
     permission_policy_cls = FromConfig(
@@ -326,6 +329,7 @@ class RDMRecordServiceConfig(RecordServiceConfig, ConfiguratorMixin):
         AccessComponent,
         DraftFilesComponent,
         DraftMediaFilesComponent,
+        RecordDeletionComponent,
         # for the internal `pid` field
         PIDComponent,
         # for the `pids` field (external PIDs)

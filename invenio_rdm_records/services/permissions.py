@@ -28,6 +28,7 @@ from .generators import (
     AccessGrant,
     GuestAccessRequestToken,
     IfCreate,
+    IfDeleted,
     IfExternalDOIRecord,
     IfFileIsLocal,
     IfNewRecord,
@@ -167,7 +168,7 @@ class RDMRecordPermissionPolicy(RecordPermissionPolicy):
     # Actions
     #
     # Allow to put a record in edit mode (create a draft from record)
-    can_edit = can_curate
+    can_edit = [IfDeleted(then_=[Disable()], else_=can_curate)]
     # Allow deleting/discarding a draft and all associated files
     can_delete_draft = can_curate
     # Allow creating a new version of an existing published record.
@@ -235,17 +236,22 @@ class RDMRecordPermissionPolicy(RecordPermissionPolicy):
     can_media_delete_files = [Disable()]
 
     #
+    # Record deletion workflows
+    #
+    can_delete = [SystemProcess()]
+    can_delete_files = [SystemProcess()]
+    can_purge = [SystemProcess()]
+
+    #
     # Disabled actions (these should not be used or changed)
     #
     # - Records/files are updated/deleted via drafts so we don't support
     #   using below actions.
     can_update = [Disable()]
-    can_delete = [Disable()]
     can_create_files = [Disable()]
     can_set_content_files = [Disable()]
     can_commit_files = [Disable()]
     can_update_files = [Disable()]
-    can_delete_files = [Disable()]
 
     # Used to hide at the moment the `parent.is_verified` field. It should be set to
     # correct permissions based on which the field will be exposed only to moderators
