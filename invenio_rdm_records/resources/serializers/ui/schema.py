@@ -3,7 +3,7 @@
 # Copyright (C) 2020 CERN.
 # Copyright (C) 2020 Northwestern University.
 # Copyright (C) 2021-2023 Graz University of Technology.
-# Copyright (C) 2022 TU Wien.
+# Copyright (C) 2022-2023 TU Wien.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
@@ -19,11 +19,12 @@ from invenio_communities.communities.resources.ui_schema import (
     _community_permission_check,
 )
 from invenio_i18n import get_locale
+from invenio_i18n import lazy_gettext as _
 from invenio_records_resources.services.custom_fields import CustomFieldsSchemaUI
 from invenio_vocabularies.contrib.awards.serializer import AwardL10NItemSchema
 from invenio_vocabularies.contrib.funders.serializer import FunderL10NItemSchema
 from invenio_vocabularies.resources import L10NString, VocabularyL10Schema
-from marshmallow import Schema, fields, missing, pre_dump
+from marshmallow import Schema, fields, missing, post_dump, pre_dump
 from marshmallow_utils.fields import FormatDate as FormatDate_
 from marshmallow_utils.fields import FormatEDTF as FormatEDTF_
 from marshmallow_utils.fields import SanitizedHTML, SanitizedUnicode, StrippedHTML
@@ -92,6 +93,22 @@ def record_version(obj):
         return f"v{obj['versions']['index']}"
 
     return field_data
+
+
+def mask_removed_by(obj):
+    """Mask information about who removed the record."""
+    return_value = _("Unknown")
+    removed_by = obj.get("removed_by", None)
+
+    if removed_by is not None:
+        user = removed_by.get("user", None)
+
+        if user == "system":
+            return_value = _("System (automatic)")
+        elif user is not None:
+            return_value = _("User")
+
+    return return_value
 
 
 class RelatedIdentifiersSchema(Schema):
@@ -220,6 +237,24 @@ def compute_publishing_information(obj, dummyctx):
     return result
 
 
+class TombstoneSchema(Schema):
+    """Schema for a record tombstone."""
+
+    removal_reason = fields.Nested(VocabularyL10Schema, attribute="removal_reason")
+
+    note = fields.String(attribute="note")
+
+    removed_by = fields.Function(mask_removed_by)
+
+    removal_date_l10n_medium = FormatEDTF(attribute="removal_date", format="medium")
+
+    removal_date_l10n_long = FormatEDTF(attribute="removal_date", format="long")
+
+    citation_text = fields.String(attribute="citation_text")
+
+    is_visible = fields.Boolean(attribute="is_visible")
+
+
 class UIRecordSchema(BaseObjectSchema):
     """Schema for dumping extra information for the UI."""
 
@@ -288,6 +323,8 @@ class UIRecordSchema(BaseObjectSchema):
         attribute="metadata.funding",
     )
 
+    tombstone = fields.Nested(TombstoneSchema, attribute="tombstone")
+
     @pre_dump
     def add_communities_permissions_and_roles(self, obj, **kwargs):
         """Inject current user's permission to community receiver."""
@@ -304,4 +341,12 @@ class UIRecordSchema(BaseObjectSchema):
             receiver.setdefault("ui", {})["permissions"] = {
                 "can_include_directly": can_include_directly
             }
+        return obj
+
+    @post_dump
+    def hide_tombstone(self, obj, **kwargs):
+        """Hide the tombstone information if it's not visible."""
+        if not obj.get("tombstone", {}).get("is_visible", False):
+            obj.pop("tombstone", None)
+
         return obj

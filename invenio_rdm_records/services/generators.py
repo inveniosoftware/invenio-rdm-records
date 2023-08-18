@@ -123,6 +123,19 @@ class IfExternalDOIRecord(ConditionalGenerator):
         return record.get("pids", {}).get("doi", {}).get("provider") == "external"
 
 
+class IfDeleted(ConditionalGenerator):
+    """Conditional generator for deleted records."""
+
+    def _condition(self, record=None, **kwargs):
+        """Check if the record is deleted."""
+        try:
+            return record.deletion_status.is_deleted
+
+        except AttributeError:
+            # if the record doesn't have the attribute, we assume it's not deleted
+            return False
+
+
 class RecordOwners(Generator):
     """Allows record owners."""
 

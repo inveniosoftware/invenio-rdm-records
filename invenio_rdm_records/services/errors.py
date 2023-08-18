@@ -15,6 +15,24 @@ class RDMRecordsException(Exception):
     """Base exception for RDMRecords errors."""
 
 
+class RecordDeletedException(RDMRecordsException):
+    """Exception denoting that the record was deleted."""
+
+    def __init__(self, record, result_item=None):
+        """Constructor."""
+        self.record = record
+        self.result_item = result_item
+
+
+class DeletionStatusException(RDMRecordsException):
+    """Indicator for the record being in the wrong deletion status for the action."""
+
+    def __init__(self, record, expected_status):
+        """Constructor."""
+        self.expected_status = expected_status
+        self.record = record
+
+
 class EmbargoNotLiftedError(RDMRecordsException):
     """Embargo could not be lifted ."""
 

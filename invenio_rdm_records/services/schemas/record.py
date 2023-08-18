@@ -91,16 +91,12 @@ class RDMRecordSchema(RecordSchema, FieldPermissionsMixin):
 
         return data
 
-    def hide_tombstone_or_metadata(self, data):
+    def hide_tombstone(self, data):
         """Hide tombstone info if the record isn't deleted and metadata if it is."""
-        is_deleted = data.get("deletion_status", {}).get("is_deleted", False)
+        is_deleted = (data.get("deletion_status") or {}).get("is_deleted", False)
+        tombstone_visible = (data.get("tombstone") or {}).get("is_visible", True)
 
-        if is_deleted:
-            keys_to_keep = ["tombstone", "deletion_status", "id", "pids", "links"]
-            for key in [k for k in data if k in keys_to_keep]:
-                data.pop(key, None)
-
-        else:
+        if not is_deleted or not tombstone_visible:
             data.pop("tombstone", None)
 
         return data
@@ -109,5 +105,5 @@ class RDMRecordSchema(RecordSchema, FieldPermissionsMixin):
     def post_dump(self, data, many, **kwargs):
         """Perform some updates on the dumped data."""
         data = self.default_nested(data)
-        data = self.hide_tombstone_or_metadata(data)
+        data = self.hide_tombstone(data)
         return data
