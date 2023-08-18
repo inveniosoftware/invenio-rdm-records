@@ -8,6 +8,7 @@
 """BibTex based Schema for Invenio RDM Records."""
 
 import datetime
+import textwrap
 
 from flask_resources.serializers import BaseSerializerSchema
 from marshmallow import fields, post_dump
