@@ -615,13 +615,14 @@ class RecordAccessService(RecordService):
     def create_guest_access_request_token(
         self, identity, id_, data, expand=False, uow=None
     ):
-        """Create an request token that can be used to create an access request."""
+        """Create a request token that can be used to create an access request."""
         # Permissions
         if authenticated_user in identity.provides:
             raise PermissionDeniedError("request_guest_access")
 
         record = self.record_cls.pid.resolve(id_)
         if current_app.config.get("MAIL_SUPPRESS_SEND", False):
+            # TODO should be handled globally, not here, maybe EmailOp?
             current_app.logger.warn(
                 "Cannot proceed with guest based access request - "
                 "email sending has been disabled!"
@@ -636,8 +637,9 @@ class RecordAccessService(RecordService):
         )
 
         # Create the URL for the email verification endpoint
+        # TODO why replace api?
         verify_url = url_for(
-            "invenio_rdm_records_ext.verify_access_request_token",
+            "invenio_app_rdm_requests.verify_access_request_token",
             _external=True,
             **{"access_request_token": access_token.token},
         ).replace("/api/", "/")
@@ -680,7 +682,7 @@ class RecordAccessService(RecordService):
 
         access_token = AccessRequestToken.get_by_token(token)
         if access_token is None:
-            return None
+            return
 
         access_token_data = access_token.to_dict()
         record = self.record_cls.pid.resolve(access_token_data["record_pid"])
