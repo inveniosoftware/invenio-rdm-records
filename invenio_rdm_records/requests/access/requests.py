@@ -8,14 +8,16 @@
 """Access requests for records."""
 from datetime import datetime, timedelta
 
+import marshmallow as ma
 from flask import current_app, g
 from invenio_access.permissions import authenticated_user, system_identity
 from invenio_i18n import lazy_gettext as _
 from invenio_mail.tasks import send_email
 from invenio_records_resources.services.uow import Operation, RecordCommitOp
+from invenio_requests import current_events_service
 from invenio_requests.customizations import RequestType, actions
+from invenio_requests.customizations.event_types import CommentEventType
 from marshmallow import ValidationError, fields, validates
-import marshmallow as ma
 from marshmallow_utils.permissions import FieldPermissionsMixin
 
 from ...proxies import current_rdm_records_service as service
@@ -61,12 +63,8 @@ class GuestSubmitAction(actions.SubmitAction):
 
     def execute(self, identity, uow):
         """Execute the submit action."""
-
         record = self.request.topic.resolve()
         self.request["title"] = record.metadata["title"]
-
-        days = str(record.parent.access.settings.secret_link_expiration)
-        self.request["payload"]["secret_link_expiration"] = days
 
         super().execute(identity, uow)
 
@@ -96,14 +94,17 @@ class GuestAcceptAction(actions.AcceptAction):
         # TODO date calculation could be done elsewhere ?
         if days:
             data["expires_at"] = (
-                    datetime.utcnow() + timedelta(days=days)).date().isoformat()
+                (datetime.utcnow() + timedelta(days=days)).date().isoformat()
+            )
         link = service.access.create_secret_link(identity, record.id, data)
 
         access_url = f"{record.links['self_html']}?token={link._link.token}"
 
-        plain_message = _("Access the record here: %(url)s", url=access_url)
+        plain_message = _("Access the record here: {url}".format(url=access_url))
         message = _(
-            'Click <a href="%(url)s">here</a> to access the record.', url=access_url
+            'Click <a href="{url}">here</a> to access the record.'.format(
+                url=access_url
+            )
         )
 
         uow.register(RecordCommitOp(record._record.parent))
@@ -117,6 +118,22 @@ class GuestAcceptAction(actions.AcceptAction):
         )
 
         super().execute(identity, uow)
+
+        confirmation_message = {
+            "payload": {
+                "content": 'Click <a href="{url}">here</a> to access the record.'.format(
+                    url=access_url
+                )
+            }
+        }
+        current_events_service.create(
+            system_identity,
+            self.request.id,
+            confirmation_message,
+            CommentEventType,
+            uow=uow,
+            notify=False,
+        )
 
 
 class UserAcceptAction(actions.AcceptAction):
@@ -196,7 +213,7 @@ class GuestAccessRequest(RequestType):
     def _create_payload_cls(cls):
         class PayloadBaseSchema(ma.Schema, FieldPermissionsMixin):
             field_load_permissions = {
-                "secret_link_expiration": "update_payload",
+                "secret_link_expiration": "manage_access_options",
             }
 
             class Meta:
@@ -206,10 +223,13 @@ class GuestAccessRequest(RequestType):
 
     def _update_link_config(self, **context_vars):
         """Fix the prefix required for "self_html"."""
-        identity = context_vars.get("identity", g.identity)
         prefix = "/me"
-        if authenticated_user not in identity.provides:
-            prefix = "/access-requests"
+
+        if hasattr(g, "identity"):
+            identity = context_vars.get("identity", g.identity)
+
+            if authenticated_user not in identity.provides:
+                prefix = "/access-requests"
 
         return {"ui": context_vars["ui"] + prefix}
 
