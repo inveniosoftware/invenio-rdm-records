@@ -13,6 +13,7 @@
 See https://pytest-invenio.readthedocs.io/ for documentation on which test
 fixtures are available.
 """
+from invenio_rdm_records.services.permissions import RDMRequestsPermissionPolicy
 
 # Monkey patch Werkzeug 2.1
 # Flask-Login uses the safe_str_cmp method which has been removed in Werkzeug
@@ -158,6 +159,7 @@ def app_config(app_config, mock_datacite_client):
         "PIDSTORE_RECID_FIELD",
         "RECORDS_PERMISSIONS_RECORD_POLICY",
         "RECORDS_REST_ENDPOINTS",
+        "REQUESTS_PERMISSION_POLICY",
     ]
 
     for config_key in supported_configurations:
@@ -302,7 +304,7 @@ def app_config(app_config, mock_datacite_client):
     # When testing unverified users, there is a "unverified_user" fixture for that purpose.
     app_config["ACCOUNTS_DEFAULT_USERS_VERIFIED"] = True
     app_config["RDM_USER_MODERATION_ENABLED"] = False
-
+    app_config["REQUESTS_PERMISSION_POLICY"] = RDMRequestsPermissionPolicy
     return app_config
 
 

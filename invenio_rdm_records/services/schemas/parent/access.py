@@ -71,7 +71,7 @@ class AccessSettingsSchema(Schema):
     allow_guest_requests = fields.Boolean()
 
     accept_conditions_text = SanitizedHTML(allow_none=True)
-    secret_link_expiration = fields.Integer(validate=validate.Range(max=365))
+    secret_link_expiration = fields.Integer(validate=validate.Range(max=365, min=0))
 
 
 class ParentAccessSchema(Schema, FieldPermissionsMixin):

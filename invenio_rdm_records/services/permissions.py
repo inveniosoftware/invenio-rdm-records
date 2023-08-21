@@ -18,7 +18,7 @@ from invenio_records_permissions.generators import (
     SystemProcess,
 )
 from invenio_records_permissions.policies.records import RecordPermissionPolicy
-from invenio_requests.services.generators import Creator, Status, Receiver
+from invenio_requests.services.generators import Creator, Receiver, Status
 from invenio_requests.services.permissions import (
     PermissionPolicy as RequestPermissionPolicy,
 )
@@ -27,6 +27,7 @@ from ..requests.access import GuestAccessRequest
 from .generators import (
     AccessGrant,
     GuestAccessRequestToken,
+    IfCreate,
     IfExternalDOIRecord,
     IfFileIsLocal,
     IfNewRecord,
@@ -267,7 +268,16 @@ class RDMRequestsPermissionPolicy(RequestPermissionPolicy):
     can_update_comment = RequestPermissionPolicy.can_update_comment + [guest_token]
     can_delete_comment = RequestPermissionPolicy.can_delete_comment + [guest_token]
 
-    can_update_payload = [IfRequestType(GuestAccessRequest,
-                                       then_=[Status(["created"], [Creator()]),
-                                              Status(["submitted"], [Receiver()])],
-                                       else_=can_update)]
+    # manages GuessAccessRequest payload permissions
+    can_manage_access_options = [
+        IfCreate(
+            then_=[SystemProcess()],
+            else_=[
+                IfRequestType(
+                    GuestAccessRequest,
+                    then_=[Status(["submitted"], [Receiver()])],
+                    else_=Disable(),
+                )
+            ],
+        )
+    ]

@@ -83,6 +83,7 @@ class ChainObject:
 def verify_token(identity):
     """Verify the token and provide identity with corresponding need."""
     token = request.args.get("token", session.get("token", None))
+
     session["token"] = token
     if token:
         try:

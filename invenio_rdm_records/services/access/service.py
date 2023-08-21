@@ -639,7 +639,7 @@ class RecordAccessService(RecordService):
         # Create the URL for the email verification endpoint
         # TODO why replace api?
         verify_url = url_for(
-            "invenio_app_rdm_requests.verify_access_request_token",
+            "invenio_rdm_records_ext.verify_access_request_token",
             _external=True,
             **{"access_request_token": access_token.token},
         ).replace("/api/", "/")
@@ -705,7 +705,6 @@ class RecordAccessService(RecordService):
 
         if requests:
             raise DuplicateAccessRequestError([str(r.id) for r in requests])
-
         data = {
             "payload": {
                 "permission": "view",
@@ -713,6 +712,9 @@ class RecordAccessService(RecordService):
                 "full_name": access_token_data["full_name"],
                 "token": access_token_data["token"],
                 "message": access_token_data.get("message") or "",
+                "secret_link_expiration": str(
+                    record.parent.access.settings.secret_link_expiration
+                ),
             }
         }
 
@@ -720,9 +722,6 @@ class RecordAccessService(RecordService):
         record_owner = record.parent.access.owner.resolve()
         if record_owner:
             receiver = record_owner
-
-        if receiver is None:
-            pass
 
         access_token.delete()
         request = current_requests_service.create(
@@ -732,21 +731,13 @@ class RecordAccessService(RecordService):
             receiver,
             creator=data["payload"]["email"],
             topic=record,
-            expires_at=None,
+            expires_at=None,  # TODO expire request ?
             expand=expand,
             uow=uow,
         )
 
-        if request.errors:
-            return request
-
-        prefix = _(
-            "%(full_name)s (%(email)s) commented",
-            full_name=access_token_data["full_name"],
-            email=data["payload"]["email"],
-        )
         message = data["payload"].get("message") or ""
-        comment = {"payload": {"content": f"{prefix}: {message}"}}
+        comment = {"payload": {"content": message}}
 
         return current_requests_service.execute_action(
             system_identity,
