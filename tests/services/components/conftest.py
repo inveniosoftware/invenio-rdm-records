@@ -10,3 +10,13 @@
 See https://pytest-invenio.readthedocs.io/ for documentation on which test
 fixtures are available.
 """
+
+import pytest
+
+
+@pytest.fixture(scope="module")
+def app_config(app_config):
+    """Override pytest-invenio app_config fixture."""
+    # Enable user moderation
+    app_config["RDM_USER_MODERATION_ENABLED"] = True
+    return app_config

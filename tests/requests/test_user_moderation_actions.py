@@ -52,7 +52,7 @@ def test_user_moderation_approve(
     # Since tasks are executed synchronously in tests, the db session used for publishing is rolledback.
     # This is a patch for tests only.
     mocker.patch(
-        "invenio_rdm_records.services.components.verified.request_moderation_async",
+        "invenio_rdm_records.services.components.verified.request_moderation",
         MockRequestModerationTask,
     )
     new_record = records_service.publish(
