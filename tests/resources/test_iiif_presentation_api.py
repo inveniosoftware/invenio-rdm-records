@@ -55,25 +55,6 @@ def publish_record_with_images(
     record["files"]["default_preview"] = file_ids[-1]
     res = client.put(f"/records/{id_}/draft", headers=headers, json=record)
 
-    # create a new image
-    res = client.post(
-        f"/records/{id_}/draft/files", headers=headers, json=[{"key": file_id}]
-    )
-
-    # Upload a file
-    image_file = BytesIO()
-    image = Image.new("RGBA", (1280, 1024), (255, 0, 0, 0))
-    image.save(image_file, "png")
-    image_file.seek(0)
-    res = client.put(
-        f"/records/{id_}/draft/files/{file_id}/content",
-        headers={"content-type": "application/octet-stream"},
-        data=image_file,
-    )
-
-    # Commit the file
-    res = client.post(f"/records/{id_}/draft/files/{file_id}/commit", headers=headers)
-
     # Publish the record
     res = client.post(f"/records/{id_}/draft/actions/publish", headers=headers)
 
