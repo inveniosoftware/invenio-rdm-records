@@ -298,9 +298,11 @@ def app_config(app_config, mock_datacite_client):
 
     app_config["RDM_RESOURCE_ACCESS_TOKENS_ENABLED"] = True
 
-    # Users are verified by default. This will disable the automatic creation of moderation requests after publishing a record.
+    # Disable the automatic creation of moderation requests after publishing a record.
     # When testing unverified users, there is a "unverified_user" fixture for that purpose.
     app_config["ACCOUNTS_DEFAULT_USERS_VERIFIED"] = True
+    app_config["RDM_USER_MODERATION_ENABLED"] = False
+
     return app_config
 
 
@@ -1619,6 +1621,8 @@ def verified_user(UserFixture, app, db):
     )
     u.create(app, db)
     u.user.verified_at = datetime.utcnow()
+    # Dumping `is_verified` requires authenticated user in tests
+    u.identity.provides.add(Need(method="system_role", value="authenticated_user"))
     return u
 
 
@@ -1631,6 +1635,8 @@ def unverified_user(UserFixture, app, db):
     )
     u.create(app, db)
     u.user.verified_at = None
+    # Dumping `is_verified` requires authenticated user in tests
+    u.identity.provides.add(Need(method="system_role", value="authenticated_user"))
     return u
 
 

@@ -524,3 +524,7 @@ RDM_RESOURCE_ACCESS_TOKEN_REQUEST_ARG = "resource_access_token"
 
 RDM_LOCK_EDIT_PUBLISHED_FILES = lock_edit_published_files
 """Lock editing already published files (enforce record versioning)."""
+
+# Feature flag to enable/disable user moderation
+RDM_USER_MODERATION_ENABLED = False
+"""Flag to enable creation of user moderation requests on specific user actions."""

@@ -245,6 +245,10 @@ class RDMRecordPermissionPolicy(RecordPermissionPolicy):
     can_update_files = [Disable()]
     can_delete_files = [Disable()]
 
+    # Used to hide at the moment the `parent.is_verified` field. It should be set to
+    # correct permissions based on which the field will be exposed only to moderators
+    can_moderate = [Disable()]
+
 
 guest_token = IfRequestType(
     GuestAccessRequest, then_=[GuestAccessRequestToken()], else_=[]
