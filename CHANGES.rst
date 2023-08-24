@@ -10,6 +10,14 @@
 Changes
 =======
 
+Version 4.15.0 (2023-08-24)
+
+- access request: add secret_link_expiration to guest access request payload schema
+- permissions: add create/update conditions for managing access options
+- views: add error handlers to the blueprint
+- access request: add permission on secret_link_expiration request field
+
+
 Version 4.14.0 (2023-08-17)
 
 - alembic: add recipe for files and media files versioning
