@@ -174,7 +174,9 @@ class RecordAccessField(SystemField):
 
         data = self.get_dictkey(instance)
         if data:
-            obj = self._access_obj_class.from_dict(data, has_files=len(instance.files))
+            obj = self._access_obj_class.from_dict(
+                data, has_files=instance.files.enabled
+            )
         else:
             obj = self._access_obj_class()
 
