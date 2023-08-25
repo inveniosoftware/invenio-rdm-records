@@ -10,6 +10,10 @@
 Changes
 =======
 
+Version 4.15.1 (2023-08-25)
+
+- access-field: rely on `instance.files.enabled` to indicate if files exist or not
+
 Version 4.15.0 (2023-08-24)
 
 - access request: add secret_link_expiration to guest access request payload schema
