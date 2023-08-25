@@ -305,6 +305,8 @@ def app_config(app_config, mock_datacite_client):
     app_config["ACCOUNTS_DEFAULT_USERS_VERIFIED"] = True
     app_config["RDM_USER_MODERATION_ENABLED"] = False
     app_config["REQUESTS_PERMISSION_POLICY"] = RDMRequestsPermissionPolicy
+
+    app_config["COMMUNITIES_OAI_SETS_PREFIX"] = "community-"
     return app_config
 
 
