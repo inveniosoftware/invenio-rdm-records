@@ -19,12 +19,16 @@ from marshmallow_utils.permissions import FieldPermissionsMixin
 class FileSchema(Schema):
     """File schema."""
 
-    checksum = fields.String()
+    # File fields
+    id = fields.String(attribute="file.id")
+    checksum = fields.String(attribute="file.checksum")
     ext = fields.String(attribute="file.ext")
+    size = fields.Integer(attribute="file.size")
+    mimetype = fields.String(attribute="file.mimetype")
+
+    # FileRecord fields
     key = SanitizedUnicode()
     metadata = fields.Dict()
-    mimetype = fields.String(attribute="file.mimetype")
-    size = fields.Integer(attribute="file.size")
 
 
 class FilesSchema(Schema, FieldPermissionsMixin):
