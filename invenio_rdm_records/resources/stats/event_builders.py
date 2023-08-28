@@ -61,24 +61,30 @@ def record_view_event_builder(event, sender_app, **kwargs):
     Flask's global ``request`` object.
     """
     assert "record" in kwargs
-
     record = kwargs["record"]
-    event.update(
-        {
-            # When:
-            "timestamp": datetime.utcnow().isoformat(),
-            # What:
-            "recid": record["id"],
-            "parent_recid": record.parent["id"],
-            # Who:
-            "referrer": request.referrer,
-            **get_user(),
-            # TODO probably we can add more request context information here for
-            #      extra filtering (e.g. URL or query params for discarding the event
-            #      when it's a citation text export)
-        }
-    )
-    return event
+
+    is_published = getattr(record, "is_published", False)
+    is_draft = getattr(record, "is_draft", True)
+
+    # drop not published records
+    if is_published and not is_draft:
+        event.update(
+            {
+                # When:
+                "timestamp": datetime.utcnow().isoformat(),
+                # What:
+                "recid": record["id"],
+                "parent_recid": record.parent["id"],
+                # Who:
+                "referrer": request.referrer,
+                **get_user(),
+                # TODO probably we can add more request context information here for
+                #      extra filtering (e.g. URL or query params for discarding the event
+                #      when it's a citation text export)
+            }
+        )
+        return event
+    return None
 
 
 def check_if_via_api(event, sender_app, **kwargs):
