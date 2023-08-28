@@ -174,7 +174,8 @@ class RDMRecordCommunitiesConfig(ServiceConfig, ConfiguratorMixin):
     """Record communities service config."""
 
     service_id = "record-communities"
-    record_cls = RDMRecord
+
+    record_cls = FromConfig("RDM_RECORD_CLS", default=RDMRecord)
     permission_policy_cls = FromConfig(
         "RDM_PERMISSION_POLICY", default=RDMRecordPermissionPolicy, import_string=True
     )
@@ -194,7 +195,7 @@ class RDMRecordCommunitiesConfig(ServiceConfig, ConfiguratorMixin):
 class RDMRecordRequestsConfig(ServiceConfig, ConfiguratorMixin):
     """Record community inclusion config."""
 
-    request_record_cls = RDMRecord
+    request_record_cls = FromConfig("RDM_RECORD_CLS", default=RDMRecord)
     service_id = "record-requests"
     permission_policy_cls = FromConfig(
         "RDM_PERMISSION_POLICY", default=RDMRecordPermissionPolicy, import_string=True
@@ -214,7 +215,7 @@ class RDMCommunityRecordsConfig(BaseRecordServiceConfig, ConfiguratorMixin):
     """Community records service config."""
 
     service_id = "community-records"
-    record_cls = RDMRecord
+    record_cls = FromConfig("RDM_RECORD_CLS", default=RDMRecord)
     community_cls = Community
     permission_policy_cls = FromConfig(
         "RDM_PERMISSION_POLICY", default=RDMRecordPermissionPolicy, import_string=True
@@ -253,8 +254,8 @@ class RDMRecordServiceConfig(RecordServiceConfig, ConfiguratorMixin):
     """RDM record draft service config."""
 
     # Record and draft classes
-    record_cls = RDMRecord
-    draft_cls = RDMDraft
+    record_cls = FromConfig("RDM_RECORD_CLS", default=RDMRecord)
+    draft_cls = FromConfig("RDM_DRAFT_CLS", default=RDMDraft)
 
     # Schemas
     schema = RDMRecordSchema
@@ -486,7 +487,8 @@ class RDMRecordMediaFilesServiceConfig(RDMRecordServiceConfig):
 class RDMFileRecordServiceConfig(FileServiceConfig, ConfiguratorMixin):
     """Configuration for record files."""
 
-    record_cls = RDMRecord
+    record_cls = FromConfig("RDM_RECORD_CLS", default=RDMRecord)
+
     permission_policy_cls = FromConfig(
         "RDM_PERMISSION_POLICY", default=RDMRecordPermissionPolicy
     )
@@ -545,7 +547,8 @@ class RDMFileDraftServiceConfig(FileServiceConfig, ConfiguratorMixin):
 
     service_id = "draft-files"
 
-    record_cls = RDMDraft
+    record_cls = FromConfig("RDM_DRAFT_CLS", default=RDMDraft)
+
     permission_action_prefix = "draft_"
     permission_policy_cls = FromConfig(
         "RDM_PERMISSION_POLICY", default=RDMRecordPermissionPolicy
