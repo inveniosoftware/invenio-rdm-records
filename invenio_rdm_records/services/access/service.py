@@ -556,8 +556,9 @@ class RecordAccessService(RecordService):
                 for rm in model_cls.query.filter(
                     model_cls.json["created_by"] == {"user": str(identity.id)},
                     model_cls.json["topic"] == {"record": id_},
+                    model_cls.json["type"].as_string() == UserAccessRequest.type_id,
                 )
-                if rm.data and rm.data["type"] == UserAccessRequest.type_id
+                if not rm.is_deleted
             )
             if request.is_open
         ]
@@ -697,8 +698,9 @@ class RecordAccessService(RecordService):
                 for rm in model_cls.query.filter(
                     model_cls.json["created_by"] == {"email": access_token.email},
                     model_cls.json["topic"] == {"record": access_token.record_pid},
+                    model_cls.json["type"].as_string() == GuestAccessRequest.type_id,
                 )
-                if rm.data and rm.data["type"] == GuestAccessRequest.type_id
+                if not rm.is_deleted
             )
             if request.is_open
         ]
