@@ -9,6 +9,7 @@
 """Owners classes for the access system field."""
 
 from invenio_accounts.models import User
+from invenio_db import db
 
 
 class Owner:
@@ -50,7 +51,7 @@ class Owner:
                 return None
 
             elif self.owner_type == "user":
-                self._entity = User.query.get(self.owner_id)
+                self._entity = db.session.get(User, self.owner_id)
 
             else:
                 raise ValueError("unknown owner type: {}".format(self.owner_type))
