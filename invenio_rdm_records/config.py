@@ -17,6 +17,7 @@ from invenio_i18n import lazy_gettext as _
 
 from .resources.serializers import DataCite43JSONSerializer
 from .services import facets
+from .services.config import lock_edit_published_files
 from .services.permissions import RDMRecordPermissionPolicy
 from .services.pids import providers
 
@@ -56,7 +57,6 @@ RDM_RECORDS_PERSONORG_SCHEMES = {
     "gnd": {"label": _("GND"), "validator": idutils.is_gnd, "datacite": "GND"},
     "ror": {"label": _("ROR"), "validator": idutils.is_ror, "datacite": "ROR"},
 }
-
 
 RDM_RECORDS_IDENTIFIERS_SCHEMES = {
     "ark": {"label": _("ARK"), "validator": idutils.is_ark, "datacite": "ARK"},
@@ -102,13 +102,11 @@ RDM_RECORDS_LOCATION_SCHEMES = {
     "geonames": {"label": _("GeoNames"), "validator": always_valid},
 }
 
-
 #
 # Record permission policy
 #
 RDM_PERMISSION_POLICY = RDMRecordPermissionPolicy
 """Override the default record permission policy."""
-
 
 #
 # Record review requests
@@ -339,7 +337,6 @@ The name is further used to configure the desired persistent identifiers (see
 ``RDM_PERSISTENT_IDENTIFIERS`` below)
 """
 
-
 RDM_PERSISTENT_IDENTIFIERS = {
     # DOI automatically removed if DATACITE_ENABLED is False.
     "doi": {
@@ -396,22 +393,17 @@ RDM_ALLOW_EXTERNAL_DOI_VERSIONING = True
 DATACITE_ENABLED = False
 """Flag to enable/disable DOI registration."""
 
-
 DATACITE_USERNAME = ""
 """DataCite username."""
-
 
 DATACITE_PASSWORD = ""
 """DataCite password."""
 
-
 DATACITE_PREFIX = ""
 """DataCite DOI prefix."""
 
-
 DATACITE_TEST_MODE = True
 """DataCite test mode enabled."""
-
 
 DATACITE_FORMAT = "{prefix}/{id}"
 """A string used for formatting the DOI or a callable.
@@ -528,3 +520,11 @@ RDM_RESOURCE_ACCESS_TOKENS_WHITELISTED_JWT_ALGORITHMS = ["HS256", "HS384", "HS51
 
 RDM_RESOURCE_ACCESS_TOKEN_REQUEST_ARG = "resource_access_token"
 """URL argument to provide resource access token."""
+
+
+RDM_LOCK_EDIT_PUBLISHED_FILES = lock_edit_published_files
+"""Lock editing already published files (enforce record versioning)."""
+
+# Feature flag to enable/disable user moderation
+RDM_USER_MODERATION_ENABLED = False
+"""Flag to enable creation of user moderation requests on specific user actions."""

@@ -288,6 +288,14 @@ class ResourceAccessToken(Generator):
         return []
 
 
+class IfCreate(ConditionalGenerator):
+    """Check if the request is created or modified."""
+
+    def _condition(self, record=None, request=None, **kwargs):
+        """Check if record is empty - meaning it is created for the first time ."""
+        return record is None and request is None
+
+
 class IfRequestType(ConditionalGenerator):
     """Conditional generator for requests of a certain type."""
 

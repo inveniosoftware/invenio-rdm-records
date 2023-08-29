@@ -9,6 +9,33 @@
 
 Changes
 =======
+
+Version 4.15.1 (2023-08-25)
+
+- access-field: rely on `instance.files.enabled` to indicate if files exist or not
+
+Version 4.15.0 (2023-08-24)
+
+- access request: add secret_link_expiration to guest access request payload schema
+- permissions: add create/update conditions for managing access options
+- views: add error handlers to the blueprint
+- access request: add permission on secret_link_expiration request field
+
+
+Version 4.14.0 (2023-08-17)
+
+- alembic: add recipe for files and media files versioning
+- permissions: fix permissions about whom can add a record to community
+- service: lock record files conditionally
+- search: added 'verified' field sort option
+- records: added verified field to record
+- permissions: extract base permissions
+- deposit: set color of discard button
+- github: remove python 3.7 from the tests
+- records: add tombstone and deletion status
+- access request: add secret link expiration access request setting
+- deposit: fix license modal
+
 Version 4.13.1 (2023-08-11)
 
 - vocabularies: add new values to resource types

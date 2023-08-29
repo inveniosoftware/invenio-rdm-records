@@ -10,7 +10,6 @@
 """Service level tests for Invenio RDM Records."""
 
 import pytest
-from invenio_records_resources.services.errors import PermissionDeniedError
 
 from invenio_rdm_records.proxies import current_rdm_records
 from invenio_rdm_records.services.errors import EmbargoNotLiftedError
@@ -132,11 +131,11 @@ def test_embargo_lift_with_error(running_app, search_clear, minimal_record):
 
 def test_search_sort_verified_enabled(
     running_app,
-    uploader,
     minimal_record,
     search_clear,
     monkeypatch,
     verified_user,
+    unverified_user,
 ):
     """Tests sort by 'is_verified' field, when enabled.
 
@@ -145,7 +144,7 @@ def test_search_sort_verified_enabled(
     service = current_rdm_records.records_service
 
     # NV : non-verified
-    nv_user = uploader
+    nv_user = unverified_user
     # V  : verified
     v_user = verified_user
 

@@ -112,5 +112,3 @@ class OAIPMHServerServiceConfig(ServiceConfig):
         ),
         "oai-identify": Link("{+ui}/oai2d?verb=Identify"),
     }
-
-    reserved_prefixes = {"community-"}

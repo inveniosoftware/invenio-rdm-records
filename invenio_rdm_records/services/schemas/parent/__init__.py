@@ -35,6 +35,8 @@ class RDMParentSchema(ParentSchema, FieldPermissionsMixin):
     field_dump_permissions = {
         # omit 'review' from dumps except for users with curate permission
         "review": "review",
+        # omit 'is_verified' from dumps except for users with moderate permission
+        "is_verified": "moderate",
     }
 
     access = fields.Nested(ParentAccessSchema, dump_only=True)

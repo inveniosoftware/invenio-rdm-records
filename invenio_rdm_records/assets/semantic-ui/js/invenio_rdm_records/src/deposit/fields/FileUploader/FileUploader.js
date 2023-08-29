@@ -39,12 +39,14 @@ export const FileUploaderComponent = ({
   importButtonText,
   isFileImportInProgress,
   decimalSizeDisplay,
+  filesLocked,
   ...uiProps
 }) => {
   // We extract the working copy of the draft stored as `values` in formik
   const { values: formikDraft } = useFormikContext();
   const filesEnabled = _get(formikDraft, "files.enabled", false);
   const [warningMsg, setWarningMsg] = useState();
+  const lockFileUploader = !isDraftRecord && filesLocked;
 
   const filesList = Object.values(files).map((fileState) => {
     return {
@@ -144,7 +146,6 @@ export const FileUploaderComponent = ({
 
   const displayImportBtn =
     filesEnabled && isDraftRecord && hasParentRecord && !filesList.length;
-
   return (
     <Overridable
       id="ReactInvenioDeposit.FileUploader.layout"
@@ -169,19 +170,19 @@ export const FileUploaderComponent = ({
       dropzoneParams={dropzoneParams}
       warningMsg={warningMsg}
       setWarningMsg={setWarningMsg}
+      filesLocked={lockFileUploader}
       {...uiProps}
     >
       <>
-        <Grid>
+        <Grid className="file-uploader">
           <Grid.Row className="pt-10 pb-5">
-            {isDraftRecord && (
+            {!lockFileUploader && (
               <FileUploaderToolbar
                 {...uiProps}
                 config={config}
                 filesEnabled={filesEnabled}
                 filesList={filesList}
                 filesSize={filesSize}
-                isDraftRecord={isDraftRecord}
                 quota={quota}
                 decimalSizeDisplay={decimalSizeDisplay}
               />
@@ -200,7 +201,7 @@ export const FileUploaderComponent = ({
               <Grid.Row className="pb-5 pt-5">
                 <Grid.Column width={16}>
                   <Message visible info>
-                    <div style={{ display: "inline-block", float: "right" }}>
+                    <div className="right-floated display-inline-block">
                       <Button
                         type="button"
                         size="mini"
@@ -212,7 +213,7 @@ export const FileUploaderComponent = ({
                         loading={isFileImportInProgress}
                       />
                     </div>
-                    <p style={{ marginTop: "5px", display: "inline-block" }}>
+                    <p className="display-inline-block mt-5">
                       <Icon name="info circle" />
                       {i18next.t("You can import files from the previous version.")}
                     </p>
@@ -226,7 +227,7 @@ export const FileUploaderComponent = ({
             id="ReactInvenioDeposit.FileUploader.FileUploaderArea.container"
             filesList={filesList}
             dropzoneParams={dropzoneParams}
-            isDraftRecord={isDraftRecord}
+            filesLocked={lockFileUploader}
             filesEnabled={filesEnabled}
             deleteFile={deleteFile}
             decimalSizeDisplay={decimalSizeDisplay}
@@ -238,7 +239,7 @@ export const FileUploaderComponent = ({
                   {...uiProps}
                   filesList={filesList}
                   dropzoneParams={dropzoneParams}
-                  isDraftRecord={isDraftRecord}
+                  filesLocked={lockFileUploader}
                   filesEnabled={filesEnabled}
                   deleteFile={deleteFile}
                   decimalSizeDisplay={decimalSizeDisplay}
@@ -250,6 +251,8 @@ export const FileUploaderComponent = ({
           <Overridable
             id="ReactInvenioDeposit.FileUploader.NewVersionButton.container"
             isDraftRecord={isDraftRecord}
+            draft={formikDraft}
+            filesLocked={lockFileUploader}
             permissions={permissions}
             record={record}
             {...uiProps}
@@ -268,25 +271,26 @@ export const FileUploaderComponent = ({
                 </Grid.Column>
               </Grid.Row>
             ) : (
-              <Grid.Row className="file-upload-note pt-5">
-                <Grid.Column width={16}>
-                  <Message info>
-                    <NewVersionButton
-                      record={record}
-                      onError={() => {}}
-                      className=""
-                      disabled={!permissions.can_new_version}
-                      style={{ float: "right" }}
-                    />
-                    <p style={{ marginTop: "5px", display: "inline-block" }}>
-                      <Icon name="info circle" size="large" />
-                      {i18next.t(
-                        "You must create a new version to add, modify or delete files."
-                      )}
-                    </p>
-                  </Message>
-                </Grid.Column>
-              </Grid.Row>
+              filesLocked && (
+                <Grid.Row className="file-upload-note pt-5">
+                  <Grid.Column width={16}>
+                    <Message info>
+                      <NewVersionButton
+                        record={record}
+                        onError={() => {}}
+                        className="right-floated"
+                        disabled={!permissions.can_new_version}
+                      />
+                      <p className="mt-5 display-inline-block">
+                        <Icon name="info circle" size="large" />
+                        {i18next.t(
+                          "You must create a new version to add, modify or delete files."
+                        )}
+                      </p>
+                    </Message>
+                  </Grid.Column>
+                </Grid.Row>
+              )
             )}
           </Overridable>
         </Grid>
@@ -342,6 +346,7 @@ FileUploaderComponent.propTypes = {
   uploadFiles: PropTypes.func.isRequired,
   deleteFile: PropTypes.func.isRequired,
   decimalSizeDisplay: PropTypes.bool,
+  filesLocked: PropTypes.bool,
   permissions: PropTypes.object,
 };
 
@@ -363,4 +368,5 @@ FileUploaderComponent.defaultProps = {
   importButtonIcon: "sync",
   importButtonText: i18next.t("Import files"),
   decimalSizeDisplay: true,
+  filesLocked: false,
 };

@@ -21,6 +21,7 @@ from invenio_records_resources.references.entity_resolvers import (
     ServiceResultProxy,
     ServiceResultResolver,
 )
+from invenio_users_resources.services.schemas import SystemUserSchema
 from sqlalchemy.orm.exc import NoResultFound
 
 from invenio_rdm_records.services.config import RDMRecordServiceConfig
@@ -101,6 +102,11 @@ class EmailProxy(EntityProxy):
         """Return the ghost representation of the unresolved value."""
         return value
 
+    def system_record(self):
+        """Return the representation of system user."""
+        default_constant_values = {}
+        return SystemUserSchema().dump(default_constant_values)
+
     def get_needs(self, ctx=None):
         """Get the needs provided by the entity."""
         return []
@@ -114,6 +120,7 @@ class EmailResolver(EntityResolver):
     """Resolver for email addresses."""
 
     type_id = "email"
+    type_key = "email"  # TODO: hack to make this entity resolver work in notifications
 
     def __init__(self):
         """Constructor."""

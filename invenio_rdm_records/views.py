@@ -22,14 +22,25 @@ from flask import (
 from invenio_access.permissions import system_identity
 from invenio_i18n import lazy_gettext as _
 from invenio_mail.tasks import send_email
+from invenio_pidstore.errors import PIDDeletedError, PIDDoesNotExistError
+from invenio_records_resources.services.errors import PermissionDeniedError
 from invenio_requests.proxies import current_requests_service
 from invenio_requests.views.decorators import pass_request
+from invenio_requests.views.ui import (
+    not_found_error,
+    record_permission_denied_error,
+    record_tombstone_error,
+)
 
 from .proxies import current_rdm_records_service as current_service
 from .requests.access.requests import GuestAcceptAction
 from .services.errors import DuplicateAccessRequestError
 
 blueprint = Blueprint("invenio_rdm_records_ext", __name__)
+# Register error handlers
+blueprint.register_error_handler(PermissionDeniedError, record_permission_denied_error)
+blueprint.register_error_handler(PIDDeletedError, record_tombstone_error)
+blueprint.register_error_handler(PIDDoesNotExistError, not_found_error)
 
 
 @blueprint.record_once
@@ -122,6 +133,7 @@ def read_request(request, **kwargs):
         f"invenio_requests/{request_type}/index.html",
         user_avatar="",
         record=None,
+        permissions={},
         invenio_request=request.to_dict(),
         request_is_accepted=request_is_accepted,
     )

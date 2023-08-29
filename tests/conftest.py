@@ -13,6 +13,7 @@
 See https://pytest-invenio.readthedocs.io/ for documentation on which test
 fixtures are available.
 """
+from invenio_rdm_records.services.permissions import RDMRequestsPermissionPolicy
 
 # Monkey patch Werkzeug 2.1
 # Flask-Login uses the safe_str_cmp method which has been removed in Werkzeug
@@ -158,6 +159,7 @@ def app_config(app_config, mock_datacite_client):
         "PIDSTORE_RECID_FIELD",
         "RECORDS_PERMISSIONS_RECORD_POLICY",
         "RECORDS_REST_ENDPOINTS",
+        "REQUESTS_PERMISSION_POLICY",
     ]
 
     for config_key in supported_configurations:
@@ -297,6 +299,14 @@ def app_config(app_config, mock_datacite_client):
     app_config["USERS_RESOURCES_SERVICE_SCHEMA"] = NotificationsUserSchema
 
     app_config["RDM_RESOURCE_ACCESS_TOKENS_ENABLED"] = True
+
+    # Disable the automatic creation of moderation requests after publishing a record.
+    # When testing unverified users, there is a "unverified_user" fixture for that purpose.
+    app_config["ACCOUNTS_DEFAULT_USERS_VERIFIED"] = True
+    app_config["RDM_USER_MODERATION_ENABLED"] = False
+    app_config["REQUESTS_PERMISSION_POLICY"] = RDMRequestsPermissionPolicy
+
+    app_config["COMMUNITIES_OAI_SETS_PREFIX"] = "community-"
     return app_config
 
 
@@ -974,21 +984,6 @@ def mod_identity(app, moderator_user):
     return idt
 
 
-@pytest.fixture
-def mod_request_create(running_app, mod_identity):
-    """Yields a fixture that encloses a function to create a moderation request."""
-
-    def _request(user_id):
-        """Creates the request."""
-        request_item = mod_service.request_moderation(mod_identity, user_id=user_id)
-        assert request_item
-
-        return request_item
-
-    # Pass this closure to the test
-    yield _request
-
-
 @pytest.fixture()
 def users(app, db):
     """Create example user."""
@@ -1466,6 +1461,7 @@ RunningApp = namedtuple(
         "licenses_v",
         "funders_v",
         "awards_v",
+        "moderator_role",  # Add moderator role by default to the app
     ],
 )
 
@@ -1488,6 +1484,7 @@ def running_app(
     licenses_v,
     funders_v,
     awards_v,
+    moderator_role,
 ):
     """This fixture provides an app with the typically needed db data loaded.
 
@@ -1511,6 +1508,7 @@ def running_app(
         licenses_v,
         funders_v,
         awards_v,
+        moderator_role,
     )
 
 
@@ -1622,11 +1620,27 @@ def test_user(UserFixture, app, db, index_users):
 def verified_user(UserFixture, app, db):
     """User meant to test 'verified' property of records."""
     u = UserFixture(
-        email="testuser@inveniosoftware.org",
+        email="verified@inveniosoftware.org",
         password="testuser",
     )
     u.create(app, db)
     u.user.verified_at = datetime.utcnow()
+    # Dumping `is_verified` requires authenticated user in tests
+    u.identity.provides.add(Need(method="system_role", value="authenticated_user"))
+    return u
+
+
+@pytest.fixture()
+def unverified_user(UserFixture, app, db):
+    """User meant to test 'verified' property of records."""
+    u = UserFixture(
+        email="unverified@inveniosoftware.org",
+        password="testuser",
+    )
+    u.create(app, db)
+    u.user.verified_at = None
+    # Dumping `is_verified` requires authenticated user in tests
+    u.identity.provides.add(Need(method="system_role", value="authenticated_user"))
     return u
 
 

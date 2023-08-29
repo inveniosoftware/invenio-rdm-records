@@ -25,7 +25,6 @@ from sqlalchemy.sql import text
 
 from invenio_rdm_records.oaiserver.services.errors import (
     OAIPMHSetDoesNotExistError,
-    OAIPMHSetIDDoesNotExistError,
     OAIPMHSetNotEditable,
     OAIPMHSetSpecAlreadyExistsError,
 )
@@ -35,10 +34,10 @@ from invenio_rdm_records.oaiserver.services.uow import OAISetCommitOp, OAISetDel
 class OAIPMHServerService(Service):
     """OAI-PMH service."""
 
-    def __init__(self, config, extra_reserved_prefixes={}):
+    def __init__(self, config, extra_reserved_prefixes=None):
         """Init service with config."""
         super().__init__(config)
-        self.reserved_prefixes = config.reserved_prefixes.union(extra_reserved_prefixes)
+        self.extra_reserved_prefixes = extra_reserved_prefixes or {}
 
     @property
     def schema(self):
@@ -51,6 +50,12 @@ class OAIPMHServerService(Service):
         return LinksTemplate(
             self.config.links_item,
         )
+
+    @property
+    def reserved_prefixes(self):
+        """Get OAI-PMH set prefix from config."""
+        _reserved_prefixes = set([current_app.config["COMMUNITIES_OAI_SETS_PREFIX"]])
+        return _reserved_prefixes.union(self.extra_reserved_prefixes)
 
     def _get_one(self, raise_error=True, **kwargs):
         """Retrieve set based on provided arguments."""

@@ -71,6 +71,9 @@ class RDMFileRecordMetadata(db.Model, RecordMetadataBase, FileRecordModelMixin):
 
     __tablename__ = "rdm_records_files"
 
+    # Enable versioning
+    __versioned__ = {}
+
 
 class RDMMediaFileRecordMetadata(db.Model, RecordMetadataBase, FileRecordModelMixin):
     """File associated with a record."""
@@ -78,6 +81,9 @@ class RDMMediaFileRecordMetadata(db.Model, RecordMetadataBase, FileRecordModelMi
     __record_model_cls__ = RDMRecordMetadata
 
     __tablename__ = "rdm_records_media_files"
+
+    # Enable versioning
+    __versioned__ = {}
 
 
 #

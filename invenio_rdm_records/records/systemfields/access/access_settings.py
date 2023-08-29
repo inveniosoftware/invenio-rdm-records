@@ -17,7 +17,7 @@ class AccessSettings:
         self.allow_user_requests = settings_dict.get("allow_user_requests", False)
         self.allow_guest_requests = settings_dict.get("allow_guest_requests", False)
         self.accept_conditions_text = settings_dict.get("accept_conditions_text", None)
-        self.secret_link_expiration = settings_dict.get("secret_link_expiration", None)
+        self.secret_link_expiration = settings_dict.get("secret_link_expiration", 0)
 
     def dump(self):
         """Dump the record as dictionary."""

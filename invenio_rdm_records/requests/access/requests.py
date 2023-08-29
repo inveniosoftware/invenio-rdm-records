@@ -6,14 +6,19 @@
 # it under the terms of the MIT License; see LICENSE file for more details.
 
 """Access requests for records."""
+from datetime import datetime, timedelta
 
+import marshmallow as ma
 from flask import current_app, g
 from invenio_access.permissions import authenticated_user, system_identity
 from invenio_i18n import lazy_gettext as _
 from invenio_mail.tasks import send_email
 from invenio_records_resources.services.uow import Operation, RecordCommitOp
+from invenio_requests import current_events_service
 from invenio_requests.customizations import RequestType, actions
-from marshmallow import fields
+from invenio_requests.customizations.event_types import CommentEventType
+from marshmallow import ValidationError, fields, validates
+from marshmallow_utils.permissions import FieldPermissionsMixin
 
 from ...proxies import current_rdm_records_service as service
 
@@ -58,7 +63,9 @@ class GuestSubmitAction(actions.SubmitAction):
 
     def execute(self, identity, uow):
         """Execute the submit action."""
-        self.request["title"] = self.request.topic.resolve().metadata["title"]
+        record = self.request.topic.resolve()
+        self.request["title"] = record.metadata["title"]
+
         super().execute(identity, uow)
 
 
@@ -82,11 +89,22 @@ class GuestAcceptAction(actions.AcceptAction):
             "origin": f"request:{self.request.id}",
         }
 
+        # secret link will never expire if secret_link_expiration is empty
+        days = int(payload["secret_link_expiration"])
+        # TODO date calculation could be done elsewhere ?
+        if days:
+            data["expires_at"] = (
+                (datetime.utcnow() + timedelta(days=days)).date().isoformat()
+            )
         link = service.access.create_secret_link(identity, record.id, data)
+
         access_url = f"{record.links['self_html']}?token={link._link.token}"
-        plain_message = _("Access the record here: %(url)s", url=access_url)
+
+        plain_message = _("Access the record here: {url}".format(url=access_url))
         message = _(
-            'Click <a href="%(url)s">here</a> to access the record.', url=access_url
+            'Click <a href="{url}">here</a> to access the record.'.format(
+                url=access_url
+            )
         )
 
         uow.register(RecordCommitOp(record._record.parent))
@@ -100,6 +118,22 @@ class GuestAcceptAction(actions.AcceptAction):
         )
 
         super().execute(identity, uow)
+
+        confirmation_message = {
+            "payload": {
+                "content": 'Click <a href="{url}">here</a> to access the record.'.format(
+                    url=access_url
+                )
+            }
+        }
+        current_events_service.create(
+            system_identity,
+            self.request.id,
+            confirmation_message,
+            CommentEventType,
+            uow=uow,
+            notify=False,
+        )
 
 
 class UserAcceptAction(actions.AcceptAction):
@@ -175,14 +209,43 @@ class GuestAccessRequest(RequestType):
     allowed_receiver_ref_types = ["user", "community"]
     allowed_topic_ref_types = ["record"]
 
+    @classmethod
+    def _create_payload_cls(cls):
+        class PayloadBaseSchema(ma.Schema, FieldPermissionsMixin):
+            field_load_permissions = {
+                "secret_link_expiration": "manage_access_options",
+            }
+
+            class Meta:
+                unknown = ma.RAISE
+
+        cls.payload_schema_cls = PayloadBaseSchema
+
     def _update_link_config(self, **context_vars):
         """Fix the prefix required for "self_html"."""
-        identity = context_vars.get("identity", g.identity)
         prefix = "/me"
-        if authenticated_user not in identity.provides:
-            prefix = "/access-requests"
+
+        if hasattr(g, "identity"):
+            identity = context_vars.get("identity", g.identity)
+
+            if authenticated_user not in identity.provides:
+                prefix = "/access-requests"
 
         return {"ui": context_vars["ui"] + prefix}
+
+    @validates("secret_link_expiration")
+    def _validate_days(self, value):
+        try:
+            if int(value) < 0:
+                raise ValidationError(
+                    message="Not a valid number of days.",
+                    field_name="secret_link_expiration",
+                )
+        except ValueError:
+            raise ValidationError(
+                message="Not a valid number of days.",
+                field_name="secret_link_expiration",
+            )
 
     available_actions = {
         "create": actions.CreateAction,
@@ -200,4 +263,5 @@ class GuestAccessRequest(RequestType):
         "full_name": fields.String(required=True),
         "token": fields.String(required=True),
         "message": fields.String(required=False),
+        "secret_link_expiration": fields.String(required=True),
     }

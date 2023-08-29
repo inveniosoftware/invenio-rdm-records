@@ -62,6 +62,7 @@ from ..records.api import RDMDraftMediaFiles, RDMRecordMediaFiles
 from . import facets
 from .components import (
     AccessComponent,
+    ContentModerationComponent,
     CustomFieldsComponent,
     MetadataComponent,
     ParentPIDsComponent,
@@ -119,6 +120,14 @@ def archive_download_enabled(record, ctx):
 def is_datacite_test(record, ctx):
     """Return if the datacite test mode is being used."""
     return current_app.config["DATACITE_TEST_MODE"]
+
+
+def lock_edit_published_files(record):
+    """Return if files once published should be locked when editing the record.
+
+    Return False to allow editing of published files or True otherwise.
+    """
+    return True
 
 
 #
@@ -262,8 +271,16 @@ class RDMRecordServiceConfig(RecordServiceConfig, ConfiguratorMixin):
     grant_result_item_cls = GrantItem
     grant_result_list_cls = GrantList
 
-    # Permission policy
     default_files_enabled = FromConfig("RDM_DEFAULT_FILES_ENABLED", default=True)
+
+    # we disable by default media files. The feature is only available via REST API
+    # and they should be enabled before an upload is made i.e update the draft to
+    # set `media_files.enabled` to True
+    default_media_files_enabled = False
+
+    lock_edit_published_files = FromConfig(
+        "RDM_LOCK_EDIT_PUBLISHED_FILES", default=lock_edit_published_files
+    )
 
     # Search configuration
     search = FromConfigSearchOptions(
@@ -314,6 +331,7 @@ class RDMRecordServiceConfig(RecordServiceConfig, ConfiguratorMixin):
         ParentPIDsComponent,
         RelationsComponent,
         ReviewComponent,
+        ContentModerationComponent,
     ]
 
     # Links
@@ -497,6 +515,7 @@ class RDMMediaFileRecordServiceConfig(FileServiceConfig, ConfiguratorMixin):
     permission_policy_cls = FromConfig(
         "RDM_PERMISSION_POLICY", default=RDMRecordPermissionPolicy
     )
+    permission_action_prefix = "media_"
 
     file_links_list = {
         "self": RecordLink("{+api}/records/{id}/media-files"),

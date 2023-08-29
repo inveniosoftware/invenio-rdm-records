@@ -615,13 +615,14 @@ class RecordAccessService(RecordService):
     def create_guest_access_request_token(
         self, identity, id_, data, expand=False, uow=None
     ):
-        """Create an request token that can be used to create an access request."""
+        """Create a request token that can be used to create an access request."""
         # Permissions
         if authenticated_user in identity.provides:
             raise PermissionDeniedError("request_guest_access")
 
         record = self.record_cls.pid.resolve(id_)
         if current_app.config.get("MAIL_SUPPRESS_SEND", False):
+            # TODO should be handled globally, not here, maybe EmailOp?
             current_app.logger.warn(
                 "Cannot proceed with guest based access request - "
                 "email sending has been disabled!"
@@ -636,6 +637,7 @@ class RecordAccessService(RecordService):
         )
 
         # Create the URL for the email verification endpoint
+        # TODO why replace api?
         verify_url = url_for(
             "invenio_rdm_records_ext.verify_access_request_token",
             _external=True,
@@ -680,7 +682,7 @@ class RecordAccessService(RecordService):
 
         access_token = AccessRequestToken.get_by_token(token)
         if access_token is None:
-            return None
+            return
 
         access_token_data = access_token.to_dict()
         record = self.record_cls.pid.resolve(access_token_data["record_pid"])
@@ -703,7 +705,6 @@ class RecordAccessService(RecordService):
 
         if requests:
             raise DuplicateAccessRequestError([str(r.id) for r in requests])
-
         data = {
             "payload": {
                 "permission": "view",
@@ -711,6 +712,9 @@ class RecordAccessService(RecordService):
                 "full_name": access_token_data["full_name"],
                 "token": access_token_data["token"],
                 "message": access_token_data.get("message") or "",
+                "secret_link_expiration": str(
+                    record.parent.access.settings.secret_link_expiration
+                ),
             }
         }
 
@@ -718,9 +722,6 @@ class RecordAccessService(RecordService):
         record_owner = record.parent.access.owner.resolve()
         if record_owner:
             receiver = record_owner
-
-        if receiver is None:
-            pass
 
         access_token.delete()
         request = current_requests_service.create(
@@ -730,21 +731,13 @@ class RecordAccessService(RecordService):
             receiver,
             creator=data["payload"]["email"],
             topic=record,
-            expires_at=None,
+            expires_at=None,  # TODO expire request ?
             expand=expand,
             uow=uow,
         )
 
-        if request.errors:
-            return request
-
-        prefix = _(
-            "%(full_name)s (%(email)s) commented",
-            full_name=access_token_data["full_name"],
-            email=data["payload"]["email"],
-        )
         message = data["payload"].get("message") or ""
-        comment = {"payload": {"content": f"{prefix}: {message}"}}
+        comment = {"payload": {"content": message}}
 
         return current_requests_service.execute_action(
             system_identity,
