@@ -44,6 +44,7 @@ from .deserializers import ROCrateJSONDeserializer
 from .deserializers.errors import DeserializerError
 from .errors import HTTPJSONException, HTTPJSONValidationWithMessageAsListException
 from .serializers import (
+    BibtexSerializer,
     CSLJSONSerializer,
     DataCite43JSONSerializer,
     DataCite43XMLSerializer,
@@ -81,6 +82,7 @@ record_serializers = {
         StringCitationSerializer(url_args_retriever=csl_url_args_retriever),
         headers={"content-type": "text/plain"},
     ),
+    "application/x-bibtex": ResponseHandler(BibtexSerializer()),
     "application/dcat+xml": ResponseHandler(DCATSerializer()),
 }
 
