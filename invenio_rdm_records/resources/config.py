@@ -124,7 +124,10 @@ class RDMRecordResourceConfig(RecordResourceConfig, ConfiguratorMixin):
 
     request_search_args = RDMSearchRequestArgsSchema
 
-    response_handlers = record_serializers
+    response_handlers = FromConfig(
+        "RDM_RECORDS_SERIALIZERS",
+        default=record_serializers,
+    )
 
     error_handlers = {
         DeserializerError: create_error_handler(
@@ -343,7 +346,10 @@ class RDMCommunityRecordsResourceConfig(RecordResourceConfig, ConfiguratorMixin)
     url_prefix = "/communities"
     routes = {"list": "/<pid_value>/records"}
 
-    response_handlers = record_serializers
+    response_handlers = FromConfig(
+        "RDM_RECORDS_SERIALIZERS",
+        default=record_serializers,
+    )
 
 
 class RDMRecordCommunitiesResourceConfig(CommunityResourceConfig, ConfiguratorMixin):
