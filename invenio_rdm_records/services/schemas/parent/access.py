@@ -80,9 +80,8 @@ class ParentAccessSchema(Schema, FieldPermissionsMixin):
 
     field_dump_permissions = {
         # omit fields from dumps except for users with 'manage' permissions
-        # allow only 'settings'
+        # allow only 'settings' and 'owned_by'
         "grants": "manage",
-        "owned_by": "manage",
         "links": "manage",
     }
 
