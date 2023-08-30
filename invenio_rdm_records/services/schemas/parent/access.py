@@ -14,7 +14,8 @@
 
 from datetime import timezone
 
-from marshmallow import Schema, fields, pre_load, validate
+from marshmallow import Schema, fields, validate
+from marshmallow.validate import OneOf
 from marshmallow_utils.fields import (
     ISODateString,
     SanitizedHTML,
@@ -89,3 +90,13 @@ class ParentAccessSchema(Schema, FieldPermissionsMixin):
     owned_by = fields.Nested(Agent)
     links = fields.List(fields.Nested(SecretLink))
     settings = fields.Nested(AccessSettingsSchema)
+
+
+class RequestAccessSchema(Schema):
+    """Access request schema."""
+
+    permission = fields.Constant("view")
+    email = fields.Email()
+    full_name = SanitizedUnicode()
+    message = SanitizedUnicode()
+    consent_to_share_personal_data = fields.String(validate=OneOf(["true", "false"]))

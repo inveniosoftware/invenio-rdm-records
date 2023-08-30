@@ -6,7 +6,7 @@
 # it under the terms of the MIT License; see LICENSE file for more details.
 
 """RDM Record Communities Service."""
-
+from flask import current_app
 from invenio_communities.proxies import current_communities
 from invenio_i18n import lazy_gettext as _
 from invenio_notifications.services.uow import NotificationOp
@@ -71,6 +71,11 @@ class RecordCommunitiesService(Service, RecordIndexerMixin):
                 ],
             ),
         )
+        if results.total > 1:
+            current_app.logger.error(
+                f"Multiple community inclusions request detected for: "
+                f"record_pid{record.pid.pid_value}, community_id{community_id}"
+            )
         return next(results.hits)["id"] if results.total > 0 else None
 
     def _include(self, identity, community_id, comment, require_review, record, uow):
@@ -85,6 +90,7 @@ class RecordCommunitiesService(Service, RecordIndexerMixin):
 
         # check if there is already an open request, to avoid duplications
         existing_request_id = self._exists(identity, com_id, record)
+
         if existing_request_id:
             raise OpenRequestAlreadyExists(existing_request_id)
 
@@ -224,7 +230,7 @@ class RecordCommunitiesService(Service, RecordIndexerMixin):
         search_preference=None,
         expand=False,
         extra_filter=None,
-        **kwargs
+        **kwargs,
     ):
         """Search for record's communities."""
         record = self.record_cls.pid.resolve(id_)
@@ -241,7 +247,7 @@ class RecordCommunitiesService(Service, RecordIndexerMixin):
             search_preference=search_preference,
             expand=expand,
             extra_filter=communities_filter,
-            **kwargs
+            **kwargs,
         )
 
     @staticmethod
@@ -285,7 +291,7 @@ class RecordCommunitiesService(Service, RecordIndexerMixin):
         expand=False,
         by_membership=False,
         extra_filter=None,
-        **kwargs
+        **kwargs,
     ):
         """Search for communities that can be added to a record."""
         record = self.record_cls.pid.resolve(id_)
@@ -305,7 +311,7 @@ class RecordCommunitiesService(Service, RecordIndexerMixin):
                 params=params,
                 search_preference=search_preference,
                 extra_filter=communities_filter,
-                **kwargs
+                **kwargs,
             )
 
         return current_communities.service.search(
@@ -314,5 +320,5 @@ class RecordCommunitiesService(Service, RecordIndexerMixin):
             search_preference=search_preference,
             expand=expand,
             extra_filter=communities_filter,
-            **kwargs
+            **kwargs,
         )

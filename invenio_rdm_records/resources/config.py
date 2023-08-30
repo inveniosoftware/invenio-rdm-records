@@ -31,7 +31,7 @@ from invenio_records_resources.services.base.config import ConfiguratorMixin, Fr
 from invenio_requests.resources.requests.config import RequestSearchRequestArgsSchema
 
 from ..services.errors import (
-    DuplicateAccessRequestError,
+    AccessRequestExistsError,
     InvalidAccessRestrictions,
     ReviewExistsError,
     ReviewNotFoundError,
@@ -101,8 +101,7 @@ class RDMRecordResourceConfig(RecordResourceConfig, ConfiguratorMixin):
     routes["item-review"] = "/<pid_value>/draft/review"
     routes["item-actions-review"] = "/<pid_value>/draft/actions/submit-review"
     # Access requests
-    routes["user-access-request"] = "/<pid_value>/access/request"
-    routes["guest-access-request"] = "/<pid_value>/access/request/guest"
+    routes["record-access-request"] = "/<pid_value>/access/request"
     routes["access-request-settings"] = "/<pid_value>/access"
 
     request_view_args = {
@@ -172,11 +171,10 @@ class RDMRecordResourceConfig(RecordResourceConfig, ConfiguratorMixin):
         ValidationErrorWithMessageAsList: create_error_handler(
             lambda e: HTTPJSONValidationWithMessageAsListException(e)
         ),
-        DuplicateAccessRequestError: create_error_handler(
+        AccessRequestExistsError: create_error_handler(
             lambda e: HTTPJSONException(
-                code=409,
+                code=400,
                 description=e.description,
-                duplicates=e.request_ids,
             )
         ),
     }
@@ -303,8 +301,8 @@ class RDMParentGrantsResourceConfig(RecordResourceConfig, ConfiguratorMixin):
     url_prefix = "/records/<pid_value>/access"
 
     routes = {
-        "list": "/grants",
-        "item": "/grants/<grant_id>",
+        "list": "/users",
+        "item": "/users/<grant_id>",
     }
 
     links_config = {}
