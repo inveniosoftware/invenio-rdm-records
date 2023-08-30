@@ -179,7 +179,7 @@ class UserAccessRequest(RequestType):
 
     def _update_link_config(self, **context_vars):
         """Update the 'ui' variable for generation of links."""
-        return {"ui": context_vars["ui"] + "/me"}
+        return {"ui": context_vars["ui"] + "/access"}
 
     available_actions = {
         "create": actions.CreateAction,
@@ -229,7 +229,7 @@ class GuestAccessRequest(RequestType):
             identity = context_vars.get("identity", g.identity)
 
             if authenticated_user not in identity.provides:
-                prefix = "/access-requests"
+                prefix = "/access"
 
         return {"ui": context_vars["ui"] + prefix}
 
@@ -262,6 +262,7 @@ class GuestAccessRequest(RequestType):
         "email": fields.Email(required=True),
         "full_name": fields.String(required=True),
         "token": fields.String(required=True),
-        "message": fields.String(required=False),
+        "message": fields.String(required=True),
         "secret_link_expiration": fields.String(required=True),
+        "consent_to_share_personal_data": fields.String(required=True),
     }

@@ -13,6 +13,7 @@ from datetime import datetime, timedelta
 
 import arrow
 from flask import current_app, url_for
+from flask_login import current_user
 from invenio_access.permissions import authenticated_user, system_identity
 from invenio_drafts_resources.services.records import RecordService
 from invenio_i18n import lazy_gettext as _
@@ -27,7 +28,7 @@ from sqlalchemy.orm.exc import NoResultFound
 from ...requests.access import AccessRequestToken, GuestAccessRequest, UserAccessRequest
 from ...requests.access.requests import EmailOp
 from ...secret_links.errors import InvalidPermissionLevelError
-from ..errors import DuplicateAccessRequestError
+from ..errors import AccessRequestExistsError
 from ..results import GrantSubjectExpandableField
 
 
@@ -69,6 +70,11 @@ class RecordAccessService(RecordService):
     def schema_grant(self):
         """Schema for secret links."""
         return ServiceSchemaWrapper(self, schema=self.config.schema_grant)
+
+    @property
+    def schema_request_access(self):
+        """Schema for secret links."""
+        return ServiceSchemaWrapper(self, schema=self.config.schema_request_access)
 
     @property
     def schema_access_settings(self):
@@ -524,63 +530,86 @@ class RecordAccessService(RecordService):
 
         return True
 
+    def _exists(self, identity, created_by, record_id, request_type):
+        """Return the request id if an open request already exists, else None."""
+        api_cls = current_requests_service.record_cls
+        model_cls = api_cls.model_cls
+
+        requests = [
+            request
+            for request in (
+                api_cls(rm.data, model=rm)
+                for rm in model_cls.query.filter(
+                    model_cls.json["created_by"] == created_by,
+                    model_cls.json["topic"] == {"record": record_id},
+                    model_cls.json["type"].as_string() == request_type,
+                )
+                if not rm.is_deleted
+            )
+            if request.is_open
+        ]
+        if len(requests) > 1:
+            current_app.logger.error(
+                f"Multiple access requests detected for: "
+                f"record_pid{record_id}, creator: {created_by}"
+            )
+        if requests and len(requests) > 0:
+            return requests[0]
+
+    def request_access(self, identity, id_, data, expand=False):
+        """Redirect the access request to specific service method."""
+        if current_user.is_authenticated:
+            valid_current_email = data["email"] == current_user.email
+            if valid_current_email:
+                return self.create_user_access_request(
+                    identity, id_, data, expand=expand
+                )
+
+        return self.create_guest_access_request_token(
+            identity, id_, data, expand=expand
+        )
+
     #
     # Access requests
     #
-
     @unit_of_work()
-    def create_user_access_request(
-        self, identity, id_, message, expand=False, uow=None
-    ):
+    def create_user_access_request(self, identity, id_, data, expand=False, uow=None):
         """Create a user access request for the given record."""
         record = self.record_cls.pid.resolve(id_)
 
         # Permissions
+        # fail early if record fully restricted
         self.require_permission(identity, "read", record=record)
-        denied = False
-        try:
-            self.require_permission(identity, "read_files", record=record)
-        except PermissionDeniedError:
-            denied = True
 
-        if not denied:
-            raise PermissionDeniedError()
+        can_read_files = self.check_permission(identity, "read_files", record=record)
 
-        # Detect duplicate requests
-        req_cls = current_requests_service.record_cls
-        model_cls = req_cls.model_cls
-        requests = [
-            request
-            for request in (
-                req_cls(rm.data, model=rm)
-                for rm in model_cls.query.filter(
-                    model_cls.json["created_by"] == {"user": str(identity.id)},
-                    model_cls.json["topic"] == {"record": id_},
-                )
-                if rm.data and rm.data["type"] == UserAccessRequest.type_id
+        if can_read_files:
+            raise PermissionDeniedError(
+                "You already have access to files of this record."
             )
-            if request.is_open
-        ]
 
-        if requests:
-            raise DuplicateAccessRequestError([str(r.id) for r in requests])
+        existing_access_request = self._exists(
+            identity,
+            created_by={"user": str(identity.id)},
+            record_id=id_,
+            request_type=UserAccessRequest.type_id,
+        )
+
+        if existing_access_request:
+            raise AccessRequestExistsError(existing_access_request.id)
 
         record = self.record_cls.pid.resolve(id_)
-        data = {
-            "payload": {
-                "permission": "view",
-                "message": message,
-            }
-        }
+        data, __ = self.schema_request_access.load(
+            data, context={"identity": identity}, raise_errors=True
+        )
+
+        data = {"payload": data}
 
         # Determine the request's receiver
         receiver = None
         record_owner = record.parent.access.owner.resolve()
         if record_owner:
             receiver = record_owner
-
-        if receiver is None:
-            pass
 
         request = current_requests_service.create(
             identity,
@@ -593,21 +622,19 @@ class RecordAccessService(RecordService):
             uow=uow,
         )
 
-        # immediately submit the request, unless it has errors
-        if request.errors:
-            return request
-
-        message = {
-            "payload": {
-                "content": data["payload"].get("message") or "",
+        message = data["payload"].get("message")
+        comment = None
+        if message:
+            comment = {
+                "payload": {
+                    "content": message,
+                }
             }
-        }
-
         return current_requests_service.execute_action(
             identity,
             request.id,
             "submit",
-            data=message,
+            data=comment,
             uow=uow,
         )
 
@@ -616,10 +643,6 @@ class RecordAccessService(RecordService):
         self, identity, id_, data, expand=False, uow=None
     ):
         """Create a request token that can be used to create an access request."""
-        # Permissions
-        if authenticated_user in identity.provides:
-            raise PermissionDeniedError("request_guest_access")
-
         record = self.record_cls.pid.resolve(id_)
         if current_app.config.get("MAIL_SUPPRESS_SEND", False):
             # TODO should be handled globally, not here, maybe EmailOp?
@@ -628,23 +651,31 @@ class RecordAccessService(RecordService):
                 "email sending has been disabled!"
             )
 
+        data, __ = self.schema_request_access.load(
+            data, context={"identity": identity}, raise_errors=True
+        )
+
         access_token = AccessRequestToken.create(
             email=data["email"],
             full_name=data["full_name"],
-            message=data["message"],
+            message=data.get("message"),
             record_pid=id_,
             shelf_life=timedelta(hours=6),
+            consent=data["consent_to_share_personal_data"],
         )
 
         # Create the URL for the email verification endpoint
-        # TODO why replace api?
-        verify_url = url_for(
-            "invenio_rdm_records_ext.verify_access_request_token",
-            _external=True,
-            **{"access_request_token": access_token.token},
-        ).replace("/api/", "/")
 
+        # TODO ideally this part should be auto generated, but
+        # due to api app and ui app split, api app does not have the UI
+        # urls registered
+        verify_url = (
+            f"{current_app.config['SITE_UI_URL']}"
+            f"/access/requests/confirm"
+            f"?access_request_token={access_token.token}"
+        )
         uow.register(
+            # TODO: should be a notification
             EmailOp(
                 receiver=data["email"],
                 subject=_(
@@ -688,30 +719,25 @@ class RecordAccessService(RecordService):
         record = self.record_cls.pid.resolve(access_token_data["record_pid"])
 
         # Detect duplicate requests
-        req_cls = current_requests_service.record_cls
-        model_cls = req_cls.model_cls
-        requests = [
-            request
-            for request in (
-                req_cls(rm.data, model=rm)
-                for rm in model_cls.query.filter(
-                    model_cls.json["created_by"] == {"email": access_token.email},
-                    model_cls.json["topic"] == {"record": access_token.record_pid},
-                )
-                if rm.data and rm.data["type"] == GuestAccessRequest.type_id
-            )
-            if request.is_open
-        ]
+        existing_access_request = self._exists(
+            identity,
+            created_by={"email": access_token.email},
+            record_id=access_token.record_pid,
+            request_type=GuestAccessRequest.type_id,
+        )
 
-        if requests:
-            raise DuplicateAccessRequestError([str(r.id) for r in requests])
+        if existing_access_request:
+            raise AccessRequestExistsError(existing_access_request)
         data = {
             "payload": {
                 "permission": "view",
                 "email": access_token_data["email"],
                 "full_name": access_token_data["full_name"],
                 "token": access_token_data["token"],
-                "message": access_token_data.get("message") or "",
+                "message": access_token_data.get("message", ""),
+                "consent_to_share_personal_data": access_token_data.get(
+                    "consent_to_share_personal_data"
+                ),
                 "secret_link_expiration": str(
                     record.parent.access.settings.secret_link_expiration
                 ),
@@ -736,11 +762,13 @@ class RecordAccessService(RecordService):
             uow=uow,
         )
 
-        message = data["payload"].get("message") or ""
-        comment = {"payload": {"content": message}}
+        message = data["payload"].get("message")
+        comment = None
+        if message:
+            comment = {"payload": {"content": message}}
 
         return current_requests_service.execute_action(
-            system_identity,
+            identity,
             request.id,
             "submit",
             data=comment,

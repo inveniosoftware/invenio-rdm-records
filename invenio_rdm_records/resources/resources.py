@@ -11,7 +11,7 @@
 
 """Bibliographic Record Resource."""
 
-from flask import abort, current_app, g, send_file
+from flask import abort, g, send_file
 from flask_cors import cross_origin
 from flask_resources import (
     HTTPJSONException,
@@ -27,7 +27,6 @@ from flask_resources import (
 from importlib_metadata import version
 from invenio_drafts_resources.resources import RecordResource
 from invenio_drafts_resources.resources.records.errors import RedirectException
-from invenio_mail.tasks import send_email
 from invenio_records_resources.resources.errors import ErrorHandlersMixin
 from invenio_records_resources.resources.records.resource import (
     request_data,
@@ -40,7 +39,6 @@ from invenio_records_resources.resources.records.resource import (
 from invenio_records_resources.resources.records.utils import search_preference
 from werkzeug.utils import secure_filename
 
-from ..requests.access import AccessRequestToken
 from .serializers import (
     IIIFCanvasV2JSONSerializer,
     IIIFInfoV2JSONSerializer,
@@ -70,13 +68,8 @@ class RDMRecordResource(RecordResource):
             route("POST", p(routes["item-actions-review"]), self.review_submit),
             route(
                 "POST",
-                p(routes["user-access-request"]),
-                self.create_user_access_request,
-            ),
-            route(
-                "POST",
-                p(routes["guest-access-request"]),
-                self.create_guest_access_request_token,
+                p(routes["record-access-request"]),
+                self.create_access_request,
             ),
             route(
                 "PUT",
@@ -177,25 +170,19 @@ class RDMRecordResource(RecordResource):
 
     @request_view_args
     @request_data
-    def create_user_access_request(self):
+    def create_access_request(self):
         """Request access to a record as authenticated user."""
-        item = self.service.access.create_user_access_request(
-            id_=resource_requestctx.view_args["pid_value"],
-            identity=g.identity,
-            message=resource_requestctx.data.get("message", ""),
-        )
-        return item.to_dict(), 200
-
-    @request_view_args
-    @request_data
-    def create_guest_access_request_token(self):
-        """Request access to a record as unauthenticated guest."""
-        item = self.service.access.create_guest_access_request_token(
+        item = self.service.access.request_access(
             id_=resource_requestctx.view_args["pid_value"],
             identity=g.identity,
             data=resource_requestctx.data,
         )
-        return item, 200
+        # TODO: improve the serialization here
+        # this is done due to guest access request creation returning a dictionary,
+        # not the request item (request item does not exist before email is confirmed)
+        if isinstance(item, dict):
+            return item, 200
+        return item.to_dict(), 200
 
     @request_view_args
     @request_data

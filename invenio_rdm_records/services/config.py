@@ -80,6 +80,7 @@ from .schemas import RDMParentSchema, RDMRecordSchema
 from .schemas.community_records import CommunityRecordsSchema
 from .schemas.parent.access import AccessSettingsSchema
 from .schemas.parent.access import Grant as GrantSchema
+from .schemas.parent.access import RequestAccessSchema
 from .schemas.parent.access import SecretLink as SecretLinkSchema
 from .schemas.record_communities import RecordCommunitiesSchema
 from .sort import VerifiedRecordsSortParam
@@ -259,6 +260,7 @@ class RDMRecordServiceConfig(RecordServiceConfig, ConfiguratorMixin):
     schema_access_settings = AccessSettingsSchema
     schema_secret_link = SecretLinkSchema
     schema_grant = GrantSchema
+    schema_request_access = RequestAccessSchema
 
     # Permission policy
     permission_policy_cls = FromConfig(
@@ -452,6 +454,9 @@ class RDMRecordServiceConfig(RecordServiceConfig, ConfiguratorMixin):
         ),
         "versions": RecordLink("{+api}/records/{id}/versions"),
         "access_links": RecordLink("{+api}/records/{id}/access/links"),
+        "access_users": RecordLink("{+api}/records/{id}/access/users"),
+        "access_request": RecordLink("{+api}/records/{id}/access/request"),
+        "access": RecordLink("{+api}/records/{id}/access"),
         # TODO: only include link when DOI support is enabled.
         "reserve_doi": RecordLink("{+api}/records/{id}/draft/pids/doi"),
         "communities": RecordLink("{+api}/records/{id}/communities"),

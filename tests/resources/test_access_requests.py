@@ -26,6 +26,7 @@ from invenio_db import db
 from invenio_requests.proxies import current_requests_service
 
 from invenio_rdm_records.proxies import current_rdm_records_service as service
+from invenio_rdm_records.requests.access import AccessRequestTokenNeed
 
 
 def test_simple_guest_access_request_flow(running_app, client, users, minimal_record):
@@ -67,11 +68,12 @@ def test_simple_guest_access_request_flow(running_app, client, users, minimal_re
 
         # The guest creates an access request
         response = client.post(
-            f"/records/{record.id}/access/request/guest",
+            f"/records/{record.id}/access/request",
             json={
                 "message": "This is not spam!",
                 "email": "idle@montypython.com",
                 "full_name": "Eric Idle",
+                "consent_to_share_personal_data": "true",
             },
         )
         assert response.status_code == 200
@@ -86,6 +88,8 @@ def test_simple_guest_access_request_flow(running_app, client, users, minimal_re
         parsed = urllib.parse.urlparse(verification_url)
         args = {k: v for k, v in [kv.split("=") for kv in parsed.query.split("&")]}
         assert "access_request_token" in args
+        token = args["access_request_token"]
+        guest_identity.provides.add(AccessRequestTokenNeed(token))
 
         # Create the access request from the token
         # NOTE: we're not going through a `ui_app.test_client` here because that would
@@ -167,7 +171,11 @@ def test_simple_user_access_request_flow(running_app, client, users, minimal_rec
     # The user creates an access request
     response = client.post(
         f"/records/{record.id}/access/request",
-        json={"message": "Please give me access!"},
+        json={
+            "message": "Please give me access!",
+            "email": user.email,
+            "full_name": "ABC",
+        },
     )
     request_id = response.json["id"]
     assert response.status_code == 200
