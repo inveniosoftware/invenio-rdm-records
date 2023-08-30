@@ -10,6 +10,13 @@
 Changes
 =======
 
+Version 4.16.0 (2023-08-30)
+
+- access request: record the consent to share personal data
+- access request: ensure compliance of endpoints with the RFC
+- access request: add load serialization schema
+- oai-pmh: read oai sets prefix from app config
+
 Version 4.15.1 (2023-08-25)
 
 - access-field: rely on `instance.files.enabled` to indicate if files exist or not
