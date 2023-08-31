@@ -81,14 +81,11 @@ def read_request(request, **kwargs):
     """UI endpoint for the guest access request details."""
     request_type = request["type"]
     request_is_accepted = request["status"] == GuestAcceptAction.status_to
-    avatar = current_user_resources.users_service.links_item_tpl.expand(
-        g.identity, current_user
-    )["avatar"]
 
     # NOTE: this template is defined in Invenio-App-RDM
     return render_template(
         f"invenio_requests/{request_type}/index.html",
-        user_avatar=avatar,
+        user_avatar=None,
         record=None,
         permissions={},
         invenio_request=request.to_dict(),
