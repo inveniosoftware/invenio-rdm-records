@@ -13,7 +13,8 @@
 from copy import copy
 
 from invenio_drafts_resources.services.records.components import ServiceComponent
-from invenio_records_resources.services.uow import RecordCommitOp, TaskOp
+from invenio_drafts_resources.services.records.uow import ParentRecordCommitOp
+from invenio_records_resources.services.uow import TaskOp
 
 from ..pids.tasks import register_or_update_pid
 
@@ -162,7 +163,11 @@ class ParentPIDsComponent(ServiceComponent):
         record.parent.pids = pids
 
         # TODO: This should normally be done in `Service.publish`
-        self.uow.register(RecordCommitOp(record.parent))
+        self.uow.register(
+            ParentRecordCommitOp(
+                record.parent, indexer_context=dict(service=self.service)
+            )
+        )
 
         # Async register/update tasks after transaction commit.
         for scheme in pids.keys():
