@@ -7,8 +7,9 @@
 
 """Community addition request."""
 
+from invenio_drafts_resources.services.records.uow import ParentRecordCommitOp
 from invenio_i18n import lazy_gettext as _
-from invenio_records_resources.services.uow import RecordCommitOp, RecordIndexOp
+from invenio_records_resources.services.uow import RecordIndexOp
 from invenio_requests.customizations import RequestType, actions
 from invenio_requests.errors import CannotExecuteActionError
 
@@ -59,8 +60,14 @@ class AcceptAction(actions.AcceptAction):
         # set the community to `default` if it is the first
         default = not record.parent.communities
         record.parent.communities.add(community, request=self.request, default=default)
-        uow.register(RecordCommitOp(record.parent))
-        uow.register(RecordIndexOp(record, indexer=service.indexer))
+
+        uow.register(
+            ParentRecordCommitOp(record.parent, indexer_context=dict(service=service))
+        )
+        # this indexed record might not be the latest version: in this case, it might
+        # not be immediately visible in the community's records, when the `all versions`
+        # facet is not toggled
+        uow.register(RecordIndexOp(record, indexer=service.indexer, index_refresh=True))
 
         super().execute(identity, uow)
 

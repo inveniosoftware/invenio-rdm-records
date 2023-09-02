@@ -11,9 +11,10 @@ from datetime import datetime, timedelta
 import marshmallow as ma
 from flask import current_app, g
 from invenio_access.permissions import authenticated_user, system_identity
+from invenio_drafts_resources.services.records.uow import ParentRecordCommitOp
 from invenio_i18n import lazy_gettext as _
 from invenio_mail.tasks import send_email
-from invenio_records_resources.services.uow import Operation, RecordCommitOp
+from invenio_records_resources.services.uow import Operation
 from invenio_requests import current_events_service
 from invenio_requests.customizations import RequestType, actions
 from invenio_requests.customizations.event_types import CommentEventType
@@ -107,7 +108,11 @@ class GuestAcceptAction(actions.AcceptAction):
             )
         )
 
-        uow.register(RecordCommitOp(record._record.parent))
+        uow.register(
+            ParentRecordCommitOp(
+                record._record.parent, indexer_context=dict(service=service)
+            )
+        )
         uow.register(
             EmailOp(
                 receiver=payload["email"],
@@ -157,7 +162,9 @@ class UserAcceptAction(actions.AcceptAction):
         # NOTE: we're using the system identity here to avoid the grant creation
         #       potentially being blocked by the requesting user's profile visibility
         service.access.create_grant(system_identity, record.pid.pid_value, data)
-        uow.register(RecordCommitOp(record.parent))
+        uow.register(
+            ParentRecordCommitOp(record.parent, indexer_context=dict(service=service))
+        )
 
         super().execute(identity, uow)
 

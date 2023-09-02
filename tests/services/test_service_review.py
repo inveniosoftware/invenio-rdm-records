@@ -618,7 +618,7 @@ def test_review_notification(
     inviter,
     monkeypatch,
 ):
-    """Test notifcation being built on review submit."""
+    """Test notification being built on review submit."""
 
     original_builder = CommunityInclusionSubmittedNotificationBuilder
 

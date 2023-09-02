@@ -8,6 +8,7 @@
 """RDM Record Communities Service."""
 from flask import current_app
 from invenio_communities.proxies import current_communities
+from invenio_drafts_resources.services.records.uow import ParentRecordCommitOp
 from invenio_i18n import lazy_gettext as _
 from invenio_notifications.services.uow import NotificationOp
 from invenio_pidstore.errors import PIDDoesNotExistError
@@ -19,7 +20,6 @@ from invenio_records_resources.services import (
 from invenio_records_resources.services.errors import PermissionDeniedError
 from invenio_records_resources.services.uow import (
     IndexRefreshOp,
-    RecordCommitOp,
     RecordIndexOp,
     unit_of_work,
 )
@@ -31,7 +31,7 @@ from sqlalchemy.orm.exc import NoResultFound
 from invenio_rdm_records.notifications.builders import (
     CommunityInclusionSubmittedNotificationBuilder,
 )
-from invenio_rdm_records.proxies import current_rdm_records
+from invenio_rdm_records.proxies import current_rdm_records, current_rdm_records_service
 from invenio_rdm_records.requests import CommunityInclusion
 from invenio_rdm_records.services.errors import (
     CommunityAlreadyExists,
@@ -215,7 +215,12 @@ class RecordCommunitiesService(Service, RecordIndexerMixin):
                     }
                 )
         if processed:
-            uow.register(RecordCommitOp(record.parent))
+            uow.register(
+                ParentRecordCommitOp(
+                    record.parent,
+                    indexer_context=dict(service=current_rdm_records_service),
+                )
+            )
             uow.register(
                 RecordIndexOp(record, indexer=self.indexer, index_refresh=True)
             )

@@ -8,8 +8,8 @@
 
 """Community submission request."""
 
+from invenio_drafts_resources.services.records.uow import ParentRecordCommitOp
 from invenio_i18n import lazy_gettext as _
-from invenio_records_resources.services.uow import RecordCommitOp, RecordIndexOp
 from invenio_requests.customizations import actions
 
 from ..proxies import current_rdm_records_service as service
@@ -57,10 +57,12 @@ class AcceptAction(actions.AcceptAction):
         draft.parent.communities.add(
             community, request=self.request, default=is_default
         )
-        uow.register(RecordCommitOp(draft.parent))
+        uow.register(
+            ParentRecordCommitOp(draft.parent, indexer_context=dict(service=service))
+        )
 
         # Publish the record
-        # TODO: Ensure that the accpeting user has permissions to publish.
+        # TODO: Ensure that the accepting user has permissions to publish.
         service.publish(identity, draft.pid.pid_value, uow=uow)
         super().execute(identity, uow)
 
@@ -81,9 +83,9 @@ class DeclineAction(actions.DeclineAction):
         # in the review systemfield, the review should be set with the updated
         # request object
         draft.parent.review = self.request
-        uow.register(RecordCommitOp(draft.parent))
-        # update draft to reflect the new status
-        uow.register(RecordIndexOp(draft, indexer=service.indexer))
+        uow.register(
+            ParentRecordCommitOp(draft.parent, indexer_context=dict(service=service))
+        )
 
 
 class CancelAction(actions.CancelAction):
@@ -95,9 +97,9 @@ class CancelAction(actions.CancelAction):
         # Same reasoning as in 'decline'
         draft = self.request.topic.resolve()
         draft.parent.review = None
-        uow.register(RecordCommitOp(draft.parent))
-        # update draft to reflect the new status
-        uow.register(RecordIndexOp(draft, indexer=service.indexer))
+        uow.register(
+            ParentRecordCommitOp(draft.parent, indexer_context=dict(service=service))
+        )
         super().execute(identity, uow)
 
 
@@ -117,9 +119,9 @@ class ExpireAction(actions.ExpireAction):
         # in the review systemfield, the review should be set with the updated
         # request object
         draft.parent.review = self.request
-        uow.register(RecordCommitOp(draft.parent))
-        # update draft to reflect the new status
-        uow.register(RecordIndexOp(draft, indexer=service.indexer))
+        uow.register(
+            ParentRecordCommitOp(draft.parent, indexer_context=dict(service=service))
+        )
 
 
 #

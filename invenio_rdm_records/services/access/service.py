@@ -16,10 +16,11 @@ from flask import current_app, url_for
 from flask_login import current_user
 from invenio_access.permissions import authenticated_user, system_identity
 from invenio_drafts_resources.services.records import RecordService
+from invenio_drafts_resources.services.records.uow import ParentRecordCommitOp
 from invenio_i18n import lazy_gettext as _
 from invenio_records_resources.services.errors import PermissionDeniedError
 from invenio_records_resources.services.records.schema import ServiceSchemaWrapper
-from invenio_records_resources.services.uow import RecordCommitOp, unit_of_work
+from invenio_records_resources.services.uow import unit_of_work
 from invenio_requests.proxies import current_requests_service
 from invenio_users_resources.proxies import current_user_resources
 from marshmallow.exceptions import ValidationError
@@ -184,13 +185,7 @@ class RecordAccessService(RecordService):
                 field_name="permission",
             )
 
-        # Commit
-        uow.register(RecordCommitOp(parent))
-        if record:
-            uow.register(RecordCommitOp(record))
-
-        # Index all child records of the parent
-        self._index_related_records(record, parent, uow=uow)
+        uow.register(ParentRecordCommitOp(parent, indexer_context=dict(service=self)))
 
         return self.link_result_item(
             self,
@@ -290,13 +285,7 @@ class RecordAccessService(RecordService):
         link.permission_level = permission or link.permission_level
         link.description = data.get("description", link.description)
 
-        # Commit
-        uow.register(RecordCommitOp(parent))
-        if record:
-            uow.register(RecordCommitOp(record))
-
-        # Index all child records of the parent
-        self._index_related_records(record, parent, uow=uow)
+        uow.register(ParentRecordCommitOp(parent, indexer_context=dict(service=self)))
 
         return self.link_result_item(
             self,
@@ -325,13 +314,7 @@ class RecordAccessService(RecordService):
         parent.access.links.pop(link_idx)
         link.revoke()
 
-        # Commit
-        uow.register(RecordCommitOp(parent))
-        if record:
-            uow.register(RecordCommitOp(record))
-
-        # Index all child records of the parent
-        self._index_related_records(record, parent, uow=uow)
+        uow.register(ParentRecordCommitOp(parent, indexer_context=dict(service=self)))
 
         return True
 
@@ -390,13 +373,7 @@ class RecordAccessService(RecordService):
                 _("Could not find the specified subject."), field_name="subject.id"
             )
 
-        # Commit
-        uow.register(RecordCommitOp(parent))
-        if record:
-            uow.register(RecordCommitOp(record))
-
-        # Index all child records of the parent
-        self._index_related_records(record, parent, uow=uow)
+        uow.register(ParentRecordCommitOp(parent, indexer_context=dict(service=self)))
 
         return self.grant_result_item(
             self,
@@ -475,13 +452,7 @@ class RecordAccessService(RecordService):
 
         parent.access.grants[grant_id] = new_grant
 
-        # Commit
-        uow.register(RecordCommitOp(parent))
-        if record:
-            uow.register(RecordCommitOp(record))
-
-        # Index all child records of the parent
-        self._index_related_records(record, parent, uow=uow)
+        uow.register(ParentRecordCommitOp(parent, indexer_context=dict(service=self)))
 
         return self.grant_result_item(
             self,
@@ -520,13 +491,7 @@ class RecordAccessService(RecordService):
         # Deletion
         parent.access.grants.pop(grant_id)
 
-        # Commit
-        uow.register(RecordCommitOp(parent))
-        if record:
-            uow.register(RecordCommitOp(record))
-
-        # Index all child records of the parent
-        self._index_related_records(record, parent, uow=uow)
+        uow.register(ParentRecordCommitOp(parent, indexer_context=dict(service=self)))
 
         return True
 
@@ -797,11 +762,7 @@ class RecordAccessService(RecordService):
         # Update
         setattr(parent.access, "settings", data)
 
-        # Commit
-        uow.register(RecordCommitOp(parent))
-
-        # Index all child records of the parent
-        self._index_related_records(record, parent, uow=uow)
+        uow.register(ParentRecordCommitOp(parent, indexer_context=dict(service=self)))
 
         return self.result_item(
             self,
