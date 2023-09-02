@@ -36,15 +36,25 @@ EMAIL_REGEX = re.compile(r"(^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$)")
 class RDMRecordProxy(RecordProxy):
     """Proxy for resolve RDMDraft and RDMRecord."""
 
+    def _get_record(self, pid_value):
+        """Fetch the published record."""
+        return RDMRecord.pid.resolve(pid_value)
+
     def _resolve(self):
         """Resolve the Record from the proxy's reference dict."""
         pid_value = self._parse_ref_dict_id()
 
+        draft = None
         try:
-            return RDMDraft.pid.resolve(pid_value, registered_only=False)
+            draft = RDMDraft.pid.resolve(pid_value, registered_only=False)
         except (PIDUnregistered, NoResultFound):
             # try checking if it is a published record before failing
-            return RDMRecord.pid.resolve(pid_value)
+            record = self._get_record(pid_value)
+        else:
+            # no exception raised. If published, get the published record instead
+            record = draft if not draft.is_published else self._get_record(pid_value)
+
+        return record
 
 
 class RDMRecordResolver(RecordResolver):
@@ -69,14 +79,26 @@ class RDMRecordResolver(RecordResolver):
 class RDMRecordServiceResultProxy(ServiceResultProxy):
     """Proxy to resolve RDMDraft and RDMRecord."""
 
+    def _get_record(self, pid_value):
+        """Fetch the published record."""
+        return self.service.read(system_identity, pid_value)
+
     def _resolve(self):
         """Resolve the result item from the proxy's reference dict."""
         pid_value = self._parse_ref_dict_id()
 
+        draft = None
         try:
-            return self.service.read_draft(system_identity, pid_value).to_dict()
+            draft = self.service.read_draft(system_identity, pid_value)
         except (PIDDoesNotExistError, NoResultFound):
-            return self.service.read(system_identity, pid_value).to_dict()
+            record = self._get_record(pid_value)
+        else:
+            # no exception raised. If published, get the published record instead
+            record = (
+                draft if not draft._record.is_published else self._get_record(pid_value)
+            )
+
+        return record.to_dict()
 
 
 class RDMRecordServiceResultResolver(ServiceResultResolver):
