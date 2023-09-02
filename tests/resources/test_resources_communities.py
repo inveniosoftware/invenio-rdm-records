@@ -119,6 +119,11 @@ def test_community_owner_add_record_to_communities(
     inviter(curator.id, open_review_community.id, "curator")
     inviter(curator.id, closed_review_community.id, "curator")
     record = record_community.create_record(uploader=curator)
+    # create a draft of the record, to ensure that it is included even with a draft
+    response = client.post(
+        f"/records/{record.pid.pid_value}/draft",
+        headers=headers,
+    )
 
     response = client.post(
         f"/records/{record.pid.pid_value}/communities",
