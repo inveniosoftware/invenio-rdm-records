@@ -32,11 +32,11 @@ jobs:
       matrix:
         python-version: [3.8, 3.9]
         requirements-level: [pypi]
-        db-service: [postgresql13]
+        db-service: [postgresql14]
         search-service: [opensearch2,elasticsearch7]
         node-version: [16.x]
         include:
-          - db-service: postgresql13
+          - db-service: postgresql14
             DB_EXTRAS: "postgresql"
 
           - search-service: opensearch2
