@@ -106,7 +106,7 @@ def is_record_and_has_parent_doi(record, ctx):
 def has_doi(record, ctx):
     """Determine if a record has a DOI."""
     pids = record.pids or {}
-    return "doi" in pids
+    return "doi" in pids and pids["doi"].get("identifier") is not None
 
 
 def is_iiif_compatible(file_, ctx):
