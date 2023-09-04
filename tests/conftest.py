@@ -1038,6 +1038,16 @@ def identity_simple(users):
     return i
 
 
+@pytest.fixture()
+def anonymous_identity(users):
+    """Simple identity fixture."""
+    user = users[1]
+    i = Identity(user.id)
+    i.provides.add(UserNeed(user.id))
+    i.provides.add(Need(method="system_role", value="any_user"))
+    return i
+
+
 @pytest.fixture(scope="module")
 def languages_type(app):
     """Lanuage vocabulary type."""
