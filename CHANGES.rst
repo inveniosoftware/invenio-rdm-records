@@ -10,6 +10,11 @@
 Changes
 =======
 
+Version 4.16.1 (2023-09-04)
+
+- stats: omit events from records without parent
+- views: fix non existing avatar fetch in guest access request
+
 Version 4.16.0 (2023-08-30)
 
 - access request: record the consent to share personal data
