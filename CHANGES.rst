@@ -10,6 +10,12 @@
 Changes
 =======
 
+Version 4.17.0 (2023-09-05)
+
+- dumper: add files dumper ext
+- services: add record deletion workflow
+- alembic: fix record consent recipe
+
 Version 4.16.1 (2023-09-04)
 
 - stats: omit events from records without parent
