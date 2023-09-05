@@ -17,11 +17,12 @@ from invenio_db import db
 from invenio_i18n import _
 from invenio_users_resources.services.users.tasks import reindex_users
 from itsdangerous import SignatureExpired
+from marshmallow import ValidationError
 
 from .requests.access.permissions import AccessRequestTokenNeed
 from .secret_links import LinkNeed, SecretLink
 from .tokens import RATNeed, validate_rat
-from .tokens.errors import RATFeatureDisabledError
+from .tokens.errors import InvalidTokenError, RATFeatureDisabledError
 
 
 def get_or_create_user(email):
@@ -101,11 +102,15 @@ def verify_token(identity):
             raise RATFeatureDisabledError()
 
         rat_signer, payload = validate_rat(resource_access_token)
-        identity.provides.add(
-            RATNeed(
-                rat_signer, payload["record_id"], payload["file"], payload["access"]
-            )
-        )
+        schema_cls = current_app.config.get("RDM_RESOURCE_ACCESS_TOKENS_SUBJECT_SCHEMA")
+        if schema_cls:
+            try:
+                rat_need_data = schema_cls().load(payload)
+            except ValidationError:
+                raise InvalidTokenError()
+        else:
+            rat_need_data = payload
+        identity.provides.add(RATNeed(rat_signer, **rat_need_data))
 
     access_request_token = request.args.get(
         "access_request_token", session.get("access_request_token", None)

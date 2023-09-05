@@ -15,6 +15,7 @@ from datetime import timedelta
 import idutils
 from invenio_i18n import lazy_gettext as _
 
+from . import tokens
 from .resources.serializers import DataCite43JSONSerializer
 from .services import facets
 from .services.config import lock_edit_published_files
@@ -521,6 +522,8 @@ RDM_RESOURCE_ACCESS_TOKENS_WHITELISTED_JWT_ALGORITHMS = ["HS256", "HS384", "HS51
 RDM_RESOURCE_ACCESS_TOKEN_REQUEST_ARG = "resource_access_token"
 """URL argument to provide resource access token."""
 
+RDM_RESOURCE_ACCESS_TOKENS_SUBJECT_SCHEMA = tokens.resource_access.SubjectSchema
+"""Resource access token Marshmallow schema for parsing JWT subject."""
 
 RDM_LOCK_EDIT_PUBLISHED_FILES = lock_edit_published_files
 """Lock editing already published files (enforce record versioning)."""
