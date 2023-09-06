@@ -60,7 +60,7 @@ class JournalCF(BaseCF):
 
 JOURNAL_NAMESPACE = {
     # Journal
-    "journal": "",
+    "journal": None,
 }
 
 
