@@ -15,6 +15,7 @@ from invenio_notifications.services.builders import NotificationBuilder
 from invenio_notifications.services.generators import EntityResolve, UserEmailBackend
 from invenio_requests.notifications.filters import UserRecipientFilter
 from invenio_users_resources.notifications.filters import UserPreferencesRecipientFilter
+from invenio_users_resources.notifications.generators import UserRecipient
 
 
 class CommunityInclusionNotificationBuilder(NotificationBuilder):
@@ -59,3 +60,84 @@ class CommunityInclusionSubmittedNotificationBuilder(
     """Notification builder for record community inclusion submitted."""
 
     type = "community-submission.submit"
+
+
+class CommunityInclusionActionNotificationBuilder(NotificationBuilder):
+    """Notification builder for inclusion actions."""
+
+    @classmethod
+    def build(cls, identity, request):
+        """Build notification with request context."""
+        return Notification(
+            type=cls.type,
+            context={
+                "request": EntityResolverRegistry.reference_entity(request),
+                "executing_user": EntityResolverRegistry.reference_identity(identity),
+            },
+        )
+
+    context = [
+        EntityResolve(key="request"),
+        EntityResolve(key="request.created_by"),
+        EntityResolve(key="request.topic"),
+        EntityResolve(key="request.receiver"),
+        EntityResolve(key="executing_user"),
+    ]
+
+    recipients = [
+        UserRecipient("request.created_by"),
+    ]
+
+    recipient_filters = [
+        UserPreferencesRecipientFilter(),
+        UserRecipientFilter("executing_user"),
+    ]
+
+    recipient_backends = [
+        UserEmailBackend(),
+    ]
+
+
+class CommunityInclusionAcceptNotificationBuilder(
+    CommunityInclusionActionNotificationBuilder
+):
+    """Notification builder for inclusion accept action."""
+
+    type = f"{CommunityInclusionNotificationBuilder.type}.accept"
+
+
+class CommunityInclusionCancelNotificationBuilder(
+    CommunityInclusionActionNotificationBuilder
+):
+    """Notification builder for inclusion cancel action."""
+
+    type = f"{CommunityInclusionNotificationBuilder.type}.cancel"
+
+    recipients = [
+        CommunityMembersRecipient("request.receiver", roles=["curator", "owner"]),
+    ]
+
+
+class CommunityInclusionDeclineNotificationBuilder(
+    CommunityInclusionActionNotificationBuilder
+):
+    """Notification builder for inclusion decline action."""
+
+    type = f"{CommunityInclusionNotificationBuilder.type}.decline"
+
+
+class CommunityInclusionExpireNotificationBuilder(
+    CommunityInclusionActionNotificationBuilder
+):
+    """Notification builder for inclusion expire action."""
+
+    type = f"{CommunityInclusionNotificationBuilder.type}.expire"
+
+    # Executing user will most probably be the system. It is not resolvable on the service level
+    # as of now and we do not use it in the template.
+    context = [
+        EntityResolve(key="request"),
+        EntityResolve(key="request.created_by"),
+        EntityResolve(key="request.topic"),
+        EntityResolve(key="request.receiver"),
+    ]

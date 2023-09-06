@@ -10,8 +10,15 @@
 
 from invenio_drafts_resources.services.records.uow import ParentRecordCommitOp
 from invenio_i18n import lazy_gettext as _
+from invenio_notifications.services.uow import NotificationOp
 from invenio_requests.customizations import actions
 
+from ..notifications.builders import (
+    CommunityInclusionAcceptNotificationBuilder,
+    CommunityInclusionCancelNotificationBuilder,
+    CommunityInclusionDeclineNotificationBuilder,
+    CommunityInclusionExpireNotificationBuilder,
+)
 from ..proxies import current_rdm_records_service as service
 from ..services.errors import InvalidAccessRestrictions
 from .base import ReviewRequest
@@ -70,6 +77,13 @@ class AcceptAction(actions.AcceptAction):
         # Publish the record
         # TODO: Ensure that the accepting user has permissions to publish.
         service.publish(identity, draft.pid.pid_value, uow=uow)
+        uow.register(
+            NotificationOp(
+                CommunityInclusionAcceptNotificationBuilder.build(
+                    identity=identity, request=self.request
+                )
+            )
+        )
         super().execute(identity, uow)
 
 
@@ -92,6 +106,13 @@ class DeclineAction(actions.DeclineAction):
         uow.register(
             ParentRecordCommitOp(draft.parent, indexer_context=dict(service=service))
         )
+        uow.register(
+            NotificationOp(
+                CommunityInclusionDeclineNotificationBuilder.build(
+                    identity=identity, request=self.request
+                )
+            )
+        )
 
 
 class CancelAction(actions.CancelAction):
@@ -107,6 +128,13 @@ class CancelAction(actions.CancelAction):
             ParentRecordCommitOp(draft.parent, indexer_context=dict(service=service))
         )
         super().execute(identity, uow)
+        uow.register(
+            NotificationOp(
+                CommunityInclusionCancelNotificationBuilder.build(
+                    identity=identity, request=self.request
+                )
+            )
+        )
 
 
 class ExpireAction(actions.ExpireAction):
@@ -127,6 +155,13 @@ class ExpireAction(actions.ExpireAction):
         draft.parent.review = self.request
         uow.register(
             ParentRecordCommitOp(draft.parent, indexer_context=dict(service=service))
+        )
+        uow.register(
+            NotificationOp(
+                CommunityInclusionExpireNotificationBuilder.build(
+                    identity=identity, request=self.request
+                )
+            )
         )
 
 

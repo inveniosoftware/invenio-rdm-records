@@ -1,0 +1,40 @@
+{% set submission_request = notification.context.request %}
+{% set community = submission_request.receiver %}
+{% set creator = submission_request.created_by %}
+{% set record = submission_request.topic %}
+{% set request_id = submission_request.id %}
+
+{% set community_title = community.metadata.title %}
+{% set record_title = record.metadata.title %}
+
+{# TODO: use request.links.self_html when issue issue is resolved: https://github.com/inveniosoftware/invenio-rdm-records/issues/1327 #}
+{% set request_link = "{ui}/me/requests/{id}".format(
+    ui=config.SITE_UI_URL, id=request_id
+    )
+%}
+
+{%- block subject -%}
+{{ _("The submission for your record '{record_title}' has been expired").format(record_title=record_title) }}
+{%- endblock subject -%}
+
+{%- block html_body -%}
+<p>
+    {{ _("The record submission for the record '{record_title}' for the community '{community_title}' has expired'.").format(record_title=record_title, community_title=community_title) }}
+</p>
+
+<a href="{{ request_link }}" class="button"> {{ _("Check out the submission request") }}</a>
+{%- endblock html_body %}
+
+{%- block plain_body -%}
+{{ _("The record submission for the record '{record_title}' for the community '{community_title}' has expired'.").format(record_title=record_title, community_title=community_title) }}
+
+{{ _("Check out the submission request: {request_link}").format(request_link=request_link) }}
+
+{%- endblock plain_body %}
+
+{# Markdown for Slack/Mattermost/chat #}
+{%- block md_body -%}
+{{ _("The record submission for the record '{record_title}' for the community '{community_title}' has expired'.").format(record_title=record_title, community_title=community_title) }}
+
+[{{_("Check out the submission request")}}]({{request_link}})
+{%- endblock md_body %}

@@ -58,6 +58,7 @@ from invenio_communities.notifications.builders import (
     CommunityInvitationSubmittedNotificationBuilder,
 )
 from invenio_notifications.backends import EmailNotificationBackend
+from invenio_notifications.proxies import current_notifications_manager
 from invenio_notifications.services.builders import NotificationBuilder
 from invenio_oauth2server.models import Client
 from invenio_pidstore.errors import PIDDoesNotExistError
@@ -86,6 +87,10 @@ from marshmallow import fields
 
 from invenio_rdm_records import config
 from invenio_rdm_records.notifications.builders import (
+    CommunityInclusionAcceptNotificationBuilder,
+    CommunityInclusionCancelNotificationBuilder,
+    CommunityInclusionDeclineNotificationBuilder,
+    CommunityInclusionExpireNotificationBuilder,
     CommunityInclusionSubmittedNotificationBuilder,
 )
 from invenio_rdm_records.proxies import current_rdm_records_service
@@ -279,6 +284,10 @@ def app_config(app_config, mock_datacite_client):
     # Specifying dummy builders to avoid raising errors for most tests. Extend as needed.
     app_config["NOTIFICATIONS_BUILDERS"] = {
         CommentRequestEventCreateNotificationBuilder.type: DummyNotificationBuilder,
+        CommunityInclusionAcceptNotificationBuilder.type: DummyNotificationBuilder,
+        CommunityInclusionCancelNotificationBuilder.type: DummyNotificationBuilder,
+        CommunityInclusionDeclineNotificationBuilder.type: DummyNotificationBuilder,
+        CommunityInclusionExpireNotificationBuilder.type: DummyNotificationBuilder,
         CommunityInclusionSubmittedNotificationBuilder.type: DummyNotificationBuilder,
         CommunityInvitationSubmittedNotificationBuilder.type: DummyNotificationBuilder,
     }
@@ -1933,3 +1942,25 @@ def index_users():
         current_users_service.record_cls.index.refresh()
 
     return _index
+
+
+@pytest.fixture()
+def replace_notification_builder(monkeypatch):
+    """Replace a notification builder and return a mock."""
+
+    def _replace(builder_cls):
+        mock_build = mock.MagicMock()
+        mock_build.side_effect = builder_cls.build
+        monkeypatch.setattr(builder_cls, "build", mock_build)
+        # setting specific builder for test case
+        monkeypatch.setattr(
+            current_notifications_manager,
+            "builders",
+            {
+                **current_notifications_manager.builders,
+                builder_cls.type: builder_cls,
+            },
+        )
+        return mock_build
+
+    return _replace
