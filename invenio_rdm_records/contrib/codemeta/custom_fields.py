@@ -23,7 +23,7 @@ from marshmallow import validate
 
 CODEMETA_NAMESPACE = {
     # CodeMeta
-    "code": "https://codemeta.github.io",
+    "code": "https://codemeta.github.io/terms/#",
 }
 
 

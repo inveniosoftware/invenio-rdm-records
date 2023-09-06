@@ -59,7 +59,7 @@ class ImprintCF(BaseCF):
 
 IMPRINT_NAMESPACE = {
     # Imprint
-    "imprint": "",
+    "imprint": None,
 }
 
 

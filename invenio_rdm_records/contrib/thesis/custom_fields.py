@@ -15,7 +15,7 @@ from invenio_records_resources.services.custom_fields import TextCF
 
 THESIS_NAMESPACE = {
     # Thesis
-    "thesis": "",
+    "thesis": None,
 }
 
 THESIS_CUSTOM_FIELDS = [
