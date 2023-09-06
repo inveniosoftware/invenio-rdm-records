@@ -229,7 +229,7 @@ class RDMRecordPermissionPolicy(RecordPermissionPolicy):
         # it was simpler and less coupling to implement this as permission check
         IfFileIsLocal(then_=can_read, else_=[SystemProcess()])
     ]
-    can_media_create__files = [Disable()]
+    can_media_create_files = [Disable()]
     can_media_set_content_files = [Disable()]
     can_media_commit_files = [Disable()]
     can_media_update_files = [Disable()]

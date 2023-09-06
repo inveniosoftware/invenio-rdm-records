@@ -442,6 +442,17 @@ class RDMRecordServiceConfig(RecordServiceConfig, ConfiguratorMixin):
                 when=archive_download_enabled,
             ),
         ),
+        "archive_media": ConditionalLink(
+            cond=is_record,
+            if_=RecordLink(
+                "{+api}/records/{id}/media-files-archive",
+                when=archive_download_enabled,
+            ),
+            else_=RecordLink(
+                "{+api}/records/{id}/draft/media-files-archive",
+                when=archive_download_enabled,
+            ),
+        ),
         "latest": RecordLink("{+api}/records/{id}/versions/latest", when=is_record),
         "latest_html": RecordLink("{+ui}/records/{id}/latest", when=is_record),
         "draft": RecordLink("{+api}/records/{id}/draft", when=is_record),
@@ -531,7 +542,7 @@ class RDMMediaFileRecordServiceConfig(FileServiceConfig, ConfiguratorMixin):
     file_links_list = {
         "self": RecordLink("{+api}/records/{id}/media-files"),
         "archive": RecordLink(
-            "{+api}/records/{id}/media-files-archive",  # TODO needed?
+            "{+api}/records/{id}/media-files-archive",
             when=archive_download_enabled,
         ),
     }
@@ -596,7 +607,7 @@ class RDMMediaFileDraftServiceConfig(FileServiceConfig, ConfiguratorMixin):
     file_links_list = {
         "self": RecordLink("{+api}/records/{id}/draft/media-files"),
         "archive": RecordLink(
-            "{+api}/records/{id}/draft/media-files-archive",  # TODO needed?
+            "{+api}/records/{id}/draft/media-files-archive",
             when=archive_download_enabled,
         ),
     }
