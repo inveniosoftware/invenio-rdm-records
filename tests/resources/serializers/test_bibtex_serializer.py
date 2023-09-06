@@ -47,7 +47,7 @@ def test_bibtex_serializer_minimal_record(running_app, updated_minimal_record):
 
     expected_data = "\n".join(
         [
-            "@misc{name_2023_abcde-fghij,",
+            "@misc{brown_2023_abcde-fghij,",
             "  author       = {Name and",
             "                  Troy Inc.},",
             "  title        = {A Romans story},",
@@ -68,14 +68,14 @@ def test_bibtex_serializer_full_record(running_app, updated_full_record):
 
     expected_data = "\n".join(
         [
-            "@misc{nielsen_lars_holm_2023_abcde-fghij,",
+            "@misc{nielsen_2023_abcde-fghij,",
             "  author       = {Nielsen, Lars Holm},",
             "  title        = {InvenioRDM},",
             "  month        = mar,",
             "  year         = 2023,",
             "  publisher    = {InvenioRDM},",
             "  version      = {v1.0},",
-            "  doi          = {10.1234/inveniordm.1234},",
+            "  doi          = {10.5281/inveniordm.1234},",
             "}",
         ]
     )
