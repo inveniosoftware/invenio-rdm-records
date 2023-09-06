@@ -10,6 +10,11 @@
 Changes
 =======
 
+Version 4.18.0 (2023-09-06)
+
+- uow: use ParentRecordCommitOp when committing parent
+- resolver: resolve records first when draft is published
+
 Version 4.17.0 (2023-09-05)
 
 - dumper: add files dumper ext
