@@ -72,5 +72,5 @@ class ImprintMarcXMLDumper(DumperMixin):
         if existing_data and isinstance(existing_data, list):
             data[code].append(items_dict)
         else:
-            data[code] = items_dict
+            data[code] = [items_dict]
         return data
