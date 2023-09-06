@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2019-2022 CERN.
+# Copyright (C) 2019-2023 CERN.
 # Copyright (C) 2019-2022 Northwestern University.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
@@ -10,6 +10,6 @@
 
 from .ext import InvenioRDMRecords
 
-__version__ = "4.18.0"
+__version__ = "4.19.0"
 
 __all__ = ("__version__", "InvenioRDMRecords")

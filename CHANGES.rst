@@ -10,6 +10,18 @@
 Changes
 =======
 
+Version 4.19.0 (2023-09-06)
+
+- custom fields: update namespace values
+- tokens: make RAT subject schema configurable
+- services: handle no-value DOI for links
+- deposit-ui: use "vnd.inveniordm.v1+json" always
+- access: serialize "owned_by" field
+- resources: add "x-bibtex" record serialization
+- resources: make record serializers configurable
+- schema: expose checksum and file ID
+- services: make record/draft API classes configurable
+
 Version 4.18.0 (2023-09-06)
 
 - uow: use ParentRecordCommitOp when committing parent
