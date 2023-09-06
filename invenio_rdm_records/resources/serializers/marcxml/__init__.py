@@ -12,6 +12,7 @@ from flask_resources import BaseListSchema, MarshmallowSerializer
 from flask_resources.serializers import SimpleSerializer
 from lxml import etree
 
+from ....contrib.imprint.processors import ImprintMarcXMLDumper
 from ....contrib.journal.processors import JournalMarcXMLDumper
 from .schema import MARCXMLSchema
 
@@ -29,7 +30,9 @@ class MARCXMLSerializer(MarshmallowSerializer):
             format_serializer_cls=SimpleSerializer,
             object_schema_cls=MARCXMLSchema,
             list_schema_cls=BaseListSchema,
-            schema_kwargs={"dumpers": [JournalMarcXMLDumper()]},
+            schema_kwargs={
+                "dumpers": [JournalMarcXMLDumper(), ImprintMarcXMLDumper()]
+            },  # Order matters
             encoder=self.marcxml_tostring,
         )
 

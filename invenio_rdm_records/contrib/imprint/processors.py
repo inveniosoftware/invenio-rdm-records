@@ -38,3 +38,39 @@ class ImprintCSLDumper(DumperMixin):
             data["ISBN"] = isbn
 
         return data
+
+
+class ImprintMarcXMLDumper(DumperMixin):
+    """Dumper for MarcXML serialization of 'Imprint' custom field."""
+
+    def post_dump(self, data, original=None, **kwargs):
+        """Adds serialized imprint data to the input data under the '773' key."""
+        _original = original or {}
+        custom_fields = _original.get("custom_fields", {})
+        imprint_data = custom_fields.get("imprint:imprint", {})
+
+        if not imprint_data:
+            return data
+
+        items_dict = {}
+        field_keys = {
+            "t": imprint_data.get("title"),
+            "z": imprint_data.get("isbn"),
+            "g": imprint_data.get("pages"),
+            "a": imprint_data.get("place"),
+            "b": _original.get("metadata", {}).get("publication_date"),
+        }
+        for key, value in field_keys.items():
+            if value:
+                items_dict[key] = value
+
+        if not items_dict:
+            return data
+
+        code = "773  "
+        existing_data = data.get(code)
+        if existing_data and isinstance(existing_data, list):
+            data[code].append(items_dict)
+        else:
+            data[code] = items_dict
+        return data
