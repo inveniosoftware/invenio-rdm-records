@@ -118,10 +118,11 @@ class JournalMarcXMLDumper(DumperMixin):
         # TODO in zenodo, journal field serializes to
         # TODO code 909, C, 4 but that's not in the specification
         code = "773  "
-        if data[code] and isinstance(data[code], list):
+        existing_data = data.get(code)
+        if existing_data and isinstance(existing_data, list):
             data[code].append(items_dict)
         else:
-            data[code] = items_dict
+            data[code] = [items_dict]
         return data
 
 
