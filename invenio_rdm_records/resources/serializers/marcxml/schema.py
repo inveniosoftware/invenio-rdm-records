@@ -26,7 +26,7 @@ class MARCXMLSchema(BaseSerializerSchema, CommonFieldsMixin):
 
     id = fields.Method("get_id", data_key="001")
     doi = fields.Method("get_doi", data_key="024  ")
-    oai = fields.Method("get_oai", data_key="909CO  ")
+    oai = fields.Method("get_oai", data_key="909CO")
     contributors = fields.Method("get_contributors", data_key="700  ")
     titles = fields.Method("get_titles", data_key="245  ")
     first_creator = fields.Method("get_first_creator", data_key="100  ")
@@ -42,7 +42,7 @@ class MARCXMLSchema(BaseSerializerSchema, CommonFieldsMixin):
     # sources = fields.Constant(missing)  # Corresponds to references in the metadata schema
     formats = fields.Method("get_formats", data_key="520 1")
     parent_id = fields.Method("get_parent_id", data_key="024 1")
-    community_ids = fields.Method("get_community_ids", data_key="909CO")
+    community_ids = fields.Method("get_community_ids", data_key="980  ")
     sizes = fields.Method("get_sizes", data_key="520 2")
     version = fields.Method("get_version", data_key="024 3")
     funding = fields.Method(
@@ -66,7 +66,7 @@ class MARCXMLSchema(BaseSerializerSchema, CommonFieldsMixin):
             related_identifier = {
                 "a": identifier["identifier"],
                 "i": identifier["relation_type"]["title"]["en"],
-                "u": identifier["scheme"],
+                "n": identifier["scheme"],
             }
             host_information.append(related_identifier)
 
@@ -74,7 +74,11 @@ class MARCXMLSchema(BaseSerializerSchema, CommonFieldsMixin):
         parent_pids = obj["parent"].get("pids", {})
         for key, value in parent_pids.items():
             if key == "doi":
-                parent_doi = {"n": "doi", "a": value["identifier"]}
+                parent_doi = {
+                    "a": value["identifier"],  # identifier
+                    "i": "isVersionOf",  # relation type with parent is "isVersionOf"
+                    "n": "doi",  # scheme
+                }
                 host_information.append(parent_doi)
                 break
 
@@ -126,18 +130,21 @@ class MARCXMLSchema(BaseSerializerSchema, CommonFieldsMixin):
     def get_community_ids(self, obj):
         """Get community ids."""
         communities = obj["parent"].get("communities", {}).get("ids", [])
-        communities_list = []
+
+        if not communities:
+            return missing
+
+        result = []
         for community_id in communities:
             community = current_communities.service.read(
                 id_=community_id, identity=g.identity
             )
-            communities_list.append(community.data["slug"])
+            slug = community.data["slug"]
+            # Communities are prefixed with ``user-``
+            comm = {"a": f"user-{slug}"}
+            result.append(comm)
 
-        if not communities_list:
-            return missing
-
-        community_ids = {"a": communities_list}
-        return community_ids
+        return result
 
     def get_parent_id(self, obj):
         """Get parent id."""
@@ -165,13 +172,43 @@ class MARCXMLSchema(BaseSerializerSchema, CommonFieldsMixin):
         return missing
 
     def get_oai(self, obj):
-        """Get OAI."""
-        if "oai" not in obj["pids"]:
-            return missing
+        """Get oai information.
 
-        identifier = [obj["pids"]["oai"]["identifier"]]
-        oai = {"o": identifier}
-        return oai
+        Contains OAI and communities. It should serialize into:
+
+        .. code-block:: xml
+
+            <datafield tag="909" ind1="C" ind2="O">
+                <subfield code="p">user-community_name1</subfield>
+                <subfield code="p">user-community_name2</subfield>
+                <subfield code="o">oai:invenio.org:123456</subfield>
+            </datafield>
+
+        Communities slugs are prefixed with ``user-``.
+        """
+
+        result = {}
+
+        # OAI
+        if "oai" in obj["pids"]:
+            identifier = [obj["pids"]["oai"]["identifier"]]
+            result.update({"o": identifier})
+
+            # Communities
+            communities = obj["parent"].get("communities", {}).get("ids", [])
+            for community_id in communities:
+                # Resolve community to fetch its slug
+                community = current_communities.service.read(
+                    id_=community_id, identity=g.identity
+                )
+                slug = community.data["slug"]
+
+                comm = f"user-{slug}"
+
+                # Add "p": [comm] or extend if there's already other communities
+                result.setdefault("p", []).append(comm)
+
+        return result or missing
 
     def _serialize_contributor(self, contributor):
         """Serializes one contributor."""
@@ -225,22 +262,21 @@ class MARCXMLSchema(BaseSerializerSchema, CommonFieldsMixin):
         if not (pub or dates_list):
             return missing
 
-        pub_information = []
+        pub_information = {}
 
         if pub:
-            pub_information.append({"a": pub})
+            pub_information.update({"b": pub})
 
         # Dates
-        dates_list = [obj["metadata"]["publication_date"]]
+        pub_date = obj["metadata"]["publication_date"]
+        pub_information.setdefault("c", []).append(pub_date)
 
-        access_status = obj.get("access", {}).get("status", {})
+        access_status = obj.get("access", {}).get("status", "")
 
         if access_status == "embargoed":
             embargo_date = obj["access"]["embargo"]["until"]
-            dates_list.append(f"info:eu-repo/date/embargoEnd/{embargo_date}")
-
-        if dates_list:
-            pub_information.append({"c": dates_list})
+            serialized_date = f"info:eu-repo/date/embargoEnd/{embargo_date}"
+            pub_information.setdefault("c", []).append(serialized_date)
 
         return pub_information
 
