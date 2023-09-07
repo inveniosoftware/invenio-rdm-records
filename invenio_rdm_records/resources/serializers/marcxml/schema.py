@@ -302,23 +302,25 @@ class MARCXMLSchema(BaseSerializerSchema, CommonFieldsMixin):
             funder = funding_object["funder"]
             award = funding_object.get("award", {})
 
-            # TODO what
-            identifier = award.get("identifiers", [])[0]
-            scheme = identifier.get("scheme", "null")
-            identifier_value = identifier.get("identifier", "null")
-            title = award.get("title", {})
-            title = list(title.values())[0] if title else "null"
-            number = award.get("number", "null")
+            funder_string = ""
+
+            if award:
+                identifier = award.get("identifiers", [])[0]
+                scheme = identifier.get("scheme", "null")
+                identifier_value = identifier.get("identifier", "null")
+                title = award.get("title", {})
+                title = list(title.values())[0] if title else "null"
+                number = award.get("number", "null")
+
+                funder_string += f"award_identifiers_scheme={scheme}; "
+                funder_string += f"award_identifiers_identifier={identifier_value}; "
+                funder_string += f"award_title={title}; "
+                funder_string += f"award_number={number}; "
 
             funder_id = funder["id"]
             funder_name = funder.get("name", "null")
 
             # Serialize funder
-            funder_string = ""
-            funder_string += f"award_identifiers_scheme={scheme}; "
-            funder_string += f"award_identifiers_identifier={identifier_value}; "
-            funder_string += f"award_title={title}; "
-            funder_string += f"award_number={number}; "
             funder_string += f"funder_id={funder_id}; "
             funder_string += f"funder_name={funder_name}; "
 
