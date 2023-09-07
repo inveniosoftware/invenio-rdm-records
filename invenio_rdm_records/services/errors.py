@@ -44,9 +44,8 @@ class EmbargoNotLiftedError(RDMRecordsException):
     def description(self):
         """Exception's description."""
         return _(
-            "Embargo could not be lifted for record: {record_id}".format(
-                record_id=self.record_id
-            )
+            "Embargo could not be lifted for record: %(record_id)s",
+            record_id=self.record_id,
         )
 
 
@@ -154,9 +153,9 @@ class RecordCommunityMissing(Exception):
     def description(self):
         """Exception description."""
         return _(
-            "The record {record_id} in not included in the community {community_id}.".format(
-                record_id=self.record_id, community_id=self.community_id
-            )
+            "The record %(rec_id)s in not included in the community %(com_id)s.",
+            rec_id=self.record_id,
+            com_id=self.community_id,
         )
 
 
@@ -170,7 +169,7 @@ class InvalidCommunityVisibility(Exception):
     @property
     def description(self):
         """Exception description."""
-        return _("Cannot modify community visibility: {reason}".format(self.reason))
+        return _("Cannot modify community visibility: %(reason)s", reason=self.reason)
 
 
 class AccessRequestException(RDMRecordsException):
@@ -188,6 +187,9 @@ class AccessRequestExistsError(AccessRequestException):
     def description(self):
         """Exception description."""
         if self.request_id:
-            return _(f"Identical access requests already exist: {self.request_id}")
+            return _(
+                "Identical access requests already exist: %(request_id)s",
+                request_id=self.request_id,
+            )
         else:
             return _("The access request is a duplicate")
