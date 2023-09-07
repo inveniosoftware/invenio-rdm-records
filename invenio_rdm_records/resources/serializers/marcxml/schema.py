@@ -186,7 +186,6 @@ class MARCXMLSchema(BaseSerializerSchema, CommonFieldsMixin):
 
         Communities slugs are prefixed with ``user-``.
         """
-
         result = {}
 
         # OAI
