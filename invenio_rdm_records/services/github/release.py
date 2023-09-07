@@ -13,10 +13,10 @@ from invenio_github.api import GitHubRelease
 from invenio_github.models import ReleaseStatus
 from invenio_records_resources.services.uow import UnitOfWork
 
-from invenio_rdm_records.proxies import current_rdm_records_service
-from invenio_rdm_records.resources.serializers.ui import UIJSONSerializer
-from invenio_rdm_records.services.github.metadata import RDMReleaseMetadata
-from invenio_rdm_records.services.github.utils import retrieve_recid_by_uuid
+from ...proxies import current_rdm_records_service
+from ...resources.serializers.ui import UIJSONSerializer
+from .metadata import RDMReleaseMetadata
+from .utils import retrieve_recid_by_uuid
 
 
 class RDMGithubRelease(GitHubRelease):

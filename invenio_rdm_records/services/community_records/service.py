@@ -18,7 +18,7 @@ from invenio_records_resources.services.errors import PermissionDeniedError
 from invenio_records_resources.services.uow import unit_of_work
 from invenio_search.engine import dsl
 
-from invenio_rdm_records.proxies import current_record_communities_service
+from ...proxies import current_record_communities_service
 
 
 class CommunityRecordsService(RecordService):

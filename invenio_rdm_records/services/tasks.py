@@ -10,10 +10,9 @@
 from celery import shared_task
 from flask import current_app
 from invenio_access.permissions import system_identity
-from invenio_i18n import lazy_gettext as _
 
-from invenio_rdm_records.proxies import current_rdm_records
-from invenio_rdm_records.services.errors import EmbargoNotLiftedError
+from ..proxies import current_rdm_records
+from .errors import EmbargoNotLiftedError
 
 
 @shared_task(ignore_result=True)

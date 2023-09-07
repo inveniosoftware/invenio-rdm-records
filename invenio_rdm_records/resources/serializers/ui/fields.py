@@ -13,9 +13,7 @@ from babel_edtf import format_edtf
 from invenio_i18n import gettext as _
 from marshmallow import fields
 
-from invenio_rdm_records.records.systemfields.access.field.record import (
-    AccessStatusEnum,
-)
+from ....records.systemfields.access.field.record import AccessStatusEnum
 
 
 class UIAccessStatus(object):

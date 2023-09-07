@@ -8,9 +8,7 @@
 """Add field to record consent to share personal data for access request."""
 
 import sqlalchemy as sa
-import sqlalchemy_utils
 from alembic import op
-from sqlalchemy.dialects import postgresql
 
 # revision identifiers, used by Alembic.
 revision = "ffd725001655"

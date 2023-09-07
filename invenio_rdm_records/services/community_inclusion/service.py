@@ -9,15 +9,14 @@
 
 from flask import current_app
 from invenio_communities import current_communities
-from invenio_i18n import lazy_gettext as _
 from invenio_requests import current_requests_service
 
-from invenio_rdm_records.requests.community_inclusion import (
+from ...requests.community_inclusion import (
     CommunityInclusion,
     is_access_restriction_valid,
 )
-from invenio_rdm_records.requests.community_submission import CommunitySubmission
-from invenio_rdm_records.services.errors import InvalidAccessRestrictions
+from ...requests.community_submission import CommunitySubmission
+from ..errors import InvalidAccessRestrictions
 
 
 class CommunityInclusionService:

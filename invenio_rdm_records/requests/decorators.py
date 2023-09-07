@@ -12,7 +12,7 @@ from functools import wraps
 from invenio_requests import current_requests_service
 from invenio_requests.services.requests.links import RequestLink, RequestLinksTemplate
 
-from invenio_rdm_records.services.review.links import RequestRecordLink
+from ..services.review.links import RequestRecordLink
 
 
 def request_next_link(**kwargs):

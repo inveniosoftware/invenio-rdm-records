@@ -7,9 +7,7 @@
 
 """Remove PIDRelations tables."""
 
-import sqlalchemy as sa
 from alembic import op
-from sqlalchemy.dialects import postgresql
 from sqlalchemy.engine.reflection import Inspector
 
 # revision identifiers, used by Alembic.

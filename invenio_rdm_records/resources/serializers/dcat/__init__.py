@@ -15,8 +15,8 @@ from lxml import etree as ET
 from pkg_resources import resource_stream
 from werkzeug.utils import cached_property
 
-from invenio_rdm_records.contrib.journal.processors import JournalDataciteDumper
-from invenio_rdm_records.resources.serializers.dcat.schema import DcatSchema
+from ....contrib.journal.processors import JournalDataciteDumper
+from ....resources.serializers.dcat.schema import DcatSchema
 
 
 class DCATSerializer(MarshmallowSerializer):

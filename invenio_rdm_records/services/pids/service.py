@@ -14,8 +14,8 @@ from invenio_records_resources.services.uow import RecordCommitOp, unit_of_work
 from invenio_requests.services.results import EntityResolverExpandableField
 from sqlalchemy.orm.exc import NoResultFound
 
-from invenio_rdm_records.services.results import ParentCommunitiesExpandableField
-from invenio_rdm_records.utils import ChainObject
+from ...utils import ChainObject
+from ..results import ParentCommunitiesExpandableField
 
 
 class PIDsService(RecordService):

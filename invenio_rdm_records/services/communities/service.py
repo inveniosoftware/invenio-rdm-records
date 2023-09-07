@@ -28,12 +28,10 @@ from invenio_requests.resolvers.registry import ResolverRegistry
 from invenio_search.engine import dsl
 from sqlalchemy.orm.exc import NoResultFound
 
-from invenio_rdm_records.notifications.builders import (
-    CommunityInclusionSubmittedNotificationBuilder,
-)
-from invenio_rdm_records.proxies import current_rdm_records, current_rdm_records_service
-from invenio_rdm_records.requests import CommunityInclusion
-from invenio_rdm_records.services.errors import (
+from ...notifications.builders import CommunityInclusionSubmittedNotificationBuilder
+from ...proxies import current_rdm_records, current_rdm_records_service
+from ...requests import CommunityInclusion
+from ..errors import (
     CommunityAlreadyExists,
     InvalidAccessRestrictions,
     OpenRequestAlreadyExists,

@@ -18,7 +18,7 @@ from invenio_records_permissions.generators import (
     SystemProcess,
 )
 from invenio_records_permissions.policies.records import RecordPermissionPolicy
-from invenio_requests.services.generators import Creator, Receiver, Status
+from invenio_requests.services.generators import Receiver, Status
 from invenio_requests.services.permissions import (
     PermissionPolicy as RequestPermissionPolicy,
 )
