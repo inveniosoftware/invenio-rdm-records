@@ -11,9 +11,8 @@ from dcxml import simpledc
 from flask_resources import BaseListSchema, MarshmallowSerializer
 from flask_resources.serializers import JSONSerializer, SimpleSerializer
 
-from invenio_rdm_records.contrib.journal.processors import JournalDublinCoreDumper
-from invenio_rdm_records.contrib.meeting.processors import MeetingDublinCoreDumper
-
+from ....contrib.journal.processors import JournalDublinCoreDumper
+from ....contrib.meeting.processors import MeetingDublinCoreDumper
 from .schema import DublinCoreSchema
 
 

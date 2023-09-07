@@ -10,7 +10,7 @@
 from celery import shared_task
 from invenio_access.permissions import system_identity
 
-from invenio_rdm_records.proxies import current_rdm_records
+from ...proxies import current_rdm_records
 
 
 @shared_task(ignore_result=True)

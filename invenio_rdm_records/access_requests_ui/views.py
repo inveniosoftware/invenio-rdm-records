@@ -6,14 +6,12 @@
 # it under the terms of the MIT License; see LICENSE file for more details.
 
 """Access request UI views."""
-from flask import Blueprint, abort, current_app, g, redirect, render_template, request
-from flask_login import current_user
+from flask import abort, current_app, g, redirect, render_template, request
 from invenio_access.permissions import system_identity
 from invenio_i18n import lazy_gettext as _
 from invenio_mail.tasks import send_email
 from invenio_requests.proxies import current_requests_service
 from invenio_requests.views.decorators import pass_request
-from invenio_users_resources.proxies import current_user_resources
 
 from ..proxies import current_rdm_records_service as current_service
 from ..requests.access.requests import GuestAcceptAction

@@ -16,8 +16,7 @@ from invenio_records_permissions.generators import ConditionalGenerator, Generat
 from invenio_records_resources.services.files.transfer import TransferType
 from invenio_search.engine import dsl
 
-from invenio_rdm_records.records import RDMDraft
-
+from ..records import RDMDraft
 from ..records.systemfields.access.grants import Grant
 from ..requests.access import AccessRequestTokenNeed
 from ..tokens.permissions import RATNeed

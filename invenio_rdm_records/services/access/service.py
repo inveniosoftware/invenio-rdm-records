@@ -12,7 +12,7 @@
 from datetime import datetime, timedelta
 
 import arrow
-from flask import current_app, url_for
+from flask import current_app
 from flask_login import current_user
 from invenio_access.permissions import authenticated_user, system_identity
 from invenio_drafts_resources.services.records import RecordService

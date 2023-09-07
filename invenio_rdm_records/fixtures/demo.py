@@ -9,7 +9,6 @@
 """Fake demo records."""
 
 import datetime
-import json
 import random
 from pathlib import Path
 

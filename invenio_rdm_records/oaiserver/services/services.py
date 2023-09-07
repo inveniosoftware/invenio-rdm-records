@@ -23,12 +23,12 @@ from sqlalchemy import or_
 from sqlalchemy.orm.exc import NoResultFound
 from sqlalchemy.sql import text
 
-from invenio_rdm_records.oaiserver.services.errors import (
+from .errors import (
     OAIPMHSetDoesNotExistError,
     OAIPMHSetNotEditable,
     OAIPMHSetSpecAlreadyExistsError,
 )
-from invenio_rdm_records.oaiserver.services.uow import OAISetCommitOp, OAISetDeleteOp
+from .uow import OAISetCommitOp, OAISetDeleteOp
 
 
 class OAIPMHServerService(Service):

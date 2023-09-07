@@ -8,9 +8,6 @@
 
 """Create RDM-Records branch."""
 
-import sqlalchemy as sa
-from alembic import op
-
 # revision identifiers, used by Alembic.
 revision = "b822ba22c688"
 down_revision = None

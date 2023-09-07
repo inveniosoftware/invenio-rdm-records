@@ -9,7 +9,6 @@
 from flask import current_app
 from invenio_access.permissions import system_identity
 from invenio_drafts_resources.services.records.components import ServiceComponent
-from invenio_i18n import lazy_gettext as _
 from invenio_requests.tasks import request_moderation
 
 

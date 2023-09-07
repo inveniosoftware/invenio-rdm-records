@@ -7,7 +7,6 @@
 
 """Migrate secret links permission levels."""
 
-import sqlalchemy as sa
 from alembic import op
 
 # revision identifiers, used by Alembic.

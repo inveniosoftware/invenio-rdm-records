@@ -13,9 +13,8 @@ from invenio_records_resources.services.uow import RecordIndexOp
 from invenio_requests.customizations import RequestType, actions
 from invenio_requests.errors import CannotExecuteActionError
 
-from invenio_rdm_records.services.errors import InvalidAccessRestrictions
-
 from ..proxies import current_rdm_records_service as service
+from ..services.errors import InvalidAccessRestrictions
 
 
 def is_access_restriction_valid(record, community):

@@ -25,8 +25,6 @@ from invenio_search import current_search_client
 from invenio_search.engine import dsl, search
 from invenio_search.utils import build_alias_name
 
-from invenio_rdm_records.proxies import current_rdm_records, current_rdm_records_service
-
 from .fixtures import FixturesEngine
 from .fixtures.demo import (
     create_fake_community,
@@ -41,6 +39,7 @@ from .fixtures.tasks import (
     create_demo_record,
     get_authenticated_identity,
 )
+from .proxies import current_rdm_records, current_rdm_records_service
 from .utils import get_or_create_user
 
 COMMUNITY_OWNER_EMAIL = "community@demo.org"

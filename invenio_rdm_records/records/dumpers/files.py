@@ -10,7 +10,7 @@
 
 from invenio_records.dumpers import SearchDumperExt
 
-from invenio_rdm_records.records.systemfields.access.protection import Visibility
+from ..systemfields.access.protection import Visibility
 
 
 class FilesDumperExt(SearchDumperExt):

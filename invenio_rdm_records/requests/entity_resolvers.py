@@ -24,9 +24,8 @@ from invenio_records_resources.references.entity_resolvers import (
 from invenio_users_resources.services.schemas import SystemUserSchema
 from sqlalchemy.orm.exc import NoResultFound
 
-from invenio_rdm_records.services.config import RDMRecordServiceConfig
-
 from ..records.api import RDMDraft, RDMRecord
+from ..services.config import RDMRecordServiceConfig
 from ..services.dummy import DummyExpandingService
 
 # NOTE: this is the python regex from https://emailregex.com/
