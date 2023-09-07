@@ -79,7 +79,7 @@ class ExternalPIDProvider(PIDProvider):
         success, errors = super().validate(record, identifier, provider, **kwargs)
 
         if not identifier:
-            error = self._insert_pid_type_error_msg(
+            self._insert_pid_type_error_msg(
                 errors,
                 _("Missing {scheme} for required field.").format(scheme=self.label),
             )

@@ -60,8 +60,6 @@ class CachedVocabularies:
         if not cls._resource_type_ids:
             cls._resource_type_ids = []
 
-            dir_ = Path(__file__).parent
-
             res_types = cls._read_vocabulary("resourcetypes")
 
             for res in res_types:
