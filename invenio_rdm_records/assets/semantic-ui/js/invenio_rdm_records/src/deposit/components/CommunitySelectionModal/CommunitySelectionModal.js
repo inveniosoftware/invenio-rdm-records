@@ -64,6 +64,7 @@ export class CommunitySelectionModalComponent extends Component {
       modalOpen,
       apiConfigs,
       handleClose,
+      record,
     } = this.props;
 
     return (
@@ -93,7 +94,7 @@ export class CommunitySelectionModalComponent extends Component {
             </Header>
           </Modal.Header>
 
-          <CommunitySelectionSearch apiConfigs={apiConfigs} />
+          <CommunitySelectionSearch apiConfigs={apiConfigs} record={record} />
 
           {extraContentComponents && (
             <Modal.Content>{extraContentComponents}</Modal.Content>
@@ -120,6 +121,7 @@ CommunitySelectionModalComponent.propTypes = {
   modalOpen: PropTypes.bool,
   apiConfigs: PropTypes.object,
   handleClose: PropTypes.func.isRequired,
+  record: PropTypes.object.isRequired,
 };
 
 CommunitySelectionModalComponent.defaultProps = {

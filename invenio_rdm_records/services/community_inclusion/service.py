@@ -44,10 +44,6 @@ class CommunityInclusionService:
         if request.type.type_id not in self.supported_types:
             raise ValueError("Invalid request type.")
 
-        # validate record and community access
-        if not is_access_restriction_valid(record, community):
-            raise InvalidAccessRestrictions()
-
         # All other preconditions can be checked by the action itself which can
         # raise appropriate exceptions.
         return current_requests_service.execute_action(

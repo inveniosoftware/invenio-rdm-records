@@ -18,6 +18,7 @@ from invenio_rdm_records.proxies import (
 )
 from invenio_rdm_records.records.api import RDMDraft, RDMRecord
 from invenio_rdm_records.requests.community_inclusion import CommunityInclusion
+from invenio_rdm_records.services.errors import InvalidAccessRestrictions
 
 
 def _add_to_community(db, record, community):
@@ -313,12 +314,13 @@ def test_restrict_community_before_accepting_inclusion(
     assert response.status_code == 200
 
     # accept request should fail
-    response = client.post(
-        f"/requests/{request_id}/actions/accept",
-        headers=headers,
-        json={},
-    )
-    assert response.status_code == 400
+    # The error handlers for this action are defined in invenio-app-rdm, therefore we catch the exception here
+    with pytest.raises(InvalidAccessRestrictions):
+        client.post(
+            f"/requests/{request_id}/actions/accept",
+            headers=headers,
+            json={},
+        )
 
 
 def test_create_new_version_after_inclusion_request(
@@ -417,14 +419,15 @@ def test_create_new_version_after_inclusion_request(
     assert hit["metadata"]["title"] == second_version_record["metadata"]["title"]
 
 
-def test_include_public_record_in_restricted_community(
+def test_accept_public_record_in_restricted_community(
     client,
     uploader,
     record_community,
     headers,
     restricted_community,
+    community_owner,
 ):
-    """Test include public record in restricted community."""
+    """Test accept public record in restricted community."""
     client = uploader.login(client)
 
     data = {
@@ -438,12 +441,20 @@ def test_include_public_record_in_restricted_community(
         headers=headers,
         json=data,
     )
-    assert response.status_code == 400
-    assert response.json["errors"]
-    assert (
-        "cannot be included in a restricted community"
-        in response.json["errors"][0]["message"]
-    )
+    assert response.status_code == 200
+    assert response.json["processed"]
+    assert len(response.json["processed"]) == 1
+    request_id = response.json["processed"][0]["request_id"]
+    client = uploader.logout(client)
+    client = community_owner.login(client)
+
+    # The error handlers for this action are defined in invenio-app-rdm, therefore we catch the exception here
+    with pytest.raises(InvalidAccessRestrictions):
+        client.post(
+            f"/requests/{request_id}/actions/accept",
+            headers=headers,
+            json={},
+        )
 
 
 def test_include_community_already_in(

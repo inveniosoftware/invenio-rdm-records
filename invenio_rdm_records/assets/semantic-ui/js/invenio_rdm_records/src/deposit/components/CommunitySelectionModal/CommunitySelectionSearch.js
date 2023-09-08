@@ -7,7 +7,7 @@
 
 import { i18next } from "@translations/invenio_rdm_records/i18next";
 import React, { Component } from "react";
-import { OverridableContext } from "react-overridable";
+import { OverridableContext, parametrize } from "react-overridable";
 import {
   EmptyResults,
   Error,
@@ -47,10 +47,13 @@ export class CommunitySelectionSearch extends Component {
     } = this.state;
     const {
       apiConfigs: { allCommunities, myCommunities },
+      record,
     } = this.props;
     const searchApi = new InvenioSearchApi(selectedsearchApi);
     const overriddenComponents = {
-      [`${selectedAppId}.ResultsList.item`]: CommunityListItem,
+      [`${selectedAppId}.ResultsList.item`]: parametrize(CommunityListItem, {
+        record: record,
+      }),
     };
     return (
       <OverridableContext.Provider value={overriddenComponents}>
@@ -163,6 +166,7 @@ CommunitySelectionSearch.propTypes = {
       searchApi: PropTypes.object.isRequired,
     }),
   }),
+  record: PropTypes.object.isRequired,
 };
 
 CommunitySelectionSearch.defaultProps = {

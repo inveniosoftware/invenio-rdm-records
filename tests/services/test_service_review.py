@@ -377,14 +377,16 @@ def test_create_review_after_draft(running_app, community, service, minimal_reco
     assert draft["status"] == DraftStatus.review_to_draft_statuses[req["status"]]
 
 
-def test_submit_public_record_review_to_restricted_community(
-    running_app, public_draft_review_restricted, service
+def test_accept_public_record_review_to_restricted_community(
+    running_app, public_draft_review_restricted, service, requests_service
 ):
-    """Test creation of review after draft was created."""
-    # Create draft
+    """Test invalid record/community restrictions on accept."""
+    request = service.review.submit(
+        running_app.superuser_identity, public_draft_review_restricted.id
+    )
     with pytest.raises(InvalidAccessRestrictions):
-        service.review.submit(
-            running_app.superuser_identity, public_draft_review_restricted.id
+        requests_service.execute_action(
+            running_app.superuser_identity, request.id, "accept", {}
         )
 
 
