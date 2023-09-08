@@ -90,6 +90,17 @@ def full_to_dict_record(full_record):
         }
     ]
 
+    to_dict_record["metadata"]["locations"] = {
+        "features": [
+            {
+                "geometry": {"type": "Point", "coordinates": [6.05, 46.23333]},
+                "identifiers": [{"scheme": "geonames", "identifier": "2661235"}],
+                "place": "CERN",
+                "description": "Invenio birth place.",
+            },
+        ]
+    }
+
     _add_affiliation_name(to_dict_record["metadata"]["creators"])
     _add_affiliation_name(to_dict_record["metadata"]["contributors"])
 
@@ -206,6 +217,16 @@ def test_ui_serializer(app, full_to_dict_record):
                 },
             }
         ],
+        "locations": {
+            "features": [
+                {
+                    "geometry": {"type": "Point", "coordinates": [6.05, 46.23333]},
+                    "identifiers": [{"scheme": "geonames", "identifier": "2661235"}],
+                    "place": "CERN",
+                    "description": "Invenio birth place.",
+                },
+            ]
+        },
     }
 
     serialized_record = UIJSONSerializer().dump_obj(full_to_dict_record)

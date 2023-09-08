@@ -28,7 +28,8 @@ class CommonFieldsMixin:
         """Get locations."""
         locations = []
 
-        access_location = obj["metadata"].get("locations", [])
+        access_location = obj["metadata"].get("locations", {})
+
         if not access_location:
             return missing
 
