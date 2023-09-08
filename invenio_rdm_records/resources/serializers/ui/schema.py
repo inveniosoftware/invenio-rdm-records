@@ -160,6 +160,35 @@ class FundingSchema(Schema):
     funder = fields.Nested(FunderL10NItemSchema)
 
 
+class GeometrySchema(Schema):
+    """Schema for geometry in the UI."""
+
+    type = fields.Str()
+    coordinates = fields.List(fields.Float())
+
+
+class IdentifierSchema(Schema):
+    """Schema for dumping identifier in the UI."""
+
+    scheme = fields.Str()
+    identifier = fields.Str()
+
+
+class FeatureSchema(Schema):
+    """Schema for dumping locations in the UI."""
+
+    place = SanitizedUnicode()
+    description = SanitizedUnicode()
+    geometry = fields.Nested(GeometrySchema)
+    identifiers = fields.List(fields.Nested(IdentifierSchema))
+
+
+class LocationSchema(Schema):
+    """Schema for dumping locations in the UI."""
+
+    features = fields.List(fields.Nested(FeatureSchema))
+
+
 class MeetingSchema(Schema):
     """Schema for dumping 'meeting' custom field in the UI."""
 
@@ -324,6 +353,8 @@ class UIRecordSchema(BaseObjectSchema):
     )
 
     tombstone = fields.Nested(TombstoneSchema, attribute="tombstone")
+
+    locations = fields.Nested(LocationSchema, attribute="metadata.locations")
 
     @pre_dump
     def add_communities_permissions_and_roles(self, obj, **kwargs):
