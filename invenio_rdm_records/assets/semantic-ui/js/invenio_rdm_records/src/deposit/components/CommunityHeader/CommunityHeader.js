@@ -30,6 +30,7 @@ class CommunityHeaderComponent extends Component {
       showCommunitySelectionButton,
       disableCommunitySelectionButton,
       showCommunityHeader,
+      record,
     } = this.props;
     const { modalOpen } = this.state;
 
@@ -73,6 +74,7 @@ class CommunityHeaderComponent extends Component {
                     modalOpen={modalOpen}
                     chosenCommunity={community}
                     displaySelected
+                    record={record}
                     trigger={
                       <Button
                         className="community-header-button"
@@ -119,6 +121,7 @@ CommunityHeaderComponent.propTypes = {
   showCommunitySelectionButton: PropTypes.bool.isRequired,
   showCommunityHeader: PropTypes.bool.isRequired,
   changeSelectedCommunity: PropTypes.func.isRequired,
+  record: PropTypes.object.isRequired,
 };
 
 CommunityHeaderComponent.defaultProps = {

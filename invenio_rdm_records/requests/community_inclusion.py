@@ -11,7 +11,6 @@ from invenio_drafts_resources.services.records.uow import ParentRecordCommitOp
 from invenio_i18n import lazy_gettext as _
 from invenio_records_resources.services.uow import RecordIndexOp
 from invenio_requests.customizations import RequestType, actions
-from invenio_requests.errors import CannotExecuteActionError
 
 from ..proxies import current_rdm_records_service as service
 from ..services.errors import InvalidAccessRestrictions
@@ -53,8 +52,7 @@ class AcceptAction(actions.AcceptAction):
         assert not record.parent.review
 
         if not is_access_restriction_valid(record, community):
-            description = InvalidAccessRestrictions.description
-            raise CannotExecuteActionError(description)
+            raise InvalidAccessRestrictions()
 
         # set the community to `default` if it is the first
         default = not record.parent.communities

@@ -28,6 +28,7 @@ class SubmitReviewOrPublishComponent extends Component {
       showChangeCommunityButton,
       showDirectPublishButton,
       showSubmitForReviewButton,
+      record,
       ...ui
     } = this.props;
     const { modalOpen } = this.state;
@@ -52,6 +53,7 @@ class SubmitReviewOrPublishComponent extends Component {
             onModalChange={(value) => this.setState({ modalOpen: value })}
             modalOpen={modalOpen}
             displaySelected
+            record={record}
             chosenCommunity={community}
             trigger={
               <Button content={i18next.t("Change community")} fluid className="mb-10" />
@@ -77,6 +79,7 @@ SubmitReviewOrPublishComponent.propTypes = {
   showChangeCommunityButton: PropTypes.bool.isRequired,
   showDirectPublishButton: PropTypes.bool.isRequired,
   showSubmitForReviewButton: PropTypes.bool.isRequired,
+  record: PropTypes.object.isRequired,
 };
 
 SubmitReviewOrPublishComponent.defaultProps = {

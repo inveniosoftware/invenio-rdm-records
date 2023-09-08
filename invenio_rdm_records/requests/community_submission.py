@@ -13,7 +13,9 @@ from invenio_i18n import lazy_gettext as _
 from invenio_requests.customizations import actions
 
 from ..proxies import current_rdm_records_service as service
+from ..services.errors import InvalidAccessRestrictions
 from .base import ReviewRequest
+from .community_inclusion import is_access_restriction_valid
 
 
 #
@@ -41,6 +43,10 @@ class AcceptAction(actions.AcceptAction):
         draft = self.request.topic.resolve()
         community = self.request.receiver.resolve()
         service._validate_draft(identity, draft)
+
+        # validate record and community access
+        if not is_access_restriction_valid(draft, community):
+            raise InvalidAccessRestrictions()
 
         # Unset review from record (still accessible from request)
         # The curator (receiver) should still have access, via the community
