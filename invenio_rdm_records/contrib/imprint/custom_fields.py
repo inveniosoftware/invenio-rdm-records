@@ -32,7 +32,7 @@ class ImprintCF(BaseCF):
                 "isbn": SanitizedUnicode(
                     validate=is_isbn,
                     error_messages={
-                        "validator_failed": _("Please provide a valid ISBN.")
+                        "validator_failed": [_("Please provide a valid ISBN.")]
                     },
                 ),
                 "pages": SanitizedUnicode(),
