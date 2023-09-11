@@ -10,6 +10,13 @@
 Changes
 =======
 
+Version 4.20.0 (2023-09-11)
+
+- export formats: fix serializers
+- links: add media files archive link
+- moderation: delete user's records when blocking them
+- serializers: added locations to UI serializer
+
 Version 4.19.0 (2023-09-06)
 
 - custom fields: update namespace values
