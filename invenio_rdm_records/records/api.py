@@ -43,7 +43,6 @@ from . import models
 from .dumpers import (
     EDTFDumperExt,
     EDTFListDumperExt,
-    FilesDumperExt,
     GrantTokensDumperExt,
     StatisticsDumperExt,
 )
@@ -57,7 +56,7 @@ from .systemfields import (
     TombstoneField,
 )
 from .systemfields.draft_status import DraftStatus
-
+from .systemfields.access.protection import Visibility
 
 #
 # Parent record API
@@ -97,15 +96,6 @@ class RDMParent(ParentRecordBase):
 #
 # Common properties between records and drafts.
 #
-COMMON_DUMPER_EXTENSIONS = [
-    EDTFDumperExt("metadata.publication_date"),
-    EDTFListDumperExt("metadata.dates", "date"),
-    RelationDumperExt("relations"),
-    CustomFieldsDumperExt(fields_var="RDM_CUSTOM_FIELDS"),
-    StatisticsDumperExt("stats"),
-]
-
-
 class CommonFieldsMixin:
     """Common system fields between records and drafts."""
 
@@ -116,7 +106,13 @@ class CommonFieldsMixin:
     # update the JSONSchema and mappings to a new version.
     schema = ConstantField("$schema", "local://records/record-v6.0.0.json")
 
-    dumper = SearchDumper(extensions=COMMON_DUMPER_EXTENSIONS)
+    dumper = SearchDumper(extensions=[
+        EDTFDumperExt("metadata.publication_date"),
+        EDTFListDumperExt("metadata.dates", "date"),
+        RelationDumperExt("relations"),
+        CustomFieldsDumperExt(fields_var="RDM_CUSTOM_FIELDS"),
+        StatisticsDumperExt("stats"),
+    ])
 
     relations = MultiRelationsField(
         creator_affiliations=PIDNestedListRelation(
@@ -331,8 +327,6 @@ class RDMDraftMediaFiles(RDMDraft):
 
 RDMMediaFileDraft.record_cls = RDMDraftMediaFiles
 
-
-#
 # Record API
 #
 class RDMFileRecord(FileRecord):
@@ -357,8 +351,6 @@ class RDMRecord(CommonFieldsMixin, Record):
     index = IndexField(
         "rdmrecords-records-record-v6.0.0", search_alias="rdmrecords-records"
     )
-
-    dumper = SearchDumper(extensions=COMMON_DUMPER_EXTENSIONS + [FilesDumperExt()])
 
     files = FilesField(
         store=False,
