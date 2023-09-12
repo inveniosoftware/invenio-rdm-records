@@ -10,6 +10,13 @@
 Changes
 =======
 
+Version 4.20.1 (2023-09-12)
+
+- records: adds conditional dumping of files
+- records: revert file dumper
+- entity_resolvers: add missing ghost_record representation
+- deposit: update headers for submit review action
+
 Version 4.20.0 (2023-09-11)
 
 - export formats: fix serializers
