@@ -244,7 +244,12 @@ export class RDMDepositApiClient extends DepositApiClient {
             },
           }
         : {};
-      return this.axiosWithConfig.post(draftLinks["submit-review"], payload);
+      return this.axiosWithConfig.post(draftLinks["submit-review"], payload, {
+        headers: {
+          "Content-Type": "application/json",
+          "Accept": "application/json",
+        },
+      });
     });
   }
 
