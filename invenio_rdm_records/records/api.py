@@ -55,8 +55,9 @@ from .systemfields import (
     RecordStatisticsField,
     TombstoneField,
 )
-from .systemfields.draft_status import DraftStatus
 from .systemfields.access.protection import Visibility
+from .systemfields.draft_status import DraftStatus
+
 
 #
 # Parent record API
@@ -106,13 +107,15 @@ class CommonFieldsMixin:
     # update the JSONSchema and mappings to a new version.
     schema = ConstantField("$schema", "local://records/record-v6.0.0.json")
 
-    dumper = SearchDumper(extensions=[
-        EDTFDumperExt("metadata.publication_date"),
-        EDTFListDumperExt("metadata.dates", "date"),
-        RelationDumperExt("relations"),
-        CustomFieldsDumperExt(fields_var="RDM_CUSTOM_FIELDS"),
-        StatisticsDumperExt("stats"),
-    ])
+    dumper = SearchDumper(
+        extensions=[
+            EDTFDumperExt("metadata.publication_date"),
+            EDTFListDumperExt("metadata.dates", "date"),
+            RelationDumperExt("relations"),
+            CustomFieldsDumperExt(fields_var="RDM_CUSTOM_FIELDS"),
+            StatisticsDumperExt("stats"),
+        ]
+    )
 
     relations = MultiRelationsField(
         creator_affiliations=PIDNestedListRelation(
@@ -327,6 +330,7 @@ class RDMDraftMediaFiles(RDMDraft):
 
 RDMMediaFileDraft.record_cls = RDMDraftMediaFiles
 
+
 # Record API
 #
 class RDMFileRecord(FileRecord):
@@ -355,6 +359,11 @@ class RDMRecord(CommonFieldsMixin, Record):
     files = FilesField(
         store=False,
         dump=True,
+        # Don't dump files if record is public and files restricted.
+        dump_entries=lambda record: not (
+            record.access.protection.record == Visibility.PUBLIC.value
+            and record.access.protection.files == Visibility.RESTRICTED.value
+        ),
         file_cls=RDMFileRecord,
         # Don't create
         create=False,
