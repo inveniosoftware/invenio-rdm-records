@@ -59,7 +59,7 @@ class RDMRecordProxy(RecordProxy):
         """Ghost reprensentation of a record.
 
         Drafts at the moment cannot be resolved, service.read_many() is searching on
-        pubic records, thus the `ghost_record` method will always kick in!
+        public records, thus the `ghost_record` method will always kick in!
         """
         return {"id": record}
 
