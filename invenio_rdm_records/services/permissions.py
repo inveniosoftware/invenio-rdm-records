@@ -22,6 +22,7 @@ from invenio_requests.services.generators import Receiver, Status
 from invenio_requests.services.permissions import (
     PermissionPolicy as RequestPermissionPolicy,
 )
+from invenio_users_resources.services.permissions import UserManager
 
 from ..requests.access import GuestAccessRequest
 from .generators import (
@@ -242,6 +243,15 @@ class RDMRecordPermissionPolicy(RecordPermissionPolicy):
     can_delete_files = [SystemProcess()]
     can_purge = [SystemProcess()]
 
+    #
+    # Record and user quota
+    #
+
+    can_manage_quota = [
+        # moderators
+        UserManager,
+        SystemProcess(),
+    ]
     #
     # Disabled actions (these should not be used or changed)
     #

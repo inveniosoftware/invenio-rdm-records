@@ -8,6 +8,7 @@
 
 """RDM Record and Draft API."""
 
+from flask import g
 from invenio_communities.records.records.systemfields import CommunitiesField
 from invenio_drafts_resources.records import Draft, Record
 from invenio_drafts_resources.records.api import ParentRecord as ParentRecordBase
@@ -279,6 +280,55 @@ class RDMMediaFileDraft(FileRecord):
     record_cls = None  # defined below
 
 
+def get_quota(record=None):
+    """Called by the file manager in create_bucket() during record.post_create.
+
+    The quota is checked against the following order:
+    - If record is passed, then
+        - record.parent quota is checked
+        - record.owner quota is cheched
+        - default quota
+    - If record is not passed e.g new draft then
+        - current identity quota is checked
+        - default quota
+    :returns: dict i.e {quota_size, max_file_size}: dict is passed to the
+        Bucket.create(...) method.
+    """
+    if record is not None:
+        assert getattr(record, "parent", None)
+        # Check record quota
+        record_quota = models.RDMRecordQuota.query.filter(
+            models.RDMRecordQuota.parent_id == record.parent.id
+        ).one_or_none()
+        if record_quota is not None:
+            return dict(
+                quota_size=record_quota.quota_size,
+                max_file_size=record_quota.max_file_size,
+            )
+        # Next user quota
+        user_quota = models.RDMUserQuota.query.filter(
+            models.RDMUserQuota.user_id == record.parent.access.owned_by.owner_id
+        ).one_or_none()
+        if user_quota is not None:
+            return dict(
+                quota_size=user_quota.quota_size,
+                max_file_size=user_quota.max_file_size,
+            )
+    else:
+        # check current user quota
+        user_quota = models.RDMUserQuota.query.filter(
+            models.RDMUserQuota.user_id == g.identity.id
+        ).one_or_none()
+        if user_quota is not None:
+            return dict(
+                quota_size=user_quota.quota_size,
+                max_file_size=user_quota.max_file_size,
+            )
+    # return empty dict as the default values are handled by
+    # FILES_REST_DEFAULT_QUOTA_SIZE , FILES_REST_DEFAULT_MAX_FILE_SIZE
+    return {}
+
+
 class RDMDraft(CommonFieldsMixin, Draft):
     """RDM draft API."""
 
@@ -292,6 +342,7 @@ class RDMDraft(CommonFieldsMixin, Draft):
         file_cls=RDMFileDraft,
         # Don't delete, we'll manage in the service
         delete=False,
+        bucket_args=get_quota,
     )
 
     media_files = FilesField(
