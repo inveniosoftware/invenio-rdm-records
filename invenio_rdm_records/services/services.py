@@ -13,11 +13,15 @@
 
 
 import arrow
+from invenio_accounts.models import User
+from invenio_db import db
 from invenio_drafts_resources.services.records import RecordService
 from invenio_records_resources.services import ServiceSchemaWrapper
 from invenio_records_resources.services.uow import RecordCommitOp, unit_of_work
 from invenio_requests.services.results import EntityResolverExpandableField
 from invenio_search.engine import dsl
+
+from invenio_rdm_records.records.models import RDMRecordQuota, RDMUserQuota
 
 from ..records.systemfields.deletion_status import RecordDeletionStatusEnum
 from .errors import (
@@ -420,3 +424,87 @@ class RDMRecordService(RecordService):
             raise RecordDeletedException(record, result_item=result)
 
         return result
+
+    #
+    # Record file quota handling
+    #
+    @unit_of_work()
+    def set_quota(
+        self,
+        identity,
+        id_,
+        quota_size=None,
+        max_file_size=None,
+        notes=None,
+        files_attr="files",
+        uow=None,
+    ):
+        """Set draft files quota."""
+        draft = self.draft_cls.pid.resolve(id_, registered_only=False)
+        parent = draft.parent
+        self.require_permission(identity, "manage_quota", record=draft)
+
+        # Set quota
+        draft_quota = RDMRecordQuota.query.filter(
+            RDMRecordQuota.parent_id == str(parent.id)
+        ).one_or_none()
+        if not draft_quota:
+            draft_quota = RDMRecordQuota(
+                parent_id=str(parent.id),
+                user_id=parent.access.owned_by.owner_id,
+                quota_size=quota_size,
+                max_file_size=max_file_size,
+                notes=notes,
+            )
+        else:
+            # update record quota
+            draft_quota.quota_size = quota_size
+            draft_quota.max_file_size = max_file_size
+            draft_quota.notes = notes
+
+        db.session.add(draft_quota)
+
+        # files_attr can be set to "media_files"
+        getattr(draft, files_attr).set_quota(
+            quota_size=quota_size, max_file_size=max_file_size
+        )
+        return True
+
+    #
+    #  NOTE this should potentially be moved to users service. Added here for
+    # fast tracking its development
+    @unit_of_work()
+    def set_user_quota(
+        self,
+        identity,
+        id_,
+        quota_size=None,
+        max_file_size=None,
+        notes=None,
+        uow=None,
+    ):
+        """Set user files quota."""
+        user = User.query.get(id_)
+
+        self.require_permission(identity, "manage_quota", record=user)
+
+        # Set quota
+        user_quota = RDMUserQuota.query.filter(
+            RDMUserQuota.user_id == user.id
+        ).one_or_none()
+        if not user_quota:
+            user_quota = RDMUserQuota(
+                user_id=user.id,
+                quota_size=quota_size,
+                max_file_size=max_file_size,
+                notes=notes,
+            )
+        else:
+            # update user quota
+            user_quota.quota_size = quota_size
+            user_quota.max_file_size = max_file_size
+            user_quota.notes = notes
+
+        db.session.add(user_quota)
+
+        return True
