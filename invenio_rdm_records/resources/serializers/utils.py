@@ -7,6 +7,7 @@
 # it under the terms of the MIT License; see LICENSE file for more details.
 
 """Helpers for serializers."""
+import math
 
 from invenio_access.permissions import system_identity
 from invenio_search.engine import dsl
@@ -48,3 +49,18 @@ def get_preferred_identifier(priority, identifiers):
             return identifiers[idx]
 
     return None
+
+
+def convert_size(size_bytes):
+    """Convert syze, in bytes, to its string representation.
+
+    Computed in bytes (base 1024):
+    """
+    if size_bytes == 0:
+        return "0B"
+
+    size_name = ("B", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB")
+    i = int(math.floor(math.log(size_bytes, 1024)))
+    p = math.pow(1024, i)
+    s = round(size_bytes / p, 2)
+    return "%s %s" % (s, size_name[i])

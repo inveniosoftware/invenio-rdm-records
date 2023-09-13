@@ -1,0 +1,149 @@
+# -*- coding: utf-8 -*-
+#
+# Copyright (C) 2021 CERN.
+# Copyright (C) 2021 Caltech.
+# Copyright (C) 2021 Northwestern University.
+#
+# Invenio-RDM-Records is free software; you can redistribute it and/or modify
+# it under the terms of the MIT License; see LICENSE file for more details.
+
+"""Resources serializers tests."""
+
+import pytest
+
+from invenio_rdm_records.resources.serializers.schemaorg import (
+    SchemaorgJSONLDSerializer,
+)
+
+
+@pytest.fixture(scope="function")
+def updated_minimal_record(minimal_record):
+    """Update fields (done after record create) for Schemaorg JSON serializer."""
+    minimal_record["@context"] = "http://schema.org"
+    minimal_record["@type"] = "Photograph"
+    minimal_record["@id"] = "https://doi.org/10.5281/inveniordm.5678"
+
+    return minimal_record
+
+
+@pytest.fixture(scope="function")
+def updated_full_record(full_record):
+    """Update fields (done after record create) for Schemaorg JSON serializer."""
+    full_record["@context"] = "http://schema.org"
+    full_record["@type"] = "Photograph"
+    full_record["@id"] = "https://doi.org/10.5281/inveniordm.5678"
+
+    return full_record
+
+
+def test_schemaorg_serializer_full_record(running_app, updated_full_record):
+    """Test Schemaorg JSON-LD serializer with full record."""
+
+    expected_data = {
+        "@context": "http://schema.org",
+        "@id": "https://doi.org/10.5281/inveniordm.1234",
+        "@type": "Photograph",
+        "identifier": "https://doi.org/10.5281/inveniordm.1234",
+        "author": [
+            {
+                "@id": "https://orcid.org/0000-0001-8135-3489",
+                "@type": "Person",
+                "name": "Nielsen, Lars Holm",
+                "givenName": "Lars Holm",
+                "familyName": "Nielsen",
+                "affiliation": [
+                    {"@type": "Organization", "name": "free-text"},
+                    {
+                        "@id": "https://ror.org/01ggx4157",
+                        "@type": "Organization",
+                        "name": "CERN",
+                    },
+                ],
+            }
+        ],
+        "name": "InvenioRDM",
+        "publisher": {"@type": "Organization", "name": "InvenioRDM"},
+        "keywords": "custom",
+        "editor": [
+            {
+                "@id": "https://orcid.org/0000-0001-8135-3489",
+                "@type": "Person",
+                "name": "Nielsen, Lars Holm",
+                "givenName": "Lars Holm",
+                "familyName": "Nielsen",
+                "affiliation": [
+                    {"@type": "Organization", "name": "free-text"},
+                    {
+                        "@id": "https://ror.org/01ggx4157",
+                        "@type": "Organization",
+                        "name": "CERN",
+                    },
+                ],
+            }
+        ],
+        "datePublished": "2018",
+        "inLanguage": {"@type": "Language", "alternateName": "dan", "name": "Danish"},
+        "contentSize": "11 pages",
+        "encodingFormat": "application/pdf",
+        "version": "v1.0",
+        "license": "https://creativecommons.org/licenses/by/4.0/legalcode",
+        "description": "<h1>A description</h1> <p>with HTML tags</p>",
+        # "spatialCoverage": [
+        #     {
+        #         "geoLocationPoint": {
+        #             "pointLatitude": -32.94682,
+        #             "pointLongitude": -60.63932,
+        #         },
+        #         "geoLocationPlace": "test location place",
+        #     }
+        # ],
+        # "funder": [
+        #     {
+        #         "funderName": "European Commission",
+        #         "funderIdentifier": "00k4n6c32",
+        #         "funderIdentifierType": "ROR",
+        #         "awardTitle": (
+        #             "Personalised Treatment For Cystic Fibrosis Patients With "
+        #             "Ultra-rare CFTR Mutations (and beyond)"
+        #         ),
+        #         "awardNumber": "755021",
+        #         "awardURI": "https://cordis.europa.eu/project/id/755021",
+        #     }
+        # ],
+    }
+
+    serializer = SchemaorgJSONLDSerializer()
+    serialized_record = serializer.dump_obj(updated_full_record)
+
+    assert serialized_record == expected_data
+
+
+def test_schemaorg_serializer_minimal_record(running_app, updated_minimal_record):
+    """Test Schemaorg JSON-LD serializer with minimal record."""
+
+    expected_data = {
+        "@context": "http://schema.org",
+        "@type": "Photograph",
+        "@id": "https://doi.org/10.5281/inveniordm.5678",
+        "author": [
+            {
+                "@type": "Person",
+                "givenName": "Troy",
+                "familyName": "Brown",
+            },
+            {
+                "@type": "Organization",
+                "name": "Troy Inc.",
+            },
+        ],
+        "name": "A Romans story",
+        "publisher": {"@type": "Organization", "name": "Acme Inc"},
+        "datePublished": "2020-06-01",
+        "contentSize": None,
+        "encodingFormat": None,
+    }
+
+    serializer = SchemaorgJSONLDSerializer()
+    serialized_record = serializer.dump_obj(updated_minimal_record)
+
+    assert serialized_record == expected_data
