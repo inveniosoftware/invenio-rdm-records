@@ -154,3 +154,35 @@ class JournalCSLDumper(DumperMixin):
             data["ISSN"] = issn
 
         return data
+
+
+class JournalSchemaorgDumper(DumperMixin):
+    """Dumper for Schemaorg serialization of 'Journal' custom field."""
+
+    def post_dump(self, data, original=None, **kwargs):
+        """Adds serialized journal data to the input data."""
+        _original = original or {}
+        custom_fields = _original.get("custom_fields", {})
+        journal_data = custom_fields.get("journal:journal", {})
+
+        if not journal_data:
+            return data
+
+        title = journal_data.get("title")
+        volume = journal_data.get("volume")
+        issue = journal_data.get("issue")
+        pages = journal_data.get("pages")
+        issn = journal_data.get("issn")
+
+        if title:
+            data["container_title"] = title
+        if pages:
+            data["page"] = pages
+        if volume:
+            data["volume"] = volume
+        if issue:
+            data["issue"] = issue
+        if issn:
+            data["ISSN"] = issn
+
+        return data

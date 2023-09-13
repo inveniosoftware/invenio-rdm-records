@@ -54,6 +54,7 @@ from .serializers import (
     DublinCoreXMLSerializer,
     GeoJSONSerializer,
     MARCXMLSerializer,
+    SchemaorgJSONLDSerializer,
     StringCitationSerializer,
     UIJSONSerializer,
 )
@@ -78,6 +79,7 @@ def _bibliography_headers(obj_or_list, code, many=False):
 
 record_serializers = {
     "application/json": ResponseHandler(JSONSerializer(), headers=etag_headers),
+    "application/ld+json": ResponseHandler(SchemaorgJSONLDSerializer()),
     "application/marcxml+xml": ResponseHandler(
         MARCXMLSerializer(), headers=etag_headers
     ),

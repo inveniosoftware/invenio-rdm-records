@@ -22,6 +22,7 @@ from .iiif import (
     IIIFSequenceV2JSONSerializer,
 )
 from .marcxml import MARCXMLSerializer
+from .schemaorg import SchemaorgJSONLDSerializer
 from .ui import UIJSONSerializer
 
 __all__ = (
@@ -37,6 +38,7 @@ __all__ = (
     "IIIFManifestV2JSONSerializer",
     "IIIFSequenceV2JSONSerializer",
     "MARCXMLSerializer",
+    "SchemaorgJSONLDSerializer",
     "StringCitationSerializer",
     "UIJSONSerializer",
     "DCATSerializer",
