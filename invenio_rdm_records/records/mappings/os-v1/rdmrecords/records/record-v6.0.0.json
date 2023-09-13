@@ -493,6 +493,9 @@
                   "number": {
                     "type": "text"
                   },
+                  "acronym": {
+                    "type": "keyword"
+                  },
                   "identifiers": {
                     "properties": {
                       "identifier": {
