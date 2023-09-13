@@ -1,3 +1,4 @@
+
 ..
     Copyright (C) 2019-2023 CERN.
     Copyright (C) 2019 Northwestern University.
@@ -9,6 +10,11 @@
 
 Changes
 =======
+
+Version 4.21.0 (2023-09-13)
+
+- service: prevent creating a request if invalid restrictions
+- mappings: added award acronym to os-v1 and es-v7
 
 Version 4.20.1 (2023-09-12)
 
