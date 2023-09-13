@@ -251,9 +251,7 @@ export class CreatibutorsModal extends Component {
         key: creatibutor.id,
         content: (
           <Header>
-            <Header.Content>
-              {creatibutor.name} {idString.length ? <>({idString})</> : null}
-            </Header.Content>
+            {creatibutor.name} {idString.length ? <>({idString})</> : null}
             <Header.Subheader>{affNames}</Header.Subheader>
           </Header>
         ),
@@ -392,14 +390,8 @@ export class CreatibutorsModal extends Component {
               closeIcon
               closeOnDimmerClick={false}
             >
-              <Modal.Header as="h6" className="pt-10 pb-10">
-                <Grid>
-                  <Grid.Column floated="left" width={4}>
-                    <Header as="h2">
-                      <ActionLabel />
-                    </Header>
-                  </Grid.Column>
-                </Grid>
+              <Modal.Header as="h2" className="pt-10 pb-10">
+                <ActionLabel />
               </Modal.Header>
               <Modal.Content>
                 <Form>
