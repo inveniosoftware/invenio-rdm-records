@@ -111,20 +111,14 @@ export class LicenseModal extends Component {
             closeIcon
             closeOnDimmerClick={false}
           >
-            <Modal.Header as="h6" className="pt-10 pb-10">
-              <Grid>
-                <Grid.Column floated="left">
-                  <Header as="h2">
-                    {action === ModalActions.ADD
-                      ? i18next.t(`Add {{mode}} license`, {
-                          mode: mode,
-                        })
-                      : i18next.t(`Change {{mode}} license`, {
-                          mode: mode,
-                        })}
-                  </Header>
-                </Grid.Column>
-              </Grid>
+            <Modal.Header as="h2" className="pt-10 pb-10">
+              {action === ModalActions.ADD
+                ? i18next.t(`Add {{mode}} license`, {
+                    mode: mode,
+                  })
+                : i18next.t(`Change {{mode}} license`, {
+                    mode: mode,
+                  })}
             </Modal.Header>
             <Modal.Content scrolling>
               {mode === ModalTypes.STANDARD && (
