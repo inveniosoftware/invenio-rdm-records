@@ -65,36 +65,33 @@ class CommunityInclusionSubmittedNotificationBuilder(
     type = "community-submission.submit"
 
 
-class CommunityInclusionActionNotificationBuilder(NotificationBuilder):
-    """Notification builder for inclusion actions."""
+class GuestAccessRequestTokenCreateNotificationBuilder(NotificationBuilder):
+    """Notification builder for user access requests."""
+
+    type = "guest-access-request-token.create"
 
     @classmethod
-    def build(cls, identity, request):
+    def build(cls, record, email, verify_url):
         """Build notification with request context."""
         return Notification(
             type=cls.type,
             context={
-                "request": EntityResolverRegistry.reference_entity(request),
-                "executing_user": EntityResolverRegistry.reference_identity(identity),
+                "record": EntityResolverRegistry.reference_entity(record),
+                "created_by": EntityResolverRegistry.reference_entity(email),
+                "verify_url": verify_url,
             },
         )
 
     context = [
-        EntityResolve(key="request"),
-        EntityResolve(key="request.created_by"),
-        EntityResolve(key="request.topic"),
-        EntityResolve(key="request.receiver"),
-        EntityResolve(key="executing_user"),
+        EntityResolve(key="record"),
+        EntityResolve(key="created_by"),  # email
     ]
 
     recipients = [
-        UserRecipient("request.created_by"),
+        EmailRecipient(key="created_by"),  # email only
     ]
 
-    recipient_filters = [
-        UserPreferencesRecipientFilter(),
-        UserRecipientFilter("executing_user"),
-    ]
+    recipient_filters = []  # assume guest is ok with mail being sent
 
     recipient_backends = [
         UserEmailBackend(),
@@ -128,6 +125,42 @@ class GuestAccessRequestAcceptNotificationBuilder(NotificationBuilder):
     ]
 
     recipient_filters = []  # assume guest is ok with mail being sent
+
+    recipient_backends = [
+        UserEmailBackend(),
+    ]
+
+
+class CommunityInclusionActionNotificationBuilder(NotificationBuilder):
+    """Notification builder for inclusion actions."""
+
+    @classmethod
+    def build(cls, identity, request):
+        """Build notification with request context."""
+        return Notification(
+            type=cls.type,
+            context={
+                "request": EntityResolverRegistry.reference_entity(request),
+                "executing_user": EntityResolverRegistry.reference_identity(identity),
+            },
+        )
+
+    context = [
+        EntityResolve(key="request"),
+        EntityResolve(key="request.created_by"),
+        EntityResolve(key="request.topic"),
+        EntityResolve(key="request.receiver"),
+        EntityResolve(key="executing_user"),
+    ]
+
+    recipients = [
+        UserRecipient("request.created_by"),
+    ]
+
+    recipient_filters = [
+        UserPreferencesRecipientFilter(),
+        UserRecipientFilter("executing_user"),
+    ]
 
     recipient_backends = [
         UserEmailBackend(),
