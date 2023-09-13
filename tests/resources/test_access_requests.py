@@ -98,11 +98,16 @@ def test_simple_guest_access_request_flow(running_app, client, users, minimal_re
             identity=guest_identity, token=args["access_request_token"]
         )
 
+        assert len(outbox) == 2
+        submit_message = outbox[1]
+        # TODO: update to `req["links"]["self_html"]` when addressing https://github.com/inveniosoftware/invenio-rdm-records/issues/1327
+        assert "/me/requests/{}".format(request.id) in submit_message.html
+
         # Accept the request
         # This is expected to send out another email, containing the new secret link
         current_requests_service.execute_action(identity, request.id, "accept", data={})
-        assert len(outbox) == 2
-        success_message = outbox[1]
+        assert len(outbox) == 3
+        success_message = outbox[2]
         match = link_regex.search(str(success_message.body))
         assert match
         access_url = match.group(1)
@@ -184,11 +189,15 @@ def test_simple_user_access_request_flow(running_app, client, users, minimal_rec
         )
         request_id = response.json["id"]
         assert response.status_code == 200
+        assert len(outbox) == 1
+        submit_message = outbox[0]
+        # TODO: update to `req["links"]["self_html"]` when addressing https://github.com/inveniosoftware/invenio-rdm-records/issues/1327
+        assert "/me/requests/{}".format(request_id) in submit_message.html
 
         # The record owner approves the access request
         current_requests_service.execute_action(identity, request_id, "accept", data={})
-        assert len(outbox) == 1
-        success_message = outbox[0]
+        assert len(outbox) == 2
+        success_message = outbox[1]
         assert record.to_dict()["links"]["self_html"] in success_message.body
 
         # Now, the user has permission to view the record's files!

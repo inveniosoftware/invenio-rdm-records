@@ -17,6 +17,7 @@ from invenio_requests.notifications.filters import UserRecipientFilter
 from invenio_users_resources.notifications.filters import UserPreferencesRecipientFilter
 from invenio_users_resources.notifications.generators import (
     EmailRecipient,
+    IfUserRecipient,
     UserRecipient,
 )
 
@@ -98,6 +99,51 @@ class GuestAccessRequestTokenCreateNotificationBuilder(NotificationBuilder):
     ]
 
 
+class GuestAccessRequestSubmitNotificationBuilder(NotificationBuilder):
+    """Notification builder for guest access requests."""
+
+    type = "guest-access-request.submit"
+
+    @classmethod
+    def build(cls, request):
+        """Build notification with request context."""
+        return Notification(
+            type=cls.type,
+            context={
+                "request": EntityResolverRegistry.reference_entity(request),
+                "receiver_entity": request.receiver.reference_dict,  # will not be resolved for easier lookup for recipients
+            },
+        )
+
+    context = [
+        EntityResolve(key="request"),
+        EntityResolve(key="request.created_by"),
+        EntityResolve(key="request.topic"),
+        EntityResolve(key="request.receiver"),
+    ]
+
+    recipients = [
+        # Currently only these two are allowed. Adapt as needed.
+        IfUserRecipient(
+            key="receiver_entity",
+            then_=[UserRecipient(key="request.receiver")],
+            else_=[
+                CommunityMembersRecipient(
+                    key="request.receiver", roles=["curator", "owner"]
+                )
+            ],
+        )
+    ]
+
+    recipient_filters = [
+        UserPreferencesRecipientFilter(),
+    ]
+
+    recipient_backends = [
+        UserEmailBackend(),
+    ]
+
+
 class GuestAccessRequestAcceptNotificationBuilder(NotificationBuilder):
     """Notification builder for user access requests."""
 
@@ -125,6 +171,86 @@ class GuestAccessRequestAcceptNotificationBuilder(NotificationBuilder):
     ]
 
     recipient_filters = []  # assume guest is ok with mail being sent
+
+    recipient_backends = [
+        UserEmailBackend(),
+    ]
+
+
+class UserAccessRequestSubmitNotificationBuilder(NotificationBuilder):
+    """Notification builder for user access requests."""
+
+    type = "user-access-request.submit"
+
+    @classmethod
+    def build(cls, request):
+        """Build notification with request context."""
+        return Notification(
+            type=cls.type,
+            context={
+                "request": EntityResolverRegistry.reference_entity(request),
+                "receiver_entity": request.receiver.reference_dict,  # will not be resolved for easier lookup for recipients
+            },
+        )
+
+    context = [
+        EntityResolve(key="request"),
+        EntityResolve(key="request.created_by"),
+        EntityResolve(key="request.topic"),
+        EntityResolve(key="request.receiver"),
+    ]
+
+    recipients = [
+        # Currently only these two are allowed. Adapt as needed.
+        IfUserRecipient(
+            key="receiver_entity",
+            then_=[UserRecipient(key="request.receiver")],
+            else_=[
+                CommunityMembersRecipient(
+                    key="request.receiver", roles=["curator", "owner"]
+                )
+            ],
+        )
+    ]
+
+    recipient_filters = [
+        UserPreferencesRecipientFilter(),
+    ]
+
+    recipient_backends = [
+        UserEmailBackend(),
+    ]
+
+
+class UserAccessRequestAcceptNotificationBuilder(NotificationBuilder):
+    """Notification builder for user access requests."""
+
+    type = "user-access-request.accept"
+
+    @classmethod
+    def build(cls, request):
+        """Build notification with request context."""
+        return Notification(
+            type=cls.type,
+            context={
+                "request": EntityResolverRegistry.reference_entity(request),
+            },
+        )
+
+    context = [
+        EntityResolve(key="request"),
+        EntityResolve(key="request.created_by"),
+        EntityResolve(key="request.topic"),
+        EntityResolve(key="request.receiver"),
+    ]
+
+    recipients = [
+        UserRecipient(key="request.created_by"),
+    ]
+
+    recipient_filters = [
+        UserPreferencesRecipientFilter(),
+    ]
 
     recipient_backends = [
         UserEmailBackend(),
