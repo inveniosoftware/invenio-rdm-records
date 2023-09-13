@@ -15,7 +15,10 @@ from invenio_notifications.services.builders import NotificationBuilder
 from invenio_notifications.services.generators import EntityResolve, UserEmailBackend
 from invenio_requests.notifications.filters import UserRecipientFilter
 from invenio_users_resources.notifications.filters import UserPreferencesRecipientFilter
-from invenio_users_resources.notifications.generators import UserRecipient
+from invenio_users_resources.notifications.generators import (
+    EmailRecipient,
+    UserRecipient,
+)
 
 
 class CommunityInclusionNotificationBuilder(NotificationBuilder):
@@ -96,6 +99,47 @@ class CommunityInclusionActionNotificationBuilder(NotificationBuilder):
     recipient_backends = [
         UserEmailBackend(),
     ]
+
+
+class GuestAccessRequestAcceptNotificationBuilder(NotificationBuilder):
+    """Notification builder for user access requests."""
+
+    type = "guest-access-request.accept"
+
+    @classmethod
+    def build(cls, request, access_url):
+        """Build notification with request context."""
+        return Notification(
+            type=cls.type,
+            context={
+                "request": EntityResolverRegistry.reference_entity(request),
+                "access_url": access_url,
+            },
+        )
+
+    context = [
+        EntityResolve(key="request"),
+        EntityResolve(key="request.created_by"),  # email
+        EntityResolve(key="request.topic"),
+    ]
+
+    recipients = [
+        EmailRecipient(key="request.created_by"),  # email only
+    ]
+
+    recipient_filters = []  # assume guest is ok with mail being sent
+
+    recipient_backends = [
+        UserEmailBackend(),
+    ]
+
+
+class CommunityInclusionAcceptNotificationBuilder(
+    CommunityInclusionActionNotificationBuilder
+):
+    """Notification builder for inclusion accept action."""
+
+    type = f"{CommunityInclusionNotificationBuilder.type}.accept"
 
 
 class CommunityInclusionAcceptNotificationBuilder(
