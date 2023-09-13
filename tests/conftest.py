@@ -93,6 +93,7 @@ from invenio_rdm_records.notifications.builders import (
     CommunityInclusionExpireNotificationBuilder,
     CommunityInclusionSubmittedNotificationBuilder,
     GuestAccessRequestAcceptNotificationBuilder,
+    GuestAccessRequestTokenCreateNotificationBuilder,
     UserAccessRequestAcceptNotificationBuilder,
 )
 from invenio_rdm_records.proxies import current_rdm_records_service
@@ -295,6 +296,7 @@ def app_config(app_config, mock_datacite_client):
         CommunityInclusionExpireNotificationBuilder.type: DummyNotificationBuilder,
         CommunityInclusionSubmittedNotificationBuilder.type: DummyNotificationBuilder,
         CommunityInvitationSubmittedNotificationBuilder.type: DummyNotificationBuilder,
+        GuestAccessRequestTokenCreateNotificationBuilder.type: GuestAccessRequestTokenCreateNotificationBuilder,
         GuestAccessRequestAcceptNotificationBuilder.type: GuestAccessRequestAcceptNotificationBuilder,
         UserAccessRequestAcceptNotificationBuilder.type: UserAccessRequestAcceptNotificationBuilder,
     }

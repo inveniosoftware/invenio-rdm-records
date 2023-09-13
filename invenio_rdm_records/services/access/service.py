@@ -19,6 +19,7 @@ from invenio_db import db
 from invenio_drafts_resources.services.records import RecordService
 from invenio_drafts_resources.services.records.uow import ParentRecordCommitOp
 from invenio_i18n import lazy_gettext as _
+from invenio_notifications.services.uow import NotificationOp
 from invenio_records_resources.services.errors import PermissionDeniedError
 from invenio_records_resources.services.records.schema import ServiceSchemaWrapper
 from invenio_records_resources.services.uow import unit_of_work
@@ -27,8 +28,11 @@ from invenio_users_resources.proxies import current_user_resources
 from marshmallow.exceptions import ValidationError
 from sqlalchemy.orm.exc import NoResultFound
 
+from invenio_rdm_records.notifications.builders import (
+    GuestAccessRequestTokenCreateNotificationBuilder,
+)
+
 from ...requests.access import AccessRequestToken, GuestAccessRequest, UserAccessRequest
-from ...requests.access.requests import EmailOp
 from ...secret_links.errors import InvalidPermissionLevelError
 from ..errors import AccessRequestExistsError
 from ..results import GrantSubjectExpandableField
@@ -641,28 +645,10 @@ class RecordAccessService(RecordService):
             f"?access_request_token={access_token.token}"
         )
         uow.register(
-            # TODO: should be a notification
-            EmailOp(
-                receiver=data["email"],
-                subject=_(
-                    "Access request for '%(record_title)s'",
-                    record_title=record.metadata["title"],
-                ),
-                html_body=_(
-                    (
-                        "Please verify your e-mail address via the following link "
-                        "in order to submit the access request: "
-                        '<a href="%(url)s">%(url)s</a>'
-                    ),
-                    url=verify_url,
-                ),
-                body=_(
-                    (
-                        "Please verify your e-mail address via the following link "
-                        "in order to submit the access request: %(url)s"
-                    ),
-                    url=verify_url,
-                ),
+            NotificationOp(
+                GuestAccessRequestTokenCreateNotificationBuilder.build(
+                    record=record, email=data["email"], verify_url=verify_url
+                )
             )
         )
 

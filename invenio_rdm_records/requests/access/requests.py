@@ -9,13 +9,11 @@
 from datetime import datetime, timedelta
 
 import marshmallow as ma
-from flask import current_app, g
+from flask import g
 from invenio_access.permissions import authenticated_user, system_identity
 from invenio_drafts_resources.services.records.uow import ParentRecordCommitOp
 from invenio_i18n import lazy_gettext as _
-from invenio_mail.tasks import send_email
 from invenio_notifications.services.uow import NotificationOp
-from invenio_records_resources.services.uow import Operation
 from invenio_requests import current_events_service
 from invenio_requests.customizations import RequestType, actions
 from invenio_requests.customizations.event_types import CommentEventType
@@ -28,29 +26,6 @@ from invenio_rdm_records.notifications.builders import (
 )
 
 from ...proxies import current_rdm_records_service as service
-
-
-class EmailOp(Operation):
-    """A notification operation."""
-
-    def __init__(self, receiver, subject, html_body, body):
-        """Initialize operation."""
-        self.receiver = receiver
-        self.subject = subject
-        self.html_body = html_body
-        self.body = body
-
-    def on_post_commit(self, uow):
-        """Start task to send text via email."""
-        send_email(
-            {
-                "subject": self.subject,
-                "html_body": self.html_body,
-                "body": self.body,
-                "recipients": [self.receiver],
-                "sender": current_app.config["MAIL_DEFAULT_SENDER"],
-            }
-        )
 
 
 #
