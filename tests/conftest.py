@@ -92,10 +92,15 @@ from invenio_rdm_records.notifications.builders import (
     CommunityInclusionDeclineNotificationBuilder,
     CommunityInclusionExpireNotificationBuilder,
     CommunityInclusionSubmittedNotificationBuilder,
+    GuestAccessRequestAcceptNotificationBuilder,
+    UserAccessRequestAcceptNotificationBuilder,
 )
 from invenio_rdm_records.proxies import current_rdm_records_service
 from invenio_rdm_records.records.api import RDMDraft, RDMParent, RDMRecord
-from invenio_rdm_records.requests.entity_resolvers import RDMRecordServiceResultResolver
+from invenio_rdm_records.requests.entity_resolvers import (
+    EmailResolver,
+    RDMRecordServiceResultResolver,
+)
 from invenio_rdm_records.resources.serializers import DataCite43JSONSerializer
 from invenio_rdm_records.services.communities.components import (
     CommunityServiceComponents,
@@ -290,10 +295,13 @@ def app_config(app_config, mock_datacite_client):
         CommunityInclusionExpireNotificationBuilder.type: DummyNotificationBuilder,
         CommunityInclusionSubmittedNotificationBuilder.type: DummyNotificationBuilder,
         CommunityInvitationSubmittedNotificationBuilder.type: DummyNotificationBuilder,
+        GuestAccessRequestAcceptNotificationBuilder.type: GuestAccessRequestAcceptNotificationBuilder,
+        UserAccessRequestAcceptNotificationBuilder.type: UserAccessRequestAcceptNotificationBuilder,
     }
 
     # Specifying default resolvers. Will only be used in specific test cases.
     app_config["NOTIFICATIONS_ENTITY_RESOLVERS"] = [
+        EmailResolver(),
         RDMRecordServiceResultResolver(),
         ServiceResultResolver(service_id="users", type_key="user"),
         ServiceResultResolver(service_id="communities", type_key="community"),

@@ -14,12 +14,18 @@ from invenio_access.permissions import authenticated_user, system_identity
 from invenio_drafts_resources.services.records.uow import ParentRecordCommitOp
 from invenio_i18n import lazy_gettext as _
 from invenio_mail.tasks import send_email
+from invenio_notifications.services.uow import NotificationOp
 from invenio_records_resources.services.uow import Operation
 from invenio_requests import current_events_service
 from invenio_requests.customizations import RequestType, actions
 from invenio_requests.customizations.event_types import CommentEventType
 from marshmallow import ValidationError, fields, validates
 from marshmallow_utils.permissions import FieldPermissionsMixin
+
+from invenio_rdm_records.notifications.builders import (
+    GuestAccessRequestAcceptNotificationBuilder,
+    UserAccessRequestAcceptNotificationBuilder,
+)
 
 from ...proxies import current_rdm_records_service as service
 
@@ -98,15 +104,7 @@ class GuestAcceptAction(actions.AcceptAction):
                 (datetime.utcnow() + timedelta(days=days)).date().isoformat()
             )
         link = service.access.create_secret_link(identity, record.id, data)
-
         access_url = f"{record.links['self_html']}?token={link._link.token}"
-
-        plain_message = _("Access the record here: {url}".format(url=access_url))
-        message = _(
-            'Click <a href="{url}">here</a> to access the record.'.format(
-                url=access_url
-            )
-        )
 
         uow.register(
             ParentRecordCommitOp(
@@ -114,11 +112,10 @@ class GuestAcceptAction(actions.AcceptAction):
             )
         )
         uow.register(
-            EmailOp(
-                receiver=payload["email"],
-                subject="Request accepted",
-                body=plain_message,
-                html_body=message,
+            NotificationOp(
+                GuestAccessRequestAcceptNotificationBuilder.build(
+                    self.request, access_url=access_url
+                )
             )
         )
 
@@ -164,6 +161,11 @@ class UserAcceptAction(actions.AcceptAction):
         service.access.create_grant(system_identity, record.pid.pid_value, data)
         uow.register(
             ParentRecordCommitOp(record.parent, indexer_context=dict(service=service))
+        )
+        uow.register(
+            NotificationOp(
+                UserAccessRequestAcceptNotificationBuilder.build(self.request)
+            )
         )
 
         super().execute(identity, uow)
