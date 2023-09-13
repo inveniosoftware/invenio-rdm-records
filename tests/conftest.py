@@ -93,8 +93,10 @@ from invenio_rdm_records.notifications.builders import (
     CommunityInclusionExpireNotificationBuilder,
     CommunityInclusionSubmittedNotificationBuilder,
     GuestAccessRequestAcceptNotificationBuilder,
+    GuestAccessRequestSubmitNotificationBuilder,
     GuestAccessRequestTokenCreateNotificationBuilder,
     UserAccessRequestAcceptNotificationBuilder,
+    UserAccessRequestSubmitNotificationBuilder,
 )
 from invenio_rdm_records.proxies import current_rdm_records_service
 from invenio_rdm_records.records.api import RDMDraft, RDMParent, RDMRecord
@@ -298,7 +300,9 @@ def app_config(app_config, mock_datacite_client):
         CommunityInvitationSubmittedNotificationBuilder.type: DummyNotificationBuilder,
         GuestAccessRequestTokenCreateNotificationBuilder.type: GuestAccessRequestTokenCreateNotificationBuilder,
         GuestAccessRequestAcceptNotificationBuilder.type: GuestAccessRequestAcceptNotificationBuilder,
+        GuestAccessRequestSubmitNotificationBuilder.type: GuestAccessRequestSubmitNotificationBuilder,
         UserAccessRequestAcceptNotificationBuilder.type: UserAccessRequestAcceptNotificationBuilder,
+        UserAccessRequestSubmitNotificationBuilder.type: UserAccessRequestSubmitNotificationBuilder,
     }
 
     # Specifying default resolvers. Will only be used in specific test cases.

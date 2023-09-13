@@ -22,7 +22,9 @@ from marshmallow_utils.permissions import FieldPermissionsMixin
 
 from invenio_rdm_records.notifications.builders import (
     GuestAccessRequestAcceptNotificationBuilder,
+    GuestAccessRequestSubmitNotificationBuilder,
     UserAccessRequestAcceptNotificationBuilder,
+    UserAccessRequestSubmitNotificationBuilder,
 )
 
 from ...proxies import current_rdm_records_service as service
@@ -37,6 +39,11 @@ class UserSubmitAction(actions.SubmitAction):
     def execute(self, identity, uow):
         """Execute the submit action."""
         self.request["title"] = self.request.topic.resolve().metadata["title"]
+        uow.register(
+            NotificationOp(
+                UserAccessRequestSubmitNotificationBuilder.build(request=self.request)
+            )
+        )
         super().execute(identity, uow)
 
 
@@ -47,7 +54,11 @@ class GuestSubmitAction(actions.SubmitAction):
         """Execute the submit action."""
         record = self.request.topic.resolve()
         self.request["title"] = record.metadata["title"]
-
+        uow.register(
+            NotificationOp(
+                GuestAccessRequestSubmitNotificationBuilder.build(request=self.request)
+            )
+        )
         super().execute(identity, uow)
 
 
