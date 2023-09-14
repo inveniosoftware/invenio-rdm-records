@@ -1435,6 +1435,7 @@ def awards_v(app, funders_v):
             },
             "funder": {"id": "00k4n6c32"},
             "acronym": "HIT-CF",
+            "program": "H2020",
         },
     )
 

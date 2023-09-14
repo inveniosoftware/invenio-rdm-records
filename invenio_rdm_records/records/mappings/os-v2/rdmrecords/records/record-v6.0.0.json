@@ -496,6 +496,9 @@
                   "acronym": {
                     "type": "keyword"
                   },
+                  "program": {
+                    "type": "keyword"
+                  },
                   "identifiers": {
                     "properties": {
                       "identifier": {
