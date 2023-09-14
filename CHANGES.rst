@@ -11,6 +11,10 @@
 Changes
 =======
 
+Version 4.23.0 (2023-09-14)
+
+- fixtures: update names and affiliations to use model PIDs
+
 Version 4.22.0 (2023-09-14)
 
 - service: set records and user quota
