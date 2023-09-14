@@ -11,6 +11,11 @@
 Changes
 =======
 
+Version 4.22.0 (2023-09-14)
+
+- service: set records and user quota
+- deposit modals: fix modal headlines and list options styling for creatibutors
+
 Version 4.21.0 (2023-09-13)
 
 - service: prevent creating a request if invalid restrictions
