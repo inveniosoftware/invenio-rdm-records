@@ -21,6 +21,7 @@ def names_service():
 def example_name(app, db, search_clear, superuser_identity, names_service):
     """Example name."""
     data = {
+        "id": "0000-0001-8135-3489",
         "name": "Doe, John",
         "given_name": "John",
         "family_name": "Doe",

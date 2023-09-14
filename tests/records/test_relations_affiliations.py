@@ -54,7 +54,8 @@ def test_creator_affiliations_validation(running_app, minimal_record_with_creato
     # test it was saved properly
     aff = list(list(draft.relations.creator_affiliations())[0])[0]
     # since it is loaded it will contain more fields
-    assert aff["id"] == "cern"
+    assert aff.pid.pid_value == "cern"
+    assert aff["name"] == "CERN"
 
 
 def test_creator_affiliations_with_name_validation(
@@ -78,7 +79,7 @@ def test_creator_affiliations_with_name_validation(
     assert len(aff_list) == 1
     aff = aff_list[0]
     # since it is loaded it will contain more fields
-    assert aff["id"] == "cern"
+    assert aff.pid.pid_value == "cern"
 
 
 def test_creator_affiliations_with_name_cleanup_validation(running_app, minimal_record):
@@ -97,7 +98,7 @@ def test_creator_affiliations_with_name_cleanup_validation(running_app, minimal_
     # test it was saved properly
     aff = list(list(draft.relations.creator_affiliations())[0])[0]
     # since it is loaded it will contain more fields
-    assert aff["id"] == "cern"
+    assert aff.pid.pid_value == "cern"
 
 
 def test_creator_affiliations_indexing(running_app, minimal_record_with_creator):
@@ -111,7 +112,7 @@ def test_creator_affiliations_indexing(running_app, minimal_record_with_creator)
         {
             "id": "cern",
             "name": "CERN",
-            "@v": f"{running_app.affiliations_v._record.id}::1",
+            "@v": f"{running_app.affiliations_v._record.id}::2",
         }
     ]
 
@@ -179,7 +180,7 @@ def test_contributor_affiliations_validation(
     # test it was saved properly
     aff = list(list(draft.relations.contributor_affiliations())[0])[0]
     # since it is loaded it will contain more fields
-    assert aff["id"] == "cern"
+    assert aff.pid.pid_value == "cern"
 
 
 def test_contributor_affiliations_indexing(
@@ -195,7 +196,7 @@ def test_contributor_affiliations_indexing(
         {
             "id": "cern",
             "name": "CERN",
-            "@v": f"{running_app.affiliations_v._record.id}::1",
+            "@v": f"{running_app.affiliations_v._record.id}::2",
         }
     ]
 

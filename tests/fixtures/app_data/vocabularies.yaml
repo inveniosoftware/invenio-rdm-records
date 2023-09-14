@@ -1,10 +1,6 @@
 affiliations:
   pid-type: aff
-  schemes:
-    - id: ROR
-      name: Research Organization Registry
-      uri: "https://ror.org/"
-      data-file: vocabularies/affiliations_ror.yaml
+  data-file: vocabularies/affiliations_ror.yaml
 resourcetypes:
   pid-type: rsrct
   data-file: vocabularies/resource_types.yaml
