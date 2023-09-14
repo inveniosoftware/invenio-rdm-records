@@ -428,6 +428,15 @@ class RDMRecordService(RecordService):
     #
     # Record file quota handling
     #
+
+    def _update_quota(self, record, quota_size, max_file_size, notes):
+        """Update record with quota values"""
+        record.quota_size = quota_size
+        if max_file_size:
+            record.max_file_size = max_file_size
+        if notes:
+            record.notes = notes
+
     @unit_of_work()
     def set_quota(
         self,
@@ -458,9 +467,7 @@ class RDMRecordService(RecordService):
             )
         else:
             # update record quota
-            draft_quota.quota_size = quota_size
-            draft_quota.max_file_size = max_file_size
-            draft_quota.notes = notes
+            self._update_quota(draft_quota, quota_size, max_file_size, notes)
 
         db.session.add(draft_quota)
 
@@ -501,9 +508,7 @@ class RDMRecordService(RecordService):
             )
         else:
             # update user quota
-            user_quota.quota_size = quota_size
-            user_quota.max_file_size = max_file_size
-            user_quota.notes = notes
+            self._update_quota(user_quota, quota_size, max_file_size, notes)
 
         db.session.add(user_quota)
 
