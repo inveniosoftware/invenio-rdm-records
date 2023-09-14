@@ -430,7 +430,7 @@ class RDMRecordService(RecordService):
     #
 
     def _update_quota(self, record, quota_size, max_file_size, notes):
-        """Update record with quota values"""
+        """Update record with quota values."""
         record.quota_size = quota_size
         if max_file_size:
             record.max_file_size = max_file_size
