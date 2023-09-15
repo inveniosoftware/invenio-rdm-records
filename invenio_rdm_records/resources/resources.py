@@ -122,7 +122,6 @@ class RDMRecordResource(RecordResource):
     @request_headers
     @request_view_args
     @request_data
-    @response_handler()
     def review_submit(self):
         """Submit a draft for review or directly publish it."""
         require_review = False
