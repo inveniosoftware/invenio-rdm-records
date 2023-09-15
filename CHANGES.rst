@@ -11,6 +11,10 @@
 Changes
 =======
 
+Version 4.23.1 (2023-09-15)
+
+- resources: remove response handler from submit review
+
 Version 4.23.0 (2023-09-14)
 
 - fixtures: update names and affiliations to use model PIDs
