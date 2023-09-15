@@ -29,10 +29,6 @@ export class SubmitReviewModal extends Component {
 
   ConfirmSubmitReviewSchema = Yup.object({
     acceptAccessToRecord: Yup.bool().oneOf([true], i18next.t("You must accept this.")),
-    acceptAfterPublishRecord: Yup.bool().oneOf(
-      [true],
-      i18next.t("You must accept this.")
-    ),
     reviewComment: Yup.string(),
   });
 
@@ -47,11 +43,11 @@ export class SubmitReviewModal extends Component {
       directPublish,
       errors,
       loading,
+      record,
     } = this.props;
     const communityTitle = community.metadata.title;
 
-    let headerTitle, msgWarningTitle, msgWarningText1, submitBtnLbl;
-    if (directPublish) {
+    const directPublishCase = () => {
       headerTitle = i18next.t("Publish to community");
       msgWarningTitle = i18next.t(
         "Before publishing to the community, please read and check the following:"
@@ -61,16 +57,47 @@ export class SubmitReviewModal extends Component {
         { communityTitle }
       );
       submitBtnLbl = i18next.t("Publish record to community");
-    } else {
-      headerTitle = i18next.t("Submit for review");
+    };
+
+    let headerTitle, msgWarningTitle, msgWarningText1, submitBtnLbl;
+    // if record is passed and it is published
+    if (record?.is_published) {
+      headerTitle = i18next.t("Submit to community");
       msgWarningTitle = i18next.t(
-        "Before requesting review, please read and check the following:"
+        "Before submitting to community, please read and check the following:"
       );
-      msgWarningText1 = i18next.t(
-        "If your upload is accepted by the community curators, it will be <bold>immediately published</bold>. Before that, you will still be able to modify metadata and files of this upload."
-      );
-      submitBtnLbl = i18next.t("Submit record for review");
+      submitBtnLbl = i18next.t("Submit to community");
     }
+    // else record is a draft
+    else {
+      if (directPublish) {
+        directPublishCase();
+      } else {
+        headerTitle = i18next.t("Submit for review");
+        msgWarningTitle = i18next.t(
+          "Before requesting review, please read and check the following:"
+        );
+        msgWarningText1 = i18next.t(
+          "If your upload is accepted by the community curators, it will be <bold>immediately published</bold>. Before that, you will still be able to modify metadata and files of this upload."
+        );
+        submitBtnLbl = i18next.t("Submit record for review");
+      }
+    }
+
+    // acceptAfterPublishRecord checkbox is absent if record is published
+    const schema = () => {
+      if (record) {
+        return this.ConfirmSubmitReviewSchema;
+      } else {
+        const additionalValidationSchema = Yup.object({
+          acceptAfterPublishRecord: Yup.bool().oneOf(
+            [true],
+            i18next.t("You must accept this.")
+          ),
+        });
+        return this.ConfirmSubmitReviewSchema.concat(additionalValidationSchema);
+      }
+    };
 
     return (
       <Formik
@@ -80,7 +107,7 @@ export class SubmitReviewModal extends Component {
           reviewComment: initialReviewComment || "",
         }}
         onSubmit={onSubmit}
-        validationSchema={this.ConfirmSubmitReviewSchema}
+        validationSchema={schema}
         validateOnChange={false}
         validateOnBlur={false}
       >
@@ -135,35 +162,36 @@ export class SubmitReviewModal extends Component {
                       className="mt-0 mb-5"
                     />
                   </Form.Field>
-                  <Form.Field>
-                    <RadioField
-                      control={Checkbox}
-                      fieldPath="acceptAfterPublishRecord"
-                      label={
-                        <Trans
-                          defaults={msgWarningText1}
-                          values={{
-                            communityTitle: communityTitle,
-                          }}
-                          components={{ bold: <b /> }}
-                        />
-                      }
-                      checked={_get(values, "acceptAfterPublishRecord") === true}
-                      onChange={({ data, formikProps }) => {
-                        formikProps.form.setFieldValue(
-                          "acceptAfterPublishRecord",
-                          data.checked
-                        );
-                      }}
-                      optimized
-                    />
-                    <ErrorLabel
-                      role="alert"
-                      fieldPath="acceptAfterPublishRecord"
-                      className="mt-0 mb-5"
-                    />
-                  </Form.Field>
-
+                  {!record && (
+                    <Form.Field>
+                      <RadioField
+                        control={Checkbox}
+                        fieldPath="acceptAfterPublishRecord"
+                        label={
+                          <Trans
+                            defaults={msgWarningText1}
+                            values={{
+                              communityTitle: communityTitle,
+                            }}
+                            components={{ bold: <b /> }}
+                          />
+                        }
+                        checked={_get(values, "acceptAfterPublishRecord") === true}
+                        onChange={({ data, formikProps }) => {
+                          formikProps.form.setFieldValue(
+                            "acceptAfterPublishRecord",
+                            data.checked
+                          );
+                        }}
+                        optimized
+                      />
+                      <ErrorLabel
+                        role="alert"
+                        fieldPath="acceptAfterPublishRecord"
+                        className="mt-0 mb-5"
+                      />
+                    </Form.Field>
+                  )}
                   {!directPublish && (
                     <TextAreaField
                       fieldPath="reviewComment"
@@ -217,6 +245,7 @@ SubmitReviewModal.propTypes = {
   directPublish: PropTypes.bool,
   errors: PropTypes.node, // TODO FIXME: Use a common error cmp to display errros.
   loading: PropTypes.bool,
+  record: PropTypes.object.isRequired,
 };
 
 SubmitReviewModal.defaultProps = {
