@@ -432,7 +432,7 @@ def full_record(users):
                 }
             ],
             "languages": [{"id": "dan"}, {"id": "eng"}],
-            "identifiers": [{"identifier": "1924MNRAS..84..308E", "scheme": "bibcode"}],
+            "identifiers": [{"identifier": "1924MNRAS..84..308E", "scheme": "ads"}],
             "related_identifiers": [
                 {
                     "identifier": "10.1234/foo.bar",
@@ -677,7 +677,7 @@ def enhanced_full_record(users):
                     },
                 },
             ],
-            "identifiers": [{"identifier": "1924MNRAS..84..308E", "scheme": "bibcode"}],
+            "identifiers": [{"identifier": "1924MNRAS..84..308E", "scheme": "ads"}],
             "related_identifiers": [
                 {
                     "identifier": "10.1234/foo.bar",
