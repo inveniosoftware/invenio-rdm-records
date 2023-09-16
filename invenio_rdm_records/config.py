@@ -62,7 +62,7 @@ RDM_RECORDS_PERSONORG_SCHEMES = {
 RDM_RECORDS_IDENTIFIERS_SCHEMES = {
     "ark": {"label": _("ARK"), "validator": idutils.is_ark, "datacite": "ARK"},
     "arxiv": {"label": _("arXiv"), "validator": idutils.is_arxiv, "datacite": "arXiv"},
-    "bibcode": {
+    "ads": {
         "label": _("Bibcode"),
         "validator": idutils.is_ads,
         "datacite": "bibcode",
