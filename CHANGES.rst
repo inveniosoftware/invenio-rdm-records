@@ -11,6 +11,10 @@
 Changes
 =======
 
+Version 4.23.2 (2023-09-17)
+
+- config: fix ADS bibcode idutils scheme
+
 Version 4.23.1 (2023-09-15)
 
 - resources: remove response handler from submit review
