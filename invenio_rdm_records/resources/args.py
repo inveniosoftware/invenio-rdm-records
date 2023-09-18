@@ -18,3 +18,4 @@ class RDMSearchRequestArgsSchema(SearchRequestArgsSchema):
 
     style = fields.Str()
     locale = fields.Str()
+    status = fields.Str()

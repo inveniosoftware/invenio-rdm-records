@@ -16,7 +16,7 @@ import arrow
 from invenio_accounts.models import User
 from invenio_db import db
 from invenio_drafts_resources.services.records import RecordService
-from invenio_records_resources.services import ServiceSchemaWrapper
+from invenio_records_resources.services import LinksTemplate, ServiceSchemaWrapper
 from invenio_records_resources.services.uow import RecordCommitOp, unit_of_work
 from invenio_requests.services.results import EntityResolverExpandableField
 from invenio_search.engine import dsl
@@ -323,92 +323,97 @@ class RDMRecordService(RecordService):
     #
     # Search functions
     #
-    def _add_deletion_filter(self, kwargs_dict, deletion_status, positive_filter=True):
-        """Add an 'extra_filter' for the record deletion status to the kwarg dict.
-
-        This function will manipulate the specified ``kwargs_dict`` by extending the
-        existing ``extra_filter`` value or adding a new one.
-        The added ``extra_filter`` assumes an ``RDMRecord`` structure and takes care
-        of filtering out search results with a deletion status different from the one
-        specified.
-        The ``positive_filter`` determines if the created query filter will check for
-        the presence of a specified "good" value (if ``True``) vs. the absence of a
-        set of "bad" values (if ``False``).
-        The difference here is how the case will be handled if the field is missing
-        entirely: The "positive filter" will filter out the search result, while the
-        otherwise it will keep the search results.
-        For instance, this is relevant for handling RDMDrafts that do not have this
-        field.
-        """
-        if positive_filter:
-            filter = dsl.Q(
-                "bool", **{"filter": {"term": {"deletion_status": deletion_status}}}
-            )
-        else:
-            values = [
-                v.value for v in RecordDeletionStatusEnum if v.value != deletion_status
-            ]
-            filter = dsl.Q(
-                "bool", **{"must_not": {"terms": {"deletion_status": values}}}
-            )
-
-        if extra_filter := kwargs_dict.get("extra_filter", None):
-            filter = filter & extra_filter
-
-        kwargs_dict["extra_filter"] = filter
-        return kwargs_dict
-
     def search(
-        self, identity, params=None, search_preference=None, expand=False, **kwargs
+        self,
+        identity,
+        params=None,
+        search_preference=None,
+        expand=False,
+        extra_filter=None,
+        **kwargs,
     ):
         """Search for published records matching the querystring."""
         status = RecordDeletionStatusEnum.PUBLISHED.value
-        kwargs = self._add_deletion_filter(kwargs, status)
-        return super().search(identity, params, search_preference, expand, **kwargs)
+        search_filter = dsl.Q("term", **{"deletion_status": status})
+        if extra_filter:
+            search_filter = search_filter & extra_filter
 
-    def search_deleted(
-        self, identity, params=None, search_preference=None, expand=False, **kwargs
-    ):
-        """Search for soft-deleted records matching the querystring."""
-        status = RecordDeletionStatusEnum.DELETED.value
-        kwargs = self._add_deletion_filter(kwargs, status)
-        return super().search(identity, params, search_preference, expand, **kwargs)
+        return super().search(
+            identity,
+            params,
+            search_preference,
+            expand,
+            extra_filter=search_filter,
+            **kwargs,
+        )
 
-    def search_marked_for_purge(
-        self, identity, params=None, search_preference=None, expand=False, **kwargs
+    def search_all(
+        self,
+        identity,
+        params=None,
+        search_preference=None,
+        expand=False,
+        extra_filter=None,
+        **kwargs,
     ):
-        """Search for records marked for purge, matching the querystring."""
-        status = RecordDeletionStatusEnum.MARKED.value
-        kwargs = self._add_deletion_filter(kwargs, status)
-        return super().search(identity, params, search_preference, expand, **kwargs)
+        """Search for all (published and deleted) records matching the querystring."""
+        self.require_permission(identity, "search_all")
+
+        # exclude drafts filter (drafts have no deletion status)
+        search_filter = dsl.Q(
+            "terms", **{"deletion_status": [v.value for v in RecordDeletionStatusEnum]}
+        )
+        if extra_filter:
+            search_filter &= extra_filter
+        search_result = self._search(
+            "search_all",
+            identity,
+            params,
+            search_preference,
+            record_cls=self.draft_cls,
+            search_opts=self.config.search_all,
+            extra_filter=search_filter,
+            permission_action="read",  # TODO this probably should be read_deleted
+            **kwargs,
+        ).execute()
+
+        return self.result_list(
+            self,
+            identity,
+            search_result,
+            params,
+            links_tpl=LinksTemplate(self.config.links_search, context={"args": params}),
+            links_item_tpl=self.links_item_tpl,
+            expandable_fields=self.expandable_fields,
+            expand=expand,
+        )
 
     def search_drafts(
-        self, identity, params=None, search_preference=None, expand=False, **kwargs
+        self,
+        identity,
+        params=None,
+        search_preference=None,
+        expand=False,
+        extra_filter=None,
+        **kwargs,
     ):
         """Search for drafts that have not been marked as deleted."""
         # because drafts don't have a 'deletion_status', a simple positive filter
         # won't work in cases where records and drafts are mixed...
         # instead, we exclude all the 'wrong' values here
-        status = RecordDeletionStatusEnum.PUBLISHED.value
-        kwargs = self._add_deletion_filter(kwargs, status, positive_filter=False)
+        # TODO this filter can be removed if we cleanup "orphaned" drafts after deletion
+        deletion_filter = dsl.query.Bool(
+            "must_not", **{"exists": {"field": "deletion_status"}}
+        )
+        search_filter = deletion_filter
+        if extra_filter:
+            search_filter &= extra_filter
         return super().search_drafts(
             identity,
             params=params,
             search_preference=search_preference,
             expand=expand,
-            **kwargs,
-        )
-
-    def search_versions(
-        self, identity, id_, params=None, search_preference=None, expand=False, **kwargs
-    ):
-        """Search versions of a record that aren't deleted."""
-        return super().search_versions(
-            identity,
-            id_,
-            params=None,
-            search_preference=None,
-            expand=False,
+            extra_filter=search_filter,
             **kwargs,
         )
 

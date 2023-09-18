@@ -8,7 +8,7 @@
 # it under the terms of the MIT License; see LICENSE file for more details.
 
 """Permissions for Invenio RDM Records."""
-
+from invenio_administration.generators import Administration
 from invenio_communities.generators import CommunityCurators
 from invenio_records_permissions.generators import (
     AnyUser,
@@ -94,6 +94,7 @@ class RDMRecordPermissionPolicy(RecordPermissionPolicy):
     #
     # Allow searching of records
     can_search = can_all
+    can_search_all = [Administration(), SystemProcess()]
 
     # Allow reading metadata of a record
     can_read = [
@@ -239,7 +240,7 @@ class RDMRecordPermissionPolicy(RecordPermissionPolicy):
     #
     # Record deletion workflows
     #
-    can_delete = [SystemProcess()]
+    can_delete = [Administration(), SystemProcess()]
     can_delete_files = [SystemProcess()]
     can_purge = [SystemProcess()]
 
