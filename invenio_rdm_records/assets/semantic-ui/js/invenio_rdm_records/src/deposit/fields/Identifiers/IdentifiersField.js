@@ -46,6 +46,7 @@ export class IdentifiersField extends Component {
                 <SelectField
                   fieldPath={`${fieldPathPrefix}.scheme`}
                   label={i18next.t("Scheme")}
+                  aria-label={i18next.t("Scheme")}
                   options={schemeOptions}
                   optimized
                   required
@@ -56,6 +57,7 @@ export class IdentifiersField extends Component {
                 <TextField
                   fieldPath={`${fieldPathPrefix}.scheme`}
                   label={i18next.t("Scheme")}
+                  aria-label={i18next.t("Scheme")}
                   required
                   width={5}
                 />

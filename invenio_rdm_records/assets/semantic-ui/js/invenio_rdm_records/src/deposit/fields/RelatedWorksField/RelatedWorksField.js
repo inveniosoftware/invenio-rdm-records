@@ -51,9 +51,13 @@ export class RelatedWorksField extends Component {
                   clearable
                   fieldPath={`${fieldPathPrefix}.relation_type`}
                   label={i18next.t("Relation")}
+                  aria-label={i18next.t("Relation")}
                   optimized
                   options={options.relations}
-                  placeholder={i18next.t("Select relation...")}
+                  placeholder={{
+                    role: "option",
+                    content: "Select relation...",
+                  }}
                   required
                   width={3}
                 />
@@ -69,6 +73,7 @@ export class RelatedWorksField extends Component {
                   clearable
                   fieldPath={`${fieldPathPrefix}.scheme`}
                   label={i18next.t("Scheme")}
+                  aria-label={i18next.t("Scheme")}
                   optimized
                   options={options.scheme}
                   required

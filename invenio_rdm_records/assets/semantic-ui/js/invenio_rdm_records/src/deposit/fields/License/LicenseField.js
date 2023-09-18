@@ -92,36 +92,36 @@ class LicenseFieldForm extends Component {
                 />
               );
             })}
-            <LicenseModal
-              searchConfig={searchConfig}
-              trigger={
-                <Button type="button" key="standard" icon labelPosition="left">
-                  <Icon name="add" />
-                  {i18next.t("Add standard")}
-                </Button>
-              }
-              onLicenseChange={(selectedLicense) => {
-                formikArrayPush(selectedLicense);
-              }}
-              mode="standard"
-              action="add"
-              serializeLicenses={serializeLicenses}
-            />
-            <LicenseModal
-              searchConfig={searchConfig}
-              trigger={
-                <Button type="button" key="custom" icon labelPosition="left">
-                  <Icon name="add" />
-                  {i18next.t("Add custom")}
-                </Button>
-              }
-              onLicenseChange={(selectedLicense) => {
-                formikArrayPush(selectedLicense);
-              }}
-              mode="custom"
-              action="add"
-            />
           </List>
+          <LicenseModal
+            searchConfig={searchConfig}
+            trigger={
+              <Button type="button" key="standard" icon labelPosition="left">
+                <Icon name="add" />
+                {i18next.t("Add standard")}
+              </Button>
+            }
+            onLicenseChange={(selectedLicense) => {
+              formikArrayPush(selectedLicense);
+            }}
+            mode="standard"
+            action="add"
+            serializeLicenses={serializeLicenses}
+          />
+          <LicenseModal
+            searchConfig={searchConfig}
+            trigger={
+              <Button type="button" key="custom" icon labelPosition="left">
+                <Icon name="add" />
+                {i18next.t("Add custom")}
+              </Button>
+            }
+            onLicenseChange={(selectedLicense) => {
+              formikArrayPush(selectedLicense);
+            }}
+            mode="custom"
+            action="add"
+          />
         </Form.Field>
       </DndProvider>
     );

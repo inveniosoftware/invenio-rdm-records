@@ -65,7 +65,7 @@ CODEMETA_CUSTOM_FIELDS_UI = {
                 label="Programming language",
                 icon="code",
                 description="Repository's programming language.",
-                placeholder="Python ...",
+                placeholder="e.g. Python ...",
             ),
         ),
         dict(
@@ -75,7 +75,7 @@ CODEMETA_CUSTOM_FIELDS_UI = {
                 label="Runtime platform",
                 icon="cog",
                 description="Repository runtime platform or script interpreter dependencies.",
-                placeholder="Java v1, Python2.3, .Net Framework 3.0 ...",
+                placeholder="e.g. Java v1, Python2.3, .Net Framework 3.0 ...",
             ),
         ),
         dict(
@@ -85,7 +85,7 @@ CODEMETA_CUSTOM_FIELDS_UI = {
                 label="Supported operating system",
                 icon="desktop",
                 description="Supported operating systems.",
-                placeholder="Windows 7, OSX 10.6, Android 1.6 ...",
+                placeholder="e.g. Windows 7, OSX 10.6, Android 1.6 ...",
             ),
         ),
         dict(

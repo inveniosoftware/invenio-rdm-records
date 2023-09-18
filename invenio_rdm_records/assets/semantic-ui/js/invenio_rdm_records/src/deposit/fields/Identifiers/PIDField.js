@@ -126,6 +126,7 @@ class ManagedUnmanagedSwitch extends Component {
         <Form.Field width={2}>
           <Radio
             label={i18next.t("Yes")}
+            aria-label={i18next.t("Yes")}
             name="radioGroup"
             value="unmanaged"
             disabled={disabled}
@@ -136,6 +137,7 @@ class ManagedUnmanagedSwitch extends Component {
         <Form.Field width={2}>
           <Radio
             label={i18next.t("No")}
+            aria-label={i18next.t("No")}
             name="radioGroup"
             value="managed"
             disabled={disabled}

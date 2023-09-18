@@ -64,6 +64,7 @@ export class SubjectsField extends Component {
               className="p-0"
               defaultValue={limitToOptions[0].value}
               fluid
+              aria-label={i18next.t("Suggest from")}
               onChange={(event, data) => this.setState({ limitTo: data.value })}
               options={limitToOptions}
               selection

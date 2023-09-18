@@ -58,6 +58,7 @@ export class ResourceTypeField extends Component {
         fieldPath={fieldPath}
         label={<FieldLabel htmlFor={fieldPath} icon={labelIcon} label={label} />}
         optimized
+        aria-label={label}
         options={frontEndOptions}
         selectOnBlur={false}
         {...restProps}

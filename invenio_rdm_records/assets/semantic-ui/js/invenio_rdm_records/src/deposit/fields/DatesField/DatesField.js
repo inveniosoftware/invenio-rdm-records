@@ -85,6 +85,7 @@ export class DatesField extends Component {
               <SelectField
                 fieldPath={`${fieldPathPrefix}.type`}
                 label={i18next.t("Type")}
+                aria-label={i18next.t("Type")}
                 options={sortOptions(options.type)}
                 disabled={hasRequiredTypeValue}
                 required
