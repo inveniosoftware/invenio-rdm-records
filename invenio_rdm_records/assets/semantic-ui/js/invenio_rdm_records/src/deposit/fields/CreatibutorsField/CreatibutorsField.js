@@ -106,27 +106,27 @@ class CreatibutorsFieldForm extends Component {
                 />
               );
             })}
-            <CreatibutorsModal
-              onCreatibutorChange={this.handleOnContributorChange}
-              action="add"
-              addLabel={modal.addLabel}
-              editLabel={modal.editLabel}
-              roleOptions={sortOptions(roleOptions)}
-              schema={schema}
-              autocompleteNames={autocompleteNames}
-              trigger={
-                <Button type="button" icon labelPosition="left">
-                  <Icon name="add" />
-                  {addButtonLabel}
-                </Button>
-              }
-            />
-            {creatibutorsError && typeof creatibutorsError == "string" && (
-              <Label pointing="left" prompt>
-                {creatibutorsError}
-              </Label>
-            )}
           </List>
+          <CreatibutorsModal
+            onCreatibutorChange={this.handleOnContributorChange}
+            action="add"
+            addLabel={modal.addLabel}
+            editLabel={modal.editLabel}
+            roleOptions={sortOptions(roleOptions)}
+            schema={schema}
+            autocompleteNames={autocompleteNames}
+            trigger={
+              <Button type="button" icon labelPosition="left">
+                <Icon name="add" />
+                {addButtonLabel}
+              </Button>
+            }
+          />
+          {creatibutorsError && typeof creatibutorsError == "string" && (
+            <Label pointing="left" prompt>
+              {creatibutorsError}
+            </Label>
+          )}
         </Form.Field>
       </DndProvider>
     );
