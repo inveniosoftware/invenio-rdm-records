@@ -85,6 +85,7 @@ from .schemas.parent.access import RequestAccessSchema
 from .schemas.parent.access import SecretLink as SecretLinkSchema
 from .schemas.record_communities import RecordCommunitiesSchema
 from .schemas.tombstone import TombstoneSchema
+from .search_params import StatusParam
 from .sort import VerifiedRecordsSortParam
 
 
@@ -153,6 +154,12 @@ class RDMSearchOptions(SearchOptions, SearchOptionsMixin):
         FacetsParam,
         VerifiedRecordsSortParam,
     ]
+
+
+class RDMSearchAllOptions(RDMSearchOptions):
+    """Search options for full (including deleted) records search."""
+
+    params_interpreters_cls = [StatusParam] + RDMSearchOptions.params_interpreters_cls
 
 
 class RDMSearchDraftsOptions(SearchDraftsOptions, SearchOptionsMixin):
@@ -306,6 +313,13 @@ class RDMRecordServiceConfig(RecordServiceConfig, ConfiguratorMixin):
         "RDM_SORT_OPTIONS",
         "RDM_FACETS",
         search_option_cls=RDMSearchVersionsOptions,
+    )
+
+    search_all = FromConfigSearchOptions(
+        "RDM_SEARCH",
+        "RDM_SORT_OPTIONS",
+        "RDM_FACETS",
+        search_option_cls=RDMSearchAllOptions,
     )
 
     # PIDs configuration

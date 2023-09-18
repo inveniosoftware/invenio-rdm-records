@@ -106,6 +106,11 @@ class RDMRecordResourceConfig(RecordResourceConfig, ConfiguratorMixin):
     # Access requests
     routes["record-access-request"] = "/<pid_value>/access/request"
     routes["access-request-settings"] = "/<pid_value>/access"
+    routes["delete-record"] = "/<pid_value>/delete"
+    routes["restore-record"] = "/<pid_value>/restore"
+    routes["set-record-quota"] = "/<pid_value>/quota"
+    routes["set-user-quota"] = "/users/<pid_value>/quota"
+    routes["list-all"] = "/all"
 
     request_view_args = {
         "pid_value": ma.fields.Str(),
