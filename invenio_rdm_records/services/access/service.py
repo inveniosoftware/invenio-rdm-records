@@ -15,6 +15,7 @@ import arrow
 from flask import current_app
 from flask_login import current_user
 from invenio_access.permissions import authenticated_user, system_identity
+from invenio_db import db
 from invenio_drafts_resources.services.records import RecordService
 from invenio_drafts_resources.services.records.uow import ParentRecordCommitOp
 from invenio_i18n import lazy_gettext as _
@@ -500,26 +501,27 @@ class RecordAccessService(RecordService):
         api_cls = current_requests_service.record_cls
         model_cls = api_cls.model_cls
 
-        requests = [
-            request
-            for request in (
-                api_cls(rm.data, model=rm)
-                for rm in model_cls.query.filter(
-                    model_cls.json["created_by"] == created_by,
-                    model_cls.json["topic"] == {"record": record_id},
-                    model_cls.json["type"].as_string() == request_type,
+        with db.session.no_autoflush:
+            requests = [
+                request
+                for request in (
+                    api_cls(rm.data, model=rm)
+                    for rm in model_cls.query.filter(
+                        model_cls.json["created_by"] == created_by,
+                        model_cls.json["topic"] == {"record": record_id},
+                        model_cls.json["type"].as_string() == request_type,
+                    )
+                    if not rm.is_deleted
                 )
-                if not rm.is_deleted
-            )
-            if request.is_open
-        ]
-        if len(requests) > 1:
-            current_app.logger.error(
-                f"Multiple access requests detected for: "
-                f"record_pid{record_id}, creator: {created_by}"
-            )
-        if requests and len(requests) > 0:
-            return requests[0]
+                if request.is_open
+            ]
+            if len(requests) > 1:
+                current_app.logger.error(
+                    f"Multiple access requests detected for: "
+                    f"record_pid{record_id}, creator: {created_by}"
+                )
+            if requests and len(requests) > 0:
+                return requests[0]
 
     def request_access(self, identity, id_, data, expand=False):
         """Redirect the access request to specific service method."""
