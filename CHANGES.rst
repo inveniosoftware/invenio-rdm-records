@@ -11,6 +11,12 @@
 Changes
 =======
 
+Version 4.24.0 (2023-09-19)
+
+- community submission: fix modal text for different cases
+- resources: add administration and moderation actions
+- models: avoid flushing when getting records
+
 Version 4.23.2 (2023-09-17)
 
 - config: fix ADS bibcode idutils scheme
