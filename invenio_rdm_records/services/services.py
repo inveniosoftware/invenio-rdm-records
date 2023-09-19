@@ -87,7 +87,6 @@ class RDMRecordService(RecordService):
         """Schema for tombstone information."""
         return ServiceSchemaWrapper(self, schema=self.config.schema_tombstone)
 
-
     @property
     def schema_quota(self):
         """Returns the featured data schema instance."""
@@ -409,9 +408,7 @@ class RDMRecordService(RecordService):
         published_filter = dsl.Q(
             "term", **{"deletion_status": RecordDeletionStatusEnum.PUBLISHED.value}
         )
-        drafts_filter = dsl.Q(
-            "term", **{"is_published": False}
-        )
+        drafts_filter = dsl.Q("term", **{"is_published": False})
         search_filter = drafts_filter | published_filter
         if extra_filter:
             search_filter &= extra_filter
@@ -486,12 +483,9 @@ class RDMRecordService(RecordService):
         db.session.add(draft_quota)
 
         # files_attr can be set to "media_files"
-        files_manager = getattr(draft, files_attr)
-        files_manager.unlock()
         getattr(draft, files_attr).set_quota(
             quota_size=data["quota_size"], max_file_size=data["max_file_size"]
         )
-        files_manager.lock()
         return True
 
     #
@@ -522,10 +516,7 @@ class RDMRecordService(RecordService):
             RDMUserQuota.user_id == user.id
         ).one_or_none()
         if not user_quota:
-            user_quota = RDMUserQuota(
-                user_id=user.id,
-                **data
-            )
+            user_quota = RDMUserQuota(user_id=user.id, **data)
         else:
             # update user quota
             self._update_quota(user_quota, **data)
