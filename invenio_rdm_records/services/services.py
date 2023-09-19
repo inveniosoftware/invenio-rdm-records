@@ -87,6 +87,12 @@ class RDMRecordService(RecordService):
         """Schema for tombstone information."""
         return ServiceSchemaWrapper(self, schema=self.config.schema_tombstone)
 
+
+    @property
+    def schema_quota(self):
+        """Returns the featured data schema instance."""
+        return ServiceSchemaWrapper(self, schema=self.config.schema_quota)
+
     #
     # Service methods
     #
@@ -433,7 +439,6 @@ class RDMRecordService(RecordService):
     #
     # Record file quota handling
     #
-
     def _update_quota(self, record, quota_size, max_file_size, notes):
         """Update record with quota values."""
         record.quota_size = quota_size
@@ -447,9 +452,7 @@ class RDMRecordService(RecordService):
         self,
         identity,
         id_,
-        quota_size=None,
-        max_file_size=None,
-        notes=None,
+        data,
         files_attr="files",
         uow=None,
     ):
@@ -457,29 +460,37 @@ class RDMRecordService(RecordService):
         draft = self.draft_cls.pid.resolve(id_, registered_only=False)
         parent = draft.parent
         self.require_permission(identity, "manage_quota", record=draft)
-
+        data, errors = self.schema_quota.load(
+            data,
+            context={
+                "identity": identity,
+            },
+            raise_errors=True,
+        )
         # Set quota
         draft_quota = RDMRecordQuota.query.filter(
             RDMRecordQuota.parent_id == str(parent.id)
         ).one_or_none()
+
         if not draft_quota:
             draft_quota = RDMRecordQuota(
                 parent_id=str(parent.id),
                 user_id=parent.access.owned_by.owner_id,
-                quota_size=quota_size,
-                max_file_size=max_file_size,
-                notes=notes,
+                **data,
             )
         else:
             # update record quota
-            self._update_quota(draft_quota, quota_size, max_file_size, notes)
+            self._update_quota(draft_quota, **data)
 
         db.session.add(draft_quota)
 
         # files_attr can be set to "media_files"
+        files_manager = getattr(draft, files_attr)
+        files_manager.unlock()
         getattr(draft, files_attr).set_quota(
-            quota_size=quota_size, max_file_size=max_file_size
+            quota_size=data["quota_size"], max_file_size=data["max_file_size"]
         )
+        files_manager.lock()
         return True
 
     #
@@ -490,9 +501,7 @@ class RDMRecordService(RecordService):
         self,
         identity,
         id_,
-        quota_size=None,
-        max_file_size=None,
-        notes=None,
+        data,
         uow=None,
     ):
         """Set user files quota."""
@@ -500,6 +509,13 @@ class RDMRecordService(RecordService):
 
         self.require_permission(identity, "manage_quota", record=user)
 
+        data, errors = self.schema_quota.load(
+            data,
+            context={
+                "identity": identity,
+            },
+            raise_errors=True,
+        )
         # Set quota
         user_quota = RDMUserQuota.query.filter(
             RDMUserQuota.user_id == user.id
@@ -507,13 +523,11 @@ class RDMRecordService(RecordService):
         if not user_quota:
             user_quota = RDMUserQuota(
                 user_id=user.id,
-                quota_size=quota_size,
-                max_file_size=max_file_size,
-                notes=notes,
+                **data
             )
         else:
             # update user quota
-            self._update_quota(user_quota, quota_size, max_file_size, notes)
+            self._update_quota(user_quota, **data)
 
         db.session.add(user_quota)
 
