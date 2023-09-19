@@ -76,9 +76,9 @@ class RDMRecordResource(RecordResource):
                 p(routes["access-request-settings"]),
                 self.update_access_settings,
             ),
-            route("POST", p(routes["delete-record"]), self.delete_record),
+            route("DELETE", p(routes["delete-record"]), self.delete_record),
             route("POST", p(routes["restore-record"]), self.restore_record),
-            route("GET", p(routes["list-all"]), self.search_all),
+            route("GET", routes["list-all"], self.search_all),
             route("POST", p(routes["set-record-quota"]), self.set_record_quota),
             # TODO: move to users?
             route("POST", routes["set-user-quota"], self.set_user_quota),
@@ -90,13 +90,11 @@ class RDMRecordResource(RecordResource):
     @request_view_args
     @request_data
     def set_record_quota(self):
-        """Read the related review request."""
+        """Set record quota resource."""
         item = self.service.set_quota(
             g.identity,
             resource_requestctx.view_args["pid_value"],
-            quota_size=resource_requestctx.data["quota_size"],
-            max_file_size=resource_requestctx.data["max_file_size"],
-            notes=resource_requestctx.data["notes"],
+            data=resource_requestctx.data,
         )
 
         return {}, 200
@@ -105,13 +103,11 @@ class RDMRecordResource(RecordResource):
     @request_view_args
     @request_data
     def set_user_quota(self):
-        """Read the related review request."""
+        """Set user quota resource."""
         item = self.service.set_user_quota(
             g.identity,
             id_=resource_requestctx.view_args["pid_value"],
-            quota_size=resource_requestctx.data["quota_size"],
-            max_file_size=resource_requestctx.data["max_file_size"],
-            notes=resource_requestctx.data["notes"],
+            data=resource_requestctx.data,
         )
 
         return {}, 200

@@ -57,6 +57,7 @@ from invenio_requests.services.requests import RequestItem, RequestList
 from invenio_requests.services.requests.config import RequestSearchOptions
 from requests import Request
 
+from .schemas.quota import QuotaSchema
 from ..records import RDMDraft, RDMRecord
 from ..records.api import RDMDraftMediaFiles, RDMRecordMediaFiles
 from . import facets
@@ -272,6 +273,7 @@ class RDMRecordServiceConfig(RecordServiceConfig, ConfiguratorMixin):
     schema_grant = GrantSchema
     schema_request_access = RequestAccessSchema
     schema_tombstone = TombstoneSchema
+    schema_quota = QuotaSchema
 
     # Permission policy
     permission_policy_cls = FromConfig(

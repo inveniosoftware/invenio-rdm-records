@@ -116,5 +116,5 @@ class RecordDeletionStatusField(SystemField):
         """After loading, set the deletion status."""
         deletion_status = data.get("deletion_status", None)
         self.__set__(record, deletion_status)
-        data.pop("is_deleted", None)
-        data.pop("deletion_status", None)
+        record.pop("is_deleted", None)
+        record.pop("deletion_status", None)
