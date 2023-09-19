@@ -11,6 +11,12 @@
 Changes
 =======
 
+Version 4.25.0 (2023-09-19)
+
+- permissions: allow moderator to see all drafts
+- services: filter out deleted records
+- service: add quota load schema
+
 Version 4.24.0 (2023-09-19)
 
 - community submission: fix modal text for different cases
