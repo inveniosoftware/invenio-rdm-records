@@ -57,7 +57,6 @@ from invenio_requests.services.requests import RequestItem, RequestList
 from invenio_requests.services.requests.config import RequestSearchOptions
 from requests import Request
 
-from .schemas.quota import QuotaSchema
 from ..records import RDMDraft, RDMRecord
 from ..records.api import RDMDraftMediaFiles, RDMRecordMediaFiles
 from . import facets
@@ -84,6 +83,7 @@ from .schemas.parent.access import AccessSettingsSchema
 from .schemas.parent.access import Grant as GrantSchema
 from .schemas.parent.access import RequestAccessSchema
 from .schemas.parent.access import SecretLink as SecretLinkSchema
+from .schemas.quota import QuotaSchema
 from .schemas.record_communities import RecordCommunitiesSchema
 from .schemas.tombstone import TombstoneSchema
 from .search_params import StatusParam
