@@ -70,6 +70,7 @@ class RDMRecordPermissionPolicy(RecordPermissionPolicy):
         AccessGrant("preview"),
         SecretLinks("preview"),
         SubmissionReviewer(),
+        UserManager,
     ]
     can_view = can_preview + [
         AccessGrant("view"),
@@ -94,7 +95,7 @@ class RDMRecordPermissionPolicy(RecordPermissionPolicy):
     #
     # Allow searching of records
     can_search = can_all
-    can_search_all = [Administration(), SystemProcess()]
+    can_search_all = [UserManager, SystemProcess()]
 
     # Allow reading metadata of a record
     can_read = [
