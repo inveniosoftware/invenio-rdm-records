@@ -19,6 +19,7 @@ from .errors import (
     InvalidTokenError,
     InvalidTokenIDError,
     MissingTokenIDError,
+    TokenDecodeError,
 )
 from .scopes import tokens_generate_scope
 
@@ -37,6 +38,8 @@ def validate_rat(token):
     try:
         headers = jwt.get_unverified_header(token)
         access_token_id = headers.get("kid")
+    except jwt.DecodeError:
+        raise TokenDecodeError()
     except jwt.InvalidTokenError:
         raise InvalidTokenError()
 
@@ -71,6 +74,8 @@ def validate_rat(token):
         if (issued_at + token_lifetime) < datetime.utcnow():
             raise ExpiredTokenError()
 
+    except jwt.DecodeError:
+        raise TokenDecodeError()
     except jwt.InvalidTokenError:
         raise InvalidTokenError()
 

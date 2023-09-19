@@ -22,7 +22,11 @@ from marshmallow import ValidationError
 from .requests.access.permissions import AccessRequestTokenNeed
 from .secret_links import LinkNeed, SecretLink
 from .tokens import RATNeed, validate_rat
-from .tokens.errors import InvalidTokenError, RATFeatureDisabledError
+from .tokens.errors import (
+    InvalidTokenSubjectError,
+    RATFeatureDisabledError,
+    TokenDecodeError,
+)
 
 
 def get_or_create_user(email):
@@ -83,34 +87,49 @@ class ChainObject:
 
 def verify_token(identity):
     """Verify the token and provide identity with corresponding need."""
-    token = request.args.get("token", session.get("token", None))
+    secret_link_token_arg = "token"
+    token = request.args.get(
+        secret_link_token_arg,
+        session.get(secret_link_token_arg, None),
+    )
+    has_secret_link_token = False
 
-    session["token"] = token
     if token:
         try:
             data = SecretLink.load_token(token)
             if data:
                 identity.provides.add(LinkNeed(data["id"]))
+            session[secret_link_token_arg] = token
+            has_secret_link_token = True
         except SignatureExpired:
             flash(_("Your shared link has expired."))
 
-    resource_access_token = request.args.get(
-        current_app.config.get("RDM_RESOURCE_ACCESS_TOKEN_REQUEST_ARG", None), None
-    )
-    if resource_access_token:
-        if not current_app.config.get("RDM_RESOURCE_ACCESS_TOKENS_ENABLED", False):
+    # NOTE: This logic is getting very complex becuase of possible arg naming conflicts
+    # for the Zenodo use-case. It can be simplified once the conflict changes
+    rat_enabled = current_app.config.get("RDM_RESOURCE_ACCESS_TOKENS_ENABLED", False)
+    rat_arg = current_app.config.get("RDM_RESOURCE_ACCESS_TOKEN_REQUEST_ARG", None)
+    # we can have a "naming conflict" if both secret links and RATs use the same arg key
+    rat_arg_name_conflict = rat_arg == secret_link_token_arg
+    rat = request.args.get(rat_arg, None)
+    if rat and not (rat_arg_name_conflict and has_secret_link_token):
+        if not rat_enabled:
             raise RATFeatureDisabledError()
 
-        rat_signer, payload = validate_rat(resource_access_token)
-        schema_cls = current_app.config.get("RDM_RESOURCE_ACCESS_TOKENS_SUBJECT_SCHEMA")
-        if schema_cls:
-            try:
-                rat_need_data = schema_cls().load(payload)
-            except ValidationError:
-                raise InvalidTokenError()
-        else:
-            rat_need_data = payload
-        identity.provides.add(RATNeed(rat_signer, **rat_need_data))
+        try:
+            rat_signer, payload = validate_rat(rat)
+            schema_cls = current_app.config.get(
+                "RDM_RESOURCE_ACCESS_TOKENS_SUBJECT_SCHEMA"
+            )
+            if schema_cls:
+                try:
+                    rat_need_data = schema_cls().load(payload)
+                except ValidationError:
+                    raise InvalidTokenSubjectError()
+            else:
+                rat_need_data = payload
+            identity.provides.add(RATNeed(rat_signer, **rat_need_data))
+        except TokenDecodeError:
+            pass
 
     access_request_token = request.args.get(
         "access_request_token", session.get("access_request_token", None)
