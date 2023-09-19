@@ -565,7 +565,6 @@ class RecordAccessService(RecordService):
         if existing_access_request:
             raise AccessRequestExistsError(existing_access_request.id)
 
-        record = self.record_cls.pid.resolve(id_)
         data, __ = self.schema_request_access.load(
             data, context={"identity": identity}, raise_errors=True
         )
