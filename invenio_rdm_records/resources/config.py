@@ -27,6 +27,7 @@ from invenio_drafts_resources.resources import RecordResourceConfig
 from invenio_i18n import lazy_gettext as _
 from invenio_records.systemfields.relations import InvalidRelationValue
 from invenio_records_resources.resources.files import FileResourceConfig
+from invenio_records_resources.resources.records.headers import etag_headers
 from invenio_records_resources.services.base.config import ConfiguratorMixin, FromConfig
 from invenio_requests.resources.requests.config import RequestSearchRequestArgsSchema
 
@@ -67,23 +68,42 @@ def csl_url_args_retriever():
 #
 # Response handlers
 #
+def _bibliography_headers(obj_or_list, code, many=False):
+    """Override content type for 'text/x-bibliography'."""
+    _etag_headers = etag_headers(obj_or_list, code, many=False)
+    _etag_headers["content-type"] = "text/plain"
+    return _etag_headers
+
+
 record_serializers = {
-    "application/json": ResponseHandler(JSONSerializer()),
-    "application/marcxml+xml": ResponseHandler(MARCXMLSerializer()),
-    "application/vnd.inveniordm.v1+json": ResponseHandler(UIJSONSerializer()),
-    "application/vnd.citationstyles.csl+json": ResponseHandler(CSLJSONSerializer()),
-    "application/vnd.datacite.datacite+json": ResponseHandler(
-        DataCite43JSONSerializer()
+    "application/json": ResponseHandler(JSONSerializer(), headers=etag_headers),
+    "application/marcxml+xml": ResponseHandler(
+        MARCXMLSerializer(), headers=etag_headers
     ),
-    "application/vnd.geo+json": ResponseHandler(GeoJSONSerializer()),
-    "application/vnd.datacite.datacite+xml": ResponseHandler(DataCite43XMLSerializer()),
-    "application/x-dc+xml": ResponseHandler(DublinCoreXMLSerializer()),
+    "application/vnd.inveniordm.v1+json": ResponseHandler(
+        UIJSONSerializer(), headers=etag_headers
+    ),
+    "application/vnd.citationstyles.csl+json": ResponseHandler(
+        CSLJSONSerializer(), headers=etag_headers
+    ),
+    "application/vnd.datacite.datacite+json": ResponseHandler(
+        DataCite43JSONSerializer(), headers=etag_headers
+    ),
+    "application/vnd.geo+json": ResponseHandler(
+        GeoJSONSerializer(), headers=etag_headers
+    ),
+    "application/vnd.datacite.datacite+xml": ResponseHandler(
+        DataCite43XMLSerializer(), headers=etag_headers
+    ),
+    "application/x-dc+xml": ResponseHandler(
+        DublinCoreXMLSerializer(), headers=etag_headers
+    ),
     "text/x-bibliography": ResponseHandler(
         StringCitationSerializer(url_args_retriever=csl_url_args_retriever),
-        headers={"content-type": "text/plain"},
+        headers=_bibliography_headers,
     ),
-    "application/x-bibtex": ResponseHandler(BibtexSerializer()),
-    "application/dcat+xml": ResponseHandler(DCATSerializer()),
+    "application/x-bibtex": ResponseHandler(BibtexSerializer(), headers=etag_headers),
+    "application/dcat+xml": ResponseHandler(DCATSerializer(), headers=etag_headers),
 }
 
 
@@ -310,7 +330,9 @@ class RDMParentRecordLinksResourceConfig(RecordResourceConfig, ConfiguratorMixin
         "link_id": ma.fields.Str(),
     }
 
-    response_handlers = {"application/json": ResponseHandler(JSONSerializer())}
+    response_handlers = {
+        "application/json": ResponseHandler(JSONSerializer(), headers=etag_headers)
+    }
 
     error_handlers = record_links_error_handlers
 
@@ -338,7 +360,9 @@ class RDMParentGrantsResourceConfig(RecordResourceConfig, ConfiguratorMixin):
     }
     request_extra_args = {"expand": ma.fields.Bool()}
 
-    response_handlers = {"application/json": ResponseHandler(JSONSerializer())}
+    response_handlers = {
+        "application/json": ResponseHandler(JSONSerializer(), headers=etag_headers)
+    }
 
     error_handlers = grants_error_handlers
 
