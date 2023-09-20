@@ -28,6 +28,7 @@ from importlib_metadata import version
 from invenio_drafts_resources.resources import RecordResource
 from invenio_drafts_resources.resources.records.errors import RedirectException
 from invenio_records_resources.resources.errors import ErrorHandlersMixin
+from invenio_records_resources.resources.records.headers import etag_headers
 from invenio_records_resources.resources.records.resource import (
     request_data,
     request_extra_args,
@@ -649,7 +650,7 @@ def with_iiif_content_negotiation(serializer):
     """Always response as JSON LD regardless of the request type."""
     return with_content_negotiation(
         response_handlers={
-            "application/ld+json": ResponseHandler(serializer()),
+            "application/ld+json": ResponseHandler(serializer(), headers=etag_headers),
         },
         default_accept_mimetype="application/ld+json",
     )
@@ -692,7 +693,7 @@ class IIIFResource(ErrorHandlersMixin, Resource):
     @response_handler()
     def manifest(self):
         """Manifest."""
-        return self._get_record_with_files(), 200
+        return self._get_record_with_files().to_dict(), 200
 
     @cross_origin(origin="*", methods=["GET"])
     @with_iiif_content_negotiation(IIIFSequenceV2JSONSerializer)
@@ -700,7 +701,7 @@ class IIIFResource(ErrorHandlersMixin, Resource):
     @response_handler()
     def sequence(self):
         """Sequence."""
-        return self._get_record_with_files(), 200
+        return self._get_record_with_files().to_dict(), 200
 
     @cross_origin(origin="*", methods=["GET"])
     @with_iiif_content_negotiation(IIIFCanvasV2JSONSerializer)
