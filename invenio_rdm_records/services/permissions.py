@@ -33,6 +33,7 @@ from .generators import (
     IfExternalDOIRecord,
     IfFileIsLocal,
     IfNewRecord,
+    IfRecordDeleted,
     IfRequestType,
     IfRestricted,
     RecordCommunitiesAction,
@@ -100,6 +101,16 @@ class RDMRecordPermissionPolicy(RecordPermissionPolicy):
     # Allow reading metadata of a record
     can_read = [
         IfRestricted("record", then_=can_view, else_=can_all),
+    ]
+
+    # Used for search filtering of deleted records
+    # cannot be implemented inside can_read - otherwise permission will
+    # kick in before tombstone renders
+    can_read_deleted = [
+        IfRecordDeleted(
+            then_=[UserManager, SystemProcess()],
+            else_=can_read,
+        )
     ]
     # Allow reading the files of a record
     can_read_files = [
