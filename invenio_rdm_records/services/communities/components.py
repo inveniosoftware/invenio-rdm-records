@@ -14,6 +14,7 @@ from invenio_communities.communities.services.components import (
     CommunityAccessComponent as BaseAccessComponent,
 )
 from invenio_communities.communities.services.components import (
+    CommunityDeletionComponent,
     CustomFieldsComponent,
     FeaturedCommunityComponent,
     OAISetComponent,
@@ -90,4 +91,5 @@ CommunityServiceComponents = [
     FeaturedCommunityComponent,
     OAISetComponent,
     ContentModerationComponent,
+    CommunityDeletionComponent,
 ]
