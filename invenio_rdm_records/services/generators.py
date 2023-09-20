@@ -8,6 +8,9 @@
 # it under the terms of the MIT License; see LICENSE file for more details.
 
 """Invenio-RDM-Records Permissions Generators."""
+import operator
+from functools import reduce
+from itertools import chain
 
 from flask_principal import UserNeed
 from invenio_communities.generators import CommunityRoleNeed, CommunityRoles
@@ -18,6 +21,7 @@ from invenio_search.engine import dsl
 
 from ..records import RDMDraft
 from ..records.systemfields.access.grants import Grant
+from ..records.systemfields.deletion_status import RecordDeletionStatusEnum
 from ..requests.access import AccessRequestTokenNeed
 from ..tokens.permissions import RATNeed
 
@@ -133,6 +137,66 @@ class IfDeleted(ConditionalGenerator):
         except AttributeError:
             # if the record doesn't have the attribute, we assume it's not deleted
             return False
+
+
+class IfRecordDeleted(Generator):
+    """Custom conditional generator for deleted records."""
+
+    def __init__(self, then_, else_):
+        """Constructor."""
+        self.then_ = then_
+        self.else_ = else_
+
+    def _condition(self, record=None, **kwargs):
+        """Check if the record is deleted."""
+        try:
+            return record.deletion_status.is_deleted
+
+        except AttributeError:
+            # if the record doesn't have the attribute, we assume it's not deleted
+            return False
+
+    def generators(self, record):
+        """Get the "then" or "else" generators."""
+        if record is None:
+            return self.else_
+
+        is_deleted = record.deletion_status.is_deleted
+        return self.then_ if is_deleted else self.else_
+
+    def needs(self, record=None, **kwargs):
+        """Set of Needs granting permission."""
+        needs = [g.needs(record=record, **kwargs) for g in self.generators(record)]
+        return set(chain.from_iterable(needs))
+
+    def excludes(self, record=None, **kwargs):
+        """Set of Needs denying permission."""
+        needs = [g.excludes(record=record, **kwargs) for g in self.generators(record)]
+        return set(chain.from_iterable(needs))
+
+    def make_query(self, generators, **kwargs):
+        """Make a query for one set of generators."""
+        queries = [g.query_filter(**kwargs) for g in generators]
+        queries = [q for q in queries if q]
+        return reduce(operator.or_, queries) if queries else None
+
+    def query_filter(self, **kwargs):
+        """Filters for current identity."""
+        q_then = dsl.Q("match_all")
+        q_else = dsl.Q(
+            "term", **{"deletion_status": RecordDeletionStatusEnum.PUBLISHED.value}
+        )
+        then_query = self.make_query(self.then_, **kwargs)
+        else_query = self.make_query(self.else_, **kwargs)
+
+        if then_query and else_query:
+            return (q_then & then_query) | (q_else & else_query)
+        elif then_query:
+            return (q_then & then_query) | q_else
+        elif else_query:
+            return q_else & else_query
+        else:
+            return q_else
 
 
 class RecordOwners(Generator):

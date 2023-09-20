@@ -338,59 +338,15 @@ class RDMRecordService(RecordService):
         **kwargs,
     ):
         """Search for published records matching the querystring."""
-        status = RecordDeletionStatusEnum.PUBLISHED.value
-        search_filter = dsl.Q("term", **{"deletion_status": status})
-        if extra_filter:
-            search_filter = search_filter & extra_filter
 
         return super().search(
             identity,
             params,
             search_preference,
             expand,
-            extra_filter=search_filter,
+            extra_filter=extra_filter,
+            permission_action="read_deleted",
             **kwargs,
-        )
-
-    def search_all(
-        self,
-        identity,
-        params=None,
-        search_preference=None,
-        expand=False,
-        extra_filter=None,
-        **kwargs,
-    ):
-        """Search for all (published and deleted) records matching the querystring."""
-        self.require_permission(identity, "search_all")
-
-        # exclude drafts filter (drafts have no deletion status)
-        search_filter = dsl.Q(
-            "terms", **{"deletion_status": [v.value for v in RecordDeletionStatusEnum]}
-        )
-        if extra_filter:
-            search_filter &= extra_filter
-        search_result = self._search(
-            "search_all",
-            identity,
-            params,
-            search_preference,
-            record_cls=self.draft_cls,
-            search_opts=self.config.search_all,
-            extra_filter=search_filter,
-            permission_action="read",  # TODO this probably should be read_deleted
-            **kwargs,
-        ).execute()
-
-        return self.result_list(
-            self,
-            identity,
-            search_result,
-            params,
-            links_tpl=LinksTemplate(self.config.links_search, context={"args": params}),
-            links_item_tpl=self.links_item_tpl,
-            expandable_fields=self.expandable_fields,
-            expand=expand,
         )
 
     def search_drafts(

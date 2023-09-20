@@ -78,7 +78,6 @@ class RDMRecordResource(RecordResource):
             ),
             route("DELETE", p(routes["delete-record"]), self.delete_record),
             route("POST", p(routes["restore-record"]), self.restore_record),
-            route("GET", routes["list-all"], self.search_all),
             route("POST", p(routes["set-record-quota"]), self.set_record_quota),
             # TODO: move to users?
             route("POST", routes["set-user-quota"], self.set_user_quota),
@@ -111,20 +110,6 @@ class RDMRecordResource(RecordResource):
         )
 
         return {}, 200
-
-    @request_extra_args
-    @request_search_args
-    @response_handler(many=True)
-    def search_all(self):
-        """Perform a search over the items."""
-        identity = g.identity
-        hits = self.service.search_all(
-            identity=identity,
-            params=resource_requestctx.args,
-            search_preference=search_preference(),
-            expand=resource_requestctx.args.get("expand", False),
-        )
-        return hits.to_dict(), 200
 
     #
     # Deletion workflows
