@@ -26,7 +26,7 @@ THESIS_CUSTOM_FIELDS_UI = {
     "section": _("Thesis"),
     "fields": [
         {
-            "field": "thesis:thesis",
+            "field": "thesis:university",
             "ui_widget": "Thesis",
             "props": {
                 "label": _("Thesis"),
