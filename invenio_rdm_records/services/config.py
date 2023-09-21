@@ -58,7 +58,6 @@ from ..records import RDMDraft, RDMRecord
 from ..records.api import RDMDraftMediaFiles, RDMRecordMediaFiles
 from . import facets
 from .components import DefaultRecordsComponents
-
 from .customizations import (
     FromConfigConditionalPIDs,
     FromConfigPIDsProviders,
