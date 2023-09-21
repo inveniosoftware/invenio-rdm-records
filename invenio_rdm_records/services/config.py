@@ -16,10 +16,7 @@ from os.path import splitext
 from flask import current_app
 from invenio_communities.communities.records.api import Community
 from invenio_drafts_resources.services.records.components import (
-    DraftFilesComponent,
     DraftMediaFilesComponent,
-    PIDComponent,
-    RelationsComponent,
 )
 from invenio_drafts_resources.services.records.config import (
     RecordServiceConfig,
@@ -60,16 +57,8 @@ from requests import Request
 from ..records import RDMDraft, RDMRecord
 from ..records.api import RDMDraftMediaFiles, RDMRecordMediaFiles
 from . import facets
-from .components import (
-    AccessComponent,
-    ContentModerationComponent,
-    CustomFieldsComponent,
-    MetadataComponent,
-    ParentPIDsComponent,
-    PIDsComponent,
-    RecordDeletionComponent,
-    ReviewComponent,
-)
+from .components import DefaultRecordsComponents
+
 from .customizations import (
     FromConfigConditionalPIDs,
     FromConfigPIDsProviders,
@@ -335,22 +324,10 @@ class RDMRecordServiceConfig(RecordServiceConfig, ConfiguratorMixin):
     )
 
     # Components - order matters!
-    components = [
-        MetadataComponent,
-        CustomFieldsComponent,
-        AccessComponent,
-        DraftFilesComponent,
-        DraftMediaFilesComponent,
-        RecordDeletionComponent,
-        # for the internal `pid` field
-        PIDComponent,
-        # for the `pids` field (external PIDs)
-        PIDsComponent,
-        ParentPIDsComponent,
-        RelationsComponent,
-        ReviewComponent,
-        ContentModerationComponent,
-    ]
+    # Service components
+    components = FromConfig(
+        "RDM_RECORDS_SERVICE_COMPONENTS", default=DefaultRecordsComponents
+    )
 
     # Links
     links_item = {
