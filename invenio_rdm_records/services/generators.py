@@ -147,18 +147,10 @@ class IfRecordDeleted(Generator):
         self.then_ = then_
         self.else_ = else_
 
-    def _condition(self, record=None, **kwargs):
-        """Check if the record is deleted."""
-        try:
-            return record.deletion_status.is_deleted
-
-        except AttributeError:
-            # if the record doesn't have the attribute, we assume it's not deleted
-            return False
-
     def generators(self, record):
         """Get the "then" or "else" generators."""
         if record is None:
+            # if no records, we assume it returns standard else response
             return self.else_
 
         is_deleted = record.deletion_status.is_deleted

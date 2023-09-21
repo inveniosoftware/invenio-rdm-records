@@ -86,7 +86,7 @@ from .schemas.parent.access import SecretLink as SecretLinkSchema
 from .schemas.quota import QuotaSchema
 from .schemas.record_communities import RecordCommunitiesSchema
 from .schemas.tombstone import TombstoneSchema
-from .search_params import AdminDraftsParam, AdminParam, StatusParam
+from .search_params import MyDraftsParam, PublishedRecordsParam, StatusParam
 from .sort import VerifiedRecordsSortParam
 
 
@@ -155,7 +155,7 @@ class RDMSearchOptions(SearchOptions, SearchOptionsMixin):
         FacetsParam,
         VerifiedRecordsSortParam,
         StatusParam,
-        AdminParam,
+        PublishedRecordsParam,
     ]
 
 
@@ -170,7 +170,7 @@ class RDMSearchDraftsOptions(SearchDraftsOptions, SearchOptionsMixin):
     }
 
     params_interpreters_cls = [
-        AdminDraftsParam
+        MyDraftsParam
     ] + SearchDraftsOptions.params_interpreters_cls
 
 

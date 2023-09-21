@@ -338,7 +338,6 @@ class RDMRecordService(RecordService):
         **kwargs,
     ):
         """Search for published records matching the querystring."""
-
         return super().search(
             identity,
             params,
@@ -380,13 +379,21 @@ class RDMRecordService(RecordService):
     #
     # Base methods, extended with handling of deleted records
     #
-    def read(self, identity, id_, expand=False, with_deleted=False):
+    def read(self, identity, id_, expand=False, include_deleted=False):
         """Retrieve a record."""
         record = self.record_cls.pid.resolve(id_)
         result = super().read(identity, id_, expand=expand)
 
-        if record.deletion_status.is_deleted and not with_deleted:
+        if not include_deleted and record.deletion_status.is_deleted:
             raise RecordDeletedException(record, result_item=result)
+        if include_deleted and record.deletion_status.is_deleted:
+            can_read_deleted = self.check_permission(
+                identity, "read_deleted", record=record
+            )
+
+            if not can_read_deleted:
+                # displays tombstone
+                raise RecordDeletedException(record, result_item=result)
 
         return result
 

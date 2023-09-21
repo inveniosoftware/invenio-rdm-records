@@ -10,8 +10,7 @@
 # it under the terms of the MIT License; see LICENSE file for more details.
 
 """Bibliographic Record Resource."""
-
-from flask import abort, g, send_file
+from flask import abort, current_app, g, send_file
 from flask_cors import cross_origin
 from flask_resources import (
     HTTPJSONException,
@@ -38,6 +37,7 @@ from invenio_records_resources.resources.records.resource import (
     request_view_args,
 )
 from invenio_records_resources.resources.records.utils import search_preference
+from invenio_stats import current_stats
 from werkzeug.utils import secure_filename
 
 from .serializers import (
@@ -85,6 +85,29 @@ class RDMRecordResource(RecordResource):
         ]
 
         return url_rules
+
+    @request_extra_args
+    @request_read_args
+    @request_view_args
+    @response_handler()
+    def read(self):
+        """Read an item."""
+        item = self.service.read(
+            g.identity,
+            resource_requestctx.view_args["pid_value"],
+            expand=resource_requestctx.args.get("expand", False),
+            # allows to access deleted record if permissions match
+            include_deleted=resource_requestctx.args.get("include_deleted", False),
+        )
+
+        # we emit the record view stats event here rather than in the service because
+        # the service might be called from other places as well that we don't want
+        # to count, e.g. from some CLI commands
+        emitter = current_stats.get_event_emitter("record-view")
+        if item is not None and emitter is not None:
+            emitter(current_app, record=item._record, via_api=True)
+
+        return item.to_dict(), 200
 
     @request_headers
     @request_view_args

@@ -19,4 +19,4 @@ class RDMSearchRequestArgsSchema(SearchRequestArgsSchema):
     style = fields.Str()
     locale = fields.Str()
     status = fields.Str()
-    is_admin = fields.Bool()
+    include_deleted = fields.Bool()
