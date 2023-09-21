@@ -122,7 +122,7 @@ def test_user_moderation_decline(
 
     # The user's record should now be deleted
     record = records_service.read(
-        id_=draft.id, identity=system_identity, with_deleted=True
+        id_=draft.id, identity=system_identity, include_deleted=True
     )
     assert record._record.deletion_status.is_deleted
     assert record._record.tombstone is not None

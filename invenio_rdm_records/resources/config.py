@@ -119,6 +119,7 @@ class RDMRecordResourceConfig(RecordResourceConfig, ConfiguratorMixin):
     request_read_args = {
         "style": ma.fields.Str(),
         "locale": ma.fields.Str(),
+        "include_deleted": ma.fields.Bool(),
     }
 
     request_body_parsers = {

@@ -26,12 +26,12 @@ class StatusParam(ParamInterpreter):
         return search
 
 
-class AdminParam(ParamInterpreter):
-    """Evaluates the 'status' parameter."""
+class PublishedRecordsParam(ParamInterpreter):
+    """Evaluates the include_deleted parameter."""
 
     def apply(self, identity, search, params):
-        """Evaluate the status parameter on the search."""
-        value = params.pop("is_admin", None)
+        """Evaluate the include_deleted parameter on the search."""
+        value = params.pop("include_deleted", None)
         # Filter prevents from displaying deleted records on mainsite search
         # deleted records should appear only in admins panel
         if value is None:
@@ -41,15 +41,15 @@ class AdminParam(ParamInterpreter):
         return search
 
 
-class AdminDraftsParam(ParamInterpreter):
-    """Evaluates the 'is_admin' parameter."""
+class MyDraftsParam(ParamInterpreter):
+    """Evaluates the include_deleted parameter."""
 
     def apply(self, identity, search, params):
-        """Evaluate the is_admin parameter on the search."""
-        value = params.pop("is_admin", None)
+        """Evaluate the include_deleted parameter on the search."""
+        value = params.pop("include_deleted", None)
         # Filter prevents from other users' drafts from displaying on Moderator's
         # dashboard
-        if value is None:
+        if value is None and current_user.is_authenticated:
             search = search.filter(
                 "term", **{"parent.access.owned_by.user": current_user.id}
             )
