@@ -11,6 +11,13 @@
 Changes
 =======
 
+Version 4.26.0 (2023-09-21)
+
+- deposit: add accessibility attributes
+- resources: add etag headers
+- search: query filter for deleted records on the main search endpoint
+- services: add search params
+
 Version 4.25.0 (2023-09-19)
 
 - permissions: allow moderator to see all drafts
