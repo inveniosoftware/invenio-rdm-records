@@ -11,6 +11,11 @@
 Changes
 =======
 
+Version 4.27.0 (2023-09-22)
+
+- services: added record components config support
+- links: return parent_doi for both records and drafts
+
 Version 4.26.0 (2023-09-21)
 
 - deposit: add accessibility attributes
