@@ -60,6 +60,9 @@
       },
       "via_api": {
         "type": "boolean"
+      },
+      "updated_timestamp": {
+        "type": "date"
       }
     }
   },
