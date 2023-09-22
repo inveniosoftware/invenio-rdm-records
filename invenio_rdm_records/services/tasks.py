@@ -7,15 +7,30 @@
 
 """Celery tasks."""
 
+import math
+from datetime import datetime, timedelta
+
 from celery import shared_task
 from flask import current_app
 from invenio_access.permissions import system_identity
 from invenio_search.engine import dsl
 from invenio_search.proxies import current_search_client
 from invenio_search.utils import prefix_index
+from invenio_stats.bookmark import BookmarkAPI
 
 from ..proxies import current_rdm_records
 from .errors import EmbargoNotLiftedError
+
+StatsRDMReindexTask = {
+    "task": "invenio_rdm_records.services.tasks.reindex_stats",
+    "schedule": timedelta(hours=1),
+    "args": [
+        (
+            "stats-record-view",
+            "stats-file-download",
+        )
+    ],
+}
 
 
 @shared_task(ignore_result=True)
@@ -33,37 +48,32 @@ def update_expired_embargos():
 
 
 @shared_task(ignore_result=True)
-def reindex_stats():
+def reindex_stats(stats_indices):
     """Reindex the documents where the stats have changed."""
-    buffer_index = prefix_index("buffer_stats_to_reindex")
-    client = current_search_client
-    if not dsl.Index(buffer_index, using=client).exists():
-        return
-    documents = (
-        dsl.Search(
-            using=client,
-            index=buffer_index,
-        )
-        .source(includes=["timestamp"])
-        .execute()
-    )
-    latest = None
-    all_parents = []
-    for doc in documents:
-        all_parents.append(doc.meta["id"])
-        if not latest or latest < doc.get("timestamp"):
-            latest = doc.get("timestamp")
-    if not all_parents:
-        return
-    records_q = dsl.Q("terms", parent__id=all_parents)
+    bm = BookmarkAPI(current_search_client, "stats_reindex", "day")
+    last_run = bm.get_bookmark()
+    if not last_run:
+        # If this is the first time that we run, let's do it for the documents of the last week
+        last_run = (datetime.utcnow() - timedelta(days=7)).isoformat()
+    reindex_start_time = datetime.utcnow().isoformat()
+    indices = ",".join(map(lambda x: prefix_index(x) + "*", stats_indices))
 
-    current_rdm_records.records_service.reindex(
-        params={"allversions": True},
-        identity=system_identity,
-        extra_filter=records_q,
-    )
-    if latest:
-        client.delete_by_query(
-            index=buffer_index,
-            body={"query": {"range": {"timestamp": {"lte": latest}}}},
+    all_parents = set()
+    query = dsl.Search(
+        using=current_search_client,
+        index=indices,
+    ).filter({"range": {"updated_timestamp": {"gte": last_run}}})
+
+    for result in query.scan():
+        parent_id = result.parent_recid
+        all_parents.add(parent_id)
+
+    if all_parents:
+        records_q = dsl.Q("terms", parent__id=list(all_parents))
+        current_rdm_records.records_service.reindex(
+            params={"allversions": True},
+            identity=system_identity,
+            search_query=records_q,
         )
+    bm.set_bookmark(reindex_start_time)
+    return "%d documents reindexed" % len(all_parents)
