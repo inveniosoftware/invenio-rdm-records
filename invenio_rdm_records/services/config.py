@@ -91,18 +91,20 @@ from .sort import VerifiedRecordsSortParam
 
 
 def is_draft_and_has_review(record, ctx):
-    """Determine if submit review link should be included."""
+    """Determine if draft has doi."""
     return is_draft(record, ctx) and record.parent.review is not None
 
 
 def is_record_and_has_doi(record, ctx):
-    """Determine if submit review link should be included."""
+    """Determine if record has doi."""
     return is_record(record, ctx) and has_doi(record, ctx)
 
 
-def is_record_and_has_parent_doi(record, ctx):
-    """Determine if submit review link should be included."""
-    return is_record(record, ctx) and has_doi(record.parent, ctx)
+def is_record_or_draft_and_has_parent_doi(record, ctx):
+    """Determine if draft or record has parent doi."""
+    return (
+        is_record(record, ctx) or is_draft(record, ctx) and has_doi(record.parent, ctx)
+    )
 
 
 def has_doi(record, ctx):
@@ -412,7 +414,7 @@ class RDMRecordServiceConfig(RecordServiceConfig, ConfiguratorMixin):
         ),
         "parent_doi": Link(
             "{+ui}/doi/{+pid_doi}",
-            when=is_record_and_has_parent_doi,
+            when=is_record_or_draft_and_has_parent_doi,
             vars=lambda record, vars: vars.update(
                 {
                     f"pid_{scheme}": pid["identifier"]
