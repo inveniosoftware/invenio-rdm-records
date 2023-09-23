@@ -149,7 +149,7 @@ class RDMRecordResource(RecordResource):
             resource_requestctx.data,
         )
 
-        return item.to_dict(), 200
+        return item.to_dict(), 204
 
     @request_headers
     @request_view_args
