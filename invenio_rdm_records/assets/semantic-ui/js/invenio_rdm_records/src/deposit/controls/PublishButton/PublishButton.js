@@ -1,6 +1,7 @@
 // This file is part of Invenio-RDM-Records
 // Copyright (C) 2020-2023 CERN.
 // Copyright (C) 2020-2022 Northwestern University.
+// Copyright (C) 2023 KTH Royal Institute of Technology.
 //
 // Invenio-RDM-Records is free software; you can redistribute it and/or modify it
 // under the terms of the MIT License; see LICENSE file for more details.
@@ -40,10 +41,13 @@ class PublishButtonComponent extends Component {
     this.closeConfirmModal();
   };
 
-  isDisabled = (values, isSubmitting, numberOfFiles) => {
+  isDisabled = (values, isSubmitting, numberOfFiles, permissions) => {
+    const canPublish = permissions?.can_publish ?? false;
+    const publishWithCommunity = permissions?.can_publish_always_in_community ?? false;
+    const hasNoPermission = !canPublish && publishWithCommunity;
     const filesEnabled = _get(values, "files.enabled", false);
     const filesMissing = filesEnabled && !numberOfFiles;
-    return isSubmitting || filesMissing;
+    return isSubmitting || filesMissing || hasNoPermission;
   };
 
   render() {
@@ -54,6 +58,7 @@ class PublishButtonComponent extends Component {
       publishWithoutCommunity,
       formik,
       publishModalExtraContent,
+      permissions,
       ...ui
     } = this.props;
     const { isConfirmModalOpen } = this.state;
@@ -64,7 +69,7 @@ class PublishButtonComponent extends Component {
     return (
       <>
         <Button
-          disabled={this.isDisabled(values, isSubmitting, numberOfFiles)}
+          disabled={this.isDisabled(values, isSubmitting, numberOfFiles, permissions)}
           name="publish"
           onClick={this.openConfirmModal}
           positive
@@ -126,6 +131,7 @@ PublishButtonComponent.propTypes = {
   numberOfFiles: PropTypes.number.isRequired,
   formik: PropTypes.object.isRequired,
   publishModalExtraContent: PropTypes.string,
+  permissions: PropTypes.object,
 };
 
 PublishButtonComponent.defaultProps = {
@@ -133,12 +139,14 @@ PublishButtonComponent.defaultProps = {
   publishWithoutCommunity: false,
   actionState: undefined,
   publishModalExtraContent: undefined,
+  permissions: {},
 };
 
 const mapStateToProps = (state) => ({
   actionState: state.deposit.actionState,
   numberOfFiles: Object.values(state.files.entries).length,
   publishModalExtraContent: state.deposit.config.publish_modal_extra,
+  permissions: state.deposit.permissions,
 });
 
 export const PublishButton = connect(

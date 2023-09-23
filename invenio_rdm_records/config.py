@@ -4,6 +4,7 @@
 # Copyright (C) 2019 Northwestern University.
 # Copyright (C) 2021-2023 Graz University of Technology.
 # Copyright (C) 2023 TU Wien.
+# Copyright (C) 2023 KTH Royal Institute of Technology.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
@@ -130,6 +131,12 @@ RDM_DEFAULT_FILES_ENABLED = True
 #
 RDM_ALLOW_RESTRICTED_RECORDS = True
 """Allow users to set restricted/private records."""
+
+#
+# Record communities
+#
+RDM_RECORD_ALWAYS_IN_COMMUNITY = False
+"""Enforces at least one community per record on remove community function."""
 
 #
 # Search configuration
