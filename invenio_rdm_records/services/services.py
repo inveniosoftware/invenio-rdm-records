@@ -155,14 +155,18 @@ class RDMRecordService(RecordService):
     # Deletion workflows
     #
     @unit_of_work()
-    def delete_record(self, identity, id_, data, expand=False, uow=None):
+    def delete_record(
+        self, identity, id_, data, expand=False, uow=None, revision_id=None
+    ):
         """(Soft) delete a published record."""
         record = self.record_cls.pid.resolve(id_)
-        if record.deletion_status.is_deleted:
-            raise DeletionStatusException(record, RecordDeletionStatusEnum.PUBLISHED)
-
         # Check permissions
         self.require_permission(identity, "delete", record=record)
+
+        self.check_revision_id(record, revision_id)
+
+        if record.deletion_status.is_deleted:
+            raise DeletionStatusException(record, RecordDeletionStatusEnum.PUBLISHED)
 
         # Load tombstone data with the schema
         data, errors = self.schema_tombstone.load(
