@@ -71,6 +71,7 @@ from .schemas.parent.access import AccessSettingsSchema
 from .schemas.parent.access import Grant as GrantSchema
 from .schemas.parent.access import RequestAccessSchema
 from .schemas.parent.access import SecretLink as SecretLinkSchema
+from .schemas.parent.communities import CommunitiesSchema
 from .schemas.quota import QuotaSchema
 from .schemas.record_communities import RecordCommunitiesSchema
 from .schemas.tombstone import TombstoneSchema
@@ -183,6 +184,7 @@ class RDMRecordCommunitiesConfig(ServiceConfig, ConfiguratorMixin):
     )
 
     schema = RecordCommunitiesSchema
+    communities_schema = CommunitiesSchema
 
     indexer_cls = RecordIndexer
     indexer_queue_name = service_id
