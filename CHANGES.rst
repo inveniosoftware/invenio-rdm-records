@@ -11,6 +11,13 @@
 Changes
 =======
 
+Version 4.28.0 (2023-09-26)
+
+- services: add community deletion component
+- resources: fix response code on delete action
+- resources: accept if_match header with revision id on DELETE
+
+
 Version 4.27.0 (2023-09-22)
 
 - services: added record components config support
