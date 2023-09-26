@@ -296,6 +296,7 @@ class RDMRecordCommunitiesResource(ErrorHandlersMixin, Resource):
             route("POST", routes["list"], self.add),
             route("DELETE", routes["list"], self.remove),
             route("GET", routes["suggestions"], self.get_suggestions),
+            route("PUT", routes["list"], self.set_default),
         ]
         return url_rules
 
@@ -367,6 +368,18 @@ class RDMRecordCommunitiesResource(ErrorHandlersMixin, Resource):
             expand=resource_requestctx.args.get("expand", False),
         )
         return items.to_dict(), 200
+
+    @request_view_args
+    @request_data
+    def set_default(self):
+        """Set default community."""
+        item = self.service.set_default(
+            id_=resource_requestctx.view_args["pid_value"],
+            identity=g.identity,
+            data=resource_requestctx.data,
+        )
+
+        return item, 200
 
 
 class RDMRecordRequestsResource(ErrorHandlersMixin, Resource):

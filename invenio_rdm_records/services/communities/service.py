@@ -51,6 +51,11 @@ class RecordCommunitiesService(Service, RecordIndexerMixin):
         return ServiceSchemaWrapper(self, schema=self.config.schema)
 
     @property
+    def communities_schema(self):
+        """Returns the communities schema instance."""
+        return ServiceSchemaWrapper(self, schema=self.config.communities_schema)
+
+    @property
     def record_cls(self):
         """Factory for creating a record class."""
         return self.config.record_cls
@@ -325,3 +330,27 @@ class RecordCommunitiesService(Service, RecordIndexerMixin):
             extra_filter=communities_filter,
             **kwargs,
         )
+
+    @unit_of_work()
+    def set_default(self, identity, id_, data, uow):
+        """Set default community."""
+        valid_data, _ = self.communities_schema.load(
+            data,
+            context={
+                "identity": identity,
+            },
+            raise_errors=True,
+        )
+
+        record = self.record_cls.pid.resolve(id_)
+        self.require_permission(identity, "manage", record=record)
+        record.parent.communities.default = valid_data["default"]
+
+        uow.register(
+            ParentRecordCommitOp(
+                record.parent,
+                indexer_context=dict(service=current_rdm_records_service),
+            )
+        )
+
+        return record.parent
