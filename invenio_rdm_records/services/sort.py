@@ -21,6 +21,5 @@ class VerifiedRecordsSortParam(SortParam):
         """
         if current_app.config["RDM_SEARCH_SORT_BY_VERIFIED"]:
             fields = self._compute_sort_fields(params)
-            fields.insert(0, "-parent.is_verified")
-            return search.sort(*fields)
+            return search.sort(*["-parent.is_verified", *fields])
         return super().apply(identity, search, params)
