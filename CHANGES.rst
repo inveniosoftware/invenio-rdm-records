@@ -11,6 +11,10 @@
 Changes
 =======
 
+Version 4.28.2 (2023-09-28)
+
+- serializers: fix cache ttl when fetching communities slugs
+
 Version 4.28.1 (2023-09-28)
 
 - serializers: use cache when fetching communities slugs
