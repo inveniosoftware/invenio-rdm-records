@@ -133,10 +133,10 @@ class MARCXMLSchema(BaseSerializerSchema, CommonFieldsMixin):
     def _get_communities_slugs(self, ids):
         """Get communities slugs."""
         service_id = current_communities.service.id
-        one_hour_cache = round(time.time() / 60 * 60)
+        one_hour_cache = round(time.time() / 3600)
         return [
             get_cached_community_slug(
-                community_id, service_id, ttl_hash=lambda x: one_hour_cache
+                community_id, service_id, ttl_hash=one_hour_cache
             )
             for community_id in ids
         ]

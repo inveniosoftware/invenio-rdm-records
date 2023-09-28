@@ -107,10 +107,10 @@ class DublinCoreSchema(BaseSerializerSchema, CommonFieldsMixin):
         # Communities
         communities = obj["parent"].get("communities", {}).get("ids", [])
         service_id = current_communities.service.id
-        one_hour_cache = round(time.time() / 60 * 60)
+        one_hour_cache = round(time.time() / 3600)
         for community_id in communities:
             slug = get_cached_community_slug(
-                community_id, service_id, ttl_hash=lambda x: one_hour_cache
+                community_id, service_id, ttl_hash=one_hour_cache
             )
             url = f"{current_app.config['SITE_UI_URL']}/communities/{slug}"
             rels.append(self._transform_identifier(url, "url"))
