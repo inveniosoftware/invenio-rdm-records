@@ -191,6 +191,8 @@ export class LicenseModal extends Component {
                     placeholder={i18next.t("License title")}
                     fieldPath="selectedLicense.title"
                     required
+                    // eslint-disable-next-line
+                    autoFocus
                   />
                   <TextAreaField
                     fieldPath="selectedLicense.description"

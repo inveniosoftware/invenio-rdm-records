@@ -408,6 +408,8 @@ export class CreatibutorsModal extends Component {
                         );
                       }}
                       optimized
+                      // eslint-disable-next-line
+                      autoFocus
                     />
                     <RadioField
                       fieldPath={typeFieldPath}
