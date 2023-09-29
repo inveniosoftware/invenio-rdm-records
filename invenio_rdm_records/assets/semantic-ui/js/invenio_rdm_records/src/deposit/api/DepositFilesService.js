@@ -133,7 +133,6 @@ export class RDMDepositFilesService extends DepositFilesService {
     // the next upload in the queue
     this.uploaderQueue.markCompleted(file);
     this._startNextUpload();
-
     const response = await this.fileApiClient.finalizeFileUpload(commitFileURL);
     return response.data;
   };
@@ -169,7 +168,7 @@ export class RDMDepositFilesService extends DepositFilesService {
         fileData.links
       );
     } catch (error) {
-      await this.delete(initializedFileMetadata.links);
+      console.error(error);
       const isCancelled = this.fileApiClient.isCancelled(error);
       this._onError(file, isCancelled);
     }

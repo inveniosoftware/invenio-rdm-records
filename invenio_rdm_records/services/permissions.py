@@ -96,7 +96,6 @@ class RDMRecordPermissionPolicy(RecordPermissionPolicy):
     #
     # Allow searching of records
     can_search = can_all
-    can_search_all = [UserManager, SystemProcess()]
 
     # Allow reading metadata of a record
     can_read = [
