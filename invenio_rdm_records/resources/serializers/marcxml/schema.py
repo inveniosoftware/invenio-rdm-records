@@ -135,9 +135,7 @@ class MARCXMLSchema(BaseSerializerSchema, CommonFieldsMixin):
         service_id = current_communities.service.id
         one_hour_cache = round(time.time() / 3600)
         return [
-            get_cached_community_slug(
-                community_id, service_id, ttl_hash=one_hour_cache
-            )
+            get_cached_community_slug(community_id, service_id, ttl_hash=one_hour_cache)
             for community_id in ids
         ]
 
