@@ -7,8 +7,6 @@
 
 """MARCXML based Schema for Invenio RDM Records."""
 
-import time
-
 import bleach
 from dateutil.parser import parse
 from flask import current_app, g
@@ -133,10 +131,8 @@ class MARCXMLSchema(BaseSerializerSchema, CommonFieldsMixin):
     def _get_communities_slugs(self, ids):
         """Get communities slugs."""
         service_id = current_communities.service.id
-        one_hour_cache = round(time.time() / 3600)
         return [
-            get_cached_community_slug(community_id, service_id, ttl_hash=one_hour_cache)
-            for community_id in ids
+            get_cached_community_slug(community_id, service_id) for community_id in ids
         ]
 
     def get_communities(self, obj):

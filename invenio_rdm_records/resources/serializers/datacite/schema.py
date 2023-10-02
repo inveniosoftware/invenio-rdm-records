@@ -9,8 +9,6 @@
 
 """DataCite based Schema for Invenio RDM Records."""
 
-import time
-
 from edtf import parse_edtf
 from edtf.parser.grammar import ParseException
 from flask import current_app
@@ -436,11 +434,8 @@ class DataCite43Schema(BaseSerializerSchema):
         # adding communities
         communities = obj.get("parent", {}).get("communities", {}).get("ids", [])
         service_id = current_communities.service.id
-        one_hour_cache = round(time.time() / 3600)
         for community_id in communities:
-            slug = get_cached_community_slug(
-                community_id, service_id, ttl_hash=one_hour_cache
-            )
+            slug = get_cached_community_slug(community_id, service_id)
             url = f"{current_app.config['SITE_UI_URL']}/communities/{slug}"
             serialized_identifiers.append(
                 {
