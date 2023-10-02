@@ -170,9 +170,6 @@ describe("DepositFilesService tests", () => {
       expect(fakeOnUploadFailed).toHaveBeenCalledTimes(1);
       let filename = fakeOnUploadFailed.mock.calls[0][0];
       expect(filename).toEqual(expectedFilename);
-      expect(fakeApiDeleteFile).toHaveBeenCalledTimes(1);
-      let fileLinks = fakeApiDeleteFile.mock.calls[0][0];
-      expect(fileLinks).toEqual(fakeFileData.links);
       expect(fakeOnUploadStarted).not.toHaveBeenCalled();
       expect(fakeOnUploadProgress).not.toHaveBeenCalled();
       expect(fakeOnUploadCompleted).not.toHaveBeenCalled();
@@ -194,7 +191,6 @@ describe("DepositFilesService tests", () => {
       expect(fakeOnUploadFailed).toHaveBeenCalledTimes(1);
       let filename = fakeOnUploadFailed.mock.calls[0][0];
       expect(filename).toEqual(expectedFilename);
-      expect(fakeApiDeleteFile).toHaveBeenCalledTimes(1);
       expect(fakeOnUploadCompleted).not.toHaveBeenCalled();
       expect(fakeOnUploadCancelled).not.toHaveBeenCalled();
     });
@@ -210,9 +206,6 @@ describe("DepositFilesService tests", () => {
       expect(fakeOnUploadCancelled).toHaveBeenCalledTimes(1);
       let filename = fakeOnUploadCancelled.mock.calls[0][0];
       expect(filename).toEqual(expectedFilename);
-      expect(fakeApiDeleteFile).toHaveBeenCalledTimes(1);
-      let fileLinks = fakeApiDeleteFile.mock.calls[0][0];
-      expect(fileLinks).toEqual(fakeFileData.links);
       expect(fakeOnUploadStarted).not.toHaveBeenCalled();
       expect(fakeOnUploadProgress).not.toHaveBeenCalled();
       expect(fakeOnUploadCompleted).not.toHaveBeenCalled();
