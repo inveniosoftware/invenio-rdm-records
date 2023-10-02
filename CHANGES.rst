@@ -11,6 +11,13 @@
 Changes
 =======
 
+Version 4.29.0 (2023-10-30)
+
+- serializers: replace slugs caching with invenio-cache
+- assets: remove redundant recover on file upload fail
+- notifications: add submission accept action notification
+- ui: added autoFocus to Deposit Form modals
+
 Version 4.28.2 (2023-09-28)
 
 - serializers: fix cache ttl when fetching communities slugs
