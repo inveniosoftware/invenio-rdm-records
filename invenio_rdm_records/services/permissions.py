@@ -111,6 +111,8 @@ class RDMRecordPermissionPolicy(RecordPermissionPolicy):
             else_=can_read,
         )
     ]
+    can_read_deleted_files = can_read_deleted
+    can_media_read_deleted_files = can_read_deleted_files
     # Allow reading the files of a record
     can_read_files = [
         IfRestricted("files", then_=can_view, else_=can_all),

@@ -26,6 +26,7 @@ from invenio_communities.communities.resources.config import community_error_han
 from invenio_drafts_resources.resources import RecordResourceConfig
 from invenio_i18n import lazy_gettext as _
 from invenio_records.systemfields.relations import InvalidRelationValue
+from invenio_records_resources.resources.errors import ErrorHandlersMixin
 from invenio_records_resources.resources.files import FileResourceConfig
 from invenio_records_resources.resources.records.headers import etag_headers
 from invenio_records_resources.services.base.config import ConfiguratorMixin, FromConfig
@@ -233,6 +234,21 @@ class RDMRecordFilesResourceConfig(FileResourceConfig, ConfiguratorMixin):
     blueprint_name = "record_files"
     url_prefix = "/records/<pid_value>"
 
+    error_handlers = {
+        **ErrorHandlersMixin.error_handlers,
+        RecordDeletedException: create_error_handler(
+            lambda e: (
+                HTTPJSONException(code=404, description=_("Record not found"))
+                if not e.record.tombstone.is_visible
+                else HTTPJSONException(
+                    code=410,
+                    description=_("Record deleted"),
+                    tombstone=e.record.tombstone.dump(),
+                )
+            )
+        ),
+    }
+
 
 #
 # Draft files
@@ -258,6 +274,21 @@ class RDMRecordMediaFilesResourceConfig(FileResourceConfig, ConfiguratorMixin):
         "item-content": "/media-files/<key>/content",
         "item-commit": "/media-files/<key>/commit",
         "list-archive": "/media-files-archive",
+    }
+
+    error_handlers = {
+        **ErrorHandlersMixin.error_handlers,
+        RecordDeletedException: create_error_handler(
+            lambda e: (
+                HTTPJSONException(code=404, description=_("Record not found"))
+                if not e.record.tombstone.is_visible
+                else HTTPJSONException(
+                    code=410,
+                    description=_("Record deleted"),
+                    tombstone=e.record.tombstone.dump(),
+                )
+            )
+        ),
     }
 
 
