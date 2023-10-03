@@ -14,7 +14,6 @@ from flask import Blueprint
 from flask_iiif import IIIF
 from flask_principal import identity_loaded
 from invenio_records_resources.resources.files import FileResource
-from invenio_records_resources.services import FileService
 
 from . import config
 from .oaiserver.resources.config import OAIPMHServerResourceConfig
@@ -62,6 +61,7 @@ from .services.config import (
     RDMMediaFileRecordServiceConfig,
     RDMRecordMediaFilesServiceConfig,
 )
+from .services.files import RDMFileService
 from .services.pids import PIDManager, PIDsService
 from .services.review.service import ReviewService
 from .utils import verify_token
@@ -147,8 +147,8 @@ class InvenioRDMRecords(object):
         # Services
         self.records_service = RDMRecordService(
             service_configs.record,
-            files_service=FileService(service_configs.file),
-            draft_files_service=FileService(service_configs.file_draft),
+            files_service=RDMFileService(service_configs.file),
+            draft_files_service=RDMFileService(service_configs.file_draft),
             access_service=RecordAccessService(service_configs.record),
             pids_service=PIDsService(service_configs.record, PIDManager),
             review_service=ReviewService(service_configs.record),
@@ -156,8 +156,8 @@ class InvenioRDMRecords(object):
 
         self.records_media_files_service = RDMRecordService(
             service_configs.record_with_media_files,
-            files_service=FileService(service_configs.media_file),
-            draft_files_service=FileService(service_configs.media_file_draft),
+            files_service=RDMFileService(service_configs.media_file),
+            draft_files_service=RDMFileService(service_configs.media_file_draft),
             pids_service=PIDsService(service_configs.record, PIDManager),
         )
 
