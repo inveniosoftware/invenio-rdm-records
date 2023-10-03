@@ -11,7 +11,11 @@
 Changes
 =======
 
-Version 4.29.0 (2023-10-30)
+Version 4.30.0 (2023-10-03)
+
+- add task to reindex records to update views/downloads stats
+
+Version 4.29.0 (2023-10-03)
 
 - serializers: replace slugs caching with invenio-cache
 - assets: remove redundant recover on file upload fail
