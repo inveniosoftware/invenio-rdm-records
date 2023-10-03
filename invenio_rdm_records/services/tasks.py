@@ -11,6 +11,7 @@ import math
 from datetime import datetime, timedelta
 
 from celery import shared_task
+from celery.schedules import crontab
 from flask import current_app
 from invenio_access.permissions import system_identity
 from invenio_search.engine import dsl
@@ -21,9 +22,11 @@ from invenio_stats.bookmark import BookmarkAPI
 from ..proxies import current_rdm_records
 from .errors import EmbargoNotLiftedError
 
+# runs every hour at minute 10 for a consistent offset from process and aggregate
+# event statistics.
 StatsRDMReindexTask = {
     "task": "invenio_rdm_records.services.tasks.reindex_stats",
-    "schedule": timedelta(hours=1),
+    "schedule": crontab(minute=10),
     "args": [
         (
             "stats-record-view",
