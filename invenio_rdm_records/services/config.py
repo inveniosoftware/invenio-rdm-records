@@ -167,6 +167,10 @@ class RDMSearchDraftsOptions(SearchDraftsOptions, SearchOptionsMixin):
 class RDMSearchVersionsOptions(SearchVersionsOptions, SearchOptionsMixin):
     """Search options for record versioning search."""
 
+    params_interpreters_cls = [
+        StatusParam
+    ] + SearchVersionsOptions.params_interpreters_cls
+
 
 class RDMRecordCommunitiesConfig(ServiceConfig, ConfiguratorMixin):
     """Record communities service config."""
