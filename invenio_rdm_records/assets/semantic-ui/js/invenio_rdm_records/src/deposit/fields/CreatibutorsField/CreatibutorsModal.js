@@ -7,27 +7,27 @@
 // Invenio-RDM-Records is free software; you can redistribute it and/or modify it
 // under the terms of the MIT License; see LICENSE file for more details.
 
-import React, { Component, createRef } from "react";
-import PropTypes from "prop-types";
-import { Button, Form, Grid, Header, Modal } from "semantic-ui-react";
+import { i18next } from "@translations/invenio_rdm_records/i18next";
 import { Formik } from "formik";
-import {
-  Image,
-  SelectField,
-  TextField,
-  RadioField,
-  RemoteSelectField,
-} from "react-invenio-forms";
-import * as Yup from "yup";
-import _get from "lodash/get";
 import _find from "lodash/find";
+import _get from "lodash/get";
 import _isEmpty from "lodash/isEmpty";
 import _map from "lodash/map";
+import PropTypes from "prop-types";
+import React, { Component, createRef } from "react";
+import { Trans } from "react-i18next";
+import {
+  Image,
+  RadioField,
+  RemoteSelectField,
+  SelectField,
+  TextField,
+} from "react-invenio-forms";
+import { Button, Form, Header, Modal } from "semantic-ui-react";
+import * as Yup from "yup";
 import { AffiliationsField } from "./../AffiliationsField";
 import { CreatibutorsIdentifiers } from "./CreatibutorsIdentifiers";
 import { CREATIBUTOR_TYPE } from "./type";
-import { i18next } from "@translations/invenio_rdm_records/i18next";
-import { Trans } from "react-i18next";
 
 const ModalActions = {
   ADD: "add",
@@ -230,7 +230,11 @@ export class CreatibutorsModal extends Component {
   };
 
   serializeSuggestions = (creatibutors) => {
-    let results = creatibutors.map((creatibutor) => {
+    const results = creatibutors.map((creatibutor) => {
+      // ensure `affiliations` and `identifiers` are present
+      creatibutor.affiliations = creatibutor.affiliations || [];
+      creatibutor.identifiers = creatibutor.identifiers || [];
+
       let affNames = "";
       creatibutor.affiliations.forEach((affiliation, idx) => {
         affNames += affiliation.name;
@@ -239,8 +243,8 @@ export class CreatibutorsModal extends Component {
         }
       });
 
-      let idString = [];
-      creatibutor.identifiers.forEach((i) => {
+      const idString = [];
+      creatibutor.identifiers?.forEach((i) => {
         idString.push(this.makeIdEntry(i));
       });
 
@@ -305,16 +309,9 @@ export class CreatibutorsModal extends Component {
         showPersonForm: true,
       },
       () => {
-        const identifiers = selectedSuggestions[0].extra.identifiers.map(
-          (identifier) => {
-            return identifier.identifier;
-          }
-        );
-        const affiliations = selectedSuggestions[0].extra.affiliations.map(
-          (affiliation) => {
-            return affiliation;
-          }
-        );
+        const extra = selectedSuggestions[0].extra;
+        const identifiers = extra.identifiers.map((id) => id.identifier);
+        const affiliations = extra.affiliations;
 
         const personOrOrgPath = `person_or_org`;
         const familyNameFieldPath = `${personOrOrgPath}.family_name`;
@@ -322,9 +319,9 @@ export class CreatibutorsModal extends Component {
         const identifiersFieldPath = `${personOrOrgPath}.identifiers`;
         const affiliationsFieldPath = "affiliations";
 
-        let chosen = {
-          [givenNameFieldPath]: selectedSuggestions[0].extra.given_name,
-          [familyNameFieldPath]: selectedSuggestions[0].extra.family_name,
+        const chosen = {
+          [givenNameFieldPath]: extra.given_name,
+          [familyNameFieldPath]: extra.family_name,
           [identifiersFieldPath]: identifiers,
           [affiliationsFieldPath]: affiliations,
         };
