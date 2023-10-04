@@ -11,6 +11,10 @@
 Changes
 =======
 
+Version 4.31.1 (2023-10-04)
+
+- deposit: make name's affiliation/id optionals
+
 Version 4.31.0 (2023-10-04)
 
 - files: add check for deleted record
