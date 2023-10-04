@@ -11,6 +11,13 @@
 Changes
 =======
 
+Version 4.31.0 (2023-10-04)
+
+- files: add check for deleted record
+- communities: add resource and service handlers for setting default community
+- versions: add status param interpreter
+- communities-records: set correct links
+
 Version 4.30.0 (2023-10-03)
 
 - add task to reindex records to update views/downloads stats
