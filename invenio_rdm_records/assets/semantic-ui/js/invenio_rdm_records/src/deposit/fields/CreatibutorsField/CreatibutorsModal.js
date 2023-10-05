@@ -390,7 +390,6 @@ export class CreatibutorsModal extends Component {
         organizationAffiliations: [
           {
             name: selectedSuggestion.name,
-            id: selectedSuggestion.id,
           },
         ],
       },
