@@ -11,10 +11,11 @@
 
 from edtf import parse_edtf
 from edtf.parser.grammar import ParseException
-from flask import current_app, g
+from flask import current_app
 from flask_resources.serializers import BaseSerializerSchema
 from invenio_access.permissions import system_identity
 from invenio_communities import current_communities
+from invenio_communities.communities.services.service import get_cached_community_slug
 from invenio_i18n import lazy_gettext as _
 from invenio_records_resources.proxies import current_service_registry
 from invenio_vocabularies.proxies import current_service as vocabulary_service
@@ -432,11 +433,10 @@ class DataCite43Schema(BaseSerializerSchema):
 
         # adding communities
         communities = obj.get("parent", {}).get("communities", {}).get("ids", [])
+        service_id = current_communities.service.id
         for community_id in communities:
-            community = current_communities.service.read(
-                id_=community_id, identity=g.identity
-            )
-            url = f"{current_app.config['SITE_UI_URL']}/communities/{community.data['slug']}"
+            slug = get_cached_community_slug(community_id, service_id)
+            url = f"{current_app.config['SITE_UI_URL']}/communities/{slug}"
             serialized_identifiers.append(
                 {
                     "relatedIdentifier": url,

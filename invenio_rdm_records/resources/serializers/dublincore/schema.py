@@ -9,10 +9,11 @@
 
 import bleach
 import idutils
-from flask import current_app, g
+from flask import current_app
 from flask_resources.serializers import BaseSerializerSchema
 from invenio_access.permissions import system_identity
 from invenio_communities import current_communities
+from invenio_communities.communities.services.service import get_cached_community_slug
 from invenio_vocabularies.proxies import current_service as vocabulary_service
 from marshmallow import fields, missing
 
@@ -103,11 +104,10 @@ class DublinCoreSchema(BaseSerializerSchema, CommonFieldsMixin):
 
         # Communities
         communities = obj["parent"].get("communities", {}).get("ids", [])
+        service_id = current_communities.service.id
         for community_id in communities:
-            community = current_communities.service.read(
-                id_=community_id, identity=g.identity
-            )
-            url = f"{current_app.config['SITE_UI_URL']}/communities/{community.data['slug']}"
+            slug = get_cached_community_slug(community_id, service_id)
+            url = f"{current_app.config['SITE_UI_URL']}/communities/{slug}"
             rels.append(self._transform_identifier(url, "url"))
 
         # Parent doi

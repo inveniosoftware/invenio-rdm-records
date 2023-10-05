@@ -71,6 +71,7 @@ from .schemas.parent.access import AccessSettingsSchema
 from .schemas.parent.access import Grant as GrantSchema
 from .schemas.parent.access import RequestAccessSchema
 from .schemas.parent.access import SecretLink as SecretLinkSchema
+from .schemas.parent.communities import CommunitiesSchema
 from .schemas.quota import QuotaSchema
 from .schemas.record_communities import RecordCommunitiesSchema
 from .schemas.tombstone import TombstoneSchema
@@ -167,6 +168,10 @@ class RDMSearchDraftsOptions(SearchDraftsOptions, SearchOptionsMixin):
 class RDMSearchVersionsOptions(SearchVersionsOptions, SearchOptionsMixin):
     """Search options for record versioning search."""
 
+    params_interpreters_cls = [
+        StatusParam
+    ] + SearchVersionsOptions.params_interpreters_cls
+
 
 class RDMRecordCommunitiesConfig(ServiceConfig, ConfiguratorMixin):
     """Record communities service config."""
@@ -179,6 +184,7 @@ class RDMRecordCommunitiesConfig(ServiceConfig, ConfiguratorMixin):
     )
 
     schema = RecordCommunitiesSchema
+    communities_schema = CommunitiesSchema
 
     indexer_cls = RecordIndexer
     indexer_queue_name = service_id
@@ -207,42 +213,6 @@ class RDMRecordRequestsConfig(ServiceConfig, ConfiguratorMixin):
     schema = None  # stored in the API classes, for customization
     indexer_queue_name = "requests"
     index_dumper = None
-
-
-class RDMCommunityRecordsConfig(BaseRecordServiceConfig, ConfiguratorMixin):
-    """Community records service config."""
-
-    service_id = "community-records"
-    record_cls = FromConfig("RDM_RECORD_CLS", default=RDMRecord)
-    community_cls = Community
-    permission_policy_cls = FromConfig(
-        "RDM_PERMISSION_POLICY", default=RDMRecordPermissionPolicy, import_string=True
-    )
-
-    # Search configuration
-    search = FromConfigSearchOptions(
-        "RDM_SEARCH",
-        "RDM_SORT_OPTIONS",
-        "RDM_FACETS",
-        search_option_cls=RDMSearchOptions,
-    )
-    search_versions = FromConfigSearchOptions(
-        "RDM_SEARCH_VERSIONING",
-        "RDM_SORT_OPTIONS",
-        "RDM_FACETS",
-        search_option_cls=RDMSearchVersionsOptions,
-    )
-
-    # Service schemas
-    community_record_schema = CommunityRecordsSchema
-    schema = RDMRecordSchema
-
-    # Max n. records that can be removed at once
-    max_number_of_removals = 10
-
-    links_search_community_records = pagination_links(
-        "{+api}/communities/{id}/records{?args*}"
-    )
 
 
 #
@@ -468,6 +438,44 @@ class RDMRecordServiceConfig(RecordServiceConfig, ConfiguratorMixin):
         ),
         "requests": RecordLink("{+api}/records/{id}/requests"),
     }
+
+
+class RDMCommunityRecordsConfig(BaseRecordServiceConfig, ConfiguratorMixin):
+    """Community records service config."""
+
+    service_id = "community-records"
+    record_cls = FromConfig("RDM_RECORD_CLS", default=RDMRecord)
+    community_cls = Community
+    permission_policy_cls = FromConfig(
+        "RDM_PERMISSION_POLICY", default=RDMRecordPermissionPolicy, import_string=True
+    )
+
+    # Search configuration
+    search = FromConfigSearchOptions(
+        "RDM_SEARCH",
+        "RDM_SORT_OPTIONS",
+        "RDM_FACETS",
+        search_option_cls=RDMSearchOptions,
+    )
+    search_versions = FromConfigSearchOptions(
+        "RDM_SEARCH_VERSIONING",
+        "RDM_SORT_OPTIONS",
+        "RDM_FACETS",
+        search_option_cls=RDMSearchVersionsOptions,
+    )
+
+    # Service schemas
+    community_record_schema = CommunityRecordsSchema
+    schema = RDMRecordSchema
+
+    # Max n. records that can be removed at once
+    max_number_of_removals = 10
+
+    links_search_community_records = pagination_links(
+        "{+api}/communities/{id}/records{?args*}"
+    )
+
+    links_item = RDMRecordServiceConfig.links_item
 
 
 class RDMRecordMediaFilesServiceConfig(RDMRecordServiceConfig):

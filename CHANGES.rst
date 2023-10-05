@@ -11,12 +11,42 @@
 Changes
 =======
 
+Version 4.31.1 (2023-10-04)
+
+- deposit: make name's affiliation/id optionals
+
+Version 4.31.0 (2023-10-04)
+
+- files: add check for deleted record
+- communities: add resource and service handlers for setting default community
+- versions: add status param interpreter
+- communities-records: set correct links
+
+Version 4.30.0 (2023-10-03)
+
+- add task to reindex records to update views/downloads stats
+
+Version 4.29.0 (2023-10-03)
+
+- serializers: replace slugs caching with invenio-cache
+- assets: remove redundant recover on file upload fail
+- notifications: add submission accept action notification
+- ui: added autoFocus to Deposit Form modals
+
+Version 4.28.2 (2023-09-28)
+
+- serializers: fix cache ttl when fetching communities slugs
+
+Version 4.28.1 (2023-09-28)
+
+- serializers: use cache when fetching communities slugs
+- service: fix config sort object being wrongly updated
+
 Version 4.28.0 (2023-09-26)
 
 - services: add community deletion component
 - resources: fix response code on delete action
 - resources: accept if_match header with revision id on DELETE
-
 
 Version 4.27.0 (2023-09-22)
 

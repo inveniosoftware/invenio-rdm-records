@@ -13,6 +13,7 @@ from flask import current_app, g
 from flask_resources.serializers import BaseSerializerSchema
 from invenio_access.permissions import system_identity
 from invenio_communities import current_communities
+from invenio_communities.communities.services.service import get_cached_community_slug
 from invenio_vocabularies.proxies import current_service as vocabulary_service
 from marshmallow import fields, missing
 
@@ -42,7 +43,7 @@ class MARCXMLSchema(BaseSerializerSchema, CommonFieldsMixin):
     # sources = fields.Constant(missing)  # Corresponds to references in the metadata schema
     formats = fields.Method("get_formats", data_key="520 1")
     parent_id = fields.Method("get_parent_id", data_key="024 1")
-    community_ids = fields.Method("get_community_ids", data_key="980  ")
+    community_ids = fields.Method("get_communities", data_key="980  ")
     sizes = fields.Method("get_sizes", data_key="520 2")
     version = fields.Method("get_version", data_key="024 3")
     funding = fields.Method(
@@ -127,24 +128,20 @@ class MARCXMLSchema(BaseSerializerSchema, CommonFieldsMixin):
         sizes = [{"a": s} for s in sizes_list]
         return sizes
 
-    def get_community_ids(self, obj):
-        """Get community ids."""
-        communities = obj["parent"].get("communities", {}).get("ids", [])
+    def _get_communities_slugs(self, ids):
+        """Get communities slugs."""
+        service_id = current_communities.service.id
+        return [
+            get_cached_community_slug(community_id, service_id) for community_id in ids
+        ]
 
-        if not communities:
+    def get_communities(self, obj):
+        """Get communities."""
+        ids = obj["parent"].get("communities", {}).get("ids", [])
+        if not ids:
             return missing
-
-        result = []
-        for community_id in communities:
-            community = current_communities.service.read(
-                id_=community_id, identity=g.identity
-            )
-            slug = community.data["slug"]
-            # Communities are prefixed with ``user-``
-            comm = {"a": f"user-{slug}"}
-            result.append(comm)
-
-        return result
+        # Communities are prefixed with ``user-``
+        return [{"a": f"user-{slug}"} for slug in self._get_communities_slugs(ids)]
 
     def get_parent_id(self, obj):
         """Get parent id."""
@@ -194,18 +191,11 @@ class MARCXMLSchema(BaseSerializerSchema, CommonFieldsMixin):
             result.update({"o": identifier})
 
             # Communities
-            communities = obj["parent"].get("communities", {}).get("ids", [])
-            for community_id in communities:
-                # Resolve community to fetch its slug
-                community = current_communities.service.read(
-                    id_=community_id, identity=g.identity
-                )
-                slug = community.data["slug"]
-
-                comm = f"user-{slug}"
-
-                # Add "p": [comm] or extend if there's already other communities
-                result.setdefault("p", []).append(comm)
+            ids = obj["parent"].get("communities", {}).get("ids", [])
+            for slug in self._get_communities_slugs(ids):
+                user_slug = f"user-{slug}"
+                # Add "p": [user_slug] or extend if there are already other communities
+                result.setdefault("p", []).append(user_slug)
 
         return result or missing
 

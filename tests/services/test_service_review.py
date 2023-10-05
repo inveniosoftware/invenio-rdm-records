@@ -7,21 +7,22 @@
 
 """Test of the review deposit integration."""
 
-from unittest.mock import MagicMock
-
 import pytest
 from flask_principal import Identity, UserNeed
-from invenio_access.permissions import any_user, authenticated_user
+from invenio_access.permissions import any_user, authenticated_user, system_identity
 from invenio_communities.communities.records.api import Community
 from invenio_communities.generators import CommunityRoleNeed
 from invenio_communities.members.records.api import Member
-from invenio_notifications.proxies import current_notifications_manager
 from invenio_records_resources.services.errors import PermissionDeniedError
 from invenio_requests import current_requests_service
 from marshmallow.exceptions import ValidationError
 from sqlalchemy.orm.exc import NoResultFound
 
 from invenio_rdm_records.notifications.builders import (
+    CommunityInclusionAcceptNotificationBuilder,
+    CommunityInclusionCancelNotificationBuilder,
+    CommunityInclusionDeclineNotificationBuilder,
+    CommunityInclusionExpireNotificationBuilder,
     CommunityInclusionSubmittedNotificationBuilder,
 )
 from invenio_rdm_records.proxies import current_rdm_records
@@ -610,7 +611,7 @@ def test_review_gives_access_to_curator(running_app, draft, service, requests_se
         item = service.read_draft(identity, draft.pid.pid_value)
 
 
-def test_review_notification(
+def test_review_submit_notification(
     draft_for_open_review,
     running_app,
     open_review_community,
@@ -618,34 +619,16 @@ def test_review_notification(
     community_owner,
     service,
     inviter,
-    monkeypatch,
+    replace_notification_builder,
 ):
     """Test notification being built on review submit."""
 
     original_builder = CommunityInclusionSubmittedNotificationBuilder
-
     # mock build to observe calls
-    mock_build = MagicMock()
-    mock_build.side_effect = original_builder.build
-    monkeypatch.setattr(original_builder, "build", mock_build)
-    # setting specific builder for test case
-    monkeypatch.setattr(
-        current_notifications_manager,
-        "builders",
-        {
-            **current_notifications_manager.builders,
-            original_builder.type: original_builder,
-        },
-    )
+    mock_build = replace_notification_builder(original_builder)
+    assert not mock_build.called
 
     inviter(curator.id, open_review_community.id, "curator")
-
-    # check draft status
-    assert (
-        draft_for_open_review["status"]
-        == DraftStatus.review_to_draft_statuses["created"]
-    )
-    assert not mock_build.called
 
     mail = running_app.app.extensions.get("mail")
     assert mail
@@ -664,6 +647,174 @@ def test_review_notification(
         assert "/me/requests/{}".format(req["id"]) in sent_mail.html
         assert community_owner.email not in sent_mail.recipients
         assert curator.email in sent_mail.recipients
+
+
+def test_review_accept_notification(
+    draft_for_open_review,
+    running_app,
+    open_review_community,
+    curator,
+    community_owner,
+    service,
+    requests_service,
+    inviter,
+    replace_notification_builder,
+):
+    """Test notification being built on review submit."""
+
+    original_builder = CommunityInclusionAcceptNotificationBuilder
+    # mock build to observe calls
+    mock_build = replace_notification_builder(original_builder)
+    assert not mock_build.called
+
+    inviter(curator.id, open_review_community.id, "curator")
+
+    mail = running_app.app.extensions.get("mail")
+    assert mail
+
+    req = service.review.submit(
+        community_owner.identity, draft_for_open_review.id
+    ).to_dict()
+
+    with mail.record_messages() as outbox:
+        # Validate that email was sent
+        req = requests_service.execute_action(
+            curator.identity, req["id"], "accept", {}
+        ).to_dict()
+        # check notification is build on submit
+        assert mock_build.called
+        assert len(outbox) == 1
+        sent_mail = outbox[0]
+        # TODO: update to `req["links"]["self_html"]` when addressing https://github.com/inveniosoftware/invenio-rdm-records/issues/1327
+        assert "/me/requests/{}".format(req["id"]) in sent_mail.html
+        assert community_owner.email in sent_mail.recipients
+        assert curator.email not in sent_mail.recipients
+
+
+def test_review_cancel_notification(
+    draft_for_open_review,
+    running_app,
+    open_review_community,
+    curator,
+    community_owner,
+    service,
+    requests_service,
+    inviter,
+    replace_notification_builder,
+):
+    """Test notification being built on review submit."""
+
+    original_builder = CommunityInclusionCancelNotificationBuilder
+    # mock build to observe calls
+    mock_build = replace_notification_builder(original_builder)
+    assert not mock_build.called
+
+    inviter(curator.id, open_review_community.id, "curator")
+
+    mail = running_app.app.extensions.get("mail")
+    assert mail
+
+    req = service.review.submit(
+        community_owner.identity, draft_for_open_review.id
+    ).to_dict()
+
+    with mail.record_messages() as outbox:
+        # Validate that email was sent
+        req = requests_service.execute_action(
+            community_owner.identity, req["id"], "cancel", {}
+        ).to_dict()
+        # check notification is build on submit
+        assert mock_build.called
+        assert len(outbox) == 1
+        sent_mail = outbox[0]
+        # TODO: update to `req["links"]["self_html"]` when addressing https://github.com/inveniosoftware/invenio-rdm-records/issues/1327
+        assert "/me/requests/{}".format(req["id"]) in sent_mail.html
+        assert community_owner.email not in sent_mail.recipients
+        assert curator.email in sent_mail.recipients
+
+
+def test_review_decline_notification(
+    draft_for_open_review,
+    running_app,
+    open_review_community,
+    curator,
+    community_owner,
+    service,
+    requests_service,
+    inviter,
+    replace_notification_builder,
+):
+    """Test notification being built on review submit."""
+
+    original_builder = CommunityInclusionDeclineNotificationBuilder
+    # mock build to observe calls
+    mock_build = replace_notification_builder(original_builder)
+    assert not mock_build.called
+
+    inviter(curator.id, open_review_community.id, "curator")
+
+    mail = running_app.app.extensions.get("mail")
+    assert mail
+
+    req = service.review.submit(
+        community_owner.identity, draft_for_open_review.id
+    ).to_dict()
+
+    with mail.record_messages() as outbox:
+        # Validate that email was sent
+        req = requests_service.execute_action(
+            curator.identity, req["id"], "decline", {}
+        ).to_dict()
+        # check notification is build on submit
+        assert mock_build.called
+        assert len(outbox) == 1
+        sent_mail = outbox[0]
+        # TODO: update to `req["links"]["self_html"]` when addressing https://github.com/inveniosoftware/invenio-rdm-records/issues/1327
+        assert "/me/requests/{}".format(req["id"]) in sent_mail.html
+        assert community_owner.email in sent_mail.recipients
+        assert curator.email not in sent_mail.recipients
+
+
+def test_review_expire_notification(
+    draft_for_open_review,
+    running_app,
+    open_review_community,
+    curator,
+    community_owner,
+    service,
+    requests_service,
+    inviter,
+    replace_notification_builder,
+):
+    """Test notification being built on review submit."""
+
+    original_builder = CommunityInclusionExpireNotificationBuilder
+    # mock build to observe calls
+    mock_build = replace_notification_builder(original_builder)
+    assert not mock_build.called
+
+    inviter(curator.id, open_review_community.id, "curator")
+
+    mail = running_app.app.extensions.get("mail")
+    assert mail
+
+    req = service.review.submit(
+        community_owner.identity, draft_for_open_review.id
+    ).to_dict()
+
+    with mail.record_messages() as outbox:
+        # Validate that email was sent
+        req = requests_service.execute_action(
+            system_identity, req["id"], "expire", {}
+        ).to_dict()
+        # check notification is build on submit
+        assert mock_build.called
+        assert len(outbox) == 1
+        sent_mail = outbox[0]
+        # TODO: update to `req["links"]["self_html"]` when addressing https://github.com/inveniosoftware/invenio-rdm-records/issues/1327
+        assert "/me/requests/{}".format(req["id"]) in sent_mail.html
+        assert community_owner.email in sent_mail.recipients
+        assert curator.email not in sent_mail.recipients
 
 
 # TODO tests:
