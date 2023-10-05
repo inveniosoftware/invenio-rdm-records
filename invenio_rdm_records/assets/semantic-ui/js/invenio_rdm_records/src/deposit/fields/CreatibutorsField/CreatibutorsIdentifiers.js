@@ -90,6 +90,6 @@ CreatibutorsIdentifiers.propTypes = {
 };
 
 CreatibutorsIdentifiers.defaultProps = {
-  label: i18next.t("Name identifiers"),
+  label: i18next.t("Identifiers"),
   placeholder: i18next.t("e.g. ORCID, ISNI or GND."),
 };
