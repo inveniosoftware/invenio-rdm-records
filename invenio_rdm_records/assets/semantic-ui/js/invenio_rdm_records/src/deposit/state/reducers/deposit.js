@@ -253,14 +253,28 @@ const depositReducer = (state = {}, action) => {
         actionState: action.type,
         actionStateExtra: { pidType: action.payload.pidType },
       };
-    case DRAFT_FETCHED:
-    case DRAFT_SAVE_SUCCEEDED:
     case RESERVE_PID_SUCCEEDED:
     case DISCARD_PID_SUCCEEDED:
       return {
         ...state,
         record: {
           ...state.record,
+          ...action.payload.data,
+        },
+        editorState: computeDepositState(
+          action.payload.data,
+          state.editorState.selectedCommunity
+        ),
+        errors: {},
+        actionState: action.type,
+        actionStateExtra: {},
+      };
+    case DRAFT_FETCHED:
+    case DRAFT_SAVE_SUCCEEDED:
+      return {
+        ...state,
+        record: {
+          // populate record only with fresh backend response
           ...action.payload.data,
         },
         editorState: computeDepositState(
