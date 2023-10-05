@@ -39,7 +39,7 @@ export class AffiliationsField extends Component {
               }}
               initialSuggestions={getIn(values, fieldPath, [])}
               serializeSuggestions={this.serializeAffiliations}
-              placeholder={i18next.t("Search or create affiliation'")}
+              placeholder={i18next.t("Search or create affiliation")}
               label={
                 <FieldLabel
                   htmlFor={`${fieldPath}.name`}
