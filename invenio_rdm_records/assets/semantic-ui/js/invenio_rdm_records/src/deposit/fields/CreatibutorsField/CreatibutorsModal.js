@@ -249,7 +249,7 @@ export class CreatibutorsModal extends Component {
       icon = "/static/images/ror-icon.svg";
       link = "https://ror.org/" + identifier.identifier;
     } else if (identifier.scheme === "isni" || identifier.scheme === "grid") {
-      return <></>;
+      return null;
     } else {
       return (
         <>
