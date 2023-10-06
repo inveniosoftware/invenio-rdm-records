@@ -106,7 +106,7 @@ def mask_removed_by(obj):
         if user == "system":
             return_value = _("System (automatic)")
         elif user is not None:
-            return_value = _("User")
+            return_value = _("Admin")
 
     return return_value
 
