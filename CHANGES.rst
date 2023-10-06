@@ -11,6 +11,13 @@
 Changes
 =======
 
+Version 4.32.0 (2023-10-06)
+
+- deposit form: report invalid value errors on each draft save
+- access-requests: send notification on submit action
+- access-requests: replace EmailOp with NotificationOp on guest access token create
+- access-requests: replace EmailOp with NotificationOp
+
 Version 4.31.1 (2023-10-04)
 
 - deposit: make name's affiliation/id optionals
