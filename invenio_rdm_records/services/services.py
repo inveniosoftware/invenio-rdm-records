@@ -184,8 +184,23 @@ class RDMRecordService(RecordService):
             "delete_record", identity, data=data, record=record, uow=uow
         )
 
+        new_record_latest_version = None
+        if record.versions.is_latest == True:
+            # set latest to the previous non deleted record
+            new_record_latest_version = (
+                self.record_cls.next_latest_published_record_by_parent(record.parent)
+            )
+            if new_record_latest_version:
+                new_record_latest_version.versions.set_latest()
+
         # Commit and reindex record
         uow.register(RecordCommitOp(record, indexer=self.indexer))
+
+        # Commit and reindex new latest record
+        if new_record_latest_version:
+            uow.register(
+                RecordCommitOp(new_record_latest_version, indexer=self.indexer)
+            )
 
         return self.result_item(
             self,
@@ -258,8 +273,24 @@ class RDMRecordService(RecordService):
         # Run components
         self.run_components("restore_record", identity, record=record, uow=uow)
 
+        # set latest to the previous non deleted record
+        latest_record_version = self.record_cls.get_latest_published_by_parent(
+            record.parent
+        )
+
+        if not latest_record_version:
+            # if all records were deleted then make the restored record latest
+            record.versions.set_latest()
+        elif record.versions.index > latest_record_version.versions.index:
+            # set current restored record as latest
+            record.versions.set_latest()
+
         # Commit and reindex record
         uow.register(RecordCommitOp(record, indexer=self.indexer))
+
+        # commit and reindex the old latest record
+        if latest_record_version and record.id != latest_record_version.id:
+            uow.register(RecordCommitOp(latest_record_version, indexer=self.indexer))
 
         return self.result_item(
             self,

@@ -10,6 +10,7 @@
 
 from flask import g
 from invenio_communities.records.records.systemfields import CommunitiesField
+from invenio_db import db
 from invenio_drafts_resources.records import Draft, Record
 from invenio_drafts_resources.records.api import ParentRecord as ParentRecordBase
 from invenio_drafts_resources.services.records.components.media_files import (
@@ -39,6 +40,10 @@ from invenio_vocabularies.contrib.funders.api import Funder
 from invenio_vocabularies.contrib.subjects.api import Subject
 from invenio_vocabularies.records.api import Vocabulary
 from invenio_vocabularies.records.systemfields.relations import CustomFieldsRelation
+
+from invenio_rdm_records.records.systemfields.deletion_status import (
+    RecordDeletionStatusEnum,
+)
 
 from . import models
 from .dumpers import (
@@ -444,6 +449,50 @@ class RDMRecord(CommonFieldsMixin, Record):
     deletion_status = RecordDeletionStatusField()
 
     tombstone = TombstoneField()
+
+    @classmethod
+    def next_latest_published_record_by_parent(cls, parent):
+        """Get the next latest published record.
+
+        This method gives back the next published latest record by parent or None if all
+        records are deleted i.e `record.deletion_status != 'P'`.
+
+        :param parent: parent record.
+        :param excluded_latest: latest record to exclude find next published version
+        """
+
+        with db.session.no_autoflush:
+            rec_model_query = (
+                cls.model_cls.query.filter_by(parent_id=parent.id)
+                .filter(
+                    cls.model_cls.deletion_status
+                    == RecordDeletionStatusEnum.PUBLISHED.value
+                )
+                .order_by(cls.model_cls.index.desc())
+            )
+            current_latest_id = cls.get_latest_by_parent(parent, id_only=True)
+            if current_latest_id:
+                rec_model_query.filter(cls.model_cls.id != current_latest_id)
+
+            rec_model = rec_model_query.first()
+            return (
+                cls(rec_model.data, model=rec_model, parent=parent)
+                if rec_model
+                else None
+            )
+
+    @classmethod
+    def get_latest_published_by_parent(cls, parent):
+        """Get the latest published record for the specified parent record.
+
+        It might return None if there is no latest published version i.e not
+        published yet or all versions are deleted.
+        """
+
+        latest_record = cls.get_latest_by_parent(parent)
+        if latest_record.deletion_status != RecordDeletionStatusEnum.PUBLISHED.value:
+            return None
+        return latest_record
 
 
 RDMFileRecord.record_cls = RDMRecord
