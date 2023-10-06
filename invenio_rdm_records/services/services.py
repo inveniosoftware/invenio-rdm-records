@@ -151,6 +151,12 @@ class RDMRecordService(RecordService):
             links_tpl=self.links_item_tpl,
         )
 
+    def get_owner(self, id_):
+        """Returns the owner of a record."""
+        record = self.record_cls.pid.resolve(id_)
+        # if an owner can be of different types maybe we should have a common interface
+        return record.parent.access.owner.resolve()
+
     #
     # Deletion workflows
     #
