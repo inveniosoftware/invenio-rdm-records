@@ -460,7 +460,6 @@ class RDMRecord(CommonFieldsMixin, Record):
         :param parent: parent record.
         :param excluded_latest: latest record to exclude find next published version
         """
-
         with db.session.no_autoflush:
             rec_model_query = (
                 cls.model_cls.query.filter_by(parent_id=parent.id)
@@ -488,7 +487,6 @@ class RDMRecord(CommonFieldsMixin, Record):
         It might return None if there is no latest published version i.e not
         published yet or all versions are deleted.
         """
-
         latest_record = cls.get_latest_by_parent(parent)
         if latest_record.deletion_status != RecordDeletionStatusEnum.PUBLISHED.value:
             return None
