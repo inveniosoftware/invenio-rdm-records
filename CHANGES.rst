@@ -11,6 +11,12 @@
 Changes
 =======
 
+Version 4.33.0 (2023-10-09)
+
+- journal: ui serializer formatting improvements
+- serializers: ui - add publication date to journal citation
+- github: store name and family name of author
+
 Version 4.32.0 (2023-10-06)
 
 - deposit form: report invalid value errors on each draft save
