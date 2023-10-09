@@ -90,15 +90,21 @@ class RDMReleaseMetadata(object):
             name = gh_data.get("name", login)
             company = gh_data.get("company", "")
 
-            human_name = HumanName(name)
-            given_name = human_name.first
-            family_name = human_name.surnames
+            author = {}
+            if name.count(",") == 1:
+                family, given = name.split(",")
+                author["given_name"] = given.strip()
+                author["family_name"] = family.strip()
+                # autocompleted by RDM Metadata schema
+                author["name"] = name
+            else:
+                author["family_name"] = name
+                author["name"] = name
 
             rdm_contributor = {
                 "person_or_org": {
                     "type": "personal",
-                    "given_name": given_name,
-                    "family_name": family_name,
+                    **author,
                 },
                 "affiliations": [{"name": company}],
             }
