@@ -13,6 +13,7 @@
 from copy import deepcopy
 from functools import partial
 
+from edtf import parse_edtf
 from flask import current_app, g
 from flask_resources import BaseObjectSchema
 from invenio_communities.communities.resources.ui_schema import (
@@ -204,20 +205,28 @@ class MeetingSchema(Schema):
 def compute_publishing_information(obj, dummyctx):
     """Computes 'publishing information' string from custom fields."""
 
-    def _format_journal(journal):
+    def _format_journal(journal, publication_date):
         """Formats a journal object into a string based on its attributes.
 
         Example:
-            _format_journal({"title": "The Effects of Climate Change", "volume": 10, "issue": 2, "pages": "15-22", "issn": "1234-5678"})
-            >>> 'The Effects of Climate Change, 10(2), 15-22, ISSN:1234-5678.'
+            _format_journal({"title": "The Effects of Climate Change", "volume": 10, "issue": 2, "pages": "15-22", "issn": "1234-5678", "publication_date": "2023-03-02})
+            >>> 'The Effects of Climate Change, 10(2), 15-22, ISSN:1234-5678, 2023.'
         """
         journal_title = journal.get("title")
         journal_issn = journal.get("issn")
         journal_issue = journal.get("issue")
         journal_volume = journal.get("volume")
         journal_pages = journal.get("pages")
+        publication_date_edtf = (
+            parse_edtf(publication_date).lower_strict() if publication_date else None
+        )
+        publication_date_formatted = (
+            f"{publication_date_edtf.tm_year}" if publication_date_edtf else None
+        )
+
         title = f"{journal_title}" if journal_title else None
         vol_issue = f"{journal_volume}" if journal_volume else None
+
         if journal_issue:
             if vol_issue:
                 vol_issue += f"({journal_issue})"
@@ -225,7 +234,8 @@ def compute_publishing_information(obj, dummyctx):
                 vol_issue = f"{journal_issue}"
         pages = f"{journal_pages}" if journal_pages else None
         issn = f"ISSN: {journal_issn}" if journal_issn else None
-        fields = [title, vol_issue, pages, issn]
+        fields = [title, vol_issue, pages, issn, publication_date_formatted]
+
         formatted = ", ".join(filter(None, fields))
         formatted += "."
 
@@ -233,11 +243,24 @@ def compute_publishing_information(obj, dummyctx):
 
     def _format_imprint(imprint, publisher):
         """Formats a imprint object into a string based on its attributes."""
-        place = imprint.get("place", "")
-        isbn = imprint.get("isbn", "")
-        formatted = "{publisher}{place} {isbn}".format(
-            publisher=publisher, place=f", {place}", isbn=f"({isbn})"
-        )
+        imprint_title = imprint.get("title")
+        imprint_place = imprint.get("place")
+        imprint_isbn = imprint.get("isbn")
+        imprint_pages = imprint.get("pages")
+        title_page = f"{imprint_title}" if imprint_title else ""
+        if imprint_pages:
+            if title_page:
+                title_page += f", {imprint_pages}."
+            else:
+                title_page = f"{imprint_pages}."
+        elif title_page:
+            title_page += "."
+        else:
+            title_page = None
+        place = f"{imprint_place}." if imprint_place else None
+        isbn = f"ISBN: {imprint_isbn}." if imprint_isbn else None
+        formatted = " ".join(filter(None, [title_page, place, isbn]))
+
         return formatted
 
     attr = "custom_fields"
@@ -249,9 +272,10 @@ def compute_publishing_information(obj, dummyctx):
     imprint = field.get("imprint:imprint")
     thesis = field.get("thesis:university")
 
+    publication_date = obj.get("metadata", {}).get("publication_date", None)
     result = {}
     if journal:
-        journal_string = _format_journal(journal)
+        journal_string = _format_journal(journal, publication_date)
         if journal_string:
             result.update({"journal": journal_string})
 
