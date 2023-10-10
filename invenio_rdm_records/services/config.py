@@ -169,7 +169,7 @@ class RDMSearchVersionsOptions(SearchVersionsOptions, SearchOptionsMixin):
     """Search options for record versioning search."""
 
     params_interpreters_cls = [
-        StatusParam
+        PublishedRecordsParam
     ] + SearchVersionsOptions.params_interpreters_cls
 
 

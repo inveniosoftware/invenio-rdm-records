@@ -411,6 +411,20 @@ class RDMRecordService(RecordService):
             **kwargs,
         )
 
+    def search_versions(
+        self, identity, id_, params=None, search_preference=None, expand=False, **kwargs
+    ):
+        """Search for published records matching the querystring."""
+        return super().search_versions(
+            identity,
+            id_,
+            params,
+            search_preference,
+            expand,
+            permission_action="read_deleted",
+            **kwargs,
+        )
+
     #
     # Base methods, extended with handling of deleted records
     #
