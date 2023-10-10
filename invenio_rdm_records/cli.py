@@ -311,6 +311,10 @@ def rebuild_index():
     rec_service = current_rdm_records.records_service
     rec_service.rebuild_index(identity=system_identity)
 
+    click.secho("Reindexing OAI sets...", fg="green")
+    oaipmh_service = current_rdm_records.oaipmh_server_service
+    oaipmh_service.rebuild_index(identity=system_identity)
+
     click.secho("Reindexed records and vocabularies!", fg="green")
 
 
