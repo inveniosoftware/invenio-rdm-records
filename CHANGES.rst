@@ -11,6 +11,10 @@
 Changes
 =======
 
+Version 4.33.1 (2023-10-10)
+
+- service: fix restore/delete of specific record version
+
 Version 4.33.0 (2023-10-09)
 
 - journal: ui serializer formatting improvements
