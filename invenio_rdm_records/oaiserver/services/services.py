@@ -11,8 +11,10 @@ import re
 
 from flask import current_app
 from flask_sqlalchemy import Pagination
+from invenio_db import db
 from invenio_i18n import lazy_gettext as _
 from invenio_oaiserver.models import OAISet
+from invenio_oaiserver.percolator import _new_percolator
 from invenio_records_resources.services import Service
 from invenio_records_resources.services.base import LinksTemplate
 from invenio_records_resources.services.base.utils import map_search_params
@@ -234,3 +236,11 @@ class OAIPMHServerService(Service):
                 self, schema=self.config.metadata_format_schema
             ),
         )
+
+    def rebuild_index(self, identity):
+        """Rebuild OAI sets percolator index."""
+        entries = db.session.query(OAISet.spec, OAISet.search_pattern).yield_per(1000)
+        for spec, search_pattern in entries:
+            # Creates or updates the OAI set
+            _new_percolator(spec, search_pattern)
+        return True
