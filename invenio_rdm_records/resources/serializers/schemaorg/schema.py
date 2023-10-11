@@ -197,8 +197,8 @@ class SchemaorgSchema(BaseSerializerSchema, CommonFieldsMixin):
 
     def get_modification_date(self, obj):
         """Get modification date."""
-        # TODO: implement with the help of test data
-        return missing
+        last_updated = obj.get("updated")
+        return last_updated or missing
 
     def get_language(self, obj):
         """Get language. Schemaorg expects either a string or language dict.
