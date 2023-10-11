@@ -36,7 +36,7 @@ def dublincore_etree(pid, record, **serializer_kwargs):
     return simpledc.dump_etree(obj)
 
 
-def oai_marcxml_etree(pid, record):
+def marcxml_etree(pid, record):
     """OAI MARCXML format for OAI-PMH."""
     item = current_rdm_records_service.oai_result_item(g.identity, record["_source"])
     # TODO: MARCXMLSerializer should directly be able to dump an etree instead
@@ -45,7 +45,7 @@ def oai_marcxml_etree(pid, record):
     return etree.fromstring(MARCXMLSerializer().serialize_object(item.to_dict()))
 
 
-def oai_dcat_etree(pid, record):
+def dcat_etree(pid, record):
     """OAI DCAT-AP format for OAI-PMH."""
     item = current_rdm_records_service.oai_result_item(g.identity, record["_source"])
     # TODO: Ditto. See https://github.com/inveniosoftware/flask-resources/issues/117
