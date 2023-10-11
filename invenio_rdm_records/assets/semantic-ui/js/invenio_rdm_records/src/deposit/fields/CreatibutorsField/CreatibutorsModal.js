@@ -387,11 +387,7 @@ export class CreatibutorsModal extends Component {
         organizationIdentifiers: selectedSuggestion.identifiers.map(
           (identifier) => identifier.identifier
         ),
-        organizationAffiliations: [
-          {
-            name: selectedSuggestion.name,
-          },
-        ],
+        organizationAffiliations: [],
       },
       () => {
         const { organizationIdentifiers, organizationAffiliations } = this.state;
