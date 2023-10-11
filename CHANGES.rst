@@ -11,6 +11,11 @@
 Changes
 =======
 
+Version 4.33.2 (2023-10-11)
+
+- deposit form: improve UX of contributors modal
+- tombstone: fix information removed by Admin
+
 Version 4.33.1 (2023-10-10)
 
 - service: fix restore/delete of specific record version
