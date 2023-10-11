@@ -42,7 +42,9 @@ def marcxml_etree(pid, record):
     # TODO: MARCXMLSerializer should directly be able to dump an etree instead
     # of internally creating an etree, then dump to xml, then parse into an
     # etree. See https://github.com/inveniosoftware/flask-resources/issues/117
-    return etree.fromstring(MARCXMLSerializer().serialize_object(item.to_dict()))
+    return etree.fromstring(
+        MARCXMLSerializer().serialize_object(item.to_dict()).encode(encoding="utf-8")
+    )
 
 
 def dcat_etree(pid, record):
