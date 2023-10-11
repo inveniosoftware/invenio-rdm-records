@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2021 CERN.
+# Copyright (C) 2023 CERN.
 # Copyright (C) 2021 Northwestern University.
 # Copyright (C) 2023 Graz University of Technology.
 #
@@ -16,7 +16,9 @@ from edtf import parse_edtf
 from edtf.parser.grammar import ParseException
 from flask_resources.serializers import BaseSerializerSchema
 from idutils import to_url
-from marshmallow import Schema, fields, missing, ValidationError
+from invenio_access.permissions import system_identity
+from invenio_records_resources.proxies import current_service_registry
+from marshmallow import Schema, ValidationError, fields, missing
 from marshmallow_utils.fields import SanitizedUnicode
 from pydash import py_
 
@@ -34,37 +36,42 @@ class PersonOrOrgSchema(Schema):
     id_ = fields.Method("get_name_identifier", data_key="@id")
     type_ = fields.Method("get_name_type", data_key="@type")
 
-    def get_name_type(self, obj):
-        """Get name type. Schemaorg expects either @Person or @Organisation.
+    #
+    # Private helper functions
+    #
 
-        Defaults to @Person.
+    def _serialize_identifier(self, identifier):
+        """Format on name identifier."""
+        if not identifier.get("identifier"):
+            return None
+
+        if identifier.get("scheme") == "isni":
+            return "http://isni.org/isni/" + identifier.get("identifier")
+
+        # Schemaorg expects a URL for the identifier
+        return to_url(identifier["identifier"], identifier["scheme"], "https")
+
+    #
+    # Schema Methods
+    #
+
+    def get_name_type(self, obj):
+        """Get name type. Schemaorg expects either Person or Organisation.
+
+        Defaults to Person.
         """
         name_type = py_.get(obj, "person_or_org.type")
-        return "@Organisation" if name_type == "organizational" else "@Person"
+        return "Organization" if name_type == "organizational" else "Person"
 
     def get_name_identifier(self, obj):
         """Get name identifier.
 
         Schemaorg expects a URL for the identifier, and does not support multiple identifiers. Use the first identifier found.
         """
-
-        def format_name_identifier(name_identifier):
-            """Format on name identifier."""
-            if not name_identifier.get("identifier"):
-                return None
-
-            if name_identifier.get("scheme") == "isni":
-                return "http://isni.org/isni/" + name_identifier.get("identifier")
-
-            # Schemaorg expects a URL for the identifier
-            return to_url(
-                name_identifier["identifier"], name_identifier["scheme"], "https"
-            )
-
         return (
             next(
                 (
-                    format_name_identifier(i)
+                    self._serialize_identifier(i)
                     for i in wrap(obj["person_or_org"].get("identifiers", []))
                 ),
                 None,
@@ -76,14 +83,48 @@ class PersonOrOrgSchema(Schema):
         """Get affiliation list."""
 
         def format_affiliation(affiliation):
-            """Format on affiliaition."""
-            # TODO: get affiliation id
-            return {"name": affiliation.get("name", None), "@type": "Organization"}
+            """Format on affiliation."""
+            name = affiliation.get("name")
+            id_ = affiliation.get("id")
+            if not (name or id_):
+                raise ValidationError(
+                    "Affiliation failed to serialize: one of 'id' or 'name' must be provided."
+                )
 
-        affiliations = wrap(obj.get("affiliations", None))
-        return [
-            format_affiliation(a) for a in affiliations if a.get("name", None)
-        ] or missing
+            serialized_affiliation = {"@type": "Organization"}
+
+            if name:
+                serialized_affiliation.update({"name": name})
+
+            # Affiliation comes from a controlled vocabulary
+            if id_:
+                affiliations_service = current_service_registry.get("affiliations")
+                affiliation_vc = affiliations_service.read(
+                    system_identity, id_
+                ).to_dict()
+
+                # Prioritize the vocabulary name instead of the custom one
+                if affiliation_vc.get("name"):
+                    serialized_affiliation.update({"name": affiliation_vc["name"]})
+
+                # Retrieve the first identifier
+                identifier = next(
+                    (
+                        idf
+                        for idf in affiliation_vc.get("identifiers", [])
+                        if (idf.get("identifier") and idf.get("scheme"))
+                    ),
+                    None,
+                )
+                if identifier:
+                    serialized_affiliation.update(
+                        {"@id": self._serialize_identifier(identifier)}
+                    )
+
+            return serialized_affiliation
+
+        affiliations = obj.get("affiliations", [])
+        return [format_affiliation(a) for a in affiliations] or missing
 
 
 class SchemaorgSchema(BaseSerializerSchema, CommonFieldsMixin):
@@ -235,7 +276,13 @@ class SchemaorgSchema(BaseSerializerSchema, CommonFieldsMixin):
         return spdx.get("url", None) if spdx else missing
 
     def get_funding(self, obj):
-        """Get funding."""
+        """Serialize funding to schema.org.
+
+        .. note::
+
+            Property 'funding': https://schema.org/funding
+            Type 'Grant': https://schema.org/Grant
+        """
 
         def _serialize_funder(funder):
             """Serializes a funder to schema.org."""
@@ -248,19 +295,26 @@ class SchemaorgSchema(BaseSerializerSchema, CommonFieldsMixin):
 
         def _serialize_award(award):
             """Serializes an award (or grant) to schema.org."""
-            serialized_award = {}
             title = py_.get(award, "title.en")
-            if title:
-                serialized_award.update({"name": title})
             number = award.get("number")
-            if number:
-                serialized_award.update({"identifier": number})
+            id_ = award.get("id")
 
-            if not (title and number):
-                # One of title or number must be provided
+            if not (id_ or (title and number)):
+                # One of 'id' or '(title' and 'number') must be provided
                 raise ValidationError(
-                    "Funding serialization failed on award: one of 'number' or 'title' are required."
+                    "Funding serialization failed on award: one of 'id' or ('number' and 'title') are required."
                 )
+
+            serialized_award = {}
+            if title or number:
+                # Serializes to:
+                # title (number) OR title OR number
+                fallback = title or number
+                serialized_award.update(
+                    {"name": f"{title} ({number})" if title and number else fallback}
+                )
+            if id_:
+                serialized_award.update({"identifier": id_})
 
             url = next(
                 (i for i in award.get("identifiers", []) if i.get("scheme") == "url"),

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2021 CERN.
+# Copyright (C) 2023 CERN.
 # Copyright (C) 2021 Caltech.
 # Copyright (C) 2021 Northwestern University.
 #
@@ -36,14 +36,13 @@ def updated_full_record(full_record):
     return full_record
 
 
-def test_schemaorg_serializer_full_record(running_app, updated_full_record):
+def test_schemaorg_serializer_full_record(running_app, full_record):
     """Test Schemaorg JSON-LD serializer with full record."""
 
     expected_data = {
         "@context": "http://schema.org",
-        "@id": "https://doi.org/10.5281/inveniordm.1234",
-        "@type": "Photograph",
-        "identifier": "https://doi.org/10.5281/inveniordm.1234",
+        "@id": "https://doi.org/10.1234/inveniordm.1234",
+        "@type": "https://schema.org/Photograph",
         "author": [
             {
                 "@id": "https://orcid.org/0000-0001-8135-3489",
@@ -52,18 +51,17 @@ def test_schemaorg_serializer_full_record(running_app, updated_full_record):
                 "givenName": "Lars Holm",
                 "familyName": "Nielsen",
                 "affiliation": [
-                    {"@type": "Organization", "name": "free-text"},
                     {
                         "@id": "https://ror.org/01ggx4157",
                         "@type": "Organization",
                         "name": "CERN",
                     },
+                    {"@type": "Organization", "name": "free-text"},
                 ],
             }
         ],
-        "name": "InvenioRDM",
-        "publisher": {"@type": "Organization", "name": "InvenioRDM"},
-        "keywords": "custom",
+        "datePublished": "2018",
+        "description": "<h1>A description</h1> <p>with HTML tags</p>",
         "editor": [
             {
                 "@id": "https://orcid.org/0000-0001-8135-3489",
@@ -72,7 +70,6 @@ def test_schemaorg_serializer_full_record(running_app, updated_full_record):
                 "givenName": "Lars Holm",
                 "familyName": "Nielsen",
                 "affiliation": [
-                    {"@type": "Organization", "name": "free-text"},
                     {
                         "@id": "https://ror.org/01ggx4157",
                         "@type": "Organization",
@@ -81,13 +78,20 @@ def test_schemaorg_serializer_full_record(running_app, updated_full_record):
                 ],
             }
         ],
-        "datePublished": "2018",
-        "inLanguage": {"@type": "Language", "alternateName": "dan", "name": "Danish"},
-        "contentSize": "11 pages",
         "encodingFormat": "application/pdf",
-        "version": "v1.0",
+        "funding": [
+            {
+                "funder": {"@type": "Organization", "@id": "00k4n6c32"},
+                "identifier": "00k4n6c32::755021",
+            }
+        ],
+        "identifier": "https://doi.org/10.1234/inveniordm.1234",
+        "inLanguage": {"@type": "Language", "alternateName": "dan", "name": "Danish"},
+        "keywords": "custom",
         "license": "https://creativecommons.org/licenses/by/4.0/legalcode",
-        "description": "<h1>A description</h1> <p>with HTML tags</p>",
+        "name": "InvenioRDM",
+        "publisher": {"@type": "Organization", "name": "InvenioRDM"},
+        "version": "v1.0",
         # "spatialCoverage": [
         #     {
         #         "geoLocationPoint": {
@@ -113,23 +117,22 @@ def test_schemaorg_serializer_full_record(running_app, updated_full_record):
     }
 
     serializer = SchemaorgJSONLDSerializer()
-    serialized_record = serializer.dump_obj(updated_full_record)
+    serialized_record = serializer.dump_obj(full_record)
 
     assert serialized_record == expected_data
 
 
-def test_schemaorg_serializer_minimal_record(running_app, updated_minimal_record):
+def test_schemaorg_serializer_minimal_record(running_app, minimal_record):
     """Test Schemaorg JSON-LD serializer with minimal record."""
 
     expected_data = {
         "@context": "http://schema.org",
-        "@type": "Photograph",
-        "@id": "https://doi.org/10.5281/inveniordm.5678",
+        "@type": "https://schema.org/Photograph",
         "author": [
             {
                 "@type": "Person",
-                "givenName": "Troy",
                 "familyName": "Brown",
+                "givenName": "Troy",
             },
             {
                 "@type": "Organization",
@@ -139,11 +142,9 @@ def test_schemaorg_serializer_minimal_record(running_app, updated_minimal_record
         "name": "A Romans story",
         "publisher": {"@type": "Organization", "name": "Acme Inc"},
         "datePublished": "2020-06-01",
-        "contentSize": None,
-        "encodingFormat": None,
     }
 
     serializer = SchemaorgJSONLDSerializer()
-    serialized_record = serializer.dump_obj(updated_minimal_record)
+    serialized_record = serializer.dump_obj(minimal_record)
 
     assert serialized_record == expected_data
