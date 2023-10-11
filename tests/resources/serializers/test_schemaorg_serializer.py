@@ -119,6 +119,11 @@ def test_schemaorg_serializer_full_record(running_app, full_record):
     serializer = SchemaorgJSONLDSerializer()
     serialized_record = serializer.dump_obj(full_record)
 
+    assert serialized_record["dateModified"]
+
+    # Delete to facilitate the comparison with the expected data
+    del serialized_record["dateModified"]
+
     assert serialized_record == expected_data
 
 
