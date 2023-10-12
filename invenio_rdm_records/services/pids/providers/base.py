@@ -125,12 +125,17 @@ class PIDProvider:
         """Update information about the persistent identifier."""
         pass
 
-    def delete(self, pid, **kwargs):
+    def restore(self, pid, **kwargs):
+        """Update information about the persistent identifier."""
+        pass
+
+    def delete(self, pid, soft_delete=False, **kwargs):
         """Delete a persistent identifier.
 
         See: :meth:`invenio_pidstore.models.PersistentIdentifier.delete`.
         """
-        return pid.delete()
+        if not soft_delete:
+            return pid.delete()
 
     def validate(self, record, identifier=None, provider=None, **kwargs):
         """Validate the attributes of the identifier.

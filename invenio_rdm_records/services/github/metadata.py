@@ -11,7 +11,6 @@ from invenio_github.errors import CustomGitHubMetadataError
 from invenio_i18n import _
 from marshmallow import Schema, ValidationError
 from mistune import markdown
-from nameparser import HumanName
 
 
 class RDMReleaseMetadata(object):
