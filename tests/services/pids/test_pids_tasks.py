@@ -7,13 +7,16 @@
 # more details.
 
 """PID service tasks tests."""
-
+from copy import deepcopy
 from unittest import mock
 
 import pytest
 from invenio_pidstore.models import PIDStatus
 
 from invenio_rdm_records.proxies import current_rdm_records
+from invenio_rdm_records.records.systemfields.deletion_status import (
+    RecordDeletionStatusEnum,
+)
 from invenio_rdm_records.services.pids.tasks import register_or_update_pid
 
 
@@ -191,3 +194,359 @@ def test_update_pid(
         ],
         any_order=True,
     )
+
+
+def test_invalidate_pid(
+    running_app,
+    search_clear,
+    minimal_record,
+    mocker,
+    superuser_identity,
+    mock_datacite_client,
+):
+    """No pid provided, creating one by default."""
+    service = current_rdm_records.records_service
+    draft = service.create(superuser_identity, minimal_record)
+    record = service.publish(superuser_identity, draft.id)
+
+    oai = record["pids"]["oai"]["identifier"]
+    doi = record["pids"]["doi"]["identifier"]
+    parent_doi = record["parent"]["pids"]["doi"]["identifier"]
+    provider = service.pids.pid_manager._get_provider("doi", "datacite")
+    pid = provider.get(pid_value=doi)
+    assert pid.status == PIDStatus.REGISTERED
+    parent_provider = service.pids.parent_pid_manager._get_provider("doi", "datacite")
+    parent_pid = parent_provider.get(pid_value=parent_doi)
+    assert parent_pid.status == PIDStatus.REGISTERED
+
+    tombstone_info = {"note": "no specific reason, tbh"}
+
+    record = service.delete_record(
+        superuser_identity, id_=record.id, data=tombstone_info
+    )
+
+    assert mock_datacite_client.api.hide_doi.called is True
+    assert mock_datacite_client.api.update_doi.called is True
+    mock_datacite_client.api.update_doi.assert_has_calls(
+        [
+            mock.call(
+                metadata={
+                    "schemaVersion": "http://datacite.org/schema/kernel-4",
+                    "types": {"resourceTypeGeneral": "Image", "resourceType": "Photo"},
+                    "creators": [
+                        {
+                            "name": "Brown, Troy",
+                            "familyName": "Brown",
+                            "nameIdentifiers": [],
+                            "nameType": "Personal",
+                            "givenName": "Troy",
+                        },
+                        {
+                            "familyName": "Troy Inc.",
+                            "name": "Troy Inc.",
+                            "nameIdentifiers": [],
+                            "nameType": "Organizational",
+                        },
+                    ],
+                    "titles": [{"title": "A Romans story"}],
+                    "dates": [{"date": "2020-06-01", "dateType": "Issued"}],
+                    "identifiers": [
+                        {"identifier": parent_doi, "identifierType": "DOI"}
+                    ],
+                    "publicationYear": "2020",
+                    "publisher": "Acme Inc",
+                },
+                doi=parent_doi,
+                url=f"https://127.0.0.1:5000/doi/{parent_doi}",
+            ),
+        ]
+    )
+
+    # make sure we still have the PID registered for tombstone
+    assert record._record.pid.status == PIDStatus.REGISTERED
+
+
+def test_invalidate_versions_pid(
+    running_app,
+    search_clear,
+    minimal_record,
+    mocker,
+    superuser_identity,
+    mock_datacite_client,
+):
+    """No pid provided, creating one by default."""
+    service = current_rdm_records.records_service
+    draft = service.create(superuser_identity, minimal_record)
+    record = service.publish(superuser_identity, draft.id)
+
+    oai = record["pids"]["oai"]["identifier"]
+    doi = record["pids"]["doi"]["identifier"]
+    parent_doi = record["parent"]["pids"]["doi"]["identifier"]
+    provider = service.pids.pid_manager._get_provider("doi", "datacite")
+    pid = provider.get(pid_value=doi)
+    assert pid.status == PIDStatus.REGISTERED
+    parent_provider = service.pids.parent_pid_manager._get_provider("doi", "datacite")
+    parent_pid = parent_provider.get(pid_value=parent_doi)
+    assert parent_pid.status == PIDStatus.REGISTERED
+
+    minimal_record_v2 = deepcopy(minimal_record)
+    minimal_record_v2["metadata"]["title"] = f"{minimal_record['metadata']['title']} v2"
+    draft_v2 = service.new_version(superuser_identity, record.id)
+    service.update_draft(superuser_identity, draft_v2.id, minimal_record_v2)
+    record_v2 = service.publish(superuser_identity, draft_v2.id)
+    record_v2_doi = record_v2["pids"]["doi"]["identifier"]
+
+    tombstone_info = {"note": "no specific reason, tbh"}
+
+    # delete v1
+    record = service.delete_record(
+        superuser_identity, id_=record.id, data=tombstone_info
+    )
+
+    assert mock_datacite_client.api.hide_doi.called is True
+    assert mock_datacite_client.api.update_doi.called is True
+
+    expected_calls = [
+        # UPDATE PARENT WITH BOTH VERSIONS (publish new)
+        mock.call(
+            metadata={
+                "schemaVersion": "http://datacite.org/schema/kernel-4",
+                "types": {"resourceTypeGeneral": "Image", "resourceType": "Photo"},
+                "creators": [
+                    {
+                        "name": "Brown, Troy",
+                        "familyName": "Brown",
+                        "nameIdentifiers": [],
+                        "nameType": "Personal",
+                        "givenName": "Troy",
+                    },
+                    {
+                        "name": "Troy Inc.",
+                        "nameIdentifiers": [],
+                        "nameType": "Organizational",
+                    },
+                ],
+                "relatedIdentifiers": [
+                    {
+                        "relatedIdentifier": record_v2_doi,
+                        "relationType": "HasVersion",
+                        "relatedIdentifierType": "DOI",
+                    },
+                    {
+                        "relatedIdentifier": doi,
+                        "relationType": "HasVersion",
+                        "relatedIdentifierType": "DOI",
+                    },
+                ],
+                "titles": [{"title": "A Romans story v2"}],
+                "dates": [{"date": "2020-06-01", "dateType": "Issued"}],
+                "identifiers": [{"identifier": parent_doi, "identifierType": "DOI"}],
+                "publicationYear": "2020",
+                "publisher": "Acme Inc",
+            },
+            doi=parent_doi,
+            url=f"https://127.0.0.1:5000/doi/{parent_doi}",
+        ),
+        # REMOVE ONE VERSION FROM THE PARENT
+        mock.call(
+            metadata={
+                "schemaVersion": "http://datacite.org/schema/kernel-4",
+                "types": {"resourceTypeGeneral": "Image", "resourceType": "Photo"},
+                "creators": [
+                    {
+                        "name": "Brown, Troy",
+                        "familyName": "Brown",
+                        "nameIdentifiers": [],
+                        "nameType": "Personal",
+                        "givenName": "Troy",
+                    },
+                    {
+                        "name": "Troy Inc.",
+                        "nameIdentifiers": [],
+                        "nameType": "Organizational",
+                    },
+                ],
+                "relatedIdentifiers": [
+                    {
+                        "relatedIdentifier": record_v2_doi,
+                        "relationType": "HasVersion",
+                        "relatedIdentifierType": "DOI",
+                    }
+                ],
+                "titles": [{"title": "A Romans story v2"}],
+                "dates": [{"date": "2020-06-01", "dateType": "Issued"}],
+                "identifiers": [
+                    {"identifier": parent_doi, "identifierType": "DOI"},
+                ],
+                "publicationYear": "2020",
+                "publisher": "Acme Inc",
+            },
+            doi=parent_doi,
+            url=f"https://127.0.0.1:5000/doi/{parent_doi}",
+        ),
+    ]
+
+    mock_datacite_client.api.update_doi.assert_has_calls(expected_calls)
+
+    # make sure we still have the PID registered for tombstone
+    assert record._record.pid.status == PIDStatus.REGISTERED
+
+    # DELETE THE SECOND VERSION
+    record_v2_del = service.delete_record(
+        superuser_identity, id_=record_v2.id, data=tombstone_info
+    )
+
+    mock_datacite_client.api.update_doi.assert_has_calls(
+        expected_calls
+        + [
+            # REMOVE LAST VERSION FROM THE PARENT
+            mock.call(
+                metadata={
+                    "schemaVersion": "http://datacite.org/schema/kernel-4",
+                    "types": {"resourceTypeGeneral": "Image", "resourceType": "Photo"},
+                    "creators": [
+                        {
+                            "name": "Brown, Troy",
+                            "familyName": "Brown",
+                            "nameIdentifiers": [],
+                            "nameType": "Personal",
+                            "givenName": "Troy",
+                        },
+                        {
+                            "name": "Troy Inc.",
+                            "familyName": "Troy Inc.",
+                            "nameIdentifiers": [],
+                            "nameType": "Organizational",
+                        },
+                    ],
+                    "titles": [{"title": "A Romans story v2"}],
+                    "dates": [{"date": "2020-06-01", "dateType": "Issued"}],
+                    "identifiers": [
+                        {"identifier": parent_doi, "identifierType": "DOI"},
+                    ],
+                    "publicationYear": "2020",
+                    "publisher": "Acme Inc",
+                },
+                doi=parent_doi,
+                url=f"https://127.0.0.1:5000/doi/{parent_doi}",
+            ),
+        ],
+    )
+
+
+def test_restore_pid(
+    running_app,
+    search_clear,
+    minimal_record,
+    mocker,
+    superuser_identity,
+    mock_datacite_client,
+):
+    """No pid provided, creating one by default."""
+    service = current_rdm_records.records_service
+    draft = service.create(superuser_identity, minimal_record)
+    record = service.publish(superuser_identity, draft.id)
+
+    oai = record["pids"]["oai"]["identifier"]
+    doi = record["pids"]["doi"]["identifier"]
+    parent_doi = record["parent"]["pids"]["doi"]["identifier"]
+    provider = service.pids.pid_manager._get_provider("doi", "datacite")
+    pid = provider.get(pid_value=doi)
+    assert pid.status == PIDStatus.REGISTERED
+    parent_provider = service.pids.parent_pid_manager._get_provider("doi", "datacite")
+    parent_pid = parent_provider.get(pid_value=parent_doi)
+    assert parent_pid.status == PIDStatus.REGISTERED
+
+    tombstone_info = {"note": "no specific reason, tbh"}
+
+    record = service.delete_record(
+        superuser_identity, id_=record.id, data=tombstone_info
+    )
+
+    assert mock_datacite_client.api.hide_doi.called is True
+    assert mock_datacite_client.api.update_doi.called is True
+
+    expected_calls = [
+        mock.call(
+            metadata={
+                "schemaVersion": "http://datacite.org/schema/kernel-4",
+                "types": {"resourceTypeGeneral": "Image", "resourceType": "Photo"},
+                "creators": [
+                    {
+                        "name": "Brown, Troy",
+                        "familyName": "Brown",
+                        "nameIdentifiers": [],
+                        "nameType": "Personal",
+                        "givenName": "Troy",
+                    },
+                    {
+                        "familyName": "Troy Inc.",
+                        "name": "Troy Inc.",
+                        "nameIdentifiers": [],
+                        "nameType": "Organizational",
+                    },
+                ],
+                "titles": [{"title": "A Romans story"}],
+                "dates": [{"date": "2020-06-01", "dateType": "Issued"}],
+                "identifiers": [{"identifier": parent_doi, "identifierType": "DOI"}],
+                "publicationYear": "2020",
+                "publisher": "Acme Inc",
+            },
+            doi=parent_doi,
+            url=f"https://127.0.0.1:5000/doi/{parent_doi}",
+        ),
+    ]
+    mock_datacite_client.api.update_doi.assert_has_calls(expected_calls)
+
+    # make sure we still have the PID registered for tombstone
+    assert record._record.pid.status == PIDStatus.REGISTERED
+
+    restored_rec = service.restore_record(superuser_identity, record.id)
+
+    # once for parent + once for the record
+    assert mock_datacite_client.api.show_doi.call_count == 2
+
+    mock_datacite_client.api.update_doi.assert_has_calls(
+        expected_calls
+        + [
+            mock.call(
+                metadata={
+                    "schemaVersion": "http://datacite.org/schema/kernel-4",
+                    "types": {"resourceTypeGeneral": "Image", "resourceType": "Photo"},
+                    "creators": [
+                        {
+                            "name": "Brown, Troy",
+                            "familyName": "Brown",
+                            "nameIdentifiers": [],
+                            "nameType": "Personal",
+                            "givenName": "Troy",
+                        },
+                        {
+                            "name": "Troy Inc.",
+                            "familyName": "Troy Inc.",
+                            "nameIdentifiers": [],
+                            "nameType": "Organizational",
+                        },
+                    ],
+                    "relatedIdentifiers": [
+                        {
+                            "relatedIdentifier": doi,  # restored version DOI
+                            "relationType": "HasVersion",
+                            "relatedIdentifierType": "DOI",
+                        },
+                    ],
+                    "titles": [{"title": "A Romans story"}],
+                    "dates": [{"date": "2020-06-01", "dateType": "Issued"}],
+                    "identifiers": [
+                        {"identifier": parent_doi, "identifierType": "DOI"}
+                    ],
+                    "publicationYear": "2020",
+                    "publisher": "Acme Inc",
+                },
+                doi=parent_doi,
+                url=f"https://127.0.0.1:5000/doi/{parent_doi}",
+            ),
+        ]
+    )
+
+    assert restored_rec._obj.deletion_status == RecordDeletionStatusEnum.PUBLISHED

@@ -190,6 +190,10 @@ class DataCitePIDProvider(PIDProvider):
 
         return True
 
+    def restore(self, pid, **kwargs):
+        """Restore previously deactivated DOI."""
+        self.client.api.show_doi(pid.pid_value)
+
     def delete(self, pid, **kwargs):
         """Delete/unregister a registered DOI.
 

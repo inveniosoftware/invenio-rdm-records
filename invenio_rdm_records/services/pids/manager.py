@@ -231,11 +231,15 @@ class PIDManager:
 
         provider.register(pid, record=record, url=url)
 
-    def discard(self, scheme, identifier, provider_name=None):
+    def discard(self, scheme, identifier, provider_name=None, soft_delete=False):
         """Discard a PID."""
         provider = self._get_provider(scheme, provider_name)
         pid = provider.get(identifier)
-        if not provider.can_modify(pid):
+
+        # soft delete defines if the action comes from an admin or a regular user
+        # regular user never tries to soft delete
+        # TODO come up with better architecture
+        if not provider.can_modify(pid) and not soft_delete:
             raise ValidationError(
                 message=[
                     {
@@ -248,9 +252,28 @@ class PIDManager:
                 ]
             )
 
-        provider.delete(pid)
+        # the provider should check the conditions of deletion
+        provider.delete(pid, soft_delete=soft_delete)
 
-    def discard_all(self, pids):
+    def restore(self, scheme, identifier, provider_name=None):
+        """Restore previously invalidated DOI."""
+        provider = self._get_provider(scheme, provider_name)
+        pid = provider.get(identifier)
+        provider.restore(pid)
+
+    def restore_all(self, pids):
+        """Restore all pids."""
+        for scheme, pid_attrs in pids.items():
+            try:
+                self.restore(
+                    scheme,
+                    pid_attrs["identifier"],
+                    pid_attrs["provider"],
+                )
+            except PIDDoesNotExistError:
+                pass  # might not have been saved to DB yet
+
+    def discard_all(self, pids, soft_delete=False):
         """Discard all PIDs."""
         for scheme, pid_attrs in pids.items():
             try:
@@ -258,6 +281,7 @@ class PIDManager:
                     scheme,
                     pid_attrs["identifier"],
                     pid_attrs["provider"],
+                    soft_delete=soft_delete,
                 )
             except PIDDoesNotExistError:
                 pass  # might not have been saved to DB yet

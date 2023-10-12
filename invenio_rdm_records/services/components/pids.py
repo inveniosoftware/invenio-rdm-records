@@ -127,6 +127,16 @@ class PIDsComponent(ServiceComponent):
         self.service.pids.pid_manager.validate(pids, record)
         draft.pids = pids
 
+    def delete_record(self, identity, data=None, record=None, uow=None):
+        """Process pids on delete record."""
+        record_pids = copy(record.get("pids", {}))
+        self.service.pids.pid_manager.discard_all(record_pids, soft_delete=True)
+
+    def restore_record(self, identity, record=None, uow=None):
+        """Restore previously invalidated pids."""
+        record_pids = copy(record.get("pids", {}))
+        self.service.pids.pid_manager.restore_all(record_pids)
+
 
 class ParentPIDsComponent(ServiceComponent):
     """Service component for record parent PIDs."""
@@ -171,6 +181,32 @@ class ParentPIDsComponent(ServiceComponent):
 
         # Async register/update tasks after transaction commit.
         for scheme in pids.keys():
+            self.uow.register(
+                TaskOp(register_or_update_pid, record["id"], scheme, parent=True)
+            )
+
+    def delete_record(self, identity, data=None, record=None, uow=None):
+        """Process pids on delete record."""
+        record_cls = self.service.record_cls
+        parent_pids = copy(record.parent.get("pids", {}))
+        if record_cls.next_latest_published_record_by_parent(record.parent) is None:
+            self.service.pids.parent_pid_manager.discard_all(
+                parent_pids, soft_delete=True
+            )
+
+        # Async register/update tasks after transaction commit.
+        for scheme in parent_pids.keys():
+            self.uow.register(
+                TaskOp(register_or_update_pid, record["id"], scheme, parent=True)
+            )
+
+    def restore_record(self, identity, record=None, uow=None):
+        """Restore previously invalidated pids."""
+        parent_pids = copy(record.parent.get("pids", {}))
+        self.service.pids.parent_pid_manager.restore_all(parent_pids)
+
+        # Async register/update tasks after transaction commit.
+        for scheme in parent_pids.keys():
             self.uow.register(
                 TaskOp(register_or_update_pid, record["id"], scheme, parent=True)
             )

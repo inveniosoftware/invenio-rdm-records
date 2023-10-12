@@ -185,7 +185,7 @@ class RDMRecordService(RecordService):
         )
 
         new_record_latest_version = None
-        if record.versions.is_latest == True:
+        if record.versions.is_latest is True:
             # set latest to the previous non deleted record
             new_record_latest_version = (
                 self.record_cls.next_latest_published_record_by_parent(record.parent)
