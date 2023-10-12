@@ -11,6 +11,14 @@
 Changes
 =======
 
+Version 4.34.0 (2023-10-12)
+
+- oai: add alias methods for backwards compatibility
+- oai: marcxml: string encoding bug
+- dependencies: upper pinned types requests.
+- add schemaorg serializer
+- oaiserver: add rebuild index method
+
 Version 4.33.2 (2023-10-11)
 
 - deposit form: improve UX of contributors modal
