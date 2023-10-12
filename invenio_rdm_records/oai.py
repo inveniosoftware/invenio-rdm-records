@@ -147,3 +147,8 @@ class OAIRecordSearch(RecordsSearch):
             dsl.Q("exists", field="pids.oai.identifier"),
             dsl.Q("term", **{"access.record": "public"}),
         ]
+
+
+# Alias methods, to be deprecated
+oai_marcxml_etree = marcxml_etree
+oai_dcat = dcat_etree
