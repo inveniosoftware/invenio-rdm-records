@@ -20,6 +20,7 @@ from invenio_records_resources.services import LinksTemplate, ServiceSchemaWrapp
 from invenio_records_resources.services.uow import RecordCommitOp, unit_of_work
 from invenio_requests.services.results import EntityResolverExpandableField
 from invenio_search.engine import dsl
+from sqlalchemy.exc import NoResultFound
 
 from invenio_rdm_records.records.models import RDMRecordQuota, RDMUserQuota
 
@@ -423,6 +424,54 @@ class RDMRecordService(RecordService):
             expand,
             permission_action="read_deleted",
             **kwargs,
+        )
+
+    def scan_versions(
+        self,
+        identity,
+        id_,
+        params=None,
+        search_preference=None,
+        expand=False,
+        permission_action="read_deleted",
+        **kwargs,
+    ):
+        """Search for record's versions."""
+        try:
+            record = self.record_cls.pid.resolve(id_, registered_only=False)
+        except NoResultFound:
+            record = self.draft_cls.pid.resolve(id_, registered_only=False)
+
+        self.require_permission(identity, "read", record=record)
+        extra_filter = dsl.Q("term", **{"parent.id": str(record.parent.pid.pid_value)})
+        if filter_ := kwargs.pop("extra_filter", None):
+            extra_filter = filter_ & extra_filter
+
+        # Prepare and execute the search
+        params = params or {}
+
+        search_result = self._search(
+            "search_versions",
+            identity,
+            params,
+            search_preference,
+            record_cls=self.record_cls,
+            search_opts=self.config.search_versions,
+            extra_filter=extra_filter,
+            permission_action=permission_action,
+            **kwargs,
+        ).scan()
+        return self.result_list(
+            self,
+            identity,
+            search_result,
+            params,
+            links_tpl=LinksTemplate(
+                self.config.links_search_versions, context={"id": id_, "args": params}
+            ),
+            links_item_tpl=self.links_item_tpl,
+            expandable_fields=self.expandable_fields,
+            expand=expand,
         )
 
     #

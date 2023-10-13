@@ -389,7 +389,7 @@ class DataCite43Schema(BaseSerializerSchema):
             # Fetch DOIs for all versions
             # NOTE: The refresh is safe to do here since we'll be in Celery task
             current_rdm_records_service.indexer.refresh()
-            record_versions = current_rdm_records_service.search_versions(
+            record_versions = current_rdm_records_service.scan_versions(
                 system_identity,
                 obj._child["id"],
                 params={"_source_includes": "pids.doi"},
