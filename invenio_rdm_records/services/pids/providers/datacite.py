@@ -15,7 +15,8 @@ from collections import ChainMap
 from json import JSONDecodeError
 
 from datacite import DataCiteRESTClient
-from datacite.errors import DataCiteError, DataCiteNoContentError, DataCiteServerError
+from datacite.errors import DataCiteError, DataCiteNoContentError, DataCiteServerError, \
+    DataCiteNotFoundError
 from flask import current_app
 from invenio_i18n import lazy_gettext as _
 from invenio_pidstore.models import PIDStatus
@@ -192,7 +193,11 @@ class DataCitePIDProvider(PIDProvider):
 
     def restore(self, pid, **kwargs):
         """Restore previously deactivated DOI."""
-        self.client.api.show_doi(pid.pid_value)
+        try:
+            self.client.api.show_doi(pid.pid_value)
+        except DataCiteNotFoundError as e:
+            if not current_app.config["DATACITE_TEST_MODE"]:
+                raise e
 
     def delete(self, pid, **kwargs):
         """Delete/unregister a registered DOI.
