@@ -11,6 +11,10 @@
 Changes
 =======
 
+Version 4.36.0 (2023-10-13)
+
+- service add version scan method
+
 Version 4.35.0 (2023-10-13)
 
 - datacite: hide DOI on delete record admin action
