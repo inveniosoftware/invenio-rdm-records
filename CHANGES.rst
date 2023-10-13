@@ -11,6 +11,11 @@
 Changes
 =======
 
+Version 4.35.0 (2023-10-13)
+
+- datacite: hide DOI on delete record admin action
+- datacite: show DOI on restore record admin action
+
 Version 4.34.0 (2023-10-12)
 
 - oai: add alias methods for backwards compatibility
