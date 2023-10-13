@@ -31,7 +31,8 @@ from .tokens.errors import (
 
 def get_or_create_user(email):
     """Get or create a user."""
-    user = current_datastore.get_user(email)
+    with db.session.no_autoflush:
+        user = current_datastore.get_user(email)
     if not user:
         user = current_datastore.create_user(
             email=email,
