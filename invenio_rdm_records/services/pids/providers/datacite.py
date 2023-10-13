@@ -15,8 +15,12 @@ from collections import ChainMap
 from json import JSONDecodeError
 
 from datacite import DataCiteRESTClient
-from datacite.errors import DataCiteError, DataCiteNoContentError, DataCiteServerError, \
-    DataCiteNotFoundError
+from datacite.errors import (
+    DataCiteError,
+    DataCiteNoContentError,
+    DataCiteNotFoundError,
+    DataCiteServerError,
+)
 from flask import current_app
 from invenio_i18n import lazy_gettext as _
 from invenio_pidstore.models import PIDStatus
