@@ -11,6 +11,10 @@
 Changes
 =======
 
+Version 4.36.1 (2023-10-14)
+
+- github: read releases by user identity permission
+
 Version 4.36.0 (2023-10-13)
 
 - service add version scan method
