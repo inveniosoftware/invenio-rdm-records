@@ -13,6 +13,7 @@ from invenio_github.api import GitHubRelease
 from invenio_github.models import ReleaseStatus
 from invenio_records_resources.services.uow import UnitOfWork
 
+from ..errors import RecordDeletedException
 from ...proxies import current_rdm_records_service
 from ...resources.serializers.ui import UIJSONSerializer
 from .metadata import RDMReleaseMetadata
@@ -35,7 +36,10 @@ class RDMGithubRelease(GitHubRelease):
         if not self.release_object.record_id:
             return None
         recid = retrieve_recid_by_uuid(self.release_object.record_id)
-        return current_rdm_records_service.read(system_identity, recid.pid_value)
+        try:
+            return current_rdm_records_service.read(system_identity, recid.pid_value)
+        except RecordDeletedException:
+            return None
 
     def _upload_files_to_draft(self, draft, draft_file_service, uow):
         """Upload files to draft."""
