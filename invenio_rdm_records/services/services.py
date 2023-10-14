@@ -394,13 +394,22 @@ class RDMRecordService(RecordService):
         **kwargs,
     ):
         """Search for drafts that have not been marked as deleted."""
-        # because drafts don't have a 'deletion_status', a simple positive filter
-        # won't work in cases where records and drafts are mixed...
-        published_filter = dsl.Q(
-            "term", **{"deletion_status": RecordDeletionStatusEnum.PUBLISHED.value}
-        )
-        drafts_filter = dsl.Q("term", **{"is_published": False})
-        search_filter = drafts_filter | published_filter
+        # ATTENTION: super() applies dsl.Q("term", has_draft=False) & search_filter
+        #
+        # The "has_draft=False" ensures that we return either:
+        # - a record without a draft, or
+        # - a draft
+        #
+        # To filter out deleted records we apply the following logic:
+        #   deletion_status=="P" or "deletion_status" not in data
+
+        search_filter = dsl.query.Q("bool", should=[
+            dsl.query.Q("bool", must=[dsl.query.Q("term", deletion_status=RecordDeletionStatusEnum.PUBLISHED.value)]),
+            # Drafts does not have deletion_status so this clause is needed to
+            # prevent the above clause from filtering out the drafts
+            # TODO: ensure draft also has the needed data.
+            dsl.query.Q("bool", must_not=[dsl.query.Q("exists", field="deletion_status")]),
+        ])
         if extra_filter:
             search_filter &= extra_filter
         return super().search_drafts(
