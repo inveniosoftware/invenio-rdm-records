@@ -33,8 +33,9 @@ class RDMGithubRelease(GitHubRelease):
 
     def resolve_record(self):
         """Resolves an RDM record from a release."""
-        if not self.release_object.record_id:
+        if (self.release_object is None) or (not self.release_object.record_id):
             return None
+
         recid = retrieve_recid_by_uuid(self.release_object.record_id)
         try:
             return current_rdm_records_service.read(system_identity, recid.pid_value)
