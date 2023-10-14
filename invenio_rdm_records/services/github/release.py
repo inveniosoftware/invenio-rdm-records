@@ -13,9 +13,9 @@ from invenio_github.api import GitHubRelease
 from invenio_github.models import ReleaseStatus
 from invenio_records_resources.services.uow import UnitOfWork
 
-from ..errors import RecordDeletedException
 from ...proxies import current_rdm_records_service
 from ...resources.serializers.ui import UIJSONSerializer
+from ..errors import RecordDeletedException
 from .metadata import RDMReleaseMetadata
 from .utils import retrieve_recid_by_uuid
 
