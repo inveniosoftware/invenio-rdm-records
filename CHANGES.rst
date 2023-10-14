@@ -11,6 +11,10 @@
 Changes
 =======
 
+Version 4.36.2 (2023-10-14)
+
+- github: resolve record only if release present
+
 Version 4.36.1 (2023-10-14)
 
 - github: read releases by user identity permission
