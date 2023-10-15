@@ -402,14 +402,26 @@ class RDMRecordService(RecordService):
         #
         # To filter out deleted records we apply the following logic:
         #   deletion_status=="P" or "deletion_status" not in data
-
-        search_filter = dsl.query.Q("bool", should=[
-            dsl.query.Q("bool", must=[dsl.query.Q("term", deletion_status=RecordDeletionStatusEnum.PUBLISHED.value)]),
-            # Drafts does not have deletion_status so this clause is needed to
-            # prevent the above clause from filtering out the drafts
-            # TODO: ensure draft also has the needed data.
-            dsl.query.Q("bool", must_not=[dsl.query.Q("exists", field="deletion_status")]),
-        ])
+        search_filter = dsl.query.Q(
+            "bool",
+            should=[
+                dsl.query.Q(
+                    "bool",
+                    must=[
+                        dsl.query.Q(
+                            "term",
+                            deletion_status=RecordDeletionStatusEnum.PUBLISHED.value,
+                        )
+                    ],
+                ),
+                # Drafts does not have deletion_status so this clause is needed to
+                # prevent the above clause from filtering out the drafts
+                # TODO: ensure draft also has the needed data.
+                dsl.query.Q(
+                    "bool", must_not=[dsl.query.Q("exists", field="deletion_status")]
+                ),
+            ],
+        )
         if extra_filter:
             search_filter &= extra_filter
         return super().search_drafts(

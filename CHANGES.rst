@@ -11,6 +11,10 @@
 Changes
 =======
 
+Version 4.36.3 (2023-10-15)
+
+- fix search of drafts
+
 Version 4.36.2 (2023-10-14)
 
 - datastore: prevent autoflush on search
