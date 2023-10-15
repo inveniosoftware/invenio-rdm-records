@@ -7,7 +7,7 @@
 # details.
 
 """Sort parameter interpreter API."""
-from flask_login import current_user
+from invenio_access.permissions import authenticated_user
 from invenio_records_resources.services.records.params.base import ParamInterpreter
 
 from invenio_rdm_records.records.systemfields.deletion_status import (
@@ -47,10 +47,14 @@ class MyDraftsParam(ParamInterpreter):
     def apply(self, identity, search, params):
         """Evaluate the include_deleted parameter on the search."""
         value = params.pop("include_deleted", None)
+
         # Filter prevents from other users' drafts from displaying on Moderator's
         # dashboard
-        if value is None and current_user.is_authenticated:
+        def is_user_authenticated():
+            return authenticated_user in identity.provides
+
+        if value is None and is_user_authenticated():
             search = search.filter(
-                "term", **{"parent.access.owned_by.user": current_user.id}
+                "term", **{"parent.access.owned_by.user": identity.id}
             )
         return search
