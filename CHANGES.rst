@@ -11,6 +11,10 @@
 Changes
 =======
 
+Version 4.36.4 (2023-10-15)
+
+- remove dependency in `flask_login.current_user` on service layer
+
 Version 4.36.3 (2023-10-15)
 
 - fix search of drafts
