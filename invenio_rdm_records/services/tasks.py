@@ -72,11 +72,15 @@ def reindex_stats(stats_indices):
         all_parents.add(parent_id)
 
     if all_parents:
-        records_q = dsl.Q("terms", parent__id=list(all_parents))
-        current_rdm_records.records_service.reindex(
-            params={"allversions": True},
-            identity=system_identity,
-            search_query=records_q,
-        )
+        all_parents_list = list(all_parents)
+        step = 10000
+        end = len(list(all_parents))
+        for i in range(0, end, step):
+            records_q = dsl.Q("terms", parent__id=all_parents_list[i : i + step])
+            current_rdm_records.records_service.reindex(
+                params={"allversions": True},
+                identity=system_identity,
+                search_query=records_q,
+            )
     bm.set_bookmark(reindex_start_time)
     return "%d documents reindexed" % len(all_parents)
