@@ -13,6 +13,7 @@ from invenio_access.permissions import any_user, authenticated_user, system_iden
 from invenio_communities.communities.records.api import Community
 from invenio_communities.generators import CommunityRoleNeed
 from invenio_communities.members.records.api import Member
+from invenio_pidstore.errors import PIDDoesNotExistError
 from invenio_records_resources.services.errors import PermissionDeniedError
 from invenio_requests import current_requests_service
 from marshmallow.exceptions import ValidationError
@@ -175,7 +176,7 @@ def test_simple_flow(draft, running_app, community, service, requests_service):
     assert record["status"] == "published"
 
     # ### Read draft (which should have been removed)
-    with pytest.raises(NoResultFound):
+    with pytest.raises(PIDDoesNotExistError):
         service.read_draft(running_app.superuser_identity, draft.id)
 
     # ### Create a new version (still part of community)
