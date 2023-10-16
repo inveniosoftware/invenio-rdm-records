@@ -28,12 +28,13 @@ class CommunityInclusionNotificationBuilder(NotificationBuilder):
     type = "community-submission"
 
     @classmethod
-    def build(cls, request):
+    def build(cls, request, message=None):
         """Build notification with request context."""
         return Notification(
             type=cls.type,
             context={
                 "request": EntityResolverRegistry.reference_entity(request),
+                "message": message,
             },
         )
 
