@@ -26,8 +26,8 @@ import { scrollTop } from "../utils";
 
 class DepositBootstrapComponent extends Component {
   componentDidMount() {
-    const { fileUploadOngoing } = this.props;
     window.addEventListener("beforeunload", (e) => {
+      const { fileUploadOngoing } = this.props;
       if (fileUploadOngoing) {
         e.returnValue = "";
         return "";
