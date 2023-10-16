@@ -11,6 +11,10 @@
 Changes
 =======
 
+Version 4.36.6 (2023-10-16)
+
+- reindex stats in batches of 10k
+
 Version 4.36.5 (2023-10-16)
 
 - allow users to delete pending files
