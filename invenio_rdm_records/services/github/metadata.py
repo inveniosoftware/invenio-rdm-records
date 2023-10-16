@@ -81,24 +81,41 @@ class RDMReleaseMetadata(object):
 
     @property
     def contributors(self):
-        """Serializes contributors retrieved from github."""
+        """Serializes contributors retrieved from github.
+
+        .. note::
+
+            `self.rdm_release.contributors` might fail with a `UnexpectedGithubResponse`. This is an error from which the RDM release
+            processing can't recover since `creators` is a mandatory field.
+        """
 
         def serialize_author(gh_data):
             """Serializes github contributor data into RDM author."""
             login = gh_data["login"]
-            name = gh_data.get("name", login)
-            company = gh_data.get("company", "")
+            # Default name to the user's login
+            name = gh_data.get("name") or login
+            company = gh_data.get("company") or ""
 
             author = {}
-            if name.count(",") == 1:
+
+            total_commas = name.count(",")
+
+            # Case of "John Doe"
+            if total_commas == 0:
+                author["given_name"] = name
+                author["family_name"] = name
+            # Case of "Doe, John"
+            elif total_commas == 1:
                 family, given = name.split(",")
                 author["given_name"] = given.strip()
                 author["family_name"] = family.strip()
-                # autocompleted by RDM Metadata schema
-                author["name"] = name
+            # Case of "Mr, Doe, John, the Second"
             else:
-                author["family_name"] = name
-                author["name"] = name
+                family, given = name.split(
+                    ",", 1
+                )  # stop at the first occurrence, otherwise raises
+                author["given_name"] = given.strip()
+                author["family_name"] = family.strip()
 
             rdm_contributor = {
                 "person_or_org": {
@@ -114,7 +131,8 @@ class RDMReleaseMetadata(object):
         # Get contributors from api
         for c in self.rdm_release.contributors:
             rdm_author = serialize_author(c)
-            contributors.append(rdm_author)
+            if rdm_author:
+                contributors.append(rdm_author)
 
         return contributors
 
