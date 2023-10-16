@@ -11,6 +11,11 @@
 Changes
 =======
 
+Version 4.36.5 (2023-10-16)
+
+- allow users to delete pending files
+- fix beforeunload event in upload form
+
 Version 4.36.4 (2023-10-15)
 
 - remove dependency in `flask_login.current_user` on service layer
