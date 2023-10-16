@@ -192,7 +192,8 @@ class ReviewService(RecordService):
         uow.register(
             NotificationOp(
                 CommunityInclusionSubmittedNotificationBuilder.build(
-                    request_item._request
+                    request_item._request,
+                    message=data.get('payload', {}).get('content'),
                 )
             )
         )
