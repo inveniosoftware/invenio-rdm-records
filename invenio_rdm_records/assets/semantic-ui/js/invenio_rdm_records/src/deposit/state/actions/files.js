@@ -55,8 +55,18 @@ export const deleteFile = (file) => {
         },
       });
     } catch (error) {
-      dispatch({ type: FILE_DELETE_FAILED });
-      throw error;
+      if (error.response.status === 404 && file.uploadState?.isPending) {
+        // pending file was removed from the backend thus we can remove it from the state
+        dispatch({
+          type: FILE_DELETED_SUCCESS,
+          payload: {
+            filename: file.name,
+          },
+        });
+      } else {
+        dispatch({ type: FILE_DELETE_FAILED });
+        throw error;
+      }
     }
   };
 };
