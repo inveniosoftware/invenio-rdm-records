@@ -97,10 +97,7 @@ class RDMReleaseMetadata(object):
             company = gh_data.get("company")
 
             rdm_contributor = {
-                "person_or_org": {
-                    "type": "personal",
-                    "family_name": name
-                },
+                "person_or_org": {"type": "personal", "family_name": name},
             }
             if company:
                 rdm_contributor.update({"affiliations": [{"name": company}]})
