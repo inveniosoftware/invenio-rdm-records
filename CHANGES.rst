@@ -11,6 +11,10 @@
 Changes
 =======
 
+Version 4.36.7 (2023-10-17)
+
+- github: fixed authors serialization.
+
 Version 4.36.6 (2023-10-16)
 
 - reindex stats in batches of 10k
