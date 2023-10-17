@@ -11,6 +11,10 @@
 Changes
 =======
 
+Version 4.36.8 (2023-10-17)
+
+- github metadata: fix empty affiliations
+
 Version 4.36.7 (2023-10-17)
 
 - github: fixed authors serialization.
