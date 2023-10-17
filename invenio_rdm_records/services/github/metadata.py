@@ -91,39 +91,19 @@ class RDMReleaseMetadata(object):
 
         def serialize_author(gh_data):
             """Serializes github contributor data into RDM author."""
-            login = gh_data["login"]
+            gh_username = gh_data["login"]
             # Default name to the user's login
-            name = gh_data.get("name") or login
-            company = gh_data.get("company") or ""
-
-            author = {}
-
-            total_commas = name.count(",")
-
-            # Case of "John Doe"
-            if total_commas == 0:
-                author["given_name"] = name
-                author["family_name"] = name
-            # Case of "Doe, John"
-            elif total_commas == 1:
-                family, given = name.split(",")
-                author["given_name"] = given.strip()
-                author["family_name"] = family.strip()
-            # Case of "Mr, Doe, John, the Second"
-            else:
-                family, given = name.split(
-                    ",", 1
-                )  # stop at the first occurrence, otherwise raises
-                author["given_name"] = given.strip()
-                author["family_name"] = family.strip()
+            name = gh_data.get("name") or gh_username
+            company = gh_data.get("company")
 
             rdm_contributor = {
                 "person_or_org": {
                     "type": "personal",
-                    **author,
+                    "family_name": name
                 },
-                "affiliations": [{"name": company}],
             }
+            if company:
+                rdm_contributor.update({"affiliations": [{"name": company}]})
             return rdm_contributor
 
         contributors = []
