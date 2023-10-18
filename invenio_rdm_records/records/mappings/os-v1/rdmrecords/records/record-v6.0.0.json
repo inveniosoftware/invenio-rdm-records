@@ -1029,5 +1029,32 @@
         }
       }
     }
+  },
+  "settings": {
+    "index.query.default_field": [
+      "id",
+      "metadata.title",
+      "metadata.contact",
+      "metadata.contributors.affiliations.name",
+      "metadata.contributors.person_or_org.name",
+      "metadata.contributors.person_or_org.family_name",
+      "metadata.contributors.person_or_org.given_name",
+      "metadata.creators.affiliations.name",
+      "metadata.creators.person_or_org.name",
+      "metadata.creators.person_or_org.family_name",
+      "metadata.creators.person_or_org.given_name",
+      "metadata.description",
+      "metadata.formats",
+      "metadata.funding.award.identifiers.identifier",
+      "metadata.funding.award.funder.name",
+      "metadata.identifiers.identifier",
+      "metadata.location.place",
+      "metadata.location.description",
+      "metadata.publication_date",
+      "metadata.publisher",
+      "metadata.subjects.subject",
+      "metadata.title",
+      "metadata.version"
+    ]
   }
 }
