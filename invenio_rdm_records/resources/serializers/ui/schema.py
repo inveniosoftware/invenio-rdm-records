@@ -76,9 +76,10 @@ def make_affiliation_index(attr, obj, dummy_ctx):
         if "affiliations" in creator:
             creator["affiliations"] = list(map(apply_idx, creator["affiliations"]))
         if "role" in creator:
-            creator["role"]["title"] = gettext_from_dict(
-                creator["role"]["title"], get_locale(), current_default_locale()
-            )
+            if "title" in creator["role"]:
+                creator["role"]["title"] = gettext_from_dict(
+                    creator["role"]["title"], get_locale(), current_default_locale()
+                )
 
     return {
         attr: creators,
