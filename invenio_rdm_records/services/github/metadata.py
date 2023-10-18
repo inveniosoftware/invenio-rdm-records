@@ -126,18 +126,19 @@ class RDMReleaseMetadata(object):
             data = self.load_citation_file(citation_file_path)
 
             # Load metadata from citation file and serialize it
-            metadata = self.load_citation_metadata(data)
-            return self.serialize_citation_metadata(metadata)
+            return self.load_citation_metadata(data)
         except ValidationError as e:
             # Wrap the error into CustomGitHubMetadataError() so it can be handled upstream
             raise CustomGitHubMetadataError(file=citation_file_path, message=e.messages)
 
-    def serialize_citation_metadata(self, data):
-        """Serializes citation data to RDM."""
-        if not data:
-            return {}
-        # TODO to be implemented
-        return data
+    @property
+    def extra_metadata(self):
+        """Get extra metadata for the release."""
+        return self.load_extra_metadata()
+
+    def load_extra_metadata(self):
+        """Get extra metadata for the release."""
+        return {}
 
     def load_citation_file(self, citation_file_name):
         """Returns the citation file data."""
@@ -145,7 +146,7 @@ class RDMReleaseMetadata(object):
             return {}
 
         # Fetch the citation file and load it
-        content = self.retrieve_remote_file(citation_file_name)
+        content = self.rdm_release.retrieve_remote_file(citation_file_name)
 
         data = (
             yaml.safe_load(content.decoded.decode("utf-8"))
@@ -162,7 +163,7 @@ class RDMReleaseMetadata(object):
 
         citation_schema = current_app.config.get("GITHUB_CITATION_METADATA_SCHEMA")
 
-        assert isinstance(citation_schema, Schema), _(
+        assert issubclass(citation_schema, Schema), _(
             "Citation schema is needed to load citation metadata."
         )
 

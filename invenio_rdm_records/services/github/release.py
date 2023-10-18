@@ -23,11 +23,14 @@ from .utils import retrieve_recid_by_uuid
 class RDMGithubRelease(GitHubRelease):
     """Implement release API instance for RDM."""
 
+    metadata_cls = RDMReleaseMetadata
+
     @property
     def metadata(self):
         """Extracts metadata to create an RDM draft."""
-        metadata = RDMReleaseMetadata(self)
+        metadata = self.metadata_cls(self)
         output = metadata.default_metadata
+        output.update(metadata.extra_metadata)
         output.update(metadata.citation_metadata)
         return output
 
