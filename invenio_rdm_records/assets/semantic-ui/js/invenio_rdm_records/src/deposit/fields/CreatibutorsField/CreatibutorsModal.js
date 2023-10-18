@@ -67,7 +67,7 @@ export class CreatibutorsModal extends Component {
   initStatesFromInitialCreatibutor(initialCreatibutor) {
     const { affiliations = [] } = initialCreatibutor;
     const { isOrganization } = this.state;
-    const identifiers = initialCreatibutor.person_or_org.identifiers.map(
+    const identifiers = initialCreatibutor.person_or_org.identifiers?.map(
       (identifier) => identifier.identifier
     );
     this.setState({
