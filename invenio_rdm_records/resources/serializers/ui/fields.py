@@ -136,7 +136,7 @@ class AccessStatusField(fields.Field):
     def _serialize(self, value, attr, obj, **kwargs):
         """Serialise access status."""
         record_access_dict = obj.get("access")
-        has_files = obj.get("files").get("enabled", False)
+        has_files = obj.get("files", {}).get("enabled", False)
         if record_access_dict:
             record_access_status_ui = UIObjectAccessStatus(
                 record_access_dict, has_files
