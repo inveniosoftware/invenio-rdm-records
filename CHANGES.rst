@@ -11,6 +11,10 @@
 Changes
 =======
 
+Version 4.36.10 (2023-10-19)
+
+- access: relax serialization checks
+
 Version 4.36.9 (2023-10-18)
 
 - github: added support for extra metadata.
