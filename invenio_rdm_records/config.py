@@ -526,7 +526,11 @@ RDM_RESOURCE_ACCESS_TOKENS_SUBJECT_SCHEMA = tokens.resource_access.SubjectSchema
 """Resource access token Marshmallow schema for parsing JWT subject."""
 
 RDM_LOCK_EDIT_PUBLISHED_FILES = lock_edit_published_files
-"""Lock editing already published files (enforce record versioning)."""
+"""Lock editing already published files (enforce record versioning).
+
+   signature to implement:
+   def lock_edit_published_files(service, identity, record=None):
+"""
 
 # Feature flag to enable/disable user moderation
 RDM_USER_MODERATION_ENABLED = False
