@@ -13,7 +13,7 @@
 from copy import deepcopy
 from functools import partial
 
-from edtf import parse_edtf
+from babel_edtf import parse_edtf
 from flask import current_app, g
 from flask_resources import BaseObjectSchema
 from invenio_communities.communities.resources.ui_schema import (

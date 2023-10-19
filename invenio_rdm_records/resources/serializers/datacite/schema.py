@@ -9,7 +9,7 @@
 
 """DataCite based Schema for Invenio RDM Records."""
 
-from edtf import parse_edtf
+from babel_edtf import parse_edtf
 from edtf.parser.grammar import ParseException
 from flask import current_app
 from flask_resources.serializers import BaseSerializerSchema
