@@ -11,6 +11,10 @@
 Changes
 =======
 
+Version 4.37.1 (2023-10-19)
+
+- serializing: patch edtf date parser
+
 Version 4.37.0 (2023-10-19)
 
 - service config: change lock edit publish file
