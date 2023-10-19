@@ -118,7 +118,7 @@ def is_datacite_test(record, ctx):
     return current_app.config["DATACITE_TEST_MODE"]
 
 
-def lock_edit_published_files(record):
+def lock_edit_published_files(service, identity, record=None):
     """Return if files once published should be locked when editing the record.
 
     Return False to allow editing of published files or True otherwise.
