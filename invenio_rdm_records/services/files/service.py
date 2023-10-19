@@ -7,7 +7,6 @@
 
 """File Service API."""
 from invenio_records_resources.services import FileService
-from invenio_records_resources.services.errors import FileKeyNotFoundError
 
 from invenio_rdm_records.services.errors import RecordDeletedException
 
