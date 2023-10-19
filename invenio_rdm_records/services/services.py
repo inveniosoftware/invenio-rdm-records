@@ -132,7 +132,7 @@ class RDMRecordService(RecordService):
             f"access.embargo.active:true AND access.embargo.until:[* TO {today}]"
         )
 
-        return self.scan(identity=identity, q=embargoed_q)
+        return self.scan(identity=identity, q=embargoed_q, params={"allversions": True})
 
     def oai_result_item(self, identity, oai_record_source):
         """Get a result item from a record source in the OAI server.
