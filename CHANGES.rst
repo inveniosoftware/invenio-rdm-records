@@ -11,6 +11,13 @@
 Changes
 =======
 
+Version 4.36.9 (2023-10-18)
+
+- github: added support for extra metadata.
+- edit: fix serialization of creator roles
+- deposit: fix required identifiers for creators
+- serializers: fix wrongly used get
+
 Version 4.36.8 (2023-10-17)
 
 - github metadata: fix empty affiliations
