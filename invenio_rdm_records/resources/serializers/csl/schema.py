@@ -7,7 +7,7 @@
 
 """CSL based Schema for Invenio RDM Records."""
 
-from edtf import parse_edtf
+from babel_edtf import parse_edtf
 from edtf.parser.edtf_exceptions import EDTFParseException
 from edtf.parser.parser_classes import Date, Interval
 from flask_resources.serializers import BaseSerializerSchema

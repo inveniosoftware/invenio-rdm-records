@@ -10,7 +10,7 @@
 import calendar
 
 from arrow import Arrow
-from edtf import parse_edtf
+from babel_edtf import parse_edtf
 from edtf.parser.edtf_exceptions import EDTFParseException
 from invenio_records.dictutils import dict_lookup, parse_lookup_key
 from invenio_records.dumpers import SearchDumperExt

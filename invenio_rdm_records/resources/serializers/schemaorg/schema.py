@@ -11,8 +11,8 @@
 from typing import Optional
 
 import pycountry
+from babel_edtf import parse_edtf
 from commonmeta import dict_to_spdx, doi_as_url, parse_attributes, unwrap, wrap
-from edtf import parse_edtf
 from edtf.parser.grammar import ParseException
 from flask_resources.serializers import BaseSerializerSchema
 from idutils import to_url
