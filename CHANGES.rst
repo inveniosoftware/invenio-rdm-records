@@ -11,6 +11,11 @@
 Changes
 =======
 
+Version 4.37.0 (2023-10-19)
+
+- service config: change lock edit publish file
+- installation: bump invenio-drafts-resources
+
 Version 4.36.10 (2023-10-19)
 
 - access: relax serialization checks
