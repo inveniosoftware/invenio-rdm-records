@@ -263,6 +263,7 @@ class RDMRecordServiceConfig(RecordServiceConfig, ConfiguratorMixin):
         "RDM_SORT_OPTIONS",
         "RDM_FACETS",
         search_option_cls=RDMSearchOptions,
+        search_option_cls_key="RDM_SEARCH_OPTIONS_CLS",
     )
     search_drafts = FromConfigSearchOptions(
         "RDM_SEARCH_DRAFTS",
@@ -456,6 +457,7 @@ class RDMCommunityRecordsConfig(BaseRecordServiceConfig, ConfiguratorMixin):
         "RDM_SORT_OPTIONS",
         "RDM_FACETS",
         search_option_cls=RDMSearchOptions,
+        search_option_cls_key="RDM_SEARCH_OPTIONS_CLS",
     )
     search_versions = FromConfigSearchOptions(
         "RDM_SEARCH_VERSIONING",
