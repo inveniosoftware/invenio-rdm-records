@@ -152,7 +152,9 @@ class RDMRecordResourceConfig(RecordResourceConfig, ConfiguratorMixin):
         ),
     }
 
-    request_search_args = RDMSearchRequestArgsSchema
+    request_search_args = FromConfig(
+        "RDM_SEARCH_ARGS_SCHEMA", default=RDMSearchRequestArgsSchema
+    )
 
     response_handlers = FromConfig(
         "RDM_RECORDS_SERIALIZERS",
