@@ -83,8 +83,7 @@ class BibTexSchema(BaseSerializerSchema, CommonFieldsMixin):
         """Get creator."""
         creator = obj["metadata"]["creators"][0]["person_or_org"]
         return {
-            "given_name": creator["given_name"],
-            "family_name": creator["family_name"],
+            "name": creator["name"],
         }
 
     def get_booktitle(self, obj):
@@ -277,7 +276,7 @@ class BibTexSchema(BaseSerializerSchema, CommonFieldsMixin):
         if creator is None:
             return id
 
-        name = creator.get("family_name", creator.get("given_name"))
+        name = creator.get("name")
         pubdate = data.get("date_created", {}).get("year", None)
         year = id
         if pubdate is not None:
