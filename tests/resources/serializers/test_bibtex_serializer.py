@@ -22,11 +22,7 @@ def updated_minimal_record(minimal_record):
     for creator in minimal_record["metadata"]["creators"]:
         name = creator["person_or_org"].get("name")
         if not name:
-            creator["person_or_org"]["name"] = (
-                creator["person_or_org"].get("family_name")
-                + ", "
-                + creator["person_or_org"].get("given_name")
-            )
+            creator["person_or_org"]["name"] = "Name"
 
     return minimal_record
 
@@ -49,8 +45,8 @@ def test_bibtex_serializer_minimal_record(running_app, updated_minimal_record):
 
     expected_data = "\n".join(
         [
-            "@misc{brown_troy_2023_abcde-fghij,",
-            "  author       = {Brown, Troy and",
+            "@misc{brown_2023_abcde-fghij,",
+            "  author       = {Name and",
             "                  Troy Inc.},",
             "  title        = {A Romans story},",
             "  month        = mar,",
@@ -70,7 +66,7 @@ def test_bibtex_serializer_full_record(running_app, updated_full_record):
 
     expected_data = "\n".join(
         [
-            "@misc{nielsen_lars_holm_2023_abcde-fghij,",
+            "@misc{nielsen_2023_abcde-fghij,",
             "  author       = {Nielsen, Lars Holm},",
             "  title        = {InvenioRDM},",
             "  month        = mar,",
@@ -132,8 +128,8 @@ def test_misc_types(running_app, updated_minimal_record, resource_type):
 
     expected_data = "\n".join(
         [
-            "@misc{brown_troy_2023_abcde-fghij,",
-            "  author       = {Brown, Troy and",
+            "@misc{brown_2023_abcde-fghij,",
+            "  author       = {Name and",
             "                  Troy Inc.},",
             "  title        = {A Romans story},",
             "  month        = mar,",
@@ -167,8 +163,8 @@ def test_serialize_publication_conferencepaper(running_app, updated_minimal_reco
 
     expected_data = "\n".join(
         [
-            "@inproceedings{brown_troy_2023_abcde-fghij,",
-            "  author       = {Brown, Troy and",
+            "@inproceedings{brown_2023_abcde-fghij,",
+            "  author       = {Name and",
             "                  Troy Inc.},",
             "  title        = {A Romans story},",
             "  booktitle    = {book title},",
@@ -187,8 +183,8 @@ def test_serialize_publication_conferencepaper(running_app, updated_minimal_reco
 
     expected_data = "\n".join(
         [
-            "@proceedings{brown_troy_2023_abcde-fghij,",
-            "  author       = {Brown, Troy and",
+            "@proceedings{brown_2023_abcde-fghij,",
+            "  author       = {Name and",
             "                  Troy Inc.},",
             "  title        = {A Romans story},",
             "  year         = 2023,",
@@ -214,8 +210,8 @@ def test_serialize_publication_book(running_app, updated_minimal_record):
 
     expected_data = "\n".join(
         [
-            "@book{brown_troy_2023_abcde-fghij,",
-            "  author       = {Brown, Troy and",
+            "@book{brown_2023_abcde-fghij,",
+            "  author       = {Name and",
             "                  Troy Inc.},",
             "  title        = {A Romans story},",
             "  publisher    = {Acme Inc},",
@@ -233,9 +229,9 @@ def test_serialize_publication_book(running_app, updated_minimal_record):
 
     expected_data = "\n".join(
         [
-            "@booklet{brown_troy_2023_abcde-fghij,",
+            "@booklet{brown_2023_abcde-fghij,",
             "  title        = {A Romans story},",
-            "  author       = {Brown, Troy and",
+            "  author       = {Name and",
             "                  Troy Inc.},",
             "  month        = mar,",
             "  year         = 2023,",
@@ -261,8 +257,8 @@ def test_serialize_publication_article(running_app, updated_minimal_record):
 
     expected_data = "\n".join(
         [
-            "@article{brown_troy_2023_abcde-fghij,",
-            "  author       = {Brown, Troy and",
+            "@article{brown_2023_abcde-fghij,",
+            "  author       = {Name and",
             "                  Troy Inc.},",
             "  title        = {A Romans story},",
             "  journal      = {journal title},",
@@ -295,8 +291,8 @@ def test_serialize_publication_preprint(running_app, updated_minimal_record):
 
     expected_data = "\n".join(
         [
-            "@unpublished{brown_troy_2023_abcde-fghij,",
-            "  author       = {Brown, Troy and",
+            "@unpublished{brown_2023_abcde-fghij,",
+            "  author       = {Name and",
             "                  Troy Inc.},",
             "  title        = {A Romans story},",
             "  note         = {a description},",
@@ -325,8 +321,8 @@ def test_serialize_publication_thesis(running_app, updated_minimal_record):
 
     expected_data = "\n".join(
         [
-            "@phdthesis{brown_troy_2023_abcde-fghij,",
-            "  author       = {Brown, Troy and",
+            "@phdthesis{brown_2023_abcde-fghij,",
+            "  author       = {Name and",
             "                  Troy Inc.},",
             "  title        = {A Romans story},",
             "  school       = {A university},",
@@ -353,9 +349,9 @@ def test_serialize_publication_technicalnote(running_app, updated_minimal_record
 
     expected_data = "\n".join(
         [
-            "@manual{brown_troy_2023_abcde-fghij,",
+            "@manual{brown_2023_abcde-fghij,",
             "  title        = {A Romans story},",
-            "  author       = {Brown, Troy and",
+            "  author       = {Name and",
             "                  Troy Inc.},",
             "  month        = mar,",
             "  year         = 2023,",
@@ -388,8 +384,8 @@ def test_serialize_publication_workingpaper(running_app, updated_minimal_record)
 
     expected_data = "\n".join(
         [
-            "@unpublished{brown_troy_2023_abcde-fghij,",
-            "  author       = {Brown, Troy and",
+            "@unpublished{brown_2023_abcde-fghij,",
+            "  author       = {Name and",
             "                  Troy Inc.},",
             "  title        = {A Romans story},",
             "  note         = {a description},",
@@ -414,8 +410,8 @@ def test_serialize_software(running_app, updated_minimal_record):
 
     expected_data = "\n".join(
         [
-            "@software{brown_troy_2023_abcde-fghij,",
-            "  author       = {Brown, Troy and",
+            "@software{brown_2023_abcde-fghij,",
+            "  author       = {Name and",
             "                  Troy Inc.},",
             "  title        = {A Romans story},",
             "  month        = mar,",
@@ -440,8 +436,8 @@ def test_serialize_dataset(running_app, updated_minimal_record):
 
     expected_data = "\n".join(
         [
-            "@dataset{brown_troy_2023_abcde-fghij,",
-            "  author       = {Brown, Troy and",
+            "@dataset{brown_2023_abcde-fghij,",
+            "  author       = {Name and",
             "                  Troy Inc.},",
             "  title        = {A Romans story},",
             "  month        = mar,",
