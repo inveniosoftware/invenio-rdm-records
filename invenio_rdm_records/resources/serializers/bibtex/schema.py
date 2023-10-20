@@ -11,7 +11,6 @@ import datetime
 import textwrap
 
 from flask_resources.serializers import BaseSerializerSchema
-from invenio_i18n import lazy_gettext as _
 from marshmallow import fields, post_dump
 from slugify import slugify
 
@@ -149,8 +148,8 @@ class BibTexSchema(BaseSerializerSchema, CommonFieldsMixin):
         """
         return obj.get("custom_fields", {}).get("thesis:university")
 
-    @post_dump()
-    def dump_record(self, data, many, **kwargs):
+    @post_dump(pass_original=True)
+    def dump_record(self, data, original, many, **kwargs):
         """Dumps record."""
         resource_type = data["resource_id"]
 
@@ -160,7 +159,9 @@ class BibTexSchema(BaseSerializerSchema, CommonFieldsMixin):
 
         entry_fields = entry["req_fields"] + entry["opt_fields"]
 
-        dumped_record = self._dump_data(entry["name"], entry_fields, fields_map, data)
+        dumped_record = self._dump_data(
+            entry["name"], entry_fields, fields_map, data, original
+        )
         return dumped_record
 
     def _get_bibtex_entry(self, resource_type, fields_map):
@@ -189,13 +190,13 @@ class BibTexSchema(BaseSerializerSchema, CommonFieldsMixin):
                     break
         return entry
 
-    def _dump_data(self, name, entry_fields, fields, data):
+    def _dump_data(self, name, entry_fields, fields, data, original):
         """Dumps record data into the Bibtex format.
 
         :returns: the Bibtex string formatted.
         """
         out = "@" + name + "{"
-        out += self._get_citation_key(data) + ",\n"
+        out += self._get_citation_key(data, original) + ",\n"
         fields_string = self._parse_fields(entry_fields, fields)
         out += self._clean_input(fields_string)
         out += "}"
@@ -268,15 +269,16 @@ class BibTexSchema(BaseSerializerSchema, CommonFieldsMixin):
                 out = "  {0:<12} = {{{1}}},\n".format(field, value)
         return out
 
-    def _get_citation_key(self, data):
+    def _get_citation_key(self, data, original_data):
         """Return citation key."""
         id = data["id"]
 
-        creator = data.get("creator", None)
-        if creator is None:
+        creators = original_data["metadata"].get("creators", [])
+        if not creators:
             return id
 
-        name = creator.get("name")
+        creator = creators[0].get("person_or_org", {})
+        name = creator.get("family_name", creator["name"])
         pubdate = data.get("date_created", {}).get("year", None)
         year = id
         if pubdate is not None:
