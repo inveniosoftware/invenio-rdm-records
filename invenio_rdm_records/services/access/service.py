@@ -530,7 +530,9 @@ class RecordAccessService(RecordService):
     def request_access(self, identity, id_, data, expand=False):
         """Redirect the access request to specific service method."""
         if current_user.is_authenticated:
-            valid_current_email = data["email"] == current_user.email
+            valid_current_email = (
+                data.get("email", "").lower() == current_user.email.lower()
+            )
             if valid_current_email:
                 return self.create_user_access_request(
                     identity, id_, data, expand=expand
