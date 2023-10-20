@@ -11,6 +11,13 @@
 Changes
 =======
 
+Version 4.37.2 (2023-10-20)
+
+- email: case-insensitive comparison of user email
+- resources: make search request args class configurable
+- service: make search option class configurable
+- serializers: fix bibtex for github record-releases and requiring given_name field
+
 Version 4.37.1 (2023-10-19)
 
 - serializing: patch edtf date parser
