@@ -32,6 +32,39 @@ class RDMGithubRelease(GitHubRelease):
         output = metadata.default_metadata
         output.update(metadata.extra_metadata)
         output.update(metadata.citation_metadata)
+
+        if not output.get("creators"):
+            # Get owner from Github API
+            owner = self.get_owner()
+            if owner:
+                output.update({"creators": [owner]})
+
+        # Default to "Unkwnown"
+        if not output.get("creators"):
+            output.update(
+                {
+                    "creators": [
+                        {
+                            "person_or_org": {
+                                "type": "personal",
+                                "family_name": "Unknown",
+                            },
+                        }
+                    ]
+                }
+            )
+        return output
+
+    def get_owner(self):
+        """Retrieves repository owner and its affiliation, if any."""
+        # `owner.name` is not required, `owner.login` is.
+        output = None
+        if self.owner:
+            name = getattr(self.owner, "name", self.owner.login)
+            company = getattr(self.owner, "company", None)
+            output = {"person_or_org": {"type": "personal", "family_name": name}}
+            if company:
+                output.update({"affiliations": [{"name": company}]})
         return output
 
     def resolve_record(self):
