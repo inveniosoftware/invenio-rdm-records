@@ -17,7 +17,12 @@ from invenio_accounts.models import User
 from invenio_db import db
 from invenio_drafts_resources.services.records import RecordService
 from invenio_records_resources.services import LinksTemplate, ServiceSchemaWrapper
-from invenio_records_resources.services.uow import RecordCommitOp, unit_of_work
+from invenio_records_resources.services.uow import (
+    RecordCommitOp,
+    RecordIndexDeleteOp,
+    RecordIndexOp,
+    unit_of_work,
+)
 from invenio_requests.services.results import EntityResolverExpandableField
 from invenio_search.engine import dsl
 from sqlalchemy.exc import NoResultFound
@@ -197,6 +202,13 @@ class RDMRecordService(RecordService):
         # Commit and reindex record
         uow.register(RecordCommitOp(record, indexer=self.indexer))
 
+        # delete associated draft from index
+        try:
+            draft = self.draft_cls.pid.resolve(id_)
+            uow.register(RecordIndexDeleteOp(draft, indexer=self.draft_indexer))
+        except NoResultFound:
+            pass
+
         # Commit and reindex new latest record
         if new_record_latest_version:
             uow.register(
@@ -288,6 +300,13 @@ class RDMRecordService(RecordService):
 
         # Commit and reindex record
         uow.register(RecordCommitOp(record, indexer=self.indexer))
+
+        # reindex associated draft
+        try:
+            draft = self.draft_cls.pid.resolve(id_)
+            uow.register(RecordIndexOp(draft, indexer=self.draft_indexer))
+        except NoResultFound:
+            pass
 
         # commit and reindex the old latest record
         if latest_record_version and record.id != latest_record_version.id:
@@ -512,6 +531,22 @@ class RDMRecordService(RecordService):
 
             if not can_read_deleted:
                 # displays tombstone
+                raise RecordDeletedException(record, result_item=result)
+
+        return result
+
+    def read_draft(self, identity, id_, expand=False):
+        """Retrieve a draft of a record.
+
+        If the draft has a "deleted" published record then we return 410.
+        """
+        result = super().read_draft(identity, id_, expand=expand)
+        # check that if there is a published deleted record then return 410
+        draft = result._record
+        if draft.is_published:
+            record = self.record_cls.pid.resolve(id_)
+            if record.deletion_status.is_deleted:
+                result = super().read(identity, id_, expand=expand)
                 raise RecordDeletedException(record, result_item=result)
 
         return result
