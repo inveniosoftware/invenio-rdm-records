@@ -48,6 +48,7 @@ const defaultLabels = {
   "metadata.related_identifiers": i18next.t("Related works"),
   "metadata.references": i18next.t("References"),
   "metadata.identifiers": i18next.t("Alternate identifiers"),
+  "metadata.subjects": i18next.t("Keywords and subjects"),
   "access.embargo.until": i18next.t("Embargo until"),
   "pids.doi": i18next.t("DOI"),
 };
