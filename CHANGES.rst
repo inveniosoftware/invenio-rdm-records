@@ -11,6 +11,12 @@
 Changes
 =======
 
+Version 4.37.3 (2023-10-23)
+
+- subjects: validate that values are unique
+- github: added default repo creators
+- service: fix draft access on deleted published record
+
 Version 4.37.2 (2023-10-20)
 
 - email: case-insensitive comparison of user email
