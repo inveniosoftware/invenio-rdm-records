@@ -26,7 +26,7 @@
 {%- block html_body -%}
     <table style="font-family:'Lato',Helvetica,Arial,sans-serif;border-spacing:15px">
         <tr>
-            <td>{{ _("The community curator <b>@{curator_name}</b> declined the record '<b>{record_title}</b>' into the community <b>{community_title}</b>").format(curator_name=curator_name, community_title=community_title, record_title=record_title) }}
+            <td>{{ _("The community curator '@{curator_name}' declined the record '{record_title}' into the community '{community_title}'").format(curator_name=curator_name, community_title=community_title, record_title=record_title) }}
             {% if message %} 
             {{ _(" with the following message:")}}
             {% endif %}

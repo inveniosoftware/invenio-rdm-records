@@ -26,7 +26,7 @@
 {%- block html_body -%}
     <table style="font-family:'Lato',Helvetica,Arial,sans-serif;border-spacing:15px">
         <tr>
-            <td>{{ _("The record submission for your community <b>{community_title}</b> was cancelled by <b>@{cancel_name}</b>.").format(cancel_name=cancel_name, community_title=community_title) }}</td>
+            <td>{{ _("The record submission for your community '{community_title}' was cancelled by '@{cancel_name}'.").format(cancel_name=cancel_name, community_title=community_title) }}</td>
         </tr>
         <tr>
             <td><a href="{{ request_link }}" class="button">{{ _("Check out the submission request")}}</a></td>
