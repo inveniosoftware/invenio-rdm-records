@@ -25,7 +25,7 @@
 {%- block html_body -%}
     <table style="font-family:'Lato',Helvetica,Arial,sans-serif;border-spacing:15px">
         <tr>
-            <td>{{ _("The record '<b>{record_title}</b>' was submitted to your community <b>{community_title}</b> by <b>@{creator_name}</b>").format(record_title=record_title, community_title=community_title, creator_name=creator_name) }}
+            <td>{{ _("The record '{record_title}' was submitted to your community '{community_title}' by '@{creator_name}'").format(record_title=record_title, community_title=community_title, creator_name=creator_name) }}
             {% if message %} 
             {{ _(" with the following message:")}}
             {% endif %}
