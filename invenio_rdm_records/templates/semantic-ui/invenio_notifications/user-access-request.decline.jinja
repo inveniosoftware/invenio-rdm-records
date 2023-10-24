@@ -7,7 +7,7 @@
 
 {% set community_title = community.metadata.title %}
 {% set record_title = record.metadata.title %}
-{% set curator_name = executing_user.username %}
+{% set curator_name = executing_user.username or executing_user.profile.full_name %}
 
 {# TODO: use request.links.self_html when issue issue is resolved: https://github.com/inveniosoftware/invenio-rdm-records/issues/1327 #}
 {% set request_link = "{ui}/me/requests/{id}".format(
@@ -24,7 +24,7 @@
 {%- endblock subject -%}
 
 {%- block html_body -%}
-    <table">
+    <table>
         <tr>
             <td>{{ _("The owner of '<b>{record_title}</b>' has declined your access request").format(record_title=record_title)}}
             {% if message %} 
@@ -34,7 +34,7 @@
         </tr>
         <tr>
             {% if message %} 
-            <td><em>"{{message}}"</em></td>
+            <td><em>{{message}}</em></td>
             {% endif %}
         </tr>
         <tr>

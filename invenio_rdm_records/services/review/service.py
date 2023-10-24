@@ -193,7 +193,6 @@ class ReviewService(RecordService):
             NotificationOp(
                 CommunityInclusionSubmittedNotificationBuilder.build(
                     request_item._request,
-                    message=data.get('payload', {}).get('content'),
                 )
             )
         )
