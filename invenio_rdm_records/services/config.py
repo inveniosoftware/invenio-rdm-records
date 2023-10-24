@@ -571,19 +571,19 @@ class RDMFileDraftServiceConfig(FileServiceConfig, ConfiguratorMixin):
     }
 
     file_links_item = {
-        "self": FileLink("{+api}/records/{id}/draft/files/{key}"),
-        "content": FileLink("{+api}/records/{id}/draft/files/{key}/content"),
-        "commit": FileLink("{+api}/records/{id}/draft/files/{key}/commit"),
+        "self": FileLink("{+api}/records/{id}/draft/files/{+key}"),
+        "content": FileLink("{+api}/records/{id}/draft/files/{+key}/content"),
+        "commit": FileLink("{+api}/records/{id}/draft/files/{+key}/commit"),
         # FIXME: filename instead
         "iiif_canvas": FileLink(
-            "{+api}/iiif/draft:{id}/canvas/{key}", when=is_iiif_compatible
+            "{+api}/iiif/draft:{id}/canvas/{+key}", when=is_iiif_compatible
         ),
-        "iiif_base": FileLink("{+api}/iiif/draft:{id}:{key}", when=is_iiif_compatible),
+        "iiif_base": FileLink("{+api}/iiif/draft:{id}:{+key}", when=is_iiif_compatible),
         "iiif_info": FileLink(
-            "{+api}/iiif/draft:{id}:{key}/info.json", when=is_iiif_compatible
+            "{+api}/iiif/draft:{id}:{+key}/info.json", when=is_iiif_compatible
         ),
         "iiif_api": FileLink(
-            "{+api}/iiif/draft:{id}:{key}/{region=full}"
+            "{+api}/iiif/draft:{id}:{+key}/{region=full}"
             "/{size=full}/{rotation=0}/{quality=default}.{format=png}",
             when=is_iiif_compatible,
         ),
