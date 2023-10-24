@@ -293,7 +293,7 @@ def test_marcxml_serializer_full_record(
                 <subfield code="a">v1.0</subfield>
             </datafield>
             <datafield tag="856" ind1=" " ind2="1">
-                <subfield code="a">award_identifiers_scheme=url; award_identifiers_identifier=https://cordis.europa.eu/project/id/755021; award_title=Personalised Treatment For Cystic Fibrosis Patients With Ultra-rare CFTR Mutations (and beyond); award_number=755021; funder_id=00k4n6c32; funder_name=European Commission; </subfield>
+                <subfield code="a">award_title=PersonalisedTreatmentForCysticFibrosisPatientsWithUltra-rareCFTRMutations(andbeyond);award_number=755021;award_identifiers_scheme=url;award_identifiers_identifier=https://cordis.europa.eu/project/id/755021;funder_id=00k4n6c32;funder_name=EuropeanCommission; </subfield>
             </datafield>
             <controlfield tag="005">{str(parse(record["updated"]).timestamp())}</controlfield>
             <datafield tag="856" ind1="4" ind2=" ">

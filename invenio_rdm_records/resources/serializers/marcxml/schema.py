@@ -295,17 +295,23 @@ class MARCXMLSchema(BaseSerializerSchema, CommonFieldsMixin):
             funder_string = ""
 
             if award:
-                identifier = award.get("identifiers", [])[0]
-                scheme = identifier.get("scheme", "null")
-                identifier_value = identifier.get("identifier", "null")
+                identifiers = award.get("identifiers", [])
                 title = award.get("title", {})
                 title = list(title.values())[0] if title else "null"
                 number = award.get("number", "null")
 
-                funder_string += f"award_identifiers_scheme={scheme}; "
-                funder_string += f"award_identifiers_identifier={identifier_value}; "
                 funder_string += f"award_title={title}; "
                 funder_string += f"award_number={number}; "
+
+                if identifiers:
+                    identifier = identifiers[0]
+                    scheme = identifier.get("scheme", "null")
+                    identifier_value = identifier.get("identifier", "null")
+
+                    funder_string += f"award_identifiers_scheme={scheme}; "
+                    funder_string += (
+                        f"award_identifiers_identifier={identifier_value}; "
+                    )
 
             funder_id = funder["id"]
             funder_name = funder.get("name", "null")
