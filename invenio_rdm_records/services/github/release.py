@@ -7,7 +7,8 @@
 """Github release API implementation."""
 
 from flask import current_app
-from invenio_access.permissions import system_identity
+from invenio_access.permissions import authenticated_user, system_identity
+from invenio_access.utils import get_identity
 from invenio_db import db
 from invenio_github.api import GitHubRelease
 from invenio_github.models import ReleaseStatus
@@ -18,6 +19,13 @@ from ...resources.serializers.ui import UIJSONSerializer
 from ..errors import RecordDeletedException
 from .metadata import RDMReleaseMetadata
 from .utils import retrieve_recid_by_uuid
+
+
+def _get_user_identity(user):
+    """Get user identity."""
+    identity = get_identity(user)
+    identity.provides.add(authenticated_user)
+    return identity
 
 
 class RDMGithubRelease(GitHubRelease):
@@ -77,13 +85,15 @@ class RDMGithubRelease(GitHubRelease):
         except RecordDeletedException:
             return None
 
-    def _upload_files_to_draft(self, draft, draft_file_service, uow):
+    def _upload_files_to_draft(self, identity, draft, uow):
         """Upload files to draft."""
         # Validate the release files are fetchable
         self.test_zipball()
 
+        draft_file_service = current_rdm_records_service.draft_files
+
         draft_file_service.init_files(
-            self.user_identity,
+            identity,
             draft.id,
             data=[{"key": self.release_file_name}],
             uow=uow,
@@ -91,7 +101,7 @@ class RDMGithubRelease(GitHubRelease):
 
         with self.fetch_zipball_file() as file_stream:
             draft_file_service.set_file_content(
-                self.user_identity,
+                identity,
                 draft.id,
                 self.release_file_name,
                 file_stream,
@@ -128,10 +138,10 @@ class RDMGithubRelease(GitHubRelease):
                 }
 
                 if self.is_first_release():
-                    draft = current_rdm_records_service.create(
-                        self.user_identity, data, uow=uow
-                    )
-                    self._upload_files_to_draft(draft, draft_file_service, uow)
+                    # For the first release, use the repo's owner identity.
+                    identity = self.user_identity
+                    draft = current_rdm_records_service.create(identity, data, uow=uow)
+                    self._upload_files_to_draft(identity, draft, uow)
                 else:
                     # Retrieve latest record id and its recid
                     latest_record_uuid = self.repository_object.latest_release(
@@ -140,25 +150,31 @@ class RDMGithubRelease(GitHubRelease):
 
                     recid = retrieve_recid_by_uuid(latest_record_uuid)
 
+                    # Use the previous record's owner as the new version owner
+                    last_record = current_rdm_records_service.read(
+                        system_identity, recid.pid_value
+                    )
+                    owner = last_record._record.parent.access.owner.resolve()
+
+                    identity = _get_user_identity(owner)
+
                     # Create a new version and update its contents
                     new_version_draft = current_rdm_records_service.new_version(
-                        self.user_identity, recid.pid_value, uow=uow
+                        identity, recid.pid_value, uow=uow
                     )
 
-                    self._upload_files_to_draft(
-                        new_version_draft, draft_file_service, uow
-                    )
+                    self._upload_files_to_draft(identity, new_version_draft, uow)
 
                     draft = current_rdm_records_service.update_draft(
-                        self.user_identity, new_version_draft.id, data, uow=uow
+                        identity, new_version_draft.id, data, uow=uow
                     )
 
                 draft_file_service.commit_file(
-                    self.user_identity, draft.id, self.release_file_name, uow=uow
+                    identity, draft.id, self.release_file_name, uow=uow
                 )
 
                 record = current_rdm_records_service.publish(
-                    self.user_identity, draft.id, uow=uow
+                    identity, draft.id, uow=uow
                 )
 
                 # Update release weak reference and set status to PUBLISHED
