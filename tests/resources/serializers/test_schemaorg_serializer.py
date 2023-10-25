@@ -60,6 +60,23 @@ def test_schemaorg_serializer_full_record(running_app, full_record):
                 ],
             }
         ],
+        "creator": [
+            {
+                "@id": "https://orcid.org/0000-0001-8135-3489",
+                "@type": "Person",
+                "name": "Nielsen, Lars Holm",
+                "givenName": "Lars Holm",
+                "familyName": "Nielsen",
+                "affiliation": [
+                    {
+                        "@id": "https://ror.org/01ggx4157",
+                        "@type": "Organization",
+                        "name": "CERN",
+                    },
+                    {"@type": "Organization", "name": "free-text"},
+                ],
+            }
+        ],
         "datePublished": "2018",
         "description": "<h1>A description</h1> <p>with HTML tags</p>",
         "editor": [
@@ -134,6 +151,17 @@ def test_schemaorg_serializer_minimal_record(running_app, minimal_record):
         "@context": "http://schema.org",
         "@type": "https://schema.org/Photograph",
         "author": [
+            {
+                "@type": "Person",
+                "familyName": "Brown",
+                "givenName": "Troy",
+            },
+            {
+                "@type": "Organization",
+                "name": "Troy Inc.",
+            },
+        ],
+        "creator": [
             {
                 "@type": "Person",
                 "familyName": "Brown",
