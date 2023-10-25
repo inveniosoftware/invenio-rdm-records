@@ -21,7 +21,10 @@
 {%- block html_body -%}
     <table style="font-family:'Lato',Helvetica,Arial,sans-serif;border-spacing:15px">
         <tr>
-            <td>{{ _("An access request was submitted for your record '{record_title}'").format(record_title=record_title) }}</td>
+            <td>{{ _("An access request was submitted for your record '{record_title}'.").format(record_title=record_title) }}</td>
+        </tr>
+        <tr>
+            <td>{{ _("The requestor's e-mail address: {email}").format(email=creator.email) }}</td>
         </tr>
         <tr>
             <td><a href="{{ request_link }}" class="button">{{ _("See request details")}}</a></td>
