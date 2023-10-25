@@ -11,6 +11,10 @@
 Changes
 =======
 
+Version 4.38.0 (2023-10-25)
+
+- github: fix identity fetch for releases
+
 Version 4.37.4 (2023-10-25)
 
 - serializers: fix award serialization in marcxml
