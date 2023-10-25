@@ -11,6 +11,11 @@
 Changes
 =======
 
+Version 4.37.4 (2023-10-25)
+
+- serializers: fix award serialization in marcxml
+- assets: improve email templates formatting
+
 Version 4.37.3 (2023-10-23)
 
 - subjects: validate that values are unique
