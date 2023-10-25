@@ -135,8 +135,18 @@ class SchemaorgSchema(BaseSerializerSchema, CommonFieldsMixin):
     type_ = fields.Method("get_type", data_key="@type")
     identifier = fields.Method("get_identifiers")
     name = SanitizedUnicode(attribute="metadata.title")
+    creator = fields.List(
+        fields.Nested(PersonOrOrgSchema),
+        attribute="metadata.creators",
+        dump_only=True,
+    )
+    # NOTE: This is a duplicate of "creator". See
+    # <https://developers.google.com/search/docs/appearance/structured-data/dataset> and
+    # <https://schema.org/Dataset> for more details
     author = fields.List(
-        fields.Nested(PersonOrOrgSchema), attribute="metadata.creators"
+        fields.Nested(PersonOrOrgSchema),
+        attribute="metadata.creators",
+        dump_only=True,
     )
     editor = fields.List(
         fields.Nested(PersonOrOrgSchema), attribute="metadata.contributors"
