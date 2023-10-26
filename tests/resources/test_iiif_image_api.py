@@ -68,6 +68,16 @@ def test_file_links_depending_on_file_extensions(
     assert "iiif_info" in response.json["links"]
     assert "iiif_api" in response.json["links"]
 
+    ## Testing with filename with a slash ##
+
+    file_id = "test/image.png"
+    recid = publish_record_with_images(client, file_id, minimal_record, headers)
+    response = client.get(f"/records/{recid}/files/{file_id}")
+    assert "iiif_canvas" in response.json["links"]
+    assert "iiif_base" in response.json["links"]
+    assert "iiif_info" in response.json["links"]
+    assert "iiif_api" in response.json["links"]
+
 
 def test_iiif_base(
     running_app, search_clear, client, uploader, headers, minimal_record
@@ -82,12 +92,39 @@ def test_iiif_base(
         == f"https://127.0.0.1:5000/api/iiif/record:{recid}:{file_id}/info.json"
     )
 
+    ## Testing with filename with a slash ##
+
+    file_id = "test/image.png"
+    recid = publish_record_with_images(client, file_id, minimal_record, headers)
+    response = client.get(f"/iiif/record:{recid}:{file_id}")
+    assert response.status_code == 301
+    assert (
+        response.json["location"]
+        == f"https://127.0.0.1:5000/api/iiif/record:{recid}:{file_id}/info.json"
+    )
+
 
 def test_iiif_info(
     running_app, search_clear, client, uploader, headers, minimal_record
 ):
     client = uploader.login(client)
     file_id = "test_image.png"
+    recid = publish_record_with_images(client, file_id, minimal_record, headers)
+    response = client.get(f"/iiif/record:{recid}:{file_id}/info.json")
+    assert response.status_code == 200
+    assert response.json == {
+        "@context": "http://iiif.io/api/image/2/context.json",
+        "profile": ["http://iiif.io/api/image/2/level2.json"],
+        "protocol": "http://iiif.io/api/image",
+        "@id": f"https://127.0.0.1:5000/api/iiif/record:{recid}:{file_id}",
+        "tiles": [{"width": 256, "scaleFactors": [1, 2, 4, 8, 16, 32, 64]}],
+        "width": 1280,
+        "height": 1024,
+    }
+
+    ## Testing with filename with a slash ##
+
+    file_id = "test/image.png"
     recid = publish_record_with_images(client, file_id, minimal_record, headers)
     response = client.get(f"/iiif/record:{recid}:{file_id}/info.json")
     assert response.status_code == 200
@@ -130,6 +167,21 @@ def test_iiif_base_restricted_files(
     response = client.get(f"/iiif/record:{recid}:{file_id}")
     assert response.status_code == 301
 
+    ## Testing with filename with a slash ##
+
+    file_id = "test/image.png"
+    recid = publish_record_with_images(
+        client, file_id, minimal_record, headers, restricted_files=True
+    )
+    client = uploader.logout(client)
+    response = client.get(f"/iiif/record:{recid}:{file_id}")
+    assert response.status_code == 403
+
+    # Log in user and try again
+    client = uploader.login(client)
+    response = client.get(f"/iiif/record:{recid}:{file_id}")
+    assert response.status_code == 301
+
 
 def test_iiif_info_restricted_files(
     running_app,
@@ -142,6 +194,20 @@ def test_iiif_info_restricted_files(
 ):
     client = uploader.login(client)
     file_id = "test_image.png"
+    recid = publish_record_with_images(
+        client, file_id, minimal_record, headers, restricted_files=True
+    )
+    client = uploader.logout(client)
+    response = client.get(f"/iiif/record:{recid}:{file_id}/info.json")
+    assert response.status_code == 403
+
+    # Log in user and try again
+    client = uploader.login(client)
+    response = client.get(f"/iiif/record:{recid}:{file_id}/info.json")
+    assert response.status_code == 200
+
+    ## Testing with filename with a slash ##
+    file_id = "test/image.png"
     recid = publish_record_with_images(
         client, file_id, minimal_record, headers, restricted_files=True
     )
@@ -167,6 +233,34 @@ def test_iiif_image_api(
     image = Image.new("RGBA", (1280, 1024), (255, 0, 0, 0))
     image.save(tmp_file, "png")
     tmp_file.seek(0)
+
+    response = client.get(f"/iiif/record:{recid}:{file_id}/full/full/0/default.png")
+    assert response.status_code == 200
+    assert response.data == tmp_file.getvalue()
+
+    response = client.get(
+        f"/iiif/record:{recid}:{file_id}/200,200,200,200/300,300/!50/color.pdf"
+    )
+    assert response.status_code == 200
+
+    default_name = secure_filename(
+        f"record:{recid}:{file_id}-200200200200-300300-color-50.pdf"
+    )
+    for dl, name in (
+        ("", default_name),
+        ("1", default_name),
+        ("foo.pdf", "foo.pdf"),
+    ):
+        response = client.get(
+            f"/iiif/record:{recid}:{file_id}/"
+            f"200,200,200,200/300,300/!50/color.pdf?dl={dl}"
+        )
+        assert response.status_code == 200
+        assert response.headers["Content-Disposition"] == f"attachment; filename={name}"
+
+    ## Testing with filename with a slash ##
+    file_id = "test/image.png"
+    recid = publish_record_with_images(client, file_id, minimal_record, headers)
 
     response = client.get(f"/iiif/record:{recid}:{file_id}/full/full/0/default.png")
     assert response.status_code == 200

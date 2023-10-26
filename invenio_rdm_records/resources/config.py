@@ -465,12 +465,12 @@ class IIIFResourceConfig(ResourceConfig, ConfiguratorMixin):
     url_prefix = "/iiif"
 
     routes = {
-        "manifest": "/<uuid>/manifest",
-        "sequence": "/<uuid>/sequence/default",
-        "canvas": "/<uuid>/canvas/<file_name>",
-        "image_base": "/<uuid>",
-        "image_info": "/<uuid>/info.json",
-        "image_api": "/<uuid>/<region>/<size>/<rotation>/<quality>.<image_format>",
+        "manifest": "/<path:uuid>/manifest",
+        "sequence": "/<path:uuid>/sequence/default",
+        "canvas": "/<path:uuid>/canvas/<path:file_name>",
+        "image_base": "/<path:uuid>",
+        "image_info": "/<path:uuid>/info.json",
+        "image_api": "/<path:uuid>/<region>/<size>/<rotation>/<quality>.<image_format>",
     }
 
     request_view_args = {
