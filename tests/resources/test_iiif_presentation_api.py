@@ -125,6 +125,18 @@ def test_empty_iiif_manifest(
     assert not manifest["sequences"][0]["canvases"]
 
 
+def test_empty_iiif_manifest_filename_with_slash(
+    running_app, search_clear, client, uploader, headers, minimal_record
+):
+    client = uploader.login(client)
+    file_id = "test/image.zip"
+    recid = publish_record_with_images(client, file_id, minimal_record, headers)
+    response = client.get(f"/iiif/record:{recid}/manifest")
+    assert response.status_code == 200
+    manifest = response.json
+    assert not manifest["sequences"][0]["canvases"]
+
+
 @pytest.mark.skip("to be fixed, bug exposed during fixes in another scope")
 def test_iiif_manifest_restricted_files(
     running_app,

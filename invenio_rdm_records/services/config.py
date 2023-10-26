@@ -513,14 +513,16 @@ class RDMFileRecordServiceConfig(FileServiceConfig, ConfiguratorMixin):
         **FileServiceConfig.file_links_item,
         # FIXME: filename instead
         "iiif_canvas": FileLink(
-            "{+api}/iiif/record:{id}/canvas/{key}", when=is_iiif_compatible
+            "{+api}/iiif/record:{id}/canvas/{+key}", when=is_iiif_compatible
         ),
-        "iiif_base": FileLink("{+api}/iiif/record:{id}:{key}", when=is_iiif_compatible),
+        "iiif_base": FileLink(
+            "{+api}/iiif/record:{id}:{+key}", when=is_iiif_compatible
+        ),
         "iiif_info": FileLink(
-            "{+api}/iiif/record:{id}:{key}/info.json", when=is_iiif_compatible
+            "{+api}/iiif/record:{id}:{+key}/info.json", when=is_iiif_compatible
         ),
         "iiif_api": FileLink(
-            "{+api}/iiif/record:{id}:{key}/{region=full}"
+            "{+api}/iiif/record:{id}:{+key}/{region=full}"
             "/{size=full}/{rotation=0}/{quality=default}.{format=png}",
             when=is_iiif_compatible,
         ),
