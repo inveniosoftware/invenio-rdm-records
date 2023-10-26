@@ -11,6 +11,13 @@
 Changes
 =======
 
+Version 4.38.1 (2023-10-26)
+
+- files: updating url  encoding
+- entity: catch soft deleted draft
+- schemaorg: serialize "creator"
+- user access request e-mail: include requestor email address
+
 Version 4.38.0 (2023-10-25)
 
 - github: fix identity fetch for releases
