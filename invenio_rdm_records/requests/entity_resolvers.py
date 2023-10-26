@@ -46,7 +46,7 @@ class RDMRecordProxy(RecordProxy):
         draft = None
         try:
             draft = RDMDraft.pid.resolve(pid_value, registered_only=False)
-        except (PIDUnregistered, NoResultFound):
+        except (PIDUnregistered, NoResultFound, PIDDoesNotExistError):
             # try checking if it is a published record before failing
             record = self._get_record(pid_value)
         else:
