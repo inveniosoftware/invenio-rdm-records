@@ -149,7 +149,12 @@ class RDMRecordService(RecordService):
         and pass it into the service (normally the service must be responsible
         for this).
         """
-        record = self.record_cls.loads(oai_record_source)
+        # From search results, i.e. `?verb=ListRecords`, it's a plain dict
+        if not isinstance(oai_record_source, self.record_cls):
+            record = self.record_cls.loads(oai_record_source)
+        else:
+            # From DB, i.e. `?verb=GetRecord`, it's already an API instance
+            record = oai_record_source
         return self.result_item(
             self,
             identity,
