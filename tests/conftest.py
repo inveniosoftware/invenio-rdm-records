@@ -36,6 +36,7 @@ except AttributeError:
 from collections import namedtuple
 from copy import deepcopy
 from datetime import datetime
+from io import BytesIO
 from unittest import mock
 
 import arrow
@@ -186,35 +187,63 @@ def app_config(app_config, mock_datacite_client):
     ] = "invenio_jsonschemas.proxies.current_refresolver_store"
 
     # OAI Server
-    app_config["OAISERVER_ID_PREFIX"] = "oai:inveniosoftware.org:recid/"
+    app_config["OAISERVER_REPOSITORY_NAME"] = "InvenioRDM"
+    app_config["OAISERVER_ID_PREFIX"] = "inveniordm"
     app_config["OAISERVER_RECORD_INDEX"] = "rdmrecords-records"
+    app_config["OAISERVER_SEARCH_CLS"] = "invenio_rdm_records.oai:OAIRecordSearch"
+    app_config["OAISERVER_ID_FETCHER"] = "invenio_rdm_records.oai:oaiid_fetcher"
+    app_config["OAISERVER_LAST_UPDATE_KEY"] = "updated"
+    app_config["OAISERVER_CREATED_KEY"] = "created"
+    app_config["OAISERVER_RECORD_CLS"] = "invenio_rdm_records.records.api:RDMRecord"
+    app_config[
+        "OAISERVER_RECORD_SETS_FETCHER"
+    ] = "invenio_oaiserver.utils:record_sets_fetcher"
+    app_config[
+        "OAISERVER_GETRECORD_FETCHER"
+    ] = "invenio_rdm_records.oai:getrecord_fetcher"
     app_config["OAISERVER_METADATA_FORMATS"] = {
+        "marcxml": {
+            "serializer": "invenio_rdm_records.oai:marcxml_etree",
+            "schema": "https://www.loc.gov/standards/marcxml/schema/MARC21slim.xsd",
+            "namespace": "https://www.loc.gov/standards/marcxml/",
+        },
         "oai_dc": {
             "serializer": "invenio_rdm_records.oai:dublincore_etree",
             "schema": "http://www.openarchives.org/OAI/2.0/oai_dc.xsd",
             "namespace": "http://www.openarchives.org/OAI/2.0/oai_dc/",
         },
+        "dcat": {
+            "serializer": "invenio_rdm_records.oai:dcat_etree",
+            "schema": "http://schema.datacite.org/meta/kernel-4/metadata.xsd",
+            "namespace": "https://www.w3.org/ns/dcat",
+        },
+        "marc21": {
+            "serializer": "invenio_rdm_records.oai:marcxml_etree",
+            "schema": "https://www.loc.gov/standards/marcxml/schema/MARC21slim.xsd",
+            "namespace": "https://www.loc.gov/standards/marcxml/",
+        },
         "datacite": {
             "serializer": "invenio_rdm_records.oai:datacite_etree",
-            "schema": "http://schema.datacite.orgmeta/nonexistant/nonexistant.xsd",  # noqa
-            "namespace": "http://datacite.org/schema/nonexistant",
+            "schema": "http://schema.datacite.org/meta/kernel-4.3/metadata.xsd",
+            "namespace": "http://datacite.org/schema/kernel-4",
         },
         "oai_datacite": {
             "serializer": "invenio_rdm_records.oai:oai_datacite_etree",
             "schema": "http://schema.datacite.org/oai/oai-1.1/oai.xsd",
             "namespace": "http://schema.datacite.org/oai/oai-1.1/",
         },
-        "oai_marcxml": {
-            "serializer": "invenio_rdm_records.oai:oai_marcxml_etree",
-            "schema": "https://www.loc.gov/standards/marcxml/schema/MARC21slim.xsd",
-            "namespace": "https://www.loc.gov/standards/marcxml/",
+        "datacite4": {
+            "serializer": "invenio_rdm_records.oai:datacite_etree",
+            "schema": "http://schema.datacite.org/meta/kernel-4.3/metadata.xsd",
+            "namespace": "http://datacite.org/schema/kernel-4",
         },
-        "oai_dcat": {
-            "serializer": "invenio_rdm_records.oai:oai_dcat_etree",
-            "schema": "http://schema.datacite.org/meta/kernel-4/metadata.xsd",
-            "namespace": "https://www.w3.org/ns/dcat",
+        "oai_datacite4": {
+            "serializer": ("invenio_rdm_records.oai:oai_datacite_etree"),
+            "schema": "http://schema.datacite.org/oai/oai-1.1/oai.xsd",
+            "namespace": "http://schema.datacite.org/oai/oai-1.1/",
         },
     }
+
     app_config["INDEXER_DEFAULT_INDEX"] = "rdmrecords-records-record-v6.0.0"
     # Variable not used. We set it to silent warnings
     app_config["JSONSCHEMAS_HOST"] = "not-used"
@@ -1871,23 +1900,72 @@ def record_community(db, uploader, minimal_record, community):
         ):
             """Creates new record that belongs to the same community."""
             # create draft
-            community_record = community._record
             draft = current_rdm_records_service.create(uploader.identity, record_dict)
             # publish and get record
             result_item = current_rdm_records_service.publish(
                 uploader.identity, draft.id
             )
             record = result_item._record
-            # add the record to the community
-            record.parent.communities.add(community_record, default=False)
-            record.parent.commit()
-            db.session.commit()
-            current_rdm_records_service.indexer.index(
-                record, arguments={"refresh": True}
-            )
+            if community:
+                # add the record to the community
+                community_record = community._record
+                record.parent.communities.add(community_record, default=False)
+                record.parent.commit()
+                db.session.commit()
+                current_rdm_records_service.indexer.index(
+                    record, arguments={"refresh": True}
+                )
+
             return record
 
     return Record()
+
+
+@pytest.fixture()
+def record_factory(db, uploader, minimal_record, community, location):
+    """Creates a record that belongs to a community."""
+
+    class RecordFactory:
+        """Test record class."""
+
+        def create_record(
+            self,
+            record_dict=minimal_record,
+            uploader=uploader,
+            community=community,
+            file=None,
+        ):
+            """Creates new record that belongs to the same community."""
+            service = current_rdm_records_service
+            files_service = service.draft_files
+            idty = uploader.identity
+            # create draft
+            if file:
+                record_dict["files"] = {"enabled": True}
+            draft = service.create(idty, record_dict)
+
+            # add file to draft
+            if file:
+                files_service.init_files(idty, draft.id, data=[{"key": file}])
+                files_service.set_file_content(
+                    idty, draft.id, file, BytesIO(b"test file")
+                )
+                files_service.commit_file(idty, draft.id, file)
+
+            # publish and get record
+            result_item = service.publish(idty, draft.id)
+            record = result_item._record
+            if community:
+                # add the record to the community
+                community_record = community._record
+                record.parent.communities.add(community_record, default=False)
+                record.parent.commit()
+                db.session.commit()
+                service.indexer.index(record, arguments={"refresh": True})
+
+            return record
+
+    return RecordFactory()
 
 
 @pytest.fixture(scope="session")
