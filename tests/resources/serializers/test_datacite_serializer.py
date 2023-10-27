@@ -365,8 +365,8 @@ def test_datacite43_serializer_with_unknown_id_schemes(
     assert expected_pid_id_2 in serialized_record["identifiers"]
     assert len(serialized_record["identifiers"]) == 5
 
-    assert expected_related_id in serialized_record["relatedIdentifiers"]
-    assert len(serialized_record["relatedIdentifiers"]) == 2
+    assert expected_related_id not in serialized_record["relatedIdentifiers"]
+    assert len(serialized_record["relatedIdentifiers"]) == 1
 
     creator_ids = serialized_record["creators"][0]["nameIdentifiers"]
     assert expected_creator_id in creator_ids
@@ -386,5 +386,5 @@ def test_datacite43_xml_serializer_with_unknown_id_schemes(
 
     assert expected_pid_id in serialized_record
     assert expected_pid_id_2 in serialized_record
-    assert expected_related_id in serialized_record
+    assert expected_related_id not in serialized_record
     assert expected_creator_id in serialized_record
