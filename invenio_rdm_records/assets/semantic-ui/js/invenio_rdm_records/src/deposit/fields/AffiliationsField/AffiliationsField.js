@@ -19,10 +19,9 @@ export class AffiliationsField extends Component {
       text: affiliation.acronym
         ? `${affiliation.name} (${affiliation.acronym})`
         : affiliation.name,
-      value: affiliation.name,
-      key: affiliation.name,
-      ...(affiliation.id ? { id: affiliation.id } : {}),
-      name: affiliation.name,
+      value: affiliation.id,
+      key: affiliation.id,
+      id: affiliation.id,
     }));
 
   render() {
@@ -58,8 +57,10 @@ export class AffiliationsField extends Component {
                   selectedSuggestions
                 );
               }}
-              value={getIn(values, fieldPath, []).map((val) => val.name)}
+              value={getIn(values, fieldPath, []).map((val) => val.id)}
               ref={selectRef}
+              // Disable UI-side filtering of search results
+              search={(options) => options}
             />
           );
         }}
