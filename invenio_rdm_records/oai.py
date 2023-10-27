@@ -134,7 +134,9 @@ def getrecord_fetcher(record_id):
         # if it is a restricted record.
         raise PIDDoesNotExistError("recid", None)
 
-    return result.to_dict()
+    # TODO: Calling dumps() is not the best way here, since later on it will call
+    # loads() in the service to "normalize" the result.
+    return result._record.dumps()
 
 
 class OAIRecordSearch(RecordsSearch):

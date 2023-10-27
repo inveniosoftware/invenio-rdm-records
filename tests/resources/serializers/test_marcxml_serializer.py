@@ -82,7 +82,7 @@ def test_marcxml_serializer_minimal_record(running_app, minimal_record, parent):
                 </subfield>
             </datafield>
             <datafield tag="909" ind1="C" ind2="O">
-                <subfieldcode="o">oai:oai:inveniosoftware.org:recid/:{record.id}
+                <subfieldcode="o">oai:inveniordm:{record.id}
                 </subfield>
             </datafield>
             <datafield tag="700" ind1="" ind2="">
