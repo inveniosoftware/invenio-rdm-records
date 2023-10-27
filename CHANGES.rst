@@ -11,6 +11,10 @@
 Changes
 =======
 
+Version 4.38.2 (2023-10-27)
+
+- datacite: fix related identifiers serialization.
+
 Version 4.38.1 (2023-10-26)
 
 - files: updating url  encoding
