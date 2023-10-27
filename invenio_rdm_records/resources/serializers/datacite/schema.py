@@ -27,6 +27,29 @@ from ....proxies import current_rdm_records_service
 from ...serializers.ui.schema import current_default_locale
 from ..utils import get_preferred_identifier, get_vocabulary_props
 
+RELATED_IDENTIFIER_SCHEMES = {
+    "ark",
+    "arxiv",
+    "bibcode",
+    "doi",
+    "ean13",
+    "eissn",
+    "handle",
+    "igsn",
+    "isbn",
+    "issn",
+    "istc",
+    "lissn",
+    "lsid1",
+    "pmid",
+    "purl",
+    "upc",
+    "url",
+    "urn",
+    "w3id",
+}
+"""Allowed related identifier schemes for DataCite. Vocabulary taken from DataCite 4.3 schema definition."""
+
 
 def get_scheme_datacite(scheme, config_name, default=None):
     """Returns the datacite equivalent of a scheme."""
@@ -362,7 +385,8 @@ class DataCite43Schema(BaseSerializerSchema):
                 default=scheme,
             )
 
-            if id_scheme:
+            # Only serialize related identifiers with a valid scheme for DataCite.
+            if id_scheme and id_scheme.lower() in RELATED_IDENTIFIER_SCHEMES:
                 serialized_identifier = {
                     "relatedIdentifier": rel_id["identifier"],
                     "relationType": props.get("datacite", ""),
@@ -423,13 +447,14 @@ class DataCite43Schema(BaseSerializerSchema):
                     "RDM_RECORDS_IDENTIFIERS_SCHEMES",
                     default="doi",
                 )
-                serialized_identifiers.append(
-                    {
-                        "relatedIdentifier": parent_doi["identifier"],
-                        "relationType": "IsVersionOf",
-                        "relatedIdentifierType": id_scheme,
-                    }
-                )
+                if id_scheme.lower() in RELATED_IDENTIFIER_SCHEMES:
+                    serialized_identifiers.append(
+                        {
+                            "relatedIdentifier": parent_doi["identifier"],
+                            "relationType": "IsVersionOf",
+                            "relatedIdentifierType": id_scheme,
+                        }
+                    )
 
         # adding communities
         communities = obj.get("parent", {}).get("communities", {}).get("ids", [])
