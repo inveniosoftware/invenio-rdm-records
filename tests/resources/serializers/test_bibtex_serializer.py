@@ -73,6 +73,8 @@ def test_bibtex_serializer_full_record(running_app, updated_full_record):
             "  year         = 2023,",
             "  publisher    = {InvenioRDM},",
             "  version      = {v1.0},",
+            "  doi          = {10.1234/inveniordm.1234},",
+            "  url          = {https://doi.org/10.1234/inveniordm.1234}",
             "}",
         ]
     )

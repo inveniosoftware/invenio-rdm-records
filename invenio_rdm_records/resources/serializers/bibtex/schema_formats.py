@@ -21,14 +21,14 @@ class BibTexFormatter:
     book = {
         "name": "book",
         "req_fields": ["author", "title", "publisher", "year"],
-        "opt_fields": ["volume", "address", "month", "note"],
+        "opt_fields": ["volume", "address", "month", "note", "doi", "url"],
     }
     """A single-volume book."""
 
     booklet = {
         "name": "booklet",
         "req_fields": ["title"],
-        "opt_fields": ["author", "address", "month", "year", "note"],
+        "opt_fields": ["author", "address", "month", "year", "note", "doi", "url"],
     }
     """A book-like work without a formal publisher or sponsoring institution."""
 
@@ -43,6 +43,8 @@ class BibTexFormatter:
             "note",
             "publisher",
             "version",
+            "doi",
+            "url",
         ],
     }
     """A fallback type for entries which do not fit into any other category."""
@@ -50,42 +52,51 @@ class BibTexFormatter:
     in_proceedings = {
         "name": "inproceedings",
         "req_fields": ["author", "title", "booktitle", "year"],
-        "opt_fields": ["pages", "publisher", "address", "month", "note", "venue"],
+        "opt_fields": [
+            "pages",
+            "publisher",
+            "address",
+            "month",
+            "note",
+            "venue",
+            "doi",
+            "url",
+        ],
     }
     """An article in a conference proceedings."""
 
     proceedings = {
         "name": "proceedings",
         "req_fields": ["title", "year"],
-        "opt_fields": ["publisher", "address", "month", "note"],
+        "opt_fields": ["publisher", "address", "month", "note", "doi", "url"],
     }
     """A single-volume conference proceedings."""
 
     article = {
         "name": "article",
         "req_fields": ["author", "title", "journal", "year"],
-        "opt_fields": ["volume", "number", "pages", "month", "note"],
+        "opt_fields": ["volume", "number", "pages", "month", "note", "doi", "url"],
     }
     """An article in a journal, magazine, newspaper, or other periodical which forms a self-contained unit with its own title."""
 
     unpublished = {
         "name": "unpublished",
         "req_fields": ["author", "title", "note"],
-        "opt_fields": ["month", "year"],
+        "opt_fields": ["month", "year", "doi", "url"],
     }
     """A work with an author and a title which has not been formally published."""
 
     thesis = {
         "name": "phdthesis",
         "req_fields": ["author", "title", "school", "year"],
-        "opt_fields": ["address", "month", "note"],
+        "opt_fields": ["address", "month", "note", "doi", "url"],
     }
     """A thesis written for an educational institution."""
 
     manual = {
         "name": "manual",
         "req_fields": ["title"],
-        "opt_fields": ["author", "address", "month", "year", "note"],
+        "opt_fields": ["author", "address", "month", "year", "note", "doi", "url"],
     }
     """Technical or other documentation, not necessarily in printed form."""
 
@@ -100,6 +111,8 @@ class BibTexFormatter:
             "note",
             "publisher",
             "version",
+            "doi",
+            "url",
         ],
     }
     """A data set or a similar collection of (mostly) raw data."""
@@ -115,6 +128,8 @@ class BibTexFormatter:
             "note",
             "publisher",
             "version",
+            "doi",
+            "url",
         ],
     }
     """Computer software."""
