@@ -467,7 +467,7 @@ export class CreatibutorsModal extends Component {
       saveAndContinueLabel,
     } = this.state;
 
-    const ActionLabel = () => this.displayActionLabel();
+    const ActionLabel = this.displayActionLabel();
     return (
       <Formik
         initialValues={this.deserializeCreatibutor(initialCreatibutor)}
@@ -500,7 +500,7 @@ export class CreatibutorsModal extends Component {
               closeOnDimmerClick={false}
             >
               <Modal.Header as="h2" className="pt-10 pb-10">
-                <ActionLabel />
+                {ActionLabel}
               </Modal.Header>
               <Modal.Content>
                 <Form>
