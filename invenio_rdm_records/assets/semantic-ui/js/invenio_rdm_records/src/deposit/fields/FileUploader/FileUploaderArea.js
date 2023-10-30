@@ -96,7 +96,7 @@ const FileTableRow = ({
       <Table.Cell data-label={i18next.t("Filename")} width={10}>
         <div>
           {file.uploadState.isPending ? (
-            file.name
+            <div>{file.name}</div>
           ) : (
             <a
               href={_get(file, "links.content", "")}
