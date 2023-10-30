@@ -11,6 +11,11 @@
 Changes
 =======
 
+Version 4.38.3 (2023-10-30)
+
+- oaiserver: fix record loading for db results
+- tests: add OAI endpoint tests
+
 Version 4.38.2 (2023-10-27)
 
 - datacite: fix related identifiers serialization.
