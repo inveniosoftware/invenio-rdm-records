@@ -40,6 +40,7 @@ class BibTexSchema(BaseSerializerSchema, CommonFieldsMixin):
     pages = fields.Method("get_pages")
     note = fields.Method("get_note")
     venue = fields.Method("get_venue")
+    url = fields.Method("get_url")
 
     entry_mapper = {
         # Publication fields
@@ -148,6 +149,14 @@ class BibTexSchema(BaseSerializerSchema, CommonFieldsMixin):
         """
         return obj.get("custom_fields", {}).get("thesis:university")
 
+    def get_url(self, obj):
+        """Generate url."""
+        doi = obj.get("pids", {}).get("doi", {}).get("identifier")
+        url = None
+        if doi:
+            url = f"https://doi.org/{doi}"
+        return url
+
     @post_dump(pass_original=True)
     def dump_record(self, data, original, many, **kwargs):
         """Dumps record."""
@@ -227,9 +236,7 @@ class BibTexSchema(BaseSerializerSchema, CommonFieldsMixin):
             "doi": data.get("doi", None),
             "month": data.get("date_created", {}).get("month", None),
             "version": data.get("version", None),
-            "url": (lambda doi: None if doi is None else "https://doi.org/" + doi)(
-                data.get("doi", None)
-            ),
+            "url": data.get("url", None),
             "school": data.get("school", None),
             "journal": data.get("journal", None),
             "volume": data.get("volume", None),
@@ -261,7 +268,7 @@ class BibTexSchema(BaseSerializerSchema, CommonFieldsMixin):
         elif field == "month":
             out = "  {0:<12} = {1},\n".format(field, value)
         elif field == "url":
-            out == "  {0:<12} = {{{1}}}\n".format(field, value)
+            out = "  {0:<12} = {{{1}}}\n".format(field, value)
         else:
             if not isinstance(value, list) and value.isdigit():
                 out = "  {0:<12} = {1},\n".format(field, value)
