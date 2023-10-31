@@ -11,6 +11,12 @@
 Changes
 =======
 
+Version 4.39.0 (2023-10-31)
+
+- jsonschema: remove unique items constraints
+- ui: deposit fields license Custom SearchBar
+- fix: upload going blank on translation
+
 Version 4.38.3 (2023-10-30)
 
 - oaiserver: fix record loading for db results
