@@ -387,8 +387,7 @@
   },
   "subjects": {
     "type": "array",
-    "items": {"$ref": "#/subject"},
-    "uniqueItems": true
+    "items": {"$ref": "#/subject"}
   },
   "title_type": {
     "description": "Type of title.",
