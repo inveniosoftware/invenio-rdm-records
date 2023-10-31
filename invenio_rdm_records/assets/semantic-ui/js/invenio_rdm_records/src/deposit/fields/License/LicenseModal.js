@@ -18,10 +18,9 @@ import {
   InvenioSearchApi,
   ReactSearchKit,
   ResultsLoader,
-  SearchBar,
   Toggle,
 } from "react-searchkit";
-import { Button, Form, Grid, Header, Menu, Modal } from "semantic-ui-react";
+import { Button, Form, Grid, Menu, Modal } from "semantic-ui-react";
 import * as Yup from "yup";
 import { LicenseFilter } from "./LicenseFilter";
 import { LicenseResults } from "./LicenseResults";
