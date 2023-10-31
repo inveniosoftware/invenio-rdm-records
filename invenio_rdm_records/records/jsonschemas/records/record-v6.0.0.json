@@ -131,8 +131,7 @@
           "type": "array",
           "items": {
             "$ref": "local://records/definitions-v2.0.0.json#/language"
-          },
-          "uniqueItems": true
+          }
         },
         "identifiers": {
           "description": "Alternate identifiers for the record.",
@@ -144,7 +143,6 @@
         },
         "related_identifiers": {
           "type": "array",
-          "uniqueItems": true,
           "items": {
             "type": "object",
             "additionalProperties": false,

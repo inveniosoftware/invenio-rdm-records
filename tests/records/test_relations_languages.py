@@ -85,7 +85,3 @@ def test_languages_invalid(running_app, minimal_record):
     # Extra keys are not allowed
     minimal_record["metadata"]["languages"] = [{"id": "eng", "title": "rm"}]
     pytest.raises(ValidationError, RDMDraft.create, minimal_record)
-
-    # No duplicates
-    minimal_record["metadata"]["languages"] = [{"id": "eng"}, {"id": "eng"}]
-    pytest.raises(ValidationError, RDMDraft.create, minimal_record)

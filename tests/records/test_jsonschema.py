@@ -354,23 +354,6 @@ def test_related_identifiers(appctx):
     assert fails_meta(
         {"related_identifiers": [{"identifier": "10.1234/test", "invalid": "doi"}]}
     )
-    # Unique
-    assert fails_meta(
-        {
-            "related_identifiers": [
-                {
-                    "identifier": "10.1234/test",
-                    "scheme": "doi",
-                    "relation_type": {"id": "cites"},
-                },
-                {
-                    "identifier": "10.1234/test",
-                    "scheme": "doi",
-                    "relation_type": {"id": "cites"},
-                },
-            ]
-        }
-    )
 
 
 def test_sizes(appctx):
