@@ -57,6 +57,14 @@ LicenseSearchBarComponent.propTypes = {
   placeholder: PropTypes.string,
 };
 
+LicenseSearchBarComponent.defaultProps = {
+  actionProps: null,
+  autofocus: false,
+  placeholder: "",
+  currentQueryState: null,
+  updateQueryState: null,
+};
+
 class Element extends Component {
   componentDidMount() {
     const { autofocus } = this.props;
