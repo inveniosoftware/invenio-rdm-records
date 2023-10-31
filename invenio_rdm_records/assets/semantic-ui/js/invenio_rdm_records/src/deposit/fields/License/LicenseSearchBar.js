@@ -24,9 +24,7 @@ export const LicenseSearchBarComponent = ({
   };
 
   const executeSearch = () => {
-    if (currentQueryState["filters"][0][1] != "all") {
-      currentQueryState["filters"][0] = ["tags", "all"];
-    }
+    currentQueryState["filters"][0] = ["tags", "all"];
     currentQueryState["queryString"] = currentValue;
     updateQueryState(currentQueryState);
   };
