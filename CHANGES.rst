@@ -11,6 +11,11 @@
 Changes
 =======
 
+Version 4.39.1 (2023-11-01)
+
+- installation: remove upper pin for invenio-oauth2server
+- draft: fix creatibutors affiliation de-duplication in select dropdown
+
 Version 4.39.0 (2023-10-31)
 
 - jsonschema: remove unique items constraints
