@@ -45,7 +45,9 @@ class CommunityInclusionNotificationBuilder(NotificationBuilder):
     ]
 
     recipients = [
-        CommunityMembersRecipient(key="request.receiver", roles=["curator", "owner"]),
+        CommunityMembersRecipient(
+            key="request.receiver", roles=["curator", "owner", "manager"]
+        ),
     ]
 
     recipient_filters = [
