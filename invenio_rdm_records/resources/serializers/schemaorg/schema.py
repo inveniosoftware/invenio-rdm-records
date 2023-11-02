@@ -19,11 +19,41 @@ from idutils import to_url
 from invenio_access.permissions import system_identity
 from invenio_records_resources.proxies import current_service_registry
 from marshmallow import Schema, ValidationError, fields, missing
-from marshmallow_utils.fields import SanitizedUnicode
+from marshmallow_utils.fields import SanitizedHTML, SanitizedUnicode
 from pydash import py_
 
 from ..schemas import CommonFieldsMixin
 from ..utils import convert_size, get_vocabulary_props
+
+
+def _serialize_identifiers(ids):
+    """Serialize related and alternate identifiers to URLs.
+
+    :param ids: List of related_identifier or alternate_identifier objects.
+    :returns: List of identifiers in schema.org format.
+    :rtype dict:
+    """
+    res = []
+    for i in ids:
+        _url = to_url(i["identifier"], i["scheme"], "https")
+
+        # Identifiers without a valid @id (url) are not returned (e.g. a book's ISBN can't be converted to an URL)
+        if not _url:
+            continue
+
+        # CreativeWork is the default type
+        serialized = {"@type": "CreativeWork", "@id": _url}
+        if "resource_type" in i:
+            props = get_vocabulary_props(
+                "resourcetypes", ["props.schema.org"], i["resource_type"]["id"]
+            )
+            schema_org_type = props.get("schema.org")
+            if schema_org_type:
+                serialized.update({"@type": schema_org_type[19:]})
+
+        res.append(serialized)
+
+    return res
 
 
 class PersonOrOrgSchema(Schema):
@@ -155,14 +185,24 @@ class SchemaorgSchema(BaseSerializerSchema, CommonFieldsMixin):
     keywords = fields.Method("get_keywords")
     datePublished = fields.Method("get_publication_date")
     dateModified = fields.Method("get_modification_date")
+    temporal = fields.Method("get_dates")
     inLanguage = fields.Method("get_language")
     contentSize = fields.Method("get_size")
     encodingFormat = fields.Method("get_format")
     version = SanitizedUnicode(attribute="metadata.version")
     license = fields.Method("get_license")
-    description = SanitizedUnicode(attribute="metadata.description")
+    description = SanitizedHTML(attribute="metadata.description")
     # spatialCoverage = fields.Method("get_spatial_coverage")
     funding = fields.Method("get_funding")
+
+    # Related identifiers
+    isPartOf = fields.Method("get_is_part_of")
+    hasPart = fields.Method("get_has_part")
+    sameAs = fields.Method("get_sameAs")
+
+    citation = fields.Method("get_citation")
+
+    url = fields.Method("get_url")
 
     def get_id(self, obj):
         """Get id. Use the DOI expressed as a URL."""
@@ -351,3 +391,68 @@ class SchemaorgSchema(BaseSerializerSchema, CommonFieldsMixin):
             result.append(serialized_funding)
 
         return result or missing
+
+    def get_is_part_of(self, obj):
+        """Get records that this record is part of."""
+        identifiers = py_.get(obj, "metadata.related_identifiers", [])
+        relids = self._filter_related_identifier_type(identifiers, "ispartof")
+        ids = _serialize_identifiers(relids)
+        return ids or missing
+
+    def get_has_part(self, obj):
+        """Get parts of the record."""
+        identifiers = py_.get(obj, "metadata.related_identifiers", [])
+        relids = self._filter_related_identifier_type(identifiers, "haspart")
+        ids = _serialize_identifiers(relids)
+        return ids or missing
+
+    def get_sameAs(self, obj):
+        """Get identical identifiers of the record."""
+        identifiers = py_.get(obj, "metadata.related_identifiers", [])
+        relids = self._filter_related_identifier_type(identifiers, "isidenticalto")
+        ids = _serialize_identifiers(relids)
+
+        alt_identifiers = py_.get(obj, "metadata.alternate_identifiers", [])
+        ids += [i["@id"] for i in _serialize_identifiers(alt_identifiers)]
+        return ids or missing
+
+    def get_url(self, obj):
+        """Get Zenodo URL of the record."""
+        self_url = py_.get(obj, "links.self_html")
+        return self_url or missing
+
+    def get_dates(self, obj):
+        """Get other dates of the record."""
+        dates = []
+        for date in obj["metadata"].get("dates", []):
+            try:
+                parsed_date = parse_edtf(date["date"])
+                dates.append(str(parsed_date))
+            except ParseException:
+                continue
+        return dates or missing
+
+    def get_citation(self, obj):
+        """Get citations of the record."""
+        identifiers = py_.get(obj, "metadata.related_identifiers", [])
+        relids = self._filter_related_identifier_type(
+            identifiers, {"cites", "references"}
+        )
+        ids = _serialize_identifiers(relids)
+        return ids or missing
+
+    def _filter_related_identifier_type(self, identifiers, relation_types):
+        """Filters identifier by relation types.
+
+        Relation types must be a sequence where to look items (e.g. ``list``, ``set``).
+        A single ``str`` is also accepted but it's converted to a ``set``.
+
+        :returns: the filter object.
+        """
+        if type(relation_types) == str:
+            relation_types = {relation_types}
+
+        return filter(
+            lambda x: x.get("relation_type", {}).get("id") in relation_types,
+            identifiers,
+        )
