@@ -109,6 +109,7 @@ def test_schemaorg_serializer_full_record(running_app, full_record):
         "name": "InvenioRDM",
         "publisher": {"@type": "Organization", "name": "InvenioRDM"},
         "version": "v1.0",
+        "temporal": ["1939/1945"],
         # "spatialCoverage": [
         #     {
         #         "geoLocationPoint": {
