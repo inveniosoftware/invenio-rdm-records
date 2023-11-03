@@ -23,7 +23,7 @@ class DcatSchema(DataCite43Schema):
         files_enabled = obj["files"].get("enabled", False)
         if not files_enabled:
             return missing
-        files_entries = obj["files"].get("entries")
+        files_entries = obj["files"].get("entries", {})
         record_id = obj["id"]
         files_list = []
         for key, value in files_entries.items():
