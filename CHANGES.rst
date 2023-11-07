@@ -11,6 +11,13 @@
 Changes
 =======
 
+Version 4.39.2 (2023-11-07)
+
+- resources: fix dcat serializer for restricted record files
+- email templates: fix access request submit templates
+- schemaorg: added fields to schema to improve fair score
+- notifications: send community inclusion emails to community managers
+
 Version 4.39.1 (2023-11-01)
 
 - installation: remove upper pin for invenio-oauth2server
