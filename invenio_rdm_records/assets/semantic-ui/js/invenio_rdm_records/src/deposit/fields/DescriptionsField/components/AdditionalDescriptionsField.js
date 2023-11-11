@@ -18,7 +18,7 @@ import { sortOptions } from "../../../utils";
 
 export class AdditionalDescriptionsField extends Component {
   render() {
-    const { fieldPath, options, recordUI, editorConfig } = this.props;
+    const { fieldPath, options, recordUI } = this.props;
     return (
       <ArrayField
         addButtonLabel={i18next.t("Add description")}
@@ -36,7 +36,6 @@ export class AdditionalDescriptionsField extends Component {
                   <RichInputField
                     fieldPath={`${fieldPathPrefix}.description`}
                     label={i18next.t("Additional Description")}
-                    editorConfig={editorConfig}
                     optimized
                     required
                   />
@@ -110,10 +109,8 @@ AdditionalDescriptionsField.propTypes = {
     ),
   }).isRequired,
   recordUI: PropTypes.object,
-  editorConfig: PropTypes.object,
 };
 
 AdditionalDescriptionsField.defaultProps = {
   recordUI: {},
-  editorConfig: undefined,
 };
