@@ -8,7 +8,6 @@
 
 import React, { Component } from "react";
 import PropTypes from "prop-types";
-
 import { FieldLabel, RichInputField } from "react-invenio-forms";
 import { AdditionalDescriptionsField } from "./components";
 import { i18next } from "@translations/invenio_rdm_records/i18next";
@@ -19,7 +18,7 @@ export class DescriptionsField extends Component {
     return (
       <>
         <RichInputField
-          className="description-field rel-mb-1"
+          className="description-field rel-mb-1 rel-mt-2"
           fieldPath={fieldPath}
           editorConfig={editorConfig}
           label={<FieldLabel htmlFor={fieldPath} icon={labelIcon} label={label} />}
