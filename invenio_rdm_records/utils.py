@@ -89,11 +89,17 @@ class ChainObject:
 def verify_token(identity):
     """Verify the token and provide identity with corresponding need."""
     secret_link_token_arg = "token"
-    token = request.args.get(
-        secret_link_token_arg,
-        session.get(secret_link_token_arg, None),
-    )
+    token = None
+    token_source = None
     has_secret_link_token = False
+    arg_token = request.args.get(secret_link_token_arg, None)
+    session_token = session.get(secret_link_token_arg, None)
+    if arg_token:
+        token = arg_token
+        token_source = "arg"
+    elif session_token:
+        token = session_token
+        token_source = "session"
 
     if token:
         try:
@@ -103,7 +109,11 @@ def verify_token(identity):
             session[secret_link_token_arg] = token
             has_secret_link_token = True
         except SignatureExpired:
-            flash(_("Your shared link has expired."))
+            # It the token came from "args", we notify that the link has expired
+            if token_source == "arg":
+                flash(_("Your shared link has expired."))
+            # We remove the token from the session to avoid flashing the message
+            session.pop(secret_link_token_arg, None)
 
     # NOTE: This logic is getting very complex becuase of possible arg naming conflicts
     # for the Zenodo use-case. It can be simplified once the conflict changes
