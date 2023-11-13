@@ -10,7 +10,9 @@
 # it under the terms of the MIT License; see LICENSE file for more details.
 
 """Bibliographic Record Resource."""
-from flask import abort, current_app, g, send_file
+from functools import wraps
+
+from flask import abort, current_app, g, redirect, send_file, url_for
 from flask_cors import cross_origin
 from flask_resources import (
     HTTPJSONException,
@@ -38,6 +40,7 @@ from invenio_records_resources.resources.records.resource import (
 )
 from invenio_records_resources.resources.records.utils import search_preference
 from invenio_stats import current_stats
+from sqlalchemy.exc import NoResultFound
 from werkzeug.utils import secure_filename
 
 from .serializers import (
@@ -92,13 +95,30 @@ class RDMRecordResource(RecordResource):
     @response_handler()
     def read(self):
         """Read an item."""
-        item = self.service.read(
-            g.identity,
-            resource_requestctx.view_args["pid_value"],
-            expand=resource_requestctx.args.get("expand", False),
-            # allows to access deleted record if permissions match
-            include_deleted=resource_requestctx.args.get("include_deleted", False),
-        )
+        try:
+            item = self.service.read(
+                g.identity,
+                resource_requestctx.view_args["pid_value"],
+                expand=resource_requestctx.args.get("expand", False),
+                # allows to access deleted record if permissions match
+                include_deleted=resource_requestctx.args.get("include_deleted", False),
+            )
+        except NoResultFound:
+            # If the parent pid is being used we can get the id of the latest record and redirect
+            latest_version = self.service.read_latest(
+                g.identity,
+                resource_requestctx.view_args["pid_value"],
+                expand=resource_requestctx.args.get("expand", False),
+            )
+            return (
+                redirect(
+                    url_for(
+                        ".read",
+                        pid_value=latest_version.id,
+                    )
+                ),
+                None,  # We pass None to create a tuple as the response_handler always expects an iterable
+            )
 
         # we emit the record view stats event here rather than in the service because
         # the service might be called from other places as well that we don't want
