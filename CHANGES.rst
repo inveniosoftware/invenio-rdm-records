@@ -11,6 +11,10 @@
 Changes
 =======
 
+Version 4.39.3 (2023-11-13)
+
+- secret-links: remove token from session on expiration
+
 Version 4.39.2 (2023-11-07)
 
 - resources: fix dcat serializer for restricted record files
