@@ -145,6 +145,6 @@ def verify_token(identity):
     access_request_token = request.args.get(
         "access_request_token", session.get("access_request_token", None)
     )
-    session["access_request_token"] = access_request_token
     if access_request_token:
+        session["access_request_token"] = access_request_token
         identity.provides.add(AccessRequestTokenNeed(access_request_token))
