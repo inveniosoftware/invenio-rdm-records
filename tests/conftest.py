@@ -197,7 +197,7 @@ def app_config(app_config, mock_datacite_client):
     app_config["OAISERVER_RECORD_CLS"] = "invenio_rdm_records.records.api:RDMRecord"
     app_config[
         "OAISERVER_RECORD_SETS_FETCHER"
-    ] = "invenio_oaiserver.utils:record_sets_fetcher"
+    ] = "invenio_oaiserver.percolator:find_sets_for_record"
     app_config[
         "OAISERVER_GETRECORD_FETCHER"
     ] = "invenio_rdm_records.oai:getrecord_fetcher"
