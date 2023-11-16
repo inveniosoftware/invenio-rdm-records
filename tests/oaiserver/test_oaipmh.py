@@ -91,3 +91,5 @@ def test_harvest(running_app, client, record_factory, search_clear):
         resp = client.get(url)
         assert resp.status_code == 200
         assert f"<identifier>{oai_id}</identifier>" in resp.text
+        if record["id"] == community_record["id"]:
+            assert "<setSpec>community-blr</setSpec>" in resp.text
