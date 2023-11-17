@@ -183,8 +183,6 @@ class DublinCoreSchema(BaseSerializerSchema, CommonFieldsMixin):
         descriptions = [
             bleach.clean(
                 desc,
-                strip=True,
-                strip_comments=True,
                 tags=[],
                 attributes=[],
             )
