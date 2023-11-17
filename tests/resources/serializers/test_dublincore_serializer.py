@@ -46,7 +46,10 @@ def test_dublincorejson_serializer(running_app, updated_full_record):
             "https://doi.org/10.1234/foo.bar",
             "https://doi.org/10.1234/inveniordm.1234.parent",
         ],
-        "descriptions": ["A description \nwith HTML tags", "Bla bla bla"],
+        "descriptions": [
+            "&lt;h1&gt;A description&lt;/h1&gt; &lt;p&gt;with HTML tags&lt;/p&gt;",
+            "Bla bla bla",
+        ],
         "publishers": ["InvenioRDM"],
         "languages": ["dan", "eng"],
         "locations": [
@@ -109,7 +112,7 @@ def test_dublincorexml_serializer(running_app, updated_full_record):
         "<dc:creator>Nielsen, Lars Holm</dc:creator>",
         "<dc:date>2018/2020-09</dc:date>",
         "<dc:date>info:eu-repo/date/embargoEnd/2131-01-01</dc:date>",
-        "<dc:description>A description \nwith HTML tags</dc:description>",
+        "<dc:description>&amp;lt;h1&amp;gt;A description&amp;lt;/h1&amp;gt; &amp;lt;p&amp;gt;with HTML tags&amp;lt;/p&amp;gt;</dc:description>",
         "<dc:description>Bla bla bla</dc:description>",
         "<dc:format>application/pdf</dc:format>",
         "<dc:identifier>https://doi.org/10.1234/inveniordm.1234</dc:identifier>",
@@ -130,7 +133,6 @@ def test_dublincorexml_serializer(running_app, updated_full_record):
 
     serializer = DublinCoreXMLSerializer()
     serialized_record = serializer.serialize_object(updated_full_record)
-
     for ed in expected_data:
         assert ed in serialized_record
 
@@ -161,7 +163,7 @@ def test_dublincorexml_serializer_list(
         "<dc:creator>Nielsen, Lars Holm</dc:creator>",
         "<dc:date>2018/2020-09</dc:date>",
         "<dc:date>info:eu-repo/date/embargoEnd/2131-01-01</dc:date>",
-        "<dc:description>A description \nwith HTML tags</dc:description>",
+        "<dc:description>&amp;lt;h1&amp;gt;A description&amp;lt;/h1&amp;gt; &amp;lt;p&amp;gt;with HTML tags&amp;lt;/p&amp;gt;</dc:description>",
         "<dc:description>Bla bla bla</dc:description>",
         "<dc:format>application/pdf</dc:format>",
         "<dc:identifier>https://doi.org/10.1234/inveniordm.1234</dc:identifier>",
