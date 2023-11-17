@@ -402,8 +402,6 @@ class MARCXMLSchema(BaseSerializerSchema, CommonFieldsMixin):
             return {
                 "a": bleach.clean(
                     description,
-                    strip=True,
-                    strip_comments=True,
                     tags=[],
                     attributes=[],
                 )
