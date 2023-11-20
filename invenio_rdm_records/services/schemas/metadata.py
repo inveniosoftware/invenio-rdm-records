@@ -32,6 +32,7 @@ from marshmallow import (
 )
 from marshmallow_utils.fields import (
     EDTFDateString,
+    EDTFDateTimeString,
     IdentifierSet,
     SanitizedHTML,
     SanitizedUnicode,
@@ -228,7 +229,7 @@ class RightsSchema(Schema):
 class DateSchema(Schema):
     """Schema for date intervals."""
 
-    date = EDTFDateString(required=True)
+    date = EDTFDateTimeString(required=True)
     type = fields.Nested(VocabularySchema, required=True)
     description = fields.Str()
 
