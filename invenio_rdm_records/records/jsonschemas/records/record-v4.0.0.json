@@ -95,19 +95,19 @@
         },
 
         "dates": {
-          "description": "Date or date interval.",
+          "description": "Date, datetime or date interval.",
           "type": "array",
           "items": {
             "type": "object",
             "additionalProperties": false,
             "properties": {
               "date": {
-                "description": "Date or date interval in EDTF level 0 format",
+                "description": "Date, datetime or date interval in EDTF level 0 format",
                 "type": "string"
               },
               "type": {"$ref": "local://records/definitions-v2.0.0.json#/date_type"},
               "description": {
-                "description": "Description of the date or date interval e.g. 'Accepted' or 'Available' (CV).",
+                "description": "Description of the date, datetime or date interval e.g. 'Accepted' or 'Available' (CV).",
                 "type": "string"
               }
             }
