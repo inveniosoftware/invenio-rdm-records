@@ -11,6 +11,14 @@
 Changes
 =======
 
+Version 4.40.0 (2023-11-20)
+
+- access: avoid setting ``access_request_token``
+- resources: add parent doi redirection
+- serializers: don't strip html for dc and marcxml
+- config: update OAISERVER_RECORD_SETS_FETCHER
+- deposit-ui: fix affiliations serialization
+
 Version 4.39.3 (2023-11-13)
 
 - secret-links: remove token from session on expiration
