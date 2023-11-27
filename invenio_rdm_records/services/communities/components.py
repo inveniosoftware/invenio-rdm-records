@@ -15,6 +15,7 @@ from invenio_communities.communities.services.components import (
 )
 from invenio_communities.communities.services.components import (
     CommunityDeletionComponent,
+    CommunityThemeComponent,
     CustomFieldsComponent,
     FeaturedCommunityComponent,
     OAISetComponent,
@@ -83,6 +84,7 @@ class ContentModerationComponent(ServiceComponent):
 
 CommunityServiceComponents = [
     MetadataComponent,
+    CommunityThemeComponent,
     CustomFieldsComponent,
     PIDComponent,
     RelationsComponent,
