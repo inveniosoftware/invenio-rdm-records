@@ -21,12 +21,16 @@ def test_metadata_component(minimal_record, parent, identity_simple, location):
     assert "publication_date" in record.metadata
     assert "title" in record.metadata
 
+    original_publication_date = record.metadata["publication_date"]
+
     component = MetadataComponent(current_rdm_records.records_service)
     component.new_version(identity_simple, draft=draft, record=record)
 
-    # Make sure publication_date was NOT copied, but that title WAS copied
-    assert "publication_date" not in draft.metadata
+    # publication_date is auto-populated with today's date (not copied),
+    # while title IS copied from the original record
+    assert "publication_date" in draft.metadata
+    assert draft.metadata["publication_date"] != original_publication_date
     assert "title" in draft.metadata
 
     # make sure the reference management is correct
-    assert "publication_date" in record.metadata
+    assert record.metadata["publication_date"] == original_publication_date
