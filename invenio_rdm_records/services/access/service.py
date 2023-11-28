@@ -15,7 +15,6 @@ import arrow
 from flask import current_app
 from flask_login import current_user
 from invenio_access.permissions import authenticated_user, system_identity
-from invenio_db import db
 from invenio_drafts_resources.services.records import RecordService
 from invenio_drafts_resources.services.records.uow import ParentRecordCommitOp
 from invenio_i18n import lazy_gettext as _
@@ -24,6 +23,7 @@ from invenio_records_resources.services.errors import PermissionDeniedError
 from invenio_records_resources.services.records.schema import ServiceSchemaWrapper
 from invenio_records_resources.services.uow import unit_of_work
 from invenio_requests.proxies import current_requests_service
+from invenio_search.engine import dsl
 from invenio_users_resources.proxies import current_user_resources
 from marshmallow.exceptions import ValidationError
 from sqlalchemy.orm.exc import NoResultFound
@@ -500,32 +500,31 @@ class RecordAccessService(RecordService):
 
         return True
 
-    def _exists(self, identity, created_by, record_id, request_type):
+    def _exists(self, created_by, record_id, request_type):
         """Return the request id if an open request already exists, else None."""
-        api_cls = current_requests_service.record_cls
-        model_cls = api_cls.model_cls
+        query_terms = [
+            dsl.Q("term", **{"topic.record": record_id}),
+            dsl.Q("term", **{"type": request_type}),
+            dsl.Q("term", **{"is_open": True}),
+        ]
 
-        with db.session.no_autoflush:
-            requests = [
-                request
-                for request in (
-                    api_cls(rm.data, model=rm)
-                    for rm in model_cls.query.filter(
-                        model_cls.json["created_by"] == created_by,
-                        model_cls.json["topic"] == {"record": record_id},
-                        model_cls.json["type"].as_string() == request_type,
-                    )
-                    if not rm.is_deleted
-                )
-                if request.is_open
-            ]
-            if len(requests) > 1:
-                current_app.logger.error(
-                    f"Multiple access requests detected for: "
-                    f"record_pid{record_id}, creator: {created_by}"
-                )
-            if requests and len(requests) > 0:
-                return requests[0]
+        # Build the query dynamically based on the keys in created_by
+        for key, value in created_by.items():
+            query_terms.append(dsl.Q("term", **{f"created_by.{key}": value}))
+
+        open_requests = current_requests_service.search(
+            system_identity,
+            extra_filter=dsl.query.Bool("must", must=query_terms),
+        )
+
+        if open_requests.total > 1:
+            current_app.logger.error(
+                f"Multiple access requests detected for: "
+                f"record_pid{record_id}, creator: {created_by}"
+            )
+
+        if open_requests.total > 0:
+            return open_requests.to_dict()["hits"]["hits"][0]
 
     def request_access(self, identity, id_, data, expand=False):
         """Redirect the access request to specific service method."""
@@ -562,14 +561,13 @@ class RecordAccessService(RecordService):
             )
 
         existing_access_request = self._exists(
-            identity,
             created_by={"user": str(identity.id)},
             record_id=id_,
             request_type=UserAccessRequest.type_id,
         )
 
         if existing_access_request:
-            raise AccessRequestExistsError(existing_access_request.id)
+            raise AccessRequestExistsError(existing_access_request["id"])
 
         data, __ = self.schema_request_access.load(
             data, context={"identity": identity}, raise_errors=True
@@ -674,14 +672,13 @@ class RecordAccessService(RecordService):
 
         # Detect duplicate requests
         existing_access_request = self._exists(
-            identity,
             created_by={"email": access_token.email},
             record_id=access_token.record_pid,
             request_type=GuestAccessRequest.type_id,
         )
 
         if existing_access_request:
-            raise AccessRequestExistsError(existing_access_request)
+            raise AccessRequestExistsError(existing_access_request["id"])
         data = {
             "payload": {
                 "permission": "view",
