@@ -27,6 +27,7 @@ from invenio_users_resources.services.permissions import UserManager
 from ..requests.access import GuestAccessRequest
 from .generators import (
     AccessGrant,
+    CommunityInclusionReviewers,
     GuestAccessRequestToken,
     IfCreate,
     IfDeleted,
@@ -77,6 +78,7 @@ class RDMRecordPermissionPolicy(RecordPermissionPolicy):
         AccessGrant("view"),
         SecretLinks("view"),
         SubmissionReviewer(),
+        CommunityInclusionReviewers(),
         RecordCommunitiesAction("view"),
     ]
 

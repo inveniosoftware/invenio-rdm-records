@@ -7,6 +7,7 @@
 
 """RDM Record Communities Service."""
 from flask import current_app
+from invenio_access.permissions import system_identity
 from invenio_communities.proxies import current_communities
 from invenio_drafts_resources.services.records.uow import ParentRecordCommitOp
 from invenio_i18n import lazy_gettext as _
@@ -60,10 +61,10 @@ class RecordCommunitiesService(Service, RecordIndexerMixin):
         """Factory for creating a record class."""
         return self.config.record_cls
 
-    def _exists(self, identity, community_id, record):
+    def _exists(self, community_id, record):
         """Return the request id if an open request already exists, else None."""
         results = current_requests_service.search(
-            identity,
+            system_identity,
             extra_filter=dsl.query.Bool(
                 "must",
                 must=[
@@ -92,7 +93,7 @@ class RecordCommunitiesService(Service, RecordIndexerMixin):
             raise CommunityAlreadyExists()
 
         # check if there is already an open request, to avoid duplications
-        existing_request_id = self._exists(identity, com_id, record)
+        existing_request_id = self._exists(com_id, record)
 
         if existing_request_id:
             raise OpenRequestAlreadyExists(existing_request_id)

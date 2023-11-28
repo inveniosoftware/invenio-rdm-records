@@ -9,10 +9,13 @@
 
 """Invenio-RDM-Records Permissions Generators."""
 import operator
-from functools import reduce
+from collections import namedtuple
+from functools import partial, reduce
 from itertools import chain
 
+from flask import g
 from flask_principal import UserNeed
+from invenio_communities.config import COMMUNITIES_ROLES
 from invenio_communities.generators import CommunityRoleNeed, CommunityRoles
 from invenio_communities.proxies import current_roles
 from invenio_records_permissions.generators import ConditionalGenerator, Generator
@@ -22,8 +25,14 @@ from invenio_search.engine import dsl
 from ..records import RDMDraft
 from ..records.systemfields.access.grants import Grant
 from ..records.systemfields.deletion_status import RecordDeletionStatusEnum
+from ..requests import CommunityInclusion
 from ..requests.access import AccessRequestTokenNeed
 from ..tokens.permissions import RATNeed
+
+_Need = namedtuple("Need", ["method", "record"])
+
+CommunityInclusionNeed = partial(_Need, "community-inclusion")
+"""Defines a need for a community inclusion."""
 
 
 class IfRestricted(ConditionalGenerator):
@@ -299,6 +308,21 @@ class SubmissionReviewer(Generator):
         receiver = request.receiver
         if receiver is not None:
             return receiver.get_needs(ctx=request.type.needs_context)
+        return []
+
+
+class CommunityInclusionReviewers(Generator):
+    """Needs for community members that have rights to curate the record of the inclusion-requests.
+
+    WARNING: This is a TEMPORAL solution, meaning that it should not be reused around. This need is used to grant a
+    "one time" ticket to access a concrete view (in this case the community inclusion request details page of restricted
+    records).
+    """
+
+    def needs(self, record=None, **kwargs):
+        """Set of Needs granting permission."""
+        if record is not None:
+            return [CommunityInclusionNeed(record.pid.pid_value)]
         return []
 
 
