@@ -8,6 +8,7 @@
     openaire_type: publication
     eurepo: info:eu-repo/semantics/other
     schema.org: https://schema.org/CreativeWork
+    bibtex: misc
     subtype: ""
     type: publication
   title:
@@ -26,6 +27,7 @@
     openaire_type: publication
     eurepo: info:eu-repo/semantics/technicalDocumentation
     schema.org: https://schema.org/Collection
+    bibtex: misc
     subtype: publication-annotationcollection
     type: publication
   title:
@@ -44,6 +46,7 @@
     openaire_type: publication
     eurepo: info:eu-repo/semantics/book
     schema.org: https://schema.org/Book
+    bibtex: book
     subtype: publication-book
     type: publication
   title:
@@ -62,6 +65,7 @@
     openaire_type: publication
     eurepo: info:eu-repo/semantics/bookPart
     schema.org: https://schema.org/ScholarlyArticle
+    bibtex: misc
     subtype: publication-section
     type: publication
   title:
@@ -80,6 +84,7 @@
     openaire_type: publication
     eurepo: info:eu-repo/semantics/conferencePaper
     schema.org: https://schema.org/ScholarlyArticle
+    bibtex: inproceedings
     subtype: publication-conferencepaper
     type: publication
   title:
@@ -98,6 +103,7 @@
     openaire_type: publication
     eurepo: info:eu-repo/semantics/conferenceProceedings
     schema.org: https://schema.org/ScholarlyArticle
+    bibtex: misc
     subtype: publication-conferenceproceeding
     type: publication
   title:
@@ -116,6 +122,7 @@
     openaire_type: publication
     eurepo: info:eu-repo/semantics/technicalDocumentation
     schema.org: https://schema.org/CreativeWork
+    bibtex: misc
     subtype: publication-datamanagementplan
     type: publication
   title:
@@ -134,6 +141,7 @@
     openaire_type: publication
     eurepo: info:eu-repo/semantics/article
     schema.org: https://schema.org/ScholarlyArticle
+    bibtex: misc
     subtype: publication-journal
     type: publication
   title:
@@ -152,6 +160,7 @@
     openaire_type: publication
     eurepo: info:eu-repo/semantics/article
     schema.org: https://schema.org/ScholarlyArticle
+    bibtex: article
     subtype: publication-article
     type: publication
   title:
@@ -170,6 +179,7 @@
     openaire_type: publication
     eurepo: info:eu-repo/semantics/patent
     schema.org: https://schema.org/CreativeWork
+    bibtex: misc
     subtype: publication-patent
     type: publication
   title:
@@ -188,6 +198,7 @@
     openaire_type: publication
     eurepo: info:eu-repo/semantics/review
     schema.org: https://schema.org/ScholarlyArticle
+    bibtex: misc
     subtype: publication-peerreview
     type: publication
   title:
@@ -206,6 +217,7 @@
     openaire_type: publication
     eurepo: info:eu-repo/semantics/preprint
     schema.org: https://schema.org/ScholarlyArticle
+    bibtex: unpublished
     subtype: publication-preprint
     type: publication
   title:
@@ -224,6 +236,7 @@
     openaire_type: publication
     eurepo: info:eu-repo/semantics/report
     schema.org: https://schema.org/CreativeWork
+    bibtex: misc
     subtype: publication-deliverable
     type: publication
   title:
@@ -242,6 +255,7 @@
     openaire_type: publication
     eurepo: info:eu-repo/semantics/report
     schema.org: https://schema.org/CreativeWork
+    bibtex: misc
     subtype: publication-milestone
     type: publication
   title:
@@ -260,6 +274,7 @@
     openaire_type: publication
     eurepo: info:eu-repo/semantics/researchProposal
     schema.org: https://schema.org/CreativeWork
+    bibtex: misc
     subtype: publication-proposal
     type: publication
   title:
@@ -278,6 +293,7 @@
     openaire_type: publication
     eurepo: info:eu-repo/semantics/report
     schema.org: https://schema.org/ScholarlyArticle
+    bibtex: misc
     subtype: publication-report
     type: publication
   title:
@@ -296,6 +312,7 @@
     openaire_type: publication
     eurepo: info:eu-repo/semantics/technicalDocumentation
     schema.org: https://schema.org/CreativeWork
+    bibtex: misc
     subtype: publication-softwaredocumentation
     type: publication
   title:
@@ -314,6 +331,7 @@
     openaire_type: publication
     eurepo: info:eu-repo/semantics/other
     schema.org: https://schema.org/ScholarlyArticle
+    bibtex: misc
     subtype: publication-taxonomictreatment
     type: publication
   title:
@@ -332,6 +350,7 @@
     openaire_type: publication
     eurepo: info:eu-repo/semantics/technicalDocumentation
     schema.org: https://schema.org/ScholarlyArticle
+    bibtex: manual
     subtype: publication-technicalnote
     type: publication
   title:
@@ -350,6 +369,7 @@
     openaire_type: publication
     eurepo: info:eu-repo/semantics/doctoralThesis
     schema.org: https://schema.org/ScholarlyArticle
+    bibtex: phdthesis
     subtype: publication-thesis
     type: publication
   title:
@@ -368,6 +388,7 @@
     openaire_type: publication
     eurepo: info:eu-repo/semantics/workingPaper
     schema.org: https://schema.org/ScholarlyArticle
+    bibtex: unpublished
     subtype: publication-workingpaper
     type: publication
   title:
@@ -386,6 +407,7 @@
     openaire_type: publication
     eurepo: info:eu-repo/semantics/workingPaper
     schema.org: https://schema.org/ScholarlyArticle
+    bibtex: misc
     subtype: publication-datapaper
     type: publication
   title:
@@ -404,6 +426,7 @@
     openaire_type: publication
     eurepo: info:eu-repo/semantics/other
     schema.org: https://schema.org/thesis
+    bibtex: misc
     subtype: publication-dissertation
     type: publication
   title:
@@ -422,6 +445,7 @@
     openaire_type: publication
     eurepo: info:eu-repo/semantics/other
     schema.org: https://schema.org/other
+    bibtex: misc
     subtype: publication-standard
     type: publication
   title:
@@ -440,6 +464,7 @@
     openaire_type: publication
     eurepo: info:eu-repo/semantics/other
     schema.org: https://schema.org/CreativeWork
+    bibtex: misc
     subtype: publication-other
     type: publication
   title:
@@ -458,6 +483,7 @@
     openaire_type: publication
     eurepo: info:eu-repo/semantics/conferencePoster
     schema.org: https://schema.org/CreativeWork
+    bibtex: misc
     subtype: ""
     type: poster
   title:
@@ -476,6 +502,7 @@
     openaire_type: publication
     eurepo: info:eu-repo/semantics/lecture
     schema.org: https://schema.org/PresentationDigitalDocument
+    bibtex: misc
     subtype: ""
     type: presentation
   title:
@@ -494,6 +521,7 @@
     openaire_type: publication
     eurepo: info:eu-repo/semantics/other
     schema.org: https://schema.org/event
+    bibtex: misc
     subtype: ""
     type: event
   title:
@@ -512,6 +540,7 @@
     openaire_type: dataset
     eurepo: info:eu-repo/semantics/other
     schema.org: https://schema.org/Dataset
+    bibtex: dataset
     subtype: ""
     type: dataset
   title:
@@ -530,6 +559,7 @@
     openaire_type: dataset
     eurepo: info:eu-repo/semantics/other
     schema.org: https://schema.org/ImageObject
+    bibtex: misc
     subtype: ""
     type: image
   title:
@@ -548,6 +578,7 @@
     openaire_type: dataset
     eurepo: info:eu-repo/semantics/other
     schema.org: https://schema.org/ImageObject
+    bibtex: misc
     subtype: image-figure
     type: image
   title:
@@ -566,6 +597,7 @@
     openaire_type: dataset
     eurepo: info:eu-repo/semantics/other
     schema.org: https://schema.org/ImageObject
+    bibtex: misc
     subtype: image-plot
     type: image
   title:
@@ -584,6 +616,7 @@
     openaire_type: dataset
     eurepo: info:eu-repo/semantics/other
     schema.org: https://schema.org/ImageObject
+    bibtex: misc
     subtype: image-drawing
     type: image
   title:
@@ -602,6 +635,7 @@
     openaire_type: dataset
     eurepo: info:eu-repo/semantics/other
     schema.org: https://schema.org/ImageObject
+    bibtex: misc
     subtype: image-diagram
     type: image
   title:
@@ -620,6 +654,7 @@
     openaire_type: dataset
     eurepo: info:eu-repo/semantics/other
     schema.org: https://schema.org/Photograph
+    bibtex: misc
     subtype: image-photo
     type: image
   title:
@@ -638,6 +673,7 @@
     openaire_type: dataset
     eurepo: info:eu-repo/semantics/other
     schema.org: https://schema.org/ImageObject
+    bibtex: misc
     subtype: image-other
     type: image
   title:
@@ -656,6 +692,7 @@
     openaire_type: dataset
     eurepo: info:eu-repo/semantics/other
     schema.org: https://schema.org/CreativeWork
+    bibtex: misc
     subtype: ""
     type: model
   title:
@@ -674,6 +711,7 @@
     openaire_type: dataset
     eurepo: info:eu-repo/semantics/other
     schema.org: https://schema.org/MediaObject
+    bibtex: misc
     subtype: ""
     type: video
   title:
@@ -692,6 +730,7 @@
     openaire_type: software
     eurepo: info:eu-repo/semantics/other
     schema.org: https://schema.org/SoftwareSourceCode
+    bibtex: software
     subtype: ""
     type: software
   title:
@@ -710,6 +749,7 @@
     openaire_type: other
     eurepo: info:eu-repo/semantics/lecture
     schema.org: https://schema.org/CreativeWork
+    bibtex: misc
     subtype: ""
     type: lesson
   title:
@@ -728,6 +768,7 @@
     openaire_type: software
     eurepo: info:eu-repo/semantics/other
     schema.org: https://schema.org/SoftwareSourceCode
+    bibtex: misc
     subtype: software-computationalnotebook
     type: software
   title:
@@ -746,6 +787,7 @@
     openaire_type: other
     eurepo: info:eu-repo/semantics/other
     schema.org: https://schema.org/CreativeWork
+    bibtex: misc
     subtype: ""
     type: other
   title:
@@ -764,6 +806,7 @@
     openaire_type: other
     eurepo: info:eu-repo/semantics/other
     schema.org: https://schema.org/CreativeWork
+    bibtex: misc
     subtype: ""
     type: physicalobject
   title:
@@ -782,6 +825,7 @@
     openaire_type: other
     eurepo: info:eu-repo/semantics/other
     schema.org: https://schema.org/CreativeWork
+    bibtex: misc
     subtype: ""
     type: workflow
   title:
