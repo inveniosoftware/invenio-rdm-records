@@ -15,3 +15,4 @@ class CustomFieldsComponent(MetadataComponent):
 
     field = "custom_fields"
     new_version_skip_fields = []
+    new_version_generate_fields = []
