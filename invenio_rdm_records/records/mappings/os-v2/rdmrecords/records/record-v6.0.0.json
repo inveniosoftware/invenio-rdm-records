@@ -494,7 +494,10 @@
                     "type": "text"
                   },
                   "acronym": {
-                    "type": "keyword"
+                    "type": "keyword",
+                    "fields": {
+                      "text": { "type": "text"}
+                    }
                   },
                   "program": {
                     "type": "keyword"
@@ -1046,6 +1049,7 @@
       "metadata.description",
       "metadata.formats",
       "metadata.funding.award.identifiers.identifier",
+      "metadata.funding.award.acronym.text",
       "metadata.funding.award.funder.name",
       "metadata.identifiers.identifier",
       "metadata.location.place",
