@@ -10,13 +10,13 @@
 import bleach
 from dateutil.parser import parse
 from flask import current_app, g
-from marshmallow_utils.html import sanitize_unicode
 from flask_resources.serializers import BaseSerializerSchema
 from invenio_access.permissions import system_identity
 from invenio_communities import current_communities
 from invenio_communities.communities.services.service import get_cached_community_slug
 from invenio_vocabularies.proxies import current_service as vocabulary_service
 from marshmallow import fields, missing
+from marshmallow_utils.html import sanitize_unicode
 
 from ..schemas import CommonFieldsMixin
 from ..ui.schema import current_default_locale
