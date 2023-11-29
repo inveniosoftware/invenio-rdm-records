@@ -47,6 +47,7 @@ from invenio_rdm_records.records.systemfields.deletion_status import (
 
 from . import models
 from .dumpers import (
+    CombinedSubjectsDumperExt,
     EDTFDumperExt,
     EDTFListDumperExt,
     GrantTokensDumperExt,
@@ -118,6 +119,7 @@ class CommonFieldsMixin:
             EDTFDumperExt("metadata.publication_date"),
             EDTFListDumperExt("metadata.dates", "date"),
             RelationDumperExt("relations"),
+            CombinedSubjectsDumperExt(),
             CustomFieldsDumperExt(fields_var="RDM_CUSTOM_FIELDS"),
             StatisticsDumperExt("stats"),
         ]

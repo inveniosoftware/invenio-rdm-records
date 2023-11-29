@@ -8,12 +8,14 @@
 """Search dumpers, for transforming to and from versions to index."""
 
 from .access import GrantTokensDumperExt
+from .combined_subjects import CombinedSubjectsDumperExt
 from .edtf import EDTFDumperExt, EDTFListDumperExt
 from .locations import LocationsDumper
 from .pids import PIDsDumperExt
 from .statistics import StatisticsDumperExt
 
 __all__ = (
+    "CombinedSubjectsDumperExt",
     "EDTFDumperExt",
     "EDTFListDumperExt",
     "PIDsDumperExt",

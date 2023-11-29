@@ -174,8 +174,22 @@ RDM_FACETS = {
             "field": "subjects.subject",
         },
     },
+    # subject_nested is deprecated and should be removed.
+    # subject_combined does require a pre-existing change to indexed documents,
+    # so it's unclear if a direct replacement is right.
+    # Keeping it around until v13 might be better. On the flipside it is an incorrect
+    # facet...
     "subject_nested": {
         "facet": facets.subject_nested,
+        "ui": {
+            "field": "subjects.scheme",
+            "childAgg": {
+                "field": "subjects.subject",
+            },
+        },
+    },
+    "subject_combined": {
+        "facet": facets.subject_combined,
         "ui": {
             "field": "subjects.scheme",
             "childAgg": {
