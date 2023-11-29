@@ -10,6 +10,7 @@ import idutils
 from flask import current_app
 from marshmallow import fields, missing
 from marshmallow_utils.html import sanitize_unicode
+
 from invenio_rdm_records.resources.serializers.datacite import DataCite43Schema
 
 
@@ -27,7 +28,9 @@ class DcatSchema(DataCite43Schema):
         record_id = obj["id"]
         files_list = []
         for key, value in files_entries.items():
-            file_name = sanitize_unicode(value['key']) # There can be inconsistencies in the file name i.e. if the file name consists of invalid XML characters
+            file_name = sanitize_unicode(
+                value["key"]
+            )  # There can be inconsistencies in the file name i.e. if the file name consists of invalid XML characters
             url = f"{current_app.config['SITE_UI_URL']}/records/{record_id}/files/{file_name}"
             access_url = None
             if "doi" in obj["pids"]:
