@@ -10,6 +10,7 @@
 import bleach
 from dateutil.parser import parse
 from flask import current_app, g
+from marshmallow_utils.html import sanitize_unicode
 from flask_resources.serializers import BaseSerializerSchema
 from invenio_access.permissions import system_identity
 from invenio_communities import current_communities
@@ -99,7 +100,7 @@ class MARCXMLSchema(BaseSerializerSchema, CommonFieldsMixin):
         record_id = obj["id"]
         files = []
         for file_entry in files_entries.values():
-            file_name = file_entry["key"]
+            file_name = sanitize_unicode(file_entry["key"])
             url = f"{current_app.config['SITE_UI_URL']}/records/{record_id}/files/{file_name}"
             file_ = {
                 "s": str(file_entry["size"]),  # file size
