@@ -11,6 +11,14 @@
 Changes
 =======
 
+Version 4.41.0 (2023-11-29)
+
+- metadata: use DateAndTime format for dates field
+- contrib: update imprint labels to be more descriptive
+- services: extend embargo check to all versions
+- service: improve check for record existance
+- generators: add community inclusion reviewers
+
 Version 4.40.0 (2023-11-20)
 
 - access: avoid setting ``access_request_token``
