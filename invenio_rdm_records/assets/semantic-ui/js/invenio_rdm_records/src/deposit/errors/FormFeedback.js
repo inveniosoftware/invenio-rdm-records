@@ -65,13 +65,13 @@ const ACTIONS = {
   [DRAFT_SAVE_FAILED]: {
     feedback: "negative",
     message: i18next.t(
-      "Oops, something went wrong! The draft was not saved. Please try again. If the problem persists, contact user support."
+      "The draft was not saved. Please try again. If the problem persists, contact user support."
     ),
   },
   [DRAFT_PUBLISH_FAILED]: {
     feedback: "negative",
     message: i18next.t(
-      "Oops, something went wrong! The draft was not published. Please try again. If the problem persists, contact user support."
+      "The draft was not published. Please try again. If the problem persists, contact user support."
     ),
   },
   [DRAFT_PUBLISH_FAILED_WITH_VALIDATION_ERRORS]: {
@@ -83,7 +83,7 @@ const ACTIONS = {
   [DRAFT_SUBMIT_REVIEW_FAILED]: {
     feedback: "negative",
     message: i18next.t(
-      "Oops, something went wrong! The draft was not submitted for review. Please try again. If the problem persists, contact user support."
+      "The draft was not submitted for review. Please try again. If the problem persists, contact user support."
     ),
   },
   [DRAFT_SUBMIT_REVIEW_FAILED_WITH_VALIDATION_ERRORS]: {
@@ -95,37 +95,37 @@ const ACTIONS = {
   [DRAFT_DELETE_FAILED]: {
     feedback: "negative",
     message: i18next.t(
-      "Oops, something went wrong! The draft was not deleted. Please try again. If the problem persists, contact user support."
+      "Draft deletion failed. Please try again. If the problem persists, contact user support."
     ),
   },
   [DRAFT_PREVIEW_FAILED]: {
     feedback: "negative",
     message: i18next.t(
-      "Oops, something went wrong! The draft cannot be previewed. Please try again. If the problem persists, contact user support."
+      "Draft preview failed. Please try again. If the problem persists, contact user support."
     ),
   },
   [RESERVE_PID_FAILED]: {
     feedback: "negative",
     message: i18next.t(
-      "Oops, something went wrong! The identifier was not reserved. Please try again. If the problem persists, contact user support."
+      "Identifier reservation failed. Please try again. If the problem persists, contact user support."
     ),
   },
   [DISCARD_PID_FAILED]: {
     feedback: "negative",
     message: i18next.t(
-      "Oops, something went wrong! The identifier was not discarded. Please try again. If the problem persists, contact user support."
+      "Identifier could not be discarded. Please try again. If the problem persists, contact user support."
     ),
   },
   [FILE_UPLOAD_SAVE_DRAFT_FAILED]: {
     feedback: "negative",
     message: i18next.t(
-      "Oops, something went wrong! The draft could not be saved before uploading the file. Please try again. If the problem persists, contact user support."
+      "Draft save failed before file upload. Please try again. If the problem persists, contact user support."
     ),
   },
   [FILE_IMPORT_FAILED]: {
     feedback: "negative",
     message: i18next.t(
-      "Oops, something went wrong! Importing files from the previous version failed. Please try again. If the problem persists, contact user support."
+      "Files import from the previous version failed. Please try again. If the problem persists, contact user support."
     ),
   },
 };
