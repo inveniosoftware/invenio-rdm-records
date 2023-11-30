@@ -11,6 +11,11 @@
 Changes
 =======
 
+Version 4.42.0 (2023-11-30)
+
+- services: add signals component
+- contrib: codemeta serializer
+
 Version 4.41.0 (2023-11-29)
 
 - metadata: use DateAndTime format for dates field
