@@ -535,3 +535,9 @@ RDM_LOCK_EDIT_PUBLISHED_FILES = lock_edit_published_files
 # Feature flag to enable/disable user moderation
 RDM_USER_MODERATION_ENABLED = False
 """Flag to enable creation of user moderation requests on specific user actions."""
+
+RDM_RECORDS_MAX_FILES_COUNT = 100
+"""Max amount of files allowed to upload in the deposit form."""
+
+RDM_RECORDS_MAX_MEDIA_FILES_COUNT = 100
+"""Max amount of media files allowed to upload in the deposit form."""

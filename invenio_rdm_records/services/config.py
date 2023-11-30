@@ -501,6 +501,8 @@ class RDMFileRecordServiceConfig(FileServiceConfig, ConfiguratorMixin):
         "RDM_PERMISSION_POLICY", default=RDMRecordPermissionPolicy
     )
 
+    max_files_count = FromConfig("RDM_RECORDS_MAX_FILES_COUNT", 100)
+
     file_links_list = {
         **FileServiceConfig.file_links_list,
         "archive": RecordLink(
@@ -538,6 +540,8 @@ class RDMMediaFileRecordServiceConfig(FileServiceConfig, ConfiguratorMixin):
     )
     permission_action_prefix = "media_"
 
+    max_files_count = FromConfig("RDM_RECORDS_MAX_MEDIA_FILES_COUNT", 100)
+
     file_links_list = {
         "self": RecordLink("{+api}/records/{id}/media-files"),
         "archive": RecordLink(
@@ -563,6 +567,8 @@ class RDMFileDraftServiceConfig(FileServiceConfig, ConfiguratorMixin):
     permission_policy_cls = FromConfig(
         "RDM_PERMISSION_POLICY", default=RDMRecordPermissionPolicy
     )
+
+    max_files_count = FromConfig("RDM_RECORDS_MAX_FILES_COUNT", 100)
 
     file_links_list = {
         "self": RecordLink("{+api}/records/{id}/draft/files"),
@@ -602,6 +608,8 @@ class RDMMediaFileDraftServiceConfig(FileServiceConfig, ConfiguratorMixin):
     permission_policy_cls = FromConfig(
         "RDM_PERMISSION_POLICY", default=RDMRecordPermissionPolicy
     )
+
+    max_files_count = FromConfig("RDM_RECORDS_MAX_MEDIA_FILES_COUNT", 100)
 
     file_links_list = {
         "self": RecordLink("{+api}/records/{id}/draft/media-files"),
