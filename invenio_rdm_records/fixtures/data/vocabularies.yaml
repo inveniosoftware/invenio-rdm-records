@@ -52,3 +52,6 @@ awards:
 code:developmentStatus:
   pid-type: ds
   data-file: vocabularies/contrib/codemeta/development_status.yaml
+code:programmingLanguages:
+  pid-type: pl
+  data-file: vocabularies/contrib/codemeta/programming_languages.yaml

@@ -188,6 +188,7 @@ class SchemaorgSchema(BaseSerializerSchema, CommonFieldsMixin):
     temporal = fields.Method("get_dates")
     inLanguage = fields.Method("get_language")
     contentSize = fields.Method("get_size")
+    size = fields.Method("get_size")
     encodingFormat = fields.Method("get_format")
     version = SanitizedUnicode(attribute="metadata.version")
     license = fields.Method("get_license")

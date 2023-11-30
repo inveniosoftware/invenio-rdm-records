@@ -1195,6 +1195,28 @@ def resource_type_v(app, resource_type_type):
         },
     )
 
+    vocabulary_service.create(
+        system_identity,
+        {  # create base resource type
+            "id": "software",
+            "props": {
+                "csl": "figure",
+                "datacite_general": "Software",
+                "datacite_type": "",
+                "openaire_resourceType": "0029",
+                "openaire_type": "software",
+                "eurepo": "info:eu-repo/semantic/other",
+                "schema.org": "https://schema.org/SoftwareSourceCode",
+                "subtype": "",
+                "type": "image",
+            },
+            "icon": "code",
+            "title": {"en": "Software"},
+            "tags": ["depositable", "linkable"],
+            "type": "resourcetypes",
+        },
+    )
+
     vocab = vocabulary_service.create(
         system_identity,
         {

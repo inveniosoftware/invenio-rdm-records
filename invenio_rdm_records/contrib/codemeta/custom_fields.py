@@ -35,7 +35,12 @@ CODEMETA_CUSTOM_FIELDS = [
             "error_messages": {"validate": "You must provide a valid URL."},
         },
     ),
-    KeywordCF(name="code:programmingLanguage"),
+    VocabularyCF(
+        name="code:programmingLanguage",
+        vocabulary_id="code:programmingLanguages",
+        multiple=True,
+        dump_options=False,
+    ),
     KeywordCF(name="code:runtimePlatform"),
     KeywordCF(name="code:operatingSystem"),
     VocabularyCF(
@@ -60,12 +65,17 @@ CODEMETA_CUSTOM_FIELDS_UI = {
         ),
         dict(
             field="code:programmingLanguage",
-            ui_widget="Input",
+            ui_widget="AutocompleteDropdown",
             props=dict(
                 label="Programming language",
                 icon="code",
                 description="Repository's programming language.",
                 placeholder="e.g. Python ...",
+                autocompleteFrom="/api/vocabularies/code:programmingLanguages",
+                autocompleteFromAcceptHeader="application/vnd.inveniordm.v1+json",
+                required=False,
+                multiple=True,
+                clearable=True,
             ),
         ),
         dict(

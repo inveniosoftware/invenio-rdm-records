@@ -10,6 +10,7 @@
 """Record response serializers."""
 
 from .bibtex import BibtexSerializer
+from .codemeta import CodemetaSerializer
 from .csl import CSLJSONSerializer, StringCitationSerializer
 from .datacite import DataCite43JSONSerializer, DataCite43XMLSerializer
 from .dcat import DCATSerializer
@@ -42,4 +43,5 @@ __all__ = (
     "StringCitationSerializer",
     "UIJSONSerializer",
     "DCATSerializer",
+    "CodemetaSerializer",
 )
