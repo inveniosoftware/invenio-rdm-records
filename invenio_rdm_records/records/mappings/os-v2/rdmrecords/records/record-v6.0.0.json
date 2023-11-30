@@ -1050,14 +1050,14 @@
       "metadata.formats",
       "metadata.funding.award.identifiers.identifier",
       "metadata.funding.award.acronym.text",
-      "metadata.funding.award.funder.name",
+      "metadata.funding.award.number",
+      "metadata.funding.funder.name",
       "metadata.identifiers.identifier",
-      "metadata.location.place",
-      "metadata.location.description",
+      "metadata.locations.features.place",
+      "metadata.locations.features.description",
       "metadata.publication_date",
       "metadata.publisher",
       "metadata.subjects.subject",
-      "metadata.title",
       "metadata.version"
     ]
   }
