@@ -19,6 +19,8 @@ from invenio_search.proxies import current_search_client
 from invenio_search.utils import prefix_index
 from invenio_stats.bookmark import BookmarkAPI
 
+from invenio_rdm_records.services.signals import post_publish_signal
+
 from ..proxies import current_rdm_records
 from .errors import EmbargoNotLiftedError
 
@@ -84,3 +86,9 @@ def reindex_stats(stats_indices):
             )
     bm.set_bookmark(reindex_start_time)
     return "%d documents reindexed" % len(all_parents)
+
+
+@shared_task(ignore_result=True)
+def send_post_published_signal(pid):
+    """Sends a signal for a published record."""
+    post_publish_signal.send(current_app._get_current_object(), pid=pid)
