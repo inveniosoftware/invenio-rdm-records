@@ -32,12 +32,12 @@ class CodemetaSchema(SchemaorgSchema):
         if not funding:
             return missing
 
-        result = {}
+        result = None
         for fund in funding:
             award = fund.get("award", {})
             title = award.get("title", {}).get("en")
             number = award.get("number")
-            grant_id = next(
+            grant_url = next(
                 (
                     x["identifier"]
                     for x in award.get("identifiers", [])
@@ -45,10 +45,8 @@ class CodemetaSchema(SchemaorgSchema):
                 ),
                 None,
             )
-            if grant_id or (title and number):
-                result = (
-                    {"@id": grant_id} if grant_id else {"@id": f"{title} ({number})"}
-                )
+            if grant_url or (title and number):
+                result = grant_url or f"{title} ({number})"
                 break
 
         return result or missing
