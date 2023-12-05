@@ -6,9 +6,9 @@
 # it under the terms of the MIT License; see LICENSE file for more details.
 """CFF serializer."""
 import yaml
-
 from flask_resources import BaseListSchema, MarshmallowSerializer
 from flask_resources.serializers import SimpleSerializer
+
 from .schema import CFFSchema
 
 

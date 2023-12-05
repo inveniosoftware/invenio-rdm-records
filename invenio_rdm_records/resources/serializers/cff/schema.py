@@ -7,8 +7,8 @@
 """CFF schema."""
 
 from flask_resources.serializers import BaseSerializerSchema
-from marshmallow import fields, missing, ValidationError
-from marshmallow_utils.fields import SanitizedUnicode, SanitizedHTML
+from marshmallow import ValidationError, fields, missing
+from marshmallow_utils.fields import SanitizedHTML, SanitizedUnicode
 
 
 def _serialize_person(person):
