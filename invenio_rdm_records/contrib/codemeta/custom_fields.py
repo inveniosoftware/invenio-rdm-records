@@ -41,8 +41,6 @@ CODEMETA_CUSTOM_FIELDS = [
         multiple=True,
         dump_options=False,
     ),
-    KeywordCF(name="code:runtimePlatform"),
-    KeywordCF(name="code:operatingSystem"),
     VocabularyCF(
         name="code:developmentStatus",
         vocabulary_id="code:developmentStatus",
@@ -76,26 +74,6 @@ CODEMETA_CUSTOM_FIELDS_UI = {
                 required=False,
                 multiple=True,
                 clearable=True,
-            ),
-        ),
-        dict(
-            field="code:runtimePlatform",
-            ui_widget="Input",
-            props=dict(
-                label="Runtime platform",
-                icon="cog",
-                description="Repository runtime platform or script interpreter dependencies.",
-                placeholder="e.g. Java v1, Python2.3, .Net Framework 3.0 ...",
-            ),
-        ),
-        dict(
-            field="code:operatingSystem",
-            ui_widget="Input",
-            props=dict(
-                label="Supported operating system",
-                icon="desktop",
-                description="Supported operating systems.",
-                placeholder="e.g. Windows 7, OSX 10.6, Android 1.6 ...",
             ),
         ),
         dict(
