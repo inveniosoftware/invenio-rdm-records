@@ -139,12 +139,36 @@ class PersonOrOrganizationSchema(Schema):
         return data
 
 
+def validate_affiliations_data(data):
+    """Validate affiliations."""
+    affiliations = data.get("affiliations", [])
+    #  return early If there are no affiliations
+    if not affiliations:
+        return
+    # avoid nesting
+    seen_names = {
+        affiliation.get("name", affiliation.get("id")) for affiliation in affiliations
+    }
+    if len(seen_names) != len(affiliations):
+        # provide more specific info
+        messages = [
+            _("Duplicated affiliations: ")
+            + ", ".join(set(name for name in seen_names if name))
+        ]
+        raise ValidationError({"affiliations": messages})
+
+
 class CreatorSchema(Schema):
     """Creator schema."""
 
     person_or_org = fields.Nested(PersonOrOrganizationSchema, required=True)
     role = fields.Nested(VocabularySchema)
     affiliations = fields.List(fields.Nested(AffiliationRelationSchema))
+
+    @validates_schema
+    def validate_affiliations(self, data, **kwargs):
+        """Validate names."""
+        validate_affiliations_data(data)
 
 
 class ContributorSchema(Schema):
@@ -153,6 +177,11 @@ class ContributorSchema(Schema):
     person_or_org = fields.Nested(PersonOrOrganizationSchema, required=True)
     role = fields.Nested(VocabularySchema, required=True)
     affiliations = fields.List(fields.Nested(AffiliationRelationSchema))
+
+    @validates_schema
+    def validate_affiliations(self, data, **kwargs):
+        """Validate names."""
+        validate_affiliations_data(data)
 
 
 class TitleSchema(Schema):

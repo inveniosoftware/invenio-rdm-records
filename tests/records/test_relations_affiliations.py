@@ -144,13 +144,6 @@ def test_creator_affiliations_invalid(running_app, minimal_record):
     minimal_record["metadata"]["creators"][0]["affiliations"] = [{"id": 1}]
     pytest.raises(ValidationError, RDMDraft.create, minimal_record)
 
-    # No duplicates
-    minimal_record["metadata"]["creators"][0]["affiliations"] = [
-        {"id": "cern"},
-        {"id": "cern"},
-    ]
-    pytest.raises(ValidationError, RDMDraft.create, minimal_record)
-
 
 #
 # Contributor Affiliations
@@ -227,11 +220,4 @@ def test_contributor_affiliations_invalid(running_app, minimal_record_with_contr
 
     # non-string types are not allowed as id values
     minimal_record["metadata"]["contributors"][0]["affiliations"] = [{"id": 1}]
-    pytest.raises(ValidationError, RDMDraft.create, minimal_record)
-
-    # No duplicates
-    minimal_record["metadata"]["contributors"][0]["affiliations"] = [
-        {"id": "cern"},
-        {"id": "cern"},
-    ]
     pytest.raises(ValidationError, RDMDraft.create, minimal_record)
