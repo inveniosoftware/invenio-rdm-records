@@ -13,8 +13,7 @@
   },
   "affiliations": {
     "type": "array",
-    "items": {"$ref": "#/affiliation"},
-    "uniqueItems": true
+    "items": {"$ref": "#/affiliation"}
   },
   "agent": {
     "description": "An agent (user, software process, community, ...).",
