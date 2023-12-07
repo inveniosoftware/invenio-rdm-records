@@ -518,10 +518,10 @@ class RDMRecordService(RecordService):
     #
     # Base methods, extended with handling of deleted records
     #
-    def read(self, identity, id_, expand=False, include_deleted=False):
+    def read(self, identity, id_, expand=False, include_deleted=False, action="read"):
         """Retrieve a record."""
         record = self.record_cls.pid.resolve(id_)
-        result = super().read(identity, id_, expand=expand)
+        result = super().read(identity, id_, expand=expand, action=action)
 
         if not include_deleted and record.deletion_status.is_deleted:
             raise RecordDeletedException(record, result_item=result)

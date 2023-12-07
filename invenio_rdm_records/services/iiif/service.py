@@ -14,6 +14,7 @@ import tempfile
 import importlib_metadata as metadata
 from flask_iiif.api import IIIFImageAPIWrapper
 from invenio_records_resources.services import Service
+from invenio_records_resources.services.errors import PermissionDeniedError
 
 try:
     metadata.distribution("wand")
@@ -63,12 +64,11 @@ class IIIFService(Service):
     def read_record(self, identity, uuid):
         """Read the correct version of the record and its files."""
         type_, id_ = self._iiif_uuid(uuid)
-        read = (
-            self._records_service.read
-            if type_ == "record"
-            else self._records_service.read_draft
-        )
-        return read(identity=identity, id_=id_)
+        if type_ == "record":
+            record = self._records_service.read(identity=identity, id_=id_, action="read_files")
+        else:
+            record = self._records_service.read_draft(identity=identity, id_=id_)
+        return record
 
     def _open_image(self, file_):
         fp = file_.get_stream("rb")
