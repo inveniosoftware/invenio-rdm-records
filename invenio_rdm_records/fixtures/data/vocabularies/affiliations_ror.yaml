@@ -125,3 +125,12 @@
   identifiers:
     - scheme: ror
       identifier: 05dxps055
+- acronym: KTH
+  id: 026vcq606
+  name: KTH Royal Institute of Technology
+  title:
+    en: KTH Royal Institute of Technology
+    sv: "KTH Kungliga Tekniska högskolan"
+  identifiers:
+    - scheme: ror
+      identifier: 026vcq606
