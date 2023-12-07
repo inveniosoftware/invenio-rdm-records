@@ -217,6 +217,7 @@ class IIIFManifestV2Schema(Schema):
 
     @pre_dump
     def add_iiif_links(self, data, many):
+        """Add IIIF links to each files entry."""
         for file in data["files"]["entries"].values():
             if "links" not in file:
                 links_tpl = current_rdm_records_service.files.file_links_item_tpl(
