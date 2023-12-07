@@ -107,7 +107,6 @@ class CFFSchema(BaseSerializerSchema):
 
     def get_contact(self, obj):
         """Serializes contact person, if any."""
-
         metadata = obj.get("metadata", {})
 
         result = {}
@@ -212,7 +211,6 @@ class CFFSchema(BaseSerializerSchema):
         As defined by CFF, a repository is represented by its URL.
         The URL of the work in a source code repository.
         """
-
         resource_type = obj.get("metadata", {}).get("resource_type", {}).get("id")
 
         if resource_type != "software":
