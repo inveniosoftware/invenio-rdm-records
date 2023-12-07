@@ -65,7 +65,9 @@ class IIIFService(Service):
         """Read the correct version of the record and its files."""
         type_, id_ = self._iiif_uuid(uuid)
         if type_ == "record":
-            record = self._records_service.read(identity=identity, id_=id_, action="read_files")
+            record = self._records_service.read(
+                identity=identity, id_=id_, action="read_files"
+            )
         else:
             record = self._records_service.read_draft(identity=identity, id_=id_)
         return record
