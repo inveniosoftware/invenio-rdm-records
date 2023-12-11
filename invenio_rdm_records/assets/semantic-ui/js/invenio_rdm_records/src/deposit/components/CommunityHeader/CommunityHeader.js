@@ -6,14 +6,16 @@
 // Invenio-RDM-Records is free software; you can redistribute it and/or modify it
 // under the terms of the MIT License; see LICENSE file for more details.
 
-import { i18next } from "@translations/invenio_rdm_records/i18next";
+import {i18next} from "@translations/invenio_rdm_records/i18next";
 import PropTypes from "prop-types";
-import React, { Component } from "react";
-import { Image } from "react-invenio-forms";
-import { connect } from "react-redux";
-import { Button, Container } from "semantic-ui-react";
-import { changeSelectedCommunity } from "../../state/actions";
-import { CommunitySelectionModal } from "../CommunitySelectionModal";
+import React, {Component} from "react";
+import {Image} from "react-invenio-forms";
+import {connect} from "react-redux";
+import {Button, Container} from "semantic-ui-react";
+import {changeSelectedCommunity} from "../../state/actions";
+import {CommunitySelectionModal} from "../CommunitySelectionModal";
+import Overridable from "react-overridable";
+
 
 class CommunityHeaderComponent extends Component {
   constructor(props) {
@@ -22,6 +24,7 @@ class CommunityHeaderComponent extends Component {
       modalOpen: false,
     };
   }
+
   render() {
     const {
       changeSelectedCommunity,
@@ -32,7 +35,7 @@ class CommunityHeaderComponent extends Component {
       showCommunityHeader,
       record,
     } = this.props;
-    const { modalOpen } = this.state;
+    const {modalOpen} = this.state;
 
     return (
       showCommunityHeader && (
@@ -64,47 +67,53 @@ class CommunityHeaderComponent extends Component {
             )}
             <div className="community-header-element flex align-items-center rel-ml-1">
               {showCommunitySelectionButton && (
-                <>
-                  <CommunitySelectionModal
-                    onCommunityChange={(community) => {
-                      changeSelectedCommunity(community);
-                      this.setState({ modalOpen: false });
-                    }}
-                    onModalChange={(value) => this.setState({ modalOpen: value })}
-                    modalOpen={modalOpen}
-                    chosenCommunity={community}
-                    displaySelected
-                    record={record}
-                    trigger={
-                      <Button
-                        className="community-header-button"
-                        disabled={disableCommunitySelectionButton}
-                        onClick={() => this.setState({ modalOpen: true })}
-                        primary
-                        size="mini"
-                        name="setting"
-                        type="button"
-                        content={
-                          community
-                            ? i18next.t("Change")
-                            : i18next.t("Select a community")
-                        }
-                      />
-                    }
-                  />
-                  {community && (
-                    <Button
-                      basic
-                      size="mini"
-                      labelPosition="left"
-                      className="community-header-button ml-5"
-                      onClick={() => changeSelectedCommunity(null)}
-                      content={i18next.t("Remove")}
-                      icon="close"
-                      disabled={disableCommunitySelectionButton}
+                <Overridable id="InvenioRdmRecords.CommunityHeader.CommunityHeaderElement.container">
+                  <>
+                    <CommunitySelectionModal
+                      onCommunityChange={(community) => {
+                        changeSelectedCommunity(community);
+                        this.setState({modalOpen: false});
+                      }}
+                      onModalChange={(value) => this.setState({modalOpen: value})}
+                      modalOpen={modalOpen}
+                      chosenCommunity={community}
+                      displaySelected
+                      record={record}
+                      trigger={
+                        <Overridable id="InvenioRdmRecords.CommunityHeader.SelectCommunity.Button">
+                          <Button
+                            className="community-header-button"
+                            disabled={disableCommunitySelectionButton}
+                            onClick={() => this.setState({modalOpen: true})}
+                            primary
+                            size="mini"
+                            name="setting"
+                            type="button"
+                            content={
+                              community
+                                ? i18next.t("Change")
+                                : i18next.t("Select a community")
+                            }
+                          />
+                        </Overridable>
+                      }
                     />
-                  )}
-                </>
+                    {community && (
+                      <Overridable id="InvenioRdmRecords.CommunityHeader.RemoveCommunity.Button">
+                        <Button
+                          basic
+                          size="mini"
+                          labelPosition="left"
+                          className="community-header-button ml-5"
+                          onClick={() => changeSelectedCommunity(null)}
+                          content={i18next.t("Remove")}
+                          icon="close"
+                          disabled={disableCommunitySelectionButton}
+                        />
+                      </Overridable>
+                    )}
+                  </>
+                </Overridable>
               )}
             </div>
           </Container>
@@ -131,9 +140,9 @@ CommunityHeaderComponent.defaultProps = {
 const mapStateToProps = (state) => ({
   community: state.deposit.editorState.selectedCommunity,
   disableCommunitySelectionButton:
-    state.deposit.editorState.ui.disableCommunitySelectionButton,
+  state.deposit.editorState.ui.disableCommunitySelectionButton,
   showCommunitySelectionButton:
-    state.deposit.editorState.ui.showCommunitySelectionButton,
+  state.deposit.editorState.ui.showCommunitySelectionButton,
   showCommunityHeader: state.deposit.editorState.ui.showCommunityHeader,
 });
 
