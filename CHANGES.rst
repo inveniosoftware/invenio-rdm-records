@@ -11,6 +11,23 @@
 Changes
 =======
 
+Version 4.43.0 (2023-12-11)
+
+- fixtures: method to add/update entries
+- fixtures: add KTH affiliation
+- chore: pycodestyle fix
+- tests: added cff serializer test
+- serializers: added yaml formatter
+- serializers: added cff
+- contrib: removed open terms from software fields
+- codemeta: fixed funding serialization
+- mappings: fix some mapping paths
+- mapping: add a text subfield for award acronyms
+- updated formatting
+- export: sanitized file name in dcat schema
+- export: santized filename in marcxml
+- deposit-ui: improve error messages
+
 Version 4.42.0 (2023-11-30)
 
 - services: add signals component
