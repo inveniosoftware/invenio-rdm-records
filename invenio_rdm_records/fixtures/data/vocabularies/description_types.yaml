@@ -3,34 +3,40 @@
     datacite: Abstract
   title:
     en: Abstract
+    sv: Abstract
     de: Abstract
 - id: methods
   props:
     datacite: Methods
   title:
     en: Methods
+    sv: Metoder
     de: Methoden
 - id: series-information
   props:
     datacite: SeriesInformation
   title:
     en: Series information
+    sv: Information om serien
     de: Informationen zur Reihe
 - id: table-of-contents
   props:
     datacite: TableOfContents
   title:
     en: Table of contents
+    sv: Innehållsförteckning
     de: Inhaltsverzeichnis
 - id: technical-info
   props:
     datacite: TechnicalInfo
   title:
     en: Technical info
+    sv: Teknisk information
     de: Technische Informationen
 - id: other
   props:
     datacite: Other
   title:
     en: Other
+    sv: Övrig
     de: Sonstige

@@ -12,6 +12,7 @@
     type: publication
   title:
     en: Publication
+    sv: Publikation
     de: Publikation
   tags:
     - depositable
@@ -30,6 +31,7 @@
     type: publication
   title:
     en: Annotation collection
+    sv: Annoteringssamling
     de: Anmerkungssammlung
   tags:
     - depositable
@@ -48,6 +50,7 @@
     type: publication
   title:
     en: Book
+    sv: Bok
     de: Buch
   tags:
     - depositable
@@ -66,6 +69,7 @@
     type: publication
   title:
     en: Book chapter
+    sv: Bokkapitel
     de: Buchkapitel
   tags:
     - depositable
@@ -84,6 +88,7 @@
     type: publication
   title:
     en: Conference paper
+    sv: Konferensbidrag
     de: Konferenzbeitrag
   tags:
     - depositable
@@ -102,6 +107,7 @@
     type: publication
   title:
     en: Conference proceeding
+    sv: Konferenshandling
     de: Tagungsband
   tags:
     - depositable
@@ -120,6 +126,7 @@
     type: publication
   title:
     en: Output management plan
+    sv: Outputhanteringsplan
     de: Outputmanagementplan
   tags:
     - depositable
@@ -138,6 +145,7 @@
     type: publication
   title:
     en: Journal
+    sv: Tidskrift
     de: Zeitschrift
   tags:
     - depositable
@@ -156,6 +164,7 @@
     type: publication
   title:
     en: Journal article
+    sv: Tidskriftsartikel
     de: Zeitschriftenartikel
   tags:
     - depositable
@@ -174,6 +183,7 @@
     type: publication
   title:
     en: Patent
+    sv: Patent
     de: Patent
   tags:
     - depositable
@@ -192,6 +202,7 @@
     type: publication
   title:
     en: Peer review
+    sv: Peer review
     de: Peer Review
   tags:
     - depositable
@@ -210,6 +221,7 @@
     type: publication
   title:
     en: Preprint
+    sv: Preprint
     de: Preprint
   tags:
     - depositable
@@ -228,6 +240,7 @@
     type: publication
   title:
     en: Project deliverable
+    sv: Projektresultat
     de: Projektergebnis
   tags:
     - depositable
@@ -246,6 +259,7 @@
     type: publication
   title:
     en: Project milestone
+    sv: Milstolpe för projektet
     de: Projektmeilenstein
   tags:
     - depositable
@@ -264,6 +278,7 @@
     type: publication
   title:
     en: Proposal
+    sv: Förslag
     de: Antrag
   tags:
     - depositable
@@ -282,6 +297,7 @@
     type: publication
   title:
     en: Report
+    sv: Rapport
     de: Bericht
   tags:
     - depositable
@@ -300,6 +316,7 @@
     type: publication
   title:
     en: Software documentation
+    sv: Mjukvarudokumentation
     de: Softwaredokumentation
   tags:
     - depositable
@@ -318,6 +335,7 @@
     type: publication
   title:
     en: Taxonomic treatment
+    sv: Taxonomisk behandling
     de: Taxonomische Behandlung
   tags:
     - depositable
@@ -336,6 +354,7 @@
     type: publication
   title:
     en: Technical note
+    sv: Technical note
     de: Technical Note
   tags:
     - depositable
@@ -354,6 +373,7 @@
     type: publication
   title:
     en: Thesis
+    sv: Avhandling
     de: Abschlussarbeit
   tags:
     - depositable
@@ -372,6 +392,7 @@
     type: publication
   title:
     en: Working paper
+    sv: Arbetsdokument
     de: Arbeitspapier
   tags:
     - depositable
@@ -390,6 +411,7 @@
     type: publication
   title:
     en: Data paper
+    sv: Datadokument
     de: Datenpapier
   tags:
     - depositable
@@ -408,6 +430,7 @@
     type: publication
   title:
     en: Dissertation
+    sv: Avhandling
     de: Dissertation
   tags:
     - depositable
@@ -426,6 +449,7 @@
     type: publication
   title:
     en: Standard
+    sv: Standard
     de: Standard
   tags:
     - depositable
@@ -444,6 +468,7 @@
     type: publication
   title:
     en: Other
+    sv: Övrig
     de: Sonstige
   tags:
     - depositable
@@ -462,6 +487,7 @@
     type: poster
   title:
     en: Poster
+    sv: Poster
     de: Poster
   tags:
     - depositable
@@ -480,6 +506,7 @@
     type: presentation
   title:
     en: Presentation
+    sv: Presentation
     de: Präsentation
   tags:
     - depositable
@@ -498,6 +525,7 @@
     type: event
   title:
     en: Event
+    sv: Evenemang
     de: Veranstaltung
   tags:
     - depositable
@@ -516,6 +544,7 @@
     type: dataset
   title:
     en: Dataset
+    sv: Dataset
     de: Datensatz
   tags:
     - depositable
@@ -534,6 +563,7 @@
     type: image
   title:
     en: Image
+    sv: Bild
     de: Bild
   tags:
     - depositable
@@ -552,6 +582,7 @@
     type: image
   title:
     en: Figure
+    sv: Figur
     de: Abbildung
   tags:
     - depositable
@@ -570,6 +601,7 @@
     type: image
   title:
     en: Plot
+    sv: Plot
     de: Plot
   tags:
     - depositable
@@ -588,6 +620,7 @@
     type: image
   title:
     en: Drawing
+    sv: Ritning
     de: Zeichnung
   tags:
     - depositable
@@ -606,6 +639,7 @@
     type: image
   title:
     en: Diagram
+    sv: Diagram
     de: Diagramm
   tags:
     - depositable
@@ -624,6 +658,7 @@
     type: image
   title:
     en: Photo
+    sv: Foto
     de: Foto
   tags:
     - depositable
@@ -642,6 +677,7 @@
     type: image
   title:
     en: Other
+    sv: Övrig
     de: Sonstiges
   tags:
     - depositable
@@ -660,6 +696,7 @@
     type: model
   title:
     en: Model
+    sv: Modell
     de: Modell
   tags:
     - depositable
@@ -679,6 +716,7 @@
   title:
     en: Video
     de: Video
+    sv: Video
   tags:
     - depositable
     - linkable
@@ -697,6 +735,7 @@
   title:
     en: Audio
     de: Audio
+    sv: Audio
   tags:
     - depositable
     - linkable
@@ -714,6 +753,7 @@
     type: software
   title:
     en: Software
+    sv: Mjukvara
     de: Software
   tags:
     - depositable
@@ -732,6 +772,7 @@
     type: lesson
   title:
     en: Lesson
+    sv: Lektion
     de: Unterrichtseinheit
   tags:
     - depositable
@@ -750,6 +791,7 @@
     type: software
   title:
     en: Computational notebook
+    sv: Computational notebook
     de: Computational Notebook
   tags:
     - depositable
@@ -768,6 +810,7 @@
     type: other
   title:
     en: Other
+    sv: Övrig
     de: Sonstige
   tags:
     - depositable
@@ -786,6 +829,7 @@
     type: physicalobject
   title:
     en: Physical object
+    sv: Fysiskt objekt
     de: Physikalisches Objekt
   tags:
     - depositable
@@ -804,6 +848,7 @@
     type: workflow
   title:
     en: Workflow
+    sv: Workflow
     de: Workflow
   tags:
     - depositable
