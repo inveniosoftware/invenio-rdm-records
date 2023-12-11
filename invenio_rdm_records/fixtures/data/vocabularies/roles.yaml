@@ -4,6 +4,7 @@
     marc: prc
   title:
     en: Contact person
+    sv: Kontaktperson
     de: Kontaktperson
 - id: datacollector
   props:
@@ -11,6 +12,7 @@
     marc: col
   title:
     en: Data collector
+    sv: Datainsamlare
     de: DatensammlerIn
 - id: datacurator
   props:
@@ -18,6 +20,7 @@
     marc: cur
   title:
     en: Data curator
+    sv: Datakurator
     de: DatenkuratorIn
 - id: datamanager
   props:
@@ -25,6 +28,7 @@
     marc: dtm
   title:
     en: Data manager
+    sv: Dataansvarig
     de: DatenmanagerIn
 - id: distributor
   props:
@@ -32,6 +36,7 @@
     marc: dst
   title:
     en: Distributor
+    sv: Distributör
     de: VerteilerIn
 - id: editor
   props:
@@ -39,6 +44,7 @@
     marc: edt
   title:
     en: Editor
+    sv: Redaktör
     de: EditorIn
 - id: hostinginstitution
   props:
@@ -46,6 +52,7 @@
     marc: his
   title:
     en: Hosting institution
+    sv: Värdinstitution
     de: Bereitstellende Institution
 - id: producer
   props:
@@ -53,6 +60,7 @@
     marc: pro
   title:
     en: Producer
+    sv: Producent
     de: ProduzentIn
 - id: projectleader
   props:
@@ -60,6 +68,7 @@
     marc: pdr
   title:
     en: Project leader
+    sv: Projektledare
     de: ProjektleiterIn
 - id: projectmanager
   props:
@@ -67,6 +76,7 @@
     marc: rth
   title:
     en: Project manager
+    sv: Projektansvarig
     de: ProjektmanagerIn
 - id: projectmember
   props:
@@ -74,6 +84,7 @@
     marc: rtm
   title:
     en: Project member
+    sv: Projektmedlem
     de: Projektmitglied
 - id: registrationagency
   props:
@@ -81,6 +92,7 @@
     marc: cor
   title:
     en: Registration agency
+    sv: Registreringsorgan
     de: Registrierungsstelle
 - id: registrationauthority
   props:
@@ -88,6 +100,7 @@
     marc: cor
   title:
     en: Registration authority
+    sv: Registreringsmyndighet
     de: Registrierungsbehörde
 - id: relatedperson
   props:
@@ -95,6 +108,7 @@
     marc: oth
   title:
     en: Related person
+    sv: Relaterad person
     de: Verwandte Person
 - id: researcher
   props:
@@ -102,6 +116,7 @@
     marc: res
   title:
     en: Researcher
+    sv: Forskare
     de: WissenschaftlerIn
 - id: researchgroup
   props:
@@ -109,6 +124,7 @@
     marc: rtm
   title:
     en: Research group
+    sv: Forskningsgrupp
     de: Forschungsgruppe
 - id: rightsholder
   props:
@@ -116,6 +132,7 @@
     marc: cph
   title:
     en: Rights holder
+    sv: Rättighetsinnehavare
     de: RechteinhaberIn
 - id: sponsor
   props:
@@ -123,6 +140,7 @@
     marc: spn
   title:
     en: Sponsor
+    sv: Sponsor
     de: Sponsor
 - id: supervisor
   props:
@@ -130,6 +148,7 @@
     marc: dgs
   title:
     en: Supervisor
+    sv: Handledare
     de: SupervisorIn
 - id: workpackageleader
   props:
@@ -137,6 +156,7 @@
     marc: led
   title:
     en: Work package leader
+    sv: Arbetspaketsledare
     de: ArbeitspaketleiterIn
 - id: other
   props:
@@ -144,4 +164,5 @@
     marc: oth
   title:
     en: Other
+    sv: Övriga
     de: Andere

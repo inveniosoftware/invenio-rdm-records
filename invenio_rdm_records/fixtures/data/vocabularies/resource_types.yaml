@@ -14,6 +14,7 @@
     marc21_subtype: ""
   title:
     en: Publication
+    sv: Publikation
     de: Publikation
   tags:
     - depositable
@@ -34,6 +35,7 @@
     marc21_subtype: annotationcollection
   title:
     en: Annotation collection
+    sv: Annoteringssamling
     de: Anmerkungssammlung
   tags:
     - depositable
@@ -54,6 +56,7 @@
     marc21_subtype: book
   title:
     en: Book
+    sv: Bok
     de: Buch
   tags:
     - depositable
@@ -74,6 +77,7 @@
     marc21_subtype: section
   title:
     en: Book chapter
+    sv: Bokkapitel
     de: Buchkapitel
   tags:
     - depositable
@@ -94,6 +98,7 @@
     marc21_subtype: conferencepaper
   title:
     en: Conference paper
+    sv: Konferensbidrag
     de: Konferenzbeitrag
   tags:
     - depositable
@@ -114,6 +119,7 @@
     marc21_subtype: conferenceproceeding
   title:
     en: Conference proceeding
+    sv: Konferenshandling
     de: Tagungsband
   tags:
     - depositable
@@ -134,6 +140,7 @@
     marc21_subtype: datamanagementplan
   title:
     en: Output management plan
+    sv: Outputhanteringsplan
     de: Outputmanagementplan
   tags:
     - depositable
@@ -154,6 +161,7 @@
     marc21_subtype: journal
   title:
     en: Journal
+    sv: Tidskrift
     de: Zeitschrift
   tags:
     - depositable
@@ -174,6 +182,7 @@
     marc21_subtype: article
   title:
     en: Journal article
+    sv: Tidskriftsartikel
     de: Zeitschriftenartikel
   tags:
     - depositable
@@ -194,6 +203,7 @@
     marc21_subtype: patent
   title:
     en: Patent
+    sv: Patent
     de: Patent
   tags:
     - depositable
@@ -214,6 +224,7 @@
     marc21_subtype: peerreview
   title:
     en: Peer review
+    sv: Peer review
     de: Peer Review
   tags:
     - depositable
@@ -234,6 +245,7 @@
     marc21_subtype: preprint
   title:
     en: Preprint
+    sv: Preprint
     de: Preprint
   tags:
     - depositable
@@ -254,6 +266,7 @@
     marc21_subtype: deliverable
   title:
     en: Project deliverable
+    sv: Projektresultat
     de: Projektergebnis
   tags:
     - depositable
@@ -274,6 +287,7 @@
     marc21_subtype: milestone
   title:
     en: Project milestone
+    sv: Milstolpe för projektet
     de: Projektmeilenstein
   tags:
     - depositable
@@ -294,6 +308,7 @@
     marc21_subtype: proposal
   title:
     en: Proposal
+    sv: Förslag
     de: Antrag
   tags:
     - depositable
@@ -314,6 +329,7 @@
     marc21_subtype: report
   title:
     en: Report
+    sv: Rapport
     de: Bericht
   tags:
     - depositable
@@ -334,6 +350,7 @@
     marc21_subtype: softwaredocumentation
   title:
     en: Software documentation
+    sv: Mjukvarudokumentation
     de: Softwaredokumentation
   tags:
     - depositable
@@ -354,6 +371,7 @@
     marc21_subtype: taxonomictreatment
   title:
     en: Taxonomic treatment
+    sv: Taxonomisk behandling
     de: Taxonomische Behandlung
   tags:
     - depositable
@@ -374,6 +392,7 @@
     marc21_subtype: technicalnote
   title:
     en: Technical note
+    sv: Technical note
     de: Technical Note
   tags:
     - depositable
@@ -394,6 +413,7 @@
     marc21_subtype: thesis
   title:
     en: Thesis
+    sv: Avhandling
     de: Abschlussarbeit
   tags:
     - depositable
@@ -414,6 +434,7 @@
     marc21_subtype: workingpaper
   title:
     en: Working paper
+    sv: Arbetsdokument
     de: Arbeitspapier
   tags:
     - depositable
@@ -434,6 +455,7 @@
     marc21_subtype: datapaper
   title:
     en: Data paper
+    sv: Datadokument
     de: Datenpapier
   tags:
     - depositable
@@ -454,6 +476,7 @@
     marc21_subtype: dissertation
   title:
     en: Dissertation
+    sv: Avhandling
     de: Dissertation
   tags:
     - depositable
@@ -474,6 +497,7 @@
     marc21_subtype: standard
   title:
     en: Standard
+    sv: Standard
     de: Standard
   tags:
     - depositable
@@ -494,6 +518,7 @@
     marc21_subtype: other
   title:
     en: Other
+    sv: Övrig
     de: Sonstige
   tags:
     - depositable
@@ -514,6 +539,7 @@
     marc21_subtype: ""
   title:
     en: Poster
+    sv: Poster
     de: Poster
   tags:
     - depositable
@@ -534,6 +560,7 @@
     marc21_subtype: ""
   title:
     en: Presentation
+    sv: Presentation
     de: Präsentation
   tags:
     - depositable
@@ -554,6 +581,7 @@
     marc21_subtype: ""
   title:
     en: Event
+    sv: Evenemang
     de: Veranstaltung
   tags:
     - depositable
@@ -574,6 +602,7 @@
     marc21_subtype: ""
   title:
     en: Dataset
+    sv: Dataset
     de: Datensatz
   tags:
     - depositable
@@ -594,6 +623,7 @@
     marc21_subtype: ""
   title:
     en: Image
+    sv: Bild
     de: Bild
   tags:
     - depositable
@@ -614,6 +644,7 @@
     marc21_subtype: figure
   title:
     en: Figure
+    sv: Figur
     de: Abbildung
   tags:
     - depositable
@@ -634,6 +665,7 @@
     marc21_subtype: plot
   title:
     en: Plot
+    sv: Plot
     de: Plot
   tags:
     - depositable
@@ -654,6 +686,7 @@
     marc21_subtype: drawing
   title:
     en: Drawing
+    sv: Ritning
     de: Zeichnung
   tags:
     - depositable
@@ -674,6 +707,7 @@
     marc21_subtype: diagram
   title:
     en: Diagram
+    sv: Diagram
     de: Diagramm
   tags:
     - depositable
@@ -694,6 +728,7 @@
     marc21_subtype: photo
   title:
     en: Photo
+    sv: Foto
     de: Foto
   tags:
     - depositable
@@ -714,6 +749,7 @@
     marc21_subtype: other
   title:
     en: Other
+    sv: Övrig
     de: Sonstiges
   tags:
     - depositable
@@ -734,6 +770,7 @@
     marc21_subtype: ""
   title:
     en: Model
+    sv: Modell
     de: Modell
   tags:
     - depositable
@@ -755,6 +792,7 @@
   title:
     en: Video
     de: Video
+    sv: Video
   tags:
     - depositable
     - linkable
@@ -775,6 +813,7 @@
   title:
     en: Audio
     de: Audio
+    sv: Audio
   tags:
     - depositable
     - linkable
@@ -794,6 +833,7 @@
     marc21_subtype: ""
   title:
     en: Software
+    sv: Mjukvara
     de: Software
   tags:
     - depositable
@@ -814,6 +854,7 @@
     marc21_subtype: ""
   title:
     en: Lesson
+    sv: Lektion
     de: Unterrichtseinheit
   tags:
     - depositable
@@ -834,6 +875,7 @@
     marc21_subtype: computationalnotebook
   title:
     en: Computational notebook
+    sv: Computational notebook
     de: Computational Notebook
   tags:
     - depositable
@@ -854,6 +896,7 @@
     marc21_subtype: ""
   title:
     en: Other
+    sv: Övrig
     de: Sonstige
   tags:
     - depositable
@@ -874,6 +917,7 @@
     marc21_subtype: ""
   title:
     en: Physical object
+    sv: Fysiskt objekt
     de: Physikalisches Objekt
   tags:
     - depositable
@@ -894,6 +938,7 @@
     marc21_subtype: ""
   title:
     en: Workflow
+    sv: Workflow
     de: Workflow
   tags:
     - depositable
