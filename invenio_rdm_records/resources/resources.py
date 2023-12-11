@@ -754,7 +754,7 @@ class IIIFResource(ErrorHandlersMixin, Resource):
         uuid = resource_requestctx.view_args["uuid"]
         key = resource_requestctx.view_args["file_name"]
         file_ = self.service.get_file(uuid=uuid, identity=g.identity, key=key)
-        return file_, 200
+        return file_.to_dict(), 200
 
     @cross_origin(origin="*", methods=["GET"])
     @with_iiif_content_negotiation(IIIFInfoV2JSONSerializer)
