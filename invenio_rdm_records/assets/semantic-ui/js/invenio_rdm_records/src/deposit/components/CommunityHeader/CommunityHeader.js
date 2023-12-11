@@ -6,16 +6,15 @@
 // Invenio-RDM-Records is free software; you can redistribute it and/or modify it
 // under the terms of the MIT License; see LICENSE file for more details.
 
-import {i18next} from "@translations/invenio_rdm_records/i18next";
+import { i18next } from "@translations/invenio_rdm_records/i18next";
 import PropTypes from "prop-types";
-import React, {Component} from "react";
-import {Image} from "react-invenio-forms";
-import {connect} from "react-redux";
-import {Button, Container} from "semantic-ui-react";
-import {changeSelectedCommunity} from "../../state/actions";
-import {CommunitySelectionModal} from "../CommunitySelectionModal";
+import React, { Component } from "react";
+import { Image } from "react-invenio-forms";
+import { connect } from "react-redux";
+import { Button, Container } from "semantic-ui-react";
+import { changeSelectedCommunity } from "../../state/actions";
+import { CommunitySelectionModal } from "../CommunitySelectionModal";
 import Overridable from "react-overridable";
-
 
 class CommunityHeaderComponent extends Component {
   constructor(props) {
@@ -35,7 +34,7 @@ class CommunityHeaderComponent extends Component {
       showCommunityHeader,
       record,
     } = this.props;
-    const {modalOpen} = this.state;
+    const { modalOpen } = this.state;
 
     return (
       showCommunityHeader && (
@@ -72,9 +71,9 @@ class CommunityHeaderComponent extends Component {
                     <CommunitySelectionModal
                       onCommunityChange={(community) => {
                         changeSelectedCommunity(community);
-                        this.setState({modalOpen: false});
+                        this.setState({ modalOpen: false });
                       }}
-                      onModalChange={(value) => this.setState({modalOpen: value})}
+                      onModalChange={(value) => this.setState({ modalOpen: value })}
                       modalOpen={modalOpen}
                       chosenCommunity={community}
                       displaySelected
@@ -84,7 +83,7 @@ class CommunityHeaderComponent extends Component {
                           <Button
                             className="community-header-button"
                             disabled={disableCommunitySelectionButton}
-                            onClick={() => this.setState({modalOpen: true})}
+                            onClick={() => this.setState({ modalOpen: true })}
                             primary
                             size="mini"
                             name="setting"
@@ -140,9 +139,9 @@ CommunityHeaderComponent.defaultProps = {
 const mapStateToProps = (state) => ({
   community: state.deposit.editorState.selectedCommunity,
   disableCommunitySelectionButton:
-  state.deposit.editorState.ui.disableCommunitySelectionButton,
+    state.deposit.editorState.ui.disableCommunitySelectionButton,
   showCommunitySelectionButton:
-  state.deposit.editorState.ui.showCommunitySelectionButton,
+    state.deposit.editorState.ui.showCommunitySelectionButton,
   showCommunityHeader: state.deposit.editorState.ui.showCommunityHeader,
 });
 

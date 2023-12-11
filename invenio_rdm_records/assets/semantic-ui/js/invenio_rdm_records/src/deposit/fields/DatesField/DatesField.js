@@ -6,20 +6,19 @@
 // Invenio-RDM-Records is free software; you can redistribute it and/or modify it
 // under the terms of the MIT License; see LICENSE file for more details.
 
-import React, {Component} from "react";
+import React, { Component } from "react";
 import PropTypes from "prop-types";
-import {ArrayField, GroupField, SelectField, TextField} from "react-invenio-forms";
-import {Button, Form, Icon} from "semantic-ui-react";
+import { ArrayField, GroupField, SelectField, TextField } from "react-invenio-forms";
+import { Button, Form, Icon } from "semantic-ui-react";
 import _isEmpty from "lodash/isEmpty";
 import _matches from "lodash/matches";
 import _filter from "lodash/filter";
 import _isEqual from "lodash/isEqual";
 import _has from "lodash/has";
-import {emptyDate} from "./initialValues";
-import {i18next} from "@translations/invenio_rdm_records/i18next";
-import {sortOptions} from "../../utils";
+import { emptyDate } from "./initialValues";
+import { i18next } from "@translations/invenio_rdm_records/i18next";
+import { sortOptions } from "../../utils";
 import Overridable from "react-overridable";
-
 
 export class DatesField extends Component {
   /** Top-level Dates Component */
@@ -31,7 +30,7 @@ export class DatesField extends Component {
    * @return {Object} The required option if any
    */
   getRequiredOption = (currentValue, arrayOfValues) => {
-    const {requiredOptions} = this.props;
+    const { requiredOptions } = this.props;
     for (const requiredOption of requiredOptions) {
       // If more values matched we do take the first value
       const matchingValue = _filter(arrayOfValues, _matches(requiredOption))[0];
@@ -69,7 +68,7 @@ export class DatesField extends Component {
           requiredOptions={requiredOptions}
           showEmptyValue={showEmptyValue}
         >
-          {({array, arrayHelpers, indexPath, value}) => {
+          {({ array, arrayHelpers, indexPath, value }) => {
             const fieldPathPrefix = `${fieldPath}.${indexPath}`;
             const requiredOption = this.getRequiredOption(value, array);
             const hasRequiredDateValue = _has(requiredOption, "date");
@@ -117,7 +116,7 @@ export class DatesField extends Component {
                       onClick={() => arrayHelpers.remove(indexPath)}
                       type="button"
                     >
-                      <Icon name="close"/>
+                      <Icon name="close" />
                     </Button>
                   </Form.Field>
                 </Overridable>
