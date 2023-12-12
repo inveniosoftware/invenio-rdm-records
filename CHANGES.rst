@@ -11,6 +11,10 @@
 Changes
 =======
 
+Version 4.43.1 (2023-12-12)
+
+- replace ckeditor with tinymce
+
 Version 4.43.0 (2023-12-11)
 
 - fixtures: method to add/update entries
