@@ -7,6 +7,7 @@
 
 import { Formik } from "formik";
 import React from "react";
+import "./setupJestMock"
 import { render, unmountComponentAtNode } from "react-dom";
 import { act } from "react-dom/test-utils";
 import { AccessRightFieldCmp } from "./AccessRightField";
@@ -57,6 +58,22 @@ import "@testing-library/jest-dom/extend-expect";
 */
 
 let container;
+
+beforeAll(()  => {
+  Object.defineProperty(window, 'matchMedia', {
+    writable: true,
+    value: jest.fn().mockImplementation(query => ({
+      matches: false,
+      media: query,
+      onchange: null,
+      addListener: jest.fn(), // deprecated
+      removeListener: jest.fn(), // deprecated
+      addEventListener: jest.fn(),
+      removeEventListener: jest.fn(),
+      dispatchEvent: jest.fn(),
+    })),
+  });
+})
 
 beforeEach(() => {
   // setup a DOM element as a render target
