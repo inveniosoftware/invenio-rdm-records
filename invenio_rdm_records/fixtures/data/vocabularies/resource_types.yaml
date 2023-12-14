@@ -13,6 +13,7 @@
   title:
     en: Publication
     de: Publikation
+    ar: منشور
   tags:
     - depositable
     - linkable
@@ -31,6 +32,8 @@
   title:
     en: Annotation collection
     de: Anmerkungssammlung
+    ar: مجموعة حواشي تفسيريّة
+
   tags:
     - depositable
     - linkable
@@ -49,6 +52,7 @@
   title:
     en: Book
     de: Buch
+    ar: كتاب
   tags:
     - depositable
     - linkable
@@ -67,6 +71,7 @@
   title:
     en: Book chapter
     de: Buchkapitel
+    ar: فصل من كتاب
   tags:
     - depositable
     - linkable
@@ -85,6 +90,7 @@
   title:
     en: Conference paper
     de: Konferenzbeitrag
+    ar: مطبوع مؤتمر
   tags:
     - depositable
     - linkable
@@ -103,6 +109,7 @@
   title:
     en: Conference proceeding
     de: Tagungsband
+    ar: مداخلة بمؤتمر
   tags:
     - depositable
     - linkable
@@ -121,6 +128,7 @@
   title:
     en: Output management plan
     de: Outputmanagementplan
+    ar: مخرجات مخطط تصرّف
   tags:
     - depositable
     - linkable
@@ -139,6 +147,7 @@
   title:
     en: Journal
     de: Zeitschrift
+    ar: دوريّة
   tags:
     - depositable
     - linkable
@@ -157,6 +166,7 @@
   title:
     en: Journal article
     de: Zeitschriftenartikel
+    ar: مقال بدوريّة                           
   tags:
     - depositable
     - linkable
@@ -175,6 +185,7 @@
   title:
     en: Patent
     de: Patent
+    ar: براء إختراع                        
   tags:
     - depositable
     - linkable
@@ -193,6 +204,7 @@
   title:
     en: Peer review
     de: Peer Review
+    ar: محكّم
   tags:
     - depositable
     - linkable
@@ -211,6 +223,7 @@
   title:
     en: Preprint
     de: Preprint
+    ar: مقال مقبول للنّشر                                    
   tags:
     - depositable
     - linkable
@@ -229,6 +242,7 @@
   title:
     en: Project deliverable
     de: Projektergebnis
+    ar: مشروع للتسليم                             
   tags:
     - depositable
     - linkable
@@ -247,6 +261,7 @@
   title:
     en: Project milestone
     de: Projektmeilenstein
+    ar: مخطط مشروع                       
   tags:
     - depositable
     - linkable
@@ -265,6 +280,7 @@
   title:
     en: Proposal
     de: Antrag
+    ar: إقتراح               
   tags:
     - depositable
     - linkable
@@ -283,6 +299,7 @@
   title:
     en: Report
     de: Bericht
+    ar: تقرير             
   tags:
     - depositable
     - linkable
@@ -301,6 +318,7 @@
   title:
     en: Software documentation
     de: Softwaredokumentation
+    ar: وثائق برنامج حاسوب                                     
   tags:
     - depositable
     - linkable
@@ -319,6 +337,7 @@
   title:
     en: Taxonomic treatment
     de: Taxonomische Behandlung
+    ar: معالجة تصنيفيّة                                 
   tags:
     - depositable
     - linkable
@@ -337,6 +356,7 @@
   title:
     en: Technical note
     de: Technical Note
+    ar: توضيح تقني                      
   tags:
     - depositable
     - linkable
@@ -355,6 +375,7 @@
   title:
     en: Thesis
     de: Abschlussarbeit
+    ar: أطروحة                
   tags:
     - depositable
     - linkable
@@ -373,6 +394,7 @@
   title:
     en: Working paper
     de: Arbeitspapier
+    ar: ورقة عمل
   tags:
     - depositable
     - linkable
@@ -391,6 +413,7 @@
   title:
     en: Data paper
     de: Datenpapier
+    ar: ورقة بيانات
   tags:
     - depositable
     - linkable
@@ -409,6 +432,7 @@
   title:
     en: Dissertation
     de: Dissertation
+    ar: رسالة ختم دروس/أطروحة
   tags:
     - depositable
     - linkable
@@ -427,6 +451,7 @@
   title:
     en: Standard
     de: Standard
+    ar: معيار
   tags:
     - depositable
     - linkable
@@ -445,6 +470,7 @@
   title:
     en: Other
     de: Sonstige
+    ar: آخر          
   tags:
     - depositable
     - linkable
@@ -463,6 +489,7 @@
   title:
     en: Poster
     de: Poster
+    ar: معلّقة               
   tags:
     - depositable
     - linkable
@@ -481,6 +508,7 @@
   title:
     en: Presentation
     de: Präsentation
+    ar: عرض تقديمي
   tags:
     - depositable
     - linkable
@@ -499,6 +527,7 @@
   title:
     en: Event
     de: Veranstaltung
+    ar: فعاليّة/حدث
   tags:
     - depositable
     - linkable
@@ -517,6 +546,7 @@
   title:
     en: Dataset
     de: Datensatz
+    ar: مجموعة بيانات                            
   tags:
     - depositable
     - linkable
@@ -535,6 +565,7 @@
   title:
     en: Image
     de: Bild
+    ar: صورة            
   tags:
     - depositable
     - linkable
@@ -553,6 +584,7 @@
   title:
     en: Figure
     de: Abbildung
+    ar: رسم
   tags:
     - depositable
     - linkable
@@ -571,6 +603,7 @@
   title:
     en: Plot
     de: Plot
+    ar: رسم بالنّقط                         
   tags:
     - depositable
     - linkable
@@ -589,6 +622,7 @@
   title:
     en: Drawing
     de: Zeichnung
+    ar: رسم تخطيطي                 
   tags:
     - depositable
     - linkable
@@ -607,6 +641,7 @@
   title:
     en: Diagram
     de: Diagramm
+    ar: رسم بياني                     
   tags:
     - depositable
     - linkable
@@ -625,6 +660,7 @@
   title:
     en: Photo
     de: Foto
+    ar: صورة فوتوغرافيّة
   tags:
     - depositable
     - linkable
@@ -643,6 +679,7 @@
   title:
     en: Other
     de: Sonstiges
+    ar: آخر
   tags:
     - depositable
     - linkable
@@ -661,6 +698,7 @@
   title:
     en: Model
     de: Modell
+    ar: أنموذج
   tags:
     - depositable
     - linkable
@@ -679,6 +717,7 @@
   title:
     en: Video/Audio
     de: Video/Audio
+    ar: صوة/فيديو               
   tags:
     - depositable
     - linkable
@@ -697,6 +736,7 @@
   title:
     en: Software
     de: Software
+    ar: برنامج حاسوب    
   tags:
     - depositable
     - linkable
@@ -715,6 +755,7 @@
   title:
     en: Lesson
     de: Unterrichtseinheit
+    ar: درس
   tags:
     - depositable
     - linkable
@@ -733,6 +774,7 @@
   title:
     en: Computational notebook
     de: Computational Notebook
+    ar: دفتر تبصيرات ممكنن
   tags:
     - depositable
     - linkable
@@ -751,6 +793,7 @@
   title:
     en: Other
     de: Sonstige
+    ar: آخر     
   tags:
     - depositable
     - linkable
@@ -769,6 +812,7 @@
   title:
     en: Physical object
     de: Physikalisches Objekt
+    ar: شيئ مادّي
   tags:
     - depositable
     - linkable
@@ -787,6 +831,7 @@
   title:
     en: Workflow
     de: Workflow
+    ar: إجراءات سير العمل
   tags:
     - depositable
     - linkable
