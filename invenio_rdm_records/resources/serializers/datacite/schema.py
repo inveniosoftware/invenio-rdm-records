@@ -619,9 +619,6 @@ class DataCite43Schema(BaseSerializerSchema):
             if award:  # having an award is optional
                 id_ = award.get("id")
                 if id_:
-                    # FIXME: should this be implemented at awards service read
-                    # level since all ids are loaded into the system with this
-                    # format?
                     award_service = current_service_registry.get("awards")
                     award = award_service.read(system_identity, id_).to_dict()
 
