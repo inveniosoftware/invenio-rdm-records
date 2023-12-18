@@ -786,6 +786,9 @@
               }
             }
           },
+          "combined_subjects": {
+            "type": "keyword"
+          },
           "title": {
             "type": "text",
             "fields": {
