@@ -54,6 +54,37 @@ class MARCXMLSchema(BaseSerializerSchema, CommonFieldsMixin):
     files = fields.Method("get_files", data_key="8564 ")
     access = fields.Method("get_access", data_key="542  ")
     host_information = fields.Method("get_host_information", data_key="773  ")
+    leader = fields.Method("get_leader")
+
+    def get_leader(self, o):
+        """Return the leader information."""
+        rt = o["metadata"]["resource_type"]["id"]
+        rec_types = {
+            "image": "two-dimensional_nonprojectable_graphic",
+            "video": "projected_medium",
+            "dataset": "computer_file",
+            "software": "computer_file",
+        }
+        type_of_record = rec_types[rt] if rt in rec_types else "language_material"
+        res = {
+            "record_length": "00000",
+            "record_status": "new",
+            "type_of_record": type_of_record,
+            "bibliographic_level": "monograph_item",
+            "type_of_control": "no_specified_type",
+            "character_coding_scheme": "marc-8",
+            "indicator_count": 2,
+            "subfield_code_count": 2,
+            "base_address_of_data": "00000",
+            "encoding_level": "unknown",
+            "descriptive_cataloging_form": "unknown",
+            "multipart_resource_record_level": "not_specified_or_not_applicable",
+            "length_of_the_length_of_field_portion": 4,
+            "length_of_the_starting_character_position_portion": 5,
+            "length_of_the_implementation_defined_portion": 0,
+            "undefined": 0,
+        }
+        return res
 
     def get_host_information(self, obj):
         """Get host information.
