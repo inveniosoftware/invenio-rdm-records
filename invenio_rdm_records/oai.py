@@ -148,6 +148,7 @@ class OAIRecordSearch(RecordsSearch):
         default_filter = [
             dsl.Q("exists", field="pids.oai.identifier"),
             dsl.Q("term", **{"access.record": "public"}),
+            dsl.Q("term", **{"is_deleted": "false"}),
         ]
 
 
