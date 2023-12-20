@@ -24,8 +24,7 @@ theme = WebpackThemeBundle(
             },
             dependencies={
                 "@babel/runtime": "^7.9.0",
-                "@ckeditor/ckeditor5-build-classic": "^16.0.0",
-                "@ckeditor/ckeditor5-react": "^2.1.0",
+                "@tinymce/tinymce-react": "^4.3.0",
                 "formik": "^2.1.0",
                 "i18next": "^20.3.0",
                 "i18next-browser-languagedetector": "^6.1.0",
@@ -39,6 +38,7 @@ theme = WebpackThemeBundle(
                 "react-i18next": "^11.11.0",
                 "react-invenio-forms": "^2.0.0",
                 "react-searchkit": "^2.0.0",
+                "tinymce": "^6.7.2",
                 "yup": "^0.32.0",
                 "@semantic-ui-react/css-patch": "^1.0.0",
                 "axios": "^0.21.0",
