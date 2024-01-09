@@ -41,9 +41,8 @@ class BlockedPrefixes:
         for p in self.prefixes:
             if identifier.startswith(p):
                 errors.append(
-                    _("The prefix '{prefix}' is administrated locally.").format(
-                        prefix=p
-                    )
+                    _("The prefix '{prefix}' is managed by Zenodo.").format(prefix=p)
+                    + " Please supply an external DOI or select 'No' to have a DOI generated for you."
                 )
                 # Bail early
                 return
