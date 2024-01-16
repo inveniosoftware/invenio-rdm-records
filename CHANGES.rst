@@ -11,6 +11,10 @@
 Changes
 =======
 
+Version 4.43.2 (2023-01-16)
+
+- dependencies: pin commonmeta-py
+
 Version 4.43.1 (2023-12-12)
 
 - replace ckeditor with tinymce
