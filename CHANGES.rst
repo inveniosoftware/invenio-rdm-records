@@ -11,6 +11,10 @@
 Changes
 =======
 
+Version 5.0.0 (2024-01-16)
+
+- communities: utilize community theming mechanism
+
 Version 4.43.2 (2023-01-16)
 
 - dependencies: pin commonmeta-py
