@@ -48,6 +48,7 @@ from .errors import HTTPJSONException, HTTPJSONValidationWithMessageAsListExcept
 from .serializers import (
     BibtexSerializer,
     CSLJSONSerializer,
+    CSVRecordSerializer,
     DataCite43JSONSerializer,
     DataCite43XMLSerializer,
     DCATSerializer,
@@ -80,6 +81,7 @@ def _bibliography_headers(obj_or_list, code, many=False):
 record_serializers = {
     "application/json": ResponseHandler(JSONSerializer(), headers=etag_headers),
     "application/ld+json": ResponseHandler(SchemaorgJSONLDSerializer()),
+    "application/vnd.inveniordm.v1.csv": ResponseHandler(CSVRecordSerializer()),
     "application/marcxml+xml": ResponseHandler(
         MARCXMLSerializer(), headers=etag_headers
     ),
