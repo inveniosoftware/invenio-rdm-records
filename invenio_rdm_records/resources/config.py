@@ -81,7 +81,23 @@ def _bibliography_headers(obj_or_list, code, many=False):
 record_serializers = {
     "application/json": ResponseHandler(JSONSerializer(), headers=etag_headers),
     "application/ld+json": ResponseHandler(SchemaorgJSONLDSerializer()),
-    "application/vnd.inveniordm.v1+csv": ResponseHandler(CSVRecordSerializer()),
+    "application/vnd.inveniordm.v1.full+csv": ResponseHandler(CSVRecordSerializer()),
+    "application/vnd.inveniordm.v1.simple+csv": ResponseHandler(
+        CSVRecordSerializer(
+            csv_included_fields=[
+                "id",
+                "created",
+                "pids.doi.identifier",
+                "metadata.title",
+                "metadata.description",
+                "metadata.resource_type.title.en",
+                "metadata.publication_date",
+                "metadata.creators.person_or_org.type",
+                "metadata.creators.person_or_org.name",
+                "metadata.rights.id",
+            ]
+        )
+    ),
     "application/marcxml+xml": ResponseHandler(
         MARCXMLSerializer(), headers=etag_headers
     ),
