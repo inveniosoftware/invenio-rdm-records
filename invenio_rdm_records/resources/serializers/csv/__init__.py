@@ -11,7 +11,7 @@ from flask_resources.serializers import CSVSerializer
 
 
 class CSVRecordSerializer(CSVSerializer):
-    """Marshmallow based Schemaorg serializer for records."""
+    """Marshmallow based CSV serializer for records."""
 
     def __init__(self, **options):
         """Constructor."""

@@ -95,7 +95,8 @@ record_serializers = {
                 "metadata.creators.person_or_org.type",
                 "metadata.creators.person_or_org.name",
                 "metadata.rights.id",
-            ]
+            ],
+            collapse_lists=True,
         )
     ),
     "application/marcxml+xml": ResponseHandler(
