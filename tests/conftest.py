@@ -179,12 +179,12 @@ def app_config(app_config, mock_datacite_client):
     for config_key in supported_configurations:
         app_config[config_key] = getattr(config, config_key, None)
 
-    app_config[
-        "RECORDS_REFRESOLVER_CLS"
-    ] = "invenio_records.resolver.InvenioRefResolver"
-    app_config[
-        "RECORDS_REFRESOLVER_STORE"
-    ] = "invenio_jsonschemas.proxies.current_refresolver_store"
+    app_config["RECORDS_REFRESOLVER_CLS"] = (
+        "invenio_records.resolver.InvenioRefResolver"
+    )
+    app_config["RECORDS_REFRESOLVER_STORE"] = (
+        "invenio_jsonschemas.proxies.current_refresolver_store"
+    )
 
     # OAI Server
     app_config["OAISERVER_REPOSITORY_NAME"] = "InvenioRDM"
@@ -195,12 +195,12 @@ def app_config(app_config, mock_datacite_client):
     app_config["OAISERVER_LAST_UPDATE_KEY"] = "updated"
     app_config["OAISERVER_CREATED_KEY"] = "created"
     app_config["OAISERVER_RECORD_CLS"] = "invenio_rdm_records.records.api:RDMRecord"
-    app_config[
-        "OAISERVER_RECORD_SETS_FETCHER"
-    ] = "invenio_oaiserver.percolator:find_sets_for_record"
-    app_config[
-        "OAISERVER_GETRECORD_FETCHER"
-    ] = "invenio_rdm_records.oai:getrecord_fetcher"
+    app_config["OAISERVER_RECORD_SETS_FETCHER"] = (
+        "invenio_oaiserver.percolator:find_sets_for_record"
+    )
+    app_config["OAISERVER_GETRECORD_FETCHER"] = (
+        "invenio_rdm_records.oai:getrecord_fetcher"
+    )
     app_config["OAISERVER_METADATA_FORMATS"] = {
         "marcxml": {
             "serializer": "invenio_rdm_records.oai:marcxml_etree",
@@ -345,9 +345,9 @@ def app_config(app_config, mock_datacite_client):
     ]
 
     # Extending preferences schemas, to include notification preferences. Should not matter for most test cases
-    app_config[
-        "ACCOUNTS_USER_PREFERENCES_SCHEMA"
-    ] = UserPreferencesNotificationsSchema()
+    app_config["ACCOUNTS_USER_PREFERENCES_SCHEMA"] = (
+        UserPreferencesNotificationsSchema()
+    )
     app_config["USERS_RESOURCES_SERVICE_SCHEMA"] = NotificationsUserSchema
 
     app_config["RDM_RESOURCE_ACCESS_TOKENS_ENABLED"] = True
