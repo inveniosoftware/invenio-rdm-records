@@ -83,7 +83,7 @@ class PIDsComponent(ServiceComponent):
         # on a published record. Changes are handled by removing the old PID
         # and adding the new.
         changed_pids = {}
-        for scheme in draft_schemes.intersection(record_schemes):
+        for scheme in draft_schemes & record_schemes:
             record_id = record_pids[scheme]["identifier"]
             draft_id = draft_pids[scheme]["identifier"]
             if record_id != draft_id:
@@ -102,6 +102,18 @@ class PIDsComponent(ServiceComponent):
 
         # Reserve all created PIDs and store them on the record
         self.service.pids.pid_manager.reserve_all(draft, pids)
+
+        # Restore any removed required PIDs
+        removed_required_pids = (record_schemes - draft_schemes) & required_schemes
+        pids.update(
+            {
+                scheme: record_pids[scheme]
+                for scheme in removed_required_pids
+                if scheme in record_pids
+            }
+        )
+
+        # Set the resulting PIDs on the record
         record.pids = pids
 
         # Async register/update tasks after transaction commit.

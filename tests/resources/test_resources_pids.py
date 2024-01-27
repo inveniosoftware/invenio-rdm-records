@@ -167,3 +167,27 @@ def test_pids_publish_validation_error(
         }
     ]
     assert expected == record.json["errors"]
+
+
+def test_required_pids_removed(
+    running_app, client, minimal_record, headers, search_clear, uploader
+):
+    """Tests that removed required PIDs are restored on publish."""
+    client = uploader.login(client)
+    record = publish_record(client, minimal_record, headers)
+    first_publish_pids = deepcopy(record["pids"])
+
+    # Edit
+    draft = client.post(link(record["links"]["draft"]))
+    assert draft.status_code == 201
+    # Update to remove (required) OAI PID
+    data = draft.json
+    data["pids"].pop("oai")
+    res = client.put(link(draft.json["links"]["self"]), headers=headers, json=data)
+    assert res.status_code == 200
+    # Publish
+    record = client.post(link(draft.json["links"]["publish"]), headers=headers)
+    assert record.status_code == 202
+
+    # Check that the OAI PID was restored
+    assert record.json["pids"] == first_publish_pids
