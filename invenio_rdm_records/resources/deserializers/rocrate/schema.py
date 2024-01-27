@@ -88,9 +88,9 @@ class ROCrateSchema(Schema):
                 if obj.get("affiliation"):
                     for a_idx, a in enumerate(obj.get("affiliation")):
                         if not a.get("name"):
-                            errors[
-                                f"{c_idx}.affiliation.{a_idx}.name"
-                            ] = self.error_messages["required"]
+                            errors[f"{c_idx}.affiliation.{a_idx}.name"] = (
+                                self.error_messages["required"]
+                            )
                         affiliations.append({"name": a.get("name")})
             elif obj.get("@type") == "Organization":
                 person_or_org["type"] = "organizational"
