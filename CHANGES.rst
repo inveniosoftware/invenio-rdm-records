@@ -1,6 +1,6 @@
 
 ..
-    Copyright (C) 2019-2023 CERN.
+    Copyright (C) 2019-2024 CERN.
     Copyright (C) 2019 Northwestern University.
 
 
@@ -10,6 +10,11 @@
 
 Changes
 =======
+
+Version 5.1.0 (released 2024-01-29)
+
+- pids: restore required PIDs on publish
+- schema: add dataset specific fields to jsonld
 
 Version 5.0.0 (2024-01-16)
 
