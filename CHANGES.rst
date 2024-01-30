@@ -11,6 +11,10 @@
 Changes
 =======
 
+Version 5.1.1 (released 2024-01-30)
+
+- Custom field ui: fix deserializing for primitive types
+
 Version 5.1.0 (released 2024-01-29)
 
 - pids: restore required PIDs on publish
