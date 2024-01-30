@@ -286,7 +286,7 @@ export class DepositFileApiClient {
       withCredentials: true,
       xsrfCookieName: "csrftoken",
       xsrfHeaderName: "X-CSRFToken",
-      headers: this.apiHeaders.json,
+      headers: this.apiHeaders["vnd+json"],
     };
     this.axiosWithConfig = axios.create(apiConfig);
   }

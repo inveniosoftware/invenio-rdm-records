@@ -288,6 +288,13 @@ class RDMDraftFilesResourceConfig(FileResourceConfig, ConfiguratorMixin):
     blueprint_name = "draft_files"
     url_prefix = "/records/<pid_value>/draft"
 
+    response_handlers = {
+        "application/vnd.inveniordm.v1+json": FileResourceConfig.response_handlers[
+            "application/json"
+        ],
+        **FileResourceConfig.response_handlers,
+    }
+
 
 class RDMRecordMediaFilesResourceConfig(FileResourceConfig, ConfiguratorMixin):
     """Bibliographic record files resource config."""
@@ -319,6 +326,13 @@ class RDMRecordMediaFilesResourceConfig(FileResourceConfig, ConfiguratorMixin):
         ),
     }
 
+    response_handlers = {
+        "application/vnd.inveniordm.v1+json": FileResourceConfig.response_handlers[
+            "application/json"
+        ],
+        **FileResourceConfig.response_handlers,
+    }
+
 
 #
 # Draft files
@@ -336,6 +350,13 @@ class RDMDraftMediaFilesResourceConfig(FileResourceConfig, ConfiguratorMixin):
         "item-content": "/media-files/<key>/content",
         "item-commit": "/media-files/<key>/commit",
         "list-archive": "/media-files-archive",
+    }
+
+    response_handlers = {
+        "application/vnd.inveniordm.v1+json": FileResourceConfig.response_handlers[
+            "application/json"
+        ],
+        **FileResourceConfig.response_handlers,
     }
 
 
@@ -403,7 +424,10 @@ class RDMParentRecordLinksResourceConfig(RecordResourceConfig, ConfiguratorMixin
     }
 
     response_handlers = {
-        "application/json": ResponseHandler(JSONSerializer(), headers=etag_headers)
+        "application/vnd.inveniordm.v1+json": RecordResourceConfig.response_handlers[
+            "application/json"
+        ],
+        **RecordResourceConfig.response_handlers,
     }
 
     error_handlers = record_links_error_handlers
@@ -433,7 +457,10 @@ class RDMParentGrantsResourceConfig(RecordResourceConfig, ConfiguratorMixin):
     request_extra_args = {"expand": ma.fields.Bool()}
 
     response_handlers = {
-        "application/json": ResponseHandler(JSONSerializer(), headers=etag_headers)
+        "application/vnd.inveniordm.v1+json": RecordResourceConfig.response_handlers[
+            "application/json"
+        ],
+        **RecordResourceConfig.response_handlers,
     }
 
     error_handlers = grants_error_handlers
@@ -550,4 +577,11 @@ class RDMRecordRequestsResourceConfig(ResourceConfig, ConfiguratorMixin):
 
     request_extra_args = {
         "expand": ma.fields.Boolean(),
+    }
+
+    response_handlers = {
+        "application/vnd.inveniordm.v1+json": ResourceConfig.response_handlers[
+            "application/json"
+        ],
+        **ResourceConfig.response_handlers,
     }
