@@ -11,6 +11,10 @@
 Changes
 =======
 
+Version 5.1.2 (released 2024-01-31)
+
+- installation: pin commonmeta-py
+
 Version 5.1.1 (released 2024-01-30)
 
 - Custom field ui: fix deserializing for primitive types
