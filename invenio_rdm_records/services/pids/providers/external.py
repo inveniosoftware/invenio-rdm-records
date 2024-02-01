@@ -41,9 +41,9 @@ class BlockedPrefixes:
         for p in self.prefixes:
             if identifier.startswith(p):
                 errors.append(
-                    _("The prefix '{prefix}' is managed by {sitename}. Please supply an external DOI or select 'No' to have a DOI generated for you.").format(
-                        prefix=p, sitename=current_app.config["THEME_SITENAME"]
-                    )
+                    _(
+                        "The prefix '{prefix}' is managed by {sitename}. Please supply an external DOI or select 'No' to have a DOI generated for you."
+                    ).format(prefix=p, sitename=current_app.config["THEME_SITENAME"])
                 )
                 # Bail early
                 return

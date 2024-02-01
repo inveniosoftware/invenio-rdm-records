@@ -258,7 +258,7 @@ def test_pids_duplicates(running_app, search_clear, minimal_record):
         "field": "pids.doi",
         "messages": [
             f"doi:{doi} already exists.",
-            "The prefix '10.1234' is administrated locally.",
+            "The prefix '10.1234' is managed by Invenio. Please supply an external DOI or select 'No' to have a DOI generated for you.",
         ],
     }
     assert error_msg in duplicated_draft.errors
@@ -271,7 +271,7 @@ def test_pids_duplicates(running_app, search_clear, minimal_record):
         "field": "pids.doi",
         "messages": [
             f"doi:{doi} already exists.",
-            "The prefix '10.1234' is administrated locally.",
+            "The prefix '10.1234' is managed by Invenio. Please supply an external DOI or select 'No' to have a DOI generated for you.",
         ],
     }
     assert error_msg in duplicated_draft.errors
