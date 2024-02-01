@@ -128,7 +128,9 @@ def test_external_doi_blocked_prefix(
     assert draft.json["errors"] == [
         {
             "field": "pids.doi",
-            "messages": ["The prefix '10.1234' is administrated locally."],
+            "messages": [
+                "The prefix '10.1234' is managed by Invenio. Please supply an external DOI or select 'No' to have a DOI generated for you."
+            ],
         }
     ]
 

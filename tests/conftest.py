@@ -179,6 +179,8 @@ def app_config(app_config, mock_datacite_client):
     for config_key in supported_configurations:
         app_config[config_key] = getattr(config, config_key, None)
 
+    app_config["THEME_SITENAME"] = "Invenio"
+
     app_config["RECORDS_REFRESOLVER_CLS"] = (
         "invenio_records.resolver.InvenioRefResolver"
     )
