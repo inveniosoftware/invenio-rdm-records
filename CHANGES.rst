@@ -11,6 +11,10 @@
 Changes
 =======
 
+Version 6.1.0 (released 2024-02-01)
+
+- Add CSV records serializer
+
 Version 6.0.0 (released 2024-01-31)
 
 - installation: bump dependencies
