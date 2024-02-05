@@ -7,11 +7,18 @@
 
 """Community schema."""
 
-from marshmallow import Schema, fields
+from invenio_communities.communities.schema import CommunitySchema
+from marshmallow import Schema, fields, post_dump
 
 
 class CommunitiesSchema(Schema):
-    """Community schema."""
+    """Communities schema."""
 
     ids = fields.List(fields.String())
-    default = fields.String()
+    default = fields.String(attribute="default.id")
+    entries = fields.List(fields.Nested(CommunitySchema))
+
+    @post_dump
+    def clear_none_values(self, data, **kwargs):
+        """Remove empty values from the dump."""
+        return {k: v for k, v in data.items() if v}
