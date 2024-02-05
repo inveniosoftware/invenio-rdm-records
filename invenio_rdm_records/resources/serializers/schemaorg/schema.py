@@ -478,9 +478,11 @@ class SchemaorgSchema(BaseSerializerSchema, CommonFieldsMixin):
         for f_name, f_object in files.items():
             entry = {
                 "@type": "DataDownload",
-                "encodingFormat": f_object["mimetype"],
                 "contentUrl": obj["links"]["files"] + f"/{f_name}/content",
             }
+            mimetype = f_object.get("mimetype")
+            if mimetype:
+                entry["encodingFormat"] = mimetype
             distribution_list.append(entry)
 
         return distribution_list if distribution_list else missing
