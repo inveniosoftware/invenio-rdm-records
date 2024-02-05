@@ -11,6 +11,12 @@
 Changes
 =======
 
+Version 6.1.1 (released 2024-02-05)
+
+- oai: exclude deleted records from search
+- models: add bucket_id index
+- serializers: fix DataDownload missing mimetype
+
 Version 6.1.0 (released 2024-02-01)
 
 - Add CSV records serializer
