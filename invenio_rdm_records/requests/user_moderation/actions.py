@@ -60,7 +60,7 @@ def on_block(user_id, uow=None, **kwargs):
 
     # set the removal reason if the vocabulary item exists
     try:
-        removal_reason_id = kwargs.get("removal_reason_id", "misconduct")
+        removal_reason_id = kwargs.get("removal_reason_id", "spam")
         vocab = current_service.read(
             identity=system_identity, id_=("removalreasons", removal_reason_id)
         )
