@@ -65,6 +65,9 @@ class AcceptAction(actions.AcceptAction):
         default = not record.parent.communities
         record.parent.communities.add(community, request=self.request, default=default)
 
+        if getattr(community, "parent", None):
+            record.parent.communities.add(community.parent, request=self.request)
+
         uow.register(
             ParentRecordCommitOp(record.parent, indexer_context=dict(service=service))
         )

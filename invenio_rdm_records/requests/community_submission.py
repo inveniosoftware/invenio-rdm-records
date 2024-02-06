@@ -70,6 +70,10 @@ class AcceptAction(actions.AcceptAction):
         draft.parent.communities.add(
             community, request=self.request, default=is_default
         )
+
+        if getattr(community, "parent", None):
+            draft.parent.communities.add(community.parent, request=self.request)
+
         uow.register(
             ParentRecordCommitOp(draft.parent, indexer_context=dict(service=service))
         )
