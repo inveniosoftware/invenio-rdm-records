@@ -6,6 +6,7 @@
 
 import { i18next } from "@translations/invenio_rdm_records/i18next";
 import _capitalize from "lodash/capitalize";
+import isEmpty from "lodash/isEmpty";
 import PropTypes from "prop-types";
 import React, { useContext } from "react";
 import { Button, Icon, Label } from "semantic-ui-react";
@@ -26,7 +27,8 @@ export const CommunityListItem = ({ result, record }) => {
   const userMembership = userCommunitiesMemberships[result["id"]];
   const invalidPermissionLevel =
     record.access.record === "public" && result.access.visibility === "restricted";
-
+  const hasTheme = !isEmpty(result.theme);
+  const isDisabled = invalidPermissionLevel || hasTheme;
   const actions = (
     <>
       {invalidPermissionLevel && (
@@ -42,16 +44,43 @@ export const CommunityListItem = ({ result, record }) => {
           )}
         />
       )}
-      <Button
-        content={
-          displaySelected && itemSelected ? i18next.t("Selected") : i18next.t("Select")
-        }
-        size="tiny"
-        positive={displaySelected && itemSelected}
-        onClick={() => setLocalCommunity(result)}
-        disabled={invalidPermissionLevel}
-        aria-label={i18next.t("Select {{title}}", { title: metadata.title })}
-      />
+      {hasTheme && (
+        <>
+          <InvenioPopup
+            popupId="community-inclusion-info-popup"
+            size="small"
+            trigger={
+              <Icon className="mb-5" color="grey" name="question circle outline" />
+            }
+            ariaLabel={i18next.t("Community submission conditions information")}
+            content={i18next.t(
+              "Submission to this community is only allowed by dedicated upload form. Use the button to jump to the form."
+            )}
+          />
+          <Button
+            size="tiny"
+            primary
+            as="a"
+            href={`/communities/${result.slug}/upload`}
+          >
+            Community upload form
+          </Button>
+        </>
+      )}
+      {!hasTheme && (
+        <Button
+          content={
+            displaySelected && itemSelected
+              ? i18next.t("Selected")
+              : i18next.t("Select")
+          }
+          size="tiny"
+          positive={displaySelected && itemSelected}
+          onClick={() => setLocalCommunity(result)}
+          disabled={isDisabled}
+          aria-label={i18next.t("Select {{title}}", { title: metadata.title })}
+        />
+      )}
     </>
   );
 
