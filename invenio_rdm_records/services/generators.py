@@ -3,6 +3,7 @@
 # Copyright (C) 2021 Graz University of Technology.
 # Copyright (C) 2021 CERN.
 # Copyright (C) 2021 TU Wien.
+# Copyright (C) 2023 KTH Royal Institute of Technology.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
@@ -125,6 +126,17 @@ class IfNewRecord(ConditionalGenerator):
     def _condition(self, record=None, **kwargs):
         """Check if there is a record."""
         return record is None
+
+
+class IfOneCommunity(ConditionalGenerator):
+    """Conditional generator for records always in communities case."""
+
+    def _condition(self, record=None, **kwargs):
+        """Check if the record is associated with more than one community."""
+        if record is None:
+            return True
+        rec_communities = record.parent.communities.ids
+        return len(rec_communities) == 1
 
 
 class IfExternalDOIRecord(ConditionalGenerator):
