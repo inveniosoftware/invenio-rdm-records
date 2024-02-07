@@ -14,7 +14,7 @@ import { CommunityCompactItem } from "@js/invenio_communities/community";
 import { CommunityContext } from "./CommunityContext";
 import { InvenioPopup } from "react-invenio-forms";
 
-export const CommunityListItem = ({ result, record }) => {
+export const CommunityListItem = ({ result, record, isInitialSubmission }) => {
   const {
     setLocalCommunity,
     getChosenCommunity,
@@ -28,7 +28,8 @@ export const CommunityListItem = ({ result, record }) => {
   const invalidPermissionLevel =
     record.access.record === "public" && result.access.visibility === "restricted";
   const hasTheme = !isEmpty(result.theme);
-  const isDisabled = invalidPermissionLevel || hasTheme;
+  const dedicatedUpload = isInitialSubmission && hasTheme;
+  const isDisabled = invalidPermissionLevel || dedicatedUpload;
   const actions = (
     <>
       {invalidPermissionLevel && (
@@ -44,7 +45,7 @@ export const CommunityListItem = ({ result, record }) => {
           )}
         />
       )}
-      {hasTheme && (
+      {dedicatedUpload && (
         <>
           <InvenioPopup
             popupId="community-inclusion-info-popup"
@@ -67,7 +68,7 @@ export const CommunityListItem = ({ result, record }) => {
           </Button>
         </>
       )}
-      {!hasTheme && (
+      {!dedicatedUpload && (
         <Button
           content={
             displaySelected && itemSelected
@@ -84,11 +85,21 @@ export const CommunityListItem = ({ result, record }) => {
     </>
   );
 
-  const extraLabels = userMembership && (
-    <Label size="small" horizontal color="teal">
-      <Icon name="key" />
-      {_capitalize(userMembership)}
-    </Label>
+  const extraLabels = (
+    <>
+      {userMembership && (
+        <Label size="small" horizontal color="teal">
+          <Icon name="key" />
+          {_capitalize(userMembership)}
+        </Label>
+      )}
+      {hasTheme && (
+        <Label color="green" horizontal size="small">
+          <Icon name="certificate" />
+          Verified
+        </Label>
+      )}
+    </>
   );
 
   return (
@@ -104,4 +115,9 @@ export const CommunityListItem = ({ result, record }) => {
 CommunityListItem.propTypes = {
   result: PropTypes.object.isRequired,
   record: PropTypes.object.isRequired,
+  isInitialSubmission: PropTypes.bool,
+};
+
+CommunityListItem.defaultProps = {
+  isInitialSubmission: true,
 };
