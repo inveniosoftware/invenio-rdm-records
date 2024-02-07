@@ -69,6 +69,7 @@ export class CommunitySelectionModalComponent extends Component {
       apiConfigs,
       handleClose,
       record,
+      isInitialSubmission,
     } = this.props;
 
     return (
@@ -93,7 +94,11 @@ export class CommunitySelectionModalComponent extends Component {
             </Header>
           </Modal.Header>
 
-          <CommunitySelectionSearch apiConfigs={apiConfigs} record={record} />
+          <CommunitySelectionSearch
+            apiConfigs={apiConfigs}
+            record={record}
+            isInitialSubmission={isInitialSubmission}
+          />
 
           {extraContentComponents && (
             <Modal.Content>{extraContentComponents}</Modal.Content>
@@ -121,6 +126,7 @@ CommunitySelectionModalComponent.propTypes = {
   apiConfigs: PropTypes.object,
   handleClose: PropTypes.func.isRequired,
   record: PropTypes.object.isRequired,
+  isInitialSubmission: PropTypes.bool,
 };
 
 CommunitySelectionModalComponent.defaultProps = {
@@ -132,6 +138,7 @@ CommunitySelectionModalComponent.defaultProps = {
   modalOpen: false,
   trigger: undefined,
   apiConfigs: undefined,
+  isInitialSubmission: true,
 };
 
 const mapStateToProps = (state) => ({
