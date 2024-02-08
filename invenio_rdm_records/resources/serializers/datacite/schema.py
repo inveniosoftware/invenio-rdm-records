@@ -574,9 +574,9 @@ class DataCite43Schema(BaseSerializerSchema):
         """Get funding references."""
         # constants
         DATACITE_FUNDER_IDENTIFIER_TYPES_PREFERENCE = (
+            "doi",
             "ror",
             "grid",
-            "doi",
             "isni",
             "gnd",
         )
