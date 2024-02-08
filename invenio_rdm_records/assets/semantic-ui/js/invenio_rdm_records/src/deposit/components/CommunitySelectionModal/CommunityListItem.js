@@ -5,8 +5,8 @@
 // under the terms of the MIT License; see LICENSE file for more details.
 
 import { i18next } from "@translations/invenio_rdm_records/i18next";
+import { get } from "lodash";
 import _capitalize from "lodash/capitalize";
-import isEmpty from "lodash/isEmpty";
 import PropTypes from "prop-types";
 import React, { useContext } from "react";
 import { Button, Icon, Label } from "semantic-ui-react";
@@ -27,7 +27,7 @@ export const CommunityListItem = ({ result, record, isInitialSubmission }) => {
   const userMembership = userCommunitiesMemberships[result["id"]];
   const invalidPermissionLevel =
     record.access.record === "public" && result.access.visibility === "restricted";
-  const hasTheme = !isEmpty(result.theme);
+  const hasTheme = get(result, "theme.enabled");
   const dedicatedUpload = isInitialSubmission && hasTheme;
   const isDisabled = invalidPermissionLevel || dedicatedUpload;
   const actions = (
