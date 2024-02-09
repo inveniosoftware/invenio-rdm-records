@@ -74,6 +74,7 @@ const FileTableRow = ({
         setDefaultPreview("");
       }
     } catch (error) {
+      setIsDeleting(false);
       console.error(error);
     }
   };
