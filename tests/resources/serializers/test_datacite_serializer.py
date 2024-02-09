@@ -172,6 +172,7 @@ def test_datacite43_serializer(running_app, full_record):
                 "rightsIdentifier": "cc-by-4.0",
                 "rightsUri": "https://creativecommons.org/licenses/by/4.0/legalcode",
             },
+            {"rightsUri": f"info:eu-repo/semantics/embargoedAccess"},
         ],
         "descriptions": [
             {
@@ -270,6 +271,7 @@ def test_datacite43_xml_serializer(running_app, full_record):
         "  <rightsList>",
         '    <rights rightsURI="https://customlicense.org/licenses/by/4.0/">A custom license</rights>',  # noqa
         '    <rights rightsURI="https://creativecommons.org/licenses/by/4.0/legalcode" rightsIdentifierScheme="spdx" rightsIdentifier="cc-by-4.0">Creative Commons Attribution 4.0 International</rights>',  # noqa
+        '    <rights rightsURI="info:eu-repo/semantics/embargoedAccess"/>',
         "  </rightsList>",
         "  <descriptions>",
         '    <description descriptionType="Abstract">A description ',
