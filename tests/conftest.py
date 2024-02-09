@@ -839,6 +839,7 @@ def enhanced_full_record(users):
                 "until": "2131-01-01",
                 "reason": "Only for medical doctors.",
             },
+            "status": "embargoed",
         },
         "files": {
             "enabled": True,

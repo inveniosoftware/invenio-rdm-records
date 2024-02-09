@@ -142,6 +142,12 @@ def test_dcat_serializer(running_app, enhanced_full_record):
         '        <dcat:centroid rdf:datatype="http://www.opengis.net/ont/geosparql#geoJSONLiteral"><![CDATA[{"type":"Point","coordinates":[-60.63932,-32.94682]}]]></dcat:centroid>',  # noqa
         "      </dct:Location>",
         "    </dct:spatial>",
+        '    <dct:accessRights rdf:resource="http://publications.europa.eu/resource/authority/access-right/NON_PUBLIC"/>',  # noqa
+        "    <dct:accessRights>",
+        '      <dct:RightsStatement rdf:about="info:eu-repo/semantics/embargoedAccess">',  # noqa
+        "        <rdfs:label/>",
+        "      </dct:RightsStatement>",
+        "    </dct:accessRights>",
         "    <dcat:distribution>",
         "      <dcat:Distribution>",
         "        <dct:extent>",
