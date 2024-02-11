@@ -11,6 +11,10 @@
 Changes
 =======
 
+Version 6.2.1 (released 2024-02-11)
+
+- requests: add record to parent community
+
 Version 6.2.0 (released 2024-02-09)
 
 - tests: make deleted file fetching deterministic
