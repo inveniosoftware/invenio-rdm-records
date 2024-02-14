@@ -541,3 +541,6 @@ RDM_RECORDS_MAX_FILES_COUNT = 100
 
 RDM_RECORDS_MAX_MEDIA_FILES_COUNT = 100
 """Max amount of media files allowed to upload in the deposit form."""
+
+RDM_DATACITE_FUNDER_IDENTIFIERS_PRIORITY = ("ror", "doi", "grid", "isni", "gnd")
+"""Priority of funder identifiers types to be used for DataCite serialization."""

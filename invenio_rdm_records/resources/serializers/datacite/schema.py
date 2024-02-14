@@ -573,12 +573,15 @@ class DataCite43Schema(BaseSerializerSchema):
     def get_funding(self, obj):
         """Get funding references."""
         # constants
-        DATACITE_FUNDER_IDENTIFIER_TYPES_PREFERENCE = (
-            "doi",
-            "ror",
-            "grid",
-            "isni",
-            "gnd",
+        FUNDER_ID_TYPES_PREF = current_app.config.get(
+            "RDM_DATACITE_FUNDER_IDENTIFIERS_PRIORITY",
+            (
+                "ror",
+                "doi",
+                "grid",
+                "isni",
+                "gnd",
+            ),
         )
         DATACITE_AWARD_IDENTIFIER_TYPES_PREFERENCE = ("doi", "url")
         TO_FUNDER_IDENTIFIER_TYPES = {
@@ -602,9 +605,7 @@ class DataCite43Schema(BaseSerializerSchema):
             funding_ref["funderName"] = funder["name"]
             identifiers = funder.get("identifiers", [])
             if identifiers:
-                identifier = get_preferred_identifier(
-                    DATACITE_FUNDER_IDENTIFIER_TYPES_PREFERENCE, identifiers
-                )
+                identifier = get_preferred_identifier(FUNDER_ID_TYPES_PREF, identifiers)
                 if not identifier:
                     identifier = identifiers[0]
                     identifier["scheme"] = "Other"
