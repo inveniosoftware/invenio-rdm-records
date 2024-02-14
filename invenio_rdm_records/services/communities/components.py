@@ -10,6 +10,7 @@
 from flask import current_app
 from invenio_access.permissions import system_identity
 from invenio_communities.communities.records.systemfields.access import VisibilityEnum
+from invenio_communities.communities.services.components import ChildrenComponent
 from invenio_communities.communities.services.components import (
     CommunityAccessComponent as BaseAccessComponent,
 )
@@ -94,4 +95,5 @@ CommunityServiceComponents = [
     OAISetComponent,
     ContentModerationComponent,
     CommunityDeletionComponent,
+    ChildrenComponent,
 ]
