@@ -58,13 +58,8 @@ export const CommunityListItem = ({ result, record, isInitialSubmission }) => {
               "Submission to this community is only allowed by dedicated upload form. Use the button to jump to the form."
             )}
           />
-          <Button
-            size="tiny"
-            primary
-            as="a"
-            href={`/communities/${result.slug}/upload`}
-          >
-            Community upload form
+          <Button size="tiny" as="a" href={`/communities/${result.slug}`}>
+            Go to the community
           </Button>
         </>
       )}
@@ -95,7 +90,7 @@ export const CommunityListItem = ({ result, record, isInitialSubmission }) => {
       )}
       {hasTheme && (
         <Label color="green" horizontal size="small">
-          <Icon name="certificate" />
+          <Icon name="check circle" />
           Verified
         </Label>
       )}
