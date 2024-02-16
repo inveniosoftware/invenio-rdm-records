@@ -11,6 +11,15 @@
 Changes
 =======
 
+Version 7.0.0 (released 2024-02-16)
+
+- services: update community components
+- installation: bump invenio-communities
+- mappings: denormalize communities in records
+- systemfields: fix docstrings
+- requests: add check on parent community on accept
+- community selection: small ui fixes
+
 Version 6.2.1 (released 2024-02-11)
 
 - requests: add record to parent community
