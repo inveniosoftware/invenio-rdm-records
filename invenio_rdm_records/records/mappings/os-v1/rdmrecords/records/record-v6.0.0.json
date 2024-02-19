@@ -261,6 +261,13 @@
                   "slug": {
                     "type": "keyword"
                   },
+                  "children": {
+                    "properties": {
+                      "allow": {
+                        "type": "boolean"
+                      }
+                    }
+                  },
                   "metadata": {
                     "properties": {
                       "title": {
@@ -405,6 +412,13 @@
                       },
                       "slug": {
                         "type": "keyword"
+                      },
+                      "children": {
+                        "properties": {
+                          "allow": {
+                            "type": "boolean"
+                          }
+                        }
                       },
                       "metadata": {
                         "type": "object",
