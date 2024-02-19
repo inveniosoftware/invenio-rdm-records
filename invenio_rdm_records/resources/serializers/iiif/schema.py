@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # Copyright (C) 2021-2023 CERN.
-# Copyright (C) 2021 data-futures.
+# Copyright (C) 2021-2023 data-futures.
 # Copyright (C) 2022 Universität Hamburg.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
@@ -153,10 +153,20 @@ class IIIFSequenceV2Schema(Schema):
     label = fields.Constant(_("Current Page Order"))
     viewingDirection = fields.Constant("left-to-right")
     viewingHint = fields.Constant("paged")
+    startCanvas = fields.Method("get_start_canvas")
 
     canvases = ListIIIFFilesAttribute(
         fields.Nested(IIIFCanvasV2Schema), attribute="files.entries"
     )
+
+    def get_start_canvas(self, obj):
+        """Set startCanvas - use default_preview if set."""
+        try:
+            file = obj["files"]["default_preview"]
+            entry = next((e for e in obj.files.entries if e["key"] == file), None)
+            return entry["links"]["iiif_canvas"]
+        except (AttributeError, KeyError):
+            return missing
 
 
 class IIIFManifestV2Schema(Schema):
