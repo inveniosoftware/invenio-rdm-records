@@ -800,7 +800,12 @@
                     "dynamic": true
                   },
                   "number": {
-                    "type": "text"
+                    "type": "text",
+                    "fields": {
+                      "keyword": {
+                        "type": "keyword"
+                      }
+                    }
                   },
                   "acronym": {
                     "type": "keyword",
