@@ -11,6 +11,10 @@
 Changes
 =======
 
+Version 7.1.1 (released 2024-02-19)
+
+- communities: add CommunityParentComponent
+
 Version 7.1.0 (released 2024-02-19)
 
 - mappings: change "dynamic" values to string
