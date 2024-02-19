@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2023 CERN.
+# Copyright (C) 2023-2024 CERN.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
@@ -10,11 +10,14 @@
 from flask import current_app
 from invenio_access.permissions import system_identity
 from invenio_communities.communities.records.systemfields.access import VisibilityEnum
+from invenio_communities.communities.services.components import ChildrenComponent
 from invenio_communities.communities.services.components import (
     CommunityAccessComponent as BaseAccessComponent,
 )
 from invenio_communities.communities.services.components import (
     CommunityDeletionComponent,
+    CommunityParentComponent,
+    CommunityThemeComponent,
     CustomFieldsComponent,
     FeaturedCommunityComponent,
     OAISetComponent,
@@ -83,6 +86,7 @@ class ContentModerationComponent(ServiceComponent):
 
 CommunityServiceComponents = [
     MetadataComponent,
+    CommunityThemeComponent,
     CustomFieldsComponent,
     PIDComponent,
     RelationsComponent,
@@ -92,4 +96,6 @@ CommunityServiceComponents = [
     OAISetComponent,
     ContentModerationComponent,
     CommunityDeletionComponent,
+    ChildrenComponent,
+    CommunityParentComponent,
 ]

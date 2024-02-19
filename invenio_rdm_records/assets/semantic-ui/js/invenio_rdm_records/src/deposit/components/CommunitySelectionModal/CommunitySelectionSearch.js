@@ -29,17 +29,15 @@ export class CommunitySelectionSearch extends Component {
       apiConfigs: { allCommunities },
     } = this.props;
 
-    const defaultConfig = allCommunities;
-
     this.state = {
-      selectedConfig: defaultConfig,
+      selectedConfig: allCommunities,
     };
   }
 
   render() {
     const {
       selectedConfig: {
-        searchApi: selectedsearchApi,
+        searchApi: selectedSearchApi,
         appId: selectedAppId,
         initialQueryState: selectedInitialQueryState,
         toggleText,
@@ -48,11 +46,13 @@ export class CommunitySelectionSearch extends Component {
     const {
       apiConfigs: { allCommunities, myCommunities },
       record,
+      isInitialSubmission,
     } = this.props;
-    const searchApi = new InvenioSearchApi(selectedsearchApi);
+    const searchApi = new InvenioSearchApi(selectedSearchApi);
     const overriddenComponents = {
       [`${selectedAppId}.ResultsList.item`]: parametrize(CommunityListItem, {
         record: record,
+        isInitialSubmission: isInitialSubmission,
       }),
     };
     return (
@@ -167,9 +167,11 @@ CommunitySelectionSearch.propTypes = {
     }),
   }),
   record: PropTypes.object.isRequired,
+  isInitialSubmission: PropTypes.bool,
 };
 
 CommunitySelectionSearch.defaultProps = {
+  isInitialSubmission: true,
   apiConfigs: {
     allCommunities: {
       initialQueryState: { size: 5, page: 1 },

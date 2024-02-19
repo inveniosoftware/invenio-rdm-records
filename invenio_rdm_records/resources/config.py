@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2020-2022 CERN.
+# Copyright (C) 2020-2024 CERN.
 # Copyright (C) 2020-2021 Northwestern University.
 # Copyright (C) 2022 Universität Hamburg.
 # Copyright (C) 2023 Graz University of Technology.
@@ -48,6 +48,7 @@ from .errors import HTTPJSONException, HTTPJSONValidationWithMessageAsListExcept
 from .serializers import (
     BibtexSerializer,
     CSLJSONSerializer,
+    CSVRecordSerializer,
     DataCite43JSONSerializer,
     DataCite43XMLSerializer,
     DCATSerializer,
@@ -80,6 +81,24 @@ def _bibliography_headers(obj_or_list, code, many=False):
 record_serializers = {
     "application/json": ResponseHandler(JSONSerializer(), headers=etag_headers),
     "application/ld+json": ResponseHandler(SchemaorgJSONLDSerializer()),
+    "application/vnd.inveniordm.v1.full+csv": ResponseHandler(CSVRecordSerializer()),
+    "application/vnd.inveniordm.v1.simple+csv": ResponseHandler(
+        CSVRecordSerializer(
+            csv_included_fields=[
+                "id",
+                "created",
+                "pids.doi.identifier",
+                "metadata.title",
+                "metadata.description",
+                "metadata.resource_type.title.en",
+                "metadata.publication_date",
+                "metadata.creators.person_or_org.type",
+                "metadata.creators.person_or_org.name",
+                "metadata.rights.id",
+            ],
+            collapse_lists=True,
+        )
+    ),
     "application/marcxml+xml": ResponseHandler(
         MARCXMLSerializer(), headers=etag_headers
     ),

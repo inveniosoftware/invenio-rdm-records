@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2021-2022 CERN.
+# Copyright (C) 2021-2024 CERN.
 # Copyright (C) 2023 Graz University of Technology.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
@@ -70,6 +70,10 @@ class AcceptAction(actions.AcceptAction):
         draft.parent.communities.add(
             community, request=self.request, default=is_default
         )
+
+        if getattr(community, "parent", None):
+            draft.parent.communities.add(community.parent, request=self.request)
+
         uow.register(
             ParentRecordCommitOp(draft.parent, indexer_context=dict(service=service))
         )

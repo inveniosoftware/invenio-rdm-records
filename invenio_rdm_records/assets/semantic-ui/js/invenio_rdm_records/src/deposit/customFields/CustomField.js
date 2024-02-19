@@ -56,7 +56,7 @@ export class CustomField extends Field {
       // internal implementation
       // Note: if i is an array of strings, then we exclude the above as you cannot set
       // a property on a string
-      if (i && typeof value !== "string") value.__key = i;
+      if (i && typeof value === "object" && value !== null) value.__key = i;
       return value;
     };
 

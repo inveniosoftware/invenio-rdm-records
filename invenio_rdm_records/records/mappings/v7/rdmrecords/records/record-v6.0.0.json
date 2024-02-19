@@ -133,7 +133,7 @@
       },
       "custom_fields": {
         "type": "object",
-        "dynamic": true
+        "dynamic": "true"
       },
       "parent": {
         "properties": {
@@ -170,7 +170,7 @@
           },
           "pids": {
             "type": "object",
-            "dynamic": true
+            "dynamic": "true"
           },
           "access": {
             "properties": {
@@ -239,12 +239,321 @@
               },
               "default": {
                 "type": "keyword"
+              },
+              "entries": {
+                "type": "object",
+                "properties": {
+                  "uuid": {
+                    "type": "keyword"
+                  },
+                  "created": {
+                    "type": "date"
+                  },
+                  "updated": {
+                    "type": "date"
+                  },
+                  "version_id": {
+                    "type": "long"
+                  },
+                  "id": {
+                    "type": "keyword"
+                  },
+                  "@v": {
+                    "type": "keyword"
+                  },
+                  "slug": {
+                    "type": "keyword"
+                  },
+                  "children": {
+                    "properties": {
+                      "allow": {
+                        "type": "boolean"
+                      }
+                    }
+                  },
+                  "metadata": {
+                    "properties": {
+                      "title": {
+                        "type": "text"
+                      },
+                      "type": {
+                        "type": "object",
+                        "properties": {
+                          "@v": {
+                            "type": "keyword"
+                          },
+                          "id": {
+                            "type": "keyword"
+                          },
+                          "title": {
+                            "type": "object",
+                            "dynamic": "true",
+                            "properties": {
+                              "en": {
+                                "type": "text"
+                              }
+                            }
+                          }
+                        }
+                      },
+                      "organizations": {
+                        "type": "object",
+                        "properties": {
+                          "@v": {
+                            "type": "keyword"
+                          },
+                          "id": {
+                            "type": "keyword"
+                          },
+                          "name": {
+                            "type": "text"
+                          }
+                        }
+                      },
+                      "funding": {
+                        "properties": {
+                          "award": {
+                            "type": "object",
+                            "properties": {
+                              "@v": {
+                                "type": "keyword"
+                              },
+                              "id": {
+                                "type": "keyword"
+                              },
+                              "title": {
+                                "type": "object",
+                                "dynamic": "true"
+                              },
+                              "number": {
+                                "type": "text",
+                                "fields": {
+                                  "keyword": {
+                                    "type": "keyword"
+                                  }
+                                }
+                              },
+                              "program": {
+                                "type": "keyword"
+                              },
+                              "acronym": {
+                                "type": "keyword",
+                                "fields": {
+                                  "text": {
+                                    "type": "text"
+                                  }
+                                }
+                              },
+                              "identifiers": {
+                                "properties": {
+                                  "identifier": {
+                                    "type": "keyword"
+                                  },
+                                  "scheme": {
+                                    "type": "keyword"
+                                  }
+                                }
+                              }
+                            }
+                          },
+                          "funder": {
+                            "type": "object",
+                            "properties": {
+                              "@v": {
+                                "type": "keyword"
+                              },
+                              "id": {
+                                "type": "keyword"
+                              },
+                              "name": {
+                                "type": "text"
+                              }
+                            }
+                          }
+                        }
+                      },
+                      "website": {
+                        "type": "keyword"
+                      }
+                    }
+                  },
+                  "theme": {
+                    "type": "object",
+                    "properties": {
+                      "enabled": {
+                        "type": "boolean"
+                      },
+                      "brand": {
+                        "type": "keyword"
+                      },
+                      "style": {
+                        "type": "object",
+                        "enabled": false
+                      }
+                    }
+                  },
+                  "parent": {
+                    "type": "object",
+                    "properties": {
+                      "uuid": {
+                        "type": "keyword"
+                      },
+                      "created": {
+                        "type": "date"
+                      },
+                      "updated": {
+                        "type": "date"
+                      },
+                      "version_id": {
+                        "type": "long"
+                      },
+                      "id": {
+                        "type": "keyword"
+                      },
+                      "@v": {
+                        "type": "keyword"
+                      },
+                      "slug": {
+                        "type": "keyword"
+                      },
+                      "children": {
+                        "properties": {
+                          "allow": {
+                            "type": "boolean"
+                          }
+                        }
+                      },
+                      "metadata": {
+                        "type": "object",
+                        "properties": {
+                          "title": {
+                            "type": "text"
+                          },
+                          "type": {
+                            "type": "object",
+                            "properties": {
+                              "@v": {
+                                "type": "keyword"
+                              },
+                              "id": {
+                                "type": "keyword"
+                              },
+                              "title": {
+                                "type": "object",
+                                "dynamic": "true",
+                                "properties": {
+                                  "en": {
+                                    "type": "text"
+                                  }
+                                }
+                              }
+                            }
+                          },
+                          "website": {
+                            "type": "keyword"
+                          },
+                          "organizations": {
+                            "type": "object",
+                            "properties": {
+                              "@v": {
+                                "type": "keyword"
+                              },
+                              "id": {
+                                "type": "keyword"
+                              },
+                              "name": {
+                                "type": "text"
+                              }
+                            }
+                          },
+                          "funding": {
+                            "properties": {
+                              "award": {
+                                "type": "object",
+                                "properties": {
+                                  "@v": {
+                                    "type": "keyword"
+                                  },
+                                  "id": {
+                                    "type": "keyword"
+                                  },
+                                  "title": {
+                                    "type": "object",
+                                    "dynamic": "true"
+                                  },
+                                  "number": {
+                                    "type": "text",
+                                    "fields": {
+                                      "keyword": {
+                                        "type": "keyword"
+                                      }
+                                    }
+                                  },
+                                  "program": {
+                                    "type": "keyword"
+                                  },
+                                  "acronym": {
+                                    "type": "keyword",
+                                    "fields": {
+                                      "text": {
+                                        "type": "text"
+                                      }
+                                    }
+                                  },
+                                  "identifiers": {
+                                    "properties": {
+                                      "identifier": {
+                                        "type": "keyword"
+                                      },
+                                      "scheme": {
+                                        "type": "keyword"
+                                      }
+                                    }
+                                  }
+                                }
+                              },
+                              "funder": {
+                                "type": "object",
+                                "properties": {
+                                  "@v": {
+                                    "type": "keyword"
+                                  },
+                                  "id": {
+                                    "type": "keyword"
+                                  },
+                                  "name": {
+                                    "type": "text"
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      },
+                      "theme": {
+                        "type": "object",
+                        "properties": {
+                          "enabled": {
+                            "type": "boolean"
+                          },
+                          "brand": {
+                            "type": "keyword"
+                          },
+                          "style": {
+                            "type": "object",
+                            "enabled": false
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
               }
             }
           },
           "permission_flags": {
             "type": "object",
-            "dynamic": true
+            "dynamic": "true"
           },
           "created": {
             "type": "date"
@@ -259,7 +568,7 @@
       },
       "pids": {
         "type": "object",
-        "dynamic": true
+        "dynamic": "true"
       },
       "has_draft": {
         "type": "boolean"
@@ -339,7 +648,7 @@
                   },
                   "title": {
                     "type": "object",
-                    "dynamic": true
+                    "dynamic": "true"
                   }
                 }
               }
@@ -398,7 +707,7 @@
                   },
                   "title": {
                     "type": "object",
-                    "dynamic": true
+                    "dynamic": "true"
                   }
                 }
               }
@@ -426,7 +735,7 @@
                   },
                   "title": {
                     "type": "object",
-                    "dynamic": true
+                    "dynamic": "true"
                   }
                 }
               }
@@ -451,7 +760,7 @@
                   },
                   "title": {
                     "type": "object",
-                    "dynamic": true
+                    "dynamic": "true"
                   }
                 }
               },
@@ -466,7 +775,7 @@
                   },
                   "title": {
                     "type": "object",
-                    "dynamic": true
+                    "dynamic": "true"
                   }
                 }
               }
@@ -488,15 +797,22 @@
                   },
                   "title": {
                     "type": "object",
-                    "dynamic": true
+                    "dynamic": "true"
                   },
                   "number": {
-                    "type": "text"
+                    "type": "text",
+                    "fields": {
+                      "keyword": {
+                        "type": "keyword"
+                      }
+                    }
                   },
                   "acronym": {
                     "type": "keyword",
                     "fields": {
-                      "text": { "type": "text"}
+                      "text": {
+                        "type": "text"
+                      }
                     }
                   },
                   "program": {
@@ -551,7 +867,7 @@
               },
               "title": {
                 "type": "object",
-                "dynamic": true
+                "dynamic": "true"
               }
             }
           },
@@ -629,7 +945,7 @@
                   },
                   "title": {
                     "type": "object",
-                    "dynamic": true
+                    "dynamic": "true"
                   }
                 }
               },
@@ -644,7 +960,7 @@
                   },
                   "title": {
                     "type": "object",
-                    "dynamic": true
+                    "dynamic": "true"
                   }
                 }
               },
@@ -664,7 +980,7 @@
               },
               "title": {
                 "type": "object",
-                "dynamic": true
+                "dynamic": "true"
               },
               "props": {
                 "type": "object",
@@ -690,11 +1006,11 @@
               },
               "title": {
                 "type": "object",
-                "dynamic": true
+                "dynamic": "true"
               },
               "description": {
                 "type": "object",
-                "dynamic": true
+                "dynamic": "true"
               },
               "props": {
                 "type": "object",
@@ -765,7 +1081,7 @@
                   },
                   "title": {
                     "type": "object",
-                    "dynamic": true
+                    "dynamic": "true"
                   }
                 }
               },
@@ -783,7 +1099,7 @@
                   },
                   "title": {
                     "type": "object",
-                    "dynamic": true
+                    "dynamic": "true"
                   }
                 }
               }
@@ -866,7 +1182,7 @@
               },
               "metadata": {
                 "type": "object",
-                "dynamic": true
+                "dynamic": "true"
               },
               "checksum": {
                 "type": "keyword"
@@ -925,7 +1241,7 @@
               },
               "metadata": {
                 "type": "object",
-                "dynamic": true
+                "dynamic": "true"
               },
               "checksum": {
                 "type": "keyword"
@@ -1006,7 +1322,7 @@
               },
               "title": {
                 "type": "object",
-                "dynamic": true
+                "dynamic": "true"
               }
             }
           },

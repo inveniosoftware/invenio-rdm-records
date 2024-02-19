@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2023 CERN.
+# Copyright (C) 2023-2024 CERN.
 # Copyright (C) 2021 Northwestern University.
 # Copyright (C) 2023 Graz University of Technology.
 #
@@ -8,7 +8,7 @@
 # it under the terms of the MIT License; see LICENSE file for more details.
 
 """Schemaorg based Schema for Invenio RDM Records."""
-from typing import Optional
+from copy import deepcopy
 
 import pycountry
 from babel_edtf import parse_edtf
@@ -18,7 +18,7 @@ from flask_resources.serializers import BaseSerializerSchema
 from idutils import to_url
 from invenio_access.permissions import system_identity
 from invenio_records_resources.proxies import current_service_registry
-from marshmallow import Schema, ValidationError, fields, missing
+from marshmallow import Schema, ValidationError, fields, missing, post_dump, pre_dump
 from marshmallow_utils.fields import SanitizedHTML, SanitizedUnicode
 from pydash import py_
 
@@ -205,6 +205,10 @@ class SchemaorgSchema(BaseSerializerSchema, CommonFieldsMixin):
 
     url = fields.Method("get_url")
 
+    # Fields that are specific to certain resource types.
+    measurementTechnique = fields.Method("get_measurement_techniques")
+    distribution = fields.Method("get_distribution")
+
     def get_id(self, obj):
         """Get id. Use the DOI expressed as a URL."""
         doi = py_.get(obj, "pids.doi.identifier")
@@ -219,7 +223,8 @@ class SchemaorgSchema(BaseSerializerSchema, CommonFieldsMixin):
             ["props.schema.org"],
             py_.get(obj, "metadata.resource_type.id"),
         )
-        return props.get("schema.org", "CreativeWork")
+        ret = props.get("schema.org", "https://schema.org/CreativeWork")
+        return ret
 
     def get_size(self, obj):
         """Get size."""
@@ -441,6 +446,46 @@ class SchemaorgSchema(BaseSerializerSchema, CommonFieldsMixin):
         )
         ids = _serialize_identifiers(relids)
         return ids or missing
+
+    def _is_dataset(self, obj):
+        return self.get_type(obj) == "https://schema.org/Dataset"
+
+    def get_measurement_techniques(self, obj):
+        """Get measurement techniques (a.k.a. methods)."""
+        # Only applies to Datasets
+        if not self._is_dataset(obj):
+            return missing
+
+        additional_descriptions = py_.get(obj, "metadata.additional_descriptions", [])
+        res = None
+        for additional_description in additional_descriptions:
+            description = py_.get(additional_description, "description")
+            is_method = py_.get(additional_description, "type.id") == "methods"
+            if is_method and description:
+                # Use the first method as measurement technique
+                res = description
+                break
+
+        return res or missing
+
+    def get_distribution(self, obj):
+        """Get dataset distribution."""
+        if not self._is_dataset(obj):
+            return missing
+
+        files = py_.get(obj, "files.entries", {})
+        distribution_list = []
+        for f_name, f_object in files.items():
+            entry = {
+                "@type": "DataDownload",
+                "contentUrl": obj["links"]["files"] + f"/{f_name}/content",
+            }
+            mimetype = f_object.get("mimetype")
+            if mimetype:
+                entry["encodingFormat"] = mimetype
+            distribution_list.append(entry)
+
+        return distribution_list if distribution_list else missing
 
     def _filter_related_identifier_type(self, identifiers, relation_types):
         """Filters identifier by relation types.

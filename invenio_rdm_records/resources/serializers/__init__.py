@@ -13,6 +13,7 @@ from .bibtex import BibtexSerializer
 from .cff import CFFSerializer
 from .codemeta import CodemetaSerializer
 from .csl import CSLJSONSerializer, StringCitationSerializer
+from .csv import CSVRecordSerializer
 from .datacite import DataCite43JSONSerializer, DataCite43XMLSerializer
 from .dcat import DCATSerializer
 from .dublincore import DublinCoreJSONSerializer, DublinCoreXMLSerializer
@@ -31,6 +32,7 @@ __all__ = (
     "BibtexSerializer",
     "CFFSerializer",
     "CSLJSONSerializer",
+    "CSVRecordSerializer",
     "DataCite43JSONSerializer",
     "DataCite43XMLSerializer",
     "DublinCoreJSONSerializer",
