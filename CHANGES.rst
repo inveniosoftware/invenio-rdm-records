@@ -11,6 +11,16 @@
 Changes
 =======
 
+Version 7.1.0 (released 2024-02-19)
+
+- mappings: change "dynamic" values to string
+- requests: change default removal reason to spam
+- mappings: add keyword field to ``funding.award.number``
+- files: fixed infinite spinning wheel on error
+- datacite: added config for funders id priority
+- datacite: updated schema
+- mapping: add community children
+
 Version 7.0.0 (released 2024-02-16)
 
 - services: update community components
