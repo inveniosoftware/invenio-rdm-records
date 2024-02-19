@@ -133,7 +133,7 @@
       },
       "custom_fields": {
         "type": "object",
-        "dynamic": true
+        "dynamic": "true"
       },
       "parent": {
         "properties": {
@@ -170,7 +170,7 @@
           },
           "pids": {
             "type": "object",
-            "dynamic": true
+            "dynamic": "true"
           },
           "access": {
             "properties": {
@@ -284,7 +284,7 @@
                           },
                           "title": {
                             "type": "object",
-                            "dynamic": true,
+                            "dynamic": "true",
                             "properties": {
                               "en": {
                                 "type": "text"
@@ -320,7 +320,7 @@
                               },
                               "title": {
                                 "type": "object",
-                                "dynamic": true
+                                "dynamic": "true"
                               },
                               "number": {
                                 "type": "text",
@@ -437,7 +437,7 @@
                               },
                               "title": {
                                 "type": "object",
-                                "dynamic": true,
+                                "dynamic": "true",
                                 "properties": {
                                   "en": {
                                     "type": "text"
@@ -476,7 +476,7 @@
                                   },
                                   "title": {
                                     "type": "object",
-                                    "dynamic": true
+                                    "dynamic": "true"
                                   },
                                   "number": {
                                     "type": "text",
@@ -575,19 +575,19 @@
               },
               "payload": {
                 "type": "object",
-                "dynamic": true
+                "dynamic": "true"
               },
               "topic": {
                 "type": "object",
-                "dynamic": true
+                "dynamic": "true"
               },
               "receiver": {
                 "type": "object",
-                "dynamic": true
+                "dynamic": "true"
               },
               "created_by": {
                 "type": "object",
-                "dynamic": true
+                "dynamic": "true"
               },
               "@v": {
                 "type": "keyword"
@@ -596,7 +596,7 @@
           },
           "permission_flags": {
             "type": "object",
-            "dynamic": true
+            "dynamic": "true"
           },
           "created": {
             "type": "date"
@@ -611,7 +611,7 @@
       },
       "pids": {
         "type": "object",
-        "dynamic": true
+        "dynamic": "true"
       },
       "has_draft": {
         "type": "boolean"
@@ -691,7 +691,7 @@
                   },
                   "title": {
                     "type": "object",
-                    "dynamic": true
+                    "dynamic": "true"
                   }
                 }
               }
@@ -750,7 +750,7 @@
                   },
                   "title": {
                     "type": "object",
-                    "dynamic": true
+                    "dynamic": "true"
                   }
                 }
               }
@@ -778,7 +778,7 @@
                   },
                   "title": {
                     "type": "object",
-                    "dynamic": true
+                    "dynamic": "true"
                   }
                 }
               }
@@ -803,7 +803,7 @@
                   },
                   "title": {
                     "type": "object",
-                    "dynamic": true
+                    "dynamic": "true"
                   }
                 }
               },
@@ -818,7 +818,7 @@
                   },
                   "title": {
                     "type": "object",
-                    "dynamic": true
+                    "dynamic": "true"
                   }
                 }
               }
@@ -840,7 +840,7 @@
                   },
                   "title": {
                     "type": "object",
-                    "dynamic": true
+                    "dynamic": "true"
                   },
                   "number": {
                     "type": "text",
@@ -910,7 +910,7 @@
               },
               "title": {
                 "type": "object",
-                "dynamic": true
+                "dynamic": "true"
               }
             }
           },
@@ -988,7 +988,7 @@
                   },
                   "title": {
                     "type": "object",
-                    "dynamic": true
+                    "dynamic": "true"
                   }
                 }
               },
@@ -1003,7 +1003,7 @@
                   },
                   "title": {
                     "type": "object",
-                    "dynamic": true
+                    "dynamic": "true"
                   }
                 }
               },
@@ -1023,7 +1023,7 @@
               },
               "title": {
                 "type": "object",
-                "dynamic": true
+                "dynamic": "true"
               },
               "props": {
                 "type": "object",
@@ -1049,11 +1049,11 @@
               },
               "title": {
                 "type": "object",
-                "dynamic": true
+                "dynamic": "true"
               },
               "description": {
                 "type": "object",
-                "dynamic": true
+                "dynamic": "true"
               },
               "props": {
                 "type": "object",
@@ -1124,7 +1124,7 @@
                   },
                   "title": {
                     "type": "object",
-                    "dynamic": true
+                    "dynamic": "true"
                   }
                 }
               },
@@ -1142,7 +1142,7 @@
                   },
                   "title": {
                     "type": "object",
-                    "dynamic": true
+                    "dynamic": "true"
                   }
                 }
               }
@@ -1231,7 +1231,7 @@
               },
               "metadata": {
                 "type": "object",
-                "dynamic": true
+                "dynamic": "true"
               },
               "checksum": {
                 "type": "keyword"
@@ -1290,7 +1290,7 @@
               },
               "metadata": {
                 "type": "object",
-                "dynamic": true
+                "dynamic": "true"
               },
               "checksum": {
                 "type": "keyword"
@@ -1371,7 +1371,7 @@
               },
               "title": {
                 "type": "object",
-                "dynamic": true
+                "dynamic": "true"
               }
             }
           },
