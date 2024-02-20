@@ -11,6 +11,10 @@
 Changes
 =======
 
+Version 8.0.0 (released 2024-02-20)
+
+- Bump due to major version upgrade in invenio-users-resources
+
 Version 7.1.1 (released 2024-02-19)
 
 - communities: add CommunityParentComponent
