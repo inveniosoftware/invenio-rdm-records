@@ -33,7 +33,7 @@ jobs:
         python-version: [3.8, 3.9]
         requirements-level: [pypi]
         db-service: [postgresql14]
-        search-service: [opensearch2,elasticsearch7]
+        search-service: [opensearch2]
         node-version: [16.x]
         include:
           - db-service: postgresql14
@@ -41,10 +41,6 @@ jobs:
 
           - search-service: opensearch2
             SEARCH_EXTRAS: "opensearch2"
-
-          - search-service: elasticsearch7
-            SEARCH_EXTRAS: "elasticsearch7"
-
     env:
       DB: ${{ matrix.db-service }}
       SEARCH: ${{ matrix.search-service }}
