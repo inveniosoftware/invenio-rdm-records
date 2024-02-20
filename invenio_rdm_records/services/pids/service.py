@@ -93,7 +93,7 @@ class PIDsService(RecordService):
 
     @unit_of_work()
     def create(self, identity, id_, scheme, provider=None, uow=None, expand=False):
-        """Create a `NEW` PID for a given record."""
+        """Create a `NEW` PID for a given draft."""
         draft = self.draft_cls.pid.resolve(id_, registered_only=False)
         self.require_permission(identity, "pid_create", record=draft)
         draft.pids[scheme] = self._manager.create(draft, scheme, provider_name=provider)
