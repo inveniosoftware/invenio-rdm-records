@@ -26,6 +26,8 @@ from .resources import (
     RDMCommunityRecordsResource,
     RDMCommunityRecordsResourceConfig,
     RDMDraftFilesResourceConfig,
+    RDMGrantsAccessResource,
+    RDMGrantUserAccessResourceConfig,
     RDMParentGrantsResource,
     RDMParentGrantsResourceConfig,
     RDMParentRecordLinksResource,
@@ -221,6 +223,11 @@ class InvenioRDMRecords(object):
         self.parent_grants_resource = RDMParentGrantsResource(
             service=self.records_service,
             config=RDMParentGrantsResourceConfig.build(app),
+        )
+
+        self.grant_user_access_resource = RDMGrantsAccessResource(
+            service=self.records_service,
+            config=RDMGrantUserAccessResourceConfig.build(app),
         )
 
         # Record's communities

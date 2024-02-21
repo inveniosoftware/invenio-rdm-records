@@ -64,6 +64,7 @@ class RDMRecordPermissionPolicy(RecordPermissionPolicy):
     can_manage = [
         RecordOwners(),
         RecordCommunitiesAction("curate"),
+        AccessGrant("manage"),
         SystemProcess(),
     ]
     can_curate = can_manage + [AccessGrant("edit"), SecretLinks("edit")]
