@@ -61,7 +61,7 @@ class SecretLink(Schema):
 class Agent(Schema):
     """An agent schema."""
 
-    user = fields.Integer(required=True)
+    user = fields.String(required=True)
 
 
 class AccessSettingsSchema(Schema):
