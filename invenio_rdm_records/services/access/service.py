@@ -34,7 +34,7 @@ from invenio_rdm_records.notifications.builders import (
 
 from ...requests.access import AccessRequestToken, GuestAccessRequest, UserAccessRequest
 from ...secret_links.errors import InvalidPermissionLevelError
-from ..errors import AccessRequestExistsError
+from ..errors import AccessRequestExistsError, GrantExistsError
 from ..results import GrantSubjectExpandableField
 
 
@@ -364,6 +364,13 @@ class RecordAccessService(RecordService):
         data, __ = self.schema_grant.load(
             data, context={"identity": identity}, raise_errors=True
         )
+
+        for grant in parent.access.grants:
+            if (
+                grant.subject_id == data["subject"]["id"]
+                and grant.subject_type == data["subject"]["type"]
+            ):
+                raise GrantExistsError()
 
         # Creation
         grant = parent.access.grants.create(
@@ -756,3 +763,139 @@ class RecordAccessService(RecordService):
             record,
             links_tpl=self.links_item_tpl,
         )
+
+    # TODO: rework the whole service and move these to a separate one:
+    #  https://github.com/inveniosoftware/invenio-rdm-records/issues/1685
+    def read_grant_by_subject(
+        self, identity, id_, subject_id, subject_type, expand=False
+    ):
+        """Read a specific access grant of a record by subject."""
+        record, parent = self.get_parent_and_record_or_draft(id_)
+
+        # Permissions
+        self.require_permission(identity, "manage", record=record)
+
+        result = None
+        for grant in parent.access.grants:
+            if grant.subject_id == subject_id and grant.subject_type == subject_type:
+                result = grant
+
+        if not result:
+            raise LookupError(subject_id)
+
+        return self.grant_result_item(
+            self,
+            identity,
+            result,
+            expand=expand,
+        )
+
+    def read_all_grants_by_subject(self, identity, id_, subject_type, expand=False):
+        """Read access grants of a record (resp. its parent) by subject type."""
+        record, parent = self.get_parent_and_record_or_draft(id_)
+
+        # Permissions
+        self.require_permission(identity, "manage", record=record)
+
+        user_grants = []
+        for grant in parent.access.grants:
+            if grant.subject_type == subject_type:
+                user_grants.append(grant)
+
+        # Fetching
+        return self.grant_result_list(
+            service=self,
+            identity=identity,
+            results=user_grants,
+            expand=expand,
+        )
+
+    @unit_of_work()
+    def update_grant_by_subject(
+        self,
+        identity,
+        id_,
+        subject_id,
+        subject_type,
+        data,
+        expand=False,
+        uow=None,
+    ):
+        """Update access grant for a record (resp. its parent) by subject."""
+        record, parent = self.get_parent_and_record_or_draft(id_)
+
+        # Permissions
+        self.require_permission(identity, "manage", record=record)
+
+        # Fetching (required for parts of the validation)
+        grant_index = None
+        for grant in parent.access.grants:
+            if grant.subject_id == subject_id and grant.subject_type == subject_type:
+                grant_index = parent.access.grants.index(grant)
+
+        if grant_index is None:
+            raise LookupError(subject_id)
+
+        old_grant = parent.access.grants[grant_index]
+        data = {
+            "permission": data.get("permission", old_grant.permission),
+            "subject": {
+                "type": data.get("subject", {}).get("type", old_grant.subject_type),
+                "id": data.get("subject", {}).get("id", old_grant.subject_id),
+            },
+            "origin": data.get("origin", old_grant.origin),
+        }
+
+        # Validation
+        data, __ = self.schema_grant.load(
+            data, context={"identity": identity}, raise_errors=True
+        )
+
+        # Update
+        try:
+            new_grant = parent.access.grants.grant_cls.create(
+                origin=data["origin"],
+                permission=data["permission"],
+                subject_type=data["subject"]["type"],
+                subject_id=data["subject"]["id"],
+                resolve_subject=True,
+            )
+        except LookupError:
+            raise ValidationError(
+                _("Could not find the specified subject."), field_name="subject.id"
+            )
+
+        parent.access.grants[grant_index] = new_grant
+
+        uow.register(ParentRecordCommitOp(parent, indexer_context=dict(service=self)))
+
+        return self.grant_result_item(
+            self,
+            identity,
+            new_grant,
+            expand=expand,
+        )
+
+    @unit_of_work()
+    def delete_grant_by_subject(
+        self, identity, id_, subject_id, subject_type, uow=None
+    ):
+        """Delete an access grant for a record by subject."""
+        record, parent = self.get_parent_and_record_or_draft(id_)
+
+        # Permissions
+        self.require_permission(identity, "manage", record=record)
+
+        # Deletion
+        result = None
+        for grant in parent.access.grants:
+            if grant.subject_id == subject_id and grant.subject_type == subject_type:
+                result = grant
+                parent.access.grants.remove(grant)
+
+        if not result:
+            raise LookupError(subject_id)
+
+        uow.register(ParentRecordCommitOp(parent, indexer_context=dict(service=self)))
+
+        return True

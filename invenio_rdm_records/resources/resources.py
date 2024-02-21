@@ -658,6 +658,80 @@ class RDMParentGrantsResource(RecordResource):
         return items.to_dict(), 200
 
 
+class RDMGrantsAccessResource(RecordResource):
+    """Users and groups grant access resource."""
+
+    def create_url_rules(self):
+        """Create the URL rules for the record resource."""
+
+        def p(route_name):
+            """Prefix a route with the URL prefix."""
+            return f"{self.config.url_prefix}{self.config.routes[route_name]}"
+
+        return [
+            route("GET", p("item"), self.read),
+            route("DELETE", p("item"), self.delete),
+            route("GET", p("list"), self.search),
+            route("PATCH", p("item"), self.partial_update),
+        ]
+
+    @request_extra_args
+    @request_view_args
+    @response_handler()
+    def read(self):
+        """Read an access grant for a record by subject."""
+        item = self.service.access.read_grant_by_subject(
+            identity=g.identity,
+            id_=resource_requestctx.view_args["pid_value"],
+            subject_id=resource_requestctx.view_args["subject_id"],
+            subject_type=self.config.grant_subject_type,
+            expand=resource_requestctx.args.get("expand", False),
+        )
+
+        return item.to_dict(), 200
+
+    @request_view_args
+    def delete(self):
+        """Delete an access grant for a record by subject."""
+        self.service.access.delete_grant_by_subject(
+            identity=g.identity,
+            id_=resource_requestctx.view_args["pid_value"],
+            subject_id=resource_requestctx.view_args["subject_id"],
+            subject_type=self.config.grant_subject_type,
+        )
+        return "", 204
+
+    @request_extra_args
+    @request_search_args
+    @request_view_args
+    @response_handler(many=True)
+    def search(self):
+        """List access grants for a record by subject type."""
+        items = self.service.access.read_all_grants_by_subject(
+            identity=g.identity,
+            id_=resource_requestctx.view_args["pid_value"],
+            subject_type=self.config.grant_subject_type,
+            expand=resource_requestctx.args.get("expand", False),
+        )
+        return items.to_dict(), 200
+
+    @request_extra_args
+    @request_view_args
+    @request_data
+    @response_handler()
+    def partial_update(self):
+        """Patch access grant for a record by subject."""
+        item = self.service.access.update_grant_by_subject(
+            identity=g.identity,
+            id_=resource_requestctx.view_args["pid_value"],
+            subject_id=resource_requestctx.view_args["subject_id"],
+            subject_type=self.config.grant_subject_type,
+            data=resource_requestctx.data,
+            expand=resource_requestctx.args.get("expand", False),
+        )
+        return item.to_dict(), 200
+
+
 #
 # Community's records
 #

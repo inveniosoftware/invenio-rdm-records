@@ -9,6 +9,7 @@
 # it under the terms of the MIT License; see LICENSE file for more details.
 
 """Resources configuration."""
+from copy import deepcopy
 
 import marshmallow as ma
 from citeproc_styles import StyleNotFoundError
@@ -34,6 +35,7 @@ from invenio_requests.resources.requests.config import RequestSearchRequestArgsS
 
 from ..services.errors import (
     AccessRequestExistsError,
+    GrantExistsError,
     InvalidAccessRestrictions,
     RecordDeletedException,
     ReviewExistsError,
@@ -339,29 +341,35 @@ class RDMDraftMediaFilesResourceConfig(FileResourceConfig, ConfiguratorMixin):
 #
 # Parent Record Links
 #
-record_links_error_handlers = RecordResourceConfig.error_handlers.copy()
-
-
-record_links_error_handlers.update(
-    {
-        LookupError: create_error_handler(
-            HTTPJSONException(
-                code=404,
-                description="No secret link found with the given ID.",
-            )
-        ),
-    }
-)
-
-grants_error_handlers = RecordResourceConfig.error_handlers.copy()
-
-grants_error_handlers.update(
-    {
-        LookupError: create_error_handler(
-            HTTPJSONException(code=404, description="No grant found with the given ID.")
+record_links_error_handlers = {
+    **deepcopy(RecordResourceConfig.error_handlers),
+    LookupError: create_error_handler(
+        HTTPJSONException(
+            code=404,
+            description="No secret link found with the given ID.",
         )
-    }
-)
+    ),
+}
+
+grants_error_handlers = {
+    **deepcopy(RecordResourceConfig.error_handlers),
+    LookupError: create_error_handler(
+        HTTPJSONException(code=404, description="No grant found with the given ID.")
+    ),
+    GrantExistsError: create_error_handler(
+        lambda e: HTTPJSONException(
+            code=400,
+            description=e.description,
+        )
+    ),
+}
+
+user_access_error_handlers = {
+    **deepcopy(RecordResourceConfig.error_handlers),
+    LookupError: create_error_handler(
+        HTTPJSONException(code=404, description="No grant found by given user id.")
+    ),
+}
 
 
 #
@@ -401,8 +409,8 @@ class RDMParentGrantsResourceConfig(RecordResourceConfig, ConfiguratorMixin):
     url_prefix = "/records/<pid_value>/access"
 
     routes = {
-        "list": "/users",
-        "item": "/users/<grant_id>",
+        "list": "/grants",
+        "item": "/grants/<grant_id>",
     }
 
     links_config = {}
@@ -421,6 +429,37 @@ class RDMParentGrantsResourceConfig(RecordResourceConfig, ConfiguratorMixin):
     }
 
     error_handlers = grants_error_handlers
+
+
+class RDMGrantUserAccessResourceConfig(RecordResourceConfig, ConfiguratorMixin):
+    """Record grants user access resource configuration."""
+
+    blueprint_name = "record_user_access"
+
+    url_prefix = "/records/<pid_value>/access"
+
+    routes = {
+        "item": "/users/<subject_id>",
+        "list": "/users",
+    }
+
+    links_config = {}
+
+    request_view_args = {
+        "pid_value": ma.fields.Str(),
+        "subject_id": ma.fields.Str(),  # user id
+    }
+
+    grant_subject_type = "user"
+
+    response_handlers = {
+        "application/vnd.inveniordm.v1+json": RecordResourceConfig.response_handlers[
+            "application/json"
+        ],
+        **deepcopy(RecordResourceConfig.response_handlers),
+    }
+
+    error_handlers = user_access_error_handlers
 
 
 #
