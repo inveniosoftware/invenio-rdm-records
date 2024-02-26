@@ -29,6 +29,7 @@ export const NewVersionButton = ({ onError, record, disabled, ...uiProps }) => {
   return (
     <Popup
       content={i18next.t("You don't have permissions to create a new version.")}
+      position="top center"
       disabled={!disabled}
       trigger={
         // Extra span needed since disabled buttons do not trigger hover events
