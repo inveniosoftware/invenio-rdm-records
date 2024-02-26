@@ -31,20 +31,23 @@ export const NewVersionButton = ({ onError, record, disabled, ...uiProps }) => {
       content={i18next.t("You don't have permissions to create a new version.")}
       disabled={!disabled}
       trigger={
-        <Button
-          type="button"
-          positive
-          size="mini"
-          onClick={handleClick}
-          loading={loading}
-          icon
-          labelPosition="left"
-          disabled={disabled}
-          {...uiProps}
-        >
-          <Icon name="tag" />
-          {i18next.t("New version")}
-        </Button>
+        // Extra span needed since disabled buttons do not trigger hover events
+        <span>
+          <Button
+            type="button"
+            positive
+            size="mini"
+            onClick={handleClick}
+            loading={loading}
+            icon
+            labelPosition="left"
+            disabled={disabled}
+            {...uiProps}
+          >
+            <Icon name="tag" />
+            {i18next.t("New version")}
+          </Button>
+        </span>
       }
     />
   );
