@@ -182,6 +182,7 @@ class InvenioRDMRecords(object):
             config=service_configs.oaipmh_server,
         )
 
+
     def init_resource(self, app):
         """Initialize resources."""
         self.records_resource = RDMRecordResource(
