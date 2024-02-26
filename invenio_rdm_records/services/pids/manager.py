@@ -138,7 +138,7 @@ class PIDManager:
         """
         provider = self._get_provider(scheme, provider_name)
         pid_attrs = {}
-        if identifier:
+        if identifier is not None:
             try:
                 pid = provider.get(identifier)
             except PIDDoesNotExistError:
