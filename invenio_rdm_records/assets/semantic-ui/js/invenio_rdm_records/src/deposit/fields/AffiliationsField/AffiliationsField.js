@@ -35,7 +35,7 @@ export class AffiliationsField extends Component {
               fieldPath={fieldPath}
               suggestionAPIUrl="/api/affiliations"
               suggestionAPIHeaders={{
-                Accept: "application/json",
+                Accept: "application/vnd.inveniordm.v1+json",
               }}
               initialSuggestions={getIn(values, fieldPath, [])}
               serializeSuggestions={this.serializeAffiliations}
