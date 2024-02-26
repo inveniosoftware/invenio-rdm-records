@@ -378,7 +378,7 @@ RDM_PARENT_PERSISTENT_IDENTIFIERS = {
     "doi": {
         "providers": ["datacite"],
         "required": True,
-        "condition": lambda record: record.pids["doi"]["provider"] == "datacite",
+        "condition": lambda rec: rec.pids.get("doi", {}).get("provider") == "datacite",
         "label": _("Concept DOI"),
         "validator": idutils.is_doi,
         "normalizer": idutils.normalize_doi,
