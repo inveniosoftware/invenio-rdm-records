@@ -11,6 +11,10 @@
 Changes
 =======
 
+Version 8.1.1 (released 2024-02-27)
+
+- Revert "serializers: updated datacite schema rights."
+
 Version 8.1.0 (released 2024-02-27)
 
 - pids: allow empty-string PIDs
