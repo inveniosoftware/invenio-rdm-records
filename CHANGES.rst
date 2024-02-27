@@ -11,6 +11,12 @@
 Changes
 =======
 
+Version 8.1.0 (released 2024-02-27)
+
+- pids: allow empty-string PIDs
+- config: safer parent PID conditional check
+- serializers: updated datacite schema rights
+
 Version 8.0.0 (released 2024-02-20)
 
 - Bump due to major version upgrade in invenio-users-resources
