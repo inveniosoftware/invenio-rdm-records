@@ -568,14 +568,6 @@ class DataCite43Schema(BaseSerializerSchema):
 
                 serialized_rights.append(serialized_right)
 
-        # Add OpenAIRE information
-        access_right = obj["access"]["status"]
-        if access_right == "metadata-only":
-            access_right = "closed"
-        serialized_rights.append(
-            {"rightsUri": f"info:eu-repo/semantics/{access_right}Access"}
-        )
-
         return serialized_rights if serialized_rights else missing
 
     def get_funding(self, obj):
