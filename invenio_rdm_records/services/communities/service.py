@@ -360,67 +360,49 @@ class RecordCommunitiesService(Service, RecordIndexerMixin):
         return record.parent
 
     @unit_of_work()
-    def bulk_add(self, identity, id_, recids, set_default=False, uow=None):
+    def bulk_add(self, identity, community_id, record_ids, set_default=False, uow=None):
         """Bulk adds records to a community.
 
         :param identity: The identity performing the action.
-        :param id_: The ID of the community.
-        :param recids: List of record IDs to be added to the community.
-        :param set_default:  Whether to set the community as default for the added records.
+        :param community_id: The ID of the community.
+        :param record_ids: List of record IDs to be added to the community.
+        :param set_default: Whether to set the community as default for the added records.
         """
-        # TODO do we check for a "bulk" permission here? Only open to admins?
-        # TODO There's also a check inside the loop (on service.add)
-        for record_id in recids:
-            self.include_one_record(
-                identity, id_, record_id, set_default=set_default, uow=uow
+        self.require_permission(identity, "bulk_add")
+        errors = []
+        for record_id in record_ids:
+            record = self.record_cls.pid.resolve(record_id)
+            community = current_communities.service.record_cls.pid.resolve(community_id)
+
+            set_default = set_default or not record.parent.communities
+            already_included = community.id in record.parent.communities
+            if already_included:
+                errors.append(
+                    {
+                        "record_id": record_id,
+                        "community_id": community_id,
+                        "message": "Community already included.",
+                    }
+                )
+                continue
+
+            parent_community = getattr(community, "parent", None)
+            already_in_parent = (
+                parent_community
+                and str(parent_community.id) in record.parent.communities
             )
 
-    @unit_of_work()
-    def include_one_record(self, identity, id_, record_id, set_default=False, uow=None):
-        """Includes one record in a community.
+            if parent_community and not already_in_parent:
+                record.parent.communities.add(parent_community, request=None)
 
-        :param identity: The identity performing the action.
-        :param id_: The id of the community where to include the record.
-        :param record_id: The id of the record to be included in the community.
-        :param set_default: Whether to set the community as default for the added record.
-        """
-        record = self.record_cls.pid.resolve(record_id)
+            record.parent.communities.add(community, request=None, default=set_default)
 
-        community = current_communities.service.read(identity, id_)
-        self._include_one(identity, record, community._record, set_default)
-
-        # Commit and re-index everything
-        uow.register(
-            ParentRecordCommitOp(
-                record.parent,
-                indexer_context=dict(service=current_rdm_records_service),
+            # Commit and bulk re-index everything
+            uow.register(
+                ParentRecordCommitOp(
+                    record.parent,
+                    indexer_context={"service": current_rdm_records_service},
+                    bulk_index=True,
+                )
             )
-        )
-        uow.register(
-            RecordCommitOp(
-                record,
-                indexer=current_rdm_records_service.indexer,
-                index_refresh=True,
-            )
-        )
-
-        return record
-
-    def _include_one(self, identity, record, community, set_default=False, uow=None):
-        """This service call differs from the `add` method in that it does not create a request to include the record in the community.
-
-        It adds the record to the community directly, given the identity has permissions to do so.
-        """
-        # Check permissions
-        self.require_permission(identity, "add_community", record=record)
-
-        default = set_default or not record.parent.communities
-
-        parent_community = getattr(community, "parent", None)
-        already_in_parent = parent_community and str(parent_community.id) in record
-
-        if parent_community and not already_in_parent:
-            record.parent.communities.add(parent_community, request=self.request)
-
-        record.parent.communities.add(community, request=None, default=default)
-        return record
+        return errors
