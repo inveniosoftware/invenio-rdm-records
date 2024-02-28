@@ -214,6 +214,8 @@ class RDMRecordPermissionPolicy(RecordPermissionPolicy):
     ]
     # Who can remove records from a community
     can_remove_record = [CommunityCurators()]
+    # Who can add records to a community in bulk
+    can_bulk_add = [SystemProcess()]
 
     #
     # Media files - draft
