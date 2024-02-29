@@ -11,6 +11,9 @@ import datetime
 import textwrap
 
 from flask_resources.serializers import BaseSerializerSchema
+from invenio_access.permissions import system_identity
+from invenio_i18n import lazy_gettext as _
+from invenio_vocabularies.proxies import current_service as vocab_service
 from marshmallow import fields, post_dump
 from slugify import slugify
 
@@ -63,13 +66,17 @@ class BibTexSchema(BaseSerializerSchema, CommonFieldsMixin):
     }
     """Maps resource types to formats."""
 
-    @property
-    def default_entry_type(self):
-        """Read-only property that defines the default bibtex entry type to be used.
+    def get_default_entry_type(self, resource_type):
+        """Retrieves the default entry type for the given resource type.
 
-        The default type can be used when a resource type is not explicitely defined in ``format_mapper``.
+        The value is read from the vocabulary.
         """
-        return BibTexFormatter.misc
+        vocab = vocab_service.read(
+            system_identity, ("resourcetypes", resource_type), expand=True
+        ).to_dict()
+        bibtex_type = vocab["props"]["bibtex"]
+        entry = self.entry_mapper.get(bibtex_type, BibTexFormatter.misc)
+        return entry
 
     def get_date_created(self, obj):
         """Get date last updated."""
@@ -189,8 +196,8 @@ class BibTexSchema(BaseSerializerSchema, CommonFieldsMixin):
 
         :returns: an object with the bibtex fields for the resource types.
         """
-        # Every resource type is mapped to a default
-        entry = self.default_entry_type
+        # Every resource type is mapped to a default as defined by the resource type vocabulary.
+        entry = self.get_default_entry_type(resource_type)
         if entries := self.entry_mapper.get(resource_type):
             for _entry in entries:
                 success = all([fields_map.get(f) for f in _entry["req_fields"]])
