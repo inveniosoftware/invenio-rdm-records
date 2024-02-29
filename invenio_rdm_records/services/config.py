@@ -75,7 +75,12 @@ from .schemas.parent.communities import CommunitiesSchema
 from .schemas.quota import QuotaSchema
 from .schemas.record_communities import RecordCommunitiesSchema
 from .schemas.tombstone import TombstoneSchema
-from .search_params import MyDraftsParam, PublishedRecordsParam, StatusParam
+from .search_params import (
+    MetricsParam,
+    MyDraftsParam,
+    PublishedRecordsParam,
+    StatusParam,
+)
 from .sort import VerifiedRecordsSortParam
 
 
@@ -147,6 +152,7 @@ class RDMSearchOptions(SearchOptions, SearchOptionsMixin):
         VerifiedRecordsSortParam,
         StatusParam,
         PublishedRecordsParam,
+        MetricsParam,
     ]
 
 

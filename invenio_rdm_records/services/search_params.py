@@ -58,3 +58,17 @@ class MyDraftsParam(ParamInterpreter):
                 "term", **{"parent.access.owned_by.user": identity.id}
             )
         return search
+
+
+class MetricsParam(ParamInterpreter):
+    """Evaluates the metrics parameter."""
+
+    def apply(self, identity, search, params):
+        value = params.pop("metrics", {})
+        for key, metric_params in value.items():
+            name = metric_params.get("name", key)
+            _type = metric_params.get("type", None)
+            kwargs = metric_params.get("kwargs", {})
+            if name and _type:
+                search.aggs.metric(name, _type, **kwargs)
+        return search
