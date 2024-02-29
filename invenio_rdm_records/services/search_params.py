@@ -64,6 +64,25 @@ class MetricsParam(ParamInterpreter):
     """Evaluates the metrics parameter."""
 
     def apply(self, identity, search, params):
+        """Evaluate the metrics parameter on the search.
+
+        Usage:
+
+        .. code-block:: python
+
+            "params": {
+                ...
+                "metrics": {
+                    "total_data": {
+                        "name": "total_data",
+                        "type": "sum",
+                        "kwargs": {
+                            "field": "files.totalbytes"
+                        }
+                    }
+                }
+            }
+        """
         value = params.pop("metrics", {})
         for key, metric_params in value.items():
             name = metric_params.get("name", key)
