@@ -41,7 +41,7 @@
     "react-dom": "^16.13.0",
     "react-dropzone": "^11.0.0",
     "react-i18next": "^11.11.0",
-    "react-invenio-forms": "^2.0.0",
+    "react-invenio-forms": "^3.0.0",
     "react-overridable": "^0.0.3",
     "react-redux": "^7.2.0",
     "react-scripts": "^5.0.1",
