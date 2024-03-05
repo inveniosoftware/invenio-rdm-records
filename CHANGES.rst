@@ -11,6 +11,26 @@
 Changes
 =======
 
+Version 8.2.0 (released 2024-03-05)
+
+- bumps react-invenio-forms
+- ui: center disabled new version popup tooltip
+- fix: show popup tooltip on disabled new version button
+
+Version 8.1.1 (released 2024-02-27)
+
+- Revert "serializers: updated datacite schema rights."
+
+Version 8.1.0 (released 2024-02-27)
+
+- pids: allow empty-string PIDs
+- config: safer parent PID conditional check
+- serializers: updated datacite schema rights
+
+Version 8.0.0 (released 2024-02-20)
+
+- Bump due to major version upgrade in invenio-users-resources
+
 Version 7.1.1 (released 2024-02-19)
 
 - communities: add CommunityParentComponent
