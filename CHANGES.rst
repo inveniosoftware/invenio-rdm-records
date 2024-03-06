@@ -11,6 +11,13 @@
 Changes
 =======
 
+Version 8.3.0 (released 2024-03-06)
+
+- services: introduced bulk_add permission
+- requests: added community transfer request type
+- services: added bulk addition to record community
+- services: add metrics param interpreter
+
 Version 8.2.0 (released 2024-03-05)
 
 - bumps react-invenio-forms
