@@ -40,6 +40,20 @@ class Grant(Schema):
     permission = fields.String(required=True)
     subject = fields.Nested(GrantSubject, required=True)
     origin = fields.String(required=False)
+    message = SanitizedUnicode()
+    notify = fields.Bool()
+
+
+class Grants(Schema):
+    """Grants Schema."""
+
+    grants = fields.List(
+        fields.Nested(Grant),
+        # max is on purpose to limit the max number of additions/changes/
+        # removals per request as they all run in a single transaction and
+        # requires resources to hold.
+        validate=validate.Length(min=1, max=100),
+    )
 
 
 class SecretLink(Schema):

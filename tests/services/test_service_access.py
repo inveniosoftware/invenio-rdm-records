@@ -25,20 +25,33 @@ def test_cant_create_multiple_grants_for_same_user(running_app, minimal_record, 
     user_id = str(users[0].id)
     access_service = records_service.access
     grant_payload = {
-        "subject": {"type": "user", "id": user_id},
-        "permission": "preview",
+        "grants": [
+            {
+                "subject": {"type": "user", "id": user_id},
+                "permission": "preview",
+            }
+        ]
     }
 
-    grant = access_service.create_grant(superuser_identity, record.id, grant_payload)
+    grant = access_service.create_grants(superuser_identity, record.id, grant_payload)
+
     assert grant.to_dict() == {
-        "permission": "preview",
-        "subject": {"id": user_id, "type": "user"},
-        "origin": None,
+        "hits": {
+            "hits": [
+                {
+                    "permission": "preview",
+                    "subject": {"id": user_id, "type": "user"},
+                    "origin": None,
+                    "id": 0,
+                }
+            ],
+            "total": 1,
+        }
     }
 
     # try to create again
     with pytest.raises(GrantExistsError):
-        access_service.create_grant(superuser_identity, record.id, grant_payload)
+        access_service.create_grants(superuser_identity, record.id, grant_payload)
 
 
 def test_cant_create_multiple_grants_for_same_role(running_app, minimal_record, roles):
@@ -51,18 +64,147 @@ def test_cant_create_multiple_grants_for_same_role(running_app, minimal_record, 
 
     # create grant
     access_service = records_service.access
-    grant_payload = {"subject": {"type": "role", "id": "test"}, "permission": "preview"}
+    grant_payload = {
+        "grants": [
+            {
+                "subject": {"type": "role", "id": "test"},
+                "permission": "preview",
+            }
+        ]
+    }
+    grant = access_service.create_grants(superuser_identity, record.id, grant_payload)
 
-    grant = access_service.create_grant(superuser_identity, record.id, grant_payload)
     assert grant.to_dict() == {
-        "permission": "preview",
-        "subject": {"id": "test", "type": "role"},
-        "origin": None,
+        "hits": {
+            "hits": [
+                {
+                    "permission": "preview",
+                    "subject": {"id": "test", "type": "role"},
+                    "origin": None,
+                    "id": 0,
+                }
+            ],
+            "total": 1,
+        }
     }
 
     # try to create again
     with pytest.raises(GrantExistsError):
-        access_service.create_grant(superuser_identity, record.id, grant_payload)
+        access_service.create_grants(superuser_identity, record.id, grant_payload)
+
+
+def test_create_multiple_grants(running_app, minimal_record, users):
+    """Test creating multiple grants at the same time."""
+    # create record
+    superuser_identity = running_app.superuser_identity
+    records_service = current_rdm_records.records_service
+    draft = records_service.create(superuser_identity, minimal_record)
+    record = records_service.publish(superuser_identity, draft.id)
+
+    # create grants
+    user_id = str(users[0].id)
+    user_id2 = str(users[1].id)
+    access_service = records_service.access
+    grants_payload = {
+        "grants": [
+            {
+                "subject": {"type": "user", "id": user_id},
+                "permission": "preview",
+            },
+            {
+                "subject": {"type": "user", "id": user_id2},
+                "permission": "manage",
+            },
+        ]
+    }
+
+    access_service.create_grants(superuser_identity, record.id, grants_payload)
+
+    read_grants = access_service.read_all_grants(
+        superuser_identity,
+        record.id,
+    )
+
+    assert read_grants.to_dict() == {
+        "hits": {
+            "hits": [
+                {
+                    "permission": "preview",
+                    "subject": {"id": user_id, "type": "user"},
+                    "origin": None,
+                    "id": 0,
+                },
+                {
+                    "permission": "manage",
+                    "subject": {"id": user_id2, "type": "user"},
+                    "origin": None,
+                    "id": 1,
+                },
+            ],
+            "total": 2,
+        }
+    }
+
+
+def test_create_multiple_grants_one_exists(running_app, minimal_record, users):
+    """Test creating multiple grants at the same time. One grant already exists. None added in the end."""
+    # create record
+    superuser_identity = running_app.superuser_identity
+    records_service = current_rdm_records.records_service
+    draft = records_service.create(superuser_identity, minimal_record)
+    record = records_service.publish(superuser_identity, draft.id)
+
+    # create grant
+    user_id = str(users[0].id)
+    access_service = records_service.access
+    grant_payload = {
+        "grants": [
+            {
+                "subject": {"type": "user", "id": user_id},
+                "permission": "preview",
+            },
+        ]
+    }
+
+    access_service.create_grants(superuser_identity, record.id, grant_payload)
+
+    # create 2 grants, one of them already exists
+    user_id2 = str(users[1].id)
+    grants_payload = {
+        "grants": [
+            {
+                "subject": {"type": "user", "id": user_id},
+                "permission": "preview",
+            },
+            {
+                "subject": {"type": "user", "id": user_id2},
+                "permission": "manage",
+            },
+        ]
+    }
+
+    with pytest.raises(GrantExistsError):
+        access_service.create_grants(superuser_identity, record.id, grants_payload)
+
+    # assert that second grant wasn't added
+    grants = access_service.read_all_grants(
+        superuser_identity,
+        record.id,
+    )
+
+    assert grants.to_dict() == {
+        "hits": {
+            "hits": [
+                {
+                    "permission": "preview",
+                    "subject": {"id": user_id, "type": "user"},
+                    "origin": None,
+                    "id": 0,
+                }
+            ],
+            "total": 1,
+        }
+    }
 
 
 def test_read_grant_by_subjectid_found(running_app, minimal_record, users):
@@ -78,10 +220,14 @@ def test_read_grant_by_subjectid_found(running_app, minimal_record, users):
     access_service = records_service.access
     user_id = str(users[0].id)
     grant_payload = {
-        "subject": {"type": "user", "id": user_id},
-        "permission": "preview",
+        "grants": [
+            {
+                "subject": {"type": "user", "id": user_id},
+                "permission": "preview",
+            }
+        ]
     }
-    access_service.create_grant(superuser_identity, record.id, grant_payload)
+    access_service.create_grants(superuser_identity, record.id, grant_payload)
 
     # read grant
     grant = access_service.read_grant_by_subject(
@@ -107,10 +253,14 @@ def test_read_grant_by_subjectid_not_found(running_app, minimal_record, users):
     user_id = str(users[0].id)
     access_service = records_service.access
     grant_payload = {
-        "subject": {"type": "user", "id": user_id},
-        "permission": "preview",
+        "grants": [
+            {
+                "subject": {"type": "user", "id": user_id},
+                "permission": "preview",
+            }
+        ]
     }
-    access_service.create_grant(superuser_identity, record.id, grant_payload)
+    access_service.create_grants(superuser_identity, record.id, grant_payload)
 
     # try to read grant for different user
     access_service = records_service.access
@@ -149,8 +299,15 @@ def test_read_grant_by_subjectid_provide_role(running_app, minimal_record, roles
     # create grant for role "test"
     subject_type = "user"
     access_service = records_service.access
-    grant_payload = {"subject": {"type": "role", "id": "test"}, "permission": "preview"}
-    access_service.create_grant(superuser_identity, record.id, grant_payload)
+    grant_payload = {
+        "grants": [
+            {
+                "subject": {"type": "role", "id": "test"},
+                "permission": "preview",
+            }
+        ]
+    }
+    access_service.create_grants(superuser_identity, record.id, grant_payload)
 
     # try to read grant by role "test"
     access_service = records_service.access
@@ -173,10 +330,14 @@ def test_delete_grant_by_subjectid_found(running_app, minimal_record, users):
     access_service = records_service.access
     user_id = str(users[0].id)
     grant_payload = {
-        "subject": {"type": "user", "id": user_id},
-        "permission": "preview",
+        "grants": [
+            {
+                "subject": {"type": "user", "id": user_id},
+                "permission": "preview",
+            }
+        ]
     }
-    access_service.create_grant(superuser_identity, record.id, grant_payload)
+    access_service.create_grants(superuser_identity, record.id, grant_payload)
 
     # delete grant
     grant = access_service.delete_grant_by_subject(
@@ -204,10 +365,14 @@ def test_delete_grant_by_subjectid_not_found(running_app, minimal_record, users)
     user_id = str(users[0].id)
     access_service = records_service.access
     grant_payload = {
-        "subject": {"type": "user", "id": user_id},
-        "permission": "preview",
+        "grants": [
+            {
+                "subject": {"type": "user", "id": user_id},
+                "permission": "preview",
+            }
+        ]
     }
-    access_service.create_grant(superuser_identity, record.id, grant_payload)
+    access_service.create_grants(superuser_identity, record.id, grant_payload)
 
     # try to delete grant for different user
     access_service = records_service.access
@@ -245,8 +410,15 @@ def test_delete_grant_by_subjectid_provide_role(running_app, minimal_record, rol
     # create grant for role "test"
     subject_type = "user"
     access_service = records_service.access
-    grant_payload = {"subject": {"type": "role", "id": "test"}, "permission": "preview"}
-    access_service.create_grant(superuser_identity, record.id, grant_payload)
+    grant_payload = {
+        "grants": [
+            {
+                "subject": {"type": "role", "id": "test"},
+                "permission": "preview",
+            }
+        ]
+    }
+    access_service.create_grants(superuser_identity, record.id, grant_payload)
 
     # try to read grant by role "test"
     access_service = records_service.access
@@ -270,22 +442,34 @@ def test_read_all_grants_by_subject_found(running_app, minimal_record, users, ro
     user_id = str(users[0].id)
     user_id2 = str(users[1].id)
     grant_payload = {
-        "subject": {"type": "user", "id": user_id},
-        "permission": "preview",
+        "grants": [
+            {
+                "subject": {"type": "user", "id": user_id},
+                "permission": "preview",
+            }
+        ]
     }
     grant_payload2 = {
-        "subject": {"type": "user", "id": user_id2},
-        "permission": "preview",
+        "grants": [
+            {
+                "subject": {"type": "user", "id": user_id2},
+                "permission": "preview",
+            }
+        ]
     }
-    access_service.create_grant(superuser_identity, record.id, grant_payload)
-    access_service.create_grant(superuser_identity, record.id, grant_payload2)
+    access_service.create_grants(superuser_identity, record.id, grant_payload)
+    access_service.create_grants(superuser_identity, record.id, grant_payload2)
 
     # create role grants
     grant_payload = {
-        "subject": {"type": "role", "id": "test"},
-        "permission": "preview",
+        "grants": [
+            {
+                "subject": {"type": "role", "id": "test"},
+                "permission": "preview",
+            }
+        ]
     }
-    access_service.create_grant(superuser_identity, record.id, grant_payload)
+    access_service.create_grants(superuser_identity, record.id, grant_payload)
 
     # search user grants
     grants = access_service.read_all_grants_by_subject(
@@ -311,10 +495,14 @@ def test_read_all_grants_by_subject_not_found(
 
     # create role grants
     grant_payload = {
-        "subject": {"type": "role", "id": "test"},
-        "permission": "preview",
+        "grants": [
+            {
+                "subject": {"type": "role", "id": "test"},
+                "permission": "preview",
+            }
+        ]
     }
-    access_service.create_grant(superuser_identity, record.id, grant_payload)
+    access_service.create_grants(superuser_identity, record.id, grant_payload)
 
     # search user grants
     subject_type = "user"
@@ -337,11 +525,15 @@ def test_update_grant_by_subject_found(running_app, minimal_record, users):
     access_service = records_service.access
     user_id = str(users[0].id)
     grant_payload = {
-        "subject": {"type": "user", "id": user_id},
-        "permission": "preview",
-        "origin": "origin",
+        "grants": [
+            {
+                "subject": {"type": "user", "id": user_id},
+                "permission": "preview",
+                "origin": "origin",
+            }
+        ]
     }
-    access_service.create_grant(superuser_identity, record.id, grant_payload)
+    access_service.create_grants(superuser_identity, record.id, grant_payload)
 
     # update user grant
     payload = {"permission": "manage"}
@@ -372,11 +564,15 @@ def test_update_grant_by_subject_not_found(running_app, minimal_record, roles):
     # create role grant
     access_service = records_service.access
     grant_payload = {
-        "subject": {"type": "role", "id": "test"},
-        "permission": "preview",
-        "origin": "origin",
+        "grants": [
+            {
+                "subject": {"type": "role", "id": "test"},
+                "permission": "preview",
+                "origin": "origin",
+            }
+        ]
     }
-    access_service.create_grant(superuser_identity, record.id, grant_payload)
+    access_service.create_grants(superuser_identity, record.id, grant_payload)
 
     # update user grant
     payload = {"permission": "manage"}
