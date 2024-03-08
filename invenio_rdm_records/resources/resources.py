@@ -591,16 +591,17 @@ class RDMParentGrantsResource(RecordResource):
     @request_data
     @response_handler()
     def create(self):
-        """Create an access grant for a record."""
+        """Create access grants for a record."""
         data = resource_requestctx.data
-        data["origin"] = f"api:{g.identity.id}"
-        item = self.service.access.create_grant(
+        for grant in data["grants"]:
+            grant["origin"] = f"api:{g.identity.id}"
+        items = self.service.access.bulk_create_grants(
             identity=g.identity,
             id_=resource_requestctx.view_args["pid_value"],
             data=data,
             expand=resource_requestctx.args.get("expand", False),
         )
-        return item.to_dict(), 201
+        return items.to_dict(), 201
 
     @request_extra_args
     @request_view_args

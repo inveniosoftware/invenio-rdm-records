@@ -39,6 +39,10 @@ class LinksTable extends Component {
     };
   }
 
+  componentDidMount() {
+    this.fetchFormats();
+  }
+
   fetchFormats = async () => {
     const cancellableFetchFormats = withCancel(http.get("/api/oaipmh/formats"));
 
@@ -70,10 +74,6 @@ class LinksTable extends Component {
       });
     }
   };
-
-  componentDidMount() {
-    this.fetchFormats();
-  }
 
   /**
    * Replaces the metadata prefix in the link.

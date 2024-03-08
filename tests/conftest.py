@@ -93,6 +93,7 @@ from invenio_rdm_records.notifications.builders import (
     CommunityInclusionDeclineNotificationBuilder,
     CommunityInclusionExpireNotificationBuilder,
     CommunityInclusionSubmittedNotificationBuilder,
+    GrantUserAccessNotificationBuilder,
     GuestAccessRequestAcceptNotificationBuilder,
     GuestAccessRequestSubmitNotificationBuilder,
     GuestAccessRequestTokenCreateNotificationBuilder,
@@ -334,6 +335,7 @@ def app_config(app_config, mock_datacite_client):
         GuestAccessRequestSubmitNotificationBuilder.type: GuestAccessRequestSubmitNotificationBuilder,
         UserAccessRequestAcceptNotificationBuilder.type: UserAccessRequestAcceptNotificationBuilder,
         UserAccessRequestSubmitNotificationBuilder.type: UserAccessRequestSubmitNotificationBuilder,
+        GrantUserAccessNotificationBuilder.type: GrantUserAccessNotificationBuilder,
     }
 
     # Specifying default resolvers. Will only be used in specific test cases.

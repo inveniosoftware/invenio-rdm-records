@@ -69,6 +69,7 @@ from .schemas import RDMParentSchema, RDMRecordSchema
 from .schemas.community_records import CommunityRecordsSchema
 from .schemas.parent.access import AccessSettingsSchema
 from .schemas.parent.access import Grant as GrantSchema
+from .schemas.parent.access import Grants as GrantsSchema
 from .schemas.parent.access import RequestAccessSchema
 from .schemas.parent.access import SecretLink as SecretLinkSchema
 from .schemas.parent.communities import CommunitiesSchema
@@ -237,6 +238,7 @@ class RDMRecordServiceConfig(RecordServiceConfig, ConfiguratorMixin):
     schema_access_settings = AccessSettingsSchema
     schema_secret_link = SecretLinkSchema
     schema_grant = GrantSchema
+    schema_grants = GrantsSchema
     schema_request_access = RequestAccessSchema
     schema_tombstone = TombstoneSchema
     schema_quota = QuotaSchema
