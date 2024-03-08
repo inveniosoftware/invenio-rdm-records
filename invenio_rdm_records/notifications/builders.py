@@ -259,6 +259,42 @@ class UserAccessRequestAcceptNotificationBuilder(NotificationBuilder):
     ]
 
 
+class GrantUserAccessNotificationBuilder(NotificationBuilder):
+    """Notification builder for user access grant."""
+
+    type = "grant-user-access.create"
+
+    @classmethod
+    def build(cls, record, user, permission, message=None):
+        """Build notification with request context."""
+        return Notification(
+            type=cls.type,
+            context={
+                "record": EntityResolverRegistry.reference_entity(record),
+                "receiver": EntityResolverRegistry.reference_entity(user),
+                "permission": permission,
+                "message": message,
+            },
+        )
+
+    context = [
+        EntityResolve(key="record"),
+        EntityResolve(key="receiver"),
+    ]
+
+    recipients = [
+        UserRecipient(key="receiver"),
+    ]
+
+    recipient_filters = [
+        UserPreferencesRecipientFilter(),
+    ]
+
+    recipient_backends = [
+        UserEmailBackend(),
+    ]
+
+
 class CommunityInclusionActionNotificationBuilder(NotificationBuilder):
     """Notification builder for inclusion actions."""
 
