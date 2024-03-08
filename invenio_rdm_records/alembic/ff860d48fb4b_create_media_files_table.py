@@ -14,7 +14,7 @@ from sqlalchemy_utils import JSONType, UUIDType
 
 # revision identifiers, used by Alembic.
 revision = "ff860d48fb4b"
-down_revision = "cfcb8cb78708"
+down_revision = "4a15e8671f4d"
 branch_labels = ()
 depends_on = None
 
