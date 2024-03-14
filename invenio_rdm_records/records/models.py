@@ -168,7 +168,7 @@ class RDMRecordQuota(db.Model, Timestamp):
 
     """Parent record id."""
 
-    user_id = db.Column(db.Integer, unique=True)
+    user_id = db.Column(db.Integer)
     """User associated with the parent record via parent.access.owned_by."""
 
     quota_size = db.Column(
