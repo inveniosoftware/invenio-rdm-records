@@ -11,9 +11,25 @@
 from invenio_vocabularies.services.schema import (
     VocabularyRelationSchema as VocabularySchema,
 )
-from marshmallow import Schema, fields, pre_load
+from marshmallow import RAISE, Schema, fields, pre_load
 from marshmallow_utils.fields import NestedAttribute, SanitizedUnicode
 from marshmallow_utils.permissions import FieldPermissionsMixin
+
+
+class FileMetadataSchema(Schema):
+    """Schema for file metadata."""
+
+    class Meta:
+        """Meta."""
+
+        unknown = RAISE
+
+    page = fields.Integer()
+    type = fields.String()
+    language = fields.String()
+    encoding = fields.String()
+    charset = fields.String()
+    previewer = fields.String()
 
 
 class FileSchema(Schema):
@@ -28,7 +44,8 @@ class FileSchema(Schema):
 
     # FileRecord fields
     key = SanitizedUnicode()
-    metadata = fields.Dict()
+    metadata = fields.Nested(FileMetadataSchema)
+    access = fields.Dict(attribute="file.access")
 
 
 class FilesSchema(Schema, FieldPermissionsMixin):
