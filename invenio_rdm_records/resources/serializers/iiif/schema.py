@@ -152,7 +152,7 @@ class IIIFSequenceV2Schema(Schema):
 
     label = fields.Constant(_("Current Page Order"))
     viewingDirection = fields.Constant("left-to-right")
-    viewingHint = fields.Constant("paged")
+    viewingHint = fields.Constant("individuals")
 
     canvases = ListIIIFFilesAttribute(
         fields.Nested(IIIFCanvasV2Schema), attribute="files.entries"
