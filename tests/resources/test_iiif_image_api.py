@@ -9,6 +9,7 @@ from io import BytesIO
 
 from PIL import Image
 from werkzeug.utils import secure_filename
+import dictdiffer
 
 
 def publish_record_with_images(
@@ -112,15 +113,20 @@ def test_iiif_info(
     recid = publish_record_with_images(client, file_id, minimal_record, headers)
     response = client.get(f"/iiif/record:{recid}:{file_id}/info.json")
     assert response.status_code == 200
-    assert response.json == {
-        "@context": "http://iiif.io/api/image/2/context.json",
-        "profile": ["http://iiif.io/api/image/2/level2.json"],
-        "protocol": "http://iiif.io/api/image",
-        "@id": f"https://127.0.0.1:5000/api/iiif/record:{recid}:{file_id}",
-        "tiles": [{"width": 256, "scaleFactors": [1, 2, 4, 8, 16, 32, 64]}],
-        "width": 1280,
-        "height": 1024,
-    }
+    assert not list(
+        dictdiffer.diff(
+            response.json,
+            {
+                "@context": "http://iiif.io/api/image/2/context.json",
+                "profile": ["http://iiif.io/api/image/2/level2.json"],
+                "protocol": "http://iiif.io/api/image",
+                "@id": f"https://127.0.0.1:5000/api/iiif/record:{recid}:{file_id}",
+                "tiles": [{"width": 256, "scaleFactors": [1, 2, 4, 8, 16, 32, 64]}],
+                "width": 1280,
+                "height": 1024,
+            },
+        )
+    )
 
     ## Testing with filename with a slash ##
 

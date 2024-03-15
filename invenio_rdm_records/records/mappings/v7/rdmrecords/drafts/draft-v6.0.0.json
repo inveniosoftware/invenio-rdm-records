@@ -1292,6 +1292,14 @@
               },
               "file_id": {
                 "enabled": false
+              },
+              "access": {
+                "type": "object",
+                "properties": {
+                  "hidden": {
+                    "type": "boolean"
+                  }
+                }
               }
             }
           }
@@ -1351,6 +1359,14 @@
               },
               "file_id": {
                 "enabled": false
+              },
+              "access": {
+                "type": "object",
+                "properties": {
+                  "hidden": {
+                    "type": "boolean"
+                  }
+                }
               }
             }
           }
