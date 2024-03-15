@@ -11,7 +11,7 @@
 
 from flask import current_app
 from flask_babel import lazy_gettext as _
-from marshmallow import Schema, fields, missing, post_dump
+from marshmallow import Schema, fields, missing, post_dump, pre_dump
 
 
 class SelfList(fields.List):
@@ -203,9 +203,6 @@ class IIIFManifestV2Schema(Schema):
 
     @post_dump
     def sortcanvases(self, manifest, many, **kwargs):
-        """Sort files by key.
-
-        TODO: should sorting be done elsewhere?
-        """
-        # manifest["sequences"][0]["canvases"].sort(key=lambda x: x["@id"])
+        """Sort files by key."""
+        manifest["sequences"][0]["canvases"].sort(key=lambda x: x["@id"])
         return manifest
