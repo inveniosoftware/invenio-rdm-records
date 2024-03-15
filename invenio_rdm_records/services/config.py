@@ -434,6 +434,7 @@ class RDMRecordServiceConfig(RecordServiceConfig, ConfiguratorMixin):
         ),
         "versions": RecordLink("{+api}/records/{id}/versions"),
         "access_links": RecordLink("{+api}/records/{id}/access/links"),
+        "access_grants": RecordLink("{+api}/records/{id}/access/grants"),
         "access_users": RecordLink("{+api}/records/{id}/access/users"),
         "access_request": RecordLink("{+api}/records/{id}/access/request"),
         "access": RecordLink("{+api}/records/{id}/access"),
