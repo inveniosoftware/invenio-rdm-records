@@ -67,6 +67,7 @@ from .permissions import RDMRecordPermissionPolicy
 from .result_items import GrantItem, GrantList, SecretLinkItem, SecretLinkList
 from .schemas import RDMParentSchema, RDMRecordSchema
 from .schemas.community_records import CommunityRecordsSchema
+from .schemas.files import FileSchema
 from .schemas.parent.access import AccessSettingsSchema
 from .schemas.parent.access import Grant as GrantSchema
 from .schemas.parent.access import Grants as GrantsSchema
@@ -262,6 +263,8 @@ class RDMFileRecordServiceConfig(FileServiceConfig, ConfiguratorMixin):
             when=is_iiif_compatible,
         ),
     }
+
+    file_schema = FileSchema
 
 
 class RDMRecordServiceConfig(RecordServiceConfig, ConfiguratorMixin):
@@ -575,6 +578,8 @@ class RDMMediaFileRecordServiceConfig(FileServiceConfig, ConfiguratorMixin):
         "content": FileLink("{+api}/records/{id}/media-files/{key}/content"),
     }
 
+    file_schema = FileSchema
+
 
 class RDMFileDraftServiceConfig(FileServiceConfig, ConfiguratorMixin):
     """Configuration for draft files."""
@@ -617,6 +622,8 @@ class RDMFileDraftServiceConfig(FileServiceConfig, ConfiguratorMixin):
         ),
     }
 
+    file_schema = FileSchema
+
 
 class RDMMediaFileDraftServiceConfig(FileServiceConfig, ConfiguratorMixin):
     """Configuration for draft media files."""
@@ -644,3 +651,5 @@ class RDMMediaFileDraftServiceConfig(FileServiceConfig, ConfiguratorMixin):
         "content": FileLink("{+api}/records/{id}/draft/media-files/{key}/content"),
         "commit": FileLink("{+api}/records/{id}/draft/media-files/{key}/commit"),
     }
+
+    file_schema = FileSchema
