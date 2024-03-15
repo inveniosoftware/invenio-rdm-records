@@ -15,6 +15,12 @@ class RDMRecordsException(Exception):
     """Base exception for RDMRecords errors."""
 
 
+class GrantExistsError(RDMRecordsException):
+    """Exception raised when trying to create a grant that already exists for user/role."""
+
+    description = _("Grant for this user/role already exists within this record.")
+
+
 class RecordDeletedException(RDMRecordsException):
     """Exception denoting that the record was deleted."""
 

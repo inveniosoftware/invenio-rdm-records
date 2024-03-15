@@ -80,6 +80,12 @@ def create_parent_grants_bp(app):
     return ext.parent_grants_resource.as_blueprint()
 
 
+def create_grant_user_access_bp(app):
+    """Create grant user access blueprint."""
+    ext = app.extensions["invenio-rdm-records"]
+    return ext.grant_user_access_resource.as_blueprint()
+
+
 def create_pid_resolver_resource_bp(app):
     """Create pid resource blueprint."""
     ext = app.extensions["invenio-rdm-records"]
