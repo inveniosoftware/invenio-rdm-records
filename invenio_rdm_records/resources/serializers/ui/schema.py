@@ -256,7 +256,9 @@ def compute_publishing_information(obj, dummyctx):
         imprint_place = imprint.get("place")
         imprint_isbn = imprint.get("isbn")
         imprint_pages = imprint.get("pages")
-        title_page = f"{imprint_title}" if imprint_title else ""
+        edition = imprint.get("edition")
+        ed_form = f" {edition} ed." if edition else ""
+        title_page = f"{imprint_title}{ed_form}" if imprint_title else None
         if imprint_pages:
             if title_page:
                 title_page += f", {imprint_pages}."
