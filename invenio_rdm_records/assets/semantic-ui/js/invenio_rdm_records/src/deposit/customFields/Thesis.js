@@ -17,6 +17,8 @@ export class Thesis extends Component {
     const {
       fieldPath, // injected by the custom field loader via the `field` config property
       university,
+      department,
+      type,
       icon,
       label,
     } = this.props;
@@ -29,14 +31,34 @@ export class Thesis extends Component {
           </>
         )}
         <Grid padded>
-          <Grid.Column width="16">
+          <Grid.Column width="6">
             <Input
-              fieldPath={fieldPath}
+              fieldPath={`${fieldPath}.university`}
               label={university.label}
               placeholder={university.placeholder}
             />
             {university.description && (
               <label className="helptext mb-0">{university.description}</label>
+            )}
+          </Grid.Column>
+          <Grid.Column width="6">
+            <Input
+              fieldPath={`${fieldPath}.department`}
+              label={department.label}
+              placeholder={department.placeholder}
+            />
+            {department.description && (
+              <label className="helptext mb-0">{department.description}</label>
+            )}
+          </Grid.Column>
+          <Grid.Column width="4">
+            <Input
+              fieldPath={`${fieldPath}.type`}
+              label={type.label}
+              placeholder={type.placeholder}
+            />
+            {type.description && (
+              <label className="helptext mb-0">{type.description}</label>
             )}
           </Grid.Column>
         </Grid>
@@ -48,6 +70,8 @@ export class Thesis extends Component {
 Thesis.propTypes = {
   fieldPath: PropTypes.string.isRequired,
   university: PropTypes.object.isRequired,
+  department: PropTypes.object.isRequired,
+  type: PropTypes.object.isRequired,
   icon: PropTypes.string,
   label: PropTypes.string,
 };
