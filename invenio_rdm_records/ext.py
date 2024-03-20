@@ -3,7 +3,7 @@
 # Copyright (C) 2019-2023 CERN.
 # Copyright (C) 2019-2021 Northwestern University.
 # Copyright (C) 2022 Universität Hamburg.
-# Copyright (C) 2023 Graz University of Technology.
+# Copyright (C) 2023-2024 Graz University of Technology.
 # Copyright (C) 2023 TU Wien.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
@@ -290,6 +290,11 @@ def init(app):
     sregistry.register(ext.records_service, service_id="records")
     sregistry.register(ext.records_service.files, service_id="files")
     sregistry.register(ext.records_service.draft_files, service_id="draft-files")
+    sregistry.register(ext.records_media_files_service, service_id="record-media-files")
+    sregistry.register(ext.records_media_files_service.files, service_id="media-files")
+    sregistry.register(
+        ext.records_media_files_service.draft_files, service_id="draft-media-files"
+    )
     sregistry.register(ext.oaipmh_server_service, service_id="oaipmh-server")
     sregistry.register(ext.iiif_service, service_id="rdm-iiif")
     # Register indexers
