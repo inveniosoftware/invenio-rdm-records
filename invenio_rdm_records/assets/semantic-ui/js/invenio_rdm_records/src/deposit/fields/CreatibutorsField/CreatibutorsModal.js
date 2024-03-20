@@ -384,9 +384,9 @@ export class CreatibutorsModal extends Component {
     const selectedSuggestion = selectedSuggestions[0].extra;
     this.setState(
       {
-        organizationIdentifiers: selectedSuggestion.identifiers.map(
-          (identifier) => identifier.identifier
-        ),
+        organizationIdentifiers: selectedSuggestion.identifiers
+          .filter((identifier) => identifier.scheme !== "grid") // Filtering out unsupported org scheme i.e. "grid"
+          .map((identifier) => identifier.identifier),
         organizationAffiliations: [],
       },
       () => {
