@@ -9,6 +9,7 @@
 
 import bleach
 from dateutil.parser import parse
+from dojson.contrib.to_marc21.fields.bdleader import to_leader
 from flask import current_app, g
 from flask_resources.serializers import BaseSerializerSchema
 from invenio_access.permissions import system_identity
@@ -56,9 +57,9 @@ class MARCXMLSchema(BaseSerializerSchema, CommonFieldsMixin):
     host_information = fields.Method("get_host_information", data_key="773  ")
     leader = fields.Method("get_leader")
 
-    def get_leader(self, o):
+    def get_leader(self, obj):
         """Return the leader information."""
-        rt = o["metadata"]["resource_type"]["id"]
+        rt = obj["metadata"]["resource_type"]["id"]
         rec_types = {
             "image": "two-dimensional_nonprojectable_graphic",
             "video": "projected_medium",
@@ -84,7 +85,7 @@ class MARCXMLSchema(BaseSerializerSchema, CommonFieldsMixin):
             "length_of_the_implementation_defined_portion": 0,
             "undefined": 0,
         }
-        return res
+        return to_leader(None, None, res)
 
     def get_host_information(self, obj):
         """Get host information.
