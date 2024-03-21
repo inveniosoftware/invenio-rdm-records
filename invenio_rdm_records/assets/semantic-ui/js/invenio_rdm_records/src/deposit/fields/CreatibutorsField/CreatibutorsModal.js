@@ -385,7 +385,7 @@ export class CreatibutorsModal extends Component {
     this.setState(
       {
         organizationIdentifiers: selectedSuggestion.identifiers
-          .filter((identifier) => identifier.scheme !== "grid") // Filtering out unsupported org scheme i.e. "grid"
+          .filter((identifier) => identifier.scheme !== "grid") // Filtering out org scheme (RDM_RECORDS_PERSONORG_SCHEMES) for unsupported one i.e. "grid"
           .map((identifier) => identifier.identifier),
         organizationAffiliations: [],
       },
