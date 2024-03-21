@@ -92,6 +92,7 @@ def test_dcat_serializer(running_app, enhanced_full_record):
         "    </dct:contributor>",
         '    <dct:issued rdf:datatype="http://www.w3.org/2001/XMLSchema#dateTime">2018/2020-09</dct:issued>',  # noqa
         '    <dct:date rdf:datatype="http://www.w3.org/2001/XMLSchema#date">1939/1945</dct:date>',  # noqa
+        '    <dct:modified rdf:datatype="http://www.w3.org/2001/XMLSchema#date">2023-01-02</dct:modified>',  # noqa
         '    <dct:language rdf:resource="http://publications.europa.eu/resource/authority/language/DAN"/>',  # noqa
         '    <owl:sameAs rdf:resource="https://self-link.com"/>',  # noqa
         "    <adms:identifier>",
