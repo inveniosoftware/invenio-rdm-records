@@ -74,6 +74,7 @@ def test_marcxml_serializer_minimal_record(running_app, minimal_record, parent):
     expected_data = f"""
         <?xmlversion='1.0'encoding='utf-8'?>
         <record xmlns="http://www.loc.gov/MARC21/slim">
+            <leader>00000nam##2200000uu#4500</leader>
             <controlfield tag="001">{record.id}</controlfield>
             <datafield tag="024" ind1="" ind2="">
                 <subfieldcode="2">doi
@@ -210,6 +211,7 @@ def test_marcxml_serializer_full_record(
     expected_data = f"""
         <?xml version='1.0' encoding='utf-8'?>
         <record xmlns="http://www.loc.gov/MARC21/slim">
+            <leader>00000nam##2200000uu#4500</leader>
             <controlfield tag="001">{recid}</controlfield>
             <datafield tag="024" ind1=" " ind2=" ">
                 <subfield code="2">doi</subfield>
