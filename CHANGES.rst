@@ -11,6 +11,20 @@
 Changes
 =======
 
+Version 9.0.0 (released 2024-03-23)
+
+- views: add signposting
+- fixtures: added subject type creation on load
+- contrib: change pages label and journal examples
+- creatibutors: switch remove and edit button order
+- serializers: add geolocation box and polygon to datacite
+- serializers: fix longitude and latitude order to match geojson.
+- resource-types: fix schema.org Thesis URL
+- resource-types: publication-thesis = schema.org/Thesis
+- resource-types: schema.org URL for Event
+- ux: DOI prefix error message improvement
+- init: move record_once to finalize_app
+
 Version 8.3.0 (released 2024-03-06)
 
 - services: introduced bulk_add permission
