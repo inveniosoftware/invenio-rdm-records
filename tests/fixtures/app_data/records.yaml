@@ -2,7 +2,7 @@
     record: public
     files: public
   files:
-    enabled: false
+    enabled: true
   metadata:
     resource_type:
       id: image
@@ -19,7 +19,7 @@
     record: public
     files: public
   files:
-    enabled: false
+    enabled: true
   metadata:
     resource_type:
       id: image
