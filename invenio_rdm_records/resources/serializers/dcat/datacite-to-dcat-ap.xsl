@@ -162,6 +162,7 @@
   <xsl:param name="skos">http://www.w3.org/2004/02/skos/core#</xsl:param>
   <xsl:param name="bibo">http://purl.org/ontology/bibo/</xsl:param>
   <xsl:param name="citedcat">https://w3id.org/citedcat-ap/</xsl:param>
+  <xsl:param name="prov">http://www.w3.org/ns/prov#</xsl:param>
 
 <!-- MDR NALs and other code lists -->
 

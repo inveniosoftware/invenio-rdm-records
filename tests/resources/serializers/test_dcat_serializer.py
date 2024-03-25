@@ -63,7 +63,7 @@ def test_dcat_serializer(running_app, enhanced_full_record):
         "      </foaf:Project>",
         "    </citedcat:isFundedBy>",
         '    <citedcat:funder rdf:resource="https://ror.org/00k4n6c32"/>',  # noqa
-        "    <dct:contributor>",
+        "    <citedcat:dataManager>",
         '      <rdf:Description rdf:about="https://orcid.org/0000-0001-8135-3489">',  # noqa
         '        <rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Person"/>',  # noqa
         "        <foaf:name>Nielsen, Lars Holm</foaf:name>",
@@ -81,7 +81,7 @@ def test_dcat_serializer(running_app, enhanced_full_record):
         "          </foaf:Organization>",
         "        </org:memberOf>",
         "      </rdf:Description>",
-        "    </dct:contributor>",
+        "    </citedcat:dataManager>",
         "    <dct:contributor>",
         "      <rdf:Description>",
         '        <rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Person"/>',  # noqa
@@ -90,6 +90,19 @@ def test_dcat_serializer(running_app, enhanced_full_record):
         "        <foaf:familyName>Dirk</foaf:familyName>",
         "      </rdf:Description>",
         "    </dct:contributor>",
+        "    <prov:wasGeneratedBy>",
+        "      <foaf:Project>",
+        '        <rdf:type rdf:resource="http://www.w3.org/ns/prov#Activity"/>',
+        "        <citedcat:projectManager>",
+        "          <rdf:Description>",
+        '            <rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Person"/>',
+        "            <foaf:name>Dirk, Dirkin</foaf:name>",
+        "            <foaf:givenName>Dirkin</foaf:givenName>",
+        "            <foaf:familyName>Dirk</foaf:familyName>",
+        "          </rdf:Description>",
+        "        </citedcat:projectManager>",
+        "      </foaf:Project>",
+        "    </prov:wasGeneratedBy>",
         '    <dct:issued rdf:datatype="http://www.w3.org/2001/XMLSchema#dateTime">2018/2020-09</dct:issued>',  # noqa
         '    <dct:date rdf:datatype="http://www.w3.org/2001/XMLSchema#date">1939/1945</dct:date>',  # noqa
         '    <dct:language rdf:resource="http://publications.europa.eu/resource/authority/language/DAN"/>',  # noqa

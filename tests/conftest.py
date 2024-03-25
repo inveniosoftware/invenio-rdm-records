@@ -686,7 +686,7 @@ def enhanced_full_record(users):
                         ],
                     },
                     "role": {
-                        "id": "other",
+                        "id": "datamanager",
                         "title": {
                             "de": "DatenmanagerIn",
                             "en": "Data manager",
@@ -702,10 +702,10 @@ def enhanced_full_record(users):
                         "type": "personal",
                     },
                     "role": {
-                        "id": "other",
+                        "id": "projectmanager",
                         "title": {
-                            "de": "VerteilerIn",
-                            "en": "Other",
+                            "de": "ProjektmanagerIn",
+                            "en": "Project manager",
                         },
                     },
                 },
@@ -1361,6 +1361,26 @@ def contributors_role_type(app):
 @pytest.fixture(scope="module")
 def contributors_role_v(app, contributors_role_type):
     """Contributor role vocabulary record."""
+    vocabulary_service.create(
+        system_identity,
+        {
+            "id": "datamanager",
+            "props": {"datacite": "DataManager"},
+            "title": {"en": "Data manager"},
+            "type": "contributorsroles",
+        },
+    )
+
+    vocabulary_service.create(
+        system_identity,
+        {
+            "id": "projectmanager",
+            "props": {"datacite": "ProjectManager"},
+            "title": {"en": "Project manager"},
+            "type": "contributorsroles",
+        },
+    )
+
     vocab = vocabulary_service.create(
         system_identity,
         {
