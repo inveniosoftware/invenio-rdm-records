@@ -3,64 +3,75 @@
     datacite: Accepted
   title:
     en: Accepted
+    sv: Accepterad
     de: Angenommen
 - id: available
   props:
     datacite: Available
   title:
     en: Available
+    sv: Tillgänglig
     de: Verfügbar
 - id: collected
   props:
     datacite: Collected
   title:
     en: Collected
+    sv: Samlade
     de: Gesammelt
 - id: copyrighted
   props:
     datacite: Copyrighted
   title:
     en: Copyrighted
+    sv: Upphovsrättsligt skyddad
     de: Mit Copyright versehen
 - id: created
   props:
     datacite: Created
   title:
     en: Created
+    sv: Skapad
     de: Erstellt
 - id: issued
   props:
     datacite: Issued
   title:
     en: Issued
+    sv: Utfärdad
     de: Veröffentlicht
 - id: other
   props:
     datacite: Other
   title:
     en: Other
+    sv: Övrig
     de: Sonstiges
 - id: submitted
   props:
     datacite: Submitted
   title:
     en: Submitted
+    sv: Inskickad
     de: Eingereicht
 - id: updated
   props:
     datacite: Updated
   title:
     en: Updated
+    sv: Uppdaterad
     de: Aktualisiert
 - id: valid
   props:
     datacite: Valid
   title:
     en: Valid
+    sv: Giltig
     de: Gültig
 - id: withdrawn
   props:
     datacite: Withdrawn
   title:
     en: Withdrawn
+    sv: Tillbakadragen
     de: Zurückgezogen

@@ -1,16 +1,20 @@
 - id: "organization"
   title:
     en: "Organization"
+    sv: "Organisation"
     de: "Organisation"
 - id: "event"
   title:
     en: "Event"
+    sv: "Evenemang"
     de: "Event"
 - id: "topic"
   title:
     en: "Topic"
+    sv: "Tema"
     de: "Thema"
 - id: "project"
   title:
     en: "Project"
+    sv: "Projekt"
     de: "Projekt"
