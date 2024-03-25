@@ -74,7 +74,7 @@ def create_demo_record(user_id, data, publish=True):
         identity = get_authenticated_identity(user_id)
 
     draft = service.create(data=data, identity=identity)
-    _add_file_to_draft(service.draft_files, draft.id, "test", identity)
+    _add_file_to_draft(service.draft_files, draft.id, "file.txt", identity)
     if publish:
         service.publish(id_=draft.id, identity=identity)
 
