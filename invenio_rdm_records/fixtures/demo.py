@@ -177,9 +177,7 @@ def create_fake_record():
             "record": "public",
             "files": "public",
         },
-        "files": {
-            "enabled": False,
-        },
+        "files": {},
         "pids": {},
         "metadata": {
             "resource_type": CachedVocabularies.fake_resource_type(),
