@@ -11,6 +11,12 @@
 Changes
 =======
 
+Version 9.0.1 (released 2024-03-25)
+
+- serializers: DataCite to DCAT-AP - fix missing prov namespace for contributors project roles 
+- serializers: DataCite to DCAT-AP - include upstream editorial changes 
+- serializers: marcxml: Add leader to schema 
+
 Version 9.0.0 (released 2024-03-23)
 
 - views: add signposting
