@@ -301,11 +301,17 @@ def create_fake_record():
                     "scheme": "isni",
                 }
             ],
-            "identifiers": [{"identifier": "ark:/123/456", "scheme": "ark"}],
+            "identifiers": [
+                {"identifier": f"ark:/123/{_random_sequence(10)}", "scheme": "ark"}
+            ],
         },
     }
 
     return data_to_use
+
+
+def _random_sequence(n):
+    return "".join(random.choices("0123456789", k=n))
 
 
 def create_fake_community():
