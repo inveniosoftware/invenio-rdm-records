@@ -186,6 +186,8 @@ def test_marcxml_serializer_full_record(
 
     # We are setting explicitly the order of the communities as it's required to match the expected data
     record.data["parent"]["communities"]["ids"] = [community.id, community2.id]
+    # TODO: This is cheating, try to set this in the `updated_full_record` method above
+    record.data["custom_fields"] = {"thesis:university": "A university"}
     serialized_record = serializer.serialize_object(record.data)
 
     expected_data = f"""\
@@ -251,6 +253,9 @@ def test_marcxml_serializer_full_record(
     <subfield code="b">InvenioRDM</subfield>
     <subfield code="c">2018/2020-09</subfield>
     <subfield code="c">info:eu-repo/date/embargoEnd/2131-01-01</subfield>
+  </datafield>
+  <datafield tag="502" ind1=" " ind2=" ">
+    <subfield code="c">A university</subfield>
   </datafield>
   <datafield tag="901" ind1=" " ind2=" ">
     <subfield code="u">info:eu-repo/semantic/other</subfield>
