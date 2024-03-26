@@ -38,6 +38,7 @@ class MARCXMLSchema(BaseSerializerSchema, CommonFieldsMixin):
     subjects = fields.Method("get_subjects", data_key="653  ")
     descriptions = fields.Method("get_descriptions", data_key="520  ")
     publication_information = fields.Method("get_pub_information", data_key="260  ")
+    dissertation_note = fields.Method("get_dissertation_note", data_key="502  ")
     types = fields.Method(
         "get_types", data_key="901  "
     )  # Corresponds to resource_type in the metadata schema
@@ -301,6 +302,17 @@ class MARCXMLSchema(BaseSerializerSchema, CommonFieldsMixin):
             pub_information.setdefault("c", []).append(serialized_date)
 
         return pub_information
+
+    def get_dissertation_note(self, obj):
+        """Get dissertation note."""
+        name_of_granting_institution = obj.get("custom_fields", {}).get(
+            "thesis:university"
+        )
+        if not name_of_granting_institution:
+            return missing
+
+        dissertation_note = {"c": name_of_granting_institution}
+        return dissertation_note
 
     def get_titles(self, obj):
         """Get titles."""
