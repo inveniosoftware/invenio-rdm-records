@@ -309,7 +309,7 @@ class MARCXMLSchema(BaseSerializerSchema, CommonFieldsMixin):
 
     def get_updated(self, obj):
         """Gets updated."""
-        updated = str(parse(obj["updated"]).timestamp())
+        updated = parse(obj["updated"]).strftime("%Y%m%d%H%M%S.0")
         return updated
 
     def get_id(self, obj):
