@@ -115,7 +115,7 @@ class DepositBootstrapComponent extends Component {
   };
 
   render() {
-    const { errors, record, children } = this.props;
+    const { errors, record, children, validate, validationSchema } = this.props;
     return (
       <DepositFormSubmitContext.Provider
         value={{ setSubmitContext: this.setSubmitContext }}
@@ -131,6 +131,11 @@ class DepositBootstrapComponent extends Component {
             // is requested on each action, generating countless drafts
             enableReinitialize: true,
             initialValues: record,
+            // validate and validationSchema allow a function or schema to be
+            // passed in to enable formik's client-side form validation. If no
+            // values are passed in, no client-side validation is performed.
+            validate: validate,
+            validationSchema: validationSchema,
             // errors need to be repopulated after form is reinitialised
             ...(errors && { initialErrors: errors }),
           }}
@@ -154,12 +159,16 @@ DepositBootstrapComponent.propTypes = {
   reservePIDAction: PropTypes.func.isRequired,
   discardPIDAction: PropTypes.func.isRequired,
   fileUploadOngoing: PropTypes.bool,
+  validate: PropTypes.func,
+  validationSchema: PropTypes.object,
 };
 
 DepositBootstrapComponent.defaultProps = {
   errors: undefined,
   children: undefined,
   fileUploadOngoing: false,
+  validate: undefined,
+  validationSchema: undefined,
 };
 
 const mapStateToProps = (state) => {
