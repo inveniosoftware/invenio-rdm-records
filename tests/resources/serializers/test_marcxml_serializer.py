@@ -30,6 +30,12 @@ def updated_full_record(full_record):
                 "type": "personal",
                 "given_name": "Foo the Creator",
                 "family_name": "Bar",
+                "identifiers": [
+                    {
+                        "scheme": "orcid",
+                        "identifier": "0000-0002-1825-0097",
+                    }
+                ],
             },
             "affiliations": [{"id": "cern"}, {"name": "free-text"}],
         }
@@ -51,6 +57,16 @@ def updated_full_record(full_record):
                 "type": "personal",
                 "given_name": "John the Contributor",
                 "family_name": "Doe",
+                "identifiers": [
+                    {
+                        "scheme": "orcid",
+                        "identifier": "0000-0001-8135-3489",
+                    },
+                    {
+                        "scheme": "gnd",
+                        "identifier": "gnd:4079154-3",
+                    },
+                ],
             },
             "role": {"id": "other"},
             "affiliations": [{"id": "cern"}, {"name": "free-text"}],
@@ -210,10 +226,13 @@ def test_marcxml_serializer_full_record(
   </datafield>
   <datafield tag="700" ind1=" " ind2=" ">
     <subfield code="a">Doe, John the Contributor</subfield>
+    <subfield code="0">(orcid)0000-0001-8135-3489</subfield>
+    <subfield code="0">(gnd)gnd:4079154-3</subfield>
     <subfield code="u">CERN</subfield>
   </datafield>
   <datafield tag="700" ind1=" " ind2=" ">
     <subfield code="a">Bar, Foo the Creator</subfield>
+    <subfield code="0">(orcid)0000-0002-1825-0097</subfield>
     <subfield code="u">CERN</subfield>
   </datafield>
   <datafield tag="245" ind1=" " ind2=" ">
@@ -221,6 +240,7 @@ def test_marcxml_serializer_full_record(
   </datafield>
   <datafield tag="100" ind1=" " ind2=" ">
     <subfield code="a">Nielsen, Lars Holm</subfield>
+    <subfield code="0">(orcid)0000-0001-8135-3489</subfield>
     <subfield code="u">CERN</subfield>
   </datafield>
   <datafield tag="856" ind1=" " ind2="2">

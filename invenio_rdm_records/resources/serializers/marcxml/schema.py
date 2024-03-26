@@ -237,6 +237,14 @@ class MARCXMLSchema(BaseSerializerSchema, CommonFieldsMixin):
         """Serializes one contributor."""
         name = contributor["person_or_org"]["name"]
         contributor_dict = dict(a=name)
+
+        identifiers = contributor["person_or_org"].get("identifiers", [])
+        for identifier in identifiers:
+            if identifier["scheme"] in ["gnd", "orcid"]:
+                contributor_dict.setdefault("0", []).append(
+                    "({0}){1}".format(identifier["scheme"], identifier["identifier"])
+                )
+
         affiliations = contributor.get("affiliations", [])
         if affiliations:
             # Affiliation is not repeatable, we only get the first
