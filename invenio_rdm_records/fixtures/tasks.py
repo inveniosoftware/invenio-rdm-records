@@ -65,7 +65,7 @@ def create_vocabulary_record(service_str, data):
 
 
 @shared_task
-def create_demo_record(user_id, data, publish=True):
+def create_demo_record(user_id, data, publish=True, create_file=False):
     """Create demo record."""
     service = current_rdm_records_service
     if user_id == system_user_id:
@@ -74,7 +74,8 @@ def create_demo_record(user_id, data, publish=True):
         identity = get_authenticated_identity(user_id)
 
     draft = service.create(data=data, identity=identity)
-    _add_file_to_draft(service.draft_files, draft.id, "file.txt", identity)
+    if create_file:
+        _add_file_to_draft(service.draft_files, draft.id, "file.txt", identity)
     if publish:
         service.publish(id_=draft.id, identity=identity)
 
