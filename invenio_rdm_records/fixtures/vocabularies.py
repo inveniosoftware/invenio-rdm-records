@@ -2,6 +2,7 @@
 #
 # Copyright (C) 2021-2022 CERN.
 # Copyright (C) 2021-2022 Northwestern University.
+# Copyright (C) 2024 TU Wien.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
@@ -70,7 +71,7 @@ class CSVIterator(DataIterator):
     def __iter__(self):
         """Iterate over records."""
         with open(self._data_file) as fp:
-            reader = csv.reader(fp, delimiter=";", quotechar='"')
+            reader = csv.reader(fp, delimiter=",", quotechar='"')
             header = next(reader)
             for row in reader:
                 yield self.map_row(header, row)
