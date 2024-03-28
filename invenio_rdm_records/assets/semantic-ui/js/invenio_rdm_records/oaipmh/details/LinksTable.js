@@ -123,7 +123,7 @@ class LinksTable extends Component {
 
     if (formats.some((obj) => obj.key === newFormat)) {
       const newLinks = {};
-      Object.keys(links).map((key) => {
+      Object.keys(links).forEach((key) => {
         const link = links[key];
         newLinks[key] = this.replaceLinkPrefix(link, newFormat);
       });
