@@ -55,6 +55,7 @@ CODEMETA_CUSTOM_FIELDS_UI = {
         dict(
             field="code:codeRepository",
             ui_widget="Input",
+            is_identifier=True,
             props=dict(
                 label="Repository URL",
                 icon="linkify",
