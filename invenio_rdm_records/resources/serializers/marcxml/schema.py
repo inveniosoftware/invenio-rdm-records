@@ -121,7 +121,7 @@ class MARCXMLSchema(BaseSerializerSchema, CommonFieldsMixin):
 
     def get_access(self, obj):
         """Get access rights."""
-        access = {"a": obj["access"]["record"]}
+        access = {"l": obj["access"]["status"]}
         return access
 
     def get_files(self, obj):

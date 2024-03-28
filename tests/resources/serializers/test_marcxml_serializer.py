@@ -122,7 +122,7 @@ def test_marcxml_serializer_minimal_record(running_app, minimal_record, parent):
   </datafield>
   <controlfield tag="005">{parse(record["updated"]).strftime("%Y%m%d%H%M%S.0")}</controlfield>
   <datafield tag="542" ind1=" " ind2=" ">
-    <subfield code="a">public</subfield>
+    <subfield code="l">metadata-only</subfield>
   </datafield>
   <datafield tag="773" ind1=" " ind2=" ">
     <subfield code="a">10.1234/{record.data["parent"]["id"]}</subfield>
@@ -308,7 +308,7 @@ def test_marcxml_serializer_full_record(
     <subfield code="u">https://127.0.0.1:5000/records/{recid}/files/test.pdf</subfield>
   </datafield>
   <datafield tag="542" ind1=" " ind2=" ">
-    <subfield code="a">public</subfield>
+    <subfield code="l">embargoed</subfield>
   </datafield>
   <datafield tag="773" ind1=" " ind2=" ">
     <subfield code="a">10.1234/foo.bar</subfield>
