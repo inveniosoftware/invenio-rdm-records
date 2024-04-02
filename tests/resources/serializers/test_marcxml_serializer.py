@@ -266,7 +266,7 @@ def test_marcxml_serializer_full_record(
   <datafield tag="520" ind1=" " ind2=" ">
     <subfield code="a">&amp;lt;h1&amp;gt;A description&amp;lt;/h1&amp;gt; &amp;lt;p&amp;gt;with HTML tags&amp;lt;/p&amp;gt;</subfield>
   </datafield>
-  <datafield tag="520" ind1=" " ind2=" ">
+  <datafield tag="500" ind1=" " ind2=" ">
     <subfield code="a">Bla bla bla</subfield>
   </datafield>
   <datafield tag="260" ind1=" " ind2=" ">
