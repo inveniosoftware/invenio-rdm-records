@@ -100,8 +100,8 @@ def is_record_and_has_doi(record, ctx):
 
 def is_record_or_draft_and_has_parent_doi(record, ctx):
     """Determine if draft or record has parent doi."""
-    return (
-        is_record(record, ctx) or is_draft(record, ctx) and has_doi(record.parent, ctx)
+    return (is_record(record, ctx) or is_draft(record, ctx)) and has_doi(
+        record.parent, ctx
     )
 
 

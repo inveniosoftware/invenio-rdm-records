@@ -57,7 +57,9 @@ class PIDsService(RecordService):
     @property
     def parent_pid_manager(self):
         """Parent PID Manager."""
-        return self.manager_cls(self.config.parent_pids_providers)
+        return self.manager_cls(
+            self.config.parent_pids_providers, self.config.parent_pids_required
+        )
 
     def resolve(self, identity, id_, scheme, expand=False):
         """Resolve PID to a record (not draft)."""

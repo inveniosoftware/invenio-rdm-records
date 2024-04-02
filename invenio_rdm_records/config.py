@@ -596,3 +596,9 @@ Relative paths are resolved against the application instance path.
 
 IIIF_TILES_CONVERTER_PARAMS = {}
 """Parameters to be passed to the tiles converter."""
+
+RDM_RECORDS_RESTRICTION_GRACE_PERIOD = timedelta(days=30)
+"""Grace period for changing record access to restricted."""
+
+RDM_RECORDS_ALLOW_RESTRICTION_AFTER_GRACE_PERIOD = False
+"""Whether record access restriction is allowed after the grace period or not."""
