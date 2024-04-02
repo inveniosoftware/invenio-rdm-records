@@ -37,6 +37,9 @@ class MARCXMLSchema(BaseSerializerSchema, CommonFieldsMixin):
     rights = fields.Method("get_rights", data_key="540  ")
     subjects = fields.Method("get_subjects", data_key="653  ")
     descriptions = fields.Method("get_descriptions", data_key="520  ")
+    additional_descriptions = fields.Method(
+        "get_additional_descriptions", data_key="500  "
+    )
     publication_information = fields.Method("get_pub_information", data_key="260  ")
     dissertation_note = fields.Method("get_dissertation_note", data_key="502  ")
     types = fields.Method(
@@ -444,36 +447,41 @@ class MARCXMLSchema(BaseSerializerSchema, CommonFieldsMixin):
 
         return rights or missing
 
+    def _serialize_description(self, description):
+        """Serializes one description.
+
+        The description string is sanitized using ``bleach.clean``.
+        """
+        return {
+            "a": bleach.clean(
+                description,
+                tags=[],
+                attributes=[],
+            )
+        }
+
     def get_descriptions(self, obj):
         """Get descriptions."""
-
-        def _serialize_description(description):
-            """Serializes one description.
-
-            The description string is sanitized using ``bleach.clean``.
-            """
-            return {
-                "a": bleach.clean(
-                    description,
-                    tags=[],
-                    attributes=[],
-                )
-            }
-
         metadata = obj["metadata"]
         descriptions = []
 
         description = metadata.get("description")
         if description:
-            serialized = _serialize_description(description)
-            descriptions.append(serialized)
-
-        additional_descriptions = metadata.get("additional_descriptions", [])
-        for add_desc in additional_descriptions:
-            serialized = _serialize_description(add_desc["description"])
+            serialized = self._serialize_description(description)
             descriptions.append(serialized)
 
         return descriptions or missing
+
+    def get_additional_descriptions(self, obj):
+        """Get additional descriptions."""
+        metadata = obj["metadata"]
+        additional_descriptions = []
+
+        for add_desc in metadata.get("additional_descriptions", []):
+            serialized = self._serialize_description(add_desc["description"])
+            additional_descriptions.append(serialized)
+
+        return additional_descriptions or missing
 
     def get_subjects(self, obj):
         """Get subjects."""
