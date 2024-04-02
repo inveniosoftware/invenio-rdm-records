@@ -51,14 +51,6 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
 
-      - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v4
-        with:
-          node-version: ${{ matrix.node-version }}
-
-      - name: Run eslint test
-        run: ./run-js-linter.sh -i
-
       - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v5
         with:
@@ -70,14 +62,21 @@ jobs:
         run: |
           pip install ".[$EXTRAS]"
           pip freeze
-          docker --version
-          docker-compose --version
+          docker version
+
+      - name: Run backend tests
+        run: ./run-tests.sh
+
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+
+      - name: Run eslint test
+        run: ./run-js-linter.sh -i
 
       - name: Run translations test
         run: ./run-i18n-tests.sh
-
-      - name: Run tests
-        run: ./run-tests.sh
 
       - name: Install deps for frontend tests
         working-directory: ./invenio_rdm_records/assets/semantic-ui/js/invenio_rdm_records

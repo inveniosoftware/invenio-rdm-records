@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # Copyright (C) 2021-2024 CERN
+# Copyright (C) 2024 Graz University of Technology.
 #
 # Invenio-RDM-Records is free software; you can redistribute it
 # and/or modify it under the terms of the MIT License; see LICENSE file for
@@ -84,6 +85,74 @@ def test_register_pid(
     )
 
 
+def test_register_restricted_pid(
+    running_app,
+    search_clear,
+    minimal_record,
+    superuser_identity,
+    mock_datacite_client,
+):
+    """Test register restricted pid."""
+    minimal_record["access"]["record"] = "restricted"
+    service = current_rdm_records.records_service
+    draft = service.create(superuser_identity, minimal_record)
+    draft = service.pids.create(superuser_identity, draft.id, "doi")
+    doi = draft["pids"]["doi"]["identifier"]
+    provider = service.pids.pid_manager._get_provider("doi", "datacite")
+    pid = provider.get(pid_value=doi)
+    record = service.record_cls.publish(draft._record)
+    record.pids = {pid.pid_type: {"identifier": pid.pid_value, "provider": "datacite"}}
+    record.metadata = draft["metadata"]
+    record.access = draft["access"]
+    record.register()
+    record.commit()
+    assert pid.status == PIDStatus.NEW
+    pid.reserve()
+    assert pid.status == PIDStatus.RESERVED
+    register_or_update_pid(recid=record["id"], scheme="doi")
+    assert pid.status != PIDStatus.REGISTERED
+    mock_datacite_client.api.public_doi.assert_has_calls([])
+    mock_datacite_client.api.draft_doi.assert_has_calls([])
+
+    access = draft["access"]
+    access["record"] = "public"
+    record.access = access
+    record.commit()
+    register_or_update_pid(recid=record["id"], scheme="doi")
+    assert pid.status == PIDStatus.REGISTERED
+    mock_datacite_client.api.public_doi.assert_has_calls(
+        [
+            mock.call(
+                metadata={
+                    "identifiers": [{"identifier": doi, "identifierType": "DOI"}],
+                    "types": {"resourceTypeGeneral": "Image", "resourceType": "Photo"},
+                    "publisher": "Acme Inc",
+                    "creators": [
+                        {
+                            "givenName": "Troy",
+                            "nameIdentifiers": [],
+                            "familyName": "Brown",
+                            "nameType": "Personal",
+                            "name": "Brown, Troy",
+                        },
+                        {
+                            "nameIdentifiers": [],
+                            "nameType": "Organizational",
+                            "name": "Troy Inc.",
+                        },
+                    ],
+                    "titles": [{"title": "A Romans story"}],
+                    "schemaVersion": "http://datacite.org/schema/kernel-4",
+                    "publicationYear": "2020",
+                    "dates": [{"date": "2020-06-01", "dateType": "Issued"}],
+                },
+                url=f"https://127.0.0.1:5000/doi/{doi}",
+                doi=doi,
+            )
+        ]
+    )
+
+
 def test_update_pid(
     running_app,
     search_clear,
@@ -117,6 +186,7 @@ def test_update_pid(
         [
             mock.call(
                 metadata={
+                    "event": "publish",
                     "schemaVersion": "http://datacite.org/schema/kernel-4",
                     "types": {"resourceTypeGeneral": "Image", "resourceType": "Photo"},
                     "creators": [
@@ -157,6 +227,7 @@ def test_update_pid(
             ),
             mock.call(
                 metadata={
+                    "event": "publish",
                     "schemaVersion": "http://datacite.org/schema/kernel-4",
                     "types": {"resourceTypeGeneral": "Image", "resourceType": "Photo"},
                     "creators": [
@@ -231,6 +302,7 @@ def test_invalidate_pid(
         [
             mock.call(
                 metadata={
+                    "event": "publish",
                     "schemaVersion": "http://datacite.org/schema/kernel-4",
                     "types": {"resourceTypeGeneral": "Image", "resourceType": "Photo"},
                     "creators": [
@@ -310,6 +382,7 @@ def test_invalidate_versions_pid(
         # UPDATE PARENT WITH BOTH VERSIONS (publish new)
         mock.call(
             metadata={
+                "event": "publish",
                 "schemaVersion": "http://datacite.org/schema/kernel-4",
                 "types": {"resourceTypeGeneral": "Image", "resourceType": "Photo"},
                 "creators": [
@@ -350,6 +423,7 @@ def test_invalidate_versions_pid(
         # REMOVE ONE VERSION FROM THE PARENT
         mock.call(
             metadata={
+                "event": "publish",
                 "schemaVersion": "http://datacite.org/schema/kernel-4",
                 "types": {"resourceTypeGeneral": "Image", "resourceType": "Photo"},
                 "creators": [
@@ -402,6 +476,7 @@ def test_invalidate_versions_pid(
             # REMOVE LAST VERSION FROM THE PARENT
             mock.call(
                 metadata={
+                    "event": "publish",
                     "schemaVersion": "http://datacite.org/schema/kernel-4",
                     "types": {"resourceTypeGeneral": "Image", "resourceType": "Photo"},
                     "creators": [
@@ -469,6 +544,7 @@ def test_restore_pid(
     expected_calls = [
         mock.call(
             metadata={
+                "event": "publish",
                 "schemaVersion": "http://datacite.org/schema/kernel-4",
                 "types": {"resourceTypeGeneral": "Image", "resourceType": "Photo"},
                 "creators": [
@@ -511,6 +587,7 @@ def test_restore_pid(
         + [
             mock.call(
                 metadata={
+                    "event": "publish",
                     "schemaVersion": "http://datacite.org/schema/kernel-4",
                     "types": {"resourceTypeGeneral": "Image", "resourceType": "Photo"},
                     "creators": [
