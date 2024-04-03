@@ -332,11 +332,16 @@ class MARCXMLSchema(BaseSerializerSchema, CommonFieldsMixin):
             """Serializes one funder."""
             award = funding_object.get("award", {})
 
-            award_title = award.get("title", {}).get(
-                "en", "null"
-            )  # Assuming title is a dictionary with language keys
-            award_number = award.get("number", "null")
-            return {"c": award_number, "a": award_title}
+            award_title = award.get("title", {}).get("en")
+            award_number = award.get("number")
+
+            serialized_funder = {}
+            if award_number:
+                serialized_funder["c"] = award_number
+            if award_title:
+                serialized_funder["a"] = award_title
+
+            return serialized_funder
 
         funders_list = obj["metadata"].get("funding", [])
         if not funders_list:
