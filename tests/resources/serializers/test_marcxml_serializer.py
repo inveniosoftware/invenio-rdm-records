@@ -199,8 +199,16 @@ def test_marcxml_serializer_full_record(
 
     # We are setting explicitly the order of the communities as it's required to match the expected data
     record.data["parent"]["communities"]["ids"] = [community.id, community2.id]
+    record.data["custom_fields"] = {}
     # TODO: This is cheating, try to set this in the `updated_full_record` method above
-    record.data["custom_fields"] = {"thesis:university": "A university"}
+    record.data["custom_fields"]["thesis:university"] = "A university"
+
+    record.data["custom_fields"]["journal:journal"] = {
+        "title": "Journal Title",
+        "pages": "100",
+        "volume": "5",
+        "issue": "10",
+    }
     serialized_record = serializer.serialize_object(record.data)
 
     expected_data = f"""\
@@ -310,6 +318,13 @@ def test_marcxml_serializer_full_record(
     <subfield code="a">10.1234/{record["parent"]["id"]}</subfield>
     <subfield code="i">isVersionOf</subfield>
     <subfield code="n">doi</subfield>
+  </datafield>
+  <datafield tag="909" ind1="C" ind2="4">
+    <subfield code="p">Journal Title</subfield>
+    <subfield code="v">5</subfield>
+    <subfield code="n">10</subfield>
+    <subfield code="c">100</subfield>
+    <subfield code="y">2018/2020-09</subfield>
   </datafield>
 </record>
 """
