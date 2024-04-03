@@ -42,13 +42,12 @@ class MARCXMLSchema(BaseSerializerSchema, CommonFieldsMixin):
     )
     publication_information = fields.Method("get_pub_information", data_key="260  ")
     dissertation_note = fields.Method("get_dissertation_note", data_key="502  ")
-    types = fields.Method(
-        "get_types", data_key="901  "
+    types_and_community_ids = fields.Method(
+        "get_types_and_communities", data_key="980  "
     )  # Corresponds to resource_type in the metadata schema
     # TODO: sources = fields.List(fields.Str(), attribute="metadata.references")
     # sources = fields.Constant(missing)  # Corresponds to references in the metadata schema
     formats = fields.Method("get_formats", data_key="520 1")
-    community_ids = fields.Method("get_communities", data_key="980  ")
     sizes = fields.Method("get_sizes", data_key="520 2")
     funding = fields.Method(
         "get_funding", data_key="856 1"
@@ -163,14 +162,6 @@ class MARCXMLSchema(BaseSerializerSchema, CommonFieldsMixin):
         return [
             get_cached_community_slug(community_id, service_id) for community_id in ids
         ]
-
-    def get_communities(self, obj):
-        """Get communities."""
-        ids = obj["parent"].get("communities", {}).get("ids", [])
-        if not ids:
-            return missing
-        # Communities are prefixed with ``user-``
-        return [{"a": f"user-{slug}"} for slug in self._get_communities_slugs(ids)]
 
     def get_formats(self, obj):
         """Get data formats."""
@@ -483,15 +474,40 @@ class MARCXMLSchema(BaseSerializerSchema, CommonFieldsMixin):
             subjects_list.append({"a": subject["subject"]})
         return subjects_list
 
-    def get_types(self, obj):
+    def get_types_and_communities(self, obj):
         """Get resource type."""
+        output = []
+        ids = obj["parent"].get("communities", {}).get("ids", [])
+        if ids:
+            # Communities are prefixed with ``user-``
+            output += [
+                {"a": f"user-{slug}"} for slug in self._get_communities_slugs(ids)
+            ]
+
         props = get_vocabulary_props(
             "resourcetypes",
             [
                 "props.eurepo",
+                "props.marc21_type",
+                "props.marc21_subtype",
             ],
             obj["metadata"]["resource_type"]["id"],
         )
-        resource_type = props.get("eurepo")
-        types = {"u": resource_type}
-        return types or missing
+        props_eurepo = props.get("eurepo")
+        if props_eurepo:
+            eurepo = {"a": props_eurepo}
+            output.append(eurepo)
+
+        resource_types = {}
+
+        resource_type = props.get("marc21_type")
+        if resource_type:
+            resource_types["a"] = resource_type
+        resource_subtype = props.get("marc21_subtype")
+        if resource_subtype:
+            resource_types["b"] = resource_subtype
+
+        if resource_types:
+            output.append(resource_types)
+
+        return output or missing
