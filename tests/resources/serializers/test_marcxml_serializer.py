@@ -266,6 +266,12 @@ def test_marcxml_serializer_full_record(
   <datafield tag="500" ind1=" " ind2=" ">
     <subfield code="a">Bla bla bla</subfield>
   </datafield>
+  <datafield tag="041" ind1=" " ind2=" ">
+    <subfield code="a">dan</subfield>
+  </datafield>
+  <datafield tag="041" ind1=" " ind2=" ">
+    <subfield code="a">eng</subfield>
+  </datafield>
   <datafield tag="260" ind1=" " ind2=" ">
     <subfield code="b">InvenioRDM</subfield>
     <subfield code="c">2018/2020-09</subfield>
