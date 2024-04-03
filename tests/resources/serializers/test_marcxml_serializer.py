@@ -268,6 +268,10 @@ def test_marcxml_serializer_full_record(
     <subfield code="a">Creative Commons Attribution 4.0 International</subfield>
     <subfield code="u">https://creativecommons.org/licenses/by/4.0/legalcode</subfield>
   </datafield>
+  <datafield tag="650" ind1="1" ind2="7">
+    <subfield code="a">cc-by-4.0</subfield>
+    <subfield code="2">spdx</subfield>
+  </datafield>
   <datafield tag="653" ind1=" " ind2=" ">
     <subfield code="a">Abdominal Injuries</subfield>
   </datafield>
