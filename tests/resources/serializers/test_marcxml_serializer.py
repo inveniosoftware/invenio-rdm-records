@@ -114,8 +114,12 @@ def test_marcxml_serializer_minimal_record(running_app, minimal_record, parent):
     <subfield code="b">Acme Inc</subfield>
     <subfield code="c">2020-06-01</subfield>
   </datafield>
-  <datafield tag="901" ind1=" " ind2=" ">
-    <subfield code="u">info:eu-repo/semantic/other</subfield>
+  <datafield tag="980" ind1=" " ind2=" ">
+    <subfield code="a">info:eu-repo/semantics/other</subfield>
+  </datafield>
+  <datafield tag="980" ind1=" " ind2=" ">
+    <subfield code="a">image</subfield>
+    <subfield code="b">photo</subfield>
   </datafield>
   <controlfield tag="005">{parse(record["updated"]).strftime("%Y%m%d%H%M%S.0")}</controlfield>
   <datafield tag="542" ind1=" " ind2=" ">
@@ -274,17 +278,21 @@ def test_marcxml_serializer_full_record(
   <datafield tag="502" ind1=" " ind2=" ">
     <subfield code="c">A university</subfield>
   </datafield>
-  <datafield tag="901" ind1=" " ind2=" ">
-    <subfield code="u">info:eu-repo/semantic/other</subfield>
-  </datafield>
-  <datafield tag="520" ind1=" " ind2="1">
-    <subfield code="a">application/pdf</subfield>
-  </datafield>
   <datafield tag="980" ind1=" " ind2=" ">
     <subfield code="a">user-blr</subfield>
   </datafield>
   <datafield tag="980" ind1=" " ind2=" ">
     <subfield code="a">user-rdm</subfield>
+  </datafield>
+  <datafield tag="980" ind1=" " ind2=" ">
+    <subfield code="a">info:eu-repo/semantics/other</subfield>
+  </datafield>
+  <datafield tag="980" ind1=" " ind2=" ">
+    <subfield code="a">image</subfield>
+    <subfield code="b">photo</subfield>
+  </datafield>
+  <datafield tag="520" ind1=" " ind2="1">
+    <subfield code="a">application/pdf</subfield>
   </datafield>
   <datafield tag="520" ind1=" " ind2="2">
     <subfield code="a">11 pages</subfield>
