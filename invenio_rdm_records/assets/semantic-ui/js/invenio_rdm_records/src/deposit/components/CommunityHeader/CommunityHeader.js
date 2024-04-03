@@ -66,7 +66,7 @@ class CommunityHeaderComponent extends Component {
             )}
             <div className="community-header-element flex align-items-center rel-ml-1">
               {showCommunitySelectionButton && (
-                <Overridable id="InvenioRdmRecords.CommunityHeader.CommunityHeaderElement.container">
+                <Overridable id="InvenioRdmRecords.CommunityHeader.CommunityHeaderElement.Container">
                   <>
                     <CommunitySelectionModal
                       onCommunityChange={(community) => {
@@ -79,7 +79,7 @@ class CommunityHeaderComponent extends Component {
                       displaySelected
                       record={record}
                       trigger={
-                        <Overridable id="InvenioRdmRecords.CommunityHeader.SelectCommunity.Button">
+                        <Overridable id="InvenioRdmRecords.CommunityHeader.CommunitySelectionButton.Container">
                           <Button
                             className="community-header-button"
                             disabled={disableCommunitySelectionButton}
@@ -97,8 +97,11 @@ class CommunityHeaderComponent extends Component {
                         </Overridable>
                       }
                     />
-                    {community && (
-                      <Overridable id="InvenioRdmRecords.CommunityHeader.RemoveCommunity.Button">
+                    <Overridable
+                      id="InvenioRdmRecords.CommunityHeader.RemoveCommunityButton.Container"
+                      community={community}
+                    >
+                      {community && (
                         <Button
                           basic
                           size="mini"
@@ -109,8 +112,8 @@ class CommunityHeaderComponent extends Component {
                           icon="close"
                           disabled={disableCommunitySelectionButton}
                         />
-                      </Overridable>
-                    )}
+                      )}
+                    </Overridable>
                   </>
                 </Overridable>
               )}
