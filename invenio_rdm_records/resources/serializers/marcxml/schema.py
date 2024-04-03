@@ -48,7 +48,7 @@ class MARCXMLSchema(BaseSerializerSchema, CommonFieldsMixin):
     formats = fields.Method("get_formats", data_key="520 1")
     sizes = fields.Method("get_sizes", data_key="520 2")
     funding = fields.Method(
-        "get_funding", data_key="856 1"
+        "get_funding", data_key="536  "
     )  # TODO this was not implemented on Zenodo, neither specified in marcxml
     updated = fields.Method("get_updated", data_key="005")
     files = fields.Method("get_files", data_key="8564 ")
@@ -329,44 +329,18 @@ class MARCXMLSchema(BaseSerializerSchema, CommonFieldsMixin):
 
         def _serialize_funder(funding_object):
             """Serializes one funder."""
-            funder = funding_object["funder"]
             award = funding_object.get("award", {})
 
-            funder_string = ""
 
-            if award:
-                identifiers = award.get("identifiers", [])
-                title = award.get("title", {})
-                title = list(title.values())[0] if title else "null"
-                number = award.get("number", "null")
-
-                funder_string += f"award_title={title}; "
-                funder_string += f"award_number={number}; "
-
-                if identifiers:
-                    identifier = identifiers[0]
-                    scheme = identifier.get("scheme", "null")
-                    identifier_value = identifier.get("identifier", "null")
-
-                    funder_string += f"award_identifiers_scheme={scheme}; "
-                    funder_string += (
-                        f"award_identifiers_identifier={identifier_value}; "
-                    )
-
-            funder_id = funder["id"]
-            funder_name = funder.get("name", "null")
-
-            # Serialize funder
-            funder_string += f"funder_id={funder_id}; "
-            funder_string += f"funder_name={funder_name}; "
-
-            return funder_string
+            award_title = award.get("title", {}).get("en", "null")  # Assuming title is a dictionary with language keys
+            award_number = award.get("number", "null")
+            return {"c": award_number, "a": award_title}
 
         funders_list = obj["metadata"].get("funding", [])
         if not funders_list:
             return missing
 
-        funding = [{"a": _serialize_funder(funder)} for funder in funders_list]
+        funding = [_serialize_funder(funder) for funder in funders_list]
 
         return funding
 

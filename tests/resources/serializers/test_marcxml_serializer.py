@@ -307,8 +307,9 @@ def test_marcxml_serializer_full_record(
   <datafield tag="520" ind1=" " ind2="2">
     <subfield code="a">11 pages</subfield>
   </datafield>
-  <datafield tag="856" ind1=" " ind2="1">
-    <subfield code="a">award_title=Personalised Treatment For Cystic Fibrosis Patients With Ultra-rare CFTR Mutations (and beyond); award_number=755021; award_identifiers_scheme=url; award_identifiers_identifier=https://cordis.europa.eu/project/id/755021; funder_id=00k4n6c32; funder_name=European Commission; </subfield>
+  <datafield tag="536" ind1=" " ind2=" ">
+    <subfield code="c">755021</subfield>
+    <subfield code="a">Personalised Treatment For Cystic Fibrosis Patients With Ultra-rare CFTR Mutations (and beyond)</subfield>
   </datafield>
   <controlfield tag="005">{parse(record["updated"]).strftime("%Y%m%d%H%M%S.0")}</controlfield>
   <datafield tag="856" ind1="4" ind2=" ">
