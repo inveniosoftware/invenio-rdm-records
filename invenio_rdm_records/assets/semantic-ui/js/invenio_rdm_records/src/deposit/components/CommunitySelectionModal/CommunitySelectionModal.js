@@ -16,34 +16,32 @@ import _isEmpty from "lodash/isEmpty";
 export class CommunitySelectionModalComponent extends Component {
   constructor(props) {
     super(props);
-    const {
-      chosenCommunity,
-      onCommunityChange,
-      userCommunitiesMemberships,
-      displaySelected,
-    } = props;
+    const { chosenCommunity, userCommunitiesMemberships, displaySelected } = props;
 
     this.state = {
       localChosenCommunity: chosenCommunity,
     };
 
     this.contextValue = {
-      setLocalCommunity: (community) => {
-        onCommunityChange(community);
-        this.setState({
-          localChosenCommunity: community,
-        });
-      },
-      // NOTE: We disable the eslint check as the actual destructing leads to a problem
-      // related to the updated state value. To avoid this, we need to access the
-      // `this.state` variable directly in the definition of the function so that any
-      // consumption of it, will return always the latest updated value.
-      // eslint-disable-next-line react/destructuring-assignment
-      getChosenCommunity: () => this.state.localChosenCommunity,
+      setLocalCommunity: this.setCommunity,
+      getChosenCommunity: this.getChosenCommunity,
       userCommunitiesMemberships,
       displaySelected,
     };
   }
+
+  getChosenCommunity = () => {
+    const { localChosenCommunity } = this.state;
+    return localChosenCommunity;
+  };
+
+  setCommunity = (community) => {
+    const { onCommunityChange } = this.props;
+    onCommunityChange(community);
+    this.setState({
+      localChosenCommunity: community,
+    });
+  };
 
   modalTrigger = () => {
     const { trigger, modalOpen } = this.props;
@@ -55,9 +53,15 @@ export class CommunitySelectionModalComponent extends Component {
     }
   };
 
+  handleModalOpen = () => {
+    const { chosenCommunity, onModalChange } = this.props;
+    this.setState({
+      localChosenCommunity: chosenCommunity,
+    });
+    onModalChange && onModalChange(true);
+  };
   render() {
     const {
-      chosenCommunity,
       extraContentComponents,
       modalHeader,
       onModalChange,
@@ -65,6 +69,7 @@ export class CommunitySelectionModalComponent extends Component {
       apiConfigs,
       handleClose,
       record,
+      isInitialSubmission,
     } = this.props;
 
     return (
@@ -80,12 +85,7 @@ export class CommunitySelectionModalComponent extends Component {
           onClose={() => {
             onModalChange && onModalChange(false);
           }}
-          onOpen={() => {
-            this.setState({
-              localChosenCommunity: chosenCommunity,
-            });
-            onModalChange && onModalChange(true);
-          }}
+          onOpen={this.handleModalOpen}
           trigger={this.modalTrigger()}
         >
           <Modal.Header>
@@ -94,7 +94,11 @@ export class CommunitySelectionModalComponent extends Component {
             </Header>
           </Modal.Header>
 
-          <CommunitySelectionSearch apiConfigs={apiConfigs} record={record} />
+          <CommunitySelectionSearch
+            apiConfigs={apiConfigs}
+            record={record}
+            isInitialSubmission={isInitialSubmission}
+          />
 
           {extraContentComponents && (
             <Modal.Content>{extraContentComponents}</Modal.Content>
@@ -122,6 +126,7 @@ CommunitySelectionModalComponent.propTypes = {
   apiConfigs: PropTypes.object,
   handleClose: PropTypes.func.isRequired,
   record: PropTypes.object.isRequired,
+  isInitialSubmission: PropTypes.bool,
 };
 
 CommunitySelectionModalComponent.defaultProps = {
@@ -133,6 +138,7 @@ CommunitySelectionModalComponent.defaultProps = {
   modalOpen: false,
   trigger: undefined,
   apiConfigs: undefined,
+  isInitialSubmission: true,
 };
 
 const mapStateToProps = (state) => ({

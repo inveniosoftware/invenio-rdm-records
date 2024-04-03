@@ -12,7 +12,7 @@
 """Bibliographic Record Resource."""
 from functools import wraps
 
-from flask import abort, current_app, g, redirect, send_file, url_for
+from flask import abort, current_app, g, send_file
 from flask_cors import cross_origin
 from flask_resources import (
     HTTPJSONException,
@@ -49,6 +49,35 @@ from .serializers import (
     IIIFManifestV2JSONSerializer,
     IIIFSequenceV2JSONSerializer,
 )
+from .urls import record_url_for
+
+
+def response_header_signposting(f):
+    """Add signposting link to view's reponse headers.
+
+    :param headers: response headers
+    :type headers: dict
+    :return: updated response headers
+    :rtype: dict
+    """
+
+    @wraps(f)
+    def inner(*args, **kwargs):
+        pid_value = resource_requestctx.view_args["pid_value"]
+        signposting_link = record_url_for(_app="api", pid_value=pid_value)
+
+        response = f(*args, **kwargs)
+        if response.status_code != 200:
+            return response
+        response.headers.update(
+            {
+                "Link": f'<{signposting_link}> ; rel="linkset" ; type="application/linkset+json"',  # noqa
+            }
+        )
+
+        return response
+
+    return inner
 
 
 class RDMRecordResource(RecordResource):
@@ -92,6 +121,7 @@ class RDMRecordResource(RecordResource):
     @request_extra_args
     @request_read_args
     @request_view_args
+    @response_header_signposting
     @response_handler()
     def read(self):
         """Read an item."""
@@ -754,7 +784,7 @@ class IIIFResource(ErrorHandlersMixin, Resource):
         uuid = resource_requestctx.view_args["uuid"]
         key = resource_requestctx.view_args["file_name"]
         file_ = self.service.get_file(uuid=uuid, identity=g.identity, key=key)
-        return file_, 200
+        return file_.to_dict(), 200
 
     @cross_origin(origin="*", methods=["GET"])
     @with_iiif_content_negotiation(IIIFInfoV2JSONSerializer)

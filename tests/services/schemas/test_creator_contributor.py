@@ -355,6 +355,30 @@ def test_contributor_invalid_role(app):
     )
 
 
+def test_contributor_duplicated_affiliation(app):
+    invalid_role = {
+        "person_or_org": {
+            "name": "Julio Cesar",
+            "type": "personal",
+            "given_name": "Julio",
+            "family_name": "Cesar",
+            "identifiers": [
+                {
+                    "scheme": "orcid",
+                    "identifier": "0000-0002-1825-0097",
+                }
+            ],
+        },
+        "role": {"id": "rightsholder"},
+        "affiliations": [{"name": "test"}, {"name": "test"}],
+    }
+
+    assert_raises_messages(
+        lambda: ContributorSchema().load(invalid_role),
+        {"affiliations": ["Duplicated affiliations: test"]},
+    )
+
+
 def test_metadata_requires_non_empty_creators(app, minimal_metadata):
     del minimal_metadata["creators"]
     assert_raises_messages(

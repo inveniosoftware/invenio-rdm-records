@@ -13,6 +13,7 @@ from .bibtex import BibtexSerializer
 from .cff import CFFSerializer
 from .codemeta import CodemetaSerializer
 from .csl import CSLJSONSerializer, StringCitationSerializer
+from .csv import CSVRecordSerializer
 from .datacite import DataCite43JSONSerializer, DataCite43XMLSerializer
 from .dcat import DCATSerializer
 from .dublincore import DublinCoreJSONSerializer, DublinCoreXMLSerializer
@@ -25,16 +26,19 @@ from .iiif import (
 )
 from .marcxml import MARCXMLSerializer
 from .schemaorg import SchemaorgJSONLDSerializer
+from .signposting import FAIRSignpostingProfileLvl2Serializer
 from .ui import UIJSONSerializer
 
 __all__ = (
     "BibtexSerializer",
     "CFFSerializer",
     "CSLJSONSerializer",
+    "CSVRecordSerializer",
     "DataCite43JSONSerializer",
     "DataCite43XMLSerializer",
     "DublinCoreJSONSerializer",
     "DublinCoreXMLSerializer",
+    "FAIRSignpostingProfileLvl2Serializer",
     "GeoJSONSerializer",
     "IIIFCanvasV2JSONSerializer",
     "IIIFInfoV2JSONSerializer",

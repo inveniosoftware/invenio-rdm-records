@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2023 CERN.
+# Copyright (C) 2023-2024 CERN.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
@@ -64,6 +64,13 @@ class AcceptAction(actions.AcceptAction):
         # set the community to `default` if it is the first
         default = not record.parent.communities
         record.parent.communities.add(community, request=self.request, default=default)
+
+        parent_community = getattr(community, "parent", None)
+        if (
+            parent_community
+            and not str(parent_community.id) in record.parent.communities.ids
+        ):
+            record.parent.communities.add(parent_community, request=self.request)
 
         uow.register(
             ParentRecordCommitOp(record.parent, indexer_context=dict(service=service))

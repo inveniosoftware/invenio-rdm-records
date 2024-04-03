@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2023 CERN.
+# Copyright (C) 2023-2024 CERN.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
@@ -59,17 +59,23 @@ def test_uploader_add_record_to_communities(
     processed = response.json["processed"]
     assert len(processed) == 2
 
-    # assert that no communities have been added yet
-    response = client.get(
-        f"/records/{record.pid.pid_value}",
-        headers=headers,
-        json=data,
-    )
-    record_communities = response.json["parent"]["communities"]["ids"]
-    assert len(record_communities) == 1
-    assert community.id in record_communities
-    assert open_review_community.id not in record_communities
-    assert closed_review_community.id not in record_communities
+    # assert that open review community has been added
+    response = client.get(f"/records/{record.pid.pid_value}", headers=headers)
+    record_communities_ids = response.json["parent"]["communities"]["ids"]
+    assert len(record_communities_ids) == 1
+    assert community.id in record_communities_ids
+    assert open_review_community.id not in record_communities_ids
+    assert closed_review_community.id not in record_communities_ids
+    rec_comms = response.json["parent"]["communities"]["entries"]
+    assert len(rec_comms) == 1
+    assert rec_comms[0]["id"] == str(community.id)
+    assert rec_comms[0]["created"] == community["created"]
+    assert rec_comms[0]["updated"] == community["updated"]
+    assert rec_comms[0]["revision_id"] == community["revision_id"]
+    assert rec_comms[0]["slug"] == community["slug"]
+    assert rec_comms[0]["metadata"]["title"] == community["metadata"]["title"]
+    assert rec_comms[0]["metadata"]["type"]["id"] == community["metadata"]["type"]["id"]
+    assert rec_comms[0]["access"] == community["access"]
 
     # assert that requests are "submitted", but not "accepted"
     for result in processed:
@@ -77,7 +83,6 @@ def test_uploader_add_record_to_communities(
         response = client.get(
             f"/requests/{request_id}",
             headers=headers,
-            json=data,
         )
         assert response.json["status"] == "submitted"
         assert response.json["type"] == CommunityInclusion.type_id
@@ -93,9 +98,28 @@ def test_uploader_add_record_to_communities(
         response = client.get(
             f"/communities/{community_id}/records",
             headers=headers,
-            json=data,
         )
         assert response.json["hits"]["total"] == expected_n_results
+
+    # check global search results
+    response = client.get("/records", headers=headers)
+    assert response.json["hits"]["total"] == 1
+    record_hit = response.json["hits"]["hits"][0]
+    assert record_hit["id"] == record.pid.pid_value
+    assert record_hit["parent"]["communities"]["ids"] == [str(community.id)]
+    record_hit_comms = record_hit["parent"]["communities"]["entries"]
+    assert len(record_hit_comms) == 1
+    assert record_hit_comms[0]["id"] == str(community.id)
+    assert record_hit_comms[0]["created"] == community["created"]
+    assert record_hit_comms[0]["updated"] == community["updated"]
+    assert record_hit_comms[0]["revision_id"] == community["revision_id"]
+    assert record_hit_comms[0]["slug"] == community["slug"]
+    assert record_hit_comms[0]["metadata"]["title"] == community["metadata"]["title"]
+    assert (
+        record_hit_comms[0]["metadata"]["type"]["id"]
+        == community["metadata"]["type"]["id"]
+    )
+    assert record_hit_comms[0]["access"] == community["access"]
 
 
 def test_community_owner_add_record_to_communities(
@@ -139,7 +163,6 @@ def test_community_owner_add_record_to_communities(
     response = client.get(
         f"/records/{record.pid.pid_value}",
         headers=headers,
-        json=data,
     )
     record_communities = response.json["parent"]["communities"]["ids"]
     # assert that only the curator's community has been added
@@ -155,7 +178,6 @@ def test_community_owner_add_record_to_communities(
         response = client.get(
             f"/requests/{request_id}",
             headers=headers,
-            json=data,
         )
         request = response.json
         assert request["type"] == CommunityInclusion.type_id
@@ -178,7 +200,6 @@ def test_community_owner_add_record_to_communities(
         response = client.get(
             f"/communities/{community_id}/records",
             headers=headers,
-            json=data,
         )
         assert response.json["hits"]["total"] == expected_n_results
 
@@ -223,7 +244,6 @@ def test_community_owner_add_record_to_communities_forcing_review_with_comment(
     response = client.get(
         f"/records/{record.pid.pid_value}",
         headers=headers,
-        json=data,
     )
     record_communities = response.json["parent"]["communities"]["ids"]
     # assert that the community was not added
@@ -241,7 +261,6 @@ def test_community_owner_add_record_to_communities_forcing_review_with_comment(
     response = client.get(
         f"/requests/{request_id}",
         headers=headers,
-        json=data,
     )
     request = response.json
     assert request["type"] == CommunityInclusion.type_id
@@ -252,7 +271,6 @@ def test_community_owner_add_record_to_communities_forcing_review_with_comment(
     response = client.get(
         f"/requests/{request_id}/timeline",
         headers=headers,
-        json=data,
     )
     comments = response.json
     assert comments["hits"]["total"] == 1
@@ -268,7 +286,6 @@ def test_community_owner_add_record_to_communities_forcing_review_with_comment(
         response = client.get(
             f"/communities/{community_id}/records",
             headers=headers,
-            json=data,
         )
         assert response.json["hits"]["total"] == expected_n_results
 
@@ -576,7 +593,6 @@ def test_remove_community(
         response = client.get(
             f"/communities/{community.id}/records",
             headers=headers,
-            json=data,
         )
         assert response.json["hits"]["total"] == 0
 
@@ -598,7 +614,7 @@ def test_remove_missing_permission(
     assert response.status_code == 400
     assert len(response.json["errors"]) == 1
     record_saved = client.get(f"/records/{record.pid.pid_value}", headers=headers)
-    assert record_saved.json["parent"]["communities"] == {"ids": [str(community.id)]}
+    assert record_saved.json["parent"]["communities"]["ids"] == [str(community.id)]
 
 
 def test_remove_existing_non_existing_community(
@@ -623,7 +639,11 @@ def test_remove_existing_non_existing_community(
 
 @pytest.mark.parametrize(
     "payload",
-    [[{"id": "wrong-id"}], [{"id": "duplicated-id"}, {"id": "duplicated-id"}], []],
+    (
+        [{"id": "wrong-id"}],
+        [{"id": "duplicated-id"}, {"id": "duplicated-id"}],
+        [],
+    ),
 )
 def test_add_remove_non_existing_community(
     client, uploader, record_community, headers, community, payload
@@ -641,9 +661,7 @@ def test_add_remove_non_existing_community(
         )
         assert response.status_code == 400
         record_saved = client.get(f"/records/{record.pid.pid_value}", headers=headers)
-        assert record_saved.json["parent"]["communities"] == {
-            "ids": [str(community.id)]
-        }
+        assert record_saved.json["parent"]["communities"]["ids"] == [str(community.id)]
 
 
 def test_remove_another_community(

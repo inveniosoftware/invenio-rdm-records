@@ -387,6 +387,10 @@ class VocabularyEntryWithSchemes(VocabularyEntry):
     # Template methods
     def pre_load(self, identity, ignore):
         """Actions taken before iteratively creating records."""
+        # Create the type first, if needed
+        super().pre_load(identity, ignore)
+
+        # Add schemes
         for scheme in self.schemes():
             id_ = f"{self._id}.{scheme['id']}"
             if id_ not in ignore:

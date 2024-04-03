@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2021 CERN.
+# Copyright (C) 2021-2024 CERN.
 # Copyright (C) 2021 Northwestern University.
 # Copyright (C) 2023 Graz University of Technology.
+# Copyright (C) 2023 Caltech.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
@@ -485,12 +486,45 @@ class DataCite43Schema(BaseSerializerSchema):
             if geometry:
                 geo_type = geometry["type"]
                 # PIDS-FIXME: Scalable enough?
-                # PIDS-FIXME: Implement Box and Polygon serialization
                 if geo_type == "Point":
                     serialized_location["geoLocationPoint"] = {
-                        "pointLatitude": geometry["coordinates"][0],
-                        "pointLongitude": geometry["coordinates"][1],
+                        "pointLongitude": str(geometry["coordinates"][0]),
+                        "pointLatitude": str(geometry["coordinates"][1]),
                     }
+                elif geo_type == "Polygon":
+                    # geojson has a layer of nesting before actual coordinates
+                    coords = geometry["coordinates"][0]
+                    # First we see if we have a box
+                    box = False
+                    if len(coords) in [4, 5]:
+                        # A box polygon may wrap around with 5 coordinates
+                        x_coords = set()
+                        y_coords = set()
+                        for coord in coords:
+                            x_coords.add(coord[0])
+                            y_coords.add(coord[1])
+                        if len(x_coords) == 2 and len(y_coords) == 2:
+                            x_coords = sorted(x_coords)
+                            y_coords = sorted(y_coords)
+                            serialized_location["geoLocationBox"] = {
+                                "westBoundLongitude": str(x_coords[0]),
+                                "eastBoundLongitude": str(x_coords[1]),
+                                "southBoundLatitude": str(y_coords[0]),
+                                "northBoundLatitude": str(y_coords[1]),
+                            }
+                            box = True
+                    if not box:
+                        polygon = []
+                        for coord in coords:
+                            polygon.append(
+                                {
+                                    "polygonPoint": {
+                                        "pointLongitude": str(coord[0]),
+                                        "pointLatitude": str(coord[1]),
+                                    }
+                                }
+                            )
+                        serialized_location["geoLocationPolygon"] = polygon
 
             locations.append(serialized_location)
         return locations or missing
@@ -573,12 +607,15 @@ class DataCite43Schema(BaseSerializerSchema):
     def get_funding(self, obj):
         """Get funding references."""
         # constants
-        DATACITE_FUNDER_IDENTIFIER_TYPES_PREFERENCE = (
-            "ror",
-            "grid",
-            "doi",
-            "isni",
-            "gnd",
+        FUNDER_ID_TYPES_PREF = current_app.config.get(
+            "RDM_DATACITE_FUNDER_IDENTIFIERS_PRIORITY",
+            (
+                "ror",
+                "doi",
+                "grid",
+                "isni",
+                "gnd",
+            ),
         )
         DATACITE_AWARD_IDENTIFIER_TYPES_PREFERENCE = ("doi", "url")
         TO_FUNDER_IDENTIFIER_TYPES = {
@@ -602,9 +639,7 @@ class DataCite43Schema(BaseSerializerSchema):
             funding_ref["funderName"] = funder["name"]
             identifiers = funder.get("identifiers", [])
             if identifiers:
-                identifier = get_preferred_identifier(
-                    DATACITE_FUNDER_IDENTIFIER_TYPES_PREFERENCE, identifiers
-                )
+                identifier = get_preferred_identifier(FUNDER_ID_TYPES_PREF, identifiers)
                 if not identifier:
                     identifier = identifiers[0]
                     identifier["scheme"] = "Other"
@@ -619,9 +654,6 @@ class DataCite43Schema(BaseSerializerSchema):
             if award:  # having an award is optional
                 id_ = award.get("id")
                 if id_:
-                    # FIXME: should this be implemented at awards service read
-                    # level since all ids are loaded into the system with this
-                    # format?
                     award_service = current_service_registry.get("awards")
                     award = award_service.read(system_identity, id_).to_dict()
 

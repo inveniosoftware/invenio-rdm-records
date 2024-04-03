@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2020-2021 CERN.
+# Copyright (C) 2020-2024 CERN.
 # Copyright (C) 2020-2021 Northwestern University.
 # Copyright (C)      2021 TU Wien.
 # Copyright (C) 2021-2023 Graz University of Technology.
@@ -75,7 +75,12 @@ from .schemas.parent.communities import CommunitiesSchema
 from .schemas.quota import QuotaSchema
 from .schemas.record_communities import RecordCommunitiesSchema
 from .schemas.tombstone import TombstoneSchema
-from .search_params import MyDraftsParam, PublishedRecordsParam, StatusParam
+from .search_params import (
+    MetricsParam,
+    MyDraftsParam,
+    PublishedRecordsParam,
+    StatusParam,
+)
 from .sort import VerifiedRecordsSortParam
 
 
@@ -147,6 +152,7 @@ class RDMSearchOptions(SearchOptions, SearchOptionsMixin):
         VerifiedRecordsSortParam,
         StatusParam,
         PublishedRecordsParam,
+        MetricsParam,
     ]
 
 
@@ -501,6 +507,8 @@ class RDMFileRecordServiceConfig(FileServiceConfig, ConfiguratorMixin):
         "RDM_PERMISSION_POLICY", default=RDMRecordPermissionPolicy
     )
 
+    max_files_count = FromConfig("RDM_RECORDS_MAX_FILES_COUNT", 100)
+
     file_links_list = {
         **FileServiceConfig.file_links_list,
         "archive": RecordLink(
@@ -538,6 +546,8 @@ class RDMMediaFileRecordServiceConfig(FileServiceConfig, ConfiguratorMixin):
     )
     permission_action_prefix = "media_"
 
+    max_files_count = FromConfig("RDM_RECORDS_MAX_MEDIA_FILES_COUNT", 100)
+
     file_links_list = {
         "self": RecordLink("{+api}/records/{id}/media-files"),
         "archive": RecordLink(
@@ -563,6 +573,8 @@ class RDMFileDraftServiceConfig(FileServiceConfig, ConfiguratorMixin):
     permission_policy_cls = FromConfig(
         "RDM_PERMISSION_POLICY", default=RDMRecordPermissionPolicy
     )
+
+    max_files_count = FromConfig("RDM_RECORDS_MAX_FILES_COUNT", 100)
 
     file_links_list = {
         "self": RecordLink("{+api}/records/{id}/draft/files"),
@@ -602,6 +614,8 @@ class RDMMediaFileDraftServiceConfig(FileServiceConfig, ConfiguratorMixin):
     permission_policy_cls = FromConfig(
         "RDM_PERMISSION_POLICY", default=RDMRecordPermissionPolicy
     )
+
+    max_files_count = FromConfig("RDM_RECORDS_MAX_MEDIA_FILES_COUNT", 100)
 
     file_links_list = {
         "self": RecordLink("{+api}/records/{id}/draft/media-files"),

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2019-2023 CERN.
+# Copyright (C) 2019-2024 CERN.
 # Copyright (C) 2019 Northwestern University.
 # Copyright (C) 2021-2023 Graz University of Technology.
 # Copyright (C) 2023 TU Wien.
@@ -378,7 +378,7 @@ RDM_PARENT_PERSISTENT_IDENTIFIERS = {
     "doi": {
         "providers": ["datacite"],
         "required": True,
-        "condition": lambda record: record.pids["doi"]["provider"] == "datacite",
+        "condition": lambda rec: rec.pids.get("doi", {}).get("provider") == "datacite",
         "label": _("Concept DOI"),
         "validator": idutils.is_doi,
         "normalizer": idutils.normalize_doi,
@@ -535,3 +535,12 @@ RDM_LOCK_EDIT_PUBLISHED_FILES = lock_edit_published_files
 # Feature flag to enable/disable user moderation
 RDM_USER_MODERATION_ENABLED = False
 """Flag to enable creation of user moderation requests on specific user actions."""
+
+RDM_RECORDS_MAX_FILES_COUNT = 100
+"""Max amount of files allowed to upload in the deposit form."""
+
+RDM_RECORDS_MAX_MEDIA_FILES_COUNT = 100
+"""Max amount of media files allowed to upload in the deposit form."""
+
+RDM_DATACITE_FUNDER_IDENTIFIERS_PRIORITY = ("ror", "doi", "grid", "isni", "gnd")
+"""Priority of funder identifiers types to be used for DataCite serialization."""

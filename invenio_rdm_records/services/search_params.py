@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2023 CERN.
+# Copyright (C) 2023-2024 CERN.
 #
 # Invenio-Rdm-Records is free software; you can redistribute it and/or
 # modify it under the terms of the MIT License; see LICENSE file for more
@@ -57,4 +57,37 @@ class MyDraftsParam(ParamInterpreter):
             search = search.filter(
                 "term", **{"parent.access.owned_by.user": identity.id}
             )
+        return search
+
+
+class MetricsParam(ParamInterpreter):
+    """Evaluates the metrics parameter."""
+
+    def apply(self, identity, search, params):
+        """Evaluate the metrics parameter on the search.
+
+        Usage:
+
+        .. code-block:: python
+
+            "params": {
+                ...
+                "metrics": {
+                    "total_data": {
+                        "name": "total_data",
+                        "type": "sum",
+                        "kwargs": {
+                            "field": "files.totalbytes"
+                        }
+                    }
+                }
+            }
+        """
+        value = params.pop("metrics", {})
+        for key, metric_params in value.items():
+            name = metric_params.get("name", key)
+            _type = metric_params.get("type", None)
+            kwargs = metric_params.get("kwargs", {})
+            if name and _type:
+                search.aggs.metric(name, _type, **kwargs)
         return search

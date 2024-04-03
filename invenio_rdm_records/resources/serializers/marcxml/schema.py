@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2023 CERN
+# Copyright (C) 2023-2024 CERN
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
@@ -9,6 +9,7 @@
 
 import bleach
 from dateutil.parser import parse
+from dojson.contrib.to_marc21.fields.bdleader import to_leader
 from flask import current_app, g
 from flask_resources.serializers import BaseSerializerSchema
 from invenio_access.permissions import system_identity
@@ -36,7 +37,11 @@ class MARCXMLSchema(BaseSerializerSchema, CommonFieldsMixin):
     rights = fields.Method("get_rights", data_key="540  ")
     subjects = fields.Method("get_subjects", data_key="653  ")
     descriptions = fields.Method("get_descriptions", data_key="520  ")
+    additional_descriptions = fields.Method(
+        "get_additional_descriptions", data_key="500  "
+    )
     publication_information = fields.Method("get_pub_information", data_key="260  ")
+    dissertation_note = fields.Method("get_dissertation_note", data_key="502  ")
     types = fields.Method(
         "get_types", data_key="901  "
     )  # Corresponds to resource_type in the metadata schema
@@ -54,6 +59,37 @@ class MARCXMLSchema(BaseSerializerSchema, CommonFieldsMixin):
     files = fields.Method("get_files", data_key="8564 ")
     access = fields.Method("get_access", data_key="542  ")
     host_information = fields.Method("get_host_information", data_key="773  ")
+    leader = fields.Method("get_leader")
+
+    def get_leader(self, obj):
+        """Return the leader information."""
+        rt = obj["metadata"]["resource_type"]["id"]
+        rec_types = {
+            "image": "two-dimensional_nonprojectable_graphic",
+            "video": "projected_medium",
+            "dataset": "computer_file",
+            "software": "computer_file",
+        }
+        type_of_record = rec_types[rt] if rt in rec_types else "language_material"
+        res = {
+            "record_length": "00000",
+            "record_status": "new",
+            "type_of_record": type_of_record,
+            "bibliographic_level": "monograph_item",
+            "type_of_control": "no_specified_type",
+            "character_coding_scheme": "marc-8",
+            "indicator_count": 2,
+            "subfield_code_count": 2,
+            "base_address_of_data": "00000",
+            "encoding_level": "unknown",
+            "descriptive_cataloging_form": "unknown",
+            "multipart_resource_record_level": "not_specified_or_not_applicable",
+            "length_of_the_length_of_field_portion": 4,
+            "length_of_the_starting_character_position_portion": 5,
+            "length_of_the_implementation_defined_portion": 0,
+            "undefined": 0,
+        }
+        return to_leader(None, None, res)
 
     def get_host_information(self, obj):
         """Get host information.
@@ -88,7 +124,7 @@ class MARCXMLSchema(BaseSerializerSchema, CommonFieldsMixin):
 
     def get_access(self, obj):
         """Get access rights."""
-        access = {"a": obj["access"]["record"]}
+        access = {"l": obj["access"]["status"]}
         return access
 
     def get_files(self, obj):
@@ -204,6 +240,14 @@ class MARCXMLSchema(BaseSerializerSchema, CommonFieldsMixin):
         """Serializes one contributor."""
         name = contributor["person_or_org"]["name"]
         contributor_dict = dict(a=name)
+
+        identifiers = contributor["person_or_org"].get("identifiers", [])
+        for identifier in identifiers:
+            if identifier["scheme"] in ["gnd", "orcid"]:
+                contributor_dict.setdefault("0", []).append(
+                    "({0}){1}".format(identifier["scheme"], identifier["identifier"])
+                )
+
         affiliations = contributor.get("affiliations", [])
         if affiliations:
             # Affiliation is not repeatable, we only get the first
@@ -270,6 +314,17 @@ class MARCXMLSchema(BaseSerializerSchema, CommonFieldsMixin):
 
         return pub_information
 
+    def get_dissertation_note(self, obj):
+        """Get dissertation note."""
+        name_of_granting_institution = obj.get("custom_fields", {}).get(
+            "thesis:university"
+        )
+        if not name_of_granting_institution:
+            return missing
+
+        dissertation_note = {"c": name_of_granting_institution}
+        return dissertation_note
+
     def get_titles(self, obj):
         """Get titles."""
         title = {"a": obj["metadata"]["title"]}
@@ -277,7 +332,7 @@ class MARCXMLSchema(BaseSerializerSchema, CommonFieldsMixin):
 
     def get_updated(self, obj):
         """Gets updated."""
-        updated = str(parse(obj["updated"]).timestamp())
+        updated = parse(obj["updated"]).strftime("%Y%m%d%H%M%S.0")
         return updated
 
     def get_id(self, obj):
@@ -392,36 +447,41 @@ class MARCXMLSchema(BaseSerializerSchema, CommonFieldsMixin):
 
         return rights or missing
 
+    def _serialize_description(self, description):
+        """Serializes one description.
+
+        The description string is sanitized using ``bleach.clean``.
+        """
+        return {
+            "a": bleach.clean(
+                description,
+                tags=[],
+                attributes=[],
+            )
+        }
+
     def get_descriptions(self, obj):
         """Get descriptions."""
-
-        def _serialize_description(description):
-            """Serializes one description.
-
-            The description string is sanitized using ``bleach.clean``.
-            """
-            return {
-                "a": bleach.clean(
-                    description,
-                    tags=[],
-                    attributes=[],
-                )
-            }
-
         metadata = obj["metadata"]
         descriptions = []
 
         description = metadata.get("description")
         if description:
-            serialized = _serialize_description(description)
-            descriptions.append(serialized)
-
-        additional_descriptions = metadata.get("additional_descriptions", [])
-        for add_desc in additional_descriptions:
-            serialized = _serialize_description(add_desc["description"])
+            serialized = self._serialize_description(description)
             descriptions.append(serialized)
 
         return descriptions or missing
+
+    def get_additional_descriptions(self, obj):
+        """Get additional descriptions."""
+        metadata = obj["metadata"]
+        additional_descriptions = []
+
+        for add_desc in metadata.get("additional_descriptions", []):
+            serialized = self._serialize_description(add_desc["description"])
+            additional_descriptions.append(serialized)
+
+        return additional_descriptions or missing
 
     def get_subjects(self, obj):
         """Get subjects."""

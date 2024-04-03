@@ -91,7 +91,13 @@ def records(user_email, n_records):
 
     for _ in range(n_records):
         fake_data = create_fake_record()
-        create_demo_record.delay(user.id, fake_data, publish=True)
+        create_file = False
+        if not current_app.config.get("RDM_ALLOW_METADATA_ONLY_RECORDS"):
+            create_file = True
+            fake_data["files"]["enabled"] = True
+        create_demo_record.delay(
+            user.id, fake_data, publish=True, create_file=create_file
+        )
 
     click.secho("Demo records task submitted...", fg="green")
 

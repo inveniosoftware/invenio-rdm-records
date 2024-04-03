@@ -3,7 +3,7 @@
 # Copyright (C) 2019-2023 CERN.
 # Copyright (C) 2019-2021 Northwestern University.
 # Copyright (C) 2022 Universität Hamburg.
-# Copyright (C) 2023 Graz University of Technology.
+# Copyright (C) 2023-2024 Graz University of Technology.
 # Copyright (C) 2023 TU Wien.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
@@ -263,3 +263,41 @@ class InvenioRDMRecords(object):
         for config_item in datacite_config_items:
             if config_item in app.config:
                 app.config[config_item] = str(app.config[config_item])
+
+
+def finalize_app(app):
+    """Finalize app.
+
+    NOTE: replace former @record_once decorator
+    """
+    init(app)
+
+
+def api_finalize_app(app):
+    """Finalize app for api.
+
+    NOTE: replace former @record_once decorator
+    """
+    init(app)
+
+
+def init(app):
+    """Init app."""
+    # Register services - cannot be done in extension because
+    # Invenio-Records-Resources might not have been initialized.
+    sregistry = app.extensions["invenio-records-resources"].registry
+    ext = app.extensions["invenio-rdm-records"]
+    sregistry.register(ext.records_service, service_id="records")
+    sregistry.register(ext.records_service.files, service_id="files")
+    sregistry.register(ext.records_service.draft_files, service_id="draft-files")
+    sregistry.register(ext.records_media_files_service, service_id="record-media-files")
+    sregistry.register(ext.records_media_files_service.files, service_id="media-files")
+    sregistry.register(
+        ext.records_media_files_service.draft_files, service_id="draft-media-files"
+    )
+    sregistry.register(ext.oaipmh_server_service, service_id="oaipmh-server")
+    sregistry.register(ext.iiif_service, service_id="rdm-iiif")
+    # Register indexers
+    iregistry = app.extensions["invenio-indexer"].registry
+    iregistry.register(ext.records_service.indexer, indexer_id="records")
+    iregistry.register(ext.records_service.draft_indexer, indexer_id="records-drafts")

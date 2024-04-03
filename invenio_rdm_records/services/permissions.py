@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2019 CERN.
+# Copyright (C) 2019-2024 CERN.
 # Copyright (C) 2019 Northwestern University.
 # Copyright (C) 2023 TU Wien.
 #
@@ -214,6 +214,8 @@ class RDMRecordPermissionPolicy(RecordPermissionPolicy):
     ]
     # Who can remove records from a community
     can_remove_record = [CommunityCurators()]
+    # Who can add records to a community in bulk
+    can_bulk_add = [SystemProcess()]
 
     #
     # Media files - draft
