@@ -41,7 +41,7 @@ def test_dublincorejson_serializer(running_app, updated_full_record):
     """Test serializer to Dublin Core JSON"""
     expected_data = {
         "contributors": ["Nielsen, Lars Holm"],
-        "types": ["info:eu-repo/semantic/other"],
+        "types": ["info:eu-repo/semantics/other"],
         "relations": [
             "https://doi.org/10.1234/foo.bar",
             "https://doi.org/10.1234/inveniordm.1234.parent",
@@ -83,7 +83,7 @@ def test_dublincorejson_serializer(running_app, updated_full_record):
 def test_dublincorejson_serializer_minimal(running_app, updated_minimal_record):
     """Test serializer to Dublin Core JSON with minimal record"""
     expected_data = {
-        "types": ["info:eu-repo/semantic/other"],
+        "types": ["info:eu-repo/semantics/other"],
         "titles": ["A Romans story"],
         "creators": ["Name", "Troy Inc."],
         "dates": ["2020-06-01"],
@@ -128,7 +128,7 @@ def test_dublincorexml_serializer(running_app, updated_full_record):
         "<dc:rights>Creative Commons Attribution 4.0 " + "International</dc:rights>",
         "<dc:rights>https://creativecommons.org/licenses/by/4.0/legalcode</dc:rights>",
         "<dc:title>InvenioRDM</dc:title>",
-        "<dc:type>info:eu-repo/semantic/other</dc:type>",
+        "<dc:type>info:eu-repo/semantics/other</dc:type>",
     ]
 
     serializer = DublinCoreXMLSerializer()
@@ -145,7 +145,7 @@ def test_dublincorexml_serializer_minimal(running_app, updated_minimal_record):
         "<dc:date>2020-06-01</dc:date>",
         "<dc:rights>info:eu-repo/semantics/openAccess</dc:rights>",
         "<dc:title>A Romans story</dc:title>",
-        "<dc:type>info:eu-repo/semantic/other</dc:type>",
+        "<dc:type>info:eu-repo/semantics/other</dc:type>",
     ]
 
     serializer = DublinCoreXMLSerializer()
@@ -178,7 +178,7 @@ def test_dublincorexml_serializer_list(
         "<dc:rights>Creative Commons Attribution 4.0 " + "International</dc:rights>",
         "<dc:rights>https://creativecommons.org/licenses/by/4.0/legalcode</dc:rights>",
         "<dc:title>InvenioRDM</dc:title>",
-        "<dc:type>info:eu-repo/semantic/other</dc:type>",
+        "<dc:type>info:eu-repo/semantics/other</dc:type>",
     ]
 
     expected_data_minimal = [
@@ -187,7 +187,7 @@ def test_dublincorexml_serializer_list(
         "<dc:date>2020-06-01</dc:date>",
         "<dc:rights>info:eu-repo/semantics/openAccess</dc:rights>",
         "<dc:title>A Romans story</dc:title>",
-        "<dc:type>info:eu-repo/semantic/other</dc:type>",
+        "<dc:type>info:eu-repo/semantics/other</dc:type>",
     ]
 
     serializer = DublinCoreXMLSerializer()
