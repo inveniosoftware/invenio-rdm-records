@@ -38,6 +38,7 @@ class MARCXMLSchema(BaseSerializerSchema, CommonFieldsMixin):
     additional_descriptions = fields.Method(
         "get_additional_descriptions", data_key="500  "
     )
+    languages = fields.Method("get_languages", data_key="041  ")
     publication_information = fields.Method("get_pub_information", data_key="260  ")
     dissertation_note = fields.Method("get_dissertation_note", data_key="502  ")
     types_and_community_ids = fields.Method(
@@ -331,8 +332,9 @@ class MARCXMLSchema(BaseSerializerSchema, CommonFieldsMixin):
             """Serializes one funder."""
             award = funding_object.get("award", {})
 
-
-            award_title = award.get("title", {}).get("en", "null")  # Assuming title is a dictionary with language keys
+            award_title = award.get("title", {}).get(
+                "en", "null"
+            )  # Assuming title is a dictionary with language keys
             award_number = award.get("number", "null")
             return {"c": award_number, "a": award_title}
 
@@ -423,6 +425,15 @@ class MARCXMLSchema(BaseSerializerSchema, CommonFieldsMixin):
             additional_descriptions.append(serialized)
 
         return additional_descriptions or missing
+
+    def get_languages(self, obj):
+        """Get languages."""
+        languages = obj["metadata"].get("languages")
+
+        if languages:
+            return [{"a": language["id"]} for language in languages]
+
+        return missing
 
     def get_subjects(self, obj):
         """Get subjects."""
