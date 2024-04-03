@@ -117,9 +117,6 @@ def test_marcxml_serializer_minimal_record(running_app, minimal_record, parent):
   <datafield tag="901" ind1=" " ind2=" ">
     <subfield code="u">info:eu-repo/semantic/other</subfield>
   </datafield>
-  <datafield tag="024" ind1=" " ind2="1">
-    <subfield code="a">{record.data["parent"]["id"]}</subfield>
-  </datafield>
   <controlfield tag="005">{parse(record["updated"]).strftime("%Y%m%d%H%M%S.0")}</controlfield>
   <datafield tag="542" ind1=" " ind2=" ">
     <subfield code="l">metadata-only</subfield>
@@ -283,9 +280,6 @@ def test_marcxml_serializer_full_record(
   <datafield tag="520" ind1=" " ind2="1">
     <subfield code="a">application/pdf</subfield>
   </datafield>
-  <datafield tag="024" ind1=" " ind2="1">
-    <subfield code="a">{record["parent"]["id"]}</subfield>
-  </datafield>
   <datafield tag="980" ind1=" " ind2=" ">
     <subfield code="a">user-blr</subfield>
   </datafield>
@@ -294,9 +288,6 @@ def test_marcxml_serializer_full_record(
   </datafield>
   <datafield tag="520" ind1=" " ind2="2">
     <subfield code="a">11 pages</subfield>
-  </datafield>
-  <datafield tag="024" ind1=" " ind2="3">
-    <subfield code="a">v1.0</subfield>
   </datafield>
   <datafield tag="856" ind1=" " ind2="1">
     <subfield code="a">award_title=Personalised Treatment For Cystic Fibrosis Patients With Ultra-rare CFTR Mutations (and beyond); award_number=755021; award_identifiers_scheme=url; award_identifiers_identifier=https://cordis.europa.eu/project/id/755021; funder_id=00k4n6c32; funder_name=European Commission; </subfield>

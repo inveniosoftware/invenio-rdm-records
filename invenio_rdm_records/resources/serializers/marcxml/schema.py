@@ -48,10 +48,8 @@ class MARCXMLSchema(BaseSerializerSchema, CommonFieldsMixin):
     # TODO: sources = fields.List(fields.Str(), attribute="metadata.references")
     # sources = fields.Constant(missing)  # Corresponds to references in the metadata schema
     formats = fields.Method("get_formats", data_key="520 1")
-    parent_id = fields.Method("get_parent_id", data_key="024 1")
     community_ids = fields.Method("get_communities", data_key="980  ")
     sizes = fields.Method("get_sizes", data_key="520 2")
-    version = fields.Method("get_version", data_key="024 3")
     funding = fields.Method(
         "get_funding", data_key="856 1"
     )  # TODO this was not implemented on Zenodo, neither specified in marcxml
@@ -147,12 +145,6 @@ class MARCXMLSchema(BaseSerializerSchema, CommonFieldsMixin):
 
         return files or missing
 
-    def get_version(self, obj):
-        """Get version."""
-        v_ = obj["metadata"].get("version")
-        if not v_:
-            return missing
-
         version = {"a": v_}
         return version
 
@@ -179,11 +171,6 @@ class MARCXMLSchema(BaseSerializerSchema, CommonFieldsMixin):
             return missing
         # Communities are prefixed with ``user-``
         return [{"a": f"user-{slug}"} for slug in self._get_communities_slugs(ids)]
-
-    def get_parent_id(self, obj):
-        """Get parent id."""
-        parent_id = {"a": obj["parent"]["id"]}
-        return parent_id
 
     def get_formats(self, obj):
         """Get data formats."""
