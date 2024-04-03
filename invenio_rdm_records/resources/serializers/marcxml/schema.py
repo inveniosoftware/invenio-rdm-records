@@ -33,6 +33,7 @@ class MARCXMLSchema(BaseSerializerSchema, CommonFieldsMixin):
     first_creator = fields.Method("get_first_creator", data_key="100  ")
     relations = fields.Method("get_relations", data_key="856 2")
     rights = fields.Method("get_rights", data_key="540  ")
+    license = fields.Method("get_license", data_key="65017")
     subjects = fields.Method("get_subjects", data_key="653  ")
     descriptions = fields.Method("get_descriptions", data_key="520  ")
     additional_descriptions = fields.Method(
@@ -394,6 +395,25 @@ class MARCXMLSchema(BaseSerializerSchema, CommonFieldsMixin):
             rights.append(right_dict)
 
         return rights or missing
+
+    def get_license(self, obj):
+        """Get license.
+
+        Same data as get_rights but duplicated for backwards compatibility reasons.
+        """
+        license = []
+        for right in obj["metadata"].get("rights", []):
+            license_dict = {}
+            id = right.get("id")
+            if id:
+                license_dict["a"] = id
+            scheme = right.get("props", {}).get("scheme")
+            if scheme:
+                license_dict["2"] = scheme
+
+            license.append(license_dict)
+
+        return license or missing
 
     def _serialize_description(self, description):
         """Serializes one description.
