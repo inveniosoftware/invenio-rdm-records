@@ -10,10 +10,8 @@
 import bleach
 from dateutil.parser import parse
 from dojson.contrib.to_marc21.fields.bdleader import to_leader
-from flask import current_app, g
+from flask import current_app
 from flask_resources.serializers import BaseSerializerSchema
-from invenio_communities import current_communities
-from invenio_communities.communities.services.service import get_cached_community_slug
 from marshmallow import fields, missing
 from marshmallow_utils.html import sanitize_unicode
 

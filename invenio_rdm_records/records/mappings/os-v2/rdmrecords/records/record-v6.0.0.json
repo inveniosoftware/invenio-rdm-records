@@ -614,6 +614,16 @@
                   },
                   "name": {
                     "type": "text"
+                  },
+                  "identifiers": {
+                    "properties": {
+                      "identifier": {
+                        "type": "keyword"
+                      },
+                      "scheme": {
+                        "type": "keyword"
+                      }
+                    }
                   }
                 }
               },
@@ -673,6 +683,16 @@
                   },
                   "name": {
                     "type": "text"
+                  },
+                  "identifiers": {
+                    "properties": {
+                      "identifier": {
+                        "type": "keyword"
+                      },
+                      "scheme": {
+                        "type": "keyword"
+                      }
+                    }
                   }
                 }
               },
@@ -847,6 +867,16 @@
                   },
                   "name": {
                     "type": "text"
+                  },
+                  "identifiers": {
+                    "properties": {
+                      "identifier": {
+                        "type": "keyword"
+                      },
+                      "scheme": {
+                        "type": "keyword"
+                      }
+                    }
                   }
                 }
               }

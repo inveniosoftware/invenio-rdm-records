@@ -7,7 +7,14 @@
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
 
-"""Record response serializers."""
+"""Record response serializers.
+
+ATTENTION: Serializers MUST NOT query for data (e.g. use a service)!
+
+The only allowed data querying is "get_vocabulary_props()" which is cached.
+Querying for data in a serializer will most likely result in very bad
+performance for the OAI-PMH server and search results serialzations.
+"""
 
 from .bibtex import BibtexSerializer
 from .cff import CFFSerializer

@@ -11,10 +11,6 @@ import bleach
 import idutils
 from flask import current_app
 from flask_resources.serializers import BaseSerializerSchema
-from invenio_access.permissions import system_identity
-from invenio_communities import current_communities
-from invenio_communities.communities.services.service import get_cached_community_slug
-from invenio_vocabularies.proxies import current_service as vocabulary_service
 from marshmallow import fields, missing
 
 from ..schemas import CommonFieldsMixin
@@ -103,10 +99,9 @@ class DublinCoreSchema(BaseSerializerSchema, CommonFieldsMixin):
             rels.append(self._transform_identifier(a["identifier"], a["scheme"]))
 
         # Communities
-        communities = obj["parent"].get("communities", {}).get("ids", [])
-        service_id = current_communities.service.id
-        for community_id in communities:
-            slug = get_cached_community_slug(community_id, service_id)
+        communities = obj["parent"].get("communities", {}).get("entries", [])
+        for community in communities:
+            slug = community["slug"]
             url = f"{current_app.config['SITE_UI_URL']}/communities/{slug}"
             rels.append(self._transform_identifier(url, "url"))
 
@@ -128,30 +123,14 @@ class DublinCoreSchema(BaseSerializerSchema, CommonFieldsMixin):
 
         rights.append(f"info:eu-repo/semantics/{access_right}Access")
 
-        ids = []
         for right in obj["metadata"].get("rights", []):
-            _id = right.get("id")
-            if _id:
-                ids.append(_id)
-            else:
-                title = right.get("title").get(current_default_locale())
-                if title:
-                    rights.append(title)
-
-                license_url = right.get("link")
+            rights.append(right.get("title").get(current_default_locale()))
+            if right.get("id"):
+                license_url = right.get("props").get("url")
                 if license_url:
                     rights.append(license_url)
-
-        if ids:
-            vocab_rights = vocabulary_service.read_many(
-                system_identity, "licenses", ids
-            )
-            for right in vocab_rights:
-                title = right.get("title").get(current_default_locale())
-                if title:
-                    rights.append(title)
-
-                license_url = right.get("props").get("url")
+            else:
+                license_url = right.get("link")
                 if license_url:
                     rights.append(license_url)
 
