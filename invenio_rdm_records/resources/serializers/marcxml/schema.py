@@ -33,7 +33,7 @@ class MARCXMLSchema(BaseSerializerSchema, CommonFieldsMixin):
     first_creator = fields.Method("get_first_creator", data_key="100  ")
     relations = fields.Method("get_relations", data_key="856 2")
     rights = fields.Method("get_rights", data_key="540  ")
-    license = fields.Method("get_license", data_key="65017")
+    licenses = fields.Method("get_licenses", data_key="65017")
     subjects = fields.Method("get_subjects", data_key="653  ")
     descriptions = fields.Method("get_descriptions", data_key="520  ")
     additional_descriptions = fields.Method(
@@ -396,33 +396,22 @@ class MARCXMLSchema(BaseSerializerSchema, CommonFieldsMixin):
 
         return rights or missing
 
-    def get_license(self, obj):
+    def get_licenses(self, obj):
         """Get license.
 
         Same data as get_rights but duplicated for backwards compatibility reasons.
         """
         license = []
-        rights = obj["metadata"].get("rights", [])
-        if not rights:
-            return missing
+        for right in obj["metadata"].get("rights", []):
+            license_dict = {}
+            id = right.get("id")
+            if id:
+                license_dict["a"] = id
+            scheme = right.get("props", {}).get("scheme")
+            if scheme:
+                license_dict["2"] = scheme
 
-        ids = []
-        for right in rights:
-            _id = right.get("id")
-            if _id:
-                ids.append(_id)
-
-        if ids:
-            rights = vocabulary_service.read_many(system_identity, "licenses", ids)
-            for right in rights:
-                license_dict = {}
-                id = right.get("id")
-                if id:
-                    license_dict["a"] = id
-                scheme = right.get("props").get("scheme")
-                if scheme:
-                    license_dict["2"] = scheme
-
+            if license_dict:
                 license.append(license_dict)
 
         return license or missing
