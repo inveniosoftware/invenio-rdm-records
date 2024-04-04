@@ -157,12 +157,16 @@ class MARCXMLSchema(BaseSerializerSchema, CommonFieldsMixin):
         sizes = [{"a": s} for s in sizes_list]
         return sizes
 
-    def _get_communities_slugs(self, ids):
-        """Get communities slugs."""
-        service_id = current_communities.service.id
-        return [
-            get_cached_community_slug(community_id, service_id) for community_id in ids
-        ]
+    def get_communities(self, obj):
+        """Get communities."""
+        communities = obj["parent"].get("communities", {}).get("entries", [])
+
+        if not communities:
+            return missing
+
+        slugs = [community.get("slug") for community in communities]
+        # Communities are prefixed with "user-"
+        return [{"a": f"user-{slug}"} for slug in slugs]
 
     def get_formats(self, obj):
         """Get data formats."""
@@ -207,11 +211,14 @@ class MARCXMLSchema(BaseSerializerSchema, CommonFieldsMixin):
             result.update({"o": identifier})
 
             # Communities
-            ids = obj["parent"].get("communities", {}).get("ids", [])
-            for slug in self._get_communities_slugs(ids):
-                user_slug = f"user-{slug}"
-                # Add "p": [user_slug] or extend if there are already other communities
-                result.setdefault("p", []).append(user_slug)
+            communities = obj["parent"].get("communities", {}).get("entries", [])
+            if communities:
+                for community in communities:
+                    slug = community.get("slug")
+                    if slug:
+                        user_slug = f"user-{slug}"
+                        # Add "p": [user_slug] or extend if there are already other communities
+                        result.setdefault("p", []).append(user_slug)
 
         return result or missing
 
@@ -485,13 +492,10 @@ class MARCXMLSchema(BaseSerializerSchema, CommonFieldsMixin):
     def get_types_and_communities(self, obj):
         """Get resource type."""
         output = []
-        ids = obj["parent"].get("communities", {}).get("ids", [])
-        if ids:
-            # Communities are prefixed with ``user-``
-            output += [
-                {"a": f"user-{slug}"} for slug in self._get_communities_slugs(ids)
-            ]
-
+        communities = obj["parent"].get("communities", {}).get("entries", [])
+        if communities:
+            slugs = [community.get("slug") for community in communities]
+            output += [{"a": f"user-{slug}"} for slug in slugs]
         props = get_vocabulary_props(
             "resourcetypes",
             [
