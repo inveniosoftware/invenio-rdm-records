@@ -287,10 +287,10 @@ def test_marcxml_serializer_full_record(
     <subfield code="c">A university</subfield>
   </datafield>
   <datafield tag="980" ind1=" " ind2=" ">
-    <subfield code="a">user-blr</subfield>
+    <subfield code="a">user-rdm</subfield>
   </datafield>
   <datafield tag="980" ind1=" " ind2=" ">
-    <subfield code="a">user-rdm</subfield>
+    <subfield code="a">user-blr</subfield>
   </datafield>
   <datafield tag="980" ind1=" " ind2=" ">
     <subfield code="a">info:eu-repo/semantics/other</subfield>
