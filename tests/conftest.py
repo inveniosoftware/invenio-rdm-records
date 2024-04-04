@@ -546,9 +546,7 @@ def full_record(users):
             ],
             "references": [
                 {
-                    "reference": "Nielsen et al,..",
-                    "identifier": "0000 0001 1456 7559",
-                    "scheme": "isni",
+                    "reference": "0000 0001 1456 7559",
                 }
             ],
         },
