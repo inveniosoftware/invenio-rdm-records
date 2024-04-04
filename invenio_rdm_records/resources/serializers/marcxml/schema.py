@@ -230,6 +230,14 @@ class MARCXMLSchema(BaseSerializerSchema, CommonFieldsMixin):
             # (https://www.loc.gov/marc/bibliographic/bd700.html)
             affiliation = affiliations[0]["name"]
             contributor_dict["u"] = affiliation
+
+        role_id = contributor.get("role", {}).get("id", "")
+        if role_id:
+            props = get_vocabulary_props("contributorsroles", ["props.marc"], role_id)
+            marc_role = props.get("marc")
+            if marc_role:
+                contributor_dict["4"] = marc_role
+
         return contributor_dict
 
     def get_contributors(self, obj):
@@ -252,7 +260,7 @@ class MARCXMLSchema(BaseSerializerSchema, CommonFieldsMixin):
         return contrib_list or missing
 
     def get_first_creator(self, obj):
-        """Returns the fist autor of the list."""
+        """Returns the fist author of the list."""
         creators = obj["metadata"].get("creators", [])
         if not creators:
             return missing
