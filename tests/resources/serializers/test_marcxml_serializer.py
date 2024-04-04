@@ -232,12 +232,14 @@ def test_marcxml_serializer_full_record(
   <datafield tag="700" ind1=" " ind2=" ">
     <subfield code="a">Full Name, Test</subfield>
     <subfield code="u">CERN</subfield>
+    <subfield code="4">oth</subfield>
   </datafield>
   <datafield tag="700" ind1=" " ind2=" ">
     <subfield code="a">Doe, John the Contributor</subfield>
     <subfield code="0">(orcid)0000-0001-8135-3489</subfield>
     <subfield code="0">(gnd)gnd:4079154-3</subfield>
     <subfield code="u">CERN</subfield>
+    <subfield code="4">oth</subfield>
   </datafield>
   <datafield tag="700" ind1=" " ind2=" ">
     <subfield code="a">Bar, Foo the Creator</subfield>
