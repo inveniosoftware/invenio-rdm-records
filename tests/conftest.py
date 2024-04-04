@@ -1350,7 +1350,7 @@ def date_type_v(app, date_type):
         {
             "id": "other",
             "title": {"en": "Other"},
-            "props": {"datacite": "Other"},
+            "props": {"datacite": "Other", "marc": "oth"},
             "type": "datetypes",
         },
     )
@@ -1393,7 +1393,7 @@ def contributors_role_v(app, contributors_role_type):
         system_identity,
         {
             "id": "other",
-            "props": {"datacite": "Other"},
+            "props": {"datacite": "Other", "marc": "oth"},
             "title": {"en": "Other"},
             "type": "contributorsroles",
         },
