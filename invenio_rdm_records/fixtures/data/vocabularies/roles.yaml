@@ -1,126 +1,147 @@
 - id: contactperson
   props:
     datacite: ContactPerson
+    marc: prc
   title:
     en: Contact person
     de: Kontaktperson
 - id: datacollector
   props:
     datacite: DataCollector
+    marc: col
   title:
     en: Data collector
     de: DatensammlerIn
 - id: datacurator
   props:
     datacite: DataCurator
+    marc: cur
   title:
     en: Data curator
     de: DatenkuratorIn
 - id: datamanager
   props:
     datacite: DataManager
+    marc: dtm
   title:
     en: Data manager
     de: DatenmanagerIn
 - id: distributor
   props:
     datacite: Distributor
+    marc: dst
   title:
     en: Distributor
     de: VerteilerIn
 - id: editor
   props:
     datacite: Editor
+    marc: edt
   title:
     en: Editor
     de: EditorIn
 - id: hostinginstitution
   props:
     datacite: HostingInstitution
+    marc: his
   title:
     en: Hosting institution
     de: Bereitstellende Institution
 - id: producer
   props:
     datacite: Producer
+    marc: pro
   title:
     en: Producer
     de: ProduzentIn
 - id: projectleader
   props:
     datacite: ProjectLeader
+    marc: pdr
   title:
     en: Project leader
     de: ProjektleiterIn
 - id: projectmanager
   props:
     datacite: ProjectManager
+    marc: rth
   title:
     en: Project manager
     de: ProjektmanagerIn
 - id: projectmember
   props:
     datacite: ProjectMember
+    marc: rtm
   title:
     en: Project member
     de: Projektmitglied
 - id: registrationagency
   props:
     datacite: RegistrationAgency
+    marc: cor
   title:
     en: Registration agency
     de: Registrierungsstelle
 - id: registrationauthority
   props:
     datacite: RegistrationAuthority
+    marc: cor
   title:
     en: Registration authority
     de: Registrierungsbehörde
 - id: relatedperson
   props:
     datacite: RelatedPerson
+    marc: oth
   title:
     en: Related person
     de: Verwandte Person
 - id: researcher
   props:
     datacite: Researcher
+    marc: res
   title:
     en: Researcher
     de: WissenschaftlerIn
 - id: researchgroup
   props:
     datacite: ResearchGroup
+    marc: rtm
   title:
     en: Research group
     de: Forschungsgruppe
 - id: rightsholder
   props:
     datacite: RightsHolder
+    marc: cph
   title:
     en: Rights holder
     de: RechteinhaberIn
 - id: sponsor
   props:
     datacite: Sponsor
+    marc: spn
   title:
     en: Sponsor
     de: Sponsor
 - id: supervisor
   props:
     datacite: Supervisor
+    marc: dgs
   title:
     en: Supervisor
     de: SupervisorIn
 - id: workpackageleader
   props:
     datacite: WorkPackageLeader
+    marc: led
   title:
     en: Work package leader
     de: ArbeitspaketleiterIn
 - id: other
   props:
     datacite: Other
+    marc: oth
   title:
     en: Other
     de: Andere
