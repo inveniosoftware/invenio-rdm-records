@@ -255,6 +255,9 @@
                   "id": {
                     "type": "keyword"
                   },
+                  "is_verified": {
+                    "type": "boolean"
+                  },
                   "@v": {
                     "type": "keyword"
                   },
@@ -406,6 +409,9 @@
                       },
                       "id": {
                         "type": "keyword"
+                      },
+                      "is_verified": {
+                        "type": "boolean"
                       },
                       "@v": {
                         "type": "keyword"
