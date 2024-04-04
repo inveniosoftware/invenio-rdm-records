@@ -31,7 +31,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python-version: ['3.9', '3.10', '3.11', '3.12']
+        python-version: [3.9, 3.12]
         db-service: [postgresql14]
         search-service: [opensearch2]
         node-version: [18.x, 20.x]
