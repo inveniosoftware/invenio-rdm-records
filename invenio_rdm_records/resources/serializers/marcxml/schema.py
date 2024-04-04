@@ -397,7 +397,10 @@ class MARCXMLSchema(BaseSerializerSchema, CommonFieldsMixin):
         return rights or missing
 
     def get_license(self, obj):
-        """Get license."""
+        """Get license.
+
+        Same data as get_rights but duplicated for backwards compatibility reasons.
+        """
         license = []
         rights = obj["metadata"].get("rights", [])
         if not rights:
