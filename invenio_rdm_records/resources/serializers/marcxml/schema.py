@@ -12,10 +12,8 @@ from dateutil.parser import parse
 from dojson.contrib.to_marc21.fields.bdleader import to_leader
 from flask import current_app, g
 from flask_resources.serializers import BaseSerializerSchema
-from invenio_access.permissions import system_identity
 from invenio_communities import current_communities
 from invenio_communities.communities.services.service import get_cached_community_slug
-from invenio_vocabularies.proxies import current_service as vocabulary_service
 from marshmallow import fields, missing
 from marshmallow_utils.html import sanitize_unicode
 
@@ -392,36 +390,19 @@ class MARCXMLSchema(BaseSerializerSchema, CommonFieldsMixin):
         if access_right == "metadata-only":
             access_right = "closed"
 
-        ids = []
         for right in obj["metadata"].get("rights", []):
-            _id = right.get("id")
-            if _id:
-                ids.append(_id)
+            title = right.get("title").get(current_default_locale())
+            right_dict = dict()
+            if title:
+                right_dict["a"] = title
+            license_url = right.get("link")
+            if license_url:
+                right_dict["u"] = license_url
             else:
-                title = right.get("title").get(current_default_locale())
-                right_dict = dict()
-                if title:
-                    right_dict["a"] = title
-                license_url = right.get("link")
-                if license_url:
-                    right_dict["u"] = license_url
-                rights.append(right_dict)
-
-        if ids:
-            vocab_rights = vocabulary_service.read_many(
-                system_identity, "licenses", ids
-            )
-            for right in vocab_rights:
-                title = right.get("title").get(current_default_locale())
-                right_dict = dict()
-                if title:
-                    right_dict["a"] = title
-
-                license_url = right.get("props").get("url")
-                if license_url:
-                    right_dict["u"] = license_url
-
-                rights.append(right_dict)
+                props_license_url = right.get("props", {}).get("url")
+                if props_license_url:
+                    right_dict["u"] = props_license_url
+            rights.append(right_dict)
 
         return rights or missing
 
