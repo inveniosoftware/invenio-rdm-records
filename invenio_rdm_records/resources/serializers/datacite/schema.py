@@ -137,7 +137,6 @@ class PersonOrOrgSchema43(Schema):
                         aff["affiliationIdentifierScheme"] = id_scheme
             serialized_affiliations.append(aff)
 
-
         return serialized_affiliations
 
     @post_dump(pass_many=False)
@@ -552,7 +551,7 @@ class DataCite43Schema(BaseSerializerSchema):
         serialized_rights = []
         for right in rights:
             entry = {
-                "rights": right.get("title").get(current_default_locale())
+                "rights": right.get("title", {}).get(current_default_locale())
             }
 
             id_ = right.get("id")
@@ -560,7 +559,8 @@ class DataCite43Schema(BaseSerializerSchema):
                 entry["rightsIdentifier"] = right.get("id")
                 entry["rightsIdentifierScheme"] = right.get("props", {}).get("scheme")
 
-            link = right.get("props", {}).get("url")
+            # Get url from props (vocabulary) or link (custom license)
+            link = right.get("props", {}).get("url") or right.get("link", {})
             if link:
                 entry["rightsUri"] = link
             serialized_rights.append(entry)
