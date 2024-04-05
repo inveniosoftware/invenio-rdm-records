@@ -81,10 +81,17 @@ class PersonOrOrgSchema43(Schema):
             )
 
             if id_scheme:
+                if scheme == "orcid":
+                    scheme_uri = "http://orcid.org/"
+                elif scheme == "ror":
+                    scheme_uri = "https://ror.org/"
+
                 name_id = {
                     "nameIdentifier": identifier["identifier"],
                     "nameIdentifierScheme": id_scheme,
+                    "schemeUri": scheme_uri,
                 }
+
                 serialized_identifiers.append(name_id)
 
         return serialized_identifiers
