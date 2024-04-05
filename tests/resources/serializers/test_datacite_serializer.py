@@ -131,12 +131,12 @@ def test_datacite43_serializer(running_app, full_record):
                     }
                 ],
                 "affiliation": [
-                    {"name": "free-text"},
                     {
-                        "name": "CERN",
+                        "name": "European Organization for Nuclear Research",
                         "affiliationIdentifier": "https://ror.org/01ggx4157",
                         "affiliationIdentifierScheme": "ROR",
                     },
+                    {"name": "free-text"},
                 ],
             }
         ],
@@ -151,12 +151,12 @@ def test_datacite43_serializer(running_app, full_record):
         "publisher": "InvenioRDM",
         "publicationYear": "2018",
         "subjects": [
-            {"subject": "custom"},
             {
                 "subject": "Abdominal Injuries",
                 "subjectScheme": "MeSH",
                 "valueURI": "http://id.nlm.nih.gov/mesh/A-D000007",
             },
+            {"subject": "custom"},
         ],
         "contributors": [
             {
@@ -173,7 +173,7 @@ def test_datacite43_serializer(running_app, full_record):
                 ],
                 "affiliation": [
                     {
-                        "name": "CERN",
+                        "name": "European Organization for Nuclear Research",
                         "affiliationIdentifier": "https://ror.org/01ggx4157",
                         "affiliationIdentifierScheme": "ROR",
                     }
@@ -213,13 +213,13 @@ def test_datacite43_serializer(running_app, full_record):
                 "rights": "A custom license",
                 "rightsUri": "https://customlicense.org/licenses/by/4.0/",
             },
-            {"rights": "No rightsUri license"},
             {
                 "rights": "Creative Commons Attribution 4.0 International",
                 "rightsIdentifierScheme": "spdx",
                 "rightsIdentifier": "cc-by-4.0",
                 "rightsUri": "https://creativecommons.org/licenses/by/4.0/legalcode",
             },
+            {"rights": "No rightsUri license"},
         ],
         "descriptions": [
             {
@@ -275,8 +275,8 @@ def test_datacite43_xml_serializer(running_app, full_record):
         "      <givenName>Lars Holm</givenName>",
         "      <familyName>Nielsen</familyName>",
         '      <nameIdentifier nameIdentifierScheme="ORCID">0000-0001-8135-3489</nameIdentifier>',  # noqa
+        '      <affiliation affiliationIdentifier="https://ror.org/01ggx4157" affiliationIdentifierScheme="ROR">European Organization for Nuclear Research</affiliation>',  # noqa
         "      <affiliation>free-text</affiliation>",
-        '      <affiliation affiliationIdentifier="https://ror.org/01ggx4157" affiliationIdentifierScheme="ROR">CERN</affiliation>',  # noqa
         "    </creator>",
         "  </creators>",
         "  <titles>",
@@ -286,8 +286,8 @@ def test_datacite43_xml_serializer(running_app, full_record):
         "  <publisher>InvenioRDM</publisher>",
         "  <publicationYear>2018</publicationYear>",
         "  <subjects>",
-        "    <subject>custom</subject>",
         '    <subject subjectScheme="MeSH">Abdominal Injuries</subject>',
+        "    <subject>custom</subject>",
         "  </subjects>",
         "  <contributors>",
         '    <contributor contributorType="Other">',
@@ -295,7 +295,7 @@ def test_datacite43_xml_serializer(running_app, full_record):
         "      <givenName>Lars Holm</givenName>",
         "      <familyName>Nielsen</familyName>",
         '      <nameIdentifier nameIdentifierScheme="ORCID">0000-0001-8135-3489</nameIdentifier>',  # noqa
-        '      <affiliation affiliationIdentifier="https://ror.org/01ggx4157" affiliationIdentifierScheme="ROR">CERN</affiliation>',  # noqa
+        '      <affiliation affiliationIdentifier="https://ror.org/01ggx4157" affiliationIdentifierScheme="ROR">European Organization for Nuclear Research</affiliation>',  # noqa
         "    </contributor>",
         "  </contributors>",
         "  <dates>",

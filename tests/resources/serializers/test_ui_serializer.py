@@ -121,10 +121,10 @@ def test_ui_serializer(app, full_to_dict_record):
             "message_class": "warning",
         },
         "contributors": {
-            "affiliations": [[1, "CERN", "cern"]],
+            "affiliations": [[1, "CERN", "cern"], [2, "TU Wien", None]],
             "contributors": [
                 {
-                    "affiliations": [[1, "CERN"]],
+                    "affiliations": [[1, "CERN"], [2, "TU Wien"]],
                     "person_or_org": {
                         "family_name": "Nielsen",
                         "given_name": "Lars Holm",
@@ -135,7 +135,16 @@ def test_ui_serializer(app, full_to_dict_record):
                         "type": "personal",
                     },
                     "role": {"id": "other", "title": "other"},
-                }
+                },
+                {
+                    "person_or_org": {
+                        "family_name": "Dirk",
+                        "given_name": "Dirkin",
+                        "name": "Dirk, Dirkin",
+                        "type": "personal",
+                    },
+                    "role": {"id": "other", "title": "Other"},
+                },
             ],
         },
         "creators": {
@@ -152,7 +161,15 @@ def test_ui_serializer(app, full_to_dict_record):
                         "name": "Nielsen, Lars Holm",
                         "type": "personal",
                     },
-                }
+                },
+                {
+                    "person_or_org": {
+                        "family_name": "Tom",
+                        "given_name": "Blabin",
+                        "name": "Tom, Blabin",
+                        "type": "personal",
+                    }
+                },
             ],
         },
         "publication_date_l10n_long": "January 2018\u2009–\u2009September 2020",
@@ -160,24 +177,29 @@ def test_ui_serializer(app, full_to_dict_record):
         "resource_type": {"id": "publication-article", "title_l10n": "Journal article"},
         "additional_titles": [
             {
-                "lang": {"id": "eng"},
+                "lang": {"id": "eng", "title_l10n": "English"},
                 "title": "a research data management platform",
-                "type": {"id": "subtitle"},
+                "type": {"id": "subtitle", "title_l10n": "Subtitle"},
             }
         ],
         "additional_descriptions": [
             {
                 "description": "Bla bla bla",
-                "lang": {"id": "eng"},
-                "type": {"id": "methods"},
+                "lang": {"id": "eng", "title_l10n": "English"},
+                "type": {"id": "methods", "title_l10n": "Methods"},
             }
         ],
+        "is_draft": False,
         "languages": [
             {"id": "dan", "title_l10n": "Danish"},
             {"id": "eng", "title_l10n": "English"},
         ],
         "dates": [
-            {"date": "1939/1945", "description": "A date", "type": {"id": "other"}}
+            {
+                "date": "1939/1945",
+                "description": "A date",
+                "type": {"id": "other", "title_l10n": "Other"},
+            }
         ],
         "rights": [
             {
@@ -185,7 +207,15 @@ def test_ui_serializer(app, full_to_dict_record):
                 "link": "https://customlicense.org/licenses/by/4.0/",
                 "title_l10n": "A custom license",
             },
-            {"id": "cc-by-4.0"},
+            {
+                "description_l10n": "The Creative Commons Attribution license allows re-distribution and re-use of a licensed work on the condition that the creator is appropriately credited.",
+                "id": "cc-by-4.0",
+                "props": {
+                    "scheme": "spdx",
+                    "url": "https://creativecommons.org/licenses/by/4.0/legalcode",
+                },
+                "title_l10n": "Creative Commons Attribution 4.0 International",
+            },
         ],
         "related_identifiers": [
             {
@@ -195,10 +225,11 @@ def test_ui_serializer(app, full_to_dict_record):
                 "scheme": "doi",
             }
         ],
+        "custom_fields": {},
         "description_stripped": "A description \nwith HTML tags",
         "version": "v1.0",
-        "created_date_l10n_long": "January 1, 2023",
-        "updated_date_l10n_long": "January 2, 2023",
+        "created_date_l10n_long": "November 14, 2023",
+        "updated_date_l10n_long": "November 14, 2023",
         "funding": [
             {
                 "award": {

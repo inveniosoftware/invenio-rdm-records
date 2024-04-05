@@ -54,7 +54,7 @@ def test_schemaorg_serializer_full_record(running_app, full_record):
                     {
                         "@id": "https://ror.org/01ggx4157",
                         "@type": "Organization",
-                        "name": "CERN",
+                        "name": "European Organization for Nuclear Research",
                     },
                     {"@type": "Organization", "name": "free-text"},
                 ],
@@ -71,7 +71,7 @@ def test_schemaorg_serializer_full_record(running_app, full_record):
                     {
                         "@id": "https://ror.org/01ggx4157",
                         "@type": "Organization",
-                        "name": "CERN",
+                        "name": "European Organization for Nuclear Research",
                     },
                     {"@type": "Organization", "name": "free-text"},
                 ],
@@ -90,7 +90,7 @@ def test_schemaorg_serializer_full_record(running_app, full_record):
                     {
                         "@id": "https://ror.org/01ggx4157",
                         "@type": "Organization",
-                        "name": "CERN",
+                        "name": "European Organization for Nuclear Research",
                     },
                 ],
             }
@@ -98,13 +98,23 @@ def test_schemaorg_serializer_full_record(running_app, full_record):
         "encodingFormat": "application/pdf",
         "funding": [
             {
-                "funder": {"@type": "Organization", "@id": "00k4n6c32"},
+                "funder": {
+                    "@type": "Organization",
+                    "@id": "00k4n6c32",
+                    "name": "European Commission",
+                },
                 "identifier": "00k4n6c32::755021",
+                "name": "Personalised Treatment For Cystic Fibrosis Patients "
+                "With Ultra-rare CFTR Mutations (and beyond) (755021)",
+                "url": {
+                    "identifier": "https://cordis.europa.eu/project/id/755021",
+                    "scheme": "url",
+                },
             }
         ],
         "identifier": "https://doi.org/10.1234/inveniordm.1234",
         "inLanguage": {"@type": "Language", "alternateName": "dan", "name": "Danish"},
-        "keywords": "custom",
+        "keywords": "Abdominal Injuries, custom",
         "license": "https://creativecommons.org/licenses/by/4.0/legalcode",
         "name": "InvenioRDM",
         "publisher": {"@type": "Organization", "name": "InvenioRDM"},

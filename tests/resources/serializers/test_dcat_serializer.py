@@ -27,14 +27,14 @@ def test_dcat_serializer(running_app, enhanced_full_record):
         "        <foaf:givenName>Lars Holm</foaf:givenName>",
         "        <foaf:familyName>Nielsen</foaf:familyName>",
         "        <org:memberOf>",
-        "          <foaf:Organization>",
-        "            <foaf:name>free-text</foaf:name>",
+        '          <foaf:Organization rdf:about="https://ror.org/https://ror.org/01ggx4157">',  # noqa
+        '            <dct:identifier rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://ror.org/01ggx4157</dct:identifier>',  # noqa
+        "            <foaf:name>European Organization for Nuclear Research</foaf:name>",
         "          </foaf:Organization>",
         "        </org:memberOf>",
         "        <org:memberOf>",
-        '          <foaf:Organization rdf:about="https://ror.org/https://ror.org/01ggx4157">',  # noqa
-        '            <dct:identifier rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://ror.org/01ggx4157</dct:identifier>',  # noqa
-        "            <foaf:name>CERN</foaf:name>",
+        "          <foaf:Organization>",
+        "            <foaf:name>free-text</foaf:name>",
         "          </foaf:Organization>",
         "        </org:memberOf>",
         "      </rdf:Description>",
@@ -54,11 +54,21 @@ def test_dcat_serializer(running_app, enhanced_full_record):
         "      </foaf:Agent>",
         "    </dct:publisher>",
         '    <dct:issued rdf:datatype="http://www.w3.org/2001/XMLSchema#gYear">2018</dct:issued>',  # noqa
+        "    <dct:subject>",
+        "      <skos:Concept>",
+        "        <skos:prefLabel>Abdominal Injuries</skos:prefLabel>",
+        "        <skos:inScheme>",
+        "          <skos:ConceptScheme>",
+        "            <dct:title>MeSH</dct:title>",
+        "          </skos:ConceptScheme>",
+        "        </skos:inScheme>",
+        "      </skos:Concept>",
+        "    </dct:subject>",
         "    <dcat:keyword>custom</dcat:keyword>",
         "    <citedcat:isFundedBy>",
         "      <foaf:Project>",
-        '        <dct:identifier rdf:datatype="http://www.w3.org/2001/XMLSchema#string">111023</dct:identifier>',  # noqa
-        "        <dct:title>Launching of the research program on meaning processing</dct:title>",
+        '        <dct:identifier rdf:datatype="http://www.w3.org/2001/XMLSchema#string">755021</dct:identifier>',  # noqa
+        "        <dct:title>Personalised Treatment For Cystic Fibrosis Patients With Ultra-rare CFTR Mutations (and beyond)</dct:title>",
         '        <citedcat:isAwardedBy rdf:resource="https://ror.org/00k4n6c32"/>',  # noqa
         "      </foaf:Project>",
         "    </citedcat:isFundedBy>",
@@ -70,14 +80,14 @@ def test_dcat_serializer(running_app, enhanced_full_record):
         "        <foaf:givenName>Lars Holm</foaf:givenName>",
         "        <foaf:familyName>Nielsen</foaf:familyName>",
         "        <org:memberOf>",
-        "          <foaf:Organization>",
-        "            <foaf:name>TU Wien</foaf:name>",
+        '          <foaf:Organization rdf:about="https://ror.org/https://ror.org/01ggx4157">',  # noqa
+        '            <dct:identifier rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://ror.org/01ggx4157</dct:identifier>',  # noqa
+        "            <foaf:name>European Organization for Nuclear Research</foaf:name>",
         "          </foaf:Organization>",
         "        </org:memberOf>",
         "        <org:memberOf>",
-        '          <foaf:Organization rdf:about="https://ror.org/https://ror.org/01ggx4157">',  # noqa
-        '            <dct:identifier rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://ror.org/01ggx4157</dct:identifier>',  # noqa
-        "            <foaf:name>CERN</foaf:name>",
+        "          <foaf:Organization>",
+        "            <foaf:name>TU Wien</foaf:name>",
         "          </foaf:Organization>",
         "        </org:memberOf>",
         "      </rdf:Description>",

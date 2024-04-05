@@ -63,7 +63,7 @@ def test_dublincorejson_serializer(running_app, updated_full_record):
         "formats": ["application/pdf"],
         "titles": ["InvenioRDM"],
         "creators": ["Nielsen, Lars Holm"],
-        "subjects": ["custom"],
+        "subjects": ["Abdominal Injuries", "custom"],
         "dates": ["2018/2020-09", "info:eu-repo/date/embargoEnd/2131-01-01"],
         "rights": [
             "info:eu-repo/semantics/embargoedAccess",

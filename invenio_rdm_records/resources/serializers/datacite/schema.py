@@ -550,9 +550,7 @@ class DataCite43Schema(BaseSerializerSchema):
 
         serialized_rights = []
         for right in rights:
-            entry = {
-                "rights": right.get("title", {}).get(current_default_locale())
-            }
+            entry = {"rights": right.get("title", {}).get(current_default_locale())}
 
             id_ = right.get("id")
             if id_:
