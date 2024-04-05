@@ -20,7 +20,7 @@ from invenio_records_resources.proxies import current_service_registry
 from marshmallow import Schema, ValidationError, fields, missing, post_dump, validate
 from marshmallow_utils.fields import SanitizedUnicode
 from marshmallow_utils.html import strip_html
-
+import json
 from ....proxies import current_rdm_records_service
 from ...serializers.ui.schema import current_default_locale
 from ..utils import get_preferred_identifier, get_vocabulary_props
@@ -253,6 +253,19 @@ class DataCite43Schema(BaseSerializerSchema):
                 item["lang"] = lang_id
 
             result.append(item)
+
+        if field == "description":
+            # References
+            refs = obj["metadata"].get("references")
+            if refs:
+                result.append(
+                    {
+                        field: json.dumps(
+                            {"references": [r["reference"] for r in refs]}
+                        ),
+                        f"{field}Type": "Other",
+                    }
+                )
 
         return result or missing
 
