@@ -54,7 +54,10 @@ export class DatesField extends Component {
     } = this.props;
 
     return (
-      <Overridable id="InvenioRdmRecords.DatesField.AddDateArrayField.Container">
+      <Overridable
+        id="InvenioRdmRecords.DatesField.AddDateArrayField.Container"
+        fieldPath={fieldPath}
+      >
         <ArrayField
           addButtonLabel={i18next.t("Add date")} // TODO: Pass by prop
           defaultNewValue={emptyDate}
@@ -76,7 +79,10 @@ export class DatesField extends Component {
             const hasRequiredDescriptionValue = _has(requiredOption, "description");
             return (
               <GroupField fieldPath={fieldPath} optimized>
-                <Overridable id="InvenioRdmRecords.DatesField.DateTextField.Container">
+                <Overridable
+                  id="InvenioRdmRecords.DatesField.DateTextField.Container"
+                  fieldPath={`${fieldPathPrefix}.date`}
+                >
                   <TextField
                     fieldPath={`${fieldPathPrefix}.date`}
                     label={i18next.t("Date")}
@@ -86,7 +92,10 @@ export class DatesField extends Component {
                     width={5}
                   />
                 </Overridable>
-                <Overridable id="InvenioRdmRecords.DatesField.TypeSelectField.Container">
+                <Overridable
+                  id="InvenioRdmRecords.DatesField.TypeSelectField.Container"
+                  fieldPath={`${fieldPathPrefix}.type`}
+                >
                   <SelectField
                     fieldPath={`${fieldPathPrefix}.type`}
                     label={i18next.t("Type")}
@@ -98,7 +107,10 @@ export class DatesField extends Component {
                     optimized
                   />
                 </Overridable>
-                <Overridable id="InvenioRdmRecords.DatesField.DescriptionTextField.Container">
+                <Overridable
+                  id="InvenioRdmRecords.DatesField.DescriptionTextField.Container"
+                  fieldPath={`${fieldPathPrefix}.description`}
+                >
                   <TextField
                     fieldPath={`${fieldPathPrefix}.description`}
                     label={i18next.t("Description")}
