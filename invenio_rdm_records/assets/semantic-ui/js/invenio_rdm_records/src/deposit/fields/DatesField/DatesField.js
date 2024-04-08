@@ -18,6 +18,7 @@ import _has from "lodash/has";
 import { emptyDate } from "./initialValues";
 import { i18next } from "@translations/invenio_rdm_records/i18next";
 import { sortOptions } from "../../utils";
+import Overridable from "react-overridable";
 
 export class DatesField extends Component {
   /** Top-level Dates Component */
@@ -53,67 +54,89 @@ export class DatesField extends Component {
     } = this.props;
 
     return (
-      <ArrayField
-        addButtonLabel={i18next.t("Add date")} // TODO: Pass by prop
-        defaultNewValue={emptyDate}
+      <Overridable
+        id="InvenioRdmRecords.DatesField.AddDateArrayField.Container"
         fieldPath={fieldPath}
-        helpText={i18next.t(
-          "Format: DATE or DATE/DATE where DATE is YYYY or YYYY-MM or YYYY-MM-DD."
-        )}
-        label={label}
-        labelIcon={labelIcon}
-        required={required}
-        requiredOptions={requiredOptions}
-        showEmptyValue={showEmptyValue}
       >
-        {({ array, arrayHelpers, indexPath, value }) => {
-          const fieldPathPrefix = `${fieldPath}.${indexPath}`;
-          const requiredOption = this.getRequiredOption(value, array);
-          const hasRequiredDateValue = _has(requiredOption, "date");
-          const hasRequiredTypeValue = _has(requiredOption, "type");
-          const hasRequiredDescriptionValue = _has(requiredOption, "description");
-          return (
-            <GroupField fieldPath={fieldPath} optimized>
-              <TextField
-                fieldPath={`${fieldPathPrefix}.date`}
-                label={i18next.t("Date")}
-                placeholder={placeholderDate}
-                disabled={hasRequiredDateValue}
-                required
-                width={5}
-              />
-              <SelectField
-                fieldPath={`${fieldPathPrefix}.type`}
-                label={i18next.t("Type")}
-                aria-label={i18next.t("Type")}
-                options={sortOptions(options.type)}
-                disabled={hasRequiredTypeValue}
-                required
-                width={5}
-                optimized
-              />
-              <TextField
-                fieldPath={`${fieldPathPrefix}.description`}
-                label={i18next.t("Description")}
-                disabled={hasRequiredDescriptionValue}
-                width={5}
-              />
-              <Form.Field>
-                <Button
-                  aria-label={i18next.t("Remove field")}
-                  className="close-btn"
-                  disabled={!_isEmpty(requiredOption)}
-                  icon
-                  onClick={() => arrayHelpers.remove(indexPath)}
-                  type="button"
+        <ArrayField
+          addButtonLabel={i18next.t("Add date")} // TODO: Pass by prop
+          defaultNewValue={emptyDate}
+          fieldPath={fieldPath}
+          helpText={i18next.t(
+            "Format: DATE or DATE/DATE where DATE is YYYY or YYYY-MM or YYYY-MM-DD."
+          )}
+          label={label}
+          labelIcon={labelIcon}
+          required={required}
+          requiredOptions={requiredOptions}
+          showEmptyValue={showEmptyValue}
+        >
+          {({ array, arrayHelpers, indexPath, value }) => {
+            const fieldPathPrefix = `${fieldPath}.${indexPath}`;
+            const requiredOption = this.getRequiredOption(value, array);
+            const hasRequiredDateValue = _has(requiredOption, "date");
+            const hasRequiredTypeValue = _has(requiredOption, "type");
+            const hasRequiredDescriptionValue = _has(requiredOption, "description");
+            return (
+              <GroupField fieldPath={fieldPath} optimized>
+                <Overridable
+                  id="InvenioRdmRecords.DatesField.DateTextField.Container"
+                  fieldPath={`${fieldPathPrefix}.date`}
                 >
-                  <Icon name="close" />
-                </Button>
-              </Form.Field>
-            </GroupField>
-          );
-        }}
-      </ArrayField>
+                  <TextField
+                    fieldPath={`${fieldPathPrefix}.date`}
+                    label={i18next.t("Date")}
+                    placeholder={placeholderDate}
+                    disabled={hasRequiredDateValue}
+                    required
+                    width={5}
+                  />
+                </Overridable>
+                <Overridable
+                  id="InvenioRdmRecords.DatesField.TypeSelectField.Container"
+                  fieldPath={`${fieldPathPrefix}.type`}
+                >
+                  <SelectField
+                    fieldPath={`${fieldPathPrefix}.type`}
+                    label={i18next.t("Type")}
+                    aria-label={i18next.t("Type")}
+                    options={sortOptions(options.type)}
+                    disabled={hasRequiredTypeValue}
+                    required
+                    width={5}
+                    optimized
+                  />
+                </Overridable>
+                <Overridable
+                  id="InvenioRdmRecords.DatesField.DescriptionTextField.Container"
+                  fieldPath={`${fieldPathPrefix}.description`}
+                >
+                  <TextField
+                    fieldPath={`${fieldPathPrefix}.description`}
+                    label={i18next.t("Description")}
+                    disabled={hasRequiredDescriptionValue}
+                    width={5}
+                  />
+                </Overridable>
+                <Overridable id="InvenioRdmRecords.DatesField.RemoveFormField.Container">
+                  <Form.Field>
+                    <Button
+                      aria-label={i18next.t("Remove field")}
+                      className="close-btn"
+                      disabled={!_isEmpty(requiredOption)}
+                      icon
+                      onClick={() => arrayHelpers.remove(indexPath)}
+                      type="button"
+                    >
+                      <Icon name="close" />
+                    </Button>
+                  </Form.Field>
+                </Overridable>
+              </GroupField>
+            );
+          }}
+        </ArrayField>
+      </Overridable>
     );
   }
 }
