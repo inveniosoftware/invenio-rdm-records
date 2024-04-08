@@ -447,7 +447,7 @@ class DataCite43Schema(BaseSerializerSchema):
                     )
 
         # adding communities
-        communities = obj["parent"].get("communities", {}).get("entries", [])
+        communities = obj.get("parent", {}).get("communities", {}).get("entries", [])
         for community in communities:
             slug = community.get("slug")
             url = f"{current_app.config['SITE_UI_URL']}/communities/{slug}"
