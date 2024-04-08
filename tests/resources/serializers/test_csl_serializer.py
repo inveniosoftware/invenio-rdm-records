@@ -21,35 +21,33 @@ from invenio_rdm_records.resources.serializers.csl import get_citation_string
 from invenio_rdm_records.resources.serializers.csl.schema import CSLJSONSchema
 
 
-def test_csl_json_serializer(running_app, full_record):
+def test_csl_json_serializer(running_app, full_record_to_dict):
     """Test JSON CLS Serializer."""
     # if the record is created this field will be present
-    full_record["id"] = "12345-abcde"
+    full_record_to_dict["id"] = "12345-abcde"
 
     expected_data = {
-        "publisher": "InvenioRDM",
-        "DOI": "10.1234/inveniordm.1234",
-        "language": "dan",
-        "title": "InvenioRDM",
-        "issued": {"date-parts": [["2018"], ["2020", "09"]]},
+        "DOI": "10.1234/12345-abcde",
         "abstract": "A description \nwith HTML tags",
         "author": [
-            {
-                "family": "Nielsen",
-                "given": "Lars Holm",
-            }
+            {"family": "Nielsen", "given": "Lars Holm"},
+            {"family": "Tom", "given": "Blabin"},
         ],
-        "version": "v1.0",
-        "type": "graphic",
         "id": "12345-abcde",
+        "issued": {"date-parts": [["2018"], ["2020", "09"]]},
+        "language": "dan",
+        "publisher": "InvenioRDM",
+        "title": "InvenioRDM",
+        "type": "graphic",
+        "version": "v1.0",
     }
 
     serializer = CSLJSONSerializer()
-    serialized_record = serializer.dump_obj(full_record)
+    serialized_record = serializer.dump_obj(full_record_to_dict)
     assert serialized_record == expected_data
 
     # test wrong publication date
-    rec_wrong_date = deepcopy(full_record)
+    rec_wrong_date = deepcopy(full_record_to_dict)
     rec_wrong_date["metadata"]["publication_date"] = "wrong"
     expected = deepcopy(expected_data)
     del expected["issued"]  # missing

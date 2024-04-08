@@ -8,13 +8,13 @@
 from invenio_rdm_records.resources.serializers import CFFSerializer
 
 
-def test_cff_serializer(running_app, full_record):
+def test_cff_serializer(running_app, full_record_to_dict):
     """Test JSON CLS Serializer."""
     # if the record is created this field will be present
-    full_record["id"] = "12345-abcde"
-    full_record["metadata"]["resource_type"]["id"] = "software"
-    ri = full_record["metadata"]["related_identifiers"]
-    full_record["metadata"]["related_identifiers"] = [
+    full_record_to_dict["id"] = "12345-abcde"
+    full_record_to_dict["metadata"]["resource_type"]["id"] = "software"
+    ri = full_record_to_dict["metadata"]["related_identifiers"]
+    full_record_to_dict["metadata"]["related_identifiers"] = [
         *ri,
         {
             "scheme": "url",
@@ -25,21 +25,25 @@ def test_cff_serializer(running_app, full_record):
     ]
 
     serializer = CFFSerializer()
-    serialized_record = serializer.serialize_object(full_record)
+    serialized_record = serializer.serialize_object(full_record_to_dict)
     assert serialized_record == (
         "abstract: <h1>A description</h1> <p>with HTML tags</p>\n"
         "authors:\n"
-        "- affiliation: European Organization for Nuclear Research\n"
+        "- affiliation: CERN\n"
         "  family-names: Nielsen\n"
         "  given-names: Lars Holm\n"
         "  orcid: 0000-0001-8135-3489\n"
-        "- affiliation: European Organization for Nuclear Research\n"
+        "- family-names: Tom\n"
+        "  given-names: Blabin\n"
+        "- affiliation: CERN\n"
         "  family-names: Nielsen\n"
         "  given-names: Lars Holm\n"
         "  orcid: 0000-0001-8135-3489\n"
+        "- family-names: Dirk\n"
+        "  given-names: Dirkin\n"
         "cff-version: 1.2.0\n"
         "date-released: 2018/2020-09\n"
-        "doi: 10.1234/inveniordm.1234\n"
+        "doi: 10.1234/12345-abcde\n"
         "identifiers:\n"
         "- type: other\n"
         "  value: 1924MNRAS..84..308E\n"

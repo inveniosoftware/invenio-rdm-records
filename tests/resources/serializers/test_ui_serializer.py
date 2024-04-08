@@ -18,7 +18,7 @@ from invenio_rdm_records.resources.serializers import UIJSONSerializer
 
 def _add_affiliation_name(creatibutors):
     for idx_c, creator in enumerate(creatibutors):
-        affiliations = creatibutors[idx_c]["affiliations"]
+        affiliations = creatibutors[idx_c].get("affiliations", [])
         for idx_aff, affiliation in enumerate(affiliations):
             name = creatibutors[idx_c]["affiliations"][idx_aff].get("id")
             if name:
@@ -31,10 +31,10 @@ def _add_affiliation_name(creatibutors):
 
 
 @pytest.fixture(scope="function")
-def full_to_dict_record(full_record):
+def full_to_dict_record(full_record_to_dict):
     """Full record dereferenced data, as is expected by the UI serializer."""
     # TODO: Converge this and full record over time
-    to_dict_record = deepcopy(full_record)
+    to_dict_record = deepcopy(full_record_to_dict)
 
     to_dict_record["metadata"]["languages"] = [
         {"id": "dan", "title": {"en": "Danish"}},

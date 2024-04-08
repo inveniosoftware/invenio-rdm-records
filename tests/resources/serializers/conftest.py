@@ -38,7 +38,6 @@ def enhanced_full_record(enhanced_full_record, parent_record):
     return enhanced_full_record
 
 
-# TODO: Use this representation in all serializer tests
 @pytest.fixture
 def full_record_to_dict():
     """The to_dict() representation of a full record.

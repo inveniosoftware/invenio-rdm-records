@@ -28,14 +28,14 @@ def updated_minimal_record(minimal_record):
 
 
 @pytest.fixture(scope="function")
-def updated_full_record(full_record):
+def updated_full_record(full_record_to_dict):
     """Update fields (done after record create) for BibTex serializer."""
-    full_record["access"]["status"] = "embargoed"
-    full_record["created"] = "2023-03-23T00:00:00.000000+00:00"
-    full_record["id"] = "abcde-fghij"
-    full_record["metadata"]["resource_type"]["id"] = "other"
+    full_record_to_dict["access"]["status"] = "embargoed"
+    full_record_to_dict["created"] = "2023-03-23T00:00:00.000000+00:00"
+    full_record_to_dict["id"] = "abcde-fghij"
+    full_record_to_dict["metadata"]["resource_type"]["id"] = "other"
 
-    return full_record
+    return full_record_to_dict
 
 
 def test_bibtex_serializer_minimal_record(running_app, updated_minimal_record):
@@ -64,19 +64,18 @@ def test_bibtex_serializer_full_record(running_app, updated_full_record):
     serializer = BibtexSerializer()
     serialized_record = serializer.serialize_object(updated_full_record)
 
-    expected_data = "\n".join(
-        [
-            "@misc{nielsen_2023_abcde-fghij,",
-            "  author       = {Nielsen, Lars Holm},",
-            "  title        = {InvenioRDM},",
-            "  month        = mar,",
-            "  year         = 2023,",
-            "  publisher    = {InvenioRDM},",
-            "  version      = {v1.0},",
-            "  doi          = {10.1234/inveniordm.1234},",
-            "  url          = {https://doi.org/10.1234/inveniordm.1234}",
-            "}",
-        ]
+    expected_data = (
+        "@misc{nielsen_2023_abcde-fghij,\n"
+        "  author       = {Nielsen, Lars Holm and\n"
+        "                  Tom, Blabin},\n"
+        "  title        = {InvenioRDM},\n"
+        "  month        = mar,\n"
+        "  year         = 2023,\n"
+        "  publisher    = {InvenioRDM},\n"
+        "  version      = {v1.0},\n"
+        "  doi          = {10.1234/12345-abcde},\n"
+        "  url          = {https://doi.org/10.1234/12345-abcde}\n"
+        "}"
     )
 
     assert serialized_record == expected_data

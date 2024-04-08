@@ -451,23 +451,7 @@ def full_record(users):
                             }
                         ],
                     },
-                    "affiliations": [
-                        {
-                            "id": "cern",
-                            "name": "European Organization for Nuclear Research",
-                            "identifiers": [
-                                {
-                                    "scheme": "ror",
-                                    "identifier": "01ggx4157",
-                                },
-                                {
-                                    "scheme": "isni",
-                                    "identifier": "000000012156142X",
-                                },
-                            ],
-                        },
-                        {"name": "free-text"},
-                    ],
+                    "affiliations": [{"id": "cern"}, {"name": "free-text"}],
                 }
             ],
             "title": "InvenioRDM",
@@ -481,11 +465,7 @@ def full_record(users):
             "publisher": "InvenioRDM",
             "publication_date": "2018/2020-09",
             "subjects": [
-                {
-                    "id": "http://id.nlm.nih.gov/mesh/A-D000007",
-                    "subject": "Abdominal Injuries",
-                    "scheme": "MeSH",
-                },
+                {"id": "http://id.nlm.nih.gov/mesh/A-D000007"},
                 {"subject": "custom"},
             ],
             "contributors": [
@@ -503,22 +483,7 @@ def full_record(users):
                         ],
                     },
                     "role": {"id": "other"},
-                    "affiliations": [
-                        {
-                            "id": "cern",
-                            "name": "European Organization for Nuclear Research",
-                            "identifiers": [
-                                {
-                                    "scheme": "ror",
-                                    "identifier": "01ggx4157",
-                                },
-                                {
-                                    "scheme": "isni",
-                                    "identifier": "000000012156142X",
-                                },
-                            ],
-                        }
-                    ],
+                    "affiliations": [{"id": "cern"}],
                 }
             ],
             "dates": [
@@ -547,19 +512,7 @@ def full_record(users):
                     "description": {"en": "A description"},
                     "link": "https://customlicense.org/licenses/by/4.0/",
                 },
-                {
-                    "id": "cc-by-4.0",
-                    "title": {"en": "Creative Commons Attribution 4.0 International"},
-                    "description": {
-                        "en": "The Creative Commons Attribution license allows"
-                        " re-distribution and re-use of a licensed work on"
-                        " the condition that the creator is appropriately credited."
-                    },
-                    "props": {
-                        "url": "https://creativecommons.org/licenses/by/4.0/legalcode",
-                        "scheme": "spdx",
-                    },
-                },
+                {"id": "cc-by-4.0"},
             ],
             "description": "<h1>A description</h1> <p>with HTML tags</p>",
             "additional_descriptions": [
@@ -589,32 +542,8 @@ def full_record(users):
                 {
                     "funder": {
                         "id": "00k4n6c32",
-                        "name": "European Commission",
-                        "identifiers": [
-                            {
-                                "identifier": "00k4n6c32",
-                                "scheme": "ror",
-                            }
-                        ],
                     },
-                    "award": {
-                        "id": "00k4n6c32::755021",
-                        "title": {
-                            "en": (
-                                "Personalised Treatment For Cystic Fibrosis Patients With "
-                                "Ultra-rare CFTR Mutations (and beyond)"
-                            ),
-                        },
-                        "number": "755021",
-                        "identifiers": [
-                            {
-                                "identifier": "https://cordis.europa.eu/project/id/755021",
-                                "scheme": "url",
-                            }
-                        ],
-                        "acronym": "HIT-CF",
-                        "program": "H2020",
-                    },
+                    "award": {"id": "00k4n6c32::755021"},
                 }
             ],
             "references": [
@@ -702,23 +631,7 @@ def enhanced_full_record(users):
                             }
                         ],
                     },
-                    "affiliations": [
-                        {
-                            "id": "cern",
-                            "name": "European Organization for Nuclear Research",
-                            "identifiers": [
-                                {
-                                    "scheme": "ror",
-                                    "identifier": "01ggx4157",
-                                },
-                                {
-                                    "scheme": "isni",
-                                    "identifier": "000000012156142X",
-                                },
-                            ],
-                        },
-                        {"name": "free-text"},
-                    ],
+                    "affiliations": [{"id": "cern"}, {"name": "free-text"}],
                 },
                 {
                     "person_or_org": {
@@ -752,9 +665,9 @@ def enhanced_full_record(users):
             "publication_date": "2018/2020-09",
             "subjects": [
                 {
-                    "id": "http://id.nlm.nih.gov/mesh/A-D000007",
-                    "subject": "Abdominal Injuries",
-                    "scheme": "MeSH",
+                    "id": "http://www.oecd.org/science/inno/38235147.pdf?1.6",
+                    "scheme": "FOS",
+                    "subject": "Biological sciences",
                 },
                 {"subject": "custom"},
             ],
@@ -779,23 +692,7 @@ def enhanced_full_record(users):
                             "en": "Data manager",
                         },
                     },
-                    "affiliations": [
-                        {
-                            "id": "cern",
-                            "name": "European Organization for Nuclear Research",
-                            "identifiers": [
-                                {
-                                    "scheme": "ror",
-                                    "identifier": "01ggx4157",
-                                },
-                                {
-                                    "scheme": "isni",
-                                    "identifier": "000000012156142X",
-                                },
-                            ],
-                        },
-                        {"name": "TU Wien"},
-                    ],
+                    "affiliations": [{"id": "cern"}, {"name": "TU Wien"}],
                 },
                 {
                     "person_or_org": {
@@ -873,7 +770,6 @@ def enhanced_full_record(users):
                 {
                     "id": "cc-by-4.0",
                     "icon": "cc-by-icon",
-                    "title": {"en": "Creative Commons Attribution 4.0 International"},
                     "props": {
                         "scheme": "spdx",
                         "url": "https://creativecommons.org/licenses/by/4.0/legalcode",
@@ -914,31 +810,19 @@ def enhanced_full_record(users):
                 {
                     "funder": {
                         "id": "00k4n6c32",
-                        "name": "European Commission",
-                        "identifiers": [
-                            {
-                                "identifier": "00k4n6c32",
-                                "scheme": "ror",
-                            }
-                        ],
+                        "name": "Academy of Finland",
                     },
                     "award": {
-                        "id": "00k4n6c32::755021",
-                        "title": {
-                            "en": (
-                                "Personalised Treatment For Cystic Fibrosis Patients With "
-                                "Ultra-rare CFTR Mutations (and beyond)"
-                            ),
-                        },
-                        "number": "755021",
                         "identifiers": [
                             {
-                                "identifier": "https://cordis.europa.eu/project/id/755021",
+                                "identifier": "https://sandbox.zenodo.org/",
                                 "scheme": "url",
                             }
                         ],
-                        "acronym": "HIT-CF",
-                        "program": "H2020",
+                        "number": "111023",
+                        "title": {
+                            "en": "Launching of the research program on meaning processing",
+                        },
                     },
                 }
             ],

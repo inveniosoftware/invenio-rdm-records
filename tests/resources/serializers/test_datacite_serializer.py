@@ -25,26 +25,19 @@ def minimal_record(minimal_record, parent_record):
     return minimal_record
 
 
-@pytest.fixture(scope="function")
-def full_record(full_record, parent_record):
-    """Minimal record metadata with added parent metadata."""
-    full_record["links"] = dict(self_html="https://self-link.com")
-    return full_record
-
-
 @pytest.fixture
-def full_modified_record(full_record):
-    full_record["pids"]["unknown-scheme"] = {
+def full_modified_record(full_record_to_dict):
+    full_record_to_dict["pids"]["unknown-scheme"] = {
         "identifier": "unknown-1234",
         "provider": "unknown",
         "client": "unknown",
     }
 
-    full_record["metadata"]["identifiers"] = [
+    full_record_to_dict["metadata"]["identifiers"] = [
         {"identifier": "unknown-1234-a", "scheme": "unknown-scheme"}
     ]
 
-    full_record["metadata"]["related_identifiers"] = [
+    full_record_to_dict["metadata"]["related_identifiers"] = [
         {
             "identifier": "unknown-1234-b",
             "scheme": "unknown-scheme",
@@ -52,16 +45,16 @@ def full_modified_record(full_record):
         }
     ]
 
-    full_record["metadata"]["creators"][0]["person_or_org"]["identifiers"] = [
+    full_record_to_dict["metadata"]["creators"][0]["person_or_org"]["identifiers"] = [
         {"identifier": "unknown-2345", "scheme": "unknown-scheme"}
     ]
 
-    return full_record
+    return full_record_to_dict
 
 
 @pytest.fixture
-def full_geolocation_box_record(full_record):
-    full_record["metadata"]["locations"]["features"] = [
+def full_geolocation_box_record(full_record_to_dict):
+    full_record_to_dict["metadata"]["locations"]["features"] = [
         {
             "geometry": {
                 "coordinates": [
@@ -77,12 +70,12 @@ def full_geolocation_box_record(full_record):
             }
         }
     ]
-    return full_record
+    return full_record_to_dict
 
 
 @pytest.fixture
-def full_geolocation_polygon_record(full_record):
-    full_record["metadata"]["locations"]["features"] = [
+def full_geolocation_polygon_record(full_record_to_dict):
+    full_record_to_dict["metadata"]["locations"]["features"] = [
         {
             "geometry": {
                 "coordinates": [
@@ -99,127 +92,74 @@ def full_geolocation_polygon_record(full_record):
             }
         }
     ]
-    return full_record
+    return full_record_to_dict
 
 
 @pytest.fixture
-def full_modified_date_record(full_record):
-    full_record["updated"] = "2022-12-12T22:50:10.573125+00:00"
-    return full_record
+def full_modified_date_record(full_record_to_dict):
+    full_record_to_dict["updated"] = "2022-12-12T22:50:10.573125+00:00"
+    return full_record_to_dict
 
 
-def test_datacite43_serializer(running_app, full_record):
+def test_datacite43_serializer(running_app, full_record_to_dict):
     """Test serializer to DataCite 4.3 JSON"""
-    full_record["metadata"]["rights"].append(
+    full_record_to_dict["metadata"]["rights"].append(
         {
             "title": {"en": "No rightsUri license"},
         }
     )
     # for HTML stripping test purposes
     expected_data = {
-        "types": {"resourceTypeGeneral": "Image", "resourceType": "Photo"},
-        "creators": [
-            {
-                "name": "Nielsen, Lars Holm",
-                "nameType": "Personal",
-                "givenName": "Lars Holm",
-                "familyName": "Nielsen",
-                "nameIdentifiers": [
-                    {
-                        "nameIdentifier": "0000-0001-8135-3489",
-                        "nameIdentifierScheme": "ORCID",
-                    }
-                ],
-                "affiliation": [
-                    {
-                        "name": "European Organization for Nuclear Research",
-                        "affiliationIdentifier": "https://ror.org/01ggx4157",
-                        "affiliationIdentifierScheme": "ROR",
-                    },
-                    {"name": "free-text"},
-                ],
-            }
-        ],
-        "titles": [
-            {"title": "InvenioRDM"},
-            {
-                "title": "a research data management platform",
-                "titleType": "Subtitle",
-                "lang": "eng",
-            },
-        ],
-        "publisher": "InvenioRDM",
-        "publicationYear": "2018",
-        "subjects": [
-            {
-                "subject": "Abdominal Injuries",
-                "subjectScheme": "MeSH",
-                "valueURI": "http://id.nlm.nih.gov/mesh/A-D000007",
-            },
-            {"subject": "custom"},
-        ],
         "contributors": [
             {
-                "name": "Nielsen, Lars Holm",
-                "nameType": "Personal",
+                "affiliation": [{"name": "CERN"}, {"name": "TU Wien"}],
                 "contributorType": "Other",
-                "givenName": "Lars Holm",
                 "familyName": "Nielsen",
+                "givenName": "Lars Holm",
+                "name": "Nielsen, Lars Holm",
                 "nameIdentifiers": [
                     {
                         "nameIdentifier": "0000-0001-8135-3489",
                         "nameIdentifierScheme": "ORCID",
                     }
                 ],
-                "affiliation": [
+                "nameType": "Personal",
+            },
+            {
+                "contributorType": "Other",
+                "familyName": "Dirk",
+                "givenName": "Dirkin",
+                "name": "Dirk, Dirkin",
+                "nameIdentifiers": [],
+                "nameType": "Personal",
+            },
+        ],
+        "creators": [
+            {
+                "affiliation": [{"name": "CERN"}, {"name": "free-text"}],
+                "familyName": "Nielsen",
+                "givenName": "Lars Holm",
+                "name": "Nielsen, Lars Holm",
+                "nameIdentifiers": [
                     {
-                        "name": "European Organization for Nuclear Research",
-                        "affiliationIdentifier": "https://ror.org/01ggx4157",
-                        "affiliationIdentifierScheme": "ROR",
+                        "nameIdentifier": "0000-0001-8135-3489",
+                        "nameIdentifierScheme": "ORCID",
                     }
                 ],
-            }
+                "nameType": "Personal",
+            },
+            {
+                "familyName": "Tom",
+                "givenName": "Blabin",
+                "name": "Tom, Blabin",
+                "nameIdentifiers": [],
+                "nameType": "Personal",
+            },
         ],
         "dates": [
             {"date": "2018/2020-09", "dateType": "Issued"},
-            {"date": "1939/1945", "dateType": "Other", "dateInformation": "A date"},
-            {"date": "2023-01-02", "dateType": "Updated"},
-        ],
-        "language": "dan",
-        "identifiers": [
-            {"identifier": "https://self-link.com", "identifierType": "URL"},
-            {"identifier": "10.1234/inveniordm.1234", "identifierType": "DOI"},
-            {"identifier": "oai:vvv.com:abcde-fghij", "identifierType": "oai"},
-            {"identifier": "1924MNRAS..84..308E", "identifierType": "bibcode"},
-        ],
-        "relatedIdentifiers": [
-            {
-                "relatedIdentifier": "10.1234/foo.bar",
-                "relatedIdentifierType": "DOI",
-                "relationType": "IsCitedBy",
-                "resourceTypeGeneral": "Dataset",
-            },
-            {
-                "relatedIdentifier": "10.1234/inveniordm.1234.parent",
-                "relatedIdentifierType": "DOI",
-                "relationType": "IsVersionOf",
-            },
-        ],
-        "sizes": ["11 pages"],
-        "formats": ["application/pdf"],
-        "version": "v1.0",
-        "rightsList": [
-            {
-                "rights": "A custom license",
-                "rightsUri": "https://customlicense.org/licenses/by/4.0/",
-            },
-            {
-                "rights": "Creative Commons Attribution 4.0 International",
-                "rightsIdentifierScheme": "spdx",
-                "rightsIdentifier": "cc-by-4.0",
-                "rightsUri": "https://creativecommons.org/licenses/by/4.0/legalcode",
-            },
-            {"rights": "No rightsUri license"},
+            {"date": "1939/1945", "dateInformation": "A date", "dateType": "Other"},
+            {"date": "2023-11-14", "dateType": "Updated"},
         ],
         "descriptions": [
             {
@@ -228,128 +168,209 @@ def test_datacite43_serializer(running_app, full_record):
             },
             {"description": "Bla bla bla", "descriptionType": "Methods", "lang": "eng"},
         ],
-        "geoLocations": [
-            {
-                "geoLocationPoint": {
-                    "pointLongitude": "-32.94682",
-                    "pointLatitude": "-60.63932",
-                },
-                "geoLocationPlace": "test location place",
-            }
-        ],
+        "formats": ["application/pdf"],
         "fundingReferences": [
             {
+                "awardNumber": "111023",
+                "awardTitle": "Launching of the research program on "
+                "meaning processing",
+                "awardURI": "https://sandbox.zenodo.org/",
                 "funderName": "European Commission",
-                "funderIdentifier": "00k4n6c32",
-                "funderIdentifierType": "ROR",
-                "awardTitle": (
-                    "Personalised Treatment For Cystic Fibrosis Patients With "
-                    "Ultra-rare CFTR Mutations (and beyond)"
-                ),
-                "awardNumber": "755021",
-                "awardURI": "https://cordis.europa.eu/project/id/755021",
             }
         ],
+        "geoLocations": [
+            {
+                "geoLocationPlace": "test location place",
+                "geoLocationPoint": {
+                    "pointLatitude": "-60.63932",
+                    "pointLongitude": "-32.94682",
+                },
+            }
+        ],
+        "identifiers": [
+            {
+                "identifier": "https://127.0.0.1:5000/records/12345-abcde",
+                "identifierType": "URL",
+            },
+            {"identifier": "10.1234/12345-abcde", "identifierType": "DOI"},
+            {"identifier": "oai:invenio-rdm.com:12345-abcde", "identifierType": "oai"},
+            {"identifier": "1924MNRAS..84..308E", "identifierType": "bibcode"},
+        ],
+        "language": "dan",
+        "publicationYear": "2018",
+        "publisher": "InvenioRDM",
+        "relatedIdentifiers": [
+            {
+                "relatedIdentifier": "10.1234/foo.bar",
+                "relatedIdentifierType": "DOI",
+                "relationType": "IsCitedBy",
+                "resourceTypeGeneral": "Dataset",
+            },
+            {
+                "relatedIdentifier": "10.1234/pgfpj-at058",
+                "relatedIdentifierType": "DOI",
+                "relationType": "IsVersionOf",
+            },
+        ],
+        "rightsList": [
+            {
+                "rights": "A custom license",
+                "rightsUri": "https://customlicense.org/licenses/by/4.0/",
+            },
+            {
+                "rights": "Creative Commons Attribution 4.0 International",
+                "rightsIdentifier": "cc-by-4.0",
+                "rightsIdentifierScheme": "spdx",
+                "rightsUri": "https://creativecommons.org/licenses/by/4.0/legalcode",
+            },
+            {"rights": "No rightsUri license"},
+        ],
         "schemaVersion": "http://datacite.org/schema/kernel-4",
+        "sizes": ["11 pages"],
+        "subjects": [
+            {
+                "subject": "Abdominal Injuries",
+                "subjectScheme": "MeSH",
+                "valueURI": "http://id.nlm.nih.gov/mesh/A-D000007",
+            },
+            {"subject": "custom"},
+        ],
+        "titles": [
+            {"title": "InvenioRDM"},
+            {
+                "lang": "eng",
+                "title": "a research data management platform",
+                "titleType": "Subtitle",
+            },
+        ],
+        "types": {"resourceType": "Photo", "resourceTypeGeneral": "Image"},
+        "version": "v1.0",
     }
 
     serializer = DataCite43JSONSerializer()
-    serialized_record = serializer.dump_obj(full_record)
+    serialized_record = serializer.dump_obj(full_record_to_dict)
 
     assert serialized_record == expected_data
 
 
-def test_datacite43_xml_serializer(running_app, full_record):
-    expected_data = [
-        "<?xml version='1.0' encoding='utf-8'?>",
-        '<resource xmlns="http://datacite.org/schema/kernel-4" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://datacite.org/schema/kernel-4 http://schema.datacite.org/meta/kernel-4.3/metadata.xsd">',  # noqa
-        '  <identifier identifierType="DOI">10.1234/inveniordm.1234</identifier>',  # noqa
-        "  <alternateIdentifiers>",
-        '    <alternateIdentifier alternateIdentifierType="URL">https://self-link.com</alternateIdentifier>',
-        '    <alternateIdentifier alternateIdentifierType="oai">oai:vvv.com:abcde-fghij</alternateIdentifier>',
-        '    <alternateIdentifier alternateIdentifierType="bibcode">1924MNRAS..84..308E</alternateIdentifier>',  # noqa
-        "  </alternateIdentifiers>",
-        "  <creators>",
-        "    <creator>",
-        '      <creatorName nameType="Personal">Nielsen, Lars Holm</creatorName>',  # noqa
-        "      <givenName>Lars Holm</givenName>",
-        "      <familyName>Nielsen</familyName>",
-        '      <nameIdentifier nameIdentifierScheme="ORCID">0000-0001-8135-3489</nameIdentifier>',  # noqa
-        '      <affiliation affiliationIdentifier="https://ror.org/01ggx4157" affiliationIdentifierScheme="ROR">European Organization for Nuclear Research</affiliation>',  # noqa
-        "      <affiliation>free-text</affiliation>",
-        "    </creator>",
-        "  </creators>",
-        "  <titles>",
-        "    <title>InvenioRDM</title>",
-        '    <title xml:lang="eng" titleType="Subtitle">a research data management platform</title>',  # noqa
-        "  </titles>",
-        "  <publisher>InvenioRDM</publisher>",
-        "  <publicationYear>2018</publicationYear>",
-        "  <subjects>",
-        '    <subject subjectScheme="MeSH">Abdominal Injuries</subject>',
-        "    <subject>custom</subject>",
-        "  </subjects>",
-        "  <contributors>",
-        '    <contributor contributorType="Other">',
-        '      <contributorName nameType="Personal">Nielsen, Lars Holm</contributorName>',  # noqa
-        "      <givenName>Lars Holm</givenName>",
-        "      <familyName>Nielsen</familyName>",
-        '      <nameIdentifier nameIdentifierScheme="ORCID">0000-0001-8135-3489</nameIdentifier>',  # noqa
-        '      <affiliation affiliationIdentifier="https://ror.org/01ggx4157" affiliationIdentifierScheme="ROR">European Organization for Nuclear Research</affiliation>',  # noqa
-        "    </contributor>",
-        "  </contributors>",
-        "  <dates>",
-        '    <date dateType="Issued">2018/2020-09</date>',
-        '    <date dateType="Other" dateInformation="A date">1939/1945</date>',  # noqa
-        '    <date dateType="Updated">2023-01-02</date>',
-        "  </dates>",
-        "  <language>dan</language>",
-        '  <resourceType resourceTypeGeneral="Image">Photo</resourceType>',
-        "  <relatedIdentifiers>",
-        '    <relatedIdentifier relatedIdentifierType="DOI" relationType="IsCitedBy" resourceTypeGeneral="Dataset">10.1234/foo.bar</relatedIdentifier>',  # noqa
-        '    <relatedIdentifier relatedIdentifierType="DOI" relationType="IsVersionOf">10.1234/inveniordm.1234.parent</relatedIdentifier>',  # noqa
-        "  </relatedIdentifiers>",
-        "  <sizes>",
-        "    <size>11 pages</size>",
-        "  </sizes>",
-        "  <formats>",
-        "    <format>application/pdf</format>",
-        "  </formats>",
-        "  <version>v1.0</version>",
-        "  <rightsList>",
-        '    <rights rightsURI="https://customlicense.org/licenses/by/4.0/">A custom license</rights>',  # noqa
-        '    <rights rightsURI="https://creativecommons.org/licenses/by/4.0/legalcode" rightsIdentifierScheme="spdx" rightsIdentifier="cc-by-4.0">Creative Commons Attribution 4.0 International</rights>',  # noqa
-        "  </rightsList>",
-        "  <descriptions>",
-        '    <description descriptionType="Abstract">A description ',
-        "with HTML tags</description>",
-        '    <description descriptionType="Methods" xml:lang="eng">Bla bla bla</description>',  # noqa
-        "  </descriptions>",
-        "  <geoLocations>",
-        "    <geoLocation>",
-        "      <geoLocationPlace>test location place</geoLocationPlace>",
-        "      <geoLocationPoint>",
-        "        <pointLongitude>-32.94682</pointLongitude>",
-        "        <pointLatitude>-60.63932</pointLatitude>",
-        "      </geoLocationPoint>",
-        "    </geoLocation>",
-        "  </geoLocations>",
-        "  <fundingReferences>",
-        "    <fundingReference>",
-        "      <funderName>European Commission</funderName>",
-        '      <funderIdentifier funderIdentifierType="ROR">00k4n6c32</funderIdentifier>',  # noqa
-        "      <awardNumber>755021</awardNumber>",
-        "      <awardTitle>Personalised Treatment For Cystic Fibrosis Patients With Ultra-rare CFTR Mutations (and beyond)</awardTitle>",  # noqa
-        "    </fundingReference>",
-        "  </fundingReferences>",
-        "</resource>",
-        "",  # this is because of the split
-    ]
+def test_datacite43_xml_serializer(running_app, full_record_to_dict):
+    expected_data = (
+        "<?xml version='1.0' encoding='utf-8'?>\n"
+        '<resource xmlns="http://datacite.org/schema/kernel-4" '
+        'xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" '
+        'xsi:schemaLocation="http://datacite.org/schema/kernel-4 '
+        'http://schema.datacite.org/meta/kernel-4.3/metadata.xsd">\n'
+        '  <identifier identifierType="DOI">10.1234/12345-abcde</identifier>\n'
+        "  <alternateIdentifiers>\n"
+        "    <alternateIdentifier "
+        'alternateIdentifierType="URL">https://127.0.0.1:5000/records/12345-abcde</alternateIdentifier>\n'
+        "    <alternateIdentifier "
+        'alternateIdentifierType="oai">oai:invenio-rdm.com:12345-abcde</alternateIdentifier>\n'
+        "    <alternateIdentifier "
+        'alternateIdentifierType="bibcode">1924MNRAS..84..308E</alternateIdentifier>\n'
+        "  </alternateIdentifiers>\n"
+        "  <creators>\n"
+        "    <creator>\n"
+        '      <creatorName nameType="Personal">Nielsen, Lars Holm</creatorName>\n'
+        "      <givenName>Lars Holm</givenName>\n"
+        "      <familyName>Nielsen</familyName>\n"
+        "      <nameIdentifier "
+        'nameIdentifierScheme="ORCID">0000-0001-8135-3489</nameIdentifier>\n'
+        "      <affiliation>CERN</affiliation>\n"
+        "      <affiliation>free-text</affiliation>\n"
+        "    </creator>\n"
+        "    <creator>\n"
+        '      <creatorName nameType="Personal">Tom, Blabin</creatorName>\n'
+        "      <givenName>Blabin</givenName>\n"
+        "      <familyName>Tom</familyName>\n"
+        "    </creator>\n"
+        "  </creators>\n"
+        "  <titles>\n"
+        "    <title>InvenioRDM</title>\n"
+        '    <title xml:lang="eng" titleType="Subtitle">a research data management '
+        "platform</title>\n"
+        "  </titles>\n"
+        "  <publisher>InvenioRDM</publisher>\n"
+        "  <publicationYear>2018</publicationYear>\n"
+        "  <subjects>\n"
+        '    <subject subjectScheme="MeSH">Abdominal Injuries</subject>\n'
+        "    <subject>custom</subject>\n"
+        "  </subjects>\n"
+        "  <contributors>\n"
+        '    <contributor contributorType="Other">\n'
+        '      <contributorName nameType="Personal">Nielsen, Lars '
+        "Holm</contributorName>\n"
+        "      <givenName>Lars Holm</givenName>\n"
+        "      <familyName>Nielsen</familyName>\n"
+        "      <nameIdentifier "
+        'nameIdentifierScheme="ORCID">0000-0001-8135-3489</nameIdentifier>\n'
+        "      <affiliation>CERN</affiliation>\n"
+        "      <affiliation>TU Wien</affiliation>\n"
+        "    </contributor>\n"
+        '    <contributor contributorType="Other">\n'
+        '      <contributorName nameType="Personal">Dirk, Dirkin</contributorName>\n'
+        "      <givenName>Dirkin</givenName>\n"
+        "      <familyName>Dirk</familyName>\n"
+        "    </contributor>\n"
+        "  </contributors>\n"
+        "  <dates>\n"
+        '    <date dateType="Issued">2018/2020-09</date>\n'
+        '    <date dateType="Other" dateInformation="A date">1939/1945</date>\n'
+        '    <date dateType="Updated">2023-11-14</date>\n'
+        "  </dates>\n"
+        "  <language>dan</language>\n"
+        '  <resourceType resourceTypeGeneral="Image">Photo</resourceType>\n'
+        "  <relatedIdentifiers>\n"
+        '    <relatedIdentifier relatedIdentifierType="DOI" relationType="IsCitedBy" '
+        'resourceTypeGeneral="Dataset">10.1234/foo.bar</relatedIdentifier>\n'
+        '    <relatedIdentifier relatedIdentifierType="DOI" '
+        'relationType="IsVersionOf">10.1234/pgfpj-at058</relatedIdentifier>\n'
+        "  </relatedIdentifiers>\n"
+        "  <sizes>\n"
+        "    <size>11 pages</size>\n"
+        "  </sizes>\n"
+        "  <formats>\n"
+        "    <format>application/pdf</format>\n"
+        "  </formats>\n"
+        "  <version>v1.0</version>\n"
+        "  <rightsList>\n"
+        '    <rights rightsURI="https://customlicense.org/licenses/by/4.0/">A custom '
+        "license</rights>\n"
+        "    <rights "
+        'rightsURI="https://creativecommons.org/licenses/by/4.0/legalcode" '
+        'rightsIdentifierScheme="spdx" rightsIdentifier="cc-by-4.0">Creative Commons '
+        "Attribution 4.0 International</rights>\n"
+        "  </rightsList>\n"
+        "  <descriptions>\n"
+        '    <description descriptionType="Abstract">A description \n'
+        "with HTML tags</description>\n"
+        '    <description descriptionType="Methods" xml:lang="eng">Bla bla '
+        "bla</description>\n"
+        "  </descriptions>\n"
+        "  <geoLocations>\n"
+        "    <geoLocation>\n"
+        "      <geoLocationPlace>test location place</geoLocationPlace>\n"
+        "      <geoLocationPoint>\n"
+        "        <pointLongitude>-32.94682</pointLongitude>\n"
+        "        <pointLatitude>-60.63932</pointLatitude>\n"
+        "      </geoLocationPoint>\n"
+        "    </geoLocation>\n"
+        "  </geoLocations>\n"
+        "  <fundingReferences>\n"
+        "    <fundingReference>\n"
+        "      <funderName>European Commission</funderName>\n"
+        "      <awardNumber>111023</awardNumber>\n"
+        "      <awardTitle>Launching of the research program on meaning "
+        "processing</awardTitle>\n"
+        "    </fundingReference>\n"
+        "  </fundingReferences>\n"
+        "</resource>\n"
+    )
 
     serializer = DataCite43XMLSerializer()
-    serialized_record = serializer.serialize_object(full_record)
+    serialized_record = serializer.serialize_object(full_record_to_dict)
 
-    assert serialized_record == "\n".join(expected_data)
+    assert serialized_record == expected_data
 
 
 def test_datacite43_identifiers(running_app, minimal_record):
