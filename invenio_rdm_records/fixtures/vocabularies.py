@@ -71,7 +71,9 @@ class CSVIterator(DataIterator):
     def __iter__(self):
         """Iterate over records."""
         with open(self._data_file) as fp:
-            reader = csv.reader(fp, delimiter=",", quotechar='"')
+            dialect = csv.Sniffer().sniff(fp.read(1024))
+            fp.seek(0)
+            reader = csv.reader(fp, dialect)
             header = next(reader)
             for row in reader:
                 yield self.map_row(header, row)
