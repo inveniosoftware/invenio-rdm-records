@@ -143,9 +143,6 @@ class MARCXMLSchema(BaseSerializerSchema, CommonFieldsMixin):
 
         return files or missing
 
-        version = {"a": v_}
-        return version
-
     def get_sizes(self, obj):
         """Get sizes."""
         sizes_list = obj["metadata"].get("sizes", [])
