@@ -325,7 +325,9 @@ def full_record_to_dict():
             "publisher": "InvenioRDM",
             "references": [
                 {
-                    "reference": "0000 0001 1456 7559",
+                    "reference": "Nielsen et al,..",
+                    "identifier": "0000 0001 1456 7559",
+                    "scheme": "isni",
                 },
             ],
             "related_identifiers": [
