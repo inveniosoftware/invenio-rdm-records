@@ -126,7 +126,7 @@ class DublinCoreSchema(BaseSerializerSchema, CommonFieldsMixin):
         for right in obj["metadata"].get("rights", []):
             rights.append(right.get("title").get(current_default_locale()))
             if right.get("id"):
-                license_url = right.get("props").get("url")
+                license_url = right.get("props", {}).get("url")
                 if license_url:
                     rights.append(license_url)
             else:
