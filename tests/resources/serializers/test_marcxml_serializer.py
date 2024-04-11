@@ -276,7 +276,7 @@ def test_marcxml_serializer_full_record(db, running_app, updated_full_record):
     <subfield code="a">eng</subfield>
   </datafield>
   <datafield tag="999" ind1="C" ind2="5">
-    <subfield code="x">0000 0001 1456 7559</subfield>
+    <subfield code="x">Nielsen et al,..</subfield>
   </datafield>
   <datafield tag="260" ind1=" " ind2=" ">
     <subfield code="b">InvenioRDM</subfield>
