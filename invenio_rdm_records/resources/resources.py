@@ -12,7 +12,7 @@
 """Bibliographic Record Resource."""
 from functools import wraps
 
-from flask import abort, current_app, g, send_file
+from flask import abort, current_app, g, redirect, send_file, url_for
 from flask_cors import cross_origin
 from flask_resources import (
     HTTPJSONException,
