@@ -11,6 +11,35 @@
 Changes
 =======
 
+Version 10.0.0 (released 2024-04-11)
+
+- Fixes datacite, dcat, dublin core, marcxml and schema.org serializer performance (reduced from ~500 queries in an OAI-PMH page down to 5).
+- resources: fix performance of serializers
+    - Rely on index data for licenses, subjects, communities, affiliations, and licenses instead of querying.
+- datacite: fixed schema with unsafe access to parent
+- datacite: fixed custom license links.
+- serializer: add system updated date to DataCite
+- csl: improve DOI (alternative identifier), ISBN, and ISSN
+- csl: improve serialization performance
+    - Remove funding information from CSL as it makes database queries and it is not relevant in the CSL JSON for generating citations.
+- marcxml: removed service call for community slug
+- marcxml: add license in 650
+- marcxml: added references
+- marcxml: updated award title in get_funding
+- marcxml: added language
+- marcxml: moved funding from 856 to 536
+- marcxml: add contributor role
+- marcxml: remove read_many call to vocab service
+- records: add community.is_verified to mapping
+- licenses: use sniffer to determine csv format
+- licenses: bring urls up to date and use opensource and creativecommons as main urls with spdx as fallback
+- licenses: change delimiter to comma
+- assets: Add overridable tags (#1631)
+- Added Swedish translation for vocabularies
+- IIIF Presi: change viewingHint to individuals
+- links: fix ESLint map expects a return value from arrow function
+- vocab: add marc to roles.yaml
+
 Version 9.1.0 (released 2024-04-04)
 
 - api: added new endpoint to manage access restrictions of records

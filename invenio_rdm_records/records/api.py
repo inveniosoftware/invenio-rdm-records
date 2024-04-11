@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2020-2023 CERN.
+# Copyright (C) 2020-2024 CERN.
 # Copyright (C) 2021-2023 TU Wien.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
