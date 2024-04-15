@@ -11,6 +11,13 @@
 Changes
 =======
 
+Version 10.1.0 (released 2024-04-15)
+
+- licenses: fix wrong characters encoding
+- facets: integrate combined_subjects / fix nested subject faceting
+- resources: fixed missing imports
+- dublincore: fix license URL lookup
+
 Version 10.0.0 (released 2024-04-11)
 
 - Fixes datacite, dcat, dublin core, marcxml and schema.org serializer performance (reduced from ~500 queries in an OAI-PMH page down to 5).
