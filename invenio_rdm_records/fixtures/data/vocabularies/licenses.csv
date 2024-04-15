@@ -219,9 +219,9 @@ lppl-1.3a,LaTeX Project Public License v1.3a,,,"all,software",https://spdx.org/l
 lppl-1.3c,LaTeX Project Public License v1.3c,,,"all,software",https://opensource.org/license/lppl,spdx,y
 latex2e,Latex2e License,,,all,https://spdx.org/licenses/Latex2e,spdx,
 leptonica,Leptonica License,,,all,https://spdx.org/licenses/Leptonica,spdx,
-liliq-p-1.1,Licence Libre du Qu�bec � Permissive version 1.1,,,all,https://opensource.org/license/liliq-p-1-1,spdx,y
-liliq-r-1.1,Licence Libre du Qu�bec � R�ciprocit� version 1.1,,,all,https://opensource.org/license/liliq-r-1-1,spdx,y
-liliq-rplus-1.1,Licence Libre du Qu�bec � R�ciprocit� forte version 1.1,,,all,https://opensource.org/license/liliq-rplus-1-1,spdx,y
+liliq-p-1.1,Licence Libre du Québec – Permissive version 1.1,,,all,https://opensource.org/license/liliq-p-1-1,spdx,y
+liliq-r-1.1,Licence Libre du Québec – Réciprocité version 1.1,,,all,https://opensource.org/license/liliq-r-1-1,spdx,y
+liliq-rplus-1.1,Licence Libre du Québec – Réciprocité forte version 1.1,,,all,https://opensource.org/license/liliq-rplus-1-1,spdx,y
 libpng,libpng License,,,"all,software",https://spdx.org/licenses/Libpng,spdx,
 linux-openib,Linux Kernel Variant of OpenIB.org license,,,all,https://spdx.org/licenses/Linux-OpenIB,spdx,
 mit,MIT License,"A short and simple permissive license with conditions only requiring preservation of copyright and license notices. Licensed works, modifications, and larger works may be distributed under different terms and without source code.",,"recommended,all,software",https://opensource.org/license/mit,spdx,y
