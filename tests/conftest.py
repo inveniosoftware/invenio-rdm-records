@@ -369,6 +369,8 @@ def app_config(app_config, mock_datacite_client):
         "record_file_download": "/records/<pid_value>/files/<path:filename>",
     }
 
+    app_config["USERS_RESOURCES_GROUPS_ENABLED"] = True
+
     return app_config
 
 

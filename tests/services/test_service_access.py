@@ -235,7 +235,7 @@ def test_read_grant_by_subjectid_found(running_app, minimal_record, users):
 
     # read grant
     grant = access_service.read_grant_by_subject(
-        superuser_identity, record.id, user_id, subject_type
+        superuser_identity, record.id, user_id, subject_type=subject_type
     )
     assert grant.to_dict() == {
         "permission": "preview",
@@ -270,7 +270,7 @@ def test_read_grant_by_subjectid_not_found(running_app, minimal_record, users):
     access_service = records_service.access
     with pytest.raises(LookupError):
         access_service.read_grant_by_subject(
-            superuser_identity, record.id, "10000000", subject_type
+            superuser_identity, record.id, "10000000", subject_type=subject_type
         )
 
 
@@ -288,7 +288,7 @@ def test_read_grant_by_subjectid_no_grants(running_app, minimal_record, users):
     access_service = records_service.access
     with pytest.raises(LookupError):
         access_service.read_grant_by_subject(
-            superuser_identity, record.id, user_id, subject_type
+            superuser_identity, record.id, user_id, subject_type=subject_type
         )
 
 
@@ -317,7 +317,7 @@ def test_read_grant_by_subjectid_provide_role(running_app, minimal_record, roles
     access_service = records_service.access
     with pytest.raises(LookupError):
         access_service.read_grant_by_subject(
-            superuser_identity, record.id, "test", subject_type
+            superuser_identity, record.id, "test", subject_type=subject_type
         )
 
 
@@ -345,14 +345,14 @@ def test_delete_grant_by_subjectid_found(running_app, minimal_record, users):
 
     # delete grant
     grant = access_service.delete_grant_by_subject(
-        superuser_identity, record.id, user_id, subject_type
+        superuser_identity, record.id, user_id, subject_type=subject_type
     )
     assert grant is True
 
     # try to read grant
     with pytest.raises(LookupError):
         access_service.read_grant_by_subject(
-            superuser_identity, record.id, user_id, subject_type
+            superuser_identity, record.id, user_id, subject_type=subject_type
         )
 
 
@@ -382,7 +382,7 @@ def test_delete_grant_by_subjectid_not_found(running_app, minimal_record, users)
     access_service = records_service.access
     with pytest.raises(LookupError):
         access_service.delete_grant_by_subject(
-            superuser_identity, record.id, "10000000", subject_type
+            superuser_identity, record.id, "10000000", subject_type=subject_type
         )
 
 
@@ -399,7 +399,7 @@ def test_delete_grant_by_subjectid_no_grants(running_app, minimal_record, users)
     access_service = records_service.access
     with pytest.raises(LookupError):
         access_service.delete_grant_by_subject(
-            superuser_identity, record.id, str(users[0].id), subject_type
+            superuser_identity, record.id, str(users[0].id), subject_type=subject_type
         )
 
 
@@ -428,7 +428,7 @@ def test_delete_grant_by_subjectid_provide_role(running_app, minimal_record, rol
     access_service = records_service.access
     with pytest.raises(LookupError):
         access_service.delete_grant_by_subject(
-            superuser_identity, record.id, "test", subject_type
+            superuser_identity, record.id, "test", subject_type=subject_type
         )
 
 
@@ -477,7 +477,7 @@ def test_read_all_grants_by_subject_found(running_app, minimal_record, users, ro
 
     # search user grants
     grants = access_service.read_all_grants_by_subject(
-        superuser_identity, record.id, subject_type
+        superuser_identity, record.id, subject_type=subject_type
     )
     assert grants.to_dict()["hits"]["total"] == 2
     assert grants.to_dict()["hits"]["hits"][0]["subject"]["type"] == "user"
@@ -511,7 +511,7 @@ def test_read_all_grants_by_subject_not_found(
     # search user grants
     subject_type = "user"
     grants = access_service.read_all_grants_by_subject(
-        superuser_identity, record.id, subject_type
+        superuser_identity, record.id, subject_type=subject_type
     )
     assert grants.to_dict()["hits"]["total"] == 0
 
@@ -552,7 +552,7 @@ def test_update_grant_by_subject_found(running_app, minimal_record, users):
 
     # read grant
     grant = access_service.read_grant_by_subject(
-        superuser_identity, record.id, user_id, subject_type
+        superuser_identity, record.id, user_id, subject_type=subject_type
     )
     assert grant.to_dict()["permission"] == "manage"
 
@@ -672,7 +672,7 @@ def test_delete_grant_by_subject_permissions(
 
     # delete user grant
     access_service.delete_grant_by_subject(
-        superuser_identity, record.id, user_with_grant_id, subject_type
+        superuser_identity, record.id, user_with_grant_id, subject_type=subject_type
     )
 
     # assert that now user can not create a new version

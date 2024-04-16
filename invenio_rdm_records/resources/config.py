@@ -346,7 +346,7 @@ record_links_error_handlers = {
     LookupError: create_error_handler(
         HTTPJSONException(
             code=404,
-            description="No secret link found with the given ID.",
+            description=_("No secret link found with the given ID."),
         )
     ),
 }
@@ -354,7 +354,7 @@ record_links_error_handlers = {
 grants_error_handlers = {
     **deepcopy(RecordResourceConfig.error_handlers),
     LookupError: create_error_handler(
-        HTTPJSONException(code=404, description="No grant found with the given ID.")
+        HTTPJSONException(code=404, description=_("No grant found with the given ID."))
     ),
     GrantExistsError: create_error_handler(
         lambda e: HTTPJSONException(
@@ -367,7 +367,14 @@ grants_error_handlers = {
 user_access_error_handlers = {
     **deepcopy(RecordResourceConfig.error_handlers),
     LookupError: create_error_handler(
-        HTTPJSONException(code=404, description="No grant found by given user id.")
+        HTTPJSONException(code=404, description=_("No grant found by given user id."))
+    ),
+}
+
+group_access_error_handlers = {
+    **deepcopy(RecordResourceConfig.error_handlers),
+    LookupError: create_error_handler(
+        HTTPJSONException(code=404, description=_("No grant found by given group id."))
     ),
 }
 
@@ -460,6 +467,37 @@ class RDMGrantUserAccessResourceConfig(RecordResourceConfig, ConfiguratorMixin):
     }
 
     error_handlers = user_access_error_handlers
+
+
+class RDMGrantGroupAccessResourceConfig(RecordResourceConfig, ConfiguratorMixin):
+    """Record grants group access resource configuration."""
+
+    blueprint_name = "record_group_access"
+
+    url_prefix = "/records/<pid_value>/access"
+
+    routes = {
+        "item": "/groups/<subject_id>",
+        "list": "/groups",
+    }
+
+    links_config = {}
+
+    request_view_args = {
+        "pid_value": ma.fields.Str(),
+        "subject_id": ma.fields.Str(),  # group id
+    }
+
+    grant_subject_type = "role"
+
+    response_handlers = {
+        "application/vnd.inveniordm.v1+json": RecordResourceConfig.response_handlers[
+            "application/json"
+        ],
+        **deepcopy(RecordResourceConfig.response_handlers),
+    }
+
+    error_handlers = group_access_error_handlers
 
 
 #
