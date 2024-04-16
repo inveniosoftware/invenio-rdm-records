@@ -119,6 +119,11 @@ def archive_download_enabled(record, ctx):
     return current_app.config["RDM_ARCHIVE_DOWNLOAD_ENABLED"]
 
 
+def _groups_enabled(record, ctx):
+    """Return if groups are enabled."""
+    return current_app.config.get("USERS_RESOURCES_GROUPS_ENABLED", False)
+
+
 def is_datacite_test(record, ctx):
     """Return if the datacite test mode is being used."""
     return current_app.config["DATACITE_TEST_MODE"]
@@ -438,6 +443,9 @@ class RDMRecordServiceConfig(RecordServiceConfig, ConfiguratorMixin):
         "access_links": RecordLink("{+api}/records/{id}/access/links"),
         "access_grants": RecordLink("{+api}/records/{id}/access/grants"),
         "access_users": RecordLink("{+api}/records/{id}/access/users"),
+        "access_groups": RecordLink(
+            "{+api}/records/{id}/access/groups", when=_groups_enabled
+        ),
         "access_request": RecordLink("{+api}/records/{id}/access/request"),
         "access": RecordLink("{+api}/records/{id}/access"),
         # TODO: only include link when DOI support is enabled.
