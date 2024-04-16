@@ -563,3 +563,8 @@ class IIIFResourceConfig(ResourceConfig, ConfiguratorMixin):
         "tif": "image/tiff",
         "tiff": "image/tiff",
     }
+
+    proxy_cls = FromConfig(
+        "IIIF_PROXY_CLASS",
+        default=None,
+    )

@@ -811,6 +811,29 @@ class IIIFResource(ErrorHandlersMixin, Resource):
         super().__init__(config)
         self.service = service
 
+    def proxy_if_enabled(f):
+        """Decorate a function to proxy the request to an Image Server if a proxy is enabled."""
+
+        @wraps(f)
+        def _wrapper(self, *args, **kwargs):
+            if self.proxy_enabled:
+                res = self.proxy_server()
+                if res:
+                    return res, 200
+            return f(self, *args, **kwargs)
+
+        return _wrapper
+
+    @property
+    def proxy_enabled(self):
+        """Check if proxy is enabled."""
+        return self.config.proxy_cls is not None
+
+    @property
+    def proxy_server(self):
+        """Get the proxy configuration."""
+        return self.config.proxy_cls() if self.proxy_enabled else None
+
     def create_url_rules(self):
         """Create the URL rules for the IIIF resource."""
         routes = self.config.routes
@@ -877,6 +900,7 @@ class IIIFResource(ErrorHandlersMixin, Resource):
     @with_iiif_content_negotiation(IIIFInfoV2JSONSerializer)
     @iiif_request_view_args
     @response_handler()
+    @proxy_if_enabled
     def info(self):
         """Get IIIF image info."""
         item = self.service.get_file(
@@ -889,6 +913,7 @@ class IIIFResource(ErrorHandlersMixin, Resource):
     @request_headers
     @request_read_args
     @iiif_request_view_args
+    @proxy_if_enabled
     def image_api(self):
         """IIIF API Implementation.
 
