@@ -313,6 +313,10 @@ class IIPServerProxy(IIIFProxy):
 
     def proxy_request(self):
         """Proxy request to IIIF server."""
+        assert (
+            self.server_url
+        ), "IIIF server URL must be set. Use variable `RDM_IIIF_SERVER_URL` to set it."
+
         url = self.handle_url_rewrite()
         res = requests.request(
             request.method, url, headers=request.headers, stream=True
@@ -335,7 +339,7 @@ class IIPServerProxy(IIIFProxy):
         recid = uuid.split(":")[1]
         file_name = uuid.split(":")[-1]
         path = request.path
-        path = path.replace("/iiif/", "").replace(uuid, f"public/{recid}/{file_name}")
+        path = path.replace(uuid, f"/public/{recid}/{file_name}")
         return urljoin(
             self.server_url,
             path,
