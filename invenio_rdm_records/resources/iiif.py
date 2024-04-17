@@ -10,7 +10,7 @@
 from abc import ABC, abstractmethod
 
 import requests
-from flask import Response, request
+from flask import Response, current_app, request
 from flask_resources import resource_requestctx
 
 
@@ -81,8 +81,7 @@ class IIPServerProxy(IIIFProxy):
     @property
     def server_url(self):
         """IIIF server URL."""
-        # TODO or get by config
-        return "http://127.0.0.1:8080/iiif/"
+        return current_app.config["RDM_IIIF_SERVER_URL"]
 
     @property
     def proxied_routes(self):
@@ -105,7 +104,7 @@ class IIPServerProxy(IIIFProxy):
         """Handle URL rewrite.
 
         For IIPServer, we need to match the folder structure where the images are stored.
-        I.e. /<recid>/<filename>
+        I.e. /public/<recid>/<filename>
         """
         from urllib.parse import urljoin
 
@@ -113,7 +112,7 @@ class IIPServerProxy(IIIFProxy):
         recid = uuid.split(":")[1]
         file_name = uuid.split(":")[-1]
         path = request.path
-        path = path.replace("/iiif/", "").replace(uuid, f"{recid}/{file_name}")
+        path = path.replace("/iiif/", "").replace(uuid, f"public/{recid}/{file_name}")
         return urljoin(
             self.server_url,
             path,
