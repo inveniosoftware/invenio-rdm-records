@@ -20,8 +20,8 @@ from .config import (
     RDMRecordRequestsResourceConfig,
     RDMRecordResourceConfig,
 )
+from .iiif import IIIFResource
 from .resources import (
-    IIIFResource,
     RDMCommunityRecordsResource,
     RDMGrantsAccessResource,
     RDMParentGrantsResource,
