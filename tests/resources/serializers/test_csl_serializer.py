@@ -148,3 +148,14 @@ def test_citation_string_serializer_record(
             # in case of error, the response is JSON
             assert response.headers["content-type"] == "application/json"
             assert f"Citation string style not found." in body
+
+
+def test_citation_string_serializer_empty_record(running_app, empty_record):
+    """Test Citation String Serializer for an empty record."""
+
+    expected_data = {}
+
+    serializer = CSLJSONSchema()
+    serialized_record = serializer.dump(empty_record)
+
+    assert serialized_record == expected_data
