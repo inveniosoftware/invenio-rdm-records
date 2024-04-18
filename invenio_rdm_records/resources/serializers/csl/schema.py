@@ -13,6 +13,7 @@ from edtf.parser.parser_classes import Date, Interval
 from flask_resources.serializers import BaseSerializerSchema
 from marshmallow import Schema, fields, missing, pre_dump
 from marshmallow_utils.fields import SanitizedUnicode, StrippedHTML
+from pydash import py_
 
 from ..schemas import CommonFieldsMixin
 from ..utils import get_vocabulary_props
@@ -62,19 +63,27 @@ class CSLJSONSchema(BaseSerializerSchema, CommonFieldsMixin):
 
     def get_type(self, obj):
         """Get resource type."""
+        resource_type_id = py_.get(obj, "metadata.resource_type.id")
+        if not resource_type_id:
+            return missing
+
         props = get_vocabulary_props(
             "resourcetypes",
             [
                 "props.csl",
             ],
-            obj["metadata"]["resource_type"]["id"],
+            resource_type_id,
         )
         return props.get("csl", "article")  # article is CSL "Other"
 
     def get_issued(self, obj):
         """Get issued dates."""
+        publication_date = py_.get(obj, "metadata.publication_date")
+        if not publication_date:
+            return missing
+
         try:
-            parsed = parse_edtf(obj["metadata"].get("publication_date"))
+            parsed = parse_edtf(publication_date)
         except EDTFParseException:
             return missing
 
