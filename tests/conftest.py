@@ -916,6 +916,19 @@ def minimal_record():
 
 
 @pytest.fixture()
+def empty_record():
+    """Almost empty record data as dict coming from the external world."""
+    return {
+        "pids": {},
+        "access": {},
+        "files": {
+            "enabled": False,  # Most tests don't care about files
+        },
+        "metadata": {},
+    }
+
+
+@pytest.fixture()
 def minimal_restricted_record(minimal_record):
     """Data for restricted record."""
     record = deepcopy(minimal_record)
