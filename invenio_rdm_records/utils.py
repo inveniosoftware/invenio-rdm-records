@@ -71,7 +71,7 @@ class ChainObject:
 
         objs = super().__getattribute__("_objs")
         for o in objs:
-            if getattr(o, name):
+            if getattr(o, name, None):
                 return getattr(o, name)
         raise AttributeError()
 

@@ -193,6 +193,20 @@ class PIDsService(RecordService):
         if f"{link_prefix}_{scheme}" in links:
             url = links[f"{link_prefix}_{scheme}"]
 
+        # NOTE: This is not the best place to do this, since we shouldn't be aware of
+        #       the fact that the record has a `RelationsField``. However, without
+        #       dereferencing, we're not able to serialize the record properly for
+        #       registration/updates (e.g. for the DataCite DOIs).
+        #       Some possible alternatives:
+        #
+        #       - Fetch the record from the service, so that it is already in a
+        #         serializable dereferenced state.
+        #       - Bake-in the dereferencing in the serializer, though this would
+        #         be not very consistent regarding the architecture layers.
+        relations = getattr(pid_record, "relations", None)
+        if relations:
+            relations.dereference()
+
         if pid.is_registered():
             self.require_permission(identity, "pid_update", record=record)
             pid_manager.update(pid_record, scheme, url=url)
