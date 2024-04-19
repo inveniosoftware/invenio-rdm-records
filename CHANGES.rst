@@ -11,6 +11,10 @@
 Changes
 =======
 
+Version 10.1.1 (released 2024-04-19)
+
+- pids: fix register/update serialization
+
 Version 10.1.0 (released 2024-04-15)
 
 - licenses: fix wrong characters encoding
