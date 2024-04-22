@@ -20,7 +20,7 @@ from invenio_records_resources.proxies import current_service_registry
 from marshmallow import Schema, ValidationError, fields, missing, post_dump, validate
 from marshmallow_utils.fields import SanitizedUnicode
 from marshmallow_utils.html import strip_html
-
+import json
 from ....proxies import current_rdm_records_service
 from ...serializers.ui.schema import current_default_locale
 from ..utils import get_preferred_identifier, get_vocabulary_props
@@ -73,7 +73,7 @@ class PersonOrOrgSchema43(Schema):
         """Get name identifier list."""
         serialized_identifiers = []
         identifiers = obj["person_or_org"].get("identifiers", [])
-
+        scheme_uri = ""
         for identifier in identifiers:
             scheme = identifier["scheme"]
             id_scheme = get_scheme_datacite(
@@ -81,10 +81,18 @@ class PersonOrOrgSchema43(Schema):
             )
 
             if id_scheme:
+                if scheme == "orcid":
+                    scheme_uri = "http://orcid.org/"
+                elif scheme == "ror":
+                    scheme_uri = "https://ror.org/"
+
                 name_id = {
                     "nameIdentifier": identifier["identifier"],
                     "nameIdentifierScheme": id_scheme,
                 }
+                if scheme_uri:
+                    name_id["schemeUri"] = scheme_uri
+
                 serialized_identifiers.append(name_id)
 
         return serialized_identifiers
