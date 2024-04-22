@@ -183,6 +183,7 @@ class ReviewService(RecordService):
         # request object
         draft.parent.review = request
         uow.register(ParentRecordCommitOp(draft.parent))
+        uow.register(RecordIndexOp(draft, indexer=self.indexer))
 
         if not require_review:
             request_item = current_rdm_records.community_inclusion_service.include(
@@ -196,5 +197,4 @@ class ReviewService(RecordService):
                 )
             )
         )
-        uow.register(RecordIndexOp(draft, indexer=self.indexer))
         return request_item
