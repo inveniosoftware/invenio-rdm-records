@@ -73,7 +73,7 @@ class PersonOrOrgSchema43(Schema):
         """Get name identifier list."""
         serialized_identifiers = []
         identifiers = obj["person_or_org"].get("identifiers", [])
-
+        scheme_uri = ""
         for identifier in identifiers:
             scheme = identifier["scheme"]
             id_scheme = get_scheme_datacite(
@@ -89,8 +89,9 @@ class PersonOrOrgSchema43(Schema):
                 name_id = {
                     "nameIdentifier": identifier["identifier"],
                     "nameIdentifierScheme": id_scheme,
-                    "schemeUri": scheme_uri,
                 }
+                if scheme_uri:
+                    name_id["schemeUri"] = scheme_uri
 
                 serialized_identifiers.append(name_id)
 
