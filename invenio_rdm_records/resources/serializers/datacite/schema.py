@@ -255,6 +255,19 @@ class DataCite43Schema(BaseSerializerSchema):
 
             result.append(item)
 
+        if field == "description":
+            # References
+            refs = obj["metadata"].get("references")
+            if refs:
+                result.append(
+                    {
+                        field: json.dumps(
+                            {"references": [r["reference"] for r in refs]}
+                        ),
+                        f"{field}Type": "Other",
+                    }
+                )
+
         return result or missing
 
     def get_titles(self, obj):
