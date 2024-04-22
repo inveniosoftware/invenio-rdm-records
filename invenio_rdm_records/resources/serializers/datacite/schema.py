@@ -10,6 +10,8 @@
 
 """DataCite based Schema for Invenio RDM Records."""
 
+import json
+
 from babel_edtf import parse_edtf
 from edtf.parser.grammar import ParseException
 from flask import current_app
@@ -20,7 +22,7 @@ from invenio_records_resources.proxies import current_service_registry
 from marshmallow import Schema, ValidationError, fields, missing, post_dump, validate
 from marshmallow_utils.fields import SanitizedUnicode
 from marshmallow_utils.html import strip_html
-import json
+
 from ....proxies import current_rdm_records_service
 from ...serializers.ui.schema import current_default_locale
 from ..utils import get_preferred_identifier, get_vocabulary_props
@@ -584,13 +586,14 @@ class DataCite43Schema(BaseSerializerSchema):
                 entry["rightsUri"] = link
             serialized_rights.append(entry)
 
-        # Adding access_right information
-        access_right = obj["access"]["status"]
-        if access_right == "metadata-only":
-            access_right = "closed"
+        # Adding access_status information
 
-        access_right_formatted = access_right.capitalize() + " Access"
-        rights_uri = "info:eu-repo/semantics/{}Access".format(access_right)
+        access_status = obj.get("access", {}).get("status", "")
+        if access_status == "metadata-only":
+            access_status = "closed"
+
+        access_right_formatted = access_status.capitalize() + " Access"
+        rights_uri = "info:eu-repo/semantics/{}Access".format(access_status)
 
         access_right_serialized = {
             "rights": access_right_formatted,

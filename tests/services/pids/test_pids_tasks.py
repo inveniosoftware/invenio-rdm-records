@@ -600,6 +600,7 @@ def test_full_record_register(
                                 {
                                     "nameIdentifier": "0000-0001-8135-3489",
                                     "nameIdentifierScheme": "ORCID",
+                                    "schemeUri": "http://orcid.org/",
                                 }
                             ],
                             "nameType": "Personal",
@@ -622,6 +623,7 @@ def test_full_record_register(
                                 {
                                     "nameIdentifier": "0000-0001-8135-3489",
                                     "nameIdentifierScheme": "ORCID",
+                                    "schemeUri": "http://orcid.org/",
                                 }
                             ],
                             "nameType": "Personal",
@@ -644,6 +646,10 @@ def test_full_record_register(
                             "description": "Bla bla bla",
                             "descriptionType": "Methods",
                             "lang": "eng",
+                        },
+                        {
+                            "description": '{"references": ["Nielsen et ' 'al,.."]}',
+                            "descriptionType": "Other",
                         },
                     ],
                     "formats": ["application/pdf"],
@@ -701,6 +707,10 @@ def test_full_record_register(
                             "rightsIdentifier": "cc-by-4.0",
                             "rightsIdentifierScheme": "spdx",
                             "rightsUri": "https://creativecommons.org/licenses/by/4.0/legalcode",
+                        },
+                        {
+                            "rights": " Access",
+                            "rightsUri": "info:eu-repo/semantics/Access",
                         },
                     ],
                     "schemaVersion": "http://datacite.org/schema/kernel-4",
