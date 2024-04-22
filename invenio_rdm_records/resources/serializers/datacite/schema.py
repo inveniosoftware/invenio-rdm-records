@@ -571,6 +571,21 @@ class DataCite43Schema(BaseSerializerSchema):
                 entry["rightsUri"] = link
             serialized_rights.append(entry)
 
+        # Adding access_right information
+        access_right = obj["access"]["status"]
+        if access_right == "metadata-only":
+            access_right = "closed"
+
+        access_right_formatted = access_right.capitalize() + " Access"
+        rights_uri = "info:eu-repo/semantics/{}Access".format(access_right)
+
+        access_right_serialized = {
+            "rights": access_right_formatted,
+            "rightsUri": rights_uri,
+        }
+
+        serialized_rights.append(access_right_serialized)
+
         return serialized_rights if serialized_rights else missing
 
     def get_funding(self, obj):
