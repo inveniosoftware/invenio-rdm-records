@@ -11,6 +11,15 @@
 Changes
 =======
 
+Version 10.1.2 (released 2024-04-22)
+
+- review: fix draft indexing operations order
+    - Fixes a bug where when publishing directly to a community (e.g.
+      beacause the uploader is a community admin/owner/curator), the draft
+      would get deleted from the index and then get indexed again, thus
+      appearing in the users' dashboard both as a published record and
+      as a draft in review.
+
 Version 10.1.1 (released 2024-04-19)
 
 - pids: fix register/update serialization
