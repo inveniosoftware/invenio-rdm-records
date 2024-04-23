@@ -11,6 +11,10 @@
 Changes
 =======
 
+Version 10.2.0 (released 2024-04-23)
+
+- iiif: added proxy to image server
+
 Version 10.1.2 (released 2024-04-22)
 
 - review: fix draft indexing operations order
