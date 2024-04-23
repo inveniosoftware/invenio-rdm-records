@@ -1,20 +1,26 @@
 # -*- coding: utf-8 -*-
 #
 # Copyright (C) 2024 CERN.
+# Copyright (C) 2022 Universität Hamburg.
 #
-# Invenio-RDM is free software; you can redistribute it and/or modify
+# Invenio-RDM-Records is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
 """IIIF Resource."""
 
+import textwrap
 from abc import ABC, abstractmethod
 from functools import wraps
+from urllib.parse import urljoin
 
+import marshmallow as ma
 import requests
 from flask import Response, current_app, g, request, send_file
 from flask_cors import cross_origin
 from flask_resources import (
     HTTPJSONException,
+    JSONSerializer,
     Resource,
+    ResourceConfig,
     ResponseHandler,
     from_conf,
     request_parser,
@@ -31,7 +37,8 @@ from invenio_records_resources.resources.records.resource import (
     request_headers,
     request_read_args,
 )
-from werkzeug.utils import secure_filename
+from invenio_records_resources.services.base.config import ConfiguratorMixin, FromConfig
+from werkzeug.utils import cached_property, secure_filename
 
 from .serializers import (
     IIIFCanvasV2JSONSerializer,
@@ -40,11 +47,55 @@ from .serializers import (
     IIIFSequenceV2JSONSerializer,
 )
 
-# IIIF decorators
 
-iiif_request_view_args = request_parser(
-    from_conf("request_view_args"), location="view_args"
-)
+class IIIFResourceConfig(ResourceConfig, ConfiguratorMixin):
+    """IIIF resource configuration."""
+
+    blueprint_name = "iiif"
+
+    url_prefix = "/iiif"
+
+    routes = {
+        "manifest": "/<path:uuid>/manifest",
+        "sequence": "/<path:uuid>/sequence/default",
+        "canvas": "/<path:uuid>/canvas/<path:file_name>",
+        "image_base": "/<path:uuid>",
+        "image_info": "/<path:uuid>/info.json",
+        "image_api": "/<path:uuid>/<region>/<size>/<rotation>/<quality>.<image_format>",
+    }
+
+    request_view_args = {
+        "uuid": ma.fields.Str(),
+        "file_name": ma.fields.Str(),
+        "region": ma.fields.Str(),
+        "size": ma.fields.Str(),
+        "rotation": ma.fields.Str(),
+        "quality": ma.fields.Str(),
+        "image_format": ma.fields.Str(),
+    }
+
+    request_read_args = {
+        "dl": ma.fields.Str(),
+    }
+
+    request_headers = {
+        "If-Modified-Since": ma.fields.DateTime(),
+    }
+
+    response_handler = {"application/json": ResponseHandler(JSONSerializer())}
+
+    supported_formats = {
+        "gif": "image/gif",
+        "jp2": "image/jp2",
+        "jpeg": "image/jpeg",
+        "jpg": "image/jpeg",
+        "pdf": "application/pdf",
+        "png": "image/png",
+        "tif": "image/tiff",
+        "tiff": "image/tiff",
+    }
+
+    proxy_cls = FromConfig("IIIF_PROXY_CLASS", default=None)
 
 
 def with_iiif_content_negotiation(serializer):
@@ -57,6 +108,11 @@ def with_iiif_content_negotiation(serializer):
     )
 
 
+iiif_request_view_args = request_parser(
+    from_conf("request_view_args"), location="view_args"
+)
+
+
 class IIIFResource(ErrorHandlersMixin, Resource):
     """IIIF resource."""
 
@@ -65,28 +121,25 @@ class IIIFResource(ErrorHandlersMixin, Resource):
         super().__init__(config)
         self.service = service
 
-    def proxy_if_enabled(f):
-        """Decorate a function to proxy the request to an Image Server if a proxy is enabled."""
+    @cached_property
+    def proxy(self):
+        """IIIF Image Server proxy instance."""
+        if self.config.proxy_cls is not None:
+            return self.config.proxy_cls()
+
+    @staticmethod
+    def proxy_pass(f):
+        """Decorate a function to proxy the request to an Image Server if enabled."""
 
         @wraps(f)
         def _wrapper(self, *args, **kwargs):
-            if self.proxy_enabled:
-                res = self.proxy_server()
+            if self.proxy:
+                res = self.proxy()
                 if res:
                     return res, 200
             return f(self, *args, **kwargs)
 
         return _wrapper
-
-    @property
-    def proxy_enabled(self):
-        """Check if proxy is enabled."""
-        return self.config.proxy_cls is not None
-
-    @property
-    def proxy_server(self):
-        """Get the proxy configuration."""
-        return self.config.proxy_cls() if self.proxy_enabled else None
 
     def create_url_rules(self):
         """Create the URL rules for the IIIF resource."""
@@ -115,6 +168,7 @@ class IIIFResource(ErrorHandlersMixin, Resource):
     @with_iiif_content_negotiation(IIIFManifestV2JSONSerializer)
     @iiif_request_view_args
     @response_handler()
+    @proxy_pass.__func__
     def manifest(self):
         """Manifest."""
         return self._get_record_with_files().to_dict(), 200
@@ -123,6 +177,7 @@ class IIIFResource(ErrorHandlersMixin, Resource):
     @with_iiif_content_negotiation(IIIFSequenceV2JSONSerializer)
     @iiif_request_view_args
     @response_handler()
+    @proxy_pass.__func__
     def sequence(self):
         """Sequence."""
         return self._get_record_with_files().to_dict(), 200
@@ -131,6 +186,7 @@ class IIIFResource(ErrorHandlersMixin, Resource):
     @with_iiif_content_negotiation(IIIFCanvasV2JSONSerializer)
     @iiif_request_view_args
     @response_handler()
+    @proxy_pass.__func__
     def canvas(self):
         """Canvas."""
         uuid = resource_requestctx.view_args["uuid"]
@@ -142,6 +198,7 @@ class IIIFResource(ErrorHandlersMixin, Resource):
     @with_iiif_content_negotiation(IIIFInfoV2JSONSerializer)
     @iiif_request_view_args
     @response_handler()
+    @proxy_pass.__func__
     def base(self):
         """IIIF base endpoint, redirects to IIIF Info endpoint."""
         item = self.service.get_file(
@@ -154,7 +211,7 @@ class IIIFResource(ErrorHandlersMixin, Resource):
     @with_iiif_content_negotiation(IIIFInfoV2JSONSerializer)
     @iiif_request_view_args
     @response_handler()
-    @proxy_if_enabled
+    @proxy_pass.__func__
     def info(self):
         """Get IIIF image info."""
         item = self.service.get_file(
@@ -167,7 +224,7 @@ class IIIFResource(ErrorHandlersMixin, Resource):
     @request_headers
     @request_read_args
     @iiif_request_view_args
-    @proxy_if_enabled
+    @proxy_pass.__func__
     def image_api(self):
         """IIIF API Implementation.
 
@@ -240,56 +297,27 @@ class IIIFResource(ErrorHandlersMixin, Resource):
 class IIIFProxy(ABC):
     """IIIF Proxy interface.
 
-    The purpose of this class is to provide a consistent way of proxying
-    requests to an IIIF server, regardless of the specific implementation
-    details of the server proxy. It defines a set of methods that should be
-    implemented by the server proxy, such as `proxy_request` and
-    `handle_url_rewrite`.
-
-    To use this class, you should create a subclass that implements the
-    required methods. The `IIIFProxy` class provides some default
-    implementations for certain methods, such as `should_proxy`. These default implementations can be
-    overridden in the subclass if needed.
-
-    Example usage:
-
-    .. code-block::python
-
-        class MyIIIFProxy(IIIFProxy):
-        def proxy_request(self):
-            # Implementation specific to the IIIF server proxy
-
-        def handle_url_rewrite(self):
-            # Implementation specific to the IIIF server proxy
-
-        # Instantiate the proxy
-        proxy = MyIIIFProxy()
-
-        # Proxy the current request if it should be proxied
-        proxy()
+    The purpose of this class is to provide a consistent way of proxying requests to a
+    IIIF server. To use, subclass and implement `proxy_request`, and optionally override
+    `should_proxy` to add custom logic to determine if a request should be proxied.
     """
 
-    @property
-    def proxied_routes(self):
-        """List of routes that should be proxied."""
-        return []
+    def should_proxy(self):
+        """Check if the curent request should be proxied.
 
-    @property
-    def server_url(self):
-        """IIIF server URL."""
-        raise NotImplementedError("IIIF server must be set.")
+        By default, checks if the request is for one of the IIIF image API endpoints.
+        """
+        return request.endpoint in (
+            "iiif.image_api",
+            "iiif.image_info",
+            # TODO: `image_base` would redirect to the info endpoint, but we should make
+            #       sure the proxy does this correctly, preserving the original path.
+            # "iiif.image_base",
+        )
 
     @abstractmethod
     def proxy_request(self):
         """Proxy the current request to IIIF server."""
-
-    @abstractmethod
-    def handle_url_rewrite(self):
-        """Handle URL rewrite."""
-
-    def should_proxy(self):
-        """Check if the curent request should be proxied."""
-        return False
 
     def __call__(self):
         """Proxy request to IIIF server if the endpoint is configured."""
@@ -304,22 +332,19 @@ class IIPServerProxy(IIIFProxy):
     @property
     def server_url(self):
         """IIIF server URL."""
-        return current_app.config["RDM_IIIF_SERVER_URL"]
-
-    @property
-    def proxied_routes(self):
-        """List of routes that should be proxied."""
-        return ["iiif.image_api", "iiif.info"]
+        return current_app.config.get("RDM_IIIF_SERVER_URL")
 
     def proxy_request(self):
         """Proxy request to IIIF server."""
-        assert (
-            self.server_url
-        ), "IIIF server URL must be set. Use variable `RDM_IIIF_SERVER_URL` to set it."
+        if not self.server_url:
+            raise RuntimeError("IIIF server URL must be set via `RDM_IIIF_SERVER_URL`.")
 
-        url = self.handle_url_rewrite()
+        url = self._rewrite_url()
         res = requests.request(
-            request.method, url, headers=request.headers, stream=True
+            request.method,
+            url,
+            headers=request.headers,
+            stream=True,
         )
         return Response(
             res.iter_content(chunk_size=10 * 1024),
@@ -327,24 +352,27 @@ class IIPServerProxy(IIIFProxy):
             content_type=res.headers["Content-Type"],
         )
 
-    def handle_url_rewrite(self):
-        """Handle URL rewrite.
+    # TODO: This should be configurable, as it depends on how the tiles are stored.
+    def _rewrite_url(self):
+        """Rewrite URL.
 
-        For IIPServer, we need to match the folder structure where the images are stored.
-        I.e. /public/<recid>/<filename>
+        Examples:
+        - /iiif/record:12:image.png/ -> /iiif/12/__/image.png/
+        - /iiif/record:1234:image.png/ -> /iiif/12/34_/image.png/
+        - /iiif/record:1234567:image.png/ -> /iiif/12/34/567_/image.png/
         """
-        from urllib.parse import urljoin
-
         uuid = resource_requestctx.view_args["uuid"]
-        recid = uuid.split(":")[1]
-        file_name = uuid.split(":")[-1]
-        path = request.path
-        path = path.replace(uuid, f"/public/{recid}/{file_name}")
-        return urljoin(
-            self.server_url,
-            path,
-        )
+        _, recid, filename = uuid.split(":")
 
-    def should_proxy(self):
-        """Check if request should be proxied."""
-        return request.endpoint in self.proxied_routes
+        recid_parts = textwrap.wrap(recid.ljust(4, "_"), 2)
+        start_parts = recid_parts[:2]
+        end_parts = recid_parts[2:]
+        recid_path = "/".join(start_parts)
+        if end_parts:
+            recid_path += f"/{''.join(end_parts)}"
+        if not recid_path.endswith("_"):
+            recid_path += "_"
+
+        path = request.path
+        path = path.replace(uuid, f"{recid_path}/{filename}.ptif")
+        return urljoin(self.server_url, path)
