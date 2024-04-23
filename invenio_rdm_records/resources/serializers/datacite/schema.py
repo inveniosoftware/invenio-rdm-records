@@ -75,7 +75,6 @@ class PersonOrOrgSchema43(Schema):
         """Get name identifier list."""
         serialized_identifiers = []
         identifiers = obj["person_or_org"].get("identifiers", [])
-        scheme_uri = ""
         for identifier in identifiers:
             scheme = identifier["scheme"]
             id_scheme = get_scheme_datacite(
@@ -83,15 +82,18 @@ class PersonOrOrgSchema43(Schema):
             )
 
             if id_scheme:
-                if scheme == "orcid":
-                    scheme_uri = "http://orcid.org/"
-                elif scheme == "ror":
-                    scheme_uri = "https://ror.org/"
 
                 name_id = {
                     "nameIdentifier": identifier["identifier"],
                     "nameIdentifierScheme": id_scheme,
                 }
+
+                scheme_uri = ""
+                if scheme == "orcid":
+                    scheme_uri = "http://orcid.org/"
+                elif scheme == "ror":
+                    scheme_uri = "https://ror.org/"
+
                 if scheme_uri:
                     name_id["schemeUri"] = scheme_uri
 
@@ -593,7 +595,7 @@ class DataCite43Schema(BaseSerializerSchema):
             access_status = "closed"
 
         access_right_formatted = access_status.capitalize() + " Access"
-        rights_uri = "info:eu-repo/semantics/{}Access".format(access_status)
+        rights_uri = f"info:eu-repo/semantics/{access_status}Access"
 
         access_right_serialized = {
             "rights": access_right_formatted,
