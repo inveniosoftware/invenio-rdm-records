@@ -30,6 +30,8 @@ class FileMetadataSchema(Schema):
     encoding = fields.String()
     charset = fields.String()
     previewer = fields.String()
+    width = fields.Integer()
+    height = fields.Integer()
 
 
 class FileSchema(Schema):

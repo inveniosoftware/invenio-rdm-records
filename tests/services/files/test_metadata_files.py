@@ -34,7 +34,9 @@ def test_valid_metadata_set(running_app, db, location, minimal_record, identity_
         "type": "pdf",
     }
     service.draft_files.init_files(
-        identity_simple, draft.id, data=[{"key": "test.pdf", "metadata": metadata}]
+        identity_simple,
+        draft.id,
+        data=[{"key": "test.pdf", "metadata": metadata, "access": {"hidden": False}}],
     )
     service.draft_files.set_file_content(
         identity_simple, draft.id, "test.pdf", BytesIO(b"test file")
