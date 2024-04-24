@@ -7,9 +7,9 @@
 
 from io import BytesIO
 
+import dictdiffer
 from PIL import Image
 from werkzeug.utils import secure_filename
-import dictdiffer
 
 
 def publish_record_with_images(
