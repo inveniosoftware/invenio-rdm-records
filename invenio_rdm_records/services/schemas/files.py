@@ -43,6 +43,8 @@ class FileSchema(Schema):
     ext = fields.String(attribute="file.ext")
     size = fields.Integer(attribute="file.size")
     mimetype = fields.String(attribute="file.mimetype")
+    storage_class = fields.String(attribute="file.storage_class")
+    uri = fields.String(attribute="file.uri")
 
     # FileRecord fields
     key = SanitizedUnicode()
