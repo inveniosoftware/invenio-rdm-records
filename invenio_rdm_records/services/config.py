@@ -502,6 +502,8 @@ class RDMRecordServiceConfig(RecordServiceConfig, ConfiguratorMixin):
         ),
     ]
 
+    file_processors = FromConfig("RDM_RECORD_FILE_PROCESSORS", default=[])
+
 
 class RDMCommunityRecordsConfig(BaseRecordServiceConfig, ConfiguratorMixin):
     """Community records service config."""
