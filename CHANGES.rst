@@ -11,6 +11,10 @@
 Changes
 =======
 
+Version 10.3.0 (released 2024-04-24)
+
+- services: added nested links for record files
+
 Version 10.2.0 (released 2024-04-23)
 
 - iiif: added proxy to image server
