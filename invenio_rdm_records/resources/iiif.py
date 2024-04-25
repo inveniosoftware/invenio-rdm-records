@@ -95,7 +95,7 @@ class IIIFResourceConfig(ResourceConfig, ConfiguratorMixin):
         "tiff": "image/tiff",
     }
 
-    proxy_cls = FromConfig("IIIF_PROXY_CLASS", default=None)
+    proxy_cls = FromConfig("IIIF_PROXY_CLASS", default=None, import_string=True)
 
 
 def with_iiif_content_negotiation(serializer):
