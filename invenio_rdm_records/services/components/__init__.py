@@ -15,7 +15,9 @@ from invenio_drafts_resources.services.records.components import (
     RelationsComponent,
 )
 
-from invenio_rdm_records.services.iiif.components import IIIFComponent
+from invenio_rdm_records.records.components.record_files import (
+    RecordFilesProcessorComponent,
+)
 
 from .access import AccessComponent
 from .custom_fields import CustomFieldsComponent
@@ -30,7 +32,7 @@ DefaultRecordsComponents = [
     MetadataComponent,
     CustomFieldsComponent,
     AccessComponent,
-    IIIFComponent,
+    RecordFilesProcessorComponent,
     DraftFilesComponent,
     DraftMediaFilesComponent,
     RecordDeletionComponent,

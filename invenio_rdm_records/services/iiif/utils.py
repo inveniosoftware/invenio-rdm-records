@@ -152,7 +152,6 @@ class LocalTilesStorage(TilesStorage):
             self.base_path
             / record.access.protection.files
             / Path(*path_partitions)
-            / recid
         )
 
     def _get_file_path(self, record: RDMRecord, filename: str) -> Path:
