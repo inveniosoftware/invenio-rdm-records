@@ -11,6 +11,10 @@
 Changes
 =======
 
+Version 10.3.1 (released 2024-04-25)
+
+- resources: make IIIF proxy configurable via import string
+
 Version 10.3.0 (released 2024-04-24)
 
 - services: added nested links for record files
