@@ -38,6 +38,7 @@ from invenio_records_resources.services.base.config import (
 )
 from invenio_records_resources.services.base.links import Link, NestedLinks
 from invenio_records_resources.services.files.links import FileLink
+from invenio_records_resources.services.files.schema import FileSchema
 from invenio_records_resources.services.records.config import (
     RecordServiceConfig as BaseRecordServiceConfig,
 )
@@ -67,7 +68,6 @@ from .permissions import RDMRecordPermissionPolicy
 from .result_items import GrantItem, GrantList, SecretLinkItem, SecretLinkList
 from .schemas import RDMParentSchema, RDMRecordSchema
 from .schemas.community_records import CommunityRecordsSchema
-from .schemas.files import FileSchema
 from .schemas.parent.access import AccessSettingsSchema
 from .schemas.parent.access import Grant as GrantSchema
 from .schemas.parent.access import Grants as GrantsSchema

@@ -148,11 +148,7 @@ class LocalTilesStorage(TilesStorage):
 
         path_partitions = recid_path.split("/")
 
-        return (
-            self.base_path
-            / record.access.protection.files
-            / Path(*path_partitions)
-        )
+        return self.base_path / record.access.protection.files / Path(*path_partitions)
 
     def _get_file_path(self, record: RDMRecord, filename: str) -> Path:
         """Get file path."""
@@ -170,6 +166,8 @@ class LocalTilesStorage(TilesStorage):
             fout = outpath.open("w+b")
             if not self.converter.convert(fin, fout):
                 current_app.logger.info(f"Image conversion failed {record.id}")
+                return False
+        return True
 
     def open(self, record, filename):
         """Open the file in read mode."""

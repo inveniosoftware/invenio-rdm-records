@@ -32,9 +32,9 @@ DefaultRecordsComponents = [
     MetadataComponent,
     CustomFieldsComponent,
     AccessComponent,
-    RecordFilesProcessorComponent,
     DraftFilesComponent,
     DraftMediaFilesComponent,
+    RecordFilesProcessorComponent,
     RecordDeletionComponent,
     # for the internal `pid` field
     PIDComponent,
