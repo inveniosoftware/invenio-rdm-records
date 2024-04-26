@@ -1367,6 +1367,10 @@
                     "type": "boolean"
                   }
                 }
+              },
+              "processor": {
+                "type": "object",
+                "dynamic": "true"
               }
             }
           }
