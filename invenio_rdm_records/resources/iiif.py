@@ -346,11 +346,16 @@ class IIPServerProxy(IIIFProxy):
             headers=request.headers,
             stream=True,
         )
-        return Response(
-            res.iter_content(chunk_size=10 * 1024),
-            status=res.status_code,
-            content_type=res.headers["Content-Type"],
-        )
+        if not res.ok:
+            current_app.logger.error(
+                f"Request to IIP server failed with status code {res.status_code}."
+            )
+        else:
+            return Response(
+                res.iter_content(chunk_size=10 * 1024),
+                status=res.status_code,
+                content_type=res.headers["Content-Type"],
+            )
 
     # TODO: This should be configurable, as it depends on how the tiles are stored.
     def _rewrite_url(self):
