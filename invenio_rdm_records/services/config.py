@@ -86,6 +86,9 @@ from .search_params import (
 from .sort import VerifiedRecordsSortParam
 
 
+from invenio_records_resources.services.records.processors.tiles import TilesProcessor
+
+
 def is_draft_and_has_review(record, ctx):
     """Determine if draft has doi."""
     return is_draft(record, ctx) and record.parent.review is not None
@@ -502,7 +505,7 @@ class RDMRecordServiceConfig(RecordServiceConfig, ConfiguratorMixin):
         ),
     ]
 
-    record_file_processors = FromConfig("RDM_RECORD_FILE_PROCESSORS", default=[])
+    record_file_processors = FromConfig("RDM_RECORD_FILE_PROCESSORS", default=[TilesProcessor()])
 
 
 class RDMCommunityRecordsConfig(BaseRecordServiceConfig, ConfiguratorMixin):

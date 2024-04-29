@@ -177,3 +177,6 @@ class LocalTilesStorage(TilesStorage):
     def delete(self, record, filename):
         """Delete the ptif."""
         pass
+
+
+tiles_storage = LocalTilesStorage(base_path="./iiif/images")

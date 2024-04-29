@@ -12,10 +12,7 @@ from invenio_db import db
 
 from invenio_rdm_records.proxies import current_rdm_records_service
 
-from .utils import LocalTilesStorage
-
-tif_store = LocalTilesStorage(base_path="/iiif/images")
-
+from .utils import tiles_storage as tif_store # TODO Change to singleton
 
 @shared_task(
     ignore_result=True,
