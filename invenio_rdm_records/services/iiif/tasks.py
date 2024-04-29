@@ -20,7 +20,7 @@ tif_store = LocalTilesStorage(base_path="/iiif/images")
 @shared_task(
     ignore_result=True,
 )
-def generate_zoomable_image(record_id, file_key, params=None):
+def generate_tiles(record_id, file_key, params=None):
     """Generate pyramidal tiff."""
     record = current_rdm_records_service.record_cls.pid.resolve(record_id)
     status_file = record.media_files[file_key + ".ptif"]

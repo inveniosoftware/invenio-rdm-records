@@ -157,9 +157,10 @@ class LocalTilesStorage(TilesStorage):
 
     def save(self, record, filename):
         """Convert and save to ptif."""
+        # TODO don't regenerate?
         outpath = self._get_file_path(record, filename)
-        if outpath.exists():
-            return
+        # if outpath.exists():
+        #     return True
 
         self._get_dir(record).mkdir(parents=True, exist_ok=True)
         with record.files[filename].open_stream("rb") as fin:
