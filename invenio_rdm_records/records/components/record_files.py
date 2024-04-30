@@ -6,6 +6,5 @@ class RecordFilesProcessorComponent(ServiceComponent):
 
     def publish(self, identity, draft=None, record=None):
         """Publish handler."""
-        # breakpoint()
         for processor in self.service.config.record_file_processors:
             processor(draft, record, uow=self.uow)
