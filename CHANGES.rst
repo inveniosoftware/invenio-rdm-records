@@ -11,6 +11,10 @@
 Changes
 =======
 
+Version 10.3.2 (released 2024-04-30)
+
+- iiif: fix proxy path generation
+
 Version 10.3.1 (released 2024-04-25)
 
 - resources: make IIIF proxy configurable via import string
