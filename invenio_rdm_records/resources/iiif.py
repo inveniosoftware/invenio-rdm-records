@@ -357,8 +357,8 @@ class IIPServerProxy(IIIFProxy):
         """Rewrite URL.
 
         Examples:
-        - /iiif/record:12:image.png/ -> /iiif/12/__/image.png/
-        - /iiif/record:1234:image.png/ -> /iiif/12/34_/image.png/
+        - /iiif/record:12:image.png/ -> /iiif/12/__/_/image.png/
+        - /iiif/record:1234:image.png/ -> /iiif/12/34/_/image.png/
         - /iiif/record:1234567:image.png/ -> /iiif/12/34/567_/image.png/
         """
         uuid = resource_requestctx.view_args["uuid"]
@@ -369,9 +369,9 @@ class IIPServerProxy(IIIFProxy):
         end_parts = recid_parts[2:]
         recid_path = "/".join(start_parts)
         if end_parts:
-            recid_path += f"/{''.join(end_parts)}"
-        if not recid_path.endswith("_"):
-            recid_path += "_"
+            recid_path += f"/{''.join(end_parts)}_"
+        else:
+            recid_path += "/_"
 
         path = request.path
         path = path.replace(uuid, f"{recid_path}/{filename}.ptif")
