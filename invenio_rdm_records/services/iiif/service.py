@@ -10,7 +10,7 @@
 """IIIF Service."""
 
 import tempfile
-
+import io
 import importlib_metadata as metadata
 from flask_iiif.api import IIIFImageAPIWrapper
 from invenio_records_resources.services import Service
@@ -76,7 +76,7 @@ class IIIFService(Service):
         # for PDF/text.
         pages_mimetypes = {"application/pdf", "text/plain"}
         if HAS_IMAGEMAGICK and file_.data["mimetype"] in pages_mimetypes:
-            first_page = Image(Image(fp).sequence[0])
+            first_page = Image(blob=fp)
             tempfile_ = tempfile.TemporaryFile()
             with first_page.convert(format="png") as converted:
                 converted.save(file=tempfile_)
