@@ -10,7 +10,7 @@
 """IIIF Service."""
 
 import tempfile
-import io
+
 import importlib_metadata as metadata
 from flask_iiif.api import IIIFImageAPIWrapper
 from invenio_records_resources.services import Service

@@ -246,7 +246,9 @@ class IIIFResource(ErrorHandlersMixin, Resource):
             image_format=image_format,
         )
         # decide the mime_type from the requested image_format
-        mimetype = current_app.config.get("IIIF_FORMATS").get(image_format, "image/jpeg")
+        mimetype = current_app.config.get("IIIF_FORMATS").get(
+            image_format, "image/jpeg"
+        )
         # TODO: get from cache on the service image.last_modified
         last_modified = None
         send_file_kwargs = {"mimetype": mimetype}
