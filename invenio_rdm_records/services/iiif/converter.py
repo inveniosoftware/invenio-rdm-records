@@ -2,7 +2,6 @@
 
 from flask import current_app
 
-
 try:
     import pyvips
 

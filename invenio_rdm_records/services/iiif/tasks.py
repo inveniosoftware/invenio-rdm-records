@@ -12,7 +12,8 @@ from invenio_db import db
 
 from invenio_rdm_records.proxies import current_rdm_records_service
 
-from .storage import tiles_storage as tif_store # TODO Change to singleton
+from .storage import tiles_storage as tif_store
+
 
 @shared_task(
     ignore_result=True,
@@ -28,8 +29,6 @@ def generate_tiles(record_id, file_key, params=None):
     conversion_state = tif_store.save(record, file_key)
 
     status_file.processor["status"] = "finished" if conversion_state else "failed"
-    status_file.file.file_model.uri = str(
-        tif_store._get_file_path(record, file_key)
-    )
+    status_file.file.file_model.uri = str(tif_store._get_file_path(record, file_key))
     status_file.commit()
     db.session.commit()

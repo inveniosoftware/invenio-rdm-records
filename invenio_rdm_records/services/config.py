@@ -55,6 +55,8 @@ from invenio_requests.services.requests import RequestItem, RequestList
 from invenio_requests.services.requests.config import RequestSearchOptions
 from requests import Request
 
+from invenio_rdm_records.records.processors.tiles import TilesProcessor
+
 from ..records import RDMDraft, RDMRecord
 from ..records.api import RDMDraftMediaFiles, RDMRecordMediaFiles
 from . import facets
@@ -84,9 +86,6 @@ from .search_params import (
     StatusParam,
 )
 from .sort import VerifiedRecordsSortParam
-
-
-from invenio_records_resources.services.records.processors.tiles import TilesProcessor
 
 
 def is_draft_and_has_review(record, ctx):
@@ -505,7 +504,9 @@ class RDMRecordServiceConfig(RecordServiceConfig, ConfiguratorMixin):
         ),
     ]
 
-    record_file_processors = FromConfig("RDM_RECORD_FILE_PROCESSORS", default=[TilesProcessor()])
+    record_file_processors = FromConfig(
+        "RDM_RECORD_FILE_PROCESSORS", default=[TilesProcessor()]
+    )
 
 
 class RDMCommunityRecordsConfig(BaseRecordServiceConfig, ConfiguratorMixin):
