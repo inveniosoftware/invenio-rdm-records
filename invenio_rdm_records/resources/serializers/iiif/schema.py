@@ -135,7 +135,7 @@ class ListIIIFFilesAttribute(fields.List):
         return [
             f
             for f in obj["files"].get("entries", {}).values()
-            if f["ext"] in current_app.config["IIIF_FORMATS"]
+            if f["ext"] in current_app.config["RDM_IIIF_MANIFEST_FORMATS"]
         ]
 
 
