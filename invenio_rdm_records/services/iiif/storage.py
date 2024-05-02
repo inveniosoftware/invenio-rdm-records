@@ -1,18 +1,18 @@
 """IIIF Tiles generation storage."""
 
-from pathlib import Path
-from textwrap import wrap
 import os
 import shutil
+from pathlib import Path
+from textwrap import wrap
+from typing import Union
 
 from flask import current_app
 
-from invenio_rdm_records.services.iiif.converter import (
-    PyVIPSImageConverter,
-    ImageConverter,
-)
-
 from invenio_rdm_records.records.api import RDMRecord
+from invenio_rdm_records.services.iiif.converter import (
+    ImageConverter,
+    PyVIPSImageConverter,
+)
 
 
 class TilesStorage:
@@ -38,11 +38,21 @@ class TilesStorage:
 class LocalTilesStorage(TilesStorage):
     """Local tile storage implementation."""
 
-    def __init__(self, *, base_path: str, converter: ImageConverter = None, **kwargs):
+    def __init__(
+        self,
+        *,
+        output_path: Union[str, None] = None,
+        converter: ImageConverter = None,
+        **kwargs,
+    ):
         """Constructor."""
         converter = converter or PyVIPSImageConverter()
-        self.base_path = Path(base_path)
+        self.output_path = output_path and output_path
         super().__init__(converter=converter, **kwargs)
+
+    @property
+    def base_path(self):
+        return self.output_path or Path(current_app.config.get("IIIF_TILES_BASE_PATH"))
 
     def _get_dir(self, record: RDMRecord) -> Path:
         """Get directory."""
@@ -104,4 +114,4 @@ class LocalTilesStorage(TilesStorage):
         Path(record.media_files[filename].file.uri).unlink(missing_ok=True)
 
 
-tiles_storage = LocalTilesStorage(base_path="./iiif/images")  # TODO Load from config
+tiles_storage = LocalTilesStorage()
