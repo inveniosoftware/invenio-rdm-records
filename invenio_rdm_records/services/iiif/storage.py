@@ -99,19 +99,26 @@ class LocalTilesStorage(TilesStorage):
 
     def update_access(self, record):
         """Move files according to current files access of the record"""
-        access = record.access.protection.files
-        directory = str(self._get_dir(record))
-        old_dir = str(directory).replace(
-            access,
-            "restricted" if access == "public" else "public",
-        )
-        if os.path.exists(old_dir):
-            shutil.move(old_dir, directory)
+        # If we want to move the record from public -> restricted folder, uncomment below
+        # access = record.access.protection.files
+        # directory = str(self._get_dir(record))
+        # old_dir = str(directory).replace(
+        #     access,
+        #     "restricted" if access == "public" else "public",
+        # )
+        # if os.path.exists(old_dir):
+        #     shutil.move(old_dir, directory)
+        pass
 
     def delete(self, record, filename):
         """Delete the ptif."""
-        # TODO: this filename is the ptif name, should it be the file name?
-        Path(record.media_files[filename].file.uri).unlink(missing_ok=True)
+        try:
+            Path(record.media_files[filename + ".ptif"].file.uri).unlink(
+                missing_ok=True
+            )
+        except Exception:
+            return False
+        return True
 
 
 tiles_storage = LocalTilesStorage()
