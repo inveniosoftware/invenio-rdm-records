@@ -128,7 +128,7 @@ class RDMRecordService(RecordService):
             raise EmbargoNotLiftedError(_id)
 
         self.run_components(
-            "lift_embargo", identity, darft=draft, record=record, uow=uow
+            "lift_embargo", identity, draft=draft, record=record, uow=uow
         )
 
         # Commit and reindex record

@@ -94,6 +94,6 @@ class PyVIPSImageConverter(ImageConverter):
             image = pyvips.Image.new_from_source(source, "", access="sequential")
             image.tiffsave_target(target, tile=True, pyramid=True, **self.params)
             return True
-        except pyvips.Error:
+        except Exception:
             current_app.logger.exception("Image processing with pyvips failed")
             return False
