@@ -8,3 +8,7 @@ class RecordFilesProcessorComponent(ServiceComponent):
         """Publish handler."""
         for processor in self.service.config.record_file_processors:
             processor(draft, record, uow=self.uow)
+
+    def lift_embargo(self, identity, draft=None, record=None):
+        for processor in self.service.config.record_file_processors:
+            processor(draft, record, uow=self.uow)
