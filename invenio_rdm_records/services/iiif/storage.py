@@ -7,8 +7,6 @@
 
 """IIIF Tiles generation storage."""
 
-import os
-import shutil
 from pathlib import Path
 from textwrap import wrap
 from typing import Union
@@ -25,9 +23,19 @@ from invenio_rdm_records.services.iiif.converter import (
 class TilesStorage:
     """Base class for tile storage."""
 
-    def __init__(self, *, converter: ImageConverter):
+    def __init__(self, *, converter: Union[ImageConverter, dict]):
         """Constructor."""
-        self.converter = converter
+        self._converter = converter
+
+    @property
+    def converter(self):
+        """Get converter."""
+        if isinstance(self._converter, dict):
+            converter_cls = self._converter["cls"]
+            converter_params = self._converter.get("kwargs", {})
+            return converter_cls(**converter_params)
+
+        return self._converter
 
     def save(self, record: RDMRecord, filename: str):
         """Save tiles."""
@@ -45,17 +53,15 @@ class TilesStorage:
 class LocalTilesStorage(TilesStorage):
     """Local tile storage implementation."""
 
-    def __init__(
-        self,
-        *,
-        output_path: Union[str, None] = None,
-        converter: ImageConverter = None,
-        **kwargs,
-    ):
+    default_converter = {
+        "cls": PyVIPSImageConverter,
+    }
+
+    def __init__(self, *, base_path: Union[str, None] = None, **kwargs):
         """Constructor."""
-        converter = converter or PyVIPSImageConverter()
-        self.output_path = output_path and output_path
-        super().__init__(converter=converter, **kwargs)
+        self._base_path = base_path
+        kwargs.setdefault("converter", self.default_converter)
+        super().__init__(**kwargs)
 
     @property
     def base_path(self):
