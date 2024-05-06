@@ -443,8 +443,8 @@
   icon: file alternate
   props:
     csl: article
-    datacite_general: Text
-    datacite_type: Data paper
+    datacite_general: DataPaper
+    datacite_type: ""
     openaire_resourceType: "0031"
     openaire_type: publication
     eurepo: info:eu-repo/semantics/workingPaper
@@ -843,7 +843,7 @@
   props:
     csl: speech
     datacite_general: InteractiveResource
-    datacite_type: Interactive resource
+    datacite_type: ""
     openaire_resourceType: "0010"
     openaire_type: other
     eurepo: info:eu-repo/semantics/lecture
