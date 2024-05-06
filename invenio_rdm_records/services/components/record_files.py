@@ -18,6 +18,7 @@ class RecordFilesProcessorComponent(ServiceComponent):
         for processor in self.service.config.record_file_processors:
             processor(draft, record, uow=self.uow)
 
+    # TODO: Add this method to a new "RDMRecordServiceComponent" class
     def lift_embargo(self, identity, draft=None, record=None):
         for processor in self.service.config.record_file_processors:
             processor(draft, record, uow=self.uow)

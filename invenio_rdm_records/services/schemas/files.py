@@ -11,18 +11,13 @@
 from invenio_vocabularies.services.schema import (
     VocabularyRelationSchema as VocabularySchema,
 )
-from marshmallow import RAISE, Schema, fields, pre_load
+from marshmallow import Schema, fields, pre_load
 from marshmallow_utils.fields import NestedAttribute, SanitizedUnicode
 from marshmallow_utils.permissions import FieldPermissionsMixin
 
 
-class FileMetadataSchema(Schema):
+class MetadataSchema(Schema):
     """Schema for file metadata."""
-
-    class Meta:
-        """Meta."""
-
-        unknown = RAISE
 
     page = fields.Integer()
     type = fields.String()
@@ -32,6 +27,21 @@ class FileMetadataSchema(Schema):
     previewer = fields.String()
     width = fields.Integer()
     height = fields.Integer()
+
+
+class AccessSchema(Schema):
+    """Schema for file access."""
+
+    hidden = fields.Bool()
+
+
+class ProcessorSchema(Schema):
+    """Schema for file processor."""
+
+    type = fields.String()
+    status = fields.String()
+    source_file_id = fields.String()
+    props = fields.Dict()
 
 
 class FileSchema(Schema):
@@ -44,12 +54,12 @@ class FileSchema(Schema):
     size = fields.Integer(attribute="file.size")
     mimetype = fields.String(attribute="file.mimetype")
     storage_class = fields.String(attribute="file.storage_class")
-    uri = fields.String(attribute="file.uri")
 
     # FileRecord fields
     key = SanitizedUnicode()
-    metadata = fields.Nested(FileMetadataSchema)
-    access = fields.Dict(attribute="file.access")
+    metadata = fields.Nested(MetadataSchema)
+    access = fields.Nested(AccessSchema)
+    processor = fields.Nested(ProcessorSchema)
 
 
 class FilesSchema(Schema, FieldPermissionsMixin):
