@@ -1321,7 +1321,21 @@
               },
               "processor": {
                 "type": "object",
-                "dynamic": "true"
+                "properties": {
+                  "type": {
+                    "type": "keyword"
+                  },
+                  "status": {
+                    "type": "keyword"
+                  },
+                  "source_file_id": {
+                    "type": "keyword"
+                  },
+                  "props": {
+                    "type": "object",
+                    "dynamic": "true"
+                  }
+                }
               }
             }
           }
