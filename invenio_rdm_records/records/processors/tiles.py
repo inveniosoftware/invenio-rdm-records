@@ -15,7 +15,7 @@ from invenio_records_resources.services.uow import TaskOp
 
 from invenio_rdm_records.records.processors.base import RecordFilesProcessor
 from invenio_rdm_records.services.iiif.storage import tiles_storage
-from invenio_rdm_records.services.iiif.tasks import generate_tiles
+from invenio_rdm_records.services.iiif.tasks import cleanup_tiles_file, generate_tiles
 
 
 class TilesProcessor(RecordFilesProcessor):
@@ -52,7 +52,7 @@ class TilesProcessor(RecordFilesProcessor):
         yield
         files.lock()
 
-    def _cleanup(self, record):
+    def _cleanup(self, record, uow=None):
         """Cleans up unused media files and ptifs."""
         media_files = list(record.media_files.entries.keys())
         for fname in media_files:
@@ -60,7 +60,7 @@ class TilesProcessor(RecordFilesProcessor):
                 record.access.protection.files == "restricted"
                 or record.files.get(fname[:-5]) is None
             ):
-                deletion_status = tiles_storage.delete(record, fname[:-5])
+                deletion_status = tiles_storage.delete(record, fname[: -len(".ptif")])
                 if deletion_status:
                     mf = record.media_files.get(fname)
                     fi = mf.file.file_model
@@ -68,6 +68,15 @@ class TilesProcessor(RecordFilesProcessor):
                         fname, softdelete_obj=False, remove_rf=True
                     )
                     fi.delete()
+                else:
+                    # Send a task to make sure we retry in case of a transient error
+                    uow.register(
+                        TaskOp(
+                            cleanup_tiles_file,
+                            record_id=record["id"],
+                            tile_file_key=fname,
+                        )
+                    )
 
     def _process_file(self, file_record, draft, record, uow=None):
         """Process a file record to kickoff pyramidal tiff generation."""
@@ -119,7 +128,14 @@ class TilesProcessor(RecordFilesProcessor):
                 )
             )
         except Exception:
-            pass
+            # Nested transaction for current file is rolled back
+            current_app.logger.exception(
+                "Failed to initialize tiles generation.",
+                extra={
+                    "record_id": record["id"],
+                    "file_key": file_record.key,
+                },
+            )
 
     def _process(self, draft, record, uow):
         """Process the whole record to generate pyramidal tifs for valid files."""

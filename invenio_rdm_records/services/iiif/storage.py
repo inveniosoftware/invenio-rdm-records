@@ -106,7 +106,7 @@ class LocalTilesStorage(TilesStorage):
 
     def update_access(self, record):
         """Move files according to current files access of the record"""
-        # If we want to move the record from public -> restricted folder, uncomment below
+        # NOTE: If we want to move the record from public -> restricted dir, uncomment
         # access = record.access.protection.files
         # directory = str(self._get_dir(record))
         # old_dir = str(directory).replace(
@@ -124,6 +124,13 @@ class LocalTilesStorage(TilesStorage):
                 missing_ok=True
             )
         except Exception:
+            current_app.logger.exception(
+                "Failed to delete tiles for record.",
+                extra={
+                    "record_id": record["id"],
+                    "filename": filename,
+                },
+            )
             return False
         return True
 
