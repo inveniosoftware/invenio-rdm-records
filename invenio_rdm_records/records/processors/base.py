@@ -20,5 +20,6 @@ class RecordFilesProcessor:
         pass
 
     def __call__(self, draft, record, uow=None):
+        """Call method."""
         if self._can_process(draft, record):
             self._process(draft, record, uow=uow)

@@ -20,5 +20,6 @@ class RecordFilesProcessorComponent(ServiceComponent):
 
     # TODO: Add this method to a new "RDMRecordServiceComponent" class
     def lift_embargo(self, identity, draft=None, record=None):
+        """Lift embargo handler."""
         for processor in self.service.config.record_file_processors:
             processor(draft, record, uow=self.uow)

@@ -111,7 +111,7 @@ class LocalTilesStorage(TilesStorage):
         return self._get_file_path(record, filename).open("rb")
 
     def update_access(self, record):
-        """Move files according to current files access of the record"""
+        """Move files according to current files access of the record."""
         # NOTE: If we want to move the record from public -> restricted dir, uncomment
         # access = record.access.protection.files
         # directory = str(self._get_dir(record))
