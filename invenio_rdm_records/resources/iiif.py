@@ -84,6 +84,8 @@ class IIIFResourceConfig(ResourceConfig, ConfiguratorMixin):
 
     response_handler = {"application/json": ResponseHandler(JSONSerializer())}
 
+    supported_formats = FromConfig("IIIF_FORMATS")
+
     proxy_cls = FromConfig("IIIF_PROXY_CLASS", default=None, import_string=True)
 
 
@@ -246,9 +248,7 @@ class IIIFResource(ErrorHandlersMixin, Resource):
             image_format=image_format,
         )
         # decide the mime_type from the requested image_format
-        mimetype = current_app.config.get("IIIF_FORMATS").get(
-            image_format, "image/jpeg"
-        )
+        mimetype = current_app.config.supported_formats.get(image_format, "image/jpeg")
         # TODO: get from cache on the service image.last_modified
         last_modified = None
         send_file_kwargs = {"mimetype": mimetype}

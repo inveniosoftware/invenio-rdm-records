@@ -25,14 +25,20 @@ class TilesProcessor(RecordFilesProcessor):
     def valid_exts(self) -> list:
         """Return valid extenstions for tiles generation from config/default."""
         return current_app.config.get(
-            "IIIF_VALID_EXTENSIONS", ["tiff", "jpeg", "png", "jpg"]
+            "IIIF_TILES_VALID_EXTENSIONS", ["tiff", "pdf", "jpeg", "png"]
         )
 
     def _can_process(self, draft, record) -> bool:
         """Checks to determine if to process the record."""
-        return current_app.config.get("IIIF_GENERATE_TILES", False) and (
-            bool(set(self.valid_exts).intersection(record.files.exts))
-            or (record.media_files.enabled and "ptif" in record.media_files.exts)
+        return (
+            # Check if tiles generation is enabled...
+            current_app.config.get("IIIF_TILES_GENERATION_ENABLED", False)
+            and (
+                # ...has convertable files (i.e. images)
+                bool(set(self.valid_exts).intersection(record.files.exts))
+                # ...or has already converted files
+                or (record.media_files.enabled and "ptif" in record.media_files.exts)
+            )
         )
 
     def _can_process_file(self, file_record, draft, record) -> bool:

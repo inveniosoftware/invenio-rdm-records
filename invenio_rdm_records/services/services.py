@@ -127,6 +127,7 @@ class RDMRecordService(RecordService):
         if not record.access.lift_embargo():
             raise EmbargoNotLiftedError(_id)
 
+        # Run components
         self.run_components(
             "lift_embargo", identity, draft=draft, record=record, uow=uow
         )

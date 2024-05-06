@@ -60,7 +60,9 @@ class LocalTilesStorage(TilesStorage):
     @property
     def base_path(self):
         """Return base path from object/config."""
-        return self.output_path or Path(current_app.config.get("IIIF_TILES_BASE_PATH"))
+        return Path(
+            self._base_path or current_app.config.get("IIIF_TILES_STORAGE_BASE_PATH")
+        )
 
     def _get_dir(self, record: RDMRecord) -> Path:
         """Get directory."""
