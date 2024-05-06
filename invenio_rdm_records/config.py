@@ -559,5 +559,13 @@ RDM_RECORDS_MAX_MEDIA_FILES_COUNT = 100
 RDM_DATACITE_FUNDER_IDENTIFIERS_PRIORITY = ("ror", "doi", "grid", "isni", "gnd")
 """Priority of funder identifiers types to be used for DataCite serialization."""
 
-RDM_IIIF_MANIFEST_FORMATS = []
+RDM_IIIF_MANIFEST_FORMATS = [
+    "gif",
+    "jp2",
+    "jpeg",
+    "jpg",
+    "png",
+    "tif",
+    "tiff",
+]
 """Formats to be included in the IIIF Manifest."""
