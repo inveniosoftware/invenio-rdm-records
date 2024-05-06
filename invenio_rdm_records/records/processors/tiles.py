@@ -90,8 +90,8 @@ class TilesProcessor(RecordFilesProcessor):
                 status_file.processor = {
                     "type": "image-tiles",
                     "status": "init",
-                    "props": {},
                     "source_file_id": str(file_record.file.id),
+                    "props": {},
                 }
                 status_file.access.hidden = True
                 status_file.commit()

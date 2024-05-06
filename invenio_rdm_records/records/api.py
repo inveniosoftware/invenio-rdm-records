@@ -286,6 +286,9 @@ class RDMMediaFileDraft(FileRecord):
     model_cls = models.RDMMediaFileDraftMetadata
     record_cls = None  # defined below
 
+    # Stores record files processor information
+    processor = DictField(clear_none=True, create_if_missing=True)
+
 
 def get_quota(record=None):
     """Called by the file manager in create_bucket() during record.post_create.
@@ -403,6 +406,9 @@ class RDMMediaFileRecord(FileRecord):
 
     model_cls = models.RDMMediaFileRecordMetadata
     record_cls = None  # defined below
+
+    # Stores record files processor information
+    processor = DictField(clear_none=True, create_if_missing=True)
 
 
 class RDMRecord(CommonFieldsMixin, Record):
