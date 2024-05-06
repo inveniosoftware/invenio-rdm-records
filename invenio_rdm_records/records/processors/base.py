@@ -1,7 +1,17 @@
+# -*- coding: utf-8 -*-
+#
+# Copyright (C) 2021-2024 CERN.
+#
+# Invenio-RDM-Records is free software; you can redistribute it and/or modify
+# it under the terms of the MIT License; see LICENSE file for more details.
+
+"""Record files processor base."""
+
+
 class RecordFilesProcessor:
     """Base class for record files processors."""
 
-    def _can_process(self, file_record, draft, record):
+    def _can_process(self, draft, record):
         """Determine if this processor can process a given record file."""
         return False
 
