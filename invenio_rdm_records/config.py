@@ -569,3 +569,21 @@ RDM_IIIF_MANIFEST_FORMATS = [
     "tiff",
 ]
 """Formats to be included in the IIIF Manifest."""
+
+#
+# IIIF Tiles configuration
+#
+IIIF_TILES_GENERATION_ENABLED = False
+"""Enable generating pyramidal TIFF tiles for uploaded images."""
+
+IIIF_TILES_VALID_EXTENSIONS = ["tiff", "pdf", "jpeg", "png"]
+"""Valid (normalized) file extensions for generating tiles."""
+
+IIIF_TILES_STORAGE_BASE_PATH = "images/"
+"""Base path for storing IIIF tiles.
+
+Relative paths are resolved against the application instance path.
+"""
+
+IIIF_TILES_CONVERTER_PARAMS = {}
+"""Parameters to be passed to the tiles converter."""
