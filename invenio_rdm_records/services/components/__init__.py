@@ -5,7 +5,6 @@
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
 
-
 """High-level API for working with RDM service components."""
 
 from invenio_drafts_resources.services.records.components import (
@@ -15,15 +14,12 @@ from invenio_drafts_resources.services.records.components import (
     RelationsComponent,
 )
 
-from invenio_rdm_records.records.components.record_files import (
-    RecordFilesProcessorComponent,
-)
-
 from .access import AccessComponent
 from .custom_fields import CustomFieldsComponent
 from .metadata import MetadataComponent
 from .pids import ParentPIDsComponent, PIDsComponent
 from .record_deletion import RecordDeletionComponent
+from .record_files import RecordFilesProcessorComponent
 from .review import ReviewComponent
 from .verified import ContentModerationComponent
 
