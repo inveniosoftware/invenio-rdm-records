@@ -11,6 +11,20 @@
 Changes
 =======
 
+Version 10.4.0 (released 2024-05-07)
+
+- config: add default values for IIIF tiles generation
+- config: new variable for default IIIF manifest formats
+- iiif: add pyramidal TIFF tiles generation on record publish via files processor
+- iiif: harmonize configuration naming
+- services: updated file schema
+    - added "access" field to file schema
+    - updated metadata field to be nested with a new schema
+- services: fixed PDF image conversion bug
+    - PDF thumbnails should now work again
+- iiif: added fallback for iip server
+- licenses: fix some delimiters not been recognized.
+
 Version 10.3.2 (released 2024-04-30)
 
 - iiif: fix proxy path generation
