@@ -11,6 +11,10 @@
 Changes
 =======
 
+Version 10.4.1 (released 2024-05-07)
+
+- grants: add new endpoint to grant access to records by groups
+
 Version 10.4.0 (released 2024-05-07)
 
 - config: add default values for IIIF tiles generation
