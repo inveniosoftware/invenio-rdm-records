@@ -576,7 +576,16 @@ RDM_IIIF_MANIFEST_FORMATS = [
 IIIF_TILES_GENERATION_ENABLED = False
 """Enable generating pyramidal TIFF tiles for uploaded images."""
 
-IIIF_TILES_VALID_EXTENSIONS = ["tiff", "pdf", "jpeg", "png"]
+IIIF_TILES_VALID_EXTENSIONS = [
+    "jp2",
+    "jpeg",
+    "jpg",
+    "pdf",  # We can still generate tiles for the first page of a PDF
+    "png",
+    "png",
+    "tif",
+    "tiff",
+]
 """Valid (normalized) file extensions for generating tiles."""
 
 IIIF_TILES_STORAGE_BASE_PATH = "images/"
