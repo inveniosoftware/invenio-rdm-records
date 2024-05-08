@@ -35,6 +35,7 @@ class PIDsService(RecordService):
         return [
             EntityResolverExpandableField("parent.review.receiver"),
             ParentCommunitiesExpandableField("parent.communities.default"),
+            EntityResolverExpandableField("parent.access.owned_by"),
         ]
 
     @property
