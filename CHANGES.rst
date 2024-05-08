@@ -11,6 +11,10 @@
 Changes
 =======
 
+Version 10.4.2 (released 2024-05-08)
+
+- iiif: resolve relative tiles storage against instance path
+
 Version 10.4.1 (released 2024-05-07)
 
 - grants: add new endpoint to grant access to records by groups
