@@ -543,7 +543,7 @@ RDM_LOCK_EDIT_PUBLISHED_FILES = lock_edit_published_files
 """Lock editing already published files (enforce record versioning).
 
    signature to implement:
-   def lock_edit_published_files(service, identity, record=None):
+   def lock_edit_published_files(service, identity, record=None, draft=None):
 """
 
 # Feature flag to enable/disable user moderation
