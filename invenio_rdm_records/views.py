@@ -20,6 +20,11 @@ def create_records_bp(app):
     ext = app.extensions["invenio-rdm-records"]
     return ext.records_resource.as_blueprint()
 
+def create_jobs_bp(app):
+    """Create jobs blueprint."""
+    ext = app.extensions["invenio-rdm-records"]
+    return ext.jobs_resource.as_blueprint()
+
 
 def create_record_files_bp(app):
     """Create records files blueprint."""

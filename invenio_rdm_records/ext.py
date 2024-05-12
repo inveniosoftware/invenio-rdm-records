@@ -43,6 +43,7 @@ from .resources.config import (
     RDMDraftMediaFilesResourceConfig,
     RDMRecordMediaFilesResourceConfig,
 )
+from .resources.jobs import JobsResource, JobsResourceConfig
 from .resources.resources import RDMRecordCommunitiesResource, RDMRecordRequestsResource
 from .services import (
     CommunityRecordsService,
@@ -192,6 +193,11 @@ class InvenioRDMRecords(object):
         self.records_resource = RDMRecordResource(
             service=self.records_service,
             config=RDMRecordResourceConfig.build(app),
+        )
+
+        self.jobs_resource = JobsResource(
+            service=self.records_service,
+            config=JobsResourceConfig,
         )
 
         # Record files resource
