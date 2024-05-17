@@ -35,18 +35,14 @@ def link(url):
 @pytest.fixture(scope="function")
 def app_with_allowed_edits(running_app):
     """Allow editing of published records."""
-    running_app.app.config["RDM_LOCK_EDIT_PUBLISHED_FILES"] = (
-        lambda service, identity, record=None: False
-    )
+    running_app.app.config["RDM_LOCK_EDIT_PUBLISHED_FILES"] = lambda *_, **__: False
     return running_app
 
 
 @pytest.fixture(scope="function")
 def app_with_deny_edits(running_app):
     """Deny editing of published records."""
-    running_app.app.config["RDM_LOCK_EDIT_PUBLISHED_FILES"] = (
-        lambda service, identity, record=None: True
-    )
+    running_app.app.config["RDM_LOCK_EDIT_PUBLISHED_FILES"] = lambda *_, **__: True
 
 
 def init_file(client, recid, key, headers):
