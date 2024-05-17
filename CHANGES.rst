@@ -11,6 +11,10 @@
 Changes
 =======
 
+Version 10.4.3 (released 2024-05-17)
+
+- services: fix permission for file edit
+
 Version 10.4.2 (released 2024-05-08)
 
 - iiif: resolve relative tiles storage against instance path
