@@ -11,6 +11,10 @@
 Changes
 =======
 
+Version 10.5.0 (released 2024-05-21)
+
+- iiif: add PyVIPS support for PDF thumnbail rendering
+
 Version 10.4.3 (released 2024-05-17)
 
 - services: fix permission for file edit
