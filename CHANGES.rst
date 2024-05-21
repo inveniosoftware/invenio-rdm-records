@@ -11,8 +11,11 @@
 Changes
 =======
 
-Version 10.5.0 (released 2024-05-21)
+Version 10.6.0 (released 2024-05-22)
+- pids: prevent creating pids for restricted records
+- pids: restrict updating permission levels for records based on a grace period
 
+Version 10.5.0 (released 2024-05-21)
 - iiif: add PyVIPS support for PDF thumnbail rendering
 
 Version 10.4.3 (released 2024-05-17)
