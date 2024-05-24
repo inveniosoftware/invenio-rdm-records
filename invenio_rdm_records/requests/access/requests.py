@@ -134,17 +134,21 @@ class UserAcceptAction(actions.AcceptAction):
         permission = self.request["payload"]["permission"]
 
         data = {
-            "permission": permission,
-            "subject": {
-                "type": "user",
-                "id": str(creator.id),
-            },
-            "origin": f"request:{self.request.id}",
+            "grants": [
+                {
+                    "permission": permission,
+                    "subject": {
+                        "type": "user",
+                        "id": str(creator.id),
+                    },
+                    "origin": f"request:{self.request.id}",
+                }
+            ]
         }
 
         # NOTE: we're using the system identity here to avoid the grant creation
         #       potentially being blocked by the requesting user's profile visibility
-        service.access.create_grant(system_identity, record.pid.pid_value, data)
+        service.access.bulk_create_grants(system_identity, record.pid.pid_value, data)
         uow.register(
             ParentRecordCommitOp(record.parent, indexer_context=dict(service=service))
         )

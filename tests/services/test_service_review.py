@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2021 CERN.
+# Copyright (C) 2021-2024 CERN.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
@@ -217,6 +217,17 @@ def test_direct_include_to_open_review_community(
         record["parent"]["communities"]["default"] == open_review_community.data["id"]
     )
     assert record["status"] == "published"
+
+    # check that record shows up in the user serach results, but the draft doesn't
+    service.record_cls.index.refresh()
+    service.draft_cls.index.refresh()
+    search_res = service.search_drafts(identity)
+
+    data = list(search_res.hits)
+    assert len(data) == 1
+    assert data[0]["is_draft"] is False
+    assert data[0]["is_published"] is True
+    assert data[0]["status"] == "published"
 
     # ### Create a new version (still part of community)
     draft = service.new_version(identity, draft_for_open_review.id).to_dict()

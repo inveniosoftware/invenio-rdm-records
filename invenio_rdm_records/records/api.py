@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2020-2023 CERN.
+# Copyright (C) 2020-2024 CERN.
 # Copyright (C) 2021-2023 TU Wien.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
@@ -47,6 +47,7 @@ from invenio_rdm_records.records.systemfields.deletion_status import (
 
 from . import models
 from .dumpers import (
+    CombinedSubjectsDumperExt,
     EDTFDumperExt,
     EDTFListDumperExt,
     GrantTokensDumperExt,
@@ -118,6 +119,7 @@ class CommonFieldsMixin:
             EDTFDumperExt("metadata.publication_date"),
             EDTFListDumperExt("metadata.dates", "date"),
             RelationDumperExt("relations"),
+            CombinedSubjectsDumperExt(),
             CustomFieldsDumperExt(fields_var="RDM_CUSTOM_FIELDS"),
             StatisticsDumperExt("stats"),
         ]
@@ -127,21 +129,21 @@ class CommonFieldsMixin:
         creator_affiliations=PIDNestedListRelation(
             "metadata.creators",
             relation_field="affiliations",
-            keys=["name"],
+            keys=["name", "identifiers"],
             pid_field=Affiliation.pid,
             cache_key="affiliations",
         ),
         contributor_affiliations=PIDNestedListRelation(
             "metadata.contributors",
             relation_field="affiliations",
-            keys=["name"],
+            keys=["name", "identifiers"],
             pid_field=Affiliation.pid,
             cache_key="affiliations",
         ),
         funding_funder=PIDListRelation(
             "metadata.funding",
             relation_field="funder",
-            keys=["name"],
+            keys=["name", "identifiers"],
             pid_field=Funder.pid,
             cache_key="funders",
         ),
@@ -284,6 +286,9 @@ class RDMMediaFileDraft(FileRecord):
     model_cls = models.RDMMediaFileDraftMetadata
     record_cls = None  # defined below
 
+    # Stores record files processor information
+    processor = DictField(clear_none=True, create_if_missing=True)
+
 
 def get_quota(record=None):
     """Called by the file manager in create_bucket() during record.post_create.
@@ -401,6 +406,9 @@ class RDMMediaFileRecord(FileRecord):
 
     model_cls = models.RDMMediaFileRecordMetadata
     record_cls = None  # defined below
+
+    # Stores record files processor information
+    processor = DictField(clear_none=True, create_if_missing=True)
 
 
 class RDMRecord(CommonFieldsMixin, Record):

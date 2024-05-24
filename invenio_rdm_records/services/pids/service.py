@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2021 CERN.
+# Copyright (C) 2021-2024 CERN.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
@@ -57,7 +57,9 @@ class PIDsService(RecordService):
     @property
     def parent_pid_manager(self):
         """Parent PID Manager."""
-        return self.manager_cls(self.config.parent_pids_providers)
+        return self.manager_cls(
+            self.config.parent_pids_providers, self.config.parent_pids_required
+        )
 
     def resolve(self, identity, id_, scheme, expand=False):
         """Resolve PID to a record (not draft)."""
@@ -192,6 +194,20 @@ class PIDsService(RecordService):
         url = links[f"{link_prefix}_html"]
         if f"{link_prefix}_{scheme}" in links:
             url = links[f"{link_prefix}_{scheme}"]
+
+        # NOTE: This is not the best place to do this, since we shouldn't be aware of
+        #       the fact that the record has a `RelationsField``. However, without
+        #       dereferencing, we're not able to serialize the record properly for
+        #       registration/updates (e.g. for the DataCite DOIs).
+        #       Some possible alternatives:
+        #
+        #       - Fetch the record from the service, so that it is already in a
+        #         serializable dereferenced state.
+        #       - Bake-in the dereferencing in the serializer, though this would
+        #         be not very consistent regarding the architecture layers.
+        relations = getattr(pid_record, "relations", None)
+        if relations:
+            relations.dereference()
 
         if pid.is_registered():
             self.require_permission(identity, "pid_update", record=record)

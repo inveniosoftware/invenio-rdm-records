@@ -15,7 +15,10 @@ import pytest
 from flask_principal import AnonymousIdentity, Identity, UserNeed
 from invenio_access.permissions import any_user, authenticated_user
 from invenio_db import db
-from invenio_records_resources.services.errors import PermissionDeniedError
+from invenio_records_resources.services.errors import (
+    PermissionDeniedError,
+    RecordPermissionDeniedError,
+)
 from marshmallow.exceptions import ValidationError
 
 from invenio_rdm_records.proxies import current_rdm_records
@@ -85,7 +88,7 @@ def test_permission_levels(service, restricted_record, identity_simple, client):
     anon.provides.add(any_user)
 
     # Deny anonymous to read restricted record and draft
-    pytest.raises(PermissionDeniedError, service.read, anon, id_)
+    pytest.raises(RecordPermissionDeniedError, service.read, anon, id_)
     pytest.raises(PermissionDeniedError, service.files.list_files, anon, id_)
     pytest.raises(PermissionDeniedError, service.read_draft, anon, id_)
     with pytest.raises(PermissionDeniedError):

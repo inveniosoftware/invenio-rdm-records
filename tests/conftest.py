@@ -35,7 +35,7 @@ except AttributeError:
 
 from collections import namedtuple
 from copy import deepcopy
-from datetime import datetime
+from datetime import datetime, timedelta
 from io import BytesIO
 from unittest import mock
 
@@ -93,6 +93,7 @@ from invenio_rdm_records.notifications.builders import (
     CommunityInclusionDeclineNotificationBuilder,
     CommunityInclusionExpireNotificationBuilder,
     CommunityInclusionSubmittedNotificationBuilder,
+    GrantUserAccessNotificationBuilder,
     GuestAccessRequestAcceptNotificationBuilder,
     GuestAccessRequestSubmitNotificationBuilder,
     GuestAccessRequestTokenCreateNotificationBuilder,
@@ -178,6 +179,8 @@ def app_config(app_config, mock_datacite_client):
 
     for config_key in supported_configurations:
         app_config[config_key] = getattr(config, config_key, None)
+
+    app_config["THEME_SITENAME"] = "Invenio"
 
     app_config["RECORDS_REFRESOLVER_CLS"] = (
         "invenio_records.resolver.InvenioRefResolver"
@@ -332,6 +335,7 @@ def app_config(app_config, mock_datacite_client):
         GuestAccessRequestSubmitNotificationBuilder.type: GuestAccessRequestSubmitNotificationBuilder,
         UserAccessRequestAcceptNotificationBuilder.type: UserAccessRequestAcceptNotificationBuilder,
         UserAccessRequestSubmitNotificationBuilder.type: UserAccessRequestSubmitNotificationBuilder,
+        GrantUserAccessNotificationBuilder.type: GrantUserAccessNotificationBuilder,
     }
 
     # Specifying default resolvers. Will only be used in specific test cases.
@@ -359,6 +363,14 @@ def app_config(app_config, mock_datacite_client):
     app_config["REQUESTS_PERMISSION_POLICY"] = RDMRequestsPermissionPolicy
 
     app_config["COMMUNITIES_OAI_SETS_PREFIX"] = "community-"
+
+    app_config["APP_RDM_ROUTES"] = {
+        "record_detail": "/records/<pid_value>",
+        "record_file_download": "/records/<pid_value>/files/<path:filename>",
+    }
+
+    app_config["USERS_RESOURCES_GROUPS_ENABLED"] = True
+
     return app_config
 
 
@@ -678,7 +690,7 @@ def enhanced_full_record(users):
                         ],
                     },
                     "role": {
-                        "id": "other",
+                        "id": "datamanager",
                         "title": {
                             "de": "DatenmanagerIn",
                             "en": "Data manager",
@@ -694,10 +706,10 @@ def enhanced_full_record(users):
                         "type": "personal",
                     },
                     "role": {
-                        "id": "other",
+                        "id": "projectmanager",
                         "title": {
-                            "de": "VerteilerIn",
-                            "en": "Other",
+                            "de": "ProjektmanagerIn",
+                            "en": "Project manager",
                         },
                     },
                 },
@@ -1166,6 +1178,8 @@ def resource_type_v(app, resource_type_type):
                 "schema.org": "https://schema.org/Dataset",
                 "subtype": "",
                 "type": "dataset",
+                "marc21_type": "dataset",
+                "marc21_subtype": "",
             },
             "title": {"en": "Dataset"},
             "tags": ["depositable", "linkable"],
@@ -1183,10 +1197,12 @@ def resource_type_v(app, resource_type_type):
                 "datacite_type": "",
                 "openaire_resourceType": "25",
                 "openaire_type": "dataset",
-                "eurepo": "info:eu-repo/semantic/other",
+                "eurepo": "info:eu-repo/semantics/other",
                 "schema.org": "https://schema.org/ImageObject",
                 "subtype": "",
                 "type": "image",
+                "marc21_type": "image",
+                "marc21_subtype": "",
             },
             "icon": "chart bar outline",
             "title": {"en": "Image"},
@@ -1205,10 +1221,12 @@ def resource_type_v(app, resource_type_type):
                 "datacite_type": "",
                 "openaire_resourceType": "0029",
                 "openaire_type": "software",
-                "eurepo": "info:eu-repo/semantic/other",
+                "eurepo": "info:eu-repo/semantics/other",
                 "schema.org": "https://schema.org/SoftwareSourceCode",
                 "subtype": "",
                 "type": "image",
+                "marc21_type": "software",
+                "marc21_subtype": "",
             },
             "icon": "code",
             "title": {"en": "Software"},
@@ -1227,10 +1245,12 @@ def resource_type_v(app, resource_type_type):
                 "datacite_type": "Photo",
                 "openaire_resourceType": "25",
                 "openaire_type": "dataset",
-                "eurepo": "info:eu-repo/semantic/other",
+                "eurepo": "info:eu-repo/semantics/other",
                 "schema.org": "https://schema.org/Photograph",
                 "subtype": "image-photo",
                 "type": "image",
+                "marc21_type": "image",
+                "marc21_subtype": "photo",
             },
             "icon": "chart bar outline",
             "title": {"en": "Photo"},
@@ -1334,7 +1354,7 @@ def date_type_v(app, date_type):
         {
             "id": "other",
             "title": {"en": "Other"},
-            "props": {"datacite": "Other"},
+            "props": {"datacite": "Other", "marc": "oth"},
             "type": "datetypes",
         },
     )
@@ -1353,11 +1373,31 @@ def contributors_role_type(app):
 @pytest.fixture(scope="module")
 def contributors_role_v(app, contributors_role_type):
     """Contributor role vocabulary record."""
+    vocabulary_service.create(
+        system_identity,
+        {
+            "id": "datamanager",
+            "props": {"datacite": "DataManager"},
+            "title": {"en": "Data manager"},
+            "type": "contributorsroles",
+        },
+    )
+
+    vocabulary_service.create(
+        system_identity,
+        {
+            "id": "projectmanager",
+            "props": {"datacite": "ProjectManager"},
+            "title": {"en": "Project manager"},
+            "type": "contributorsroles",
+        },
+    )
+
     vocab = vocabulary_service.create(
         system_identity,
         {
             "id": "other",
-            "props": {"datacite": "Other"},
+            "props": {"datacite": "Other", "marc": "oth"},
             "title": {"en": "Other"},
             "type": "contributorsroles",
         },
@@ -1664,6 +1704,33 @@ def admin_role_need(db):
 
 
 @pytest.fixture()
+def embargoed_files_record(running_app, minimal_record, superuser_identity):
+    """Embargoed files record."""
+    service = current_rdm_records_service
+    today = arrow.utcnow().date().isoformat()
+
+    # Add embargo to record
+    with mock.patch("arrow.utcnow") as mock_arrow:
+        minimal_record["access"]["files"] = "restricted"
+        minimal_record["access"]["status"] = "embargoed"
+        minimal_record["access"]["embargo"] = dict(
+            active=True, until=today, reason=None
+        )
+
+        # We need to set the current date in the past to pass the validations
+        mock_arrow.return_value = arrow.get(datetime(1954, 9, 29), tz.gettz("UTC"))
+        draft = service.create(superuser_identity, minimal_record)
+        record = service.publish(id_=draft.id, identity=superuser_identity)
+
+        RDMRecord.index.refresh()
+
+        # Recover current date
+        mock_arrow.return_value = arrow.get(datetime.utcnow())
+
+    return record
+
+
+@pytest.fixture()
 def embargoed_record(running_app, minimal_record, superuser_identity):
     """Embargoed record."""
     service = current_rdm_records_service
@@ -1671,7 +1738,7 @@ def embargoed_record(running_app, minimal_record, superuser_identity):
 
     # Add embargo to record
     with mock.patch("arrow.utcnow") as mock_arrow:
-        minimal_record["access"]["files"] = "restricted"
+        minimal_record["access"]["record"] = "restricted"
         minimal_record["access"]["status"] = "embargoed"
         minimal_record["access"]["embargo"] = dict(
             active=True, until=today, reason=None

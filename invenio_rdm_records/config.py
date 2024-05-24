@@ -174,8 +174,22 @@ RDM_FACETS = {
             "field": "subjects.subject",
         },
     },
+    # subject_nested is deprecated and should be removed.
+    # subject_combined does require a pre-existing change to indexed documents,
+    # so it's unclear if a direct replacement is right.
+    # Keeping it around until v13 might be better. On the flipside it is an incorrect
+    # facet...
     "subject_nested": {
         "facet": facets.subject_nested,
+        "ui": {
+            "field": "subjects.scheme",
+            "childAgg": {
+                "field": "subjects.subject",
+            },
+        },
+    },
+    "subject_combined": {
+        "facet": facets.subject_combined,
         "ui": {
             "field": "subjects.scheme",
             "childAgg": {
@@ -529,7 +543,7 @@ RDM_LOCK_EDIT_PUBLISHED_FILES = lock_edit_published_files
 """Lock editing already published files (enforce record versioning).
 
    signature to implement:
-   def lock_edit_published_files(service, identity, record=None):
+   def lock_edit_published_files(service, identity, record=None, draft=None):
 """
 
 # Feature flag to enable/disable user moderation
@@ -544,3 +558,47 @@ RDM_RECORDS_MAX_MEDIA_FILES_COUNT = 100
 
 RDM_DATACITE_FUNDER_IDENTIFIERS_PRIORITY = ("ror", "doi", "grid", "isni", "gnd")
 """Priority of funder identifiers types to be used for DataCite serialization."""
+
+RDM_IIIF_MANIFEST_FORMATS = [
+    "gif",
+    "jp2",
+    "jpeg",
+    "jpg",
+    "png",
+    "tif",
+    "tiff",
+]
+"""Formats to be included in the IIIF Manifest."""
+
+#
+# IIIF Tiles configuration
+#
+IIIF_TILES_GENERATION_ENABLED = False
+"""Enable generating pyramidal TIFF tiles for uploaded images."""
+
+IIIF_TILES_VALID_EXTENSIONS = [
+    "jp2",
+    "jpeg",
+    "jpg",
+    "pdf",  # We can still generate tiles for the first page of a PDF
+    "png",
+    "png",
+    "tif",
+    "tiff",
+]
+"""Valid (normalized) file extensions for generating tiles."""
+
+IIIF_TILES_STORAGE_BASE_PATH = "images/"
+"""Base path for storing IIIF tiles.
+
+Relative paths are resolved against the application instance path.
+"""
+
+IIIF_TILES_CONVERTER_PARAMS = {}
+"""Parameters to be passed to the tiles converter."""
+
+RDM_RECORDS_RESTRICTION_GRACE_PERIOD = timedelta(days=30)
+"""Grace period for changing record access to restricted."""
+
+RDM_RECORDS_ALLOW_RESTRICTION_AFTER_GRACE_PERIOD = False
+"""Whether record access restriction is allowed after the grace period or not."""

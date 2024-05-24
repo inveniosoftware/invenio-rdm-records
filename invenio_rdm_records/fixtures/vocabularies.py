@@ -1,7 +1,9 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2021-2022 CERN.
+# Copyright (C) 2021-2024 CERN.
 # Copyright (C) 2021-2022 Northwestern University.
+# Copyright (C) 2024 TU Wien.
+# Copyright (C) 2024 KTH Royal Institute of Technology.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
@@ -70,7 +72,9 @@ class CSVIterator(DataIterator):
     def __iter__(self):
         """Iterate over records."""
         with open(self._data_file) as fp:
-            reader = csv.reader(fp, delimiter=";", quotechar='"')
+            dialect = csv.Sniffer().sniff(fp.read(4096))
+            fp.seek(0)
+            reader = csv.reader(fp, dialect)
             header = next(reader)
             for row in reader:
                 yield self.map_row(header, row)
@@ -387,6 +391,10 @@ class VocabularyEntryWithSchemes(VocabularyEntry):
     # Template methods
     def pre_load(self, identity, ignore):
         """Actions taken before iteratively creating records."""
+        # Create the type first, if needed
+        super().pre_load(identity, ignore)
+
+        # Add schemes
         for scheme in self.schemes():
             id_ = f"{self._id}.{scheme['id']}"
             if id_ not in ignore:

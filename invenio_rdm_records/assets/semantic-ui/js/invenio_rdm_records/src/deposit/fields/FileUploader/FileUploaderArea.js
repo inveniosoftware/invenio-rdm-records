@@ -103,7 +103,7 @@ const FileTableRow = ({
               href={_get(file, "links.content", "")}
               target="_blank"
               rel="noopener noreferrer"
-              className="mr-5"
+              className="mr-5 text-break"
             >
               {file.name}
             </a>

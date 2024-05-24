@@ -10,6 +10,7 @@
 """Celery tasks for fixtures."""
 
 import random
+from io import BytesIO
 
 from celery import shared_task
 from flask import current_app
@@ -64,7 +65,7 @@ def create_vocabulary_record(service_str, data):
 
 
 @shared_task
-def create_demo_record(user_id, data, publish=True):
+def create_demo_record(user_id, data, publish=True, create_file=False):
     """Create demo record."""
     service = current_rdm_records_service
     if user_id == system_user_id:
@@ -73,8 +74,20 @@ def create_demo_record(user_id, data, publish=True):
         identity = get_authenticated_identity(user_id)
 
     draft = service.create(data=data, identity=identity)
+    if create_file:
+        _add_file_to_draft(service.draft_files, draft.id, "file.txt", identity)
     if publish:
         service.publish(id_=draft.id, identity=identity)
+
+
+def _add_file_to_draft(draft_file_service, draft_id, file_id, identity):
+    """Add a file to the record."""
+    draft_file_service.init_files(identity, draft_id, data=[{"key": file_id}])
+    draft_file_service.set_file_content(
+        identity, draft_id, file_id, BytesIO(b"test file content")
+    )
+    result = draft_file_service.commit_file(identity, draft_id, file_id)
+    return result
 
 
 @shared_task

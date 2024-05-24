@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2022 CERN.
+# Copyright (C) 2022-2024 CERN.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
@@ -71,7 +71,7 @@ class ChainObject:
 
         objs = super().__getattribute__("_objs")
         for o in objs:
-            if getattr(o, name):
+            if getattr(o, name, None):
                 return getattr(o, name)
         raise AttributeError()
 

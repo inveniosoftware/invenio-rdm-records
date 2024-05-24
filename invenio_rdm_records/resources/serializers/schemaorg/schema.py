@@ -16,9 +16,7 @@ from commonmeta import dict_to_spdx, doi_as_url, parse_attributes, unwrap, wrap
 from edtf.parser.grammar import ParseException
 from flask_resources.serializers import BaseSerializerSchema
 from idutils import to_url
-from invenio_access.permissions import system_identity
-from invenio_records_resources.proxies import current_service_registry
-from marshmallow import Schema, ValidationError, fields, missing, post_dump, pre_dump
+from marshmallow import Schema, ValidationError, fields, missing
 from marshmallow_utils.fields import SanitizedHTML, SanitizedUnicode
 from pydash import py_
 
@@ -128,20 +126,11 @@ class PersonOrOrgSchema(Schema):
 
             # Affiliation comes from a controlled vocabulary
             if id_:
-                affiliations_service = current_service_registry.get("affiliations")
-                affiliation_vc = affiliations_service.read(
-                    system_identity, id_
-                ).to_dict()
-
-                # Prioritize the vocabulary name instead of the custom one
-                if affiliation_vc.get("name"):
-                    serialized_affiliation.update({"name": affiliation_vc["name"]})
-
                 # Retrieve the first identifier
                 identifier = next(
                     (
                         idf
-                        for idf in affiliation_vc.get("identifiers", [])
+                        for idf in affiliation.get("identifiers", [])
                         if (idf.get("identifier") and idf.get("scheme"))
                     ),
                     None,

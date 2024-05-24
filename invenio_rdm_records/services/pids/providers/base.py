@@ -203,3 +203,11 @@ class PIDProvider:
             error["messages"].extend(error_msg)
         else:
             error["messages"].append(error_msg)
+
+    def validate_restriction_level(self, record, identifier, **kwargs):
+        """Validates that the record has correct restriction levels to crate the PID."""
+        pass
+
+    def create_and_reserve(self, record, **kwargs):
+        """Create and reserve a PID for a record."""
+        pass

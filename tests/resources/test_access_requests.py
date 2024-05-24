@@ -239,15 +239,19 @@ def test_access_grant_for_user(
     assert response.status_code == 403
 
     # Grant access to the *current user*
-    service.access.create_grant(
+    service.access.bulk_create_grants(
         identity=system_identity,
         id_=record.id,
         data={
-            "subject": {
-                "type": "user",
-                "id": str(user.id),
-            },
-            "permission": "view",
+            "grants": [
+                {
+                    "subject": {
+                        "type": "user",
+                        "id": str(user.id),
+                    },
+                    "permission": "view",
+                }
+            ]
         },
     )
 
@@ -269,15 +273,19 @@ def test_access_grant_for_system_role(
     assert response.status_code == 403
 
     # Grant access to *any authenticated user*
-    service.access.create_grant(
+    service.access.bulk_create_grants(
         identity=system_identity,
         id_=record.id,
         data={
-            "subject": {
-                "type": "system_role",
-                "id": "authenticated_user",
-            },
-            "permission": "view",
+            "grants": [
+                {
+                    "subject": {
+                        "type": "system_role",
+                        "id": "authenticated_user",
+                    },
+                    "permission": "view",
+                }
+            ]
         },
     )
 
@@ -308,15 +316,19 @@ def test_access_grant_for_role(
     assert response.status_code == 403
 
     # Grant access to users with a specific role (i.e. in a specific group)
-    service.access.create_grant(
+    service.access.bulk_create_grants(
         identity=system_identity,
         id_=record.id,
         data={
-            "subject": {
-                "type": "role",
-                "id": str(role.name),
-            },
-            "permission": "view",
+            "grants": [
+                {
+                    "subject": {
+                        "type": "role",
+                        "id": str(role.name),
+                    },
+                    "permission": "view",
+                }
+            ]
         },
     )
 

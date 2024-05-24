@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2020-2021 CERN.
+# Copyright (C) 2020-2024 CERN.
 # Copyright (C) 2020 Northwestern University.
 # Copyright (C) 2021 TU Wien.
 # Copyright (C) 2021 data-futures.
@@ -12,24 +12,10 @@
 """Bibliographic Record Resource."""
 from functools import wraps
 
-from flask import abort, current_app, g, redirect, send_file, url_for
-from flask_cors import cross_origin
-from flask_resources import (
-    HTTPJSONException,
-    Resource,
-    ResponseHandler,
-    from_conf,
-    request_parser,
-    resource_requestctx,
-    response_handler,
-    route,
-    with_content_negotiation,
-)
-from importlib_metadata import version
+from flask import abort, current_app, g, redirect, url_for
+from flask_resources import Resource, resource_requestctx, response_handler, route
 from invenio_drafts_resources.resources import RecordResource
-from invenio_drafts_resources.resources.records.errors import RedirectException
 from invenio_records_resources.resources.errors import ErrorHandlersMixin
-from invenio_records_resources.resources.records.headers import etag_headers
 from invenio_records_resources.resources.records.resource import (
     request_data,
     request_extra_args,
@@ -41,14 +27,36 @@ from invenio_records_resources.resources.records.resource import (
 from invenio_records_resources.resources.records.utils import search_preference
 from invenio_stats import current_stats
 from sqlalchemy.exc import NoResultFound
-from werkzeug.utils import secure_filename
 
-from .serializers import (
-    IIIFCanvasV2JSONSerializer,
-    IIIFInfoV2JSONSerializer,
-    IIIFManifestV2JSONSerializer,
-    IIIFSequenceV2JSONSerializer,
-)
+from .urls import record_url_for
+
+
+def response_header_signposting(f):
+    """Add signposting link to view's reponse headers.
+
+    :param headers: response headers
+    :type headers: dict
+    :return: updated response headers
+    :rtype: dict
+    """
+
+    @wraps(f)
+    def inner(*args, **kwargs):
+        pid_value = resource_requestctx.view_args["pid_value"]
+        signposting_link = record_url_for(_app="api", pid_value=pid_value)
+
+        response = f(*args, **kwargs)
+        if response.status_code != 200:
+            return response
+        response.headers.update(
+            {
+                "Link": f'<{signposting_link}> ; rel="linkset" ; type="application/linkset+json"',  # noqa
+            }
+        )
+
+        return response
+
+    return inner
 
 
 class RDMRecordResource(RecordResource):
@@ -92,6 +100,7 @@ class RDMRecordResource(RecordResource):
     @request_extra_args
     @request_read_args
     @request_view_args
+    @response_header_signposting
     @response_handler()
     def read(self):
         """Read an item."""
@@ -561,16 +570,17 @@ class RDMParentGrantsResource(RecordResource):
     @request_data
     @response_handler()
     def create(self):
-        """Create an access grant for a record."""
+        """Create access grants for a record."""
         data = resource_requestctx.data
-        data["origin"] = f"api:{g.identity.id}"
-        item = self.service.access.create_grant(
+        for grant in data["grants"]:
+            grant["origin"] = f"api:{g.identity.id}"
+        items = self.service.access.bulk_create_grants(
             identity=g.identity,
             id_=resource_requestctx.view_args["pid_value"],
             data=data,
             expand=resource_requestctx.args.get("expand", False),
         )
-        return item.to_dict(), 201
+        return items.to_dict(), 201
 
     @request_extra_args
     @request_view_args
@@ -628,6 +638,80 @@ class RDMParentGrantsResource(RecordResource):
         return items.to_dict(), 200
 
 
+class RDMGrantsAccessResource(RecordResource):
+    """Users and groups grant access resource."""
+
+    def create_url_rules(self):
+        """Create the URL rules for the record resource."""
+
+        def p(route_name):
+            """Prefix a route with the URL prefix."""
+            return f"{self.config.url_prefix}{self.config.routes[route_name]}"
+
+        return [
+            route("GET", p("item"), self.read),
+            route("DELETE", p("item"), self.delete),
+            route("GET", p("list"), self.search),
+            route("PATCH", p("item"), self.partial_update),
+        ]
+
+    @request_extra_args
+    @request_view_args
+    @response_handler()
+    def read(self):
+        """Read an access grant for a record by subject."""
+        item = self.service.access.read_grant_by_subject(
+            identity=g.identity,
+            id_=resource_requestctx.view_args["pid_value"],
+            subject_id=resource_requestctx.view_args["subject_id"],
+            subject_type=self.config.grant_subject_type,
+            expand=resource_requestctx.args.get("expand", False),
+        )
+
+        return item.to_dict(), 200
+
+    @request_view_args
+    def delete(self):
+        """Delete an access grant for a record by subject."""
+        self.service.access.delete_grant_by_subject(
+            identity=g.identity,
+            id_=resource_requestctx.view_args["pid_value"],
+            subject_id=resource_requestctx.view_args["subject_id"],
+            subject_type=self.config.grant_subject_type,
+        )
+        return "", 204
+
+    @request_extra_args
+    @request_search_args
+    @request_view_args
+    @response_handler(many=True)
+    def search(self):
+        """List access grants for a record by subject type."""
+        items = self.service.access.read_all_grants_by_subject(
+            identity=g.identity,
+            id_=resource_requestctx.view_args["pid_value"],
+            subject_type=self.config.grant_subject_type,
+            expand=resource_requestctx.args.get("expand", False),
+        )
+        return items.to_dict(), 200
+
+    @request_extra_args
+    @request_view_args
+    @request_data
+    @response_handler()
+    def partial_update(self):
+        """Patch access grant for a record by subject."""
+        item = self.service.access.update_grant_by_subject(
+            identity=g.identity,
+            id_=resource_requestctx.view_args["pid_value"],
+            subject_id=resource_requestctx.view_args["subject_id"],
+            subject_type=self.config.grant_subject_type,
+            data=resource_requestctx.data,
+            expand=resource_requestctx.args.get("expand", False),
+        )
+        return item.to_dict(), 200
+
+
 #
 # Community's records
 #
@@ -679,174 +763,3 @@ class RDMCommunityRecordsResource(RecordResource):
         if errors:
             response["errors"] = errors
         return response, 200
-
-
-# IIIF decorators
-
-iiif_request_view_args = request_parser(
-    from_conf("request_view_args"), location="view_args"
-)
-
-
-def with_iiif_content_negotiation(serializer):
-    """Always response as JSON LD regardless of the request type."""
-    return with_content_negotiation(
-        response_handlers={
-            "application/ld+json": ResponseHandler(serializer(), headers=etag_headers),
-        },
-        default_accept_mimetype="application/ld+json",
-    )
-
-
-class IIIFResource(ErrorHandlersMixin, Resource):
-    """IIIF resource."""
-
-    def __init__(self, config, service):
-        """Constructor."""
-        super().__init__(config)
-        self.service = service
-
-    def create_url_rules(self):
-        """Create the URL rules for the IIIF resource."""
-        routes = self.config.routes
-        return [
-            route("GET", routes["manifest"], self.manifest),
-            route("GET", routes["sequence"], self.sequence),
-            route("GET", routes["canvas"], self.canvas),
-            route("GET", routes["image_base"], self.base),
-            route("GET", routes["image_info"], self.info),
-            route("GET", routes["image_api"], self.image_api),
-        ]
-
-    def _get_record_with_files(self):
-        uuid = resource_requestctx.view_args["uuid"]
-        return self.service.read_record(uuid=uuid, identity=g.identity)
-
-    #
-    # IIIF Manifest - not all clients support content-negotiation so we need a
-    # full endpoint.
-    #
-    # See https://iiif.io/api/presentation/2.1/#responses on
-    # "Access-Control-Allow-Origin: *"
-    #
-    @cross_origin(origin="*", methods=["GET"])
-    @with_iiif_content_negotiation(IIIFManifestV2JSONSerializer)
-    @iiif_request_view_args
-    @response_handler()
-    def manifest(self):
-        """Manifest."""
-        return self._get_record_with_files().to_dict(), 200
-
-    @cross_origin(origin="*", methods=["GET"])
-    @with_iiif_content_negotiation(IIIFSequenceV2JSONSerializer)
-    @iiif_request_view_args
-    @response_handler()
-    def sequence(self):
-        """Sequence."""
-        return self._get_record_with_files().to_dict(), 200
-
-    @cross_origin(origin="*", methods=["GET"])
-    @with_iiif_content_negotiation(IIIFCanvasV2JSONSerializer)
-    @iiif_request_view_args
-    @response_handler()
-    def canvas(self):
-        """Canvas."""
-        uuid = resource_requestctx.view_args["uuid"]
-        key = resource_requestctx.view_args["file_name"]
-        file_ = self.service.get_file(uuid=uuid, identity=g.identity, key=key)
-        return file_.to_dict(), 200
-
-    @cross_origin(origin="*", methods=["GET"])
-    @with_iiif_content_negotiation(IIIFInfoV2JSONSerializer)
-    @iiif_request_view_args
-    @response_handler()
-    def base(self):
-        """Base."""
-        item = self.service.get_file(
-            identity=g.identity,
-            uuid=resource_requestctx.view_args["uuid"],
-        )
-        raise RedirectException(item["links"]["iiif_info"])
-
-    @cross_origin(origin="*", methods=["GET"])
-    @with_iiif_content_negotiation(IIIFInfoV2JSONSerializer)
-    @iiif_request_view_args
-    @response_handler()
-    def info(self):
-        """Get IIIF image info."""
-        item = self.service.get_file(
-            identity=g.identity,
-            uuid=resource_requestctx.view_args["uuid"],
-        )
-        return item.to_dict(), 200
-
-    @cross_origin(origin="*", methods=["GET"])
-    @request_headers
-    @request_read_args
-    @iiif_request_view_args
-    def image_api(self):
-        """IIIF API Implementation.
-
-        .. note::
-            * IIF IMAGE API v1.0
-                * For more infos please visit <http://iiif.io/api/image/>.
-            * IIIF Image API v2.0
-                * For more infos please visit <http://iiif.io/api/image/2.0/>.
-            * The API works only for GET requests
-            * The image process must follow strictly the following workflow:
-                * Region
-                * Size
-                * Rotation
-                * Quality
-                * Format
-        """
-        image_format = resource_requestctx.view_args["image_format"]
-        uuid = resource_requestctx.view_args["uuid"]
-        region = resource_requestctx.view_args["region"]
-        size = resource_requestctx.view_args["size"]
-        rotation = resource_requestctx.view_args["rotation"]
-        quality = resource_requestctx.view_args["quality"]
-        to_serve = self.service.image_api(
-            identity=g.identity,
-            uuid=uuid,
-            region=region,
-            size=size,
-            rotation=rotation,
-            quality=quality,
-            image_format=image_format,
-        )
-        # decide the mime_type from the requested image_format
-        mimetype = self.config.supported_formats.get(image_format, "image/jpeg")
-        # TODO: get from cache on the service image.last_modified
-        last_modified = None
-        send_file_kwargs = {"mimetype": mimetype}
-        # last_modified is not supported before flask 0.12
-        if last_modified:
-            send_file_kwargs.update(last_modified=last_modified)
-
-        dl = resource_requestctx.args.get("dl")
-        if dl is not None:
-            filename = secure_filename(dl)
-            if filename.lower() in {"", "1", "true"}:
-                filename = "{0}-{1}-{2}-{3}-{4}.{5}".format(
-                    uuid, region, size, quality, rotation, image_format
-                )
-
-            send_file_kwargs.update(
-                as_attachment=True,
-            )
-            if version("Flask") < "2.2.0":
-                send_file_kwargs.update(
-                    attachment_filename=secure_filename(filename),
-                )
-            else:
-                # Flask 2.2 renamed `attachment_filename` to `download_name`
-                send_file_kwargs.update(
-                    download_name=secure_filename(filename),
-                )
-        if_modified_since = resource_requestctx.headers.get("If-Modified-Since")
-        if if_modified_since and last_modified and if_modified_since >= last_modified:
-            raise HTTPJSONException(code=304)
-
-        response = send_file(to_serve, **send_file_kwargs)
-        return response

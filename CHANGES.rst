@@ -11,6 +11,138 @@
 Changes
 =======
 
+Version 10.6.0 (released 2024-05-22)
+- pids: prevent creating pids for restricted records
+- pids: restrict updating permission levels for records based on a grace period
+
+Version 10.5.0 (released 2024-05-21)
+
+- iiif: add PyVIPS support for PDF thumnbail rendering
+
+Version 10.4.3 (released 2024-05-17)
+
+- services: fix permission for file edit
+
+Version 10.4.2 (released 2024-05-08)
+
+- iiif: resolve relative tiles storage against instance path
+
+Version 10.4.1 (released 2024-05-07)
+
+- grants: add new endpoint to grant access to records by groups
+
+Version 10.4.0 (released 2024-05-07)
+
+- config: add default values for IIIF tiles generation
+- config: new variable for default IIIF manifest formats
+- iiif: add pyramidal TIFF tiles generation on record publish via files processor
+- iiif: harmonize configuration naming
+- services: updated file schema
+    - added "access" field to file schema
+    - updated metadata field to be nested with a new schema
+- services: fixed PDF image conversion bug
+    - PDF thumbnails should now work again
+- iiif: added fallback for iip server
+- licenses: fix some delimiters not been recognized.
+
+Version 10.3.2 (released 2024-04-30)
+
+- iiif: fix proxy path generation
+
+Version 10.3.1 (released 2024-04-25)
+
+- resources: make IIIF proxy configurable via import string
+
+Version 10.3.0 (released 2024-04-24)
+
+- services: added nested links for record files
+
+Version 10.2.0 (released 2024-04-23)
+
+- iiif: added proxy to image server
+
+Version 10.1.2 (released 2024-04-22)
+
+- review: fix draft indexing operations order
+    - Fixes a bug where when publishing directly to a community (e.g.
+      beacause the uploader is a community admin/owner/curator), the draft
+      would get deleted from the index and then get indexed again, thus
+      appearing in the users' dashboard both as a published record and
+      as a draft in review.
+
+Version 10.1.1 (released 2024-04-19)
+
+- pids: fix register/update serialization
+
+Version 10.1.0 (released 2024-04-15)
+
+- licenses: fix wrong characters encoding
+- facets: integrate combined_subjects / fix nested subject faceting
+- resources: fixed missing imports
+- dublincore: fix license URL lookup
+
+Version 10.0.0 (released 2024-04-11)
+
+- Fixes datacite, dcat, dublin core, marcxml and schema.org serializer performance (reduced from ~500 queries in an OAI-PMH page down to 5).
+- resources: fix performance of serializers
+    - Rely on index data for licenses, subjects, communities, affiliations, and licenses instead of querying.
+- datacite: fixed schema with unsafe access to parent
+- datacite: fixed custom license links.
+- serializer: add system updated date to DataCite
+- csl: improve DOI (alternative identifier), ISBN, and ISSN
+- csl: improve serialization performance
+    - Remove funding information from CSL as it makes database queries and it is not relevant in the CSL JSON for generating citations.
+- marcxml: removed service call for community slug
+- marcxml: add license in 650
+- marcxml: added references
+- marcxml: updated award title in get_funding
+- marcxml: added language
+- marcxml: moved funding from 856 to 536
+- marcxml: add contributor role
+- marcxml: remove read_many call to vocab service
+- records: add community.is_verified to mapping
+- licenses: use sniffer to determine csv format
+- licenses: bring urls up to date and use opensource and creativecommons as main urls with spdx as fallback
+- licenses: change delimiter to comma
+- assets: Add overridable tags (#1631)
+- Added Swedish translation for vocabularies
+- IIIF Presi: change viewingHint to individuals
+- links: fix ESLint map expects a return value from arrow function
+- vocab: add marc to roles.yaml
+
+Version 9.1.0 (released 2024-04-04)
+
+- api: added new endpoint to manage access restrictions of records
+- deposit: improved communities sorting when uploading a new record
+- serializers: marcxml: fixes to transformation rules
+
+Version 9.0.1 (released 2024-03-25)
+
+- serializers: DataCite to DCAT-AP - fix missing prov namespace for contributors project roles
+- serializers: DataCite to DCAT-AP - include upstream editorial changes
+- serializers: marcxml: Add leader to schema
+
+Version 9.0.0 (released 2024-03-23)
+
+- views: add signposting
+- fixtures: added subject type creation on load
+- contrib: change pages label and journal examples
+- creatibutors: switch remove and edit button order
+- serializers: add geolocation box and polygon to datacite
+- serializers: fix longitude and latitude order to match geojson.
+- resource-types: fix schema.org Thesis URL
+- resource-types: publication-thesis = schema.org/Thesis
+- resource-types: schema.org URL for Event
+- ux: DOI prefix error message improvement
+- init: move record_once to finalize_app
+
+Version 8.3.0 (released 2024-03-06)
+
+- services: introduced bulk_add permission
+- requests: added community transfer request type
+- services: added bulk addition to record community
+- services: add metrics param interpreter
+
 Version 8.2.0 (released 2024-03-05)
 
 - bumps react-invenio-forms
@@ -94,7 +226,7 @@ Version 5.0.0 (2024-01-16)
 
 - communities: utilize community theming mechanism
 
-Version 4.43.2 (2023-01-16)
+Version 4.43.2 (2024-01-16)
 
 - dependencies: pin commonmeta-py
 

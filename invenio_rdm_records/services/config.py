@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2020-2021 CERN.
+# Copyright (C) 2020-2024 CERN.
 # Copyright (C) 2020-2021 Northwestern University.
 # Copyright (C)      2021 TU Wien.
 # Copyright (C) 2021-2023 Graz University of Technology.
@@ -36,8 +36,9 @@ from invenio_records_resources.services.base.config import (
     SearchOptionsMixin,
     ServiceConfig,
 )
-from invenio_records_resources.services.base.links import Link
+from invenio_records_resources.services.base.links import Link, NestedLinks
 from invenio_records_resources.services.files.links import FileLink
+from invenio_records_resources.services.files.schema import FileSchema
 from invenio_records_resources.services.records.config import (
     RecordServiceConfig as BaseRecordServiceConfig,
 )
@@ -54,6 +55,8 @@ from invenio_requests.services.requests import RequestItem, RequestList
 from invenio_requests.services.requests.config import RequestSearchOptions
 from requests import Request
 
+from invenio_rdm_records.records.processors.tiles import TilesProcessor
+
 from ..records import RDMDraft, RDMRecord
 from ..records.api import RDMDraftMediaFiles, RDMRecordMediaFiles
 from . import facets
@@ -69,13 +72,19 @@ from .schemas import RDMParentSchema, RDMRecordSchema
 from .schemas.community_records import CommunityRecordsSchema
 from .schemas.parent.access import AccessSettingsSchema
 from .schemas.parent.access import Grant as GrantSchema
+from .schemas.parent.access import Grants as GrantsSchema
 from .schemas.parent.access import RequestAccessSchema
 from .schemas.parent.access import SecretLink as SecretLinkSchema
 from .schemas.parent.communities import CommunitiesSchema
 from .schemas.quota import QuotaSchema
 from .schemas.record_communities import RecordCommunitiesSchema
 from .schemas.tombstone import TombstoneSchema
-from .search_params import MyDraftsParam, PublishedRecordsParam, StatusParam
+from .search_params import (
+    MetricsParam,
+    MyDraftsParam,
+    PublishedRecordsParam,
+    StatusParam,
+)
 from .sort import VerifiedRecordsSortParam
 
 
@@ -91,8 +100,8 @@ def is_record_and_has_doi(record, ctx):
 
 def is_record_or_draft_and_has_parent_doi(record, ctx):
     """Determine if draft or record has parent doi."""
-    return (
-        is_record(record, ctx) or is_draft(record, ctx) and has_doi(record.parent, ctx)
+    return (is_record(record, ctx) or is_draft(record, ctx)) and has_doi(
+        record.parent, ctx
     )
 
 
@@ -113,12 +122,17 @@ def archive_download_enabled(record, ctx):
     return current_app.config["RDM_ARCHIVE_DOWNLOAD_ENABLED"]
 
 
+def _groups_enabled(record, ctx):
+    """Return if groups are enabled."""
+    return current_app.config.get("USERS_RESOURCES_GROUPS_ENABLED", False)
+
+
 def is_datacite_test(record, ctx):
     """Return if the datacite test mode is being used."""
     return current_app.config["DATACITE_TEST_MODE"]
 
 
-def lock_edit_published_files(service, identity, record=None):
+def lock_edit_published_files(service, identity, record=None, draft=None):
     """Return if files once published should be locked when editing the record.
 
     Return False to allow editing of published files or True otherwise.
@@ -147,6 +161,7 @@ class RDMSearchOptions(SearchOptions, SearchOptionsMixin):
         VerifiedRecordsSortParam,
         StatusParam,
         PublishedRecordsParam,
+        MetricsParam,
     ]
 
 
@@ -218,6 +233,47 @@ class RDMRecordRequestsConfig(ServiceConfig, ConfiguratorMixin):
 #
 # Default service configuration
 #
+class RDMFileRecordServiceConfig(FileServiceConfig, ConfiguratorMixin):
+    """Configuration for record files."""
+
+    record_cls = FromConfig("RDM_RECORD_CLS", default=RDMRecord)
+
+    permission_policy_cls = FromConfig(
+        "RDM_PERMISSION_POLICY", default=RDMRecordPermissionPolicy
+    )
+
+    max_files_count = FromConfig("RDM_RECORDS_MAX_FILES_COUNT", 100)
+
+    file_links_list = {
+        **FileServiceConfig.file_links_list,
+        "archive": RecordLink(
+            "{+api}/records/{id}/files-archive",
+            when=archive_download_enabled,
+        ),
+    }
+
+    file_links_item = {
+        **FileServiceConfig.file_links_item,
+        # FIXME: filename instead
+        "iiif_canvas": FileLink(
+            "{+api}/iiif/record:{id}/canvas/{+key}", when=is_iiif_compatible
+        ),
+        "iiif_base": FileLink(
+            "{+api}/iiif/record:{id}:{+key}", when=is_iiif_compatible
+        ),
+        "iiif_info": FileLink(
+            "{+api}/iiif/record:{id}:{+key}/info.json", when=is_iiif_compatible
+        ),
+        "iiif_api": FileLink(
+            "{+api}/iiif/record:{id}:{+key}/{region=full}"
+            "/{size=full}/{rotation=0}/{quality=default}.{format=png}",
+            when=is_iiif_compatible,
+        ),
+    }
+
+    file_schema = FileSchema
+
+
 class RDMRecordServiceConfig(RecordServiceConfig, ConfiguratorMixin):
     """RDM record draft service config."""
 
@@ -231,6 +287,7 @@ class RDMRecordServiceConfig(RecordServiceConfig, ConfiguratorMixin):
     schema_access_settings = AccessSettingsSchema
     schema_secret_link = SecretLinkSchema
     schema_grant = GrantSchema
+    schema_grants = GrantsSchema
     schema_request_access = RequestAccessSchema
     schema_tombstone = TombstoneSchema
     schema_quota = QuotaSchema
@@ -428,7 +485,11 @@ class RDMRecordServiceConfig(RecordServiceConfig, ConfiguratorMixin):
         ),
         "versions": RecordLink("{+api}/records/{id}/versions"),
         "access_links": RecordLink("{+api}/records/{id}/access/links"),
+        "access_grants": RecordLink("{+api}/records/{id}/access/grants"),
         "access_users": RecordLink("{+api}/records/{id}/access/users"),
+        "access_groups": RecordLink(
+            "{+api}/records/{id}/access/groups", when=_groups_enabled
+        ),
         "access_request": RecordLink("{+api}/records/{id}/access/request"),
         "access": RecordLink("{+api}/records/{id}/access"),
         # TODO: only include link when DOI support is enabled.
@@ -439,6 +500,21 @@ class RDMRecordServiceConfig(RecordServiceConfig, ConfiguratorMixin):
         ),
         "requests": RecordLink("{+api}/records/{id}/requests"),
     }
+
+    nested_links_item = [
+        NestedLinks(
+            links=RDMFileRecordServiceConfig.file_links_item,
+            key="files.entries",
+            context_func=lambda identity, record, key, value: {
+                "id": record.pid.pid_value,
+                "key": key,
+            },
+        ),
+    ]
+
+    record_file_processors = FromConfig(
+        "RDM_RECORD_FILE_PROCESSORS", default=[TilesProcessor()]
+    )
 
 
 class RDMCommunityRecordsConfig(BaseRecordServiceConfig, ConfiguratorMixin):
@@ -492,45 +568,6 @@ class RDMRecordMediaFilesServiceConfig(RDMRecordServiceConfig):
     ]
 
 
-class RDMFileRecordServiceConfig(FileServiceConfig, ConfiguratorMixin):
-    """Configuration for record files."""
-
-    record_cls = FromConfig("RDM_RECORD_CLS", default=RDMRecord)
-
-    permission_policy_cls = FromConfig(
-        "RDM_PERMISSION_POLICY", default=RDMRecordPermissionPolicy
-    )
-
-    max_files_count = FromConfig("RDM_RECORDS_MAX_FILES_COUNT", 100)
-
-    file_links_list = {
-        **FileServiceConfig.file_links_list,
-        "archive": RecordLink(
-            "{+api}/records/{id}/files-archive",
-            when=archive_download_enabled,
-        ),
-    }
-
-    file_links_item = {
-        **FileServiceConfig.file_links_item,
-        # FIXME: filename instead
-        "iiif_canvas": FileLink(
-            "{+api}/iiif/record:{id}/canvas/{+key}", when=is_iiif_compatible
-        ),
-        "iiif_base": FileLink(
-            "{+api}/iiif/record:{id}:{+key}", when=is_iiif_compatible
-        ),
-        "iiif_info": FileLink(
-            "{+api}/iiif/record:{id}:{+key}/info.json", when=is_iiif_compatible
-        ),
-        "iiif_api": FileLink(
-            "{+api}/iiif/record:{id}:{+key}/{region=full}"
-            "/{size=full}/{rotation=0}/{quality=default}.{format=png}",
-            when=is_iiif_compatible,
-        ),
-    }
-
-
 class RDMMediaFileRecordServiceConfig(FileServiceConfig, ConfiguratorMixin):
     """Configuration for record media files."""
 
@@ -554,6 +591,8 @@ class RDMMediaFileRecordServiceConfig(FileServiceConfig, ConfiguratorMixin):
         "self": FileLink("{+api}/records/{id}/media-files/{key}"),
         "content": FileLink("{+api}/records/{id}/media-files/{key}/content"),
     }
+
+    file_schema = FileSchema
 
 
 class RDMFileDraftServiceConfig(FileServiceConfig, ConfiguratorMixin):
@@ -597,6 +636,8 @@ class RDMFileDraftServiceConfig(FileServiceConfig, ConfiguratorMixin):
         ),
     }
 
+    file_schema = FileSchema
+
 
 class RDMMediaFileDraftServiceConfig(FileServiceConfig, ConfiguratorMixin):
     """Configuration for draft media files."""
@@ -624,3 +665,5 @@ class RDMMediaFileDraftServiceConfig(FileServiceConfig, ConfiguratorMixin):
         "content": FileLink("{+api}/records/{id}/draft/media-files/{key}/content"),
         "commit": FileLink("{+api}/records/{id}/draft/media-files/{key}/commit"),
     }
+
+    file_schema = FileSchema

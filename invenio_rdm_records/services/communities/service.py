@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2023 CERN.
+# Copyright (C) 2023-2024 CERN.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
@@ -9,7 +9,10 @@
 from flask import current_app
 from invenio_access.permissions import system_identity
 from invenio_communities.proxies import current_communities
-from invenio_drafts_resources.services.records.uow import ParentRecordCommitOp
+from invenio_drafts_resources.services.records.uow import (
+    ParentRecordCommitOp,
+    RecordCommitOp,
+)
 from invenio_i18n import lazy_gettext as _
 from invenio_notifications.services.uow import NotificationOp
 from invenio_pidstore.errors import PIDDoesNotExistError
@@ -355,3 +358,51 @@ class RecordCommunitiesService(Service, RecordIndexerMixin):
         )
 
         return record.parent
+
+    @unit_of_work()
+    def bulk_add(self, identity, community_id, record_ids, set_default=False, uow=None):
+        """Bulk adds records to a community.
+
+        :param identity: The identity performing the action.
+        :param community_id: The ID of the community.
+        :param record_ids: List of record IDs to be added to the community.
+        :param set_default: Whether to set the community as default for the added records.
+        """
+        self.require_permission(identity, "bulk_add")
+        errors = []
+        for record_id in record_ids:
+            record = self.record_cls.pid.resolve(record_id)
+            community = current_communities.service.record_cls.pid.resolve(community_id)
+
+            set_default = set_default or not record.parent.communities
+            already_included = community.id in record.parent.communities
+            if already_included:
+                errors.append(
+                    {
+                        "record_id": record_id,
+                        "community_id": community_id,
+                        "message": "Community already included.",
+                    }
+                )
+                continue
+
+            parent_community = getattr(community, "parent", None)
+            already_in_parent = (
+                parent_community
+                and str(parent_community.id) in record.parent.communities
+            )
+
+            if parent_community and not already_in_parent:
+                record.parent.communities.add(parent_community, request=None)
+
+            record.parent.communities.add(community, request=None, default=set_default)
+
+            # Commit and bulk re-index everything
+            uow.register(
+                ParentRecordCommitOp(
+                    record.parent,
+                    indexer_context={"service": current_rdm_records_service},
+                    bulk_index=True,
+                )
+            )
+        return errors

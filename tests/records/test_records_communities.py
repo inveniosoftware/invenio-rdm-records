@@ -43,9 +43,10 @@ def test_community_integration(db, community, running_app, minimal_record):
     db.session.commit()
 
     assert record.parent.communities.entries[0] == community
-    assert record.dumps()["parent"]["communities"]["default"] == str(community.id)
-    assert record.dumps()["parent"]["communities"]["ids"] == [str(community.id)]
-    entries = record.dumps()["parent"]["communities"]["entries"]
+    dump = record.dumps()
+    assert dump["parent"]["communities"]["default"] == str(community.id)
+    assert dump["parent"]["communities"]["ids"] == [str(community.id)]
+    entries = dump["parent"]["communities"]["entries"]
     assert len(entries) == 1
     assert entries[0]["id"] == str(community.id)
     assert entries[0]["slug"] == "test-community"

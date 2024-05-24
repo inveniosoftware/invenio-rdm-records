@@ -45,11 +45,77 @@ def test_draft_w_languages_creation(running_app, search_clear, minimal_record):
     ]
 
 
+# Test restricted record with doi creation
+
+
+def test_publish_public_record_with_default_doi(
+    running_app, search_clear, minimal_record
+):
+    superuser_identity = running_app.superuser_identity
+    service = current_rdm_records.records_service
+    draft = service.create(superuser_identity, minimal_record)
+    record = service.publish(id_=draft.id, identity=superuser_identity)
+    assert "doi" in record._record.pids
+
+
+def test_publish_restricted_record_without_default_doi(
+    running_app, search_clear, minimal_restricted_record
+):
+    superuser_identity = running_app.superuser_identity
+    service = current_rdm_records.records_service
+    draft = service.create(superuser_identity, minimal_restricted_record)
+    record = service.publish(id_=draft.id, identity=superuser_identity)
+    assert (
+        "doi" not in record._record.pids
+    )  # Restricted records do not create by default a doi
+
+
+def test_publish_restricted_record_with_external_doi(
+    running_app, search_clear, minimal_restricted_record
+):
+    superuser_identity = running_app.superuser_identity
+    minimal_restricted_record["pids"]["doi"] = {
+        "identifier": "10.1235/rdm.5678",
+        "provider": "external",
+    }
+    service = current_rdm_records.records_service
+    draft = service.create(superuser_identity, minimal_restricted_record)
+    record = service.publish(id_=draft.id, identity=superuser_identity)
+    assert "doi" in record._record.pids
+    assert record._record.pids["doi"]["identifier"] == "10.1235/rdm.5678"
+    assert record._record.pids["doi"]["provider"] == "external"
+
+
+def test_embargo_lift_creates_doi(running_app, search_clear, embargoed_record):
+    superuser_identity = running_app.superuser_identity
+    service = current_rdm_records.records_service
+    assert "doi" not in embargoed_record._record.pids
+    service.lift_embargo(_id=embargoed_record["id"], identity=superuser_identity)
+    record_lifted = service.record_cls.pid.resolve(embargoed_record["id"])
+    assert "doi" in record_lifted.pids
+
+
+def test_public_record_to_restricted_keeps_doi(
+    running_app, search_clear, minimal_record
+):
+    superuser_identity = running_app.superuser_identity
+    service = current_rdm_records.records_service
+    draft = service.create(superuser_identity, minimal_record)
+    record = service.publish(id_=draft.id, identity=superuser_identity)
+    assert "doi" in record._record.pids
+
+    draft = service.edit(superuser_identity, record.id)
+    draft["access"]["record"] = "restricted"
+    draft = service.update_draft(superuser_identity, draft.id, draft.data)
+    record = service.publish(superuser_identity, draft.id)
+    assert "doi" in record._record.pids
+
+
 #
 # Embargo lift
 #
-def test_embargo_lift_without_draft(embargoed_record, running_app, search_clear):
-    record = embargoed_record
+def test_embargo_lift_without_draft(embargoed_files_record, running_app, search_clear):
+    record = embargoed_files_record
     service = current_rdm_records.records_service
 
     service.lift_embargo(_id=record["id"], identity=running_app.superuser_identity)
@@ -61,8 +127,10 @@ def test_embargo_lift_without_draft(embargoed_record, running_app, search_clear)
     assert record_lifted.access.status.value == "metadata-only"
 
 
-def test_embargo_lift_with_draft(embargoed_record, search_clear, superuser_identity):
-    record = embargoed_record
+def test_embargo_lift_with_draft(
+    embargoed_files_record, search_clear, superuser_identity
+):
+    record = embargoed_files_record
     service = current_rdm_records.records_service
 
     # Edit a draft
@@ -82,9 +150,9 @@ def test_embargo_lift_with_draft(embargoed_record, search_clear, superuser_ident
 
 
 def test_embargo_lift_with_updated_draft(
-    embargoed_record, superuser_identity, search_clear
+    embargoed_files_record, superuser_identity, search_clear
 ):
-    record = embargoed_record
+    record = embargoed_files_record
     service = current_rdm_records.records_service
 
     # This draft simulates an existing one while lifting the record

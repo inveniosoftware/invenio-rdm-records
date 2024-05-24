@@ -9,6 +9,7 @@
 # it under the terms of the MIT License; see LICENSE file for more details.
 
 """Resources configuration."""
+from copy import deepcopy
 
 import marshmallow as ma
 from citeproc_styles import StyleNotFoundError
@@ -34,6 +35,7 @@ from invenio_requests.resources.requests.config import RequestSearchRequestArgsS
 
 from ..services.errors import (
     AccessRequestExistsError,
+    GrantExistsError,
     InvalidAccessRestrictions,
     RecordDeletedException,
     ReviewExistsError,
@@ -53,6 +55,7 @@ from .serializers import (
     DataCite43XMLSerializer,
     DCATSerializer,
     DublinCoreXMLSerializer,
+    FAIRSignpostingProfileLvl2Serializer,
     GeoJSONSerializer,
     MARCXMLSerializer,
     SchemaorgJSONLDSerializer,
@@ -126,6 +129,7 @@ record_serializers = {
     ),
     "application/x-bibtex": ResponseHandler(BibtexSerializer(), headers=etag_headers),
     "application/dcat+xml": ResponseHandler(DCATSerializer(), headers=etag_headers),
+    "application/linkset+json": ResponseHandler(FAIRSignpostingProfileLvl2Serializer()),
 }
 
 
@@ -337,29 +341,42 @@ class RDMDraftMediaFilesResourceConfig(FileResourceConfig, ConfiguratorMixin):
 #
 # Parent Record Links
 #
-record_links_error_handlers = RecordResourceConfig.error_handlers.copy()
-
-
-record_links_error_handlers.update(
-    {
-        LookupError: create_error_handler(
-            HTTPJSONException(
-                code=404,
-                description="No secret link found with the given ID.",
-            )
-        ),
-    }
-)
-
-grants_error_handlers = RecordResourceConfig.error_handlers.copy()
-
-grants_error_handlers.update(
-    {
-        LookupError: create_error_handler(
-            HTTPJSONException(code=404, description="No grant found with the given ID.")
+record_links_error_handlers = {
+    **deepcopy(RecordResourceConfig.error_handlers),
+    LookupError: create_error_handler(
+        HTTPJSONException(
+            code=404,
+            description=_("No secret link found with the given ID."),
         )
-    }
-)
+    ),
+}
+
+grants_error_handlers = {
+    **deepcopy(RecordResourceConfig.error_handlers),
+    LookupError: create_error_handler(
+        HTTPJSONException(code=404, description=_("No grant found with the given ID."))
+    ),
+    GrantExistsError: create_error_handler(
+        lambda e: HTTPJSONException(
+            code=400,
+            description=e.description,
+        )
+    ),
+}
+
+user_access_error_handlers = {
+    **deepcopy(RecordResourceConfig.error_handlers),
+    LookupError: create_error_handler(
+        HTTPJSONException(code=404, description=_("No grant found by given user id."))
+    ),
+}
+
+group_access_error_handlers = {
+    **deepcopy(RecordResourceConfig.error_handlers),
+    LookupError: create_error_handler(
+        HTTPJSONException(code=404, description=_("No grant found by given group id."))
+    ),
+}
 
 
 #
@@ -399,8 +416,8 @@ class RDMParentGrantsResourceConfig(RecordResourceConfig, ConfiguratorMixin):
     url_prefix = "/records/<pid_value>/access"
 
     routes = {
-        "list": "/users",
-        "item": "/users/<grant_id>",
+        "list": "/grants",
+        "item": "/grants/<grant_id>",
     }
 
     links_config = {}
@@ -419,6 +436,68 @@ class RDMParentGrantsResourceConfig(RecordResourceConfig, ConfiguratorMixin):
     }
 
     error_handlers = grants_error_handlers
+
+
+class RDMGrantUserAccessResourceConfig(RecordResourceConfig, ConfiguratorMixin):
+    """Record grants user access resource configuration."""
+
+    blueprint_name = "record_user_access"
+
+    url_prefix = "/records/<pid_value>/access"
+
+    routes = {
+        "item": "/users/<subject_id>",
+        "list": "/users",
+    }
+
+    links_config = {}
+
+    request_view_args = {
+        "pid_value": ma.fields.Str(),
+        "subject_id": ma.fields.Str(),  # user id
+    }
+
+    grant_subject_type = "user"
+
+    response_handlers = {
+        "application/vnd.inveniordm.v1+json": RecordResourceConfig.response_handlers[
+            "application/json"
+        ],
+        **deepcopy(RecordResourceConfig.response_handlers),
+    }
+
+    error_handlers = user_access_error_handlers
+
+
+class RDMGrantGroupAccessResourceConfig(RecordResourceConfig, ConfiguratorMixin):
+    """Record grants group access resource configuration."""
+
+    blueprint_name = "record_group_access"
+
+    url_prefix = "/records/<pid_value>/access"
+
+    routes = {
+        "item": "/groups/<subject_id>",
+        "list": "/groups",
+    }
+
+    links_config = {}
+
+    request_view_args = {
+        "pid_value": ma.fields.Str(),
+        "subject_id": ma.fields.Str(),  # group id
+    }
+
+    grant_subject_type = "role"
+
+    response_handlers = {
+        "application/vnd.inveniordm.v1+json": RecordResourceConfig.response_handlers[
+            "application/json"
+        ],
+        **deepcopy(RecordResourceConfig.response_handlers),
+    }
+
+    error_handlers = group_access_error_handlers
 
 
 #
@@ -470,55 +549,4 @@ class RDMRecordRequestsResourceConfig(ResourceConfig, ConfiguratorMixin):
 
     request_extra_args = {
         "expand": ma.fields.Boolean(),
-    }
-
-
-#
-# IIIF
-#
-class IIIFResourceConfig(ResourceConfig, ConfiguratorMixin):
-    """IIIF resource configuration."""
-
-    blueprint_name = "iiif"
-
-    url_prefix = "/iiif"
-
-    routes = {
-        "manifest": "/<path:uuid>/manifest",
-        "sequence": "/<path:uuid>/sequence/default",
-        "canvas": "/<path:uuid>/canvas/<path:file_name>",
-        "image_base": "/<path:uuid>",
-        "image_info": "/<path:uuid>/info.json",
-        "image_api": "/<path:uuid>/<region>/<size>/<rotation>/<quality>.<image_format>",
-    }
-
-    request_view_args = {
-        "uuid": ma.fields.Str(),
-        "file_name": ma.fields.Str(),
-        "region": ma.fields.Str(),
-        "size": ma.fields.Str(),
-        "rotation": ma.fields.Str(),
-        "quality": ma.fields.Str(),
-        "image_format": ma.fields.Str(),
-    }
-
-    request_read_args = {
-        "dl": ma.fields.Str(),
-    }
-
-    request_headers = {
-        "If-Modified-Since": ma.fields.DateTime(),
-    }
-
-    response_handler = {"application/json": ResponseHandler(JSONSerializer())}
-
-    supported_formats = {
-        "gif": "image/gif",
-        "jp2": "image/jp2",
-        "jpeg": "image/jpeg",
-        "jpg": "image/jpeg",
-        "pdf": "application/pdf",
-        "png": "image/png",
-        "tif": "image/tiff",
-        "tiff": "image/tiff",
     }

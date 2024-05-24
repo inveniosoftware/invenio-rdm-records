@@ -3,6 +3,7 @@
 # Copyright (C) 2021-2024 CERN.
 # Copyright (C) 2021 Northwestern University.
 # Copyright (C) 2023 Graz University of Technology.
+# Copyright (C) 2023 Caltech.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
@@ -14,11 +15,8 @@ from edtf.parser.grammar import ParseException
 from flask import current_app
 from flask_resources.serializers import BaseSerializerSchema
 from invenio_access.permissions import system_identity
-from invenio_communities import current_communities
-from invenio_communities.communities.services.service import get_cached_community_slug
 from invenio_i18n import lazy_gettext as _
 from invenio_records_resources.proxies import current_service_registry
-from invenio_vocabularies.proxies import current_service as vocabulary_service
 from marshmallow import Schema, ValidationError, fields, missing, post_dump, validate
 from marshmallow_utils.fields import SanitizedUnicode
 from marshmallow_utils.html import strip_html
@@ -79,9 +77,7 @@ class PersonOrOrgSchema43(Schema):
         for identifier in identifiers:
             scheme = identifier["scheme"]
             id_scheme = get_scheme_datacite(
-                scheme,
-                "RDM_RECORDS_PERSONORG_SCHEMES",
-                default=scheme,
+                scheme, "RDM_RECORDS_PERSONORG_SCHEMES", default=scheme
             )
 
             if id_scheme:
@@ -101,24 +97,12 @@ class PersonOrOrgSchema43(Schema):
             return missing
 
         serialized_affiliations = []
-        ids = []
 
         for affiliation in affiliations:
+            # name is mandatory with or without link to affiliation vocabulary
+            aff = {"name": affiliation["name"]}
             id_ = affiliation.get("id")
             if id_:
-                ids.append(id_)
-            else:
-                # if no id, name is mandatory
-                serialized_affiliations.append({"name": affiliation["name"]})
-
-        if ids:
-            affiliations_service = current_service_registry.get("affiliations")
-            affiliations = affiliations_service.read_many(system_identity, ids)
-
-            for affiliation in affiliations:
-                aff = {
-                    "name": affiliation["name"],
-                }
                 identifiers = affiliation.get("identifiers")
                 if identifiers:
                     # FIXME: Make configurable
@@ -151,8 +135,7 @@ class PersonOrOrgSchema43(Schema):
                     if id_scheme:
                         aff["affiliationIdentifier"] = identifier_value
                         aff["affiliationIdentifierScheme"] = id_scheme
-
-                serialized_affiliations.append(aff)
+            serialized_affiliations.append(aff)
 
         return serialized_affiliations
 
@@ -293,8 +276,12 @@ class DataCite43Schema(BaseSerializerSchema):
         """Get dates."""
         dates = [{"date": obj["metadata"]["publication_date"], "dateType": "Issued"}]
 
+        updated = False
+
         for date in obj["metadata"].get("dates", []):
             date_type_id = date.get("type", {}).get("id")
+            if date_type_id == "updated":
+                updated = True
             props = get_vocabulary_props("datetypes", ["props.datacite"], date_type_id)
             to_append = {
                 "date": date["date"],
@@ -305,6 +292,19 @@ class DataCite43Schema(BaseSerializerSchema):
                 to_append["dateInformation"] = desc
 
             dates.append(to_append)
+
+        if not updated:
+            try:
+                updated_date = obj["updated"]
+            except KeyError:
+                pass
+                # If no update date is present, do nothing. Happens with some tests, but should not in live repository
+            else:
+                to_append = {
+                    "date": updated_date.split("T")[0],
+                    "dateType": "Updated",
+                }
+                dates.append(to_append)
 
         return dates or missing
 
@@ -333,17 +333,12 @@ class DataCite43Schema(BaseSerializerSchema):
         pids = obj["pids"]
         for scheme, id_ in pids.items():
             id_scheme = get_scheme_datacite(
-                scheme,
-                "RDM_RECORDS_IDENTIFIERS_SCHEMES",
-                default=scheme,
+                scheme, "RDM_RECORDS_IDENTIFIERS_SCHEMES", default=scheme
             )
 
             if id_scheme:
                 serialized_identifiers.append(
-                    {
-                        "identifier": id_["identifier"],
-                        "identifierType": id_scheme,
-                    }
+                    {"identifier": id_["identifier"], "identifierType": id_scheme}
                 )
 
         # Identifiers field
@@ -359,10 +354,7 @@ class DataCite43Schema(BaseSerializerSchema):
                 # dropped
                 if id_scheme != "DOI":
                     serialized_identifiers.append(
-                        {
-                            "identifier": id_["identifier"],
-                            "identifierType": id_scheme,
-                        }
+                        {"identifier": id_["identifier"], "identifierType": id_scheme}
                     )
 
         return serialized_identifiers or missing
@@ -380,9 +372,7 @@ class DataCite43Schema(BaseSerializerSchema):
 
             scheme = rel_id["scheme"]
             id_scheme = get_scheme_datacite(
-                scheme,
-                "RDM_RECORDS_IDENTIFIERS_SCHEMES",
-                default=scheme,
+                scheme, "RDM_RECORDS_IDENTIFIERS_SCHEMES", default=scheme
             )
 
             # Only serialize related identifiers with a valid scheme for DataCite.
@@ -457,10 +447,9 @@ class DataCite43Schema(BaseSerializerSchema):
                     )
 
         # adding communities
-        communities = obj.get("parent", {}).get("communities", {}).get("ids", [])
-        service_id = current_communities.service.id
-        for community_id in communities:
-            slug = get_cached_community_slug(community_id, service_id)
+        communities = obj.get("parent", {}).get("communities", {}).get("entries", [])
+        for community in communities:
+            slug = community.get("slug")
             url = f"{current_app.config['SITE_UI_URL']}/communities/{slug}"
             serialized_identifiers.append(
                 {
@@ -485,12 +474,45 @@ class DataCite43Schema(BaseSerializerSchema):
             if geometry:
                 geo_type = geometry["type"]
                 # PIDS-FIXME: Scalable enough?
-                # PIDS-FIXME: Implement Box and Polygon serialization
                 if geo_type == "Point":
                     serialized_location["geoLocationPoint"] = {
-                        "pointLatitude": geometry["coordinates"][0],
-                        "pointLongitude": geometry["coordinates"][1],
+                        "pointLongitude": str(geometry["coordinates"][0]),
+                        "pointLatitude": str(geometry["coordinates"][1]),
                     }
+                elif geo_type == "Polygon":
+                    # geojson has a layer of nesting before actual coordinates
+                    coords = geometry["coordinates"][0]
+                    # First we see if we have a box
+                    box = False
+                    if len(coords) in [4, 5]:
+                        # A box polygon may wrap around with 5 coordinates
+                        x_coords = set()
+                        y_coords = set()
+                        for coord in coords:
+                            x_coords.add(coord[0])
+                            y_coords.add(coord[1])
+                        if len(x_coords) == 2 and len(y_coords) == 2:
+                            x_coords = sorted(x_coords)
+                            y_coords = sorted(y_coords)
+                            serialized_location["geoLocationBox"] = {
+                                "westBoundLongitude": str(x_coords[0]),
+                                "eastBoundLongitude": str(x_coords[1]),
+                                "southBoundLatitude": str(y_coords[0]),
+                                "northBoundLatitude": str(y_coords[1]),
+                            }
+                            box = True
+                    if not box:
+                        polygon = []
+                        for coord in coords:
+                            polygon.append(
+                                {
+                                    "polygonPoint": {
+                                        "pointLongitude": str(coord[0]),
+                                        "pointLatitude": str(coord[1]),
+                                    }
+                                }
+                            )
+                        serialized_location["geoLocationPolygon"] = polygon
 
             locations.append(serialized_location)
         return locations or missing
@@ -501,33 +523,22 @@ class DataCite43Schema(BaseSerializerSchema):
         if not subjects:
             return missing
 
+        validator = validate.URL()
         serialized_subjects = []
-        ids = []
+
         for subject in subjects:
-            _id = subject.get("id")
-            if _id:
-                ids.append(_id)
-            else:
-                serialized_subjects.append({"subject": subject.get("subject")})
+            entry = {"subject": subject.get("subject")}
 
-        if ids:
-            subjects_service = current_service_registry.get("subjects")
-            subjects = subjects_service.read_many(system_identity, ids)
-            validator = validate.URL()
-            for subject in subjects:
-                serialized_subj = {
-                    "subject": subject.get("subject"),
-                    "subjectScheme": subject.get("scheme"),
-                }
-                id_ = subject.get("id")
-
+            id_ = subject.get("id")
+            if id_:
+                entry["subjectScheme"] = subject.get("scheme")
                 try:
                     validator(id_)
-                    serialized_subj["valueURI"] = id_
+                    entry["valueURI"] = id_
                 except ValidationError:
                     pass
 
-                serialized_subjects.append(serialized_subj)
+            serialized_subjects.append(entry)
 
         return serialized_subjects if serialized_subjects else missing
 
@@ -538,35 +549,19 @@ class DataCite43Schema(BaseSerializerSchema):
             return missing
 
         serialized_rights = []
-        ids = []
         for right in rights:
-            _id = right.get("id")
-            if _id:
-                ids.append(_id)
-            else:
-                serialized_right = {
-                    "rights": right.get("title").get(current_default_locale()),
-                }
+            entry = {"rights": right.get("title", {}).get(current_default_locale())}
 
-                link = right.get("link")
-                if link:
-                    serialized_right["rightsUri"] = link
+            id_ = right.get("id")
+            if id_:
+                entry["rightsIdentifier"] = right.get("id")
+                entry["rightsIdentifierScheme"] = right.get("props", {}).get("scheme")
 
-                serialized_rights.append(serialized_right)
-
-        if ids:
-            rights = vocabulary_service.read_many(system_identity, "licenses", ids)
-            for right in rights:
-                serialized_right = {
-                    "rights": right.get("title").get(current_default_locale()),
-                    "rightsIdentifierScheme": right.get("props").get("scheme"),
-                    "rightsIdentifier": right.get("id"),
-                }
-                link = right.get("props").get("url")
-                if link:
-                    serialized_right["rightsUri"] = link
-
-                serialized_rights.append(serialized_right)
+            # Get url from props (vocabulary) or link (custom license)
+            link = right.get("props", {}).get("url") or right.get("link", {})
+            if link:
+                entry["rightsUri"] = link
+            serialized_rights.append(entry)
 
         return serialized_rights if serialized_rights else missing
 
@@ -597,11 +592,6 @@ class DataCite43Schema(BaseSerializerSchema):
             # funder, if there is an item in the list  it must have a funder
             funding_ref = {}
             funder = funding.get("funder", {})
-            id_ = funder.get("id")
-            if id_:
-                funder_service = current_service_registry.get("funders")
-                funder = funder_service.read(system_identity, id_).to_dict()
-
             funding_ref["funderName"] = funder["name"]
             identifiers = funder.get("identifiers", [])
             if identifiers:
@@ -618,13 +608,7 @@ class DataCite43Schema(BaseSerializerSchema):
             # award
             award = funding.get("award")
             if award:  # having an award is optional
-                id_ = award.get("id")
-                if id_:
-                    award_service = current_service_registry.get("awards")
-                    award = award_service.read(system_identity, id_).to_dict()
-
-                title = award.get("title", {})
-                funding_ref["awardTitle"] = title.get("en", missing)
+                funding_ref["awardTitle"] = award.get("title", {}).get("en", missing)
                 funding_ref["awardNumber"] = award["number"]
 
                 identifiers = award.get("identifiers", [])

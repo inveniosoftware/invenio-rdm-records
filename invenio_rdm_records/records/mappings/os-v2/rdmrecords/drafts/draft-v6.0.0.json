@@ -255,6 +255,9 @@
                   "id": {
                     "type": "keyword"
                   },
+                  "is_verified": {
+                    "type": "boolean"
+                  },
                   "@v": {
                     "type": "keyword"
                   },
@@ -406,6 +409,9 @@
                       },
                       "id": {
                         "type": "keyword"
+                      },
+                      "is_verified": {
+                        "type": "boolean"
                       },
                       "@v": {
                         "type": "keyword"
@@ -651,6 +657,16 @@
                   },
                   "name": {
                     "type": "text"
+                  },
+                  "identifiers": {
+                    "properties": {
+                      "identifier": {
+                        "type": "keyword"
+                      },
+                      "scheme": {
+                        "type": "keyword"
+                      }
+                    }
                   }
                 }
               },
@@ -710,6 +726,16 @@
                   },
                   "name": {
                     "type": "text"
+                  },
+                  "identifiers": {
+                    "properties": {
+                      "identifier": {
+                        "type": "keyword"
+                      },
+                      "scheme": {
+                        "type": "keyword"
+                      }
+                    }
                   }
                 }
               },
@@ -884,6 +910,16 @@
                   },
                   "name": {
                     "type": "text"
+                  },
+                  "identifiers": {
+                    "properties": {
+                      "identifier": {
+                        "type": "keyword"
+                      },
+                      "scheme": {
+                        "type": "keyword"
+                      }
+                    }
                   }
                 }
               }
@@ -1102,6 +1138,9 @@
               }
             }
           },
+          "combined_subjects": {
+            "type": "keyword"
+          },
           "title": {
             "type": "text",
             "fields": {
@@ -1253,6 +1292,14 @@
               },
               "file_id": {
                 "enabled": false
+              },
+              "access": {
+                "type": "object",
+                "properties": {
+                  "hidden": {
+                    "type": "boolean"
+                  }
+                }
               }
             }
           }
@@ -1312,6 +1359,32 @@
               },
               "file_id": {
                 "enabled": false
+              },
+              "access": {
+                "type": "object",
+                "properties": {
+                  "hidden": {
+                    "type": "boolean"
+                  }
+                }
+              },
+              "processor": {
+                "type": "object",
+                "properties": {
+                  "type": {
+                    "type": "keyword"
+                  },
+                  "status": {
+                    "type": "keyword"
+                  },
+                  "source_file_id": {
+                    "type": "keyword"
+                  },
+                  "props": {
+                    "type": "object",
+                    "dynamic": "true"
+                  }
+                }
               }
             }
           }

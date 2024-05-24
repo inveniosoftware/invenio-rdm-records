@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2021-2023 CERN.
+# Copyright (C) 2021-2024 CERN.
 # Copyright (C) 2021 data-futures.
 # Copyright (C) 2022 Universität Hamburg.
 #
@@ -11,7 +11,7 @@
 
 from flask import current_app
 from flask_babel import lazy_gettext as _
-from marshmallow import Schema, fields, missing, post_dump
+from marshmallow import Schema, fields, missing, post_dump, pre_dump
 
 
 class SelfList(fields.List):
@@ -135,7 +135,7 @@ class ListIIIFFilesAttribute(fields.List):
         return [
             f
             for f in obj["files"].get("entries", {}).values()
-            if f["ext"] in current_app.config["IIIF_FORMATS"]
+            if f["ext"] in current_app.config["RDM_IIIF_MANIFEST_FORMATS"]
         ]
 
 
@@ -152,7 +152,7 @@ class IIIFSequenceV2Schema(Schema):
 
     label = fields.Constant(_("Current Page Order"))
     viewingDirection = fields.Constant("left-to-right")
-    viewingHint = fields.Constant("paged")
+    viewingHint = fields.Constant("individuals")
 
     canvases = ListIIIFFilesAttribute(
         fields.Nested(IIIFCanvasV2Schema), attribute="files.entries"
@@ -203,9 +203,6 @@ class IIIFManifestV2Schema(Schema):
 
     @post_dump
     def sortcanvases(self, manifest, many, **kwargs):
-        """Sort files by key.
-
-        TODO: should sorting be done elsewhere?
-        """
-        # manifest["sequences"][0]["canvases"].sort(key=lambda x: x["@id"])
+        """Sort files by key."""
+        manifest["sequences"][0]["canvases"].sort(key=lambda x: x["@id"])
         return manifest
