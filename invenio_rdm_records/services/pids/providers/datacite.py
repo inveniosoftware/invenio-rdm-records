@@ -143,6 +143,11 @@ class DataCitePIDProvider(PIDProvider):
         # Delegate to client
         return self.client.generate_doi(record)
 
+    @classmethod
+    def is_enabled(cls, app):
+        """Determine if datacite is enabled or not."""
+        return app.config.get("DATACITE_ENABLED", False)
+
     def can_modify(self, pid, **kwargs):
         """Checks if the PID can be modified."""
         return not pid.is_registered() and not pid.is_reserved()
