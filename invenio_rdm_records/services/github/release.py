@@ -152,7 +152,7 @@ class RDMGithubRelease(GitHubRelease):
 
                     # Use the previous record's owner as the new version owner
                     last_record = current_rdm_records_service.read(
-                        system_identity, recid.pid_value
+                        system_identity, recid.pid_value, include_deleted=True
                     )
                     owner = last_record._record.parent.access.owner.resolve()
 
