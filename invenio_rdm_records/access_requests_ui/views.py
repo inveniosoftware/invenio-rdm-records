@@ -48,29 +48,6 @@ def verify_access_request_token():
 
     url = f"{access_request.links['self_html']}?access_request_token={token}"
 
-    # todo - move to notifications ( submit action )
-    send_email(
-        {
-            "subject": _("Access request submitted successfully"),
-            "html_body": _(
-                (
-                    "Your access request was submitted successfully. "
-                    'The request details are available <a href="%(url)s">here</a>.'
-                ),
-                url=url,
-            ),
-            "body": _(
-                (
-                    "Your access request was submitted successfully. "
-                    "The request details are available at: %(url)s"
-                ),
-                url=url,
-            ),
-            "recipients": [access_request._request["created_by"]["email"]],
-            "sender": current_app.config["MAIL_DEFAULT_SENDER"],
-        }
-    )
-
     return redirect(url)
 
 
