@@ -11,6 +11,12 @@
 Changes
 =======
 
+Version 10.7.1 (released 2024-05-31)
+
+- secret links: set csrf token for all requests with secret links,
+  i.e. fixes edit button CSRF error message on record landing page
+
+
 Version 10.7.0 (released 2024-05-28)
 
 - pids service: resolve owned_by for the emails
