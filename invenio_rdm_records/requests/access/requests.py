@@ -22,8 +22,13 @@ from marshmallow_utils.permissions import FieldPermissionsMixin
 
 from invenio_rdm_records.notifications.builders import (
     GuestAccessRequestAcceptNotificationBuilder,
+    GuestAccessRequestCancelNotificationBuilder,
+    GuestAccessRequestDeclineNotificationBuilder,
     GuestAccessRequestSubmitNotificationBuilder,
+    GuestAccessRequestSubmittedNotificationBuilder,
     UserAccessRequestAcceptNotificationBuilder,
+    UserAccessRequestCancelNotificationBuilder,
+    UserAccessRequestDeclineNotificationBuilder,
     UserAccessRequestSubmitNotificationBuilder,
 )
 
@@ -47,6 +52,66 @@ class UserSubmitAction(actions.SubmitAction):
         super().execute(identity, uow)
 
 
+class UserCancelAction(actions.CancelAction):
+    """Cancel action for user access requests."""
+
+    def execute(self, identity, uow):
+        """Execute the cancel action."""
+        self.request["title"] = self.request.topic.resolve().metadata["title"]
+        uow.register(
+            NotificationOp(
+                UserAccessRequestCancelNotificationBuilder.build(
+                    request=self.request, identity=identity
+                )
+            )
+        )
+        super().execute(identity, uow)
+
+
+class UserDeclineAction(actions.DeclineAction):
+    """Decline action for user access requests."""
+
+    def execute(self, identity, uow):
+        """Execute the decline action."""
+        self.request["title"] = self.request.topic.resolve().metadata["title"]
+        uow.register(
+            NotificationOp(
+                UserAccessRequestDeclineNotificationBuilder.build(request=self.request)
+            )
+        )
+        super().execute(identity, uow)
+
+
+class GuestCancelAction(actions.CancelAction):
+    """Cancel action for guest access requests."""
+
+    def execute(self, identity, uow):
+        """Execute the cancel action."""
+        record = self.request.topic.resolve()
+        self.request["title"] = record.metadata["title"]
+        uow.register(
+            NotificationOp(
+                GuestAccessRequestCancelNotificationBuilder.build(
+                    request=self.request, identity=identity
+                )
+            )
+        )
+        super().execute(identity, uow)
+
+
+class GuestDeclineAction(actions.DeclineAction):
+    """Decline action for guest access requests."""
+
+    def execute(self, identity, uow):
+        """Execute the decline action."""
+        uow.register(
+            NotificationOp(
+                GuestAccessRequestDeclineNotificationBuilder.build(request=self.request)
+            )
+        )
+        super().execute(identity, uow)
+
+
 class GuestSubmitAction(actions.SubmitAction):
     """Submit action for guest access requests."""
 
@@ -57,6 +122,13 @@ class GuestSubmitAction(actions.SubmitAction):
         uow.register(
             NotificationOp(
                 GuestAccessRequestSubmitNotificationBuilder.build(request=self.request)
+            )
+        )
+        uow.register(
+            NotificationOp(
+                GuestAccessRequestSubmittedNotificationBuilder.build(
+                    request=self.request
+                )
             )
         )
         super().execute(identity, uow)
@@ -185,8 +257,8 @@ class UserAccessRequest(RequestType):
         "submit": UserSubmitAction,
         "delete": actions.DeleteAction,
         "accept": UserAcceptAction,
-        "cancel": actions.CancelAction,
-        "decline": actions.DeclineAction,
+        "cancel": UserCancelAction,
+        "decline": UserDeclineAction,
         "expire": actions.ExpireAction,
     }
 
@@ -251,8 +323,8 @@ class GuestAccessRequest(RequestType):
         "submit": GuestSubmitAction,
         "delete": actions.DeleteAction,
         "accept": GuestAcceptAction,
-        "cancel": actions.CancelAction,
-        "decline": actions.DeclineAction,
+        "cancel": GuestCancelAction,
+        "decline": GuestDeclineAction,
         "expire": actions.ExpireAction,
     }
 

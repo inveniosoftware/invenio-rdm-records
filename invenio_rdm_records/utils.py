@@ -106,6 +106,9 @@ def verify_token(identity):
             data = SecretLink.load_token(token)
             if data:
                 identity.provides.add(LinkNeed(data["id"]))
+                # In order for anonymous users with secret link to perform vulnerable HTTP requests
+                # ("POST", "PUT", "PATCH", "DELETE"), CSRF token must be set
+                request.csrf_cookie_needs_reset = True
             session[secret_link_token_arg] = token
             has_secret_link_token = True
         except SignatureExpired:

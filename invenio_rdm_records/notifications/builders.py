@@ -101,6 +101,105 @@ class GuestAccessRequestTokenCreateNotificationBuilder(NotificationBuilder):
     ]
 
 
+class GuestAccessRequestDeclineNotificationBuilder(NotificationBuilder):
+    """Notification builder for user access requests."""
+
+    type = "guest-access-request.decline"
+
+    @classmethod
+    def build(cls, request):
+        """Build notification with request context."""
+        return Notification(
+            type=cls.type,
+            context={
+                "request": EntityResolverRegistry.reference_entity(request),
+            },
+        )
+
+    context = [
+        EntityResolve(key="request"),
+        EntityResolve(key="request.created_by"),  # email
+        EntityResolve(key="request.topic"),
+    ]
+
+    recipients = [
+        EmailRecipient(key="request.created_by"),  # email only
+    ]
+
+    recipient_filters = []  # assume guest is ok with mail being sent
+
+    recipient_backends = [
+        UserEmailBackend(),
+    ]
+
+
+class GuestAccessRequestCancelNotificationBuilder(NotificationBuilder):
+    """Notification builder for user access requests."""
+
+    type = "guest-access-request.cancel"
+
+    @classmethod
+    def build(cls, request, identity):
+        """Build notification with request context."""
+        return Notification(
+            type=cls.type,
+            context={
+                "request": EntityResolverRegistry.reference_entity(request),
+            },
+        )
+
+    context = [
+        EntityResolve(key="request"),
+        EntityResolve(key="request.created_by"),
+        EntityResolve(key="request.topic"),
+        EntityResolve(key="request.receiver"),
+    ]
+
+    recipients = [
+        EmailRecipient(key="request.created_by"),  # email only
+    ]
+
+    recipient_filters = []
+
+    recipient_backends = [
+        UserEmailBackend(),
+    ]
+
+
+class GuestAccessRequestSubmittedNotificationBuilder(NotificationBuilder):
+    """Notification builder for submitted guest access requests."""
+
+    type = "guest-access-request.submitted"
+
+    @classmethod
+    def build(cls, request):
+        """Build notification with request context."""
+        return Notification(
+            type=cls.type,
+            context={
+                "request": EntityResolverRegistry.reference_entity(request),
+            },
+        )
+
+    context = [
+        EntityResolve(key="request"),
+        EntityResolve(key="request.created_by"),
+        EntityResolve(key="request.topic"),
+    ]
+
+    recipients = [
+        EmailRecipient(key="request.created_by"),
+    ]
+
+    recipient_filters = [
+        UserPreferencesRecipientFilter(),
+    ]
+
+    recipient_backends = [
+        UserEmailBackend(),
+    ]
+
+
 class GuestAccessRequestSubmitNotificationBuilder(NotificationBuilder):
     """Notification builder for guest access requests."""
 
@@ -173,6 +272,79 @@ class GuestAccessRequestAcceptNotificationBuilder(NotificationBuilder):
     ]
 
     recipient_filters = []  # assume guest is ok with mail being sent
+
+    recipient_backends = [
+        UserEmailBackend(),
+    ]
+
+
+class UserAccessRequestDeclineNotificationBuilder(NotificationBuilder):
+    """Notification builder for user access requests."""
+
+    type = "user-access-request.decline"
+
+    @classmethod
+    def build(cls, request):
+        """Build notification with request context."""
+        return Notification(
+            type=cls.type,
+            context={
+                "request": EntityResolverRegistry.reference_entity(request),
+            },
+        )
+
+    context = [
+        EntityResolve(key="request"),
+        EntityResolve(key="request.created_by"),
+        EntityResolve(key="request.topic"),
+        EntityResolve(key="request.receiver"),
+    ]
+
+    recipients = [
+        UserRecipient(key="request.created_by"),
+    ]
+
+    recipient_filters = [
+        UserPreferencesRecipientFilter(),
+    ]
+
+    recipient_backends = [
+        UserEmailBackend(),
+    ]
+
+
+class UserAccessRequestCancelNotificationBuilder(NotificationBuilder):
+    """Notification builder for user access requests."""
+
+    type = "user-access-request.cancel"
+
+    @classmethod
+    def build(cls, request, identity):
+        """Build notification with request context."""
+        return Notification(
+            type=cls.type,
+            context={
+                "request": EntityResolverRegistry.reference_entity(request),
+                "executing_user": EntityResolverRegistry.reference_identity(identity),
+            },
+        )
+
+    context = [
+        EntityResolve(key="request"),
+        EntityResolve(key="request.created_by"),
+        EntityResolve(key="request.topic"),
+        EntityResolve(key="request.receiver"),
+        EntityResolve(key="executing_user"),
+    ]
+
+    recipients = [
+        UserRecipient(key="request.created_by"),
+    ]
+
+    recipient_filters = [
+        UserPreferencesRecipientFilter(),
+        UserRecipientFilter("executing_user"),
+    ]
 
     recipient_backends = [
         UserEmailBackend(),

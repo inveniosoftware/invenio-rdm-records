@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # Copyright (C) 2021 CERN.
-# Copyright (C) 2021-2023 Graz University of Technology.
+# Copyright (C) 2021-2024 Graz University of Technology.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
@@ -34,6 +34,11 @@ class OAIPIDProvider(PIDProvider):
         # http://www.openarchives.org/OAI/2.0/guidelines-oai-identifier.htm
         prefix = current_app.config.get("OAISERVER_ID_PREFIX", "")
         return f"oai:{prefix}:{record.pid.pid_value}"
+
+    @classmethod
+    def is_enabled(cls, app):
+        """Determine if datacite is enabled or not."""
+        return True
 
     def reserve(self, pid, record, **kwargs):
         """Constant True.

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # Copyright (C) 2021 CERN.
-# Copyright (C) 2021-2023 Graz University of Technology.
+# Copyright (C) 2021-2024 Graz University of Technology.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
@@ -37,6 +37,11 @@ class PIDProvider:
 
     def generate_id(self, record, **kwargs):
         """Generates an identifier value."""
+        raise NotImplementedError
+
+    @classmethod
+    def is_enabled(cls):
+        """Determine if the pid is enabled or not."""
         raise NotImplementedError
 
     def is_managed(self):

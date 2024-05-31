@@ -2,7 +2,7 @@
 #
 # Copyright (C) 2019-2024 CERN.
 # Copyright (C) 2019 Northwestern University.
-# Copyright (C) 2021-2023 Graz University of Technology.
+# Copyright (C) 2021-2024 Graz University of Technology.
 # Copyright (C) 2023 TU Wien.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
@@ -360,11 +360,13 @@ RDM_PERSISTENT_IDENTIFIERS = {
         "label": _("DOI"),
         "validator": idutils.is_doi,
         "normalizer": idutils.normalize_doi,
+        "is_enabled": providers.DataCitePIDProvider.is_enabled,
     },
     "oai": {
         "providers": ["oai"],
         "required": True,
         "label": _("OAI"),
+        "is_enabled": providers.OAIPIDProvider.is_enabled,
     },
 }
 """The configured persistent identifiers for records.
@@ -396,6 +398,7 @@ RDM_PARENT_PERSISTENT_IDENTIFIERS = {
         "label": _("Concept DOI"),
         "validator": idutils.is_doi,
         "normalizer": idutils.normalize_doi,
+        "is_enabled": providers.DataCitePIDProvider.is_enabled,
     },
 }
 """Persistent identifiers for parent record."""

@@ -11,7 +11,16 @@
 Changes
 =======
 
+Version 10.7.0 (released 2024-05-28)
+
+- pids service: resolve owned_by for the emails
+- entity_resolver: match drafts while resolving
+- notifications: add user and guest notifications on request actions
+- pids: unify pid behaviour, disable/enable parent DOI on demand, based on
+  DATACITE_ENABLED configuration
+
 Version 10.6.0 (released 2024-05-22)
+
 - pids: prevent creating pids for restricted records
 - pids: restrict updating permission levels for records based on a grace period
 
