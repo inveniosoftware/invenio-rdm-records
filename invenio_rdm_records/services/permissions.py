@@ -3,6 +3,7 @@
 # Copyright (C) 2019-2024 CERN.
 # Copyright (C) 2019 Northwestern University.
 # Copyright (C) 2023 TU Wien.
+# Copyright (C) 2023 KTH Royal Institute of Technology.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
@@ -10,6 +11,7 @@
 """Permissions for Invenio RDM Records."""
 from invenio_administration.generators import Administration
 from invenio_communities.generators import CommunityCurators
+from invenio_communities.permissions import CommunityMembers
 from invenio_records_permissions.generators import (
     AnyUser,
     AuthenticatedUser,
@@ -34,6 +36,7 @@ from .generators import (
     IfExternalDOIRecord,
     IfFileIsLocal,
     IfNewRecord,
+    IfOneCommunity,
     IfRecordDeleted,
     IfRequestType,
     IfRestricted,
@@ -197,8 +200,21 @@ class RDMRecordPermissionPolicy(RecordPermissionPolicy):
             else_=[IfExternalDOIRecord(then_=[Disable()], else_=can_curate)],
         ),
     ]
+    can_publish_via_community = (
+        [RecordCommunitiesAction("curate")]
+        + [SystemProcess()]
+        + [CommunityMembers()]
+        + [SecretLinks("edit")]
+        + [SubmissionReviewer()]
+    )
     # Allow publishing a new record or changes to an existing record.
-    can_publish = can_review
+    can_publish = [
+        IfConfig(
+            "RDM_RECORD_ALWAYS_IN_COMMUNITY",
+            then_=can_publish_via_community,
+            else_=can_review,
+        ),
+    ]
     # Allow lifting a record or draft.
     can_lift_embargo = can_manage
 
@@ -208,10 +224,19 @@ class RDMRecordPermissionPolicy(RecordPermissionPolicy):
     # Who can add record to a community
     can_add_community = can_manage
     # Who can remove a community from a record
-    can_remove_community = [
+    can_remove_community_ = [
         RecordOwners(),
         CommunityCurators(),
         SystemProcess(),
+    ]
+    can_remove_community = [
+        IfConfig(
+            "RDM_RECORD_ALWAYS_IN_COMMUNITY",
+            then_=[
+                IfOneCommunity(then_=[SystemProcess()], else_=can_remove_community_)
+            ],
+            else_=can_remove_community_,
+        )
     ]
     # Who can remove records from a community
     can_remove_record = [CommunityCurators()]
