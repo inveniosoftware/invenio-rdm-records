@@ -11,6 +11,11 @@
 Changes
 =======
 
+Version 11.0.0 (released 2024-06-04)
+
+- installation: bump invenio-communities, invenio-vocabularies, invenio-drafts-resources and invenio-records-resources
+- installation: added invenio-jobs
+
 Version 10.7.1 (released 2024-05-31)
 
 - secret links: set csrf token for all requests with secret links,
