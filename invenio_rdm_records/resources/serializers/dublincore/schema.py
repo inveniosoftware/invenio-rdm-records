@@ -12,6 +12,7 @@ import idutils
 from flask import current_app
 from flask_resources.serializers import BaseSerializerSchema
 from marshmallow import fields, missing
+from pydash import py_
 
 from ..schemas import CommonFieldsMixin
 from ..ui.schema import current_default_locale
@@ -91,22 +92,22 @@ class DublinCoreSchema(BaseSerializerSchema, CommonFieldsMixin):
         # FIXME: Add after UI support is there
 
         # Alternate identifiers
-        for a in obj["metadata"].get("alternate_identifiers", []):
+        for a in obj.get("metadata", {}).get("alternate_identifiers", []):
             rels.append(self._transform_identifier(a["identifier"], a["scheme"]))
 
         # Related identifiers
-        for a in obj["metadata"].get("related_identifiers", []):
+        for a in obj.get("metadata", {}).get("related_identifiers", []):
             rels.append(self._transform_identifier(a["identifier"], a["scheme"]))
 
         # Communities
-        communities = obj["parent"].get("communities", {}).get("entries", [])
+        communities = obj.get("parent", {}).get("communities", {}).get("entries", [])
         for community in communities:
             slug = community["slug"]
             url = f"{current_app.config['SITE_UI_URL']}/communities/{slug}"
             rels.append(self._transform_identifier(url, "url"))
 
         # Parent doi
-        parent_pids = obj["parent"].get("pids", {})
+        parent_pids = obj.get("parent", {}).get("pids", {})
         for key, value in parent_pids.items():
             if key == "doi":
                 rels.append(self._transform_identifier(value["identifier"], key))
@@ -117,13 +118,14 @@ class DublinCoreSchema(BaseSerializerSchema, CommonFieldsMixin):
         """Get rights."""
         rights = []
 
-        access_right = obj["access"]["status"]
-        if access_right == "metadata-only":
-            access_right = "closed"
+        access_right = py_.get(obj, "access.status")
+        if access_right:
+            if access_right == "metadata-only":
+                access_right = "closed"
 
-        rights.append(f"info:eu-repo/semantics/{access_right}Access")
+            rights.append(f"info:eu-repo/semantics/{access_right}Access")
 
-        for right in obj["metadata"].get("rights", []):
+        for right in obj.get("metadata", {}).get("rights", []):
             rights.append(right.get("title").get(current_default_locale()))
             if right.get("id"):
                 license_url = right.get("props", {}).get("url")
@@ -138,9 +140,14 @@ class DublinCoreSchema(BaseSerializerSchema, CommonFieldsMixin):
 
     def get_dates(self, obj):
         """Get dates."""
-        dates = [obj["metadata"]["publication_date"]]
+        dates = []
 
-        if obj["access"]["status"] == "embargoed":
+        publication_date = py_.get(obj, "metadata.publication_date")
+        if publication_date:
+            dates.append(publication_date)
+
+        access_right = py_.get(obj, "access.status")
+        if access_right == "embargoed":
             date = obj["access"]["embargo"]["until"]
             dates.append(f"info:eu-repo/date/embargoEnd/{date}")
 
@@ -181,12 +188,16 @@ class DublinCoreSchema(BaseSerializerSchema, CommonFieldsMixin):
 
     def get_types(self, obj):
         """Get resource type."""
+        resource_type_id = py_.get(obj, "metadata.resource_type.id")
+        if not resource_type_id:
+            return missing
+
         props = get_vocabulary_props(
             "resourcetypes",
             [
                 "props.eurepo",
             ],
-            obj["metadata"]["resource_type"]["id"],
+            resource_type_id,
         )
         t = props.get("eurepo")
         return [t] if t else missing

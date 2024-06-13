@@ -14,6 +14,7 @@ from copy import deepcopy
 from functools import partial
 
 from babel_edtf import parse_edtf
+from edtf.parser.grammar import ParseException
 from flask import current_app, g
 from flask_resources import BaseObjectSchema
 from invenio_communities.communities.resources.ui_schema import (
@@ -30,6 +31,7 @@ from marshmallow_utils.fields import FormatDate as FormatDate_
 from marshmallow_utils.fields import FormatEDTF as FormatEDTF_
 from marshmallow_utils.fields import SanitizedHTML, SanitizedUnicode, StrippedHTML
 from marshmallow_utils.fields.babel import gettext_from_dict
+from pyparsing import ParseException
 
 from .fields import AccessStatusField
 
@@ -218,12 +220,18 @@ def compute_publishing_information(obj, dummyctx):
         journal_issue = journal.get("issue")
         journal_volume = journal.get("volume")
         journal_pages = journal.get("pages")
-        publication_date_edtf = (
-            parse_edtf(publication_date).lower_strict() if publication_date else None
-        )
-        publication_date_formatted = (
-            f"{publication_date_edtf.tm_year}" if publication_date_edtf else None
-        )
+
+        try:
+            publication_date_edtf = (
+                parse_edtf(publication_date).lower_strict()
+                if publication_date
+                else None
+            )
+            publication_date_formatted = (
+                f"{publication_date_edtf.tm_year}" if publication_date_edtf else None
+            )
+        except ParseException:
+            publication_date_formatted = None
 
         title = f"{journal_title}" if journal_title else None
         vol_issue = f"{journal_volume}" if journal_volume else None
