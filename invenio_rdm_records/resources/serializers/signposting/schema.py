@@ -15,9 +15,9 @@ from ..utils import get_vocabulary_props
 
 
 class LandingPageSchema(Schema):
-    """Schema for serialization of typed links pertaining to the landing page.
+    """Schema for serialization of link context object for the landing page.
 
-    Serialization input is a whole record dict projection.
+    Serialization input (`obj`) is a whole record dict projection.
     """
 
     anchor = fields.Method(serialize="serialize_anchor")
@@ -143,9 +143,9 @@ class LandingPageSchema(Schema):
 
 
 class ContentResourceSchema(Schema):
-    """Schema for serialization of typed links pertaining to the content resource.
+    """Schema for serialization of link context object for the content resource.
 
-    Serialization input is a file entry dict projection.
+    Serialization input (`obj`) is a file entry dict projection.
 
     Passing a context={"record_dict"} to the constructor is required.
     """
@@ -169,33 +169,28 @@ class ContentResourceSchema(Schema):
 
 
 class MetadataResourceSchema(Schema):
-    """Schema for serialization of typed links pertaining to the metadata resource.
+    """Schema for serialization of link context object for the metadata resource.
 
-    Serialization input is a mimetype.
+    Serialization input (`obj`) is a whole record dict projection.
 
     Passing a context={"record_dict"} to the constructor is required.
     """
 
     anchor = fields.Method(serialize="serialize_anchor")
     describes = fields.Method(serialize="serialize_describes")
-    type = fields.Method(serialize="serialize_type")
 
     def serialize_anchor(self, obj, **kwargs):
         """Serialize to API url."""
-        return self.context["record_dict"]["links"]["self"]
+        return obj["links"]["self"]
 
     def serialize_describes(self, obj, **kwargs):
         """Serialize to record landing page url."""
         return [
             {
-                "href": self.context["record_dict"]["links"]["self_html"],
+                "href": obj["links"]["self_html"],
                 "type": "text/html",
             }
         ]
-
-    def serialize_type(self, obj, **kwargs):
-        """Serialize to mimetype i.e. obj."""
-        return obj
 
 
 class FAIRSignpostingProfileLvl2Schema(Schema):
@@ -208,9 +203,6 @@ class FAIRSignpostingProfileLvl2Schema(Schema):
 
     def serialize_linkset(self, obj, **kwargs):
         """Serialize linkset."""
-        # Has to be placed here to prevent circular dependency.
-        from invenio_rdm_records.resources.config import record_serializers
-
         result = [LandingPageSchema().dump(obj)]
 
         content_resource_schema = ContentResourceSchema(context={"record_dict": obj})
@@ -219,10 +211,8 @@ class FAIRSignpostingProfileLvl2Schema(Schema):
             for entry in obj.get("files", {}).get("entries", {}).values()
         ]
 
-        metadata_resource_schema = MetadataResourceSchema(context={"record_dict": obj})
-        result += [
-            metadata_resource_schema.dump(mimetype)
-            for mimetype in sorted(record_serializers)
-        ]
+        # Only a single metadata link context object is appropriate given our usage of
+        # content-negotiation per discussion with Signposting authors
+        result += [MetadataResourceSchema().dump(obj)]
 
         return result
