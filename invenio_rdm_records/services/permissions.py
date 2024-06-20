@@ -2,7 +2,7 @@
 #
 # Copyright (C) 2019-2024 CERN.
 # Copyright (C) 2019 Northwestern University.
-# Copyright (C) 2023 TU Wien.
+# Copyright (C) 2022-2024 TU Wien.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
@@ -14,6 +14,7 @@ from invenio_records_permissions.generators import (
     AnyUser,
     AuthenticatedUser,
     Disable,
+    DisableIfReadOnly,
     IfConfig,
     SystemProcess,
 )
@@ -127,7 +128,7 @@ class RDMRecordPermissionPolicy(RecordPermissionPolicy):
         IfFileIsLocal(then_=can_read_files, else_=[SystemProcess()])
     ]
     # Allow submitting new record
-    can_create = can_authenticated
+    can_create = can_authenticated + [DisableIfReadOnly()]
 
     #
     # Drafts
@@ -139,12 +140,13 @@ class RDMRecordPermissionPolicy(RecordPermissionPolicy):
     # Allow reading files of a draft
     can_draft_read_files = can_preview + [ResourceAccessToken("read")]
     # Allow updating metadata of a draft
-    can_update_draft = can_review
+    can_update_draft = can_review + [DisableIfReadOnly()]
     # Allow uploading, updating and deleting files in drafts
-    can_draft_create_files = can_review
+    can_draft_create_files = can_review + [DisableIfReadOnly()]
     can_draft_set_content_files = [
         # review is the same as create_files
-        IfFileIsLocal(then_=can_review, else_=[SystemProcess()])
+        IfFileIsLocal(then_=can_review, else_=[SystemProcess()]),
+        DisableIfReadOnly(),
     ]
     can_draft_get_content_files = [
         # preview is same as read_files
@@ -152,10 +154,11 @@ class RDMRecordPermissionPolicy(RecordPermissionPolicy):
     ]
     can_draft_commit_files = [
         # review is the same as create_files
-        IfFileIsLocal(then_=can_review, else_=[SystemProcess()])
+        IfFileIsLocal(then_=can_review, else_=[SystemProcess()]),
+        DisableIfReadOnly(),
     ]
-    can_draft_update_files = can_review
-    can_draft_delete_files = can_review
+    can_draft_update_files = can_review + [DisableIfReadOnly()]
+    can_draft_delete_files = can_review + [DisableIfReadOnly()]
     # Allow enabling/disabling files
     can_manage_files = [
         IfConfig(
@@ -163,6 +166,7 @@ class RDMRecordPermissionPolicy(RecordPermissionPolicy):
             then_=[IfNewRecord(then_=can_authenticated, else_=can_review)],
             else_=[],
         ),
+        DisableIfReadOnly(),
     ]
     # Allow managing record access
     can_manage_record_access = [
@@ -170,25 +174,26 @@ class RDMRecordPermissionPolicy(RecordPermissionPolicy):
             "RDM_ALLOW_RESTRICTED_RECORDS",
             then_=[IfNewRecord(then_=can_authenticated, else_=can_review)],
             else_=[],
-        )
+        ),
+        DisableIfReadOnly(),
     ]
 
     #
     # PIDs
     #
-    can_pid_create = can_review
-    can_pid_register = can_review
-    can_pid_update = can_review
-    can_pid_discard = can_review
-    can_pid_delete = can_review
+    can_pid_create = can_review + [DisableIfReadOnly()]
+    can_pid_register = can_review + [DisableIfReadOnly()]
+    can_pid_update = can_review + [DisableIfReadOnly()]
+    can_pid_discard = can_review + [DisableIfReadOnly()]
+    can_pid_delete = can_review + [DisableIfReadOnly()]
 
     #
     # Actions
     #
     # Allow to put a record in edit mode (create a draft from record)
-    can_edit = [IfDeleted(then_=[Disable()], else_=can_curate)]
+    can_edit = [IfDeleted(then_=[Disable()], else_=can_curate), DisableIfReadOnly()]
     # Allow deleting/discarding a draft and all associated files
-    can_delete_draft = can_curate
+    can_delete_draft = can_curate + [DisableIfReadOnly()]
     # Allow creating a new version of an existing published record.
     can_new_version = [
         IfConfig(
@@ -196,46 +201,50 @@ class RDMRecordPermissionPolicy(RecordPermissionPolicy):
             then_=can_curate,
             else_=[IfExternalDOIRecord(then_=[Disable()], else_=can_curate)],
         ),
+        DisableIfReadOnly(),
     ]
     # Allow publishing a new record or changes to an existing record.
-    can_publish = can_review
+    can_publish = can_review + [DisableIfReadOnly()]
     # Allow lifting a record or draft.
-    can_lift_embargo = can_manage
+    can_lift_embargo = can_manage + [DisableIfReadOnly()]
 
     #
     # Record communities
     #
     # Who can add record to a community
-    can_add_community = can_manage
+    can_add_community = can_manage + [DisableIfReadOnly()]
     # Who can remove a community from a record
     can_remove_community = [
         RecordOwners(),
         CommunityCurators(),
         SystemProcess(),
+        DisableIfReadOnly(),
     ]
     # Who can remove records from a community
-    can_remove_record = [CommunityCurators()]
+    can_remove_record = [CommunityCurators(), DisableIfReadOnly()]
     # Who can add records to a community in bulk
-    can_bulk_add = [SystemProcess()]
+    can_bulk_add = [SystemProcess(), DisableIfReadOnly()]
 
     #
     # Media files - draft
     #
-    can_draft_media_create_files = can_review
+    can_draft_media_create_files = can_review + [DisableIfReadOnly()]
     can_draft_media_read_files = can_review
     can_draft_media_set_content_files = [
-        IfFileIsLocal(then_=can_review, else_=[SystemProcess()])
+        IfFileIsLocal(then_=can_review, else_=[SystemProcess()]),
+        DisableIfReadOnly(),
     ]
     can_draft_media_get_content_files = [
         # preview is same as read_files
-        IfFileIsLocal(then_=can_preview, else_=[SystemProcess()])
+        IfFileIsLocal(then_=can_preview, else_=[SystemProcess()]),
     ]
     can_draft_media_commit_files = [
         # review is the same as create_files
-        IfFileIsLocal(then_=can_review, else_=[SystemProcess()])
+        IfFileIsLocal(then_=can_review, else_=[SystemProcess()]),
+        DisableIfReadOnly(),
     ]
-    can_draft_media_update_files = can_review
-    can_draft_media_delete_files = can_review
+    can_draft_media_update_files = can_review + [DisableIfReadOnly()]
+    can_draft_media_delete_files = can_review + [DisableIfReadOnly()]
 
     #
     # Media files - record
@@ -258,9 +267,9 @@ class RDMRecordPermissionPolicy(RecordPermissionPolicy):
     #
     # Record deletion workflows
     #
-    can_delete = [Administration(), SystemProcess()]
-    can_delete_files = [SystemProcess()]
-    can_purge = [SystemProcess()]
+    can_delete = [Administration(), SystemProcess(), DisableIfReadOnly()]
+    can_delete_files = [SystemProcess(), DisableIfReadOnly()]
+    can_purge = [SystemProcess(), DisableIfReadOnly()]
 
     #
     # Record and user quota
@@ -270,6 +279,7 @@ class RDMRecordPermissionPolicy(RecordPermissionPolicy):
         # moderators
         UserManager,
         SystemProcess(),
+        DisableIfReadOnly(),
     ]
     #
     # Disabled actions (these should not be used or changed)
@@ -314,5 +324,6 @@ class RDMRequestsPermissionPolicy(RequestPermissionPolicy):
                     else_=Disable(),
                 )
             ],
-        )
+        ),
+        DisableIfReadOnly(),
     ]
