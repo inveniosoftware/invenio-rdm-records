@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2022-2023 Graz University of Technology.
+# Copyright (C) 2022-2024 Graz University of Technology.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
@@ -10,7 +10,6 @@
 import re
 
 from flask import current_app
-from flask_sqlalchemy import Pagination
 from invenio_db import db
 from invenio_i18n import lazy_gettext as _
 from invenio_oaiserver.models import OAISet
@@ -31,6 +30,13 @@ from .errors import (
     OAIPMHSetSpecAlreadyExistsError,
 )
 from .uow import OAISetCommitOp, OAISetDeleteOp
+
+try:
+    # flask_sqlalchemy<3.0.0
+    from flask_sqlalchemy import Pagination
+except ImportError:
+    # flask_sqlalchemy>=3.0.0
+    from flask_sqlalchemy.pagination import Pagination
 
 
 class OAIPMHServerService(Service):
