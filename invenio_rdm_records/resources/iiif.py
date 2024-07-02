@@ -2,6 +2,7 @@
 #
 # Copyright (C) 2024-2024 CERN.
 # Copyright (C) 2022 Universität Hamburg.
+# Copyright (C) 2024 Graz University of Technology.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
@@ -14,7 +15,7 @@ from urllib.parse import urljoin
 
 import marshmallow as ma
 import requests
-from flask import Response, current_app, g, request, send_file
+from flask import Response, abort, current_app, g, request, send_file
 from flask_cors import cross_origin
 from flask_resources import (
     HTTPJSONException,
@@ -40,12 +41,31 @@ from invenio_records_resources.resources.records.resource import (
 from invenio_records_resources.services.base.config import ConfiguratorMixin, FromConfig
 from werkzeug.utils import cached_property, secure_filename
 
+from ..services.errors import RecordDeletedException
 from .serializers import (
     IIIFCanvasV2JSONSerializer,
     IIIFInfoV2JSONSerializer,
     IIIFManifestV2JSONSerializer,
     IIIFSequenceV2JSONSerializer,
 )
+
+
+def abort_record_deleted_exception(func):
+    """Abort deleted record exception.
+
+    Service methods may raise the Exception RecordDeletedException to show that
+    the method was called for a deleted record. The exception should be hidden
+    from the user.
+    """
+
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+        try:
+            return func(*args, **kwargs)
+        except RecordDeletedException:
+            abort(404)
+
+    return wrapper
 
 
 class IIIFResourceConfig(ResourceConfig, ConfiguratorMixin):
@@ -160,6 +180,7 @@ class IIIFResource(ErrorHandlersMixin, Resource):
     @iiif_request_view_args
     @response_handler()
     @proxy_pass.__func__
+    @abort_record_deleted_exception
     def manifest(self):
         """Manifest."""
         return self._get_record_with_files().to_dict(), 200
@@ -169,6 +190,7 @@ class IIIFResource(ErrorHandlersMixin, Resource):
     @iiif_request_view_args
     @response_handler()
     @proxy_pass.__func__
+    @abort_record_deleted_exception
     def sequence(self):
         """Sequence."""
         return self._get_record_with_files().to_dict(), 200
@@ -178,6 +200,7 @@ class IIIFResource(ErrorHandlersMixin, Resource):
     @iiif_request_view_args
     @response_handler()
     @proxy_pass.__func__
+    @abort_record_deleted_exception
     def canvas(self):
         """Canvas."""
         uuid = resource_requestctx.view_args["uuid"]
@@ -190,6 +213,7 @@ class IIIFResource(ErrorHandlersMixin, Resource):
     @iiif_request_view_args
     @response_handler()
     @proxy_pass.__func__
+    @abort_record_deleted_exception
     def base(self):
         """IIIF base endpoint, redirects to IIIF Info endpoint."""
         item = self.service.get_file(
@@ -203,6 +227,7 @@ class IIIFResource(ErrorHandlersMixin, Resource):
     @iiif_request_view_args
     @response_handler()
     @proxy_pass.__func__
+    @abort_record_deleted_exception
     def info(self):
         """Get IIIF image info."""
         item = self.service.get_file(
@@ -216,6 +241,7 @@ class IIIFResource(ErrorHandlersMixin, Resource):
     @request_read_args
     @iiif_request_view_args
     @proxy_pass.__func__
+    @abort_record_deleted_exception
     def image_api(self):
         """IIIF API Implementation.
 
