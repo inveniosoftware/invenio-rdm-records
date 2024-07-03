@@ -136,9 +136,16 @@ def test_rat_validation_failed(app, db, uploader, superuser_identity, oauth2_cli
         # generate token issued an hour ago
         validate_rat(
             _rat_gen(
-                pat["token"], payload={"iat": datetime.utcnow() - timedelta(hours=1)}
+                pat["token"],
+                payload={"iat": datetime.utcnow() - timedelta(hours=1), "sub": {}},
             )
         )
+    # case: RAT is missing "sub" key
+    with pytest.raises(InvalidTokenError):
+        validate_rat(_rat_gen(pat["token"]))
+    # case: RAT has a non-dictionary "sub" key
+    with pytest.raises(InvalidTokenError):
+        validate_rat(_rat_gen(pat["token"], payload={"sub": "test-string-sub"}))
 
 
 def test_rec_files_permissions_with_rat(
@@ -705,7 +712,7 @@ def test_rec_files_permissions_with_rat_expired_token_error(
     # generate expired RAT
     pat = _generate_pat_token(db, uploader, oauth2_client, "rat_token")["token"]
     rat_token = jwt.encode(
-        payload={"iat": datetime.utcnow() - timedelta(hours=1)},
+        payload={"iat": datetime.utcnow() - timedelta(hours=1), "sub": {}},
         key=pat.access_token,
         algorithm="HS256",
         headers={"kid": str(pat.id)},
