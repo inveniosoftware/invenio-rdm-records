@@ -28,6 +28,7 @@ import * as Yup from "yup";
 import { AffiliationsField } from "./../AffiliationsField";
 import { CreatibutorsIdentifiers } from "./CreatibutorsIdentifiers";
 import { CREATIBUTOR_TYPE } from "./type";
+import Overridable from "react-overridable";
 
 const ModalActions = {
   ADD: "add",
@@ -679,16 +680,18 @@ export class CreatibutorsModal extends Component {
                     (showPersonForm &&
                       _get(values, typeFieldPath) === CREATIBUTOR_TYPE.PERSON)) && (
                     <div>
-                      <SelectField
-                        fieldPath={roleFieldPath}
-                        label={i18next.t("Role")}
-                        options={roleOptions}
-                        placeholder={i18next.t("Select role")}
-                        {...(this.isCreator() && { clearable: true })}
-                        required={!this.isCreator()}
-                        optimized
-                        scrolling
-                      />
+                      <Overridable id="InvenioRdmRecords.Deposit.CreatibutorsModalRoleSelectField.Container">
+                        <SelectField
+                          fieldPath={roleFieldPath}
+                          label={i18next.t("Role")}
+                          options={roleOptions}
+                          placeholder={i18next.t("Select role")}
+                          {...(this.isCreator() && { clearable: true })}
+                          required={!this.isCreator()}
+                          optimized
+                          scrolling
+                        />
+                      </Overridable>
                     </div>
                   )}
                 </Form>
