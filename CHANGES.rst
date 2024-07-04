@@ -11,6 +11,10 @@
 Changes
 =======
 
+Version 11.1.0 (released 2024-07-04)
+
+- installation: upgrade invenio-drafts-resources
+
 Version 11.0.0 (released 2024-06-04)
 
 - installation: bump invenio-communities, invenio-vocabularies, invenio-drafts-resources and invenio-records-resources
@@ -37,7 +41,7 @@ Version 10.6.0 (released 2024-05-22)
 
 Version 10.5.0 (released 2024-05-21)
 
-- iiif: add PyVIPS support for PDF thumnbail rendering
+- iiif: add PyVIPS support for PDF thumbnail rendering
 
 Version 10.4.3 (released 2024-05-17)
 
