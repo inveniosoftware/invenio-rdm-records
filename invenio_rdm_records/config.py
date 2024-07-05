@@ -597,7 +597,12 @@ IIIF_TILES_STORAGE_BASE_PATH = "images/"
 Relative paths are resolved against the application instance path.
 """
 
-IIIF_TILES_CONVERTER_PARAMS = {}
+IIIF_TILES_CONVERTER_PARAMS = {
+    "compression": "jpeg",
+    "Q": 90,
+    "tile_width": 256,
+    "tile_height": 256,
+}
 """Parameters to be passed to the tiles converter."""
 
 RDM_RECORDS_RESTRICTION_GRACE_PERIOD = timedelta(days=30)
