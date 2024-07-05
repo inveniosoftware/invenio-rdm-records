@@ -11,6 +11,10 @@
 Changes
 =======
 
+Version 11.2.0 (released 2024-07-05)
+
+- iiif: schema: only return images within size limit in manifest
+
 Version 11.1.0 (released 2024-07-04)
 
 - installation: upgrade invenio-drafts-resources
