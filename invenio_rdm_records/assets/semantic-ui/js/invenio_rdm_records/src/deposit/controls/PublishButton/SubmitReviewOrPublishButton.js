@@ -29,6 +29,7 @@ class SubmitReviewOrPublishComponent extends Component {
       showDirectPublishButton,
       showSubmitForReviewButton,
       record,
+      permissions,
       ...ui
     } = this.props;
     const { modalOpen } = this.state;
@@ -61,13 +62,14 @@ class SubmitReviewOrPublishComponent extends Component {
           />
           <PublishButton
             buttonLabel={i18next.t("Publish without community")}
+            permissions={permissions}
             publishWithoutCommunity
             {...ui}
           />
         </>
       );
     } else {
-      result = <PublishButton {...ui} />;
+      result = <PublishButton permissions={permissions} {...ui} />;
     }
     return result;
   }
@@ -80,6 +82,7 @@ SubmitReviewOrPublishComponent.propTypes = {
   showDirectPublishButton: PropTypes.bool.isRequired,
   showSubmitForReviewButton: PropTypes.bool.isRequired,
   record: PropTypes.object.isRequired,
+  permissions: PropTypes.object.isRequired,
 };
 
 SubmitReviewOrPublishComponent.defaultProps = {
