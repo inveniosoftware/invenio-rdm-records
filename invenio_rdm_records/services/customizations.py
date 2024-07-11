@@ -57,7 +57,9 @@ class FromConfigRequiredPIDs:
         """Return required pids (descriptor protocol)."""
         pids = obj._app.config.get(self.pids_key, {})
         return [
-            scheme for (scheme, conf) in pids.items() if conf["is_enabled"](obj._app)
+            scheme
+            for (scheme, conf) in pids.items()
+            if (conf["is_enabled"](obj._app) and conf.get("required", False))
         ]
 
 

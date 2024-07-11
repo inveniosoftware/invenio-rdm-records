@@ -2,6 +2,7 @@
 #
 # Copyright (C) 2021 Graz University of Technology.
 # Copyright (C) 2021 TU Wien.
+# Copyright (C) 2024 California Institute of Technology.
 #
 # Invenio-RDM-Records is free software; you can redistribute it
 # and/or modify it under the terms of the MIT License; see LICENSE file for
@@ -56,6 +57,19 @@ def test_publish_public_record_with_default_doi(
     draft = service.create(superuser_identity, minimal_record)
     record = service.publish(id_=draft.id, identity=superuser_identity)
     assert "doi" in record._record.pids
+
+
+def test_publish_public_record_with_optional_doi(
+    running_app, search_clear, minimal_record
+):
+    running_app.app.config["RDM_PERSISTENT_IDENTIFIERS"]["doi"]["required"] = False
+    superuser_identity = running_app.superuser_identity
+    service = current_rdm_records.records_service
+    draft = service.create(superuser_identity, minimal_record)
+    record = service.publish(id_=draft.id, identity=superuser_identity)
+    assert "doi" not in record._record.pids
+    # Reset the running_app config for next tests
+    running_app.app.config["RDM_PERSISTENT_IDENTIFIERS"]["doi"]["required"] = True
 
 
 def test_publish_restricted_record_without_default_doi(

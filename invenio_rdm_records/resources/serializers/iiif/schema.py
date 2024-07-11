@@ -132,10 +132,18 @@ class ListIIIFFilesAttribute(fields.List):
 
     def get_value(self, obj, *args, **kwargs):
         """Return the value for a given key from an object attribute."""
+        iiif_config = current_app.config.get("IIIF_TILES_CONVERTER_PARAMS")
+        valid_metadata = (
+            lambda x: x
+            and x["height"] > iiif_config["tile_height"]
+            and x["width"] > iiif_config["tile_width"]
+        )
+
         return [
             f
             for f in obj["files"].get("entries", {}).values()
             if f["ext"] in current_app.config["RDM_IIIF_MANIFEST_FORMATS"]
+            and valid_metadata(f["metadata"])
         ]
 
 
