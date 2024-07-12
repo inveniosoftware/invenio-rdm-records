@@ -23,23 +23,29 @@ class TilesProcessor(RecordFilesProcessor):
 
     @property
     def valid_exts(self) -> list:
-        """Return valid extenstions for tiles generation from config/default."""
+        """Return valid extensions for tiles generation from config/default."""
         return current_app.config.get(
             "IIIF_TILES_VALID_EXTENSIONS", ["tiff", "pdf", "jpeg", "png"]
         )
 
     def _can_process(self, draft, record) -> bool:
         """Checks to determine if to process the record."""
-        return (
-            # Check if tiles generation is enabled...
-            current_app.config.get("IIIF_TILES_GENERATION_ENABLED", False)
-            and (
-                # ...has convertable files (i.e. images)
-                bool(set(self.valid_exts).intersection(record.files.exts))
-                # ...or has already converted files
-                or (record.media_files.enabled and "ptif" in record.media_files.exts)
-            )
-        )
+        for file_type in ["media_files", "files"]:
+            files = getattr(record, file_type)
+            if (
+                # Check if tiles generation is enabled...
+                current_app.config.get("IIIF_TILES_GENERATION_ENABLED", False)
+                and (
+                    # ...has convertible files (i.e. images)
+                    bool(set(self.valid_exts).intersection(files.exts))
+                    # ...or has already converted files
+                    or (
+                        record.media_files.enabled and "ptif" in record.media_files.exts
+                    )
+                )
+            ):
+                return True
+        return False
 
     def _can_process_file(self, file_record, draft, record) -> bool:
         """Checks to determine if to process the record."""
@@ -58,7 +64,10 @@ class TilesProcessor(RecordFilesProcessor):
         for fname in media_files:
             if fname.endswith(".ptif") and (
                 record.access.protection.files == "restricted"
-                or record.files.get(fname[:-5]) is None
+                or (
+                    record.files.get(fname[:-5]) is None
+                    and record.media_files.get(fname[:-5]) is None
+                )
             ):
                 deletion_status = tiles_storage.delete(record, fname[: -len(".ptif")])
                 if deletion_status:
@@ -78,7 +87,7 @@ class TilesProcessor(RecordFilesProcessor):
                         )
                     )
 
-    def _process_file(self, file_record, draft, record, uow=None):
+    def _process_file(self, file_record, draft, record, file_type, uow=None):
         """Process a file record to kickoff pyramidal tiff generation."""
         if not self._can_process_file(file_record, draft, record):
             return
@@ -125,6 +134,7 @@ class TilesProcessor(RecordFilesProcessor):
                     generate_tiles,
                     record_id=record["id"],
                     file_key=file_record.key,
+                    file_type=file_type,
                 )
             )
         except Exception:
@@ -160,9 +170,11 @@ class TilesProcessor(RecordFilesProcessor):
                     record.media_files.enabled = False
                 return
 
-            # Look through files and call the task for generating tiles
             for fname, file_record in record.files.items():
-                self._process_file(file_record, draft, record, uow)
+                self._process_file(file_record, draft, record, "files", uow)
+
+            for fname, file_record in record.media_files.items():
+                self._process_file(file_record, draft, record, "media_files", uow)
 
         if not len(record.media_files.entries):
             record.media_files.enabled = False
