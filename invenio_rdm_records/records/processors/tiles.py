@@ -170,10 +170,13 @@ class TilesProcessor(RecordFilesProcessor):
                     record.media_files.enabled = False
                 return
 
-            for fname, file_record in record.files.items():
-                self._process_file(file_record, draft, record, "files", uow)
+            # Use a copy of the files lists, since we might be modifying them
+            record_files = list(record.files.values())
+            record_media_files = list(record.media_files.values())
 
-            for fname, file_record in record.media_files.items():
+            for file_record in record_files:
+                self._process_file(file_record, draft, record, "files", uow)
+            for file_record in record_media_files:
                 self._process_file(file_record, draft, record, "media_files", uow)
 
         if not len(record.media_files.entries):
