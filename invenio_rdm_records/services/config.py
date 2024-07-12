@@ -510,6 +510,14 @@ class RDMRecordServiceConfig(RecordServiceConfig, ConfiguratorMixin):
                 "key": key,
             },
         ),
+        NestedLinks(
+            links=RDMFileRecordServiceConfig.file_links_item,
+            key="media_files.entries",
+            context_func=lambda identity, record, key, value: {
+                "id": record.pid.pid_value,
+                "key": key,
+            },
+        ),
     ]
 
     record_file_processors = FromConfig(
@@ -590,6 +598,20 @@ class RDMMediaFileRecordServiceConfig(FileServiceConfig, ConfiguratorMixin):
     file_links_item = {
         "self": FileLink("{+api}/records/{id}/media-files/{key}"),
         "content": FileLink("{+api}/records/{id}/media-files/{key}/content"),
+        "iiif_canvas": FileLink(
+            "{+api}/iiif/record:{id}/canvas/{+key}", when=is_iiif_compatible
+        ),
+        "iiif_base": FileLink(
+            "{+api}/iiif/record:{id}:{+key}", when=is_iiif_compatible
+        ),
+        "iiif_info": FileLink(
+            "{+api}/iiif/record:{id}:{+key}/info.json", when=is_iiif_compatible
+        ),
+        "iiif_api": FileLink(
+            "{+api}/iiif/record:{id}:{+key}/{region=full}"
+            "/{size=full}/{rotation=0}/{quality=default}.{format=png}",
+            when=is_iiif_compatible,
+        ),
     }
 
     file_schema = FileSchema
@@ -664,6 +686,18 @@ class RDMMediaFileDraftServiceConfig(FileServiceConfig, ConfiguratorMixin):
         "self": FileLink("{+api}/records/{id}/draft/media-files/{key}"),
         "content": FileLink("{+api}/records/{id}/draft/media-files/{key}/content"),
         "commit": FileLink("{+api}/records/{id}/draft/media-files/{key}/commit"),
+        "iiif_canvas": FileLink(
+            "{+api}/iiif/draft:{id}/canvas/{+key}", when=is_iiif_compatible
+        ),
+        "iiif_base": FileLink("{+api}/iiif/draft:{id}:{+key}", when=is_iiif_compatible),
+        "iiif_info": FileLink(
+            "{+api}/iiif/draft:{id}:{+key}/info.json", when=is_iiif_compatible
+        ),
+        "iiif_api": FileLink(
+            "{+api}/iiif/draft:{id}:{+key}/{region=full}"
+            "/{size=full}/{rotation=0}/{quality=default}.{format=png}",
+            when=is_iiif_compatible,
+        ),
     }
 
     file_schema = FileSchema

@@ -98,16 +98,23 @@ class LocalTilesStorage(TilesStorage):
         # Partition record.id into 3 chunks of min. 2 characters (e.g. "12345678" -> ["12", "34", "5678"])
         return (self._get_dir(record) / (filename + ".ptif")).absolute()
 
-    def save(self, record, filename):
+    def save(self, record, filename, file_type):
         """Convert and save to ptif."""
-        outpath = self._get_file_path(record, filename)
+        # Get the files
+        file_source = getattr(record, file_type)
 
+        # Get the output path and create necessary directories
+        outpath = self._get_file_path(record, filename)
         self._get_dir(record).mkdir(parents=True, exist_ok=True)
-        with record.files[filename].open_stream("rb") as fin:
+
+        # Open the input stream and output stream
+        with file_source[filename].open_stream("rb") as fin:
             fout = outpath.open("w+b")
+            # Convert the file and log an error if the conversion fails
             if not self.converter.convert(fin, fout):
                 current_app.logger.info(f"Image conversion failed {record.id}")
                 return False
+
         return True
 
     def open(self, record, filename):
