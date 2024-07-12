@@ -11,6 +11,21 @@
 Changes
 =======
 
+Version 11.3.0 (released 2024-07-12)
+
+* media-files: generate ptif and include in manifets
+* fix: pids required behavior
+    * The fix for the parent doi configuration
+      https://github.com/inveniosoftware/invenio-rdm-records/pull/1740 broke
+      the "required" parameter for the pid provider. Previously you could
+      have a pid provider that was active (shows up in the deposit form),
+      but not required (pid would only be minted if something was entered).
+      Because the check for "required" was removed, this stopped working.
+    * This correction enables the option of having external DOIs without
+      necessarily having to set one of them. This would not be possible with
+      the "is_enabled" configuration.
+* iiif: handle DecompressionBombError
+
 Version 11.2.0 (released 2024-07-05)
 
 - iiif: schema: only return images within size limit in manifest
