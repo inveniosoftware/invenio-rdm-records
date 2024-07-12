@@ -11,6 +11,12 @@
 Changes
 =======
 
+Version 11.3.1 (released 2024-07-12)
+
+- processors: fix tiles files iteration
+    * Creates a copy of the files list to be iterated since we might be
+      modifying the underlying dictionary while processing tiles.
+
 Version 11.3.0 (released 2024-07-12)
 
 * media-files: generate ptif and include in manifets
