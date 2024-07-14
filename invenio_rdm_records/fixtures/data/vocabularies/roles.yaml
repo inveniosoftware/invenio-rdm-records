@@ -1,3 +1,11 @@
+- id: annotator
+  props:
+    datacite: Other
+    marc: ann
+  title:
+    en: Annotator
+    sv: Annotator
+    de: Kommentator
 - id: contactperson
   props:
     datacite: ContactPerson
