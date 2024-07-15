@@ -138,13 +138,19 @@ class ListIIIFFilesAttribute(fields.List):
             and x["height"] > iiif_config["tile_height"]
             and x["width"] > iiif_config["tile_width"]
         )
+        formats = current_app.config["RDM_IIIF_MANIFEST_FORMATS"]
 
-        return [
-            f
-            for f in obj["files"].get("entries", {}).values()
-            if f["ext"] in current_app.config["RDM_IIIF_MANIFEST_FORMATS"]
-            and valid_metadata(f["metadata"])
-        ]
+        def filter_entries(entries):
+            return [
+                f
+                for f in entries.values()
+                if f["ext"] in formats and valid_metadata(f["metadata"])
+            ]
+
+        files_entries = obj.get("files", {}).get("entries", {})
+        media_files_entries = obj.get("media_files", {}).get("entries", {})
+
+        return filter_entries(files_entries) + filter_entries(media_files_entries)
 
 
 class IIIFSequenceV2Schema(Schema):

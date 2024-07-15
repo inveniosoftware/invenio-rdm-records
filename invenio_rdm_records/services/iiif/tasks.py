@@ -16,7 +16,7 @@ from .storage import tiles_storage
 
 
 @shared_task(ignore_result=True)
-def generate_tiles(record_id, file_key):
+def generate_tiles(record_id, file_key, file_type):
     """Generate pyramidal TIFF."""
     record = current_rdm_records_service.record_cls.pid.resolve(record_id)
     status_file = record.media_files[file_key + ".ptif"]
@@ -24,7 +24,7 @@ def generate_tiles(record_id, file_key):
     status_file.commit()
     db.session.commit()
 
-    conversion_state = tiles_storage.save(record, file_key)
+    conversion_state = tiles_storage.save(record, file_key, file_type)
 
     status_file.processor["status"] = "finished" if conversion_state else "failed"
     status_file.file.file_model.uri = str(
