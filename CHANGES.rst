@@ -11,6 +11,10 @@
 Changes
 =======
 
+Version v11.4.0 (released 2024-07-15)
+
+- affiliations: update defaults to ror v2
+
 Version 11.3.1 (released 2024-07-12)
 
 - processors: fix tiles files iteration
