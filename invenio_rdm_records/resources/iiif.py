@@ -2,6 +2,7 @@
 #
 # Copyright (C) 2024-2024 CERN.
 # Copyright (C) 2022 Universität Hamburg.
+# Copyright (C) 2024 Graz University of Technology.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
@@ -43,6 +44,7 @@ from invenio_records_resources.services.base.config import ConfiguratorMixin, Fr
 from PIL.Image import DecompressionBombError
 from werkzeug.utils import cached_property, secure_filename
 
+from ..services.errors import RecordDeletedException
 from .serializers import (
     IIIFCanvasV2JSONSerializer,
     IIIFInfoV2JSONSerializer,
@@ -95,6 +97,14 @@ class IIIFResourceConfig(ResourceConfig, ConfiguratorMixin):
         DecompressionBombError: create_error_handler(
             lambda e: HTTPJSONException(
                 code=403, description=_("Image size limit exceeded")
+            )
+        ),
+        RecordDeletedException: create_error_handler(
+            lambda e: HTTPJSONException(
+                code=410,
+                description=_(
+                    "The record associated with this file has been deleted. See deletion notice."
+                ),
             )
         ),
     }
