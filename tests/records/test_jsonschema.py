@@ -23,7 +23,7 @@ from invenio_rdm_records.records.api import RDMRecord as Record
 #
 def validates(data):
     """Assertion function used to validate according to the schema."""
-    data["$schema"] = "local://records/record-v6.0.0.json"
+    data["$schema"] = "local://records/record-v7.0.0.json"
     Record(data).validate()
     return True
 
