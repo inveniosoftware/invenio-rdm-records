@@ -11,6 +11,12 @@
 Changes
 =======
 
+Version v11.5.0 (released 2024-07-22)
+
+- codemeta: added identifier to schema
+- signposting: generate 1 link context object for metadata
+- fix: abort on record deletion exception
+
 Version v11.4.0 (released 2024-07-15)
 
 - affiliations: update defaults to ror v2
