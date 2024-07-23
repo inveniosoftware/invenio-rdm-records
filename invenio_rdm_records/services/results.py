@@ -2,6 +2,7 @@
 #
 # Copyright (C) 2022 CERN.
 # Copyright (C) 2023 TU Wien.
+# Copyright (C) 2024 Graz University of Technology.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
@@ -83,7 +84,9 @@ class RDMRecordList(RecordList):
         for hit in self._results:
             # Load dump
             record_dict = hit.to_dict()
-            if record_dict["is_published"]:
+
+            index_name = self._service.record_cls.index._name
+            if index_name in hit.meta["index"]:
                 record = self._service.record_cls.loads(record_dict)
             else:
                 record = self._service.draft_cls.loads(record_dict)
