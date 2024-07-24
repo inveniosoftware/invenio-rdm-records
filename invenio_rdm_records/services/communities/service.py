@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # Copyright (C) 2023-2024 CERN.
+# Copyright (C) 2024 Graz University of Technology.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
@@ -345,10 +346,9 @@ class RecordCommunitiesService(Service, RecordIndexerMixin):
             },
             raise_errors=True,
         )
-
         record = self.record_cls.pid.resolve(id_)
         self.require_permission(identity, "manage", record=record)
-        record.parent.communities.default = valid_data["default"]
+        record.parent.communities.default = valid_data["default"]["id"]
 
         uow.register(
             ParentRecordCommitOp(
