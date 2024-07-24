@@ -613,7 +613,9 @@
                     "type": "keyword"
                   },
                   "name": {
-                    "type": "text"
+                    "type": "text",
+                    "analyzer": "accent_analyzer",
+                    "search_analyzer": "accent_analyzer"
                   },
                   "identifiers": {
                     "properties": {
@@ -682,7 +684,9 @@
                     "type": "keyword"
                   },
                   "name": {
-                    "type": "text"
+                    "type": "text",
+                    "analyzer": "accent_analyzer",
+                    "search_analyzer": "accent_analyzer"
                   },
                   "identifiers": {
                     "properties": {
@@ -715,7 +719,9 @@
                     }
                   },
                   "name": {
-                    "type": "text"
+                    "type": "text",
+                    "analyzer": "accent_analyzer",
+                    "search_analyzer": "accent_analyzer"
                   },
                   "type": {
                     "type": "keyword"
@@ -768,7 +774,9 @@
             }
           },
           "description": {
-            "type": "text"
+            "type": "text",
+            "analyzer": "accent_analyzer",
+            "search_analyzer": "accent_analyzer"
           },
           "additional_descriptions": {
             "properties": {
@@ -1100,15 +1108,17 @@
           },
           "title": {
             "type": "text",
+            "analyzer": "accent_analyzer",
+            "search_analyzer": "accent_analyzer",
             "fields": {
               "keyword": {
                 "type": "keyword",
-                "ignore_above": 256,
-                "normalizer": "custom_normalizer"
+                "ignore_above": 256
+              },
+              "original": {
+                "type": "text"
               }
-            },
-            "analyzer": "custom_analyzer",
-            "search_analyzer": "custom_analyzer"
+            }
           },
           "additional_titles": {
             "properties": {
@@ -1128,7 +1138,14 @@
                 }
               },
               "title": {
-                "type": "text"
+                "type": "text",
+                "analyzer": "accent_analyzer",
+                "search_analyzer": "accent_analyzer",
+                "fields": {
+                  "original": {
+                    "type": "text"
+                  }
+                }
               },
               "type": {
                 "type": "object",
@@ -1429,6 +1446,7 @@
     "index.query.default_field": [
       "id",
       "metadata.title",
+      "metadata.title.original",
       "metadata.contact",
       "metadata.contributors.affiliations.name",
       "metadata.contributors.person_or_org.name",
@@ -1460,15 +1478,8 @@
           "replacement": ""
         }
       },
-      "normalizer": {
-        "custom_normalizer": {
-          "type": "custom",
-          "char_filter": ["strip_special_chars"],
-          "filter": ["lowercase", "asciifolding"]
-        }
-      },
       "analyzer": {
-        "custom_analyzer": {
+        "accent_analyzer": {
           "tokenizer": "standard",
           "type": "custom",
           "char_filter": ["strip_special_chars"],
