@@ -14,6 +14,7 @@ from flask import current_app
 from flask_resources.serializers import BaseSerializerSchema
 from marshmallow import fields, missing
 from marshmallow_utils.html import sanitize_unicode
+from pydash import py_
 
 from ..schemas import CommonFieldsMixin
 from ..ui.schema import current_default_locale
@@ -491,30 +492,33 @@ class MARCXMLSchema(BaseSerializerSchema, CommonFieldsMixin):
         if communities:
             slugs = [community.get("slug") for community in communities]
             output += [{"a": f"user-{slug}"} for slug in slugs]
-        props = get_vocabulary_props(
-            "resourcetypes",
-            [
-                "props.eurepo",
-                "props.marc21_type",
-                "props.marc21_subtype",
-            ],
-            obj["metadata"]["resource_type"]["id"],
-        )
-        props_eurepo = props.get("eurepo")
-        if props_eurepo:
-            eurepo = {"a": props_eurepo}
-            output.append(eurepo)
 
-        resource_types = {}
+        resource_type_id = py_.get(obj, "metadata.resource_type.id")
+        if resource_type_id:
+            props = get_vocabulary_props(
+                "resourcetypes",
+                [
+                    "props.eurepo",
+                    "props.marc21_type",
+                    "props.marc21_subtype",
+                ],
+                resource_type_id,
+            )
+            props_eurepo = props.get("eurepo")
+            if props_eurepo:
+                eurepo = {"a": props_eurepo}
+                output.append(eurepo)
 
-        resource_type = props.get("marc21_type")
-        if resource_type:
-            resource_types["a"] = resource_type
-        resource_subtype = props.get("marc21_subtype")
-        if resource_subtype:
-            resource_types["b"] = resource_subtype
+            resource_types = {}
 
-        if resource_types:
-            output.append(resource_types)
+            resource_type = props.get("marc21_type")
+            if resource_type:
+                resource_types["a"] = resource_type
+            resource_subtype = props.get("marc21_subtype")
+            if resource_subtype:
+                resource_types["b"] = resource_subtype
+
+            if resource_types:
+                output.append(resource_types)
 
         return output or missing

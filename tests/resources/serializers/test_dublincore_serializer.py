@@ -90,6 +90,17 @@ def test_dublincorejson_serializer_minimal(running_app, updated_minimal_record):
     assert serialized_record == expected_data
 
 
+def test_dublincorejson_serializer_empty_record(running_app, empty_record):
+    """Test serializer to Dublin Core JSON with an empty record"""
+
+    expected_data = {}
+
+    serializer = DublinCoreJSONSerializer()
+    serialized_record = serializer.dump_obj(empty_record)
+
+    assert serialized_record == expected_data
+
+
 def test_vocabulary_type_error(running_app, updated_minimal_record):
     """Test error thrown on missing resource type."""
     updated_minimal_record["metadata"]["resource_type"]["id"] = "invalid"

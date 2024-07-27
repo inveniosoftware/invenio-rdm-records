@@ -20,6 +20,7 @@ from invenio_records_resources.proxies import current_service_registry
 from marshmallow import Schema, ValidationError, fields, missing, post_dump, validate
 from marshmallow_utils.fields import SanitizedUnicode
 from marshmallow_utils.html import strip_html
+from pydash import py_
 
 from ....proxies import current_rdm_records_service
 from ...serializers.ui.schema import current_default_locale
@@ -206,10 +207,14 @@ class DataCite43Schema(BaseSerializerSchema):
 
     def get_type(self, obj):
         """Get resource type."""
+        resource_type_id = py_.get(obj, "metadata.resource_type.id")
+        if not resource_type_id:
+            return missing
+
         props = get_vocabulary_props(
             "resourcetypes",
             ["props.datacite_general", "props.datacite_type"],
-            obj["metadata"]["resource_type"]["id"],
+            resource_type_id,
         )
         return {
             "resourceTypeGeneral": props.get("datacite_general", "Other"),
@@ -261,8 +266,11 @@ class DataCite43Schema(BaseSerializerSchema):
 
     def get_publication_year(self, obj):
         """Get publication year from edtf date."""
+        publication_date = py_.get(obj, "metadata.publication_date")
+        if not publication_date:
+            return missing
+
         try:
-            publication_date = obj["metadata"]["publication_date"]
             parsed_date = parse_edtf(publication_date)
             return str(parsed_date.lower_strict().tm_year)
         except ParseException:
@@ -274,7 +282,8 @@ class DataCite43Schema(BaseSerializerSchema):
 
     def get_dates(self, obj):
         """Get dates."""
-        dates = [{"date": obj["metadata"]["publication_date"], "dateType": "Issued"}]
+        pub_date = py_.get(obj, "metadata.publication_date")
+        dates = [{"date": pub_date, "dateType": "Issued"}] if pub_date else []
 
         updated = False
 
@@ -428,7 +437,7 @@ class DataCite43Schema(BaseSerializerSchema):
             if hasattr(obj, "parent"):
                 parent_record = obj.parent
             else:
-                parent_record = obj["parent"]
+                parent_record = obj.get("parent", {})
             parent_doi = parent_record.get("pids", {}).get("doi")
 
             if parent_doi:
