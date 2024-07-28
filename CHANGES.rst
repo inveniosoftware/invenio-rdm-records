@@ -11,6 +11,18 @@
 Changes
 =======
 
+Version 10.8.0 (released 2024-07-28)
+
+- results: added support for drafts
+- fix(community): set branding
+- codemeta: added identifier to schema
+- signposting: generate 1 link context object for metadata
+- fix: abort on record deletion exception
+- media-files: generate ptif and include in manifets
+- fix: pids required behavior
+- iiif: handle DecompressionBombError
+- iiif: schema: only return images within size limit in manifest
+
 Version 10.7.1 (released 2024-05-31)
 
 - secret links: set csrf token for all requests with secret links,
