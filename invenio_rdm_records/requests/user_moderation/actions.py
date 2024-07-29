@@ -8,11 +8,12 @@
 """RDM user moderation action."""
 
 from invenio_access.permissions import system_identity
+from invenio_db import db
 from invenio_pidstore.errors import PIDDoesNotExistError
 from invenio_vocabularies.proxies import current_service
 
 from ...proxies import current_rdm_records_service
-from ...records.systemfields.deletion_status import RecordDeletionStatusEnum
+from .tasks import delete_record, restore_record
 
 
 def _get_records_for_user(user_id):
@@ -29,23 +30,16 @@ def _get_records_for_user(user_id):
     parent_cls = record_cls.parent_record_cls
     parent_model_cls = parent_cls.model_cls
 
-    # get all the parent records owned by the blocked user
-    parent_recs = [
-        parent_cls(m.data, model=m)
-        for m in parent_model_cls.query.filter(
-            parent_model_cls.json["access"]["owned_by"]["user"].as_string() == user_id
-        ).all()
-    ]
+    records = (
+        db.session.query(model_cls.json["id"].as_string())
+        .join(parent_model_cls)
+        .filter(
+            parent_model_cls.json["access"]["owned_by"]["user"].as_string()
+            == str(user_id),
+        )
+    ).yield_per(1000)
 
-    # get all child records of the chosen parent records
-    recs = [
-        record_cls(m.data, model=m)
-        for m in model_cls.query.filter(
-            model_cls.parent_id.in_([p.id for p in parent_recs])
-        ).all()
-    ]
-
-    return recs
+    return records
 
 
 def on_block(user_id, uow=None, **kwargs):
@@ -69,14 +63,8 @@ def on_block(user_id, uow=None, **kwargs):
         pass
 
     # soft-delete all the published records of that user
-    for rec in _get_records_for_user(user_id):
-        if not rec.deletion_status.is_deleted:
-            current_rdm_records_service.delete_record(
-                system_identity,
-                rec.pid.pid_value,
-                tombstone_data,
-                uow=uow,
-            )
+    for (recid,) in _get_records_for_user(user_id):
+        delete_record.delay(recid, tombstone_data)
 
 
 def on_restore(user_id, uow=None, **kwargs):
@@ -89,13 +77,8 @@ def on_restore(user_id, uow=None, **kwargs):
     user_id = str(user_id)
 
     # restore all the deleted records of that user
-    for rec in _get_records_for_user(user_id):
-        if rec.deletion_status == RecordDeletionStatusEnum.DELETED:
-            current_rdm_records_service.restore_record(
-                system_identity,
-                rec.pid.pid_value,
-                uow=uow,
-            )
+    for (recid,) in _get_records_for_user(user_id):
+        restore_record.delay(recid)
 
 
 def on_approve(user_id, uow=None, **kwargs):
