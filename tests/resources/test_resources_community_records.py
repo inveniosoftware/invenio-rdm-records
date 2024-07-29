@@ -6,6 +6,7 @@
 # it under the terms of the MIT License; see LICENSE file for more details.
 
 """Tests community records resources."""
+
 import pytest
 
 from invenio_rdm_records.proxies import current_community_records_service

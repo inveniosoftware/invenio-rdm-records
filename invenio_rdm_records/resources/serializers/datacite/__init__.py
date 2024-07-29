@@ -6,6 +6,7 @@
 # it under the terms of the MIT License; see LICENSE file for more details.
 
 """DataCite Serializers for Invenio RDM Records."""
+
 from datacite import schema43
 from flask_resources import BaseListSchema, MarshmallowSerializer
 from flask_resources.serializers import JSONSerializer, SimpleSerializer
@@ -24,7 +25,7 @@ class DataCite43JSONSerializer(MarshmallowSerializer):
             object_schema_cls=DataCite43Schema,
             list_schema_cls=BaseListSchema,
             schema_kwargs={"dumpers": [JournalDataciteDumper()]},  # Order matters
-            **options
+            **options,
         )
 
 

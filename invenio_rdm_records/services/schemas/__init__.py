@@ -9,6 +9,7 @@
 # it under the terms of the MIT License; see LICENSE file for more details.
 
 """RDM record schemas."""
+
 from .metadata import MetadataSchema
 from .parent import RDMParentSchema
 from .record import RDMRecordSchema

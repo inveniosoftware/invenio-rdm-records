@@ -8,7 +8,6 @@
 
 """Schemas for parameter parsing."""
 
-
 from invenio_drafts_resources.resources.records.args import SearchRequestArgsSchema
 from marshmallow import fields
 

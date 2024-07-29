@@ -8,7 +8,6 @@
 
 """Tests for the service PIDsComponent."""
 
-
 import pytest
 from invenio_pidstore.errors import PIDDoesNotExistError
 from invenio_pidstore.models import PIDStatus

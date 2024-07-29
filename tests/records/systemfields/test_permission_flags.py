@@ -6,6 +6,7 @@
 # it under the terms of the MIT License; see LICENSE file for more details.
 
 """Test permission flags system field."""
+
 import pytest
 from invenio_access.permissions import system_identity
 

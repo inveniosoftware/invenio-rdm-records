@@ -7,7 +7,6 @@
 
 """Search dumpers for PIDs."""
 
-
 from invenio_records.dumpers import SearchDumperExt
 
 

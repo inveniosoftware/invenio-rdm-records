@@ -45,7 +45,7 @@ class CommunityRecordsService(RecordService):
         params=None,
         search_preference=None,
         extra_filter=None,
-        **kwargs
+        **kwargs,
     ):
         """Search for records published in the given community."""
         self.require_permission(identity, "search")

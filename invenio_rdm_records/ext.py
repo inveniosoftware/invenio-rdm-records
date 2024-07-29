@@ -10,6 +10,7 @@
 # it under the terms of the MIT License; see LICENSE file for more details.
 
 """DataCite-based data model for Invenio."""
+
 from flask import Blueprint
 from flask_iiif import IIIF
 from flask_principal import identity_loaded

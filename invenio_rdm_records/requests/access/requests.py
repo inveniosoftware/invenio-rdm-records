@@ -6,6 +6,7 @@
 # it under the terms of the MIT License; see LICENSE file for more details.
 
 """Access requests for records."""
+
 from datetime import datetime, timedelta
 
 import marshmallow as ma

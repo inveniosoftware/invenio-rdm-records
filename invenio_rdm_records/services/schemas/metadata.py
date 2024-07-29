@@ -301,7 +301,7 @@ class ReferenceSchema(IdentifierSchema):
         super().__init__(
             allowed_schemes=record_identifiers_schemes,
             identifier_required=False,
-            **kwargs
+            **kwargs,
         )
 
     reference = SanitizedUnicode(required=True)

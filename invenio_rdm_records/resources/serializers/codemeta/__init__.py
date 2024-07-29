@@ -24,5 +24,5 @@ class CodemetaSerializer(MarshmallowSerializer):
             object_schema_cls=CodemetaSchema,
             list_schema_cls=BaseListSchema,
             schema_kwargs={"dumpers": [CodemetaDumper()]},  # Order matters
-            **options
+            **options,
         )

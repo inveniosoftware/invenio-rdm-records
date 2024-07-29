@@ -8,6 +8,7 @@
 # it under the terms of the MIT License; see LICENSE file for more details.
 
 """Invenio-RDM-Records Permissions Generators."""
+
 import operator
 from collections import namedtuple
 from functools import partial, reduce

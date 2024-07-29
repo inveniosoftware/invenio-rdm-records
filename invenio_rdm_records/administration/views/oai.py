@@ -8,6 +8,7 @@
 # details.
 
 """Invenio administration OAI-PMH view module."""
+
 from invenio_administration.views.base import (
     AdminResourceCreateView,
     AdminResourceDetailView,

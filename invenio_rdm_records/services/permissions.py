@@ -8,6 +8,7 @@
 # it under the terms of the MIT License; see LICENSE file for more details.
 
 """Permissions for Invenio RDM Records."""
+
 from invenio_administration.generators import Administration
 from invenio_communities.generators import CommunityCurators
 from invenio_records_permissions.generators import (

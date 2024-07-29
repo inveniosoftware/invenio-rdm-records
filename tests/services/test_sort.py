@@ -9,7 +9,6 @@
 
 """Sort tests."""
 
-
 import pytest
 
 from invenio_rdm_records.proxies import current_rdm_records

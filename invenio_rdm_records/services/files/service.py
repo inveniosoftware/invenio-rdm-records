@@ -6,6 +6,7 @@
 # it under the terms of the MIT License; see LICENSE file for more details.
 
 """File Service API."""
+
 from invenio_records_resources.services import FileService
 
 from invenio_rdm_records.services.errors import RecordDeletedException

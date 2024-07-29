@@ -11,7 +11,6 @@
 Not every case is tested, but enough high-level ones for it to be useful.
 """
 
-
 from io import BytesIO
 
 import pytest

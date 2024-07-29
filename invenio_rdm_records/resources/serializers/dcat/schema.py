@@ -6,6 +6,7 @@
 # it under the terms of the MIT License; see LICENSE file for more details.
 
 """Dcat based Schema for Invenio RDM Records."""
+
 import idutils
 from flask import current_app
 from marshmallow import fields, missing

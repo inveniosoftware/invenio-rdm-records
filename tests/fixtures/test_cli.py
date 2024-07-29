@@ -8,7 +8,6 @@
 
 """Tests for the CLI."""
 
-
 from invenio_access.permissions import system_identity
 from invenio_communities import current_communities
 from invenio_communities.communities.records.api import Community

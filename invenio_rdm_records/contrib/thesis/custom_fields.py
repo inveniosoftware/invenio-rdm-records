@@ -10,6 +10,7 @@ Implements the following fields:
 
 - thesis.university
 """
+
 from invenio_i18n import lazy_gettext as _
 from invenio_records_resources.services.custom_fields import TextCF
 

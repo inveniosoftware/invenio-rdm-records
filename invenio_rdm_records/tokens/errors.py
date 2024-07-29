@@ -6,6 +6,7 @@
 # it under the terms of the MIT License; see LICENSE file for more details.
 
 """Resource access tokens module errors."""
+
 from invenio_i18n import _
 from invenio_rest.errors import RESTException
 

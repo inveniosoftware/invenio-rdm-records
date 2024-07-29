@@ -8,7 +8,6 @@
 
 """RDM service component for request integration."""
 
-
 from invenio_drafts_resources.services.records.components import ServiceComponent
 from invenio_i18n import lazy_gettext as _
 from invenio_requests import current_requests_service

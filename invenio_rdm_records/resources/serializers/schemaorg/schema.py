@@ -8,6 +8,7 @@
 # it under the terms of the MIT License; see LICENSE file for more details.
 
 """Schemaorg based Schema for Invenio RDM Records."""
+
 from copy import deepcopy
 
 import pycountry

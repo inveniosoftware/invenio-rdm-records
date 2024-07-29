@@ -29,7 +29,7 @@ class IIIFInfoV2JSONSerializer(MarshmallowSerializer):
             format_serializer_cls=JSONSerializer,
             object_schema_cls=IIIFInfoV2Schema,
             list_schema_cls=BaseListSchema,
-            **options
+            **options,
         )
 
 
@@ -42,7 +42,7 @@ class IIIFSequenceV2JSONSerializer(MarshmallowSerializer):
             format_serializer_cls=JSONSerializer,
             object_schema_cls=IIIFSequenceV2Schema,
             list_schema_cls=BaseListSchema,
-            **options
+            **options,
         )
 
 
@@ -55,7 +55,7 @@ class IIIFCanvasV2JSONSerializer(MarshmallowSerializer):
             format_serializer_cls=JSONSerializer,
             object_schema_cls=IIIFCanvasV2Schema,
             list_schema_cls=BaseListSchema,
-            **options
+            **options,
         )
 
 
@@ -68,5 +68,5 @@ class IIIFManifestV2JSONSerializer(MarshmallowSerializer):
             format_serializer_cls=JSONSerializer,
             object_schema_cls=IIIFManifestV2Schema,
             list_schema_cls=BaseListSchema,
-            **options
+            **options,
         )

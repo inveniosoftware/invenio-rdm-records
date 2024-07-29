@@ -8,6 +8,7 @@
 # more details.
 
 """PID service tasks tests."""
+
 from copy import deepcopy
 from unittest import mock
 

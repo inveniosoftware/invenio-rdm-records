@@ -7,7 +7,6 @@
 
 """RDM Record PIDs Service Errors."""
 
-
 from invenio_i18n import lazy_gettext as _
 
 from ..errors import RDMRecordsException

@@ -111,7 +111,7 @@ class TimedSecretLinkSerializer(TimedJSONWebSignatureSerializer, TokenSerializer
             current_app.config["SECRET_KEY"],
             expires_in=int(dt.total_seconds()) if dt else None,
             salt="rdm-records-timed-link",
-            **kwargs
+            **kwargs,
         )
 
 

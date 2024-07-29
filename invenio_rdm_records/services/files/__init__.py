@@ -6,6 +6,7 @@
 # it under the terms of the MIT License; see LICENSE file for more details.
 
 """File Service API."""
+
 from invenio_rdm_records.services.files.service import RDMFileService
 
 __all__ = ("RDMFileService",)

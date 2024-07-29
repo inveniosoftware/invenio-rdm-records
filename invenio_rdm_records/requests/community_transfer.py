@@ -5,6 +5,7 @@
 # Invenio-Requests is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
 """Community transfer request implementation."""
+
 from invenio_i18n import lazy_gettext as _
 from invenio_requests.customizations import RequestType, actions
 

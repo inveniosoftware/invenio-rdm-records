@@ -7,6 +7,7 @@
 # details.
 
 """Sort parameter interpreter API."""
+
 from invenio_access.permissions import authenticated_user
 from invenio_records_resources.services.records.params.base import ParamInterpreter
 

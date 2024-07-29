@@ -10,6 +10,7 @@
 # it under the terms of the MIT License; see LICENSE file for more details.
 
 """Bibliographic Record Resource."""
+
 from functools import wraps
 
 from flask import abort, current_app, g, redirect, url_for

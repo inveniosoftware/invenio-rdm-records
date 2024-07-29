@@ -7,6 +7,7 @@
 # it under the terms of the MIT License; see LICENSE file for more details.
 
 """RDM Record Communities Service."""
+
 from flask import current_app
 from invenio_access.permissions import system_identity
 from invenio_communities.proxies import current_communities

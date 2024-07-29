@@ -22,5 +22,5 @@ class GeoJSONSerializer(MarshmallowSerializer):
             format_serializer_cls=JSONSerializer,
             object_schema_cls=GeoJSONSchema,
             list_schema_cls=BaseListSchema,
-            **options
+            **options,
         )

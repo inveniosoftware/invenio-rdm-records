@@ -6,6 +6,7 @@
 # it under the terms of the MIT License; see LICENSE file for more details.
 
 """Datacite to DCAT serializer."""
+
 import mimetypes
 
 from datacite import schema43
