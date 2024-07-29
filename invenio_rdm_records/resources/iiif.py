@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2024-2024 CERN.
+# Copyright (C) 2024 CERN.
 # Copyright (C) 2022 Universität Hamburg.
 # Copyright (C) 2024 Graz University of Technology.
 #
