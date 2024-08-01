@@ -36,9 +36,7 @@ def test_advance_record_search(
     assert records[0]["metadata"]["title"] == record_title
 
     # Search with regex
-    res = client.get(
-        "/records", query_string={"q": "/\d{12}/"}, headers=headers
-    )
+    res = client.get("/records", query_string={"q": "/\d{12}/"}, headers=headers)
     print(res.data)
     assert res.status_code == 200
     assert res.json["hits"]["total"] == 1
