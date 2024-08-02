@@ -1,4 +1,50 @@
 {
+  "settings": {
+    "index.query.default_field": [
+      "id",
+      "metadata.title",
+      "metadata.title.original",
+      "metadata.contact",
+      "metadata.contributors.affiliations.name",
+      "metadata.contributors.person_or_org.name",
+      "metadata.contributors.person_or_org.family_name",
+      "metadata.contributors.person_or_org.given_name",
+      "metadata.creators.affiliations.name",
+      "metadata.creators.person_or_org.name",
+      "metadata.creators.person_or_org.family_name",
+      "metadata.creators.person_or_org.given_name",
+      "metadata.description",
+      "metadata.formats",
+      "metadata.funding.award.identifiers.identifier",
+      "metadata.funding.award.acronym.text",
+      "metadata.funding.award.number",
+      "metadata.funding.funder.name",
+      "metadata.identifiers.identifier",
+      "metadata.locations.features.place",
+      "metadata.locations.features.description",
+      "metadata.publication_date",
+      "metadata.publisher",
+      "metadata.subjects.subject",
+      "metadata.version"
+    ],
+    "analysis": {
+      "char_filter": {
+        "strip_special_chars": {
+          "type": "pattern_replace",
+          "pattern": "[\\p{Punct}\\p{S}]",
+          "replacement": ""
+        }
+      },
+      "analyzer": {
+        "accent_analyzer": {
+          "tokenizer": "standard",
+          "type": "custom",
+          "char_filter": ["strip_special_chars"],
+          "filter": ["lowercase", "asciifolding"]
+        }
+      }
+    }
+  },
   "mappings": {
     "dynamic_templates": [
       {
@@ -1438,52 +1484,6 @@
           "is_visible": {
             "type": "boolean"
           }
-        }
-      }
-    }
-  },
-  "settings": {
-    "index.query.default_field": [
-      "id",
-      "metadata.title",
-      "metadata.title.original",
-      "metadata.contact",
-      "metadata.contributors.affiliations.name",
-      "metadata.contributors.person_or_org.name",
-      "metadata.contributors.person_or_org.family_name",
-      "metadata.contributors.person_or_org.given_name",
-      "metadata.creators.affiliations.name",
-      "metadata.creators.person_or_org.name",
-      "metadata.creators.person_or_org.family_name",
-      "metadata.creators.person_or_org.given_name",
-      "metadata.description",
-      "metadata.formats",
-      "metadata.funding.award.identifiers.identifier",
-      "metadata.funding.award.acronym.text",
-      "metadata.funding.award.number",
-      "metadata.funding.funder.name",
-      "metadata.identifiers.identifier",
-      "metadata.locations.features.place",
-      "metadata.locations.features.description",
-      "metadata.publication_date",
-      "metadata.publisher",
-      "metadata.subjects.subject",
-      "metadata.version"
-    ],
-    "analysis": {
-      "char_filter": {
-        "strip_special_chars": {
-          "type": "pattern_replace",
-          "pattern": "[\\p{Punct}\\p{S}]",
-          "replacement": ""
-        }
-      },
-      "analyzer": {
-        "accent_analyzer": {
-          "tokenizer": "standard",
-          "type": "custom",
-          "char_filter": ["strip_special_chars"],
-          "filter": ["lowercase", "asciifolding"]
         }
       }
     }
