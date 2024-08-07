@@ -11,18 +11,36 @@
 %}
 
 {%- block subject -%}
-{{ _("👤✔️ You were granted {permission} access to record '{record_title}'").format(permission=permission, record_title=record_title) }}
+    {%- if record.is_published -%}
+        {{ _("👤✔️ You were granted {permission} access to all versions of the record '{record_title}'").format(permission=permission, record_title=record_title) }}
+    {%- else -%}
+        {%- if record_title -%}
+            {{ _("👤✔️ You were granted {permission} access to draft '{record_title}'").format(permission=permission, record_title=record_title) }}
+        {%- else -%}
+            {{ _("👤✔️ You were granted {permission} access to a draft").format(permission=permission) }}
+        {%- endif -%}
+    {%- endif -%}
 {%- endblock subject -%}
 
 {%- block html_body -%}
 <table style="font-family:'Lato',Helvetica,Arial,sans-serif;border-spacing:15px">
     <tr>
-        <td>{{ _("You have now permission to {permission} the record '{record_title}'.").format(record_title=record_title, permission=permission)}}
-            {% if message %}
+        <td>
+        {%- if record.is_published -%}
+            {{ _("You have now permission to {permission} all versions of the record '{record_title}'.").format(record_title=record_title, permission=permission)}}
+        {%- else -%}
+            {%- if record_title -%}
+                {{ _("You have now permission to {permission} the draft '{record_title}'.").format(record_title=record_title, permission=permission)}}
+            {%- else -%}
+                {{ _("You have now permission to {permission} a draft.").format(permission=permission)}}
+            {%- endif -%}
+        {%- endif -%}
+
+        {% if message %}
             <br>
             <br>
             {{ _("Message:")}}
-            {% endif %}
+        {% endif %}
         </td>
     </tr>
     <tr>
@@ -31,7 +49,11 @@
         {% endif %}
     </tr>
     <tr>
-        <td><a href="{{ record_link }}" class="button">{{ _("View the record")}}</a></td>
+        {%- if record.is_published -%}
+            <td><a href="{{ record_link }}" class="button">{{ _("View the record")}}</a></td>
+        {%- else -%}
+            <td><a href="{{ record_link }}" class="button">{{ _("View the draft")}}</a></td>
+        {%- endif -%}
     </tr>
     <tr>
         <td><strong>_</strong></td>
@@ -43,7 +65,15 @@
 {%- endblock html_body -%}
 
 {%- block plain_body -%}
-{{ _("You have now permission to {permission} the record '{record_title}'.").format(record_title=record_title, permission=permission)}}
+    {%- if record.is_published -%}
+        {{ _("You have now permission to {permission} all versions of the record '{record_title}'.").format(record_title=record_title, permission=permission)}}
+    {%- else -%}
+        {%- if record_title -%}
+            {{ _("You have now permission to {permission} the draft '{record_title}'.").format(record_title=record_title, permission=permission)}}
+        {%- else -%}
+            {{ _("You have now permission to {permission} the draft.").format(permission=permission)}}
+        {%- endif -%}
+    {%- endif -%}
 
 {% if message %}
 <br>
@@ -52,7 +82,11 @@
 {{message}}
 {% endif %}
 
-{{ _("View the record: ") }}{{ record_link }}
+{%- if record.is_published -%}
+    {{ _("View the record: ") }}{{ record_link }}
+{%- else -%}
+    {{ _("View the draft: ") }}{{ record_link }}
+{%- endif -%}
 
 {{ _("This is an auto-generated message. To manage notifications, visit your account settings: ")}}{{ account_settings_link }}
 {%- endblock plain_body -%}

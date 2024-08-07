@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2024-2024 CERN.
+# Copyright (C) 2024 CERN.
 # Copyright (C) 2022 Universität Hamburg.
+# Copyright (C) 2024 Graz University of Technology.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
@@ -22,6 +23,7 @@ from flask_resources import (
     Resource,
     ResourceConfig,
     ResponseHandler,
+    create_error_handler,
     from_conf,
     request_parser,
     resource_requestctx,
@@ -31,6 +33,7 @@ from flask_resources import (
 )
 from importlib_metadata import version
 from invenio_drafts_resources.resources.records.errors import RedirectException
+from invenio_i18n import lazy_gettext as _
 from invenio_records_resources.resources.errors import ErrorHandlersMixin
 from invenio_records_resources.resources.records.headers import etag_headers
 from invenio_records_resources.resources.records.resource import (
@@ -38,8 +41,10 @@ from invenio_records_resources.resources.records.resource import (
     request_read_args,
 )
 from invenio_records_resources.services.base.config import ConfiguratorMixin, FromConfig
+from PIL.Image import DecompressionBombError
 from werkzeug.utils import cached_property, secure_filename
 
+from ..services.errors import RecordDeletedException
 from .serializers import (
     IIIFCanvasV2JSONSerializer,
     IIIFInfoV2JSONSerializer,
@@ -84,18 +89,25 @@ class IIIFResourceConfig(ResourceConfig, ConfiguratorMixin):
 
     response_handler = {"application/json": ResponseHandler(JSONSerializer())}
 
-    supported_formats = {
-        "gif": "image/gif",
-        "jp2": "image/jp2",
-        "jpeg": "image/jpeg",
-        "jpg": "image/jpeg",
-        "pdf": "application/pdf",
-        "png": "image/png",
-        "tif": "image/tiff",
-        "tiff": "image/tiff",
-    }
+    supported_formats = FromConfig("IIIF_FORMATS")
 
     proxy_cls = FromConfig("IIIF_PROXY_CLASS", default=None, import_string=True)
+
+    error_handlers = {
+        DecompressionBombError: create_error_handler(
+            lambda e: HTTPJSONException(
+                code=403, description=_("Image size limit exceeded")
+            )
+        ),
+        RecordDeletedException: create_error_handler(
+            lambda e: HTTPJSONException(
+                code=410,
+                description=_(
+                    "The record associated with this file has been deleted. See deletion notice."
+                ),
+            )
+        ),
+    }
 
 
 def with_iiif_content_negotiation(serializer):
@@ -346,11 +358,16 @@ class IIPServerProxy(IIIFProxy):
             headers=request.headers,
             stream=True,
         )
-        return Response(
-            res.iter_content(chunk_size=10 * 1024),
-            status=res.status_code,
-            content_type=res.headers["Content-Type"],
-        )
+        if not res.ok:
+            current_app.logger.error(
+                f"Request to IIP server failed with status code {res.status_code}."
+            )
+        else:
+            return Response(
+                res.iter_content(chunk_size=10 * 1024),
+                status=res.status_code,
+                content_type=res.headers["Content-Type"],
+            )
 
     # TODO: This should be configurable, as it depends on how the tiles are stored.
     def _rewrite_url(self):

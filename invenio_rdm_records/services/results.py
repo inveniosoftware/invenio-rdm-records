@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2022 CERN.
+# Copyright (C) 2022-2024 CERN.
 # Copyright (C) 2023 TU Wien.
+# Copyright (C) 2024 Graz University of Technology.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
@@ -11,7 +12,10 @@
 from invenio_communities.communities.entity_resolvers import pick_fields
 from invenio_communities.communities.schema import CommunityGhostSchema
 from invenio_communities.proxies import current_communities
-from invenio_records_resources.services.records.results import ExpandableField
+from invenio_records_resources.services.records.results import (
+    ExpandableField,
+    RecordList,
+)
 from invenio_users_resources.proxies import current_user_resources
 
 from .dummy import DummyExpandingService
@@ -69,3 +73,35 @@ class GrantSubjectExpandableField(ExpandableField):
     def pick(self, identity, resolved_rec):
         """Pick fields defined in the entity resolver."""
         return resolved_rec
+
+
+class RDMRecordList(RecordList):
+    """Record list with custom fields."""
+
+    @property
+    def hits(self):
+        """Iterator over the hits."""
+        for hit in self._results:
+            # Load dump
+            record_dict = hit.to_dict()
+
+            index_name = self._service.record_cls.index._name
+            if index_name in hit.meta["index"]:
+                record = self._service.record_cls.loads(record_dict)
+            else:
+                record = self._service.draft_cls.loads(record_dict)
+
+            # Project the record
+            projection = self._schema.dump(
+                record,
+                context=dict(
+                    identity=self._identity,
+                    record=record,
+                ),
+            )
+            if self._links_item_tpl:
+                projection["links"] = self._links_item_tpl.expand(
+                    self._identity, record
+                )
+
+            yield projection

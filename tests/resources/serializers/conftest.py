@@ -94,6 +94,7 @@ def full_record_to_dict():
             "access_links": "https://127.0.0.1:5000/api/records/12345-abcde/access/links",  # noqa
             "access_request": "https://127.0.0.1:5000/api/records/12345-abcde/access/request",  # noqa
             "access_users": "https://127.0.0.1:5000/api/records/12345-abcde/access/users",  # noqa
+            "access_groups": "https://127.0.0.1:5000/api/records/12345-abcde/access/groups",  # noqa
             "archive": "https://127.0.0.1:5000/api/records/12345-abcde/files-archive",
             "archive_media": "https://127.0.0.1:5000/api/records/12345-abcde/media-files-archive",  # noqa
             "communities": "https://127.0.0.1:5000/api/records/12345-abcde/communities",
@@ -495,6 +496,7 @@ def minimal_record_to_dict():
             "access_links": "https://127.0.0.1:5000/api/records/67890-fghij/access/links",  # noqa
             "access_request": "https://127.0.0.1:5000/api/records/67890-fghij/access/request",  # noqa
             "access_users": "https://127.0.0.1:5000/api/records/67890-fghij/access/users",  # noqa
+            "access_groups": "https://127.0.0.1:5000/api/records/67890-fghij/access/groups",  # noqa
             "archive": "https://127.0.0.1:5000/api/records/67890-fghij/files-archive",
             "archive_media": "https://127.0.0.1:5000/api/records/67890-fghij/media-files-archive",  # noqa
             "communities": "https://127.0.0.1:5000/api/records/67890-fghij/communities",

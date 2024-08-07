@@ -2,7 +2,7 @@
 #
 # Copyright (C) 2019-2024 CERN.
 # Copyright (C) 2019 Northwestern University.
-# Copyright (C) 2021-2023 Graz University of Technology.
+# Copyright (C) 2021-2024 Graz University of Technology.
 # Copyright (C) 2023 TU Wien.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
@@ -360,11 +360,13 @@ RDM_PERSISTENT_IDENTIFIERS = {
         "label": _("DOI"),
         "validator": idutils.is_doi,
         "normalizer": idutils.normalize_doi,
+        "is_enabled": providers.DataCitePIDProvider.is_enabled,
     },
     "oai": {
         "providers": ["oai"],
         "required": True,
         "label": _("OAI"),
+        "is_enabled": providers.OAIPIDProvider.is_enabled,
     },
 }
 """The configured persistent identifiers for records.
@@ -396,6 +398,7 @@ RDM_PARENT_PERSISTENT_IDENTIFIERS = {
         "label": _("Concept DOI"),
         "validator": idutils.is_doi,
         "normalizer": idutils.normalize_doi,
+        "is_enabled": providers.DataCitePIDProvider.is_enabled,
     },
 }
 """Persistent identifiers for parent record."""
@@ -543,7 +546,7 @@ RDM_LOCK_EDIT_PUBLISHED_FILES = lock_edit_published_files
 """Lock editing already published files (enforce record versioning).
 
    signature to implement:
-   def lock_edit_published_files(service, identity, record=None):
+   def lock_edit_published_files(service, identity, record=None, draft=None):
 """
 
 # Feature flag to enable/disable user moderation
@@ -558,3 +561,52 @@ RDM_RECORDS_MAX_MEDIA_FILES_COUNT = 100
 
 RDM_DATACITE_FUNDER_IDENTIFIERS_PRIORITY = ("ror", "doi", "grid", "isni", "gnd")
 """Priority of funder identifiers types to be used for DataCite serialization."""
+
+RDM_IIIF_MANIFEST_FORMATS = [
+    "gif",
+    "jp2",
+    "jpeg",
+    "jpg",
+    "png",
+    "tif",
+    "tiff",
+]
+"""Formats to be included in the IIIF Manifest."""
+
+#
+# IIIF Tiles configuration
+#
+IIIF_TILES_GENERATION_ENABLED = False
+"""Enable generating pyramidal TIFF tiles for uploaded images."""
+
+IIIF_TILES_VALID_EXTENSIONS = [
+    "jp2",
+    "jpeg",
+    "jpg",
+    "pdf",  # We can still generate tiles for the first page of a PDF
+    "png",
+    "png",
+    "tif",
+    "tiff",
+]
+"""Valid (normalized) file extensions for generating tiles."""
+
+IIIF_TILES_STORAGE_BASE_PATH = "images/"
+"""Base path for storing IIIF tiles.
+
+Relative paths are resolved against the application instance path.
+"""
+
+IIIF_TILES_CONVERTER_PARAMS = {
+    "compression": "jpeg",
+    "Q": 90,
+    "tile_width": 256,
+    "tile_height": 256,
+}
+"""Parameters to be passed to the tiles converter."""
+
+RDM_RECORDS_RESTRICTION_GRACE_PERIOD = timedelta(days=30)
+"""Grace period for changing record access to restricted."""
+
+RDM_RECORDS_ALLOW_RESTRICTION_AFTER_GRACE_PERIOD = False
+"""Whether record access restriction is allowed after the grace period or not."""

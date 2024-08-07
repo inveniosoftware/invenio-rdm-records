@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2020-2023 CERN.
+# Copyright (C) 2020-2024 CERN.
 # Copyright (C) 2020-2021 Northwestern University.
 # Copyright (C) 2021-2023 TU Wien.
 # Copyright (C) 2021 Graz University of Technology.
@@ -11,23 +11,29 @@
 
 """RDM Record Service."""
 
+from datetime import datetime
 
 import arrow
+from flask import current_app
 from invenio_accounts.models import User
 from invenio_db import db
 from invenio_drafts_resources.services.records import RecordService
+from invenio_drafts_resources.services.records.uow import ParentRecordCommitOp
 from invenio_records_resources.services import LinksTemplate, ServiceSchemaWrapper
 from invenio_records_resources.services.uow import (
     RecordCommitOp,
     RecordIndexDeleteOp,
     RecordIndexOp,
+    TaskOp,
     unit_of_work,
 )
 from invenio_requests.services.results import EntityResolverExpandableField
 from invenio_search.engine import dsl
+from marshmallow import ValidationError
 from sqlalchemy.exc import NoResultFound
 
 from invenio_rdm_records.records.models import RDMRecordQuota, RDMUserQuota
+from invenio_rdm_records.services.pids.tasks import register_or_update_pid
 
 from ..records.systemfields.deletion_status import RecordDeletionStatusEnum
 from .errors import (
@@ -127,8 +133,25 @@ class RDMRecordService(RecordService):
         if not record.access.lift_embargo():
             raise EmbargoNotLiftedError(_id)
 
-        # Commit and reindex record
+        # Run components
+        self.run_components(
+            "lift_embargo", identity, draft=draft, record=record, uow=uow
+        )
+
+        self._pids.pid_manager.create_and_reserve(record)
         uow.register(RecordCommitOp(record, indexer=self.indexer))
+        uow.register(TaskOp(register_or_update_pid, record["id"], "doi", parent=False))
+        # If the record was previously public it will still keep the parent PID
+        if not record.parent.pids:
+            self._pids.parent_pid_manager.create_and_reserve(record.parent)
+            uow.register(
+                ParentRecordCommitOp(
+                    record.parent,
+                )
+            )
+            uow.register(
+                TaskOp(register_or_update_pid, record["id"], "doi", parent=True)
+            )
 
     def scan_expired_embargos(self, identity):
         """Scan for records with an expired embargo."""
@@ -551,6 +574,48 @@ class RDMRecordService(RecordService):
                 raise RecordDeletedException(record, result_item=result)
 
         return result
+
+    @unit_of_work()
+    def update_draft(
+        self, identity, id_, data, revision_id=None, uow=None, expand=False
+    ):
+        """Replace a draft."""
+        draft = self.draft_cls.pid.resolve(id_, registered_only=False)
+
+        # can not make record restricted after grace period
+        current_draft_is_public = (
+            draft.get("access", {}).get("record", None) == "public"
+        )
+        is_update_to_restricted = (
+            data.get("access", {}).get("record", None) == "restricted"
+        )
+        allow_restriction = current_app.config[
+            "RDM_RECORDS_ALLOW_RESTRICTION_AFTER_GRACE_PERIOD"
+        ]
+
+        if (
+            not allow_restriction
+            and current_draft_is_public
+            and is_update_to_restricted
+        ):
+            end_of_grace_period = (
+                draft.created
+                + current_app.config["RDM_RECORDS_RESTRICTION_GRACE_PERIOD"]
+            )
+            if end_of_grace_period <= datetime.now():
+                raise ValidationError(
+                    "Record visibility can not be changed to restricted "
+                    "anymore. Please contact support if you still need to make these changes."
+                )
+
+        return super().update_draft(
+            identity,
+            id_,
+            data,
+            revision_id=revision_id,
+            uow=uow,
+            expand=expand,
+        )
 
     #
     # Record file quota handling

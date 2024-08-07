@@ -6,6 +6,7 @@
 # under the terms of the MIT License; see LICENSE file for more details.
 
 """Add indexes."""
+
 from alembic import op
 
 # revision identifiers, used by Alembic.

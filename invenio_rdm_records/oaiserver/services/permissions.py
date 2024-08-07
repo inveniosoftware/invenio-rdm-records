@@ -6,6 +6,7 @@
 # it under the terms of the MIT License; see LICENSE file for more details.
 
 """Permissions for OAI-PMH service."""
+
 from invenio_administration.generators import Administration
 from invenio_records_permissions import BasePermissionPolicy
 from invenio_records_permissions.generators import SystemProcess

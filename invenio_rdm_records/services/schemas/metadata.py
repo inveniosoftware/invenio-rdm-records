@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2020-2022 CERN.
+# Copyright (C) 2020-2024 CERN.
 # Copyright (C) 2020 Northwestern University.
 # Copyright (C) 2021-2023 Graz University of Technology.
 #
@@ -301,7 +301,7 @@ class ReferenceSchema(IdentifierSchema):
         super().__init__(
             allowed_schemes=record_identifiers_schemes,
             identifier_required=False,
-            **kwargs
+            **kwargs,
         )
 
     reference = SanitizedUnicode(required=True)

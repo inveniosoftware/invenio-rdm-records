@@ -2,6 +2,7 @@
 #
 # Copyright (C) 2021-2023 CERN.
 # Copyright (C) 2022 Northwestern University.
+# Copyright (C) 2024 Graz University of Technology.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
@@ -38,12 +39,10 @@ class FromConfigPIDsProviders:
 
         pids = obj._app.config.get(self.pids_key, {})
         providers = {p.name: p for p in obj._app.config.get(self.providers_key, [])}
-        doi_enabled = obj._app.config.get("DATACITE_ENABLED", False)
-
         return {
             scheme: get_provider_dict(conf, providers)
             for scheme, conf in pids.items()
-            if scheme != "doi" or doi_enabled
+            if conf["is_enabled"](obj._app)
         }
 
 
@@ -57,15 +56,10 @@ class FromConfigRequiredPIDs:
     def __get__(self, obj, objtype=None):
         """Return required pids (descriptor protocol)."""
         pids = obj._app.config.get(self.pids_key, {})
-        doi_enabled = obj._app.config.get("DATACITE_ENABLED", False)
-
-        pids = {
-            scheme: conf
-            for (scheme, conf) in pids.items()
-            if scheme != "doi" or doi_enabled
-        }
         return [
-            scheme for (scheme, conf) in pids.items() if conf.get("required", False)
+            scheme
+            for (scheme, conf) in pids.items()
+            if (conf["is_enabled"](obj._app) and conf.get("required", False))
         ]
 
 

@@ -391,6 +391,7 @@ class CustomPIDField extends Component {
       unmanagedHelpText,
       pidType,
       field,
+      record,
     } = this.props;
 
     const value = field.value || {};
@@ -412,6 +413,9 @@ class CustomPIDField extends Component {
         ? hasManagedIdentifier || currentProvider === "" // i.e pids: {}
         : isManagedSelected;
 
+    const doi = record?.pids?.doi?.identifier || "";
+    const hasDoi = doi !== "";
+    const isDoiCreated = currentIdentifier !== "";
     const fieldError = getFieldErrors(form, fieldPath);
     return (
       <>
@@ -421,7 +425,10 @@ class CustomPIDField extends Component {
 
         {this.canBeManagedAndUnmanaged && (
           <ManagedUnmanagedSwitch
-            disabled={isEditingPublishedRecord || hasManagedIdentifier}
+            disabled={
+              (isEditingPublishedRecord || hasManagedIdentifier) &&
+              (hasDoi || isDoiCreated)
+            }
             isManagedSelected={_isManagedSelected}
             onManagedUnmanagedChange={(userSelectedManaged) => {
               if (userSelectedManaged) {
@@ -439,7 +446,7 @@ class CustomPIDField extends Component {
 
         {canBeManaged && _isManagedSelected && (
           <ManagedIdentifierCmp
-            disabled={isEditingPublishedRecord}
+            disabled={hasDoi && isEditingPublishedRecord}
             btnLabelDiscardPID={btnLabelDiscardPID}
             btnLabelGetPID={btnLabelGetPID}
             form={form}
@@ -485,6 +492,7 @@ CustomPIDField.propTypes = {
   pidType: PropTypes.string.isRequired,
   required: PropTypes.bool.isRequired,
   unmanagedHelpText: PropTypes.string,
+  record: PropTypes.object.isRequired,
 };
 
 CustomPIDField.defaultProps = {
@@ -533,6 +541,7 @@ PIDField.propTypes = {
   pidType: PropTypes.string.isRequired,
   required: PropTypes.bool,
   unmanagedHelpText: PropTypes.string,
+  record: PropTypes.object.isRequired,
 };
 
 PIDField.defaultProps = {

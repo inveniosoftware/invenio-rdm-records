@@ -6,6 +6,7 @@
 # it under the terms of the MIT License; see LICENSE file for more details.
 
 """Tests for RDMGrantsAccessResource."""
+
 import json
 
 from tests.helpers import login_user, logout_user

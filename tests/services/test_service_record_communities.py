@@ -1,10 +1,11 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2024-2024 CERN.
+# Copyright (C) 2024 CERN.
 #
 # Invenio-RDM-records is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
 """Test community records service."""
+
 import pytest
 from invenio_access.permissions import system_identity
 from invenio_records_resources.services.errors import PermissionDeniedError

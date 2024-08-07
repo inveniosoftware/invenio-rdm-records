@@ -63,6 +63,12 @@ def create_grant_user_access_bp(app):
     return ext.grant_user_access_resource.as_blueprint()
 
 
+def create_grant_group_access_bp(app):
+    """Create grant group access blueprint."""
+    ext = app.extensions["invenio-rdm-records"]
+    return ext.grant_group_access_resource.as_blueprint()
+
+
 def create_pid_resolver_resource_bp(app):
     """Create pid resource blueprint."""
     ext = app.extensions["invenio-rdm-records"]

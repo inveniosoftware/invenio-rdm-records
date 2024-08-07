@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2020-2021 CERN.
+# Copyright (C) 2020-2024 CERN.
 # Copyright (C) 2020-2021 Northwestern University.
 # Copyright (C) 2021 TU Wien.
 # Copyright (C) 2023 Graz University of Technology.
@@ -9,6 +9,7 @@
 # it under the terms of the MIT License; see LICENSE file for more details.
 
 """RDM record access settings service."""
+
 from datetime import datetime, timedelta
 
 import arrow
@@ -35,12 +36,15 @@ from invenio_rdm_records.notifications.builders import (
 
 from ...requests.access import AccessRequestToken, GuestAccessRequest, UserAccessRequest
 from ...secret_links.errors import InvalidPermissionLevelError
+from ..decorators import groups_enabled
 from ..errors import AccessRequestExistsError, GrantExistsError
 from ..results import GrantSubjectExpandableField
 
 
 class RecordAccessService(RecordService):
     """RDM Secret Link service."""
+
+    group_subject_type = "role"
 
     def link_result_item(self, *args, **kwargs):
         """Create a new instance of the resource unit."""
@@ -340,7 +344,7 @@ class RecordAccessService(RecordService):
                 current_user_resources.users_service.read(
                     identity=identity, id_=grant.subject_id
                 )
-            elif grant.subject_type == "role":
+            elif grant.subject_type == RecordAccessService.group_subject_type:
                 current_user_resources.groups_service.read(
                     identity=identity, id_=grant.subject_id
                 )
@@ -385,6 +389,13 @@ class RecordAccessService(RecordService):
             raise GrantExistsError()
 
         for grant in grants:
+            # checks if groups are enabled in the instance
+            if (
+                not current_app.config.get("USERS_RESOURCES_GROUPS_ENABLED", False)
+                and grant["subject"]["type"] == RecordAccessService.group_subject_type
+            ):
+                raise PermissionDeniedError()
+
             # Creation
             new_grant = parent.access.grants.create(
                 subject_type=grant["subject"]["type"],
@@ -433,6 +444,13 @@ class RecordAccessService(RecordService):
 
         grant = parent.access.grants[grant_id]
 
+        # checks if groups are enabled in the instance
+        if (
+            not current_app.config.get("USERS_RESOURCES_GROUPS_ENABLED", False)
+            and grant.subject_type == RecordAccessService.group_subject_type
+        ):
+            raise PermissionDeniedError()
+
         return self.grant_result_item(
             self,
             identity,
@@ -459,6 +477,14 @@ class RecordAccessService(RecordService):
 
         # Fetching (required for parts of the validation)
         old_grant = parent.access.grants[grant_id]
+
+        # checks if groups are enabled in the instance
+        if (
+            not current_app.config.get("USERS_RESOURCES_GROUPS_ENABLED", False)
+            and old_grant.subject_type == RecordAccessService.group_subject_type
+        ):
+            raise PermissionDeniedError()
+
         if partial:
             data = {
                 "permission": data.get("permission", old_grant.permission),
@@ -506,97 +532,22 @@ class RecordAccessService(RecordService):
         # Permissions
         self.require_permission(identity, "manage", record=record)
 
-        # Fetching
-        return self.grants_result_list(
-            service=self,
-            identity=identity,
-            results=parent.access.grants,
-            expand=expand,
-        )
+        existing_grants = parent.access.grants
 
-    def read_all_grants_by_subject(self, identity, id_, subject_type, expand=False):
-        """Read access grants of a record (resp. its parent) by subject type."""
-        record, parent = self.get_parent_and_record_or_draft(id_)
-
-        # Permissions
-        self.require_permission(identity, "manage", record=record)
-
-        user_grants = []
-        for grant in parent.access.grants:
-            if grant.subject_type == subject_type:
-                user_grants.append(grant)
+        for grant in existing_grants:
+            # removes group grants if groups are not enabled in the instance
+            if (
+                not current_app.config.get("USERS_RESOURCES_GROUPS_ENABLED", False)
+                and grant.subject_type == RecordAccessService.group_subject_type
+            ):
+                # don't fail with 403, instead return only user grants, even if group grants are present
+                existing_grants.remove(grant)
 
         # Fetching
         return self.grants_result_list(
             service=self,
             identity=identity,
-            results=user_grants,
-            expand=expand,
-        )
-
-    @unit_of_work()
-    def update_grant_by_subject(
-        self,
-        identity,
-        id_,
-        subject_id,
-        subject_type,
-        data,
-        expand=False,
-        uow=None,
-    ):
-        """Update access grant for a record (resp. its parent) by subject."""
-        record, parent = self.get_parent_and_record_or_draft(id_)
-
-        # Permissions
-        self.require_permission(identity, "manage", record=record)
-
-        # Fetching (required for parts of the validation)
-        grant_id = None
-        for grant in parent.access.grants:
-            if grant.subject_id == subject_id and grant.subject_type == subject_type:
-                grant_id = parent.access.grants.index(grant)
-
-        if grant_id is None:
-            raise LookupError(subject_id)
-
-        old_grant = parent.access.grants[grant_id]
-        data = {
-            "permission": data.get("permission", old_grant.permission),
-            "subject": {
-                "type": data.get("subject", {}).get("type", old_grant.subject_type),
-                "id": data.get("subject", {}).get("id", old_grant.subject_id),
-            },
-            "origin": data.get("origin", old_grant.origin),
-        }
-
-        # Validation
-        data, __ = self.schema_grant.load(
-            data, context={"identity": identity}, raise_errors=True
-        )
-
-        # Update
-        try:
-            new_grant = parent.access.grants.grant_cls.create(
-                origin=data["origin"],
-                permission=data["permission"],
-                subject_type=data["subject"]["type"],
-                subject_id=data["subject"]["id"],
-                resolve_subject=True,
-            )
-        except LookupError:
-            raise ValidationError(
-                _("Could not find the specified subject."), field_name="subject.id"
-            )
-
-        parent.access.grants[grant_id] = new_grant
-
-        uow.register(ParentRecordCommitOp(parent, indexer_context=dict(service=self)))
-
-        return self.grant_result_item(
-            self,
-            identity,
-            new_grant,
+            results=existing_grants,
             expand=expand,
         )
 
@@ -611,6 +562,14 @@ class RecordAccessService(RecordService):
         # Fetching
         if not 0 <= grant_id < len(parent.access.grants):
             raise LookupError(str(grant_id))
+
+        # checks if groups are enabled in the instance
+        if (
+            not current_app.config.get("USERS_RESOURCES_GROUPS_ENABLED", False)
+            and parent.access.grants[grant_id].subject_type
+            == RecordAccessService.group_subject_type
+        ):
+            raise PermissionDeniedError()
 
         # Deletion
         parent.access.grants.pop(grant_id)
@@ -878,6 +837,7 @@ class RecordAccessService(RecordService):
 
     # TODO: rework the whole service and move these to a separate one:
     #  https://github.com/inveniosoftware/invenio-rdm-records/issues/1685
+    @groups_enabled(group_subject_type)
     def read_grant_by_subject(
         self, identity, id_, subject_id, subject_type, expand=False
     ):
@@ -902,6 +862,7 @@ class RecordAccessService(RecordService):
             expand=expand,
         )
 
+    @groups_enabled(group_subject_type)
     def read_all_grants_by_subject(self, identity, id_, subject_type, expand=False):
         """Read access grants of a record (resp. its parent) by subject type."""
         record, parent = self.get_parent_and_record_or_draft(id_)
@@ -922,6 +883,7 @@ class RecordAccessService(RecordService):
             expand=expand,
         )
 
+    @groups_enabled(group_subject_type)
     @unit_of_work()
     def update_grant_by_subject(
         self,
@@ -988,6 +950,7 @@ class RecordAccessService(RecordService):
             expand=expand,
         )
 
+    @groups_enabled(group_subject_type)
     @unit_of_work()
     def delete_grant_by_subject(
         self, identity, id_, subject_id, subject_type, uow=None

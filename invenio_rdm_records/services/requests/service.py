@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2023 CERN.
+# Copyright (C) 2023-2024 CERN.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
@@ -32,7 +32,7 @@ class RecordRequestsService(Service):
         search_preference=None,
         expand=False,
         extra_filter=None,
-        **kwargs
+        **kwargs,
     ):
         """Search for record's requests."""
         record = self.record_cls.pid.resolve(record_pid)
@@ -52,5 +52,5 @@ class RecordRequestsService(Service):
             search_preference=search_preference,
             expand=expand,
             extra_filter=search_filter,
-            **kwargs
+            **kwargs,
         )

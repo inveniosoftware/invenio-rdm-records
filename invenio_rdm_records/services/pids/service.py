@@ -10,6 +10,10 @@
 from invenio_drafts_resources.services.records import RecordService
 from invenio_pidstore.errors import PIDDoesNotExistError
 from invenio_pidstore.models import PersistentIdentifier
+from invenio_records_resources.services.errors import (
+    PermissionDeniedError,
+    RecordPermissionDeniedError,
+)
 from invenio_records_resources.services.uow import RecordCommitOp, unit_of_work
 from invenio_requests.services.results import EntityResolverExpandableField
 from sqlalchemy.orm.exc import NoResultFound
@@ -35,6 +39,7 @@ class PIDsService(RecordService):
         return [
             EntityResolverExpandableField("parent.review.receiver"),
             ParentCommunitiesExpandableField("parent.communities.default"),
+            EntityResolverExpandableField("parent.access.owned_by"),
         ]
 
     @property
@@ -57,7 +62,9 @@ class PIDsService(RecordService):
     @property
     def parent_pid_manager(self):
         """Parent PID Manager."""
-        return self.manager_cls(self.config.parent_pids_providers)
+        return self.manager_cls(
+            self.config.parent_pids_providers, self.config.parent_pids_required
+        )
 
     def resolve(self, identity, id_, scheme, expand=False):
         """Resolve PID to a record (not draft)."""
@@ -80,7 +87,10 @@ class PIDsService(RecordService):
         if record is None:
             raise PIDDoesNotExistError(scheme, id_)
 
-        self.require_permission(identity, "read", record=record)
+        try:
+            self.require_permission(identity, "read", record=record)
+        except PermissionDeniedError:
+            raise RecordPermissionDeniedError(action_name="read", record=record)
 
         return self.result_item(
             self,

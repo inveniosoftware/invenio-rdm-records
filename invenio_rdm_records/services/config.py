@@ -38,6 +38,7 @@ from invenio_records_resources.services.base.config import (
 )
 from invenio_records_resources.services.base.links import Link, NestedLinks
 from invenio_records_resources.services.files.links import FileLink
+from invenio_records_resources.services.files.schema import FileSchema
 from invenio_records_resources.services.records.config import (
     RecordServiceConfig as BaseRecordServiceConfig,
 )
@@ -54,6 +55,8 @@ from invenio_requests.services.requests import RequestItem, RequestList
 from invenio_requests.services.requests.config import RequestSearchOptions
 from requests import Request
 
+from invenio_rdm_records.records.processors.tiles import TilesProcessor
+
 from ..records import RDMDraft, RDMRecord
 from ..records.api import RDMDraftMediaFiles, RDMRecordMediaFiles
 from . import facets
@@ -65,6 +68,7 @@ from .customizations import (
 )
 from .permissions import RDMRecordPermissionPolicy
 from .result_items import GrantItem, GrantList, SecretLinkItem, SecretLinkList
+from .results import RDMRecordList
 from .schemas import RDMParentSchema, RDMRecordSchema
 from .schemas.community_records import CommunityRecordsSchema
 from .schemas.parent.access import AccessSettingsSchema
@@ -97,8 +101,8 @@ def is_record_and_has_doi(record, ctx):
 
 def is_record_or_draft_and_has_parent_doi(record, ctx):
     """Determine if draft or record has parent doi."""
-    return (
-        is_record(record, ctx) or is_draft(record, ctx) and has_doi(record.parent, ctx)
+    return (is_record(record, ctx) or is_draft(record, ctx)) and has_doi(
+        record.parent, ctx
     )
 
 
@@ -119,12 +123,17 @@ def archive_download_enabled(record, ctx):
     return current_app.config["RDM_ARCHIVE_DOWNLOAD_ENABLED"]
 
 
+def _groups_enabled(record, ctx):
+    """Return if groups are enabled."""
+    return current_app.config.get("USERS_RESOURCES_GROUPS_ENABLED", False)
+
+
 def is_datacite_test(record, ctx):
     """Return if the datacite test mode is being used."""
     return current_app.config["DATACITE_TEST_MODE"]
 
 
-def lock_edit_published_files(service, identity, record=None):
+def lock_edit_published_files(service, identity, record=None, draft=None):
     """Return if files once published should be locked when editing the record.
 
     Return False to allow editing of published files or True otherwise.
@@ -263,6 +272,8 @@ class RDMFileRecordServiceConfig(FileServiceConfig, ConfiguratorMixin):
         ),
     }
 
+    file_schema = FileSchema
+
 
 class RDMRecordServiceConfig(RecordServiceConfig, ConfiguratorMixin):
     """RDM record draft service config."""
@@ -292,6 +303,7 @@ class RDMRecordServiceConfig(RecordServiceConfig, ConfiguratorMixin):
     link_result_list_cls = SecretLinkList
     grant_result_item_cls = GrantItem
     grant_result_list_cls = GrantList
+    result_list_cls = RDMRecordList
 
     default_files_enabled = FromConfig("RDM_DEFAULT_FILES_ENABLED", default=True)
 
@@ -477,6 +489,9 @@ class RDMRecordServiceConfig(RecordServiceConfig, ConfiguratorMixin):
         "access_links": RecordLink("{+api}/records/{id}/access/links"),
         "access_grants": RecordLink("{+api}/records/{id}/access/grants"),
         "access_users": RecordLink("{+api}/records/{id}/access/users"),
+        "access_groups": RecordLink(
+            "{+api}/records/{id}/access/groups", when=_groups_enabled
+        ),
         "access_request": RecordLink("{+api}/records/{id}/access/request"),
         "access": RecordLink("{+api}/records/{id}/access"),
         # TODO: only include link when DOI support is enabled.
@@ -497,7 +512,19 @@ class RDMRecordServiceConfig(RecordServiceConfig, ConfiguratorMixin):
                 "key": key,
             },
         ),
+        NestedLinks(
+            links=RDMFileRecordServiceConfig.file_links_item,
+            key="media_files.entries",
+            context_func=lambda identity, record, key, value: {
+                "id": record.pid.pid_value,
+                "key": key,
+            },
+        ),
     ]
+
+    record_file_processors = FromConfig(
+        "RDM_RECORD_FILE_PROCESSORS", default=[TilesProcessor()]
+    )
 
 
 class RDMCommunityRecordsConfig(BaseRecordServiceConfig, ConfiguratorMixin):
@@ -573,7 +600,23 @@ class RDMMediaFileRecordServiceConfig(FileServiceConfig, ConfiguratorMixin):
     file_links_item = {
         "self": FileLink("{+api}/records/{id}/media-files/{key}"),
         "content": FileLink("{+api}/records/{id}/media-files/{key}/content"),
+        "iiif_canvas": FileLink(
+            "{+api}/iiif/record:{id}/canvas/{+key}", when=is_iiif_compatible
+        ),
+        "iiif_base": FileLink(
+            "{+api}/iiif/record:{id}:{+key}", when=is_iiif_compatible
+        ),
+        "iiif_info": FileLink(
+            "{+api}/iiif/record:{id}:{+key}/info.json", when=is_iiif_compatible
+        ),
+        "iiif_api": FileLink(
+            "{+api}/iiif/record:{id}:{+key}/{region=full}"
+            "/{size=full}/{rotation=0}/{quality=default}.{format=png}",
+            when=is_iiif_compatible,
+        ),
     }
+
+    file_schema = FileSchema
 
 
 class RDMFileDraftServiceConfig(FileServiceConfig, ConfiguratorMixin):
@@ -617,6 +660,8 @@ class RDMFileDraftServiceConfig(FileServiceConfig, ConfiguratorMixin):
         ),
     }
 
+    file_schema = FileSchema
+
 
 class RDMMediaFileDraftServiceConfig(FileServiceConfig, ConfiguratorMixin):
     """Configuration for draft media files."""
@@ -643,4 +688,18 @@ class RDMMediaFileDraftServiceConfig(FileServiceConfig, ConfiguratorMixin):
         "self": FileLink("{+api}/records/{id}/draft/media-files/{key}"),
         "content": FileLink("{+api}/records/{id}/draft/media-files/{key}/content"),
         "commit": FileLink("{+api}/records/{id}/draft/media-files/{key}/commit"),
+        "iiif_canvas": FileLink(
+            "{+api}/iiif/draft:{id}/canvas/{+key}", when=is_iiif_compatible
+        ),
+        "iiif_base": FileLink("{+api}/iiif/draft:{id}:{+key}", when=is_iiif_compatible),
+        "iiif_info": FileLink(
+            "{+api}/iiif/draft:{id}:{+key}/info.json", when=is_iiif_compatible
+        ),
+        "iiif_api": FileLink(
+            "{+api}/iiif/draft:{id}:{+key}/{region=full}"
+            "/{size=full}/{rotation=0}/{quality=default}.{format=png}",
+            when=is_iiif_compatible,
+        ),
     }
+
+    file_schema = FileSchema

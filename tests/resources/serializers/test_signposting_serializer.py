@@ -15,7 +15,7 @@ from invenio_rdm_records.resources.serializers import (
 def test_signposting_serializer_full(running_app, full_record_to_dict):
     expected = {
         "linkset": [
-            # Landing page Link Set Object
+            # Landing page Link Context Object
             {
                 "anchor": "https://127.0.0.1:5000/records/12345-abcde",
                 "author": [{"href": "https://orcid.org/0000-0001-8135-3489"}],
@@ -97,7 +97,7 @@ def test_signposting_serializer_full(running_app, full_record_to_dict):
                     {"href": "https://schema.org/AboutPage"},
                 ],
             },
-            # Content Resource (file) Link Set Object
+            # Content Resource (file) Link Context Object
             {
                 "anchor": "https://127.0.0.1:5000/records/12345-abcde/files/test.txt",
                 "collection": [
@@ -107,7 +107,7 @@ def test_signposting_serializer_full(running_app, full_record_to_dict):
                     }
                 ],
             },
-            # Metadata Resource (mimetype format representation) Link Set Object
+            # Metadata Resource (mimetype format representation) Link Context Object
             {
                 "anchor": "https://127.0.0.1:5000/api/records/12345-abcde",
                 "describes": [
@@ -116,147 +116,6 @@ def test_signposting_serializer_full(running_app, full_record_to_dict):
                         "type": "text/html",
                     }
                 ],
-                "type": "application/dcat+xml",
-            },
-            {
-                "anchor": "https://127.0.0.1:5000/api/records/12345-abcde",
-                "describes": [
-                    {
-                        "href": "https://127.0.0.1:5000/records/12345-abcde",
-                        "type": "text/html",
-                    }
-                ],
-                "type": "application/json",
-            },
-            {
-                "anchor": "https://127.0.0.1:5000/api/records/12345-abcde",
-                "describes": [
-                    {
-                        "href": "https://127.0.0.1:5000/records/12345-abcde",
-                        "type": "text/html",
-                    }
-                ],
-                "type": "application/ld+json",
-            },
-            {
-                "anchor": "https://127.0.0.1:5000/api/records/12345-abcde",
-                "describes": [
-                    {
-                        "href": "https://127.0.0.1:5000/records/12345-abcde",
-                        "type": "text/html",
-                    }
-                ],
-                "type": "application/linkset+json",
-            },
-            {
-                "anchor": "https://127.0.0.1:5000/api/records/12345-abcde",
-                "describes": [
-                    {
-                        "href": "https://127.0.0.1:5000/records/12345-abcde",
-                        "type": "text/html",
-                    }
-                ],
-                "type": "application/marcxml+xml",
-            },
-            {
-                "anchor": "https://127.0.0.1:5000/api/records/12345-abcde",
-                "describes": [
-                    {
-                        "href": "https://127.0.0.1:5000/records/12345-abcde",
-                        "type": "text/html",
-                    }
-                ],
-                "type": "application/vnd.citationstyles.csl+json",
-            },
-            {
-                "anchor": "https://127.0.0.1:5000/api/records/12345-abcde",
-                "describes": [
-                    {
-                        "href": "https://127.0.0.1:5000/records/12345-abcde",
-                        "type": "text/html",
-                    }
-                ],
-                "type": "application/vnd.datacite.datacite+json",
-            },
-            {
-                "anchor": "https://127.0.0.1:5000/api/records/12345-abcde",
-                "describes": [
-                    {
-                        "href": "https://127.0.0.1:5000/records/12345-abcde",
-                        "type": "text/html",
-                    }
-                ],
-                "type": "application/vnd.datacite.datacite+xml",
-            },
-            {
-                "anchor": "https://127.0.0.1:5000/api/records/12345-abcde",
-                "describes": [
-                    {
-                        "href": "https://127.0.0.1:5000/records/12345-abcde",
-                        "type": "text/html",
-                    }
-                ],
-                "type": "application/vnd.geo+json",
-            },
-            {
-                "anchor": "https://127.0.0.1:5000/api/records/12345-abcde",
-                "describes": [
-                    {
-                        "href": "https://127.0.0.1:5000/records/12345-abcde",
-                        "type": "text/html",
-                    }
-                ],
-                "type": "application/vnd.inveniordm.v1+json",
-            },
-            {
-                "anchor": "https://127.0.0.1:5000/api/records/12345-abcde",
-                "describes": [
-                    {
-                        "href": "https://127.0.0.1:5000/records/12345-abcde",
-                        "type": "text/html",
-                    }
-                ],
-                "type": "application/vnd.inveniordm.v1.full+csv",
-            },
-            {
-                "anchor": "https://127.0.0.1:5000/api/records/12345-abcde",
-                "describes": [
-                    {
-                        "href": "https://127.0.0.1:5000/records/12345-abcde",
-                        "type": "text/html",
-                    }
-                ],
-                "type": "application/vnd.inveniordm.v1.simple+csv",
-            },
-            {
-                "anchor": "https://127.0.0.1:5000/api/records/12345-abcde",
-                "describes": [
-                    {
-                        "href": "https://127.0.0.1:5000/records/12345-abcde",
-                        "type": "text/html",
-                    }
-                ],
-                "type": "application/x-bibtex",
-            },
-            {
-                "anchor": "https://127.0.0.1:5000/api/records/12345-abcde",
-                "describes": [
-                    {
-                        "href": "https://127.0.0.1:5000/records/12345-abcde",
-                        "type": "text/html",
-                    }
-                ],
-                "type": "application/x-dc+xml",
-            },
-            {
-                "anchor": "https://127.0.0.1:5000/api/records/12345-abcde",
-                "describes": [
-                    {
-                        "href": "https://127.0.0.1:5000/records/12345-abcde",
-                        "type": "text/html",
-                    }
-                ],
-                "type": "text/x-bibliography",
             },
         ]
     }
@@ -269,7 +128,7 @@ def test_signposting_serializer_full(running_app, full_record_to_dict):
 def test_signposting_serializer_minimal(running_app, minimal_record_to_dict):
     expected = {
         "linkset": [
-            # Landing page Link Set Object
+            # Landing page Link Context Object
             {
                 "anchor": "https://127.0.0.1:5000/records/67890-fghij",
                 # No author since no associated PID
@@ -342,8 +201,8 @@ def test_signposting_serializer_minimal(running_app, minimal_record_to_dict):
                     {"href": "https://schema.org/AboutPage"},
                 ],
             },
-            # No Content Resource (file) Link Set Object
-            # Metadata Resource (mimetype format representation) Link Set Object
+            # No Content Resource (file) Link Context Object
+            # Metadata Resource (mimetype format representation) Link Context Object
             {
                 "anchor": "https://127.0.0.1:5000/api/records/67890-fghij",
                 "describes": [
@@ -352,147 +211,6 @@ def test_signposting_serializer_minimal(running_app, minimal_record_to_dict):
                         "type": "text/html",
                     }
                 ],
-                "type": "application/dcat+xml",
-            },
-            {
-                "anchor": "https://127.0.0.1:5000/api/records/67890-fghij",
-                "describes": [
-                    {
-                        "href": "https://127.0.0.1:5000/records/67890-fghij",
-                        "type": "text/html",
-                    }
-                ],
-                "type": "application/json",
-            },
-            {
-                "anchor": "https://127.0.0.1:5000/api/records/67890-fghij",
-                "describes": [
-                    {
-                        "href": "https://127.0.0.1:5000/records/67890-fghij",
-                        "type": "text/html",
-                    }
-                ],
-                "type": "application/ld+json",
-            },
-            {
-                "anchor": "https://127.0.0.1:5000/api/records/67890-fghij",
-                "describes": [
-                    {
-                        "href": "https://127.0.0.1:5000/records/67890-fghij",
-                        "type": "text/html",
-                    }
-                ],
-                "type": "application/linkset+json",
-            },
-            {
-                "anchor": "https://127.0.0.1:5000/api/records/67890-fghij",
-                "describes": [
-                    {
-                        "href": "https://127.0.0.1:5000/records/67890-fghij",
-                        "type": "text/html",
-                    }
-                ],
-                "type": "application/marcxml+xml",
-            },
-            {
-                "anchor": "https://127.0.0.1:5000/api/records/67890-fghij",
-                "describes": [
-                    {
-                        "href": "https://127.0.0.1:5000/records/67890-fghij",
-                        "type": "text/html",
-                    }
-                ],
-                "type": "application/vnd.citationstyles.csl+json",
-            },
-            {
-                "anchor": "https://127.0.0.1:5000/api/records/67890-fghij",
-                "describes": [
-                    {
-                        "href": "https://127.0.0.1:5000/records/67890-fghij",
-                        "type": "text/html",
-                    }
-                ],
-                "type": "application/vnd.datacite.datacite+json",
-            },
-            {
-                "anchor": "https://127.0.0.1:5000/api/records/67890-fghij",
-                "describes": [
-                    {
-                        "href": "https://127.0.0.1:5000/records/67890-fghij",
-                        "type": "text/html",
-                    }
-                ],
-                "type": "application/vnd.datacite.datacite+xml",
-            },
-            {
-                "anchor": "https://127.0.0.1:5000/api/records/67890-fghij",
-                "describes": [
-                    {
-                        "href": "https://127.0.0.1:5000/records/67890-fghij",
-                        "type": "text/html",
-                    }
-                ],
-                "type": "application/vnd.geo+json",
-            },
-            {
-                "anchor": "https://127.0.0.1:5000/api/records/67890-fghij",
-                "describes": [
-                    {
-                        "href": "https://127.0.0.1:5000/records/67890-fghij",
-                        "type": "text/html",
-                    }
-                ],
-                "type": "application/vnd.inveniordm.v1+json",
-            },
-            {
-                "anchor": "https://127.0.0.1:5000/api/records/67890-fghij",
-                "describes": [
-                    {
-                        "href": "https://127.0.0.1:5000/records/67890-fghij",
-                        "type": "text/html",
-                    }
-                ],
-                "type": "application/vnd.inveniordm.v1.full+csv",
-            },
-            {
-                "anchor": "https://127.0.0.1:5000/api/records/67890-fghij",
-                "describes": [
-                    {
-                        "href": "https://127.0.0.1:5000/records/67890-fghij",
-                        "type": "text/html",
-                    }
-                ],
-                "type": "application/vnd.inveniordm.v1.simple+csv",
-            },
-            {
-                "anchor": "https://127.0.0.1:5000/api/records/67890-fghij",
-                "describes": [
-                    {
-                        "href": "https://127.0.0.1:5000/records/67890-fghij",
-                        "type": "text/html",
-                    }
-                ],
-                "type": "application/x-bibtex",
-            },
-            {
-                "anchor": "https://127.0.0.1:5000/api/records/67890-fghij",
-                "describes": [
-                    {
-                        "href": "https://127.0.0.1:5000/records/67890-fghij",
-                        "type": "text/html",
-                    }
-                ],
-                "type": "application/x-dc+xml",
-            },
-            {
-                "anchor": "https://127.0.0.1:5000/api/records/67890-fghij",
-                "describes": [
-                    {
-                        "href": "https://127.0.0.1:5000/records/67890-fghij",
-                        "type": "text/html",
-                    }
-                ],
-                "type": "text/x-bibliography",
             },
         ]
     }
