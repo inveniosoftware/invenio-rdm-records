@@ -127,6 +127,15 @@ class InvenioRDMRecords(object):
         if not app.config.get("COMMUNITIES_NAMESPACES"):
             app.config["COMMUNITIES_NAMESPACES"] = app.config["RDM_NAMESPACES"]
 
+        app.config.setdefault(
+            "RDM_FILES_DEFAULT_QUOTA_SIZE",
+            app.config.get("FILES_REST_DEFAULT_QUOTA_SIZE"),
+        )
+        app.config.setdefault(
+            "RDM_FILES_DEFAULT_MAX_FILE_SIZE",
+            app.config.get("FILES_REST_DEFAULT_MAX_FILE_SIZE"),
+        )
+
         self.fix_datacite_configs(app)
 
     def service_configs(self, app):
