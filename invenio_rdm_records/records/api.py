@@ -417,7 +417,7 @@ class RDMRecord(CommonFieldsMixin, Record):
     model_cls = models.RDMRecordMetadata
 
     index = IndexField(
-        "rdmrecords-records-record-v6.0.0", search_alias="rdmrecords-records"
+        "rdmrecords-records-record-v7.0.0", search_alias="rdmrecords-records"
     )
 
     files = FilesField(

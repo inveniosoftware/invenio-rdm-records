@@ -248,7 +248,7 @@ def app_config(app_config, mock_datacite_client):
         },
     }
 
-    app_config["INDEXER_DEFAULT_INDEX"] = "rdmrecords-records-record-v6.0.0"
+    app_config["INDEXER_DEFAULT_INDEX"] = "rdmrecords-records-record-v7.0.0"
     # Variable not used. We set it to silent warnings
     app_config["JSONSCHEMAS_HOST"] = "not-used"
 
