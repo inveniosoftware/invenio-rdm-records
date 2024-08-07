@@ -11,6 +11,24 @@
 Changes
 =======
 
+Version v11.6.0 (released 2024-08-07)
+
+- creatibutors: fix buttons order
+- permissions: change error handler for resolving pid permission denied
+- record inclusion: use system identity to accept inclusion request when can_include_directly
+- user_moderation: improve DB queries and use Celery tasks
+- fix: use index to distinguish type of record in results
+    * The problem with "is_published" is that drafts created from records will
+      not be recognised correctly.
+    * Using the index is a valid solution but it is not a nice implementation.
+- results: added support for drafts in the results list
+- fix(community): set branding
+    * The set branding didn't work at all. It didn't work for rebranding if
+      a default already exists and it didn't work if no branding exists at
+      all.
+    * The default property of the CommunitiesRelationManager needs a string.
+      It can't handle a dict.
+
 Version v11.5.0 (released 2024-07-22)
 
 - codemeta: added identifier to schema
