@@ -8,7 +8,7 @@
 
 """RDM Record and Draft API."""
 
-from flask import g
+from flask import current_app, g
 from invenio_communities.records.records.systemfields import CommunitiesField
 from invenio_db import db
 from invenio_drafts_resources.records import Draft, Record
@@ -290,7 +290,7 @@ class RDMMediaFileDraft(FileRecord):
     processor = DictField(clear_none=True, create_if_missing=True)
 
 
-def get_quota(record=None):
+def get_files_quota(record=None):
     """Called by the file manager in create_bucket() during record.post_create.
 
     The quota is checked against the following order:
@@ -334,9 +334,26 @@ def get_quota(record=None):
                 quota_size=user_quota.quota_size,
                 max_file_size=user_quota.max_file_size,
             )
-    # return empty dict as the default values are handled by
-    # FILES_REST_DEFAULT_QUOTA_SIZE , FILES_REST_DEFAULT_MAX_FILE_SIZE
-    return {}
+
+    # the config variables if not set are mapped to FILES_REST_DEFAULT_QUOTA_SIZE,
+    # FILES_REST_DEFAULT_MAX_FILE_SIZE respectively
+    return dict(
+        quota_size=current_app.config.get("RDM_FILES_DEFAULT_QUOTA_SIZE"),
+        max_file_size=current_app.config.get("RDM_FILES_DEFAULT_MAX_FILE_SIZE"),
+    )
+
+
+def get_media_files_quota(record=None):
+    """Called by the file manager in create_bucket() during record.post_create.
+
+    The quota is configured using config variables.
+        :returns: dict i.e {quota_size, max_file_size}: dict is passed to the
+        Bucket.create(...) method.
+    """
+    return dict(
+        quota_size=current_app.config.get("RDM_MEDIA_FILES_DEFAULT_QUOTA_SIZE"),
+        max_file_size=current_app.config.get("RDM_MEDIA_FILES_DEFAULT_MAX_FILE_SIZE"),
+    )
 
 
 class RDMDraft(CommonFieldsMixin, Draft):
@@ -352,13 +369,14 @@ class RDMDraft(CommonFieldsMixin, Draft):
         file_cls=RDMFileDraft,
         # Don't delete, we'll manage in the service
         delete=False,
-        bucket_args=get_quota,
+        bucket_args=get_files_quota,
     )
 
     media_files = FilesField(
         key=MediaFilesAttrConfig["_files_attr_key"],
         bucket_id_attr=MediaFilesAttrConfig["_files_bucket_id_attr_key"],
         bucket_attr=MediaFilesAttrConfig["_files_bucket_attr_key"],
+        bucket_args=get_media_files_quota,
         store=False,
         dump=False,
         file_cls=RDMMediaFileDraft,
@@ -381,6 +399,7 @@ class RDMDraftMediaFiles(RDMDraft):
         key=MediaFilesAttrConfig["_files_attr_key"],
         bucket_id_attr=MediaFilesAttrConfig["_files_bucket_id_attr_key"],
         bucket_attr=MediaFilesAttrConfig["_files_bucket_attr_key"],
+        bucket_args=get_media_files_quota,
         store=False,
         dump=False,
         file_cls=RDMMediaFileDraft,
@@ -511,6 +530,7 @@ class RDMRecordMediaFiles(RDMRecord):
         key=MediaFilesAttrConfig["_files_attr_key"],
         bucket_id_attr=MediaFilesAttrConfig["_files_bucket_id_attr_key"],
         bucket_attr=MediaFilesAttrConfig["_files_bucket_attr_key"],
+        bucket_args=get_media_files_quota,
         store=False,
         dump=False,
         file_cls=RDMMediaFileRecord,
