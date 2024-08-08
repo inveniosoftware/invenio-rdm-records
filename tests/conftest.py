@@ -991,6 +991,15 @@ def closed_review_minimal_community(minimal_community):
 
 
 @pytest.fixture()
+def closed_submission_minimal_community(minimal_community):
+    """Data for a minimal community that restricts record submission."""
+    community = deepcopy(minimal_community)
+    community["slug"] = "closed-submission-community"
+    community["access"]["record_submission_policy"] = "closed"
+    return community
+
+
+@pytest.fixture()
 def minimal_oai_set():
     """Data for a minimal OAI-PMH set."""
     return {
@@ -1972,6 +1981,19 @@ def closed_review_community(
     """Create community with close review policy i.e allow direct publishes."""
     return _community_get_or_create(
         closed_review_minimal_community, community_owner.identity
+    )
+
+
+@pytest.fixture()
+def closed_submission_community(
+    running_app,
+    community_type_record,
+    community_owner,
+    closed_submission_minimal_community,
+):
+    """Create community with close submission policy."""
+    return _community_get_or_create(
+        closed_submission_minimal_community, community_owner.identity
     )
 
 
