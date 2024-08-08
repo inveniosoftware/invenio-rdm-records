@@ -1655,7 +1655,10 @@
         <xsl:otherwise>
 <!--
           <rdf:type rdf:resource="{$foaf}Agent"/>
--->
+-->       
+          <xsl:if test="$uri != ''">
+            <dct:identifier rdf:datatype="{$xsd}string"><xsl:value-of select="$nameIdentifier"/></dct:identifier>
+          </xsl:if>
           <xsl:if test="$agentName != ''">
             <foaf:name><xsl:value-of select="$agentName"/></foaf:name>
           </xsl:if>

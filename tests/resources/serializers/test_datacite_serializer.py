@@ -121,6 +121,7 @@ def test_datacite43_serializer(running_app, full_record_to_dict):
                     {
                         "nameIdentifier": "0000-0001-8135-3489",
                         "nameIdentifierScheme": "ORCID",
+                        "schemeUri": "http://orcid.org/",
                     }
                 ],
                 "nameType": "Personal",
@@ -144,6 +145,7 @@ def test_datacite43_serializer(running_app, full_record_to_dict):
                     {
                         "nameIdentifier": "0000-0001-8135-3489",
                         "nameIdentifierScheme": "ORCID",
+                        "schemeUri": "http://orcid.org/",
                     }
                 ],
                 "nameType": "Personal",
@@ -167,6 +169,10 @@ def test_datacite43_serializer(running_app, full_record_to_dict):
                 "descriptionType": "Abstract",
             },
             {"description": "Bla bla bla", "descriptionType": "Methods", "lang": "eng"},
+            {
+                "description": '{"references": ["Nielsen et al,.."]}',
+                "descriptionType": "Other",
+            },
         ],
         "formats": ["application/pdf"],
         "fundingReferences": [
@@ -224,6 +230,10 @@ def test_datacite43_serializer(running_app, full_record_to_dict):
                 "rightsUri": "https://creativecommons.org/licenses/by/4.0/legalcode",
             },
             {"rights": "No rightsUri license"},
+            {
+                "rights": "Embargoed Access",
+                "rightsUri": "info:eu-repo/semantics/embargoedAccess",
+            },
         ],
         "schemaVersion": "http://datacite.org/schema/kernel-4",
         "sizes": ["11 pages"],
@@ -275,7 +285,7 @@ def test_datacite43_xml_serializer(running_app, full_record_to_dict):
         "      <givenName>Lars Holm</givenName>\n"
         "      <familyName>Nielsen</familyName>\n"
         "      <nameIdentifier "
-        'nameIdentifierScheme="ORCID">0000-0001-8135-3489</nameIdentifier>\n'
+        'nameIdentifierScheme="ORCID" schemeURI="http://orcid.org/">0000-0001-8135-3489</nameIdentifier>\n'
         "      <affiliation>CERN</affiliation>\n"
         "      <affiliation>free-text</affiliation>\n"
         "    </creator>\n"
@@ -303,7 +313,7 @@ def test_datacite43_xml_serializer(running_app, full_record_to_dict):
         "      <givenName>Lars Holm</givenName>\n"
         "      <familyName>Nielsen</familyName>\n"
         "      <nameIdentifier "
-        'nameIdentifierScheme="ORCID">0000-0001-8135-3489</nameIdentifier>\n'
+        'nameIdentifierScheme="ORCID" schemeURI="http://orcid.org/">0000-0001-8135-3489</nameIdentifier>\n'
         "      <affiliation>CERN</affiliation>\n"
         "      <affiliation>TU Wien</affiliation>\n"
         "    </contributor>\n"
@@ -340,12 +350,14 @@ def test_datacite43_xml_serializer(running_app, full_record_to_dict):
         'rightsURI="https://creativecommons.org/licenses/by/4.0/legalcode" '
         'rightsIdentifierScheme="spdx" rightsIdentifier="cc-by-4.0">Creative Commons '
         "Attribution 4.0 International</rights>\n"
+        '    <rights rightsURI="info:eu-repo/semantics/embargoedAccess">Embargoed Access</rights>\n'
         "  </rightsList>\n"
         "  <descriptions>\n"
         '    <description descriptionType="Abstract">A description \n'
         "with HTML tags</description>\n"
         '    <description descriptionType="Methods" xml:lang="eng">Bla bla '
         "bla</description>\n"
+        '    <description descriptionType="Other">{"references": ["Nielsen et al,.."]}</description>\n'
         "  </descriptions>\n"
         "  <geoLocations>\n"
         "    <geoLocation>\n"
