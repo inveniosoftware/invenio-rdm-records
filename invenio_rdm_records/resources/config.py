@@ -39,6 +39,7 @@ from ..services.errors import (
     GrantExistsError,
     InvalidAccessRestrictions,
     RecordDeletedException,
+    RecordSubmissionClosedCommunityError,
     ReviewExistsError,
     ReviewNotFoundError,
     ReviewStateError,
@@ -246,6 +247,12 @@ class RDMRecordResourceConfig(RecordResourceConfig, ConfiguratorMixin):
                     description=_("Record deleted"),
                     tombstone=e.record.tombstone.dump(),
                 )
+            )
+        ),
+        RecordSubmissionClosedCommunityError: create_error_handler(
+            lambda e: HTTPJSONException(
+                code=403,
+                description=e.description,
             )
         ),
     }
