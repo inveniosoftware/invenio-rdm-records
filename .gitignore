@@ -75,5 +75,6 @@ Pipfile.lock
 # pip wheel
 pip-wheel-metadata/
 
-# node_modules
+# node modules
+**/*/node_modules
 node_modules
