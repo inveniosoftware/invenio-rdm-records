@@ -338,9 +338,15 @@ def get_files_quota(record=None):
     # the config variables if not set are mapped to FILES_REST_DEFAULT_QUOTA_SIZE,
     # FILES_REST_DEFAULT_MAX_FILE_SIZE respectively
     return dict(
-        quota_size=current_app.config.get("RDM_FILES_DEFAULT_QUOTA_SIZE"),
-        max_file_size=current_app.config.get("RDM_FILES_DEFAULT_MAX_FILE_SIZE"),
+        quota_size=current_app.config.get("RDM_FILES_DEFAULT_QUOTA_SIZE")
+        or current_app.config.get("FILES_REST_DEFAULT_QUOTA_SIZE"),
+        max_file_size=current_app.config.get("RDM_FILES_DEFAULT_MAX_FILE_SIZE")
+        or current_app.config.get("FILES_REST_DEFAULT_MAX_FILE_SIZE"),
     )
+
+
+# Alias to get the quota of files for backward compatibility
+get_quota = get_files_quota
 
 
 def get_media_files_quota(record=None):
