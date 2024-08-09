@@ -9,10 +9,14 @@
 """RDM Review Service."""
 
 from flask import current_app
+from invenio_communities import current_communities
 from invenio_drafts_resources.services.records import RecordService
 from invenio_drafts_resources.services.records.uow import ParentRecordCommitOp
 from invenio_i18n import lazy_gettext as _
 from invenio_notifications.services.uow import NotificationOp
+from invenio_records_resources.services.errors import (
+    RecordSubmissionClosedCommunityError,
+)
 from invenio_records_resources.services.uow import RecordIndexOp, unit_of_work
 from invenio_requests import current_request_type_registry, current_requests_service
 from invenio_requests.resolvers.registry import ResolverRegistry
@@ -171,6 +175,17 @@ class ReviewService(RecordService):
 
         # Check permission
         self.require_permission(identity, "update_draft", record=draft)
+
+        can_submit_record = current_communities.service.config.permission_policy_cls(
+            "submit_record",
+            community_id=draft.parent.review.get_object()
+            .get("receiver", {})
+            .get("community", ""),
+            record=community,
+        ).allows(identity)
+
+        if not can_submit_record:
+            raise RecordSubmissionClosedCommunityError()
 
         # create review request
         request_item = current_rdm_records.community_inclusion_service.submit(
