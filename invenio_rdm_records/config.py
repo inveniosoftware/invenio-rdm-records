@@ -565,6 +565,13 @@ RDM_MEDIA_FILES_DEFAULT_QUOTA_SIZE = 10**10
 RDM_MEDIA_FILES_DEFAULT_MAX_FILE_SIZE = RDM_MEDIA_FILES_DEFAULT_QUOTA_SIZE
 """Default maximum file size for a bucket in bytes for media files."""
 
+RDM_FILES_DEFAULT_QUOTA_SIZE = None
+"""Default size for a bucket in bytes for files."""
+
+RDM_FILES_DEFAULT_MAX_FILE_SIZE = RDM_FILES_DEFAULT_QUOTA_SIZE
+"""Default maximum file size for a bucket in bytes for files."""
+
+
 RDM_DATACITE_FUNDER_IDENTIFIERS_PRIORITY = ("ror", "doi", "grid", "isni", "gnd")
 """Priority of funder identifiers types to be used for DataCite serialization."""
 
