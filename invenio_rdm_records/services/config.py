@@ -28,7 +28,12 @@ from invenio_drafts_resources.services.records.config import (
 )
 from invenio_drafts_resources.services.records.search_params import AllVersionsParam
 from invenio_indexer.api import RecordIndexer
-from invenio_records_resources.services import ConditionalLink, FileServiceConfig
+from invenio_records_resources.services import (
+    ConditionalLink,
+    FileServiceConfig,
+    RecordLink,
+    pagination_links,
+)
 from invenio_records_resources.services.base.config import (
     ConfiguratorMixin,
     FromConfig,
@@ -41,10 +46,6 @@ from invenio_records_resources.services.files.links import FileLink
 from invenio_records_resources.services.files.schema import FileSchema
 from invenio_records_resources.services.records.config import (
     RecordServiceConfig as BaseRecordServiceConfig,
-)
-from invenio_records_resources.services.records.links import (
-    RecordLink,
-    pagination_links,
 )
 from invenio_records_resources.services.records.params import (
     FacetsParam,
@@ -139,6 +140,25 @@ def lock_edit_published_files(service, identity, record=None, draft=None):
     Return False to allow editing of published files or True otherwise.
     """
     return True
+
+
+class RecordPIDLink(Link):
+    """Record PID link."""
+
+    def vars(self, record, vars):
+        """Add record PID to vars."""
+        vars.update(
+            {
+                f"pid_{scheme}": pid["identifier"]
+                for (scheme, pid) in record.pids.items()
+            }
+        )
+        vars.update(
+            {
+                f"parent_pid_{scheme}": pid["identifier"]
+                for (scheme, pid) in record.parent.pids.items()
+            }
+        )
 
 
 #
@@ -275,6 +295,28 @@ class RDMFileRecordServiceConfig(FileServiceConfig, ConfiguratorMixin):
     file_schema = FileSchema
 
 
+# Helper link definitions
+record_doi_link = ConditionalLink(
+    cond=is_datacite_test,
+    if_=RecordPIDLink("https://handle.stage.datacite.org/{+pid_doi}", when=has_doi),
+    else_=RecordPIDLink("https://doi.org/{+pid_doi}", when=has_doi),
+)
+record_doi_html_link = RecordPIDLink("{+ui}/doi/{+pid_doi}", when=is_record_and_has_doi)
+parent_doi_link = ConditionalLink(
+    cond=is_datacite_test,
+    if_=RecordPIDLink(
+        "https://handle.stage.datacite.org/{+parent_pid_doi}",
+        when=is_record_or_draft_and_has_parent_doi,
+    ),
+    else_=RecordPIDLink(
+        "https://doi.org/{+pid_doi}", when=is_record_or_draft_and_has_parent_doi
+    ),
+)
+parent_doi_html_link = RecordPIDLink(
+    "{+ui}/doi/{+parent_pid_doi}", when=is_record_or_draft_and_has_parent_doi
+)
+
+
 class RDMRecordServiceConfig(RecordServiceConfig, ConfiguratorMixin):
     """RDM record draft service config."""
 
@@ -360,6 +402,7 @@ class RDMRecordServiceConfig(RecordServiceConfig, ConfiguratorMixin):
 
     # Links
     links_item = {
+        # Record
         "self": ConditionalLink(
             cond=is_record,
             if_=RecordLink("{+api}/records/{id}"),
@@ -370,39 +413,9 @@ class RDMRecordServiceConfig(RecordServiceConfig, ConfiguratorMixin):
             if_=RecordLink("{+ui}/records/{id}"),
             else_=RecordLink("{+ui}/uploads/{id}"),
         ),
-        "self_doi": Link(
-            "{+ui}/doi/{+pid_doi}",
-            when=is_record_and_has_doi,
-            vars=lambda record, vars: vars.update(
-                {
-                    f"pid_{scheme}": pid["identifier"]
-                    for (scheme, pid) in record.pids.items()
-                }
-            ),
-        ),
-        "doi": ConditionalLink(
-            cond=is_datacite_test,
-            if_=Link(
-                "https://handle.stage.datacite.org/{+pid_doi}",
-                when=has_doi,
-                vars=lambda record, vars: vars.update(
-                    {
-                        f"pid_{scheme}": pid["identifier"]
-                        for (scheme, pid) in record.pids.items()
-                    }
-                ),
-            ),
-            else_=Link(
-                "https://doi.org/{+pid_doi}",
-                when=has_doi,
-                vars=lambda record, vars: vars.update(
-                    {
-                        f"pid_{scheme}": pid["identifier"]
-                        for (scheme, pid) in record.pids.items()
-                    }
-                ),
-            ),
-        ),
+        "doi": record_doi_link,
+        "self_doi": record_doi_link,
+        "self_doi_html": record_doi_html_link,
         # Parent
         "parent": RecordLink(
             "{+api}/records/{+parent_id}",
@@ -418,16 +431,9 @@ class RDMRecordServiceConfig(RecordServiceConfig, ConfiguratorMixin):
                 {"parent_id": record.parent.pid.pid_value}
             ),
         ),
-        "parent_doi": Link(
-            "{+ui}/doi/{+pid_doi}",
-            when=is_record_or_draft_and_has_parent_doi,
-            vars=lambda record, vars: vars.update(
-                {
-                    f"pid_{scheme}": pid["identifier"]
-                    for (scheme, pid) in record.parent.pids.items()
-                }
-            ),
-        ),
+        "parent_doi": parent_doi_link,
+        "parent_doi_html": parent_doi_html_link,
+        # IIIF
         "self_iiif_manifest": ConditionalLink(
             cond=is_record,
             if_=RecordLink("{+api}/iiif/record:{id}/manifest"),
@@ -438,6 +444,7 @@ class RDMRecordServiceConfig(RecordServiceConfig, ConfiguratorMixin):
             if_=RecordLink("{+api}/iiif/record:{id}/sequence/default"),
             else_=RecordLink("{+api}/iiif/draft:{id}/sequence/default"),
         ),
+        # Files
         "files": ConditionalLink(
             cond=is_record,
             if_=RecordLink("{+api}/records/{id}/files"),
@@ -470,13 +477,16 @@ class RDMRecordServiceConfig(RecordServiceConfig, ConfiguratorMixin):
                 when=archive_download_enabled,
             ),
         ),
+        # Versioning
         "latest": RecordLink("{+api}/records/{id}/versions/latest", when=is_record),
         "latest_html": RecordLink("{+ui}/records/{id}/latest", when=is_record),
+        "versions": RecordLink("{+api}/records/{id}/versions"),
         "draft": RecordLink("{+api}/records/{id}/draft", when=is_record),
         "record": RecordLink("{+api}/records/{id}", when=is_draft),
         # TODO: record_html temporarily needed for DOI registration, until
         # problems with self_doi has been fixed
         "record_html": RecordLink("{+ui}/records/{id}", when=is_draft),
+        # Actions
         "publish": RecordLink(
             "{+api}/records/{id}/draft/actions/publish", when=is_draft
         ),
@@ -485,7 +495,9 @@ class RDMRecordServiceConfig(RecordServiceConfig, ConfiguratorMixin):
             "{+api}/records/{id}/draft/actions/submit-review",
             when=is_draft_and_has_review,
         ),
-        "versions": RecordLink("{+api}/records/{id}/versions"),
+        # TODO: only include link when DOI support is enabled.
+        "reserve_doi": RecordLink("{+api}/records/{id}/draft/pids/doi"),
+        # Access
         "access_links": RecordLink("{+api}/records/{id}/access/links"),
         "access_grants": RecordLink("{+api}/records/{id}/access/grants"),
         "access_users": RecordLink("{+api}/records/{id}/access/users"),
@@ -494,12 +506,12 @@ class RDMRecordServiceConfig(RecordServiceConfig, ConfiguratorMixin):
         ),
         "access_request": RecordLink("{+api}/records/{id}/access/request"),
         "access": RecordLink("{+api}/records/{id}/access"),
-        # TODO: only include link when DOI support is enabled.
-        "reserve_doi": RecordLink("{+api}/records/{id}/draft/pids/doi"),
+        # Communities
         "communities": RecordLink("{+api}/records/{id}/communities"),
         "communities-suggestions": RecordLink(
             "{+api}/records/{id}/communities-suggestions"
         ),
+        # Requests
         "requests": RecordLink("{+api}/records/{id}/requests"),
     }
 

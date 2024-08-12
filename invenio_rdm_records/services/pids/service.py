@@ -199,9 +199,14 @@ class PIDsService(RecordService):
         # Determine landing page (use scheme specific if available)
         links = self.links_item_tpl.expand(identity, record)
         link_prefix = "parent" if parent else "self"
-        url = links[f"{link_prefix}_html"]
-        if f"{link_prefix}_{scheme}" in links:
-            url = links[f"{link_prefix}_{scheme}"]
+        link_choices = [
+            f"{link_prefix}_{scheme}_html",
+            f"{link_prefix}_html",
+        ]
+        for link_id in link_choices:
+            if link_id in links:
+                url = links[link_id]
+                break
 
         # NOTE: This is not the best place to do this, since we shouldn't be aware of
         #       the fact that the record has a `RelationsField``. However, without
