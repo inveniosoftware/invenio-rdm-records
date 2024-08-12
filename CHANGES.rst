@@ -11,6 +11,11 @@
 Changes
 =======
 
+Version v11.7.0 (released 2024-08-12)
+
+- resources: add vnd.inveniordm.v1+json http header
+- translation: update file paths for strings (UI)
+
 Version v11.6.0 (released 2024-08-07)
 
 - creatibutors: fix buttons order
