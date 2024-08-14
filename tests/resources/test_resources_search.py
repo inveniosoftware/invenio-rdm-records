@@ -37,7 +37,6 @@ def test_advance_record_search(
 
     # Search with regex
     res = client.get("/records", query_string={"q": "/\d{12}/"}, headers=headers)
-    print(res.data)
     assert res.status_code == 200
     assert res.json["hits"]["total"] == 1
     records = res.json["hits"]["hits"]
@@ -46,5 +45,25 @@ def test_advance_record_search(
     # Search with forward slash
     res = client.get("/records", query_string={"q": "/"}, headers=headers)
     assert res.status_code == 200
+
+    # Search with punctuation on title.original subfield (standard)
+    res = client.get(
+        "/records",
+        query_string={"q": "metadata.title.original:romans!%20sto.ry"},
+        headers=headers,
+    )
+    assert res.status_code == 200
+    assert res.json["hits"]["total"] == 0
+
+    # Search with punctuation on title field (analyzed)
+    res = client.get(
+        "/records",
+        query_string={"q": "metadata.title:romans!%20sto.ry"},
+        headers=headers,
+    )
+    assert res.status_code == 200
+    assert res.json["hits"]["total"] == 1
+    records = res.json["hits"]["hits"]
+    assert records[0]["metadata"]["title"] == record_title
 
     uploader.logout(client)
