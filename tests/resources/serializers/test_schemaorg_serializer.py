@@ -132,9 +132,11 @@ def test_schemaorg_serializer_full_record(running_app, full_record_to_dict):
     serialized_record = serializer.dump_obj(full_record_to_dict)
 
     assert serialized_record["dateModified"]
+    assert serialized_record["dateCreated"]
 
     # Delete to facilitate the comparison with the expected data
     del serialized_record["dateModified"]
+    del serialized_record["dateCreated"]
 
     assert serialized_record == expected_data
 
