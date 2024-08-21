@@ -11,6 +11,15 @@
 Changes
 =======
 
+Version v11.8.0 (released 2024-08-21)
+
+- pids: fix parent DOI link generation
+- schemaorg: add ``dateCreated`` field (closes #1777)
+- i18n: push translations
+- package: bump react-invenio-forms
+- subjects: remove suggest from dropdown if not required
+    * closes https://github.com/inveniosoftware/invenio-app-rdm/issues/2767
+
 Version v11.7.0 (released 2024-08-12)
 
 - resources: add vnd.inveniordm.v1+json http header
