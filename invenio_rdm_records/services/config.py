@@ -156,7 +156,7 @@ def lock_edit_published_files(service, identity, record=None, draft=None):
 
 def record_thumbnail_sizes():
     """Return configured sizes for thumbnails."""
-    return current_app.config.get("APP_RDM_RECORD_THUMBNAIL_SIZES",[])
+    return current_app.config.get("APP_RDM_RECORD_THUMBNAIL_SIZES", [])
 
 
 def record_thumbnail(size, record=None, **kwargs):
@@ -180,7 +180,7 @@ def record_thumbnail(size, record=None, **kwargs):
             None,
         )
         if file_key:
-            return f"{file_key}/full/{size},/0/default.png"
+            return f"{file_key}/full/^{size},/0/default.png"
 
     raise NotFound("Thumbnail not found")
 
