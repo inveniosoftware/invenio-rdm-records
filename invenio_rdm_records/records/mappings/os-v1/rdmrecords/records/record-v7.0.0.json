@@ -25,7 +25,11 @@
       "metadata.publication_date",
       "metadata.publisher",
       "metadata.subjects.subject",
-      "metadata.version"
+      "metadata.version",
+      "metadata.dates.description",
+      "metadata.additional_descriptions.description",
+      "metadata.references.reference",
+      "metadata.additional_titles.title"
     ],
     "analysis": {
       "char_filter": {
