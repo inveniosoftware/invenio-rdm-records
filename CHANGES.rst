@@ -1,7 +1,7 @@
 
 ..
     Copyright (C) 2019-2024 CERN.
-    Copyright (C) 2019 Northwestern University.
+    Copyright (C) 2019-2024 Northwestern University.
 
 
     Invenio-RDM-Records is free software; you can redistribute it and/or
@@ -10,6 +10,10 @@
 
 Changes
 =======
+
+Version v12.0.0 (released 2024-08-22)
+
+- mappings: add analyzers and filters to improve results when searching records
 
 Version v11.8.0 (released 2024-08-21)
 
