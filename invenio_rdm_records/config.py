@@ -559,16 +559,19 @@ RDM_RECORDS_MAX_FILES_COUNT = 100
 RDM_RECORDS_MAX_MEDIA_FILES_COUNT = 100
 """Max amount of media files allowed to upload in the deposit form."""
 
-RDM_MEDIA_FILES_DEFAULT_QUOTA_SIZE = 10**10
+RDM_MEDIA_FILES_DEFAULT_QUOTA_SIZE = 10 * (10**9)  # 10 GB
 """Default size for a bucket in bytes for media files."""
 
-RDM_MEDIA_FILES_DEFAULT_MAX_FILE_SIZE = RDM_MEDIA_FILES_DEFAULT_QUOTA_SIZE
+RDM_MEDIA_FILES_DEFAULT_MAX_FILE_SIZE = 10 * (10**9)  # 10 GB
 """Default maximum file size for a bucket in bytes for media files."""
 
+# For backwards compatibility,
+# FILES_REST_DEFAULT_QUOTA_SIZE & FILES_REST_DEFAULT_MAX_FILE_SIZE
+# are used respectively instead
 RDM_FILES_DEFAULT_QUOTA_SIZE = None
 """Default size for a bucket in bytes for files."""
 
-RDM_FILES_DEFAULT_MAX_FILE_SIZE = RDM_FILES_DEFAULT_QUOTA_SIZE
+RDM_FILES_DEFAULT_MAX_FILE_SIZE = None
 """Default maximum file size for a bucket in bytes for files."""
 
 
