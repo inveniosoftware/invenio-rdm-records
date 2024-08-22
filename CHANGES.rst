@@ -11,6 +11,10 @@
 Changes
 =======
 
+Version v12.0.1 (released 2024-08-22)
+
+- bump invenio-vocabularies
+
 Version v12.0.0 (released 2024-08-22)
 
 - mappings: add analyzers and filters to improve results when searching records
