@@ -67,6 +67,7 @@ from invenio_requests.services.requests import RequestItem, RequestList
 from invenio_requests.services.requests.config import RequestSearchOptions
 from requests import Request
 from werkzeug.exceptions import NotFound
+from werkzeug.local import LocalProxy
 
 from invenio_rdm_records.records.processors.tiles import TilesProcessor
 
@@ -154,23 +155,27 @@ def lock_edit_published_files(service, identity, record=None, draft=None):
     return True
 
 
+def has_image_files(record, ctx):
+    """Return if the record has any image file."""
+    for file in record.files.entries:
+        file_ext = splitext(file)[1].replace(".", "").lower()
+        if file_ext in current_app.config["IIIF_FORMATS"]:
+            return True
+
+
 def record_thumbnail_sizes():
     """Return configured sizes for thumbnails."""
     return current_app.config.get("APP_RDM_RECORD_THUMBNAIL_SIZES", [])
 
 
-def record_thumbnail(size, record=None, **kwargs):
+def get_record_thumbnail_file(record, **kwargs):
     """Generate the URL for a record's thumbnail."""
-    # Verify against allowed thumbnail sizes
-    if size not in current_app.config["APP_RDM_RECORD_THUMBNAIL_SIZES"]:
-        raise NotFound("Thumbnail size not allowed")
-
     files = record.files
     default_preview = files.get("default_preview")
     file_entries = files.entries
     image_extensions = current_app.config["IIIF_FORMATS"]
     if file_entries:
-        # Verify file has allowed extension and selects default preview file if present else the first valid file
+        # Verify file has allowed extension and select the default preview file if present else the first valid file
         file_key = next(
             (
                 key
@@ -179,10 +184,7 @@ def record_thumbnail(size, record=None, **kwargs):
             ),
             None,
         )
-        if file_key:
-            return f"{file_key}/full/^{size},/0/default.png"
-
-    raise NotFound("Thumbnail not found")
+        return file_key
 
 
 class RecordPIDLink(Link):
@@ -338,7 +340,7 @@ class RDMFileRecordServiceConfig(FileServiceConfig, ConfiguratorMixin):
     file_schema = FileSchema
 
 
-class RDMThumbnailLink(RecordLink):
+class ThumbnailLinks(RecordLink):
     """RDM thumbnail links dictionary."""
 
     def __init__(self, *args, sizes=None, **kwargs):
@@ -356,15 +358,10 @@ class RDMThumbnailLink(RecordLink):
         vars = preprocess_vars(vars)
 
         thumbnail_links = {}
-        for size in self._sizes():
-            try:
-                thumbnail_url = record_thumbnail(size, record=obj)
-                thumbnail_links[str(size)] = (
-                    self._uritemplate.expand(**vars) + thumbnail_url
-                )
-            except NotFound:
-                # Handle the case where the thumbnail does not exist
-                thumbnail_links[str(size)] = None
+        vars["file_key"] = get_record_thumbnail_file(record=obj)
+        for size in self._sizes:
+            vars["size"] = size
+            thumbnail_links[str(size)] = self._uritemplate.expand(**vars)
         return thumbnail_links
 
 
@@ -528,9 +525,10 @@ class RDMRecordServiceConfig(RecordServiceConfig, ConfiguratorMixin):
             if_=RecordLink("{+api}/records/{id}/media-files"),
             else_=RecordLink("{+api}/records/{id}/draft/media-files"),
         ),
-        "thumbnails": RDMThumbnailLink(
-            "{+api}/iiif/record:{id}:",
-            sizes=record_thumbnail_sizes,
+        "thumbnails": ThumbnailLinks(
+            "{+api}/iiif/record:{id}:{file_key}/full/^{size},/0/default.jpg",
+            sizes=LocalProxy(record_thumbnail_sizes),
+            when=has_image_files,
         ),
         "archive": ConditionalLink(
             cond=is_record,

@@ -64,7 +64,6 @@ def test_draft_links(client, draft_json, minimal_record, headers):
         "access_links": f"https://127.0.0.1:5000/api/records/{pid_value}/access/links",  # noqa
         "files": f"https://127.0.0.1:5000/api/records/{pid_value}/draft/files",
         "media_files": f"https://127.0.0.1:5000/api/records/{pid_value}/draft/media-files",
-        "thumbnails": {},
         "archive": f"https://127.0.0.1:5000/api/records/{pid_value}/draft/files-archive",  # noqa
         "archive_media": f"https://127.0.0.1:5000/api/records/{pid_value}/draft/media-files-archive",  # noqa
         "reserve_doi": f"https://127.0.0.1:5000/api/records/{pid_value}/draft/pids/doi",  # noqa
@@ -102,7 +101,6 @@ def test_record_links(client, published_json, headers):
         "draft": f"https://127.0.0.1:5000/api/records/{pid_value}/draft",
         "files": f"https://127.0.0.1:5000/api/records/{pid_value}/files",
         "media_files": f"https://127.0.0.1:5000/api/records/{pid_value}/media-files",
-        "thumbnails": {},
         "archive": f"https://127.0.0.1:5000/api/records/{pid_value}/files-archive",
         "archive_media": f"https://127.0.0.1:5000/api/records/{pid_value}/media-files-archive",
         "parent": f"https://127.0.0.1:5000/api/records/{parent_pid_value}",
