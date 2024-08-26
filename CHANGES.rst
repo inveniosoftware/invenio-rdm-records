@@ -11,6 +11,12 @@
 Changes
 =======
 
+Version v12.0.2 (released 2024-08-26)
+
+- add permissions checks for community submission policy
+- update file quota and size vars
+- add quota config for media_files bucket
+
 Version v12.0.1 (released 2024-08-22)
 
 - bump invenio-vocabularies
