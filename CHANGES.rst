@@ -11,9 +11,12 @@
 Changes
 =======
 
-Version v12.0.2 (released 2024-08-26)
+Version v12.0.3 (released 2024-08-27)
 
 - add permissions checks for community submission policy
+
+Version v12.0.2 (released 2024-08-26)
+
 - update file quota and size vars
 - add quota config for media_files bucket
 
