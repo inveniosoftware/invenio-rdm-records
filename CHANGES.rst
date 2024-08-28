@@ -11,6 +11,10 @@
 Changes
 =======
 
+Version v12.0.4 (released 2024-08-28)
+
+- stats: add missing "is_machine" field
+
 Version v12.0.3 (released 2024-08-27)
 
 - add permissions checks for community submission policy
