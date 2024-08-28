@@ -559,7 +559,7 @@ export class CreatibutorsModal extends Component {
                     />
                   </Form.Group>
                   {_get(values, typeFieldPath, "") === CREATIBUTOR_TYPE.PERSON ? (
-                    <div>
+                    <>
                       {autocompleteNames !== NamesAutocompleteOptions.OFF && (
                         <RemoteSelectField
                           selectOnBlur={false}
@@ -587,7 +587,7 @@ export class CreatibutorsModal extends Component {
                         />
                       )}
                       {showPersonForm && (
-                        <div>
+                        <>
                           <Form.Group widths="equal">
                             <TextField
                               label={i18next.t("Family name")}
@@ -617,9 +617,9 @@ export class CreatibutorsModal extends Component {
                             fieldPath={affiliationsFieldPath}
                             selectRef={this.affiliationsRef}
                           />
-                        </div>
+                        </>
                       )}
-                    </div>
+                    </>
                   ) : (
                     <>
                       {autocompleteNames !== NamesAutocompleteOptions.OFF && (
@@ -678,18 +678,16 @@ export class CreatibutorsModal extends Component {
                   {(_get(values, typeFieldPath) === CREATIBUTOR_TYPE.ORGANIZATION ||
                     (showPersonForm &&
                       _get(values, typeFieldPath) === CREATIBUTOR_TYPE.PERSON)) && (
-                    <div>
-                      <SelectField
-                        fieldPath={roleFieldPath}
-                        label={i18next.t("Role")}
-                        options={roleOptions}
-                        placeholder={i18next.t("Select role")}
-                        {...(this.isCreator() && { clearable: true })}
-                        required={!this.isCreator()}
-                        optimized
-                        scrolling
-                      />
-                    </div>
+                    <SelectField
+                      fieldPath={roleFieldPath}
+                      label={i18next.t("Role")}
+                      options={roleOptions}
+                      placeholder={i18next.t("Select role")}
+                      {...(this.isCreator() && { clearable: true })}
+                      required={!this.isCreator()}
+                      optimized
+                      scrolling
+                    />
                   )}
                 </Form>
               </Modal.Content>
