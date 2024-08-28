@@ -78,6 +78,7 @@ def test_draft_links(client, draft_json, minimal_record, headers):
         "access_users": f"https://127.0.0.1:5000/api/records/{pid_value}/access/users",
         "access_groups": f"https://127.0.0.1:5000/api/records/{pid_value}/access/groups",
     }
+
     assert expected_links == created_draft_links == read_draft_links
 
 
@@ -122,6 +123,7 @@ def test_record_links(client, published_json, headers):
         "access_users": f"https://127.0.0.1:5000/api/records/{pid_value}/access/users",
         "access_groups": f"https://127.0.0.1:5000/api/records/{pid_value}/access/groups",
     }
+
     assert expected_links == published_record_links == read_record_links
 
 

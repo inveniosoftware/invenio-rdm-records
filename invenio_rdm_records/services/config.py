@@ -11,7 +11,10 @@
 
 """RDM Record Service."""
 
+import itertools
+from copy import deepcopy
 from os.path import splitext
+from pathlib import Path
 
 from flask import current_app
 from invenio_communities.communities.records.api import Community
@@ -41,11 +44,19 @@ from invenio_records_resources.services.base.config import (
     SearchOptionsMixin,
     ServiceConfig,
 )
-from invenio_records_resources.services.base.links import Link, NestedLinks
+from invenio_records_resources.services.base.links import (
+    Link,
+    NestedLinks,
+    preprocess_vars,
+)
 from invenio_records_resources.services.files.links import FileLink
 from invenio_records_resources.services.files.schema import FileSchema
 from invenio_records_resources.services.records.config import (
     RecordServiceConfig as BaseRecordServiceConfig,
+)
+from invenio_records_resources.services.records.links import (
+    RecordLink,
+    pagination_links,
 )
 from invenio_records_resources.services.records.params import (
     FacetsParam,
@@ -55,6 +66,8 @@ from invenio_records_resources.services.records.params import (
 from invenio_requests.services.requests import RequestItem, RequestList
 from invenio_requests.services.requests.config import RequestSearchOptions
 from requests import Request
+from werkzeug.exceptions import NotFound
+from werkzeug.local import LocalProxy
 
 from invenio_rdm_records.records.processors.tiles import TilesProcessor
 
@@ -140,6 +153,38 @@ def lock_edit_published_files(service, identity, record=None, draft=None):
     Return False to allow editing of published files or True otherwise.
     """
     return True
+
+
+def has_image_files(record, ctx):
+    """Return if the record has any image file."""
+    for file in record.files.entries:
+        file_ext = splitext(file)[1].replace(".", "").lower()
+        if file_ext in current_app.config["IIIF_FORMATS"]:
+            return True
+
+
+def record_thumbnail_sizes():
+    """Return configured sizes for thumbnails."""
+    return current_app.config.get("APP_RDM_RECORD_THUMBNAIL_SIZES", [])
+
+
+def get_record_thumbnail_file(record, **kwargs):
+    """Generate the URL for a record's thumbnail."""
+    files = record.files
+    default_preview = files.get("default_preview")
+    file_entries = files.entries
+    image_extensions = current_app.config["IIIF_FORMATS"]
+    if file_entries:
+        # Verify file has allowed extension and select the default preview file if present else the first valid file
+        file_key = next(
+            (
+                key
+                for key in itertools.chain([default_preview], file_entries)
+                if key and Path(key).suffix[1:] in image_extensions
+            ),
+            None,
+        )
+        return file_key
 
 
 class RecordPIDLink(Link):
@@ -293,6 +338,31 @@ class RDMFileRecordServiceConfig(FileServiceConfig, ConfiguratorMixin):
     }
 
     file_schema = FileSchema
+
+
+class ThumbnailLinks(RecordLink):
+    """RDM thumbnail links dictionary."""
+
+    def __init__(self, *args, sizes=None, **kwargs):
+        """Constructor."""
+        self._sizes = sizes
+        super().__init__(*args, **kwargs)
+
+    def expand(self, obj, context):
+        """Expand the thumbs size dictionary of URIs."""
+        vars = {}
+        vars.update(deepcopy(context))
+        self.vars(obj, vars)
+        if self._vars_func:
+            self._vars_func(obj, vars)
+        vars = preprocess_vars(vars)
+
+        thumbnail_links = {}
+        vars["file_key"] = get_record_thumbnail_file(record=obj)
+        for size in self._sizes:
+            vars["size"] = size
+            thumbnail_links[str(size)] = self._uritemplate.expand(**vars)
+        return thumbnail_links
 
 
 # Helper link definitions
@@ -454,6 +524,11 @@ class RDMRecordServiceConfig(RecordServiceConfig, ConfiguratorMixin):
             cond=is_record,
             if_=RecordLink("{+api}/records/{id}/media-files"),
             else_=RecordLink("{+api}/records/{id}/draft/media-files"),
+        ),
+        "thumbnails": ThumbnailLinks(
+            "{+api}/iiif/record:{id}:{file_key}/full/^{size},/0/default.jpg",
+            sizes=LocalProxy(record_thumbnail_sizes),
+            when=has_image_files,
         ),
         "archive": ConditionalLink(
             cond=is_record,
