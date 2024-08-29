@@ -246,10 +246,9 @@ export class CreatibutorsModal extends Component {
       icon = "/static/images/gnd-icon.svg";
       link = "https://d-nb.info/gnd/" + identifier.identifier;
     } else if (identifier.scheme === "ror") {
-      icon = "/static/images/ror-icon.svg";
-      link = "https://ror.org/" + identifier.identifier;
+      return; // ROR doesn't recommend displaying ROR IDs
     } else if (identifier.scheme === "isni" || identifier.scheme === "grid") {
-      return null;
+      return;
     } else {
       return (
         <>
@@ -261,15 +260,27 @@ export class CreatibutorsModal extends Component {
     return (
       <span key={identifier.identifier}>
         <a href={link} target="_blank" rel="noopener noreferrer">
-          <Image
-            src={icon}
-            className="inline-id-icon ml-5 mr-5"
-            verticalAlign="middle"
-          />
+          <Image src={icon} className="inline-id-icon mr-5" verticalAlign="middle" />
           {identifier.scheme === "orcid" ? identifier.identifier : null}
         </a>
       </span>
     );
+  };
+
+  makeSubheader = (creatibutor) => {
+    const { isOrganization } = this.state;
+
+    if (isOrganization) {
+      return creatibutor.acronym;
+    } else {
+      let affNames = "";
+      if ("affiliations" in creatibutor) {
+        affNames = creatibutor.affiliations
+          .map((affiliation) => affiliation.name)
+          .join(", ");
+      }
+      return affNames;
+    }
   };
 
   serializeSuggestions = (creatibutors) => {
@@ -278,21 +289,13 @@ export class CreatibutorsModal extends Component {
       creatibutor.affiliations = creatibutor.affiliations || [];
       creatibutor.identifiers = creatibutor.identifiers || [];
 
-      let affNames = "";
-      if ("affiliations" in creatibutor) {
-        creatibutor.affiliations.forEach((affiliation, idx) => {
-          affNames += affiliation.name;
-          if (idx < creatibutor.affiliations.length - 1) {
-            affNames += ", ";
-          }
-        });
-      }
+      const subheader = this.makeSubheader(creatibutor);
 
       const idString = [];
       creatibutor.identifiers?.forEach((i) => {
-        idString.push(this.makeIdEntry(i));
+        const idEntry = this.makeIdEntry(i);
+        if (idEntry) idString.push(idEntry);
       });
-      const { isOrganization } = this.state;
 
       return {
         text: creatibutor.name,
@@ -302,9 +305,7 @@ export class CreatibutorsModal extends Component {
         content: (
           <Header>
             {creatibutor.name} {idString.length ? <>({idString})</> : null}
-            <Header.Subheader>
-              {isOrganization ? creatibutor.acronym : affNames}
-            </Header.Subheader>
+            <Header.Subheader>{subheader}</Header.Subheader>
           </Header>
         ),
       };
