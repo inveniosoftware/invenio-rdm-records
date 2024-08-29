@@ -271,15 +271,22 @@ export class CreatibutorsModal extends Component {
     const { isOrganization } = this.state;
 
     if (isOrganization) {
-      return creatibutor.acronym;
+      const locationPart = [creatibutor?.location_name, creatibutor?.country_name]
+        .filter(Boolean)
+        .join(", ");
+
+      const typesPart = creatibutor?.types
+        .map((type) => type.charAt(0).toUpperCase() + type.slice(1))
+        .join(", ");
+
+      return `${locationPart}${
+        locationPart && typesPart ? " — " : ""
+      }${typesPart}`.trim();
     } else {
-      let affNames = "";
-      if ("affiliations" in creatibutor) {
-        affNames = creatibutor.affiliations
-          .map((affiliation) => affiliation.name)
-          .join(", ");
-      }
-      return affNames;
+      return (
+        creatibutor?.affiliations?.map((affiliation) => affiliation.name)?.join(", ") ||
+        ""
+      );
     }
   };
 
@@ -290,6 +297,8 @@ export class CreatibutorsModal extends Component {
       creatibutor.identifiers = creatibutor.identifiers || [];
 
       const subheader = this.makeSubheader(creatibutor);
+      let name = creatibutor.name;
+      if (creatibutor.acronym) name += " (" + creatibutor.acronym + ")";
 
       const idString = [];
       creatibutor.identifiers?.forEach((i) => {
@@ -304,7 +313,7 @@ export class CreatibutorsModal extends Component {
         key: creatibutor.id,
         content: (
           <Header>
-            {creatibutor.name} {idString.length ? <>({idString})</> : null}
+            {name} {idString.length ? <>({idString})</> : null}
             <Header.Subheader>{subheader}</Header.Subheader>
           </Header>
         ),
