@@ -11,6 +11,10 @@
 Changes
 =======
 
+Version v12.1.0 (released 2024-08-30)
+
+- config: added links for thumbnails (#1799)
+
 Version v12.0.4 (released 2024-08-28)
 
 - stats: add missing "is_machine" field
