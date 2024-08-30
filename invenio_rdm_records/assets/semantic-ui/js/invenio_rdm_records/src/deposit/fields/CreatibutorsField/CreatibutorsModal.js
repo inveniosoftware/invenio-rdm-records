@@ -238,13 +238,10 @@ export class CreatibutorsModal extends Component {
     const { isOrganization, showPersonForm } = this.state;
     const { autocompleteNames } = this.props;
 
-    return AffiliationsSuggestions(
-      creatibutors,
-      isOrganization,
-      showPersonForm,
-      autocompleteNames,
-      NamesAutocompleteOptions
-    );
+    const showManualEntry =
+      autocompleteNames === NamesAutocompleteOptions.SEARCH_ONLY && !showPersonForm;
+
+    return AffiliationsSuggestions(creatibutors, isOrganization, showManualEntry);
   };
 
   updateIdentifiersAndAffiliations(
