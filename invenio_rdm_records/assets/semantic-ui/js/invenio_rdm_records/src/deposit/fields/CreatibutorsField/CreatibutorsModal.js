@@ -22,7 +22,7 @@ import {
   TextField,
   AffiliationsSuggestions,
 } from "react-invenio-forms";
-import { Button, Form, Header, Modal } from "semantic-ui-react";
+import { Button, Form, Modal } from "semantic-ui-react";
 import * as Yup from "yup";
 import { AffiliationsField } from "./../AffiliationsField";
 import { CreatibutorsIdentifiers } from "./CreatibutorsIdentifiers";
@@ -234,7 +234,7 @@ export class CreatibutorsModal extends Component {
     }
   };
 
-  SuggestionsWrapper = (creatibutors) => {
+  serializeAffiliations = (creatibutors) => {
     const { isOrganization, showPersonForm } = this.state;
     const { autocompleteNames } = this.props;
 
@@ -486,7 +486,7 @@ export class CreatibutorsModal extends Component {
                           // Disable UI-side filtering of search results
                           search={(options) => options}
                           suggestionAPIUrl="/api/names"
-                          serializeSuggestions={this.SuggestionsWrapper}
+                          serializeSuggestions={this.serializeAffiliations}
                           onValueChange={this.onPersonSearchChange}
                           ref={this.namesAutocompleteRef}
                         />
@@ -548,7 +548,7 @@ export class CreatibutorsModal extends Component {
                           // Disable UI-side filtering of search results
                           search={(options) => options}
                           suggestionAPIUrl="/api/affiliations"
-                          serializeSuggestions={this.SuggestionsWrapper}
+                          serializeSuggestions={this.serializeAffiliations}
                           onValueChange={this.onOrganizationSearchChange}
                         />
                       )}

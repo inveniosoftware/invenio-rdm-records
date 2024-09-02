@@ -18,7 +18,7 @@ import { i18next } from "@translations/invenio_rdm_records/i18next";
 
 /**Affiliation input component */
 export class AffiliationsField extends Component {
-  SuggestionsWrapper = (affiliations) => {
+  serializeAffiliations = (affiliations) => {
     return AffiliationsSuggestions(affiliations, true, false);
   };
 
@@ -35,7 +35,7 @@ export class AffiliationsField extends Component {
                 Accept: "application/vnd.inveniordm.v1+json",
               }}
               initialSuggestions={getIn(values, fieldPath, [])}
-              serializeSuggestions={this.SuggestionsWrapper}
+              serializeSuggestions={this.serializeAffiliations}
               placeholder={i18next.t("Search or create affiliation")}
               label={
                 <FieldLabel
