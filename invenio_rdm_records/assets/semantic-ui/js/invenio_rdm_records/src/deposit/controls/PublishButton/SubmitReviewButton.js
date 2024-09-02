@@ -41,13 +41,26 @@ class SubmitReviewButtonComponent extends Component {
     this.closeConfirmModal();
   };
 
-  isDisabled = (numberOfFiles, disableSubmitForReviewButton) => {
+  isDisabled = (disableSubmitForReviewButton, filesState) => {
     const { formik } = this.props;
     const { values, isSubmitting } = formik;
 
+    if (disableSubmitForReviewButton || isSubmitting) {
+      return true;
+    }
+
     const filesEnabled = _get(values, "files.enabled", false);
-    const filesMissing = filesEnabled && !numberOfFiles;
-    return isSubmitting || filesMissing || disableSubmitForReviewButton;
+    const filesArray = Object.values(filesState.entries ?? {});
+    const filesMissing = filesEnabled && filesArray.length === 0;
+
+    if (filesMissing) {
+      return true;
+    }
+
+    // All files must be finished uploading
+    const allCompleted = filesArray.every(file => file.status === "finished")
+
+    return !allCompleted;
   };
 
   render() {
@@ -59,8 +72,8 @@ class SubmitReviewButtonComponent extends Component {
       directPublish,
       formik,
       isRecordSubmittedForReview,
-      numberOfFiles,
       publishModalExtraContent,
+      filesState,
       ...ui
     } = this.props;
 
@@ -80,7 +93,7 @@ class SubmitReviewButtonComponent extends Component {
     return (
       <>
         <Button
-          disabled={this.isDisabled(numberOfFiles, disableSubmitForReviewButton)}
+          disabled={this.isDisabled(disableSubmitForReviewButton, filesState)}
           name="SubmitReview"
           onClick={this.openConfirmModal}
           positive={directPublish}
@@ -112,20 +125,20 @@ SubmitReviewButtonComponent.propTypes = {
   actionState: PropTypes.string,
   actionStateExtra: PropTypes.object.isRequired,
   community: PropTypes.object.isRequired,
-  numberOfFiles: PropTypes.number,
   disableSubmitForReviewButton: PropTypes.bool,
   isRecordSubmittedForReview: PropTypes.bool.isRequired,
   directPublish: PropTypes.bool,
   formik: PropTypes.object.isRequired,
   publishModalExtraContent: PropTypes.string,
+  filesState: PropTypes.object,
 };
 
 SubmitReviewButtonComponent.defaultProps = {
   actionState: undefined,
-  numberOfFiles: undefined,
   disableSubmitForReviewButton: undefined,
   publishModalExtraContent: undefined,
   directPublish: false,
+  filesState: undefined
 };
 
 const mapStateToProps = (state) => ({
@@ -135,8 +148,8 @@ const mapStateToProps = (state) => ({
   isRecordSubmittedForReview: state.deposit.record.status === DepositStatus.IN_REVIEW,
   disableSubmitForReviewButton:
     state.deposit.editorState.ui.disableSubmitForReviewButton,
-  numberOfFiles: Object.values(state.files.entries).length,
   publishModalExtraContent: state.deposit.config.publish_modal_extra,
+  filesState: state.files,
 });
 
 export const SubmitReviewButton = connect(
