@@ -58,7 +58,7 @@ class SubmitReviewButtonComponent extends Component {
     }
 
     // All files must be finished uploading
-    const allCompleted = filesArray.every(file => file.status === "finished")
+    const allCompleted = filesArray.every((file) => file.status === "finished");
 
     return !allCompleted;
   };
@@ -138,7 +138,7 @@ SubmitReviewButtonComponent.defaultProps = {
   disableSubmitForReviewButton: undefined,
   publishModalExtraContent: undefined,
   directPublish: false,
-  filesState: undefined
+  filesState: undefined,
 };
 
 const mapStateToProps = (state) => ({
