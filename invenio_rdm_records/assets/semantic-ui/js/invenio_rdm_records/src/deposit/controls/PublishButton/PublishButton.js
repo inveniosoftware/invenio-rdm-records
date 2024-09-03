@@ -54,7 +54,7 @@ class PublishButtonComponent extends Component {
     }
 
     // All files must be finished uploading
-    const allCompleted = filesArray.every(file => file.status === "finished")
+    const allCompleted = filesArray.every((file) => file.status === "finished");
 
     return !allCompleted;
   };
