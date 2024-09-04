@@ -30,6 +30,7 @@ from invenio_records_resources.services.records.components import (
     MetadataComponent,
     RelationsComponent,
 )
+from invenio_records_resources.services.uow import TaskOp
 from invenio_requests.tasks import request_moderation
 from invenio_search.engine import dsl
 
@@ -81,7 +82,7 @@ class ContentModerationComponent(ServiceComponent):
 
             if not is_verified:
                 # Spawn a task to request moderation.
-                request_moderation.delay(identity.id)
+                self.uow.register(TaskOp(request_moderation, user_id=identity.id))
 
 
 CommunityServiceComponents = [
