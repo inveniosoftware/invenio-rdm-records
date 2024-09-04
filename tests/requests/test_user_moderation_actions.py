@@ -21,8 +21,8 @@ from invenio_rdm_records.proxies import current_rdm_records_service as records_s
 class MockRequestModerationTask(Task):
     """Mock celery task for moderation request."""
 
-    def delay(*args):
-        user_id = args[0]
+    def apply_async(self, args=None, kwargs=None, **kwargs_):
+        user_id = kwargs["user_id"]
         with db.session.begin_nested():
             try:
                 current_user_moderation_service.request_moderation(
@@ -55,7 +55,7 @@ def test_user_moderation_approve(
     # This is a patch for tests only.
     mocker.patch(
         "invenio_rdm_records.services.components.verified.request_moderation",
-        MockRequestModerationTask,
+        MockRequestModerationTask(),
     )
     new_record = records_service.publish(
         identity=unverified_user.identity, id_=new_version.id
