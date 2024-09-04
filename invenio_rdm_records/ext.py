@@ -11,6 +11,8 @@
 
 """DataCite-based data model for Invenio."""
 
+from warnings import warn
+
 from flask import Blueprint
 from flask_iiif import IIIF
 from flask_principal import identity_loaded
@@ -126,6 +128,19 @@ class InvenioRDMRecords(object):
         # set default communities namespaces to the global RDM_NAMESPACES
         if not app.config.get("COMMUNITIES_NAMESPACES"):
             app.config["COMMUNITIES_NAMESPACES"] = app.config["RDM_NAMESPACES"]
+
+        if not app.config.get("RDM_FILES_DEFAULT_QUOTA_SIZE"):
+            warn(
+                "The configuration value 'RDM_FILES_DEFAULT_QUOTA_SIZE' is not set. In future, please set it "
+                "explicitly to define your quota size, or be aware that the default value used i.e. FILES_REST_DEFAULT_QUOTA_SIZE will be 10 * (10**9) (10 GB).",
+                DeprecationWarning,
+            )
+        if not app.config.get("RDM_FILES_DEFAULT_MAX_FILE_SIZE"):
+            warn(
+                "The configuration value 'RDM_FILES_DEFAULT_MAX_FILE_SIZE' is not set. In future, please set it "
+                "explicitly to define your max file size, or be aware that the default value used i.e. FILES_REST_DEFAULT_MAX_FILE_SIZE will be 10 * (10**9) (10 GB).",
+                DeprecationWarning,
+            )
 
         self.fix_datacite_configs(app)
 

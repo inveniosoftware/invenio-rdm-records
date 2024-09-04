@@ -248,7 +248,7 @@ def app_config(app_config, mock_datacite_client):
         },
     }
 
-    app_config["INDEXER_DEFAULT_INDEX"] = "rdmrecords-records-record-v6.0.0"
+    app_config["INDEXER_DEFAULT_INDEX"] = "rdmrecords-records-record-v7.0.0"
     # Variable not used. We set it to silent warnings
     app_config["JSONSCHEMAS_HOST"] = "not-used"
 
@@ -987,6 +987,15 @@ def closed_review_minimal_community(minimal_community):
     community = deepcopy(minimal_community)
     community["slug"] = "closed-review-community"
     community["access"]["review_policy"] = "closed"
+    return community
+
+
+@pytest.fixture()
+def closed_submission_minimal_community(minimal_community):
+    """Data for a minimal community that restricts record submission."""
+    community = deepcopy(minimal_community)
+    community["slug"] = "closed-submission-community"
+    community["access"]["record_submission_policy"] = "closed"
     return community
 
 
@@ -1972,6 +1981,19 @@ def closed_review_community(
     """Create community with close review policy i.e allow direct publishes."""
     return _community_get_or_create(
         closed_review_minimal_community, community_owner.identity
+    )
+
+
+@pytest.fixture()
+def closed_submission_community(
+    running_app,
+    community_type_record,
+    community_owner,
+    closed_submission_minimal_community,
+):
+    """Create community with close submission policy."""
+    return _community_get_or_create(
+        closed_submission_minimal_community, community_owner.identity
     )
 
 

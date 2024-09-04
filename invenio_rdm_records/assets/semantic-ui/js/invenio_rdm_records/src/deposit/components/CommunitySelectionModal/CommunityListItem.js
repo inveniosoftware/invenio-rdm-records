@@ -27,9 +27,10 @@ export const CommunityListItem = ({ result, record, isInitialSubmission }) => {
   const userMembership = userCommunitiesMemberships[result["id"]];
   const invalidPermissionLevel =
     record.access.record === "public" && result.access.visibility === "restricted";
+  const canSubmitRecord = result.ui.permissions.can_submit_record;
   const hasTheme = get(result, "theme.enabled");
   const dedicatedUpload = isInitialSubmission && hasTheme;
-  const isDisabled = invalidPermissionLevel || dedicatedUpload;
+  const isDisabled = invalidPermissionLevel || dedicatedUpload || !canSubmitRecord;
   const actions = (
     <>
       {invalidPermissionLevel && (
@@ -42,6 +43,21 @@ export const CommunityListItem = ({ result, record, isInitialSubmission }) => {
           ariaLabel={i18next.t("Community inclusion information")}
           content={i18next.t(
             "Submission to this community is only allowed if the record is restricted."
+          )}
+        />
+      )}
+      {!canSubmitRecord && (
+        <InvenioPopup
+          popupId="community-inclusion-info-popup"
+          size="small"
+          trigger={
+            <Icon className="mb-5" color="grey" name="question circle outline" />
+          }
+          ariaLabel={i18next.t(
+            "Submission to this community is only allowed to community members."
+          )}
+          content={i18next.t(
+            "Submission to this community is only allowed to community members."
           )}
         />
       )}

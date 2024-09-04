@@ -36,7 +36,7 @@ theme = WebpackThemeBundle(
                 "react-dnd-html5-backend": "^11.1.0",
                 "react-dropzone": "^11.0.0",
                 "react-i18next": "^11.11.0",
-                "react-invenio-forms": "^3.0.0",
+                "react-invenio-forms": "^4.0.0",
                 "react-searchkit": "^2.0.0",
                 "tinymce": "^6.7.2",
                 "yup": "^0.32.0",

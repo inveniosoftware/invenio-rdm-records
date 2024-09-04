@@ -438,14 +438,13 @@ def test_create_new_version_after_inclusion_request(
 
 def test_accept_public_record_in_restricted_community(
     client,
-    uploader,
     record_community,
     headers,
     restricted_community,
     community_owner,
 ):
     """Test accept public record in restricted community."""
-    client = uploader.login(client)
+    client = community_owner.login(client)
 
     data = {
         "communities": [
@@ -462,8 +461,6 @@ def test_accept_public_record_in_restricted_community(
     assert response.json["processed"]
     assert len(response.json["processed"]) == 1
     request_id = response.json["processed"][0]["request_id"]
-    client = uploader.logout(client)
-    client = community_owner.login(client)
 
     # The error handlers for this action are defined in invenio-app-rdm, therefore we catch the exception here
     with pytest.raises(InvalidAccessRestrictions):
@@ -747,3 +744,148 @@ def test_search_communities(
         headers=headers,
     )
     assert response.status_code == 403
+
+
+def test_add_record_to_community_submission_closed_non_member(
+    client,
+    uploader,
+    record_community,
+    headers,
+    community2,
+    closed_submission_community,
+):
+    """Test addition of record to community with closed submission."""
+    client = uploader.login(client)
+
+    data = {
+        "communities": [
+            {"id": community2.id},
+            {"id": closed_submission_community.id},
+        ]
+    }
+    record = record_community.create_record()
+    response = client.post(
+        f"/records/{record.pid.pid_value}/communities",
+        headers=headers,
+        json=data,
+    )
+
+    assert response.status_code == 200
+    assert (
+        response.json["errors"][0]["message"]
+        == "Submission to this community is only allowed to community members."
+    )
+    processed = response.json["processed"]
+    assert len(processed) == 1
+
+
+def test_add_record_to_community_submission_closed_member(
+    client,
+    community_owner,
+    record_community,
+    headers,
+    community2,
+    closed_submission_community,
+):
+    """Test addition of record to community with closed submission."""
+    client = community_owner.login(client)
+
+    data = {
+        "communities": [
+            {"id": community2.id},
+            {"id": closed_submission_community.id},
+        ]
+    }
+    record = record_community.create_record()
+    response = client.post(
+        f"/records/{record.pid.pid_value}/communities",
+        headers=headers,
+        json=data,
+    )
+    assert response.status_code == 200
+    assert not response.json.get("errors")
+    processed = response.json["processed"]
+    assert len(processed) == 2
+
+
+def test_add_record_to_community_submission_open_non_member(
+    client,
+    uploader,
+    record_community,
+    headers,
+    community2,
+):
+    """Test addition of record to community with open submission."""
+    client = uploader.login(client)
+
+    data = {
+        "communities": [
+            {"id": community2.id},
+        ]
+    }
+    record = record_community.create_record()
+    response = client.post(
+        f"/records/{record.pid.pid_value}/communities",
+        headers=headers,
+        json=data,
+    )
+    assert response.status_code == 200
+    assert not response.json.get("errors")
+    processed = response.json["processed"]
+    assert len(processed) == 1
+
+
+def test_add_record_to_restricted_community_submission_open_non_member(
+    client,
+    uploader,
+    record_community,
+    headers,
+    restricted_community,
+):
+    """Test addition of record to restricted community with open submission."""
+    client = uploader.login(client)
+
+    data = {
+        "communities": [
+            {"id": restricted_community.id},
+        ]
+    }
+    record = record_community.create_record()
+    response = client.post(
+        f"/records/{record.pid.pid_value}/communities",
+        headers=headers,
+        json=data,
+    )
+    assert response.status_code == 400
+    assert (
+        response.json["errors"][0]["message"]
+        == "Submission to this community is only allowed to community members."
+    )
+    assert not response.json.get("processed")
+
+
+def test_add_record_to_restricted_community_submission_open_member(
+    client,
+    community_owner,
+    record_community,
+    headers,
+    restricted_community,
+):
+    """Test addition of record to restricted community with open submission."""
+    client = community_owner.login(client)
+
+    data = {
+        "communities": [
+            {"id": restricted_community.id},
+        ]
+    }
+    record = record_community.create_record()
+    response = client.post(
+        f"/records/{record.pid.pid_value}/communities",
+        headers=headers,
+        json=data,
+    )
+    assert response.status_code == 200
+    assert not response.json.get("errors")
+    processed = response.json["processed"]
+    assert len(processed) == 1

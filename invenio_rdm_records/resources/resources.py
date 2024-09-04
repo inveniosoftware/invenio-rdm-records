@@ -344,8 +344,8 @@ class RDMRecordCommunitiesResource(ErrorHandlersMixin, Resource):
         )
         return items.to_dict(), 200
 
+    # No response_handler here because we dont want to process the response with the schema
     @request_view_args
-    @response_handler()
     @request_data
     def add(self):
         """Include record in communities."""

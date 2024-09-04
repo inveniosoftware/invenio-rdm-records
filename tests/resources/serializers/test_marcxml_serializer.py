@@ -26,7 +26,7 @@ def updated_full_record(full_record_to_dict):
                 "access": {
                     "member_policy": "open",
                     "members_visibility": "public",
-                    "record_policy": "open",
+                    "record_submission_policy": "open",
                     "review_policy": "closed",
                     "visibility": "public",
                 },
@@ -48,7 +48,7 @@ def updated_full_record(full_record_to_dict):
                 "access": {
                     "member_policy": "open",
                     "members_visibility": "public",
-                    "record_policy": "open",
+                    "record_submission_policy": "open",
                     "review_policy": "closed",
                     "visibility": "public",
                 },

@@ -23,6 +23,9 @@
       "visitor_id": {
         "type": "keyword"
       },
+      "is_machine": {
+        "type": "boolean"
+      },
       "is_robot": {
         "type": "boolean"
       },

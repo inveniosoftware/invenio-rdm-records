@@ -1,7 +1,7 @@
 
 ..
     Copyright (C) 2019-2024 CERN.
-    Copyright (C) 2019 Northwestern University.
+    Copyright (C) 2019-2024 Northwestern University.
 
 
     Invenio-RDM-Records is free software; you can redistribute it and/or
@@ -10,6 +10,45 @@
 
 Changes
 =======
+
+Version v12.1.0 (released 2024-08-30)
+
+- config: added links for thumbnails (#1799)
+
+Version v12.0.4 (released 2024-08-28)
+
+- stats: add missing "is_machine" field
+
+Version v12.0.3 (released 2024-08-27)
+
+- add permissions checks for community submission policy
+
+Version v12.0.2 (released 2024-08-26)
+
+- update file quota and size vars
+- add quota config for media_files bucket
+
+Version v12.0.1 (released 2024-08-22)
+
+- bump invenio-vocabularies
+
+Version v12.0.0 (released 2024-08-22)
+
+- mappings: add analyzers and filters to improve results when searching records
+
+Version v11.8.0 (released 2024-08-21)
+
+- pids: fix parent DOI link generation
+- schemaorg: add ``dateCreated`` field (closes #1777)
+- i18n: push translations
+- package: bump react-invenio-forms
+- subjects: remove suggest from dropdown if not required
+    * closes https://github.com/inveniosoftware/invenio-app-rdm/issues/2767
+
+Version v11.7.0 (released 2024-08-12)
+
+- resources: add vnd.inveniordm.v1+json http header
+- translation: update file paths for strings (UI)
 
 Version v11.6.0 (released 2024-08-07)
 
