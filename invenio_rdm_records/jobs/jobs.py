@@ -1,8 +1,8 @@
-from invenio_jobs.jobs import RegisteredTask
+from invenio_jobs.jobs import JobType
 
 from invenio_rdm_records.services.tasks import update_expired_embargos
 
-update_expired_embargos_cls = RegisteredTask.factory(
+update_expired_embargos_cls = JobType.create(
     arguments_schema=None,
     job_cls_name="UpdateEmbargoesJob",
     id_="update_expired_embargos",
