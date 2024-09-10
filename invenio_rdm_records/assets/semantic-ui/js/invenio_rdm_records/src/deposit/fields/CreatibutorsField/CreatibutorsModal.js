@@ -235,13 +235,9 @@ export class CreatibutorsModal extends Component {
   };
 
   serializeAffiliations = (creatibutors) => {
-    const { isOrganization, showPersonForm } = this.state;
-    const { autocompleteNames } = this.props;
+    const { isOrganization } = this.state;
 
-    const showManualEntry =
-      autocompleteNames === NamesAutocompleteOptions.SEARCH_ONLY && !showPersonForm;
-
-    return AffiliationsSuggestions(creatibutors, isOrganization, showManualEntry);
+    return AffiliationsSuggestions(creatibutors, isOrganization);
   };
 
   updateIdentifiersAndAffiliations(
