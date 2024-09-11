@@ -192,7 +192,8 @@ class PrioritizedVocabulariesFixtures:
             for v in VocabularyScheme.query.options(load_only("id", "parent_id")).all()
         ]
         self._loaded_vocabularies = set(v_type_ids + v_subtype_ids)
-        if reload:
+        # If it's not already loaded it means it's a new one
+        if reload and reload in self._loaded_vocabularies:
             self._loaded_vocabularies.remove(reload)
         # 1- Load from app_data_folder
         filepath = self._app_data_folder / self._filename
