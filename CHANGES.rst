@@ -11,6 +11,11 @@
 Changes
 =======
 
+Version v12.1.1 (released 2024-09-11)
+
+- resource: fix add record to community
+- controls: refactored isDisabled function
+
 Version v12.1.0 (released 2024-08-30)
 
 - config: added links for thumbnails (#1799)
