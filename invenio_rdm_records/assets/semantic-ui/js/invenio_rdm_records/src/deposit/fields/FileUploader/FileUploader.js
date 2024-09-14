@@ -88,9 +88,7 @@ export const FileUploaderComponent = ({
         (accumulators, file) => {
           if (filesNamesSet.has(file.name)) {
             accumulators.duplicateFiles.push(file);
-          }
-
-          if (file.size === 0) {
+          } else if (file.size === 0) {
             accumulators.emptyFiles.push(file);
           } else {
             accumulators.nonEmptyFiles.push(file);
@@ -102,7 +100,7 @@ export const FileUploaderComponent = ({
       );
 
       const hasEmptyFiles = !_isEmpty(emptyFiles);
-      const hasNonEmptyFiles = !_isEmpty(nonEmptyFiles);
+      const hasDuplicateFiles = !_isEmpty(duplicateFiles);
 
       if (maxFileNumberReached) {
         setWarningMsg(
@@ -110,10 +108,12 @@ export const FileUploaderComponent = ({
             <Message
               warning
               icon="warning circle"
-              header="Could not upload files."
-              content={`Uploading the selected files would result in ${
-                filesList.length + acceptedFiles.length
-              } files (max.${quota.maxFiles})`}
+              header={i18next.t("Could not upload files.")}
+              content={i18next.t(
+                `Uploading the selected files would result in ${
+                  filesList.length + acceptedFiles.length
+                } files (max.${quota.maxFiles})`
+              )}
             />
           </div>
         );
@@ -123,7 +123,7 @@ export const FileUploaderComponent = ({
             <Message
               warning
               icon="warning circle"
-              header="Could not upload files."
+              header={i18next.t("Could not upload files.")}
               content={
                 <>
                   {i18next.t("Uploading the selected files would result in")}{" "}
@@ -138,35 +138,43 @@ export const FileUploaderComponent = ({
             />
           </div>
         );
-      } else if (!_isEmpty(duplicateFiles)) {
-        setWarningMsg(
-          <div className="content">
+      } else {
+        let warnings = [];
+
+        if (hasDuplicateFiles) {
+          warnings.push(
             <Message
               warning
               icon="warning circle"
-              header={i18next.t(`The following files already exist`)}
+              header={i18next.t("The following files already exist")}
               list={_map(duplicateFiles, "name")}
             />
-          </div>
-        );
-      } else {
-        if (!allowEmptyFiles && hasEmptyFiles) {
-          setWarningMsg(
-            <div className="content">
-              <Message
-                warning
-                icon="warning circle"
-                header={i18next.t("Could not upload all files.")}
-                content={i18next.t("Empty files were skipped.")}
-                list={_map(emptyFiles, "name")}
-              />
-            </div>
           );
         }
 
-        // Proceed with uploading the non-empty files or all files if empty files are allowed
-        if (allowEmptyFiles || hasNonEmptyFiles) {
-          uploadFiles(formikDraft, allowEmptyFiles ? acceptedFiles : nonEmptyFiles);
+        if (!allowEmptyFiles && hasEmptyFiles) {
+          warnings.push(
+            <Message
+              warning
+              icon="warning circle"
+              header={i18next.t("Could not upload all files.")}
+              content={i18next.t("Empty files were skipped.")}
+              list={_map(emptyFiles, "name")}
+            />
+          );
+        }
+
+        if (!_isEmpty(warnings)) {
+          setWarningMsg(<div className="content">{warnings}</div>);
+        }
+
+        const filesToUpload = allowEmptyFiles
+          ? [...nonEmptyFiles, ...emptyFiles]
+          : nonEmptyFiles;
+
+        // Proceed with uploading files if there are any to upload
+        if (!_isEmpty(filesToUpload)) {
+          uploadFiles(formikDraft, filesToUpload);
         }
       }
     },
