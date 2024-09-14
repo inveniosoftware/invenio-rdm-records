@@ -3,6 +3,7 @@
 // Copyright (C) 2020-2022 Northwestern University.
 // Copyright (C)      2022 Graz University of Technology.
 // Copyright (C)      2022 TU Wien.
+// Copyright (C)      2024 KTH Royal Institute of Technology.
 //
 // Invenio-RDM-Records is free software; you can redistribute it and/or modify it
 // under the terms of the MIT License; see LICENSE file for more details.
@@ -40,6 +41,7 @@ export const FileUploaderComponent = ({
   isFileImportInProgress,
   decimalSizeDisplay,
   filesLocked,
+  allowEmptyFiles,
   ...uiProps
 }) => {
   // We extract the working copy of the draft stored as `values` in formik
@@ -80,9 +82,27 @@ export const FileUploaderComponent = ({
       const maxFileStorageReached = filesSize + acceptedFilesSize > quota.maxStorage;
 
       const filesNames = _map(filesList, "name");
-      const duplicateFiles = acceptedFiles.filter((acceptedFile) =>
-        filesNames.includes(acceptedFile.name)
+      const filesNamesSet = new Set(filesNames);
+
+      const { duplicateFiles, emptyFiles, nonEmptyFiles } = acceptedFiles.reduce(
+        (accumulators, file) => {
+          if (filesNamesSet.has(file.name)) {
+            accumulators.duplicateFiles.push(file);
+          }
+
+          if (file.size === 0) {
+            accumulators.emptyFiles.push(file);
+          } else {
+            accumulators.nonEmptyFiles.push(file);
+          }
+
+          return accumulators;
+        },
+        { duplicateFiles: [], emptyFiles: [], nonEmptyFiles: [] }
       );
+
+      const hasEmptyFiles = !_isEmpty(emptyFiles);
+      const hasNonEmptyFiles = !_isEmpty(nonEmptyFiles);
 
       if (maxFileNumberReached) {
         setWarningMsg(
@@ -130,7 +150,24 @@ export const FileUploaderComponent = ({
           </div>
         );
       } else {
-        uploadFiles(formikDraft, acceptedFiles);
+        if (!allowEmptyFiles && hasEmptyFiles) {
+          setWarningMsg(
+            <div className="content">
+              <Message
+                warning
+                icon="warning circle"
+                header={i18next.t("Could not upload all files.")}
+                content={i18next.t("Empty files were skipped.")}
+                list={_map(emptyFiles, "name")}
+              />
+            </div>
+          );
+        }
+
+        // Proceed with uploading the non-empty files or all files if empty files are allowed
+        if (allowEmptyFiles || hasNonEmptyFiles) {
+          uploadFiles(formikDraft, allowEmptyFiles ? acceptedFiles : nonEmptyFiles);
+        }
       }
     },
     multiple: true,
@@ -348,6 +385,7 @@ FileUploaderComponent.propTypes = {
   decimalSizeDisplay: PropTypes.bool,
   filesLocked: PropTypes.bool,
   permissions: PropTypes.object,
+  allowEmptyFiles: PropTypes.bool,
 };
 
 FileUploaderComponent.defaultProps = {
@@ -369,4 +407,5 @@ FileUploaderComponent.defaultProps = {
   importButtonText: i18next.t("Import files"),
   decimalSizeDisplay: true,
   filesLocked: false,
+  allowEmptyFiles: true,
 };
