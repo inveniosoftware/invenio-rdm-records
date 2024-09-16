@@ -13,7 +13,6 @@ from invenio_access.permissions import system_identity
 from invenio_communities.proxies import current_communities
 from invenio_drafts_resources.services.records.uow import (
     ParentRecordCommitOp,
-    RecordCommitOp,
 )
 from invenio_i18n import lazy_gettext as _
 from invenio_notifications.services.uow import NotificationOp
@@ -23,7 +22,10 @@ from invenio_records_resources.services import (
     Service,
     ServiceSchemaWrapper,
 )
-from invenio_records_resources.services.errors import PermissionDeniedError
+from invenio_records_resources.services.errors import (
+    PermissionDeniedError,
+    CannotRemoveCommunityError,
+)
 from invenio_records_resources.services.uow import (
     IndexRefreshOp,
     RecordIndexOp,
@@ -205,6 +207,16 @@ class RecordCommunitiesService(Service, RecordIndexerMixin):
         if community_id not in record.parent.communities.ids:
             raise RecordCommunityMissing(record.id, community_id)
 
+        # If config is True and there is only 1 communities left to remove
+        # Then, check for permissions to remove last community
+        if (
+            current_app.config["RDM_RECORD_ALWAYS_IN_COMMUNITY"]
+            and len(record.parent.communities.ids) == 1
+        ):
+            if not self.check_permission(
+                identity, "remove_community", record=record, community_id=community_id
+            ):
+                raise CannotRemoveCommunityError()
         # check permission here, per community: curator cannot remove another community
         self.require_permission(
             identity, "remove_community", record=record, community_id=community_id
