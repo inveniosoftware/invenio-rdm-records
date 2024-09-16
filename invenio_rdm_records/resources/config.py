@@ -187,6 +187,7 @@ class RDMRecordResourceConfig(RecordResourceConfig, ConfiguratorMixin):
     )
 
     error_handlers = {
+        **ErrorHandlersMixin.error_handlers,
         DeserializerError: create_error_handler(
             lambda exc: HTTPJSONException(
                 code=400,
