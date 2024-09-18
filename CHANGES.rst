@@ -11,6 +11,10 @@
 Changes
 =======
 
+Version 10.8.1 (released 2024-09-18)
+
+- serializers: avoid null pointer exceptions
+
 Version 10.8.0 (released 2024-07-28)
 
 - results: added support for drafts
