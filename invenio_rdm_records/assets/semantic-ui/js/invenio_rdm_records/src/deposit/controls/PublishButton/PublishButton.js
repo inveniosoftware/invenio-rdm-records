@@ -1,6 +1,7 @@
 // This file is part of Invenio-RDM-Records
 // Copyright (C) 2020-2023 CERN.
 // Copyright (C) 2020-2022 Northwestern University.
+// Copyright (C) 2020-2022 Graz University of Technology.
 //
 // Invenio-RDM-Records is free software; you can redistribute it and/or modify it
 // under the terms of the MIT License; see LICENSE file for more details.
@@ -12,7 +13,7 @@ import _omit from "lodash/omit";
 import PropTypes from "prop-types";
 import React, { Component } from "react";
 import { connect } from "react-redux";
-import { Button, Icon, Message, Modal } from "semantic-ui-react";
+import { Button, Icon, Message, Modal, Popup } from "semantic-ui-react";
 import {
   DepositFormSubmitActions,
   DepositFormSubmitContext,
@@ -40,10 +41,14 @@ class PublishButtonComponent extends Component {
     this.closeConfirmModal();
   };
 
-  isDisabled = (values, isSubmitting, numberOfFiles) => {
+  isDisabled = (values, isSubmitting, numberOfFiles, permissions) => {
     const filesEnabled = _get(values, "files.enabled", false);
     const filesMissing = filesEnabled && !numberOfFiles;
-    return isSubmitting || filesMissing;
+    return isSubmitting || filesMissing || !this.hasPermissions(permissions);
+  };
+
+  hasPermissions = (permissions) => {
+    return permissions.can_publish;
   };
 
   render() {
@@ -54,26 +59,44 @@ class PublishButtonComponent extends Component {
       publishWithoutCommunity,
       formik,
       publishModalExtraContent,
+      permissions,
       ...ui
     } = this.props;
     const { isConfirmModalOpen } = this.state;
     const { values, isSubmitting, handleSubmit } = formik;
 
     const uiProps = _omit(ui, ["dispatch"]);
+    const publishDisabled = this.isDisabled(
+      values,
+      isSubmitting,
+      numberOfFiles,
+      permissions
+    );
 
+    const popupText = !this.hasPermissions(permissions)
+      ? i18next.t("You don't have permission to publish")
+      : i18next.t("Required fields are missing.");
     return (
       <>
-        <Button
-          disabled={this.isDisabled(values, isSubmitting, numberOfFiles)}
-          name="publish"
-          onClick={this.openConfirmModal}
-          positive
-          icon="upload"
-          loading={isSubmitting && actionState === DRAFT_PUBLISH_STARTED}
-          labelPosition="left"
-          content={buttonLabel}
-          {...uiProps}
-          type="button" // needed so the formik form doesn't handle it as submit button i.e enable HTML validation on required input fields
+        <Popup
+          disabled={!publishDisabled}
+          content={popupText}
+          trigger={
+            <span>
+              <Button
+                disabled={publishDisabled}
+                name="publish"
+                onClick={this.openConfirmModal}
+                positive
+                icon="upload"
+                loading={isSubmitting && actionState === DRAFT_PUBLISH_STARTED}
+                labelPosition="left"
+                content={buttonLabel}
+                {...uiProps}
+                type="button" // needed so the formik form doesn't handle it as submit button i.e enable HTML validation on required input fields
+              />
+            </span>
+          }
         />
         {isConfirmModalOpen && (
           <Modal
@@ -126,6 +149,7 @@ PublishButtonComponent.propTypes = {
   numberOfFiles: PropTypes.number.isRequired,
   formik: PropTypes.object.isRequired,
   publishModalExtraContent: PropTypes.string,
+  permissions: PropTypes.object.isRequired,
 };
 
 PublishButtonComponent.defaultProps = {
@@ -139,6 +163,7 @@ const mapStateToProps = (state) => ({
   actionState: state.deposit.actionState,
   numberOfFiles: Object.values(state.files.entries).length,
   publishModalExtraContent: state.deposit.config.publish_modal_extra,
+  permissions: state.deposit.permissions,
 });
 
 export const PublishButton = connect(
