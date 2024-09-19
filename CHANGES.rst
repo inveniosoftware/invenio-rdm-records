@@ -11,6 +11,13 @@
 Changes
 =======
 
+Version v12.2.1 (released 2024-09-19)
+
+- file upload: better handling of errors when uploading empty files
+- serializers: ensure that the vocab id is set before performing a look up
+- deposit: take into account the can_publish permission to control when the
+           Publish button should be enabled or disabled
+
 Version v12.1.1 (released 2024-09-11)
 
 - resource: fix add record to community
