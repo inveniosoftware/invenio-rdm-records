@@ -11,6 +11,10 @@
 Changes
 =======
 
+Version 10.8.2 (released 2024-09-19)
+
+- deposit: check permission and set disable tooltip for publish button
+
 Version 10.8.1 (released 2024-09-18)
 
 - serializers: avoid null pointer exceptions
