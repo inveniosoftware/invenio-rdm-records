@@ -36,6 +36,7 @@ from invenio_requests.resources.requests.config import RequestSearchRequestArgsS
 
 from ..services.errors import (
     AccessRequestExistsError,
+    CommunityNotSelectedError,
     GrantExistsError,
     InvalidAccessRestrictions,
     RecordDeletedException,
@@ -254,6 +255,12 @@ class RDMRecordResourceConfig(RecordResourceConfig, ConfiguratorMixin):
             lambda e: HTTPJSONException(
                 code=403,
                 description=e.description,
+            )
+        ),
+        CommunityNotSelectedError: create_error_handler(
+            HTTPJSONException(
+                code=400,
+                description="Cannot publish without selecting a community.",
             )
         ),
     }
