@@ -20,6 +20,7 @@ from invenio_db import db
 from invenio_drafts_resources.services.records import RecordService
 from invenio_drafts_resources.services.records.uow import ParentRecordCommitOp
 from invenio_records_resources.services import LinksTemplate, ServiceSchemaWrapper
+from invenio_records_resources.services.errors import PermissionDeniedError
 from invenio_records_resources.services.uow import (
     RecordCommitOp,
     RecordIndexDeleteOp,
@@ -37,6 +38,7 @@ from invenio_rdm_records.services.pids.tasks import register_or_update_pid
 
 from ..records.systemfields.deletion_status import RecordDeletionStatusEnum
 from .errors import (
+    CommunityNotSelectedError,
     DeletionStatusException,
     EmbargoNotLiftedError,
     RecordDeletedException,
@@ -403,6 +405,28 @@ class RDMRecordService(RecordService):
             raise DeletionStatusException(record, RecordDeletionStatusEnum.MARKED)
 
         raise NotImplementedError()
+
+    def publish(self, identity, id_, uow=None, expand=False):
+        """Publish a draft.
+
+        Check for permissions to publish a draft and then call invenio_drafts_resourcs.services.records.services.publish()
+        """
+        # Get the draft
+        draft = self.draft_cls.pid.resolve(id_, registered_only=False)
+
+        # If config is true and there are no communities selected
+        is_community_required = current_app.config["RDM_RECORD_ALWAYS_IN_COMMUNITY"]
+        is_community_missing = len(draft.parent.communities.ids) == 0
+        # Then, check for permissions to upload without community
+        can_publish_draft = self.check_permission(identity, "publish", record=draft)
+
+        if is_community_required and is_community_missing and not can_publish_draft:
+            raise CommunityNotSelectedError()
+        elif not can_publish_draft:
+            # If community is not missing or the community is not required, raise error if user doesn't have permissions
+            raise PermissionDeniedError("publish")
+
+        return super().publish(identity, id_, uow=uow, expand=expand)
 
     #
     # Search functions

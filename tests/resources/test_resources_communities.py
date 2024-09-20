@@ -19,7 +19,10 @@ from invenio_rdm_records.proxies import (
 )
 from invenio_rdm_records.records.api import RDMDraft, RDMRecord
 from invenio_rdm_records.requests.community_inclusion import CommunityInclusion
-from invenio_rdm_records.services.errors import InvalidAccessRestrictions
+from invenio_rdm_records.services.errors import (
+    CommunityNotSelectedError,
+    InvalidAccessRestrictions,
+)
 
 
 def _add_to_community(db, record, community):
@@ -891,27 +894,28 @@ def test_add_record_to_restricted_community_submission_open_member(
     processed = response.json["processed"]
     assert len(processed) == 1
 
+
 # Assure Records community exists tests
 # -------------------------------------
-from invenio_records_resources.services.errors import CommunityNotSelectedError, CannotRemoveCommunityError
 
 
 @contextmanager
 def ensure_record_community_exists_config(app):
     """
-        Context manager to ensure record community exists config
-        is set to True during a specific code block.
-        Parameters:
-        app: app fixture
-        Usage:
-        with ensure_record_community_exists_config(app):
-        # code block that requires the flag to be set
+    Context manager to ensure record community exists config
+    is set to True during a specific code block.
+    Parameters:
+    app: app fixture
+    Usage:
+    with ensure_record_community_exists_config(app):
+    # code block that requires the flag to be set
     """
     try:
         app.config["RDM_RECORD_ALWAYS_IN_COMMUNITY"] = True
         yield
     finally:
         app.config["RDM_RECORD_ALWAYS_IN_COMMUNITY"] = False
+
 
 def test_restricted_record_creation(
     app, record_community, uploader, curator, community_owner, test_user, superuser
@@ -953,17 +957,17 @@ def test_remove_last_existing_non_existing_community(
     client = uploader.login(client)
     record = record_community.create_record()
     with ensure_record_community_exists_config(app):
-        with pytest.raises(CannotRemoveCommunityError):
-            response = client.delete(
-                f"/records/{record.pid.pid_value}/communities",
-                headers=headers,
-                json=data,
-            )
-            assert response.status_code == 400
-            # Should get 3 errors: Can't remove community, 2 bad IDs
-            assert len(response.json["errors"]) == 3
-            record_saved = client.get(f"/records/{record.pid.pid_value}", headers=headers)
-            assert record_saved.json["parent"]["communities"]
+        response = client.delete(
+            f"/records/{record.pid.pid_value}/communities",
+            headers=headers,
+            json=data,
+        )
+        assert response.is_json
+        assert response.status_code == 200
+        # Should get 3 errors: Can't remove community, 2 bad IDs
+        assert len(response.json["errors"]) == 3
+        record_saved = client.get(f"/records/{record.pid.pid_value}", headers=headers)
+        assert record_saved.json["parent"]["communities"]
 
 
 def test_remove_last_community_api_error_handling(
@@ -995,12 +999,13 @@ def test_remove_last_community_api_error_handling(
                 json=data,
             )
             assert response.is_json
-            assert response.status_code == 400
+            assert response.status_code == 200
 
             record_saved = client.get(
                 f"/records/{record.pid.pid_value}", headers=headers
             )
             assert record_saved.json["parent"]["communities"]
+            assert len(response.json["errors"]) == 1
 
             client = user.logout(client)
             # check communities number

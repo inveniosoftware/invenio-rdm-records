@@ -206,3 +206,15 @@ class RecordSubmissionClosedCommunityError(PermissionDenied):
     """Record submission policy forbids non-members from submitting records to community."""
 
     description = "Submission to this community is only allowed to community members."
+
+
+class CommunityNotSelectedError(Exception):
+    """Error thrown when a record is being created/updated with less than 1 community."""
+
+    description = "Cannot publish without selecting a community."
+
+
+class CannotRemoveCommunityError(PermissionDenied):
+    """Error thrown when the last community is being removed from the record."""
+
+    description = "Cannot remove. A record should be part of atleast 1 community."
