@@ -11,6 +11,11 @@
 Changes
 =======
 
+Version 10.8.3 (released 2024-09-23)
+
+- deposit: show warning for empty files in the deposit form if they are not allowed
+- deposit: refactor warning messages
+
 Version 10.8.2 (released 2024-09-19)
 
 - deposit: check permission and set disable tooltip for publish button
