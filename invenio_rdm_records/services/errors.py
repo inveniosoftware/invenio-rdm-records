@@ -214,7 +214,7 @@ class CommunityNotSelectedError(Exception):
     description = "Cannot publish without selecting a community."
 
 
-class CannotRemoveCommunityError(PermissionDenied):
+class CannotRemoveCommunityError(Exception):
     """Error thrown when the last community is being removed from the record."""
 
     description = "Cannot remove. A record should be part of atleast 1 community."

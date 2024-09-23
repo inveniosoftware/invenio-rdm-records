@@ -918,7 +918,13 @@ def ensure_record_community_exists_config(app):
 
 
 def test_restricted_record_creation(
-    app, record_community, uploader, curator, community_owner, test_user, superuser
+    app,
+    record_community,
+    uploader,
+    curator,
+    community_owner,
+    test_user,
+    superuser,
 ):
     """Verify CommunityNotSelectedError is raised when direct publish a record"""
     # You can directly publish a record when the config is disabled
@@ -942,7 +948,7 @@ def test_restricted_record_creation(
 
 
 def test_remove_last_existing_non_existing_community(
-    app, client, uploader, record_community, headers, community
+    app, client, uploader, record_required_community, headers, community
 ):
     """Test removal of an existing and non-existing community from the record,
     while ensuring at least one community exists."""
@@ -955,23 +961,24 @@ def test_remove_last_existing_non_existing_community(
     }
 
     client = uploader.login(client)
-    record = record_community.create_record()
+    record = record_required_community.create_record()
+    record_pid = record._record.pid.pid_value
     with ensure_record_community_exists_config(app):
         response = client.delete(
-            f"/records/{record.pid.pid_value}/communities",
+            f"/records/{record_pid}/communities",
             headers=headers,
             json=data,
         )
         assert response.is_json
-        assert response.status_code == 200
+        assert response.status_code == 400
         # Should get 3 errors: Can't remove community, 2 bad IDs
         assert len(response.json["errors"]) == 3
-        record_saved = client.get(f"/records/{record.pid.pid_value}", headers=headers)
+        record_saved = client.get(f"/records/{record_pid}", headers=headers)
         assert record_saved.json["parent"]["communities"]
 
 
 def test_remove_last_community_api_error_handling(
-    record_community,
+    record_required_community,
     community,
     uploader,
     headers,
@@ -980,7 +987,8 @@ def test_remove_last_community_api_error_handling(
     app,
 ):
     """Testing error message when trying to remove last community."""
-    record = record_community.create_record()
+    record = record_required_community.create_record()
+    record_pid = record._record.pid.pid_value
     data = {"communities": [{"id": community.id}]}
     for user in [uploader, curator]:
         client = user.login(client)
@@ -994,16 +1002,14 @@ def test_remove_last_community_api_error_handling(
         )
         with ensure_record_community_exists_config(app):
             response = client.delete(
-                f"/records/{record.pid.pid_value}/communities",
+                f"/records/{record_pid}/communities",
                 headers=headers,
                 json=data,
             )
             assert response.is_json
-            assert response.status_code == 200
+            assert response.status_code == 400
 
-            record_saved = client.get(
-                f"/records/{record.pid.pid_value}", headers=headers
-            )
+            record_saved = client.get(f"/records/{record_pid}", headers=headers)
             assert record_saved.json["parent"]["communities"]
             assert len(response.json["errors"]) == 1
 
@@ -1023,7 +1029,7 @@ def test_remove_last_community_api_error_handling(
 def test_remove_record_last_community_with_multiple_communities(
     closed_review_community,
     open_review_community,
-    record_community,
+    record_required_community,
     community2,
     uploader,
     headers,
@@ -1034,21 +1040,24 @@ def test_remove_record_last_community_with_multiple_communities(
     """Testing correct removal of multiple communities"""
     client = uploader.login(client)
 
-    record = record_community.create_record()
+    record = record_required_community.create_record()
+    record_pid = record._record.pid.pid_value
     comm = [
         community2,
         open_review_community,
         closed_review_community,
     ]  # one more in the rec fixture so it's 4
     for com in comm:
-        _add_to_community(db, record, com)
-    assert len(record.parent.communities.ids) == 4
+        _add_to_community(db, record._record, com)
+    assert len(record._record.parent.communities.ids) == 4
 
     with ensure_record_community_exists_config(app):
-        data = {"communities": [{"id": x} for x in record.parent.communities.ids]}
+        data = {
+            "communities": [{"id": x} for x in record._record.parent.communities.ids]
+        }
 
         response = client.delete(
-            f"/records/{record.pid.pid_value}/communities",
+            f"/records/{record_pid}/communities",
             headers=headers,
             json=data,
         )
@@ -1056,18 +1065,20 @@ def test_remove_record_last_community_with_multiple_communities(
         assert response.status_code == 200
         assert "error" in str(response.data)
 
-        rec_com_left = client.get(f"/records/{record.pid.pid_value}", headers=headers)
+        rec_com_left = client.get(f"/records/{record_pid}", headers=headers)
         assert len(rec_com_left.json["parent"]["communities"]["ids"]) == 1
 
         # You get res 400 with error msg if you Delete the last one only.
         response = client.delete(
-            f"/records/{record.pid.pid_value}/communities",
+            f"/records/{record_pid}/communities",
             headers=headers,
-            json={"communities": [{"id": str(record.parent.communities.ids[0])}]},
+            json={
+                "communities": [{"id": str(record._record.parent.communities.ids[0])}]
+            },
         )
         assert response.status_code == 400
         assert "error" in str(response.data)
 
-        record_saved = client.get(f"/records/{record.pid.pid_value}", headers=headers)
+        record_saved = client.get(f"/records/{record_pid}", headers=headers)
         # check that only one community ID is associated with the record
         assert len(record_saved.json["parent"]["communities"]["ids"]) == 1
