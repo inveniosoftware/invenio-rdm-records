@@ -406,6 +406,7 @@ class RDMRecordService(RecordService):
 
         raise NotImplementedError()
 
+    @unit_of_work()
     def publish(self, identity, id_, uow=None, expand=False):
         """Publish a draft.
 

@@ -134,8 +134,8 @@ RDM_ALLOW_RESTRICTED_RECORDS = True
 #
 # Record communities
 #
-RDM_RECORD_ALWAYS_IN_COMMUNITY = True
-"""Enforces at least one community per record on remove community function."""
+RDM_RECORD_ALWAYS_IN_COMMUNITY = False
+"""Enforces at least one community per record."""
 
 #
 # Search configuration

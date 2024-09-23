@@ -67,6 +67,7 @@ from invenio_pidstore.errors import PIDDoesNotExistError
 from invenio_records_resources.proxies import current_service_registry
 from invenio_records_resources.references.entity_resolvers import ServiceResultResolver
 from invenio_records_resources.services.custom_fields import TextCF
+from invenio_records_resources.services.uow import UnitOfWork
 from invenio_requests.notifications.builders import (
     CommentRequestEventCreateNotificationBuilder,
 )
@@ -2091,6 +2092,41 @@ def record_factory(db, uploader, minimal_record, community, location):
             return record
 
     return RecordFactory()
+
+
+@pytest.fixture()
+def record_required_community(db, uploader, minimal_record, community):
+    """Creates a record that belongs to a community before publishing."""
+
+    class Record:
+        """Test record class."""
+
+        def create_record(
+            self,
+            record_dict=minimal_record,
+            uploader=uploader,
+            community=community,
+        ):
+            """Creates new record that belongs to the same community."""
+            # create draft
+            draft = current_rdm_records_service.create(uploader.identity, record_dict)
+            record = draft._record
+            # add the record to the community
+            community_record = community._record
+            record.parent.communities.add(community_record, default=False)
+            record.parent.commit()
+            db.session.commit()
+            current_rdm_records_service.indexer.index(
+                record, arguments={"refresh": True}
+            )
+
+            # publish and get record
+            community_record = current_rdm_records_service.publish(
+                uploader.identity, draft.id
+            )
+            return community_record
+
+    return Record()
 
 
 @pytest.fixture(scope="session")
