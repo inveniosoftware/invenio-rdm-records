@@ -55,6 +55,7 @@ from invenio_requests.services.requests import RequestItem, RequestList
 from invenio_requests.services.requests.config import RequestSearchOptions
 from requests import Request
 
+from invenio_rdm_records.records.processors.full_text import FullTextProcessor
 from invenio_rdm_records.records.processors.tiles import TilesProcessor
 
 from ..records import RDMDraft, RDMRecord
@@ -523,7 +524,7 @@ class RDMRecordServiceConfig(RecordServiceConfig, ConfiguratorMixin):
     ]
 
     record_file_processors = FromConfig(
-        "RDM_RECORD_FILE_PROCESSORS", default=[TilesProcessor()]
+        "RDM_RECORD_FILE_PROCESSORS", default=[TilesProcessor(), FullTextProcessor()]
     )
 
 

@@ -610,3 +610,9 @@ RDM_RECORDS_RESTRICTION_GRACE_PERIOD = timedelta(days=30)
 
 RDM_RECORDS_ALLOW_RESTRICTION_AFTER_GRACE_PERIOD = False
 """Whether record access restriction is allowed after the grace period or not."""
+
+#
+# Full text configuration
+#
+FULL_TEXT_EXTRACTION_ENABLED = False
+"""Enable full text extraction."""

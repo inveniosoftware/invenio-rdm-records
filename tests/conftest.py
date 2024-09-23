@@ -371,6 +371,8 @@ def app_config(app_config, mock_datacite_client):
 
     app_config["USERS_RESOURCES_GROUPS_ENABLED"] = True
 
+    app_config["FULL_TEXT_EXTRACTION_ENABLED"] = True
+
     return app_config
 
 
