@@ -4,6 +4,7 @@
 # Copyright (C) 2021-2022 Northwestern University.
 # Copyright (C) 2024 TU Wien.
 # Copyright (C) 2024 KTH Royal Institute of Technology.
+# Copyright (C) 2024 Graz University of Technology.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
@@ -186,10 +187,15 @@ class PrioritizedVocabulariesFixtures:
         Fixtures found later are ignored.
         """
         # Prime with existing (sub)vocabularies
-        v_type_ids = [v.id for v in VocabularyType.query.options(load_only("id")).all()]
+        v_type_ids = [
+            v.id
+            for v in VocabularyType.query.options(load_only(VocabularyType.id)).all()
+        ]
         v_subtype_ids = [
             f"{v.parent_id}.{v.id}"
-            for v in VocabularyScheme.query.options(load_only("id", "parent_id")).all()
+            for v in VocabularyScheme.query.options(
+                load_only(VocabularyScheme.id, VocabularyScheme.parent_id)
+            ).all()
         ]
         self._loaded_vocabularies = set(v_type_ids + v_subtype_ids)
         # If it's not already loaded it means it's a new one
