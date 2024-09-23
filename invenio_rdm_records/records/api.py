@@ -150,9 +150,16 @@ class CommonFieldsMixin:
         funding_award=PIDListRelation(
             "metadata.funding",
             relation_field="award",
-            keys=["title", "number", "identifiers", "acronym", "program"],
+            keys=["title", "number", "identifiers", "acronym", "program", "subjects", "organizations"],
             pid_field=Award.pid,
             cache_key="awards",
+        ),
+        funding_award_subjects=PIDListRelation(
+            "metadata.funding",
+            relation_field="award.subjects",
+            keys=["subject", "scheme", "identifiers", "props"],
+            pid_field=Subject.pid,
+            cache_key="subjects",
         ),
         languages=PIDListRelation(
             "metadata.languages",
