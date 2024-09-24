@@ -339,6 +339,10 @@ class RDMFileRecordServiceConfig(FileServiceConfig, ConfiguratorMixin):
 
     file_schema = FileSchema
 
+    components = FromConfig(
+        "RDM_FILES_SERVICE_COMPONENTS", default=FileServiceConfig.components
+    )
+
 
 class ThumbnailLinks(RecordLink):
     """RDM thumbnail links dictionary."""
@@ -748,6 +752,10 @@ class RDMFileDraftServiceConfig(FileServiceConfig, ConfiguratorMixin):
     }
 
     file_schema = FileSchema
+
+    components = FromConfig(
+        "RDM_DRAFT_FILES_SERVICE_COMPONENTS", default=FileServiceConfig.components
+    )
 
 
 class RDMMediaFileDraftServiceConfig(FileServiceConfig, ConfiguratorMixin):
