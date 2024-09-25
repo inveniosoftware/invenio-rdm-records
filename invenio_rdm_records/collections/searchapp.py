@@ -15,11 +15,6 @@ from invenio_search_ui.searchconfig import search_app_config
 
 def search_app_context():
     """Search app context."""
-    # endpoint = None
-    # if collection.community is None:
-    #     endpoint = "/api/records/"
-    # else:
-    #     endpoint = f"/api/communities/{collection.community.id}/records/"
     return {
         "search_app_collection_config": partial(
             search_app_config,
