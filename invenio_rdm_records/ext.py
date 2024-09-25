@@ -19,6 +19,7 @@ from flask_principal import identity_loaded
 from invenio_records_resources.resources.files import FileResource
 
 from . import config
+from .collections.service import CollectionsService
 from .oaiserver.resources.config import OAIPMHServerResourceConfig
 from .oaiserver.resources.resources import OAIPMHServerResource
 from .oaiserver.services.config import OAIPMHServerServiceConfig
@@ -202,6 +203,8 @@ class InvenioRDMRecords(object):
         self.oaipmh_server_service = OAIPMHServerService(
             config=service_configs.oaipmh_server,
         )
+
+        self.collections_service = CollectionsService()
 
     def init_resource(self, app):
         """Initialize resources."""
