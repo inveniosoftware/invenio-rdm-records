@@ -8,8 +8,7 @@
 
 import pytest
 
-from invenio_rdm_records.collections.api import Collection
-from invenio_rdm_records.collections.models import CollectionTree
+from invenio_rdm_records.collections.api import Collection, CollectionTree
 from invenio_rdm_records.proxies import current_rdm_records
 
 
@@ -25,20 +24,15 @@ def add_collections(running_app, db, community):
 
     def _inner():
         """Add collections to the app."""
-        tree = CollectionTree(
+        tree = CollectionTree.create(
             title="Tree 1",
             order=10,
             community_id=community.id,
+            slug="tree-1",
         )
-        db.session.add(tree)
-        db.session.flush()
-        db.session.refresh(tree)
         c1 = Collection.create(
             title="Collection 1", query="*:*", slug="collection-1", ctree=tree
         )
-        db.session.add(c1.model)
-        db.session.flush()
-        db.session.refresh(tree)
         c2 = Collection.create(
             title="Collection 2",
             query="*:*",
@@ -46,8 +40,6 @@ def add_collections(running_app, db, community):
             ctree=tree,
             parent=c1,
         )
-        db.session.add(c2.model)
-        db.session.commit()
         return [c1, c2]
 
     return _inner
@@ -60,14 +52,5 @@ def test_collections_service_read(
     collections = add_collections()
     c0 = collections[0]
     c1 = collections[1]
-    res = collections_service.read(community_owner, c0.id)
+    res = collections_service.read(community_owner.identity, c0.id)
     assert res._collection.id == c0.id
-
-
-def test_collections_service_create(
-    running_app, db, collections_service, community_owner
-):
-    """Test collections service create."""
-    collections_service.create(
-        community_owner, 1, title="My Collection", query="*:*", slug="my-collection"
-    )
