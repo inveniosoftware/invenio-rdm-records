@@ -11,6 +11,10 @@
 Changes
 =======
 
+Version 10.8.4 (released 2024-09-26)
+
+- revert deposit permission check for publish button, as it is not working as expected
+
 Version 10.8.3 (released 2024-09-23)
 
 - deposit: show warning for empty files in the deposit form if they are not allowed
