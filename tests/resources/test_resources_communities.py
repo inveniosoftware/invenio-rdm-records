@@ -947,6 +947,47 @@ def test_restricted_record_creation(
         assert super_user_rec.id
 
 
+def test_republish_with_mulitple_communities(
+    app,
+    db,
+    headers,
+    client,
+    minimal_record,
+    open_review_community,
+    record_required_community,
+    community2,
+    uploader,
+):
+    """Verify new version of record with multiple communities can be re-published"""
+    client = uploader.login(client)
+    comm = [
+        community2,
+        open_review_community,
+    ]
+    with ensure_record_community_exists_config(app):
+        record = record_required_community.create_record()
+        record_pid = record._record.pid.pid_value
+        for com in comm:
+            _add_to_community(db, record._record, com)
+        assert len(record._record.parent.communities.ids) == 3
+        response = client.post(
+            f"/records/{record_pid}/versions",
+            headers=headers,
+        )
+        assert response.is_json
+        assert response.status_code == 201
+        current_rdm_records_service.update_draft(
+            uploader.identity, response.json["id"], minimal_record
+        )
+        result_item = current_rdm_records_service.publish(
+            uploader.identity, response.json["id"]
+        )
+        new_record_pid = result_item._record.pid.pid_value
+
+        new_record = client.get(f"/records/{new_record_pid}", headers=headers)
+        assert len(new_record.json["parent"]["communities"]["ids"]) == 3
+
+
 def test_remove_last_existing_non_existing_community(
     app, client, uploader, record_required_community, headers, community
 ):

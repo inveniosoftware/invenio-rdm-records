@@ -30,6 +30,7 @@ from .generators import (
     AccessGrant,
     CommunityInclusionReviewers,
     GuestAccessRequestToken,
+    IfAtleastOneCommunity,
     IfCreate,
     IfDeleted,
     IfExternalDOIRecord,
@@ -204,7 +205,7 @@ class RDMRecordPermissionPolicy(RecordPermissionPolicy):
         IfConfig(
             "RDM_RECORD_ALWAYS_IN_COMMUNITY",
             then_=[
-                IfOneCommunity(
+                IfAtleastOneCommunity(
                     then_=can_review, else_=[Administration(), SystemProcess()]
                 )
             ],
