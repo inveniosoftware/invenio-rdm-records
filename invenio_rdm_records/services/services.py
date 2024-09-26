@@ -419,13 +419,12 @@ class RDMRecordService(RecordService):
         is_community_required = current_app.config["RDM_RECORD_ALWAYS_IN_COMMUNITY"]
         is_community_missing = len(draft.parent.communities.ids) == 0
         # Then, check for permissions to upload without community
-        can_publish_draft = self.check_permission(identity, "publish", record=draft)
-
-        if is_community_required and is_community_missing and not can_publish_draft:
+        if (
+            is_community_required
+            and is_community_missing
+            and not self.check_permission(identity, "publish", record=draft)
+        ):
             raise CommunityNotSelectedError()
-        elif not can_publish_draft:
-            # If community is not missing or the community is not required, raise error if user doesn't have permissions
-            raise PermissionDeniedError("publish")
 
         return super().publish(identity, id_, uow=uow, expand=expand)
 

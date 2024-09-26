@@ -425,3 +425,14 @@ class IfOneCommunity(ConditionalGenerator):
             return True
         rec_communities = record.parent.communities.ids
         return len(rec_communities) == 1
+
+
+class IfAtleastOneCommunity(ConditionalGenerator):
+    """Conditional generator for records always in communities case."""
+
+    def _condition(self, record=None, **kwargs):
+        """Check if the record is associated with zero or one community."""
+        if record is None:
+            return True
+        rec_communities = record.parent.communities.ids
+        return len(rec_communities) > 0
