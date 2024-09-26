@@ -4,7 +4,8 @@
 # Copyright (C) 2020-2021 Northwestern University.
 # Copyright (C)      2021 TU Wien.
 # Copyright (C) 2021-2023 Graz University of Technology.
-# Copyright (C) 2022 Universität Hamburg
+# Copyright (C) 2022      Universität Hamburg
+# Copyright (C) 2024      KTH Royal Institute of Technology.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
@@ -260,6 +261,7 @@ class RDMRecordCommunitiesConfig(ServiceConfig, ConfiguratorMixin):
     service_id = "record-communities"
 
     record_cls = FromConfig("RDM_RECORD_CLS", default=RDMRecord)
+    draft_cls = FromConfig("RDM_DRAFT_CLS", default=RDMDraft)
     permission_policy_cls = FromConfig(
         "RDM_PERMISSION_POLICY", default=RDMRecordPermissionPolicy, import_string=True
     )
