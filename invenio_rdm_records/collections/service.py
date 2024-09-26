@@ -45,9 +45,20 @@ class CollectionItem:
             "self_html": self_html,
         }
 
-    def __getattr__(self, name):
-        """Delegate attribute access to the collection."""
-        return getattr(self._collection, name)
+    @property
+    def community(self):
+        """Get the collection community."""
+        return self._collection.community
+
+    @property
+    def query(self):
+        """Get the collection query."""
+        return self._collection.query
+
+    @property
+    def title(self):
+        """Get the collection title."""
+        return self._collection.title
 
 
 class CollectionsService:

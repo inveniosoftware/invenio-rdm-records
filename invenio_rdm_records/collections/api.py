@@ -26,15 +26,15 @@ class Collection:
         self.model = model
 
     @classmethod
-    def create(cls, slug, title, query, ctree=None, parent=None, order=None, logo=None):
+    def create(cls, slug, title, query, ctree=None, parent=None, order=None):
         """Create a new collection."""
         _ctree = None
         if parent:
             path = f"{parent.path}{parent.id},"
-            _ctree = parent.collection_tree
+            _ctree = parent.collection_tree.model
         elif ctree:
             path = ","
-            _ctree = ctree
+            _ctree = ctree if isinstance(ctree, int) else ctree.model
         else:
             raise ValueError("Either parent or ctree must be set.")
 
@@ -43,9 +43,8 @@ class Collection:
                 slug=slug,
                 path=path,
                 title=title,
-                query_text=query,
+                search_query=query,
                 order=order,
-                logo=logo,
                 ctree_or_id=_ctree,
             )
         )
@@ -80,7 +79,13 @@ class Collection:
             return None
         return cls(model)
 
-    def add(self, slug, title, query, order=None, logo=None):
+    def add(
+        self,
+        slug,
+        title,
+        query,
+        order=None,
+    ):
         """Add a subcollection to the collection."""
         return self.create(
             slug=slug,
@@ -88,7 +93,6 @@ class Collection:
             query=query,
             parent=self,
             order=order,
-            logo=logo,
         )
 
     @property
@@ -127,7 +131,7 @@ class Collection:
 
         Note: this will execute a query to the collection tree table.
         """
-        return self.model.collection_tree
+        return CollectionTree(self.model.collection_tree)
 
     @property
     def depth(self):
@@ -145,17 +149,12 @@ class Collection:
         return self.collection_tree.community
 
     @property
-    def logo(self):
-        """Get the collection logo."""
-        return self.model.logo
-
-    @property
     def query(self):
         """Get the collection query."""
         q = ""
         for _a in self.ancestors:
-            q += f"({_a.model.query_text}) AND "
-        q += f"({self.model.query_text})"
+            q += f"({_a.model.search_query}) AND "
+        q += f"({self.model.search_query})"
         return q
 
     @cached_property
@@ -227,7 +226,6 @@ class Collection:
             "title": collection.title,
             "slug": collection.slug,
             "depth": collection.depth,
-            "logo": collection.logo,
             "order": collection.order,
             "id": collection.id,
             "query": collection.query,
@@ -341,3 +339,8 @@ class CollectionTree:
     def order(self):
         """Get the collection tree order."""
         return self.model.order
+
+    @property
+    def community(self):
+        """Get the community object."""
+        return self.model.community
