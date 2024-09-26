@@ -1,7 +1,6 @@
 // This file is part of Invenio-RDM-Records
 // Copyright (C) 2020-2023 CERN.
 // Copyright (C) 2020-2022 Northwestern University.
-// Copyright (C)      2024 Graz University of Technology.
 //
 // Invenio-RDM-Records is free software; you can redistribute it and/or modify it
 // under the terms of the MIT License; see LICENSE file for more details.
@@ -13,7 +12,7 @@ import _omit from "lodash/omit";
 import PropTypes from "prop-types";
 import React, { Component } from "react";
 import { connect } from "react-redux";
-import { Button, Icon, Message, Modal, Popup } from "semantic-ui-react";
+import { Button, Icon, Message, Modal } from "semantic-ui-react";
 import {
   DepositFormSubmitActions,
   DepositFormSubmitContext,
@@ -41,8 +40,8 @@ class PublishButtonComponent extends Component {
     this.closeConfirmModal();
   };
 
-  isDisabled = (values, isSubmitting, filesState, hasPublishPermission) => {
-    if (isSubmitting || !hasPublishPermission) {
+  isDisabled = (values, isSubmitting, filesState) => {
+    if (isSubmitting) {
       return true;
     }
 
@@ -60,19 +59,6 @@ class PublishButtonComponent extends Component {
     return !allCompleted;
   };
 
-  hasPermission = (permissions) => {
-    return permissions.can_publish;
-  };
-
-  getDisabledButtonPopupText = (hasPublishPermission) => {
-    let text = i18next.t("Required fields are missing");
-
-    if (!hasPublishPermission) {
-      text = i18next.t("You don't have permission to publish");
-    }
-    return text;
-  };
-
   render() {
     const {
       actionState,
@@ -81,7 +67,6 @@ class PublishButtonComponent extends Component {
       publishWithoutCommunity,
       formik,
       publishModalExtraContent,
-      permissions,
       ...ui
     } = this.props;
     const { isConfirmModalOpen } = this.state;
@@ -89,38 +74,19 @@ class PublishButtonComponent extends Component {
 
     const uiProps = _omit(ui, ["dispatch"]);
 
-    const hasPublishPermission = this.hasPermission(permissions);
-    const publishDisabled = this.isDisabled(
-      values,
-      isSubmitting,
-      filesState,
-      hasPublishPermission
-    );
-
-    // only used when button is disabled
-    const popupText = this.getDisabledButtonPopupText(hasPublishPermission);
-
     return (
       <>
-        <Popup
-          disabled={!publishDisabled}
-          content={popupText}
-          trigger={
-            <span>
-              <Button
-                disabled={publishDisabled}
-                name="publish"
-                onClick={this.openConfirmModal}
-                positive
-                icon="upload"
-                loading={isSubmitting && actionState === DRAFT_PUBLISH_STARTED}
-                labelPosition="left"
-                content={buttonLabel}
-                {...uiProps}
-                type="button" // needed so the formik form doesn't handle it as submit button i.e enable HTML validation on required input fields
-              />
-            </span>
-          }
+        <Button
+          disabled={this.isDisabled(values, isSubmitting, filesState)}
+          name="publish"
+          onClick={this.openConfirmModal}
+          positive
+          icon="upload"
+          loading={isSubmitting && actionState === DRAFT_PUBLISH_STARTED}
+          labelPosition="left"
+          content={buttonLabel}
+          {...uiProps}
+          type="button" // needed so the formik form doesn't handle it as submit button i.e enable HTML validation on required input fields
         />
         {isConfirmModalOpen && (
           <Modal
@@ -173,7 +139,6 @@ PublishButtonComponent.propTypes = {
   formik: PropTypes.object.isRequired,
   publishModalExtraContent: PropTypes.string,
   filesState: PropTypes.object,
-  permissions: PropTypes.object.isRequired,
 };
 
 PublishButtonComponent.defaultProps = {
@@ -188,7 +153,6 @@ const mapStateToProps = (state) => ({
   actionState: state.deposit.actionState,
   publishModalExtraContent: state.deposit.config.publish_modal_extra,
   filesState: state.files,
-  permissions: state.deposit.permissions,
 });
 
 export const PublishButton = connect(
