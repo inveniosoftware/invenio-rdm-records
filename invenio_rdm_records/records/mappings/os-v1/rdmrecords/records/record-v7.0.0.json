@@ -973,7 +973,8 @@
                     "type": "geo_point"
                   },
                   "geometry": {
-                    "type": "geo_shape"
+                    "type": "geo_shape",
+                    "doc_values": false
                   },
                   "place": {
                     "type": "text"
