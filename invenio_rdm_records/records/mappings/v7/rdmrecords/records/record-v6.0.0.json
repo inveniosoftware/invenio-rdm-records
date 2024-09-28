@@ -356,6 +356,39 @@
                                     "type": "keyword"
                                   }
                                 }
+                              },
+                              "subjects": {
+                                "properties": {
+                                  "@v": {
+                                    "type": "keyword"
+                                  },
+                                  "id": {
+                                    "type": "keyword"
+                                  },
+                                  "subject": {
+                                    "type": "keyword"
+                                  },
+                                  "scheme": {
+                                    "type": "keyword"
+                                  },
+                                  "props": {
+                                    "type": "object",
+                                    "dynamic": "true"
+                                  }
+                                }
+                              },
+                              "organizations": {
+                                "properties": {
+                                  "scheme": {
+                                    "type": "keyword"
+                                  },
+                                  "id": {
+                                    "type": "keyword"
+                                  },
+                                  "organization": {
+                                    "type": "keyword"
+                                  }
+                                }
                               }
                             }
                           },
@@ -512,6 +545,39 @@
                                         "type": "keyword"
                                       },
                                       "scheme": {
+                                        "type": "keyword"
+                                      }
+                                    }
+                                  },
+                                  "subjects": {
+                                    "properties": {
+                                      "@v": {
+                                        "type": "keyword"
+                                      },
+                                      "id": {
+                                        "type": "keyword"
+                                      },
+                                      "subject": {
+                                        "type": "keyword"
+                                      },
+                                      "scheme": {
+                                        "type": "keyword"
+                                      },
+                                      "props": {
+                                        "type": "object",
+                                        "dynamic": "true"
+                                      }
+                                    }
+                                  },
+                                  "organizations": {
+                                    "properties": {
+                                      "scheme": {
+                                        "type": "keyword"
+                                      },
+                                      "id": {
+                                        "type": "keyword"
+                                      },
+                                      "organization": {
                                         "type": "keyword"
                                       }
                                     }
@@ -853,6 +919,39 @@
                         "type": "keyword"
                       }
                     }
+                  },
+                  "subjects": {
+                    "properties": {
+                      "@v": {
+                        "type": "keyword"
+                      },
+                      "id": {
+                        "type": "keyword"
+                      },
+                      "subject": {
+                        "type": "keyword"
+                      },
+                      "scheme": {
+                        "type": "keyword"
+                      },
+                      "props": {
+                        "type": "object",
+                        "dynamic": "true"
+                      }
+                    }
+                  },
+                  "organizations": {
+                    "properties": {
+                      "scheme": {
+                        "type": "keyword"
+                      },
+                      "id": {
+                        "type": "keyword"
+                      },
+                      "organization": {
+                        "type": "keyword"
+                      }
+                    }
                   }
                 }
               },
@@ -1092,6 +1191,10 @@
               },
               "scheme": {
                 "type": "keyword"
+              },
+              "props": {
+                "type": "object",
+                "dynamic": "true"
               }
             }
           },
@@ -1440,6 +1543,8 @@
       "metadata.funding.award.identifiers.identifier",
       "metadata.funding.award.acronym.text",
       "metadata.funding.award.number",
+      "metadata.funding.award.subjects",
+      "metadata.funding.award.organizations",
       "metadata.funding.funder.name",
       "metadata.identifiers.identifier",
       "metadata.locations.features.place",
