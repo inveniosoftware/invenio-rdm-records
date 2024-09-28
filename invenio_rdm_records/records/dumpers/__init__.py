@@ -13,6 +13,7 @@ from .edtf import EDTFDumperExt, EDTFListDumperExt
 from .locations import LocationsDumper
 from .pids import PIDsDumperExt
 from .statistics import StatisticsDumperExt
+from .subject_hierarchy import SubjectHierarchyDumperExt
 
 __all__ = (
     "CombinedSubjectsDumperExt",
@@ -22,4 +23,5 @@ __all__ = (
     "GrantTokensDumperExt",
     "LocationsDumper",
     "StatisticsDumperExt",
+    "SubjectHierarchyDumperExt",
 )
