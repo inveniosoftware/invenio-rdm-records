@@ -72,7 +72,7 @@ class CollectionsService:
         current_communities.service.require_permission(
             identity, "update", community_id=community_id
         )
-        ctree = CollectionTree.get_by_slug(tree_slug, community_id)
+        ctree = CollectionTree.resolve(slug=tree_slug, community_id=community_id)
         if not ctree:
             raise ValueError(f"Collection tree {tree_slug} not found.")
         collection = self.collection_cls.create(
@@ -99,7 +99,7 @@ class CollectionsService:
             identity, "read", community_id=community_id
         )
 
-        ctree = CollectionTree.get_by_slug(tree_slug, community_id)
+        ctree = CollectionTree.resolve(slug=tree_slug, community_id=community_id)
         if not ctree:
             raise ValueError(f"Collection tree {tree_slug} not found.")
 

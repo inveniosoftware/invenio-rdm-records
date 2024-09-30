@@ -16,10 +16,43 @@ from .models import Collection as CollectionModel
 from .models import CollectionTree as CollectionTreeModel
 
 
+class ModelField:
+
+    def __init__(self, attr_name):
+        self._attr_name = attr_name
+
+    @property
+    def attr_name(self):
+        """The name of the SQLAlchemy field on the model.
+
+        Defaults to the attribute name used on the class.
+        """
+        return self._attr_name
+
+    def __get__(self, obj, objtype=None):
+        """Descriptor method to get the object."""
+        if obj is None:
+            return self
+
+        # Try instance access
+        try:
+            return getattr(obj.model, self.attr_name)
+        except AttributeError:
+            return None
+
+
 class Collection:
     """Collection Object."""
 
     model_cls = CollectionModel
+
+    id = ModelField("id")
+    path = ModelField("path")
+    ctree_id = ModelField("collection_tree_id")
+    order = ModelField("order")
+    title = ModelField("title")
+    slug = ModelField("slug")
+    depth = ModelField("depth")
 
     def __init__(self, model=None):
         """Instantiate a Collection object."""
@@ -50,34 +83,16 @@ class Collection:
         )
 
     @classmethod
-    def resolve(cls, id_, ctree_id=None, use_slug=False):
+    def resolve(cls, id_=None, slug=None, ctree_id=None):
         """Resolve a collection by ID or slug.
 
         To resolve by slug, the collection tree ID must be provided.
         """
-        if not use_slug:
-            return cls.get(id_)
-        if not ctree_id:
-            raise ValueError(
-                "Collection tree ID is required to resolve a collection by slug."
-            )
-        return cls.get_by_slug(id_, ctree_id)
-
-    @classmethod
-    def get(cls, id_):
-        """Get a collection by ID."""
-        model = cls.model_cls.get(id_)
-        if not model:
-            return None
-        return cls(model)
-
-    @classmethod
-    def get_by_slug(cls, slug, ctree_id):
-        """Get a collection by slug."""
-        model = cls.model_cls.get_by_slug(slug, ctree_id)
-        if not model:
-            return None
-        return cls(model)
+        if id_:
+            return cls(cls.model_cls.get(id_))
+        if slug and ctree_id:
+            return cls(cls.model_cls.get_by_slug(slug, ctree_id))
+        raise ValueError("Either ID or slug and collection tree ID must be provided.")
 
     def add(
         self,
@@ -96,52 +111,12 @@ class Collection:
         )
 
     @property
-    def id(self):
-        """Get the collection ID."""
-        return self.model.id
-
-    @property
-    def path(self):
-        """Get the collection path."""
-        return self.model.path
-
-    @property
-    def ctree_id(self):
-        """Get the collection tree ID."""
-        return self.model.tree_id
-
-    @property
-    def order(self):
-        """Get the collection order."""
-        return self.model.order
-
-    @property
-    def title(self):
-        """Get the collection title."""
-        return self.model.title
-
-    @property
-    def ctree_title(self):
-        """Get the collection tree title."""
-        return self.model.collection_tree.title
-
-    @property
     def collection_tree(self):
         """Get the collection tree object.
 
         Note: this will execute a query to the collection tree table.
         """
         return CollectionTree(self.model.collection_tree)
-
-    @property
-    def depth(self):
-        """Get the collection depth in its tree."""
-        return self.model.depth
-
-    @property
-    def slug(self):
-        """Get the collection slug."""
-        return self.model.slug
 
     @cached_property
     def community(self):
@@ -168,7 +143,7 @@ class Collection:
         for cid in cps:
             if not cid:
                 continue
-            cl = Collection.get(cid)
+            cl = Collection.resolve(cid)
             ret.append(cl)
         return list(sorted(ret, key=lambda x: (x.path, x.order)))
 
@@ -271,6 +246,13 @@ class CollectionTree:
 
     model_cls = CollectionTreeModel
 
+    id = ModelField("id")
+    title = ModelField("title")
+    slug = ModelField("slug")
+    community_id = ModelField("community_id")
+    order = ModelField("order")
+    community = ModelField("community")
+
     def __init__(self, model):
         """Instantiate a CollectionTree object."""
         self.model = model
@@ -285,62 +267,11 @@ class CollectionTree:
         )
 
     @classmethod
-    def resolve(cls, id_, community_id=None, use_slug=False):
+    def resolve(cls, id_=None, slug=None, community_id=None):
         """Resolve a CollectionTree."""
-        if not use_slug:
-            return cls.get(id_)
-
-        if not community_id:
-            raise ValueError(
-                "Community ID is required to resolve a collection tree by slug."
-            )
-        return cls.get_by_slug(id_, community_id)
-
-    @classmethod
-    def get(cls, id_):
-        """Get a collection tree by ID."""
-        model = cls.model_cls.get(id_)
-        if not model:
-            return None
-        return cls(model)
-
-    @classmethod
-    def get_by_slug(cls, slug, community_id):
-        """Get a collection tree by slug.
-
-        Community ID is required to avoid ambiguity.
-        """
-        model = cls.model_cls.get_by_slug(slug, community_id)
-        if not model:
-            return None
-        return cls(model)
-
-    @property
-    def id(self):
-        """Get the collection tree ID."""
-        return self.model.id
-
-    @property
-    def title(self):
-        """Get the collection tree title."""
-        return self.model.title
-
-    @property
-    def slug(self):
-        """Get the collection tree slug."""
-        return self.model.slug
-
-    @property
-    def community_id(self):
-        """Get the community ID."""
-        return self.model.community_id
-
-    @property
-    def order(self):
-        """Get the collection tree order."""
-        return self.model.order
-
-    @property
-    def community(self):
-        """Get the community object."""
-        return self.model.community
+        if id_:
+            return cls(cls.model_cls._get(id_))
+        elif slug and community_id:
+            return cls(cls.model_cls._get_by_slug(slug, community_id))
+        else:
+            raise ValueError("Either ID or slug and community ID must be provided.")
