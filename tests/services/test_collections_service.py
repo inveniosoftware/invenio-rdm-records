@@ -52,5 +52,5 @@ def test_collections_service_read(
     collections = add_collections()
     c0 = collections[0]
     c1 = collections[1]
-    res = collections_service.read(community_owner.identity, c0.id)
+    res = collections_service.read(community_owner.identity, id_=c0.id)
     assert res._collection.id == c0.id
