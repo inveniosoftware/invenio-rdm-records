@@ -2,6 +2,7 @@
 ..
     Copyright (C) 2019-2024 CERN.
     Copyright (C) 2019-2024 Northwestern University.
+    Copyright (C) 2024      KTH Royal Institute of Technology.
 
 
     Invenio-RDM-Records is free software; you can redistribute it and/or
@@ -10,6 +11,13 @@
 
 Changes
 =======
+
+Version v12.2.2 (released 2024-09-30)
+
+- Improve handling of draft PID in RecordCommunitiesService
+- Revert "deposit: check permission and set disable tooltip for publish button"
+- Remove DeprecationWarning for sqlalchemy
+- Add compatibility layer to move to flask>=3
 
 Version v12.2.1 (released 2024-09-19)
 
