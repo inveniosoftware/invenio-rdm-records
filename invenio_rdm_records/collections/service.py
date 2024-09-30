@@ -10,53 +10,7 @@ from invenio_communities.proxies import current_communities
 from invenio_records_resources.services.uow import ModelCommitOp, unit_of_work
 
 from .api import Collection, CollectionTree
-
-
-class CollectionItem:
-    """Collection item."""
-
-    def __init__(self, collection):
-        """Instantiate a Collection object."""
-        self._collection = collection
-
-    def to_dict(self):
-        """Serialize the collection to a dictionary and add links."""
-        res = {**self._collection.to_dict()}
-        res[self._collection.id]["links"] = self.links
-
-        return res
-
-    @property
-    def links(self):
-        """Return the links of the collection."""
-        self_html = None
-        search = None
-        tree_slug = self._collection.collection_tree.slug
-        if self._collection.community:
-            self_html = f"/communities/{self._collection.community.slug}/{tree_slug}/{self._collection.slug}"
-            search = f"/api/communities/{self._collection.community.slug}/records"
-        else:
-            self_html = f"/collections/{tree_slug}/{self._collection.slug}"
-            search = "/api/records"
-        return {
-            "search": search,
-            "self_html": self_html,
-        }
-
-    @property
-    def community(self):
-        """Get the collection community."""
-        return self._collection.community
-
-    @property
-    def query(self):
-        """Get the collection query."""
-        return self._collection.query
-
-    @property
-    def title(self):
-        """Get the collection title."""
-        return self._collection.title
+from .results import CollectionItem, CollectionTreeList
 
 
 class CollectionsService:
@@ -72,20 +26,28 @@ class CollectionsService:
         current_communities.service.require_permission(
             identity, "update", community_id=community_id
         )
-        ctree = CollectionTree.get_by_slug(tree_slug, community_id)
-        if not ctree:
-            raise ValueError(f"Collection tree {tree_slug} not found.")
+        ctree = CollectionTree.resolve(slug=tree_slug, community_id=community_id)
         collection = self.collection_cls.create(
             slug=slug, title=title, query=query, ctree=ctree, **kwargs
         )
         uow.register(ModelCommitOp(collection.model))
         return CollectionItem(collection)
 
-    def read(self, identity, id_):
-        """Get a collection by ID or slug."""
-        collection = self.collection_cls.resolve(id_)
-        if not collection:
-            raise ValueError(f"Collection {id_} not found.")
+    def read(
+        self, identity, /, *, id_=None, slug=None, community_id=None, tree_slug=None
+    ):
+        """Get a collection by ID or slug.
+
+        To resolve by slug, the collection tree ID and community ID must be provided.
+        """
+        if id_:
+            collection = self.collection_cls.resolve(id_)
+        elif slug and tree_slug and community_id:
+            ctree = CollectionTree.resolve(slug=tree_slug, community_id=community_id)
+            collection = self.collection_cls.resolve(slug=slug, ctree_id=ctree.id)
+        else:
+            raise ValueError("ID or slug and tree_slug and community_id must be provided.")
+
         if collection.community:
             current_communities.service.require_permission(
                 identity, "read", community_id=collection.community.id
@@ -93,21 +55,15 @@ class CollectionsService:
 
         return CollectionItem(collection)
 
-    def read_slug(self, identity, community_id, tree_slug, slug):
-        """Get a collection by slug."""
+    def list_trees(self, identity, community_id, max_depth=2):
+        """Get the trees of a community."""
         current_communities.service.require_permission(
             identity, "read", community_id=community_id
         )
-
-        ctree = CollectionTree.get_by_slug(tree_slug, community_id)
-        if not ctree:
-            raise ValueError(f"Collection tree {tree_slug} not found.")
-
-        collection = self.collection_cls.resolve(slug, ctree.id, use_slug=True)
-        if not collection:
-            raise ValueError(f"Collection {slug} not found.")
-
-        return CollectionItem(collection)
+        if not community_id:
+            raise ValueError("Community ID must be provided.")
+        res = CollectionTree.get_community_trees(community_id)
+        return CollectionTreeList(res, max_depth=max_depth)
 
     @unit_of_work()
     def add(self, identity, collection, slug, title, query, uow=None, **kwargs):
