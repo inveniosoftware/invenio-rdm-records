@@ -6,12 +6,12 @@
 # it under the terms of the MIT License; see LICENSE file for more details.
 """Collections models."""
 
+from traitlets import default
 from invenio_communities.communities.records.models import CommunityMetadata
 from invenio_db import db
 from invenio_records.models import Timestamp
 from sqlalchemy import UniqueConstraint
 from sqlalchemy_utils.types import UUIDType
-from traitlets import ClassBasedTraitType
 
 
 # CollectionTree Table
@@ -66,6 +66,21 @@ class CollectionTree(db.Model, Timestamp):
             cls.slug == slug, cls.community_id == community_id
         ).one_or_none()
 
+    @classmethod
+    def get_community_trees(cls, community_id):
+        """Get all collection trees of a community."""
+        return cls.query.filter(cls.community_id == community_id).all()
+
+    @classmethod
+    def get_collections(cls, model, max_depth):
+        """Get collections under a tree."""
+        stmt = Collection.query.filter(
+            Collection.tree_id == model.id, Collection.depth < max_depth
+        ).order_by(Collection.path, Collection.order)
+
+        # Execute the query and get the result
+        return stmt.all()
+
 
 # Collection Table
 class Collection(db.Model, Timestamp):
@@ -97,7 +112,7 @@ class Collection(db.Model, Timestamp):
     order = db.Column(db.Integer, nullable=True)
     # TODO index depth
     depth = db.Column(db.Integer, nullable=False)
-    num_records = db.Column(db.Integer, nullable=True)
+    num_records = db.Column(db.Integer, nullable=False, default=0)
 
     # Relationship to CollectionTree
     collection_tree = db.relationship("CollectionTree", back_populates="collections")
@@ -143,3 +158,35 @@ class Collection(db.Model, Timestamp):
     def get_by_slug(cls, slug, tree_id):
         """Get a collection by slug."""
         return cls.query.filter(cls.slug == slug, cls.tree_id == tree_id).one_or_none()
+
+    @classmethod
+    def read_many(cls, ids):
+        """Get many collections by ID."""
+        return cls.query.filter(cls.id.in_(ids)).order_by(cls.path, cls.order).all()
+
+    @classmethod
+    def get_children(cls, model):
+        """Get children collections of a collection."""
+        # Assuming self.model_cls is the ORM model
+        stmt = cls.query.filter(
+            cls.path == f"{model.path}{model.id},", cls.tree_id == model.tree_id
+        ).order_by(cls.path, cls.order)
+
+        # Execute the query and get the result
+        return stmt.all()
+
+    @classmethod
+    def get_subcollections(cls, model, max_depth):
+        """Get subcollections of a collection.
+
+        This query will return all subcollections of a collection up to a certain depth.
+        It can be used for max_depth=1, however it is more efficient to use get_children.
+        """
+        stmt = cls.query.filter(
+            cls.path.like(f"{model.path}{model.id},%"),
+            cls.tree_id == model.tree_id,
+            cls.depth < model.depth + max_depth,
+        ).order_by(cls.path, cls.order)
+
+        # Execute the query and get the result
+        return stmt.all()

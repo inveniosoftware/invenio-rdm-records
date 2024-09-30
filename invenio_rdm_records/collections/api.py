@@ -5,20 +5,19 @@
 # Invenio-RDM is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
 """Collections programmatic API."""
-
-from types import ClassMethodDescriptorType
-
-from invenio_db import db
-from sqlalchemy import select
+from luqum.parser import parser as luqum_parser
 from werkzeug.utils import cached_property
 
+from .errors import CollectionNotFound, CollectionTreeNotFound, InvalidQuery
 from .models import Collection as CollectionModel
 from .models import CollectionTree as CollectionTreeModel
 
 
 class ModelField:
+    """Model Field Descriptor."""
 
     def __init__(self, attr_name):
+        """Initialize the descriptor."""
         self._attr_name = attr_name
 
     @property
@@ -53,10 +52,20 @@ class Collection:
     title = ModelField("title")
     slug = ModelField("slug")
     depth = ModelField("depth")
+    search_query = ModelField("search_query")
+    num_records = ModelField("num_records")
 
     def __init__(self, model=None):
         """Instantiate a Collection object."""
         self.model = model
+
+    @classmethod
+    def validate_query(cls, query):
+        """Validate the collection query."""
+        try:
+            luqum_parser.parse(query)
+        except Exception:
+            raise InvalidQuery()
 
     @classmethod
     def create(cls, slug, title, query, ctree=None, parent=None, order=None):
@@ -71,6 +80,7 @@ class Collection:
         else:
             raise ValueError("Either parent or ctree must be set.")
 
+        Collection.validate_query(query)
         return cls(
             cls.model_cls.create(
                 slug=slug,
@@ -88,11 +98,25 @@ class Collection:
 
         To resolve by slug, the collection tree ID must be provided.
         """
+        res = None
         if id_:
-            return cls(cls.model_cls.get(id_))
-        if slug and ctree_id:
-            return cls(cls.model_cls.get_by_slug(slug, ctree_id))
-        raise ValueError("Either ID or slug and collection tree ID must be provided.")
+            res = cls(cls.model_cls.get(id_))
+        elif slug and ctree_id:
+            res = cls(cls.model_cls.get_by_slug(slug, ctree_id))
+        else:
+            raise ValueError(
+                "Either ID or slug and collection tree ID must be provided."
+            )
+
+        if res.model is None:
+            raise CollectionNotFound()
+        return res
+
+    @classmethod
+    def resolve_many(cls, ids_=None):
+        """Resolve many collections by ID."""
+        _ids = ids_ or []
+        return [cls(c) for c in cls.model_cls.read_many(_ids)]
 
     def add(
         self,
@@ -130,22 +154,13 @@ class Collection:
         for _a in self.ancestors:
             q += f"({_a.model.search_query}) AND "
         q += f"({self.model.search_query})"
+        Collection.validate_query(q)
         return q
 
     @cached_property
     def ancestors(self):
         """Get the collection ancestors."""
-        if not self.model:
-            return None
-
-        cps = self.path.split(",")
-        ret = []
-        for cid in cps:
-            if not cid:
-                continue
-            cl = Collection.resolve(cid)
-            ret.append(cl)
-        return list(sorted(ret, key=lambda x: (x.path, x.order)))
+        return Collection.resolve_many(self.split_path_to_ids())
 
     @cached_property
     def sub_collections(self):
@@ -153,27 +168,25 @@ class Collection:
         return self.get_subcollections()
 
     @cached_property
-    def direct_subcollections(self):
+    def children(self):
         """Fetch only direct descendants."""
-        return self.get_direct_subcollections()
+        return self.get_children()
 
-    def get_direct_subcollections(self):
+    def split_path_to_ids(self):
+        """Return the path as a list of integers."""
+        if not self.model:
+            return None
+        return [int(part) for part in self.path.split(",") if part.strip()]
+
+    def get_children(self):
         """Get the collection first level (direct) children.
 
         More preformant query to retrieve descendants, executes an exact match query.
         """
         if not self.model:
             return None
-        stmt = (
-            select(self.model_cls)
-            .filter(
-                self.model_cls.path == f"{self.path}{self.id},",
-                self.model_cls.tree_id == self.ctree_id,
-            )
-            .order_by(self.model_cls.path, self.model_cls.order)
-        )
-        ret = db.session.execute(stmt).scalars().all()
-        return [type(self)(r) for r in ret]
+        res = self.model_cls.get_children(self.model)
+        return [type(self)(r) for r in res]
 
     def get_subcollections(self, max_depth=3):
         """Get the collection subcollections.
@@ -183,16 +196,8 @@ class Collection:
         if not self.model:
             return None
 
-        stmt = (
-            select(self.model_cls)
-            .filter(
-                self.model_cls.path.like(f"{self.path}{self.id},%"),
-                self.model_cls.depth < self.model.depth + max_depth,
-            )
-            .order_by(self.model_cls.path, self.model_cls.order)
-        )
-        ret = db.session.execute(stmt).scalars().all()
-        return [type(self)(r) for r in ret]
+        res = self.model_cls.get_subcollections(self.model, max_depth)
+        return [type(self)(r) for r in res]
 
     @classmethod
     def dump(cls, collection):
@@ -204,10 +209,11 @@ class Collection:
             "order": collection.order,
             "id": collection.id,
             "query": collection.query,
+            "num_records": collection.num_records,
         }
         return res
 
-    def to_dict(self) -> dict:
+    def to_dict(self, max_depth=2) -> dict:
         """Return a dictionary representation of the collection.
 
         Uses an adjacency list.
@@ -217,13 +223,13 @@ class Collection:
             self.id: {**Collection.dump(self), "children": set()},
         }
 
-        for _c in self.sub_collections:
+        for _c in self.get_subcollections(max_depth=max_depth):
             # Add the collection itself to the dictionary
             if _c.id not in ret:
                 ret[_c.id] = {**Collection.dump(_c), "children": set()}
 
             # Find the parent ID from the collection's path (last valid ID in the path)
-            path_parts = [int(part) for part in _c.path.split(",") if part.strip()]
+            path_parts = _c.split_path_to_ids()
             if path_parts:
                 parent_id = path_parts[-1]
                 # Add the collection as a child of its parent
@@ -240,6 +246,10 @@ class Collection:
         else:
             return "Collection (None)"
 
+    def __eq__(self, value: object) -> bool:
+        """Check if the value is equal to the collection."""
+        return isinstance(value, Collection) and value.id == self.id
+
 
 class CollectionTree:
     """Collection Tree Object."""
@@ -252,6 +262,7 @@ class CollectionTree:
     community_id = ModelField("community_id")
     order = ModelField("order")
     community = ModelField("community")
+    collections = ModelField("collections")
 
     def __init__(self, model):
         """Instantiate a CollectionTree object."""
@@ -269,9 +280,52 @@ class CollectionTree:
     @classmethod
     def resolve(cls, id_=None, slug=None, community_id=None):
         """Resolve a CollectionTree."""
+        res = None
         if id_:
-            return cls(cls.model_cls._get(id_))
+            res = cls(cls.model_cls.get(id_))
         elif slug and community_id:
-            return cls(cls.model_cls._get_by_slug(slug, community_id))
+            res = cls(cls.model_cls.get_by_slug(slug, community_id))
         else:
             raise ValueError("Either ID or slug and community ID must be provided.")
+
+        if res.model is None:
+            raise CollectionTreeNotFound()
+        return res
+
+    def dump(self):
+        """Transform the collection tree into a dictionary."""
+        if not self.model:
+            return {}
+
+        return {
+            "title": self.title,
+            "slug": self.slug,
+            "community_id": str(self.community_id),
+            "order": self.order,
+            "id": self.id,
+        }
+
+    def to_dict(self, max_depth=2):
+        """Return a dictionary representation of the collection tree."""
+        collections = self.root_collections
+        return {
+            **self.dump(),
+            "collections": [c.to_dict(max_depth=max_depth) for c in collections],
+        }
+
+    @cached_property
+    def root_collections(self):
+        """Get the collections under this tree."""
+        return self.get_collections(max_depth=1)
+
+    def get_collections(self, max_depth=0):
+        """Get the collections under this tree, up to a depth."""
+        return [
+            Collection(c)
+            for c in CollectionTreeModel.get_collections(self.model, max_depth)
+        ]
+
+    @classmethod
+    def get_community_trees(cls, community_id):
+        """Get all the collection trees for a community."""
+        return [cls(c) for c in cls.model_cls.get_community_trees(community_id)]
