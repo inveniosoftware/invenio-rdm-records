@@ -1,7 +1,7 @@
 // This file is part of Invenio-RDM-Records
 // Copyright (C) 2020-2023 CERN.
 // Copyright (C) 2020-2022 Northwestern University.
-// Copyright (C) 2021 Graz University of Technology.
+// Copyright (C) 2021-2024 Graz University of Technology.
 //
 // Invenio-RDM-Records is free software; you can redistribute it and/or modify it
 // under the terms of the MIT License; see LICENSE file for more details.
@@ -109,7 +109,11 @@ export class ProtectionButtons extends Component {
   }
 }
 
+ProtectionButtons.defaultProps = {
+  canRestrictRecord: true,
+};
+
 ProtectionButtons.propTypes = {
-  canRestrictRecord: PropTypes.bool.isRequired,
+  canRestrictRecord: PropTypes.bool,
   fieldPath: PropTypes.string.isRequired,
 };
