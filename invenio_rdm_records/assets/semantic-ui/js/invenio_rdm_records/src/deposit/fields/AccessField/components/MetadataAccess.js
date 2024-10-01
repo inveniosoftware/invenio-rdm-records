@@ -62,6 +62,6 @@ MetadataAccess.propTypes = {
   recordAccess: PropTypes.string.isRequired,
   communityAccess: PropTypes.string.isRequired,
   record: PropTypes.object.isRequired,
-  recordRestrictionGracePeriod: PropTypes.object.isRequired,
+  recordRestrictionGracePeriod: PropTypes.number.isRequired,
   allowRecordRestriction: PropTypes.bool.isRequired,
 };
