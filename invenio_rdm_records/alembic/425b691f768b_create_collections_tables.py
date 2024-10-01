@@ -63,14 +63,7 @@ def upgrade():
         sa.Column("title", sa.String(length=255), nullable=False),
         sa.Column("query", sa.Text(), nullable=False),
         sa.Column("order", sa.Integer(), nullable=True),
-        sa.Column(
-            "depth",
-            sa.Integer(),
-            sa.Computed(
-                "array_length(string_to_array(path, ','), 1) - 2",
-            ),
-            nullable=True,
-        ),
+        sa.Column("depth", sa.Integer(), nullable=True),
         sa.Column("num_records", sa.Integer(), nullable=True),
         sa.ForeignKeyConstraint(
             ["tree_id"],
