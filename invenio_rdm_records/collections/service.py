@@ -7,6 +7,7 @@
 """Collections service."""
 
 from invenio_communities.proxies import current_communities
+from invenio_records_resources.services.uow import ModelCommitOp, unit_of_work
 
 from .api import Collection, CollectionTree
 
@@ -14,11 +15,8 @@ from .api import Collection, CollectionTree
 class CollectionItem:
     """Collection item."""
 
-    def __init__(self, collection: Collection):
-        """Instantiate a Collection object.
-
-        Optionally pass a community to cache its information in the collection's instance.
-        """
+    def __init__(self, collection):
+        """Instantiate a Collection object."""
         self._collection = collection
 
     def to_dict(self):
@@ -66,7 +64,10 @@ class CollectionsService:
 
     collection_cls = Collection
 
-    def create(self, identity, community_id, tree_slug, slug, title, query, **kwargs):
+    @unit_of_work()
+    def create(
+        self, identity, community_id, tree_slug, slug, title, query, uow=None, **kwargs
+    ):
         """Create a new collection."""
         current_communities.service.require_permission(
             identity, "update", community_id=community_id
@@ -77,6 +78,7 @@ class CollectionsService:
         collection = self.collection_cls.create(
             slug=slug, title=title, query=query, ctree=ctree, **kwargs
         )
+        uow.register(ModelCommitOp(collection.model))
         return CollectionItem(collection)
 
     def read(self, identity, id_):
@@ -107,12 +109,14 @@ class CollectionsService:
 
         return CollectionItem(collection)
 
-    def add(self, identity, collection, slug, title, query, **kwargs):
+    @unit_of_work()
+    def add(self, identity, collection, slug, title, query, uow=None, **kwargs):
         """Add a subcollection to a collection."""
         current_communities.service.require_permission(
             identity, "update", community_id=collection.community.id
         )
-        collection = self.collection_cls.create(
+        new_collection = self.collection_cls.create(
             parent=collection, slug=slug, title=title, query=query, **kwargs
         )
-        return CollectionItem(collection)
+        uow.register(ModelCommitOp(new_collection.model))
+        return CollectionItem(new_collection)
