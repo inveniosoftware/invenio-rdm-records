@@ -96,9 +96,7 @@ class Collection(db.Model, Timestamp):
     search_query = db.Column("query", db.Text, nullable=False)
     order = db.Column(db.Integer, nullable=True)
     # TODO index depth
-    depth = db.Column(
-        db.Integer, db.Computed("array_length(string_to_array(path, ','), 1) - 2")
-    )  # TODO client side
+    depth = db.Column(db.Integer, nullable=False)
     num_records = db.Column(db.Integer, nullable=True)
 
     # Relationship to CollectionTree
@@ -107,6 +105,7 @@ class Collection(db.Model, Timestamp):
     @classmethod
     def create(cls, slug, path, title, search_query, ctree_or_id, **kwargs):
         """Create a new collection."""
+        depth = len([int(part) for part in path.split(",") if part.strip()])
         with db.session.begin_nested():
             if isinstance(ctree_or_id, CollectionTree):
                 collection = cls(
@@ -115,6 +114,7 @@ class Collection(db.Model, Timestamp):
                     title=title,
                     search_query=search_query,
                     collection_tree=ctree_or_id,
+                    depth=depth,
                     **kwargs,
                 )
             elif isinstance(ctree_or_id, int):
@@ -124,6 +124,7 @@ class Collection(db.Model, Timestamp):
                     title=title,
                     search_query=search_query,
                     tree_id=ctree_or_id,
+                    depth=depth,
                     **kwargs,
                 )
             else:
