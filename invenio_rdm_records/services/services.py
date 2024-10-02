@@ -415,14 +415,17 @@ class RDMRecordService(RecordService):
         # Get the draft
         draft = self.draft_cls.pid.resolve(id_, registered_only=False)
 
-        # If config is true and there are no communities selected
         is_community_required = current_app.config["RDM_RECORD_ALWAYS_IN_COMMUNITY"]
         is_community_missing = len(draft.parent.communities.ids) == 0
-        # Then, check for permissions to upload without community
+        # If community is required for a record and there are no communities selected
+        # Then, check for permissions to publish without community
+        can_publish_without_community = self.check_permission(
+            identity, "publish_elevated", record=draft
+        )
         if (
             is_community_required
             and is_community_missing
-            and not self.check_permission(identity, "publish", record=draft)
+            and not can_publish_without_community
         ):
             raise CommunityNotSelectedError()
 

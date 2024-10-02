@@ -209,12 +209,19 @@ class RecordCommunitiesService(Service, RecordIndexerMixin):
         if community_id not in record.parent.communities.ids:
             raise RecordCommunityMissing(record.id, community_id)
 
-        # If config is true and there is only 1 communities left to remove
+        # Check for permission to remove a community from a record
+        self.require_permission(
+            identity, "remove_community", record=record, community_id=community_id
+        )
         is_community_required = current_app.config["RDM_RECORD_ALWAYS_IN_COMMUNITY"]
         is_last_community = len(record.parent.communities.ids) == 1
-        # Then, check for permissions to remove last community
+        # If community is required for a record and if it is the last community to remove
+        # Then, only users with special permissions can remove
         can_remove_last_community = self.check_permission(
-            identity, "remove_community", record=record, community_id=community_id
+            identity,
+            "remove_community_elevated",
+            record=record,
+            community_id=community_id,
         )
         if (
             is_community_required
@@ -222,9 +229,6 @@ class RecordCommunitiesService(Service, RecordIndexerMixin):
             and not can_remove_last_community
         ):
             raise CannotRemoveCommunityError()
-        # check permission here, per community: curator cannot remove another community
-        elif not can_remove_last_community:
-            raise PermissionDeniedError("remove_community")
 
         # Default community is deleted when the exact same community is removed from the record
         record.parent.communities.remove(community_id)
