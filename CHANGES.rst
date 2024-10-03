@@ -12,6 +12,12 @@
 Changes
 =======
 
+Version v13.0.0 (released 2024-10-03)
+
+- collections: added feature, containing core functionalities and DB models
+- ui: fixed propTypes warnings
+- dependencies: bump flask-iiif to >1.0.0
+
 Version v12.2.2 (released 2024-09-30)
 
 - Improve handling of draft PID in RecordCommunitiesService
