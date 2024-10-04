@@ -12,6 +12,10 @@
 Changes
 =======
 
+Version v14.0.0 (released 2024-10-04)
+
+- installation: bump invenio-vocabularies & invenio-communities
+
 Version v13.0.0 (released 2024-10-03)
 
 - collections: added feature, containing core functionalities and DB models
