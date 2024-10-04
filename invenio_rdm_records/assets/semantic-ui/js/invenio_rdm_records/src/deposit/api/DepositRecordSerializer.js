@@ -323,6 +323,9 @@ export class RDMDepositRecordSerializer extends DepositRecordSerializer {
       "pids",
       "ui",
       "custom_fields",
+      "created",
+      "updated",
+      "revision_id",
     ]);
 
     // FIXME: move logic in a more sophisticated PIDField that allows empty values
