@@ -316,12 +316,6 @@
                     "items": {
                       "$ref": "local://definitions-v1.0.0.json#/identifiers_with_scheme"
                     }
-                  },
-                  "subjects": {
-                    "$ref": "local://records/definitions-v2.0.0.json#/subjects"
-                  },
-                  "organizations": {
-                    "$ref": "local://records/definitions-v2.0.0.json#/organizations"
                   }
                 }
               }
