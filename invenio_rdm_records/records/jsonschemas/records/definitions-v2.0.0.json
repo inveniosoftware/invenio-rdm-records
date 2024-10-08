@@ -348,55 +348,12 @@
       },
       "subject": {
         "type": "string"
-      },
-      "scheme": {
-        "description": "Identifier of the subject scheme.",
-        "$ref": "local://definitions-v1.0.0.json#/identifier"
-      },
-      "props": {
-        "type": "object",
-        "patternProperties": {
-          "^.*$": {
-            "type": "string"
-          }
-        }
-      },
-      "identifiers": {
-        "description": "Alternate identifiers for the subject.",
-        "type": "array",
-        "items": {
-          "$ref": "local://definitions-v2.0.0.json#/identifiers_with_scheme"
-        },
-        "uniqueItems": true
       }
     }
   },
   "subjects": {
     "type": "array",
     "items": { "$ref": "#/subject" }
-  },
-  "organization": {
-    "description": "Award's organizations.",
-    "type": "object",
-    "additionalProperties": false,
-    "properties": {
-      "scheme": {
-        "description": "Identifier of the organization scheme.",
-        "$ref": "local://definitions-v1.0.0.json#/identifier"
-      },
-      "id": {
-        "description": "Identifier of the organization for the given scheme.",
-        "$ref": "local://definitions-v1.0.0.json#/identifier"
-      },
-      "organization": {
-        "description": "Human readable label.",
-        "type": "string"
-      }
-    }
-  },
-  "organizations": {
-    "type": "array",
-    "items": { "$ref": "#/organization" }
   },
   "title_type": {
     "description": "Type of title.",
