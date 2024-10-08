@@ -68,6 +68,11 @@ class SubjectHierarchyDumperExt(SearchDumperExt):
 
         def build_hierarchy(parents_str, current_subject_id):
             """Build the hierarchy by progressively combining parent notations."""
+            if not parents_str:
+                return [
+                    current_subject_id
+                ]  # No parents, so the hierarchy is just the current ID.
+
             parents = parents_str.split(self._splitchar)  # Split the parent notations
             hierarchy = []
             current_hierarchy = parents[0]  # Start with the top-level parent
@@ -87,7 +92,7 @@ class SubjectHierarchyDumperExt(SearchDumperExt):
             for subject in subjects:
                 parents = subject.get("props", {}).get("parents", "")
                 current_subject_id = subject.get("id", "")
-                if parents and current_subject_id:
+                if current_subject_id:
                     subject_hierarchy = build_hierarchy(parents, current_subject_id)
                     subject.setdefault("props", {})["hierarchy"] = subject_hierarchy
 
