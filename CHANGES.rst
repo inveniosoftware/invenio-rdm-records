@@ -12,6 +12,13 @@
 Changes
 =======
 
+Version v15.0.0 (released 2024-10-08)
+
+- installation: bump invenio-communities
+- dumper: refactor and updated docstring
+- awards: added subjects and orgs, updated mappings
+- relations: added subject relation in awards
+
 Version v14.0.0 (released 2024-10-04)
 
 - installation: bump invenio-vocabularies & invenio-communities
