@@ -6,7 +6,6 @@
 # it under the terms of the MIT License; see LICENSE file for more details.
 """Collections models."""
 
-from traitlets import default
 from invenio_communities.communities.records.models import CommunityMetadata
 from invenio_db import db
 from invenio_records.models import Timestamp
