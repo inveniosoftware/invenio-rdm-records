@@ -134,7 +134,7 @@ RDM_ALLOW_RESTRICTED_RECORDS = True
 #
 # Record communities
 #
-RDM_RECORD_ALWAYS_IN_COMMUNITY = False
+RDM_COMMUNITY_REQUIRED_TO_PUBLISH = False
 """Enforces at least one community per record."""
 
 #
