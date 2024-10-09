@@ -2027,20 +2027,22 @@ def record_community(db, uploader, minimal_record, community):
             """Creates new record that belongs to the same community."""
             # create draft
             draft = current_rdm_records_service.create(uploader.identity, record_dict)
-            # publish and get record
-            result_item = current_rdm_records_service.publish(
-                uploader.identity, draft.id
-            )
-            record = result_item._record
+            record = draft._record
             if community:
                 # add the record to the community
                 community_record = community._record
                 record.parent.communities.add(community_record, default=False)
                 record.parent.commit()
                 db.session.commit()
-                current_rdm_records_service.indexer.index(
-                    record, arguments={"refresh": True}
-                )
+
+            # publish and get record
+            result_item = current_rdm_records_service.publish(
+                uploader.identity, draft.id
+            )
+            record = result_item._record
+            current_rdm_records_service.indexer.index(
+                record, arguments={"refresh": True}
+            )
 
             return record
 
@@ -2092,41 +2094,6 @@ def record_factory(db, uploader, minimal_record, community, location):
             return record
 
     return RecordFactory()
-
-
-@pytest.fixture()
-def record_required_community(db, uploader, minimal_record, community):
-    """Creates a record that belongs to a community before publishing."""
-
-    class Record:
-        """Test record class."""
-
-        def create_record(
-            self,
-            record_dict=minimal_record,
-            uploader=uploader,
-            community=community,
-        ):
-            """Creates new record that belongs to the same community."""
-            # create draft
-            draft = current_rdm_records_service.create(uploader.identity, record_dict)
-            record = draft._record
-            # add the record to the community
-            community_record = community._record
-            record.parent.communities.add(community_record, default=False)
-            record.parent.commit()
-            db.session.commit()
-            current_rdm_records_service.indexer.index(
-                record, arguments={"refresh": True}
-            )
-
-            # publish and get record
-            community_record = current_rdm_records_service.publish(
-                uploader.identity, draft.id
-            )
-            return community_record
-
-    return Record()
 
 
 @pytest.fixture(scope="session")

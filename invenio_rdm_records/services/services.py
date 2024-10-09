@@ -38,7 +38,7 @@ from invenio_rdm_records.services.pids.tasks import register_or_update_pid
 
 from ..records.systemfields.deletion_status import RecordDeletionStatusEnum
 from .errors import (
-    CommunityNotSelectedError,
+    CommunityRequiredError,
     DeletionStatusException,
     EmbargoNotLiftedError,
     RecordDeletedException,
@@ -412,22 +412,19 @@ class RDMRecordService(RecordService):
 
         Check for permissions to publish a draft and then call invenio_drafts_resourcs.services.records.services.publish()
         """
-        # Get the draft
-        draft = self.draft_cls.pid.resolve(id_, registered_only=False)
-
-        is_community_required = current_app.config["RDM_RECORD_ALWAYS_IN_COMMUNITY"]
-        is_community_missing = len(draft.parent.communities.ids) == 0
-        # If community is required for a record and there are no communities selected
-        # Then, check for permissions to publish without community
-        can_publish_without_community = self.check_permission(
-            identity, "publish_elevated", record=draft
-        )
-        if (
-            is_community_required
-            and is_community_missing
-            and not can_publish_without_community
-        ):
-            raise CommunityNotSelectedError()
+        try:
+            draft = self.draft_cls.pid.resolve(id_, registered_only=False)
+            self.require_permission(identity, "publish", record=draft)
+            # By default, admin/superuser has permission to do everything, so PermissionDeniedError won't be raised for admin in any case
+        except PermissionDeniedError as exc:
+            # If user doesn't have permission to publish, determine which error to raise, based on config
+            community_required = current_app.config["RDM_COMMUNITY_REQUIRED_TO_PUBLISH"]
+            is_community_missing = len(draft.parent.communities.ids) < 1
+            if community_required and is_community_missing:
+                raise CommunityRequiredError()
+            else:
+                # If the config wasn't enabled, then raise the PermissionDeniedError
+                raise exc
 
         return super().publish(identity, id_, uow=uow, expand=expand)
 

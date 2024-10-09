@@ -209,26 +209,20 @@ class RecordCommunitiesService(Service, RecordIndexerMixin):
         if community_id not in record.parent.communities.ids:
             raise RecordCommunityMissing(record.id, community_id)
 
-        # Check for permission to remove a community from a record
-        self.require_permission(
-            identity, "remove_community", record=record, community_id=community_id
-        )
-        is_community_required = current_app.config["RDM_RECORD_ALWAYS_IN_COMMUNITY"]
-        is_last_community = len(record.parent.communities.ids) == 1
-        # If community is required for a record and if it is the last community to remove
-        # Then, only users with special permissions can remove
-        can_remove_last_community = self.check_permission(
-            identity,
-            "remove_community_elevated",
-            record=record,
-            community_id=community_id,
-        )
-        if (
-            is_community_required
-            and is_last_community
-            and not can_remove_last_community
-        ):
-            raise CannotRemoveCommunityError()
+        try:
+            self.require_permission(
+                identity, "remove_community", record=record, community_id=community_id
+            )
+            # By default, admin/superuser has permission to do everything, so PermissionDeniedError won't be raised for admin in any case
+        except PermissionDeniedError as exc:
+            # If permission is denied, determine which error to raise, based on config
+            community_required = current_app.config["RDM_COMMUNITY_REQUIRED_TO_PUBLISH"]
+            is_last_community = len(record.parent.communities.ids) <= 1
+            if community_required and is_last_community:
+                raise CannotRemoveCommunityError()
+            else:
+                # If the config wasn't enabled, then raise the PermissionDeniedError
+                raise exc
 
         # Default community is deleted when the exact same community is removed from the record
         record.parent.communities.remove(community_id)

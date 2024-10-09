@@ -30,11 +30,13 @@ from .generators import (
     AccessGrant,
     CommunityInclusionReviewers,
     GuestAccessRequestToken,
+    IfAtLeastOneCommunity,
     IfCreate,
     IfDeleted,
     IfExternalDOIRecord,
     IfFileIsLocal,
     IfNewRecord,
+    IfOneCommunity,
     IfRecordDeleted,
     IfRequestType,
     IfRestricted,
@@ -66,7 +68,6 @@ class RDMRecordPermissionPolicy(RecordPermissionPolicy):
         RecordOwners(),
         RecordCommunitiesAction("curate"),
         AccessGrant("manage"),
-        Administration(),
         SystemProcess(),
     ]
     can_curate = can_manage + [AccessGrant("edit"), SecretLinks("edit")]
@@ -200,9 +201,18 @@ class RDMRecordPermissionPolicy(RecordPermissionPolicy):
         ),
     ]
     # Allow publishing a new record or changes to an existing record.
-    can_publish = can_review
-    # Permission to allow special users to publish a record in special cases
-    can_publish_elevated = [Administration(), SystemProcess()]
+    can_publish = [
+        IfConfig(
+            "RDM_COMMUNITY_REQUIRED_TO_PUBLISH",
+            then_=[
+                IfAtLeastOneCommunity(
+                    then_=can_review,
+                    else_=[Administration(), SystemProcess()],
+                ),
+            ],
+            else_=can_review,
+        )
+    ]
     # Allow lifting a record or draft.
     can_lift_embargo = can_manage
 
@@ -212,16 +222,25 @@ class RDMRecordPermissionPolicy(RecordPermissionPolicy):
     # Who can add record to a community
     can_add_community = can_manage
     # Who can remove a community from a record
-    can_remove_community = [
+    can_remove_community_ = [
         RecordOwners(),
         CommunityCurators(),
-        Administration(),
         SystemProcess(),
     ]
-    # Permission to allow special users to remove community in special cases
-    can_remove_community_elevated = [Administration(), SystemProcess()]
+    can_remove_community = [
+        IfConfig(
+            "RDM_COMMUNITY_REQUIRED_TO_PUBLISH",
+            then_=[
+                IfOneCommunity(
+                    then_=[Administration(), SystemProcess()],
+                    else_=can_remove_community_,
+                ),
+            ],
+            else_=can_remove_community_,
+        ),
+    ]
     # Who can remove records from a community
-    can_remove_record = [CommunityCurators(), Administration()]
+    can_remove_record = [CommunityCurators(), Administration(), SystemProcess()]
     # Who can add records to a community in bulk
     can_bulk_add = [SystemProcess()]
 
