@@ -17,3 +17,6 @@ class CollectionTreeNotFound(CollectionError):
 
 class InvalidQuery(CollectionError):
     """Query syntax is invalid."""
+
+class LogoNotFoundError(CollectionError):
+    """Logo not found error."""

@@ -6,10 +6,14 @@
 # it under the terms of the MIT License; see LICENSE file for more details.
 """Collections service."""
 
+import os
+
+from flask import current_app, url_for
 from invenio_communities.proxies import current_communities
 from invenio_records_resources.services.uow import ModelCommitOp, unit_of_work
 
 from .api import Collection, CollectionTree
+from .errors import LogoNotFoundError
 from .results import CollectionItem, CollectionTreeList
 
 
@@ -46,7 +50,9 @@ class CollectionsService:
             ctree = CollectionTree.resolve(slug=tree_slug, community_id=community_id)
             collection = self.collection_cls.resolve(slug=slug, ctree_id=ctree.id)
         else:
-            raise ValueError("ID or slug and tree_slug and community_id must be provided.")
+            raise ValueError(
+                "ID or slug and tree_slug and community_id must be provided."
+            )
 
         if collection.community:
             current_communities.service.require_permission(
@@ -76,3 +82,14 @@ class CollectionsService:
         )
         uow.register(ModelCommitOp(new_collection.model))
         return CollectionItem(new_collection)
+
+    def read_logo(self, identity, slug):
+        """Read a collection logo.
+
+        TODO: implement logos as files in the database. For now, we just check if the file exists as a static file.
+        """
+        logo_path = f"images/collections/{slug}.jpg"
+        _exists = os.path.exists(os.path.join(current_app.static_folder, logo_path))
+        if _exists:
+            return url_for("static", filename=logo_path)
+        raise LogoNotFoundError()

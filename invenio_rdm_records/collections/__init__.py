@@ -6,7 +6,7 @@
 # it under the terms of the MIT License; see LICENSE file for more details.
 """Collections entrypoint."""
 
-from .errors import CollectionNotFound, CollectionTreeNotFound
+from .errors import CollectionNotFound, CollectionTreeNotFound, LogoNotFoundError
 from .models import Collection, CollectionTree
 from .searchapp import search_app_context
 
@@ -15,5 +15,6 @@ __all__ = (
     "CollectionNotFound",
     "CollectionTree",
     "CollectionTreeNotFound",
+    "LogoNotFoundError",
     "search_app_context",
 )
