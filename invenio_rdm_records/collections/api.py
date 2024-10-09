@@ -55,9 +55,10 @@ class Collection:
     search_query = ModelField("search_query")
     num_records = ModelField("num_records")
 
-    def __init__(self, model=None):
+    def __init__(self, model=None, max_depth=2):
         """Instantiate a Collection object."""
         self.model = model
+        self.max_depth = max_depth
 
     @classmethod
     def validate_query(cls, query):
@@ -68,7 +69,7 @@ class Collection:
             raise InvalidQuery()
 
     @classmethod
-    def create(cls, slug, title, query, ctree=None, parent=None, order=None):
+    def create(cls, slug, title, query, ctree=None, parent=None, order=None, depth=2):
         """Create a new collection."""
         _ctree = None
         if parent:
@@ -89,20 +90,21 @@ class Collection:
                 search_query=query,
                 order=order,
                 ctree_or_id=_ctree,
-            )
+            ),
+            depth,
         )
 
     @classmethod
-    def resolve(cls, id_=None, slug=None, ctree_id=None):
+    def resolve(cls, id_=None, slug=None, ctree_id=None, depth=2):
         """Resolve a collection by ID or slug.
 
         To resolve by slug, the collection tree ID must be provided.
         """
         res = None
         if id_:
-            res = cls(cls.model_cls.get(id_))
+            res = cls(cls.model_cls.get(id_), depth)
         elif slug and ctree_id:
-            res = cls(cls.model_cls.get_by_slug(slug, ctree_id))
+            res = cls(cls.model_cls.get_by_slug(slug, ctree_id), depth)
         else:
             raise ValueError(
                 "Either ID or slug and collection tree ID must be provided."
@@ -113,25 +115,15 @@ class Collection:
         return res
 
     @classmethod
-    def resolve_many(cls, ids_=None):
+    def resolve_many(cls, ids_=None, depth=2):
         """Resolve many collections by ID."""
         _ids = ids_ or []
-        return [cls(c) for c in cls.model_cls.read_many(_ids)]
+        return [cls(c, depth) for c in cls.model_cls.read_many(_ids)]
 
-    def add(
-        self,
-        slug,
-        title,
-        query,
-        order=None,
-    ):
+    def add(self, slug, title, query, order=None, depth=2):
         """Add a subcollection to the collection."""
         return self.create(
-            slug=slug,
-            title=title,
-            query=query,
-            parent=self,
-            order=order,
+            slug=slug, title=title, query=query, parent=self, order=order, depth=depth
         )
 
     @property
@@ -164,7 +156,16 @@ class Collection:
 
     @cached_property
     def sub_collections(self):
-        """Fetch all the descendants."""
+        """Fetch descendants.
+
+        If the max_depth is 1, fetch only direct descendants.
+        """
+        if self.max_depth == 0:
+            return []
+
+        if self.max_depth == 1:
+            return self.get_children()
+
         return self.get_subcollections()
 
     @cached_property
@@ -188,7 +189,7 @@ class Collection:
         res = self.model_cls.get_children(self.model)
         return [type(self)(r) for r in res]
 
-    def get_subcollections(self, max_depth=3):
+    def get_subcollections(self):
         """Get the collection subcollections.
 
         This query executes a LIKE query on the path column.
@@ -196,48 +197,8 @@ class Collection:
         if not self.model:
             return None
 
-        res = self.model_cls.get_subcollections(self.model, max_depth)
+        res = self.model_cls.get_subcollections(self.model, self.max_depth)
         return [type(self)(r) for r in res]
-
-    @classmethod
-    def dump(cls, collection):
-        """Transform the collection into a dictionary."""
-        res = {
-            "title": collection.title,
-            "slug": collection.slug,
-            "depth": collection.depth,
-            "order": collection.order,
-            "id": collection.id,
-            "query": collection.query,
-            "num_records": collection.num_records,
-        }
-        return res
-
-    def to_dict(self, max_depth=2) -> dict:
-        """Return a dictionary representation of the collection.
-
-        Uses an adjacency list.
-        """
-        ret = {
-            "root": self.id,
-            self.id: {**Collection.dump(self), "children": set()},
-        }
-
-        for _c in self.get_subcollections(max_depth=max_depth):
-            # Add the collection itself to the dictionary
-            if _c.id not in ret:
-                ret[_c.id] = {**Collection.dump(_c), "children": set()}
-
-            # Find the parent ID from the collection's path (last valid ID in the path)
-            path_parts = _c.split_path_to_ids()
-            if path_parts:
-                parent_id = path_parts[-1]
-                # Add the collection as a child of its parent
-                ret[parent_id]["children"].add(_c.id)
-        for k, v in ret.items():
-            if isinstance(v, dict):
-                v["children"] = list(v["children"])
-        return ret
 
     def __repr__(self) -> str:
         """Return a string representation of the collection."""
@@ -264,9 +225,10 @@ class CollectionTree:
     community = ModelField("community")
     collections = ModelField("collections")
 
-    def __init__(self, model):
+    def __init__(self, model=None, max_depth=2):
         """Instantiate a CollectionTree object."""
         self.model = model
+        self.max_depth = max_depth
 
     @classmethod
     def create(cls, title, slug, community_id=None, order=None):
@@ -292,40 +254,13 @@ class CollectionTree:
             raise CollectionTreeNotFound()
         return res
 
-    def dump(self):
-        """Transform the collection tree into a dictionary."""
-        if not self.model:
-            return {}
-
-        return {
-            "title": self.title,
-            "slug": self.slug,
-            "community_id": str(self.community_id),
-            "order": self.order,
-            "id": self.id,
-        }
-
-    def to_dict(self, max_depth=2):
-        """Return a dictionary representation of the collection tree."""
-        collections = self.root_collections
-        return {
-            **self.dump(),
-            "collections": [c.to_dict(max_depth=max_depth) for c in collections],
-        }
-
     @cached_property
-    def root_collections(self):
+    def collections(self):
         """Get the collections under this tree."""
-        return self.get_collections(max_depth=1)
-
-    def get_collections(self, max_depth=0):
-        """Get the collections under this tree, up to a depth."""
-        return [
-            Collection(c)
-            for c in CollectionTreeModel.get_collections(self.model, max_depth)
-        ]
+        root_collections = CollectionTreeModel.get_collections(self.model, 1)
+        return [Collection(c, self.max_depth) for c in root_collections]
 
     @classmethod
-    def get_community_trees(cls, community_id):
+    def get_community_trees(cls, community_id, depth=2):
         """Get all the collection trees for a community."""
-        return [cls(c) for c in cls.model_cls.get_community_trees(community_id)]
+        return [cls(c, depth) for c in cls.model_cls.get_community_trees(community_id)]

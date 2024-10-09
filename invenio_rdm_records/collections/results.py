@@ -6,114 +6,127 @@
 # it under the terms of the MIT License; see LICENSE file for more details.
 """Collections service items."""
 
+from invenio_records_resources.services.base.results import (
+    ServiceItemResult,
+    ServiceListResult,
+)
 
-class CollectionItem:
+
+class CollectionItem(ServiceItemResult):
     """Collection item."""
 
-    def __init__(self, collection):
+    def __init__(self, identity, collection, schema, links_tpl):
         """Instantiate a Collection object.
 
         Optionally pass a community to cache its information in the collection's instance.
         """
+        self._identity = identity
         self._collection = collection
+        self._schema = schema
+        self._links_tpl = links_tpl
 
-    def to_dict(self, max_depth=2, include_breadcrumbs=False):
-        """Serialize the collection to a dictionary and add links."""
-        res = {**self._collection.to_dict(max_depth=max_depth)}
+    def to_dict(self):
+        """Serialize the collection to a dictionary and add links.
 
-        # Add links for all the collections
-        tree = self._collection.collection_tree
-        community = self._collection.community
-        for id_, coll in res.items():
-            if id_ == "root":
-                continue
-            res[id_]["links"] = {
-                "search": CollectionItem.search_link(community.slug),
-                "self_html": CollectionItem.html_link(
-                    community.slug, tree.slug, coll["slug"]
-                ),
-            }
+        It will output a dictionary with the following structure:
+
+        .. code-block:: python
+
+            {
+                "root": 1,
+                1: {
+                    "id": 1,
+                    "title": "Root",
+                    "slug": "root",
+                    "depth": 0,
+                    "order": 1,
+                    "query": "",
+                    "num_records": 0,
+                    "children": [2],
+                    "links": {
+                        "self_html": "..."
+                        "search": "..."
+                    }
+                },
+                2: {
+                    "id": 2,
+                    "title": "Subcollection",
+                    "slug": "subcollection",
+                    "depth": 1,
+                    "order": 1,
+                    "query": "",
+                    "num_records": 0,
+                    "children": [],
+                    "links": {
+                        "self_html": "..."
+                        "search": "..."
+                    }
+                }
+        """
+        res = {
+            "root": self._collection.id,
+            self._collection.id: {
+                **self._schema.dump(self._collection),
+                "children": list(),
+                "links": self._links_tpl.expand(self._identity, self._collection),
+            },
+        }
+
+        for _c in self._collection.sub_collections:
+            if _c.id not in res:
+                # Add the subcollection to the dictionary
+                res[_c.id] = {
+                    **self._schema.dump(_c),
+                    "children": list(),
+                    "links": self._links_tpl.expand(self._identity, _c),
+                }
+            # Find the parent ID from the collection's path (last valid ID in the path)
+            path_parts = _c.split_path_to_ids()
+            if path_parts:
+                parent_id = path_parts[-1]
+                # Add the collection as a child of its parent
+                res[parent_id]["children"].append(_c.id)
 
         # Add breadcrumbs
-        if include_breadcrumbs:
-            res[self._collection.id]["breadcrumbs"] = self.breadcrumbs
+        res[self._collection.id]["breadcrumbs"] = self.breadcrumbs
 
         return res
-
-    @classmethod
-    def search_link(cls, community_slug):
-        """Get the search link."""
-        if community_slug:
-            return f"/api/communities/{community_slug}/records"
-        return "/api/records"
-
-    @classmethod
-    def html_link(cls, community_slug, tree_slug, collection_slug):
-        """Get the HTML link."""
-        if community_slug:
-            return f"/communities/{community_slug}/collections/{tree_slug}/{collection_slug}"
-        return f"/collections/{tree_slug}/{collection_slug}"
-
-    @property
-    def title(self):
-        """Get the collection title."""
-        return self._collection.title
-
-    @property
-    def query(self):
-        """Get the collection query."""
-        return self._collection.query
-
-    @property
-    def collection_tree(self):
-        """Get the collection tree."""
-        return self._collection.collection_tree
-
-    @property
-    def children(self):
-        """Get the collection children."""
-        return self._collection.children
-
-    @property
-    def community(self):
-        """Get the collection community."""
-        return self._collection.community
 
     @property
     def breadcrumbs(self):
         """Get the collection ancestors."""
         res = []
-        community_slug = self.community.slug
-        tree_slug = self.collection_tree.slug
+        community_slug = self._collection.community.slug
+        tree_slug = self._collection.collection_tree.slug
         for anc in self._collection.ancestors:
             _a = {
                 "title": anc.title,
-                "link": CollectionItem.html_link(community_slug, tree_slug, anc.slug),
+                "link": self._links_tpl.expand(self._identity, anc)["self_html"],
             }
             res.append(_a)
         res.append(
             {
-                "title": self.title,
-                "link": CollectionItem.html_link(
-                    community_slug, tree_slug, self._collection.slug
-                ),
+                "title": self._collection.title,
+                "link": self._links_tpl.expand(self._identity, self._collection)[
+                    "self_html"
+                ],
             }
         )
         return res
 
 
-class CollectionList:
+class CollectionList(ServiceListResult):
     """Collection list item."""
 
     def __init__(self, collections):
         """Instantiate a Collection list item."""
         self._collections = collections
 
-    def to_dict(self, max_depth=2):
+    def to_dict(self):
         """Serialize the collection list to a dictionary."""
         res = []
         for collection in self._collections:
-            _r = collection.to_dict(max_depth=2)
+            _r = collection.to_dict()
             _r["links"] = CollectionItem(collection).links
             res.append(_r)
         return res
@@ -126,30 +139,54 @@ class CollectionList:
 class CollectionTreeItem:
     """Collection tree item."""
 
-    def __init__(self, tree, max_depth=2):
+    def __init__(self, identity, tree, collection_link_tpl, collection_schema):
         """Instantiate a Collection tree object."""
+        self._identity = identity
         self._tree = tree
-        self._max_depth = max_depth
+        self._collection_link_tpl = collection_link_tpl
+        self._collection_schema = collection_schema
 
     def to_dict(self):
         """Serialize the collection tree to a dictionary."""
-        return self._tree.to_dict(max_depth=self._max_depth)
+        return {
+            "title": self._tree.title,
+            "slug": self._tree.slug,
+            "community_id": str(self._tree.community_id),
+            "order": self._tree.order,
+            "id": self._tree.id,
+            "collections": [
+                CollectionItem(
+                    self._identity,
+                    c,
+                    self._collection_schema,
+                    self._collection_link_tpl,
+                ).to_dict()
+                for c in self._tree.collections
+            ],
+        }
 
 
 class CollectionTreeList:
     """Collection tree list item."""
 
-    def __init__(self, trees, max_depth=1):
+    def __init__(self, identity, trees, collection_schema, collection_link_tpl):
         """Instantiate a Collection tree list item."""
+        self._identity = identity
         self._trees = trees
-        self._max_depth = max_depth
+        self._collection_link_tpl = collection_link_tpl
+        self._collection_schema = collection_schema
 
     def to_dict(self):
         """Serialize the collection tree list to a dictionary."""
         res = {}
         for tree in self._trees:
             # Only root collections
-            res[tree.id] = CollectionTreeItem(tree, self._max_depth).to_dict()
+            res[tree.id] = CollectionTreeItem(
+                self._identity,
+                tree,
+                self._collection_schema,
+                self._collection_link_tpl,
+            ).to_dict()
         return res
 
     def __iter__(self):
