@@ -69,7 +69,9 @@ class CollectionTree(db.Model, Timestamp):
     @classmethod
     def get_community_trees(cls, community_id):
         """Get all collection trees of a community."""
-        return cls.query.filter(cls.community_id == community_id).all()
+        return (
+            cls.query.filter(cls.community_id == community_id).order_by(cls.order).all()
+        )
 
     @classmethod
     def get_collections(cls, model, max_depth):
