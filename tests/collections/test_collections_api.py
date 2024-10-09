@@ -18,7 +18,6 @@ def test_create(running_app, db, community, community_owner):
         slug="tree-1",
     )
 
-    # Use ORM object (collection tree)
     collection = Collection.create(
         title="My Collection",
         query="*:*",
@@ -45,46 +44,33 @@ def test_create(running_app, db, community, community_owner):
     assert collection.collection_tree.id == tree.id
 
 
-def test_as_dict(running_app, db):
-    """Test collection as dict."""
+def test_resolve(running_app, db, community):
+    """Test collection resolution."""
     tree = CollectionTree.create(
         title="Tree 1",
         order=10,
+        community_id=community.id,
         slug="tree-1",
     )
-    c1 = Collection.create(
+
+    collection = Collection.create(
         title="My Collection",
         query="*:*",
         slug="my-collection",
         ctree=tree,
     )
 
-    c2 = Collection.create(
-        title="My Collection 2",
-        query="*:*",
-        slug="my-collection-2",
-        parent=c1,
-    )
+    # Read by ID
+    read_by_id = Collection.resolve(collection.id)
+    assert read_by_id.id == collection.id
 
-    c3 = Collection.create(title="3", query="*", slug="my-collection-3", parent=c2)
-    res = c1.to_dict(max_depth=3)
-    assert all(k in res for k in (c1.id, c2.id, c3.id))
-    assert res[c1.id]["title"] == "My Collection"
-    assert res[c1.id]["children"] == [c2.id]
-    assert res[c2.id]["children"] == [c3.id]
-    assert res[c3.id]["children"] == []
-
-    res = c1.to_dict(max_depth=2)
-    assert all(k in res for k in (c1.id, c2.id))
-    assert res[c1.id]["title"] == "My Collection"
-    assert res[c1.id]["children"] == [c2.id]
-    assert res[c2.id]["children"] == []
-    assert c3.id not in res
+    # Read by slug
+    read_by_slug = Collection.resolve(slug="my-collection", ctree_id=tree.id)
+    assert read_by_slug.id == read_by_id.id == collection.id
 
 
 def test_query_build(running_app, db):
     """Test query building."""
-
     tree = CollectionTree.create(
         title="Tree 1",
         order=10,
