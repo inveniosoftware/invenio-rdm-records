@@ -77,3 +77,7 @@ pip-wheel-metadata/
 
 # node_modules
 node_modules
+
+# Transifex compiled files
+README.md
+tx
