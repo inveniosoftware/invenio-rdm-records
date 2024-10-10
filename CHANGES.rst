@@ -12,6 +12,10 @@
 Changes
 =======
 
+Version v15.2.0 (released 2024-10-10)
+
+- webpack: update axios and react-searchkit(due to axios) major versions
+
 Version v15.1.0 (released 2024-10-10)
 
 - jobs: register embargo update job type
