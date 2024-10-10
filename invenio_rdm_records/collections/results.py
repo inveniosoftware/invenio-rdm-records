@@ -67,7 +67,7 @@ class CollectionItem(ServiceItemResult):
             "root": self._collection.id,
             self._collection.id: {
                 **self._schema.dump(self._collection),
-                "children": set(),
+                "children": list(),
                 "links": self._links_tpl.expand(self._identity, self._collection),
             },
         }
@@ -77,7 +77,7 @@ class CollectionItem(ServiceItemResult):
                 # Add the subcollection to the dictionary
                 res[_c.id] = {
                     **self._schema.dump(_c),
-                    "children": set(),
+                    "children": list(),
                     "links": self._links_tpl.expand(self._identity, _c),
                 }
             # Find the parent ID from the collection's path (last valid ID in the path)
@@ -85,10 +85,7 @@ class CollectionItem(ServiceItemResult):
             if path_parts:
                 parent_id = path_parts[-1]
                 # Add the collection as a child of its parent
-                res[parent_id]["children"].add(_c.id)
-        for k, v in res.items():
-            if isinstance(v, dict):
-                v["children"] = list(v["children"])
+                res[parent_id]["children"].append(_c.id)
 
         # Add breadcrumbs
         res[self._collection.id]["breadcrumbs"] = self.breadcrumbs
