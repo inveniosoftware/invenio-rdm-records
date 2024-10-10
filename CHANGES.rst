@@ -12,6 +12,11 @@
 Changes
 =======
 
+Version v15.1.0 (released 2024-10-10)
+
+- jobs: register embargo update job type
+- installation: upgrade invenio-jbs
+
 Version v15.0.0 (released 2024-10-08)
 
 - installation: bump invenio-communities
