@@ -381,7 +381,7 @@ parent_doi_link = ConditionalLink(
         when=is_record_or_draft_and_has_parent_doi,
     ),
     else_=RecordPIDLink(
-        "https://doi.org/{+pid_doi}", when=is_record_or_draft_and_has_parent_doi
+        "https://doi.org/{+parent_pid_doi}", when=is_record_or_draft_and_has_parent_doi
     ),
 )
 parent_doi_html_link = RecordPIDLink(
