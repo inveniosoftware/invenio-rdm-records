@@ -1289,6 +1289,9 @@
           },
           "next_draft_id": {
             "type": "keyword"
+          },
+          "versions_count": {
+            "type": "integer"
           }
         }
       },
