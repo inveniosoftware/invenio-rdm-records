@@ -58,12 +58,12 @@ def test_collections_read(
     c1 = collections[1]
 
     # Read by id
-    res = collections_service.read(community_owner.identity, id_=c0.id)
+    res = collections_service.read(identity=community_owner.identity, id_=c0.id)
     assert res._collection.id == c0.id
 
     # Read by slug
     res = collections_service.read(
-        community_owner.identity,
+        identity=community_owner.identity,
         community_id=community.id,
         tree_slug=c0.collection_tree.slug,
         slug=c0.slug,
@@ -97,7 +97,7 @@ def test_collections_create(
     assert collection.collection_tree.id == tree.id
 
     read_collection = collections_service.read(
-        community_owner.identity, id_=collection.id
+        identity=community_owner.identity, id_=collection.id
     )
     assert read_collection._collection.id == collection.id
     assert read_collection._collection.title == "My Collection"
@@ -123,12 +123,12 @@ def test_collections_add(
     c3 = c3._collection
 
     # Read the collection
-    res = collections_service.read(community_owner.identity, id_=c3.id)
+    res = collections_service.read(identity=community_owner.identity, id_=c3.id)
     assert res._collection.id == c3.id
     assert res._collection.title == "Collection 3"
 
     # Read the parent collection
-    res = collections_service.read(community_owner.identity, id_=c2.id)
+    res = collections_service.read(identity=community_owner.identity, id_=c2.id)
     assert res.to_dict()[c2.id]["children"] == [c3.id]
 
 
@@ -150,7 +150,9 @@ def test_collections_results(
         query="metadata.title:baz",
     )
     # Read the collection tree up to depth 2
-    res = collections_service.read(community_owner.identity, id_=c0.id, depth=2)
+    res = collections_service.read(
+        identity=community_owner.identity, id_=c0.id, depth=2
+    )
     r_dict = res.to_dict()
 
     expected = {
@@ -171,7 +173,6 @@ def test_collections_results(
             },
             "num_records": 0,
             "order": c0.order,
-            "query": "(metadata.title:foo)",
             "slug": "collection-1",
             "title": "Collection 1",
         },
@@ -185,7 +186,6 @@ def test_collections_results(
             },
             "num_records": 0,
             "order": c1.order,
-            "query": "(metadata.title:foo) AND (metadata.title:bar)",
             "slug": "collection-2",
             "title": "Collection 2",
         },
@@ -193,7 +193,9 @@ def test_collections_results(
     assert not list(dictdiffer.diff(expected, r_dict))
 
     # Read the collection tree up to depth 3
-    res = collections_service.read(community_owner.identity, id_=c0.id, depth=3)
+    res = collections_service.read(
+        identity=community_owner.identity, id_=c0.id, depth=3
+    )
     r_dict = res.to_dict()
 
     # Get the API object, just for the sake of testing
@@ -216,7 +218,6 @@ def test_collections_results(
             },
             "num_records": 0,
             "order": c0.order,
-            "query": "(metadata.title:foo)",
             "slug": "collection-1",
             "title": "Collection 1",
         },
@@ -230,7 +231,6 @@ def test_collections_results(
             },
             "num_records": 0,
             "order": c1.order,
-            "query": "(metadata.title:foo) AND (metadata.title:bar)",
             "slug": "collection-2",
             "title": "Collection 2",
         },
@@ -244,7 +244,6 @@ def test_collections_results(
             },
             "num_records": 0,
             "order": c3.order,
-            "query": "(metadata.title:foo) AND (metadata.title:bar) AND (metadata.title:baz)",
             "slug": "collection-3",
             "title": "Collection 3",
         },

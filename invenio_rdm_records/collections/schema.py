@@ -17,5 +17,4 @@ class CollectionSchema(Schema):
     depth = fields.Int()
     order = fields.Int()
     id = fields.Int()
-    query = fields.Str()
     num_records = fields.Int()

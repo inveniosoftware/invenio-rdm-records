@@ -112,6 +112,11 @@ class CollectionItem(ServiceItemResult):
         )
         return res
 
+    @property
+    def query(self):
+        """Get the collection query."""
+        return self._collection.query
+
 
 class CollectionList(ServiceListResult):
     """Collection list item."""
