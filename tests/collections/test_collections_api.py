@@ -6,6 +6,8 @@
 # it under the terms of the MIT License; see LICENSE file for more details.
 """Test suite for the collections programmatic API."""
 
+from invenio_search.engine import dsl
+
 from invenio_rdm_records.collections.api import Collection, CollectionTree
 
 
@@ -25,7 +27,7 @@ def test_create(running_app, db, community, community_owner):
         ctree=tree,
     )
 
-    read_c = Collection.resolve(collection.id)
+    read_c = Collection.resolve(id_=collection.id)
     assert read_c.id == collection.id
     assert read_c.title == "My Collection"
     assert read_c.collection_tree.id == tree.id
@@ -38,7 +40,7 @@ def test_create(running_app, db, community, community_owner):
         ctree=tree.id,
     )
 
-    read_c = Collection.resolve(collection.id)
+    read_c = Collection.resolve(id_=collection.id)
     assert read_c.id == collection.id
     assert collection.title == "My Collection 2"
     assert collection.collection_tree.id == tree.id
@@ -61,7 +63,7 @@ def test_resolve(running_app, db, community):
     )
 
     # Read by ID
-    read_by_id = Collection.resolve(collection.id)
+    read_by_id = Collection.resolve(id_=collection.id)
     assert read_by_id.id == collection.id
 
     # Read by slug
@@ -88,7 +90,7 @@ def test_query_build(running_app, db):
         slug="my-collection-2",
         parent=c1,
     )
-    assert c2.query == "(metadata.title:hello) AND (metadata.creators.name:john)"
+    assert c2.query == c1.query & dsl.Q("query_string", query=c2.search_query)
 
 
 def test_children(running_app, db):

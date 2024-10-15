@@ -13,6 +13,7 @@ class CollectionLinkstemplate(LinksTemplate):
     """Templates for generating links for a collection object."""
 
     def __init__(self, links=None, context=None):
+        """Initialize the links template."""
         super().__init__(links, context)
 
 

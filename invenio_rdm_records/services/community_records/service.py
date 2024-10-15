@@ -18,7 +18,7 @@ from invenio_records_resources.services.errors import PermissionDeniedError
 from invenio_records_resources.services.uow import unit_of_work
 from invenio_search.engine import dsl
 
-from ...proxies import current_record_communities_service
+from ...proxies import current_rdm_records, current_record_communities_service
 from ...records.systemfields.deletion_status import RecordDeletionStatusEnum
 
 
@@ -66,6 +66,14 @@ class CommunityRecordsService(RecordService):
 
         if extra_filter is not None:
             community_filter = community_filter & extra_filter
+
+        # Search in a specific collection
+        if "collection_id" in params:
+            collections_service = current_rdm_records.collections_service
+            collection = collections_service.read(
+                identity=identity, id_=params["collection_id"]
+            )
+            community_filter &= collection.query
 
         search = self._search(
             "search",

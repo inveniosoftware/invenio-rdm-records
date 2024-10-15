@@ -116,14 +116,14 @@ class Collection:
     @property
     def query(self):
         """Get the collection query."""
-        q = ""
-        for _a in self.ancestors:
-            q += f"({_a.model.search_query}) AND "
-        q += f"({self.model.search_query})"
+        import operator
+        from functools import reduce
 
-        # Query must be validated because it is not being built using dsl
-        Collection.validate_query(q)
-        return q
+        from invenio_search.engine import dsl
+
+        queries = [dsl.Q("query_string", query=a.search_query) for a in self.ancestors]
+        queries.append(dsl.Q("query_string", query=self.search_query))
+        return reduce(operator.and_, queries)
 
     @cached_property
     def ancestors(self):

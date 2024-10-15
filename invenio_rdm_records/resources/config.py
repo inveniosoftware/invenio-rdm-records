@@ -45,7 +45,7 @@ from ..services.errors import (
     ReviewStateError,
     ValidationErrorWithMessageAsList,
 )
-from .args import RDMSearchRequestArgsSchema
+from .args import CommunityRecordsSearchRequestArgsSchema, RDMSearchRequestArgsSchema
 from .deserializers import ROCrateJSONDeserializer
 from .deserializers.errors import DeserializerError
 from .errors import HTTPJSONException, HTTPJSONValidationWithMessageAsListException
@@ -549,6 +549,8 @@ class RDMCommunityRecordsResourceConfig(RecordResourceConfig, ConfiguratorMixin)
         "RDM_RECORDS_SERIALIZERS",
         default=record_serializers,
     )
+
+    request_search_args = CommunityRecordsSearchRequestArgsSchema
 
 
 class RDMRecordCommunitiesResourceConfig(CommunityResourceConfig, ConfiguratorMixin):

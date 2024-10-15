@@ -74,7 +74,7 @@ class CollectionsService(Service):
         To resolve by slug, the collection tree ID and community ID must be provided.
         """
         if id_:
-            collection = self.collection_cls.resolve(id_, depth=depth)
+            collection = self.collection_cls.resolve(id_=id_, depth=depth)
         elif slug and tree_slug and community_id:
             ctree = CollectionTree.resolve(slug=tree_slug, community_id=community_id)
             collection = self.collection_cls.resolve(
