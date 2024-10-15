@@ -69,7 +69,7 @@ class Collection:
         )
 
     @classmethod
-    def resolve(cls, id_=None, slug=None, ctree_id=None, depth=2):
+    def resolve(cls, *, id_=None, slug=None, ctree_id=None, depth=2):
         """Resolve a collection by ID or slug.
 
         To resolve by slug, the collection tree ID must be provided.
@@ -120,6 +120,8 @@ class Collection:
         for _a in self.ancestors:
             q += f"({_a.model.search_query}) AND "
         q += f"({self.model.search_query})"
+
+        # Query must be validated because it is not being built using dsl
         Collection.validate_query(q)
         return q
 
@@ -129,7 +131,7 @@ class Collection:
         return Collection.resolve_many(self.split_path_to_ids())
 
     @cached_property
-    def sub_collections(self):
+    def subcollections(self):
         """Fetch descendants.
 
         If the max_depth is 1, fetch only direct descendants.

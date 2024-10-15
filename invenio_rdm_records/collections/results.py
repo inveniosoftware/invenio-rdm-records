@@ -72,7 +72,7 @@ class CollectionItem(ServiceItemResult):
             },
         }
 
-        for _c in self._collection.sub_collections:
+        for _c in self._collection.subcollections:
             if _c.id not in res:
                 # Add the subcollection to the dictionary
                 res[_c.id] = {
@@ -87,7 +87,7 @@ class CollectionItem(ServiceItemResult):
                 # Add the collection as a child of its parent
                 res[parent_id]["children"].append(_c.id)
 
-        # Add breadcrumbs
+        # Add breadcrumbs, sorted from root to leaf and taking into account the `order` field
         res[self._collection.id]["breadcrumbs"] = self.breadcrumbs
 
         return res
@@ -96,8 +96,6 @@ class CollectionItem(ServiceItemResult):
     def breadcrumbs(self):
         """Get the collection ancestors."""
         res = []
-        community_slug = self._collection.community.slug
-        tree_slug = self._collection.collection_tree.slug
         for anc in self._collection.ancestors:
             _a = {
                 "title": anc.title,
