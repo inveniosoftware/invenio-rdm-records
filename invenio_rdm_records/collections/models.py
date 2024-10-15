@@ -68,19 +68,14 @@ class CollectionTree(db.Model, Timestamp):
     @classmethod
     def get_community_trees(cls, community_id):
         """Get all collection trees of a community."""
-        return (
-            cls.query.filter(cls.community_id == community_id).order_by(cls.order).all()
-        )
+        return cls.query.filter(cls.community_id == community_id).order_by(cls.order)
 
     @classmethod
     def get_collections(cls, model, max_depth):
         """Get collections under a tree."""
-        stmt = Collection.query.filter(
+        return Collection.query.filter(
             Collection.tree_id == model.id, Collection.depth < max_depth
         ).order_by(Collection.path, Collection.order)
-
-        # Execute the query and get the result
-        return stmt.all()
 
 
 # Collection Table
@@ -163,18 +158,14 @@ class Collection(db.Model, Timestamp):
     @classmethod
     def read_many(cls, ids):
         """Get many collections by ID."""
-        return cls.query.filter(cls.id.in_(ids)).order_by(cls.path, cls.order).all()
+        return cls.query.filter(cls.id.in_(ids)).order_by(cls.path, cls.order)
 
     @classmethod
     def get_children(cls, model):
         """Get children collections of a collection."""
-        # Assuming self.model_cls is the ORM model
-        stmt = cls.query.filter(
+        return cls.query.filter(
             cls.path == f"{model.path}{model.id},", cls.tree_id == model.tree_id
         ).order_by(cls.path, cls.order)
-
-        # Execute the query and get the result
-        return stmt.all()
 
     @classmethod
     def get_subcollections(cls, model, max_depth):
@@ -183,11 +174,8 @@ class Collection(db.Model, Timestamp):
         This query will return all subcollections of a collection up to a certain depth.
         It can be used for max_depth=1, however it is more efficient to use get_children.
         """
-        stmt = cls.query.filter(
+        return cls.query.filter(
             cls.path.like(f"{model.path}{model.id},%"),
             cls.tree_id == model.tree_id,
             cls.depth < model.depth + max_depth,
         ).order_by(cls.path, cls.order)
-
-        # Execute the query and get the result
-        return stmt.all()

@@ -5,6 +5,7 @@
 # Invenio-RDM is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
 """Collections programmatic API."""
+from invenio_records.systemfields import ModelField
 from luqum.parser import parser as luqum_parser
 from werkzeug.utils import cached_property
 
@@ -13,47 +14,20 @@ from .models import Collection as CollectionModel
 from .models import CollectionTree as CollectionTreeModel
 
 
-class ModelField:
-    """Model Field Descriptor."""
-
-    def __init__(self, attr_name):
-        """Initialize the descriptor."""
-        self._attr_name = attr_name
-
-    @property
-    def attr_name(self):
-        """The name of the SQLAlchemy field on the model.
-
-        Defaults to the attribute name used on the class.
-        """
-        return self._attr_name
-
-    def __get__(self, obj, objtype=None):
-        """Descriptor method to get the object."""
-        if obj is None:
-            return self
-
-        # Try instance access
-        try:
-            return getattr(obj.model, self.attr_name)
-        except AttributeError:
-            return None
-
-
 class Collection:
     """Collection Object."""
 
     model_cls = CollectionModel
 
-    id = ModelField("id")
-    path = ModelField("path")
+    id = ModelField()
+    path = ModelField()
     ctree_id = ModelField("collection_tree_id")
-    order = ModelField("order")
-    title = ModelField("title")
-    slug = ModelField("slug")
-    depth = ModelField("depth")
-    search_query = ModelField("search_query")
-    num_records = ModelField("num_records")
+    order = ModelField()
+    title = ModelField()
+    slug = ModelField()
+    depth = ModelField()
+    search_query = ModelField()
+    num_records = ModelField()
 
     def __init__(self, model=None, max_depth=2):
         """Instantiate a Collection object."""
