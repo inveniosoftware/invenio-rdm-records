@@ -12,6 +12,13 @@
 Changes
 =======
 
+Version v15.3.0 (released 2024-10-16)
+
+- collections: display pages and REST API
+- deposit: add feature flag for required community submission flow
+- mappings: disable doc_values for geo_shape fields (#1807)
+    * Fixes multiple values for ``metadata.locaations.features``.
+
 Version v15.2.0 (released 2024-10-10)
 
 - webpack: update axios and react-searchkit(due to axios) major versions
