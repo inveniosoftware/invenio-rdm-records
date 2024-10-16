@@ -35,6 +35,7 @@ from invenio_requests.resources.requests.config import RequestSearchRequestArgsS
 
 from ..services.errors import (
     AccessRequestExistsError,
+    CommunityRequiredError,
     GrantExistsError,
     InvalidAccessRestrictions,
     RecordDeletedException,
@@ -185,6 +186,7 @@ class RDMRecordResourceConfig(RecordResourceConfig, ConfiguratorMixin):
     )
 
     error_handlers = {
+        **ErrorHandlersMixin.error_handlers,
         DeserializerError: create_error_handler(
             lambda exc: HTTPJSONException(
                 code=400,
@@ -245,6 +247,12 @@ class RDMRecordResourceConfig(RecordResourceConfig, ConfiguratorMixin):
                     description=_("Record deleted"),
                     tombstone=e.record.tombstone.dump(),
                 )
+            )
+        ),
+        CommunityRequiredError: create_error_handler(
+            HTTPJSONException(
+                code=400,
+                description=_("Cannot publish without selecting a community."),
             )
         ),
     }
