@@ -8,6 +8,7 @@
 export {
   CommunitySelectionModal,
   CommunitySelectionModalComponent,
+  CommunitySelectionSearch,
 } from "./CommunitySelectionModal";
 export { DepositStatusBox } from "./DepositStatus";
 export { RDMUploadProgressNotifier } from "./UploadProgressNotifier";
