@@ -12,6 +12,10 @@
 Changes
 =======
 
+Version 10.8.6 (released 2024-10-16)
+
+- Feature: Config to require community approval for record publishing
+
 Version 10.8.6 (released 2024-09-30)
 
 - dependencies: bump flask-iiif
