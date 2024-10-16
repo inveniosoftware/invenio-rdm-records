@@ -43,11 +43,15 @@ export class CommunitySelectionSearch extends Component {
         toggleText,
       },
     } = this.state;
+
     const {
       apiConfigs: { allCommunities, myCommunities },
       record,
       isInitialSubmission,
+      CommunityListItem,
+      pagination,
     } = this.props;
+
     const searchApi = new InvenioSearchApi(selectedSearchApi);
     const overriddenComponents = {
       [`${selectedAppId}.ResultsList.item`]: parametrize(CommunityListItem, {
@@ -55,6 +59,7 @@ export class CommunitySelectionSearch extends Component {
         isInitialSubmission: isInitialSubmission,
       }),
     };
+
     return (
       <OverridableContext.Provider value={overriddenComponents}>
         <ReactSearchKit
@@ -75,7 +80,7 @@ export class CommunitySelectionSearch extends Component {
                 floated="left"
                 className="pt-0 pl-0"
               >
-                <Menu role="tablist" compact>
+                <Menu role="tablist" className="theme-primary-menu" compact>
                   <Menu.Item
                     as="button"
                     role="tab"
@@ -144,9 +149,11 @@ export class CommunitySelectionSearch extends Component {
               </ResultsLoader>
             </Modal.Content>
 
-            <Modal.Content className="text-align-center">
-              <Pagination />
-            </Modal.Content>
+            {pagination && (
+              <Modal.Content className="text-align-center">
+                <Pagination />
+              </Modal.Content>
+            )}
           </>
         </ReactSearchKit>
       </OverridableContext.Provider>
@@ -169,10 +176,14 @@ CommunitySelectionSearch.propTypes = {
   }),
   record: PropTypes.object.isRequired,
   isInitialSubmission: PropTypes.bool,
+  CommunityListItem: PropTypes.elementType,
+  pagination: PropTypes.bool,
 };
 
 CommunitySelectionSearch.defaultProps = {
   isInitialSubmission: true,
+  pagination: true,
+  CommunityListItem: CommunityListItem,
   apiConfigs: {
     allCommunities: {
       initialQueryState: { size: 5, page: 1, sortBy: "bestmatch" },

@@ -9,4 +9,6 @@ export {
   CommunitySelectionModalComponent,
 } from "./CommunitySelectionModal";
 
+export { CommunitySelectionSearch } from "./CommunitySelectionSearch";
+
 export { CommunityContext } from "./CommunityContext";
