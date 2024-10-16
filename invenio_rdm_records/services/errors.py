@@ -199,3 +199,15 @@ class AccessRequestExistsError(AccessRequestException):
             )
         else:
             return _("The access request is a duplicate")
+
+
+class CommunityRequiredError(Exception):
+    """Error thrown when a record is being created/updated with less than 1 community."""
+
+    description = _("Cannot publish without a community.")
+
+
+class CannotRemoveCommunityError(Exception):
+    """Error thrown when the last community is being removed from the record."""
+
+    description = _("A record should be part of at least 1 community.")

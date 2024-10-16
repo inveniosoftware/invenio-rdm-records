@@ -11,10 +11,7 @@
 from flask import current_app
 from invenio_access.permissions import system_identity
 from invenio_communities.proxies import current_communities
-from invenio_drafts_resources.services.records.uow import (
-    ParentRecordCommitOp,
-    RecordCommitOp,
-)
+from invenio_drafts_resources.services.records.uow import ParentRecordCommitOp
 from invenio_i18n import lazy_gettext as _
 from invenio_notifications.services.uow import NotificationOp
 from invenio_pidstore.errors import PIDDoesNotExistError, PIDUnregistered
@@ -38,6 +35,7 @@ from ...notifications.builders import CommunityInclusionSubmittedNotificationBui
 from ...proxies import current_rdm_records, current_rdm_records_service
 from ...requests import CommunityInclusion
 from ..errors import (
+    CannotRemoveCommunityError,
     CommunityAlreadyExists,
     InvalidAccessRestrictions,
     OpenRequestAlreadyExists,
@@ -193,10 +191,20 @@ class RecordCommunitiesService(Service, RecordIndexerMixin):
         if community_id not in record.parent.communities.ids:
             raise RecordCommunityMissing(record.id, community_id)
 
-        # check permission here, per community: curator cannot remove another community
-        self.require_permission(
-            identity, "remove_community", record=record, community_id=community_id
-        )
+        try:
+            self.require_permission(
+                identity, "remove_community", record=record, community_id=community_id
+            )
+            # By default, admin/superuser has permission to do everything, so PermissionDeniedError won't be raised for admin in any case
+        except PermissionDeniedError as exc:
+            # If permission is denied, determine which error to raise, based on config
+            community_required = current_app.config["RDM_COMMUNITY_REQUIRED_TO_PUBLISH"]
+            is_last_community = len(record.parent.communities.ids) <= 1
+            if community_required and is_last_community:
+                raise CannotRemoveCommunityError()
+            else:
+                # If the config wasn't enabled, then raise the PermissionDeniedError
+                raise exc
 
         # Default community is deleted when the exact same community is removed from the record
         record.parent.communities.remove(community_id)
@@ -221,7 +229,11 @@ class RecordCommunitiesService(Service, RecordIndexerMixin):
             try:
                 self._remove(identity, community_id, record)
                 processed.append({"community": community_id})
-            except (RecordCommunityMissing, PermissionDeniedError) as ex:
+            except (
+                RecordCommunityMissing,
+                PermissionDeniedError,
+                CannotRemoveCommunityError,
+            ) as ex:
                 errors.append(
                     {
                         "community": community_id,
