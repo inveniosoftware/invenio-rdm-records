@@ -20,6 +20,7 @@ from invenio_db import db
 from invenio_drafts_resources.services.records import RecordService
 from invenio_drafts_resources.services.records.uow import ParentRecordCommitOp
 from invenio_records_resources.services import LinksTemplate, ServiceSchemaWrapper
+from invenio_records_resources.services.errors import PermissionDeniedError
 from invenio_records_resources.services.uow import (
     RecordCommitOp,
     RecordIndexDeleteOp,
@@ -37,6 +38,7 @@ from invenio_rdm_records.services.pids.tasks import register_or_update_pid
 
 from ..records.systemfields.deletion_status import RecordDeletionStatusEnum
 from .errors import (
+    CommunityRequiredError,
     DeletionStatusException,
     EmbargoNotLiftedError,
     RecordDeletedException,
@@ -403,6 +405,28 @@ class RDMRecordService(RecordService):
             raise DeletionStatusException(record, RecordDeletionStatusEnum.MARKED)
 
         raise NotImplementedError()
+
+    @unit_of_work()
+    def publish(self, identity, id_, uow=None, expand=False):
+        """Publish a draft.
+
+        Check for permissions to publish a draft and then call invenio_drafts_resourcs.services.records.services.publish()
+        """
+        try:
+            draft = self.draft_cls.pid.resolve(id_, registered_only=False)
+            self.require_permission(identity, "publish", record=draft)
+            # By default, admin/superuser has permission to do everything, so PermissionDeniedError won't be raised for admin in any case
+        except PermissionDeniedError as exc:
+            # If user doesn't have permission to publish, determine which error to raise, based on config
+            community_required = current_app.config["RDM_COMMUNITY_REQUIRED_TO_PUBLISH"]
+            is_community_missing = len(draft.parent.communities.ids) < 1
+            if community_required and is_community_missing:
+                raise CommunityRequiredError()
+            else:
+                # If the config wasn't enabled, then raise the PermissionDeniedError
+                raise exc
+
+        return super().publish(identity, id_, uow=uow, expand=expand)
 
     #
     # Search functions

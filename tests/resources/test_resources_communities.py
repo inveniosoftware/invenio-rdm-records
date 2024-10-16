@@ -7,6 +7,7 @@
 
 """Tests record's communities resources."""
 
+from contextlib import contextmanager
 from copy import deepcopy
 
 import pytest
@@ -18,7 +19,10 @@ from invenio_rdm_records.proxies import (
 )
 from invenio_rdm_records.records.api import RDMDraft, RDMRecord
 from invenio_rdm_records.requests.community_inclusion import CommunityInclusion
-from invenio_rdm_records.services.errors import InvalidAccessRestrictions
+from invenio_rdm_records.services.errors import (
+    CommunityRequiredError,
+    InvalidAccessRestrictions,
+)
 
 
 def _add_to_community(db, record, community):
@@ -747,3 +751,221 @@ def test_search_communities(
         headers=headers,
     )
     assert response.status_code == 403
+
+
+# Assure Records community exists tests
+# -------------------------------------
+
+
+def test_restricted_record_creation(
+    app,
+    record_community,
+    uploader,
+    curator,
+    community_owner,
+    test_user,
+    superuser,
+    monkeypatch,
+):
+    """Verify CommunityRequiredError is raised when direct publish a record"""
+    # You can directly publish a record when the config is disabled
+    monkeypatch.setitem(app.config, "RDM_COMMUNITY_REQUIRED_TO_PUBLISH", False)
+    rec = record_community.create_record(community=None)
+    assert rec.id
+    monkeypatch.setitem(app.config, "RDM_COMMUNITY_REQUIRED_TO_PUBLISH", True)
+    # You can't directly publish
+    users = [
+        curator,
+        test_user,
+        uploader,
+        community_owner,
+    ]
+    for user in users:
+        with pytest.raises(CommunityRequiredError):
+            record_community.create_record(uploader=user, community=None)
+
+    # Super user can!
+    super_user_rec = record_community.create_record(uploader=superuser, community=None)
+    assert super_user_rec.id
+
+
+def test_republish_with_mulitple_communities(
+    app,
+    db,
+    headers,
+    client,
+    minimal_record,
+    open_review_community,
+    record_community,
+    community2,
+    uploader,
+    monkeypatch,
+):
+    """Verify new version of record with multiple communities can be re-published"""
+    monkeypatch.setitem(app.config, "RDM_COMMUNITY_REQUIRED_TO_PUBLISH", True)
+    client = uploader.login(client)
+    comm = [
+        community2,
+        open_review_community,
+    ]
+    record = record_community.create_record()
+    record_pid = record.pid.pid_value
+    for com in comm:
+        _add_to_community(db, record, com)
+    assert len(record.parent.communities.ids) == 3
+    response = client.post(
+        f"/records/{record_pid}/versions",
+        headers=headers,
+    )
+    assert response.is_json
+    assert response.status_code == 201
+    current_rdm_records_service.update_draft(
+        uploader.identity, response.json["id"], minimal_record
+    )
+    result_item = current_rdm_records_service.publish(
+        uploader.identity, response.json["id"]
+    )
+    new_record_pid = result_item._record.pid.pid_value
+
+    new_record = client.get(f"/records/{new_record_pid}", headers=headers)
+    assert len(new_record.json["parent"]["communities"]["ids"]) == 3
+
+
+def test_remove_last_existing_non_existing_community(
+    app,
+    client,
+    uploader,
+    record_community,
+    headers,
+    community,
+    monkeypatch,
+):
+    """Test removal of an existing and non-existing community from the record,
+    while ensuring at least one community exists."""
+    monkeypatch.setitem(app.config, "RDM_COMMUNITY_REQUIRED_TO_PUBLISH", True)
+    data = {
+        "communities": [
+            {"id": "wrong-id"},
+            {"id": community.id},
+            {"id": "wrong-id2"},
+        ]
+    }
+
+    client = uploader.login(client)
+    record = record_community.create_record()
+    record_pid = record.pid.pid_value
+    response = client.delete(
+        f"/records/{record_pid}/communities",
+        headers=headers,
+        json=data,
+    )
+    assert response.is_json
+    assert response.status_code == 400
+    # Should get 3 errors: Can't remove community, 2 bad IDs
+    assert len(response.json["errors"]) == 3
+    record_saved = client.get(f"/records/{record_pid}", headers=headers)
+    assert record_saved.json["parent"]["communities"]
+
+
+def test_remove_last_community_api_error_handling(
+    record_community,
+    community,
+    uploader,
+    headers,
+    curator,
+    client,
+    app,
+    monkeypatch,
+):
+    """Testing error message when trying to remove last community."""
+    monkeypatch.setitem(app.config, "RDM_COMMUNITY_REQUIRED_TO_PUBLISH", True)
+    record = record_community.create_record()
+    record_pid = record.pid.pid_value
+    data = {"communities": [{"id": community.id}]}
+    for user in [uploader, curator]:
+        client = user.login(client)
+        response = client.get(
+            f"/communities/{community.id}/records",
+            headers=headers,
+            json=data,
+        )
+        assert (
+            len(response.json["hits"]["hits"][0]["parent"]["communities"]["ids"]) == 1
+        )
+        response = client.delete(
+            f"/records/{record_pid}/communities",
+            headers=headers,
+            json=data,
+        )
+        assert response.is_json
+        assert response.status_code == 400
+
+        record_saved = client.get(f"/records/{record_pid}", headers=headers)
+        assert record_saved.json["parent"]["communities"]
+        assert len(response.json["errors"]) == 1
+
+        client = user.logout(client)
+        # check communities number
+        response = client.get(
+            f"/communities/{community.id}/records",
+            headers=headers,
+            json=data,
+        )
+        assert (
+            len(response.json["hits"]["hits"][0]["parent"]["communities"]["ids"]) == 1
+        )
+
+
+def test_remove_record_last_community_with_multiple_communities(
+    closed_review_community,
+    open_review_community,
+    record_community,
+    community2,
+    uploader,
+    headers,
+    client,
+    app,
+    db,
+    monkeypatch,
+):
+    """Testing correct removal of multiple communities"""
+    monkeypatch.setitem(app.config, "RDM_COMMUNITY_REQUIRED_TO_PUBLISH", True)
+    client = uploader.login(client)
+
+    record = record_community.create_record()
+    record_pid = record.pid.pid_value
+    comm = [
+        community2,
+        open_review_community,
+        closed_review_community,
+    ]  # one more in the rec fixture so it's 4
+    for com in comm:
+        _add_to_community(db, record, com)
+    assert len(record.parent.communities.ids) == 4
+
+    data = {"communities": [{"id": x} for x in record.parent.communities.ids]}
+
+    response = client.delete(
+        f"/records/{record_pid}/communities",
+        headers=headers,
+        json=data,
+    )
+    # You get res 200 with error msg if all communities you are deleting
+    assert response.status_code == 200
+    assert "error" in str(response.data)
+
+    rec_com_left = client.get(f"/records/{record_pid}", headers=headers)
+    assert len(rec_com_left.json["parent"]["communities"]["ids"]) == 1
+
+    # You get res 400 with error msg if you Delete the last one only.
+    response = client.delete(
+        f"/records/{record_pid}/communities",
+        headers=headers,
+        json={"communities": [{"id": str(record.parent.communities.ids[0])}]},
+    )
+    assert response.status_code == 400
+    assert "error" in str(response.data)
+
+    record_saved = client.get(f"/records/{record_pid}", headers=headers)
+    # check that only one community ID is associated with the record
+    assert len(record_saved.json["parent"]["communities"]["ids"]) == 1
