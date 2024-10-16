@@ -413,3 +413,19 @@ class GuestAccessRequestToken(Generator):
             return [AccessRequestTokenNeed(request["payload"]["token"])]
 
         return []
+
+
+class IfOneCommunity(ConditionalGenerator):
+    """Conditional generator for records always in communities case."""
+
+    def _condition(self, record=None, **kwargs):
+        """Check if the record is associated with one community."""
+        return bool(record and len(record.parent.communities.ids) == 1)
+
+
+class IfAtLeastOneCommunity(ConditionalGenerator):
+    """Conditional generator for records always in communities case."""
+
+    def _condition(self, record=None, **kwargs):
+        """Check if the record is associated with at least one community."""
+        return bool(record and record.parent.communities.ids)
