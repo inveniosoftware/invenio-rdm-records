@@ -3,58 +3,70 @@
     en: Duplicate of another record
     sv: Duplikat av en annan post
     de: Duplikat eines anderen Eintrags
+    cs: Duplikát jiného záznamu
 - id: retracted
   title:
     en: Retraction/Withdrawal of a record
     sv: Återkallande/tillbakadragande av en post
     de: Widerruf eines Eintrags
+    cs: Stáhnutí záznamu
 - id: replaced
   title:
     en: Substitution
     sv: Ersättning
     de: Ersetzung
+    cs: Nahrazení záznamu
 - id: spam
   title:
     en: Spam
     sv: Spam
     de: Spam
+    cs: Spam
 - id: test-record
   title:
     en: Test upload of a record
     sv: Test-uppladdning av en post
     de: Test-Upload eines Eintrags
+    cs: Testovací nahrání záznamu
 - id: copyright
   title:
     en: Copyright infringement
     sv: Upphovsrättsintrång
     de: Urheberrechtsverletzung
+    cs: Porušení autorských práv
 - id: personal-data
   title:
     en: Personal data issue
     sv: Problem med personuppgifter
     de: Problem mit personenbezogenen Daten
+    cs: Problém s osobními údaji
 - id: take-down-request
   title:
     en: Take-down request
     sv: Nedtagningsbegäran
     de: Deaktivierungsanfrage
+    cs: Žádost o stažení
 - id: disputed-authorship
   title:
     en: Disputed authorship
     sv: Omtvistat författarskap
     de: Umstrittene Urheberschaft
+    cs: Sporné autorství
 - id: misconduct
   title:
     en: Misconduct
     sv: Misskötsamhet
     de: Fehlverhalten
+    cs: Nedovolené jednání
 - id: fraud
   title:
     en: Fraud
     sv: Bedrägeri
     de: Betrug
+    cs: Podvod
 - id: out-of-scope
   title:
     en: Content out of scope for repository
     sv: Innehåll som ligger utanför repositoriets område
     de: Inhalt außerhalb des Rahmens des Repositoriums
+    cs: Obsah mimo rozsah určení repozitáře
