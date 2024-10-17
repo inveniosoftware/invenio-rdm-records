@@ -22,6 +22,7 @@ from .codemeta import CodemetaSerializer
 from .csl import CSLJSONSerializer, StringCitationSerializer
 from .csv import CSVRecordSerializer
 from .datacite import DataCite43JSONSerializer, DataCite43XMLSerializer
+from .datapackage import DataPackageSerializer
 from .dcat import DCATSerializer
 from .dublincore import DublinCoreJSONSerializer, DublinCoreXMLSerializer
 from .geojson import GeoJSONSerializer
@@ -43,6 +44,7 @@ __all__ = (
     "CSVRecordSerializer",
     "DataCite43JSONSerializer",
     "DataCite43XMLSerializer",
+    "DataPackageSerializer",
     "DublinCoreJSONSerializer",
     "DublinCoreXMLSerializer",
     "FAIRSignpostingProfileLvl2Serializer",
