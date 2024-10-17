@@ -28,6 +28,7 @@ import * as Yup from "yup";
 import { AffiliationsField } from "./../AffiliationsField";
 import { CreatibutorsIdentifiers } from "./CreatibutorsIdentifiers";
 import { CREATIBUTOR_TYPE } from "./type";
+import Overridable from "react-overridable";
 
 const ModalActions = {
   ADD: "add",
@@ -259,7 +260,7 @@ export class CreatibutorsModal extends Component {
     }
 
     return (
-      <span key={identifier.identifier}>
+      <span key={identifier.identifier} className="font-weight-normal">
         <a href={link} target="_blank" rel="noopener noreferrer">
           <Image
             src={icon}
@@ -300,12 +301,20 @@ export class CreatibutorsModal extends Component {
         extra: creatibutor,
         key: creatibutor.id,
         content: (
-          <Header>
-            {creatibutor.name} {idString.length ? <>({idString})</> : null}
-            <Header.Subheader>
-              {isOrganization ? creatibutor.acronym : affNames}
-            </Header.Subheader>
-          </Header>
+          <Overridable
+            id="CreatibutorsModal.RemoteSelectItem.content"
+            creatibutor={creatibutor}
+            isOrganization={isOrganization}
+            idString={idString}
+            affNames={affNames}
+          >
+            <Header>
+              {creatibutor.name} {idString.length ? <>({idString})</> : null}
+              <Header.Subheader>
+                {isOrganization ? creatibutor.acronym : affNames}
+              </Header.Subheader>
+            </Header>
+          </Overridable>
         ),
       };
     });
