@@ -77,7 +77,7 @@
     en: Valid
     sv: Giltig
     de: Gültig
-    cs: Platný
+    cs: Platnost
 - id: withdrawn
   props:
     datacite: Withdrawn
