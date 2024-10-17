@@ -12,6 +12,11 @@
 Changes
 =======
 
+Version v15.4.0 (released 2024-10-17)
+
+- DOI: fix wrong parent DOI link
+- community: added props to make CommunitySelectionSearch reusable
+
 Version v15.3.0 (released 2024-10-16)
 
 - collections: display pages and REST API
