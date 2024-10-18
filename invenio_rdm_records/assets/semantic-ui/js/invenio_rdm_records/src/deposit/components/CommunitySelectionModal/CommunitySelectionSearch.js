@@ -50,6 +50,7 @@ export class CommunitySelectionSearch extends Component {
       isInitialSubmission,
       CommunityListItem,
       pagination,
+      autofocus,
     } = this.props;
 
     const searchApi = new InvenioSearchApi(selectedSearchApi);
@@ -125,7 +126,7 @@ export class CommunitySelectionSearch extends Component {
               >
                 <SearchBar
                   placeholder={toggleText}
-                  autofocus
+                  autofocus={autofocus}
                   actionProps={{
                     "icon": "search",
                     "content": null,
@@ -178,11 +179,13 @@ CommunitySelectionSearch.propTypes = {
   isInitialSubmission: PropTypes.bool,
   CommunityListItem: PropTypes.elementType,
   pagination: PropTypes.bool,
+  autofocus: PropTypes.bool,
 };
 
 CommunitySelectionSearch.defaultProps = {
   isInitialSubmission: true,
   pagination: true,
+  autofocus: true,
   CommunityListItem: CommunityListItem,
   apiConfigs: {
     allCommunities: {
