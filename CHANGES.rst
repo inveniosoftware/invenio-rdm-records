@@ -12,6 +12,10 @@
 Changes
 =======
 
+Version v15.5.0 (released 2024-10-18)
+
+- community: added autofocus prop to CommunitySelectionSearch
+
 Version v15.4.0 (released 2024-10-17)
 
 - DOI: fix wrong parent DOI link
