@@ -50,6 +50,7 @@ export class CommunitySelectionSearch extends Component {
       isInitialSubmission,
       CommunityListItem,
       pagination,
+      myCommunitiesEnabled,
       autofocus,
     } = this.props;
 
@@ -72,55 +73,57 @@ export class CommunitySelectionSearch extends Component {
           defaultSortingOnEmptyQueryString={{ sortBy: "bestmatch" }}
         >
           <>
-            <Modal.Content as={Grid} className="m-0 pb-0">
+            <Modal.Content as={Grid} className="m-0 pb-0 centered">
+              {myCommunitiesEnabled && (
+                <Grid.Column
+                  mobile={16}
+                  tablet={8}
+                  computer={8}
+                  textAlign="left"
+                  floated="left"
+                  className="pt-0 pl-0"
+                >
+                  <Menu role="tablist" className="theme-primary-menu" compact>
+                    <Menu.Item
+                      as="button"
+                      role="tab"
+                      id="all-communities-tab"
+                      aria-selected={selectedAppId === allCommunities.appId}
+                      aria-controls={allCommunities.appId}
+                      name="All"
+                      active={selectedAppId === allCommunities.appId}
+                      onClick={() =>
+                        this.setState({
+                          selectedConfig: allCommunities,
+                        })
+                      }
+                    >
+                      {i18next.t("All")}
+                    </Menu.Item>
+                    <Menu.Item
+                      as="button"
+                      role="tab"
+                      id="my-communities-tab"
+                      aria-selected={selectedAppId === myCommunities.appId}
+                      aria-controls={myCommunities.appId}
+                      name="My communities"
+                      active={selectedAppId === myCommunities.appId}
+                      onClick={() =>
+                        this.setState({
+                          selectedConfig: myCommunities,
+                        })
+                      }
+                    >
+                      {i18next.t("My communities")}
+                    </Menu.Item>
+                  </Menu>
+                </Grid.Column>
+              )}
               <Grid.Column
                 mobile={16}
                 tablet={8}
                 computer={8}
-                textAlign="left"
-                floated="left"
-                className="pt-0 pl-0"
-              >
-                <Menu role="tablist" className="theme-primary-menu" compact>
-                  <Menu.Item
-                    as="button"
-                    role="tab"
-                    id="all-communities-tab"
-                    aria-selected={selectedAppId === allCommunities.appId}
-                    aria-controls={allCommunities.appId}
-                    name="All"
-                    active={selectedAppId === allCommunities.appId}
-                    onClick={() =>
-                      this.setState({
-                        selectedConfig: allCommunities,
-                      })
-                    }
-                  >
-                    {i18next.t("All")}
-                  </Menu.Item>
-                  <Menu.Item
-                    as="button"
-                    role="tab"
-                    id="my-communities-tab"
-                    aria-selected={selectedAppId === myCommunities.appId}
-                    aria-controls={myCommunities.appId}
-                    name="My communities"
-                    active={selectedAppId === myCommunities.appId}
-                    onClick={() =>
-                      this.setState({
-                        selectedConfig: myCommunities,
-                      })
-                    }
-                  >
-                    {i18next.t("My communities")}
-                  </Menu.Item>
-                </Menu>
-              </Grid.Column>
-              <Grid.Column
-                mobile={16}
-                tablet={8}
-                computer={8}
-                floated="right"
+                floated={myCommunitiesEnabled ? "right" : "null"}
                 verticalAlign="middle"
                 className="pt-0 pr-0 pl-0"
               >
@@ -179,12 +182,14 @@ CommunitySelectionSearch.propTypes = {
   isInitialSubmission: PropTypes.bool,
   CommunityListItem: PropTypes.elementType,
   pagination: PropTypes.bool,
+  myCommunitiesEnabled: PropTypes.bool,
   autofocus: PropTypes.bool,
 };
 
 CommunitySelectionSearch.defaultProps = {
   isInitialSubmission: true,
   pagination: true,
+  myCommunitiesEnabled: true,
   autofocus: true,
   CommunityListItem: CommunityListItem,
   apiConfigs: {
