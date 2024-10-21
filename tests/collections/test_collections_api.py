@@ -27,7 +27,7 @@ def test_create(running_app, db, community, community_owner):
         ctree=tree,
     )
 
-    read_c = Collection.resolve(id_=collection.id)
+    read_c = Collection.read(id_=collection.id)
     assert read_c.id == collection.id
     assert read_c.title == "My Collection"
     assert read_c.collection_tree.id == tree.id
@@ -40,7 +40,7 @@ def test_create(running_app, db, community, community_owner):
         ctree=tree.id,
     )
 
-    read_c = Collection.resolve(id_=collection.id)
+    read_c = Collection.read(id_=collection.id)
     assert read_c.id == collection.id
     assert collection.title == "My Collection 2"
     assert collection.collection_tree.id == tree.id
@@ -63,11 +63,11 @@ def test_resolve(running_app, db, community):
     )
 
     # Read by ID
-    read_by_id = Collection.resolve(id_=collection.id)
+    read_by_id = Collection.read(id_=collection.id)
     assert read_by_id.id == collection.id
 
     # Read by slug
-    read_by_slug = Collection.resolve(slug="my-collection", ctree_id=tree.id)
+    read_by_slug = Collection.read(slug="my-collection", ctree_id=tree.id)
     assert read_by_slug.id == read_by_id.id == collection.id
 
 
