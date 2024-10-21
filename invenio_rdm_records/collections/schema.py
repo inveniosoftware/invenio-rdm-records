@@ -14,7 +14,8 @@ class CollectionSchema(Schema):
 
     slug = fields.Str()
     title = fields.Str()
-    depth = fields.Int()
+    depth = fields.Int(dump_only=True)
     order = fields.Int()
-    id = fields.Int()
+    id = fields.Int(dump_only=True)
     num_records = fields.Int()
+    search_query = fields.Str(load_only=True)

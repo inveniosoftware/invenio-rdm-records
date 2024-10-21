@@ -250,3 +250,82 @@ def test_collections_results(
     }
 
     assert not list(dictdiffer.diff(expected, r_dict))
+
+
+def test_update(running_app, db, add_collections, collections_service, community_owner):
+    """Test updating a collection."""
+    collections = add_collections()
+    c0 = collections[0]
+
+    # Update by ID
+    collections_service.update(
+        community_owner.identity,
+        c0.id,
+        data={"slug": "New slug"},
+    )
+
+    res = collections_service.read(
+        identity=community_owner.identity,
+        id_=c0.id,
+    )
+
+    assert res.to_dict()[c0.id]["slug"] == "New slug"
+
+    # Update by object
+    collections_service.update(
+        community_owner.identity,
+        c0,
+        data={"slug": "New slug 2"},
+    )
+
+    res = collections_service.read(
+        identity=community_owner.identity,
+        id_=c0.id,
+    )
+    assert res.to_dict()[c0.id]["slug"] == "New slug 2"
+
+
+def test_read_many(
+    running_app, db, add_collections, collections_service, community_owner
+):
+    """Test reading multiple collections."""
+    collections = add_collections()
+    c0 = collections[0]
+    c1 = collections[1]
+
+    # Read two collections
+    res = collections_service.read_many(
+        community_owner.identity,
+        ids_=[c0.id, c1.id],
+        depth=0,
+    )
+
+    res = res.to_dict()
+    assert len(res) == 2
+    assert res[0]["root"] == c0.id
+    assert res[1]["root"] == c1.id
+
+
+def test_read_all(
+    running_app, db, add_collections, collections_service, community_owner
+):
+    """Test reading all collections."""
+    collections = add_collections()
+    c0 = collections[0]
+    c1 = collections[1]
+
+    # Read all collections
+    res = collections_service.read_all(community_owner.identity, depth=0)
+
+    res = res.to_dict()
+    assert len(res) == 2
+    assert res[0]["root"] == c0.id
+    assert res[1]["root"] == c1.id
+
+
+def test_read_invalid(running_app, db, collections_service, community_owner):
+    """Test reading a non-existing collection."""
+    with pytest.raises(ValueError):
+        collections_service.read(
+            identity=community_owner.identity,
+        )

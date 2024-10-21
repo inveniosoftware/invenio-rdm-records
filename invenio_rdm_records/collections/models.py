@@ -156,9 +156,30 @@ class Collection(db.Model, Timestamp):
         return cls.query.filter(cls.slug == slug, cls.tree_id == tree_id).one_or_none()
 
     @classmethod
-    def read_many(cls, ids):
+    def read_many(cls, ids_):
         """Get many collections by ID."""
-        return cls.query.filter(cls.id.in_(ids)).order_by(cls.path, cls.order)
+        return cls.query.filter(cls.id.in_(ids_)).order_by(cls.path, cls.order)
+
+    @classmethod
+    def read_all(cls):
+        """Get all collections."""
+        return cls.query.order_by(cls.path, cls.order)
+
+    def update(
+        self, /, slug=None, title=None, search_query=None, order=None, num_records=None
+    ):
+        """Update a collection."""
+        if slug is not None:
+            self.slug = slug
+        if title is not None:
+            self.title = title
+        if search_query is not None:
+            self.search_query = search_query
+        if order is not None:
+            self.order = order
+        if num_records is not None:
+            self.num_records = num_records
+        return self
 
     @classmethod
     def get_children(cls, model):

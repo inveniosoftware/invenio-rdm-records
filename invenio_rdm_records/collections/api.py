@@ -91,8 +91,21 @@ class Collection:
     @classmethod
     def resolve_many(cls, ids_=None, depth=2):
         """Resolve many collections by ID."""
-        _ids = ids_ or []
-        return [cls(c, depth) for c in cls.model_cls.read_many(_ids)]
+        if not ids_:
+            return []
+        return [cls(c, depth) for c in cls.model_cls.read_many(ids_)]
+
+    @classmethod
+    def resolve_all(cls, depth=2):
+        """Resolve all collections."""
+        return [cls(c, depth) for c in cls.model_cls.read_all()]
+
+    def update(self, **kwargs):
+        """Update the collection."""
+        if "search_query" in kwargs:
+            Collection.validate_query(kwargs["search_query"])
+        self.model.update(**kwargs)
+        return self
 
     def add(self, slug, title, query, order=None, depth=2):
         """Add a subcollection to the collection."""
