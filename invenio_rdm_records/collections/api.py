@@ -69,10 +69,10 @@ class Collection:
         )
 
     @classmethod
-    def resolve(cls, *, id_=None, slug=None, ctree_id=None, depth=2):
-        """Resolve a collection by ID or slug.
+    def read(cls, *, id_=None, slug=None, ctree_id=None, depth=2):
+        """Read a collection by ID or slug.
 
-        To resolve by slug, the collection tree ID must be provided.
+        To read by slug, the collection tree ID must be provided.
         """
         res = None
         if id_:
@@ -89,10 +89,21 @@ class Collection:
         return res
 
     @classmethod
-    def resolve_many(cls, ids_=None, depth=2):
-        """Resolve many collections by ID."""
-        _ids = ids_ or []
-        return [cls(c, depth) for c in cls.model_cls.read_many(_ids)]
+    def read_many(cls, ids_, depth=2):
+        """Read many collections by ID."""
+        return [cls(c, depth) for c in cls.model_cls.read_many(ids_)]
+
+    @classmethod
+    def read_all(cls, depth=2):
+        """Read all collections."""
+        return [cls(c, depth) for c in cls.model_cls.read_all()]
+
+    def update(self, **kwargs):
+        """Update the collection."""
+        if "search_query" in kwargs:
+            Collection.validate_query(kwargs["search_query"])
+        self.model.update(**kwargs)
+        return self
 
     def add(self, slug, title, query, order=None, depth=2):
         """Add a subcollection to the collection."""
@@ -128,7 +139,10 @@ class Collection:
     @cached_property
     def ancestors(self):
         """Get the collection ancestors."""
-        return Collection.resolve_many(self.split_path_to_ids())
+        ids_ = self.split_path_to_ids()
+        if not ids_:
+            return []
+        return Collection.read_many(ids_)
 
     @cached_property
     def subcollections(self):
