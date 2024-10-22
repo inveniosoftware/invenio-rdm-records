@@ -198,5 +198,7 @@ class CollectionsService(Service):
                 params=params,
             )
         else:
-            raise NotImplementedError("Search for collections without community not supported.")
+            raise NotImplementedError(
+                "Search for collections without community not supported."
+            )
         return res

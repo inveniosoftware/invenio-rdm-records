@@ -66,7 +66,9 @@ class CollectionItem(ServiceItemResult):
         res = {
             "root": self._collection.id,
             self._collection.id: {
-                **self._schema.dump(self._collection, context={"identity": self._identity}),
+                **self._schema.dump(
+                    self._collection, context={"identity": self._identity}
+                ),
                 "children": list(),
                 "links": self._links_tpl.expand(self._identity, self._collection),
             },
@@ -145,7 +147,6 @@ class CollectionList(ServiceListResult):
             CollectionItem(self._identity, x, self._schema, self._links_item_tpl)
             for x in self._collections
         )
-
 
 
 class CollectionTreeItem:
