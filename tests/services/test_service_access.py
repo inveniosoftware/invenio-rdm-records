@@ -679,3 +679,36 @@ def test_delete_grant_by_subject_permissions(
     # assert that now user can not create a new version
     with pytest.raises(PermissionDeniedError):
         records_service.new_version(user_with_grant.identity, id_=record.id)
+
+
+def test_preview_draft_link_in_email(
+    running_app, uploader, minimal_record, community_owner
+):
+    # services
+    records_service = current_rdm_records.records_service
+    access_service = records_service.access
+    # instances
+    draft = records_service.create(uploader.identity, minimal_record)
+
+    # community_owner is not used because this has anything to do with
+    # communities. It is used simply because it is a user with "visibility": "public"
+    # like it is in test_resources_user_access.py
+    user_id = str(community_owner.id)
+    grant_payload = {
+        "grants": [
+            {
+                "subject": {"type": "user", "id": user_id},
+                "permission": "preview",
+                "notify": True,
+            }
+        ]
+    }
+    mail = running_app.app.extensions.get("mail")
+
+    with mail.record_messages() as outbox:
+        # This triggers an email notification because of "notify": True
+        access_service.bulk_create_grants(uploader.identity, draft.id, grant_payload)
+
+        sent_mail = outbox[0]
+        assert f"/records/{draft.id}?preview=1" in sent_mail.html
+        assert f"/records/{draft.id}?preview=1" in sent_mail.body
