@@ -12,6 +12,11 @@
 Changes
 =======
 
+Version 10.8.7 (released 2024-10-23)
+
+- access notification: provide correct draft preview link
+- fix: propTypes warning
+
 Version 10.8.6 (released 2024-09-30)
 
 - dependencies: bump flask-iiif
