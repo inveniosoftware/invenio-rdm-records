@@ -66,7 +66,9 @@ class CollectionItem(ServiceItemResult):
         res = {
             "root": self._collection.id,
             self._collection.id: {
-                **self._schema.dump(self._collection),
+                **self._schema.dump(
+                    self._collection, context={"identity": self._identity}
+                ),
                 "children": list(),
                 "links": self._links_tpl.expand(self._identity, self._collection),
             },
@@ -76,7 +78,7 @@ class CollectionItem(ServiceItemResult):
             if _c.id not in res:
                 # Add the subcollection to the dictionary
                 res[_c.id] = {
-                    **self._schema.dump(_c),
+                    **self._schema.dump(_c, context={"identity": self._identity}),
                     "children": list(),
                     "links": self._links_tpl.expand(self._identity, _c),
                 }
@@ -121,22 +123,30 @@ class CollectionItem(ServiceItemResult):
 class CollectionList(ServiceListResult):
     """Collection list item."""
 
-    def __init__(self, collections):
+    def __init__(self, identity, collections, schema, links_tpl, links_item_tpl):
         """Instantiate a Collection list item."""
+        self._identity = identity
         self._collections = collections
+        self._schema = schema
+        self._links_tpl = links_tpl
+        self._links_item_tpl = links_item_tpl
 
     def to_dict(self):
         """Serialize the collection list to a dictionary."""
         res = []
         for collection in self._collections:
-            _r = collection.to_dict()
-            _r["links"] = CollectionItem(collection).links
+            _r = CollectionItem(
+                self._identity, collection, self._schema, self._links_item_tpl
+            ).to_dict()
             res.append(_r)
         return res
 
     def __iter__(self):
         """Iterate over the collections."""
-        return iter(self._collections)
+        return (
+            CollectionItem(self._identity, x, self._schema, self._links_item_tpl)
+            for x in self._collections
+        )
 
 
 class CollectionTreeItem:

@@ -9,13 +9,19 @@
 import os
 
 from flask import current_app, url_for
+from invenio_records_resources.services import ServiceSchemaWrapper
 from invenio_records_resources.services.base import Service
 from invenio_records_resources.services.uow import ModelCommitOp, unit_of_work
+
+from invenio_rdm_records.proxies import (
+    current_community_records_service,
+    current_rdm_records_service,
+)
 
 from .api import Collection, CollectionTree
 from .errors import LogoNotFoundError
 from .links import CollectionLinkstemplate
-from .results import CollectionItem, CollectionTreeList
+from .results import CollectionItem, CollectionList, CollectionTreeList
 
 
 class CollectionsService(Service):
@@ -30,7 +36,7 @@ class CollectionsService(Service):
     @property
     def collection_schema(self):
         """Get the collection schema."""
-        return self.config.schema()
+        return ServiceSchemaWrapper(self, schema=self.config.schema)
 
     @property
     def links_item_tpl(self):
@@ -121,6 +127,31 @@ class CollectionsService(Service):
             identity, new_collection, self.collection_schema, self.links_item_tpl
         )
 
+    @unit_of_work()
+    def update(self, identity, collection_or_id, data=None, uow=None):
+        """Update a collection."""
+        if isinstance(collection_or_id, int):
+            collection = self.collection_cls.resolve(id_=collection_or_id)
+        else:
+            collection = collection_or_id
+        self.require_permission(
+            identity, "update", community_id=collection.community.id
+        )
+
+        data = data or {}
+
+        valid_data, errors = self.collection_schema.load(
+            data, context={"identity": identity}, raise_errors=True
+        )
+
+        res = collection.update(**valid_data)
+
+        uow.register(ModelCommitOp(res.model))
+
+        return CollectionItem(
+            identity, collection, self.collection_schema, self.links_item_tpl
+        )
+
     def read_logo(self, identity, slug):
         """Read a collection logo.
 
@@ -131,3 +162,43 @@ class CollectionsService(Service):
         if _exists:
             return url_for("static", filename=logo_path)
         raise LogoNotFoundError()
+
+    def read_many(self, identity, ids_=None, depth=2):
+        """Get many collections."""
+        self.require_permission(identity, "read")
+
+        ids_ = ids_ or []
+        res = self.collection_cls.resolve_many(ids_, depth=depth)
+        return CollectionList(
+            identity, res, self.collection_schema, None, self.links_item_tpl
+        )
+
+    def read_all(self, identity, depth=2):
+        """Get all collections."""
+        self.require_permission(identity, "read")
+        res = self.collection_cls.resolve_all(depth=depth)
+        return CollectionList(
+            identity, res, self.collection_schema, None, self.links_item_tpl
+        )
+
+    def search_records(self, identity, collection_or_id, params=None):
+        """Search records in a collection."""
+        params = params or {}
+
+        if isinstance(collection_or_id, int):
+            collection = self.collection_cls.resolve(id_=collection_or_id)
+        else:
+            collection = collection_or_id
+
+        params.update({"collection_id": collection.id})
+        if collection.community:
+            res = current_community_records_service.search(
+                identity,
+                community_id=collection.community.id,
+                params=params,
+            )
+        else:
+            raise NotImplementedError(
+                "Search for collections without community not supported."
+            )
+        return res
