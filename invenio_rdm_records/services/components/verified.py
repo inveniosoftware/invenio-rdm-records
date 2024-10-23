@@ -9,6 +9,7 @@
 from flask import current_app
 from invenio_access.permissions import system_identity
 from invenio_drafts_resources.services.records.components import ServiceComponent
+from invenio_records_resources.services.uow import TaskOp
 from invenio_requests.tasks import request_moderation
 
 
@@ -27,4 +28,5 @@ class ContentModerationComponent(ServiceComponent):
 
             if not is_verified:
                 # Spawn a task to request moderation.
-                request_moderation.delay(record.parent.access.owner.owner_id)
+                owner_id = record.parent.access.owner.owner_id
+                self.uow.register(TaskOp(request_moderation, user_id=owner_id))
