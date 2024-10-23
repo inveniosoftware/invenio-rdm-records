@@ -7,7 +7,7 @@
 
 """OAI-PMH service API configuration."""
 
-from invenio_i18n import gettext as _
+from invenio_i18n import lazy_gettext as _
 from invenio_oaiserver.models import OAISet
 from invenio_records_resources.services import ServiceConfig
 from invenio_records_resources.services.base import Link
