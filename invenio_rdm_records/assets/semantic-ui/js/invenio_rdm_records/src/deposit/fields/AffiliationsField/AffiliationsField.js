@@ -8,23 +8,16 @@
 
 import PropTypes from "prop-types";
 import React, { Component } from "react";
-import { FieldLabel, RemoteSelectField } from "react-invenio-forms";
+import {
+  FieldLabel,
+  RemoteSelectField,
+  AffiliationsSuggestions,
+} from "react-invenio-forms";
 import { Field, getIn } from "formik";
 import { i18next } from "@translations/invenio_rdm_records/i18next";
 
 /**Affiliation input component */
 export class AffiliationsField extends Component {
-  serializeAffiliations = (affiliations) =>
-    affiliations.map((affiliation) => ({
-      text: affiliation.acronym
-        ? `${affiliation.name} (${affiliation.acronym})`
-        : affiliation.name,
-      value: affiliation.id || affiliation.name,
-      key: affiliation.id,
-      id: affiliation.id,
-      name: affiliation.name,
-    }));
-
   render() {
     const { fieldPath, selectRef } = this.props;
     return (
@@ -38,7 +31,9 @@ export class AffiliationsField extends Component {
                 Accept: "application/vnd.inveniordm.v1+json",
               }}
               initialSuggestions={getIn(values, fieldPath, [])}
-              serializeSuggestions={this.serializeAffiliations}
+              serializeSuggestions={(affiliations) => {
+                return AffiliationsSuggestions(affiliations, true);
+              }}
               placeholder={i18next.t("Search or create affiliation")}
               label={
                 <FieldLabel
