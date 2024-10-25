@@ -61,13 +61,11 @@ class RDMRecordSchema(RecordSchema, FieldPermissionsMixin):
     access = NestedAttribute(AccessSchema)
     files = NestedAttribute(FilesSchema)
     media_files = NestedAttribute(FilesSchema)
-    # notes = fields.List(fields.Nested(InternalNoteSchema))
     revision = fields.Integer(dump_only=True)
     versions = NestedAttribute(VersionsSchema, dump_only=True)
     parent = NestedAttribute(RDMParentSchema)
     is_published = fields.Boolean(dump_only=True)
     status = fields.String(dump_only=True)
-
     tombstone = fields.Nested(TombstoneSchema, dump_only=True)
     deletion_status = fields.Nested(DeletionStatusSchema, dump_only=True)
 
