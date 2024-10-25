@@ -67,14 +67,6 @@ class CommunityRecordsService(RecordService):
         if extra_filter is not None:
             community_filter = community_filter & extra_filter
 
-        # Search in a specific collection
-        if "collection_id" in params:
-            collections_service = current_rdm_records.collections_service
-            collection = collections_service.read(
-                identity=identity, id_=params["collection_id"]
-            )
-            community_filter &= collection.query
-
         search = self._search(
             "search",
             identity,

@@ -102,3 +102,9 @@ def create_iiif_bp(app):
     """Create IIIF blueprint."""
     ext = app.extensions["invenio-rdm-records"]
     return ext.iiif_resource.as_blueprint()
+
+
+def create_collections_bp(app):
+    """Create collections blueprint."""
+    ext = app.extensions["invenio-rdm-records"]
+    return ext.collections_resource.as_blueprint()

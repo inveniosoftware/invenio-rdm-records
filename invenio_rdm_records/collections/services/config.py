@@ -28,11 +28,7 @@ class CollectionServiceConfig(ServiceConfig, ConfiguratorMixin):
     schema = CollectionSchema
 
     links_item = {
-        "search": ConditionalLink(
-            cond=lambda coll, ctx: coll.community,
-            if_=CollectionLink("/api/communities/{community}/records"),
-            else_="/api/records",
-        ),
+        "search": CollectionLink("/api/collections/{id}/records"),
         "self_html": ConditionalLink(
             cond=lambda coll, ctx: coll.community,
             if_=CollectionLink(

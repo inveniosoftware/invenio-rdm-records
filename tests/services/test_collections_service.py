@@ -170,6 +170,7 @@ def test_collections_results(
             "links": {
                 "search": "/api/communities/blr/records",
                 "self_html": "/communities/blr/collections/tree-1/collection-1",
+                "search": f"/api/collections/{c0.id}/records",
             },
             "num_records": 0,
             "order": c0.order,
@@ -183,6 +184,7 @@ def test_collections_results(
             "links": {
                 "search": "/api/communities/blr/records",
                 "self_html": "/communities/blr/collections/tree-1/collection-2",
+                "search": f"/api/collections/{c1.id}/records",
             },
             "num_records": 0,
             "order": c1.order,
@@ -215,6 +217,7 @@ def test_collections_results(
             "links": {
                 "search": "/api/communities/blr/records",
                 "self_html": "/communities/blr/collections/tree-1/collection-1",
+                "search": f"/api/collections/{c0.id}/records",
             },
             "num_records": 0,
             "order": c0.order,
@@ -228,6 +231,7 @@ def test_collections_results(
             "links": {
                 "search": "/api/communities/blr/records",
                 "self_html": "/communities/blr/collections/tree-1/collection-2",
+                "search": f"/api/collections/{c1.id}/records",
             },
             "num_records": 0,
             "order": c1.order,
@@ -241,6 +245,7 @@ def test_collections_results(
             "links": {
                 "search": "/api/communities/blr/records",
                 "self_html": "/communities/blr/collections/tree-1/collection-3",
+                "search": f"/api/collections/{c3.id}/records",
             },
             "num_records": 0,
             "order": c3.order,

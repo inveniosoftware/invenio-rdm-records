@@ -28,5 +28,6 @@ class CollectionLink(Link):
                 "community": collection.community.slug,
                 "tree": collection.collection_tree.slug,
                 "collection": collection.slug,
+                "id": collection.id,
             }
         )
