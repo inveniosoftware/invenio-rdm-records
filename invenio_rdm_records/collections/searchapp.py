@@ -23,10 +23,5 @@ def search_app_context():
             sort_options=current_app.config["RDM_SORT_OPTIONS"],
             headers={"Accept": "application/vnd.inveniordm.v1+json"},
             pagination_options=(10, 25, 50, 100),
-            # endpoint=/communities/eu/records
-            # endpoint=/api/records
-            # hidden_params=[
-            #     ["q", collection.query]
-            # ]
         )
     }

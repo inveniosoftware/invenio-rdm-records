@@ -19,8 +19,10 @@ from flask_principal import identity_loaded
 from invenio_records_resources.resources.files import FileResource
 
 from . import config
-from .collections.config import CollectionServiceConfig
-from .collections.service import CollectionsService
+from .collections.resources.config import CollectionsResourceConfig
+from .collections.resources.resource import CollectionsResource
+from .collections.services.config import CollectionServiceConfig
+from .collections.services.service import CollectionsService
 from .oaiserver.resources.config import OAIPMHServerResourceConfig
 from .oaiserver.resources.resources import OAIPMHServerResource
 from .oaiserver.services.config import OAIPMHServerServiceConfig
@@ -276,6 +278,12 @@ class InvenioRDMRecords(object):
         self.community_records_resource = RDMCommunityRecordsResource(
             service=self.community_records_service,
             config=RDMCommunityRecordsResourceConfig.build(app),
+        )
+
+        # Collections
+        self.collections_resource = CollectionsResource(
+            service=self.collections_service,
+            config=CollectionsResourceConfig,
         )
 
         # OAI-PMH

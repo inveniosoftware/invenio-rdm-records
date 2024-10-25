@@ -18,8 +18,8 @@ from invenio_rdm_records.proxies import (
     current_rdm_records_service,
 )
 
-from .api import Collection, CollectionTree
-from .errors import LogoNotFoundError
+from ..api import Collection, CollectionTree
+from ..errors import LogoNotFoundError
 from .links import CollectionLinkstemplate
 from .results import CollectionItem, CollectionList, CollectionTreeList
 
@@ -198,12 +198,11 @@ class CollectionsService(Service):
         else:
             collection = collection_or_id
 
-        params.update({"collection_id": collection.id})
         if collection.community:
             res = current_community_records_service.search(
                 identity,
                 community_id=collection.community.id,
-                params=params,
+                extra_filter=collection.query,
             )
         else:
             raise NotImplementedError(
