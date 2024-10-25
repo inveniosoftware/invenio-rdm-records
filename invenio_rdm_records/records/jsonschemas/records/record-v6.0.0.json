@@ -341,6 +341,22 @@
               }
             }
           }
+        },
+        "_internal_notes": {
+            "properties": {
+              "note": {
+                "type": "string"
+              },
+              "timestamp": {
+                "type": "string",
+                "description": "ISO8601 formatted timestamp in UTC.",
+                "format": "date-time"
+              },
+              "user": {
+                "type": "string",
+                "description": "User id of the person who created the note"
+              }
+            }
         }
       }
     },
