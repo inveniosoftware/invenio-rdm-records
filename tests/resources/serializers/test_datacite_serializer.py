@@ -513,3 +513,14 @@ def test_datacite43_serializer_updated_date(running_app, full_modified_date_reco
 
     assert expected_dates == serialized_record["dates"]
     assert len(serialized_record["dates"]) == 3
+
+
+def test_datacite43_serializer_empty_record(running_app, empty_record):
+    """Test if the DataCite 4.3 JSON serializer handles an empty record."""
+
+    expected_data = {"schemaVersion": "http://datacite.org/schema/kernel-4"}
+
+    serializer = DataCite43JSONSerializer()
+    serialized_record = serializer.dump_obj(empty_record)
+
+    assert serialized_record == expected_data

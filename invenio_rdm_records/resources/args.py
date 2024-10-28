@@ -19,3 +19,9 @@ class RDMSearchRequestArgsSchema(SearchRequestArgsSchema):
     locale = fields.Str()
     status = fields.Str()
     include_deleted = fields.Bool()
+
+
+class CommunityRecordsSearchRequestArgsSchema(SearchRequestArgsSchema):
+    """Extend schema with collection_id field."""
+
+    collection_id = fields.Integer()

@@ -209,10 +209,14 @@ class SchemaorgSchema(BaseSerializerSchema, CommonFieldsMixin):
 
     def get_type(self, obj):
         """Get type. Use the vocabulary service to get the schema.org type."""
+        resource_type_id = py_.get(obj, "metadata.resource_type.id")
+        if not resource_type_id:
+            return missing
+
         props = get_vocabulary_props(
             "resourcetypes",
             ["props.schema.org"],
-            py_.get(obj, "metadata.resource_type.id"),
+            resource_type_id,
         )
         ret = props.get("schema.org", "https://schema.org/CreativeWork")
         return ret
@@ -232,8 +236,12 @@ class SchemaorgSchema(BaseSerializerSchema, CommonFieldsMixin):
 
     def get_publication_date(self, obj):
         """Get publication date."""
+        publication_date = py_.get(obj, "metadata.publication_date")
+        if not publication_date:
+            return missing
+
         try:
-            parsed_date = parse_edtf(py_.get(obj, "metadata.publication_date"))
+            parsed_date = parse_edtf(publication_date)
         except ParseException:
             return missing
 

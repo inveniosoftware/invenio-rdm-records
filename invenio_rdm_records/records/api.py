@@ -52,6 +52,7 @@ from .dumpers import (
     EDTFListDumperExt,
     GrantTokensDumperExt,
     StatisticsDumperExt,
+    SubjectHierarchyDumperExt,
 )
 from .systemfields import (
     HasDraftCheckField,
@@ -122,6 +123,7 @@ class CommonFieldsMixin:
             CombinedSubjectsDumperExt(),
             CustomFieldsDumperExt(fields_var="RDM_CUSTOM_FIELDS"),
             StatisticsDumperExt("stats"),
+            SubjectHierarchyDumperExt(),
         ]
     )
 
@@ -150,9 +152,24 @@ class CommonFieldsMixin:
         funding_award=PIDListRelation(
             "metadata.funding",
             relation_field="award",
-            keys=["title", "number", "identifiers", "acronym", "program"],
+            keys=[
+                "title",
+                "number",
+                "identifiers",
+                "acronym",
+                "program",
+                "subjects",
+                "organizations",
+            ],
             pid_field=Award.pid,
             cache_key="awards",
+        ),
+        funding_award_subjects=PIDNestedListRelation(
+            "metadata.funding",
+            relation_field="award.subjects",
+            keys=["subject", "scheme", "props"],
+            pid_field=Subject.pid,
+            cache_key="subjects",
         ),
         languages=PIDListRelation(
             "metadata.languages",
@@ -169,7 +186,7 @@ class CommonFieldsMixin:
         ),
         subjects=PIDListRelation(
             "metadata.subjects",
-            keys=["subject", "scheme"],
+            keys=["subject", "scheme", "props"],
             pid_field=Subject.pid,
             cache_key="subjects",
         ),

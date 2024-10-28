@@ -104,7 +104,7 @@ AccessRightFieldCmp.propTypes = {
   showMetadataAccess: PropTypes.bool,
   community: PropTypes.object,
   record: PropTypes.object.isRequired,
-  recordRestrictionGracePeriod: PropTypes.object.isRequired,
+  recordRestrictionGracePeriod: PropTypes.number.isRequired,
   allowRecordRestriction: PropTypes.bool.isRequired,
 };
 
@@ -140,7 +140,7 @@ AccessRightField.propTypes = {
   labelIcon: PropTypes.string,
   isMetadataOnly: PropTypes.bool,
   record: PropTypes.object.isRequired,
-  recordRestrictionGracePeriod: PropTypes.object.isRequired,
+  recordRestrictionGracePeriod: PropTypes.number.isRequired,
   allowRecordRestriction: PropTypes.bool.isRequired,
 };
 

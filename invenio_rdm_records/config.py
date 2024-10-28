@@ -132,6 +132,12 @@ RDM_ALLOW_RESTRICTED_RECORDS = True
 """Allow users to set restricted/private records."""
 
 #
+# Record communities
+#
+RDM_COMMUNITY_REQUIRED_TO_PUBLISH = False
+"""Enforces at least one community per record."""
+
+#
 # Search configuration
 #
 RDM_FACETS = {

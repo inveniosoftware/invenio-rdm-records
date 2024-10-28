@@ -1,16 +1,19 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2023 CERN.
+# Copyright (C) 2023-2024 CERN.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
 
 """Test community records service."""
 
+from copy import deepcopy
+
 import pytest
 from invenio_records_resources.services.errors import PermissionDeniedError
 from marshmallow import ValidationError
 
+from invenio_rdm_records.collections.api import Collection, CollectionTree
 from invenio_rdm_records.proxies import (
     current_community_records_service,
     current_rdm_records_service,
@@ -156,3 +159,38 @@ def test_search_community_records(
             community_id=str(community.id),
         )
         assert results.to_dict()["hits"]["total"] == 3
+
+
+def test_search_community_records_in_collections(
+    community, record_community, service, uploader, minimal_record
+):
+    """Test search for records in a community collection."""
+    rec1 = deepcopy(minimal_record)
+    rec1["metadata"]["title"] = "Another record"
+    record_community.create_record(record_dict=rec1)
+    record_community.create_record(record_dict=minimal_record)
+    ctree = CollectionTree.create(
+        title="Tree 1",
+        order=10,
+        community_id=community.id,
+        slug="tree-1",
+    )
+    collection = Collection.create(
+        title="My Collection",
+        query='metadata.title:"Another record"',
+        slug="my-collection",
+        ctree=ctree,
+    )
+    all_results = service.search(
+        uploader.identity,
+        community_id=str(community.id),
+    )
+    assert all_results.total == 2
+
+    results = service.search(
+        uploader.identity,
+        community_id=str(community.id),
+        params={"collection_id": str(collection.id)},
+    )
+    assert results.total == 1
+    assert results.to_dict()["hits"]["hits"][0]["metadata"]["title"] == "Another record"

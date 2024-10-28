@@ -36,6 +36,7 @@ from invenio_requests.resources.requests.config import RequestSearchRequestArgsS
 
 from ..services.errors import (
     AccessRequestExistsError,
+    CommunityRequiredError,
     GrantExistsError,
     InvalidAccessRestrictions,
     RecordDeletedException,
@@ -45,7 +46,7 @@ from ..services.errors import (
     ReviewStateError,
     ValidationErrorWithMessageAsList,
 )
-from .args import RDMSearchRequestArgsSchema
+from .args import CommunityRecordsSearchRequestArgsSchema, RDMSearchRequestArgsSchema
 from .deserializers import ROCrateJSONDeserializer
 from .deserializers.errors import DeserializerError
 from .errors import HTTPJSONException, HTTPJSONValidationWithMessageAsListException
@@ -187,6 +188,7 @@ class RDMRecordResourceConfig(RecordResourceConfig, ConfiguratorMixin):
     )
 
     error_handlers = {
+        **ErrorHandlersMixin.error_handlers,
         DeserializerError: create_error_handler(
             lambda exc: HTTPJSONException(
                 code=400,
@@ -253,6 +255,12 @@ class RDMRecordResourceConfig(RecordResourceConfig, ConfiguratorMixin):
             lambda e: HTTPJSONException(
                 code=403,
                 description=e.description,
+            )
+        ),
+        CommunityRequiredError: create_error_handler(
+            HTTPJSONException(
+                code=400,
+                description=_("Cannot publish without selecting a community."),
             )
         ),
     }
@@ -549,6 +557,8 @@ class RDMCommunityRecordsResourceConfig(RecordResourceConfig, ConfiguratorMixin)
         "RDM_RECORDS_SERIALIZERS",
         default=record_serializers,
     )
+
+    request_search_args = CommunityRecordsSearchRequestArgsSchema
 
 
 class RDMRecordCommunitiesResourceConfig(CommunityResourceConfig, ConfiguratorMixin):

@@ -400,18 +400,12 @@
         "record": {
           "description": "Record visibility (public or restricted)",
           "type": "string",
-          "enum": [
-            "public",
-            "restricted"
-          ]
+          "enum": ["public", "restricted"]
         },
         "files": {
           "description": "Files visibility (public or restricted)",
           "type": "string",
-          "enum": [
-            "public",
-            "restricted"
-          ]
+          "enum": ["public", "restricted"]
         },
         "embargo": {
           "description": "Description of the embargo on the record.",
@@ -420,25 +414,16 @@
           "properties": {
             "active": {
               "description": "Whether or not the embargo is (still) active.",
-              "type": [
-                "boolean",
-                "null"
-              ]
+              "type": ["boolean", "null"]
             },
             "until": {
               "description": "Embargo date of record (ISO8601 formatted date time in UTC). At this time both metadata and files will be made public.",
-              "type": [
-                "string",
-                "null"
-              ],
+              "type": ["string", "null"],
               "format": "date"
             },
             "reason": {
               "description": "The reason why the record is under embargo.",
-              "type": [
-                "string",
-                "null"
-              ]
+              "type": ["string", "null"]
             }
           }
         }

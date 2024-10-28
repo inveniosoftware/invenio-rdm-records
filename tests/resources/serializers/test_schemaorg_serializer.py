@@ -178,3 +178,16 @@ def test_schemaorg_serializer_minimal_record(running_app, minimal_record):
     serialized_record = serializer.dump_obj(minimal_record)
 
     assert serialized_record == expected_data
+
+
+def test_schemaorg_serializer_empty_record(running_app, empty_record):
+    """Test Schemaorg JSON-LD serializer with minimal record."""
+
+    expected_data = {
+        "@context": "http://schema.org",
+    }
+
+    serializer = SchemaorgJSONLDSerializer()
+    serialized_record = serializer.dump_obj(empty_record)
+
+    assert serialized_record == expected_data

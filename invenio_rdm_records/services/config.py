@@ -4,7 +4,8 @@
 # Copyright (C) 2020-2021 Northwestern University.
 # Copyright (C)      2021 TU Wien.
 # Copyright (C) 2021-2023 Graz University of Technology.
-# Copyright (C) 2022 Universität Hamburg
+# Copyright (C) 2022      Universität Hamburg
+# Copyright (C) 2024      KTH Royal Institute of Technology.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
@@ -260,6 +261,7 @@ class RDMRecordCommunitiesConfig(ServiceConfig, ConfiguratorMixin):
     service_id = "record-communities"
 
     record_cls = FromConfig("RDM_RECORD_CLS", default=RDMRecord)
+    draft_cls = FromConfig("RDM_DRAFT_CLS", default=RDMDraft)
     permission_policy_cls = FromConfig(
         "RDM_PERMISSION_POLICY", default=RDMRecordPermissionPolicy, import_string=True
     )
@@ -339,6 +341,10 @@ class RDMFileRecordServiceConfig(FileServiceConfig, ConfiguratorMixin):
 
     file_schema = FileSchema
 
+    components = FromConfig(
+        "RDM_FILES_SERVICE_COMPONENTS", default=FileServiceConfig.components
+    )
+
 
 class ThumbnailLinks(RecordLink):
     """RDM thumbnail links dictionary."""
@@ -379,7 +385,7 @@ parent_doi_link = ConditionalLink(
         when=is_record_or_draft_and_has_parent_doi,
     ),
     else_=RecordPIDLink(
-        "https://doi.org/{+pid_doi}", when=is_record_or_draft_and_has_parent_doi
+        "https://doi.org/{+parent_pid_doi}", when=is_record_or_draft_and_has_parent_doi
     ),
 )
 parent_doi_html_link = RecordPIDLink(
@@ -748,6 +754,10 @@ class RDMFileDraftServiceConfig(FileServiceConfig, ConfiguratorMixin):
     }
 
     file_schema = FileSchema
+
+    components = FromConfig(
+        "RDM_DRAFT_FILES_SERVICE_COMPONENTS", default=FileServiceConfig.components
+    )
 
 
 class RDMMediaFileDraftServiceConfig(FileServiceConfig, ConfiguratorMixin):

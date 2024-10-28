@@ -67,6 +67,7 @@ from invenio_pidstore.errors import PIDDoesNotExistError
 from invenio_records_resources.proxies import current_service_registry
 from invenio_records_resources.references.entity_resolvers import ServiceResultResolver
 from invenio_records_resources.services.custom_fields import TextCF
+from invenio_records_resources.services.uow import UnitOfWork
 from invenio_requests.notifications.builders import (
     CommentRequestEventCreateNotificationBuilder,
 )
@@ -915,6 +916,19 @@ def minimal_record():
             "resource_type": {"id": "image-photo"},
             "title": "A Romans story",
         },
+    }
+
+
+@pytest.fixture()
+def empty_record():
+    """Almost empty record data as dict coming from the external world."""
+    return {
+        "pids": {},
+        "access": {},
+        "files": {
+            "enabled": False,  # Most tests don't care about files
+        },
+        "metadata": {},
     }
 
 
@@ -2013,20 +2027,22 @@ def record_community(db, uploader, minimal_record, community):
             """Creates new record that belongs to the same community."""
             # create draft
             draft = current_rdm_records_service.create(uploader.identity, record_dict)
-            # publish and get record
-            result_item = current_rdm_records_service.publish(
-                uploader.identity, draft.id
-            )
-            record = result_item._record
+            record = draft._record
             if community:
                 # add the record to the community
                 community_record = community._record
                 record.parent.communities.add(community_record, default=False)
                 record.parent.commit()
                 db.session.commit()
-                current_rdm_records_service.indexer.index(
-                    record, arguments={"refresh": True}
-                )
+
+            # publish and get record
+            result_item = current_rdm_records_service.publish(
+                uploader.identity, draft.id
+            )
+            record = result_item._record
+            current_rdm_records_service.indexer.index(
+                record, arguments={"refresh": True}
+            )
 
             return record
 

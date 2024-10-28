@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 #
 # Copyright (C) 2023-2024 CERN.
-# Copyright (C) 2024 Graz University of Technology.
+# Copyright (C) 2024      Graz University of Technology.
+# Copyright (C) 2024      KTH Royal Institute of Technology.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
@@ -11,13 +12,10 @@
 from flask import current_app
 from invenio_access.permissions import system_identity
 from invenio_communities.proxies import current_communities
-from invenio_drafts_resources.services.records.uow import (
-    ParentRecordCommitOp,
-    RecordCommitOp,
-)
+from invenio_drafts_resources.services.records.uow import ParentRecordCommitOp
 from invenio_i18n import lazy_gettext as _
 from invenio_notifications.services.uow import NotificationOp
-from invenio_pidstore.errors import PIDDoesNotExistError
+from invenio_pidstore.errors import PIDDoesNotExistError, PIDUnregistered
 from invenio_records_resources.services import (
     RecordIndexerMixin,
     Service,
@@ -38,6 +36,7 @@ from ...notifications.builders import CommunityInclusionSubmittedNotificationBui
 from ...proxies import current_rdm_records, current_rdm_records_service
 from ...requests import CommunityInclusion
 from ..errors import (
+    CannotRemoveCommunityError,
     CommunityAlreadyExists,
     InvalidAccessRestrictions,
     OpenRequestAlreadyExists,
@@ -66,6 +65,11 @@ class RecordCommunitiesService(Service, RecordIndexerMixin):
     def record_cls(self):
         """Factory for creating a record class."""
         return self.config.record_cls
+
+    @property
+    def draft_cls(self):
+        """Factory for creating a draft class."""
+        return self.config.draft_cls
 
     def _exists(self, community_id, record):
         """Return the request id if an open request already exists, else None."""
@@ -205,10 +209,20 @@ class RecordCommunitiesService(Service, RecordIndexerMixin):
         if community_id not in record.parent.communities.ids:
             raise RecordCommunityMissing(record.id, community_id)
 
-        # check permission here, per community: curator cannot remove another community
-        self.require_permission(
-            identity, "remove_community", record=record, community_id=community_id
-        )
+        try:
+            self.require_permission(
+                identity, "remove_community", record=record, community_id=community_id
+            )
+            # By default, admin/superuser has permission to do everything, so PermissionDeniedError won't be raised for admin in any case
+        except PermissionDeniedError as exc:
+            # If permission is denied, determine which error to raise, based on config
+            community_required = current_app.config["RDM_COMMUNITY_REQUIRED_TO_PUBLISH"]
+            is_last_community = len(record.parent.communities.ids) <= 1
+            if community_required and is_last_community:
+                raise CannotRemoveCommunityError()
+            else:
+                # If the config wasn't enabled, then raise the PermissionDeniedError
+                raise exc
 
         # Default community is deleted when the exact same community is removed from the record
         record.parent.communities.remove(community_id)
@@ -233,7 +247,11 @@ class RecordCommunitiesService(Service, RecordIndexerMixin):
             try:
                 self._remove(identity, community_id, record)
                 processed.append({"community": community_id})
-            except (RecordCommunityMissing, PermissionDeniedError) as ex:
+            except (
+                RecordCommunityMissing,
+                PermissionDeniedError,
+                CannotRemoveCommunityError,
+            ) as ex:
                 errors.append(
                     {
                         "community": community_id,
@@ -264,7 +282,10 @@ class RecordCommunitiesService(Service, RecordIndexerMixin):
         **kwargs,
     ):
         """Search for record's communities."""
-        record = self.record_cls.pid.resolve(id_)
+        try:
+            record = self.record_cls.pid.resolve(id_)
+        except PIDUnregistered:
+            record = self.draft_cls.pid.resolve(id_, registered_only=False)
         self.require_permission(identity, "read", record=record)
 
         communities_ids = record.parent.communities.ids
