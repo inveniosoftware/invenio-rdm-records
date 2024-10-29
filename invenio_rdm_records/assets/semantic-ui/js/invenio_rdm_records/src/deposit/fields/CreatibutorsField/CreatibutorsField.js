@@ -71,7 +71,7 @@ class CreatibutorsFieldForm extends Component {
       error || (creatibutorsList === formikInitialValues && initialError);
 
     return (
-      <DndProvider backend={HTML5Backend}>
+      <DndProvider backend={HTML5Backend} context={window}>
         <Form.Field
           required={schema === "creators"}
           className={creatibutorsError ? "error" : ""}

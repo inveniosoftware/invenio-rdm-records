@@ -74,7 +74,7 @@ class LicenseFieldForm extends Component {
     const uiRights = getIn(values, uiFieldPath, []);
 
     return (
-      <DndProvider backend={HTML5Backend}>
+      <DndProvider backend={HTML5Backend} context={window}>
         <Form.Field required={required}>
           <FieldLabel htmlFor={fieldPath} icon={labelIcon} label={label} />
           <List>
