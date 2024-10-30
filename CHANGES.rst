@@ -12,6 +12,10 @@
 Changes
 =======
 
+Version 10.9.0 (released 2024-10-30)
+
+- Feature: Config to require community approval for record publishing
+
 Version 10.8.7 (released 2024-10-23)
 
 - access notification: provide correct draft preview link
