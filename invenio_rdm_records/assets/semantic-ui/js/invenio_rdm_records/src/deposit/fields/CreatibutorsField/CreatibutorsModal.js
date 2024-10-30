@@ -680,7 +680,17 @@ export class CreatibutorsModal extends Component {
                     (showPersonForm &&
                       _get(values, typeFieldPath) === CREATIBUTOR_TYPE.PERSON)) && (
                     <div>
-                      <Overridable id="InvenioRdmRecords.Deposit.CreatibutorsModalRoleSelectField.Container">
+                      <Overridable
+                        id="InvenioRdmRecords.Deposit.CreatibutorsModalRoleSelectField.Container"
+                        fieldPath={roleFieldPath}
+                        label={i18next.t("Role")}
+                        options={roleOptions}
+                        placeholder={i18next.t("Select role")}
+                        {...(this.isCreator() && { clearable: true })}
+                        required={!this.isCreator()}
+                        optimized
+                        scrolling
+                      >
                         <SelectField
                           fieldPath={roleFieldPath}
                           label={i18next.t("Role")}
