@@ -20,9 +20,6 @@ import { CreatibutorsFieldItem } from "./CreatibutorsFieldItem";
 import { CREATIBUTOR_TYPE } from "./type";
 import { sortOptions } from "../../utils";
 import { i18next } from "@translations/invenio_rdm_records/i18next";
-import { OverridableContext, overrideStore } from "react-overridable";
-
-const overriddenComponents = overrideStore.getAll();
 
 const creatibutorNameDisplay = (value) => {
   const creatibutorType = _get(value, "person_or_org.type", CREATIBUTOR_TYPE.PERSON);
@@ -110,23 +107,21 @@ class CreatibutorsFieldForm extends Component {
               );
             })}
           </List>
-          <OverridableContext.Provider value={overriddenComponents}>
-            <CreatibutorsModal
-              onCreatibutorChange={this.handleOnContributorChange}
-              action="add"
-              addLabel={modal.addLabel}
-              editLabel={modal.editLabel}
-              roleOptions={sortOptions(roleOptions)}
-              schema={schema}
-              autocompleteNames={autocompleteNames}
-              trigger={
-                <Button type="button" icon labelPosition="left">
-                  <Icon name="add" />
-                  {addButtonLabel}
-                </Button>
-              }
-            />
-          </OverridableContext.Provider>
+          <CreatibutorsModal
+            onCreatibutorChange={this.handleOnContributorChange}
+            action="add"
+            addLabel={modal.addLabel}
+            editLabel={modal.editLabel}
+            roleOptions={sortOptions(roleOptions)}
+            schema={schema}
+            autocompleteNames={autocompleteNames}
+            trigger={
+              <Button type="button" icon labelPosition="left">
+                <Icon name="add" />
+                {addButtonLabel}
+              </Button>
+            }
+          />
           {creatibutorsError && typeof creatibutorsError == "string" && (
             <Label pointing="left" prompt>
               {creatibutorsError}
