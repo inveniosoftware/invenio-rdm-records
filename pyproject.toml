@@ -1,3 +1,217 @@
+# -*- coding: utf-8 -*-
+#
+# Copyright (C) 2019-2024 CERN.
+# Copyright (C) 2019 Northwestern University.
+# Copyright (C) 2022 Universität Hamburg.
+# Copyright (C) 2022 Graz University of Technology.
+#
+# Invenio-RDM-Records is free software; you can redistribute it and/or modify it
+# under the terms of the MIT License; see LICENSE file for more details.
+
 [build-system]
-requires = ["setuptools", "wheel", "babel>2.8"]
-build-backend = "setuptools.build_meta"
+requires = ["hatchling", "babel>=2.16.0"]
+build-backend = "hatchling.build"
+
+[tool.hatch.version]
+path = "invenio_rdm_records/__init__.py"
+
+[tool.hatch.metadata]
+readme = { paths = ["README.rst", "CHANGES.rst"], content-type = "text/x-rst" }
+
+[tool.hatch.build]
+include = ["invenio_rdm_records/**/*"]
+
+[project]
+name = "invenio-rdm-records"
+dynamic = ["version", "readme"]
+description = "InvenioRDM module for the communities feature."
+keywords = ["invenio", "rdm", "data", "model"]
+license = { text = "MIT" }
+authors = [{ name = "CERN", email = "info@inveniosoftware.org" }]
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "License :: OSI Approved :: MIT License",
+]
+urls = { Homepage = "https://github.com/inveniosoftware/invenio-rdm-records" }
+requires-python = ">=3.7"
+dependencies = [
+    "arrow>=0.17.0",
+    "babel-edtf>=1.1.0",
+    "citeproc-py-styles>=0.1.2,<1.0.0",
+    "citeproc-py>=0.6.0",
+    "commonmeta-py>=0.8.4,<0.8.7",
+    "datacite>=1.1.1,<2.0.0",
+    "dcxml>=0.1.2,<1.0.0",
+    "Faker>=2.0.3",
+    "flask-iiif>=1.0.0,<2.0.0",
+    "ftfy>=4.4.3,<5.0.0",
+    "invenio-administration>=2.0.0,<3.0.0",
+    "invenio-communities>=17.0.0,<18.0.0",
+    "invenio-drafts-resources>=5.0.0,<6.0.0",
+    "invenio-records-resources>=6.0.0,<7.0.0",
+    "invenio-github>=1.0.0,<2.0.0",
+    "invenio-i18n>=2.0.0,<3.0.0",
+    "invenio-jobs>=1.0.0,<2.0.0",
+    "invenio-oaiserver>=2.0.0,<3.0.0",
+    "invenio-oauth2server>=2.0.0",
+    "invenio-stats>=4.0.0,<5.0.0",
+    "invenio-vocabularies>=6.0.0,<7.0.0",
+    "nameparser>=1.1.1",
+    "pycountry>=22.3.5",
+    "pydash>=6.0.0,<7.0.0",
+    "pytz>=2020.4",
+    "pyyaml>=5.4.0",
+    "python-slugify>=8.0.1",
+    "types-requests<2.31.0.7",  # Upper pinning due to commonmeta-py
+]
+
+[project.optional-dependencies]
+tests = [
+    "pytest-black-ng>=0.4.0",
+    "invenio-app>=1.4.0,<2.0.0",
+    "invenio-db[postgresql,mysql]>=1.0.14,<2.0.0",
+    "pytest-invenio>=2.1.0,<3.0.0",
+    "pytest-mock>=1.6.0",
+    "sphinx>=4.5.0",
+    "tripoli~=2.0.0",
+]
+elasticsearch7 = [
+    "invenio-search[elasticsearch7]>=2.1.0,<3.0.0",
+]
+opensearch1 = [
+    "invenio-search[opensearch1]>=2.1.0,<3.0.0",
+]
+opensearch2 = [
+    "invenio-search[opensearch2]>=2.1.0,<3.0.0",
+]
+
+# Entry points
+[project.entry-points."flask.commands"]
+rdm-records = "invenio_rdm_records.cli:rdm_records"
+
+[project.entry-points."invenio_base.apps"]
+invenio_rdm_records = "invenio_rdm_records:InvenioRDMRecords"
+
+[project.entry-points."invenio_base.api_apps"]
+invenio_rdm_records = "invenio_rdm_records:InvenioRDMRecords"
+
+[project.entry-points."invenio_base.api_blueprints"]
+invenio_rdm_records = "invenio_rdm_records.views:create_records_bp"
+invenio_rdm_records_draft_files = "invenio_rdm_records.views:create_draft_files_bp"
+invenio_rdm_records_draft_media_files = "invenio_rdm_records.views:create_draft_media_files_bp"
+invenio_rdm_records_ext = "invenio_rdm_records.views:blueprint"
+invenio_rdm_records_parent_links = "invenio_rdm_records.views:create_parent_record_links_bp"
+invenio_rdm_records_parent_grants = "invenio_rdm_records.views:create_parent_grants_bp"
+invenio_rdm_records_user_access = "invenio_rdm_records.views:create_grant_user_access_bp"
+invenio_rdm_records_group_access = "invenio_rdm_records.views:create_grant_group_access_bp"
+invenio_rdm_records_record_files = "invenio_rdm_records.views:create_record_files_bp"
+invenio_rdm_records_record_media_files = "invenio_rdm_records.views:create_record_media_files_bp"
+invenio_rdm_community_records = "invenio_rdm_records.views:create_community_records_bp"
+invenio_oaipmh_server = "invenio_rdm_records.views:create_oaipmh_server_blueprint_from_app"
+invenio_rdm_record_communities = "invenio_rdm_records.views:create_record_communities_bp"
+invenio_rdm_record_requests = "invenio_rdm_records.views:create_record_requests_bp"
+invenio_iiif = "invenio_rdm_records.views:create_iiif_bp"
+
+[project.entry-points."invenio_base.api_finalize_app"]
+invenio_rdm_records = "invenio_rdm_records.ext:api_finalize_app"
+
+[project.entry-points."invenio_base.blueprints"]
+invenio_rdm_records_ext = "invenio_rdm_records.views:blueprint"
+
+[project.entry-points."invenio_base.finalize_app"]
+invenio_rdm_records = "invenio_rdm_records.ext:finalize_app"
+
+[project.entry-points."invenio_celery.tasks"]
+invenio_rdm_records_fixtures = "invenio_rdm_records.fixtures.tasks"
+invenio_rdm_records_services = "invenio_rdm_records.services.tasks"
+invenio_rdm_records_access_requests = "invenio_rdm_records.requests.access.tasks"
+invenio_rdm_records_iiif = "invenio_rdm_records.services.iiif.tasks"
+invenio_rdm_records_user_moderation = "invenio_rdm_records.requests.user_moderation.tasks"
+
+[project.entry-points."invenio_db.models"]
+invenio_rdm_records = "invenio_rdm_records.records.models"
+invenio_rdm_records_collections = "invenio_rdm_records.collections.models"
+
+[project.entry-points."invenio_db.alembic"]
+invenio_rdm_records = "invenio_rdm_records:alembic"
+
+[project.entry-points."invenio_jsonschemas.schemas"]
+invenio_rdm_records = "invenio_rdm_records.records.jsonschemas"
+
+[project.entry-points."invenio_search.mappings"]
+rdmrecords = "invenio_rdm_records.records.mappings"
+
+[project.entry-points."invenio_i18n.translations"]
+invenio_rdm_records = "invenio_rdm_records"
+
+[project.entry-points."invenio_requests.types"]
+community_inclusion = "invenio_rdm_records.requests:CommunityInclusion"
+community_submission = "invenio_rdm_records.requests:CommunitySubmission"
+user_access_request = "invenio_rdm_records.requests:UserAccessRequest"
+guest_access_request = "invenio_rdm_records.requests:GuestAccessRequest"
+
+[project.entry-points."invenio_requests.entity_resolvers"]
+records = "invenio_rdm_records.requests.entity_resolvers:RDMRecordResolver"
+email = "invenio_rdm_records.requests.entity_resolvers:EmailResolver"
+
+[project.entry-points."invenio_administration.views"]
+invenio_rdm_records_oai_list = "invenio_rdm_records.administration.views.oai:OaiPmhListView"
+invenio_rdm_records_oai_edit = "invenio_rdm_records.administration.views.oai:OaiPmhEditView"
+invenio_rdm_records_oai_create = "invenio_rdm_records.administration.views.oai:OaiPmhCreateView"
+invenio_rdm_records_details = "invenio_rdm_records.administration.views.oai:OaiPmhDetailView"
+
+[project.entry-points."invenio_assets.webpack"]
+invenio_rdm_records = "invenio_rdm_records.webpack:theme"
+
+[project.entry-points."invenio_oauth2server.scopes"]
+tokens_generate_scope = "invenio_rdm_records.tokens.scopes:tokens_generate_scope"
+
+[project.entry-points."invenio_users_resources.moderation.actions"]
+block = "invenio_rdm_records.requests.user_moderation.actions:on_block"
+restore = "invenio_rdm_records.requests.user_moderation.actions:on_restore"
+approve = "invenio_rdm_records.requests.user_moderation.actions:on_approve"
+
+[project.entry-points."invenio_jobs.jobs"]
+update_expired_embargos = "invenio_rdm_records.jobs.jobs:update_expired_embargos_cls"
+
+[tool.pydocstyle]
+add-ignore = ["D401", "D403"]
+
+[tool.isort]
+profile = "black"
+
+[tool.check-manifest]
+ignore = ["*-requirements.txt"]
+
+[tool.pytest.ini_options]
+addopts = """
+--black --isort --pydocstyle --doctest-glob='*.rst' --doctest-modules
+--cov=invenio_rdm_records --cov-report=term-missing
+"""
+testpaths = ["docs", "tests", "invenio_rdm_records"]
+
+[tool.babel]
+copyright_holder = "CERN"
+msgid_bugs_address = "info@inveniosoftware.org"
+
+[tool.babel.compile_catalog]
+directory = "invenio_rdm_records/translations/"
+use_fuzzy = true
+
+[tool.babel.extract_messages]
+mapping_file = "babel.ini"
+output_file = "invenio_rdm_records/translations/messages.pot"
+add_comments = "NOTE"
+
+[tool.babel.init_catalog]
+input_file = "invenio_rdm_records/translations/messages.pot"
+output_dir = "invenio_rdm_records/translations/"
+
+[tool.babel.update_catalog]
+input_file = "invenio_rdm_records/translations/messages.pot"
+output_dir = "invenio_rdm_records/translations/"
+
+[tool.build_sphinx]
+source-dir = "docs/"
+build-dir = "docs/_build"
+all_files = true
