@@ -19,7 +19,7 @@ from invenio_i18n import lazy_gettext as _
 from invenio_records_resources.services.uow import TaskOp
 
 from ..errors import ValidationErrorWithMessageAsList
-from ..pids.tasks import register_or_update_pid
+from ..pids.tasks import cleanup_parent_pids, register_or_update_pid
 
 OPTIONAL_DOI_TRANSITIONS = {
     "datacite": {
@@ -336,6 +336,11 @@ class ParentPIDsComponent(ServiceComponent):
             self.service.pids.parent_pid_manager.discard_all(
                 parent_pids, soft_delete=True, record=record
             )
+        else:
+            # We're sending a task in case there is a race condition with two
+            # versions being deleted at the same time to ensure that we have
+            # consistent database state
+            self.uow.register(TaskOp(cleanup_parent_pids, record["id"]))
 
         # Async register/update tasks after transaction commit.
         for scheme in parent_pids.keys():
