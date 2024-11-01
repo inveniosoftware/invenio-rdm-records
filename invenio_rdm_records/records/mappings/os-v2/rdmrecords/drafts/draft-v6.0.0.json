@@ -1571,6 +1571,28 @@
             "type": "boolean"
           }
         }
+      },
+      "internal_notes": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "keyword"
+          },
+          "note": {
+            "type": "text"
+          },
+          "timestamp": {
+            "type": "date"
+          },
+          "added_by": {
+            "type": "object",
+            "properties": {
+              "user": {
+                "type": "keyword"
+              }
+            }
+          }
+        }
       }
     }
   }

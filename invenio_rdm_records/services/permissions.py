@@ -61,6 +61,9 @@ class RDMRecordPermissionPolicy(RecordPermissionPolicy):
         "object-read": "read_files",
     }
 
+    # permission meant for global curators of the instance
+    # (for now applies to internal notes field only
+    can_manage_internal = [Administration()]
     #
     # High-level permissions (used by low-level)
     #

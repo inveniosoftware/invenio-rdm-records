@@ -13,7 +13,13 @@
 from datetime import timedelta
 
 import idutils
+from invenio_administration.permissions import administration_permission
 from invenio_i18n import lazy_gettext as _
+from invenio_records_resources.services.records.queryparser import QueryParser
+from invenio_records_resources.services.records.queryparser.transformer import (
+    RestrictedTerm,
+    SearchFieldTransformer,
+)
 
 import invenio_rdm_records.services.communities.moderation as communities_moderation
 from invenio_rdm_records.services.components.verified import UserModerationHandler
@@ -24,6 +30,7 @@ from .services import facets
 from .services.config import lock_edit_published_files
 from .services.permissions import RDMRecordPermissionPolicy
 from .services.pids import providers
+from .services.queryparser import word_internal_notes
 
 # Invenio-RDM-Records
 # ===================
@@ -254,6 +261,7 @@ RDM_SORT_OPTIONS = {
 
 """
 
+
 RDM_SEARCH = {
     "facets": ["access_status", "file_type", "resource_type"],
     "sort": [
@@ -264,6 +272,18 @@ RDM_SEARCH = {
         "mostviewed",
         "mostdownloaded",
     ],
+    "query_parser_cls": QueryParser.factory(
+        mapping={
+            "internal_notes.note": RestrictedTerm(administration_permission),
+            "internal_notes.id": RestrictedTerm(administration_permission),
+            "internal_notes.added_by": RestrictedTerm(administration_permission),
+            "internal_notes.timestamp": RestrictedTerm(administration_permission),
+            "_exists_": RestrictedTerm(
+                administration_permission, word=word_internal_notes
+            ),
+        },
+        tree_transformer_cls=SearchFieldTransformer,
+    ),
 }
 """Record search configuration.
 
