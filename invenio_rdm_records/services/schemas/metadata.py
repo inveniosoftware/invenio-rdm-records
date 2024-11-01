@@ -8,7 +8,6 @@
 # it under the terms of the MIT License; see LICENSE file for more details.
 
 """RDM record schemas."""
-from datetime import timezone
 from functools import partial
 from urllib import parse
 
@@ -35,12 +34,11 @@ from marshmallow_utils.fields import (
     EDTFDateTimeString,
     IdentifierSet,
     SanitizedHTML,
-    SanitizedUnicode, TZDateTime,
+    SanitizedUnicode,
 )
 from marshmallow_utils.schemas import GeometryObjectSchema, IdentifierSchema
 from werkzeug.local import LocalProxy
 
-from invenio_rdm_records.services.schemas.parent.access import Agent
 
 record_personorg_schemes = LocalProxy(
     lambda: current_app.config["RDM_RECORDS_PERSONORG_SCHEMES"]
@@ -353,13 +351,6 @@ class FeatureSchema(Schema):
     features = fields.List(fields.Nested(LocationSchema))
 
 
-class InternalNoteSchema(Schema):
-    """Schema for internal notes."""
-    timestamp = TZDateTime(timezone=timezone.utc, format="iso", dump_only=True)
-    user = fields.Nested(Agent, dump_only=True)
-    note = SanitizedUnicode()
-
-
 class MetadataSchema(Schema):
     """Schema for the record metadata."""
 
@@ -398,4 +389,3 @@ class MetadataSchema(Schema):
     locations = fields.Nested(FeatureSchema)
     funding = fields.List(fields.Nested(FundingSchema))
     references = fields.List(fields.Nested(ReferenceSchema))
-    _internal_notes = fields.List(fields.Nested(InternalNoteSchema))

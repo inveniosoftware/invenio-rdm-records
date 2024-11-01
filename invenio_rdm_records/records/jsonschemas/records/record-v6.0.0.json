@@ -341,22 +341,6 @@
               }
             }
           }
-        },
-        "_internal_notes": {
-            "properties": {
-              "note": {
-                "type": "string"
-              },
-              "timestamp": {
-                "type": "string",
-                "description": "ISO8601 formatted timestamp in UTC.",
-                "format": "date-time"
-              },
-              "user": {
-                "type": "string",
-                "description": "User id of the person who created the note"
-              }
-            }
         }
       }
     },
@@ -392,6 +376,24 @@
         "is_visible": {
           "type": "boolean",
           "description": "Whether or not the tombstone page is publicly visible."
+        }
+      }
+    },
+    "internal_notes": {
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "note": {
+          "type": "string"
+        },
+        "timestamp": {
+          "type": "string",
+          "description": "ISO8601 formatted timestamp in UTC.",
+          "format": "date-time"
+        },
+        "added_by": {
+          "$ref": "local://records/definitions-v2.0.0.json#/agent"
         }
       }
     },

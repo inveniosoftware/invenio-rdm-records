@@ -16,6 +16,7 @@ from invenio_drafts_resources.services.records.components import (
 
 from .access import AccessComponent
 from .custom_fields import CustomFieldsComponent
+from .internal_notes import InternalNotesComponent
 from .metadata import MetadataComponent
 from .pids import ParentPIDsComponent, PIDsComponent
 from .record_deletion import RecordDeletionComponent
@@ -40,6 +41,7 @@ DefaultRecordsComponents = [
     RelationsComponent,
     ReviewComponent,
     ContentModerationComponent,
+    InternalNotesComponent,
 ]
 
 
