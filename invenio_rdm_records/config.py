@@ -15,6 +15,9 @@ from datetime import timedelta
 import idutils
 from invenio_i18n import lazy_gettext as _
 
+import invenio_rdm_records.services.communities.moderation as communities_moderation
+from invenio_rdm_records.services.components.verified import UserModerationHandler
+
 from . import tokens
 from .resources.serializers import DataCite43JSONSerializer
 from .services import facets
@@ -554,6 +557,16 @@ RDM_LOCK_EDIT_PUBLISHED_FILES = lock_edit_published_files
    signature to implement:
    def lock_edit_published_files(service, identity, record=None, draft=None):
 """
+
+RDM_CONTENT_MODERATION_HANDLERS = [
+    UserModerationHandler(),
+]
+"""Records content moderation handlers."""
+
+RDM_COMMUNITY_CONTENT_MODERATION_HANDLERS = [
+    communities_moderation.UserModerationHandler(),
+]
+"""Community content moderation handlers."""
 
 # Feature flag to enable/disable user moderation
 RDM_USER_MODERATION_ENABLED = False
