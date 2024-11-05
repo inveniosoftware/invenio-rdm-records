@@ -12,6 +12,14 @@
 Changes
 =======
 
+Version v15.7.1 (released 2024-11-06)
+
+- installation: bump babel-edtf to >=1.2.0
+- tests: fix EDTF interval with unknown start/end
+- ui: use config instead of hardcoded url
+- setup: forward compatibility to itsdangerous>=2.1
+- fix: DeprecationWarning of SQLAlchemy
+
 Version v15.7.0 (released 2024-11-04)
 
 - resources: make record error handlers configurable
