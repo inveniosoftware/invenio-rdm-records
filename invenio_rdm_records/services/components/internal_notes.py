@@ -9,6 +9,7 @@
 import uuid
 from copy import copy, deepcopy
 from datetime import datetime, timezone
+
 from invenio_drafts_resources.services.records.components import ServiceComponent
 
 
@@ -31,29 +32,40 @@ class InternalNotesComponent(ServiceComponent):
         record.update({"internal_notes": notes})
 
     def update_draft(self, identity, data=None, record=None, **kwargs):
-        """Inject parsed metadata to the record."""
-        notes_to_update = data.get(self.field, [])
-        notes = deepcopy(record.get(self.field, []))
-        ids_to_check = [note["id"] for note in notes]
+        """Update internal notes field on draft update.
+
+        Takes list of internal notes. Adds timestamp and user to new notes.
+        Ignores updates of existing notes. Removes a note if missing from data
+        Ex. if existing record has  record["internal_notes"] = [{"id": "uuuid1", "note": "abc"}]
+         data: [{"id": "uuuid1", "note": "abc"}, {"note: "edf"}]  <--- adds a new note "edf"
+         data: []  <--- removes existing note of id = uuid1
+         data: [{"id": "uuuid1", "note": "new note"}]  <--- does not modify existing note
+        We don't allow updates to existing notes since each one
+        has a user and timestamp - therefore should be "locked" in time
+        """
+        notes_to_update = deepcopy(data.get(self.field, []))
+        existing_notes = deepcopy(record.get(self.field, []))
+        ids_to_check = [note["id"] for note in existing_notes]
 
         # reverse list to keep proper iterator reference after remove
         for note in reversed(notes_to_update):
             note.setdefault("id", str(uuid.uuid4()))
             if note["id"] in ids_to_check:
-                # exclude existing IDs from incoming data
-                # because we don't modify existing notes
+                # skip already existing IDs from incoming data
+                # because we don't allow updating existing notes
                 notes_to_update.remove(note)
+                # we remove checked ids. The ones remaining on this list will be deleted
                 ids_to_check.remove(note["id"])
                 continue
             note.setdefault("added_by", {"user": identity.id})
             note.setdefault("timestamp", datetime.now(timezone.utc).isoformat())
 
         to_delete = ids_to_check
-        for note in notes:
+        for note in existing_notes:
             if note["id"] in to_delete:
-                notes.remove(note)
+                existing_notes.remove(note)
 
-        record.update({"internal_notes": notes + notes_to_update})
+        record.update({"internal_notes": existing_notes + notes_to_update})
 
     def publish(self, identity, draft=None, record=None, **kwargs):
         """Update draft metadata."""

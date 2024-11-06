@@ -113,7 +113,7 @@ class CommonFieldsMixin:
 
     # Remember to update INDEXER_DEFAULT_INDEX in Invenio-App-RDM if you
     # update the JSONSchema and mappings to a new version.
-    schema = ConstantField("$schema", "local://records/record-v6.0.0.json")
+    schema = ConstantField("$schema", "local://records/record-v7.0.0.json")
 
     dumper = SearchDumper(
         extensions=[
