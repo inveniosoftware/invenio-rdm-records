@@ -13,11 +13,12 @@
 from datetime import timedelta
 
 import idutils
-from invenio_administration.permissions import administration_permission
+from invenio_access.permissions import system_permission
 from invenio_i18n import lazy_gettext as _
 from invenio_records_resources.services.records.queryparser import QueryParser
 from invenio_records_resources.services.records.queryparser.transformer import (
     RestrictedTerm,
+    RestrictedTermValue,
     SearchFieldTransformer,
 )
 
@@ -274,12 +275,12 @@ RDM_SEARCH = {
     ],
     "query_parser_cls": QueryParser.factory(
         mapping={
-            "internal_notes.note": RestrictedTerm(administration_permission),
-            "internal_notes.id": RestrictedTerm(administration_permission),
-            "internal_notes.added_by": RestrictedTerm(administration_permission),
-            "internal_notes.timestamp": RestrictedTerm(administration_permission),
-            "_exists_": RestrictedTerm(
-                administration_permission, word=word_internal_notes
+            "internal_notes.note": RestrictedTerm(system_permission),
+            "internal_notes.id": RestrictedTerm(system_permission),
+            "internal_notes.added_by": RestrictedTerm(system_permission),
+            "internal_notes.timestamp": RestrictedTerm(system_permission),
+            "_exists_": RestrictedTermValue(
+                system_permission, word=word_internal_notes
             ),
         },
         tree_transformer_cls=SearchFieldTransformer,

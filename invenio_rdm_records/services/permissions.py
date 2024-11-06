@@ -63,7 +63,8 @@ class RDMRecordPermissionPolicy(RecordPermissionPolicy):
 
     # permission meant for global curators of the instance
     # (for now applies to internal notes field only
-    can_manage_internal = [Administration()]
+    # to be replaced with an adequate permission when it is defined)
+    can_manage_internal = [SystemProcess()]
     #
     # High-level permissions (used by low-level)
     #

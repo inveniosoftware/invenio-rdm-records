@@ -949,7 +949,7 @@ def test_search_community_records(
 
 
 def test_search_internal_notes_fields(
-    running_app, client, minimal_record, headers, search_clear, admin, users
+    running_app, client, minimal_record, headers, search_clear, superuser, users
 ):
 
     # login regular user
@@ -964,7 +964,7 @@ def test_search_internal_notes_fields(
 
     # login admin
     logout_user(client)
-    user = admin.user
+    user = superuser.user
     login_user(client, user)
 
     resp = client.post("/records", json={**minimal_record_w_int_notes}, headers=headers)
