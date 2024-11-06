@@ -65,13 +65,6 @@ from invenio_records_resources.services.records.params import (
     PaginationParam,
     QueryStrParam,
 )
-from invenio_records_resources.services.records.queryparser import (
-    QueryParser,
-    SearchFieldTransformer,
-)
-from invenio_records_resources.services.records.queryparser.transformer import (
-    RestrictedTerm,
-)
 from invenio_requests.services.requests import RequestItem, RequestList
 from invenio_requests.services.requests.config import RequestSearchOptions
 from requests import Request
