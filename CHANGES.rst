@@ -12,6 +12,12 @@
 Changes
 =======
 
+Version v16.0.1 (released 2024-11-11)
+
+- deposit-ui: fix creator affiliations selection display
+    * Fixes a bug where the selected affiliations from the dropdown do not
+      appear inside the input box.
+
 Version v16.0.0 (released 2024-11-11)
 
 - identifiers: allow alternative identifiers with the same scheme but different values
