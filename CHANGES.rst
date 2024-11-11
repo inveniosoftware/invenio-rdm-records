@@ -12,6 +12,11 @@
 Changes
 =======
 
+Version v16.0.0 (released 2024-11-11)
+
+- identifiers: allow alternative identifiers with the same scheme but different values
+- records: add intenal_notes schema field and bump of jsonschema version
+
 Version v15.7.1 (released 2024-11-06)
 
 - installation: bump babel-edtf to >=1.2.0
