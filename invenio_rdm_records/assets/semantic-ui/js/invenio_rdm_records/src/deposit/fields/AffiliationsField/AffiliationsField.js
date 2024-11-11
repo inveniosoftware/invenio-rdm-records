@@ -54,7 +54,7 @@ export class AffiliationsField extends Component {
                 );
               }}
               value={getIn(values, fieldPath, []).map(
-                (val) => val.id || val.text || val.name
+                (val) => val.name || val.text || val.id
               )}
               ref={selectRef}
               // Disable UI-side filtering of search results
