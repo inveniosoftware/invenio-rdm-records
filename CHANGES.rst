@@ -12,6 +12,12 @@
 Changes
 =======
 
+Version 10.9.1 (released 2024-11-11)
+
+- signals: fix removed deprecated `temporarily_connected_to` method
+- i18n: fix translation only applied to app start
+
+
 Version 10.9.0 (released 2024-10-30)
 
 - Feature: Config to require community approval for record publishing
