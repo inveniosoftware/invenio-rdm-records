@@ -12,6 +12,12 @@
 Changes
 =======
 
+Version v15.7.2 (released 2024-11-11)
+
+- deposit-ui: fix creator affiliations selection display
+    * Fixes a bug where the selected affiliations from the dropdown do not
+      appear inside the input box.
+
 Version v15.7.1 (released 2024-11-06)
 
 - installation: bump babel-edtf to >=1.2.0
