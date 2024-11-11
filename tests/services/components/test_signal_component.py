@@ -67,7 +67,7 @@ def test_publish_signal_fired(
     draft = service.create(identity_simple, minimal_record)
     add_file_to_draft(identity_simple, draft.id, "test.zip", zip_file)
 
-    with post_publish_signal.temporarily_connected_to(_signal_sent):
+    with post_publish_signal.connected_to(_signal_sent):
         # Publish
         assert sentinel["called"] == False
         record = service.publish(identity_simple, draft.id)
