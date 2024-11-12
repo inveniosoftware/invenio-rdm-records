@@ -580,8 +580,18 @@ export class CreatibutorsModal extends Component {
                   {(_get(values, typeFieldPath) === CREATIBUTOR_TYPE.ORGANIZATION ||
                     (showPersonForm &&
                       _get(values, typeFieldPath) === CREATIBUTOR_TYPE.PERSON)) && (
-                      <Overridable
-                        id="InvenioRdmRecords.Deposit.CreatibutorsModalRoleSelectField.Container"
+                    <Overridable
+                      id="InvenioRdmRecords.Deposit.CreatibutorsModalRoleSelectField.Container"
+                      fieldPath={roleFieldPath}
+                      label={i18next.t("Role")}
+                      options={roleOptions}
+                      placeholder={i18next.t("Select role")}
+                      {...(this.isCreator() && { clearable: true })}
+                      required={!this.isCreator()}
+                      optimized
+                      scrolling
+                    >
+                      <SelectField
                         fieldPath={roleFieldPath}
                         label={i18next.t("Role")}
                         options={roleOptions}
@@ -590,18 +600,8 @@ export class CreatibutorsModal extends Component {
                         required={!this.isCreator()}
                         optimized
                         scrolling
-                      >
-                        <SelectField
-                          fieldPath={roleFieldPath}
-                          label={i18next.t("Role")}
-                          options={roleOptions}
-                          placeholder={i18next.t("Select role")}
-                          {...(this.isCreator() && { clearable: true })}
-                          required={!this.isCreator()}
-                          optimized
-                          scrolling
-                        />
-                      </Overridable>         
+                      />
+                    </Overridable>
                   )}
                 </Form>
               </Modal.Content>
