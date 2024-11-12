@@ -13,7 +13,17 @@
 from datetime import timedelta
 
 import idutils
+from invenio_access.permissions import system_permission
 from invenio_i18n import lazy_gettext as _
+from invenio_records_resources.services.records.queryparser import QueryParser
+from invenio_records_resources.services.records.queryparser.transformer import (
+    RestrictedTerm,
+    RestrictedTermValue,
+    SearchFieldTransformer,
+)
+
+import invenio_rdm_records.services.communities.moderation as communities_moderation
+from invenio_rdm_records.services.components.verified import UserModerationHandler
 
 from . import tokens
 from .resources.serializers import DataCite43JSONSerializer
@@ -21,6 +31,7 @@ from .services import facets
 from .services.config import lock_edit_published_files
 from .services.permissions import RDMRecordPermissionPolicy
 from .services.pids import providers
+from .services.queryparser import word_internal_notes
 
 # Invenio-RDM-Records
 # ===================
@@ -251,6 +262,7 @@ RDM_SORT_OPTIONS = {
 
 """
 
+
 RDM_SEARCH = {
     "facets": ["access_status", "file_type", "resource_type"],
     "sort": [
@@ -261,6 +273,18 @@ RDM_SEARCH = {
         "mostviewed",
         "mostdownloaded",
     ],
+    "query_parser_cls": QueryParser.factory(
+        mapping={
+            "internal_notes.note": RestrictedTerm(system_permission),
+            "internal_notes.id": RestrictedTerm(system_permission),
+            "internal_notes.added_by": RestrictedTerm(system_permission),
+            "internal_notes.timestamp": RestrictedTerm(system_permission),
+            "_exists_": RestrictedTermValue(
+                system_permission, word=word_internal_notes
+            ),
+        },
+        tree_transformer_cls=SearchFieldTransformer,
+    ),
 }
 """Record search configuration.
 
@@ -554,6 +578,16 @@ RDM_LOCK_EDIT_PUBLISHED_FILES = lock_edit_published_files
    signature to implement:
    def lock_edit_published_files(service, identity, record=None, draft=None):
 """
+
+RDM_CONTENT_MODERATION_HANDLERS = [
+    UserModerationHandler(),
+]
+"""Records content moderation handlers."""
+
+RDM_COMMUNITY_CONTENT_MODERATION_HANDLERS = [
+    communities_moderation.UserModerationHandler(),
+]
+"""Community content moderation handlers."""
 
 # Feature flag to enable/disable user moderation
 RDM_USER_MODERATION_ENABLED = False

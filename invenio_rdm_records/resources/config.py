@@ -46,7 +46,7 @@ from ..services.errors import (
     ReviewStateError,
     ValidationErrorWithMessageAsList,
 )
-from .args import CommunityRecordsSearchRequestArgsSchema, RDMSearchRequestArgsSchema
+from .args import RDMSearchRequestArgsSchema
 from .deserializers import ROCrateJSONDeserializer
 from .deserializers.errors import DeserializerError
 from .errors import HTTPJSONException, HTTPJSONValidationWithMessageAsListException
@@ -135,6 +135,84 @@ record_serializers = {
     "application/linkset+json": ResponseHandler(FAIRSignpostingProfileLvl2Serializer()),
 }
 
+error_handlers = {
+    **ErrorHandlersMixin.error_handlers,
+    DeserializerError: create_error_handler(
+        lambda exc: HTTPJSONException(
+            code=400,
+            description=exc.args[0],
+        )
+    ),
+    StyleNotFoundError: create_error_handler(
+        HTTPJSONException(
+            code=400,
+            description=_("Citation string style not found."),
+        )
+    ),
+    ReviewNotFoundError: create_error_handler(
+        HTTPJSONException(
+            code=404,
+            description=_("Review for draft not found"),
+        )
+    ),
+    ReviewStateError: create_error_handler(
+        lambda e: HTTPJSONException(
+            code=400,
+            description=str(e),
+        )
+    ),
+    ReviewExistsError: create_error_handler(
+        lambda e: HTTPJSONException(
+            code=400,
+            description=str(e),
+        )
+    ),
+    InvalidRelationValue: create_error_handler(
+        lambda exc: HTTPJSONException(
+            code=400,
+            description=exc.args[0],
+        )
+    ),
+    InvalidAccessRestrictions: create_error_handler(
+        lambda exc: HTTPJSONException(
+            code=400,
+            description=exc.args[0],
+        )
+    ),
+    ValidationErrorWithMessageAsList: create_error_handler(
+        lambda e: HTTPJSONValidationWithMessageAsListException(e)
+    ),
+    AccessRequestExistsError: create_error_handler(
+        lambda e: HTTPJSONException(
+            code=400,
+            description=e.description,
+        )
+    ),
+    RecordDeletedException: create_error_handler(
+        lambda e: (
+            HTTPJSONException(code=404, description=_("Record not found"))
+            if not e.record.tombstone.is_visible
+            else HTTPJSONException(
+                code=410,
+                description=_("Record deleted"),
+                tombstone=e.record.tombstone.dump(),
+            )
+        )
+    ),
+    RecordSubmissionClosedCommunityError: create_error_handler(
+        lambda e: HTTPJSONException(
+            code=403,
+            description=e.description,
+        )
+    ),
+    CommunityRequiredError: create_error_handler(
+        HTTPJSONException(
+            code=400,
+            description=_("Cannot publish without selecting a community."),
+        )
+    ),
+}
+
 
 #
 # Records and record versions
@@ -187,83 +265,10 @@ class RDMRecordResourceConfig(RecordResourceConfig, ConfiguratorMixin):
         default=record_serializers,
     )
 
-    error_handlers = {
-        **ErrorHandlersMixin.error_handlers,
-        DeserializerError: create_error_handler(
-            lambda exc: HTTPJSONException(
-                code=400,
-                description=exc.args[0],
-            )
-        ),
-        StyleNotFoundError: create_error_handler(
-            HTTPJSONException(
-                code=400,
-                description=_("Citation string style not found."),
-            )
-        ),
-        ReviewNotFoundError: create_error_handler(
-            HTTPJSONException(
-                code=404,
-                description=_("Review for draft not found"),
-            )
-        ),
-        ReviewStateError: create_error_handler(
-            lambda e: HTTPJSONException(
-                code=400,
-                description=str(e),
-            )
-        ),
-        ReviewExistsError: create_error_handler(
-            lambda e: HTTPJSONException(
-                code=400,
-                description=str(e),
-            )
-        ),
-        InvalidRelationValue: create_error_handler(
-            lambda exc: HTTPJSONException(
-                code=400,
-                description=exc.args[0],
-            )
-        ),
-        InvalidAccessRestrictions: create_error_handler(
-            lambda exc: HTTPJSONException(
-                code=400,
-                description=exc.args[0],
-            )
-        ),
-        ValidationErrorWithMessageAsList: create_error_handler(
-            lambda e: HTTPJSONValidationWithMessageAsListException(e)
-        ),
-        AccessRequestExistsError: create_error_handler(
-            lambda e: HTTPJSONException(
-                code=400,
-                description=e.description,
-            )
-        ),
-        RecordDeletedException: create_error_handler(
-            lambda e: (
-                HTTPJSONException(code=404, description=_("Record not found"))
-                if not e.record.tombstone.is_visible
-                else HTTPJSONException(
-                    code=410,
-                    description=_("Record deleted"),
-                    tombstone=e.record.tombstone.dump(),
-                )
-            )
-        ),
-        RecordSubmissionClosedCommunityError: create_error_handler(
-            lambda e: HTTPJSONException(
-                code=403,
-                description=e.description,
-            )
-        ),
-        CommunityRequiredError: create_error_handler(
-            HTTPJSONException(
-                code=400,
-                description=_("Cannot publish without selecting a community."),
-            )
-        ),
-    }
+    error_handlers = FromConfig(
+        "RDM_RECORDS_ERROR_HANDLERS",
+        default=error_handlers,
+    )
 
 
 #
@@ -557,8 +562,6 @@ class RDMCommunityRecordsResourceConfig(RecordResourceConfig, ConfiguratorMixin)
         "RDM_RECORDS_SERIALIZERS",
         default=record_serializers,
     )
-
-    request_search_args = CommunityRecordsSearchRequestArgsSchema
 
 
 class RDMRecordCommunitiesResourceConfig(CommunityResourceConfig, ConfiguratorMixin):

@@ -257,9 +257,8 @@ export const delete_ = () => {
     try {
       const draft = getState().deposit.record;
       await config.service.drafts.delete(draft.links);
-
       // redirect to the the uploads page after deleting/discarding a draft
-      const redirectURL = "/me/uploads";
+      const redirectURL = config.config.dashboard_routes.uploads;
       window.location.replace(redirectURL);
     } catch (error) {
       dispatch({

@@ -12,6 +12,47 @@
 Changes
 =======
 
+Version v16.0.1 (released 2024-11-11)
+
+- deposit-ui: fix creator affiliations selection display
+    * Fixes a bug where the selected affiliations from the dropdown do not
+      appear inside the input box.
+
+Version v16.0.0 (released 2024-11-11)
+
+- identifiers: allow alternative identifiers with the same scheme but different values
+- records: add intenal_notes schema field and bump of jsonschema version
+
+Version v15.7.1 (released 2024-11-06)
+
+- installation: bump babel-edtf to >=1.2.0
+- tests: fix EDTF interval with unknown start/end
+- ui: use config instead of hardcoded url
+- setup: forward compatibility to itsdangerous>=2.1
+- fix: DeprecationWarning of SQLAlchemy
+
+Version v15.7.0 (released 2024-11-04)
+
+- resources: make record error handlers configurable
+    * Possible via the new `RDM_RECORDS_ERROR_HANDLERS` config variable.
+- components: make content moderation configurable
+    * Closes #1861.
+    * Adds a new `RRM_CONTENT_MODERATION_HANDLERS` config variable to allow
+      for configuring multiple handlers for the different write actions.
+- user_moderation: use search for faster actions
+    * Use search results to determine the user's list of records.
+    * Use a TaskOp and Unit of Work to avoid sending Celery tasks immediately.
+    * Add a cleanup task that will perform a more thorough check using the
+      DB to lookup the user's records.
+- deposit: add missing fields to record deserializer
+- UI/UX: add consistent suggestions display to affiliations
+- UI/UX: improve display of ROR information
+- collections: move records search into service
+- collections: added task to compute number of records for each collection
+- services: make file-service components configurable
+- access notification: provide correct draft preview link
+    * Closes inveniosoftware/invenio-app-rdm#2827
+
 Version v15.6.0 (released 2024-10-18)
 
 - community: added myCommunitiesEnabled prop to CommunitySelectionSearch

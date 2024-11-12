@@ -45,8 +45,13 @@
         "accent_analyzer": {
           "tokenizer": "standard",
           "type": "custom",
-          "char_filter": ["strip_special_chars"],
-          "filter": ["lowercase", "asciifolding"]
+          "char_filter": [
+            "strip_special_chars"
+          ],
+          "filter": [
+            "lowercase",
+            "asciifolding"
+          ]
         }
       }
     }
@@ -702,19 +707,6 @@
           "_default_preview": {
             "type": "object",
             "enabled": false
-          },
-          "_internal_notes": {
-            "properties": {
-              "note": {
-                "type": "text"
-              },
-              "timestamp": {
-                "type": "date"
-              },
-              "user": {
-                "type": "keyword"
-              }
-            }
           },
           "contact": {
             "type": "keyword"
@@ -1593,6 +1585,28 @@
           },
           "is_visible": {
             "type": "boolean"
+          }
+        }
+      },
+      "internal_notes": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "keyword"
+          },
+          "note": {
+            "type": "text"
+          },
+          "timestamp": {
+            "type": "date"
+          },
+          "added_by": {
+            "type": "object",
+            "properties": {
+              "user": {
+                "type": "keyword"
+              }
+            }
           }
         }
       }

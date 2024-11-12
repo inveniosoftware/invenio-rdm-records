@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2020-2022 CERN.
+# Copyright (C) 2020-2024 CERN.
 # Copyright (C) 2021 TU Wien.
 # Copyright (C) 2022 Universität Hamburg.
 # Copyright (C) 2024 Graz University of Technology.
@@ -102,3 +102,9 @@ def create_iiif_bp(app):
     """Create IIIF blueprint."""
     ext = app.extensions["invenio-rdm-records"]
     return ext.iiif_resource.as_blueprint()
+
+
+def create_collections_bp(app):
+    """Create collections blueprint."""
+    ext = app.extensions["invenio-rdm-records"]
+    return ext.collections_resource.as_blueprint()

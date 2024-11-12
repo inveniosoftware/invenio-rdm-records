@@ -18,6 +18,7 @@ from os.path import splitext
 from pathlib import Path
 
 from flask import current_app
+from invenio_administration.permissions import administration_permission
 from invenio_communities.communities.records.api import Community
 from invenio_drafts_resources.services.records.components import (
     DraftMediaFilesComponent,
@@ -67,7 +68,6 @@ from invenio_records_resources.services.records.params import (
 from invenio_requests.services.requests import RequestItem, RequestList
 from invenio_requests.services.requests.config import RequestSearchOptions
 from requests import Request
-from werkzeug.exceptions import NotFound
 from werkzeug.local import LocalProxy
 
 from invenio_rdm_records.records.processors.tiles import TilesProcessor

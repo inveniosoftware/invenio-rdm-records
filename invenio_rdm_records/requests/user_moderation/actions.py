@@ -8,38 +8,18 @@
 """RDM user moderation action."""
 
 from invenio_access.permissions import system_identity
-from invenio_db import db
 from invenio_pidstore.errors import PIDDoesNotExistError
+from invenio_records_resources.services.uow import TaskOp
 from invenio_vocabularies.proxies import current_service
 
 from ...proxies import current_rdm_records_service
-from .tasks import delete_record, restore_record
-
-
-def _get_records_for_user(user_id):
-    """Helper function for getting all the records of the user.
-
-    Note: This function performs DB queries yielding all records for a given
-    user (which is not hard-limited in the system) and performs service calls
-    on each of them. Thus, this function has the potential of being a very
-    heavy operation, and should not be called as part of the handling of an
-    HTTP request!
-    """
-    record_cls = current_rdm_records_service.record_cls
-    model_cls = record_cls.model_cls
-    parent_cls = record_cls.parent_record_cls
-    parent_model_cls = parent_cls.model_cls
-
-    records = (
-        db.session.query(model_cls.json["id"].as_string())
-        .join(parent_model_cls)
-        .filter(
-            parent_model_cls.json["access"]["owned_by"]["user"].as_string()
-            == str(user_id),
-        )
-    ).yield_per(1000)
-
-    return records
+from .tasks import (
+    delete_record,
+    restore_record,
+    user_block_cleanup,
+    user_restore_cleanup,
+)
+from .utils import get_user_records
 
 
 def on_block(user_id, uow=None, **kwargs):
@@ -63,8 +43,18 @@ def on_block(user_id, uow=None, **kwargs):
         pass
 
     # soft-delete all the published records of that user
-    for (recid,) in _get_records_for_user(user_id):
-        delete_record.delay(recid, tombstone_data)
+    for recid in get_user_records(user_id):
+        uow.register(TaskOp(delete_record, recid=recid, tombstone_data=tombstone_data))
+
+    # Send cleanup task to make sure all records are deleted
+    uow.register(
+        TaskOp.for_async_apply(
+            user_block_cleanup,
+            kwargs=dict(user_id=user_id, tombstone_data=tombstone_data),
+            # wait for 10 minutes before starting the cleanup
+            countdown=10 * 60,
+        )
+    )
 
 
 def on_restore(user_id, uow=None, **kwargs):
@@ -77,8 +67,18 @@ def on_restore(user_id, uow=None, **kwargs):
     user_id = str(user_id)
 
     # restore all the deleted records of that user
-    for (recid,) in _get_records_for_user(user_id):
-        restore_record.delay(recid)
+    for recid in get_user_records(user_id):
+        uow.register(TaskOp(restore_record, recid=recid))
+
+    # Send cleanup task to make sure all records are restored
+    uow.register(
+        TaskOp.for_async_apply(
+            user_restore_cleanup,
+            kwargs=dict(user_id=user_id),
+            # wait for 10 minutes before starting the cleanup
+            countdown=10 * 60,
+        )
+    )
 
 
 def on_approve(user_id, uow=None, **kwargs):

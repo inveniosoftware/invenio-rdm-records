@@ -1,5 +1,5 @@
 // This file is part of Invenio-RDM-Records
-// Copyright (C) 2020-2023 CERN.
+// Copyright (C) 2020-2024 CERN.
 // Copyright (C) 2020-2022 Northwestern University.
 // Copyright (C) 2021 Graz University of Technology.
 // Copyright (C) 2022 data-futures.org.
@@ -15,15 +15,14 @@ import _isEmpty from "lodash/isEmpty";
 import _map from "lodash/map";
 import PropTypes from "prop-types";
 import React, { Component, createRef } from "react";
-import { Trans } from "react-i18next";
 import {
-  Image,
   RadioField,
   RemoteSelectField,
   SelectField,
   TextField,
+  AffiliationsSuggestions,
 } from "react-invenio-forms";
-import { Button, Form, Header, Modal } from "semantic-ui-react";
+import { Button, Form, Modal } from "semantic-ui-react";
 import * as Yup from "yup";
 import { AffiliationsField } from "./../AffiliationsField";
 import { CreatibutorsIdentifiers } from "./CreatibutorsIdentifiers";
@@ -236,108 +235,10 @@ export class CreatibutorsModal extends Component {
     }
   };
 
-  makeIdEntry = (identifier) => {
-    let icon = null;
-    let link = null;
+  serializeAffiliations = (creatibutors) => {
+    const { isOrganization } = this.state;
 
-    if (identifier.scheme === "orcid") {
-      icon = "/static/images/orcid.svg";
-      link = "https://orcid.org/" + identifier.identifier;
-    } else if (identifier.scheme === "gnd") {
-      icon = "/static/images/gnd-icon.svg";
-      link = "https://d-nb.info/gnd/" + identifier.identifier;
-    } else if (identifier.scheme === "ror") {
-      icon = "/static/images/ror-icon.svg";
-      link = "https://ror.org/" + identifier.identifier;
-    } else if (identifier.scheme === "isni" || identifier.scheme === "grid") {
-      return null;
-    } else {
-      return (
-        <>
-          {identifier.scheme}: {identifier.identifier}
-        </>
-      );
-    }
-
-    return (
-      <span key={identifier.identifier}>
-        <a href={link} target="_blank" rel="noopener noreferrer">
-          <Image
-            src={icon}
-            className="inline-id-icon ml-5 mr-5"
-            verticalAlign="middle"
-          />
-          {identifier.scheme === "orcid" ? identifier.identifier : null}
-        </a>
-      </span>
-    );
-  };
-
-  serializeSuggestions = (creatibutors) => {
-    const results = creatibutors.map((creatibutor) => {
-      // ensure `affiliations` and `identifiers` are present
-      creatibutor.affiliations = creatibutor.affiliations || [];
-      creatibutor.identifiers = creatibutor.identifiers || [];
-
-      let affNames = "";
-      if ("affiliations" in creatibutor) {
-        creatibutor.affiliations.forEach((affiliation, idx) => {
-          affNames += affiliation.name;
-          if (idx < creatibutor.affiliations.length - 1) {
-            affNames += ", ";
-          }
-        });
-      }
-
-      const idString = [];
-      creatibutor.identifiers?.forEach((i) => {
-        idString.push(this.makeIdEntry(i));
-      });
-      const { isOrganization } = this.state;
-
-      return {
-        text: creatibutor.name,
-        value: creatibutor.id,
-        extra: creatibutor,
-        key: creatibutor.id,
-        content: (
-          <Header>
-            {creatibutor.name} {idString.length ? <>({idString})</> : null}
-            <Header.Subheader>
-              {isOrganization ? creatibutor.acronym : affNames}
-            </Header.Subheader>
-          </Header>
-        ),
-      };
-    });
-
-    const { showPersonForm } = this.state;
-    const { autocompleteNames } = this.props;
-
-    const showManualEntry =
-      autocompleteNames === NamesAutocompleteOptions.SEARCH_ONLY && !showPersonForm;
-
-    if (showManualEntry) {
-      results.push({
-        text: "Manual entry",
-        value: "Manual entry",
-        extra: "Manual entry",
-        key: "manual-entry",
-        content: (
-          <Header textAlign="center">
-            <Header.Content>
-              <p>
-                <Trans>
-                  {/* eslint-disable-next-line jsx-a11y/anchor-is-valid*/}
-                  Couldn't find your person? You can <a>create a new entry</a>.
-                </Trans>
-              </p>
-            </Header.Content>
-          </Header>
-        ),
-      });
-    }
-    return results;
+    return AffiliationsSuggestions(creatibutors, isOrganization);
   };
 
   updateIdentifiersAndAffiliations(
@@ -560,7 +461,7 @@ export class CreatibutorsModal extends Component {
                     />
                   </Form.Group>
                   {_get(values, typeFieldPath, "") === CREATIBUTOR_TYPE.PERSON ? (
-                    <div>
+                    <>
                       {autocompleteNames !== NamesAutocompleteOptions.OFF && (
                         <RemoteSelectField
                           selectOnBlur={false}
@@ -582,13 +483,13 @@ export class CreatibutorsModal extends Component {
                           // Disable UI-side filtering of search results
                           search={(options) => options}
                           suggestionAPIUrl="/api/names"
-                          serializeSuggestions={this.serializeSuggestions}
+                          serializeSuggestions={this.serializeAffiliations}
                           onValueChange={this.onPersonSearchChange}
                           ref={this.namesAutocompleteRef}
                         />
                       )}
                       {showPersonForm && (
-                        <div>
+                        <>
                           <Form.Group widths="equal">
                             <TextField
                               label={i18next.t("Family name")}
@@ -618,9 +519,9 @@ export class CreatibutorsModal extends Component {
                             fieldPath={affiliationsFieldPath}
                             selectRef={this.affiliationsRef}
                           />
-                        </div>
+                        </>
                       )}
-                    </div>
+                    </>
                   ) : (
                     <>
                       {autocompleteNames !== NamesAutocompleteOptions.OFF && (
@@ -644,7 +545,7 @@ export class CreatibutorsModal extends Component {
                           // Disable UI-side filtering of search results
                           search={(options) => options}
                           suggestionAPIUrl="/api/affiliations"
-                          serializeSuggestions={this.serializeSuggestions}
+                          serializeSuggestions={this.serializeAffiliations}
                           onValueChange={this.onOrganizationSearchChange}
                         />
                       )}
@@ -679,7 +580,6 @@ export class CreatibutorsModal extends Component {
                   {(_get(values, typeFieldPath) === CREATIBUTOR_TYPE.ORGANIZATION ||
                     (showPersonForm &&
                       _get(values, typeFieldPath) === CREATIBUTOR_TYPE.PERSON)) && (
-                    <div>
                       <Overridable
                         id="InvenioRdmRecords.Deposit.CreatibutorsModalRoleSelectField.Container"
                         fieldPath={roleFieldPath}
@@ -701,8 +601,7 @@ export class CreatibutorsModal extends Component {
                           optimized
                           scrolling
                         />
-                      </Overridable>
-                    </div>
+                      </Overridable>         
                   )}
                 </Form>
               </Modal.Content>

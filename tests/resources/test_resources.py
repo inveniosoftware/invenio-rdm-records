@@ -10,15 +10,18 @@
 """Module tests."""
 
 import json
+from copy import deepcopy
 from datetime import datetime, timedelta, timezone
 from io import BytesIO
 
 import arrow
 import pytest
 from invenio_requests import current_requests_service
+from marshmallow_utils.permissions import FieldPermissionError
 
 from invenio_rdm_records.records import RDMDraft, RDMRecord
 from invenio_rdm_records.requests import CommunitySubmission
+from tests.helpers import login_user, logout_user
 
 
 @pytest.fixture()
@@ -943,3 +946,52 @@ def test_search_community_records(
 
     res = client.get(f"/communities/{community['id']}/records", headers=headers)
     assert res.json["hits"]["total"] == 1
+
+
+def test_search_internal_notes_fields(
+    running_app, client, minimal_record, headers, search_clear, superuser, users
+):
+
+    # login regular user
+    login_user(client, users[0])
+    minimal_record_w_int_notes = deepcopy(minimal_record)
+    minimal_record_w_int_notes["internal_notes"] = [{"note": "abc"}]
+
+    with pytest.raises(FieldPermissionError):
+        resp = client.post(
+            "/records", json={**minimal_record_w_int_notes}, headers=headers
+        )
+
+    # login admin
+    logout_user(client)
+    user = superuser.user
+    login_user(client, user)
+
+    resp = client.post("/records", json={**minimal_record_w_int_notes}, headers=headers)
+    assert resp.status_code == 201
+
+    recid = resp.json["id"]
+    response = client.post(
+        "/records/{}/draft/actions/publish".format(recid), headers=headers
+    )
+
+    resp = client.get(f"/records/{recid}")
+    assert resp.json["id"] == recid
+    assert resp.json["internal_notes"][0]["note"] == "abc"
+    resp = client.get("/records?q=abc")
+    assert resp.json["hits"]["total"] == 0
+    resp = client.get("/records?q=internal_notes.note:abc")
+    assert resp.json["hits"]["total"] == 1
+
+    # login user to check search and field perms
+    logout_user(client)
+    login_user(client, users[0])
+
+    resp = client.get(f"/records/{recid}")
+    assert "internal_notes" not in resp.json
+
+    resp = client.get("/records?q=abc")
+    assert resp.json["hits"]["total"] == 0
+    resp = client.get("/records?q=internal_notes.note:abc")
+    assert resp.json["hits"]["total"] == 0
+    logout_user(client)

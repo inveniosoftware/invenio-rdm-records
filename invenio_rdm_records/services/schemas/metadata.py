@@ -8,7 +8,6 @@
 # it under the terms of the MIT License; see LICENSE file for more details.
 
 """RDM record schemas."""
-
 from functools import partial
 from urllib import parse
 
@@ -34,6 +33,7 @@ from marshmallow_utils.fields import (
     EDTFDateString,
     EDTFDateTimeString,
     IdentifierSet,
+    IdentifierValueSet,
     SanitizedHTML,
     SanitizedUnicode,
 )
@@ -370,7 +370,7 @@ class MetadataSchema(Schema):
     dates = fields.List(fields.Nested(DateSchema))
     languages = fields.List(fields.Nested(VocabularySchema))
     # alternate identifiers
-    identifiers = IdentifierSet(
+    identifiers = IdentifierValueSet(
         fields.Nested(
             partial(IdentifierSchema, allowed_schemes=record_identifiers_schemes)
         )

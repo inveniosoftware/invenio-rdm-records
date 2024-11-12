@@ -1,14 +1,15 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2023-2024 CERN.
+# Copyright (C) 2024 CERN.
 #
-# Invenio-RDM-records is free software; you can redistribute it and/or modify
+# Invenio-RDM-Records is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
-"""RDM service component for content moderation."""
+
+"""Content moderation for communities."""
 
 from flask import current_app
 from invenio_access.permissions import system_identity
-from invenio_drafts_resources.services.records.components import ServiceComponent
+from invenio_records_resources.services.records.components import ServiceComponent
 from invenio_records_resources.services.uow import TaskOp
 from invenio_requests.tasks import request_moderation
 
@@ -16,34 +17,16 @@ from invenio_requests.tasks import request_moderation
 class BaseHandler:
     """Base class for content moderation handlers."""
 
-    def update_draft(
-        self, identity, data=None, record=None, errors=None, uow=None, **kwargs
-    ):
-        """Update draft handler."""
+    def create(self, identity, record=None, data=None, uow=None, **kwargs):
+        """Create handler."""
         pass
 
-    def delete_draft(
-        self, identity, draft=None, record=None, force=False, uow=None, **kwargs
-    ):
-        """Delete draft handler."""
+    def update(self, identity, record=None, data=None, uow=None, **kwargs):
+        """Update handler."""
         pass
 
-    def edit(self, identity, draft=None, record=None, uow=None, **kwargs):
-        """Edit a record handler."""
-        pass
-
-    def new_version(self, identity, draft=None, record=None, uow=None, **kwargs):
-        """New version handler."""
-        pass
-
-    def publish(self, identity, draft=None, record=None, uow=None, **kwargs):
-        """Publish handler."""
-        pass
-
-    def post_publish(
-        self, identity, record=None, is_published=False, uow=None, **kwargs
-    ):
-        """Post publish handler."""
+    def delete(self, identity, data=None, record=None, uow=None, **kwargs):
+        """Delete handler."""
         pass
 
 
@@ -63,14 +46,18 @@ class UserModerationHandler(BaseHandler):
             if identity == system_identity:
                 return
 
-            is_verified = record.parent.is_verified
+            # resolve current user and check if they are verified
+            is_verified = identity.user.verified_at is not None
             if not is_verified:
                 # Spawn a task to request moderation.
-                user_id = record.parent.access.owner.owner_id
-                uow.register(TaskOp(request_moderation, user_id=user_id))
+                self.uow.register(TaskOp(request_moderation, user_id=identity.id))
 
-    def publish(self, identity, draft=None, record=None, uow=None, **kwargs):
-        """Handle publish."""
+    def create(self, identity, record=None, data=None, uow=None, **kwargs):
+        """Handle create."""
+        self.run(identity, record=record, uow=uow)
+
+    def update(self, identity, record=None, data=None, uow=None, **kwargs):
+        """Handle update."""
         self.run(identity, record=record, uow=uow)
 
 
@@ -81,7 +68,9 @@ class ContentModerationComponent(ServiceComponent):
         """Get the handlers for an action."""
 
         def _handler_method(self, *args, **kwargs):
-            handlers = current_app.config.get("RDM_CONTENT_MODERATION_HANDLERS", [])
+            handlers = current_app.config.get(
+                "RDM_COMMUNITY_CONTENT_MODERATION_HANDLERS", []
+            )
             for handler in handlers:
                 action_method = getattr(handler, action, None)
                 if action_method:
@@ -89,11 +78,8 @@ class ContentModerationComponent(ServiceComponent):
 
         return _handler_method
 
-    update_draft = handler_for("update_draft")
-    delete_draft = handler_for("delete_draft")
-    edit = handler_for("edit")
-    publish = handler_for("publish")
-    post_publish = handler_for("post_publish")
-    new_version = handler_for("new_version")
+    create = handler_for("create")
+    update = handler_for("update")
+    delete = handler_for("delete")
 
     del handler_for
