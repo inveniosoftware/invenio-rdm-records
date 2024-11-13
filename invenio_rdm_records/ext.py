@@ -16,6 +16,7 @@ from warnings import warn
 from flask import Blueprint
 from flask_iiif import IIIF
 from flask_principal import identity_loaded
+from importlib_metadata import entry_points
 from invenio_records_resources.resources.files import FileResource
 
 from . import config
@@ -312,14 +313,12 @@ class InvenioRDMRecords(object):
                 app.config[config_item] = str(app.config[config_item])
 
     def init_record_service_registry(self, app):
-        # TODO load entry points
+        """Initialize record service registry."""
         self.record_service_registry = {}
         self._register_entry_point(
             self.record_service_registry,
             "invenio_rdm_records.services.record_service_registry",
         )
-        # Discussed w/Alex
-        # Interface could be the function itself that modifies the record class and returns it
 
     def _register_entry_point(self, registry, ep_name):
         """Load entry points into the given registry."""
