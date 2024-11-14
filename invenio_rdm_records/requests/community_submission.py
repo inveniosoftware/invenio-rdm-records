@@ -8,7 +8,6 @@
 
 """Community submission request."""
 
-from invenio_access.permissions import system_identity
 from invenio_drafts_resources.services.records.uow import ParentRecordCommitOp
 from invenio_i18n import lazy_gettext as _
 from invenio_notifications.services.uow import NotificationOp
@@ -44,7 +43,7 @@ class SubmitAction(actions.SubmitAction):
 class AcceptAction(actions.AcceptAction):
     """Accept action."""
 
-    def execute(self, identity, uow):
+    def execute(self, identity, uow, **kwargs):
         """Accept record into community."""
         # Resolve the topic and community - the request type only allow for
         # community receivers and record topics.
@@ -83,8 +82,7 @@ class AcceptAction(actions.AcceptAction):
         # TODO: Ensure that the accepting user has permissions to publish.
         service.publish(identity, draft.pid.pid_value, uow=uow)
 
-        # don't send notification about request auto-accept
-        if identity != system_identity:
+        if kwargs.get("send_notification", True):
             uow.register(
                 NotificationOp(
                     CommunityInclusionAcceptNotificationBuilder.build(
@@ -92,6 +90,7 @@ class AcceptAction(actions.AcceptAction):
                     )
                 )
             )
+
         super().execute(identity, uow)
 
 

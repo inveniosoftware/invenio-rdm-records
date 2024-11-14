@@ -63,7 +63,12 @@ class CommunityInclusionService:
 
         if can_include_directly:
             request_item = current_requests_service.execute_action(
-                system_identity, request.id, "accept", data=None, uow=uow
+                system_identity,
+                request.id,
+                "accept",
+                data=None,
+                uow=uow,
+                send_notification=False,
             )
 
             data = {
