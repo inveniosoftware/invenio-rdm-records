@@ -48,7 +48,7 @@ class SubmitAction(actions.SubmitAction):
 class AcceptAction(actions.AcceptAction):
     """Accept action."""
 
-    def execute(self, identity, uow):
+    def execute(self, identity, uow, **kwargs):
         """Include record into community."""
         # Resolve the topic and community - the request type only allow for
         # community receivers and record topics.
@@ -79,13 +79,15 @@ class AcceptAction(actions.AcceptAction):
         # not be immediately visible in the community's records, when the `all versions`
         # facet is not toggled
         uow.register(RecordIndexOp(record, indexer=service.indexer, index_refresh=True))
-        uow.register(
-            NotificationOp(
-                CommunityInclusionAcceptNotificationBuilder.build(
-                    identity=identity, request=self.request
+
+        if kwargs.get("send_notification", True):
+            uow.register(
+                NotificationOp(
+                    CommunityInclusionAcceptNotificationBuilder.build(
+                        identity=identity, request=self.request
+                    )
                 )
             )
-        )
         super().execute(identity, uow)
 
 
