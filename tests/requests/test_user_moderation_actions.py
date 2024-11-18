@@ -24,16 +24,14 @@ class MockRequestModerationTask(Task):
 
     def apply_async(self, args=None, kwargs=None, **kwargs_):
         user_id = kwargs["user_id"]
-        with db.session.begin_nested():
-            try:
-                current_user_moderation_service.request_moderation(
-                    system_identity, user_id=user_id, uow=None
-                )
-            except Exception:
-                pass
+        try:
+            current_user_moderation_service.request_moderation(
+                system_identity, user_id=user_id, uow=None
+            )
+        except Exception as ex:
+            pass
 
 
-@pytest.mark.skip(reason="Faulty test")
 def test_user_moderation_approve(
     running_app, mod_identity, unverified_user, es_clear, minimal_record, mocker
 ):
