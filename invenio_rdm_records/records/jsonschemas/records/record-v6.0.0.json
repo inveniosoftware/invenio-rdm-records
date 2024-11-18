@@ -379,6 +379,24 @@
         }
       }
     },
+    "internal_notes": {
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "note": {
+          "type": "string"
+        },
+        "timestamp": {
+          "type": "string",
+          "description": "ISO8601 formatted timestamp in UTC.",
+          "format": "date-time"
+        },
+        "added_by": {
+          "$ref": "local://records/definitions-v2.0.0.json#/agent"
+        }
+      }
+    },
     "provenance": {
       "type": "object",
       "description": "Record provenance.",

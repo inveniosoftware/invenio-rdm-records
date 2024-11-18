@@ -36,14 +36,13 @@ except AttributeError:
 
 from collections import namedtuple
 from copy import deepcopy
-from datetime import datetime, timedelta
+from datetime import datetime
 from io import BytesIO
 from unittest import mock
 
 import arrow
 import pytest
 from dateutil import tz
-from flask import g
 from flask_principal import Identity, Need, RoleNeed, UserNeed
 from flask_security import login_user
 from flask_security.utils import hash_password
@@ -67,11 +66,9 @@ from invenio_pidstore.errors import PIDDoesNotExistError
 from invenio_records_resources.proxies import current_service_registry
 from invenio_records_resources.references.entity_resolvers import ServiceResultResolver
 from invenio_records_resources.services.custom_fields import TextCF
-from invenio_records_resources.services.uow import UnitOfWork
 from invenio_requests.notifications.builders import (
     CommentRequestEventCreateNotificationBuilder,
 )
-from invenio_requests.proxies import current_user_moderation_service as mod_service
 from invenio_users_resources.permissions import user_management_action
 from invenio_users_resources.proxies import current_users_service
 from invenio_users_resources.records.api import UserAggregate
@@ -87,6 +84,7 @@ from invenio_vocabularies.contrib.subjects.api import Subject
 from invenio_vocabularies.proxies import current_service as vocabulary_service
 from invenio_vocabularies.records.api import Vocabulary
 from marshmallow import fields
+from werkzeug.local import LocalProxy
 
 from invenio_rdm_records import config
 from invenio_rdm_records.notifications.builders import (
@@ -248,8 +246,12 @@ def app_config(app_config, mock_datacite_client):
             "namespace": "http://schema.datacite.org/oai/oai-1.1/",
         },
     }
+    records_index = LocalProxy(
+        lambda: current_rdm_records_service.record_cls.index._name
+    )
+    app_config["OAISERVER_RECORD_INDEX"] = records_index
+    app_config["INDEXER_DEFAULT_INDEX"] = records_index
 
-    app_config["INDEXER_DEFAULT_INDEX"] = "rdmrecords-records-record-v7.0.0"
     # Variable not used. We set it to silent warnings
     app_config["JSONSCHEMAS_HOST"] = "not-used"
 

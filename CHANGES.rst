@@ -12,6 +12,19 @@
 Changes
 =======
 
+Version v16.1.0 (released 2024-11-18)
+
+- tokens: disable "sub" verification
+    * According to the JWT Specification (https://datatracker.ietf.org/doc/html/rfc7519#section-4.1.2)
+      `sub` has to be a string. PyJWT v2.10.0 started enforcing this validation,
+      which breaks our usage of storing an object in the `sub` field.
+    * Fixes jwt.decode options for specifying required fields.
+- jsonschemas: backport "internal_notes" to v6.0.0
+    * Backports the "internal_notes" field to the v6.0.0 JSONSchema, since
+      it is backwards compatible, and thus doesn't require any record
+      migration overhead.
+- UI: display all affiliations
+
 Version v16.0.1 (released 2024-11-11)
 
 - deposit-ui: fix creator affiliations selection display
