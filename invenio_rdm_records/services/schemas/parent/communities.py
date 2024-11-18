@@ -15,7 +15,7 @@ class CommunitiesSchema(Schema):
     """Communities schema."""
 
     ids = fields.List(fields.String())
-    default = fields.String(attribute="default.id")
+    default = fields.String(attribute="default.id", allow_none=True)
     entries = fields.List(fields.Nested(CommunitySchema))
 
     @post_dump

@@ -7,7 +7,6 @@
 
 """Tests record's communities resources."""
 
-from contextlib import contextmanager
 from copy import deepcopy
 
 import pytest
