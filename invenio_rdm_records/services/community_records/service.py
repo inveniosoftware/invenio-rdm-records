@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2023 CERN.
+# Copyright (C) 2023-2024 CERN.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
@@ -18,7 +18,8 @@ from invenio_records_resources.services.errors import PermissionDeniedError
 from invenio_records_resources.services.uow import unit_of_work
 from invenio_search.engine import dsl
 
-from invenio_rdm_records.proxies import current_record_communities_service
+from ...proxies import current_rdm_records, current_record_communities_service
+from ...records.systemfields.deletion_status import RecordDeletionStatusEnum
 
 
 class CommunityRecordsService(RecordService):
@@ -44,7 +45,7 @@ class CommunityRecordsService(RecordService):
         params=None,
         search_preference=None,
         extra_filter=None,
-        **kwargs
+        **kwargs,
     ):
         """Search for records published in the given community."""
         self.require_permission(identity, "search")
@@ -58,6 +59,11 @@ class CommunityRecordsService(RecordService):
         community_filter = dsl.Q(
             "term", **{"parent.communities.ids": str(community.id)}
         )
+        status = RecordDeletionStatusEnum.PUBLISHED.value
+
+        published_filter = dsl.Q("term", **{"deletion_status": status})
+        community_filter &= published_filter
+
         if extra_filter is not None:
             community_filter = community_filter & extra_filter
 

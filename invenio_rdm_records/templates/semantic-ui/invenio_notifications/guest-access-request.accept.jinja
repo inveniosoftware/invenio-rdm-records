@@ -1,0 +1,34 @@
+{% set access_request = notification.context.request %}
+{% set record = access_request.topic %}
+{% set access_url = notification.context.access_url %}
+
+{% set record_title = record.metadata.title %}
+{% set account_settings_link = "{ui}/account/settings/notifications".format(
+    ui=config.SITE_UI_URL
+    )
+%}
+
+{%- block subject -%}
+    {{ _("✅ Access request for '{record_title}' was accepted.").format(record_title=record_title) }}
+{%- endblock subject -%}
+
+{%- block html_body -%}
+<p>
+    {{ _("Your access request for '{record_title}' was accepted.").format(record_title=record_title) }}
+</p>
+
+<a href="{{ access_url }}" class="button"> {{ _("Access the record") }}</a>
+{%- endblock html_body -%}
+
+{%- block plain_body -%}
+{{ _("Your access request for '{record_title}' was accepted.").format(record_title=record_title) }}
+
+{{ _("Access the record here: {url}").format(url=access_url) }}
+{%- endblock plain_body -%}
+
+{# Markdown for Slack/Mattermost/chat #}
+{%- block md_body -%}
+{{ _("Your access request for *'{record_title}'* was accepted.").format(record_title=record_title) }}
+
+[{{ _("Access the record") }}]({{ access_url }})
+{%- endblock md_body -%}

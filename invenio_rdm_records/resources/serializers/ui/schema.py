@@ -3,7 +3,7 @@
 # Copyright (C) 2020 CERN.
 # Copyright (C) 2020 Northwestern University.
 # Copyright (C) 2021-2023 Graz University of Technology.
-# Copyright (C) 2022 TU Wien.
+# Copyright (C) 2022-2023 TU Wien.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
@@ -13,21 +13,25 @@
 from copy import deepcopy
 from functools import partial
 
+from babel_edtf import parse_edtf
+from edtf.parser.grammar import ParseException
 from flask import current_app, g
 from flask_resources import BaseObjectSchema
 from invenio_communities.communities.resources.ui_schema import (
     _community_permission_check,
 )
 from invenio_i18n import get_locale
+from invenio_i18n import lazy_gettext as _
 from invenio_records_resources.services.custom_fields import CustomFieldsSchemaUI
 from invenio_vocabularies.contrib.awards.serializer import AwardL10NItemSchema
 from invenio_vocabularies.contrib.funders.serializer import FunderL10NItemSchema
 from invenio_vocabularies.resources import L10NString, VocabularyL10Schema
-from marshmallow import Schema, fields, missing, pre_dump
+from marshmallow import Schema, fields, missing, post_dump, pre_dump
 from marshmallow_utils.fields import FormatDate as FormatDate_
 from marshmallow_utils.fields import FormatEDTF as FormatEDTF_
 from marshmallow_utils.fields import SanitizedHTML, SanitizedUnicode, StrippedHTML
 from marshmallow_utils.fields.babel import gettext_from_dict
+from pyparsing import ParseException
 
 from .fields import AccessStatusField
 
@@ -74,9 +78,10 @@ def make_affiliation_index(attr, obj, dummy_ctx):
         if "affiliations" in creator:
             creator["affiliations"] = list(map(apply_idx, creator["affiliations"]))
         if "role" in creator:
-            creator["role"]["title"] = gettext_from_dict(
-                creator["role"]["title"], get_locale(), current_default_locale()
-            )
+            if "title" in creator["role"]:
+                creator["role"]["title"] = gettext_from_dict(
+                    creator["role"]["title"], get_locale(), current_default_locale()
+                )
 
     return {
         attr: creators,
@@ -92,6 +97,22 @@ def record_version(obj):
         return f"v{obj['versions']['index']}"
 
     return field_data
+
+
+def mask_removed_by(obj):
+    """Mask information about who removed the record."""
+    return_value = _("Unknown")
+    removed_by = obj.get("removed_by", None)
+
+    if removed_by is not None:
+        user = removed_by.get("user", None)
+
+        if user == "system":
+            return_value = _("System (automatic)")
+        elif user is not None:
+            return_value = _("Admin")
+
+    return return_value
 
 
 class RelatedIdentifiersSchema(Schema):
@@ -143,6 +164,35 @@ class FundingSchema(Schema):
     funder = fields.Nested(FunderL10NItemSchema)
 
 
+class GeometrySchema(Schema):
+    """Schema for geometry in the UI."""
+
+    type = fields.Str()
+    coordinates = fields.List(fields.Float())
+
+
+class IdentifierSchema(Schema):
+    """Schema for dumping identifier in the UI."""
+
+    scheme = fields.Str()
+    identifier = fields.Str()
+
+
+class FeatureSchema(Schema):
+    """Schema for dumping locations in the UI."""
+
+    place = SanitizedUnicode()
+    description = SanitizedUnicode()
+    geometry = fields.Nested(GeometrySchema)
+    identifiers = fields.List(fields.Nested(IdentifierSchema))
+
+
+class LocationSchema(Schema):
+    """Schema for dumping locations in the UI."""
+
+    features = fields.List(fields.Nested(FeatureSchema))
+
+
 class MeetingSchema(Schema):
     """Schema for dumping 'meeting' custom field in the UI."""
 
@@ -162,38 +212,68 @@ def compute_publishing_information(obj, dummyctx):
         """Formats a journal object into a string based on its attributes.
 
         Example:
-            _format_journal({"title": "The Effects of Climate Change", "volume": 10, "issue": 2, "pages": "15-22", "issn": "1234-5678"}, "2022")
-            >>> 'The Effects of Climate Change: 10 (2022) no. 1234-5678 pp. 15-22 (2)'
+            _format_journal({"title": "The Effects of Climate Change", "volume": 10, "issue": 2, "pages": "15-22", "issn": "1234-5678", "publication_date": "2023-03-02})
+            >>> 'The Effects of Climate Change, 10(2), 15-22, ISSN:1234-5678, 2023.'
         """
         journal_title = journal.get("title")
-        if not journal_title:
-            return ""
-
         journal_issn = journal.get("issn")
         journal_issue = journal.get("issue")
+        journal_volume = journal.get("volume")
         journal_pages = journal.get("pages")
-        publication_date = f"({publication_date})" if publication_date else None
-        title = f"{journal_title}:"
-        issn = f"no. {journal_issn}" if journal_issn else None
-        issue = f"({journal_issue})" if journal_issue else None
-        pages = f"pp. {journal_pages}" if journal_pages else None
-        fields = [title, journal.get("volume"), publication_date, issn, pages, issue]
-        formatted = " ".join(filter(None, fields))
+
+        try:
+            publication_date_edtf = (
+                parse_edtf(publication_date).lower_strict()
+                if publication_date
+                else None
+            )
+            publication_date_formatted = (
+                f"{publication_date_edtf.tm_year}" if publication_date_edtf else None
+            )
+        except ParseException:
+            publication_date_formatted = None
+
+        title = f"{journal_title}" if journal_title else None
+        vol_issue = f"{journal_volume}" if journal_volume else None
+
+        if journal_issue:
+            if vol_issue:
+                vol_issue += f"({journal_issue})"
+            else:
+                vol_issue = f"{journal_issue}"
+        pages = f"{journal_pages}" if journal_pages else None
+        issn = f"ISSN: {journal_issn}" if journal_issn else None
+        fields = [title, vol_issue, pages, issn, publication_date_formatted]
+
+        formatted = ", ".join(filter(None, fields))
+        formatted += "."
 
         return formatted if formatted else ""
 
     def _format_imprint(imprint, publisher):
         """Formats a imprint object into a string based on its attributes."""
-        place = imprint.get("place", "")
-        isbn = imprint.get("isbn", "")
-        formatted = "{publisher}{place} {isbn}".format(
-            publisher=publisher, place=f", {place}", isbn=f"({isbn})"
-        )
+        imprint_title = imprint.get("title")
+        imprint_place = imprint.get("place")
+        imprint_isbn = imprint.get("isbn")
+        imprint_pages = imprint.get("pages")
+        title_page = f"{imprint_title}" if imprint_title else ""
+        if imprint_pages:
+            if title_page:
+                title_page += f", {imprint_pages}."
+            else:
+                title_page = f"{imprint_pages}."
+        elif title_page:
+            title_page += "."
+        else:
+            title_page = None
+        place = f"{imprint_place}." if imprint_place else None
+        isbn = f"ISBN: {imprint_isbn}." if imprint_isbn else None
+        formatted = " ".join(filter(None, [title_page, place, isbn]))
+
         return formatted
 
     attr = "custom_fields"
     field = obj.get(attr, {})
-    publication_date = obj.get("metadata", {}).get("publication_date")
     publisher = obj.get("metadata", {}).get("publisher")
 
     # Retrieve publishing related custom fields
@@ -201,6 +281,7 @@ def compute_publishing_information(obj, dummyctx):
     imprint = field.get("imprint:imprint")
     thesis = field.get("thesis:university")
 
+    publication_date = obj.get("metadata", {}).get("publication_date", None)
     result = {}
     if journal:
         journal_string = _format_journal(journal, publication_date)
@@ -218,6 +299,24 @@ def compute_publishing_information(obj, dummyctx):
         return missing
 
     return result
+
+
+class TombstoneSchema(Schema):
+    """Schema for a record tombstone."""
+
+    removal_reason = fields.Nested(VocabularyL10Schema, attribute="removal_reason")
+
+    note = fields.String(attribute="note")
+
+    removed_by = fields.Function(mask_removed_by)
+
+    removal_date_l10n_medium = FormatEDTF(attribute="removal_date", format="medium")
+
+    removal_date_l10n_long = FormatEDTF(attribute="removal_date", format="long")
+
+    citation_text = fields.String(attribute="citation_text")
+
+    is_visible = fields.Boolean(attribute="is_visible")
 
 
 class UIRecordSchema(BaseObjectSchema):
@@ -288,6 +387,10 @@ class UIRecordSchema(BaseObjectSchema):
         attribute="metadata.funding",
     )
 
+    tombstone = fields.Nested(TombstoneSchema, attribute="tombstone")
+
+    locations = fields.Nested(LocationSchema, attribute="metadata.locations")
+
     @pre_dump
     def add_communities_permissions_and_roles(self, obj, **kwargs):
         """Inject current user's permission to community receiver."""
@@ -304,4 +407,12 @@ class UIRecordSchema(BaseObjectSchema):
             receiver.setdefault("ui", {})["permissions"] = {
                 "can_include_directly": can_include_directly
             }
+        return obj
+
+    @post_dump
+    def hide_tombstone(self, obj, **kwargs):
+        """Hide the tombstone information if it's not visible."""
+        if not obj.get("tombstone", {}).get("is_visible", False):
+            obj.pop("tombstone", None)
+
         return obj

@@ -16,6 +16,7 @@ from invenio_communities.fixtures.tasks import create_demo_community
 from invenio_pidstore.errors import PIDDoesNotExistError
 from invenio_records_resources.proxies import current_service_registry
 from invenio_vocabularies.proxies import current_service as vocabulary_service
+from sqlalchemy.exc import NoResultFound
 
 from invenio_rdm_records.fixtures import RecordsFixture, create_demo_record
 from invenio_rdm_records.fixtures.communities import CommunitiesFixture
@@ -23,7 +24,7 @@ from invenio_rdm_records.fixtures.users import UsersFixture
 from invenio_rdm_records.fixtures.vocabularies import (
     GenericVocabularyEntry,
     PrioritizedVocabulariesFixtures,
-    VocabularyEntryWithSchemes,
+    VocabularyEntry,
 )
 from invenio_rdm_records.proxies import current_rdm_records
 
@@ -270,20 +271,13 @@ def test_load_records(app, db, location, vocabularies):
 
 def test_load_affiliations(app, db, admin_role, search_clear, affiliations_service):
     dir_ = Path(__file__).parent
-    affiliations = VocabularyEntryWithSchemes(
+    affiliations = VocabularyEntry(
         "affiliations",
-        Path(__file__).parent / "app_data",
+        dir_ / "app_data",
         "affiliations",
         {
             "pid-type": "aff",
-            "schemes": [
-                {
-                    "id": "ROR",
-                    "name": "Research Organization Registry",
-                    "uri": "https://ror.org/",
-                    "data-file": "vocabularies/affiliations_ror.yaml",
-                }
-            ],
+            "data-file": "vocabularies/affiliations_ror.yaml",
         },
     )
 
@@ -292,5 +286,5 @@ def test_load_affiliations(app, db, admin_role, search_clear, affiliations_servi
     cern = affiliations_service.read(identity=system_identity, id_="01ggx4157")
     assert cern["acronym"] == "CERN"
 
-    with pytest.raises(PIDDoesNotExistError):
+    with pytest.raises(NoResultFound):
         affiliations_service.read(system_identity, "cern")

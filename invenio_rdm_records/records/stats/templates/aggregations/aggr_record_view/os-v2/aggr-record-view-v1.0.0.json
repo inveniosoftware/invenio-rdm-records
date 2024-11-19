@@ -2,7 +2,7 @@
   "index_patterns": ["__SEARCH_INDEX_PREFIX__stats-record-view-*"],
   "settings": {
     "index": {
-      "refresh_interval": "1m"
+      "refresh_interval": "5s"
     }
   },
   "mappings": {
@@ -37,6 +37,9 @@
       },
       "via_api": {
         "type": "boolean"
+      },
+      "updated_timestamp": {
+        "type": "date"
       }
     }
   },

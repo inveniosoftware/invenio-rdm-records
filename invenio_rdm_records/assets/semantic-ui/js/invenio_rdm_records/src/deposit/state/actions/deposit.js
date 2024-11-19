@@ -6,6 +6,7 @@
 // under the terms of the MIT License; see LICENSE file for more details.
 
 import _isEmpty from "lodash/isEmpty";
+import _ from "lodash";
 import {
   DISCARD_PID_FAILED,
   DISCARD_PID_STARTED,
@@ -38,6 +39,21 @@ async function changeURLAfterCreation(draftURL) {
 export const saveDraftWithUrlUpdate = async (draft, draftsService) => {
   const hasAlreadyId = !!draft.id;
   const response = await draftsService.save(draft);
+
+  const draftHasValidationErrors = !_isEmpty(response.errors);
+
+  // In case of invalid values, on the second draft save, the form doesn't report the errors. This happens
+  // because the backend doesn't save invalid metadata. Here we are merging draft state with backend
+  // response in order not to lose those invalid values from the form state and have the errors reported.
+  if (draftHasValidationErrors) {
+    const mergingValues = {
+      metadata: draft.metadata,
+      custom_fields: draft.custom_fields,
+    };
+
+    response.data = _.merge(response.data, mergingValues);
+  }
+
   if (!hasAlreadyId) {
     // draft was created, change URL to add the draft PID
     const draftURL = response.data.links.self_html;
@@ -241,9 +257,8 @@ export const delete_ = () => {
     try {
       const draft = getState().deposit.record;
       await config.service.drafts.delete(draft.links);
-
       // redirect to the the uploads page after deleting/discarding a draft
-      const redirectURL = "/me/uploads";
+      const redirectURL = config.config.dashboard_routes.uploads;
       window.location.replace(redirectURL);
     } catch (error) {
       dispatch({

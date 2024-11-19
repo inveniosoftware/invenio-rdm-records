@@ -26,6 +26,7 @@ from invenio_db import db
 from invenio_requests.proxies import current_requests_service
 
 from invenio_rdm_records.proxies import current_rdm_records_service as service
+from invenio_rdm_records.requests.access import AccessRequestTokenNeed
 
 
 def test_simple_guest_access_request_flow(running_app, client, users, minimal_record):
@@ -67,11 +68,12 @@ def test_simple_guest_access_request_flow(running_app, client, users, minimal_re
 
         # The guest creates an access request
         response = client.post(
-            f"/records/{record.id}/access/request/guest",
+            f"/records/{record.id}/access/request",
             json={
                 "message": "This is not spam!",
                 "email": "idle@montypython.com",
                 "full_name": "Eric Idle",
+                "consent_to_share_personal_data": "true",
             },
         )
         assert response.status_code == 200
@@ -79,13 +81,15 @@ def test_simple_guest_access_request_flow(running_app, client, users, minimal_re
         verify_email_message = outbox[0]
 
         # Fetch the link from the response & parse the access request token
-        link_regex = re.compile(r"^.*(https?://.*?)\s?$")
-        match = link_regex.match(str(verify_email_message.body))
+        link_regex = re.compile(r"(https?://.*?)\s?$")
+        match = link_regex.search(str(verify_email_message.body))
         assert match
         verification_url = match.group(1)
         parsed = urllib.parse.urlparse(verification_url)
         args = {k: v for k, v in [kv.split("=") for kv in parsed.query.split("&")]}
         assert "access_request_token" in args
+        token = args["access_request_token"]
+        guest_identity.provides.add(AccessRequestTokenNeed(token))
 
         # Create the access request from the token
         # NOTE: we're not going through a `ui_app.test_client` here because that would
@@ -94,12 +98,17 @@ def test_simple_guest_access_request_flow(running_app, client, users, minimal_re
             identity=guest_identity, token=args["access_request_token"]
         )
 
+        assert len(outbox) == 2
+        submit_message = outbox[1]
+        # TODO: update to `req["links"]["self_html"]` when addressing https://github.com/inveniosoftware/invenio-rdm-records/issues/1327
+        assert "/me/requests/{}".format(request.id) in submit_message.html
+
         # Accept the request
         # This is expected to send out another email, containing the new secret link
         current_requests_service.execute_action(identity, request.id, "accept", data={})
-        assert len(outbox) == 2
-        success_message = outbox[1]
-        match = link_regex.match(str(success_message.body))
+        assert len(outbox) == 3
+        success_message = outbox[2]
+        match = link_regex.search(str(success_message.body))
         assert match
         access_url = match.group(1)
         parsed = urllib.parse.urlparse(access_url)
@@ -133,62 +142,81 @@ def test_simple_guest_access_request_flow(running_app, client, users, minimal_re
 
 def test_simple_user_access_request_flow(running_app, client, users, minimal_record):
     """Test a the simple user-based access request flow."""
-    # Log in a user (whose ID we need later)
-    record_owner, user = users
-    identity = Identity(record_owner.id)
-    identity.provides.add(any_user)
-    identity.provides.add(authenticated_user)
-    identity.provides.add(UserNeed(record_owner.id))
-    login_user(user)
-    login_user_via_session(client, email=user.email)
 
-    # Create a public record with some restricted files
-    record_json = copy.deepcopy(minimal_record)
-    record_json["files"] = {"enabled": True}
-    record_json["access"]["record"] = "public"
-    record_json["access"]["files"] = "restricted"
+    with running_app.app.extensions["mail"].record_messages() as outbox:
+        # Log in a user (whose ID we need later)
+        record_owner, user = users
+        identity = Identity(record_owner.id)
+        identity.provides.add(any_user)
+        identity.provides.add(authenticated_user)
+        identity.provides.add(UserNeed(record_owner.id))
+        login_user(user)
+        login_user_via_session(client, email=user.email)
 
-    draft = service.create(identity=identity, data=record_json)
-    service.draft_files.init_files(identity, draft.id, data=[{"key": "test.txt"}])
-    service.draft_files.set_file_content(
-        identity, draft.id, "test.txt", io.BytesIO(b"test file")
-    )
-    service.draft_files.commit_file(identity, draft.id, "test.txt")
-    record = service.publish(identity=identity, id_=draft.id)
+        # Create a public record with some restricted files
+        record_json = copy.deepcopy(minimal_record)
+        record_json["files"] = {"enabled": True}
+        record_json["access"]["record"] = "public"
+        record_json["access"]["files"] = "restricted"
 
-    # There's no access grants in the record yet
-    assert not record._obj.parent.access.grants
+        draft = service.create(identity=identity, data=record_json)
+        service.draft_files.init_files(identity, draft.id, data=[{"key": "test.txt"}])
+        service.draft_files.set_file_content(
+            identity, draft.id, "test.txt", io.BytesIO(b"test file")
+        )
+        service.draft_files.commit_file(identity, draft.id, "test.txt")
+        record = service.publish(identity=identity, id_=draft.id)
 
-    # The user can access the record, but not the files
-    assert client.get(f"/records/{record.id}").status_code == 200
-    assert client.get(f"/records/{record.id}/files").status_code == 403
-    assert client.get(f"/records/{record.id}/files/test.txt/content").status_code == 403
+        # There's no access grants in the record yet
+        assert not record._obj.parent.access.grants
 
-    # The user creates an access request
-    response = client.post(
-        f"/records/{record.id}/access/request",
-        json={"message": "Please give me access!"},
-    )
-    request_id = response.json["id"]
-    assert response.status_code == 200
+        # The user can access the record, but not the files
+        assert client.get(f"/records/{record.id}").status_code == 200
+        assert client.get(f"/records/{record.id}/files").status_code == 403
+        assert (
+            client.get(f"/records/{record.id}/files/test.txt/content").status_code
+            == 403
+        )
 
-    # The record owner approves the access request
-    current_requests_service.execute_action(identity, request_id, "accept", data={})
+        # The user creates an access request
+        response = client.post(
+            f"/records/{record.id}/access/request",
+            json={
+                "message": "Please give me access!",
+                "email": user.email,
+                "full_name": "ABC",
+            },
+        )
+        request_id = response.json["id"]
+        assert response.status_code == 200
+        assert len(outbox) == 1
+        submit_message = outbox[0]
+        # TODO: update to `req["links"]["self_html"]` when addressing https://github.com/inveniosoftware/invenio-rdm-records/issues/1327
+        assert "/me/requests/{}".format(request_id) in submit_message.html
 
-    # Now, the user has permission to view the record's files!
-    assert client.get(f"/records/{record.id}").status_code == 200
-    assert client.get(f"/records/{record.id}/files").status_code == 200
-    assert client.get(f"/records/{record.id}/files/test.txt/content").status_code == 200
+        # The record owner approves the access request
+        current_requests_service.execute_action(identity, request_id, "accept", data={})
+        assert len(outbox) == 2
+        success_message = outbox[1]
+        assert record.to_dict()["links"]["self_html"] in success_message.body
 
-    # Verify the created access grant
-    record = service.read(identity=identity, id_=record.id)
-    grants = record._record.parent.access.grants
-    assert len(grants) == 1
-    assert grants[0].to_dict() == {
-        "subject": {"type": "user", "id": str(user.id)},
-        "permission": "view",
-        "origin": f"request:{request_id}",
-    }
+        # Now, the user has permission to view the record's files!
+        assert client.get(f"/records/{record.id}").status_code == 200
+        assert client.get(f"/records/{record.id}/files").status_code == 200
+        assert (
+            client.get(f"/records/{record.id}/files/test.txt/content").status_code
+            == 200
+        )
+
+        # Verify the created access grant
+        record = service.read(identity=identity, id_=record.id)
+        grants = record._record.parent.access.grants
+        assert len(grants) == 1
+        assert grants[0].to_dict() == {
+            "subject": {"type": "user", "id": str(user.id)},
+            "permission": "view",
+            "origin": f"request:{request_id}",
+        }
 
 
 def test_access_grant_for_user(
@@ -211,15 +239,19 @@ def test_access_grant_for_user(
     assert response.status_code == 403
 
     # Grant access to the *current user*
-    service.access.create_grant(
+    service.access.bulk_create_grants(
         identity=system_identity,
         id_=record.id,
         data={
-            "subject": {
-                "type": "user",
-                "id": str(user.id),
-            },
-            "permission": "view",
+            "grants": [
+                {
+                    "subject": {
+                        "type": "user",
+                        "id": str(user.id),
+                    },
+                    "permission": "view",
+                }
+            ]
         },
     )
 
@@ -241,15 +273,19 @@ def test_access_grant_for_system_role(
     assert response.status_code == 403
 
     # Grant access to *any authenticated user*
-    service.access.create_grant(
+    service.access.bulk_create_grants(
         identity=system_identity,
         id_=record.id,
         data={
-            "subject": {
-                "type": "system_role",
-                "id": "authenticated_user",
-            },
-            "permission": "view",
+            "grants": [
+                {
+                    "subject": {
+                        "type": "system_role",
+                        "id": "authenticated_user",
+                    },
+                    "permission": "view",
+                }
+            ]
         },
     )
 
@@ -280,15 +316,19 @@ def test_access_grant_for_role(
     assert response.status_code == 403
 
     # Grant access to users with a specific role (i.e. in a specific group)
-    service.access.create_grant(
+    service.access.bulk_create_grants(
         identity=system_identity,
         id_=record.id,
         data={
-            "subject": {
-                "type": "role",
-                "id": str(role.name),
-            },
-            "permission": "view",
+            "grants": [
+                {
+                    "subject": {
+                        "type": "role",
+                        "id": str(role.name),
+                    },
+                    "permission": "view",
+                }
+            ]
         },
     )
 

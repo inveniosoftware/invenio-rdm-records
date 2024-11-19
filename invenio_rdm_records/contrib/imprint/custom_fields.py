@@ -32,7 +32,7 @@ class ImprintCF(BaseCF):
                 "isbn": SanitizedUnicode(
                     validate=is_isbn,
                     error_messages={
-                        "validator_failed": _("Please provide a valid ISBN.")
+                        "validator_failed": [_("Please provide a valid ISBN.")]
                     },
                 ),
                 "pages": SanitizedUnicode(),
@@ -59,7 +59,7 @@ class ImprintCF(BaseCF):
 
 IMPRINT_NAMESPACE = {
     # Imprint
-    "imprint": "",
+    "imprint": None,
 }
 
 
@@ -73,11 +73,11 @@ IMPRINT_CUSTOM_FIELDS_UI = {
             "ui_widget": "Imprint",
             "template": "imprint.html",
             "props": {
-                "label": _("Imprint"),
+                "label": _("Imprint (Book, Chapter, or Report)"),
                 "place": {
                     "label": _("Place"),
                     "placeholder": _("e.g. city, country"),
-                    "description": _("Place where the imprint was published"),
+                    "description": _("Place where the book or report was published"),
                 },
                 "isbn": {
                     "label": _("ISBN"),
@@ -85,19 +85,18 @@ IMPRINT_CUSTOM_FIELDS_UI = {
                     "description": _("International Standard Book Number"),
                 },
                 "title": {
-                    "label": _("Book title"),
+                    "label": _("Book or report title"),
                     "placeholder": "",
                     "description": _(
-                        "Title of the book or report which this upload is part of."
+                        "Title of the book or report which this upload is part of"
                     ),
                 },
                 "pages": {
-                    "label": _("Pages"),
-                    "placeholder": "",
+                    "label": _("Pagination"),
+                    "placeholder": _("e.g. 15-23 or 158"),
                     "description": "",
                 },
                 "icon": "book",
-                "description": "Imprint",
             },
         }
     ],

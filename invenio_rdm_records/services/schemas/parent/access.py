@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2020-2021 CERN.
+# Copyright (C) 2020-2024 CERN.
 # Copyright (C) 2020 Northwestern University.
 # Copyright (C) 2021 TU Wien.
 #
@@ -11,10 +11,10 @@
 
 # TODO: Replace with invenio_records_resources.services.base.schema import *
 
-
 from datetime import timezone
 
-from marshmallow import Schema, fields, pre_load, validate
+from marshmallow import Schema, fields, validate
+from marshmallow.validate import OneOf
 from marshmallow_utils.fields import (
     ISODateString,
     SanitizedHTML,
@@ -39,6 +39,20 @@ class Grant(Schema):
     permission = fields.String(required=True)
     subject = fields.Nested(GrantSubject, required=True)
     origin = fields.String(required=False)
+    message = SanitizedUnicode()
+    notify = fields.Bool()
+
+
+class Grants(Schema):
+    """Grants Schema."""
+
+    grants = fields.List(
+        fields.Nested(Grant),
+        # max is on purpose to limit the max number of additions/changes/
+        # removals per request as they all run in a single transaction and
+        # requires resources to hold.
+        validate=validate.Length(min=1, max=100),
+    )
 
 
 class SecretLink(Schema):
@@ -60,7 +74,7 @@ class SecretLink(Schema):
 class Agent(Schema):
     """An agent schema."""
 
-    user = fields.Integer(required=True)
+    user = fields.String(required=True)
 
 
 class AccessSettingsSchema(Schema):
@@ -79,9 +93,8 @@ class ParentAccessSchema(Schema, FieldPermissionsMixin):
 
     field_dump_permissions = {
         # omit fields from dumps except for users with 'manage' permissions
-        # allow only 'settings'
+        # allow only 'settings' and 'owned_by'
         "grants": "manage",
-        "owned_by": "manage",
         "links": "manage",
     }
 
@@ -89,3 +102,13 @@ class ParentAccessSchema(Schema, FieldPermissionsMixin):
     owned_by = fields.Nested(Agent)
     links = fields.List(fields.Nested(SecretLink))
     settings = fields.Nested(AccessSettingsSchema)
+
+
+class RequestAccessSchema(Schema):
+    """Access request schema."""
+
+    permission = fields.Constant("view")
+    email = fields.Email()
+    full_name = SanitizedUnicode()
+    message = SanitizedUnicode()
+    consent_to_share_personal_data = fields.String(validate=OneOf(["true", "false"]))

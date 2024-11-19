@@ -62,5 +62,18 @@ class FixturesEngine:
             create_demo_record,
         ).load()
 
+    def add_to(self, fixture):
+        """Run the fixture loading."""
+        dir_ = Path(__file__).parent
+        app_data_folder = Path(current_app.instance_path) / "app_data"
+        data_folder = dir_ / "data"
+
+        PrioritizedVocabulariesFixtures(
+            self._identity,
+            app_data_folder=app_data_folder,
+            pkg_data_folder=data_folder,
+            filename="vocabularies.yaml",
+        ).load(reload=fixture)
+
 
 __all__ = ("FixturesEngine", "PrioritizedVocabulariesFixtures", "VocabulariesFixture")

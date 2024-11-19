@@ -44,6 +44,9 @@ export class AccessRightFieldCmp extends Component {
       labelIcon,
       showMetadataAccess,
       community,
+      record,
+      recordRestrictionGracePeriod,
+      allowRecordRestriction,
     } = this.props;
 
     const isGhostCommunity = community?.is_ghost === true;
@@ -65,6 +68,9 @@ export class AccessRightFieldCmp extends Component {
                 <MetadataAccess
                   recordAccess={formik.field.value.record}
                   communityAccess={communityAccess}
+                  record={record}
+                  recordRestrictionGracePeriod={recordRestrictionGracePeriod}
+                  allowRecordRestriction={allowRecordRestriction}
                 />
                 <Divider hidden />
               </>
@@ -110,6 +116,9 @@ AccessRightFieldCmp.propTypes = {
   labelIcon: PropTypes.string.isRequired,
   showMetadataAccess: PropTypes.bool,
   community: PropTypes.object,
+  record: PropTypes.object.isRequired,
+  recordRestrictionGracePeriod: PropTypes.number.isRequired,
+  allowRecordRestriction: PropTypes.bool.isRequired,
 };
 
 AccessRightFieldCmp.defaultProps = {
@@ -143,6 +152,9 @@ AccessRightField.propTypes = {
   label: PropTypes.string.isRequired,
   labelIcon: PropTypes.string,
   isMetadataOnly: PropTypes.bool,
+  record: PropTypes.object.isRequired,
+  recordRestrictionGracePeriod: PropTypes.number.isRequired,
+  allowRecordRestriction: PropTypes.bool.isRequired,
 };
 
 AccessRightField.defaultProps = {

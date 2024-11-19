@@ -40,16 +40,29 @@ class PublishButtonComponent extends Component {
     this.closeConfirmModal();
   };
 
-  isDisabled = (values, isSubmitting, numberOfFiles) => {
+  isDisabled = (values, isSubmitting, filesState) => {
+    if (isSubmitting) {
+      return true;
+    }
+
     const filesEnabled = _get(values, "files.enabled", false);
-    const filesMissing = filesEnabled && !numberOfFiles;
-    return isSubmitting || filesMissing;
+    const filesArray = Object.values(filesState.entries ?? {});
+    const filesMissing = filesEnabled && filesArray.length === 0;
+
+    if (filesMissing) {
+      return true;
+    }
+
+    // All files must be finished uploading
+    const allCompleted = filesArray.every((file) => file.status === "finished");
+
+    return !allCompleted;
   };
 
   render() {
     const {
       actionState,
-      numberOfFiles,
+      filesState,
       buttonLabel,
       publishWithoutCommunity,
       formik,
@@ -64,7 +77,7 @@ class PublishButtonComponent extends Component {
     return (
       <>
         <Button
-          disabled={this.isDisabled(values, isSubmitting, numberOfFiles)}
+          disabled={this.isDisabled(values, isSubmitting, filesState)}
           name="publish"
           onClick={this.openConfirmModal}
           positive
@@ -123,9 +136,9 @@ PublishButtonComponent.propTypes = {
   buttonLabel: PropTypes.string,
   publishWithoutCommunity: PropTypes.bool,
   actionState: PropTypes.string,
-  numberOfFiles: PropTypes.number.isRequired,
   formik: PropTypes.object.isRequired,
   publishModalExtraContent: PropTypes.string,
+  filesState: PropTypes.object,
 };
 
 PublishButtonComponent.defaultProps = {
@@ -133,12 +146,13 @@ PublishButtonComponent.defaultProps = {
   publishWithoutCommunity: false,
   actionState: undefined,
   publishModalExtraContent: undefined,
+  filesState: undefined,
 };
 
 const mapStateToProps = (state) => ({
   actionState: state.deposit.actionState,
-  numberOfFiles: Object.values(state.files.entries).length,
   publishModalExtraContent: state.deposit.config.publish_modal_extra,
+  filesState: state.files,
 });
 
 export const PublishButton = connect(

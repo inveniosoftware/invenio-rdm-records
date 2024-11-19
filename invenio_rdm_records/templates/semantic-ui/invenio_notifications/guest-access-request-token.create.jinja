@@ -1,0 +1,43 @@
+{% set access_request = notification.context.request %}
+{% set record = notification.context.record %}
+{% set verify_url = notification.context.verify_url %}
+
+{% set record_title = record.metadata.title %}
+{% set account_settings_link = "{ui}/account/settings/notifications".format(
+    ui=config.SITE_UI_URL
+    )
+%}
+
+{%- block subject -%}
+    {{ _("❗️Access request for '{record_title}' requires action").format(record_title=record_title) }}
+{%- endblock subject -%}
+
+{%- block html_body -%}
+    <table style="font-family:'Lato',Helvetica,Arial,sans-serif;border-spacing:15px">
+        <tr>
+            <td>{{ _("Please verify the email address in order to submit the access request")}}</td>
+        </tr>
+        <tr>
+            <td><a href="{{ verify_url }}" class="button"> {{ _("Verify e-mail address") }}</a></td>
+        </tr>
+        <tr>
+            <td><strong>_</strong></td>
+        </tr>
+        <tr>
+            <td style="font-size:smaller">{{ _("This is an auto-generated message. To manage notifications, visit your")}} <a href="{{account_settings_link}}">{{ _("account settings")}}</a>.</td>
+        </tr>
+    </table>
+{%- endblock html_body -%}
+
+{%- block plain_body -%}
+{{ _("Please verify your e-mail address via the following link in order to submit the access request for the record '%(record_title)s'.", record_title=record_title) }}
+
+{{ _("Verify e-mail address: %(url)s", url=verify_url ) }}
+{%- endblock plain_body -%}
+
+{# Markdown for Slack/Mattermost/chat #}
+{%- block md_body -%}
+{{ _("Please verify your e-mail address via the following link in order to submit the access request for the record *%(record_title)s*.", record_title=record_title) }}
+
+{{ _("Verify e-mail address: %(url)s", url=verify_url ) }}
+{%- endblock md_body -%}

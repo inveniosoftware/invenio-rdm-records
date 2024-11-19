@@ -1,5 +1,5 @@
 // This file is part of Invenio-RDM-Records
-// Copyright (C) 2020-2023 CERN.
+// Copyright (C) 2020-2024 CERN.
 // Copyright (C) 2020-2022 Northwestern University.
 // Copyright (C) 2021-2022 Graz University of Technology.
 // Copyright (C)      2022 TU Wien.
@@ -74,6 +74,7 @@ const FileTableRow = ({
         setDefaultPreview("");
       }
     } catch (error) {
+      setIsDeleting(false);
       console.error(error);
     }
   };
@@ -96,13 +97,13 @@ const FileTableRow = ({
       <Table.Cell data-label={i18next.t("Filename")} width={10}>
         <div>
           {file.uploadState.isPending ? (
-            file.name
+            <div>{file.name}</div>
           ) : (
             <a
               href={_get(file, "links.content", "")}
               target="_blank"
               rel="noopener noreferrer"
-              className="mr-5"
+              className="mr-5 text-break"
             >
               {file.name}
             </a>
@@ -147,7 +148,9 @@ const FileTableRow = ({
       )}
       {!filesLocked && (
         <Table.Cell textAlign="right" width={2}>
-          {(file.uploadState?.isFinished || file.uploadState?.isFailed) &&
+          {(file.uploadState?.isFinished ||
+            file.uploadState?.isFailed ||
+            file.uploadState?.isPending) &&
             (isDeleting ? (
               <Icon loading name="spinner" />
             ) : (

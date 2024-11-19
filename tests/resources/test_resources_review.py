@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2021 CERN.
+# Copyright (C) 2021-2024 CERN.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
@@ -224,3 +224,233 @@ def test_delete_no_review(
     # Try to delete an open review - should not be possible
     req = client.delete(review_link, headers=headers)
     assert req.status_code == 400
+
+
+def test_submission_closed_non_member(
+    client,
+    minimal_record,
+    closed_submission_community,
+    headers,
+    uploader,
+):
+    """Test non-member's ability to submit record to the public community with closed submission policy."""
+    client = uploader.login(client)
+
+    # Request a review
+    minimal_record["parent"] = {
+        "review": {
+            "type": CommunitySubmission.type_id,
+            "receiver": {"community": closed_submission_community.data["id"]},
+        }
+    }
+
+    # Create a draft
+    draft = client.post("/records", headers=headers, data=json.dumps(minimal_record))
+    links = draft.json["links"]
+    review = draft.json["parent"]["review"]
+    assert draft.status_code == 201
+    assert "submit-review" in links
+    assert "id" in review
+    assert review["receiver"] == {"community": closed_submission_community.data["id"]}
+    assert review["type"] == CommunitySubmission.type_id
+    assert draft.json["parent"]["communities"] == {}
+
+    # Submit for review
+    # # as a non-member
+    response = client.post(link(links["submit-review"]), json={}, headers=headers)
+    assert response.status_code == 403
+    assert (
+        response.json["message"]
+        == "Submission to this community is only allowed to community members."
+    )
+
+    # # as an unauthorized user
+    client = uploader.logout(client)
+    response = client.post(link(links["submit-review"]), json={}, headers=headers)
+    assert response.status_code == 403
+    assert response.json["message"] == "Permission denied."
+
+
+def test_submission_closed_member(
+    client,
+    minimal_record,
+    closed_submission_community,
+    headers,
+    community_owner,
+):
+    """Test member's ability to submit record to the public community with closed submission policy."""
+    client = community_owner.login(client)
+
+    # Request a review
+    minimal_record["parent"] = {
+        "review": {
+            "type": CommunitySubmission.type_id,
+            "receiver": {"community": closed_submission_community.data["id"]},
+        }
+    }
+
+    # Create a draft
+    draft = client.post("/records", headers=headers, data=json.dumps(minimal_record))
+    links = draft.json["links"]
+    review = draft.json["parent"]["review"]
+    assert draft.status_code == 201
+    assert "submit-review" in links
+    assert "id" in review
+    assert review["receiver"] == {"community": closed_submission_community.data["id"]}
+    assert review["type"] == CommunitySubmission.type_id
+    assert draft.json["parent"]["communities"] == {}
+
+    # Submit for review
+    # # as a member
+    response = client.post(link(links["submit-review"]), json={}, headers=headers)
+    assert response.status_code == 202
+
+
+def test_submission_open_non_member(
+    client,
+    minimal_record,
+    community,
+    headers,
+    uploader,
+):
+    """Test different users ability to submit record to the public community with open submission policy."""
+    client = uploader.login(client)
+
+    # Request a review
+    minimal_record["parent"] = {
+        "review": {
+            "type": CommunitySubmission.type_id,
+            "receiver": {"community": community.data["id"]},
+        }
+    }
+
+    # Create a draft
+    draft = client.post("/records", headers=headers, data=json.dumps(minimal_record))
+    links = draft.json["links"]
+    review = draft.json["parent"]["review"]
+    assert draft.status_code == 201
+    assert "submit-review" in links
+    assert "id" in review
+    assert review["receiver"] == {"community": community.data["id"]}
+    assert review["type"] == CommunitySubmission.type_id
+    assert draft.json["parent"]["communities"] == {}
+
+    # Submit for review
+    # # as a non-member
+    response = client.post(link(links["submit-review"]), json={}, headers=headers)
+    assert response.status_code == 202
+
+    # # as an unauthorized user
+    client = uploader.logout(client)
+    response = client.post(link(links["submit-review"]), json={}, headers=headers)
+    assert response.status_code == 403
+    assert response.json["message"] == "Permission denied."
+
+
+def test_submission_open_member(
+    client,
+    minimal_record,
+    community,
+    headers,
+    community_owner,
+):
+    """Test member's ability to submit record to the public community with open submission policy."""
+    client = community_owner.login(client)
+
+    # Request a review
+    minimal_record["parent"] = {
+        "review": {
+            "type": CommunitySubmission.type_id,
+            "receiver": {"community": community.data["id"]},
+        }
+    }
+
+    # Create a draft
+    draft = client.post("/records", headers=headers, data=json.dumps(minimal_record))
+    links = draft.json["links"]
+    review = draft.json["parent"]["review"]
+    assert draft.status_code == 201
+    assert "submit-review" in links
+    assert "id" in review
+    assert review["receiver"] == {"community": community.data["id"]}
+    assert review["type"] == CommunitySubmission.type_id
+    assert draft.json["parent"]["communities"] == {}
+
+    # Submit for review
+    # # as a member
+    response = client.post(link(links["submit-review"]), json={}, headers=headers)
+    assert response.status_code == 202
+
+
+def test_submission_open_in_restricted_community_non_member(
+    client,
+    minimal_record,
+    restricted_community,
+    headers,
+    uploader,
+):
+    """Test non-member's ability to submit record to the restricted community with open submission policy."""
+    client = uploader.login(client)
+
+    # Request a review
+    minimal_record["parent"] = {
+        "review": {
+            "type": CommunitySubmission.type_id,
+            "receiver": {"community": restricted_community.data["id"]},
+        }
+    }
+
+    # Create a draft
+    draft = client.post("/records", headers=headers, data=json.dumps(minimal_record))
+    links = draft.json["links"]
+    review = draft.json["parent"]["review"]
+    assert draft.status_code == 201
+    assert "submit-review" in links
+    assert "id" in review
+    assert review["receiver"] == {"community": restricted_community.data["id"]}
+    assert review["type"] == CommunitySubmission.type_id
+    assert draft.json["parent"]["communities"] == {}
+
+    # Submit for review
+    # # as a non-member
+    response = client.post(link(links["submit-review"]), json={}, headers=headers)
+    assert response.status_code == 403
+    assert (
+        response.json["message"]
+        == "Submission to this community is only allowed to community members."
+    )
+
+
+def test_submission_open_in_restricted_community_member(
+    client,
+    minimal_record,
+    restricted_community,
+    headers,
+    community_owner,
+):
+    """Test member's ability to submit record to the restricted community with open submission policy."""
+    client = community_owner.login(client)
+
+    # Request a review
+    minimal_record["parent"] = {
+        "review": {
+            "type": CommunitySubmission.type_id,
+            "receiver": {"community": restricted_community.data["id"]},
+        }
+    }
+
+    # Create a draft
+    draft = client.post("/records", headers=headers, data=json.dumps(minimal_record))
+    links = draft.json["links"]
+    review = draft.json["parent"]["review"]
+    assert draft.status_code == 201
+    assert "submit-review" in links
+    assert "id" in review
+    assert review["receiver"] == {"community": restricted_community.data["id"]}
+    assert review["type"] == CommunitySubmission.type_id
+    assert draft.json["parent"]["communities"] == {}
+
+    # Submit for review
+    # # as a member
+    response = client.post(link(links["submit-review"]), json={}, headers=headers)
+    assert response.status_code == 202

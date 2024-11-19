@@ -41,7 +41,7 @@ export class DepositApiClient {
       withCredentials: true,
       xsrfCookieName: "csrftoken",
       xsrfHeaderName: "X-CSRFToken",
-      headers: this.apiHeaders.json,
+      headers: this.apiHeaders["vnd+json"],
     };
     this.axiosWithConfig = axios.create(this.apiConfig);
     this.cancelToken = axios.CancelToken;
@@ -117,7 +117,6 @@ export class RDMDepositApiClient extends DepositApiClient {
     const payload = this.recordSerializer.serialize(draft);
     return this._createResponse(() =>
       this.axiosWithConfig.post(this.createDraftURL, payload, {
-        headers: this.apiHeaders["vnd+json"],
         params: { expand: 1 },
       })
     );
@@ -131,7 +130,6 @@ export class RDMDepositApiClient extends DepositApiClient {
   async readDraft(draftLinks) {
     return this._createResponse(() =>
       this.axiosWithConfig.get(draftLinks.self, {
-        headers: this.apiHeaders["vnd+json"],
         params: { expand: 1 },
       })
     );
@@ -146,7 +144,6 @@ export class RDMDepositApiClient extends DepositApiClient {
     const payload = this.recordSerializer.serialize(draft);
     return this._createResponse(() =>
       this.axiosWithConfig.put(draftLinks.self, payload, {
-        headers: this.apiHeaders["vnd+json"],
         params: { expand: 1 },
       })
     );
@@ -289,7 +286,7 @@ export class DepositFileApiClient {
       withCredentials: true,
       xsrfCookieName: "csrftoken",
       xsrfHeaderName: "X-CSRFToken",
-      headers: this.apiHeaders.json,
+      headers: this.apiHeaders["vnd+json"],
     };
     this.axiosWithConfig = axios.create(apiConfig);
   }

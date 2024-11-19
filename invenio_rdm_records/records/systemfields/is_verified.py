@@ -10,7 +10,7 @@ from invenio_records_resources.records.systemfields.calculated import Calculated
 
 
 class IsVerifiedField(CalculatedField):
-    """Systemfield for calculating whether or not the request is expired."""
+    """System field for calculating whether the record is verified."""
 
     def __init__(self, key=None):
         """Constructor."""

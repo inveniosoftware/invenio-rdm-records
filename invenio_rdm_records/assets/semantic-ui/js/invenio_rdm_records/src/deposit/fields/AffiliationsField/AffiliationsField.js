@@ -1,5 +1,5 @@
 // This file is part of Invenio-RDM-Records
-// Copyright (C) 2020-2023 CERN.
+// Copyright (C) 2020-2024 CERN.
 // Copyright (C) 2020-2022 Northwestern University.
 // Copyright (C) 2021 Graz University of Technology.
 //
@@ -8,23 +8,16 @@
 
 import PropTypes from "prop-types";
 import React, { Component } from "react";
-import { FieldLabel, RemoteSelectField } from "react-invenio-forms";
+import {
+  FieldLabel,
+  RemoteSelectField,
+  AffiliationsSuggestions,
+} from "react-invenio-forms";
 import { Field, getIn } from "formik";
 import { i18next } from "@translations/invenio_rdm_records/i18next";
 
 /**Affiliation input component */
 export class AffiliationsField extends Component {
-  serializeAffiliations = (affiliations) =>
-    affiliations.map((affiliation) => ({
-      text: affiliation.acronym
-        ? `${affiliation.name} (${affiliation.acronym})`
-        : affiliation.name,
-      value: affiliation.name,
-      key: affiliation.name,
-      ...(affiliation.id ? { id: affiliation.id } : {}),
-      name: affiliation.name,
-    }));
-
   render() {
     const { fieldPath, selectRef } = this.props;
     return (
@@ -35,11 +28,13 @@ export class AffiliationsField extends Component {
               fieldPath={fieldPath}
               suggestionAPIUrl="/api/affiliations"
               suggestionAPIHeaders={{
-                Accept: "application/json",
+                Accept: "application/vnd.inveniordm.v1+json",
               }}
               initialSuggestions={getIn(values, fieldPath, [])}
-              serializeSuggestions={this.serializeAffiliations}
-              placeholder={i18next.t("Search or create affiliation'")}
+              serializeSuggestions={(affiliations) => {
+                return AffiliationsSuggestions(affiliations, true);
+              }}
+              placeholder={i18next.t("Search or create affiliation")}
               label={
                 <FieldLabel
                   htmlFor={`${fieldPath}.name`}
@@ -58,8 +53,12 @@ export class AffiliationsField extends Component {
                   selectedSuggestions
                 );
               }}
-              value={getIn(values, fieldPath, []).map((val) => val.name)}
+              value={getIn(values, fieldPath, []).map(
+                (val) => val.name || val.text || val.id
+              )}
               ref={selectRef}
+              // Disable UI-side filtering of search results
+              search={(options) => options}
             />
           );
         }}

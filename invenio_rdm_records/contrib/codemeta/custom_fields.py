@@ -23,7 +23,7 @@ from marshmallow import validate
 
 CODEMETA_NAMESPACE = {
     # CodeMeta
-    "code": "https://codemeta.github.io",
+    "code": "https://codemeta.github.io/terms/#",
 }
 
 
@@ -35,9 +35,12 @@ CODEMETA_CUSTOM_FIELDS = [
             "error_messages": {"validate": "You must provide a valid URL."},
         },
     ),
-    KeywordCF(name="code:programmingLanguage"),
-    KeywordCF(name="code:runtimePlatform"),
-    KeywordCF(name="code:operatingSystem"),
+    VocabularyCF(
+        name="code:programmingLanguage",
+        vocabulary_id="code:programmingLanguages",
+        multiple=True,
+        dump_options=False,
+    ),
     VocabularyCF(
         name="code:developmentStatus",
         vocabulary_id="code:developmentStatus",
@@ -53,6 +56,7 @@ CODEMETA_CUSTOM_FIELDS_UI = {
             field="code:codeRepository",
             ui_widget="Input",
             props=dict(
+                is_identifier=True,
                 label="Repository URL",
                 icon="linkify",
                 description="URL or link where the code repository is hosted.",
@@ -60,32 +64,17 @@ CODEMETA_CUSTOM_FIELDS_UI = {
         ),
         dict(
             field="code:programmingLanguage",
-            ui_widget="Input",
+            ui_widget="AutocompleteDropdown",
             props=dict(
                 label="Programming language",
                 icon="code",
                 description="Repository's programming language.",
-                placeholder="Python ...",
-            ),
-        ),
-        dict(
-            field="code:runtimePlatform",
-            ui_widget="Input",
-            props=dict(
-                label="Runtime platform",
-                icon="cog",
-                description="Repository runtime platform or script interpreter dependencies.",
-                placeholder="Java v1, Python2.3, .Net Framework 3.0 ...",
-            ),
-        ),
-        dict(
-            field="code:operatingSystem",
-            ui_widget="Input",
-            props=dict(
-                label="Supported operating system",
-                icon="desktop",
-                description="Supported operating systems.",
-                placeholder="Windows 7, OSX 10.6, Android 1.6 ...",
+                placeholder="e.g. Python ...",
+                autocompleteFrom="/api/vocabularies/code:programmingLanguages",
+                autocompleteFromAcceptHeader="application/vnd.inveniordm.v1+json",
+                required=False,
+                multiple=True,
+                clearable=True,
             ),
         ),
         dict(

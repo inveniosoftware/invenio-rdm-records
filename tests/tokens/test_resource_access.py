@@ -1,11 +1,12 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2023 CERN.
+# Copyright (C) 2023-2024 CERN.
 #
 # Invenio is free software; you can redistribute it and/or modify it
 # under the terms of the MIT License; see LICENSE file for more details.
 
 """Test Resource access tokens."""
+
 from datetime import datetime, timedelta
 from io import BytesIO
 
@@ -19,6 +20,7 @@ from invenio_rdm_records.tokens.errors import (
     InvalidTokenError,
     InvalidTokenIDError,
     MissingTokenIDError,
+    TokenDecodeError,
 )
 from invenio_rdm_records.tokens.scopes import tokens_generate_scope
 
@@ -105,7 +107,7 @@ def create_record_w_file(client, record, headers, is_published=True):
 def test_rat_validation_failed(app, db, uploader, superuser_identity, oauth2_client):
     """Test possible validation failings of Resource access tokens."""
     # case: no headers in the token
-    with pytest.raises(InvalidTokenError):
+    with pytest.raises(TokenDecodeError):
         validate_rat("not_a.valid_jwt")
 
     # case: headers don't have "kid"
@@ -134,9 +136,16 @@ def test_rat_validation_failed(app, db, uploader, superuser_identity, oauth2_cli
         # generate token issued an hour ago
         validate_rat(
             _rat_gen(
-                pat["token"], payload={"iat": datetime.utcnow() - timedelta(hours=1)}
+                pat["token"],
+                payload={"iat": datetime.utcnow() - timedelta(hours=1), "sub": {}},
             )
         )
+    # case: RAT is missing "sub" key
+    with pytest.raises(InvalidTokenError):
+        validate_rat(_rat_gen(pat["token"]))
+    # case: RAT has a non-dictionary "sub" key
+    with pytest.raises(InvalidTokenError):
+        validate_rat(_rat_gen(pat["token"], payload={"sub": "test-string-sub"}))
 
 
 def test_rec_files_permissions_with_rat(
@@ -528,7 +537,7 @@ def test_rec_files_permissions_with_rat_invalid_token_error(
         record_file_url, query_string={"resource_access_token": rat_token}
     )
     assert res.status_code == 400
-    assert res.json["message"] == "The token is invalid."
+    assert res.json["message"] == "The resource access token is invalid."
     uploader.logout(client)
 
     # other user with token can NOT access the files
@@ -537,13 +546,13 @@ def test_rec_files_permissions_with_rat_invalid_token_error(
         record_file_url, query_string={"resource_access_token": rat_token}
     )
     assert res.status_code == 400
-    assert res.json["message"] == "The token is invalid."
+    assert res.json["message"] == "The resource access token is invalid."
     test_user.logout(client)
 
     # anonymous user with token can NOT access the files
     res = client.get(record_file_url, query_string={"resource_access_token": rat_token})
     assert res.status_code == 400
-    assert res.json["message"] == "The token is invalid."
+    assert res.json["message"] == "The resource access token is invalid."
 
 
 def test_rec_files_permissions_with_rat_missing_token_id_error(
@@ -589,7 +598,7 @@ def test_rec_files_permissions_with_rat_missing_token_id_error(
     assert res.status_code == 400
     assert (
         res.json["message"]
-        == 'Missing "kid" key with personal access token ID in JWT header.'
+        == 'Missing "kid" key with personal access token ID in JWT header of resource access token.'
     )
     uploader.logout(client)
 
@@ -601,7 +610,7 @@ def test_rec_files_permissions_with_rat_missing_token_id_error(
     assert res.status_code == 400
     assert (
         res.json["message"]
-        == 'Missing "kid" key with personal access token ID in JWT header.'
+        == 'Missing "kid" key with personal access token ID in JWT header of resource access token.'
     )
     test_user.logout(client)
 
@@ -610,7 +619,7 @@ def test_rec_files_permissions_with_rat_missing_token_id_error(
     assert res.status_code == 400
     assert (
         res.json["message"]
-        == 'Missing "kid" key with personal access token ID in JWT header.'
+        == 'Missing "kid" key with personal access token ID in JWT header of resource access token.'
     )
 
 
@@ -657,7 +666,7 @@ def test_rec_files_permissions_with_rat_invalid_token_id_error(
     assert res.status_code == 400
     assert (
         res.json["message"]
-        == '"kid" JWT header value not a valid personal access token ID.'
+        == '"kid" JWT header value of resource access token not a valid personal access token ID.'
     )
     uploader.logout(client)
 
@@ -669,7 +678,7 @@ def test_rec_files_permissions_with_rat_invalid_token_id_error(
     assert res.status_code == 400
     assert (
         res.json["message"]
-        == '"kid" JWT header value not a valid personal access token ID.'
+        == '"kid" JWT header value of resource access token not a valid personal access token ID.'
     )
     test_user.logout(client)
 
@@ -678,7 +687,7 @@ def test_rec_files_permissions_with_rat_invalid_token_id_error(
     assert res.status_code == 400
     assert (
         res.json["message"]
-        == '"kid" JWT header value not a valid personal access token ID.'
+        == '"kid" JWT header value of resource access token not a valid personal access token ID.'
     )
 
 
@@ -703,7 +712,7 @@ def test_rec_files_permissions_with_rat_expired_token_error(
     # generate expired RAT
     pat = _generate_pat_token(db, uploader, oauth2_client, "rat_token")["token"]
     rat_token = jwt.encode(
-        payload={"iat": datetime.utcnow() - timedelta(hours=1)},
+        payload={"iat": datetime.utcnow() - timedelta(hours=1), "sub": {}},
         key=pat.access_token,
         algorithm="HS256",
         headers={"kid": str(pat.id)},
@@ -716,7 +725,7 @@ def test_rec_files_permissions_with_rat_expired_token_error(
         record_file_url, query_string={"resource_access_token": rat_token}
     )
     assert res.status_code == 400
-    assert res.json["message"] == "The token is expired."
+    assert res.json["message"] == "The resource access token is expired."
     uploader.logout(client)
 
     # other user with token can NOT access the files
@@ -725,13 +734,13 @@ def test_rec_files_permissions_with_rat_expired_token_error(
         record_file_url, query_string={"resource_access_token": rat_token}
     )
     assert res.status_code == 400
-    assert res.json["message"] == "The token is expired."
+    assert res.json["message"] == "The resource access token is expired."
     test_user.logout(client)
 
     # anonymous user with token can NOT access the files
     res = client.get(record_file_url, query_string={"resource_access_token": rat_token})
     assert res.status_code == 400
-    assert res.json["message"] == "The token is expired."
+    assert res.json["message"] == "The resource access token is expired."
 
 
 def test_rec_files_permissions_with_rat_wrong_file(

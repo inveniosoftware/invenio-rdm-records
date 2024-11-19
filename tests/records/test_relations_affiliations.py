@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2021 CERN
+# Copyright (C) 2021-2024 CERN
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
@@ -54,7 +54,8 @@ def test_creator_affiliations_validation(running_app, minimal_record_with_creato
     # test it was saved properly
     aff = list(list(draft.relations.creator_affiliations())[0])[0]
     # since it is loaded it will contain more fields
-    assert aff["id"] == "cern"
+    assert aff.pid.pid_value == "cern"
+    assert aff["name"] == "CERN"
 
 
 def test_creator_affiliations_with_name_validation(
@@ -78,7 +79,7 @@ def test_creator_affiliations_with_name_validation(
     assert len(aff_list) == 1
     aff = aff_list[0]
     # since it is loaded it will contain more fields
-    assert aff["id"] == "cern"
+    assert aff.pid.pid_value == "cern"
 
 
 def test_creator_affiliations_with_name_cleanup_validation(running_app, minimal_record):
@@ -97,7 +98,7 @@ def test_creator_affiliations_with_name_cleanup_validation(running_app, minimal_
     # test it was saved properly
     aff = list(list(draft.relations.creator_affiliations())[0])[0]
     # since it is loaded it will contain more fields
-    assert aff["id"] == "cern"
+    assert aff.pid.pid_value == "cern"
 
 
 def test_creator_affiliations_indexing(running_app, minimal_record_with_creator):
@@ -109,9 +110,13 @@ def test_creator_affiliations_indexing(running_app, minimal_record_with_creator)
     dump = draft.dumps()
     assert dump["metadata"]["creators"][0]["affiliations"] == [
         {
+            "@v": f"{running_app.affiliations_v._record.id}::2",
             "id": "cern",
+            "identifiers": [
+                {"identifier": "01ggx4157", "scheme": "ror"},
+                {"identifier": "000000012156142X", "scheme": "isni"},
+            ],
             "name": "CERN",
-            "@v": f"{running_app.affiliations_v._record.id}::1",
         }
     ]
 
@@ -143,13 +148,6 @@ def test_creator_affiliations_invalid(running_app, minimal_record):
     minimal_record["metadata"]["creators"][0]["affiliations"] = [{"id": 1}]
     pytest.raises(ValidationError, RDMDraft.create, minimal_record)
 
-    # No duplicates
-    minimal_record["metadata"]["creators"][0]["affiliations"] = [
-        {"id": "cern"},
-        {"id": "cern"},
-    ]
-    pytest.raises(ValidationError, RDMDraft.create, minimal_record)
-
 
 #
 # Contributor Affiliations
@@ -179,7 +177,7 @@ def test_contributor_affiliations_validation(
     # test it was saved properly
     aff = list(list(draft.relations.contributor_affiliations())[0])[0]
     # since it is loaded it will contain more fields
-    assert aff["id"] == "cern"
+    assert aff.pid.pid_value == "cern"
 
 
 def test_contributor_affiliations_indexing(
@@ -193,9 +191,13 @@ def test_contributor_affiliations_indexing(
     dump = draft.dumps()
     assert dump["metadata"]["contributors"][0]["affiliations"] == [
         {
+            "@v": f"{running_app.affiliations_v._record.id}::2",
             "id": "cern",
+            "identifiers": [
+                {"identifier": "01ggx4157", "scheme": "ror"},
+                {"identifier": "000000012156142X", "scheme": "isni"},
+            ],
             "name": "CERN",
-            "@v": f"{running_app.affiliations_v._record.id}::1",
         }
     ]
 
@@ -226,11 +228,4 @@ def test_contributor_affiliations_invalid(running_app, minimal_record_with_contr
 
     # non-string types are not allowed as id values
     minimal_record["metadata"]["contributors"][0]["affiliations"] = [{"id": 1}]
-    pytest.raises(ValidationError, RDMDraft.create, minimal_record)
-
-    # No duplicates
-    minimal_record["metadata"]["contributors"][0]["affiliations"] = [
-        {"id": "cern"},
-        {"id": "cern"},
-    ]
     pytest.raises(ValidationError, RDMDraft.create, minimal_record)

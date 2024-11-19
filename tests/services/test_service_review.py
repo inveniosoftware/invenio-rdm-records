@@ -1,27 +1,29 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2021 CERN.
+# Copyright (C) 2021-2024 CERN.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
 
 """Test of the review deposit integration."""
 
-from unittest.mock import MagicMock
-
 import pytest
 from flask_principal import Identity, UserNeed
-from invenio_access.permissions import any_user, authenticated_user
+from invenio_access.permissions import any_user, authenticated_user, system_identity
 from invenio_communities.communities.records.api import Community
 from invenio_communities.generators import CommunityRoleNeed
 from invenio_communities.members.records.api import Member
-from invenio_notifications.proxies import current_notifications_manager
+from invenio_pidstore.errors import PIDDoesNotExistError
 from invenio_records_resources.services.errors import PermissionDeniedError
 from invenio_requests import current_requests_service
 from marshmallow.exceptions import ValidationError
 from sqlalchemy.orm.exc import NoResultFound
 
 from invenio_rdm_records.notifications.builders import (
+    CommunityInclusionAcceptNotificationBuilder,
+    CommunityInclusionCancelNotificationBuilder,
+    CommunityInclusionDeclineNotificationBuilder,
+    CommunityInclusionExpireNotificationBuilder,
     CommunityInclusionSubmittedNotificationBuilder,
 )
 from invenio_rdm_records.proxies import current_rdm_records
@@ -88,6 +90,26 @@ def draft_for_open_review(
 
     # Create draft with review
     return service.create(community_owner.identity, minimal_record)
+
+
+@pytest.fixture()
+def draft_for_open_review_user(
+    minimal_record,
+    open_review_community,
+    service,
+    uploader,
+    authenticated_identity,
+    db,
+):
+    minimal_record["parent"] = {
+        "review": {
+            "type": CommunitySubmission.type_id,
+            "receiver": {"community": open_review_community.data["id"]},
+        }
+    }
+
+    # Create draft with review
+    return service.create(uploader.identity, minimal_record)
 
 
 @pytest.fixture()
@@ -174,7 +196,7 @@ def test_simple_flow(draft, running_app, community, service, requests_service):
     assert record["status"] == "published"
 
     # ### Read draft (which should have been removed)
-    with pytest.raises(NoResultFound):
+    with pytest.raises(PIDDoesNotExistError):
         service.read_draft(running_app.superuser_identity, draft.id)
 
     # ### Create a new version (still part of community)
@@ -215,6 +237,17 @@ def test_direct_include_to_open_review_community(
         record["parent"]["communities"]["default"] == open_review_community.data["id"]
     )
     assert record["status"] == "published"
+
+    # check that record shows up in the user serach results, but the draft doesn't
+    service.record_cls.index.refresh()
+    service.draft_cls.index.refresh()
+    search_res = service.search_drafts(identity)
+
+    data = list(search_res.hits)
+    assert len(data) == 1
+    assert data[0]["is_draft"] is False
+    assert data[0]["is_published"] is True
+    assert data[0]["status"] == "published"
 
     # ### Create a new version (still part of community)
     draft = service.new_version(identity, draft_for_open_review.id).to_dict()
@@ -377,14 +410,16 @@ def test_create_review_after_draft(running_app, community, service, minimal_reco
     assert draft["status"] == DraftStatus.review_to_draft_statuses[req["status"]]
 
 
-def test_submit_public_record_review_to_restricted_community(
-    running_app, public_draft_review_restricted, service
+def test_accept_public_record_review_to_restricted_community(
+    running_app, public_draft_review_restricted, service, requests_service
 ):
-    """Test creation of review after draft was created."""
-    # Create draft
+    """Test invalid record/community restrictions on accept."""
+    request = service.review.submit(
+        running_app.superuser_identity, public_draft_review_restricted.id
+    )
     with pytest.raises(InvalidAccessRestrictions):
-        service.review.submit(
-            running_app.superuser_identity, public_draft_review_restricted.id
+        requests_service.execute_action(
+            running_app.superuser_identity, request.id, "accept", {}
         )
 
 
@@ -608,42 +643,25 @@ def test_review_gives_access_to_curator(running_app, draft, service, requests_se
         item = service.read_draft(identity, draft.pid.pid_value)
 
 
-def test_review_notification(
-    draft_for_open_review,
+def test_review_submit_notification(
+    draft_for_open_review_user,
     running_app,
     open_review_community,
     curator,
     community_owner,
+    uploader,
     service,
     inviter,
-    monkeypatch,
+    replace_notification_builder,
 ):
-    """Test notifcation being built on review submit."""
+    """Test notification being built on review submit."""
 
     original_builder = CommunityInclusionSubmittedNotificationBuilder
-
     # mock build to observe calls
-    mock_build = MagicMock()
-    mock_build.side_effect = original_builder.build
-    monkeypatch.setattr(original_builder, "build", mock_build)
-    # setting specific builder for test case
-    monkeypatch.setattr(
-        current_notifications_manager,
-        "builders",
-        {
-            **current_notifications_manager.builders,
-            original_builder.type: original_builder,
-        },
-    )
+    mock_build = replace_notification_builder(original_builder)
+    assert not mock_build.called
 
     inviter(curator.id, open_review_community.id, "curator")
-
-    # check draft status
-    assert (
-        draft_for_open_review["status"]
-        == DraftStatus.review_to_draft_statuses["created"]
-    )
-    assert not mock_build.called
 
     mail = running_app.app.extensions.get("mail")
     assert mail
@@ -651,17 +669,197 @@ def test_review_notification(
     with mail.record_messages() as outbox:
         # Validate that email was sent
         req = service.review.submit(
-            community_owner.identity, draft_for_open_review.id
+            uploader.identity, draft_for_open_review_user.id
         ).to_dict()
         assert req["status"] == "submitted"
+        # check notification is build on submit
+        assert mock_build.called
+        assert len(outbox) == 2
+        sent_mail = outbox[0]
+        sent_mail_2 = outbox[1]
+        # TODO: update to `req["links"]["self_html"]` when addressing https://github.com/inveniosoftware/invenio-rdm-records/issues/1327
+        assert "/me/requests/{}".format(req["id"]) in sent_mail.html
+        assert community_owner.email in sent_mail.recipients
+        assert (
+            uploader.email not in sent_mail.recipients
+            and uploader.email not in sent_mail_2.recipients
+        )
+        assert curator.email in sent_mail_2.recipients
+
+
+def test_review_accept_notification(
+    draft_for_open_review_user,
+    running_app,
+    open_review_community,
+    curator,
+    uploader,
+    authenticated_identity,
+    service,
+    requests_service,
+    inviter,
+    replace_notification_builder,
+):
+    """Test notification being built on review submit."""
+
+    original_builder = CommunityInclusionAcceptNotificationBuilder
+    # mock build to observe calls
+    mock_build = replace_notification_builder(original_builder)
+    assert not mock_build.called
+
+    inviter(curator.id, open_review_community.id, "curator")
+
+    mail = running_app.app.extensions.get("mail")
+    assert mail
+
+    req = service.review.submit(
+        uploader.identity, draft_for_open_review_user.id
+    ).to_dict()
+
+    with mail.record_messages() as outbox:
+        # Validate that email was sent
+        req = requests_service.execute_action(
+            curator.identity, req["id"], "accept", {}
+        ).to_dict()
         # check notification is build on submit
         assert mock_build.called
         assert len(outbox) == 1
         sent_mail = outbox[0]
         # TODO: update to `req["links"]["self_html"]` when addressing https://github.com/inveniosoftware/invenio-rdm-records/issues/1327
         assert "/me/requests/{}".format(req["id"]) in sent_mail.html
-        assert community_owner.email not in sent_mail.recipients
-        assert curator.email in sent_mail.recipients
+        assert uploader.email in sent_mail.recipients
+        assert curator.email not in sent_mail.recipients
+
+
+def test_review_cancel_notification(
+    draft_for_open_review_user,
+    running_app,
+    open_review_community,
+    curator,
+    uploader,
+    community_owner,
+    service,
+    requests_service,
+    inviter,
+    replace_notification_builder,
+):
+    """Test notification being built on review submit."""
+
+    original_builder = CommunityInclusionCancelNotificationBuilder
+    # mock build to observe calls
+    mock_build = replace_notification_builder(original_builder)
+    assert not mock_build.called
+
+    inviter(curator.id, open_review_community.id, "curator")
+
+    mail = running_app.app.extensions.get("mail")
+    assert mail
+
+    req = service.review.submit(
+        uploader.identity, draft_for_open_review_user.id
+    ).to_dict()
+
+    with mail.record_messages() as outbox:
+        # Validate that email was sent
+        req = requests_service.execute_action(
+            uploader.identity, req["id"], "cancel", {}
+        ).to_dict()
+        # check notification is build on submit
+        assert mock_build.called
+        assert len(outbox) == 2
+        sent_mail = outbox[0]
+        sent_mail_2 = outbox[1]
+        # TODO: update to `req["links"]["self_html"]` when addressing https://github.com/inveniosoftware/invenio-rdm-records/issues/1327
+        assert "/me/requests/{}".format(req["id"]) in sent_mail.html
+        assert (
+            uploader.email not in sent_mail.recipients
+            and not uploader.email in sent_mail_2.recipients
+        )
+        assert community_owner.email in sent_mail.recipients
+        assert curator.email in sent_mail_2.recipients
+
+
+def test_review_decline_notification(
+    draft_for_open_review_user,
+    running_app,
+    open_review_community,
+    curator,
+    uploader,
+    service,
+    requests_service,
+    inviter,
+    replace_notification_builder,
+):
+    """Test notification being built on review submit."""
+
+    original_builder = CommunityInclusionDeclineNotificationBuilder
+    # mock build to observe calls
+    mock_build = replace_notification_builder(original_builder)
+    assert not mock_build.called
+
+    inviter(curator.id, open_review_community.id, "curator")
+
+    mail = running_app.app.extensions.get("mail")
+    assert mail
+
+    req = service.review.submit(
+        uploader.identity, draft_for_open_review_user.id
+    ).to_dict()
+
+    with mail.record_messages() as outbox:
+        # Validate that email was sent
+        req = requests_service.execute_action(
+            curator.identity, req["id"], "decline", {}
+        ).to_dict()
+        # check notification is build on submit
+        assert mock_build.called
+        assert len(outbox) == 1
+        sent_mail = outbox[0]
+        # TODO: update to `req["links"]["self_html"]` when addressing https://github.com/inveniosoftware/invenio-rdm-records/issues/1327
+        assert "/me/requests/{}".format(req["id"]) in sent_mail.html
+        assert uploader.email in sent_mail.recipients
+        assert curator.email not in sent_mail.recipients
+
+
+def test_review_expire_notification(
+    draft_for_open_review_user,
+    running_app,
+    open_review_community,
+    curator,
+    uploader,
+    service,
+    requests_service,
+    inviter,
+    replace_notification_builder,
+):
+    """Test notification being built on review submit."""
+
+    original_builder = CommunityInclusionExpireNotificationBuilder
+    # mock build to observe calls
+    mock_build = replace_notification_builder(original_builder)
+    assert not mock_build.called
+
+    inviter(curator.id, open_review_community.id, "curator")
+
+    mail = running_app.app.extensions.get("mail")
+    assert mail
+
+    req = service.review.submit(
+        uploader.identity, draft_for_open_review_user.id
+    ).to_dict()
+
+    with mail.record_messages() as outbox:
+        # Validate that email was sent
+        req = requests_service.execute_action(
+            system_identity, req["id"], "expire", {}
+        ).to_dict()
+        # check notification is build on submit
+        assert mock_build.called
+        assert len(outbox) == 1
+        sent_mail = outbox[0]
+        # TODO: update to `req["links"]["self_html"]` when addressing https://github.com/inveniosoftware/invenio-rdm-records/issues/1327
+        assert "/me/requests/{}".format(req["id"]) in sent_mail.html
+        assert uploader.email in sent_mail.recipients
+        assert curator.email not in sent_mail.recipients
 
 
 # TODO tests:

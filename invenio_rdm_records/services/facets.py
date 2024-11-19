@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2020-2023 CERN.
-# Copyright (C) 2020-2021 Northwestern University.
+# Copyright (C) 2020-2024 CERN.
+# Copyright (C) 2020-2024 Northwestern University.
 # Copyright (C)      2021 TU Wien.
 # Copyright (C) 2023 Graz University of Technology.
 #
@@ -10,14 +10,19 @@
 
 """Facet definitions."""
 
-from invenio_i18n import gettext as _
+from warnings import warn
+
+from invenio_i18n import lazy_gettext as _
 from invenio_records_resources.services.records.facets import (
+    CombinedTermsFacet,
     NestedTermsFacet,
     TermsFacet,
 )
 from invenio_vocabularies.contrib.subjects import SubjectsLabels
+from invenio_vocabularies.records.models import VocabularyScheme
 from invenio_vocabularies.services.facets import VocabularyLabels
 
+from ..records.dumpers.combined_subjects import SPLITCHAR
 from ..records.systemfields.access.field.record import AccessStatusEnum
 
 access_status = TermsFacet(
@@ -62,14 +67,44 @@ resource_type = NestedTermsFacet(
 )
 
 
-subject_nested = NestedTermsFacet(
-    field="metadata.subjects.scheme",
-    subfield="metadata.subjects.subject.keyword",
-    label=_("Subjects"),
-    value_labels=SubjectsLabels(),
-)
+def deprecated_subject_nested():
+    """Deprecated NestedTermsFacet.
+
+    Will warn until this is completely removed.
+    """
+    warn(
+        "subject_nested is deprecated. Use subject_combined instead.",
+        DeprecationWarning,
+    )
+    return NestedTermsFacet(
+        field="metadata.subjects.scheme",
+        subfield="metadata.subjects.subject.keyword",
+        label=_("Subjects"),
+        value_labels=SubjectsLabels(),
+    )
+
+
+subject_nested = deprecated_subject_nested()
+
 
 subject = TermsFacet(
     field="metadata.subjects.subject.keyword",
     label=_("Subjects"),
+)
+
+
+def get_subject_schemes():
+    """Return subject schemes."""
+    return [
+        row.id for row in VocabularyScheme.query.filter_by(parent_id="subjects").all()
+    ]
+
+
+subject_combined = CombinedTermsFacet(
+    field="metadata.subjects.scheme",
+    combined_field="metadata.combined_subjects",
+    parents=get_subject_schemes,
+    splitchar=SPLITCHAR,
+    label=_("Subjects"),
+    value_labels=SubjectsLabels(),
 )

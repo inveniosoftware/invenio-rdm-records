@@ -2,6 +2,7 @@
 #
 # Copyright (C) 2019-2022 CERN.
 # Copyright (C) 2019-2022 Northwestern University.
+# Copyright (C) 2023 California Institute of Technology.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
@@ -25,8 +26,6 @@ from invenio_search import current_search_client
 from invenio_search.engine import dsl, search
 from invenio_search.utils import build_alias_name
 
-from invenio_rdm_records.proxies import current_rdm_records, current_rdm_records_service
-
 from .fixtures import FixturesEngine
 from .fixtures.demo import (
     create_fake_community,
@@ -41,6 +40,7 @@ from .fixtures.tasks import (
     create_demo_record,
     get_authenticated_identity,
 )
+from .proxies import current_rdm_records, current_rdm_records_service
 from .utils import get_or_create_user
 
 COMMUNITY_OWNER_EMAIL = "community@demo.org"
@@ -91,7 +91,13 @@ def records(user_email, n_records):
 
     for _ in range(n_records):
         fake_data = create_fake_record()
-        create_demo_record.delay(user.id, fake_data, publish=True)
+        create_file = False
+        if not current_app.config.get("RDM_ALLOW_METADATA_ONLY_RECORDS"):
+            create_file = True
+            fake_data["files"]["enabled"] = True
+        create_demo_record.delay(
+            user.id, fake_data, publish=True, create_file=create_file
+        )
 
     click.secho("Demo records task submitted...", fg="green")
 
@@ -280,6 +286,25 @@ def create_fixtures():
     click.secho("Created required fixtures!", fg="green")
 
 
+@rdm_records.command("add-to-fixture")
+@click.argument("fixture")
+@with_appcontext
+def add_to_fixture(fixture):
+    """Add or update new entries to existing fixture.
+
+    Takes a argument of a vocabulary
+    name (e.g. contributorsroles).
+
+    Example:
+    pipenv run invenio rdm-records add-to-fixture contributorsroles
+    """
+    click.secho("Adding or updating entries to fixtures...", fg="green")
+
+    FixturesEngine(system_identity).add_to(fixture)
+
+    click.secho("Sent all entry additions and updates to celery!", fg="green")
+
+
 @rdm_records.command("rebuild-index")
 @with_appcontext
 def rebuild_index():
@@ -311,6 +336,10 @@ def rebuild_index():
     click.secho("Reindexing records and drafts...", fg="green")
     rec_service = current_rdm_records.records_service
     rec_service.rebuild_index(identity=system_identity)
+
+    click.secho("Reindexing OAI sets...", fg="green")
+    oaipmh_service = current_rdm_records.oaipmh_server_service
+    oaipmh_service.rebuild_index(identity=system_identity)
 
     click.secho("Reindexed records and vocabularies!", fg="green")
 

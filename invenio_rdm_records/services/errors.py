@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2021 CERN.
+# Copyright (C) 2021-2024 CERN.
 # Copyright (C) 2023 Graz University of Technology.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
@@ -8,11 +8,36 @@
 
 """RDM Record Service Errors."""
 
+from flask_principal import PermissionDenied
 from invenio_i18n import lazy_gettext as _
 
 
 class RDMRecordsException(Exception):
     """Base exception for RDMRecords errors."""
+
+
+class GrantExistsError(RDMRecordsException):
+    """Exception raised when trying to create a grant that already exists for user/role."""
+
+    description = _("Grant for this user/role already exists within this record.")
+
+
+class RecordDeletedException(RDMRecordsException):
+    """Exception denoting that the record was deleted."""
+
+    def __init__(self, record, result_item=None):
+        """Constructor."""
+        self.record = record
+        self.result_item = result_item
+
+
+class DeletionStatusException(RDMRecordsException):
+    """Indicator for the record being in the wrong deletion status for the action."""
+
+    def __init__(self, record, expected_status):
+        """Constructor."""
+        self.expected_status = expected_status
+        self.record = record
 
 
 class EmbargoNotLiftedError(RDMRecordsException):
@@ -26,9 +51,8 @@ class EmbargoNotLiftedError(RDMRecordsException):
     def description(self):
         """Exception's description."""
         return _(
-            "Embargo could not be lifted for record: {record_id}".format(
-                record_id=self.record_id
-            )
+            "Embargo could not be lifted for record: %(record_id)s",
+            record_id=self.record_id,
         )
 
 
@@ -136,9 +160,9 @@ class RecordCommunityMissing(Exception):
     def description(self):
         """Exception description."""
         return _(
-            "The record {record_id} in not included in the community {community_id}.".format(
-                record_id=self.record_id, community_id=self.community_id
-            )
+            "The record %(rec_id)s in not included in the community %(com_id)s.",
+            rec_id=self.record_id,
+            com_id=self.community_id,
         )
 
 
@@ -152,34 +176,47 @@ class InvalidCommunityVisibility(Exception):
     @property
     def description(self):
         """Exception description."""
-        return _("Cannot modify community visibility: {reason}".format(self.reason))
+        return _("Cannot modify community visibility: %(reason)s", reason=self.reason)
 
 
 class AccessRequestException(RDMRecordsException):
     """Base class for errors related to access requests."""
 
 
-class DuplicateAccessRequestError(AccessRequestException):
+class AccessRequestExistsError(AccessRequestException):
     """An identical access request already exists."""
 
-    def __init__(self, request_ids):
+    def __init__(self, request_id):
         """Constructor."""
-        self.request_ids = request_ids or []
+        self.request_id = request_id
 
     @property
     def description(self):
         """Exception description."""
-        if len(self.request_ids) > 1:
+        if self.request_id:
             return _(
-                "Identical access requests already exist: %(request_ids)s",
-                request_id=self.request_ids,
+                "Identical access requests already exist: %(request_id)s",
+                request_id=self.request_id,
             )
-
-        elif self.request_ids:
-            return _(
-                "An identical access request already exists: %(request_id)s",
-                request_id=self.request_ids[0],
-            )
-
         else:
             return _("The access request is a duplicate")
+
+
+class RecordSubmissionClosedCommunityError(PermissionDenied):
+    """Record submission policy forbids non-members from submitting records to community."""
+
+    description = _(
+        "Submission to this community is only allowed to community members."
+    )
+
+
+class CommunityRequiredError(Exception):
+    """Error thrown when a record is being created/updated with less than 1 community."""
+
+    description = _("Cannot publish without a community.")
+
+
+class CannotRemoveCommunityError(Exception):
+    """Error thrown when the last community is being removed from the record."""
+
+    description = _("A record should be part of at least 1 community.")

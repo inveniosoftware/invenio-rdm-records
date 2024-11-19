@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2022 CERN.
+# Copyright (C) 2022-2024 CERN.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
@@ -17,16 +17,22 @@ from invenio_db import db
 from invenio_i18n import _
 from invenio_users_resources.services.users.tasks import reindex_users
 from itsdangerous import SignatureExpired
+from marshmallow import ValidationError
 
 from .requests.access.permissions import AccessRequestTokenNeed
 from .secret_links import LinkNeed, SecretLink
 from .tokens import RATNeed, validate_rat
-from .tokens.errors import RATFeatureDisabledError
+from .tokens.errors import (
+    InvalidTokenSubjectError,
+    RATFeatureDisabledError,
+    TokenDecodeError,
+)
 
 
 def get_or_create_user(email):
     """Get or create a user."""
-    user = current_datastore.get_user(email)
+    with db.session.no_autoflush:
+        user = current_datastore.get_user(email)
     if not user:
         user = current_datastore.create_user(
             email=email,
@@ -65,7 +71,7 @@ class ChainObject:
 
         objs = super().__getattribute__("_objs")
         for o in objs:
-            if getattr(o, name):
+            if getattr(o, name, None):
                 return getattr(o, name)
         raise AttributeError()
 
@@ -82,34 +88,66 @@ class ChainObject:
 
 def verify_token(identity):
     """Verify the token and provide identity with corresponding need."""
-    token = request.args.get("token", session.get("token", None))
+    secret_link_token_arg = "token"
+    token = None
+    token_source = None
+    has_secret_link_token = False
+    arg_token = request.args.get(secret_link_token_arg, None)
+    session_token = session.get(secret_link_token_arg, None)
+    if arg_token:
+        token = arg_token
+        token_source = "arg"
+    elif session_token:
+        token = session_token
+        token_source = "session"
 
-    session["token"] = token
     if token:
         try:
             data = SecretLink.load_token(token)
             if data:
                 identity.provides.add(LinkNeed(data["id"]))
+                # In order for anonymous users with secret link to perform vulnerable HTTP requests
+                # ("POST", "PUT", "PATCH", "DELETE"), CSRF token must be set
+                request.csrf_cookie_needs_reset = True
+            session[secret_link_token_arg] = token
+            has_secret_link_token = True
         except SignatureExpired:
-            flash(_("Your shared link has expired."))
+            # It the token came from "args", we notify that the link has expired
+            if token_source == "arg":
+                flash(_("Your shared link has expired."))
+            # We remove the token from the session to avoid flashing the message
+            session.pop(secret_link_token_arg, None)
 
-    resource_access_token = request.args.get(
-        current_app.config.get("RDM_RESOURCE_ACCESS_TOKEN_REQUEST_ARG", None), None
-    )
-    if resource_access_token:
-        if not current_app.config.get("RDM_RESOURCE_ACCESS_TOKENS_ENABLED", False):
+    # NOTE: This logic is getting very complex becuase of possible arg naming conflicts
+    # for the Zenodo use-case. It can be simplified once the conflict changes
+    rat_enabled = current_app.config.get("RDM_RESOURCE_ACCESS_TOKENS_ENABLED", False)
+    rat_arg = current_app.config.get("RDM_RESOURCE_ACCESS_TOKEN_REQUEST_ARG", None)
+    # we can have a "naming conflict" if both secret links and RATs use the same arg key
+    rat_arg_name_conflict = rat_arg == secret_link_token_arg
+    rat = request.args.get(rat_arg, None)
+    if rat and not (rat_arg_name_conflict and has_secret_link_token):
+        if not rat_enabled:
             raise RATFeatureDisabledError()
 
-        rat_signer, payload = validate_rat(resource_access_token)
-        identity.provides.add(
-            RATNeed(
-                rat_signer, payload["record_id"], payload["file"], payload["access"]
+        try:
+            rat_signer, payload = validate_rat(rat)
+            schema_cls = current_app.config.get(
+                "RDM_RESOURCE_ACCESS_TOKENS_SUBJECT_SCHEMA"
             )
-        )
+            if schema_cls:
+                try:
+                    rat_need_data = schema_cls().load(payload)
+                except ValidationError:
+                    raise InvalidTokenSubjectError()
+            else:
+                rat_need_data = payload
+            identity.provides.add(RATNeed(rat_signer, **rat_need_data))
+        except TokenDecodeError:
+            pass
 
     access_request_token = request.args.get(
         "access_request_token", session.get("access_request_token", None)
     )
-    session["access_request_token"] = access_request_token
     if access_request_token:
+        session["access_request_token"] = access_request_token
         identity.provides.add(AccessRequestTokenNeed(access_request_token))

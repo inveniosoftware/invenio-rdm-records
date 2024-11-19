@@ -1,7 +1,10 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2021-2022 CERN.
+# Copyright (C) 2021-2024 CERN.
 # Copyright (C) 2021-2022 Northwestern University.
+# Copyright (C) 2024 TU Wien.
+# Copyright (C) 2024 KTH Royal Institute of Technology.
+# Copyright (C) 2024 Graz University of Technology.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
@@ -16,9 +19,11 @@ from pathlib import Path
 
 import pkg_resources
 import yaml
+from flask import current_app
 from invenio_db import db
 from invenio_vocabularies.proxies import current_service
 from invenio_vocabularies.records.models import VocabularyScheme, VocabularyType
+from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import load_only
 
 from .tasks import create_vocabulary_record
@@ -68,7 +73,9 @@ class CSVIterator(DataIterator):
     def __iter__(self):
         """Iterate over records."""
         with open(self._data_file) as fp:
-            reader = csv.reader(fp, delimiter=";", quotechar='"')
+            dialect = csv.Sniffer().sniff(fp.read(4096))
+            fp.seek(0)
+            reader = csv.reader(fp, dialect)
             header = next(reader)
             for row in reader:
                 yield self.map_row(header, row)
@@ -168,7 +175,7 @@ class PrioritizedVocabulariesFixtures:
         """
         return list(pkg_resources.iter_entry_points("invenio_rdm_records.fixtures"))
 
-    def load(self):
+    def load(self, reload=None):
         """Load the fixtures.
 
         Loads in priority
@@ -180,13 +187,20 @@ class PrioritizedVocabulariesFixtures:
         Fixtures found later are ignored.
         """
         # Prime with existing (sub)vocabularies
-        v_type_ids = [v.id for v in VocabularyType.query.options(load_only("id")).all()]
+        v_type_ids = [
+            v.id
+            for v in VocabularyType.query.options(load_only(VocabularyType.id)).all()
+        ]
         v_subtype_ids = [
             f"{v.parent_id}.{v.id}"
-            for v in VocabularyScheme.query.options(load_only("id", "parent_id")).all()
+            for v in VocabularyScheme.query.options(
+                load_only(VocabularyScheme.id, VocabularyScheme.parent_id)
+            ).all()
         ]
         self._loaded_vocabularies = set(v_type_ids + v_subtype_ids)
-
+        # If it's not already loaded it means it's a new one
+        if reload and reload in self._loaded_vocabularies:
+            self._loaded_vocabularies.remove(reload)
         # 1- Load from app_data_folder
         filepath = self._app_data_folder / self._filename
         # An instance doesn't necessarily have custom vocabularies
@@ -266,9 +280,9 @@ class VocabulariesFixture:
             data = yaml.safe_load(f) or {}
             for id_, yaml_entry in data.items():
                 # Some vocabularies are non-generic
-                if id_ in ("subjects", "affiliations"):
+                if id_ in ("subjects",):
                     entry = VocabularyEntryWithSchemes(id_, dir_, id_, yaml_entry)
-                elif id_ in ("names", "funders", "awards"):
+                elif id_ in ("affiliations", "names", "funders", "awards"):
                     entry = VocabularyEntry(id_, dir_, id_, yaml_entry)
                 else:
                     entry = GenericVocabularyEntry(dir_, id_, yaml_entry)
@@ -322,7 +336,12 @@ class VocabularyEntry:
         """Actions taken before iteratively creating records."""
         if self._id not in ignore:
             pid_type = self._entry["pid-type"]
-            current_service.create_type(identity, self._id, pid_type)
+            try:
+                current_service.create_type(identity, self._id, pid_type)
+            except IntegrityError:
+                current_app.logger.info(
+                    f"skipping creation of {pid_type}, already existing"
+                )
 
     def iterate(self, ignore):
         """Iterate over dicts of file content."""
@@ -379,10 +398,19 @@ class VocabularyEntryWithSchemes(VocabularyEntry):
     # Template methods
     def pre_load(self, identity, ignore):
         """Actions taken before iteratively creating records."""
+        # Create the type first, if needed
+        super().pre_load(identity, ignore)
+
+        # Add schemes
         for scheme in self.schemes():
             id_ = f"{self._id}.{scheme['id']}"
             if id_ not in ignore:
-                self.create_scheme(scheme)
+                try:
+                    self.create_scheme(scheme)
+                except IntegrityError:
+                    current_app.logger.info(
+                        f"skipping creation of {scheme}, already existing"
+                    )
 
     def iterate(self, ignore):
         """Iterate over dicts of file content."""

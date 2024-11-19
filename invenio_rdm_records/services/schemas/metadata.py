@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2020-2022 CERN.
+# Copyright (C) 2020-2024 CERN.
 # Copyright (C) 2020 Northwestern University.
 # Copyright (C) 2021-2023 Graz University of Technology.
 #
@@ -8,7 +8,6 @@
 # it under the terms of the MIT License; see LICENSE file for more details.
 
 """RDM record schemas."""
-
 from functools import partial
 from urllib import parse
 
@@ -32,7 +31,9 @@ from marshmallow import (
 )
 from marshmallow_utils.fields import (
     EDTFDateString,
+    EDTFDateTimeString,
     IdentifierSet,
+    IdentifierValueSet,
     SanitizedHTML,
     SanitizedUnicode,
 )
@@ -138,12 +139,36 @@ class PersonOrOrganizationSchema(Schema):
         return data
 
 
+def validate_affiliations_data(data):
+    """Validate affiliations."""
+    affiliations = data.get("affiliations", [])
+    #  return early If there are no affiliations
+    if not affiliations:
+        return
+    # avoid nesting
+    seen_names = {
+        affiliation.get("name", affiliation.get("id")) for affiliation in affiliations
+    }
+    if len(seen_names) != len(affiliations):
+        # provide more specific info
+        messages = [
+            _("Duplicated affiliations: ")
+            + ", ".join(set(name for name in seen_names if name))
+        ]
+        raise ValidationError({"affiliations": messages})
+
+
 class CreatorSchema(Schema):
     """Creator schema."""
 
     person_or_org = fields.Nested(PersonOrOrganizationSchema, required=True)
     role = fields.Nested(VocabularySchema)
     affiliations = fields.List(fields.Nested(AffiliationRelationSchema))
+
+    @validates_schema
+    def validate_affiliations(self, data, **kwargs):
+        """Validate names."""
+        validate_affiliations_data(data)
 
 
 class ContributorSchema(Schema):
@@ -152,6 +177,11 @@ class ContributorSchema(Schema):
     person_or_org = fields.Nested(PersonOrOrganizationSchema, required=True)
     role = fields.Nested(VocabularySchema, required=True)
     affiliations = fields.List(fields.Nested(AffiliationRelationSchema))
+
+    @validates_schema
+    def validate_affiliations(self, data, **kwargs):
+        """Validate names."""
+        validate_affiliations_data(data)
 
 
 class TitleSchema(Schema):
@@ -207,7 +237,7 @@ class RightsSchema(Schema):
 
     @validates_schema
     def validate_rights(self, data, **kwargs):
-        """Validates that id xor name are present."""
+        """Validates that id xor title are present."""
         id_ = data.get("id")
         title = data.get("title")
 
@@ -228,7 +258,7 @@ class RightsSchema(Schema):
 class DateSchema(Schema):
     """Schema for date intervals."""
 
-    date = EDTFDateString(required=True)
+    date = EDTFDateTimeString(required=True)
     type = fields.Nested(VocabularySchema, required=True)
     description = fields.Str()
 
@@ -271,7 +301,7 @@ class ReferenceSchema(IdentifierSchema):
         super().__init__(
             allowed_schemes=record_identifiers_schemes,
             identifier_required=False,
-            **kwargs
+            **kwargs,
         )
 
     reference = SanitizedUnicode(required=True)
@@ -340,7 +370,7 @@ class MetadataSchema(Schema):
     dates = fields.List(fields.Nested(DateSchema))
     languages = fields.List(fields.Nested(VocabularySchema))
     # alternate identifiers
-    identifiers = IdentifierSet(
+    identifiers = IdentifierValueSet(
         fields.Nested(
             partial(IdentifierSchema, allowed_schemes=record_identifiers_schemes)
         )

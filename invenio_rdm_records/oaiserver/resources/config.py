@@ -68,3 +68,10 @@ class OAIPMHServerResourceConfig(ResourceConfig, ConfiguratorMixin):
     request_search_args = OAIPMHServerSearchRequestArgsSchema
 
     error_handlers = oaipmh_error_handlers
+
+    response_handlers = {
+        "application/vnd.inveniordm.v1+json": ResourceConfig.response_handlers[
+            "application/json"
+        ],
+        **ResourceConfig.response_handlers,
+    }

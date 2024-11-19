@@ -9,7 +9,6 @@
 """Fake demo records."""
 
 import datetime
-import json
 import random
 from pathlib import Path
 
@@ -60,8 +59,6 @@ class CachedVocabularies:
         """Generate a random resource_type."""
         if not cls._resource_type_ids:
             cls._resource_type_ids = []
-
-            dir_ = Path(__file__).parent
 
             res_types = cls._read_vocabulary("resourcetypes")
 

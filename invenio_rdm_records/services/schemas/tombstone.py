@@ -9,7 +9,7 @@
 
 from invenio_vocabularies.services.schema import VocabularyRelationSchema
 from marshmallow import Schema, fields
-from marshmallow_utils.fields import ISODateString, NestedAttribute, SanitizedUnicode
+from marshmallow_utils.fields import ISODateString, SanitizedUnicode
 
 from .parent.access import Agent as BaseAgentSchema
 

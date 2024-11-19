@@ -1,14 +1,12 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2022 CERN.
+# Copyright (C) 2022-2024 CERN.
 # Copyright (C) 2023 Graz University of Technology.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
 
 """RO-Crate schema."""
-
-from distutils.log import error
 
 from invenio_i18n import lazy_gettext as _
 from marshmallow import EXCLUDE, Schema, ValidationError, fields, pre_load, validate
@@ -90,9 +88,9 @@ class ROCrateSchema(Schema):
                 if obj.get("affiliation"):
                     for a_idx, a in enumerate(obj.get("affiliation")):
                         if not a.get("name"):
-                            errors[
-                                f"{c_idx}.affiliation.{a_idx}.name"
-                            ] = self.error_messages["required"]
+                            errors[f"{c_idx}.affiliation.{a_idx}.name"] = (
+                                self.error_messages["required"]
+                            )
                         affiliations.append({"name": a.get("name")})
             elif obj.get("@type") == "Organization":
                 person_or_org["type"] = "organizational"

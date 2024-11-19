@@ -1,17 +1,17 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2023 CERN.
+# Copyright (C) 2023-2024 CERN.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
 """RDM github release metadata."""
+
 import yaml
 from flask import current_app
 from invenio_github.errors import CustomGitHubMetadataError
 from invenio_i18n import _
 from marshmallow import Schema, ValidationError
 from mistune import markdown
-from nameparser import HumanName
 
 
 class RDMReleaseMetadata(object):
@@ -82,26 +82,26 @@ class RDMReleaseMetadata(object):
 
     @property
     def contributors(self):
-        """Serializes contributors retrieved from github."""
+        """Serializes contributors retrieved from github.
+
+        .. note::
+
+            `self.rdm_release.contributors` might fail with a `UnexpectedGithubResponse`. This is an error from which the RDM release
+            processing can't recover since `creators` is a mandatory field.
+        """
 
         def serialize_author(gh_data):
             """Serializes github contributor data into RDM author."""
-            login = gh_data["login"]
-            name = gh_data.get("name", login)
-            company = gh_data.get("company", "")
-
-            human_name = HumanName(name)
-            given_name = human_name.first
-            family_name = human_name.surnames
+            gh_username = gh_data["login"]
+            # Default name to the user's login
+            name = gh_data.get("name") or gh_username
+            company = gh_data.get("company")
 
             rdm_contributor = {
-                "person_or_org": {
-                    "type": "personal",
-                    "given_name": given_name,
-                    "family_name": family_name,
-                },
-                "affiliations": [{"name": company}],
+                "person_or_org": {"type": "personal", "family_name": name},
             }
+            if company:
+                rdm_contributor.update({"affiliations": [{"name": company}]})
             return rdm_contributor
 
         contributors = []
@@ -109,7 +109,8 @@ class RDMReleaseMetadata(object):
         # Get contributors from api
         for c in self.rdm_release.contributors:
             rdm_author = serialize_author(c)
-            contributors.append(rdm_author)
+            if rdm_author:
+                contributors.append(rdm_author)
 
         return contributors
 
@@ -126,18 +127,19 @@ class RDMReleaseMetadata(object):
             data = self.load_citation_file(citation_file_path)
 
             # Load metadata from citation file and serialize it
-            metadata = self.load_citation_metadata(data)
-            return self.serialize_citation_metadata(metadata)
+            return self.load_citation_metadata(data)
         except ValidationError as e:
             # Wrap the error into CustomGitHubMetadataError() so it can be handled upstream
             raise CustomGitHubMetadataError(file=citation_file_path, message=e.messages)
 
-    def serialize_citation_metadata(self, data):
-        """Serializes citation data to RDM."""
-        if not data:
-            return {}
-        # TODO to be implemented
-        return data
+    @property
+    def extra_metadata(self):
+        """Get extra metadata for the release."""
+        return self.load_extra_metadata()
+
+    def load_extra_metadata(self):
+        """Get extra metadata for the release."""
+        return {}
 
     def load_citation_file(self, citation_file_name):
         """Returns the citation file data."""
@@ -145,7 +147,7 @@ class RDMReleaseMetadata(object):
             return {}
 
         # Fetch the citation file and load it
-        content = self.retrieve_remote_file(citation_file_name)
+        content = self.rdm_release.retrieve_remote_file(citation_file_name)
 
         data = (
             yaml.safe_load(content.decoded.decode("utf-8"))
@@ -162,7 +164,7 @@ class RDMReleaseMetadata(object):
 
         citation_schema = current_app.config.get("GITHUB_CITATION_METADATA_SCHEMA")
 
-        assert isinstance(citation_schema, Schema), _(
+        assert issubclass(citation_schema, Schema), _(
             "Citation schema is needed to load citation metadata."
         )
 

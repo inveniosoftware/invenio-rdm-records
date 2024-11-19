@@ -24,9 +24,8 @@ from invenio_records_resources.references.entity_resolvers import (
 from invenio_users_resources.services.schemas import SystemUserSchema
 from sqlalchemy.orm.exc import NoResultFound
 
-from invenio_rdm_records.services.config import RDMRecordServiceConfig
-
 from ..records.api import RDMDraft, RDMRecord
+from ..services.config import RDMRecordServiceConfig
 from ..services.dummy import DummyExpandingService
 
 # NOTE: this is the python regex from https://emailregex.com/
@@ -36,15 +35,33 @@ EMAIL_REGEX = re.compile(r"(^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$)")
 class RDMRecordProxy(RecordProxy):
     """Proxy for resolve RDMDraft and RDMRecord."""
 
+    def _get_record(self, pid_value):
+        """Fetch the published record."""
+        return RDMRecord.pid.resolve(pid_value)
+
     def _resolve(self):
         """Resolve the Record from the proxy's reference dict."""
         pid_value = self._parse_ref_dict_id()
 
+        draft = None
         try:
-            return RDMDraft.pid.resolve(pid_value, registered_only=False)
-        except (PIDUnregistered, NoResultFound):
+            draft = RDMDraft.pid.resolve(pid_value, registered_only=False)
+        except (PIDUnregistered, NoResultFound, PIDDoesNotExistError):
             # try checking if it is a published record before failing
-            return RDMRecord.pid.resolve(pid_value)
+            record = self._get_record(pid_value)
+        else:
+            # no exception raised. If published, get the published record instead
+            record = draft if not draft.is_published else self._get_record(pid_value)
+
+        return record
+
+    def ghost_record(self, record):
+        """Ghost reprensentation of a record.
+
+        Drafts at the moment cannot be resolved, service.read_many() is searching on
+        public records, thus the `ghost_record` method will always kick in!
+        """
+        return {"id": record}
 
 
 class RDMRecordResolver(RecordResolver):
@@ -69,14 +86,26 @@ class RDMRecordResolver(RecordResolver):
 class RDMRecordServiceResultProxy(ServiceResultProxy):
     """Proxy to resolve RDMDraft and RDMRecord."""
 
+    def _get_record(self, pid_value):
+        """Fetch the published record."""
+        return self.service.read(system_identity, pid_value)
+
     def _resolve(self):
         """Resolve the result item from the proxy's reference dict."""
         pid_value = self._parse_ref_dict_id()
 
+        draft = None
         try:
-            return self.service.read_draft(system_identity, pid_value).to_dict()
+            draft = self.service.read_draft(system_identity, pid_value)
         except (PIDDoesNotExistError, NoResultFound):
-            return self.service.read(system_identity, pid_value).to_dict()
+            record = self._get_record(pid_value)
+        else:
+            # no exception raised. If published, get the published record instead
+            record = (
+                draft if not draft._record.is_published else self._get_record(pid_value)
+            )
+
+        return record.to_dict()
 
 
 class RDMRecordServiceResultResolver(ServiceResultResolver):
@@ -89,6 +118,23 @@ class RDMRecordServiceResultResolver(ServiceResultResolver):
             type_key="record",
             proxy_cls=RDMRecordServiceResultProxy,
         )
+
+    def _reference_entity(self, entity):
+        """Create a reference dict for the given result item."""
+        pid = entity.id if isinstance(entity, self.item_cls) else entity.pid.pid_value
+        return {self.type_key: str(pid)}
+
+    @property
+    def draft_cls(self):
+        """Get specified draft class or from service."""
+        return self.get_service().draft_cls
+
+    def matches_entity(self, entity):
+        """Check if the entity is a draft."""
+        if isinstance(entity, self.draft_cls):
+            return True
+
+        return ServiceResultResolver.matches_entity(self, entity=entity)
 
 
 class EmailProxy(EntityProxy):

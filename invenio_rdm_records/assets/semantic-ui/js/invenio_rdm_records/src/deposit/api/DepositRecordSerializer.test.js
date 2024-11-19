@@ -1,5 +1,5 @@
 // This file is part of Invenio-RDM-Records
-// Copyright (C) 2020-2023 CERN.
+// Copyright (C) 2020-2024 CERN.
 // Copyright (C) 2020-2022 Northwestern University.
 //
 // Invenio-RDM-Records is free software; you can redistribute it and/or modify it
@@ -368,6 +368,7 @@ describe("RDMDepositRecordSerializer tests", () => {
           files: false,
           metadata: false,
         },
+        created: "2020-10-28 18:35:58.113520",
         expanded: {},
         id: "wk205-00878",
         links: {
@@ -496,9 +497,11 @@ describe("RDMDepositRecordSerializer tests", () => {
           ],
           version: "v2.0.0",
         },
+        revision_id: 1,
         ui: {
           publication_date_l10n: "Sep 28, 2020",
         },
+        updated: "2020-10-28 18:35:58.125222",
       };
       expect(deserializedRecord).toEqual(expectedRecord);
     });

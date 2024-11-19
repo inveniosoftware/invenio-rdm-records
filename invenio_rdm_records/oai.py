@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # Copyright (C) 2021 Graz University of Technology.
-# Copyright (C) 2021-2023 CERN.
+# Copyright (C) 2021-2024 CERN.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
@@ -36,16 +36,18 @@ def dublincore_etree(pid, record, **serializer_kwargs):
     return simpledc.dump_etree(obj)
 
 
-def oai_marcxml_etree(pid, record):
+def marcxml_etree(pid, record):
     """OAI MARCXML format for OAI-PMH."""
     item = current_rdm_records_service.oai_result_item(g.identity, record["_source"])
     # TODO: MARCXMLSerializer should directly be able to dump an etree instead
     # of internally creating an etree, then dump to xml, then parse into an
     # etree. See https://github.com/inveniosoftware/flask-resources/issues/117
-    return etree.fromstring(MARCXMLSerializer().serialize_object(item.to_dict()))
+    return etree.fromstring(
+        MARCXMLSerializer().serialize_object(item.to_dict()).encode(encoding="utf-8")
+    )
 
 
-def oai_dcat_etree(pid, record):
+def dcat_etree(pid, record):
     """OAI DCAT-AP format for OAI-PMH."""
     item = current_rdm_records_service.oai_result_item(g.identity, record["_source"])
     # TODO: Ditto. See https://github.com/inveniosoftware/flask-resources/issues/117
@@ -132,7 +134,9 @@ def getrecord_fetcher(record_id):
         # if it is a restricted record.
         raise PIDDoesNotExistError("recid", None)
 
-    return result.to_dict()
+    # TODO: Calling dumps() is not the best way here, since later on it will call
+    # loads() in the service to "normalize" the result.
+    return result._record.dumps()
 
 
 class OAIRecordSearch(RecordsSearch):
@@ -144,4 +148,10 @@ class OAIRecordSearch(RecordsSearch):
         default_filter = [
             dsl.Q("exists", field="pids.oai.identifier"),
             dsl.Q("term", **{"access.record": "public"}),
+            dsl.Q("term", **{"is_deleted": "false"}),
         ]
+
+
+# Alias methods, to be deprecated
+oai_marcxml_etree = marcxml_etree
+oai_dcat = dcat_etree

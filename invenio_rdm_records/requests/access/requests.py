@@ -6,44 +6,34 @@
 # it under the terms of the MIT License; see LICENSE file for more details.
 
 """Access requests for records."""
+
 from datetime import datetime, timedelta
 
 import marshmallow as ma
-from flask import current_app, g
+from flask import g
 from invenio_access.permissions import authenticated_user, system_identity
+from invenio_drafts_resources.services.records.uow import ParentRecordCommitOp
 from invenio_i18n import lazy_gettext as _
-from invenio_mail.tasks import send_email
-from invenio_records_resources.services.uow import Operation, RecordCommitOp
+from invenio_notifications.services.uow import NotificationOp
 from invenio_requests import current_events_service
 from invenio_requests.customizations import RequestType, actions
 from invenio_requests.customizations.event_types import CommentEventType
 from marshmallow import ValidationError, fields, validates
 from marshmallow_utils.permissions import FieldPermissionsMixin
 
+from invenio_rdm_records.notifications.builders import (
+    GuestAccessRequestAcceptNotificationBuilder,
+    GuestAccessRequestCancelNotificationBuilder,
+    GuestAccessRequestDeclineNotificationBuilder,
+    GuestAccessRequestSubmitNotificationBuilder,
+    GuestAccessRequestSubmittedNotificationBuilder,
+    UserAccessRequestAcceptNotificationBuilder,
+    UserAccessRequestCancelNotificationBuilder,
+    UserAccessRequestDeclineNotificationBuilder,
+    UserAccessRequestSubmitNotificationBuilder,
+)
+
 from ...proxies import current_rdm_records_service as service
-
-
-class EmailOp(Operation):
-    """A notification operation."""
-
-    def __init__(self, receiver, subject, html_body, body):
-        """Initialize operation."""
-        self.receiver = receiver
-        self.subject = subject
-        self.html_body = html_body
-        self.body = body
-
-    def on_post_commit(self, uow):
-        """Start task to send text via email."""
-        send_email(
-            {
-                "subject": self.subject,
-                "html_body": self.html_body,
-                "body": self.body,
-                "recipients": [self.receiver],
-                "sender": current_app.config["MAIL_DEFAULT_SENDER"],
-            }
-        )
 
 
 #
@@ -55,6 +45,71 @@ class UserSubmitAction(actions.SubmitAction):
     def execute(self, identity, uow):
         """Execute the submit action."""
         self.request["title"] = self.request.topic.resolve().metadata["title"]
+        uow.register(
+            NotificationOp(
+                UserAccessRequestSubmitNotificationBuilder.build(request=self.request)
+            )
+        )
+        super().execute(identity, uow)
+
+
+class UserCancelAction(actions.CancelAction):
+    """Cancel action for user access requests."""
+
+    def execute(self, identity, uow):
+        """Execute the cancel action."""
+        self.request["title"] = self.request.topic.resolve().metadata["title"]
+        uow.register(
+            NotificationOp(
+                UserAccessRequestCancelNotificationBuilder.build(
+                    request=self.request, identity=identity
+                )
+            )
+        )
+        super().execute(identity, uow)
+
+
+class UserDeclineAction(actions.DeclineAction):
+    """Decline action for user access requests."""
+
+    def execute(self, identity, uow):
+        """Execute the decline action."""
+        self.request["title"] = self.request.topic.resolve().metadata["title"]
+        uow.register(
+            NotificationOp(
+                UserAccessRequestDeclineNotificationBuilder.build(request=self.request)
+            )
+        )
+        super().execute(identity, uow)
+
+
+class GuestCancelAction(actions.CancelAction):
+    """Cancel action for guest access requests."""
+
+    def execute(self, identity, uow):
+        """Execute the cancel action."""
+        record = self.request.topic.resolve()
+        self.request["title"] = record.metadata["title"]
+        uow.register(
+            NotificationOp(
+                GuestAccessRequestCancelNotificationBuilder.build(
+                    request=self.request, identity=identity
+                )
+            )
+        )
+        super().execute(identity, uow)
+
+
+class GuestDeclineAction(actions.DeclineAction):
+    """Decline action for guest access requests."""
+
+    def execute(self, identity, uow):
+        """Execute the decline action."""
+        uow.register(
+            NotificationOp(
+                GuestAccessRequestDeclineNotificationBuilder.build(request=self.request)
+            )
+        )
         super().execute(identity, uow)
 
 
@@ -65,7 +120,18 @@ class GuestSubmitAction(actions.SubmitAction):
         """Execute the submit action."""
         record = self.request.topic.resolve()
         self.request["title"] = record.metadata["title"]
-
+        uow.register(
+            NotificationOp(
+                GuestAccessRequestSubmitNotificationBuilder.build(request=self.request)
+            )
+        )
+        uow.register(
+            NotificationOp(
+                GuestAccessRequestSubmittedNotificationBuilder.build(
+                    request=self.request
+                )
+            )
+        )
         super().execute(identity, uow)
 
 
@@ -97,23 +163,18 @@ class GuestAcceptAction(actions.AcceptAction):
                 (datetime.utcnow() + timedelta(days=days)).date().isoformat()
             )
         link = service.access.create_secret_link(identity, record.id, data)
-
         access_url = f"{record.links['self_html']}?token={link._link.token}"
 
-        plain_message = _("Access the record here: {url}".format(url=access_url))
-        message = _(
-            'Click <a href="{url}">here</a> to access the record.'.format(
-                url=access_url
+        uow.register(
+            ParentRecordCommitOp(
+                record._record.parent, indexer_context=dict(service=service)
             )
         )
-
-        uow.register(RecordCommitOp(record._record.parent))
         uow.register(
-            EmailOp(
-                receiver=payload["email"],
-                subject="Request accepted",
-                body=plain_message,
-                html_body=message,
+            NotificationOp(
+                GuestAccessRequestAcceptNotificationBuilder.build(
+                    self.request, access_url=access_url
+                )
             )
         )
 
@@ -146,18 +207,29 @@ class UserAcceptAction(actions.AcceptAction):
         permission = self.request["payload"]["permission"]
 
         data = {
-            "permission": permission,
-            "subject": {
-                "type": "user",
-                "id": str(creator.id),
-            },
-            "origin": f"request:{self.request.id}",
+            "grants": [
+                {
+                    "permission": permission,
+                    "subject": {
+                        "type": "user",
+                        "id": str(creator.id),
+                    },
+                    "origin": f"request:{self.request.id}",
+                }
+            ]
         }
 
         # NOTE: we're using the system identity here to avoid the grant creation
         #       potentially being blocked by the requesting user's profile visibility
-        service.access.create_grant(system_identity, record.pid.pid_value, data)
-        uow.register(RecordCommitOp(record.parent))
+        service.access.bulk_create_grants(system_identity, record.pid.pid_value, data)
+        uow.register(
+            ParentRecordCommitOp(record.parent, indexer_context=dict(service=service))
+        )
+        uow.register(
+            NotificationOp(
+                UserAccessRequestAcceptNotificationBuilder.build(self.request)
+            )
+        )
 
         super().execute(identity, uow)
 
@@ -179,15 +251,15 @@ class UserAccessRequest(RequestType):
 
     def _update_link_config(self, **context_vars):
         """Update the 'ui' variable for generation of links."""
-        return {"ui": context_vars["ui"] + "/me"}
+        return {"ui": context_vars["ui"] + "/access"}
 
     available_actions = {
         "create": actions.CreateAction,
         "submit": UserSubmitAction,
         "delete": actions.DeleteAction,
         "accept": UserAcceptAction,
-        "cancel": actions.CancelAction,
-        "decline": actions.DeclineAction,
+        "cancel": UserCancelAction,
+        "decline": UserDeclineAction,
         "expire": actions.ExpireAction,
     }
 
@@ -229,7 +301,7 @@ class GuestAccessRequest(RequestType):
             identity = context_vars.get("identity", g.identity)
 
             if authenticated_user not in identity.provides:
-                prefix = "/access-requests"
+                prefix = "/access"
 
         return {"ui": context_vars["ui"] + prefix}
 
@@ -252,8 +324,8 @@ class GuestAccessRequest(RequestType):
         "submit": GuestSubmitAction,
         "delete": actions.DeleteAction,
         "accept": GuestAcceptAction,
-        "cancel": actions.CancelAction,
-        "decline": actions.DeclineAction,
+        "cancel": GuestCancelAction,
+        "decline": GuestDeclineAction,
         "expire": actions.ExpireAction,
     }
 
@@ -262,6 +334,7 @@ class GuestAccessRequest(RequestType):
         "email": fields.Email(required=True),
         "full_name": fields.String(required=True),
         "token": fields.String(required=True),
-        "message": fields.String(required=False),
+        "message": fields.String(required=True),
         "secret_link_expiration": fields.String(required=True),
+        "consent_to_share_personal_data": fields.String(required=True),
     }

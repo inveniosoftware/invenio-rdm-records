@@ -56,6 +56,8 @@ class AccessRequestToken(db.Model):
     record_pid = db.Column(db.String(255), nullable=False)
     """PID value of the record for which the request will be created."""
 
+    consent_to_share_personal_data = db.Column(db.String(255), nullable=False)
+
     def delete(self):
         """Delete this secret link."""
         db.session.delete(self)
@@ -70,6 +72,7 @@ class AccessRequestToken(db.Model):
             "email": self.email,
             "full_name": self.full_name,
             "message": self.message,
+            "consent_to_share_personal_data": self.consent_to_share_personal_data,
             "record_pid": self.record_pid,
         }
 
@@ -97,6 +100,7 @@ class AccessRequestToken(db.Model):
         record_pid,
         shelf_life=None,
         expires_at=None,
+        consent=False,
     ):
         """Create a new request access token.
 
@@ -124,6 +128,7 @@ class AccessRequestToken(db.Model):
             record_pid=record_pid,
             expires_at=expires_at,
             token=token_urlsafe(),
+            consent_to_share_personal_data=consent,
         )
         db.session.add(access_request_token)
 

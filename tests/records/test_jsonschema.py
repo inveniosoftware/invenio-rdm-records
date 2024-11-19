@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2020-2021 CERN.
+# Copyright (C) 2020-2024 CERN.
 # Copyright (C) 2020-2021 Northwestern University.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
@@ -353,23 +353,6 @@ def test_related_identifiers(appctx):
     # Additional property
     assert fails_meta(
         {"related_identifiers": [{"identifier": "10.1234/test", "invalid": "doi"}]}
-    )
-    # Unique
-    assert fails_meta(
-        {
-            "related_identifiers": [
-                {
-                    "identifier": "10.1234/test",
-                    "scheme": "doi",
-                    "relation_type": {"id": "cites"},
-                },
-                {
-                    "identifier": "10.1234/test",
-                    "scheme": "doi",
-                    "relation_type": {"id": "cites"},
-                },
-            ]
-        }
     )
 
 

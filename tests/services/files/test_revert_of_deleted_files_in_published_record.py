@@ -72,10 +72,14 @@ def test_revert_of_deleted_files_in_published_record(
     # list all files
     file_service_config = service.files.config
     file_cls = file_service_config.record_cls.files.file_cls
-    all_files = [
-        f for f in file_cls.list_by_record(str(record._record.id), with_deleted=True)
-    ]
-    deleted_file = all_files[1]
+    all_files = {
+        f.key: f
+        for f in file_cls.list_by_record(
+            str(record._record.id),
+            with_deleted=True,
+        )
+    }
+    deleted_file = all_files["test.pdf"]
 
     # revert deleted file
     deleted_file.revert(deleted_file.revision_id - 1)

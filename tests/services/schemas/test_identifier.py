@@ -20,7 +20,7 @@ allowed_schemes = {"doi": {"label": "DOI", "validator": idutils.is_doi}}
 
 
 def test_valid_identifier():
-    valid = {"identifier": "10.5281/rdm.9999999", "scheme": "doi"}
+    valid = {"identifier": "10.1234/rdm.9999999", "scheme": "doi"}
     loaded = IdentifierSchema(allowed_schemes=allowed_schemes).load(valid)
     assert valid == loaded
 
@@ -28,7 +28,7 @@ def test_valid_identifier():
 def test_valid_no_schema():
     """It is valid becuase the schema is detected by the schema."""
     valid_identifier = {
-        "identifier": "10.5281/rdm.9999999",
+        "identifier": "10.1234/rdm.9999999",
     }
     loaded = IdentifierSchema(allowed_schemes=allowed_schemes).load(valid_identifier)
     valid_identifier["scheme"] = "doi"
@@ -51,28 +51,46 @@ def test_valid_empty_list(app, minimal_record):
 def test_valid_multiple_identifiers(app, minimal_record):
     metadata = minimal_record["metadata"]
     metadata["identifiers"] = [
-        {"identifier": "10.5281/rdm.9999999", "scheme": "doi"},
+        {"identifier": "10.1234/rdm.9999999", "scheme": "doi"},
         {"identifier": "ark:/123/456", "scheme": "ark"},
     ]
     data = MetadataSchema().load(metadata)
     assert data["identifiers"] == metadata["identifiers"]
 
 
-def test_invalid_duplicate_scheme(app, minimal_record):
-    # NOTE: Duplicates are accepted, there is no de-duplication
+def test_invalid_duplicate_scheme_and_value(app, minimal_record):
     metadata = minimal_record["metadata"]
     metadata["identifiers"] = [
-        {"identifier": "10.5281/rdm.9999999", "scheme": "doi"},
-        {"identifier": "10.5281/rdm.0000000", "scheme": "doi"},
+        {"identifier": "10.1234/rdm.9999999", "scheme": "doi"},
+        {"identifier": "10.1234/rdm.9999999", "scheme": "doi"},
     ]
 
     with pytest.raises(ValidationError):
         data = MetadataSchema().load(metadata)
 
     metadata["identifiers"] = [
-        {"identifier": "10.5281/rdm.9999999", "scheme": "doi"},
-        {"identifier": "10.5281/rdm.0000000"},
+        {"identifier": "10.1234/rdm.9999999", "scheme": "doi"},
+        {"identifier": "10.1234/rdm.9999999"},
     ]
 
     with pytest.raises(ValidationError):
         data = MetadataSchema().load(metadata)
+
+
+def test_valid_duplicate_scheme_with_different_values(app, minimal_record):
+    metadata = minimal_record["metadata"]
+    metadata["identifiers"] = [
+        {"identifier": "10.1234/rdm.9999999", "scheme": "doi"},
+        {"identifier": "10.1234/rdm.0000000", "scheme": "doi"},
+    ]
+
+    # it should not raise
+    MetadataSchema().load(metadata)
+
+    metadata["identifiers"] = [
+        {"identifier": "10.1234/rdm.9999999", "scheme": "doi"},
+        {"identifier": "10.1234/rdm.0000000"},
+    ]
+
+    # it should not raise
+    MetadataSchema().load(metadata)

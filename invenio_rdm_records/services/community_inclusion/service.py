@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2023 CERN.
+# Copyright (C) 2023-2024 CERN.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
@@ -8,16 +8,14 @@
 """Community Inclusion Service."""
 
 from flask import current_app
+from invenio_access.permissions import system_identity
 from invenio_communities import current_communities
-from invenio_i18n import lazy_gettext as _
-from invenio_requests import current_requests_service
+from invenio_i18n import gettext as _
+from invenio_requests import current_events_service, current_requests_service
+from invenio_requests.customizations.event_types import CommentEventType
 
-from invenio_rdm_records.requests.community_inclusion import (
-    CommunityInclusion,
-    is_access_restriction_valid,
-)
-from invenio_rdm_records.requests.community_submission import CommunitySubmission
-from invenio_rdm_records.services.errors import InvalidAccessRestrictions
+from ...requests.community_inclusion import CommunityInclusion
+from ...requests.community_submission import CommunitySubmission
 
 
 class CommunityInclusionService:
@@ -45,10 +43,6 @@ class CommunityInclusionService:
         if request.type.type_id not in self.supported_types:
             raise ValueError("Invalid request type.")
 
-        # validate record and community access
-        if not is_access_restriction_valid(record, community):
-            raise InvalidAccessRestrictions()
-
         # All other preconditions can be checked by the action itself which can
         # raise appropriate exceptions.
         return current_requests_service.execute_action(
@@ -69,7 +63,24 @@ class CommunityInclusionService:
 
         if can_include_directly:
             request_item = current_requests_service.execute_action(
-                identity, request.id, "accept", data=None, uow=uow
+                system_identity, request.id, "accept", data=None, uow=uow
+            )
+
+            data = {
+                "payload": {
+                    "content": _(
+                        "This request has been automatically accepted, as the uploader can submit to "
+                        "community directly without review."
+                    ),
+                }
+            }
+            current_events_service.create(
+                system_identity,
+                request_item.id,
+                data,
+                CommentEventType,
+                uow=uow,
+                notify=False,
             )
         else:
             request_item = current_requests_service.read(identity, request.id)

@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2019-2023 CERN.
+# Copyright (C) 2019-2024 CERN.
 # Copyright (C) 2019 Northwestern University.
-# Copyright (C) 2021-2023 Graz University of Technology.
+# Copyright (C) 2021-2024 Graz University of Technology.
 # Copyright (C) 2023 TU Wien.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
@@ -13,13 +13,25 @@
 from datetime import timedelta
 
 import idutils
+from invenio_access.permissions import system_permission
 from invenio_i18n import lazy_gettext as _
+from invenio_records_resources.services.records.queryparser import QueryParser
+from invenio_records_resources.services.records.queryparser.transformer import (
+    RestrictedTerm,
+    RestrictedTermValue,
+    SearchFieldTransformer,
+)
 
+import invenio_rdm_records.services.communities.moderation as communities_moderation
+from invenio_rdm_records.services.components.verified import UserModerationHandler
+
+from . import tokens
 from .resources.serializers import DataCite43JSONSerializer
 from .services import facets
 from .services.config import lock_edit_published_files
 from .services.permissions import RDMRecordPermissionPolicy
 from .services.pids import providers
+from .services.queryparser import word_internal_notes
 
 # Invenio-RDM-Records
 # ===================
@@ -61,7 +73,7 @@ RDM_RECORDS_PERSONORG_SCHEMES = {
 RDM_RECORDS_IDENTIFIERS_SCHEMES = {
     "ark": {"label": _("ARK"), "validator": idutils.is_ark, "datacite": "ARK"},
     "arxiv": {"label": _("arXiv"), "validator": idutils.is_arxiv, "datacite": "arXiv"},
-    "bibcode": {
+    "ads": {
         "label": _("Bibcode"),
         "validator": idutils.is_ads,
         "datacite": "bibcode",
@@ -131,6 +143,12 @@ RDM_ALLOW_RESTRICTED_RECORDS = True
 """Allow users to set restricted/private records."""
 
 #
+# Record communities
+#
+RDM_COMMUNITY_REQUIRED_TO_PUBLISH = False
+"""Enforces at least one community per record."""
+
+#
 # Search configuration
 #
 RDM_FACETS = {
@@ -173,8 +191,22 @@ RDM_FACETS = {
             "field": "subjects.subject",
         },
     },
+    # subject_nested is deprecated and should be removed.
+    # subject_combined does require a pre-existing change to indexed documents,
+    # so it's unclear if a direct replacement is right.
+    # Keeping it around until v13 might be better. On the flipside it is an incorrect
+    # facet...
     "subject_nested": {
         "facet": facets.subject_nested,
+        "ui": {
+            "field": "subjects.scheme",
+            "childAgg": {
+                "field": "subjects.subject",
+            },
+        },
+    },
+    "subject_combined": {
+        "facet": facets.subject_combined,
         "ui": {
             "field": "subjects.scheme",
             "childAgg": {
@@ -230,6 +262,7 @@ RDM_SORT_OPTIONS = {
 
 """
 
+
 RDM_SEARCH = {
     "facets": ["access_status", "file_type", "resource_type"],
     "sort": [
@@ -240,6 +273,18 @@ RDM_SEARCH = {
         "mostviewed",
         "mostdownloaded",
     ],
+    "query_parser_cls": QueryParser.factory(
+        mapping={
+            "internal_notes.note": RestrictedTerm(system_permission),
+            "internal_notes.id": RestrictedTerm(system_permission),
+            "internal_notes.added_by": RestrictedTerm(system_permission),
+            "internal_notes.timestamp": RestrictedTerm(system_permission),
+            "_exists_": RestrictedTermValue(
+                system_permission, word=word_internal_notes
+            ),
+        },
+        tree_transformer_cls=SearchFieldTransformer,
+    ),
 }
 """Record search configuration.
 
@@ -345,11 +390,13 @@ RDM_PERSISTENT_IDENTIFIERS = {
         "label": _("DOI"),
         "validator": idutils.is_doi,
         "normalizer": idutils.normalize_doi,
+        "is_enabled": providers.DataCitePIDProvider.is_enabled,
     },
     "oai": {
         "providers": ["oai"],
         "required": True,
         "label": _("OAI"),
+        "is_enabled": providers.OAIPIDProvider.is_enabled,
     },
 }
 """The configured persistent identifiers for records.
@@ -377,10 +424,11 @@ RDM_PARENT_PERSISTENT_IDENTIFIERS = {
     "doi": {
         "providers": ["datacite"],
         "required": True,
-        "condition": lambda record: record.pids["doi"]["provider"] == "datacite",
+        "condition": lambda rec: rec.pids.get("doi", {}).get("provider") == "datacite",
         "label": _("Concept DOI"),
         "validator": idutils.is_doi,
         "normalizer": idutils.normalize_doi,
+        "is_enabled": providers.DataCitePIDProvider.is_enabled,
     },
 }
 """Persistent identifiers for parent record."""
@@ -521,10 +569,100 @@ RDM_RESOURCE_ACCESS_TOKENS_WHITELISTED_JWT_ALGORITHMS = ["HS256", "HS384", "HS51
 RDM_RESOURCE_ACCESS_TOKEN_REQUEST_ARG = "resource_access_token"
 """URL argument to provide resource access token."""
 
+RDM_RESOURCE_ACCESS_TOKENS_SUBJECT_SCHEMA = tokens.resource_access.SubjectSchema
+"""Resource access token Marshmallow schema for parsing JWT subject."""
 
 RDM_LOCK_EDIT_PUBLISHED_FILES = lock_edit_published_files
-"""Lock editing already published files (enforce record versioning)."""
+"""Lock editing already published files (enforce record versioning).
+
+   signature to implement:
+   def lock_edit_published_files(service, identity, record=None, draft=None):
+"""
+
+RDM_CONTENT_MODERATION_HANDLERS = [
+    UserModerationHandler(),
+]
+"""Records content moderation handlers."""
+
+RDM_COMMUNITY_CONTENT_MODERATION_HANDLERS = [
+    communities_moderation.UserModerationHandler(),
+]
+"""Community content moderation handlers."""
 
 # Feature flag to enable/disable user moderation
 RDM_USER_MODERATION_ENABLED = False
 """Flag to enable creation of user moderation requests on specific user actions."""
+
+RDM_RECORDS_MAX_FILES_COUNT = 100
+"""Max amount of files allowed to upload in the deposit form."""
+
+RDM_RECORDS_MAX_MEDIA_FILES_COUNT = 100
+"""Max amount of media files allowed to upload in the deposit form."""
+
+RDM_MEDIA_FILES_DEFAULT_QUOTA_SIZE = 10 * (10**9)  # 10 GB
+"""Default size for a bucket in bytes for media files."""
+
+RDM_MEDIA_FILES_DEFAULT_MAX_FILE_SIZE = 10 * (10**9)  # 10 GB
+"""Default maximum file size for a bucket in bytes for media files."""
+
+# For backwards compatibility,
+# FILES_REST_DEFAULT_QUOTA_SIZE & FILES_REST_DEFAULT_MAX_FILE_SIZE
+# are used respectively instead
+RDM_FILES_DEFAULT_QUOTA_SIZE = None
+"""Default size for a bucket in bytes for files."""
+
+RDM_FILES_DEFAULT_MAX_FILE_SIZE = None
+"""Default maximum file size for a bucket in bytes for files."""
+
+
+RDM_DATACITE_FUNDER_IDENTIFIERS_PRIORITY = ("ror", "doi", "grid", "isni", "gnd")
+"""Priority of funder identifiers types to be used for DataCite serialization."""
+
+RDM_IIIF_MANIFEST_FORMATS = [
+    "gif",
+    "jp2",
+    "jpeg",
+    "jpg",
+    "png",
+    "tif",
+    "tiff",
+]
+"""Formats to be included in the IIIF Manifest."""
+
+#
+# IIIF Tiles configuration
+#
+IIIF_TILES_GENERATION_ENABLED = False
+"""Enable generating pyramidal TIFF tiles for uploaded images."""
+
+IIIF_TILES_VALID_EXTENSIONS = [
+    "jp2",
+    "jpeg",
+    "jpg",
+    "pdf",  # We can still generate tiles for the first page of a PDF
+    "png",
+    "png",
+    "tif",
+    "tiff",
+]
+"""Valid (normalized) file extensions for generating tiles."""
+
+IIIF_TILES_STORAGE_BASE_PATH = "images/"
+"""Base path for storing IIIF tiles.
+
+Relative paths are resolved against the application instance path.
+"""
+
+IIIF_TILES_CONVERTER_PARAMS = {
+    "compression": "jpeg",
+    "Q": 90,
+    "tile_width": 256,
+    "tile_height": 256,
+}
+"""Parameters to be passed to the tiles converter."""
+
+RDM_RECORDS_RESTRICTION_GRACE_PERIOD = timedelta(days=30)
+"""Grace period for changing record access to restricted."""
+
+RDM_RECORDS_ALLOW_RESTRICTION_AFTER_GRACE_PERIOD = False
+"""Whether record access restriction is allowed after the grace period or not."""

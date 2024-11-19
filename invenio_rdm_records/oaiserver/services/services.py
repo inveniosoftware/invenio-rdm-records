@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2022-2023 Graz University of Technology.
+# Copyright (C) 2022-2024 Graz University of Technology.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
@@ -10,9 +10,10 @@
 import re
 
 from flask import current_app
-from flask_sqlalchemy import Pagination
+from invenio_db import db
 from invenio_i18n import lazy_gettext as _
 from invenio_oaiserver.models import OAISet
+from invenio_oaiserver.percolator import _new_percolator
 from invenio_records_resources.services import Service
 from invenio_records_resources.services.base import LinksTemplate
 from invenio_records_resources.services.base.utils import map_search_params
@@ -23,12 +24,19 @@ from sqlalchemy import or_
 from sqlalchemy.orm.exc import NoResultFound
 from sqlalchemy.sql import text
 
-from invenio_rdm_records.oaiserver.services.errors import (
+from .errors import (
     OAIPMHSetDoesNotExistError,
     OAIPMHSetNotEditable,
     OAIPMHSetSpecAlreadyExistsError,
 )
-from invenio_rdm_records.oaiserver.services.uow import OAISetCommitOp, OAISetDeleteOp
+from .uow import OAISetCommitOp, OAISetDeleteOp
+
+try:
+    # flask_sqlalchemy<3.0.0
+    from flask_sqlalchemy import Pagination
+except ImportError:
+    # flask_sqlalchemy>=3.0.0
+    from flask_sqlalchemy.pagination import Pagination
 
 
 class OAIPMHServerService(Service):
@@ -234,3 +242,11 @@ class OAIPMHServerService(Service):
                 self, schema=self.config.metadata_format_schema
             ),
         )
+
+    def rebuild_index(self, identity):
+        """Rebuild OAI sets percolator index."""
+        entries = db.session.query(OAISet.spec, OAISet.search_pattern).yield_per(1000)
+        for spec, search_pattern in entries:
+            # Creates or updates the OAI set
+            _new_percolator(spec, search_pattern)
+        return True

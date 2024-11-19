@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2019 CERN.
+# Copyright (C) 2019-2024 CERN.
 # Copyright (C) 2019 Northwestern University.
 # Copyright (C) 2023 TU Wien.
 #
@@ -9,6 +9,7 @@
 
 """Permissions for Invenio RDM Records."""
 
+from invenio_administration.generators import Administration
 from invenio_communities.generators import CommunityCurators
 from invenio_records_permissions.generators import (
     AnyUser,
@@ -18,19 +19,25 @@ from invenio_records_permissions.generators import (
     SystemProcess,
 )
 from invenio_records_permissions.policies.records import RecordPermissionPolicy
-from invenio_requests.services.generators import Creator, Receiver, Status
+from invenio_requests.services.generators import Receiver, Status
 from invenio_requests.services.permissions import (
     PermissionPolicy as RequestPermissionPolicy,
 )
+from invenio_users_resources.services.permissions import UserManager
 
 from ..requests.access import GuestAccessRequest
 from .generators import (
     AccessGrant,
+    CommunityInclusionReviewers,
     GuestAccessRequestToken,
+    IfAtLeastOneCommunity,
     IfCreate,
+    IfDeleted,
     IfExternalDOIRecord,
     IfFileIsLocal,
     IfNewRecord,
+    IfOneCommunity,
+    IfRecordDeleted,
     IfRequestType,
     IfRestricted,
     RecordCommunitiesAction,
@@ -54,12 +61,17 @@ class RDMRecordPermissionPolicy(RecordPermissionPolicy):
         "object-read": "read_files",
     }
 
+    # permission meant for global curators of the instance
+    # (for now applies to internal notes field only
+    # to be replaced with an adequate permission when it is defined)
+    can_manage_internal = [SystemProcess()]
     #
     # High-level permissions (used by low-level)
     #
     can_manage = [
         RecordOwners(),
         RecordCommunitiesAction("curate"),
+        AccessGrant("manage"),
         SystemProcess(),
     ]
     can_curate = can_manage + [AccessGrant("edit"), SecretLinks("edit")]
@@ -68,11 +80,13 @@ class RDMRecordPermissionPolicy(RecordPermissionPolicy):
         AccessGrant("preview"),
         SecretLinks("preview"),
         SubmissionReviewer(),
+        UserManager,
     ]
     can_view = can_preview + [
         AccessGrant("view"),
         SecretLinks("view"),
         SubmissionReviewer(),
+        CommunityInclusionReviewers(),
         RecordCommunitiesAction("view"),
     ]
 
@@ -97,6 +111,18 @@ class RDMRecordPermissionPolicy(RecordPermissionPolicy):
     can_read = [
         IfRestricted("record", then_=can_view, else_=can_all),
     ]
+
+    # Used for search filtering of deleted records
+    # cannot be implemented inside can_read - otherwise permission will
+    # kick in before tombstone renders
+    can_read_deleted = [
+        IfRecordDeleted(
+            then_=[UserManager, SystemProcess()],
+            else_=can_read,
+        )
+    ]
+    can_read_deleted_files = can_read_deleted
+    can_media_read_deleted_files = can_read_deleted_files
     # Allow reading the files of a record
     can_read_files = [
         IfRestricted("files", then_=can_view, else_=can_all),
@@ -167,7 +193,7 @@ class RDMRecordPermissionPolicy(RecordPermissionPolicy):
     # Actions
     #
     # Allow to put a record in edit mode (create a draft from record)
-    can_edit = can_curate
+    can_edit = [IfDeleted(then_=[Disable()], else_=can_curate)]
     # Allow deleting/discarding a draft and all associated files
     can_delete_draft = can_curate
     # Allow creating a new version of an existing published record.
@@ -179,7 +205,18 @@ class RDMRecordPermissionPolicy(RecordPermissionPolicy):
         ),
     ]
     # Allow publishing a new record or changes to an existing record.
-    can_publish = can_review
+    can_publish = [
+        IfConfig(
+            "RDM_COMMUNITY_REQUIRED_TO_PUBLISH",
+            then_=[
+                IfAtLeastOneCommunity(
+                    then_=can_review,
+                    else_=[Administration(), SystemProcess()],
+                ),
+            ],
+            else_=can_review,
+        )
+    ]
     # Allow lifting a record or draft.
     can_lift_embargo = can_manage
 
@@ -189,13 +226,27 @@ class RDMRecordPermissionPolicy(RecordPermissionPolicy):
     # Who can add record to a community
     can_add_community = can_manage
     # Who can remove a community from a record
-    can_remove_community = [
+    can_remove_community_ = [
         RecordOwners(),
         CommunityCurators(),
         SystemProcess(),
     ]
+    can_remove_community = [
+        IfConfig(
+            "RDM_COMMUNITY_REQUIRED_TO_PUBLISH",
+            then_=[
+                IfOneCommunity(
+                    then_=[Administration(), SystemProcess()],
+                    else_=can_remove_community_,
+                ),
+            ],
+            else_=can_remove_community_,
+        ),
+    ]
     # Who can remove records from a community
-    can_remove_record = [CommunityCurators()]
+    can_remove_record = [CommunityCurators(), Administration(), SystemProcess()]
+    # Who can add records to a community in bulk
+    can_bulk_add = [SystemProcess()]
 
     #
     # Media files - draft
@@ -228,24 +279,38 @@ class RDMRecordPermissionPolicy(RecordPermissionPolicy):
         # it was simpler and less coupling to implement this as permission check
         IfFileIsLocal(then_=can_read, else_=[SystemProcess()])
     ]
-    can_media_create__files = [Disable()]
+    can_media_create_files = [Disable()]
     can_media_set_content_files = [Disable()]
     can_media_commit_files = [Disable()]
     can_media_update_files = [Disable()]
     can_media_delete_files = [Disable()]
 
     #
+    # Record deletion workflows
+    #
+    can_delete = [Administration(), SystemProcess()]
+    can_delete_files = [SystemProcess()]
+    can_purge = [SystemProcess()]
+
+    #
+    # Record and user quota
+    #
+
+    can_manage_quota = [
+        # moderators
+        UserManager,
+        SystemProcess(),
+    ]
+    #
     # Disabled actions (these should not be used or changed)
     #
     # - Records/files are updated/deleted via drafts so we don't support
     #   using below actions.
     can_update = [Disable()]
-    can_delete = [Disable()]
     can_create_files = [Disable()]
     can_set_content_files = [Disable()]
     can_commit_files = [Disable()]
     can_update_files = [Disable()]
-    can_delete_files = [Disable()]
 
     # Used to hide at the moment the `parent.is_verified` field. It should be set to
     # correct permissions based on which the field will be exposed only to moderators

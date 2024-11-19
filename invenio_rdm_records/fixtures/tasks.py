@@ -2,6 +2,7 @@
 #
 # Copyright (C) 2021-2022 CERN.
 # Copyright (C) 2021-2022 Northwestern University.
+# Copyright (C) 2023 California Institute of Technology.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
@@ -9,6 +10,7 @@
 """Celery tasks for fixtures."""
 
 import random
+from io import BytesIO
 
 from celery import shared_task
 from flask import current_app
@@ -22,9 +24,11 @@ from invenio_access.permissions import (
 from invenio_communities.generators import CommunityRoleNeed
 from invenio_communities.members.errors import AlreadyMemberError
 from invenio_communities.proxies import current_communities
+from invenio_pidstore.errors import PersistentIdentifierError
 from invenio_records_resources.proxies import current_service_registry
 from invenio_requests import current_events_service, current_requests_service
 from invenio_requests.customizations import CommentEventType
+from invenio_vocabularies.records.api import Vocabulary
 
 from ..proxies import current_oaipmh_server_service, current_rdm_records_service
 from ..requests import CommunitySubmission
@@ -43,13 +47,25 @@ def get_authenticated_identity(user_id):
 
 @shared_task
 def create_vocabulary_record(service_str, data):
-    """Create a vocabulary record."""
+    """Create or update a vocabulary record."""
     service = current_service_registry.get(service_str)
-    service.create(system_identity, data)
+    if "type" in data:
+        # We only check non-datastream vocabularies for updates
+        try:
+            pid = (data["type"], data["id"])
+            # If the entry hasn't been added, this will fail
+            record = Vocabulary.pid.resolve(pid)
+            service.update(system_identity, pid, data=data)
+            current_app.logger.info(f"updated existing fixture with {data}")
+        except PersistentIdentifierError:
+            service.create(system_identity, data)
+            current_app.logger.info(f"added new fixture with {data}")
+    else:
+        service.create(system_identity, data)
 
 
 @shared_task
-def create_demo_record(user_id, data, publish=True):
+def create_demo_record(user_id, data, publish=True, create_file=False):
     """Create demo record."""
     service = current_rdm_records_service
     if user_id == system_user_id:
@@ -58,8 +74,20 @@ def create_demo_record(user_id, data, publish=True):
         identity = get_authenticated_identity(user_id)
 
     draft = service.create(data=data, identity=identity)
+    if create_file:
+        _add_file_to_draft(service.draft_files, draft.id, "file.txt", identity)
     if publish:
         service.publish(id_=draft.id, identity=identity)
+
+
+def _add_file_to_draft(draft_file_service, draft_id, file_id, identity):
+    """Add a file to the record."""
+    draft_file_service.init_files(identity, draft_id, data=[{"key": file_id}])
+    draft_file_service.set_file_content(
+        identity, draft_id, file_id, BytesIO(b"test file content")
+    )
+    result = draft_file_service.commit_file(identity, draft_id, file_id)
+    return result
 
 
 @shared_task

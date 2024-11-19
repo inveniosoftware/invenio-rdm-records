@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2019-2022 CERN.
+# Copyright (C) 2019-2024 CERN.
 # Copyright (C) 2019-2022 Northwestern University.
 # Copyright (C) 2021 TU Wien.
 # Copyright (C) 2022-2023 Graz University of Technology.
@@ -13,6 +13,7 @@
 See https://pytest-invenio.readthedocs.io/ for documentation on which test
 fixtures are available.
 """
+
 from invenio_rdm_records.services.permissions import RDMRequestsPermissionPolicy
 
 # Monkey patch Werkzeug 2.1
@@ -36,12 +37,12 @@ except AttributeError:
 from collections import namedtuple
 from copy import deepcopy
 from datetime import datetime
+from io import BytesIO
 from unittest import mock
 
 import arrow
 import pytest
 from dateutil import tz
-from flask import g
 from flask_principal import Identity, Need, RoleNeed, UserNeed
 from flask_security import login_user
 from flask_security.utils import hash_password
@@ -58,6 +59,7 @@ from invenio_communities.notifications.builders import (
     CommunityInvitationSubmittedNotificationBuilder,
 )
 from invenio_notifications.backends import EmailNotificationBackend
+from invenio_notifications.proxies import current_notifications_manager
 from invenio_notifications.services.builders import NotificationBuilder
 from invenio_oauth2server.models import Client
 from invenio_pidstore.errors import PIDDoesNotExistError
@@ -67,7 +69,6 @@ from invenio_records_resources.services.custom_fields import TextCF
 from invenio_requests.notifications.builders import (
     CommentRequestEventCreateNotificationBuilder,
 )
-from invenio_requests.proxies import current_user_moderation_service as mod_service
 from invenio_users_resources.permissions import user_management_action
 from invenio_users_resources.proxies import current_users_service
 from invenio_users_resources.records.api import UserAggregate
@@ -83,14 +84,28 @@ from invenio_vocabularies.contrib.subjects.api import Subject
 from invenio_vocabularies.proxies import current_service as vocabulary_service
 from invenio_vocabularies.records.api import Vocabulary
 from marshmallow import fields
+from werkzeug.local import LocalProxy
 
 from invenio_rdm_records import config
 from invenio_rdm_records.notifications.builders import (
+    CommunityInclusionAcceptNotificationBuilder,
+    CommunityInclusionCancelNotificationBuilder,
+    CommunityInclusionDeclineNotificationBuilder,
+    CommunityInclusionExpireNotificationBuilder,
     CommunityInclusionSubmittedNotificationBuilder,
+    GrantUserAccessNotificationBuilder,
+    GuestAccessRequestAcceptNotificationBuilder,
+    GuestAccessRequestSubmitNotificationBuilder,
+    GuestAccessRequestTokenCreateNotificationBuilder,
+    UserAccessRequestAcceptNotificationBuilder,
+    UserAccessRequestSubmitNotificationBuilder,
 )
 from invenio_rdm_records.proxies import current_rdm_records_service
 from invenio_rdm_records.records.api import RDMDraft, RDMParent, RDMRecord
-from invenio_rdm_records.requests.entity_resolvers import RDMRecordServiceResultResolver
+from invenio_rdm_records.requests.entity_resolvers import (
+    EmailResolver,
+    RDMRecordServiceResultResolver,
+)
 from invenio_rdm_records.resources.serializers import DataCite43JSONSerializer
 from invenio_rdm_records.services.communities.components import (
     CommunityServiceComponents,
@@ -165,44 +180,78 @@ def app_config(app_config, mock_datacite_client):
     for config_key in supported_configurations:
         app_config[config_key] = getattr(config, config_key, None)
 
-    app_config[
-        "RECORDS_REFRESOLVER_CLS"
-    ] = "invenio_records.resolver.InvenioRefResolver"
-    app_config[
-        "RECORDS_REFRESOLVER_STORE"
-    ] = "invenio_jsonschemas.proxies.current_refresolver_store"
+    app_config["THEME_SITENAME"] = "Invenio"
+
+    app_config["RECORDS_REFRESOLVER_CLS"] = (
+        "invenio_records.resolver.InvenioRefResolver"
+    )
+    app_config["RECORDS_REFRESOLVER_STORE"] = (
+        "invenio_jsonschemas.proxies.current_refresolver_store"
+    )
 
     # OAI Server
-    app_config["OAISERVER_ID_PREFIX"] = "oai:inveniosoftware.org:recid/"
+    app_config["OAISERVER_REPOSITORY_NAME"] = "InvenioRDM"
+    app_config["OAISERVER_ID_PREFIX"] = "inveniordm"
     app_config["OAISERVER_RECORD_INDEX"] = "rdmrecords-records"
+    app_config["OAISERVER_SEARCH_CLS"] = "invenio_rdm_records.oai:OAIRecordSearch"
+    app_config["OAISERVER_ID_FETCHER"] = "invenio_rdm_records.oai:oaiid_fetcher"
+    app_config["OAISERVER_LAST_UPDATE_KEY"] = "updated"
+    app_config["OAISERVER_CREATED_KEY"] = "created"
+    app_config["OAISERVER_RECORD_CLS"] = "invenio_rdm_records.records.api:RDMRecord"
+    app_config["OAISERVER_RECORD_SETS_FETCHER"] = (
+        "invenio_oaiserver.percolator:find_sets_for_record"
+    )
+    app_config["OAISERVER_GETRECORD_FETCHER"] = (
+        "invenio_rdm_records.oai:getrecord_fetcher"
+    )
     app_config["OAISERVER_METADATA_FORMATS"] = {
+        "marcxml": {
+            "serializer": "invenio_rdm_records.oai:marcxml_etree",
+            "schema": "https://www.loc.gov/standards/marcxml/schema/MARC21slim.xsd",
+            "namespace": "https://www.loc.gov/standards/marcxml/",
+        },
         "oai_dc": {
             "serializer": "invenio_rdm_records.oai:dublincore_etree",
             "schema": "http://www.openarchives.org/OAI/2.0/oai_dc.xsd",
             "namespace": "http://www.openarchives.org/OAI/2.0/oai_dc/",
         },
+        "dcat": {
+            "serializer": "invenio_rdm_records.oai:dcat_etree",
+            "schema": "http://schema.datacite.org/meta/kernel-4/metadata.xsd",
+            "namespace": "https://www.w3.org/ns/dcat",
+        },
+        "marc21": {
+            "serializer": "invenio_rdm_records.oai:marcxml_etree",
+            "schema": "https://www.loc.gov/standards/marcxml/schema/MARC21slim.xsd",
+            "namespace": "https://www.loc.gov/standards/marcxml/",
+        },
         "datacite": {
             "serializer": "invenio_rdm_records.oai:datacite_etree",
-            "schema": "http://schema.datacite.orgmeta/nonexistant/nonexistant.xsd",  # noqa
-            "namespace": "http://datacite.org/schema/nonexistant",
+            "schema": "http://schema.datacite.org/meta/kernel-4.3/metadata.xsd",
+            "namespace": "http://datacite.org/schema/kernel-4",
         },
         "oai_datacite": {
             "serializer": "invenio_rdm_records.oai:oai_datacite_etree",
             "schema": "http://schema.datacite.org/oai/oai-1.1/oai.xsd",
             "namespace": "http://schema.datacite.org/oai/oai-1.1/",
         },
-        "oai_marcxml": {
-            "serializer": "invenio_rdm_records.oai:oai_marcxml_etree",
-            "schema": "https://www.loc.gov/standards/marcxml/schema/MARC21slim.xsd",
-            "namespace": "https://www.loc.gov/standards/marcxml/",
+        "datacite4": {
+            "serializer": "invenio_rdm_records.oai:datacite_etree",
+            "schema": "http://schema.datacite.org/meta/kernel-4.3/metadata.xsd",
+            "namespace": "http://datacite.org/schema/kernel-4",
         },
-        "oai_dcat": {
-            "serializer": "invenio_rdm_records.oai:oai_dcat_etree",
-            "schema": "http://schema.datacite.org/meta/kernel-4/metadata.xsd",
-            "namespace": "https://www.w3.org/ns/dcat",
+        "oai_datacite4": {
+            "serializer": ("invenio_rdm_records.oai:oai_datacite_etree"),
+            "schema": "http://schema.datacite.org/oai/oai-1.1/oai.xsd",
+            "namespace": "http://schema.datacite.org/oai/oai-1.1/",
         },
     }
-    app_config["INDEXER_DEFAULT_INDEX"] = "rdmrecords-records-record-v6.0.0"
+    records_index = LocalProxy(
+        lambda: current_rdm_records_service.record_cls.index._name
+    )
+    app_config["OAISERVER_RECORD_INDEX"] = records_index
+    app_config["INDEXER_DEFAULT_INDEX"] = records_index
+
     # Variable not used. We set it to silent warnings
     app_config["JSONSCHEMAS_HOST"] = "not-used"
 
@@ -279,12 +328,23 @@ def app_config(app_config, mock_datacite_client):
     # Specifying dummy builders to avoid raising errors for most tests. Extend as needed.
     app_config["NOTIFICATIONS_BUILDERS"] = {
         CommentRequestEventCreateNotificationBuilder.type: DummyNotificationBuilder,
+        CommunityInclusionAcceptNotificationBuilder.type: DummyNotificationBuilder,
+        CommunityInclusionCancelNotificationBuilder.type: DummyNotificationBuilder,
+        CommunityInclusionDeclineNotificationBuilder.type: DummyNotificationBuilder,
+        CommunityInclusionExpireNotificationBuilder.type: DummyNotificationBuilder,
         CommunityInclusionSubmittedNotificationBuilder.type: DummyNotificationBuilder,
         CommunityInvitationSubmittedNotificationBuilder.type: DummyNotificationBuilder,
+        GuestAccessRequestTokenCreateNotificationBuilder.type: GuestAccessRequestTokenCreateNotificationBuilder,
+        GuestAccessRequestAcceptNotificationBuilder.type: GuestAccessRequestAcceptNotificationBuilder,
+        GuestAccessRequestSubmitNotificationBuilder.type: GuestAccessRequestSubmitNotificationBuilder,
+        UserAccessRequestAcceptNotificationBuilder.type: UserAccessRequestAcceptNotificationBuilder,
+        UserAccessRequestSubmitNotificationBuilder.type: UserAccessRequestSubmitNotificationBuilder,
+        GrantUserAccessNotificationBuilder.type: GrantUserAccessNotificationBuilder,
     }
 
     # Specifying default resolvers. Will only be used in specific test cases.
     app_config["NOTIFICATIONS_ENTITY_RESOLVERS"] = [
+        EmailResolver(),
         RDMRecordServiceResultResolver(),
         ServiceResultResolver(service_id="users", type_key="user"),
         ServiceResultResolver(service_id="communities", type_key="community"),
@@ -293,9 +353,9 @@ def app_config(app_config, mock_datacite_client):
     ]
 
     # Extending preferences schemas, to include notification preferences. Should not matter for most test cases
-    app_config[
-        "ACCOUNTS_USER_PREFERENCES_SCHEMA"
-    ] = UserPreferencesNotificationsSchema()
+    app_config["ACCOUNTS_USER_PREFERENCES_SCHEMA"] = (
+        UserPreferencesNotificationsSchema()
+    )
     app_config["USERS_RESOURCES_SERVICE_SCHEMA"] = NotificationsUserSchema
 
     app_config["RDM_RESOURCE_ACCESS_TOKENS_ENABLED"] = True
@@ -307,6 +367,14 @@ def app_config(app_config, mock_datacite_client):
     app_config["REQUESTS_PERMISSION_POLICY"] = RDMRequestsPermissionPolicy
 
     app_config["COMMUNITIES_OAI_SETS_PREFIX"] = "community-"
+
+    app_config["APP_RDM_ROUTES"] = {
+        "record_detail": "/records/<pid_value>",
+        "record_file_download": "/records/<pid_value>/files/<path:filename>",
+    }
+
+    app_config["USERS_RESOURCES_GROUPS_ENABLED"] = True
+
     return app_config
 
 
@@ -360,7 +428,7 @@ def full_record(users):
     return {
         "pids": {
             "doi": {
-                "identifier": "10.5281/inveniordm.1234",
+                "identifier": "10.1234/inveniordm.1234",
                 "provider": "datacite",
                 "client": "inveniordm",
             },
@@ -432,7 +500,7 @@ def full_record(users):
                 }
             ],
             "languages": [{"id": "dan"}, {"id": "eng"}],
-            "identifiers": [{"identifier": "1924MNRAS..84..308E", "scheme": "bibcode"}],
+            "identifiers": [{"identifier": "1924MNRAS..84..308E", "scheme": "ads"}],
             "related_identifiers": [
                 {
                     "identifier": "10.1234/foo.bar",
@@ -539,9 +607,10 @@ def full_record(users):
 def enhanced_full_record(users):
     """Full record data as dict coming from the external world."""
     return {
+        "id": "w502q-xzh22",
         "pids": {
             "doi": {
-                "identifier": "10.5281/inveniordm.1234",
+                "identifier": "10.1234/inveniordm.1234",
                 "provider": "datacite",
                 "client": "inveniordm",
             },
@@ -625,7 +694,7 @@ def enhanced_full_record(users):
                         ],
                     },
                     "role": {
-                        "id": "other",
+                        "id": "datamanager",
                         "title": {
                             "de": "DatenmanagerIn",
                             "en": "Data manager",
@@ -641,10 +710,10 @@ def enhanced_full_record(users):
                         "type": "personal",
                     },
                     "role": {
-                        "id": "other",
+                        "id": "projectmanager",
                         "title": {
-                            "de": "VerteilerIn",
-                            "en": "Other",
+                            "de": "ProjektmanagerIn",
+                            "en": "Project manager",
                         },
                     },
                 },
@@ -676,7 +745,7 @@ def enhanced_full_record(users):
                     },
                 },
             ],
-            "identifiers": [{"identifier": "1924MNRAS..84..308E", "scheme": "bibcode"}],
+            "identifiers": [{"identifier": "1924MNRAS..84..308E", "scheme": "ads"}],
             "related_identifiers": [
                 {
                     "identifier": "10.1234/foo.bar",
@@ -793,8 +862,8 @@ def enhanced_full_record(users):
             "bucket": "81983514-22e5-473a-b521-24254bd5e049",
             "default_preview": "big-dataset.zip",
             "order": ["big-dataset.zip"],
-            "entries": [
-                {
+            "entries": {
+                "big-dataset.zip": {
                     "checksum": "md5:234245234213421342",
                     "mimetype": "application/zip",
                     "size": 1114324524355,
@@ -808,7 +877,7 @@ def enhanced_full_record(users):
                     "metadata": {},
                     "id": "445aaacd-9de1-41ab-af52-25ab6cb93df7",
                 }
-            ],
+            },
             "meta": {"big-dataset.zip": {"description": "File containing the data."}},
         },
         "notes": ["Under investigation for copyright infringement."],
@@ -849,6 +918,19 @@ def minimal_record():
             "resource_type": {"id": "image-photo"},
             "title": "A Romans story",
         },
+    }
+
+
+@pytest.fixture()
+def empty_record():
+    """Almost empty record data as dict coming from the external world."""
+    return {
+        "pids": {},
+        "access": {},
+        "files": {
+            "enabled": False,  # Most tests don't care about files
+        },
+        "metadata": {},
     }
 
 
@@ -921,6 +1003,15 @@ def closed_review_minimal_community(minimal_community):
     community = deepcopy(minimal_community)
     community["slug"] = "closed-review-community"
     community["access"]["review_policy"] = "closed"
+    return community
+
+
+@pytest.fixture()
+def closed_submission_minimal_community(minimal_community):
+    """Data for a minimal community that restricts record submission."""
+    community = deepcopy(minimal_community)
+    community["slug"] = "closed-submission-community"
+    community["access"]["record_submission_policy"] = "closed"
     return community
 
 
@@ -1038,6 +1129,16 @@ def identity_simple(users):
     return i
 
 
+@pytest.fixture()
+def anonymous_identity(users):
+    """Simple identity fixture."""
+    user = users[1]
+    i = Identity(user.id)
+    i.provides.add(UserNeed(user.id))
+    i.provides.add(Need(method="system_role", value="any_user"))
+    return i
+
+
 @pytest.fixture(scope="module")
 def languages_type(app):
     """Lanuage vocabulary type."""
@@ -1103,6 +1204,8 @@ def resource_type_v(app, resource_type_type):
                 "schema.org": "https://schema.org/Dataset",
                 "subtype": "",
                 "type": "dataset",
+                "marc21_type": "dataset",
+                "marc21_subtype": "",
             },
             "title": {"en": "Dataset"},
             "tags": ["depositable", "linkable"],
@@ -1120,13 +1223,39 @@ def resource_type_v(app, resource_type_type):
                 "datacite_type": "",
                 "openaire_resourceType": "25",
                 "openaire_type": "dataset",
-                "eurepo": "info:eu-repo/semantic/other",
+                "eurepo": "info:eu-repo/semantics/other",
                 "schema.org": "https://schema.org/ImageObject",
                 "subtype": "",
                 "type": "image",
+                "marc21_type": "image",
+                "marc21_subtype": "",
             },
             "icon": "chart bar outline",
             "title": {"en": "Image"},
+            "tags": ["depositable", "linkable"],
+            "type": "resourcetypes",
+        },
+    )
+
+    vocabulary_service.create(
+        system_identity,
+        {  # create base resource type
+            "id": "software",
+            "props": {
+                "csl": "figure",
+                "datacite_general": "Software",
+                "datacite_type": "",
+                "openaire_resourceType": "0029",
+                "openaire_type": "software",
+                "eurepo": "info:eu-repo/semantics/other",
+                "schema.org": "https://schema.org/SoftwareSourceCode",
+                "subtype": "",
+                "type": "image",
+                "marc21_type": "software",
+                "marc21_subtype": "",
+            },
+            "icon": "code",
+            "title": {"en": "Software"},
             "tags": ["depositable", "linkable"],
             "type": "resourcetypes",
         },
@@ -1142,10 +1271,12 @@ def resource_type_v(app, resource_type_type):
                 "datacite_type": "Photo",
                 "openaire_resourceType": "25",
                 "openaire_type": "dataset",
-                "eurepo": "info:eu-repo/semantic/other",
+                "eurepo": "info:eu-repo/semantics/other",
                 "schema.org": "https://schema.org/Photograph",
                 "subtype": "image-photo",
                 "type": "image",
+                "marc21_type": "image",
+                "marc21_subtype": "photo",
             },
             "icon": "chart bar outline",
             "title": {"en": "Photo"},
@@ -1249,7 +1380,7 @@ def date_type_v(app, date_type):
         {
             "id": "other",
             "title": {"en": "Other"},
-            "props": {"datacite": "Other"},
+            "props": {"datacite": "Other", "marc": "oth"},
             "type": "datetypes",
         },
     )
@@ -1268,11 +1399,31 @@ def contributors_role_type(app):
 @pytest.fixture(scope="module")
 def contributors_role_v(app, contributors_role_type):
     """Contributor role vocabulary record."""
+    vocabulary_service.create(
+        system_identity,
+        {
+            "id": "datamanager",
+            "props": {"datacite": "DataManager"},
+            "title": {"en": "Data manager"},
+            "type": "contributorsroles",
+        },
+    )
+
+    vocabulary_service.create(
+        system_identity,
+        {
+            "id": "projectmanager",
+            "props": {"datacite": "ProjectManager"},
+            "title": {"en": "Project manager"},
+            "type": "contributorsroles",
+        },
+    )
+
     vocab = vocabulary_service.create(
         system_identity,
         {
             "id": "other",
-            "props": {"datacite": "Other"},
+            "props": {"datacite": "Other", "marc": "oth"},
             "title": {"en": "Other"},
             "type": "contributorsroles",
         },
@@ -1424,6 +1575,7 @@ def awards_v(app, funders_v):
             },
             "funder": {"id": "00k4n6c32"},
             "acronym": "HIT-CF",
+            "program": "H2020",
         },
     )
 
@@ -1578,6 +1730,33 @@ def admin_role_need(db):
 
 
 @pytest.fixture()
+def embargoed_files_record(running_app, minimal_record, superuser_identity):
+    """Embargoed files record."""
+    service = current_rdm_records_service
+    today = arrow.utcnow().date().isoformat()
+
+    # Add embargo to record
+    with mock.patch("arrow.utcnow") as mock_arrow:
+        minimal_record["access"]["files"] = "restricted"
+        minimal_record["access"]["status"] = "embargoed"
+        minimal_record["access"]["embargo"] = dict(
+            active=True, until=today, reason=None
+        )
+
+        # We need to set the current date in the past to pass the validations
+        mock_arrow.return_value = arrow.get(datetime(1954, 9, 29), tz.gettz("UTC"))
+        draft = service.create(superuser_identity, minimal_record)
+        record = service.publish(id_=draft.id, identity=superuser_identity)
+
+        RDMRecord.index.refresh()
+
+        # Recover current date
+        mock_arrow.return_value = arrow.get(datetime.utcnow())
+
+    return record
+
+
+@pytest.fixture()
 def embargoed_record(running_app, minimal_record, superuser_identity):
     """Embargoed record."""
     service = current_rdm_records_service
@@ -1585,7 +1764,7 @@ def embargoed_record(running_app, minimal_record, superuser_identity):
 
     # Add embargo to record
     with mock.patch("arrow.utcnow") as mock_arrow:
-        minimal_record["access"]["files"] = "restricted"
+        minimal_record["access"]["record"] = "restricted"
         minimal_record["access"]["status"] = "embargoed"
         minimal_record["access"]["embargo"] = dict(
             active=True, until=today, reason=None
@@ -1822,6 +2001,19 @@ def closed_review_community(
 
 
 @pytest.fixture()
+def closed_submission_community(
+    running_app,
+    community_type_record,
+    community_owner,
+    closed_submission_minimal_community,
+):
+    """Create community with close submission policy."""
+    return _community_get_or_create(
+        closed_submission_minimal_community, community_owner.identity
+    )
+
+
+@pytest.fixture()
 def record_community(db, uploader, minimal_record, community):
     """Creates a record that belongs to a community."""
 
@@ -1836,23 +2028,74 @@ def record_community(db, uploader, minimal_record, community):
         ):
             """Creates new record that belongs to the same community."""
             # create draft
-            community_record = community._record
             draft = current_rdm_records_service.create(uploader.identity, record_dict)
+            record = draft._record
+            if community:
+                # add the record to the community
+                community_record = community._record
+                record.parent.communities.add(community_record, default=False)
+                record.parent.commit()
+                db.session.commit()
+
             # publish and get record
             result_item = current_rdm_records_service.publish(
                 uploader.identity, draft.id
             )
             record = result_item._record
-            # add the record to the community
-            record.parent.communities.add(community_record, default=False)
-            record.parent.commit()
-            db.session.commit()
             current_rdm_records_service.indexer.index(
                 record, arguments={"refresh": True}
             )
+
             return record
 
     return Record()
+
+
+@pytest.fixture()
+def record_factory(db, uploader, minimal_record, community, location):
+    """Creates a record that belongs to a community."""
+
+    class RecordFactory:
+        """Test record class."""
+
+        def create_record(
+            self,
+            record_dict=minimal_record,
+            uploader=uploader,
+            community=community,
+            file=None,
+        ):
+            """Creates new record that belongs to the same community."""
+            service = current_rdm_records_service
+            files_service = service.draft_files
+            idty = uploader.identity
+            # create draft
+            if file:
+                record_dict["files"] = {"enabled": True}
+            draft = service.create(idty, record_dict)
+
+            # add file to draft
+            if file:
+                files_service.init_files(idty, draft.id, data=[{"key": file}])
+                files_service.set_file_content(
+                    idty, draft.id, file, BytesIO(b"test file")
+                )
+                files_service.commit_file(idty, draft.id, file)
+
+            # publish and get record
+            result_item = service.publish(idty, draft.id)
+            record = result_item._record
+            if community:
+                # add the record to the community
+                community_record = community._record
+                record.parent.communities.add(community_record, default=False)
+                record.parent.commit()
+                db.session.commit()
+                service.indexer.index(record, arguments={"refresh": True})
+
+            return record
+
+    return RecordFactory()
 
 
 @pytest.fixture(scope="session")
@@ -1921,3 +2164,25 @@ def index_users():
         current_users_service.record_cls.index.refresh()
 
     return _index
+
+
+@pytest.fixture()
+def replace_notification_builder(monkeypatch):
+    """Replace a notification builder and return a mock."""
+
+    def _replace(builder_cls):
+        mock_build = mock.MagicMock()
+        mock_build.side_effect = builder_cls.build
+        monkeypatch.setattr(builder_cls, "build", mock_build)
+        # setting specific builder for test case
+        monkeypatch.setattr(
+            current_notifications_manager,
+            "builders",
+            {
+                **current_notifications_manager.builders,
+                builder_cls.type: builder_cls,
+            },
+        )
+        return mock_build
+
+    return _replace

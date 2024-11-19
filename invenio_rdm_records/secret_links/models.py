@@ -11,7 +11,6 @@ import uuid
 from datetime import date, datetime
 
 from invenio_db import db
-from itsdangerous import BadData
 from sqlalchemy_utils import UUIDType
 
 from .errors import InvalidPermissionLevelError

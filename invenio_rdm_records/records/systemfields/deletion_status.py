@@ -109,6 +109,9 @@ class RecordDeletionStatusField(SystemField):
     def pre_dump(self, record, data, **kwargs):
         """Dump the deletion status information."""
         status = RecordDeletionStatus(record.model.deletion_status)
+        # mitigation of deletion_status.is_deleted missing from the mapping
+        # currently it is a string
+        # don't confuse with record.model.is_deleted!
         data["is_deleted"] = status.is_deleted
         data["deletion_status"] = status.status
 
@@ -116,5 +119,8 @@ class RecordDeletionStatusField(SystemField):
         """After loading, set the deletion status."""
         deletion_status = data.get("deletion_status", None)
         self.__set__(record, deletion_status)
-        data.pop("is_deleted", None)
-        data.pop("deletion_status", None)
+        # mitigation of deletion_status.is_deleted missing from the mapping
+        # currently it is a string
+        # don't confuse with record.model.is_deleted!
+        record.pop("is_deleted", None)
+        record.pop("deletion_status", None)

@@ -1,5 +1,5 @@
 {
-  "$schema": "local://records/record-v6.0.0.json",
+  "$schema": "local://records/record-v7.0.0.json",
   "id": "abcde-12345",
   "pid": {
     "pk": 1,
@@ -7,12 +7,12 @@
   },
   "pids": {
     "doi": {
-      "identifier": "10.5281/zenodo.1234",
+      "identifier": "10.1234/zenodo.1234",
       "provider": "datacite",
       "client": "zenodo"
     },
     "concept-doi": {
-      "identifier": "10.5281/zenodo.1234",
+      "identifier": "10.1234/zenodo.1234",
       "provider": "datacite",
       "client": "zenodo"
     },

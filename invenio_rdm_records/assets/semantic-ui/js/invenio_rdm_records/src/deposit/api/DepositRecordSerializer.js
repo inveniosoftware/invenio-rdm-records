@@ -1,5 +1,5 @@
 // This file is part of Invenio-RDM-Records
-// Copyright (C) 2020-2023 CERN.
+// Copyright (C) 2020-2024 CERN.
 // Copyright (C) 2020-2022 Northwestern University.
 //
 // Invenio-RDM-Records is free software; you can redistribute it and/or modify it
@@ -323,6 +323,9 @@ export class RDMDepositRecordSerializer extends DepositRecordSerializer {
       "pids",
       "ui",
       "custom_fields",
+      "created",
+      "updated",
+      "revision_id",
     ]);
 
     // FIXME: move logic in a more sophisticated PIDField that allows empty values

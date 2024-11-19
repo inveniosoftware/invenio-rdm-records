@@ -15,6 +15,7 @@ from invenio_access.permissions import SystemRoleNeed
 from invenio_access.proxies import current_access
 from invenio_accounts.models import Role, User
 from invenio_accounts.proxies import current_datastore
+from invenio_db import db
 
 
 class Grant:
@@ -93,7 +94,8 @@ class Grant:
         subject = None
 
         if type_ == "user":
-            subject = current_datastore.get_user(self._subject_id)
+            with db.session.no_autoflush:
+                subject = current_datastore.get_user(self._subject_id)
         elif type_ == "role":
             subject = current_datastore.find_role(self._subject_id)
 

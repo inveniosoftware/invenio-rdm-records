@@ -1,16 +1,21 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2023 CERN.
+# Copyright (C) 2023-2024 CERN.
+# Copyright (C) 2024      Graz University of Technology.
+# Copyright (C) 2024      KTH Royal Institute of Technology.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
 
 """RDM Record Communities Service."""
 
+from flask import current_app
+from invenio_access.permissions import system_identity
 from invenio_communities.proxies import current_communities
+from invenio_drafts_resources.services.records.uow import ParentRecordCommitOp
 from invenio_i18n import lazy_gettext as _
 from invenio_notifications.services.uow import NotificationOp
-from invenio_pidstore.errors import PIDDoesNotExistError
+from invenio_pidstore.errors import PIDDoesNotExistError, PIDUnregistered
 from invenio_records_resources.services import (
     RecordIndexerMixin,
     Service,
@@ -19,7 +24,6 @@ from invenio_records_resources.services import (
 from invenio_records_resources.services.errors import PermissionDeniedError
 from invenio_records_resources.services.uow import (
     IndexRefreshOp,
-    RecordCommitOp,
     RecordIndexOp,
     unit_of_work,
 )
@@ -28,16 +32,16 @@ from invenio_requests.resolvers.registry import ResolverRegistry
 from invenio_search.engine import dsl
 from sqlalchemy.orm.exc import NoResultFound
 
-from invenio_rdm_records.notifications.builders import (
-    CommunityInclusionSubmittedNotificationBuilder,
-)
-from invenio_rdm_records.proxies import current_rdm_records
-from invenio_rdm_records.requests import CommunityInclusion
-from invenio_rdm_records.services.errors import (
+from ...notifications.builders import CommunityInclusionSubmittedNotificationBuilder
+from ...proxies import current_rdm_records, current_rdm_records_service
+from ...requests import CommunityInclusion
+from ..errors import (
+    CannotRemoveCommunityError,
     CommunityAlreadyExists,
     InvalidAccessRestrictions,
     OpenRequestAlreadyExists,
     RecordCommunityMissing,
+    RecordSubmissionClosedCommunityError,
 )
 
 
@@ -53,14 +57,24 @@ class RecordCommunitiesService(Service, RecordIndexerMixin):
         return ServiceSchemaWrapper(self, schema=self.config.schema)
 
     @property
+    def communities_schema(self):
+        """Returns the communities schema instance."""
+        return ServiceSchemaWrapper(self, schema=self.config.communities_schema)
+
+    @property
     def record_cls(self):
         """Factory for creating a record class."""
         return self.config.record_cls
 
-    def _exists(self, identity, community_id, record):
+    @property
+    def draft_cls(self):
+        """Factory for creating a draft class."""
+        return self.config.draft_cls
+
+    def _exists(self, community_id, record):
         """Return the request id if an open request already exists, else None."""
         results = current_requests_service.search(
-            identity,
+            system_identity,
             extra_filter=dsl.query.Bool(
                 "must",
                 must=[
@@ -71,6 +85,11 @@ class RecordCommunitiesService(Service, RecordIndexerMixin):
                 ],
             ),
         )
+        if results.total > 1:
+            current_app.logger.error(
+                f"Multiple community inclusions request detected for: "
+                f"record_pid{record.pid.pid_value}, community_id{community_id}"
+            )
         return next(results.hits)["id"] if results.total > 0 else None
 
     def _include(self, identity, community_id, comment, require_review, record, uow):
@@ -84,7 +103,8 @@ class RecordCommunitiesService(Service, RecordIndexerMixin):
             raise CommunityAlreadyExists()
 
         # check if there is already an open request, to avoid duplications
-        existing_request_id = self._exists(identity, com_id, record)
+        existing_request_id = self._exists(com_id, record)
+
         if existing_request_id:
             raise OpenRequestAlreadyExists(existing_request_id)
 
@@ -139,6 +159,19 @@ class RecordCommunitiesService(Service, RecordIndexerMixin):
                 "community_id": community_id,
             }
             try:
+                can_submit_record = (
+                    current_communities.service.config.permission_policy_cls(
+                        "submit_record",
+                        community_id=community_id,
+                        record=current_communities.service.record_cls.pid.resolve(
+                            community_id
+                        ),
+                    ).allows(identity)
+                )
+
+                if not can_submit_record:
+                    raise RecordSubmissionClosedCommunityError()
+
                 request_item = self._include(
                     identity, community_id, comment, require_review, record, uow
                 )
@@ -163,6 +196,9 @@ class RecordCommunitiesService(Service, RecordIndexerMixin):
             ) as ex:
                 result["message"] = ex.description
                 errors.append(result)
+            except RecordSubmissionClosedCommunityError as e:
+                result["message"] = e.description
+                errors.append(result)
 
         uow.register(IndexRefreshOp(indexer=self.indexer))
 
@@ -173,10 +209,20 @@ class RecordCommunitiesService(Service, RecordIndexerMixin):
         if community_id not in record.parent.communities.ids:
             raise RecordCommunityMissing(record.id, community_id)
 
-        # check permission here, per community: curator cannot remove another community
-        self.require_permission(
-            identity, "remove_community", record=record, community_id=community_id
-        )
+        try:
+            self.require_permission(
+                identity, "remove_community", record=record, community_id=community_id
+            )
+            # By default, admin/superuser has permission to do everything, so PermissionDeniedError won't be raised for admin in any case
+        except PermissionDeniedError as exc:
+            # If permission is denied, determine which error to raise, based on config
+            community_required = current_app.config["RDM_COMMUNITY_REQUIRED_TO_PUBLISH"]
+            is_last_community = len(record.parent.communities.ids) <= 1
+            if community_required and is_last_community:
+                raise CannotRemoveCommunityError()
+            else:
+                # If the config wasn't enabled, then raise the PermissionDeniedError
+                raise exc
 
         # Default community is deleted when the exact same community is removed from the record
         record.parent.communities.remove(community_id)
@@ -201,7 +247,11 @@ class RecordCommunitiesService(Service, RecordIndexerMixin):
             try:
                 self._remove(identity, community_id, record)
                 processed.append({"community": community_id})
-            except (RecordCommunityMissing, PermissionDeniedError) as ex:
+            except (
+                RecordCommunityMissing,
+                PermissionDeniedError,
+                CannotRemoveCommunityError,
+            ) as ex:
                 errors.append(
                     {
                         "community": community_id,
@@ -209,7 +259,12 @@ class RecordCommunitiesService(Service, RecordIndexerMixin):
                     }
                 )
         if processed:
-            uow.register(RecordCommitOp(record.parent))
+            uow.register(
+                ParentRecordCommitOp(
+                    record.parent,
+                    indexer_context=dict(service=current_rdm_records_service),
+                )
+            )
             uow.register(
                 RecordIndexOp(record, indexer=self.indexer, index_refresh=True)
             )
@@ -224,10 +279,13 @@ class RecordCommunitiesService(Service, RecordIndexerMixin):
         search_preference=None,
         expand=False,
         extra_filter=None,
-        **kwargs
+        **kwargs,
     ):
         """Search for record's communities."""
-        record = self.record_cls.pid.resolve(id_)
+        try:
+            record = self.record_cls.pid.resolve(id_)
+        except PIDUnregistered:
+            record = self.draft_cls.pid.resolve(id_, registered_only=False)
         self.require_permission(identity, "read", record=record)
 
         communities_ids = record.parent.communities.ids
@@ -241,7 +299,7 @@ class RecordCommunitiesService(Service, RecordIndexerMixin):
             search_preference=search_preference,
             expand=expand,
             extra_filter=communities_filter,
-            **kwargs
+            **kwargs,
         )
 
     @staticmethod
@@ -285,7 +343,7 @@ class RecordCommunitiesService(Service, RecordIndexerMixin):
         expand=False,
         by_membership=False,
         extra_filter=None,
-        **kwargs
+        **kwargs,
     ):
         """Search for communities that can be added to a record."""
         record = self.record_cls.pid.resolve(id_)
@@ -305,7 +363,7 @@ class RecordCommunitiesService(Service, RecordIndexerMixin):
                 params=params,
                 search_preference=search_preference,
                 extra_filter=communities_filter,
-                **kwargs
+                **kwargs,
             )
 
         return current_communities.service.search(
@@ -314,5 +372,76 @@ class RecordCommunitiesService(Service, RecordIndexerMixin):
             search_preference=search_preference,
             expand=expand,
             extra_filter=communities_filter,
-            **kwargs
+            **kwargs,
         )
+
+    @unit_of_work()
+    def set_default(self, identity, id_, data, uow):
+        """Set default community."""
+        valid_data, _ = self.communities_schema.load(
+            data,
+            context={
+                "identity": identity,
+            },
+            raise_errors=True,
+        )
+        record = self.record_cls.pid.resolve(id_)
+        self.require_permission(identity, "manage", record=record)
+        record.parent.communities.default = valid_data["default"]["id"]
+
+        uow.register(
+            ParentRecordCommitOp(
+                record.parent,
+                indexer_context=dict(service=current_rdm_records_service),
+            )
+        )
+
+        return record.parent
+
+    @unit_of_work()
+    def bulk_add(self, identity, community_id, record_ids, set_default=False, uow=None):
+        """Bulk adds records to a community.
+
+        :param identity: The identity performing the action.
+        :param community_id: The ID of the community.
+        :param record_ids: List of record IDs to be added to the community.
+        :param set_default: Whether to set the community as default for the added records.
+        """
+        self.require_permission(identity, "bulk_add")
+        errors = []
+        for record_id in record_ids:
+            record = self.record_cls.pid.resolve(record_id)
+            community = current_communities.service.record_cls.pid.resolve(community_id)
+
+            set_default = set_default or not record.parent.communities
+            already_included = community.id in record.parent.communities
+            if already_included:
+                errors.append(
+                    {
+                        "record_id": record_id,
+                        "community_id": community_id,
+                        "message": "Community already included.",
+                    }
+                )
+                continue
+
+            parent_community = getattr(community, "parent", None)
+            already_in_parent = (
+                parent_community
+                and str(parent_community.id) in record.parent.communities
+            )
+
+            if parent_community and not already_in_parent:
+                record.parent.communities.add(parent_community, request=None)
+
+            record.parent.communities.add(community, request=None, default=set_default)
+
+            # Commit and bulk re-index everything
+            uow.register(
+                ParentRecordCommitOp(
+                    record.parent,
+                    indexer_context={"service": current_rdm_records_service},
+                    bulk_index=True,
+                )
+            )
+        return errors

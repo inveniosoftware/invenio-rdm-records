@@ -6,9 +6,7 @@
 # it under the terms of the MIT License; see LICENSE file for more details.
 """Utility functions."""
 
-from flask import current_app
 from invenio_pidstore.models import PersistentIdentifier
-from marshmallow import Schema
 
 
 def retrieve_recid_by_uuid(rec_uuid):

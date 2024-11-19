@@ -13,9 +13,7 @@ from babel_edtf import format_edtf
 from invenio_i18n import gettext as _
 from marshmallow import fields
 
-from invenio_rdm_records.records.systemfields.access.field.record import (
-    AccessStatusEnum,
-)
+from ....records.systemfields.access.field.record import AccessStatusEnum
 
 
 class UIAccessStatus(object):
@@ -138,7 +136,8 @@ class AccessStatusField(fields.Field):
     def _serialize(self, value, attr, obj, **kwargs):
         """Serialise access status."""
         record_access_dict = obj.get("access")
-        has_files = obj.get("files").get("enabled", False)
+        _files = obj.get("files", {})
+        has_files = _files is not None and _files.get("enabled", False)
         if record_access_dict:
             record_access_status_ui = UIObjectAccessStatus(
                 record_access_dict, has_files

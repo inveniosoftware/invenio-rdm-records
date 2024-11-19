@@ -1,5 +1,5 @@
 // This file is part of InvenioRdmRecords
-// Copyright (C) 2022 CERN.
+// Copyright (C) 2022-2024 CERN.
 //
 // Invenio RDM is free software; you can redistribute it and/or modify it
 // under the terms of the MIT License; see LICENSE file for more details.
@@ -39,6 +39,10 @@ class LinksTable extends Component {
     };
   }
 
+  componentDidMount() {
+    this.fetchFormats();
+  }
+
   fetchFormats = async () => {
     const cancellableFetchFormats = withCancel(http.get("/api/oaipmh/formats"));
 
@@ -70,10 +74,6 @@ class LinksTable extends Component {
       });
     }
   };
-
-  componentDidMount() {
-    this.fetchFormats();
-  }
 
   /**
    * Replaces the metadata prefix in the link.
@@ -123,7 +123,7 @@ class LinksTable extends Component {
 
     if (formats.some((obj) => obj.key === newFormat)) {
       const newLinks = {};
-      Object.keys(links).map((key) => {
+      Object.keys(links).forEach((key) => {
         const link = links[key];
         newLinks[key] = this.replaceLinkPrefix(link, newFormat);
       });

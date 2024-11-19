@@ -108,24 +108,56 @@ class JournalMarcXMLDumper(DumperMixin):
             "c": journal_data.get("pages"),
             "y": _original.get("metadata", {}).get("publication_date"),
         }
-        for key, field in field_keys.items():
-            value = journal_data.get(field)
+        for key, value in field_keys.items():
             if value:
                 items_dict[key] = value
 
         if not items_dict:
             return data
 
-        # TODO in zenodo, journal field serializes to
-        # TODO code 909, C, 4 but that's not in the specification
-        code = "773  "
-
-        data[code] = items_dict
+        code = "909C4"
+        existing_data = data.get(code)
+        if existing_data and isinstance(existing_data, list):
+            data[code].append(items_dict)
+        else:
+            data[code] = [items_dict]
         return data
 
 
 class JournalCSLDumper(DumperMixin):
     """Dumper for CSL serialization of 'Journal' custom field."""
+
+    def post_dump(self, data, original=None, **kwargs):
+        """Adds serialized journal data to the input data."""
+        _original = original or {}
+        custom_fields = _original.get("custom_fields", {})
+        journal_data = custom_fields.get("journal:journal", {})
+
+        if not journal_data:
+            return data
+
+        title = journal_data.get("title")
+        volume = journal_data.get("volume")
+        issue = journal_data.get("issue")
+        pages = journal_data.get("pages")
+        issn = journal_data.get("issn")
+
+        if title:
+            data["container_title"] = title
+        if pages:
+            data["page"] = pages
+        if volume:
+            data["volume"] = volume
+        if issue:
+            data["issue"] = issue
+        if issn:
+            data["ISSN"] = issn
+
+        return data
+
+
+class JournalSchemaorgDumper(DumperMixin):
+    """Dumper for Schemaorg serialization of 'Journal' custom field."""
 
     def post_dump(self, data, original=None, **kwargs):
         """Adds serialized journal data to the input data."""

@@ -1,5 +1,5 @@
 // This file is part of Invenio-RDM-Records
-// Copyright (C) 2020-2023 CERN.
+// Copyright (C) 2020-2024 CERN.
 // Copyright (C) 2021 Graz University of Technology.
 //
 // Invenio-RDM-Records is free software; you can redistribute it and/or modify it
@@ -29,22 +29,26 @@ export const NewVersionButton = ({ onError, record, disabled, ...uiProps }) => {
   return (
     <Popup
       content={i18next.t("You don't have permissions to create a new version.")}
+      position="top center"
       disabled={!disabled}
       trigger={
-        <Button
-          type="button"
-          positive
-          size="mini"
-          onClick={handleClick}
-          loading={loading}
-          icon
-          labelPosition="left"
-          disabled={disabled}
-          {...uiProps}
-        >
-          <Icon name="tag" />
-          {i18next.t("New version")}
-        </Button>
+        // Extra span needed since disabled buttons do not trigger hover events
+        <span>
+          <Button
+            type="button"
+            positive
+            size="mini"
+            onClick={handleClick}
+            loading={loading}
+            icon
+            labelPosition="left"
+            disabled={disabled}
+            {...uiProps}
+          >
+            <Icon name="tag" />
+            {i18next.t("New version")}
+          </Button>
+        </span>
       }
     />
   );

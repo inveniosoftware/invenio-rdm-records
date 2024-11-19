@@ -9,7 +9,7 @@
   },
   "pids": {
     "doi": {
-      "identifier": "10.5281/zenodo.1234",
+      "identifier": "10.1234/zenodo.1234",
       "provider": "datacite",
       "client": "zenodo"
     },
@@ -95,7 +95,7 @@
     "identifiers": [
       {
         "identifier": "1924MNRAS..84..308E",
-        "scheme": "bibcode"
+        "scheme": "ads"
       }
     ],
     "related_identifiers": [

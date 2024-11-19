@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2021-2022 CERN.
+# Copyright (C) 2021-2024 CERN.
 # Copyright (C) 2023 Graz University of Technology.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
@@ -8,12 +8,22 @@
 
 """Community submission request."""
 
+from invenio_access.permissions import system_identity
+from invenio_drafts_resources.services.records.uow import ParentRecordCommitOp
 from invenio_i18n import lazy_gettext as _
-from invenio_records_resources.services.uow import RecordCommitOp, RecordIndexOp
+from invenio_notifications.services.uow import NotificationOp
 from invenio_requests.customizations import actions
 
+from ..notifications.builders import (
+    CommunityInclusionAcceptNotificationBuilder,
+    CommunityInclusionCancelNotificationBuilder,
+    CommunityInclusionDeclineNotificationBuilder,
+    CommunityInclusionExpireNotificationBuilder,
+)
 from ..proxies import current_rdm_records_service as service
+from ..services.errors import InvalidAccessRestrictions
 from .base import ReviewRequest
+from .community_inclusion import is_access_restriction_valid
 
 
 #
@@ -42,6 +52,10 @@ class AcceptAction(actions.AcceptAction):
         community = self.request.receiver.resolve()
         service._validate_draft(identity, draft)
 
+        # validate record and community access
+        if not is_access_restriction_valid(draft, community):
+            raise InvalidAccessRestrictions()
+
         # Unset review from record (still accessible from request)
         # The curator (receiver) should still have access, via the community
         # The creator (uploader) should also still have access, because
@@ -57,11 +71,27 @@ class AcceptAction(actions.AcceptAction):
         draft.parent.communities.add(
             community, request=self.request, default=is_default
         )
-        uow.register(RecordCommitOp(draft.parent))
+
+        if getattr(community, "parent", None):
+            draft.parent.communities.add(community.parent, request=self.request)
+
+        uow.register(
+            ParentRecordCommitOp(draft.parent, indexer_context=dict(service=service))
+        )
 
         # Publish the record
-        # TODO: Ensure that the accpeting user has permissions to publish.
+        # TODO: Ensure that the accepting user has permissions to publish.
         service.publish(identity, draft.pid.pid_value, uow=uow)
+
+        # don't send notification about request auto-accept
+        if identity != system_identity:
+            uow.register(
+                NotificationOp(
+                    CommunityInclusionAcceptNotificationBuilder.build(
+                        identity=identity, request=self.request
+                    )
+                )
+            )
         super().execute(identity, uow)
 
 
@@ -81,9 +111,16 @@ class DeclineAction(actions.DeclineAction):
         # in the review systemfield, the review should be set with the updated
         # request object
         draft.parent.review = self.request
-        uow.register(RecordCommitOp(draft.parent))
-        # update draft to reflect the new status
-        uow.register(RecordIndexOp(draft, indexer=service.indexer))
+        uow.register(
+            ParentRecordCommitOp(draft.parent, indexer_context=dict(service=service))
+        )
+        uow.register(
+            NotificationOp(
+                CommunityInclusionDeclineNotificationBuilder.build(
+                    identity=identity, request=self.request
+                )
+            )
+        )
 
 
 class CancelAction(actions.CancelAction):
@@ -95,10 +132,17 @@ class CancelAction(actions.CancelAction):
         # Same reasoning as in 'decline'
         draft = self.request.topic.resolve()
         draft.parent.review = None
-        uow.register(RecordCommitOp(draft.parent))
-        # update draft to reflect the new status
-        uow.register(RecordIndexOp(draft, indexer=service.indexer))
+        uow.register(
+            ParentRecordCommitOp(draft.parent, indexer_context=dict(service=service))
+        )
         super().execute(identity, uow)
+        uow.register(
+            NotificationOp(
+                CommunityInclusionCancelNotificationBuilder.build(
+                    identity=identity, request=self.request
+                )
+            )
+        )
 
 
 class ExpireAction(actions.ExpireAction):
@@ -117,9 +161,16 @@ class ExpireAction(actions.ExpireAction):
         # in the review systemfield, the review should be set with the updated
         # request object
         draft.parent.review = self.request
-        uow.register(RecordCommitOp(draft.parent))
-        # update draft to reflect the new status
-        uow.register(RecordIndexOp(draft, indexer=service.indexer))
+        uow.register(
+            ParentRecordCommitOp(draft.parent, indexer_context=dict(service=service))
+        )
+        uow.register(
+            NotificationOp(
+                CommunityInclusionExpireNotificationBuilder.build(
+                    identity=identity, request=self.request
+                )
+            )
+        )
 
 
 #

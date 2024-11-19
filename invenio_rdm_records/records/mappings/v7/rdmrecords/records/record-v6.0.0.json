@@ -133,7 +133,7 @@
       },
       "custom_fields": {
         "type": "object",
-        "dynamic": true
+        "dynamic": "true"
       },
       "parent": {
         "properties": {
@@ -170,7 +170,7 @@
           },
           "pids": {
             "type": "object",
-            "dynamic": true
+            "dynamic": "true"
           },
           "access": {
             "properties": {
@@ -239,12 +239,393 @@
               },
               "default": {
                 "type": "keyword"
+              },
+              "entries": {
+                "type": "object",
+                "properties": {
+                  "uuid": {
+                    "type": "keyword"
+                  },
+                  "created": {
+                    "type": "date"
+                  },
+                  "updated": {
+                    "type": "date"
+                  },
+                  "version_id": {
+                    "type": "long"
+                  },
+                  "id": {
+                    "type": "keyword"
+                  },
+                  "is_verified": {
+                    "type": "boolean"
+                  },
+                  "@v": {
+                    "type": "keyword"
+                  },
+                  "slug": {
+                    "type": "keyword"
+                  },
+                  "children": {
+                    "properties": {
+                      "allow": {
+                        "type": "boolean"
+                      }
+                    }
+                  },
+                  "metadata": {
+                    "properties": {
+                      "title": {
+                        "type": "text"
+                      },
+                      "type": {
+                        "type": "object",
+                        "properties": {
+                          "@v": {
+                            "type": "keyword"
+                          },
+                          "id": {
+                            "type": "keyword"
+                          },
+                          "title": {
+                            "type": "object",
+                            "dynamic": "true",
+                            "properties": {
+                              "en": {
+                                "type": "text"
+                              }
+                            }
+                          }
+                        }
+                      },
+                      "organizations": {
+                        "type": "object",
+                        "properties": {
+                          "@v": {
+                            "type": "keyword"
+                          },
+                          "id": {
+                            "type": "keyword"
+                          },
+                          "name": {
+                            "type": "text"
+                          }
+                        }
+                      },
+                      "funding": {
+                        "properties": {
+                          "award": {
+                            "type": "object",
+                            "properties": {
+                              "@v": {
+                                "type": "keyword"
+                              },
+                              "id": {
+                                "type": "keyword"
+                              },
+                              "title": {
+                                "type": "object",
+                                "dynamic": "true"
+                              },
+                              "number": {
+                                "type": "text",
+                                "fields": {
+                                  "keyword": {
+                                    "type": "keyword"
+                                  }
+                                }
+                              },
+                              "program": {
+                                "type": "keyword"
+                              },
+                              "acronym": {
+                                "type": "keyword",
+                                "fields": {
+                                  "text": {
+                                    "type": "text"
+                                  }
+                                }
+                              },
+                              "identifiers": {
+                                "properties": {
+                                  "identifier": {
+                                    "type": "keyword"
+                                  },
+                                  "scheme": {
+                                    "type": "keyword"
+                                  }
+                                }
+                              },
+                              "subjects": {
+                                "properties": {
+                                  "@v": {
+                                    "type": "keyword"
+                                  },
+                                  "id": {
+                                    "type": "keyword"
+                                  },
+                                  "subject": {
+                                    "type": "keyword"
+                                  },
+                                  "scheme": {
+                                    "type": "keyword"
+                                  },
+                                  "props": {
+                                    "type": "object",
+                                    "dynamic": "true"
+                                  }
+                                }
+                              },
+                              "organizations": {
+                                "properties": {
+                                  "scheme": {
+                                    "type": "keyword"
+                                  },
+                                  "id": {
+                                    "type": "keyword"
+                                  },
+                                  "organization": {
+                                    "type": "keyword"
+                                  }
+                                }
+                              }
+                            }
+                          },
+                          "funder": {
+                            "type": "object",
+                            "properties": {
+                              "@v": {
+                                "type": "keyword"
+                              },
+                              "id": {
+                                "type": "keyword"
+                              },
+                              "name": {
+                                "type": "text"
+                              }
+                            }
+                          }
+                        }
+                      },
+                      "website": {
+                        "type": "keyword"
+                      }
+                    }
+                  },
+                  "theme": {
+                    "type": "object",
+                    "properties": {
+                      "enabled": {
+                        "type": "boolean"
+                      },
+                      "brand": {
+                        "type": "keyword"
+                      },
+                      "style": {
+                        "type": "object",
+                        "enabled": false
+                      }
+                    }
+                  },
+                  "parent": {
+                    "type": "object",
+                    "properties": {
+                      "uuid": {
+                        "type": "keyword"
+                      },
+                      "created": {
+                        "type": "date"
+                      },
+                      "updated": {
+                        "type": "date"
+                      },
+                      "version_id": {
+                        "type": "long"
+                      },
+                      "id": {
+                        "type": "keyword"
+                      },
+                      "is_verified": {
+                        "type": "boolean"
+                      },
+                      "@v": {
+                        "type": "keyword"
+                      },
+                      "slug": {
+                        "type": "keyword"
+                      },
+                      "children": {
+                        "properties": {
+                          "allow": {
+                            "type": "boolean"
+                          }
+                        }
+                      },
+                      "metadata": {
+                        "type": "object",
+                        "properties": {
+                          "title": {
+                            "type": "text"
+                          },
+                          "type": {
+                            "type": "object",
+                            "properties": {
+                              "@v": {
+                                "type": "keyword"
+                              },
+                              "id": {
+                                "type": "keyword"
+                              },
+                              "title": {
+                                "type": "object",
+                                "dynamic": "true",
+                                "properties": {
+                                  "en": {
+                                    "type": "text"
+                                  }
+                                }
+                              }
+                            }
+                          },
+                          "website": {
+                            "type": "keyword"
+                          },
+                          "organizations": {
+                            "type": "object",
+                            "properties": {
+                              "@v": {
+                                "type": "keyword"
+                              },
+                              "id": {
+                                "type": "keyword"
+                              },
+                              "name": {
+                                "type": "text"
+                              }
+                            }
+                          },
+                          "funding": {
+                            "properties": {
+                              "award": {
+                                "type": "object",
+                                "properties": {
+                                  "@v": {
+                                    "type": "keyword"
+                                  },
+                                  "id": {
+                                    "type": "keyword"
+                                  },
+                                  "title": {
+                                    "type": "object",
+                                    "dynamic": "true"
+                                  },
+                                  "number": {
+                                    "type": "text",
+                                    "fields": {
+                                      "keyword": {
+                                        "type": "keyword"
+                                      }
+                                    }
+                                  },
+                                  "program": {
+                                    "type": "keyword"
+                                  },
+                                  "acronym": {
+                                    "type": "keyword",
+                                    "fields": {
+                                      "text": {
+                                        "type": "text"
+                                      }
+                                    }
+                                  },
+                                  "identifiers": {
+                                    "properties": {
+                                      "identifier": {
+                                        "type": "keyword"
+                                      },
+                                      "scheme": {
+                                        "type": "keyword"
+                                      }
+                                    }
+                                  },
+                                  "subjects": {
+                                    "properties": {
+                                      "@v": {
+                                        "type": "keyword"
+                                      },
+                                      "id": {
+                                        "type": "keyword"
+                                      },
+                                      "subject": {
+                                        "type": "keyword"
+                                      },
+                                      "scheme": {
+                                        "type": "keyword"
+                                      },
+                                      "props": {
+                                        "type": "object",
+                                        "dynamic": "true"
+                                      }
+                                    }
+                                  },
+                                  "organizations": {
+                                    "properties": {
+                                      "scheme": {
+                                        "type": "keyword"
+                                      },
+                                      "id": {
+                                        "type": "keyword"
+                                      },
+                                      "organization": {
+                                        "type": "keyword"
+                                      }
+                                    }
+                                  }
+                                }
+                              },
+                              "funder": {
+                                "type": "object",
+                                "properties": {
+                                  "@v": {
+                                    "type": "keyword"
+                                  },
+                                  "id": {
+                                    "type": "keyword"
+                                  },
+                                  "name": {
+                                    "type": "text"
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      },
+                      "theme": {
+                        "type": "object",
+                        "properties": {
+                          "enabled": {
+                            "type": "boolean"
+                          },
+                          "brand": {
+                            "type": "keyword"
+                          },
+                          "style": {
+                            "type": "object",
+                            "enabled": false
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
               }
             }
           },
           "permission_flags": {
             "type": "object",
-            "dynamic": true
+            "dynamic": "true"
           },
           "created": {
             "type": "date"
@@ -259,7 +640,7 @@
       },
       "pids": {
         "type": "object",
-        "dynamic": true
+        "dynamic": "true"
       },
       "has_draft": {
         "type": "boolean"
@@ -299,6 +680,16 @@
                   },
                   "name": {
                     "type": "text"
+                  },
+                  "identifiers": {
+                    "properties": {
+                      "identifier": {
+                        "type": "keyword"
+                      },
+                      "scheme": {
+                        "type": "keyword"
+                      }
+                    }
                   }
                 }
               },
@@ -339,7 +730,7 @@
                   },
                   "title": {
                     "type": "object",
-                    "dynamic": true
+                    "dynamic": "true"
                   }
                 }
               }
@@ -358,6 +749,16 @@
                   },
                   "name": {
                     "type": "text"
+                  },
+                  "identifiers": {
+                    "properties": {
+                      "identifier": {
+                        "type": "keyword"
+                      },
+                      "scheme": {
+                        "type": "keyword"
+                      }
+                    }
                   }
                 }
               },
@@ -398,7 +799,7 @@
                   },
                   "title": {
                     "type": "object",
-                    "dynamic": true
+                    "dynamic": "true"
                   }
                 }
               }
@@ -426,7 +827,7 @@
                   },
                   "title": {
                     "type": "object",
-                    "dynamic": true
+                    "dynamic": "true"
                   }
                 }
               }
@@ -451,7 +852,7 @@
                   },
                   "title": {
                     "type": "object",
-                    "dynamic": true
+                    "dynamic": "true"
                   }
                 }
               },
@@ -466,7 +867,7 @@
                   },
                   "title": {
                     "type": "object",
-                    "dynamic": true
+                    "dynamic": "true"
                   }
                 }
               }
@@ -488,10 +889,26 @@
                   },
                   "title": {
                     "type": "object",
-                    "dynamic": true
+                    "dynamic": "true"
                   },
                   "number": {
-                    "type": "text"
+                    "type": "text",
+                    "fields": {
+                      "keyword": {
+                        "type": "keyword"
+                      }
+                    }
+                  },
+                  "acronym": {
+                    "type": "keyword",
+                    "fields": {
+                      "text": {
+                        "type": "text"
+                      }
+                    }
+                  },
+                  "program": {
+                    "type": "keyword"
                   },
                   "identifiers": {
                     "properties": {
@@ -499,6 +916,39 @@
                         "type": "text"
                       },
                       "scheme": {
+                        "type": "keyword"
+                      }
+                    }
+                  },
+                  "subjects": {
+                    "properties": {
+                      "@v": {
+                        "type": "keyword"
+                      },
+                      "id": {
+                        "type": "keyword"
+                      },
+                      "subject": {
+                        "type": "keyword"
+                      },
+                      "scheme": {
+                        "type": "keyword"
+                      },
+                      "props": {
+                        "type": "object",
+                        "dynamic": "true"
+                      }
+                    }
+                  },
+                  "organizations": {
+                    "properties": {
+                      "scheme": {
+                        "type": "keyword"
+                      },
+                      "id": {
+                        "type": "keyword"
+                      },
+                      "organization": {
                         "type": "keyword"
                       }
                     }
@@ -516,6 +966,16 @@
                   },
                   "name": {
                     "type": "text"
+                  },
+                  "identifiers": {
+                    "properties": {
+                      "identifier": {
+                        "type": "keyword"
+                      },
+                      "scheme": {
+                        "type": "keyword"
+                      }
+                    }
                   }
                 }
               }
@@ -542,7 +1002,7 @@
               },
               "title": {
                 "type": "object",
-                "dynamic": true
+                "dynamic": "true"
               }
             }
           },
@@ -620,7 +1080,7 @@
                   },
                   "title": {
                     "type": "object",
-                    "dynamic": true
+                    "dynamic": "true"
                   }
                 }
               },
@@ -635,7 +1095,7 @@
                   },
                   "title": {
                     "type": "object",
-                    "dynamic": true
+                    "dynamic": "true"
                   }
                 }
               },
@@ -655,7 +1115,7 @@
               },
               "title": {
                 "type": "object",
-                "dynamic": true
+                "dynamic": "true"
               },
               "props": {
                 "type": "object",
@@ -681,11 +1141,11 @@
               },
               "title": {
                 "type": "object",
-                "dynamic": true
+                "dynamic": "true"
               },
               "description": {
                 "type": "object",
-                "dynamic": true
+                "dynamic": "true"
               },
               "props": {
                 "type": "object",
@@ -731,8 +1191,15 @@
               },
               "scheme": {
                 "type": "keyword"
+              },
+              "props": {
+                "type": "object",
+                "dynamic": "true"
               }
             }
+          },
+          "combined_subjects": {
+            "type": "keyword"
           },
           "title": {
             "type": "text",
@@ -756,7 +1223,7 @@
                   },
                   "title": {
                     "type": "object",
-                    "dynamic": true
+                    "dynamic": "true"
                   }
                 }
               },
@@ -774,7 +1241,7 @@
                   },
                   "title": {
                     "type": "object",
-                    "dynamic": true
+                    "dynamic": "true"
                   }
                 }
               }
@@ -857,7 +1324,7 @@
               },
               "metadata": {
                 "type": "object",
-                "dynamic": true
+                "dynamic": "true"
               },
               "checksum": {
                 "type": "keyword"
@@ -879,6 +1346,14 @@
               },
               "file_id": {
                 "enabled": false
+              },
+              "access": {
+                "type": "object",
+                "properties": {
+                  "hidden": {
+                    "type": "boolean"
+                  }
+                }
               }
             }
           }
@@ -916,7 +1391,7 @@
               },
               "metadata": {
                 "type": "object",
-                "dynamic": true
+                "dynamic": "true"
               },
               "checksum": {
                 "type": "keyword"
@@ -938,6 +1413,32 @@
               },
               "file_id": {
                 "enabled": false
+              },
+              "access": {
+                "type": "object",
+                "properties": {
+                  "hidden": {
+                    "type": "boolean"
+                  }
+                }
+              },
+              "processor": {
+                "type": "object",
+                "properties": {
+                  "type": {
+                    "type": "keyword"
+                  },
+                  "status": {
+                    "type": "keyword"
+                  },
+                  "source_file_id": {
+                    "type": "keyword"
+                  },
+                  "props": {
+                    "type": "object",
+                    "dynamic": "true"
+                  }
+                }
               }
             }
           }
@@ -997,7 +1498,7 @@
               },
               "title": {
                 "type": "object",
-                "dynamic": true
+                "dynamic": "true"
               }
             }
           },
@@ -1023,5 +1524,35 @@
         }
       }
     }
+  },
+  "settings": {
+    "index.query.default_field": [
+      "id",
+      "metadata.title",
+      "metadata.contact",
+      "metadata.contributors.affiliations.name",
+      "metadata.contributors.person_or_org.name",
+      "metadata.contributors.person_or_org.family_name",
+      "metadata.contributors.person_or_org.given_name",
+      "metadata.creators.affiliations.name",
+      "metadata.creators.person_or_org.name",
+      "metadata.creators.person_or_org.family_name",
+      "metadata.creators.person_or_org.given_name",
+      "metadata.description",
+      "metadata.formats",
+      "metadata.funding.award.identifiers.identifier",
+      "metadata.funding.award.acronym.text",
+      "metadata.funding.award.number",
+      "metadata.funding.award.subjects",
+      "metadata.funding.award.organizations",
+      "metadata.funding.funder.name",
+      "metadata.identifiers.identifier",
+      "metadata.locations.features.place",
+      "metadata.locations.features.description",
+      "metadata.publication_date",
+      "metadata.publisher",
+      "metadata.subjects.subject",
+      "metadata.version"
+    ]
   }
 }

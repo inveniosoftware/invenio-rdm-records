@@ -1,0 +1,56 @@
+{% set submission_request = notification.context.request %}
+{% set community = submission_request.receiver %}
+{% set creator = submission_request.created_by %}
+{% set record = submission_request.topic %}
+{% set request_id = submission_request.id %}
+
+{% set community_title = community.metadata.title %}
+{% set record_title = record.metadata.title %}
+
+{# TODO: use request.links.self_html when issue issue is resolved: https://github.com/inveniosoftware/invenio-rdm-records/issues/1327 #}
+{% set request_link = "{ui}/me/requests/{id}".format(
+    ui=config.SITE_UI_URL, id=request_id
+    )
+%}
+{% set account_settings_link = "{ui}/account/settings/notifications".format(
+    ui=config.SITE_UI_URL
+    )
+%}
+
+{%- block subject -%}
+       {{ _("⌛️ Community inclusion expired for '{record_title}'").format(record_title=record_title) }}
+{%- endblock subject -%}
+
+{%- block html_body -%}
+    <table style="font-family:'Lato',Helvetica,Arial,sans-serif;border-spacing:15px">
+        <tr>
+            <td>{{ _("The submission for your record has expired.") }}</td>
+        </tr>
+        <tr>
+            <td><a href="{{ request_link }}" class="button">{{ _("Check out the submission request")}}</a></td>
+        </tr>
+        <tr>
+            <td><strong>_</strong></td>
+        </tr>
+        <tr>
+            <td style="font-size:smaller">{{ _("This is an auto-generated message. To manage notifications, visit your")}} <a href="{{account_settings_link}}">{{ _("account settings")}}</a>.</td>
+        </tr>
+    </table>
+{%- endblock html_body %}
+
+{%- block plain_body -%}
+{{ _("The submission for your record has expired.") }}
+
+{{ _("Check out the submission request: {request_link}").format(request_link=request_link) }}
+
+{{ _("This is an auto-generated message. To manage notifications, visit your")}} <a href="{{account_settings_link}}">{{ _("account settings")}}
+{%- endblock plain_body %}
+
+{# Markdown for Slack/Mattermost/chat #}
+{%- block md_body -%}
+{{ _("The submission for your record has expired.") }}
+
+[{{_("Check out the submission request")}}]({{request_link}})
+
+[{{ _("This is an auto-generated message. To manage notifications, visit your account settings")}}]({{account_settings_link}})
+{%- endblock md_body %}
