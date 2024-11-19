@@ -12,6 +12,10 @@
 Changes
 =======
 
+Version v16.2.0 (released 2024-11-19)
+
+- search: pass search parameters to collection records
+
 Version v16.1.1 (released 2024-11-19)
 
 - communities: fix set/unset of default record community
