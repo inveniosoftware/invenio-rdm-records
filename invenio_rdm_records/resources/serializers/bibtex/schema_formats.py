@@ -130,6 +130,7 @@ class BibTexFormatter:
             "version",
             "doi",
             "url",
+            "swhid",
         ],
     }
     """Computer software."""
