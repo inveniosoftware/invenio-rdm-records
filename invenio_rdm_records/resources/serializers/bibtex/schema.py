@@ -245,6 +245,7 @@ class BibTexSchema(BaseSerializerSchema, CommonFieldsMixin):
             "pages": data.get("pages", None),
             "note": data.get("note", None),
             "venue": data.get("venue", None),
+            "swhid": data.get("swhid", None),
         }
 
     def _format_output_row(self, field, value):
@@ -261,10 +262,10 @@ class BibTexSchema(BaseSerializerSchema, CommonFieldsMixin):
 
         elif len(value) > 50:
             wrapped = textwrap.wrap(value, 50)
-            out = "  {0:<12} = {{{{{1} \n".format(field, wrapped[0])
-            for line in wrapped[1:-1]:
-                out += " {0:<17} {1:<}\n".format("", line)
-            out += " {0:<17} {1:<}}}}},\n".format("", wrapped[-1])
+            out = f"  {field:<12} = {{{wrapped[0]}\n"
+            for line in wrapped[1:]:
+                out += f" {'' :<17} {line}\n"
+            out += f" {'' :<17}}},\n"  # Closing the single brace here
         elif field == "month":
             out = "  {0:<12} = {1},\n".format(field, value)
         elif field == "url":
