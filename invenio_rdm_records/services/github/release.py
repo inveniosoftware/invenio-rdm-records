@@ -63,6 +63,13 @@ class RDMGithubRelease(GitHubRelease):
             )
         return output
 
+    def get_custom_fields(self):
+        """Get custom fields."""
+        ret = {}
+        repo_url = self.repository_payload["html_url"]
+        ret["code:codeRepository"] = repo_url
+        return ret
+
     def get_owner(self):
         """Retrieves repository owner and its affiliation, if any."""
         # `owner.name` is not required, `owner.login` is.
@@ -135,6 +142,7 @@ class RDMGithubRelease(GitHubRelease):
                     "metadata": self.metadata,
                     "access": {"record": "public", "files": "public"},
                     "files": {"enabled": True},
+                    "custom_fields": self.get_custom_fields(),
                 }
 
                 if self.is_first_release():
