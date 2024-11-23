@@ -234,9 +234,10 @@ export class CreatibutorsModal extends Component {
     }
   };
 
-  serializeAffiliations = (creatibutors) => {
+  serializeSuggestions = (creatibutors) => {
     const { isOrganization } = this.state;
-
+    // TODO: AffiliationsSuggestions is wrongly named, since it also serializes authors,
+    // this has to be fixed upstream though
     return AffiliationsSuggestions(creatibutors, isOrganization);
   };
 
@@ -482,7 +483,7 @@ export class CreatibutorsModal extends Component {
                           // Disable UI-side filtering of search results
                           search={(options) => options}
                           suggestionAPIUrl="/api/names"
-                          serializeSuggestions={this.serializeAffiliations}
+                          serializeSuggestions={this.serializeSuggestions}
                           onValueChange={this.onPersonSearchChange}
                           ref={this.namesAutocompleteRef}
                         />
@@ -544,7 +545,7 @@ export class CreatibutorsModal extends Component {
                           // Disable UI-side filtering of search results
                           search={(options) => options}
                           suggestionAPIUrl="/api/affiliations"
-                          serializeSuggestions={this.serializeAffiliations}
+                          serializeSuggestions={this.serializeSuggestions}
                           onValueChange={this.onOrganizationSearchChange}
                         />
                       )}
