@@ -61,6 +61,10 @@ class RDMGithubRelease(GitHubRelease):
                     ]
                 }
             )
+
+        # Add default license if not yet added
+        if not output.get("rights"):
+            output.update({"rights": [{"id": metadata.repo_license or "cc-by-4.0"}]})
         return output
 
     def get_custom_fields(self):
@@ -144,7 +148,6 @@ class RDMGithubRelease(GitHubRelease):
                     "files": {"enabled": True},
                     "custom_fields": self.get_custom_fields(),
                 }
-
                 if self.is_first_release():
                     # For the first release, use the repo's owner identity.
                     identity = self.user_identity
