@@ -12,6 +12,19 @@
 Changes
 =======
 
+Version v16.3.0 (released 2024-11-27)
+
+- github: added default license from Github API
+- deposit-ui: fix affiliations rendering during edits
+- github: added custom_fields in metadata extraction
+- github: added optional swhid field to the bibtex export
+- datacite: improve error logging formatting and grouping
+    * Avoids f-strings in logging calls so that entries are easier to be
+      grouped.
+    * Adds exception info to the logged errors.
+- config: added service schema from config
+- requests: manage sending notifications
+
 Version v16.2.0 (released 2024-11-19)
 
 - search: pass search parameters to collection records
