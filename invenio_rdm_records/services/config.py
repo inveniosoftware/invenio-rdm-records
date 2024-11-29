@@ -401,7 +401,7 @@ class RDMRecordServiceConfig(RecordServiceConfig, ConfiguratorMixin):
     draft_cls = FromConfig("RDM_DRAFT_CLS", default=RDMDraft)
 
     # Schemas
-    schema = RDMRecordSchema
+    schema = FromConfig("RDM_RECORD_SCHEMA", default=RDMRecordSchema)
     schema_parent = RDMParentSchema
     schema_access_settings = AccessSettingsSchema
     schema_secret_link = SecretLinkSchema
@@ -647,7 +647,7 @@ class RDMCommunityRecordsConfig(BaseRecordServiceConfig, ConfiguratorMixin):
 
     # Service schemas
     community_record_schema = CommunityRecordsSchema
-    schema = RDMRecordSchema
+    schema = FromConfig("RDM_RECORD_SCHEMA", default=RDMRecordSchema)
 
     # Max n. records that can be removed at once
     max_number_of_removals = 10

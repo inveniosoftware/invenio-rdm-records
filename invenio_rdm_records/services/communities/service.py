@@ -387,7 +387,9 @@ class RecordCommunitiesService(Service, RecordIndexerMixin):
         )
         record = self.record_cls.pid.resolve(id_)
         self.require_permission(identity, "manage", record=record)
-        record.parent.communities.default = valid_data["default"]["id"]
+
+        default_community_id = valid_data.get("default", {}).get("id") or None
+        record.parent.communities.default = default_community_id
 
         uow.register(
             ParentRecordCommitOp(

@@ -203,6 +203,7 @@ class CollectionsService(Service):
                 identity,
                 community_id=collection.community.id,
                 extra_filter=collection.query,
+                params=params,
             )
         else:
             raise NotImplementedError(

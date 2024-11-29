@@ -28,7 +28,9 @@ const creatibutorNameDisplay = (value) => {
 
   const familyName = _get(value, "person_or_org.family_name", "");
   const givenName = _get(value, "person_or_org.given_name", "");
-  const affiliations = _map(value?.affiliations, "name");
+  const affiliations = value?.affiliations.map(
+    (affiliation) => affiliation.text || affiliation.name
+  );
   const name = _get(value, `person_or_org.name`);
 
   const affiliation = affiliations.length ? ` (${affiliations.join(", ")})` : "";

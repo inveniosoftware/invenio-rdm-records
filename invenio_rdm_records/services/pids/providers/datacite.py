@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2021 CERN.
+# Copyright (C) 2021-2024 CERN.
 # Copyright (C) 2023 Northwestern University.
 # Copyright (C) 2023-2024 Graz University of Technology.
 #
@@ -120,23 +120,26 @@ class DataCitePIDProvider(PIDProvider):
         # DataCiteError will have the response msg as first arg
         ex_txt = exception.args[0] or ""
         if isinstance(exception, DataCiteNoContentError):
-            current_app.logger.error(f"No content error: {ex_txt}")
+            current_app.logger.error("DataCite no content error", exc_info=exception)
         elif isinstance(exception, DataCiteServerError):
-            current_app.logger.error(f"DataCite internal server error: {ex_txt}")
+            current_app.logger.error(
+                "DataCite internal server error", exc_info=exception
+            )
         else:
             # Client error 4xx status code
             try:
                 ex_json = json.loads(ex_txt)
             except JSONDecodeError:
-                current_app.logger.error(f"Unknown error: {ex_txt}")
+                current_app.logger.error("Unknown DataCite error", exc_info=exception)
                 return
 
             # the `errors` field is only available when a 4xx error happened (not 500)
             for error in ex_json.get("errors", []):
-                reason = error["title"]
-                field = error.get("source")  # set when missing/wrong required field
-                error_prefix = f"Error in `{field}`: " if field else "Error: "
-                current_app.logger.error(f"{error_prefix}{reason}")
+                current_app.logger.error(
+                    "DataCite error (field: %(field)s): %(reason)s",
+                    {"field": error.get("source"), "reason": error.get("title")},
+                    exc_info=exception,
+                )
 
     def generate_id(self, record, **kwargs):
         """Generate a unique DOI."""

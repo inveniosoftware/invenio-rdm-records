@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2021 CERN.
+# Copyright (C) 2021-2024 CERN.
 # Copyright (C) 2021 Northwestern University.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
@@ -12,6 +12,7 @@ import pytest
 from invenio_access.permissions import system_identity
 from invenio_accounts.proxies import current_datastore
 from invenio_communities import current_communities
+from invenio_communities.errors import LogoNotFoundError
 from invenio_communities.fixtures.tasks import create_demo_community
 from invenio_pidstore.errors import PIDDoesNotExistError
 from invenio_records_resources.proxies import current_service_registry
@@ -218,8 +219,8 @@ def test_load_communities(app, db, location):
     # Refresh to make changes live
     service.record_cls.index.refresh()
 
-    community1 = service.search(system_identity, q=f"slug:community1")
-    community2 = service.search(system_identity, q=f"slug:community2")
+    community1 = service.search(system_identity, q="slug:community1")
+    community2 = service.search(system_identity, q="slug:community2")
 
     assert community1.total == 1
     assert community2.total == 1
@@ -243,7 +244,7 @@ def test_load_communities(app, db, location):
         assert fs1.read() == fs2.read()
 
     # make sure community2 has no logo
-    with pytest.raises(FileNotFoundError):
+    with pytest.raises(LogoNotFoundError):
         service.read_logo(system_identity, community2_id)
 
 
@@ -262,8 +263,8 @@ def test_load_records(app, db, location, vocabularies):
     # Refresh to make changes live
     service.record_cls.index.refresh()
 
-    record1 = service.search(system_identity, q=f"Record1")
-    record2 = service.search(system_identity, q=f"Record2")
+    record1 = service.search(system_identity, q="Record1")
+    record2 = service.search(system_identity, q="Record2")
 
     assert record1.total == 1
     assert record2.total == 1

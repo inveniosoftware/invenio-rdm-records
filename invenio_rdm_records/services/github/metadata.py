@@ -63,12 +63,10 @@ class RDMReleaseMetadata(object):
         """Return default metadata for a release."""
         # Get default right from app config or use cc-by-4.0 if default is not set in app
         # TODO use the default software license
-        default_right = "cc-by-4.0"
         version = self.rdm_release.release_payload.get("tag_name", "")
 
         return dict(
             description=self.description,
-            rights=[{"id": default_right}],
             publication_date=self.rdm_release.release_payload["published_at"][:10],
             related_identifiers=[self.related_identifiers],
             version=version,
@@ -79,6 +77,12 @@ class RDMReleaseMetadata(object):
                 "publisher", "CERN"
             ),
         )
+
+    @property
+    def repo_license(self):
+        """Get license from repository, if any. Falls back to default."""
+        repo_license_obj = self.rdm_release.repository_payload.get("license", {})
+        return repo_license_obj.get("spdx_id") if repo_license_obj else None
 
     @property
     def contributors(self):

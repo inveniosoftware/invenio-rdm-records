@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2023 CERN.
+# Copyright (C) 2023-2024 CERN.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
@@ -61,7 +61,18 @@ class RDMGithubRelease(GitHubRelease):
                     ]
                 }
             )
+
+        # Add default license if not yet added
+        if not output.get("rights"):
+            output.update({"rights": [{"id": metadata.repo_license or "cc-by-4.0"}]})
         return output
+
+    def get_custom_fields(self):
+        """Get custom fields."""
+        ret = {}
+        repo_url = self.repository_payload["html_url"]
+        ret["code:codeRepository"] = repo_url
+        return ret
 
     def get_owner(self):
         """Retrieves repository owner and its affiliation, if any."""
@@ -135,8 +146,8 @@ class RDMGithubRelease(GitHubRelease):
                     "metadata": self.metadata,
                     "access": {"record": "public", "files": "public"},
                     "files": {"enabled": True},
+                    "custom_fields": self.get_custom_fields(),
                 }
-
                 if self.is_first_release():
                     # For the first release, use the repo's owner identity.
                     identity = self.user_identity
