@@ -383,7 +383,7 @@ export class RDMDepositRecordSerializer extends DepositRecordSerializer {
    *
    */
   serialize(record) {
-    // NOTE: cloning nows allows us to manipulate the copy with impunity without
+    // NOTE: cloning now allows us to manipulate the copy with impunity without
     //       affecting the original
     let originalRecord = _pick(_cloneDeep(record), [
       "access",
@@ -400,8 +400,7 @@ export class RDMDepositRecordSerializer extends DepositRecordSerializer {
     // Save pids so they are not removed when an empty value is passed
     let savedPIDsFieldValue = originalRecord.pids || {};
 
-    let serializedRecord = this._removeEmptyValues(originalRecord);
-
+    let serializedRecord = originalRecord;
     for (let key in this.depositRecordSchema) {
       serializedRecord = this.depositRecordSchema[key].serialize(
         serializedRecord,
