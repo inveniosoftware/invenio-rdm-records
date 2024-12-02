@@ -12,6 +12,19 @@
 Changes
 =======
 
+Version v16.3.1 (released 2024-12-02)
+
+- deposit-ui: make sure we handle null/undefined for SchemaField
+- deposit-ui: skip unecessary removal of empty values in serialization
+    * This initial removal of empty values can be dangerous, since the
+      `record` at this point is a UI object representation that could
+      potentially include circular references or very deeply nested objects.
+      Since `_removeEmptyValues` is recursive this can lead to stack
+      overflow errors.
+- deposit-ui: log errors on all deposit form actions
+    * This can help with debugging unexpected non-network related errors
+      that might occur in the logic before/after a REST API requests.
+
 Version v16.3.0 (released 2024-11-27)
 
 - github: added default license from Github API
