@@ -57,7 +57,7 @@ export class SchemaField extends Field {
    */
   serialize(deserialized, defaultLocale) {
     const fieldValues = _get(deserialized, this.fieldpath, this.serializedDefault);
-    const serializedElements = fieldValues.map((value) => {
+    const serializedElements = fieldValues?.map((value) => {
       let serializedElement = _pick(value, this.schemaKeys);
       this.schemaKeys.forEach((key) => {
         serializedElement = this.schema[key].serialize(
