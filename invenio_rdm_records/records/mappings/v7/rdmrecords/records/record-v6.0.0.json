@@ -1195,6 +1195,16 @@
               "props": {
                 "type": "object",
                 "dynamic": "true"
+              },
+              "identifiers": {
+                "properties": {
+                  "identifier": {
+                    "type": "keyword"
+                  },
+                  "scheme": {
+                    "type": "keyword"
+                  }
+                }
               }
             }
           },
