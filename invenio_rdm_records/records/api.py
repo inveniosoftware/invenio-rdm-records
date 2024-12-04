@@ -184,7 +184,7 @@ class CommonFieldsMixin:
         ),
         subjects=PIDListRelation(
             "metadata.subjects",
-            keys=["subject", "scheme", "props"],
+            keys=["subject", "scheme", "props", "identifiers"],
             pid_field=Subject.pid,
             cache_key="subjects",
         ),

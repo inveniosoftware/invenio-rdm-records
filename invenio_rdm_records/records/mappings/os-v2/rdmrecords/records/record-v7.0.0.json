@@ -45,13 +45,8 @@
         "accent_analyzer": {
           "tokenizer": "standard",
           "type": "custom",
-          "char_filter": [
-            "strip_special_chars"
-          ],
-          "filter": [
-            "lowercase",
-            "asciifolding"
-          ]
+          "char_filter": ["strip_special_chars"],
+          "filter": ["lowercase", "asciifolding"]
         }
       }
     }
@@ -1248,6 +1243,16 @@
               "props": {
                 "type": "object",
                 "dynamic": "true"
+              },
+              "identifiers": {
+                "properties": {
+                  "identifier": {
+                    "type": "keyword"
+                  },
+                  "scheme": {
+                    "type": "keyword"
+                  }
+                }
               }
             }
           },
