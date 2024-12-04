@@ -2,6 +2,7 @@
 // Copyright (C) 2020-2023 CERN.
 // Copyright (C) 2020-2022 Northwestern University.
 // Copyright (C) 2021 Graz University of Technology.
+// Copyright (C) 2024 KTH Royal Institute of Technology.
 //
 // Invenio-RDM-Records is free software; you can redistribute it and/or modify it
 // under the terms of the MIT License; see LICENSE file for more details.
@@ -146,22 +147,22 @@ export class LicenseModal extends Component {
                           <Menu compact>
                             <Toggle
                               title={i18next.t("Recommended")}
-                              label="recommended"
+                              label={i18next.t("recommended")}
                               filterValue={["tags", "recommended"]}
                             />
                             <Toggle
                               title={i18next.t("All")}
-                              label="all"
+                              label={i18next.t("all")}
                               filterValue={["tags", "all"]}
                             />
                             <Toggle
                               title={i18next.t("Data")}
-                              label="data"
+                              label={i18next.t("data")}
                               filterValue={["tags", "data"]}
                             />
                             <Toggle
                               title={i18next.t("Software")}
-                              label="software"
+                              label={i18next.t("software")}
                               filterValue={["tags", "software"]}
                             />
                           </Menu>
