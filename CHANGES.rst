@@ -12,6 +12,10 @@
 Changes
 =======
 
+Version v16.3.3 (released 2024-12-04)
+
+- github: handle missing repo license
+
 Version v16.3.2 (released 2024-12-04)
 
 - github: lower license spdx id
