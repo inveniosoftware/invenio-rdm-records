@@ -12,6 +12,10 @@
 Changes
 =======
 
+Version v16.3.2 (released 2024-12-04)
+
+- github: lower license spdx id
+
 Version v16.3.1 (released 2024-12-02)
 
 - deposit-ui: make sure we handle null/undefined for SchemaField
