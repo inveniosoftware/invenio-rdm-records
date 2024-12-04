@@ -2,6 +2,7 @@
 // Copyright (C) 2020-2023 CERN.
 // Copyright (C) 2020-2022 Northwestern University.
 // Copyright (C) 2021 Graz University of Technology.
+// Copyright (C) 2024 KTH Royal Institute of Technology.
 //
 // Invenio-RDM-Records is free software; you can redistribute it and/or modify it
 // under the terms of the MIT License; see LICENSE file for more details.
@@ -32,13 +33,13 @@ export class AdditionalTitlesField extends Component {
             <GroupField fieldPath={fieldPath} optimized>
               <TextField
                 fieldPath={`${fieldPathPrefix}.title`}
-                label="Additional title"
+                label={i18next.t("Additional title")}
                 required
                 width={5}
               />
               <SelectField
                 fieldPath={`${fieldPathPrefix}.type`}
-                label="Type"
+                label={i18next.t("Type")}
                 optimized
                 options={options.type}
                 required
@@ -59,9 +60,9 @@ export class AdditionalTitlesField extends Component {
                     : []
                 }
                 fieldPath={`${fieldPathPrefix}.lang`}
-                label="Language"
+                label={i18next.t("Language")}
                 multiple={false}
-                placeholder="Select language"
+                placeholder={i18next.t("Select language")}
                 labelIcon={null}
                 clearable
                 selectOnBlur={false}
