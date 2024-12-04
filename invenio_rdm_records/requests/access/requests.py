@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # Copyright (C) 2023 TU Wien.
+# Copyright (C) 2024 KTH Royal Institute of Technology.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
@@ -12,6 +13,7 @@ import marshmallow as ma
 from flask import g
 from invenio_access.permissions import authenticated_user, system_identity
 from invenio_drafts_resources.services.records.uow import ParentRecordCommitOp
+from invenio_i18n import gettext as t
 from invenio_i18n import lazy_gettext as _
 from invenio_notifications.services.uow import NotificationOp
 from invenio_requests import current_events_service
@@ -148,8 +150,10 @@ class GuestAcceptAction(actions.AcceptAction):
         #       by the record owner
         data = {
             "permission": payload["permission"],
-            "description": (
-                f"Requested by guest: {payload['full_name']} ({payload['email']})"
+            "description": t(
+                "Requested by guest: %(full_name)s (%(email)s)",
+                full_name=payload["full_name"],
+                email=payload["email"],
             ),
             "origin": f"request:{self.request.id}",
         }
@@ -181,9 +185,11 @@ class GuestAcceptAction(actions.AcceptAction):
 
         confirmation_message = {
             "payload": {
-                "content": 'Click <a href="{url}">here</a> to access the record.'.format(
-                    url=access_url
+                "content": _(
+                    'Click <a href="%(url)s">here</a> to access the record.',
+                    url=access_url,
                 )
+                % {"url": access_url}
             }
         }
         current_events_service.create(
@@ -309,12 +315,12 @@ class GuestAccessRequest(RequestType):
         try:
             if int(value) < 0:
                 raise ValidationError(
-                    message="Not a valid number of days.",
+                    message=_("Not a valid number of days."),
                     field_name="secret_link_expiration",
                 )
         except ValueError:
             raise ValidationError(
-                message="Not a valid number of days.",
+                message=_("Not a valid number of days."),
                 field_name="secret_link_expiration",
             )
 

@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2023 CERN.
+# Copyright (C) 2023-2024 CERN.
+# Copyright (C) 2024 KTH Royal Institute of Technology.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
@@ -42,7 +43,7 @@ class CommunityInclusionService:
         It ensures that public records cannot be included in restricted communities.
         """
         if request.type.type_id not in self.supported_types:
-            raise ValueError("Invalid request type.")
+            raise ValueError(_("Invalid request type."))
 
         # All other preconditions can be checked by the action itself which can
         # raise appropriate exceptions.
@@ -56,7 +57,7 @@ class CommunityInclusionService:
         Request will be accepted based on community policy and identity permissions
         """
         if request.type.type_id not in self.supported_types:
-            raise ValueError("Invalid request type.")
+            raise ValueError(_("Invalid request type."))
 
         can_include_directly = current_communities.service.check_permission(
             identity, "include_directly", record=community
