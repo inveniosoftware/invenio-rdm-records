@@ -19,6 +19,7 @@ import {
 } from "../../api/DepositFormSubmitContext";
 import { DRAFT_PUBLISH_STARTED } from "../../state/types";
 import { scrollTop } from "../../utils";
+import { DRAFT_PUBLISH_FAILED_WITH_VALIDATION_ERRORS } from "../../state/types";
 
 class PublishButtonComponent extends Component {
   state = { isConfirmModalOpen: false };
@@ -31,18 +32,20 @@ class PublishButtonComponent extends Component {
 
   handlePublish = (event, handleSubmit, publishWithoutCommunity) => {
     const { setSubmitContext } = this.context;
-    const { formik } = this.props;
+    const { formik, raiseDOINeededButNotReserved } = this.props;
     const noINeedOne = formik?.values?.noINeedOne;
     // TODO
     // - You need to check if DOI is enabled here, otherwise you will not see field
     // - The error message is not shown on the field, maybe missing an error label
     // - Maybe show it also in the global?
     if (noINeedOne && Object.keys(formik?.values?.pids).length === 0) {
-      formik.setErrors({
+      const errors = {
         pids: {
           doi: "No DOI was reserved and one was needed.",
         },
-      });
+      };
+      formik.setErrors(errors);
+      raiseDOINeededButNotReserved(formik?.values, errors);
       this.closeConfirmModal();
       // scroll top to show the global error
       scrollTop();
@@ -156,6 +159,7 @@ PublishButtonComponent.propTypes = {
   formik: PropTypes.object.isRequired,
   publishModalExtraContent: PropTypes.string,
   filesState: PropTypes.object,
+  raiseDOINeededButNotReserved: PropTypes.func.isRequired,
 };
 
 PublishButtonComponent.defaultProps = {
@@ -172,7 +176,13 @@ const mapStateToProps = (state) => ({
   filesState: state.files,
 });
 
-export const PublishButton = connect(
-  mapStateToProps,
-  null
-)(connectFormik(PublishButtonComponent));
+export const PublishButton = connect(mapStateToProps, (dispatch) => {
+  return {
+    raiseDOINeededButNotReserved: (data, errors) =>
+      dispatch({
+        // TODO: maybe you need another error because the message is misleading
+        type: DRAFT_PUBLISH_FAILED_WITH_VALIDATION_ERRORS,
+        payload: { data: data, errors: errors },
+      }),
+  };
+})(connectFormik(PublishButtonComponent));
