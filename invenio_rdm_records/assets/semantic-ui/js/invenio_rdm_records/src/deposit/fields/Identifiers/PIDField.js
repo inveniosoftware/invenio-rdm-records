@@ -33,7 +33,7 @@ const getFieldErrors = (form, fieldPath) => {
  */
 class ReservePIDBtn extends Component {
   render() {
-    const { disabled, handleReservePID, label, loading } = this.props;
+    const { disabled, handleReservePID, label, loading, fieldError } = this.props;
     return (
       <Field>
         {({ form: formik }) => (
@@ -44,6 +44,7 @@ class ReservePIDBtn extends Component {
             disabled={disabled || loading}
             onClick={(e) => handleReservePID(e, formik)}
             content={label}
+            error={fieldError}
           />
         )}
       </Field>
@@ -54,6 +55,7 @@ class ReservePIDBtn extends Component {
 ReservePIDBtn.propTypes = {
   disabled: PropTypes.bool,
   handleReservePID: PropTypes.func.isRequired,
+  fieldError: PropTypes.object,
   label: PropTypes.string.isRequired,
   loading: PropTypes.bool,
 };
@@ -61,6 +63,7 @@ ReservePIDBtn.propTypes = {
 ReservePIDBtn.defaultProps = {
   disabled: false,
   loading: false,
+  fieldError: null,
 };
 
 /**
@@ -110,11 +113,13 @@ class ManagedUnmanagedSwitch extends Component {
   handleChange = (e, { value }) => {
     const { onManagedUnmanagedChange } = this.props;
     const isManagedSelected = value === "managed";
-    onManagedUnmanagedChange(isManagedSelected);
+    const isNoNeedSelected = value === "notneeded";
+    onManagedUnmanagedChange(isManagedSelected, isNoNeedSelected);
   };
 
   render() {
-    const { disabled, isManagedSelected, pidLabel } = this.props;
+    const { disabled, isManagedSelected, isNoNeedSelected, pidLabel, required } =
+      this.props;
 
     return (
       <Form.Group inline>
@@ -123,28 +128,41 @@ class ManagedUnmanagedSwitch extends Component {
             pidLabel: pidLabel,
           })}
         </Form.Field>
-        <Form.Field width={2}>
+        <Form.Field width={4}>
           <Radio
-            label={i18next.t("Yes")}
-            aria-label={i18next.t("Yes")}
+            label={i18next.t("Yes, I already have one")}
+            aria-label={i18next.t("Yes, I already have one")}
             name="radioGroup"
             value="unmanaged"
             disabled={disabled}
-            checked={!isManagedSelected}
+            checked={!isManagedSelected && !isNoNeedSelected}
             onChange={this.handleChange}
           />
         </Form.Field>
-        <Form.Field width={2}>
+        <Form.Field width={3}>
           <Radio
-            label={i18next.t("No")}
-            aria-label={i18next.t("No")}
+            label={i18next.t("No, I need one")}
+            aria-label={i18next.t("No, I need one")}
             name="radioGroup"
             value="managed"
             disabled={disabled}
-            checked={isManagedSelected}
+            checked={isManagedSelected && !isNoNeedSelected}
             onChange={this.handleChange}
           />
         </Form.Field>
+        {!required && (
+          <Form.Field width={4}>
+            <Radio
+              label={i18next.t("No, I don't need one")}
+              aria-label={i18next.t("No, I don't need one")}
+              name="radioGroup"
+              value="notneeded"
+              disabled={disabled}
+              checked={isNoNeedSelected}
+              onChange={this.handleChange}
+            />
+          </Form.Field>
+        )}
       </Form.Group>
     );
   }
@@ -153,8 +171,10 @@ class ManagedUnmanagedSwitch extends Component {
 ManagedUnmanagedSwitch.propTypes = {
   disabled: PropTypes.bool,
   isManagedSelected: PropTypes.bool.isRequired,
+  isNoNeedSelected: PropTypes.bool.isRequired,
   onManagedUnmanagedChange: PropTypes.func.isRequired,
   pidLabel: PropTypes.string,
+  required: PropTypes.bool.isRequired,
 };
 
 ManagedUnmanagedSwitch.defaultProps = {
@@ -198,6 +218,8 @@ class ManagedIdentifierComponent extends Component {
       identifier,
       pidPlaceholder,
       pidType,
+      form,
+      fieldPath,
     } = this.props;
     const hasIdentifier = identifier !== "";
 
@@ -209,6 +231,7 @@ class ManagedIdentifierComponent extends Component {
           actionState === RESERVE_PID_STARTED && actionStateExtra.pidType === pidType
         }
         handleReservePID={this.handleReservePID}
+        fieldError={getFieldErrors(form, fieldPath)}
       />
     );
 
@@ -253,6 +276,8 @@ ManagedIdentifierComponent.propTypes = {
   btnLabelDiscardPID: PropTypes.string.isRequired,
   pidPlaceholder: PropTypes.string.isRequired,
   pidType: PropTypes.string.isRequired,
+  form: PropTypes.object.isRequired,
+  fieldPath: PropTypes.string.isRequired,
   /* from Redux */
   actionState: PropTypes.string,
   actionStateExtra: PropTypes.object,
@@ -307,7 +332,7 @@ class UnmanagedIdentifierCmp extends Component {
 
   render() {
     const { localIdentifier } = this.state;
-    const { form, fieldPath, helpText, pidPlaceholder } = this.props;
+    const { form, fieldPath, helpText, pidPlaceholder, disabled } = this.props;
     const fieldError = getFieldErrors(form, fieldPath);
     return (
       <>
@@ -318,6 +343,7 @@ class UnmanagedIdentifierCmp extends Component {
             placeholder={pidPlaceholder}
             width={16}
             error={fieldError}
+            disabled={disabled}
           />
         </Form.Field>
         {helpText && <label className="helptext">{helpText}</label>}
@@ -333,10 +359,12 @@ UnmanagedIdentifierCmp.propTypes = {
   identifier: PropTypes.string.isRequired,
   onIdentifierChanged: PropTypes.func.isRequired,
   pidPlaceholder: PropTypes.string.isRequired,
+  disabled: PropTypes.bool,
 };
 
 UnmanagedIdentifierCmp.defaultProps = {
   helpText: null,
+  disabled: false,
 };
 
 /**
@@ -349,11 +377,18 @@ class CustomPIDField extends Component {
   constructor(props) {
     super(props);
 
-    const { canBeManaged, canBeUnmanaged } = this.props;
+    const { canBeManaged, canBeUnmanaged, record, field } = this.props;
     this.canBeManagedAndUnmanaged = canBeManaged && canBeUnmanaged;
+    const value = field?.value;
+    const isInternalProvider = value?.provider !== PROVIDER_EXTERNAL;
+    const isDraft = record?.is_draft === true;
+    const hasIdentifier = value?.identifier;
+    const isManagedSelected =
+      isDraft && hasIdentifier && isInternalProvider ? true : undefined;
 
     this.state = {
-      isManagedSelected: undefined,
+      isManagedSelected: isManagedSelected,
+      isNoNeedSelected: undefined,
     };
   }
 
@@ -373,7 +408,7 @@ class CustomPIDField extends Component {
   };
 
   render() {
-    const { isManagedSelected } = this.state;
+    const { isManagedSelected, isNoNeedSelected } = this.state;
     const {
       btnLabelDiscardPID,
       btnLabelGetPID,
@@ -394,6 +429,8 @@ class CustomPIDField extends Component {
       record,
     } = this.props;
 
+    let { doiDefaultSelection } = this.props;
+
     const value = field.value || {};
     const currentIdentifier = value.identifier || "";
     const currentProvider = value.provider || "";
@@ -407,19 +444,43 @@ class CustomPIDField extends Component {
     }
 
     const hasManagedIdentifier = managedIdentifier !== "";
+    const hasUnmanagedIdentifier = unmanagedIdentifier !== "";
+    const doi = record?.pids?.doi?.identifier || "";
+    const parentDoi = record.parent?.pids?.doi?.identifier || "";
+
+    const hasDoi = doi !== "";
+    const hasParentDoi = parentDoi !== "";
+    const isDoiCreated = currentIdentifier !== "";
+    const isDraft = record.is_draft;
+
+    const _isUnmanagedSelected =
+      isManagedSelected === undefined
+        ? hasUnmanagedIdentifier ||
+          (currentIdentifier === "" && doiDefaultSelection === "yes")
+        : !isManagedSelected;
 
     const _isManagedSelected =
       isManagedSelected === undefined
-        ? hasManagedIdentifier || currentProvider === "" // i.e pids: {}
+        ? hasManagedIdentifier ||
+          (currentIdentifier === "" && doiDefaultSelection === "no") // i.e pids: {}
         : isManagedSelected;
 
-    const doi = record?.pids?.doi?.identifier || "";
-    const hasDoi = doi !== "";
-    const isDoiCreated = currentIdentifier !== "";
+    const _isNoNeedSelected =
+      isNoNeedSelected === undefined
+        ? (!_isManagedSelected && !_isUnmanagedSelected) ||
+          (isDraft !== true &&
+            currentIdentifier === "" &&
+            doiDefaultSelection === "not_needed")
+        : isNoNeedSelected;
+
     const fieldError = getFieldErrors(form, fieldPath);
+
     return (
       <>
-        <Form.Field required={required} error={fieldError}>
+        <Form.Field
+          required={required || hasParentDoi}
+          error={fieldError ? true : false}
+        >
           <FieldLabel htmlFor={fieldPath} icon={pidIcon} label={fieldLabel} />
         </Form.Field>
 
@@ -427,20 +488,32 @@ class CustomPIDField extends Component {
           <ManagedUnmanagedSwitch
             disabled={
               (isEditingPublishedRecord || hasManagedIdentifier) &&
-              (hasDoi || isDoiCreated)
+              (hasDoi || isDoiCreated || _isNoNeedSelected)
             }
             isManagedSelected={_isManagedSelected}
-            onManagedUnmanagedChange={(userSelectedManaged) => {
+            isNoNeedSelected={_isNoNeedSelected}
+            onManagedUnmanagedChange={(userSelectedManaged, userSelectedNoNeed) => {
               if (userSelectedManaged) {
                 form.setFieldValue("pids", {});
+                if (!required) {
+                  // We set the
+                  form.setFieldValue("noINeedOne", true);
+                }
+              } else if (userSelectedNoNeed) {
+                form.setFieldValue("pids", {});
+                form.setFieldValue("noINeedOne", false);
               } else {
                 this.onExternalIdentifierChanged("");
+                form.setFieldValue("noINeedOne", false);
               }
+              form.setFieldError(fieldPath, false);
               this.setState({
                 isManagedSelected: userSelectedManaged,
+                isNoNeedSelected: userSelectedNoNeed,
               });
             }}
             pidLabel={pidLabel}
+            required={required}
           />
         )}
 
@@ -450,6 +523,7 @@ class CustomPIDField extends Component {
             btnLabelDiscardPID={btnLabelDiscardPID}
             btnLabelGetPID={btnLabelGetPID}
             form={form}
+            fieldPath={fieldPath}
             identifier={managedIdentifier}
             helpText={managedHelpText}
             pidPlaceholder={pidPlaceholder}
@@ -458,7 +532,7 @@ class CustomPIDField extends Component {
           />
         )}
 
-        {canBeUnmanaged && !_isManagedSelected && (
+        {canBeUnmanaged && (!_isManagedSelected || _isNoNeedSelected) && (
           <UnmanagedIdentifierCmp
             identifier={unmanagedIdentifier}
             onIdentifierChanged={(identifier) => {
@@ -468,6 +542,7 @@ class CustomPIDField extends Component {
             fieldPath={fieldPath}
             pidPlaceholder={pidPlaceholder}
             helpText={unmanagedHelpText}
+            disabled={_isNoNeedSelected || isEditingPublishedRecord}
           />
         )}
       </>
@@ -493,6 +568,7 @@ CustomPIDField.propTypes = {
   required: PropTypes.bool.isRequired,
   unmanagedHelpText: PropTypes.string,
   record: PropTypes.object.isRequired,
+  doiDefaultSelection: PropTypes.object.isRequired,
 };
 
 CustomPIDField.defaultProps = {
@@ -542,6 +618,7 @@ PIDField.propTypes = {
   required: PropTypes.bool,
   unmanagedHelpText: PropTypes.string,
   record: PropTypes.object.isRequired,
+  doiDefaultSelection: PropTypes.object.isRequired,
 };
 
 PIDField.defaultProps = {
