@@ -16,7 +16,6 @@ from flask import current_app
 from flask_resources.serializers import BaseSerializerSchema
 from invenio_access.permissions import system_identity
 from invenio_i18n import lazy_gettext as _
-from invenio_records_resources.proxies import current_service_registry
 from marshmallow import Schema, ValidationError, fields, missing, post_dump, validate
 from marshmallow_utils.fields import SanitizedUnicode
 from marshmallow_utils.html import strip_html
@@ -617,8 +616,12 @@ class DataCite43Schema(BaseSerializerSchema):
             # award
             award = funding.get("award")
             if award:  # having an award is optional
-                funding_ref["awardTitle"] = award.get("title", {}).get("en", missing)
-                funding_ref["awardNumber"] = award["number"]
+                award_title = award.get("title", {}).get("en")
+                if award_title:
+                    funding_ref["awardTitle"] = award_title
+                award_number = award.get("number")
+                if award_number:
+                    funding_ref["awardNumber"] = award_number
 
                 identifiers = award.get("identifiers", [])
                 if identifiers:
