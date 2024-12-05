@@ -478,12 +478,12 @@ class CustomPIDField extends Component {
             onManagedUnmanagedChange={(userSelectedManaged, userSelectedNoNeed) => {
               if (userSelectedManaged) {
                 form.setFieldValue("pids", {});
-                // form.setFieldValue("noINeedOne", true);
+                form.setFieldValue("noINeedOne", true);
               } else if (userSelectedNoNeed) {
-                // form.setFieldValue("noINeedOne", false);
+                form.setFieldValue("noINeedOne", false);
               } else {
                 this.onExternalIdentifierChanged("");
-                // form.setFieldValue("noINeedOne", false);
+                form.setFieldValue("noINeedOne", false);
               }
               this.setState({
                 isManagedSelected: userSelectedManaged,

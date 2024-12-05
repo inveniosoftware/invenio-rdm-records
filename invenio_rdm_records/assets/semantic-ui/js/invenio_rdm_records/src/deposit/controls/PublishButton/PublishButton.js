@@ -18,6 +18,7 @@ import {
   DepositFormSubmitContext,
 } from "../../api/DepositFormSubmitContext";
 import { DRAFT_PUBLISH_STARTED } from "../../state/types";
+import { scrollTop } from "../../utils";
 
 class PublishButtonComponent extends Component {
   state = { isConfirmModalOpen: false };
@@ -30,18 +31,30 @@ class PublishButtonComponent extends Component {
 
   handlePublish = (event, handleSubmit, publishWithoutCommunity) => {
     const { setSubmitContext } = this.context;
-    // const { formik } = this.props;
-    // const noINeedOne = formik?.values?.noINeedOne;
-    // if (noINeedOne && Object.keys(formik?.values?.pids).length === 0) {
-    //   formik.setFieldError("pids", "EROROROROROOR");
-    // }
-    setSubmitContext(
-      publishWithoutCommunity
-        ? DepositFormSubmitActions.PUBLISH_WITHOUT_COMMUNITY
-        : DepositFormSubmitActions.PUBLISH
-    );
-    handleSubmit(event);
-    this.closeConfirmModal();
+    const { formik } = this.props;
+    const noINeedOne = formik?.values?.noINeedOne;
+    // TODO
+    // - You need to check if DOI is enabled here, otherwise you will not see field
+    // - The error message is not shown on the field, maybe missing an error label
+    // - Maybe show it also in the global?
+    if (noINeedOne && Object.keys(formik?.values?.pids).length === 0) {
+      formik.setErrors({
+        pids: {
+          doi: "No DOI was reserved and one was needed.",
+        },
+      });
+      this.closeConfirmModal();
+      // scroll top to show the global error
+      scrollTop();
+    } else {
+      setSubmitContext(
+        publishWithoutCommunity
+          ? DepositFormSubmitActions.PUBLISH_WITHOUT_COMMUNITY
+          : DepositFormSubmitActions.PUBLISH
+      );
+      handleSubmit(event);
+      this.closeConfirmModal();
+    }
   };
 
   isDisabled = (values, isSubmitting, filesState) => {
