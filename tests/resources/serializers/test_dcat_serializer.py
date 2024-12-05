@@ -71,7 +71,7 @@ def test_dcat_serializer(running_app, full_record_to_dict):
         "    </dct:publisher>\n"
         "    <dct:issued "
         'rdf:datatype="http://www.w3.org/2001/XMLSchema#gYear">2018</dct:issued>\n'
-        "    <dct:subject>\n"
+        '    <dct:subject rdf:about="http://id.nlm.nih.gov/mesh/A-D000007">\n'
         "      <skos:Concept>\n"
         "        <skos:prefLabel>Abdominal Injuries</skos:prefLabel>\n"
         "        <skos:inScheme>\n"
