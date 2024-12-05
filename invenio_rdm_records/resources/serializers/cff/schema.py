@@ -1,12 +1,14 @@
 # -*- coding: utf-8 -*-
 #
 # Copyright (C) 2023 CERN.
+# Copyright (C) 2024 KTH Royal Institute of Technology.
 #
 # Invenio-RDM is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
 """CFF schema."""
 
 from flask_resources.serializers import BaseSerializerSchema
+from invenio_i18n import lazy_gettext as _
 from marshmallow import ValidationError, fields, missing
 from marshmallow_utils.fields import SanitizedHTML, SanitizedUnicode
 
@@ -24,7 +26,7 @@ def _serialize_person(person):
         serialized.update({"given-names": giv_name})
 
     if not serialized:
-        return ValidationError("One of 'family-names' or 'given-names' is required.")
+        return ValidationError(_("One of 'family-names' or 'given-names' is required."))
 
     identifiers = person["person_or_org"].get("identifiers", [])
     affiliations = person.get("affiliations", [])

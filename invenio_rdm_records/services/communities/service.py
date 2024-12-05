@@ -422,7 +422,7 @@ class RecordCommunitiesService(Service, RecordIndexerMixin):
                     {
                         "record_id": record_id,
                         "community_id": community_id,
-                        "message": "Community already included.",
+                        "message": _("Community already included."),
                     }
                 )
                 continue
