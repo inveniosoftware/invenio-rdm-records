@@ -9,7 +9,7 @@
 
 import idutils
 from flask import current_app
-from marshmallow import fields, missing
+from marshmallow import ValidationError, fields, missing, validate
 from marshmallow_utils.html import sanitize_unicode
 
 from invenio_rdm_records.resources.serializers.datacite import DataCite43Schema
@@ -49,3 +49,44 @@ class DcatSchema(DataCite43Schema):
             )
 
         return files_list or missing
+
+    def get_subjects(self, obj):
+        """Get subjects."""
+        subjects = obj["metadata"].get("subjects", [])
+        if not subjects:
+            return missing
+
+        validator = validate.URL()
+        serialized_subjects = []
+
+        for subject in subjects:
+            entry = {"subject": subject.get("subject")}
+
+            id_ = subject.get("id")
+            if id_:
+                entry["subjectScheme"] = subject.get("scheme")
+                try:
+                    validator(id_)
+                    entry["valueURI"] = id_
+                except ValidationError:
+                    pass
+
+            # Get identifiers and assign valueURI if scheme is 'url' and id_ was not a valid url
+            if "valueURI" not in entry:
+                entry["valueURI"] = next(
+                    (
+                        identifier.get("identifier")
+                        for identifier in subject.get("identifiers", [])
+                        if identifier.get("scheme") == "url"
+                    ),
+                    None,
+                )
+
+            # Add props if it exists
+            props = subject.get("props", {})
+            if props:
+                entry["subjectProps"] = props
+
+            serialized_subjects.append(entry)
+
+        return serialized_subjects if serialized_subjects else missing
