@@ -30,7 +30,11 @@ class PublishButtonComponent extends Component {
 
   handlePublish = (event, handleSubmit, publishWithoutCommunity) => {
     const { setSubmitContext } = this.context;
-
+    // const { formik } = this.props;
+    // const noINeedOne = formik?.values?.noINeedOne;
+    // if (noINeedOne && Object.keys(formik?.values?.pids).length === 0) {
+    //   formik.setFieldError("pids", "EROROROROROOR");
+    // }
     setSubmitContext(
       publishWithoutCommunity
         ? DepositFormSubmitActions.PUBLISH_WITHOUT_COMMUNITY

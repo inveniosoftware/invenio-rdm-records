@@ -172,6 +172,10 @@ class ParentPIDsComponent(ServiceComponent):
         current_schemes = set(current_pids.keys())
         required_schemes = set(self.service.config.parent_pids_required)
 
+        # if parent DOI is not required in the config, but record DOI is created, we need to create parent DOI as well
+        if "doi" not in required_schemes and draft and draft.get("pids", {}).get("doi"):
+            required_schemes.add("doi")
+
         conditional_schemes = self.service.config.parent_pids_conditional
         for scheme in set(required_schemes):
             condition_func = conditional_schemes.get(scheme)
