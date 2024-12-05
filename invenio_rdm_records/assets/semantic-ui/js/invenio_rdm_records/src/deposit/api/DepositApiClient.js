@@ -103,7 +103,12 @@ export class RDMDepositApiClient extends DepositApiClient {
       );
       return new DepositApiClientResponse(data, errors);
     } catch (error) {
-      const errorData = error.response.data;
+      let errorData = error.response.data;
+      const errors = this.recordSerializer.deserializeErrors(
+        error.response.data.errors || []
+      );
+      // this is to serialize raised error from the backend on publish
+      if (errors) errorData = errors;
       throw new DepositApiClientResponse({}, errorData);
     }
   }

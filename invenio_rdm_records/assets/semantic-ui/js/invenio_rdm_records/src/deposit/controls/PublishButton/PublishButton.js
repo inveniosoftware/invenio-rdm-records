@@ -18,6 +18,8 @@ import {
   DepositFormSubmitContext,
 } from "../../api/DepositFormSubmitContext";
 import { DRAFT_PUBLISH_STARTED } from "../../state/types";
+import { scrollTop } from "../../utils";
+import { DRAFT_PUBLISH_FAILED_WITH_VALIDATION_ERRORS } from "../../state/types";
 
 class PublishButtonComponent extends Component {
   state = { isConfirmModalOpen: false };
@@ -30,14 +32,36 @@ class PublishButtonComponent extends Component {
 
   handlePublish = (event, handleSubmit, publishWithoutCommunity) => {
     const { setSubmitContext } = this.context;
-
-    setSubmitContext(
-      publishWithoutCommunity
-        ? DepositFormSubmitActions.PUBLISH_WITHOUT_COMMUNITY
-        : DepositFormSubmitActions.PUBLISH
-    );
-    handleSubmit(event);
-    this.closeConfirmModal();
+    const { formik, raiseDOINeededButNotReserved, isDOIRequired } = this.props;
+    const noINeedOne = formik?.values?.noINeedOne;
+    // Check for explicit DOI reservation via the "GET DOI button" only when DOI is
+    // optional in the instance's settings. If it is required, backend will automatically
+    // mint one even if it was not explicitly reserved
+    const shouldCheckForExplicitDOIReservation =
+      isDOIRequired !== undefined && // isDOIRequired is undefined when no value was provided from Invenio-app-rdm
+      !isDOIRequired &&
+      noINeedOne &&
+      Object.keys(formik?.values?.pids).length === 0;
+    if (shouldCheckForExplicitDOIReservation) {
+      const errors = {
+        pids: {
+          doi: i18next.t("DOI is needed. Please click on the button to reserve it."),
+        },
+      };
+      formik.setErrors(errors);
+      raiseDOINeededButNotReserved(formik?.values, errors);
+      this.closeConfirmModal();
+    } else {
+      setSubmitContext(
+        publishWithoutCommunity
+          ? DepositFormSubmitActions.PUBLISH_WITHOUT_COMMUNITY
+          : DepositFormSubmitActions.PUBLISH
+      );
+      handleSubmit(event);
+      this.closeConfirmModal();
+    }
+    // scroll top to show the global error
+    scrollTop();
   };
 
   isDisabled = (values, isSubmitting, filesState) => {
@@ -67,6 +91,7 @@ class PublishButtonComponent extends Component {
       publishWithoutCommunity,
       formik,
       publishModalExtraContent,
+      raiseDOINeededButNotReserved,
       ...ui
     } = this.props;
     const { isConfirmModalOpen } = this.state;
@@ -139,6 +164,8 @@ PublishButtonComponent.propTypes = {
   formik: PropTypes.object.isRequired,
   publishModalExtraContent: PropTypes.string,
   filesState: PropTypes.object,
+  raiseDOINeededButNotReserved: PropTypes.func.isRequired,
+  isDOIRequired: PropTypes.bool,
 };
 
 PublishButtonComponent.defaultProps = {
@@ -147,15 +174,22 @@ PublishButtonComponent.defaultProps = {
   actionState: undefined,
   publishModalExtraContent: undefined,
   filesState: undefined,
+  isDOIRequired: undefined,
 };
 
 const mapStateToProps = (state) => ({
   actionState: state.deposit.actionState,
   publishModalExtraContent: state.deposit.config.publish_modal_extra,
   filesState: state.files,
+  isDOIRequired: state.deposit.config.is_doi_required,
 });
 
-export const PublishButton = connect(
-  mapStateToProps,
-  null
-)(connectFormik(PublishButtonComponent));
+export const PublishButton = connect(mapStateToProps, (dispatch) => {
+  return {
+    raiseDOINeededButNotReserved: (data, errors) =>
+      dispatch({
+        type: DRAFT_PUBLISH_FAILED_WITH_VALIDATION_ERRORS,
+        payload: { data: data, errors: errors },
+      }),
+  };
+})(connectFormik(PublishButtonComponent));
