@@ -33,7 +33,7 @@ const getFieldErrors = (form, fieldPath) => {
  */
 class ReservePIDBtn extends Component {
   render() {
-    const { disabled, handleReservePID, label, loading } = this.props;
+    const { disabled, handleReservePID, label, loading, fieldError } = this.props;
     return (
       <Field>
         {({ form: formik }) => (
@@ -44,6 +44,7 @@ class ReservePIDBtn extends Component {
             disabled={disabled || loading}
             onClick={(e) => handleReservePID(e, formik)}
             content={label}
+            error={fieldError}
           />
         )}
       </Field>
@@ -54,6 +55,7 @@ class ReservePIDBtn extends Component {
 ReservePIDBtn.propTypes = {
   disabled: PropTypes.bool,
   handleReservePID: PropTypes.func.isRequired,
+  fieldError: PropTypes.object,
   label: PropTypes.string.isRequired,
   loading: PropTypes.bool,
 };
@@ -61,6 +63,7 @@ ReservePIDBtn.propTypes = {
 ReservePIDBtn.defaultProps = {
   disabled: false,
   loading: false,
+  fieldError: null,
 };
 
 /**
@@ -215,6 +218,8 @@ class ManagedIdentifierComponent extends Component {
       identifier,
       pidPlaceholder,
       pidType,
+      form,
+      fieldPath,
     } = this.props;
     const hasIdentifier = identifier !== "";
 
@@ -226,6 +231,7 @@ class ManagedIdentifierComponent extends Component {
           actionState === RESERVE_PID_STARTED && actionStateExtra.pidType === pidType
         }
         handleReservePID={this.handleReservePID}
+        fieldError={getFieldErrors(form, fieldPath)}
       />
     );
 
@@ -270,6 +276,8 @@ ManagedIdentifierComponent.propTypes = {
   btnLabelDiscardPID: PropTypes.string.isRequired,
   pidPlaceholder: PropTypes.string.isRequired,
   pidType: PropTypes.string.isRequired,
+  form: PropTypes.object.isRequired,
+  fieldPath: PropTypes.string.isRequired,
   /* from Redux */
   actionState: PropTypes.string,
   actionStateExtra: PropTypes.object,
@@ -480,6 +488,7 @@ class CustomPIDField extends Component {
                 form.setFieldValue("pids", {});
                 form.setFieldValue("noINeedOne", true);
               } else if (userSelectedNoNeed) {
+                form.setFieldValue("pids", {});
                 form.setFieldValue("noINeedOne", false);
               } else {
                 this.onExternalIdentifierChanged("");
@@ -501,6 +510,7 @@ class CustomPIDField extends Component {
             btnLabelDiscardPID={btnLabelDiscardPID}
             btnLabelGetPID={btnLabelGetPID}
             form={form}
+            fieldPath={fieldPath}
             identifier={managedIdentifier}
             helpText={managedHelpText}
             pidPlaceholder={pidPlaceholder}

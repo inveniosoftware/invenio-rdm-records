@@ -34,14 +34,10 @@ class PublishButtonComponent extends Component {
     const { setSubmitContext } = this.context;
     const { formik, raiseDOINeededButNotReserved } = this.props;
     const noINeedOne = formik?.values?.noINeedOne;
-    // TODO
-    // - You need to check if DOI is enabled here, otherwise you will not see field
-    // - The error message is not shown on the field, maybe missing an error label
-    // - Maybe show it also in the global?
     if (noINeedOne && Object.keys(formik?.values?.pids).length === 0) {
       const errors = {
         pids: {
-          doi: "No DOI was reserved and one was needed.",
+          doi: "DOI is needed. Please click on the button to reserve it.",
         },
       };
       formik.setErrors(errors);
@@ -180,7 +176,6 @@ export const PublishButton = connect(mapStateToProps, (dispatch) => {
   return {
     raiseDOINeededButNotReserved: (data, errors) =>
       dispatch({
-        // TODO: maybe you need another error because the message is misleading
         type: DRAFT_PUBLISH_FAILED_WITH_VALIDATION_ERRORS,
         payload: { data: data, errors: errors },
       }),
