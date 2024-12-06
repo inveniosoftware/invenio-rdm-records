@@ -12,6 +12,13 @@
 Changes
 =======
 
+Version v16.3.4 (released 2024-12-06)
+
+- github: return None for `NOASSERTION` license
+- datacite: fix funding serialization for optional award fields
+    * Makes sure that we handle missing values for optional award fields
+      like "title" and "number".
+
 Version v16.3.3 (released 2024-12-04)
 
 - github: handle missing repo license
