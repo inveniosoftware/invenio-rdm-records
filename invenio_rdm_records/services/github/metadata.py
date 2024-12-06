@@ -87,7 +87,7 @@ class RDMReleaseMetadata(object):
         spdx_id = repo_license_obj.get("spdx_id")
         # For 'other' type of licenses, Github sets the spdx_id to NOASSERTION
         if spdx_id == "NOASSERTION":
-            spdx_id = "other"
+            return None
         return spdx_id
 
     @property
