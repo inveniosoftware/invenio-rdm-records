@@ -269,7 +269,7 @@ class BibTexSchema(BaseSerializerSchema, CommonFieldsMixin):
         elif field == "month":
             out = "  {0:<12} = {1},\n".format(field, value)
         elif field == "url":
-            out = "  {0:<12} = {{{1}}}\n".format(field, value)
+            out = "  {0:<12} = {{{1}}},\n".format(field, value)
         else:
             if not isinstance(value, list) and value.isdigit():
                 out = "  {0:<12} = {1},\n".format(field, value)
