@@ -18,6 +18,8 @@ import {
   DepositFormSubmitContext,
 } from "../../api/DepositFormSubmitContext";
 import { DRAFT_PUBLISH_STARTED } from "../../state/types";
+import { scrollTop } from "../../utils";
+import { DRAFT_PUBLISH_FAILED_WITH_VALIDATION_ERRORS } from "../../state/types";
 
 class PublishButtonComponent extends Component {
   state = { isConfirmModalOpen: false };
@@ -30,14 +32,28 @@ class PublishButtonComponent extends Component {
 
   handlePublish = (event, handleSubmit, publishWithoutCommunity) => {
     const { setSubmitContext } = this.context;
-
-    setSubmitContext(
-      publishWithoutCommunity
-        ? DepositFormSubmitActions.PUBLISH_WITHOUT_COMMUNITY
-        : DepositFormSubmitActions.PUBLISH
-    );
-    handleSubmit(event);
-    this.closeConfirmModal();
+    const { formik, raiseDOINeededButNotReserved } = this.props;
+    const noINeedOne = formik?.values?.noINeedOne;
+    if (noINeedOne && Object.keys(formik?.values?.pids).length === 0) {
+      const errors = {
+        pids: {
+          doi: "DOI is needed. Please click on the button to reserve it.",
+        },
+      };
+      formik.setErrors(errors);
+      raiseDOINeededButNotReserved(formik?.values, errors);
+      this.closeConfirmModal();
+      // scroll top to show the global error
+      scrollTop();
+    } else {
+      setSubmitContext(
+        publishWithoutCommunity
+          ? DepositFormSubmitActions.PUBLISH_WITHOUT_COMMUNITY
+          : DepositFormSubmitActions.PUBLISH
+      );
+      handleSubmit(event);
+      this.closeConfirmModal();
+    }
   };
 
   isDisabled = (values, isSubmitting, filesState) => {
@@ -139,6 +155,7 @@ PublishButtonComponent.propTypes = {
   formik: PropTypes.object.isRequired,
   publishModalExtraContent: PropTypes.string,
   filesState: PropTypes.object,
+  raiseDOINeededButNotReserved: PropTypes.func.isRequired,
 };
 
 PublishButtonComponent.defaultProps = {
@@ -155,7 +172,12 @@ const mapStateToProps = (state) => ({
   filesState: state.files,
 });
 
-export const PublishButton = connect(
-  mapStateToProps,
-  null
-)(connectFormik(PublishButtonComponent));
+export const PublishButton = connect(mapStateToProps, (dispatch) => {
+  return {
+    raiseDOINeededButNotReserved: (data, errors) =>
+      dispatch({
+        type: DRAFT_PUBLISH_FAILED_WITH_VALIDATION_ERRORS,
+        payload: { data: data, errors: errors },
+      }),
+  };
+})(connectFormik(PublishButtonComponent));

@@ -391,6 +391,7 @@ RDM_PERSISTENT_IDENTIFIERS = {
         "validator": idutils.is_doi,
         "normalizer": idutils.normalize_doi,
         "is_enabled": providers.DataCitePIDProvider.is_enabled,
+        "ui": {"default_selected": "yes"},  # "yes", "no" or "not_needed"
     },
     "oai": {
         "providers": ["oai"],
