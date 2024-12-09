@@ -13,6 +13,7 @@
 See https://pytest-invenio.readthedocs.io/ for documentation on which test
 fixtures are available.
 """
+
 from invenio_rdm_records.services.permissions import RDMRequestsPermissionPolicy
 
 # Monkey patch Werkzeug 2.1
@@ -42,7 +43,6 @@ from unittest import mock
 import arrow
 import pytest
 from dateutil import tz
-from flask import g
 from flask_principal import Identity, Need, RoleNeed, UserNeed
 from flask_security import login_user
 from flask_security.utils import hash_password
@@ -69,7 +69,6 @@ from invenio_records_resources.services.custom_fields import TextCF
 from invenio_requests.notifications.builders import (
     CommentRequestEventCreateNotificationBuilder,
 )
-from invenio_requests.proxies import current_user_moderation_service as mod_service
 from invenio_users_resources.permissions import user_management_action
 from invenio_users_resources.proxies import current_users_service
 from invenio_users_resources.records.api import UserAggregate
@@ -85,6 +84,7 @@ from invenio_vocabularies.contrib.subjects.api import Subject
 from invenio_vocabularies.proxies import current_service as vocabulary_service
 from invenio_vocabularies.records.api import Vocabulary
 from marshmallow import fields
+from werkzeug.local import LocalProxy
 
 from invenio_rdm_records import config
 from invenio_rdm_records.notifications.builders import (
@@ -246,8 +246,12 @@ def app_config(app_config, mock_datacite_client):
             "namespace": "http://schema.datacite.org/oai/oai-1.1/",
         },
     }
+    records_index = LocalProxy(
+        lambda: current_rdm_records_service.record_cls.index._name
+    )
+    app_config["OAISERVER_RECORD_INDEX"] = records_index
+    app_config["INDEXER_DEFAULT_INDEX"] = records_index
 
-    app_config["INDEXER_DEFAULT_INDEX"] = "rdmrecords-records-record-v6.0.0"
     # Variable not used. We set it to silent warnings
     app_config["JSONSCHEMAS_HOST"] = "not-used"
 
@@ -368,6 +372,8 @@ def app_config(app_config, mock_datacite_client):
         "record_detail": "/records/<pid_value>",
         "record_file_download": "/records/<pid_value>/files/<path:filename>",
     }
+
+    app_config["USERS_RESOURCES_GROUPS_ENABLED"] = True
 
     return app_config
 
@@ -916,6 +922,19 @@ def minimal_record():
 
 
 @pytest.fixture()
+def empty_record():
+    """Almost empty record data as dict coming from the external world."""
+    return {
+        "pids": {},
+        "access": {},
+        "files": {
+            "enabled": False,  # Most tests don't care about files
+        },
+        "metadata": {},
+    }
+
+
+@pytest.fixture()
 def minimal_restricted_record(minimal_record):
     """Data for restricted record."""
     record = deepcopy(minimal_record)
@@ -984,6 +1003,15 @@ def closed_review_minimal_community(minimal_community):
     community = deepcopy(minimal_community)
     community["slug"] = "closed-review-community"
     community["access"]["review_policy"] = "closed"
+    return community
+
+
+@pytest.fixture()
+def closed_submission_minimal_community(minimal_community):
+    """Data for a minimal community that restricts record submission."""
+    community = deepcopy(minimal_community)
+    community["slug"] = "closed-submission-community"
+    community["access"]["record_submission_policy"] = "closed"
     return community
 
 
@@ -1702,6 +1730,33 @@ def admin_role_need(db):
 
 
 @pytest.fixture()
+def embargoed_files_record(running_app, minimal_record, superuser_identity):
+    """Embargoed files record."""
+    service = current_rdm_records_service
+    today = arrow.utcnow().date().isoformat()
+
+    # Add embargo to record
+    with mock.patch("arrow.utcnow") as mock_arrow:
+        minimal_record["access"]["files"] = "restricted"
+        minimal_record["access"]["status"] = "embargoed"
+        minimal_record["access"]["embargo"] = dict(
+            active=True, until=today, reason=None
+        )
+
+        # We need to set the current date in the past to pass the validations
+        mock_arrow.return_value = arrow.get(datetime(1954, 9, 29), tz.gettz("UTC"))
+        draft = service.create(superuser_identity, minimal_record)
+        record = service.publish(id_=draft.id, identity=superuser_identity)
+
+        RDMRecord.index.refresh()
+
+        # Recover current date
+        mock_arrow.return_value = arrow.get(datetime.utcnow())
+
+    return record
+
+
+@pytest.fixture()
 def embargoed_record(running_app, minimal_record, superuser_identity):
     """Embargoed record."""
     service = current_rdm_records_service
@@ -1709,7 +1764,7 @@ def embargoed_record(running_app, minimal_record, superuser_identity):
 
     # Add embargo to record
     with mock.patch("arrow.utcnow") as mock_arrow:
-        minimal_record["access"]["files"] = "restricted"
+        minimal_record["access"]["record"] = "restricted"
         minimal_record["access"]["status"] = "embargoed"
         minimal_record["access"]["embargo"] = dict(
             active=True, until=today, reason=None
@@ -1946,6 +2001,19 @@ def closed_review_community(
 
 
 @pytest.fixture()
+def closed_submission_community(
+    running_app,
+    community_type_record,
+    community_owner,
+    closed_submission_minimal_community,
+):
+    """Create community with close submission policy."""
+    return _community_get_or_create(
+        closed_submission_minimal_community, community_owner.identity
+    )
+
+
+@pytest.fixture()
 def record_community(db, uploader, minimal_record, community):
     """Creates a record that belongs to a community."""
 
@@ -1961,20 +2029,22 @@ def record_community(db, uploader, minimal_record, community):
             """Creates new record that belongs to the same community."""
             # create draft
             draft = current_rdm_records_service.create(uploader.identity, record_dict)
-            # publish and get record
-            result_item = current_rdm_records_service.publish(
-                uploader.identity, draft.id
-            )
-            record = result_item._record
+            record = draft._record
             if community:
                 # add the record to the community
                 community_record = community._record
                 record.parent.communities.add(community_record, default=False)
                 record.parent.commit()
                 db.session.commit()
-                current_rdm_records_service.indexer.index(
-                    record, arguments={"refresh": True}
-                )
+
+            # publish and get record
+            result_item = current_rdm_records_service.publish(
+                uploader.identity, draft.id
+            )
+            record = result_item._record
+            current_rdm_records_service.indexer.index(
+                record, arguments={"refresh": True}
+            )
 
             return record
 

@@ -11,6 +11,7 @@
 from .config import (
     RDMCommunityRecordsResourceConfig,
     RDMDraftFilesResourceConfig,
+    RDMGrantGroupAccessResourceConfig,
     RDMGrantUserAccessResourceConfig,
     RDMParentGrantsResourceConfig,
     RDMParentRecordLinksResourceConfig,
@@ -39,6 +40,7 @@ __all__ = (
     "RDMGrantsAccessResource",
     "RDMParentGrantsResourceConfig",
     "RDMGrantUserAccessResourceConfig",
+    "RDMGrantGroupAccessResourceConfig",
     "RDMParentRecordLinksResource",
     "RDMParentRecordLinksResourceConfig",
     "RDMRecordCommunitiesResourceConfig",

@@ -353,6 +353,39 @@
                                     "type": "keyword"
                                   }
                                 }
+                              },
+                              "subjects": {
+                                "properties": {
+                                  "@v": {
+                                    "type": "keyword"
+                                  },
+                                  "id": {
+                                    "type": "keyword"
+                                  },
+                                  "subject": {
+                                    "type": "keyword"
+                                  },
+                                  "scheme": {
+                                    "type": "keyword"
+                                  },
+                                  "props": {
+                                    "type": "object",
+                                    "dynamic": "true"
+                                  }
+                                }
+                              },
+                              "organizations": {
+                                "properties": {
+                                  "scheme": {
+                                    "type": "keyword"
+                                  },
+                                  "id": {
+                                    "type": "keyword"
+                                  },
+                                  "organization": {
+                                    "type": "keyword"
+                                  }
+                                }
                               }
                             }
                           },
@@ -509,6 +542,39 @@
                                         "type": "keyword"
                                       },
                                       "scheme": {
+                                        "type": "keyword"
+                                      }
+                                    }
+                                  },
+                                  "subjects": {
+                                    "properties": {
+                                      "@v": {
+                                        "type": "keyword"
+                                      },
+                                      "id": {
+                                        "type": "keyword"
+                                      },
+                                      "subject": {
+                                        "type": "keyword"
+                                      },
+                                      "scheme": {
+                                        "type": "keyword"
+                                      },
+                                      "props": {
+                                        "type": "object",
+                                        "dynamic": "true"
+                                      }
+                                    }
+                                  },
+                                  "organizations": {
+                                    "properties": {
+                                      "scheme": {
+                                        "type": "keyword"
+                                      },
+                                      "id": {
+                                        "type": "keyword"
+                                      },
+                                      "organization": {
                                         "type": "keyword"
                                       }
                                     }
@@ -896,6 +962,39 @@
                         "type": "keyword"
                       }
                     }
+                  },
+                  "subjects": {
+                    "properties": {
+                      "@v": {
+                        "type": "keyword"
+                      },
+                      "id": {
+                        "type": "keyword"
+                      },
+                      "subject": {
+                        "type": "keyword"
+                      },
+                      "scheme": {
+                        "type": "keyword"
+                      },
+                      "props": {
+                        "type": "object",
+                        "dynamic": "true"
+                      }
+                    }
+                  },
+                  "organizations": {
+                    "properties": {
+                      "scheme": {
+                        "type": "keyword"
+                      },
+                      "id": {
+                        "type": "keyword"
+                      },
+                      "organization": {
+                        "type": "keyword"
+                      }
+                    }
                   }
                 }
               },
@@ -1135,6 +1234,10 @@
               },
               "scheme": {
                 "type": "keyword"
+              },
+              "props": {
+                "type": "object",
+                "dynamic": "true"
               }
             }
           },
@@ -1292,6 +1395,14 @@
               },
               "file_id": {
                 "enabled": false
+              },
+              "access": {
+                "type": "object",
+                "properties": {
+                  "hidden": {
+                    "type": "boolean"
+                  }
+                }
               }
             }
           }
@@ -1351,6 +1462,32 @@
               },
               "file_id": {
                 "enabled": false
+              },
+              "access": {
+                "type": "object",
+                "properties": {
+                  "hidden": {
+                    "type": "boolean"
+                  }
+                }
+              },
+              "processor": {
+                "type": "object",
+                "properties": {
+                  "type": {
+                    "type": "keyword"
+                  },
+                  "status": {
+                    "type": "keyword"
+                  },
+                  "source_file_id": {
+                    "type": "keyword"
+                  },
+                  "props": {
+                    "type": "object",
+                    "dynamic": "true"
+                  }
+                }
               }
             }
           }

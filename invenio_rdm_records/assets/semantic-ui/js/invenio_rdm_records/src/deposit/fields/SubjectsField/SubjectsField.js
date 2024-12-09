@@ -25,36 +25,44 @@ export class SubjectsField extends Component {
     const { fieldPath, label, labelIcon, limitToOptions, ...dropdownProps } =
       this.props;
     const { limitTo } = this.state;
-
+    const displaySuggestFromField = limitToOptions.length > 2; // 2 because of "all", that is always present
     return (
       <GroupField className="main-group-field">
-        <Form.Field width={5} className="subjects-field">
-          <FieldLabel htmlFor={fieldPath} icon={labelIcon} label={label} />
-          <GroupField>
-            <Form.Field
-              width={8}
-              style={{ marginBottom: "auto", marginTop: "auto" }}
-              className="p-0"
-            >
-              {i18next.t("Suggest from")}
-            </Form.Field>
-            <Form.Dropdown
-              className="p-0"
-              defaultValue={limitToOptions[0].value}
-              fluid
-              aria-label={i18next.t("Suggest from")}
-              onChange={(event, data) => this.setState({ limitTo: data.value })}
-              options={limitToOptions}
-              selection
-              width={8}
-            />
-          </GroupField>
-        </Form.Field>
+        {displaySuggestFromField && (
+          <Form.Field width={5} className="subjects-field">
+            <FieldLabel htmlFor={fieldPath} icon={labelIcon} label={label} />
+            <GroupField>
+              <Form.Field
+                width={8}
+                style={{ marginBottom: "auto", marginTop: "auto" }}
+                className="p-0"
+              >
+                {i18next.t("Suggest from")}
+              </Form.Field>
+              <Form.Dropdown
+                className="p-0"
+                defaultValue={limitToOptions[0].value}
+                fluid
+                aria-label={i18next.t("Suggest from")}
+                onChange={(event, data) => this.setState({ limitTo: data.value })}
+                options={limitToOptions}
+                selection
+                width={8}
+              />
+            </GroupField>
+          </Form.Field>
+        )}
+
         <SubjectAutocompleteDropdown
           {...dropdownProps}
           fieldPath={fieldPath}
+          label={
+            !displaySuggestFromField && (
+              <FieldLabel htmlFor={fieldPath} icon={labelIcon} label={label} />
+            ) // Add label to second field if suggest from is hidden
+          }
           limitTo={limitTo}
-          width={11}
+          width={displaySuggestFromField ? 11 : 16}
         />
       </GroupField>
     );

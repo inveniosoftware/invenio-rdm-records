@@ -10,6 +10,10 @@
 from invenio_drafts_resources.services.records import RecordService
 from invenio_pidstore.errors import PIDDoesNotExistError
 from invenio_pidstore.models import PersistentIdentifier
+from invenio_records_resources.services.errors import (
+    PermissionDeniedError,
+    RecordPermissionDeniedError,
+)
 from invenio_records_resources.services.uow import RecordCommitOp, unit_of_work
 from invenio_requests.services.results import EntityResolverExpandableField
 from sqlalchemy.orm.exc import NoResultFound
@@ -35,6 +39,7 @@ class PIDsService(RecordService):
         return [
             EntityResolverExpandableField("parent.review.receiver"),
             ParentCommunitiesExpandableField("parent.communities.default"),
+            EntityResolverExpandableField("parent.access.owned_by"),
         ]
 
     @property
@@ -57,7 +62,9 @@ class PIDsService(RecordService):
     @property
     def parent_pid_manager(self):
         """Parent PID Manager."""
-        return self.manager_cls(self.config.parent_pids_providers)
+        return self.manager_cls(
+            self.config.parent_pids_providers, self.config.parent_pids_required
+        )
 
     def resolve(self, identity, id_, scheme, expand=False):
         """Resolve PID to a record (not draft)."""
@@ -80,7 +87,10 @@ class PIDsService(RecordService):
         if record is None:
             raise PIDDoesNotExistError(scheme, id_)
 
-        self.require_permission(identity, "read", record=record)
+        try:
+            self.require_permission(identity, "read", record=record)
+        except PermissionDeniedError:
+            raise RecordPermissionDeniedError(action_name="read", record=record)
 
         return self.result_item(
             self,
@@ -189,9 +199,14 @@ class PIDsService(RecordService):
         # Determine landing page (use scheme specific if available)
         links = self.links_item_tpl.expand(identity, record)
         link_prefix = "parent" if parent else "self"
-        url = links[f"{link_prefix}_html"]
-        if f"{link_prefix}_{scheme}" in links:
-            url = links[f"{link_prefix}_{scheme}"]
+        link_choices = [
+            f"{link_prefix}_{scheme}_html",
+            f"{link_prefix}_html",
+        ]
+        for link_id in link_choices:
+            if link_id in links:
+                url = links[link_id]
+                break
 
         # NOTE: This is not the best place to do this, since we shouldn't be aware of
         #       the fact that the record has a `RelationsField``. However, without

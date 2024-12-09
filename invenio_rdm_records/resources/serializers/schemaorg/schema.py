@@ -8,6 +8,7 @@
 # it under the terms of the MIT License; see LICENSE file for more details.
 
 """Schemaorg based Schema for Invenio RDM Records."""
+
 from copy import deepcopy
 
 import pycountry
@@ -172,8 +173,9 @@ class SchemaorgSchema(BaseSerializerSchema, CommonFieldsMixin):
     )
     publisher = fields.Method("get_publisher")
     keywords = fields.Method("get_keywords")
-    datePublished = fields.Method("get_publication_date")
+    dateCreated = fields.Method("get_creation_date")
     dateModified = fields.Method("get_modification_date")
+    datePublished = fields.Method("get_publication_date")
     temporal = fields.Method("get_dates")
     inLanguage = fields.Method("get_language")
     contentSize = fields.Method("get_size")
@@ -207,10 +209,14 @@ class SchemaorgSchema(BaseSerializerSchema, CommonFieldsMixin):
 
     def get_type(self, obj):
         """Get type. Use the vocabulary service to get the schema.org type."""
+        resource_type_id = py_.get(obj, "metadata.resource_type.id")
+        if not resource_type_id:
+            return missing
+
         props = get_vocabulary_props(
             "resourcetypes",
             ["props.schema.org"],
-            py_.get(obj, "metadata.resource_type.id"),
+            resource_type_id,
         )
         ret = props.get("schema.org", "https://schema.org/CreativeWork")
         return ret
@@ -230,8 +236,12 @@ class SchemaorgSchema(BaseSerializerSchema, CommonFieldsMixin):
 
     def get_publication_date(self, obj):
         """Get publication date."""
+        publication_date = py_.get(obj, "metadata.publication_date")
+        if not publication_date:
+            return missing
+
         try:
-            parsed_date = parse_edtf(py_.get(obj, "metadata.publication_date"))
+            parsed_date = parse_edtf(publication_date)
         except ParseException:
             return missing
 
@@ -240,10 +250,13 @@ class SchemaorgSchema(BaseSerializerSchema, CommonFieldsMixin):
             parsed_date = parsed_date.lower
         return str(parsed_date)
 
+    def get_creation_date(self, obj):
+        """Get creation date."""
+        return obj.get("created") or missing
+
     def get_modification_date(self, obj):
         """Get modification date."""
-        last_updated = obj.get("updated")
-        return last_updated or missing
+        return obj.get("updated") or missing
 
     def get_language(self, obj):
         """Get language. Schemaorg expects either a string or language dict.

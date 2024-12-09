@@ -43,7 +43,7 @@ class SubmitAction(actions.SubmitAction):
 class AcceptAction(actions.AcceptAction):
     """Accept action."""
 
-    def execute(self, identity, uow):
+    def execute(self, identity, uow, **kwargs):
         """Accept record into community."""
         # Resolve the topic and community - the request type only allow for
         # community receivers and record topics.
@@ -81,13 +81,16 @@ class AcceptAction(actions.AcceptAction):
         # Publish the record
         # TODO: Ensure that the accepting user has permissions to publish.
         service.publish(identity, draft.pid.pid_value, uow=uow)
-        uow.register(
-            NotificationOp(
-                CommunityInclusionAcceptNotificationBuilder.build(
-                    identity=identity, request=self.request
+
+        if kwargs.get("send_notification", True):
+            uow.register(
+                NotificationOp(
+                    CommunityInclusionAcceptNotificationBuilder.build(
+                        identity=identity, request=self.request
+                    )
                 )
             )
-        )
+
         super().execute(identity, uow)
 
 

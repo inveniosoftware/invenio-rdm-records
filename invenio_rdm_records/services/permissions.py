@@ -8,6 +8,7 @@
 # it under the terms of the MIT License; see LICENSE file for more details.
 
 """Permissions for Invenio RDM Records."""
+
 from invenio_administration.generators import Administration
 from invenio_communities.generators import CommunityCurators
 from invenio_records_permissions.generators import (
@@ -29,11 +30,13 @@ from .generators import (
     AccessGrant,
     CommunityInclusionReviewers,
     GuestAccessRequestToken,
+    IfAtLeastOneCommunity,
     IfCreate,
     IfDeleted,
     IfExternalDOIRecord,
     IfFileIsLocal,
     IfNewRecord,
+    IfOneCommunity,
     IfRecordDeleted,
     IfRequestType,
     IfRestricted,
@@ -58,6 +61,10 @@ class RDMRecordPermissionPolicy(RecordPermissionPolicy):
         "object-read": "read_files",
     }
 
+    # permission meant for global curators of the instance
+    # (for now applies to internal notes field only
+    # to be replaced with an adequate permission when it is defined)
+    can_manage_internal = [SystemProcess()]
     #
     # High-level permissions (used by low-level)
     #
@@ -198,7 +205,18 @@ class RDMRecordPermissionPolicy(RecordPermissionPolicy):
         ),
     ]
     # Allow publishing a new record or changes to an existing record.
-    can_publish = can_review
+    can_publish = [
+        IfConfig(
+            "RDM_COMMUNITY_REQUIRED_TO_PUBLISH",
+            then_=[
+                IfAtLeastOneCommunity(
+                    then_=can_review,
+                    else_=[Administration(), SystemProcess()],
+                ),
+            ],
+            else_=can_review,
+        )
+    ]
     # Allow lifting a record or draft.
     can_lift_embargo = can_manage
 
@@ -208,13 +226,25 @@ class RDMRecordPermissionPolicy(RecordPermissionPolicy):
     # Who can add record to a community
     can_add_community = can_manage
     # Who can remove a community from a record
-    can_remove_community = [
+    can_remove_community_ = [
         RecordOwners(),
         CommunityCurators(),
         SystemProcess(),
     ]
+    can_remove_community = [
+        IfConfig(
+            "RDM_COMMUNITY_REQUIRED_TO_PUBLISH",
+            then_=[
+                IfOneCommunity(
+                    then_=[Administration(), SystemProcess()],
+                    else_=can_remove_community_,
+                ),
+            ],
+            else_=can_remove_community_,
+        ),
+    ]
     # Who can remove records from a community
-    can_remove_record = [CommunityCurators()]
+    can_remove_record = [CommunityCurators(), Administration(), SystemProcess()]
     # Who can add records to a community in bulk
     can_bulk_add = [SystemProcess()]
 

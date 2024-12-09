@@ -39,20 +39,20 @@ def example_name(app, db, search_clear, superuser_identity, names_service):
     names_service.delete(superuser_identity, name.id)
 
 
-def test_names_get(client, example_name, headers):
+def test_names_get(client_with_login, example_name, headers):
     """Test the endpoint to retrieve a single item."""
     id_ = example_name.id
 
-    res = client.get(f"/names/{id_}", headers=headers)
+    res = client_with_login.get(f"/names/{id_}", headers=headers)
     assert res.status_code == 200
     assert res.json["id"] == id_
     # Test links
     assert res.json["links"] == {"self": f"https://127.0.0.1:5000/api/names/{id_}"}
 
 
-def test_names_search(client, example_name, headers):
+def test_names_search(client_with_login, example_name, headers):
     """Test a successful search."""
-    res = client.get("/names", headers=headers)
+    res = client_with_login.get("/names", headers=headers)
 
     assert res.status_code == 200
     assert res.json["hits"]["total"] == 1

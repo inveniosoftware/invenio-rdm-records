@@ -9,6 +9,7 @@
 # it under the terms of the MIT License; see LICENSE file for more details.
 
 """Resources configuration."""
+
 from copy import deepcopy
 
 import marshmallow as ma
@@ -35,9 +36,11 @@ from invenio_requests.resources.requests.config import RequestSearchRequestArgsS
 
 from ..services.errors import (
     AccessRequestExistsError,
+    CommunityRequiredError,
     GrantExistsError,
     InvalidAccessRestrictions,
     RecordDeletedException,
+    RecordSubmissionClosedCommunityError,
     ReviewExistsError,
     ReviewNotFoundError,
     ReviewStateError,
@@ -132,6 +135,84 @@ record_serializers = {
     "application/linkset+json": ResponseHandler(FAIRSignpostingProfileLvl2Serializer()),
 }
 
+error_handlers = {
+    **ErrorHandlersMixin.error_handlers,
+    DeserializerError: create_error_handler(
+        lambda exc: HTTPJSONException(
+            code=400,
+            description=exc.args[0],
+        )
+    ),
+    StyleNotFoundError: create_error_handler(
+        HTTPJSONException(
+            code=400,
+            description=_("Citation string style not found."),
+        )
+    ),
+    ReviewNotFoundError: create_error_handler(
+        HTTPJSONException(
+            code=404,
+            description=_("Review for draft not found"),
+        )
+    ),
+    ReviewStateError: create_error_handler(
+        lambda e: HTTPJSONException(
+            code=400,
+            description=str(e),
+        )
+    ),
+    ReviewExistsError: create_error_handler(
+        lambda e: HTTPJSONException(
+            code=400,
+            description=str(e),
+        )
+    ),
+    InvalidRelationValue: create_error_handler(
+        lambda exc: HTTPJSONException(
+            code=400,
+            description=exc.args[0],
+        )
+    ),
+    InvalidAccessRestrictions: create_error_handler(
+        lambda exc: HTTPJSONException(
+            code=400,
+            description=exc.args[0],
+        )
+    ),
+    ValidationErrorWithMessageAsList: create_error_handler(
+        lambda e: HTTPJSONValidationWithMessageAsListException(e)
+    ),
+    AccessRequestExistsError: create_error_handler(
+        lambda e: HTTPJSONException(
+            code=400,
+            description=e.description,
+        )
+    ),
+    RecordDeletedException: create_error_handler(
+        lambda e: (
+            HTTPJSONException(code=404, description=_("Record not found"))
+            if not e.record.tombstone.is_visible
+            else HTTPJSONException(
+                code=410,
+                description=_("Record deleted"),
+                tombstone=e.record.tombstone.dump(),
+            )
+        )
+    ),
+    RecordSubmissionClosedCommunityError: create_error_handler(
+        lambda e: HTTPJSONException(
+            code=403,
+            description=e.description,
+        )
+    ),
+    CommunityRequiredError: create_error_handler(
+        HTTPJSONException(
+            code=400,
+            description=_("Cannot publish without selecting a community."),
+        )
+    ),
+}
+
 
 #
 # Records and record versions
@@ -184,70 +265,10 @@ class RDMRecordResourceConfig(RecordResourceConfig, ConfiguratorMixin):
         default=record_serializers,
     )
 
-    error_handlers = {
-        DeserializerError: create_error_handler(
-            lambda exc: HTTPJSONException(
-                code=400,
-                description=exc.args[0],
-            )
-        ),
-        StyleNotFoundError: create_error_handler(
-            HTTPJSONException(
-                code=400,
-                description=_("Citation string style not found."),
-            )
-        ),
-        ReviewNotFoundError: create_error_handler(
-            HTTPJSONException(
-                code=404,
-                description=_("Review for draft not found"),
-            )
-        ),
-        ReviewStateError: create_error_handler(
-            lambda e: HTTPJSONException(
-                code=400,
-                description=str(e),
-            )
-        ),
-        ReviewExistsError: create_error_handler(
-            lambda e: HTTPJSONException(
-                code=400,
-                description=str(e),
-            )
-        ),
-        InvalidRelationValue: create_error_handler(
-            lambda exc: HTTPJSONException(
-                code=400,
-                description=exc.args[0],
-            )
-        ),
-        InvalidAccessRestrictions: create_error_handler(
-            lambda exc: HTTPJSONException(
-                code=400,
-                description=exc.args[0],
-            )
-        ),
-        ValidationErrorWithMessageAsList: create_error_handler(
-            lambda e: HTTPJSONValidationWithMessageAsListException(e)
-        ),
-        AccessRequestExistsError: create_error_handler(
-            lambda e: HTTPJSONException(
-                code=400,
-                description=e.description,
-            )
-        ),
-        RecordDeletedException: create_error_handler(
-            lambda e: (
-                HTTPJSONException(code=404, description=_("Record not found"))
-                if not e.record.tombstone.is_visible
-                else HTTPJSONException(
-                    code=410,
-                    description=_("Record deleted"),
-                    tombstone=e.record.tombstone.dump(),
-                )
-            )
-        ),
-    }
+    error_handlers = FromConfig(
+        "RDM_RECORDS_ERROR_HANDLERS",
+        default=error_handlers,
+    )
 
 
 #
@@ -287,6 +308,13 @@ class RDMDraftFilesResourceConfig(FileResourceConfig, ConfiguratorMixin):
     blueprint_name = "draft_files"
     url_prefix = "/records/<pid_value>/draft"
 
+    response_handlers = {
+        "application/vnd.inveniordm.v1+json": FileResourceConfig.response_handlers[
+            "application/json"
+        ],
+        **FileResourceConfig.response_handlers,
+    }
+
 
 class RDMRecordMediaFilesResourceConfig(FileResourceConfig, ConfiguratorMixin):
     """Bibliographic record files resource config."""
@@ -318,6 +346,13 @@ class RDMRecordMediaFilesResourceConfig(FileResourceConfig, ConfiguratorMixin):
         ),
     }
 
+    response_handlers = {
+        "application/vnd.inveniordm.v1+json": FileResourceConfig.response_handlers[
+            "application/json"
+        ],
+        **FileResourceConfig.response_handlers,
+    }
+
 
 #
 # Draft files
@@ -337,6 +372,13 @@ class RDMDraftMediaFilesResourceConfig(FileResourceConfig, ConfiguratorMixin):
         "list-archive": "/media-files-archive",
     }
 
+    response_handlers = {
+        "application/vnd.inveniordm.v1+json": FileResourceConfig.response_handlers[
+            "application/json"
+        ],
+        **FileResourceConfig.response_handlers,
+    }
+
 
 #
 # Parent Record Links
@@ -346,7 +388,7 @@ record_links_error_handlers = {
     LookupError: create_error_handler(
         HTTPJSONException(
             code=404,
-            description="No secret link found with the given ID.",
+            description=_("No secret link found with the given ID."),
         )
     ),
 }
@@ -354,7 +396,7 @@ record_links_error_handlers = {
 grants_error_handlers = {
     **deepcopy(RecordResourceConfig.error_handlers),
     LookupError: create_error_handler(
-        HTTPJSONException(code=404, description="No grant found with the given ID.")
+        HTTPJSONException(code=404, description=_("No grant found with the given ID."))
     ),
     GrantExistsError: create_error_handler(
         lambda e: HTTPJSONException(
@@ -367,7 +409,14 @@ grants_error_handlers = {
 user_access_error_handlers = {
     **deepcopy(RecordResourceConfig.error_handlers),
     LookupError: create_error_handler(
-        HTTPJSONException(code=404, description="No grant found by given user id.")
+        HTTPJSONException(code=404, description=_("No grant found by given user id."))
+    ),
+}
+
+group_access_error_handlers = {
+    **deepcopy(RecordResourceConfig.error_handlers),
+    LookupError: create_error_handler(
+        HTTPJSONException(code=404, description=_("No grant found by given group id."))
     ),
 }
 
@@ -395,7 +444,10 @@ class RDMParentRecordLinksResourceConfig(RecordResourceConfig, ConfiguratorMixin
     }
 
     response_handlers = {
-        "application/json": ResponseHandler(JSONSerializer(), headers=etag_headers)
+        "application/vnd.inveniordm.v1+json": RecordResourceConfig.response_handlers[
+            "application/json"
+        ],
+        **RecordResourceConfig.response_handlers,
     }
 
     error_handlers = record_links_error_handlers
@@ -425,7 +477,10 @@ class RDMParentGrantsResourceConfig(RecordResourceConfig, ConfiguratorMixin):
     request_extra_args = {"expand": ma.fields.Bool()}
 
     response_handlers = {
-        "application/json": ResponseHandler(JSONSerializer(), headers=etag_headers)
+        "application/vnd.inveniordm.v1+json": RecordResourceConfig.response_handlers[
+            "application/json"
+        ],
+        **RecordResourceConfig.response_handlers,
     }
 
     error_handlers = grants_error_handlers
@@ -460,6 +515,37 @@ class RDMGrantUserAccessResourceConfig(RecordResourceConfig, ConfiguratorMixin):
     }
 
     error_handlers = user_access_error_handlers
+
+
+class RDMGrantGroupAccessResourceConfig(RecordResourceConfig, ConfiguratorMixin):
+    """Record grants group access resource configuration."""
+
+    blueprint_name = "record_group_access"
+
+    url_prefix = "/records/<pid_value>/access"
+
+    routes = {
+        "item": "/groups/<subject_id>",
+        "list": "/groups",
+    }
+
+    links_config = {}
+
+    request_view_args = {
+        "pid_value": ma.fields.Str(),
+        "subject_id": ma.fields.Str(),  # group id
+    }
+
+    grant_subject_type = "role"
+
+    response_handlers = {
+        "application/vnd.inveniordm.v1+json": RecordResourceConfig.response_handlers[
+            "application/json"
+        ],
+        **deepcopy(RecordResourceConfig.response_handlers),
+    }
+
+    error_handlers = group_access_error_handlers
 
 
 #
@@ -511,4 +597,11 @@ class RDMRecordRequestsResourceConfig(ResourceConfig, ConfiguratorMixin):
 
     request_extra_args = {
         "expand": ma.fields.Boolean(),
+    }
+
+    response_handlers = {
+        "application/vnd.inveniordm.v1+json": ResourceConfig.response_handlers[
+            "application/json"
+        ],
+        **ResourceConfig.response_handlers,
     }

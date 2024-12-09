@@ -1,7 +1,8 @@
 
 ..
     Copyright (C) 2019-2024 CERN.
-    Copyright (C) 2019 Northwestern University.
+    Copyright (C) 2019-2024 Northwestern University.
+    Copyright (C) 2024      KTH Royal Institute of Technology.
 
 
     Invenio-RDM-Records is free software; you can redistribute it and/or
@@ -10,6 +11,330 @@
 
 Changes
 =======
+
+Version v16.3.4 (released 2024-12-06)
+
+- github: return None for `NOASSERTION` license
+- datacite: fix funding serialization for optional award fields
+    * Makes sure that we handle missing values for optional award fields
+      like "title" and "number".
+
+Version v16.3.3 (released 2024-12-04)
+
+- github: handle missing repo license
+
+Version v16.3.2 (released 2024-12-04)
+
+- github: lower license spdx id
+
+Version v16.3.1 (released 2024-12-02)
+
+- deposit-ui: make sure we handle null/undefined for SchemaField
+- deposit-ui: skip unecessary removal of empty values in serialization
+    * This initial removal of empty values can be dangerous, since the
+      `record` at this point is a UI object representation that could
+      potentially include circular references or very deeply nested objects.
+      Since `_removeEmptyValues` is recursive this can lead to stack
+      overflow errors.
+- deposit-ui: log errors on all deposit form actions
+    * This can help with debugging unexpected non-network related errors
+      that might occur in the logic before/after a REST API requests.
+
+Version v16.3.0 (released 2024-11-27)
+
+- github: added default license from Github API
+- deposit-ui: fix affiliations rendering during edits
+- github: added custom_fields in metadata extraction
+- github: added optional swhid field to the bibtex export
+- datacite: improve error logging formatting and grouping
+    * Avoids f-strings in logging calls so that entries are easier to be
+      grouped.
+    * Adds exception info to the logged errors.
+- config: added service schema from config
+- requests: manage sending notifications
+
+Version v16.2.0 (released 2024-11-19)
+
+- search: pass search parameters to collection records
+
+Version v16.1.1 (released 2024-11-19)
+
+- communities: fix set/unset of default record community
+    * Closes https://github.com/inveniosoftware/invenio-app-rdm/issues/2869
+    * Fixes the allowed values that can be passed to set/unset the default
+      community of a record.
+    * Part of the fix is to also accept an empty string ("") as a valid
+      value when setting the "default" field, which was a currently wrong
+      behavior in some UI logic.
+
+Version v16.1.0 (released 2024-11-18)
+
+- tokens: disable "sub" verification
+    * According to the JWT Specification (https://datatracker.ietf.org/doc/html/rfc7519#section-4.1.2)
+      `sub` has to be a string. PyJWT v2.10.0 started enforcing this validation,
+      which breaks our usage of storing an object in the `sub` field.
+    * Fixes jwt.decode options for specifying required fields.
+- jsonschemas: backport "internal_notes" to v6.0.0
+    * Backports the "internal_notes" field to the v6.0.0 JSONSchema, since
+      it is backwards compatible, and thus doesn't require any record
+      migration overhead.
+- UI: display all affiliations
+
+Version v16.0.1 (released 2024-11-11)
+
+- deposit-ui: fix creator affiliations selection display
+    * Fixes a bug where the selected affiliations from the dropdown do not
+      appear inside the input box.
+
+Version v16.0.0 (released 2024-11-11)
+
+- identifiers: allow alternative identifiers with the same scheme but different values
+- records: add intenal_notes schema field and bump of jsonschema version
+
+Version v15.7.1 (released 2024-11-06)
+
+- installation: bump babel-edtf to >=1.2.0
+- tests: fix EDTF interval with unknown start/end
+- ui: use config instead of hardcoded url
+- setup: forward compatibility to itsdangerous>=2.1
+- fix: DeprecationWarning of SQLAlchemy
+
+Version v15.7.0 (released 2024-11-04)
+
+- resources: make record error handlers configurable
+    * Possible via the new `RDM_RECORDS_ERROR_HANDLERS` config variable.
+- components: make content moderation configurable
+    * Closes #1861.
+    * Adds a new `RRM_CONTENT_MODERATION_HANDLERS` config variable to allow
+      for configuring multiple handlers for the different write actions.
+- user_moderation: use search for faster actions
+    * Use search results to determine the user's list of records.
+    * Use a TaskOp and Unit of Work to avoid sending Celery tasks immediately.
+    * Add a cleanup task that will perform a more thorough check using the
+      DB to lookup the user's records.
+- deposit: add missing fields to record deserializer
+- UI/UX: add consistent suggestions display to affiliations
+- UI/UX: improve display of ROR information
+- collections: move records search into service
+- collections: added task to compute number of records for each collection
+- services: make file-service components configurable
+- access notification: provide correct draft preview link
+    * Closes inveniosoftware/invenio-app-rdm#2827
+
+Version v15.6.0 (released 2024-10-18)
+
+- community: added myCommunitiesEnabled prop to CommunitySelectionSearch
+
+Version v15.5.0 (released 2024-10-18)
+
+- community: added autofocus prop to CommunitySelectionSearch
+
+Version v15.4.0 (released 2024-10-17)
+
+- DOI: fix wrong parent DOI link
+- community: added props to make CommunitySelectionSearch reusable
+
+Version v15.3.0 (released 2024-10-16)
+
+- collections: display pages and REST API
+- deposit: add feature flag for required community submission flow
+- mappings: disable doc_values for geo_shape fields (#1807)
+    * Fixes multiple values for ``metadata.locaations.features``.
+
+Version v15.2.0 (released 2024-10-10)
+
+- webpack: update axios and react-searchkit(due to axios) major versions
+
+Version v15.1.0 (released 2024-10-10)
+
+- jobs: register embargo update job type
+- installation: upgrade invenio-jbs
+
+Version v15.0.0 (released 2024-10-08)
+
+- installation: bump invenio-communities
+- dumper: refactor and updated docstring
+- awards: added subjects and orgs, updated mappings
+- relations: added subject relation in awards
+
+Version v14.0.0 (released 2024-10-04)
+
+- installation: bump invenio-vocabularies & invenio-communities
+
+Version v13.0.0 (released 2024-10-03)
+
+- collections: added feature, containing core functionalities and DB models
+- ui: fixed propTypes warnings
+- dependencies: bump flask-iiif to >1.0.0
+
+Version v12.2.2 (released 2024-09-30)
+
+- Improve handling of draft PID in RecordCommunitiesService
+- Revert "deposit: check permission and set disable tooltip for publish button"
+- Remove DeprecationWarning for sqlalchemy
+- Add compatibility layer to move to flask>=3
+
+Version v12.2.1 (released 2024-09-19)
+
+- file upload: better handling of errors when uploading empty files
+- serializers: ensure that the vocab id is set before performing a look up
+- deposit: take into account the can_publish permission to control when the
+           Publish button should be enabled or disabled
+
+Version v12.1.1 (released 2024-09-11)
+
+- resource: fix add record to community
+- controls: refactored isDisabled function
+
+Version v12.1.0 (released 2024-08-30)
+
+- config: added links for thumbnails (#1799)
+
+Version v12.0.4 (released 2024-08-28)
+
+- stats: add missing "is_machine" field
+
+Version v12.0.3 (released 2024-08-27)
+
+- add permissions checks for community submission policy
+
+Version v12.0.2 (released 2024-08-26)
+
+- update file quota and size vars
+- add quota config for media_files bucket
+
+Version v12.0.1 (released 2024-08-22)
+
+- bump invenio-vocabularies
+
+Version v12.0.0 (released 2024-08-22)
+
+- mappings: add analyzers and filters to improve results when searching records
+
+Version v11.8.0 (released 2024-08-21)
+
+- pids: fix parent DOI link generation
+- schemaorg: add ``dateCreated`` field (closes #1777)
+- i18n: push translations
+- package: bump react-invenio-forms
+- subjects: remove suggest from dropdown if not required
+    * closes https://github.com/inveniosoftware/invenio-app-rdm/issues/2767
+
+Version v11.7.0 (released 2024-08-12)
+
+- resources: add vnd.inveniordm.v1+json http header
+- translation: update file paths for strings (UI)
+
+Version v11.6.0 (released 2024-08-07)
+
+- creatibutors: fix buttons order
+- permissions: change error handler for resolving pid permission denied
+- record inclusion: use system identity to accept inclusion request when can_include_directly
+- user_moderation: improve DB queries and use Celery tasks
+- fix: use index to distinguish type of record in results
+    * The problem with "is_published" is that drafts created from records will
+      not be recognised correctly.
+    * Using the index is a valid solution but it is not a nice implementation.
+- results: added support for drafts in the results list
+- fix(community): set branding
+    * The set branding didn't work at all. It didn't work for rebranding if
+      a default already exists and it didn't work if no branding exists at
+      all.
+    * The default property of the CommunitiesRelationManager needs a string.
+      It can't handle a dict.
+
+Version v11.5.0 (released 2024-07-22)
+
+- codemeta: added identifier to schema
+- signposting: generate 1 link context object for metadata
+- fix: abort on record deletion exception
+
+Version v11.4.0 (released 2024-07-15)
+
+- affiliations: update defaults to ror v2
+
+Version 11.3.1 (released 2024-07-12)
+
+- processors: fix tiles files iteration
+    * Creates a copy of the files list to be iterated since we might be
+      modifying the underlying dictionary while processing tiles.
+
+Version 11.3.0 (released 2024-07-12)
+
+* media-files: generate ptif and include in manifets
+* fix: pids required behavior
+    * The fix for the parent doi configuration
+      https://github.com/inveniosoftware/invenio-rdm-records/pull/1740 broke
+      the "required" parameter for the pid provider. Previously you could
+      have a pid provider that was active (shows up in the deposit form),
+      but not required (pid would only be minted if something was entered).
+      Because the check for "required" was removed, this stopped working.
+    * This correction enables the option of having external DOIs without
+      necessarily having to set one of them. This would not be possible with
+      the "is_enabled" configuration.
+* iiif: handle DecompressionBombError
+
+Version 11.2.0 (released 2024-07-05)
+
+- iiif: schema: only return images within size limit in manifest
+
+Version 11.1.0 (released 2024-07-04)
+
+- installation: upgrade invenio-drafts-resources
+
+Version 11.0.0 (released 2024-06-04)
+
+- installation: bump invenio-communities, invenio-vocabularies, invenio-drafts-resources and invenio-records-resources
+- installation: added invenio-jobs
+
+Version 10.7.1 (released 2024-05-31)
+
+- secret links: set csrf token for all requests with secret links,
+  i.e. fixes edit button CSRF error message on record landing page
+
+
+Version 10.7.0 (released 2024-05-28)
+
+- pids service: resolve owned_by for the emails
+- entity_resolver: match drafts while resolving
+- notifications: add user and guest notifications on request actions
+- pids: unify pid behaviour, disable/enable parent DOI on demand, based on
+  DATACITE_ENABLED configuration
+
+Version 10.6.0 (released 2024-05-22)
+
+- pids: prevent creating pids for restricted records
+- pids: restrict updating permission levels for records based on a grace period
+
+Version 10.5.0 (released 2024-05-21)
+
+- iiif: add PyVIPS support for PDF thumbnail rendering
+
+Version 10.4.3 (released 2024-05-17)
+
+- services: fix permission for file edit
+
+Version 10.4.2 (released 2024-05-08)
+
+- iiif: resolve relative tiles storage against instance path
+
+Version 10.4.1 (released 2024-05-07)
+
+- grants: add new endpoint to grant access to records by groups
+
+Version 10.4.0 (released 2024-05-07)
+
+- config: add default values for IIIF tiles generation
+- config: new variable for default IIIF manifest formats
+- iiif: add pyramidal TIFF tiles generation on record publish via files processor
+- iiif: harmonize configuration naming
+- services: updated file schema
+    - added "access" field to file schema
+    - updated metadata field to be nested with a new schema
+- services: fixed PDF image conversion bug
+    - PDF thumbnails should now work again
+- iiif: added fallback for iip server
+- licenses: fix some delimiters not been recognized.
 
 Version 10.3.2 (released 2024-04-30)
 

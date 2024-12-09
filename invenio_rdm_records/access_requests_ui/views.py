@@ -6,6 +6,7 @@
 # it under the terms of the MIT License; see LICENSE file for more details.
 
 """Access request UI views."""
+
 from flask import abort, current_app, g, redirect, render_template, request
 from invenio_access.permissions import system_identity
 from invenio_i18n import lazy_gettext as _
@@ -47,29 +48,6 @@ def verify_access_request_token():
         abort(404)
 
     url = f"{access_request.links['self_html']}?access_request_token={token}"
-
-    # todo - move to notifications ( submit action )
-    send_email(
-        {
-            "subject": _("Access request submitted successfully"),
-            "html_body": _(
-                (
-                    "Your access request was submitted successfully. "
-                    'The request details are available <a href="%(url)s">here</a>.'
-                ),
-                url=url,
-            ),
-            "body": _(
-                (
-                    "Your access request was submitted successfully. "
-                    "The request details are available at: %(url)s"
-                ),
-                url=url,
-            ),
-            "recipients": [access_request._request["created_by"]["email"]],
-            "sender": current_app.config["MAIL_DEFAULT_SENDER"],
-        }
-    )
 
     return redirect(url)
 

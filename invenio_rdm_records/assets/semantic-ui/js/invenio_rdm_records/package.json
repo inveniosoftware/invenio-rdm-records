@@ -3,7 +3,7 @@
     "This package.json is needed to run the JS tests, locally and CI."
   ],
   "scripts": {
-    "test": "react-scripts test"
+    "test": "react-scripts test --transformIgnorePatterns /\"node_modules/(?!axios)/\""
   },
   "devDependencies": {
     "@babel/cli": "^7.5.0",
@@ -20,11 +20,10 @@
     "@translations/invenio_rdm_records": "../../translations/invenio_rdm_records",
     "ajv": "^8.0.0",
     "ajv-keywords": "^5.0.0",
-    "axios": "^0.21.0",
+    "axios": "^1.7.7",
     "coveralls": "^3.0.0",
     "enzyme": "^3.10.0",
     "enzyme-adapter-react-16": "^1.15.0",
-    "enzyme-to-json": "^3.4.0",
     "expect": "^26.0.0",
     "formik": "^2.1.0",
     "i18next": "^20.3.0",
@@ -41,11 +40,11 @@
     "react-dom": "^16.13.0",
     "react-dropzone": "^11.0.0",
     "react-i18next": "^11.11.0",
-    "react-invenio-forms": "^3.0.0",
+    "react-invenio-forms": "^4.0.0",
     "react-overridable": "^0.0.3",
     "react-redux": "^7.2.0",
     "react-scripts": "^5.0.1",
-    "react-searchkit": "^2.0.0",
+    "react-searchkit": "^3.0.0",
     "redux": "^4.0.0",
     "redux-thunk": "^2.3.0",
     "rimraf": "^3.0.0",
@@ -59,10 +58,5 @@
     "tinymce": "^6.7.2",
     "typescript": "^4.9.5",
     "yup": "^0.32.11"
-  },
-  "jest": {
-    "snapshotSerializers": [
-      "enzyme-to-json/serializer"
-    ]
   }
 }

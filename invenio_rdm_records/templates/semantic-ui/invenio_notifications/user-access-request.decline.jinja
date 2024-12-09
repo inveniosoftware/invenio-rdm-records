@@ -1,13 +1,8 @@
 {% set submission_request = notification.context.request %}
-{% set community = submission_request.receiver %}
-{% set creator = submission_request.created_by %}
 {% set record = submission_request.topic %}
 {% set request_id = submission_request.id %}
-{% set executing_user = notification.context.executing_user %}
 
-{% set community_title = community.metadata.title %}
 {% set record_title = record.metadata.title %}
-{% set curator_name = executing_user.username or executing_user.profile.full_name %}
 
 {# TODO: use request.links.self_html when issue issue is resolved: https://github.com/inveniosoftware/invenio-rdm-records/issues/1327 #}
 {% set request_link = "{ui}/me/requests/{id}".format(

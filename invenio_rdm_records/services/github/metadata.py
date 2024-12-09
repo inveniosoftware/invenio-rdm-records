@@ -1,10 +1,11 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2023 CERN.
+# Copyright (C) 2023-2024 CERN.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
 """RDM github release metadata."""
+
 import yaml
 from flask import current_app
 from invenio_github.errors import CustomGitHubMetadataError
@@ -62,12 +63,10 @@ class RDMReleaseMetadata(object):
         """Return default metadata for a release."""
         # Get default right from app config or use cc-by-4.0 if default is not set in app
         # TODO use the default software license
-        default_right = "cc-by-4.0"
         version = self.rdm_release.release_payload.get("tag_name", "")
 
         return dict(
             description=self.description,
-            rights=[{"id": default_right}],
             publication_date=self.rdm_release.release_payload["published_at"][:10],
             related_identifiers=[self.related_identifiers],
             version=version,
@@ -78,6 +77,18 @@ class RDMReleaseMetadata(object):
                 "publisher", "CERN"
             ),
         )
+
+    @property
+    def repo_license(self):
+        """Get license from repository, if any."""
+        repo_license_obj = self.rdm_release.repository_payload.get("license", {})
+        if not repo_license_obj:
+            return None
+        spdx_id = repo_license_obj.get("spdx_id")
+        # For 'other' type of licenses, Github sets the spdx_id to NOASSERTION
+        if spdx_id == "NOASSERTION":
+            return None
+        return spdx_id
 
     @property
     def contributors(self):

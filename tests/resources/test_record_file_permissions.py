@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2021 CERN.
+# Copyright (C) 2021-2024 CERN.
 # Copyright (C) 2021 Northwestern University.
 # Copyright (C) 2023 TU Wien.
 #
@@ -11,7 +11,6 @@
 
 Not every case is tested, but enough high-level ones for it to be useful.
 """
-
 
 from io import BytesIO
 

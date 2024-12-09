@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2020-2022 CERN.
+# Copyright (C) 2020-2024 CERN.
 # Copyright (C) 2020 Northwestern University.
 # Copyright (C) 2021-2023 Graz University of Technology.
 #
@@ -8,7 +8,6 @@
 # it under the terms of the MIT License; see LICENSE file for more details.
 
 """RDM record schemas."""
-
 from functools import partial
 from urllib import parse
 
@@ -34,6 +33,7 @@ from marshmallow_utils.fields import (
     EDTFDateString,
     EDTFDateTimeString,
     IdentifierSet,
+    IdentifierValueSet,
     SanitizedHTML,
     SanitizedUnicode,
 )
@@ -301,7 +301,7 @@ class ReferenceSchema(IdentifierSchema):
         super().__init__(
             allowed_schemes=record_identifiers_schemes,
             identifier_required=False,
-            **kwargs
+            **kwargs,
         )
 
     reference = SanitizedUnicode(required=True)
@@ -370,7 +370,7 @@ class MetadataSchema(Schema):
     dates = fields.List(fields.Nested(DateSchema))
     languages = fields.List(fields.Nested(VocabularySchema))
     # alternate identifiers
-    identifiers = IdentifierSet(
+    identifiers = IdentifierValueSet(
         fields.Nested(
             partial(IdentifierSchema, allowed_schemes=record_identifiers_schemes)
         )

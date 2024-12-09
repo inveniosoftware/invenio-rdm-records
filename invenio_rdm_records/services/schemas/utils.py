@@ -31,7 +31,7 @@ def dump_empty(schema_or_field):
     if isinstance(schema_or_field, fields.List):
         field = schema_or_field
         return [dump_empty(field.inner)]
-    if isinstance(schema_or_field, NestedAttribute):
+    if isinstance(schema_or_field, (NestedAttribute, fields.Nested)):
         field = schema_or_field
         return dump_empty(field.nested)
 

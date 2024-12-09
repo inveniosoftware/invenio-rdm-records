@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2020-2022 CERN.
+# Copyright (C) 2020-2024 CERN.
 # Copyright (C) 2021 TU Wien.
 # Copyright (C) 2022 Universität Hamburg.
 # Copyright (C) 2024 Graz University of Technology.
@@ -63,6 +63,12 @@ def create_grant_user_access_bp(app):
     return ext.grant_user_access_resource.as_blueprint()
 
 
+def create_grant_group_access_bp(app):
+    """Create grant group access blueprint."""
+    ext = app.extensions["invenio-rdm-records"]
+    return ext.grant_group_access_resource.as_blueprint()
+
+
 def create_pid_resolver_resource_bp(app):
     """Create pid resource blueprint."""
     ext = app.extensions["invenio-rdm-records"]
@@ -96,3 +102,9 @@ def create_iiif_bp(app):
     """Create IIIF blueprint."""
     ext = app.extensions["invenio-rdm-records"]
     return ext.iiif_resource.as_blueprint()
+
+
+def create_collections_bp(app):
+    """Create collections blueprint."""
+    ext = app.extensions["invenio-rdm-records"]
+    return ext.collections_resource.as_blueprint()

@@ -1,5 +1,5 @@
 // This file is part of Invenio-RDM-Records
-// Copyright (C) 2020-2023 CERN.
+// Copyright (C) 2020-2024 CERN.
 // Copyright (C) 2020-2022 Northwestern University.
 //
 // Invenio-RDM-Records is free software; you can redistribute it and/or modify it
@@ -43,11 +43,17 @@ export class CommunitySelectionSearch extends Component {
         toggleText,
       },
     } = this.state;
+
     const {
       apiConfigs: { allCommunities, myCommunities },
       record,
       isInitialSubmission,
+      CommunityListItem,
+      pagination,
+      myCommunitiesEnabled,
+      autofocus,
     } = this.props;
+
     const searchApi = new InvenioSearchApi(selectedSearchApi);
     const overriddenComponents = {
       [`${selectedAppId}.ResultsList.item`]: parametrize(CommunityListItem, {
@@ -55,6 +61,7 @@ export class CommunitySelectionSearch extends Component {
         isInitialSubmission: isInitialSubmission,
       }),
     };
+
     return (
       <OverridableContext.Provider value={overriddenComponents}>
         <ReactSearchKit
@@ -66,61 +73,63 @@ export class CommunitySelectionSearch extends Component {
           defaultSortingOnEmptyQueryString={{ sortBy: "bestmatch" }}
         >
           <>
-            <Modal.Content as={Grid} className="m-0 pb-0">
+            <Modal.Content as={Grid} className="m-0 pb-0 centered">
+              {myCommunitiesEnabled && (
+                <Grid.Column
+                  mobile={16}
+                  tablet={8}
+                  computer={8}
+                  textAlign="left"
+                  floated="left"
+                  className="pt-0 pl-0"
+                >
+                  <Menu role="tablist" className="theme-primary-menu" compact>
+                    <Menu.Item
+                      as="button"
+                      role="tab"
+                      id="all-communities-tab"
+                      aria-selected={selectedAppId === allCommunities.appId}
+                      aria-controls={allCommunities.appId}
+                      name="All"
+                      active={selectedAppId === allCommunities.appId}
+                      onClick={() =>
+                        this.setState({
+                          selectedConfig: allCommunities,
+                        })
+                      }
+                    >
+                      {i18next.t("All")}
+                    </Menu.Item>
+                    <Menu.Item
+                      as="button"
+                      role="tab"
+                      id="my-communities-tab"
+                      aria-selected={selectedAppId === myCommunities.appId}
+                      aria-controls={myCommunities.appId}
+                      name="My communities"
+                      active={selectedAppId === myCommunities.appId}
+                      onClick={() =>
+                        this.setState({
+                          selectedConfig: myCommunities,
+                        })
+                      }
+                    >
+                      {i18next.t("My communities")}
+                    </Menu.Item>
+                  </Menu>
+                </Grid.Column>
+              )}
               <Grid.Column
                 mobile={16}
                 tablet={8}
                 computer={8}
-                textAlign="left"
-                floated="left"
-                className="pt-0 pl-0"
-              >
-                <Menu role="tablist" compact>
-                  <Menu.Item
-                    as="button"
-                    role="tab"
-                    id="all-communities-tab"
-                    aria-selected={selectedAppId === allCommunities.appId}
-                    aria-controls={allCommunities.appId}
-                    name="All"
-                    active={selectedAppId === allCommunities.appId}
-                    onClick={() =>
-                      this.setState({
-                        selectedConfig: allCommunities,
-                      })
-                    }
-                  >
-                    {i18next.t("All")}
-                  </Menu.Item>
-                  <Menu.Item
-                    as="button"
-                    role="tab"
-                    id="my-communities-tab"
-                    aria-selected={selectedAppId === myCommunities.appId}
-                    aria-controls={myCommunities.appId}
-                    name="My communities"
-                    active={selectedAppId === myCommunities.appId}
-                    onClick={() =>
-                      this.setState({
-                        selectedConfig: myCommunities,
-                      })
-                    }
-                  >
-                    {i18next.t("My communities")}
-                  </Menu.Item>
-                </Menu>
-              </Grid.Column>
-              <Grid.Column
-                mobile={16}
-                tablet={8}
-                computer={8}
-                floated="right"
+                floated={myCommunitiesEnabled ? "right" : "null"}
                 verticalAlign="middle"
                 className="pt-0 pr-0 pl-0"
               >
                 <SearchBar
                   placeholder={toggleText}
-                  autofocus
+                  autofocus={autofocus}
                   actionProps={{
                     "icon": "search",
                     "content": null,
@@ -144,9 +153,11 @@ export class CommunitySelectionSearch extends Component {
               </ResultsLoader>
             </Modal.Content>
 
-            <Modal.Content className="text-align-center">
-              <Pagination />
-            </Modal.Content>
+            {pagination && (
+              <Modal.Content className="text-align-center">
+                <Pagination />
+              </Modal.Content>
+            )}
           </>
         </ReactSearchKit>
       </OverridableContext.Provider>
@@ -169,10 +180,18 @@ CommunitySelectionSearch.propTypes = {
   }),
   record: PropTypes.object.isRequired,
   isInitialSubmission: PropTypes.bool,
+  CommunityListItem: PropTypes.elementType,
+  pagination: PropTypes.bool,
+  myCommunitiesEnabled: PropTypes.bool,
+  autofocus: PropTypes.bool,
 };
 
 CommunitySelectionSearch.defaultProps = {
   isInitialSubmission: true,
+  pagination: true,
+  myCommunitiesEnabled: true,
+  autofocus: true,
+  CommunityListItem: CommunityListItem,
   apiConfigs: {
     allCommunities: {
       initialQueryState: { size: 5, page: 1, sortBy: "bestmatch" },

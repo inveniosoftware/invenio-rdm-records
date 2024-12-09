@@ -36,7 +36,7 @@ def anyuser_identity():
 @pytest.fixture(scope="function")
 def authenticated_identity():
     """Authenticated identity fixture."""
-    identity = Identity(1)
-    identity.provides.add(UserNeed(1))
+    identity = Identity(100)
+    identity.provides.add(UserNeed(100))
     identity.provides.add(authenticated_user)
     return identity

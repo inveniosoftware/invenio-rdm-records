@@ -12,6 +12,7 @@
 
 from copy import copy
 
+from flask import current_app
 from invenio_drafts_resources.services.records.components import ServiceComponent
 from invenio_drafts_resources.services.records.uow import ParentRecordCommitOp
 from invenio_records_resources.services.uow import TaskOp
@@ -75,7 +76,7 @@ class PIDsComponent(ServiceComponent):
         required_schemes = set(self.service.config.pids_required)
 
         # Validate the draft PIDs
-        self.service.pids.pid_manager.validate(draft_pids, record, raise_errors=True)
+        self.service.pids.pid_manager.validate(draft_pids, draft, raise_errors=True)
 
         # Detect which PIDs on a published record that has been changed.
         #
@@ -89,6 +90,8 @@ class PIDsComponent(ServiceComponent):
             if record_id != draft_id:
                 changed_pids[scheme] = record_pids[scheme]
 
+        self.service.pids.pid_manager.validate_restriction_level(draft)
+
         self.service.pids.pid_manager.discard_all(changed_pids)
 
         # Determine schemes which are required, but not yet created.
@@ -97,7 +100,11 @@ class PIDsComponent(ServiceComponent):
         pids = self.service.pids.pid_manager.create_all(
             draft,
             pids=draft_pids,
-            schemes=missing_required_schemes,
+            schemes=(
+                missing_required_schemes
+                if draft["access"]["record"] != "restricted"
+                else None
+            ),
         )
 
         # Reserve all created PIDs and store them on the record

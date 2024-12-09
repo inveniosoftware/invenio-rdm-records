@@ -9,6 +9,7 @@
 """RDM Review Service."""
 
 from flask import current_app
+from invenio_communities import current_communities
 from invenio_drafts_resources.services.records import RecordService
 from invenio_drafts_resources.services.records.uow import ParentRecordCommitOp
 from invenio_i18n import lazy_gettext as _
@@ -21,7 +22,12 @@ from marshmallow import ValidationError
 from ...notifications.builders import CommunityInclusionSubmittedNotificationBuilder
 from ...proxies import current_rdm_records
 from ...requests.decorators import request_next_link
-from ..errors import ReviewExistsError, ReviewNotFoundError, ReviewStateError
+from ..errors import (
+    RecordSubmissionClosedCommunityError,
+    ReviewExistsError,
+    ReviewNotFoundError,
+    ReviewStateError,
+)
 
 
 class ReviewService(RecordService):
@@ -171,6 +177,18 @@ class ReviewService(RecordService):
 
         # Check permission
         self.require_permission(identity, "update_draft", record=draft)
+
+        community_id = (
+            draft.parent.review.get_object().get("receiver", {}).get("community", "")
+        )
+        can_submit_record = current_communities.service.config.permission_policy_cls(
+            "submit_record",
+            community_id=community_id,
+            record=community,
+        ).allows(identity)
+
+        if not can_submit_record:
+            raise RecordSubmissionClosedCommunityError()
 
         # create review request
         request_item = current_rdm_records.community_inclusion_service.submit(

@@ -132,11 +132,25 @@ class ListIIIFFilesAttribute(fields.List):
 
     def get_value(self, obj, *args, **kwargs):
         """Return the value for a given key from an object attribute."""
-        return [
-            f
-            for f in obj["files"].get("entries", {}).values()
-            if f["ext"] in current_app.config["IIIF_FORMATS"]
-        ]
+        iiif_config = current_app.config.get("IIIF_TILES_CONVERTER_PARAMS")
+        valid_metadata = (
+            lambda x: x
+            and x["height"] > iiif_config["tile_height"]
+            and x["width"] > iiif_config["tile_width"]
+        )
+        formats = current_app.config["RDM_IIIF_MANIFEST_FORMATS"]
+
+        def filter_entries(entries):
+            return [
+                f
+                for f in entries.values()
+                if f["ext"] in formats and valid_metadata(f["metadata"])
+            ]
+
+        files_entries = obj.get("files", {}).get("entries", {})
+        media_files_entries = obj.get("media_files", {}).get("entries", {})
+
+        return filter_entries(files_entries) + filter_entries(media_files_entries)
 
 
 class IIIFSequenceV2Schema(Schema):

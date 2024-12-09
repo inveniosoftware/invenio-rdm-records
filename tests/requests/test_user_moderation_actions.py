@@ -1,11 +1,13 @@
 # # -*- coding: utf-8 -*-
 # #
-# # Copyright (C) 2023 CERN.
+# # Copyright (C) 2023-2024 CERN.
 # # Copyright (C) 2023 TU Wien.
 # #
 # # Invenio-RDM is free software; you can redistribute it and/or modify
 # # it under the terms of the MIT License; see LICENSE file for more details.
 """Test user moderation actions."""
+
+import pytest
 from celery import Task
 from invenio_access.permissions import system_identity
 from invenio_db import db
@@ -20,15 +22,14 @@ from invenio_rdm_records.proxies import current_rdm_records_service as records_s
 class MockRequestModerationTask(Task):
     """Mock celery task for moderation request."""
 
-    def delay(*args):
-        user_id = args[0]
-        with db.session.begin_nested():
-            try:
-                current_user_moderation_service.request_moderation(
-                    system_identity, user_id=user_id, uow=None
-                )
-            except Exception as ex:
-                pass
+    def apply_async(self, args=None, kwargs=None, **kwargs_):
+        user_id = kwargs["user_id"]
+        try:
+            current_user_moderation_service.request_moderation(
+                system_identity, user_id=user_id, uow=None
+            )
+        except Exception as ex:
+            pass
 
 
 def test_user_moderation_approve(
@@ -54,7 +55,7 @@ def test_user_moderation_approve(
     # This is a patch for tests only.
     mocker.patch(
         "invenio_rdm_records.services.components.verified.request_moderation",
-        MockRequestModerationTask,
+        MockRequestModerationTask(),
     )
     new_record = records_service.publish(
         identity=unverified_user.identity, id_=new_version.id
@@ -68,7 +69,7 @@ def test_user_moderation_approve(
     hits = pre_approval_records.to_dict()["hits"]["hits"]
     is_verified = all([hit["parent"]["is_verified"] for hit in hits])
 
-    assert is_verified == False
+    assert is_verified is False
 
     # Fetch moderation request that was created on publish
     res = current_requests_service.search(
@@ -94,7 +95,7 @@ def test_user_moderation_approve(
     assert post_approval_records.total == 2
     hits = post_approval_records.to_dict()["hits"]["hits"]
     is_verified = all([hit["parent"]["is_verified"] for hit in hits])
-    assert is_verified == True
+    assert is_verified is True
 
 
 def test_user_moderation_decline(

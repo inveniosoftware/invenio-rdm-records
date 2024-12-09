@@ -1,5 +1,5 @@
 // This file is part of Invenio-RDM-Records
-// Copyright (C) 2020-2023 CERN.
+// Copyright (C) 2020-2024 CERN.
 // Copyright (C) 2020-2022 Northwestern University.
 // Copyright (C) 2021 Graz University of Technology.
 //
@@ -11,6 +11,7 @@ import PropTypes from "prop-types";
 import { getIn, FieldArray } from "formik";
 import { Button, Form, Label, List, Icon } from "semantic-ui-react";
 import _get from "lodash/get";
+import _map from "lodash/map";
 import { FieldLabel } from "react-invenio-forms";
 import { HTML5Backend } from "react-dnd-html5-backend";
 import { DndProvider } from "react-dnd";
@@ -27,10 +28,12 @@ const creatibutorNameDisplay = (value) => {
 
   const familyName = _get(value, "person_or_org.family_name", "");
   const givenName = _get(value, "person_or_org.given_name", "");
-  const affiliationName = _get(value, `affiliations[0].name`, "");
+  const affiliations = value?.affiliations.map(
+    (affiliation) => affiliation.text || affiliation.name
+  );
   const name = _get(value, `person_or_org.name`);
 
-  const affiliation = affiliationName ? ` (${affiliationName})` : "";
+  const affiliation = affiliations.length ? ` (${affiliations.join(", ")})` : "";
 
   if (isPerson) {
     const givenNameSuffix = givenName ? `, ${givenName}` : "";

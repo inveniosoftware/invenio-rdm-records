@@ -1,13 +1,14 @@
 # -*- coding: utf-8 -*-
 #
 # Copyright (C) 2021 Graz University of Technology.
-# Copyright (C) 2021 CERN.
+# Copyright (C) 2021-2024 CERN.
 # Copyright (C) 2021 TU Wien.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
 
 """Invenio-RDM-Records Permissions Generators."""
+
 import operator
 from collections import namedtuple
 from functools import partial, reduce
@@ -413,3 +414,19 @@ class GuestAccessRequestToken(Generator):
             return [AccessRequestTokenNeed(request["payload"]["token"])]
 
         return []
+
+
+class IfOneCommunity(ConditionalGenerator):
+    """Conditional generator for records always in communities case."""
+
+    def _condition(self, record=None, **kwargs):
+        """Check if the record is associated with one community."""
+        return bool(record and len(record.parent.communities.ids) == 1)
+
+
+class IfAtLeastOneCommunity(ConditionalGenerator):
+    """Conditional generator for records always in communities case."""
+
+    def _condition(self, record=None, **kwargs):
+        """Check if the record is associated with at least one community."""
+        return bool(record and record.parent.communities.ids)
