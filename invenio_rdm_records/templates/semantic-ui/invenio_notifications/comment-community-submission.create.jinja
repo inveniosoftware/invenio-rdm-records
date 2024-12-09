@@ -1,0 +1,60 @@
+{% set invenio_request = notification.context.request %}
+{% set invenio_request_event = notification.context.request_event %}
+
+{# created_by is either a resolved user or an email (for guests) #}
+{% set event_creator_name = invenio_request_event.created_by.username or invenio_request_event.created_by %}
+{% set request_id = invenio_request.id %}
+{% set request_event_content = invenio_request_event.payload.content | safe %}
+{% set request_title = invenio_request.title | safe %}
+
+{# TODO: use request.links.self_html when issue issue is resolved: https://github.com/inveniosoftware/invenio-rdm-records/issues/1327 #}
+{% set request_link = "{ui}/me/requests/{id}".format(
+    ui=config.SITE_UI_URL, id=request_id
+    )
+%}
+{% set account_settings_link = "{ui}/account/settings/notifications".format(
+    ui=config.SITE_UI_URL
+    )
+%}
+
+{%- block subject -%}
+{{ _("💬 New comment on '{request_title}'").format(request_title=request_title) }}
+{%- endblock subject -%}
+
+{%- block html_body -%}
+<table style="font-family:'Lato',Helvetica,Arial,sans-serif;border-spacing:15px">
+    <tr>
+        <td>{{ _("'@{user_name}' commented on '{request_title}':").format(user_name=event_creator_name, request_title=request_title) }}</td>
+    </tr>
+    <tr>
+        <td><em>{{ request_event_content }}</em></td>
+    </tr>
+    <tr>
+        <td><a href="{{ request_link }}" class="button">{{ _("Check out the request")}}</a></td>
+    </tr>
+    <tr>
+        <td><strong>_</strong></td>
+    </tr>
+    <tr>
+        <td style="font-size:smaller">{{ _("This is an auto-generated message. To manage notifications, visit your")}} <a href="{{account_settings_link}}">{{ _("account settings")}}</a>.</td>
+    </tr>
+</table>
+{%- endblock html_body %}
+
+{%- block plain_body -%}
+{{ _("@{user_name} commented on '{request_title}'").format(user_name=event_creator_name, request_title=request_title) }}.
+
+{{ request_event_content }}
+
+{{ _("Check out the request: {request_link}").format(request_link=request_link) }}
+
+{%- endblock plain_body %}
+
+{# Markdown for Slack/Mattermost/chat #}
+{%- block md_body -%}
+{{ _("*@{user_name}* commented on *{request_title}*").format(user_name=event_creator_name, request_title=request_title) }}.
+
+{{ request_event_content }}
+
+[{{_("Check out the request")}}]({{request_link}})
+{%- endblock md_body %}
