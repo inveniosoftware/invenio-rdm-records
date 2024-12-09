@@ -1,5 +1,6 @@
 #
 # Copyright (C) 2023 CERN.
+# Copyright (C) 2024 KTH Royal Institute of Technology.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
@@ -40,7 +41,7 @@ class MeetingCF(BaseCF):
                 "session": SanitizedUnicode(),
                 "title": SanitizedUnicode(),
                 "url": SanitizedUnicode(
-                    validate=_valid_url(error_msg="You must provide a valid URL."),
+                    validate=_valid_url(error_msg=_("You must provide a valid URL.")),
                 ),
             }
         )

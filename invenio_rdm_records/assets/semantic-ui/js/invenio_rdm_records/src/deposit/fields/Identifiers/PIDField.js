@@ -1,6 +1,7 @@
 // This file is part of Invenio-RDM-Records
 // Copyright (C) 2020-2023 CERN.
 // Copyright (C) 2020-2022 Northwestern University.
+// Copyright (C) 2024 KTH Royal Institute of Technology.
 //
 // Invenio-RDM-Records is free software; you can redistribute it and/or modify it
 // under the terms of the MIT License; see LICENSE file for more details.
@@ -515,7 +516,9 @@ export class PIDField extends Component {
     const { canBeManaged, canBeUnmanaged, fieldPath } = this.props;
 
     if (!canBeManaged && !canBeUnmanaged) {
-      throw Error(`${fieldPath} must be managed, unmanaged or both.`);
+      throw Error(
+        i18next.t("{{fieldPath}} must be managed, unmanaged or both.", { fieldPath })
+      );
     }
   };
 

@@ -5,6 +5,7 @@
 # Copyright (C) 2021-2023 TU Wien.
 # Copyright (C) 2021 Graz University of Technology.
 # Copyright (C) 2022 Universität Hamburg.
+# Copyright (C) 2024 KTH Royal Institute of Technology.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
@@ -19,6 +20,7 @@ from invenio_accounts.models import User
 from invenio_db import db
 from invenio_drafts_resources.services.records import RecordService
 from invenio_drafts_resources.services.records.uow import ParentRecordCommitOp
+from invenio_i18n import lazy_gettext as _
 from invenio_records_resources.services import LinksTemplate, ServiceSchemaWrapper
 from invenio_records_resources.services.errors import PermissionDeniedError
 from invenio_records_resources.services.uow import (
@@ -628,8 +630,10 @@ class RDMRecordService(RecordService):
             )
             if end_of_grace_period <= datetime.now():
                 raise ValidationError(
-                    "Record visibility can not be changed to restricted "
-                    "anymore. Please contact support if you still need to make these changes."
+                    _(
+                        "Record visibility can not be changed to restricted "
+                        "anymore. Please contact support if you still need to make these changes."
+                    )
                 )
 
         return super().update_draft(
