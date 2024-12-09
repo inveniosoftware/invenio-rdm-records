@@ -74,7 +74,7 @@ def test_bibtex_serializer_full_record(running_app, updated_full_record):
         "  publisher    = {InvenioRDM},\n"
         "  version      = {v1.0},\n"
         "  doi          = {10.1234/12345-abcde},\n"
-        "  url          = {https://doi.org/10.1234/12345-abcde}\n"
+        "  url          = {https://doi.org/10.1234/12345-abcde},\n"
         "}"
     )
 
@@ -151,9 +151,9 @@ def test_serialize_publication_conferencepaper(running_app, updated_minimal_reco
     - inproceedings
     - proceedings
     """
-    updated_minimal_record["metadata"]["resource_type"][
-        "id"
-    ] = "publication-conferencepaper"
+    updated_minimal_record["metadata"]["resource_type"]["id"] = (
+        "publication-conferencepaper"
+    )
 
     # Force serialization into 'inproceedings'
     updated_minimal_record.update(
@@ -341,9 +341,9 @@ def test_serialize_publication_technicalnote(running_app, updated_minimal_record
 
     It serializes into 'manual'.
     """
-    updated_minimal_record["metadata"]["resource_type"][
-        "id"
-    ] = "publication-technicalnote"
+    updated_minimal_record["metadata"]["resource_type"]["id"] = (
+        "publication-technicalnote"
+    )
 
     serializer = BibtexSerializer()
     serialized_record = serializer.serialize_object(updated_minimal_record)
@@ -368,9 +368,9 @@ def test_serialize_publication_workingpaper(running_app, updated_minimal_record)
 
     It serializes into 'unpublished'.
     """
-    updated_minimal_record["metadata"]["resource_type"][
-        "id"
-    ] = "publication-workingpaper"
+    updated_minimal_record["metadata"]["resource_type"]["id"] = (
+        "publication-workingpaper"
+    )
 
     updated_minimal_record.update(
         {
