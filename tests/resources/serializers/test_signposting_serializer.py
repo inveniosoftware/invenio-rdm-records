@@ -35,6 +35,10 @@ def test_signposting_serializer_full(running_app, full_record_to_dict):
                     },
                     {
                         "href": "https://127.0.0.1:5000/api/records/12345-abcde",
+                        "type": 'application/ld+json;profile="https://datapackage.org/profiles/2.0/datapackage.json"',
+                    },
+                    {
+                        "href": "https://127.0.0.1:5000/api/records/12345-abcde",
                         "type": "application/linkset+json",
                     },
                     {
@@ -145,6 +149,10 @@ def test_signposting_serializer_minimal(running_app, minimal_record_to_dict):
                     {
                         "href": "https://127.0.0.1:5000/api/records/67890-fghij",
                         "type": "application/ld+json",
+                    },
+                    {
+                        "href": "https://127.0.0.1:5000/api/records/67890-fghij",
+                        "type": 'application/ld+json;profile="https://datapackage.org/profiles/2.0/datapackage.json"',
                     },
                     {
                         "href": "https://127.0.0.1:5000/api/records/67890-fghij",
