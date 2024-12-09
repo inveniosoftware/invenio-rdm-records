@@ -9,6 +9,7 @@
 """Notification related utils for notifications."""
 
 from invenio_communities.notifications.generators import CommunityMembersRecipient
+from invenio_communities.notifications.builders import CommunityCommentNotificationBuilderBase
 from invenio_notifications.models import Notification
 from invenio_notifications.registry import EntityResolverRegistry
 from invenio_notifications.services.builders import NotificationBuilder
@@ -66,6 +67,14 @@ class CommunityInclusionSubmittedNotificationBuilder(
     """Notification builder for record community inclusion submitted."""
 
     type = "community-submission.submit"
+
+
+class CommunityInclusionCommentNotificationBuilder(
+    CommunityCommentNotificationBuilderBase
+):
+    """Notification builder for comment request event creation."""
+
+    type = f"comment-{CommunityInclusionNotificationBuilder.type}.create"
 
 
 class GuestAccessRequestTokenCreateNotificationBuilder(NotificationBuilder):
