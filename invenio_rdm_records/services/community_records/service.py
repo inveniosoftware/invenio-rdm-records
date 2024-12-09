@@ -45,6 +45,8 @@ class CommunityRecordsService(RecordService):
         params=None,
         search_preference=None,
         extra_filter=None,
+        scan=False,
+        scan_params=None,
         **kwargs,
     ):
         """Search for records published in the given community."""
@@ -76,7 +78,12 @@ class CommunityRecordsService(RecordService):
             permission_action="read",
             **kwargs,
         )
-        search_result = search.execute()
+
+        if scan:
+            scan_params = scan_params or {}
+            search_result = search.scan(**scan_params)
+        else:
+            search_result = search.execute()
 
         return self.result_list(
             self,
