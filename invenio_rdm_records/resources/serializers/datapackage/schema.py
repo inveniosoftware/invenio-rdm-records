@@ -30,6 +30,7 @@ class DataPackageSchema(Schema):
     contributors = fields.Method("get_contributors")
 
     def get_keywords(self, obj):
+        """Get keywords."""
         keywords = []
         for subject in obj.get("metadata", {}).get("subjects", []):
             keyword = subject.get("subject")
@@ -38,6 +39,7 @@ class DataPackageSchema(Schema):
         return keywords if keywords else missing
 
     def get_resources(self, obj):
+        """Get resources."""
         resources = []
         basepath = obj.get("links", {}).get("self_html")
         if basepath:
@@ -55,6 +57,7 @@ class DataPackageSchema(Schema):
         return resources
 
     def get_licenses(self, obj):
+        """Get licenses."""
         licenses = []
         for item in obj.get("metadata", {}).get("rights", []):
             license = {}
@@ -67,6 +70,7 @@ class DataPackageSchema(Schema):
         return licenses if licenses else missing
 
     def get_contributors(self, obj):
+        """Get contributors."""
         contributors = []
         for type in ["creator", "contributor"]:
             for item in obj.get("metadata", {}).get(f"{type}s", []):
