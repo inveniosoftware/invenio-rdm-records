@@ -75,6 +75,11 @@ class PIDsComponent(ServiceComponent):
         record_schemes = set(record_pids.keys())
         required_schemes = set(self.service.config.pids_required)
 
+        # if a doi was ever minted for the parent record then we always require one
+        # for any version of the record that will be published
+        if "doi" in draft.parent.pids:
+            required_schemes.add("doi")
+
         # Validate the draft PIDs
         self.service.pids.pid_manager.validate(draft_pids, draft, raise_errors=True)
 
@@ -171,6 +176,10 @@ class ParentPIDsComponent(ServiceComponent):
         current_pids = copy(record.parent.get("pids", {}))
         current_schemes = set(current_pids.keys())
         required_schemes = set(self.service.config.parent_pids_required)
+
+        # if parent DOI is not required in the config, but record DOI is created, we need to create parent DOI as well
+        if draft and draft.get("pids", {}).get("doi"):
+            required_schemes.add("doi")
 
         conditional_schemes = self.service.config.parent_pids_conditional
         for scheme in set(required_schemes):

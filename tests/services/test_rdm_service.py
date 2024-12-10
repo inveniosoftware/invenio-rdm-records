@@ -12,6 +12,9 @@
 
 import pytest
 
+from copy import deepcopy
+from marshmallow import ValidationError
+
 from invenio_rdm_records.proxies import current_rdm_records
 from invenio_rdm_records.services.errors import EmbargoNotLiftedError
 
@@ -50,7 +53,7 @@ def test_draft_w_languages_creation(running_app, search_clear, minimal_record):
 
 
 def test_publish_public_record_with_default_doi(
-    running_app, search_clear, minimal_record
+    running_app, search_clear, minimal_record, uploader
 ):
     superuser_identity = running_app.superuser_identity
     service = current_rdm_records.records_service
@@ -60,14 +63,78 @@ def test_publish_public_record_with_default_doi(
 
 
 def test_publish_public_record_with_optional_doi(
-    running_app, search_clear, minimal_record
+    running_app, search_clear, minimal_record, verified_user
 ):
     running_app.app.config["RDM_PERSISTENT_IDENTIFIERS"]["doi"]["required"] = False
-    superuser_identity = running_app.superuser_identity
+    verified_user_identity = verified_user.identity
     service = current_rdm_records.records_service
-    draft = service.create(superuser_identity, minimal_record)
-    record = service.publish(id_=draft.id, identity=superuser_identity)
+    draft = service.create(verified_user_identity, minimal_record)
+    record = service.publish(id_=draft.id, identity=verified_user_identity)
     assert "doi" not in record._record.pids
+    assert "doi" not in record._record.parent.pids
+
+    # edit the record and mint the DOI
+    draft = service.edit(verified_user_identity, record.id)
+    draft = service.pids.create(verified_user_identity, draft.id, "doi")
+
+    assert "doi" in draft._record.pids
+    record = service.publish(id_=draft.id, identity=verified_user_identity)
+    assert "doi" in record._record.pids
+    assert "doi" in record._record.parent.pids
+    parent_doi = record._record.parent.pids["doi"]
+
+    # edit and try to remove doi
+    draft = service.edit(verified_user_identity, record.id)
+    draft_data = deepcopy(draft.data)
+    draft_data["pids"]["doi"] = {}
+    draft = service.update_draft(verified_user_identity, draft.id, data=draft_data)
+
+    with pytest.raises(ValidationError):
+        record = service.publish(id_=draft.id, identity=verified_user_identity)
+
+    # create a new version and ensure that doi is minted by default now when you publish
+    draft = service.new_version(verified_user_identity, record.id)
+    draft_data = deepcopy(draft.data)
+    draft_data["metadata"]["publication_date"] = "2023-01-01"
+    draft = service.update_draft(verified_user_identity, draft.id, data=draft_data)
+
+    record = service.publish(id_=draft.id, identity=verified_user_identity)
+    assert "doi" in record._record.pids
+    assert "doi" in record._record.parent.pids
+    assert record._record.parent.pids["doi"] == parent_doi
+
+    # create a new version and try to set an external DOI
+    draft = service.new_version(verified_user_identity, record.id)
+    draft_data = deepcopy(draft.data)
+    draft_data["metadata"]["publication_date"] = "2023-01-01"
+    draft_data["pids"]["doi"] = {
+        "identifier": "10.4321/test.1234",
+        "provider": "external",
+    }
+    draft = service.update_draft(verified_user_identity, draft.id, data=draft_data)
+    record = service.publish(id_=draft.id, identity=verified_user_identity)
+    assert "doi" in record._record.pids
+    assert "doi" in record._record.parent.pids
+    assert record._record.parent.pids["doi"] == parent_doi
+
+    # create a new version and try unset pids i.e. pids: {}
+    # because of previous minted doi that should fail
+    draft = service.new_version(verified_user_identity, record.id)
+    draft_data = deepcopy(draft.data)
+    draft_data["metadata"]["publication_date"] = "2023-01-01"
+    draft_data["pids"]["doi"] = {}
+    draft = service.update_draft(verified_user_identity, draft.id, data=draft_data)
+
+    with pytest.raises(ValidationError):
+        record = service.publish(id_=draft.id, identity=verified_user_identity)
+
+    # mint a managed DOI and publish
+    draft = service.pids.create(verified_user_identity, draft.id, "doi")
+    assert "doi" in draft._record.pids
+    record = service.publish(id_=draft.id, identity=verified_user_identity)
+    assert "doi" in record._record.pids
+    assert "doi" in record._record.parent.pids
+
     # Reset the running_app config for next tests
     running_app.app.config["RDM_PERSISTENT_IDENTIFIERS"]["doi"]["required"] = True
 

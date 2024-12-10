@@ -417,7 +417,7 @@ class DataCite43Schema(BaseSerializerSchema):
                 params={"_source_includes": "pids.doi"},
             )
             for version in record_versions:
-                version_doi = version["pids"]["doi"]
+                version_doi = version.get("pids", {}).get("doi")
                 id_scheme = get_scheme_datacite(
                     "doi",
                     "RDM_RECORDS_IDENTIFIERS_SCHEMES",
