@@ -12,6 +12,17 @@
 Changes
 =======
 
+Version v16.4.0 (released 2024-12-10)
+
+- bibtex: add trailing comma in url field
+- community-records: allow scan search
+    * Adds `scan` and `scan_params` arguments to
+      `CommunityRecordsService.search(...)`, to allow for serving scan
+      results (but only via the service).
+- serializer: updated subjects and affiliations in dcat
+- schema: added identifiers to subjects
+- serializers: add datapackage serializer (#1742)
+
 Version v16.3.4 (released 2024-12-06)
 
 - github: return None for `NOASSERTION` license
