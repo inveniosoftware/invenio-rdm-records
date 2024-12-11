@@ -17,7 +17,7 @@ from invenio_drafts_resources.services.records.components import ServiceComponen
 from invenio_drafts_resources.services.records.uow import ParentRecordCommitOp
 from invenio_records_resources.services.uow import TaskOp
 
-from ..pids.tasks import register_or_update_pid
+from ..pids.tasks import cleanup_parent_pids, register_or_update_pid
 
 
 class PIDsComponent(ServiceComponent):
@@ -212,6 +212,11 @@ class ParentPIDsComponent(ServiceComponent):
             self.service.pids.parent_pid_manager.discard_all(
                 parent_pids, soft_delete=True
             )
+        else:
+            # We're sending a task in case there is a race condition with two
+            # versions being deleted at the same time to ensure that we have
+            # consistent database state
+            self.uow.register(TaskOp(cleanup_parent_pids, record["id"]))
 
         # Async register/update tasks after transaction commit.
         for scheme in parent_pids.keys():
