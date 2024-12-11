@@ -307,6 +307,21 @@
                           },
                           "name": {
                             "type": "text"
+                          },
+                          "identifiers": {
+                            "properties": {
+                              "identifier": {
+                                "type": "text",
+                                "fields": {
+                                  "keyword": {
+                                    "type": "keyword"
+                                  }
+                                }
+                              },
+                              "scheme": {
+                                "type": "keyword"
+                              }
+                            }
                           }
                         }
                       },
@@ -499,6 +514,21 @@
                               },
                               "name": {
                                 "type": "text"
+                              },
+                              "identifiers": {
+                                "properties": {
+                                  "identifier": {
+                                    "type": "text",
+                                    "fields": {
+                                      "keyword": {
+                                        "type": "keyword"
+                                      }
+                                    }
+                                  },
+                                  "scheme": {
+                                    "type": "keyword"
+                                  }
+                                }
                               }
                             }
                           },
