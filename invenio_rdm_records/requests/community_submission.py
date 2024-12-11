@@ -18,6 +18,7 @@ from ..notifications.builders import (
     CommunityInclusionCancelNotificationBuilder,
     CommunityInclusionDeclineNotificationBuilder,
     CommunityInclusionExpireNotificationBuilder,
+    CommunityInclusionCommentNotificationBuilder,
 )
 from ..proxies import current_rdm_records_service as service
 from ..services.errors import InvalidAccessRestrictions
@@ -192,6 +193,8 @@ class CommunitySubmission(ReviewRequest):
     needs_context = {
         "community_roles": ["owner", "manager", "curator"],
     }
+
+    comment_notification_builder = CommunityInclusionCommentNotificationBuilder
 
     available_actions = {
         "create": actions.CreateAction,
