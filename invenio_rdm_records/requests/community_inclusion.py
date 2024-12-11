@@ -14,11 +14,10 @@ from invenio_records_resources.services.uow import RecordIndexOp
 from invenio_requests.customizations import RequestType, actions
 from invenio_requests.errors import CannotExecuteActionError
 
-from invenio_rdm_records.notifications.builders import (
+from ..notifications.builders import (
     CommunityInclusionAcceptNotificationBuilder,
+    CommunityInclusionCommentNotificationBuilder,
 )
-from invenio_rdm_records.services.errors import InvalidAccessRestrictions
-
 from ..proxies import current_rdm_records_service as service
 from ..services.errors import InvalidAccessRestrictions
 
@@ -108,6 +107,8 @@ class CommunityInclusion(RequestType):
     needs_context = {
         "community_roles": ["owner", "manager", "curator"],
     }
+
+    comment_notification_builder = CommunityInclusionCommentNotificationBuilder
 
     available_actions = {
         "create": actions.CreateAction,
