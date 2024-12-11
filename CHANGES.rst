@@ -12,6 +12,11 @@
 Changes
 =======
 
+Version v16.4.1 (released 2024-12-11)
+
+- mappings: add missing `identifiers` to community orgs
+    * Adds the missing `identifiers` mapping field to community organizations
+
 Version v16.4.0 (released 2024-12-10)
 
 - bibtex: add trailing comma in url field
