@@ -2,6 +2,7 @@
 #
 # Copyright (C) 2020-2024 CERN.
 # Copyright (C) 2020 Northwestern University.
+# Copyright (C) 2024 Graz University of Technology.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
@@ -10,11 +11,14 @@ name: CI
 
 on:
   push:
-    branches: master
+    branches:
+      - master
+      - "feature/*"
   pull_request:
     branches:
       - master
       - "maint-**"
+      - "feature/*"
   schedule:
     # * is a special character in YAML so you have to quote this string
     - cron: "0 3 * * 6"
