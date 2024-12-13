@@ -75,6 +75,8 @@ class LandingPageSchema(Schema):
         result = [
             {"href": obj["links"]["self"], "type": mimetype}
             for mimetype in sorted(record_serializers)
+            # Remove the linkset serializer, so that the linkset does not link to itself.
+            if mimetype != "application/linkset+json"
         ]
 
         return result or missing
