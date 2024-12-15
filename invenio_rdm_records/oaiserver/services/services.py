@@ -10,6 +10,7 @@
 import re
 
 from flask import current_app
+from flask_sqlalchemy.pagination import Pagination
 from invenio_db import db
 from invenio_i18n import lazy_gettext as _
 from invenio_oaiserver.models import OAISet
@@ -31,12 +32,25 @@ from .errors import (
 )
 from .uow import OAISetCommitOp, OAISetDeleteOp
 
-try:
-    # flask_sqlalchemy<3.0.0
-    from flask_sqlalchemy import Pagination
-except ImportError:
-    # flask_sqlalchemy>=3.0.0
-    from flask_sqlalchemy.pagination import Pagination
+
+class OAIPagination(Pagination):
+    """OAI Pagination."""
+
+    def _query_items(self):
+        """Return items."""
+        try:
+            return self._query_args["items"]
+        except KeyError:
+            msg = "items not set in OAIPaginations constructor."
+            raise RuntimeError(msg)
+
+    def _query_count(self):
+        """Return count."""
+        try:
+            return self._query_args["total"]
+        except KeyError:
+            msg = "total not set in OAIPaginations constructor."
+            raise RuntimeError(msg)
 
 
 class OAIPMHServerService(Service):
@@ -226,7 +240,7 @@ class OAIPMHServerService(Service):
             for k, v in current_app.config.get("OAISERVER_METADATA_FORMATS").items()
         ]
 
-        results = Pagination(
+        results = OAIPagination(
             query=None,
             page=1,
             per_page=None,
