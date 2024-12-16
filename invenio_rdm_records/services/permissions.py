@@ -188,6 +188,7 @@ class RDMRecordPermissionPolicy(RecordPermissionPolicy):
     can_pid_update = can_review
     can_pid_discard = can_review
     can_pid_delete = can_review
+    can_pid_manage = [SystemProcess()]
 
     #
     # Actions

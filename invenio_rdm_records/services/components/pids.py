@@ -107,7 +107,9 @@ class PIDsComponent(ServiceComponent):
 
         # if DOI is not required in an instance check validate allowed providers
         # for each record version
-        if "doi" not in required_schemes:
+        if "doi" not in required_schemes and not self.service.check_permission(
+            identity, "pid_manage"
+        ):
             previous_published = self.service.record_cls.get_latest_published_by_parent(
                 record.parent
             )
@@ -149,7 +151,9 @@ class PIDsComponent(ServiceComponent):
 
         # if DOI is not required in an instance check validate allowed providers
         # for each record version
-        if "doi" not in required_schemes:
+        if "doi" not in required_schemes and not self.service.check_permission(
+            identity, "pid_manage"
+        ):
             # if a doi was ever minted for the parent record then we always require one
             # for any version of the record that will be published
             if draft.parent.get("pids", {}).get("doi"):
