@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # Copyright (C) 2023 Northwestern University.
+# Copyright (C) 2024 CERN.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
@@ -8,6 +9,7 @@
 """Resources serializers tests."""
 
 from invenio_rdm_records.resources.serializers import (
+    FAIRSignpostingProfileLvl1Serializer,
     FAIRSignpostingProfileLvl2Serializer,
 )
 
@@ -33,10 +35,6 @@ def test_signposting_serializer_full(running_app, full_record_to_dict):
                         "href": "https://127.0.0.1:5000/api/records/12345-abcde",
                         "type": "application/ld+json",
                     },
-                    # {
-                    #     "href": "https://127.0.0.1:5000/api/records/12345-abcde",
-                    #     "type": "application/linkset+json",
-                    # },
                     {
                         "href": "https://127.0.0.1:5000/api/records/12345-abcde",
                         "type": "application/marcxml+xml",
@@ -125,6 +123,43 @@ def test_signposting_serializer_full(running_app, full_record_to_dict):
     assert expected == serialized
 
 
+def test_signposting_lvl1_serializer_full(running_app, full_record_to_dict):
+    ui_url = "https://127.0.0.1:5000/records/12345-abcde"
+    api_url = "https://127.0.0.1:5000/api/records/12345-abcde"
+    filename = "test.txt"
+
+    expected = [
+        f'<https://orcid.org/0000-0001-8135-3489> ; rel="author"',
+        f'<https://doi.org/10.1234/12345-abcde> ; rel="cite-as"',
+        f'<{api_url}> ; rel="describedby" ; type="application/dcat+xml"',
+        f'<{api_url}> ; rel="describedby" ; type="application/json"',
+        f'<{api_url}> ; rel="describedby" ; type="application/ld+json"',
+        f'<{api_url}> ; rel="describedby" ; type="application/marcxml+xml"',
+        f'<{api_url}> ; rel="describedby" ; type="application/vnd.citationstyles.csl+json"',
+        f'<{api_url}> ; rel="describedby" ; type="application/vnd.datacite.datacite+json"',
+        f'<{api_url}> ; rel="describedby" ; type="application/vnd.datacite.datacite+xml"',
+        f'<{api_url}> ; rel="describedby" ; type="application/vnd.geo+json"',
+        f'<{api_url}> ; rel="describedby" ; type="application/vnd.inveniordm.v1+json"',
+        f'<{api_url}> ; rel="describedby" ; type="application/vnd.inveniordm.v1.full+csv"',
+        f'<{api_url}> ; rel="describedby" ; type="application/vnd.inveniordm.v1.simple+csv"',
+        f'<{api_url}> ; rel="describedby" ; type="application/x-bibtex"',
+        f'<{api_url}> ; rel="describedby" ; type="application/x-dc+xml"',
+        f'<{api_url}> ; rel="describedby" ; type="text/x-bibliography"',
+        f'<{ui_url}/files/{filename}> ; rel="item" ; type="text/plain"',
+        '<https://customlicense.org/licenses/by/4.0/> ; rel="license"',
+        '<https://creativecommons.org/licenses/by/4.0/legalcode> ; rel="license"',
+        '<https://schema.org/Photograph> ; rel="type"',
+        '<https://schema.org/AboutPage> ; rel="type"',
+        f'<{api_url}> ; rel="linkset" ; type="application/linkset+json"',
+    ]
+
+    serialized = FAIRSignpostingProfileLvl1Serializer().serialize_object(
+        full_record_to_dict
+    )
+
+    assert expected == serialized.split(" , ")
+
+
 def test_signposting_serializer_minimal(running_app, minimal_record_to_dict):
     expected = {
         "linkset": [
@@ -146,10 +181,6 @@ def test_signposting_serializer_minimal(running_app, minimal_record_to_dict):
                         "href": "https://127.0.0.1:5000/api/records/67890-fghij",
                         "type": "application/ld+json",
                     },
-                    # {
-                    #     "href": "https://127.0.0.1:5000/api/records/67890-fghij",
-                    #     "type": "application/linkset+json",
-                    # },
                     {
                         "href": "https://127.0.0.1:5000/api/records/67890-fghij",
                         "type": "application/marcxml+xml",
@@ -218,3 +249,37 @@ def test_signposting_serializer_minimal(running_app, minimal_record_to_dict):
     serialized = FAIRSignpostingProfileLvl2Serializer().dump_obj(minimal_record_to_dict)
 
     assert expected == serialized
+
+
+def test_signposting_lvl1_serializer_minimal(running_app, minimal_record_to_dict):
+    api_url = "https://127.0.0.1:5000/api/records/67890-fghij"
+
+    expected = [
+        # No author since no associated PID
+        # No cite-as since no DOI
+        f'<{api_url}> ; rel="describedby" ; type="application/dcat+xml"',
+        f'<{api_url}> ; rel="describedby" ; type="application/json"',
+        f'<{api_url}> ; rel="describedby" ; type="application/ld+json"',
+        f'<{api_url}> ; rel="describedby" ; type="application/marcxml+xml"',
+        f'<{api_url}> ; rel="describedby" ; type="application/vnd.citationstyles.csl+json"',
+        f'<{api_url}> ; rel="describedby" ; type="application/vnd.datacite.datacite+json"',
+        f'<{api_url}> ; rel="describedby" ; type="application/vnd.datacite.datacite+xml"',
+        f'<{api_url}> ; rel="describedby" ; type="application/vnd.geo+json"',
+        f'<{api_url}> ; rel="describedby" ; type="application/vnd.inveniordm.v1+json"',
+        f'<{api_url}> ; rel="describedby" ; type="application/vnd.inveniordm.v1.full+csv"',
+        f'<{api_url}> ; rel="describedby" ; type="application/vnd.inveniordm.v1.simple+csv"',
+        f'<{api_url}> ; rel="describedby" ; type="application/x-bibtex"',
+        f'<{api_url}> ; rel="describedby" ; type="application/x-dc+xml"',
+        f'<{api_url}> ; rel="describedby" ; type="text/x-bibliography"',
+        # No files
+        # No license
+        '<https://schema.org/Photograph> ; rel="type"',
+        '<https://schema.org/AboutPage> ; rel="type"',
+        f'<{api_url}> ; rel="linkset" ; type="application/linkset+json"',
+    ]
+
+    serialized = FAIRSignpostingProfileLvl1Serializer().serialize_object(
+        minimal_record_to_dict
+    )
+
+    assert expected == serialized.split(" , ")
