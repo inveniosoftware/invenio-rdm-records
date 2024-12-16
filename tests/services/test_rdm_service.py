@@ -14,6 +14,8 @@ from copy import deepcopy
 
 import pytest
 
+from invenio_access.permissions import system_identity
+
 from invenio_rdm_records.proxies import current_rdm_records
 from invenio_rdm_records.services.errors import (
     EmbargoNotLiftedError,
@@ -167,6 +169,44 @@ def test_publish_public_record_versions_managed_doi_no_doi(
     draft = service.update_draft(verified_user_identity, draft.id, data=draft_data)
     with pytest.raises(ValidationErrorWithMessageAsList):
         record = service.publish(id_=draft.id, identity=verified_user_identity)
+
+    # Reset the running_app config for next tests
+    running_app.app.config["RDM_PERSISTENT_IDENTIFIERS"]["doi"]["required"] = True
+
+
+def test_edit_published_record_change_doi_when_optional(
+    running_app, search_clear, minimal_record, verified_user
+):
+    running_app.app.config["RDM_PERSISTENT_IDENTIFIERS"]["doi"]["required"] = False
+    verified_user_identity = verified_user.identity
+    service = current_rdm_records.records_service
+    # Publish without DOI
+    draft = service.create(verified_user_identity, minimal_record)
+    record = service.publish(id_=draft.id, identity=verified_user_identity)
+    assert "doi" not in record._record.pids
+    assert "doi" not in record._record.parent.pids
+
+    # create a new version with no DOI
+    draft = service.new_version(verified_user_identity, record.id)
+    draft_data = deepcopy(draft.data)
+    draft_data["metadata"]["publication_date"] = "2023-01-01"
+
+    draft = service.update_draft(verified_user_identity, draft.id, data=draft_data)
+    record = service.publish(id_=draft.id, identity=verified_user_identity)
+    assert "doi" not in record._record.pids
+    assert "doi" not in record._record.parent.pids
+
+    # edit the new published version and change the DOI to locally managed with
+    # system user
+    draft = service.edit(system_identity, record.id)
+    draft = service.pids.create(system_identity, draft.id, "doi")
+    draft_data = deepcopy(draft.data)
+    draft_data["metadata"]["publication_date"] = "2023-01-01"
+    draft = service.update_draft(system_identity, draft.id, data=draft_data)
+
+    record = service.publish(id_=draft.id, identity=system_identity)
+    assert "doi" in record._record.pids
+    assert "doi" in record._record.parent.pids
 
     # Reset the running_app config for next tests
     running_app.app.config["RDM_PERSISTENT_IDENTIFIERS"]["doi"]["required"] = True
