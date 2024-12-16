@@ -12,6 +12,10 @@
 Changes
 =======
 
+Version v16.5.0 (released 2024-12-16)
+
+- pids: add support for optional DOI
+
 Version v16.4.1 (released 2024-12-11)
 
 - mappings: add missing `identifiers` to community orgs
