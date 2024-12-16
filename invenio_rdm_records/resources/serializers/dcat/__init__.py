@@ -12,6 +12,7 @@ import mimetypes
 from datacite import schema43
 from flask_resources import BaseListSchema, MarshmallowSerializer
 from flask_resources.serializers import SimpleSerializer
+from idutils import detect_identifier_schemes, to_url
 from lxml import etree as ET
 from pkg_resources import resource_stream
 from werkzeug.utils import cached_property
@@ -93,12 +94,114 @@ class DCATSerializer(MarshmallowSerializer):
                     if isinstance(tag_value, dict):
                         el.attrib.update(tag_value)
 
+    def add_missing_creatibutor_links(self, rdf_tree):
+        """Add missing `rdf:about` attributes to <rdf:Description> within <dct:creator> and <dct:contributor> and <foaf:Organization> within <org:memberOf>."""
+        namespaces = rdf_tree.nsmap
+
+        # Helper function to add rdf:about based on identifier
+        def add_rdf_about(element, identifier_elem):
+            identifier = identifier_elem.text.strip()
+            schemes = detect_identifier_schemes(identifier)
+            rdf_about_url = next(
+                (
+                    to_url(identifier, scheme=scheme)
+                    for scheme in schemes
+                    if to_url(identifier, scheme)
+                ),
+                None,
+            )
+            if rdf_about_url:
+                element.set(
+                    "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}about", rdf_about_url
+                )
+
+        # Process <dct:creator> and <dct:contributor>
+        contributors_and_creators = rdf_tree.xpath(
+            "//dct:creator/rdf:Description | //dct:contributor/rdf:Description",
+            namespaces=namespaces,
+        )
+
+        for description in contributors_and_creators:
+            # Add rdf:about for creator/contributor if missing
+            if not description.get(
+                "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}about"
+            ):
+                identifier_elem = description.find("dct:identifier", namespaces)
+                if identifier_elem is not None:
+                    add_rdf_about(description, identifier_elem)
+
+        # Process <foaf:Organization> within <org:memberOf> at any level
+        organizations = rdf_tree.xpath(
+            "//org:memberOf//foaf:Organization[not(@rdf:about)]",
+            namespaces=namespaces,
+        )
+
+        for org in organizations:
+            org_identifier_elem = org.find("dct:identifier", namespaces)
+            if org_identifier_elem is not None:
+                add_rdf_about(org, org_identifier_elem)
+
+        return rdf_tree
+
+    def add_subjects_uri(self, rdf_tree, subjects):
+        """Add valueURI of subjects to the corresponding dct:subject elements in the RDF tree."""
+        namespaces = rdf_tree.nsmap
+        for subject in subjects:
+            value_uri = subject.get("valueURI")
+            subject_label = subject.get("subject")
+            subject_scheme = subject.get("subjectScheme")
+            subject_props = subject.get("subjectProps", {})
+
+            if value_uri and subject_label and subject_scheme:
+                # Find the corresponding dct:subject element by prefLabel and subjectScheme
+                subject_element = rdf_tree.xpath(
+                    f"""
+                    //dct:subject[
+                        skos:Concept[
+                            skos:prefLabel[text()='{subject_label}']
+                            and skos:inScheme/skos:ConceptScheme/dct:title[text()='{subject_scheme}']
+                        ]
+                    ]
+                    """,
+                    namespaces=namespaces,
+                )[0]
+
+                if subject_element:
+                    # Add the valueURI to the dct:subject element as rdf:about
+                    subject_element.set(
+                        "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}about", value_uri
+                    )
+
+                # Check if
+                #  subject has a definition in its props
+                definition = subject_props.get("definition")
+                if definition:
+                    concept_elem = subject_element.find(
+                        ".//skos:Concept", namespaces=namespaces
+                    )
+                    if concept_elem is not None:
+                        skos_definition = ET.Element(
+                            "{http://www.w3.org/2004/02/skos/core#}definition"
+                        )
+                        skos_definition.text = definition
+                        concept_elem.append(skos_definition)
+
+        return rdf_tree
+
     def transform_with_xslt(self, dc_record, **kwargs):
         """Transform record with XSLT."""
         dc_etree = schema43.dump_etree(dc_record)
         dc_namespace = schema43.ns[None]
         dc_etree.tag = "{{{0}}}resource".format(dc_namespace)
         dcat_etree = self.xslt_transform_func(dc_etree).getroot()
+
+        # Add valueURI to subjects
+        subjects = dc_record.get("subjects", [])
+        if subjects:
+            dcat_etree = self.add_subjects_uri(dcat_etree, subjects)
+
+        # Add the identifier links for creators & contributors if missing
+        dcat_etree = self.add_missing_creatibutor_links(dcat_etree)
 
         # Inject files in results (since the XSLT can't do that by default)
         files_data = dc_record.get("_files", [])

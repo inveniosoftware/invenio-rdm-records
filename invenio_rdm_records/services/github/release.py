@@ -64,7 +64,10 @@ class RDMGithubRelease(GitHubRelease):
 
         # Add default license if not yet added
         if not output.get("rights"):
-            output.update({"rights": [{"id": metadata.repo_license or "cc-by-4.0"}]})
+            default_license = "cc-by-4.0"
+            if metadata.repo_license:
+                default_license = metadata.repo_license.lower()
+            output.update({"rights": [{"id": default_license}]})
         return output
 
     def get_custom_fields(self):

@@ -1,5 +1,5 @@
 // This file is part of Invenio-RDM-Records
-// Copyright (C) 2020-2023 CERN.
+// Copyright (C) 2020-2024 CERN.
 // Copyright (C) 2020-2022 Northwestern University.
 //
 // Invenio-RDM-Records is free software; you can redistribute it and/or modify it
@@ -33,6 +33,7 @@ export const uploadFiles = (draft, files) => {
         config.service.files.upload(uploadFileUrl, file);
       }
     } catch (error) {
+      console.error("Error uploading files", error, draft, files);
       dispatch({
         type: FILE_UPLOAD_SAVE_DRAFT_FAILED,
         payload: { errors: error.errors },
@@ -64,6 +65,7 @@ export const deleteFile = (file) => {
           },
         });
       } else {
+        console.error("Error deleting file", error, file);
         dispatch({ type: FILE_DELETE_FAILED });
         throw error;
       }
@@ -86,6 +88,7 @@ export const importParentFiles = () => {
         payload: { files: files },
       });
     } catch (error) {
+      console.error("Error importing parent record files", error);
       dispatch({ type: FILE_IMPORT_FAILED });
       throw error;
     }

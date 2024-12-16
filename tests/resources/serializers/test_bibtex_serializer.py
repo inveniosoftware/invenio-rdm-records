@@ -74,7 +74,7 @@ def test_bibtex_serializer_full_record(running_app, updated_full_record):
         "  publisher    = {InvenioRDM},\n"
         "  version      = {v1.0},\n"
         "  doi          = {10.1234/12345-abcde},\n"
-        "  url          = {https://doi.org/10.1234/12345-abcde}\n"
+        "  url          = {https://doi.org/10.1234/12345-abcde},\n"
         "}"
     )
 

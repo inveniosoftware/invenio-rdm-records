@@ -80,9 +80,15 @@ class RDMReleaseMetadata(object):
 
     @property
     def repo_license(self):
-        """Get license from repository, if any. Falls back to default."""
+        """Get license from repository, if any."""
         repo_license_obj = self.rdm_release.repository_payload.get("license", {})
-        return repo_license_obj.get("spdx_id") if repo_license_obj else None
+        if not repo_license_obj:
+            return None
+        spdx_id = repo_license_obj.get("spdx_id")
+        # For 'other' type of licenses, Github sets the spdx_id to NOASSERTION
+        if spdx_id == "NOASSERTION":
+            return None
+        return spdx_id
 
     @property
     def contributors(self):

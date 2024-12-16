@@ -8,6 +8,7 @@
 # it under the terms of the MIT License; see LICENSE file for more details.
 
 """RDM record schemas."""
+
 from functools import partial
 from urllib import parse
 

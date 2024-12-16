@@ -1,5 +1,5 @@
 // This file is part of Invenio-RDM-Records
-// Copyright (C) 2020-2023 CERN.
+// Copyright (C) 2020-2024 CERN.
 // Copyright (C) 2020-2022 Northwestern University.
 //
 // Invenio-RDM-Records is free software; you can redistribute it and/or modify it
@@ -72,6 +72,7 @@ async function _saveDraft(
   try {
     response = await saveDraftWithUrlUpdate(draft, draftsService, failType);
   } catch (error) {
+    console.error("Error saving draft", error, draft);
     dispatchFn({
       type: failType,
       payload: { errors: error.errors },
@@ -180,6 +181,7 @@ export const publish = (draft, { removeSelectedCommunity = false }) => {
       const recordURL = response.data.links.self_html;
       window.location.replace(recordURL);
     } catch (error) {
+      console.error("Error publishing draft", error, draft);
       dispatch({
         type: DRAFT_PUBLISH_FAILED,
         payload: { errors: error.errors },
@@ -215,6 +217,7 @@ export const submitReview = (draft, { reviewComment, directPublish }) => {
       const nextURL = reqResponse.data.links.next_html;
       window.location.replace(nextURL);
     } catch (error) {
+      console.error("Error submitting review", error, draft);
       dispatch({
         type: DRAFT_SUBMIT_REVIEW_FAILED,
         payload: { errors: error.errors },
@@ -261,6 +264,7 @@ export const delete_ = () => {
       const redirectURL = config.config.dashboard_routes.uploads;
       window.location.replace(redirectURL);
     } catch (error) {
+      console.error("Error deleting draft", error);
       dispatch({
         type: DRAFT_DELETE_FAILED,
         payload: { errors: error.errors },
@@ -291,6 +295,7 @@ export const reservePID = (draft, { pidType }) => {
         payload: { data: response.data },
       });
     } catch (error) {
+      console.error("Error reserving PID", error, draft);
       dispatch({
         type: RESERVE_PID_FAILED,
         payload: { errors: error.errors },
@@ -321,6 +326,7 @@ export const discardPID = (draft, { pidType }) => {
         payload: { data: response.data },
       });
     } catch (error) {
+      console.error("Error discarding PID", error, draft);
       dispatch({
         type: DISCARD_PID_FAILED,
         payload: { errors: error.errors },

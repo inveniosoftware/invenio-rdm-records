@@ -10,10 +10,15 @@
 
 """Service level tests for Invenio RDM Records."""
 
+from copy import deepcopy
+
 import pytest
 
 from invenio_rdm_records.proxies import current_rdm_records
-from invenio_rdm_records.services.errors import EmbargoNotLiftedError
+from invenio_rdm_records.services.errors import (
+    EmbargoNotLiftedError,
+    ValidationErrorWithMessageAsList,
+)
 
 
 def test_minimal_draft_creation(running_app, search_clear, minimal_record):
@@ -50,7 +55,7 @@ def test_draft_w_languages_creation(running_app, search_clear, minimal_record):
 
 
 def test_publish_public_record_with_default_doi(
-    running_app, search_clear, minimal_record
+    running_app, search_clear, minimal_record, uploader
 ):
     superuser_identity = running_app.superuser_identity
     service = current_rdm_records.records_service
@@ -68,8 +73,113 @@ def test_publish_public_record_with_optional_doi(
     draft = service.create(superuser_identity, minimal_record)
     record = service.publish(id_=draft.id, identity=superuser_identity)
     assert "doi" not in record._record.pids
+    assert "doi" not in record._record.parent.pids
     # Reset the running_app config for next tests
     running_app.app.config["RDM_PERSISTENT_IDENTIFIERS"]["doi"]["required"] = True
+
+
+def test_publish_public_record_versions_no_or_external_doi_managed_doi(
+    running_app, search_clear, minimal_record, verified_user
+):
+    running_app.app.config["RDM_PERSISTENT_IDENTIFIERS"]["doi"]["required"] = False
+    verified_user_identity = verified_user.identity
+    service = current_rdm_records.records_service
+    # Publish without DOI
+    draft = service.create(verified_user_identity, minimal_record)
+    record = service.publish(id_=draft.id, identity=verified_user_identity)
+    assert "doi" not in record._record.pids
+    assert "doi" not in record._record.parent.pids
+
+    # create a new version with an external DOI
+    draft = service.new_version(verified_user_identity, record.id)
+    draft_data = deepcopy(draft.data)
+    draft_data["metadata"]["publication_date"] = "2023-01-01"
+    draft_data["pids"]["doi"] = {
+        "identifier": "10.4321/test.1234",
+        "provider": "external",
+    }
+    draft = service.update_draft(verified_user_identity, draft.id, data=draft_data)
+    record = service.publish(id_=draft.id, identity=verified_user_identity)
+    assert "doi" in record._record.pids
+    assert "doi" not in record._record.parent.pids
+
+    # create a new version and and try to mint a managed DOI now when you publish
+    draft = service.new_version(verified_user_identity, record.id)
+    draft = service.pids.create(verified_user_identity, draft.id, "doi")
+    draft_data = deepcopy(draft.data)
+    draft_data["metadata"]["publication_date"] = "2023-01-01"
+    draft = service.update_draft(verified_user_identity, draft.id, data=draft_data)
+
+    with pytest.raises(ValidationErrorWithMessageAsList):
+        record = service.publish(id_=draft.id, identity=verified_user_identity)
+
+    # Reset the running_app config for next tests
+    running_app.app.config["RDM_PERSISTENT_IDENTIFIERS"]["doi"]["required"] = True
+
+
+def test_publish_public_record_versions_managed_doi_external_doi(
+    running_app, search_clear, minimal_record, verified_user
+):
+    running_app.app.config["RDM_PERSISTENT_IDENTIFIERS"]["doi"]["required"] = False
+    verified_user_identity = verified_user.identity
+    service = current_rdm_records.records_service
+    # Publish with locally managed DOI
+    draft = service.create(verified_user_identity, minimal_record)
+    draft = service.pids.create(verified_user_identity, draft.id, "doi")
+    record = service.publish(id_=draft.id, identity=verified_user_identity)
+    assert "doi" in record._record.pids
+    assert "doi" in record._record.parent.pids
+
+    # create a new version with an external DOI
+    draft = service.new_version(verified_user_identity, record.id)
+    draft_data = deepcopy(draft.data)
+    draft_data["metadata"]["publication_date"] = "2023-01-01"
+    draft_data["pids"]["doi"] = {
+        "identifier": "10.4321/test.1234",
+        "provider": "external",
+    }
+    draft = service.update_draft(verified_user_identity, draft.id, data=draft_data)
+    with pytest.raises(ValidationErrorWithMessageAsList):
+        record = service.publish(id_=draft.id, identity=verified_user_identity)
+
+    # Reset the running_app config for next tests
+    running_app.app.config["RDM_PERSISTENT_IDENTIFIERS"]["doi"]["required"] = True
+
+
+def test_publish_public_record_versions_managed_doi_no_doi(
+    running_app, search_clear, minimal_record, verified_user
+):
+    running_app.app.config["RDM_PERSISTENT_IDENTIFIERS"]["doi"]["required"] = False
+    verified_user_identity = verified_user.identity
+    service = current_rdm_records.records_service
+    # Publish with locally managed DOI
+    draft = service.create(verified_user_identity, minimal_record)
+    draft = service.pids.create(verified_user_identity, draft.id, "doi")
+    record = service.publish(id_=draft.id, identity=verified_user_identity)
+    assert "doi" in record._record.pids
+    assert "doi" in record._record.parent.pids
+
+    # create a new version with no DOI
+    draft = service.new_version(verified_user_identity, record.id)
+    draft_data = deepcopy(draft.data)
+    draft_data["metadata"]["publication_date"] = "2023-01-01"
+    draft_data["pids"] = {}
+    draft = service.update_draft(verified_user_identity, draft.id, data=draft_data)
+    with pytest.raises(ValidationErrorWithMessageAsList):
+        record = service.publish(id_=draft.id, identity=verified_user_identity)
+
+    # Reset the running_app config for next tests
+    running_app.app.config["RDM_PERSISTENT_IDENTIFIERS"]["doi"]["required"] = True
+
+
+def test_publish_public_record_with_default_doi(
+    running_app, search_clear, minimal_record, uploader
+):
+    superuser_identity = running_app.superuser_identity
+    service = current_rdm_records.records_service
+    draft = service.create(superuser_identity, minimal_record)
+    record = service.publish(id_=draft.id, identity=superuser_identity)
+    assert "doi" in record._record.pids
 
 
 def test_publish_restricted_record_without_default_doi(
