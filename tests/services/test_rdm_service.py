@@ -13,7 +13,6 @@
 from copy import deepcopy
 
 import pytest
-
 from invenio_access.permissions import system_identity
 
 from invenio_rdm_records.proxies import current_rdm_records
