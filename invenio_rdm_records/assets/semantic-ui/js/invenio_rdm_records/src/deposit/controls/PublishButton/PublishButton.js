@@ -33,19 +33,19 @@ class PublishButtonComponent extends Component {
   handlePublish = (event, handleSubmit, publishWithoutCommunity) => {
     const { setSubmitContext } = this.context;
     const { formik, raiseDOINeededButNotReserved, isDOIRequired } = this.props;
-    const noINeedOne = formik?.values?.noINeedOne;
+    const noINeedDOI = formik?.values?.noINeedDOI;
     // Check for explicit DOI reservation via the "GET DOI button" only when DOI is
     // optional in the instance's settings. If it is required, backend will automatically
     // mint one even if it was not explicitly reserved
     const shouldCheckForExplicitDOIReservation =
       isDOIRequired !== undefined && // isDOIRequired is undefined when no value was provided from Invenio-app-rdm
       !isDOIRequired &&
-      noINeedOne &&
+      noINeedDOI &&
       Object.keys(formik?.values?.pids).length === 0;
     if (shouldCheckForExplicitDOIReservation) {
       const errors = {
         pids: {
-          doi: i18next.t("DOI is needed. Please click on the button to reserve it."),
+          doi: i18next.t("DOI is needed. You need to reserve a DOI before publishing."),
         },
       };
       formik.setErrors(errors);

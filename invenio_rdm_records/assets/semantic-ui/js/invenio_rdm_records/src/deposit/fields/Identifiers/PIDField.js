@@ -497,14 +497,14 @@ class CustomPIDField extends Component {
                 form.setFieldValue("pids", {});
                 if (!required) {
                   // We set the
-                  form.setFieldValue("noINeedOne", true);
+                  form.setFieldValue("noINeedDOI", true);
                 }
               } else if (userSelectedNoNeed) {
                 form.setFieldValue("pids", {});
-                form.setFieldValue("noINeedOne", false);
+                form.setFieldValue("noINeedDOI", false);
               } else {
                 this.onExternalIdentifierChanged("");
-                form.setFieldValue("noINeedOne", false);
+                form.setFieldValue("noINeedDOI", false);
               }
               form.setFieldError(fieldPath, false);
               this.setState({

@@ -29,6 +29,7 @@ import {
   RESERVE_PID_STARTED,
   RESERVE_PID_SUCCEEDED,
   SET_COMMUNITY,
+  SET_DOI_NEEDED,
 } from "../types";
 
 export class DepositStatus {
@@ -332,11 +333,19 @@ const depositReducer = (state = {}, action) => {
           },
         };
       }
-
       return {
         ...state,
         record: recordCopy,
         editorState: computeDepositState(recordCopy, action.payload.community),
+      };
+    }
+    case SET_DOI_NEEDED: {
+      const recordCopy = {
+        ...state.record,
+      };
+      return {
+        ...state,
+        record: { ...recordCopy, ...action.payload },
       };
     }
     default:
