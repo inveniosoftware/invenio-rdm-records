@@ -16,6 +16,7 @@ from invenio_requests.customizations import actions
 from ..notifications.builders import (
     CommunityInclusionAcceptNotificationBuilder,
     CommunityInclusionCancelNotificationBuilder,
+    CommunityInclusionCommentNotificationBuilder,
     CommunityInclusionDeclineNotificationBuilder,
     CommunityInclusionExpireNotificationBuilder,
 )
@@ -192,6 +193,8 @@ class CommunitySubmission(ReviewRequest):
     needs_context = {
         "community_roles": ["owner", "manager", "curator"],
     }
+
+    comment_notification_builder = CommunityInclusionCommentNotificationBuilder
 
     available_actions = {
         "create": actions.CreateAction,

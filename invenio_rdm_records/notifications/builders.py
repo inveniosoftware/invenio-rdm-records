@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2023 CERN.
+# Copyright (C) 2023-2024 CERN.
 # Copyright (C) 2023 Graz University of Technology.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
@@ -8,12 +8,16 @@
 
 """Notification related utils for notifications."""
 
+from invenio_communities.notifications.builders import (
+    CommunityCommentNotificationBuilderBase,
+)
 from invenio_communities.notifications.generators import CommunityMembersRecipient
 from invenio_notifications.models import Notification
 from invenio_notifications.registry import EntityResolverRegistry
 from invenio_notifications.services.builders import NotificationBuilder
 from invenio_notifications.services.generators import EntityResolve, UserEmailBackend
 from invenio_requests.notifications.filters import UserRecipientFilter
+from invenio_requests.notifications.generators import RequestParticipantsRecipient
 from invenio_users_resources.notifications.filters import UserPreferencesRecipientFilter
 from invenio_users_resources.notifications.generators import (
     EmailRecipient,
@@ -66,6 +70,19 @@ class CommunityInclusionSubmittedNotificationBuilder(
     """Notification builder for record community inclusion submitted."""
 
     type = "community-submission.submit"
+
+
+class CommunityInclusionCommentNotificationBuilder(
+    CommunityCommentNotificationBuilderBase
+):
+    """Notification builder for draft/record request comment notifications."""
+
+    type = f"comment-{CommunityInclusionNotificationBuilder.type}.create"
+
+    recipients = [
+        RequestParticipantsRecipient(key="request"),
+        CommunityMembersRecipient("request.receiver", roles=["owner", "manager"]),
+    ]
 
 
 class GuestAccessRequestTokenCreateNotificationBuilder(NotificationBuilder):
