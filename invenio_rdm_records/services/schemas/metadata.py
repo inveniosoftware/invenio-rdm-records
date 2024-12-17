@@ -362,7 +362,10 @@ class MetadataSchema(Schema):
         required=True,
         validate=validate.Length(min=1, error=_("Missing data for required field.")),
     )
-    title = SanitizedUnicode(required=True, validate=validate.Length(min=3))
+    title = SanitizedUnicode(
+        required=True, 
+        validate=_not_blank(_("Title cannot be a blank string."))
+    )
     additional_titles = fields.List(fields.Nested(TitleSchema))
     publisher = SanitizedUnicode()
     publication_date = EDTFDateString(required=True)
