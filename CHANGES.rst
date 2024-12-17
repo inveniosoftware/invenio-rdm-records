@@ -12,6 +12,10 @@
 Changes
 =======
 
+Version v16.4.2 (released 2024-12-17)
+
+- rights: fix serialize condition for controlled license
+
 Version v16.4.1 (released 2024-12-11)
 
 - mappings: add missing `identifiers` to community orgs
