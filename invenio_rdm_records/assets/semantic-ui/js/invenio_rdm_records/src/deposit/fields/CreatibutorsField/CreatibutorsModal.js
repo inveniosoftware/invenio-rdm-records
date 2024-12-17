@@ -16,17 +16,18 @@ import _map from "lodash/map";
 import PropTypes from "prop-types";
 import React, { Component, createRef } from "react";
 import {
+  AffiliationsSuggestions,
   RadioField,
   RemoteSelectField,
   SelectField,
   TextField,
-  AffiliationsSuggestions,
 } from "react-invenio-forms";
 import { Button, Form, Modal } from "semantic-ui-react";
 import * as Yup from "yup";
 import { AffiliationsField } from "./../AffiliationsField";
 import { CreatibutorsIdentifiers } from "./CreatibutorsIdentifiers";
 import { CREATIBUTOR_TYPE } from "./type";
+import Overridable from "react-overridable";
 
 const ModalActions = {
   ADD: "add",
@@ -76,27 +77,6 @@ export class CreatibutorsModal extends Component {
       organizationAffiliations: isOrganization ? affiliations : [],
     });
   }
-
-  CreatorSchema = Yup.object({
-    person_or_org: Yup.object({
-      type: Yup.string(),
-      family_name: Yup.string().when("type", (type, schema) => {
-        if (type === CREATIBUTOR_TYPE.PERSON && this.isCreator()) {
-          return schema.required(i18next.t("Family name is a required field."));
-        }
-      }),
-      name: Yup.string().when("type", (type, schema) => {
-        if (type === CREATIBUTOR_TYPE.ORGANIZATION && this.isCreator()) {
-          return schema.required(i18next.t("Name is a required field."));
-        }
-      }),
-    }),
-    role: Yup.string().when("_", (_, schema) => {
-      if (!this.isCreator()) {
-        return schema.required(i18next.t("Role is a required field."));
-      }
-    }),
-  });
 
   openModal = () => {
     this.setState({ open: true, action: null }, () => {
@@ -210,6 +190,27 @@ export class CreatibutorsModal extends Component {
 
     return schema === "creators";
   };
+
+  CreatorSchema = Yup.object({
+    person_or_org: Yup.object({
+      type: Yup.string(),
+      family_name: Yup.string().when("type", (type, schema) => {
+        if (type === CREATIBUTOR_TYPE.PERSON && this.isCreator()) {
+          return schema.required(i18next.t("Family name is a required field."));
+        }
+      }),
+      name: Yup.string().when("type", (type, schema) => {
+        if (type === CREATIBUTOR_TYPE.ORGANIZATION && this.isCreator()) {
+          return schema.required(i18next.t("Name is a required field."));
+        }
+      }),
+    }),
+    role: Yup.string().when("_", (_, schema) => {
+      if (!this.isCreator()) {
+        return schema.required(i18next.t("Role is a required field."));
+      }
+    }),
+  });
 
   onSubmit = (values, formikBag) => {
     const { onCreatibutorChange } = this.props;
@@ -580,7 +581,8 @@ export class CreatibutorsModal extends Component {
                   {(_get(values, typeFieldPath) === CREATIBUTOR_TYPE.ORGANIZATION ||
                     (showPersonForm &&
                       _get(values, typeFieldPath) === CREATIBUTOR_TYPE.PERSON)) && (
-                    <SelectField
+                    <Overridable
+                      id="InvenioRdmRecords.Deposit.CreatibutorsModalRoleSelectField.Container"
                       fieldPath={roleFieldPath}
                       label={i18next.t("Role")}
                       options={roleOptions}
@@ -589,7 +591,18 @@ export class CreatibutorsModal extends Component {
                       required={!this.isCreator()}
                       optimized
                       scrolling
-                    />
+                    >
+                      <SelectField
+                        fieldPath={roleFieldPath}
+                        label={i18next.t("Role")}
+                        options={roleOptions}
+                        placeholder={i18next.t("Select role")}
+                        {...(this.isCreator() && { clearable: true })}
+                        required={!this.isCreator()}
+                        optimized
+                        scrolling
+                      />
+                    </Overridable>
                   )}
                 </Form>
               </Modal.Content>
