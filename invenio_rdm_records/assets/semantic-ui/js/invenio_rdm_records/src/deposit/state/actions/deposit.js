@@ -30,6 +30,7 @@ import {
   RESERVE_PID_STARTED,
   RESERVE_PID_SUCCEEDED,
   SET_COMMUNITY,
+  SET_DOI_NEEDED,
 } from "../types";
 
 async function changeURLAfterCreation(draftURL) {
@@ -152,6 +153,16 @@ export const save = (draft) => {
       type: DRAFT_SAVE_SUCCEEDED,
       payload: { data: response.data },
     });
+
+    if (draft.noINeedDOI) {
+      // Save the choice that user selected that DOI is needed. This is used to validate
+      // if user has reserved a DOI before clicking publish. This check is valid when
+      // DOI is optional
+      dispatch({
+        type: SET_DOI_NEEDED,
+        payload: { noINeedDOI: draft.noINeedDOI },
+      });
+    }
   };
 };
 
@@ -341,6 +352,15 @@ export const changeSelectedCommunity = (community) => {
     dispatch({
       type: SET_COMMUNITY,
       payload: { community },
+    });
+  };
+};
+
+export const setDOINeeded = (value) => {
+  return async (dispatch) => {
+    dispatch({
+      type: SET_DOI_NEEDED,
+      payload: { noINeedDOI: value },
     });
   };
 };
