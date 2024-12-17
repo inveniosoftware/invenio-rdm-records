@@ -82,7 +82,7 @@ export class RightsVocabularyField extends VocabularyField {
     let serializedValue = null;
     const _serialize = (value) => {
       let clonedValue = _cloneDeep(value);
-      if ("id" in value) {
+      if ("id" in value && value.id != null) {
         return { id: value.id };
       } else {
         this.localeFields.forEach((field) => {
