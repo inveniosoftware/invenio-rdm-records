@@ -16,7 +16,8 @@ from invenio_rdm_records.resources.serializers.bibtex import BibtexSerializer
 def updated_minimal_record(minimal_record):
     """Update fields (done after record create) for BibTex serializer."""
     minimal_record["access"]["status"] = "open"
-    minimal_record["created"] = "2023-03-09T00:00:00.000000+00:00"
+    minimal_record["metadata"]["publication_date"] = "2023-03-13"
+    minimal_record["created"] = "2024-12-17T00:00:00.000000+00:00"
     minimal_record["id"] = "abcde-fghij"
 
     for creator in minimal_record["metadata"]["creators"]:
@@ -31,7 +32,8 @@ def updated_minimal_record(minimal_record):
 def updated_full_record(full_record_to_dict):
     """Update fields (done after record create) for BibTex serializer."""
     full_record_to_dict["access"]["status"] = "embargoed"
-    full_record_to_dict["created"] = "2023-03-23T00:00:00.000000+00:00"
+    full_record_to_dict["metadata"]["publication_date"] = "2023-03/2024-02"
+    full_record_to_dict["created"] = "2024-12-17T00:00:00.000000+00:00"
     full_record_to_dict["id"] = "abcde-fghij"
     full_record_to_dict["metadata"]["resource_type"]["id"] = "other"
 
