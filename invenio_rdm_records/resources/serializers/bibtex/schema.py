@@ -48,6 +48,7 @@ class BibTexSchema(BaseSerializerSchema, CommonFieldsMixin):
             BibTexFormatter.in_proceedings,
             BibTexFormatter.proceedings,
         ],
+        "publication-conferenceproceeding": [BibTexFormatter.proceedings],
         "publication-book": [
             BibTexFormatter.book,
             BibTexFormatter.booklet,
