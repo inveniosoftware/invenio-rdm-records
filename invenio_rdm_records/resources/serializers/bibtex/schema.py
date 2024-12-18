@@ -44,10 +44,7 @@ class BibTexSchema(BaseSerializerSchema, CommonFieldsMixin):
 
     entry_mapper = {
         # Publication fields
-        "publication-conferencepaper": [
-            BibTexFormatter.in_proceedings,
-            BibTexFormatter.proceedings,
-        ],
+        "publication-conferencepaper": [BibTexFormatter.in_proceedings],
         "publication-book": [
             BibTexFormatter.book,
             BibTexFormatter.booklet,
