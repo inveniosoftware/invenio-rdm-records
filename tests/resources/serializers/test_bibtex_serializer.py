@@ -150,7 +150,7 @@ def test_serialize_publication_conferencepaper(running_app, updated_minimal_reco
     It serializes into the following formats, depending on the data:
 
     - inproceedings
-    - proceedings
+    - misc
     """
     updated_minimal_record["metadata"]["resource_type"][
         "id"
@@ -179,22 +179,24 @@ def test_serialize_publication_conferencepaper(running_app, updated_minimal_reco
 
     assert serialized_record == expected_data
 
-    # Force serialization into 'proceedings'
+    # Force serialization into 'misc'
     del updated_minimal_record["custom_fields"]["imprint:imprint"]
     serialized_record = serializer.serialize_object(updated_minimal_record)
 
     expected_data = "\n".join(
         [
-            "@proceedings{brown_2023_abcde-fghij,",
+            "@misc{brown_2023_abcde-fghij,",
             "  author       = {Name and",
             "                  Troy Inc.},",
             "  title        = {A Romans story},",
+            "  month        = mar,",
             "  year         = 2023,",
             "  publisher    = {Acme Inc},",
-            "  month        = mar,",
             "}",
         ]
     )
+
+    assert serialized_record == expected_data
 
 
 def test_serialize_publication_conferenceproceeding(
