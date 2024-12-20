@@ -52,6 +52,7 @@ class BibTexSchema(BaseSerializerSchema, CommonFieldsMixin):
             BibTexFormatter.book,
             BibTexFormatter.booklet,
         ],
+        "publication-section": [BibTexFormatter.incollection],
         "publication-article": [BibTexFormatter.article],
         "publication-preprint": [BibTexFormatter.unpublished],
         "publication-thesis": [BibTexFormatter.thesis],
