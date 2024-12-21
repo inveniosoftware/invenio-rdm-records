@@ -3,18 +3,22 @@
     en: "Organization"
     sv: "Organisation"
     de: "Organisation"
+    es: "Organización"
 - id: "event"
   title:
     en: "Event"
     sv: "Evenemang"
     de: "Event"
+    es: "Evento"
 - id: "topic"
   title:
     en: "Topic"
     sv: "Tema"
     de: "Thema"
+    es: "Tópico"
 - id: "project"
   title:
     en: "Project"
     sv: "Projekt"
     de: "Projekt"
+    es: "Proyecto"

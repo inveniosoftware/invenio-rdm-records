@@ -5,6 +5,7 @@
     en: Alternative title
     sv: Alternativ titel
     de: Alternativer Titel
+    es: Título alternativo
 - id: subtitle
   props:
     datacite: Subtitle
@@ -12,6 +13,7 @@
     en: Subtitle
     sv: Undertitel
     de: Untertitel
+    es: Subtítulo
 - id: translated-title
   props:
     datacite: TranslatedTitle
@@ -19,6 +21,7 @@
     en: Translated title
     sv: Översatt titel
     de: Übersetzter Titel
+    es: Título traducido
 - id: other
   props:
     datacite: Other
@@ -26,3 +29,4 @@
     en: Other
     sv: Övrig titel
     de: Sonstiger Titel
+    es: Otro

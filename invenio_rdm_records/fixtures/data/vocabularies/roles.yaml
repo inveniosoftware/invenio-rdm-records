@@ -6,6 +6,7 @@
     en: Contact person
     sv: Kontaktperson
     de: Kontaktperson
+    es: Persona de contacto
 - id: datacollector
   props:
     datacite: DataCollector
@@ -14,6 +15,7 @@
     en: Data collector
     sv: Datainsamlare
     de: DatensammlerIn
+    es: Recolector de datos
 - id: datacurator
   props:
     datacite: DataCurator
@@ -22,6 +24,7 @@
     en: Data curator
     sv: Datakurator
     de: DatenkuratorIn
+    es: Curador de datos
 - id: datamanager
   props:
     datacite: DataManager
@@ -30,6 +33,7 @@
     en: Data manager
     sv: Dataansvarig
     de: DatenmanagerIn
+    es: Gestor de datos
 - id: distributor
   props:
     datacite: Distributor
@@ -38,6 +42,7 @@
     en: Distributor
     sv: Distributör
     de: VerteilerIn
+    es: Distribuidor
 - id: editor
   props:
     datacite: Editor
@@ -46,6 +51,7 @@
     en: Editor
     sv: Redaktör
     de: EditorIn
+    es: Editor
 - id: hostinginstitution
   props:
     datacite: HostingInstitution
@@ -54,6 +60,7 @@
     en: Hosting institution
     sv: Värdinstitution
     de: Bereitstellende Institution
+    es: Institución anfitriona
 - id: producer
   props:
     datacite: Producer
@@ -62,6 +69,7 @@
     en: Producer
     sv: Producent
     de: ProduzentIn
+    es: Productor
 - id: projectleader
   props:
     datacite: ProjectLeader
@@ -70,6 +78,7 @@
     en: Project leader
     sv: Projektledare
     de: ProjektleiterIn
+    es: Líder de proyecto
 - id: projectmanager
   props:
     datacite: ProjectManager
@@ -78,6 +87,7 @@
     en: Project manager
     sv: Projektansvarig
     de: ProjektmanagerIn
+    es: Gerente de proyecto
 - id: projectmember
   props:
     datacite: ProjectMember
@@ -86,6 +96,7 @@
     en: Project member
     sv: Projektmedlem
     de: Projektmitglied
+    es: Miembro del proyecto
 - id: registrationagency
   props:
     datacite: RegistrationAgency
@@ -94,6 +105,7 @@
     en: Registration agency
     sv: Registreringsorgan
     de: Registrierungsstelle
+    es: Agencia de registro
 - id: registrationauthority
   props:
     datacite: RegistrationAuthority
@@ -102,6 +114,7 @@
     en: Registration authority
     sv: Registreringsmyndighet
     de: Registrierungsbehörde
+    es: Autoridad de registro
 - id: relatedperson
   props:
     datacite: RelatedPerson
@@ -110,6 +123,7 @@
     en: Related person
     sv: Relaterad person
     de: Verwandte Person
+    es: Persona relacionada
 - id: researcher
   props:
     datacite: Researcher
@@ -118,6 +132,7 @@
     en: Researcher
     sv: Forskare
     de: WissenschaftlerIn
+    es: Investigador
 - id: researchgroup
   props:
     datacite: ResearchGroup
@@ -126,6 +141,7 @@
     en: Research group
     sv: Forskningsgrupp
     de: Forschungsgruppe
+    es: Grupo de investigación
 - id: rightsholder
   props:
     datacite: RightsHolder
@@ -134,6 +150,7 @@
     en: Rights holder
     sv: Rättighetsinnehavare
     de: RechteinhaberIn
+    es: Titular de derechos
 - id: sponsor
   props:
     datacite: Sponsor
@@ -142,6 +159,7 @@
     en: Sponsor
     sv: Sponsor
     de: Sponsor
+    es: Patrocinador
 - id: supervisor
   props:
     datacite: Supervisor
@@ -150,6 +168,7 @@
     en: Supervisor
     sv: Handledare
     de: SupervisorIn
+    es: Supervisor
 - id: workpackageleader
   props:
     datacite: WorkPackageLeader
@@ -158,6 +177,7 @@
     en: Work package leader
     sv: Arbetspaketsledare
     de: ArbeitspaketleiterIn
+    es: Líder del paquete de trabajo
 - id: other
   props:
     datacite: Other
@@ -166,3 +186,4 @@
     en: Other
     sv: Övriga
     de: Andere
+    es: Otro
