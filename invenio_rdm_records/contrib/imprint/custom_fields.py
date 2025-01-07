@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2023 CERN.
+# Copyright (C) 2023-2025 CERN.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
@@ -73,7 +73,9 @@ IMPRINT_CUSTOM_FIELDS_UI = {
             "ui_widget": "Imprint",
             "template": "imprint.html",
             "props": {
-                "label": _("Imprint (Book, Chapter, or Report)"),
+                "label": _(
+                    "Imprint (Book, Chapter, Report, or Conference proceedings)"
+                ),
                 "place": {
                     "label": _("Place"),
                     "placeholder": _("e.g. city, country"),
@@ -85,10 +87,10 @@ IMPRINT_CUSTOM_FIELDS_UI = {
                     "description": _("International Standard Book Number"),
                 },
                 "title": {
-                    "label": _("Book or report title"),
+                    "label": _("Book, report title, or proceedings"),
                     "placeholder": "",
                     "description": _(
-                        "Title of the book or report which this upload is part of"
+                        "Title of the book, report, or proceedings which this upload is part of"
                     ),
                 },
                 "pages": {
