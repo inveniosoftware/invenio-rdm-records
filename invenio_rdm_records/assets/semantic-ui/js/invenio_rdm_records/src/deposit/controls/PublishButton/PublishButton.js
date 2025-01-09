@@ -32,8 +32,8 @@ class PublishButtonComponent extends Component {
 
   handlePublish = (event, handleSubmit, publishWithoutCommunity) => {
     const { setSubmitContext } = this.context;
-    const { formik, raiseDOINeededButNotReserved, isDOIRequired } = this.props;
-    const noINeedDOI = formik?.values?.noINeedDOI;
+    const { formik, raiseDOINeededButNotReserved, isDOIRequired, noINeedDOI } =
+      this.props;
     // Check for explicit DOI reservation via the "GET DOI button" only when DOI is
     // optional in the instance's settings. If it is required, backend will automatically
     // mint one even if it was not explicitly reserved
@@ -92,6 +92,8 @@ class PublishButtonComponent extends Component {
       formik,
       publishModalExtraContent,
       raiseDOINeededButNotReserved,
+      noINeedDOI,
+      isDOIRequired,
       ...ui
     } = this.props;
     const { isConfirmModalOpen } = this.state;
@@ -166,6 +168,7 @@ PublishButtonComponent.propTypes = {
   filesState: PropTypes.object,
   raiseDOINeededButNotReserved: PropTypes.func.isRequired,
   isDOIRequired: PropTypes.bool,
+  noINeedDOI: PropTypes.bool,
 };
 
 PublishButtonComponent.defaultProps = {
@@ -175,6 +178,7 @@ PublishButtonComponent.defaultProps = {
   publishModalExtraContent: undefined,
   filesState: undefined,
   isDOIRequired: undefined,
+  noINeedDOI: undefined,
 };
 
 const mapStateToProps = (state) => ({
@@ -182,6 +186,7 @@ const mapStateToProps = (state) => ({
   publishModalExtraContent: state.deposit.config.publish_modal_extra,
   filesState: state.files,
   isDOIRequired: state.deposit.config.is_doi_required,
+  noINeedDOI: state.deposit.noINeedDOI,
 });
 
 export const PublishButton = connect(mapStateToProps, (dispatch) => {

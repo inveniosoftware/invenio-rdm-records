@@ -437,6 +437,28 @@ RDM_PARENT_PERSISTENT_IDENTIFIERS = {
 RDM_ALLOW_EXTERNAL_DOI_VERSIONING = True
 """Allow records with external DOIs to be versioned."""
 
+RDM_OPTIONAL_DOI_TRANSITIONS = {
+    "datacite": {
+        "allowed_providers": ["datacite"],
+        "message": _(
+            "A previous version used a DOI registered from {sitename}. This version must also use a DOI from {sitename}."
+        ),
+    },
+    "external": {
+        "allowed_providers": ["external", "not_needed"],
+        "message": _(
+            "A previous version was published with a DOI from an external provider or without one. You cannot use a DOI registered from {sitename} for this version."
+        ),
+    },
+    "not_needed": {
+        "allowed_providers": ["external", "not_needed"],
+        "message": _(
+            "A previous version was published with a DOI from an external provider or without one. You cannot use a DOI registered from {sitename} for this version."
+        ),
+    },
+}
+"""Optional DOI transitions for versioning. The allowed providers are the ones that can be used for the new version and when you edit a published record."""
+
 # Configuration for the DataCiteClient used by the DataCitePIDProvider
 
 DATACITE_ENABLED = False
