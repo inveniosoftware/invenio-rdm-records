@@ -88,7 +88,6 @@ def test_bibtex_serializer_full_record(running_app, updated_full_record):
     [
         ("publication"),
         ("publication-annotationcollection"),
-        ("publication-section"),
         ("publication-datamanagementplan"),
         ("publication-journal"),
         ("publication-patent"),
@@ -220,6 +219,81 @@ def test_serialize_publication_conferenceproceeding(
             "  year         = 2023,",
             "  publisher    = {Acme Inc},",
             "  month        = mar,",
+            "}",
+        ]
+    )
+
+    assert serialized_record == expected_data
+
+
+def test_serialize_publication_booksection(running_app, updated_minimal_record):
+    """Test bibtex formatter for a section of a book.
+
+    It serializes into `incollection` based on
+
+    - incollection (Book title is present)
+    - inbook (Book title is not present, pages are present)
+    """
+    updated_minimal_record["metadata"]["resource_type"]["id"] = "publication-section"
+
+    # Force serialization into 'incollection'
+    updated_minimal_record.update(
+        {"custom_fields": {"imprint:imprint": {"title": "book title", "pages": "1-5"}}}
+    )
+
+    serializer = BibtexSerializer()
+    serialized_record = serializer.serialize_object(updated_minimal_record)
+
+    expected_data = "\n".join(
+        [
+            "@incollection{brown_2023_abcde-fghij,",
+            "  author       = {Name and",
+            "                  Troy Inc.},",
+            "  title        = {A Romans story},",
+            "  booktitle    = {book title},",
+            "  year         = 2023,",
+            "  publisher    = {Acme Inc},",
+            "  pages        = {1-5},",
+            "  month        = mar,",
+            "}",
+        ]
+    )
+
+    assert serialized_record == expected_data
+
+    # Force serialization into 'inbook' (no book title)
+    del updated_minimal_record["custom_fields"]["imprint:imprint"]["title"]
+    serialized_record = serializer.serialize_object(updated_minimal_record)
+
+    expected_data = "\n".join(
+        [
+            "@inbook{brown_2023_abcde-fghij,",
+            "  author       = {Name and",
+            "                  Troy Inc.},",
+            "  title        = {A Romans story},",
+            "  pages        = {1-5},",
+            "  year         = 2023,",
+            "  publisher    = {Acme Inc},",
+            "  month        = mar,",
+            "}",
+        ]
+    )
+
+    assert serialized_record == expected_data
+
+    # Force serialization into 'misc' (no pages)
+    del updated_minimal_record["custom_fields"]["imprint:imprint"]["pages"]
+    serialized_record = serializer.serialize_object(updated_minimal_record)
+
+    expected_data = "\n".join(
+        [
+            "@misc{brown_2023_abcde-fghij,",
+            "  author       = {Name and",
+            "                  Troy Inc.},",
+            "  title        = {A Romans story},",
+            "  month        = mar,",
+            "  year         = 2023,",
+            "  publisher    = {Acme Inc},",
             "}",
         ]
     )

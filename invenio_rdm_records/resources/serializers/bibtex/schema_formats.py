@@ -72,6 +72,41 @@ class BibTexFormatter:
     }
     """A single-volume conference proceedings."""
 
+    in_collection = {
+        "name": "incollection",
+        "req_fields": ["author", "title", "booktitle", "year", "publisher"],
+        "opt_fields": [
+            "pages",
+            "address",
+            "month",
+            "editor",
+            "volume",
+            "number",
+            "series",
+            "doi",
+            "url",
+        ],
+    }
+    """An article in a book."""
+
+    in_book = {
+        "name": "inbook",
+        "req_fields": ["author", "title", "pages", "year", "publisher"],
+        "opt_fields": [
+            "address",
+            "month",
+            "editor",
+            "edition",
+            "volume",
+            "number",
+            "series",
+            "note",
+            "doi",
+            "url",
+        ],
+    }
+    """A part of a book that doesn't have a title."""
+
     article = {
         "name": "article",
         "req_fields": ["author", "title", "journal", "year"],
