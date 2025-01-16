@@ -12,6 +12,13 @@
 Changes
 =======
 
+Version v16.6.1 (released 2025-01-16)
+
+- Revert "bug: add custom comment notification for record/draft requests"
+    * This is actually a breaking change since it introduces a new
+      set of notification templates that will potentialy not be
+      styled if overridden in an instance's overlay.
+
 Version v16.6.0 (released 2025-01-16)
 
 - notifications: add custom comment template for record inclusion
