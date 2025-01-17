@@ -237,6 +237,7 @@ class RDMRecordResourceConfig(RecordResourceConfig, ConfiguratorMixin):
     routes["restore-record"] = "/<pid_value>/restore"
     routes["set-record-quota"] = "/<pid_value>/quota"
     routes["set-user-quota"] = "/users/<pid_value>/quota"
+    routes["item-revision-list"] = "/<pid_value>/revisions"
 
     request_view_args = {
         "pid_value": ma.fields.Str(),
