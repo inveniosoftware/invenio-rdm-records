@@ -136,6 +136,8 @@ class RDMRecordPermissionPolicy(RecordPermissionPolicy):
     # Allow submitting new record
     can_create = can_authenticated
 
+    can_search_revisions = [Administration()]
+
     #
     # Drafts
     #

@@ -94,9 +94,21 @@ class RDMRecordResource(RecordResource):
             route("POST", p(routes["set-record-quota"]), self.set_record_quota),
             # TODO: move to users?
             route("POST", routes["set-user-quota"], self.set_user_quota),
+            route("GET", p(routes["item-revision-list"]), self.search_revisions),
         ]
 
         return url_rules
+
+    @request_headers
+    @request_extra_args
+    @request_view_args
+    def search_revisions(self):
+        """Discard a previously reserved PID."""
+        item = self.service.search_revisions(
+            identity=g.identity, id_=resource_requestctx.view_args["pid_value"]
+        )
+
+        return item.to_dict(), 200
 
     @request_extra_args
     @request_read_args
