@@ -3,6 +3,7 @@
 # Copyright (C) 2021 Graz University of Technology.
 # Copyright (C) 2021-2024 CERN.
 # Copyright (C) 2021 TU Wien.
+# Copyright (C) 2024 CESNET.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
@@ -14,19 +15,15 @@ from collections import namedtuple
 from functools import partial, reduce
 from itertools import chain
 
-from flask import g
 from flask_principal import UserNeed
-from invenio_communities.config import COMMUNITIES_ROLES
 from invenio_communities.generators import CommunityRoleNeed, CommunityRoles
 from invenio_communities.proxies import current_roles
 from invenio_records_permissions.generators import ConditionalGenerator, Generator
-from invenio_records_resources.services.files.transfer import TransferType
 from invenio_search.engine import dsl
 
 from ..records import RDMDraft
 from ..records.systemfields.access.grants import Grant
 from ..records.systemfields.deletion_status import RecordDeletionStatusEnum
-from ..requests import CommunityInclusion
 from ..requests.access import AccessRequestTokenNeed
 from ..tokens.permissions import RATNeed
 
@@ -96,28 +93,6 @@ class IfDraft(ConditionalGenerator):
     def _condition(self, record, **kwargs):
         """Check if the record is a draft."""
         return isinstance(record, RDMDraft)
-
-
-class IfFileIsLocal(ConditionalGenerator):
-    """Conditional generator for file storage class."""
-
-    def _condition(self, record, file_key=None, **kwargs):
-        """Check if the file is local."""
-        is_file_local = True
-        if file_key:
-            file_record = record.files.get(file_key)
-            # file_record __bool__ returns false for `if file_record`
-            file = file_record.file if file_record is not None else None
-            is_file_local = not file or file.storage_class == TransferType.LOCAL
-        else:
-            file_records = record.files.entries
-            for file_record in file_records:
-                file = file_record.file
-                if file and file.storage_class != TransferType.LOCAL:
-                    is_file_local = False
-                    break
-
-        return is_file_local
 
 
 class IfNewRecord(ConditionalGenerator):
