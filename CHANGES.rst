@@ -12,6 +12,12 @@
 Changes
 =======
 
+Version v16.7.0 (released 2025-01-21)
+
+- pids: improve deposit UI for optional DOI
+- deposit-ui: fix affiliation selection input display
+
+
 Version v16.6.1 (released 2025-01-16)
 
 - Revert "bug: add custom comment notification for record/draft requests"
