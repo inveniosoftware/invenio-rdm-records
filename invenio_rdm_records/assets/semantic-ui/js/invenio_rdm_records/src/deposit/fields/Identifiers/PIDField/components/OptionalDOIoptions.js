@@ -8,13 +8,14 @@ import { i18next } from "@translations/invenio_rdm_records/i18next";
 
 import PropTypes from "prop-types";
 import React, { Component } from "react";
+import { connect } from "react-redux";
 import { Form, Radio, Popup } from "semantic-ui-react";
-import _isEmpty from "lodash/isEmpty";
+import { DepositStatus } from "../../../../state/reducers/deposit";
 
 /**
  * Manage radio buttons choices between managed (i.e. datacite), unmanaged (i.e. external) and no need for a PID.
  */
-export class OptionalDOIoptions extends Component {
+class OptionalDOIoptionsCmp extends Component {
   handleChange = (e, { value }) => {
     const { onManagedUnmanagedChange } = this.props;
     const isManagedSelected = value === "managed";
@@ -23,24 +24,39 @@ export class OptionalDOIoptions extends Component {
   };
 
   _render = (cmp, shouldWrapPopup, message) =>
-    shouldWrapPopup ? <Popup content={message} trigger={cmp} /> : cmp;
+    shouldWrapPopup && message ? <Popup content={message} trigger={cmp} /> : cmp;
 
   render() {
-    const { isManagedSelected, isNoNeedSelected, pidLabel, optionalDOItransitions } =
-      this.props;
+    const {
+      isManagedSelected,
+      isNoNeedSelected,
+      pidLabel,
+      optionalDOItransitions,
+      record,
+    } = this.props;
 
-    const allDOIoptionsAllowed = _isEmpty(optionalDOItransitions);
-    const isUnManagedDisabled =
-      isManagedSelected ||
-      (!allDOIoptionsAllowed &&
-        !optionalDOItransitions.allowed_providers.includes("external"));
-    const isNoNeedDisabled =
-      isManagedSelected ||
-      (!allDOIoptionsAllowed &&
-        !optionalDOItransitions.allowed_providers.includes("not_needed"));
+    const doi = record?.pids?.doi?.identifier || "";
+    const alreadyPublished = [
+      DepositStatus.PUBLISHED,
+      DepositStatus.NEW_VERSION_DRAFT,
+    ].includes(record.status);
+
+    const hasDoi = doi !== "";
+    const isUnManagedDisabled = alreadyPublished
+      ? !optionalDOItransitions.allowed_providers.includes("external")
+      : hasDoi && isManagedSelected;
+
+    const isNoNeedDisabled = alreadyPublished
+      ? !optionalDOItransitions.allowed_providers.includes("not_needed")
+      : hasDoi && isManagedSelected;
+
+    const isManagedTransition = optionalDOItransitions?.allowed_providers?.some(
+      (val) => !["external", "not_needed"].includes(val)
+    );
     // The locally managed DOI is disabled either if the external provider is allowed or if the no need option is allowed
-    const isManagedDisabled =
-      !allDOIoptionsAllowed && (!isUnManagedDisabled || !isNoNeedDisabled);
+    const isManagedDisabled = alreadyPublished
+      ? !isManagedTransition
+      : hasDoi && isManagedSelected;
 
     const yesIHaveOne = (
       <Form.Field width={4}>
@@ -93,28 +109,31 @@ export class OptionalDOIoptions extends Component {
         </Form.Field>
         {this._render(
           yesIHaveOne,
-          isUnManagedDisabled && !isManagedSelected,
+          isUnManagedDisabled,
           optionalDOItransitions?.message
         )}
         {this._render(noINeedOne, isManagedDisabled, optionalDOItransitions?.message)}
-        {this._render(
-          noNeed,
-          isNoNeedDisabled && !isManagedSelected,
-          optionalDOItransitions?.message
-        )}
+        {this._render(noNeed, isNoNeedDisabled, optionalDOItransitions?.message)}
       </Form.Group>
     );
   }
 }
 
-OptionalDOIoptions.propTypes = {
+OptionalDOIoptionsCmp.propTypes = {
   isManagedSelected: PropTypes.bool.isRequired,
   isNoNeedSelected: PropTypes.bool.isRequired,
   onManagedUnmanagedChange: PropTypes.func.isRequired,
   pidLabel: PropTypes.string,
   optionalDOItransitions: PropTypes.array.isRequired,
+  record: PropTypes.object.isRequired,
 };
 
-OptionalDOIoptions.defaultProps = {
+OptionalDOIoptionsCmp.defaultProps = {
   pidLabel: undefined,
 };
+
+const mapStateToProps = (state) => ({
+  record: state.deposit.record,
+});
+
+export const OptionalDOIoptions = connect(mapStateToProps, null)(OptionalDOIoptionsCmp);
