@@ -12,11 +12,14 @@
 Changes
 =======
 
+Version v16.7.1 (released 2025-01-21)
+
+- optional-doi: fix new upload disabled states
+
 Version v16.7.0 (released 2025-01-21)
 
 - pids: improve deposit UI for optional DOI
 - deposit-ui: fix affiliation selection input display
-
 
 Version v16.6.1 (released 2025-01-16)
 
