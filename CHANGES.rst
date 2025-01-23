@@ -12,7 +12,9 @@
 Changes
 =======
 
-Version 17.0.0.dev1 (released 2024-12-16)
+Version v17.0.0.dev2 (released 2025-01-23)
+
+Version v17.0.0.dev1 (released 2024-12-16)
 
 - fix: flask-sqlalchemy.pagination >= 3.0.0
 - comp: make compatible to flask-sqlalchemy>=3.1
