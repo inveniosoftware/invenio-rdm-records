@@ -12,6 +12,10 @@
 Changes
 =======
 
+Version v16.8.0 (released 2025-01-27)
+
+- resources: expose record revisions
+
 Version v16.7.1 (released 2025-01-21)
 
 - optional-doi: fix new upload disabled states
