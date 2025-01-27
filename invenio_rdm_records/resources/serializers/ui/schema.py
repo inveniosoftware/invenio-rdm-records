@@ -115,6 +115,18 @@ def mask_removed_by(obj):
     return return_value
 
 
+def get_coordinates(obj):
+    """Coordinates determined by geometry type."""
+    geometry_type = obj.get("type", None)
+
+    if geometry_type == "Point":
+        return obj.get("coordinates", [])
+    elif geometry_type == "Polygon":
+        return obj.get("coordinates", [[[]]])
+    else:
+        return None
+
+
 class RelatedIdentifiersSchema(Schema):
     """Localization of language titles."""
 
@@ -168,7 +180,7 @@ class GeometrySchema(Schema):
     """Schema for geometry in the UI."""
 
     type = fields.Str()
-    coordinates = fields.List(fields.Float())
+    coordinates = fields.Function(get_coordinates)
 
 
 class IdentifierSchema(Schema):

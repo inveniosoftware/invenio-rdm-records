@@ -98,6 +98,15 @@ def full_to_dict_record(full_record_to_dict):
                 "place": "CERN",
                 "description": "Invenio birth place.",
             },
+            {
+                "geometry": {
+                    "type": "Polygon",
+                    "coordinates": [[[0, 0], [1, 0], [1, 1], [0, 1], [0, 0]]],
+                },
+                "identifiers": [{"scheme": "geonames", "identifier": "123456"}],
+                "place": "Rectangle",
+                "description": "Example Polygon",
+            },
         ]
     }
 
@@ -255,6 +264,15 @@ def test_ui_serializer(app, full_to_dict_record):
                     "identifiers": [{"scheme": "geonames", "identifier": "2661235"}],
                     "place": "CERN",
                     "description": "Invenio birth place.",
+                },
+                {
+                    "geometry": {
+                        "type": "Polygon",
+                        "coordinates": [[[0, 0], [1, 0], [1, 1], [0, 1], [0, 0]]],
+                    },
+                    "identifiers": [{"scheme": "geonames", "identifier": "123456"}],
+                    "place": "Rectangle",
+                    "description": "Example Polygon",
                 },
             ]
         },
