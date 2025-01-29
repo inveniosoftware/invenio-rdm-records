@@ -6,6 +6,7 @@
 # it under the terms of the MIT License; see LICENSE file for more details.
 
 from io import BytesIO
+from urllib.parse import quote
 
 import dictdiffer
 from PIL import Image
@@ -96,12 +97,13 @@ def test_iiif_base(
     ## Testing with filename with a slash ##
 
     file_id = "test/image.png"
+    encoded_file_id = quote(file_id, safe="")
     recid = publish_record_with_images(client, file_id, minimal_record, headers)
     response = client.get(f"/iiif/record:{recid}:{file_id}")
     assert response.status_code == 301
     assert (
         response.json["location"]
-        == f"https://127.0.0.1:5000/api/iiif/record:{recid}:{file_id}/info.json"
+        == f"https://127.0.0.1:5000/api/iiif/record:{recid}:{encoded_file_id}/info.json"
     )
 
 
@@ -131,6 +133,7 @@ def test_iiif_info(
     ## Testing with filename with a slash ##
 
     file_id = "test/image.png"
+    encoded_file_id = quote(file_id, safe="")
     recid = publish_record_with_images(client, file_id, minimal_record, headers)
     response = client.get(f"/iiif/record:{recid}:{file_id}/info.json")
     assert response.status_code == 200
@@ -138,7 +141,7 @@ def test_iiif_info(
         "@context": "http://iiif.io/api/image/2/context.json",
         "profile": ["http://iiif.io/api/image/2/level2.json"],
         "protocol": "http://iiif.io/api/image",
-        "@id": f"https://127.0.0.1:5000/api/iiif/record:{recid}:{file_id}",
+        "@id": f"https://127.0.0.1:5000/api/iiif/record:{recid}:{encoded_file_id}",
         "tiles": [{"width": 256, "scaleFactors": [1, 2, 4, 8, 16, 32, 64]}],
         "width": 1280,
         "height": 1024,
