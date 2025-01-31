@@ -3,7 +3,7 @@
 # Copyright (C) 2019-2024 CERN.
 # Copyright (C) 2019-2021 Northwestern University.
 # Copyright (C) 2022 Universität Hamburg.
-# Copyright (C) 2023-2024 Graz University of Technology.
+# Copyright (C) 2023-2025 Graz University of Technology.
 # Copyright (C) 2023 TU Wien.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
@@ -13,7 +13,7 @@
 
 from warnings import warn
 
-from flask import Blueprint
+from flask import Blueprint, request
 from flask_iiif import IIIF
 from flask_principal import identity_loaded
 from invenio_records_resources.resources.files import FileResource
@@ -214,6 +214,13 @@ class InvenioRDMRecords(object):
 
     def init_resource(self, app):
         """Initialize resources."""
+
+        @app.before_request
+        def before_request():
+            if "files" in request.path:
+                print("before_request in files")
+                request.max_content_length = 10 ** 10
+
         self.records_resource = RDMRecordResource(
             service=self.records_service,
             config=RDMRecordResourceConfig.build(app),
