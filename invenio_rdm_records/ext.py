@@ -218,7 +218,7 @@ class InvenioRDMRecords(object):
         @app.before_request
         def before_request():
             if "files" in request.path:
-                request.max_content_length = 10**10
+                request.max_content_length = 10 ** 10
 
         self.records_resource = RDMRecordResource(
             service=self.records_service,
