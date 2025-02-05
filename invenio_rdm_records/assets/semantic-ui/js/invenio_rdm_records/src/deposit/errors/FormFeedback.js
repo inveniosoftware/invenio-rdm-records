@@ -1,5 +1,5 @@
 // This file is part of Invenio-RDM-Records
-// Copyright (C) 2020-2023 CERN.
+// Copyright (C) 2020-2024 CERN.
 // Copyright (C) 2020-2022 Northwestern University.
 // Copyright (C) 2021 Graz University of Technology.
 //
@@ -266,8 +266,20 @@ class DisconnectedFormFeedback extends Component {
       </Message.Item>
     ));
 
-    // errors not related to validation, following a different format {status:.., message:..}
-    const backendErrorMessage = errors.message;
+    // errors not related to validation, following a different format {status:..., message:..., errors: {field: ..., messages: [...]}}
+    let backendErrorMessage = errors.message;
+
+    // add extra backend error messages related to fields if present
+    if (backendErrorMessage && errors.errors) {
+      backendErrorMessage +=
+        " " +
+        errors.errors
+          .map((error) => {
+            // Not including `error.field` since it's often redundant with the messages
+            return error.messages?.join(" ");
+          })
+          .join(" ");
+    }
 
     return (
       <Message
