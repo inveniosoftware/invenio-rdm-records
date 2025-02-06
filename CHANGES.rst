@@ -12,6 +12,10 @@
 Changes
 =======
 
+Version <next>
+
+- align licenses modal with funders modal
+
 Version v18.0.0 (released 2025-03-26)
 
 deposit-ui: creatibutors: support general new error format with severity (fix null)

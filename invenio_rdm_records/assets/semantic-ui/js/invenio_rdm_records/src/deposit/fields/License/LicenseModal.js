@@ -17,15 +17,17 @@ import {
   EmptyResults,
   Error,
   InvenioSearchApi,
+  Pagination,
   ReactSearchKit,
   ResultsLoader,
   Toggle,
 } from "react-searchkit";
-import { Button, Form, Grid, Menu, Modal } from "semantic-ui-react";
+import { Button, Container, Form, Grid, Menu, Modal } from "semantic-ui-react";
 import * as Yup from "yup";
 import { LicenseFilter } from "./LicenseFilter";
 import { LicenseResults } from "./LicenseResults";
 import { LicenseSearchBar } from "./LicenseSearchBar";
+import { NoLicenseResults } from "./NoLicenseResults";
 
 const overriddenComponents = {
   "SearchFilters.Toggle": LicenseFilter,
@@ -51,6 +53,7 @@ const LicenseSchema = Yup.object().shape({
 export class LicenseModal extends Component {
   state = {
     open: false,
+    mode: ModalTypes.STANDARD,
   };
 
   openModal = () => {
@@ -61,12 +64,17 @@ export class LicenseModal extends Component {
     this.setState({ open: false });
   };
 
+  setMode = (mode) => {
+    this.setState({ mode: mode });
+  };
+
   onSubmit = (values, formikBag) => {
     // We have to close the modal first because onLicenseChange and passing
     // license as an object makes React get rid of this component. Otherwise
     // we get a memory leak warning.
     const { onLicenseChange } = this.props;
     this.closeModal();
+    this.setMode(this.mode);
     onLicenseChange(values.selectedLicense);
     formikBag.resetForm();
   };
@@ -81,6 +89,7 @@ export class LicenseModal extends Component {
       initialLicense: initialLicenseProp,
     } = this.props;
     const { open } = this.state;
+    const modeState = this.state.mode;
 
     const initialLicense = initialLicenseProp || {
       title: "",
@@ -102,12 +111,21 @@ export class LicenseModal extends Component {
       >
         {({ handleSubmit, resetForm }) => (
           <Modal
-            onOpen={() => this.openModal()}
+            role="dialog"
+            centered={false}
+            onOpen={() => {
+              this.openModal();
+              this.setMode(mode);
+            }}
             open={open}
-            trigger={trigger}
+            trigger={React.cloneElement(trigger, {
+              "aria-expanded": open,
+              "aria-haspopup": "dialog",
+            })}
             onClose={() => {
-              this.closeModal();
               resetForm();
+              this.setMode(ModalTypes.STANDARD);
+              this.closeModal();
             }}
             closeIcon
             closeOnDimmerClick={false}
@@ -115,14 +133,14 @@ export class LicenseModal extends Component {
             <Modal.Header as="h2" className="pt-10 pb-10">
               {action === ModalActions.ADD
                 ? i18next.t(`Add {{mode}} license`, {
-                    mode: mode,
+                    mode: modeState,
                   })
                 : i18next.t(`Change {{mode}} license`, {
-                    mode: mode,
+                    mode: modeState,
                   })}
             </Modal.Header>
-            <Modal.Content scrolling>
-              {mode === ModalTypes.STANDARD && (
+            <Modal.Content>
+              {modeState === ModalTypes.STANDARD && (
                 <OverridableContext.Provider value={overriddenComponents}>
                   <ReactSearchKit
                     searchApi={searchApi}
@@ -134,7 +152,7 @@ export class LicenseModal extends Component {
                       <Grid.Row>
                         <Grid.Column width={8} floated="left" verticalAlign="middle">
                           <LicenseSearchBar
-                            placeholder={i18next.t("Search")}
+                            placeholder={i18next.t("Search for licenses")}
                             autofocus
                             actionProps={{
                               icon: "search",
@@ -169,7 +187,7 @@ export class LicenseModal extends Component {
                         </Grid.Column>
                       </Grid.Row>
                       <Grid.Row verticalAlign="middle">
-                        <Grid.Column>
+                        <Grid.Column width={16} className="pb-0">
                           <ResultsLoader>
                             <EmptyResults />
                             <Error />
@@ -179,13 +197,28 @@ export class LicenseModal extends Component {
                               })}
                             />
                           </ResultsLoader>
+                          <Container textAlign="center" className="rel-mb-1">
+                            <Pagination />
+                          </Container>
+                        </Grid.Column>
+                        <Grid.Column
+                          width={16}
+                          textAlign="center"
+                          className="pt-0 pb-0"
+                        >
+                          <NoLicenseResults
+                            switchToCustom={() => {
+                              resetForm();
+                              this.setMode(ModalTypes.CUSTOM);
+                            }}
+                          />
                         </Grid.Column>
                       </Grid.Row>
                     </Grid>
                   </ReactSearchKit>
                 </OverridableContext.Provider>
               )}
-              {mode === ModalTypes.CUSTOM && (
+              {modeState === ModalTypes.CUSTOM && (
                 <Form>
                   <TextField
                     label={i18next.t("Title")}
@@ -212,10 +245,10 @@ export class LicenseModal extends Component {
                 name="cancel"
                 onClick={() => {
                   resetForm();
+                  this.setMode(mode);
                   this.closeModal();
                 }}
                 icon="remove"
-                labelPosition="left"
                 content={i18next.t("Cancel")}
                 floated="left"
               />
@@ -224,7 +257,6 @@ export class LicenseModal extends Component {
                 onClick={(event) => handleSubmit(event)}
                 primary
                 icon="checkmark"
-                labelPosition="left"
                 content={
                   action === ModalActions.ADD
                     ? i18next.t("Add license")
