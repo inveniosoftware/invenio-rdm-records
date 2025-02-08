@@ -55,6 +55,7 @@ def test_cff_serializer(running_app, full_record_to_dict):
         "license:\n"
         "- cc-by-4.0\n"
         "license-url: https://customlicense.org/licenses/by/4.0/\n"
+        "message: If you use this software, please cite it using the metadata from this file.\n"
         "repository-code: "
         "https://github.com/citation-file-format/cff-converter-python\n"
         "title: InvenioRDM\n"
