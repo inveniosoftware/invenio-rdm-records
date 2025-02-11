@@ -152,7 +152,9 @@ class GuestAcceptAction(actions.AcceptAction):
         data = {
             "permission": payload["permission"],
             "description": t(
-                f"Requested by guest: {payload['full_name']} ({payload['email']})"
+                "Requested by guest: %(full_name)s (%(email)s)",
+                full_name=payload["full_name"],
+                email=payload["email"],
             ),
             "origin": f"request:{self.request.id}",
         }
@@ -185,8 +187,10 @@ class GuestAcceptAction(actions.AcceptAction):
         confirmation_message = {
             "payload": {
                 "content": _(
-                    'Click <a href="{url}">here</a> to access the record.'
-                ).format(url=access_url)
+                    'Click <a href="%(url)s">here</a> to access the record.',
+                    url=access_url,
+                )
+                % {"url": access_url}
             }
         }
         current_events_service.create(
