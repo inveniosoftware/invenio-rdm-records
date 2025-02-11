@@ -34,8 +34,10 @@ def get_vocabulary_props(vocabulary, fields, id_):
         return h.get("props", {})
 
     raise VocabularyItemNotFoundError(
-        _("The '{vocabulary}' vocabulary item '{id_}' was not found.").format(
-            vocabulary=vocabulary, id_=id_
+        _(
+            "The '%(vocabulary)s' vocabulary item '%(id_)s' was not found.",
+            vocabulary=vocabulary,
+            id_=id_,
         )
     )
 
