@@ -153,16 +153,6 @@ export const save = (draft) => {
       type: DRAFT_SAVE_SUCCEEDED,
       payload: { data: response.data },
     });
-
-    if (draft.noINeedDOI) {
-      // Save the choice that user selected that DOI is needed. This is used to validate
-      // if user has reserved a DOI before clicking publish. This check is valid when
-      // DOI is optional
-      dispatch({
-        type: SET_DOI_NEEDED,
-        payload: { noINeedDOI: draft.noINeedDOI },
-      });
-    }
   };
 };
 

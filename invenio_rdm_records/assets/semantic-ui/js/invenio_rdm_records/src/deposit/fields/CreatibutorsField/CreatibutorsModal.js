@@ -268,10 +268,10 @@ export class CreatibutorsModal extends Component {
     });
 
     // Update affiliations render
-    const affiliationsState = affiliations.map(({ name }) => ({
+    const affiliationsState = affiliations.map(({ id, name }) => ({
       text: name,
-      value: name,
-      key: name,
+      value: id ?? name,
+      key: id ?? name,
       name,
     }));
     affiliationsRef.current.setState({

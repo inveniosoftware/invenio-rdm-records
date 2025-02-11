@@ -12,6 +12,37 @@
 Changes
 =======
 
+Version v16.8.0 (released 2025-01-27)
+
+- resources: expose record revisions
+
+Version v16.7.1 (released 2025-01-21)
+
+- optional-doi: fix new upload disabled states
+
+Version v16.7.0 (released 2025-01-21)
+
+- pids: improve deposit UI for optional DOI
+- deposit-ui: fix affiliation selection input display
+
+Version v16.6.1 (released 2025-01-16)
+
+- Revert "bug: add custom comment notification for record/draft requests"
+    * This is actually a breaking change since it introduces a new
+      set of notification templates that will potentialy not be
+      styled if overridden in an instance's overlay.
+
+Version v16.6.0 (released 2025-01-16)
+
+- notifications: add custom comment template for record inclusion
+  and draft review requests
+- deposit-ui: fix affiliations dropdown behavior for custom values
+- moderation: fix use of uow
+- serializers/bibtex: Conference paper not falling back to proceedings
+- serializers/bibtex: Conference proceeding to proceedings
+- serializers/bibtex: year and month using publication date
+- rights: fix serialize condition for controlled license
+
 Version v16.5.1 (released 2024-12-16)
 
 - pids: add manage permission to be able to manage DOIs

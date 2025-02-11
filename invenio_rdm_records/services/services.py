@@ -731,3 +731,15 @@ class RDMRecordService(RecordService):
         db.session.add(user_quota)
 
         return True
+
+    def search_revisions(self, identity, id_):
+        """Return a list of record revisions."""
+        record = self.record_cls.pid.resolve(id_)
+        # Check permissions
+        self.require_permission(identity, "search_revisions", record=record)
+        revisions = list(reversed(record.model.versions.all()))
+
+        return self.config.revision_result_list_cls(
+            identity,
+            revisions,
+        )

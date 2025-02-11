@@ -340,12 +340,9 @@ const depositReducer = (state = {}, action) => {
       };
     }
     case SET_DOI_NEEDED: {
-      const recordCopy = {
-        ...state.record,
-      };
       return {
         ...state,
-        record: { ...recordCopy, ...action.payload },
+        noINeedDOI: action.payload.noINeedDOI,
       };
     }
     default:
