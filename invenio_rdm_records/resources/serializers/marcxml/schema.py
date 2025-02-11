@@ -10,8 +10,8 @@
 import bleach
 from dateutil.parser import parse
 from dojson.contrib.to_marc21.fields.bdleader import to_leader
-from flask import current_app
 from flask_resources.serializers import BaseSerializerSchema
+from invenio_base import invenio_url_for
 from marshmallow import fields, missing
 from marshmallow_utils.html import sanitize_unicode
 from pydash import py_
@@ -134,7 +134,12 @@ class MARCXMLSchema(BaseSerializerSchema, CommonFieldsMixin):
         files = []
         for file_entry in files_entries.values():
             file_name = sanitize_unicode(file_entry["key"])
-            url = f"{current_app.config['SITE_UI_URL']}/records/{record_id}/files/{file_name}"
+            url = invenio_url_for(
+                "invenio_app_rdm_records.record_file_download",
+                pid_value=record_id,
+                filename=file_name,
+            )
+
             file_ = {
                 "s": str(file_entry["size"]),  # file size
                 "z": file_entry["checksum"],  # check sum

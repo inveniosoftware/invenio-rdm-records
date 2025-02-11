@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # Copyright (C) 2023-2024 CERN.
+# Copyright (C) 2025 Northwestern University.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
@@ -8,7 +9,7 @@
 """Dcat based Schema for Invenio RDM Records."""
 
 import idutils
-from flask import current_app
+from invenio_base import invenio_url_for
 from marshmallow import ValidationError, fields, missing, validate
 from marshmallow_utils.html import sanitize_unicode
 
@@ -32,7 +33,11 @@ class DcatSchema(DataCite43Schema):
             file_name = sanitize_unicode(
                 value["key"]
             )  # There can be inconsistencies in the file name i.e. if the file name consists of invalid XML characters
-            url = f"{current_app.config['SITE_UI_URL']}/records/{record_id}/files/{file_name}"
+            url = invenio_url_for(
+                "invenio_app_rdm_records.record_file_download",
+                pid_value=record_id,
+                filename=file_name,
+            )
             access_url = None
             if "doi" in obj["pids"]:
                 access_url = idutils.to_url(
