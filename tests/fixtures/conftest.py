@@ -35,8 +35,8 @@ def extra_entry_points():
     """Vocabularies entry points."""
     return {
         "invenio_rdm_records.fixtures": [
-            "vocabularies_A = mock_module_A.fixtures.vocabularies",
-            "vocabularies_B = mock_module_B.fixtures.vocabularies",
+            "vocabularies_A = tests.fixtures.mock_module_A.fixtures.vocabularies",
+            "vocabularies_B = tests.fixtures.mock_module_B.fixtures.vocabularies",
         ],
     }
 

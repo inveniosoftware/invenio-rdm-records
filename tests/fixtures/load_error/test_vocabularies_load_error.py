@@ -28,11 +28,11 @@ def test_conflicting_load(app):
     expected_messages = set(
         [
             "Vocabulary 'resourcetypes' cannot have multiple sources "
-            "['conflicting_module_A.fixtures.vocabularies', "
-            "'conflicting_module_B.fixtures.vocabularies']",
+            "['tests.fixtures.load_error.conflicting_module_A.fixtures.vocabularies', "
+            "'tests.fixtures.load_error.conflicting_module_B.fixtures.vocabularies']",
             "Vocabulary 'MeSH' cannot have multiple sources "
-            "['conflicting_module_A.fixtures.vocabularies', "
-            "'conflicting_module_B.fixtures.vocabularies']",
+            "['tests.fixtures.load_error.conflicting_module_A.fixtures.vocabularies', "
+            "'tests.fixtures.load_error.conflicting_module_B.fixtures.vocabularies']",
         ]
     )
     assert expected_messages == set(messages)
