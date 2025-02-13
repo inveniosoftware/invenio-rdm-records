@@ -12,6 +12,10 @@
 Changes
 =======
 
+Version v17.0.1 (released 2025-02-13)
+
+- Bump pre-release dependencies to stable.
+
 Version v17.0.0 (released 2025-02-13)
 
 - Promote to stable release.
