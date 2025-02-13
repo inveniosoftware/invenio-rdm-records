@@ -310,6 +310,9 @@ def app_config(app_config, mock_datacite_client):
 
     app_config["FILES_REST_DEFAULT_STORAGE_CLASS"] = "L"
 
+    app_config["RDM_FILES_DEFAULT_QUOTA_SIZE"] = 10**6
+    app_config["RDM_FILES_DEFAULT_MAX_FILE_SIZE"] = 10**6
+
     # Communities
     app_config["COMMUNITIES_SERVICE_COMPONENTS"] = CommunityServiceComponents
 
