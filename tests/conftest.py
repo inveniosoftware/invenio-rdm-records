@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2019-2024 CERN.
+# Copyright (C) 2019-2025 CERN.
 # Copyright (C) 2019-2022 Northwestern University.
 # Copyright (C) 2021 TU Wien.
 # Copyright (C) 2022-2023 Graz University of Technology.
@@ -1441,9 +1441,9 @@ def relation_type(app):
 
 
 @pytest.fixture(scope="module")
-def relation_type_v(app, relation_type):
+def relation_types_v(app, relation_type):
     """Relation type vocabulary record."""
-    vocab = vocabulary_service.create(
+    vocab1 = vocabulary_service.create(
         system_identity,
         {
             "id": "iscitedby",
@@ -1453,9 +1453,19 @@ def relation_type_v(app, relation_type):
         },
     )
 
+    vocab2 = vocabulary_service.create(
+        system_identity,
+        {
+            "id": "hasmetadata",
+            "props": {"datacite": "HasMetadata"},
+            "title": {"en": "Has metadata"},
+            "type": "relationtypes",
+        },
+    )
+
     Vocabulary.index.refresh()
 
-    return vocab
+    return [vocab1, vocab2]
 
 
 @pytest.fixture(scope="module")
@@ -1609,7 +1619,7 @@ RunningApp = namedtuple(
         "description_type_v",
         "date_type_v",
         "contributors_role_v",
-        "relation_type_v",
+        "relation_types_v",
         "licenses_v",
         "funders_v",
         "awards_v",
@@ -1632,7 +1642,7 @@ def running_app(
     description_type_v,
     date_type_v,
     contributors_role_v,
-    relation_type_v,
+    relation_types_v,
     licenses_v,
     funders_v,
     awards_v,
@@ -1656,7 +1666,7 @@ def running_app(
         description_type_v,
         date_type_v,
         contributors_role_v,
-        relation_type_v,
+        relation_types_v,
         licenses_v,
         funders_v,
         awards_v,
