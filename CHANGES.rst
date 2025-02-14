@@ -12,6 +12,10 @@
 Changes
 =======
 
+Version v17.0.2 (released 2025-02-14)
+
+- serializers/dcat: fix broken subject serialization for terms with apostrophes
+
 Version v17.0.1 (released 2025-02-13)
 
 - Bump pre-release dependencies to stable.
