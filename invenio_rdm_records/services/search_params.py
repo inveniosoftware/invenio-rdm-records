@@ -6,7 +6,9 @@
 # modify it under the terms of the MIT License; see LICENSE file for more
 # details.
 
-"""Sort parameter interpreter API."""
+"""Search parameter interpreter API."""
+
+from invenio_search.engine import dsl
 
 from invenio_access.permissions import authenticated_user
 from invenio_records_resources.services.records.params.base import ParamInterpreter
@@ -42,8 +44,11 @@ class PublishedRecordsParam(ParamInterpreter):
         return search
 
 
-class MyDraftsParam(ParamInterpreter):
-    """Evaluates the include_deleted parameter."""
+class MyOrSharedWIthMeDraftsParam(ParamInterpreter):
+    """Evaluates the shared_with_me parameter.
+
+    Returns only drafts owned by the user or shared with the user.
+    """
 
     def apply(self, identity, search, params):
         """Evaluate the include_deleted parameter on the search."""
@@ -55,9 +60,14 @@ class MyDraftsParam(ParamInterpreter):
             return authenticated_user in identity.provides
 
         if value is None and is_user_authenticated():
-            search = search.filter(
-                "term", **{"parent.access.owned_by.user": identity.id}
-            )
+            my_uploads = dsl.Q("term", **{"parent.access.owned_by.user": identity.id})
+
+            if params.get("shared_with_me") is True:
+                # Shared with me
+                return search.filter(~my_uploads)
+            elif params.get("shared_with_me") is False:
+                # My uploads
+                search = search.filter(my_uploads)
         return search
 
 
