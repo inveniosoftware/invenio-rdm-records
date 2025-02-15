@@ -24,6 +24,7 @@ from invenio_records_resources.references.entity_resolvers import (
 from invenio_users_resources.services.schemas import SystemUserSchema
 from sqlalchemy.orm.exc import NoResultFound
 
+from ..proxies import current_rdm_records_service
 from ..records.api import RDMDraft, RDMRecord
 from ..services.config import RDMRecordServiceConfig
 from ..services.dummy import DummyExpandingService
@@ -62,6 +63,19 @@ class RDMRecordProxy(RecordProxy):
         public records, thus the `ghost_record` method will always kick in!
         """
         return {"id": record}
+
+    def get_needs(self, ctx=None):
+        """Enrich request with record needs.
+
+        A user that can preview a record can also read its requests.
+        """
+        record = self.resolve()
+        # TODO: we might need different needs for drafts and published records
+        # e.g community submission request vs community inclusion request
+        needs = current_rdm_records_service.config.permission_policy_cls(
+            "preview", record=record
+        ).needs
+        return needs
 
 
 class RDMRecordResolver(RecordResolver):

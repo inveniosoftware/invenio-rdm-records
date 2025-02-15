@@ -97,7 +97,7 @@ from .schemas.record_communities import RecordCommunitiesSchema
 from .schemas.tombstone import TombstoneSchema
 from .search_params import (
     MetricsParam,
-    MyDraftsParam,
+    MyOrSharedWIthMeDraftsParam,
     PublishedRecordsParam,
     StatusParam,
 )
@@ -243,7 +243,7 @@ class RDMSearchDraftsOptions(SearchDraftsOptions, SearchOptionsMixin):
     }
 
     params_interpreters_cls = [
-        MyDraftsParam
+        MyOrSharedWIthMeDraftsParam
     ] + SearchDraftsOptions.params_interpreters_cls
 
 
