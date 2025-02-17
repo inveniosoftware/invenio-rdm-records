@@ -5,4 +5,5 @@
 // under the terms of the MIT License; see LICENSE file for more details.
 
 export { FormFeedback } from "./FormFeedback";
+export { FormSectionFeedback } from "./FormSectionFeedback";
 export { DepositErrorHandler } from "./DepositErrorHandler";
