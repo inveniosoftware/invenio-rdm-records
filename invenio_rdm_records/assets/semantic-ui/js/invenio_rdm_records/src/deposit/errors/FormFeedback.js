@@ -27,7 +27,6 @@ import {
   FILE_UPLOAD_SAVE_DRAFT_FAILED,
   RESERVE_PID_FAILED,
 } from "../state/types";
-import { leafTraverse } from "../utils";
 import PropTypes from "prop-types";
 
 const defaultLabels = {
@@ -60,7 +59,7 @@ const ACTIONS = {
   },
   [DRAFT_HAS_VALIDATION_ERRORS]: {
     feedback: "warning",
-    message: i18next.t("Record saved with validation errors:"),
+    message: i18next.t("Record saved with validation errors in"),
   },
   [DRAFT_SAVE_FAILED]: {
     feedback: "negative",
@@ -77,7 +76,7 @@ const ACTIONS = {
   [DRAFT_PUBLISH_FAILED_WITH_VALIDATION_ERRORS]: {
     feedback: "negative",
     message: i18next.t(
-      "The draft was not published. Record saved with validation errors:"
+      "The draft was not published. Record saved with validation errors in"
     ),
   },
   [DRAFT_SUBMIT_REVIEW_FAILED]: {
@@ -89,7 +88,7 @@ const ACTIONS = {
   [DRAFT_SUBMIT_REVIEW_FAILED_WITH_VALIDATION_ERRORS]: {
     feedback: "negative",
     message: i18next.t(
-      "The draft was not submitted for review. Record saved with validation errors:"
+      "The draft was not submitted for review. Record saved with validation errors in"
     ),
   },
   [DRAFT_DELETE_FAILED]: {
