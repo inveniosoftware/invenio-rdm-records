@@ -2,6 +2,7 @@
 #
 # Copyright (C) 2021 CERN.
 # Copyright (C) 2021-2024 Graz University of Technology.
+# Copyright (C) 2024 KTH Royal Institute of Technology.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
@@ -81,7 +82,7 @@ class PIDProvider:
         """
         if pid_value is None:
             if not self.is_managed():
-                raise ValueError("You must provide a pid value.")
+                raise ValueError(_("You must provide a pid value."))
             pid_value = self.generate_id(record)
 
         try:
