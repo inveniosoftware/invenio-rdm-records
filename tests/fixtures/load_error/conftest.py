@@ -24,8 +24,8 @@ def extra_entry_points():
     """
     return {
         "invenio_rdm_records.fixtures": [
-            "vocabularies_A = conflicting_module_A.fixtures.vocabularies",
-            "vocabularies_B = conflicting_module_B.fixtures.vocabularies",
+            "vocabularies_A = tests.fixtures.load_error.conflicting_module_A.fixtures.vocabularies",
+            "vocabularies_B = tests.fixtures.load_error.conflicting_module_B.fixtures.vocabularies",
         ],
     }
 

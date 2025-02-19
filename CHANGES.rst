@@ -3,7 +3,7 @@
     Copyright (C) 2019-2024 CERN.
     Copyright (C) 2019-2024 Northwestern University.
     Copyright (C) 2024      KTH Royal Institute of Technology.
-
+    Copyright (C) 2024 Graz University of Technology.
 
     Invenio-RDM-Records is free software; you can redistribute it and/or
     modify it under the terms of the MIT License; see LICENSE file for more
@@ -11,6 +11,30 @@
 
 Changes
 =======
+
+Version v17.0.2 (released 2025-02-14)
+
+- serializers/dcat: fix broken subject serialization for terms with apostrophes
+
+Version v17.0.1 (released 2025-02-13)
+
+- Bump pre-release dependencies to stable.
+
+Version v17.0.0 (released 2025-02-13)
+
+- Promote to stable release.
+- serializers: DataCite to DCAT-AP: fix undefined variable $cheme for relation type has metadata
+- services: proper escape the fields key in links generation
+- UISerializer: add polygon locations to serializer in addition to points (#1924)
+
+Version v17.0.0.dev2 (released 2025-01-23)
+
+Version v17.0.0.dev1 (released 2024-12-16)
+
+- fix: flask-sqlalchemy.pagination >= 3.0.0
+- comp: make compatible to flask-sqlalchemy>=3.1
+- setup: change to reusable workflows
+- setup: bump major dependencies
 
 Version v16.8.0 (released 2025-01-27)
 
