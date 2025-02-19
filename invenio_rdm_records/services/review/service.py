@@ -111,7 +111,7 @@ class ReviewService(RecordService):
     def update(self, identity, id_, data, revision_id=None, uow=None):
         """Create or update an existing review."""
         draft = self.draft_cls.pid.resolve(id_, registered_only=False)
-        self.require_permission(identity, "update_draft", record=draft)
+        self.require_permission(identity, "manage", record=draft)
 
         # If an existing review exists, delete it.
         if draft.parent.review is not None:
@@ -124,7 +124,7 @@ class ReviewService(RecordService):
     def delete(self, identity, id_, revision_id=None, uow=None):
         """Delete a review."""
         draft = self.draft_cls.pid.resolve(id_, registered_only=False)
-        self.require_permission(identity, "update_draft", record=draft)
+        self.require_permission(identity, "manage", record=draft)
 
         # Preconditions
         if draft.parent.review is None:
@@ -176,7 +176,7 @@ class ReviewService(RecordService):
         community = draft.parent.review.receiver.resolve()
 
         # Check permission
-        self.require_permission(identity, "update_draft", record=draft)
+        self.require_permission(identity, "manage", record=draft)
 
         community_id = (
             draft.parent.review.get_object().get("receiver", {}).get("community", "")
