@@ -42,10 +42,10 @@ class SubmitReviewButtonComponent extends Component {
   };
 
   isDisabled = (disableSubmitForReviewButton, filesState) => {
-    const { formik } = this.props;
+    const { formik, userCanManageRecord } = this.props;
     const { values, isSubmitting } = formik;
 
-    if (disableSubmitForReviewButton || isSubmitting) {
+    if (!userCanManageRecord || disableSubmitForReviewButton || isSubmitting) {
       return true;
     }
 
@@ -131,6 +131,7 @@ SubmitReviewButtonComponent.propTypes = {
   formik: PropTypes.object.isRequired,
   publishModalExtraContent: PropTypes.string,
   filesState: PropTypes.object,
+  userCanManageRecord: PropTypes.bool.isRequired,
 };
 
 SubmitReviewButtonComponent.defaultProps = {
@@ -150,6 +151,7 @@ const mapStateToProps = (state) => ({
     state.deposit.editorState.ui.disableSubmitForReviewButton,
   publishModalExtraContent: state.deposit.config.publish_modal_extra,
   filesState: state.files,
+  userCanManageRecord: state.deposit.permissions.can_manage,
 });
 
 export const SubmitReviewButton = connect(
