@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # Copyright (C) 2020-2024 CERN.
-# Copyright (C) 2020-2021 Northwestern University.
+# Copyright (C) 2020-2025 Northwestern University.
 # Copyright (C)      2021 TU Wien.
 # Copyright (C) 2021-2023 Graz University of Technology.
 # Copyright (C) 2022      Universität Hamburg
@@ -313,7 +313,7 @@ class RDMFileRecordServiceConfig(FileServiceConfig, ConfiguratorMixin):
     max_files_count = FromConfig("RDM_RECORDS_MAX_FILES_COUNT", 100)
 
     file_links_list = {
-        **FileServiceConfig.file_links_list,
+        "self": RecordLink("{+api}/records/{id}/files"),
         "archive": RecordLink(
             "{+api}/records/{id}/files-archive",
             when=archive_download_enabled,
@@ -321,7 +321,8 @@ class RDMFileRecordServiceConfig(FileServiceConfig, ConfiguratorMixin):
     }
 
     file_links_item = {
-        **FileServiceConfig.file_links_item,
+        "self": FileLink("{+api}/records/{id}/files/{+key}"),
+        "content": FileLink("{+api}/records/{id}/files/{+key}/content"),
         # FIXME: filename instead
         "iiif_canvas": FileLink(
             "{+api}/iiif/record:{id}/canvas/{key}", when=is_iiif_compatible
