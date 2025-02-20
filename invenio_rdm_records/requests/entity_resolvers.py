@@ -70,11 +70,12 @@ class RDMRecordProxy(RecordProxy):
         A user that can preview a record can also read its requests.
         """
         record = self.resolve()
-        # TODO: we might need different needs for drafts and published records
-        # e.g community submission request vs community inclusion request
-        needs = current_rdm_records_service.config.permission_policy_cls(
-            "preview", record=record
-        ).needs
+        needs = []
+        record_permission = ctx.get("record_permission")
+        if record_permission:
+            needs = current_rdm_records_service.config.permission_policy_cls(
+                record_permission, record=record
+            ).needs
         return needs
 
 

@@ -44,7 +44,7 @@ class PublishedRecordsParam(ParamInterpreter):
         return search
 
 
-class MyOrSharedWIthMeDraftsParam(ParamInterpreter):
+class SharedOrMineDraftsParam(ParamInterpreter):
     """Evaluates the shared_with_me parameter.
 
     Returns only drafts owned by the user or shared with the user.
