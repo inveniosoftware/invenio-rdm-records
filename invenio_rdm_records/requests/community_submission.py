@@ -191,6 +191,7 @@ class CommunitySubmission(ReviewRequest):
     allowed_topic_ref_types = ["record"]
     needs_context = {
         "community_roles": ["owner", "manager", "curator"],
+        "record_permission": "preview",
     }
 
     available_actions = {
