@@ -443,7 +443,7 @@
   icon: file alternate
   props:
     csl: article
-    datacite_general: Text
+    datacite_general: DataPaper
     datacite_type: Data paper
     openaire_resourceType: "0031"
     openaire_type: publication
