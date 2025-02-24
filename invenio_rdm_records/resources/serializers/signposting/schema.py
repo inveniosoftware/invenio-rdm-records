@@ -9,7 +9,7 @@
 """Signposting schemas."""
 
 import idutils
-from marshmallow import Schema, fields, missing
+from marshmallow import Schema, fields, missing, post_dump
 
 from ...urls import download_url_for
 from ..utils import get_vocabulary_props
@@ -156,6 +156,18 @@ class LandingPageLvl1Schema(LandingPageSchema):
                 "type": "application/linkset+json",
             }
         ]
+
+    @post_dump
+    def fallback_to_lvl2_linkset_only_if_collections_too_big(self, data, **kwargs):
+        """Fallback to level 2 linkset only if the size of some collections is too big for the level 1 landing page.
+
+        Generating an HTTP Link header which is too big could make nginx fail.
+        """
+        for key in ["author", "item", "license"]:
+            if key in data and len(data[key]) > 5:
+                data = {"linkset": data["linkset"]}
+                break
+        return data
 
 
 class LandingPageLvl2Schema(LandingPageSchema):
