@@ -160,6 +160,7 @@ class RDMRecordPermissionPolicy(RecordPermissionPolicy):
     can_draft_set_content_files = [
         # review is the same as create_files
         IfTransferType(LOCAL_TRANSFER_TYPE, can_review),
+        IfTransferType(MULTIPART_TRANSFER_TYPE, can_review),
         SystemProcess(),
     ]
     can_draft_get_content_files = [
