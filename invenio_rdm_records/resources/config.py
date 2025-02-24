@@ -327,6 +327,7 @@ class RDMRecordMediaFilesResourceConfig(FileResourceConfig, ConfiguratorMixin):
         "item": "/media-files/<key>",
         "item-content": "/media-files/<key>/content",
         "item-commit": "/media-files/<key>/commit",
+        "item-multipart-content": "/media-files/<path:key>/content/<int:part>",
         "list-archive": "/media-files-archive",
     }
 
@@ -367,6 +368,7 @@ class RDMDraftMediaFilesResourceConfig(FileResourceConfig, ConfiguratorMixin):
         "item": "/media-files/<key>",
         "item-content": "/media-files/<key>/content",
         "item-commit": "/media-files/<key>/commit",
+        "item-multipart-content": "/media-files/<path:key>/content/<int:part>",
         "list-archive": "/media-files-archive",
     }
 
