@@ -27,7 +27,6 @@ import {
   FILE_UPLOAD_SAVE_DRAFT_FAILED,
   RESERVE_PID_FAILED,
 } from "../state/types";
-import { leafTraverse } from "../utils";
 import PropTypes from "prop-types";
 
 const defaultLabels = {
@@ -60,7 +59,7 @@ const ACTIONS = {
   },
   [DRAFT_HAS_VALIDATION_ERRORS]: {
     feedback: "warning",
-    message: i18next.t("Record saved with validation errors:"),
+    message: i18next.t("Record saved with validation errors in"),
   },
   [DRAFT_SAVE_FAILED]: {
     feedback: "negative",
@@ -77,7 +76,7 @@ const ACTIONS = {
   [DRAFT_PUBLISH_FAILED_WITH_VALIDATION_ERRORS]: {
     feedback: "negative",
     message: i18next.t(
-      "The draft was not published. Record saved with validation errors:"
+      "The draft was not published. Record saved with validation errors in"
     ),
   },
   [DRAFT_SUBMIT_REVIEW_FAILED]: {
@@ -89,7 +88,7 @@ const ACTIONS = {
   [DRAFT_SUBMIT_REVIEW_FAILED_WITH_VALIDATION_ERRORS]: {
     feedback: "negative",
     message: i18next.t(
-      "The draft was not submitted for review. Record saved with validation errors:"
+      "The draft was not submitted for review. Record saved with validation errors in"
     ),
   },
   [DRAFT_DELETE_FAILED]: {
@@ -140,47 +139,32 @@ class DisconnectedFormFeedback extends Component {
   }
 
   /**
-   * Render error messages inline (if 1) or as list (if multiple).
+   * Return object with human readbable labels as keys and error messages as
+   * values given an errors object.
    *
-   * @param {Array<String>} messages
-   * @returns String or React node
+   * @param {object} errors
+   * @returns object
    */
-  renderErrorMessages(messages) {
-    const uniqueMessages = [...new Set(messages)];
-    if (uniqueMessages.length === 1) {
-      return messages[0];
-    } else {
-      return (
-        <ul>
-          {uniqueMessages.map((m) => (
-            <li key={m}>{m}</li>
-          ))}
-        </ul>
-      );
-    }
-  }
+  getErrorPaths(obj) {
+    const paths = new Set(); // Use a Set to avoid duplicates
 
-  /**
-   * Return array of error messages from errorValue object.
-   *
-   * The error message(s) might be deeply nested in the errorValue e.g.
-   *
-   * errorValue = [
-   *   {
-   *     title: "Missing value"
-   *   }
-   * ];
-   *
-   * @param {object} errorValue
-   * @returns array of Strings (error messages)
-   */
-  toErrorMessages(errorValue) {
-    let messages = [];
-    let store = (l) => {
-      messages.push(l);
-    };
-    leafTraverse(errorValue, store);
-    return messages;
+    // Iterate over the top-level keys
+    for (const topLevelKey of Object.keys(obj)) {
+      if (Object.hasOwn(obj, topLevelKey)) {
+        const nestedObj = obj[topLevelKey];
+
+        // Iterate over the nested keys
+        for (const nestedKey of Object.keys(nestedObj)) {
+          if (Object.hasOwn(nestedObj, nestedKey)) {
+            // Construct the path and add it to the Set
+            paths.add(`${topLevelKey}.${nestedKey}`);
+          }
+        }
+      }
+    }
+
+    // Convert the Set to an array and return
+    return Array.from(paths);
   }
 
   /**
@@ -190,58 +174,21 @@ class DisconnectedFormFeedback extends Component {
    * @param {object} errors
    * @returns object
    */
-  toLabelledErrorMessages(errors) {
-    // Step 0 - Create object with collapsed 1st and 2nd level keys
-    //          e.g., {metadata: {creators: ,,,}} => {"metadata.creators": ...}
-    // For now, only for metadata, files and access.embargo
-    const metadata = errors.metadata || {};
-    const step0Metadata = Object.entries(metadata).map(([key, value]) => {
-      return ["metadata." + key, value];
-    });
-    const files = errors.files || {};
-    const step0Files = Object.entries(files).map(([key, value]) => {
-      return ["files." + key, value];
-    });
-    const access = errors.access?.embargo || {};
-    const step0Access = Object.entries(access).map(([key, value]) => {
-      return ["access.embargo." + key, value];
-    });
-    const pids = errors.pids || {};
-    const step0Pids = _isObject(pids)
-      ? Object.entries(pids).map(([key, value]) => {
-          return ["pids." + key, value];
-        })
-      : [["pids", pids]];
-    const customFields = errors.custom_fields || {};
-    const step0CustomFields = Object.entries(customFields).map(([key, value]) => {
-      return ["custom_fields." + key, value];
-    });
-    const step0 = Object.fromEntries(
-      step0Metadata
-        .concat(step0Files)
-        .concat(step0Access)
-        .concat(step0Pids)
-        .concat(step0CustomFields)
-    );
-
-    // Step 1 - Transform each error value into array of error messages
-    const step1 = Object.fromEntries(
-      Object.entries(step0).map(([key, value]) => {
-        return [key, this.toErrorMessages(value)];
-      })
-    );
-
-    // Step 2 - Group error messages by label
-    // (different error keys can map to same label e.g. title and
-    // additional_titles)
-    const labelledErrorMessages = {};
-    for (const key in step1) {
-      const label = this.labels[key] || "Unknown field";
-      let messages = labelledErrorMessages[label] || [];
-      labelledErrorMessages[label] = messages.concat(step1[key]);
-    }
-
-    return labelledErrorMessages;
+  getErrorMessages(arr) {
+    const labels = arr
+      .map((x) => document.querySelector(`label[for^="${x}"]`))
+      .filter(Boolean);
+    const sections = [...new Set(labels.map((x) => x.closest(".accordion")))];
+    const outputSections = sections.map((x) => [
+      x.id,
+      x.querySelector(".title").innerText,
+    ]);
+    const message = outputSections.map((x, i) => (
+      <a key={i} href={"#" + x[0]}>
+        {x[1]}
+      </a>
+    ));
+    return message;
   }
 
   render() {
@@ -259,12 +206,8 @@ class DisconnectedFormFeedback extends Component {
       return null;
     }
 
-    const labelledMessages = this.toLabelledErrorMessages(errors);
-    const listErrors = Object.entries(labelledMessages).map(([label, messages]) => (
-      <Message.Item key={label}>
-        <b>{label}</b>: {this.renderErrorMessages(messages)}
-      </Message.Item>
-    ));
+    const errorPaths = this.getErrorPaths(errors);
+    const errorSections = this.getErrorMessages(errorPaths);
 
     // errors not related to validation, following a different format {status:.., message:..}
     const backendErrorMessage = errors.message;
@@ -279,8 +222,12 @@ class DisconnectedFormFeedback extends Component {
       >
         <Grid container>
           <Grid.Column width={15} textAlign="left">
-            <strong>{backendErrorMessage || message}</strong>
-            {listErrors.length > 0 && <Message.List>{listErrors}</Message.List>}
+            <strong>
+              {backendErrorMessage || message}{" "}
+              {errorSections.length > 0
+                ? errorSections.reduce((prev, curr) => [prev, ", ", curr])
+                : ""}
+            </strong>
           </Grid.Column>
         </Grid>
       </Message>
