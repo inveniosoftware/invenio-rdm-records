@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # Copyright (C) 2023 Northwestern University.
+# Copyright (C) 2024-2025 CERN.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
@@ -20,17 +21,12 @@ class LandingPageSchema(Schema):
     Serialization input (`obj`) is a whole record dict projection.
     """
 
-    anchor = fields.Method(serialize="serialize_anchor")
     author = fields.Method(serialize="serialize_author")
     cite_as = fields.Method(data_key="cite-as", serialize="serialize_cite_as")
     describedby = fields.Method(serialize="serialize_describedby")
     item = fields.Method(serialize="serialize_item")
     license = fields.Method(serialize="serialize_license")
     type = fields.Method(serialize="serialize_type")
-
-    def serialize_anchor(self, obj, **kwargs):
-        """Seralize to landing page URL."""
-        return obj["links"]["self_html"]
 
     def serialize_author(self, obj, **kwargs):
         """Serialize author(s).
@@ -75,6 +71,8 @@ class LandingPageSchema(Schema):
         result = [
             {"href": obj["links"]["self"], "type": mimetype}
             for mimetype in sorted(record_serializers)
+            # Remove the linkset serializer, so that the linkset does not link to itself.
+            if mimetype != "application/linkset+json"
         ]
 
         return result or missing
@@ -142,6 +140,37 @@ class LandingPageSchema(Schema):
         return result
 
 
+class LandingPageLvl1Schema(LandingPageSchema):
+    """Schema for serialization of link context object for the level 1 landing page.
+
+    Serialization input (`obj`) is a whole record dict projection.
+    """
+
+    linkset = fields.Method(serialize="serialize_linkset")
+
+    def serialize_linkset(self, obj, **kwargs):
+        """Serialize the linkset URL."""
+        return [
+            {
+                "href": obj["links"]["self"],
+                "type": "application/linkset+json",
+            }
+        ]
+
+
+class LandingPageLvl2Schema(LandingPageSchema):
+    """Schema for serialization of link context object for the level 2 landing page.
+
+    Serialization input (`obj`) is a whole record dict projection.
+    """
+
+    anchor = fields.Method(serialize="serialize_anchor")
+
+    def serialize_anchor(self, obj, **kwargs):
+        """Serialize to landing page URL."""
+        return obj["links"]["self_html"]
+
+
 class ContentResourceSchema(Schema):
     """Schema for serialization of link context object for the content resource.
 
@@ -203,7 +232,7 @@ class FAIRSignpostingProfileLvl2Schema(Schema):
 
     def serialize_linkset(self, obj, **kwargs):
         """Serialize linkset."""
-        result = [LandingPageSchema().dump(obj)]
+        result = [LandingPageLvl2Schema().dump(obj)]
 
         content_resource_schema = ContentResourceSchema(context={"record_dict": obj})
         result += [

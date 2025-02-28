@@ -12,6 +12,11 @@
 Changes
 =======
 
+Version v17.1.0 (released 2025-02-21)
+
+- views: FAIR signposting level 1 support
+- views: FAIR signposting remove linkset link to itself
+
 Version v17.0.2 (released 2025-02-14)
 
 - serializers/dcat: fix broken subject serialization for terms with apostrophes
