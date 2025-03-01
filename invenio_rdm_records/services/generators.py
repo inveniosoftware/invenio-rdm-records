@@ -14,9 +14,7 @@ from collections import namedtuple
 from functools import partial, reduce
 from itertools import chain
 
-from flask import g
 from flask_principal import UserNeed
-from invenio_communities.config import COMMUNITIES_ROLES
 from invenio_communities.generators import CommunityRoleNeed, CommunityRoles
 from invenio_communities.proxies import current_roles
 from invenio_records_permissions.generators import ConditionalGenerator, Generator
@@ -26,7 +24,6 @@ from invenio_search.engine import dsl
 from ..records import RDMDraft
 from ..records.systemfields.access.grants import Grant
 from ..records.systemfields.deletion_status import RecordDeletionStatusEnum
-from ..requests import CommunityInclusion
 from ..requests.access import AccessRequestTokenNeed
 from ..tokens.permissions import RATNeed
 
@@ -184,21 +181,21 @@ class IfRecordDeleted(Generator):
 
     def query_filter(self, **kwargs):
         """Filters for current identity."""
-        q_then = dsl.Q("match_all")
-        q_else = dsl.Q(
+        q_record_not_deleted = dsl.Q(
             "term", **{"deletion_status": RecordDeletionStatusEnum.PUBLISHED.value}
         )
+        q_record_deleted = ~q_record_not_deleted
         then_query = self.make_query(self.then_, **kwargs)
         else_query = self.make_query(self.else_, **kwargs)
 
         if then_query and else_query:
-            return (q_then & then_query) | (q_else & else_query)
+            return (q_record_deleted & then_query) | (q_record_not_deleted & else_query)
         elif then_query:
-            return (q_then & then_query) | q_else
+            return (q_record_deleted & then_query) | q_record_not_deleted
         elif else_query:
-            return q_else & else_query
+            return q_record_not_deleted & else_query
         else:
-            return q_else
+            return q_record_not_deleted
 
 
 class RecordOwners(Generator):
