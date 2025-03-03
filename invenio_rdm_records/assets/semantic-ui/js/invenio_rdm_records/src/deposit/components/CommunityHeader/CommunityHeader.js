@@ -37,7 +37,9 @@ class CommunityHeaderComponent extends Component {
     } = this.props;
     const { modalOpen } = this.state;
 
+    // record is coming from the Jinja template and it is refreshed on page reload
     const isNewUpload = !record.id;
+    // Check if the user can manage the record only if it is not a new upload
     const isCommunitySelectionDisabled =
       (!isNewUpload && !userCanManageRecord) || disableCommunitySelectionButton;
 
