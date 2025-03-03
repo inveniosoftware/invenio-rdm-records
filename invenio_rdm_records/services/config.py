@@ -488,6 +488,7 @@ class RDMRecordServiceConfig(RecordServiceConfig, ConfiguratorMixin):
             if_=RecordLink("{+ui}/records/{id}"),
             else_=RecordLink("{+ui}/uploads/{id}"),
         ),
+        "preview_html": RecordLink("{+ui}/records/{id}?preview=1"),
         "doi": record_doi_link,
         "self_doi": record_doi_link,
         "self_doi_html": record_doi_html_link,
