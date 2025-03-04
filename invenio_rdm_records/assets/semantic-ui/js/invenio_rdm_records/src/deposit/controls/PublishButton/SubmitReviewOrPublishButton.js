@@ -41,6 +41,7 @@ class SubmitReviewOrPublishComponent extends Component {
           {...ui}
           fluid
           className="mb-10"
+          record={record}
         />
       );
     } else if (showChangeCommunityButton) {
