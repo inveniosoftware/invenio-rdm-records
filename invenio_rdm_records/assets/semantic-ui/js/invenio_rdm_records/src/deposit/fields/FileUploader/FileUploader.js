@@ -45,7 +45,9 @@ export const FileUploaderComponent = ({
   ...uiProps
 }) => {
   // We extract the working copy of the draft stored as `values` in formik
-  const { values: formikDraft } = useFormikContext();
+  const { values: formikDraft, errors, initialErrors } = useFormikContext();
+  const hasError = (errors.files || initialErrors?.files) && files;
+
   const filesEnabled = _get(formikDraft, "files.enabled", false);
   const [warningMsg, setWarningMsg] = useState();
   const lockFileUploader = !isDraftRecord && filesLocked;
@@ -216,6 +218,7 @@ export const FileUploaderComponent = ({
       warningMsg={warningMsg}
       setWarningMsg={setWarningMsg}
       filesLocked={lockFileUploader}
+      hasError={hasError}
       {...uiProps}
     >
       <>
@@ -273,6 +276,7 @@ export const FileUploaderComponent = ({
             filesList={filesList}
             dropzoneParams={dropzoneParams}
             filesLocked={lockFileUploader}
+            hasError={hasError}
             filesEnabled={filesEnabled}
             deleteFile={deleteFile}
             decimalSizeDisplay={decimalSizeDisplay}
@@ -285,6 +289,7 @@ export const FileUploaderComponent = ({
                   filesList={filesList}
                   dropzoneParams={dropzoneParams}
                   filesLocked={lockFileUploader}
+                  hasError={hasError}
                   filesEnabled={filesEnabled}
                   deleteFile={deleteFile}
                   decimalSizeDisplay={decimalSizeDisplay}
