@@ -11,7 +11,7 @@ import _get from "lodash/get";
 import _isObject from "lodash/isObject";
 import React, { Component } from "react";
 import { connect } from "react-redux";
-import { Grid, Message } from "semantic-ui-react";
+import { Grid, Message, Label, Icon, List } from "semantic-ui-react";
 import {
   DISCARD_PID_FAILED,
   DRAFT_DELETE_FAILED,
@@ -29,36 +29,13 @@ import {
 } from "../state/types";
 import PropTypes from "prop-types";
 
-const defaultLabels = {
-  "files.enabled": i18next.t("Files"),
-  "metadata.resource_type": i18next.t("Resource type"),
-  "metadata.title": i18next.t("Title"),
-  "metadata.additional_titles": i18next.t("Additional titles"),
-  "metadata.publication_date": i18next.t("Publication date"),
-  "metadata.creators": i18next.t("Creators"),
-  "metadata.contributors": i18next.t("Contributors"),
-  "metadata.description": i18next.t("Description"),
-  "metadata.additional_descriptions": i18next.t("Additional descriptions"),
-  "metadata.rights": i18next.t("Licenses"),
-  "metadata.languages": i18next.t("Languages"),
-  "metadata.dates": i18next.t("Dates"),
-  "metadata.version": i18next.t("Version"),
-  "metadata.publisher": i18next.t("Publisher"),
-  "metadata.related_identifiers": i18next.t("Related works"),
-  "metadata.references": i18next.t("References"),
-  "metadata.identifiers": i18next.t("Alternate identifiers"),
-  "metadata.subjects": i18next.t("Keywords and subjects"),
-  "access.embargo.until": i18next.t("Embargo until"),
-  "pids.doi": i18next.t("DOI"),
-};
-
 const ACTIONS = {
   [DRAFT_SAVE_SUCCEEDED]: {
     feedback: "positive",
     message: i18next.t("Record successfully saved."),
   },
   [DRAFT_HAS_VALIDATION_ERRORS]: {
-    feedback: "warning",
+    feedback: "negative",
     message: i18next.t("Record saved with validation errors in"),
   },
   [DRAFT_SAVE_FAILED]: {
@@ -133,62 +110,88 @@ class DisconnectedFormFeedback extends Component {
   constructor(props) {
     super(props);
     this.labels = {
-      ...defaultLabels,
       ...props.labels,
+    };
+    this.sections = {
+      ...props.sectionsConfig,
     };
   }
 
-  /**
-   * Return object with human readbable labels as keys and error messages as
-   * values given an errors object.
-   *
-   * @param {object} errors
-   * @returns object
-   */
-  getErrorPaths(obj) {
-    const paths = new Set(); // Use a Set to avoid duplicates
+  getErrorPaths(obj, prefix = "") {
+    const paths = new Set();
 
-    // Iterate over the top-level keys
-    for (const topLevelKey of Object.keys(obj)) {
-      if (Object.hasOwn(obj, topLevelKey)) {
-        const nestedObj = obj[topLevelKey];
-
-        // Iterate over the nested keys
-        for (const nestedKey of Object.keys(nestedObj)) {
-          if (Object.hasOwn(nestedObj, nestedKey)) {
-            // Construct the path and add it to the Set
-            paths.add(`${topLevelKey}.${nestedKey}`);
-          }
-        }
+    const recurse = (currentObj, currentPath) => {
+      if (Array.isArray(currentObj)) {
+        currentObj.forEach((item, index) => recurse(item, `${currentPath}[${index}]`));
+      } else if (currentObj && typeof currentObj === "object") {
+        Object.keys(currentObj).forEach((key) =>
+          recurse(currentObj[key], currentPath ? `${currentPath}.${key}` : key)
+        );
+      } else {
+        paths.add(currentPath);
       }
-    }
+    };
 
-    // Convert the Set to an array and return
-    return Array.from(paths);
+    recurse(obj, prefix);
+    return [...paths];
   }
 
-  /**
-   * Return object with human readbable labels as keys and error messages as
-   * values given an errors object.
-   *
-   * @param {object} errors
-   * @returns object
-   */
-  getErrorMessages(arr) {
-    const labels = arr
-      .map((x) => document.querySelector(`label[for^="${x}"]`))
-      .filter(Boolean);
-    const sections = [...new Set(labels.map((x) => x.closest(".accordion")))];
-    const outputSections = sections.map((x) => [
-      x.id,
-      x.querySelector(".title").innerText,
-    ]);
-    const message = outputSections.map((x, i) => (
-      <a key={i} href={"#" + x[0]}>
-        {x[1]}
+  getErrorSections(errorPaths) {
+    const errorSections = new Map();
+
+    errorPaths.forEach((path) => {
+      let errorCount = 1;
+
+      for (const [section, fields] of Object.entries(this.sections)) {
+        if (fields.some((field) => path.startsWith(field))) {
+          const sectionElement = document.getElementById(section);
+          if (sectionElement) {
+            const label = sectionElement.getAttribute("label") || "Unknown section";
+            const errorField = _get(this.props.errors, path, null);
+            errorCount = Array.isArray(errorField) ? errorField.length : 1;
+
+            errorSections.set(section, {
+              label,
+              count: (errorSections.get(section)?.count || 0) + errorCount,
+            });
+          }
+          return;
+        }
+      }
+
+      const labelElement = document.querySelector(
+        `label[for^="${path.replace(/^(.*?)(\[\d+\].*)?$/, "$1")}"]`
+      );
+      const sectionElement = labelElement?.closest(".accordion");
+
+      if (sectionElement) {
+        const sectionId = sectionElement.id;
+        const label = sectionElement.getAttribute("label") || "Unknown section";
+        const errorField = _get(this.props.errors, path, null);
+        errorCount = Array.isArray(errorField) ? errorField.length : 1;
+
+        errorSections.set(sectionId, {
+          label,
+          count: (errorSections.get(sectionId)?.count || 0) + errorCount,
+        });
+      }
+    });
+
+    const orderedSections = [
+      ...(errorSections.has("files-section")
+        ? [["files-section", errorSections.get("files-section")]]
+        : []),
+      ...[...errorSections].filter(([key]) => key !== "files-section"),
+    ];
+
+    return orderedSections.map(([sectionId, { label, count }], i) => (
+      <a className="pl-5" key={i} href={`#${sectionId}`}>
+        {label}{" "}
+        <Label circular size="tiny">
+          {count}
+        </Label>
       </a>
     ));
-    return message;
   }
 
   render() {
@@ -207,8 +210,9 @@ class DisconnectedFormFeedback extends Component {
     }
 
     const errorPaths = this.getErrorPaths(errors);
-    const errorSections = this.getErrorMessages(errorPaths);
-
+    const errorSections = this.getErrorSections(errorPaths);
+    //eslint-disable-next-line
+    debugger;
     // errors not related to validation, following a different format {status:.., message:..}
     const backendErrorMessage = errors.message;
 
@@ -223,10 +227,11 @@ class DisconnectedFormFeedback extends Component {
         <Grid container>
           <Grid.Column width={15} textAlign="left">
             <strong>
-              {backendErrorMessage || message}{" "}
-              {errorSections.length > 0
-                ? errorSections.reduce((prev, curr) => [prev, ", ", curr])
-                : ""}
+              <Icon name={feedback === "positive" ? "check" : "exclamation triangle"} />{" "}
+              {backendErrorMessage || message}
+              {errorSections.length > 0 && (
+                <>{errorSections.reduce((prev, curr) => [prev, ", ", curr])}</>
+              )}
             </strong>
           </Grid.Column>
         </Grid>
@@ -239,12 +244,14 @@ DisconnectedFormFeedback.propTypes = {
   errors: PropTypes.object,
   actionState: PropTypes.string,
   labels: PropTypes.object,
+  sectionsConfig: PropTypes.object,
 };
 
 DisconnectedFormFeedback.defaultProps = {
   errors: undefined,
   actionState: undefined,
   labels: undefined,
+  sectionsConfig: undefined,
 };
 
 const mapStateToProps = (state) => ({
