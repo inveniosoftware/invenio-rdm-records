@@ -119,7 +119,12 @@ class CreatibutorsFieldForm extends Component {
             schema={schema}
             autocompleteNames={autocompleteNames}
             trigger={
-              <Button type="button" icon labelPosition="left">
+              <Button
+                type="button"
+                icon
+                labelPosition="left"
+                className={creatibutorsError ? "error" : ""}
+              >
                 <Icon name="add" />
                 {addButtonLabel}
               </Button>

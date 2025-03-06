@@ -25,6 +25,7 @@ import {
   Table,
 } from "semantic-ui-react";
 import { humanReadableBytes } from "react-invenio-forms";
+import { has } from "lodash";
 
 const FileTableHeader = ({ filesLocked }) => (
   <Table.Header>
@@ -202,6 +203,7 @@ const FileUploadBox = ({
   filesLocked,
   filesList,
   dragText,
+  hasError,
   uploadButtonIcon,
   uploadButtonText,
   openFileDialog,
@@ -225,7 +227,7 @@ const FileUploadBox = ({
           <Grid.Column mobile={16} tablet={7} computer={7}>
             <Button
               type="button"
-              primary
+              className={hasError ? "error" : "primary"}
               labelPosition="left"
               icon={uploadButtonIcon}
               content={uploadButtonText}
@@ -241,6 +243,7 @@ const FileUploadBox = ({
 FileUploadBox.propTypes = {
   filesLocked: PropTypes.bool.isRequired,
   filesList: PropTypes.array,
+  hasError: PropTypes.bool,
   dragText: PropTypes.string,
   uploadButtonIcon: PropTypes.node,
   uploadButtonText: PropTypes.string,
