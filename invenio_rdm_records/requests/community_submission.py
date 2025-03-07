@@ -189,6 +189,7 @@ class CommunitySubmission(ReviewRequest):
     allowed_creator_ref_types = ["user"]
     allowed_receiver_ref_types = ["community"]
     allowed_topic_ref_types = ["record"]
+    resolve_topic_needs = True
     needs_context = {
         "community_roles": ["owner", "manager", "curator"],
         "record_permission": "preview",

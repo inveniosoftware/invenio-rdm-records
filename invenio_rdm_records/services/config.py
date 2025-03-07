@@ -97,8 +97,8 @@ from .schemas.record_communities import RecordCommunitiesSchema
 from .schemas.tombstone import TombstoneSchema
 from .search_params import (
     MetricsParam,
-    SharedOrMyDraftsParam,
     PublishedRecordsParam,
+    SharedOrMyDraftsParam,
     StatusParam,
 )
 from .sort import VerifiedRecordsSortParam

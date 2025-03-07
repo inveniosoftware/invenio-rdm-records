@@ -69,13 +69,14 @@ class RDMRecordProxy(RecordProxy):
 
         A user that can preview a record can also read its requests.
         """
+        if ctx is None or "record_permission" not in ctx:
+            return []
+
         record = self.resolve()
-        needs = []
-        record_permission = ctx.get("record_permission")
-        if record_permission:
-            needs = current_rdm_records_service.config.permission_policy_cls(
-                record_permission, record=record
-            ).needs
+        record_permission = ctx["record_permission"]
+        needs = current_rdm_records_service.config.permission_policy_cls(
+            record_permission, record=record
+        ).needs
         return needs
 
 

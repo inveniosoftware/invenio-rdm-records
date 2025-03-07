@@ -22,7 +22,7 @@ from invenio_i18n import lazy_gettext as _
 from invenio_notifications.services.uow import NotificationOp
 from invenio_records_resources.services.errors import PermissionDeniedError
 from invenio_records_resources.services.records.schema import ServiceSchemaWrapper
-from invenio_records_resources.services.uow import unit_of_work, RecordCommitOp
+from invenio_records_resources.services.uow import RecordCommitOp, unit_of_work
 from invenio_requests.proxies import current_requests_service
 from invenio_search.engine import dsl
 from invenio_users_resources.proxies import current_user_resources
