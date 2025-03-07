@@ -109,6 +109,7 @@ class CommunityInclusion(RequestType):
         "community_roles": ["owner", "manager", "curator"],
         "record_permission": "preview",
     }
+    resolve_topic_needs = True
 
     available_actions = {
         "create": actions.CreateAction,

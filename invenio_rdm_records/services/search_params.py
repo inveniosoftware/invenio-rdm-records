@@ -8,15 +8,14 @@
 
 """Search parameter interpreter API."""
 
-from invenio_search.engine import dsl
-
 from invenio_access.permissions import authenticated_user
 from invenio_records_resources.services.records.params.base import ParamInterpreter
+from invenio_search.engine import dsl
 
-from invenio_rdm_records.services.generators import AccessGrant
 from invenio_rdm_records.records.systemfields.deletion_status import (
     RecordDeletionStatusEnum,
 )
+from invenio_rdm_records.services.generators import AccessGrant
 
 
 class StatusParam(ParamInterpreter):
