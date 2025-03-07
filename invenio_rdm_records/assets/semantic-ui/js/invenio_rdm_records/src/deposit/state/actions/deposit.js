@@ -41,6 +41,7 @@ export const saveDraftWithUrlUpdate = async (draft, draftsService) => {
   const hasAlreadyId = !!draft.id;
   const response = await draftsService.save(draft);
 
+  // TODO: Filter out warnings here? Maybe not needed.
   const draftHasValidationErrors = !_isEmpty(response.errors);
 
   // In case of invalid values, on the second draft save, the form doesn't report the errors. This happens
@@ -63,10 +64,34 @@ export const saveDraftWithUrlUpdate = async (draft, draftsService) => {
   return response;
 };
 
+function _hasValidationErrorsWithSeverityError(errors) {
+  if (typeof errors === "object") {
+    if (Object.hasOwn(errors, "message") && Object.hasOwn(errors, "severity")) {
+      if (errors["severity"] === "error") {
+        return true;
+      }
+    }
+    for (const key of Object.keys(errors)) {
+      if (key !== "message" && key !== "severity") {
+        return _hasValidationErrorsWithSeverityError(errors[key]);
+      }
+    }
+  } else {
+    // If the error message is a string and not an object with `message` and `severity` keys, then it's an error.
+    return true;
+  }
+}
+
 async function _saveDraft(
   draft,
   draftsService,
-  { depositState, dispatchFn, failType, partialValidationActionType }
+  {
+    depositState,
+    dispatchFn,
+    failType,
+    partialValidationActionType,
+    showOnlyValidationErrorsWithSeverityError,
+  }
 ) {
   let response;
 
@@ -81,7 +106,9 @@ async function _saveDraft(
     throw error;
   }
 
-  const draftHasValidationErrors = !_isEmpty(response.errors);
+  const draftHasValidationErrors = showOnlyValidationErrorsWithSeverityError
+    ? _hasValidationErrorsWithSeverityError(response.errors)
+    : !_isEmpty(response.errors);
   const draftValidationErrorResponse = draftHasValidationErrors ? response : {};
 
   const {
@@ -147,6 +174,8 @@ export const save = (draft) => {
       dispatchFn: dispatch,
       failType: DRAFT_SAVE_FAILED,
       partialValidationActionType: DRAFT_HAS_VALIDATION_ERRORS,
+      // Users should see validation warnings when saving a draft.
+      showOnlyValidationErrorsWithSeverityError: false,
     });
 
     dispatch({
@@ -173,6 +202,8 @@ export const publish = (draft, { removeSelectedCommunity = false }) => {
       dispatchFn: dispatch,
       failType: DRAFT_PUBLISH_FAILED,
       partialValidationActionType: DRAFT_PUBLISH_FAILED_WITH_VALIDATION_ERRORS,
+      // Users should be able to publish a record with validation warnings.
+      showOnlyValidationErrorsWithSeverityError: true,
     });
 
     const draftWithLinks = response.data;
@@ -207,6 +238,8 @@ export const submitReview = (draft, { reviewComment, directPublish }) => {
       dispatchFn: dispatch,
       failType: DRAFT_SUBMIT_REVIEW_FAILED,
       partialValidationActionType: DRAFT_SUBMIT_REVIEW_FAILED_WITH_VALIDATION_ERRORS,
+      // Users should be able to submit for review a record with validation warnings.
+      showOnlyValidationErrorsWithSeverityError: true,
     });
 
     const draftWithLinks = response.data;
@@ -239,6 +272,8 @@ export const preview = (draft) => {
       dispatchFn: dispatch,
       failType: DRAFT_PREVIEW_FAILED,
       partialValidationActionType: DRAFT_HAS_VALIDATION_ERRORS,
+      // Users should be able to preview a record with validation warnings.
+      showOnlyValidationErrorsWithSeverityError: true,
     });
     const recordUrl = response.data.links.record_html;
     // redirect to the preview page
