@@ -28,6 +28,9 @@ export const CreatibutorsFieldItem = ({
   roleOptions,
   schema,
   autocompleteNames,
+  serializeSuggestions,
+  serializeCreatibutor,
+  deserializeCreatibutor,
 }) => {
   const dropRef = React.useRef(null);
   // eslint-disable-next-line no-unused-vars
@@ -95,6 +98,9 @@ export const CreatibutorsFieldItem = ({
                 {i18next.t("Edit")}
               </Button>
             }
+            serializeSuggestions={serializeSuggestions}
+            serializeCreatibutor={serializeCreatibutor}
+            deserializeCreatibutor={deserializeCreatibutor}
           />
           <Button size="mini" type="button" onClick={() => removeCreatibutor(index)}>
             {i18next.t("Remove")}
@@ -169,6 +175,9 @@ CreatibutorsFieldItem.propTypes = {
   roleOptions: PropTypes.array.isRequired,
   schema: PropTypes.string.isRequired,
   autocompleteNames: PropTypes.oneOfType([PropTypes.bool, PropTypes.string]),
+  serializeSuggestions: PropTypes.func,
+  serializeCreatibutor: PropTypes.func,
+  deserializeCreatibutor: PropTypes.func,
 };
 
 CreatibutorsFieldItem.defaultProps = {
@@ -177,4 +186,7 @@ CreatibutorsFieldItem.defaultProps = {
   editLabel: undefined,
   displayName: undefined,
   autocompleteNames: undefined,
+  serializeSuggestions: undefined,
+  serializeCreatibutor: undefined,
+  deserializeCreatibutor: undefined,
 };
