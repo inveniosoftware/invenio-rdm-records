@@ -73,25 +73,39 @@ class CreatibutorsFieldForm extends Component {
     const creatibutorsError =
       error || (creatibutorsList === formikInitialValues && initialError);
 
+    let className = "";
+    if (creatibutorsError) {
+      className =
+        typeof creatibutorsError !== "string" ? creatibutorsError.severity : "error";
+    }
+    // eslint-disable-next-line
+    // debugger;
+
+    let generalCreatibutorsErrorMessage;
+    if (typeof creatibutorsError === "string") {
+      generalCreatibutorsErrorMessage = creatibutorsError;
+    } else if (typeof creatibutorsError === "object") {
+      generalCreatibutorsErrorMessage = creatibutorsError?.message;
+    }
+
     return (
       <DndProvider backend={HTML5Backend}>
-        <Form.Field
-          required={schema === "creators"}
-          className={creatibutorsError ? "error" : ""}
-        >
+        <Form.Field required={schema === "creators"} className={className}>
           <FieldLabel htmlFor={fieldPath} icon={labelIcon} label={label} />
           <List>
             {creatibutorsList.map((value, index) => {
               const key = `${fieldPath}.${index}`;
-              const identifiersError =
-                creatibutorsError &&
-                creatibutorsError[index]?.person_or_org?.identifiers;
               const displayName = creatibutorNameDisplay(value);
 
               return (
                 <CreatibutorsFieldItem
                   key={key}
-                  identifiersError={identifiersError}
+                  // TODO: Call it "error"?
+                  creatibutorError={
+                    creatibutorsError &&
+                    typeof creatibutorsError !== "string" &&
+                    creatibutorsError[index]
+                  }
                   {...{
                     displayName,
                     index,
@@ -119,15 +133,15 @@ class CreatibutorsFieldForm extends Component {
             schema={schema}
             autocompleteNames={autocompleteNames}
             trigger={
-              <Button type="button" icon labelPosition="left">
+              <Button type="button" icon labelPosition="left" className={className}>
                 <Icon name="add" />
                 {addButtonLabel}
               </Button>
             }
           />
-          {creatibutorsError && typeof creatibutorsError == "string" && (
+          {generalCreatibutorsErrorMessage && (
             <Label pointing="left" prompt>
-              {creatibutorsError}
+              {generalCreatibutorsErrorMessage}
             </Label>
           )}
         </Form.Field>

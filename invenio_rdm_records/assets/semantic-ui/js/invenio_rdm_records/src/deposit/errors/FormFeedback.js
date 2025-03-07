@@ -11,7 +11,7 @@ import _get from "lodash/get";
 import _isObject from "lodash/isObject";
 import React, { Component } from "react";
 import { connect } from "react-redux";
-import { Grid, Message } from "semantic-ui-react";
+import { Grid, Message, Label, Icon, List } from "semantic-ui-react";
 import {
   DISCARD_PID_FAILED,
   DRAFT_DELETE_FAILED,
@@ -27,31 +27,7 @@ import {
   FILE_UPLOAD_SAVE_DRAFT_FAILED,
   RESERVE_PID_FAILED,
 } from "../state/types";
-import { leafTraverse } from "../utils";
 import PropTypes from "prop-types";
-
-const defaultLabels = {
-  "files.enabled": i18next.t("Files"),
-  "metadata.resource_type": i18next.t("Resource type"),
-  "metadata.title": i18next.t("Title"),
-  "metadata.additional_titles": i18next.t("Additional titles"),
-  "metadata.publication_date": i18next.t("Publication date"),
-  "metadata.creators": i18next.t("Creators"),
-  "metadata.contributors": i18next.t("Contributors"),
-  "metadata.description": i18next.t("Description"),
-  "metadata.additional_descriptions": i18next.t("Additional descriptions"),
-  "metadata.rights": i18next.t("Licenses"),
-  "metadata.languages": i18next.t("Languages"),
-  "metadata.dates": i18next.t("Dates"),
-  "metadata.version": i18next.t("Version"),
-  "metadata.publisher": i18next.t("Publisher"),
-  "metadata.related_identifiers": i18next.t("Related works"),
-  "metadata.references": i18next.t("References"),
-  "metadata.identifiers": i18next.t("Alternate identifiers"),
-  "metadata.subjects": i18next.t("Keywords and subjects"),
-  "access.embargo.until": i18next.t("Embargo until"),
-  "pids.doi": i18next.t("DOI"),
-};
 
 const ACTIONS = {
   [DRAFT_SAVE_SUCCEEDED]: {
@@ -59,8 +35,8 @@ const ACTIONS = {
     message: i18next.t("Record successfully saved."),
   },
   [DRAFT_HAS_VALIDATION_ERRORS]: {
-    feedback: "warning",
-    message: i18next.t("Record saved with validation errors:"),
+    feedback: "negative",
+    message: i18next.t("Record saved with validation errors in"),
   },
   [DRAFT_SAVE_FAILED]: {
     feedback: "negative",
@@ -77,7 +53,7 @@ const ACTIONS = {
   [DRAFT_PUBLISH_FAILED_WITH_VALIDATION_ERRORS]: {
     feedback: "negative",
     message: i18next.t(
-      "The draft was not published. Record saved with validation errors:"
+      "The draft was not published. Record saved with validation errors in"
     ),
   },
   [DRAFT_SUBMIT_REVIEW_FAILED]: {
@@ -89,7 +65,7 @@ const ACTIONS = {
   [DRAFT_SUBMIT_REVIEW_FAILED_WITH_VALIDATION_ERRORS]: {
     feedback: "negative",
     message: i18next.t(
-      "The draft was not submitted for review. Record saved with validation errors:"
+      "The draft was not submitted for review. Record saved with validation errors in"
     ),
   },
   [DRAFT_DELETE_FAILED]: {
@@ -134,114 +110,88 @@ class DisconnectedFormFeedback extends Component {
   constructor(props) {
     super(props);
     this.labels = {
-      ...defaultLabels,
       ...props.labels,
     };
-  }
-
-  /**
-   * Render error messages inline (if 1) or as list (if multiple).
-   *
-   * @param {Array<String>} messages
-   * @returns String or React node
-   */
-  renderErrorMessages(messages) {
-    const uniqueMessages = [...new Set(messages)];
-    if (uniqueMessages.length === 1) {
-      return messages[0];
-    } else {
-      return (
-        <ul>
-          {uniqueMessages.map((m) => (
-            <li key={m}>{m}</li>
-          ))}
-        </ul>
-      );
-    }
-  }
-
-  /**
-   * Return array of error messages from errorValue object.
-   *
-   * The error message(s) might be deeply nested in the errorValue e.g.
-   *
-   * errorValue = [
-   *   {
-   *     title: "Missing value"
-   *   }
-   * ];
-   *
-   * @param {object} errorValue
-   * @returns array of Strings (error messages)
-   */
-  toErrorMessages(errorValue) {
-    let messages = [];
-    let store = (l) => {
-      messages.push(l);
+    this.sections = {
+      ...props.sectionsConfig,
     };
-    leafTraverse(errorValue, store);
-    return messages;
   }
 
-  /**
-   * Return object with human readbable labels as keys and error messages as
-   * values given an errors object.
-   *
-   * @param {object} errors
-   * @returns object
-   */
-  toLabelledErrorMessages(errors) {
-    // Step 0 - Create object with collapsed 1st and 2nd level keys
-    //          e.g., {metadata: {creators: ,,,}} => {"metadata.creators": ...}
-    // For now, only for metadata, files and access.embargo
-    const metadata = errors.metadata || {};
-    const step0Metadata = Object.entries(metadata).map(([key, value]) => {
-      return ["metadata." + key, value];
-    });
-    const files = errors.files || {};
-    const step0Files = Object.entries(files).map(([key, value]) => {
-      return ["files." + key, value];
-    });
-    const access = errors.access?.embargo || {};
-    const step0Access = Object.entries(access).map(([key, value]) => {
-      return ["access.embargo." + key, value];
-    });
-    const pids = errors.pids || {};
-    const step0Pids = _isObject(pids)
-      ? Object.entries(pids).map(([key, value]) => {
-          return ["pids." + key, value];
-        })
-      : [["pids", pids]];
-    const customFields = errors.custom_fields || {};
-    const step0CustomFields = Object.entries(customFields).map(([key, value]) => {
-      return ["custom_fields." + key, value];
-    });
-    const step0 = Object.fromEntries(
-      step0Metadata
-        .concat(step0Files)
-        .concat(step0Access)
-        .concat(step0Pids)
-        .concat(step0CustomFields)
-    );
+  getErrorPaths(obj, prefix = "") {
+    const paths = new Set();
 
-    // Step 1 - Transform each error value into array of error messages
-    const step1 = Object.fromEntries(
-      Object.entries(step0).map(([key, value]) => {
-        return [key, this.toErrorMessages(value)];
-      })
-    );
+    const recurse = (currentObj, currentPath) => {
+      if (Array.isArray(currentObj)) {
+        currentObj.forEach((item, index) => recurse(item, `${currentPath}[${index}]`));
+      } else if (currentObj && typeof currentObj === "object") {
+        Object.keys(currentObj).forEach((key) =>
+          recurse(currentObj[key], currentPath ? `${currentPath}.${key}` : key)
+        );
+      } else {
+        paths.add(currentPath);
+      }
+    };
 
-    // Step 2 - Group error messages by label
-    // (different error keys can map to same label e.g. title and
-    // additional_titles)
-    const labelledErrorMessages = {};
-    for (const key in step1) {
-      const label = this.labels[key] || "Unknown field";
-      let messages = labelledErrorMessages[label] || [];
-      labelledErrorMessages[label] = messages.concat(step1[key]);
-    }
+    recurse(obj, prefix);
+    return [...paths];
+  }
 
-    return labelledErrorMessages;
+  getErrorSections(errorPaths) {
+    const errorSections = new Map();
+
+    errorPaths.forEach((path) => {
+      let errorCount = 1;
+
+      for (const [section, fields] of Object.entries(this.sections)) {
+        if (fields.some((field) => path.startsWith(field))) {
+          const sectionElement = document.getElementById(section);
+          if (sectionElement) {
+            const label = sectionElement.getAttribute("label") || "Unknown section";
+            const errorField = _get(this.props.errors, path, null);
+            errorCount = Array.isArray(errorField) ? errorField.length : 1;
+
+            errorSections.set(section, {
+              label,
+              count: (errorSections.get(section)?.count || 0) + errorCount,
+            });
+          }
+          return;
+        }
+      }
+
+      const labelElement = document.querySelector(
+        `label[for^="${path.replace(/^(.*?)(\[\d+\].*)?$/, "$1")}"]`
+      );
+      const sectionElement = labelElement?.closest(".accordion");
+
+      if (sectionElement) {
+        const sectionId = sectionElement.id;
+        const label = sectionElement.getAttribute("label") || "Unknown section";
+        const errorField = _get(this.props.errors, path, null);
+        errorCount = Array.isArray(errorField) ? errorField.length : 1;
+
+        errorSections.set(sectionId, {
+          label,
+          count: (errorSections.get(sectionId)?.count || 0) + errorCount,
+        });
+      }
+    });
+
+    const orderedSections = [
+      ...(errorSections.has("files-section")
+        ? [["files-section", errorSections.get("files-section")]]
+        : []),
+      ...[...errorSections].filter(([key]) => key !== "files-section"),
+    ];
+
+    return orderedSections.map(([sectionId, { label, count }], i) => (
+      <a className="pl-5" key={i} href={`#${sectionId}`}>
+        {label}{" "}
+        <Label circular size="tiny">
+          {count}
+        </Label>
+      </a>
+    ));
   }
 
   render() {
@@ -259,13 +209,10 @@ class DisconnectedFormFeedback extends Component {
       return null;
     }
 
-    const labelledMessages = this.toLabelledErrorMessages(errors);
-    const listErrors = Object.entries(labelledMessages).map(([label, messages]) => (
-      <Message.Item key={label}>
-        <b>{label}</b>: {this.renderErrorMessages(messages)}
-      </Message.Item>
-    ));
-
+    const errorPaths = this.getErrorPaths(errors);
+    const errorSections = this.getErrorSections(errorPaths);
+    //eslint-disable-next-line
+    debugger;
     // errors not related to validation, following a different format {status:.., message:..}
     const backendErrorMessage = errors.message;
 
@@ -279,8 +226,13 @@ class DisconnectedFormFeedback extends Component {
       >
         <Grid container>
           <Grid.Column width={15} textAlign="left">
-            <strong>{backendErrorMessage || message}</strong>
-            {listErrors.length > 0 && <Message.List>{listErrors}</Message.List>}
+            <strong>
+              <Icon name={feedback === "positive" ? "check" : "exclamation triangle"} />{" "}
+              {backendErrorMessage || message}
+              {errorSections.length > 0 && (
+                <>{errorSections.reduce((prev, curr) => [prev, ", ", curr])}</>
+              )}
+            </strong>
           </Grid.Column>
         </Grid>
       </Message>
@@ -292,12 +244,14 @@ DisconnectedFormFeedback.propTypes = {
   errors: PropTypes.object,
   actionState: PropTypes.string,
   labels: PropTypes.object,
+  sectionsConfig: PropTypes.object,
 };
 
 DisconnectedFormFeedback.defaultProps = {
   errors: undefined,
   actionState: undefined,
   labels: undefined,
+  sectionsConfig: undefined,
 };
 
 const mapStateToProps = (state) => ({
