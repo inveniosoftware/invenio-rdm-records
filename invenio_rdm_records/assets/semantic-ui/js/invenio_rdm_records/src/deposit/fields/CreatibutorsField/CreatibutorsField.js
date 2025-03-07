@@ -81,6 +81,13 @@ class CreatibutorsFieldForm extends Component {
     // eslint-disable-next-line
     // debugger;
 
+    let generalCreatibutorsErrorMessage;
+    if (typeof creatibutorsError === "string") {
+      generalCreatibutorsErrorMessage = creatibutorsError;
+    } else if (typeof creatibutorsError === "object") {
+      generalCreatibutorsErrorMessage = creatibutorsError?.message;
+    }
+
     return (
       <DndProvider backend={HTML5Backend}>
         <Form.Field required={schema === "creators"} className={className}>
@@ -94,7 +101,11 @@ class CreatibutorsFieldForm extends Component {
                 <CreatibutorsFieldItem
                   key={key}
                   // TODO: Call it "error"?
-                  creatibutorError={creatibutorsError && creatibutorsError[index]}
+                  creatibutorError={
+                    creatibutorsError &&
+                    typeof creatibutorsError !== "string" &&
+                    creatibutorsError[index]
+                  }
                   {...{
                     displayName,
                     index,
@@ -122,25 +133,15 @@ class CreatibutorsFieldForm extends Component {
             schema={schema}
             autocompleteNames={autocompleteNames}
             trigger={
-              <Button
-                type="button"
-                icon
-                labelPosition="left"
-                className={creatibutorsError ? "error" : ""}
-              >
+              <Button type="button" icon labelPosition="left" className={className}>
                 <Icon name="add" />
                 {addButtonLabel}
               </Button>
             }
           />
-          {creatibutorsError && typeof creatibutorsError == "string" && (
+          {generalCreatibutorsErrorMessage && (
             <Label pointing="left" prompt>
-              {creatibutorsError}
-            </Label>
-          )}
-          {creatibutorsError && typeof creatibutorsError != "string" && (
-            <Label pointing="left" prompt>
-              {creatibutorsError.message}
+              {generalCreatibutorsErrorMessage}
             </Label>
           )}
         </Form.Field>
