@@ -19,6 +19,7 @@ import pytest
 from invenio_requests import current_requests_service
 from marshmallow_utils.permissions import FieldPermissionError
 
+from invenio_accounts.testutils import login_user_via_session
 from invenio_rdm_records.records import RDMDraft, RDMRecord
 from invenio_rdm_records.requests import CommunitySubmission
 from tests.helpers import login_user, logout_user
@@ -995,3 +996,48 @@ def test_search_internal_notes_fields(
     resp = client.get("/records?q=internal_notes.note:abc")
     assert resp.json["hits"]["total"] == 0
     logout_user(client)
+
+
+def test_link_deletion(
+    running_app, client, minimal_record, headers, search_clear, users
+):
+    """Test the deletion of a secret link."""
+    # Login as user 0
+    user = users[0]
+    login_user(user)
+    login_user_via_session(client, email=user.email)
+
+    # Create and publish a draft
+    recid = _create_and_publish(client, minimal_record, headers)
+
+    # create a link and delete it again
+    link_result = client.post(
+        f"/records/{recid}/access/links",
+        headers=headers,
+        data=json.dumps({"permission": "view"}),
+    )
+    link_id = link_result.json["id"]
+
+    # check that the record exists
+    link_result = client.get(
+        f"/records/{recid}/access/links/{link_id}", headers=headers
+    )
+    assert link_result.status_code == 200
+
+    # delete the record
+    delete_result = client.delete(
+        f"/records/{recid}/access/links/{link_id}", headers=headers
+    )
+    assert delete_result.status_code == 204
+
+    # check that the record is deleted
+    link_result = client.get(
+        f"/records/{recid}/access/links/{link_id}", headers=headers
+    )
+    assert link_result.status_code == 404
+
+    # check that there are no links left
+    links_result = client.get(f"/records/{recid}/access/links", headers=headers)
+    assert links_result.status_code == 200
+    assert int(links_result.json["hits"]["total"]) == 0
+    assert len(links_result.json["hits"]["hits"]) == 0
