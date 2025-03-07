@@ -14,9 +14,25 @@ import { Button, Label, List, Ref } from "semantic-ui-react";
 import { CreatibutorsModal } from "./CreatibutorsModal";
 import PropTypes from "prop-types";
 
+// TODO: Do not extract only the first message (concatenate with spaces?).
+// TODO: Get the highest severity?
+function extractMessages(creatibutorError) {
+  if (typeof creatibutorError === "object") {
+    for (const key of Object.keys(creatibutorError)) {
+      console.log({ key });
+      if (key !== "severity") {
+        return extractMessages(creatibutorError[key]);
+      }
+    }
+  } else {
+    console.log(`Returning: ${creatibutorError}`);
+    return creatibutorError;
+  }
+}
+
 export const CreatibutorsFieldItem = ({
   compKey,
-  identifiersError,
+  creatibutorError,
   index,
   replaceCreatibutor,
   removeCreatibutor,
@@ -66,9 +82,18 @@ export const CreatibutorsFieldItem = ({
       return <Label size="tiny">{friendlyRole}</Label>;
     }
   };
-  const firstError =
-    identifiersError &&
-    identifiersError.find((elem) => ![undefined, null].includes(elem));
+  // const creatibutorsError
+  //   creatibutorsError &&
+  //   // typeof creatibutorsError == "string" &&
+  //   creatibutorsError[index];
+  // creatibutorsError.find((elem) => ![undefined, null].includes(elem));
+  // const firstError = true;
+  // TODO: Support firstError.scheme
+  //creatibutorError.person_or_org.identifiers.message;
+  const errorMessage = creatibutorError && extractMessages(creatibutorError);
+
+  // eslint-disable-next-line
+  // debugger;
 
   // Initialize the ref explicitely
   drop(dropRef);
@@ -143,9 +168,9 @@ export const CreatibutorsFieldItem = ({
                 {displayName} {renderRole(initialCreatibutor?.role, roleOptions)}
               </span>
             </List.Description>
-            {firstError && (
+            {errorMessage && (
               <Label pointing="left" prompt>
-                {firstError.scheme ? firstError.scheme : "Invalid identifiers"}
+                {errorMessage}
               </Label>
             )}
           </List.Content>
@@ -157,7 +182,7 @@ export const CreatibutorsFieldItem = ({
 
 CreatibutorsFieldItem.propTypes = {
   compKey: PropTypes.string.isRequired,
-  identifiersError: PropTypes.array,
+  creatibutorError: PropTypes.array,
   index: PropTypes.number.isRequired,
   replaceCreatibutor: PropTypes.func.isRequired,
   removeCreatibutor: PropTypes.func.isRequired,
@@ -172,7 +197,7 @@ CreatibutorsFieldItem.propTypes = {
 };
 
 CreatibutorsFieldItem.defaultProps = {
-  identifiersError: undefined,
+  creatibutorError: undefined,
   addLabel: undefined,
   editLabel: undefined,
   displayName: undefined,
