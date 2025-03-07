@@ -27,6 +27,7 @@ class ImprintCSLDumper(DumperMixin):
         place = imprint_data.get("place")
         pages = imprint_data.get("pages")
         isbn = imprint_data.get("isbn")
+        edition = imprint_data.get("edition")
 
         if title:
             data["container_title"] = title
@@ -36,6 +37,8 @@ class ImprintCSLDumper(DumperMixin):
             data["publisher_place"] = place
         if isbn:
             data["ISBN"] = isbn
+        if edition:
+            data["edition"] = edition
 
         return data
 
