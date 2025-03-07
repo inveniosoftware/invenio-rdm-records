@@ -38,6 +38,9 @@ export class DepositFormApp extends Component {
           props.config.custom_fields.vocabularies
         );
 
+    const { service: customFilesService, apiClient: customFileApiClient } =
+      window.invenio?.files || {};
+
     const apiHeaders = props.config.apiHeaders ? props.config.apiHeaders : null;
     const additionalApiConfig = { headers: apiHeaders };
 
@@ -51,6 +54,8 @@ export class DepositFormApp extends Component {
 
     const fileApiClient = props.fileApiClient
       ? props.fileApiClient
+      : customFileApiClient
+      ? customFileApiClient
       : new RDMDepositFileApiClient(additionalApiConfig);
 
     const draftsService = props.draftsService
@@ -59,6 +64,8 @@ export class DepositFormApp extends Component {
 
     const filesService = props.filesService
       ? props.filesService
+      : customFilesService
+      ? customFilesService
       : new RDMDepositFilesService(fileApiClient, props.config.fileUploadConcurrency);
 
     const service = new DepositService(draftsService, filesService);
