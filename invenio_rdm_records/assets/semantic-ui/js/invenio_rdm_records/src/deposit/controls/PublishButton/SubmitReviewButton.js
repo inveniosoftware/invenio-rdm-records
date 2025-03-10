@@ -42,10 +42,17 @@ class SubmitReviewButtonComponent extends Component {
   };
 
   isDisabled = (disableSubmitForReviewButton, filesState) => {
-    const { formik } = this.props;
+    const { formik, userCanManageRecord, record } = this.props;
     const { values, isSubmitting } = formik;
 
-    if (disableSubmitForReviewButton || isSubmitting) {
+    // record is coming from the Jinja template and it is refreshed on page reload
+    const isNewUpload = !record.id;
+    // Check if the user can manage the record only if it is not a new upload
+    if (
+      (!isNewUpload && !userCanManageRecord) ||
+      disableSubmitForReviewButton ||
+      isSubmitting
+    ) {
       return true;
     }
 
@@ -131,6 +138,8 @@ SubmitReviewButtonComponent.propTypes = {
   formik: PropTypes.object.isRequired,
   publishModalExtraContent: PropTypes.string,
   filesState: PropTypes.object,
+  userCanManageRecord: PropTypes.bool.isRequired,
+  record: PropTypes.object.isRequired,
 };
 
 SubmitReviewButtonComponent.defaultProps = {
@@ -150,6 +159,7 @@ const mapStateToProps = (state) => ({
     state.deposit.editorState.ui.disableSubmitForReviewButton,
   publishModalExtraContent: state.deposit.config.publish_modal_extra,
   filesState: state.files,
+  userCanManageRecord: state.deposit.permissions.can_manage,
 });
 
 export const SubmitReviewButton = connect(

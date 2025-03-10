@@ -19,6 +19,7 @@ import pytest
 from invenio_requests import current_requests_service
 from marshmallow_utils.permissions import FieldPermissionError
 
+from invenio_accounts.testutils import login_user_via_session
 from invenio_rdm_records.records import RDMDraft, RDMRecord
 from invenio_rdm_records.requests import CommunitySubmission
 from tests.helpers import login_user, logout_user
