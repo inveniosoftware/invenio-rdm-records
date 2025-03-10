@@ -165,10 +165,16 @@ export const importParentFiles = () => {
 export const getUploadParams = (draft, file, options) => {
   return async (dispatch, getState, config) => {
     const fileRecord = await dispatch(initializeFileUpload(draft, file));
-    return await config.service.files.getUploadParams(
+    const params = await config.service.files.getUploadParams(
       fileRecord.links.content,
       file,
       options
     );
+
+    return {
+      ...params,
+      links: fileRecord.links,
+      file_id: fileRecord.file_id,
+    };
   };
 };
