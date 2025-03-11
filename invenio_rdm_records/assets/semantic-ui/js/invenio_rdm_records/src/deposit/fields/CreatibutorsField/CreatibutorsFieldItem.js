@@ -11,6 +11,7 @@ import _get from "lodash/get";
 import React from "react";
 import { useDrag, useDrop } from "react-dnd";
 import { Button, Label, List, Ref } from "semantic-ui-react";
+import { FeedbackLabel } from "react-invenio-forms";
 import { CreatibutorsModal } from "./CreatibutorsModal";
 import PropTypes from "prop-types";
 
@@ -90,10 +91,6 @@ export const CreatibutorsFieldItem = ({
   // const firstError = true;
   // TODO: Support firstError.scheme
   //creatibutorError.person_or_org.identifiers.message;
-  const errorMessage = creatibutorError && extractMessages(creatibutorError);
-
-  // eslint-disable-next-line
-  // debugger;
 
   // Initialize the ref explicitely
   drop(dropRef);
@@ -168,11 +165,7 @@ export const CreatibutorsFieldItem = ({
                 {displayName} {renderRole(initialCreatibutor?.role, roleOptions)}
               </span>
             </List.Description>
-            {errorMessage && (
-              <Label pointing="left" prompt>
-                {errorMessage}
-              </Label>
-            )}
+            {creatibutorError && <FeedbackLabel errorMessage={creatibutorError} />}
           </List.Content>
         </Ref>
       </List.Item>

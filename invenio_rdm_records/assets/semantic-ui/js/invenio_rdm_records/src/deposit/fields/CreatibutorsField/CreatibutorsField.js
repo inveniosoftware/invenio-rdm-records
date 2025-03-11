@@ -78,8 +78,6 @@ class CreatibutorsFieldForm extends Component {
       className =
         typeof creatibutorsError !== "string" ? creatibutorsError.severity : "error";
     }
-    // eslint-disable-next-line
-    // debugger;
 
     let generalCreatibutorsErrorMessage;
     if (typeof creatibutorsError === "string") {

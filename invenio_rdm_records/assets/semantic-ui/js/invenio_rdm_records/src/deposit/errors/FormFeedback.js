@@ -28,6 +28,7 @@ import {
   RESERVE_PID_FAILED,
 } from "../state/types";
 import PropTypes from "prop-types";
+import { flattenAndCategorizeErrors } from "react-invenio-forms";
 
 const ACTIONS = {
   [DRAFT_SAVE_SUCCEEDED]: {
@@ -136,9 +137,9 @@ class DisconnectedFormFeedback extends Component {
     return [...paths];
   }
 
-  getErrorSections(errorPaths) {
+  getErrorSections(errors) {
     const errorSections = new Map();
-
+    const errorPaths = Object.keys(errors);
     errorPaths.forEach((path) => {
       let errorCount = 1;
 
@@ -209,10 +210,10 @@ class DisconnectedFormFeedback extends Component {
       return null;
     }
 
-    const errorPaths = this.getErrorPaths(errors);
-    const errorSections = this.getErrorSections(errorPaths);
-    //eslint-disable-next-line
-    debugger;
+    const { flattenedErrors, severityChecks } = flattenAndCategorizeErrors(errors);
+
+    const errorSections = this.getErrorSections(flattenedErrors);
+
     // errors not related to validation, following a different format {status:.., message:..}
     const backendErrorMessage = errors.message;
 
