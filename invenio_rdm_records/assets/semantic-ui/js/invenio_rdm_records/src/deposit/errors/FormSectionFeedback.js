@@ -8,7 +8,9 @@
 
 import { i18next } from "@translations/invenio_rdm_records/i18next";
 import _get from "lodash/get";
+import _set from "lodash/set";
 import _isObject from "lodash/isObject";
+import _isEmpty from "lodash/isEmpty";
 import React, { Component } from "react";
 import { connect } from "react-redux";
 import { Grid, Message } from "semantic-ui-react";
@@ -27,6 +29,7 @@ import {
   FILE_UPLOAD_SAVE_DRAFT_FAILED,
   RESERVE_PID_FAILED,
 } from "../state/types";
+import { leafTraverse } from "../utils";
 import PropTypes from "prop-types";
 
 const defaultLabels = {
@@ -76,7 +79,7 @@ const ACTIONS = {
   [DRAFT_PUBLISH_FAILED_WITH_VALIDATION_ERRORS]: {
     feedback: "negative",
     message: i18next.t(
-      "The draft was not published. Record saved with validation errors in"
+      "The draft was not published. Record saved with validation errors:"
     ),
   },
   [DRAFT_SUBMIT_REVIEW_FAILED]: {
@@ -88,7 +91,7 @@ const ACTIONS = {
   [DRAFT_SUBMIT_REVIEW_FAILED_WITH_VALIDATION_ERRORS]: {
     feedback: "negative",
     message: i18next.t(
-      "The draft was not submitted for review. Record saved with validation errors in"
+      "The draft was not submitted for review. Record saved with validation errors:"
     ),
   },
   [DRAFT_DELETE_FAILED]: {
@@ -136,6 +139,18 @@ class DisconnectedFormFeedback extends Component {
       ...defaultLabels,
       ...props.labels,
     };
+  }
+
+  filterMessages(errors, includesPaths = []) {
+    const output = {};
+    for (const errorPath in errors) {
+      for (const subPath in errors[errorPath]) {
+        const path = `${errorPath}.${subPath}`;
+        if (includesPaths.includes(path))
+          _set(output, path, errors[errorPath][subPath]);
+      }
+    }
+    return output;
   }
 
   /**
@@ -244,7 +259,7 @@ class DisconnectedFormFeedback extends Component {
   }
 
   render() {
-    const { errors: errorsProp, actionState } = this.props;
+    const { errors: errorsProp, actionState, includesPaths } = this.props;
 
     const errors = errorsProp || {};
 
@@ -253,20 +268,19 @@ class DisconnectedFormFeedback extends Component {
       message: undefined,
     });
 
-    if (!message) {
+    const filteredErrors = this.filterMessages(errors, includesPaths);
+
+    if (_isEmpty(filteredErrors)) {
       // if no message to display, simply return null
       return null;
     }
 
-    const labelledMessages = this.toLabelledErrorMessages(errors);
+    const labelledMessages = this.toLabelledErrorMessages(filteredErrors);
     const listErrors = Object.entries(labelledMessages).map(([label, messages]) => (
       <Message.Item key={label}>
         <b>{label}</b>: {this.renderErrorMessages(messages)}
       </Message.Item>
     ));
-
-    // errors not related to validation, following a different format {status:.., message:..}
-    const backendErrorMessage = errors.message;
 
     return (
       <Message
@@ -274,11 +288,10 @@ class DisconnectedFormFeedback extends Component {
         positive={feedback === "positive"}
         warning={feedback === "warning"}
         negative={feedback === "negative"}
-        className="flashed top attached"
+        className="mt-0 p-0"
       >
         <Grid container>
           <Grid.Column width={15} textAlign="left">
-            <strong>{backendErrorMessage || message}</strong>
             {listErrors.length > 0 && <Message.List>{listErrors}</Message.List>}
           </Grid.Column>
         </Grid>
@@ -291,6 +304,7 @@ DisconnectedFormFeedback.propTypes = {
   errors: PropTypes.object,
   actionState: PropTypes.string,
   labels: PropTypes.object,
+  includesPaths: PropTypes.array.isRequired,
 };
 
 DisconnectedFormFeedback.defaultProps = {
@@ -304,4 +318,7 @@ const mapStateToProps = (state) => ({
   errors: state.deposit.errors,
 });
 
-export const FormFeedback = connect(mapStateToProps, null)(DisconnectedFormFeedback);
+export const FormSectionFeedback = connect(
+  mapStateToProps,
+  null
+)(DisconnectedFormFeedback);
