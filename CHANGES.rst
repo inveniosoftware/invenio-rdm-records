@@ -1,6 +1,6 @@
 
 ..
-    Copyright (C) 2019-2024 CERN.
+    Copyright (C) 2019-2025 CERN.
     Copyright (C) 2019-2024 Northwestern University.
     Copyright (C) 2024      KTH Royal Institute of Technology.
     Copyright (C) 2024 Graz University of Technology.
@@ -11,6 +11,14 @@
 
 Changes
 =======
+
+Version v17.2.0 (released 2025-03-10)
+
+- views: signposting: files: fix filename encoding issues for downloads
+- resource_types: fix datapaper and interactiveresource datacite mapping
+- schema.org: add uploadDate for VideoObject serialization [+]
+- cff: add default "message" field
+- iiif: fix info request not being proxied
 
 Version v17.1.0 (released 2025-02-21)
 

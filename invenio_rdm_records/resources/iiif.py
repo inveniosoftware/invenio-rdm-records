@@ -321,7 +321,7 @@ class IIIFProxy(ABC):
         """
         return request.endpoint in (
             "iiif.image_api",
-            "iiif.image_info",
+            "iiif.info",
             # TODO: `image_base` would redirect to the info endpoint, but we should make
             #       sure the proxy does this correctly, preserving the original path.
             # "iiif.image_base",

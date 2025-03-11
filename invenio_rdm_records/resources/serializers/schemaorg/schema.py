@@ -199,6 +199,7 @@ class SchemaorgSchema(BaseSerializerSchema, CommonFieldsMixin):
     # Fields that are specific to certain resource types.
     measurementTechnique = fields.Method("get_measurement_techniques")
     distribution = fields.Method("get_distribution")
+    uploadDate = fields.Method("get_upload_date")
 
     def get_id(self, obj):
         """Get id. Use the DOI expressed as a URL."""
@@ -425,7 +426,7 @@ class SchemaorgSchema(BaseSerializerSchema, CommonFieldsMixin):
         return ids or missing
 
     def get_url(self, obj):
-        """Get Zenodo URL of the record."""
+        """Get URL of the record."""
         self_url = py_.get(obj, "links.self_html")
         return self_url or missing
 
@@ -504,3 +505,17 @@ class SchemaorgSchema(BaseSerializerSchema, CommonFieldsMixin):
             lambda x: x.get("relation_type", {}).get("id") in relation_types,
             identifiers,
         )
+
+    # Fields specific to https://schema.org/VideoObject
+    # Useful for video crawlers per
+    # https://developers.google.com/search/docs/appearance/structured-data/video
+    def _is_video(self, obj):
+        return self.get_type(obj) == "https://schema.org/VideoObject"
+
+    def get_upload_date(self, obj):
+        """Get uploadDate."""
+        if not self._is_video(obj):
+            return missing
+
+        # Creation date is closest in meaning to when video was uploaded
+        return self.get_creation_date(obj)

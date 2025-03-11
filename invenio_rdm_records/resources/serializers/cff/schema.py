@@ -81,6 +81,7 @@ class CFFSchema(BaseSerializerSchema):
     keywords = fields.Method("get_keywords")
     license = fields.Method("get_license")
     license_url = fields.Method("get_license_url", data_key="license-url")
+    message = fields.Method("get_message")
     # TODO references - related identifiers?
     # TODO there are other derivations of repository
     repository_code = fields.Method("get_repository_code", data_key="repository-code")
@@ -239,3 +240,13 @@ class CFFSchema(BaseSerializerSchema):
             return missing
 
         return resource_type
+
+    def get_message(self, obj):
+        """Get standard citation message based on record type."""
+        resource_type = obj.get("metadata", {}).get("resource_type", {}).get("id")
+
+        type_label = "work"
+        if resource_type in self.allowed_types:
+            type_label = resource_type
+
+        return f"If you use this {type_label}, please cite it using the metadata from this file."
