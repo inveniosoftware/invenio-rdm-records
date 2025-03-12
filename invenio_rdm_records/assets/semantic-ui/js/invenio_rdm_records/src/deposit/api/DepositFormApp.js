@@ -15,10 +15,15 @@ import {
   DepositFileApiClient,
   RDMDepositApiClient,
   RDMDepositFileApiClient,
+  UppyDepositFileApiClient,
 } from "./DepositApiClient";
 import { DepositBootstrap } from "./DepositBootstrap";
 import { DepositDraftsService, RDMDepositDraftsService } from "./DepositDraftsService";
-import { DepositFilesService, RDMDepositFilesService } from "./DepositFilesService";
+import {
+  DepositFilesService,
+  RDMDepositFilesService,
+  UppyDepositFilesService,
+} from "./DepositFilesService";
 import {
   DepositRecordSerializer,
   RDMDepositRecordSerializer,
@@ -38,9 +43,6 @@ export class DepositFormApp extends Component {
           props.config.custom_fields.vocabularies
         );
 
-    const { service: customFilesService, apiClient: customFileApiClient } =
-      window.invenio?.files || {};
-
     const apiHeaders = props.config.apiHeaders ? props.config.apiHeaders : null;
     const additionalApiConfig = { headers: apiHeaders };
 
@@ -54,8 +56,12 @@ export class DepositFormApp extends Component {
 
     const fileApiClient = props.fileApiClient
       ? props.fileApiClient
-      : customFileApiClient
-      ? customFileApiClient
+      : props.useUppy
+      ? new UppyDepositFileApiClient(
+          additionalApiConfig,
+          props.config.default_transfer_type,
+          props.config.transfer_types
+        )
       : new RDMDepositFileApiClient(additionalApiConfig);
 
     const draftsService = props.draftsService
@@ -64,8 +70,8 @@ export class DepositFormApp extends Component {
 
     const filesService = props.filesService
       ? props.filesService
-      : customFilesService
-      ? customFilesService
+      : props.useUppy
+      ? new UppyDepositFilesService(fileApiClient, props.config.fileUploadConcurrency)
       : new RDMDepositFilesService(fileApiClient, props.config.fileUploadConcurrency);
 
     const service = new DepositService(draftsService, filesService);
@@ -113,6 +119,7 @@ DepositFormApp.propTypes = {
   filesService: PropTypes.instanceOf(DepositFilesService),
   recordSerializer: PropTypes.instanceOf(DepositRecordSerializer),
   children: PropTypes.node,
+  useUppy: PropTypes.bool,
 };
 
 DepositFormApp.defaultProps = {
