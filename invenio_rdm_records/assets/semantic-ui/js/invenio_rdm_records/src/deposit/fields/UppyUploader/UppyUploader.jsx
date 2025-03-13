@@ -12,6 +12,7 @@
 // TODO: internationalization using i18next?
 import Uppy from "@uppy/core";
 import { Dashboard } from "@uppy/react";
+import { i18next } from "@translations/invenio_rdm_records/i18next";
 
 import { useFormikContext } from "formik";
 import _get from "lodash/get";
@@ -25,6 +26,7 @@ import {
   FilesListTable,
   FileUploaderToolbar,
 } from "../FileUploader";
+import { useUppyLocale } from "./locale";
 
 const defaultDashboardProps = {
   proudlyDisplayPoweredByUppy: false,
@@ -57,6 +59,7 @@ export const UppyUploaderComponent = ({
   // We extract the working copy of the draft stored as `values` in formik
   const { values: formikDraft } = useFormikContext();
   const { filesList } = useFilesList(files);
+  const locale = useUppyLocale();
 
   const filesEnabled = _get(formikDraft, "files.enabled", false);
   const filesSize = filesList.reduce((totalSize, file) => (totalSize += file.size), 0);
@@ -73,12 +76,15 @@ export const UppyUploaderComponent = ({
     console.log(files, filesList.includes(file.name), filesList, file.name);
   }
 
+  console.log(i18next.language);
+
   const [uppy] = useState(
     () =>
       new Uppy({
         debug: true,
         autoProceed: true,
         restrictions,
+        locale,
         onBeforeFileAdded: checkForDuplicates,
       }).use(MultipartUploaderPlugin, {
         // Bind Redux file actions to the uploader plugin
