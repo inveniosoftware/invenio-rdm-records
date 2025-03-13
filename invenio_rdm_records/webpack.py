@@ -30,6 +30,7 @@ theme = WebpackThemeBundle(
                 "@uppy/dashboard": "^3.9.1",
                 "@uppy/drag-drop": "^3.1.1",
                 "@uppy/file-input": "^3.1.2",
+                "@uppy/locales": "^3.5.4",
                 "@uppy/progress-bar": "^3.1.1",
                 "@uppy/react": "^3.4.0",
                 "formik": "^2.1.0",
