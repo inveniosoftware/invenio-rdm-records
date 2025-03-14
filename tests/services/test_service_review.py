@@ -166,12 +166,12 @@ def test_simple_flow(draft, running_app, community, service, requests_service):
     assert draft["status"] == DraftStatus.review_to_draft_statuses["created"]
 
     # ### Submit draft for review
-    req = service.review.submit(running_app.superuser_identity, draft.id).to_dict()
+    req = service.review.submit(system_identity, draft.id).to_dict()
     assert req["status"] == "submitted"
     assert req["title"] == draft["metadata"]["title"]
 
     # check draft status
-    draft = service.read_draft(running_app.superuser_identity, draft.id)
+    draft = service.read_draft(system_identity, draft.id)
     assert (
         draft.to_dict()["status"] == DraftStatus.review_to_draft_statuses["submitted"]
     )
@@ -182,13 +182,13 @@ def test_simple_flow(draft, running_app, community, service, requests_service):
 
     # ### Accept request
     req = requests_service.execute_action(
-        running_app.superuser_identity, req["id"], "accept", {}
+        system_identity, req["id"], "accept", {}
     ).to_dict()
     assert req["status"] == "accepted"
     assert req["is_open"] is False
 
     # ### Read the record
-    record = service.read(running_app.superuser_identity, draft.id).to_dict()
+    record = service.read(system_identity, draft.id).to_dict()
     assert "review" not in record["parent"]  # Review was desassociated
     assert record["is_published"] is True
     assert record["parent"]["communities"]["ids"] == [community.data["id"]]
@@ -197,10 +197,10 @@ def test_simple_flow(draft, running_app, community, service, requests_service):
 
     # ### Read draft (which should have been removed)
     with pytest.raises(PIDDoesNotExistError):
-        service.read_draft(running_app.superuser_identity, draft.id)
+        service.read_draft(system_identity, draft.id)
 
     # ### Create a new version (still part of community)
-    draft = service.new_version(running_app.superuser_identity, draft.id).to_dict()
+    draft = service.new_version(system_identity, draft.id).to_dict()
     assert "review" not in draft["parent"]
     assert draft["parent"]["communities"]["ids"] == [community.data["id"]]
     assert draft["parent"]["communities"]["default"] == community.data["id"]
@@ -387,7 +387,7 @@ def test_create_with_invalid_community(minimal_record, running_app, service):
 def test_create_review_after_draft(running_app, community, service, minimal_record):
     """Test creation of review after draft was created."""
     # Create draft
-    draft = service.create(running_app.superuser_identity, minimal_record)
+    draft = service.create(system_identity, minimal_record)
     assert draft.to_dict()["status"] == "draft"
 
     # Then create review (you use update, not create for this).
@@ -396,17 +396,18 @@ def test_create_review_after_draft(running_app, community, service, minimal_reco
         "receiver": {"community": community.data["id"]},
     }
     req = service.review.update(
-        running_app.superuser_identity,
+        system_identity,
         draft.id,
         data,
         revision_id=draft.data["revision_id"],
     ).to_dict()
     assert req["status"] == "created"
     assert req["topic"] == {"record": draft.id}
+    assert req["created_by"] == {"user": str(system_identity.id)}
     assert req["receiver"] == {"community": community.data["id"]}
 
     # check draft status
-    draft = service.read_draft(running_app.superuser_identity, draft.id).to_dict()
+    draft = service.read_draft(system_identity, draft.id).to_dict()
     assert draft["status"] == DraftStatus.review_to_draft_statuses[req["status"]]
 
 

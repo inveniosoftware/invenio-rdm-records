@@ -51,12 +51,8 @@ class AccessComponent(ServiceComponent):
             raise ValidationError(messages, field_name="access")
 
     def _init_owner(self, identity, record, **kwargs):
-        """If the record has no owner yet, add the current user."""
-        # if the given identity is that of a user, we set the owner ot that user
-        # (record.parent.access.owner) and commit the parent record;
-        # otherwise, the parent's owner stays empty
-        is_sys_id = identity == system_identity
-        if not record.parent.access.owner and not is_sys_id:
+        """If the record has no owner yet, set it the given identity."""
+        if not record.parent.access.owner:
             record.parent.access.owner = {"user": identity.id}
 
     def create(self, identity, data=None, record=None, **kwargs):
