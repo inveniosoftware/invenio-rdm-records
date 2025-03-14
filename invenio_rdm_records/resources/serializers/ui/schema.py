@@ -217,6 +217,25 @@ class MeetingSchema(Schema):
     url = SanitizedUnicode()
 
 
+def add_community_information(obj, _):
+    """Computes community information."""
+    receiver = (
+        obj.get("expanded", {}).get("parent", {}).get("review", {}).get("receiver")
+    )
+    if not receiver:
+        return
+
+    output = {
+        receiver["id"]: {
+            "slug": receiver["slug"],
+            "title": receiver.get("metadata", {}).get("title"),
+            "logo": receiver.get("links", {}).get("logo"),
+        },
+    }
+
+    return output
+
+
 def compute_publishing_information(obj, dummyctx):
     """Computes 'publishing information' string from custom fields."""
 
@@ -353,6 +372,8 @@ class UIRecordSchema(BaseObjectSchema):
     additional_titles = fields.List(
         fields.Nested(AdditionalTitlesSchema), attribute="metadata.additional_titles"
     )
+
+    communities = fields.Function(add_community_information)
 
     # Custom fields
     custom_fields = fields.Nested(
