@@ -57,7 +57,7 @@ class RDMRecordProxy(RecordProxy):
         return record
 
     def ghost_record(self, record):
-        """Ghost reprensentation of a record.
+        """Ghost representation of a record.
 
         Drafts at the moment cannot be resolved, service.read_many() is searching on
         public records, thus the `ghost_record` method will always kick in!
