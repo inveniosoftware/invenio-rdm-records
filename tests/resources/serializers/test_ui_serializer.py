@@ -129,6 +129,7 @@ def test_ui_serializer(app, full_to_dict_record):
             "embargo_date_l10n": "January 1, 2131",
             "message_class": "warning",
         },
+        "communities": None,
         "contributors": {
             "affiliations": [[1, "CERN", "cern"], [2, "TU Wien", None]],
             "contributors": [
