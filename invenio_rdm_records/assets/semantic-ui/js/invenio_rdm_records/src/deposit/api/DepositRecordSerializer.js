@@ -369,7 +369,16 @@ export class RDMDepositRecordSerializer extends DepositRecordSerializer {
     //                 Form/Error UX is tackled in next sprint and this is good
     //                 enough for now.
     for (const e of errors) {
-      _set(deserializedErrors, e.field, e.messages.join(" "));
+      if ("severity" in e && e.severity !== "error") {
+        // New error format with severity
+        _set(deserializedErrors, e.field, {
+          message: e.messages.join(" "),
+          severity: e.severity,
+        });
+      } else {
+        // Backward compatibility with old error format, including just the error string
+        _set(deserializedErrors, e.field, e.messages.join(" "));
+      }
     }
 
     return deserializedErrors;

@@ -25,6 +25,7 @@ export class AccessRightFieldCmp extends Component {
 
   render() {
     const {
+      id,
       fieldPath,
       formik, // this is our access to the shared current draft
       label,
@@ -42,7 +43,7 @@ export class AccessRightFieldCmp extends Component {
     const isMetadataOnly = !formik.form.values.files.enabled;
 
     return (
-      <Card className="access-right">
+      <Card label={label} id={id} className="access-right">
         <Form.Field required>
           <Card.Content>
             <Card.Header>
@@ -66,6 +67,10 @@ export class AccessRightFieldCmp extends Component {
               access={formik.field.value}
               accessCommunity={communityAccess}
               metadataOnly={isMetadataOnly}
+              values={formik.form.values}
+              initialValues={formik.form.initialValues}
+              errors={formik.form.errors}
+              initialErrors={formik.form.initialErrors}
             />
 
             <Divider hidden />
@@ -97,6 +102,7 @@ export class AccessRightFieldCmp extends Component {
 }
 
 AccessRightFieldCmp.propTypes = {
+  id: PropTypes.string,
   fieldPath: PropTypes.string.isRequired,
   formik: PropTypes.object.isRequired,
   label: PropTypes.string.isRequired,
