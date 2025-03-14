@@ -127,3 +127,12 @@ def test_user_moderation_decline(
     )
     assert record._record.deletion_status.is_deleted
     assert record._record.tombstone is not None
+
+
+def test_is_verified_system_user(running_app, minimal_record):
+    """Test is_verified when create is system user."""
+    draft = records_service.create(system_identity, minimal_record)
+    record = records_service.publish(id_=draft.id, identity=system_identity)
+    parent_dict = record.to_dict()["parent"]
+    assert parent_dict["access"]["owned_by"]["user"] == system_identity.id
+    assert parent_dict["is_verified"]
