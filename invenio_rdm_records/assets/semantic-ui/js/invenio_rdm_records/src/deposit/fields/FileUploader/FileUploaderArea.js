@@ -25,7 +25,6 @@ import {
   Table,
 } from "semantic-ui-react";
 import { humanReadableBytes } from "react-invenio-forms";
-import { has } from "lodash";
 
 const FileTableHeader = ({ filesLocked }) => (
   <Table.Header>
@@ -256,6 +255,7 @@ FileUploadBox.defaultProps = {
   uploadButtonIcon: undefined,
   uploadButtonText: undefined,
   openFileDialog: null,
+  hasError: false,
 };
 
 const FilesListTable = ({ filesLocked, filesList, deleteFile, decimalSizeDisplay }) => {

@@ -11,7 +11,6 @@ import PropTypes from "prop-types";
 import { getIn, FieldArray } from "formik";
 import { Button, Form, Label, List, Icon } from "semantic-ui-react";
 import _get from "lodash/get";
-import _map from "lodash/map";
 import { FieldLabel } from "react-invenio-forms";
 import { HTML5Backend } from "react-dnd-html5-backend";
 import { DndProvider } from "react-dnd";
@@ -98,7 +97,6 @@ class CreatibutorsFieldForm extends Component {
               return (
                 <CreatibutorsFieldItem
                   key={key}
-                  // TODO: Call it "error"?
                   creatibutorError={
                     creatibutorsError &&
                     typeof creatibutorsError !== "string" &&

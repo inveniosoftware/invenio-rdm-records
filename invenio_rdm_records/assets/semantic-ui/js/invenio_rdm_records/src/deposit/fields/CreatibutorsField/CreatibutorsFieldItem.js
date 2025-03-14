@@ -15,22 +15,6 @@ import { FeedbackLabel } from "react-invenio-forms";
 import { CreatibutorsModal } from "./CreatibutorsModal";
 import PropTypes from "prop-types";
 
-// TODO: Do not extract only the first message (concatenate with spaces?).
-// TODO: Get the highest severity?
-function extractMessages(creatibutorError) {
-  if (typeof creatibutorError === "object") {
-    for (const key of Object.keys(creatibutorError)) {
-      console.log({ key });
-      if (key !== "severity") {
-        return extractMessages(creatibutorError[key]);
-      }
-    }
-  } else {
-    console.log(`Returning: ${creatibutorError}`);
-    return creatibutorError;
-  }
-}
-
 export const CreatibutorsFieldItem = ({
   compKey,
   creatibutorError,
@@ -83,14 +67,6 @@ export const CreatibutorsFieldItem = ({
       return <Label size="tiny">{friendlyRole}</Label>;
     }
   };
-  // const creatibutorsError
-  //   creatibutorsError &&
-  //   // typeof creatibutorsError == "string" &&
-  //   creatibutorsError[index];
-  // creatibutorsError.find((elem) => ![undefined, null].includes(elem));
-  // const firstError = true;
-  // TODO: Support firstError.scheme
-  //creatibutorError.person_or_org.identifiers.message;
 
   // Initialize the ref explicitely
   drop(dropRef);

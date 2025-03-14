@@ -8,10 +8,10 @@
 
 import { i18next } from "@translations/invenio_rdm_records/i18next";
 import _get from "lodash/get";
-import _isObject from "lodash/isObject";
+import _isEmpty from "lodash/isEmpty";
 import React, { Component } from "react";
 import { connect } from "react-redux";
-import { Grid, Message, Label, Icon, List } from "semantic-ui-react";
+import { Grid, Message, Label, Icon } from "semantic-ui-react";
 import {
   DISCARD_PID_FAILED,
   DRAFT_DELETE_FAILED,
@@ -37,7 +37,7 @@ const ACTIONS = {
   },
   [DRAFT_HAS_VALIDATION_ERRORS]: {
     feedback: "negative",
-    message: i18next.t("Record saved with validation errors in"),
+    message: i18next.t("Record saved with validation feedback in"),
   },
   [DRAFT_SAVE_FAILED]: {
     feedback: "negative",
@@ -54,7 +54,7 @@ const ACTIONS = {
   [DRAFT_PUBLISH_FAILED_WITH_VALIDATION_ERRORS]: {
     feedback: "negative",
     message: i18next.t(
-      "The draft was not published. Record saved with validation errors in"
+      "The draft was not published. Record saved with validation feedback in"
     ),
   },
   [DRAFT_SUBMIT_REVIEW_FAILED]: {
@@ -66,7 +66,7 @@ const ACTIONS = {
   [DRAFT_SUBMIT_REVIEW_FAILED_WITH_VALIDATION_ERRORS]: {
     feedback: "negative",
     message: i18next.t(
-      "The draft was not submitted for review. Record saved with validation errors in"
+      "The draft was not submitted for review. Record saved with validation feedback in"
     ),
   },
   [DRAFT_DELETE_FAILED]: {
@@ -118,59 +118,33 @@ class DisconnectedFormFeedback extends Component {
     };
   }
 
-  getErrorPaths(obj, prefix = "") {
-    const paths = new Set();
-
-    const recurse = (currentObj, currentPath) => {
-      if (Array.isArray(currentObj)) {
-        currentObj.forEach((item, index) => recurse(item, `${currentPath}[${index}]`));
-      } else if (currentObj && typeof currentObj === "object") {
-        Object.keys(currentObj).forEach((key) =>
-          recurse(currentObj[key], currentPath ? `${currentPath}.${key}` : key)
-        );
-      } else {
-        paths.add(currentPath);
-      }
-    };
-
-    recurse(obj, prefix);
-    return [...paths];
-  }
-
   getErrorSections(errors) {
     const errorSections = new Map();
-    const errorPaths = Object.keys(errors);
-    errorPaths.forEach((path) => {
-      let errorCount = 1;
 
+    // Iterate over each error path in the errors object
+    Object.keys(errors).forEach((path) => {
+      let errorCount = Array.isArray(errors[path]) ? errors[path].length : 1;
+
+      // Try to match error to a section based on field paths
       for (const [section, fields] of Object.entries(this.sections)) {
         if (fields.some((field) => path.startsWith(field))) {
           const sectionElement = document.getElementById(section);
-          if (sectionElement) {
-            const label = sectionElement.getAttribute("label") || "Unknown section";
-            const errorField = _get(this.props.errors, path, null);
-            errorCount = Array.isArray(errorField) ? errorField.length : 1;
-
-            errorSections.set(section, {
-              label,
-              count: (errorSections.get(section)?.count || 0) + errorCount,
-            });
-          }
+          const label = sectionElement?.getAttribute("label") || "Unknown section";
+          errorSections.set(section, {
+            label,
+            count: (errorSections.get(section)?.count || 0) + errorCount,
+          });
           return;
         }
       }
 
-      const labelElement = document.querySelector(
-        `label[for^="${path.replace(/^(.*?)(\[\d+\].*)?$/, "$1")}"]`
-      );
-      const sectionElement = labelElement?.closest(".accordion");
-
+      // If not matched in predefined sections, check dynamically in accordions
+      const sectionElement = document
+        .querySelector(`label[for^="${path.replace(/^(.*?)(\[\d+\].*)?$/, "$1")}"]`)
+        ?.closest(".accordion");
       if (sectionElement) {
         const sectionId = sectionElement.id;
         const label = sectionElement.getAttribute("label") || "Unknown section";
-        const errorField = _get(this.props.errors, path, null);
-        errorCount = Array.isArray(errorField) ? errorField.length : 1;
-
         errorSections.set(sectionId, {
           label,
           count: (errorSections.get(sectionId)?.count || 0) + errorCount,
@@ -178,21 +152,27 @@ class DisconnectedFormFeedback extends Component {
       }
     });
 
+    // Order sections based on their DOM appearance and return error links
+    const accordions = Array.from(document.querySelectorAll(".accordion")).map(
+      (accordion) => accordion.id
+    );
+
     const orderedSections = [
-      ...(errorSections.has("files-section")
-        ? [["files-section", errorSections.get("files-section")]]
-        : []),
-      ...[...errorSections].filter(([key]) => key !== "files-section"),
+      ...accordions.filter((id) => errorSections.has(id)), // Keep sections that exist in order
+      ...[...errorSections.keys()].filter((id) => !accordions.includes(id)), // Append missing sections
     ];
 
-    return orderedSections.map(([sectionId, { label, count }], i) => (
-      <a className="pl-5" key={i} href={`#${sectionId}`}>
-        {label}{" "}
-        <Label circular size="tiny">
-          {count}
-        </Label>
-      </a>
-    ));
+    return orderedSections.map((sectionId, i) => {
+      const { label, count } = errorSections.get(sectionId);
+      return (
+        <a key={i} className="pl-5" href={`#${sectionId}`}>
+          {label}{" "}
+          <Label circular size="tiny">
+            {count}
+          </Label>
+        </a>
+      );
+    });
   }
 
   render() {
@@ -200,7 +180,7 @@ class DisconnectedFormFeedback extends Component {
 
     const errors = errorsProp || {};
 
-    const { feedback, message } = _get(ACTIONS, actionState, {
+    let { feedback, message } = _get(ACTIONS, actionState, {
       feedback: undefined,
       message: undefined,
     });
@@ -212,7 +192,14 @@ class DisconnectedFormFeedback extends Component {
 
     const { flattenedErrors, severityChecks } = flattenAndCategorizeErrors(errors);
 
-    const errorSections = this.getErrorSections(flattenedErrors);
+    const errorSections = this.getErrorSections({
+      ...flattenedErrors,
+      ...severityChecks,
+    });
+
+    if (errorSections && _isEmpty(flattenedErrors) && !_isEmpty(severityChecks)) {
+      feedback = "suggestive";
+    }
 
     // errors not related to validation, following a different format {status:.., message:..}
     const backendErrorMessage = errors.message;
@@ -223,12 +210,25 @@ class DisconnectedFormFeedback extends Component {
         positive={feedback === "positive"}
         warning={feedback === "warning"}
         negative={feedback === "negative"}
+        info={feedback === "suggestive"}
         className="flashed top attached"
       >
         <Grid container>
           <Grid.Column width={15} textAlign="left">
             <strong>
-              <Icon name={feedback === "positive" ? "check" : "exclamation triangle"} />{" "}
+              <Icon
+                name={
+                  feedback === "positive"
+                    ? "check"
+                    : feedback === "suggestive"
+                    ? "info circle"
+                    : feedback === "negative"
+                    ? "times circle"
+                    : "exclamation triangle"
+                }
+                middle
+                aligned
+              />{" "}
               {backendErrorMessage || message}
               {errorSections.length > 0 && (
                 <>{errorSections.reduce((prev, curr) => [prev, ", ", curr])}</>

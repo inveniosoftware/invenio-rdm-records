@@ -41,7 +41,6 @@ export const saveDraftWithUrlUpdate = async (draft, draftsService) => {
   const hasAlreadyId = !!draft.id;
   const response = await draftsService.save(draft);
 
-  // TODO: Filter out warnings here? Maybe not needed.
   const draftHasValidationErrors = !_isEmpty(response.errors);
 
   // In case of invalid values, on the second draft save, the form doesn't report the errors. This happens
