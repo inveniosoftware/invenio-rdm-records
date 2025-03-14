@@ -36,7 +36,7 @@ const ACTIONS = {
     message: i18next.t("Record successfully saved."),
   },
   [DRAFT_HAS_VALIDATION_ERRORS]: {
-    feedback: "negative",
+    feedback: "warning",
     message: i18next.t("Record saved with validation feedback in"),
   },
   [DRAFT_SAVE_FAILED]: {
@@ -197,6 +197,8 @@ class DisconnectedFormFeedback extends Component {
       ...severityChecks,
     });
 
+    //In case of validation where there are no errors but just severityChecks
+    // only update the feedback as the ACTION and its message is the same
     if (errorSections && _isEmpty(flattenedErrors) && !_isEmpty(severityChecks)) {
       feedback = "suggestive";
     }
