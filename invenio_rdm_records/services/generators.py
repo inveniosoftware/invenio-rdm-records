@@ -284,7 +284,25 @@ class SubmissionReviewer(Generator):
         receiver = request.receiver
         if receiver is not None:
             return receiver.get_needs(ctx=request.type.needs_context)
+
         return []
+
+
+class RequestReviewer(Generator):
+    """Roles for request's reviewers."""
+
+    def needs(self, record=None, **kwargs):
+        """Set of Needs granting permission."""
+        if record is None or record.parent.review is None:
+            return []
+
+        _needs = []
+        request = record.parent.review
+        reviewers = request.reviewer
+        if reviewers is not None:
+            for reviewer in reviewers:
+                _needs.extend(reviewer.get_needs(ctx=request.type.needs_context))
+        return _needs
 
 
 class CommunityInclusionReviewers(Generator):
