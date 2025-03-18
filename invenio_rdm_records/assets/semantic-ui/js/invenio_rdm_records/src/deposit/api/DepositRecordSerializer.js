@@ -370,10 +370,11 @@ export class RDMDepositRecordSerializer extends DepositRecordSerializer {
     //                 enough for now.
     for (const e of errors) {
       if ("severity" in e && e.severity !== "error") {
-        // New error format with severity
+        // New error format with severity and description
         _set(deserializedErrors, e.field, {
           message: e.messages.join(" "),
-          severity: e.severity,
+          severity: e.severity, // severity level of the error
+          description: e.description, // additional information about the rule that generated the error
         });
       } else {
         // Backward compatibility with old error format, including just the error string

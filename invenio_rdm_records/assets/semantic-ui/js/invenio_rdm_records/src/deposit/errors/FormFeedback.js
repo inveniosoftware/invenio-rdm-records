@@ -36,7 +36,7 @@ const ACTIONS = {
     message: i18next.t("Record successfully saved."),
   },
   [DRAFT_HAS_VALIDATION_ERRORS]: {
-    feedback: "negative",
+    feedback: "warning",
     message: i18next.t("Record saved with validation feedback in"),
   },
   [DRAFT_SAVE_FAILED]: {
@@ -107,6 +107,13 @@ const ACTIONS = {
   },
 };
 
+const feedbackConfig = {
+  positive: { icon: "check", type: "positive" },
+  suggestive: { icon: "info circle", type: "info" },
+  negative: { icon: "times circle", type: "negative" },
+  warning: { icon: "exclamation triangle", type: "warning" },
+};
+
 class DisconnectedFormFeedback extends Component {
   constructor(props) {
     super(props);
@@ -165,7 +172,7 @@ class DisconnectedFormFeedback extends Component {
     return orderedSections.map((sectionId, i) => {
       const { label, count } = errorSections.get(sectionId);
       return (
-        <a key={i} className="pl-5" href={`#${sectionId}`}>
+        <a key={sectionId} className="pl-5" href={`#${sectionId}`}>
           {label}{" "}
           <Label circular size="tiny">
             {count}
@@ -177,59 +184,40 @@ class DisconnectedFormFeedback extends Component {
 
   render() {
     const { errors: errorsProp, actionState } = this.props;
-
     const errors = errorsProp || {};
 
-    let { feedback, message } = _get(ACTIONS, actionState, {
+    const { feedback: initialFeedback, message } = _get(ACTIONS, actionState, {
       feedback: undefined,
       message: undefined,
     });
 
     if (!message) {
-      // if no message to display, simply return null
       return null;
     }
 
     const { flattenedErrors, severityChecks } = flattenAndCategorizeErrors(errors);
-
     const errorSections = this.getErrorSections({
       ...flattenedErrors,
       ...severityChecks,
     });
 
-    if (errorSections && _isEmpty(flattenedErrors) && !_isEmpty(severityChecks)) {
-      feedback = "suggestive";
-    }
+    // Determine final feedback without reassigning
+    const feedback =
+      errorSections && _isEmpty(flattenedErrors) && !_isEmpty(severityChecks)
+        ? "suggestive"
+        : initialFeedback;
 
-    // errors not related to validation, following a different format {status:.., message:..}
     const backendErrorMessage = errors.message;
 
+    // Retrieve the corresponding icon and type
+    const { icon, type } = feedbackConfig[feedback] || {};
+
     return (
-      <Message
-        visible
-        positive={feedback === "positive"}
-        warning={feedback === "warning"}
-        negative={feedback === "negative"}
-        info={feedback === "suggestive"}
-        className="flashed top attached"
-      >
+      <Message visible {...{ [type]: true }} className="flashed top attached">
         <Grid container>
           <Grid.Column width={15} textAlign="left">
             <strong>
-              <Icon
-                name={
-                  feedback === "positive"
-                    ? "check"
-                    : feedback === "suggestive"
-                    ? "info circle"
-                    : feedback === "negative"
-                    ? "times circle"
-                    : "exclamation triangle"
-                }
-                middle
-                aligned
-              />{" "}
-              {backendErrorMessage || message}
+              <Icon name={icon} middle aligned /> {backendErrorMessage || message}
               {errorSections.length > 0 && (
                 <>{errorSections.reduce((prev, curr) => [prev, ", ", curr])}</>
               )}
