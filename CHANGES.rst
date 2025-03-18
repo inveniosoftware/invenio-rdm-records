@@ -12,6 +12,11 @@
 Changes
 =======
 
+Version v17.4.0 (released 2025-03-18)
+
+- deposit-ui: Support new error format with severity and description
+  - FeedbackLabel for creatibutors and license
+
 Version v17.3.0 (released 2025-03-11)
 
 - resources: add param to filter shared with my uploads
