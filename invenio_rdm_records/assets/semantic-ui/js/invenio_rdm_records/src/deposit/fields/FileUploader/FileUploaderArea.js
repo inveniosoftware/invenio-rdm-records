@@ -202,6 +202,7 @@ const FileUploadBox = ({
   filesLocked,
   filesList,
   dragText,
+  hasError,
   uploadButtonIcon,
   uploadButtonText,
   openFileDialog,
@@ -225,7 +226,7 @@ const FileUploadBox = ({
           <Grid.Column mobile={16} tablet={7} computer={7}>
             <Button
               type="button"
-              primary
+              className={hasError ? "error" : "primary"}
               labelPosition="left"
               icon={uploadButtonIcon}
               content={uploadButtonText}
@@ -241,6 +242,7 @@ const FileUploadBox = ({
 FileUploadBox.propTypes = {
   filesLocked: PropTypes.bool.isRequired,
   filesList: PropTypes.array,
+  hasError: PropTypes.bool,
   dragText: PropTypes.string,
   uploadButtonIcon: PropTypes.node,
   uploadButtonText: PropTypes.string,
@@ -253,6 +255,7 @@ FileUploadBox.defaultProps = {
   uploadButtonIcon: undefined,
   uploadButtonText: undefined,
   openFileDialog: null,
+  hasError: false,
 };
 
 const FilesListTable = ({ filesLocked, filesList, deleteFile, decimalSizeDisplay }) => {
