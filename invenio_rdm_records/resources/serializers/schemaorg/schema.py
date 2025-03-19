@@ -3,6 +3,7 @@
 # Copyright (C) 2023-2024 CERN.
 # Copyright (C) 2021 Northwestern University.
 # Copyright (C) 2023 Graz University of Technology.
+# Copyright (C) 2024 KTH Royal Institute of Technology.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
@@ -17,6 +18,7 @@ from commonmeta import dict_to_spdx, doi_as_url, parse_attributes, unwrap, wrap
 from edtf.parser.grammar import ParseException
 from flask_resources.serializers import BaseSerializerSchema
 from idutils import to_url
+from invenio_i18n import lazy_gettext as _
 from marshmallow import Schema, ValidationError, fields, missing
 from marshmallow_utils.fields import SanitizedHTML, SanitizedUnicode
 from pydash import py_
@@ -117,7 +119,9 @@ class PersonOrOrgSchema(Schema):
             id_ = affiliation.get("id")
             if not (name or id_):
                 raise ValidationError(
-                    "Affiliation failed to serialize: one of 'id' or 'name' must be provided."
+                    _(
+                        "Affiliation failed to serialize: one of 'id' or 'name' must be provided."
+                    )
                 )
 
             serialized_affiliation = {"@type": "Organization"}
@@ -361,7 +365,9 @@ class SchemaorgSchema(BaseSerializerSchema, CommonFieldsMixin):
             if not (id_ or (title and number)):
                 # One of 'id' or '(title' and 'number') must be provided
                 raise ValidationError(
-                    "Funding serialization failed on award: one of 'id' or ('number' and 'title') are required."
+                    _(
+                        "Funding serialization failed on award: one of 'id' or ('number' and 'title') are required."
+                    )
                 )
 
             serialized_award = {}
