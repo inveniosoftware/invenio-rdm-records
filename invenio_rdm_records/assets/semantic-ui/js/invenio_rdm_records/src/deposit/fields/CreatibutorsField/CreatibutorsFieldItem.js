@@ -2,6 +2,7 @@
 // Copyright (C) 2020-2023 CERN.
 // Copyright (C) 2020-2022 Northwestern University.
 // Copyright (C) 2021 New York University.
+// Copyright (C) 2024 KTH Royal Institute of Technology.
 //
 // Invenio-RDM-Records is free software; you can redistribute it and/or modify it
 // under the terms of the MIT License; see LICENSE file for more details.
@@ -111,7 +112,7 @@ export const CreatibutorsFieldItem = ({
                   (identifier) => identifier.scheme === "orcid"
                 ) && (
                   <img
-                    alt="ORCID logo"
+                    alt={i18next.t("ORCID logo")}
                     className="inline-id-icon mr-5"
                     src="/static/images/orcid.svg"
                     width="16"
@@ -122,7 +123,7 @@ export const CreatibutorsFieldItem = ({
                   (identifier) => identifier.scheme === "ror"
                 ) && (
                   <img
-                    alt="ROR logo"
+                    alt={i18next.t("ROR logo")}
                     className="inline-id-icon mr-5"
                     src="/static/images/ror-icon.svg"
                     width="16"
@@ -133,7 +134,7 @@ export const CreatibutorsFieldItem = ({
                   (identifier) => identifier.scheme === "gnd"
                 ) && (
                   <img
-                    alt="GND logo"
+                    alt={i18next.t("GND logo")}
                     className="inline-id-icon mr-5"
                     src="/static/images/gnd-icon.svg"
                     width="16"

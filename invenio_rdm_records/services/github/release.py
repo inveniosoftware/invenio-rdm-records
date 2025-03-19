@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2023 CERN.
+# Copyright (C) 2023-2024 CERN.
+# Copyright (C) 2024 KTH Royal Institute of Technology.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
@@ -12,6 +13,7 @@ from invenio_access.utils import get_identity
 from invenio_db import db
 from invenio_github.api import GitHubRelease
 from invenio_github.models import ReleaseStatus
+from invenio_i18n import lazy_gettext as _
 from invenio_records_resources.services.uow import UnitOfWork
 
 from ...proxies import current_rdm_records_service
@@ -55,7 +57,7 @@ class RDMGithubRelease(GitHubRelease):
                         {
                             "person_or_org": {
                                 "type": "personal",
-                                "family_name": "Unknown",
+                                "family_name": _("Unknown"),
                             },
                         }
                     ]
