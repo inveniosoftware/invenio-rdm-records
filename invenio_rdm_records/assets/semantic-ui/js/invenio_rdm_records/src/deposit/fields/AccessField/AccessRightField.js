@@ -67,6 +67,10 @@ export class AccessRightFieldCmp extends Component {
               access={formik.field.value}
               accessCommunity={communityAccess}
               metadataOnly={isMetadataOnly}
+              values={formik.form.values}
+              initialValues={formik.form.initialValues}
+              errors={formik.form.errors}
+              initialErrors={formik.form.initialErrors}
             />
 
             <Divider hidden />
