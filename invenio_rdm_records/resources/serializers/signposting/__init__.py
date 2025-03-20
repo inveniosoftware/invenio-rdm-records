@@ -31,7 +31,6 @@ class FAIRSignpostingProfileLvl1Serializer(MarshmallowSerializer):
         """Stringify a FAIR Signposting record."""
         links = []
         for rel, values in record.items():
-            # if rel not in excluded_keys:
             for value in values:
                 link = f'<{value["href"]}> ; rel="{rel}"'
                 if "type" in value:
