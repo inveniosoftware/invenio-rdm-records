@@ -65,18 +65,22 @@ export const saveDraftWithUrlUpdate = async (draft, draftsService) => {
 
 function _hasValidationErrorsWithSeverityError(errors) {
   if (typeof errors === "object") {
-    if (Object.hasOwn(errors, "message") && Object.hasOwn(errors, "severity")) {
+    if (
+      Object.hasOwn(errors, "message") &&
+      Object.hasOwn(errors, "severity") &&
+      Object.hasOwn(errors, "description")
+    ) {
       if (errors["severity"] === "error") {
         return true;
       }
     }
     for (const key of Object.keys(errors)) {
-      if (key !== "message" && key !== "severity") {
+      if (key !== "message" && key !== "severity" && key !== "description") {
         return _hasValidationErrorsWithSeverityError(errors[key]);
       }
     }
   } else {
-    // If the error message is a string and not an object with `message` and `severity` keys, then it's an error.
+    // If the error message is a string and not an object with `message`, `severity`, and `description` keys, then it's an error.
     return true;
   }
 }
