@@ -97,8 +97,8 @@ from .schemas.record_communities import RecordCommunitiesSchema
 from .schemas.tombstone import TombstoneSchema
 from .search_params import (
     MetricsParam,
-    MyDraftsParam,
     PublishedRecordsParam,
+    SharedOrMyDraftsParam,
     StatusParam,
 )
 from .sort import VerifiedRecordsSortParam
@@ -243,7 +243,7 @@ class RDMSearchDraftsOptions(SearchDraftsOptions, SearchOptionsMixin):
     }
 
     params_interpreters_cls = [
-        MyDraftsParam
+        SharedOrMyDraftsParam
     ] + SearchDraftsOptions.params_interpreters_cls
 
 
@@ -488,6 +488,7 @@ class RDMRecordServiceConfig(RecordServiceConfig, ConfiguratorMixin):
             if_=RecordLink("{+ui}/records/{id}"),
             else_=RecordLink("{+ui}/uploads/{id}"),
         ),
+        "preview_html": RecordLink("{+ui}/records/{id}?preview=1"),
         "doi": record_doi_link,
         "self_doi": record_doi_link,
         "self_doi_html": record_doi_html_link,

@@ -31,10 +31,17 @@ class CommunityHeaderComponent extends Component {
       imagePlaceholderLink,
       showCommunitySelectionButton,
       disableCommunitySelectionButton,
-      showCommunityHeader,
+      userCanManageRecord,
       record,
+      showCommunityHeader,
     } = this.props;
     const { modalOpen } = this.state;
+
+    // record is coming from the Jinja template and it is refreshed on page reload
+    const isNewUpload = !record.id;
+    // Check if the user can manage the record only if it is not a new upload
+    const isCommunitySelectionDisabled =
+      (!isNewUpload && !userCanManageRecord) || disableCommunitySelectionButton;
 
     return (
       showCommunityHeader && (
@@ -82,7 +89,7 @@ class CommunityHeaderComponent extends Component {
                         <Overridable id="InvenioRdmRecords.CommunityHeader.CommunitySelectionButton.Container">
                           <Button
                             className="community-header-button"
-                            disabled={disableCommunitySelectionButton}
+                            disabled={isCommunitySelectionDisabled}
                             onClick={() => this.setState({ modalOpen: true })}
                             primary
                             size="mini"
@@ -110,7 +117,7 @@ class CommunityHeaderComponent extends Component {
                           onClick={() => changeSelectedCommunity(null)}
                           content={i18next.t("Remove")}
                           icon="close"
-                          disabled={disableCommunitySelectionButton}
+                          disabled={isCommunitySelectionDisabled}
                         />
                       )}
                     </Overridable>
@@ -133,6 +140,7 @@ CommunityHeaderComponent.propTypes = {
   showCommunityHeader: PropTypes.bool.isRequired,
   changeSelectedCommunity: PropTypes.func.isRequired,
   record: PropTypes.object.isRequired,
+  userCanManageRecord: PropTypes.bool.isRequired,
 };
 
 CommunityHeaderComponent.defaultProps = {
@@ -146,6 +154,7 @@ const mapStateToProps = (state) => ({
   showCommunitySelectionButton:
     state.deposit.editorState.ui.showCommunitySelectionButton,
   showCommunityHeader: state.deposit.editorState.ui.showCommunityHeader,
+  userCanManageRecord: state.deposit.permissions.can_manage,
 });
 
 const mapDispatchToProps = (dispatch) => ({

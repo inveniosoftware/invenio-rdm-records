@@ -1,5 +1,5 @@
 // This file is part of Invenio-RDM-Records
-// Copyright (C) 2020-2023 CERN.
+// Copyright (C) 2020-2025 CERN.
 // Copyright (C) 2020-2022 Northwestern University.
 // Copyright (C)      2021 Graz University of Technology.
 //
@@ -25,6 +25,7 @@ export class AccessRightFieldCmp extends Component {
 
   render() {
     const {
+      id,
       fieldPath,
       formik, // this is our access to the shared current draft
       label,
@@ -42,7 +43,7 @@ export class AccessRightFieldCmp extends Component {
     const isMetadataOnly = !formik.form.values.files.enabled;
 
     return (
-      <Card className="access-right">
+      <Card label={label} id={id} className="access-right">
         <Form.Field required>
           <Card.Content>
             <Card.Header>
@@ -97,6 +98,7 @@ export class AccessRightFieldCmp extends Component {
 }
 
 AccessRightFieldCmp.propTypes = {
+  id: PropTypes.string,
   fieldPath: PropTypes.string.isRequired,
   formik: PropTypes.object.isRequired,
   label: PropTypes.string.isRequired,

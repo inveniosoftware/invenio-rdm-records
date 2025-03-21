@@ -1,5 +1,5 @@
 // This file is part of Invenio-RDM-Records
-// Copyright (C) 2020-2024 CERN.
+// Copyright (C) 2020-2025 CERN.
 // Copyright (C) 2020-2022 Northwestern University.
 // Copyright (C) 2021 Graz University of Technology.
 //
@@ -11,7 +11,6 @@ import PropTypes from "prop-types";
 import { getIn, FieldArray } from "formik";
 import { Button, Form, Label, List, Icon } from "semantic-ui-react";
 import _get from "lodash/get";
-import _map from "lodash/map";
 import { FieldLabel } from "react-invenio-forms";
 import { HTML5Backend } from "react-dnd-html5-backend";
 import { DndProvider } from "react-dnd";
@@ -73,25 +72,36 @@ class CreatibutorsFieldForm extends Component {
     const creatibutorsError =
       error || (creatibutorsList === formikInitialValues && initialError);
 
+    let className = "";
+    if (creatibutorsError) {
+      className =
+        typeof creatibutorsError !== "string" ? creatibutorsError.severity : "error";
+    }
+
+    let generalCreatibutorsErrorMessage;
+    if (typeof creatibutorsError === "string") {
+      generalCreatibutorsErrorMessage = creatibutorsError;
+    } else if (typeof creatibutorsError === "object") {
+      generalCreatibutorsErrorMessage = creatibutorsError?.message;
+    }
+
     return (
       <DndProvider backend={HTML5Backend}>
-        <Form.Field
-          required={schema === "creators"}
-          className={creatibutorsError ? "error" : ""}
-        >
+        <Form.Field required={schema === "creators"} className={className}>
           <FieldLabel htmlFor={fieldPath} icon={labelIcon} label={label} />
           <List>
             {creatibutorsList.map((value, index) => {
               const key = `${fieldPath}.${index}`;
-              const identifiersError =
-                creatibutorsError &&
-                creatibutorsError[index]?.person_or_org?.identifiers;
               const displayName = creatibutorNameDisplay(value);
 
               return (
                 <CreatibutorsFieldItem
                   key={key}
-                  identifiersError={identifiersError}
+                  creatibutorError={
+                    creatibutorsError &&
+                    typeof creatibutorsError !== "string" &&
+                    creatibutorsError[index]
+                  }
                   {...{
                     displayName,
                     index,
@@ -119,15 +129,15 @@ class CreatibutorsFieldForm extends Component {
             schema={schema}
             autocompleteNames={autocompleteNames}
             trigger={
-              <Button type="button" icon labelPosition="left">
+              <Button type="button" icon labelPosition="left" className={className}>
                 <Icon name="add" />
                 {addButtonLabel}
               </Button>
             }
           />
-          {creatibutorsError && typeof creatibutorsError == "string" && (
+          {generalCreatibutorsErrorMessage && (
             <Label pointing="left" prompt>
-              {creatibutorsError}
+              {generalCreatibutorsErrorMessage}
             </Label>
           )}
         </Form.Field>
