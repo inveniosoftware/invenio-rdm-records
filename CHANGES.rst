@@ -12,6 +12,10 @@
 Changes
 =======
 
+Version v17.4.1 (released 2025-03-24)
+
+- deposit-ui: fix: do not consider new error format's description as a field
+
 Version v17.4.0 (released 2025-03-18)
 
 - deposit-ui: Support new error format with severity and description
