@@ -9,9 +9,10 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
 import { getIn, FieldArray } from "formik";
-import { Button, Form, Label, List, Icon } from "semantic-ui-react";
+import { Button, Form, List, Icon } from "semantic-ui-react";
 import _get from "lodash/get";
-import { FieldLabel } from "react-invenio-forms";
+import { FeedbackLabel, FieldLabel } from "react-invenio-forms";
+
 import { HTML5Backend } from "react-dnd-html5-backend";
 import { DndProvider } from "react-dnd";
 
@@ -78,11 +79,18 @@ class CreatibutorsFieldForm extends Component {
         typeof creatibutorsError !== "string" ? creatibutorsError.severity : "error";
     }
 
-    let generalCreatibutorsErrorMessage;
+    // Check if there is a general error (since there can also be errors for specific creatibutors).
+    let generalCreatibutorsError;
     if (typeof creatibutorsError === "string") {
-      generalCreatibutorsErrorMessage = creatibutorsError;
+      // If there is a string at the top level, it means that this is a general error.
+      generalCreatibutorsError = creatibutorsError;
     } else if (typeof creatibutorsError === "object") {
-      generalCreatibutorsErrorMessage = creatibutorsError?.message;
+      // If there is an object at the top level, try to extract the new error format.
+      generalCreatibutorsError = {
+        message: creatibutorsError?.message,
+        severity: creatibutorsError?.severity,
+        description: creatibutorsError?.description,
+      };
     }
 
     return (
@@ -135,10 +143,8 @@ class CreatibutorsFieldForm extends Component {
               </Button>
             }
           />
-          {generalCreatibutorsErrorMessage && (
-            <Label pointing="left" prompt>
-              {generalCreatibutorsErrorMessage}
-            </Label>
+          {generalCreatibutorsError && (
+            <FeedbackLabel errorMessage={generalCreatibutorsError} />
           )}
         </Form.Field>
       </DndProvider>
