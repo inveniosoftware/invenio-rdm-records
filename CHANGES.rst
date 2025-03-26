@@ -12,7 +12,7 @@
 Changes
 =======
 
-Version v17.5.0 (released 2025-03-26)
+Version v18.0.0 (released 2025-03-26)
 
 deposit-ui: creatibutors: support general new error format with severity (fix null)
 deposit-ui: creatibutors: support general new error format with severity
