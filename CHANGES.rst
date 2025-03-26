@@ -12,6 +12,14 @@
 Changes
 =======
 
+Version v17.5.0 (released 2025-03-26)
+
+deposit-ui: creatibutors: support general new error format with severity (fix null)
+deposit-ui: creatibutors: support general new error format with severity
+deposit-ui: fix: do not consider new error format's description as a field
+thesis: add department and type (breaking change)
+imprint: add edition
+
 Version v17.4.0 (released 2025-03-18)
 
 - deposit-ui: Support new error format with severity and description
