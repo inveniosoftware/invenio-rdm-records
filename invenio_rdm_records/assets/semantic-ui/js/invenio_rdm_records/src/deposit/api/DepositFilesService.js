@@ -85,7 +85,15 @@ export class DepositFilesService {
     this.progressNotifier = progressNotifier;
   }
 
+  async initializeUpload(initializeUploadURL, file) {
+    throw new Error("Not implemented.");
+  }
+
   async upload(initializeUploadURL, file, progressNotifier) {
+    throw new Error("Not implemented.");
+  }
+
+  async finalizeUpload(commitFileURL, file) {
     throw new Error("Not implemented.");
   }
 

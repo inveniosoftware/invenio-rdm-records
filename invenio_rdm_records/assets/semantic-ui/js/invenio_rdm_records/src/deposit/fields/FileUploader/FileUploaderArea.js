@@ -258,7 +258,12 @@ FileUploadBox.defaultProps = {
   hasError: false,
 };
 
-const FilesListTable = ({ filesLocked, filesList, deleteFile, decimalSizeDisplay }) => {
+export const FilesListTable = ({
+  filesLocked,
+  filesList,
+  deleteFile,
+  decimalSizeDisplay,
+}) => {
   const { setFieldValue, values: formikDraft } = useFormikContext();
   const defaultPreview = _get(formikDraft, "files.default_preview", "");
   return (
