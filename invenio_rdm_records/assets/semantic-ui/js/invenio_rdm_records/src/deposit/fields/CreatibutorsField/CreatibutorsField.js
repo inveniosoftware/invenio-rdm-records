@@ -84,7 +84,7 @@ class CreatibutorsFieldForm extends Component {
     if (typeof creatibutorsError === "string") {
       // If there is a string at the top level, it means that this is a general error.
       generalCreatibutorsError = creatibutorsError;
-    } else if (typeof creatibutorsError === "object") {
+    } else if (typeof creatibutorsError === "object" && creatibutorsError !== null) {
       // If there is an object at the top level, try to extract the new error format.
       generalCreatibutorsError = {
         message: creatibutorsError?.message,
