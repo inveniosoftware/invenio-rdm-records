@@ -16,6 +16,7 @@ from datetime import datetime
 import arrow
 from flask import current_app
 from invenio_accounts.models import User
+from invenio_accounts.proxies import current_datastore
 from invenio_db import db
 from invenio_drafts_resources.services.records import RecordService
 from invenio_drafts_resources.services.records.uow import ParentRecordCommitOp
@@ -693,6 +694,24 @@ class RDMRecordService(RecordService):
         getattr(draft, files_attr).set_quota(
             quota_size=data["quota_size"], max_file_size=data["max_file_size"]
         )
+        return True
+
+    @unit_of_work()
+    def transfer_ownership(self, identity, id_, new_owner_id, uow=None):
+        """Transfer ownership of a record to a new user."""
+        # Get record
+        record, parent = self.access.get_parent_and_record_or_draft(id_)
+
+        # Permissions
+        self.require_permission(identity, "can_manage_quota", record=record)
+
+        # Change ownership
+        new_owner = current_datastore.get_user_by_id(new_owner_id)
+        if not new_owner:
+            raise Exception('Invalid user')
+        parent.access.owned_by =  {'user': new_owner.id}
+
+        uow.register(ParentRecordCommitOp(parent, indexer_context=dict(service=self)))
         return True
 
     #
