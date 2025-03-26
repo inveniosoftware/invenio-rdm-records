@@ -21,7 +21,6 @@ from invenio_records_resources.services.errors import (
 )
 from marshmallow.exceptions import ValidationError
 
-from invenio_rdm_records.proxies import current_rdm_records
 from invenio_rdm_records.records import RDMRecord
 from invenio_rdm_records.secret_links.permissions import LinkNeed
 
