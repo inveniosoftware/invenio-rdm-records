@@ -1,39 +1,35 @@
-#
+# 
 # Translators:
 # yyones, 2024
 # Rim Sharif, 2024
 # Tibor Simko <tibor.simko@cern.ch>, 2024
-# Sam Arbid <samaa2@kth.se>, 2024
-# Mattias Vesterlund, 2024
-#
+# Sam Arbid, 2024
+# Mattias Vesterlund, 2025
+# 
 msgid ""
 msgstr ""
 "Project-Id-Version: i18next-conv\n"
 "POT-Creation-Date: 2024-08-14T06:30:28.436Z\n"
-"PO-Revision-Date: 2024-10-01 18:21+0200\n"
-"Last-Translator: Sam Arbid <samaa2@kth.se>\n"
-"Language-Team: Swedish (https://app.transifex.com/inveniosoftware/"
-"teams/23537/sv/)\n"
-"Language: sv\n"
-"MIME-Version: 1.0\n"
+"PO-Revision-Date: 2024-08-06 08:56+0000\n"
+"Last-Translator: Mattias Vesterlund, 2025\n"
+"Language-Team: Swedish (https://app.transifex.com/inveniosoftware/teams/23537/sv/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Language: sv\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "mime-version: 1.0\n"
-"X-Generator: Poedit 3.4.4\n"
 
 msgid "Copy to clipboard"
 msgstr "Kopiera till urklipp"
 
 msgid "Copied!"
-msgstr "Kopierad!"
+msgstr "Kopierade!"
 
 msgid "This set is not editable as it was created by the system."
-msgstr "Uppsättningen är inte redigerbar eftersom den skapades av systemet."
+msgstr "Setet är inte redigerbart eftersom det skapades av systemet."
 
 msgid "This set is not deletable as it was created by the system."
-msgstr ""
-"Uppsättningen är inte möjlig att radera eftersom den skapades av systemet."
+msgstr "Setet är inte möjligt att radera eftersom det skapades av systemet."
 
 msgid "Links"
 msgstr "Länkar"
@@ -73,7 +69,7 @@ msgid "Delete {{title}}"
 msgstr "Ta bort {{title}}"
 
 msgid "This will delete the set '{{title}}'."
-msgstr "Detta kommer att radera uppsättningen '{{title}}'."
+msgstr "Detta kommer att radera setet '{{title}}'."
 
 msgid "Fetch error"
 msgstr "Fel vid hämtning"
@@ -88,7 +84,7 @@ msgid "Change"
 msgstr "Ändra"
 
 msgid "Select a community"
-msgstr "Välj ett community"
+msgstr "Välj en community"
 
 msgid "Remove"
 msgstr "Ta bort"
@@ -146,8 +142,8 @@ msgid ""
 "Community curators will review your upload. Once accepted, it will be "
 "published."
 msgstr ""
-"Communityns granskare kommer gå igenom din uppladdning. När den har "
-"godkänts kommer den att publiceras."
+"Communityns granskare kommer gå igenom din uppladdning. När den har godkänts"
+" kommer den att publiceras."
 
 msgid "Declined"
 msgstr "Avslagen"
@@ -180,14 +176,14 @@ msgstr ""
 "communityns granskare."
 
 msgid ""
-"Once your upload is complete, you can publish or submit it for review to "
-"the community curators."
+"Once your upload is complete, you can publish or submit it for review to the"
+" community curators."
 msgstr ""
 "När din uppladdning är klar kan du publicera eller skicka in den för "
 "genomgång av communityns granskare."
 
 msgid "New version draft"
-msgstr "Nytt version av utkast"
+msgstr "Utkast till ny version"
 
 msgid "Once your upload is complete, you can publish it."
 msgstr "När din uppladdning är klar kan du publicera den."
@@ -384,8 +380,8 @@ msgid ""
 "The draft was not published. Please try again. If the problem persists, "
 "contact user support."
 msgstr ""
-"Utkastet publicerades inte. Var god försök igen. Kontakta användarsupport "
-"om problemet kvarstår."
+"Utkastet publicerades inte. Var god försök igen. Kontakta användarsupport om"
+" problemet kvarstår."
 
 msgid "The draft was not published. Record saved with validation errors:"
 msgstr "Utkastet publicerades inte. Posten sparad med valideringsfel:"
@@ -463,7 +459,7 @@ msgid "Restricted"
 msgstr "Begränsad"
 
 msgid "Public with restricted files"
-msgstr "Offentlig med begränsade filer"
+msgstr "Offentlig med åtkomstbegränsade filer"
 
 msgid "Embargoed (files-only)"
 msgstr "Embargo (endast för filer)"
@@ -485,8 +481,8 @@ msgstr ""
 "<4>användare som anges</4> i behörigheterna."
 
 msgid ""
-"The record is publicly accessible. On <bold>{{ date }}</bold> the files "
-"will automatically be made publicly accessible. Until then, the files can "
+"The record is publicly accessible. On <bold>{{ date }}</bold> the files will"
+" automatically be made publicly accessible. Until then, the files can "
 "<bold>only</bold> be accessed by <bold>users specified</bold> in the "
 "permissions."
 msgstr ""
@@ -696,14 +692,14 @@ msgid "Size"
 msgstr "Storlek"
 
 msgid "Progress"
-msgstr "Framsteg"
+msgstr "Förlopp"
 
 msgid "Default preview"
 msgstr "Standardförhandsvisning"
 
 msgid ""
-"This is the file fingerprint (MD5 checksum), which can be used to verify "
-"the file integrity."
+"This is the file fingerprint (MD5 checksum), which can be used to verify the"
+" file integrity."
 msgstr ""
 "Detta är filens fingeravtryck (MD5 checksum), som kan användas för att "
 "verifiera filens integritet."
@@ -727,7 +723,7 @@ msgid "Disable files for this record"
 msgstr "Inaktivera filer för den här posten"
 
 msgid "Storage available"
-msgstr "Förvaring tillgänglig"
+msgstr "Tillgänglig lagring"
 
 msgid "{{length}} out of {{maxfiles}} files"
 msgstr "{{length}} av {{maxfiles}} filer"
@@ -742,7 +738,7 @@ msgid "Identifier"
 msgstr "Identifierare"
 
 msgid "Scheme"
-msgstr "System"
+msgstr "Schema"
 
 msgid "Do you already have a {{pidLabel}} for this upload?"
 msgstr "Har du redan en {{pidLabel}} för den här uppladdningen?"
