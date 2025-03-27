@@ -201,9 +201,13 @@ class DisconnectedFormFeedback extends Component {
       ...severityChecks,
     });
 
+    const noSeverityChecksWithErrors = Object.values(severityChecks).every(
+      (severityObject) => severityObject.severity !== "error"
+    );
+
     // Determine final feedback without reassigning
     const feedback =
-      errorSections && _isEmpty(flattenedErrors) && !_isEmpty(severityChecks)
+      errorSections && _isEmpty(flattenedErrors) && noSeverityChecksWithErrors
         ? "suggestive"
         : initialFeedback;
 
