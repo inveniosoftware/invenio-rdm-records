@@ -12,9 +12,11 @@
 Changes
 =======
 
-Version <next>
+Version v18.1.0 (released 2025-03-27)
 
 - align licenses modal with funders modal
+- use underscores for setuptools configuration instead of dashes
+- lots of translations
 
 Version v18.0.0 (released 2025-03-26)
 
