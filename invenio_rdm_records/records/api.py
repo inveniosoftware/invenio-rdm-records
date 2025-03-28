@@ -71,7 +71,7 @@ from .systemfields.draft_status import DraftStatus
 # Parent record API
 #
 class RDMParent(ParentRecordBase):
-    """Example parent record."""
+    """RDM parent record."""
 
     # Configuration
     model_cls = models.RDMParentMetadata
