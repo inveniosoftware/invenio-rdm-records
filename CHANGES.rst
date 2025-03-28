@@ -12,6 +12,10 @@
 Changes
 =======
 
+Version v17.5.0 (released 2025-03-28)
+
+- deposit-ui: show icon and tooltip for new error format with severity error
+
 Version v17.4.3 (released 2025-03-26)
 
 - deposit-ui: creatibutors: support general new error format with severity (fix null)
