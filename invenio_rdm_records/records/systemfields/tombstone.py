@@ -149,6 +149,19 @@ class Tombstone:
 class TombstoneField(SystemField):
     """System field for accessing a record's deletion status."""
 
+    def mark_to_be_removed(self, instance):
+        """Mark to be removed."""
+        if not hasattr(instance, "_obj_cache"):
+            instance._obj_cache = {}
+        instance._obj_cache["remove"] = True
+
+    def is_marked_to_be_removed(self, instance):
+        """Is marked to be removed."""
+        if not hasattr(instance, "_obj_cache"):
+            instance._obj_cache = {}
+
+        return instance._obj_cache.get("remove", False)
+
     #
     # Data descriptor methods (i.e. attribute access)
     #
@@ -165,6 +178,9 @@ class TombstoneField(SystemField):
         if tombstone is not None:
             return tombstone
 
+        if self.is_marked_to_be_removed(record):
+            return None
+
         ts_dict = record.get("tombstone", None)
         tombstone = Tombstone(ts_dict) if ts_dict else None
         self._set_cache(record, tombstone)
@@ -178,6 +194,7 @@ class TombstoneField(SystemField):
         """Set obj."""
         if value is None:
             tombstone = None
+            self.mark_to_be_removed(record)
         elif isinstance(value, dict):
             tombstone = Tombstone(value)
         elif isinstance(value, Tombstone):
@@ -187,11 +204,16 @@ class TombstoneField(SystemField):
 
         self._set_cache(record, tombstone)
 
+    def __delete__(self, record):
+        """Remove tombstone."""
+        self.mark_to_be_removed(record)
+        self._set_cache(record, None)
+
     def pre_commit(self, record):
         """Dump the configured tombstone before committing the record."""
         tombstone = self.get_obj(record)
-
         if tombstone:
             record["tombstone"] = tombstone.dump()
-        else:
+
+        if self.is_marked_to_be_removed(record):
             record.pop("tombstone", None)
