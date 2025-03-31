@@ -68,21 +68,24 @@ function normalizeLanguageCode(code) {
 
 const importLangPack = async (code) => {
   try {
-    return await import(`@uppy/locales/lib/${code}.js`).default;
+    return await import(`@uppy/locales/lib/${code}.js`);
   } catch (e) {
     console.warn(`No Uppy locale found for ${code}, falling back to en_US`);
-    return await import("@uppy/locales/lib/en_US.js").default;
+    return await import("@uppy/locales/lib/en_US.js");
   }
 };
 
 export function useUppyLocale() {
-  const [locale, setLocale] = React.useState();
+  const [locale, setLocale] = React.useState(null);
 
   React.useEffect(() => {
-    console.warn("Switching Uppy locale to ", i18next.language);
     const normalizedLangCode = normalizeLanguageCode(i18next.language);
+    console.warn("Switching Uppy locale to", normalizedLangCode);
 
-    importLangPack(normalizedLangCode).then((result) => setLocale(result));
+    importLangPack(normalizedLangCode).then((module) => {
+      const localeData = module.default ?? module;
+      setLocale(localeData);
+    });
   }, [i18next.language]);
 
   return locale;

@@ -76,8 +76,6 @@ export const UppyUploaderComponent = ({
     console.log(files, filesList.includes(file.name), filesList, file.name);
   }
 
-  console.log(i18next.language);
-
   const [uppy] = useState(
     () =>
       new Uppy({
@@ -101,6 +99,8 @@ export const UppyUploaderComponent = ({
         checkPartIntegrity: false,
       })
   );
+
+  uppy.setOptions({ locale });
 
   React.useEffect(() => {
     const dashboardPlugin = uppy.getPlugin("Dashboard");
