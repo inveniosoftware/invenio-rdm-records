@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # Copyright (C) 2023 TU Wien.
+# Copyright (C) 2025 Graz University of Technology.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
@@ -156,6 +157,10 @@ class TombstoneField(SystemField):
         if record is None:
             return self  # returns the field itself.
 
+        return self.get_obj(record, owner)
+
+    def get_obj(self, record, owner=None):
+        """Get obj."""
         tombstone = self._get_cache(record)
         if tombstone is not None:
             return tombstone
@@ -167,6 +172,10 @@ class TombstoneField(SystemField):
 
     def __set__(self, record, value):
         """Set a record's tombstone entry."""
+        self.set_obj(record, value)
+
+    def set_obj(self, record, value):
+        """Set obj."""
         if value is None:
             tombstone = None
         elif isinstance(value, dict):
@@ -180,7 +189,8 @@ class TombstoneField(SystemField):
 
     def pre_commit(self, record):
         """Dump the configured tombstone before committing the record."""
-        tombstone = self._get_cache(record)
+        tombstone = self.get_obj(record)
+
         if tombstone:
             record["tombstone"] = tombstone.dump()
         else:
