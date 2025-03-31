@@ -46,7 +46,8 @@ export const FileUploaderComponent = ({
   ...uiProps
 }) => {
   // We extract the working copy of the draft stored as `values` in formik
-  const { values: formikDraft } = useFormikContext();
+  const { values: formikDraft, errors, initialErrors } = useFormikContext();
+  const hasError = (errors.files || initialErrors?.files) && files;
   const { filesList, filesNamesSet, filesSize } = useFilesList(files);
 
   const filesEnabled = _get(formikDraft, "files.enabled", false);
