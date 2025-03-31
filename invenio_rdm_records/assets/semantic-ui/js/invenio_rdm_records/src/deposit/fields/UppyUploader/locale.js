@@ -68,10 +68,10 @@ function normalizeLanguageCode(code) {
 
 const importLangPack = async (code) => {
   try {
-    return await import(`@uppy/locales/lib/${code}`).default;
+    return await import(`@uppy/locales/lib/${code}.js`).default;
   } catch (e) {
     console.warn(`No Uppy locale found for ${code}, falling back to en_US`);
-    return await import("@uppy/locales/lib/en_US").default;
+    return await import("@uppy/locales/lib/en_US.js").default;
   }
 };
 
