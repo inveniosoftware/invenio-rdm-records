@@ -43,6 +43,9 @@ export class DepositFormApp extends Component {
           props.config.custom_fields.vocabularies
         );
 
+    const { service: customFilesService, apiClient: customFileApiClient } =
+      window.invenio?.files || {};
+
     const apiHeaders = props.config.apiHeaders ? props.config.apiHeaders : null;
     const additionalApiConfig = { headers: apiHeaders };
 

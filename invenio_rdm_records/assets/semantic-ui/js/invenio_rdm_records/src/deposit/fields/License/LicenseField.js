@@ -1,5 +1,5 @@
 // This file is part of Invenio-RDM-Records
-// Copyright (C) 2020-2023 CERN.
+// Copyright (C) 2020-2025 CERN.
 // Copyright (C) 2020-2022 Northwestern University.
 // Copyright (C) 2021 Graz University of Technology.
 //
@@ -12,7 +12,7 @@ import PropTypes from "prop-types";
 import { getIn, FieldArray } from "formik";
 import { HTML5Backend } from "react-dnd-html5-backend";
 import { DndProvider } from "react-dnd";
-import { FieldLabel } from "react-invenio-forms";
+import { FieldLabel, FeedbackLabel } from "react-invenio-forms";
 import { Button, Form, Icon, List } from "semantic-ui-react";
 
 import { LicenseModal } from "./LicenseModal";
@@ -61,7 +61,7 @@ class LicenseFieldForm extends Component {
       labelIcon,
       fieldPath,
       uiFieldPath,
-      form: { values },
+      form: { values, errors, initialErrors, initialValues },
       move: formikArrayMove,
       push: formikArrayPush,
       remove: formikArrayRemove,
@@ -73,9 +73,21 @@ class LicenseFieldForm extends Component {
 
     const uiRights = getIn(values, uiFieldPath, []);
 
+    const licenseList = getIn(values, fieldPath, []);
+    const formikInitialValues = getIn(initialValues, fieldPath, []);
+
+    const error = getIn(errors, fieldPath, null);
+    const initialError = getIn(initialErrors, fieldPath, null);
+    const licenseError = error || (licenseList === formikInitialValues && initialError);
+
+    let className = "";
+    if (licenseError) {
+      className = typeof licenseError !== "string" ? licenseError.severity : "error";
+    }
+
     return (
       <DndProvider backend={HTML5Backend}>
-        <Form.Field required={required}>
+        <Form.Field required={required} className={className}>
           <FieldLabel htmlFor={fieldPath} icon={labelIcon} label={label} />
           <List>
             {getIn(values, fieldPath, []).map((value, index) => {
@@ -96,7 +108,13 @@ class LicenseFieldForm extends Component {
           <LicenseModal
             searchConfig={searchConfig}
             trigger={
-              <Button type="button" key="standard" icon labelPosition="left">
+              <Button
+                type="button"
+                key="standard"
+                icon
+                labelPosition="left"
+                className={className}
+              >
                 <Icon name="add" />
                 {i18next.t("Add standard")}
               </Button>
@@ -111,7 +129,13 @@ class LicenseFieldForm extends Component {
           <LicenseModal
             searchConfig={searchConfig}
             trigger={
-              <Button type="button" key="custom" icon labelPosition="left">
+              <Button
+                type="button"
+                key="custom"
+                icon
+                labelPosition="left"
+                className={className}
+              >
                 <Icon name="add" />
                 {i18next.t("Add custom")}
               </Button>
@@ -122,6 +146,7 @@ class LicenseFieldForm extends Component {
             mode="custom"
             action="add"
           />
+          {licenseError && <FeedbackLabel errorMessage={licenseError} />}
         </Form.Field>
       </DndProvider>
     );

@@ -57,6 +57,7 @@ def test_draft_links(client, draft_json, minimal_record, headers):
         "self": f"https://127.0.0.1:5000/api/records/{pid_value}/draft",
         "review": f"https://127.0.0.1:5000/api/records/{pid_value}/draft/review",  # noqa
         "self_html": f"https://127.0.0.1:5000/uploads/{pid_value}",
+        "preview_html": f"https://127.0.0.1:5000/records/{pid_value}?preview=1",
         "publish": f"https://127.0.0.1:5000/api/records/{pid_value}/draft/actions/publish",  # noqa
         "record": f"https://127.0.0.1:5000/api/records/{pid_value}",
         "record_html": f"https://127.0.0.1:5000/records/{pid_value}",
@@ -95,6 +96,7 @@ def test_record_links(client, published_json, headers):
     expected_links = {
         "self": f"https://127.0.0.1:5000/api/records/{pid_value}",
         "self_html": f"https://127.0.0.1:5000/records/{pid_value}",
+        "preview_html": f"https://127.0.0.1:5000/records/{pid_value}?preview=1",
         "doi": f"https://handle.stage.datacite.org/{doi_value}",
         "self_doi": f"https://handle.stage.datacite.org/{doi_value}",
         "self_doi_html": f"https://127.0.0.1:5000/doi/{doi_value}",

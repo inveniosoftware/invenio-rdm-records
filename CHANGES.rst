@@ -12,6 +12,19 @@
 Changes
 =======
 
+Version v17.4.0 (released 2025-03-18)
+
+- deposit-ui: Support new error format with severity and description
+  - FeedbackLabel for creatibutors and license
+
+Version v17.3.0 (released 2025-03-11)
+
+- resources: add param to filter shared with my uploads
+  - returns record needs on entity resolution
+  - reindex associated request on parent access changes
+- service: change community submission actions on who can manage
+- links: add preview_html link
+
 Version v17.2.0 (released 2025-03-10)
 
 - views: signposting: files: fix filename encoding issues for downloads

@@ -1,5 +1,5 @@
 // This file is part of Invenio-RDM-Records
-// Copyright (C) 2020-2024 CERN.
+// Copyright (C) 2020-2025 CERN.
 // Copyright (C) 2020-2022 Northwestern University.
 // Copyright (C) 2021 New York University.
 //
@@ -11,12 +11,13 @@ import _get from "lodash/get";
 import React from "react";
 import { useDrag, useDrop } from "react-dnd";
 import { Button, Label, List, Ref } from "semantic-ui-react";
+import { FeedbackLabel } from "react-invenio-forms";
 import { CreatibutorsModal } from "./CreatibutorsModal";
 import PropTypes from "prop-types";
 
 export const CreatibutorsFieldItem = ({
   compKey,
-  identifiersError,
+  creatibutorError,
   index,
   replaceCreatibutor,
   removeCreatibutor,
@@ -66,9 +67,6 @@ export const CreatibutorsFieldItem = ({
       return <Label size="tiny">{friendlyRole}</Label>;
     }
   };
-  const firstError =
-    identifiersError &&
-    identifiersError.find((elem) => ![undefined, null].includes(elem));
 
   // Initialize the ref explicitely
   drop(dropRef);
@@ -143,11 +141,7 @@ export const CreatibutorsFieldItem = ({
                 {displayName} {renderRole(initialCreatibutor?.role, roleOptions)}
               </span>
             </List.Description>
-            {firstError && (
-              <Label pointing="left" prompt>
-                {firstError.scheme ? firstError.scheme : "Invalid identifiers"}
-              </Label>
-            )}
+            {creatibutorError && <FeedbackLabel errorMessage={creatibutorError} />}
           </List.Content>
         </Ref>
       </List.Item>
@@ -157,7 +151,7 @@ export const CreatibutorsFieldItem = ({
 
 CreatibutorsFieldItem.propTypes = {
   compKey: PropTypes.string.isRequired,
-  identifiersError: PropTypes.array,
+  creatibutorError: PropTypes.array,
   index: PropTypes.number.isRequired,
   replaceCreatibutor: PropTypes.func.isRequired,
   removeCreatibutor: PropTypes.func.isRequired,
@@ -172,7 +166,7 @@ CreatibutorsFieldItem.propTypes = {
 };
 
 CreatibutorsFieldItem.defaultProps = {
-  identifiersError: undefined,
+  creatibutorError: undefined,
   addLabel: undefined,
   editLabel: undefined,
   displayName: undefined,

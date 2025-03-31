@@ -21,7 +21,6 @@ from invenio_records_resources.services.errors import (
 )
 from marshmallow.exceptions import ValidationError
 
-from invenio_rdm_records.proxies import current_rdm_records
 from invenio_rdm_records.records import RDMRecord
 from invenio_rdm_records.secret_links.permissions import LinkNeed
 
@@ -125,7 +124,7 @@ def test_permission_levels(service, restricted_record, identity_simple, client):
     pytest.raises(PermissionDeniedError, service.new_version, anon, id_)
     pytest.raises(PermissionDeniedError, service.publish, anon, id_)
     with pytest.raises(PermissionDeniedError):
-        service.draft_files.init_files(anon, id_, {})
+        service.draft_files.init_files(anon, id_, [{"key": "test.pdf"}])
     with pytest.raises(PermissionDeniedError):
         service.draft_files.update_file_metadata(anon, id_, "test.pdf", {})
     with pytest.raises(PermissionDeniedError):
