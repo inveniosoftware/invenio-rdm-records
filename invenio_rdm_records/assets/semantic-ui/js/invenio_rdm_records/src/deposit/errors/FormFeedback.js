@@ -217,7 +217,7 @@ class DisconnectedFormFeedback extends Component {
     const { icon, type } = feedbackConfig[feedback] || {};
 
     return (
-      <Message visible {...{ [type]: true }} className="flashed top attached">
+      <Message visible {...{ [type]: true }} className="flashed top attached" id={type + "-feedback-div"}>
         <Grid container>
           <Grid.Column width={15} textAlign="left">
             <strong>
