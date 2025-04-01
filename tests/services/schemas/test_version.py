@@ -13,7 +13,7 @@ from marshmallow import ValidationError
 from invenio_rdm_records.services.schemas.metadata import MetadataSchema
 
 
-@pytest.mark.parametrize("version", [("v1.0.0")])
+@pytest.mark.parametrize("version", ["v1.0.0"])
 def test_valid_version(version, app, minimal_record):
     metadata = minimal_record["metadata"]
     metadata["version"] = version
