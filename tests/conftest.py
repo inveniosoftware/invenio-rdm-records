@@ -355,6 +355,10 @@ def app_config(app_config, mock_datacite_client):
         ServiceResultResolver(service_id="request_events", type_key="request_event"),
     ]
 
+    # Specifying a notifications settings view function to trigger registration of route
+    # needed for invenio_url_for
+    app_config["NOTIFICATIONS_SETTINGS_VIEW_FUNCTION"] = lambda: "<index>"
+
     # Extending preferences schemas, to include notification preferences. Should not matter for most test cases
     app_config["ACCOUNTS_USER_PREFERENCES_SCHEMA"] = (
         UserPreferencesNotificationsSchema()
@@ -377,12 +381,25 @@ def app_config(app_config, mock_datacite_client):
     }
 
     app_config["USERS_RESOURCES_GROUPS_ENABLED"] = True
+    app_config["THEME_FRONTPAGE"] = False
 
     return app_config
 
 
 @pytest.fixture(scope="module")
-def create_app(instance_path):
+def extra_entry_points():
+    """Extra entrypoints."""
+    return {
+        "invenio_base.blueprints": [
+            "invenio_app_rdm_records = tests.mock_module:create_invenio_app_rdm_records_blueprint",  # noqa
+            "invenio_app_rdm_requests = tests.mock_module:create_invenio_app_rdm_requests_blueprint",  # noqa
+            "invenio_app_rdm_communities = tests.mock_module:create_invenio_app_rdm_communities_blueprint",  # noqa
+        ],
+    }
+
+
+@pytest.fixture(scope="module")
+def create_app(instance_path, entry_points):
     """Application factory fixture."""
     return _create_app
 
