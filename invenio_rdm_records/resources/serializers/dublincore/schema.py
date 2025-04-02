@@ -9,8 +9,8 @@
 
 import bleach
 import idutils
-from flask import current_app
 from flask_resources.serializers import BaseSerializerSchema
+from invenio_base import invenio_url_for
 from marshmallow import fields, missing
 from pydash import py_
 
@@ -103,7 +103,11 @@ class DublinCoreSchema(BaseSerializerSchema, CommonFieldsMixin):
         communities = obj.get("parent", {}).get("communities", {}).get("entries", [])
         for community in communities:
             slug = community["slug"]
-            url = f"{current_app.config['SITE_UI_URL']}/communities/{slug}"
+            url = invenio_url_for(
+                "invenio_app_rdm_communities.communities_home",
+                pid_value=slug,
+            )
+
             rels.append(self._transform_identifier(url, "url"))
 
         # Parent doi

@@ -73,10 +73,23 @@ def test_file_links_depending_on_file_extensions(
     file_id = "test_image.png"
     recid = publish_record_with_images(client, file_id, minimal_record, headers)
     response = client.get(f"/records/{recid}/files/{file_id}")
-    assert "iiif_canvas" in response.json["links"]
-    assert "iiif_base" in response.json["links"]
-    assert "iiif_info" in response.json["links"]
-    assert "iiif_api" in response.json["links"]
+    links = response.json["links"]
+    assert (
+        f"https://127.0.0.1:5000/api/iiif/record:{recid}/canvas/{file_id}"
+        == links["iiif_canvas"]
+    )
+    assert (
+        f"https://127.0.0.1:5000/api/iiif/record:{recid}:{file_id}"
+        == links["iiif_base"]
+    )
+    assert (
+        f"https://127.0.0.1:5000/api/iiif/record:{recid}:{file_id}/info.json"
+        == links["iiif_info"]
+    )
+    assert (
+        f"https://127.0.0.1:5000/api/iiif/record:{recid}:{file_id}/full/full/0/default.png"
+        == links["iiif_api"]
+    )
 
     ## Testing with filename with a slash ##
 
@@ -105,7 +118,7 @@ def test_iiif_base(
     ## Testing with filename with a slash and a "#" ##
 
     file_id = "test/#image.png"
-    encoded_file_id = "test%2F%23image.png"
+    encoded_file_id = "test/%23image.png"
     recid = publish_record_with_images(client, file_id, minimal_record, headers)
 
     response = client.get(f"/iiif/record:{recid}:{encoded_file_id}")
@@ -143,7 +156,7 @@ def test_iiif_info(
     ## Testing with filename with a slash and a "#" ##
 
     file_id = "test/#image.png"
-    encoded_file_id = "test%2F%23image.png"
+    encoded_file_id = "test/%23image.png"
     recid = publish_record_with_images(client, file_id, minimal_record, headers)
     response = client.get(f"/iiif/record:{recid}:{encoded_file_id}/info.json")
     assert response.status_code == 200

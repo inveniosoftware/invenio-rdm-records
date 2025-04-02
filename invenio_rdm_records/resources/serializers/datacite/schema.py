@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # Copyright (C) 2021-2024 CERN.
-# Copyright (C) 2021 Northwestern University.
+# Copyright (C) 2021-2025 Northwestern University.
 # Copyright (C) 2023 Graz University of Technology.
 # Copyright (C) 2023 Caltech.
 #
@@ -15,6 +15,7 @@ from edtf.parser.grammar import ParseException
 from flask import current_app
 from flask_resources.serializers import BaseSerializerSchema
 from invenio_access.permissions import system_identity
+from invenio_base import invenio_url_for
 from invenio_i18n import lazy_gettext as _
 from marshmallow import Schema, ValidationError, fields, missing, post_dump, validate
 from marshmallow_utils.fields import SanitizedUnicode
@@ -458,7 +459,9 @@ class DataCite43Schema(BaseSerializerSchema):
         communities = obj.get("parent", {}).get("communities", {}).get("entries", [])
         for community in communities:
             slug = community.get("slug")
-            url = f"{current_app.config['SITE_UI_URL']}/communities/{slug}"
+            url = invenio_url_for(
+                "invenio_app_rdm_communities.communities_home", pid_value=slug
+            )
             serialized_identifiers.append(
                 {
                     "relatedIdentifier": url,
