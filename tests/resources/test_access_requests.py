@@ -102,6 +102,13 @@ def test_simple_guest_access_request_flow(running_app, client, users, minimal_re
         submit_message = outbox[1]
         # TODO: update to `req["links"]["self_html"]` when addressing https://github.com/inveniosoftware/invenio-rdm-records/issues/1327
         assert "/me/requests/{}".format(request.id) in submit_message.html
+        # Following is a 1-off test of invenio_url_for in Jinja settings + dynamic
+        # blueprint route registration (decorator style within a function). Good to keep
+        # as a smoke test.
+        assert (
+            "https://127.0.0.1:5000/account/settings/notifications"
+            in submit_message.html
+        )
 
         # Accept the request
         # This is expected to send out another email, containing the new secret link

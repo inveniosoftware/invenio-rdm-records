@@ -34,10 +34,7 @@ from invenio_drafts_resources.services.records.config import (
 from invenio_drafts_resources.services.records.search_params import AllVersionsParam
 from invenio_indexer.api import RecordIndexer
 from invenio_records_resources.services import (
-    ConditionalLink,
     FileServiceConfig,
-    RecordLink,
-    pagination_links,
 )
 from invenio_records_resources.services.base.config import (
     ConfiguratorMixin,
@@ -47,18 +44,19 @@ from invenio_records_resources.services.base.config import (
     ServiceConfig,
 )
 from invenio_records_resources.services.base.links import (
-    Link,
+    ConditionalLink,
+    EndpointLink,
+    ExternalLink,
     NestedLinks,
-    preprocess_vars,
 )
-from invenio_records_resources.services.files.links import FileLink
+from invenio_records_resources.services.files.links import FileEndpointLink
 from invenio_records_resources.services.files.schema import FileSchema
 from invenio_records_resources.services.records.config import (
     RecordServiceConfig as BaseRecordServiceConfig,
 )
 from invenio_records_resources.services.records.links import (
-    RecordLink,
-    pagination_links,
+    RecordEndpointLink,
+    pagination_endpoint_links,
 )
 from invenio_records_resources.services.records.params import (
     FacetsParam,
@@ -188,25 +186,6 @@ def get_record_thumbnail_file(record, **kwargs):
         return file_key
 
 
-class RecordPIDLink(Link):
-    """Record PID link."""
-
-    def vars(self, record, vars):
-        """Add record PID to vars."""
-        vars.update(
-            {
-                f"pid_{scheme}": pid["identifier"]
-                for (scheme, pid) in record.pids.items()
-            }
-        )
-        vars.update(
-            {
-                f"parent_pid_{scheme}": pid["identifier"]
-                for (scheme, pid) in record.parent.pids.items()
-            }
-        )
-
-
 #
 # Default search configuration
 #
@@ -255,6 +234,214 @@ class RDMSearchVersionsOptions(SearchVersionsOptions, SearchOptionsMixin):
     ] + SearchVersionsOptions.params_interpreters_cls
 
 
+#
+# Helper link definitions
+#
+
+
+class RecordPIDLink(ExternalLink):
+    """Record external PID link."""
+
+    def vars(self, record, vars):
+        """Add record PID to vars."""
+        vars.update(
+            {
+                f"pid_{scheme}": pid["identifier"]
+                for (scheme, pid) in record.pids.items()
+            }
+        )
+        vars.update(
+            {
+                f"parent_pid_{scheme}": pid["identifier"]
+                for (scheme, pid) in record.parent.pids.items()
+            }
+        )
+
+
+class ThumbnailLinks:
+    """RDM thumbnail links dictionary.
+
+    Adopts the interface of an EndpointLink but not one.
+    """
+
+    link_for_thumbnail = EndpointLink(
+        "iiif.image_api",
+        params=["uuid", "region", "size", "rotation", "quality", "image_format"],
+    )
+
+    def __init__(self, sizes=None, when=None):
+        """Constructor."""
+        self._sizes = sizes
+        self._when_func = when
+
+    def should_render(self, obj, context):
+        """Determine if the dictionary of links should be rendered."""
+        if self._when_func:
+            return bool(self._when_func(obj, context))
+        else:
+            return True
+
+    def expand(self, obj, context):
+        """Expand the thumbs size dictionary of URIs."""
+        vars = {}
+        vars.update(deepcopy(context))
+        record = obj
+        pid_value = record.pid.pid_value
+        file_key = get_record_thumbnail_file(record=record)
+        vars.update(
+            {
+                "uuid": f"record:{pid_value}:{file_key}",
+                "region": "full",
+                "rotation": "0",
+                "quality": "default",
+                "image_format": "jpg",
+            }
+        )
+        links = {}
+        for size in self._sizes:
+            vars["size"] = f"^{size},"  # IIIF syntax
+            links[str(size)] = self.link_for_thumbnail.expand(record, vars)
+        return links
+
+
+record_doi_link = ConditionalLink(
+    cond=is_datacite_test,
+    if_=RecordPIDLink("https://handle.stage.datacite.org/{+pid_doi}", when=has_doi),
+    else_=RecordPIDLink("https://doi.org/{+pid_doi}", when=has_doi),
+)
+
+
+def vars_preview_html(drafcord, vars):
+    """Update vars in place for variable expansion."""
+    vars_args = vars.setdefault("args", {})
+    vars_args["preview"] = 1
+
+
+def get_pid_value(drafcord):
+    """Get the pid_value or None of draft or record."""
+    return getattr(drafcord.pid, "pid_value", None)
+
+
+def is_record_or_draft(drafcord):
+    """Return if input is a draft or a record."""
+    return "record" if is_record(drafcord, {}) else "draft"
+
+
+def get_iiif_uuid_of_drafcord_from_file_drafcord(file_drafcord, vars):
+    """Return IIIF uuid of draft or record associated with RDMFile{Record,Draft}."""
+    # Rely on being called with a context (vars) containing pid_value
+    # which was a pre-existing assumption at time of writing
+    r_or_d = is_record_or_draft(file_drafcord.record)
+    return f"{r_or_d}:{vars['pid_value']}"
+
+
+def get_iiif_uuid_of_file_drafcord(file_drafcord, vars):
+    """Return IIIF uuid of a RDMFileRecord or RDMFileDraft."""
+    # Rely on being called with a context (vars) containing pid_value
+    # which was a pre-existing assumption at time of writing
+    prefix = get_iiif_uuid_of_drafcord_from_file_drafcord(file_drafcord, vars)
+    return f"{prefix}:{file_drafcord.key}"
+
+
+def get_iiif_uuid_of_drafcord(drafcord, vars):
+    """Return IIIF uuid of draft or record."""
+    # Rely on being called with a context (vars) containing pid_value
+    # which was a pre-existing assumption at time of writing
+    r_or_d = is_record_or_draft(drafcord)
+    return f"{r_or_d}:{vars['pid_value']}"
+
+
+def vars_self_iiif(drafcord, vars):
+    """Update in-place `vars` with variables for endpoint expansion."""
+    # In this context -generating links from a resource retrieved by its pid_value-
+    # a pid_value is necessarily present
+    vars["pid_value"] = drafcord.pid.pid_value
+    vars["uuid"] = get_iiif_uuid_of_drafcord(drafcord, vars)
+
+
+def get_file_links_list(name_of_blueprint):
+    """Generate dict of file_links_list."""
+    # Note: file_links_list are passed their record's `pid_value` via
+    # `FileService.file_links_list_tpl` which takes it from the relevant
+    # method's input. Therefore we don't pass a vars func for `pid_value`.
+    return {
+        "self": EndpointLink(f"{name_of_blueprint}.search", params=["pid_value"]),
+        "archive": EndpointLink(
+            f"{name_of_blueprint}.read_archive",
+            params=["pid_value"],
+            when=archive_download_enabled,
+        ),
+    }
+
+
+def get_file_links_item(name_of_blueprint):
+    """Generate dict of file_links_item."""
+    # Note: file_links_item are passed their record's `pid_value` via
+    # `FileService.file_links_list_tpl` which takes it from the relevant
+    # method's input. Therefore we don't pass a vars func for `pid_value`.
+    return {
+        "self": FileEndpointLink(
+            f"{name_of_blueprint}.read", params=["pid_value", "key"]
+        ),
+        "content": FileEndpointLink(
+            f"{name_of_blueprint}.read_content",
+            params=["pid_value", "key"],
+        ),
+        "commit": FileEndpointLink(
+            f"{name_of_blueprint}.create_commit",
+            params=["pid_value", "key"],
+            when=lambda file_drafcord, ctx: is_draft(file_drafcord.record, ctx),
+        ),
+        "iiif_canvas": FileEndpointLink(
+            "iiif.canvas",
+            params=["uuid", "file_name"],
+            when=is_iiif_compatible,
+            vars=lambda file_drafcord, vars: vars.update(
+                {
+                    "uuid": get_iiif_uuid_of_drafcord_from_file_drafcord(
+                        file_drafcord, vars
+                    ),
+                    "file_name": vars["key"],  # Because of FileEndpointLink
+                }
+            ),
+        ),
+        "iiif_base": EndpointLink(
+            "iiif.base",
+            params=["uuid"],
+            when=is_iiif_compatible,
+            vars=lambda file_drafcord, vars: vars.update(
+                {"uuid": get_iiif_uuid_of_file_drafcord(file_drafcord, vars)}
+            ),
+        ),
+        "iiif_info": EndpointLink(
+            "iiif.info",
+            params=["uuid"],
+            when=is_iiif_compatible,
+            vars=lambda file_drafcord, vars: vars.update(
+                {"uuid": get_iiif_uuid_of_file_drafcord(file_drafcord, vars)}
+            ),
+        ),
+        "iiif_api": EndpointLink(
+            "iiif.image_api",
+            params=["uuid", "region", "size", "rotation", "quality", "image_format"],
+            when=is_iiif_compatible,
+            vars=lambda file_drafcord, vars: vars.update(
+                {
+                    "uuid": get_iiif_uuid_of_file_drafcord(file_drafcord, vars),
+                    "region": "full",
+                    "size": "full",
+                    "rotation": "0",
+                    "quality": "default",
+                    "image_format": "png",
+                }
+            ),
+        ),
+    }
+
+
+#
+# Default service configuration
+#
 class RDMRecordCommunitiesConfig(ServiceConfig, ConfiguratorMixin):
     """Record communities service config."""
 
@@ -298,9 +485,6 @@ class RDMRecordRequestsConfig(ServiceConfig, ConfiguratorMixin):
     index_dumper = None
 
 
-#
-# Default service configuration
-#
 class RDMFileRecordServiceConfig(FileServiceConfig, ConfiguratorMixin):
     """Configuration for record files."""
 
@@ -312,84 +496,14 @@ class RDMFileRecordServiceConfig(FileServiceConfig, ConfiguratorMixin):
 
     max_files_count = FromConfig("RDM_RECORDS_MAX_FILES_COUNT", 100)
 
-    file_links_list = {
-        "self": RecordLink("{+api}/records/{id}/files"),
-        "archive": RecordLink(
-            "{+api}/records/{id}/files-archive",
-            when=archive_download_enabled,
-        ),
-    }
-
-    file_links_item = {
-        "self": FileLink("{+api}/records/{id}/files/{+key}"),
-        "content": FileLink("{+api}/records/{id}/files/{+key}/content"),
-        # FIXME: filename instead
-        "iiif_canvas": FileLink(
-            "{+api}/iiif/record:{id}/canvas/{key}", when=is_iiif_compatible
-        ),
-        "iiif_base": FileLink("{+api}/iiif/record:{id}:{key}", when=is_iiif_compatible),
-        "iiif_info": FileLink(
-            "{+api}/iiif/record:{id}:{key}/info.json", when=is_iiif_compatible
-        ),
-        "iiif_api": FileLink(
-            "{+api}/iiif/record:{id}:{key}/{region=full}"
-            "/{size=full}/{rotation=0}/{quality=default}.{format=png}",
-            when=is_iiif_compatible,
-        ),
-    }
+    file_links_list = get_file_links_list("record_files")
+    file_links_item = get_file_links_item("record_files")
 
     file_schema = FileSchema
 
     components = FromConfig(
         "RDM_FILES_SERVICE_COMPONENTS", default=FileServiceConfig.components
     )
-
-
-class ThumbnailLinks(RecordLink):
-    """RDM thumbnail links dictionary."""
-
-    def __init__(self, *args, sizes=None, **kwargs):
-        """Constructor."""
-        self._sizes = sizes
-        super().__init__(*args, **kwargs)
-
-    def expand(self, obj, context):
-        """Expand the thumbs size dictionary of URIs."""
-        vars = {}
-        vars.update(deepcopy(context))
-        self.vars(obj, vars)
-        if self._vars_func:
-            self._vars_func(obj, vars)
-        vars = preprocess_vars(vars)
-
-        thumbnail_links = {}
-        vars["file_key"] = get_record_thumbnail_file(record=obj)
-        for size in self._sizes:
-            vars["size"] = size
-            thumbnail_links[str(size)] = self._uritemplate.expand(**vars)
-        return thumbnail_links
-
-
-# Helper link definitions
-record_doi_link = ConditionalLink(
-    cond=is_datacite_test,
-    if_=RecordPIDLink("https://handle.stage.datacite.org/{+pid_doi}", when=has_doi),
-    else_=RecordPIDLink("https://doi.org/{+pid_doi}", when=has_doi),
-)
-record_doi_html_link = RecordPIDLink("{+ui}/doi/{+pid_doi}", when=is_record_and_has_doi)
-parent_doi_link = ConditionalLink(
-    cond=is_datacite_test,
-    if_=RecordPIDLink(
-        "https://handle.stage.datacite.org/{+parent_pid_doi}",
-        when=is_record_or_draft_and_has_parent_doi,
-    ),
-    else_=RecordPIDLink(
-        "https://doi.org/{+parent_pid_doi}", when=is_record_or_draft_and_has_parent_doi
-    ),
-)
-parent_doi_html_link = RecordPIDLink(
-    "{+ui}/doi/{+parent_pid_doi}", when=is_record_or_draft_and_has_parent_doi
-)
 
 
 class RDMRecordServiceConfig(RecordServiceConfig, ConfiguratorMixin):
@@ -481,120 +595,170 @@ class RDMRecordServiceConfig(RecordServiceConfig, ConfiguratorMixin):
         # Record
         "self": ConditionalLink(
             cond=is_record,
-            if_=RecordLink("{+api}/records/{id}"),
-            else_=RecordLink("{+api}/records/{id}/draft"),
+            if_=RecordEndpointLink("records.read"),
+            else_=RecordEndpointLink("records.read_draft"),
         ),
         "self_html": ConditionalLink(
             cond=is_record,
-            if_=RecordLink("{+ui}/records/{id}"),
-            else_=RecordLink("{+ui}/uploads/{id}"),
+            if_=RecordEndpointLink("invenio_app_rdm_records.record_detail"),
+            else_=RecordEndpointLink("invenio_app_rdm_records.deposit_edit"),
         ),
-        "preview_html": RecordLink("{+ui}/records/{id}?preview=1"),
+        "preview_html": RecordEndpointLink(
+            "invenio_app_rdm_records.record_detail",
+            vars=vars_preview_html,
+        ),
+        # DOI
         "doi": record_doi_link,
         "self_doi": record_doi_link,
-        "self_doi_html": record_doi_html_link,
+        "self_doi_html": EndpointLink(
+            "invenio_app_rdm_records.record_from_pid",
+            params=["pid_value", "pid_scheme"],
+            when=is_record_and_has_doi,
+            vars=lambda record, vars: vars.update(
+                {
+                    "pid_scheme": "doi",
+                    "pid_value": record.pids["doi"]["identifier"],
+                }
+            ),
+        ),
+        # TODO: only include link when DOI support is enabled.
+        "reserve_doi": RecordEndpointLink(
+            "records.pids_reserve",
+            params=["pid_value", "scheme"],
+            vars=lambda record, vars: vars.update({"scheme": "doi"}),
+        ),
         # Parent
-        "parent": RecordLink(
-            "{+api}/records/{+parent_id}",
+        "parent": EndpointLink(
+            "records.read",
+            params=["pid_value"],
             when=is_record,
             vars=lambda record, vars: vars.update(
-                {"parent_id": record.parent.pid.pid_value}
+                {"pid_value": record.parent.pid.pid_value}
             ),
         ),
-        "parent_html": RecordLink(
-            "{+ui}/records/{+parent_id}",
+        "parent_html": EndpointLink(
+            "invenio_app_rdm_records.record_detail",
+            params=["pid_value"],
             when=is_record,
             vars=lambda record, vars: vars.update(
-                {"parent_id": record.parent.pid.pid_value}
+                {"pid_value": record.parent.pid.pid_value}
             ),
         ),
-        "parent_doi": parent_doi_link,
-        "parent_doi_html": parent_doi_html_link,
+        "parent_doi": ConditionalLink(
+            cond=is_datacite_test,
+            if_=RecordPIDLink(
+                "https://handle.stage.datacite.org/{+parent_pid_doi}",
+                when=is_record_or_draft_and_has_parent_doi,
+            ),
+            else_=RecordPIDLink(
+                "https://doi.org/{+parent_pid_doi}",
+                when=is_record_or_draft_and_has_parent_doi,
+            ),
+        ),
+        "parent_doi_html": EndpointLink(
+            "invenio_app_rdm_records.record_from_pid",
+            params=["pid_value", "pid_scheme"],
+            when=is_record_or_draft_and_has_parent_doi,
+            vars=lambda record, vars: vars.update(
+                {
+                    "pid_scheme": "doi",
+                    "pid_value": record.parent.pids["doi"]["identifier"],
+                }
+            ),
+        ),
         # IIIF
-        "self_iiif_manifest": ConditionalLink(
-            cond=is_record,
-            if_=RecordLink("{+api}/iiif/record:{id}/manifest"),
-            else_=RecordLink("{+api}/iiif/draft:{id}/manifest"),
+        "self_iiif_manifest": EndpointLink(
+            "iiif.manifest", params=["uuid"], vars=vars_self_iiif
         ),
-        "self_iiif_sequence": ConditionalLink(
-            cond=is_record,
-            if_=RecordLink("{+api}/iiif/record:{id}/sequence/default"),
-            else_=RecordLink("{+api}/iiif/draft:{id}/sequence/default"),
+        "self_iiif_sequence": EndpointLink(
+            "iiif.sequence", params=["uuid"], vars=vars_self_iiif
         ),
         # Files
         "files": ConditionalLink(
             cond=is_record,
-            if_=RecordLink("{+api}/records/{id}/files"),
-            else_=RecordLink("{+api}/records/{id}/draft/files"),
+            if_=RecordEndpointLink("record_files.search"),
+            else_=RecordEndpointLink("draft_files.search"),
         ),
         "media_files": ConditionalLink(
             cond=is_record,
-            if_=RecordLink("{+api}/records/{id}/media-files"),
-            else_=RecordLink("{+api}/records/{id}/draft/media-files"),
+            if_=RecordEndpointLink("record_media_files.search"),
+            else_=RecordEndpointLink("draft_media_files.search"),
         ),
         "thumbnails": ThumbnailLinks(
-            "{+api}/iiif/record:{id}:{file_key}/full/^{size},/0/default.jpg",
             sizes=LocalProxy(record_thumbnail_sizes),
             when=has_image_files,
         ),
         "archive": ConditionalLink(
             cond=is_record,
-            if_=RecordLink(
-                "{+api}/records/{id}/files-archive",
+            if_=RecordEndpointLink(
+                "record_files.read_archive",
                 when=archive_download_enabled,
             ),
-            else_=RecordLink(
-                "{+api}/records/{id}/draft/files-archive",
+            else_=RecordEndpointLink(
+                "draft_files.read_archive",
                 when=archive_download_enabled,
             ),
         ),
         "archive_media": ConditionalLink(
             cond=is_record,
-            if_=RecordLink(
-                "{+api}/records/{id}/media-files-archive",
+            if_=RecordEndpointLink(
+                "record_media_files.read_archive",
                 when=archive_download_enabled,
             ),
-            else_=RecordLink(
-                "{+api}/records/{id}/draft/media-files-archive",
+            else_=RecordEndpointLink(
+                "draft_media_files.read_archive",
                 when=archive_download_enabled,
             ),
         ),
         # Versioning
-        "latest": RecordLink("{+api}/records/{id}/versions/latest", when=is_record),
-        "latest_html": RecordLink("{+ui}/records/{id}/latest", when=is_record),
-        "versions": RecordLink("{+api}/records/{id}/versions"),
-        "draft": RecordLink("{+api}/records/{id}/draft", when=is_record),
-        "record": RecordLink("{+api}/records/{id}", when=is_draft),
+        "latest": RecordEndpointLink("records.read_latest", when=is_record),
+        "latest_html": RecordEndpointLink(
+            "invenio_app_rdm_records.record_latest",
+            when=is_record,
+        ),
+        "versions": RecordEndpointLink("records.search_versions"),
+        # Corresponding Draft/Record
+        "draft": RecordEndpointLink("records.read_draft", when=is_record),
+        "record": RecordEndpointLink("records.read", when=is_draft),
         # TODO: record_html temporarily needed for DOI registration, until
         # problems with self_doi has been fixed
-        "record_html": RecordLink("{+ui}/records/{id}", when=is_draft),
-        # Actions
-        "publish": RecordLink(
-            "{+api}/records/{id}/draft/actions/publish", when=is_draft
+        "record_html": RecordEndpointLink(
+            "invenio_app_rdm_records.record_detail", when=is_draft
         ),
-        "review": RecordLink("{+api}/records/{id}/draft/review", when=is_draft),
-        "submit-review": RecordLink(
-            "{+api}/records/{id}/draft/actions/submit-review",
+        # Actions
+        "publish": RecordEndpointLink("records.publish", when=is_draft),
+        "review": RecordEndpointLink("records.review_read", when=is_draft),
+        "submit-review": RecordEndpointLink(
+            "records.review_submit",
             when=is_draft_and_has_review,
         ),
-        # TODO: only include link when DOI support is enabled.
-        "reserve_doi": RecordLink("{+api}/records/{id}/draft/pids/doi"),
         # Access
-        "access_links": RecordLink("{+api}/records/{id}/access/links"),
-        "access_grants": RecordLink("{+api}/records/{id}/access/grants"),
-        "access_users": RecordLink("{+api}/records/{id}/access/users"),
-        "access_groups": RecordLink(
-            "{+api}/records/{id}/access/groups", when=_groups_enabled
+        "access_links": RecordEndpointLink("record_links.search"),
+        "access_grants": RecordEndpointLink("record_grants.search"),
+        "access_users": RecordEndpointLink("record_user_access.search"),
+        "access_groups": RecordEndpointLink(
+            "record_group_access.search",
+            when=_groups_enabled,
         ),
-        "access_request": RecordLink("{+api}/records/{id}/access/request"),
-        "access": RecordLink("{+api}/records/{id}/access"),
+        "access_request": RecordEndpointLink("records.create_access_request"),
+        "access": RecordEndpointLink("records.update_access_settings"),
         # Communities
-        "communities": RecordLink("{+api}/records/{id}/communities"),
-        "communities-suggestions": RecordLink(
-            "{+api}/records/{id}/communities-suggestions"
+        "communities": RecordEndpointLink("record_communities.search"),
+        "communities-suggestions": RecordEndpointLink(
+            "record_communities.get_suggestions"
         ),
         # Requests
-        "requests": RecordLink("{+api}/records/{id}/requests"),
+        # Unfortunately `record_pid`` was used in `RDMRecordRequestsResourceConfig``
+        # instead of `pid_value`, so we have to pass a bespoke vars func
+        "requests": EndpointLink(
+            "record_requests.search",
+            params=["record_pid"],
+            vars=lambda record, vars: (
+                vars.update({"record_pid": get_pid_value(record)})
+                if get_pid_value(record)
+                else None
+            ),
+        ),
     }
 
     nested_links_item = [
@@ -602,7 +766,7 @@ class RDMRecordServiceConfig(RecordServiceConfig, ConfiguratorMixin):
             links=RDMFileRecordServiceConfig.file_links_item,
             key="files.entries",
             context_func=lambda identity, record, key, value: {
-                "id": record.pid.pid_value,
+                "pid_value": record.pid.pid_value,
                 "key": key,
             },
         ),
@@ -610,7 +774,7 @@ class RDMRecordServiceConfig(RecordServiceConfig, ConfiguratorMixin):
             links=RDMFileRecordServiceConfig.file_links_item,
             key="media_files.entries",
             context_func=lambda identity, record, key, value: {
-                "id": record.pid.pid_value,
+                "pid_value": record.pid.pid_value,
                 "key": key,
             },
         ),
@@ -653,8 +817,8 @@ class RDMCommunityRecordsConfig(BaseRecordServiceConfig, ConfiguratorMixin):
     # Max n. records that can be removed at once
     max_number_of_removals = 10
 
-    links_search_community_records = pagination_links(
-        "{+api}/communities/{id}/records{?args*}"
+    links_search_community_records = pagination_endpoint_links(
+        "community-records.search", params=["pid_value"]
     )
 
     links_item = RDMRecordServiceConfig.links_item
@@ -683,30 +847,8 @@ class RDMMediaFileRecordServiceConfig(FileServiceConfig, ConfiguratorMixin):
 
     max_files_count = FromConfig("RDM_RECORDS_MAX_MEDIA_FILES_COUNT", 100)
 
-    file_links_list = {
-        "self": RecordLink("{+api}/records/{id}/media-files"),
-        "archive": RecordLink(
-            "{+api}/records/{id}/media-files-archive",
-            when=archive_download_enabled,
-        ),
-    }
-
-    file_links_item = {
-        "self": FileLink("{+api}/records/{id}/media-files/{key}"),
-        "content": FileLink("{+api}/records/{id}/media-files/{key}/content"),
-        "iiif_canvas": FileLink(
-            "{+api}/iiif/record:{id}/canvas/{key}", when=is_iiif_compatible
-        ),
-        "iiif_base": FileLink("{+api}/iiif/record:{id}:{key}", when=is_iiif_compatible),
-        "iiif_info": FileLink(
-            "{+api}/iiif/record:{id}:{key}/info.json", when=is_iiif_compatible
-        ),
-        "iiif_api": FileLink(
-            "{+api}/iiif/record:{id}:{key}/{region=full}"
-            "/{size=full}/{rotation=0}/{quality=default}.{format=png}",
-            when=is_iiif_compatible,
-        ),
-    }
+    file_links_list = get_file_links_list("record_media_files")
+    file_links_item = get_file_links_item("record_media_files")
 
     file_schema = FileSchema
 
@@ -725,32 +867,8 @@ class RDMFileDraftServiceConfig(FileServiceConfig, ConfiguratorMixin):
 
     max_files_count = FromConfig("RDM_RECORDS_MAX_FILES_COUNT", 100)
 
-    file_links_list = {
-        "self": RecordLink("{+api}/records/{id}/draft/files"),
-        "archive": RecordLink(
-            "{+api}/records/{id}/draft/files-archive",
-            when=archive_download_enabled,
-        ),
-    }
-
-    file_links_item = {
-        "self": FileLink("{+api}/records/{id}/draft/files/{key}"),
-        "content": FileLink("{+api}/records/{id}/draft/files/{key}/content"),
-        "commit": FileLink("{+api}/records/{id}/draft/files/{key}/commit"),
-        # FIXME: filename instead
-        "iiif_canvas": FileLink(
-            "{+api}/iiif/draft:{id}/canvas/{key}", when=is_iiif_compatible
-        ),
-        "iiif_base": FileLink("{+api}/iiif/draft:{id}:{key}", when=is_iiif_compatible),
-        "iiif_info": FileLink(
-            "{+api}/iiif/draft:{id}:{key}/info.json", when=is_iiif_compatible
-        ),
-        "iiif_api": FileLink(
-            "{+api}/iiif/draft:{id}:{key}/{region=full}"
-            "/{size=full}/{rotation=0}/{quality=default}.{format=png}",
-            when=is_iiif_compatible,
-        ),
-    }
+    file_links_list = get_file_links_list("draft_files")
+    file_links_item = get_file_links_item("draft_files")
 
     file_schema = FileSchema
 
@@ -772,30 +890,7 @@ class RDMMediaFileDraftServiceConfig(FileServiceConfig, ConfiguratorMixin):
 
     max_files_count = FromConfig("RDM_RECORDS_MAX_MEDIA_FILES_COUNT", 100)
 
-    file_links_list = {
-        "self": RecordLink("{+api}/records/{id}/draft/media-files"),
-        "archive": RecordLink(
-            "{+api}/records/{id}/draft/media-files-archive",
-            when=archive_download_enabled,
-        ),
-    }
-
-    file_links_item = {
-        "self": FileLink("{+api}/records/{id}/draft/media-files/{key}"),
-        "content": FileLink("{+api}/records/{id}/draft/media-files/{key}/content"),
-        "commit": FileLink("{+api}/records/{id}/draft/media-files/{key}/commit"),
-        "iiif_canvas": FileLink(
-            "{+api}/iiif/draft:{id}/canvas/{key}", when=is_iiif_compatible
-        ),
-        "iiif_base": FileLink("{+api}/iiif/draft:{id}:{key}", when=is_iiif_compatible),
-        "iiif_info": FileLink(
-            "{+api}/iiif/draft:{id}:{key}/info.json", when=is_iiif_compatible
-        ),
-        "iiif_api": FileLink(
-            "{+api}/iiif/draft:{id}:{key}/{region=full}"
-            "/{size=full}/{rotation=0}/{quality=default}.{format=png}",
-            when=is_iiif_compatible,
-        ),
-    }
+    file_links_list = get_file_links_list("draft_media_files")
+    file_links_item = get_file_links_item("draft_media_files")
 
     file_schema = FileSchema

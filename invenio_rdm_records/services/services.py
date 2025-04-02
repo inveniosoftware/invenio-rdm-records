@@ -558,7 +558,8 @@ class RDMRecordService(RecordService):
             search_result,
             params,
             links_tpl=LinksTemplate(
-                self.config.links_search_versions, context={"id": id_, "args": params}
+                self.config.links_search_versions,
+                context={"pid_value": id_, "args": params},
             ),
             links_item_tpl=self.links_item_tpl,
             expandable_fields=self.expandable_fields,

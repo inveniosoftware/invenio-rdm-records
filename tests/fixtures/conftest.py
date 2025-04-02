@@ -38,6 +38,11 @@ def extra_entry_points():
             "vocabularies_A = tests.fixtures.mock_module_A.fixtures.vocabularies",
             "vocabularies_B = tests.fixtures.mock_module_B.fixtures.vocabularies",
         ],
+        "invenio_base.blueprints": [
+            "invenio_app_rdm_records = tests.mock_module:create_invenio_app_rdm_records_blueprint",  # noqa
+            "invenio_app_rdm_requests = tests.mock_module:create_invenio_app_rdm_requests_blueprint",  # noqa
+            "invenio_app_rdm_communities = tests.mock_module:create_invenio_app_rdm_communities_blueprint",  # noqa
+        ],
     }
 
 

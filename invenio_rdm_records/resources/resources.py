@@ -15,6 +15,7 @@ from functools import wraps
 
 from flask import abort, current_app, g, redirect, url_for
 from flask_resources import Resource, resource_requestctx, response_handler, route
+from invenio_base import invenio_url_for
 from invenio_drafts_resources.resources import RecordResource
 from invenio_records_resources.resources.errors import ErrorHandlersMixin
 from invenio_records_resources.resources.records.resource import (
@@ -29,8 +30,6 @@ from invenio_records_resources.resources.records.utils import search_preference
 from invenio_stats import current_stats
 from sqlalchemy.exc import NoResultFound
 
-from .urls import record_url_for
-
 
 def response_header_signposting(f):
     """Add signposting link to view's reponse headers.
@@ -44,8 +43,7 @@ def response_header_signposting(f):
     @wraps(f)
     def inner(*args, **kwargs):
         pid_value = resource_requestctx.view_args["pid_value"]
-        signposting_link = record_url_for(_app="api", pid_value=pid_value)
-
+        signposting_link = invenio_url_for("records.read", pid_value=pid_value)
         response = f(*args, **kwargs)
         if response.status_code != 200:
             return response

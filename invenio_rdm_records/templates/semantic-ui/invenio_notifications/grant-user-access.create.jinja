@@ -10,10 +10,7 @@
 {%- else -%}
     {% set shared_link = record.links.self_html %}
 {%- endif -%}
-{% set account_settings_link = "{ui}/account/settings/notifications".format(
-    ui=config.SITE_UI_URL
-    )
-%}
+{% set account_settings_link = invenio_url_for("invenio_notifications_settings.index") %}
 
 {%- block subject -%}
     {%- if record.is_published -%}
