@@ -31,6 +31,8 @@ class ProviderNotSupportedError(RDMRecordsException):
         """Initialise error."""
         super().__init__(
             _(
-                "Unknown PID provider %(provider)s for %(scheme)s", provider=provider, scheme=scheme
+                "Unknown PID provider %(provider)s for %(scheme)s",
+                provider=provider,
+                scheme=scheme,
             )
         )
