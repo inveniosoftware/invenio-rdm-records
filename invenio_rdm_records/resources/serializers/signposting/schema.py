@@ -9,9 +9,9 @@
 """Signposting schemas."""
 
 import idutils
+from invenio_base import invenio_url_for
 from marshmallow import Schema, fields, missing
 
-from ...urls import download_url_for
 from ..utils import get_vocabulary_props
 
 
@@ -83,7 +83,11 @@ class LandingPageSchema(Schema):
 
         result = [
             {
-                "href": download_url_for(pid_value=obj["id"], filename=entry["key"]),
+                "href": invenio_url_for(
+                    "invenio_app_rdm_records.record_file_download",
+                    pid_value=obj["id"],
+                    filename=entry["key"],
+                ),
                 "type": entry["mimetype"],
             }
             for entry in file_entries.values()
@@ -185,7 +189,11 @@ class ContentResourceSchema(Schema):
     def serialize_anchor(self, obj, **kwargs):
         """Serialize to download url."""
         pid_value = self.context["record_dict"]["id"]
-        return download_url_for(pid_value=pid_value, filename=obj["key"])
+        return invenio_url_for(
+            "invenio_app_rdm_records.record_file_download",
+            pid_value=pid_value,
+            filename=obj["key"],
+        )
 
     def serialize_collection(self, obj, **kwargs):
         """Serialize to record landing page url."""
