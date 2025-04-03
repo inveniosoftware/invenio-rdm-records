@@ -3,7 +3,7 @@
     Copyright (C) 2019-2025 CERN.
     Copyright (C) 2019-2024 Northwestern University.
     Copyright (C) 2024      KTH Royal Institute of Technology.
-    Copyright (C) 2024 Graz University of Technology.
+    Copyright (C) 2024-2025 Graz University of Technology.
 
     Invenio-RDM-Records is free software; you can redistribute it and/or
     modify it under the terms of the MIT License; see LICENSE file for more
@@ -11,6 +11,13 @@
 
 Changes
 =======
+
+Version v18.2.0 (released 2025-04-03)
+
+- fix: deletion_status gone after record.commit
+- fix: tombstone gone after record.commit
+- file_links: prepare for changes in invenio-records-resources
+- deposit-ui: show icon and tooltip for new error format with severity error
 
 Version v18.1.0 (released 2025-03-27)
 
