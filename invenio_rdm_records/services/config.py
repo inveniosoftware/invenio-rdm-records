@@ -384,6 +384,11 @@ class RDMRecordCommunitiesConfig(ServiceConfig, ConfiguratorMixin):
     # Max n. communities that can be removed at once
     max_number_of_removals = 10
 
+    components = FromConfig(
+        "RDM_RECORD_COMMUNITIES_SERVICE_COMPONENTS",
+        default=[],
+    )
+
 
 class RDMRecordRequestsConfig(ServiceConfig, ConfiguratorMixin):
     """Record community inclusion config."""
