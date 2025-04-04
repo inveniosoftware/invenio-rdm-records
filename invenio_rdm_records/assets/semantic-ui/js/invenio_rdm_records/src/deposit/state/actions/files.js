@@ -21,6 +21,7 @@ import { saveDraftWithUrlUpdate } from "./deposit";
 
 export const uploadFiles = (draft, files) => {
   return async (dispatch, _, config) => {
+    console.debug("[uploadFiles]:", files);
     const savedDraft = await _fileUploadSaveDraft(
       dispatch,
       draft,
@@ -36,6 +37,7 @@ export const uploadFiles = (draft, files) => {
 };
 
 export const finalizeUpload = (commitFileUrl, file) => {
+  console.debug("[finalizeUpload]:", file);
   return async (dispatch, _, config) => {
     try {
       const response = await config.service.files.finalizeUpload(commitFileUrl, file);
@@ -57,6 +59,7 @@ export const finalizeUpload = (commitFileUrl, file) => {
 };
 
 const _fileUploadSaveDraft = async (dispatch, draft, draftService) => {
+  console.debug("[_fileUploadSaveDraft]:", draft);
   const response = await saveDraftWithUrlUpdate(draft, draftService);
   // update state with created draft
   dispatch({
@@ -67,6 +70,7 @@ const _fileUploadSaveDraft = async (dispatch, draft, draftService) => {
 };
 
 export const initializeFileUpload = (draft, file) => {
+  console.debug("[initializeFileUpload]:", file);
   return async (dispatch, _, config) => {
     try {
       const savedDraft = await _fileUploadSaveDraft(
@@ -95,8 +99,8 @@ export const initializeFileUpload = (draft, file) => {
 };
 
 export const uploadFile = (draft, file, uploadUrl) => {
+  console.debug("[uploadFile]:", file);
   return async (dispatch, _, config) => {
-    let uploadFileUrl;
     try {
       console.log("uf", uploadUrl);
       config.service.files.upload(uploadUrl, file);
@@ -111,6 +115,7 @@ export const uploadFile = (draft, file, uploadUrl) => {
 };
 
 export const deleteFile = (file) => {
+  console.debug("[deleteFile]:", file);
   return async (dispatch, _, config) => {
     try {
       const fileLinks = file.links;
@@ -141,6 +146,7 @@ export const deleteFile = (file) => {
 };
 
 export const importParentFiles = () => {
+  console.debug("[importParentFiles]");
   return async (dispatch, getState, config) => {
     const draft = getState().deposit.record;
     if (!draft.id) return;
@@ -163,6 +169,7 @@ export const importParentFiles = () => {
 };
 
 export const getUploadParams = (draft, file, options) => {
+  console.debug("[getUploadParams]:", file, options);
   return async (dispatch, getState, config) => {
     const fileRecord = await dispatch(initializeFileUpload(draft, file));
     const params = await config.service.files.getUploadParams(

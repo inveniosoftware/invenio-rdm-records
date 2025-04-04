@@ -461,8 +461,7 @@ export class UppyDepositFileApiClient extends DepositFileApiClient {
       url: fileContentUrl,
       headers: {
         ...xhrHeaders,
-        // The following is hard-coded into drafts files resource
-        "Content-Type": "application/octet-stream",
+        ...this.apiHeaders["octet-stream"],
       },
     };
     return resp;
