@@ -204,7 +204,7 @@ class RDMRecordPermissionPolicy(RecordPermissionPolicy):
         IfConfig(
             "RDM_ALLOW_EXTERNAL_DOI_VERSIONING",
             then_=can_curate,
-            else_=[IfExternalDOIRecord(then_=[Disable()], else_=can_curate)],
+            else_=[IfExternalDOIRecord(then_=[SystemProcess()], else_=can_curate)],
         ),
     ]
     # Allow publishing a new record or changes to an existing record.
@@ -315,9 +315,9 @@ class RDMRecordPermissionPolicy(RecordPermissionPolicy):
     can_commit_files = [Disable()]
     can_update_files = [Disable()]
 
-    # Used to hide at the moment the `parent.is_verified` field. It should be set to
+    # Used to hide the `parent.is_verified` field. It should be set to
     # correct permissions based on which the field will be exposed only to moderators
-    can_moderate = [Disable()]
+    can_moderate = [SystemProcess()]
 
 
 guest_token = IfRequestType(
@@ -344,7 +344,7 @@ class RDMRequestsPermissionPolicy(RequestPermissionPolicy):
                 IfRequestType(
                     GuestAccessRequest,
                     then_=[Status(["submitted"], [Receiver()])],
-                    else_=Disable(),
+                    else_=SystemProcess(),
                 )
             ],
         )
