@@ -150,9 +150,10 @@ export class MultipartUploaderPlugin extends AwsS3Multipart {
     file.transferOptions = { fileSize: file.size, type: "L" };
 
     const response = await this.opts.getUploadParams(file, options);
-    file.links = response.links;
-    file.file_id = response.file_id;
-
+    this.uppy.setFileMeta(file.id, {
+      file_id: response.file_id,
+      links: response.links,
+    });
     console.log("GUP>R", file);
     return response;
   }

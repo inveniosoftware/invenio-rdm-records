@@ -238,6 +238,7 @@ export class UppyDepositFilesService extends RDMDepositFilesService {
   finalizeUpload = async (commitFileURL, file) => {
     console.log("_FU", commitFileURL, file);
     const response = await this.fileApiClient.finalizeFileUpload(commitFileURL);
+    this.progressNotifier.onUploadProgress(file.name, 100);
     return response.data;
   };
 

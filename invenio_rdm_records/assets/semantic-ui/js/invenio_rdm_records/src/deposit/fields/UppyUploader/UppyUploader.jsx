@@ -9,11 +9,8 @@
 // Invenio-RDM-Records is free software; you can redistribute it and/or modify it
 // under the terms of the MIT License; see LICENSE file for more details.
 
-// TODO: internationalization using i18next?
 import Uppy from "@uppy/core";
 import { Dashboard } from "@uppy/react";
-import { i18next } from "@translations/invenio_rdm_records/i18next";
-
 import { useFormikContext } from "formik";
 import _get from "lodash/get";
 import PropTypes from "prop-types";
@@ -87,7 +84,7 @@ export const UppyUploaderComponent = ({
       }).use(MultipartUploaderPlugin, {
         // Bind Redux file actions to the uploader plugin
         initializeUpload: (file) => initializeFileUpload(formikDraft, file),
-        finalizeUpload: (file) => finalizeUpload(file.links.commit, file),
+        finalizeUpload: (file) => finalizeUpload(file.meta.links.commit, file),
         getUploadParams: (file, options) => getUploadParams(formikDraft, file, options),
         abortUpload: (file, uploadId) =>
           deleteFile(file.links, { params: { uploadId } }),
