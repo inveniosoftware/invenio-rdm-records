@@ -26,6 +26,8 @@ import invenio_rdm_records.services.communities.moderation as communities_modera
 from invenio_rdm_records.services.components.verified import UserModerationHandler
 
 from . import tokens
+from .requests.community_inclusion import CommunityInclusion
+from .requests.community_submission import CommunitySubmission
 from .resources.serializers import DataCite43JSONSerializer
 from .services import facets
 from .services.config import lock_edit_published_files
@@ -124,8 +126,11 @@ RDM_PERMISSION_POLICY = RDMRecordPermissionPolicy
 # Record review requests
 #
 RDM_RECORDS_REVIEWS = [
-    "community-submission",
+    CommunitySubmission.type_id,
 ]
+"""List of review request types."""
+RDM_COMMUNITY_SUBMISSION_REQUEST_CLS = CommunitySubmission
+"""Request type for community submission requests."""
 
 #
 # Record files configuration
@@ -147,6 +152,8 @@ RDM_ALLOW_RESTRICTED_RECORDS = True
 #
 RDM_COMMUNITY_REQUIRED_TO_PUBLISH = False
 """Enforces at least one community per record."""
+RDM_COMMUNITY_INCLUSION_REQUEST_CLS = CommunityInclusion
+"""Request type for record inclusion requests."""
 
 #
 # Search configuration
