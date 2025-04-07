@@ -251,7 +251,12 @@ class RecordCommunitiesService(Service, RecordIndexerMixin):
         for component in self.components:
             if hasattr(component, "remove"):
                 component.remove(
-                    identity, record=record, communities=communities, uow=uow
+                    identity,
+                    record=record,
+                    communities=communities,
+                    valid_data=valid_data,
+                    errors=errors,
+                    uow=uow,
                 )
 
         processed = []

@@ -100,7 +100,7 @@ def test_remove_component_called(community, uploader, record_factory):
     """The component `remove` method is called and modifies the supplied arguments."""
 
     class MockRemoveComponent(ServiceComponent):
-        def remove(self, identity, record, communities, uow):
+        def remove(self, identity, record, communities, valid_data, errors, uow):
             communities.pop(-1)
 
     current_app.config["RDM_RECORD_COMMUNITIES_SERVICE_COMPONENTS"] = [
