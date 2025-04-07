@@ -192,7 +192,6 @@ def app_config(app_config, mock_datacite_client):
     # OAI Server
     app_config["OAISERVER_REPOSITORY_NAME"] = "InvenioRDM"
     app_config["OAISERVER_ID_PREFIX"] = "inveniordm"
-    app_config["OAISERVER_RECORD_INDEX"] = "rdmrecords-records"
     app_config["OAISERVER_SEARCH_CLS"] = "invenio_rdm_records.oai:OAIRecordSearch"
     app_config["OAISERVER_ID_FETCHER"] = "invenio_rdm_records.oai:oaiid_fetcher"
     app_config["OAISERVER_LAST_UPDATE_KEY"] = "updated"
