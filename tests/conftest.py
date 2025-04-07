@@ -86,6 +86,7 @@ from invenio_vocabularies.contrib.subjects.api import Subject
 from invenio_vocabularies.proxies import current_service as vocabulary_service
 from invenio_vocabularies.records.api import Vocabulary
 from marshmallow import fields
+from werkzeug.local import LocalProxy
 
 from invenio_rdm_records import config
 from invenio_rdm_records.notifications.builders import (
@@ -248,7 +249,11 @@ def app_config(app_config, mock_datacite_client):
         },
     }
 
-    app_config["INDEXER_DEFAULT_INDEX"] = "rdmrecords-records-record-v6.0.0"
+    records_index = LocalProxy(
+        lambda: current_rdm_records_service.record_cls.index._name
+    )
+    app_config["OAISERVER_RECORD_INDEX"] = records_index
+    app_config["INDEXER_DEFAULT_INDEX"] = records_index
     # Variable not used. We set it to silent warnings
     app_config["JSONSCHEMAS_HOST"] = "not-used"
 
