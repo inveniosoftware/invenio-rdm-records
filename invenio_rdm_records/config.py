@@ -23,6 +23,7 @@ from invenio_records_resources.services.records.queryparser.transformer import (
 )
 
 import invenio_rdm_records.services.communities.moderation as communities_moderation
+from invenio_rdm_records.services.components.pids import validate_optional_doi
 from invenio_rdm_records.services.components.verified import UserModerationHandler
 
 from . import tokens
@@ -437,27 +438,13 @@ RDM_PARENT_PERSISTENT_IDENTIFIERS = {
 RDM_ALLOW_EXTERNAL_DOI_VERSIONING = True
 """Allow records with external DOIs to be versioned."""
 
-RDM_OPTIONAL_DOI_TRANSITIONS = {
-    "datacite": {
-        "allowed_providers": ["datacite"],
-        "message": _(
-            "A previous version used a DOI registered from {sitename}. This version must also use a DOI from {sitename}."
-        ),
-    },
-    "external": {
-        "allowed_providers": ["external", "not_needed"],
-        "message": _(
-            "A previous version was published with a DOI from an external provider or without one. You cannot use a DOI registered from {sitename} for this version."
-        ),
-    },
-    "not_needed": {
-        "allowed_providers": ["external", "not_needed"],
-        "message": _(
-            "A previous version was published with a DOI from an external provider or without one. You cannot use a DOI registered from {sitename} for this version."
-        ),
-    },
-}
-"""Optional DOI transitions for versioning. The allowed providers are the ones that can be used for the new version and when you edit a published record."""
+
+RDM_OPTIONAL_DOI_VALIDATOR = validate_optional_doi
+"""Optional DOI transitions validate method.
+
+Check the signature of validate_optional_doi for more information.
+"""
+
 
 # Configuration for the DataCiteClient used by the DataCitePIDProvider
 

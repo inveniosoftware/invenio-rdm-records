@@ -247,14 +247,12 @@ class PIDManager:
         if not provider.can_modify(pid) and not soft_delete:
             raise ValidationError(
                 message=[
-                    {
-                        "field": f"pids.{scheme}",
-                        "message": _(
-                            "Cannot discard a reserved or registered persistent "
-                            "identifier."
-                        ),
-                    }
-                ]
+                    _(
+                        "Cannot discard a reserved or registered persistent "
+                        "identifier."
+                    ),
+                ],
+                field_name=f"pids.{scheme}",
             )
 
         # the provider should check the conditions of deletion
