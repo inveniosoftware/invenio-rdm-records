@@ -8,8 +8,8 @@ import _debounce from "lodash/debounce";
 import PropTypes from "prop-types";
 import React, { Component } from "react";
 import { connect } from "react-redux";
-import { FieldLabel } from "react-invenio-forms";
-import { Form } from "semantic-ui-react";
+import { FieldLabel, FeedbackLabel } from "react-invenio-forms";
+import { Form, Grid } from "semantic-ui-react";
 import {
   ManagedIdentifierCmp,
   OptionalDOIoptions,
@@ -135,7 +135,16 @@ class OptionalPIDFieldCmp extends Component {
           required={required || hasParentDoi}
           error={fieldError ? true : false}
         >
-          <FieldLabel htmlFor={fieldPath} icon={pidIcon} label={fieldLabel} />
+          <Grid>
+            <Grid.Column width={3}>
+              <FieldLabel htmlFor={fieldPath} icon={pidIcon} label={fieldLabel} />
+            </Grid.Column>
+            {fieldError && (
+              <Grid.Column width={13}>
+                <FeedbackLabel errorMessage={fieldError} />
+              </Grid.Column>
+            )}
+          </Grid>
         </Form.Field>
 
         {this.canBeManagedAndUnmanaged && (
