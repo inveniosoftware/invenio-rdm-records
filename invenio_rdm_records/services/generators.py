@@ -298,7 +298,7 @@ class RequestReviewer(Generator):
 
         _needs = []
         request = record.parent.review
-        reviewers = request.reviewer
+        reviewers = request.reviewers
         if reviewers is not None:
             for reviewer in reviewers:
                 _needs.extend(reviewer.get_needs(ctx=request.type.needs_context))
