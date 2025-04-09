@@ -166,7 +166,9 @@ def test_simple_flow(draft, running_app, community, service, requests_service):
     assert draft["status"] == DraftStatus.review_to_draft_statuses["created"]
 
     # ### Submit draft for review
-    req = service.review.submit(system_identity, draft.id).to_dict()
+    req = service.review.submit(
+        system_identity, draft.id, require_review=True
+    ).to_dict()
     assert req["status"] == "submitted"
     assert req["title"] == draft["metadata"]["title"]
 
