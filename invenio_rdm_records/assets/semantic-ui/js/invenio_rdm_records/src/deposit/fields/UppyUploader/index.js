@@ -18,6 +18,7 @@ import {
   uploadFile,
   uploadFiles,
   finalizeUpload,
+  saveAndFetchDraft,
 } from "../../state/actions";
 import { UppyUploaderComponent } from "./UppyUploader";
 
@@ -40,12 +41,12 @@ const mapDispatchToProps = (dispatch) => ({
   initializeFileUpload: (draft, file) => dispatch(initializeFileUpload(draft, file)),
   uploadFile: (draft, file) => dispatch(uploadFile(draft, file)),
   uploadFiles: (draft, files) => dispatch(uploadFiles(draft, files)),
-  finalizeUpload: (commitFileURL, file) =>
-    dispatch(finalizeUpload(commitFileURL, file)),
+  finalizeUpload: (file) => dispatch(finalizeUpload(file.meta.links.commit, file)),
   importParentFiles: () => dispatch(importParentFiles()),
   deleteFile: (file, options) => dispatch(deleteFile(file, options)),
   getUploadParams: (draft, file, options) =>
     dispatch(getUploadParams(draft, file, options)),
+  saveAndFetchDraft: (draft) => dispatch(saveAndFetchDraft(draft)),
 });
 
 export const UppyUploader = connect(

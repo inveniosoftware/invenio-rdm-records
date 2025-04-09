@@ -24,6 +24,7 @@ theme = WebpackThemeBundle(
             },
             dependencies={
                 "@babel/runtime": "^7.9.0",
+                "@reduxjs/toolkit": "2.6.1",
                 "@tinymce/tinymce-react": "^4.3.0",
                 "@uppy/aws-s3-multipart": "^3.12.0",
                 "@uppy/core": "^3.13.1",
@@ -32,7 +33,10 @@ theme = WebpackThemeBundle(
                 "@uppy/file-input": "^3.1.2",
                 "@uppy/locales": "^3.5.4",
                 "@uppy/progress-bar": "^3.1.1",
+                "@uppy/provider-views": "^3.13.0",
                 "@uppy/react": "^3.4.0",
+                "@uppy/store-redux": "^4.0.2",
+                "@uppy/url": "^3.6.1",
                 "formik": "^2.1.0",
                 "hash-wasm": "^4.12.0",
                 "i18next": "^20.3.0",

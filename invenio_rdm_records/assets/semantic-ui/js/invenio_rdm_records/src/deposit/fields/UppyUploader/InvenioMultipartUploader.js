@@ -9,11 +9,13 @@
 // Invenio-RDM-Records is free software; you can redistribute it and/or modify it
 // under the terms of the MIT License; see LICENSE file for more details.
 
+import { h } from "preact";
 // TODO: If WASM undesirable, we can use something like Crypto-JS?
 import { md5 } from "hash-wasm";
 import AwsS3Multipart from "@uppy/aws-s3-multipart";
 import { fetcher } from "@uppy/utils/lib/fetcher";
 import { humanReadableBytes } from "react-invenio-forms";
+import { i18next } from "@translations/invenio_rdm_records/i18next";
 
 import { FileSizeError, InvalidPartNumberError, SignedUrlExpiredError } from "./error";
 
@@ -29,9 +31,25 @@ const defaultOptions = {
   companionHeaders: {},
   uploadFiles: () => {},
   checkPartIntegrity: false,
+  allowedMetaFields: [
+    {
+      id: "default_preview",
+      name: i18next.t("Default preview"),
+      isUserInput: true,
+      render({ value, onChange, required, form }, h) {
+        return h("input", {
+          type: "checkbox",
+          required,
+          form,
+          onChange: (ev) => onChange(ev.target.checked ? value : ""),
+          defaultChecked: value === "",
+        });
+      },
+    },
+  ],
 };
 
-export class MultipartUploaderPlugin extends AwsS3Multipart {
+export class InvenioMultipartUploader extends AwsS3Multipart {
   static VERSION = "0.0.2";
   #maxMultipartParts = 10_000;
 
@@ -42,18 +60,18 @@ export class MultipartUploaderPlugin extends AwsS3Multipart {
       ...opts,
     });
     this.type = "uploader";
-    this.id = this.opts.id || "MultipartUploaderPlugin";
+    this.draftRecord = opts.draftRecord;
+    this.id = this.opts.id || "InvenioMultipartUploader";
     this.getChunkSize = opts.getChunkSize || this.getChunkSize;
     this.shouldUseMultipart = this.opts.shouldUseMultipart || this.shouldUseMultipart;
+
+    this.uppy.addPreProcessor(this.#saveDraftBeforeUpload);
 
     this.i18nInit();
     super.setOptions({
       // Here we override default implementation in AwsS3Multipart
       shouldUseMultipart: this.shouldUseMultipart.bind(this),
     });
-
-    // Register event hooks
-    uppy.on("upload-success", this.#completeSinglePartUpload);
   }
 
   install() {
@@ -62,12 +80,28 @@ export class MultipartUploaderPlugin extends AwsS3Multipart {
     // Currently unsupported, as it requires missing API
     // implementation for the `listParts` method.
     this.#setResumableUploadsCapability(false);
+    this.uppy.on("upload-success", this.#completeSinglePartUpload);
+    this.uppy.addPreProcessor(this.#saveDraftBeforeUpload);
   }
+
+  uninstall() {
+    AwsS3Multipart.prototype.uninstall.apply(this);
+    this.uppy.off("upload-success", this.#completeSinglePartUpload);
+    this.uppy.removePreProcessor(this.#saveDraftBeforeUpload);
+  }
+
+  #saveDraftBeforeUpload = async (fileIDs) => {
+    if (!(this.draftRecord.id && this.draftRecord.links)) {
+      // To obtain file links, we need to save the draft record first
+      this.uppy.log("Saving draft record before upload");
+      this.draftRecord = await this.opts.saveAndFetchDraft(this.draftRecord);
+      this.uppy.log(`Saved draft record before upload: ${this.draftRecord.id}`);
+    }
+  };
 
   #completeSinglePartUpload = (file, response) => {
     const { uploadURL } = response;
     if (!uploadURL) return;
-    // TODO: fix a bug with file.links missing on second upload batch
     console.log("COMPLETE SINGLE", file, response);
     return this.completeMultipartUpload(file, {
       uploadId: file.file_id,
@@ -149,7 +183,7 @@ export class MultipartUploaderPlugin extends AwsS3Multipart {
   async getUploadParameters(file, options) {
     file.transferOptions = { fileSize: file.size, type: "L" };
 
-    const response = await this.opts.getUploadParams(file, options);
+    const response = await this.opts.getUploadParams(this.draftRecord, file, options);
     this.uppy.setFileMeta(file.id, {
       file_id: response.file_id,
       links: response.links,
@@ -213,12 +247,14 @@ export class MultipartUploaderPlugin extends AwsS3Multipart {
       part_size: chunkSize,
       type: "M",
     };
+    console.debug("III", this.draftRecord);
+    const response = await this.opts.initializeFileUpload(this.draftRecord, file);
 
-    const response = await this.opts.initializeUpload(file);
-
-    // Map any links to Uppy file object state for further use (e.g. to fetch signed part URLs)
-    file.links = response.links;
-    file.file_id = response.file_id;
+    // Map any links to Uppy file state for further use (e.g. to fetch signed part URLs)
+    this.uppy.setFileMeta(file.id, {
+      file_id: response.file_id,
+      links: response.links,
+    });
 
     return { uploadId: file.file_id, key: response.key };
   }
@@ -238,7 +274,7 @@ export class MultipartUploaderPlugin extends AwsS3Multipart {
    */
   async signPart(file, partData) {
     const { partNumber, signal, body } = partData;
-    const signedPartUrls = file.links.parts;
+    const signedPartUrls = file.meta.links.parts;
 
     const headers = {};
 
@@ -264,8 +300,10 @@ export class MultipartUploaderPlugin extends AwsS3Multipart {
     if (now > expiryDate) {
       const fetch = this.#getFetcher(file, { signal });
       // Re-fetching file metadata will re-generate signed part URLs
-      const fileMetadata = await fetch(file.links.self);
-      file.links = fileMetadata.links;
+      const response = await fetch(file.meta.links.self);
+      this.uppy.setFileMeta(file.id, {
+        links: response.links,
+      });
 
       // Throw an error to let Uppy retry with fresh state
       throw new SignedUrlExpiredError(
@@ -301,6 +339,9 @@ export class MultipartUploaderPlugin extends AwsS3Multipart {
    * and removes all parts that have been uploaded so far.
    */
   async abortMultipartUpload(file, { uploadId, key }) {
+    file.links = file.meta.links;
     await this.opts.abortUpload(file, uploadId);
   }
 }
+
+export default InvenioMultipartUploader;

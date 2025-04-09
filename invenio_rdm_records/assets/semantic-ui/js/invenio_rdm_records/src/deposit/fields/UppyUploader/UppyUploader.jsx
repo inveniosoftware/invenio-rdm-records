@@ -9,15 +9,22 @@
 // Invenio-RDM-Records is free software; you can redistribute it and/or modify it
 // under the terms of the MIT License; see LICENSE file for more details.
 
+import React, { useState } from "react";
+
 import Uppy from "@uppy/core";
+import Url from '@uppy/url';
 import { Dashboard } from "@uppy/react";
 import { useFormikContext } from "formik";
 import _get from "lodash/get";
 import PropTypes from "prop-types";
-import React, { useState } from "react";
 import { Grid } from "semantic-ui-react";
 import Overridable from "react-overridable";
-import { MultipartUploaderPlugin } from "./MultipartUploaderPlugin";
+import InvenioMultipartUploader from "./InvenioMultipartUploader";
+import InvenioFilesProvider from "./InvenioFilesProvider";
+// TODO: potentially integrate with deposit store
+// import { ReduxStore } from '@uppy/store-redux'
+// import { useStore } from 'react-redux'
+
 import {
   useFilesList,
   FilesListTable,
@@ -26,6 +33,8 @@ import {
 import { useUppyLocale } from "./locale";
 
 const defaultDashboardProps = {
+  showRemoveButtonAfterComplete: true,
+  showLinkToFileUploadResult: true,
   proudlyDisplayPoweredByUppy: false,
   height: "100%",
   width: "100%",
@@ -44,6 +53,7 @@ export const UppyUploaderComponent = ({
   finalizeUpload,
   deleteFile,
   getUploadParams,
+  saveAndFetchDraft,
   importParentFiles,
   importButtonIcon,
   importButtonText,
@@ -57,11 +67,12 @@ export const UppyUploaderComponent = ({
   const { values: formikDraft } = useFormikContext();
   const { filesList } = useFilesList(files);
   const locale = useUppyLocale();
-
   const filesEnabled = _get(formikDraft, "files.enabled", false);
   const filesSize = filesList.reduce((totalSize, file) => (totalSize += file.size), 0);
   const lockFileUploader = !isDraftRecord && filesLocked;
   const filesLeft = filesList.length < quota.maxFiles;
+  // TODO: potentially integrate with deposit store
+  // const rootStore = useStore();
 
   const restrictions = {
     minFileSize: allowEmptyFiles ? 0 : 1,
@@ -69,35 +80,66 @@ export const UppyUploaderComponent = ({
     maxTotalFileSize: quota.maxStorage - filesSize,
   };
 
-  function checkForDuplicates(file, files) {
-    console.log(files, filesList.includes(file.name), filesList, file.name);
-  }
-
   const [uppy] = useState(
     () =>
       new Uppy({
         debug: true,
-        autoProceed: true,
+        autoProceed: false,
         restrictions,
         locale,
-        onBeforeFileAdded: checkForDuplicates,
-      }).use(MultipartUploaderPlugin, {
+        // TODO: potentially integrate with deposit store
+        // store: new ReduxStore({ store: rootStore }),
+      }).use(InvenioMultipartUploader, {
         // Bind Redux file actions to the uploader plugin
-        initializeUpload: (file) => initializeFileUpload(formikDraft, file),
-        finalizeUpload: (file) => finalizeUpload(file.meta.links.commit, file),
-        getUploadParams: (file, options) => getUploadParams(formikDraft, file, options),
+        draftRecord: formikDraft,
+        initializeFileUpload,
+        finalizeUpload,
+        saveAndFetchDraft,
+        getUploadParams,
         abortUpload: (file, uploadId) =>
-          deleteFile(file.links, { params: { uploadId } }),
+          deleteFile(file, { params: { uploadId } }),
         // Calculate & verify checksum for every uploaded part
         // TODO: this feature currently computes part checksums,
         // but S3 presign url don't like it when Content-MD5 header is added
         // *after* their creation. PUT request with this added header
         // results in HTTP 400 Bad Request. Needs more investigation.
         checkPartIntegrity: false,
-      })
+      }).use(InvenioFilesProvider, { files, deleteFile })
   );
 
-  uppy.setOptions({ locale });
+  const uppyMetaFileIDs = uppy.getFiles().map((file) => file.meta.file_id);
+
+  Object.entries(files).forEach(([fileID, file])=> {
+    // Skip already added files
+    if (uppyMetaFileIDs.includes(file.file_id)) { return; }
+
+    console.log("Adding file", fileID, file, uppyMetaFileIDs);
+    const addedFileID = uppy.addFile({
+      name: file.name,
+      type: file.mimeType,
+      data: { size: file.size },
+      body: {
+        fileId: file.file_id,
+      },
+      meta: {
+        links: file.links,
+        file_id: file.file_id
+      },
+      source: file.source || "InvenioFilesProvider",
+      uploadURL: file.links.content,
+      isRemote: true, // file is stored on the backend, not locally available by browser
+    });
+    uppy.setFileState(addedFileID, {
+      progress: {
+        uploadComplete: file.progressPercentage === 100,
+        uploadStarted: file.progressPercentage === 100,
+      }
+    });
+  });
+
+  // After files from store state have been synced to Uppy state,
+  // enable auto-proceed to auto-upload any files added by user.
+  uppy.setOptions({ autoProceed: true });
 
   React.useEffect(() => {
     const dashboardPlugin = uppy.getPlugin("Dashboard");

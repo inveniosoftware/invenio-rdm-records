@@ -19,17 +19,28 @@ import {
 } from "../types";
 import { saveDraftWithUrlUpdate } from "./deposit";
 
+export const saveAndFetchDraft = (draft) => {
+  return async (dispatch, _, config) => {
+    console.debug("[saveAndFetchDraft]:", draft);
+    const response = await saveDraftWithUrlUpdate(draft, config.service.drafts);
+    // update state with created draft
+    dispatch({
+      type: DRAFT_FETCHED,
+      payload: { data: response.data },
+    });
+    console.log("RESPONSE", response);
+    return response.data;
+  };
+};
+
 export const uploadFiles = (draft, files) => {
+  // NOTE: Unused by Uppy uploader
   return async (dispatch, _, config) => {
     console.debug("[uploadFiles]:", files);
-    const savedDraft = await _fileUploadSaveDraft(
-      dispatch,
-      draft,
-      config.service.drafts
-    );
+    const savedDraft = await dispatch(saveAndFetchDraft(draft));
 
     // upload files
-    const uploadFileUrl = savedDraft.data.links.files;
+    const uploadFileUrl = savedDraft.links.files;
     for (const file of files) {
       dispatch(uploadFile(draft, file, uploadFileUrl));
     }
@@ -41,13 +52,15 @@ export const finalizeUpload = (commitFileUrl, file) => {
   return async (dispatch, _, config) => {
     try {
       const response = await config.service.files.finalizeUpload(commitFileUrl, file);
+      const { name: filename, size, checksum, links, ...extraData } = response;
       dispatch({
         type: FILE_UPLOAD_FINISHED,
         payload: {
-          filename: file.name,
-          size: response.size,
-          checksum: response.checksum,
-          links: response.links,
+          filename,
+          size,
+          checksum,
+          links,
+          extraData,
         },
       });
       return response;
@@ -58,29 +71,12 @@ export const finalizeUpload = (commitFileUrl, file) => {
   };
 };
 
-const _fileUploadSaveDraft = async (dispatch, draft, draftService) => {
-  console.debug("[_fileUploadSaveDraft]:", draft);
-  const response = await saveDraftWithUrlUpdate(draft, draftService);
-  // update state with created draft
-  dispatch({
-    type: DRAFT_FETCHED,
-    payload: { data: response.data },
-  });
-  return response;
-};
-
 export const initializeFileUpload = (draft, file) => {
-  console.debug("[initializeFileUpload]:", file);
+  console.debug("[initializeFileUpload]:", draft, file);
   return async (dispatch, _, config) => {
     try {
-      const savedDraft = await _fileUploadSaveDraft(
-        dispatch,
-        draft,
-        config.service.drafts
-      );
-      const uploadFileUrl = savedDraft.data.links.files;
       const initializedFileMetadata = await config.service.files.initializeUpload(
-        uploadFileUrl,
+        draft.links.files,
         file
       );
       dispatch({
@@ -99,10 +95,10 @@ export const initializeFileUpload = (draft, file) => {
 };
 
 export const uploadFile = (draft, file, uploadUrl) => {
+  // NOTE: Unused by Uppy uploader
   console.debug("[uploadFile]:", file);
   return async (dispatch, _, config) => {
     try {
-      console.log("uf", uploadUrl);
       config.service.files.upload(uploadUrl, file);
     } catch (error) {
       console.error("Error uploading files", error, draft, file);
@@ -118,7 +114,7 @@ export const deleteFile = (file) => {
   console.debug("[deleteFile]:", file);
   return async (dispatch, _, config) => {
     try {
-      const fileLinks = file.links;
+      const fileLinks = file.meta.links;
       await config.service.files.delete(fileLinks);
 
       dispatch({
@@ -128,6 +124,7 @@ export const deleteFile = (file) => {
         },
       });
     } catch (error) {
+      console.error("Error deleting file", error, file);
       if (error.response.status === 404 && file.uploadState?.isPending) {
         // pending file was removed from the backend thus we can remove it from the state
         dispatch({
@@ -137,7 +134,6 @@ export const deleteFile = (file) => {
           },
         });
       } else {
-        console.error("Error deleting file", error, file);
         dispatch({ type: FILE_DELETE_FAILED });
         throw error;
       }

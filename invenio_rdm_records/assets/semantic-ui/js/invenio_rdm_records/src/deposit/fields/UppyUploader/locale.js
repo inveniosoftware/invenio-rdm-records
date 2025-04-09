@@ -80,7 +80,7 @@ export function useUppyLocale() {
 
   React.useEffect(() => {
     const normalizedLangCode = normalizeLanguageCode(i18next.language);
-    console.warn("Switching Uppy locale to", normalizedLangCode);
+    console.debug("Switching Uppy locale to", normalizedLangCode);
 
     importLangPack(normalizedLangCode).then((module) => {
       const localeData = module.default ?? module;
