@@ -21,7 +21,6 @@ from invenio_records_resources.services.uow import TaskOp
 from ..errors import ValidationErrorWithMessageAsList
 from ..pids.tasks import register_or_update_pid
 
-
 OPTIONAL_DOI_TRANSITIONS = {
     "datacite": {
         "allowed_providers": ["datacite"],
