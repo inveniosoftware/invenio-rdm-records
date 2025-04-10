@@ -12,6 +12,14 @@
 Changes
 =======
 
+Version v18.3.0 (released 2025-04-10)
+
+- pids: change optional DOI validation
+- views: FAIR signposting level 1 support (remove comment)
+- views: signposting: fix fallback to level 2 linkset if collections size is too big to control link header size
+- owner: allow system_user to be record owner
+
+
 Version v18.2.0 (released 2025-04-03)
 
 - fix: deletion_status gone after record.commit
