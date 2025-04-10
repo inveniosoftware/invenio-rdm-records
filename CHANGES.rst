@@ -12,6 +12,11 @@
 Changes
 =======
 
+Version v17.6.0 (released 2025-04-10)
+
+- views: FAIR signposting level 1 support (remove comment)
+- views: signposting: fix: fallback to level 2 linkset if collections size too big to control link header size
+
 Version v17.5.0 (released 2025-03-28)
 
 - deposit-ui: show icon and tooltip for new error format with severity error
