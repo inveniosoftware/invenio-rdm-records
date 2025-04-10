@@ -136,11 +136,11 @@ class OptionalPIDFieldCmp extends Component {
           error={fieldError ? true : false}
         >
           <Grid>
-            <Grid.Column width={3}>
+            <Grid.Column width={5}>
               <FieldLabel htmlFor={fieldPath} icon={pidIcon} label={fieldLabel} />
             </Grid.Column>
             {fieldError && (
-              <Grid.Column width={13}>
+              <Grid.Column width={11}>
                 <FeedbackLabel errorMessage={fieldError} />
               </Grid.Column>
             )}
