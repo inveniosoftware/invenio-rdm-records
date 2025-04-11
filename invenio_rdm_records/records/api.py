@@ -9,6 +9,7 @@
 """RDM Record and Draft API."""
 
 from flask import current_app, g
+from invenio_access.permissions import system_user_id
 from invenio_communities.records.records.systemfields import CommunitiesField
 from invenio_db import db
 from invenio_drafts_resources.records import Draft, Record
@@ -331,9 +332,14 @@ def get_files_quota(record=None):
                 max_file_size=record_quota.max_file_size,
             )
         # Next user quota
-        user_quota = models.RDMUserQuota.query.filter(
-            models.RDMUserQuota.user_id == record.parent.access.owned_by.owner_id
-        ).one_or_none()
+        owner_id = record.parent.access.owned_by.owner_id
+        if owner_id == system_user_id:
+            user_quota = None
+        else:
+            user_quota = models.RDMUserQuota.query.filter(
+                models.RDMUserQuota.user_id == owner_id
+            ).one_or_none()
+
         if user_quota is not None:
             return dict(
                 quota_size=user_quota.quota_size,
