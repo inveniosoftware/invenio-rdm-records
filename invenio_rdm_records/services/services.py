@@ -16,6 +16,7 @@ from datetime import datetime
 
 import arrow
 from flask import current_app
+from invenio_access.permissions import system_user_id
 from invenio_accounts.models import User
 from invenio_db import db
 from invenio_drafts_resources.services.records import RecordService
@@ -723,9 +724,12 @@ class RDMRecordService(RecordService):
             raise_errors=True,
         )
         # Set quota
-        user_quota = RDMUserQuota.query.filter(
-            RDMUserQuota.user_id == user.id
-        ).one_or_none()
+        if user.id == system_user_id:
+            user_quota = None
+        else:
+            user_quota = RDMUserQuota.query.filter(
+                RDMUserQuota.user_id == user.id
+            ).one_or_none()
         if not user_quota:
             user_quota = RDMUserQuota(user_id=user.id, **data)
         else:
