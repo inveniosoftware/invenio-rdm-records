@@ -385,6 +385,7 @@ class MetadataSchema(Schema):
     )
     version = SanitizedUnicode()
     rights = fields.List(fields.Nested(RightsSchema))
+    copyrights = SanitizedHTML(validate=validate.Length(min=3))
     description = SanitizedHTML(validate=validate.Length(min=3))
     additional_descriptions = fields.List(fields.Nested(DescriptionSchema))
     locations = fields.Nested(FeatureSchema)

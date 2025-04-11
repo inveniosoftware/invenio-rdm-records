@@ -203,6 +203,10 @@
             }
           }
         },
+        "copyrights": {
+          "description": "Copyrights for record (may contain HTML).",
+          "type": "string"
+        },
         "description": {
           "description": "Description for record (may contain HTML).",
           "type": "string"
