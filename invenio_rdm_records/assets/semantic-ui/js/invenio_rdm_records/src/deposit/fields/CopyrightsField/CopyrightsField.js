@@ -23,6 +23,9 @@ export class CopyrightsField extends Component {
             <FieldLabel htmlFor={fieldPath} icon="copyright outline" label={label} />
           }
           required={required}
+          helpText={i18next.t(
+            "Optionally specify holder, year and copyright statement for this resource (if any)"
+          )}
           optimized
         />
       </>
