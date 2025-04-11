@@ -807,6 +807,9 @@
               }
             }
           },
+          "copyrights": {
+            "type": "text"
+          },
           "creators": {
             "properties": {
               "affiliations": {
