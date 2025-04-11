@@ -200,7 +200,6 @@ class CommunitySubmission(ReviewRequest):
         "submit": SubmitAction,
         "delete": actions.DeleteAction,
         "accept": AcceptAction,
-        "approve": actions.ApproveAction,
         "decline": DeclineAction,
         "cancel": CancelAction,
         "expire": ExpireAction,

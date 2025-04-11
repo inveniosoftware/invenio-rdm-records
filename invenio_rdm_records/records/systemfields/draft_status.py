@@ -34,7 +34,6 @@ class DraftStatus(SystemField):
     review_to_draft_statuses = dict(
         created="draft_with_review",
         submitted="in_review",
-        approved="approved",
         declined="declined",
         expired="expired",
         published="published",
