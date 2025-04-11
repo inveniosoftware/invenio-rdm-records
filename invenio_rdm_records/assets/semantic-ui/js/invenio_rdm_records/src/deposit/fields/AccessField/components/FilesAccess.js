@@ -9,9 +9,19 @@ import PropTypes from "prop-types";
 import React from "react";
 import { ProtectionButtons } from "./ProtectionButtons";
 import { i18next } from "@translations/invenio_rdm_records/i18next";
+import { getIn } from "formik";
+import { FeedbackLabel } from "react-invenio-forms";
 import { Card } from "semantic-ui-react";
 
-export const FilesAccess = ({ access, accessCommunity, metadataOnly }) => {
+export const FilesAccess = ({
+  access,
+  accessCommunity,
+  metadataOnly,
+  values,
+  initialValues,
+  errors,
+  initialErrors,
+}) => {
   const publicFiles = access.files === "public";
   const publicMetadata = access.record === "public";
   const publicCommunity = accessCommunity === "public";
@@ -29,15 +39,25 @@ export const FilesAccess = ({ access, accessCommunity, metadataOnly }) => {
     );
   }
 
+  const fieldPath = "access.files";
+  const filesAccess = getIn(values, fieldPath, []);
+  const formikInitialValues = getIn(initialValues, fieldPath, []);
+
+  const error = getIn(errors, fieldPath, null);
+  const initialError = getIn(initialErrors, fieldPath, null);
+  const filesAccessError =
+    error || (filesAccess === formikInitialValues && initialError);
+
   return (
     <div data-testid="access-files">
       {filesButtonsDisplayed && (
         <>
           {i18next.t("Files only")}
+          {filesAccessError && <FeedbackLabel errorMessage={filesAccessError} />}
           <ProtectionButtons
             active={publicFiles}
             disable={!publicCommunity}
-            fieldPath="access.files"
+            fieldPath={fieldPath}
           />
         </>
       )}
@@ -59,6 +79,11 @@ FilesAccess.propTypes = {
   access: PropTypes.object.isRequired,
   metadataOnly: PropTypes.bool,
   accessCommunity: PropTypes.string.isRequired,
+  values: PropTypes.object,
+  initialValues: PropTypes.object,
+  errors: PropTypes.object,
+  initialErrors: PropTypes.object,
+  errors: PropTypes.object,
 };
 
 FilesAccess.defaultProps = {
