@@ -12,6 +12,11 @@
 Changes
 =======
 
+Version v18.3.1 (released 2025-04-14)
+
+- user quota: anticipate system user
+- doi: increase label width
+
 Version v18.3.0 (released 2025-04-10)
 
 - pids: change optional DOI validation
