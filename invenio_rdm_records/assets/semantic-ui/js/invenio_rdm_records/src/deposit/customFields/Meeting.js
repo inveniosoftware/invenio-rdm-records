@@ -5,14 +5,22 @@
 // Invenio-RDM-Records is free software; you can redistribute it and/or modify it
 // under the terms of the MIT License; see LICENSE file for more details.
 
+import { IdentifiersField } from "@js/invenio_rdm_records/src/deposit/fields";
+import { i18next } from "@translations/invenio_rdm_records/i18next";
 import React, { Component } from "react";
-
+import { getInputFromDOM } from "@js/invenio_rdm_records";
 import { FieldLabel, Input } from "react-invenio-forms";
 import { Divider, Grid } from "semantic-ui-react";
 
 import PropTypes from "prop-types";
 
 export class Meeting extends Component {
+  constructor(props) {
+    super(props);
+    this.config = getInputFromDOM("deposits-config");
+    this.vocabularies = this.config.vocabularies;
+  }
+
   render() {
     const {
       fieldPath, // injected by the custom field loader via the `field` config property
@@ -20,7 +28,7 @@ export class Meeting extends Component {
       acronym,
       dates,
       place,
-      url,
+      // identifiers,
       session,
       session_part: sessionPart,
       icon,
@@ -75,15 +83,14 @@ export class Meeting extends Component {
               <label className="helptext mb-0">{dates.description}</label>
             )}
           </Grid.Column>
-          <Grid.Column width="12">
-            <Input
-              fieldPath={`${fieldPath}.url`}
-              label={url.label}
-              placeholder={url.placeholder}
+          <Grid.Column width="16">
+            <IdentifiersField
+              fieldPath={`${fieldPath}.identifiers`}
+              label={i18next.t("Meeting identifiers")}
+              labelIcon="barcode"
+              schemeOptions={this.vocabularies.identifiers.scheme}
+              showEmptyValue
             />
-            {url.description && (
-              <label className="helptext mb-0">{url.description}</label>
-            )}
           </Grid.Column>
           <Grid.Column width="6">
             <Input
@@ -117,7 +124,7 @@ Meeting.propTypes = {
   acronym: PropTypes.object.isRequired,
   session_part: PropTypes.object.isRequired,
   session: PropTypes.object.isRequired,
-  url: PropTypes.object.isRequired,
+  // identifiers: PropTypes.object.isRequired,
   dates: PropTypes.object.isRequired,
   place: PropTypes.object.isRequired,
   icon: PropTypes.string,
