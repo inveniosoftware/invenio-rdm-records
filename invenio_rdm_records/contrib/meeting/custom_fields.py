@@ -17,13 +17,15 @@ Implements the following fields:
 - meeting.title
 - meeting.url
 """
+from functools import partial
 
 from invenio_i18n import lazy_gettext as _
 from invenio_records_resources.services.custom_fields import BaseCF
 from marshmallow import fields
-from marshmallow_utils.fields import SanitizedUnicode
+from marshmallow_utils.fields import SanitizedUnicode, IdentifierValueSet
+from marshmallow_utils.schemas import IdentifierSchema
 
-from ...services.schemas.metadata import _valid_url
+from ...services.schemas.metadata import record_identifiers_schemes
 
 
 class MeetingCF(BaseCF):
@@ -40,9 +42,12 @@ class MeetingCF(BaseCF):
                 "session_part": SanitizedUnicode(),
                 "session": SanitizedUnicode(),
                 "title": SanitizedUnicode(),
-                "url": SanitizedUnicode(
-                    validate=_valid_url(error_msg=_("You must provide a valid URL.")),
-                ),
+                "identifiers": IdentifierValueSet(
+                    fields.Nested(
+                        partial(IdentifierSchema,
+                                allowed_schemes=record_identifiers_schemes)
+                    )
+                )
             }
         )
 
@@ -61,7 +66,11 @@ class MeetingCF(BaseCF):
                     "type": "text",
                     "fields": {"keyword": {"type": "keyword"}},
                 },
-                "url": {"type": "keyword"},
+                "identifiers": {"type": "object",
+                                "properties": {
+                                    "identifier": {"type": "keyword"},
+                                    "schema": {"type": "keyword"}
+                                }},
             },
         }
 
@@ -70,7 +79,6 @@ MEETING_NAMESPACE = {
     # Meeting
     "meeting": "",
 }
-
 
 MEETING_CUSTOM_FIELDS = [
     MeetingCF(name="meeting:meeting"),
@@ -104,10 +112,8 @@ MEETING_CUSTOM_FIELDS_UI = {
                     "placeholder": "",
                     "description": _("Location where the conference took place."),
                 },
-                "url": {
-                    "label": _("Website"),
-                    "placeholder": "",
-                    "description": "",
+                "identifiers": {
+                    "label": _("Identifiers"),
                 },
                 "session": {
                     "label": _("Session"),
