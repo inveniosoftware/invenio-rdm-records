@@ -101,6 +101,7 @@ class RDMRecordList(RecordList):
                 context=dict(
                     identity=self._identity,
                     record=record,
+                    meta=hit.meta,
                 ),
             )
             if self._links_item_tpl:
