@@ -321,7 +321,7 @@ export class DepositFileApiClient {
     return axios.isCancel(error);
   }
 
-  initializeFileUpload(initializeUploadUrl, filename) {
+  initializeFileUpload(initializeUploadUrl, filename, transferOptions) {
     throw new Error("Not implemented.");
   }
 
@@ -342,10 +342,27 @@ export class DepositFileApiClient {
  * Default File API Client for deposits.
  */
 export class RDMDepositFileApiClient extends DepositFileApiClient {
-  initializeFileUpload(initializeUploadUrl, filename) {
+  constructor(additionalApiConfig, defaultTransferType, transferTypes) {
+    super(additionalApiConfig);
+    this.defaultTransferType = defaultTransferType || "L";
+    this.transferTypes = transferTypes || ["L"];
+  }
+
+  initializeFileUpload(initializeUploadUrl, filename, transferOptions = {}) {
+    const { fileSize = 0, type = this.defaultTransferType, ...opts } = transferOptions;
+
+    if (!this.transferTypes.includes(type)) {
+      throw new UnsupportedTransferTypeError(
+        `Unsupported upload TransferType "${type}". Server supports: ${this.transferTypes}`,
+        { filename, type, supportedTypes: this.transferTypes }
+      );
+    }
+
     const payload = [
       {
         key: filename,
+        size: fileSize,
+        transfer: { type, ...opts },
       },
     ];
     return this.axiosWithConfig.post(initializeUploadUrl, payload, {});
@@ -374,55 +391,13 @@ export class RDMDepositFileApiClient extends DepositFileApiClient {
   deleteFile(fileLinks) {
     return this.axiosWithConfig.delete(fileLinks.self);
   }
-}
-
-/**
- * File API Client for Uppy uploader, with support for L,M transfer types.
- */
-export class UppyDepositFileApiClient extends DepositFileApiClient {
-  constructor(additionalApiConfig, defaultTransferType, transferTypes) {
-    super(additionalApiConfig);
-    this.defaultTransferType = defaultTransferType || "L";
-    this.transferTypes = transferTypes || ["L"];
-  }
-
-  initializeFileUpload(initializeUploadUrl, filename, transferOptions) {
-    console.log("IFU", initializeUploadUrl, filename, transferOptions);
-
-    const { fileSize, type: transferType, ...opts } = transferOptions;
-
-    if (!this.transferTypes.includes(transferType)) {
-      throw new UnsupportedTransferTypeError(
-        `Unsupported upload TransferType "${transferType}". Server supports: ${this.transferTypes}`,
-        { filename, transferType, supportedTypes: this.transferTypes }
-      );
-    }
-
-    const payload = [
-      {
-        key: filename,
-        size: fileSize,
-        transfer: {
-          type: transferType || this.defaultTransferType,
-          ...opts,
-        },
-      },
-    ];
-    return this.axiosWithConfig.post(initializeUploadUrl, payload, {});
-  }
-
-  finalizeFileUpload(finalizeUploadUrl) {
-    return this.axiosWithConfig.post(finalizeUploadUrl, {});
-  }
-
-  deleteFile(fileLinks, options) {
-    return this.axiosWithConfig.delete(fileLinks.self, options);
-  }
 
   /**
-   * This method is required by Uppy to do single-part small file uploads.
-   * These uploads are managed through a simple XHRHttpRequest-based upload request,
-   * and thus cannot reuse current axiosWithConfig instance to make the request.
+   * This method is required by uploader UIs, that manage actual upload
+   * of file content by itself (e.g. using XHRHttpRequest). As such, we cannot
+   * cannot reuse current axiosWithConfig instance to make the request,
+   * but we pass the params from Axios to the uploader UI to make the request
+   * on its own.
    *
    * @param {*} fileContentUrl link to upload the file data to
    * @param {*} file Uppy file metadata
@@ -430,8 +405,6 @@ export class UppyDepositFileApiClient extends DepositFileApiClient {
    * @returns
    */
   async getUploadParams(fileContentUrl, file, options) {
-    console.log("GUP", fileContentUrl, file, options);
-
     const axiosDefaults = this.axiosWithConfig.defaults;
 
     // Extract headers, ensuring they are merged properly

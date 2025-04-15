@@ -1,9 +1,5 @@
 // This file is part of Invenio-RDM-Records
-// Copyright (C) 2020-2023 CERN.
-// Copyright (C) 2020-2022 Northwestern University.
-// Copyright (C)      2022 Graz University of Technology.
-// Copyright (C)      2022 TU Wien.
-// Copyright (C)      2024 KTH Royal Institute of Technology.
+// Copyright (C) 2020-2025 CERN.
 // Copyright (C)      2025 CESNET.
 //
 // Invenio-RDM-Records is free software; you can redistribute it and/or modify it
@@ -15,7 +11,6 @@ import { md5 } from "hash-wasm";
 import AwsS3Multipart from "@uppy/aws-s3-multipart";
 import { fetcher } from "@uppy/utils/lib/fetcher";
 import { humanReadableBytes } from "react-invenio-forms";
-import { i18next } from "@translations/invenio_rdm_records/i18next";
 
 import { FileSizeError, InvalidPartNumberError, SignedUrlExpiredError } from "./error";
 
@@ -31,22 +26,6 @@ const defaultOptions = {
   companionHeaders: {},
   uploadFiles: () => {},
   checkPartIntegrity: false,
-  allowedMetaFields: [
-    {
-      id: "default_preview",
-      name: i18next.t("Default preview"),
-      isUserInput: true,
-      render({ value, onChange, required, form }, h) {
-        return h("input", {
-          type: "checkbox",
-          required,
-          form,
-          onChange: (ev) => onChange(ev.target.checked ? value : ""),
-          defaultChecked: value === "",
-        });
-      },
-    },
-  ],
 };
 
 export class InvenioMultipartUploader extends AwsS3Multipart {
@@ -66,6 +45,7 @@ export class InvenioMultipartUploader extends AwsS3Multipart {
     this.shouldUseMultipart = this.opts.shouldUseMultipart || this.shouldUseMultipart;
 
     this.uppy.addPreProcessor(this.#saveDraftBeforeUpload);
+    this.uppy.addPreProcessor(this.#disableResumableUploadsCapability);
 
     this.i18nInit();
     super.setOptions({
@@ -79,16 +59,22 @@ export class InvenioMultipartUploader extends AwsS3Multipart {
     // Disable resumable uploads Uppy capability.
     // Currently unsupported, as it requires missing API
     // implementation for the `listParts` method.
-    this.#setResumableUploadsCapability(false);
     this.uppy.on("upload-success", this.#completeSinglePartUpload);
+    this.uppy.on("complete", this.#resetOnComplete);
     this.uppy.addPreProcessor(this.#saveDraftBeforeUpload);
   }
 
   uninstall() {
     AwsS3Multipart.prototype.uninstall.apply(this);
     this.uppy.off("upload-success", this.#completeSinglePartUpload);
+    this.uppy.off("complete", this.#resetOnComplete);
     this.uppy.removePreProcessor(this.#saveDraftBeforeUpload);
+    this.uppy.removePreProcessor(this.#disableResumableUploadsCapability);
   }
+
+  #resetOnComplete = (result) => {
+    this.uppy.cancelAll();
+  };
 
   #saveDraftBeforeUpload = async (fileIDs) => {
     if (!(this.draftRecord.id && this.draftRecord.links)) {
@@ -101,7 +87,10 @@ export class InvenioMultipartUploader extends AwsS3Multipart {
 
   #completeSinglePartUpload = (file, response) => {
     const { uploadURL } = response;
-    if (!uploadURL) return;
+    if (!uploadURL) {
+      // Ignore cases when uploadURL missing - not a singlepart upload
+      return;
+    }
     console.log("COMPLETE SINGLE", file, response);
     return this.completeMultipartUpload(file, {
       uploadId: file.file_id,
@@ -109,12 +98,12 @@ export class InvenioMultipartUploader extends AwsS3Multipart {
     });
   };
 
-  #setResumableUploadsCapability = (boolean) => {
+  #disableResumableUploadsCapability = () => {
     const { capabilities } = this.uppy.getState();
     this.uppy.setState({
       capabilities: {
         ...capabilities,
-        resumableUploads: boolean,
+        resumableUploads: false,
       },
     });
   };
@@ -183,13 +172,17 @@ export class InvenioMultipartUploader extends AwsS3Multipart {
   async getUploadParameters(file, options) {
     file.transferOptions = { fileSize: file.size, type: "L" };
 
-    const response = await this.opts.getUploadParams(this.draftRecord, file, options);
-    this.uppy.setFileMeta(file.id, {
-      file_id: response.file_id,
-      links: response.links,
-    });
-    console.log("GUP>R", file);
-    return response;
+    try {
+      const response = await this.opts.getUploadParams(this.draftRecord, file, options);
+      this.uppy.setFileMeta(file.id, {
+        file_id: response.file_id,
+        links: response.links,
+      });
+      return response;
+    } catch (error) {
+      this.uppy.info(error.message, "error");
+      throw error;
+    }
   }
 
   /**
@@ -247,7 +240,6 @@ export class InvenioMultipartUploader extends AwsS3Multipart {
       part_size: chunkSize,
       type: "M",
     };
-    console.debug("III", this.draftRecord);
     const response = await this.opts.initializeFileUpload(this.draftRecord, file);
 
     // Map any links to Uppy file state for further use (e.g. to fetch signed part URLs)

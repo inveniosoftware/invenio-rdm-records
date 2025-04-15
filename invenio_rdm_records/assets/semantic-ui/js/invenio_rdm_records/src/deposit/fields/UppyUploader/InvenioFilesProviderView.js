@@ -1,5 +1,5 @@
 // This file is part of Invenio-RDM-Records
-// Copyright (C) 2020-2023 CERN.
+// Copyright (C) 2020-2025 CERN.
 // Copyright (C)      2025 CESNET.
 //
 // Invenio-RDM-Records is free software; you can redistribute it and/or modify it
@@ -18,6 +18,8 @@ const defaultOptions = {
   loadAllFiles: false,
 };
 
+// TODO: this is a WIP to provide users with possibility
+// to manually pick which individual files do they want to import from a record.
 export class InvenioFilesProviderView extends ProviderView {
   static VERSION = "0.0.2";
 

@@ -1,9 +1,5 @@
 // This file is part of Invenio-RDM-Records
-// Copyright (C) 2020-2023 CERN.
-// Copyright (C) 2020-2022 Northwestern University.
-// Copyright (C)      2022 Graz University of Technology.
-// Copyright (C)      2022 TU Wien.
-// Copyright (C)      2024 KTH Royal Institute of Technology.
+// Copyright (C) 2020-2025 CERN.
 // Copyright (C)      2025 CESNET.
 //
 // Invenio-RDM-Records is free software; you can redistribute it and/or modify it
@@ -12,18 +8,18 @@
 import React, { useState } from "react";
 
 import Uppy from "@uppy/core";
-import Url from '@uppy/url';
 import { Dashboard } from "@uppy/react";
+import ImageEditor from '@uppy/image-editor';
+
 import { useFormikContext } from "formik";
 import _get from "lodash/get";
 import PropTypes from "prop-types";
-import { Grid } from "semantic-ui-react";
+import { Grid, Message, Icon, Button } from "semantic-ui-react";
 import Overridable from "react-overridable";
 import InvenioMultipartUploader from "./InvenioMultipartUploader";
 import InvenioFilesProvider from "./InvenioFilesProvider";
-// TODO: potentially integrate with deposit store
-// import { ReduxStore } from '@uppy/store-redux'
-// import { useStore } from 'react-redux'
+import { NewVersionButton } from "../../controls/NewVersionButton";
+import { i18next } from "@translations/invenio_rdm_records/i18next";
 
 import {
   useFilesList,
@@ -33,11 +29,16 @@ import {
 import { useUppyLocale } from "./locale";
 
 const defaultDashboardProps = {
-  showRemoveButtonAfterComplete: true,
+  showRemoveButtonAfterComplete: false,
   showLinkToFileUploadResult: true,
   proudlyDisplayPoweredByUppy: false,
+  hideProgressAfterFinish: true,
+  hidePauseResumeButton: true,
+  disableLocalFiles: false,
   height: "100%",
   width: "100%",
+  autoOpen: null,
+  autoOpenFileEditor: false,
 };
 
 export const UppyUploaderComponent = ({
@@ -64,15 +65,15 @@ export const UppyUploaderComponent = ({
   ...uiProps
 }) => {
   // We extract the working copy of the draft stored as `values` in formik
-  const { values: formikDraft } = useFormikContext();
+  const { values: formikDraft} = useFormikContext();
   const { filesList } = useFilesList(files);
   const locale = useUppyLocale();
   const filesEnabled = _get(formikDraft, "files.enabled", false);
   const filesSize = filesList.reduce((totalSize, file) => (totalSize += file.size), 0);
   const lockFileUploader = !isDraftRecord && filesLocked;
   const filesLeft = filesList.length < quota.maxFiles;
-  // TODO: potentially integrate with deposit store
-  // const rootStore = useStore();
+  const displayImportBtn =
+    filesEnabled && isDraftRecord && hasParentRecord && !filesList.length;
 
   const restrictions = {
     minFileSize: allowEmptyFiles ? 0 : 1,
@@ -87,8 +88,6 @@ export const UppyUploaderComponent = ({
         autoProceed: false,
         restrictions,
         locale,
-        // TODO: potentially integrate with deposit store
-        // store: new ReduxStore({ store: rootStore }),
       }).use(InvenioMultipartUploader, {
         // Bind Redux file actions to the uploader plugin
         draftRecord: formikDraft,
@@ -104,57 +103,41 @@ export const UppyUploaderComponent = ({
         // *after* their creation. PUT request with this added header
         // results in HTTP 400 Bad Request. Needs more investigation.
         checkPartIntegrity: false,
-      }).use(InvenioFilesProvider, { files, deleteFile })
+      })
+      .use(ImageEditor)
   );
 
-  const uppyMetaFileIDs = uppy.getFiles().map((file) => file.meta.file_id);
-
-  Object.entries(files).forEach(([fileID, file])=> {
-    // Skip already added files
-    if (uppyMetaFileIDs.includes(file.file_id)) { return; }
-
-    console.log("Adding file", fileID, file, uppyMetaFileIDs);
-    const addedFileID = uppy.addFile({
-      name: file.name,
-      type: file.mimeType,
-      data: { size: file.size },
-      body: {
-        fileId: file.file_id,
-      },
-      meta: {
-        links: file.links,
-        file_id: file.file_id
-      },
-      source: file.source || "InvenioFilesProvider",
-      uploadURL: file.links.content,
-      isRemote: true, // file is stored on the backend, not locally available by browser
-    });
-    uppy.setFileState(addedFileID, {
-      progress: {
-        uploadComplete: file.progressPercentage === 100,
-        uploadStarted: file.progressPercentage === 100,
-      }
-    });
-  });
-
-  // After files from store state have been synced to Uppy state,
-  // enable auto-proceed to auto-upload any files added by user.
-  uppy.setOptions({ autoProceed: true });
+  // TODO: this is a WIP to provide users with possibility
+  // to manually pick which individual files do they want to import from a record.
+  if (displayImportBtn) {
+    if (!uppy.getPlugin("InvenioFilesProvider")) {
+      uppy.use(InvenioFilesProvider, { files });
+    }
+  }
 
   React.useEffect(() => {
-    const dashboardPlugin = uppy.getPlugin("Dashboard");
+    uppy.setOptions({
+      locale
+    });
+  }, [uppy, locale]);
+
+  React.useEffect(() => {
+    uppy.setOptions({
+      restrictions
+    });
+  }, [restrictions]);
+
+  React.useEffect(() => {
+    const dashboardPlugin = uppy.getPlugin("uppy-uploader-dashboard");
     if (!dashboardPlugin) return;
     dashboardPlugin.setOptions({
       disabled: !filesLeft,
     });
-  }, [filesLeft, uppy]);
+  }, [uppy, filesLeft]);
 
-  // TODO: this hook-based approach could be used after React upgrade
+  // TODO: this hook-based approach to sync with uppy state could be used after React>=v18 upgrade
   // const filesList = useUppyState(uppy, (state) => state.files);
   // const totalProgress = useUppyState(uppy, (state) => state.totalProgress);
-
-  const displayImportBtn =
-    filesEnabled && isDraftRecord && hasParentRecord && !filesList.length;
   return (
     <Grid className="file-uploader">
       <Grid.Row className="pt-10 pb-5">
@@ -171,6 +154,40 @@ export const UppyUploaderComponent = ({
         )}
       </Grid.Row>
       <Overridable
+        id="ReactInvenioDeposit.FileUploader.ImportButton.container"
+        importButtonIcon={importButtonIcon}
+        importButtonText={importButtonText}
+        importParentFiles={importParentFiles}
+        isFileImportInProgress={isFileImportInProgress}
+        displayImportBtn={displayImportBtn}
+        {...uiProps}
+      >
+        {displayImportBtn && (
+          <Grid.Row className="pb-5 pt-5">
+            <Grid.Column width={16}>
+              <Message visible info>
+                <div className="right-floated display-inline-block">
+                  <Button
+                    type="button"
+                    size="mini"
+                    primary
+                    icon={importButtonIcon}
+                    content={importButtonText}
+                    onClick={() => importParentFiles()}
+                    disabled={isFileImportInProgress}
+                    loading={isFileImportInProgress}
+                  />
+                </div>
+                <p className="display-inline-block mt-5">
+                  <Icon name="info circle" />
+                  {i18next.t("You can import files from the previous version.")}
+                </p>
+              </Message>
+            </Grid.Column>
+          </Grid.Row>
+        )}
+      </Overridable>
+      <Overridable
         id="ReactInvenioDeposit.FileUploader.FileUploaderArea.container"
         filesList={filesList}
         filesLocked={lockFileUploader}
@@ -182,16 +199,6 @@ export const UppyUploaderComponent = ({
         {filesEnabled && (
           <Grid.Row stretched className="pt-0 pb-0">
             <Grid.Column width={16}>
-              <Dashboard
-                style={{ width: "100%" }}
-                uppy={uppy}
-                id="uppy-uploader-dashboard"
-                disabled={!filesLeft}
-                // `null` means "do not display a Done button in a status bar"
-                doneButtonHandler={null}
-                {...defaultDashboardProps}
-                {...uiProps}
-              />
               {filesList.length !== 0 && (
                 <Grid.Column verticalAlign="middle">
                   <FilesListTable
@@ -203,6 +210,50 @@ export const UppyUploaderComponent = ({
                   />
                 </Grid.Column>
               )}
+              <Dashboard
+                style={{ width: "100%" }}
+                uppy={uppy}
+                id="uppy-uploader-dashboard"
+                disabled={!filesLeft}
+                // `null` means "do not display a Done button in a status bar"
+                doneButtonHandler={null}
+                // metaFields={metaFields}
+                note={i18next.t(
+                  "File addition, removal or modification are not allowed after you have published your upload."
+                )}
+                {...defaultDashboardProps}
+                {...uiProps}
+              />
+            </Grid.Column>
+          </Grid.Row>
+        )}
+      </Overridable>
+      <Overridable
+        id="ReactInvenioDeposit.FileUploader.NewVersionButton.container"
+        isDraftRecord={isDraftRecord}
+        draft={formikDraft}
+        filesLocked={lockFileUploader}
+        permissions={permissions}
+        record={record}
+        {...uiProps}
+      >
+        {(!isDraftRecord && filesLocked) && (
+          <Grid.Row className="file-upload-note pt-5">
+            <Grid.Column width={16}>
+              <Message info>
+                <NewVersionButton
+                  record={record}
+                  onError={() => {}}
+                  className="right-floated"
+                  disabled={!permissions.can_new_version}
+                />
+                <p className="mt-5 display-inline-block">
+                  <Icon name="info circle" size="large" />
+                  {i18next.t(
+                    "You must create a new version to add, modify or delete files."
+                  )}
+                </p>
+              </Message>
             </Grid.Column>
           </Grid.Row>
         )}

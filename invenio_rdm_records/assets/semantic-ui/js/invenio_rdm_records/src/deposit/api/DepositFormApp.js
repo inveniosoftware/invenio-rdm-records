@@ -56,13 +56,11 @@ export class DepositFormApp extends Component {
 
     const fileApiClient = props.fileApiClient
       ? props.fileApiClient
-      : props.useUppy
-      ? new UppyDepositFileApiClient(
+      : new RDMDepositFileApiClient(
           additionalApiConfig,
           props.config.default_transfer_type,
           props.config.transfer_types
-        )
-      : new RDMDepositFileApiClient(additionalApiConfig);
+        );
 
     const draftsService = props.draftsService
       ? props.draftsService

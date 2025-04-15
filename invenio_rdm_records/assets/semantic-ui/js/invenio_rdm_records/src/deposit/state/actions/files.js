@@ -1,6 +1,7 @@
 // This file is part of Invenio-RDM-Records
-// Copyright (C) 2020-2023 CERN.
+// Copyright (C) 2020-2025 CERN.
 // Copyright (C) 2020-2022 Northwestern University.
+// Copyright (C)      2025 CESNET.
 //
 // Invenio-RDM-Records is free software; you can redistribute it and/or modify it
 // under the terms of the MIT License; see LICENSE file for more details.
@@ -28,7 +29,6 @@ export const saveAndFetchDraft = (draft) => {
       type: DRAFT_FETCHED,
       payload: { data: response.data },
     });
-    console.log("RESPONSE", response);
     return response.data;
   };
 };
@@ -52,7 +52,7 @@ export const finalizeUpload = (commitFileUrl, file) => {
   return async (dispatch, _, config) => {
     try {
       const response = await config.service.files.finalizeUpload(commitFileUrl, file);
-      const { name: filename, size, checksum, links, ...extraData } = response;
+      const { key: filename, size, checksum, links, ...extraData } = response;
       dispatch({
         type: FILE_UPLOAD_FINISHED,
         payload: {
@@ -87,16 +87,21 @@ export const initializeFileUpload = (draft, file) => {
       });
       return initializedFileMetadata;
     } catch (error) {
-      console.error("Error uploading files", error, draft, file);
+      const axiosError = error?.t0 && error.t0.isAxiosError ? error.t0 : error;
+
+      console.error("Error uploading files", axiosError, draft, file);
       dispatch({ type: FILE_UPLOAD_FAILED, payload: { filename: file.name } });
-      throw error;
+
+      const errorMessage =
+        axiosError?.response?.data?.message || axiosError?.message || "Upload failed";
+      throw new Error(errorMessage);
     }
   };
 };
 
 export const uploadFile = (draft, file, uploadUrl) => {
   // NOTE: Unused by Uppy uploader
-  console.debug("[uploadFile]:", file);
+  console.debug("[uploadFile]:", file, uploadUrl);
   return async (dispatch, _, config) => {
     try {
       config.service.files.upload(uploadUrl, file);
@@ -114,7 +119,7 @@ export const deleteFile = (file) => {
   console.debug("[deleteFile]:", file);
   return async (dispatch, _, config) => {
     try {
-      const fileLinks = file.meta.links;
+      const fileLinks = file.meta?.links || file.links;
       await config.service.files.delete(fileLinks);
 
       dispatch({
