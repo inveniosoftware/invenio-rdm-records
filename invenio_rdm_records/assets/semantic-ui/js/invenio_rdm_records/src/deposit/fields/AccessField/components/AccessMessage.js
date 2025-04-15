@@ -27,7 +27,9 @@ export const AccessMessage = ({ access, metadataOnly, accessCommunity }) => {
   const fullEmbargo = !recordPublic && embargoActive;
 
   const fmtDate = access.embargo?.until
-    ? DateTime.fromISO(access.embargo.until).toLocaleString(DateTime.DATE_FULL)
+    ? DateTime.fromISO(access.embargo.until)
+        .setLocale(i18next.language)
+        .toLocaleString(DateTime.DATE_FULL)
     : "???";
 
   if (fullyPublic) {
