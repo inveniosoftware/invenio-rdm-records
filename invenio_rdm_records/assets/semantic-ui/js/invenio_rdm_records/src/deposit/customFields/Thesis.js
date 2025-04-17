@@ -19,6 +19,8 @@ export class Thesis extends Component {
       university,
       department,
       type,
+      date_submitted: dateSubmitted,
+      date_defended: dateDefended,
       icon,
       label,
     } = this.props;
@@ -71,6 +73,26 @@ export class Thesis extends Component {
               )}
             </Grid.Column>
           )}
+          <Grid.Column width="8">
+            <Input
+              fieldPath={`${fieldPath}.date_submitted`}
+              label={dateSubmitted.label}
+              placeholder={dateSubmitted.placeholder}
+            />
+            {dateSubmitted.description && (
+              <label className="helptext mb-0">{dateSubmitted.description}</label>
+            )}
+          </Grid.Column>
+          <Grid.Column width="8">
+            <Input
+              fieldPath={`${fieldPath}.date_defended`}
+              label={dateDefended.label}
+              placeholder={dateDefended.placeholder}
+            />
+            {dateDefended.description && (
+              <label className="helptext mb-0">{dateDefended.description}</label>
+            )}
+          </Grid.Column>
         </Grid>
       </>
     );
@@ -82,6 +104,8 @@ Thesis.propTypes = {
   university: PropTypes.object.isRequired,
   department: PropTypes.object.isRequired,
   type: PropTypes.object.isRequired,
+  date_submitted: PropTypes.object.isRequired,
+  date_defended: PropTypes.object.isRequired,
   icon: PropTypes.string,
   label: PropTypes.string,
 };
