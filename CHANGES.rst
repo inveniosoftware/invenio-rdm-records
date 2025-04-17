@@ -12,6 +12,10 @@
 Changes
 =======
 
+Version v18.3.2 (released 2025-04-17)
+
+- custom_fields: added fallback to old thesis format and conditionally handle form display based on config
+
 Version v18.3.1 (released 2025-04-14)
 
 - user quota: anticipate system user
