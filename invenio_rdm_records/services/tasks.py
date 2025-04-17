@@ -41,15 +41,20 @@ StatsRDMReindexTask = {
 @shared_task(ignore_result=True)
 def update_expired_embargos():
     """Lift expired embargos."""
+    current_app.logger.debug("Updating expired embargoes")
     service = current_rdm_records.records_service
 
     records = service.scan_expired_embargos(system_identity)
+    lifted_embargoes = 0
     for record in records.hits:
         try:
+            current_app.logger.info(f"Lifting embargo for record {record['id']}")
             service.lift_embargo(_id=record["id"], identity=system_identity)
+            lifted_embargoes += 1
         except EmbargoNotLiftedError as ex:
             current_app.logger.warning(ex.description)
             continue
+    current_app.logger.info(f"Lifted {lifted_embargoes} embargoes")
 
 
 @shared_task(ignore_result=True)
