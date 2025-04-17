@@ -40,6 +40,6 @@ CopyrightsField.propTypes = {
 };
 
 CopyrightsField.defaultProps = {
-  label: i18next.t("Copyrights"),
+  label: i18next.t("Copyright"),
   required: false,
 };

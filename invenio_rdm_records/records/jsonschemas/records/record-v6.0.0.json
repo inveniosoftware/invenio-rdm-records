@@ -203,8 +203,8 @@
             }
           }
         },
-        "copyrights": {
-          "description": "Copyrights for record (may contain HTML).",
+        "copyright": {
+          "description": "Copyright for record (may contain HTML).",
           "type": "string"
         },
         "description": {
