@@ -22,6 +22,8 @@ export class Thesis extends Component {
       icon,
       label,
     } = this.props;
+    // For backwards compability added conditional rendering for fields; it is based on their definition in the props in THESIS_CUSTOM_FIELDS_UI
+    const uniWidth = department && type ? 6 : 16;
     return (
       <>
         {label && (
@@ -31,36 +33,44 @@ export class Thesis extends Component {
           </>
         )}
         <Grid padded>
-          <Grid.Column width="6">
-            <Input
-              fieldPath={`${fieldPath}.university`}
-              label={university.label}
-              placeholder={university.placeholder}
-            />
-            {university.description && (
-              <label className="helptext mb-0">{university.description}</label>
-            )}
-          </Grid.Column>
-          <Grid.Column width="6">
-            <Input
-              fieldPath={`${fieldPath}.department`}
-              label={department.label}
-              placeholder={department.placeholder}
-            />
-            {department.description && (
-              <label className="helptext mb-0">{department.description}</label>
-            )}
-          </Grid.Column>
-          <Grid.Column width="4">
-            <Input
-              fieldPath={`${fieldPath}.type`}
-              label={type.label}
-              placeholder={type.placeholder}
-            />
-            {type.description && (
-              <label className="helptext mb-0">{type.description}</label>
-            )}
-          </Grid.Column>
+          {university && (
+            <Grid.Column width={uniWidth}>
+              <Input
+                fieldPath={`${fieldPath}.university`}
+                label={university.label}
+                placeholder={university.placeholder}
+              />
+              {university.description && (
+                <label className="helptext mb-0">{university.description}</label>
+              )}
+            </Grid.Column>
+          )}
+
+          {department && (
+            <Grid.Column width={6}>
+              <Input
+                fieldPath={`${fieldPath}.department`}
+                label={department.label}
+                placeholder={department.placeholder}
+              />
+              {department.description && (
+                <label className="helptext mb-0">{department.description}</label>
+              )}
+            </Grid.Column>
+          )}
+
+          {type && (
+            <Grid.Column width={4}>
+              <Input
+                fieldPath={`${fieldPath}.type`}
+                label={type.label}
+                placeholder={type.placeholder}
+              />
+              {type.description && (
+                <label className="helptext mb-0">{type.description}</label>
+              )}
+            </Grid.Column>
+          )}
         </Grid>
       </>
     );

@@ -287,13 +287,13 @@ def compute_publishing_information(obj, dummyctx):
         return formatted
 
     def _format_thesis(thesis):
-        """Formats a thesis object into a string based on its attributes."""
-        university = thesis.get("university", "")
-        department = thesis.get("department", "")
-        ttype = thesis.get("type", "")
-        fields = [university, department, ttype]
-        formatted = ", ".join(filter(None, fields))
-        return formatted
+        """Formats a thesis entry into a string based on its attributes."""
+        if not isinstance(thesis, dict):
+            return thesis
+
+        fields = ["university", "department", "type"]
+        formatted = [thesis.get(field, "") for field in fields]
+        return ", ".join(filter(None, formatted))
 
     attr = "custom_fields"
     field = obj.get(attr, {})
@@ -302,7 +302,8 @@ def compute_publishing_information(obj, dummyctx):
     # Retrieve publishing related custom fields
     journal = field.get("journal:journal")
     imprint = field.get("imprint:imprint")
-    thesis = field.get("thesis:thesis")
+    # "thesis:university" is deprecated and kept for compatibility, will be removed later.
+    thesis = field.get("thesis:thesis") or field.get("thesis:university")
 
     publication_date = obj.get("metadata", {}).get("publication_date", None)
     result = {}
