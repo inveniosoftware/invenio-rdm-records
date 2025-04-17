@@ -807,7 +807,7 @@
               }
             }
           },
-          "copyrights": {
+          "copyright": {
             "type": "text"
           },
           "creators": {

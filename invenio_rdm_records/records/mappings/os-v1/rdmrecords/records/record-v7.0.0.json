@@ -898,7 +898,7 @@
               }
             }
           },
-          "copyrights": {
+          "copyright": {
             "type": "text"
           },
           "dates": {
