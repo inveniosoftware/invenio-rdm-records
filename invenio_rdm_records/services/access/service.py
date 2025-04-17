@@ -16,6 +16,7 @@ import arrow
 from flask import current_app
 from flask_login import current_user
 from invenio_access.permissions import authenticated_user, system_identity
+from invenio_base import invenio_url_for
 from invenio_drafts_resources.services.records import RecordService
 from invenio_drafts_resources.services.records.uow import ParentRecordCommitOp
 from invenio_i18n import lazy_gettext as _
@@ -729,14 +730,9 @@ class RecordAccessService(RecordService):
         )
 
         # Create the URL for the email verification endpoint
-
-        # TODO ideally this part should be auto generated, but
-        # due to api app and ui app split, api app does not have the UI
-        # urls registered
-        verify_url = (
-            f"{current_app.config['SITE_UI_URL']}"
-            f"/access/requests/confirm"
-            f"?access_request_token={access_token.token}"
+        verify_url = invenio_url_for(
+            "invenio_app_rdm_requests.verify_access_request_token",
+            access_request_token=access_token.token,
         )
         uow.register(
             NotificationOp(

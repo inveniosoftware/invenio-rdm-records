@@ -8,6 +8,9 @@
 """Signposting resource tests."""
 
 
+from tests.helpers import login_user, logout_user
+
+
 def test_link_in_metadata_resource_response_headers(
     running_app, client_with_login, minimal_record, publish_record
 ):
@@ -27,18 +30,18 @@ def test_link_in_metadata_resource_response_headers(
 
 # Just a sanity check
 def test_signposting_link_permissions(
-    client, client_with_login, minimal_restricted_record, publish_record
+    client, users, minimal_restricted_record, publish_record
 ):
-    record_json = publish_record(client_with_login, minimal_restricted_record)
+    login_user(client, users[0])
+    record_json = publish_record(client, minimal_restricted_record)
+    logout_user(client)
     record_id = record_json["id"]
-    response = client_with_login.head(
-        f"/records/{record_id}", headers={"accept": "application/marcxml+xml"}
+
+    response = client.get(
+        f"/records/{record_id}", headers={"accept": "application/linkset+json"}
     )
-    link = response.headers["Link"]
 
-    response = client.get(link, headers={"accept-type": "application/linkset+json"})
-
-    assert 404 == response.status_code
+    assert 403 == response.status_code
 
 
 def test_linkset_endpoint(
