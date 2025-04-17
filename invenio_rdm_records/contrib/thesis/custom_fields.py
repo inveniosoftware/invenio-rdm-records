@@ -16,7 +16,7 @@ Implements the following fields:
 from invenio_i18n import lazy_gettext as _
 from invenio_records_resources.services.custom_fields import BaseCF
 from marshmallow import fields
-from marshmallow_utils.fields import SanitizedUnicode
+from marshmallow_utils.fields import SanitizedUnicode, EDTFLevel2DateString
 
 
 class ThesisCF(BaseCF):
@@ -30,6 +30,8 @@ class ThesisCF(BaseCF):
                 "university": SanitizedUnicode(),
                 "department": SanitizedUnicode(),
                 "type": SanitizedUnicode(),
+                "date_submitted": EDTFLevel2DateString(),
+                "date_defended": EDTFLevel2DateString(),
             }
         )
 
@@ -42,6 +44,8 @@ class ThesisCF(BaseCF):
                 "university": {"type": "keyword"},
                 "department": {"type": "keyword"},
                 "type": {"type": "keyword"},
+                "date_submitted": {"type": "keyword"},
+                "date_defended": {"type": "keyword"},
             },
         }
 
@@ -79,6 +83,20 @@ THESIS_CUSTOM_FIELDS_UI = {
                     "placeholder": _("PhD"),
                     "description": _(
                         "The type of thesis (e.g. Masters, PhD, Engineers, Bachelors)"
+                    ),
+                },
+                "date_submitted": {
+                    "label": _("Submission date"),
+                    "placeholder": "",
+                    "description": _(
+                        "Submission date in YYYY-MM-DD format."
+                    ),
+                },
+                "date_defended": {
+                    "label": _("Defense date"),
+                    "placeholder": "",
+                    "description": _(
+                        "Defense date in YYYY-MM-DD format."
                     ),
                 },
             },
