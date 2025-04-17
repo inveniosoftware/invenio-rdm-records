@@ -114,6 +114,7 @@ MEETING_CUSTOM_FIELDS_UI = {
                 },
                 "identifiers": {
                     "label": _("Identifiers"),
+                    "description": _("URL of conference website or other identifier."),
                 },
                 "session": {
                     "label": _("Session"),
