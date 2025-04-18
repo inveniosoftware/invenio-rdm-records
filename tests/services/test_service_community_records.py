@@ -13,7 +13,6 @@ import pytest
 from invenio_records_resources.services.errors import PermissionDeniedError
 from marshmallow import ValidationError
 
-from invenio_rdm_records.collections.api import Collection, CollectionTree
 from invenio_rdm_records.proxies import (
     current_community_records_service,
     current_rdm_records_service,
