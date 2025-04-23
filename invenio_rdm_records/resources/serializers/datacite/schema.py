@@ -10,6 +10,8 @@
 
 """DataCite based Schema for Invenio RDM Records."""
 
+import json
+
 from babel_edtf import parse_edtf
 from edtf.parser.grammar import ParseException
 from flask import current_app
@@ -74,7 +76,6 @@ class PersonOrOrgSchema43(Schema):
         """Get name identifier list."""
         serialized_identifiers = []
         identifiers = obj["person_or_org"].get("identifiers", [])
-
         for identifier in identifiers:
             scheme = identifier["scheme"]
             id_scheme = get_scheme_datacite(
@@ -82,10 +83,21 @@ class PersonOrOrgSchema43(Schema):
             )
 
             if id_scheme:
+
                 name_id = {
                     "nameIdentifier": identifier["identifier"],
                     "nameIdentifierScheme": id_scheme,
                 }
+
+                scheme_uri = ""
+                if scheme == "orcid":
+                    scheme_uri = "http://orcid.org/"
+                elif scheme == "ror":
+                    scheme_uri = "https://ror.org/"
+
+                if scheme_uri:
+                    name_id["schemeUri"] = scheme_uri
+
                 serialized_identifiers.append(name_id)
 
         return serialized_identifiers
@@ -251,6 +263,19 @@ class DataCite43Schema(BaseSerializerSchema):
                 item["lang"] = lang_id
 
             result.append(item)
+
+        if field == "description":
+            # References
+            refs = obj["metadata"].get("references")
+            if refs:
+                result.append(
+                    {
+                        field: json.dumps(
+                            {"references": [r["reference"] for r in refs]}
+                        ),
+                        f"{field}Type": "Other",
+                    }
+                )
 
         return result or missing
 
@@ -573,6 +598,22 @@ class DataCite43Schema(BaseSerializerSchema):
             if link:
                 entry["rightsUri"] = link
             serialized_rights.append(entry)
+
+        # Adding access_status information
+
+        access_status = obj.get("access", {}).get("status", "")
+        if access_status == "metadata-only":
+            access_status = "closed"
+
+        access_right_formatted = access_status.capitalize() + " Access"
+        rights_uri = f"info:eu-repo/semantics/{access_status}Access"
+
+        access_right_serialized = {
+            "rights": access_right_formatted,
+            "rightsUri": rights_uri,
+        }
+
+        serialized_rights.append(access_right_serialized)
 
         return serialized_rights if serialized_rights else missing
 

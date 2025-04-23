@@ -59,6 +59,7 @@ def test_dcat_serializer(running_app, full_record_to_dict):
         "    <dct:creator>\n"
         '      <rdf:Description rdf:about="https://orcid.org/0000-0001-8135-3489">\n'
         '        <rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Person"/>\n'
+        '        <dct:identifier rdf:datatype="http://www.w3.org/2001/XMLSchema#string">0000-0001-8135-3489</dct:identifier>\n'
         "        <foaf:name>Nielsen, Lars Holm</foaf:name>\n"
         "        <foaf:givenName>Lars Holm</foaf:givenName>\n"
         "        <foaf:familyName>Nielsen</foaf:familyName>\n"
@@ -126,6 +127,7 @@ def test_dcat_serializer(running_app, full_record_to_dict):
         "    <dct:contributor>\n"
         '      <rdf:Description rdf:about="https://orcid.org/0000-0001-8135-3489">\n'
         '        <rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Person"/>\n'
+        '        <dct:identifier rdf:datatype="http://www.w3.org/2001/XMLSchema#string">0000-0001-8135-3489</dct:identifier>\n'
         "        <foaf:name>Nielsen, Lars Holm</foaf:name>\n"
         "        <foaf:givenName>Lars Holm</foaf:givenName>\n"
         "        <foaf:familyName>Nielsen</foaf:familyName>\n"
@@ -206,6 +208,7 @@ def test_dcat_serializer(running_app, full_record_to_dict):
         "        <rdfs:label>Bla bla bla</rdfs:label>\n"
         "      </dct:ProvenanceStatement>\n"
         "    </dct:provenance>\n"
+        '    <dct:description>{"references": ["Nielsen et al,.."]}</dct:description>\n'
         "    <dct:spatial>\n"
         "      <dct:Location>\n"
         "        <rdf:type "
@@ -224,6 +227,12 @@ def test_dcat_serializer(running_app, full_record_to_dict):
         'rdf:datatype="http://www.opengis.net/ont/geosparql#geoJSONLiteral"><![CDATA[{"type":"Point","coordinates":[-32.94682,-60.63932]}]]></dcat:centroid>\n'
         "      </dct:Location>\n"
         "    </dct:spatial>\n"
+        '    <dct:accessRights rdf:resource="http://publications.europa.eu/resource/authority/access-right/NON_PUBLIC"/>\n'
+        "    <dct:accessRights>\n"
+        '      <dct:RightsStatement rdf:about="info:eu-repo/semantics/embargoedAccess">\n'
+        "        <rdfs:label>Embargoed Access</rdfs:label>\n"
+        "      </dct:RightsStatement>\n"
+        "    </dct:accessRights>\n"
         "    <dcat:distribution>\n"
         "      <dcat:Distribution>\n"
         "        <dct:extent>\n"
