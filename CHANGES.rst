@@ -12,6 +12,11 @@
 Changes
 =======
 
+Version v18.4.0 (released 2025-04-23)
+
+- urls: integrate invenio_url_for
+- permissions: replace Disabled with SystemProcess
+
 Version v18.3.2 (released 2025-04-17)
 
 - custom_fields: added fallback to old thesis format and conditionally handle form display based on config
