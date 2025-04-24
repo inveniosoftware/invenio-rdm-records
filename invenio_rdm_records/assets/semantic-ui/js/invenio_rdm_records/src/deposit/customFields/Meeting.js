@@ -5,10 +5,10 @@
 // Invenio-RDM-Records is free software; you can redistribute it and/or modify it
 // under the terms of the MIT License; see LICENSE file for more details.
 
-import { IdentifiersField } from "@js/invenio_rdm_records/src/deposit/fields";
 import { i18next } from "@translations/invenio_rdm_records/i18next";
 import React, { Component } from "react";
-import { getInputFromDOM } from "@js/invenio_rdm_records";
+import { getInputFromDOM } from "../../deposit/dom";
+import { IdentifiersField } from "../fields/Identifiers/IdentifiersField";
 import { FieldLabel, Input } from "react-invenio-forms";
 import { Divider, Grid } from "semantic-ui-react";
 
@@ -82,15 +82,6 @@ export class Meeting extends Component {
               <label className="helptext mb-0">{dates.description}</label>
             )}
           </Grid.Column>
-          <Grid.Column width="16">
-            <IdentifiersField
-              fieldPath={`${fieldPath}.identifiers`}
-              label={i18next.t("Meeting identifiers")}
-              labelIcon="barcode"
-              schemeOptions={this.vocabularies.identifiers.scheme}
-              showEmptyValue
-            />
-          </Grid.Column>
           <Grid.Column width="6">
             <Input
               fieldPath={`${fieldPath}.session`}
@@ -110,6 +101,15 @@ export class Meeting extends Component {
             {sessionPart.description && (
               <label className="helptext mb-0">{sessionPart.description}</label>
             )}
+          </Grid.Column>
+          <Grid.Column width="16">
+            <IdentifiersField
+              fieldPath={`${fieldPath}.identifiers`}
+              label={i18next.t("Meeting identifiers")}
+              labelIcon="barcode"
+              schemeOptions={this.vocabularies.identifiers.scheme}
+              showEmptyValue
+            />
           </Grid.Column>
         </Grid>
       </>

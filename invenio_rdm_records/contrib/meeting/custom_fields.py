@@ -22,7 +22,7 @@ from functools import partial
 from invenio_i18n import lazy_gettext as _
 from invenio_records_resources.services.custom_fields import BaseCF
 from marshmallow import fields
-from marshmallow_utils.fields import SanitizedUnicode, IdentifierValueSet
+from marshmallow_utils.fields import IdentifierValueSet, SanitizedUnicode
 from marshmallow_utils.schemas import IdentifierSchema
 
 from ...services.schemas.metadata import record_identifiers_schemes
@@ -44,10 +44,11 @@ class MeetingCF(BaseCF):
                 "title": SanitizedUnicode(),
                 "identifiers": IdentifierValueSet(
                     fields.Nested(
-                        partial(IdentifierSchema,
-                                allowed_schemes=record_identifiers_schemes)
+                        partial(
+                            IdentifierSchema, allowed_schemes=record_identifiers_schemes
+                        )
                     )
-                )
+                ),
             }
         )
 
@@ -66,11 +67,13 @@ class MeetingCF(BaseCF):
                     "type": "text",
                     "fields": {"keyword": {"type": "keyword"}},
                 },
-                "identifiers": {"type": "object",
-                                "properties": {
-                                    "identifier": {"type": "keyword"},
-                                    "schema": {"type": "keyword"}
-                                }},
+                "identifiers": {
+                    "type": "object",
+                    "properties": {
+                        "identifier": {"type": "keyword"},
+                        "schema": {"type": "keyword"},
+                    },
+                },
             },
         }
 
