@@ -12,6 +12,10 @@
 Changes
 =======
 
+Version v18.5.0 (released 2025-04-24)
+
+- datamodel: add copyright field
+
 Version v18.4.0 (released 2025-04-23)
 
 - urls: integrate invenio_url_for
