@@ -12,6 +12,10 @@
 Changes
 =======
 
+Version v18.6.0 (released 2025-04-24)
+
+- datamodel contrib: add defense and submission date to thesis field
+
 Version v18.5.0 (released 2025-04-24)
 
 - datamodel: add copyright field
