@@ -108,6 +108,7 @@ def test_datacite43_serializer(running_app, full_record_to_dict):
             "title": {"en": "No rightsUri license"},
         }
     )
+    full_record_to_dict["metadata"]["copyright"] = "2025 © Author(s)"
     # for HTML stripping test purposes
     expected_data = {
         "contributors": [
@@ -224,6 +225,10 @@ def test_datacite43_serializer(running_app, full_record_to_dict):
                 "rightsUri": "https://creativecommons.org/licenses/by/4.0/legalcode",
             },
             {"rights": "No rightsUri license"},
+            {
+                "rights": "2025 © Author(s)",
+                "rightsUri": "http://rightsstatements.org/vocab/InC/1.0/",
+            },
         ],
         "schemaVersion": "http://datacite.org/schema/kernel-4",
         "sizes": ["11 pages"],

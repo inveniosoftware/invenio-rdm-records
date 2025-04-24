@@ -556,7 +556,8 @@ class DataCite43Schema(BaseSerializerSchema):
     def get_rights(self, obj):
         """Get datacite rigths."""
         rights = obj["metadata"].get("rights", [])
-        if not rights:
+        copyright = obj["metadata"].get("copyright", None)
+        if not rights and not copyright:
             return missing
 
         serialized_rights = []
@@ -573,6 +574,13 @@ class DataCite43Schema(BaseSerializerSchema):
             if link:
                 entry["rightsUri"] = link
             serialized_rights.append(entry)
+        if copyright:
+            serialized_rights.append(
+                {
+                    "rights": copyright,
+                    "rightsUri": "http://rightsstatements.org/vocab/InC/1.0/",
+                }
+            )
 
         return serialized_rights if serialized_rights else missing
 
