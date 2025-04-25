@@ -14,4 +14,3 @@ export * from "./components";
 export { connect } from "./connect";
 export * from "./dom";
 export * from "./customFields";
-export * from "./state/actions";

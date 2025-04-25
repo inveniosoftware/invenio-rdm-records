@@ -19,6 +19,8 @@ import Overridable from "react-overridable";
 import InvenioMultipartUploader from "./InvenioMultipartUploader";
 import InvenioFilesProvider from "./InvenioFilesProvider";
 import { NewVersionButton } from "../../controls/NewVersionButton";
+import { UploadState } from "../../state/reducers/files";
+
 import { i18next } from "@translations/invenio_rdm_records/i18next";
 
 import {
@@ -35,6 +37,8 @@ const defaultDashboardProps = {
   hideProgressAfterFinish: true,
   hidePauseResumeButton: true,
   disableLocalFiles: false,
+  // Allows to select both files and folders
+  fileManagerSelectionType: 'both',
   height: "100%",
   width: "100%",
   autoOpen: null,
@@ -90,6 +94,8 @@ export const UppyUploaderComponent = ({
         locale,
       }).use(InvenioMultipartUploader, {
         // Bind Redux file actions to the uploader plugin
+        // TODO: this must me made reactive - extract from initializer func
+        // to persist form changes between uploads
         draftRecord: formikDraft,
         initializeFileUpload,
         finalizeUpload,
@@ -116,23 +122,17 @@ export const UppyUploaderComponent = ({
   }
 
   React.useEffect(() => {
-    uppy.setOptions({
-      locale
-    });
+    uppy.setOptions({ locale });
   }, [uppy, locale]);
 
   React.useEffect(() => {
-    uppy.setOptions({
-      restrictions
-    });
-  }, [restrictions]);
+    uppy.setOptions({ restrictions });
+  }, [uppy, restrictions]);
 
   React.useEffect(() => {
     const dashboardPlugin = uppy.getPlugin("uppy-uploader-dashboard");
     if (!dashboardPlugin) return;
-    dashboardPlugin.setOptions({
-      disabled: !filesLeft,
-    });
+    dashboardPlugin.setOptions({ disabled: !filesLeft });
   }, [uppy, filesLeft]);
 
   // TODO: this hook-based approach to sync with uppy state could be used after React>=v18 upgrade
@@ -270,14 +270,13 @@ const fileDetailsShape = PropTypes.objectOf(
     checksum: PropTypes.string,
     links: PropTypes.object,
     cancelUploadFn: PropTypes.func,
-    state: PropTypes.any, // PropTypes.oneOf(Object.values(UploadState)), can't reach UploadState from here
+    state: PropTypes.oneOf(Object.values(UploadState)),
     enabled: PropTypes.bool,
   })
 );
 
 UppyUploaderComponent.propTypes = {
   config: PropTypes.object,
-  dragText: PropTypes.string,
   files: fileDetailsShape,
   isDraftRecord: PropTypes.bool,
   hasParentRecord: PropTypes.bool,
@@ -286,7 +285,6 @@ UppyUploaderComponent.propTypes = {
     maxFiles: PropTypes.number,
   }),
   record: PropTypes.object,
-  uploadButtonIcon: PropTypes.string,
   uploadButtonText: PropTypes.string,
   importButtonIcon: PropTypes.string,
   importButtonText: PropTypes.string,
@@ -310,14 +308,12 @@ UppyUploaderComponent.defaultProps = {
   files: undefined,
   record: undefined,
   isFileImportInProgress: false,
-  // dragText: i18next.t("Drag and drop files"),
   isDraftRecord: true,
   hasParentRecord: false,
   quota: {
     maxFiles: 5,
     maxStorage: 10 ** 10,
   },
-  uploadButtonIcon: "upload",
   // uploadButtonText: i18next.t("Upload files"),
   importButtonIcon: "sync",
   // importButtonText: i18next.t("Import files"),

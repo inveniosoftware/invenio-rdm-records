@@ -1,6 +1,7 @@
 // This file is part of Invenio-RDM-Records
 // Copyright (C) 2020-2023 CERN.
 // Copyright (C) 2020-2022 Northwestern University.
+// Copyright (C)      2025 CESNET.
 //
 // Invenio-RDM-Records is free software; you can redistribute it and/or modify it
 // under the terms of the MIT License; see LICENSE file for more details.
@@ -236,7 +237,6 @@ export class RDMDepositFilesService extends DepositFilesService {
 
 export class UppyDepositFilesService extends RDMDepositFilesService {
   finalizeUpload = async (commitFileURL, file) => {
-    console.log("_FU", commitFileURL, file);
     const response = await this.fileApiClient.finalizeFileUpload(commitFileURL);
     this.progressNotifier.onUploadProgress(file.name, 100);
     return response.data;

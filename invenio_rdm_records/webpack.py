@@ -35,7 +35,6 @@ theme = WebpackThemeBundle(
                 "@uppy/progress-bar": "^3.1.1",
                 "@uppy/provider-views": "^3.13.0",
                 "@uppy/react": "^3.4.0",
-                "@uppy/url": "^3.6.1",
                 "formik": "^2.1.0",
                 "hash-wasm": "^4.12.0",
                 "i18next": "^20.3.0",

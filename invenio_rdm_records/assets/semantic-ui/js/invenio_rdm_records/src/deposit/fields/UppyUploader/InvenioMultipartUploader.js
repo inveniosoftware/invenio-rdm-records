@@ -44,9 +44,6 @@ export class InvenioMultipartUploader extends AwsS3Multipart {
     this.getChunkSize = opts.getChunkSize || this.getChunkSize;
     this.shouldUseMultipart = this.opts.shouldUseMultipart || this.shouldUseMultipart;
 
-    this.uppy.addPreProcessor(this.#saveDraftBeforeUpload);
-    this.uppy.addPreProcessor(this.#disableResumableUploadsCapability);
-
     this.i18nInit();
     super.setOptions({
       // Here we override default implementation in AwsS3Multipart
@@ -62,6 +59,7 @@ export class InvenioMultipartUploader extends AwsS3Multipart {
     this.uppy.on("upload-success", this.#completeSinglePartUpload);
     this.uppy.on("complete", this.#resetOnComplete);
     this.uppy.addPreProcessor(this.#saveDraftBeforeUpload);
+    this.uppy.addPreProcessor(this.#disableResumableUploadsCapability);
   }
 
   uninstall() {
@@ -77,12 +75,10 @@ export class InvenioMultipartUploader extends AwsS3Multipart {
   };
 
   #saveDraftBeforeUpload = async (fileIDs) => {
-    if (!(this.draftRecord.id && this.draftRecord.links)) {
-      // To obtain file links, we need to save the draft record first
-      this.uppy.log("Saving draft record before upload");
-      this.draftRecord = await this.opts.saveAndFetchDraft(this.draftRecord);
-      this.uppy.log(`Saved draft record before upload: ${this.draftRecord.id}`);
-    }
+    // To obtain file links, we need to save the draft record first
+    this.uppy.log("Saving draft record before upload");
+    this.draftRecord = await this.opts.saveAndFetchDraft(this.draftRecord);
+    this.uppy.log(`Saved draft record before upload: ${this.draftRecord.id}`);
   };
 
   #completeSinglePartUpload = (file, response) => {
@@ -91,7 +87,6 @@ export class InvenioMultipartUploader extends AwsS3Multipart {
       // Ignore cases when uploadURL missing - not a singlepart upload
       return;
     }
-    console.log("COMPLETE SINGLE", file, response);
     return this.completeMultipartUpload(file, {
       uploadId: file.file_id,
       key: response.key,
@@ -159,8 +154,6 @@ export class InvenioMultipartUploader extends AwsS3Multipart {
   shouldUseMultipart(file) {
     const chunkSize = this.getChunkSize(file);
     const partCount = Math.ceil(file.size / chunkSize);
-    console.log("SUM", partCount > 1);
-
     return partCount > 1;
   }
 
@@ -194,7 +187,6 @@ export class InvenioMultipartUploader extends AwsS3Multipart {
    * @returns
    */
   getChunkSize(file) {
-    console.log("GCS", file);
     const MiB = 1024 * 1024;
     const minPartSize = MiB * 5;
     const midPartSize = MiB * 25;
@@ -247,7 +239,8 @@ export class InvenioMultipartUploader extends AwsS3Multipart {
       file_id: response.file_id,
       links: response.links,
     });
-
+    file.meta.links = response.links;
+    console.debug("cmu", this.uppy.getFile(file.id));
     return { uploadId: file.file_id, key: response.key };
   }
 
@@ -332,6 +325,7 @@ export class InvenioMultipartUploader extends AwsS3Multipart {
    */
   async abortMultipartUpload(file, { uploadId, key }) {
     file.links = file.meta.links;
+    this.uppy.log("Aborting file upload", file, uploadId);
     await this.opts.abortUpload(file, uploadId);
   }
 }
