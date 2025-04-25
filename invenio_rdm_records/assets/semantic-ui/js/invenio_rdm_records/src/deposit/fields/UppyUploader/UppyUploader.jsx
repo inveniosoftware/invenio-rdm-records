@@ -96,7 +96,6 @@ export const UppyUploaderComponent = ({
         // Bind Redux file actions to the uploader plugin
         // TODO: this must me made reactive - extract from initializer func
         // to persist form changes between uploads
-        draftRecord: formikDraft,
         initializeFileUpload,
         finalizeUpload,
         saveAndFetchDraft,
@@ -120,6 +119,14 @@ export const UppyUploaderComponent = ({
       uppy.use(InvenioFilesProvider, { files });
     }
   }
+
+  React.useEffect(() => {
+    const uploaderPlugin = uppy.getPlugin('InvenioMultipartUploader');
+    if (uploaderPlugin) {
+      // Synchronize uploader with current formik state
+      uploaderPlugin.draftRecord = formikDraft;
+    }
+  }, [formikDraft, uppy]);
 
   React.useEffect(() => {
     uppy.setOptions({ locale });
