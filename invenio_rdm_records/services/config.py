@@ -387,11 +387,6 @@ def get_file_links_item(name_of_blueprint):
             f"{name_of_blueprint}.read_content",
             params=["pid_value", "key"],
         ),
-        "commit": FileEndpointLink(
-            f"{name_of_blueprint}.create_commit",
-            params=["pid_value", "key"],
-            when=lambda file_drafcord, ctx: is_draft(file_drafcord.record, ctx),
-        ),
         "iiif_canvas": FileEndpointLink(
             "iiif.canvas",
             params=["uuid", "file_name"],
@@ -868,7 +863,16 @@ class RDMFileDraftServiceConfig(FileServiceConfig, ConfiguratorMixin):
     max_files_count = FromConfig("RDM_RECORDS_MAX_FILES_COUNT", 100)
 
     file_links_list = get_file_links_list("draft_files")
-    file_links_item = get_file_links_item("draft_files")
+    file_links_item = {
+        **get_file_links_item("draft_files"),
+        # adding commit link only on draft, records do not allow commiting files directly,
+        # without going through a draft
+        "commit": FileEndpointLink(
+            f"draft_files.create_commit",
+            params=["pid_value", "key"],
+            when=lambda file_draft, ctx: is_draft(file_draft.record, ctx),
+        ),
+    }
 
     file_schema = FileSchema
 
@@ -891,6 +895,15 @@ class RDMMediaFileDraftServiceConfig(FileServiceConfig, ConfiguratorMixin):
     max_files_count = FromConfig("RDM_RECORDS_MAX_MEDIA_FILES_COUNT", 100)
 
     file_links_list = get_file_links_list("draft_media_files")
-    file_links_item = get_file_links_item("draft_media_files")
+    file_links_item = {
+        **get_file_links_item("draft_media_files"),
+        # adding commit link only on draft, records do not allow commiting files directly,
+        # without going through a draft
+        "commit": FileEndpointLink(
+            f"draft_media_files.create_commit",
+            params=["pid_value", "key"],
+            when=lambda file_draft, ctx: is_draft(file_draft.record, ctx),
+        ),
+    }
 
     file_schema = FileSchema
