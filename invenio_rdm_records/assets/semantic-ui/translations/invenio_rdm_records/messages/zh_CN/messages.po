@@ -1,0 +1,832 @@
+# 
+# Translators:
+# Tibor Simko <tibor.simko@cern.ch>, 2024
+# Weizheng Lu, 2024
+# Kalven Richie, 2024
+# 
+msgid ""
+msgstr ""
+"Project-Id-Version: i18next-conv\n"
+"POT-Creation-Date: 2025-04-07T16:10:08.156Z\n"
+"PO-Revision-Date: 2024-08-06 08:56+0000\n"
+"Last-Translator: Kalven Richie, 2024\n"
+"Language-Team: Chinese (China) (https://app.transifex.com/inveniosoftware/teams/23537/zh_CN/)\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: zh_CN\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"mime-version: 1.0\n"
+
+msgid "Copy to clipboard"
+msgstr "复制到剪切板"
+
+msgid "Copied!"
+msgstr "成功复制！"
+
+msgid "This set is not editable as it was created by the system."
+msgstr ""
+
+msgid "This set is not deletable as it was created by the system."
+msgstr ""
+
+msgid "Links"
+msgstr ""
+
+msgid "Format"
+msgstr ""
+
+msgid "List records"
+msgstr ""
+
+msgid "Opens in new tab"
+msgstr "在新选项卡中打开"
+
+msgid "List identifiers"
+msgstr ""
+
+msgid ""
+"Before deleting, make sure to alert all harvesters that this set will no "
+"longer be available."
+msgstr ""
+
+msgid ""
+"I have alerted all harvesters that this set will no longer be available."
+msgstr ""
+
+msgid "Cancel"
+msgstr "取消"
+
+msgid "Delete"
+msgstr "删除"
+
+msgid "Delete {{title}}"
+msgstr ""
+
+msgid "This will delete the set '{{title}}'."
+msgstr ""
+
+msgid "Fetch error"
+msgstr ""
+
+msgid "Error fetching OAI set formats."
+msgstr ""
+
+msgid "Select the community where you want to submit your record."
+msgstr "选择要提交记录的社区。"
+
+msgid "Change"
+msgstr "更改"
+
+msgid "Select a community"
+msgstr "选择社区"
+
+msgid "Remove"
+msgstr "移除"
+
+msgid "Community inclusion information"
+msgstr ""
+
+msgid ""
+"Submission to this community is only allowed if the record is restricted."
+msgstr ""
+
+msgid "Community submission conditions information"
+msgstr ""
+
+msgid ""
+"Submission to this community is only allowed by dedicated upload form. Use "
+"the button to jump to the form."
+msgstr ""
+
+msgid "Go to the community"
+msgstr ""
+
+msgid "Selected"
+msgstr "选定的"
+
+msgid "Select"
+msgstr "选择"
+
+msgid "Select {{title}}"
+msgstr ""
+
+msgid "Verified"
+msgstr ""
+
+msgid ""
+"Did not find a community that fits you? Upload without a community or "
+"<2>create your own.</2>"
+msgstr ""
+
+msgid "Close"
+msgstr "关闭"
+
+msgid "All"
+msgstr "全部"
+
+msgid "My communities"
+msgstr "我的社区"
+
+msgid "Search"
+msgstr "搜索"
+
+msgid "In review"
+msgstr "检查中"
+
+msgid ""
+"Community curators will review your upload. Once accepted, it will be "
+"published."
+msgstr "社区管理员将审查您的上传。一旦被接受，它将被公布。"
+
+msgid "Declined"
+msgstr "拒绝"
+
+msgid "The request to submit this upload to the community was declined."
+msgstr "向社区提交此上传的请求被拒绝。"
+
+msgid "Expired"
+msgstr "已过期"
+
+msgid "The request to submit this upload to the community has expired."
+msgstr "向社区提交此上载的请求已过期。"
+
+msgid "Published"
+msgstr "已发布"
+
+msgid "Your upload is published."
+msgstr "您的上传已发布。"
+
+msgid "Draft"
+msgstr "草稿"
+
+msgid ""
+"Once your upload is complete, you can submit it for review to the community "
+"curators."
+msgstr "上传完成后，您可以将其提交给社区管理员审查。"
+
+msgid ""
+"Once your upload is complete, you can publish or submit it for review to the"
+" community curators."
+msgstr "上传完成后，您可以将其发布或提交给社区策展人审查。"
+
+msgid "New version draft"
+msgstr "新版本草稿"
+
+msgid "Once your upload is complete, you can publish it."
+msgstr "上传完成后，您可以发布它。"
+
+msgid "View request"
+msgstr "查看请求"
+
+msgid "discard changes"
+msgstr "放弃更改"
+
+msgid "discard version"
+msgstr "放弃版本"
+
+msgid "delete"
+msgstr "删除"
+
+msgid "Are you sure you want to discard the changes to this draft?"
+msgstr "是否确实要放弃对此草稿的更改？"
+
+msgid "Are you sure you want to delete this new version?"
+msgstr "是否确实要删除此新版本？"
+
+msgid "Are you sure you want to delete this draft?"
+msgstr "是否确定要删除此草稿？"
+
+msgid "You don't have permissions to create a new version."
+msgstr "您没有创建新版本的权限。"
+
+msgid "New version"
+msgstr "新版本"
+
+msgid "Preview"
+msgstr "预览"
+
+msgid "Are you sure you want to publish this record?"
+msgstr "确实要发布此记录吗？"
+
+msgid ""
+"Once the record is published you will no longer be able to change the files "
+"in the upload! However, you will still be able to update the record's "
+"metadata later."
+msgstr "一旦记录发布，您将无法再更改上传中的文件！但是，稍后您仍然可以更新记录的元数据。"
+
+msgid "Publish"
+msgstr "发表"
+
+msgid "Submitted for review"
+msgstr "提交审查"
+
+msgid "Submit for review"
+msgstr "提交供审查"
+
+msgid "Publish to community"
+msgstr ""
+
+msgid "You must accept this."
+msgstr ""
+
+msgid ""
+"Before publishing to the community, please read and check the following:"
+msgstr ""
+
+msgid ""
+"Your upload will be <bold>immediately published</bold> in "
+"'{{communityTitle}}'. You will no longer be able to change the files in the "
+"upload! However, you will still be able to update the record's metadata "
+"later."
+msgstr ""
+
+msgid "Publish record to community"
+msgstr ""
+
+msgid "Submit to community"
+msgstr ""
+
+msgid "Before submitting to community, please read and check the following:"
+msgstr ""
+
+msgid "Before requesting review, please read and check the following:"
+msgstr ""
+
+msgid ""
+"If your upload is accepted by the community curators, it will be "
+"<bold>immediately published</bold>. Before that, you will still be able to "
+"modify metadata and files of this upload."
+msgstr ""
+
+msgid "Submit record for review"
+msgstr ""
+
+msgid ""
+"The '{{communityTitle}}' curators will have access to <bold>view</bold> and "
+"<bold>edit</bold> your upload's metadata and files."
+msgstr ""
+
+msgid "Message to curators (optional)"
+msgstr ""
+
+msgid "Change community"
+msgstr "改变社区"
+
+msgid "Publish without community"
+msgstr "在没有社区的情况下发布"
+
+msgid "Save draft"
+msgstr "保存草稿"
+
+msgid "Files"
+msgstr "文件"
+
+msgid "Resource type"
+msgstr "资源类型"
+
+msgid "Title"
+msgstr "标题"
+
+msgid "Additional titles"
+msgstr "其他标题"
+
+msgid "Publication date"
+msgstr "发布日期"
+
+msgid "Creators"
+msgstr "创建者"
+
+msgid "Contributors"
+msgstr "贡献者"
+
+msgid "Description"
+msgstr "描述"
+
+msgid "Additional descriptions"
+msgstr "其他说明"
+
+msgid "Licenses"
+msgstr "许可证"
+
+msgid "Languages"
+msgstr "语言"
+
+msgid "Dates"
+msgstr "日期"
+
+msgid "Version"
+msgstr "版本"
+
+msgid "Publisher"
+msgstr "发布者"
+
+msgid "Related works"
+msgstr "相关工作"
+
+msgid "References"
+msgstr "参考"
+
+msgid "Alternate identifiers"
+msgstr "其他的唯一标识符"
+
+msgid "Keywords and subjects"
+msgstr "关键字和主题"
+
+msgid "Embargo until"
+msgstr "禁运直到"
+
+msgid "DOI"
+msgstr "DOI"
+
+msgid "Record successfully saved."
+msgstr "记录已成功保存。"
+
+msgid "Record saved with validation errors:"
+msgstr "保存了带有验证错误的记录："
+
+msgid ""
+"The draft was not saved. Please try again. If the problem persists, contact "
+"user support."
+msgstr ""
+
+msgid ""
+"The draft was not published. Please try again. If the problem persists, "
+"contact user support."
+msgstr ""
+
+msgid "The draft was not published. Record saved with validation errors:"
+msgstr "草稿未公布。保存了带有验证错误的记录："
+
+msgid ""
+"The draft was not submitted for review. Please try again. If the problem "
+"persists, contact user support."
+msgstr ""
+
+msgid ""
+"The draft was not submitted for review. Record saved with validation errors:"
+msgstr "草稿未提交审查。保存了带有验证错误的记录："
+
+msgid ""
+"Draft deletion failed. Please try again. If the problem persists, contact "
+"user support."
+msgstr ""
+
+msgid ""
+"Draft preview failed. Please try again. If the problem persists, contact "
+"user support."
+msgstr ""
+
+msgid ""
+"Identifier reservation failed. Please try again. If the problem persists, "
+"contact user support."
+msgstr ""
+
+msgid ""
+"Identifier could not be discarded. Please try again. If the problem "
+"persists, contact user support."
+msgstr ""
+
+msgid ""
+"Draft save failed before file upload. Please try again. If the problem "
+"persists, contact user support."
+msgstr ""
+
+msgid ""
+"Files import from the previous version failed. Please try again. If the "
+"problem persists, contact user support."
+msgstr ""
+
+msgid "Options"
+msgstr "选项"
+
+msgid "Public"
+msgstr "公开"
+
+msgid "The record is publicly accessible."
+msgstr "该记录可公开获取。"
+
+msgid "The record and files are publicly accessible."
+msgstr "记录和文件可公开访问。"
+
+msgid "Embargoed (full record)"
+msgstr "禁运（完整记录）"
+
+msgid "Restricted"
+msgstr "被限制"
+
+msgid "Public with restricted files"
+msgstr "公开受限制的文件"
+
+msgid "Embargoed (files-only)"
+msgstr "禁运（仅文件）"
+
+msgid "access-message"
+msgstr ""
+
+msgid ""
+"The record can <1>only</1> be accessed by <3>users specified</3> in the "
+"permissions."
+msgstr "记录<1>只能</1>由权限中<3>指定的用户</3>访问。"
+
+msgid ""
+"The record is publicly accessible. The files can <1>only</1> be accessed by "
+"<4>users specified</4> in the permissions."
+msgstr ""
+
+msgid ""
+"The record is publicly accessible. On <bold>{{ date }}</bold> the files will"
+" automatically be made publicly accessible. Until then, the files can "
+"<bold>only</bold> be accessed by <bold>users specified</bold> in the "
+"permissions."
+msgstr ""
+"该记录可公开获取。在<bold>{{ date "
+"}}</bold>时，文件将自动公开。在此之前，文件<bold>只能</bold>由权限中<bold>指定的用户</bold>访问。"
+
+msgid "Apply an embargo"
+msgstr "实施禁运"
+
+msgid "Embargo reason"
+msgstr "禁运原因"
+
+msgid "Optionally, describe the reason for the embargo."
+msgstr "或者，描述禁运的原因。"
+
+msgid "Embargo was lifted on {{fmtDate}}."
+msgstr "禁运于 {{fmtDate}}解除。"
+
+msgid "Reason"
+msgstr "原因"
+
+msgid ""
+"Record or files protection must be <1>restricted</1> to apply an embargo."
+msgstr "必须<1>限制</1>记录或文件保护以实施禁运。"
+
+msgid "YYYY-MM-DD"
+msgstr "年-月-日"
+
+msgid "The record has no files."
+msgstr "本数据记录没有文件"
+
+msgid "Files only"
+msgstr "仅文件"
+
+msgid "The full record is restricted."
+msgstr "完整数据记录受到限制。"
+
+msgid "The files of this record are restricted."
+msgstr ""
+
+msgid "Full record"
+msgstr "完整记录"
+
+msgid ""
+"Record visibility can not be changed to restricted anymore. Please contact "
+"support if you still need to make these changes."
+msgstr ""
+
+msgid "Search or create affiliation"
+msgstr ""
+
+msgid "Affiliations"
+msgstr "从属关系"
+
+msgid "Search for affiliations.."
+msgstr "搜索附属机构…"
+
+msgid "Coming soon"
+msgstr ""
+
+msgid "Add creator"
+msgstr "添加创建者"
+
+msgid "Edit creator"
+msgstr "编辑创建者"
+
+msgid "Edit"
+msgstr "编辑"
+
+msgid "ORCID logo"
+msgstr ""
+
+msgid "ROR logo"
+msgstr ""
+
+msgid "GND logo"
+msgstr ""
+
+msgid "Type the value of an identifier..."
+msgstr "键入标识符的值…"
+
+msgid "Identifiers"
+msgstr "标识符"
+
+msgid "e.g. ORCID, ISNI or GND."
+msgstr "e.g. ORCID, ISNI或GND。"
+
+msgid "Save and add another"
+msgstr "保存并添加另一个"
+
+msgid "Family name is a required field."
+msgstr "姓氏是必填字段。"
+
+msgid "Name is a required field."
+msgstr "名称是必填字段。"
+
+msgid "Role is a required field."
+msgstr "角色是必填字段。"
+
+msgid "Added"
+msgstr "补充"
+
+msgid "Person"
+msgstr "人"
+
+msgid "Organization"
+msgstr "组织"
+
+msgid "Search for persons by name, identifier, or affiliation..."
+msgstr "按姓名、标识符或附属关系搜索人员…"
+
+msgid "Family name"
+msgstr "姓"
+
+msgid "Given names"
+msgstr ""
+
+msgid "Search for an organization by name, identifier, or affiliation..."
+msgstr ""
+
+msgid "Search for organization by name, identifier, or affiliation..."
+msgstr ""
+
+msgid "Name"
+msgstr "名称"
+
+msgid "Organization name"
+msgstr "组织名称"
+
+msgid "e.g. ROR, ISNI or GND."
+msgstr "e.g. ROR, ISNI或GND。"
+
+msgid "Role"
+msgstr "角色"
+
+msgid "Select role"
+msgstr "选择角色"
+
+msgid "Save"
+msgstr "保存"
+
+msgid "Couldn't find your person? You can <2>create a new entry</2>."
+msgstr ""
+
+msgid "Add date"
+msgstr "添加日期"
+
+msgid "Format: DATE or DATE/DATE where DATE is YYYY or YYYY-MM or YYYY-MM-DD."
+msgstr "格式：日期或日期/日期，其中日期为YYYY或YYYY-MM或YYYY-MM-DD。"
+
+msgid "Date"
+msgstr "日期"
+
+msgid "Type"
+msgstr "类型"
+
+msgid "Remove field"
+msgstr ""
+
+msgid "YYYY-MM-DD or YYYY-MM-DD/YYYY-MM-DD"
+msgstr "YYYY-MM-DD或YYYY-MM-DD/YYYY-MM-DD"
+
+msgid "Add description"
+msgstr "添加描述"
+
+msgid "Additional Description"
+msgstr "额外的描述"
+
+msgid "Language"
+msgstr "语言"
+
+msgid "Select language"
+msgstr "选择语言"
+
+msgid "Could not upload files."
+msgstr ""
+
+msgid "Uploading the selected files would result in"
+msgstr "上载所选文件将导致"
+
+msgid "but the limit is"
+msgstr "但限制是"
+
+msgid "The following files already exist"
+msgstr "以下文件已存在"
+
+msgid "Could not upload all files."
+msgstr ""
+
+msgid "Empty files were skipped."
+msgstr ""
+
+msgid "You can import files from the previous version."
+msgstr "您可以从以前的版本导入文件。"
+
+msgid ""
+"File addition, removal or modification are not allowed after you have "
+"published your upload."
+msgstr "发布上传后，不允许添加、删除或修改文件。"
+
+msgid "You must create a new version to add, modify or delete files."
+msgstr "您必须创建新版本才能添加、修改或删除文件。"
+
+msgid "Drag and drop files"
+msgstr ""
+
+msgid "Upload files"
+msgstr "上传文件"
+
+msgid "Import files"
+msgstr "导入文件"
+
+msgid "Set the default preview"
+msgstr ""
+
+msgid "Filename"
+msgstr "文件名"
+
+msgid "Size"
+msgstr "大小"
+
+msgid "Progress"
+msgstr "进程"
+
+msgid "Default preview"
+msgstr ""
+
+msgid ""
+"This is the file fingerprint (MD5 checksum), which can be used to verify the"
+" file integrity."
+msgstr "这是文件指纹（MD5校验和），可用于验证文件完整性。"
+
+msgid "Pending"
+msgstr "等待中"
+
+msgid "Delete file"
+msgstr ""
+
+msgid "or"
+msgstr "或"
+
+msgid "This is a Metadata-only record."
+msgstr ""
+
+msgid "Metadata-only record"
+msgstr "仅元数据记录"
+
+msgid "Disable files for this record"
+msgstr "禁用此记录的文件"
+
+msgid "Storage available"
+msgstr "可用存储空间"
+
+msgid "{{length}} out of {{maxfiles}} files"
+msgstr "{{length}}共{{maxfiles}}个文件"
+
+msgid "out of"
+msgstr "从…里面"
+
+msgid "Add identifier"
+msgstr "添加标识符"
+
+msgid "Identifier"
+msgstr "标识符"
+
+msgid "Scheme"
+msgstr "计划"
+
+msgid "Do you already have a {{pidLabel}} for this upload?"
+msgstr "你已经有一个{{pidLabel}}上传了吗？"
+
+msgid "Yes"
+msgstr "是"
+
+msgid "No"
+msgstr "否"
+
+msgid "Search for languages..."
+msgstr "搜索语言…"
+
+msgid "Search for a language by name (e.g \"eng\", \"fr\" or \"Polish\")"
+msgstr "按名称搜索语言（例如“eng”、“fr”或“Polish”）"
+
+msgid "Add standard"
+msgstr "添加标准"
+
+msgid "Add custom"
+msgstr "添加自定义"
+
+msgid "Read more"
+msgstr "阅读更多"
+
+msgid "Title is a required field."
+msgstr "标题是必填字段。"
+
+msgid "Link must be a valid URL"
+msgstr "链接必须是有效的URL"
+
+msgid "Add {{mode}} license"
+msgstr "添加{{mode}}许可证"
+
+msgid "Change {{mode}} license"
+msgstr "更改{{mode}}许可证"
+
+msgid "Recommended"
+msgstr "Recommended"
+
+msgid "recommended"
+msgstr ""
+
+msgid "all"
+msgstr ""
+
+msgid "Data"
+msgstr "数据"
+
+msgid "data"
+msgstr ""
+
+msgid "Software"
+msgstr "软件"
+
+msgid "software"
+msgstr ""
+
+msgid "License title"
+msgstr "许可证标题"
+
+msgid "Link"
+msgstr "链接"
+
+msgid "License link"
+msgstr "许可证链接"
+
+msgid "Add license"
+msgstr "添加许可证"
+
+msgid "Change license"
+msgstr "更改许可证"
+
+msgid ""
+"In case your upload was already published elsewhere, please use the date of "
+"the first publication. Format: YYYY-MM-DD, YYYY-MM, or YYYY. For intervals "
+"use DATE/DATE, e.g. 1939/1945."
+msgstr ""
+"如果您的上传已经在其他地方发布，请使用第一次发布的日期。格式：YYYY-MM-DD、YYYY-"
+"MM或YYYY。对于间隔，使用日期/日期，例如1939/1945。"
+
+msgid ""
+"YYYY-MM-DD or YYYY-MM-DD/YYYY-MM-DD for intervals. MM and DD are optional."
+msgstr "YYYY-MM-DD或YYYY-MM-DD/YYYY-MM-DD表示间隔。MM和DD是可选的。"
+
+msgid ""
+"The publisher is used to formulate the citation, so consider the prominence "
+"of the role."
+msgstr "出版商是用来制定引文的，所以要考虑角色的突出性。"
+
+msgid "Add reference"
+msgstr ""
+
+msgid "Reference string"
+msgstr ""
+
+msgid ""
+"Specify identifiers of related works. Supported identifiers include DOI, "
+"Handle, ARK, PURL, ISSN, ISBN, PubMed ID, PubMed Central ID, ADS "
+"Bibliographic Code, arXiv, Life Science Identifiers (LSID), EAN-13, ISTC, "
+"URNs, and URLs."
+msgstr ""
+"指定相关工程的标识符。支持的标识符包括DOI、Handle、ARK、PURL、ISSN、ISBN、PubMed ID、PubMed Central "
+"ID、ADS书目代码、arXiv、生命科学标识符（LSID）、EAN-13、ISTC、URNs和URL。"
+
+msgid "Add related work"
+msgstr "添加相关工作"
+
+msgid "Relation"
+msgstr "关系"
+
+msgid "Suggest from"
+msgstr "建议从"
+
+msgid "Search for a subject by name"
+msgstr "按名称搜索主题"
+
+msgid "Add titles"
+msgstr "添加标题"
+
+msgid "Additional title"
+msgstr ""
+
+msgid ""
+"Mostly relevant for software and dataset uploads. A semantic version string "
+"is preferred see<1> semver.org</1>, but any version string is accepted."
+msgstr "主要与软件和数据集上传相关。语义版本字符串最好参见<1>semver.org</1>，但接受任何版本字符串。"
