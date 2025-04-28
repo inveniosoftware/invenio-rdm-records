@@ -30,7 +30,9 @@ export const EmbargoAccess = ({ access, accessCommunity, metadataOnly }) => {
   const embargoEnabled = communityPublic && (!recordPublic || filesRestricted);
 
   const fmtDate = embargoUntil
-    ? DateTime.fromISO(embargoUntil).toLocaleString(DateTime.DATE_FULL)
+    ? DateTime.fromISO(embargoUntil)
+        .setLocale(i18next.language)
+        .toLocaleString(DateTime.DATE_FULL)
     : "???";
 
   return (
