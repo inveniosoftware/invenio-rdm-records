@@ -12,6 +12,10 @@
 Changes
 =======
 
+Version v18.6.1 (released 2025-04-28)
+
+- services: remove commit file link from record (bugfix)
+
 Version v18.6.0 (released 2025-04-24)
 
 - datamodel contrib: add defense and submission date to thesis field
