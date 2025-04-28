@@ -12,6 +12,10 @@
 Changes
 =======
 
+Version v18.7.0 (released 2025-04-28)
+
+- logging: add basic logging for expired embargoes
+
 Version v18.6.1 (released 2025-04-28)
 
 - services: remove commit file link from record (bugfix)
