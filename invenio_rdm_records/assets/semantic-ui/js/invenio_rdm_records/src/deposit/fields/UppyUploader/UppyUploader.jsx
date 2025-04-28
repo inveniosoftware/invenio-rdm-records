@@ -94,7 +94,6 @@ export const UppyUploaderComponent = ({
         locale,
       }).use(InvenioMultipartUploader, {
         // Bind Redux file actions to the uploader plugin
-        // TODO: this must me made reactive - extract from initializer func
         // to persist form changes between uploads
         initializeFileUpload,
         finalizeUpload,
@@ -103,27 +102,24 @@ export const UppyUploaderComponent = ({
         abortUpload: (file, uploadId) =>
           deleteFile(file, { params: { uploadId } }),
         // Calculate & verify checksum for every uploaded part
-        // TODO: this feature currently computes part checksums,
-        // but S3 presign url don't like it when Content-MD5 header is added
-        // *after* their creation. PUT request with this added header
-        // results in HTTP 400 Bad Request. Needs more investigation.
-        checkPartIntegrity: false,
+        // TODO: check if WASM is supported & allowed by CSP
+        checkPartIntegrity: true,
       })
       .use(ImageEditor)
   );
 
   // TODO: this is a WIP to provide users with possibility
   // to manually pick which individual files do they want to import from a record.
-  if (displayImportBtn) {
-    if (!uppy.getPlugin("InvenioFilesProvider")) {
-      uppy.use(InvenioFilesProvider, { files });
-    }
-  }
+  // if (displayImportBtn) {
+  //   if (!uppy.getPlugin("InvenioFilesProvider")) {
+  //     uppy.use(InvenioFilesProvider, { files });
+  //   }
+  // }
 
   React.useEffect(() => {
     const uploaderPlugin = uppy.getPlugin('InvenioMultipartUploader');
     if (uploaderPlugin) {
-      // Synchronize uploader with current formik state
+      // Synchronize uploader state with current formik state
       uploaderPlugin.draftRecord = formikDraft;
     }
   }, [formikDraft, uppy]);

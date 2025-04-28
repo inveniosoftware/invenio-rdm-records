@@ -6,7 +6,7 @@
 // under the terms of the MIT License; see LICENSE file for more details.
 
 import { h } from "preact";
-// TODO: If WASM undesirable, we can use something like Crypto-JS?
+// NOTE: If WASM undesirable, we can use library like Crypto-JS
 import { md5 } from "hash-wasm";
 import AwsS3Multipart from "@uppy/aws-s3-multipart";
 import { fetcher } from "@uppy/utils/lib/fetcher";
@@ -15,7 +15,7 @@ import { humanReadableBytes } from "react-invenio-forms";
 import { FileSizeError, InvalidPartNumberError, SignedUrlExpiredError } from "./error";
 
 const defaultOptions = {
-  // TODO: null here means “include all”, [] means include none.
+  // NOTE: null here means “include all”, [] means include none.
   // This is inconsistent with @uppy/aws-s3 and @uppy/transloadit
   allowedMetaFields: null,
   limit: 6,
@@ -131,7 +131,6 @@ export class InvenioMultipartUploader extends AwsS3Multipart {
   };
 
   async #getPartDigest(blob) {
-    // TODO: this code seems to get stuck indefinitely for whatever reason now
     // fix and set checkPartIntegrity Uppy option to true
     const arrayBuffer = await blob.arrayBuffer();
     const digest = await md5(new Uint8Array(arrayBuffer));
@@ -140,7 +139,6 @@ export class InvenioMultipartUploader extends AwsS3Multipart {
       .match(/.{2}/g)
       .map((byte) => String.fromCharCode(parseInt(byte, 16)))
       .join("");
-    console.log("CKS", byteString);
     // Convert bytestring to base64
     return btoa(byteString);
   }
