@@ -169,11 +169,11 @@ msgstr "الأقل تحيينا مؤخرًا"
 
 #: invenio_rdm_records/config.py:237
 msgid "Most viewed"
-msgstr ""
+msgstr "الأكثر مشاهدة"
 
 #: invenio_rdm_records/config.py:240
 msgid "Most downloaded"
-msgstr ""
+msgstr "الأكثر تنزيلا"
 
 #: invenio_rdm_records/administration/views/oai.py:40
 #: invenio_rdm_records/administration/views/oai.py:69
@@ -216,7 +216,7 @@ msgstr "OAI"
 #: invenio_rdm_records/config.py:394 invenio_rdm_records/config.py:404
 #: tests/conftest.py:289
 msgid "Concept DOI"
-msgstr ""
+msgstr "تصوّر DOI"
 
 #: invenio_rdm_records/utils.py:117
 msgid "Your shared link has expired."
@@ -224,7 +224,7 @@ msgstr "انتهت صلاحية رابطك المشترك."
 
 #: invenio_rdm_records/administration/views/oai.py:28
 msgid "OAI-PMH Sets"
-msgstr ""
+msgstr "مجموعات OAI-PMH"
 
 #: invenio_rdm_records/administration/views/oai.py:29
 msgid "Site management"
@@ -239,7 +239,7 @@ msgstr "مقاربة البحث"
 
 #: invenio_rdm_records/administration/views/oai.py:62
 msgid "Edit OAI-PMH set"
-msgstr ""
+msgstr "تعديل مجموعة OAI-PMH"
 
 #: invenio_rdm_records/administration/views/oai.py:64
 #: invenio_rdm_records/administration/views/oai.py:104
@@ -267,16 +267,16 @@ msgstr "راجع بناء جملة المقاربة في ملف <a href='/help/s
 
 #: invenio_rdm_records/administration/views/oai.py:102
 msgid "Create OAI-PMH set"
-msgstr ""
+msgstr "إنشاء مجموعة OAI-PMH"
 
 #: invenio_rdm_records/administration/views/oai.py:139
 msgid "OAI-PMH Details"
-msgstr ""
+msgstr "تفاصيل OAI-PMH"
 
 #: invenio_rdm_records/contrib/codemeta/custom_fields.py:36
 #: invenio_rdm_records/contrib/meeting/custom_fields.py:44
 msgid "You must provide a valid URL."
-msgstr ""
+msgstr "يجب أن توفّر رابط URL ساري المفعول."
 
 #: invenio_rdm_records/contrib/codemeta/custom_fields.py:54
 msgid "Software"
@@ -284,100 +284,100 @@ msgstr "برمجيّة"
 
 #: invenio_rdm_records/contrib/codemeta/custom_fields.py:61
 msgid "Repository URL"
-msgstr ""
+msgstr "عنوان ويب URL المستودع."
 
 #: invenio_rdm_records/contrib/codemeta/custom_fields.py:63
 msgid "URL or link where the code repository is hosted."
-msgstr ""
+msgstr "عنوان URL أو الرابط الذي يستضيف كود برمجية المستودع ."
 
 #: invenio_rdm_records/contrib/codemeta/custom_fields.py:70
 #: invenio_rdm_records/contrib/codemeta/custom_fields.py:111
 msgid "Programming language"
-msgstr ""
+msgstr "لغة البرمجة"
 
 #: invenio_rdm_records/contrib/codemeta/custom_fields.py:72
 msgid "Repository's programming language."
-msgstr ""
+msgstr "لغة برمجية المستودع."
 
 #: invenio_rdm_records/contrib/codemeta/custom_fields.py:73
 msgid "e.g. Python ..."
-msgstr ""
+msgstr "على سبيل المثال بايثون Python  ..."
 
 #: invenio_rdm_records/contrib/codemeta/custom_fields.py:85
 msgid "Development Status"
-msgstr ""
+msgstr "وضعيّات التطوير"
 
 #: invenio_rdm_records/contrib/codemeta/custom_fields.py:86
 msgid "Repository status"
-msgstr ""
+msgstr "وضعيّات المستودع"
 
 #: invenio_rdm_records/contrib/codemeta/custom_fields.py:88
 msgid "Repository current status."
-msgstr ""
+msgstr "الوضعيّات الحاليّة المستودع."
 
 #: invenio_rdm_records/contrib/codemeta/custom_fields.py:101
 msgid "Development status"
-msgstr ""
+msgstr "وضعيّات التطوير"
 
 #: invenio_rdm_records/contrib/imprint/custom_fields.py:35
 msgid "Please provide a valid ISBN."
-msgstr ""
+msgstr "يرجى تقديم رقم ISBN صالح."
 
 #: invenio_rdm_records/contrib/imprint/custom_fields.py:69
 msgid "Book / Report / Chapter"
-msgstr ""
+msgstr "كتاب / تقرير / فصل"
 
 #: invenio_rdm_records/contrib/imprint/custom_fields.py:76
 msgid "Imprint (Book, Chapter, or Report)"
-msgstr ""
+msgstr "بصمة (كتاب أو فصل أو تقرير)"
 
 #: invenio_rdm_records/contrib/imprint/custom_fields.py:78
 #: invenio_rdm_records/contrib/meeting/custom_fields.py:103
 #: invenio_rdm_records/templates/semantic-ui/imprint.html:7
 #: invenio_rdm_records/templates/semantic-ui/meeting.html:19
 msgid "Place"
-msgstr ""
+msgstr "مكان"
 
 #: invenio_rdm_records/contrib/imprint/custom_fields.py:79
 msgid "e.g. city, country"
-msgstr ""
+msgstr "مثال: مدينة، بلد"
 
 #: invenio_rdm_records/contrib/imprint/custom_fields.py:80
 msgid "Place where the book or report was published"
-msgstr ""
+msgstr "المكان الذي تم فيه نشر الكتاب أو التقرير"
 
 #: invenio_rdm_records/contrib/imprint/custom_fields.py:84
 msgid "e.g. 0-06-251587-X"
-msgstr ""
+msgstr "على سبيل المثال 0-06-251587-X"
 
 #: invenio_rdm_records/contrib/imprint/custom_fields.py:85
 msgid "International Standard Book Number"
-msgstr ""
+msgstr "الترقيم الدولي المعياري للكتاب"
 
 #: invenio_rdm_records/contrib/imprint/custom_fields.py:88
 msgid "Book or report title"
-msgstr ""
+msgstr "عنوان كتاب أو تقرير"
 
 #: invenio_rdm_records/contrib/imprint/custom_fields.py:91
 msgid "Title of the book or report which this upload is part of"
-msgstr ""
+msgstr "عنوان الكتاب أو التقرير الذي يعد هذا التحميل جزءًا منه"
 
 #: invenio_rdm_records/contrib/imprint/custom_fields.py:95
 msgid "Pagination"
-msgstr ""
+msgstr "الصفحات"
 
 #: invenio_rdm_records/contrib/imprint/custom_fields.py:96
 msgid "e.g. 15-23 or 158"
-msgstr ""
+msgstr "على سبيل المثال 15-23 أو 158"
 
 #: invenio_rdm_records/contrib/journal/custom_fields.py:38
 msgid "Please provide a valid ISSN."
-msgstr ""
+msgstr "يرجى تقديم رقم ISSN صالح."
 
 #: invenio_rdm_records/contrib/journal/custom_fields.py:73
 #: invenio_rdm_records/contrib/journal/custom_fields.py:80
 msgid "Journal"
-msgstr ""
+msgstr "مجلّة"
 
 #: invenio_rdm_records/contrib/journal/custom_fields.py:82
 #: invenio_rdm_records/contrib/meeting/custom_fields.py:88
@@ -389,45 +389,45 @@ msgstr "العنوان"
 
 #: invenio_rdm_records/contrib/journal/custom_fields.py:85
 msgid "Title of the journal in which the article was published"
-msgstr ""
+msgstr "عنوان المجلة التي نشرت فيها المقالة"
 
 #: invenio_rdm_records/contrib/journal/custom_fields.py:89
 #: invenio_rdm_records/templates/semantic-ui/journal.html:8
 msgid "Volume"
-msgstr ""
+msgstr "المجلّد"
 
 #: invenio_rdm_records/contrib/journal/custom_fields.py:90
 msgid "e.g. 645"
-msgstr ""
+msgstr "مثال 645"
 
 #: invenio_rdm_records/contrib/journal/custom_fields.py:94
 #: invenio_rdm_records/templates/semantic-ui/journal.html:13
 msgid "Issue"
-msgstr ""
+msgstr "العدد"
 
 #: invenio_rdm_records/contrib/journal/custom_fields.py:95
 msgid "e.g. 7"
-msgstr ""
+msgstr "مثال 7"
 
 #: invenio_rdm_records/contrib/journal/custom_fields.py:99
 msgid "Page range or article number"
-msgstr ""
+msgstr "الصفحات أو رقم المقالة"
 
 #: invenio_rdm_records/contrib/journal/custom_fields.py:100
 msgid "e.g. 15-23 or A29"
-msgstr ""
+msgstr "على سبيل المثال 15-23 أو A29"
 
 #: invenio_rdm_records/contrib/journal/custom_fields.py:105
 msgid "e.g. 2077-9550"
-msgstr ""
+msgstr "مثال 2077-9550"
 
 #: invenio_rdm_records/contrib/journal/custom_fields.py:106
 msgid "International Standard Serial Number"
-msgstr ""
+msgstr "الترقيم الدولي المعياري لدّوريات"
 
 #: invenio_rdm_records/contrib/journal/sort.py:14
 msgid "Journal [Newest]"
-msgstr ""
+msgstr "المجلة [الأحدث]"
 
 #: invenio_rdm_records/contrib/meeting/custom_fields.py:80
 msgid "Conference"
@@ -436,7 +436,7 @@ msgstr "مؤتمر"
 #: invenio_rdm_records/contrib/meeting/custom_fields.py:93
 #: invenio_rdm_records/templates/semantic-ui/meeting.html:9
 msgid "Acronym"
-msgstr ""
+msgstr "اختصار"
 
 #: invenio_rdm_records/contrib/meeting/custom_fields.py:98
 #: invenio_rdm_records/templates/semantic-ui/meeting.html:14
@@ -445,11 +445,11 @@ msgstr "تواريخ"
 
 #: invenio_rdm_records/contrib/meeting/custom_fields.py:99
 msgid "e.g. 21-22 November 2022."
-msgstr ""
+msgstr "على سبيل المثال 21-22 نوفمبر 2022."
 
 #: invenio_rdm_records/contrib/meeting/custom_fields.py:105
 msgid "Location where the conference took place."
-msgstr ""
+msgstr "المكان الذي أقيم فيه المؤتمر."
 
 #: invenio_rdm_records/contrib/meeting/custom_fields.py:108
 #: invenio_rdm_records/templates/semantic-ui/meeting.html:24
@@ -459,36 +459,36 @@ msgstr "موقع الويب"
 #: invenio_rdm_records/contrib/meeting/custom_fields.py:113
 #: invenio_rdm_records/templates/semantic-ui/meeting.html:29
 msgid "Session"
-msgstr ""
+msgstr "الدّورة"
 
 #: invenio_rdm_records/contrib/meeting/custom_fields.py:114
 msgid "e.g. VI"
-msgstr ""
+msgstr "مثال VI"
 
 #: invenio_rdm_records/contrib/meeting/custom_fields.py:115
 msgid "Session within the conference."
-msgstr ""
+msgstr "دورة ضمن المؤتمر."
 
 #: invenio_rdm_records/contrib/meeting/custom_fields.py:118
 msgid "Part"
-msgstr ""
+msgstr "جزء"
 
 #: invenio_rdm_records/contrib/meeting/custom_fields.py:119
 msgid "e.g. 1"
-msgstr ""
+msgstr "مثال 1"
 
 #: invenio_rdm_records/contrib/meeting/custom_fields.py:120
 msgid "Part within the session."
-msgstr ""
+msgstr "جزء من الدورة."
 
 #: invenio_rdm_records/contrib/meeting/sort.py:14
 msgid "Conference session [Newest]"
-msgstr ""
+msgstr "دورة المؤتمر [الأحدث]"
 
 #: invenio_rdm_records/contrib/thesis/custom_fields.py:26
 #: invenio_rdm_records/contrib/thesis/custom_fields.py:32
 msgid "Thesis"
-msgstr ""
+msgstr "أُطرُوحَة"
 
 #: invenio_rdm_records/contrib/thesis/custom_fields.py:35
 msgid "Awarding university"
@@ -563,12 +563,12 @@ msgstr "إيداعات المجتمع"
 
 #: invenio_rdm_records/requests/community_transfer.py:26
 msgid "Community transfer"
-msgstr ""
+msgstr "نقل المجتمع"
 
 #: invenio_rdm_records/requests/access/requests.py:189
 #, python-format
 msgid "Click <a href=\"%(url)s\">here</a> to access the record."
-msgstr ""
+msgstr "انقر <a href=\"%(url)s\">هنا</a> للوصول إلى التسجيلة."
 
 #: invenio_rdm_records/requests/access/requests.py:249
 #: invenio_rdm_records/requests/access/requests.py:281
@@ -578,7 +578,7 @@ msgstr "طلب الولوج"
 #: invenio_rdm_records/requests/access/requests.py:318
 #: invenio_rdm_records/requests/access/requests.py:323
 msgid "Not a valid number of days."
-msgstr ""
+msgstr "عدد الأيام ليس صالحًا."
 
 #: invenio_rdm_records/resources/config.py:199
 msgid "Citation string style not found."
@@ -592,46 +592,46 @@ msgstr "لا وجود لتقييم المسودة "
 #: invenio_rdm_records/resources/config.py:276
 #: invenio_rdm_records/resources/config.py:318
 msgid "Record not found"
-msgstr ""
+msgstr "التسجيلة غير متوفّرة"
 
 #: invenio_rdm_records/resources/config.py:247
 #: invenio_rdm_records/resources/config.py:280
 #: invenio_rdm_records/resources/config.py:322
 msgid "Record deleted"
-msgstr ""
+msgstr "التّسجيلة محذوفة"
 
 #: invenio_rdm_records/resources/config.py:255
 msgid "Cannot publish without selecting a community."
-msgstr ""
+msgstr "لا يمكن النشر دون إختيار المجتمع."
 
 #: invenio_rdm_records/resources/config.py:357
 msgid "No secret link found with the given ID."
-msgstr ""
+msgstr "لم يتم العثور على رابط سري بالمعرف ID المقدم."
 
 #: invenio_rdm_records/resources/config.py:365
 msgid "No grant found with the given ID."
-msgstr ""
+msgstr "لم يتم العثور على منحة بالمعرف ID المحدد."
 
 #: invenio_rdm_records/resources/config.py:378
 msgid "No grant found by given user id."
-msgstr ""
+msgstr "لم يتم العثور على منحة بواسطة معرف المستخدم id المحدد."
 
 #: invenio_rdm_records/resources/config.py:385
 msgid "No grant found by given group id."
-msgstr ""
+msgstr "لم يتم العثور على منحة بواسطة معرف الفريق id المحدد."
 
 #: invenio_rdm_records/resources/iiif.py:99
 msgid "Image size limit exceeded"
-msgstr ""
+msgstr "تم تجاوز الحد الأقصى لحجم الصّورة."
 
 #: invenio_rdm_records/resources/iiif.py:106
 msgid ""
 "The record associated with this file has been deleted. See deletion notice."
-msgstr ""
+msgstr "تم حذف التسجيلة المرتبطة بهذا الملف. راجع إشعار الحذف."
 
 #: invenio_rdm_records/resources/deserializers/rocrate/__init__.py:31
 msgid "Invalid RO-Crate metadata format, missing '@graph' key."
-msgstr ""
+msgstr "تنسيق بيانات التعريف RO-Crate غير صالح، المفتاح '@graph' مفقود."
 
 #: invenio_rdm_records/resources/deserializers/rocrate/schema.py:32
 #: invenio_rdm_records/services/schemas/metadata.py:362
@@ -640,20 +640,20 @@ msgstr "معطيات منقوصة لحقل وجوبي."
 
 #: invenio_rdm_records/resources/deserializers/rocrate/schema.py:102
 msgid "'@type' must be 'Person' or 'Organization'"
-msgstr ""
+msgstr "'@type' يجب أن يكون 'شخص' أو 'منظمة'"
 
 #: invenio_rdm_records/resources/deserializers/rocrate/schema.py:138
 msgid "Format must be a list of strings."
-msgstr ""
+msgstr "يجب أن يكون التنسيق عبارة عن قائمة من السلاسل list of strings."
 
 #: invenio_rdm_records/resources/serializers/utils.py:37
 #, python-format
 msgid "The '%(vocabulary)s' vocabulary item '%(id_)s' was not found."
-msgstr ""
+msgstr "'%(vocabulary)s' عنصر المفردات'%(id_)s' لم يتم العثور عليه."
 
 #: invenio_rdm_records/resources/serializers/cff/schema.py:29
 msgid "One of 'family-names' or 'given-names' is required."
-msgstr ""
+msgstr "يجب إدخال أحد 'أسماء العائلة' أو 'الأسماء المسندة'."
 
 #: invenio_rdm_records/resources/serializers/datacite/schema.py:281
 msgid "Invalid publication date value."
@@ -661,26 +661,28 @@ msgstr "تاريخ النشر خاطئ"
 
 #: invenio_rdm_records/resources/serializers/iiif/schema.py:167
 msgid "Current Page Order"
-msgstr ""
+msgstr "ترتيب الصفحة الحالية"
 
 #: invenio_rdm_records/resources/serializers/iiif/schema.py:194
 msgid "Manifest generated by InvenioRDM"
-msgstr ""
+msgstr "البيان الذي تم إنشاؤه بواسطة InvenioRDM"
 
 #: invenio_rdm_records/resources/serializers/iiif/schema.py:213
 msgid "Publication Date"
-msgstr ""
+msgstr "تاريخ النّشر"
 
 #: invenio_rdm_records/resources/serializers/schemaorg/schema.py:122
 msgid ""
 "Affiliation failed to serialize: one of 'id' or 'name' must be provided."
-msgstr ""
+msgstr "فشل الانتماء في التسلسل: يجب توفير إمّا 'المعرف' أو 'الاسم'."
 
 #: invenio_rdm_records/resources/serializers/schemaorg/schema.py:363
 msgid ""
 "Funding serialization failed on award: one of 'id' or ('number' and 'title')"
 " are required."
 msgstr ""
+"فشل التسلسل التمويلي في الجائزة: المطلوب إمّا 'المعرف' أو ('الرقم' "
+"و'العنوان')."
 
 #: invenio_rdm_records/resources/serializers/ui/fields.py:35
 #: invenio_rdm_records/services/facets.py:32
@@ -747,20 +749,20 @@ msgstr "غير معلوم"
 
 #: invenio_rdm_records/resources/serializers/ui/schema.py:111
 msgid "System (automatic)"
-msgstr ""
+msgstr "النظام (تلقائي)"
 
 #: invenio_rdm_records/resources/serializers/ui/schema.py:113
 msgid "Admin"
-msgstr ""
+msgstr "مدير"
 
 #: invenio_rdm_records/services/errors.py:21
 msgid "Grant for this user/role already exists within this record."
-msgstr ""
+msgstr "توجد منحة لهذا المستخدم/الدور بالفعل داخل هذه التّسجيلة."
 
 #: invenio_rdm_records/services/errors.py:53
 #, python-format
 msgid "Embargo could not be lifted for record: %(record_id)s"
-msgstr ""
+msgstr "رفع الحظر غير ممكن للتسجيلة: %(record_id)s"
 
 #: invenio_rdm_records/services/errors.py:65
 msgid "Review not found."
@@ -768,42 +770,42 @@ msgstr "التقييم غير موجود"
 
 #: invenio_rdm_records/services/errors.py:83
 msgid "The record is already included in this community."
-msgstr ""
+msgstr "هذه التّسجيلة مدرجة بعد في أحد المجتمعات."
 
 #: invenio_rdm_records/services/errors.py:93
 msgid "A public record cannot be included in a restricted community."
-msgstr ""
+msgstr "لا يمكن تضمين التسجيلة المشاعة في مجتمع مقيد."
 
 #: invenio_rdm_records/services/errors.py:106
 msgid "There is already an open inclusion request for this community."
-msgstr ""
+msgstr "هناك بالفعل طلب إدراج مفتوح بالنسبة لهذا المجتمع."
 
 #: invenio_rdm_records/services/errors.py:162
 #, python-format
 msgid "The record %(rec_id)s in not included in the community %(com_id)s."
-msgstr ""
+msgstr "التسجيلة %(rec_id)s غير مدرجة في المجتمع %(com_id)s."
 
 #: invenio_rdm_records/services/errors.py:178
 #, python-format
 msgid "Cannot modify community visibility: %(reason)s"
-msgstr ""
+msgstr "لا يمكن تعديل مرئيّة المجتمع: %(reason)s"
 
 #: invenio_rdm_records/services/errors.py:197
 #, python-format
 msgid "Identical access requests already exist: %(request_id)s"
-msgstr ""
+msgstr "توجد بالفعل طلبات وصول متطابقة: %(request_id)s"
 
 #: invenio_rdm_records/services/errors.py:201
 msgid "The access request is a duplicate"
-msgstr ""
+msgstr "طلب الوصول مكرر"
 
 #: invenio_rdm_records/services/errors.py:207
 msgid "Cannot publish without a community."
-msgstr ""
+msgstr "لا يمكن النشر بدون مجتمع."
 
 #: invenio_rdm_records/services/errors.py:213
 msgid "A record should be part of at least 1 community."
-msgstr ""
+msgstr "يجب أن تكون التسجيلة جزءًا من مجتمع 1 على الأقل."
 
 #: invenio_rdm_records/services/facets.py:30
 msgid "Access status"
@@ -868,32 +870,32 @@ msgstr "مستوى إذن الولوج خاطئ."
 #: invenio_rdm_records/services/access/service.py:513
 #: invenio_rdm_records/services/access/service.py:938
 msgid "Could not find the specified subject."
-msgstr ""
+msgstr "لم يتم العثور على الموضوع المحدد."
 
 #: invenio_rdm_records/services/access/service.py:733
 msgid "Verification link sent out, please check your e-mail inbox"
-msgstr ""
+msgstr "تم إرسال رابط التحقق، يرجى التحقق من صندوق البريد الإلكتروني الخاص بك"
 
 #: invenio_rdm_records/services/communities/components.py:55
 msgid "Cannot restrict a community with public records."
-msgstr ""
+msgstr "لا يمكن تقييد المجتمع ذو التسجيلات المشاعة."
 
 #: invenio_rdm_records/services/communities/service.py:174
 msgid "Community not found."
-msgstr ""
+msgstr "لم يتم العثور على المجتمع."
 
 #: invenio_rdm_records/services/communities/service.py:405
 msgid "Community already included."
-msgstr ""
+msgstr "المجتمع مشمول بالفعل."
 
 #: invenio_rdm_records/services/community_inclusion/service.py:46
 #: invenio_rdm_records/services/community_inclusion/service.py:60
 msgid "Invalid request type."
-msgstr ""
+msgstr "نوع الطلب غير صالح."
 
 #: invenio_rdm_records/services/community_records/service.py:131
 msgid "The record does not exist."
-msgstr ""
+msgstr "التّسجيلة ليست موجودة."
 
 #: invenio_rdm_records/services/community_records/service.py:138
 msgid "Permission denied."
@@ -901,7 +903,7 @@ msgstr "تم رفض الإذن."
 
 #: invenio_rdm_records/services/components/access.py:39
 msgid "You don't have permissions to manage record access."
-msgstr ""
+msgstr "ليس لديك الصلوحيات اللازمة لإدارة الوصول إلى التسجيلة."
 
 #: invenio_rdm_records/services/components/review.py:38
 msgid ""
@@ -911,21 +913,22 @@ msgstr "لا يمكن حذف مسودة متاحة للتقييم المفتوح
 
 #: invenio_rdm_records/services/github/metadata.py:58
 msgid "No description provided."
-msgstr ""
+msgstr "لم يتم تقديم أي وصف."
 
 #: invenio_rdm_records/services/github/metadata.py:167
 msgid "Citation schema is needed to load citation metadata."
 msgstr ""
+" مخطط الاستشهاد Citation schema ضروري لتحميل البيانات الوصفية للاستشهاد."
 
 #: invenio_rdm_records/services/pids/errors.py:23
 #, python-brace-format
 msgid "No configuration defined for PIDs {schemes}"
-msgstr ""
+msgstr "لم يتم تحديد الإعدادات للمعرفات PIDs {schemes}"
 
 #: invenio_rdm_records/services/pids/errors.py:34
 #, python-format
 msgid "Unknown PID provider %(provider)s for %(scheme)s"
-msgstr ""
+msgstr "مزود PID غير معروف %(provider)s لـ %(scheme)s"
 
 #: invenio_rdm_records/services/pids/manager.py:86
 #, python-brace-format
@@ -953,7 +956,7 @@ msgstr "لا يمكن تجاهل معرف الدائم محجوز أو مسجل.
 
 #: invenio_rdm_records/services/pids/providers/base.py:85
 msgid "You must provide a pid value."
-msgstr ""
+msgstr "يجب عليك توفير قيمة الـ pid."
 
 #: invenio_rdm_records/services/pids/providers/base.py:176
 #, python-brace-format
@@ -962,7 +965,7 @@ msgstr "{pid_type}:{identifier} متواجد سابقا."
 
 #: invenio_rdm_records/services/pids/providers/datacite.py:281
 msgid "Missing publisher field required for DOI registration."
-msgstr ""
+msgstr "حقل الناشر المفقود مطلوب لتسجيل DOI."
 
 #: invenio_rdm_records/services/pids/providers/external.py:45
 #, python-brace-format
@@ -970,6 +973,8 @@ msgid ""
 "The prefix '{prefix}' is managed by {sitename}. Please supply an external "
 "DOI or select 'No' to have a DOI generated for you."
 msgstr ""
+"تتم إدارة البادئة '{prefix}' بواسطة {sitename}. يُرجى توفير مُعرِّف DOI "
+"خارجي أو اختيار \"لا\" لإنشاء مُعرِّف DOI خاص لك."
 
 #: invenio_rdm_records/services/pids/providers/external.py:91
 #, python-brace-format
@@ -999,7 +1004,7 @@ msgstr "لا يمكن حذف تقييم مفتوح"
 
 #: invenio_rdm_records/services/review/service.py:157
 msgid "Must be a boolean, true or false"
-msgstr ""
+msgstr "يجب أن يكون منطقيًا boolean ، صحيحًا أو خطأً"
 
 #: invenio_rdm_records/services/schemas/access.py:39
 msgid "Embargo end date must be set to a future date."
@@ -1134,7 +1139,7 @@ msgstr ""
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/user-access-request.cancel.jinja:31
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/user-access-request.decline.jinja:26
 msgid " with the following message:"
-msgstr ""
+msgstr "مع الرسالة التالية:"
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/community-submission.accept.jinja:41
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/community-submission.accept.jinja:60
@@ -1165,7 +1170,7 @@ msgstr ""
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/user-access-request.decline.jinja:42
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/user-access-request.submit.jinja:36
 msgid "This is an auto-generated message. To manage notifications, visit your"
-msgstr ""
+msgstr "هذه رسالة حررت آليا. لإدارة الإشعارات، تفضل بزيارة"
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/community-submission.accept.jinja:47
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/community-submission.cancel.jinja:38
@@ -1184,7 +1189,7 @@ msgstr ""
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/user-access-request.decline.jinja:42
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/user-access-request.submit.jinja:36
 msgid "account settings"
-msgstr ""
+msgstr "إعدادات الحساب"
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/community-submission.accept.jinja:53
 #, python-brace-format
@@ -1210,7 +1215,7 @@ msgstr ""
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/user-access-request.decline.jinja:51
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/user-access-request.decline.jinja:65
 msgid "with the following message:"
-msgstr ""
+msgstr "مع الرسالة التالية:"
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/community-submission.accept.jinja:62
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/community-submission.accept.jinja:76
