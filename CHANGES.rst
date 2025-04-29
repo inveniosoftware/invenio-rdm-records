@@ -3,6 +3,7 @@
     Copyright (C) 2019-2024 CERN.
     Copyright (C) 2019-2024 Northwestern University.
     Copyright (C) 2024 KTH Royal Institute of Technology.
+    Copyright (C) 2025 Graz University of Technology.
 
 
     Invenio-RDM-Records is free software; you can redistribute it and/or
@@ -11,6 +12,24 @@
 
 Changes
 =======
+
+Version 10.10.0 (released 2025-04-29)
+
+- i18n: pulled translations
+- tests: set index from app config
+- tests: fix EDTF interval with unknown start/end
+- tokens: disable "sub" verification
+- i18n: push translations
+- i18n: fix path in Transifex configuration
+- fix: tombstone delete not worked
+- fix: deletion_status gone after record.commit
+- fix: tombstone gone after record.commit
+- i18n: UI Support for Swedish language
+- i18n: include jinja file encoding in babel.ini
+- i18n: support for czech language
+- i18n: vocabulary translations
+- i18n: update string formatting for compatibility
+- i18n: mark strings for translation
 
 Version 10.9.1 (released 2024-11-11)
 
