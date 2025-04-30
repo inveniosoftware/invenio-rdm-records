@@ -131,7 +131,6 @@ export class InvenioMultipartUploader extends AwsS3Multipart {
   };
 
   async #getPartDigest(blob) {
-    // fix and set checkPartIntegrity Uppy option to true
     const arrayBuffer = await blob.arrayBuffer();
     const digest = await md5(new Uint8Array(arrayBuffer));
     // Convert hex digest to bytestring
@@ -237,8 +236,6 @@ export class InvenioMultipartUploader extends AwsS3Multipart {
       file_id: response.file_id,
       links: response.links,
     });
-    file.meta.links = response.links;
-    console.debug("cmu", this.uppy.getFile(file.id));
     return { uploadId: file.file_id, key: response.key };
   }
 
