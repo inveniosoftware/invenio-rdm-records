@@ -18,7 +18,6 @@ from os.path import splitext
 from pathlib import Path
 
 from flask import current_app
-from invenio_administration.permissions import administration_permission
 from invenio_communities.communities.records.api import Community
 from invenio_drafts_resources.services.records.components import (
     DraftMediaFilesComponent,
@@ -34,7 +33,7 @@ from invenio_drafts_resources.services.records.config import (
 from invenio_drafts_resources.services.records.search_params import AllVersionsParam
 from invenio_indexer.api import RecordIndexer
 from invenio_records_resources.services import (
-    FileServiceConfig,
+    FileServiceConfig as BaseFileServiceConfig,
 )
 from invenio_records_resources.services.base.config import (
     ConfiguratorMixin,
@@ -359,81 +358,6 @@ def vars_self_iiif(drafcord, vars):
     vars["uuid"] = get_iiif_uuid_of_drafcord(drafcord, vars)
 
 
-def get_file_links_list(name_of_blueprint):
-    """Generate dict of file_links_list."""
-    # Note: file_links_list are passed their record's `pid_value` via
-    # `FileService.file_links_list_tpl` which takes it from the relevant
-    # method's input. Therefore we don't pass a vars func for `pid_value`.
-    return {
-        "self": EndpointLink(f"{name_of_blueprint}.search", params=["pid_value"]),
-        "archive": EndpointLink(
-            f"{name_of_blueprint}.read_archive",
-            params=["pid_value"],
-            when=archive_download_enabled,
-        ),
-    }
-
-
-def get_file_links_item(name_of_blueprint):
-    """Generate dict of file_links_item."""
-    # Note: file_links_item are passed their record's `pid_value` via
-    # `FileService.file_links_list_tpl` which takes it from the relevant
-    # method's input. Therefore we don't pass a vars func for `pid_value`.
-    return {
-        "self": FileEndpointLink(
-            f"{name_of_blueprint}.read", params=["pid_value", "key"]
-        ),
-        "content": FileEndpointLink(
-            f"{name_of_blueprint}.read_content",
-            params=["pid_value", "key"],
-        ),
-        "iiif_canvas": FileEndpointLink(
-            "iiif.canvas",
-            params=["uuid", "file_name"],
-            when=is_iiif_compatible,
-            vars=lambda file_drafcord, vars: vars.update(
-                {
-                    "uuid": get_iiif_uuid_of_drafcord_from_file_drafcord(
-                        file_drafcord, vars
-                    ),
-                    "file_name": vars["key"],  # Because of FileEndpointLink
-                }
-            ),
-        ),
-        "iiif_base": EndpointLink(
-            "iiif.base",
-            params=["uuid"],
-            when=is_iiif_compatible,
-            vars=lambda file_drafcord, vars: vars.update(
-                {"uuid": get_iiif_uuid_of_file_drafcord(file_drafcord, vars)}
-            ),
-        ),
-        "iiif_info": EndpointLink(
-            "iiif.info",
-            params=["uuid"],
-            when=is_iiif_compatible,
-            vars=lambda file_drafcord, vars: vars.update(
-                {"uuid": get_iiif_uuid_of_file_drafcord(file_drafcord, vars)}
-            ),
-        ),
-        "iiif_api": EndpointLink(
-            "iiif.image_api",
-            params=["uuid", "region", "size", "rotation", "quality", "image_format"],
-            when=is_iiif_compatible,
-            vars=lambda file_drafcord, vars: vars.update(
-                {
-                    "uuid": get_iiif_uuid_of_file_drafcord(file_drafcord, vars),
-                    "region": "full",
-                    "size": "full",
-                    "rotation": "0",
-                    "quality": "default",
-                    "image_format": "png",
-                }
-            ),
-        ),
-    }
-
-
 #
 # Default service configuration
 #
@@ -480,6 +404,113 @@ class RDMRecordRequestsConfig(ServiceConfig, ConfiguratorMixin):
     index_dumper = None
 
 
+class WithFileLinks(type):
+    """Metaclass to dynamically generate file_links_{list,item} at class level.
+
+    This approach is needed to make use of the current config's
+    allow_upload OR the parent's allow_upload in the construction of the file_links.
+    It also makes further inheritance work as expected without additional code
+    (as would be the case with a class decorator).
+    """
+
+    def __init__(cls, *args, **kwargs):
+        """Constructor."""
+        cls.file_links_list = {
+            "self": EndpointLink(
+                f"{cls.name_of_file_blueprint}.search", params=["pid_value"]
+            ),
+            "archive": EndpointLink(
+                f"{cls.name_of_file_blueprint}.read_archive",
+                params=["pid_value"],
+                when=archive_download_enabled,
+            ),
+        }
+
+        cls.file_links_item = {
+            "self": FileEndpointLink(
+                f"{cls.name_of_file_blueprint}.read", params=["pid_value", "key"]
+            ),
+            "content": FileEndpointLink(
+                f"{cls.name_of_file_blueprint}.read_content",
+                params=["pid_value", "key"],
+            ),
+            "commit": FileEndpointLink(
+                f"{cls.name_of_file_blueprint}.create_commit",
+                params=["pid_value", "key"],
+                when=lambda file_draft, ctx: (
+                    cls.allow_upload and is_draft(file_draft.record, ctx)
+                ),
+            ),
+            "iiif_canvas": FileEndpointLink(
+                "iiif.canvas",
+                params=["uuid", "file_name"],
+                when=is_iiif_compatible,
+                vars=lambda file_drafcord, vars: vars.update(
+                    {
+                        "uuid": get_iiif_uuid_of_drafcord_from_file_drafcord(
+                            file_drafcord, vars
+                        ),
+                        "file_name": vars["key"],  # Because of FileEndpointLink
+                    }
+                ),
+            ),
+            "iiif_base": EndpointLink(
+                "iiif.base",
+                params=["uuid"],
+                when=is_iiif_compatible,
+                vars=lambda file_drafcord, vars: vars.update(
+                    {"uuid": get_iiif_uuid_of_file_drafcord(file_drafcord, vars)}
+                ),
+            ),
+            "iiif_info": EndpointLink(
+                "iiif.info",
+                params=["uuid"],
+                when=is_iiif_compatible,
+                vars=lambda file_drafcord, vars: vars.update(
+                    {"uuid": get_iiif_uuid_of_file_drafcord(file_drafcord, vars)}
+                ),
+            ),
+            "iiif_api": EndpointLink(
+                "iiif.image_api",
+                params=[
+                    "uuid",
+                    "region",
+                    "size",
+                    "rotation",
+                    "quality",
+                    "image_format",
+                ],
+                when=is_iiif_compatible,
+                vars=lambda file_drafcord, vars: vars.update(
+                    {
+                        "uuid": get_iiif_uuid_of_file_drafcord(file_drafcord, vars),
+                        "region": "full",
+                        "size": "full",
+                        "rotation": "0",
+                        "quality": "default",
+                        "image_format": "png",
+                    }
+                ),
+            ),
+        }
+
+
+class FileServiceConfig(
+    BaseFileServiceConfig, ConfiguratorMixin, metaclass=WithFileLinks
+):
+    """Common File Service configuration.
+
+    Injects file_links dynamically via metaclass (to all descendants).
+
+    If a descendant wants to override the file_links, a new metaclass inheriting
+    from WithFileLinks and containing the desired changes has to be created, and then
+    used by the descendant.
+    """
+
+    name_of_file_blueprint = ""  # Has to be overridden by descendants
+    allow_archive_download = FromConfig("RDM_ARCHIVE_DOWNLOAD_ENABLED", True)
+
+
 class RDMFileRecordServiceConfig(FileServiceConfig, ConfiguratorMixin):
     """Configuration for record files."""
 
@@ -491,8 +522,9 @@ class RDMFileRecordServiceConfig(FileServiceConfig, ConfiguratorMixin):
 
     max_files_count = FromConfig("RDM_RECORDS_MAX_FILES_COUNT", 100)
 
-    file_links_list = get_file_links_list("record_files")
-    file_links_item = get_file_links_item("record_files")
+    # For blueprint/link serialization
+    allow_upload = False
+    name_of_file_blueprint = "record_files"
 
     file_schema = FileSchema
 
@@ -842,8 +874,9 @@ class RDMMediaFileRecordServiceConfig(FileServiceConfig, ConfiguratorMixin):
 
     max_files_count = FromConfig("RDM_RECORDS_MAX_MEDIA_FILES_COUNT", 100)
 
-    file_links_list = get_file_links_list("record_media_files")
-    file_links_item = get_file_links_item("record_media_files")
+    # For blueprint/link serialization
+    allow_upload = False
+    name_of_file_blueprint = "record_media_files"
 
     file_schema = FileSchema
 
@@ -862,17 +895,8 @@ class RDMFileDraftServiceConfig(FileServiceConfig, ConfiguratorMixin):
 
     max_files_count = FromConfig("RDM_RECORDS_MAX_FILES_COUNT", 100)
 
-    file_links_list = get_file_links_list("draft_files")
-    file_links_item = {
-        **get_file_links_item("draft_files"),
-        # adding commit link only on draft, records do not allow commiting files directly,
-        # without going through a draft
-        "commit": FileEndpointLink(
-            f"draft_files.create_commit",
-            params=["pid_value", "key"],
-            when=lambda file_draft, ctx: is_draft(file_draft.record, ctx),
-        ),
-    }
+    # For blueprint/link serialization
+    name_of_file_blueprint = "draft_files"
 
     file_schema = FileSchema
 
@@ -894,16 +918,7 @@ class RDMMediaFileDraftServiceConfig(FileServiceConfig, ConfiguratorMixin):
 
     max_files_count = FromConfig("RDM_RECORDS_MAX_MEDIA_FILES_COUNT", 100)
 
-    file_links_list = get_file_links_list("draft_media_files")
-    file_links_item = {
-        **get_file_links_item("draft_media_files"),
-        # adding commit link only on draft, records do not allow commiting files directly,
-        # without going through a draft
-        "commit": FileEndpointLink(
-            f"draft_media_files.create_commit",
-            params=["pid_value", "key"],
-            when=lambda file_draft, ctx: is_draft(file_draft.record, ctx),
-        ),
-    }
+    # For blueprint/link serialization
+    name_of_file_blueprint = "draft_media_files"
 
     file_schema = FileSchema
