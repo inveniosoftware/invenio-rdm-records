@@ -5,22 +5,13 @@
 // Invenio-RDM-Records is free software; you can redistribute it and/or modify it
 // under the terms of the MIT License; see LICENSE file for more details.
 
-import { i18next } from "@translations/invenio_rdm_records/i18next";
 import React, { Component } from "react";
-import { getInputFromDOM } from "../../deposit/dom";
-import { IdentifiersField } from "../fields/Identifiers/IdentifiersField";
 import { FieldLabel, Input } from "react-invenio-forms";
 import { Divider, Grid } from "semantic-ui-react";
 
 import PropTypes from "prop-types";
 
 export class Meeting extends Component {
-  constructor(props) {
-    super(props);
-    this.config = getInputFromDOM("deposits-config");
-    this.vocabularies = this.config.vocabularies;
-  }
-
   render() {
     const {
       fieldPath, // injected by the custom field loader via the `field` config property
@@ -28,6 +19,7 @@ export class Meeting extends Component {
       acronym,
       dates,
       place,
+      url,
       session,
       session_part: sessionPart,
       icon,
@@ -102,15 +94,18 @@ export class Meeting extends Component {
               <label className="helptext mb-0">{sessionPart.description}</label>
             )}
           </Grid.Column>
-          <Grid.Column width="16">
-            <IdentifiersField
-              fieldPath={`${fieldPath}.identifiers`}
-              label={i18next.t("Meeting identifiers")}
-              labelIcon="barcode"
-              schemeOptions={this.vocabularies.identifiers.scheme}
-              showEmptyValue
-            />
-          </Grid.Column>
+          {url && (
+            <Grid.Column width="12">
+              <Input
+                fieldPath={`${fieldPath}.url`}
+                label={url.label}
+                placeholder={url.placeholder}
+              />
+              {url.description && (
+                <label className="helptext mb-0">{url.description}</label>
+              )}
+            </Grid.Column>
+          )}
         </Grid>
       </>
     );
@@ -127,6 +122,7 @@ Meeting.propTypes = {
   place: PropTypes.object.isRequired,
   icon: PropTypes.string,
   label: PropTypes.string,
+  url: PropTypes.object.isRequired,
 };
 
 Meeting.defaultProps = {

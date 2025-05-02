@@ -25,7 +25,7 @@ from marshmallow import fields
 from marshmallow_utils.fields import IdentifierValueSet, SanitizedUnicode
 from marshmallow_utils.schemas import IdentifierSchema
 
-from ...services.schemas.metadata import record_identifiers_schemes
+from ...services.schemas.metadata import _valid_url, record_identifiers_schemes
 
 
 class MeetingCF(BaseCF):
@@ -42,6 +42,9 @@ class MeetingCF(BaseCF):
                 "session_part": SanitizedUnicode(),
                 "session": SanitizedUnicode(),
                 "title": SanitizedUnicode(),
+                "url": SanitizedUnicode(
+                    validate=_valid_url(error_msg=_("You must provide a valid URL.")),
+                ),
                 "identifiers": IdentifierValueSet(
                     fields.Nested(
                         partial(
@@ -67,6 +70,7 @@ class MeetingCF(BaseCF):
                     "type": "text",
                     "fields": {"keyword": {"type": "keyword"}},
                 },
+                "url": {"type": "keyword"},
                 "identifiers": {
                     "type": "object",
                     "properties": {
