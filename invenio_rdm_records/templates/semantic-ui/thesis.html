@@ -1,0 +1,5 @@
+{% for key, value in field_value.items() %}
+  {% set field_prop = field_cfg.props.get(key) %}
+  <dt class="ui tiny header">{{ field_prop.label }}</dt>
+  <dd>{{ value }}</dd>
+{% endfor %}

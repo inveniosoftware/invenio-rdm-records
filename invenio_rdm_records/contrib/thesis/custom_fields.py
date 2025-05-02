@@ -65,6 +65,7 @@ THESIS_CUSTOM_FIELDS_UI = {
         {
             "field": "thesis:thesis",
             "ui_widget": "Thesis",
+            "template": "thesis.html",
             "props": {
                 "label": _("Thesis"),
                 "icon": "university",
