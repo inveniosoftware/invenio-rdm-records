@@ -2,7 +2,7 @@
 ..
     Copyright (C) 2019-2024 CERN.
     Copyright (C) 2019-2024 Northwestern University.
-    Copyright (C) 2024 KTH Royal Institute of Technology.
+    Copyright (C) 2024-2025 KTH Royal Institute of Technology.
 
 
     Invenio-RDM-Records is free software; you can redistribute it and/or
@@ -12,11 +12,15 @@
 Changes
 =======
 
+Version 10.9.2 (released 2025-05-05)
+
+ - tests: fix js tests
+ - deps: update @babel/runtime and axios versions
+
 Version 10.9.1 (released 2024-11-11)
 
 - signals: fix removed deprecated `temporarily_connected_to` method
 - i18n: fix translation only applied to app start
-
 
 Version 10.9.0 (released 2024-10-30)
 
