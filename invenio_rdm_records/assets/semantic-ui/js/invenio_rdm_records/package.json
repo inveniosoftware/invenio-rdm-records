@@ -3,7 +3,7 @@
     "This package.json is needed to run the JS tests, locally and CI."
   ],
   "scripts": {
-    "test": "react-scripts test"
+    "test": "react-scripts test --transformIgnorePatterns /\"node_modules/(?!axios)/\""
   },
   "devDependencies": {
     "@babel/cli": "^7.5.0",
