@@ -3,11 +3,11 @@
     "This package.json is needed to run the JS tests, locally and CI."
   ],
   "scripts": {
-    "test": "react-scripts test"
+    "test": "react-scripts test --transformIgnorePatterns /\"node_modules/(?!axios)/\""
   },
   "devDependencies": {
     "@babel/cli": "^7.5.0",
-    "@babel/runtime": "^7.9.0",
+    "@babel/runtime": "^7.26.10",
     "@inveniosoftware/eslint-config-invenio": "^2.0.0",
     "@rollup/plugin-babel": "^5.0.0",
     "@rollup/plugin-commonjs": "^11.1.0",
@@ -20,7 +20,7 @@
     "@translations/invenio_rdm_records": "../../translations/invenio_rdm_records",
     "ajv": "^8.0.0",
     "ajv-keywords": "^5.0.0",
-    "axios": "^0.21.0",
+    "axios": "^1.8.2",
     "coveralls": "^3.0.0",
     "enzyme": "^3.10.0",
     "enzyme-adapter-react-16": "^1.15.0",
