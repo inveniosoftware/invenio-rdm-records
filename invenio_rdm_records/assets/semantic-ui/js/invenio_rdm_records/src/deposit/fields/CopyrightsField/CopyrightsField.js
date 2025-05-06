@@ -1,5 +1,5 @@
 // This file is part of Invenio-RDM-Records
-// Copyright (C) 2020-2023 CERN.
+// Copyright (C) 2020-2025 CERN.
 // Copyright (C) 2020-2022 Northwestern University.
 // Copyright (C) 2021 Graz University of Technology.
 //
@@ -24,8 +24,11 @@ export class CopyrightsField extends Component {
           }
           required={required}
           helpText={i18next.t(
-            "Optionally specify holder, year and copyright statement for this resource (if any)"
+            "A copyright statement describing the ownership of the uploaded resource."
           )}
+          placeholder={i18next.t("Copyright (C) {{currentYear}} The Authors.", {
+            currentYear: new Date().getFullYear(),
+          })}
           optimized
         />
       </>
