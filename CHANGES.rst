@@ -12,6 +12,13 @@
 Changes
 =======
 
+Version v18.8.0 (released 2025-05-06)
+
+- services: make commit file link dependent on allow_upload
+- meeting: add identifiers to data model of meeting contrib field
+- services: include Opensearch meta in the results
+
+
 Version v18.7.0 (released 2025-04-28)
 
 - logging: add basic logging for expired embargoes
