@@ -12,6 +12,10 @@
 Changes
 =======
 
+Version <next>
+
+- schemas: provide default value for quota increase notes
+
 Version v18.8.0 (released 2025-05-06)
 
 - services: make commit file link dependent on allow_upload
