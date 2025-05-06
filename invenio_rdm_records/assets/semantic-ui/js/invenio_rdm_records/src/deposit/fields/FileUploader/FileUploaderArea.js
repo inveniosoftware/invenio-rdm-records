@@ -16,7 +16,7 @@ import React, { Component, useState } from "react";
 import Dropzone from "react-dropzone";
 import {
   Button,
-  Checkbox,
+  Radio,
   Grid,
   Header,
   Icon,
@@ -33,7 +33,9 @@ const FileTableHeader = ({ filesLocked }) => (
       <Table.HeaderCell>
         {i18next.t("Preview")}{" "}
         <Popup
-          content={i18next.t("Set the default preview")}
+          content={i18next.t(
+            "Choose which file to preview on the published record landing page"
+          )}
           trigger={<Icon fitted name="help circle" size="small" />}
         />
       </Table.HeaderCell>
@@ -89,9 +91,7 @@ const FileTableRow = ({
   return (
     <Table.Row key={file.name}>
       <Table.Cell data-label={i18next.t("Default preview")} width={2}>
-        {/* TODO: Investigate if react-deposit-forms optimized Checkbox field
-                  would be more performant */}
-        <Checkbox
+        <Radio
           checked={isDefaultPreview}
           onChange={() => setDefaultPreview(isDefaultPreview ? "" : file.name)}
         />
