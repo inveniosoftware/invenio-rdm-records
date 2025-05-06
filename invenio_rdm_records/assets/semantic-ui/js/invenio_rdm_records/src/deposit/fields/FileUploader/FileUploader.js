@@ -22,6 +22,7 @@ import { FileUploaderArea } from "./FileUploaderArea";
 import { FileUploaderToolbar } from "./FileUploaderToolbar";
 import { humanReadableBytes } from "react-invenio-forms";
 import Overridable from "react-overridable";
+import { Trans } from "react-i18next";
 
 // NOTE: This component has to be a function component to allow
 //       the `useFormikContext` hook.
@@ -129,15 +130,18 @@ export const FileUploaderComponent = ({
               icon="warning circle"
               header={i18next.t("Could not upload files.")}
               content={
-                <>
-                  {i18next.t("Uploading the selected files would result in")}{" "}
-                  {humanReadableBytes(
-                    filesSize + acceptedFilesSize,
-                    decimalSizeDisplay
-                  )}
-                  {i18next.t("but the limit is")}
-                  {humanReadableBytes(quota.maxStorage, decimalSizeDisplay)}.
-                </>
+                <Trans
+                  i18nKey="fileUploadQuotaExceeded"
+                  defaults="Uploading the selected files would result in {{ total }} of storage
+                  use, exceeding the limit of {{ limit }}."
+                  values={{
+                    total: humanReadableBytes(
+                      filesSize + acceptedFilesSize,
+                      decimalSizeDisplay
+                    ),
+                    limit: humanReadableBytes(quota.maxStorage, decimalSizeDisplay),
+                  }}
+                />
               }
             />
           </div>
