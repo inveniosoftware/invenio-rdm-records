@@ -291,8 +291,17 @@ def compute_publishing_information(obj, dummyctx):
         if not isinstance(thesis, dict):
             return thesis
 
-        fields = ["university", "department", "type"]
-        formatted = [thesis.get(field, "") for field in fields]
+        department = thesis.get("department")
+        department = f" ({department})" if department else ""
+        date_submitted = thesis.get("date_submitted")
+        date_defended = thesis.get("date_defended")
+        submitted = f"{_('Submitted: ')}{date_submitted}" if date_submitted else ""
+        defended = f"{_('Defended: ')}{date_defended}" if date_defended else ""
+        return (
+            f"{thesis.get('university')} {department}, {thesis.get('type')}, "
+            f"{submitted}, {defended}"
+        )
+
         return ", ".join(filter(None, formatted))
 
     attr = "custom_fields"
