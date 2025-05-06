@@ -12,6 +12,10 @@
 Changes
 =======
 
+Version <next>
+
+- schemas: provide default value for quota increase notes
+
 Version 10.9.2 (released 2025-05-05)
 
  - tests: fix js tests

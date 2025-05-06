@@ -16,4 +16,4 @@ class QuotaSchema(Schema):
 
     quota_size = fields.Number(required=True)
     max_file_size = fields.Number(required=True)
-    notes = SanitizedUnicode()
+    notes = SanitizedUnicode(default="")
