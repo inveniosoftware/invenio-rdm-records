@@ -6,6 +6,5 @@
 // under the terms of the MIT License; see LICENSE file for more details.
 
 export { DepositApiClient } from "./DepositApiClient";
-
 export { DepositFormApp } from "./DepositFormApp";
 export { DepositRecordSerializer } from "./DepositRecordSerializer";
