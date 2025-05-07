@@ -12,6 +12,10 @@
 Changes
 =======
 
+Version <next>
+
+- quotas: remove unique constraint for the `user_id` column in `RDMRecordQuota`
+
 Version v18.8.1 (released 2025-05-07)
 
 - schemas: provide default value for quota increase notes
