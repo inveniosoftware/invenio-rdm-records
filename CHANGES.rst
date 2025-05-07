@@ -11,7 +11,6 @@
 
 Changes
 =======
-
 Version v19.2.0 (released 2025-06-13)
 
 - checks: integrate service component and community requests
