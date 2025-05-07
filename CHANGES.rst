@@ -12,9 +12,11 @@
 Changes
 =======
 
-Version <next>
+Version v18.8.1 (released 2025-05-07)
 
 - schemas: provide default value for quota increase notes
+- metadata: copyrights placeholder and help text changes
+- ui serializer: display more thesis information
 
 Version v18.8.0 (released 2025-05-06)
 
