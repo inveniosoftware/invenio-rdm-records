@@ -12,8 +12,11 @@
 Changes
 =======
 
-Version <next>
+Version 10.9.3 (released 2025-05-07)
 
+- i18n: compile js languages
+- i18n: import js translated languages from transifex
+- fix: exclude node_modules from i18next message extraction
 - schemas: provide default value for quota increase notes
 
 Version 10.9.2 (released 2025-05-05)
