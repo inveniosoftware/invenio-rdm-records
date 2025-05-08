@@ -2,7 +2,7 @@
 #
 # Copyright (C) 2020-2024 CERN.
 # Copyright (C) 2020 Northwestern University.
-# Copyright (C) 2021-2023 Graz University of Technology.
+# Copyright (C) 2021-2025 Graz University of Technology.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
@@ -311,8 +311,8 @@ class ReferenceSchema(IdentifierSchema):
 class PointSchema(Schema):
     """Point schema."""
 
-    lat = fields.Number(required=True)
-    lon = fields.Number(required=True)
+    lat = fields.Float(required=True)
+    lon = fields.Float(required=True)
 
 
 class LocationSchema(Schema):
