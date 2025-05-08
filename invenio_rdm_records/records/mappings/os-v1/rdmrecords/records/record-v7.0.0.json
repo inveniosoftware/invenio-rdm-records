@@ -18,8 +18,6 @@
       "metadata.funding.award.identifiers.identifier",
       "metadata.funding.award.acronym.text",
       "metadata.funding.award.number",
-      "metadata.funding.award.subjects",
-      "metadata.funding.award.organizations",
       "metadata.funding.funder.name",
       "metadata.identifiers.identifier",
       "metadata.locations.features.place",
