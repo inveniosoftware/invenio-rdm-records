@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2022-2024 Graz University of Technology.
+# Copyright (C) 2022-2025 Graz University of Technology.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
@@ -171,8 +171,12 @@ class OAIPMHServerService(Service):
                 ]
             )
 
+        # if filters == [] -> True
+        # if filters != [] -> False
+        default_element = not bool(len(filters))
+
         oai_sets = (
-            OAISet.query.filter(or_(*filters))
+            OAISet.query.filter(or_(default_element, *filters))
             .order_by(
                 search_params["sort_direction"](text(",".join(search_params["sort"])))
             )
