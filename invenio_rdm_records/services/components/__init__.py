@@ -9,7 +9,6 @@
 
 from invenio_checks.components import ChecksComponent
 from invenio_drafts_resources.services.records.components import (
-    DraftFilesComponent,
     DraftMediaFilesComponent,
     PIDComponent,
     RelationsComponent,
@@ -17,6 +16,7 @@ from invenio_drafts_resources.services.records.components import (
 
 from .access import AccessComponent
 from .custom_fields import CustomFieldsComponent
+from .files import RDMDraftFilesComponent
 from .internal_notes import InternalNotesComponent
 from .metadata import MetadataComponent
 from .pids import ParentPIDsComponent, PIDsComponent
@@ -30,7 +30,7 @@ DefaultRecordsComponents = [
     MetadataComponent,
     CustomFieldsComponent,
     AccessComponent,
-    DraftFilesComponent,
+    RDMDraftFilesComponent,
     DraftMediaFilesComponent,
     RecordFilesProcessorComponent,
     RecordDeletionComponent,
