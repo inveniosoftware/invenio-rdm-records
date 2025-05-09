@@ -216,8 +216,20 @@ class DisconnectedFormFeedback extends Component {
     // Retrieve the corresponding icon and type
     const { icon, type } = feedbackConfig[feedback] || {};
 
+    let finalType = type;
+    if (type == null) {
+      console.warn("Got unexpected feedback", feedback);
+      finalType = "warning";
+    }
+    // generate dynamic id for easy getElementById calls.
+    // see feedbackConfig for possible values.
     return (
-      <Message visible {...{ [type]: true }} className="flashed top attached">
+      <Message
+        visible
+        {...{ [finalType]: true }}
+        className="flashed top attached"
+        id={finalType + "-feedback-div"}
+      >
         <Grid container>
           <Grid.Column width={15} textAlign="left">
             <strong>
