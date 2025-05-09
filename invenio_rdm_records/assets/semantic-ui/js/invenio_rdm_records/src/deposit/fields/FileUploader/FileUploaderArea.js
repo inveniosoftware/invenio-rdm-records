@@ -9,7 +9,7 @@
 // under the terms of the MIT License; see LICENSE file for more details.
 
 import { i18next } from "@translations/invenio_rdm_records/i18next";
-import { useFormikContext } from "formik";
+import { useFormikContext, getIn } from "formik";
 import _get from "lodash/get";
 import PropTypes from "prop-types";
 import React, { Component, useState } from "react";
@@ -25,7 +25,7 @@ import {
   Segment,
   Table,
 } from "semantic-ui-react";
-import { humanReadableBytes } from "react-invenio-forms";
+import { humanReadableBytes, FeedbackLabel } from "react-invenio-forms";
 
 const FileTableHeader = ({ filesLocked }) => (
   <Table.Header>
@@ -62,6 +62,7 @@ const FileTableRow = ({
   defaultPreview,
   setDefaultPreview,
   decimalSizeDisplay,
+  fileError,
 }) => {
   const [isCancelling, setIsCancelling] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
@@ -97,6 +98,12 @@ const FileTableRow = ({
       </Table.Cell>
       <Table.Cell data-label={i18next.t("Filename")} width={10}>
         <div>
+          {fileError && (
+            <>
+              <FeedbackLabel errorMessage={fileError} pointing="below" />
+              <br />
+            </>
+          )}
           {file.uploadState.isPending ? (
             <div>{file.name}</div>
           ) : (
@@ -190,6 +197,7 @@ FileTableRow.propTypes = {
   defaultPreview: PropTypes.string,
   setDefaultPreview: PropTypes.func.isRequired,
   decimalSizeDisplay: PropTypes.bool,
+  fileError: PropTypes.object,
 };
 
 FileTableRow.defaultProps = {
@@ -197,6 +205,7 @@ FileTableRow.defaultProps = {
   file: undefined,
   defaultPreview: undefined,
   decimalSizeDisplay: false,
+  fileError: undefined,
 };
 
 const FileUploadBox = ({
@@ -260,7 +269,7 @@ FileUploadBox.defaultProps = {
 };
 
 const FilesListTable = ({ filesLocked, filesList, deleteFile, decimalSizeDisplay }) => {
-  const { setFieldValue, values: formikDraft } = useFormikContext();
+  const { errors, setFieldValue, values: formikDraft } = useFormikContext();
   const defaultPreview = _get(formikDraft, "files.default_preview", "");
   return (
     <Table>
@@ -278,6 +287,7 @@ const FilesListTable = ({ filesLocked, filesList, deleteFile, decimalSizeDisplay
                 setFieldValue("files.default_preview", filename)
               }
               decimalSizeDisplay={decimalSizeDisplay}
+              fileError={getIn(errors, "files.entries." + file.name, undefined)}
             />
           );
         })}
