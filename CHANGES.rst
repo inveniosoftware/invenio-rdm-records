@@ -12,6 +12,11 @@
 Changes
 =======
 
+Version <next>
+
+- quotas: remove unique constraint for the `user_id` column in `RDMRecordQuota`
+- quotas: set the file quota for new drafts in a service component
+
 Version v18.8.1 (released 2025-05-07)
 
 - schemas: provide default value for quota increase notes
