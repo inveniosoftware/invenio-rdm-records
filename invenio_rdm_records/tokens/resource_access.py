@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # Copyright (C) 2023-2024 CERN.
+# Copyright (C) 2025 Graz University of Technology.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
@@ -28,8 +29,8 @@ class SubjectSchema(Schema):
     """Resource access token JWT subject schema."""
 
     pid_value = fields.Str(data_key="record_id", required=True)
-    file_key = fields.Str(data_key="file", missing=None)
-    permission = fields.Str(data_key="access", missing=None)
+    file_key = fields.Str(data_key="file", load_default=None)
+    permission = fields.Str(data_key="access", load_default=None)
 
 
 def validate_rat(token):

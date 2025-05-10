@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2022 Graz University of Technology.
+# Copyright (C) 2022-2025 Graz University of Technology.
 # Copyright (C) 2024 KTH Royal Institute of Technology.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
@@ -43,4 +43,3 @@ class OAIPMHSetSchema(Schema):
         """Meta attributes for the schema."""
 
         unknown = EXCLUDE
-        ordered = True
