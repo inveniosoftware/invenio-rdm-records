@@ -190,6 +190,9 @@ class ReviewService(RecordService):
         if not can_submit_record:
             raise RecordSubmissionClosedCommunityError()
 
+        # Run components
+        self.run_components("submit_record", identity, data=data, record=draft, uow=uow)
+
         # create review request
         request_item = current_rdm_records.community_inclusion_service.submit(
             identity, draft, community, draft.parent.review, data, uow
