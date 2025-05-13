@@ -2,7 +2,7 @@
 #
 # Copyright (C) 2020-2025 CERN.
 # Copyright (C) 2020 Northwestern University.
-# Copyright (C) 2021-2023 Graz University of Technology.
+# Copyright (C) 2021-2025 Graz University of Technology.
 # Copyright (C) 2022-2023 TU Wien.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
@@ -49,7 +49,7 @@ FormatEDTF = partial(FormatEDTF_, locale=get_locale)
 FormatDate = partial(FormatDate_, locale=get_locale)
 
 
-def make_affiliation_index(attr, obj, dummy_ctx):
+def make_affiliation_index(attr, obj):
     """Serializes creators/contributors for easier UI consumption."""
     # Copy so we don't modify in place the existing dict.
     creators = deepcopy(obj.get("metadata", {}).get(attr))
@@ -217,7 +217,7 @@ class MeetingSchema(Schema):
     url = SanitizedUnicode()
 
 
-def compute_publishing_information(obj, dummyctx):
+def compute_publishing_information(obj):
     """Computes 'publishing information' string from custom fields."""
 
     def _format_journal(journal, publication_date):
