@@ -2,13 +2,15 @@
 #
 # Copyright (C) 2021-2024 CERN.
 # Copyright (C) 2021-2025 Northwestern University.
-# Copyright (C) 2023 Graz University of Technology.
+# Copyright (C) 2023-2025 Graz University of Technology.
 # Copyright (C) 2023 Caltech.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
 
 """DataCite based Schema for Invenio RDM Records."""
+
+import importlib.metadata
 
 from babel_edtf import parse_edtf
 from edtf.parser.grammar import ParseException
@@ -48,6 +50,14 @@ RELATED_IDENTIFIER_SCHEMES = {
     "w3id",
 }
 """Allowed related identifier schemes for DataCite. Vocabulary taken from DataCite 4.3 schema definition."""
+
+
+def compat_post_dump(pass_collection):
+    """Compat post dump to gradually migrate to marshmallow>=4."""
+    if importlib.metadata.version("marshmallow") >= "4.0.0":
+        return post_dump(pass_collection=pass_collection)
+    else:
+        return post_dump(pass_many=pass_collection)
 
 
 def get_scheme_datacite(scheme, config_name, default=None):
@@ -140,7 +150,7 @@ class PersonOrOrgSchema43(Schema):
 
         return serialized_affiliations
 
-    @post_dump(pass_many=False)
+    @compat_post_dump(pass_collection=False)
     def capitalize_name_type(self, data, **kwargs):
         """Capitalize type."""
         if data.get("nameType"):
