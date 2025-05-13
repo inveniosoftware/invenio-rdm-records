@@ -12,6 +12,11 @@
 Changes
 =======
 
+Version v18.9.0 (released 2025-05-13)
+
+- mappings: remove objectfields from "index.query.default_field" settings
+- update setup.cfg
+
 Version v18.8.1 (released 2025-05-07)
 
 - schemas: provide default value for quota increase notes
