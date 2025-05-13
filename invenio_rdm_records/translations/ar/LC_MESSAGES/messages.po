@@ -1023,11 +1023,12 @@ msgstr "'{field_name}' يجب أن يكون إما 'مشاع' أو 'مقيّد'"
 #, python-brace-format
 msgid "Too many records passed, {max_number} max allowed."
 msgstr ""
+"تم تمرير عدد كبير جدًا من التسجيلات، الحد الأقصى المسموح به هو {max_number}."
 
 #: invenio_rdm_records/services/schemas/community_records.py:51
 #, python-brace-format
 msgid "Duplicated records {rec_ids}."
-msgstr ""
+msgstr "التسجيلات المكررة {rec_ids}."
 
 #: invenio_rdm_records/services/schemas/metadata.py:73
 msgid "Only one value is accepted."
@@ -1053,7 +1054,7 @@ msgstr "اﻹسم لا يمكن أن يكون فارغا"
 
 #: invenio_rdm_records/services/schemas/metadata.py:155
 msgid "Duplicated affiliations: "
-msgstr ""
+msgstr "الانتماءات المكررة:"
 
 #: invenio_rdm_records/services/schemas/metadata.py:214
 #: invenio_rdm_records/services/schemas/metadata.py:226
@@ -1094,16 +1095,17 @@ msgstr "مخطط المعرف الدائم خاطئ."
 #, python-brace-format
 msgid "Too many communities passed, {max_number} max allowed."
 msgstr ""
+"تم تمرير عدد كبير جدًا من المجتمعات، الحد الأقصى المسموح به هو {max_number}."
 
 #: invenio_rdm_records/services/schemas/record_communities.py:54
 #, python-brace-format
 msgid "Duplicated communities {com_ids}."
-msgstr ""
+msgstr "المجتمعات المكررة {com_ids}."
 
 #: invenio_rdm_records/services/schemas/parent/__init__.py:28
 #, python-brace-format
 msgid "Invalid persistent identifier scheme {scheme}."
-msgstr ""
+msgstr "مخطط المعرف الدائم غير صالح {scheme}."
 
 #: invenio_rdm_records/templates/semantic-ui/imprint.html:2
 msgid "Publisher"
@@ -1116,12 +1118,12 @@ msgstr "صفحات:"
 
 #: invenio_rdm_records/templates/semantic-ui/meeting.html:34
 msgid "Session part"
-msgstr ""
+msgstr "جزء من فضاء العمل"
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/community-submission.accept.jinja:23
 #, python-brace-format
 msgid "✅ Community inclusion accepted for '{record_title}'"
-msgstr ""
+msgstr "✅ تم قبول إدراج المجتمع لـ '{record_title}'"
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/community-submission.accept.jinja:29
 #, python-brace-format
@@ -1129,6 +1131,8 @@ msgid ""
 "The community curator '@{curator_name}' accepted the record '{record_title}'"
 " into the community '{community_title}'"
 msgstr ""
+"قام المشرف على المجتمع '@{curator_name}' بقبول التسجيلة '{record_title}' في "
+"المجتمع '{community_title}'"
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/community-submission.accept.jinja:31
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/community-submission.decline.jinja:31
@@ -1151,7 +1155,7 @@ msgstr "مع الرسالة التالية:"
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/community-submission.expire.jinja:30
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/community-submission.expire.jinja:53
 msgid "Check out the submission request"
-msgstr ""
+msgstr "تحقق من طلب الإيداع"
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/community-submission.accept.jinja:47
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/community-submission.cancel.jinja:38
@@ -1197,6 +1201,8 @@ msgid ""
 "The community curator @{curator_name} accepted the record '{record_title}' "
 "into the community '{community_title}'"
 msgstr ""
+"قام المشرف على المجتمع @{curator_name} بقبول التسجيلة '{record_title}' في "
+"المجتمع '{community_title}'"
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/community-submission.accept.jinja:56
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/community-submission.accept.jinja:70
@@ -1243,7 +1249,7 @@ msgstr "مع الرسالة التالية:"
 msgid ""
 "This is an auto-generated message. To manage notifications, visit your "
 "account settings"
-msgstr ""
+msgstr "هذه رسالة حررت آليا. لإدارة الإشعارات، تفضل بزيارة إعدادات حسابك"
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/community-submission.accept.jinja:67
 #, python-brace-format
@@ -1251,11 +1257,13 @@ msgid ""
 "The community curator *@{curator_name}* accepted the record *{record_title}*"
 " into the community *{community_title}*"
 msgstr ""
+"قام المشرف على المجتمع *@{curator_name}* بقبول التسجيلة *{record_title}* في "
+"المجتمع *{community_title}*"
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/community-submission.cancel.jinja:23
 #, python-brace-format
 msgid "❌ Community inclusion cancelled for '{record_title}'"
-msgstr ""
+msgstr "❌ تم إلغاء إدراج المجتمع لـ '{record_title}'"
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/community-submission.cancel.jinja:29
 #, python-brace-format
@@ -1263,6 +1271,7 @@ msgid ""
 "The record submission for your community '{community_title}' was cancelled "
 "by '@{cancel_name}'."
 msgstr ""
+"تم إلغاء إرسال التسجيلة لمجتمعك '{community_title}' بواسطة '@{cancel_name}'."
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/community-submission.cancel.jinja:44
 #, python-brace-format
@@ -1270,13 +1279,14 @@ msgid ""
 "The record submission for your community '{community_title}' was cancelled "
 "by @'{cancel_name}'."
 msgstr ""
+"تم إلغاء إرسال التسجيلة لمجتمعك '{community_title}' بواسطة '@{cancel_name}'."
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/community-submission.cancel.jinja:46
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/community-submission.decline.jinja:60
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/community-submission.expire.jinja:44
 #, python-brace-format
 msgid "Check out the submission request: {request_link}"
-msgstr ""
+msgstr "تحقق من طلب الإيداع: {request_link}"
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/community-submission.cancel.jinja:51
 #, python-brace-format
@@ -1284,11 +1294,13 @@ msgid ""
 "The record submission for your community *'{community_title}'* was cancelled"
 " by *'{cancel_name}'*."
 msgstr ""
+"تم إلغاء إرسال التسجيلة لمجتمعك *'{community_title}'* بواسطة "
+"*'@{cancel_name}'*."
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/community-submission.decline.jinja:23
 #, python-brace-format
 msgid "⛔️ Community inclusion declined for '{record_title}'"
-msgstr ""
+msgstr "⛔️ تم رفض إدراج المجتمع لـ '{record_title}'"
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/community-submission.decline.jinja:29
 #, python-brace-format
@@ -1296,6 +1308,8 @@ msgid ""
 "The community curator '@{curator_name}' declined the record '{record_title}'"
 " into the community '{community_title}'"
 msgstr ""
+"قام المشرف على المجتمع '@{curator_name}' برفض التسجيلة '{record_title}' في "
+"المجتمع '{community_title}'"
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/community-submission.decline.jinja:53
 #, python-brace-format
@@ -1303,6 +1317,8 @@ msgid ""
 "The community curator @{curator_name} declined the record '{record_title}' "
 "into the community '{community_title}'"
 msgstr ""
+"قام المشرف على المجتمع @{curator_name} برفض التسجيلة '{record_title}' في "
+"المجتمع '{community_title}'"
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/community-submission.decline.jinja:67
 #, python-brace-format
@@ -1310,22 +1326,24 @@ msgid ""
 "The community curator *@{curator_name}* declined the record *{record_title}*"
 " into the community *{community_title}*"
 msgstr ""
+"قام المشرف على المجتمع *@{curator_name}* برفض التسجيلة *{record_title}* في "
+"المجتمع *{community_title}*"
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/community-submission.expire.jinja:21
 #, python-brace-format
 msgid "⌛️ Community inclusion expired for '{record_title}'"
-msgstr ""
+msgstr "⌛️ انتهت صلاحية إدراج المجتمع لـ '{record_title}'"
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/community-submission.expire.jinja:27
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/community-submission.expire.jinja:42
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/community-submission.expire.jinja:51
 msgid "The submission for your record has expired."
-msgstr ""
+msgstr "لقد انتهت صلاحية إداع تسجيلتك."
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/community-submission.submit.jinja:22
 #, python-brace-format
 msgid "📥 New record submission to your community '{community_title}'"
-msgstr ""
+msgstr "📥 إداع تسجيلة جديدة إلى مجتمعك '{community_title}'"
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/community-submission.submit.jinja:28
 #, python-brace-format
@@ -1333,12 +1351,14 @@ msgid ""
 "The record '{record_title}' was submitted to your community "
 "'{community_title}' by '@{creator_name}'"
 msgstr ""
+"تم إيداع التسجيلة '{record_title}' إلى مجتمعك '{community_title}' بواسطة "
+"'@{creator_name}'"
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/community-submission.submit.jinja:40
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/community-submission.submit.jinja:59
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/community-submission.submit.jinja:73
 msgid "Review the submission request"
-msgstr ""
+msgstr "مراجعة طلب الإيداع"
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/community-submission.submit.jinja:52
 #, python-brace-format
@@ -1346,6 +1366,8 @@ msgid ""
 "The record '{record_title}' was submitted to your community "
 "'{community_title}' by @'{creator_name}'."
 msgstr ""
+"تم إيداع التسجيلة '{record_title}' إلى مجتمعك '{community_title}' بواسطة "
+"'@{creator_name}'."
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/community-submission.submit.jinja:66
 #, python-brace-format
@@ -1353,6 +1375,8 @@ msgid ""
 "The record *'{record_title}'* was submitted to your community "
 "*'{community_title}'* by *@'{creator_name}'*."
 msgstr ""
+"تم إيداع التسجيلة *'{record_title}'* إلى مجتمعك *'{community_title}'* بواسطة"
+" *@'{creator_name}'*."
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/grant-user-access.create.jinja:20
 #, python-brace-format
@@ -1360,16 +1384,17 @@ msgid ""
 "👤✔️ You were granted {permission} access to all versions of the record "
 "'{record_title}'"
 msgstr ""
+"👤✔️ لقد تم منحك {إذن} الوصول إلى جميع إصدارات التسجيلة '{record_title}'"
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/grant-user-access.create.jinja:23
 #, python-brace-format
 msgid "👤✔️ You were granted {permission} access to draft '{record_title}'"
-msgstr ""
+msgstr "👤✔️ لقد تم منحك {إذن} الوصول إلى مسودّة '{record_title}'"
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/grant-user-access.create.jinja:25
 #, python-brace-format
 msgid "👤✔️ You were granted {permission} access to a draft"
-msgstr ""
+msgstr "👤✔️ لقد تم منحك {إذن} الوصول إلى مسودّة"
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/grant-user-access.create.jinja:35
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/grant-user-access.create.jinja:78
@@ -1378,17 +1403,18 @@ msgid ""
 "You have now permission to {permission} all versions of the record "
 "'{record_title}'."
 msgstr ""
+"لديك الآن إذن بـ {permission} لجميع إصدارات التسجيلة '{record_title}'."
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/grant-user-access.create.jinja:38
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/grant-user-access.create.jinja:81
 #, python-brace-format
 msgid "You have now permission to {permission} the draft '{record_title}'."
-msgstr ""
+msgstr "لديك الآن إذن بـ {permission} مسودّة '{record_title}'."
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/grant-user-access.create.jinja:40
 #, python-brace-format
 msgid "You have now permission to {permission} a draft."
-msgstr ""
+msgstr "لديك الآن إذن بـ {permission} مسودّة."
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/grant-user-access.create.jinja:47
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/grant-user-access.create.jinja:89
@@ -1410,45 +1436,45 @@ msgstr "الرسالة :"
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/user-access-request.decline.jinja:55
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/user-access-request.decline.jinja:69
 msgid "View the record"
-msgstr ""
+msgstr "مشاهدة التّسجيلة"
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/grant-user-access.create.jinja:59
 msgid "View the draft"
-msgstr ""
+msgstr "مشاهدة المسودّة"
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/grant-user-access.create.jinja:83
 #, python-brace-format
 msgid "You have now permission to {permission} the draft."
-msgstr ""
+msgstr "لديك الآن إذن بـ {permission} مسودّة."
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/grant-user-access.create.jinja:94
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/guest-access-request.cancel.jinja:55
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/guest-access-request.decline.jinja:56
 msgid "View the record: "
-msgstr ""
+msgstr "مشاهدة التّسجيلة:"
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/grant-user-access.create.jinja:94
 msgid "View the draft: "
-msgstr ""
+msgstr "مشاهدة المسودّة:"
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/grant-user-access.create.jinja:96
 msgid ""
 "This is an auto-generated message. To manage notifications, visit your "
 "account settings: "
-msgstr ""
+msgstr "هذه رسالة حررت آليا. لإدارة الإشعارات، تفضل بزيارة إعدادات حسابك:"
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/guest-access-request-token.create.jinja:12
 #, python-brace-format
 msgid "❗️Access request for '{record_title}' requires action"
-msgstr ""
+msgstr "❗️طلب الوصول إلى '{record_title}' يتطلب اتخاذ إجراء"
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/guest-access-request-token.create.jinja:18
 msgid "Please verify the email address in order to submit the access request"
-msgstr ""
+msgstr "يرجى التحقق من عنوان البريد الإلكتروني لتقديم طلب الوصول"
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/guest-access-request-token.create.jinja:21
 msgid "Verify e-mail address"
-msgstr ""
+msgstr "تحقّق من عنوان البريد الإلكتروني"
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/guest-access-request-token.create.jinja:33
 #, python-format
@@ -1456,12 +1482,14 @@ msgid ""
 "Please verify your e-mail address via the following link in order to submit "
 "the access request for the record '%(record_title)s'."
 msgstr ""
+"يرجى التحقق من عنوان بريدك الإلكتروني عبر الرابط التالي لتقديم طلب الوصول "
+"إلى التسجيلة '%(record_title)s'."
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/guest-access-request-token.create.jinja:35
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/guest-access-request-token.create.jinja:42
 #, python-format
 msgid "Verify e-mail address: %(url)s"
-msgstr ""
+msgstr "تحقّق من عنوان البريد الإلكتروني: %(url)s"
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/guest-access-request-token.create.jinja:40
 #, python-format
@@ -1469,84 +1497,86 @@ msgid ""
 "Please verify your e-mail address via the following link in order to submit "
 "the access request for the record *%(record_title)s*."
 msgstr ""
+"يرجى التحقق من عنوان بريدك الإلكتروني عبر الرابط التالي لتقديم طلب الوصول "
+"إلى التسجيلة *%(record_title)s*."
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/guest-access-request.accept.jinja:12
 #, python-brace-format
 msgid "✅ Access request for '{record_title}' was accepted."
-msgstr ""
+msgstr "✅ تم قبول طلب الوصول إلى '{record_title}'."
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/guest-access-request.accept.jinja:17
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/guest-access-request.accept.jinja:24
 #, python-brace-format
 msgid "Your access request for '{record_title}' was accepted."
-msgstr ""
+msgstr "تم قبول طلبك للوصول إلى '{record_title}'."
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/guest-access-request.accept.jinja:20
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/guest-access-request.accept.jinja:33
 msgid "Access the record"
-msgstr ""
+msgstr "الدخول إلى التسجيلة"
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/guest-access-request.accept.jinja:26
 #, python-brace-format
 msgid "Access the record here: {url}"
-msgstr ""
+msgstr "الدخول إلى التسجيلة هنا: {url}"
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/guest-access-request.accept.jinja:31
 #, python-brace-format
 msgid "Your access request for *'{record_title}'* was accepted."
-msgstr ""
+msgstr "تم قبول طلبك للوصول إلى *'{record_title}'*."
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/guest-access-request.cancel.jinja:18
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/user-access-request.cancel.jinja:23
 msgid "❌ Access request canceled"
-msgstr ""
+msgstr "❌ تم إلغاء طلب الدخول"
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/guest-access-request.cancel.jinja:24
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/guest-access-request.cancel.jinja:48
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/guest-access-request.cancel.jinja:62
 msgid "Your access request has been canceled"
-msgstr ""
+msgstr "لقد تم إلغاء طلب الدخول الخاص بك"
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/guest-access-request.decline.jinja:19
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/user-access-request.decline.jinja:18
 msgid "⛔️ Access request declined"
-msgstr ""
+msgstr "⛔️ تم رفض طلب الدخول"
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/guest-access-request.decline.jinja:25
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/user-access-request.decline.jinja:24
 #, python-brace-format
 msgid "The owner of '{record_title}' has declined your access request"
-msgstr ""
+msgstr "لقد رفض مالك '{record_title}' طلب الدخول الخاص بك"
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/guest-access-request.decline.jinja:49
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/user-access-request.decline.jinja:48
 #, python-brace-format
 msgid "The owner of '{record_title}' has rejected your access request"
-msgstr ""
+msgstr "لقد رفض مالك '{record_title}' طلب الدخول الخاص بك"
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/guest-access-request.decline.jinja:63
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/user-access-request.decline.jinja:62
 #, python-brace-format
 msgid "The owner of *{record_title}* has rejected your access request"
-msgstr ""
+msgstr "لقد رفض مالك *{record_title}* طلب الدخول الخاص بك"
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/guest-access-request.submit.jinja:18
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/user-access-request.submit.jinja:18
 #, python-brace-format
 msgid "📥 New access request for your record '{record_title}'"
-msgstr ""
+msgstr "📥 طلب جديد بالدخول للتسجيلة الخاصة بك '{record_title}'"
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/guest-access-request.submit.jinja:24
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/user-access-request.submit.jinja:24
 #, python-brace-format
 msgid "An access request was submitted for your record '{record_title}'."
-msgstr ""
+msgstr "تم تقديم طلب بالدخول للتسجيلة الخاصة بك '{record_title}'."
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/guest-access-request.submit.jinja:27
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/user-access-request.submit.jinja:27
 #, python-brace-format
 msgid "The requestor's e-mail address: {email}"
-msgstr ""
+msgstr "عنوان البريد الإلكتروني لمقدم الطلب: {email}"
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/guest-access-request.submit.jinja:30
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/guest-access-request.submit.jinja:44
@@ -1555,18 +1585,18 @@ msgstr ""
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/user-access-request.submit.jinja:44
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/user-access-request.submit.jinja:53
 msgid "See request details"
-msgstr ""
+msgstr "إطّلع على تفاصيل الطلب"
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/guest-access-request.submit.jinja:42
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/guest-access-request.submit.jinja:51
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/user-access-request.submit.jinja:42
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/user-access-request.submit.jinja:51
 msgid "An access request was submitted for your record."
-msgstr ""
+msgstr "تم تقديم طلب بالدخول للتسجيلة الخاصة بك."
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/guest-access-request.submitted.jinja:13
 msgid "📥 Your access request was submitted successfully"
-msgstr ""
+msgstr "📥 تم تقديم طلب الدخول الخاص بك بنجاح"
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/guest-access-request.submitted.jinja:19
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/guest-access-request.submitted.jinja:34
@@ -1574,71 +1604,77 @@ msgstr ""
 msgid ""
 "Your access request was submitted successfully. The request details are "
 "available at:"
-msgstr ""
+msgstr "تم تقديم طلب الدخول الخاص بك بنجاح. تفاصيل الطلب متاحة هنا:"
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/guest-access-request.submitted.jinja:22
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/guest-access-request.submitted.jinja:45
 msgid "View request details"
-msgstr ""
+msgstr "الإطّلع على تفاصيل الطلب"
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/guest-access-request.submitted.jinja:36
 msgid "View request details: "
-msgstr ""
+msgstr "الإطّلع على تفاصيل الطلب:"
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/user-access-request.accept.jinja:13
 msgid "✅ Access request accepted"
-msgstr ""
+msgstr "✅ تم قبول طلب الدخول"
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/user-access-request.accept.jinja:19
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/user-access-request.accept.jinja:43
 #, python-brace-format
 msgid "The owner of '{record_title}' has accepted your access request"
-msgstr ""
+msgstr "لقد قبل مالك '{record_title}' طلب الدخول الخاص بك"
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/user-access-request.accept.jinja:57
 #, python-brace-format
 msgid "The owner of *{record_title}* has accepted your access request"
-msgstr ""
+msgstr "لقد قبل مالك *{record_title}* طلب الدخول الخاص بك"
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/user-access-request.cancel.jinja:29
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/user-access-request.cancel.jinja:53
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/user-access-request.cancel.jinja:67
 #, python-brace-format
 msgid "Your access request has been canceled by {cancel_name}"
-msgstr ""
+msgstr "لقد تم إلغاء طلب الدخول الخاص بك من طرف {cancel_name}"
 
 #: invenio_rdm_records/tokens/errors.py:23
 msgid ""
 "Missing \"kid\" key with personal access token ID in JWT header of resource "
 "access token."
 msgstr ""
+"مفتاح \"kid\" مفقود مع رمز معرف الوصول الشخصي في رأس JWT لرمز الوصول إلى "
+"المورد. Missing \"kid\" key with personal access token ID in JWT header of "
+"resource access token."
 
 #: invenio_rdm_records/tokens/errors.py:32
 msgid ""
 "\"kid\" JWT header value of resource access token not a valid personal "
 "access token ID."
 msgstr ""
+"قيمة رأس \"JWT \"kid لرمز الوصول للمورد ليست معرف رمز وصول شخصي صالح. "
+"\"kid\" JWT header value of resource access token not a valid personal "
+"access token ID."
 
 #: invenio_rdm_records/tokens/errors.py:40
 msgid "Failed to decode resource access token."
-msgstr ""
+msgstr "فشل فك تشفير رمز الوصول إلى المورد resource access token."
 
 #: invenio_rdm_records/tokens/errors.py:46
 msgid "The resource access token is invalid."
-msgstr ""
+msgstr "رمز الوصول إلى المورد غير صالح."
 
 #: invenio_rdm_records/tokens/errors.py:52
 msgid "The resource access token subject is invalid."
-msgstr ""
+msgstr "موضوع رمز الوصول إلى المورد غير صالح."
 
 #: invenio_rdm_records/tokens/errors.py:58
 msgid "The resource access token is expired."
-msgstr ""
+msgstr "انتهت صلاحية رمز الوصول إلى المورد."
 
 #: invenio_rdm_records/tokens/errors.py:64
 msgid "Resource Access Tokens feature is currently disabled."
-msgstr ""
+msgstr "تم تعطيل ميزة رموز الوصول إلى الموارد حاليًا."
 
 #: invenio_rdm_records/tokens/scopes.py:16
 msgid "Allow generation of granular access JWT tokens."
-msgstr ""
+msgstr "السماح بإنشاء رموز الوصول JWT المحببة."

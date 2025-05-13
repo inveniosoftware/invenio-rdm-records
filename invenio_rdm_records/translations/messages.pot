@@ -7,9 +7,9 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: invenio-rdm-records 10.9.1\n"
+"Project-Id-Version: invenio-rdm-records 10.9.3\n"
 "Report-Msgid-Bugs-To: info@inveniosoftware.org\n"
-"POT-Creation-Date: 2025-04-07 16:09+0000\n"
+"POT-Creation-Date: 2025-05-14 00:22+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -52,7 +52,7 @@ msgstr ""
 
 #: invenio_rdm_records/config.py:75 invenio_rdm_records/config.py:336
 #: invenio_rdm_records/config.py:343 invenio_rdm_records/config.py:366
-#: tests/conftest.py:268 tests/conftest.py:275
+#: tests/conftest.py:273 tests/conftest.py:280
 msgid "DOI"
 msgstr ""
 
@@ -198,7 +198,7 @@ msgstr ""
 msgid "Updated"
 msgstr ""
 
-#: invenio_rdm_records/config.py:348 tests/conftest.py:280
+#: invenio_rdm_records/config.py:348 tests/conftest.py:285
 msgid "OAI ID"
 msgstr ""
 
@@ -207,7 +207,7 @@ msgid "OAI"
 msgstr ""
 
 #: invenio_rdm_records/config.py:394 invenio_rdm_records/config.py:404
-#: tests/conftest.py:289
+#: tests/conftest.py:294
 msgid "Concept DOI"
 msgstr ""
 

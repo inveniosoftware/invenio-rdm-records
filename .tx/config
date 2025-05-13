@@ -42,24 +42,21 @@ type = PO
 #    npm run init_catalog lang <lang>
 # 4) Extract translation keys/values
 #    $ npm run extract_messages
-# 5) Update the ./messages/index.js file
-#    import TRANSLATE_<lang> from './<lang>/translations.json'
-#    export const translations = {
-#      ...rest,
-#      <lang>: { translation: TRANSLATE_<lang> }
-#    }
-# 6) Install the transifex-client
+# 5) Install the transifex-client
 #    $ curl -o- https://raw.githubusercontent.com/transifex/cli/master/install.sh | bash
 
-# 7) Push source (.pot) and translations (.po) to Transifex
+# 6) Push source (.pot) and translations (.po) to Transifex
+# Navigate to the root of the invenio_administration repository
 #    $ tx push -s -t
-# 8) Pull translations for a single language from Transifex
+# 7) Pull translations for a single language from Transifex
 #    $ tx pull -l <lang>
-# 9) Pull translations for all languages from Transifex
+# 8) Pull translations for all languages from Transifex
+# Navigate to the root of the invenio_administration repository
 #    $ tx pull -a
-# 10) Compile .po files for all languages
+# 9) Compile .po files for all languages
+# Navigate to the invenio_rdm_records/assets/semantic-ui/translations/invenio_rdm_records folder
 #    $ npm run compile_catalog
-# 11) Convert .po file for a single language
+# 10) Convert .po file for a single language
 #    $ npm run compile_catalog lang <lang>
 
 [o:inveniosoftware:p:invenio:r:invenio-rdm-records-messages-ui]
