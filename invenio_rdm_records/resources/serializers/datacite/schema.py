@@ -2,7 +2,7 @@
 #
 # Copyright (C) 2021-2024 CERN.
 # Copyright (C) 2021-2025 Northwestern University.
-# Copyright (C) 2023 Graz University of Technology.
+# Copyright (C) 2023-2025 Graz University of Technology.
 # Copyright (C) 2023 Caltech.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
@@ -140,7 +140,7 @@ class PersonOrOrgSchema43(Schema):
 
         return serialized_affiliations
 
-    @post_dump(pass_many=False)
+    @post_dump(pass_collection=False)
     def capitalize_name_type(self, data, **kwargs):
         """Capitalize type."""
         if data.get("nameType"):
