@@ -12,6 +12,11 @@
 Changes
 =======
 
+Version v18.10.0 (released 2025-05-13)
+
+- review: add components hook for submitting review
+- deposit: show global backend validation message
+
 Version v18.9.0 (released 2025-05-13)
 
 - mappings: remove objectfields from "index.query.default_field" settings
