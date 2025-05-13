@@ -211,7 +211,8 @@ class DisconnectedFormFeedback extends Component {
         ? "suggestive"
         : initialFeedback;
 
-    const backendErrorMessage = errors.message;
+    // if no field is specified on the backend, then the message is on the `_schema` field
+    const backendErrorMessage = errors._schema;
 
     // Retrieve the corresponding icon and type
     const { icon, type } = feedbackConfig[feedback] || {};
