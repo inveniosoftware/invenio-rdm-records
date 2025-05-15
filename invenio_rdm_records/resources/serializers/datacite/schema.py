@@ -554,13 +554,10 @@ class DataCite43Schema(BaseSerializerSchema):
         return serialized_subjects if serialized_subjects else missing
 
     def get_rights(self, obj):
-        """Get datacite rigths."""
-        rights = obj["metadata"].get("rights", [])
-        copyright = obj["metadata"].get("copyright", None)
-        if not rights and not copyright:
-            return missing
+        """Get datacite rights."""
+        result = []
 
-        serialized_rights = []
+        rights = obj["metadata"].get("rights", [])
         for right in rights:
             entry = {"rights": right.get("title", {}).get(current_default_locale())}
 
@@ -573,16 +570,28 @@ class DataCite43Schema(BaseSerializerSchema):
             link = right.get("props", {}).get("url") or right.get("link", {})
             if link:
                 entry["rightsUri"] = link
-            serialized_rights.append(entry)
+            result.append(entry)
+
+        # Add info:eu-repo access rights (if configured)
+        dump_access_rights = current_app.config.get(
+            "RDM_DATACITE_DUMP_ACCESS_RIGHTS", False
+        )
+        access_right = obj.get("access", {}).get("status")
+        if dump_access_rights and access_right:
+            if access_right == "metadata-only":
+                access_right = "closed"
+            result.append({"rightsUri": f"info:eu-repo/semantics/{access_right}Access"})
+
+        copyright = obj["metadata"].get("copyright", None)
         if copyright:
-            serialized_rights.append(
+            result.append(
                 {
                     "rights": copyright,
                     "rightsUri": "http://rightsstatements.org/vocab/InC/1.0/",
                 }
             )
 
-        return serialized_rights if serialized_rights else missing
+        return result or missing
 
     def get_funding(self, obj):
         """Get funding references."""
