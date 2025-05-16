@@ -628,6 +628,9 @@ RDM_FILES_DEFAULT_MAX_FILE_SIZE = None
 RDM_DATACITE_FUNDER_IDENTIFIERS_PRIORITY = ("ror", "doi", "grid", "isni", "gnd")
 """Priority of funder identifiers types to be used for DataCite serialization."""
 
+RDM_DATACITE_DUMP_ACCESS_RIGHTS = False
+"""Flag to show whether DataCite access rights level should be dumped or not."""
+
 RDM_IIIF_MANIFEST_FORMATS = [
     "gif",
     "jp2",
