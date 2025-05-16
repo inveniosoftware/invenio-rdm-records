@@ -22,6 +22,7 @@ import { FileUploaderArea } from "./FileUploaderArea";
 import { FileUploaderToolbar } from "./FileUploaderToolbar";
 import { humanReadableBytes } from "react-invenio-forms";
 import Overridable from "react-overridable";
+import { useFilesList } from "./hooks";
 
 // NOTE: This component has to be a function component to allow
 //       the `useFormikContext` hook.
@@ -46,6 +47,7 @@ export const FileUploaderComponent = ({
 }) => {
   // We extract the working copy of the draft stored as `values` in formik
   const { values: formikDraft, errors, initialErrors } = useFormikContext();
+  const { filesList, filesNamesSet, filesSize } = useFilesList(files);
   const hasError = (errors.files || initialErrors?.files) && files;
   const hasErrorNoFiles =
     (errors.files?.enabled || initialErrors?.files?.enabled) && files;
@@ -53,27 +55,6 @@ export const FileUploaderComponent = ({
   const filesEnabled = _get(formikDraft, "files.enabled", false);
   const [warningMsg, setWarningMsg] = useState();
   const lockFileUploader = !isDraftRecord && filesLocked;
-
-  const filesList = Object.values(files).map((fileState) => {
-    return {
-      name: fileState.name,
-      size: fileState.size,
-      checksum: fileState.checksum,
-      links: fileState.links,
-      uploadState: {
-        // initial: fileState.status === UploadState.initial,
-        isFailed: fileState.status === UploadState.error,
-        isUploading: fileState.status === UploadState.uploading,
-        isFinished: fileState.status === UploadState.finished,
-        isPending: fileState.status === UploadState.pending,
-      },
-      progressPercentage: fileState.progressPercentage,
-      cancelUploadFn: fileState.cancelUploadFn,
-    };
-  });
-
-  const filesSize = filesList.reduce((totalSize, file) => (totalSize += file.size), 0);
-
   const dropzoneParams = {
     preventDropOnDocument: true,
     onDropAccepted: (acceptedFiles) => {
@@ -84,9 +65,6 @@ export const FileUploaderComponent = ({
         0
       );
       const maxFileStorageReached = filesSize + acceptedFilesSize > quota.maxStorage;
-
-      const filesNames = _map(filesList, "name");
-      const filesNamesSet = new Set(filesNames);
 
       const { duplicateFiles, emptyFiles, nonEmptyFiles } = acceptedFiles.reduce(
         (accumulators, file) => {

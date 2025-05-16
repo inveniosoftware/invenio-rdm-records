@@ -22,3 +22,4 @@ export { SubjectsField } from "./SubjectsField";
 export { TitlesField } from "./TitlesField";
 export { VersionField } from "./VersionField";
 export { ComingSoonField } from "./ComingSoonField";
+export { UppyUploader } from "./UppyUploader";
