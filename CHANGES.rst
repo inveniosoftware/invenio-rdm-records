@@ -12,6 +12,11 @@
 Changes
 =======
 
+Version v18.11.0 (released 2025-05-16)
+
+- deposit-ui: fix upload files error state
+- deposit-ui: add feedback messages on the file level
+
 Version v18.10.0 (released 2025-05-13)
 
 - review: add components hook for submitting review
