@@ -3,11 +3,13 @@
 # Copyright (C) 2024-2024 CERN.
 # Copyright (C) 2022 Universität Hamburg.
 # Copyright (C) 2024 Graz University of Technology.
+# Copyright (C) 2025 Data Futures GmbH.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
 """IIIF Resource."""
-
+import json
+import os
 import textwrap
 from abc import ABC, abstractmethod
 from functools import wraps
@@ -41,6 +43,7 @@ from invenio_records_resources.resources.records.resource import (
     request_read_args,
 )
 from invenio_records_resources.services.base.config import ConfiguratorMixin, FromConfig
+from invenio_records_resources.services.errors import FileKeyNotFoundError
 from PIL.Image import DecompressionBombError
 from werkzeug.utils import cached_property, secure_filename
 
@@ -148,7 +151,9 @@ class IIIFResource(ErrorHandlersMixin, Resource):
             if self.proxy:
                 res = self.proxy()
                 if res:
-                    return res, 200
+                    status_code = getattr(res, "status_code", 200)
+                    return res, status_code
+
             return f(self, *args, **kwargs)
 
         return _wrapper
@@ -393,3 +398,160 @@ class IIPServerProxy(IIIFProxy):
         path = request.path
         path = path.replace(uuid, f"{recid_path}/{filename}.ptif")
         return urljoin(self.server_url, path)
+
+
+class CantaloupeProxy(IIIFProxy):
+    """
+    Proxy for a Cantaloupe instance configured with direct access to RDM's local file bucket.
+
+    Important security note:
+
+    This class is designed to work with a Cantaloupe instance that has full, direct access to RDM's local file bucket
+    To ensure permissions are respected the Cantaloupe instance *must* only be accessible by RDM.
+    All IIIF requests from end users are proxied through the app, which enforces access control.
+
+    Attributes:
+        iiif_server (str): URL of IIIF server, <scheme>://<server>[:<port>]/ (required).
+        fs_prefix: (str): Prefix for local filestore (required if Cantaloupe's 'FilesystemSource.BasicLookupStrategy.path_prefix'
+            setting doesn't point directly to the root of the instance's local file bucket)
+        chunk_size (int): Chunk size for streaming file content (default: 64KB).
+        fallback (bool): Fall back to RDM IIIF handling on proxy failure (default: False).
+        iiif_version (int): Major IIIF version to use (default: 2).
+        levels (int): Number of levels in the path RDM uses in local filestore, should be loaded from config.
+        timeout (int): Seconds to wait for Cantaloupe to respond (default: 5).
+    """
+
+    def __init__(self):
+        """Initialize the proxy."""
+        self.iiif_server = current_app.config.get("RDM_IIIF_SERVER_URL")
+        if not self.iiif_server:
+            raise RuntimeError("RDM_IIIF_SERVER_URL not configured")
+        self.fs_prefix = current_app.config.get("RDM_CANTALOUPE_FS_PREFIX", "")
+        self.chunk_size = current_app.config.get("RDM_CANTALOUPE_CHUNK_SIZE", 64 * 1024)
+        self.fallback = current_app.config.get("RDM_IIIF_PROXY_FALLBACK", False)
+        self.iiif_version = current_app.config.get("RDM_CANTALOUPE_IIIF_VERSION", 2)
+        self.levels = current_app.config.get("FILES_REST_STORAGE_PATH_DIMENSIONS", 2)
+        self.timeout = current_app.config.get("RDM_IIIF_PROXY_TIMEOUT", 5)
+        self.iiif_service = current_app.extensions["invenio-rdm-records"].iiif_service
+
+    @property
+    def iiif_image_uuid(self):
+        """'UUID' of the IIIF image (<record_type>:<record_id>:<filename>)."""
+        return resource_requestctx.view_args["uuid"]
+
+    @property
+    def uuid_parts(self):
+        """Parts of the 'UUID' required by the class."""
+        record_type, record_id, filename = self.iiif_image_uuid.split(":")
+        return {
+            "record_type": record_type,
+            "record_id": record_id,
+            "filename": filename,
+            "iiif_record_uuid": ":".join([record_type, record_id]),
+        }
+
+    @property
+    def file_service(self):
+        """Return the file service for the current record type."""
+        return self.iiif_service.file_service(self.uuid_parts["record_type"])
+
+    @property
+    def media_files_service(self):
+        """Return the media files service for the current record type."""
+        return self.iiif_service.media_files_service(self.uuid_parts["record_type"])
+
+    @property
+    def record(self):
+        """Read record via record service."""
+        return self.iiif_service.read_record(
+            g.identity, self.uuid_parts["iiif_record_uuid"]
+        )._record
+
+    @property
+    def file_id(self):
+        """UUID of file in local filestore."""
+        try:
+            file_meta = self.file_service.read_file_metadata(
+                identity=g.identity,
+                id_=self.uuid_parts["record_id"],
+                file_key=self.uuid_parts["filename"],
+            )
+        except FileKeyNotFoundError:
+            file_meta = self.media_files_service.read_file_metadata(
+                identity=g.identity,
+                id_=self.uuid_parts["record_id"],
+                file_key=self.uuid_parts["filename"],
+            )
+        return file_meta.data["file_id"]
+
+    def _can_read_files(self):
+        """Check permission to read record and file."""
+        return self.file_service.check_permission(
+            g.identity, "read_files", record=self.record
+        )
+
+    def _make_identifier(self, file_uuid):
+        """Generate local image identifier for the cantaloupe URL - this is the location of local file with path separators escaped to '%2F'."""
+        file_uuid_parts = [file_uuid[i : i + 2] for i in range(0, len(file_uuid), 2)]
+        file_path = os.path.join(
+            self.fs_prefix,
+            *file_uuid_parts[: self.levels],
+            "".join(file_uuid_parts[self.levels :]),
+            "data",
+        )
+        return file_path.replace(os.path.sep, "%2F")
+
+    def _rewrite_url(self, file_uuid):
+        """Convert request URL to a Cantaloupe one."""
+        path = request.path.replace(
+            self.iiif_image_uuid,
+            f"{self.iiif_version}/{self._make_identifier(file_uuid)}",
+        )
+        return urljoin(self.iiif_server, path)
+
+    def _rewrite_info_json(self, response):
+        """Rewrite id in Cantaloupe's info.json with RDM's endpoint."""
+        id_key = "@id" if self.iiif_version < 3 else "id"
+        return {
+            **response.json(),
+            id_key: request.url.removesuffix("/info.json"),
+        }
+
+    def _handle_proxy_error(self, log_message=None, status_code=503):
+        current_app.logger.error(log_message)
+        if not self.fallback:
+            return Response(log_message, status=status_code)
+        return None
+
+    def should_proxy(self):
+        """Check this is an image API request and that a valid/accessible record/file is specified."""
+        if request.endpoint not in (
+            "iiif.image_api",
+            "iiif.info",
+        ):
+            return False
+        return self._can_read_files()
+
+    def proxy_request(self):
+        """Proxy request to Cantaloupe server."""
+        url = self._rewrite_url(self.file_id)
+        try:
+            res = requests.request(
+                request.method, url, stream=True, timeout=self.timeout
+            )
+            if not res.ok:
+                return self._handle_proxy_error(f"IIIF proxy error", res.status_code)
+
+            payload = (
+                json.dumps(self._rewrite_info_json(res))
+                if request.endpoint == "iiif.info"
+                else res.iter_content(self.chunk_size)
+            )
+            return Response(
+                response=payload,
+                status=res.status_code,
+                content_type=res.headers["Content-Type"],
+            )
+
+        except requests.RequestException as e:
+            return self._handle_proxy_error(f"IIIF proxy exception: {str(e)}", 503)
