@@ -73,6 +73,7 @@ const fileReducer = (state = initialState, action) => {
           ...state.entries,
           [remoteFileName]: {
             ...state.entries[remoteFileName],
+            ...action.payload.extraData,
             status: UploadState.finished,
             size: action.payload.size,
             progressPercentage: 100,

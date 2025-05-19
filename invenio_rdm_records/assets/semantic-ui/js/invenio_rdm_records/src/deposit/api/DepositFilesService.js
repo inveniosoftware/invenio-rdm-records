@@ -1,6 +1,7 @@
 // This file is part of Invenio-RDM-Records
 // Copyright (C) 2020-2023 CERN.
 // Copyright (C) 2020-2022 Northwestern University.
+// Copyright (C)      2025 CESNET.
 //
 // Invenio-RDM-Records is free software; you can redistribute it and/or modify it
 // under the terms of the MIT License; see LICENSE file for more details.
@@ -85,7 +86,15 @@ export class DepositFilesService {
     this.progressNotifier = progressNotifier;
   }
 
+  async initializeUpload(initializeUploadURL, file) {
+    throw new Error("Not implemented.");
+  }
+
   async upload(initializeUploadURL, file, progressNotifier) {
+    throw new Error("Not implemented.");
+  }
+
+  async finalizeUpload(commitFileURL, file) {
     throw new Error("Not implemented.");
   }
 
@@ -106,10 +115,15 @@ export class RDMDepositFilesService extends DepositFilesService {
     this.uploaderQueue = new UploaderQueue();
   }
 
+  initializeUpload(initializeUploadURL, file) {
+    return this._initializeUpload(initializeUploadURL, file);
+  }
+
   _initializeUpload = async (initializeUploadURL, file) => {
     const response = await this.fileApiClient.initializeFileUpload(
       initializeUploadURL,
-      file.name
+      file.name,
+      file.transferOptions
     );
 
     // get the init file with the sent filename
@@ -197,6 +211,10 @@ export class RDMDepositFilesService extends DepositFilesService {
     return await this.fileApiClient.deleteFile(fileLinks);
   };
 
+  getUploadParams = async (fileContentUrl, file, options) => {
+    return this.fileApiClient.getUploadParams(fileContentUrl, file, options);
+  };
+
   importParentRecordFiles = async (draftLinks) => {
     const response = await this.fileApiClient.importParentRecordFiles(draftLinks);
 
@@ -214,5 +232,13 @@ export class RDMDepositFilesService extends DepositFilesService {
       }),
       {}
     );
+  };
+}
+
+export class UppyDepositFilesService extends RDMDepositFilesService {
+  finalizeUpload = async (commitFileURL, file) => {
+    const response = await this.fileApiClient.finalizeFileUpload(commitFileURL);
+    this.progressNotifier.onUploadProgress(file.name, 100);
+    return response.data;
   };
 }

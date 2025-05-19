@@ -21,10 +21,12 @@ const preloadFiles = (files) => {
       .map((file) => {
         let hasSize = file.size >= 0;
         const fileState = {
+          file_id: file.file_id,
           name: file.key,
           size: file.size || 0,
           checksum: file.checksum || "",
           links: file.links || {},
+          mimetype: file.mimetype || "application/octet-stream",
         };
         // TODO: fix this as the lack of size is not always an error e.g upload ongoing in another tab
         return hasSize

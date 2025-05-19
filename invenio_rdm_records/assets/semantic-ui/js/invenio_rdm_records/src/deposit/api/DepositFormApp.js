@@ -18,7 +18,11 @@ import {
 } from "./DepositApiClient";
 import { DepositBootstrap } from "./DepositBootstrap";
 import { DepositDraftsService, RDMDepositDraftsService } from "./DepositDraftsService";
-import { DepositFilesService, RDMDepositFilesService } from "./DepositFilesService";
+import {
+  DepositFilesService,
+  RDMDepositFilesService,
+  UppyDepositFilesService,
+} from "./DepositFilesService";
 import {
   DepositRecordSerializer,
   RDMDepositRecordSerializer,
@@ -51,7 +55,11 @@ export class DepositFormApp extends Component {
 
     const fileApiClient = props.fileApiClient
       ? props.fileApiClient
-      : new RDMDepositFileApiClient(additionalApiConfig);
+      : new RDMDepositFileApiClient(
+          additionalApiConfig,
+          props.config.default_transfer_type,
+          props.config.transfer_types
+        );
 
     const draftsService = props.draftsService
       ? props.draftsService
@@ -59,6 +67,8 @@ export class DepositFormApp extends Component {
 
     const filesService = props.filesService
       ? props.filesService
+      : props.useUppy
+      ? new UppyDepositFilesService(fileApiClient, props.config.fileUploadConcurrency)
       : new RDMDepositFilesService(fileApiClient, props.config.fileUploadConcurrency);
 
     const service = new DepositService(draftsService, filesService);
@@ -106,6 +116,7 @@ DepositFormApp.propTypes = {
   filesService: PropTypes.instanceOf(DepositFilesService),
   recordSerializer: PropTypes.instanceOf(DepositRecordSerializer),
   children: PropTypes.node,
+  useUppy: PropTypes.bool,
 };
 
 DepositFormApp.defaultProps = {
