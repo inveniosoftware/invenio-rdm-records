@@ -26,6 +26,7 @@ import {
   FILE_IMPORT_FAILED,
   FILE_UPLOAD_SAVE_DRAFT_FAILED,
   RESERVE_PID_FAILED,
+  DRAFT_LOADED_WITH_VALIDATION_ERRORS,
 } from "../state/types";
 import PropTypes from "prop-types";
 import { flattenAndCategorizeErrors } from "react-invenio-forms";
@@ -105,6 +106,10 @@ const ACTIONS = {
       "Files import from the previous version failed. Please try again. If the problem persists, contact user support."
     ),
   },
+  [DRAFT_LOADED_WITH_VALIDATION_ERRORS]: {
+    feedback: "warning",
+    message: i18next.t("The draft has validation feedback in"),
+  },
 };
 
 const feedbackConfig = {
@@ -123,6 +128,15 @@ class DisconnectedFormFeedback extends Component {
     this.sections = {
       ...props.sectionsConfig,
     };
+    this.state = {
+      domReady: false,
+    };
+  }
+  // Set domReady after initial render completes, so we can get the sections in the form
+  componentDidMount() {
+    setTimeout(() => {
+      this.setState({ domReady: true });
+    }, 0);
   }
 
   getErrorSections(errors) {
@@ -185,6 +199,7 @@ class DisconnectedFormFeedback extends Component {
   render() {
     const { errors: errorsProp, actionState } = this.props;
     const errors = errorsProp || {};
+    const { domReady } = this.state;
 
     const { feedback: initialFeedback, message } = _get(ACTIONS, actionState, {
       feedback: undefined,
@@ -196,10 +211,9 @@ class DisconnectedFormFeedback extends Component {
     }
 
     const { flattenedErrors, severityChecks } = flattenAndCategorizeErrors(errors);
-    const errorSections = this.getErrorSections({
-      ...flattenedErrors,
-      ...severityChecks,
-    });
+    const errorSections = domReady
+      ? this.getErrorSections({ ...flattenedErrors, ...severityChecks })
+      : [];
 
     const noSeverityChecksWithErrors = Object.values(severityChecks).every(
       (severityObject) => severityObject.severity !== "error"
