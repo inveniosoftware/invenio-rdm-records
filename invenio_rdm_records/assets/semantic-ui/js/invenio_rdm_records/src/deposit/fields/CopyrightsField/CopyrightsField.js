@@ -16,22 +16,20 @@ export class CopyrightsField extends Component {
   render() {
     const { fieldPath, label, required } = this.props;
     return (
-      <>
-        <TextField
-          fieldPath={fieldPath}
-          label={
-            <FieldLabel htmlFor={fieldPath} icon="copyright outline" label={label} />
-          }
-          required={required}
-          helpText={i18next.t(
-            "A copyright statement describing the ownership of the uploaded resource."
-          )}
-          placeholder={i18next.t("Copyright (C) {{currentYear}} The Authors.", {
-            currentYear: new Date().getFullYear(),
-          })}
-          optimized
-        />
-      </>
+      <TextField
+        fieldPath={fieldPath}
+        label={
+          <FieldLabel htmlFor={fieldPath} icon="copyright outline" label={label} />
+        }
+        required={required}
+        helpText={i18next.t(
+          "A copyright statement describing the ownership of the uploaded resource."
+        )}
+        placeholder={i18next.t("Copyright (C) {{currentYear}} The Authors.", {
+          currentYear: new Date().getFullYear(),
+        })}
+        optimized
+      />
     );
   }
 }
