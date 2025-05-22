@@ -7,6 +7,7 @@
 
 import axios from "axios";
 import _get from "lodash/get";
+import _isEmpty from "lodash/isEmpty";
 
 const BASE_HEADERS = {
   "json": { "Content-Type": "application/json" },
@@ -108,7 +109,7 @@ export class RDMDepositApiClient extends DepositApiClient {
         error.response.data.errors || []
       );
       // this is to serialize raised error from the backend on publish
-      if (errors) errorData = errors;
+      if (!_isEmpty(errors)) errorData = errors;
       throw new DepositApiClientResponse({}, errorData);
     }
   }

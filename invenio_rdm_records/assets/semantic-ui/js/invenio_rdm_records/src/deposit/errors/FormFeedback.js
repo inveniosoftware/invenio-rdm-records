@@ -211,8 +211,9 @@ class DisconnectedFormFeedback extends Component {
         ? "suggestive"
         : initialFeedback;
 
-    // if no field is specified on the backend, then the message is on the `_schema` field
-    const backendErrorMessage = errors._schema;
+    // if no field is specified on the backend, then the validation message is on the `_schema` field
+    // if the backend returns an explicit message e.g server error, then we use that instead of the default one
+    const backendErrorMessage = errors.message || errors._schema;
 
     // Retrieve the corresponding icon and type if the feedback is a valid key,
     // else fallback to warning.
