@@ -752,3 +752,21 @@ class RDMRecordService(RecordService):
             identity,
             revisions,
         )
+
+    def read_revision(self, identity, id_, revision_id, include_previous=False):
+        """Read a specific record revision (and return the precedent revision if include_previous==True)."""
+        record = self.record_cls.pid.resolve(id_)
+        self.require_permission(identity, "search_revisions", record=record)
+
+        revisions = []
+        current_revision = record.model.versions.filter_by(
+            transaction_id=revision_id
+        ).first()
+        revisions.append(current_revision)
+        if include_previous:
+            previous_revision = record.model.versions.filter_by(
+                end_transaction_id=revision_id
+            ).first()
+            if previous_revision:
+                revisions.append(previous_revision)
+        return self.config.revision_result_list_cls(identity, revisions)
