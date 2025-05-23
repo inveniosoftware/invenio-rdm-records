@@ -12,6 +12,12 @@
 Changes
 =======
 
+Version v18.12.0 (released 2025-05-23)
+
+- resources: expose get current revision of record
+- deposit: fix global server errors in frontend
+- feedback-ui: Add specific ID to disconnected feedback form
+
 Version v18.11.0 (released 2025-05-16)
 
 - deposit-ui: fix upload files error state
