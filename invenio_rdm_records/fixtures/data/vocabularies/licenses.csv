@@ -98,6 +98,7 @@ cc-by-sa-3.0,Creative Commons Attribution Share Alike 3.0 Unported,,cc-by-sa-ico
 cc-by-sa-3.0-at,Creative Commons Attribution-Share Alike 3.0 Austria,,cc-by-sa-icon,"all,data",https://creativecommons.org/licenses/by-sa/3.0/at/,spdx,
 cc-by-sa-4.0,Creative Commons Attribution Share Alike 4.0 International,Permits almost any use subject to providing credit and license notice. Frequently used for media assets and educational materials. The most common license for Open Access scientific publications. Not recommended for software.,cc-by-sa-icon,"recommended,all,data",https://creativecommons.org/licenses/by-sa/4.0/,spdx,
 cc-pddc,Creative Commons Public Domain Dedication and Certification,,cc-pddc-icon,all,https://creativecommons.org/licenses/publicdomain/,spdx,
+cc-pdm-1.0,Creative Commons Public Domain Mark 1.0 Universal,,cc-pddc-icon,all,https://creativecommons.org/publicdomain/mark/1.0/,spdx,
 cc0-1.0,Creative Commons Zero v1.0 Universal,CC0 waives copyright interest in a work you've created and dedicates it to the world-wide public domain. Use CC0 to opt out of copyright entirely and ensure your work has the widest reach.,cc-cc0-icon,"recommended,all,data,software",https://creativecommons.org/publicdomain/zero/1.0/,spdx,
 cddl-1.0,Common Development and Distribution License 1.0,,,"all,software",https://opensource.org/license/cddl-1-0,spdx,y
 cddl-1.1,Common Development and Distribution License 1.1,,,"all,software",https://spdx.org/licenses/CDDL-1.1,spdx,
