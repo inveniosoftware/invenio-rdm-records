@@ -93,6 +93,7 @@ class RDMRecordResource(RecordResource):
             # TODO: move to users?
             route("POST", routes["set-user-quota"], self.set_user_quota),
             route("GET", p(routes["item-revision-list"]), self.search_revisions),
+            route("GET", p(routes["item-revision"]), self.read_revision),
         ]
 
         return url_rules
@@ -101,9 +102,27 @@ class RDMRecordResource(RecordResource):
     @request_extra_args
     @request_view_args
     def search_revisions(self):
-        """Discard a previously reserved PID."""
+        """Return all revisions of a record."""
         item = self.service.search_revisions(
             identity=g.identity, id_=resource_requestctx.view_args["pid_value"]
+        )
+
+        return item.to_dict(), 200
+
+    @request_headers
+    @request_extra_args
+    @request_read_args
+    @request_view_args
+    def read_revision(self):
+        """Read a specific revision of a record.
+
+        :param: include_previous: If True, return the precedent revision of the record of interest.
+        """
+        item = self.service.read_revision(
+            identity=g.identity,
+            id_=resource_requestctx.view_args["pid_value"],
+            revision_id=resource_requestctx.view_args["revision_id"],
+            include_previous=resource_requestctx.args.get("include_previous", False),
         )
 
         return item.to_dict(), 200
