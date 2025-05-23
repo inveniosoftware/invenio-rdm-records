@@ -74,6 +74,7 @@ def test_tombstone_valid_removed_by(app, users):
     t.removed_by = "system"
     assert t.removed_by == {"user": "system"}
     assert t.removed_by_proxy.resolve() == {
+        "email": "noreply@inveniosoftware.org",
         "id": "system",
         "is_ghost": True,
         "profile": {"full_name": "System"},
