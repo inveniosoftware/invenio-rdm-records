@@ -176,6 +176,10 @@ class RDMRecordPermissionPolicy(RecordPermissionPolicy):
     ]
     can_draft_update_files = can_review
     can_draft_delete_files = can_review
+
+    can_draft_get_file_transfer_metadata = [SystemProcess()]
+    can_draft_update_file_transfer_metadata = [SystemProcess()]
+
     # Allow enabling/disabling files
     can_manage_files = [
         IfConfig(
@@ -329,6 +333,9 @@ class RDMRecordPermissionPolicy(RecordPermissionPolicy):
     can_set_content_files = [Disable()]
     can_commit_files = [Disable()]
     can_update_files = [Disable()]
+
+    can_get_file_transfer_metadata = [Disable()]
+    can_update_file_transfer_metadata = [Disable()]
 
     # Used to hide the `parent.is_verified` field. It should be set to
     # correct permissions based on which the field will be exposed only to moderators
