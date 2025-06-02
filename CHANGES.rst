@@ -12,6 +12,13 @@
 Changes
 =======
 
+Version v18.14.0 (released 2025-06-02)
+
+- config: make community request type classes customizable
+    * Allows to customize community submissions and inclusion request type
+      classes via the ``RDM_COMMUNITY_SUBMISSION_REQUEST_CLS`` and
+      ``RDM_COMMUNITY_INCLUSION_REQUEST_CLS`` config variables.
+
 Version v18.13.0 (released 2025-06-02)
 
 - Move collections implementaiton to Invenio-Collections
