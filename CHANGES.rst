@@ -12,6 +12,10 @@
 Changes
 =======
 
+Version v18.13.0 (released 2025-06-02)
+
+- Move collections implementaiton to Invenio-Collections
+
 Version v18.12.0 (released 2025-05-23)
 
 - resources: expose get current revision of record
