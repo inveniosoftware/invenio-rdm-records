@@ -298,7 +298,7 @@ def app_config(app_config, mock_datacite_client):
         providers.DataCitePIDProvider(
             "datacite",
             client=mock_datacite_client("datacite", config_prefix="DATACITE"),
-            serializer=DataCite43JSONSerializer(schema_context={"is_parent": True}),
+            serializer=DataCite43JSONSerializer(is_parent=True),
             label=_("Concept DOI"),
         ),
     ]
