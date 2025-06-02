@@ -3,7 +3,7 @@
 # Copyright (C) 2019-2026 CERN.
 # Copyright (C) 2019-2022 Northwestern University.
 # Copyright (C) 2021 TU Wien.
-# Copyright (C) 2022-2023 Graz University of Technology.
+# Copyright (C) 2022-2025 Graz University of Technology.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
@@ -295,7 +295,7 @@ def app_config(app_config, mock_datacite_client):
         providers.DataCitePIDProvider(
             "datacite",
             client=mock_datacite_client("datacite", config_prefix="DATACITE"),
-            serializer=DataCite45JSONSerializer(schema_context={"is_parent": True}),
+            serializer=DataCite45JSONSerializer(is_parent=True),
             label=_("Concept DOI"),
         ),
     ]

@@ -2,7 +2,7 @@
 #
 # Copyright (C) 2021-2025 CERN.
 # Copyright (C) 2021-2025 Northwestern University.
-# Copyright (C) 2023 Graz University of Technology.
+# Copyright (C) 2023-2025 Graz University of Technology.
 # Copyright (C) 2023 Caltech.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
@@ -202,6 +202,11 @@ class DataCite43Schema(BaseSerializerSchema):
     geoLocations = fields.Method("get_locations")
     fundingReferences = fields.Method("get_funding")
     schemaVersion = fields.Constant("http://datacite.org/schema/kernel-4")
+
+    def __init__(self, is_parent=False, **kwargs):
+        """Construct."""
+        super().__init__(**kwargs)
+        self.is_parent = is_parent
 
     def get_type(self, obj):
         """Get resource type."""
@@ -406,7 +411,7 @@ class DataCite43Schema(BaseSerializerSchema):
                 serialized_identifiers.append(serialized_identifier)
 
         # Generate parent/child versioning relationships
-        if self.context.get("is_parent"):
+        if self.is_parent:
             # Fetch DOIs for all versions
             # NOTE: The refresh is safe to do here since we'll be in Celery task
             current_rdm_records_service.indexer.refresh()
@@ -679,6 +684,11 @@ class DataCite45Schema(BaseSerializerSchema):
     fundingReferences = fields.Method("get_funding")
     schemaVersion = fields.Constant("http://datacite.org/schema/kernel-4")
 
+    def __init__(self, is_parent=False, **kwargs):
+        """Construct."""
+        super().__init__(**kwargs)
+        self.is_parent = is_parent
+
     def get_type(self, obj):
         """Get resource type."""
         resource_type_id = py_.get(obj, "metadata.resource_type.id")
@@ -890,7 +900,7 @@ class DataCite45Schema(BaseSerializerSchema):
                 serialized_identifiers.append(serialized_identifier)
 
         # Generate parent/child versioning relationships
-        if self.context.get("is_parent"):
+        if self.is_parent:
             # Fetch DOIs for all versions
             # NOTE: The refresh is safe to do here since we'll be in Celery task
             current_rdm_records_service.indexer.refresh()
