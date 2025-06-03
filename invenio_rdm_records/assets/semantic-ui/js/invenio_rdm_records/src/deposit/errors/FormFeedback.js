@@ -7,11 +7,12 @@
 // under the terms of the MIT License; see LICENSE file for more details.
 
 import { i18next } from "@translations/invenio_rdm_records/i18next";
+import { FormFeedbackSummary } from "./FormFeedbackSummary";
 import _get from "lodash/get";
 import _isEmpty from "lodash/isEmpty";
 import React, { Component } from "react";
 import { connect } from "react-redux";
-import { Grid, Message, Label, Icon } from "semantic-ui-react";
+import { Grid, Message, Icon } from "semantic-ui-react";
 import {
   DISCARD_PID_FAILED,
   DRAFT_DELETE_FAILED,
@@ -28,7 +29,6 @@ import {
   RESERVE_PID_FAILED,
 } from "../state/types";
 import PropTypes from "prop-types";
-import { flattenAndCategorizeErrors } from "react-invenio-forms";
 
 const ACTIONS = {
   [DRAFT_SAVE_SUCCEEDED]: {
@@ -120,70 +120,10 @@ class DisconnectedFormFeedback extends Component {
     this.labels = {
       ...props.labels,
     };
-    this.sections = {
-      ...props.sectionsConfig,
-    };
-  }
-
-  getErrorSections(errors) {
-    const errorSections = new Map();
-
-    // Iterate over each error path in the errors object
-    Object.keys(errors).forEach((path) => {
-      let errorCount = Array.isArray(errors[path]) ? errors[path].length : 1;
-
-      // Try to match error to a section based on field paths
-      for (const [section, fields] of Object.entries(this.sections)) {
-        if (fields.some((field) => path.startsWith(field))) {
-          const sectionElement = document.getElementById(section);
-          const label = sectionElement?.getAttribute("label") || "Unknown section";
-          errorSections.set(section, {
-            label,
-            count: (errorSections.get(section)?.count || 0) + errorCount,
-          });
-          return;
-        }
-      }
-
-      // If not matched in predefined sections, check dynamically in accordions
-      const sectionElement = document
-        .querySelector(`label[for^="${path.replace(/^(.*?)(\[\d+\].*)?$/, "$1")}"]`)
-        ?.closest(".accordion");
-      if (sectionElement) {
-        const sectionId = sectionElement.id;
-        const label = sectionElement.getAttribute("label") || "Unknown section";
-        errorSections.set(sectionId, {
-          label,
-          count: (errorSections.get(sectionId)?.count || 0) + errorCount,
-        });
-      }
-    });
-
-    // Order sections based on their DOM appearance and return error links
-    const accordions = Array.from(document.querySelectorAll(".accordion")).map(
-      (accordion) => accordion.id
-    );
-
-    const orderedSections = [
-      ...accordions.filter((id) => errorSections.has(id)), // Keep sections that exist in order
-      ...[...errorSections.keys()].filter((id) => !accordions.includes(id)), // Append missing sections
-    ];
-
-    return orderedSections.map((sectionId, i) => {
-      const { label, count } = errorSections.get(sectionId);
-      return (
-        <a key={sectionId} className="pl-5" href={`#${sectionId}`}>
-          {label}{" "}
-          <Label circular size="tiny">
-            {count}
-          </Label>
-        </a>
-      );
-    });
   }
 
   render() {
-    const { errors: errorsProp, actionState } = this.props;
+    const { errors: errorsProp, actionState, sectionsConfig } = this.props;
     const errors = errorsProp || {};
 
     const { feedback: initialFeedback, message } = _get(ACTIONS, actionState, {
@@ -195,21 +135,13 @@ class DisconnectedFormFeedback extends Component {
       return null;
     }
 
-    const { flattenedErrors, severityChecks } = flattenAndCategorizeErrors(errors);
-    const errorSections = this.getErrorSections({
-      ...flattenedErrors,
-      ...severityChecks,
-    });
-
-    const noSeverityChecksWithErrors = Object.values(severityChecks).every(
+    const noSeverityChecksWithErrors = Object.values(errors).every(
       (severityObject) => severityObject.severity !== "error"
     );
 
     // Determine final feedback without reassigning
     const feedback =
-      errorSections && _isEmpty(flattenedErrors) && noSeverityChecksWithErrors
-        ? "suggestive"
-        : initialFeedback;
+      _isEmpty(errors) && noSeverityChecksWithErrors ? "suggestive" : initialFeedback;
 
     // if no field is specified on the backend, then the validation message is on the `_schema` field
     // if the backend returns an explicit message e.g server error, then we use that instead of the default one
@@ -232,9 +164,7 @@ class DisconnectedFormFeedback extends Component {
           <Grid.Column width={15} textAlign="left">
             <strong>
               <Icon name={icon} middle aligned /> {backendErrorMessage || message}
-              {errorSections.length > 0 && (
-                <>{errorSections.reduce((prev, curr) => [prev, ", ", curr])}</>
-              )}
+              <FormFeedbackSummary sectionsConfig={sectionsConfig} errors={errors} />
             </strong>
           </Grid.Column>
         </Grid>
