@@ -149,6 +149,10 @@ async function _saveDraft(
       ...draftValidationErrorResponse.data,
       ...response.data,
     };
+    draftValidationErrorResponse.errors = {
+      ...draftValidationErrorResponse.errors,
+      ...response.errors,
+    };
   }
   // Throw validation errors from the partially saved draft
   if (draftHasValidationErrors) {
