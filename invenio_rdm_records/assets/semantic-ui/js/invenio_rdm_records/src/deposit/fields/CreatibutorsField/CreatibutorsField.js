@@ -143,9 +143,7 @@ class CreatibutorsFieldForm extends Component {
               </Button>
             }
           />
-          {generalCreatibutorsError && (
-            <FeedbackLabel errorMessage={generalCreatibutorsError} />
-          )}
+          {generalCreatibutorsError && <FeedbackLabel fieldPath={fieldPath} />}
         </Form.Field>
       </DndProvider>
     );
