@@ -100,7 +100,10 @@ const FileTableRow = ({
         <div>
           {fileError && (
             <>
-              <FeedbackLabel errorMessage={fileError} pointing="below" />
+              <FeedbackLabel
+                fieldPath={"files.entries." + file.name}
+                pointing="below"
+              />
               <br />
             </>
           )}
