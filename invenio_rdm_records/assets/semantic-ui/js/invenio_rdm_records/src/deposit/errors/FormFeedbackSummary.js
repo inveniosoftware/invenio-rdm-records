@@ -17,7 +17,17 @@ export class FormFeedbackSummary extends Component {
     this.sections = {
       ...props.sectionsConfig,
     };
+    this.state = {
+      domReady: false,
+    };
   }
+  // Set domReady after initial render completes, so we can get the sections in the form
+  componentDidMount() {
+    setTimeout(() => {
+      this.setState({ domReady: true });
+    }, 0);
+  }
+
   getAllErrPaths = (obj, prev = "") => {
     const result = [];
 
@@ -91,7 +101,12 @@ export class FormFeedbackSummary extends Component {
 
   render() {
     const { errors } = this.props;
-    const { orderedSections, errorSections } = this.getErrorSections(errors);
+
+    const { domReady } = this.state;
+
+    const { orderedSections, errorSections } = domReady
+      ? this.getErrorSections(errors)
+      : [];
     if (_isEmpty(orderedSections)) {
       return null;
     }

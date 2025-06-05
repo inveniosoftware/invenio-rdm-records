@@ -22,6 +22,7 @@ import {
   DRAFT_PUBLISH_FAILED_WITH_VALIDATION_ERRORS,
   DRAFT_SAVE_FAILED,
   DRAFT_SAVE_SUCCEEDED,
+  DRAFT_LOADED_WITH_VALIDATION_ERRORS,
   DRAFT_SUBMIT_REVIEW_FAILED,
   DRAFT_SUBMIT_REVIEW_FAILED_WITH_VALIDATION_ERRORS,
   FILE_IMPORT_FAILED,
@@ -38,6 +39,10 @@ const ACTIONS = {
   [DRAFT_HAS_VALIDATION_ERRORS]: {
     feedback: "warning",
     message: i18next.t("Record saved with validation feedback in"),
+  },
+  [DRAFT_LOADED_WITH_VALIDATION_ERRORS]: {
+    feedback: "warning",
+    message: i18next.t("Draft has validation feedback in"),
   },
   [DRAFT_SAVE_FAILED]: {
     feedback: "negative",
