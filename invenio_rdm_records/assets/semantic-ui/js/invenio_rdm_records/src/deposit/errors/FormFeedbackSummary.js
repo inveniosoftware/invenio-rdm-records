@@ -17,7 +17,20 @@ export class FormFeedbackSummary extends Component {
     this.sections = {
       ...props.sectionsConfig,
     };
+    this.state = {
+      domReady: false,
+    };
   }
+
+  componentDidMount() {
+    // XXX: This is a workaround to ensure that the component is mounted before we try
+    // to access the DOM elements. DO NOT use this pattern in new components, this will
+    // be properly fixed in https://github.com/inveniosoftware/invenio-rdm-records/issues/2072
+    setTimeout(() => {
+      this.setState({ domReady: true });
+    }, 0);
+  }
+
   getAllErrPaths = (obj, prev = "") => {
     const result = [];
 
@@ -59,7 +72,7 @@ export class FormFeedbackSummary extends Component {
       // If not matched in predefined sections, check dynamically in accordions
       // this part is used for custom widgets
       // and ensures backwards compatibility for the sections with no config provided
-      const sectionElements = document.querySelectorAll(`.invenio-accordion-field`);
+      const sectionElements = document.querySelectorAll(".invenio-accordion-field");
 
       // select section which contains the field
       // name in the field is always present, it is a must in forms
@@ -91,7 +104,10 @@ export class FormFeedbackSummary extends Component {
 
   render() {
     const { errors } = this.props;
-    const { orderedSections, errorSections } = this.getErrorSections(errors);
+    const { domReady } = this.state;
+    const { orderedSections, errorSections } = domReady
+      ? this.getErrorSections(errors)
+      : [];
     if (_isEmpty(orderedSections)) {
       return null;
     }
