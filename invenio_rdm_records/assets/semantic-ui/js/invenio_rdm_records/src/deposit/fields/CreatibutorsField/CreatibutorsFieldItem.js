@@ -142,7 +142,9 @@ export const CreatibutorsFieldItem = ({
                 {displayName} {renderRole(initialCreatibutor?.role, roleOptions)}
               </span>
             </List.Description>
-            {creatibutorError && <FeedbackLabel errorMessage={creatibutorError} />}
+            {creatibutorError && (
+              <FeedbackLabel fieldPath={`${compKey}`} hasSubfields />
+            )}
           </List.Content>
         </Ref>
       </List.Item>
