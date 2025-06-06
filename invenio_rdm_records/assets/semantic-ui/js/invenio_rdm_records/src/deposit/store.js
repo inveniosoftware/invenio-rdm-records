@@ -19,21 +19,20 @@ const preloadFiles = (files) => {
     links: files.links || {},
     entries: _get(_files, "entries", [])
       .map((file) => {
-        let hasSize = file.size >= 0;
         const fileState = {
+          file_id: file.file_id,
           name: file.key,
           size: file.size || 0,
           checksum: file.checksum || "",
           links: file.links || {},
+          mimetype: file.mimetype || "application/octet-stream",
+          status: UploadState[file.status],
         };
-        // TODO: fix this as the lack of size is not always an error e.g upload ongoing in another tab
-        return hasSize
-          ? {
-              status: UploadState.finished,
-              progressPercentage: 100,
-              ...fileState,
-            }
-          : { status: UploadState.pending, ...fileState };
+
+        return {
+          progressPercentage: fileState.status === UploadState.completed ? 100 : 0,
+          ...fileState,
+        };
       })
       .reduce((acc, current) => {
         acc[current.name] = { ...current };
