@@ -12,6 +12,15 @@
 Changes
 =======
 
+
+Version v19.0.1 (released 2025-06-10)
+
+- file uploader: change from checkbox to radio
+- file uploader: improve exceeded limit message
+- tests: update error to reflect records-resources file permission order change
+- creatibutors: adapt to new feedback label interface
+- creatibutors: fix nested errors & feedback display
+
 Version v19.0.0 (released 2025-06-03)
 
 - setup: version bump on dependent packages
