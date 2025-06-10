@@ -146,7 +146,7 @@ class LicenseFieldForm extends Component {
             mode="custom"
             action="add"
           />
-          {licenseError && <FeedbackLabel errorMessage={licenseError} />}
+          {licenseError && <FeedbackLabel fieldPath={fieldPath} />}
         </Form.Field>
       </DndProvider>
     );
