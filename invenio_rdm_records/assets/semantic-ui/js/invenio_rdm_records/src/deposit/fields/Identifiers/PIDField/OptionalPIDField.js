@@ -141,7 +141,7 @@ class OptionalPIDFieldCmp extends Component {
             </Grid.Column>
             {fieldError && (
               <Grid.Column width={11}>
-                <FeedbackLabel errorMessage={fieldError} />
+                <FeedbackLabel fieldPath={fieldPath} />
               </Grid.Column>
             )}
           </Grid>
