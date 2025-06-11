@@ -628,8 +628,13 @@ RDM_FILES_DEFAULT_MAX_FILE_SIZE = None
 RDM_DATACITE_FUNDER_IDENTIFIERS_PRIORITY = ("ror", "doi", "grid", "isni", "gnd")
 """Priority of funder identifiers types to be used for DataCite serialization."""
 
-RDM_DATACITE_DUMP_ACCESS_RIGHTS = False
-"""Flag to show whether DataCite access rights level should be dumped or not."""
+RDM_DATACITE_DUMP_OPENAIRE_ACCESS_RIGHTS = False
+"""Flag to control dumping DataCite OpenAIRE access rights.
+
+See https://guidelines.openaire.eu/en/latest/data/field_rights.html for further 
+information on how the OpenAIRE Guidelines expect access rights to be exposed 
+via the DataCite schema.
+"""
 
 RDM_IIIF_MANIFEST_FORMATS = [
     "gif",

@@ -574,7 +574,7 @@ class DataCite43Schema(BaseSerializerSchema):
 
         # Add info:eu-repo access rights (if configured)
         dump_access_rights = current_app.config.get(
-            "RDM_DATACITE_DUMP_ACCESS_RIGHTS", False
+            "RDM_DATACITE_DUMP_OPENAIRE_ACCESS_RIGHTS", False
         )
         access_right = obj.get("access", {}).get("status")
         if dump_access_rights and access_right:

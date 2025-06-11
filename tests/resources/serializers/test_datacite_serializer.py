@@ -415,7 +415,7 @@ def test_datacite43_access_right(running_app, minimal_record, set_app_config_fn_
     assert "rightsList" not in serialized_record
 
     # Test with access rights dumping enabled
-    set_app_config_fn_scoped({"RDM_DATACITE_DUMP_ACCESS_RIGHTS": True})
+    set_app_config_fn_scoped({"RDM_DATACITE_DUMP_OPENAIRE_ACCESS_RIGHTS": True})
     serialized_record = serializer.dump_obj(minimal_record)
     rights_list = serialized_record["rightsList"]
     assert {"rightsUri": "info:eu-repo/semantics/openAccess"} in rights_list
