@@ -2,7 +2,7 @@
 #
 # Copyright (C) 2023-2024 CERN.
 # Copyright (C) 2021 Northwestern University.
-# Copyright (C) 2023 Graz University of Technology.
+# Copyright (C) 2023-2025 Graz University of Technology.
 # Copyright (C) 2024 KTH Royal Institute of Technology.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
