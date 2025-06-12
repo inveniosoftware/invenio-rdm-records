@@ -12,6 +12,21 @@
 Changes
 =======
 
+Version v19.1.0 (released 2025-06-12)
+
+- form: display errors on draft load
+- deposit: updated fieldpath for feedback label
+- serializers/datacite: configurable dumping of access right (#2047)
+    * serializers/datacite: configurable dumping of access right
+    * Adds a new `RDM_DATACITE_DUMP_ACCESS_RIGHTS` config variable to
+      control if the access right level is included in the DataCite
+      serialization. The value is based on the vocabulary documented at
+      <https://wiki.surfnet.nl/spaces/standards/pages/11055603/info-eu-repo#infoeurepo-AccessRights>
+    * confix: rename to `RDM_DATACITE_DUMP_OPENAIRE_ACCESS_RIGHTS`
+- licenses: add creative commons public domain mark from spdx
+- serializers: add publication-section rdm type (book section) to bibtex serialization
+- localizing dates based on application selected locale
+- contrib-meeting: add missing `url` field to deposit form
 
 Version v19.0.1 (released 2025-06-10)
 
