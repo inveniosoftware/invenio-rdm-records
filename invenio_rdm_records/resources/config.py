@@ -56,6 +56,7 @@ from .serializers import (
     CSVRecordSerializer,
     DataCite43JSONSerializer,
     DataCite43XMLSerializer,
+    DataPackageSerializer,
     DCATSerializer,
     DublinCoreXMLSerializer,
     FAIRSignpostingProfileLvl2Serializer,
@@ -83,6 +84,10 @@ def _bibliography_headers(obj_or_list, code, many=False):
     _etag_headers["content-type"] = "text/plain"
     return _etag_headers
 
+
+# Schema.org profiles
+DATAPACKAGE_PROFILE = "https://datapackage.org/profiles/2.0/datapackage.json"
+ROCRATE_PROFILE = "https://w3id.org/ro/crate/1.1"
 
 record_serializers = {
     "application/json": ResponseHandler(JSONSerializer(), headers=etag_headers),
@@ -122,6 +127,9 @@ record_serializers = {
     ),
     "application/vnd.datacite.datacite+xml": ResponseHandler(
         DataCite43XMLSerializer(), headers=etag_headers
+    ),
+    f'application/ld+json;profile="{DATAPACKAGE_PROFILE}"': ResponseHandler(
+        DataPackageSerializer(), headers=etag_headers
     ),
     "application/x-dc+xml": ResponseHandler(
         DublinCoreXMLSerializer(), headers=etag_headers
@@ -255,7 +263,7 @@ class RDMRecordResourceConfig(RecordResourceConfig, ConfiguratorMixin):
 
     request_body_parsers = {
         "application/json": RequestBodyParser(JSONDeserializer()),
-        'application/ld+json;profile="https://w3id.org/ro/crate/1.1"': RequestBodyParser(
+        f'application/ld+json;profile="{ROCRATE_PROFILE}"': RequestBodyParser(
             ROCrateJSONDeserializer()
         ),
     }

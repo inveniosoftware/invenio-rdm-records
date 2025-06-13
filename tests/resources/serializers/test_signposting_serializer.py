@@ -18,11 +18,11 @@ from invenio_rdm_records.resources.serializers import (
 
 def full_record_to_dict_signposting(full_record_to_dict, collections_size):
     file_entries = {
-        f"testé_{n+1}.txt": {
+        f"testé_{n + 1}.txt": {
             "checksum": "md5:e795abeef2c38de2b064be9f6364ceae",
             "ext": "txt",
             "id": "d22bde05-5a36-48a3-86a7-acf2c4bb6f64",
-            "key": f"testé_{n+1}.txt",
+            "key": f"testé_{n + 1}.txt",
             "metadata": None,
             "mimetype": "text/plain",
             "size": 9,
@@ -44,7 +44,7 @@ def full_record_to_dict_signposting(full_record_to_dict, collections_size):
                 "given_name": "Given Name",
                 "identifiers": [
                     {
-                        "identifier": f"0000-0001-8135-348{n+1}",
+                        "identifier": f"0000-0001-8135-348{n + 1}",
                         "scheme": "orcid",
                     },
                 ],
@@ -61,7 +61,7 @@ def full_record_to_dict_signposting(full_record_to_dict, collections_size):
             "description": {
                 "en": "A description",
             },
-            "link": f"https://customlicense.org/licenses/by/{n+1}.0/",
+            "link": f"https://customlicense.org/licenses/by/{n + 1}.0/",
             "title": {
                 "en": "A custom license",
             },
@@ -73,13 +73,13 @@ def full_record_to_dict_signposting(full_record_to_dict, collections_size):
             "description": {
                 "en": "The Creative Commons Attribution license allows re-distribution and re-use of a licensed work on the condition that the creator is appropriately credited.",  # noqa
             },
-            "id": f"cc-by-{n+1}.0",
+            "id": f"cc-by-{n + 1}.0",
             "props": {
                 "scheme": "spdx",
-                "url": f"https://creativecommons.org/licenses/by/{n+1}.0/legalcode",
+                "url": f"https://creativecommons.org/licenses/by/{n + 1}.0/legalcode",
             },
             "title": {
-                "en": f"Creative Commons Attribution {n+1}.0 International",
+                "en": f"Creative Commons Attribution {n + 1}.0 International",
             },
         }
         for n in range(int(collections_size / 2), collections_size)
@@ -128,6 +128,10 @@ def test_signposting_serializer_full(
                     {
                         "href": "https://127.0.0.1:5000/api/records/12345-abcde",
                         "type": "application/ld+json",
+                    },
+                    {
+                        "href": "https://127.0.0.1:5000/api/records/12345-abcde",
+                        "type": 'application/ld+json;profile="https://datapackage.org/profiles/2.0/datapackage.json"',
                     },
                     {
                         "href": "https://127.0.0.1:5000/api/records/12345-abcde",
@@ -313,15 +317,16 @@ def test_signposting_lvl1_serializer_full_collections_size_ok(
 
     # Collections size are OK, so the whole level 1 headers are included.
     expected = [
-        f'<https://orcid.org/0000-0001-8135-3481> ; rel="author"',
-        f'<https://orcid.org/0000-0001-8135-3482> ; rel="author"',
-        f'<https://orcid.org/0000-0001-8135-3483> ; rel="author"',
-        f'<https://orcid.org/0000-0001-8135-3484> ; rel="author"',
-        f'<https://orcid.org/0000-0001-8135-3485> ; rel="author"',
-        f'<https://doi.org/10.1234/12345-abcde> ; rel="cite-as"',
+        '<https://orcid.org/0000-0001-8135-3481> ; rel="author"',
+        '<https://orcid.org/0000-0001-8135-3482> ; rel="author"',
+        '<https://orcid.org/0000-0001-8135-3483> ; rel="author"',
+        '<https://orcid.org/0000-0001-8135-3484> ; rel="author"',
+        '<https://orcid.org/0000-0001-8135-3485> ; rel="author"',
+        '<https://doi.org/10.1234/12345-abcde> ; rel="cite-as"',
         f'<{api_url}> ; rel="describedby" ; type="application/dcat+xml"',
         f'<{api_url}> ; rel="describedby" ; type="application/json"',
         f'<{api_url}> ; rel="describedby" ; type="application/ld+json"',
+        f'<{api_url}> ; rel="describedby" ; type="application/ld+json;profile="https://datapackage.org/profiles/2.0/datapackage.json""',
         f'<{api_url}> ; rel="describedby" ; type="application/marcxml+xml"',
         f'<{api_url}> ; rel="describedby" ; type="application/vnd.citationstyles.csl+json"',
         f'<{api_url}> ; rel="describedby" ; type="application/vnd.datacite.datacite+json"',
@@ -375,6 +380,10 @@ def test_signposting_serializer_minimal(running_app, minimal_record_to_dict):
                     {
                         "href": "https://127.0.0.1:5000/api/records/67890-fghij",
                         "type": "application/ld+json",
+                    },
+                    {
+                        "href": "https://127.0.0.1:5000/api/records/67890-fghij",
+                        "type": 'application/ld+json;profile="https://datapackage.org/profiles/2.0/datapackage.json"',
                     },
                     {
                         "href": "https://127.0.0.1:5000/api/records/67890-fghij",
@@ -455,6 +464,7 @@ def test_signposting_lvl1_serializer_minimal(running_app, minimal_record_to_dict
         f'<{api_url}> ; rel="describedby" ; type="application/dcat+xml"',
         f'<{api_url}> ; rel="describedby" ; type="application/json"',
         f'<{api_url}> ; rel="describedby" ; type="application/ld+json"',
+        f'<{api_url}> ; rel="describedby" ; type="application/ld+json;profile="https://datapackage.org/profiles/2.0/datapackage.json""',
         f'<{api_url}> ; rel="describedby" ; type="application/marcxml+xml"',
         f'<{api_url}> ; rel="describedby" ; type="application/vnd.citationstyles.csl+json"',
         f'<{api_url}> ; rel="describedby" ; type="application/vnd.datacite.datacite+json"',
