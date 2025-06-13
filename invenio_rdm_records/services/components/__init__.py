@@ -7,6 +7,7 @@
 
 """High-level API for working with RDM service components."""
 
+from invenio_checks.components import ChecksComponent
 from invenio_drafts_resources.services.records.components import (
     DraftFilesComponent,
     DraftMediaFilesComponent,
@@ -42,6 +43,7 @@ DefaultRecordsComponents = [
     ReviewComponent,
     ContentModerationComponent,
     InternalNotesComponent,
+    ChecksComponent,
 ]
 
 
