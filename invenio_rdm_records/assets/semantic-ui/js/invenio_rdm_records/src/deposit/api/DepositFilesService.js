@@ -1,6 +1,7 @@
 // This file is part of Invenio-RDM-Records
 // Copyright (C) 2020-2023 CERN.
 // Copyright (C) 2020-2022 Northwestern University.
+// Copyright (C)      2025 CESNET.
 //
 // Invenio-RDM-Records is free software; you can redistribute it and/or modify it
 // under the terms of the MIT License; see LICENSE file for more details.
@@ -85,7 +86,19 @@ export class DepositFilesService {
     this.progressNotifier = progressNotifier;
   }
 
+  async initializeUpload(initializeUploadURL, file) {
+    throw new Error("Not implemented.");
+  }
+
   async upload(initializeUploadURL, file, progressNotifier) {
+    throw new Error("Not implemented.");
+  }
+
+  async uploadPart(uploadParams) {
+    throw new Error("Not implemented.");
+  }
+
+  async finalizeUpload(commitFileURL, file) {
     throw new Error("Not implemented.");
   }
 
@@ -109,7 +122,8 @@ export class RDMDepositFilesService extends DepositFilesService {
   _initializeUpload = async (initializeUploadURL, file) => {
     const response = await this.fileApiClient.initializeFileUpload(
       initializeUploadURL,
-      file.name
+      file.name,
+      file.transferOptions
     );
 
     // get the init file with the sent filename
@@ -186,6 +200,12 @@ export class RDMDepositFilesService extends DepositFilesService {
     }
   };
 
+  initializeUpload = async (initializeUploadURL, file) => {
+    const initializedFile = await this._initializeUpload(initializeUploadURL, file);
+    this.progressNotifier.onUploadStarted(file.name, file.transferOptions.cancelFn);
+    return initializedFile;
+  };
+
   upload = async (initializeUploadURL, file) => {
     this.uploaderQueue.put(initializeUploadURL, file);
     this.progressNotifier.onUploadAdded(file.name);
@@ -197,6 +217,14 @@ export class RDMDepositFilesService extends DepositFilesService {
     return await this.fileApiClient.deleteFile(fileLinks);
   };
 
+  uploadPart = async (uploadParams) => {
+    return await this.fileApiClient.uploadPart(uploadParams);
+  };
+
+  finalizeUpload = async (commitFileURL, file) => {
+    return (await this.fileApiClient.finalizeFileUpload(commitFileURL)).data;
+  };
+
   importParentRecordFiles = async (draftLinks) => {
     const response = await this.fileApiClient.importParentRecordFiles(draftLinks);
 
@@ -204,7 +232,7 @@ export class RDMDepositFilesService extends DepositFilesService {
       (acc, file) => ({
         ...acc,
         [file.key]: {
-          status: UploadState.finished,
+          status: UploadState.completed,
           size: file.size,
           name: file.key,
           progressPercentage: 100,

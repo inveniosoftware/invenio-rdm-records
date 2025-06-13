@@ -135,7 +135,9 @@ const FileTableRow = ({
         </div>
       </Table.Cell>
       <Table.Cell data-label={i18next.t("Size")} width={2}>
-        {file.size ? humanReadableBytes(file.size, decimalSizeDisplay) : ""}
+        {file.size
+          ? humanReadableBytes(file.size, decimalSizeDisplay)
+          : i18next.t("N/A")}
       </Table.Cell>
       {!filesLocked && (
         <Table.Cell
@@ -271,7 +273,12 @@ FileUploadBox.defaultProps = {
   hasError: false,
 };
 
-const FilesListTable = ({ filesLocked, filesList, deleteFile, decimalSizeDisplay }) => {
+export const FilesListTable = ({
+  filesLocked,
+  filesList,
+  deleteFile,
+  decimalSizeDisplay,
+}) => {
   const { errors, setFieldValue, values: formikDraft } = useFormikContext();
   const defaultPreview = _get(formikDraft, "files.default_preview", "");
   return (
