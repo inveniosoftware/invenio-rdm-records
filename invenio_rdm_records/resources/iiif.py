@@ -406,7 +406,7 @@ class CantaloupeProxy(IIIFProxy):
     Important security note:
 
     This class is designed to work with a Cantaloupe instance that has full, direct access to RDM's local file bucket
-    To ensure permissions are resoected the Cantaloupe instance *must* only be accessible by RDM.
+    To ensure permissions are respected the Cantaloupe instance *must* only be accessible by RDM.
     All IIIF requests from end users are proxied through the app, which enforces access control.
 
     Attributes:
@@ -422,7 +422,7 @@ class CantaloupeProxy(IIIFProxy):
 
     def __init__(self):
         """Initialize the proxy."""
-        self.iiif_server = current_app.config.get("RDM_II'IF_SERVER_URL")
+        self.iiif_server = current_app.config.get("RDM_IIIF_SERVER_URL")
         if not self.iiif_server:
             raise RuntimeError("RDM_IIIF_SERVER_URL not configured")
         self.fs_prefix = current_app.config.get("RDM_CANTALOUPE_FS_PREFIX", "")
