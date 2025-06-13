@@ -638,8 +638,8 @@ RDM_DATACITE_FUNDER_IDENTIFIERS_PRIORITY = ("ror", "doi", "grid", "isni", "gnd")
 RDM_DATACITE_DUMP_OPENAIRE_ACCESS_RIGHTS = False
 """Flag to control dumping DataCite OpenAIRE access rights.
 
-See https://guidelines.openaire.eu/en/latest/data/field_rights.html for further 
-information on how the OpenAIRE Guidelines expect access rights to be exposed 
+See https://guidelines.openaire.eu/en/latest/data/field_rights.html for further
+information on how the OpenAIRE Guidelines expect access rights to be exposed
 via the DataCite schema.
 """
 
