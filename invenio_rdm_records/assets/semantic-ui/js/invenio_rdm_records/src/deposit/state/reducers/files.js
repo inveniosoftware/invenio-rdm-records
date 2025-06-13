@@ -20,11 +20,12 @@ import {
   FILE_UPLOAD_SET_CANCEL_FUNCTION,
 } from "../types";
 
+// Mapping from invenio-records-resources TransferStatus to JS uploader statuses
 export const UploadState = {
   // initial: 'initial', // no file or the initial file selected
   uploading: "uploading", // currently uploading a file from the UI
-  error: "error", // upload failed
-  finished: "finished", // upload finished (uploaded file is the field's current file)
+  failed: "error", // upload failed
+  completed: "finished", // upload finished (uploaded file is the field's current file)
   pending: "pending", // files retrieved from the backend are in pending state
 };
 
@@ -73,7 +74,8 @@ const fileReducer = (state = initialState, action) => {
           ...state.entries,
           [remoteFileName]: {
             ...state.entries[remoteFileName],
-            status: UploadState.finished,
+            ...action.payload.extraData,
+            status: UploadState.completed,
             size: action.payload.size,
             progressPercentage: 100,
             checksum: action.payload.checksum,
@@ -102,7 +104,7 @@ const fileReducer = (state = initialState, action) => {
           ...state.entries,
           [remoteFileName]: {
             ...state.entries[remoteFileName],
-            status: UploadState.error,
+            status: UploadState.failed,
             cancelUploadFn: null,
           },
         },
