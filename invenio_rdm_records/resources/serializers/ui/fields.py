@@ -10,6 +10,7 @@
 """Record response serializers."""
 
 from babel_edtf import format_edtf
+from invenio_i18n import get_locale
 from invenio_i18n import gettext as _
 from marshmallow import fields
 
@@ -116,7 +117,7 @@ class UIObjectAccessStatus(UIAccessStatus):
         """Embargo date."""
         until = self.record_access_dict.get("embargo").get("until")
         if until:
-            return format_edtf(until, format="long")
+            return format_edtf(until, format="long", locale=get_locale())
         return until
 
     @property
