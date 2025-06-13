@@ -9,8 +9,10 @@
 # it under the terms of the MIT License; see LICENSE file for more details.
 
 """Views."""
+from types import SimpleNamespace
 
 from flask import Blueprint
+from invenio_records_resources.services.files.transfer import constants
 
 blueprint = Blueprint("invenio_rdm_records_ext", __name__)
 
@@ -102,3 +104,15 @@ def create_iiif_bp(app):
     """Create IIIF blueprint."""
     ext = app.extensions["invenio-rdm-records"]
     return ext.iiif_resource.as_blueprint()
+
+
+@blueprint.app_context_processor
+def file_transfer_type():
+    """Injects all *_TRANSFER_TYPE constants into templates as `file_transfer_type`, accessible via dot notation."""
+    file_transfer_type_constants = {
+        name.replace("_TRANSFER_TYPE", ""): getattr(constants, name)
+        for name in dir(constants)
+        if name.endswith("_TRANSFER_TYPE") and not name.startswith("_")
+    }
+
+    return {"transfer_types": file_transfer_type_constants}
