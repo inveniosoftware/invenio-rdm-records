@@ -9,6 +9,7 @@ import { i18next } from "@translations/invenio_rdm_records/i18next";
 import { connect as connectFormik } from "formik";
 import _get from "lodash/get";
 import _omit from "lodash/omit";
+import Overridable from "react-overridable";
 import PropTypes from "prop-types";
 import React, { Component } from "react";
 import { connect } from "react-redux";
@@ -116,43 +117,54 @@ class PublishButtonComponent extends Component {
           type="button" // needed so the formik form doesn't handle it as submit button i.e enable HTML validation on required input fields
         />
         {isConfirmModalOpen && (
-          <Modal
-            open={isConfirmModalOpen}
-            onClose={this.closeConfirmModal}
-            size="small"
-            closeIcon
-            closeOnDimmerClick={false}
+          <Overridable
+            id="InvenioRdmRecords.PublishModal"
+            isConfirmModalOpen={isConfirmModalOpen}
+            handleSubmit={handleSubmit}
+            buttonLabel={buttonLabel}
+            publishWithoutCommunity={publishWithoutCommunity}
+            publishModalExtraContent={publishModalExtraContent}
+            closeConfirmModal={this.closeConfirmModal}
+            handlePublish={this.handlePublish}
           >
-            <Modal.Header>
-              {i18next.t("Are you sure you want to publish this record?")}
-            </Modal.Header>
-            {/* the modal text should only ever come from backend configuration */}
-            <Modal.Content>
-              <Message visible warning>
-                <p>
-                  <Icon name="warning sign" />{" "}
-                  {i18next.t(
-                    "Once the record is published you will no longer be able to change the files in the upload! However, you will still be able to update the record's metadata later."
-                  )}
-                </p>
-              </Message>
-              {publishModalExtraContent && (
-                <div dangerouslySetInnerHTML={{ __html: publishModalExtraContent }} />
-              )}
-            </Modal.Content>
-            <Modal.Actions>
-              <Button onClick={this.closeConfirmModal} floated="left">
-                {i18next.t("Cancel")}
-              </Button>
-              <Button
-                onClick={(event) =>
-                  this.handlePublish(event, handleSubmit, publishWithoutCommunity)
-                }
-                positive
-                content={buttonLabel}
-              />
-            </Modal.Actions>
-          </Modal>
+            <Modal
+              open={isConfirmModalOpen}
+              onClose={this.closeConfirmModal}
+              size="small"
+              closeIcon
+              closeOnDimmerClick={false}
+            >
+              <Modal.Header>
+                {i18next.t("Are you sure you want to publish this record?")}
+              </Modal.Header>
+              {/* the modal text should only ever come from backend configuration */}
+              <Modal.Content>
+                <Message visible warning>
+                  <p>
+                    <Icon name="warning sign" />{" "}
+                    {i18next.t(
+                      "Once the record is published you will no longer be able to change the files in the upload! However, you will still be able to update the record's metadata later."
+                    )}
+                  </p>
+                </Message>
+                {publishModalExtraContent && (
+                  <div dangerouslySetInnerHTML={{ __html: publishModalExtraContent }} />
+                )}
+              </Modal.Content>
+              <Modal.Actions>
+                <Button onClick={this.closeConfirmModal} floated="left">
+                  {i18next.t("Cancel")}
+                </Button>
+                <Button
+                  onClick={(event) =>
+                    this.handlePublish(event, handleSubmit, publishWithoutCommunity)
+                  }
+                  positive
+                  content={buttonLabel}
+                />
+              </Modal.Actions>
+            </Modal>
+          </Overridable>
         )}
       </>
     );
