@@ -118,12 +118,11 @@ class PublishButtonComponent extends Component {
         />
         {isConfirmModalOpen && (
           <Overridable
-            id="InvenioRdmRecords.PublishModal"
+            id="InvenioRdmRecords.PublishModal.container"
             isConfirmModalOpen={isConfirmModalOpen}
-            handleSubmit={handleSubmit}
+            handleSubmitRecord={handleSubmit}
             buttonLabel={buttonLabel}
             publishWithoutCommunity={publishWithoutCommunity}
-            publishModalExtraContent={publishModalExtraContent}
             closeConfirmModal={this.closeConfirmModal}
             handlePublish={this.handlePublish}
           >

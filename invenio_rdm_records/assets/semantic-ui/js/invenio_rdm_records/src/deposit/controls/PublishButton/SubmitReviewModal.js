@@ -214,7 +214,7 @@ class SubmitReviewModalComponent extends Component {
                       label={i18next.t("Message to curators (optional)")}
                     />
                   )}
-                  <Overridable id="InvenioRdmRecords.SubmitReviewModal.ExtraComponents" />
+                  <Overridable id="InvenioRdmRecords.SubmitReviewModal.Form.ExtraComponent.container" />
                   {publishModalExtraContent && (
                     <div
                       dangerouslySetInnerHTML={{ __html: publishModalExtraContent }}
@@ -277,6 +277,6 @@ SubmitReviewModalComponent.defaultProps = {
 };
 
 export const SubmitReviewModal = Overridable.component(
-  "InvenioRdmRecords.SubmitReviewModal",
+  "InvenioRdmRecords.SubmitReviewModal.container",
   SubmitReviewModalComponent
 );
