@@ -158,25 +158,20 @@ class OAIPMHServerService(Service):
         """Perform search over OAI sets."""
         self.require_permission(identity, "read")
 
+        filters = []
         search_params = map_search_params(self.config.search, params)
 
         query_param = search_params["q"]
-        filters = []
-
         if query_param:
-            filters.extend(
-                [
+            filters.append(
+                or_(
                     OAISet.name.ilike(f"%{query_param}%"),
                     OAISet.spec.ilike(f"%{query_param}%"),
-                ]
+                )
             )
 
-        # if filters == [] -> True
-        # if filters != [] -> False
-        default_element = not bool(len(filters))
-
         oai_sets = (
-            OAISet.query.filter(or_(default_element, *filters))
+            OAISet.query.filter(*filters)
             .order_by(
                 search_params["sort_direction"](text(",".join(search_params["sort"])))
             )
