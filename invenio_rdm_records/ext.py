@@ -141,6 +141,12 @@ class InvenioRDMRecords(object):
                 "explicitly to define your max file size, or be aware that the default value used i.e. FILES_REST_DEFAULT_MAX_FILE_SIZE will be 10 * (10**9) (10 GB).",
                 DeprecationWarning,
             )
+        if app.config.get("APP_RDM_DEPOSIT_FORM_PUBLISH_MODAL_EXTRA"):
+            warn(
+                "The configuration value 'APP_RDM_DEPOSIT_FORM_PUBLISH_MODAL_EXTRA' is deprecated and will be removed in a future release. Use Overridables for ",
+                "adding extra content to the publish modal instead.",
+                DeprecationWarning,
+            )
 
         self.fix_datacite_configs(app)
 
