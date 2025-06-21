@@ -312,6 +312,16 @@ def app_config(app_config, mock_datacite_client):
     app_config["RDM_FILES_DEFAULT_QUOTA_SIZE"] = 10**6
     app_config["RDM_FILES_DEFAULT_MAX_FILE_SIZE"] = 10**6
 
+    # allowed domains for remotely linked files
+    app_config["RECORDS_RESOURCES_FILES_ALLOWED_REMOTE_DOMAINS"] = [
+        "example.com",
+    ]
+
+    # allowed domains for fetched files
+    app_config["RECORDS_RESOURCES_FILES_ALLOWED_DOMAINS"] = [
+        "example.com",
+    ]
+
     # Communities
     app_config["COMMUNITIES_SERVICE_COMPONENTS"] = CommunityServiceComponents
 

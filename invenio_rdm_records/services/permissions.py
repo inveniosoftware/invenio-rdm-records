@@ -156,7 +156,12 @@ class RDMRecordPermissionPolicy(RecordPermissionPolicy):
     # Allow updating metadata of a draft
     can_update_draft = can_review
     # Allow uploading, updating and deleting files in drafts
-    can_draft_create_files = can_review
+    can_draft_create_files = [
+        # review is the same as create_files
+        IfTransferType(LOCAL_TRANSFER_TYPE, can_review),
+        IfTransferType(MULTIPART_TRANSFER_TYPE, can_review),
+        SystemProcess(),
+    ]
     can_draft_set_content_files = [
         # review is the same as create_files
         IfTransferType(LOCAL_TRANSFER_TYPE, can_review),
