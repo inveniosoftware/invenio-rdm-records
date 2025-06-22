@@ -78,6 +78,9 @@ export const CreatibutorsFieldItem = ({
         className={hidden ? "deposit-drag-listitem hidden" : "deposit-drag-listitem"}
       >
         <List.Content floated="right">
+          <Button size="mini" type="button" onClick={() => removeCreatibutor(index)}>
+            {i18next.t("Remove")}
+          </Button>
           <CreatibutorsModal
             addLabel={addLabel}
             editLabel={editLabel}
@@ -95,9 +98,6 @@ export const CreatibutorsFieldItem = ({
               </Button>
             }
           />
-          <Button size="mini" type="button" onClick={() => removeCreatibutor(index)}>
-            {i18next.t("Remove")}
-          </Button>
         </List.Content>
         <Ref innerRef={drag}>
           <List.Icon name="bars" className="drag-anchor" />
