@@ -12,10 +12,8 @@ import { getIn, FieldArray } from "formik";
 import { Button, Form, List, Icon } from "semantic-ui-react";
 import _get from "lodash/get";
 import { FeedbackLabel, FieldLabel } from "react-invenio-forms";
-
 import { HTML5Backend } from "react-dnd-html5-backend";
 import { DndProvider } from "react-dnd";
-
 import { CreatibutorsModal } from "./CreatibutorsModal";
 import { CreatibutorsFieldItem } from "./CreatibutorsFieldItem";
 import { CREATIBUTOR_TYPE } from "./type";
@@ -63,6 +61,9 @@ class CreatibutorsFieldForm extends Component {
       modal,
       autocompleteNames,
       addButtonLabel,
+      serializeSuggestions,
+      serializeCreatibutor,
+      deserializeCreatibutor,
     } = this.props;
 
     const creatibutorsList = getIn(values, fieldPath, []);
@@ -123,6 +124,9 @@ class CreatibutorsFieldForm extends Component {
                     addLabel: modal.addLabel,
                     editLabel: modal.editLabel,
                     autocompleteNames: autocompleteNames,
+                    serializeSuggestions: serializeSuggestions,
+                    serializeCreatibutor: serializeCreatibutor,
+                    deserializeCreatibutor: deserializeCreatibutor,
                   }}
                 />
               );
@@ -183,6 +187,9 @@ CreatibutorsFieldForm.propTypes = {
   move: PropTypes.func.isRequired,
   push: PropTypes.func.isRequired,
   name: PropTypes.string.isRequired,
+  serializeSuggestions: PropTypes.func,
+  serializeCreatibutor: PropTypes.func,
+  deserializeCreatibutor: PropTypes.func,
 };
 
 CreatibutorsFieldForm.defaultProps = {
@@ -194,6 +201,9 @@ CreatibutorsFieldForm.defaultProps = {
     editLabel: i18next.t("Edit creator"),
   },
   addButtonLabel: i18next.t("Add creator"),
+  serializeSuggestions: undefined,
+  serializeCreatibutor: undefined,
+  deserializeCreatibutor: undefined,
 };
 
 CreatibutorsField.propTypes = {
@@ -208,6 +218,9 @@ CreatibutorsField.propTypes = {
   label: PropTypes.string,
   labelIcon: PropTypes.string,
   roleOptions: PropTypes.array,
+  serializeSuggestions: PropTypes.func,
+  serializeCreatibutor: PropTypes.func,
+  deserializeCreatibutor: PropTypes.func,
 };
 
 CreatibutorsField.defaultProps = {
@@ -220,4 +233,7 @@ CreatibutorsField.defaultProps = {
     editLabel: i18next.t("Edit creator"),
   },
   addButtonLabel: i18next.t("Add creator"),
+  serializeSuggestions: undefined,
+  serializeCreatibutor: undefined,
+  deserializeCreatibutor: undefined,
 };
