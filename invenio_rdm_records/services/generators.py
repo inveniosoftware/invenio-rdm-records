@@ -159,21 +159,21 @@ class IfRecordDeleted(Generator):
 
     def query_filter(self, **kwargs):
         """Filters for current identity."""
-        q_then = dsl.Q("match_all")
-        q_else = dsl.Q(
+        q_record_not_deleted = dsl.Q(
             "term", **{"deletion_status": RecordDeletionStatusEnum.PUBLISHED.value}
         )
+        q_record_deleted = ~q_record_not_deleted
         then_query = self.make_query(self.then_, **kwargs)
         else_query = self.make_query(self.else_, **kwargs)
 
         if then_query and else_query:
-            return (q_then & then_query) | (q_else & else_query)
+            return (q_record_deleted & then_query) | (q_record_not_deleted & else_query)
         elif then_query:
-            return (q_then & then_query) | q_else
+            return (q_record_deleted & then_query) | q_record_not_deleted
         elif else_query:
-            return q_else & else_query
+            return q_record_not_deleted & else_query
         else:
-            return q_else
+            return q_record_not_deleted
 
 
 class RecordOwners(Generator):
