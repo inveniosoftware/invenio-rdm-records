@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # Copyright (C) 2023-2025 CERN
+# Copyright (C) 2025 Graz University of Technology.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
@@ -8,13 +9,13 @@
 """Datacite to DCAT serializer."""
 
 import mimetypes
+from importlib.resources import files
 
 from datacite import schema43
 from flask_resources import BaseListSchema, MarshmallowSerializer
 from flask_resources.serializers import SimpleSerializer
 from idutils import detect_identifier_schemes, to_url
 from lxml import etree as ET
-from pkg_resources import resource_stream
 from werkzeug.utils import cached_property
 
 from ....contrib.journal.processors import JournalDataciteDumper
@@ -47,9 +48,11 @@ class DCATSerializer(MarshmallowSerializer):
     @cached_property
     def xslt_transform_func(self):
         """Return the DCAT XSLT transformation function."""
-        with resource_stream(
-            "invenio_rdm_records.resources.serializers", "dcat/datacite-to-dcat-ap.xsl"
-        ) as f:
+        file_ = (
+            files("invenio_rdm_records.resources.serializers")
+            / "dcat/datacite-to-dcat-ap.xsl"
+        )
+        with file_.open("rb") as f:
             xsl = ET.XML(f.read())
         transform = ET.XSLT(xsl)
         return transform
