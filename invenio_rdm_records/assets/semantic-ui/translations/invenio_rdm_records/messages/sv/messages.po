@@ -9,7 +9,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: i18next-conv\n"
-"POT-Creation-Date: 2024-08-14T06:30:28.436Z\n"
+"POT-Creation-Date: 2025-04-07T16:10:08.156Z\n"
 "PO-Revision-Date: 2024-08-06 08:56+0000\n"
 "Last-Translator: Mattias Vesterlund, 2025\n"
 "Language-Team: Swedish (https://app.transifex.com/inveniosoftware/teams/23537/sv/)\n"
@@ -107,6 +107,9 @@ msgstr ""
 "Inlämning till denna community är endast tillåten via ett särskilt "
 "uppladdningsformulär. Använd knappen för att komma till formuläret."
 
+msgid "Go to the community"
+msgstr "Gå till communityn"
+
 msgid "Selected"
 msgstr "Vald"
 
@@ -115,6 +118,9 @@ msgstr "Välj"
 
 msgid "Select {{title}}"
 msgstr "Välj {{title}}"
+
+msgid "Verified"
+msgstr "Verifierad"
 
 msgid ""
 "Did not find a community that fits you? Upload without a community or "
@@ -545,6 +551,9 @@ msgstr "Affilieringar"
 msgid "Search for affiliations.."
 msgstr "Sök efter affilieringar.."
 
+msgid "Coming soon"
+msgstr "Kommer snart"
+
 msgid "Add creator"
 msgstr "Lägg till skapare"
 
@@ -553,6 +562,15 @@ msgstr "Redigera skapare"
 
 msgid "Edit"
 msgstr "Redigera"
+
+msgid "ORCID logo"
+msgstr "ORCID logo"
+
+msgid "ROR logo"
+msgstr "ROR logo"
+
+msgid "GND logo"
+msgstr "GND logo"
 
 msgid "Type the value of an identifier..."
 msgstr "Skriv värdet på en identifierare..."
@@ -653,6 +671,9 @@ msgstr "Språk"
 msgid "Select language"
 msgstr "Välj språk"
 
+msgid "Could not upload files."
+msgstr "Det gick inte att ladda upp filer."
+
 msgid "Uploading the selected files would result in"
 msgstr "Att ladda upp de valda filerna skulle resultera i"
 
@@ -661,6 +682,12 @@ msgstr "men gränsen är"
 
 msgid "The following files already exist"
 msgstr "Följande filer finns redan"
+
+msgid "Could not upload all files."
+msgstr "Det gick inte att ladda upp alla filer."
+
+msgid "Empty files were skipped."
+msgstr "Tomma filer hoppades över."
 
 msgid "You can import files from the previous version."
 msgstr "Du kan importera filer från den tidigare versionen."
@@ -684,6 +711,9 @@ msgstr "Ladda upp filer"
 
 msgid "Import files"
 msgstr "Importera filer"
+
+msgid "Set the default preview"
+msgstr "Ställ in standardförhandsvisning"
 
 msgid "Filename"
 msgstr "Filnamn"
@@ -779,11 +809,23 @@ msgstr "Ändra {{mode}} licens"
 msgid "Recommended"
 msgstr "Rekommenderad"
 
+msgid "recommended"
+msgstr "rekommenderad"
+
+msgid "all"
+msgstr "alla"
+
 msgid "Data"
 msgstr "Data"
 
+msgid "data"
+msgstr "data"
+
 msgid "Software"
 msgstr "Mjukvara"
+
+msgid "software"
+msgstr "mjukvara"
 
 msgid "License title"
 msgstr "Licenstitel"
@@ -851,6 +893,9 @@ msgstr "Sök efter ett ämne med namn"
 
 msgid "Add titles"
 msgstr "Lägg till titlar"
+
+msgid "Additional title"
+msgstr "Ytterligare titel"
 
 msgid ""
 "Mostly relevant for software and dataset uploads. A semantic version string "
