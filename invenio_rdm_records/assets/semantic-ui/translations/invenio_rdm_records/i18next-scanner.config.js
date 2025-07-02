@@ -1,4 +1,4 @@
-// This file is part of InvenioRdmRecords
+// This file is part of invenio-rdm-records.
 // Copyright (C) 2022 CERN.
 //
 // Invenio RDM is free software; you can redistribute it and/or modify it
