@@ -11,6 +11,24 @@
 
 Changes
 =======
+
+Version v19.3.0 (released 2025-07-02)
+
+- fix: disabled remote and fetch transport in permissions
+- fix: RemovedInMarshmallow4Warning
+- fix: ChangedInMarshmallow4Warning
+- contrib: specify proceedings in imprint title label
+- fix: pkg_resources DeprecationWarning
+- tests: add tests for setting record/user quotas
+- quotas: set the record's file quota in a service component
+- quotas: add extra info about the user_id column in record quotas
+- quotas: remove unique constraint for the user_id in record quotas
+- deposit-ui: implement uppy uploader field
+- oaiserver/services: simplify search filtering
+- fix: SADeprecationWarning
+- i18n: localize embargoed date
+- records-api: add Data Package serializer
+
 Version v19.2.0 (released 2025-06-13)
 
 - checks: integrate service component and community requests
