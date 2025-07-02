@@ -5,6 +5,7 @@
 # Copyright (C) 2021 TU Wien.
 # Copyright (C) 2021 data-futures.
 # Copyright (C) 2022 Universität Hamburg.
+# Copyright (C) 2025 KTH Royal Institute of Technology.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
@@ -395,7 +396,6 @@ class RDMRecordCommunitiesResource(ErrorHandlersMixin, Resource):
 
     @request_view_args
     @request_data
-    @response_handler()
     def remove(self):
         """Remove communities from the record."""
         processed, errors = self.service.remove(
