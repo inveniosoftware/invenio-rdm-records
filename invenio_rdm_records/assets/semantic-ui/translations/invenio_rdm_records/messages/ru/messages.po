@@ -1,0 +1,855 @@
+# 
+# Translators:
+# Tibor Simko <tibor.simko@cern.ch>, 2024
+# Anna Sakoyan, 2025
+# 
+msgid ""
+msgstr ""
+"Project-Id-Version: i18next-conv\n"
+"POT-Creation-Date: 2025-04-07T16:10:08.156Z\n"
+"PO-Revision-Date: 2024-08-06 08:56+0000\n"
+"Last-Translator: Anna Sakoyan, 2025\n"
+"Language-Team: Russian (https://app.transifex.com/inveniosoftware/teams/23537/ru/)\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: ru\n"
+"Plural-Forms: nplurals=4; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<12 || n%100>14) ? 1 : n%10==0 || (n%10>=5 && n%10<=9) || (n%100>=11 && n%100<=14)? 2 : 3);\n"
+"mime-version: 1.0\n"
+
+msgid "Copy to clipboard"
+msgstr "Скопировано в буфер"
+
+msgid "Copied!"
+msgstr "Скопировано!"
+
+msgid "This set is not editable as it was created by the system."
+msgstr ""
+
+msgid "This set is not deletable as it was created by the system."
+msgstr ""
+
+msgid "Links"
+msgstr "Ссылки"
+
+msgid "Format"
+msgstr "Формат"
+
+msgid "List records"
+msgstr ""
+
+msgid "Opens in new tab"
+msgstr "Открывается в новой вкладке"
+
+msgid "List identifiers"
+msgstr ""
+
+msgid ""
+"Before deleting, make sure to alert all harvesters that this set will no "
+"longer be available."
+msgstr ""
+
+msgid ""
+"I have alerted all harvesters that this set will no longer be available."
+msgstr ""
+
+msgid "Cancel"
+msgstr "Отменить"
+
+msgid "Delete"
+msgstr "Удалить"
+
+msgid "Delete {{title}}"
+msgstr "Удалить {{title}}"
+
+msgid "This will delete the set '{{title}}'."
+msgstr ""
+
+msgid "Fetch error"
+msgstr ""
+
+msgid "Error fetching OAI set formats."
+msgstr ""
+
+msgid "Select the community where you want to submit your record."
+msgstr "Выберите сообщество, в которое вы хотите предложить свою запись."
+
+msgid "Change"
+msgstr "Изменить"
+
+msgid "Select a community"
+msgstr "Выбрать сообщество"
+
+msgid "Remove"
+msgstr "Удалить"
+
+msgid "Community inclusion information"
+msgstr ""
+
+msgid ""
+"Submission to this community is only allowed if the record is restricted."
+msgstr ""
+
+msgid "Community submission conditions information"
+msgstr ""
+
+msgid ""
+"Submission to this community is only allowed by dedicated upload form. Use "
+"the button to jump to the form."
+msgstr ""
+
+msgid "Go to the community"
+msgstr ""
+
+msgid "Selected"
+msgstr ""
+
+msgid "Select"
+msgstr "Выбор"
+
+msgid "Select {{title}}"
+msgstr ""
+
+msgid "Verified"
+msgstr "Проверено"
+
+msgid ""
+"Did not find a community that fits you? Upload without a community or "
+"<2>create your own.</2>"
+msgstr ""
+
+msgid "Close"
+msgstr "Закрыть"
+
+msgid "All"
+msgstr "Все"
+
+msgid "My communities"
+msgstr "Мои сообщества"
+
+msgid "Search"
+msgstr "Искать"
+
+msgid "In review"
+msgstr "На согласовании"
+
+msgid ""
+"Community curators will review your upload. Once accepted, it will be "
+"published."
+msgstr ""
+
+msgid "Declined"
+msgstr "Отклонено"
+
+msgid "The request to submit this upload to the community was declined."
+msgstr ""
+
+msgid "Expired"
+msgstr "Устарело"
+
+msgid "The request to submit this upload to the community has expired."
+msgstr ""
+
+msgid "Published"
+msgstr "Опубликовано"
+
+msgid "Your upload is published."
+msgstr ""
+
+msgid "Draft"
+msgstr "Черновик"
+
+msgid ""
+"Once your upload is complete, you can submit it for review to the community "
+"curators."
+msgstr ""
+"Как только загрузка завершится, вы сможете отправить это на согласование "
+"кураторам сообщества."
+
+msgid ""
+"Once your upload is complete, you can publish or submit it for review to the"
+" community curators."
+msgstr ""
+"Как только загрузка завершится, вы сможете опубликовать это или отправить на"
+" согласование кураторам сообщества."
+
+msgid "New version draft"
+msgstr "Черновик новой версии"
+
+msgid "Once your upload is complete, you can publish it."
+msgstr ""
+
+msgid "View request"
+msgstr ""
+
+msgid "discard changes"
+msgstr ""
+
+msgid "discard version"
+msgstr ""
+
+msgid "delete"
+msgstr "удалить"
+
+msgid "Are you sure you want to discard the changes to this draft?"
+msgstr ""
+
+msgid "Are you sure you want to delete this new version?"
+msgstr ""
+
+msgid "Are you sure you want to delete this draft?"
+msgstr ""
+
+msgid "You don't have permissions to create a new version."
+msgstr ""
+
+msgid "New version"
+msgstr "Новая версия"
+
+msgid "Preview"
+msgstr "Предварительный просмотр"
+
+msgid "Are you sure you want to publish this record?"
+msgstr ""
+
+msgid ""
+"Once the record is published you will no longer be able to change the files "
+"in the upload! However, you will still be able to update the record's "
+"metadata later."
+msgstr ""
+
+msgid "Publish"
+msgstr "Опубликовать"
+
+msgid "Submitted for review"
+msgstr "Отправлено на согласование"
+
+msgid "Submit for review"
+msgstr "Отправить на согласование"
+
+msgid "Publish to community"
+msgstr ""
+
+msgid "You must accept this."
+msgstr "Вы должны принять это."
+
+msgid ""
+"Before publishing to the community, please read and check the following:"
+msgstr ""
+
+msgid ""
+"Your upload will be <bold>immediately published</bold> in "
+"'{{communityTitle}}'. You will no longer be able to change the files in the "
+"upload! However, you will still be able to update the record's metadata "
+"later."
+msgstr ""
+
+msgid "Publish record to community"
+msgstr ""
+
+msgid "Submit to community"
+msgstr "Отправить в сообщество"
+
+msgid "Before submitting to community, please read and check the following:"
+msgstr ""
+
+msgid "Before requesting review, please read and check the following:"
+msgstr ""
+
+msgid ""
+"If your upload is accepted by the community curators, it will be "
+"<bold>immediately published</bold>. Before that, you will still be able to "
+"modify metadata and files of this upload."
+msgstr ""
+
+msgid "Submit record for review"
+msgstr "Отправить запись на согласование"
+
+msgid ""
+"The '{{communityTitle}}' curators will have access to <bold>view</bold> and "
+"<bold>edit</bold> your upload's metadata and files."
+msgstr ""
+
+msgid "Message to curators (optional)"
+msgstr ""
+
+msgid "Change community"
+msgstr ""
+
+msgid "Publish without community"
+msgstr ""
+
+msgid "Save draft"
+msgstr "Сохранить черновик"
+
+msgid "Files"
+msgstr "Файлы"
+
+msgid "Resource type"
+msgstr "Тип ресурса"
+
+msgid "Title"
+msgstr "Название"
+
+msgid "Additional titles"
+msgstr "Дополнительные названия"
+
+msgid "Publication date"
+msgstr "Дата публикации"
+
+msgid "Creators"
+msgstr "Создатели"
+
+msgid "Contributors"
+msgstr "Соавторы"
+
+msgid "Description"
+msgstr "Описание"
+
+msgid "Additional descriptions"
+msgstr "Дополнительные описания"
+
+msgid "Licenses"
+msgstr "Лицензии"
+
+msgid "Languages"
+msgstr "Языки"
+
+msgid "Dates"
+msgstr "Даты"
+
+msgid "Version"
+msgstr "Версия"
+
+msgid "Publisher"
+msgstr "Издатель"
+
+msgid "Related works"
+msgstr "Связанные работы"
+
+msgid "References"
+msgstr "Ссылки"
+
+msgid "Alternate identifiers"
+msgstr "Альтернативные идентификаторы"
+
+msgid "Keywords and subjects"
+msgstr "Ключевые слова и темы"
+
+msgid "Embargo until"
+msgstr "Эмбарго до"
+
+msgid "DOI"
+msgstr "DOI"
+
+msgid "Record successfully saved."
+msgstr "Запись успешно сохранена."
+
+msgid "Record saved with validation errors:"
+msgstr "Запись сохранена с ошибками валидации:"
+
+msgid ""
+"The draft was not saved. Please try again. If the problem persists, contact "
+"user support."
+msgstr ""
+"Черновик не был сохранен. Пожалуйста, попробуйте снова. Если проблема "
+"останется, свяжитесь с технической поддержкой."
+
+msgid ""
+"The draft was not published. Please try again. If the problem persists, "
+"contact user support."
+msgstr ""
+
+msgid "The draft was not published. Record saved with validation errors:"
+msgstr "Черновик не был опубликован. Запись сохранена с ошибками валидации:"
+
+msgid ""
+"The draft was not submitted for review. Please try again. If the problem "
+"persists, contact user support."
+msgstr ""
+"Черновик не был отправлен на согласование. Пожалуйста, попробуйте снова. "
+"Если проблема останется, свяжитесь с технической поддержкой."
+
+msgid ""
+"The draft was not submitted for review. Record saved with validation errors:"
+msgstr ""
+"Черновик не был отправлен на согласование. Запись сохранена с ошибками "
+"валидации:"
+
+msgid ""
+"Draft deletion failed. Please try again. If the problem persists, contact "
+"user support."
+msgstr ""
+
+msgid ""
+"Draft preview failed. Please try again. If the problem persists, contact "
+"user support."
+msgstr ""
+
+msgid ""
+"Identifier reservation failed. Please try again. If the problem persists, "
+"contact user support."
+msgstr ""
+
+msgid ""
+"Identifier could not be discarded. Please try again. If the problem "
+"persists, contact user support."
+msgstr ""
+
+msgid ""
+"Draft save failed before file upload. Please try again. If the problem "
+"persists, contact user support."
+msgstr ""
+"Не удалось сохранить черновик до загрузки файла. Пожалуйста, попробуйте "
+"снова. Если проблема останется, свяжитесь с технической поддержкой."
+
+msgid ""
+"Files import from the previous version failed. Please try again. If the "
+"problem persists, contact user support."
+msgstr ""
+
+msgid "Options"
+msgstr "Дополнительно"
+
+msgid "Public"
+msgstr "Публичное"
+
+msgid "The record is publicly accessible."
+msgstr ""
+
+msgid "The record and files are publicly accessible."
+msgstr "Запись и файлы находятся в публичном доступе."
+
+msgid "Embargoed (full record)"
+msgstr "Под эмбарго (запись целиком)"
+
+msgid "Restricted"
+msgstr "Ограниченный доступ"
+
+msgid "Public with restricted files"
+msgstr ""
+
+msgid "Embargoed (files-only)"
+msgstr "Под эмбарго (только файлы)"
+
+msgid "access-message"
+msgstr ""
+
+msgid ""
+"The record can <1>only</1> be accessed by <3>users specified</3> in the "
+"permissions."
+msgstr ""
+
+msgid ""
+"The record is publicly accessible. The files can <1>only</1> be accessed by "
+"<4>users specified</4> in the permissions."
+msgstr ""
+"Эта запись доступна всем. К файлам имеют доступ <1>только</1>  "
+"<4>пользователи, указанные</4> в настройках прав доступа."
+
+msgid ""
+"The record is publicly accessible. On <bold>{{ date }}</bold> the files will"
+" automatically be made publicly accessible. Until then, the files can "
+"<bold>only</bold> be accessed by <bold>users specified</bold> in the "
+"permissions."
+msgstr ""
+"Эта запись доступна всем.  <bold>{{ date }}</bold> файлы автоматически "
+"окажутся в открытом доступе. До того момента к файлам имеют доступ "
+"<bold>только</bold>  <bold>пользователи, указанные</bold> в настройках прав."
+
+msgid "Apply an embargo"
+msgstr "Применить эмбарго"
+
+msgid "Embargo reason"
+msgstr "Обоснование эмбарго"
+
+msgid "Optionally, describe the reason for the embargo."
+msgstr "Опционально можно указать основание для эмбарго."
+
+msgid "Embargo was lifted on {{fmtDate}}."
+msgstr "Эмбарго было снято {{fmtDate}}."
+
+msgid "Reason"
+msgstr "Основание"
+
+msgid ""
+"Record or files protection must be <1>restricted</1> to apply an embargo."
+msgstr ""
+"Запись или файлы должны находиться в <1>ограниченном доступе</1>, чтобы "
+"применить эмбарго."
+
+msgid "YYYY-MM-DD"
+msgstr ""
+
+msgid "The record has no files."
+msgstr "У этой записи нет файлов."
+
+msgid "Files only"
+msgstr "Только файлы"
+
+msgid "The full record is restricted."
+msgstr "Доступ к полной записи ограничен."
+
+msgid "The files of this record are restricted."
+msgstr ""
+
+msgid "Full record"
+msgstr "Полная запись"
+
+msgid ""
+"Record visibility can not be changed to restricted anymore. Please contact "
+"support if you still need to make these changes."
+msgstr ""
+
+msgid "Search or create affiliation"
+msgstr "Искать или создать аффилиацию"
+
+msgid "Affiliations"
+msgstr "Аффилиации"
+
+msgid "Search for affiliations.."
+msgstr "Искать аффилиации..."
+
+msgid "Coming soon"
+msgstr ""
+
+msgid "Add creator"
+msgstr "Добавить создателя"
+
+msgid "Edit creator"
+msgstr "Редактировать создателя"
+
+msgid "Edit"
+msgstr "Редактировать"
+
+msgid "ORCID logo"
+msgstr ""
+
+msgid "ROR logo"
+msgstr ""
+
+msgid "GND logo"
+msgstr ""
+
+msgid "Type the value of an identifier..."
+msgstr ""
+
+msgid "Identifiers"
+msgstr "Идентификаторы"
+
+msgid "e.g. ORCID, ISNI or GND."
+msgstr ""
+
+msgid "Save and add another"
+msgstr "Сохранить и добавить еще одного"
+
+msgid "Family name is a required field."
+msgstr "Необходимо указать фамилию."
+
+msgid "Name is a required field."
+msgstr ""
+
+msgid "Role is a required field."
+msgstr ""
+
+msgid "Added"
+msgstr ""
+
+msgid "Person"
+msgstr ""
+
+msgid "Organization"
+msgstr "Организация"
+
+msgid "Search for persons by name, identifier, or affiliation..."
+msgstr "Искать людей по имени, идентификатору или аффилиации..."
+
+msgid "Family name"
+msgstr "Фамилия"
+
+msgid "Given names"
+msgstr "Личные имена"
+
+msgid "Search for an organization by name, identifier, or affiliation..."
+msgstr "Искать организацию по названию, идентификатору или аффилиации..."
+
+msgid "Search for organization by name, identifier, or affiliation..."
+msgstr "Искать организацию по названию, идентификатору или аффилиации..."
+
+msgid "Name"
+msgstr "Имя"
+
+msgid "Organization name"
+msgstr ""
+
+msgid "e.g. ROR, ISNI or GND."
+msgstr ""
+
+msgid "Role"
+msgstr "Роль"
+
+msgid "Select role"
+msgstr "Выбрать роль"
+
+msgid "Save"
+msgstr "Сохранить"
+
+msgid "Couldn't find your person? You can <2>create a new entry</2>."
+msgstr ""
+
+msgid "Add date"
+msgstr "Добавить дату"
+
+msgid "Format: DATE or DATE/DATE where DATE is YYYY or YYYY-MM or YYYY-MM-DD."
+msgstr ""
+"Формат: ДАТА или ДАТА/ДАТА, где ДАТА – это ГГГГ, или ГГГГ-ММ, или ГГГГ-ММ-"
+"ДД."
+
+msgid "Date"
+msgstr "Дата"
+
+msgid "Type"
+msgstr "Тип"
+
+msgid "Remove field"
+msgstr "Убрать поле"
+
+msgid "YYYY-MM-DD or YYYY-MM-DD/YYYY-MM-DD"
+msgstr ""
+
+msgid "Add description"
+msgstr "Добавить описание"
+
+msgid "Additional Description"
+msgstr "Дополнительное описание"
+
+msgid "Language"
+msgstr ""
+
+msgid "Select language"
+msgstr "Выберите язык"
+
+msgid "Could not upload files."
+msgstr ""
+
+msgid "Uploading the selected files would result in"
+msgstr ""
+
+msgid "but the limit is"
+msgstr ""
+
+msgid "The following files already exist"
+msgstr ""
+
+msgid "Could not upload all files."
+msgstr ""
+
+msgid "Empty files were skipped."
+msgstr ""
+
+msgid "You can import files from the previous version."
+msgstr ""
+
+msgid ""
+"File addition, removal or modification are not allowed after you have "
+"published your upload."
+msgstr ""
+"Добавлять, удалять или изменять файлы станет невозможно, после того как вы "
+"опубликуете загруженное."
+
+msgid "You must create a new version to add, modify or delete files."
+msgstr ""
+
+msgid "Drag and drop files"
+msgstr "Перетащите файлы"
+
+msgid "Upload files"
+msgstr "Загрузить файлы"
+
+msgid "Import files"
+msgstr ""
+
+msgid "Set the default preview"
+msgstr ""
+
+msgid "Filename"
+msgstr ""
+
+msgid "Size"
+msgstr "Размер"
+
+msgid "Progress"
+msgstr ""
+
+msgid "Default preview"
+msgstr ""
+
+msgid ""
+"This is the file fingerprint (MD5 checksum), which can be used to verify the"
+" file integrity."
+msgstr ""
+
+msgid "Pending"
+msgstr "Ожидающие"
+
+msgid "Delete file"
+msgstr ""
+
+msgid "or"
+msgstr "или"
+
+msgid "This is a Metadata-only record."
+msgstr "Это запись только с метаданными"
+
+msgid "Metadata-only record"
+msgstr "Запись только с метаданными"
+
+msgid "Disable files for this record"
+msgstr ""
+
+msgid "Storage available"
+msgstr "Доступный объем хранилища"
+
+msgid "{{length}} out of {{maxfiles}} files"
+msgstr "{{length}} из {{maxfiles}} файлов"
+
+msgid "out of"
+msgstr "из"
+
+msgid "Add identifier"
+msgstr ""
+
+msgid "Identifier"
+msgstr "Идентификатор"
+
+msgid "Scheme"
+msgstr "Схема"
+
+msgid "Do you already have a {{pidLabel}} for this upload?"
+msgstr ""
+
+msgid "Yes"
+msgstr "Да"
+
+msgid "No"
+msgstr "Нет"
+
+msgid "Search for languages..."
+msgstr "Искать языки..."
+
+msgid "Search for a language by name (e.g \"eng\", \"fr\" or \"Polish\")"
+msgstr "Искать язык по названию (например, \"eng\", \"fr\" или \"Polish\")"
+
+msgid "Add standard"
+msgstr ""
+
+msgid "Add custom"
+msgstr "Добавить свою"
+
+msgid "Read more"
+msgstr ""
+
+msgid "Title is a required field."
+msgstr ""
+
+msgid "Link must be a valid URL"
+msgstr ""
+
+msgid "Add {{mode}} license"
+msgstr ""
+
+msgid "Change {{mode}} license"
+msgstr ""
+
+msgid "Recommended"
+msgstr ""
+
+msgid "recommended"
+msgstr ""
+
+msgid "all"
+msgstr ""
+
+msgid "Data"
+msgstr ""
+
+msgid "data"
+msgstr ""
+
+msgid "Software"
+msgstr "Программное обеспечение"
+
+msgid "software"
+msgstr ""
+
+msgid "License title"
+msgstr ""
+
+msgid "Link"
+msgstr ""
+
+msgid "License link"
+msgstr ""
+
+msgid "Add license"
+msgstr ""
+
+msgid "Change license"
+msgstr ""
+
+msgid ""
+"In case your upload was already published elsewhere, please use the date of "
+"the first publication. Format: YYYY-MM-DD, YYYY-MM, or YYYY. For intervals "
+"use DATE/DATE, e.g. 1939/1945."
+msgstr ""
+"В случае, если ваш загружаемый материал уже где-то публиковался, пожалуйста,"
+" используйте дату первой публикации. Формат: ГГГГ-ММ-ДД, ГГГГ-ММ или ГГГГ. "
+"Для указания интервалов используйте ДАТА/ДАТА, например, 1939/1945."
+
+msgid ""
+"YYYY-MM-DD or YYYY-MM-DD/YYYY-MM-DD for intervals. MM and DD are optional."
+msgstr ""
+
+msgid ""
+"The publisher is used to formulate the citation, so consider the prominence "
+"of the role."
+msgstr ""
+
+msgid "Add reference"
+msgstr "Добавить ссылку"
+
+msgid "Reference string"
+msgstr "Строка ссылки"
+
+msgid ""
+"Specify identifiers of related works. Supported identifiers include DOI, "
+"Handle, ARK, PURL, ISSN, ISBN, PubMed ID, PubMed Central ID, ADS "
+"Bibliographic Code, arXiv, Life Science Identifiers (LSID), EAN-13, ISTC, "
+"URNs, and URLs."
+msgstr ""
+"Уточните идентификаторы связанных работ. В числе поддерживаемых "
+"сертификаторов: DOI, Handle, ARK, PURL, ISSN, ISBN, PubMed ID, PubMed "
+"Central ID, библиографический код ADS, arXiv, Life Science Identifiers "
+"(LSID), EAN-13, ISTC, URN и URL."
+
+msgid "Add related work"
+msgstr "Добавить связанную работу"
+
+msgid "Relation"
+msgstr "Связь"
+
+msgid "Suggest from"
+msgstr ""
+
+msgid "Search for a subject by name"
+msgstr "Искать предмет по названию"
+
+msgid "Add titles"
+msgstr "Добавить названия"
+
+msgid "Additional title"
+msgstr ""
+
+msgid ""
+"Mostly relevant for software and dataset uploads. A semantic version string "
+"is preferred see<1> semver.org</1>, but any version string is accepted."
+msgstr ""
