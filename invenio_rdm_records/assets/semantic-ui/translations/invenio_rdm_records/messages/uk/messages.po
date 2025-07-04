@@ -1,0 +1,869 @@
+# 
+# Translators:
+# Tibor Simko <tibor.simko@cern.ch>, 2024
+# Vasyl Ostrovskyi <vasyusya@yahoo.com>, 2024
+# 
+msgid ""
+msgstr ""
+"Project-Id-Version: i18next-conv\n"
+"POT-Creation-Date: 2025-04-07T16:10:08.156Z\n"
+"PO-Revision-Date: 2024-08-06 08:56+0000\n"
+"Last-Translator: Vasyl Ostrovskyi <vasyusya@yahoo.com>, 2024\n"
+"Language-Team: Ukrainian (https://app.transifex.com/inveniosoftware/teams/23537/uk/)\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: uk\n"
+"Plural-Forms: nplurals=4; plural=(n % 1 == 0 && n % 10 == 1 && n % 100 != 11 ? 0 : n % 1 == 0 && n % 10 >= 2 && n % 10 <= 4 && (n % 100 < 12 || n % 100 > 14) ? 1 : n % 1 == 0 && (n % 10 ==0 || (n % 10 >=5 && n % 10 <=9) || (n % 100 >=11 && n % 100 <=14 )) ? 2: 3);\n"
+"mime-version: 1.0\n"
+
+msgid "Copy to clipboard"
+msgstr "Копіювати до буферу"
+
+msgid "Copied!"
+msgstr "Скопійовано!"
+
+msgid "This set is not editable as it was created by the system."
+msgstr ""
+
+msgid "This set is not deletable as it was created by the system."
+msgstr ""
+
+msgid "Links"
+msgstr ""
+
+msgid "Format"
+msgstr "Формат"
+
+msgid "List records"
+msgstr ""
+
+msgid "Opens in new tab"
+msgstr "Буде відкрито у новій вкладці"
+
+msgid "List identifiers"
+msgstr ""
+
+msgid ""
+"Before deleting, make sure to alert all harvesters that this set will no "
+"longer be available."
+msgstr ""
+
+msgid ""
+"I have alerted all harvesters that this set will no longer be available."
+msgstr ""
+
+msgid "Cancel"
+msgstr "Скасувати"
+
+msgid "Delete"
+msgstr "Видалити"
+
+msgid "Delete {{title}}"
+msgstr ""
+
+msgid "This will delete the set '{{title}}'."
+msgstr ""
+
+msgid "Fetch error"
+msgstr ""
+
+msgid "Error fetching OAI set formats."
+msgstr ""
+
+msgid "Select the community where you want to submit your record."
+msgstr "Виберіть спільноту, до якої ви хочете подати ваше завантаження."
+
+msgid "Change"
+msgstr "Змінити"
+
+msgid "Select a community"
+msgstr "Вибрати спільноту"
+
+msgid "Remove"
+msgstr "Вилучити"
+
+msgid "Community inclusion information"
+msgstr ""
+
+msgid ""
+"Submission to this community is only allowed if the record is restricted."
+msgstr ""
+
+msgid "Community submission conditions information"
+msgstr ""
+
+msgid ""
+"Submission to this community is only allowed by dedicated upload form. Use "
+"the button to jump to the form."
+msgstr ""
+
+msgid "Go to the community"
+msgstr ""
+
+msgid "Selected"
+msgstr "Вибрано"
+
+msgid "Select"
+msgstr "Вибрати"
+
+msgid "Select {{title}}"
+msgstr ""
+
+msgid "Verified"
+msgstr ""
+
+msgid ""
+"Did not find a community that fits you? Upload without a community or "
+"<2>create your own.</2>"
+msgstr ""
+"Не знайшли спільноти, яка вам підходить? Завантажте без спільноти, чи "
+"<2>створіть власну.</2>"
+
+msgid "Close"
+msgstr "Закрити"
+
+msgid "All"
+msgstr "Всі"
+
+msgid "My communities"
+msgstr "Мої спільноти"
+
+msgid "Search"
+msgstr "Пошук"
+
+msgid "In review"
+msgstr "На розгляді"
+
+msgid ""
+"Community curators will review your upload. Once accepted, it will be "
+"published."
+msgstr ""
+"Куратори спільноти розглянуть ваше завантаження. У разі прийняття воно буде "
+"опубліковане."
+
+msgid "Declined"
+msgstr "Відхилено"
+
+msgid "The request to submit this upload to the community was declined."
+msgstr "Запит на подання цього завантаження до спільноти відхилено."
+
+msgid "Expired"
+msgstr "Застаріло"
+
+msgid "The request to submit this upload to the community has expired."
+msgstr ""
+"Термін розгляду запиту на подання цого завантаження до спільноти закінчився."
+
+msgid "Published"
+msgstr "Опубліковано"
+
+msgid "Your upload is published."
+msgstr "Ваше завантаження опубліковано."
+
+msgid "Draft"
+msgstr "Чернетка"
+
+msgid ""
+"Once your upload is complete, you can submit it for review to the community "
+"curators."
+msgstr ""
+"Коли ваше заванаження готове, ви можете подати його кураторам спільноти на "
+"розгляд."
+
+msgid ""
+"Once your upload is complete, you can publish or submit it for review to the"
+" community curators."
+msgstr ""
+"Коли ваше заванаження готове, ви можете його опублікувати чи подати  "
+"кураторам спільноти на розгляд."
+
+msgid "New version draft"
+msgstr "Чернетка нової версії"
+
+msgid "Once your upload is complete, you can publish it."
+msgstr "Коли ваше заванаження готове, ви можете його опублікувати."
+
+msgid "View request"
+msgstr "Переглянути запит"
+
+msgid "discard changes"
+msgstr "скасувати зміни"
+
+msgid "discard version"
+msgstr "скасувати версію"
+
+msgid "delete"
+msgstr "видалити"
+
+msgid "Are you sure you want to discard the changes to this draft?"
+msgstr "Ви певні, що слід скасувати зміни до цієї чернетки?"
+
+msgid "Are you sure you want to delete this new version?"
+msgstr "Ви певні, що слід видалити цю нову версію?"
+
+msgid "Are you sure you want to delete this draft?"
+msgstr "Ви певні, чо слуд видалити цю чернетку?"
+
+msgid "You don't have permissions to create a new version."
+msgstr "Ви не маєте права створювати нову версію."
+
+msgid "New version"
+msgstr "Нова версія"
+
+msgid "Preview"
+msgstr "Попередній перегляд"
+
+msgid "Are you sure you want to publish this record?"
+msgstr "Ви певні, що сілд опублікувати даний запис?"
+
+msgid ""
+"Once the record is published you will no longer be able to change the files "
+"in the upload! However, you will still be able to update the record's "
+"metadata later."
+msgstr ""
+"Коли запис буде опублікоувано, ви більше не зможете змінювати файли у "
+"завантаженні! Проте ви все ж  матимете можливість пізніше оновлюівати "
+"метадані запису."
+
+msgid "Publish"
+msgstr "Опублікувати"
+
+msgid "Submitted for review"
+msgstr "Подати на розгляд"
+
+msgid "Submit for review"
+msgstr "Подати на розгляд"
+
+msgid "Publish to community"
+msgstr ""
+
+msgid "You must accept this."
+msgstr "Ви повинні прийняти цю умову."
+
+msgid ""
+"Before publishing to the community, please read and check the following:"
+msgstr ""
+
+msgid ""
+"Your upload will be <bold>immediately published</bold> in "
+"'{{communityTitle}}'. You will no longer be able to change the files in the "
+"upload! However, you will still be able to update the record's metadata "
+"later."
+msgstr ""
+
+msgid "Publish record to community"
+msgstr ""
+
+msgid "Submit to community"
+msgstr ""
+
+msgid "Before submitting to community, please read and check the following:"
+msgstr ""
+
+msgid "Before requesting review, please read and check the following:"
+msgstr ""
+
+msgid ""
+"If your upload is accepted by the community curators, it will be "
+"<bold>immediately published</bold>. Before that, you will still be able to "
+"modify metadata and files of this upload."
+msgstr ""
+"Якщо ваше завантаження буде прийняте кураторами спільноти, воно буде "
+"<bold>негайно опубліковане</bold>. До цього часу ви ще можете змінювати "
+"метадані та файли цього подання."
+
+msgid "Submit record for review"
+msgstr ""
+
+msgid ""
+"The '{{communityTitle}}' curators will have access to <bold>view</bold> and "
+"<bold>edit</bold> your upload's metadata and files."
+msgstr ""
+
+msgid "Message to curators (optional)"
+msgstr ""
+
+msgid "Change community"
+msgstr "Змінити спільноту"
+
+msgid "Publish without community"
+msgstr "Опублікувати без спільноти"
+
+msgid "Save draft"
+msgstr "Зберегти чернетку"
+
+msgid "Files"
+msgstr "Файли"
+
+msgid "Resource type"
+msgstr "Тип ресурсу"
+
+msgid "Title"
+msgstr "Заголовок"
+
+msgid "Additional titles"
+msgstr "Додаткові назви"
+
+msgid "Publication date"
+msgstr "Дата публікації"
+
+msgid "Creators"
+msgstr "Автори"
+
+msgid "Contributors"
+msgstr "Учасники"
+
+msgid "Description"
+msgstr "Опис"
+
+msgid "Additional descriptions"
+msgstr "Додаткові описи"
+
+msgid "Licenses"
+msgstr "Ліцензії"
+
+msgid "Languages"
+msgstr "Мови"
+
+msgid "Dates"
+msgstr "Дати"
+
+msgid "Version"
+msgstr "Версія"
+
+msgid "Publisher"
+msgstr "Видавець"
+
+msgid "Related works"
+msgstr "Пов'язані праці"
+
+msgid "References"
+msgstr "Посилання"
+
+msgid "Alternate identifiers"
+msgstr "Альтернативні ідентифікатори"
+
+msgid "Keywords and subjects"
+msgstr "Ключові слова та тематика"
+
+msgid "Embargo until"
+msgstr "Ембарго до"
+
+msgid "DOI"
+msgstr "DOI"
+
+msgid "Record successfully saved."
+msgstr "Запис успішно збережено."
+
+msgid "Record saved with validation errors:"
+msgstr "Запис збережено з помилками перевірки:"
+
+msgid ""
+"The draft was not saved. Please try again. If the problem persists, contact "
+"user support."
+msgstr ""
+
+msgid ""
+"The draft was not published. Please try again. If the problem persists, "
+"contact user support."
+msgstr ""
+
+msgid "The draft was not published. Record saved with validation errors:"
+msgstr "Чернетку не опубліковано. Запис збережено з помилками перевірки:"
+
+msgid ""
+"The draft was not submitted for review. Please try again. If the problem "
+"persists, contact user support."
+msgstr ""
+
+msgid ""
+"The draft was not submitted for review. Record saved with validation errors:"
+msgstr ""
+"Чернетку не надіслано на розгляд. Запис збережено з помилками перевірки:"
+
+msgid ""
+"Draft deletion failed. Please try again. If the problem persists, contact "
+"user support."
+msgstr ""
+
+msgid ""
+"Draft preview failed. Please try again. If the problem persists, contact "
+"user support."
+msgstr ""
+
+msgid ""
+"Identifier reservation failed. Please try again. If the problem persists, "
+"contact user support."
+msgstr ""
+
+msgid ""
+"Identifier could not be discarded. Please try again. If the problem "
+"persists, contact user support."
+msgstr ""
+
+msgid ""
+"Draft save failed before file upload. Please try again. If the problem "
+"persists, contact user support."
+msgstr ""
+
+msgid ""
+"Files import from the previous version failed. Please try again. If the "
+"problem persists, contact user support."
+msgstr ""
+
+msgid "Options"
+msgstr "Опції"
+
+msgid "Public"
+msgstr "Публічний"
+
+msgid "The record is publicly accessible."
+msgstr "Запис загальнодоступний"
+
+msgid "The record and files are publicly accessible."
+msgstr "Запис та файли загальнодоступні."
+
+msgid "Embargoed (full record)"
+msgstr "Під ембарго (повний запис)"
+
+msgid "Restricted"
+msgstr "Обмежений доступ"
+
+msgid "Public with restricted files"
+msgstr "Загальнодоступний з обмеженням на доступ до файлів"
+
+msgid "Embargoed (files-only)"
+msgstr "Під ембарго (лише файли)"
+
+msgid "access-message"
+msgstr ""
+
+msgid ""
+"The record can <1>only</1> be accessed by <3>users specified</3> in the "
+"permissions."
+msgstr ""
+"Запис доступний <1>лише</1> для <3>вказаних користувачів</3>, яким надано "
+"дозвіл."
+
+msgid ""
+"The record is publicly accessible. The files can <1>only</1> be accessed by "
+"<4>users specified</4> in the permissions."
+msgstr ""
+"Цей запис загальнодоступний. Файли доступні <1>лише</1> для <4>вказаних "
+"користувачів</4>, яким надано дозвіл."
+
+msgid ""
+"The record is publicly accessible. On <bold>{{ date }}</bold> the files will"
+" automatically be made publicly accessible. Until then, the files can "
+"<bold>only</bold> be accessed by <bold>users specified</bold> in the "
+"permissions."
+msgstr ""
+"Зпис загальнодоступний. Після <bold>{{ date }}</bold> файли автоматично "
+"стануть загальнодоступними. До цього часу файли доступні <bold>лише</bold> "
+"для <bold>вказаних користувачів</bold>, яким надано дозвіл."
+
+msgid "Apply an embargo"
+msgstr "Застосувати ембарго"
+
+msgid "Embargo reason"
+msgstr "Підстава для ембарго"
+
+msgid "Optionally, describe the reason for the embargo."
+msgstr "Додатково можна вказати підставу для застосування ембарго."
+
+msgid "Embargo was lifted on {{fmtDate}}."
+msgstr "Ембарго знято з {{fmtDate}}."
+
+msgid "Reason"
+msgstr "Підстава"
+
+msgid ""
+"Record or files protection must be <1>restricted</1> to apply an embargo."
+msgstr ""
+"Для застосування ембарго запис чи файли повинні мати <1>обмежений "
+"доступ</1>."
+
+msgid "YYYY-MM-DD"
+msgstr "РРРР-ММ-ДД"
+
+msgid "The record has no files."
+msgstr "Запис на містить файлів"
+
+msgid "Files only"
+msgstr "Лише файли"
+
+msgid "The full record is restricted."
+msgstr "Доступ до повгого запису обмежено."
+
+msgid "The files of this record are restricted."
+msgstr "Доступ до файлів цього запису обмежено."
+
+msgid "Full record"
+msgstr "Повний запис"
+
+msgid ""
+"Record visibility can not be changed to restricted anymore. Please contact "
+"support if you still need to make these changes."
+msgstr ""
+
+msgid "Search or create affiliation"
+msgstr ""
+
+msgid "Affiliations"
+msgstr "Приналежності"
+
+msgid "Search for affiliations.."
+msgstr "Шукати приналежності..."
+
+msgid "Coming soon"
+msgstr ""
+
+msgid "Add creator"
+msgstr "Додати автора"
+
+msgid "Edit creator"
+msgstr "Редагувати автора"
+
+msgid "Edit"
+msgstr "Редагувати"
+
+msgid "ORCID logo"
+msgstr ""
+
+msgid "ROR logo"
+msgstr ""
+
+msgid "GND logo"
+msgstr ""
+
+msgid "Type the value of an identifier..."
+msgstr "Вкажіть ваш ідентифікатор"
+
+msgid "Identifiers"
+msgstr "Ідентифікатори"
+
+msgid "e.g. ORCID, ISNI or GND."
+msgstr "напр. ORCID, ISNI чи GND."
+
+msgid "Save and add another"
+msgstr "Зберегти та додати ще один"
+
+msgid "Family name is a required field."
+msgstr "Поле \"прізвище\" є обовʼязковим."
+
+msgid "Name is a required field."
+msgstr "Поле \"назва\" є обовʼязковим."
+
+msgid "Role is a required field."
+msgstr "Поле \"роль\" є обовʼязковим."
+
+msgid "Added"
+msgstr "Додано"
+
+msgid "Person"
+msgstr "Особа"
+
+msgid "Organization"
+msgstr "Організація"
+
+msgid "Search for persons by name, identifier, or affiliation..."
+msgstr "Шукати особу за іменем, ідентифікатором, чи приналежністю..."
+
+msgid "Family name"
+msgstr "Прізвище"
+
+msgid "Given names"
+msgstr "Імена"
+
+msgid "Search for an organization by name, identifier, or affiliation..."
+msgstr ""
+
+msgid "Search for organization by name, identifier, or affiliation..."
+msgstr ""
+
+msgid "Name"
+msgstr "Назва"
+
+msgid "Organization name"
+msgstr "Назва організації"
+
+msgid "e.g. ROR, ISNI or GND."
+msgstr "напр. ROR, ISNI, чи GND."
+
+msgid "Role"
+msgstr "Роль"
+
+msgid "Select role"
+msgstr "Вкажіть роль"
+
+msgid "Save"
+msgstr "Зберегти"
+
+msgid "Couldn't find your person? You can <2>create a new entry</2>."
+msgstr "Не знайшли потрібної особи? Ви можете <2>створити новий запис</2>."
+
+msgid "Add date"
+msgstr "Додати дату"
+
+msgid "Format: DATE or DATE/DATE where DATE is YYYY or YYYY-MM or YYYY-MM-DD."
+msgstr ""
+"Формат: ДАТА чи ДАТА/ДАТА, де ДАТА має форму РРРР чи РРРР-ММ чи РРРР-ММ-ДД."
+
+msgid "Date"
+msgstr "Дата"
+
+msgid "Type"
+msgstr "Тип"
+
+msgid "Remove field"
+msgstr "Видалити поле"
+
+msgid "YYYY-MM-DD or YYYY-MM-DD/YYYY-MM-DD"
+msgstr "ДДДД-ММ-ДД чи РРРР-ММ-ДД/РРРР-ММ-ДД"
+
+msgid "Add description"
+msgstr "Додати опис"
+
+msgid "Additional Description"
+msgstr "Додатковий опис"
+
+msgid "Language"
+msgstr "Мова"
+
+msgid "Select language"
+msgstr "Виберіть мову"
+
+msgid "Could not upload files."
+msgstr ""
+
+msgid "Uploading the selected files would result in"
+msgstr "Завантаження вибраного файлу призведе до"
+
+msgid "but the limit is"
+msgstr "але встановлено обмеження"
+
+msgid "The following files already exist"
+msgstr "Наступні файли вже існують"
+
+msgid "Could not upload all files."
+msgstr ""
+
+msgid "Empty files were skipped."
+msgstr ""
+
+msgid "You can import files from the previous version."
+msgstr "Ви можете імпортувати файли з попередньої версії."
+
+msgid ""
+"File addition, removal or modification are not allowed after you have "
+"published your upload."
+msgstr ""
+"Додати, вилучити, чи замінити файли після публікації запису буде неможливо."
+
+msgid "You must create a new version to add, modify or delete files."
+msgstr ""
+"Вам слід створити нову версію, щоб додати, вилучити, чи замінити файли."
+
+msgid "Drag and drop files"
+msgstr "Претягніть файл сюди"
+
+msgid "Upload files"
+msgstr "Завантажити файли"
+
+msgid "Import files"
+msgstr "Імпортувати файли"
+
+msgid "Set the default preview"
+msgstr ""
+
+msgid "Filename"
+msgstr "Назва файлу"
+
+msgid "Size"
+msgstr "Розмір"
+
+msgid "Progress"
+msgstr "Поступ"
+
+msgid "Default preview"
+msgstr "Стандартний перегляд"
+
+msgid ""
+"This is the file fingerprint (MD5 checksum), which can be used to verify the"
+" file integrity."
+msgstr ""
+"Це цифровий відбиток (контрольна сума MD5), який можна використати для "
+"перевірки цілісності файлу."
+
+msgid "Pending"
+msgstr "Очікують"
+
+msgid "Delete file"
+msgstr "Видалити файл"
+
+msgid "or"
+msgstr "або"
+
+msgid "This is a Metadata-only record."
+msgstr "Цей запис містить лише метадані."
+
+msgid "Metadata-only record"
+msgstr "Запис містить лише метадані"
+
+msgid "Disable files for this record"
+msgstr "Унеможливити файли для цього запису"
+
+msgid "Storage available"
+msgstr "Доступне місце для зберігання"
+
+msgid "{{length}} out of {{maxfiles}} files"
+msgstr "{{length}} з {{maxfiles}} файлів"
+
+msgid "out of"
+msgstr "з"
+
+msgid "Add identifier"
+msgstr "Додати ідентифікатор"
+
+msgid "Identifier"
+msgstr "Ідентифікатор"
+
+msgid "Scheme"
+msgstr "Схема"
+
+msgid "Do you already have a {{pidLabel}} for this upload?"
+msgstr "Ви вже маєте {{pidLabel}} для цього завантаження?"
+
+msgid "Yes"
+msgstr "Так"
+
+msgid "No"
+msgstr "Ні"
+
+msgid "Search for languages..."
+msgstr "Шукати мови..."
+
+msgid "Search for a language by name (e.g \"eng\", \"fr\" or \"Polish\")"
+msgstr "Шукати мову за назвою (напр. \"eng\", \"fr\" чи \"Ukrainian\")"
+
+msgid "Add standard"
+msgstr "Додати стандартну"
+
+msgid "Add custom"
+msgstr "Додати власну"
+
+msgid "Read more"
+msgstr "Детальніше"
+
+msgid "Title is a required field."
+msgstr "Поле \"заголовок\" обовʼязкове "
+
+msgid "Link must be a valid URL"
+msgstr "Посилання має бути дійсним URL"
+
+msgid "Add {{mode}} license"
+msgstr "Додати {{mode}} ліцензію"
+
+msgid "Change {{mode}} license"
+msgstr "Змінити {{mode}} ліцензію"
+
+msgid "Recommended"
+msgstr "Рекомендоване"
+
+msgid "recommended"
+msgstr ""
+
+msgid "all"
+msgstr ""
+
+msgid "Data"
+msgstr "Дані"
+
+msgid "data"
+msgstr ""
+
+msgid "Software"
+msgstr "Програмне забезпечення"
+
+msgid "software"
+msgstr ""
+
+msgid "License title"
+msgstr "Назва ліцензії"
+
+msgid "Link"
+msgstr "Посилання"
+
+msgid "License link"
+msgstr "Посилання на ліцензію"
+
+msgid "Add license"
+msgstr "Додати ліцензію"
+
+msgid "Change license"
+msgstr "Змінити ліцензію"
+
+msgid ""
+"In case your upload was already published elsewhere, please use the date of "
+"the first publication. Format: YYYY-MM-DD, YYYY-MM, or YYYY. For intervals "
+"use DATE/DATE, e.g. 1939/1945."
+msgstr ""
+"Якщо ваше завантаження було опубліковане раніше, будь ласка, вкажіть дату "
+"першої публікації. Формат: РРРР-ММ-ДД, РРРР-ММ, чи РРРР. Для проміжків часу "
+"вкажіть ДАТА/ДАТА, напр 1939/1945."
+
+msgid ""
+"YYYY-MM-DD or YYYY-MM-DD/YYYY-MM-DD for intervals. MM and DD are optional."
+msgstr ""
+"РРРР-ММ-ДД чи РРРР-ММ-ДД/РРРР-ММ-ДД для проміжків часу. ММ та ДД вказувати "
+"не обовʼязково."
+
+msgid ""
+"The publisher is used to formulate the citation, so consider the prominence "
+"of the role."
+msgstr ""
+"Видавець використвується для формування посилання, тому зважайте на "
+"важливість цієї ролі."
+
+msgid "Add reference"
+msgstr ""
+
+msgid "Reference string"
+msgstr ""
+
+msgid ""
+"Specify identifiers of related works. Supported identifiers include DOI, "
+"Handle, ARK, PURL, ISSN, ISBN, PubMed ID, PubMed Central ID, ADS "
+"Bibliographic Code, arXiv, Life Science Identifiers (LSID), EAN-13, ISTC, "
+"URNs, and URLs."
+msgstr ""
+"Вкажіть ідентифікатори повʼязаних праць. Підтримуються наступні "
+"ідентифікатори: DOI, Handle, ARK, PURL, ISSN, ISBN, PubMed ID, PubMed "
+"Central ID, ADS Bibliographic Code, arXiv, Life Science Identifiers (LSID), "
+"EAN-13, ISTC, URNs, а також URL."
+
+msgid "Add related work"
+msgstr "Додати повʼязану працю"
+
+msgid "Relation"
+msgstr "Звʼязок"
+
+msgid "Suggest from"
+msgstr "Пропонувати з"
+
+msgid "Search for a subject by name"
+msgstr "Шукати дисципліну за назвою"
+
+msgid "Add titles"
+msgstr "Додати заголовки"
+
+msgid "Additional title"
+msgstr ""
+
+msgid ""
+"Mostly relevant for software and dataset uploads. A semantic version string "
+"is preferred see<1> semver.org</1>, but any version string is accepted."
+msgstr ""
+"Здебільшого стосується програмного забезпечення та завантаження наборів "
+"даних. Рекомендовано використовувати рядок семантичної версії<1> "
+"semver.org</1>, але приймається будь-який рядок версії."

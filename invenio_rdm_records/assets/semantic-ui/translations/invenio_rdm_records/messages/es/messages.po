@@ -1,0 +1,911 @@
+# 
+# Translators:
+# Alizee Pace <alizee.pace@gmail.com>, 2024
+# Tibor Simko <tibor.simko@cern.ch>, 2024
+# Zacharias Zacharodimos <zacharias.zacharodimos@cern.ch>, 2024
+# Jesús Martín <jesusmartin@sallep.net>, 2025
+# 
+msgid ""
+msgstr ""
+"Project-Id-Version: i18next-conv\n"
+"POT-Creation-Date: 2025-04-07T16:10:08.156Z\n"
+"PO-Revision-Date: 2024-08-06 08:56+0000\n"
+"Last-Translator: Jesús Martín <jesusmartin@sallep.net>, 2025\n"
+"Language-Team: Spanish (https://app.transifex.com/inveniosoftware/teams/23537/es/)\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: es\n"
+"Plural-Forms: nplurals=3; plural=n == 1 ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;\n"
+"mime-version: 1.0\n"
+
+msgid "Copy to clipboard"
+msgstr "Copiar al portapapeles"
+
+msgid "Copied!"
+msgstr "¡Copiado!"
+
+msgid "This set is not editable as it was created by the system."
+msgstr "Este conjunto no es editable ya que fue creado por el sistema."
+
+msgid "This set is not deletable as it was created by the system."
+msgstr "Este conjunto no se puede eliminar ya que fue creado por el sistema."
+
+msgid "Links"
+msgstr "Enlaces"
+
+msgid "Format"
+msgstr "Formato"
+
+msgid "List records"
+msgstr "Listar registros"
+
+msgid "Opens in new tab"
+msgstr "Se abre en una pestaña nueva"
+
+msgid "List identifiers"
+msgstr "Listar identificadores"
+
+msgid ""
+"Before deleting, make sure to alert all harvesters that this set will no "
+"longer be available."
+msgstr ""
+"Antes de eliminarlo, asegúrese de alertar a todos los recolectores de que "
+"este conjunto ya no estará disponible."
+
+msgid ""
+"I have alerted all harvesters that this set will no longer be available."
+msgstr ""
+"He alertado a todos los recolectores de que este conjunto ya no estará "
+"disponible."
+
+msgid "Cancel"
+msgstr "Cancelar"
+
+msgid "Delete"
+msgstr "Eliminar"
+
+msgid "Delete {{title}}"
+msgstr "Borrar {{title}}"
+
+msgid "This will delete the set '{{title}}'."
+msgstr "Esto eliminará el conjunto '{{title}}'."
+
+msgid "Fetch error"
+msgstr "Error de recuperación"
+
+msgid "Error fetching OAI set formats."
+msgstr "Error al obtener los formatos establecidos de OAI."
+
+msgid "Select the community where you want to submit your record."
+msgstr "Seleccione la comunidad donde desea enviar su registro."
+
+msgid "Change"
+msgstr "Cambiar"
+
+msgid "Select a community"
+msgstr "Seleccionar una comunidad"
+
+msgid "Remove"
+msgstr "Retirar"
+
+msgid "Community inclusion information"
+msgstr "Información sobre inclusión en la comunidad"
+
+msgid ""
+"Submission to this community is only allowed if the record is restricted."
+msgstr ""
+"El envío a esta comunidad solo está permitido si el registro está "
+"restringido."
+
+msgid "Community submission conditions information"
+msgstr "Información sobre las condiciones de envío a la comunidad"
+
+msgid ""
+"Submission to this community is only allowed by dedicated upload form. Use "
+"the button to jump to the form."
+msgstr ""
+"Solo se permite enviar material a esta comunidad mediante un formulario de "
+"carga específico. Utilice el botón para ir al formulario."
+
+msgid "Go to the community"
+msgstr ""
+
+msgid "Selected"
+msgstr "Seleccionado"
+
+msgid "Select"
+msgstr "Seleccionar"
+
+msgid "Select {{title}}"
+msgstr "Seleccionar {{title}}"
+
+msgid "Verified"
+msgstr "Verificado"
+
+msgid ""
+"Did not find a community that fits you? Upload without a community or "
+"<2>create your own.</2>"
+msgstr ""
+"¿No ha encontrado una comunidad que se adapte a usted? Envíe sin una "
+"comunidad o <2>cree la suya propia.</2>"
+
+msgid "Close"
+msgstr "Cerrar"
+
+msgid "All"
+msgstr "Todas"
+
+msgid "My communities"
+msgstr "Mis comunidades"
+
+msgid "Search"
+msgstr "Buscar"
+
+msgid "In review"
+msgstr "En revisión"
+
+msgid ""
+"Community curators will review your upload. Once accepted, it will be "
+"published."
+msgstr ""
+"Los curadores de la comunidad revisarán su envío. Una vez aceptado, será "
+"publicado."
+
+msgid "Declined"
+msgstr "Rechazado"
+
+msgid "The request to submit this upload to the community was declined."
+msgstr "La solicitud de mandar a la comunidad su envío ha sido rechazada."
+
+msgid "Expired"
+msgstr "Caducado"
+
+msgid "The request to submit this upload to the community has expired."
+msgstr "La solicitud de mandar a la comunidad su envío ha caducado."
+
+msgid "Published"
+msgstr "Publicado"
+
+msgid "Your upload is published."
+msgstr "Su envío está publicado."
+
+msgid "Draft"
+msgstr "Borrador"
+
+msgid ""
+"Once your upload is complete, you can submit it for review to the community "
+"curators."
+msgstr ""
+"Una vez que su envío esté completado, puede enviarlo para su revisión a los "
+"curadores de la comunidad."
+
+msgid ""
+"Once your upload is complete, you can publish or submit it for review to the"
+" community curators."
+msgstr ""
+"Una vez que su envío esté completo, puede publicarlo o enviarlo para su "
+"revisión a los curadores de la comunidad."
+
+msgid "New version draft"
+msgstr "Borrador de la nueva versión"
+
+msgid "Once your upload is complete, you can publish it."
+msgstr "Cuando su envío esté completo podrá publicarlo."
+
+msgid "View request"
+msgstr "Ver solicitud"
+
+msgid "discard changes"
+msgstr "descartar cambios"
+
+msgid "discard version"
+msgstr "descartar versión"
+
+msgid "delete"
+msgstr "suprimir"
+
+msgid "Are you sure you want to discard the changes to this draft?"
+msgstr "¿Está seguro de que desea descartar los cambios en este borrador?"
+
+msgid "Are you sure you want to delete this new version?"
+msgstr "¿Está seguro de que desea eliminar esta nueva versión?"
+
+msgid "Are you sure you want to delete this draft?"
+msgstr "¿Está seguro de querer eliminar este borrador?"
+
+msgid "You don't have permissions to create a new version."
+msgstr "No tiene permisos para crear una nueva versión."
+
+msgid "New version"
+msgstr "Nueva versión"
+
+msgid "Preview"
+msgstr "Previsualizar"
+
+msgid "Are you sure you want to publish this record?"
+msgstr "¿Está seguro de querer publicar este registro?"
+
+msgid ""
+"Once the record is published you will no longer be able to change the files "
+"in the upload! However, you will still be able to update the record's "
+"metadata later."
+msgstr ""
+"Una vez que se publique el registro, no podrá cambiar los archivos en la "
+"subida. Sin embargo, podrá actualizar los metadatos del registro más "
+"adelante."
+
+msgid "Publish"
+msgstr "Publicar"
+
+msgid "Submitted for review"
+msgstr "Enviado para revisión"
+
+msgid "Submit for review"
+msgstr "Enviar para revisión"
+
+msgid "Publish to community"
+msgstr "Publicar en la comunidad"
+
+msgid "You must accept this."
+msgstr "Debe aceptar esto."
+
+msgid ""
+"Before publishing to the community, please read and check the following:"
+msgstr "Antes de publicar en la comunidad, lea y verifique lo siguiente:"
+
+msgid ""
+"Your upload will be <bold>immediately published</bold> in "
+"'{{communityTitle}}'. You will no longer be able to change the files in the "
+"upload! However, you will still be able to update the record's metadata "
+"later."
+msgstr ""
+"Su envío se <bold>publicará inmediatamente</bold> en '{{communityTitle}}'. "
+"¡Ya no podrá cambiar los archivos en envío! Sin embargo, podrá actualizar "
+"los metadatos del registro más tarde."
+
+msgid "Publish record to community"
+msgstr "Publicar registro en la comunidad"
+
+msgid "Submit to community"
+msgstr "Enviar a la comunidad"
+
+msgid "Before submitting to community, please read and check the following:"
+msgstr "Antes de enviar a la comunidad, lea y verifique lo siguiente:"
+
+msgid "Before requesting review, please read and check the following:"
+msgstr "Antes de solicitar una revisión, lea y verifique lo siguiente:"
+
+msgid ""
+"If your upload is accepted by the community curators, it will be "
+"<bold>immediately published</bold>. Before that, you will still be able to "
+"modify metadata and files of this upload."
+msgstr ""
+"Si los curadores de la comunidad aceptan su envío, se <bold>publicará de "
+"inmediato</bold>. Antes de eso, aún podrá modificar los metadatos y los "
+"archivos de dicho envío."
+
+msgid "Submit record for review"
+msgstr "Enviar registro para revisión"
+
+msgid ""
+"The '{{communityTitle}}' curators will have access to <bold>view</bold> and "
+"<bold>edit</bold> your upload's metadata and files."
+msgstr ""
+"Los curadores de '{{communityTitle}}' tendrán acceso para <bold>ver</bold> y"
+" <bold>editar</bold> los metadatos y archivos de su envío."
+
+msgid "Message to curators (optional)"
+msgstr "Mensaje a los curadores (opcional)"
+
+msgid "Change community"
+msgstr "Cambiar comunidad"
+
+msgid "Publish without community"
+msgstr "Publicar sin comunidad"
+
+msgid "Save draft"
+msgstr "Guardar borrador"
+
+msgid "Files"
+msgstr "Archivos"
+
+msgid "Resource type"
+msgstr "Tipo de recurso"
+
+msgid "Title"
+msgstr "Título"
+
+msgid "Additional titles"
+msgstr "Títulos adicionales"
+
+msgid "Publication date"
+msgstr "Fecha de publicación"
+
+msgid "Creators"
+msgstr "Creadores"
+
+msgid "Contributors"
+msgstr "Colaboradores"
+
+msgid "Description"
+msgstr "Descripción"
+
+msgid "Additional descriptions"
+msgstr "Descripciones adicionales"
+
+msgid "Licenses"
+msgstr "Licencias"
+
+msgid "Languages"
+msgstr "Idiomas"
+
+msgid "Dates"
+msgstr "Fechas"
+
+msgid "Version"
+msgstr "Version"
+
+msgid "Publisher"
+msgstr "Editor"
+
+msgid "Related works"
+msgstr "Trabajos relacionados"
+
+msgid "References"
+msgstr "Referencias"
+
+msgid "Alternate identifiers"
+msgstr "Identificadores alternativos"
+
+msgid "Keywords and subjects"
+msgstr "Palabras clave y temas"
+
+msgid "Embargo until"
+msgstr "Embargo hasta"
+
+msgid "DOI"
+msgstr "DOI"
+
+msgid "Record successfully saved."
+msgstr "Registro guardado con éxito."
+
+msgid "Record saved with validation errors:"
+msgstr "Registro guardado con errores de validación:"
+
+msgid ""
+"The draft was not saved. Please try again. If the problem persists, contact "
+"user support."
+msgstr ""
+"No se guardó el borrador. Inténtalo de nuevo. Si el problema persiste, "
+"póngase en contacto con el servicio de atención al usuario."
+
+msgid ""
+"The draft was not published. Please try again. If the problem persists, "
+"contact user support."
+msgstr ""
+"El borrador no se ha publicado. Inténtelo de nuevo. Si el problema persiste,"
+" póngase en contacto con el servicio de atención al usuario."
+
+msgid "The draft was not published. Record saved with validation errors:"
+msgstr ""
+"El borrador no fue publicado. Registro guardado con errores de validación:"
+
+msgid ""
+"The draft was not submitted for review. Please try again. If the problem "
+"persists, contact user support."
+msgstr ""
+"El borrador no se envió para su revisión. Inténtalo de nuevo. Si el problema"
+" persiste, póngase en contacto con el servicio de asistencia al usuario."
+
+msgid ""
+"The draft was not submitted for review. Record saved with validation errors:"
+msgstr ""
+"El borrador no fue enviado para su revisión. Registro guardado con errores "
+"de validación:"
+
+msgid ""
+"Draft deletion failed. Please try again. If the problem persists, contact "
+"user support."
+msgstr ""
+"Error al eliminar el borrador. Inténtalo de nuevo. Si el problema persiste, "
+"póngase en contacto con el servicio de asistencia al usuario."
+
+msgid ""
+"Draft preview failed. Please try again. If the problem persists, contact "
+"user support."
+msgstr ""
+"Error en la vista previa del borrador. Inténtalo de nuevo. Si el problema "
+"persiste, póngase en contacto con el servicio de atención al usuario."
+
+msgid ""
+"Identifier reservation failed. Please try again. If the problem persists, "
+"contact user support."
+msgstr ""
+"Error en la reserva del identificador. Inténtalo de nuevo. Si el problema "
+"persiste, póngase en contacto con el servicio de asistencia al usuario."
+
+msgid ""
+"Identifier could not be discarded. Please try again. If the problem "
+"persists, contact user support."
+msgstr ""
+"No se pudo descartar el identificador. Inténtelo nuevamente. Si el problema "
+"persiste, contacte con el servicio de asistencia al usuario."
+
+msgid ""
+"Draft save failed before file upload. Please try again. If the problem "
+"persists, contact user support."
+msgstr ""
+"Error al guardar el borrador antes de cargar el archivo. Inténtelo de nuevo."
+" Si el problema persiste, póngase en contacto con el servicio de atención al"
+" usuario."
+
+msgid ""
+"Files import from the previous version failed. Please try again. If the "
+"problem persists, contact user support."
+msgstr ""
+"Error en la importación de archivos de la versión anterior. Inténtelo de "
+"nuevo. Si el problema persiste, póngase en contacto con el servicio de "
+"asistencia al usuario."
+
+msgid "Options"
+msgstr "Opciones"
+
+msgid "Public"
+msgstr "Publico"
+
+msgid "The record is publicly accessible."
+msgstr "El registro es de acceso público."
+
+msgid "The record and files are publicly accessible."
+msgstr "El registro y los archivos son de acceso público."
+
+msgid "Embargoed (full record)"
+msgstr "Embargado (registro completo)"
+
+msgid "Restricted"
+msgstr "Restringido"
+
+msgid "Public with restricted files"
+msgstr "Público pero con archivos restringidos"
+
+msgid "Embargoed (files-only)"
+msgstr "Embargado (solo archivos)"
+
+msgid "access-message"
+msgstr "mensaje de acceso"
+
+msgid ""
+"The record can <1>only</1> be accessed by <3>users specified</3> in the "
+"permissions."
+msgstr ""
+"<1>Solo</1> los <3>usuarios especificados</3> en los permisos pueden acceder"
+" al registro."
+
+msgid ""
+"The record is publicly accessible. The files can <1>only</1> be accessed by "
+"<4>users specified</4> in the permissions."
+msgstr ""
+"El registro es de acceso público. <1>Solo</1> los usuarios especificados<4> "
+"en los permisos pueden acceder a los archivos."
+
+msgid ""
+"The record is publicly accessible. On <bold>{{ date }}</bold> the files will"
+" automatically be made publicly accessible. Until then, the files can "
+"<bold>only</bold> be accessed by <bold>users specified</bold> in the "
+"permissions."
+msgstr ""
+"El registro es de acceso público. El <bold>{{date}}</bold>, los archivos "
+"serán automáticamente accesibles al público. Hasta entonces, "
+"<bold>solo</bold> los <bold>usuarios especificados</bold> en los permisos "
+"pueden acceder a los archivos."
+
+msgid "Apply an embargo"
+msgstr "Aplicar un embargo"
+
+msgid "Embargo reason"
+msgstr "Motivo del embargo"
+
+msgid "Optionally, describe the reason for the embargo."
+msgstr "Opcionalmente, describa el motivo del embargo."
+
+msgid "Embargo was lifted on {{fmtDate}}."
+msgstr "El embargo fue levantado el {{fmtDate}}."
+
+msgid "Reason"
+msgstr "Motivo"
+
+msgid ""
+"Record or files protection must be <1>restricted</1> to apply an embargo."
+msgstr ""
+"La protección de registros o archivos debe estar r<1>estringida</1> para "
+"aplicar un embargo."
+
+msgid "YYYY-MM-DD"
+msgstr "YYYY-MM-DD"
+
+msgid "The record has no files."
+msgstr "El registro no tiene archivos."
+
+msgid "Files only"
+msgstr "Solo archivos"
+
+msgid "The full record is restricted."
+msgstr "Todo el registro está restringido."
+
+msgid "The files of this record are restricted."
+msgstr "Los archivos de este registro son restringidos."
+
+msgid "Full record"
+msgstr "Registro completo"
+
+msgid ""
+"Record visibility can not be changed to restricted anymore. Please contact "
+"support if you still need to make these changes."
+msgstr ""
+"La visibilidad de los registros ya no se puede modificar a restringida. "
+"Comuníquese con el servicio de asistencia si aún necesita realizar estos "
+"cambios."
+
+msgid "Search or create affiliation"
+msgstr "Buscar o crear afiliación"
+
+msgid "Affiliations"
+msgstr "Afiliaciones"
+
+msgid "Search for affiliations.."
+msgstr "Buscar afiliaciones"
+
+msgid "Coming soon"
+msgstr ""
+
+msgid "Add creator"
+msgstr "Añadir creador"
+
+msgid "Edit creator"
+msgstr "Editar creador"
+
+msgid "Edit"
+msgstr "Editar"
+
+msgid "ORCID logo"
+msgstr ""
+
+msgid "ROR logo"
+msgstr ""
+
+msgid "GND logo"
+msgstr ""
+
+msgid "Type the value of an identifier..."
+msgstr "Escriba el valor de un identificador..."
+
+msgid "Identifiers"
+msgstr "Identificadores"
+
+msgid "e.g. ORCID, ISNI or GND."
+msgstr "por ej. ORCID, ISNI o GND."
+
+msgid "Save and add another"
+msgstr "Guardar y añadir otro"
+
+msgid "Family name is a required field."
+msgstr "El apellido es un campo obligatorio."
+
+msgid "Name is a required field."
+msgstr "El nombre es un campo obligatorio."
+
+msgid "Role is a required field."
+msgstr "El rol es un campo obligatorio."
+
+msgid "Added"
+msgstr "Añadido"
+
+msgid "Person"
+msgstr "Persona"
+
+msgid "Organization"
+msgstr "Organización"
+
+msgid "Search for persons by name, identifier, or affiliation..."
+msgstr "Buscar personas por nombre, identificador o afiliación..."
+
+msgid "Family name"
+msgstr "Apellidos"
+
+msgid "Given names"
+msgstr "Nombres de pila"
+
+msgid "Search for an organization by name, identifier, or affiliation..."
+msgstr "Busque una organización por nombre, identificador o afiliación..."
+
+msgid "Search for organization by name, identifier, or affiliation..."
+msgstr "Busque organización por nombre, identificador o afiliación..."
+
+msgid "Name"
+msgstr "Nombre"
+
+msgid "Organization name"
+msgstr "Nombre de la organización"
+
+msgid "e.g. ROR, ISNI or GND."
+msgstr "ej. ROR, ISNI o GND."
+
+msgid "Role"
+msgstr "Rol"
+
+msgid "Select role"
+msgstr "Seleccionar rol"
+
+msgid "Save"
+msgstr "Guardar"
+
+msgid "Couldn't find your person? You can <2>create a new entry</2>."
+msgstr ""
+"¿No ha podido encontrar a su persona? Puede <2>crear una nueva entrada</2>."
+
+msgid "Add date"
+msgstr "Añadir fecha"
+
+msgid "Format: DATE or DATE/DATE where DATE is YYYY or YYYY-MM or YYYY-MM-DD."
+msgstr ""
+"Formato: FECHA o FECHA / FECHA donde FECHA es AAAA o AAAA-MM o AAAA-MM-DD."
+
+msgid "Date"
+msgstr "Fecha"
+
+msgid "Type"
+msgstr "Tipo"
+
+msgid "Remove field"
+msgstr "Eliminar campo"
+
+msgid "YYYY-MM-DD or YYYY-MM-DD/YYYY-MM-DD"
+msgstr "AAAA-MM-DD o AAAA-MM-DD / AAAA-MM-DD"
+
+msgid "Add description"
+msgstr "Añadir descripción"
+
+msgid "Additional Description"
+msgstr "Descripción adicional"
+
+msgid "Language"
+msgstr "Idioma"
+
+msgid "Select language"
+msgstr "Seleccionar idioma"
+
+msgid "Could not upload files."
+msgstr ""
+
+msgid "Uploading the selected files would result in"
+msgstr "La subida de los archivos seleccionados podría dar lugar a"
+
+msgid "but the limit is"
+msgstr "pero el límite es"
+
+msgid "The following files already exist"
+msgstr "Los siguientes archivos ya existen"
+
+msgid "Could not upload all files."
+msgstr ""
+
+msgid "Empty files were skipped."
+msgstr ""
+
+msgid "You can import files from the previous version."
+msgstr "No es posible importar archivos de una versión anterior."
+
+msgid ""
+"File addition, removal or modification are not allowed after you have "
+"published your upload."
+msgstr ""
+"No se permite la adición, eliminación o modificación de archivos después de "
+"haber publicado su envío."
+
+msgid "You must create a new version to add, modify or delete files."
+msgstr ""
+"Debe crear una nueva versión para agregar, modificar o eliminar archivos."
+
+msgid "Drag and drop files"
+msgstr "Arrastrar y soltar archivos"
+
+msgid "Upload files"
+msgstr "Subir archivos"
+
+msgid "Import files"
+msgstr "Importar archivos"
+
+msgid "Set the default preview"
+msgstr ""
+
+msgid "Filename"
+msgstr "Nombre de archivo"
+
+msgid "Size"
+msgstr "Tamaño"
+
+msgid "Progress"
+msgstr "Progreso"
+
+msgid "Default preview"
+msgstr "Vista previa predeterminada"
+
+msgid ""
+"This is the file fingerprint (MD5 checksum), which can be used to verify the"
+" file integrity."
+msgstr ""
+"Esta es la huella digital del archivo (suma de comprobación MD5), que se "
+"puede utilizar para verificar la integridad del archivo."
+
+msgid "Pending"
+msgstr "Pendiente"
+
+msgid "Delete file"
+msgstr "Borrar archivo"
+
+msgid "or"
+msgstr "o"
+
+msgid "This is a Metadata-only record."
+msgstr "Este es un registro solo de metadatos."
+
+msgid "Metadata-only record"
+msgstr "Registro solo de metadatos"
+
+msgid "Disable files for this record"
+msgstr "Deshabilitar archivos para este registro"
+
+msgid "Storage available"
+msgstr "Almacenamiento disponible"
+
+msgid "{{length}} out of {{maxfiles}} files"
+msgstr "{{length}} de {{maxfiles}} archivos"
+
+msgid "out of"
+msgstr "de"
+
+msgid "Add identifier"
+msgstr "Añadir identificador"
+
+msgid "Identifier"
+msgstr "Identificador"
+
+msgid "Scheme"
+msgstr "Esquema"
+
+msgid "Do you already have a {{pidLabel}} for this upload?"
+msgstr "¿Tiene ya una {{pidLabel}} para este envío?"
+
+msgid "Yes"
+msgstr "Sí"
+
+msgid "No"
+msgstr "No"
+
+msgid "Search for languages..."
+msgstr "Buscar idiomas..."
+
+msgid "Search for a language by name (e.g \"eng\", \"fr\" or \"Polish\")"
+msgstr "Busca un idioma por nombre (por ej., \"Eng\", \"es\" o \"italiano\")"
+
+msgid "Add standard"
+msgstr "Añadir estándar"
+
+msgid "Add custom"
+msgstr "Añadir a medida"
+
+msgid "Read more"
+msgstr "Leer más"
+
+msgid "Title is a required field."
+msgstr "El título es un campo obligatorio."
+
+msgid "Link must be a valid URL"
+msgstr "El enlace debe ser una URL válida"
+
+msgid "Add {{mode}} license"
+msgstr "Añadir licencia {{mode}} "
+
+msgid "Change {{mode}} license"
+msgstr "Cambiar licencia {{mode}} "
+
+msgid "Recommended"
+msgstr "Recomendado"
+
+msgid "recommended"
+msgstr ""
+
+msgid "all"
+msgstr ""
+
+msgid "Data"
+msgstr "Datos"
+
+msgid "data"
+msgstr ""
+
+msgid "Software"
+msgstr "Software"
+
+msgid "software"
+msgstr ""
+
+msgid "License title"
+msgstr "Título de licencia"
+
+msgid "Link"
+msgstr "Enlace"
+
+msgid "License link"
+msgstr "Enlace de la licencia"
+
+msgid "Add license"
+msgstr "Añadir licencia"
+
+msgid "Change license"
+msgstr "Cambiar licencia"
+
+msgid ""
+"In case your upload was already published elsewhere, please use the date of "
+"the first publication. Format: YYYY-MM-DD, YYYY-MM, or YYYY. For intervals "
+"use DATE/DATE, e.g. 1939/1945."
+msgstr ""
+"En caso de que su carga ya se haya publicado en otro lugar, utilice la fecha"
+" de la primera publicación. Formato: AAAA-MM-DD, AAAA-MM o AAAA. Para "
+"intervalos use FECHA / FECHA, por ej. 1939/1945."
+
+msgid ""
+"YYYY-MM-DD or YYYY-MM-DD/YYYY-MM-DD for intervals. MM and DD are optional."
+msgstr ""
+"AAAA-MM-DD o AAAA-MM-DD / AAAA-MM-DD para intervalos. MM y DD son "
+"opcionales."
+
+msgid ""
+"The publisher is used to formulate the citation, so consider the prominence "
+"of the role."
+msgstr ""
+"Se utiliza al editor para formular la cita, así que considere la relevancia "
+"del rol."
+
+msgid "Add reference"
+msgstr "Añadir referencia"
+
+msgid "Reference string"
+msgstr "Cadena de referencia"
+
+msgid ""
+"Specify identifiers of related works. Supported identifiers include DOI, "
+"Handle, ARK, PURL, ISSN, ISBN, PubMed ID, PubMed Central ID, ADS "
+"Bibliographic Code, arXiv, Life Science Identifiers (LSID), EAN-13, ISTC, "
+"URNs, and URLs."
+msgstr ""
+"Especifique identificadores de trabajos relacionados. Los identificadores "
+"admitidos incluyen DOI, Handle, ARK, PURL, ISSN, ISBN, PubMed ID, PubMed "
+"Central ID, ADS Bibliographic Code, arXiv, Life Science Identifiers (LSID), "
+"EAN-13, ISTC, URN y URL."
+
+msgid "Add related work"
+msgstr "Añadir trabajo relacionado"
+
+msgid "Relation"
+msgstr "Relación"
+
+msgid "Suggest from"
+msgstr "Sugerencia de"
+
+msgid "Search for a subject by name"
+msgstr "Buscar un tema por el nombre"
+
+msgid "Add titles"
+msgstr "Añadir títulos"
+
+msgid "Additional title"
+msgstr ""
+
+msgid ""
+"Mostly relevant for software and dataset uploads. A semantic version string "
+"is preferred see<1> semver.org</1>, but any version string is accepted."
+msgstr ""
+"Principalmente relevante para la subida de software y grupos de datos. Se "
+"prefiere una cadena semántica, vea <1>semver.org</1>, pero se acepta "
+"cualquier cadena de versión."

@@ -151,17 +151,16 @@ class SubmitReviewModalComponent extends Component {
                       control={Checkbox}
                       fieldPath="acceptAccessToRecord"
                       label={
-                        <Trans
-                          defaults={i18next.t(
-                            "The '{{communityTitle}}' curators will have access to <bold>view</bold> and <bold>edit</bold> your upload's metadata and files.",
-                            { communityTitle }
-                          )}
-                          values={{
-                            communityTitle,
-                          }}
-                          components={{ bold: <b /> }}
-                          shouldUnescape
-                        />
+                        <>
+                          {i18next.t(
+                            "The '{{communityTitle}}' curators will have access to",
+                            {
+                              communityTitle,
+                            }
+                          )}{" "}
+                          <b>{i18next.t("view and edit")}</b>{" "}
+                          {i18next.t("your upload's metadata and files.")}
+                        </>
                       }
                       checked={_get(values, "acceptAccessToRecord") === true}
                       onChange={({ data, formikProps }) => {
