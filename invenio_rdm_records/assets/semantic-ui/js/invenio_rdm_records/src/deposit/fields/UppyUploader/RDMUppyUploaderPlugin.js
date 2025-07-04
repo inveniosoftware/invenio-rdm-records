@@ -266,13 +266,8 @@ export class RDMUppyUploaderPlugin extends AwsS3Multipart {
     const maxPartSize = 5 * GiB;
     const maxParts = this.#maxMultipartParts;
 
-    const fileSizeLimit = this.opts.quota?.maxFileSize || maxFileSize;
-
     // Calculate max allowed part size based on maxFileSize and maxParts, capped by S3 limit
-    const maxAllowedPartSize = Math.min(
-      maxPartSize,
-      Math.ceil(fileSizeLimit / maxParts)
-    );
+    const maxAllowedPartSize = Math.min(maxPartSize, Math.ceil(maxFileSize / maxParts));
 
     const steps = 5;
     const logMin = Math.log(minPartSize);
