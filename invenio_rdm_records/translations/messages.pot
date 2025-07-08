@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: invenio-rdm-records 19.3.0\n"
 "Report-Msgid-Bugs-To: info@inveniosoftware.org\n"
-"POT-Creation-Date: 2025-07-02 11:50+0200\n"
+"POT-Creation-Date: 2025-07-08 19:50+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,6 +17,21 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.17.0\n"
+
+#: invenio_rdm_records/config.py:89 invenio_rdm_records/config.py:368
+#: invenio_rdm_records/config.py:375 invenio_rdm_records/config.py:398
+#: tests/conftest.py:270 tests/conftest.py:277
+msgid "DOI"
+msgstr ""
+
+#: invenio_rdm_records/config.py:380 tests/conftest.py:282
+msgid "OAI ID"
+msgstr ""
+
+#: invenio_rdm_records/config.py:427 invenio_rdm_records/config.py:437
+#: tests/conftest.py:291
+msgid "Concept DOI"
+msgstr ""
 
 #: invenio_rdm_records/config.py:70
 msgid "ORCID"
@@ -48,12 +63,6 @@ msgstr ""
 
 #: invenio_rdm_records/config.py:85
 msgid "Crossref Funder ID"
-msgstr ""
-
-#: invenio_rdm_records/config.py:89 invenio_rdm_records/config.py:368
-#: invenio_rdm_records/config.py:375 invenio_rdm_records/config.py:398
-#: tests/conftest.py:270 tests/conftest.py:277
-msgid "DOI"
 msgstr ""
 
 #: invenio_rdm_records/config.py:90
@@ -198,17 +207,8 @@ msgstr ""
 msgid "Updated"
 msgstr ""
 
-#: invenio_rdm_records/config.py:380 tests/conftest.py:282
-msgid "OAI ID"
-msgstr ""
-
 #: invenio_rdm_records/config.py:407
 msgid "OAI"
-msgstr ""
-
-#: invenio_rdm_records/config.py:427 invenio_rdm_records/config.py:437
-#: tests/conftest.py:291
-msgid "Concept DOI"
 msgstr ""
 
 #: invenio_rdm_records/utils.py:117
