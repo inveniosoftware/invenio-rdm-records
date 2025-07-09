@@ -11,6 +11,7 @@
 import textwrap
 from abc import ABC, abstractmethod
 from functools import wraps
+from importlib.metadata import version
 from urllib.parse import urljoin
 
 import marshmallow as ma
@@ -31,7 +32,6 @@ from flask_resources import (
     route,
     with_content_negotiation,
 )
-from importlib_metadata import version
 from invenio_drafts_resources.resources.records.errors import RedirectException
 from invenio_i18n import lazy_gettext as _
 from invenio_records_resources.resources.errors import ErrorHandlersMixin
