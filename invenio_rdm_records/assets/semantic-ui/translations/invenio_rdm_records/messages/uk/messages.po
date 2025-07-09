@@ -6,7 +6,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: i18next-conv\n"
-"POT-Creation-Date: 2025-04-07T16:10:08.156Z\n"
+"POT-Creation-Date: 2025-07-08T19:50:35.330Z\n"
 "PO-Revision-Date: 2024-08-06 08:56+0000\n"
 "Last-Translator: Vasyl Ostrovskyi <vasyusya@yahoo.com>, 2024\n"
 "Language-Team: Ukrainian (https://app.transifex.com/inveniosoftware/teams/23537/uk/)\n"
@@ -26,6 +26,12 @@ msgid "This set is not editable as it was created by the system."
 msgstr ""
 
 msgid "This set is not deletable as it was created by the system."
+msgstr ""
+
+msgid "Fetch error"
+msgstr ""
+
+msgid "Error fetching OAI set formats."
 msgstr ""
 
 msgid "Links"
@@ -64,12 +70,6 @@ msgstr ""
 msgid "This will delete the set '{{title}}'."
 msgstr ""
 
-msgid "Fetch error"
-msgstr ""
-
-msgid "Error fetching OAI set formats."
-msgstr ""
-
 msgid "Select the community where you want to submit your record."
 msgstr "Виберіть спільноту, до якої ви хочете подати ваше завантаження."
 
@@ -87,6 +87,9 @@ msgstr ""
 
 msgid ""
 "Submission to this community is only allowed if the record is restricted."
+msgstr ""
+
+msgid "Submission to this community is only allowed to community members."
 msgstr ""
 
 msgid "Community submission conditions information"
@@ -111,13 +114,6 @@ msgstr ""
 
 msgid "Verified"
 msgstr ""
-
-msgid ""
-"Did not find a community that fits you? Upload without a community or "
-"<2>create your own.</2>"
-msgstr ""
-"Не знайшли спільноти, яка вам підходить? Завантажте без спільноти, чи "
-"<2>створіть власну.</2>"
 
 msgid "Close"
 msgstr "Закрити"
@@ -213,6 +209,9 @@ msgstr "Нова версія"
 msgid "Preview"
 msgstr "Попередній перегляд"
 
+msgid "DOI is needed. You need to reserve a DOI before publishing."
+msgstr ""
+
 msgid "Are you sure you want to publish this record?"
 msgstr "Ви певні, що сілд опублікувати даний запис?"
 
@@ -275,12 +274,19 @@ msgstr ""
 msgid "Submit record for review"
 msgstr ""
 
-msgid ""
-"The '{{communityTitle}}' curators will have access to <bold>view</bold> and "
-"<bold>edit</bold> your upload's metadata and files."
+msgid "The '{{communityTitle}}' curators will have access to"
+msgstr ""
+
+msgid "view and edit"
+msgstr ""
+
+msgid "your upload's metadata and files."
 msgstr ""
 
 msgid "Message to curators (optional)"
+msgstr ""
+
+msgid "msgWarningText1"
 msgstr ""
 
 msgid "Change community"
@@ -292,71 +298,14 @@ msgstr "Опублікувати без спільноти"
 msgid "Save draft"
 msgstr "Зберегти чернетку"
 
-msgid "Files"
-msgstr "Файли"
-
-msgid "Resource type"
-msgstr "Тип ресурсу"
-
-msgid "Title"
-msgstr "Заголовок"
-
-msgid "Additional titles"
-msgstr "Додаткові назви"
-
-msgid "Publication date"
-msgstr "Дата публікації"
-
-msgid "Creators"
-msgstr "Автори"
-
-msgid "Contributors"
-msgstr "Учасники"
-
-msgid "Description"
-msgstr "Опис"
-
-msgid "Additional descriptions"
-msgstr "Додаткові описи"
-
-msgid "Licenses"
-msgstr "Ліцензії"
-
-msgid "Languages"
-msgstr "Мови"
-
-msgid "Dates"
-msgstr "Дати"
-
-msgid "Version"
-msgstr "Версія"
-
-msgid "Publisher"
-msgstr "Видавець"
-
-msgid "Related works"
-msgstr "Пов'язані праці"
-
-msgid "References"
-msgstr "Посилання"
-
-msgid "Alternate identifiers"
-msgstr "Альтернативні ідентифікатори"
-
-msgid "Keywords and subjects"
-msgstr "Ключові слова та тематика"
-
-msgid "Embargo until"
-msgstr "Ембарго до"
-
-msgid "DOI"
-msgstr "DOI"
-
 msgid "Record successfully saved."
 msgstr "Запис успішно збережено."
 
-msgid "Record saved with validation errors:"
-msgstr "Запис збережено з помилками перевірки:"
+msgid "Record saved with validation feedback in"
+msgstr ""
+
+msgid "Draft has validation feedback in"
+msgstr ""
 
 msgid ""
 "The draft was not saved. Please try again. If the problem persists, contact "
@@ -368,8 +317,8 @@ msgid ""
 "contact user support."
 msgstr ""
 
-msgid "The draft was not published. Record saved with validation errors:"
-msgstr "Чернетку не опубліковано. Запис збережено з помилками перевірки:"
+msgid "The draft was not published. Record saved with validation feedback in"
+msgstr ""
 
 msgid ""
 "The draft was not submitted for review. Please try again. If the problem "
@@ -377,9 +326,9 @@ msgid ""
 msgstr ""
 
 msgid ""
-"The draft was not submitted for review. Record saved with validation errors:"
+"The draft was not submitted for review. Record saved with validation "
+"feedback in"
 msgstr ""
-"Чернетку не надіслано на розгляд. Запис збережено з помилками перевірки:"
 
 msgid ""
 "Draft deletion failed. Please try again. If the problem persists, contact "
@@ -486,6 +435,9 @@ msgstr ""
 msgid "YYYY-MM-DD"
 msgstr "РРРР-ММ-ДД"
 
+msgid "Embargo until"
+msgstr "Ембарго до"
+
 msgid "The record has no files."
 msgstr "Запис на містить файлів"
 
@@ -517,6 +469,19 @@ msgstr "Шукати приналежності..."
 
 msgid "Coming soon"
 msgstr ""
+
+msgid ""
+"A copyright statement describing the ownership of the uploaded resource."
+msgstr ""
+
+msgid "Copyright (C) {{currentYear}} The Authors."
+msgstr ""
+
+msgid "Copyright"
+msgstr ""
+
+msgid "Creators"
+msgstr "Автори"
 
 msgid "Add creator"
 msgstr "Додати автора"
@@ -599,9 +564,6 @@ msgstr "Вкажіть роль"
 msgid "Save"
 msgstr "Зберегти"
 
-msgid "Couldn't find your person? You can <2>create a new entry</2>."
-msgstr "Не знайшли потрібної особи? Ви можете <2>створити новий запис</2>."
-
 msgid "Add date"
 msgstr "Додати дату"
 
@@ -615,8 +577,14 @@ msgstr "Дата"
 msgid "Type"
 msgstr "Тип"
 
+msgid "Description"
+msgstr "Опис"
+
 msgid "Remove field"
 msgstr "Видалити поле"
+
+msgid "Dates"
+msgstr "Дати"
 
 msgid "YYYY-MM-DD or YYYY-MM-DD/YYYY-MM-DD"
 msgstr "ДДДД-ММ-ДД чи РРРР-ММ-ДД/РРРР-ММ-ДД"
@@ -635,12 +603,6 @@ msgstr "Виберіть мову"
 
 msgid "Could not upload files."
 msgstr ""
-
-msgid "Uploading the selected files would result in"
-msgstr "Завантаження вибраного файлу призведе до"
-
-msgid "but the limit is"
-msgstr "але встановлено обмеження"
 
 msgid "The following files already exist"
 msgstr "Наступні файли вже існують"
@@ -673,7 +635,10 @@ msgstr "Завантажити файли"
 msgid "Import files"
 msgstr "Імпортувати файли"
 
-msgid "Set the default preview"
+msgid "fileUploadQuotaExceeded"
+msgstr ""
+
+msgid "Choose which file to preview on the published record landing page"
 msgstr ""
 
 msgid "Filename"
@@ -694,6 +659,9 @@ msgid ""
 msgstr ""
 "Це цифровий відбиток (контрольна сума MD5), який можна використати для "
 "перевірки цілісності файлу."
+
+msgid "N/A"
+msgstr ""
 
 msgid "Pending"
 msgstr "Очікують"
@@ -734,14 +702,20 @@ msgstr "Схема"
 msgid "Do you already have a {{pidLabel}} for this upload?"
 msgstr "Ви вже маєте {{pidLabel}} для цього завантаження?"
 
-msgid "Yes"
-msgstr "Так"
+msgid "Yes, I already have one"
+msgstr ""
 
-msgid "No"
-msgstr "Ні"
+msgid "No, I need one"
+msgstr ""
+
+msgid "No, I don't need one"
+msgstr ""
 
 msgid "Search for languages..."
 msgstr "Шукати мови..."
+
+msgid "Languages"
+msgstr "Мови"
 
 msgid "Search for a language by name (e.g \"eng\", \"fr\" or \"Polish\")"
 msgstr "Шукати мову за назвою (напр. \"eng\", \"fr\" чи \"Ukrainian\")"
@@ -751,6 +725,9 @@ msgstr "Додати стандартну"
 
 msgid "Add custom"
 msgstr "Додати власну"
+
+msgid "Licenses"
+msgstr "Ліцензії"
 
 msgid "Read more"
 msgstr "Детальніше"
@@ -766,6 +743,9 @@ msgstr "Додати {{mode}} ліцензію"
 
 msgid "Change {{mode}} license"
 msgstr "Змінити {{mode}} ліцензію"
+
+msgid "Search for licenses"
+msgstr ""
 
 msgid "Recommended"
 msgstr "Рекомендоване"
@@ -788,6 +768,9 @@ msgstr "Програмне забезпечення"
 msgid "software"
 msgstr ""
 
+msgid "Title"
+msgstr "Заголовок"
+
 msgid "License title"
 msgstr "Назва ліцензії"
 
@@ -803,6 +786,12 @@ msgstr "Додати ліцензію"
 msgid "Change license"
 msgstr "Змінити ліцензію"
 
+msgid "Did not find your license? "
+msgstr ""
+
+msgid "Add a custom license."
+msgstr ""
+
 msgid ""
 "In case your upload was already published elsewhere, please use the date of "
 "the first publication. Format: YYYY-MM-DD, YYYY-MM, or YYYY. For intervals "
@@ -811,6 +800,9 @@ msgstr ""
 "Якщо ваше завантаження було опубліковане раніше, будь ласка, вкажіть дату "
 "першої публікації. Формат: РРРР-ММ-ДД, РРРР-ММ, чи РРРР. Для проміжків часу "
 "вкажіть ДАТА/ДАТА, напр 1939/1945."
+
+msgid "Publication date"
+msgstr "Дата публікації"
 
 msgid ""
 "YYYY-MM-DD or YYYY-MM-DD/YYYY-MM-DD for intervals. MM and DD are optional."
@@ -825,11 +817,17 @@ msgstr ""
 "Видавець використвується для формування посилання, тому зважайте на "
 "важливість цієї ролі."
 
+msgid "Publisher"
+msgstr "Видавець"
+
 msgid "Add reference"
 msgstr ""
 
 msgid "Reference string"
 msgstr ""
+
+msgid "References"
+msgstr "Посилання"
 
 msgid ""
 "Specify identifiers of related works. Supported identifiers include DOI, "
@@ -848,8 +846,17 @@ msgstr "Додати повʼязану працю"
 msgid "Relation"
 msgstr "Звʼязок"
 
+msgid "Related works"
+msgstr "Пов'язані праці"
+
+msgid "Resource type"
+msgstr "Тип ресурсу"
+
 msgid "Suggest from"
 msgstr "Пропонувати з"
+
+msgid "Keywords and subjects"
+msgstr "Ключові слова та тематика"
 
 msgid "Search for a subject by name"
 msgstr "Шукати дисципліну за назвою"
@@ -859,6 +866,9 @@ msgstr "Додати заголовки"
 
 msgid "Additional title"
 msgstr ""
+
+msgid "Version"
+msgstr "Версія"
 
 msgid ""
 "Mostly relevant for software and dataset uploads. A semantic version string "

@@ -1,15 +1,15 @@
 # 
 # Translators:
-# Tibor Simko <tibor.simko@cern.ch>, 2024
 # Weizheng Lu, 2024
 # Kalven Richie, 2024
+# Tibor Simko <tibor.simko@cern.ch>, 2025
 # 
 msgid ""
 msgstr ""
 "Project-Id-Version: i18next-conv\n"
-"POT-Creation-Date: 2025-04-07T16:10:08.156Z\n"
+"POT-Creation-Date: 2025-07-08T19:50:35.330Z\n"
 "PO-Revision-Date: 2024-08-06 08:56+0000\n"
-"Last-Translator: Kalven Richie, 2024\n"
+"Last-Translator: Tibor Simko <tibor.simko@cern.ch>, 2025\n"
 "Language-Team: Chinese (China) (https://app.transifex.com/inveniosoftware/teams/23537/zh_CN/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -27,6 +27,12 @@ msgid "This set is not editable as it was created by the system."
 msgstr ""
 
 msgid "This set is not deletable as it was created by the system."
+msgstr ""
+
+msgid "Fetch error"
+msgstr ""
+
+msgid "Error fetching OAI set formats."
 msgstr ""
 
 msgid "Links"
@@ -65,12 +71,6 @@ msgstr ""
 msgid "This will delete the set '{{title}}'."
 msgstr ""
 
-msgid "Fetch error"
-msgstr ""
-
-msgid "Error fetching OAI set formats."
-msgstr ""
-
 msgid "Select the community where you want to submit your record."
 msgstr "选择要提交记录的社区。"
 
@@ -88,6 +88,9 @@ msgstr ""
 
 msgid ""
 "Submission to this community is only allowed if the record is restricted."
+msgstr ""
+
+msgid "Submission to this community is only allowed to community members."
 msgstr ""
 
 msgid "Community submission conditions information"
@@ -111,11 +114,6 @@ msgid "Select {{title}}"
 msgstr ""
 
 msgid "Verified"
-msgstr ""
-
-msgid ""
-"Did not find a community that fits you? Upload without a community or "
-"<2>create your own.</2>"
 msgstr ""
 
 msgid "Close"
@@ -205,6 +203,9 @@ msgstr "新版本"
 msgid "Preview"
 msgstr "预览"
 
+msgid "DOI is needed. You need to reserve a DOI before publishing."
+msgstr ""
+
 msgid "Are you sure you want to publish this record?"
 msgstr "确实要发布此记录吗？"
 
@@ -261,12 +262,19 @@ msgstr ""
 msgid "Submit record for review"
 msgstr ""
 
-msgid ""
-"The '{{communityTitle}}' curators will have access to <bold>view</bold> and "
-"<bold>edit</bold> your upload's metadata and files."
+msgid "The '{{communityTitle}}' curators will have access to"
+msgstr ""
+
+msgid "view and edit"
+msgstr ""
+
+msgid "your upload's metadata and files."
 msgstr ""
 
 msgid "Message to curators (optional)"
+msgstr ""
+
+msgid "msgWarningText1"
 msgstr ""
 
 msgid "Change community"
@@ -278,71 +286,14 @@ msgstr "在没有社区的情况下发布"
 msgid "Save draft"
 msgstr "保存草稿"
 
-msgid "Files"
-msgstr "文件"
-
-msgid "Resource type"
-msgstr "资源类型"
-
-msgid "Title"
-msgstr "标题"
-
-msgid "Additional titles"
-msgstr "其他标题"
-
-msgid "Publication date"
-msgstr "发布日期"
-
-msgid "Creators"
-msgstr "创建者"
-
-msgid "Contributors"
-msgstr "贡献者"
-
-msgid "Description"
-msgstr "描述"
-
-msgid "Additional descriptions"
-msgstr "其他说明"
-
-msgid "Licenses"
-msgstr "许可证"
-
-msgid "Languages"
-msgstr "语言"
-
-msgid "Dates"
-msgstr "日期"
-
-msgid "Version"
-msgstr "版本"
-
-msgid "Publisher"
-msgstr "发布者"
-
-msgid "Related works"
-msgstr "相关工作"
-
-msgid "References"
-msgstr "参考"
-
-msgid "Alternate identifiers"
-msgstr "其他的唯一标识符"
-
-msgid "Keywords and subjects"
-msgstr "关键字和主题"
-
-msgid "Embargo until"
-msgstr "禁运直到"
-
-msgid "DOI"
-msgstr "DOI"
-
 msgid "Record successfully saved."
 msgstr "记录已成功保存。"
 
-msgid "Record saved with validation errors:"
-msgstr "保存了带有验证错误的记录："
+msgid "Record saved with validation feedback in"
+msgstr ""
+
+msgid "Draft has validation feedback in"
+msgstr ""
 
 msgid ""
 "The draft was not saved. Please try again. If the problem persists, contact "
@@ -354,8 +305,8 @@ msgid ""
 "contact user support."
 msgstr ""
 
-msgid "The draft was not published. Record saved with validation errors:"
-msgstr "草稿未公布。保存了带有验证错误的记录："
+msgid "The draft was not published. Record saved with validation feedback in"
+msgstr ""
 
 msgid ""
 "The draft was not submitted for review. Please try again. If the problem "
@@ -363,8 +314,9 @@ msgid ""
 msgstr ""
 
 msgid ""
-"The draft was not submitted for review. Record saved with validation errors:"
-msgstr "草稿未提交审查。保存了带有验证错误的记录："
+"The draft was not submitted for review. Record saved with validation "
+"feedback in"
+msgstr ""
 
 msgid ""
 "Draft deletion failed. Please try again. If the problem persists, contact "
@@ -464,6 +416,9 @@ msgstr "必须<1>限制</1>记录或文件保护以实施禁运。"
 msgid "YYYY-MM-DD"
 msgstr "年-月-日"
 
+msgid "Embargo until"
+msgstr "禁运直到"
+
 msgid "The record has no files."
 msgstr "本数据记录没有文件"
 
@@ -495,6 +450,19 @@ msgstr "搜索附属机构…"
 
 msgid "Coming soon"
 msgstr ""
+
+msgid ""
+"A copyright statement describing the ownership of the uploaded resource."
+msgstr ""
+
+msgid "Copyright (C) {{currentYear}} The Authors."
+msgstr ""
+
+msgid "Copyright"
+msgstr ""
+
+msgid "Creators"
+msgstr "创建者"
 
 msgid "Add creator"
 msgstr "添加创建者"
@@ -577,9 +545,6 @@ msgstr "选择角色"
 msgid "Save"
 msgstr "保存"
 
-msgid "Couldn't find your person? You can <2>create a new entry</2>."
-msgstr ""
-
 msgid "Add date"
 msgstr "添加日期"
 
@@ -592,8 +557,14 @@ msgstr "日期"
 msgid "Type"
 msgstr "类型"
 
+msgid "Description"
+msgstr "描述"
+
 msgid "Remove field"
 msgstr ""
+
+msgid "Dates"
+msgstr "日期"
 
 msgid "YYYY-MM-DD or YYYY-MM-DD/YYYY-MM-DD"
 msgstr "YYYY-MM-DD或YYYY-MM-DD/YYYY-MM-DD"
@@ -612,12 +583,6 @@ msgstr "选择语言"
 
 msgid "Could not upload files."
 msgstr ""
-
-msgid "Uploading the selected files would result in"
-msgstr "上载所选文件将导致"
-
-msgid "but the limit is"
-msgstr "但限制是"
 
 msgid "The following files already exist"
 msgstr "以下文件已存在"
@@ -648,7 +613,10 @@ msgstr "上传文件"
 msgid "Import files"
 msgstr "导入文件"
 
-msgid "Set the default preview"
+msgid "fileUploadQuotaExceeded"
+msgstr ""
+
+msgid "Choose which file to preview on the published record landing page"
 msgstr ""
 
 msgid "Filename"
@@ -667,6 +635,9 @@ msgid ""
 "This is the file fingerprint (MD5 checksum), which can be used to verify the"
 " file integrity."
 msgstr "这是文件指纹（MD5校验和），可用于验证文件完整性。"
+
+msgid "N/A"
+msgstr "不适用"
 
 msgid "Pending"
 msgstr "等待中"
@@ -707,14 +678,20 @@ msgstr "计划"
 msgid "Do you already have a {{pidLabel}} for this upload?"
 msgstr "你已经有一个{{pidLabel}}上传了吗？"
 
-msgid "Yes"
-msgstr "是"
+msgid "Yes, I already have one"
+msgstr ""
 
-msgid "No"
-msgstr "否"
+msgid "No, I need one"
+msgstr ""
+
+msgid "No, I don't need one"
+msgstr ""
 
 msgid "Search for languages..."
 msgstr "搜索语言…"
+
+msgid "Languages"
+msgstr "语言"
 
 msgid "Search for a language by name (e.g \"eng\", \"fr\" or \"Polish\")"
 msgstr "按名称搜索语言（例如“eng”、“fr”或“Polish”）"
@@ -724,6 +701,9 @@ msgstr "添加标准"
 
 msgid "Add custom"
 msgstr "添加自定义"
+
+msgid "Licenses"
+msgstr "许可证"
 
 msgid "Read more"
 msgstr "阅读更多"
@@ -739,6 +719,9 @@ msgstr "添加{{mode}}许可证"
 
 msgid "Change {{mode}} license"
 msgstr "更改{{mode}}许可证"
+
+msgid "Search for licenses"
+msgstr ""
 
 msgid "Recommended"
 msgstr "Recommended"
@@ -761,6 +744,9 @@ msgstr "软件"
 msgid "software"
 msgstr ""
 
+msgid "Title"
+msgstr "标题"
+
 msgid "License title"
 msgstr "许可证标题"
 
@@ -776,6 +762,12 @@ msgstr "添加许可证"
 msgid "Change license"
 msgstr "更改许可证"
 
+msgid "Did not find your license? "
+msgstr ""
+
+msgid "Add a custom license."
+msgstr ""
+
 msgid ""
 "In case your upload was already published elsewhere, please use the date of "
 "the first publication. Format: YYYY-MM-DD, YYYY-MM, or YYYY. For intervals "
@@ -783,6 +775,9 @@ msgid ""
 msgstr ""
 "如果您的上传已经在其他地方发布，请使用第一次发布的日期。格式：YYYY-MM-DD、YYYY-"
 "MM或YYYY。对于间隔，使用日期/日期，例如1939/1945。"
+
+msgid "Publication date"
+msgstr "发布日期"
 
 msgid ""
 "YYYY-MM-DD or YYYY-MM-DD/YYYY-MM-DD for intervals. MM and DD are optional."
@@ -793,11 +788,17 @@ msgid ""
 "of the role."
 msgstr "出版商是用来制定引文的，所以要考虑角色的突出性。"
 
+msgid "Publisher"
+msgstr "发布者"
+
 msgid "Add reference"
 msgstr ""
 
 msgid "Reference string"
 msgstr ""
+
+msgid "References"
+msgstr "参考"
 
 msgid ""
 "Specify identifiers of related works. Supported identifiers include DOI, "
@@ -814,8 +815,17 @@ msgstr "添加相关工作"
 msgid "Relation"
 msgstr "关系"
 
+msgid "Related works"
+msgstr "相关工作"
+
+msgid "Resource type"
+msgstr "资源类型"
+
 msgid "Suggest from"
 msgstr "建议从"
+
+msgid "Keywords and subjects"
+msgstr "关键字和主题"
 
 msgid "Search for a subject by name"
 msgstr "按名称搜索主题"
@@ -825,6 +835,9 @@ msgstr "添加标题"
 
 msgid "Additional title"
 msgstr ""
+
+msgid "Version"
+msgstr "版本"
 
 msgid ""
 "Mostly relevant for software and dataset uploads. A semantic version string "

@@ -7,7 +7,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: i18next-conv\n"
-"POT-Creation-Date: 2025-04-07T16:10:08.156Z\n"
+"POT-Creation-Date: 2025-07-08T19:50:35.330Z\n"
 "PO-Revision-Date: 2024-08-06 08:56+0000\n"
 "Last-Translator: Salaheddine Ben Ali <salaheddine.benali@cnudst.tn>, 2025\n"
 "Language-Team: Arabic (https://app.transifex.com/inveniosoftware/teams/23537/ar/)\n"
@@ -28,6 +28,12 @@ msgstr "غير قابلة للتعديل حيث تم إنشاؤها بواسطة
 
 msgid "This set is not deletable as it was created by the system."
 msgstr "غير قابلة للحذف حيث تم إنشاؤها بواسطة النظام."
+
+msgid "Fetch error"
+msgstr "خطأ في الجلب"
+
+msgid "Error fetching OAI set formats."
+msgstr "حدث خطأ أثناء جلب تنسيقات مجموعة OAI."
 
 msgid "Links"
 msgstr "روابط"
@@ -69,12 +75,6 @@ msgstr "حذف  {{title}}"
 msgid "This will delete the set '{{title}}'."
 msgstr "سيؤدي هذا إلى حذف المجموعة '{{title}}'."
 
-msgid "Fetch error"
-msgstr "خطأ في الجلب"
-
-msgid "Error fetching OAI set formats."
-msgstr "حدث خطأ أثناء جلب تنسيقات مجموعة OAI."
-
 msgid "Select the community where you want to submit your record."
 msgstr "إختر المجتمع الذي تريد نشر تسجيلتك ضمنه."
 
@@ -93,6 +93,9 @@ msgstr "معلومات حول دمج المجتمع"
 msgid ""
 "Submission to this community is only allowed if the record is restricted."
 msgstr "لا يُسمح بالإرسال إلى هذا المجتمع إلا إذا كانت التسجيلة مقيدة."
+
+msgid "Submission to this community is only allowed to community members."
+msgstr ""
 
 msgid "Community submission conditions information"
 msgstr "معلومات شروط التقديم بهذا المجتمع"
@@ -118,13 +121,6 @@ msgstr "إختر {{title}}"
 
 msgid "Verified"
 msgstr "تم التّحقق"
-
-msgid ""
-"Did not find a community that fits you? Upload without a community or "
-"<2>create your own.</2>"
-msgstr ""
-"لم تجد المجتمع الذي يناسبك؟ قم بالتّحميل بدون مجتمع أو <2>أضف مجتمعا خاصا "
-"بك</2>."
 
 msgid "Close"
 msgstr "غلق"
@@ -214,6 +210,9 @@ msgstr "إصدار جديد"
 msgid "Preview"
 msgstr "معاينة"
 
+msgid "DOI is needed. You need to reserve a DOI before publishing."
+msgstr ""
+
 msgid "Are you sure you want to publish this record?"
 msgstr "هل أنت متأكد من نشر هذه التّسجيلة؟"
 
@@ -277,15 +276,20 @@ msgstr ""
 msgid "Submit record for review"
 msgstr "أرسل التسجيلة للمراجعة"
 
-msgid ""
-"The '{{communityTitle}}' curators will have access to <bold>view</bold> and "
-"<bold>edit</bold> your upload's metadata and files."
+msgid "The '{{communityTitle}}' curators will have access to"
 msgstr ""
-"سيكون لدى أمناء \"{{communityTitle}}\" حق الوصول <bold>لعرض </bold> "
-"و<bold>تعديل</bold> البيانات الوصفية والملفات الخاصة بالتحميل ."
+
+msgid "view and edit"
+msgstr ""
+
+msgid "your upload's metadata and files."
+msgstr ""
 
 msgid "Message to curators (optional)"
 msgstr "رسالة إلى الأمناء (إختياري)"
+
+msgid "msgWarningText1"
+msgstr ""
 
 msgid "Change community"
 msgstr "تغيير المجتمع"
@@ -296,71 +300,14 @@ msgstr "نشر بدون مجتمع"
 msgid "Save draft"
 msgstr "حفظ مسودة"
 
-msgid "Files"
-msgstr "الملفّات"
-
-msgid "Resource type"
-msgstr "نوع المورد"
-
-msgid "Title"
-msgstr "العنوان"
-
-msgid "Additional titles"
-msgstr "عناوين إضافيّة"
-
-msgid "Publication date"
-msgstr "تاريخ النّشر"
-
-msgid "Creators"
-msgstr "المنشؤون"
-
-msgid "Contributors"
-msgstr "المساهمون"
-
-msgid "Description"
-msgstr "وصف"
-
-msgid "Additional descriptions"
-msgstr "أوصاف إضافيّة"
-
-msgid "Licenses"
-msgstr "تراخيص"
-
-msgid "Languages"
-msgstr "اللّغات"
-
-msgid "Dates"
-msgstr "تواريخ"
-
-msgid "Version"
-msgstr "إصدار"
-
-msgid "Publisher"
-msgstr "النّاشر"
-
-msgid "Related works"
-msgstr "أعمال ذات علاقة"
-
-msgid "References"
-msgstr "مراجع"
-
-msgid "Alternate identifiers"
-msgstr "معرفات بديلة"
-
-msgid "Keywords and subjects"
-msgstr "كلمات مفاتيح و المواضيع"
-
-msgid "Embargo until"
-msgstr "محظور حتى"
-
-msgid "DOI"
-msgstr "المعرف الوحيد للأشياء DOI"
-
 msgid "Record successfully saved."
 msgstr "حفظ التسجيلة تمّ بنجاح."
 
-msgid "Record saved with validation errors:"
-msgstr "حفظت التسجيلة مع خطء في التحقّق من السّلامة:"
+msgid "Record saved with validation feedback in"
+msgstr ""
+
+msgid "Draft has validation feedback in"
+msgstr ""
 
 msgid ""
 "The draft was not saved. Please try again. If the problem persists, contact "
@@ -376,8 +323,8 @@ msgstr ""
 "لم يتم نشر المسودة. يُرجى المحاولة مرة أخرى. إذا استمرت المشكلة، يُرجى "
 "التواصل مع دعم المستخدمين."
 
-msgid "The draft was not published. Record saved with validation errors:"
-msgstr "لم يتم نشر المسودة. تم حفظ التّسجيلة مع وجود أخطاء :"
+msgid "The draft was not published. Record saved with validation feedback in"
+msgstr ""
 
 msgid ""
 "The draft was not submitted for review. Please try again. If the problem "
@@ -387,8 +334,9 @@ msgstr ""
 "يُرجى التواصل مع دعم المستخدمين."
 
 msgid ""
-"The draft was not submitted for review. Record saved with validation errors:"
-msgstr "لم يتم تقديم المسودة للمراجعة. تم حفظ التّسجيلة مع وجود أخطاء :"
+"The draft was not submitted for review. Record saved with validation "
+"feedback in"
+msgstr ""
 
 msgid ""
 "Draft deletion failed. Please try again. If the problem persists, contact "
@@ -504,6 +452,9 @@ msgstr "حماية التّسجيلة أو الملفات يجب أن تكون <
 msgid "YYYY-MM-DD"
 msgstr "YYYY-MM-DD"
 
+msgid "Embargo until"
+msgstr "محظور حتى"
+
 msgid "The record has no files."
 msgstr "التّسجيلة لا تحتوي على ملفات."
 
@@ -537,6 +488,19 @@ msgstr "إبحث عن مؤسّسات الإنتماء.."
 
 msgid "Coming soon"
 msgstr "قريباً"
+
+msgid ""
+"A copyright statement describing the ownership of the uploaded resource."
+msgstr ""
+
+msgid "Copyright (C) {{currentYear}} The Authors."
+msgstr ""
+
+msgid "Copyright"
+msgstr ""
+
+msgid "Creators"
+msgstr "المنشؤون"
 
 msgid "Add creator"
 msgstr "أضف منشئ"
@@ -619,9 +583,6 @@ msgstr "إختر دورا"
 msgid "Save"
 msgstr "حفظ"
 
-msgid "Couldn't find your person? You can <2>create a new entry</2>."
-msgstr "لا تستطيع العثور على شخصك؟ يمكنك<2> إنشاء مدخل جديد</2>."
-
 msgid "Add date"
 msgstr "أضف تاريخا"
 
@@ -636,8 +597,14 @@ msgstr "التاريخ"
 msgid "Type"
 msgstr "نوع"
 
+msgid "Description"
+msgstr "وصف"
+
 msgid "Remove field"
 msgstr "حذف الحقل"
+
+msgid "Dates"
+msgstr "تواريخ"
 
 msgid "YYYY-MM-DD or YYYY-MM-DD/YYYY-MM-DD"
 msgstr "YYYY-MM-DD أو YYYY-MM-DD/YYYY-MM-DD"
@@ -656,12 +623,6 @@ msgstr "إختر لغة"
 
 msgid "Could not upload files."
 msgstr "لم يتمكن من تحميل الملفات."
-
-msgid "Uploading the selected files would result in"
-msgstr "تحميل الملفات المختارة سيؤدي إلى"
-
-msgid "but the limit is"
-msgstr "لكن الحدود هي"
 
 msgid "The following files already exist"
 msgstr "الملفات التالية موجودة "
@@ -692,8 +653,11 @@ msgstr "تحميل الملفّات"
 msgid "Import files"
 msgstr "إستيراد الملفّات"
 
-msgid "Set the default preview"
-msgstr "ثبّت العرض التلقائي"
+msgid "fileUploadQuotaExceeded"
+msgstr ""
+
+msgid "Choose which file to preview on the published record landing page"
+msgstr ""
 
 msgid "Filename"
 msgstr "إسم الملفّ"
@@ -713,6 +677,9 @@ msgid ""
 msgstr ""
 "هذه هي بصمة الملف (المجموع الاختباري MD5) ، والتي يمكن استخدامها للتّحقّق من"
 " كموليّة الملف."
+
+msgid "N/A"
+msgstr ""
 
 msgid "Pending"
 msgstr "قيد الإنتظار"
@@ -753,14 +720,20 @@ msgstr "هيكل"
 msgid "Do you already have a {{pidLabel}} for this upload?"
 msgstr "هل لديك مسبقا {{pidLabel}} لهذا التحميل؟"
 
-msgid "Yes"
-msgstr "نعم"
+msgid "Yes, I already have one"
+msgstr ""
 
-msgid "No"
-msgstr "رقم"
+msgid "No, I need one"
+msgstr ""
+
+msgid "No, I don't need one"
+msgstr ""
 
 msgid "Search for languages..."
 msgstr "بحث عن اللّغات..."
+
+msgid "Languages"
+msgstr "اللّغات"
 
 msgid "Search for a language by name (e.g \"eng\", \"fr\" or \"Polish\")"
 msgstr "بحث عن اللّغة بالتّسمية ( \"eng\", \"fr\", \"Polish\" )"
@@ -770,6 +743,9 @@ msgstr "أضف معيارا"
 
 msgid "Add custom"
 msgstr "إضافة  إجراء/خاصة"
+
+msgid "Licenses"
+msgstr "تراخيص"
 
 msgid "Read more"
 msgstr "إقراء المزيد"
@@ -785,6 +761,9 @@ msgstr "أضف {{mode}} رخصة"
 
 msgid "Change {{mode}} license"
 msgstr "تغيير {{mode}} رخصة"
+
+msgid "Search for licenses"
+msgstr ""
 
 msgid "Recommended"
 msgstr "مستحسن"
@@ -807,6 +786,9 @@ msgstr "برمجيّة"
 msgid "software"
 msgstr "برمجيّة"
 
+msgid "Title"
+msgstr "العنوان"
+
 msgid "License title"
 msgstr "عنوان التّرخيص"
 
@@ -822,6 +804,12 @@ msgstr "أضف ترخيصا"
 msgid "Change license"
 msgstr "غيّر التّرخيص"
 
+msgid "Did not find your license? "
+msgstr ""
+
+msgid "Add a custom license."
+msgstr ""
+
 msgid ""
 "In case your upload was already published elsewhere, please use the date of "
 "the first publication. Format: YYYY-MM-DD, YYYY-MM, or YYYY. For intervals "
@@ -830,6 +818,9 @@ msgstr ""
 "في حالة نشر التحميل الخاص بك في مكان آخر سلفا، يرجى استخدام تاريخ النشر "
 "الأول بهذا الشّكل: YYYY-MM-DD أو YYYY-MM أو YYYY. للفترات الزمنية ، استخدم "
 "DATE / DATE ، على سبيل المثال 1939/1945."
+
+msgid "Publication date"
+msgstr "تاريخ النّشر"
 
 msgid ""
 "YYYY-MM-DD or YYYY-MM-DD/YYYY-MM-DD for intervals. MM and DD are optional."
@@ -842,11 +833,17 @@ msgid ""
 msgstr ""
 "يتم إعتماد صياغة الإستشهاد من قبل الناشر، لذا خذ بعين الإعتبار أهمية الدور."
 
+msgid "Publisher"
+msgstr "النّاشر"
+
 msgid "Add reference"
 msgstr "أضف مرجعا"
 
 msgid "Reference string"
 msgstr "سلسلة مرجعية"
+
+msgid "References"
+msgstr "مراجع"
 
 msgid ""
 "Specify identifiers of related works. Supported identifiers include DOI, "
@@ -864,8 +861,17 @@ msgstr "أضف عملا ذا علاقة"
 msgid "Relation"
 msgstr "علاقة"
 
+msgid "Related works"
+msgstr "أعمال ذات علاقة"
+
+msgid "Resource type"
+msgstr "نوع المورد"
+
 msgid "Suggest from"
 msgstr "إقتراح من طرف"
+
+msgid "Keywords and subjects"
+msgstr "كلمات مفاتيح و المواضيع"
 
 msgid "Search for a subject by name"
 msgstr "بحث عن موضوع عبر الإسم"
@@ -875,6 +881,9 @@ msgstr "أضف عناوين"
 
 msgid "Additional title"
 msgstr "عنوان إضافي"
+
+msgid "Version"
+msgstr "إصدار"
 
 msgid ""
 "Mostly relevant for software and dataset uploads. A semantic version string "

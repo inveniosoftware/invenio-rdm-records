@@ -1,15 +1,15 @@
 # 
 # Translators:
 # Berat Aldemir <berataldemir@gmail.com>, 2024
-# Ben Translation and Interpreting Services <info@bentercume.com>, 2024
 # BEN TERCÜME, 2025
+# Ben Translation and Interpreting Services <info@bentercume.com>, 2025
 # 
 msgid ""
 msgstr ""
 "Project-Id-Version: i18next-conv\n"
-"POT-Creation-Date: 2025-04-07T16:10:08.156Z\n"
+"POT-Creation-Date: 2025-07-08T19:50:35.330Z\n"
 "PO-Revision-Date: 2024-08-06 08:56+0000\n"
-"Last-Translator: BEN TERCÜME, 2025\n"
+"Last-Translator: Ben Translation and Interpreting Services <info@bentercume.com>, 2025\n"
 "Language-Team: Turkish (https://app.transifex.com/inveniosoftware/teams/23537/tr/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -28,6 +28,12 @@ msgstr "Bu set sistem tarafından oluşturulduğu için düzenlenemez."
 
 msgid "This set is not deletable as it was created by the system."
 msgstr "Bu set sistem tarafından oluşturulduğu için silinemez."
+
+msgid "Fetch error"
+msgstr "Sistemden çekme hatası"
+
+msgid "Error fetching OAI set formats."
+msgstr "OAI set formatları sistemden çekilirken hata oluştu."
 
 msgid "Links"
 msgstr "Bağlantılar"
@@ -67,12 +73,6 @@ msgstr "{{title}} başlığını sil"
 msgid "This will delete the set '{{title}}'."
 msgstr "Bu, '{{title}}' setini silecektir."
 
-msgid "Fetch error"
-msgstr "Sistemden çekme hatası"
-
-msgid "Error fetching OAI set formats."
-msgstr "OAI set formatları sistemden çekilirken hata oluştu."
-
 msgid "Select the community where you want to submit your record."
 msgstr "Kaydınızı göndermek istediğiniz topluluğu seçin."
 
@@ -93,6 +93,9 @@ msgid ""
 msgstr ""
 "Bu topluluğa gönderi yapılmasına yalnızca kayda erişim kısıtlıysa izin "
 "verilir."
+
+msgid "Submission to this community is only allowed to community members."
+msgstr ""
 
 msgid "Community submission conditions information"
 msgstr "Topluluğa gönderim koşulları ile ilgili bilgiler"
@@ -118,13 +121,6 @@ msgstr "{{title}} seç"
 
 msgid "Verified"
 msgstr "Doğrulanmış"
-
-msgid ""
-"Did not find a community that fits you? Upload without a community or "
-"<2>create your own.</2>"
-msgstr ""
-"Size uygun bir topluluk bulamadınız mı? Topluluk olmadan karşıya yükleme "
-"yapın veya <2>kendi topluluğunuzu oluşturun.</2>"
 
 msgid "Close"
 msgstr "Kapat"
@@ -220,6 +216,9 @@ msgstr "Yeni sürüm"
 msgid "Preview"
 msgstr "Gözden geçir"
 
+msgid "DOI is needed. You need to reserve a DOI before publishing."
+msgstr ""
+
 msgid "Are you sure you want to publish this record?"
 msgstr "Bu kaydı yayınlamak istediğinizden emin misiniz?"
 
@@ -287,16 +286,20 @@ msgstr ""
 msgid "Submit record for review"
 msgstr "Kaydı incelemeye gönderin"
 
-msgid ""
-"The '{{communityTitle}}' curators will have access to <bold>view</bold> and "
-"<bold>edit</bold> your upload's metadata and files."
+msgid "The '{{communityTitle}}' curators will have access to"
 msgstr ""
-"'{{communityTitle}}' küratörleri, yüklediğiniz içeriğin meta verilerini ve "
-"dosyalarını <bold>görüntüleme</bold> ve <bold>düzenleme</bold> yetkisine "
-"sahip olacak."
+
+msgid "view and edit"
+msgstr ""
+
+msgid "your upload's metadata and files."
+msgstr ""
 
 msgid "Message to curators (optional)"
 msgstr "Küratörlere mesaj (isteğe bağlı)"
+
+msgid "msgWarningText1"
+msgstr ""
 
 msgid "Change community"
 msgstr "Topluluğu değiştir"
@@ -307,71 +310,14 @@ msgstr "Topluluk olmadan yayınla"
 msgid "Save draft"
 msgstr "Taslağı kaydet"
 
-msgid "Files"
-msgstr "Dosyalar"
-
-msgid "Resource type"
-msgstr "Kaynak türü"
-
-msgid "Title"
-msgstr "Başlık"
-
-msgid "Additional titles"
-msgstr "Ek başlıklar"
-
-msgid "Publication date"
-msgstr "Yayın tarihi"
-
-msgid "Creators"
-msgstr "Oluşturanlar"
-
-msgid "Contributors"
-msgstr "Katkıda Bulunan Kişiler"
-
-msgid "Description"
-msgstr "Tanım"
-
-msgid "Additional descriptions"
-msgstr "Ek açıklamalar"
-
-msgid "Licenses"
-msgstr "Lisanslar"
-
-msgid "Languages"
-msgstr "Diller"
-
-msgid "Dates"
-msgstr "Tarihler"
-
-msgid "Version"
-msgstr "Sürüm"
-
-msgid "Publisher"
-msgstr "Yayımcı"
-
-msgid "Related works"
-msgstr "İlgili çalışmalar"
-
-msgid "References"
-msgstr "Referanslar"
-
-msgid "Alternate identifiers"
-msgstr "Alternatif tanımlayıcılar"
-
-msgid "Keywords and subjects"
-msgstr "Anahtar kelimeler ve konular"
-
-msgid "Embargo until"
-msgstr "Şu tarihe kadar ambargo uygula: "
-
-msgid "DOI"
-msgstr "DOI"
-
 msgid "Record successfully saved."
 msgstr "Kayıt başarıyla kaydedildi."
 
-msgid "Record saved with validation errors:"
-msgstr "Kayıt doğrulama hatalarıyla kaydedildi: "
+msgid "Record saved with validation feedback in"
+msgstr ""
+
+msgid "Draft has validation feedback in"
+msgstr ""
 
 msgid ""
 "The draft was not saved. Please try again. If the problem persists, contact "
@@ -387,9 +333,8 @@ msgstr ""
 "Taslak yayınlanamadı. Lütfen tekrar deneyin. Sorun devam ederse kullanıcı "
 "destek birimiyle iletişime geçin."
 
-msgid "The draft was not published. Record saved with validation errors:"
+msgid "The draft was not published. Record saved with validation feedback in"
 msgstr ""
-"Taslak yayınlanamadı. Kayıt doğrulama hatalarıyla birlikte kaydedildi:"
 
 msgid ""
 "The draft was not submitted for review. Please try again. If the problem "
@@ -399,10 +344,9 @@ msgstr ""
 "kullanıcı destek birimiyle iletişime geçin."
 
 msgid ""
-"The draft was not submitted for review. Record saved with validation errors:"
+"The draft was not submitted for review. Record saved with validation "
+"feedback in"
 msgstr ""
-"Taslak incelemeye gönderilemedi. Kayıt doğrulama hatalarıyla birlikte "
-"kaydedildi:"
 
 msgid ""
 "Draft deletion failed. Please try again. If the problem persists, contact "
@@ -521,6 +465,9 @@ msgstr ""
 msgid "YYYY-MM-DD"
 msgstr "YYYY-AA-GG"
 
+msgid "Embargo until"
+msgstr "Şu tarihe kadar ambargo uygula: "
+
 msgid "The record has no files."
 msgstr "Bu kayıt hiç dosya içermemekte."
 
@@ -554,6 +501,19 @@ msgstr "Bağlı olunan kurumları/kuruluşları ara"
 
 msgid "Coming soon"
 msgstr ""
+
+msgid ""
+"A copyright statement describing the ownership of the uploaded resource."
+msgstr ""
+
+msgid "Copyright (C) {{currentYear}} The Authors."
+msgstr ""
+
+msgid "Copyright"
+msgstr ""
+
+msgid "Creators"
+msgstr "Oluşturanlar"
 
 msgid "Add creator"
 msgstr "Oluşturan kişi ekle"
@@ -642,9 +602,6 @@ msgstr "Rol Seçin"
 msgid "Save"
 msgstr "Kaydet"
 
-msgid "Couldn't find your person? You can <2>create a new entry</2>."
-msgstr "Kişinizi bulamadınız mı? <2>Yeni bir giriş oluşturabilirsiniz</2>."
-
 msgid "Add date"
 msgstr "Tarih ekle"
 
@@ -659,8 +616,14 @@ msgstr "Tarih"
 msgid "Type"
 msgstr "Tür"
 
+msgid "Description"
+msgstr "Tanım"
+
 msgid "Remove field"
 msgstr "Alanı kaldır"
+
+msgid "Dates"
+msgstr "Tarihler"
 
 msgid "YYYY-MM-DD or YYYY-MM-DD/YYYY-MM-DD"
 msgstr "YYYY-AA-GG veya YYYY-AA-GG/YYYY-AA-GG"
@@ -679,12 +642,6 @@ msgstr "Dil Seçin"
 
 msgid "Could not upload files."
 msgstr ""
-
-msgid "Uploading the selected files would result in"
-msgstr "Seçili dosyaların yüklenmesi şuna neden olur: "
-
-msgid "but the limit is"
-msgstr "fakat limit: "
 
 msgid "The following files already exist"
 msgstr "Aşağıdaki dosyalar zaten var"
@@ -718,7 +675,10 @@ msgstr "Dosyaları yükle"
 msgid "Import files"
 msgstr "Dosyaları içe aktar"
 
-msgid "Set the default preview"
+msgid "fileUploadQuotaExceeded"
+msgstr ""
+
+msgid "Choose which file to preview on the published record landing page"
 msgstr ""
 
 msgid "Filename"
@@ -739,6 +699,9 @@ msgid ""
 msgstr ""
 "Bu, dosya bütünlüğünü doğrulamak için kullanılabilen dosya parmak izidir "
 "(MD5 sağlama toplamı)."
+
+msgid "N/A"
+msgstr "Erişilebilir değil"
 
 msgid "Pending"
 msgstr "Bekliyor"
@@ -779,14 +742,20 @@ msgstr "Şema"
 msgid "Do you already have a {{pidLabel}} for this upload?"
 msgstr "Bu yükleme için zaten bir {{pidLabel}} var mı?"
 
-msgid "Yes"
-msgstr "Evet"
+msgid "Yes, I already have one"
+msgstr ""
 
-msgid "No"
-msgstr "Hayır"
+msgid "No, I need one"
+msgstr ""
+
+msgid "No, I don't need one"
+msgstr ""
 
 msgid "Search for languages..."
 msgstr "Dilleri ara..."
+
+msgid "Languages"
+msgstr "Diller"
 
 msgid "Search for a language by name (e.g \"eng\", \"fr\" or \"Polish\")"
 msgstr "Ada göre bir dil arayın (ör. \"eng\", \"fr\" veya \"Lehçe\")"
@@ -796,6 +765,9 @@ msgstr "Standart ekle: "
 
 msgid "Add custom"
 msgstr "Özelleştirilmiş ekle: "
+
+msgid "Licenses"
+msgstr "Lisanslar"
 
 msgid "Read more"
 msgstr "Devamını okuyun"
@@ -811,6 +783,9 @@ msgstr "{{mode}} lisansını ekle"
 
 msgid "Change {{mode}} license"
 msgstr "{{mode}} lisansını değiştir"
+
+msgid "Search for licenses"
+msgstr ""
 
 msgid "Recommended"
 msgstr "Tavsiye edilen"
@@ -833,6 +808,9 @@ msgstr "Yazılım"
 msgid "software"
 msgstr ""
 
+msgid "Title"
+msgstr "Başlık"
+
 msgid "License title"
 msgstr "Lisans başlığı"
 
@@ -848,6 +826,12 @@ msgstr "Lisans ekle"
 msgid "Change license"
 msgstr "Lisansı değiştir"
 
+msgid "Did not find your license? "
+msgstr ""
+
+msgid "Add a custom license."
+msgstr ""
+
 msgid ""
 "In case your upload was already published elsewhere, please use the date of "
 "the first publication. Format: YYYY-MM-DD, YYYY-MM, or YYYY. For intervals "
@@ -856,6 +840,9 @@ msgstr ""
 "Yüklemeniz başka bir yerde yayınlanmışsa, lütfen ilk yayının tarihini "
 "kullanın. Biçim: YYYY-AA-GG, YYYY-AA veya YYYY. Aralıklar için TARİH/TARİH "
 "kullanın, ör. 1939/1945."
+
+msgid "Publication date"
+msgstr "Yayın tarihi"
 
 msgid ""
 "YYYY-MM-DD or YYYY-MM-DD/YYYY-MM-DD for intervals. MM and DD are optional."
@@ -870,11 +857,17 @@ msgstr ""
 "Yayıncı, alıntıyı formüle etmek için kullanılır, bu nedenle rolün önemini "
 "göz önünde bulundurun."
 
+msgid "Publisher"
+msgstr "Yayımcı"
+
 msgid "Add reference"
 msgstr "Referans ekle"
 
 msgid "Reference string"
 msgstr "Referans dizgesi"
+
+msgid "References"
+msgstr "Referanslar"
 
 msgid ""
 "Specify identifiers of related works. Supported identifiers include DOI, "
@@ -893,8 +886,17 @@ msgstr "İlgili çalışma ekle"
 msgid "Relation"
 msgstr "İlişki"
 
+msgid "Related works"
+msgstr "İlgili çalışmalar"
+
+msgid "Resource type"
+msgstr "Kaynak türü"
+
 msgid "Suggest from"
 msgstr "Şuradan öner: "
+
+msgid "Keywords and subjects"
+msgstr "Anahtar kelimeler ve konular"
 
 msgid "Search for a subject by name"
 msgstr "Ada göre bir konu arayın"
@@ -904,6 +906,9 @@ msgstr "Başlık ekleyin"
 
 msgid "Additional title"
 msgstr ""
+
+msgid "Version"
+msgstr "Sürüm"
 
 msgid ""
 "Mostly relevant for software and dataset uploads. A semantic version string "

@@ -1,15 +1,15 @@
 # 
 # Translators:
 # Corina Ionascu <icorina@nipne.ro>, 2024
-# Tibor Simko <tibor.simko@cern.ch>, 2024
 # Nicolaie Constantinescu, 2025
+# Tibor Simko <tibor.simko@cern.ch>, 2025
 # 
 msgid ""
 msgstr ""
 "Project-Id-Version: i18next-conv\n"
-"POT-Creation-Date: 2025-04-07T16:10:08.156Z\n"
+"POT-Creation-Date: 2025-07-08T19:50:35.330Z\n"
 "PO-Revision-Date: 2024-08-06 08:56+0000\n"
-"Last-Translator: Nicolaie Constantinescu, 2025\n"
+"Last-Translator: Tibor Simko <tibor.simko@cern.ch>, 2025\n"
 "Language-Team: Romanian (https://app.transifex.com/inveniosoftware/teams/23537/ro/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -27,6 +27,12 @@ msgid "This set is not editable as it was created by the system."
 msgstr ""
 
 msgid "This set is not deletable as it was created by the system."
+msgstr ""
+
+msgid "Fetch error"
+msgstr ""
+
+msgid "Error fetching OAI set formats."
 msgstr ""
 
 msgid "Links"
@@ -65,12 +71,6 @@ msgstr "Șterge {{title}}"
 msgid "This will delete the set '{{title}}'."
 msgstr ""
 
-msgid "Fetch error"
-msgstr ""
-
-msgid "Error fetching OAI set formats."
-msgstr ""
-
 msgid "Select the community where you want to submit your record."
 msgstr "Selectează comunitatea căreia dorești să-i trimiți înregistrarea."
 
@@ -88,6 +88,9 @@ msgstr ""
 
 msgid ""
 "Submission to this community is only allowed if the record is restricted."
+msgstr ""
+
+msgid "Submission to this community is only allowed to community members."
 msgstr ""
 
 msgid "Community submission conditions information"
@@ -112,13 +115,6 @@ msgstr ""
 
 msgid "Verified"
 msgstr "Verificat"
-
-msgid ""
-"Did not find a community that fits you? Upload without a community or "
-"<2>create your own.</2>"
-msgstr ""
-"Nu ai găsit o comunitate care să ți se potrivească? Încarcă fără o "
-"comunitate sau <2>creează tu una.</2>"
 
 msgid "Close"
 msgstr "Închide"
@@ -214,6 +210,9 @@ msgstr "Versiune nouă"
 msgid "Preview"
 msgstr "Previzualizare"
 
+msgid "DOI is needed. You need to reserve a DOI before publishing."
+msgstr ""
+
 msgid "Are you sure you want to publish this record?"
 msgstr "Ești sigur că vrei să publici această înregistrare?"
 
@@ -276,12 +275,19 @@ msgstr ""
 msgid "Submit record for review"
 msgstr ""
 
-msgid ""
-"The '{{communityTitle}}' curators will have access to <bold>view</bold> and "
-"<bold>edit</bold> your upload's metadata and files."
+msgid "The '{{communityTitle}}' curators will have access to"
+msgstr ""
+
+msgid "view and edit"
+msgstr ""
+
+msgid "your upload's metadata and files."
 msgstr ""
 
 msgid "Message to curators (optional)"
+msgstr ""
+
+msgid "msgWarningText1"
 msgstr ""
 
 msgid "Change community"
@@ -293,71 +299,14 @@ msgstr "Publică fără a implica o comunitate"
 msgid "Save draft"
 msgstr "Salvează draft"
 
-msgid "Files"
-msgstr "Fișiere"
-
-msgid "Resource type"
-msgstr "Tipul resursei"
-
-msgid "Title"
-msgstr "Titlul"
-
-msgid "Additional titles"
-msgstr "Titluri suplimentare"
-
-msgid "Publication date"
-msgstr "Data publicării"
-
-msgid "Creators"
-msgstr "Creatorii"
-
-msgid "Contributors"
-msgstr "Contribuitori"
-
-msgid "Description"
-msgstr "Descriere"
-
-msgid "Additional descriptions"
-msgstr "Descrieri suplimentare"
-
-msgid "Licenses"
-msgstr "Licențe"
-
-msgid "Languages"
-msgstr "Limbi de circulație"
-
-msgid "Dates"
-msgstr "Date calendaristice"
-
-msgid "Version"
-msgstr "Versiune"
-
-msgid "Publisher"
-msgstr "Editură"
-
-msgid "Related works"
-msgstr "Lucrări similare"
-
-msgid "References"
-msgstr "Referințe"
-
-msgid "Alternate identifiers"
-msgstr "Identificatori alternativi"
-
-msgid "Keywords and subjects"
-msgstr "Cuvinte cheie și subiecte"
-
-msgid "Embargo until"
-msgstr "Embargo până la"
-
-msgid "DOI"
-msgstr "DOI"
-
 msgid "Record successfully saved."
 msgstr "Înregistrare salvată cu succes."
 
-msgid "Record saved with validation errors:"
-msgstr "Înregistrare salvată cu erori de validare:"
+msgid "Record saved with validation feedback in"
+msgstr ""
+
+msgid "Draft has validation feedback in"
+msgstr ""
 
 msgid ""
 "The draft was not saved. Please try again. If the problem persists, contact "
@@ -369,9 +318,8 @@ msgid ""
 "contact user support."
 msgstr ""
 
-msgid "The draft was not published. Record saved with validation errors:"
+msgid "The draft was not published. Record saved with validation feedback in"
 msgstr ""
-"Draftul nu a fost publicat. Înregistrare salvată cu erori de validare:"
 
 msgid ""
 "The draft was not submitted for review. Please try again. If the problem "
@@ -379,10 +327,9 @@ msgid ""
 msgstr ""
 
 msgid ""
-"The draft was not submitted for review. Record saved with validation errors:"
+"The draft was not submitted for review. Record saved with validation "
+"feedback in"
 msgstr ""
-"Draftul nu a fost timis la evaluare. Înregistrarea a fost salvată cu erori "
-"de validare:"
 
 msgid ""
 "Draft deletion failed. Please try again. If the problem persists, contact "
@@ -489,6 +436,9 @@ msgstr ""
 msgid "YYYY-MM-DD"
 msgstr "YYYY-MM-DD"
 
+msgid "Embargo until"
+msgstr "Embargo până la"
+
 msgid "The record has no files."
 msgstr "Înregistrarea nu are fișiere."
 
@@ -520,6 +470,19 @@ msgstr "Caută afilierile..."
 
 msgid "Coming soon"
 msgstr ""
+
+msgid ""
+"A copyright statement describing the ownership of the uploaded resource."
+msgstr ""
+
+msgid "Copyright (C) {{currentYear}} The Authors."
+msgstr ""
+
+msgid "Copyright"
+msgstr ""
+
+msgid "Creators"
+msgstr "Creatorii"
 
 msgid "Add creator"
 msgstr "Adaugă creator"
@@ -602,9 +565,6 @@ msgstr "Selectează rolul"
 msgid "Save"
 msgstr "Salvează"
 
-msgid "Couldn't find your person? You can <2>create a new entry</2>."
-msgstr "Nu te găsești? Poți <2>crea o intrare nouă</2>."
-
 msgid "Add date"
 msgstr "Adaugă data"
 
@@ -618,8 +578,14 @@ msgstr "Dată"
 msgid "Type"
 msgstr "Tip"
 
+msgid "Description"
+msgstr "Descriere"
+
 msgid "Remove field"
 msgstr "Șterge câmp"
+
+msgid "Dates"
+msgstr "Date calendaristice"
 
 msgid "YYYY-MM-DD or YYYY-MM-DD/YYYY-MM-DD"
 msgstr "YYYY-MM-DD sau YYYY-MM-DD/YYYY-MM-DD"
@@ -638,12 +604,6 @@ msgstr "Selectează limba"
 
 msgid "Could not upload files."
 msgstr ""
-
-msgid "Uploading the selected files would result in"
-msgstr "Încărcarea fișierelor selectate ar rezulta în"
-
-msgid "but the limit is"
-msgstr "dar limitele sunt"
 
 msgid "The following files already exist"
 msgstr "Fișierele următoare există deja"
@@ -678,7 +638,10 @@ msgstr "Încarcă fișierele"
 msgid "Import files"
 msgstr "Importă fișierelor"
 
-msgid "Set the default preview"
+msgid "fileUploadQuotaExceeded"
+msgstr ""
+
+msgid "Choose which file to preview on the published record landing page"
 msgstr ""
 
 msgid "Filename"
@@ -699,6 +662,9 @@ msgid ""
 msgstr ""
 "Acesta este fingerprint-ul fișierului (checksum MD5), care poate fi folosit "
 "pentru a verifica integritatea fișierului."
+
+msgid "N/A"
+msgstr "N/A"
 
 msgid "Pending"
 msgstr "În așteptare"
@@ -739,14 +705,20 @@ msgstr "Schema"
 msgid "Do you already have a {{pidLabel}} for this upload?"
 msgstr "Deja ai un {{pidLabel}} pentru acest upload?"
 
-msgid "Yes"
-msgstr "Da"
+msgid "Yes, I already have one"
+msgstr ""
 
-msgid "No"
-msgstr "Nu"
+msgid "No, I need one"
+msgstr ""
+
+msgid "No, I don't need one"
+msgstr ""
 
 msgid "Search for languages..."
 msgstr "Caută după limbile localizărilor..."
+
+msgid "Languages"
+msgstr "Limbi de circulație"
 
 msgid "Search for a language by name (e.g \"eng\", \"fr\" or \"Polish\")"
 msgstr "Caută după numele limbii (ex. \"rom\", \"ro\" sau \"Romanian\")"
@@ -756,6 +728,9 @@ msgstr "Adaugă standard"
 
 msgid "Add custom"
 msgstr "Adaugă particularizare"
+
+msgid "Licenses"
+msgstr "Licențe"
 
 msgid "Read more"
 msgstr "Citește mai mult"
@@ -771,6 +746,9 @@ msgstr "Adaugă {{mode}} licența"
 
 msgid "Change {{mode}} license"
 msgstr "Modifică {{mode}} licența"
+
+msgid "Search for licenses"
+msgstr ""
 
 msgid "Recommended"
 msgstr "Recomandat"
@@ -793,6 +771,9 @@ msgstr "Software"
 msgid "software"
 msgstr ""
 
+msgid "Title"
+msgstr "Titlul"
+
 msgid "License title"
 msgstr "Titlul licenței"
 
@@ -808,6 +789,12 @@ msgstr "Adaugă licență"
 msgid "Change license"
 msgstr "Modifică licență"
 
+msgid "Did not find your license? "
+msgstr ""
+
+msgid "Add a custom license."
+msgstr ""
+
 msgid ""
 "In case your upload was already published elsewhere, please use the date of "
 "the first publication. Format: YYYY-MM-DD, YYYY-MM, or YYYY. For intervals "
@@ -816,6 +803,9 @@ msgstr ""
 "În cazul în care uploadul a fost publicat deja în altă parte, te rog să "
 "folosești data primei publicări. Formatul: YYYY-MM-DD, YYYY-MM, sau YYYY. "
 "Pentru intervale folosește DATE/DATE, ex. 1939/1945."
+
+msgid "Publication date"
+msgstr "Data publicării"
 
 msgid ""
 "YYYY-MM-DD or YYYY-MM-DD/YYYY-MM-DD for intervals. MM and DD are optional."
@@ -830,11 +820,17 @@ msgstr ""
 "Se așteaptă ca editorul să formuleze citarea așa că ia în considerare acest "
 "lucru."
 
+msgid "Publisher"
+msgstr "Editură"
+
 msgid "Add reference"
 msgstr ""
 
 msgid "Reference string"
 msgstr ""
+
+msgid "References"
+msgstr "Referințe"
 
 msgid ""
 "Specify identifiers of related works. Supported identifiers include DOI, "
@@ -853,8 +849,17 @@ msgstr "Adaugă operele în legătură"
 msgid "Relation"
 msgstr "Relație"
 
+msgid "Related works"
+msgstr "Lucrări similare"
+
+msgid "Resource type"
+msgstr "Tipul resursei"
+
 msgid "Suggest from"
 msgstr "Sugestie de la"
+
+msgid "Keywords and subjects"
+msgstr "Cuvinte cheie și subiecte"
 
 msgid "Search for a subject by name"
 msgstr "Caută subiectul după nume"
@@ -864,6 +869,9 @@ msgstr "Adaugă titlurile"
 
 msgid "Additional title"
 msgstr ""
+
+msgid "Version"
+msgstr "Versiune"
 
 msgid ""
 "Mostly relevant for software and dataset uploads. A semantic version string "

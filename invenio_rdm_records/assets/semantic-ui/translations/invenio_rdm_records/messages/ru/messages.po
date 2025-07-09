@@ -6,7 +6,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: i18next-conv\n"
-"POT-Creation-Date: 2025-04-07T16:10:08.156Z\n"
+"POT-Creation-Date: 2025-07-08T19:50:35.330Z\n"
 "PO-Revision-Date: 2024-08-06 08:56+0000\n"
 "Last-Translator: Anna Sakoyan, 2025\n"
 "Language-Team: Russian (https://app.transifex.com/inveniosoftware/teams/23537/ru/)\n"
@@ -26,6 +26,12 @@ msgid "This set is not editable as it was created by the system."
 msgstr ""
 
 msgid "This set is not deletable as it was created by the system."
+msgstr ""
+
+msgid "Fetch error"
+msgstr ""
+
+msgid "Error fetching OAI set formats."
 msgstr ""
 
 msgid "Links"
@@ -64,12 +70,6 @@ msgstr "Удалить {{title}}"
 msgid "This will delete the set '{{title}}'."
 msgstr ""
 
-msgid "Fetch error"
-msgstr ""
-
-msgid "Error fetching OAI set formats."
-msgstr ""
-
 msgid "Select the community where you want to submit your record."
 msgstr "Выберите сообщество, в которое вы хотите предложить свою запись."
 
@@ -87,6 +87,9 @@ msgstr ""
 
 msgid ""
 "Submission to this community is only allowed if the record is restricted."
+msgstr ""
+
+msgid "Submission to this community is only allowed to community members."
 msgstr ""
 
 msgid "Community submission conditions information"
@@ -111,11 +114,6 @@ msgstr ""
 
 msgid "Verified"
 msgstr "Проверено"
-
-msgid ""
-"Did not find a community that fits you? Upload without a community or "
-"<2>create your own.</2>"
-msgstr ""
 
 msgid "Close"
 msgstr "Закрыть"
@@ -208,6 +206,9 @@ msgstr "Новая версия"
 msgid "Preview"
 msgstr "Предварительный просмотр"
 
+msgid "DOI is needed. You need to reserve a DOI before publishing."
+msgstr ""
+
 msgid "Are you sure you want to publish this record?"
 msgstr ""
 
@@ -264,12 +265,19 @@ msgstr ""
 msgid "Submit record for review"
 msgstr "Отправить запись на согласование"
 
-msgid ""
-"The '{{communityTitle}}' curators will have access to <bold>view</bold> and "
-"<bold>edit</bold> your upload's metadata and files."
+msgid "The '{{communityTitle}}' curators will have access to"
+msgstr ""
+
+msgid "view and edit"
+msgstr ""
+
+msgid "your upload's metadata and files."
 msgstr ""
 
 msgid "Message to curators (optional)"
+msgstr ""
+
+msgid "msgWarningText1"
 msgstr ""
 
 msgid "Change community"
@@ -281,71 +289,14 @@ msgstr ""
 msgid "Save draft"
 msgstr "Сохранить черновик"
 
-msgid "Files"
-msgstr "Файлы"
-
-msgid "Resource type"
-msgstr "Тип ресурса"
-
-msgid "Title"
-msgstr "Название"
-
-msgid "Additional titles"
-msgstr "Дополнительные названия"
-
-msgid "Publication date"
-msgstr "Дата публикации"
-
-msgid "Creators"
-msgstr "Создатели"
-
-msgid "Contributors"
-msgstr "Соавторы"
-
-msgid "Description"
-msgstr "Описание"
-
-msgid "Additional descriptions"
-msgstr "Дополнительные описания"
-
-msgid "Licenses"
-msgstr "Лицензии"
-
-msgid "Languages"
-msgstr "Языки"
-
-msgid "Dates"
-msgstr "Даты"
-
-msgid "Version"
-msgstr "Версия"
-
-msgid "Publisher"
-msgstr "Издатель"
-
-msgid "Related works"
-msgstr "Связанные работы"
-
-msgid "References"
-msgstr "Ссылки"
-
-msgid "Alternate identifiers"
-msgstr "Альтернативные идентификаторы"
-
-msgid "Keywords and subjects"
-msgstr "Ключевые слова и темы"
-
-msgid "Embargo until"
-msgstr "Эмбарго до"
-
-msgid "DOI"
-msgstr "DOI"
-
 msgid "Record successfully saved."
 msgstr "Запись успешно сохранена."
 
-msgid "Record saved with validation errors:"
-msgstr "Запись сохранена с ошибками валидации:"
+msgid "Record saved with validation feedback in"
+msgstr ""
+
+msgid "Draft has validation feedback in"
+msgstr ""
 
 msgid ""
 "The draft was not saved. Please try again. If the problem persists, contact "
@@ -359,8 +310,8 @@ msgid ""
 "contact user support."
 msgstr ""
 
-msgid "The draft was not published. Record saved with validation errors:"
-msgstr "Черновик не был опубликован. Запись сохранена с ошибками валидации:"
+msgid "The draft was not published. Record saved with validation feedback in"
+msgstr ""
 
 msgid ""
 "The draft was not submitted for review. Please try again. If the problem "
@@ -370,10 +321,9 @@ msgstr ""
 "Если проблема останется, свяжитесь с технической поддержкой."
 
 msgid ""
-"The draft was not submitted for review. Record saved with validation errors:"
+"The draft was not submitted for review. Record saved with validation "
+"feedback in"
 msgstr ""
-"Черновик не был отправлен на согласование. Запись сохранена с ошибками "
-"валидации:"
 
 msgid ""
 "Draft deletion failed. Please try again. If the problem persists, contact "
@@ -480,6 +430,9 @@ msgstr ""
 msgid "YYYY-MM-DD"
 msgstr ""
 
+msgid "Embargo until"
+msgstr "Эмбарго до"
+
 msgid "The record has no files."
 msgstr "У этой записи нет файлов."
 
@@ -511,6 +464,19 @@ msgstr "Искать аффилиации..."
 
 msgid "Coming soon"
 msgstr ""
+
+msgid ""
+"A copyright statement describing the ownership of the uploaded resource."
+msgstr ""
+
+msgid "Copyright (C) {{currentYear}} The Authors."
+msgstr ""
+
+msgid "Copyright"
+msgstr ""
+
+msgid "Creators"
+msgstr "Создатели"
 
 msgid "Add creator"
 msgstr "Добавить создателя"
@@ -593,9 +559,6 @@ msgstr "Выбрать роль"
 msgid "Save"
 msgstr "Сохранить"
 
-msgid "Couldn't find your person? You can <2>create a new entry</2>."
-msgstr ""
-
 msgid "Add date"
 msgstr "Добавить дату"
 
@@ -610,8 +573,14 @@ msgstr "Дата"
 msgid "Type"
 msgstr "Тип"
 
+msgid "Description"
+msgstr "Описание"
+
 msgid "Remove field"
 msgstr "Убрать поле"
+
+msgid "Dates"
+msgstr "Даты"
 
 msgid "YYYY-MM-DD or YYYY-MM-DD/YYYY-MM-DD"
 msgstr ""
@@ -629,12 +598,6 @@ msgid "Select language"
 msgstr "Выберите язык"
 
 msgid "Could not upload files."
-msgstr ""
-
-msgid "Uploading the selected files would result in"
-msgstr ""
-
-msgid "but the limit is"
 msgstr ""
 
 msgid "The following files already exist"
@@ -668,7 +631,10 @@ msgstr "Загрузить файлы"
 msgid "Import files"
 msgstr ""
 
-msgid "Set the default preview"
+msgid "fileUploadQuotaExceeded"
+msgstr ""
+
+msgid "Choose which file to preview on the published record landing page"
 msgstr ""
 
 msgid "Filename"
@@ -686,6 +652,9 @@ msgstr ""
 msgid ""
 "This is the file fingerprint (MD5 checksum), which can be used to verify the"
 " file integrity."
+msgstr ""
+
+msgid "N/A"
 msgstr ""
 
 msgid "Pending"
@@ -727,14 +696,20 @@ msgstr "Схема"
 msgid "Do you already have a {{pidLabel}} for this upload?"
 msgstr ""
 
-msgid "Yes"
-msgstr "Да"
+msgid "Yes, I already have one"
+msgstr ""
 
-msgid "No"
-msgstr "Нет"
+msgid "No, I need one"
+msgstr ""
+
+msgid "No, I don't need one"
+msgstr ""
 
 msgid "Search for languages..."
 msgstr "Искать языки..."
+
+msgid "Languages"
+msgstr "Языки"
 
 msgid "Search for a language by name (e.g \"eng\", \"fr\" or \"Polish\")"
 msgstr "Искать язык по названию (например, \"eng\", \"fr\" или \"Polish\")"
@@ -744,6 +719,9 @@ msgstr ""
 
 msgid "Add custom"
 msgstr "Добавить свою"
+
+msgid "Licenses"
+msgstr "Лицензии"
 
 msgid "Read more"
 msgstr ""
@@ -758,6 +736,9 @@ msgid "Add {{mode}} license"
 msgstr ""
 
 msgid "Change {{mode}} license"
+msgstr ""
+
+msgid "Search for licenses"
 msgstr ""
 
 msgid "Recommended"
@@ -781,6 +762,9 @@ msgstr "Программное обеспечение"
 msgid "software"
 msgstr ""
 
+msgid "Title"
+msgstr "Название"
+
 msgid "License title"
 msgstr ""
 
@@ -796,6 +780,12 @@ msgstr ""
 msgid "Change license"
 msgstr ""
 
+msgid "Did not find your license? "
+msgstr ""
+
+msgid "Add a custom license."
+msgstr ""
+
 msgid ""
 "In case your upload was already published elsewhere, please use the date of "
 "the first publication. Format: YYYY-MM-DD, YYYY-MM, or YYYY. For intervals "
@@ -804,6 +794,9 @@ msgstr ""
 "В случае, если ваш загружаемый материал уже где-то публиковался, пожалуйста,"
 " используйте дату первой публикации. Формат: ГГГГ-ММ-ДД, ГГГГ-ММ или ГГГГ. "
 "Для указания интервалов используйте ДАТА/ДАТА, например, 1939/1945."
+
+msgid "Publication date"
+msgstr "Дата публикации"
 
 msgid ""
 "YYYY-MM-DD or YYYY-MM-DD/YYYY-MM-DD for intervals. MM and DD are optional."
@@ -814,11 +807,17 @@ msgid ""
 "of the role."
 msgstr ""
 
+msgid "Publisher"
+msgstr "Издатель"
+
 msgid "Add reference"
 msgstr "Добавить ссылку"
 
 msgid "Reference string"
 msgstr "Строка ссылки"
+
+msgid "References"
+msgstr "Ссылки"
 
 msgid ""
 "Specify identifiers of related works. Supported identifiers include DOI, "
@@ -837,8 +836,17 @@ msgstr "Добавить связанную работу"
 msgid "Relation"
 msgstr "Связь"
 
+msgid "Related works"
+msgstr "Связанные работы"
+
+msgid "Resource type"
+msgstr "Тип ресурса"
+
 msgid "Suggest from"
 msgstr ""
+
+msgid "Keywords and subjects"
+msgstr "Ключевые слова и темы"
 
 msgid "Search for a subject by name"
 msgstr "Искать предмет по названию"
@@ -848,6 +856,9 @@ msgstr "Добавить названия"
 
 msgid "Additional title"
 msgstr ""
+
+msgid "Version"
+msgstr "Версия"
 
 msgid ""
 "Mostly relevant for software and dataset uploads. A semantic version string "
