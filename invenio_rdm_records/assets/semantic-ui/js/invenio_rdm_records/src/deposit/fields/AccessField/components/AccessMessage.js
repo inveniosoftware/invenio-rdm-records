@@ -9,7 +9,6 @@ import { DateTime } from "luxon";
 import React from "react";
 import PropTypes from "prop-types";
 import { i18next } from "@translations/invenio_rdm_records/i18next";
-import { Trans } from "react-i18next";
 import { Icon, Message } from "semantic-ui-react";
 
 export const AccessMessage = ({ access, metadataOnly, accessCommunity }) => {
@@ -52,11 +51,14 @@ export const AccessMessage = ({ access, metadataOnly, accessCommunity }) => {
         <Icon name="lock" />
         <Message.Content>
           <Message.Header>{i18next.t("Embargoed (full record)")}</Message.Header>
-          <Trans i18nKey="access-message">
-            On <b>{fmtDate}</b> the record will automatically be made publicly
-            accessible. Until then, the record can <b>only</b> be accessed by{" "}
-            <b>users specified</b> in the permissions."
-          </Trans>
+          <>
+            {i18next.t("On")} <b>{fmtDate}</b>{" "}
+            {i18next.t(
+              "the record will automatically be made publicly accessible. Until then, the record can"
+            )}{" "}
+            <b>{i18next.t("only")}</b> {i18next.t("be accessed by")}{" "}
+            <b>{i18next.t("users specified")}</b> {i18next.t("in the permissions.")}
+          </>
         </Message.Content>
       </Message>
     );
@@ -68,10 +70,11 @@ export const AccessMessage = ({ access, metadataOnly, accessCommunity }) => {
         <Icon name="lock" />
         <Message.Content>
           <Message.Header>{i18next.t("Restricted")}</Message.Header>
-          <Trans>
-            The record can <b>only</b> be accessed by <b>users specified</b> in the
-            permissions.
-          </Trans>
+          <>
+            {i18next.t("The record can")} <b>{i18next.t("only")}</b>{" "}
+            {i18next.t("be accessed by")} <b>{i18next.t("users specified")}</b>{" "}
+            {i18next.t("in the permissions.")}
+          </>
         </Message.Content>
       </Message>
     );
@@ -83,10 +86,11 @@ export const AccessMessage = ({ access, metadataOnly, accessCommunity }) => {
         <Icon name="lock" />
         <Message.Content>
           <Message.Header>{i18next.t("Public with restricted files")}</Message.Header>
-          <Trans>
-            The record is publicly accessible. The files can <b>only</b> be accessed by{" "}
-            <b>users specified</b> in the permissions.
-          </Trans>
+          <>
+            {i18next.t("The record is publicly accessible. The files can")}{" "}
+            <b>{i18next.t("only")}</b> {i18next.t("be accessed by")}{" "}
+            <b>{i18next.t("users specified")}</b> {i18next.t("in the permissions.")}
+          </>
         </Message.Content>
       </Message>
     );
@@ -98,11 +102,14 @@ export const AccessMessage = ({ access, metadataOnly, accessCommunity }) => {
         <Icon name="lock" />
         <Message.Content>
           <Message.Header>{i18next.t("Embargoed (files-only)")}</Message.Header>
-          <Trans
-            defaults="The record is publicly accessible. On <bold>{{ date }}</bold> the files will automatically be made publicly accessible. Until then, the files can <bold>only</bold> be accessed by <bold>users specified</bold> in the permissions."
-            values={{ date: fmtDate }}
-            components={{ bold: <b /> }}
-          />
+          <>
+            {i18next.t("The record is publicly accessible. On")} <b>{fmtDate}</b>{" "}
+            {i18next.t(
+              "the files will automatically be made publicly accessible. Until then, the files can"
+            )}{" "}
+            <b>{i18next.t("only")}</b> {i18next.t("be accessed by")}{" "}
+            <b>{i18next.t("users specified")}</b> {i18next.t("in the permissions.")}
+          </>
         </Message.Content>
       </Message>
     );
