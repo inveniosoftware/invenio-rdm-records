@@ -11,31 +11,68 @@ import PropTypes from "prop-types";
 import { FieldLabel, RichInputField } from "react-invenio-forms";
 import { AdditionalDescriptionsField } from "./components";
 import { i18next } from "@translations/invenio_rdm_records/i18next";
+import Overridable from "react-overridable";
 
-export class DescriptionsField extends Component {
+export class DescriptionsFieldComponent extends Component {
   render() {
     const { fieldPath, label, labelIcon, options, editorConfig, recordUI } = this.props;
     return (
-      <>
-        <RichInputField
-          className="description-field rel-mb-1 rel-mt-2"
-          fieldPath={fieldPath}
-          editorConfig={editorConfig}
-          label={<FieldLabel htmlFor={fieldPath} icon={labelIcon} label={label} />}
-          optimized
-        />
-        <AdditionalDescriptionsField
-          recordUI={recordUI}
-          options={options}
-          editorConfig={editorConfig}
-          fieldPath="metadata.additional_descriptions"
-        />
-      </>
+      <Overridable
+        id="InvenioRdmRecords.DescriptionsField.container"
+        fieldPath={fieldPath}
+        editorConfig={editorConfig}
+        htmlFor={fieldPath}
+        icon={labelIcon}
+        label={label}
+        recordUI={recordUI}
+        options={options}
+      >
+        <>
+          <Overridable
+            id="InvenioRdmRecords.DescriptionsField.input"
+            fieldPath={fieldPath}
+            editorConfig={editorConfig}
+            htmlFor={fieldPath}
+            icon={labelIcon}
+            label={label}
+          >
+            <RichInputField
+              className="description-field rel-mb-1 rel-mt-2"
+              fieldPath={fieldPath}
+              editorConfig={editorConfig}
+              label={
+                <Overridable
+                  id="InvenioRdmRecords.DescriptionsField.input.label"
+                  htmlFor={fieldPath}
+                  icon={labelIcon}
+                  label={label}
+                >
+                  <FieldLabel htmlFor={fieldPath} icon={labelIcon} label={label} />
+                </Overridable>
+              }
+              optimized
+            />
+          </Overridable>
+          <Overridable
+            id="InvenioRdmRecords.DescriptionsField.additional"
+            recordUI={recordUI}
+            options={options}
+            editorConfig={editorConfig}
+          >
+            <AdditionalDescriptionsField
+              recordUI={recordUI}
+              options={options}
+              editorConfig={editorConfig}
+              fieldPath="metadata.additional_descriptions"
+            />
+          </Overridable>
+        </>
+      </Overridable>
     );
   }
 }
 
-DescriptionsField.propTypes = {
+DescriptionsFieldComponent.propTypes = {
   fieldPath: PropTypes.string.isRequired,
   label: PropTypes.string,
   labelIcon: PropTypes.string,
@@ -44,9 +81,14 @@ DescriptionsField.propTypes = {
   options: PropTypes.object.isRequired,
 };
 
-DescriptionsField.defaultProps = {
+DescriptionsFieldComponent.defaultProps = {
   label: i18next.t("Description"),
   labelIcon: "pencil",
   editorConfig: undefined,
   recordUI: undefined,
 };
+
+export const DescriptionsField = Overridable.component(
+  "DescriptionsField",
+  DescriptionsFieldComponent
+);
