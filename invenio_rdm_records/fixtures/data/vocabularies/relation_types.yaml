@@ -261,7 +261,7 @@
      en: Is obsoleted by
      sv: Ersätts av
      de: Wird ersetzt durch
-     cs: je nahrazen (čím)
+     cs: Je nahrazen (čím)
 - id: obsoletes
   props:
      datacite: Obsoletes
@@ -269,4 +269,4 @@
      en: Obsoletes
      sv: Ersätter
      de: Ersetzt
-     cs: nahrazuje (co)
+     cs: Nahrazuje (co)
