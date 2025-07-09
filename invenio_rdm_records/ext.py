@@ -19,10 +19,6 @@ from flask_principal import identity_loaded
 from invenio_records_resources.resources.files import FileResource
 
 from . import config
-from .collections.resources.config import CollectionsResourceConfig
-from .collections.resources.resource import CollectionsResource
-from .collections.services.config import CollectionServiceConfig
-from .collections.services.service import CollectionsService
 from .oaiserver.resources.config import OAIPMHServerResourceConfig
 from .oaiserver.resources.resources import OAIPMHServerResource
 from .oaiserver.services.config import OAIPMHServerServiceConfig
@@ -145,6 +141,12 @@ class InvenioRDMRecords(object):
                 "explicitly to define your max file size, or be aware that the default value used i.e. FILES_REST_DEFAULT_MAX_FILE_SIZE will be 10 * (10**9) (10 GB).",
                 DeprecationWarning,
             )
+        if app.config.get("APP_RDM_DEPOSIT_FORM_PUBLISH_MODAL_EXTRA"):
+            warn(
+                "The configuration value 'APP_RDM_DEPOSIT_FORM_PUBLISH_MODAL_EXTRA' is deprecated and will be removed in a future release. Use Overridables for ",
+                "adding extra content to the publish modal instead.",
+                DeprecationWarning,
+            )
 
         self.fix_datacite_configs(app)
 
@@ -162,7 +164,6 @@ class InvenioRDMRecords(object):
             record_communities = RDMRecordCommunitiesConfig.build(app)
             community_records = RDMCommunityRecordsConfig.build(app)
             record_requests = RDMRecordRequestsConfig.build(app)
-            collections = CollectionServiceConfig.build(app)
 
         return ServiceConfigs
 
@@ -206,10 +207,6 @@ class InvenioRDMRecords(object):
 
         self.oaipmh_server_service = OAIPMHServerService(
             config=service_configs.oaipmh_server,
-        )
-
-        self.collections_service = CollectionsService(
-            config=service_configs.collections
         )
 
     def init_resource(self, app):
@@ -278,12 +275,6 @@ class InvenioRDMRecords(object):
         self.community_records_resource = RDMCommunityRecordsResource(
             service=self.community_records_service,
             config=RDMCommunityRecordsResourceConfig.build(app),
-        )
-
-        # Collections
-        self.collections_resource = CollectionsResource(
-            service=self.collections_service,
-            config=CollectionsResourceConfig,
         )
 
         # OAI-PMH

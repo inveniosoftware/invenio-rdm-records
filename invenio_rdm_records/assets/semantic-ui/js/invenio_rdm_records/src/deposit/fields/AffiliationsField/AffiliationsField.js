@@ -1,5 +1,5 @@
 // This file is part of Invenio-RDM-Records
-// Copyright (C) 2020-2024 CERN.
+// Copyright (C) 2020-2025 CERN.
 // Copyright (C) 2020-2022 Northwestern University.
 // Copyright (C) 2021 Graz University of Technology.
 //
@@ -54,7 +54,7 @@ export class AffiliationsField extends Component {
                 );
               }}
               value={getIn(values, fieldPath, []).map(
-                (val) => val.name || val.text || val.id
+                ({ id, name, text }) => id ?? name ?? text
               )}
               ref={selectRef}
               // Disable UI-side filtering of search results

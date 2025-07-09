@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2021-2024 CERN.
+# Copyright (C) 2021-2025 CERN.
 # Copyright (C) 2021-2024 Caltech.
 # Copyright (C) 2021 Northwestern University.
 #
@@ -20,6 +20,7 @@ from invenio_rdm_records.resources.serializers import (
 @pytest.fixture(scope="function")
 def minimal_record(minimal_record, parent_record):
     """Minimal record metadata with added parent metadata."""
+    minimal_record["access"]["status"] = "open"
     minimal_record["parent"] = parent_record
     minimal_record["links"] = dict(self_html="https://self-link.com")
     return minimal_record
@@ -108,6 +109,7 @@ def test_datacite43_serializer(running_app, full_record_to_dict):
             "title": {"en": "No rightsUri license"},
         }
     )
+    full_record_to_dict["metadata"]["copyright"] = "2025 © Author(s)"
     # for HTML stripping test purposes
     expected_data = {
         "contributors": [
@@ -172,8 +174,7 @@ def test_datacite43_serializer(running_app, full_record_to_dict):
         "fundingReferences": [
             {
                 "awardNumber": "111023",
-                "awardTitle": "Launching of the research program on "
-                "meaning processing",
+                "awardTitle": "Launching of the research program on meaning processing",
                 "awardURI": "https://sandbox.zenodo.org/",
                 "funderName": "European Commission",
             }
@@ -224,6 +225,10 @@ def test_datacite43_serializer(running_app, full_record_to_dict):
                 "rightsUri": "https://creativecommons.org/licenses/by/4.0/legalcode",
             },
             {"rights": "No rightsUri license"},
+            {
+                "rights": "2025 © Author(s)",
+                "rightsUri": "http://rightsstatements.org/vocab/InC/1.0/",
+            },
         ],
         "schemaVersion": "http://datacite.org/schema/kernel-4",
         "sizes": ["11 pages"],
@@ -399,6 +404,21 @@ def test_datacite43_identifiers(running_app, minimal_record):
     assert identifier == "https://self-link.com"
     identifier = serialized_record["identifiers"][1]["identifier"]
     assert identifier == "10.1234/inveniordm.1234"
+
+
+def test_datacite43_access_right(running_app, minimal_record, set_app_config_fn_scoped):
+    """Test serialization of records with access right config."""
+    serializer = DataCite43JSONSerializer()
+
+    # Test with access rights dumping disabled (i.e. the default)
+    serialized_record = serializer.dump_obj(minimal_record)
+    assert "rightsList" not in serialized_record
+
+    # Test with access rights dumping enabled
+    set_app_config_fn_scoped({"RDM_DATACITE_DUMP_OPENAIRE_ACCESS_RIGHTS": True})
+    serialized_record = serializer.dump_obj(minimal_record)
+    rights_list = serialized_record["rightsList"]
+    assert {"rightsUri": "info:eu-repo/semantics/openAccess"} in rights_list
 
 
 def test_datacite43_serializer_with_unknown_id_schemes(

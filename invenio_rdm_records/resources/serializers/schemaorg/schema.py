@@ -2,7 +2,8 @@
 #
 # Copyright (C) 2023-2024 CERN.
 # Copyright (C) 2021 Northwestern University.
-# Copyright (C) 2023 Graz University of Technology.
+# Copyright (C) 2023-2025 Graz University of Technology.
+# Copyright (C) 2024 KTH Royal Institute of Technology.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
@@ -17,6 +18,7 @@ from commonmeta import dict_to_spdx, doi_as_url, parse_attributes, unwrap, wrap
 from edtf.parser.grammar import ParseException
 from flask_resources.serializers import BaseSerializerSchema
 from idutils import to_url
+from invenio_i18n import lazy_gettext as _
 from marshmallow import Schema, ValidationError, fields, missing
 from marshmallow_utils.fields import SanitizedHTML, SanitizedUnicode
 from pydash import py_
@@ -117,7 +119,9 @@ class PersonOrOrgSchema(Schema):
             id_ = affiliation.get("id")
             if not (name or id_):
                 raise ValidationError(
-                    "Affiliation failed to serialize: one of 'id' or 'name' must be provided."
+                    _(
+                        "Affiliation failed to serialize: one of 'id' or 'name' must be provided."
+                    )
                 )
 
             serialized_affiliation = {"@type": "Organization"}
@@ -199,6 +203,7 @@ class SchemaorgSchema(BaseSerializerSchema, CommonFieldsMixin):
     # Fields that are specific to certain resource types.
     measurementTechnique = fields.Method("get_measurement_techniques")
     distribution = fields.Method("get_distribution")
+    uploadDate = fields.Method("get_upload_date")
 
     def get_id(self, obj):
         """Get id. Use the DOI expressed as a URL."""
@@ -360,7 +365,9 @@ class SchemaorgSchema(BaseSerializerSchema, CommonFieldsMixin):
             if not (id_ or (title and number)):
                 # One of 'id' or '(title' and 'number') must be provided
                 raise ValidationError(
-                    "Funding serialization failed on award: one of 'id' or ('number' and 'title') are required."
+                    _(
+                        "Funding serialization failed on award: one of 'id' or ('number' and 'title') are required."
+                    )
                 )
 
             serialized_award = {}
@@ -425,7 +432,7 @@ class SchemaorgSchema(BaseSerializerSchema, CommonFieldsMixin):
         return ids or missing
 
     def get_url(self, obj):
-        """Get Zenodo URL of the record."""
+        """Get URL of the record."""
         self_url = py_.get(obj, "links.self_html")
         return self_url or missing
 
@@ -504,3 +511,17 @@ class SchemaorgSchema(BaseSerializerSchema, CommonFieldsMixin):
             lambda x: x.get("relation_type", {}).get("id") in relation_types,
             identifiers,
         )
+
+    # Fields specific to https://schema.org/VideoObject
+    # Useful for video crawlers per
+    # https://developers.google.com/search/docs/appearance/structured-data/video
+    def _is_video(self, obj):
+        return self.get_type(obj) == "https://schema.org/VideoObject"
+
+    def get_upload_date(self, obj):
+        """Get uploadDate."""
+        if not self._is_video(obj):
+            return missing
+
+        # Creation date is closest in meaning to when video was uploaded
+        return self.get_creation_date(obj)

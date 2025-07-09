@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # Copyright (C) 2023 Northwestern University.
+# Copyright (C) 2024-2025 CERN.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
@@ -8,9 +9,9 @@
 """Signposting schemas."""
 
 import idutils
-from marshmallow import Schema, fields, missing
+from invenio_base import invenio_url_for
+from marshmallow import Schema, fields, missing, post_dump
 
-from ...urls import download_url_for
 from ..utils import get_vocabulary_props
 
 
@@ -20,17 +21,12 @@ class LandingPageSchema(Schema):
     Serialization input (`obj`) is a whole record dict projection.
     """
 
-    anchor = fields.Method(serialize="serialize_anchor")
     author = fields.Method(serialize="serialize_author")
     cite_as = fields.Method(data_key="cite-as", serialize="serialize_cite_as")
     describedby = fields.Method(serialize="serialize_describedby")
     item = fields.Method(serialize="serialize_item")
     license = fields.Method(serialize="serialize_license")
     type = fields.Method(serialize="serialize_type")
-
-    def serialize_anchor(self, obj, **kwargs):
-        """Seralize to landing page URL."""
-        return obj["links"]["self_html"]
 
     def serialize_author(self, obj, **kwargs):
         """Serialize author(s).
@@ -75,6 +71,8 @@ class LandingPageSchema(Schema):
         result = [
             {"href": obj["links"]["self"], "type": mimetype}
             for mimetype in sorted(record_serializers)
+            # Remove the linkset serializer, so that the linkset does not link to itself.
+            if mimetype != "application/linkset+json"
         ]
 
         return result or missing
@@ -85,7 +83,11 @@ class LandingPageSchema(Schema):
 
         result = [
             {
-                "href": download_url_for(pid_value=obj["id"], filename=entry["key"]),
+                "href": invenio_url_for(
+                    "invenio_app_rdm_records.record_file_download",
+                    pid_value=obj["id"],
+                    filename=entry["key"],
+                ),
                 "type": entry["mimetype"],
             }
             for entry in file_entries.values()
@@ -142,6 +144,49 @@ class LandingPageSchema(Schema):
         return result
 
 
+class LandingPageLvl1Schema(LandingPageSchema):
+    """Schema for serialization of link context object for the level 1 landing page.
+
+    Serialization input (`obj`) is a whole record dict projection.
+    """
+
+    linkset = fields.Method(serialize="serialize_linkset")
+
+    def serialize_linkset(self, obj, **kwargs):
+        """Serialize the linkset URL."""
+        return [
+            {
+                "href": obj["links"]["self"],
+                "type": "application/linkset+json",
+            }
+        ]
+
+    @post_dump
+    def fallback_to_lvl2_linkset_only_if_collections_too_big(self, data, **kwargs):
+        """Fallback to level 2 linkset only if the size of some collections is too big for the level 1 landing page.
+
+        Generating an HTTP Link header which is too big could make nginx fail.
+        """
+        for key in ["author", "item", "license"]:
+            if key in data and len(data[key]) > 5:
+                data = {"linkset": data["linkset"]}
+                break
+        return data
+
+
+class LandingPageLvl2Schema(LandingPageSchema):
+    """Schema for serialization of link context object for the level 2 landing page.
+
+    Serialization input (`obj`) is a whole record dict projection.
+    """
+
+    anchor = fields.Method(serialize="serialize_anchor")
+
+    def serialize_anchor(self, obj, **kwargs):
+        """Serialize to landing page URL."""
+        return obj["links"]["self_html"]
+
+
 class ContentResourceSchema(Schema):
     """Schema for serialization of link context object for the content resource.
 
@@ -156,7 +201,11 @@ class ContentResourceSchema(Schema):
     def serialize_anchor(self, obj, **kwargs):
         """Serialize to download url."""
         pid_value = self.context["record_dict"]["id"]
-        return download_url_for(pid_value=pid_value, filename=obj["key"])
+        return invenio_url_for(
+            "invenio_app_rdm_records.record_file_download",
+            pid_value=pid_value,
+            filename=obj["key"],
+        )
 
     def serialize_collection(self, obj, **kwargs):
         """Serialize to record landing page url."""
@@ -203,7 +252,7 @@ class FAIRSignpostingProfileLvl2Schema(Schema):
 
     def serialize_linkset(self, obj, **kwargs):
         """Serialize linkset."""
-        result = [LandingPageSchema().dump(obj)]
+        result = [LandingPageLvl2Schema().dump(obj)]
 
         content_resource_schema = ContentResourceSchema(context={"record_dict": obj})
         result += [

@@ -35,5 +35,6 @@ export const FileUploader = connect(
   mapDispatchToProps
 )(FileUploaderComponent);
 
-export { FileUploaderArea } from "./FileUploaderArea";
+export { FileUploaderArea, FilesListTable } from "./FileUploaderArea";
 export { FileUploaderToolbar } from "./FileUploaderToolbar";
+export { getFilesList } from "./utils";

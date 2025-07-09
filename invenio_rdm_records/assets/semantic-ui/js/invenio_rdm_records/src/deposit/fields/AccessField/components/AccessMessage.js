@@ -1,5 +1,5 @@
 // This file is part of Invenio-RDM-Records
-// Copyright (C) 2020-2023 CERN.
+// Copyright (C) 2020-2025 CERN.
 // Copyright (C) 2020-2022 Northwestern University.
 //
 // Invenio-RDM-Records is free software; you can redistribute it and/or modify it
@@ -27,7 +27,9 @@ export const AccessMessage = ({ access, metadataOnly, accessCommunity }) => {
   const fullEmbargo = !recordPublic && embargoActive;
 
   const fmtDate = access.embargo?.until
-    ? DateTime.fromISO(access.embargo.until).toLocaleString(DateTime.DATE_FULL)
+    ? DateTime.fromISO(access.embargo.until)
+        .setLocale(i18next.language)
+        .toLocaleString(DateTime.DATE_FULL)
     : "???";
 
   if (fullyPublic) {

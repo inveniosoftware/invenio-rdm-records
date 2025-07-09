@@ -19,3 +19,4 @@ class RDMSearchRequestArgsSchema(SearchRequestArgsSchema):
     locale = fields.Str()
     status = fields.Str()
     include_deleted = fields.Bool()
+    shared_with_me = fields.Bool()

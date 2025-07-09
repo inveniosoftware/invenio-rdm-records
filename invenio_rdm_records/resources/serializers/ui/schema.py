@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2020 CERN.
+# Copyright (C) 2020-2025 CERN.
 # Copyright (C) 2020 Northwestern University.
-# Copyright (C) 2021-2023 Graz University of Technology.
+# Copyright (C) 2021-2025 Graz University of Technology.
 # Copyright (C) 2022-2023 TU Wien.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
@@ -49,8 +49,13 @@ FormatEDTF = partial(FormatEDTF_, locale=get_locale)
 FormatDate = partial(FormatDate_, locale=get_locale)
 
 
-def make_affiliation_index(attr, obj, dummy_ctx):
-    """Serializes creators/contributors for easier UI consumption."""
+def make_affiliation_index(attr, obj, *args):
+    """Serializes creators/contributors for easier UI consumption.
+
+    args takes 'object_key' and 'object_schema_cls'. it seems useless since it
+    is not used, but the tests would fail. it could be that this is because of
+    changes to fix RemovedInMarshmallow4Warning
+    """
     # Copy so we don't modify in place the existing dict.
     creators = deepcopy(obj.get("metadata", {}).get(attr))
     if not creators:
@@ -115,6 +120,18 @@ def mask_removed_by(obj):
     return return_value
 
 
+def get_coordinates(obj):
+    """Coordinates determined by geometry type."""
+    geometry_type = obj.get("type", None)
+
+    if geometry_type == "Point":
+        return obj.get("coordinates", [])
+    elif geometry_type == "Polygon":
+        return obj.get("coordinates", [[[]]])
+    else:
+        return None
+
+
 class RelatedIdentifiersSchema(Schema):
     """Localization of language titles."""
 
@@ -168,7 +185,7 @@ class GeometrySchema(Schema):
     """Schema for geometry in the UI."""
 
     type = fields.Str()
-    coordinates = fields.List(fields.Float())
+    coordinates = fields.Function(get_coordinates)
 
 
 class IdentifierSchema(Schema):
@@ -205,7 +222,7 @@ class MeetingSchema(Schema):
     url = SanitizedUnicode()
 
 
-def compute_publishing_information(obj, dummyctx):
+def compute_publishing_information(obj):
     """Computes 'publishing information' string from custom fields."""
 
     def _format_journal(journal, publication_date):
@@ -256,7 +273,9 @@ def compute_publishing_information(obj, dummyctx):
         imprint_place = imprint.get("place")
         imprint_isbn = imprint.get("isbn")
         imprint_pages = imprint.get("pages")
-        title_page = f"{imprint_title}" if imprint_title else ""
+        edition = imprint.get("edition")
+        ed_form = f" {edition} ed." if edition else ""
+        title_page = f"{imprint_title}{ed_form}" if imprint_title else None
         if imprint_pages:
             if title_page:
                 title_page += f", {imprint_pages}."
@@ -272,6 +291,24 @@ def compute_publishing_information(obj, dummyctx):
 
         return formatted
 
+    def _format_thesis(thesis):
+        """Formats a thesis entry into a string based on its attributes."""
+        if not isinstance(thesis, dict):
+            return thesis
+
+        department = thesis.get("department")
+        department = f" ({department})" if department else ""
+        date_submitted = thesis.get("date_submitted")
+        date_defended = thesis.get("date_defended")
+        submitted = f"{_('Submitted: ')}{date_submitted}" if date_submitted else ""
+        defended = f"{_('Defended: ')}{date_defended}" if date_defended else ""
+        return (
+            f"{thesis.get('university')} {department}, {thesis.get('type')}, "
+            f"{submitted}, {defended}"
+        )
+
+        return ", ".join(filter(None, formatted))
+
     attr = "custom_fields"
     field = obj.get(attr, {})
     publisher = obj.get("metadata", {}).get("publisher")
@@ -279,7 +316,8 @@ def compute_publishing_information(obj, dummyctx):
     # Retrieve publishing related custom fields
     journal = field.get("journal:journal")
     imprint = field.get("imprint:imprint")
-    thesis = field.get("thesis:university")
+    # "thesis:university" is deprecated and kept for compatibility, will be removed later.
+    thesis = field.get("thesis:thesis") or field.get("thesis:university")
 
     publication_date = obj.get("metadata", {}).get("publication_date", None)
     result = {}
@@ -293,7 +331,8 @@ def compute_publishing_information(obj, dummyctx):
         result.update({"imprint": imprint_string})
 
     if thesis:
-        result.update({"thesis": thesis})
+        thesis_string = _format_thesis(thesis)
+        result.update({"thesis": thesis_string})
 
     if len(result.keys()) == 0:
         return missing

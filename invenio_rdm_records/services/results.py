@@ -12,6 +12,10 @@
 from invenio_communities.communities.entity_resolvers import pick_fields
 from invenio_communities.communities.schema import CommunityGhostSchema
 from invenio_communities.proxies import current_communities
+from invenio_records_resources.services.base.results import (
+    ServiceItemResult,
+    ServiceListResult,
+)
 from invenio_records_resources.services.records.results import (
     ExpandableField,
     RecordList,
@@ -97,6 +101,7 @@ class RDMRecordList(RecordList):
                 context=dict(
                     identity=self._identity,
                     record=record,
+                    meta=hit.meta,
                 ),
             )
             if self._links_item_tpl:
@@ -105,3 +110,32 @@ class RDMRecordList(RecordList):
                 )
 
             yield projection
+
+
+class RDMRecordRevisionsList(ServiceListResult):
+    """Record revisions list.
+
+    We need a custom result class to handle the record revisions list as they are stored only in DB.
+    """
+
+    def __init__(self, identity, revisions):
+        """Instantiate a Collection tree list item."""
+        self._identity = identity
+        self._revisions = revisions
+
+    def to_dict(self):
+        """Serialize the collection tree list to a dictionary."""
+        res = map(
+            lambda revision: {
+                "updated": revision.updated,
+                "created": revision.created,
+                "revision_id": revision.transaction_id,
+                "json": revision.json,
+            },
+            self._revisions,
+        )
+        return list(res)
+
+    def __iter__(self):
+        """Iterate over the collection revisions."""
+        return iter(self._revisions)

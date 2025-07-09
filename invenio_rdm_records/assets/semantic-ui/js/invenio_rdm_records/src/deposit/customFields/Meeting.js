@@ -6,7 +6,6 @@
 // under the terms of the MIT License; see LICENSE file for more details.
 
 import React, { Component } from "react";
-
 import { FieldLabel, Input } from "react-invenio-forms";
 import { Divider, Grid } from "semantic-ui-react";
 
@@ -75,16 +74,6 @@ export class Meeting extends Component {
               <label className="helptext mb-0">{dates.description}</label>
             )}
           </Grid.Column>
-          <Grid.Column width="12">
-            <Input
-              fieldPath={`${fieldPath}.url`}
-              label={url.label}
-              placeholder={url.placeholder}
-            />
-            {url.description && (
-              <label className="helptext mb-0">{url.description}</label>
-            )}
-          </Grid.Column>
           <Grid.Column width="6">
             <Input
               fieldPath={`${fieldPath}.session`}
@@ -105,6 +94,18 @@ export class Meeting extends Component {
               <label className="helptext mb-0">{sessionPart.description}</label>
             )}
           </Grid.Column>
+          {url && (
+            <Grid.Column width="12">
+              <Input
+                fieldPath={`${fieldPath}.url`}
+                label={url.label}
+                placeholder={url.placeholder}
+              />
+              {url.description && (
+                <label className="helptext mb-0">{url.description}</label>
+              )}
+            </Grid.Column>
+          )}
         </Grid>
       </>
     );
@@ -117,11 +118,11 @@ Meeting.propTypes = {
   acronym: PropTypes.object.isRequired,
   session_part: PropTypes.object.isRequired,
   session: PropTypes.object.isRequired,
-  url: PropTypes.object.isRequired,
   dates: PropTypes.object.isRequired,
   place: PropTypes.object.isRequired,
   icon: PropTypes.string,
   label: PropTypes.string,
+  url: PropTypes.object.isRequired,
 };
 
 Meeting.defaultProps = {

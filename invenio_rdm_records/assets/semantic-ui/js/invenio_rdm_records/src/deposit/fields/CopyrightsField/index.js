@@ -1,0 +1,1 @@
+export { CopyrightsField } from "./CopyrightsField";

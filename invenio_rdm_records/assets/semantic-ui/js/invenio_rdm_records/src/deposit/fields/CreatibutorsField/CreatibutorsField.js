@@ -1,5 +1,5 @@
 // This file is part of Invenio-RDM-Records
-// Copyright (C) 2020-2024 CERN.
+// Copyright (C) 2020-2025 CERN.
 // Copyright (C) 2020-2022 Northwestern University.
 // Copyright (C) 2021 Graz University of Technology.
 //
@@ -9,13 +9,11 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
 import { getIn, FieldArray } from "formik";
-import { Button, Form, Label, List, Icon } from "semantic-ui-react";
+import { Button, Form, List, Icon } from "semantic-ui-react";
 import _get from "lodash/get";
-import _map from "lodash/map";
-import { FieldLabel } from "react-invenio-forms";
+import { FeedbackLabel, FieldLabel } from "react-invenio-forms";
 import { HTML5Backend } from "react-dnd-html5-backend";
 import { DndProvider } from "react-dnd";
-
 import { CreatibutorsModal } from "./CreatibutorsModal";
 import { CreatibutorsFieldItem } from "./CreatibutorsFieldItem";
 import { CREATIBUTOR_TYPE } from "./type";
@@ -63,6 +61,9 @@ class CreatibutorsFieldForm extends Component {
       modal,
       autocompleteNames,
       addButtonLabel,
+      serializeSuggestions,
+      serializeCreatibutor,
+      deserializeCreatibutor,
     } = this.props;
 
     const creatibutorsList = getIn(values, fieldPath, []);
@@ -73,25 +74,43 @@ class CreatibutorsFieldForm extends Component {
     const creatibutorsError =
       error || (creatibutorsList === formikInitialValues && initialError);
 
+    let className = "";
+    if (creatibutorsError) {
+      className =
+        typeof creatibutorsError !== "string" ? creatibutorsError.severity : "error";
+    }
+
+    // Check if there is a general error (since there can also be errors for specific creatibutors).
+    let generalCreatibutorsError;
+    if (typeof creatibutorsError === "string") {
+      // If there is a string at the top level, it means that this is a general error.
+      generalCreatibutorsError = creatibutorsError;
+    } else if (typeof creatibutorsError === "object" && creatibutorsError !== null) {
+      // If there is an object at the top level, try to extract the new error format.
+      generalCreatibutorsError = {
+        message: creatibutorsError?.message,
+        severity: creatibutorsError?.severity,
+        description: creatibutorsError?.description,
+      };
+    }
+
     return (
       <DndProvider backend={HTML5Backend}>
-        <Form.Field
-          required={schema === "creators"}
-          className={creatibutorsError ? "error" : ""}
-        >
+        <Form.Field required={schema === "creators"} className={className}>
           <FieldLabel htmlFor={fieldPath} icon={labelIcon} label={label} />
           <List>
             {creatibutorsList.map((value, index) => {
               const key = `${fieldPath}.${index}`;
-              const identifiersError =
-                creatibutorsError &&
-                creatibutorsError[index]?.person_or_org?.identifiers;
               const displayName = creatibutorNameDisplay(value);
 
               return (
                 <CreatibutorsFieldItem
                   key={key}
-                  identifiersError={identifiersError}
+                  creatibutorError={
+                    creatibutorsError &&
+                    typeof creatibutorsError !== "string" &&
+                    creatibutorsError[index]
+                  }
                   {...{
                     displayName,
                     index,
@@ -105,6 +124,9 @@ class CreatibutorsFieldForm extends Component {
                     addLabel: modal.addLabel,
                     editLabel: modal.editLabel,
                     autocompleteNames: autocompleteNames,
+                    serializeSuggestions: serializeSuggestions,
+                    serializeCreatibutor: serializeCreatibutor,
+                    deserializeCreatibutor: deserializeCreatibutor,
                   }}
                 />
               );
@@ -119,17 +141,13 @@ class CreatibutorsFieldForm extends Component {
             schema={schema}
             autocompleteNames={autocompleteNames}
             trigger={
-              <Button type="button" icon labelPosition="left">
+              <Button type="button" icon labelPosition="left" className={className}>
                 <Icon name="add" />
                 {addButtonLabel}
               </Button>
             }
           />
-          {creatibutorsError && typeof creatibutorsError == "string" && (
-            <Label pointing="left" prompt>
-              {creatibutorsError}
-            </Label>
-          )}
+          {generalCreatibutorsError && <FeedbackLabel fieldPath={fieldPath} />}
         </Form.Field>
       </DndProvider>
     );
@@ -169,6 +187,9 @@ CreatibutorsFieldForm.propTypes = {
   move: PropTypes.func.isRequired,
   push: PropTypes.func.isRequired,
   name: PropTypes.string.isRequired,
+  serializeSuggestions: PropTypes.func,
+  serializeCreatibutor: PropTypes.func,
+  deserializeCreatibutor: PropTypes.func,
 };
 
 CreatibutorsFieldForm.defaultProps = {
@@ -180,6 +201,9 @@ CreatibutorsFieldForm.defaultProps = {
     editLabel: i18next.t("Edit creator"),
   },
   addButtonLabel: i18next.t("Add creator"),
+  serializeSuggestions: undefined,
+  serializeCreatibutor: undefined,
+  deserializeCreatibutor: undefined,
 };
 
 CreatibutorsField.propTypes = {
@@ -194,6 +218,9 @@ CreatibutorsField.propTypes = {
   label: PropTypes.string,
   labelIcon: PropTypes.string,
   roleOptions: PropTypes.array,
+  serializeSuggestions: PropTypes.func,
+  serializeCreatibutor: PropTypes.func,
+  deserializeCreatibutor: PropTypes.func,
 };
 
 CreatibutorsField.defaultProps = {
@@ -206,4 +233,7 @@ CreatibutorsField.defaultProps = {
     editLabel: i18next.t("Edit creator"),
   },
   addButtonLabel: i18next.t("Add creator"),
+  serializeSuggestions: undefined,
+  serializeCreatibutor: undefined,
+  deserializeCreatibutor: undefined,
 };

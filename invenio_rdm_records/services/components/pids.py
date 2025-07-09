@@ -21,69 +21,83 @@ from invenio_records_resources.services.uow import TaskOp
 from ..errors import ValidationErrorWithMessageAsList
 from ..pids.tasks import register_or_update_pid
 
+OPTIONAL_DOI_TRANSITIONS = {
+    "datacite": {
+        "allowed_providers": ["datacite"],
+        "message": _(
+            "A previous version used a DOI registered from {sitename}. This version must also use a DOI from {sitename}."
+        ),
+    },
+    "external": {
+        "allowed_providers": [
+            "external",
+            "not_needed",
+        ],
+        "message": _(
+            "A previous version was published with a DOI from an external provider or without one. You cannot use a DOI registered from {sitename} for this version."
+        ),
+    },
+    "not_needed": {
+        "allowed_providers": [
+            "external",
+            "not_needed",
+        ],
+        "message": _(
+            "A previous version was published with a DOI from an external provider or without one. You cannot use a DOI registered from {sitename} for this version."
+        ),
+    },
+}
 
-class PIDsComponent(ServiceComponent):
-    """Service component for PIDs."""
 
-    ALLOWED_DOI_PROVIDERS_TRANSITIONS = {
-        "datacite": {
-            "allowed_providers": ["datacite"],
-            "message": _(
-                "A previous version used a DOI registered from {sitename}. This version must also use a DOI from {sitename}."
-            ),
-        },
-        "external": {
-            "allowed_providers": ["external", "not_needed"],
-            "message": _(
-                "A previous version was published with a DOI from an external provider or without one. You cannot use a DOI registered from {sitename} for this version."
-            ),
-        },
-        "not_needed": {
-            "allowed_providers": ["external", "not_needed"],
-            "message": _(
-                "A previous version was published with a DOI from an external provider or without one. You cannot use a DOI registered from {sitename} for this version."
-            ),
-        },
-    }
+def validate_optional_doi(
+    draft, previous_published_record, errors=None, transitions_config=None
+):
+    """Validate optional DOI.
 
-    def _validate_doi_transition(
-        self, new_provider, previous_published_provider, errors=None
-    ):
-        """If DOI is not required then we validate allowed DOI providers.
+    :param draft: The draft record.
+    :param previous_published_record: The previous published record.
+    :param errors: List of draft validation errors to append to when saving a draft. Raise to emit errors on publish instead.
+    :raises ValidationErrorWithMessageAsList: If the DOI transition is not allowed and there is no errors object passed.
+    :return: The DOI transitions in the format:
+        {
+            "allowed_providers": [<list of allowed providers>],
+            "message": <message to be shown in the UI for disallowed providers>
+        }
+    """
+    sitename = current_app.config.get("THEME_SITENAME", "this repository")
+    if transitions_config is None:
+        transitions_config = OPTIONAL_DOI_TRANSITIONS
 
-        Each new version that is published must follow the ALLOWED_DOI_PROVIDERS_TRANSITIONS.
-        """
-        sitename = current_app.config.get("THEME_SITENAME", "this repository")
-        sitename = current_app.config.get("THEME_SITENAME", "this repository")
+    doi_transitions = {}
+    if previous_published_record:
+        record_pids = previous_published_record.get("pids", {})
+        record_provider = record_pids.get("doi", {}).get("provider", "not_needed")
+        doi_transitions = transitions_config.get(record_provider, {})
 
-        valid_transitions = self.ALLOWED_DOI_PROVIDERS_TRANSITIONS.get(
-            previous_published_provider, {}
-        )
-        if new_provider not in valid_transitions.get("allowed_providers", []):
+    if doi_transitions:
+        doi_pid = [pid for pid in draft.pids.values() if "doi" in draft.pids]
+        new_provider = "not_needed" if not doi_pid else doi_pid[0]["provider"]
+        if new_provider not in doi_transitions["allowed_providers"]:
             error_message = {
                 "field": "pids.doi",
-                "messages": [
-                    valid_transitions.get("message").format(sitename=sitename)
-                ],
+                "messages": [doi_transitions.get("message").format(sitename=sitename)],
             }
-
             if errors is not None:
                 errors.append(error_message)
             else:
                 raise ValidationErrorWithMessageAsList(message=[error_message])
+    return doi_transitions
 
-    def _validate_optional_doi(self, record, previous_published, errors=None):
-        """Reusable method to validate optional DOI."""
-        if previous_published:
-            previous_published_pids = previous_published.get("pids", {})
-            doi_pid = [pid for pid in record.pids.values() if "doi" in record.pids]
-            previous_published_provider = previous_published_pids.get("doi", {}).get(
-                "provider", "not_needed"
-            )
-            new_provider = "not_needed" if not doi_pid else doi_pid[0]["provider"]
-            self._validate_doi_transition(
-                new_provider, previous_published_provider, errors
-            )
+
+class PIDsComponent(ServiceComponent):
+    """Service component for PIDs."""
+
+    def _validate_optional_doi(self, *args, **kwargs):
+        """Validate optional DOI."""
+        return current_app.config["RDM_OPTIONAL_DOI_VALIDATOR"](
+            *args,
+            **kwargs,
+        )
 
     def create(self, identity, data=None, record=None, errors=None):
         """This method is called on draft creation.
@@ -110,10 +124,12 @@ class PIDsComponent(ServiceComponent):
         doi_required = "doi" in required_schemes
         can_manage_dois = self.service.check_permission(identity, "pid_manage")
         if not doi_required and not can_manage_dois:
-            previous_published = self.service.record_cls.get_latest_published_by_parent(
-                record.parent
+            previous_published_record = (
+                self.service.record_cls.get_latest_published_by_parent(record.parent)
             )
-            self._validate_optional_doi(record, previous_published, errors)
+            self._validate_optional_doi(
+                record, previous_published_record, errors=errors
+            )
 
         self.service.pids.pid_manager.validate(pids_data, record, errors)
         record.pids = pids_data
@@ -154,15 +170,10 @@ class PIDsComponent(ServiceComponent):
         doi_required = "doi" in required_schemes
         can_manage_dois = self.service.check_permission(identity, "pid_manage")
         if not doi_required and not can_manage_dois:
-            # if a doi was ever minted for the parent record then we always require one
-            # for any version of the record that will be published
-            if draft.parent.get("pids", {}).get("doi"):
-                required_schemes.add("doi")
-
-            previous_published = (
+            previous_published_record = (
                 self.service.record_cls.get_previous_published_by_parent(record.parent)
             )
-            self._validate_optional_doi(draft, previous_published)
+            self._validate_optional_doi(draft, previous_published_record)
 
         self.service.pids.pid_manager.validate(draft_pids, draft, raise_errors=True)
 
@@ -257,12 +268,12 @@ class ParentPIDsComponent(ServiceComponent):
 
         # Check if a doi was added in the draft and create a parent DOI independently if
         # doi is required.
-        # Note: we don't have to check explicitely to the parent DOI creation only for
-        # datacite provider because we pass a `condition_func` below that it omits the
-        # minting if the pid selected is external
         if draft.get("pids", {}).get("doi"):
             required_schemes.add("doi")
 
+        # Note: we don't have explicitly to check for minting a parent DOI only for the
+        # managed provider because we pass a `condition_func` below that it omits the
+        # minting if the pid selected is external
         conditional_schemes = self.service.config.parent_pids_conditional
         for scheme in set(required_schemes):
             condition_func = conditional_schemes.get(scheme)

@@ -166,12 +166,14 @@ def test_simple_flow(draft, running_app, community, service, requests_service):
     assert draft["status"] == DraftStatus.review_to_draft_statuses["created"]
 
     # ### Submit draft for review
-    req = service.review.submit(running_app.superuser_identity, draft.id).to_dict()
+    req = service.review.submit(
+        system_identity, draft.id, require_review=True
+    ).to_dict()
     assert req["status"] == "submitted"
     assert req["title"] == draft["metadata"]["title"]
 
     # check draft status
-    draft = service.read_draft(running_app.superuser_identity, draft.id)
+    draft = service.read_draft(system_identity, draft.id)
     assert (
         draft.to_dict()["status"] == DraftStatus.review_to_draft_statuses["submitted"]
     )
@@ -182,13 +184,13 @@ def test_simple_flow(draft, running_app, community, service, requests_service):
 
     # ### Accept request
     req = requests_service.execute_action(
-        running_app.superuser_identity, req["id"], "accept", {}
+        system_identity, req["id"], "accept", {}
     ).to_dict()
     assert req["status"] == "accepted"
     assert req["is_open"] is False
 
     # ### Read the record
-    record = service.read(running_app.superuser_identity, draft.id).to_dict()
+    record = service.read(system_identity, draft.id).to_dict()
     assert "review" not in record["parent"]  # Review was desassociated
     assert record["is_published"] is True
     assert record["parent"]["communities"]["ids"] == [community.data["id"]]
@@ -197,10 +199,10 @@ def test_simple_flow(draft, running_app, community, service, requests_service):
 
     # ### Read draft (which should have been removed)
     with pytest.raises(PIDDoesNotExistError):
-        service.read_draft(running_app.superuser_identity, draft.id)
+        service.read_draft(system_identity, draft.id)
 
     # ### Create a new version (still part of community)
-    draft = service.new_version(running_app.superuser_identity, draft.id).to_dict()
+    draft = service.new_version(system_identity, draft.id).to_dict()
     assert "review" not in draft["parent"]
     assert draft["parent"]["communities"]["ids"] == [community.data["id"]]
     assert draft["parent"]["communities"]["default"] == community.data["id"]
@@ -387,7 +389,7 @@ def test_create_with_invalid_community(minimal_record, running_app, service):
 def test_create_review_after_draft(running_app, community, service, minimal_record):
     """Test creation of review after draft was created."""
     # Create draft
-    draft = service.create(running_app.superuser_identity, minimal_record)
+    draft = service.create(system_identity, minimal_record)
     assert draft.to_dict()["status"] == "draft"
 
     # Then create review (you use update, not create for this).
@@ -396,17 +398,18 @@ def test_create_review_after_draft(running_app, community, service, minimal_reco
         "receiver": {"community": community.data["id"]},
     }
     req = service.review.update(
-        running_app.superuser_identity,
+        system_identity,
         draft.id,
         data,
         revision_id=draft.data["revision_id"],
     ).to_dict()
     assert req["status"] == "created"
     assert req["topic"] == {"record": draft.id}
+    assert req["created_by"] == {"user": str(system_identity.id)}
     assert req["receiver"] == {"community": community.data["id"]}
 
     # check draft status
-    draft = service.read_draft(running_app.superuser_identity, draft.id).to_dict()
+    draft = service.read_draft(system_identity, draft.id).to_dict()
     assert draft["status"] == DraftStatus.review_to_draft_statuses[req["status"]]
 
 
@@ -866,3 +869,335 @@ def test_review_expire_notification(
 # - Test: submit to restricted community not allowed by user
 #         (likely requires members structure in communities?)
 # - Test: That another user cannot e.g. read reviews service.reviews.read
+
+
+def test_share_draft_gives_access_to_review_request(
+    running_app,
+    draft_for_open_review_user,
+    service,
+    requests_service,
+    verified_user,
+    uploader,
+    test_user,
+):
+    """Test if sharing a draft gives access to the review request."""
+    draft = draft_for_open_review_user
+    request_item = service.review.submit(uploader.identity, draft.id)
+    request = request_item._request
+
+    # the draft is the request's topic
+    draft = request.topic.resolve()
+    assert isinstance(draft, RDMDraft)
+
+    # create view grant for the verified user
+    access_service = service.access
+    user_id = str(verified_user.identity.id)
+    grants_payload = {
+        "grants": [
+            {
+                "subject": {"type": "user", "id": user_id},
+                "permission": "view",
+                "origin": "origin",
+            },
+        ]
+    }
+
+    access_service.bulk_create_grants(
+        running_app.superuser_identity, draft["id"], grants_payload
+    )
+
+    # View permission should not give access to the submission request
+    with pytest.raises(PermissionDeniedError):
+        requests_service.read(verified_user.identity, draft.parent.review.id)
+
+    # Preview permission should give access to the submission request
+    payload = {"permission": "preview"}
+    access_service.update_grant_by_subject(
+        running_app.superuser_identity,
+        id_=draft["id"],
+        subject_id=user_id,
+        subject_type="user",
+        data=payload,
+    )
+    review = requests_service.read(
+        verified_user.identity, draft.parent.review.id
+    ).to_dict()
+    assert review["id"] == draft.parent.review.id
+
+    # Edit permission should give access to the submission request
+    payload = {"permission": "edit"}
+    access_service.update_grant_by_subject(
+        running_app.superuser_identity,
+        id_=draft["id"],
+        subject_id=user_id,
+        subject_type="user",
+        data=payload,
+    )
+    review = requests_service.read(
+        verified_user.identity, draft.parent.review.id
+    ).to_dict()
+    assert review["id"] == draft.parent.review.id
+
+    # Manage permission should give access to the submission request
+    payload = {"permission": "manage"}
+    access_service.update_grant_by_subject(
+        running_app.superuser_identity,
+        id_=draft["id"],
+        subject_id=user_id,
+        subject_type="user",
+        data=payload,
+    )
+    review = requests_service.read(
+        verified_user.identity, draft.parent.review.id
+    ).to_dict()
+    assert review["id"] == draft.parent.review.id
+
+
+def test_share_draft_shows_up_in_shared_user_uploads(
+    running_app,
+    draft_for_open_review_user,
+    service,
+    requests_service,
+    verified_user,
+    uploader,
+    test_user,
+):
+    """Test if sharing a draft shows up in the shared user uploads."""
+
+    draft = draft_for_open_review_user
+    request_item = service.review.submit(uploader.identity, draft.id)
+    request = request_item._request
+
+    # the draft is the request's topic
+    draft = request.topic.resolve()
+    assert isinstance(draft, RDMDraft)
+
+    # create view grant for the verified user
+    access_service = service.access
+    user_id = str(verified_user.identity.id)
+    grants_payload = {
+        "grants": [
+            {
+                "subject": {"type": "user", "id": user_id},
+                "permission": "view",
+                "origin": "origin",
+            },
+        ]
+    }
+
+    access_service.bulk_create_grants(
+        running_app.superuser_identity, draft["id"], grants_payload
+    )
+    draft = service.read_draft(uploader.identity, draft["id"])
+    service.indexer.index(draft._record)
+    service.indexer.process_bulk_queue()
+    service.draft_cls.index.refresh()
+
+    results = service.search_drafts(
+        verified_user.identity, params={"shared_with_me": True}
+    )
+    data = list(results.hits)
+    assert len(data) == 0
+
+    # create preview grant for the verified user
+    payload = {"permission": "preview"}
+    access_service.update_grant_by_subject(
+        running_app.superuser_identity,
+        id_=draft["id"],
+        subject_id=user_id,
+        subject_type="user",
+        data=payload,
+    )
+    draft = service.read_draft(uploader.identity, draft["id"])
+    service.indexer.index(draft._record)
+    service.indexer.process_bulk_queue()
+    service.draft_cls.index.refresh()
+
+    results = service.search_drafts(
+        verified_user.identity, params={"shared_with_me": True}
+    )
+    data = list(results.hits)
+    assert len(data) == 1
+
+    results = service.search_drafts(
+        verified_user.identity, params={"shared_with_me": False}
+    )
+    data = list(results.hits)
+    assert len(data) == 0
+
+    # create edit grant for the verified user
+    payload = {"permission": "edit"}
+    access_service.update_grant_by_subject(
+        running_app.superuser_identity,
+        id_=draft["id"],
+        subject_id=user_id,
+        subject_type="user",
+        data=payload,
+    )
+    draft = service.read_draft(uploader.identity, draft["id"])
+    service.indexer.index(draft._record)
+    service.indexer.process_bulk_queue()
+    service.draft_cls.index.refresh()
+
+    results = service.search_drafts(
+        verified_user.identity, params={"shared_with_me": True}
+    )
+    data = list(results.hits)
+    assert len(data) == 1
+
+    results = service.search_drafts(
+        verified_user.identity, params={"shared_with_me": False}
+    )
+    data = list(results.hits)
+    assert len(data) == 0
+
+    # create manage grant for the verified user
+    payload = {"permission": "manage"}
+    access_service.update_grant_by_subject(
+        running_app.superuser_identity,
+        id_=draft["id"],
+        subject_id=user_id,
+        subject_type="user",
+        data=payload,
+    )
+    draft = service.read_draft(uploader.identity, draft["id"])
+    service.indexer.index(draft._record)
+    service.indexer.process_bulk_queue()
+    service.draft_cls.index.refresh()
+
+    results = service.search_drafts(
+        verified_user.identity, params={"shared_with_me": True}
+    )
+    data = list(results.hits)
+    assert len(data) == 1
+
+    results = service.search_drafts(
+        verified_user.identity, params={"shared_with_me": False}
+    )
+    data = list(results.hits)
+    assert len(data) == 0
+
+
+def test_share_draft_shows_up_in_shared_user_requests(
+    running_app,
+    draft_for_open_review_user,
+    service,
+    requests_service,
+    verified_user,
+    uploader,
+    test_user,
+):
+    """Test if sharing a draft shows up in the shared user requests."""
+
+    draft = draft_for_open_review_user
+    request_item = service.review.submit(uploader.identity, draft.id)
+    request = request_item._request
+
+    # the draft is the request's topic
+    draft = request.topic.resolve()
+    assert isinstance(draft, RDMDraft)
+
+    # create view grant for the verified user
+    access_service = service.access
+    user_id = str(verified_user.identity.id)
+    grants_payload = {
+        "grants": [
+            {
+                "subject": {"type": "user", "id": user_id},
+                "permission": "view",
+                "origin": "origin",
+            },
+        ]
+    }
+
+    access_service.bulk_create_grants(
+        running_app.superuser_identity, draft["id"], grants_payload
+    )
+    request = requests_service.read(uploader.identity, request.id)
+    service.indexer.index(request._record)
+    service.indexer.process_bulk_queue()
+    requests_service.record_cls.index.refresh()
+
+    results = requests_service.search(
+        verified_user.identity, params={"shared_with_me": True}
+    )
+    data = list(results.hits)
+    assert len(data) == 0
+
+    # create preview grant for the verified user
+    payload = {"permission": "preview"}
+    access_service.update_grant_by_subject(
+        running_app.superuser_identity,
+        id_=draft["id"],
+        subject_id=user_id,
+        subject_type="user",
+        data=payload,
+    )
+    request = requests_service.read(uploader.identity, request.id)
+    service.indexer.index(request._record)
+    service.indexer.process_bulk_queue()
+    requests_service.record_cls.index.refresh()
+
+    results = requests_service.search_user_requests(
+        verified_user.identity, params={"shared_with_me": True}
+    )
+    data = list(results.hits)
+    assert len(data) == 1
+
+    results = requests_service.search_user_requests(
+        verified_user.identity, params={"shared_with_me": False}
+    )
+    data = list(results.hits)
+    assert len(data) == 0
+
+    # create edit grant for the verified user
+    payload = {"permission": "edit"}
+    access_service.update_grant_by_subject(
+        running_app.superuser_identity,
+        id_=draft["id"],
+        subject_id=user_id,
+        subject_type="user",
+        data=payload,
+    )
+    request = requests_service.read(uploader.identity, request.id)
+    service.indexer.index(request._record)
+    service.indexer.process_bulk_queue()
+    requests_service.record_cls.index.refresh()
+
+    results = requests_service.search(
+        verified_user.identity, params={"shared_with_me": True}
+    )
+    data = list(results.hits)
+    assert len(data) == 1
+
+    results = requests_service.search_user_requests(
+        verified_user.identity, params={"shared_with_me": False}
+    )
+    data = list(results.hits)
+    assert len(data) == 0
+
+    # create manage grant for the verified user
+    payload = {"permission": "manage"}
+    access_service.update_grant_by_subject(
+        running_app.superuser_identity,
+        id_=draft["id"],
+        subject_id=user_id,
+        subject_type="user",
+        data=payload,
+    )
+    request = requests_service.read(uploader.identity, request.id)
+    service.indexer.index(request._record)
+    service.indexer.process_bulk_queue()
+    requests_service.record_cls.index.refresh()
+
+    results = requests_service.search(
+        verified_user.identity, params={"shared_with_me": True}
+    )
+    data = list(results.hits)
+    assert len(data) == 1
+
+    results = requests_service.search_user_requests(
+        verified_user.identity, params={"shared_with_me": False}
+    )
+    data = list(results.hits)
+    assert len(data) == 0

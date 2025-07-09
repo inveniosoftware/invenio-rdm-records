@@ -2,6 +2,7 @@
 #
 # Copyright (C) 2021-2024 CERN.
 # Copyright (C) 2021 Northwestern University.
+# Copyright (C) 2024 KTH Royal Institute of Technology.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
@@ -11,6 +12,7 @@
 import math
 
 from invenio_access.permissions import system_identity
+from invenio_i18n import lazy_gettext as _
 from invenio_search.engine import dsl
 from invenio_vocabularies.proxies import current_service as vocabulary_service
 
@@ -32,7 +34,11 @@ def get_vocabulary_props(vocabulary, fields, id_):
         return h.get("props", {})
 
     raise VocabularyItemNotFoundError(
-        f"The '{vocabulary}' vocabulary item '{id_}' was not found."
+        _(
+            "The '%(vocabulary)s' vocabulary item '%(id_)s' was not found.",
+            vocabulary=vocabulary,
+            id_=id_,
+        )
     )
 
 

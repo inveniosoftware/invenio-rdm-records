@@ -1,0 +1,906 @@
+# 
+# Translators:
+# yyones, 2024
+# Rim Sharif, 2024
+# Tibor Simko <tibor.simko@cern.ch>, 2024
+# Sam Arbid, 2024
+# Mattias Vesterlund, 2025
+# 
+msgid ""
+msgstr ""
+"Project-Id-Version: i18next-conv\n"
+"POT-Creation-Date: 2025-04-07T16:10:08.156Z\n"
+"PO-Revision-Date: 2024-08-06 08:56+0000\n"
+"Last-Translator: Mattias Vesterlund, 2025\n"
+"Language-Team: Swedish (https://app.transifex.com/inveniosoftware/teams/23537/sv/)\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: sv\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"mime-version: 1.0\n"
+
+msgid "Copy to clipboard"
+msgstr "Kopiera till urklipp"
+
+msgid "Copied!"
+msgstr "Kopierade!"
+
+msgid "This set is not editable as it was created by the system."
+msgstr "Setet är inte redigerbart eftersom det skapades av systemet."
+
+msgid "This set is not deletable as it was created by the system."
+msgstr "Setet är inte möjligt att radera eftersom det skapades av systemet."
+
+msgid "Links"
+msgstr "Länkar"
+
+msgid "Format"
+msgstr "Format"
+
+msgid "List records"
+msgstr "Lista poster"
+
+msgid "Opens in new tab"
+msgstr "Öppnas i ny flik"
+
+msgid "List identifiers"
+msgstr "Lista identifierare"
+
+msgid ""
+"Before deleting, make sure to alert all harvesters that this set will no "
+"longer be available."
+msgstr ""
+"Se till att varna alla skördare om att setet inte längre kommer att vara "
+"tillgängligt innan du raderar."
+
+msgid ""
+"I have alerted all harvesters that this set will no longer be available."
+msgstr ""
+"Jag har meddelat alla skördare att setet inte längre kommer att finnas "
+"tillgängligt."
+
+msgid "Cancel"
+msgstr "Avbryt"
+
+msgid "Delete"
+msgstr "Radera"
+
+msgid "Delete {{title}}"
+msgstr "Ta bort {{title}}"
+
+msgid "This will delete the set '{{title}}'."
+msgstr "Detta kommer att radera setet '{{title}}'."
+
+msgid "Fetch error"
+msgstr "Fel vid hämtning"
+
+msgid "Error fetching OAI set formats."
+msgstr "Fel vid hämtning av OAI set-format."
+
+msgid "Select the community where you want to submit your record."
+msgstr "Välj den community där du vill skicka in din post."
+
+msgid "Change"
+msgstr "Ändra"
+
+msgid "Select a community"
+msgstr "Välj en community"
+
+msgid "Remove"
+msgstr "Ta bort"
+
+msgid "Community inclusion information"
+msgstr "Information om community-inkludering"
+
+msgid ""
+"Submission to this community is only allowed if the record is restricted."
+msgstr ""
+"Inlämning till communityn är endast tillåtet om posten är åtkomstbegränsad."
+
+msgid "Community submission conditions information"
+msgstr "Information om villkor för inlämning till communityn"
+
+msgid ""
+"Submission to this community is only allowed by dedicated upload form. Use "
+"the button to jump to the form."
+msgstr ""
+"Inlämning till denna community är endast tillåten via ett särskilt "
+"uppladdningsformulär. Använd knappen för att komma till formuläret."
+
+msgid "Go to the community"
+msgstr "Gå till communityn"
+
+msgid "Selected"
+msgstr "Vald"
+
+msgid "Select"
+msgstr "Välj"
+
+msgid "Select {{title}}"
+msgstr "Välj {{title}}"
+
+msgid "Verified"
+msgstr "Verifierad"
+
+msgid ""
+"Did not find a community that fits you? Upload without a community or "
+"<2>create your own.</2>"
+msgstr ""
+"Hittade du inte en community som passar dig? Ladda upp utan en community "
+"eller <2>skapa en egen.</2>"
+
+msgid "Close"
+msgstr "Stäng"
+
+msgid "All"
+msgstr "Alla"
+
+msgid "My communities"
+msgstr "Mina communities"
+
+msgid "Search"
+msgstr "Sök"
+
+msgid "In review"
+msgstr "Under granskning"
+
+msgid ""
+"Community curators will review your upload. Once accepted, it will be "
+"published."
+msgstr ""
+"Communityns granskare kommer gå igenom din uppladdning. När den har godkänts"
+" kommer den att publiceras."
+
+msgid "Declined"
+msgstr "Avslagen"
+
+msgid "The request to submit this upload to the community was declined."
+msgstr ""
+"Begäran om att skicka den här uppladdningen till communityn avvisades."
+
+msgid "Expired"
+msgstr "Utgånget"
+
+msgid "The request to submit this upload to the community has expired."
+msgstr ""
+"Begäran om att skicka den här uppladdningen till communityn har löpt ut."
+
+msgid "Published"
+msgstr "Publicerad"
+
+msgid "Your upload is published."
+msgstr "Din uppladdning är publicerad."
+
+msgid "Draft"
+msgstr "Utkast"
+
+msgid ""
+"Once your upload is complete, you can submit it for review to the community "
+"curators."
+msgstr ""
+"När din uppladdning är klar kan du skicka in den för genomgång av "
+"communityns granskare."
+
+msgid ""
+"Once your upload is complete, you can publish or submit it for review to the"
+" community curators."
+msgstr ""
+"När din uppladdning är klar kan du publicera eller skicka in den för "
+"genomgång av communityns granskare."
+
+msgid "New version draft"
+msgstr "Utkast till ny version"
+
+msgid "Once your upload is complete, you can publish it."
+msgstr "När din uppladdning är klar kan du publicera den."
+
+msgid "View request"
+msgstr "Visa begäran"
+
+msgid "discard changes"
+msgstr "ta bort ändringar"
+
+msgid "discard version"
+msgstr "ta bort versionen"
+
+msgid "delete"
+msgstr "radera"
+
+msgid "Are you sure you want to discard the changes to this draft?"
+msgstr "Är du säker på att du vill ta bort ändringarna i detta utkast?"
+
+msgid "Are you sure you want to delete this new version?"
+msgstr "Är du säker på att du vill ta bort den här nya versionen?"
+
+msgid "Are you sure you want to delete this draft?"
+msgstr "Är du säker på att du vill ta bort det här utkastet?"
+
+msgid "You don't have permissions to create a new version."
+msgstr "Du har inte behörighet att skapa en ny version."
+
+msgid "New version"
+msgstr "Ny version"
+
+msgid "Preview"
+msgstr "Förhandsgranska"
+
+msgid "Are you sure you want to publish this record?"
+msgstr "Är du säker på att du vill publicera denna post?"
+
+msgid ""
+"Once the record is published you will no longer be able to change the files "
+"in the upload! However, you will still be able to update the record's "
+"metadata later."
+msgstr ""
+"När posten är publicerad kommer du inte längre att kunna ändra filerna i "
+"uppladdningen! Du kommer dock fortfarande att kunna uppdatera postens "
+"metadata senare."
+
+msgid "Publish"
+msgstr "Publicera"
+
+msgid "Submitted for review"
+msgstr "Inskickat för granskning"
+
+msgid "Submit for review"
+msgstr "Skicka in för granskning"
+
+msgid "Publish to community"
+msgstr "Publicera i communityn"
+
+msgid "You must accept this."
+msgstr "Du måste acceptera detta."
+
+msgid ""
+"Before publishing to the community, please read and check the following:"
+msgstr "Innan du publicerar till communityn, läs och kontrollera följande:"
+
+msgid ""
+"Your upload will be <bold>immediately published</bold> in "
+"'{{communityTitle}}'. You will no longer be able to change the files in the "
+"upload! However, you will still be able to update the record's metadata "
+"later."
+msgstr ""
+"Din uppladdning kommer <bold>omedelbart publiceras</bold> i "
+"'{{communityTitle}}'. Du kommer inte längre att kunna ändra filerna i "
+"uppladdningen! Du kommer dock fortfarande att kunna uppdatera postens "
+"metadata senare."
+
+msgid "Publish record to community"
+msgstr "Publicera posten i communityn"
+
+msgid "Submit to community"
+msgstr "Skicka till communityn"
+
+msgid "Before submitting to community, please read and check the following:"
+msgstr "Innan du skickar in till communityn, läs och kontrollera följande:"
+
+msgid "Before requesting review, please read and check the following:"
+msgstr "Innan du begär granskning, läs och kontrollera följande:"
+
+msgid ""
+"If your upload is accepted by the community curators, it will be "
+"<bold>immediately published</bold>. Before that, you will still be able to "
+"modify metadata and files of this upload."
+msgstr ""
+"Om din uppladdning accepteras av communityns granskare kommer den att "
+"<bold>publiceras omedelbart</bold>. Innan dess kommer du fortfarande att "
+"kunna ändra metadata och filer för denna uppladdning."
+
+msgid "Submit record for review"
+msgstr "Skicka in posten för granskning"
+
+msgid ""
+"The '{{communityTitle}}' curators will have access to <bold>view</bold> and "
+"<bold>edit</bold> your upload's metadata and files."
+msgstr ""
+"'{{communityTitle}}'-granskare kommer ha tillgång att <bold>visa</bold> och "
+"<bold>ändra</bold> din uppladdnings metadata och filer."
+
+msgid "Message to curators (optional)"
+msgstr "Meddelande till granskare (valfritt)"
+
+msgid "Change community"
+msgstr "Byt community"
+
+msgid "Publish without community"
+msgstr "Publicera utan community"
+
+msgid "Save draft"
+msgstr "Spara utkast"
+
+msgid "Files"
+msgstr "Filer"
+
+msgid "Resource type"
+msgstr "Resurstyp"
+
+msgid "Title"
+msgstr "Titel"
+
+msgid "Additional titles"
+msgstr "Ytterligare titlar"
+
+msgid "Publication date"
+msgstr "Publiceringsdatum"
+
+msgid "Creators"
+msgstr "Skapare"
+
+msgid "Contributors"
+msgstr "Medverkande"
+
+msgid "Description"
+msgstr "Beskrivning"
+
+msgid "Additional descriptions"
+msgstr "Ytterligare beskrivningar"
+
+msgid "Licenses"
+msgstr "Licenser"
+
+msgid "Languages"
+msgstr "Språk"
+
+msgid "Dates"
+msgstr "Datum"
+
+msgid "Version"
+msgstr "Version"
+
+msgid "Publisher"
+msgstr "Utgivare"
+
+msgid "Related works"
+msgstr "Relaterade arbeten"
+
+msgid "References"
+msgstr "Referenser"
+
+msgid "Alternate identifiers"
+msgstr "Alternativa identifierare"
+
+msgid "Keywords and subjects"
+msgstr "Nyckelord och ämnen"
+
+msgid "Embargo until"
+msgstr "Embargo tills"
+
+msgid "DOI"
+msgstr "DOI"
+
+msgid "Record successfully saved."
+msgstr "Posten har sparats."
+
+msgid "Record saved with validation errors:"
+msgstr "Posten sparad med valideringsfel:"
+
+msgid ""
+"The draft was not saved. Please try again. If the problem persists, contact "
+"user support."
+msgstr ""
+"Utkastet sparades inte. Var god försök igen. Kontakta användarsupport om "
+"problemet kvarstår."
+
+msgid ""
+"The draft was not published. Please try again. If the problem persists, "
+"contact user support."
+msgstr ""
+"Utkastet publicerades inte. Var god försök igen. Kontakta användarsupport om"
+" problemet kvarstår."
+
+msgid "The draft was not published. Record saved with validation errors:"
+msgstr "Utkastet publicerades inte. Posten sparad med valideringsfel:"
+
+msgid ""
+"The draft was not submitted for review. Please try again. If the problem "
+"persists, contact user support."
+msgstr ""
+"Utkastet skickades inte in för granskning. Var god försök igen. Kontakta "
+"användarsupport om problemet kvarstår."
+
+msgid ""
+"The draft was not submitted for review. Record saved with validation errors:"
+msgstr ""
+"Utkastet lämnades inte in för granskning. Posten sparad med valideringsfel:"
+
+msgid ""
+"Draft deletion failed. Please try again. If the problem persists, contact "
+"user support."
+msgstr ""
+"Radering av utkast misslyckades. Vänligen försök igen. Kontakta "
+"användarsupport om problemet kvarstår."
+
+msgid ""
+"Draft preview failed. Please try again. If the problem persists, contact "
+"user support."
+msgstr ""
+"Förhandsvisning av utkast misslyckades. Vänligen försök igen. Kontakta "
+"användarsupport om problemet kvarstår."
+
+msgid ""
+"Identifier reservation failed. Please try again. If the problem persists, "
+"contact user support."
+msgstr ""
+"Reservation av identifierare misslyckades. Vänligen försök igen. Kontakta "
+"användarsupport om problemet kvarstår."
+
+msgid ""
+"Identifier could not be discarded. Please try again. If the problem "
+"persists, contact user support."
+msgstr ""
+"Identifieraren kunde inte kasseras. Vänligen försök igen. Kontakta "
+"användarsupport om problemet kvarstår."
+
+msgid ""
+"Draft save failed before file upload. Please try again. If the problem "
+"persists, contact user support."
+msgstr ""
+"Spara utkast misslyckades före filuppladdningen. Vänligen försök igen. "
+"Kontakta användarsupport om problemet kvarstår."
+
+msgid ""
+"Files import from the previous version failed. Please try again. If the "
+"problem persists, contact user support."
+msgstr ""
+"Import av filer från den tidigare versionen misslyckades. Vänligen försök "
+"igen. Kontakta användarsupport om problemet kvarstår."
+
+msgid "Options"
+msgstr "Alternativ"
+
+msgid "Public"
+msgstr "Offentlig"
+
+msgid "The record is publicly accessible."
+msgstr "Posten är offentligt tillgänglig."
+
+msgid "The record and files are publicly accessible."
+msgstr "Posten och filerna är offentligt tillgängliga."
+
+msgid "Embargoed (full record)"
+msgstr "Embargo (fullständig post)"
+
+msgid "Restricted"
+msgstr "Begränsad"
+
+msgid "Public with restricted files"
+msgstr "Offentlig med åtkomstbegränsade filer"
+
+msgid "Embargoed (files-only)"
+msgstr "Embargo (endast för filer)"
+
+msgid "access-message"
+msgstr "åtkomstmeddelande"
+
+msgid ""
+"The record can <1>only</1> be accessed by <3>users specified</3> in the "
+"permissions."
+msgstr ""
+"Posten kan <1>endast</1> nås av <3>användare angivna</3> i behörigheterna."
+
+msgid ""
+"The record is publicly accessible. The files can <1>only</1> be accessed by "
+"<4>users specified</4> in the permissions."
+msgstr ""
+"Posten är offentligt tillgänglig. Filerna kan <1>endast</1> nås av "
+"<4>användare som anges</4> i behörigheterna."
+
+msgid ""
+"The record is publicly accessible. On <bold>{{ date }}</bold> the files will"
+" automatically be made publicly accessible. Until then, the files can "
+"<bold>only</bold> be accessed by <bold>users specified</bold> in the "
+"permissions."
+msgstr ""
+"Posten är offentligt tillgänglig. Filerna kommer automatiskt att göras "
+"offentligt tillgängliga <bold>{{ date }}</bold> . Tills dess kan filerna "
+"<bold>bara</bold> nås av <bold>användare som anges</bold> i behörigheterna."
+
+msgid "Apply an embargo"
+msgstr "Tillämpa ett embargo"
+
+msgid "Embargo reason"
+msgstr "Orsak till embargo"
+
+msgid "Optionally, describe the reason for the embargo."
+msgstr "Beskriv, om möjligt, orsaken till embargot."
+
+msgid "Embargo was lifted on {{fmtDate}}."
+msgstr "Embargot hävdes den {{fmtDate}}."
+
+msgid "Reason"
+msgstr "Orsak"
+
+msgid ""
+"Record or files protection must be <1>restricted</1> to apply an embargo."
+msgstr ""
+"Post- eller filskydd måste vara <1>begränsat</1> för att tillämpa ett "
+"embargo."
+
+msgid "YYYY-MM-DD"
+msgstr "ÅÅÅÅ-MM-DD"
+
+msgid "The record has no files."
+msgstr "Posten har inga filer."
+
+msgid "Files only"
+msgstr "Endast filer"
+
+msgid "The full record is restricted."
+msgstr "Hela posten är åtkomstbegränsad."
+
+msgid "The files of this record are restricted."
+msgstr "Filerna i den här posten är åtkomstbegränsade."
+
+msgid "Full record"
+msgstr "Fullständig post"
+
+msgid ""
+"Record visibility can not be changed to restricted anymore. Please contact "
+"support if you still need to make these changes."
+msgstr ""
+"Det går inte längre att ändra postens synlighet till begränsad. Kontakta "
+"supporten om du fortfarande behöver göra dessa ändringar."
+
+msgid "Search or create affiliation"
+msgstr "Sök eller skapa affiliering"
+
+msgid "Affiliations"
+msgstr "Affilieringar"
+
+msgid "Search for affiliations.."
+msgstr "Sök efter affilieringar.."
+
+msgid "Coming soon"
+msgstr "Kommer snart"
+
+msgid "Add creator"
+msgstr "Lägg till skapare"
+
+msgid "Edit creator"
+msgstr "Redigera skapare"
+
+msgid "Edit"
+msgstr "Redigera"
+
+msgid "ORCID logo"
+msgstr "ORCID logo"
+
+msgid "ROR logo"
+msgstr "ROR logo"
+
+msgid "GND logo"
+msgstr "GND logo"
+
+msgid "Type the value of an identifier..."
+msgstr "Skriv värdet på en identifierare..."
+
+msgid "Identifiers"
+msgstr "Identifierare"
+
+msgid "e.g. ORCID, ISNI or GND."
+msgstr "t.ex. ORCID, ISNI eller GND."
+
+msgid "Save and add another"
+msgstr "Spara och lägg till en till"
+
+msgid "Family name is a required field."
+msgstr "Efternamn är ett obligatoriskt fält."
+
+msgid "Name is a required field."
+msgstr "Namn är ett obligatoriskt fält."
+
+msgid "Role is a required field."
+msgstr "Roll är ett obligatoriskt fält."
+
+msgid "Added"
+msgstr "Tillagd"
+
+msgid "Person"
+msgstr "Person"
+
+msgid "Organization"
+msgstr "Organisation"
+
+msgid "Search for persons by name, identifier, or affiliation..."
+msgstr "Sök efter personer med namn, identifierare eller affiliering..."
+
+msgid "Family name"
+msgstr "Efternamn"
+
+msgid "Given names"
+msgstr "Förnamn"
+
+msgid "Search for an organization by name, identifier, or affiliation..."
+msgstr ""
+"Sök efter en organisation med namn, identifierare eller affiliering..."
+
+msgid "Search for organization by name, identifier, or affiliation..."
+msgstr "Sök efter organisation med namn, identifierare eller affiliering..."
+
+msgid "Name"
+msgstr "Namn"
+
+msgid "Organization name"
+msgstr "Organisationsnamn"
+
+msgid "e.g. ROR, ISNI or GND."
+msgstr "t.ex. ROR-, ISNI- eller GND-nummer."
+
+msgid "Role"
+msgstr "Roll"
+
+msgid "Select role"
+msgstr "Välj roll"
+
+msgid "Save"
+msgstr "Spara"
+
+msgid "Couldn't find your person? You can <2>create a new entry</2>."
+msgstr "Kunde du inte hitta din person? Du kan <2>skapa en ny person</2>."
+
+msgid "Add date"
+msgstr "Lägg till datum"
+
+msgid "Format: DATE or DATE/DATE where DATE is YYYY or YYYY-MM or YYYY-MM-DD."
+msgstr ""
+"Format: DATE eller DATE/DATE där DATE är ÅÅÅÅ eller ÅÅÅÅ-MM eller ÅÅÅÅ-MM-"
+"DD."
+
+msgid "Date"
+msgstr "Datum"
+
+msgid "Type"
+msgstr "Typ"
+
+msgid "Remove field"
+msgstr "Ta bort fält"
+
+msgid "YYYY-MM-DD or YYYY-MM-DD/YYYY-MM-DD"
+msgstr "ÅÅÅÅ-MM-DD eller ÅÅÅÅ-MM-DD/ÅÅÅÅ-MM-DD"
+
+msgid "Add description"
+msgstr "Lägg till beskrivning"
+
+msgid "Additional Description"
+msgstr "Ytterligare beskrivning"
+
+msgid "Language"
+msgstr "Språk"
+
+msgid "Select language"
+msgstr "Välj språk"
+
+msgid "Could not upload files."
+msgstr "Det gick inte att ladda upp filer."
+
+msgid "Uploading the selected files would result in"
+msgstr "Att ladda upp de valda filerna skulle resultera i"
+
+msgid "but the limit is"
+msgstr "men gränsen är"
+
+msgid "The following files already exist"
+msgstr "Följande filer finns redan"
+
+msgid "Could not upload all files."
+msgstr "Det gick inte att ladda upp alla filer."
+
+msgid "Empty files were skipped."
+msgstr "Tomma filer hoppades över."
+
+msgid "You can import files from the previous version."
+msgstr "Du kan importera filer från den tidigare versionen."
+
+msgid ""
+"File addition, removal or modification are not allowed after you have "
+"published your upload."
+msgstr ""
+"Filtillägg, borttagning eller modifiering är inte tillåtet efter att du har "
+"publicerat din uppladdning."
+
+msgid "You must create a new version to add, modify or delete files."
+msgstr ""
+"Du måste skapa en ny version för att lägga till, ändra eller ta bort filer."
+
+msgid "Drag and drop files"
+msgstr "Dra och släpp filer"
+
+msgid "Upload files"
+msgstr "Ladda upp filer"
+
+msgid "Import files"
+msgstr "Importera filer"
+
+msgid "Set the default preview"
+msgstr "Ställ in standardförhandsvisning"
+
+msgid "Filename"
+msgstr "Filnamn"
+
+msgid "Size"
+msgstr "Storlek"
+
+msgid "Progress"
+msgstr "Förlopp"
+
+msgid "Default preview"
+msgstr "Standardförhandsvisning"
+
+msgid ""
+"This is the file fingerprint (MD5 checksum), which can be used to verify the"
+" file integrity."
+msgstr ""
+"Detta är filens fingeravtryck (MD5 checksum), som kan användas för att "
+"verifiera filens integritet."
+
+msgid "Pending"
+msgstr "Pågående"
+
+msgid "Delete file"
+msgstr "Radera fil"
+
+msgid "or"
+msgstr "eller"
+
+msgid "This is a Metadata-only record."
+msgstr "Detta är en post med enbart Metadata."
+
+msgid "Metadata-only record"
+msgstr "Post med enbart Metadata"
+
+msgid "Disable files for this record"
+msgstr "Inaktivera filer för den här posten"
+
+msgid "Storage available"
+msgstr "Tillgänglig lagring"
+
+msgid "{{length}} out of {{maxfiles}} files"
+msgstr "{{length}} av {{maxfiles}} filer"
+
+msgid "out of"
+msgstr "utav"
+
+msgid "Add identifier"
+msgstr "Lägg till identifierare"
+
+msgid "Identifier"
+msgstr "Identifierare"
+
+msgid "Scheme"
+msgstr "Schema"
+
+msgid "Do you already have a {{pidLabel}} for this upload?"
+msgstr "Har du redan en {{pidLabel}} för den här uppladdningen?"
+
+msgid "Yes"
+msgstr "Ja"
+
+msgid "No"
+msgstr "Nej"
+
+msgid "Search for languages..."
+msgstr "Sök efter språk..."
+
+msgid "Search for a language by name (e.g \"eng\", \"fr\" or \"Polish\")"
+msgstr "Sök efter ett språk med namn (t.ex. \"eng\", \"fr\" eller \"polska\")"
+
+msgid "Add standard"
+msgstr "Lägg till standard"
+
+msgid "Add custom"
+msgstr "Lägg till anpassad"
+
+msgid "Read more"
+msgstr "Läs mer"
+
+msgid "Title is a required field."
+msgstr "Titel är ett obligatoriskt fält."
+
+msgid "Link must be a valid URL"
+msgstr "Länken måste vara en giltig URL"
+
+msgid "Add {{mode}} license"
+msgstr "Lägg till {{mode}} licens"
+
+msgid "Change {{mode}} license"
+msgstr "Ändra {{mode}} licens"
+
+msgid "Recommended"
+msgstr "Rekommenderad"
+
+msgid "recommended"
+msgstr "rekommenderad"
+
+msgid "all"
+msgstr "alla"
+
+msgid "Data"
+msgstr "Data"
+
+msgid "data"
+msgstr "data"
+
+msgid "Software"
+msgstr "Mjukvara"
+
+msgid "software"
+msgstr "mjukvara"
+
+msgid "License title"
+msgstr "Licenstitel"
+
+msgid "Link"
+msgstr "Länk"
+
+msgid "License link"
+msgstr "Licenslänk"
+
+msgid "Add license"
+msgstr "Lägg till licens"
+
+msgid "Change license"
+msgstr "Ändra licens"
+
+msgid ""
+"In case your upload was already published elsewhere, please use the date of "
+"the first publication. Format: YYYY-MM-DD, YYYY-MM, or YYYY. For intervals "
+"use DATE/DATE, e.g. 1939/1945."
+msgstr ""
+"Om din uppladdning redan har publicerats någon annanstans, använd datumet "
+"för den första publiceringen. Format: ÅÅÅÅ-MM-DD, ÅÅÅÅ-MM eller ÅÅÅÅ. För "
+"intervaller använd DATE/DATE, t.ex. 1939/1945."
+
+msgid ""
+"YYYY-MM-DD or YYYY-MM-DD/YYYY-MM-DD for intervals. MM and DD are optional."
+msgstr ""
+"ÅÅÅÅ-MM-DD eller ÅÅÅÅ-MM-DD/ÅÅÅÅ-MM-DD för intervaller. MM och DD är "
+"valfria."
+
+msgid ""
+"The publisher is used to formulate the citation, so consider the prominence "
+"of the role."
+msgstr "Utgivare används vid citering, och är därmed betydelsefullt."
+
+msgid "Add reference"
+msgstr "Lägg till referens"
+
+msgid "Reference string"
+msgstr "Referenssträng"
+
+msgid ""
+"Specify identifiers of related works. Supported identifiers include DOI, "
+"Handle, ARK, PURL, ISSN, ISBN, PubMed ID, PubMed Central ID, ADS "
+"Bibliographic Code, arXiv, Life Science Identifiers (LSID), EAN-13, ISTC, "
+"URNs, and URLs."
+msgstr ""
+"Ange identifierare för relaterade verk. Identifierare som stöds inkluderar "
+"DOI, Handle, ARK, PURL, ISSN, ISBN, PubMed ID, PubMed Central ID, ADS "
+"Bibliografic code, arXiv, Life Science Identifiers (LSID), EAN-13, ISTC, "
+"URN:er och URL:er."
+
+msgid "Add related work"
+msgstr "Lägg till relaterade arbeten"
+
+msgid "Relation"
+msgstr "Relation"
+
+msgid "Suggest from"
+msgstr "Föreslå från"
+
+msgid "Search for a subject by name"
+msgstr "Sök efter ett ämne med namn"
+
+msgid "Add titles"
+msgstr "Lägg till titlar"
+
+msgid "Additional title"
+msgstr "Ytterligare titel"
+
+msgid ""
+"Mostly relevant for software and dataset uploads. A semantic version string "
+"is preferred see<1> semver.org</1>, but any version string is accepted."
+msgstr ""
+"Främst relevant för uppladdning av programvara och dataset. En semantisk "
+"versionssträng är att föredra se<1> semver.org</1>, men alla "
+"versionssträngar accepteras."

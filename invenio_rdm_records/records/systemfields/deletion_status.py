@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # Copyright (C) 2023 TU Wien.
+# Copyright (C) 2025 Graz University of Technology.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
@@ -89,6 +90,10 @@ class RecordDeletionStatusField(SystemField):
         if record is None:
             return self  # returns the field itself.
 
+        return self.get_obj(record, owner)
+
+    def get_obj(self, record, owner=None):
+        """Get obj."""
         status = self._get_cache(record) or RecordDeletionStatus(
             record.model.deletion_status
         )
@@ -103,7 +108,7 @@ class RecordDeletionStatusField(SystemField):
 
     def pre_commit(self, record):
         """Dump the deletion status to the record before committing."""
-        status = self._get_cache(record) or RecordDeletionStatus(None)
+        status = self.get_obj(record)
         record.model.deletion_status = record.get("deletion_status", status._status)
 
     def pre_dump(self, record, data, **kwargs):

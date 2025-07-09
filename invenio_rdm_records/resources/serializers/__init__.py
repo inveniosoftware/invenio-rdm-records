@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2020, 2021 CERN.
+# Copyright (C) 2020-2025 CERN.
 # Copyright (C) 2020 Northwestern University.
 # Copyright (C) 2021 Graz University of Technology.
 #
@@ -34,7 +34,10 @@ from .iiif import (
 )
 from .marcxml import MARCXMLSerializer
 from .schemaorg import SchemaorgJSONLDSerializer
-from .signposting import FAIRSignpostingProfileLvl2Serializer
+from .signposting import (
+    FAIRSignpostingProfileLvl1Serializer,
+    FAIRSignpostingProfileLvl2Serializer,
+)
 from .ui import UIJSONSerializer
 
 __all__ = (
@@ -47,6 +50,7 @@ __all__ = (
     "DataPackageSerializer",
     "DublinCoreJSONSerializer",
     "DublinCoreXMLSerializer",
+    "FAIRSignpostingProfileLvl1Serializer",
     "FAIRSignpostingProfileLvl2Serializer",
     "GeoJSONSerializer",
     "IIIFCanvasV2JSONSerializer",

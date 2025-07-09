@@ -9,6 +9,7 @@ import { i18next } from "@translations/invenio_rdm_records/i18next";
 import { connect as connectFormik } from "formik";
 import _get from "lodash/get";
 import _omit from "lodash/omit";
+import Overridable from "react-overridable";
 import PropTypes from "prop-types";
 import React, { Component } from "react";
 import { connect } from "react-redux";
@@ -32,8 +33,8 @@ class PublishButtonComponent extends Component {
 
   handlePublish = (event, handleSubmit, publishWithoutCommunity) => {
     const { setSubmitContext } = this.context;
-    const { formik, raiseDOINeededButNotReserved, isDOIRequired } = this.props;
-    const noINeedDOI = formik?.values?.noINeedDOI;
+    const { formik, raiseDOINeededButNotReserved, isDOIRequired, noINeedDOI } =
+      this.props;
     // Check for explicit DOI reservation via the "GET DOI button" only when DOI is
     // optional in the instance's settings. If it is required, backend will automatically
     // mint one even if it was not explicitly reserved
@@ -92,6 +93,8 @@ class PublishButtonComponent extends Component {
       formik,
       publishModalExtraContent,
       raiseDOINeededButNotReserved,
+      noINeedDOI,
+      isDOIRequired,
       ...ui
     } = this.props;
     const { isConfirmModalOpen } = this.state;
@@ -114,43 +117,53 @@ class PublishButtonComponent extends Component {
           type="button" // needed so the formik form doesn't handle it as submit button i.e enable HTML validation on required input fields
         />
         {isConfirmModalOpen && (
-          <Modal
-            open={isConfirmModalOpen}
-            onClose={this.closeConfirmModal}
-            size="small"
-            closeIcon
-            closeOnDimmerClick={false}
+          <Overridable
+            id="InvenioRdmRecords.PublishModal.container"
+            isConfirmModalOpen={isConfirmModalOpen}
+            handleSubmitRecord={handleSubmit}
+            buttonLabel={buttonLabel}
+            publishWithoutCommunity={publishWithoutCommunity}
+            closeConfirmModal={this.closeConfirmModal}
+            handlePublish={this.handlePublish}
           >
-            <Modal.Header>
-              {i18next.t("Are you sure you want to publish this record?")}
-            </Modal.Header>
-            {/* the modal text should only ever come from backend configuration */}
-            <Modal.Content>
-              <Message visible warning>
-                <p>
-                  <Icon name="warning sign" />{" "}
-                  {i18next.t(
-                    "Once the record is published you will no longer be able to change the files in the upload! However, you will still be able to update the record's metadata later."
-                  )}
-                </p>
-              </Message>
-              {publishModalExtraContent && (
-                <div dangerouslySetInnerHTML={{ __html: publishModalExtraContent }} />
-              )}
-            </Modal.Content>
-            <Modal.Actions>
-              <Button onClick={this.closeConfirmModal} floated="left">
-                {i18next.t("Cancel")}
-              </Button>
-              <Button
-                onClick={(event) =>
-                  this.handlePublish(event, handleSubmit, publishWithoutCommunity)
-                }
-                positive
-                content={buttonLabel}
-              />
-            </Modal.Actions>
-          </Modal>
+            <Modal
+              open={isConfirmModalOpen}
+              onClose={this.closeConfirmModal}
+              size="small"
+              closeIcon
+              closeOnDimmerClick={false}
+            >
+              <Modal.Header>
+                {i18next.t("Are you sure you want to publish this record?")}
+              </Modal.Header>
+              {/* the modal text should only ever come from backend configuration */}
+              <Modal.Content>
+                <Message visible warning>
+                  <p>
+                    <Icon name="warning sign" />{" "}
+                    {i18next.t(
+                      "Once the record is published you will no longer be able to change the files in the upload! However, you will still be able to update the record's metadata later."
+                    )}
+                  </p>
+                </Message>
+                {publishModalExtraContent && (
+                  <div dangerouslySetInnerHTML={{ __html: publishModalExtraContent }} />
+                )}
+              </Modal.Content>
+              <Modal.Actions>
+                <Button onClick={this.closeConfirmModal} floated="left">
+                  {i18next.t("Cancel")}
+                </Button>
+                <Button
+                  onClick={(event) =>
+                    this.handlePublish(event, handleSubmit, publishWithoutCommunity)
+                  }
+                  positive
+                  content={buttonLabel}
+                />
+              </Modal.Actions>
+            </Modal>
+          </Overridable>
         )}
       </>
     );
@@ -166,6 +179,7 @@ PublishButtonComponent.propTypes = {
   filesState: PropTypes.object,
   raiseDOINeededButNotReserved: PropTypes.func.isRequired,
   isDOIRequired: PropTypes.bool,
+  noINeedDOI: PropTypes.bool,
 };
 
 PublishButtonComponent.defaultProps = {
@@ -175,6 +189,7 @@ PublishButtonComponent.defaultProps = {
   publishModalExtraContent: undefined,
   filesState: undefined,
   isDOIRequired: undefined,
+  noINeedDOI: undefined,
 };
 
 const mapStateToProps = (state) => ({
@@ -182,6 +197,7 @@ const mapStateToProps = (state) => ({
   publishModalExtraContent: state.deposit.config.publish_modal_extra,
   filesState: state.files,
   isDOIRequired: state.deposit.config.is_doi_required,
+  noINeedDOI: state.deposit.noINeedDOI,
 });
 
 export const PublishButton = connect(mapStateToProps, (dispatch) => {

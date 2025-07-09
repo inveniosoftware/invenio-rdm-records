@@ -7,6 +7,7 @@
 import { i18next } from "@translations/invenio_rdm_records/i18next";
 import { Formik } from "formik";
 import _get from "lodash/get";
+import Overridable from "react-overridable";
 import PropTypes from "prop-types";
 import React, { Component } from "react";
 import { Trans } from "react-i18next";
@@ -19,7 +20,7 @@ import {
 import { Button, Checkbox, Form, Icon, Message, Modal } from "semantic-ui-react";
 import * as Yup from "yup";
 
-export class SubmitReviewModal extends Component {
+class SubmitReviewModalComponent extends Component {
   componentDidMount() {
     // A11y: Focus the first input field in the form
     const firstFormFieldWrap = document.getElementById("accept-access-checkbox");
@@ -44,6 +45,8 @@ export class SubmitReviewModal extends Component {
       errors,
       loading,
       record,
+      confirmSubmitReviewSchema,
+      formikDefaults,
     } = this.props;
     const communityTitle = community.metadata.title;
 
@@ -86,6 +89,12 @@ export class SubmitReviewModal extends Component {
 
     // acceptAfterPublishRecord checkbox is absent if record is published
     const schema = () => {
+      // Add schema fields from optional prop
+      if (confirmSubmitReviewSchema) {
+        this.ConfirmSubmitReviewSchema = this.ConfirmSubmitReviewSchema.concat(
+          confirmSubmitReviewSchema
+        );
+      }
       if (record) {
         return this.ConfirmSubmitReviewSchema;
       } else {
@@ -99,13 +108,20 @@ export class SubmitReviewModal extends Component {
       }
     };
 
+    // Add default values for formik from optional prop
+    const initialValues = Object.assign(
+      {},
+      {
+        reviewComment: initialReviewComment || "",
+        acceptAccessToRecord: false,
+        acceptAfterPublishRecord: false,
+      },
+      formikDefaults
+    );
+
     return (
       <Formik
-        initialValues={{
-          acceptAccessToRecord: false,
-          acceptAfterPublishRecord: false,
-          reviewComment: initialReviewComment || "",
-        }}
+        initialValues={initialValues}
         onSubmit={onSubmit}
         validationSchema={schema}
         validateOnChange={false}
@@ -135,17 +151,16 @@ export class SubmitReviewModal extends Component {
                       control={Checkbox}
                       fieldPath="acceptAccessToRecord"
                       label={
-                        <Trans
-                          defaults={i18next.t(
-                            "The '{{communityTitle}}' curators will have access to <bold>view</bold> and <bold>edit</bold> your upload's metadata and files.",
-                            { communityTitle }
-                          )}
-                          values={{
-                            communityTitle,
-                          }}
-                          components={{ bold: <b /> }}
-                          shouldUnescape
-                        />
+                        <>
+                          {i18next.t(
+                            "The '{{communityTitle}}' curators will have access to",
+                            {
+                              communityTitle,
+                            }
+                          )}{" "}
+                          <b>{i18next.t("view and edit")}</b>{" "}
+                          {i18next.t("your upload's metadata and files.")}
+                        </>
                       }
                       checked={_get(values, "acceptAccessToRecord") === true}
                       onChange={({ data, formikProps }) => {
@@ -198,7 +213,7 @@ export class SubmitReviewModal extends Component {
                       label={i18next.t("Message to curators (optional)")}
                     />
                   )}
-
+                  <Overridable id="InvenioRdmRecords.SubmitReviewModal.Form.ExtraComponent.container" />
                   {publishModalExtraContent && (
                     <div
                       dangerouslySetInnerHTML={{ __html: publishModalExtraContent }}
@@ -235,7 +250,7 @@ export class SubmitReviewModal extends Component {
   }
 }
 
-SubmitReviewModal.propTypes = {
+SubmitReviewModalComponent.propTypes = {
   isConfirmModalOpen: PropTypes.bool.isRequired,
   community: PropTypes.object.isRequired,
   onClose: PropTypes.func.isRequired,
@@ -246,12 +261,21 @@ SubmitReviewModal.propTypes = {
   errors: PropTypes.node, // TODO FIXME: Use a common error cmp to display errros.
   loading: PropTypes.bool,
   record: PropTypes.object.isRequired,
+  confirmSubmitReviewSchema: PropTypes.object,
+  formikDefaults: PropTypes.object,
 };
 
-SubmitReviewModal.defaultProps = {
+SubmitReviewModalComponent.defaultProps = {
   initialReviewComment: "",
   publishModalExtraContent: undefined,
   directPublish: false,
   errors: undefined,
   loading: false,
+  confirmSubmitReviewSchema: undefined,
+  formikDefaults: {},
 };
+
+export const SubmitReviewModal = Overridable.component(
+  "InvenioRdmRecords.SubmitReviewModal.container",
+  SubmitReviewModalComponent
+);

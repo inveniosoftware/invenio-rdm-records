@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2021-2024 CERN.
-# Copyright (C) 2021 Northwestern University.
+# Copyright (C) 2021-2025 CERN.
+# Copyright (C) 2021-2025 Northwestern University.
 # Copyright (C) 2023 Graz University of Technology.
 # Copyright (C) 2023 Caltech.
 #
@@ -15,6 +15,7 @@ from edtf.parser.grammar import ParseException
 from flask import current_app
 from flask_resources.serializers import BaseSerializerSchema
 from invenio_access.permissions import system_identity
+from invenio_base import invenio_url_for
 from invenio_i18n import lazy_gettext as _
 from marshmallow import Schema, ValidationError, fields, missing, post_dump, validate
 from marshmallow_utils.fields import SanitizedUnicode
@@ -458,7 +459,9 @@ class DataCite43Schema(BaseSerializerSchema):
         communities = obj.get("parent", {}).get("communities", {}).get("entries", [])
         for community in communities:
             slug = community.get("slug")
-            url = f"{current_app.config['SITE_UI_URL']}/communities/{slug}"
+            url = invenio_url_for(
+                "invenio_app_rdm_communities.communities_home", pid_value=slug
+            )
             serialized_identifiers.append(
                 {
                     "relatedIdentifier": url,
@@ -551,12 +554,10 @@ class DataCite43Schema(BaseSerializerSchema):
         return serialized_subjects if serialized_subjects else missing
 
     def get_rights(self, obj):
-        """Get datacite rigths."""
-        rights = obj["metadata"].get("rights", [])
-        if not rights:
-            return missing
+        """Get datacite rights."""
+        result = []
 
-        serialized_rights = []
+        rights = obj["metadata"].get("rights", [])
         for right in rights:
             entry = {"rights": right.get("title", {}).get(current_default_locale())}
 
@@ -569,9 +570,28 @@ class DataCite43Schema(BaseSerializerSchema):
             link = right.get("props", {}).get("url") or right.get("link", {})
             if link:
                 entry["rightsUri"] = link
-            serialized_rights.append(entry)
+            result.append(entry)
 
-        return serialized_rights if serialized_rights else missing
+        # Add info:eu-repo access rights (if configured)
+        dump_access_rights = current_app.config.get(
+            "RDM_DATACITE_DUMP_OPENAIRE_ACCESS_RIGHTS", False
+        )
+        access_right = obj.get("access", {}).get("status")
+        if dump_access_rights and access_right:
+            if access_right == "metadata-only":
+                access_right = "closed"
+            result.append({"rightsUri": f"info:eu-repo/semantics/{access_right}Access"})
+
+        copyright = obj["metadata"].get("copyright", None)
+        if copyright:
+            result.append(
+                {
+                    "rights": copyright,
+                    "rightsUri": "http://rightsstatements.org/vocab/InC/1.0/",
+                }
+            )
+
+        return result or missing
 
     def get_funding(self, obj):
         """Get funding references."""

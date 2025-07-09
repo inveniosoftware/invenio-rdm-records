@@ -94,7 +94,7 @@ class CommunityRecordsService(RecordService):
                 self.config.links_search_community_records,
                 context={
                     "args": params,
-                    "id": community_id,
+                    "pid_value": community_id,
                 },
             ),
             links_item_tpl=self.links_item_tpl,

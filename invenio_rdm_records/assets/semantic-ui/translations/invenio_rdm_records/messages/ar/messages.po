@@ -1,0 +1,884 @@
+# 
+# Translators:
+# Tibor Simko <tibor.simko@cern.ch>, 2024
+# Bessem Aamira <bessemamira@gmail.com>, 2024
+# Salaheddine Ben Ali <salaheddine.benali@cnudst.tn>, 2025
+# 
+msgid ""
+msgstr ""
+"Project-Id-Version: i18next-conv\n"
+"POT-Creation-Date: 2025-04-07T16:10:08.156Z\n"
+"PO-Revision-Date: 2024-08-06 08:56+0000\n"
+"Last-Translator: Salaheddine Ben Ali <salaheddine.benali@cnudst.tn>, 2025\n"
+"Language-Team: Arabic (https://app.transifex.com/inveniosoftware/teams/23537/ar/)\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: ar\n"
+"Plural-Forms: nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 && n%100<=99 ? 4 : 5;\n"
+"mime-version: 1.0\n"
+
+msgid "Copy to clipboard"
+msgstr "نسخ إلى لوحة المفاتيح"
+
+msgid "Copied!"
+msgstr "تم النسخ!"
+
+msgid "This set is not editable as it was created by the system."
+msgstr "غير قابلة للتعديل حيث تم إنشاؤها بواسطة النظام."
+
+msgid "This set is not deletable as it was created by the system."
+msgstr "غير قابلة للحذف حيث تم إنشاؤها بواسطة النظام."
+
+msgid "Links"
+msgstr "روابط"
+
+msgid "Format"
+msgstr "صيغة"
+
+msgid "List records"
+msgstr "قائمة تسجيلات"
+
+msgid "Opens in new tab"
+msgstr "فتح في تبويبة جديدة"
+
+msgid "List identifiers"
+msgstr "قائمة معرفات"
+
+msgid ""
+"Before deleting, make sure to alert all harvesters that this set will no "
+"longer be available."
+msgstr ""
+"قبل الحذف، تأكد من تنبيه جميع الحصادين harvesters إلى أن هذه المجموعة لن "
+"تكون متاحة بعد الآن."
+
+msgid ""
+"I have alerted all harvesters that this set will no longer be available."
+msgstr ""
+"لقد قمت بتنبيه جميع الحصادين harvesters إلى أن هذه المجموعة لن تكون متاحة "
+"بعد الآن."
+
+msgid "Cancel"
+msgstr "إلغاء"
+
+msgid "Delete"
+msgstr "حذف"
+
+msgid "Delete {{title}}"
+msgstr "حذف  {{title}}"
+
+msgid "This will delete the set '{{title}}'."
+msgstr "سيؤدي هذا إلى حذف المجموعة '{{title}}'."
+
+msgid "Fetch error"
+msgstr "خطأ في الجلب"
+
+msgid "Error fetching OAI set formats."
+msgstr "حدث خطأ أثناء جلب تنسيقات مجموعة OAI."
+
+msgid "Select the community where you want to submit your record."
+msgstr "إختر المجتمع الذي تريد نشر تسجيلتك ضمنه."
+
+msgid "Change"
+msgstr "غيّر"
+
+msgid "Select a community"
+msgstr "إختر مجتمعا"
+
+msgid "Remove"
+msgstr "حذف"
+
+msgid "Community inclusion information"
+msgstr "معلومات حول دمج المجتمع"
+
+msgid ""
+"Submission to this community is only allowed if the record is restricted."
+msgstr "لا يُسمح بالإرسال إلى هذا المجتمع إلا إذا كانت التسجيلة مقيدة."
+
+msgid "Community submission conditions information"
+msgstr "معلومات شروط التقديم بهذا المجتمع"
+
+msgid ""
+"Submission to this community is only allowed by dedicated upload form. Use "
+"the button to jump to the form."
+msgstr ""
+"يُسمح بالمشاركة في هذا المجتمع فقط عبر نموذج تحميل مُخصّص. استخدم الزر "
+"للانتقال إلى النموذج."
+
+msgid "Go to the community"
+msgstr "إنتقل إلى المجتمع"
+
+msgid "Selected"
+msgstr "مُختارة"
+
+msgid "Select"
+msgstr "إختر"
+
+msgid "Select {{title}}"
+msgstr "إختر {{title}}"
+
+msgid "Verified"
+msgstr "تم التّحقق"
+
+msgid ""
+"Did not find a community that fits you? Upload without a community or "
+"<2>create your own.</2>"
+msgstr ""
+"لم تجد المجتمع الذي يناسبك؟ قم بالتّحميل بدون مجتمع أو <2>أضف مجتمعا خاصا "
+"بك</2>."
+
+msgid "Close"
+msgstr "غلق"
+
+msgid "All"
+msgstr "الكلّ"
+
+msgid "My communities"
+msgstr "مجتمعاتي"
+
+msgid "Search"
+msgstr "بحث"
+
+msgid "In review"
+msgstr "بصدد مراجعة الأقران"
+
+msgid ""
+"Community curators will review your upload. Once accepted, it will be "
+"published."
+msgstr "سيراجع أمناء المجتمع إيداعك. سيتم نشره إذا تم قبوله."
+
+msgid "Declined"
+msgstr "مرفوضة"
+
+msgid "The request to submit this upload to the community was declined."
+msgstr "تم رفض طلب إرسال هذا التحميل إلى المجتمع."
+
+msgid "Expired"
+msgstr "منتهي الصلاحية"
+
+msgid "The request to submit this upload to the community has expired."
+msgstr "تخطى طلب إرسال هذا التحميل إلى المجتمع اجله."
+
+msgid "Published"
+msgstr "نشرت"
+
+msgid "Your upload is published."
+msgstr "تمّ نشر التّحميل."
+
+msgid "Draft"
+msgstr "مسودة"
+
+msgid ""
+"Once your upload is complete, you can submit it for review to the community "
+"curators."
+msgstr "بمجرد اكتمال التحميل ، يمكنك إرساله للمراجعة من طرف أمناء المجتمع."
+
+msgid ""
+"Once your upload is complete, you can publish or submit it for review to the"
+" community curators."
+msgstr ""
+"بمجرد اكتمال التحميل ، يمكنك نشره أو إرساله للمراجعة من طرف أمناء المجتمع."
+
+msgid "New version draft"
+msgstr "مسودّة إصدار جديدة"
+
+msgid "Once your upload is complete, you can publish it."
+msgstr "مغ إنتهاء التّحميل، يمكنك النّشر."
+
+msgid "View request"
+msgstr "الاطّلاع على الطلب"
+
+msgid "discard changes"
+msgstr "تجاهل التّغييرات"
+
+msgid "discard version"
+msgstr "تجاهل الإصدار"
+
+msgid "delete"
+msgstr "حذف"
+
+msgid "Are you sure you want to discard the changes to this draft?"
+msgstr "هل انت متأكد من تجاهل التّغييرات على هذه المسودّة ؟"
+
+msgid "Are you sure you want to delete this new version?"
+msgstr "هل انت متأكد من حذفك لهذا الإصدار ؟"
+
+msgid "Are you sure you want to delete this draft?"
+msgstr "هل أنت متأكد من حذفك لهذه المسودّة ؟"
+
+msgid "You don't have permissions to create a new version."
+msgstr "ليس لك صلوحيّات إنشاء إصدار جديد."
+
+msgid "New version"
+msgstr "إصدار جديد"
+
+msgid "Preview"
+msgstr "معاينة"
+
+msgid "Are you sure you want to publish this record?"
+msgstr "هل أنت متأكد من نشر هذه التّسجيلة؟"
+
+msgid ""
+"Once the record is published you will no longer be able to change the files "
+"in the upload! However, you will still be able to update the record's "
+"metadata later."
+msgstr ""
+"إذا تمّ نشر التّسجيلة فلا يمكنك تغيير الملفات في التحميل! في حين يمكنك دائما"
+" تحيين ميتاداتا النّسجيلة لاحقا."
+
+msgid "Publish"
+msgstr "نشر"
+
+msgid "Submitted for review"
+msgstr "تم تقديمه للمراجعة"
+
+msgid "Submit for review"
+msgstr "أرسل للمراجعة"
+
+msgid "Publish to community"
+msgstr "أنشر للمجتمع"
+
+msgid "You must accept this."
+msgstr "يجب أن تقبل بهذا."
+
+msgid ""
+"Before publishing to the community, please read and check the following:"
+msgstr "قبل النشر للمجتمع، يرجى قراءة والتحقق مما يلي:"
+
+msgid ""
+"Your upload will be <bold>immediately published</bold> in "
+"'{{communityTitle}}'. You will no longer be able to change the files in the "
+"upload! However, you will still be able to update the record's metadata "
+"later."
+msgstr ""
+"ملفك المحّمل<bold> سينشر  فورًا </bold>في '{{communityTitle}}'. لن تتمكن بعد"
+" الآن من تغيير الملفات المرفوعة! مع ذلك، سيظل بإمكانك تحديث البيانات الوصفية"
+" للتسجيلة لاحقًا."
+
+msgid "Publish record to community"
+msgstr "أنشر التسجيلة للمجتمع"
+
+msgid "Submit to community"
+msgstr "قدّم للمجتمع"
+
+msgid "Before submitting to community, please read and check the following:"
+msgstr "قبل التقديم للمجتمع، يرجى قراءة والتحقق مما يلي:"
+
+msgid "Before requesting review, please read and check the following:"
+msgstr "قبل طلب المراجعة ، يرجى قراءة  والتحقق مما يلي."
+
+msgid ""
+"If your upload is accepted by the community curators, it will be "
+"<bold>immediately published</bold>. Before that, you will still be able to "
+"modify metadata and files of this upload."
+msgstr ""
+"إذا تم قبول إيداعك من قبل أمناء المجتمع ، فسيتم<bold> نشره على الفور</bold>."
+"  قبل ذلك ، ستظل قادرًا على تعديل البيانات الوصفية وملفات هذه التحميل."
+
+msgid "Submit record for review"
+msgstr "أرسل التسجيلة للمراجعة"
+
+msgid ""
+"The '{{communityTitle}}' curators will have access to <bold>view</bold> and "
+"<bold>edit</bold> your upload's metadata and files."
+msgstr ""
+"سيكون لدى أمناء \"{{communityTitle}}\" حق الوصول <bold>لعرض </bold> "
+"و<bold>تعديل</bold> البيانات الوصفية والملفات الخاصة بالتحميل ."
+
+msgid "Message to curators (optional)"
+msgstr "رسالة إلى الأمناء (إختياري)"
+
+msgid "Change community"
+msgstr "تغيير المجتمع"
+
+msgid "Publish without community"
+msgstr "نشر بدون مجتمع"
+
+msgid "Save draft"
+msgstr "حفظ مسودة"
+
+msgid "Files"
+msgstr "الملفّات"
+
+msgid "Resource type"
+msgstr "نوع المورد"
+
+msgid "Title"
+msgstr "العنوان"
+
+msgid "Additional titles"
+msgstr "عناوين إضافيّة"
+
+msgid "Publication date"
+msgstr "تاريخ النّشر"
+
+msgid "Creators"
+msgstr "المنشؤون"
+
+msgid "Contributors"
+msgstr "المساهمون"
+
+msgid "Description"
+msgstr "وصف"
+
+msgid "Additional descriptions"
+msgstr "أوصاف إضافيّة"
+
+msgid "Licenses"
+msgstr "تراخيص"
+
+msgid "Languages"
+msgstr "اللّغات"
+
+msgid "Dates"
+msgstr "تواريخ"
+
+msgid "Version"
+msgstr "إصدار"
+
+msgid "Publisher"
+msgstr "النّاشر"
+
+msgid "Related works"
+msgstr "أعمال ذات علاقة"
+
+msgid "References"
+msgstr "مراجع"
+
+msgid "Alternate identifiers"
+msgstr "معرفات بديلة"
+
+msgid "Keywords and subjects"
+msgstr "كلمات مفاتيح و المواضيع"
+
+msgid "Embargo until"
+msgstr "محظور حتى"
+
+msgid "DOI"
+msgstr "المعرف الوحيد للأشياء DOI"
+
+msgid "Record successfully saved."
+msgstr "حفظ التسجيلة تمّ بنجاح."
+
+msgid "Record saved with validation errors:"
+msgstr "حفظت التسجيلة مع خطء في التحقّق من السّلامة:"
+
+msgid ""
+"The draft was not saved. Please try again. If the problem persists, contact "
+"user support."
+msgstr ""
+"لم يتم حفظ المسودة. يُرجى المحاولة مرة أخرى. إذا استمرت المشكلة، يُرجى "
+"التواصل مع دعم المستخدمين."
+
+msgid ""
+"The draft was not published. Please try again. If the problem persists, "
+"contact user support."
+msgstr ""
+"لم يتم نشر المسودة. يُرجى المحاولة مرة أخرى. إذا استمرت المشكلة، يُرجى "
+"التواصل مع دعم المستخدمين."
+
+msgid "The draft was not published. Record saved with validation errors:"
+msgstr "لم يتم نشر المسودة. تم حفظ التّسجيلة مع وجود أخطاء :"
+
+msgid ""
+"The draft was not submitted for review. Please try again. If the problem "
+"persists, contact user support."
+msgstr ""
+"لم يتم تقديم المسودة للمراجعة. يُرجى المحاولة مرة أخرى. إذا استمرت المشكلة، "
+"يُرجى التواصل مع دعم المستخدمين."
+
+msgid ""
+"The draft was not submitted for review. Record saved with validation errors:"
+msgstr "لم يتم تقديم المسودة للمراجعة. تم حفظ التّسجيلة مع وجود أخطاء :"
+
+msgid ""
+"Draft deletion failed. Please try again. If the problem persists, contact "
+"user support."
+msgstr ""
+"فشل حذف المسودة. يُرجى المحاولة مرة أخرى. إذا استمرت المشكلة، يُرجى التواصل "
+"مع دعم المستخدمين."
+
+msgid ""
+"Draft preview failed. Please try again. If the problem persists, contact "
+"user support."
+msgstr ""
+"فشل عرض المسودة. يُرجى المحاولة مرة أخرى. إذا استمرت المشكلة، يُرجى التواصل "
+"مع دعم المستخدمين."
+
+msgid ""
+"Identifier reservation failed. Please try again. If the problem persists, "
+"contact user support."
+msgstr ""
+"فشل في إسناد معرّف. يُرجى المحاولة مرة أخرى. إذا استمرت المشكلة، يُرجى "
+"التواصل مع دعم المستخدمين."
+
+msgid ""
+"Identifier could not be discarded. Please try again. If the problem "
+"persists, contact user support."
+msgstr ""
+"تعذّر تجاهل المُعرِّف. يُرجى المحاولة مجددًا. إذا استمرت المشكلة، يُرجى "
+"التواصل مع دعم المستخدمين."
+
+msgid ""
+"Draft save failed before file upload. Please try again. If the problem "
+"persists, contact user support."
+msgstr ""
+"فشل حفظ المسودة قبل تحميل الملف. يُرجى المحاولة مرة أخرى. إذا استمرت "
+"المشكلة، يُرجى التواصل مع دعم المستخدمين."
+
+msgid ""
+"Files import from the previous version failed. Please try again. If the "
+"problem persists, contact user support."
+msgstr ""
+"فشل استيراد الملفات من الإصدار السابق. يُرجى المحاولة مرة أخرى. إذا استمرت "
+"المشكلة، يُرجى التواصل مع دعم المستخدمين."
+
+msgid "Options"
+msgstr "إختيارات"
+
+msgid "Public"
+msgstr "مشاع"
+
+msgid "The record is publicly accessible."
+msgstr "التّسجبلة متاحة  للعموم."
+
+msgid "The record and files are publicly accessible."
+msgstr "التّسجبلة و الملفات متاحان للعموم."
+
+msgid "Embargoed (full record)"
+msgstr "محظور (كامل التّسجيلة)"
+
+msgid "Restricted"
+msgstr "مقيّد"
+
+msgid "Public with restricted files"
+msgstr "مشاع مع ملفات مقيدة"
+
+msgid "Embargoed (files-only)"
+msgstr "محظور (فقط الملفات)"
+
+msgid "access-message"
+msgstr "رسالة الدخول"
+
+msgid ""
+"The record can <1>only</1> be accessed by <3>users specified</3> in the "
+"permissions."
+msgstr ""
+"التّسجيلة متاحة <1>حصريّا</1> لـ<3>مستخدميين محدّدين</3> المتمتّعين بإذن."
+
+msgid ""
+"The record is publicly accessible. The files can <1>only</1> be accessed by "
+"<4>users specified</4> in the permissions."
+msgstr ""
+"التّسجيلة متاحة للعموم. يمكن الولوج للملفّات <1>حصريّا</1> من طرف "
+"<4>مستخدميين محدّدين</4> في الأذونات."
+
+msgid ""
+"The record is publicly accessible. On <bold>{{ date }}</bold> the files will"
+" automatically be made publicly accessible. Until then, the files can "
+"<bold>only</bold> be accessed by <bold>users specified</bold> in the "
+"permissions."
+msgstr ""
+"التّسجيلة متاحة للعموم. بـ <bold>{{ date }}</bold> سيقع إتاحة الملفّات آليا "
+"للعموم. إلى ذلك الحين، يمكن الولوج للملفّات <bold>حصريّا</bold> من طرف "
+"<bold>مستخدمين محدّدين</bold> المتمتّعين بإذن."
+
+msgid "Apply an embargo"
+msgstr "تطبيق حظر"
+
+msgid "Embargo reason"
+msgstr "اسباب الحظر"
+
+msgid "Optionally, describe the reason for the embargo."
+msgstr "إختياري. حدّد سبب الحظر."
+
+msgid "Embargo was lifted on {{fmtDate}}."
+msgstr "تمّ رفع الحظر في {{fmtDate}}."
+
+msgid "Reason"
+msgstr "السّبب"
+
+msgid ""
+"Record or files protection must be <1>restricted</1> to apply an embargo."
+msgstr "حماية التّسجيلة أو الملفات يجب أن تكون <1>مقيّدة</1> لتطبيق الحظر."
+
+msgid "YYYY-MM-DD"
+msgstr "YYYY-MM-DD"
+
+msgid "The record has no files."
+msgstr "التّسجيلة لا تحتوي على ملفات."
+
+msgid "Files only"
+msgstr "فقط ملفات"
+
+msgid "The full record is restricted."
+msgstr "كامل التّسجيلة مقيّدة."
+
+msgid "The files of this record are restricted."
+msgstr "ملفّات هذه التّسجيلة مقيّدة."
+
+msgid "Full record"
+msgstr "تّسجبلة كاملة"
+
+msgid ""
+"Record visibility can not be changed to restricted anymore. Please contact "
+"support if you still need to make these changes."
+msgstr ""
+"لم يعد بالإمكان تغيير رؤية السجل إلى الوضع \"مقيد\". يُرجى التواصل مع الدعم "
+"إذا كنت لا تزال بحاجة إلى إجراء هذه التغييرات."
+
+msgid "Search or create affiliation"
+msgstr "إبحث أو أضف مؤسّسة الإنتماء"
+
+msgid "Affiliations"
+msgstr "الانتماءات"
+
+msgid "Search for affiliations.."
+msgstr "إبحث عن مؤسّسات الإنتماء.."
+
+msgid "Coming soon"
+msgstr "قريباً"
+
+msgid "Add creator"
+msgstr "أضف منشئ"
+
+msgid "Edit creator"
+msgstr "تعديل منشئ"
+
+msgid "Edit"
+msgstr "تعديل"
+
+msgid "ORCID logo"
+msgstr "شعار أوركيد ORCID"
+
+msgid "ROR logo"
+msgstr "شعار رور ROR"
+
+msgid "GND logo"
+msgstr "شعار ج ن د GND"
+
+msgid "Type the value of an identifier..."
+msgstr "أدخل قيمة المعرف ..."
+
+msgid "Identifiers"
+msgstr "معرّفات"
+
+msgid "e.g. ORCID, ISNI or GND."
+msgstr "كـ .  ORCID، ISNI أو GND."
+
+msgid "Save and add another"
+msgstr "إحفظ و أضف آخر"
+
+msgid "Family name is a required field."
+msgstr "حقل اللّقب وجوبي."
+
+msgid "Name is a required field."
+msgstr "حقل الإسم وجوبي."
+
+msgid "Role is a required field."
+msgstr "حقل الدّور وجوبي."
+
+msgid "Added"
+msgstr "أضيف"
+
+msgid "Person"
+msgstr "شخص"
+
+msgid "Organization"
+msgstr "منظمة"
+
+msgid "Search for persons by name, identifier, or affiliation..."
+msgstr "ابحث عن الأشخاص بالاسم أو بالمعرف أو بالانتماء ..."
+
+msgid "Family name"
+msgstr "اللّقب"
+
+msgid "Given names"
+msgstr "الإسم"
+
+msgid "Search for an organization by name, identifier, or affiliation..."
+msgstr "ابحث عن منظمة بالاسم أو بالمعرف أو بالانتماء ..."
+
+msgid "Search for organization by name, identifier, or affiliation..."
+msgstr "ابحث عن منظمة بالاسم أو بالمعرف أو بالانتماء ..."
+
+msgid "Name"
+msgstr "إسم"
+
+msgid "Organization name"
+msgstr "إسم المنظّمة"
+
+msgid "e.g. ROR, ISNI or GND."
+msgstr "مثلا ROR ،ISNI أو GND."
+
+msgid "Role"
+msgstr "دور"
+
+msgid "Select role"
+msgstr "إختر دورا"
+
+msgid "Save"
+msgstr "حفظ"
+
+msgid "Couldn't find your person? You can <2>create a new entry</2>."
+msgstr "لا تستطيع العثور على شخصك؟ يمكنك<2> إنشاء مدخل جديد</2>."
+
+msgid "Add date"
+msgstr "أضف تاريخا"
+
+msgid "Format: DATE or DATE/DATE where DATE is YYYY or YYYY-MM or YYYY-MM-DD."
+msgstr ""
+"الصّيغة: تاريخ أو تاريخ/تاريخ حيث يكون تاريخ إمّا سنة YYYY أو سنة-شهر YYYY-"
+"MM أو سنة-شهر-يوم YYYY-MM-DD"
+
+msgid "Date"
+msgstr "التاريخ"
+
+msgid "Type"
+msgstr "نوع"
+
+msgid "Remove field"
+msgstr "حذف الحقل"
+
+msgid "YYYY-MM-DD or YYYY-MM-DD/YYYY-MM-DD"
+msgstr "YYYY-MM-DD أو YYYY-MM-DD/YYYY-MM-DD"
+
+msgid "Add description"
+msgstr "أضف وصفا"
+
+msgid "Additional Description"
+msgstr "وصف إضافيّ"
+
+msgid "Language"
+msgstr "اللّغة"
+
+msgid "Select language"
+msgstr "إختر لغة"
+
+msgid "Could not upload files."
+msgstr "لم يتمكن من تحميل الملفات."
+
+msgid "Uploading the selected files would result in"
+msgstr "تحميل الملفات المختارة سيؤدي إلى"
+
+msgid "but the limit is"
+msgstr "لكن الحدود هي"
+
+msgid "The following files already exist"
+msgstr "الملفات التالية موجودة "
+
+msgid "Could not upload all files."
+msgstr "لم يتمكن من تحميل كل الملفات."
+
+msgid "Empty files were skipped."
+msgstr "تم تخطي الملفات الفارغة."
+
+msgid "You can import files from the previous version."
+msgstr "يمكنك إستيراد الملفات من الإصدار السّابق."
+
+msgid ""
+"File addition, removal or modification are not allowed after you have "
+"published your upload."
+msgstr "إضافة ملف، إزالته أو تغييره غير ممكن بعد نشر التّحميل."
+
+msgid "You must create a new version to add, modify or delete files."
+msgstr "يجب عليك إحداث إصدار جديد كي تضيف ملفّات، تغييرها أو تزيلها."
+
+msgid "Drag and drop files"
+msgstr "سحب و إسقاط الملفات"
+
+msgid "Upload files"
+msgstr "تحميل الملفّات"
+
+msgid "Import files"
+msgstr "إستيراد الملفّات"
+
+msgid "Set the default preview"
+msgstr "ثبّت العرض التلقائي"
+
+msgid "Filename"
+msgstr "إسم الملفّ"
+
+msgid "Size"
+msgstr "الحجم"
+
+msgid "Progress"
+msgstr "سير التقدم"
+
+msgid "Default preview"
+msgstr "العرض التلقائي"
+
+msgid ""
+"This is the file fingerprint (MD5 checksum), which can be used to verify the"
+" file integrity."
+msgstr ""
+"هذه هي بصمة الملف (المجموع الاختباري MD5) ، والتي يمكن استخدامها للتّحقّق من"
+" كموليّة الملف."
+
+msgid "Pending"
+msgstr "قيد الإنتظار"
+
+msgid "Delete file"
+msgstr "حذف الملف"
+
+msgid "or"
+msgstr "أو"
+
+msgid "This is a Metadata-only record."
+msgstr "هذه تسجيلة بيانات فقط."
+
+msgid "Metadata-only record"
+msgstr "تسجيلة بيانات فقط"
+
+msgid "Disable files for this record"
+msgstr "تعطيل الملفات لهذه التّسجيلة"
+
+msgid "Storage available"
+msgstr "التّخزين متوفّر"
+
+msgid "{{length}} out of {{maxfiles}} files"
+msgstr "{{length}} من إجمالي {{maxfiles}} من الملفات"
+
+msgid "out of"
+msgstr "بين"
+
+msgid "Add identifier"
+msgstr "أضف معرّف"
+
+msgid "Identifier"
+msgstr "المعرّف"
+
+msgid "Scheme"
+msgstr "هيكل"
+
+msgid "Do you already have a {{pidLabel}} for this upload?"
+msgstr "هل لديك مسبقا {{pidLabel}} لهذا التحميل؟"
+
+msgid "Yes"
+msgstr "نعم"
+
+msgid "No"
+msgstr "رقم"
+
+msgid "Search for languages..."
+msgstr "بحث عن اللّغات..."
+
+msgid "Search for a language by name (e.g \"eng\", \"fr\" or \"Polish\")"
+msgstr "بحث عن اللّغة بالتّسمية ( \"eng\", \"fr\", \"Polish\" )"
+
+msgid "Add standard"
+msgstr "أضف معيارا"
+
+msgid "Add custom"
+msgstr "إضافة  إجراء/خاصة"
+
+msgid "Read more"
+msgstr "إقراء المزيد"
+
+msgid "Title is a required field."
+msgstr "حقل العنوان وجوبي."
+
+msgid "Link must be a valid URL"
+msgstr "يجب أن يكون رابط URL ساري المفعول"
+
+msgid "Add {{mode}} license"
+msgstr "أضف {{mode}} رخصة"
+
+msgid "Change {{mode}} license"
+msgstr "تغيير {{mode}} رخصة"
+
+msgid "Recommended"
+msgstr "مستحسن"
+
+msgid "recommended"
+msgstr "مستحسن"
+
+msgid "all"
+msgstr "الكلّ"
+
+msgid "Data"
+msgstr "بيانات"
+
+msgid "data"
+msgstr "بيانات"
+
+msgid "Software"
+msgstr "برمجيّة"
+
+msgid "software"
+msgstr "برمجيّة"
+
+msgid "License title"
+msgstr "عنوان التّرخيص"
+
+msgid "Link"
+msgstr "رابط"
+
+msgid "License link"
+msgstr "رابط التّرخيص"
+
+msgid "Add license"
+msgstr "أضف ترخيصا"
+
+msgid "Change license"
+msgstr "غيّر التّرخيص"
+
+msgid ""
+"In case your upload was already published elsewhere, please use the date of "
+"the first publication. Format: YYYY-MM-DD, YYYY-MM, or YYYY. For intervals "
+"use DATE/DATE, e.g. 1939/1945."
+msgstr ""
+"في حالة نشر التحميل الخاص بك في مكان آخر سلفا، يرجى استخدام تاريخ النشر "
+"الأول بهذا الشّكل: YYYY-MM-DD أو YYYY-MM أو YYYY. للفترات الزمنية ، استخدم "
+"DATE / DATE ، على سبيل المثال 1939/1945."
+
+msgid ""
+"YYYY-MM-DD or YYYY-MM-DD/YYYY-MM-DD for intervals. MM and DD are optional."
+msgstr ""
+"YYYY-MM-DD أو YYYY-MM-DD/YYYY-MM-DD للفواصل الزمنية. MM و DD اختيارية."
+
+msgid ""
+"The publisher is used to formulate the citation, so consider the prominence "
+"of the role."
+msgstr ""
+"يتم إعتماد صياغة الإستشهاد من قبل الناشر، لذا خذ بعين الإعتبار أهمية الدور."
+
+msgid "Add reference"
+msgstr "أضف مرجعا"
+
+msgid "Reference string"
+msgstr "سلسلة مرجعية"
+
+msgid ""
+"Specify identifiers of related works. Supported identifiers include DOI, "
+"Handle, ARK, PURL, ISSN, ISBN, PubMed ID, PubMed Central ID, ADS "
+"Bibliographic Code, arXiv, Life Science Identifiers (LSID), EAN-13, ISTC, "
+"URNs, and URLs."
+msgstr ""
+"حدّد معرّفات الأعمال المرتبطة. المعرّفات المعتمدة تشمل DOI, Handle, ARK, "
+"PURL, ISSN, ISBN, PubMed ID, PubMed Central ID, ADS Bibliographic Code, "
+"arXiv, Life Science Identifiers (LSID), EAN-13, ISTC, URNs, and URLs. "
+
+msgid "Add related work"
+msgstr "أضف عملا ذا علاقة"
+
+msgid "Relation"
+msgstr "علاقة"
+
+msgid "Suggest from"
+msgstr "إقتراح من طرف"
+
+msgid "Search for a subject by name"
+msgstr "بحث عن موضوع عبر الإسم"
+
+msgid "Add titles"
+msgstr "أضف عناوين"
+
+msgid "Additional title"
+msgstr "عنوان إضافي"
+
+msgid ""
+"Mostly relevant for software and dataset uploads. A semantic version string "
+"is preferred see<1> semver.org</1>, but any version string is accepted."
+msgstr ""
+"مناسب بشكل خاص  لبرمجيّة و لعمليّات تحميل مجموعات البيانات. يُفضّل استخدام "
+"سلسلة إصدار دلالية. راجع <1>semver.org</1>، ولكن أي سلسلة إصدار مقبولة."

@@ -20,6 +20,7 @@ export class Imprint extends Component {
       place,
       isbn,
       pages,
+      edition,
       label,
       icon,
     } = this.props;
@@ -72,6 +73,16 @@ export class Imprint extends Component {
               <label className="helptext mb-0">{pages.description}</label>
             )}
           </Grid.Column>
+          <Grid.Column width="4">
+            <Input
+              fieldPath={`${fieldPath}.edition`}
+              label={edition.label}
+              placeholder={edition.placeholder}
+            />
+            {edition.description && (
+              <label className="helptext mb-0">{edition.description}</label>
+            )}
+          </Grid.Column>
         </Grid>
       </>
     );
@@ -84,6 +95,7 @@ Imprint.propTypes = {
   place: PropTypes.object.isRequired,
   isbn: PropTypes.object.isRequired,
   pages: PropTypes.object.isRequired,
+  edition: PropTypes.object.isRequired,
   icon: PropTypes.string,
   label: PropTypes.string,
 };

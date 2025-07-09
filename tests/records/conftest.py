@@ -20,7 +20,7 @@ from invenio_rdm_records.records.api import RDMDraft
 
 
 @pytest.fixture(scope="module")
-def create_app(instance_path):
+def create_app(instance_path, entry_points):
     """Application factory fixture."""
     return create_api
 

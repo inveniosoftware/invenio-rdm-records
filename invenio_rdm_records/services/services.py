@@ -5,6 +5,7 @@
 # Copyright (C) 2021-2023 TU Wien.
 # Copyright (C) 2021 Graz University of Technology.
 # Copyright (C) 2022 Universität Hamburg.
+# Copyright (C) 2024 KTH Royal Institute of Technology.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
@@ -15,10 +16,12 @@ from datetime import datetime
 
 import arrow
 from flask import current_app
+from invenio_access.permissions import system_user_id
 from invenio_accounts.models import User
 from invenio_db import db
 from invenio_drafts_resources.services.records import RecordService
 from invenio_drafts_resources.services.records.uow import ParentRecordCommitOp
+from invenio_i18n import lazy_gettext as _
 from invenio_records_resources.services import LinksTemplate, ServiceSchemaWrapper
 from invenio_records_resources.services.errors import PermissionDeniedError
 from invenio_records_resources.services.uow import (
@@ -555,7 +558,8 @@ class RDMRecordService(RecordService):
             search_result,
             params,
             links_tpl=LinksTemplate(
-                self.config.links_search_versions, context={"id": id_, "args": params}
+                self.config.links_search_versions,
+                context={"pid_value": id_, "args": params},
             ),
             links_item_tpl=self.links_item_tpl,
             expandable_fields=self.expandable_fields,
@@ -628,8 +632,10 @@ class RDMRecordService(RecordService):
             )
             if end_of_grace_period <= datetime.now():
                 raise ValidationError(
-                    "Record visibility can not be changed to restricted "
-                    "anymore. Please contact support if you still need to make these changes."
+                    _(
+                        "Record visibility can not be changed to restricted "
+                        "anymore. Please contact support if you still need to make these changes."
+                    )
                 )
 
         return super().update_draft(
@@ -719,9 +725,12 @@ class RDMRecordService(RecordService):
             raise_errors=True,
         )
         # Set quota
-        user_quota = RDMUserQuota.query.filter(
-            RDMUserQuota.user_id == user.id
-        ).one_or_none()
+        if user.id == system_user_id:
+            user_quota = None
+        else:
+            user_quota = RDMUserQuota.query.filter(
+                RDMUserQuota.user_id == user.id
+            ).one_or_none()
         if not user_quota:
             user_quota = RDMUserQuota(user_id=user.id, **data)
         else:
@@ -731,3 +740,33 @@ class RDMRecordService(RecordService):
         db.session.add(user_quota)
 
         return True
+
+    def search_revisions(self, identity, id_):
+        """Return a list of record revisions."""
+        record = self.record_cls.pid.resolve(id_)
+        # Check permissions
+        self.require_permission(identity, "search_revisions", record=record)
+        revisions = list(reversed(record.model.versions.all()))
+
+        return self.config.revision_result_list_cls(
+            identity,
+            revisions,
+        )
+
+    def read_revision(self, identity, id_, revision_id, include_previous=False):
+        """Read a specific record revision (and return the precedent revision if include_previous==True)."""
+        record = self.record_cls.pid.resolve(id_)
+        self.require_permission(identity, "search_revisions", record=record)
+
+        revisions = []
+        current_revision = record.model.versions.filter_by(
+            transaction_id=revision_id
+        ).first()
+        revisions.append(current_revision)
+        if include_previous:
+            previous_revision = record.model.versions.filter_by(
+                end_transaction_id=revision_id
+            ).first()
+            if previous_revision:
+                revisions.append(previous_revision)
+        return self.config.revision_result_list_cls(identity, revisions)

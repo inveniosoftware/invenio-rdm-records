@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2024 CERN.
+# Copyright (C) 2024-2025 CERN.
+# Copyright (C) 2025 Graz University of Technology.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
@@ -50,7 +51,7 @@ class UserModerationHandler(BaseHandler):
             is_verified = identity.user.verified_at is not None
             if not is_verified:
                 # Spawn a task to request moderation.
-                self.uow.register(TaskOp(request_moderation, user_id=identity.id))
+                uow.register(TaskOp(request_moderation, user_id=identity.id))
 
     def create(self, identity, record=None, data=None, uow=None, **kwargs):
         """Handle create."""

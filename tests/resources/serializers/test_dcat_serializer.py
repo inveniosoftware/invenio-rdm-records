@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2023-2024 CERN.
+# Copyright (C) 2023-2025 CERN.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
@@ -12,6 +12,25 @@ from invenio_rdm_records.resources.serializers import DCATSerializer
 
 def test_dcat_serializer(running_app, full_record_to_dict):
     full_record_to_dict["links"] = dict(self_html="https://self-link.com")
+    full_record_to_dict["metadata"]["related_identifiers"].append(
+        {
+            "identifier": "10.1234/baz.qux",
+            "relation_type": {
+                "id": "hasmetadata",
+                "title": {
+                    "en": "Has metadata",
+                },
+            },
+            "resource_type": {
+                "id": "image",
+                "title": {
+                    "en": "Image",
+                },
+            },
+            "scheme": "doi",
+        }
+    )
+    full_record_to_dict["metadata"]["subjects"][0]["subject"] = "Women's studies"
     expected_data = (
         "<?xml version='1.0' encoding='utf-8'?>\n"
         '<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" '
@@ -73,7 +92,7 @@ def test_dcat_serializer(running_app, full_record_to_dict):
         'rdf:datatype="http://www.w3.org/2001/XMLSchema#gYear">2018</dct:issued>\n'
         '    <dct:subject rdf:about="http://id.nlm.nih.gov/mesh/A-D000007">\n'
         "      <skos:Concept>\n"
-        "        <skos:prefLabel>Abdominal Injuries</skos:prefLabel>\n"
+        "        <skos:prefLabel>Women's studies</skos:prefLabel>\n"
         "        <skos:inScheme>\n"
         "          <skos:ConceptScheme>\n"
         "            <dct:title>MeSH</dct:title>\n"
@@ -168,6 +187,12 @@ def test_dcat_serializer(running_app, full_record_to_dict):
         '        <dct:type rdf:resource="http://purl.org/dc/dcmitype/Dataset"/>\n'
         "      </rdf:Description>\n"
         "    </dct:isReferencedBy>\n"
+        "    <foaf:isPrimaryTopicOf>\n"
+        '      <rdf:Description rdf:about="https://doi.org/10.1234/baz.qux">\n'
+        "        <dct:identifier>https://doi.org/10.1234/baz.qux</dct:identifier>\n"
+        '        <rdf:type rdf:resource="http://www.w3.org/ns/dcat#CatalogRecord"/>\n'
+        "      </rdf:Description>\n"
+        "    </foaf:isPrimaryTopicOf>\n"
         "    <dct:isVersionOf>\n"
         '      <rdf:Description rdf:about="https://doi.org/10.1234/pgfpj-at058">\n'
         "        "
@@ -236,4 +261,4 @@ def test_dcat_serializer(running_app, full_record_to_dict):
 
     serializer = DCATSerializer()
     serialized_record = serializer.serialize_object(full_record_to_dict)
-    assert serialized_record == expected_data
+    assert expected_data == serialized_record

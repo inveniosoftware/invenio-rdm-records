@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # Copyright (C) 2021 Northwestern University.
+# Copyright (C) 2025 California Institute of Technology.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
@@ -25,14 +26,11 @@ def test_conflicting_load(app):
         vocabularies.load()
 
     messages = e.value.errors
-    expected_messages = set(
-        [
-            "Vocabulary 'resourcetypes' cannot have multiple sources "
-            "['conflicting_module_A.fixtures.vocabularies', "
-            "'conflicting_module_B.fixtures.vocabularies']",
-            "Vocabulary 'MeSH' cannot have multiple sources "
-            "['conflicting_module_A.fixtures.vocabularies', "
-            "'conflicting_module_B.fixtures.vocabularies']",
-        ]
-    )
-    assert expected_messages == set(messages)
+    expected_messages = [
+        "Vocabulary 'resourcetypes' cannot have multiple sources ",
+        "'tests.fixtures.load_error.conflicting_module_A.fixtures.vocabularies'",
+        "'tests.fixtures.load_error.conflicting_module_B.fixtures.vocabularies'",
+        "Vocabulary 'MeSH' cannot have multiple sources ",
+    ]
+    for line in expected_messages:
+        assert any(line in message for message in messages)

@@ -4,7 +4,7 @@
 # Copyright (C) 2021-2022 Northwestern University.
 # Copyright (C) 2024 TU Wien.
 # Copyright (C) 2024 KTH Royal Institute of Technology.
-# Copyright (C) 2024 Graz University of Technology.
+# Copyright (C) 2024-2025 Graz University of Technology.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
@@ -17,9 +17,9 @@ from collections import defaultdict
 from os.path import splitext
 from pathlib import Path
 
-import pkg_resources
 import yaml
 from flask import current_app
+from invenio_base.utils import entry_points
 from invenio_db import db
 from invenio_vocabularies.proxies import current_service
 from invenio_vocabularies.records.models import VocabularyScheme, VocabularyType
@@ -161,19 +161,8 @@ class PrioritizedVocabulariesFixtures:
         self._loaded_vocabularies = set()
 
     def _entry_points(self):
-        """List entrypoints.
-
-        Python now officially recommends importlib.metadata
-        (importlib_metadata backport) for entrypoints:
-        - https://docs.python.org/3/library/importlib.metadata.html
-        - https://packaging.python.org/guides/creating-and-discovering-plugins/
-          #using-package-metadata
-
-        but Invenio is much invested in pkg_resources (``entry_points``
-        fixture assumes it). So we use pkg_resources for now until
-        _entry_points implementation can be changed.
-        """
-        return list(pkg_resources.iter_entry_points("invenio_rdm_records.fixtures"))
+        """List entrypoints."""
+        return entry_points("invenio_rdm_records.fixtures")
 
     def load(self, reload=None):
         """Load the fixtures.

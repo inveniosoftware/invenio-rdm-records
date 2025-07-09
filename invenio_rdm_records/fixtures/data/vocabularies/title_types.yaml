@@ -6,6 +6,7 @@
     sv: Alternativ titel
     de: Alternativer Titel
     es: Título alternativo
+    cs: Alternativní název
 - id: subtitle
   props:
     datacite: Subtitle
@@ -14,6 +15,7 @@
     sv: Undertitel
     de: Untertitel
     es: Subtítulo
+    cs: Podtitul
 - id: translated-title
   props:
     datacite: TranslatedTitle
@@ -22,6 +24,7 @@
     sv: Översatt titel
     de: Übersetzter Titel
     es: Título traducido
+    cs: Přeložený název
 - id: other
   props:
     datacite: Other
@@ -30,3 +33,4 @@
     sv: Övrig titel
     de: Sonstiger Titel
     es: Otro
+    cs: Jiný název

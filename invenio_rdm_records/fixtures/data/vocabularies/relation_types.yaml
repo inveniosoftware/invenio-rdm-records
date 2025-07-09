@@ -6,6 +6,7 @@
      sv: Citeras av
      de: Wird zitiert von
      es: Citado por
+     cs: Je citován (čím)
 - id: cites
   props:
      datacite: Cites
@@ -14,6 +15,7 @@
      sv: Citerar
      de: Zitiert
      es: Citas
+     cs: Cituje (co)
 - id: issupplementto
   props:
      datacite: IsSupplementTo
@@ -22,6 +24,7 @@
      sv: Är supplement till
      de: Ergänzt
      es: Es un suplemento de
+     cs: Je doplňkem k (čemu)
 - id: issupplementedby
   props:
      datacite: IsSupplementedBy
@@ -30,6 +33,7 @@
      sv: Supplementerad av
      de: Wird ergänzt durch
      es: Es complementado por
+     cs: Má doplněk (co)
 - id: iscontinuedby
   props:
      datacite: IsContinuedBy
@@ -38,6 +42,7 @@
      sv: Är fortsatt av
      de: Wird fortgesetzt durch
      es: Es continuado por
+     cs: Je pokračováním (čeho)
 - id: continues
   props:
      datacite: Continues
@@ -46,6 +51,7 @@
      sv: Fortsätter
      de: Setzt fort
      es: Continúa
+     cs: Pokračuje (čím)
 - id: isdescribedby
   props:
      datacite: IsDescribedBy
@@ -54,6 +60,7 @@
      sv: Beskrivs av
      de: Wird beschrieben von
      es: Es descrito por
+     cs: Je popsán (čím)
 - id: describes
   props:
      datacite: Describes
@@ -62,6 +69,7 @@
      sv: Beskriver
      de: Beschreibt
      es: Describe
+     cs: Popisuje (co)
 - id: hasmetadata
   props:
      datacite: HasMetadata
@@ -70,6 +78,7 @@
     sv: Har metadata
     de: Hat Metadaten in
     es: Tiene metadatos
+    cs: Má metadata
 - id: ismetadatafor
   props:
      datacite: IsMetadataFor
@@ -78,6 +87,7 @@
     sv: Är metadata för
     de: Hat Metadaten für
     es: Es metadatos para
+    cs: Je metadaty pro
 - id: hasversion
   props:
      datacite: HasVersion
@@ -86,6 +96,7 @@
      sv: Har version
      de: Hat versionierte Instanz
      es: Tiene versión
+     cs: Má verzi
 - id: isversionof
   props:
      datacite: IsVersionOf
@@ -94,6 +105,7 @@
      sv: Är version av
      de: Ist eine Version von
      es: Es versión de
+     cs: Je verzí (čeho)
 - id: isnewversionof
   props:
      datacite: IsNewVersionOf
@@ -102,6 +114,7 @@
      sv: Är en ny version av
      de: Ist eine neue Version von
      es: Es una nueva versión de
+     cs: Je novou verzí (čeho)
 - id: ispreviousversionof
   props:
      datacite: IsPreviousVersionOf
@@ -110,6 +123,7 @@
      sv: Är en tidigare version av
      de: Ist eine vorherige Version von
      es: Es una versión anterior de
+     cs: Je předchozí verzí (čeho)
 - id: ispartof
   props:
      datacite: IsPartOf
@@ -118,6 +132,7 @@
      sv: Är del av
      de: Ist Teil von
      es: Es parte de
+     cs: Je součástí (čeho)
 - id: haspart
   props:
      datacite: HasPart
@@ -126,6 +141,7 @@
      sv: Innehåller följande del
      de: Umfasst folgenden Teil
      es: Tiene parte
+     cs: Má část/i (co)
 - id: ispublishedin
   props:
      datacite: IsPublishedIn
@@ -134,6 +150,7 @@
      sv: Är publicerad i
      de: Ist veröffentlicht in
      es: Se publica en
+     cs: Je publikován v
 - id: isreferencedby
   props:
      datacite: IsReferencedBy
@@ -142,6 +159,7 @@
      sv: Hänvisas till av
      de: Wird referenziert von
      es: Es referenciado por
+     cs: Je na něj odkazováno z (čeho)
 - id: references
   props:
      datacite: References
@@ -150,6 +168,7 @@
      sv: Hänvisar till
      de: Referenziert
      es: Referencias
+     cs: Odkazuje na (co)
 - id: isdocumentedby
   props:
      datacite: IsDocumentedBy
@@ -158,6 +177,7 @@
      sv: Är dokumenterad av
      de: Wird dokumentiert von
      es: Es documentado por
+     cs: Je zdokumentován (čím)
 - id: documents
   props:
      datacite: Documents
@@ -166,6 +186,7 @@
      sv: Dokumenterar
      de: Dokumentiert
      es: Documentos
+     cs: Dokumentuje (co)
 - id: iscompiledby
   props:
      datacite: IsCompiledBy
@@ -174,6 +195,7 @@
      sv: Är sammanställd av
      de: Kompiliert durch
      es: Es compilado por
+     cs: Je kompilován (čím)
 - id: compiles
   props:
      datacite: Compiles
@@ -182,6 +204,7 @@
      sv: Sammanställer
      de: Kompiliert
      es: Compila
+     cs: Kompiluje (co)
 - id: isvariantformof
   props:
      datacite: IsVariantFormOf
@@ -190,6 +213,7 @@
      sv: Är en variant av
      de: Ist eine Variante von
      es: Es una forma variante de
+     cs: Je variantou (čeho)
 - id: isoriginalformof
   props:
      datacite: IsOriginalFormOf
@@ -198,6 +222,7 @@
      sv: Är originalet av
      de: Ist das Orginal von
      es: Es la forma original de
+     cs: Je původní variantou (čeho)
 - id: isidenticalto
   props:
      datacite: IsIdenticalTo
@@ -206,6 +231,7 @@
      sv: Är identisk med
      de: Ist identisch mit
      es: Es idéntico a
+     cs: Je identický s (čím)
 - id: isreviewedby
   props:
      datacite: IsReviewedBy
@@ -214,6 +240,7 @@
      sv: Är granskad av
      de: Wird begutachtet von
      es: Es revisado por
+     cs: Je recenzován (čím)
 - id: reviews
   props:
      datacite: Reviews
@@ -222,6 +249,7 @@
      sv: Granskar
      de: Begutachtet
      es: Revisiones
+     cs: Recenzuje (co)
 - id: isderivedfrom
   props:
      datacite: IsDerivedFrom
@@ -230,6 +258,7 @@
      sv: Härrör från
      de: Wird abgeleitet von
      es: Se deriva de
+     cs: Je odvozen od (čeho)
 - id: issourceof
   props:
      datacite: IsSourceOf
@@ -238,6 +267,7 @@
      sv: Är källa till
      de: Ist Quelle von
      es: Es fuente de
+     cs: Je zdrojem odvozené verze
 - id: isrequiredby
   props:
      datacite: IsRequiredBy
@@ -246,6 +276,7 @@
      sv: Krävs av
      de: Wird gefordert von
      es: Es requerido por
+     cs: Je požadován (čím)
 - id: requires
   props:
      datacite: Requires
@@ -254,6 +285,7 @@
      sv: Kräver
      de: Setzt voraus
      es: Requiere
+     cs: Požaduje (co)
 - id: isobsoletedby
   props:
      datacite: IsObsoletedBy
@@ -262,6 +294,7 @@
      sv: Ersätts av
      de: Wird ersetzt durch
      es: Está obsoleto por
+     cs: je nahrazen (čím)
 - id: obsoletes
   props:
      datacite: Obsoletes
@@ -270,3 +303,4 @@
      sv: Ersätter
      de: Ersetzt
      es: Obsoletos
+     cs: nahrazuje (co)

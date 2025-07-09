@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2023-2024 CERN.
+# Copyright (C) 2023-2025 CERN.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
@@ -12,7 +12,6 @@ from invenio_i18n import lazy_gettext as _
 from invenio_notifications.services.uow import NotificationOp
 from invenio_records_resources.services.uow import RecordIndexOp
 from invenio_requests.customizations import RequestType, actions
-from invenio_requests.errors import CannotExecuteActionError
 
 from invenio_rdm_records.notifications.builders import (
     CommunityInclusionAcceptNotificationBuilder,
@@ -68,7 +67,7 @@ class AcceptAction(actions.AcceptAction):
         parent_community = getattr(community, "parent", None)
         if (
             parent_community
-            and not str(parent_community.id) in record.parent.communities.ids
+            and str(parent_community.id) not in record.parent.communities.ids
         ):
             record.parent.communities.add(parent_community, request=self.request)
 
@@ -107,7 +106,9 @@ class CommunityInclusion(RequestType):
     allowed_topic_ref_types = ["record"]
     needs_context = {
         "community_roles": ["owner", "manager", "curator"],
+        "record_permission": "preview",
     }
+    resolve_topic_needs = True
 
     available_actions = {
         "create": actions.CreateAction,
@@ -118,3 +119,15 @@ class CommunityInclusion(RequestType):
         "cancel": actions.CancelAction,
         "expire": actions.ExpireAction,
     }
+
+
+def get_request_type(app):
+    """Return the community inclusion request type from config.
+
+    This function is only used to register the request type via the
+    ``invenio_requests.types`` entrypoint, and allow to customize the request type
+    class via the ``RDM_COMMUNITY_INCLUSION_REQUEST_CLS`` application config.
+    """
+    if not app:
+        return
+    return app.config.get("RDM_COMMUNITY_INCLUSION_REQUEST_CLS", CommunityInclusion)

@@ -1,14 +1,14 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2021-2024 CERN.
+# Copyright (C) 2021-2025 CERN.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
 
 """High-level API for working with RDM service components."""
 
+from invenio_checks.components import ChecksComponent
 from invenio_drafts_resources.services.records.components import (
-    DraftFilesComponent,
     DraftMediaFilesComponent,
     PIDComponent,
     RelationsComponent,
@@ -16,6 +16,7 @@ from invenio_drafts_resources.services.records.components import (
 
 from .access import AccessComponent
 from .custom_fields import CustomFieldsComponent
+from .files import RDMDraftFilesComponent
 from .internal_notes import InternalNotesComponent
 from .metadata import MetadataComponent
 from .pids import ParentPIDsComponent, PIDsComponent
@@ -29,7 +30,7 @@ DefaultRecordsComponents = [
     MetadataComponent,
     CustomFieldsComponent,
     AccessComponent,
-    DraftFilesComponent,
+    RDMDraftFilesComponent,
     DraftMediaFilesComponent,
     RecordFilesProcessorComponent,
     RecordDeletionComponent,
@@ -42,6 +43,7 @@ DefaultRecordsComponents = [
     ReviewComponent,
     ContentModerationComponent,
     InternalNotesComponent,
+    ChecksComponent,
 ]
 
 

@@ -3,6 +3,7 @@
 # Copyright (C) 2019-2024 CERN.
 # Copyright (C) 2019 Northwestern University.
 # Copyright (C) 2023 TU Wien.
+# Copyright (C) 2024 CESNET.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
@@ -19,6 +20,11 @@ from invenio_records_permissions.generators import (
     SystemProcess,
 )
 from invenio_records_permissions.policies.records import RecordPermissionPolicy
+from invenio_records_resources.services.files.generators import IfTransferType
+from invenio_records_resources.services.files.transfer import (
+    LOCAL_TRANSFER_TYPE,
+    MULTIPART_TRANSFER_TYPE,
+)
 from invenio_requests.services.generators import Receiver, Status
 from invenio_requests.services.permissions import (
     PermissionPolicy as RequestPermissionPolicy,
@@ -34,7 +40,6 @@ from .generators import (
     IfCreate,
     IfDeleted,
     IfExternalDOIRecord,
-    IfFileIsLocal,
     IfNewRecord,
     IfOneCommunity,
     IfRecordDeleted,
@@ -131,10 +136,13 @@ class RDMRecordPermissionPolicy(RecordPermissionPolicy):
     can_get_content_files = [
         # note: even though this is closer to business logic than permissions,
         # it was simpler and less coupling to implement this as permission check
-        IfFileIsLocal(then_=can_read_files, else_=[SystemProcess()])
+        IfTransferType(LOCAL_TRANSFER_TYPE, can_read_files),
+        SystemProcess(),
     ]
     # Allow submitting new record
     can_create = can_authenticated
+
+    can_search_revisions = [Administration()]
 
     #
     # Drafts
@@ -148,21 +156,35 @@ class RDMRecordPermissionPolicy(RecordPermissionPolicy):
     # Allow updating metadata of a draft
     can_update_draft = can_review
     # Allow uploading, updating and deleting files in drafts
-    can_draft_create_files = can_review
+    can_draft_create_files = [
+        # review is the same as create_files
+        IfTransferType(LOCAL_TRANSFER_TYPE, can_review),
+        IfTransferType(MULTIPART_TRANSFER_TYPE, can_review),
+        SystemProcess(),
+    ]
     can_draft_set_content_files = [
         # review is the same as create_files
-        IfFileIsLocal(then_=can_review, else_=[SystemProcess()])
+        IfTransferType(LOCAL_TRANSFER_TYPE, can_review),
+        IfTransferType(MULTIPART_TRANSFER_TYPE, can_review),
+        SystemProcess(),
     ]
     can_draft_get_content_files = [
         # preview is same as read_files
-        IfFileIsLocal(then_=can_draft_read_files, else_=[SystemProcess()])
+        IfTransferType(LOCAL_TRANSFER_TYPE, can_draft_read_files),
+        SystemProcess(),
     ]
     can_draft_commit_files = [
         # review is the same as create_files
-        IfFileIsLocal(then_=can_review, else_=[SystemProcess()])
+        IfTransferType(LOCAL_TRANSFER_TYPE, can_review),
+        IfTransferType(MULTIPART_TRANSFER_TYPE, can_review),
+        SystemProcess(),
     ]
     can_draft_update_files = can_review
     can_draft_delete_files = can_review
+
+    can_draft_get_file_transfer_metadata = [SystemProcess()]
+    can_draft_update_file_transfer_metadata = [SystemProcess()]
+
     # Allow enabling/disabling files
     can_manage_files = [
         IfConfig(
@@ -202,7 +224,7 @@ class RDMRecordPermissionPolicy(RecordPermissionPolicy):
         IfConfig(
             "RDM_ALLOW_EXTERNAL_DOI_VERSIONING",
             then_=can_curate,
-            else_=[IfExternalDOIRecord(then_=[Disable()], else_=can_curate)],
+            else_=[IfExternalDOIRecord(then_=[SystemProcess()], else_=can_curate)],
         ),
     ]
     # Allow publishing a new record or changes to an existing record.
@@ -255,15 +277,18 @@ class RDMRecordPermissionPolicy(RecordPermissionPolicy):
     can_draft_media_create_files = can_review
     can_draft_media_read_files = can_review
     can_draft_media_set_content_files = [
-        IfFileIsLocal(then_=can_review, else_=[SystemProcess()])
+        IfTransferType(LOCAL_TRANSFER_TYPE, can_review),
+        SystemProcess(),
     ]
     can_draft_media_get_content_files = [
         # preview is same as read_files
-        IfFileIsLocal(then_=can_preview, else_=[SystemProcess()])
+        IfTransferType(LOCAL_TRANSFER_TYPE, can_preview),
+        SystemProcess(),
     ]
     can_draft_media_commit_files = [
         # review is the same as create_files
-        IfFileIsLocal(then_=can_review, else_=[SystemProcess()])
+        IfTransferType(LOCAL_TRANSFER_TYPE, can_review),
+        SystemProcess(),
     ]
     can_draft_media_update_files = can_review
     can_draft_media_delete_files = can_review
@@ -278,7 +303,8 @@ class RDMRecordPermissionPolicy(RecordPermissionPolicy):
     can_media_get_content_files = [
         # note: even though this is closer to business logic than permissions,
         # it was simpler and less coupling to implement this as permission check
-        IfFileIsLocal(then_=can_read, else_=[SystemProcess()])
+        IfTransferType(LOCAL_TRANSFER_TYPE, can_read),
+        SystemProcess(),
     ]
     can_media_create_files = [Disable()]
     can_media_set_content_files = [Disable()]
@@ -313,9 +339,12 @@ class RDMRecordPermissionPolicy(RecordPermissionPolicy):
     can_commit_files = [Disable()]
     can_update_files = [Disable()]
 
-    # Used to hide at the moment the `parent.is_verified` field. It should be set to
+    can_get_file_transfer_metadata = [Disable()]
+    can_update_file_transfer_metadata = [Disable()]
+
+    # Used to hide the `parent.is_verified` field. It should be set to
     # correct permissions based on which the field will be exposed only to moderators
-    can_moderate = [Disable()]
+    can_moderate = [SystemProcess()]
 
 
 guest_token = IfRequestType(
@@ -342,7 +371,7 @@ class RDMRequestsPermissionPolicy(RequestPermissionPolicy):
                 IfRequestType(
                     GuestAccessRequest,
                     then_=[Status(["submitted"], [Receiver()])],
-                    else_=Disable(),
+                    else_=SystemProcess(),
                 )
             ],
         )

@@ -1,12 +1,14 @@
 # -*- coding: utf-8 -*-
 #
 # Copyright (C) 2023 CERN.
+# Copyright (C) 2024 KTH Royal Institute of Technology.
 #
 # Invenio-RDM is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
 """CFF schema."""
 
 from flask_resources.serializers import BaseSerializerSchema
+from invenio_i18n import lazy_gettext as _
 from marshmallow import ValidationError, fields, missing
 from marshmallow_utils.fields import SanitizedHTML, SanitizedUnicode
 
@@ -24,7 +26,7 @@ def _serialize_person(person):
         serialized.update({"given-names": giv_name})
 
     if not serialized:
-        return ValidationError("One of 'family-names' or 'given-names' is required.")
+        return ValidationError(_("One of 'family-names' or 'given-names' is required."))
 
     identifiers = person["person_or_org"].get("identifiers", [])
     affiliations = person.get("affiliations", [])
@@ -81,6 +83,7 @@ class CFFSchema(BaseSerializerSchema):
     keywords = fields.Method("get_keywords")
     license = fields.Method("get_license")
     license_url = fields.Method("get_license_url", data_key="license-url")
+    message = fields.Method("get_message")
     # TODO references - related identifiers?
     # TODO there are other derivations of repository
     repository_code = fields.Method("get_repository_code", data_key="repository-code")
@@ -239,3 +242,13 @@ class CFFSchema(BaseSerializerSchema):
             return missing
 
         return resource_type
+
+    def get_message(self, obj):
+        """Get standard citation message based on record type."""
+        resource_type = obj.get("metadata", {}).get("resource_type", {}).get("id")
+
+        type_label = "work"
+        if resource_type in self.allowed_types:
+            type_label = resource_type
+
+        return f"If you use this {type_label}, please cite it using the metadata from this file."

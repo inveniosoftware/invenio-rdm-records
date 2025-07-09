@@ -259,3 +259,37 @@ def test_search_metadata_formats(client, admin, headers):
         assert hit["id"] in available_formats
         assert hit["schema"] == available_formats[hit["id"]]["schema"]
         assert hit["namespace"] == available_formats[hit["id"]]["namespace"]
+
+
+def test_links(client, admin, minimal_oai_set, headers):
+    client = admin.login(client)
+
+    # Item links
+    resp = _create_set(client, minimal_oai_set, headers, 201).json
+    id_ = resp["id"]
+    links_expected = {
+        "self": f"https://127.0.0.1:5000/api/oaipmh/sets/{id_}",
+        "oai-listrecords": (
+            "https://127.0.0.1:5000/oai2d?metadataPrefix=oai_dc&set=spec&verb=ListRecords"  # noqa
+        ),
+        "oai-listidentifiers": (
+            "https://127.0.0.1:5000/oai2d?metadataPrefix=oai_dc&set=spec&verb=ListIdentifiers"  # noqa
+        ),
+    }
+    for k, v in links_expected.items():
+        assert v == resp["links"][k]
+
+    # Search links (prev/next are tested above so skipped here)
+    resp = _search_sets(client, {}, headers, 200).json
+    links_expected = {
+        "oai-listsets": "https://127.0.0.1:5000/oai2d?verb=ListSets",
+        "oai-listrecords": (
+            "https://127.0.0.1:5000/oai2d?metadataPrefix=oai_dc&verb=ListRecords"
+        ),
+        "oai-listidentifiers": (
+            "https://127.0.0.1:5000/oai2d?metadataPrefix=oai_dc&verb=ListIdentifiers"
+        ),
+        "oai-identify": "https://127.0.0.1:5000/oai2d?verb=Identify",
+    }
+    for k, v in links_expected.items():
+        assert v == resp["links"][k]

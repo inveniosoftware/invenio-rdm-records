@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2019-2024 CERN.
+# Copyright (C) 2019-2025 CERN.
 # Copyright (C) 2019-2022 Northwestern University.
 # Copyright (C) 2021 TU Wien.
 # Copyright (C) 2022-2023 Graz University of Technology.
@@ -192,7 +192,6 @@ def app_config(app_config, mock_datacite_client):
     # OAI Server
     app_config["OAISERVER_REPOSITORY_NAME"] = "InvenioRDM"
     app_config["OAISERVER_ID_PREFIX"] = "inveniordm"
-    app_config["OAISERVER_RECORD_INDEX"] = "rdmrecords-records"
     app_config["OAISERVER_SEARCH_CLS"] = "invenio_rdm_records.oai:OAIRecordSearch"
     app_config["OAISERVER_ID_FETCHER"] = "invenio_rdm_records.oai:oaiid_fetcher"
     app_config["OAISERVER_LAST_UPDATE_KEY"] = "updated"
@@ -310,6 +309,19 @@ def app_config(app_config, mock_datacite_client):
 
     app_config["FILES_REST_DEFAULT_STORAGE_CLASS"] = "L"
 
+    app_config["RDM_FILES_DEFAULT_QUOTA_SIZE"] = 10**6
+    app_config["RDM_FILES_DEFAULT_MAX_FILE_SIZE"] = 10**6
+
+    # allowed domains for remotely linked files
+    app_config["RECORDS_RESOURCES_FILES_ALLOWED_REMOTE_DOMAINS"] = [
+        "example.com",
+    ]
+
+    # allowed domains for fetched files
+    app_config["RECORDS_RESOURCES_FILES_ALLOWED_DOMAINS"] = [
+        "example.com",
+    ]
+
     # Communities
     app_config["COMMUNITIES_SERVICE_COMPONENTS"] = CommunityServiceComponents
 
@@ -352,6 +364,10 @@ def app_config(app_config, mock_datacite_client):
         ServiceResultResolver(service_id="request_events", type_key="request_event"),
     ]
 
+    # Specifying a notifications settings view function to trigger registration of route
+    # needed for invenio_url_for
+    app_config["NOTIFICATIONS_SETTINGS_VIEW_FUNCTION"] = lambda: "<index>"
+
     # Extending preferences schemas, to include notification preferences. Should not matter for most test cases
     app_config["ACCOUNTS_USER_PREFERENCES_SCHEMA"] = (
         UserPreferencesNotificationsSchema()
@@ -374,12 +390,25 @@ def app_config(app_config, mock_datacite_client):
     }
 
     app_config["USERS_RESOURCES_GROUPS_ENABLED"] = True
+    app_config["THEME_FRONTPAGE"] = False
 
     return app_config
 
 
 @pytest.fixture(scope="module")
-def create_app(instance_path):
+def extra_entry_points():
+    """Extra entrypoints."""
+    return {
+        "invenio_base.blueprints": [
+            "invenio_app_rdm_records = tests.mock_module:create_invenio_app_rdm_records_blueprint",  # noqa
+            "invenio_app_rdm_requests = tests.mock_module:create_invenio_app_rdm_requests_blueprint",  # noqa
+            "invenio_app_rdm_communities = tests.mock_module:create_invenio_app_rdm_communities_blueprint",  # noqa
+        ],
+    }
+
+
+@pytest.fixture(scope="module")
+def create_app(instance_path, entry_points):
     """Application factory fixture."""
     return _create_app
 
@@ -1441,9 +1470,9 @@ def relation_type(app):
 
 
 @pytest.fixture(scope="module")
-def relation_type_v(app, relation_type):
+def relation_types_v(app, relation_type):
     """Relation type vocabulary record."""
-    vocab = vocabulary_service.create(
+    vocab1 = vocabulary_service.create(
         system_identity,
         {
             "id": "iscitedby",
@@ -1453,9 +1482,19 @@ def relation_type_v(app, relation_type):
         },
     )
 
+    vocab2 = vocabulary_service.create(
+        system_identity,
+        {
+            "id": "hasmetadata",
+            "props": {"datacite": "HasMetadata"},
+            "title": {"en": "Has metadata"},
+            "type": "relationtypes",
+        },
+    )
+
     Vocabulary.index.refresh()
 
-    return vocab
+    return [vocab1, vocab2]
 
 
 @pytest.fixture(scope="module")
@@ -1609,7 +1648,7 @@ RunningApp = namedtuple(
         "description_type_v",
         "date_type_v",
         "contributors_role_v",
-        "relation_type_v",
+        "relation_types_v",
         "licenses_v",
         "funders_v",
         "awards_v",
@@ -1632,7 +1671,7 @@ def running_app(
     description_type_v,
     date_type_v,
     contributors_role_v,
-    relation_type_v,
+    relation_types_v,
     licenses_v,
     funders_v,
     awards_v,
@@ -1656,7 +1695,7 @@ def running_app(
         description_type_v,
         date_type_v,
         contributors_role_v,
-        relation_type_v,
+        relation_types_v,
         licenses_v,
         funders_v,
         awards_v,

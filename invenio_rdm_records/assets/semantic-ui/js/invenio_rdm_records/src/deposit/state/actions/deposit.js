@@ -1,5 +1,5 @@
 // This file is part of Invenio-RDM-Records
-// Copyright (C) 2020-2024 CERN.
+// Copyright (C) 2020-2025 CERN.
 // Copyright (C) 2020-2022 Northwestern University.
 //
 // Invenio-RDM-Records is free software; you can redistribute it and/or modify it
@@ -63,10 +63,38 @@ export const saveDraftWithUrlUpdate = async (draft, draftsService) => {
   return response;
 };
 
+function _hasValidationErrorsWithSeverityError(errors) {
+  if (typeof errors === "object") {
+    if (
+      Object.hasOwn(errors, "message") &&
+      Object.hasOwn(errors, "severity") &&
+      Object.hasOwn(errors, "description")
+    ) {
+      if (errors["severity"] === "error") {
+        return true;
+      }
+    }
+    for (const key of Object.keys(errors)) {
+      if (key !== "message" && key !== "severity" && key !== "description") {
+        return _hasValidationErrorsWithSeverityError(errors[key]);
+      }
+    }
+  } else {
+    // If the error message is a string and not an object with `message`, `severity`, and `description` keys, then it's an error.
+    return true;
+  }
+}
+
 async function _saveDraft(
   draft,
   draftsService,
-  { depositState, dispatchFn, failType, partialValidationActionType }
+  {
+    depositState,
+    dispatchFn,
+    failType,
+    partialValidationActionType,
+    showOnlyValidationErrorsWithSeverityError,
+  }
 ) {
   let response;
 
@@ -81,7 +109,9 @@ async function _saveDraft(
     throw error;
   }
 
-  const draftHasValidationErrors = !_isEmpty(response.errors);
+  const draftHasValidationErrors = showOnlyValidationErrorsWithSeverityError
+    ? _hasValidationErrorsWithSeverityError(response.errors)
+    : !_isEmpty(response.errors);
   const draftValidationErrorResponse = draftHasValidationErrors ? response : {};
 
   const {
@@ -119,6 +149,10 @@ async function _saveDraft(
       ...draftValidationErrorResponse.data,
       ...response.data,
     };
+    draftValidationErrorResponse.errors = {
+      ...draftValidationErrorResponse.errors,
+      ...response.errors,
+    };
   }
   // Throw validation errors from the partially saved draft
   if (draftHasValidationErrors) {
@@ -147,22 +181,14 @@ export const save = (draft) => {
       dispatchFn: dispatch,
       failType: DRAFT_SAVE_FAILED,
       partialValidationActionType: DRAFT_HAS_VALIDATION_ERRORS,
+      // Users should see validation warnings when saving a draft.
+      showOnlyValidationErrorsWithSeverityError: false,
     });
 
     dispatch({
       type: DRAFT_SAVE_SUCCEEDED,
       payload: { data: response.data },
     });
-
-    if (draft.noINeedDOI) {
-      // Save the choice that user selected that DOI is needed. This is used to validate
-      // if user has reserved a DOI before clicking publish. This check is valid when
-      // DOI is optional
-      dispatch({
-        type: SET_DOI_NEEDED,
-        payload: { noINeedDOI: draft.noINeedDOI },
-      });
-    }
   };
 };
 
@@ -183,6 +209,8 @@ export const publish = (draft, { removeSelectedCommunity = false }) => {
       dispatchFn: dispatch,
       failType: DRAFT_PUBLISH_FAILED,
       partialValidationActionType: DRAFT_PUBLISH_FAILED_WITH_VALIDATION_ERRORS,
+      // Users should be able to publish a record with validation warnings.
+      showOnlyValidationErrorsWithSeverityError: true,
     });
 
     const draftWithLinks = response.data;
@@ -217,6 +245,8 @@ export const submitReview = (draft, { reviewComment, directPublish }) => {
       dispatchFn: dispatch,
       failType: DRAFT_SUBMIT_REVIEW_FAILED,
       partialValidationActionType: DRAFT_SUBMIT_REVIEW_FAILED_WITH_VALIDATION_ERRORS,
+      // Users should be able to submit for review a record with validation warnings.
+      showOnlyValidationErrorsWithSeverityError: true,
     });
 
     const draftWithLinks = response.data;
@@ -249,6 +279,8 @@ export const preview = (draft) => {
       dispatchFn: dispatch,
       failType: DRAFT_PREVIEW_FAILED,
       partialValidationActionType: DRAFT_HAS_VALIDATION_ERRORS,
+      // Users should be able to preview a record with validation warnings.
+      showOnlyValidationErrorsWithSeverityError: true,
     });
     const recordUrl = response.data.links.record_html;
     // redirect to the preview page

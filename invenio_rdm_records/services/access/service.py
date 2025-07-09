@@ -16,13 +16,14 @@ import arrow
 from flask import current_app
 from flask_login import current_user
 from invenio_access.permissions import authenticated_user, system_identity
+from invenio_base import invenio_url_for
 from invenio_drafts_resources.services.records import RecordService
 from invenio_drafts_resources.services.records.uow import ParentRecordCommitOp
 from invenio_i18n import lazy_gettext as _
 from invenio_notifications.services.uow import NotificationOp
 from invenio_records_resources.services.errors import PermissionDeniedError
 from invenio_records_resources.services.records.schema import ServiceSchemaWrapper
-from invenio_records_resources.services.uow import unit_of_work
+from invenio_records_resources.services.uow import RecordCommitOp, unit_of_work
 from invenio_requests.proxies import current_requests_service
 from invenio_search.engine import dsl
 from invenio_users_resources.proxies import current_user_resources
@@ -103,6 +104,16 @@ class RecordAccessService(RecordService):
         return [
             GrantSubjectExpandableField("subject"),
         ]
+
+    #
+    # Update parent request on access changes
+    #
+
+    def _update_parent_request(self, parent, uow):
+        """Update the parent record request."""
+        if parent.review:
+            request = parent.review.get_object()
+            uow.register(RecordCommitOp(request, indexer=self.indexer))
 
     #
     # Secret links
@@ -201,6 +212,7 @@ class RecordAccessService(RecordService):
             )
 
         uow.register(ParentRecordCommitOp(parent, indexer_context=dict(service=self)))
+        self._update_parent_request(parent, uow)
 
         return self.link_result_item(
             self,
@@ -301,6 +313,7 @@ class RecordAccessService(RecordService):
         link.description = data.get("description", link.description)
 
         uow.register(ParentRecordCommitOp(parent, indexer_context=dict(service=self)))
+        self._update_parent_request(parent, uow)
 
         return self.link_result_item(
             self,
@@ -330,6 +343,7 @@ class RecordAccessService(RecordService):
         link.revoke()
 
         uow.register(ParentRecordCommitOp(parent, indexer_context=dict(service=self)))
+        self._update_parent_request(parent, uow)
 
         return True
 
@@ -423,6 +437,7 @@ class RecordAccessService(RecordService):
             new_grants.append(new_grant)
 
         uow.register(ParentRecordCommitOp(parent, indexer_context=dict(service=self)))
+        self._update_parent_request(parent, uow)
 
         return self.grants_result_list(
             self,
@@ -517,6 +532,7 @@ class RecordAccessService(RecordService):
         parent.access.grants[grant_id] = new_grant
 
         uow.register(ParentRecordCommitOp(parent, indexer_context=dict(service=self)))
+        self._update_parent_request(parent, uow)
 
         return self.grant_result_item(
             self,
@@ -575,6 +591,7 @@ class RecordAccessService(RecordService):
         parent.access.grants.pop(grant_id)
 
         uow.register(ParentRecordCommitOp(parent, indexer_context=dict(service=self)))
+        self._update_parent_request(parent, uow)
 
         return True
 
@@ -713,14 +730,9 @@ class RecordAccessService(RecordService):
         )
 
         # Create the URL for the email verification endpoint
-
-        # TODO ideally this part should be auto generated, but
-        # due to api app and ui app split, api app does not have the UI
-        # urls registered
-        verify_url = (
-            f"{current_app.config['SITE_UI_URL']}"
-            f"/access/requests/confirm"
-            f"?access_request_token={access_token.token}"
+        verify_url = invenio_url_for(
+            "invenio_app_rdm_requests.verify_access_request_token",
+            access_request_token=access_token.token,
         )
         uow.register(
             NotificationOp(
@@ -942,6 +954,7 @@ class RecordAccessService(RecordService):
         parent.access.grants[grant_index] = new_grant
 
         uow.register(ParentRecordCommitOp(parent, indexer_context=dict(service=self)))
+        self._update_parent_request(parent, uow)
 
         return self.grant_result_item(
             self,
@@ -972,5 +985,6 @@ class RecordAccessService(RecordService):
             raise LookupError(subject_id)
 
         uow.register(ParentRecordCommitOp(parent, indexer_context=dict(service=self)))
+        self._update_parent_request(parent, uow)
 
         return True

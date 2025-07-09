@@ -1,9 +1,9 @@
 
 ..
-    Copyright (C) 2019-2024 CERN.
+    Copyright (C) 2019-2025 CERN.
     Copyright (C) 2019-2024 Northwestern University.
     Copyright (C) 2024      KTH Royal Institute of Technology.
-
+    Copyright (C) 2024-2025 Graz University of Technology.
 
     Invenio-RDM-Records is free software; you can redistribute it and/or
     modify it under the terms of the MIT License; see LICENSE file for more
@@ -11,6 +11,250 @@
 
 Changes
 =======
+
+Version v19.3.0 (released 2025-07-02)
+
+- fix: disabled remote and fetch transport in permissions
+- fix: RemovedInMarshmallow4Warning
+- fix: ChangedInMarshmallow4Warning
+- contrib: specify proceedings in imprint title label
+- fix: pkg_resources DeprecationWarning
+- tests: add tests for setting record/user quotas
+- quotas: set the record's file quota in a service component
+- quotas: add extra info about the user_id column in record quotas
+- quotas: remove unique constraint for the user_id in record quotas
+- deposit-ui: implement uppy uploader field
+- oaiserver/services: simplify search filtering
+- fix: SADeprecationWarning
+- i18n: localize embargoed date
+- records-api: add Data Package serializer
+
+Version v19.2.0 (released 2025-06-13)
+
+- checks: integrate service component and community requests
+
+Version v19.1.0 (released 2025-06-12)
+
+- form: display errors on draft load
+- deposit: updated fieldpath for feedback label
+- serializers/datacite: configurable dumping of access right (#2047)
+    * serializers/datacite: configurable dumping of access right
+    * Adds a new `RDM_DATACITE_DUMP_ACCESS_RIGHTS` config variable to
+      control if the access right level is included in the DataCite
+      serialization. The value is based on the vocabulary documented at
+      <https://wiki.surfnet.nl/spaces/standards/pages/11055603/info-eu-repo#infoeurepo-AccessRights>
+    * confix: rename to `RDM_DATACITE_DUMP_OPENAIRE_ACCESS_RIGHTS`
+- licenses: add creative commons public domain mark from spdx
+- serializers: add publication-section rdm type (book section) to bibtex serialization
+- localizing dates based on application selected locale
+- contrib-meeting: add missing `url` field to deposit form
+
+Version v19.0.1 (released 2025-06-10)
+
+- file uploader: change from checkbox to radio
+- file uploader: improve exceeded limit message
+- tests: update error to reflect records-resources file permission order change
+- creatibutors: adapt to new feedback label interface
+- creatibutors: fix nested errors & feedback display
+
+Version v19.0.0 (released 2025-06-03)
+
+- setup: version bump on dependent packages
+- fix: added permissions for getting/setting transfer metadata
+  * Added extra permissions to get/update transfer metadata. These permissions
+  are not used by REST API, they are used in background tasks, at this
+  moment for fetch transfer (not enabled by default and not supported in UI)
+- test: fixed test - file key is now required
+- permissions: multipart upload with local fs storage
+- Implementation of RFC 0072 - Pluggable transfer types
+  * IfFileIsLocal is not used anymore as it was handling just one type of transport
+  * Switched to IfTransferType permission generators
+- installation: remove collections dependency
+
+Version v18.14.0 (released 2025-06-02)
+
+- config: make community request type classes customizable
+    * Allows to customize community submissions and inclusion request type
+      classes via the ``RDM_COMMUNITY_SUBMISSION_REQUEST_CLS`` and
+      ``RDM_COMMUNITY_INCLUSION_REQUEST_CLS`` config variables.
+
+Version v18.13.0 (released 2025-06-02)
+
+- Move collections implementaiton to Invenio-Collections
+
+Version v18.12.0 (released 2025-05-23)
+
+- resources: expose get current revision of record
+- deposit: fix global server errors in frontend
+- feedback-ui: Add specific ID to disconnected feedback form
+
+Version v18.11.0 (released 2025-05-16)
+
+- deposit-ui: fix upload files error state
+- deposit-ui: add feedback messages on the file level
+
+Version v18.10.0 (released 2025-05-13)
+
+- review: add components hook for submitting review
+- deposit: show global backend validation message
+
+Version v18.9.0 (released 2025-05-13)
+
+- mappings: remove objectfields from "index.query.default_field" settings
+- update setup.cfg
+
+Version v18.8.1 (released 2025-05-07)
+
+- schemas: provide default value for quota increase notes
+- metadata: copyrights placeholder and help text changes
+- ui serializer: display more thesis information
+
+Version v18.8.0 (released 2025-05-06)
+
+- services: make commit file link dependent on allow_upload
+- meeting: add identifiers to data model of meeting contrib field
+- services: include Opensearch meta in the results
+
+
+Version v18.7.0 (released 2025-04-28)
+
+- logging: add basic logging for expired embargoes
+
+Version v18.6.1 (released 2025-04-28)
+
+- services: remove commit file link from record (bugfix)
+
+Version v18.6.0 (released 2025-04-24)
+
+- datamodel contrib: add defense and submission date to thesis field
+
+Version v18.5.0 (released 2025-04-24)
+
+- datamodel: add copyright field
+
+Version v18.4.0 (released 2025-04-23)
+
+- urls: integrate invenio_url_for
+- permissions: replace Disabled with SystemProcess
+
+Version v18.3.2 (released 2025-04-17)
+
+- custom_fields: added fallback to old thesis format and conditionally handle form display based on config
+
+Version v18.3.1 (released 2025-04-14)
+
+- user quota: anticipate system user
+- doi: increase label width
+
+Version v18.3.0 (released 2025-04-10)
+
+- pids: change optional DOI validation
+- views: FAIR signposting level 1 support (remove comment)
+- views: signposting: fix fallback to level 2 linkset if collections size is too big to control link header size
+- owner: allow system_user to be record owner
+
+
+Version v18.2.0 (released 2025-04-03)
+
+- fix: deletion_status gone after record.commit
+- fix: tombstone gone after record.commit
+- file_links: prepare for changes in invenio-records-resources
+- deposit-ui: show icon and tooltip for new error format with severity error
+
+Version v18.1.0 (released 2025-03-27)
+
+- align licenses modal with funders modal
+- use underscores for setuptools configuration instead of dashes
+- lots of translations
+
+Version v18.0.0 (released 2025-03-26)
+
+deposit-ui: creatibutors: support general new error format with severity (fix null)
+deposit-ui: creatibutors: support general new error format with severity
+deposit-ui: fix: do not consider new error format's description as a field
+thesis: add department and type (breaking change)
+imprint: add edition
+
+Version v17.4.0 (released 2025-03-18)
+
+- deposit-ui: Support new error format with severity and description
+  - FeedbackLabel for creatibutors and license
+
+Version v17.3.0 (released 2025-03-11)
+
+- resources: add param to filter shared with my uploads
+  - returns record needs on entity resolution
+  - reindex associated request on parent access changes
+- service: change community submission actions on who can manage
+- links: add preview_html link
+
+Version v17.2.0 (released 2025-03-10)
+
+- views: signposting: files: fix filename encoding issues for downloads
+- resource_types: fix datapaper and interactiveresource datacite mapping
+- schema.org: add uploadDate for VideoObject serialization [+]
+- cff: add default "message" field
+- iiif: fix info request not being proxied
+
+Version v17.1.0 (released 2025-02-21)
+
+- views: FAIR signposting level 1 support
+- views: FAIR signposting remove linkset link to itself
+
+Version v17.0.2 (released 2025-02-14)
+
+- serializers/dcat: fix broken subject serialization for terms with apostrophes
+
+Version v17.0.1 (released 2025-02-13)
+
+- Bump pre-release dependencies to stable.
+
+Version v17.0.0 (released 2025-02-13)
+
+- Promote to stable release.
+- serializers: DataCite to DCAT-AP: fix undefined variable $cheme for relation type has metadata
+- services: proper escape the fields key in links generation
+- UISerializer: add polygon locations to serializer in addition to points (#1924)
+
+Version v17.0.0.dev2 (released 2025-01-23)
+
+Version v17.0.0.dev1 (released 2024-12-16)
+
+- fix: flask-sqlalchemy.pagination >= 3.0.0
+- comp: make compatible to flask-sqlalchemy>=3.1
+- setup: change to reusable workflows
+- setup: bump major dependencies
+
+Version v16.8.0 (released 2025-01-27)
+
+- resources: expose record revisions
+
+Version v16.7.1 (released 2025-01-21)
+
+- optional-doi: fix new upload disabled states
+
+Version v16.7.0 (released 2025-01-21)
+
+- pids: improve deposit UI for optional DOI
+- deposit-ui: fix affiliation selection input display
+
+Version v16.6.1 (released 2025-01-16)
+
+- Revert "bug: add custom comment notification for record/draft requests"
+    * This is actually a breaking change since it introduces a new
+      set of notification templates that will potentialy not be
+      styled if overridden in an instance's overlay.
+
+Version v16.6.0 (released 2025-01-16)
+
+- notifications: add custom comment template for record inclusion
+  and draft review requests
+- deposit-ui: fix affiliations dropdown behavior for custom values
+- moderation: fix use of uow
+- serializers/bibtex: Conference paper not falling back to proceedings
+- serializers/bibtex: Conference proceeding to proceedings
+- serializers/bibtex: year and month using publication date
+- rights: fix serialize condition for controlled license
 
 Version v16.5.1 (released 2024-12-16)
 

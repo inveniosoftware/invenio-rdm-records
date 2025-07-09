@@ -1,5 +1,5 @@
 // This file is part of Invenio-RDM-Records
-// Copyright (C) 2020-2023 CERN.
+// Copyright (C) 2020-2025 CERN.
 // Copyright (C) 2020-2022 Northwestern University.
 //
 // Invenio-RDM-Records is free software; you can redistribute it and/or modify it
@@ -51,7 +51,11 @@ export class DepositFormApp extends Component {
 
     const fileApiClient = props.fileApiClient
       ? props.fileApiClient
-      : new RDMDepositFileApiClient(additionalApiConfig);
+      : new RDMDepositFileApiClient(
+          additionalApiConfig,
+          props.config.default_transfer_type,
+          props.config.enabled_transfer_types
+        );
 
     const draftsService = props.draftsService
       ? props.draftsService
@@ -75,6 +79,10 @@ export class DepositFormApp extends Component {
       recordSerializer: recordSerializer,
     };
 
+    if (props.errors && props.errors.length > 0) {
+      appConfig.errors = recordSerializer.deserializeErrors(props.errors);
+    }
+
     this.store = configureStore(appConfig);
 
     const progressNotifier = new RDMUploadProgressNotifier(this.store.dispatch);
@@ -97,6 +105,14 @@ export class DepositFormApp extends Component {
 DepositFormApp.propTypes = {
   config: PropTypes.object.isRequired,
   record: PropTypes.object.isRequired,
+  errors: PropTypes.arrayOf(
+    PropTypes.shape({
+      field: PropTypes.string.isRequired,
+      messages: PropTypes.arrayOf(PropTypes.string).isRequired,
+      description: PropTypes.string,
+      severity: PropTypes.string,
+    })
+  ),
   preselectedCommunity: PropTypes.object,
   files: PropTypes.object,
   permissions: PropTypes.object,
@@ -112,6 +128,7 @@ DepositFormApp.defaultProps = {
   preselectedCommunity: undefined,
   permissions: undefined,
   apiClient: undefined,
+  errors: undefined,
   fileApiClient: undefined,
   draftsService: undefined,
   filesService: undefined,

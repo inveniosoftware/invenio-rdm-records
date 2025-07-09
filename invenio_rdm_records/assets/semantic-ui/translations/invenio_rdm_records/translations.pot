@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2024-08-14T06:30:28.436Z\n"
-"PO-Revision-Date: 2024-08-14T06:30:28.436Z\n"
+"POT-Creation-Date: 2025-07-08T19:50:35.330Z\n"
+"PO-Revision-Date: 2025-07-08T19:50:35.330Z\n"
 "Language: en\n"
 
 msgid "Copy to clipboard"
@@ -20,6 +20,12 @@ msgstr "This set is not editable as it was created by the system."
 
 msgid "This set is not deletable as it was created by the system."
 msgstr "This set is not deletable as it was created by the system."
+
+msgid "Fetch error"
+msgstr "Fetch error"
+
+msgid "Error fetching OAI set formats."
+msgstr "Error fetching OAI set formats."
 
 msgid "Links"
 msgstr "Links"
@@ -58,12 +64,6 @@ msgstr "Delete {{title}}"
 msgid "This will delete the set '{{title}}'."
 msgstr "This will delete the set '{{title}}'."
 
-msgid "Fetch error"
-msgstr "Fetch error"
-
-msgid "Error fetching OAI set formats."
-msgstr "Error fetching OAI set formats."
-
 msgid "Select the community where you want to submit your record."
 msgstr "Select the community where you want to submit your record."
 
@@ -82,6 +82,9 @@ msgstr "Community inclusion information"
 msgid "Submission to this community is only allowed if the record is restricted."
 msgstr "Submission to this community is only allowed if the record is restricted."
 
+msgid "Submission to this community is only allowed to community members."
+msgstr "Submission to this community is only allowed to community members."
+
 msgid "Community submission conditions information"
 msgstr "Community submission conditions information"
 
@@ -92,6 +95,9 @@ msgstr ""
 "Submission to this community is only allowed by dedicated upload form. Use "
 "the button to jump to the form."
 
+msgid "Go to the community"
+msgstr "Go to the community"
+
 msgid "Selected"
 msgstr "Selected"
 
@@ -101,12 +107,8 @@ msgstr "Select"
 msgid "Select {{title}}"
 msgstr "Select {{title}}"
 
-msgid ""
-"Did not find a community that fits you? Upload without a community or "
-"<2>create your own.</2>"
-msgstr ""
-"Did not find a community that fits you? Upload without a community or "
-"<2>create your own.</2>"
+msgid "Verified"
+msgstr "Verified"
 
 msgid "Close"
 msgstr "Close"
@@ -201,6 +203,9 @@ msgstr "New version"
 msgid "Preview"
 msgstr "Preview"
 
+msgid "DOI is needed. You need to reserve a DOI before publishing."
+msgstr "DOI is needed. You need to reserve a DOI before publishing."
+
 msgid "Are you sure you want to publish this record?"
 msgstr "Are you sure you want to publish this record?"
 
@@ -266,15 +271,20 @@ msgstr ""
 msgid "Submit record for review"
 msgstr "Submit record for review"
 
-msgid ""
-"The '{{communityTitle}}' curators will have access to <bold>view</bold> and "
-"<bold>edit</bold> your upload's metadata and files."
-msgstr ""
-"The '{{communityTitle}}' curators will have access to <bold>view</bold> and "
-"<bold>edit</bold> your upload's metadata and files."
+msgid "The '{{communityTitle}}' curators will have access to"
+msgstr "The '{{communityTitle}}' curators will have access to"
+
+msgid "view and edit"
+msgstr "view and edit"
+
+msgid "your upload's metadata and files."
+msgstr "your upload's metadata and files."
 
 msgid "Message to curators (optional)"
 msgstr "Message to curators (optional)"
+
+msgid "msgWarningText1"
+msgstr "msgWarningText1"
 
 msgid "Change community"
 msgstr "Change community"
@@ -285,71 +295,14 @@ msgstr "Publish without community"
 msgid "Save draft"
 msgstr "Save draft"
 
-msgid "Files"
-msgstr "Files"
-
-msgid "Resource type"
-msgstr "Resource type"
-
-msgid "Title"
-msgstr "Title"
-
-msgid "Additional titles"
-msgstr "Additional titles"
-
-msgid "Publication date"
-msgstr "Publication date"
-
-msgid "Creators"
-msgstr "Creators"
-
-msgid "Contributors"
-msgstr "Contributors"
-
-msgid "Description"
-msgstr "Description"
-
-msgid "Additional descriptions"
-msgstr "Additional descriptions"
-
-msgid "Licenses"
-msgstr "Licenses"
-
-msgid "Languages"
-msgstr "Languages"
-
-msgid "Dates"
-msgstr "Dates"
-
-msgid "Version"
-msgstr "Version"
-
-msgid "Publisher"
-msgstr "Publisher"
-
-msgid "Related works"
-msgstr "Related works"
-
-msgid "References"
-msgstr "References"
-
-msgid "Alternate identifiers"
-msgstr "Alternate identifiers"
-
-msgid "Keywords and subjects"
-msgstr "Keywords and subjects"
-
-msgid "Embargo until"
-msgstr "Embargo until"
-
-msgid "DOI"
-msgstr "DOI"
-
 msgid "Record successfully saved."
 msgstr "Record successfully saved."
 
-msgid "Record saved with validation errors:"
-msgstr "Record saved with validation errors:"
+msgid "Record saved with validation feedback in"
+msgstr "Record saved with validation feedback in"
+
+msgid "Draft has validation feedback in"
+msgstr "Draft has validation feedback in"
 
 msgid ""
 "The draft was not saved. Please try again. If the problem persists, contact "
@@ -365,8 +318,8 @@ msgstr ""
 "The draft was not published. Please try again. If the problem persists, "
 "contact user support."
 
-msgid "The draft was not published. Record saved with validation errors:"
-msgstr "The draft was not published. Record saved with validation errors:"
+msgid "The draft was not published. Record saved with validation feedback in"
+msgstr "The draft was not published. Record saved with validation feedback in"
 
 msgid ""
 "The draft was not submitted for review. Please try again. If the problem "
@@ -375,8 +328,12 @@ msgstr ""
 "The draft was not submitted for review. Please try again. If the problem "
 "persists, contact user support."
 
-msgid "The draft was not submitted for review. Record saved with validation errors:"
-msgstr "The draft was not submitted for review. Record saved with validation errors:"
+msgid ""
+"The draft was not submitted for review. Record saved with validation "
+"feedback in"
+msgstr ""
+"The draft was not submitted for review. Record saved with validation "
+"feedback in"
 
 msgid ""
 "Draft deletion failed. Please try again. If the problem persists, contact "
@@ -493,6 +450,9 @@ msgstr "Record or files protection must be <1>restricted</1> to apply an embargo
 msgid "YYYY-MM-DD"
 msgstr "YYYY-MM-DD"
 
+msgid "Embargo until"
+msgstr "Embargo until"
+
 msgid "The record has no files."
 msgstr "The record has no files."
 
@@ -524,6 +484,21 @@ msgstr "Affiliations"
 msgid "Search for affiliations.."
 msgstr "Search for affiliations.."
 
+msgid "Coming soon"
+msgstr "Coming soon"
+
+msgid "A copyright statement describing the ownership of the uploaded resource."
+msgstr "A copyright statement describing the ownership of the uploaded resource."
+
+msgid "Copyright (C) {{currentYear}} The Authors."
+msgstr "Copyright (C) {{currentYear}} The Authors."
+
+msgid "Copyright"
+msgstr "Copyright"
+
+msgid "Creators"
+msgstr "Creators"
+
 msgid "Add creator"
 msgstr "Add creator"
 
@@ -532,6 +507,15 @@ msgstr "Edit creator"
 
 msgid "Edit"
 msgstr "Edit"
+
+msgid "ORCID logo"
+msgstr "ORCID logo"
+
+msgid "ROR logo"
+msgstr "ROR logo"
+
+msgid "GND logo"
+msgstr "GND logo"
 
 msgid "Type the value of an identifier..."
 msgstr "Type the value of an identifier..."
@@ -596,9 +580,6 @@ msgstr "Select role"
 msgid "Save"
 msgstr "Save"
 
-msgid "Couldn't find your person? You can <2>create a new entry</2>."
-msgstr "Couldn't find your person? You can <2>create a new entry</2>."
-
 msgid "Add date"
 msgstr "Add date"
 
@@ -611,8 +592,14 @@ msgstr "Date"
 msgid "Type"
 msgstr "Type"
 
+msgid "Description"
+msgstr "Description"
+
 msgid "Remove field"
 msgstr "Remove field"
+
+msgid "Dates"
+msgstr "Dates"
 
 msgid "YYYY-MM-DD or YYYY-MM-DD/YYYY-MM-DD"
 msgstr "YYYY-MM-DD or YYYY-MM-DD/YYYY-MM-DD"
@@ -629,14 +616,17 @@ msgstr "Language"
 msgid "Select language"
 msgstr "Select language"
 
-msgid "Uploading the selected files would result in"
-msgstr "Uploading the selected files would result in"
-
-msgid "but the limit is"
-msgstr "but the limit is"
+msgid "Could not upload files."
+msgstr "Could not upload files."
 
 msgid "The following files already exist"
 msgstr "The following files already exist"
+
+msgid "Could not upload all files."
+msgstr "Could not upload all files."
+
+msgid "Empty files were skipped."
+msgstr "Empty files were skipped."
 
 msgid "You can import files from the previous version."
 msgstr "You can import files from the previous version."
@@ -660,6 +650,12 @@ msgstr "Upload files"
 msgid "Import files"
 msgstr "Import files"
 
+msgid "fileUploadQuotaExceeded"
+msgstr "fileUploadQuotaExceeded"
+
+msgid "Choose which file to preview on the published record landing page"
+msgstr "Choose which file to preview on the published record landing page"
+
 msgid "Filename"
 msgstr "Filename"
 
@@ -678,6 +674,9 @@ msgid ""
 msgstr ""
 "This is the file fingerprint (MD5 checksum), which can be used to verify "
 "the file integrity."
+
+msgid "N/A"
+msgstr "N/A"
 
 msgid "Pending"
 msgstr "Pending"
@@ -718,14 +717,20 @@ msgstr "Scheme"
 msgid "Do you already have a {{pidLabel}} for this upload?"
 msgstr "Do you already have a {{pidLabel}} for this upload?"
 
-msgid "Yes"
-msgstr "Yes"
+msgid "Yes, I already have one"
+msgstr "Yes, I already have one"
 
-msgid "No"
-msgstr "No"
+msgid "No, I need one"
+msgstr "No, I need one"
+
+msgid "No, I don't need one"
+msgstr "No, I don't need one"
 
 msgid "Search for languages..."
 msgstr "Search for languages..."
+
+msgid "Languages"
+msgstr "Languages"
 
 msgid "Search for a language by name (e.g \"eng\", \"fr\" or \"Polish\")"
 msgstr "Search for a language by name (e.g \"eng\", \"fr\" or \"Polish\")"
@@ -735,6 +740,9 @@ msgstr "Add standard"
 
 msgid "Add custom"
 msgstr "Add custom"
+
+msgid "Licenses"
+msgstr "Licenses"
 
 msgid "Read more"
 msgstr "Read more"
@@ -751,14 +759,32 @@ msgstr "Add {{mode}} license"
 msgid "Change {{mode}} license"
 msgstr "Change {{mode}} license"
 
+msgid "Search for licenses"
+msgstr "Search for licenses"
+
 msgid "Recommended"
 msgstr "Recommended"
+
+msgid "recommended"
+msgstr "recommended"
+
+msgid "all"
+msgstr "all"
 
 msgid "Data"
 msgstr "Data"
 
+msgid "data"
+msgstr "data"
+
 msgid "Software"
 msgstr "Software"
+
+msgid "software"
+msgstr "software"
+
+msgid "Title"
+msgstr "Title"
 
 msgid "License title"
 msgstr "License title"
@@ -775,6 +801,12 @@ msgstr "Add license"
 msgid "Change license"
 msgstr "Change license"
 
+msgid "Did not find your license? "
+msgstr "Did not find your license? "
+
+msgid "Add a custom license."
+msgstr "Add a custom license."
+
 msgid ""
 "In case your upload was already published elsewhere, please use the date of "
 "the first publication. Format: YYYY-MM-DD, YYYY-MM, or YYYY. For intervals "
@@ -783,6 +815,9 @@ msgstr ""
 "In case your upload was already published elsewhere, please use the date of "
 "the first publication. Format: YYYY-MM-DD, YYYY-MM, or YYYY. For intervals "
 "use DATE/DATE, e.g. 1939/1945."
+
+msgid "Publication date"
+msgstr "Publication date"
 
 msgid "YYYY-MM-DD or YYYY-MM-DD/YYYY-MM-DD for intervals. MM and DD are optional."
 msgstr "YYYY-MM-DD or YYYY-MM-DD/YYYY-MM-DD for intervals. MM and DD are optional."
@@ -794,11 +829,17 @@ msgstr ""
 "The publisher is used to formulate the citation, so consider the prominence "
 "of the role."
 
+msgid "Publisher"
+msgstr "Publisher"
+
 msgid "Add reference"
 msgstr "Add reference"
 
 msgid "Reference string"
 msgstr "Reference string"
+
+msgid "References"
+msgstr "References"
 
 msgid ""
 "Specify identifiers of related works. Supported identifiers include DOI, "
@@ -817,14 +858,29 @@ msgstr "Add related work"
 msgid "Relation"
 msgstr "Relation"
 
+msgid "Related works"
+msgstr "Related works"
+
+msgid "Resource type"
+msgstr "Resource type"
+
 msgid "Suggest from"
 msgstr "Suggest from"
+
+msgid "Keywords and subjects"
+msgstr "Keywords and subjects"
 
 msgid "Search for a subject by name"
 msgstr "Search for a subject by name"
 
 msgid "Add titles"
 msgstr "Add titles"
+
+msgid "Additional title"
+msgstr "Additional title"
+
+msgid "Version"
+msgstr "Version"
 
 msgid ""
 "Mostly relevant for software and dataset uploads. A semantic version string "
