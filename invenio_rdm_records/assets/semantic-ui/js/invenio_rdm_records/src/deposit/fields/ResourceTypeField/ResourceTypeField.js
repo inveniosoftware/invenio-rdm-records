@@ -11,8 +11,9 @@ import PropTypes from "prop-types";
 import _get from "lodash/get";
 import { FieldLabel, SelectField } from "react-invenio-forms";
 import { i18next } from "@translations/invenio_rdm_records/i18next";
+import Overridable from "react-overridable";
 
-export class ResourceTypeField extends Component {
+export class ResourceTypeFieldComponent extends Component {
   groupErrors = (errors, fieldPath) => {
     const fieldErrors = _get(errors, fieldPath);
     if (fieldErrors) {
@@ -54,20 +55,39 @@ export class ResourceTypeField extends Component {
     const { fieldPath, label, labelIcon, options, ...restProps } = this.props;
     const frontEndOptions = this.createOptions(options);
     return (
-      <SelectField
+      <Overridable
+        id="InvenioRdmRecords.ResourceTypeField.field"
         fieldPath={fieldPath}
-        label={<FieldLabel htmlFor={fieldPath} icon={labelIcon} label={label} />}
-        optimized
+        labelIcon={labelIcon}
+        label={label}
         aria-label={label}
         options={frontEndOptions}
-        selectOnBlur={false}
         {...restProps}
-      />
+      >
+        <SelectField
+          fieldPath={fieldPath}
+          label={
+            <Overridable
+              id="InvenioRdmRecords.ResourceTypeField.label"
+              htmlFor={fieldPath}
+              icon={labelIcon}
+              label={label}
+            >
+              <FieldLabel htmlFor={fieldPath} icon={labelIcon} label={label} />
+            </Overridable>
+          }
+          optimized
+          aria-label={label}
+          options={frontEndOptions}
+          selectOnBlur={false}
+          {...restProps}
+        />
+      </Overridable>
     );
   }
 }
 
-ResourceTypeField.propTypes = {
+ResourceTypeFieldComponent.propTypes = {
   fieldPath: PropTypes.string.isRequired,
   label: PropTypes.string,
   labelIcon: PropTypes.string,
@@ -83,9 +103,14 @@ ResourceTypeField.propTypes = {
   required: PropTypes.bool,
 };
 
-ResourceTypeField.defaultProps = {
+ResourceTypeFieldComponent.defaultProps = {
   label: i18next.t("Resource type"),
   labelIcon: "tag",
   labelclassname: "field-label-class",
   required: false,
 };
+
+export const ResourceTypeField = Overridable.component(
+  "InvenioRdmRecords.ResourceTypeField",
+  ResourceTypeFieldComponent
+);
