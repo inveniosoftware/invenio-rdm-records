@@ -59,11 +59,8 @@
     en: Other
     sv: Övrig
     de: Sonstiges
-<<<<<<< HEAD
     es: Otro
-=======
     cs: Jiné
->>>>>>> bde70f4072e64b89aa5e5e799077d80f81901aca
 - id: submitted
   props:
     datacite: Submitted
@@ -71,11 +68,8 @@
     en: Submitted
     sv: Inskickad
     de: Eingereicht
-<<<<<<< HEAD
     es: Enviado
-=======
     cs: Odesláno
->>>>>>> bde70f4072e64b89aa5e5e799077d80f81901aca
 - id: updated
   props:
     datacite: Updated
@@ -83,11 +77,8 @@
     en: Updated
     sv: Uppdaterad
     de: Aktualisiert
-<<<<<<< HEAD
     es: Actualizado
-=======
     cs: Aktualizováno
->>>>>>> bde70f4072e64b89aa5e5e799077d80f81901aca
 - id: valid
   props:
     datacite: Valid
@@ -95,11 +86,8 @@
     en: Valid
     sv: Giltig
     de: Gültig
-<<<<<<< HEAD
     es: Válido
-=======
     cs: Platnost
->>>>>>> bde70f4072e64b89aa5e5e799077d80f81901aca
 - id: withdrawn
   props:
     datacite: Withdrawn
@@ -107,8 +95,5 @@
     en: Withdrawn
     sv: Tillbakadragen
     de: Zurückgezogen
-<<<<<<< HEAD
     es: Retirado
-=======
     cs: Stáhnuto
->>>>>>> bde70f4072e64b89aa5e5e799077d80f81901aca
