@@ -12,6 +12,31 @@
 Changes
 =======
 
+Version v19.4.0 (released 2025-07-10)
+
+- chores: replacing importlib_metadata with importlib.metadata
+- i18n: run js extract msgs
+- i18n: replace Trans for EmbargoAccess
+- i18n: replace Trans with i18next.t in VersionField
+- i18n: replace Trans with i18next.t in DeleteModal
+- i18n: replace Trans in access msgs
+- i18n: fix warning msg not showing
+- i18n: cs vocabulary translations (#2093)
+- i18n:push translations
+- i18n: run js compile catalog
+- i18n: run js extract msgs
+- i18n: refactor compile catalog
+- i18n: force pull py and js translations
+- i18n: extract python msgs
+- fix: conflicting s3 part size for 1M-5M files
+- ext: Add deprecation warning for publishModalExtraContent
+- assets: PublishButton: Rename overridable containers
+- assets: PublishButton: Make submit and publish utility overridable
+- deposit: change creatributor and license item button order
+- tests: have fixture test ignore load order
+- resource: fix remove last community error
+- fix: added overridable blocks and passing serializing functions as props
+
 Version v19.3.0 (released 2025-07-02)
 
 - fix: disabled remote and fetch transport in permissions
