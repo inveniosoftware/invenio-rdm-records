@@ -19,8 +19,9 @@ import { emptyDate } from "./initialValues";
 import { i18next } from "@translations/invenio_rdm_records/i18next";
 import { sortOptions } from "../../utils";
 import Overridable from "react-overridable";
+import { createFieldComponent } from "../common/propTypes";
 
-export class DatesField extends Component {
+class DatesFieldComponent extends Component {
   /** Top-level Dates Component */
 
   /**
@@ -57,6 +58,12 @@ export class DatesField extends Component {
       <Overridable
         id="InvenioRdmRecords.DatesField.AddDateArrayField.Container"
         fieldPath={fieldPath}
+        defaultNewValue={emptyDate}
+        label={label}
+        labelIcon={labelIcon}
+        required={required}
+        requiredOptions={requiredOptions}
+        showEmptyValue={showEmptyValue}
       >
         <ArrayField
           addButtonLabel={i18next.t("Add date")} // TODO: Pass by prop
@@ -82,6 +89,10 @@ export class DatesField extends Component {
                 <Overridable
                   id="InvenioRdmRecords.DatesField.DateTextField.Container"
                   fieldPath={`${fieldPathPrefix}.date`}
+                  placeholder={placeholderDate}
+                  disabled={hasRequiredDateValue}
+                  required
+                  width={5}
                 >
                   <TextField
                     fieldPath={`${fieldPathPrefix}.date`}
@@ -95,6 +106,10 @@ export class DatesField extends Component {
                 <Overridable
                   id="InvenioRdmRecords.DatesField.TypeSelectField.Container"
                   fieldPath={`${fieldPathPrefix}.type`}
+                  disabled={hasRequiredTypeValue}
+                  required
+                  width={5}
+                  optimized
                 >
                   <SelectField
                     fieldPath={`${fieldPathPrefix}.type`}
@@ -110,6 +125,8 @@ export class DatesField extends Component {
                 <Overridable
                   id="InvenioRdmRecords.DatesField.DescriptionTextField.Container"
                   fieldPath={`${fieldPathPrefix}.description`}
+                  disabled={hasRequiredDescriptionValue}
+                  width={5}
                 >
                   <TextField
                     fieldPath={`${fieldPathPrefix}.description`}
@@ -118,8 +135,13 @@ export class DatesField extends Component {
                     width={5}
                   />
                 </Overridable>
-                <Overridable id="InvenioRdmRecords.DatesField.RemoveFormField.Container">
-                  <Form.Field>
+                <Form.Field>
+                  <Overridable
+                    id="InvenioRdmRecords.DatesField.RemoveFormField.Container"
+                    className="close-btn"
+                    icon
+                    type="button"
+                  >
                     <Button
                       aria-label={i18next.t("Remove field")}
                       className="close-btn"
@@ -128,10 +150,15 @@ export class DatesField extends Component {
                       onClick={() => arrayHelpers.remove(indexPath)}
                       type="button"
                     >
-                      <Icon name="close" />
+                      <Overridable
+                        id="InvenioRdmRecords.DatesField.RemoveFormField.icon"
+                        name="Close"
+                      >
+                        <Icon name="close" />
+                      </Overridable>
                     </Button>
-                  </Form.Field>
-                </Overridable>
+                  </Overridable>
+                </Form.Field>
               </GroupField>
             );
           }}
@@ -141,7 +168,7 @@ export class DatesField extends Component {
   }
 }
 
-DatesField.propTypes = {
+DatesFieldComponent.propTypes = {
   fieldPath: PropTypes.string.isRequired,
   label: PropTypes.string,
   labelIcon: PropTypes.string,
@@ -159,7 +186,7 @@ DatesField.propTypes = {
   showEmptyValue: PropTypes.bool,
 };
 
-DatesField.defaultProps = {
+DatesFieldComponent.defaultProps = {
   label: i18next.t("Dates"),
   labelIcon: "calendar",
   placeholderDate: i18next.t("YYYY-MM-DD or YYYY-MM-DD/YYYY-MM-DD"),
@@ -167,3 +194,8 @@ DatesField.defaultProps = {
   requiredOptions: [],
   showEmptyValue: false,
 };
+
+export const DatesField = createFieldComponent(
+  "InvenioRdmRecords.DatesField",
+  DatesFieldComponent
+);

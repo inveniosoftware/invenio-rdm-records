@@ -12,10 +12,21 @@ import { FieldLabel, RichInputField } from "react-invenio-forms";
 import { AdditionalDescriptionsField } from "./components";
 import { i18next } from "@translations/invenio_rdm_records/i18next";
 import Overridable from "react-overridable";
+import { createFieldComponent, fieldCommonProps } from "../common/propTypes";
 
-export class DescriptionsFieldComponent extends Component {
+class DescriptionsFieldComponent extends Component {
   render() {
-    const { fieldPath, label, labelIcon, options, editorConfig, recordUI } = this.props;
+    const {
+      fieldPath,
+      label,
+      labelIcon,
+      options,
+      editorConfig,
+      recordUI,
+      disabled,
+      required,
+    } = this.props;
+
     return (
       <Overridable
         id="InvenioRdmRecords.DescriptionsField.container"
@@ -26,6 +37,8 @@ export class DescriptionsFieldComponent extends Component {
         label={label}
         recordUI={recordUI}
         options={options}
+        disabled={disabled}
+        required={required}
       >
         <>
           <Overridable
@@ -35,6 +48,8 @@ export class DescriptionsFieldComponent extends Component {
             htmlFor={fieldPath}
             icon={labelIcon}
             label={label}
+            disabled={disabled}
+            required={required}
           >
             <RichInputField
               className="description-field rel-mb-1 rel-mt-2"
@@ -51,6 +66,8 @@ export class DescriptionsFieldComponent extends Component {
                 </Overridable>
               }
               optimized
+              disabled={disabled}
+              required={required}
             />
           </Overridable>
           <Overridable
@@ -73,12 +90,10 @@ export class DescriptionsFieldComponent extends Component {
 }
 
 DescriptionsFieldComponent.propTypes = {
-  fieldPath: PropTypes.string.isRequired,
-  label: PropTypes.string,
-  labelIcon: PropTypes.string,
   editorConfig: PropTypes.object,
   recordUI: PropTypes.object,
   options: PropTypes.object.isRequired,
+  ...fieldCommonProps,
 };
 
 DescriptionsFieldComponent.defaultProps = {
@@ -88,7 +103,7 @@ DescriptionsFieldComponent.defaultProps = {
   recordUI: undefined,
 };
 
-export const DescriptionsField = Overridable.component(
-  "DescriptionsField",
+export const DescriptionsField = createFieldComponent(
+  "InvenioRdmRecords.DescriptionsField",
   DescriptionsFieldComponent
 );
