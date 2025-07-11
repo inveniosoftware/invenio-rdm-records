@@ -269,7 +269,8 @@ class ParentPIDsComponent(ServiceComponent):
         # Check if a doi was added in the draft and create a parent DOI independently if
         # doi is required.
         if draft.get("pids", {}).get("doi"):
-            required_schemes.add("doi")
+            if "doi" in current_app.config["RDM_PARENT_PERSISTENT_IDENTIFIERS"]:
+                required_schemes.add("doi")
 
         # Note: we don't have explicitly to check for minting a parent DOI only for the
         # managed provider because we pass a `condition_func` below that it omits the
