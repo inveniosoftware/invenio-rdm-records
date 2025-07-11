@@ -9,3 +9,7 @@
 extends:
   - '@inveniosoftware/eslint-config-invenio'
   - '@inveniosoftware/eslint-config-invenio/prettier'
+
+# TODO: do we keep this? many field components use an object spread in the PropTypes which eslint cannot parse successfully and throws an error instead
+rules:
+  react/default-props-match-prop-types: off

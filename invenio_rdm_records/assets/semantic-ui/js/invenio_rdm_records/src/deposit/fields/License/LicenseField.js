@@ -14,10 +14,12 @@ import { HTML5Backend } from "react-dnd-html5-backend";
 import { DndProvider } from "react-dnd";
 import { FieldLabel, FeedbackLabel } from "react-invenio-forms";
 import { Button, Form, Icon, List } from "semantic-ui-react";
+import Overridable from "react-overridable";
 
 import { LicenseModal } from "./LicenseModal";
 import { LicenseFieldItem } from "./LicenseFieldItem";
 import { i18next } from "@translations/invenio_rdm_records/i18next";
+import { createFieldComponent, fieldCommonProps } from "../common/propTypes";
 
 /**
  * The user-facing license.
@@ -69,6 +71,7 @@ class LicenseFieldForm extends Component {
       required,
       searchConfig,
       serializeLicenses,
+      disabled,
     } = this.props;
 
     const uiRights = getIn(values, uiFieldPath, []);
@@ -86,77 +89,106 @@ class LicenseFieldForm extends Component {
     }
 
     return (
-      <DndProvider backend={HTML5Backend}>
-        <Form.Field required={required} className={className}>
-          <FieldLabel htmlFor={fieldPath} icon={labelIcon} label={label} />
-          <List>
-            {getIn(values, fieldPath, []).map((value, index) => {
-              const license = new VisibleLicense(uiRights, value, index);
-              return (
-                <LicenseFieldItem
-                  key={license.key}
-                  license={license}
-                  moveLicense={formikArrayMove}
-                  replaceLicense={formikArrayReplace}
-                  removeLicense={formikArrayRemove}
-                  searchConfig={searchConfig}
-                  serializeLicenses={serializeLicenses}
-                />
-              );
-            })}
-          </List>
-          <LicenseModal
-            searchConfig={searchConfig}
-            trigger={
-              <Button
-                type="button"
-                key="standard"
-                icon
-                labelPosition="left"
-                className={className}
-              >
-                <Icon name="add" />
-                {i18next.t("Add standard")}
-              </Button>
-            }
-            onLicenseChange={(selectedLicense) => {
-              formikArrayPush(selectedLicense);
-            }}
-            mode="standard"
-            action="add"
-            serializeLicenses={serializeLicenses}
-          />
-          <LicenseModal
-            searchConfig={searchConfig}
-            trigger={
-              <Button
-                type="button"
-                key="custom"
-                icon
-                labelPosition="left"
-                className={className}
-              >
-                <Icon name="add" />
-                {i18next.t("Add custom")}
-              </Button>
-            }
-            onLicenseChange={(selectedLicense) => {
-              formikArrayPush(selectedLicense);
-            }}
-            mode="custom"
-            action="add"
-          />
-          {licenseError && <FeedbackLabel fieldPath={fieldPath} />}
-        </Form.Field>
-      </DndProvider>
+      <Overridable
+        id="InvenioRdmRecords.LicenseField.container"
+        className={className}
+        labelIcon={labelIcon}
+        label={label}
+        required={required}
+      >
+        <DndProvider backend={HTML5Backend}>
+          <Form.Field required={required} disabled={disabled} className={className}>
+            <Overridable
+              id="InvenioRdmRecords.LicenseField.label"
+              labelIcon={labelIcon}
+              label={label}
+            >
+              <FieldLabel htmlFor={fieldPath} icon={labelIcon} label={label} />
+            </Overridable>
+            <Overridable id="InvenioRdmRecords.LicenseField.list">
+              <List>
+                {getIn(values, fieldPath, []).map((value, index) => {
+                  const license = new VisibleLicense(uiRights, value, index);
+                  return (
+                    <LicenseFieldItem
+                      key={license.key}
+                      license={license}
+                      moveLicense={formikArrayMove}
+                      replaceLicense={formikArrayReplace}
+                      removeLicense={formikArrayRemove}
+                      searchConfig={searchConfig}
+                      serializeLicenses={serializeLicenses}
+                    />
+                  );
+                })}
+              </List>
+            </Overridable>
+            <Overridable
+              id="InvenioRdmRecords.LicenseField.modal.standard"
+              searchConfig={searchConfig}
+              className={className}
+            >
+              <LicenseModal
+                searchConfig={searchConfig}
+                trigger={
+                  <Button
+                    type="button"
+                    key="standard"
+                    icon
+                    labelPosition="left"
+                    className={className}
+                    disabled={disabled}
+                  >
+                    <Icon name="add" />
+                    {i18next.t("Add standard")}
+                  </Button>
+                }
+                onLicenseChange={(selectedLicense) => {
+                  formikArrayPush(selectedLicense);
+                }}
+                mode="standard"
+                action="add"
+                serializeLicenses={serializeLicenses}
+              />
+            </Overridable>
+            <Overridable
+              id="InvenioRdmRecords.LicenseField.modal.custom"
+              searchConfig={searchConfig}
+              className={className}
+            >
+              <LicenseModal
+                searchConfig={searchConfig}
+                trigger={
+                  <Button
+                    type="button"
+                    key="custom"
+                    icon
+                    labelPosition="left"
+                    className={className}
+                    disabled={disabled}
+                  >
+                    <Icon name="add" />
+                    {i18next.t("Add custom")}
+                  </Button>
+                }
+                onLicenseChange={(selectedLicense) => {
+                  formikArrayPush(selectedLicense);
+                }}
+                mode="custom"
+                action="add"
+              />
+            </Overridable>
+            <Overridable id="InvenioRdmRecords.LicenseField.feedback">
+              {licenseError && <FeedbackLabel fieldPath={fieldPath} />}
+            </Overridable>
+          </Form.Field>
+        </DndProvider>
+      </Overridable>
     );
   }
 }
 
 LicenseFieldForm.propTypes = {
-  label: PropTypes.node.isRequired,
-  labelIcon: PropTypes.node,
-  fieldPath: PropTypes.string.isRequired,
   uiFieldPath: PropTypes.string,
   form: PropTypes.object.isRequired,
   move: PropTypes.func.isRequired,
@@ -166,6 +198,7 @@ LicenseFieldForm.propTypes = {
   required: PropTypes.bool.isRequired,
   searchConfig: PropTypes.object.isRequired,
   serializeLicenses: PropTypes.func,
+  ...fieldCommonProps,
 };
 
 LicenseFieldForm.defaultProps = {
@@ -174,7 +207,7 @@ LicenseFieldForm.defaultProps = {
   serializeLicenses: undefined,
 };
 
-export class LicenseField extends Component {
+class LicenseFieldComponent extends Component {
   render() {
     const { fieldPath } = this.props;
     return (
@@ -188,20 +221,23 @@ export class LicenseField extends Component {
   }
 }
 
-LicenseField.propTypes = {
-  fieldPath: PropTypes.string.isRequired,
-  label: PropTypes.string,
-  labelIcon: PropTypes.string,
+LicenseFieldComponent.propTypes = {
   searchConfig: PropTypes.object.isRequired,
   required: PropTypes.bool,
   serializeLicenses: PropTypes.func,
   uiFieldPath: PropTypes.string,
+  ...fieldCommonProps,
 };
 
-LicenseField.defaultProps = {
+LicenseFieldComponent.defaultProps = {
   label: i18next.t("Licenses"),
   uiFieldPath: "ui.rights",
   labelIcon: "drivers license",
   required: false,
   serializeLicenses: undefined,
 };
+
+export const LicenseField = createFieldComponent(
+  "InvenioRdmRecords.LicenseField",
+  LicenseFieldComponent
+);
