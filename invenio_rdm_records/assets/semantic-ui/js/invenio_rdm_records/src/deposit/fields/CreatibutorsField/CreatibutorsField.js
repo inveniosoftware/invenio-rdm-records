@@ -19,6 +19,8 @@ import { CreatibutorsFieldItem } from "./CreatibutorsFieldItem";
 import { CREATIBUTOR_TYPE } from "./type";
 import { sortOptions } from "../../utils";
 import { i18next } from "@translations/invenio_rdm_records/i18next";
+import Overridable from "react-overridable";
+import { createFieldComponent, fieldCommonProps } from "../common/propTypes";
 
 const creatibutorNameDisplay = (value) => {
   const creatibutorType = _get(value, "person_or_org.type", CREATIBUTOR_TYPE.PERSON);
@@ -64,6 +66,8 @@ class CreatibutorsFieldForm extends Component {
       serializeSuggestions,
       serializeCreatibutor,
       deserializeCreatibutor,
+      disabled,
+      required,
     } = this.props;
 
     const creatibutorsList = getIn(values, fieldPath, []);
@@ -95,66 +99,109 @@ class CreatibutorsFieldForm extends Component {
     }
 
     return (
-      <DndProvider backend={HTML5Backend}>
-        <Form.Field required={schema === "creators"} className={className}>
-          <FieldLabel htmlFor={fieldPath} icon={labelIcon} label={label} />
-          <List>
-            {creatibutorsList.map((value, index) => {
-              const key = `${fieldPath}.${index}`;
-              const displayName = creatibutorNameDisplay(value);
+      <Overridable
+        id="InvenioRdmRecords.CreatibutorsField.container"
+        labelIcon={labelIcon}
+        label={label}
+        roleOptions={roleOptions}
+        schema={schema}
+        addLabel={modal.addLabel}
+        editLabel={modal.editLabel}
+        addButtonLabel={addButtonLabel}
+        className={className}
+        disabled={disabled}
+        required={schema === "creators"}
+      >
+        <DndProvider backend={HTML5Backend}>
+          <Form.Field required={required} disabled={disabled} className={className}>
+            <Overridable
+              id="InvenioRdmRecords.CreatibutorsField.label"
+              labelIcon={labelIcon}
+              label={label}
+            >
+              <FieldLabel htmlFor={fieldPath} icon={labelIcon} label={label} />
+            </Overridable>
+            <Overridable
+              id="InvenioRdmRecords.CreatibutorsField.list"
+              roleOptions={roleOptions}
+              schema={schema}
+            >
+              <List>
+                {creatibutorsList.map((value, index) => {
+                  const key = `${fieldPath}.${index}`;
+                  const displayName = creatibutorNameDisplay(value);
 
-              return (
-                <CreatibutorsFieldItem
-                  key={key}
-                  creatibutorError={
-                    creatibutorsError &&
-                    typeof creatibutorsError !== "string" &&
-                    creatibutorsError[index]
-                  }
-                  {...{
-                    displayName,
-                    index,
-                    roleOptions,
-                    schema,
-                    compKey: key,
-                    initialCreatibutor: value,
-                    removeCreatibutor: formikArrayRemove,
-                    replaceCreatibutor: formikArrayReplace,
-                    moveCreatibutor: formikArrayMove,
-                    addLabel: modal.addLabel,
-                    editLabel: modal.editLabel,
-                    autocompleteNames: autocompleteNames,
-                    serializeSuggestions: serializeSuggestions,
-                    serializeCreatibutor: serializeCreatibutor,
-                    deserializeCreatibutor: deserializeCreatibutor,
-                  }}
-                />
-              );
-            })}
-          </List>
-          <CreatibutorsModal
-            onCreatibutorChange={this.handleOnContributorChange}
-            action="add"
-            addLabel={modal.addLabel}
-            editLabel={modal.editLabel}
-            roleOptions={sortOptions(roleOptions)}
-            schema={schema}
-            autocompleteNames={autocompleteNames}
-            trigger={
-              <Button type="button" icon labelPosition="left" className={className}>
-                <Icon name="add" />
-                {addButtonLabel}
-              </Button>
-            }
-          />
-          {generalCreatibutorsError && <FeedbackLabel fieldPath={fieldPath} />}
-        </Form.Field>
-      </DndProvider>
+                  return (
+                    <CreatibutorsFieldItem
+                      key={key}
+                      creatibutorError={
+                        creatibutorsError &&
+                        typeof creatibutorsError !== "string" &&
+                        creatibutorsError[index]
+                      }
+                      {...{
+                        displayName,
+                        index,
+                        roleOptions,
+                        schema,
+                        compKey: key,
+                        initialCreatibutor: value,
+                        removeCreatibutor: formikArrayRemove,
+                        replaceCreatibutor: formikArrayReplace,
+                        moveCreatibutor: formikArrayMove,
+                        addLabel: modal.addLabel,
+                        editLabel: modal.editLabel,
+                        autocompleteNames: autocompleteNames,
+                        serializeSuggestions: serializeSuggestions,
+                        serializeCreatibutor: serializeCreatibutor,
+                        deserializeCreatibutor: deserializeCreatibutor,
+                      }}
+                    />
+                  );
+                })}
+              </List>
+            </Overridable>
+            <Overridable
+              id="InvenioRdmRecords.CreatibutorsField.modal"
+              addLabel={modal.addLabel}
+              editLabel={modal.editLabel}
+              schema={schema}
+              disabled={disabled}
+              className={className}
+            >
+              <CreatibutorsModal
+                onCreatibutorChange={this.handleOnContributorChange}
+                action="add"
+                addLabel={modal.addLabel}
+                editLabel={modal.editLabel}
+                roleOptions={sortOptions(roleOptions)}
+                schema={schema}
+                autocompleteNames={autocompleteNames}
+                trigger={
+                  <Button
+                    type="button"
+                    icon
+                    labelPosition="left"
+                    className={className}
+                    disabled={disabled}
+                  >
+                    <Icon name="add" />
+                    {addButtonLabel}
+                  </Button>
+                }
+              />
+            </Overridable>
+            <Overridable id="InvenioRdmRecords.CreatibutorsField.feedback">
+              {generalCreatibutorsError && <FeedbackLabel fieldPath={fieldPath} />}
+            </Overridable>
+          </Form.Field>
+        </DndProvider>
+      </Overridable>
     );
   }
 }
 
-export class CreatibutorsField extends Component {
+export class CreatibutorsFieldComponent extends Component {
   render() {
     const { fieldPath } = this.props;
 
@@ -170,7 +217,6 @@ export class CreatibutorsField extends Component {
 }
 
 CreatibutorsFieldForm.propTypes = {
-  fieldPath: PropTypes.string.isRequired,
   addButtonLabel: PropTypes.string,
   modal: PropTypes.shape({
     addLabel: PropTypes.string.isRequired,
@@ -178,8 +224,6 @@ CreatibutorsFieldForm.propTypes = {
   }),
   schema: PropTypes.oneOf(["creators", "contributors"]).isRequired,
   autocompleteNames: PropTypes.oneOf(["search", "search_only", "off"]),
-  label: PropTypes.string,
-  labelIcon: PropTypes.string,
   roleOptions: PropTypes.array.isRequired,
   form: PropTypes.object.isRequired,
   remove: PropTypes.func.isRequired,
@@ -190,6 +234,7 @@ CreatibutorsFieldForm.propTypes = {
   serializeSuggestions: PropTypes.func,
   serializeCreatibutor: PropTypes.func,
   deserializeCreatibutor: PropTypes.func,
+  ...fieldCommonProps,
 };
 
 CreatibutorsFieldForm.defaultProps = {
@@ -206,8 +251,7 @@ CreatibutorsFieldForm.defaultProps = {
   deserializeCreatibutor: undefined,
 };
 
-CreatibutorsField.propTypes = {
-  fieldPath: PropTypes.string.isRequired,
+CreatibutorsFieldComponent.propTypes = {
   addButtonLabel: PropTypes.string,
   modal: PropTypes.shape({
     addLabel: PropTypes.string.isRequired,
@@ -215,15 +259,14 @@ CreatibutorsField.propTypes = {
   }),
   schema: PropTypes.oneOf(["creators", "contributors"]).isRequired,
   autocompleteNames: PropTypes.oneOf(["search", "search_only", "off"]),
-  label: PropTypes.string,
-  labelIcon: PropTypes.string,
   roleOptions: PropTypes.array,
   serializeSuggestions: PropTypes.func,
   serializeCreatibutor: PropTypes.func,
   deserializeCreatibutor: PropTypes.func,
+  ...fieldCommonProps,
 };
 
-CreatibutorsField.defaultProps = {
+CreatibutorsFieldComponent.defaultProps = {
   autocompleteNames: "search",
   label: undefined,
   labelIcon: undefined,
@@ -237,3 +280,8 @@ CreatibutorsField.defaultProps = {
   serializeCreatibutor: undefined,
   deserializeCreatibutor: undefined,
 };
+
+export const CreatibutorsField = createFieldComponent(
+  "InvenioRdmRecords.CreatibutorsField",
+  CreatibutorsFieldComponent
+);

@@ -8,43 +8,65 @@
 
 import React, { Component } from "react";
 import PropTypes from "prop-types";
-
+import Overridable from "react-overridable";
 import { FieldLabel, TextField } from "react-invenio-forms";
 import { i18next } from "@translations/invenio_rdm_records/i18next";
+import { createFieldComponent, fieldCommonProps } from "../common/propTypes";
 
-export class PublicationDateField extends Component {
+class PublicationDateFieldComponent extends Component {
   render() {
-    const { fieldPath, helpText, label, labelIcon, placeholder, required } = this.props;
+    const { fieldPath, helpText, label, labelIcon, placeholder, required, disabled } =
+      this.props;
 
     return (
-      <TextField
+      <Overridable
+        id="InvenioRdmRecords.PublicationDateField.input"
         fieldPath={fieldPath}
         helpText={helpText}
-        label={<FieldLabel htmlFor={fieldPath} icon={labelIcon} label={label} />}
         placeholder={placeholder}
         required={required}
-      />
+        disabled={disabled}
+        icon={labelIcon}
+        label={label}
+      >
+        <TextField
+          fieldPath={fieldPath}
+          helpText={helpText}
+          label={
+            <Overridable
+              id="InvenioRdmRecords.PublicationDateField.label"
+              icon={labelIcon}
+              label={label}
+            >
+              <FieldLabel htmlFor={fieldPath} icon={labelIcon} label={label} />
+            </Overridable>
+          }
+          placeholder={placeholder}
+          required={required}
+        />
+      </Overridable>
     );
   }
 }
 
-PublicationDateField.propTypes = {
-  fieldPath: PropTypes.string.isRequired,
+PublicationDateFieldComponent.propTypes = {
   helpText: PropTypes.string,
-  label: PropTypes.string,
-  labelIcon: PropTypes.string,
   placeholder: PropTypes.string,
-  required: PropTypes.bool,
+  ...fieldCommonProps,
 };
 
-PublicationDateField.defaultProps = {
+PublicationDateFieldComponent.defaultProps = {
   helpText: i18next.t(
     "In case your upload was already published elsewhere, please use the date of the first publication. Format: YYYY-MM-DD, YYYY-MM, or YYYY. For intervals use DATE/DATE, e.g. 1939/1945."
   ),
   label: i18next.t("Publication date"),
   labelIcon: "calendar",
-  required: undefined,
   placeholder: i18next.t(
     "YYYY-MM-DD or YYYY-MM-DD/YYYY-MM-DD for intervals. MM and DD are optional."
   ),
 };
+
+export const PublicationDateField = createFieldComponent(
+  "InvenioRdmRecords.PublicationDateField",
+  PublicationDateFieldComponent
+);

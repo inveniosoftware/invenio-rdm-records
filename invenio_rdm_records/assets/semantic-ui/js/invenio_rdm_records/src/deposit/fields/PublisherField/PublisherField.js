@@ -8,36 +8,61 @@
 
 import React, { Component } from "react";
 import PropTypes from "prop-types";
-
+import Overridable from "react-overridable";
 import { FieldLabel, TextField } from "react-invenio-forms";
 import { i18next } from "@translations/invenio_rdm_records/i18next";
+import { createFieldComponent, fieldCommonProps } from "../common/propTypes";
 
-export class PublisherField extends Component {
+class PublisherFieldComponent extends Component {
   render() {
-    const { fieldPath, label, labelIcon, placeholder } = this.props;
+    const { fieldPath, label, labelIcon, placeholder, disabled, required } = this.props;
 
     return (
-      <TextField
+      <Overridable
+        id="InvenioRdmRecords.PublisherField.input"
         fieldPath={fieldPath}
-        helpText={i18next.t(
-          "The publisher is used to formulate the citation, so consider the prominence of the role."
-        )}
-        label={<FieldLabel htmlFor={fieldPath} icon={labelIcon} label={label} />}
+        icon={labelIcon}
+        label={label}
         placeholder={placeholder}
-      />
+        disabled={disabled}
+        required={required}
+      >
+        <TextField
+          fieldPath={fieldPath}
+          helpText={i18next.t(
+            "The publisher is used to formulate the citation, so consider the prominence of the role."
+          )}
+          label={
+            <Overridable
+              id="InvenioRdmRecords.PublisherField.label"
+              icon={labelIcon}
+              label={label}
+            >
+              <FieldLabel htmlFor={fieldPath} icon={labelIcon} label={label} />
+            </Overridable>
+          }
+          placeholder={placeholder}
+          disabled={disabled}
+          required={required}
+        />
+      </Overridable>
     );
   }
 }
 
-PublisherField.propTypes = {
+PublisherFieldComponent.propTypes = {
   fieldPath: PropTypes.string.isRequired,
-  label: PropTypes.string,
-  labelIcon: PropTypes.string,
   placeholder: PropTypes.string,
+  ...fieldCommonProps,
 };
 
-PublisherField.defaultProps = {
+PublisherFieldComponent.defaultProps = {
   label: i18next.t("Publisher"),
   labelIcon: "building outline",
   placeholder: i18next.t("Publisher"),
 };
+
+export const PublisherField = createFieldComponent(
+  "InvenioRdmRecords.PublisherField",
+  PublisherFieldComponent
+);
