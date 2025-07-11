@@ -8,5 +8,5 @@
 export { DeleteButton } from "./DeleteButton";
 export { NewVersionButton } from "./NewVersionButton";
 export { PreviewButton } from "./PreviewButton";
-export { PublishButton, SubmitReviewModal } from "./PublishButton";
+export { PublishButton, SubmitReviewModal, PublishModal } from "./PublishButton";
 export { SaveButton } from "./SaveButton";

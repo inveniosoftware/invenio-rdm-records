@@ -1,19 +1,18 @@
 // This file is part of Invenio-RDM-Records
-// Copyright (C) 2020-2023 CERN.
+// Copyright (C) 2020-2025 CERN.
 // Copyright (C) 2020-2022 Northwestern University.
 //
 // Invenio-RDM-Records is free software; you can redistribute it and/or modify it
 // under the terms of the MIT License; see LICENSE file for more details.
 
 import { i18next } from "@translations/invenio_rdm_records/i18next";
-import { connect as connectFormik } from "formik";
+import { connect as connectFormik, Formik } from "formik";
 import _get from "lodash/get";
 import _omit from "lodash/omit";
-import Overridable from "react-overridable";
 import PropTypes from "prop-types";
 import React, { Component } from "react";
 import { connect } from "react-redux";
-import { Button, Icon, Message, Modal } from "semantic-ui-react";
+import { Button } from "semantic-ui-react";
 import {
   DepositFormSubmitActions,
   DepositFormSubmitContext,
@@ -21,6 +20,7 @@ import {
 import { DRAFT_PUBLISH_STARTED } from "../../state/types";
 import { scrollTop } from "../../utils";
 import { DRAFT_PUBLISH_FAILED_WITH_VALIDATION_ERRORS } from "../../state/types";
+import { PublishModal } from "./PublishModal";
 
 class PublishButtonComponent extends Component {
   state = { isConfirmModalOpen: false };
@@ -31,10 +31,16 @@ class PublishButtonComponent extends Component {
 
   closeConfirmModal = () => this.setState({ isConfirmModalOpen: false });
 
-  handlePublish = (event, handleSubmit, publishWithoutCommunity) => {
+  handlePublish = () => {
     const { setSubmitContext } = this.context;
-    const { formik, raiseDOINeededButNotReserved, isDOIRequired, noINeedDOI } =
-      this.props;
+    const {
+      formik,
+      raiseDOINeededButNotReserved,
+      isDOIRequired,
+      noINeedDOI,
+      publishWithoutCommunity,
+    } = this.props;
+    const { handleSubmit } = formik;
     // Check for explicit DOI reservation via the "GET DOI button" only when DOI is
     // optional in the instance's settings. If it is required, backend will automatically
     // mint one even if it was not explicitly reserved
@@ -58,7 +64,7 @@ class PublishButtonComponent extends Component {
           ? DepositFormSubmitActions.PUBLISH_WITHOUT_COMMUNITY
           : DepositFormSubmitActions.PUBLISH
       );
-      handleSubmit(event);
+      handleSubmit();
       this.closeConfirmModal();
     }
     // scroll top to show the global error
@@ -89,7 +95,6 @@ class PublishButtonComponent extends Component {
       actionState,
       filesState,
       buttonLabel,
-      publishWithoutCommunity,
       formik,
       publishModalExtraContent,
       raiseDOINeededButNotReserved,
@@ -98,7 +103,7 @@ class PublishButtonComponent extends Component {
       ...ui
     } = this.props;
     const { isConfirmModalOpen } = this.state;
-    const { values, isSubmitting, handleSubmit } = formik;
+    const { values, isSubmitting } = formik;
 
     const uiProps = _omit(ui, ["dispatch"]);
 
@@ -117,53 +122,13 @@ class PublishButtonComponent extends Component {
           type="button" // needed so the formik form doesn't handle it as submit button i.e enable HTML validation on required input fields
         />
         {isConfirmModalOpen && (
-          <Overridable
-            id="InvenioRdmRecords.PublishModal.container"
+          <PublishModal
             isConfirmModalOpen={isConfirmModalOpen}
-            handleSubmitRecord={handleSubmit}
+            onClose={this.closeConfirmModal}
+            onSubmit={this.handlePublish}
+            publishModalExtraContent={publishModalExtraContent}
             buttonLabel={buttonLabel}
-            publishWithoutCommunity={publishWithoutCommunity}
-            closeConfirmModal={this.closeConfirmModal}
-            handlePublish={this.handlePublish}
-          >
-            <Modal
-              open={isConfirmModalOpen}
-              onClose={this.closeConfirmModal}
-              size="small"
-              closeIcon
-              closeOnDimmerClick={false}
-            >
-              <Modal.Header>
-                {i18next.t("Are you sure you want to publish this record?")}
-              </Modal.Header>
-              {/* the modal text should only ever come from backend configuration */}
-              <Modal.Content>
-                <Message visible warning>
-                  <p>
-                    <Icon name="warning sign" />{" "}
-                    {i18next.t(
-                      "Once the record is published you will no longer be able to change the files in the upload! However, you will still be able to update the record's metadata later."
-                    )}
-                  </p>
-                </Message>
-                {publishModalExtraContent && (
-                  <div dangerouslySetInnerHTML={{ __html: publishModalExtraContent }} />
-                )}
-              </Modal.Content>
-              <Modal.Actions>
-                <Button onClick={this.closeConfirmModal} floated="left">
-                  {i18next.t("Cancel")}
-                </Button>
-                <Button
-                  onClick={(event) =>
-                    this.handlePublish(event, handleSubmit, publishWithoutCommunity)
-                  }
-                  positive
-                  content={buttonLabel}
-                />
-              </Modal.Actions>
-            </Modal>
-          </Overridable>
+          />
         )}
       </>
     );
