@@ -6,14 +6,15 @@
 
 import { i18next } from "@translations/invenio_rdm_records/i18next";
 import { Formik } from "formik";
-import _get from "lodash/get";
-import _omit from "lodash/omit";
 import Overridable from "react-overridable";
 import PropTypes from "prop-types";
 import React, { Component } from "react";
 import { Button, Icon, Message, Modal, Form } from "semantic-ui-react";
 import * as Yup from "yup";
-import { PublishCheckboxComponent } from "./PublishCheckboxComponent";
+import {
+  PublishCheckboxComponent,
+  ensureUniqueProps,
+} from "./PublishCheckboxComponent";
 
 class PublishModalComponent extends Component {
   constructor(props) {
@@ -23,7 +24,13 @@ class PublishModalComponent extends Component {
     this.initialValues = {};
 
     // Get extra checkbox component and define its schema and defaults
-    if (extraCheckboxes && extraCheckboxes.length > 0) {
+    if (extraCheckboxes.length > 0) {
+      // Validate id and fieldpath are unique
+      const fieldPaths = extraCheckboxes.map((checkbox) => checkbox.fieldPath);
+      ensureUniqueProps(fieldPaths, "fieldPath");
+      const ids = extraCheckboxes.map((checkbox) => checkbox.id);
+      ensureUniqueProps(ids, "id");
+
       extraCheckboxes.forEach((checkbox) => {
         this.validationSchema = this.validationSchema.concat(
           Yup.object({
@@ -137,8 +144,8 @@ PublishModalComponent.defaultProps = {
   publishModalExtraContent: "",
   buttonLabel: i18next.t("Publish"),
   extraCheckboxes: [],
-  beforeContent: undefined,
-  afterContent: undefined,
+  beforeContent: () => undefined,
+  afterContent: () => undefined,
 };
 
 export const PublishModal = Overridable.component(

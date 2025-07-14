@@ -13,7 +13,10 @@ import React, { Component } from "react";
 import { TextAreaField, ErrorMessage } from "react-invenio-forms";
 import { Button, Form, Icon, Message, Modal } from "semantic-ui-react";
 import * as Yup from "yup";
-import { PublishCheckboxComponent } from "./PublishCheckboxComponent";
+import {
+  PublishCheckboxComponent,
+  ensureUniqueProps,
+} from "./PublishCheckboxComponent";
 
 class SubmitReviewModalComponent extends Component {
   constructor(props) {
@@ -23,7 +26,15 @@ class SubmitReviewModalComponent extends Component {
     this.initialValues = this.getInitialValues(initialReviewComment, record);
 
     // Get extra checkbox component and define its schema and defaults
-    if (extraCheckboxes && extraCheckboxes.length > 0) {
+    if (extraCheckboxes.length > 0) {
+      // Validate id and fieldpath are unique
+      const fieldPaths = extraCheckboxes.map((checkbox) => checkbox.fieldPath);
+      fieldPaths.push("acceptAccessToRecord", "acceptAfterPublishRecord");
+      ensureUniqueProps(fieldPaths, "fieldPath");
+      const ids = extraCheckboxes.map((checkbox) => checkbox.id);
+      ids.push("accept-access-checkbox", "accept-after-publish-checkbox");
+      ensureUniqueProps(ids, "id");
+
       extraCheckboxes.forEach((checkbox) => {
         this.validationSchema = this.validationSchema.concat(
           Yup.object({
@@ -103,9 +114,7 @@ class SubmitReviewModalComponent extends Component {
         "Before submitting to community, please read and check the following:"
       );
       modalContent["submitBtnLbl"] = i18next.t("Submit to community");
-    }
-
-    if (directPublish) {
+    } else if (directPublish) {
       modalContent["headerTitle"] = i18next.t("Publish to community");
       modalContent["msgWarningTitle"] = i18next.t(
         "Before publishing to the community, please read and check the following:"
@@ -275,8 +284,8 @@ SubmitReviewModalComponent.defaultProps = {
   errors: undefined,
   loading: false,
   extraCheckboxes: [],
-  beforeContent: undefined,
-  afterContent: undefined,
+  beforeContent: () => undefined,
+  afterContent: () => undefined,
 };
 
 export const SubmitReviewModal = Overridable.component(

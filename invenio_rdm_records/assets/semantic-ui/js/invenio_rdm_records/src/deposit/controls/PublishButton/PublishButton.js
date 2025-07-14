@@ -6,7 +6,7 @@
 // under the terms of the MIT License; see LICENSE file for more details.
 
 import { i18next } from "@translations/invenio_rdm_records/i18next";
-import { connect as connectFormik, Formik } from "formik";
+import { connect as connectFormik } from "formik";
 import _get from "lodash/get";
 import _omit from "lodash/omit";
 import PropTypes from "prop-types";

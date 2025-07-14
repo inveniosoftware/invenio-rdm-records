@@ -11,6 +11,15 @@ import PropTypes from "prop-types";
 import { ErrorLabel, RadioField } from "react-invenio-forms";
 import { Checkbox, Form } from "semantic-ui-react";
 
+export function ensureUniqueProps(values, propName) {
+  const duplicates = values.filter((v, i, arr) => arr.indexOf(v) !== i);
+  if (duplicates.length > 0) {
+    throw new Error(
+      `Extra checkboxes must have unique "${propName}". Duplicates found: ${duplicates}.`
+    );
+  }
+}
+
 export const PublishCheckboxComponent = ({ id, fieldPath, text }) => {
   const { values } = useFormikContext();
   return (
