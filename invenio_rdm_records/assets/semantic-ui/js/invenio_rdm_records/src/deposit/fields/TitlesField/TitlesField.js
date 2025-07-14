@@ -8,37 +8,67 @@
 
 import React, { Component } from "react";
 import PropTypes from "prop-types";
-
+import Overridable from "react-overridable";
 import { FieldLabel, TextField } from "react-invenio-forms";
 import { AdditionalTitlesField } from "./AdditionalTitlesField";
 import { i18next } from "@translations/invenio_rdm_records/i18next";
+import { createFieldComponent, fieldCommonProps } from "../common/fieldComponents";
 
-export class TitlesField extends Component {
+class TitlesFieldComponent extends Component {
   render() {
-    const { fieldPath, options, label, required, recordUI } = this.props;
+    const { fieldPath, options, label, labelIcon, required, disabled, recordUI } =
+      this.props;
 
     return (
-      <>
-        <TextField
-          fieldPath={fieldPath}
-          label={<FieldLabel htmlFor={fieldPath} icon="book" label={label} />}
-          required={required}
-          className="title-field"
-          optimized
-        />
-        <AdditionalTitlesField
-          options={options}
-          recordUI={recordUI}
-          fieldPath="metadata.additional_titles"
-        />
-      </>
+      <Overridable
+        id="InvenioRdmRecords.TitlesField.container"
+        required={required}
+        disabled={disabled}
+        optimized
+        options={options}
+        recordUI={recordUI}
+      >
+        <>
+          <Overridable
+            id="InvenioRdmRecords.TitlesField.field"
+            required={required}
+            disabled={disabled}
+            optimized
+          >
+            <TextField
+              fieldPath={fieldPath}
+              label={
+                <Overridable
+                  id="InvenioRdmRecords.TitlesField.label"
+                  labelIcon={labelIcon}
+                  label={label}
+                >
+                  <FieldLabel htmlFor={fieldPath} icon={labelIcon} label={label} />
+                </Overridable>
+              }
+              required={required}
+              className="title-field"
+              optimized
+            />
+          </Overridable>
+          <Overridable
+            id="InvenioRdmRecords.TitlesField.additional"
+            options={options}
+            recordUI={recordUI}
+          >
+            <AdditionalTitlesField
+              options={options}
+              recordUI={recordUI}
+              fieldPath="metadata.additional_titles"
+            />
+          </Overridable>
+        </>
+      </Overridable>
     );
   }
 }
 
-TitlesField.propTypes = {
-  fieldPath: PropTypes.string.isRequired,
-  label: PropTypes.string,
+TitlesFieldComponent.propTypes = {
   options: PropTypes.shape({
     type: PropTypes.arrayOf(
       PropTypes.shape({
@@ -54,12 +84,18 @@ TitlesField.propTypes = {
       })
     ),
   }).isRequired,
-  required: PropTypes.bool,
   recordUI: PropTypes.object,
+  ...fieldCommonProps,
 };
 
-TitlesField.defaultProps = {
+TitlesFieldComponent.defaultProps = {
   label: i18next.t("Title"),
+  labelIcon: "book",
   required: false,
   recordUI: undefined,
 };
+
+export const TitlesField = createFieldComponent(
+  "InvenioRdmRecords.TitlesField",
+  TitlesFieldComponent
+);

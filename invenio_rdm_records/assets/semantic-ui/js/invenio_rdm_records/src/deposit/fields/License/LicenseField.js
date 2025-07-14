@@ -19,7 +19,7 @@ import Overridable from "react-overridable";
 import { LicenseModal } from "./LicenseModal";
 import { LicenseFieldItem } from "./LicenseFieldItem";
 import { i18next } from "@translations/invenio_rdm_records/i18next";
-import { createFieldComponent, fieldCommonProps } from "../common/propTypes";
+import { createFieldComponent, fieldCommonProps } from "../common/fieldComponents";
 
 /**
  * The user-facing license.
