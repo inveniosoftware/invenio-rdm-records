@@ -12,6 +12,10 @@
 Changes
 =======
 
+Version v19.4.1 (released 2025-07-14)
+
+- doi: handle case with no configured parent dois
+
 Version v19.4.0 (released 2025-07-10)
 
 - chores: replacing importlib_metadata with importlib.metadata
