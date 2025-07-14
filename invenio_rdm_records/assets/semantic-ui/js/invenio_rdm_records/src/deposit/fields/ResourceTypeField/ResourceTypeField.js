@@ -12,6 +12,7 @@ import _get from "lodash/get";
 import { FieldLabel, SelectField } from "react-invenio-forms";
 import { i18next } from "@translations/invenio_rdm_records/i18next";
 import Overridable from "react-overridable";
+import { fieldCommonProps } from "../common/fieldComponents";
 
 export class ResourceTypeFieldComponent extends Component {
   groupErrors = (errors, fieldPath) => {
@@ -88,9 +89,6 @@ export class ResourceTypeFieldComponent extends Component {
 }
 
 ResourceTypeFieldComponent.propTypes = {
-  fieldPath: PropTypes.string.isRequired,
-  label: PropTypes.string,
-  labelIcon: PropTypes.string,
   labelclassname: PropTypes.string,
   options: PropTypes.arrayOf(
     PropTypes.shape({
@@ -100,7 +98,7 @@ ResourceTypeFieldComponent.propTypes = {
       id: PropTypes.string,
     })
   ).isRequired,
-  required: PropTypes.bool,
+  ...fieldCommonProps,
 };
 
 ResourceTypeFieldComponent.defaultProps = {

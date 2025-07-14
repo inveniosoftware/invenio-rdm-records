@@ -20,7 +20,7 @@ import { CREATIBUTOR_TYPE } from "./type";
 import { sortOptions } from "../../utils";
 import { i18next } from "@translations/invenio_rdm_records/i18next";
 import Overridable from "react-overridable";
-import { createFieldComponent, fieldCommonProps } from "../common/propTypes";
+import { createFieldComponent, fieldCommonProps } from "../common/fieldComponents";
 
 const creatibutorNameDisplay = (value) => {
   const creatibutorType = _get(value, "person_or_org.type", CREATIBUTOR_TYPE.PERSON);

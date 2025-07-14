@@ -16,7 +16,7 @@ import {
 import { Form } from "semantic-ui-react";
 import { i18next } from "@translations/invenio_rdm_records/i18next";
 import Overridable from "react-overridable";
-import { createFieldComponent, fieldCommonProps } from "../common/propTypes";
+import { createFieldComponent, fieldCommonProps } from "../common/fieldComponents";
 
 class SubjectsFieldComponent extends Component {
   state = {

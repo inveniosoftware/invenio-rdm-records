@@ -19,7 +19,7 @@ import { emptyDate } from "./initialValues";
 import { i18next } from "@translations/invenio_rdm_records/i18next";
 import { sortOptions } from "../../utils";
 import Overridable from "react-overridable";
-import { createFieldComponent } from "../common/propTypes";
+import { createFieldComponent } from "../common/fieldComponents";
 
 class DatesFieldComponent extends Component {
   /** Top-level Dates Component */

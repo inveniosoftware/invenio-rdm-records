@@ -11,7 +11,7 @@ import PropTypes from "prop-types";
 import { FieldLabel, RemoteSelectField } from "react-invenio-forms";
 import { i18next } from "@translations/invenio_rdm_records/i18next";
 import Overridable from "react-overridable";
-import { createFieldComponent, fieldCommonProps } from "../common/propTypes";
+import { createFieldComponent, fieldCommonProps } from "../common/fieldComponents";
 
 class LanguagesFieldComponent extends Component {
   render() {
