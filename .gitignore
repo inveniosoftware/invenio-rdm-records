@@ -77,3 +77,9 @@ pip-wheel-metadata/
 
 # node_modules
 node_modules
+
+# Needed for certain vim configs to work properly
+tsconfig.json
+
+# Local environment variables for debugging
+.env
