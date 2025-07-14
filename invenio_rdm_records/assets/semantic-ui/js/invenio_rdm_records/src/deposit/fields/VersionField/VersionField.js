@@ -12,7 +12,7 @@ import Overridable from "react-overridable";
 import { FieldLabel, TextField } from "react-invenio-forms";
 import { i18next } from "@translations/invenio_rdm_records/i18next";
 import { Trans } from "react-i18next";
-import { createFieldComponent, fieldCommonProps } from "../common/propTypes";
+import { createFieldComponent, fieldCommonProps } from "../common/fieldComponents";
 
 class VersionFieldComponent extends Component {
   render() {

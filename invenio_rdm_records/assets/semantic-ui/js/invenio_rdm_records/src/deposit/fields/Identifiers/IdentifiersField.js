@@ -17,72 +17,127 @@ import {
 import { Button, Form } from "semantic-ui-react";
 import { i18next } from "@translations/invenio_rdm_records/i18next";
 import { emptyIdentifier } from "./initialValues";
+import Overridable from "react-overridable";
+import { createFieldComponent, fieldCommonProps } from "../common/fieldComponents";
 
-/** Identifiers array component */
-export class IdentifiersField extends Component {
+class IdentifiersFieldComponent extends Component {
   render() {
-    const { fieldPath, label, labelIcon, required, schemeOptions, showEmptyValue } =
-      this.props;
+    const {
+      fieldPath,
+      label,
+      labelIcon,
+      required,
+      disabled,
+      schemeOptions,
+      showEmptyValue,
+    } = this.props;
     return (
-      <ArrayField
-        addButtonLabel={i18next.t("Add identifier")}
+      <Overridable
+        id="InvenioRdmRecords.IdentifiersField.list"
         defaultNewValue={emptyIdentifier}
-        fieldPath={fieldPath}
-        label={<FieldLabel htmlFor={fieldPath} icon={labelIcon} label={label} />}
+        labelIcon={labelIcon}
+        label={label}
         required={required}
+        disabled={disabled}
         showEmptyValue={showEmptyValue}
+        options={schemeOptions}
       >
-        {({ arrayHelpers, indexPath }) => {
-          const fieldPathPrefix = `${fieldPath}.${indexPath}`;
-          return (
-            <GroupField>
-              <TextField
-                fieldPath={`${fieldPathPrefix}.identifier`}
-                label={i18next.t("Identifier")}
-                required
-                width={11}
-              />
-              {schemeOptions && (
-                <SelectField
-                  fieldPath={`${fieldPathPrefix}.scheme`}
-                  label={i18next.t("Scheme")}
-                  aria-label={i18next.t("Scheme")}
-                  options={schemeOptions}
-                  optimized
-                  required
-                  width={5}
-                />
-              )}
-              {!schemeOptions && (
-                <TextField
-                  fieldPath={`${fieldPathPrefix}.scheme`}
-                  label={i18next.t("Scheme")}
-                  aria-label={i18next.t("Scheme")}
-                  required
-                  width={5}
-                />
-              )}
-              <Form.Field>
-                <Button
-                  aria-label={i18next.t("Remove field")}
-                  className="close-btn"
-                  icon="close"
-                  onClick={() => arrayHelpers.remove(indexPath)}
-                />
-              </Form.Field>
-            </GroupField>
-          );
-        }}
-      </ArrayField>
+        <ArrayField
+          addButtonLabel={i18next.t("Add identifier")}
+          defaultNewValue={emptyIdentifier}
+          fieldPath={fieldPath}
+          label={
+            <Overridable
+              id="InvenioRdmRecords.IdentifiersField.label"
+              labelIcon={labelIcon}
+              label={label}
+            >
+              <FieldLabel htmlFor={fieldPath} icon={labelIcon} label={label} />
+            </Overridable>
+          }
+          required={required}
+          disabled={disabled}
+          showEmptyValue={showEmptyValue}
+        >
+          {({ arrayHelpers, indexPath }) => {
+            const fieldPathPrefix = `${fieldPath}.${indexPath}`;
+            return (
+              <Overridable
+                id="InvenioRdmRecords.IdentifiersField.item"
+                optimized={false}
+              >
+                <GroupField>
+                  <Overridable
+                    id="InvenioRdmRecords.IdentifiersField.Identifier.field"
+                    required
+                    width={11}
+                  >
+                    <TextField
+                      fieldPath={`${fieldPathPrefix}.identifier`}
+                      label={i18next.t("Identifier")}
+                      required
+                      width={11}
+                    />
+                  </Overridable>
+                  {schemeOptions && (
+                    <Overridable
+                      id="InvenioRdmRecords.IdentifiersField.Scheme.select"
+                      options={schemeOptions}
+                      optimized
+                      required
+                      width={5}
+                    >
+                      <SelectField
+                        fieldPath={`${fieldPathPrefix}.scheme`}
+                        label={i18next.t("Scheme")}
+                        aria-label={i18next.t("Scheme")}
+                        options={schemeOptions}
+                        optimized
+                        required
+                        width={5}
+                      />
+                    </Overridable>
+                  )}
+                  {!schemeOptions && (
+                    <Overridable
+                      id="InvenioRdmRecords.IdentifiersField.Scheme.text"
+                      required
+                      width={5}
+                    >
+                      <TextField
+                        fieldPath={`${fieldPathPrefix}.scheme`}
+                        label={i18next.t("Scheme")}
+                        aria-label={i18next.t("Scheme")}
+                        required
+                        width={5}
+                      />
+                    </Overridable>
+                  )}
+
+                  <Overridable
+                    id="InvenioRdmRecords.RelatedWorksField.Remove.container"
+                    icon="close"
+                  >
+                    <Form.Field>
+                      <Button
+                        aria-label={i18next.t("Remove field")}
+                        className="close-btn"
+                        icon="close"
+                        onClick={() => arrayHelpers.remove(indexPath)}
+                      />
+                    </Form.Field>
+                  </Overridable>
+                </GroupField>
+              </Overridable>
+            );
+          }}
+        </ArrayField>
+      </Overridable>
     );
   }
 }
 
-IdentifiersField.propTypes = {
-  fieldPath: PropTypes.string.isRequired,
-  label: PropTypes.string,
-  labelIcon: PropTypes.string,
-  required: PropTypes.bool,
+IdentifiersFieldComponent.propTypes = {
   schemeOptions: PropTypes.arrayOf(
     PropTypes.shape({
       text: PropTypes.string,
@@ -90,12 +145,18 @@ IdentifiersField.propTypes = {
     })
   ),
   showEmptyValue: PropTypes.bool,
+  ...fieldCommonProps,
 };
 
-IdentifiersField.defaultProps = {
+IdentifiersFieldComponent.defaultProps = {
   label: i18next.t("Identifiers"),
   labelIcon: "barcode",
   required: false,
   schemeOptions: undefined,
   showEmptyValue: false,
 };
+
+export const IdentifiersField = createFieldComponent(
+  "InvenioRdmRecords.IdentifiersField",
+  IdentifiersFieldComponent
+);
