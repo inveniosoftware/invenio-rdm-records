@@ -82,6 +82,27 @@ def test_bibtex_serializer_full_record(running_app, updated_full_record):
 
     assert serialized_record == expected_data
 
+def test_bibtex_serializer_record_all_versions(running_app, updated_full_record):
+    """Test serializer for BibTex (All versions)."""
+    serializer = BibtexSerializer(schema_context={"all_versions": True})
+    serialized_record = serializer.serialize_object(updated_full_record)
+
+    expected_data = (
+        "@misc{nielsen_2023_pgfpj-at058,\n"
+        "  author       = {Nielsen, Lars Holm and\n"
+        "                  Tom, Blabin},\n"
+        "  title        = {InvenioRDM},\n"
+        "  month        = mar,\n"
+        "  year         = 2023,\n"
+        "  publisher    = {InvenioRDM},\n"
+        "  version      = {v1.0},\n"
+        "  doi          = {10.1234/pgfpj-at058},\n"
+        "  url          = {https://doi.org/10.1234/pgfpj-at058},\n"
+        "}"
+    )
+
+    assert serialized_record == expected_data
+
 
 @pytest.mark.parametrize(
     "resource_type",
