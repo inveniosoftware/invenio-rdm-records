@@ -23,6 +23,7 @@ class BibtexSerializer(MarshmallowSerializer):
             object_schema_cls=BibTexSchema,
             list_schema_cls=BaseListSchema,
             encoder=self.bibtex_tostring,
+            **options
         )
 
     @classmethod
