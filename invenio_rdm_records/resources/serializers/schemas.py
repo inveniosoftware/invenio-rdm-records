@@ -16,6 +16,9 @@ class CommonFieldsMixin:
 
     def get_doi(self, obj):
         """Get DOI."""
+        if self.context.get("all_versions", False):
+            # If all versions export is requested, we return the DOI from the parent
+            return obj["parent"]["pids"]["doi"]["identifier"]
         if "doi" in obj["pids"]:
             return obj["pids"]["doi"]["identifier"]
 
