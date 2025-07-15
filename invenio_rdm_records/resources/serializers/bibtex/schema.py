@@ -14,7 +14,7 @@ from babel_edtf import parse_edtf
 from edtf.parser.grammar import ParseException
 from edtf.parser.parser_classes import Date, Interval
 from flask_resources.serializers import BaseSerializerSchema
-from marshmallow import fields, post_dump, missing
+from marshmallow import fields, missing, post_dump
 from pydash import py_
 from slugify import slugify
 
