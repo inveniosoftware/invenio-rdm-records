@@ -12,6 +12,12 @@
 Changes
 =======
 
+Version v19.4.2 (released 2025-07-16)
+
+- PublishButton: Separate PublishModal and add checkbox easily via params
+- assets: PublishModal: Ensure unique fieldPath and id for checkboxes
+- Fix: installation failed due to type error
+
 Version v19.4.1 (released 2025-07-14)
 
 - doi: handle case with no configured parent dois
