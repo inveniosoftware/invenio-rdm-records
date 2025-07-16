@@ -19,7 +19,10 @@ import Overridable from "react-overridable";
 import { LicenseModal } from "./LicenseModal";
 import { LicenseFieldItem } from "./LicenseFieldItem";
 import { i18next } from "@translations/invenio_rdm_records/i18next";
-import { createFieldComponent, fieldCommonProps } from "../common/fieldComponents";
+import {
+  createCommonDepositFieldComponent,
+  fieldCommonProps,
+} from "../common/fieldComponents";
 
 /**
  * The user-facing license.
@@ -90,7 +93,7 @@ class LicenseFieldForm extends Component {
 
     return (
       <Overridable
-        id="InvenioRdmRecords.LicenseField.container"
+        id="InvenioRdmRecords.DepositForm.LicenseField.Container"
         className={className}
         labelIcon={labelIcon}
         label={label}
@@ -99,13 +102,13 @@ class LicenseFieldForm extends Component {
         <DndProvider backend={HTML5Backend}>
           <Form.Field required={required} disabled={disabled} className={className}>
             <Overridable
-              id="InvenioRdmRecords.LicenseField.label"
+              id="InvenioRdmRecords.DepositForm.LicenseField.Label"
               labelIcon={labelIcon}
               label={label}
             >
               <FieldLabel htmlFor={fieldPath} icon={labelIcon} label={label} />
             </Overridable>
-            <Overridable id="InvenioRdmRecords.LicenseField.list">
+            <Overridable id="InvenioRdmRecords.DepositForm.LicenseField.List">
               <List>
                 {getIn(values, fieldPath, []).map((value, index) => {
                   const license = new VisibleLicense(uiRights, value, index);
@@ -124,7 +127,7 @@ class LicenseFieldForm extends Component {
               </List>
             </Overridable>
             <Overridable
-              id="InvenioRdmRecords.LicenseField.modal.standard"
+              id="InvenioRdmRecords.DepositForm.LicenseField.Modal.Standard"
               searchConfig={searchConfig}
               className={className}
             >
@@ -152,7 +155,7 @@ class LicenseFieldForm extends Component {
               />
             </Overridable>
             <Overridable
-              id="InvenioRdmRecords.LicenseField.modal.custom"
+              id="InvenioRdmRecords.DepositForm.LicenseField.Modal.Custom"
               searchConfig={searchConfig}
               className={className}
             >
@@ -178,7 +181,7 @@ class LicenseFieldForm extends Component {
                 action="add"
               />
             </Overridable>
-            <Overridable id="InvenioRdmRecords.LicenseField.feedback">
+            <Overridable id="InvenioRdmRecords.DepositForm.LicenseField.Feedback">
               {licenseError && <FeedbackLabel fieldPath={fieldPath} />}
             </Overridable>
           </Form.Field>
@@ -237,7 +240,7 @@ LicenseFieldComponent.defaultProps = {
   serializeLicenses: undefined,
 };
 
-export const LicenseField = createFieldComponent(
-  "InvenioRdmRecords.LicenseField",
+export const LicenseField = createCommonDepositFieldComponent(
+  "InvenioRdmRecords.DepositForm.LicenseField",
   LicenseFieldComponent
 );

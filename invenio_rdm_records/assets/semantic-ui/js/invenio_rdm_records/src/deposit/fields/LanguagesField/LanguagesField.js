@@ -11,7 +11,10 @@ import PropTypes from "prop-types";
 import { FieldLabel, RemoteSelectField } from "react-invenio-forms";
 import { i18next } from "@translations/invenio_rdm_records/i18next";
 import Overridable from "react-overridable";
-import { createFieldComponent, fieldCommonProps } from "../common/fieldComponents";
+import {
+  createCommonDepositFieldComponent,
+  fieldCommonProps,
+} from "../common/fieldComponents";
 
 class LanguagesFieldComponent extends Component {
   render() {
@@ -26,13 +29,15 @@ class LanguagesFieldComponent extends Component {
       serializeSuggestions: serializeSuggestionsFunc,
       required,
       disabled,
+      helpText,
+      noQueryMessage,
       ...uiProps
     } = this.props;
     const serializeSuggestions = serializeSuggestionsFunc || null;
 
     return (
       <Overridable
-        id="InvenioRdmRecords.LanguagesField.input"
+        id="InvenioRdmRecords.DepositForm.LanguagesField.Input"
         fieldPath={fieldPath}
         placeholder={placeholder}
         required={required}
@@ -42,6 +47,8 @@ class LanguagesFieldComponent extends Component {
         initialSuggestions={initialOptions}
         labelIcon={labelIcon}
         label={label}
+        helpText={helpText}
+        noQueryMessage={noQueryMessage}
       >
         <RemoteSelectField
           fieldPath={fieldPath}
@@ -50,6 +57,7 @@ class LanguagesFieldComponent extends Component {
             Accept: "application/vnd.inveniordm.v1+json",
           }}
           placeholder={placeholder}
+          helpText={helpText}
           required={required}
           disabled={disabled}
           clearable={clearable}
@@ -57,14 +65,14 @@ class LanguagesFieldComponent extends Component {
           initialSuggestions={initialOptions}
           label={
             <Overridable
-              id="InvenioRdmRecords.LanguagesField.label"
+              id="InvenioRdmRecords.DepositForm.LanguagesField.Label"
               labelIcon={labelIcon}
               label={label}
             >
               <FieldLabel htmlFor={fieldPath} icon={labelIcon} label={label} />
             </Overridable>
           }
-          noQueryMessage={i18next.t("Search for languages...")}
+          noQueryMessage={noQueryMessage}
           {...(serializeSuggestions && { serializeSuggestions })}
           {...uiProps}
         />
@@ -78,6 +86,7 @@ LanguagesFieldComponent.propTypes = {
   multiple: PropTypes.bool,
   clearable: PropTypes.bool,
   placeholder: PropTypes.string,
+  noQueryMessage: PropTypes.string,
   initialOptions: PropTypes.arrayOf(
     PropTypes.shape({
       key: PropTypes.string,
@@ -95,12 +104,13 @@ LanguagesFieldComponent.defaultProps = {
   multiple: true,
   clearable: true,
   placeholder: i18next.t('Search for a language by name (e.g "eng", "fr" or "Polish")'),
+  noQueryMessage: i18next.t("Search for languages..."),
   required: false,
   initialOptions: undefined,
   serializeSuggestions: undefined,
 };
 
-export const LanguagesField = createFieldComponent(
-  "InvenioRdmRecords.LanguagesField",
+export const LanguagesField = createCommonDepositFieldComponent(
+  "InvenioRdmRecords.DepositForm.LanguagesField",
   LanguagesFieldComponent
 );
