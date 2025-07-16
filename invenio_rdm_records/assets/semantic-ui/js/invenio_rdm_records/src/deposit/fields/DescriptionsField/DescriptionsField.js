@@ -12,7 +12,10 @@ import { FieldLabel, RichInputField } from "react-invenio-forms";
 import { AdditionalDescriptionsField } from "./components";
 import { i18next } from "@translations/invenio_rdm_records/i18next";
 import Overridable from "react-overridable";
-import { createFieldComponent, fieldCommonProps } from "../common/fieldComponents";
+import {
+  createCommonDepositFieldComponent,
+  fieldCommonProps,
+} from "../common/fieldComponents";
 
 class DescriptionsFieldComponent extends Component {
   render() {
@@ -21,15 +24,21 @@ class DescriptionsFieldComponent extends Component {
       label,
       labelIcon,
       options,
-      editorConfig,
+      editorConfig: propEditorConfig,
       recordUI,
       disabled,
       required,
+      placeholder,
     } = this.props;
+
+    const editorConfig = {
+      placeholder,
+      ...propEditorConfig,
+    };
 
     return (
       <Overridable
-        id="InvenioRdmRecords.DescriptionsField.container"
+        id="InvenioRdmRecords.DepositForm.DescriptionsField.Container"
         fieldPath={fieldPath}
         editorConfig={editorConfig}
         htmlFor={fieldPath}
@@ -42,7 +51,7 @@ class DescriptionsFieldComponent extends Component {
       >
         <>
           <Overridable
-            id="InvenioRdmRecords.DescriptionsField.input"
+            id="InvenioRdmRecords.DepositForm.DescriptionsField.Input"
             fieldPath={fieldPath}
             editorConfig={editorConfig}
             htmlFor={fieldPath}
@@ -57,7 +66,7 @@ class DescriptionsFieldComponent extends Component {
               editorConfig={editorConfig}
               label={
                 <Overridable
-                  id="InvenioRdmRecords.DescriptionsField.input.label"
+                  id="InvenioRdmRecords.DepositForm.DescriptionsField.Input.Label"
                   htmlFor={fieldPath}
                   icon={labelIcon}
                   label={label}
@@ -71,7 +80,7 @@ class DescriptionsFieldComponent extends Component {
             />
           </Overridable>
           <Overridable
-            id="InvenioRdmRecords.DescriptionsField.additional"
+            id="InvenioRdmRecords.DepositForm.DescriptionsField.Additional"
             recordUI={recordUI}
             options={options}
             editorConfig={editorConfig}
@@ -103,7 +112,7 @@ DescriptionsFieldComponent.defaultProps = {
   recordUI: undefined,
 };
 
-export const DescriptionsField = createFieldComponent(
-  "InvenioRdmRecords.DescriptionsField",
+export const DescriptionsField = createCommonDepositFieldComponent(
+  "InvenioRdmRecords.DepositForm.DescriptionsField",
   DescriptionsFieldComponent
 );

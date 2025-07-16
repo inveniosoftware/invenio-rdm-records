@@ -20,7 +20,10 @@ import { CREATIBUTOR_TYPE } from "./type";
 import { sortOptions } from "../../utils";
 import { i18next } from "@translations/invenio_rdm_records/i18next";
 import Overridable from "react-overridable";
-import { createFieldComponent, fieldCommonProps } from "../common/fieldComponents";
+import {
+  createCommonDepositFieldComponent,
+  mandatoryFieldCommonProps,
+} from "../common/fieldComponents";
 
 const creatibutorNameDisplay = (value) => {
   const creatibutorType = _get(value, "person_or_org.type", CREATIBUTOR_TYPE.PERSON);
@@ -66,8 +69,6 @@ class CreatibutorsFieldForm extends Component {
       serializeSuggestions,
       serializeCreatibutor,
       deserializeCreatibutor,
-      disabled,
-      required,
     } = this.props;
 
     const creatibutorsList = getIn(values, fieldPath, []);
@@ -100,7 +101,7 @@ class CreatibutorsFieldForm extends Component {
 
     return (
       <Overridable
-        id="InvenioRdmRecords.CreatibutorsField.container"
+        id="InvenioRdmRecords.DepositForm.CreatibutorsField.Container"
         labelIcon={labelIcon}
         label={label}
         roleOptions={roleOptions}
@@ -109,20 +110,18 @@ class CreatibutorsFieldForm extends Component {
         editLabel={modal.editLabel}
         addButtonLabel={addButtonLabel}
         className={className}
-        disabled={disabled}
-        required={schema === "creators"}
       >
         <DndProvider backend={HTML5Backend}>
-          <Form.Field required={required} disabled={disabled} className={className}>
+          <Form.Field required={schema === "creators"} className={className}>
             <Overridable
-              id="InvenioRdmRecords.CreatibutorsField.label"
+              id="InvenioRdmRecords.DepositForm.CreatibutorsField.Label"
               labelIcon={labelIcon}
               label={label}
             >
               <FieldLabel htmlFor={fieldPath} icon={labelIcon} label={label} />
             </Overridable>
             <Overridable
-              id="InvenioRdmRecords.CreatibutorsField.list"
+              id="InvenioRdmRecords.DepositForm.CreatibutorsField.List"
               roleOptions={roleOptions}
               schema={schema}
             >
@@ -162,11 +161,10 @@ class CreatibutorsFieldForm extends Component {
               </List>
             </Overridable>
             <Overridable
-              id="InvenioRdmRecords.CreatibutorsField.modal"
+              id="InvenioRdmRecords.DepositForm.CreatibutorsField.Modal"
               addLabel={modal.addLabel}
               editLabel={modal.editLabel}
               schema={schema}
-              disabled={disabled}
               className={className}
             >
               <CreatibutorsModal
@@ -178,20 +176,14 @@ class CreatibutorsFieldForm extends Component {
                 schema={schema}
                 autocompleteNames={autocompleteNames}
                 trigger={
-                  <Button
-                    type="button"
-                    icon
-                    labelPosition="left"
-                    className={className}
-                    disabled={disabled}
-                  >
+                  <Button type="button" icon labelPosition="left" className={className}>
                     <Icon name="add" />
                     {addButtonLabel}
                   </Button>
                 }
               />
             </Overridable>
-            <Overridable id="InvenioRdmRecords.CreatibutorsField.feedback">
+            <Overridable id="InvenioRdmRecords.DepositForm.CreatibutorsField.Feedback">
               {generalCreatibutorsError && <FeedbackLabel fieldPath={fieldPath} />}
             </Overridable>
           </Form.Field>
@@ -234,7 +226,7 @@ CreatibutorsFieldForm.propTypes = {
   serializeSuggestions: PropTypes.func,
   serializeCreatibutor: PropTypes.func,
   deserializeCreatibutor: PropTypes.func,
-  ...fieldCommonProps,
+  ...mandatoryFieldCommonProps,
 };
 
 CreatibutorsFieldForm.defaultProps = {
@@ -263,7 +255,7 @@ CreatibutorsFieldComponent.propTypes = {
   serializeSuggestions: PropTypes.func,
   serializeCreatibutor: PropTypes.func,
   deserializeCreatibutor: PropTypes.func,
-  ...fieldCommonProps,
+  ...mandatoryFieldCommonProps,
 };
 
 CreatibutorsFieldComponent.defaultProps = {
@@ -281,7 +273,7 @@ CreatibutorsFieldComponent.defaultProps = {
   deserializeCreatibutor: undefined,
 };
 
-export const CreatibutorsField = createFieldComponent(
-  "InvenioRdmRecords.CreatibutorsField",
+export const CreatibutorsField = createCommonDepositFieldComponent(
+  "InvenioRdmRecords.DepositForm.CreatibutorsField",
   CreatibutorsFieldComponent
 );

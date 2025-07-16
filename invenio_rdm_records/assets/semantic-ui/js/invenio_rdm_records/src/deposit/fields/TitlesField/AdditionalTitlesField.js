@@ -9,25 +9,29 @@
 
 import React, { Component } from "react";
 import PropTypes from "prop-types";
-import { Button, Form, Icon } from "semantic-ui-react";
+import { Button, Form } from "semantic-ui-react";
 import Overridable from "react-overridable";
 import { ArrayField, GroupField, SelectField, TextField } from "react-invenio-forms";
 import { emptyAdditionalTitle } from "./initialValues";
 import { LanguagesField } from "../LanguagesField";
 import { i18next } from "@translations/invenio_rdm_records/i18next";
-import { createFieldComponent, fieldCommonProps } from "../common/fieldComponents";
+import {
+  createCommonDepositFieldComponent,
+  fieldCommonProps,
+} from "../common/fieldComponents";
 
 class AdditionalTitlesFieldComponent extends Component {
   render() {
-    const { fieldPath, options, recordUI } = this.props;
+    const { fieldPath, options, recordUI, helpText, addButtonLabel } = this.props;
 
     return (
       <Overridable
-        id="InvenioRdmRecords.AdditionalTitlesField.list"
+        id="InvenioRdmRecords.DepositForm.AdditionalTitlesField.Container"
         defaultNewValue={emptyAdditionalTitle}
       >
         <ArrayField
-          addButtonLabel={i18next.t("Add titles")}
+          addButtonLabel={addButtonLabel}
+          helpText={helpText}
           defaultNewValue={emptyAdditionalTitle}
           fieldPath={fieldPath}
           className="additional-titles"
@@ -40,10 +44,13 @@ class AdditionalTitlesFieldComponent extends Component {
                 : [];
 
             return (
-              <Overridable id="InvenioRdmRecords.AdditionalTitlesField.item" optimized>
+              <Overridable
+                id="InvenioRdmRecords.DepositForm.AdditionalTitlesField.Item"
+                optimized
+              >
                 <GroupField fieldPath={fieldPath} optimized>
                   <Overridable
-                    id="InvenioRdmRecords.AdditionalTitlesField.Title.field"
+                    id="InvenioRdmRecords.DepositForm.AdditionalTitlesField.Title"
                     required
                     width={5}
                   >
@@ -55,7 +62,7 @@ class AdditionalTitlesFieldComponent extends Component {
                     />
                   </Overridable>
                   <Overridable
-                    id="InvenioRdmRecords.AdditionalTitlesField.Type.field"
+                    id="InvenioRdmRecords.DepositForm.AdditionalTitlesField.Type"
                     optimized
                     options={options.type}
                     required
@@ -71,7 +78,7 @@ class AdditionalTitlesFieldComponent extends Component {
                     />
                   </Overridable>
                   <Overridable
-                    id="InvenioRdmRecords.AdditionalTitlesField.Language.field"
+                    id="InvenioRdmRecords.DepositForm.AdditionalTitlesField.Language"
                     multiple={false}
                     labelIcon={null}
                     clearable
@@ -100,7 +107,7 @@ class AdditionalTitlesFieldComponent extends Component {
                   </Overridable>
 
                   <Overridable
-                    id="InvenioRdmRecords.AdditionalTitlesField.Remove.container"
+                    id="InvenioRdmRecords.DepositForm.AdditionalTitlesField.Remove.Container"
                     icon="close"
                   >
                     <Form.Field>
@@ -139,15 +146,17 @@ AdditionalTitlesFieldComponent.propTypes = {
     ),
   }),
   recordUI: PropTypes.object,
+  addButtonLabel: PropTypes.string,
   ...fieldCommonProps,
 };
 
 AdditionalTitlesFieldComponent.defaultProps = {
   options: undefined,
   recordUI: undefined,
+  addButtonLabel: i18next.t("Add titles"),
 };
 
-export const AdditionalTitlesField = createFieldComponent(
-  "InvenioRdmRecords.AdditionalTitlesField",
+export const AdditionalTitlesField = createCommonDepositFieldComponent(
+  "InvenioRdmRecords.DepositForm.AdditionalTitlesField",
   AdditionalTitlesFieldComponent
 );

@@ -10,31 +10,44 @@ import React, { Component } from "react";
 import PropTypes from "prop-types";
 import Overridable from "react-overridable";
 import { TextField, GroupField, ArrayField, FieldLabel } from "react-invenio-forms";
-import { Button, Form, Icon } from "semantic-ui-react";
+import { Button, Form } from "semantic-ui-react";
 import { emptyReference } from "./initialValues";
 import { i18next } from "@translations/invenio_rdm_records/i18next";
-import { createFieldComponent, fieldCommonProps } from "../common/fieldComponents";
+import {
+  createCommonDepositFieldComponent,
+  fieldCommonProps,
+} from "../common/fieldComponents";
 
 class ReferencesFieldComponent extends Component {
   render() {
-    const { fieldPath, label, labelIcon, required, disabled, showEmptyValue } =
-      this.props;
+    const {
+      fieldPath,
+      label,
+      labelIcon,
+      required,
+      disabled,
+      showEmptyValue,
+      helpText,
+      addButtonLabel,
+    } = this.props;
 
     return (
       <Overridable
-        id="InvenioRdmRecords.ReferencesField.list"
+        id="InvenioRdmRecords.DepositForm.ReferencesField.Container"
         defaultNewValue={emptyReference}
         required={required}
         disabled={disabled}
         showEmptyValue={showEmptyValue}
+        helpText={helpText}
+        addButtonLabel={addButtonLabel}
       >
         <ArrayField
-          addButtonLabel={i18next.t("Add reference")}
+          addButtonLabel={addButtonLabel}
           defaultNewValue={emptyReference}
           fieldPath={fieldPath}
           label={
             <Overridable
-              id="InvenioRdmRecords.ReferencesField.label"
+              id="InvenioRdmRecords.DepositForm.ReferencesField.Label"
               labelIcon={labelIcon}
               label={label}
             >
@@ -44,15 +57,19 @@ class ReferencesFieldComponent extends Component {
           required={required}
           disabled={disabled}
           showEmptyValue={showEmptyValue}
+          helpText={helpText}
         >
           {({ arrayHelpers, indexPath }) => {
             const fieldPathPrefix = `${fieldPath}.${indexPath}`;
 
             return (
-              <Overridable id="InvenioRdmRecords.ReferencesField.item" optimized>
+              <Overridable
+                id="InvenioRdmRecords.DepositForm.ReferencesField.Item"
+                optimized
+              >
                 <GroupField optimized>
                   <Overridable
-                    id="InvenioRdmRecords.ReferencesField.Reference.field"
+                    id="InvenioRdmRecords.DepositForm.ReferencesField.Reference.Field"
                     required
                     width={16}
                   >
@@ -65,7 +82,7 @@ class ReferencesFieldComponent extends Component {
                   </Overridable>
 
                   <Overridable
-                    id="InvenioRdmRecords.ReferencesField.Remove.container"
+                    id="InvenioRdmRecords.DepositForm.ReferencesField.Remove.Container"
                     icon="close"
                   >
                     <Form.Field>
@@ -89,6 +106,7 @@ class ReferencesFieldComponent extends Component {
 
 ReferencesFieldComponent.propTypes = {
   showEmptyValue: PropTypes.bool,
+  addButtonLabel: PropTypes.string,
   ...fieldCommonProps,
 };
 
@@ -97,9 +115,10 @@ ReferencesFieldComponent.defaultProps = {
   labelIcon: "bookmark",
   required: false,
   showEmptyValue: false,
+  addButtonLabel: i18next.t("Add reference"),
 };
 
-export const ReferencesField = createFieldComponent(
-  "InvenioRdmRecords.ReferencesField",
+export const ReferencesField = createCommonDepositFieldComponent(
+  "InvenioRdmRecords.DepositForm.ReferencesField",
   ReferencesFieldComponent
 );

@@ -7,18 +7,15 @@
 
 import PropTypes from "prop-types";
 import React, { Component } from "react";
-import {
-  ArrayField,
-  FieldLabel,
-  GroupField,
-  SelectField,
-  TextField,
-} from "react-invenio-forms";
+import { ArrayField, GroupField, SelectField, TextField } from "react-invenio-forms";
 import { Button, Form } from "semantic-ui-react";
 import { i18next } from "@translations/invenio_rdm_records/i18next";
 import { emptyIdentifier } from "./initialValues";
 import Overridable from "react-overridable";
-import { createFieldComponent, fieldCommonProps } from "../common/fieldComponents";
+import {
+  createCommonDepositFieldComponent,
+  fieldCommonProps,
+} from "../common/fieldComponents";
 
 class IdentifiersFieldComponent extends Component {
   render() {
@@ -30,10 +27,13 @@ class IdentifiersFieldComponent extends Component {
       disabled,
       schemeOptions,
       showEmptyValue,
+      helpText,
+      placeholder,
     } = this.props;
+
     return (
       <Overridable
-        id="InvenioRdmRecords.IdentifiersField.list"
+        id="InvenioRdmRecords.DepositForm.IdentifiersField.Container"
         defaultNewValue={emptyIdentifier}
         labelIcon={labelIcon}
         label={label}
@@ -41,20 +41,15 @@ class IdentifiersFieldComponent extends Component {
         disabled={disabled}
         showEmptyValue={showEmptyValue}
         options={schemeOptions}
+        placeholder={placeholder}
       >
         <ArrayField
           addButtonLabel={i18next.t("Add identifier")}
           defaultNewValue={emptyIdentifier}
           fieldPath={fieldPath}
-          label={
-            <Overridable
-              id="InvenioRdmRecords.IdentifiersField.label"
-              labelIcon={labelIcon}
-              label={label}
-            >
-              <FieldLabel htmlFor={fieldPath} icon={labelIcon} label={label} />
-            </Overridable>
-          }
+          label={label}
+          labelIcon={labelIcon}
+          helpText={helpText}
           required={required}
           disabled={disabled}
           showEmptyValue={showEmptyValue}
@@ -63,25 +58,28 @@ class IdentifiersFieldComponent extends Component {
             const fieldPathPrefix = `${fieldPath}.${indexPath}`;
             return (
               <Overridable
-                id="InvenioRdmRecords.IdentifiersField.item"
+                id="InvenioRdmRecords.DepositForm.IdentifiersField.Item"
                 optimized={false}
+                placeholder={placeholder}
               >
                 <GroupField>
                   <Overridable
-                    id="InvenioRdmRecords.IdentifiersField.Identifier.field"
+                    id="InvenioRdmRecords.DepositForm.IdentifiersField.Identifier.Field"
                     required
                     width={11}
+                    placeholder={placeholder}
                   >
                     <TextField
                       fieldPath={`${fieldPathPrefix}.identifier`}
                       label={i18next.t("Identifier")}
                       required
                       width={11}
+                      placeholder={placeholder}
                     />
                   </Overridable>
                   {schemeOptions && (
                     <Overridable
-                      id="InvenioRdmRecords.IdentifiersField.Scheme.select"
+                      id="InvenioRdmRecords.DepositForm.IdentifiersField.Scheme.Select"
                       options={schemeOptions}
                       optimized
                       required
@@ -100,7 +98,7 @@ class IdentifiersFieldComponent extends Component {
                   )}
                   {!schemeOptions && (
                     <Overridable
-                      id="InvenioRdmRecords.IdentifiersField.Scheme.text"
+                      id="InvenioRdmRecords.DepositForm.IdentifiersField.Scheme.Text"
                       required
                       width={5}
                     >
@@ -115,7 +113,7 @@ class IdentifiersFieldComponent extends Component {
                   )}
 
                   <Overridable
-                    id="InvenioRdmRecords.RelatedWorksField.Remove.container"
+                    id="InvenioRdmRecords.DepositForm.IdentifiersField.Remove.Container"
                     icon="close"
                   >
                     <Form.Field>
@@ -156,7 +154,7 @@ IdentifiersFieldComponent.defaultProps = {
   showEmptyValue: false,
 };
 
-export const IdentifiersField = createFieldComponent(
-  "InvenioRdmRecords.IdentifiersField",
+export const IdentifiersField = createCommonDepositFieldComponent(
+  "InvenioRdmRecords.DepositForm.IdentifiersField",
   IdentifiersFieldComponent
 );
