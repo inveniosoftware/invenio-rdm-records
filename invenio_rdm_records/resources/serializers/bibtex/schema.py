@@ -79,7 +79,7 @@ class BibTexSchema(BaseSerializerSchema, CommonFieldsMixin):
 
     def get_id(self, obj):
         """Get record id."""
-        if self.context.get("all_versions", False):
+        if self.context.get("doi_all_versions", False):
             # If all versions export is requested, return the parent id
             return obj["parent"]["id"]
         return obj["id"]
