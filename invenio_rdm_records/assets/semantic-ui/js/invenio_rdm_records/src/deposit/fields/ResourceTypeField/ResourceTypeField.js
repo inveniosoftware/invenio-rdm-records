@@ -12,7 +12,10 @@ import _get from "lodash/get";
 import { FieldLabel, SelectField } from "react-invenio-forms";
 import { i18next } from "@translations/invenio_rdm_records/i18next";
 import Overridable from "react-overridable";
-import { fieldCommonProps } from "../common/fieldComponents";
+import {
+  createCommonDepositFieldComponent,
+  mandatoryFieldCommonProps,
+} from "../common/fieldComponents";
 
 export class ResourceTypeFieldComponent extends Component {
   groupErrors = (errors, fieldPath) => {
@@ -53,23 +56,38 @@ export class ResourceTypeFieldComponent extends Component {
   };
 
   render() {
-    const { fieldPath, label, labelIcon, options, ...restProps } = this.props;
+    const {
+      fieldPath,
+      label,
+      labelIcon: propLabelIcon,
+      options,
+      placeholder,
+      helpText: propHelpText,
+      schema,
+      ...restProps
+    } = this.props;
     const frontEndOptions = this.createOptions(options);
+
+    // Cannot show helpText or labelIcon when the field is inside an ArrayField
+    const helpText = schema === "record" ? propHelpText : undefined;
+    const labelIcon = schema === "record" ? propLabelIcon : undefined;
+
     return (
       <Overridable
-        id="InvenioRdmRecords.ResourceTypeField.field"
+        id="InvenioRdmRecords.DepositForm.ResourceTypeField.Container"
         fieldPath={fieldPath}
         labelIcon={labelIcon}
         label={label}
         aria-label={label}
         options={frontEndOptions}
-        {...restProps}
+        placeholder={placeholder}
+        helpText={helpText}
       >
         <SelectField
           fieldPath={fieldPath}
           label={
             <Overridable
-              id="InvenioRdmRecords.ResourceTypeField.label"
+              id="InvenioRdmRecords.DepositForm.ResourceTypeField.Label"
               htmlFor={fieldPath}
               icon={labelIcon}
               label={label}
@@ -81,6 +99,9 @@ export class ResourceTypeFieldComponent extends Component {
           aria-label={label}
           options={frontEndOptions}
           selectOnBlur={false}
+          helpText={helpText}
+          placeholder={placeholder}
+          required
           {...restProps}
         />
       </Overridable>
@@ -98,17 +119,18 @@ ResourceTypeFieldComponent.propTypes = {
       id: PropTypes.string,
     })
   ).isRequired,
-  ...fieldCommonProps,
+  schema: PropTypes.oneOf(["record", "relatedWork"]).isRequired,
+  ...mandatoryFieldCommonProps,
 };
 
 ResourceTypeFieldComponent.defaultProps = {
   label: i18next.t("Resource type"),
   labelIcon: "tag",
   labelclassname: "field-label-class",
-  required: false,
+  schema: "record",
 };
 
-export const ResourceTypeField = Overridable.component(
-  "InvenioRdmRecords.ResourceTypeField",
+export const ResourceTypeField = createCommonDepositFieldComponent(
+  "InvenioRdmRecords.DepositForm.ResourceTypeField",
   ResourceTypeFieldComponent
 );

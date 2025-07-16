@@ -16,7 +16,10 @@ import {
 import { Form } from "semantic-ui-react";
 import { i18next } from "@translations/invenio_rdm_records/i18next";
 import Overridable from "react-overridable";
-import { createFieldComponent, fieldCommonProps } from "../common/fieldComponents";
+import {
+  createCommonDepositFieldComponent,
+  fieldCommonProps,
+} from "../common/fieldComponents";
 
 class SubjectsFieldComponent extends Component {
   state = {
@@ -31,6 +34,9 @@ class SubjectsFieldComponent extends Component {
       limitToOptions,
       required,
       disabled,
+      helpText,
+      placeholder,
+      noQueryMessage,
       ...dropdownProps
     } = this.props;
     const { limitTo } = this.state;
@@ -39,7 +45,7 @@ class SubjectsFieldComponent extends Component {
 
     const labelComponent = (
       <Overridable
-        id="InvenioRdmRecords.SubjectsField.label"
+        id="InvenioRdmRecords.DepositForm.SubjectsField.Label"
         labelIcon={labelIcon}
         label={label}
       >
@@ -49,13 +55,16 @@ class SubjectsFieldComponent extends Component {
 
     return (
       <Overridable
-        id="InvenioRdmRecords.SubjectsField.container"
+        id="InvenioRdmRecords.DepositForm.SubjectsField.Container"
         fieldPath={fieldPath}
         label={label}
         labelIcon={labelIcon}
         limitToOptions={limitToOptions}
         required={required}
         disabled={disabled}
+        noQueryMessage={noQueryMessage}
+        helpText={helpText}
+        placeholder={placeholder}
         {...dropdownProps}
       >
         <GroupField className="main-group-field">
@@ -85,15 +94,18 @@ class SubjectsFieldComponent extends Component {
           )}
 
           <Overridable
-            id="InvenioRdmRecords.SubjectsField.input"
-            {...dropdownProps}
+            id="InvenioRdmRecords.DepositForm.SubjectsField.Input"
             limitTo={limitTo}
             width={fieldWidth}
             required={required}
             disabled={disabled}
+            noQueryMessage={noQueryMessage}
+            helpText={helpText}
+            placeholder={placeholder}
           >
             <SubjectAutocompleteDropdown
               {...dropdownProps}
+              noQueryMessage={noQueryMessage}
               fieldPath={fieldPath}
               label={
                 !displaySuggestFromField && labelComponent // Add label to second field if suggest from is hidden
@@ -102,6 +114,8 @@ class SubjectsFieldComponent extends Component {
               width={fieldWidth}
               required={required}
               disabled={disabled}
+              helpText={helpText}
+              placeholder={placeholder}
             />
           </Overridable>
         </GroupField>
@@ -114,6 +128,7 @@ SubjectsFieldComponent.propTypes = {
   limitToOptions: PropTypes.array.isRequired,
   fieldPath: PropTypes.string.isRequired,
   placeholder: PropTypes.string,
+  noQueryMessage: PropTypes.string,
   ...fieldCommonProps,
 };
 
@@ -121,9 +136,10 @@ SubjectsFieldComponent.defaultProps = {
   label: i18next.t("Keywords and subjects"),
   labelIcon: "tag",
   placeholder: i18next.t("Search for a subject by name"),
+  noQueryMessage: i18next.t("Search for subjects..."),
 };
 
-export const SubjectsField = createFieldComponent(
-  "InvenioRdmRecords.SubjectsField",
+export const SubjectsField = createCommonDepositFieldComponent(
+  "InvenioRdmRecords.DepositForm.SubjectsField",
   SubjectsFieldComponent
 );

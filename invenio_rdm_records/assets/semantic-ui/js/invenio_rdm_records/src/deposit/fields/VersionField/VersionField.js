@@ -11,13 +11,16 @@ import PropTypes from "prop-types";
 import Overridable from "react-overridable";
 import { FieldLabel, TextField } from "react-invenio-forms";
 import { i18next } from "@translations/invenio_rdm_records/i18next";
-import { createFieldComponent, fieldCommonProps } from "../common/fieldComponents";
+import {
+  createCommonDepositFieldComponent,
+  fieldCommonProps,
+} from "../common/fieldComponents";
 
 class VersionFieldComponent extends Component {
   render() {
     const { fieldPath, label, labelIcon, placeholder, disabled, required } = this.props;
     const helpText = (
-      <Overridable id="InvenioRdmRecords.VersionField.help">
+      <Overridable id="InvenioRdmRecords.DepositForm.VersionField.Help">
         <span>
           {i18next.t(
             "Mostly relevant for software and dataset uploads. A semantic version string is preferred see"
@@ -33,7 +36,7 @@ class VersionFieldComponent extends Component {
 
     return (
       <Overridable
-        id="InvenioRdmRecords.VersionField.input"
+        id="InvenioRdmRecords.DepositForm.VersionField.Container"
         fieldPath={fieldPath}
         helpText={helpText}
         labelIcon={labelIcon}
@@ -47,7 +50,7 @@ class VersionFieldComponent extends Component {
           helpText={helpText}
           label={
             <Overridable
-              id="InvenioRdmRecords.VersionField.label"
+              id="InvenioRdmRecords.DepositForm.VersionField.Label"
               labelIcon={labelIcon}
               label={label}
             >
@@ -75,7 +78,7 @@ VersionFieldComponent.defaultProps = {
   placeholder: "",
 };
 
-export const VersionField = createFieldComponent(
-  "InvenioRdmRecords.VersionField",
+export const VersionField = createCommonDepositFieldComponent(
+  "InvenioRdmRecords.DepositForm.VersionField",
   VersionFieldComponent
 );

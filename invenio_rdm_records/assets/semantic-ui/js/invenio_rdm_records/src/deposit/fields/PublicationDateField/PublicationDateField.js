@@ -11,21 +11,21 @@ import PropTypes from "prop-types";
 import Overridable from "react-overridable";
 import { FieldLabel, TextField } from "react-invenio-forms";
 import { i18next } from "@translations/invenio_rdm_records/i18next";
-import { createFieldComponent, fieldCommonProps } from "../common/fieldComponents";
+import {
+  createCommonDepositFieldComponent,
+  mandatoryFieldCommonProps,
+} from "../common/fieldComponents";
 
 class PublicationDateFieldComponent extends Component {
   render() {
-    const { fieldPath, helpText, label, labelIcon, placeholder, required, disabled } =
-      this.props;
+    const { fieldPath, helpText, label, labelIcon, placeholder } = this.props;
 
     return (
       <Overridable
-        id="InvenioRdmRecords.PublicationDateField.input"
+        id="InvenioRdmRecords.DepositForm.PublicationDateField.Container"
         fieldPath={fieldPath}
         helpText={helpText}
         placeholder={placeholder}
-        required={required}
-        disabled={disabled}
         icon={labelIcon}
         label={label}
       >
@@ -34,7 +34,7 @@ class PublicationDateFieldComponent extends Component {
           helpText={helpText}
           label={
             <Overridable
-              id="InvenioRdmRecords.PublicationDateField.label"
+              id="InvenioRdmRecords.DepositForm.PublicationDateField.Label"
               icon={labelIcon}
               label={label}
             >
@@ -42,7 +42,6 @@ class PublicationDateFieldComponent extends Component {
             </Overridable>
           }
           placeholder={placeholder}
-          required={required}
         />
       </Overridable>
     );
@@ -52,7 +51,7 @@ class PublicationDateFieldComponent extends Component {
 PublicationDateFieldComponent.propTypes = {
   helpText: PropTypes.string,
   placeholder: PropTypes.string,
-  ...fieldCommonProps,
+  ...mandatoryFieldCommonProps,
 };
 
 PublicationDateFieldComponent.defaultProps = {
@@ -66,7 +65,7 @@ PublicationDateFieldComponent.defaultProps = {
   ),
 };
 
-export const PublicationDateField = createFieldComponent(
-  "InvenioRdmRecords.PublicationDateField",
+export const PublicationDateField = createCommonDepositFieldComponent(
+  "InvenioRdmRecords.DepositForm.PublicationDateField",
   PublicationDateFieldComponent
 );

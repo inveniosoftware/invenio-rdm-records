@@ -8,6 +8,7 @@
 import { connect } from "react-redux";
 import { deleteFile, importParentFiles, uploadFiles } from "../../state/actions";
 import { FileUploaderComponent } from "./FileUploader";
+import { createCommonDepositFieldComponent } from "../common/fieldComponents";
 
 const mapStateToProps = (state) => {
   const { links, entries } = state.files;
@@ -33,7 +34,14 @@ const mapDispatchToProps = (dispatch) => ({
 export const FileUploader = connect(
   mapStateToProps,
   mapDispatchToProps
-)(FileUploaderComponent);
+)(
+  createCommonDepositFieldComponent(
+    // Using the ID naming already in the component despite the non-compliance with the convention,
+    // so we can maintain backward-compatibility if anyone is already overriding this component.
+    "ReactInvenioDeposit.FileUploader",
+    FileUploaderComponent
+  )
+);
 
 export { FileUploaderArea, FilesListTable } from "./FileUploaderArea";
 export { FileUploaderToolbar } from "./FileUploaderToolbar";

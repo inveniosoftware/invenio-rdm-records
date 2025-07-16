@@ -12,47 +12,54 @@ import Overridable from "react-overridable";
 import { FieldLabel, TextField } from "react-invenio-forms";
 import { AdditionalTitlesField } from "./AdditionalTitlesField";
 import { i18next } from "@translations/invenio_rdm_records/i18next";
-import { createFieldComponent, fieldCommonProps } from "../common/fieldComponents";
+import {
+  createCommonDepositFieldComponent,
+  mandatoryFieldCommonProps,
+} from "../common/fieldComponents";
 
 class TitlesFieldComponent extends Component {
   render() {
-    const { fieldPath, options, label, labelIcon, required, disabled, recordUI } =
+    const { fieldPath, options, label, labelIcon, recordUI, helpText, placeholder } =
       this.props;
 
     return (
       <Overridable
-        id="InvenioRdmRecords.TitlesField.container"
-        required={required}
-        disabled={disabled}
+        id="InvenioRdmRecords.DepositForm.TitlesField.Container"
         optimized
         options={options}
         recordUI={recordUI}
+        helpText={helpText}
+        placeholder={placeholder}
       >
         <>
           <Overridable
-            id="InvenioRdmRecords.TitlesField.field"
-            required={required}
-            disabled={disabled}
+            id="InvenioRdmRecords.DepositForm.TitlesField.Field"
             optimized
+            helpText={helpText}
+            labelIcon={labelIcon}
+            label={label}
+            placeholder={placeholder}
           >
             <TextField
               fieldPath={fieldPath}
+              helpText={helpText}
+              placeholder={placeholder}
               label={
                 <Overridable
-                  id="InvenioRdmRecords.TitlesField.label"
+                  id="InvenioRdmRecords.DepositForm.TitlesField.Label"
                   labelIcon={labelIcon}
                   label={label}
                 >
                   <FieldLabel htmlFor={fieldPath} icon={labelIcon} label={label} />
                 </Overridable>
               }
-              required={required}
+              required
               className="title-field"
               optimized
             />
           </Overridable>
           <Overridable
-            id="InvenioRdmRecords.TitlesField.additional"
+            id="InvenioRdmRecords.DepositForm.TitlesField.Additional"
             options={options}
             recordUI={recordUI}
           >
@@ -85,7 +92,7 @@ TitlesFieldComponent.propTypes = {
     ),
   }).isRequired,
   recordUI: PropTypes.object,
-  ...fieldCommonProps,
+  ...mandatoryFieldCommonProps,
 };
 
 TitlesFieldComponent.defaultProps = {
@@ -95,7 +102,7 @@ TitlesFieldComponent.defaultProps = {
   recordUI: undefined,
 };
 
-export const TitlesField = createFieldComponent(
-  "InvenioRdmRecords.TitlesField",
+export const TitlesField = createCommonDepositFieldComponent(
+  "InvenioRdmRecords.DepositForm.TitlesField",
   TitlesFieldComponent
 );
