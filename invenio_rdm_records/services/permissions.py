@@ -47,7 +47,7 @@ from .generators import (
     IfRestricted,
     RecordCommunitiesAction,
     RecordOwners,
-    RequestReviewer,
+    RequestReviewers,
     ResourceAccessToken,
     SecretLinks,
     SubmissionReviewer,
@@ -86,7 +86,7 @@ class RDMRecordPermissionPolicy(RecordPermissionPolicy):
         AccessGrant("preview"),
         SecretLinks("preview"),
         SubmissionReviewer(),
-        RequestReviewer(),
+        RequestReviewers(),
         UserManager,
     ]
     can_view = can_preview + [

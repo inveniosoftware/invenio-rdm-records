@@ -288,7 +288,7 @@ class SubmissionReviewer(Generator):
         return []
 
 
-class RequestReviewer(Generator):
+class RequestReviewers(Generator):
     """Roles for request's reviewers."""
 
     def needs(self, record=None, **kwargs):
