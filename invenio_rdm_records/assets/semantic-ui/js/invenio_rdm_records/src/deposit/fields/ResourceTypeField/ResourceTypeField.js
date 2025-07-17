@@ -9,13 +9,14 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
 import _get from "lodash/get";
-import { FieldLabel, SelectField } from "react-invenio-forms";
-import { i18next } from "@translations/invenio_rdm_records/i18next";
-import Overridable from "react-overridable";
 import {
+  FieldLabel,
+  SelectField,
   createCommonDepositFieldComponent,
   mandatoryFieldCommonProps,
-} from "../common/fieldComponents";
+} from "react-invenio-forms";
+import { i18next } from "@translations/invenio_rdm_records/i18next";
+import Overridable from "react-overridable";
 
 export class ResourceTypeFieldComponent extends Component {
   groupErrors = (errors, fieldPath) => {

@@ -8,14 +8,15 @@
 
 import React, { Component } from "react";
 import PropTypes from "prop-types";
-import { FieldLabel, RichInputField } from "react-invenio-forms";
+import {
+  FieldLabel,
+  RichInputField,
+  createCommonDepositFieldComponent,
+  fieldCommonProps,
+} from "react-invenio-forms";
 import { AdditionalDescriptionsField } from "./components";
 import { i18next } from "@translations/invenio_rdm_records/i18next";
 import Overridable from "react-overridable";
-import {
-  createCommonDepositFieldComponent,
-  fieldCommonProps,
-} from "../common/fieldComponents";
 
 class DescriptionsFieldComponent extends Component {
   render() {

@@ -11,14 +11,17 @@ import React, { Component } from "react";
 import PropTypes from "prop-types";
 import { Button, Form } from "semantic-ui-react";
 import Overridable from "react-overridable";
-import { ArrayField, GroupField, SelectField, TextField } from "react-invenio-forms";
+import {
+  ArrayField,
+  GroupField,
+  SelectField,
+  TextField,
+  createCommonDepositFieldComponent,
+  fieldCommonProps,
+} from "react-invenio-forms";
 import { emptyAdditionalTitle } from "./initialValues";
 import { LanguagesField } from "../LanguagesField";
 import { i18next } from "@translations/invenio_rdm_records/i18next";
-import {
-  createCommonDepositFieldComponent,
-  fieldCommonProps,
-} from "../common/fieldComponents";
 
 class AdditionalTitlesFieldComponent extends Component {
   render() {
