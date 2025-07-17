@@ -8,7 +8,14 @@
 
 import React, { Component } from "react";
 import PropTypes from "prop-types";
-import { ArrayField, GroupField, SelectField, TextField } from "react-invenio-forms";
+import {
+  ArrayField,
+  GroupField,
+  SelectField,
+  TextField,
+  createCommonDepositFieldComponent,
+  fieldCommonProps,
+} from "react-invenio-forms";
 import { Button, Form } from "semantic-ui-react";
 import _isEmpty from "lodash/isEmpty";
 import _matches from "lodash/matches";
@@ -19,10 +26,6 @@ import { emptyDate } from "./initialValues";
 import { i18next } from "@translations/invenio_rdm_records/i18next";
 import { sortOptions } from "../../utils";
 import Overridable from "react-overridable";
-import {
-  createCommonDepositFieldComponent,
-  fieldCommonProps,
-} from "../common/fieldComponents";
 
 class DatesFieldComponent extends Component {
   /** Top-level Dates Component */

@@ -7,15 +7,18 @@
 
 import PropTypes from "prop-types";
 import React, { Component } from "react";
-import { ArrayField, GroupField, SelectField, TextField } from "react-invenio-forms";
+import {
+  ArrayField,
+  GroupField,
+  SelectField,
+  TextField,
+  createCommonDepositFieldComponent,
+  fieldCommonProps,
+} from "react-invenio-forms";
 import { Button, Form } from "semantic-ui-react";
 import { i18next } from "@translations/invenio_rdm_records/i18next";
 import { emptyIdentifier } from "./initialValues";
 import Overridable from "react-overridable";
-import {
-  createCommonDepositFieldComponent,
-  fieldCommonProps,
-} from "../common/fieldComponents";
 
 class IdentifiersFieldComponent extends Component {
   render() {

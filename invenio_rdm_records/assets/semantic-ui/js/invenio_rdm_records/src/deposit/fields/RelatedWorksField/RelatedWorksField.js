@@ -13,18 +13,15 @@ import {
   TextField,
   GroupField,
   ArrayField,
-  FieldLabel,
   SelectField,
+  createCommonDepositFieldComponent,
+  fieldCommonProps,
 } from "react-invenio-forms";
 import { Button, Form } from "semantic-ui-react";
 import Overridable from "react-overridable";
 import { emptyRelatedWork } from "./initialValues";
 import { ResourceTypeField } from "../ResourceTypeField";
 import { i18next } from "@translations/invenio_rdm_records/i18next";
-import {
-  createCommonDepositFieldComponent,
-  fieldCommonProps,
-} from "../common/fieldComponents";
 
 class RelatedWorksFieldComponent extends Component {
   render() {

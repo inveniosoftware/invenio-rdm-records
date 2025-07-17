@@ -11,7 +11,12 @@ import PropTypes from "prop-types";
 import { getIn, FieldArray } from "formik";
 import { Button, Form, List, Icon } from "semantic-ui-react";
 import _get from "lodash/get";
-import { FeedbackLabel, FieldLabel } from "react-invenio-forms";
+import {
+  FeedbackLabel,
+  FieldLabel,
+  createCommonDepositFieldComponent,
+  mandatoryFieldCommonProps,
+} from "react-invenio-forms";
 import { HTML5Backend } from "react-dnd-html5-backend";
 import { DndProvider } from "react-dnd";
 import { CreatibutorsModal } from "./CreatibutorsModal";
@@ -20,10 +25,6 @@ import { CREATIBUTOR_TYPE } from "./type";
 import { sortOptions } from "../../utils";
 import { i18next } from "@translations/invenio_rdm_records/i18next";
 import Overridable from "react-overridable";
-import {
-  createCommonDepositFieldComponent,
-  mandatoryFieldCommonProps,
-} from "../common/fieldComponents";
 
 const creatibutorNameDisplay = (value) => {
   const creatibutorType = _get(value, "person_or_org.type", CREATIBUTOR_TYPE.PERSON);

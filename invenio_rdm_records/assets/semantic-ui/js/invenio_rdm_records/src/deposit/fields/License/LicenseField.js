@@ -12,17 +12,18 @@ import PropTypes from "prop-types";
 import { getIn, FieldArray } from "formik";
 import { HTML5Backend } from "react-dnd-html5-backend";
 import { DndProvider } from "react-dnd";
-import { FieldLabel, FeedbackLabel } from "react-invenio-forms";
+import {
+  FieldLabel,
+  FeedbackLabel,
+  createCommonDepositFieldComponent,
+  fieldCommonProps,
+} from "react-invenio-forms";
 import { Button, Form, Icon, List } from "semantic-ui-react";
 import Overridable from "react-overridable";
 
 import { LicenseModal } from "./LicenseModal";
 import { LicenseFieldItem } from "./LicenseFieldItem";
 import { i18next } from "@translations/invenio_rdm_records/i18next";
-import {
-  createCommonDepositFieldComponent,
-  fieldCommonProps,
-} from "../common/fieldComponents";
 
 /**
  * The user-facing license.
