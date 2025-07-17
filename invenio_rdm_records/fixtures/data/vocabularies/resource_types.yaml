@@ -420,9 +420,9 @@
   icon: file alternate
   props:
     csl: thesis
-    datacite_general: Text
-    datacite_type: Thesis
-    openaire_resourceType: "0006"
+    datacite_general: Dissertation
+    datacite_type: ""
+    openaire_resourceType: "0044"
     openaire_type: publication
     eurepo: info:eu-repo/semantics/doctoralThesis
     schema.org: https://schema.org/Thesis
@@ -479,28 +479,6 @@
     sv: Datadokument
     de: Datenpapier
     cs: Datový článek
-  tags:
-    - depositable
-    - linkable
-- id: publication-dissertation
-  icon: file alternate
-  props:
-    csl: article
-    datacite_general: Dissertation
-    datacite_type: ""
-    openaire_resourceType: "0044"
-    openaire_type: publication
-    eurepo: info:eu-repo/semantics/other
-    schema.org: https://schema.org/Thesis
-    subtype: publication-dissertation
-    type: publication
-    marc21_type: publication
-    marc21_subtype: dissertation
-  title:
-    en: Dissertation
-    sv: Avhandling
-    de: Dissertation
-    cs: Disertační práce
   tags:
     - depositable
     - linkable
