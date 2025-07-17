@@ -12,6 +12,14 @@
 Changes
 =======
 
+Version v19.5.0 (released 2025-07-17)
+
+- meeting cf: fix typo in the mapping
+- i18n: pulled translations
+- serializers: bibtex: Prefix all_version with doi
+- tests: serializers: Add test for bibtex all versions
+- serializers: bibtex: Add all versions export support
+
 Version v19.4.2 (released 2025-07-16)
 
 - PublishButton: Separate PublishModal and add checkbox easily via params
