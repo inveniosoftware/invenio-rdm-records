@@ -76,7 +76,7 @@ class MeetingCF(BaseCF):
                     "type": "object",
                     "properties": {
                         "identifier": {"type": "keyword"},
-                        "schema": {"type": "keyword"},
+                        "scheme": {"type": "keyword"},
                     },
                 },
             },
