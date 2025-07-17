@@ -2,16 +2,16 @@
 # Translators:
 # yyones, 2024
 # Rim Sharif, 2024
-# Tibor Simko <tibor.simko@cern.ch>, 2024
-# Sam Arbid, 2024
 # Mattias Vesterlund, 2025
+# Tibor Simko <tibor.simko@cern.ch>, 2025
+# Sam Arbid, 2025
 # 
 msgid ""
 msgstr ""
 "Project-Id-Version: i18next-conv\n"
-"POT-Creation-Date: 2025-04-07T16:10:08.156Z\n"
+"POT-Creation-Date: 2025-07-10T06:49:34.732Z\n"
 "PO-Revision-Date: 2024-08-06 08:56+0000\n"
-"Last-Translator: Mattias Vesterlund, 2025\n"
+"Last-Translator: Sam Arbid, 2025\n"
 "Language-Team: Swedish (https://app.transifex.com/inveniosoftware/teams/23537/sv/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -30,6 +30,12 @@ msgstr "Setet är inte redigerbart eftersom det skapades av systemet."
 
 msgid "This set is not deletable as it was created by the system."
 msgstr "Setet är inte möjligt att radera eftersom det skapades av systemet."
+
+msgid "Fetch error"
+msgstr "Fel vid hämtning"
+
+msgid "Error fetching OAI set formats."
+msgstr "Fel vid hämtning av OAI set-format."
 
 msgid "Links"
 msgstr "Länkar"
@@ -71,12 +77,6 @@ msgstr "Ta bort {{title}}"
 msgid "This will delete the set '{{title}}'."
 msgstr "Detta kommer att radera setet '{{title}}'."
 
-msgid "Fetch error"
-msgstr "Fel vid hämtning"
-
-msgid "Error fetching OAI set formats."
-msgstr "Fel vid hämtning av OAI set-format."
-
 msgid "Select the community where you want to submit your record."
 msgstr "Välj den community där du vill skicka in din post."
 
@@ -96,6 +96,10 @@ msgid ""
 "Submission to this community is only allowed if the record is restricted."
 msgstr ""
 "Inlämning till communityn är endast tillåtet om posten är åtkomstbegränsad."
+
+msgid "Submission to this community is only allowed to community members."
+msgstr ""
+"Inlämning till denna community är endast tillåten för communitymedlemmar."
 
 msgid "Community submission conditions information"
 msgstr "Information om villkor för inlämning till communityn"
@@ -121,13 +125,6 @@ msgstr "Välj {{title}}"
 
 msgid "Verified"
 msgstr "Verifierad"
-
-msgid ""
-"Did not find a community that fits you? Upload without a community or "
-"<2>create your own.</2>"
-msgstr ""
-"Hittade du inte en community som passar dig? Ladda upp utan en community "
-"eller <2>skapa en egen.</2>"
 
 msgid "Close"
 msgstr "Stäng"
@@ -224,6 +221,9 @@ msgstr "Ny version"
 msgid "Preview"
 msgstr "Förhandsgranska"
 
+msgid "DOI is needed. You need to reserve a DOI before publishing."
+msgstr "DOI krävs. Du måste reservera en DOI innan publicering."
+
 msgid "Are you sure you want to publish this record?"
 msgstr "Är du säker på att du vill publicera denna post?"
 
@@ -290,15 +290,21 @@ msgstr ""
 msgid "Submit record for review"
 msgstr "Skicka in posten för granskning"
 
-msgid ""
-"The '{{communityTitle}}' curators will have access to <bold>view</bold> and "
-"<bold>edit</bold> your upload's metadata and files."
-msgstr ""
-"'{{communityTitle}}'-granskare kommer ha tillgång att <bold>visa</bold> och "
-"<bold>ändra</bold> din uppladdnings metadata och filer."
+msgid "The '{{communityTitle}}' curators will have access to"
+msgstr "Curatorerna för '{{communityTitle}}' kommer att ha tillgång till"
+
+msgid "view and edit"
+msgstr "visa och redigera"
+
+msgid "your upload's metadata and files."
+msgstr "metadata och filer för din uppladdning."
 
 msgid "Message to curators (optional)"
 msgstr "Meddelande till granskare (valfritt)"
+
+msgid "msgWarningText1"
+msgstr ""
+"varning: du måste fylla i alla obligatoriska fält innan du kan fortsätta"
 
 msgid "Change community"
 msgstr "Byt community"
@@ -309,71 +315,14 @@ msgstr "Publicera utan community"
 msgid "Save draft"
 msgstr "Spara utkast"
 
-msgid "Files"
-msgstr "Filer"
-
-msgid "Resource type"
-msgstr "Resurstyp"
-
-msgid "Title"
-msgstr "Titel"
-
-msgid "Additional titles"
-msgstr "Ytterligare titlar"
-
-msgid "Publication date"
-msgstr "Publiceringsdatum"
-
-msgid "Creators"
-msgstr "Skapare"
-
-msgid "Contributors"
-msgstr "Medverkande"
-
-msgid "Description"
-msgstr "Beskrivning"
-
-msgid "Additional descriptions"
-msgstr "Ytterligare beskrivningar"
-
-msgid "Licenses"
-msgstr "Licenser"
-
-msgid "Languages"
-msgstr "Språk"
-
-msgid "Dates"
-msgstr "Datum"
-
-msgid "Version"
-msgstr "Version"
-
-msgid "Publisher"
-msgstr "Utgivare"
-
-msgid "Related works"
-msgstr "Relaterade arbeten"
-
-msgid "References"
-msgstr "Referenser"
-
-msgid "Alternate identifiers"
-msgstr "Alternativa identifierare"
-
-msgid "Keywords and subjects"
-msgstr "Nyckelord och ämnen"
-
-msgid "Embargo until"
-msgstr "Embargo tills"
-
-msgid "DOI"
-msgstr "DOI"
-
 msgid "Record successfully saved."
 msgstr "Posten har sparats."
 
-msgid "Record saved with validation errors:"
-msgstr "Posten sparad med valideringsfel:"
+msgid "Record saved with validation feedback in"
+msgstr "Posten sparades med valideringsåterkoppling i"
+
+msgid "Draft has validation feedback in"
+msgstr "Utkastet har valideringsåterkoppling i"
 
 msgid ""
 "The draft was not saved. Please try again. If the problem persists, contact "
@@ -389,8 +338,9 @@ msgstr ""
 "Utkastet publicerades inte. Var god försök igen. Kontakta användarsupport om"
 " problemet kvarstår."
 
-msgid "The draft was not published. Record saved with validation errors:"
-msgstr "Utkastet publicerades inte. Posten sparad med valideringsfel:"
+msgid "The draft was not published. Record saved with validation feedback in"
+msgstr ""
+"Utkastet publicerades inte. Posten sparades med valideringsåterkoppling i"
 
 msgid ""
 "The draft was not submitted for review. Please try again. If the problem "
@@ -400,9 +350,11 @@ msgstr ""
 "användarsupport om problemet kvarstår."
 
 msgid ""
-"The draft was not submitted for review. Record saved with validation errors:"
+"The draft was not submitted for review. Record saved with validation "
+"feedback in"
 msgstr ""
-"Utkastet lämnades inte in för granskning. Posten sparad med valideringsfel:"
+"Utkastet skickades inte in för granskning. Posten sparades med "
+"valideringsåterkoppling i"
 
 msgid ""
 "Draft deletion failed. Please try again. If the problem persists, contact "
@@ -470,32 +422,6 @@ msgstr "Offentlig med åtkomstbegränsade filer"
 msgid "Embargoed (files-only)"
 msgstr "Embargo (endast för filer)"
 
-msgid "access-message"
-msgstr "åtkomstmeddelande"
-
-msgid ""
-"The record can <1>only</1> be accessed by <3>users specified</3> in the "
-"permissions."
-msgstr ""
-"Posten kan <1>endast</1> nås av <3>användare angivna</3> i behörigheterna."
-
-msgid ""
-"The record is publicly accessible. The files can <1>only</1> be accessed by "
-"<4>users specified</4> in the permissions."
-msgstr ""
-"Posten är offentligt tillgänglig. Filerna kan <1>endast</1> nås av "
-"<4>användare som anges</4> i behörigheterna."
-
-msgid ""
-"The record is publicly accessible. On <bold>{{ date }}</bold> the files will"
-" automatically be made publicly accessible. Until then, the files can "
-"<bold>only</bold> be accessed by <bold>users specified</bold> in the "
-"permissions."
-msgstr ""
-"Posten är offentligt tillgänglig. Filerna kommer automatiskt att göras "
-"offentligt tillgängliga <bold>{{ date }}</bold> . Tills dess kan filerna "
-"<bold>bara</bold> nås av <bold>användare som anges</bold> i behörigheterna."
-
 msgid "Apply an embargo"
 msgstr "Tillämpa ett embargo"
 
@@ -511,14 +437,11 @@ msgstr "Embargot hävdes den {{fmtDate}}."
 msgid "Reason"
 msgstr "Orsak"
 
-msgid ""
-"Record or files protection must be <1>restricted</1> to apply an embargo."
-msgstr ""
-"Post- eller filskydd måste vara <1>begränsat</1> för att tillämpa ett "
-"embargo."
-
 msgid "YYYY-MM-DD"
 msgstr "ÅÅÅÅ-MM-DD"
+
+msgid "Embargo until"
+msgstr "Embargo tills"
 
 msgid "The record has no files."
 msgstr "Posten har inga filer."
@@ -553,6 +476,20 @@ msgstr "Sök efter affilieringar.."
 
 msgid "Coming soon"
 msgstr "Kommer snart"
+
+msgid ""
+"A copyright statement describing the ownership of the uploaded resource."
+msgstr ""
+"En copyright-text som beskriver äganderätten till den uppladdade resursen."
+
+msgid "Copyright (C) {{currentYear}} The Authors."
+msgstr "Copyright (C) {{currentYear}} Författarna."
+
+msgid "Copyright"
+msgstr "Copyright"
+
+msgid "Creators"
+msgstr "Skapare"
 
 msgid "Add creator"
 msgstr "Lägg till skapare"
@@ -636,9 +573,6 @@ msgstr "Välj roll"
 msgid "Save"
 msgstr "Spara"
 
-msgid "Couldn't find your person? You can <2>create a new entry</2>."
-msgstr "Kunde du inte hitta din person? Du kan <2>skapa en ny person</2>."
-
 msgid "Add date"
 msgstr "Lägg till datum"
 
@@ -653,8 +587,14 @@ msgstr "Datum"
 msgid "Type"
 msgstr "Typ"
 
+msgid "Description"
+msgstr "Beskrivning"
+
 msgid "Remove field"
 msgstr "Ta bort fält"
+
+msgid "Dates"
+msgstr "Datum"
 
 msgid "YYYY-MM-DD or YYYY-MM-DD/YYYY-MM-DD"
 msgstr "ÅÅÅÅ-MM-DD eller ÅÅÅÅ-MM-DD/ÅÅÅÅ-MM-DD"
@@ -673,12 +613,6 @@ msgstr "Välj språk"
 
 msgid "Could not upload files."
 msgstr "Det gick inte att ladda upp filer."
-
-msgid "Uploading the selected files would result in"
-msgstr "Att ladda upp de valda filerna skulle resultera i"
-
-msgid "but the limit is"
-msgstr "men gränsen är"
 
 msgid "The following files already exist"
 msgstr "Följande filer finns redan"
@@ -712,8 +646,9 @@ msgstr "Ladda upp filer"
 msgid "Import files"
 msgstr "Importera filer"
 
-msgid "Set the default preview"
-msgstr "Ställ in standardförhandsvisning"
+msgid "Choose which file to preview on the published record landing page"
+msgstr ""
+"Välj vilken fil som ska förhandsvisas på postens publicerade landningssida"
 
 msgid "Filename"
 msgstr "Filnamn"
@@ -733,6 +668,9 @@ msgid ""
 msgstr ""
 "Detta är filens fingeravtryck (MD5 checksum), som kan användas för att "
 "verifiera filens integritet."
+
+msgid "N/A"
+msgstr "N/A"
 
 msgid "Pending"
 msgstr "Pågående"
@@ -773,14 +711,20 @@ msgstr "Schema"
 msgid "Do you already have a {{pidLabel}} for this upload?"
 msgstr "Har du redan en {{pidLabel}} för den här uppladdningen?"
 
-msgid "Yes"
-msgstr "Ja"
+msgid "Yes, I already have one"
+msgstr "Ja, jag har redan en"
 
-msgid "No"
-msgstr "Nej"
+msgid "No, I need one"
+msgstr "Nej, jag behöver en"
+
+msgid "No, I don't need one"
+msgstr "Nej, jag behöver ingen"
 
 msgid "Search for languages..."
 msgstr "Sök efter språk..."
+
+msgid "Languages"
+msgstr "Språk"
 
 msgid "Search for a language by name (e.g \"eng\", \"fr\" or \"Polish\")"
 msgstr "Sök efter ett språk med namn (t.ex. \"eng\", \"fr\" eller \"polska\")"
@@ -790,6 +734,9 @@ msgstr "Lägg till standard"
 
 msgid "Add custom"
 msgstr "Lägg till anpassad"
+
+msgid "Licenses"
+msgstr "Licenser"
 
 msgid "Read more"
 msgstr "Läs mer"
@@ -805,6 +752,9 @@ msgstr "Lägg till {{mode}} licens"
 
 msgid "Change {{mode}} license"
 msgstr "Ändra {{mode}} licens"
+
+msgid "Search for licenses"
+msgstr "Sök efter licenser"
 
 msgid "Recommended"
 msgstr "Rekommenderad"
@@ -827,6 +777,9 @@ msgstr "Mjukvara"
 msgid "software"
 msgstr "mjukvara"
 
+msgid "Title"
+msgstr "Titel"
+
 msgid "License title"
 msgstr "Licenstitel"
 
@@ -842,6 +795,12 @@ msgstr "Lägg till licens"
 msgid "Change license"
 msgstr "Ändra licens"
 
+msgid "Did not find your license? "
+msgstr "Hittade du inte din licens? "
+
+msgid "Add a custom license."
+msgstr "Lägg till en anpassad licens."
+
 msgid ""
 "In case your upload was already published elsewhere, please use the date of "
 "the first publication. Format: YYYY-MM-DD, YYYY-MM, or YYYY. For intervals "
@@ -850,6 +809,9 @@ msgstr ""
 "Om din uppladdning redan har publicerats någon annanstans, använd datumet "
 "för den första publiceringen. Format: ÅÅÅÅ-MM-DD, ÅÅÅÅ-MM eller ÅÅÅÅ. För "
 "intervaller använd DATE/DATE, t.ex. 1939/1945."
+
+msgid "Publication date"
+msgstr "Publiceringsdatum"
 
 msgid ""
 "YYYY-MM-DD or YYYY-MM-DD/YYYY-MM-DD for intervals. MM and DD are optional."
@@ -862,11 +824,17 @@ msgid ""
 "of the role."
 msgstr "Utgivare används vid citering, och är därmed betydelsefullt."
 
+msgid "Publisher"
+msgstr "Utgivare"
+
 msgid "Add reference"
 msgstr "Lägg till referens"
 
 msgid "Reference string"
 msgstr "Referenssträng"
+
+msgid "References"
+msgstr "Referenser"
 
 msgid ""
 "Specify identifiers of related works. Supported identifiers include DOI, "
@@ -885,8 +853,17 @@ msgstr "Lägg till relaterade arbeten"
 msgid "Relation"
 msgstr "Relation"
 
+msgid "Related works"
+msgstr "Relaterade arbeten"
+
+msgid "Resource type"
+msgstr "Resurstyp"
+
 msgid "Suggest from"
 msgstr "Föreslå från"
+
+msgid "Keywords and subjects"
+msgstr "Nyckelord och ämnen"
 
 msgid "Search for a subject by name"
 msgstr "Sök efter ett ämne med namn"
@@ -897,10 +874,69 @@ msgstr "Lägg till titlar"
 msgid "Additional title"
 msgstr "Ytterligare titel"
 
+msgid "Version"
+msgstr "Version"
+
+msgid "On"
+msgstr "Den"
+
+msgid ""
+"the record will automatically be made publicly accessible. Until then, the "
+"record can"
+msgstr ""
+" kommer posten automatiskt att göras offentligt tillgänglig. Fram tills dess"
+" kan posten"
+
+msgid "only"
+msgstr "endast"
+
+msgid "be accessed by"
+msgstr "åtkommas av"
+
+msgid "users specified"
+msgstr "angivna användare"
+
+msgid "in the permissions."
+msgstr "i behörigheterna."
+
+msgid "The record can"
+msgstr "Posten kan"
+
+msgid "The record is publicly accessible. The files can"
+msgstr "Posten är offentligt tillgänglig. Filerna kan"
+
+msgid "The record is publicly accessible. On"
+msgstr "Posten är offentligt tillgänglig. Den"
+
+msgid ""
+"the files will automatically be made publicly accessible. Until then, the "
+"files can"
+msgstr ""
+" kommer filerna automatiskt att göras offentligt tillgängliga. Fram tills "
+"dess kan filerna"
+
+msgid "Record or files protection must be"
+msgstr "Post- eller filskydd måste vara"
+
+msgid "restricted"
+msgstr "åtkomstbegränsad"
+
+msgid "to apply an embargo."
+msgstr "för att tillämpa ett embargo."
+
+msgid ""
+"Uploading the selected files would result in {{total}} of storage use, "
+"exceeding the limit of {{limit}}."
+msgstr ""
+"Uppladdning av de valda filerna skulle resultera i {{total}} i "
+"lagringsutrymme, vilket överskrider gränsen på {{limit}}."
+
 msgid ""
 "Mostly relevant for software and dataset uploads. A semantic version string "
-"is preferred see<1> semver.org</1>, but any version string is accepted."
+"is preferred see"
 msgstr ""
-"Främst relevant för uppladdning av programvara och dataset. En semantisk "
-"versionssträng är att föredra se<1> semver.org</1>, men alla "
-"versionssträngar accepteras."
+"Mestadels relevant för uppladdning av programvara och dataset. En semantisk "
+"versionssträng föredras, se"
+
+msgid ", but any version string is accepted."
+msgstr ", men vilken versionssträng som helst accepteras."

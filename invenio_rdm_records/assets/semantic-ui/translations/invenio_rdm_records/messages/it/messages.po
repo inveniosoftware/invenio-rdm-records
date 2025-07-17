@@ -3,14 +3,14 @@
 # Zacharias Zacharodimos <zacharias.zacharodimos@cern.ch>, 2024
 # Alizee Pace <alizee.pace@gmail.com>, 2024
 # Fare Fare <fare@polito.it>, 2024
-# Tibor Simko <tibor.simko@cern.ch>, 2024
+# Tibor Simko <tibor.simko@cern.ch>, 2025
 # 
 msgid ""
 msgstr ""
 "Project-Id-Version: i18next-conv\n"
-"POT-Creation-Date: 2025-04-07T16:10:08.156Z\n"
+"POT-Creation-Date: 2025-07-10T06:49:34.732Z\n"
 "PO-Revision-Date: 2024-08-06 08:56+0000\n"
-"Last-Translator: Tibor Simko <tibor.simko@cern.ch>, 2024\n"
+"Last-Translator: Tibor Simko <tibor.simko@cern.ch>, 2025\n"
 "Language-Team: Italian (https://app.transifex.com/inveniosoftware/teams/23537/it/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -28,6 +28,12 @@ msgid "This set is not editable as it was created by the system."
 msgstr ""
 
 msgid "This set is not deletable as it was created by the system."
+msgstr ""
+
+msgid "Fetch error"
+msgstr ""
+
+msgid "Error fetching OAI set formats."
 msgstr ""
 
 msgid "Links"
@@ -66,12 +72,6 @@ msgstr ""
 msgid "This will delete the set '{{title}}'."
 msgstr ""
 
-msgid "Fetch error"
-msgstr ""
-
-msgid "Error fetching OAI set formats."
-msgstr ""
-
 msgid "Select the community where you want to submit your record."
 msgstr ""
 
@@ -89,6 +89,9 @@ msgstr ""
 
 msgid ""
 "Submission to this community is only allowed if the record is restricted."
+msgstr ""
+
+msgid "Submission to this community is only allowed to community members."
 msgstr ""
 
 msgid "Community submission conditions information"
@@ -112,11 +115,6 @@ msgid "Select {{title}}"
 msgstr ""
 
 msgid "Verified"
-msgstr ""
-
-msgid ""
-"Did not find a community that fits you? Upload without a community or "
-"<2>create your own.</2>"
 msgstr ""
 
 msgid "Close"
@@ -206,6 +204,9 @@ msgstr "Nuova versione"
 msgid "Preview"
 msgstr "Anteprima"
 
+msgid "DOI is needed. You need to reserve a DOI before publishing."
+msgstr ""
+
 msgid "Are you sure you want to publish this record?"
 msgstr ""
 
@@ -262,12 +263,19 @@ msgstr ""
 msgid "Submit record for review"
 msgstr ""
 
-msgid ""
-"The '{{communityTitle}}' curators will have access to <bold>view</bold> and "
-"<bold>edit</bold> your upload's metadata and files."
+msgid "The '{{communityTitle}}' curators will have access to"
+msgstr ""
+
+msgid "view and edit"
+msgstr ""
+
+msgid "your upload's metadata and files."
 msgstr ""
 
 msgid "Message to curators (optional)"
+msgstr ""
+
+msgid "msgWarningText1"
 msgstr ""
 
 msgid "Change community"
@@ -279,70 +287,13 @@ msgstr ""
 msgid "Save draft"
 msgstr ""
 
-msgid "Files"
-msgstr "File"
-
-msgid "Resource type"
-msgstr "Tipo di risorsa"
-
-msgid "Title"
-msgstr "Titolo"
-
-msgid "Additional titles"
-msgstr "Titoli aggiuntivi"
-
-msgid "Publication date"
-msgstr "Data di publicazione"
-
-msgid "Creators"
-msgstr "Creatori"
-
-msgid "Contributors"
-msgstr ""
-
-msgid "Description"
-msgstr "Descrizione"
-
-msgid "Additional descriptions"
-msgstr ""
-
-msgid "Licenses"
-msgstr ""
-
-msgid "Languages"
-msgstr "Linguaggi"
-
-msgid "Dates"
-msgstr "Date"
-
-msgid "Version"
-msgstr "Versione"
-
-msgid "Publisher"
-msgstr "Editore"
-
-msgid "Related works"
-msgstr "Lavori correlati"
-
-msgid "References"
-msgstr "Riferimenti"
-
-msgid "Alternate identifiers"
-msgstr ""
-
-msgid "Keywords and subjects"
-msgstr "Parole chiave e materie"
-
-msgid "Embargo until"
-msgstr ""
-
-msgid "DOI"
-msgstr "DOI"
-
 msgid "Record successfully saved."
 msgstr ""
 
-msgid "Record saved with validation errors:"
+msgid "Record saved with validation feedback in"
+msgstr ""
+
+msgid "Draft has validation feedback in"
 msgstr ""
 
 msgid ""
@@ -355,7 +306,7 @@ msgid ""
 "contact user support."
 msgstr ""
 
-msgid "The draft was not published. Record saved with validation errors:"
+msgid "The draft was not published. Record saved with validation feedback in"
 msgstr ""
 
 msgid ""
@@ -364,7 +315,8 @@ msgid ""
 msgstr ""
 
 msgid ""
-"The draft was not submitted for review. Record saved with validation errors:"
+"The draft was not submitted for review. Record saved with validation "
+"feedback in"
 msgstr ""
 
 msgid ""
@@ -421,26 +373,6 @@ msgstr ""
 msgid "Embargoed (files-only)"
 msgstr ""
 
-msgid "access-message"
-msgstr ""
-
-msgid ""
-"The record can <1>only</1> be accessed by <3>users specified</3> in the "
-"permissions."
-msgstr ""
-
-msgid ""
-"The record is publicly accessible. The files can <1>only</1> be accessed by "
-"<4>users specified</4> in the permissions."
-msgstr ""
-
-msgid ""
-"The record is publicly accessible. On <bold>{{ date }}</bold> the files will"
-" automatically be made publicly accessible. Until then, the files can "
-"<bold>only</bold> be accessed by <bold>users specified</bold> in the "
-"permissions."
-msgstr ""
-
 msgid "Apply an embargo"
 msgstr ""
 
@@ -456,11 +388,10 @@ msgstr ""
 msgid "Reason"
 msgstr "Motivo"
 
-msgid ""
-"Record or files protection must be <1>restricted</1> to apply an embargo."
+msgid "YYYY-MM-DD"
 msgstr ""
 
-msgid "YYYY-MM-DD"
+msgid "Embargo until"
 msgstr ""
 
 msgid "The record has no files."
@@ -494,6 +425,19 @@ msgstr ""
 
 msgid "Coming soon"
 msgstr ""
+
+msgid ""
+"A copyright statement describing the ownership of the uploaded resource."
+msgstr ""
+
+msgid "Copyright (C) {{currentYear}} The Authors."
+msgstr ""
+
+msgid "Copyright"
+msgstr ""
+
+msgid "Creators"
+msgstr "Creatori"
 
 msgid "Add creator"
 msgstr ""
@@ -576,9 +520,6 @@ msgstr ""
 msgid "Save"
 msgstr "Memorizza"
 
-msgid "Couldn't find your person? You can <2>create a new entry</2>."
-msgstr ""
-
 msgid "Add date"
 msgstr ""
 
@@ -591,8 +532,14 @@ msgstr "Data"
 msgid "Type"
 msgstr "Tipo"
 
+msgid "Description"
+msgstr "Descrizione"
+
 msgid "Remove field"
 msgstr ""
+
+msgid "Dates"
+msgstr "Date"
 
 msgid "YYYY-MM-DD or YYYY-MM-DD/YYYY-MM-DD"
 msgstr ""
@@ -610,12 +557,6 @@ msgid "Select language"
 msgstr ""
 
 msgid "Could not upload files."
-msgstr ""
-
-msgid "Uploading the selected files would result in"
-msgstr ""
-
-msgid "but the limit is"
 msgstr ""
 
 msgid "The following files already exist"
@@ -647,7 +588,7 @@ msgstr ""
 msgid "Import files"
 msgstr ""
 
-msgid "Set the default preview"
+msgid "Choose which file to preview on the published record landing page"
 msgstr ""
 
 msgid "Filename"
@@ -666,6 +607,9 @@ msgid ""
 "This is the file fingerprint (MD5 checksum), which can be used to verify the"
 " file integrity."
 msgstr ""
+
+msgid "N/A"
+msgstr "N.d."
 
 msgid "Pending"
 msgstr "In sospeso"
@@ -706,14 +650,20 @@ msgstr ""
 msgid "Do you already have a {{pidLabel}} for this upload?"
 msgstr ""
 
-msgid "Yes"
-msgstr "Sì"
+msgid "Yes, I already have one"
+msgstr ""
 
-msgid "No"
-msgstr "No"
+msgid "No, I need one"
+msgstr ""
+
+msgid "No, I don't need one"
+msgstr ""
 
 msgid "Search for languages..."
 msgstr ""
+
+msgid "Languages"
+msgstr "Linguaggi"
 
 msgid "Search for a language by name (e.g \"eng\", \"fr\" or \"Polish\")"
 msgstr ""
@@ -722,6 +672,9 @@ msgid "Add standard"
 msgstr ""
 
 msgid "Add custom"
+msgstr ""
+
+msgid "Licenses"
 msgstr ""
 
 msgid "Read more"
@@ -737,6 +690,9 @@ msgid "Add {{mode}} license"
 msgstr ""
 
 msgid "Change {{mode}} license"
+msgstr ""
+
+msgid "Search for licenses"
 msgstr ""
 
 msgid "Recommended"
@@ -760,6 +716,9 @@ msgstr ""
 msgid "software"
 msgstr ""
 
+msgid "Title"
+msgstr "Titolo"
+
 msgid "License title"
 msgstr ""
 
@@ -775,11 +734,20 @@ msgstr ""
 msgid "Change license"
 msgstr ""
 
+msgid "Did not find your license? "
+msgstr ""
+
+msgid "Add a custom license."
+msgstr ""
+
 msgid ""
 "In case your upload was already published elsewhere, please use the date of "
 "the first publication. Format: YYYY-MM-DD, YYYY-MM, or YYYY. For intervals "
 "use DATE/DATE, e.g. 1939/1945."
 msgstr ""
+
+msgid "Publication date"
+msgstr "Data di publicazione"
 
 msgid ""
 "YYYY-MM-DD or YYYY-MM-DD/YYYY-MM-DD for intervals. MM and DD are optional."
@@ -790,11 +758,17 @@ msgid ""
 "of the role."
 msgstr ""
 
+msgid "Publisher"
+msgstr "Editore"
+
 msgid "Add reference"
 msgstr ""
 
 msgid "Reference string"
 msgstr ""
+
+msgid "References"
+msgstr "Riferimenti"
 
 msgid ""
 "Specify identifiers of related works. Supported identifiers include DOI, "
@@ -809,8 +783,17 @@ msgstr ""
 msgid "Relation"
 msgstr ""
 
+msgid "Related works"
+msgstr "Lavori correlati"
+
+msgid "Resource type"
+msgstr "Tipo di risorsa"
+
 msgid "Suggest from"
 msgstr ""
+
+msgid "Keywords and subjects"
+msgstr "Parole chiave e materie"
 
 msgid "Search for a subject by name"
 msgstr ""
@@ -821,7 +804,61 @@ msgstr ""
 msgid "Additional title"
 msgstr ""
 
+msgid "Version"
+msgstr "Versione"
+
+msgid "On"
+msgstr ""
+
+msgid ""
+"the record will automatically be made publicly accessible. Until then, the "
+"record can"
+msgstr ""
+
+msgid "only"
+msgstr ""
+
+msgid "be accessed by"
+msgstr ""
+
+msgid "users specified"
+msgstr ""
+
+msgid "in the permissions."
+msgstr ""
+
+msgid "The record can"
+msgstr ""
+
+msgid "The record is publicly accessible. The files can"
+msgstr ""
+
+msgid "The record is publicly accessible. On"
+msgstr ""
+
+msgid ""
+"the files will automatically be made publicly accessible. Until then, the "
+"files can"
+msgstr ""
+
+msgid "Record or files protection must be"
+msgstr ""
+
+msgid "restricted"
+msgstr "riservato"
+
+msgid "to apply an embargo."
+msgstr ""
+
+msgid ""
+"Uploading the selected files would result in {{total}} of storage use, "
+"exceeding the limit of {{limit}}."
+msgstr ""
+
 msgid ""
 "Mostly relevant for software and dataset uploads. A semantic version string "
-"is preferred see<1> semver.org</1>, but any version string is accepted."
+"is preferred see"
+msgstr ""
+
+msgid ", but any version string is accepted."
 msgstr ""
