@@ -9,13 +9,14 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
 import Overridable from "react-overridable";
-import { FieldLabel, TextField } from "react-invenio-forms";
-import { AdditionalTitlesField } from "./AdditionalTitlesField";
-import { i18next } from "@translations/invenio_rdm_records/i18next";
 import {
+  FieldLabel,
+  TextField,
   createCommonDepositFieldComponent,
   mandatoryFieldCommonProps,
-} from "../common/fieldComponents";
+} from "react-invenio-forms";
+import { AdditionalTitlesField } from "./AdditionalTitlesField";
+import { i18next } from "@translations/invenio_rdm_records/i18next";
 
 class TitlesFieldComponent extends Component {
   render() {

@@ -12,14 +12,12 @@ import {
   FieldLabel,
   GroupField,
   SubjectAutocompleteDropdown,
+  createCommonDepositFieldComponent,
+  fieldCommonProps,
 } from "react-invenio-forms";
 import { Form } from "semantic-ui-react";
 import { i18next } from "@translations/invenio_rdm_records/i18next";
 import Overridable from "react-overridable";
-import {
-  createCommonDepositFieldComponent,
-  fieldCommonProps,
-} from "../common/fieldComponents";
 
 class SubjectsFieldComponent extends Component {
   state = {

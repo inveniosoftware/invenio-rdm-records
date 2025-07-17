@@ -8,7 +8,7 @@
 import { connect } from "react-redux";
 import { deleteFile, importParentFiles, uploadFiles } from "../../state/actions";
 import { FileUploaderComponent } from "./FileUploader";
-import { createCommonDepositFieldComponent } from "../common/fieldComponents";
+import { createCommonDepositFieldComponent } from "react-invenio-forms";
 
 const mapStateToProps = (state) => {
   const { links, entries } = state.files;

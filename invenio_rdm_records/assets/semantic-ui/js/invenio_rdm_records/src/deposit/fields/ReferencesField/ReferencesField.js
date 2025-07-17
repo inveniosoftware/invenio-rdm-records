@@ -9,14 +9,17 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
 import Overridable from "react-overridable";
-import { TextField, GroupField, ArrayField, FieldLabel } from "react-invenio-forms";
+import {
+  TextField,
+  GroupField,
+  ArrayField,
+  FieldLabel,
+  createCommonDepositFieldComponent,
+  fieldCommonProps,
+} from "react-invenio-forms";
 import { Button, Form } from "semantic-ui-react";
 import { emptyReference } from "./initialValues";
 import { i18next } from "@translations/invenio_rdm_records/i18next";
-import {
-  createCommonDepositFieldComponent,
-  fieldCommonProps,
-} from "../common/fieldComponents";
 
 class ReferencesFieldComponent extends Component {
   render() {
