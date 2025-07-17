@@ -1,14 +1,14 @@
 # 
 # Translators:
 # Mart Jantson, 2024
-# Martin Jantson <martinjantson97@gmail.com>, 2024
+# Martin Jantson <martinjantson97@gmail.com>, 2025
 # 
 msgid ""
 msgstr ""
 "Project-Id-Version: i18next-conv\n"
-"POT-Creation-Date: 2025-04-07T16:10:08.156Z\n"
+"POT-Creation-Date: 2025-07-10T06:49:34.732Z\n"
 "PO-Revision-Date: 2024-08-06 08:56+0000\n"
-"Last-Translator: Martin Jantson <martinjantson97@gmail.com>, 2024\n"
+"Last-Translator: Martin Jantson <martinjantson97@gmail.com>, 2025\n"
 "Language-Team: Estonian (https://app.transifex.com/inveniosoftware/teams/23537/et/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -26,6 +26,12 @@ msgid "This set is not editable as it was created by the system."
 msgstr ""
 
 msgid "This set is not deletable as it was created by the system."
+msgstr ""
+
+msgid "Fetch error"
+msgstr ""
+
+msgid "Error fetching OAI set formats."
 msgstr ""
 
 msgid "Links"
@@ -64,12 +70,6 @@ msgstr "Kustuta {{title}}"
 msgid "This will delete the set '{{title}}'."
 msgstr ""
 
-msgid "Fetch error"
-msgstr ""
-
-msgid "Error fetching OAI set formats."
-msgstr ""
-
 msgid "Select the community where you want to submit your record."
 msgstr "Vali grupp, kuhu tahad oma kirje lisada."
 
@@ -87,6 +87,9 @@ msgstr ""
 
 msgid ""
 "Submission to this community is only allowed if the record is restricted."
+msgstr ""
+
+msgid "Submission to this community is only allowed to community members."
 msgstr ""
 
 msgid "Community submission conditions information"
@@ -111,13 +114,6 @@ msgstr ""
 
 msgid "Verified"
 msgstr ""
-
-msgid ""
-"Did not find a community that fits you? Upload without a community or "
-"<2>create your own.</2>"
-msgstr ""
-"Kas te ei leidnud teile sobivat kogukonda? Laadige üles ilma kogukonnata "
-"või<2> looge oma</2>."
 
 msgid "Close"
 msgstr "Sulge"
@@ -212,6 +208,9 @@ msgstr "Uus versioon"
 msgid "Preview"
 msgstr "Eelvaade"
 
+msgid "DOI is needed. You need to reserve a DOI before publishing."
+msgstr ""
+
 msgid "Are you sure you want to publish this record?"
 msgstr "Kas oled kindel, et soovid selle kirje avaldada?"
 
@@ -273,12 +272,19 @@ msgstr ""
 msgid "Submit record for review"
 msgstr ""
 
-msgid ""
-"The '{{communityTitle}}' curators will have access to <bold>view</bold> and "
-"<bold>edit</bold> your upload's metadata and files."
+msgid "The '{{communityTitle}}' curators will have access to"
+msgstr ""
+
+msgid "view and edit"
+msgstr ""
+
+msgid "your upload's metadata and files."
 msgstr ""
 
 msgid "Message to curators (optional)"
+msgstr ""
+
+msgid "msgWarningText1"
 msgstr ""
 
 msgid "Change community"
@@ -290,71 +296,14 @@ msgstr "Avalda ilma grupita"
 msgid "Save draft"
 msgstr "Salvesta mustand"
 
-msgid "Files"
-msgstr "Failid"
-
-msgid "Resource type"
-msgstr "Ressursi liik"
-
-msgid "Title"
-msgstr "Pealkiri"
-
-msgid "Additional titles"
-msgstr "Täiendavad pealkirjad"
-
-msgid "Publication date"
-msgstr "Avaldamise kuupäev"
-
-msgid "Creators"
-msgstr "Loojad"
-
-msgid "Contributors"
-msgstr "Kaastöölised"
-
-msgid "Description"
-msgstr "Kirjeldus"
-
-msgid "Additional descriptions"
-msgstr "Täiendavad kirjeldused"
-
-msgid "Licenses"
-msgstr "Litsentsid"
-
-msgid "Languages"
-msgstr "Keeled"
-
-msgid "Dates"
-msgstr "Kuupäevad"
-
-msgid "Version"
-msgstr "Versioon"
-
-msgid "Publisher"
-msgstr "Avaldaja"
-
-msgid "Related works"
-msgstr "Seotud tööd"
-
-msgid "References"
-msgstr "Viited"
-
-msgid "Alternate identifiers"
-msgstr "Alternatiivsed identifikaatorid"
-
-msgid "Keywords and subjects"
-msgstr "Märksõnad ja teemad"
-
-msgid "Embargo until"
-msgstr "Embargo kuni"
-
-msgid "DOI"
-msgstr "DOI"
-
 msgid "Record successfully saved."
 msgstr "Kirje salvestamine õnnestus."
 
-msgid "Record saved with validation errors:"
-msgstr "Kirje salvestati valideerimise vigadega:"
+msgid "Record saved with validation feedback in"
+msgstr ""
+
+msgid "Draft has validation feedback in"
+msgstr ""
 
 msgid ""
 "The draft was not saved. Please try again. If the problem persists, contact "
@@ -366,8 +315,8 @@ msgid ""
 "contact user support."
 msgstr ""
 
-msgid "The draft was not published. Record saved with validation errors:"
-msgstr "Mustandit ei avaldatud. Kirje salvestati valideerimise vigadega:"
+msgid "The draft was not published. Record saved with validation feedback in"
+msgstr ""
 
 msgid ""
 "The draft was not submitted for review. Please try again. If the problem "
@@ -375,10 +324,9 @@ msgid ""
 msgstr ""
 
 msgid ""
-"The draft was not submitted for review. Record saved with validation errors:"
+"The draft was not submitted for review. Record saved with validation "
+"feedback in"
 msgstr ""
-"Mustandit ei saadetud ülevaatamisele. Kirje salvestati valideerimise "
-"vigadega:"
 
 msgid ""
 "Draft deletion failed. Please try again. If the problem persists, contact "
@@ -434,33 +382,6 @@ msgstr "Avalik, aga failidele juurdepääs on piiratud"
 msgid "Embargoed (files-only)"
 msgstr "Embargo all (ainult failid)"
 
-msgid "access-message"
-msgstr ""
-
-msgid ""
-"The record can <1>only</1> be accessed by <3>users specified</3> in the "
-"permissions."
-msgstr ""
-"Kirjele saavad ligi <1>ainult</1> ligipääsuõigustes <3>määratud "
-"kasutajad</3>."
-
-msgid ""
-"The record is publicly accessible. The files can <1>only</1> be accessed by "
-"<4>users specified</4> in the permissions."
-msgstr ""
-"Kirje on avalikult kättesaadav. Failidele pääsevad ligi <1>ainult</1> "
-"<4>määratud kasutajad</4>."
-
-msgid ""
-"The record is publicly accessible. On <bold>{{ date }}</bold> the files will"
-" automatically be made publicly accessible. Until then, the files can "
-"<bold>only</bold> be accessed by <bold>users specified</bold> in the "
-"permissions."
-msgstr ""
-"Kirje on avalikult ligipääsetav. <bold>{{ date }}</bold> tehakse failid "
-"automaatselt avalikult ligipääsetavaks. Seni saavad failidele ligi "
-"<bold>ainult</bold> ligipääsuloaga <bold>määratud kasutajad</bold>."
-
 msgid "Apply an embargo"
 msgstr "Pane embargo alla"
 
@@ -476,14 +397,11 @@ msgstr "Embargo lõpetati {{fmtDate}}."
 msgid "Reason"
 msgstr "Põhjus"
 
-msgid ""
-"Record or files protection must be <1>restricted</1> to apply an embargo."
-msgstr ""
-"Embargo kehtestamiseks peab kirjele või failidele juurdepääs olema "
-"<1>piiratud</1>."
-
 msgid "YYYY-MM-DD"
 msgstr "AAAA-KK-PP"
+
+msgid "Embargo until"
+msgstr "Embargo kuni"
 
 msgid "The record has no files."
 msgstr "Antud kirjel failid puuduvad."
@@ -516,6 +434,19 @@ msgstr "Otsi seoseid..."
 
 msgid "Coming soon"
 msgstr ""
+
+msgid ""
+"A copyright statement describing the ownership of the uploaded resource."
+msgstr ""
+
+msgid "Copyright (C) {{currentYear}} The Authors."
+msgstr ""
+
+msgid "Copyright"
+msgstr ""
+
+msgid "Creators"
+msgstr "Loojad"
 
 msgid "Add creator"
 msgstr "Lisa looja"
@@ -598,9 +529,6 @@ msgstr "Vali roll"
 msgid "Save"
 msgstr "Salvesta"
 
-msgid "Couldn't find your person? You can <2>create a new entry</2>."
-msgstr "Kas te ei leidnud oma inimest? Saate <2>luua uue kirje</2>."
-
 msgid "Add date"
 msgstr "Lisa kuupäev"
 
@@ -615,8 +543,14 @@ msgstr "Kuupäev"
 msgid "Type"
 msgstr "Tüüp"
 
+msgid "Description"
+msgstr "Kirjeldus"
+
 msgid "Remove field"
 msgstr "Eemalda väli"
+
+msgid "Dates"
+msgstr "Kuupäevad"
 
 msgid "YYYY-MM-DD or YYYY-MM-DD/YYYY-MM-DD"
 msgstr "AAAA-KK-PP või AAAA-KK-PP/AAAA-KK-PP"
@@ -635,12 +569,6 @@ msgstr "Vali keel"
 
 msgid "Could not upload files."
 msgstr ""
-
-msgid "Uploading the selected files would result in"
-msgstr "Valitud failide üles laadimise tulemus on"
-
-msgid "but the limit is"
-msgstr "aga limiit on"
 
 msgid "The following files already exist"
 msgstr "Järgnevad failid on juba olemas"
@@ -674,7 +602,7 @@ msgstr "Lae failid üles"
 msgid "Import files"
 msgstr "Impordi failid"
 
-msgid "Set the default preview"
+msgid "Choose which file to preview on the published record landing page"
 msgstr ""
 
 msgid "Filename"
@@ -695,6 +623,9 @@ msgid ""
 msgstr ""
 "See on faili sõrmejälg (MD5 checksum), mida saab kasutada faili tervikluse "
 "verifitseerimiseks."
+
+msgid "N/A"
+msgstr "N/A"
 
 msgid "Pending"
 msgstr "Ootel"
@@ -735,14 +666,20 @@ msgstr "Skeem"
 msgid "Do you already have a {{pidLabel}} for this upload?"
 msgstr "Kas sul on juba {{pidLabel}} selle üleslaadimise jaoks?"
 
-msgid "Yes"
-msgstr "Jah"
+msgid "Yes, I already have one"
+msgstr ""
 
-msgid "No"
-msgstr "Ei"
+msgid "No, I need one"
+msgstr ""
+
+msgid "No, I don't need one"
+msgstr ""
 
 msgid "Search for languages..."
 msgstr "Otsi keeli..."
+
+msgid "Languages"
+msgstr "Keeled"
 
 msgid "Search for a language by name (e.g \"eng\", \"fr\" or \"Polish\")"
 msgstr "Otsi keeli nende nime järgi (nt \"eng\", \"fr\" või \"Polish\")"
@@ -752,6 +689,9 @@ msgstr "Lisa standard"
 
 msgid "Add custom"
 msgstr "Lisa kohandus"
+
+msgid "Licenses"
+msgstr "Litsentsid"
 
 msgid "Read more"
 msgstr "Loe rohkem"
@@ -767,6 +707,9 @@ msgstr "Lisa {{mode}} litsents"
 
 msgid "Change {{mode}} license"
 msgstr "Muuda {{mode}} litsentsi"
+
+msgid "Search for licenses"
+msgstr ""
 
 msgid "Recommended"
 msgstr "Soovitatud"
@@ -789,6 +732,9 @@ msgstr "Tarkvara"
 msgid "software"
 msgstr ""
 
+msgid "Title"
+msgstr "Pealkiri"
+
 msgid "License title"
 msgstr "Litsentsi pealkiri"
 
@@ -804,6 +750,12 @@ msgstr "Lisa litsents"
 msgid "Change license"
 msgstr "Muuda litsentsi"
 
+msgid "Did not find your license? "
+msgstr ""
+
+msgid "Add a custom license."
+msgstr ""
+
 msgid ""
 "In case your upload was already published elsewhere, please use the date of "
 "the first publication. Format: YYYY-MM-DD, YYYY-MM, or YYYY. For intervals "
@@ -812,6 +764,9 @@ msgstr ""
 "Kui sinu üleslaetav fail on juba kuskil avaldatud, palun kasuta esimese "
 "avaldamise kuupäeva. Formaat: AAAA-KK-PP, AAAA-KK või AAAA. Intervallide "
 "jaoks kasuta KUUPÄEV/KUUPÄEV, nt 1939/1945."
+
+msgid "Publication date"
+msgstr "Avaldamise kuupäev"
 
 msgid ""
 "YYYY-MM-DD or YYYY-MM-DD/YYYY-MM-DD for intervals. MM and DD are optional."
@@ -826,11 +781,17 @@ msgstr ""
 "Tsiteeringu formuleerimiseks kasutatakse kirjastajat, seega arvesta rolli "
 "esiletõstmisega."
 
+msgid "Publisher"
+msgstr "Avaldaja"
+
 msgid "Add reference"
 msgstr ""
 
 msgid "Reference string"
 msgstr ""
+
+msgid "References"
+msgstr "Viited"
 
 msgid ""
 "Specify identifiers of related works. Supported identifiers include DOI, "
@@ -849,8 +810,17 @@ msgstr "Lisa seotud tööd"
 msgid "Relation"
 msgstr "Seotus"
 
+msgid "Related works"
+msgstr "Seotud tööd"
+
+msgid "Resource type"
+msgstr "Ressursi liik"
+
 msgid "Suggest from"
 msgstr "Soovita"
+
+msgid "Keywords and subjects"
+msgstr "Märksõnad ja teemad"
 
 msgid "Search for a subject by name"
 msgstr "Otsi teemat nime järgi"
@@ -861,10 +831,61 @@ msgstr "Lisa pealkirju"
 msgid "Additional title"
 msgstr ""
 
+msgid "Version"
+msgstr "Versioon"
+
+msgid "On"
+msgstr ""
+
+msgid ""
+"the record will automatically be made publicly accessible. Until then, the "
+"record can"
+msgstr ""
+
+msgid "only"
+msgstr ""
+
+msgid "be accessed by"
+msgstr ""
+
+msgid "users specified"
+msgstr ""
+
+msgid "in the permissions."
+msgstr ""
+
+msgid "The record can"
+msgstr ""
+
+msgid "The record is publicly accessible. The files can"
+msgstr ""
+
+msgid "The record is publicly accessible. On"
+msgstr ""
+
+msgid ""
+"the files will automatically be made publicly accessible. Until then, the "
+"files can"
+msgstr ""
+
+msgid "Record or files protection must be"
+msgstr ""
+
+msgid "restricted"
+msgstr "piiratud"
+
+msgid "to apply an embargo."
+msgstr ""
+
+msgid ""
+"Uploading the selected files would result in {{total}} of storage use, "
+"exceeding the limit of {{limit}}."
+msgstr ""
+
 msgid ""
 "Mostly relevant for software and dataset uploads. A semantic version string "
-"is preferred see<1> semver.org</1>, but any version string is accepted."
+"is preferred see"
 msgstr ""
-"Peamiselt oluline tarkvara ja andmekogumite üleslaadimise jaoks. Semantiline"
-" versioonimine on eelistatud, vaata<1>semver.org</1>, kuid vastuvõetavad on "
-"ka muud versioonistringid."
+
+msgid ", but any version string is accepted."
+msgstr ""
