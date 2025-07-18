@@ -15,6 +15,7 @@ from collections import namedtuple
 from functools import partial, reduce
 from itertools import chain
 
+from flask import current_app
 from flask_principal import UserNeed
 from invenio_communities.generators import CommunityRoleNeed, CommunityRoles
 from invenio_communities.proxies import current_roles
@@ -291,8 +292,15 @@ class SubmissionReviewer(Generator):
 class RequestReviewers(Generator):
     """Roles for request's reviewers."""
 
+    def _reviewers_enabled(self):
+        """Check if reviewers are enabled."""
+        return current_app.config.get("REQUESTS_REVIEWERS_ENABLED", False)
+
     def needs(self, record=None, **kwargs):
         """Set of Needs granting permission."""
+        if not self._reviewers_enabled():
+            return []
+
         if record is None or record.parent.review is None:
             return []
 
