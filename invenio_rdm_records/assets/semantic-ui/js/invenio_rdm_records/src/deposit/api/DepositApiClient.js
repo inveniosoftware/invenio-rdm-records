@@ -402,7 +402,13 @@ export class RDMDepositFileApiClient extends DepositFileApiClient {
       signal,
     } = uploadParams;
 
-    return this.axiosWithConfig.request({
+    const requestUrl = URL.parse(url);
+    // Make sure we don't send any credentials or Invenio-specific headers cross-origin to external storages,
+    // e.g. when using pre-signed upload URLs (AWS S3).
+    const axiosClient =
+      requestUrl.origin === window.location.origin ? this.axiosWithConfig : axios;
+
+    return axiosClient.request({
       url,
       method,
       timeout: expires * 1000,
