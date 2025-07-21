@@ -12,6 +12,10 @@
 Changes
 =======
 
+Version v19.5.1 (released 2025-07-21)
+
+- fix: cross-origin-file-uploads
+
 Version v19.5.0 (released 2025-07-17)
 
 - meeting cf: fix typo in the mapping
