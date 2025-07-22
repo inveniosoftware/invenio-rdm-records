@@ -43,6 +43,7 @@ from invenio_records_resources.resources.records.resource import (
     request_read_args,
 )
 from invenio_records_resources.services.base.config import ConfiguratorMixin, FromConfig
+from invenio_records_resources.services.errors import FileKeyNotFoundError
 from PIL.Image import DecompressionBombError
 from werkzeug.utils import cached_property, secure_filename
 
@@ -453,6 +454,10 @@ class CantaloupeProxy(IIIFProxy):
         """Return the file service for the current record type."""
         return self.iiif_service.file_service(self.uuid_parts["record_type"])
 
+    def media_files_service(self):
+        """Return the media files service for the current record type."""
+        return self.iiif_service.media_files_service(self.uuid_parts["record_type"])
+
     def record(self):
         """Read record via record service."""
         return self.iiif_service.read_record(
@@ -461,11 +466,18 @@ class CantaloupeProxy(IIIFProxy):
 
     def file_id(self):
         """UUID of file in local filestore."""
-        file_meta = self.file_service().read_file_metadata(
-            identity=g.identity,
-            id_=self.uuid_parts["record_id"],
-            file_key=self.uuid_parts["filename"],
-        )
+        try:
+            file_meta = self.file_service().read_file_metadata(
+                identity=g.identity,
+                id_=self.uuid_parts["record_id"],
+                file_key=self.uuid_parts["filename"],
+            )
+        except FileKeyNotFoundError:
+            file_meta = self.media_files_service().read_file_metadata(
+                identity=g.identity,
+                id_=self.uuid_parts["record_id"],
+                file_key=self.uuid_parts["filename"],
+            )
         return file_meta.data["file_id"]
 
     def _can_read_files(self):
