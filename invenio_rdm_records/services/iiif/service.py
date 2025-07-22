@@ -43,10 +43,11 @@ class IIIFService(Service):
     This is just a thin layer on top of Flask-IIIF API.
     """
 
-    def __init__(self, config, records_service):
+    def __init__(self, config, records_service, records_media_files_service):
         """Constructor."""
         super().__init__(config)
         self._records_service = records_service
+        self._records_media_files_service = records_media_files_service
 
     def _iiif_uuid(self, uuid):
         """Split the uuid content.
@@ -70,6 +71,14 @@ class IIIFService(Service):
             self._records_service.files
             if type_ == "record"
             else self._records_service.draft_files
+        )
+
+    def media_files_service(self, type_):
+        """Get the correct instance of the media files service, draft vs record."""
+        return (
+            self._records_media_files_service.files
+            if type_ == "record"
+            else self._records_media_files_service.draft_files
         )
 
     def read_record(self, identity, uuid):
