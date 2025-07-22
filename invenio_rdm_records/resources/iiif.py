@@ -450,30 +450,34 @@ class CantaloupeProxy(IIIFProxy):
             "iiif_record_uuid": ":".join([record_type, record_id]),
         }
 
+    @property
     def file_service(self):
         """Return the file service for the current record type."""
         return self.iiif_service.file_service(self.uuid_parts["record_type"])
 
+    @property
     def media_files_service(self):
         """Return the media files service for the current record type."""
         return self.iiif_service.media_files_service(self.uuid_parts["record_type"])
 
+    @property
     def record(self):
         """Read record via record service."""
         return self.iiif_service.read_record(
             g.identity, self.uuid_parts["iiif_record_uuid"]
         )._record
 
+    @property
     def file_id(self):
         """UUID of file in local filestore."""
         try:
-            file_meta = self.file_service().read_file_metadata(
+            file_meta = self.file_service.read_file_metadata(
                 identity=g.identity,
                 id_=self.uuid_parts["record_id"],
                 file_key=self.uuid_parts["filename"],
             )
         except FileKeyNotFoundError:
-            file_meta = self.media_files_service().read_file_metadata(
+            file_meta = self.media_files_service.read_file_metadata(
                 identity=g.identity,
                 id_=self.uuid_parts["record_id"],
                 file_key=self.uuid_parts["filename"],
@@ -482,8 +486,8 @@ class CantaloupeProxy(IIIFProxy):
 
     def _can_read_files(self):
         """Check permission to read record and file."""
-        return self.file_service().check_permission(
-            g.identity, "read_files", record=self.record()
+        return self.file_service.check_permission(
+            g.identity, "read_files", record=self.record
         )
 
     def _make_identifier(self, file_uuid):
@@ -530,7 +534,7 @@ class CantaloupeProxy(IIIFProxy):
 
     def proxy_request(self):
         """Proxy request to Cantaloupe server."""
-        url = self._rewrite_url(self.file_id())
+        url = self._rewrite_url(self.file_id)
         try:
             res = requests.request(
                 request.method, url, stream=True, timeout=self.timeout

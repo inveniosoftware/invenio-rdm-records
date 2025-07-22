@@ -73,7 +73,7 @@ class IIIFService(Service):
         )
 
     def media_files_service(self, type_):
-        """Get the correct instance of the media files service, draft vs record.g"""
+        """Get the correct instance of the media files service, draft vs record."""
         return (
             self._records_media_files_service.files
             if type_ == "record"
