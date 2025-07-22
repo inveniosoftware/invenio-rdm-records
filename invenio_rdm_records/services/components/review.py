@@ -52,4 +52,8 @@ class ReviewComponent(ServiceComponent):
         if review is None:
             return
         if getattr(review.type, "block_publish", True) and not review.is_closed:
-            raise ReviewExistsError()
+            raise ReviewExistsError(
+                _(
+                    "You cannot publish a draft with an open review request. Please cancel the review request first."
+                )
+            )
