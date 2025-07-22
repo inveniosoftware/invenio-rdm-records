@@ -295,19 +295,20 @@ def compute_publishing_information(obj):
         """Formats a thesis entry into a string based on its attributes."""
         if not isinstance(thesis, dict):
             return thesis
-
+        university = thesis.get("university")
         department = thesis.get("department")
-        department = f" ({department})" if department else ""
-        date_submitted = thesis.get("date_submitted")
-        date_defended = thesis.get("date_defended")
-        submitted = f"{_('Submitted: ')}{date_submitted}" if date_submitted else ""
-        defended = f"{_('Defended: ')}{date_defended}" if date_defended else ""
-        return (
-            f"{thesis.get('university')} {department}, {thesis.get('type')}, "
-            f"{submitted}, {defended}"
-        )
+        if university and department:
+            university = f"{university} ({department})"
+        elif university is None:
+            university = department
 
-        return ", ".join(filter(None, formatted))
+        date_submitted = thesis.get("date_submitted")
+        submitted = f"{_('Submitted: ')}{date_submitted}" if date_submitted else None
+        date_defended = thesis.get("date_defended")
+        defended = f"{_('Defended: ')}{date_defended}" if date_defended else None
+
+        fields = [university, thesis.get("type"), submitted, defended]
+        return ", ".join(filter(None, fields))
 
     attr = "custom_fields"
     field = obj.get(attr, {})
