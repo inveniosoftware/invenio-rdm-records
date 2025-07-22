@@ -103,7 +103,7 @@ export class DeleteButtonComponent extends Component {
           disabled={!draftExists || isSubmitting}
           onClick={this.openConfirmModal}
           className={color}
-          icon
+          icon="trash alternate outline"
           loading={isSubmitting && actionState === DRAFT_DELETE_STARTED}
           labelPosition="left"
           {...uiProps}
