@@ -46,6 +46,12 @@ class OptionalPIDFieldCmp extends Component {
     };
   }
 
+  componentDidMount() {
+    // When the component is mounted we need to call the callback to sync the state
+    const { _isManagedSelected, _isNoNeedSelected } = this.computeManagedUnmanaged();
+    this.handleManagedUnmanagedChange(_isManagedSelected, _isNoNeedSelected);
+  }
+
   onExternalIdentifierChanged = (identifier) => {
     const { form, fieldPath } = this.props;
 
@@ -61,31 +67,10 @@ class OptionalPIDFieldCmp extends Component {
     this.debounced();
   };
 
-  render() {
+  computeManagedUnmanaged = () => {
     const { isManagedSelected, isNoNeedSelected } = this.state;
-    const {
-      btnLabelDiscardPID,
-      btnLabelGetPID,
-      canBeManaged,
-      canBeUnmanaged,
-      form,
-      fieldPath,
-      fieldLabel,
-      isEditingPublishedRecord,
-      managedHelpText,
-      pidLabel,
-      pidIcon,
-      pidPlaceholder,
-      required,
-      unmanagedHelpText,
-      pidType,
-      field,
-      record,
-      optionalDOItransitions,
-      setNoINeedDOI,
-    } = this.props;
+    const { field, record, doiDefaultSelection } = this.props;
 
-    const { doiDefaultSelection } = this.props;
     const value = field.value || {};
     const currentIdentifier = value.identifier || "";
     const currentProvider = value.provider || "";
@@ -127,6 +112,68 @@ class OptionalPIDFieldCmp extends Component {
             doiDefaultSelection === "not_needed")
         : isNoNeedSelected;
 
+    return {
+      managedIdentifier,
+      unmanagedIdentifier,
+      hasDoi,
+      hasParentDoi,
+      _isManagedSelected,
+      _isUnmanagedSelected,
+      _isNoNeedSelected,
+    };
+  };
+
+  handleManagedUnmanagedChange = (userSelectedManaged, userSelectedNoNeed) => {
+    const { form, fieldPath, required, setNoINeedDOI } = this.props;
+    if (userSelectedManaged) {
+      form.setFieldValue("pids", {});
+      if (!required) {
+        // We set the value as required so we can validate the action on submit
+        setNoINeedDOI(true);
+      }
+    } else if (userSelectedNoNeed) {
+      form.setFieldValue("pids", {});
+      setNoINeedDOI(false);
+    } else {
+      this.onExternalIdentifierChanged("");
+      setNoINeedDOI(false);
+    }
+    form.setFieldError(fieldPath, false);
+    this.setState({
+      isManagedSelected: userSelectedManaged,
+      isNoNeedSelected: userSelectedNoNeed,
+    });
+  };
+
+  render() {
+    const {
+      btnLabelDiscardPID,
+      btnLabelGetPID,
+      canBeManaged,
+      canBeUnmanaged,
+      form,
+      fieldPath,
+      fieldLabel,
+      isEditingPublishedRecord,
+      managedHelpText,
+      pidLabel,
+      pidIcon,
+      pidPlaceholder,
+      required,
+      unmanagedHelpText,
+      pidType,
+      optionalDOItransitions,
+    } = this.props;
+
+    const {
+      managedIdentifier,
+      unmanagedIdentifier,
+      hasDoi,
+      hasParentDoi,
+      _isManagedSelected,
+      _isNoNeedSelected,
+    } = this.computeManagedUnmanaged();
+
     const fieldError = getFieldErrors(form, fieldPath);
 
     return (
@@ -152,26 +199,7 @@ class OptionalPIDFieldCmp extends Component {
             optionalDOItransitions={optionalDOItransitions}
             isManagedSelected={_isManagedSelected}
             isNoNeedSelected={_isNoNeedSelected}
-            onManagedUnmanagedChange={(userSelectedManaged, userSelectedNoNeed) => {
-              if (userSelectedManaged) {
-                form.setFieldValue("pids", {});
-                if (!required) {
-                  // We set the value as required so we can validate the action on submit
-                  setNoINeedDOI(true);
-                }
-              } else if (userSelectedNoNeed) {
-                form.setFieldValue("pids", {});
-                setNoINeedDOI(false);
-              } else {
-                this.onExternalIdentifierChanged("");
-                setNoINeedDOI(false);
-              }
-              form.setFieldError(fieldPath, false);
-              this.setState({
-                isManagedSelected: userSelectedManaged,
-                isNoNeedSelected: userSelectedNoNeed,
-              });
-            }}
+            onManagedUnmanagedChange={this.handleManagedUnmanagedChange}
             pidLabel={pidLabel}
             required={required}
           />
