@@ -1,15 +1,15 @@
 # 
 # Translators:
 # Jiří Kunčar <jiri.kuncar@gmail.com>, 2024
-# Tibor Simko <tibor.simko@cern.ch>, 2024
 # Ivan Masár <helix84@centrum.sk>, 2024
 # Mirek Simek <miroslav.simek@gmail.com>, 2025
+# Tibor Simko <tibor.simko@cern.ch>, 2025
 # daniela.hornickova, 2025
 # 
 msgid ""
 msgstr ""
 "Project-Id-Version: i18next-conv\n"
-"POT-Creation-Date: 2025-04-07T16:10:08.156Z\n"
+"POT-Creation-Date: 2025-07-10T06:49:34.732Z\n"
 "PO-Revision-Date: 2024-08-06 08:56+0000\n"
 "Last-Translator: daniela.hornickova, 2025\n"
 "Language-Team: Czech (https://app.transifex.com/inveniosoftware/teams/23537/cs/)\n"
@@ -30,6 +30,12 @@ msgstr "Tuto množina není možno editovat, protože byla vytvořena systémem.
 
 msgid "This set is not deletable as it was created by the system."
 msgstr "Tuto množina není možno smazat, protože byla vytvořena systémem."
+
+msgid "Fetch error"
+msgstr "Chyba při načítání"
+
+msgid "Error fetching OAI set formats."
+msgstr "Chyba při načítání formátů OAI souborů."
 
 msgid "Links"
 msgstr "Odkazy"
@@ -69,12 +75,6 @@ msgstr "Smazat {{title}}"
 msgid "This will delete the set '{{title}}'."
 msgstr "Tímto se smaže oai soubor '{{title}}'."
 
-msgid "Fetch error"
-msgstr "Chyba při načítání"
-
-msgid "Error fetching OAI set formats."
-msgstr "Chyba při načítání formátů OAI souborů."
-
 msgid "Select the community where you want to submit your record."
 msgstr "Vyberte komunitu, kam chcete záznam odeslat."
 
@@ -95,6 +95,9 @@ msgid ""
 msgstr ""
 "Zařazení do této komunity je povoleno pouze pokud je záznam s omezeným "
 "přístupem."
+
+msgid "Submission to this community is only allowed to community members."
+msgstr "Zařazení do této komunity je povoleno pouze členům komunity."
 
 msgid "Community submission conditions information"
 msgstr "Informace o podmínkách zařazení do komunity"
@@ -120,13 +123,6 @@ msgstr "Vybrat {{title}}"
 
 msgid "Verified"
 msgstr "Ověřen"
-
-msgid ""
-"Did not find a community that fits you? Upload without a community or "
-"<2>create your own.</2>"
-msgstr ""
-"Nenašli jste komunitu, která by vám vyhovovala? Nahrajte bez komunity nebo "
-"<2>vytvořte vlastní.</2>"
 
 msgid "Close"
 msgstr "Zavřít"
@@ -220,6 +216,9 @@ msgstr "Nová verze"
 msgid "Preview"
 msgstr "Náhled"
 
+msgid "DOI is needed. You need to reserve a DOI before publishing."
+msgstr "Je třeba doplnit DOI. DOI si musíte rezervovat před publikováním."
+
 msgid "Are you sure you want to publish this record?"
 msgstr "Jste si jisti, že chcete tento záznam publikovat?"
 
@@ -287,15 +286,20 @@ msgstr ""
 msgid "Submit record for review"
 msgstr "Odeslat záznam k posouzení"
 
-msgid ""
-"The '{{communityTitle}}' curators will have access to <bold>view</bold> and "
-"<bold>edit</bold> your upload's metadata and files."
-msgstr ""
-"Kurátoři '{{communityTitle}}' budou mít přístup k <bold>zobrazení</bold> a "
-"<bold>úpravě</bold> metadat a souborů vašeho záznamu."
+msgid "The '{{communityTitle}}' curators will have access to"
+msgstr "Kurátoři '{{communityTitle}}' budou mít přístup k"
+
+msgid "view and edit"
+msgstr "zobrazit a editovat"
+
+msgid "your upload's metadata and files."
+msgstr "metadata a soubory vašeho záznamu."
 
 msgid "Message to curators (optional)"
 msgstr "Zpráva pro kurátory (nepovinná)"
+
+msgid "msgWarningText1"
+msgstr "msgWarningText1"
 
 msgid "Change community"
 msgstr "Změnit komunitu"
@@ -306,71 +310,14 @@ msgstr "Publikovat bez komunity"
 msgid "Save draft"
 msgstr "Uložit koncept"
 
-msgid "Files"
-msgstr "Soubory"
-
-msgid "Resource type"
-msgstr "Typ zdroje"
-
-msgid "Title"
-msgstr "Název"
-
-msgid "Additional titles"
-msgstr "Další názvy"
-
-msgid "Publication date"
-msgstr "Datum vydání"
-
-msgid "Creators"
-msgstr "Autoři"
-
-msgid "Contributors"
-msgstr "Přispěvatelé"
-
-msgid "Description"
-msgstr "Popis"
-
-msgid "Additional descriptions"
-msgstr "Další popisy"
-
-msgid "Licenses"
-msgstr "Licence"
-
-msgid "Languages"
-msgstr "Jazyky"
-
-msgid "Dates"
-msgstr "Datace"
-
-msgid "Version"
-msgstr "Verze"
-
-msgid "Publisher"
-msgstr "Vydavatel"
-
-msgid "Related works"
-msgstr "Související práce"
-
-msgid "References"
-msgstr "Zdroje"
-
-msgid "Alternate identifiers"
-msgstr "Další identifikátory"
-
-msgid "Keywords and subjects"
-msgstr "Klíčová slova a předmětová hesla"
-
-msgid "Embargo until"
-msgstr "Embargo do"
-
-msgid "DOI"
-msgstr "DOI"
-
 msgid "Record successfully saved."
 msgstr "Záznam byl úspěšně uložen."
 
-msgid "Record saved with validation errors:"
-msgstr "Záznam byl uložen s chybami:"
+msgid "Record saved with validation feedback in"
+msgstr "Záznam byl uložen s validační zpětnou vazbou v"
+
+msgid "Draft has validation feedback in"
+msgstr "Koncept má validační zpětnou vazbu v"
 
 msgid ""
 "The draft was not saved. Please try again. If the problem persists, contact "
@@ -386,8 +333,9 @@ msgstr ""
 "Koncept nebyl publikován. Zkuste to prosím znovu. Pokud problém přetrvává, "
 "kontaktujte uživatelskou podporu."
 
-msgid "The draft was not published. Record saved with validation errors:"
-msgstr "Koncept nebyl publikován. Záznam byl uložen s chybami:"
+msgid "The draft was not published. Record saved with validation feedback in"
+msgstr ""
+"Koncept nebyl publikován. Záznam byl uložen s validační zpětnou vazbou v"
 
 msgid ""
 "The draft was not submitted for review. Please try again. If the problem "
@@ -397,8 +345,11 @@ msgstr ""
 "přetrvává, kontaktujte uživatelskou podporu."
 
 msgid ""
-"The draft was not submitted for review. Record saved with validation errors:"
-msgstr "Koncept nebyl odeslán ke kontrole. Záznam byl uložen s chybami:"
+"The draft was not submitted for review. Record saved with validation "
+"feedback in"
+msgstr ""
+"Koncept nebyl odeslán ke kontrole. Záznam byl uložen s validační zpětnou "
+"vazbou v"
 
 msgid ""
 "Draft deletion failed. Please try again. If the problem persists, contact "
@@ -466,33 +417,6 @@ msgstr "Veřejný s omezenými soubory"
 msgid "Embargoed (files-only)"
 msgstr "Embargován (pouze soubory)"
 
-msgid "access-message"
-msgstr "přístupová zpráva"
-
-msgid ""
-"The record can <1>only</1> be accessed by <3>users specified</3> in the "
-"permissions."
-msgstr ""
-"Záznam mohou zobrazit <1>pouze</1> <3>uživatelé specifikovaní</3> v "
-"oprávněních."
-
-msgid ""
-"The record is publicly accessible. The files can <1>only</1> be accessed by "
-"<4>users specified</4> in the permissions."
-msgstr ""
-"Záznam je veřejně dostupný. Soubory mohou zobrazit <1>pouze</1> <4>uživatelé"
-" specifikovaní</4> v oprávněních."
-
-msgid ""
-"The record is publicly accessible. On <bold>{{ date }}</bold> the files will"
-" automatically be made publicly accessible. Until then, the files can "
-"<bold>only</bold> be accessed by <bold>users specified</bold> in the "
-"permissions."
-msgstr ""
-"Záznam je veřejně dostupný. Dne <bold>{{ date }}</bold> budou soubory "
-"automaticky zpřístupněny veřejnosti. Do té doby mohou být soubory zobrazeny "
-"<bold>pouze uživatelům specifikovaným</bold> v oprávněních."
-
 msgid "Apply an embargo"
 msgstr "Použít embargo"
 
@@ -508,14 +432,11 @@ msgstr "Embargo bylo zrušeno dne {{fmtDate}}."
 msgid "Reason"
 msgstr "Důvod"
 
-msgid ""
-"Record or files protection must be <1>restricted</1> to apply an embargo."
-msgstr ""
-"Pro použití embarga, záznam nebo soubory musí být <1>s omezeným "
-"přístupem</1>."
-
 msgid "YYYY-MM-DD"
 msgstr "RRRR-MM-DD"
+
+msgid "Embargo until"
+msgstr "Embargo do"
 
 msgid "The record has no files."
 msgstr "Záznam nemá žádné soubory."
@@ -550,6 +471,20 @@ msgstr "Hledat afiliace.."
 
 msgid "Coming soon"
 msgstr "Již brzy"
+
+msgid ""
+"A copyright statement describing the ownership of the uploaded resource."
+msgstr ""
+"Prohlášení o autorských právech popisující vlastnictví nahraného záznamu."
+
+msgid "Copyright (C) {{currentYear}} The Authors."
+msgstr "Copyright (C) {{currentYear}} Autoři"
+
+msgid "Copyright"
+msgstr "Autorská práva"
+
+msgid "Creators"
+msgstr "Autoři"
 
 msgid "Add creator"
 msgstr "Přidat autora"
@@ -632,9 +567,6 @@ msgstr "Vyberte roli"
 msgid "Save"
 msgstr "Uložit"
 
-msgid "Couldn't find your person? You can <2>create a new entry</2>."
-msgstr "Nenašli jste vaši osobu? Můžete <2>vytvořit nový záznam</2>."
-
 msgid "Add date"
 msgstr "Přidat datum"
 
@@ -648,8 +580,14 @@ msgstr "Datum"
 msgid "Type"
 msgstr "Typ"
 
+msgid "Description"
+msgstr "Popis"
+
 msgid "Remove field"
 msgstr "Odstranit pole"
+
+msgid "Dates"
+msgstr "Datace"
 
 msgid "YYYY-MM-DD or YYYY-MM-DD/YYYY-MM-DD"
 msgstr "RRRR-MM-DD nebo RRRR-MM-DD/RRRR-MM-DD"
@@ -668,12 +606,6 @@ msgstr "Vyberte jazyk"
 
 msgid "Could not upload files."
 msgstr "Nebylo možno nahrát soubor"
-
-msgid "Uploading the selected files would result in"
-msgstr "Nahrání vybraných souborů by mělo za následek"
-
-msgid "but the limit is"
-msgstr "ale limit je"
 
 msgid "The following files already exist"
 msgstr "Následující soubory již existují"
@@ -706,8 +638,10 @@ msgstr "Nahrát soubory"
 msgid "Import files"
 msgstr "Naimportovat soubory"
 
-msgid "Set the default preview"
-msgstr "Nastavit výchozí náhled"
+msgid "Choose which file to preview on the published record landing page"
+msgstr ""
+"Vyberte soubor, který se zobrazí v náhledu na úvodní stránce zveřejněného "
+"záznamu"
 
 msgid "Filename"
 msgstr "Název souboru"
@@ -727,6 +661,9 @@ msgid ""
 msgstr ""
 "Toto je MD5 kontrolní součet souboru, který lze použít k ověření integrity "
 "souboru."
+
+msgid "N/A"
+msgstr "neznámo"
 
 msgid "Pending"
 msgstr "Nevyřízena"
@@ -767,14 +704,20 @@ msgstr "Schéma"
 msgid "Do you already have a {{pidLabel}} for this upload?"
 msgstr "Opravdu máte {{pidLabel}} pro tento záznam?"
 
-msgid "Yes"
-msgstr "Ano"
+msgid "Yes, I already have one"
+msgstr "Ano, již mám"
 
-msgid "No"
-msgstr "Ne"
+msgid "No, I need one"
+msgstr "Ne, potřebuji"
+
+msgid "No, I don't need one"
+msgstr "Ne, žádné nepotřebuji"
 
 msgid "Search for languages..."
 msgstr "Hledat jazyky..."
+
+msgid "Languages"
+msgstr "Jazyky"
 
 msgid "Search for a language by name (e.g \"eng\", \"fr\" or \"Polish\")"
 msgstr "Hledat jazyk podle názvu (např. \"eng\", \"fr\" nebo \"Polština\")"
@@ -784,6 +727,9 @@ msgstr "Přidat standard"
 
 msgid "Add custom"
 msgstr "Přidat vlastní"
+
+msgid "Licenses"
+msgstr "Licence"
 
 msgid "Read more"
 msgstr "Čtěte více"
@@ -799,6 +745,9 @@ msgstr "Přidat {{mode}} licenci"
 
 msgid "Change {{mode}} license"
 msgstr "Změnit {{mode}} licenci"
+
+msgid "Search for licenses"
+msgstr "Hledat licence"
 
 msgid "Recommended"
 msgstr "Doporučená"
@@ -821,6 +770,9 @@ msgstr "Software"
 msgid "software"
 msgstr "software"
 
+msgid "Title"
+msgstr "Název"
+
 msgid "License title"
 msgstr "Název licence"
 
@@ -836,6 +788,12 @@ msgstr "Přidat licenci"
 msgid "Change license"
 msgstr "Změnit licenci"
 
+msgid "Did not find your license? "
+msgstr "Nenašli jste svou licenci?"
+
+msgid "Add a custom license."
+msgstr "Přidat vlastní licenci."
+
 msgid ""
 "In case your upload was already published elsewhere, please use the date of "
 "the first publication. Format: YYYY-MM-DD, YYYY-MM, or YYYY. For intervals "
@@ -844,6 +802,9 @@ msgstr ""
 "V případě, že byla data vašeho záznamu již publikována jinde, použijte datum"
 " první publikace. Formát: RRRR-MM-DD, RRRR-MM nebo RRRR. Pro intervaly "
 "použijte DATUM/DATUM, např. 1939/1945."
+
+msgid "Publication date"
+msgstr "Datum vydání"
 
 msgid ""
 "YYYY-MM-DD or YYYY-MM-DD/YYYY-MM-DD for intervals. MM and DD are optional."
@@ -856,11 +817,17 @@ msgid ""
 "of the role."
 msgstr "V citaci bývá vydavatel uváděn, zvažte důležitost této role."
 
+msgid "Publisher"
+msgstr "Vydavatel"
+
 msgid "Add reference"
 msgstr "Přidat referenci"
 
 msgid "Reference string"
 msgstr "Hodnota reference"
+
+msgid "References"
+msgstr "Zdroje"
 
 msgid ""
 "Specify identifiers of related works. Supported identifiers include DOI, "
@@ -879,8 +846,17 @@ msgstr "Přidejte související práci"
 msgid "Relation"
 msgstr "Vztah"
 
+msgid "Related works"
+msgstr "Související práce"
+
+msgid "Resource type"
+msgstr "Typ zdroje"
+
 msgid "Suggest from"
 msgstr "Navrhnout z"
+
+msgid "Keywords and subjects"
+msgstr "Klíčová slova a předmětová hesla"
 
 msgid "Search for a subject by name"
 msgstr "Hledat téma podle názvu"
@@ -891,10 +867,68 @@ msgstr "Přidat názvy"
 msgid "Additional title"
 msgstr "Další název"
 
+msgid "Version"
+msgstr "Verze"
+
+msgid "On"
+msgstr "Dne"
+
+msgid ""
+"the record will automatically be made publicly accessible. Until then, the "
+"record can"
+msgstr ""
+"bude záznam automaticky zpřístupněný veřejnosti. Do té doby mohou k záznamu"
+
+msgid "only"
+msgstr "pouze"
+
+msgid "be accessed by"
+msgstr "přistupovat"
+
+msgid "users specified"
+msgstr "uživatelé uvedení"
+
+msgid "in the permissions."
+msgstr "v oprávněních."
+
+msgid "The record can"
+msgstr "Záznam může"
+
+msgid "The record is publicly accessible. The files can"
+msgstr "Záznam je veřejně přístupný. Soubory mohou"
+
+msgid "The record is publicly accessible. On"
+msgstr "Záznam je veřejně přístupný. Dne"
+
+msgid ""
+"the files will automatically be made publicly accessible. Until then, the "
+"files can"
+msgstr ""
+"budou soubory automaticky zpřístupněny veřejnosti. Do té doby mohou k "
+"souborům"
+
+msgid "Record or files protection must be"
+msgstr "Ochrana záznamu nebou souborů musí být"
+
+msgid "restricted"
+msgstr "chráněno"
+
+msgid "to apply an embargo."
+msgstr "k uvalení embarga."
+
+msgid ""
+"Uploading the selected files would result in {{total}} of storage use, "
+"exceeding the limit of {{limit}}."
+msgstr ""
+"Nahrání vybraných souborů by vedlo k využití {{total}} úložiště, což "
+"překračuje limit {{limit}}."
+
 msgid ""
 "Mostly relevant for software and dataset uploads. A semantic version string "
-"is preferred see<1> semver.org</1>, but any version string is accepted."
+"is preferred see"
 msgstr ""
-"Především relevantní pro zadávání softwaru a datových sad. Je preferován "
-"řetězec sémantické verze viz <1>semver.org</1>, ale je přijímáno jakékoliv "
-"vyjádření verze."
+"Týká se především nahrávání softwaru a datových sad. Preferován je "
+"sémantický formát verze"
+
+msgid ", but any version string is accepted."
+msgstr " , ale je přijímán jakýkoli řetězec verze."

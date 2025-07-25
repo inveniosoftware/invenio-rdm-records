@@ -14,7 +14,7 @@ from babel_edtf import parse_edtf
 from edtf.parser.grammar import ParseException
 from edtf.parser.parser_classes import Date, Interval
 from flask_resources.serializers import BaseSerializerSchema
-from marshmallow import fields, post_dump
+from marshmallow import fields, missing, post_dump
 from pydash import py_
 from slugify import slugify
 
@@ -25,7 +25,7 @@ from .schema_formats import BibTexFormatter
 class BibTexSchema(BaseSerializerSchema, CommonFieldsMixin):
     """Schema for records in BibTex."""
 
-    id = fields.Str()
+    id = fields.Method("get_id")
     resource_id = fields.Str(attribute="metadata.resource_type.id")
     version = fields.Str(attribute="metadata.version")
     date_published = fields.Method("get_date_published")
@@ -76,6 +76,13 @@ class BibTexSchema(BaseSerializerSchema, CommonFieldsMixin):
         The default type can be used when a resource type is not explicitely defined in ``format_mapper``.
         """
         return BibTexFormatter.misc
+
+    def get_id(self, obj):
+        """Get record id."""
+        if self.context.get("doi_all_versions", False):
+            # If all versions export is requested, return the parent id
+            return obj["parent"]["id"]
+        return obj["id"]
 
     def get_date_published(self, obj):
         """Get publication year and month from edtf date."""
@@ -175,9 +182,9 @@ class BibTexSchema(BaseSerializerSchema, CommonFieldsMixin):
 
     def get_url(self, obj):
         """Generate url."""
-        doi = obj.get("pids", {}).get("doi", {}).get("identifier")
+        doi = self.get_doi(obj)
         url = None
-        if doi:
+        if doi is not missing:
             url = f"https://doi.org/{doi}"
         return url
 

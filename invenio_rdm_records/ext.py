@@ -5,6 +5,7 @@
 # Copyright (C) 2022 Universität Hamburg.
 # Copyright (C) 2023-2024 Graz University of Technology.
 # Copyright (C) 2023 TU Wien.
+# Copyright (C) 2025 KTH Royal Institute of Technology.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
@@ -143,7 +144,7 @@ class InvenioRDMRecords(object):
             )
         if app.config.get("APP_RDM_DEPOSIT_FORM_PUBLISH_MODAL_EXTRA"):
             warn(
-                "The configuration value 'APP_RDM_DEPOSIT_FORM_PUBLISH_MODAL_EXTRA' is deprecated and will be removed in a future release. Use Overridables for ",
+                "The configuration value 'APP_RDM_DEPOSIT_FORM_PUBLISH_MODAL_EXTRA' is deprecated and will be removed in a future release. Use Overridables for "
                 "adding extra content to the publish modal instead.",
                 DeprecationWarning,
             )

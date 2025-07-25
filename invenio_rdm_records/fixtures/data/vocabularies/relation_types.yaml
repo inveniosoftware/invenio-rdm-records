@@ -294,7 +294,7 @@
      sv: Ersätts av
      de: Wird ersetzt durch
      es: Está obsoleto por
-     cs: je nahrazen (čím)
+     cs: Je nahrazen (čím)
 - id: obsoletes
   props:
      datacite: Obsoletes
@@ -303,4 +303,4 @@
      sv: Ersätter
      de: Ersetzt
      es: Obsoletos
-     cs: nahrazuje (co)
+     cs: Nahrazuje (co)

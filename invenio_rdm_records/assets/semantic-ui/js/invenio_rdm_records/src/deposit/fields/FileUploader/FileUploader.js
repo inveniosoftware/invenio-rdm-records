@@ -3,7 +3,7 @@
 // Copyright (C) 2020-2022 Northwestern University.
 // Copyright (C)      2022 Graz University of Technology.
 // Copyright (C)      2022 TU Wien.
-// Copyright (C)      2024 KTH Royal Institute of Technology.
+// Copyright (C) 2024-2025 KTH Royal Institute of Technology.
 //
 // Invenio-RDM-Records is free software; you can redistribute it and/or modify it
 // under the terms of the MIT License; see LICENSE file for more details.
@@ -23,7 +23,6 @@ import { FileUploaderToolbar } from "./FileUploaderToolbar";
 import { humanReadableBytes } from "react-invenio-forms";
 import Overridable from "react-overridable";
 import { getFilesList } from "./utils";
-import { Trans } from "react-i18next";
 
 // NOTE: This component has to be a function component to allow
 //       the `useFormikContext` hook.
@@ -107,20 +106,16 @@ export const FileUploaderComponent = ({
               warning
               icon="warning circle"
               header={i18next.t("Could not upload files.")}
-              content={
-                <Trans
-                  i18nKey="fileUploadQuotaExceeded"
-                  defaults="Uploading the selected files would result in {{ total }} of storage
-                  use, exceeding the limit of {{ limit }}."
-                  values={{
-                    total: humanReadableBytes(
-                      filesSize + acceptedFilesSize,
-                      decimalSizeDisplay
-                    ),
-                    limit: humanReadableBytes(quota.maxStorage, decimalSizeDisplay),
-                  }}
-                />
-              }
+              content={i18next.t(
+                "Uploading the selected files would result in {{total}} of storage use, exceeding the limit of {{limit}}.",
+                {
+                  total: humanReadableBytes(
+                    filesSize + acceptedFilesSize,
+                    decimalSizeDisplay
+                  ),
+                  limit: humanReadableBytes(quota.maxStorage, decimalSizeDisplay),
+                }
+              )}
             />
           </div>
         );

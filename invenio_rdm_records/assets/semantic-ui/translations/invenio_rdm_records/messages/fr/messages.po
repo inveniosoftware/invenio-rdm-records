@@ -1,15 +1,15 @@
 # 
 # Translators:
 # Alizee Pace <alizee.pace@gmail.com>, 2024
-# Tibor Simko <tibor.simko@cern.ch>, 2024
 # Keziah Okyere, 2025
+# Tibor Simko <tibor.simko@cern.ch>, 2025
 # 
 msgid ""
 msgstr ""
 "Project-Id-Version: i18next-conv\n"
-"POT-Creation-Date: 2025-04-07T16:10:08.156Z\n"
+"POT-Creation-Date: 2025-07-10T06:49:34.732Z\n"
 "PO-Revision-Date: 2024-08-06 08:56+0000\n"
-"Last-Translator: Keziah Okyere, 2025\n"
+"Last-Translator: Tibor Simko <tibor.simko@cern.ch>, 2025\n"
 "Language-Team: French (https://app.transifex.com/inveniosoftware/teams/23537/fr/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -28,6 +28,12 @@ msgstr "Cet ensemble n'est pas modifiable car il a été créé par le système.
 
 msgid "This set is not deletable as it was created by the system."
 msgstr "Cet ensemble n'est pas supprimable car il a été créé par le système."
+
+msgid "Fetch error"
+msgstr "Récupérer une erreur"
+
+msgid "Error fetching OAI set formats."
+msgstr "Erreur lors de la récupération des formats OAI set."
 
 msgid "Links"
 msgstr "Liens"
@@ -68,12 +74,6 @@ msgstr "Supprimer {{title}}"
 msgid "This will delete the set '{{title}}'."
 msgstr "Cela supprimera l'ensemble '{{title}}'."
 
-msgid "Fetch error"
-msgstr "Récupérer une erreur"
-
-msgid "Error fetching OAI set formats."
-msgstr "Erreur lors de la récupération des formats OAI set."
-
 msgid "Select the community where you want to submit your record."
 msgstr ""
 "Sélectionnez la communauté dans laquelle vous souhaitez soumettre votre "
@@ -96,6 +96,9 @@ msgid ""
 msgstr ""
 "La soumission à cette communauté n'est autorisée que si l'enregistrement est"
 " restreint."
+
+msgid "Submission to this community is only allowed to community members."
+msgstr ""
 
 msgid "Community submission conditions information"
 msgstr "Informations sur les conditions de soumission communautaires"
@@ -121,13 +124,6 @@ msgstr "Sélectionnez {{title}}"
 
 msgid "Verified"
 msgstr "Vérifié"
-
-msgid ""
-"Did not find a community that fits you? Upload without a community or "
-"<2>create your own.</2>"
-msgstr ""
-"Vous n'avez pas trouvé une communauté qui vous convient? Téléchargez sans "
-"communauté ou <2>créez la vôtre.</2>"
 
 msgid "Close"
 msgstr "Fermer"
@@ -224,6 +220,9 @@ msgstr "Nouvelle version"
 msgid "Preview"
 msgstr "Aperçu"
 
+msgid "DOI is needed. You need to reserve a DOI before publishing."
+msgstr ""
+
 msgid "Are you sure you want to publish this record?"
 msgstr "Êtes-vous sûr de vouloir publier ce disque?"
 
@@ -293,15 +292,20 @@ msgstr ""
 msgid "Submit record for review"
 msgstr "Soumettre un dossier pour examen"
 
-msgid ""
-"The '{{communityTitle}}' curators will have access to <bold>view</bold> and "
-"<bold>edit</bold> your upload's metadata and files."
+msgid "The '{{communityTitle}}' curators will have access to"
 msgstr ""
-"Les curateurs '{{communityTitle}}' auront accès à l'affichage et à la "
-"modification des métadonnées et des fichiers de votre téléchargement."
+
+msgid "view and edit"
+msgstr ""
+
+msgid "your upload's metadata and files."
+msgstr ""
 
 msgid "Message to curators (optional)"
 msgstr "Message aux conservateurs (facultatif)"
+
+msgid "msgWarningText1"
+msgstr ""
 
 msgid "Change community"
 msgstr "Changer de communauté"
@@ -312,71 +316,14 @@ msgstr "Publier sans communauté"
 msgid "Save draft"
 msgstr "Enregistrer le brouillon"
 
-msgid "Files"
-msgstr "Fichiers"
-
-msgid "Resource type"
-msgstr "Type de ressource"
-
-msgid "Title"
-msgstr "Titre"
-
-msgid "Additional titles"
-msgstr "Titres supplémentaires"
-
-msgid "Publication date"
-msgstr "Date de publication"
-
-msgid "Creators"
-msgstr "Créateurs"
-
-msgid "Contributors"
-msgstr "Contributeurs"
-
-msgid "Description"
-msgstr "Description"
-
-msgid "Additional descriptions"
-msgstr "Des descriptions supplémentaires"
-
-msgid "Licenses"
-msgstr "Licences"
-
-msgid "Languages"
-msgstr "Langues"
-
-msgid "Dates"
-msgstr "Dates"
-
-msgid "Version"
-msgstr "Version"
-
-msgid "Publisher"
-msgstr "Éditeur"
-
-msgid "Related works"
-msgstr "Les travaux connexes"
-
-msgid "References"
-msgstr "Références"
-
-msgid "Alternate identifiers"
-msgstr "Autres identifiants"
-
-msgid "Keywords and subjects"
-msgstr "Mots-clés et sujets"
-
-msgid "Embargo until"
-msgstr "Embargo jusqu'à"
-
-msgid "DOI"
-msgstr "DOI"
-
 msgid "Record successfully saved."
 msgstr "Enregistrer enregistré avec succès."
 
-msgid "Record saved with validation errors:"
-msgstr "Enregistrement enregistré avec des erreurs de validation:"
+msgid "Record saved with validation feedback in"
+msgstr ""
+
+msgid "Draft has validation feedback in"
+msgstr ""
 
 msgid ""
 "The draft was not saved. Please try again. If the problem persists, contact "
@@ -392,10 +339,8 @@ msgstr ""
 "Le projet n'a pas été publié. Veuillez réessayer. Si le problème persiste, "
 "contactez le support utilisateur."
 
-msgid "The draft was not published. Record saved with validation errors:"
+msgid "The draft was not published. Record saved with validation feedback in"
 msgstr ""
-"Le projet n'a pas été publié. Enregistrement enregistré avec des erreurs de "
-"validation:"
 
 msgid ""
 "The draft was not submitted for review. Please try again. If the problem "
@@ -405,10 +350,9 @@ msgstr ""
 " persiste, contactez le support utilisateur."
 
 msgid ""
-"The draft was not submitted for review. Record saved with validation errors:"
+"The draft was not submitted for review. Record saved with validation "
+"feedback in"
 msgstr ""
-"Le projet n'a pas été soumis pour examen. Enregistrement enregistré avec des"
-" erreurs de validation:"
 
 msgid ""
 "Draft deletion failed. Please try again. If the problem persists, contact "
@@ -478,34 +422,6 @@ msgstr "Public avec fichiers restreints"
 msgid "Embargoed (files-only)"
 msgstr "Embargoed (fichiers seulement)"
 
-msgid "access-message"
-msgstr "message"
-
-msgid ""
-"The record can <1>only</1> be accessed by <3>users specified</3> in the "
-"permissions."
-msgstr ""
-"L'enregistrement <1>n'est </1>accessible que par <3>les utilisateurs "
-"spécifiés</3> dans les autorisations."
-
-msgid ""
-"The record is publicly accessible. The files can <1>only</1> be accessed by "
-"<4>users specified</4> in the permissions."
-msgstr ""
-"Le dossier est accessible au public. Les fichiers ne <1>sont</1> accessibles"
-" que par <4>les utilisateurs spécifiés</4> dans les autorisations."
-
-msgid ""
-"The record is publicly accessible. On <bold>{{ date }}</bold> the files will"
-" automatically be made publicly accessible. Until then, the files can "
-"<bold>only</bold> be accessed by <bold>users specified</bold> in the "
-"permissions."
-msgstr ""
-"Le dossier est accessible au public. Sur <bold>{{ date }}</bold> les "
-"fichiers seront automatiquement rendus accessibles au public. Jusque-là, les"
-" fichiers peuvent <bold>seulement</bold>être accessible "
-"par<bold>utilisateurs spécifiés</bold> dans les autorisations."
-
 msgid "Apply an embargo"
 msgstr "Appliquer un embargo"
 
@@ -521,14 +437,11 @@ msgstr "Embargo a été levé sur {{fmtDate}}."
 msgid "Reason"
 msgstr "Raison"
 
-msgid ""
-"Record or files protection must be <1>restricted</1> to apply an embargo."
-msgstr ""
-"La protection des dossiers ou des dossiers doit être "
-"<1>restreint</1>appliquer un embargo."
-
 msgid "YYYY-MM-DD"
 msgstr "AAAA-MM-JJ"
+
+msgid "Embargo until"
+msgstr "Embargo jusqu'à"
 
 msgid "The record has no files."
 msgstr "Le dossier n'a pas de fichiers."
@@ -564,6 +477,19 @@ msgstr "Recherche d'affiliations."
 
 msgid "Coming soon"
 msgstr ""
+
+msgid ""
+"A copyright statement describing the ownership of the uploaded resource."
+msgstr ""
+
+msgid "Copyright (C) {{currentYear}} The Authors."
+msgstr ""
+
+msgid "Copyright"
+msgstr ""
+
+msgid "Creators"
+msgstr "Créateurs"
 
 msgid "Add creator"
 msgstr "Ajouter un créateur"
@@ -646,11 +572,6 @@ msgstr "Sélectionnez le rôle"
 msgid "Save"
 msgstr "Enregistrer"
 
-msgid "Couldn't find your person? You can <2>create a new entry</2>."
-msgstr ""
-"Vous n'avez pas pu trouver votre personne? Vous pouvez <2>créer une nouvelle"
-" entrée</2>."
-
 msgid "Add date"
 msgstr "Ajouter une date"
 
@@ -663,8 +584,14 @@ msgstr "Date"
 msgid "Type"
 msgstr "Type"
 
+msgid "Description"
+msgstr "Description"
+
 msgid "Remove field"
 msgstr "Supprimer le champ"
+
+msgid "Dates"
+msgstr "Dates"
 
 msgid "YYYY-MM-DD or YYYY-MM-DD/YYYY-MM-DD"
 msgstr "AAAA-MM-JJ ou AAAA-MM-JJ/AAAA-MM-JJ"
@@ -683,12 +610,6 @@ msgstr "Sélectionnez la langue"
 
 msgid "Could not upload files."
 msgstr ""
-
-msgid "Uploading the selected files would result in"
-msgstr "Le téléchargement des fichiers sélectionnés entraînerait"
-
-msgid "but the limit is"
-msgstr "mais la limite est"
 
 msgid "The following files already exist"
 msgstr "Les fichiers suivants existent déjà"
@@ -723,7 +644,7 @@ msgstr "Télécharger des fichiers"
 msgid "Import files"
 msgstr "Importer des fichiers"
 
-msgid "Set the default preview"
+msgid "Choose which file to preview on the published record landing page"
 msgstr ""
 
 msgid "Filename"
@@ -744,6 +665,9 @@ msgid ""
 msgstr ""
 "Il s'agit de l'empreinte digitale du fichier (MD5 checksum), qui peut être "
 "utilisée pour vérifier l'intégrité du fichier."
+
+msgid "N/A"
+msgstr "N/A"
 
 msgid "Pending"
 msgstr "En attente"
@@ -784,14 +708,20 @@ msgstr "Schéma"
 msgid "Do you already have a {{pidLabel}} for this upload?"
 msgstr "Avez-vous déjà un {{pidLabel}} pour ce téléchargement?"
 
-msgid "Yes"
-msgstr "Oui"
+msgid "Yes, I already have one"
+msgstr ""
 
-msgid "No"
-msgstr "Non"
+msgid "No, I need one"
+msgstr ""
+
+msgid "No, I don't need one"
+msgstr ""
 
 msgid "Search for languages..."
 msgstr "Recherche de langues..."
+
+msgid "Languages"
+msgstr "Langues"
 
 msgid "Search for a language by name (e.g \"eng\", \"fr\" or \"Polish\")"
 msgstr "Rechercher une langue par nom (par exemple \"eng\", \"fr\" ou \"Polonais\")"
@@ -801,6 +731,9 @@ msgstr "Ajouter standard"
 
 msgid "Add custom"
 msgstr "Ajouter personnalisé"
+
+msgid "Licenses"
+msgstr "Licences"
 
 msgid "Read more"
 msgstr "En savoir plus"
@@ -816,6 +749,9 @@ msgstr "Ajouter {{mode}} licence"
 
 msgid "Change {{mode}} license"
 msgstr "Changer la licence{{mode}}"
+
+msgid "Search for licenses"
+msgstr ""
 
 msgid "Recommended"
 msgstr "Recommandé"
@@ -838,6 +774,9 @@ msgstr "Logiciel"
 msgid "software"
 msgstr ""
 
+msgid "Title"
+msgstr "Titre"
+
 msgid "License title"
 msgstr "Titre de licence"
 
@@ -853,6 +792,12 @@ msgstr "Ajouter une licence"
 msgid "Change license"
 msgstr "Changer de licence"
 
+msgid "Did not find your license? "
+msgstr ""
+
+msgid "Add a custom license."
+msgstr ""
+
 msgid ""
 "In case your upload was already published elsewhere, please use the date of "
 "the first publication. Format: YYYY-MM-DD, YYYY-MM, or YYYY. For intervals "
@@ -861,6 +806,9 @@ msgstr ""
 "Si votre téléchargement a déjà été publié ailleurs, veuillez utiliser la "
 "date de la première publication. Format: AAAA-MM-JJ, AAAA-MM ou AAAA. Pour "
 "les intervalles, utilisez DATE/DATE, par ex. 1939/1945."
+
+msgid "Publication date"
+msgstr "Date de publication"
 
 msgid ""
 "YYYY-MM-DD or YYYY-MM-DD/YYYY-MM-DD for intervals. MM and DD are optional."
@@ -875,11 +823,17 @@ msgstr ""
 "L'éditeur est utilisé pour formuler la citation, alors considérez "
 "l'importance du rôle."
 
+msgid "Publisher"
+msgstr "Éditeur"
+
 msgid "Add reference"
 msgstr "Ajouter une référence"
 
 msgid "Reference string"
 msgstr "Chaîne de référence"
+
+msgid "References"
+msgstr "Références"
 
 msgid ""
 "Specify identifiers of related works. Supported identifiers include DOI, "
@@ -898,8 +852,17 @@ msgstr "Ajouter des travaux connexes"
 msgid "Relation"
 msgstr "Relation"
 
+msgid "Related works"
+msgstr "Les travaux connexes"
+
+msgid "Resource type"
+msgstr "Type de ressource"
+
 msgid "Suggest from"
 msgstr "Suggérer de"
+
+msgid "Keywords and subjects"
+msgstr "Mots-clés et sujets"
 
 msgid "Search for a subject by name"
 msgstr "Rechercher un sujet par nom"
@@ -910,10 +873,61 @@ msgstr "Ajouter des titres"
 msgid "Additional title"
 msgstr ""
 
+msgid "Version"
+msgstr "Version"
+
+msgid "On"
+msgstr ""
+
+msgid ""
+"the record will automatically be made publicly accessible. Until then, the "
+"record can"
+msgstr ""
+
+msgid "only"
+msgstr ""
+
+msgid "be accessed by"
+msgstr ""
+
+msgid "users specified"
+msgstr ""
+
+msgid "in the permissions."
+msgstr ""
+
+msgid "The record can"
+msgstr ""
+
+msgid "The record is publicly accessible. The files can"
+msgstr ""
+
+msgid "The record is publicly accessible. On"
+msgstr ""
+
+msgid ""
+"the files will automatically be made publicly accessible. Until then, the "
+"files can"
+msgstr ""
+
+msgid "Record or files protection must be"
+msgstr ""
+
+msgid "restricted"
+msgstr "restreint"
+
+msgid "to apply an embargo."
+msgstr ""
+
+msgid ""
+"Uploading the selected files would result in {{total}} of storage use, "
+"exceeding the limit of {{limit}}."
+msgstr ""
+
 msgid ""
 "Mostly relevant for software and dataset uploads. A semantic version string "
-"is preferred see<1> semver.org</1>, but any version string is accepted."
+"is preferred see"
 msgstr ""
-"Principalement pertinent pour les téléchargements de logiciels et de jeux de"
-" données. Une chaîne de version sémantique est préférable voir "
-"<1>semver.org</1>, mais toute chaîne de version est acceptée."
+
+msgid ", but any version string is accepted."
+msgstr ""

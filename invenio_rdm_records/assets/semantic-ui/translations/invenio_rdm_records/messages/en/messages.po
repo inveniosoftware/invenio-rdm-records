@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2025-07-08T19:50:35.389Z\n"
-"PO-Revision-Date: 2025-07-08T19:50:35.389Z\n"
+"POT-Creation-Date: 2025-07-09T18:52:35.259Z\n"
+"PO-Revision-Date: 2025-07-09T18:52:35.259Z\n"
 "Language: en\n"
 
 msgid "Copy to clipboard"
@@ -401,34 +401,6 @@ msgstr "Public with restricted files"
 msgid "Embargoed (files-only)"
 msgstr "Embargoed (files-only)"
 
-msgid "access-message"
-msgstr "access-message"
-
-msgid ""
-"The record can <1>only</1> be accessed by <3>users specified</3> in the "
-"permissions."
-msgstr ""
-"The record can <1>only</1> be accessed by <3>users specified</3> in the "
-"permissions."
-
-msgid ""
-"The record is publicly accessible. The files can <1>only</1> be accessed by "
-"<4>users specified</4> in the permissions."
-msgstr ""
-"The record is publicly accessible. The files can <1>only</1> be accessed by "
-"<4>users specified</4> in the permissions."
-
-msgid ""
-"The record is publicly accessible. On <bold>{{ date }}</bold> the files "
-"will automatically be made publicly accessible. Until then, the files can "
-"<bold>only</bold> be accessed by <bold>users specified</bold> in the "
-"permissions."
-msgstr ""
-"The record is publicly accessible. On <bold>{{ date }}</bold> the files "
-"will automatically be made publicly accessible. Until then, the files can "
-"<bold>only</bold> be accessed by <bold>users specified</bold> in the "
-"permissions."
-
 msgid "Apply an embargo"
 msgstr "Apply an embargo"
 
@@ -443,9 +415,6 @@ msgstr "Embargo was lifted on {{fmtDate}}."
 
 msgid "Reason"
 msgstr "Reason"
-
-msgid "Record or files protection must be <1>restricted</1> to apply an embargo."
-msgstr "Record or files protection must be <1>restricted</1> to apply an embargo."
 
 msgid "YYYY-MM-DD"
 msgstr "YYYY-MM-DD"
@@ -649,9 +618,6 @@ msgstr "Upload files"
 
 msgid "Import files"
 msgstr "Import files"
-
-msgid "fileUploadQuotaExceeded"
-msgstr "fileUploadQuotaExceeded"
 
 msgid "Choose which file to preview on the published record landing page"
 msgstr "Choose which file to preview on the published record landing page"
@@ -882,9 +848,66 @@ msgstr "Additional title"
 msgid "Version"
 msgstr "Version"
 
+msgid "On"
+msgstr "On"
+
+msgid ""
+"the record will automatically be made publicly accessible. Until then, the "
+"record can"
+msgstr ""
+"the record will automatically be made publicly accessible. Until then, the "
+"record can"
+
+msgid "only"
+msgstr "only"
+
+msgid "be accessed by"
+msgstr "be accessed by"
+
+msgid "users specified"
+msgstr "users specified"
+
+msgid "in the permissions."
+msgstr "in the permissions."
+
+msgid "The record can"
+msgstr "The record can"
+
+msgid "The record is publicly accessible. The files can"
+msgstr "The record is publicly accessible. The files can"
+
+msgid "The record is publicly accessible. On"
+msgstr "The record is publicly accessible. On"
+
+msgid ""
+"the files will automatically be made publicly accessible. Until then, the "
+"files can"
+msgstr ""
+"the files will automatically be made publicly accessible. Until then, the "
+"files can"
+
+msgid "Record or files protection must be"
+msgstr "Record or files protection must be"
+
+msgid "restricted"
+msgstr "restricted"
+
+msgid "to apply an embargo."
+msgstr "to apply an embargo."
+
+msgid ""
+"Uploading the selected files would result in {{total}} of storage use, "
+"exceeding the limit of {{limit}}."
+msgstr ""
+"Uploading the selected files would result in {{total}} of storage use, "
+"exceeding the limit of {{limit}}."
+
 msgid ""
 "Mostly relevant for software and dataset uploads. A semantic version string "
-"is preferred see<1> semver.org</1>, but any version string is accepted."
+"is preferred see"
 msgstr ""
 "Mostly relevant for software and dataset uploads. A semantic version string "
-"is preferred see<1> semver.org</1>, but any version string is accepted."
+"is preferred see"
+
+msgid ", but any version string is accepted."
+msgstr ", but any version string is accepted."
