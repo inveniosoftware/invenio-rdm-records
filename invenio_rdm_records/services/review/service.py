@@ -62,7 +62,7 @@ class ReviewService(RecordService):
     def create(self, identity, data, record, uow=None):
         """Create a new review request in draft state (to be completed."""
         if record.parent.review is not None:
-            raise ReviewExistsError(_("A review already exists for this record"))
+            raise ReviewExistsError(_("A review already exists for this record."))
         # Validate that record has not been published.
         if record.is_published or record.versions.index > 1:
             raise ReviewStateError(
