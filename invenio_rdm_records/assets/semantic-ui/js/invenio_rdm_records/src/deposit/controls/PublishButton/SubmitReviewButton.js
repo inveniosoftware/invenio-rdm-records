@@ -19,6 +19,8 @@ import {
 } from "../../api/DepositFormSubmitContext";
 import { DepositStatus } from "../../state/reducers/deposit";
 import { SubmitReviewModal } from "./SubmitReviewModal";
+import { DRAFT_SUBMIT_REVIEW_FAILED_WITH_VALIDATION_ERRORS } from "../../state/types";
+import { scrollTop } from "../../utils";
 
 class SubmitReviewButtonComponent extends Component {
   state = { isConfirmModalOpen: false };
@@ -29,16 +31,45 @@ class SubmitReviewButtonComponent extends Component {
   closeConfirmModal = () => this.setState({ isConfirmModalOpen: false });
 
   handleSubmitReview = ({ reviewComment }) => {
-    const { formik, directPublish } = this.props;
+    const {
+      formik,
+      directPublish,
+      raiseDOINeededButNotReserved,
+      isDOIRequired,
+      noINeedDOI,
+    } = this.props;
     const { handleSubmit } = formik;
     const { setSubmitContext } = this.context;
 
-    setSubmitContext(DepositFormSubmitActions.SUBMIT_REVIEW, {
-      reviewComment,
-      directPublish,
-    });
-    handleSubmit();
-    this.closeConfirmModal();
+    // Check for explicit DOI reservation via the "GET DOI button" only when DOI is
+    // optional in the instance's settings. If it is required, backend will automatically
+    // mint one even if it was not explicitly reserved
+    const shouldCheckForExplicitDOIReservation =
+      isDOIRequired !== undefined && // isDOIRequired is undefined when no value was provided from Invenio-app-rdm
+      !isDOIRequired &&
+      noINeedDOI &&
+      Object.keys(formik?.values?.pids).length === 0;
+    if (shouldCheckForExplicitDOIReservation) {
+      const errors = {
+        pids: {
+          doi: i18next.t(
+            "DOI is needed. You need to reserve a DOI before submitting for review."
+          ),
+        },
+      };
+      formik.setErrors(errors);
+      raiseDOINeededButNotReserved(formik?.values, errors);
+      this.closeConfirmModal();
+    } else {
+      setSubmitContext(DepositFormSubmitActions.SUBMIT_REVIEW, {
+        reviewComment,
+        directPublish,
+      });
+      handleSubmit();
+      this.closeConfirmModal();
+    }
+    // scroll top to show the global error
+    scrollTop();
   };
 
   isDisabled = (disableSubmitForReviewButton, filesState) => {
@@ -140,6 +171,9 @@ SubmitReviewButtonComponent.propTypes = {
   filesState: PropTypes.object,
   userCanManageRecord: PropTypes.bool.isRequired,
   record: PropTypes.object.isRequired,
+  raiseDOINeededButNotReserved: PropTypes.func.isRequired,
+  isDOIRequired: PropTypes.bool,
+  noINeedDOI: PropTypes.bool,
 };
 
 SubmitReviewButtonComponent.defaultProps = {
@@ -148,6 +182,8 @@ SubmitReviewButtonComponent.defaultProps = {
   publishModalExtraContent: undefined,
   directPublish: false,
   filesState: undefined,
+  isDOIRequired: undefined,
+  noINeedDOI: undefined,
 };
 
 const mapStateToProps = (state) => ({
@@ -160,9 +196,16 @@ const mapStateToProps = (state) => ({
   publishModalExtraContent: state.deposit.config.publish_modal_extra,
   filesState: state.files,
   userCanManageRecord: state.deposit.permissions.can_manage,
+  isDOIRequired: state.deposit.config.is_doi_required,
+  noINeedDOI: state.deposit.noINeedDOI,
 });
 
-export const SubmitReviewButton = connect(
-  mapStateToProps,
-  null
-)(connectFormik(SubmitReviewButtonComponent));
+export const SubmitReviewButton = connect(mapStateToProps, (dispatch) => {
+  return {
+    raiseDOINeededButNotReserved: (data, errors) =>
+      dispatch({
+        type: DRAFT_SUBMIT_REVIEW_FAILED_WITH_VALIDATION_ERRORS,
+        payload: { data: data, errors: errors },
+      }),
+  };
+})(connectFormik(SubmitReviewButtonComponent));
