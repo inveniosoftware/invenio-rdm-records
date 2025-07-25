@@ -80,11 +80,17 @@ class LinksTable extends Component {
    * Used to update links when the metadata prefix is changed.
    */
   replaceLinkPrefix = (link, newPrefix) => {
-    const oldPrefix = this.getPrefixFromLink(link);
-    if (oldPrefix) {
-      return link.replace(oldPrefix, newPrefix);
+    if (_isEmpty(link)) return null;
+
+    const prefixParam = "metadataPrefix";
+    const url = new URL(link);
+    const params = url.searchParams;
+
+    if (params.has(prefixParam)) {
+      params.set(prefixParam, newPrefix);
     }
-    return link;
+
+    return url.toString();
   };
 
   /**
@@ -95,8 +101,8 @@ class LinksTable extends Component {
   getPrefixFromLink = (link) => {
     if (_isEmpty(link)) return null;
     const prefixParam = "metadataPrefix";
-    const params = new URLSearchParams(link);
-    const prefix = params.get(prefixParam);
+    const url = new URL(link);
+    const prefix = url.searchParams.get(prefixParam);
 
     return prefix || null;
   };
