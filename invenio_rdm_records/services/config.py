@@ -783,8 +783,11 @@ class RDMRecordServiceConfig(RecordServiceConfig, ConfiguratorMixin):
         "access": RecordEndpointLink("records.update_access_settings"),
         # Communities
         "communities": RecordEndpointLink("record_communities.search"),
-        "communities-suggestions": RecordEndpointLink(
+        "communities-suggestions": RecordEndpointLink(  # TODO This is very bad? why hyphen?
             "record_communities.get_suggestions"
+        ),
+        "request_deletion": RecordEndpointLink(
+            "records.request_deletion", when=is_record
         ),
         # Requests
         # Unfortunately `record_pid`` was used in `RDMRecordRequestsResourceConfig``
