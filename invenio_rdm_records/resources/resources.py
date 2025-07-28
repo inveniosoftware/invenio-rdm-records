@@ -95,6 +95,7 @@ class RDMRecordResource(RecordResource):
             route("POST", routes["set-user-quota"], self.set_user_quota),
             route("GET", p(routes["item-revision-list"]), self.search_revisions),
             route("GET", p(routes["item-revision"]), self.read_revision),
+            route("POST", p(routes["request-deletion"]), self.request_deletion),
         ]
 
         return url_rules
@@ -211,6 +212,19 @@ class RDMRecordResource(RecordResource):
         )
 
         return item.to_dict(), 204
+
+    @request_headers
+    @request_view_args
+    @request_data
+    def request_deletion(self):
+        """Read the related review request."""
+        item = self.service.request_deletion(
+            g.identity,
+            resource_requestctx.view_args["pid_value"],
+            resource_requestctx.data,
+        )
+
+        return item.to_dict(), 200
 
     @request_headers
     @request_view_args

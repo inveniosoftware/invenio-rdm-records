@@ -10,10 +10,12 @@
 from .access import GuestAccessRequest, UserAccessRequest
 from .community_inclusion import CommunityInclusion
 from .community_submission import CommunitySubmission
+from .record_deletion import RecordDeletion
 
 __all__ = (
     "CommunityInclusion",
     "CommunitySubmission",
     "GuestAccessRequest",
     "UserAccessRequest",
+    "RecordDeletion",
 )
