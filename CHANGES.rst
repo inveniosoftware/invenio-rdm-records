@@ -12,6 +12,10 @@
 Changes
 =======
 
+Version v19.5.2 (released 2025-07-30)
+
+- fix(serializers): Strip none and trailing whitespace for thesis
+
 Version v19.5.1 (released 2025-07-21)
 
 - fix: cross-origin-file-uploads
