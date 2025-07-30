@@ -195,6 +195,6 @@ DatesFieldComponent.defaultProps = {
 };
 
 export const DatesField = createCommonDepositFieldComponent(
-  "InvenioRdmRecords.DatesField",
+  "InvenioRdmRecords.DepositForm.DatesField",
   DatesFieldComponent
 );
