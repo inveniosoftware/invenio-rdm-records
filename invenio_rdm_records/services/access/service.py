@@ -130,8 +130,10 @@ class RecordAccessService(RecordService):
         was set in the given data, or if it was omitted (which makes a
         difference in patch operations).
         """
-
-        if current_app.config["RDM_RECORDS_REQUIRE_SECRET_LINKS_EXPIRATION"] and not expires_at:
+        if (
+            current_app.config["RDM_RECORDS_REQUIRE_SECRET_LINKS_EXPIRATION"]
+            and not expires_at
+        ):
             raise ValidationError(
                 message=_("Expiration date is required"),
                 field_name="expires_at",
