@@ -16,7 +16,7 @@ from datetime import datetime
 
 import arrow
 from flask import current_app
-from invenio_access.permissions import system_user_id
+from invenio_access.permissions import system_identity, system_user_id
 from invenio_accounts.models import User
 from invenio_db import db
 from invenio_drafts_resources.services.records import RecordService
@@ -31,12 +31,14 @@ from invenio_records_resources.services.uow import (
     TaskOp,
     unit_of_work,
 )
+from invenio_requests.proxies import current_requests_service as requests_service
 from invenio_requests.services.results import EntityResolverExpandableField
 from invenio_search.engine import dsl
 from marshmallow import ValidationError
 from sqlalchemy.exc import NoResultFound
 
 from invenio_rdm_records.records.models import RDMRecordQuota, RDMUserQuota
+from invenio_rdm_records.requests.record_deletion import RecordDeletion
 from invenio_rdm_records.services.pids.tasks import register_or_update_pid
 
 from ..records.systemfields.deletion_status import RecordDeletionStatusEnum
@@ -252,6 +254,40 @@ class RDMRecordService(RecordService):
             expandable_fields=self.expandable_fields,
             expand=expand,
         )
+
+    @unit_of_work()
+    def request_deletion(self, identity, id_, data=None, uow=None, **kwargs):
+        """Request deletion of a record."""
+        record = self.record_cls.pid.resolve(id_)
+        # Check permissions
+        self.require_permission(identity, "manage", record=record)
+
+        if record.deletion_status.is_deleted:
+            raise DeletionStatusException(record, RecordDeletionStatusEnum.PUBLISHED)
+
+        request = requests_service.create(
+            identity,
+            request_type=RecordDeletion,
+            topic=record,
+            creator=identity.user,
+            receiver=None,
+            data={"payload": data},
+            uow=uow,
+        )
+        request = requests_service.execute_action(
+            identity, request.id, "submit", uow=uow
+        )
+
+        # TODO Review this config and maybe create it's own service for request type?
+        can_immediately_delete = current_app.config.get(
+            "RECORD_DELETION_IMMEDIATE", lambda x: False
+        )
+        if can_immediately_delete(record):
+            request = requests_service.execute_action(
+                system_identity, request.id, "accept", send_notification=False, uow=uow
+            )
+
+        return request
 
     @unit_of_work()
     def update_tombstone(self, identity, id_, data, expand=False, uow=None):
