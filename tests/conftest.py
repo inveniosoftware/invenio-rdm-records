@@ -47,7 +47,10 @@ from flask_principal import Identity, Need, RoleNeed, UserNeed
 from flask_security import login_user
 from flask_security.utils import hash_password
 from invenio_access.models import ActionRoles
-from invenio_access.permissions import superuser_access, system_identity
+from invenio_access.permissions import (
+    superuser_access,
+    system_identity,
+)
 from invenio_accounts.models import Role
 from invenio_accounts.testutils import login_user_via_session
 from invenio_administration.permissions import administration_access_action
@@ -450,6 +453,45 @@ def search_clear(search):
     yield search
     _search_delete_indexes(current_search)
     _search_create_indexes(current_search, current_search_client)
+
+
+@pytest.fixture()
+def create_record(running_app, minimal_record):
+    """Record creation and publication function fixture."""
+    files_service = current_rdm_records_service.draft_files
+
+    def _create_record(identity=None, data=minimal_record, files=None):
+        """Create and publish an RDMRecord.
+
+        Optionally assign it files.
+        """
+        idty = identity or system_identity
+        data_copy = deepcopy(data)
+        if files:
+            data_copy["files"] = {"enabled": True}
+
+        draft_data = current_rdm_records_service.create(idty, data_copy)._record
+        pid_value_of_draft = draft_data.pid.pid_value
+        if files:
+            files_service.init_files(idty, pid_value_of_draft, [f.data for f in files])
+            for f in files:
+                files_service.set_file_content(
+                    idty,
+                    id_=pid_value_of_draft,
+                    file_key=f.data["key"],
+                    stream=f.content,
+                    content_length=f.content.getbuffer().nbytes,
+                )
+                files_service.commit_file(
+                    idty, id_=pid_value_of_draft, file_key=f.data["key"]
+                )
+
+        record_result = current_rdm_records_service.publish(
+            idty, id_=pid_value_of_draft
+        )
+        return record_result
+
+    return _create_record
 
 
 @pytest.fixture()
