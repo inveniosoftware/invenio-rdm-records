@@ -12,6 +12,13 @@
 Changes
 =======
 
+Version v19.5.3 (released 2025-07-31)
+
+- optional-DOI: validation workflow improvements
+  - fixes issue where optional DOI validation was not properly handled during the submit for review process
+  - adds proper optional DOI validation when submitting records for review
+- components: adds informative error message when attempting to create duplicate review requests
+
 Version v19.5.2 (released 2025-07-30)
 
 - fix(serializers): Strip none and trailing whitespace for thesis
