@@ -31,7 +31,7 @@ from .requests.community_inclusion import CommunityInclusion
 from .requests.community_submission import CommunitySubmission
 from .resources.serializers import DataCite43JSONSerializer
 from .services import facets
-from .services.config import lock_edit_published_files
+from .services.config import RDMRecordDeletionPolicy, lock_edit_published_files
 from .services.permissions import RDMRecordPermissionPolicy
 from .services.pids import providers
 from .services.queryparser import word_internal_notes
@@ -147,6 +147,37 @@ RDM_DEFAULT_FILES_ENABLED = True
 #
 RDM_ALLOW_RESTRICTED_RECORDS = True
 """Allow users to set restricted/private records."""
+
+#
+# Record deletion by users
+#
+RDM_REQUEST_RECORD_DELETION_ENABLED = False
+"""Allow users to request record deletion."""
+RDM_IMMEDIATE_RECORD_DELETION_ENABLED = False
+"""Allow users to immediately delete records."""
+
+RDM_RECORD_DELETION_POLICY = RDMRecordDeletionPolicy
+"""Policy class which evaluates whether a record can be deleted by a user."""
+RDM_IMMEDIATE_RECORD_DELETION_GRACE_PERIOD = timedelta(days=30)
+"""Grace period for immediate record deletion."""
+
+RDM_RECORD_DELETION_CHECKLIST = [
+    {
+        "label": "I want to change the metadata (title, description, etc)",
+        "message": "You can edit the record <a href='/'>here</a>",
+    },
+    {
+        "label": "I forgot to submit to a community",
+        "message": "You can submit a published record to a community <a href='/'>here</a>",
+    },
+]
+"""Checklist which appears on the modal to redirect user from deletion if possible."""
+
+
+RDM_IMMEDIATE_RECORD_DELETION_POLICIES = {
+    "grace-period-v1": "Records can be deleted by their owners within 30 days",
+}
+"""List of reasons why records can be immediately deleted."""
 
 #
 # Record communities
