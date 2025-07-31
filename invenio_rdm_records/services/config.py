@@ -14,8 +14,11 @@
 
 import itertools
 from copy import deepcopy
+from dataclasses import dataclass, field
+from datetime import datetime, timezone
 from os.path import splitext
 from pathlib import Path
+from typing import Optional
 
 from flask import current_app
 from invenio_communities.communities.records.api import Community
@@ -922,3 +925,70 @@ class RDMMediaFileDraftServiceConfig(FileServiceConfig, ConfiguratorMixin):
     name_of_file_blueprint = "draft_media_files"
 
     file_schema = FileSchema
+
+
+class BaseRecordDeletionPolicy:
+    @property
+    def immediate_deletion(self):
+        raise NotImplementedError
+
+    @property
+    def request_deletion(self):
+        raise NotImplementedError
+
+    def evaluate(self):
+        raise NotImplementedError
+
+
+class RDMRecordDeletionPolicy(BaseRecordDeletionPolicy):
+    @dataclass
+    class Result:
+        enabled: bool
+        allowed: bool = False
+        policy_id: Optional[str] = field(default=None)
+        context: dict = field(default_factory=dict)
+
+    @property
+    def immediate_deletion(self):
+        result = self.Result(
+            current_app.config["RDM_IMMEDIATE_RECORD_DELETION_ENABLED"]
+        )
+        if not result.enabled:
+            return result
+
+        is_record_owner = (
+            self.identity.user.id == self.record.parent.access.owner.owner_id
+        )
+        result.allowed = is_record_owner
+        if not result.allowed:
+            return result
+
+        if self.record.pids.doi.external:
+            result.allowed = True
+            result.policy_id = "record-with-external-doi-v1"
+            return result
+
+        expiration_time = (
+            self.record.created
+            + current_app.config["RDM_IMMEDIATE_RECORD_DELETION_GRACE_PERIOD"]
+        )
+        remaining = expiration_time - datetime.now(timezone.utc)
+        is_record_within_grace_period = remaining > 0
+        grace_period_days_remaining = max(remaining.days, 0)
+
+        result.allowed = is_record_within_grace_period
+        result.policy_id = "grace-period-v1"
+        result.context["grace_period_days_remaining"] = grace_period_days_remaining
+        return result
+
+    @property
+    def request_deletion(self):
+        enabled = current_app.config["RDM_REQUEST_RECORD_DELETION_ENABLED"]
+        allowed = self.identity.user.id == self.record.parent.access.owner.owner_id
+        return self.Result(enabled, allowed)
+
+    def evaluate(self):
+        return {
+            "request_deletion": self.request_deletion,
+            "immediate_deletion": self.immediate_deletion,
+        }
