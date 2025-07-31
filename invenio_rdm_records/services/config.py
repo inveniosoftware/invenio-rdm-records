@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2020-2024 CERN.
+# Copyright (C) 2020-2025 CERN.
 # Copyright (C) 2020-2025 Northwestern University.
 # Copyright (C)      2021 TU Wien.
 # Copyright (C) 2021-2023 Graz University of Technology.
@@ -15,10 +15,10 @@
 import itertools
 from copy import deepcopy
 from dataclasses import dataclass, field
-from datetime import datetime, timezone
-from enum import Enum
+from datetime import datetime, timedelta, timezone
 from os.path import splitext
 from pathlib import Path
+from typing import Optional
 
 from flask import current_app
 from invenio_communities.communities.records.api import Community
@@ -34,6 +34,7 @@ from invenio_drafts_resources.services.records.config import (
     is_record,
 )
 from invenio_drafts_resources.services.records.search_params import AllVersionsParam
+from invenio_i18n import lazy_gettext as _
 from invenio_indexer.api import RecordIndexer
 from invenio_records_resources.services import (
     FileServiceConfig as BaseFileServiceConfig,
@@ -927,77 +928,91 @@ class RDMMediaFileDraftServiceConfig(FileServiceConfig, ConfiguratorMixin):
     file_schema = FileSchema
 
 
-class BaseRecordDeletionPolicy:
-    @property
-    def immediate_deletion(self):
-        raise NotImplementedError
+class BasePolicy:
+    id: str
+    description: str
 
-    @property
-    def request_deletion(self):
+    def is_allowed(self):
         raise NotImplementedError
 
     def evaluate(self):
         raise NotImplementedError
 
+    @property
+    def to_dict(self):
+        return {"id": self.id, "description": self.description}
 
-class RDMRecordDeletionPolicy(BaseRecordDeletionPolicy):
-    class Policies(Enum):  # StrEnum introduced in python 3.11
-        ENABLED = "enabled-v0"
-        OWNER = "record-owner-v0"
-        EXTERNAL_DOI = "record-with-external-doi-v0"
-        GRACE_PERIOD = "grace-period-v0"
-        ADMIN = "admin-v0"
 
+class GracePeriodPolicy(BasePolicy):
+    id = "grace-period-v1"
+
+    def __init__(self, grace_period=timedelta(days=30)):
+        self.grace_period = grace_period
+        self.description = _(
+            "Records can be deleted by their owner within {grace_period} days"
+        ).format(grace_period=grace_period.days)
+
+    def is_allowed(self, identity, record):
+        is_record_owner = identity.user.id == record.parent.access.owned_by.owner_id
+        return is_record_owner
+
+    def evaluate(self, identity, record):
+        expiration_time = record.created + self.grace_period
+        expiration_time = expiration_time.replace(tzinfo=timezone.utc)
+        is_record_within_grace_period = expiration_time > datetime.now(timezone.utc)
+
+        return is_record_within_grace_period
+
+
+class RequestDeletionPolicy(BasePolicy):
+    id = "request-deletion-v1"
+    description = _("Owners can always request record deletion")
+
+    def is_allowed(self, identity, record):
+        is_record_owner = identity.user.id == record.parent.access.owned_by.owner_id
+        return is_record_owner
+
+    def evaluate(self, identity, record):
+        return self.is_allowed(identity, record)
+
+
+class RDMRecordDeletionPolicy:
     @dataclass
     class Result:
         enabled: bool
-        policy_id: "RDMRecordDeletionPolicy.Policies"
+        valid_user: bool = False # so we can show the button as disabled
         allowed: bool = False
-        context: dict = field(default_factory=dict)
+        policy: Optional[BasePolicy] = field(default=None)
 
-    @property
-    def immediate_deletion(self):
-        result = self.Result(
-            current_app.config["RDM_IMMEDIATE_RECORD_DELETION_ENABLED"],
-            self.Policies.ENABLED,
-        )
+    def evaluate_policies(self, enabled, policy_config, identity, record):
+        result = self.Result(current_app.config[enabled])
         if not result.enabled:
             return result
 
-        is_record_owner = (
-            self.identity.user.id == self.record.parent.access.owner.owner_id
-        )
-        result.allowed = is_record_owner
-        if not result.allowed:
-            result.policy_id = self.Policies.OWNER
-            return result
+        policies = current_app.config[policy_config]
 
-        if self.record.pids.doi.external:
-            result.policy_id = self.Policies.EXTERNAL_DOI
-            return result
+        for policy in policies:
+            if policy.is_allowed(identity, record):
+                result.valid_user = True
+                if policy.evaluate(identity, record):
+                    result.allowed = True
+                    result.policy = policy.to_dict
+                    return result  # early return, do not evaluate all policies
 
-        expiration_time = (
-            self.record.created
-            + current_app.config["RDM_IMMEDIATE_RECORD_DELETION_GRACE_PERIOD"]
-        )
-        remaining = expiration_time - datetime.now(timezone.utc)
-        is_record_within_grace_period = remaining > 0
-        grace_period_days_remaining = max(remaining.days, 0)
-
-        result.allowed = is_record_within_grace_period
-        result.policy_id = self.Policies.GRACE_PERIOD
-        result.context["grace_period_days_remaining"] = grace_period_days_remaining
         return result
 
-    @property
-    def request_deletion(self):
-        enabled = current_app.config["RDM_REQUEST_RECORD_DELETION_ENABLED"]
-        policy_id = self.Policies.ADMIN
-        allowed = self.identity.user.id == self.record.parent.access.owner.owner_id
-        return self.Result(enabled, policy_id, allowed)
-
-    def evaluate(self):
+    def evaluate(self, identity, record):
         return {
-            "request_deletion": self.request_deletion,
-            "immediate_deletion": self.immediate_deletion,
+            "immediate_deletion": self.evaluate_policies(
+                "RDM_IMMEDIATE_RECORD_DELETION_ENABLED",
+                "RDM_IMMEDIATE_RECORD_DELETION_POLICIES",
+                identity,
+                record,
+            ),
+            "request_deletion": self.evaluate_policies(
+                "RDM_REQUEST_RECORD_DELETION_ENABLED",
+                "RDM_REQUEST_RECORD_DELETION_POLICIES",
+                identity,
+                record,
+            ),
         }
