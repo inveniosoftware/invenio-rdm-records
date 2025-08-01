@@ -922,7 +922,7 @@ def test_share_draft_gives_access_to_review_request(
     review = requests_service.read(
         verified_user.identity, draft.parent.review.id
     ).to_dict()
-    assert review["id"] == draft.parent.review.id
+    assert review["id"] == str(draft.parent.review.id)
 
     # Edit permission should give access to the submission request
     payload = {"permission": "edit"}
@@ -936,7 +936,7 @@ def test_share_draft_gives_access_to_review_request(
     review = requests_service.read(
         verified_user.identity, draft.parent.review.id
     ).to_dict()
-    assert review["id"] == draft.parent.review.id
+    assert review["id"] == str(draft.parent.review.id)
 
     # Manage permission should give access to the submission request
     payload = {"permission": "manage"}
@@ -950,7 +950,7 @@ def test_share_draft_gives_access_to_review_request(
     review = requests_service.read(
         verified_user.identity, draft.parent.review.id
     ).to_dict()
-    assert review["id"] == draft.parent.review.id
+    assert review["id"] == str(draft.parent.review.id)
 
 
 def test_share_draft_shows_up_in_shared_user_uploads(
