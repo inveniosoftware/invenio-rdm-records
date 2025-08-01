@@ -9,85 +9,130 @@
 
 import React, { Component } from "react";
 import PropTypes from "prop-types";
-import { Button, Form, Icon } from "semantic-ui-react";
-
-import { ArrayField, GroupField, SelectField, TextField } from "react-invenio-forms";
+import { Button, Form } from "semantic-ui-react";
+import Overridable from "react-overridable";
+import {
+  ArrayField,
+  GroupField,
+  SelectField,
+  TextField,
+  createCommonDepositFieldComponent,
+  fieldCommonProps,
+} from "react-invenio-forms";
 import { emptyAdditionalTitle } from "./initialValues";
 import { LanguagesField } from "../LanguagesField";
 import { i18next } from "@translations/invenio_rdm_records/i18next";
 
-export class AdditionalTitlesField extends Component {
+class AdditionalTitlesFieldComponent extends Component {
   render() {
-    const { fieldPath, options, recordUI } = this.props;
-    return (
-      <ArrayField
-        addButtonLabel={i18next.t("Add titles")}
-        defaultNewValue={emptyAdditionalTitle}
-        fieldPath={fieldPath}
-        className="additional-titles"
-      >
-        {({ arrayHelpers, indexPath }) => {
-          const fieldPathPrefix = `${fieldPath}.${indexPath}`;
+    const { fieldPath, options, recordUI, helpText, addButtonLabel } = this.props;
 
-          return (
-            <GroupField fieldPath={fieldPath} optimized>
-              <TextField
-                fieldPath={`${fieldPathPrefix}.title`}
-                label={i18next.t("Additional title")}
-                required
-                width={5}
-              />
-              <SelectField
-                fieldPath={`${fieldPathPrefix}.type`}
-                label={i18next.t("Type")}
+    return (
+      <Overridable
+        id="InvenioRdmRecords.DepositForm.AdditionalTitlesField.Container"
+        defaultNewValue={emptyAdditionalTitle}
+      >
+        <ArrayField
+          addButtonLabel={addButtonLabel}
+          helpText={helpText}
+          defaultNewValue={emptyAdditionalTitle}
+          fieldPath={fieldPath}
+          className="additional-titles"
+        >
+          {({ arrayHelpers, indexPath }) => {
+            const fieldPathPrefix = `${fieldPath}.${indexPath}`;
+            const languagesInitialOptions =
+              recordUI?.additional_titles && recordUI.additional_titles[indexPath]?.lang
+                ? [recordUI.additional_titles[indexPath].lang]
+                : [];
+
+            return (
+              <Overridable
+                id="InvenioRdmRecords.DepositForm.AdditionalTitlesField.Item"
                 optimized
-                options={options.type}
-                required
-                width={5}
-              />
-              <LanguagesField
-                serializeSuggestions={(suggestions) =>
-                  suggestions.map((item) => ({
-                    text: item.title_l10n,
-                    value: item.id,
-                    fieldPathPrefix: item.id,
-                  }))
-                }
-                initialOptions={
-                  recordUI?.additional_titles &&
-                  recordUI.additional_titles[indexPath]?.lang
-                    ? [recordUI.additional_titles[indexPath].lang]
-                    : []
-                }
-                fieldPath={`${fieldPathPrefix}.lang`}
-                label={i18next.t("Language")}
-                multiple={false}
-                placeholder={i18next.t("Select language")}
-                labelIcon={null}
-                clearable
-                selectOnBlur={false}
-                width={5}
-              />
-              <Form.Field>
-                <Button
-                  aria-label={i18next.t("Remove field")}
-                  className="close-btn"
-                  icon
-                  onClick={() => arrayHelpers.remove(indexPath)}
-                >
-                  <Icon name="close" />
-                </Button>
-              </Form.Field>
-            </GroupField>
-          );
-        }}
-      </ArrayField>
+              >
+                <GroupField fieldPath={fieldPath} optimized>
+                  <Overridable
+                    id="InvenioRdmRecords.DepositForm.AdditionalTitlesField.Title"
+                    required
+                    width={5}
+                  >
+                    <TextField
+                      fieldPath={`${fieldPathPrefix}.title`}
+                      label={i18next.t("Additional title")}
+                      required
+                      width={5}
+                    />
+                  </Overridable>
+                  <Overridable
+                    id="InvenioRdmRecords.DepositForm.AdditionalTitlesField.Type"
+                    optimized
+                    options={options.type}
+                    required
+                    width={5}
+                  >
+                    <SelectField
+                      fieldPath={`${fieldPathPrefix}.type`}
+                      label={i18next.t("Type")}
+                      optimized
+                      options={options.type}
+                      required
+                      width={5}
+                    />
+                  </Overridable>
+                  <Overridable
+                    id="InvenioRdmRecords.DepositForm.AdditionalTitlesField.Language"
+                    multiple={false}
+                    labelIcon={null}
+                    clearable
+                    selectOnBlur={false}
+                    width={5}
+                    initialOptions={languagesInitialOptions}
+                  >
+                    <LanguagesField
+                      serializeSuggestions={(suggestions) =>
+                        suggestions.map((item) => ({
+                          text: item.title_l10n,
+                          value: item.id,
+                          fieldPathPrefix: item.id,
+                        }))
+                      }
+                      initialOptions={languagesInitialOptions}
+                      fieldPath={`${fieldPathPrefix}.lang`}
+                      label={i18next.t("Language")}
+                      multiple={false}
+                      placeholder={i18next.t("Select language")}
+                      labelIcon={null}
+                      clearable
+                      selectOnBlur={false}
+                      width={5}
+                    />
+                  </Overridable>
+
+                  <Overridable
+                    id="InvenioRdmRecords.DepositForm.AdditionalTitlesField.Remove.Container"
+                    icon="close"
+                  >
+                    <Form.Field>
+                      <Button
+                        aria-label={i18next.t("Remove field")}
+                        className="close-btn"
+                        icon="close"
+                        onClick={() => arrayHelpers.remove(indexPath)}
+                      />
+                    </Form.Field>
+                  </Overridable>
+                </GroupField>
+              </Overridable>
+            );
+          }}
+        </ArrayField>
+      </Overridable>
     );
   }
 }
 
-AdditionalTitlesField.propTypes = {
-  fieldPath: PropTypes.string.isRequired,
+AdditionalTitlesFieldComponent.propTypes = {
   options: PropTypes.shape({
     type: PropTypes.arrayOf(
       PropTypes.shape({
@@ -104,9 +149,17 @@ AdditionalTitlesField.propTypes = {
     ),
   }),
   recordUI: PropTypes.object,
+  addButtonLabel: PropTypes.string,
+  ...fieldCommonProps,
 };
 
-AdditionalTitlesField.defaultProps = {
+AdditionalTitlesFieldComponent.defaultProps = {
   options: undefined,
   recordUI: undefined,
+  addButtonLabel: i18next.t("Add titles"),
 };
+
+export const AdditionalTitlesField = createCommonDepositFieldComponent(
+  "InvenioRdmRecords.DepositForm.AdditionalTitlesField",
+  AdditionalTitlesFieldComponent
+);
