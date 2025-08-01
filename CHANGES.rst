@@ -12,6 +12,17 @@
 Changes
 =======
 
+Version v20.0.0 (released 2025-08-01)
+
+- feat: implement request reviewers functionality
+  - Add RequestReviewers generator with configuration support
+  - Refactor request.reviewer to request.reviewers for consistency
+  - Remove deprecated approve action
+  - Add comprehensive tests for reviewer assignment
+  - Include configuration validation for reviewer settings
+- setup: bump major versions of invenio-communties and invenio-checks
+  - needed to isolate the new request reviewers functionality
+
 Version v19.5.3 (released 2025-07-31)
 
 - optional-DOI: validation workflow improvements
