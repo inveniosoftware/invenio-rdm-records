@@ -31,7 +31,7 @@ on:
 
 jobs:
   Python:
-    uses: inveniosoftware/workflows/.github/workflows/tests-python.yml@master
+    uses: inveniosoftware/workflows/.github/workflows/tests-python.yml@uv
 
   JS:
     uses: inveniosoftware/workflows/.github/workflows/tests-js.yml@master
