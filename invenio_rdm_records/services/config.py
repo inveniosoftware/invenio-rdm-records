@@ -210,6 +210,26 @@ class RDMSearchOptions(SearchOptions, SearchOptionsMixin):
     ]
 
 
+class RDMCommunityRecordSearchOptions(SearchOptions, SearchOptionsMixin):
+    """Search options for community record search."""
+
+    facets = {
+        "resource_type": facets.resource_type,
+        "languages": facets.language,
+        "access_status": facets.access_status,
+    }
+
+    # without VerifiedRecordsSortParam as communities review records they accept
+    params_interpreters_cls = [
+        AllVersionsParam.factory("versions.is_latest"),
+        QueryStrParam,
+        PaginationParam,
+        FacetsParam,
+        StatusParam,
+        PublishedRecordsParam,
+    ] + SearchOptions.params_interpreters_cls
+
+
 class RDMSearchDraftsOptions(SearchDraftsOptions, SearchOptionsMixin):
     """Search options for drafts search."""
 
@@ -827,8 +847,8 @@ class RDMCommunityRecordsConfig(BaseRecordServiceConfig, ConfiguratorMixin):
         "RDM_SEARCH",
         "RDM_SORT_OPTIONS",
         "RDM_FACETS",
-        search_option_cls=RDMSearchOptions,
-        search_option_cls_key="RDM_SEARCH_OPTIONS_CLS",
+        search_option_cls=RDMCommunityRecordSearchOptions,
+        search_option_cls_key="RDM_COMMUNITY_RECORD_SEARCH_OPTIONS_CLS",
     )
     search_versions = FromConfigSearchOptions(
         "RDM_SEARCH_VERSIONING",
