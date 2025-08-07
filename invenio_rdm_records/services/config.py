@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2020-2024 CERN.
+# Copyright (C) 2020-2025 CERN.
 # Copyright (C) 2020-2025 Northwestern University.
 # Copyright (C)      2021 TU Wien.
 # Copyright (C) 2021-2023 Graz University of Technology.
@@ -14,8 +14,11 @@
 
 import itertools
 from copy import deepcopy
+from dataclasses import dataclass, field
+from datetime import datetime, timedelta, timezone
 from os.path import splitext
 from pathlib import Path
+from typing import Optional
 
 from flask import current_app
 from invenio_communities.communities.records.api import Community
@@ -31,6 +34,7 @@ from invenio_drafts_resources.services.records.config import (
     is_record,
 )
 from invenio_drafts_resources.services.records.search_params import AllVersionsParam
+from invenio_i18n import lazy_gettext as _
 from invenio_indexer.api import RecordIndexer
 from invenio_records_resources.services import (
     FileServiceConfig as BaseFileServiceConfig,
@@ -922,3 +926,113 @@ class RDMMediaFileDraftServiceConfig(FileServiceConfig, ConfiguratorMixin):
     name_of_file_blueprint = "draft_media_files"
 
     file_schema = FileSchema
+
+
+class BasePolicy:
+    """Base class for deletion policies."""
+
+    id: str
+    description: str
+
+    def is_allowed(self, identity, record):
+        """Whether the identity is allowed to delete the record."""
+        raise NotImplementedError
+
+    def evaluate(self, identity, record):
+        """Whether the record meets the conditions to be deleted."""
+        raise NotImplementedError
+
+    @property
+    def to_dict(self):
+        """Get the policy as a dict."""
+        return {"id": self.id, "description": self.description}
+
+
+class GracePeriodPolicy(BasePolicy):
+    """Deletion policy which depends on a number of days since publishing."""
+
+    id = "grace-period-v1"
+
+    def __init__(self, grace_period=timedelta(days=30)):
+        """Initialise the policy with a grace_period."""
+        self.grace_period = grace_period
+        self.description = _(
+            "Records can be deleted by their owner within {grace_period} days"
+        ).format(grace_period=grace_period.days)
+
+    def is_allowed(self, identity, record):
+        """Whether the identity is allowed to delete the record."""
+        is_record_owner = identity.user.id == record.parent.access.owned_by.owner_id
+        return is_record_owner
+
+    def evaluate(self, identity, record):
+        """Whether the record is within the grace period."""
+        expiration_time = record.created + self.grace_period
+        expiration_time = expiration_time.replace(tzinfo=timezone.utc)
+        is_record_within_grace_period = expiration_time > datetime.now(timezone.utc)
+
+        return is_record_within_grace_period
+
+
+class RequestDeletionPolicy(BasePolicy):
+    """Deletion policy which only depends on the identity."""
+
+    id = "request-deletion-v1"
+    description = _("Owners can always request record deletion")
+
+    def is_allowed(self, identity, record):
+        """Whether the identity is allowed to delete the record."""
+        is_record_owner = identity.user.id == record.parent.access.owned_by.owner_id
+        return is_record_owner
+
+    def evaluate(self, identity, record):
+        """Request deletion is possible for all records."""
+        return True
+
+
+class RDMRecordDeletionPolicy:
+    """Record deletion policy for both immediate and request deletions."""
+
+    @dataclass
+    class Result:
+        """Result object for both front and backend."""
+
+        enabled: bool
+        valid_user: bool = False  # so we can show the button as disabled
+        allowed: bool = False
+        policy: Optional[BasePolicy] = field(default=None)
+
+    def evaluate_policies(self, enabled, policy_config, identity, record):
+        """Evaluate whether deletion is allowed for a given policy, identity and record."""
+        result = self.Result(current_app.config[enabled])
+        if not result.enabled:
+            return result
+
+        policies = current_app.config[policy_config]
+
+        for policy in policies:
+            if policy.is_allowed(identity, record):
+                result.valid_user = True
+                if policy.evaluate(identity, record):
+                    result.allowed = True
+                    result.policy = policy.to_dict
+                    return result  # early return, do not evaluate all policies
+
+        return result
+
+    def evaluate(self, identity, record):
+        """Evaluate both immediate and request deletion for an identity and record."""
+        return {
+            "immediate_deletion": self.evaluate_policies(
+                "RDM_IMMEDIATE_RECORD_DELETION_ENABLED",
+                "RDM_IMMEDIATE_RECORD_DELETION_POLICIES",
+                identity,
+                record,
+            ),
+            "request_deletion": self.evaluate_policies(
+                "RDM_REQUEST_RECORD_DELETION_ENABLED",
+                "RDM_REQUEST_RECORD_DELETION_POLICIES",
+                identity,
+                record,
+            ),
+        }
