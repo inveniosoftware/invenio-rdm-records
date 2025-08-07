@@ -195,7 +195,7 @@ to least specific.
 
 To update a policy, create a duplicate of it and add a check on creation date to
 both. When your policy comes into effect on a date in the future, and this
- is the date which you will use to check whether the new or
+is the date which you will use to check whether the new or
 old policy will apply."""
 
 
