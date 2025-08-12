@@ -6,7 +6,6 @@
 
 import { i18next } from "@translations/invenio_rdm_records/i18next";
 import { Formik } from "formik";
-import _get from "lodash/get";
 import Overridable from "react-overridable";
 import PropTypes from "prop-types";
 import React, { Component } from "react";
@@ -183,7 +182,14 @@ class SubmitReviewModalComponent extends Component {
             >
               <Modal.Header>{modalContent.headerTitle}</Modal.Header>
               <Modal.Content>
-                {errors && <ErrorMessage errors={errors} />}
+                {errors && (
+                  <ErrorMessage
+                    header={i18next.t("Unable to submit request.")}
+                    content={errors}
+                    icon="exclamation"
+                    negative
+                  />
+                )}
                 <Message visible warning>
                   <p>
                     <Icon name="warning sign" />
@@ -264,7 +270,7 @@ SubmitReviewModalComponent.propTypes = {
   initialReviewComment: PropTypes.string,
   publishModalExtraContent: PropTypes.string,
   directPublish: PropTypes.bool,
-  errors: PropTypes.node, // TODO FIXME: Use a common error cmp to display errros.
+  errors: PropTypes.string, // TODO FIXME: Use a common error cmp to display errros.
   loading: PropTypes.bool,
   record: PropTypes.object.isRequired,
   extraCheckboxes: PropTypes.arrayOf(
@@ -281,7 +287,7 @@ SubmitReviewModalComponent.defaultProps = {
   initialReviewComment: "",
   publishModalExtraContent: undefined,
   directPublish: false,
-  errors: undefined,
+  errors: "",
   loading: false,
   extraCheckboxes: [],
   beforeContent: () => undefined,
