@@ -384,5 +384,15 @@
         "$ref": "local://definitions-v1.0.0.json#/identifier"
       }
     }
+  },
+  "deletion_policy": {
+    "type": "object",
+    "additionalProperties": false,
+    "description": "Deletion policy that was applied to this record.",
+    "properties": {
+      "id": {
+        "$ref": "local://definitions-v1.0.0.json#/identifier"
+      }
+    }
   }
 }

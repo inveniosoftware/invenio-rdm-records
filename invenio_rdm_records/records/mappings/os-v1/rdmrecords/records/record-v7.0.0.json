@@ -1639,6 +1639,13 @@
           },
           "is_visible": {
             "type": "boolean"
+          },
+          "deletion_policy": {
+            "properties": {
+              "id": {
+                "type": "keyword"
+              }
+            }
           }
         }
       }
