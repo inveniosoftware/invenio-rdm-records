@@ -380,6 +380,10 @@
         "is_visible": {
           "type": "boolean",
           "description": "Whether or not the tombstone page is publicly visible."
+        },
+        "deletion_policy": {
+          "$ref": "local://records/definitions-v2.0.0.json#/deletion_policy",
+          "description": "Deletion policy that was applied to this record."
         }
       }
     },
