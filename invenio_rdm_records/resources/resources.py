@@ -14,10 +14,11 @@
 
 from functools import wraps
 
-from flask import abort, current_app, g, redirect, url_for
+from flask import abort, current_app, flash, g, redirect, url_for
 from flask_resources import Resource, resource_requestctx, response_handler, route
 from invenio_base import invenio_url_for
 from invenio_drafts_resources.resources import RecordResource
+from invenio_i18n import lazy_gettext as _
 from invenio_records_resources.resources.errors import ErrorHandlersMixin
 from invenio_records_resources.resources.records.resource import (
     request_data,
@@ -224,7 +225,18 @@ class RDMRecordResource(RecordResource):
             resource_requestctx.data,
         )
 
-        return item.to_dict(), 200
+        resp_code = 201
+        if item.data["status"] == "accepted":
+            resp_code = 200
+            flash(
+                _(
+                    "Your record was deleted and from now on "
+                    "will resolve to this tombstone page."
+                ),
+                category="success",
+            )
+
+        return item.to_dict(), resp_code
 
     @request_headers
     @request_view_args
