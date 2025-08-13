@@ -25,6 +25,7 @@ class Tombstone:
         self.removal_date = data.get("removal_date")
         self.citation_text = data.get("citation_text")
         self.is_visible = data.get("is_visible", True)
+        self.deletion_policy = data.get("deletion_policy")
 
     @property
     def removal_reason(self):
@@ -119,6 +120,23 @@ class Tombstone:
         self._is_visible = bool(value)
 
     @property
+    def deletion_policy(self):
+        """Get the deletion policy."""
+        return self._deletion_policy
+
+    @deletion_policy.setter
+    def deletion_policy(self, value):
+        """Set the deletion policy.
+
+        If the value is a string, it will be turned into a dictionary of the
+        shape ``{"id": value}``.
+        """
+        if isinstance(value, str):
+            value = {"id": value}
+
+        self._deletion_policy = value
+
+    @property
     def removed_by_proxy(self):
         """Resolve the entity proxy for ``self.removed_by``."""
         if self.removed_by is None:
@@ -138,6 +156,8 @@ class Tombstone:
 
         if self.removal_reason:
             data["removal_reason"] = self.removal_reason
+        if self.deletion_policy:
+            data["deletion_policy"] = self.deletion_policy
 
         return data
 
