@@ -259,11 +259,29 @@ class RDMRecordService(RecordService):
     def request_deletion(self, identity, id_, data=None, uow=None, **kwargs):
         """Request deletion of a record."""
         record = self.record_cls.pid.resolve(id_)
-        # Check permissions
-        self.require_permission(identity, "manage", record=record)
 
         if record.deletion_status.is_deleted:
             raise DeletionStatusException(record, RecordDeletionStatusEnum.PUBLISHED)
+
+        # NOTE: For deletion requests, we delegate the permission check to the
+        # deletion policy class. This is because:
+        #
+        #   - deletion policies can be more complex than what the declarative permission
+        #     system can express
+        #   - we want to know which specific policy is being applied, since it will be
+        #     tracked in the record's tombstone or the created deletion request
+        policy_result = self.config.deletion_policy.evaluate(identity, record)
+        immediate_deletion = policy_result["immediate_deletion"]
+        request_deletion = policy_result["request_deletion"]
+
+        featured_disabled = not (immediate_deletion.enabled or request_deletion.enabled)
+        allowed = immediate_deletion.allowed or request_deletion.allowed
+        if featured_disabled or not allowed:  # bail early
+            raise PermissionDeniedError()
+
+        # Keep track of the immediate deletion policy ID
+        if immediate_deletion.policy:
+            data["policy_id"] = immediate_deletion.policy.get("id")
 
         request = requests_service.create(
             identity,
@@ -278,13 +296,15 @@ class RDMRecordService(RecordService):
             identity, request.id, "submit", uow=uow
         )
 
-        # TODO Review this config and maybe create it's own service for request type?
-        can_immediately_delete = current_app.config.get(
-            "RECORD_DELETION_IMMEDIATE", lambda x: False
-        )
-        if can_immediately_delete(record):
+        if immediate_deletion.allowed:
             request = requests_service.execute_action(
-                system_identity, request.id, "accept", send_notification=False, uow=uow
+                # NOTE: We use the system identity to accept the request, since
+                # technically the system-defined deletion policy was checked above
+                system_identity,
+                request.id,
+                "accept",
+                send_notification=False,
+                uow=uow,
             )
 
         return request
