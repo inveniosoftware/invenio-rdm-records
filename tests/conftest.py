@@ -1666,6 +1666,41 @@ def awards_v(app, funders_v):
     return award
 
 
+@pytest.fixture(scope="module")
+def removal_reason_type(app):
+    """Removal reason vocabulary type."""
+    return vocabulary_service.create_type(system_identity, "removalreasons", "rem")
+
+
+@pytest.fixture(scope="module")
+def removal_reason_v(app, removal_reason_type):
+    """Removal reason vocabulary record."""
+    vocab_spam = vocabulary_service.create(
+        system_identity,
+        {
+            "id": "spam",
+            "title": {"en": "Spam"},
+            "type": "removalreasons",
+        },
+    )
+    vocab_test_record = vocabulary_service.create(
+        system_identity,
+        {
+            "id": "test-record",
+            "title": {"en": "Test upload of a record"},
+            "type": "removalreasons",
+            "tags": ["deletion-request"],
+        },
+    )
+
+    Vocabulary.index.refresh()
+
+    return {
+        "spam": vocab_spam,
+        "test-record": vocab_test_record,
+    }
+
+
 @pytest.fixture()
 def cache():
     """Empty cache."""
@@ -1695,6 +1730,7 @@ RunningApp = namedtuple(
         "licenses_v",
         "funders_v",
         "awards_v",
+        "removal_reason_v",
         "moderator_role",  # Add moderator role by default to the app
     ],
 )
@@ -1718,6 +1754,7 @@ def running_app(
     licenses_v,
     funders_v,
     awards_v,
+    removal_reason_v,
     moderator_role,
 ):
     """This fixture provides an app with the typically needed db data loaded.
@@ -1742,6 +1779,7 @@ def running_app(
         licenses_v,
         funders_v,
         awards_v,
+        removal_reason_v,
         moderator_role,
     )
 
