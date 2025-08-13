@@ -74,6 +74,7 @@ class AcceptAction(actions.AcceptAction):
     def execute(self, identity, uow, **kwargs):
         """Delete the record."""
         record = self.request.topic.resolve()
+        request_creator = self.request.created_by.resolve()
 
         removal_reason_id = self.request.get("payload", {}).get("reason")
         tombstone_data = {
@@ -90,7 +91,7 @@ class AcceptAction(actions.AcceptAction):
             tombstone_data["deletion_policy"] = {"id": policy_id}
 
         current_rdm_records_service.delete_record(
-            system_identity, record["id"], tombstone_data, uow=uow
+            identity, record["id"], tombstone_data, uow=uow
         )
 
         super().execute(identity, uow)
