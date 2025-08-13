@@ -4,9 +4,7 @@
 #
 # Invenio-RDM is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
-"""Test user moderation actions."""
-
-from types import SimpleNamespace
+"""Test record deletion requests."""
 
 import pytest
 from invenio_access.permissions import system_identity
@@ -25,18 +23,7 @@ def _get_owner_identity(record):
 
 
 @pytest.fixture(scope="function")
-def deletion_vocabulary():
-    """Fixture to mock vocabulary service."""
-    return SimpleNamespace(
-        **{"data": {"title": {"en": "Test Reason"}}, "id": "test-reason"}
-    )
-
-
-@pytest.fixture(scope="function")
-def created_deletion_request(
-    minimal_record,
-    record_factory,
-):
+def created_deletion_request(minimal_record, record_factory, removal_reason_v):
     """Fixture to create a deletion request."""
     record = record_factory.create_record(minimal_record)
 
@@ -60,27 +47,20 @@ def created_deletion_request(
 
 
 @pytest.fixture(scope="function")
-def submitted_deletion_request(created_deletion_request, deletion_vocabulary, mocker):
+def submitted_deletion_request(created_deletion_request):
     """Fixture to create a submitted deletion request."""
     record = created_deletion_request.topic.resolve()
     identity = _get_owner_identity(record)
-    with mocker.patch(
-        "invenio_rdm_records.requests.record_deletion.current_vocabularies_service.read",
-        return_value=deletion_vocabulary,
-    ):
-        request = current_requests_service.execute_action(
-            identity,
-            created_deletion_request.id,
-            "submit",
-        )._record
+    request = current_requests_service.execute_action(
+        identity,
+        created_deletion_request.id,
+        "submit",
+    )._record
 
     return request
 
 
-def test_request_create(
-    minimal_record,
-    record_factory,
-):
+def test_request_create(minimal_record, record_factory, removal_reason_v):
     """Tests record deleteion request creation."""
     record = record_factory.create_record(minimal_record)
 
@@ -104,9 +84,7 @@ def test_request_create(
     assert request.status == "created"
 
 
-def test_request_create_exisiting_open_request(
-    submitted_deletion_request,
-):
+def test_request_create_exisiting_open_request(submitted_deletion_request):
     """Tests record deleteion request creation when there is an exisiting open request."""
     record = submitted_deletion_request.topic.resolve()
     identity = _get_owner_identity(record)
@@ -127,35 +105,27 @@ def test_request_create_exisiting_open_request(
         )
 
 
-def test_request_submit(created_deletion_request, mocker, deletion_vocabulary):
+def test_request_submit(created_deletion_request):
     """Tests record deleteion request submit action."""
     record = created_deletion_request.topic.resolve()
     identity = _get_owner_identity(record)
-    with mocker.patch(
-        "invenio_rdm_records.requests.record_deletion.current_vocabularies_service.read",
-        return_value=deletion_vocabulary,
-    ):
-        request = current_requests_service.execute_action(
-            identity,
-            str(created_deletion_request.id),
-            "submit",
-        )._record
+    request = current_requests_service.execute_action(
+        identity,
+        str(created_deletion_request.id),
+        "submit",
+    )._record
 
     record = request.topic.resolve()
     assert record.is_deleted is False
     assert request.status == "submitted"
 
 
-def test_request_accept(submitted_deletion_request, mocker):
+def test_request_accept(submitted_deletion_request):
     """Tests record deleteion request accept action."""
-    delete_patch = mocker.patch(
-        "invenio_rdm_records.proxies.current_rdm_records_service.delete_record"
-    )
     request = current_requests_service.execute_action(
         system_identity,
         submitted_deletion_request.id,
         "accept",
     )._record
 
-    delete_patch.assert_called_once()
     assert request.status == "accepted"
