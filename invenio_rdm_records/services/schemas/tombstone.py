@@ -39,7 +39,7 @@ class TombstoneSchema(Schema):
 
     removal_reason = fields.Nested(RemovalReasonSchema)
     note = SanitizedUnicode()
-    removed_by = fields.Nested(AgentSchema, dump_only=True)
+    removed_by = fields.Nested(AgentSchema)
     removal_date = ISODateString(dump_only=True)
     citation_text = SanitizedUnicode()
     is_visible = fields.Boolean()

@@ -45,8 +45,8 @@ class RecordDeletionComponent(ServiceComponent):
         record.deletion_status = RecordDeletionStatusEnum.DELETED
         record.tombstone = data
 
-        # Set `removed_by` information for the tombstone
-        record.tombstone.removed_by = identity.id
+        if record.tombstone.removed_by is None:
+            record.tombstone.removed_by = identity.id
 
     def update_tombstone(self, identity, data=None, record=None, **kwargs):
         """Update the record's tombstone information."""
