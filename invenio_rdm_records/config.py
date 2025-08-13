@@ -31,11 +31,11 @@ from .requests.community_inclusion import CommunityInclusion
 from .requests.community_submission import CommunitySubmission
 from .resources.serializers import DataCite43JSONSerializer
 from .services import facets
-from .services.config import (
+from .services.config import lock_edit_published_files
+from .services.deletion_policy import (
     GracePeriodPolicy,
     RDMRecordDeletionPolicy,
     RequestDeletionPolicy,
-    lock_edit_published_files,
 )
 from .services.permissions import RDMRecordPermissionPolicy
 from .services.pids import providers
@@ -156,35 +156,11 @@ RDM_ALLOW_RESTRICTED_RECORDS = True
 #
 # Record deletion by users
 #
-RDM_REQUEST_RECORD_DELETION_ENABLED = False
-"""Allow users to request record deletion."""
-RDM_IMMEDIATE_RECORD_DELETION_ENABLED = False
-"""Allow users to immediately delete records."""
-
 RDM_RECORD_DELETION_POLICY = RDMRecordDeletionPolicy
 """Policy class which evaluates whether a record can be deleted by a user."""
-RDM_IMMEDIATE_RECORD_DELETION_GRACE_PERIOD = timedelta(days=30)
-"""Grace period for immediate record deletion."""
 
-RDM_RECORD_DELETION_CHECKLIST = [
-    {
-        "label": _("I want to change the metadata (title, description, etc)"),
-        "message": _(
-            "Instead of deleting the record, you can instead edit the"
-            + " metadata at any time."
-        ),
-    },
-    {
-        "label": _("I forgot to submit to a community"),
-        "message": _(
-            "You can submit a published record to a community by"
-            + " going to the record landing page and selecting the cog in"
-            + " the communities sidebar"
-        ),
-    },
-]
-"""Checklist which appears on the modal to redirect user from deletion if possible."""
-
+RDM_IMMEDIATE_RECORD_DELETION_ENABLED = False
+"""Allow users to immediately delete records."""
 
 RDM_IMMEDIATE_RECORD_DELETION_POLICIES = [GracePeriodPolicy()]
 """List of policies for immediate record deletion.
@@ -195,12 +171,44 @@ to least specific.
 
 To update a policy, create a duplicate of it and add a check on creation date to
 both. When your policy comes into effect on a date in the future, and this
-is the date which you will use to check whether the new or
-old policy will apply."""
+is the date which you will use to check whether the new or old policy will apply.
+"""
 
+RDM_REQUEST_RECORD_DELETION_ENABLED = False
+"""Allow users to request record deletion."""
 
 RDM_REQUEST_RECORD_DELETION_POLICIES = [RequestDeletionPolicy()]
 """List of policies for record deletion requests."""
+
+RDM_RECORD_DELETION_CHECKLIST = []
+"""Checklist which appears on the modal to redirect user from deletion if possible.
+
+The config accepts a list of dictionaries with "label" and "message" key-value pairs.
+The "label" is used as the checklist question item, and the "message" is displayed in
+case the user selects "Yes" on the checklist item.
+
+Example config value:
+
+.. code-block:: python
+
+    RDM_RECORD_DELETION_CHECKLIST = [
+        {
+            "label": _("I want to change the metadata (title, description, etc.)"),
+            "message": _(
+                "Instead of deleting the record, you can instead edit the "
+                "metadata at any time."
+            ),
+        },
+        {
+            "label": _("I forgot to submit to a community"),
+            "message": _(
+                "You can submit a published record to a community by going to the "
+                "record landing page and selecting the cog in the communities sidebar."
+            ),
+        },
+    ]
+"""
+
 
 #
 # Record communities
