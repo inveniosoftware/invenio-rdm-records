@@ -191,6 +191,8 @@ def get_record_thumbnail_file(record, **kwargs):
 class RDMSearchOptions(SearchOptions, SearchOptionsMixin):
     """Search options for record search."""
 
+    verified_sorting_enabled = True
+
     facets = {
         "resource_type": facets.resource_type,
         "languages": facets.language,
@@ -210,24 +212,10 @@ class RDMSearchOptions(SearchOptions, SearchOptionsMixin):
     ]
 
 
-class RDMCommunityRecordSearchOptions(SearchOptions, SearchOptionsMixin):
+class RDMCommunityRecordSearchOptions(RDMSearchOptions):
     """Search options for community record search."""
 
-    facets = {
-        "resource_type": facets.resource_type,
-        "languages": facets.language,
-        "access_status": facets.access_status,
-    }
-
-    # without VerifiedRecordsSortParam as communities review records they accept
-    params_interpreters_cls = [
-        AllVersionsParam.factory("versions.is_latest"),
-        QueryStrParam,
-        PaginationParam,
-        FacetsParam,
-        StatusParam,
-        PublishedRecordsParam,
-    ] + SearchOptions.params_interpreters_cls
+    verified_sorting_enabled = False
 
 
 class RDMSearchDraftsOptions(SearchDraftsOptions, SearchOptionsMixin):
