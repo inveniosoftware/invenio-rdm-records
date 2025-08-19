@@ -362,11 +362,11 @@ class SchemaorgSchema(BaseSerializerSchema, CommonFieldsMixin):
             number = award.get("number")
             id_ = award.get("id")
 
-            if not (id_ or (title and number)):
-                # One of 'id' or '(title' and 'number') must be provided
+            if not (id_ or title or number):
+                # One of 'id', 'title', or 'number' must be provided
                 raise ValidationError(
                     _(
-                        "Funding serialization failed on award: one of 'id' or ('number' and 'title') are required."
+                        "Funding serialization failed on award: one of 'id', 'number', or 'title' are required."
                     )
                 )
 
