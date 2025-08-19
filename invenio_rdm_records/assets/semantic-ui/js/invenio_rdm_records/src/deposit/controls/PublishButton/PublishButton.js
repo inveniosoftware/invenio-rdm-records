@@ -35,38 +35,30 @@ class PublishButtonComponent extends Component {
     const { setSubmitContext } = this.context;
     const {
       formik,
-      raiseDOINeededButNotReserved,
       isDOIRequired,
       noINeedDOI,
+      doiReservationCheck,
       publishWithoutCommunity,
     } = this.props;
     const { handleSubmit } = formik;
-    // Check for explicit DOI reservation via the "GET DOI button" only when DOI is
-    // optional in the instance's settings. If it is required, backend will automatically
-    // mint one even if it was not explicitly reserved
-    const shouldCheckForExplicitDOIReservation =
-      isDOIRequired !== undefined && // isDOIRequired is undefined when no value was provided from Invenio-app-rdm
-      !isDOIRequired &&
-      noINeedDOI &&
-      Object.keys(formik?.values?.pids).length === 0;
-    if (shouldCheckForExplicitDOIReservation) {
-      const errors = {
-        pids: {
-          doi: i18next.t("DOI is needed. You need to reserve a DOI before publishing."),
-        },
-      };
-      formik.setErrors(errors);
-      raiseDOINeededButNotReserved(formik?.values, errors);
-      this.closeConfirmModal();
-    } else {
+
+    const doiCheckFailed = doiReservationCheck(
+      isDOIRequired,
+      noINeedDOI,
+      formik,
+      "DOI is needed. You need to reserve a DOI before publishing.",
+      DRAFT_PUBLISH_FAILED_WITH_VALIDATION_ERRORS
+    );
+
+    if (!doiCheckFailed) {
       setSubmitContext(
         publishWithoutCommunity
           ? DepositFormSubmitActions.PUBLISH_WITHOUT_COMMUNITY
           : DepositFormSubmitActions.PUBLISH
       );
       handleSubmit();
-      this.closeConfirmModal();
     }
+    this.closeConfirmModal();
     // scroll top to show the global error
     scrollTop();
   };
@@ -97,7 +89,6 @@ class PublishButtonComponent extends Component {
       buttonLabel,
       formik,
       publishModalExtraContent,
-      raiseDOINeededButNotReserved,
       noINeedDOI,
       isDOIRequired,
       ...ui
@@ -142,7 +133,7 @@ PublishButtonComponent.propTypes = {
   formik: PropTypes.object.isRequired,
   publishModalExtraContent: PropTypes.string,
   filesState: PropTypes.object,
-  raiseDOINeededButNotReserved: PropTypes.func.isRequired,
+  doiReservationCheck: PropTypes.func.isRequired,
   isDOIRequired: PropTypes.bool,
   noINeedDOI: PropTypes.bool,
 };
@@ -165,12 +156,7 @@ const mapStateToProps = (state) => ({
   noINeedDOI: state.deposit.noINeedDOI,
 });
 
-export const PublishButton = connect(mapStateToProps, (dispatch) => {
-  return {
-    raiseDOINeededButNotReserved: (data, errors) =>
-      dispatch({
-        type: DRAFT_PUBLISH_FAILED_WITH_VALIDATION_ERRORS,
-        payload: { data: data, errors: errors },
-      }),
-  };
-})(connectFormik(PublishButtonComponent));
+export const PublishButton = connect(
+  mapStateToProps,
+  null
+)(connectFormik(PublishButtonComponent));

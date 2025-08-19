@@ -12,6 +12,28 @@
 Changes
 =======
 
+Version v20.0.0 (released 2025-08-01)
+
+- feat: implement request reviewers functionality
+  - Add RequestReviewers generator with configuration support
+  - Refactor request.reviewer to request.reviewers for consistency
+  - Remove deprecated approve action
+  - Add comprehensive tests for reviewer assignment
+  - Include configuration validation for reviewer settings
+- setup: bump major versions of invenio-communties and invenio-checks
+  - needed to isolate the new request reviewers functionality
+
+Version v19.5.3 (released 2025-07-31)
+
+- optional-DOI: validation workflow improvements
+  - fixes issue where optional DOI validation was not properly handled during the submit for review process
+  - adds proper optional DOI validation when submitting records for review
+- components: adds informative error message when attempting to create duplicate review requests
+
+Version v19.5.2 (released 2025-07-30)
+
+- fix(serializers): Strip none and trailing whitespace for thesis
+
 Version v19.5.1 (released 2025-07-21)
 
 - fix: cross-origin-file-uploads

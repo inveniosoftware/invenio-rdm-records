@@ -19,6 +19,8 @@ import {
 } from "../../api/DepositFormSubmitContext";
 import { DepositStatus } from "../../state/reducers/deposit";
 import { SubmitReviewModal } from "./SubmitReviewModal";
+import { DRAFT_SUBMIT_REVIEW_FAILED_WITH_VALIDATION_ERRORS } from "../../state/types";
+import { scrollTop } from "../../utils";
 
 class SubmitReviewButtonComponent extends Component {
   state = { isConfirmModalOpen: false };
@@ -29,16 +31,29 @@ class SubmitReviewButtonComponent extends Component {
   closeConfirmModal = () => this.setState({ isConfirmModalOpen: false });
 
   handleSubmitReview = ({ reviewComment }) => {
-    const { formik, directPublish } = this.props;
+    const { formik, directPublish, isDOIRequired, noINeedDOI, doiReservationCheck } =
+      this.props;
     const { handleSubmit } = formik;
     const { setSubmitContext } = this.context;
 
-    setSubmitContext(DepositFormSubmitActions.SUBMIT_REVIEW, {
-      reviewComment,
-      directPublish,
-    });
-    handleSubmit();
+    const doiCheckFailed = doiReservationCheck(
+      isDOIRequired,
+      noINeedDOI,
+      formik,
+      "DOI is needed. You need to reserve a DOI before submitting for review.",
+      DRAFT_SUBMIT_REVIEW_FAILED_WITH_VALIDATION_ERRORS
+    );
+
+    if (!doiCheckFailed) {
+      setSubmitContext(DepositFormSubmitActions.SUBMIT_REVIEW, {
+        reviewComment,
+        directPublish,
+      });
+      handleSubmit();
+    }
     this.closeConfirmModal();
+    // scroll top to show the global error
+    scrollTop();
   };
 
   isDisabled = (disableSubmitForReviewButton, filesState) => {
@@ -140,6 +155,9 @@ SubmitReviewButtonComponent.propTypes = {
   filesState: PropTypes.object,
   userCanManageRecord: PropTypes.bool.isRequired,
   record: PropTypes.object.isRequired,
+  doiReservationCheck: PropTypes.func.isRequired,
+  isDOIRequired: PropTypes.bool,
+  noINeedDOI: PropTypes.bool,
 };
 
 SubmitReviewButtonComponent.defaultProps = {
@@ -148,6 +166,8 @@ SubmitReviewButtonComponent.defaultProps = {
   publishModalExtraContent: undefined,
   directPublish: false,
   filesState: undefined,
+  isDOIRequired: undefined,
+  noINeedDOI: undefined,
 };
 
 const mapStateToProps = (state) => ({
@@ -160,6 +180,8 @@ const mapStateToProps = (state) => ({
   publishModalExtraContent: state.deposit.config.publish_modal_extra,
   filesState: state.files,
   userCanManageRecord: state.deposit.permissions.can_manage,
+  isDOIRequired: state.deposit.config.is_doi_required,
+  noINeedDOI: state.deposit.noINeedDOI,
 });
 
 export const SubmitReviewButton = connect(
