@@ -12,6 +12,11 @@
 Changes
 =======
 
+Version v19.5.4 (released 2025-08-20)
+
+- fix(schemaorg): chase award schema relaxation from Invenio-Vocabularies
+- fix(oaipmh): properly change output format
+
 Version v19.5.3 (released 2025-07-31)
 
 - optional-DOI: validation workflow improvements
