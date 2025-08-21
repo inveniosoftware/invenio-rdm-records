@@ -7,7 +7,8 @@
 
 """Record deletion request."""
 
-from invenio_access.permissions import system_identity
+from flask import g
+from invenio_access.permissions import authenticated_user, system_identity
 from invenio_i18n import lazy_gettext as _
 from invenio_pidstore.errors import PIDDoesNotExistError
 from invenio_requests.customizations import RequestType, actions
@@ -128,6 +129,11 @@ class RecordDeletion(RequestType):
         "reason": fields.String(required=True, validate=validate.Length(min=1)),
         "comment": fields.String(required=False, allow_none=True),
     }
+
+    def _update_link_config(self, **context_vars):
+        """Fix the prefix required for "self_html"."""
+        prefix = "/me"
+        return {"ui": context_vars["ui"] + prefix}
 
 
 def get_request_type(app):
