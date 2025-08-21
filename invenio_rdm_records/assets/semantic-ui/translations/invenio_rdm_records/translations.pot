@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2025-07-09T18:52:35.217Z\n"
-"PO-Revision-Date: 2025-07-09T18:52:35.218Z\n"
+"POT-Creation-Date: 2025-08-21T13:57:39.961Z\n"
+"PO-Revision-Date: 2025-08-21T13:57:39.961Z\n"
 "Language: en\n"
 
 msgid "Copy to clipboard"
@@ -203,9 +203,6 @@ msgstr "New version"
 msgid "Preview"
 msgstr "Preview"
 
-msgid "DOI is needed. You need to reserve a DOI before publishing."
-msgstr "DOI is needed. You need to reserve a DOI before publishing."
-
 msgid "Are you sure you want to publish this record?"
 msgstr "Are you sure you want to publish this record?"
 
@@ -236,17 +233,6 @@ msgstr "You must accept this."
 msgid "Before publishing to the community, please read and check the following:"
 msgstr "Before publishing to the community, please read and check the following:"
 
-msgid ""
-"Your upload will be <bold>immediately published</bold> in "
-"'{{communityTitle}}'. You will no longer be able to change the files in the "
-"upload! However, you will still be able to update the record's metadata "
-"later."
-msgstr ""
-"Your upload will be <bold>immediately published</bold> in "
-"'{{communityTitle}}'. You will no longer be able to change the files in the "
-"upload! However, you will still be able to update the record's metadata "
-"later."
-
 msgid "Publish record to community"
 msgstr "Publish record to community"
 
@@ -258,15 +244,6 @@ msgstr "Before submitting to community, please read and check the following:"
 
 msgid "Before requesting review, please read and check the following:"
 msgstr "Before requesting review, please read and check the following:"
-
-msgid ""
-"If your upload is accepted by the community curators, it will be "
-"<bold>immediately published</bold>. Before that, you will still be able to "
-"modify metadata and files of this upload."
-msgstr ""
-"If your upload is accepted by the community curators, it will be "
-"<bold>immediately published</bold>. Before that, you will still be able to "
-"modify metadata and files of this upload."
 
 msgid "Submit record for review"
 msgstr "Submit record for review"
@@ -282,9 +259,6 @@ msgstr "your upload's metadata and files."
 
 msgid "Message to curators (optional)"
 msgstr "Message to curators (optional)"
-
-msgid "msgWarningText1"
-msgstr "msgWarningText1"
 
 msgid "Change community"
 msgstr "Change community"
@@ -911,3 +885,29 @@ msgstr ""
 
 msgid ", but any version string is accepted."
 msgstr ", but any version string is accepted."
+
+msgid "If your upload is accepted by the community curators, it will be"
+msgstr "If your upload is accepted by the community curators, it will be"
+
+msgid "immediately published"
+msgstr "immediately published"
+
+msgid ""
+"Before that, you will still be able to modify metadata and files of this "
+"upload."
+msgstr ""
+"Before that, you will still be able to modify metadata and files of this "
+"upload."
+
+msgid "Your upload will be"
+msgstr "Your upload will be"
+
+msgid ""
+"in '{{communityTitle}}'. You will no longer be able to change the files in "
+"the upload!"
+msgstr ""
+"in '{{communityTitle}}'. You will no longer be able to change the files in "
+"the upload!"
+
+msgid "However, you will still be able to update the record's metadata later."
+msgstr "However, you will still be able to update the record's metadata later."
