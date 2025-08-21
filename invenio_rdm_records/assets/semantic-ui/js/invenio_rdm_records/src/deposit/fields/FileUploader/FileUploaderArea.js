@@ -120,7 +120,7 @@ const FileTableRow = ({
             </a>
           )}
           <br />
-          {file.checksum && (
+          {(file.checksum && (
             <div className="ui text-muted">
               <span style={{ fontSize: "10px" }}>{file.checksum}</span>{" "}
               <Popup
@@ -130,6 +130,12 @@ const FileTableRow = ({
                 trigger={<Icon fitted name="help circle" size="small" />}
                 position="top center"
               />
+            </div>
+          )) || (
+            <div className="ui text-muted">
+              <span style={{ fontSize: "10px" }}>
+                {i18next.t("Checksum not yet calculated.")}
+              </span>{" "}
             </div>
           )}
         </div>
