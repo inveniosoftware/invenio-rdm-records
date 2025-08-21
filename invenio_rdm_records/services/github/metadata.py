@@ -169,11 +169,7 @@ class RDMReleaseMetadata(object):
             citation_file_name,
         )
 
-        data = (
-            yaml.safe_load(content.decoded.decode("utf-8"))
-            if content is not None
-            else None
-        )
+        data = yaml.safe_load(content.decode("utf-8")) if content is not None else None
 
         return data
 
