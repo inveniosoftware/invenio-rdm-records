@@ -2,16 +2,16 @@
 # Translators:
 # Jiří Kunčar <jiri.kuncar@gmail.com>, 2024
 # Ivan Masár <helix84@centrum.sk>, 2024
-# Mirek Simek <miroslav.simek@gmail.com>, 2025
 # Tibor Simko <tibor.simko@cern.ch>, 2025
 # daniela.hornickova, 2025
+# Mirek Simek <miroslav.simek@gmail.com>, 2025
 # 
 msgid ""
 msgstr ""
 "Project-Id-Version: i18next-conv\n"
 "POT-Creation-Date: 2025-07-10T06:49:34.732Z\n"
 "PO-Revision-Date: 2024-08-06 08:56+0000\n"
-"Last-Translator: daniela.hornickova, 2025\n"
+"Last-Translator: Mirek Simek <miroslav.simek@gmail.com>, 2025\n"
 "Language-Team: Czech (https://app.transifex.com/inveniosoftware/teams/23537/cs/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -892,7 +892,7 @@ msgid "in the permissions."
 msgstr "v oprávněních."
 
 msgid "The record can"
-msgstr "Záznam může"
+msgstr "K záznamu mohou"
 
 msgid "The record is publicly accessible. The files can"
 msgstr "Záznam je veřejně přístupný. Soubory mohou"
@@ -908,7 +908,7 @@ msgstr ""
 "souborům"
 
 msgid "Record or files protection must be"
-msgstr "Ochrana záznamu nebou souborů musí být"
+msgstr "Ochrana záznamu nebo souborů musí být"
 
 msgid "restricted"
 msgstr "chráněno"
