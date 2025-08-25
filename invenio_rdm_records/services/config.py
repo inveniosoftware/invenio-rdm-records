@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2020-2024 CERN.
+# Copyright (C) 2020-2025 CERN.
 # Copyright (C) 2020-2025 Northwestern University.
 # Copyright (C)      2021 TU Wien.
 # Copyright (C) 2021-2023 Graz University of Technology.
@@ -78,6 +78,7 @@ from .customizations import (
     FromConfigPIDsProviders,
     FromConfigRequiredPIDs,
 )
+from .deletion_policy import RDMRecordDeletionPolicy
 from .permissions import RDMRecordPermissionPolicy
 from .result_items import GrantItem, GrantList, SecretLinkItem, SecretLinkList
 from .results import RDMRecordList, RDMRecordRevisionsList
@@ -109,6 +110,11 @@ def is_draft_and_has_review(record, ctx):
 def is_record_and_has_doi(record, ctx):
     """Determine if record has doi."""
     return is_record(record, ctx) and has_doi(record, ctx)
+
+
+def is_published(record, ctx):
+    """Determine if record is published record's draft."""
+    return record.is_published
 
 
 def is_record_or_draft_and_has_parent_doi(record, ctx):
@@ -556,6 +562,11 @@ class RDMRecordServiceConfig(RecordServiceConfig, ConfiguratorMixin):
         "RDM_PERMISSION_POLICY", default=RDMRecordPermissionPolicy, import_string=True
     )
 
+    # Deletion policy
+    deletion_policy = FromConfig(
+        "RDM_RECORD_DELETION_POLICY", default=RDMRecordDeletionPolicy
+    )
+
     # Result classes
     link_result_item_cls = SecretLinkItem
     link_result_list_cls = SecretLinkList
@@ -771,8 +782,11 @@ class RDMRecordServiceConfig(RecordServiceConfig, ConfiguratorMixin):
         "access": RecordEndpointLink("records.update_access_settings"),
         # Communities
         "communities": RecordEndpointLink("record_communities.search"),
-        "communities-suggestions": RecordEndpointLink(
+        "communities-suggestions": RecordEndpointLink(  # TODO This is very bad? why hyphen?
             "record_communities.get_suggestions"
+        ),
+        "request_deletion": RecordEndpointLink(
+            "records.request_deletion", when=is_published
         ),
         # Requests
         # Unfortunately `record_pid`` was used in `RDMRecordRequestsResourceConfig``

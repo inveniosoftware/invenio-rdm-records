@@ -16,7 +16,7 @@ from datetime import datetime
 
 import arrow
 from flask import current_app
-from invenio_access.permissions import system_user_id
+from invenio_access.permissions import system_identity, system_user_id
 from invenio_accounts.models import User
 from invenio_db import db
 from invenio_drafts_resources.services.records import RecordService
@@ -31,12 +31,14 @@ from invenio_records_resources.services.uow import (
     TaskOp,
     unit_of_work,
 )
+from invenio_requests.proxies import current_requests_service as requests_service
 from invenio_requests.services.results import EntityResolverExpandableField
 from invenio_search.engine import dsl
 from marshmallow import ValidationError
 from sqlalchemy.exc import NoResultFound
 
 from invenio_rdm_records.records.models import RDMRecordQuota, RDMUserQuota
+from invenio_rdm_records.requests.record_deletion import RecordDeletion
 from invenio_rdm_records.services.pids.tasks import register_or_update_pid
 
 from ..records.systemfields.deletion_status import RecordDeletionStatusEnum
@@ -252,6 +254,60 @@ class RDMRecordService(RecordService):
             expandable_fields=self.expandable_fields,
             expand=expand,
         )
+
+    @unit_of_work()
+    def request_deletion(self, identity, id_, data=None, uow=None, **kwargs):
+        """Request deletion of a record."""
+        record = self.record_cls.pid.resolve(id_)
+
+        if record.deletion_status.is_deleted:
+            raise DeletionStatusException(record, RecordDeletionStatusEnum.PUBLISHED)
+
+        # NOTE: For deletion requests, we delegate the permission check to the
+        # deletion policy class. This is because:
+        #
+        #   - deletion policies can be more complex than what the declarative permission
+        #     system can express
+        #   - we want to know which specific policy is being applied, since it will be
+        #     tracked in the record's tombstone or the created deletion request
+        policy_result = self.config.deletion_policy.evaluate(identity, record)
+        immediate_deletion = policy_result["immediate_deletion"]
+        request_deletion = policy_result["request_deletion"]
+
+        featured_disabled = not (immediate_deletion.enabled or request_deletion.enabled)
+        allowed = immediate_deletion.allowed or request_deletion.allowed
+        if featured_disabled or not allowed:  # bail early
+            raise PermissionDeniedError()
+
+        # Keep track of the immediate deletion policy ID
+        if immediate_deletion.policy:
+            data["policy_id"] = immediate_deletion.policy.get("id")
+
+        request = requests_service.create(
+            identity,
+            request_type=RecordDeletion,
+            topic=record,
+            creator=identity.user,
+            receiver=None,
+            data={"payload": data},
+            uow=uow,
+        )
+        request = requests_service.execute_action(
+            identity, request.id, "submit", uow=uow
+        )
+
+        if immediate_deletion.allowed:
+            request = requests_service.execute_action(
+                # NOTE: We use the system identity to accept the request, since
+                # technically the system-defined deletion policy was checked above
+                system_identity,
+                request.id,
+                "accept",
+                send_notification=False,
+                uow=uow,
+            )
+
+        return request
 
     @unit_of_work()
     def update_tombstone(self, identity, id_, data, expand=False, uow=None):
