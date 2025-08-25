@@ -112,6 +112,11 @@ def is_record_and_has_doi(record, ctx):
     return is_record(record, ctx) and has_doi(record, ctx)
 
 
+def is_published(record, ctx):
+    """Determine if record is published record's draft."""
+    return record.is_published
+
+
 def is_record_or_draft_and_has_parent_doi(record, ctx):
     """Determine if draft or record has parent doi."""
     return (is_record(record, ctx) or is_draft(record, ctx)) and has_doi(
@@ -789,7 +794,7 @@ class RDMRecordServiceConfig(RecordServiceConfig, ConfiguratorMixin):
             "record_communities.get_suggestions"
         ),
         "request_deletion": RecordEndpointLink(
-            "records.request_deletion", when=is_record
+            "records.request_deletion", when=is_published
         ),
         # Requests
         # Unfortunately `record_pid`` was used in `RDMRecordRequestsResourceConfig``
