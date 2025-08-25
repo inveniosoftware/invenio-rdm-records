@@ -4,12 +4,16 @@
     sv: Duplikat av en annan post
     de: Duplikat eines anderen Eintrags
     cs: Duplikát jiného záznamu
+  tags:
+    - "deletion-request"
 - id: retracted
   title:
     en: Retraction/Withdrawal of a record
     sv: Återkallande/tillbakadragande av en post
     de: Widerruf eines Eintrags
     cs: Stáhnutí záznamu
+  tags:
+    - "deletion-request"
 - id: replaced
   title:
     en: Substitution
@@ -28,18 +32,24 @@
     sv: Test-uppladdning av en post
     de: Test-Upload eines Eintrags
     cs: Testovací nahrání záznamu
+  tags:
+    - "deletion-request"
 - id: copyright
   title:
     en: Copyright infringement
     sv: Upphovsrättsintrång
     de: Urheberrechtsverletzung
     cs: Porušení autorských práv
+  tags:
+    - "deletion-request"
 - id: personal-data
   title:
     en: Personal data issue
     sv: Problem med personuppgifter
     de: Problem mit personenbezogenen Daten
     cs: Problém s osobními údaji
+  tags:
+    - "deletion-request"
 - id: take-down-request
   title:
     en: Take-down request
