@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2025-08-21T13:57:40.004Z\n"
-"PO-Revision-Date: 2025-08-21T13:57:40.004Z\n"
+"POT-Creation-Date: 2025-08-26T12:34:53.617Z\n"
+"PO-Revision-Date: 2025-08-26T12:34:53.617Z\n"
 "Language: en\n"
 
 msgid "Copy to clipboard"
@@ -911,3 +911,6 @@ msgstr ""
 
 msgid "However, you will still be able to update the record's metadata later."
 msgstr "However, you will still be able to update the record's metadata later."
+
+msgid "DOI is needed. You need to reserve a DOI before publishing."
+msgstr "DOI is needed. You need to reserve a DOI before publishing."

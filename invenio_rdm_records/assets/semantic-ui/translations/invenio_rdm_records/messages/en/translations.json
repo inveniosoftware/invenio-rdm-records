@@ -259,5 +259,6 @@
   "Before that, you will still be able to modify metadata and files of this upload.": "Before that, you will still be able to modify metadata and files of this upload.",
   "Your upload will be": "Your upload will be",
   "in '{{communityTitle}}'. You will no longer be able to change the files in the upload!": "in '{{communityTitle}}'. You will no longer be able to change the files in the upload!",
-  "However, you will still be able to update the record's metadata later.": "However, you will still be able to update the record's metadata later."
+  "However, you will still be able to update the record's metadata later.": "However, you will still be able to update the record's metadata later.",
+  "DOI is needed. You need to reserve a DOI before publishing.": "DOI is needed. You need to reserve a DOI before publishing."
 }
