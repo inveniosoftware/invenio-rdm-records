@@ -21,7 +21,7 @@ for arg in $@; do
 			npm install --no-save --no-package-lock @inveniosoftware/eslint-config-invenio@^2.0.0;;
 	  -f|--fix)
 	    printf "${GREEN}Run eslint${NC}\n";
-      npx eslint -c invenio_rdm_records/assets/semantic-ui/js/invenio_rdm_records/.eslintrc.yml invenio_rdm_records/**/*.js --fix;;
+      npx eslint -c invenio_rdm_records/assets/semantic-ui/js/invenio_rdm_records/eslint.config.js invenio_rdm_records/**/*.js --fix;;
 		*)
 			printf "Argument ${RED}$arg${NC} not supported\n"
 			exit;;
@@ -29,4 +29,4 @@ for arg in $@; do
 done
 
 printf "${GREEN}Run eslint${NC}\n"
-npx eslint -c invenio_rdm_records/assets/semantic-ui/js/invenio_rdm_records/.eslintrc.yml invenio_rdm_records/**/*.js
+npx eslint -c invenio_rdm_records/assets/semantic-ui/js/invenio_rdm_records/eslint.config.js invenio_rdm_records/**/*.js
