@@ -46,7 +46,7 @@ class PublishButtonComponent extends Component {
       isDOIRequired,
       noINeedDOI,
       formik,
-      "DOI is needed. You need to reserve a DOI before publishing.",
+      i18next.t("DOI is needed. You need to reserve a DOI before publishing."),
       DRAFT_PUBLISH_FAILED_WITH_VALIDATION_ERRORS
     );
 
