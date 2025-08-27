@@ -12,6 +12,23 @@
 Changes
 =======
 
+Version v20.0.1 (released 2025-08-27)
+
+- fix: use config variable instead of redefining
+- services: create RDMCommunityRecordSearchOptions
+- deposit-form: add fallback message if checksum is not yet available
+    * this is relevant for the multipart file upload with local file
+      storage, where the checksum gets calculated in a background task after
+      finalizing the upload
+- fix(schemaorg): chase award schema relaxation from Invenio-Vocabularies
+- fix(oaipmh): properly change output format
+    * `URLSearchParams` does not parse URLs,
+      https://developer.mozilla.org/en-US/docs/Web/API/URLSearchParams#no_url_parsing,
+      preventing the `metadataPrefix` from changing when a new value is
+      selected on the dropdown.
+- UI: use X for discard instead of trash icon
+- UI: add icon to delete button
+
 Version v20.0.0 (released 2025-08-01)
 
 - feat: implement request reviewers functionality
