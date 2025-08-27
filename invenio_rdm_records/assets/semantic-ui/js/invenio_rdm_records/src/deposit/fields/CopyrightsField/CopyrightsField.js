@@ -7,40 +7,69 @@
 // under the terms of the MIT License; see LICENSE file for more details.
 
 import React, { Component } from "react";
-import PropTypes from "prop-types";
-
-import { FieldLabel, TextField } from "react-invenio-forms";
+import Overridable from "react-overridable";
 import { i18next } from "@translations/invenio_rdm_records/i18next";
+import {
+  createCommonDepositFieldComponent,
+  fieldCommonProps,
+  FieldLabel,
+  TextField,
+} from "react-invenio-forms";
 
-export class CopyrightsField extends Component {
+class CopyrightsFieldComponent extends Component {
   render() {
-    const { fieldPath, label, required } = this.props;
+    const { fieldPath, label, labelIcon, required, disabled, helpText, placeholder } =
+      this.props;
+
     return (
-      <TextField
-        fieldPath={fieldPath}
-        label={
-          <FieldLabel htmlFor={fieldPath} icon="copyright outline" label={label} />
-        }
+      <Overridable
+        id="InvenioRdmRecords.DepositForm.CopyrightsField.Container"
+        label={label}
+        labelIcon={labelIcon}
         required={required}
-        helpText={i18next.t(
-          "A copyright statement describing the ownership of the uploaded resource."
-        )}
-        placeholder={i18next.t("Copyright (C) {{currentYear}} The Authors.", {
-          currentYear: new Date().getFullYear(),
-        })}
-        optimized
-      />
+        disabled={disabled}
+        helpText={helpText}
+        placeholder={placeholder}
+      >
+        <TextField
+          fieldPath={fieldPath}
+          label={
+            <Overridable
+              id="InvenioRdmRecords.DepositForm.CopyrightsField.Label"
+              labelIcon={labelIcon}
+              label={label}
+            >
+              <FieldLabel htmlFor={fieldPath} icon={labelIcon} label={label} />
+            </Overridable>
+          }
+          required={required}
+          disabled={disabled}
+          helpText={helpText}
+          placeholder={placeholder}
+          optimized
+        />
+      </Overridable>
     );
   }
 }
 
-CopyrightsField.propTypes = {
-  fieldPath: PropTypes.string.isRequired,
-  label: PropTypes.string,
-  required: PropTypes.bool,
+CopyrightsFieldComponent.propTypes = {
+  ...fieldCommonProps,
 };
 
-CopyrightsField.defaultProps = {
+CopyrightsFieldComponent.defaultProps = {
   label: i18next.t("Copyright"),
+  labelIcon: "copyright outline",
   required: false,
+  helpText: i18next.t(
+    "A copyright statement describing the ownership of the uploaded resource."
+  ),
+  placeholder: i18next.t("Copyright (C) {{currentYear}} The Authors.", {
+    currentYear: new Date().getFullYear(),
+  }),
 };
+
+export const CopyrightsField = createCommonDepositFieldComponent(
+  "InvenioRdmRecords.DepositForm.CopyrightsField",
+  CopyrightsFieldComponent
+);

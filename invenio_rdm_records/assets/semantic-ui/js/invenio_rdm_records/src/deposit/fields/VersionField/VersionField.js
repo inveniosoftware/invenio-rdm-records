@@ -8,46 +8,78 @@
 
 import React, { Component } from "react";
 import PropTypes from "prop-types";
-
-import { FieldLabel, TextField } from "react-invenio-forms";
+import Overridable from "react-overridable";
+import {
+  FieldLabel,
+  TextField,
+  createCommonDepositFieldComponent,
+  fieldCommonProps,
+} from "react-invenio-forms";
 import { i18next } from "@translations/invenio_rdm_records/i18next";
 
-export class VersionField extends Component {
+class VersionFieldComponent extends Component {
   render() {
-    const { fieldPath, label, labelIcon, placeholder } = this.props;
+    const { fieldPath, label, labelIcon, placeholder, disabled, required } = this.props;
     const helpText = (
-      <span>
-        {i18next.t(
-          "Mostly relevant for software and dataset uploads. A semantic version string is preferred see"
-        )}
-        <a href="https://semver.org/" target="_blank" rel="noopener noreferrer">
-          {" "}
-          semver.org
-        </a>
-        {i18next.t(", but any version string is accepted.")}
-      </span>
+      <Overridable id="InvenioRdmRecords.DepositForm.VersionField.Help">
+        <span>
+          {i18next.t(
+            "Mostly relevant for software and dataset uploads. A semantic version string is preferred see"
+          )}
+          <a href="https://semver.org/" target="_blank" rel="noopener noreferrer">
+            {" "}
+            semver.org
+          </a>
+          {i18next.t(", but any version string is accepted.")}
+        </span>
+      </Overridable>
     );
 
     return (
-      <TextField
+      <Overridable
+        id="InvenioRdmRecords.DepositForm.VersionField.Container"
         fieldPath={fieldPath}
         helpText={helpText}
-        label={<FieldLabel htmlFor={fieldPath} icon={labelIcon} label={label} />}
+        labelIcon={labelIcon}
+        label={label}
         placeholder={placeholder}
-      />
+        disabled={disabled}
+        required={required}
+      >
+        <TextField
+          fieldPath={fieldPath}
+          helpText={helpText}
+          label={
+            <Overridable
+              id="InvenioRdmRecords.DepositForm.VersionField.Label"
+              labelIcon={labelIcon}
+              label={label}
+            >
+              <FieldLabel htmlFor={fieldPath} icon={labelIcon} label={label} />
+            </Overridable>
+          }
+          placeholder={placeholder}
+          disabled={disabled}
+          required={required}
+        />
+      </Overridable>
     );
   }
 }
 
-VersionField.propTypes = {
+VersionFieldComponent.propTypes = {
   fieldPath: PropTypes.string.isRequired,
-  label: PropTypes.string,
-  labelIcon: PropTypes.string,
   placeholder: PropTypes.string,
+  ...fieldCommonProps,
 };
 
-VersionField.defaultProps = {
+VersionFieldComponent.defaultProps = {
   label: i18next.t("Version"),
   labelIcon: "code branch",
   placeholder: "",
 };
+
+export const VersionField = createCommonDepositFieldComponent(
+  "InvenioRdmRecords.DepositForm.VersionField",
+  VersionFieldComponent
+);
