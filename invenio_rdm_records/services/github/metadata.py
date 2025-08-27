@@ -13,7 +13,7 @@ import yaml
 from flask import current_app
 from invenio_i18n import _
 from invenio_vcs.errors import CustomGitHubMetadataError
-from invenio_vcs.providers import GenericContributor
+from invenio_vcs.generic_models import GenericContributor
 from marshmallow import Schema, ValidationError
 from mistune import markdown
 
