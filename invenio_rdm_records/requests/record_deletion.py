@@ -80,7 +80,6 @@ class AcceptAction(actions.AcceptAction):
         removal_reason_id = self.request.get("payload", {}).get("reason")
         tombstone_data = {
             "removal_reason": {"id": removal_reason_id},
-            "removed_by": {"user": str(request_creator.id)},
         }
 
         # For immediate deletions, we track in the tombstone the deletion policy ID
@@ -90,6 +89,10 @@ class AcceptAction(actions.AcceptAction):
             # NOTE: Deletion policies are not a vocabulary, but we follow the same
             # format for consistency and potential extensions.
             tombstone_data["deletion_policy"] = {"id": policy_id}
+            tombstone_data["removed_by"] = {"user": str(request_creator.id)}
+        else:
+            tombstone_data["removed_by"] = {"user": str(identity.user.id)}
+
 
         current_rdm_records_service.delete_record(
             identity, record["id"], tombstone_data, uow=uow
