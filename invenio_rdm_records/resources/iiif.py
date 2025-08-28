@@ -18,6 +18,7 @@ import marshmallow as ma
 import requests
 from flask import Response, current_app, g, request, send_file
 from flask_cors import cross_origin
+from flask_iiif.errors import MultimediaImageNotFound
 from flask_resources import (
     HTTPJSONException,
     JSONSerializer,
@@ -105,6 +106,11 @@ class IIIFResourceConfig(ResourceConfig, ConfiguratorMixin):
                 description=_(
                     "The record associated with this file has been deleted. See deletion notice."
                 ),
+            )
+        ),
+        MultimediaImageNotFound: create_error_handler(
+            lambda e: HTTPJSONException(
+                code=404, description=_("The requested image cannot be found.")
             )
         ),
     }
