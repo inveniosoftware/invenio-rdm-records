@@ -1,9 +1,13 @@
 // This file is part of Invenio-RDM-Records
 // Copyright (C) 2020-2023 CERN.
 // Copyright (C) 2020-2022 Northwestern University.
+// Copyright (C) 2025 CSC - IT Center for Science ltd.
 //
 // Invenio-RDM-Records is free software; you can redistribute it and/or modify it
 // under the terms of the MIT License; see LICENSE file for more details.
+
+import { createDragDropManager } from "dnd-core";
+import { HTML5Backend } from "react-dnd-html5-backend";
 
 /**
  * Traverse the leaves (non-Object, non-Array values) of obj and execute func
@@ -43,3 +47,5 @@ export function scrollTop() {
     behavior: "smooth",
   });
 }
+
+export const manager = createDragDropManager(HTML5Backend);
