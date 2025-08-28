@@ -36,7 +36,9 @@ class SubmitReviewOrPublishComponent extends Component {
       isDOIRequired !== undefined && // isDOIRequired is undefined when no value was provided from Invenio-app-rdm
       !isDOIRequired &&
       noINeedDOI &&
-      Object.keys(formik?.values?.pids).length === 0;
+      // Check if there is no DOI reserved yet. We check for doi explicitly as the pids object
+      // might contain other identifiers e.g. oai
+      Object.keys(formik?.values?.pids?.doi || {}).length === 0;
     if (shouldCheckForExplicitDOIReservation) {
       const errors = {
         pids: {
