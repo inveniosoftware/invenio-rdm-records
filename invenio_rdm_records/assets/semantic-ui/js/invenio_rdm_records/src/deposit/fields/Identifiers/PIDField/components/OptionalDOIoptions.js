@@ -12,6 +12,7 @@ import { connect } from "react-redux";
 import { Form, Radio, Popup } from "semantic-ui-react";
 import { DepositStatus } from "../../../../state/reducers/deposit";
 
+const PROVIDER_EXTERNAL = "external";
 /**
  * Manage radio buttons choices between managed (i.e. datacite), unmanaged (i.e. external) and no need for a PID.
  */
@@ -42,20 +43,27 @@ class OptionalDOIoptionsCmp extends Component {
     ].includes(record.status);
 
     const hasDoi = doi !== "";
-    const isUnManagedDisabled = alreadyPublished
-      ? !optionalDOItransitions.allowed_providers.includes("external")
-      : hasDoi && isManagedSelected;
+    const hasInternalProvider =
+      hasDoi && record?.pids?.doi?.provider !== PROVIDER_EXTERNAL;
+    const hasManagedDOI = hasInternalProvider && isManagedSelected;
 
-    const isNoNeedDisabled = alreadyPublished
-      ? !optionalDOItransitions.allowed_providers.includes("not_needed")
-      : hasDoi && isManagedSelected;
+    function isDisabled(provider) {
+      return (
+        hasManagedDOI ||
+        (alreadyPublished &&
+          !optionalDOItransitions?.allowed_providers?.includes(provider))
+      );
+    }
 
-    const isManagedTransition = optionalDOItransitions?.allowed_providers?.some(
+    const isUnManagedDisabled = isDisabled("external");
+    const isNoNeedDisabled = isDisabled("not_needed");
+
+    const managedProviderAllowed = optionalDOItransitions?.allowed_providers?.some(
       (val) => !["external", "not_needed"].includes(val)
     );
     // The locally managed DOI is disabled either if the external provider is allowed or if the no need option is allowed
     const isManagedDisabled = alreadyPublished
-      ? !isManagedTransition
+      ? !managedProviderAllowed
       : hasDoi && isManagedSelected;
 
     const yesIHaveOne = (
