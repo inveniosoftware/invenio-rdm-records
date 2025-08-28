@@ -65,7 +65,14 @@ class RequestDeletionPolicy(BasePolicy):
     """Deletion policy which only depends on the identity."""
 
     id = "request-deletion-v1"
-    description = _("Owners can always request record deletion")
+
+    def __init__(self, grace_period=timedelta(days=30)):
+        """Initialise the policy with a grace_period."""
+        self.grace_period = grace_period
+        self.description = _(
+            "Owners must submit a request for record deletion if the record has been "
+            "published for more than {grace_period} days."
+        ).format(grace_period=grace_period.days)
 
     def is_allowed(self, identity, record):
         """Whether the identity is allowed to delete the record."""
