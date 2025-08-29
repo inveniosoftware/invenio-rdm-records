@@ -36,7 +36,7 @@ except AttributeError:
 
 from collections import namedtuple
 from copy import deepcopy
-from datetime import datetime
+from datetime import datetime, timedelta
 from io import BytesIO
 from unittest import mock
 
@@ -47,7 +47,10 @@ from flask_principal import Identity, Need, RoleNeed, UserNeed
 from flask_security import login_user
 from flask_security.utils import hash_password
 from invenio_access.models import ActionRoles
-from invenio_access.permissions import superuser_access, system_identity
+from invenio_access.permissions import (
+    superuser_access,
+    system_identity,
+)
 from invenio_accounts.models import Role
 from invenio_accounts.testutils import login_user_via_session
 from invenio_administration.permissions import administration_access_action
@@ -109,6 +112,10 @@ from invenio_rdm_records.requests.entity_resolvers import (
 from invenio_rdm_records.resources.serializers import DataCite43JSONSerializer
 from invenio_rdm_records.services.communities.components import (
     CommunityServiceComponents,
+)
+from invenio_rdm_records.services.deletion_policy import (
+    GracePeriodPolicy,
+    RequestDeletionPolicy,
 )
 from invenio_rdm_records.services.pids import providers
 
@@ -392,6 +399,13 @@ def app_config(app_config, mock_datacite_client):
 
     app_config["USERS_RESOURCES_GROUPS_ENABLED"] = True
     app_config["THEME_FRONTPAGE"] = False
+
+    app_config["RDM_IMMEDIATE_RECORD_DELETION_ENABLED"] = True
+    app_config["RDM_IMMEDIATE_RECORD_DELETION_POLICIES"] = [
+        GracePeriodPolicy(grace_period=timedelta(days=30))
+    ]
+    app_config["RDM_REQUEST_RECORD_DELETION_ENABLED"] = True
+    app_config["RDM_REQUEST_RECORD_DELETION_POLICIES"] = [RequestDeletionPolicy()]
 
     return app_config
 
@@ -1624,6 +1638,41 @@ def awards_v(app, funders_v):
     return award
 
 
+@pytest.fixture(scope="module")
+def removal_reason_type(app):
+    """Removal reason vocabulary type."""
+    return vocabulary_service.create_type(system_identity, "removalreasons", "rem")
+
+
+@pytest.fixture(scope="module")
+def removal_reason_v(app, removal_reason_type):
+    """Removal reason vocabulary record."""
+    vocab_spam = vocabulary_service.create(
+        system_identity,
+        {
+            "id": "spam",
+            "title": {"en": "Spam"},
+            "type": "removalreasons",
+        },
+    )
+    vocab_test_record = vocabulary_service.create(
+        system_identity,
+        {
+            "id": "test-record",
+            "title": {"en": "Test upload of a record"},
+            "type": "removalreasons",
+            "tags": ["deletion-request"],
+        },
+    )
+
+    Vocabulary.index.refresh()
+
+    return {
+        "spam": vocab_spam,
+        "test-record": vocab_test_record,
+    }
+
+
 @pytest.fixture()
 def cache():
     """Empty cache."""
@@ -1653,6 +1702,7 @@ RunningApp = namedtuple(
         "licenses_v",
         "funders_v",
         "awards_v",
+        "removal_reason_v",
         "moderator_role",  # Add moderator role by default to the app
     ],
 )
@@ -1676,6 +1726,7 @@ def running_app(
     licenses_v,
     funders_v,
     awards_v,
+    removal_reason_v,
     moderator_role,
 ):
     """This fixture provides an app with the typically needed db data loaded.
@@ -1700,6 +1751,7 @@ def running_app(
         licenses_v,
         funders_v,
         awards_v,
+        removal_reason_v,
         moderator_role,
     )
 
@@ -2108,7 +2160,10 @@ def record_factory(db, uploader, minimal_record, community, location):
             """Creates new record that belongs to the same community."""
             service = current_rdm_records_service
             files_service = service.draft_files
-            idty = uploader.identity
+            if isinstance(uploader, Identity):
+                idty = uploader
+            else:
+                idty = uploader.identity
             # create draft
             if file:
                 record_dict["files"] = {"enabled": True}
