@@ -79,7 +79,7 @@ def test_request_flow(uploader, superuser, client, record_factory, headers):
     resp = client.get(f"/records/{record.pid.pid_value}")
     assert resp.status_code == 410
     assert resp.json["message"] == "Record deleted"
-    assert resp.json["tombstone"]["removed_by"] == {"user": str(uploader.id)}
+    assert resp.json["tombstone"]["removed_by"] == {"user": str(superuser.id)}
     assert resp.json["tombstone"]["is_visible"] is True
     assert resp.json["tombstone"]["note"] == ""
     assert resp.json["tombstone"]["removal_date"].startswith(date.today().isoformat())
