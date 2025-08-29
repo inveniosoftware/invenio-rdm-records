@@ -355,6 +355,32 @@ export class RDMDepositRecordSerializer extends DepositRecordSerializer {
   }
 
   /**
+   * Extract localized message from object or return string as-is
+   * @method
+   * @param {string|object|array} value - localized object, string, or array
+   * @returns {string} localized message
+   */
+  _getLocalizedMessage(value) {
+    if (typeof value === "string") return value;
+
+    if (_isArray(value)) {
+      return value.map((item) => this._getLocalizedMessage(item)).join(" ");
+    }
+
+    if (_isObject(value)) {
+      const locale =
+        (typeof window !== "undefined" && window.app?.config?.locale) ||
+        (typeof document !== "undefined" && document.documentElement.lang) ||
+        this.defaultLocale ||
+        "en";
+
+      return value[locale] || value["en"] || value[Object.keys(value)[0]] || "";
+    }
+
+    return "";
+  }
+
+  /**
    * Deserialize backend record errors into format compatible with frontend.
    * @method
    * @param {array} errors - array of error objects
@@ -372,13 +398,13 @@ export class RDMDepositRecordSerializer extends DepositRecordSerializer {
       if ("severity" in e && "severity" in e) {
         // New error format with severity and description
         _set(deserializedErrors, e.field, {
-          message: e.messages.join(" "),
+          message: this._getLocalizedMessage(e.messages),
           severity: e.severity, // severity level of the error
-          description: e.description, // additional information about the rule that generated the error
+          description: this._getLocalizedMessage(e.description), // additional information about the rule that generated the error
         });
       } else {
         // Backward compatibility with old error format, including just the error string
-        _set(deserializedErrors, e.field, e.messages.join(" "));
+        _set(deserializedErrors, e.field, this._getLocalizedMessage(e.messages));
       }
     }
 
