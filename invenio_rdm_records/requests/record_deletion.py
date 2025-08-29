@@ -91,8 +91,10 @@ class AcceptAction(actions.AcceptAction):
             tombstone_data["deletion_policy"] = {"id": policy_id}
             tombstone_data["removed_by"] = {"user": str(request_creator.id)}
         else:
-            tombstone_data["removed_by"] = {"user": str(identity.user.id)}
-
+            remover = (
+                identity.id if identity is system_identity else str(identity.user.id)
+            )
+            tombstone_data["removed_by"] = {"user": remover}
 
         current_rdm_records_service.delete_record(
             identity, record["id"], tombstone_data, uow=uow
