@@ -12,6 +12,14 @@
 Changes
 =======
 
+Version v20.0.2 (released 2025-09-01)
+
+- fix(optional-doi): show correctly showed value on form initialization 
+    * uses published record doi to check if the managed DOI can be unreserved. 
+    * `shouldCheckForExplicitDOIReservation` condition is evaluated against pids.doi because 
+      before it was taking into account only the pids object and there more pids could be present e.g. oai
+- fix(iiif): add error handler for `MultimediaImageNotFound`
+
 Version v20.0.1 (released 2025-08-27)
 
 - fix: use config variable instead of redefining
