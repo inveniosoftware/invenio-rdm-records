@@ -44,7 +44,7 @@ class GracePeriodPolicy(BasePolicy):
         """Initialise the policy with a grace_period."""
         self.grace_period = grace_period
         self.description = _(
-            "Records can be deleted by their owner within {grace_period} days"
+            "You can delete your records within {grace_period} days of publishing."
         ).format(grace_period=grace_period.days)
 
     def is_allowed(self, identity, record):
@@ -70,7 +70,8 @@ class RequestDeletionPolicy(BasePolicy):
         """Initialise the policy with a grace_period."""
         self.grace_period = grace_period
         self.description = _(
-            "Owners must submit a request for record deletion if the record has been "
+            "You must submit a deletion request with a detailed justification "
+            "because the record has been "
             "published for more than {grace_period} days."
         ).format(grace_period=grace_period.days)
 
