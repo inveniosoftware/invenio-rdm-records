@@ -14,6 +14,8 @@ from copy import deepcopy
 
 import pytest
 from invenio_access.permissions import system_identity
+from invenio_pidstore.errors import PIDDoesNotExistError
+from invenio_pidstore.models import PIDStatus
 
 from invenio_rdm_records.proxies import current_rdm_records
 from invenio_rdm_records.services.errors import (
@@ -206,6 +208,64 @@ def test_edit_published_record_change_doi_when_optional(
     record = service.publish(id_=draft.id, identity=system_identity)
     assert "doi" in record._record.pids
     assert "doi" in record._record.parent.pids
+
+    # Reset the running_app config for next tests
+    running_app.app.config["RDM_PERSISTENT_IDENTIFIERS"]["doi"]["required"] = True
+
+
+def test_delete_draft_discard_managed_pids_when_doi_optional(
+    running_app, search_clear, minimal_record, verified_user
+):
+    running_app.app.config["RDM_PERSISTENT_IDENTIFIERS"]["doi"]["required"] = False
+    # running_app.app.config["RDM_OPTIONAL_DOI_VALIDATOR"] = custom_validate_optional_doi
+
+    verified_user_identity = verified_user.identity
+    service = current_rdm_records.records_service
+    # Publish without DOI
+    draft = service.create(verified_user_identity, minimal_record)
+    record = service.publish(id_=draft.id, identity=verified_user_identity)
+    assert "doi" not in record._record.pids
+    assert "doi" not in record._record.parent.pids
+
+    # edit the new published version and change the DOI to locally managed with
+    draft = service.edit(verified_user_identity, record.id)
+    draft = service.pids.create(verified_user_identity, draft.id, "doi")
+    draft_data = deepcopy(draft.data)
+    draft_data["metadata"]["publication_date"] = "2023-01-01"
+    draft = service.update_draft(verified_user_identity, draft.id, data=draft_data)
+
+    assert "doi" in draft.data["pids"]
+
+    draft_doi = draft.data["pids"]["doi"]["identifier"]
+    doi_provider = service.pids.pid_manager._get_provider("doi", "datacite")
+    pid = doi_provider.get(pid_value=draft_doi)
+    assert pid.status == PIDStatus.NEW
+
+    # Delete the draft and check that the pid is discarded
+    service.delete_draft(verified_user_identity, draft.id)
+
+    with pytest.raises(PIDDoesNotExistError):
+        pid = doi_provider.get(pid_value=draft_doi)
+
+    # create a new version with managed DOI and then discard the draft
+    draft = service.new_version(verified_user_identity, record.id)
+    draft_data = deepcopy(draft.data)
+    draft_data["metadata"]["publication_date"] = "2023-01-01"
+
+    draft = service.pids.create(verified_user_identity, draft.id, "doi")
+    draft_data = deepcopy(draft.data)
+    draft_data["metadata"]["publication_date"] = "2023-01-01"
+    draft = service.update_draft(verified_user_identity, draft.id, data=draft_data)
+
+    assert "doi" in draft.data["pids"]
+
+    draft_doi = draft.data["pids"]["doi"]["identifier"]
+    pid = doi_provider.get(pid_value=draft_doi)
+    assert pid.status == PIDStatus.NEW
+
+    service.delete_draft(verified_user_identity, draft.id)
+    with pytest.raises(PIDDoesNotExistError):
+        pid = doi_provider.get(pid_value=draft_doi)
 
     # Reset the running_app config for next tests
     running_app.app.config["RDM_PERSISTENT_IDENTIFIERS"]["doi"]["required"] = True
