@@ -132,7 +132,7 @@ OptionalDOIoptionsCmp.propTypes = {
   isNoNeedSelected: PropTypes.bool.isRequired,
   onManagedUnmanagedChange: PropTypes.func.isRequired,
   pidLabel: PropTypes.string,
-  optionalDOItransitions: PropTypes.array.isRequired,
+  optionalDOItransitions: PropTypes.object.isRequired,
   record: PropTypes.object.isRequired,
 };
 

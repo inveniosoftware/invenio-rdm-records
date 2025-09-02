@@ -54,7 +54,7 @@ PIDField.propTypes = {
   unmanagedHelpText: PropTypes.string,
   record: PropTypes.object.isRequired,
   doiDefaultSelection: PropTypes.object.isRequired,
-  optionalDOItransitions: PropTypes.array.isRequired,
+  optionalDOItransitions: PropTypes.object.isRequired,
 };
 
 PIDField.defaultProps = {
