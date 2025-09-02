@@ -99,6 +99,18 @@ class PIDsComponent(ServiceComponent):
             **kwargs,
         )
 
+    def _find_changed_pids_to_discard_from_source(self, source_pids, dest_pids):
+        """Finds PIDs that have changed between draft and record."""
+        changed_pids = {}
+        draft_schemes = set(source_pids.keys())
+        record_schemes = set(dest_pids.keys())
+        for scheme in draft_schemes & record_schemes:
+            dest_pid_value = dest_pids[scheme]["identifier"]
+            source_pid_value = source_pids[scheme]["identifier"]
+            if dest_pid_value != source_pid_value:
+                changed_pids[scheme] = source_pids[scheme]
+        return changed_pids
+
     def create(self, identity, data=None, record=None, errors=None):
         """This method is called on draft creation.
 
@@ -143,12 +155,22 @@ class PIDsComponent(ServiceComponent):
         # ATTENTION: Delete draft is called both for published and unpublished
         # records. Hence, we cannot just delete all PIDs, but only the new
         # unregistered PIDs.
-        to_remove = copy(draft.get("pids", {}))
-        record_pids = record.get("pids", {}).keys() if record else []
-        for scheme in record_pids:
-            to_remove.pop(scheme)
-
-        self.service.pids.pid_manager.discard_all(to_remove)
+        draft_pids = draft.get("pids", {})
+        record_pids = copy(record.get("pids", {})) if record else {}
+        draft_schemes = set(draft_pids.keys())
+        record_schemes = set(record_pids.keys())
+        common_schemes = draft_schemes & record_schemes
+        changed_pids = (
+            self._find_changed_pids_to_discard_from_source(draft_pids, record_pids)
+            if record
+            else draft_pids  # discard all draft pids if no record
+        )
+        # If no changed pids are found, check to remove only pids that are not on the record
+        if not changed_pids:
+            changed_pids = {
+                scheme: draft_pids[scheme] for scheme in draft_schemes - common_schemes
+            }
+        self.service.pids.pid_manager.discard_all(changed_pids)
         draft.pids = {}
 
     def publish(self, identity, draft=None, record=None):
@@ -182,12 +204,9 @@ class PIDsComponent(ServiceComponent):
         # Example: An external DOI (i.e. DOI not managed by us) can be changed
         # on a published record. Changes are handled by removing the old PID
         # and adding the new.
-        changed_pids = {}
-        for scheme in draft_schemes & record_schemes:
-            record_id = record_pids[scheme]["identifier"]
-            draft_id = draft_pids[scheme]["identifier"]
-            if record_id != draft_id:
-                changed_pids[scheme] = record_pids[scheme]
+        changed_pids = self._find_changed_pids_to_discard_from_source(
+            record_pids, draft_pids
+        )
 
         self.service.pids.pid_manager.validate_restriction_level(draft)
 
