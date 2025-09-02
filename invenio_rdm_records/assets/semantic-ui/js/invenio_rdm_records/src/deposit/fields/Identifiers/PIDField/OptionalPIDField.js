@@ -275,7 +275,7 @@ OptionalPIDFieldCmp.propTypes = {
   unmanagedHelpText: PropTypes.string,
   record: PropTypes.object.isRequired,
   doiDefaultSelection: PropTypes.object.isRequired,
-  optionalDOItransitions: PropTypes.array.isRequired,
+  optionalDOItransitions: PropTypes.object.isRequired,
   /* from Redux */
   publishedDOI: PropTypes.object,
   setNoINeedDOI: PropTypes.func.isRequired,
