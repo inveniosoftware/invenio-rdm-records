@@ -12,6 +12,6 @@
 
 from .ext import InvenioRDMRecords
 
-__version__ = "20.0.2"
+__version__ = "20.0.3"
 
 __all__ = ("__version__", "InvenioRDMRecords")
