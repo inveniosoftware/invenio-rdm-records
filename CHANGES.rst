@@ -12,6 +12,13 @@
 Changes
 =======
 
+Version v20.0.3 (released 2025-09-03)
+
+- fix(deposit-form): correct wrong propType for optionalDOItransitions
+- fix(deposit-form): on delete draft discard all changed pids
+    * discard all draft pids if there is no published record (i.e. new version or new draft)
+    * discard all draft pids that are not in the published record
+
 Version v20.0.2 (released 2025-09-01)
 
 - fix(optional-doi): show correctly showed value on form initialization 
