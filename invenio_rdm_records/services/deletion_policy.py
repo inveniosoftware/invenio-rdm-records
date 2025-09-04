@@ -12,6 +12,7 @@ from datetime import datetime, timedelta, timezone
 from typing import Optional
 
 from flask import current_app
+from invenio_access.permissions import authenticated_user
 from invenio_i18n import lazy_gettext as _
 
 
@@ -119,6 +120,13 @@ class RDMRecordDeletionPolicy:
     @classmethod
     def evaluate(cls, identity, record):
         """Evaluate both immediate and request deletion for an identity and record."""
+        if authenticated_user not in identity.provides:
+            # only authenticated users can delete records
+            return {
+                "immediate_deletion": cls.Result(False),
+                "request_deletion": cls.Result(False),
+            }
+
         return {
             "immediate_deletion": cls.evaluate_policies(
                 "RDM_IMMEDIATE_RECORD_DELETION_ENABLED",
