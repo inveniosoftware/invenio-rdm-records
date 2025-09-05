@@ -13,33 +13,51 @@ import {
   TextField,
   GroupField,
   ArrayField,
-  FieldLabel,
   SelectField,
+  createCommonDepositFieldComponent,
+  fieldCommonProps,
 } from "react-invenio-forms";
-import { Button, Form, Icon } from "semantic-ui-react";
-
+import { Button, Form } from "semantic-ui-react";
+import Overridable from "react-overridable";
 import { emptyRelatedWork } from "./initialValues";
 import { ResourceTypeField } from "../ResourceTypeField";
 import { i18next } from "@translations/invenio_rdm_records/i18next";
 
-export class RelatedWorksField extends Component {
+class RelatedWorksFieldComponent extends Component {
   render() {
-    const { fieldPath, label, labelIcon, required, options, showEmptyValue } =
-      this.props;
+    const {
+      fieldPath,
+      label,
+      labelIcon,
+      required,
+      disabled,
+      options,
+      showEmptyValue,
+      helpText,
+      addButtonLabel,
+    } = this.props;
 
     return (
-      <>
-        <label className="helptext" style={{ marginBottom: "10px" }}>
-          {i18next.t(
-            "Specify identifiers of related works. Supported identifiers include DOI, Handle, ARK, PURL, ISSN, ISBN, PubMed ID, PubMed Central ID, ADS Bibliographic Code, arXiv, Life Science Identifiers (LSID), EAN-13, ISTC, URNs, and URLs."
-          )}
-        </label>
+      <Overridable
+        id="InvenioRdmRecords.DepositForm.RelatedWorksField.Container"
+        required={required}
+        disabled={disabled}
+        showEmptyValue={showEmptyValue}
+        defaultNewValue={emptyRelatedWork}
+        labelIcon={labelIcon}
+        label={label}
+        helpText={helpText}
+        addButtonLabel={addButtonLabel}
+      >
         <ArrayField
-          addButtonLabel={i18next.t("Add related work")}
+          addButtonLabel={addButtonLabel}
           defaultNewValue={emptyRelatedWork}
           fieldPath={fieldPath}
-          label={<FieldLabel htmlFor={fieldPath} icon={labelIcon} label={label} />}
+          helpText={helpText}
+          label={label}
+          labelIcon={labelIcon}
           required={required}
+          disabled={disabled}
           showEmptyValue={showEmptyValue}
         >
           {({ arrayHelpers, indexPath }) => {
@@ -80,46 +98,59 @@ export class RelatedWorksField extends Component {
                   width={2}
                 />
 
-                <ResourceTypeField
+                <Overridable
+                  id="InvenioRdmRecords.DepositForm.RelatedWorksField.ResourceType"
                   clearable
-                  fieldPath={`${fieldPathPrefix}.resource_type`}
-                  labelIcon="" // Otherwise breaks alignment
                   options={options.resource_type}
+                  labelIcon=""
                   width={7}
-                  labelclassname="small field-label-class"
-                />
+                >
+                  <ResourceTypeField
+                    clearable
+                    fieldPath={`${fieldPathPrefix}.resource_type`}
+                    options={options.resource_type}
+                    width={7}
+                    labelclassname="small field-label-class"
+                    schema="relatedWork"
+                  />
+                </Overridable>
 
                 <Form.Field>
                   <Button
                     aria-label={i18next.t("Remove field")}
                     className="close-btn"
-                    icon
+                    icon="close"
                     onClick={() => arrayHelpers.remove(indexPath)}
-                  >
-                    <Icon name="close" />
-                  </Button>
+                  />
                 </Form.Field>
               </GroupField>
             );
           }}
         </ArrayField>
-      </>
+      </Overridable>
     );
   }
 }
 
-RelatedWorksField.propTypes = {
-  fieldPath: PropTypes.string.isRequired,
-  label: PropTypes.string,
-  labelIcon: PropTypes.string,
-  required: PropTypes.bool,
+RelatedWorksFieldComponent.propTypes = {
   options: PropTypes.object.isRequired,
   showEmptyValue: PropTypes.bool,
+  addButtonLabel: PropTypes.string,
+  ...fieldCommonProps,
 };
 
-RelatedWorksField.defaultProps = {
+RelatedWorksFieldComponent.defaultProps = {
   label: i18next.t("Related works"),
   labelIcon: "barcode",
   required: undefined,
   showEmptyValue: false,
+  helpText: i18next.t(
+    "Specify identifiers of related works. Supported identifiers include DOI, Handle, ARK, PURL, ISSN, ISBN, PubMed ID, PubMed Central ID, ADS Bibliographic Code, arXiv, Life Science Identifiers (LSID), EAN-13, ISTC, URNs, and URLs."
+  ),
+  addButtonLabel: i18next.t("Add related work"),
 };
+
+export const RelatedWorksField = createCommonDepositFieldComponent(
+  "InvenioRdmRecords.DepositForm.RelatedWorksField",
+  RelatedWorksFieldComponent
+);

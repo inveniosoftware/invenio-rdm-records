@@ -8,45 +8,85 @@
 
 import React, { Component } from "react";
 import PropTypes from "prop-types";
-import { FieldLabel, RichInputField } from "react-invenio-forms";
+import {
+  FieldLabel,
+  RichInputField,
+  createCommonDepositFieldComponent,
+  fieldCommonProps,
+} from "react-invenio-forms";
 import { AdditionalDescriptionsField } from "./components";
 import { i18next } from "@translations/invenio_rdm_records/i18next";
+import Overridable from "react-overridable";
 
-export class DescriptionsField extends Component {
+class DescriptionsFieldComponent extends Component {
   render() {
-    const { fieldPath, label, labelIcon, options, editorConfig, recordUI } = this.props;
+    const {
+      fieldPath,
+      label,
+      labelIcon,
+      options,
+      editorConfig: propEditorConfig,
+      recordUI,
+      disabled,
+      required,
+      placeholder,
+    } = this.props;
+
+    const editorConfig = {
+      placeholder,
+      ...propEditorConfig,
+    };
+
     return (
-      <>
-        <RichInputField
-          className="description-field rel-mb-1 rel-mt-2"
-          fieldPath={fieldPath}
-          editorConfig={editorConfig}
-          label={<FieldLabel htmlFor={fieldPath} icon={labelIcon} label={label} />}
-          optimized
-        />
-        <AdditionalDescriptionsField
-          recordUI={recordUI}
-          options={options}
-          editorConfig={editorConfig}
-          fieldPath="metadata.additional_descriptions"
-        />
-      </>
+      <Overridable
+        id="InvenioRdmRecords.DepositForm.DescriptionsField.Container"
+        fieldPath={fieldPath}
+        editorConfig={editorConfig}
+        htmlFor={fieldPath}
+        icon={labelIcon}
+        label={label}
+        recordUI={recordUI}
+        options={options}
+        disabled={disabled}
+        required={required}
+      >
+        <>
+          <RichInputField
+            className="description-field rel-mb-1 rel-mt-2"
+            fieldPath={fieldPath}
+            editorConfig={editorConfig}
+            label={<FieldLabel htmlFor={fieldPath} icon={labelIcon} label={label} />}
+            optimized
+            disabled={disabled}
+            required={required}
+          />
+          <AdditionalDescriptionsField
+            recordUI={recordUI}
+            options={options}
+            editorConfig={editorConfig}
+            fieldPath="metadata.additional_descriptions"
+          />
+        </>
+      </Overridable>
     );
   }
 }
 
-DescriptionsField.propTypes = {
-  fieldPath: PropTypes.string.isRequired,
-  label: PropTypes.string,
-  labelIcon: PropTypes.string,
+DescriptionsFieldComponent.propTypes = {
   editorConfig: PropTypes.object,
   recordUI: PropTypes.object,
   options: PropTypes.object.isRequired,
+  ...fieldCommonProps,
 };
 
-DescriptionsField.defaultProps = {
+DescriptionsFieldComponent.defaultProps = {
   label: i18next.t("Description"),
   labelIcon: "pencil",
   editorConfig: undefined,
   recordUI: undefined,
 };
+
+export const DescriptionsField = createCommonDepositFieldComponent(
+  "InvenioRdmRecords.DepositForm.DescriptionsField",
+  DescriptionsFieldComponent
+);

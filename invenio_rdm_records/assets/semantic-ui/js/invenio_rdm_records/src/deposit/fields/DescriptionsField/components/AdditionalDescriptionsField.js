@@ -19,6 +19,8 @@ import { sortOptions } from "../../../utils";
 export class AdditionalDescriptionsField extends Component {
   render() {
     const { fieldPath, options, recordUI, editorConfig } = this.props;
+    const typeOptions = sortOptions(options.type);
+
     return (
       <ArrayField
         addButtonLabel={i18next.t("Add description")}
@@ -53,13 +55,15 @@ export class AdditionalDescriptionsField extends Component {
                       <Icon name="close" />
                     </Button>
                   </Form.Field>
+
                   <SelectField
                     fieldPath={`${fieldPathPrefix}.type`}
                     label={i18next.t("Type")}
-                    options={sortOptions(options.type)}
+                    options={typeOptions}
                     required
                     optimized
                   />
+
                   <LanguagesField
                     serializeSuggestions={(suggestions) =>
                       suggestions.map((item) => ({
@@ -70,9 +74,9 @@ export class AdditionalDescriptionsField extends Component {
                     }
                     initialOptions={
                       recordUI?.additional_descriptions &&
-                      recordUI.additional_descriptions[indexPath]?.lang
+                      (recordUI.additional_descriptions[indexPath]?.lang
                         ? [recordUI.additional_descriptions[indexPath].lang]
-                        : []
+                        : [])
                     }
                     fieldPath={`${fieldPathPrefix}.lang`}
                     label={i18next.t("Language")}
