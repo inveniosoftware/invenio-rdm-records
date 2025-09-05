@@ -15,7 +15,6 @@ import { emptyAdditionalDescription } from "./initialValues";
 import { LanguagesField } from "../../LanguagesField";
 import { i18next } from "@translations/invenio_rdm_records/i18next";
 import { sortOptions } from "../../../utils";
-import Overridable from "react-overridable";
 
 export class AdditionalDescriptionsField extends Component {
   render() {
@@ -23,85 +22,76 @@ export class AdditionalDescriptionsField extends Component {
     const typeOptions = sortOptions(options.type);
 
     return (
-      <Overridable
-        id="InvenioRdmRecords.DescriptionsField.Additional.container"
+      <ArrayField
+        addButtonLabel={i18next.t("Add description")}
         defaultNewValue={emptyAdditionalDescription}
-        options={options}
-        typeOptions={typeOptions}
-        recordUI={recordUI}
-        editorConfig={editorConfig}
+        fieldPath={fieldPath}
+        className="additional-descriptions"
       >
-        <ArrayField
-          addButtonLabel={i18next.t("Add description")}
-          defaultNewValue={emptyAdditionalDescription}
-          fieldPath={fieldPath}
-          className="additional-descriptions"
-        >
-          {({ arrayHelpers, indexPath }) => {
-            const fieldPathPrefix = `${fieldPath}.${indexPath}`;
+        {({ arrayHelpers, indexPath }) => {
+          const fieldPathPrefix = `${fieldPath}.${indexPath}`;
 
-            return (
-              <Grid className="description">
-                <Grid.Row>
-                  <Grid.Column mobile={16} tablet={10} computer={12}>
-                    <RichInputField
-                      fieldPath={`${fieldPathPrefix}.description`}
-                      label={i18next.t("Additional Description")}
-                      editorConfig={editorConfig}
-                      optimized
-                      required
-                    />
-                  </Grid.Column>
-                  <Grid.Column mobile={16} tablet={6} computer={4}>
-                    <Form.Field>
-                      <Button
-                        aria-label={i18next.t("Remove field")}
-                        className="close-btn"
-                        floated="right"
-                        icon
-                        onClick={() => arrayHelpers.remove(indexPath)}
-                      >
-                        <Icon name="close" />
-                      </Button>
-                    </Form.Field>
+          return (
+            <Grid className="description">
+              <Grid.Row>
+                <Grid.Column mobile={16} tablet={10} computer={12}>
+                  <RichInputField
+                    fieldPath={`${fieldPathPrefix}.description`}
+                    label={i18next.t("Additional Description")}
+                    editorConfig={editorConfig}
+                    optimized
+                    required
+                  />
+                </Grid.Column>
+                <Grid.Column mobile={16} tablet={6} computer={4}>
+                  <Form.Field>
+                    <Button
+                      aria-label={i18next.t("Remove field")}
+                      className="close-btn"
+                      floated="right"
+                      icon
+                      onClick={() => arrayHelpers.remove(indexPath)}
+                    >
+                      <Icon name="close" />
+                    </Button>
+                  </Form.Field>
 
-                    <SelectField
-                      fieldPath={`${fieldPathPrefix}.type`}
-                      label={i18next.t("Type")}
-                      options={typeOptions}
-                      required
-                      optimized
-                    />
+                  <SelectField
+                    fieldPath={`${fieldPathPrefix}.type`}
+                    label={i18next.t("Type")}
+                    options={typeOptions}
+                    required
+                    optimized
+                  />
 
-                    <LanguagesField
-                      serializeSuggestions={(suggestions) =>
-                        suggestions.map((item) => ({
-                          text: item.title_l10n,
-                          value: item.id,
-                          fieldPathPrefix: item.id,
-                        }))
-                      }
-                      initialOptions={
-                        recordUI?.additional_descriptions &&
-                        (recordUI.additional_descriptions[indexPath]?.lang
-                          ? [recordUI.additional_descriptions[indexPath].lang]
-                          : [])
-                      }
-                      fieldPath={`${fieldPathPrefix}.lang`}
-                      label={i18next.t("Language")}
-                      multiple={false}
-                      placeholder={i18next.t("Select language")}
-                      labelIcon=""
-                      clearable
-                      selectOnBlur={false}
-                    />
-                  </Grid.Column>
-                </Grid.Row>
-              </Grid>
-            );
-          }}
-        </ArrayField>
-      </Overridable>
+                  <LanguagesField
+                    serializeSuggestions={(suggestions) =>
+                      suggestions.map((item) => ({
+                        text: item.title_l10n,
+                        value: item.id,
+                        fieldPathPrefix: item.id,
+                      }))
+                    }
+                    initialOptions={
+                      recordUI?.additional_descriptions &&
+                      (recordUI.additional_descriptions[indexPath]?.lang
+                        ? [recordUI.additional_descriptions[indexPath].lang]
+                        : [])
+                    }
+                    fieldPath={`${fieldPathPrefix}.lang`}
+                    label={i18next.t("Language")}
+                    multiple={false}
+                    placeholder={i18next.t("Select language")}
+                    labelIcon=""
+                    clearable
+                    selectOnBlur={false}
+                  />
+                </Grid.Column>
+              </Grid.Row>
+            </Grid>
+          );
+        }}
+      </ArrayField>
     );
   }
 }

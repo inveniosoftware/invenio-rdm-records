@@ -12,7 +12,7 @@ import { Formik } from "formik";
 import PropTypes from "prop-types";
 import React, { Component } from "react";
 import { TextAreaField, TextField } from "react-invenio-forms";
-import Overridable, { OverridableContext } from "react-overridable";
+import { OverridableContext } from "react-overridable";
 import {
   EmptyResults,
   Error,
@@ -226,24 +226,14 @@ export class LicenseModal extends Component {
                     // eslint-disable-next-line
                     autoFocus
                   />
-                  <Overridable
-                    id="InvenioRdmRecords.DepositForm.LicenseField.Modal.description"
+                  <TextAreaField
+                    fieldPath="selectedLicense.description"
                     label={i18next.t("Description")}
-                  >
-                    <TextAreaField
-                      fieldPath="selectedLicense.description"
-                      label={i18next.t("Description")}
-                    />
-                  </Overridable>
-                  <Overridable
-                    id="InvenioRdmRecords.DepositForm.LicenseField.Modal.link"
+                  />
+                  <TextField
                     label={i18next.t("Link")}
-                  >
-                    <TextField
-                      label={i18next.t("Link")}
-                      fieldPath="selectedLicense.link"
-                    />
-                  </Overridable>
+                    fieldPath="selectedLicense.link"
+                  />
                 </Form>
               )}
             </Modal.Content>

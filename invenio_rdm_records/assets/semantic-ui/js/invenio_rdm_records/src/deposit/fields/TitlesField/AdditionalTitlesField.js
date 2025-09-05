@@ -10,7 +10,6 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
 import { Button, Form } from "semantic-ui-react";
-import Overridable from "react-overridable";
 import {
   ArrayField,
   GroupField,
@@ -28,74 +27,67 @@ class AdditionalTitlesFieldComponent extends Component {
     const { fieldPath, options, recordUI, helpText, addButtonLabel } = this.props;
 
     return (
-      <Overridable
-        id="InvenioRdmRecords.DepositForm.AdditionalTitlesField.Container"
-        defaultNewValue={emptyAdditionalTitle}
-        helpText={helpText}
+      <ArrayField
         addButtonLabel={addButtonLabel}
+        helpText={helpText}
+        defaultNewValue={emptyAdditionalTitle}
+        fieldPath={fieldPath}
+        className="additional-titles"
       >
-        <ArrayField
-          addButtonLabel={addButtonLabel}
-          helpText={helpText}
-          defaultNewValue={emptyAdditionalTitle}
-          fieldPath={fieldPath}
-          className="additional-titles"
-        >
-          {({ arrayHelpers, indexPath }) => {
-            const fieldPathPrefix = `${fieldPath}.${indexPath}`;
-            const languagesInitialOptions =
-              recordUI?.additional_titles && recordUI.additional_titles[indexPath]?.lang
-                ? [recordUI.additional_titles[indexPath].lang]
-                : [];
+        {({ arrayHelpers, indexPath }) => {
+          const fieldPathPrefix = `${fieldPath}.${indexPath}`;
+          const languagesInitialOptions =
+            recordUI?.additional_titles && recordUI.additional_titles[indexPath]?.lang
+              ? [recordUI.additional_titles[indexPath].lang]
+              : [];
 
-            return (
-              <GroupField fieldPath={fieldPath} optimized>
-                <TextField
-                  fieldPath={`${fieldPathPrefix}.title`}
-                  label={i18next.t("Additional title")}
-                  required
-                  width={5}
-                />
-                <SelectField
-                  fieldPath={`${fieldPathPrefix}.type`}
-                  label={i18next.t("Type")}
-                  optimized
-                  options={options.type}
-                  required
-                  width={5}
-                />
-                <LanguagesField
-                  serializeSuggestions={(suggestions) =>
-                    suggestions.map((item) => ({
-                      text: item.title_l10n,
-                      value: item.id,
-                      fieldPathPrefix: item.id,
-                    }))
-                  }
-                  initialOptions={languagesInitialOptions}
-                  fieldPath={`${fieldPathPrefix}.lang`}
-                  label={i18next.t("Language")}
-                  multiple={false}
-                  placeholder={i18next.t("Select language")}
-                  labelIcon={null}
-                  clearable
-                  selectOnBlur={false}
-                  width={5}
-                />
+          return (
+            <GroupField fieldPath={fieldPath} optimized>
+              <TextField
+                fieldPath={`${fieldPathPrefix}.title`}
+                label={i18next.t("Additional title")}
+                required
+                width={5}
+              />
+              <SelectField
+                fieldPath={`${fieldPathPrefix}.type`}
+                label={i18next.t("Type")}
+                optimized
+                options={options.type}
+                required
+                width={5}
+              />
+              <LanguagesField
+                serializeSuggestions={(suggestions) =>
+                  suggestions.map((item) => ({
+                    text: item.title_l10n,
+                    value: item.id,
+                    fieldPathPrefix: item.id,
+                  }))
+                }
+                initialOptions={languagesInitialOptions}
+                fieldPath={`${fieldPathPrefix}.lang`}
+                label={i18next.t("Language")}
+                multiple={false}
+                placeholder={i18next.t("Select language")}
+                labelIcon={null}
+                clearable
+                selectOnBlur={false}
+                width={5}
+              />
 
-                <Form.Field>
-                  <Button
-                    aria-label={i18next.t("Remove field")}
-                    className="close-btn"
-                    icon="close"
-                    onClick={() => arrayHelpers.remove(indexPath)}
-                  />
-                </Form.Field>
-              </GroupField>
-            );
-          }}
-        </ArrayField>
-      </Overridable>
+              <Form.Field>
+                <Button
+                  aria-label={i18next.t("Remove field")}
+                  className="close-btn"
+                  icon="close"
+                  onClick={() => arrayHelpers.remove(indexPath)}
+                />
+              </Form.Field>
+            </GroupField>
+          );
+        }}
+      </ArrayField>
     );
   }
 }

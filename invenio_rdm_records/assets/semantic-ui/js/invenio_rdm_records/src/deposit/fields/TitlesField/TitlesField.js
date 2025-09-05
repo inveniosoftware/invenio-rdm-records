@@ -42,17 +42,11 @@ class TitlesFieldComponent extends Component {
             className="title-field"
             optimized
           />
-          <Overridable
-            id="InvenioRdmRecords.DepositForm.TitlesField.Additional"
+          <AdditionalTitlesField
             options={options}
             recordUI={recordUI}
-          >
-            <AdditionalTitlesField
-              options={options}
-              recordUI={recordUI}
-              fieldPath="metadata.additional_titles"
-            />
-          </Overridable>
+            fieldPath="metadata.additional_titles"
+          />
         </>
       </Overridable>
     );
