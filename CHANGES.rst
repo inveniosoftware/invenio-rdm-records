@@ -12,7 +12,7 @@
 Changes
 =======
 
-Version vNext (released 2025-09-05)
+Version v20.1.0 (released 2025-09-05)
 
 - setup: bump major versions of invenio-jobs and invenio-vocabularies
 - fix: improve rendering of ErrorMessage in deposit form
