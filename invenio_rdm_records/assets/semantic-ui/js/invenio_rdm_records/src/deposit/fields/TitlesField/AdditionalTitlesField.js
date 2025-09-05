@@ -31,6 +31,8 @@ class AdditionalTitlesFieldComponent extends Component {
       <Overridable
         id="InvenioRdmRecords.DepositForm.AdditionalTitlesField.Container"
         defaultNewValue={emptyAdditionalTitle}
+        helpText={helpText}
+        addButtonLabel={addButtonLabel}
       >
         <ArrayField
           addButtonLabel={addButtonLabel}
@@ -47,83 +49,49 @@ class AdditionalTitlesFieldComponent extends Component {
                 : [];
 
             return (
-              <Overridable
-                id="InvenioRdmRecords.DepositForm.AdditionalTitlesField.Item"
-                optimized
-              >
-                <GroupField fieldPath={fieldPath} optimized>
-                  <Overridable
-                    id="InvenioRdmRecords.DepositForm.AdditionalTitlesField.Title"
-                    required
-                    width={5}
-                  >
-                    <TextField
-                      fieldPath={`${fieldPathPrefix}.title`}
-                      label={i18next.t("Additional title")}
-                      required
-                      width={5}
-                    />
-                  </Overridable>
-                  <Overridable
-                    id="InvenioRdmRecords.DepositForm.AdditionalTitlesField.Type"
-                    optimized
-                    options={options.type}
-                    required
-                    width={5}
-                  >
-                    <SelectField
-                      fieldPath={`${fieldPathPrefix}.type`}
-                      label={i18next.t("Type")}
-                      optimized
-                      options={options.type}
-                      required
-                      width={5}
-                    />
-                  </Overridable>
-                  <Overridable
-                    id="InvenioRdmRecords.DepositForm.AdditionalTitlesField.Language"
-                    multiple={false}
-                    labelIcon={null}
-                    clearable
-                    selectOnBlur={false}
-                    width={5}
-                    initialOptions={languagesInitialOptions}
-                  >
-                    <LanguagesField
-                      serializeSuggestions={(suggestions) =>
-                        suggestions.map((item) => ({
-                          text: item.title_l10n,
-                          value: item.id,
-                          fieldPathPrefix: item.id,
-                        }))
-                      }
-                      initialOptions={languagesInitialOptions}
-                      fieldPath={`${fieldPathPrefix}.lang`}
-                      label={i18next.t("Language")}
-                      multiple={false}
-                      placeholder={i18next.t("Select language")}
-                      labelIcon={null}
-                      clearable
-                      selectOnBlur={false}
-                      width={5}
-                    />
-                  </Overridable>
+              <GroupField fieldPath={fieldPath} optimized>
+                <TextField
+                  fieldPath={`${fieldPathPrefix}.title`}
+                  label={i18next.t("Additional title")}
+                  required
+                  width={5}
+                />
+                <SelectField
+                  fieldPath={`${fieldPathPrefix}.type`}
+                  label={i18next.t("Type")}
+                  optimized
+                  options={options.type}
+                  required
+                  width={5}
+                />
+                <LanguagesField
+                  serializeSuggestions={(suggestions) =>
+                    suggestions.map((item) => ({
+                      text: item.title_l10n,
+                      value: item.id,
+                      fieldPathPrefix: item.id,
+                    }))
+                  }
+                  initialOptions={languagesInitialOptions}
+                  fieldPath={`${fieldPathPrefix}.lang`}
+                  label={i18next.t("Language")}
+                  multiple={false}
+                  placeholder={i18next.t("Select language")}
+                  labelIcon={null}
+                  clearable
+                  selectOnBlur={false}
+                  width={5}
+                />
 
-                  <Overridable
-                    id="InvenioRdmRecords.DepositForm.AdditionalTitlesField.Remove.Container"
+                <Form.Field>
+                  <Button
+                    aria-label={i18next.t("Remove field")}
+                    className="close-btn"
                     icon="close"
-                  >
-                    <Form.Field>
-                      <Button
-                        aria-label={i18next.t("Remove field")}
-                        className="close-btn"
-                        icon="close"
-                        onClick={() => arrayHelpers.remove(indexPath)}
-                      />
-                    </Form.Field>
-                  </Overridable>
-                </GroupField>
-              </Overridable>
+                    onClick={() => arrayHelpers.remove(indexPath)}
+                  />
+                </Form.Field>
+              </GroupField>
             );
           }}
         </ArrayField>

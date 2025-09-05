@@ -60,76 +60,44 @@ class IdentifiersFieldComponent extends Component {
           {({ arrayHelpers, indexPath }) => {
             const fieldPathPrefix = `${fieldPath}.${indexPath}`;
             return (
-              <Overridable
-                id="InvenioRdmRecords.DepositForm.IdentifiersField.Item"
-                optimized={false}
-                placeholder={placeholder}
-              >
-                <GroupField>
-                  <Overridable
-                    id="InvenioRdmRecords.DepositForm.IdentifiersField.Identifier.Field"
+              <GroupField>
+                <TextField
+                  fieldPath={`${fieldPathPrefix}.identifier`}
+                  label={i18next.t("Identifier")}
+                  required
+                  width={11}
+                  placeholder={placeholder}
+                />
+                {schemeOptions && (
+                  <SelectField
+                    fieldPath={`${fieldPathPrefix}.scheme`}
+                    label={i18next.t("Scheme")}
+                    aria-label={i18next.t("Scheme")}
+                    options={schemeOptions}
+                    optimized
                     required
-                    width={11}
-                    placeholder={placeholder}
-                  >
-                    <TextField
-                      fieldPath={`${fieldPathPrefix}.identifier`}
-                      label={i18next.t("Identifier")}
-                      required
-                      width={11}
-                      placeholder={placeholder}
-                    />
-                  </Overridable>
-                  {schemeOptions && (
-                    <Overridable
-                      id="InvenioRdmRecords.DepositForm.IdentifiersField.Scheme.Select"
-                      options={schemeOptions}
-                      optimized
-                      required
-                      width={5}
-                    >
-                      <SelectField
-                        fieldPath={`${fieldPathPrefix}.scheme`}
-                        label={i18next.t("Scheme")}
-                        aria-label={i18next.t("Scheme")}
-                        options={schemeOptions}
-                        optimized
-                        required
-                        width={5}
-                      />
-                    </Overridable>
-                  )}
-                  {!schemeOptions && (
-                    <Overridable
-                      id="InvenioRdmRecords.DepositForm.IdentifiersField.Scheme.Text"
-                      required
-                      width={5}
-                    >
-                      <TextField
-                        fieldPath={`${fieldPathPrefix}.scheme`}
-                        label={i18next.t("Scheme")}
-                        aria-label={i18next.t("Scheme")}
-                        required
-                        width={5}
-                      />
-                    </Overridable>
-                  )}
+                    width={5}
+                  />
+                )}
+                {!schemeOptions && (
+                  <TextField
+                    fieldPath={`${fieldPathPrefix}.scheme`}
+                    label={i18next.t("Scheme")}
+                    aria-label={i18next.t("Scheme")}
+                    required
+                    width={5}
+                  />
+                )}
 
-                  <Overridable
-                    id="InvenioRdmRecords.DepositForm.IdentifiersField.Remove.Container"
+                <Form.Field>
+                  <Button
+                    aria-label={i18next.t("Remove field")}
+                    className="close-btn"
                     icon="close"
-                  >
-                    <Form.Field>
-                      <Button
-                        aria-label={i18next.t("Remove field")}
-                        className="close-btn"
-                        icon="close"
-                        onClick={() => arrayHelpers.remove(indexPath)}
-                      />
-                    </Form.Field>
-                  </Overridable>
-                </GroupField>
-              </Overridable>
+                    onClick={() => arrayHelpers.remove(indexPath)}
+                  />
+                </Form.Field>
+              </GroupField>
             );
           }}
         </ArrayField>

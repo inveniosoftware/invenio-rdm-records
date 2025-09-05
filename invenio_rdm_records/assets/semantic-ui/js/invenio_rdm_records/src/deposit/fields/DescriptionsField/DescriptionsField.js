@@ -51,48 +51,21 @@ class DescriptionsFieldComponent extends Component {
         required={required}
       >
         <>
-          <Overridable
-            id="InvenioRdmRecords.DepositForm.DescriptionsField.Input"
+          <RichInputField
+            className="description-field rel-mb-1 rel-mt-2"
             fieldPath={fieldPath}
             editorConfig={editorConfig}
-            htmlFor={fieldPath}
-            icon={labelIcon}
-            label={label}
+            label={<FieldLabel htmlFor={fieldPath} icon={labelIcon} label={label} />}
+            optimized
             disabled={disabled}
             required={required}
-          >
-            <RichInputField
-              className="description-field rel-mb-1 rel-mt-2"
-              fieldPath={fieldPath}
-              editorConfig={editorConfig}
-              label={
-                <Overridable
-                  id="InvenioRdmRecords.DepositForm.DescriptionsField.Input.Label"
-                  htmlFor={fieldPath}
-                  icon={labelIcon}
-                  label={label}
-                >
-                  <FieldLabel htmlFor={fieldPath} icon={labelIcon} label={label} />
-                </Overridable>
-              }
-              optimized
-              disabled={disabled}
-              required={required}
-            />
-          </Overridable>
-          <Overridable
-            id="InvenioRdmRecords.DepositForm.DescriptionsField.Additional"
+          />
+          <AdditionalDescriptionsField
             recordUI={recordUI}
             options={options}
             editorConfig={editorConfig}
-          >
-            <AdditionalDescriptionsField
-              recordUI={recordUI}
-              options={options}
-              editorConfig={editorConfig}
-              fieldPath="metadata.additional_descriptions"
-            />
-          </Overridable>
+            fieldPath="metadata.additional_descriptions"
+          />
         </>
       </Overridable>
     );

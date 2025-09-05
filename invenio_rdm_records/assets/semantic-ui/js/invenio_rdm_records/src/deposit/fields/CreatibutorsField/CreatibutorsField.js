@@ -114,13 +114,7 @@ class CreatibutorsFieldForm extends Component {
       >
         <DndProvider backend={HTML5Backend}>
           <Form.Field required={schema === "creators"} className={className}>
-            <Overridable
-              id="InvenioRdmRecords.DepositForm.CreatibutorsField.Label"
-              labelIcon={labelIcon}
-              label={label}
-            >
-              <FieldLabel htmlFor={fieldPath} icon={labelIcon} label={label} />
-            </Overridable>
+            <FieldLabel htmlFor={fieldPath} icon={labelIcon} label={label} />
             <Overridable
               id="InvenioRdmRecords.DepositForm.CreatibutorsField.List"
               roleOptions={roleOptions}
@@ -161,32 +155,22 @@ class CreatibutorsFieldForm extends Component {
                 })}
               </List>
             </Overridable>
-            <Overridable
-              id="InvenioRdmRecords.DepositForm.CreatibutorsField.Modal"
+            <CreatibutorsModal
+              onCreatibutorChange={this.handleOnContributorChange}
+              action="add"
               addLabel={modal.addLabel}
               editLabel={modal.editLabel}
+              roleOptions={sortOptions(roleOptions)}
               schema={schema}
-              className={className}
-            >
-              <CreatibutorsModal
-                onCreatibutorChange={this.handleOnContributorChange}
-                action="add"
-                addLabel={modal.addLabel}
-                editLabel={modal.editLabel}
-                roleOptions={sortOptions(roleOptions)}
-                schema={schema}
-                autocompleteNames={autocompleteNames}
-                trigger={
-                  <Button type="button" icon labelPosition="left" className={className}>
-                    <Icon name="add" />
-                    {addButtonLabel}
-                  </Button>
-                }
-              />
-            </Overridable>
-            <Overridable id="InvenioRdmRecords.DepositForm.CreatibutorsField.Feedback">
-              {generalCreatibutorsError && <FeedbackLabel fieldPath={fieldPath} />}
-            </Overridable>
+              autocompleteNames={autocompleteNames}
+              trigger={
+                <Button type="button" icon labelPosition="left" className={className}>
+                  <Icon name="add" />
+                  {addButtonLabel}
+                </Button>
+              }
+            />
+            {generalCreatibutorsError && <FeedbackLabel fieldPath={fieldPath} />}
           </Form.Field>
         </DndProvider>
       </Overridable>

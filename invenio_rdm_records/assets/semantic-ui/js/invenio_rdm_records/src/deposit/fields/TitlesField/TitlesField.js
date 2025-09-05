@@ -33,32 +33,15 @@ class TitlesFieldComponent extends Component {
         placeholder={placeholder}
       >
         <>
-          <Overridable
-            id="InvenioRdmRecords.DepositForm.TitlesField.Field"
-            optimized
+          <TextField
+            fieldPath={fieldPath}
             helpText={helpText}
-            labelIcon={labelIcon}
-            label={label}
             placeholder={placeholder}
-          >
-            <TextField
-              fieldPath={fieldPath}
-              helpText={helpText}
-              placeholder={placeholder}
-              label={
-                <Overridable
-                  id="InvenioRdmRecords.DepositForm.TitlesField.Label"
-                  labelIcon={labelIcon}
-                  label={label}
-                >
-                  <FieldLabel htmlFor={fieldPath} icon={labelIcon} label={label} />
-                </Overridable>
-              }
-              required
-              className="title-field"
-              optimized
-            />
-          </Overridable>
+            label={<FieldLabel htmlFor={fieldPath} icon={labelIcon} label={label} />}
+            required
+            className="title-field"
+            optimized
+          />
           <Overridable
             id="InvenioRdmRecords.DepositForm.TitlesField.Additional"
             options={options}

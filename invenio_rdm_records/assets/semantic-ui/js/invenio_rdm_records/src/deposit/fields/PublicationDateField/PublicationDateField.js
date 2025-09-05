@@ -33,15 +33,7 @@ class PublicationDateFieldComponent extends Component {
         <TextField
           fieldPath={fieldPath}
           helpText={helpText}
-          label={
-            <Overridable
-              id="InvenioRdmRecords.DepositForm.PublicationDateField.Label"
-              icon={labelIcon}
-              label={label}
-            >
-              <FieldLabel htmlFor={fieldPath} icon={labelIcon} label={label} />
-            </Overridable>
-          }
+          label={<FieldLabel htmlFor={fieldPath} icon={labelIcon} label={label} />}
           placeholder={placeholder}
         />
       </Overridable>

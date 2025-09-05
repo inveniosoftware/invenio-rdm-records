@@ -657,23 +657,16 @@ export class CreatibutorsModal extends Component {
                   {(_get(values, typeFieldPath) === CREATIBUTOR_TYPE.ORGANIZATION ||
                     (showPersonForm &&
                       _get(values, typeFieldPath) === CREATIBUTOR_TYPE.PERSON)) && (
-                    <Overridable
-                      id="InvenioRDMRecords.CreatibutorsModal.RoleSelectField.container"
+                    <SelectField
                       fieldPath={roleFieldPath}
-                      roleOptions={roleOptions}
-                      isCreator={this.isCreator()}
-                    >
-                      <SelectField
-                        fieldPath={roleFieldPath}
-                        label={i18next.t("Role")}
-                        options={roleOptions}
-                        placeholder={i18next.t("Select role")}
-                        {...(this.isCreator() && { clearable: true })}
-                        required={!this.isCreator()}
-                        optimized
-                        scrolling
-                      />
-                    </Overridable>
+                      label={i18next.t("Role")}
+                      options={roleOptions}
+                      placeholder={i18next.t("Select role")}
+                      {...(this.isCreator() && { clearable: true })}
+                      required={!this.isCreator()}
+                      optimized
+                      scrolling
+                    />
                   )}
                 </Form>
               </Modal.Content>

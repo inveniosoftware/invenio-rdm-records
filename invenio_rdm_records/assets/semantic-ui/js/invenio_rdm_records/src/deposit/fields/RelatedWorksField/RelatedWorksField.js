@@ -64,100 +64,66 @@ class RelatedWorksFieldComponent extends Component {
             const fieldPathPrefix = `${fieldPath}.${indexPath}`;
 
             return (
-              <Overridable
-                id="InvenioRdmRecords.DepositForm.RelatedWorksField.Item"
-                optimized
-              >
-                <GroupField optimized>
-                  <Overridable
-                    id="InvenioRdmRecords.DepositForm.RelatedWorksField.Relation"
-                    clearable
-                    optimized
-                    options={options.relations}
-                    required
-                    width={3}
-                  >
-                    <SelectField
-                      clearable
-                      fieldPath={`${fieldPathPrefix}.relation_type`}
-                      label={i18next.t("Relation")}
-                      aria-label={i18next.t("Relation")}
-                      optimized
-                      options={options.relations}
-                      placeholder={{
-                        role: "option",
-                        content: "Select relation...",
-                      }}
-                      required
-                      width={3}
-                    />
-                  </Overridable>
+              <GroupField optimized>
+                <SelectField
+                  clearable
+                  fieldPath={`${fieldPathPrefix}.relation_type`}
+                  label={i18next.t("Relation")}
+                  aria-label={i18next.t("Relation")}
+                  optimized
+                  options={options.relations}
+                  placeholder={{
+                    role: "option",
+                    content: "Select relation...",
+                  }}
+                  required
+                  width={3}
+                />
 
-                  <Overridable
-                    id="InvenioRdmRecords.DepositForm.RelatedWorksField.Identifier"
-                    required
-                    width={4}
-                  >
-                    <TextField
-                      fieldPath={`${fieldPathPrefix}.identifier`}
-                      label={i18next.t("Identifier")}
-                      required
-                      width={4}
-                    />
-                  </Overridable>
+                <TextField
+                  fieldPath={`${fieldPathPrefix}.identifier`}
+                  label={i18next.t("Identifier")}
+                  required
+                  width={4}
+                />
 
-                  <Overridable
-                    id="InvenioRdmRecords.DepositForm.RelatedWorksField.Scheme"
-                    clearable
-                    optimized
-                    options={options.scheme}
-                    required
-                    width={2}
-                  >
-                    <SelectField
-                      clearable
-                      fieldPath={`${fieldPathPrefix}.scheme`}
-                      label={i18next.t("Scheme")}
-                      aria-label={i18next.t("Scheme")}
-                      optimized
-                      options={options.scheme}
-                      required
-                      width={2}
-                    />
-                  </Overridable>
+                <SelectField
+                  clearable
+                  fieldPath={`${fieldPathPrefix}.scheme`}
+                  label={i18next.t("Scheme")}
+                  aria-label={i18next.t("Scheme")}
+                  optimized
+                  options={options.scheme}
+                  required
+                  width={2}
+                />
 
-                  <Overridable
-                    id="InvenioRdmRecords.DepositForm.RelatedWorksField.ResourceType"
+                <Overridable
+                  id="InvenioRdmRecords.DepositForm.RelatedWorksField.ResourceType"
+                  clearable
+                  options={options.resource_type}
+                  labelIcon=""
+                  width={7}
+                >
+                  <ResourceTypeField
                     clearable
+                    fieldPath={`${fieldPathPrefix}.resource_type`}
                     options={options.resource_type}
-                    labelIcon=""
                     width={7}
-                  >
-                    <ResourceTypeField
-                      clearable
-                      fieldPath={`${fieldPathPrefix}.resource_type`}
-                      options={options.resource_type}
-                      width={7}
-                      labelclassname="small field-label-class"
-                      schema="relatedWork"
-                    />
-                  </Overridable>
+                    labelclassname="small field-label-class"
+                    schema="relatedWork"
+                  />
+                </Overridable>
 
-                  <Overridable
-                    id="InvenioRdmRecords.DepositForm.RelatedWorksField.Remove.Container"
+                <Form.Field>
+                  <Button
+                    aria-label={i18next.t("Remove field")}
+                    className="close-btn"
                     icon="close"
-                  >
-                    <Form.Field>
-                      <Button
-                        aria-label={i18next.t("Remove field")}
-                        className="close-btn"
-                        icon="close"
-                        onClick={() => arrayHelpers.remove(indexPath)}
-                      />
-                    </Form.Field>
-                  </Overridable>
-                </GroupField>
-              </Overridable>
+                    onClick={() => arrayHelpers.remove(indexPath)}
+                  />
+                </Form.Field>
+              </GroupField>
             );
           }}
         </ArrayField>

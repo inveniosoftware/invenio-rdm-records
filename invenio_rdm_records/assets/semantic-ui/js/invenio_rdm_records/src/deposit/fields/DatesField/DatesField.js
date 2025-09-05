@@ -95,40 +95,24 @@ class DatesFieldComponent extends Component {
             const hasRequiredDescriptionValue = _has(requiredOption, "description");
             return (
               <GroupField fieldPath={fieldPath} optimized>
-                <Overridable
-                  id="InvenioRdmRecords.DepositForm.DatesField.Date"
+                <TextField
+                  fieldPath={`${fieldPathPrefix}.date`}
+                  label={i18next.t("Date")}
                   placeholder={placeholder}
                   disabled={hasRequiredDateValue}
                   required
                   width={5}
-                >
-                  <TextField
-                    fieldPath={`${fieldPathPrefix}.date`}
-                    label={i18next.t("Date")}
-                    placeholder={placeholder}
-                    disabled={hasRequiredDateValue}
-                    required
-                    width={5}
-                  />
-                </Overridable>
-                <Overridable
-                  id="InvenioRdmRecords.DepositForm.DatesField.Type"
+                />
+                <SelectField
+                  fieldPath={`${fieldPathPrefix}.type`}
+                  label={i18next.t("Type")}
+                  aria-label={i18next.t("Type")}
+                  options={sortOptions(options.type)}
                   disabled={hasRequiredTypeValue}
                   required
                   width={5}
                   optimized
-                >
-                  <SelectField
-                    fieldPath={`${fieldPathPrefix}.type`}
-                    label={i18next.t("Type")}
-                    aria-label={i18next.t("Type")}
-                    options={sortOptions(options.type)}
-                    disabled={hasRequiredTypeValue}
-                    required
-                    width={5}
-                    optimized
-                  />
-                </Overridable>
+                />
                 <Overridable
                   id="InvenioRdmRecords.DepositForm.DatesField.Description"
                   disabled={hasRequiredDescriptionValue}
@@ -142,21 +126,14 @@ class DatesFieldComponent extends Component {
                   />
                 </Overridable>
                 <Form.Field>
-                  <Overridable
-                    id="InvenioRdmRecords.DepositForm.DatesField.RemoveFormField.Container"
+                  <Button
+                    aria-label={i18next.t("Remove field")}
                     className="close-btn"
-                    icon
+                    disabled={!_isEmpty(requiredOption)}
+                    icon="close"
+                    onClick={() => arrayHelpers.remove(indexPath)}
                     type="button"
-                  >
-                    <Button
-                      aria-label={i18next.t("Remove field")}
-                      className="close-btn"
-                      disabled={!_isEmpty(requiredOption)}
-                      icon="close"
-                      onClick={() => arrayHelpers.remove(indexPath)}
-                      type="button"
-                    />
-                  </Overridable>
+                  />
                 </Form.Field>
               </GroupField>
             );

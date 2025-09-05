@@ -64,15 +64,7 @@ class LanguagesFieldComponent extends Component {
           clearable={clearable}
           multiple={multiple}
           initialSuggestions={initialOptions}
-          label={
-            <Overridable
-              id="InvenioRdmRecords.DepositForm.LanguagesField.Label"
-              labelIcon={labelIcon}
-              label={label}
-            >
-              <FieldLabel htmlFor={fieldPath} icon={labelIcon} label={label} />
-            </Overridable>
-          }
+          label={<FieldLabel htmlFor={fieldPath} icon={labelIcon} label={label} />}
           noQueryMessage={noQueryMessage}
           {...(serializeSuggestions && { serializeSuggestions })}
           {...uiProps}

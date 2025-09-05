@@ -48,15 +48,7 @@ class ReferencesFieldComponent extends Component {
           addButtonLabel={addButtonLabel}
           defaultNewValue={emptyReference}
           fieldPath={fieldPath}
-          label={
-            <Overridable
-              id="InvenioRdmRecords.DepositForm.ReferencesField.Label"
-              labelIcon={labelIcon}
-              label={label}
-            >
-              <FieldLabel htmlFor={fieldPath} icon={labelIcon} label={label} />
-            </Overridable>
-          }
+          label={<FieldLabel htmlFor={fieldPath} icon={labelIcon} label={label} />}
           required={required}
           disabled={disabled}
           showEmptyValue={showEmptyValue}
@@ -66,39 +58,23 @@ class ReferencesFieldComponent extends Component {
             const fieldPathPrefix = `${fieldPath}.${indexPath}`;
 
             return (
-              <Overridable
-                id="InvenioRdmRecords.DepositForm.ReferencesField.Item"
-                optimized
-              >
-                <GroupField optimized>
-                  <Overridable
-                    id="InvenioRdmRecords.DepositForm.ReferencesField.Reference.Field"
-                    required
-                    width={16}
-                  >
-                    <TextField
-                      fieldPath={`${fieldPathPrefix}.reference`}
-                      label={i18next.t("Reference string")}
-                      required
-                      width={16}
-                    />
-                  </Overridable>
+              <GroupField optimized>
+                <TextField
+                  fieldPath={`${fieldPathPrefix}.reference`}
+                  label={i18next.t("Reference string")}
+                  required
+                  width={16}
+                />
 
-                  <Overridable
-                    id="InvenioRdmRecords.DepositForm.ReferencesField.Remove.Container"
+                <Form.Field>
+                  <Button
+                    aria-label={i18next.t("Remove field")}
+                    className="close-btn"
                     icon="close"
-                  >
-                    <Form.Field>
-                      <Button
-                        aria-label={i18next.t("Remove field")}
-                        className="close-btn"
-                        icon="close"
-                        onClick={() => arrayHelpers.remove(indexPath)}
-                      />
-                    </Form.Field>
-                  </Overridable>
-                </GroupField>
-              </Overridable>
+                    onClick={() => arrayHelpers.remove(indexPath)}
+                  />
+                </Form.Field>
+              </GroupField>
             );
           }}
         </ArrayField>

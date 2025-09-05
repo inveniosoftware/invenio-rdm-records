@@ -102,89 +102,67 @@ class LicenseFieldForm extends Component {
       >
         <DndProvider backend={HTML5Backend}>
           <Form.Field required={required} disabled={disabled} className={className}>
-            <Overridable
-              id="InvenioRdmRecords.DepositForm.LicenseField.Label"
-              labelIcon={labelIcon}
-              label={label}
-            >
-              <FieldLabel htmlFor={fieldPath} icon={labelIcon} label={label} />
-            </Overridable>
-            <Overridable id="InvenioRdmRecords.DepositForm.LicenseField.List">
-              <List>
-                {getIn(values, fieldPath, []).map((value, index) => {
-                  const license = new VisibleLicense(uiRights, value, index);
-                  return (
-                    <LicenseFieldItem
-                      key={license.key}
-                      license={license}
-                      moveLicense={formikArrayMove}
-                      replaceLicense={formikArrayReplace}
-                      removeLicense={formikArrayRemove}
-                      searchConfig={searchConfig}
-                      serializeLicenses={serializeLicenses}
-                    />
-                  );
-                })}
-              </List>
-            </Overridable>
-            <Overridable
-              id="InvenioRdmRecords.DepositForm.LicenseField.Modal.Standard"
+            <FieldLabel htmlFor={fieldPath} icon={labelIcon} label={label} />
+            <List>
+              {getIn(values, fieldPath, []).map((value, index) => {
+                const license = new VisibleLicense(uiRights, value, index);
+                return (
+                  <LicenseFieldItem
+                    key={license.key}
+                    license={license}
+                    moveLicense={formikArrayMove}
+                    replaceLicense={formikArrayReplace}
+                    removeLicense={formikArrayRemove}
+                    searchConfig={searchConfig}
+                    serializeLicenses={serializeLicenses}
+                  />
+                );
+              })}
+            </List>
+            <LicenseModal
               searchConfig={searchConfig}
-              className={className}
-            >
-              <LicenseModal
-                searchConfig={searchConfig}
-                trigger={
-                  <Button
-                    type="button"
-                    key="standard"
-                    icon
-                    labelPosition="left"
-                    className={className}
-                    disabled={disabled}
-                  >
-                    <Icon name="add" />
-                    {i18next.t("Add standard")}
-                  </Button>
-                }
-                onLicenseChange={(selectedLicense) => {
-                  formikArrayPush(selectedLicense);
-                }}
-                mode="standard"
-                action="add"
-                serializeLicenses={serializeLicenses}
-              />
-            </Overridable>
-            <Overridable
-              id="InvenioRdmRecords.DepositForm.LicenseField.Modal.Custom"
+              trigger={
+                <Button
+                  type="button"
+                  key="standard"
+                  icon
+                  labelPosition="left"
+                  className={className}
+                  disabled={disabled}
+                >
+                  <Icon name="add" />
+                  {i18next.t("Add standard")}
+                </Button>
+              }
+              onLicenseChange={(selectedLicense) => {
+                formikArrayPush(selectedLicense);
+              }}
+              mode="standard"
+              action="add"
+              serializeLicenses={serializeLicenses}
+            />
+            <LicenseModal
               searchConfig={searchConfig}
-              className={className}
-            >
-              <LicenseModal
-                searchConfig={searchConfig}
-                trigger={
-                  <Button
-                    type="button"
-                    key="custom"
-                    icon
-                    labelPosition="left"
-                    className={className}
-                    disabled={disabled}
-                  >
-                    <Icon name="add" />
-                    {i18next.t("Add custom")}
-                  </Button>
-                }
-                onLicenseChange={(selectedLicense) => {
-                  formikArrayPush(selectedLicense);
-                }}
-                mode="custom"
-                action="add"
-              />
-            </Overridable>
-            <Overridable id="InvenioRdmRecords.DepositForm.LicenseField.Feedback">
-              {licenseError && <FeedbackLabel fieldPath={fieldPath} />}
-            </Overridable>
+              trigger={
+                <Button
+                  type="button"
+                  key="custom"
+                  icon
+                  labelPosition="left"
+                  className={className}
+                  disabled={disabled}
+                >
+                  <Icon name="add" />
+                  {i18next.t("Add custom")}
+                </Button>
+              }
+              onLicenseChange={(selectedLicense) => {
+                formikArrayPush(selectedLicense);
+              }}
+              mode="custom"
+              action="add"
+            />
+            {licenseError && <FeedbackLabel fieldPath={fieldPath} />}
           </Form.Field>
         </DndProvider>
       </Overridable>

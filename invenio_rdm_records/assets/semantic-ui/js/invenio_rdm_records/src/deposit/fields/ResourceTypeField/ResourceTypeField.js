@@ -86,16 +86,7 @@ export class ResourceTypeFieldComponent extends Component {
       >
         <SelectField
           fieldPath={fieldPath}
-          label={
-            <Overridable
-              id="InvenioRdmRecords.DepositForm.ResourceTypeField.Label"
-              htmlFor={fieldPath}
-              icon={labelIcon}
-              label={label}
-            >
-              <FieldLabel htmlFor={fieldPath} icon={labelIcon} label={label} />
-            </Overridable>
-          }
+          label={<FieldLabel htmlFor={fieldPath} icon={labelIcon} label={label} />}
           optimized
           aria-label={label}
           options={frontEndOptions}

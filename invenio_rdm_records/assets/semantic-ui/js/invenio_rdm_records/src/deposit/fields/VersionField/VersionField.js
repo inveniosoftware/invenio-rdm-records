@@ -21,18 +21,16 @@ class VersionFieldComponent extends Component {
   render() {
     const { fieldPath, label, labelIcon, placeholder, disabled, required } = this.props;
     const helpText = (
-      <Overridable id="InvenioRdmRecords.DepositForm.VersionField.Help">
-        <span>
-          {i18next.t(
-            "Mostly relevant for software and dataset uploads. A semantic version string is preferred see"
-          )}
-          <a href="https://semver.org/" target="_blank" rel="noopener noreferrer">
-            {" "}
-            semver.org
-          </a>
-          {i18next.t(", but any version string is accepted.")}
-        </span>
-      </Overridable>
+      <span>
+        {i18next.t(
+          "Mostly relevant for software and dataset uploads. A semantic version string is preferred see"
+        )}
+        <a href="https://semver.org/" target="_blank" rel="noopener noreferrer">
+          {" "}
+          semver.org
+        </a>
+        {i18next.t(", but any version string is accepted.")}
+      </span>
     );
 
     return (
@@ -49,15 +47,7 @@ class VersionFieldComponent extends Component {
         <TextField
           fieldPath={fieldPath}
           helpText={helpText}
-          label={
-            <Overridable
-              id="InvenioRdmRecords.DepositForm.VersionField.Label"
-              labelIcon={labelIcon}
-              label={label}
-            >
-              <FieldLabel htmlFor={fieldPath} icon={labelIcon} label={label} />
-            </Overridable>
-          }
+          label={<FieldLabel htmlFor={fieldPath} icon={labelIcon} label={label} />}
           placeholder={placeholder}
           disabled={disabled}
           required={required}

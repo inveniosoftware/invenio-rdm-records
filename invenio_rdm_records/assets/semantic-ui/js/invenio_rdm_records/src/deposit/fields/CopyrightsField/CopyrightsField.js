@@ -33,15 +33,7 @@ class CopyrightsFieldComponent extends Component {
       >
         <TextField
           fieldPath={fieldPath}
-          label={
-            <Overridable
-              id="InvenioRdmRecords.DepositForm.CopyrightsField.Label"
-              labelIcon={labelIcon}
-              label={label}
-            >
-              <FieldLabel htmlFor={fieldPath} icon={labelIcon} label={label} />
-            </Overridable>
-          }
+          label={<FieldLabel htmlFor={fieldPath} icon={labelIcon} label={label} />}
           required={required}
           disabled={disabled}
           helpText={helpText}

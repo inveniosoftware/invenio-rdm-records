@@ -12,7 +12,7 @@ import { Formik } from "formik";
 import PropTypes from "prop-types";
 import React, { Component } from "react";
 import { TextAreaField, TextField } from "react-invenio-forms";
-import { OverridableContext } from "react-overridable";
+import Overridable, { OverridableContext } from "react-overridable";
 import {
   EmptyResults,
   Error,
@@ -88,8 +88,7 @@ export class LicenseModal extends Component {
       serializeLicenses,
       initialLicense: initialLicenseProp,
     } = this.props;
-    const { open } = this.state;
-    const modeState = this.state.mode;
+    const { open, mode: modeState } = this.state;
 
     const initialLicense = initialLicenseProp || {
       title: "",
@@ -222,21 +221,29 @@ export class LicenseModal extends Component {
                 <Form>
                   <TextField
                     label={i18next.t("Title")}
-                    placeholder={i18next.t("License title")}
                     fieldPath="selectedLicense.title"
                     required
                     // eslint-disable-next-line
                     autoFocus
                   />
-                  <TextAreaField
-                    fieldPath="selectedLicense.description"
+                  <Overridable
+                    id="InvenioRdmRecords.DepositForm.LicenseField.Modal.description"
                     label={i18next.t("Description")}
-                  />
-                  <TextField
+                  >
+                    <TextAreaField
+                      fieldPath="selectedLicense.description"
+                      label={i18next.t("Description")}
+                    />
+                  </Overridable>
+                  <Overridable
+                    id="InvenioRdmRecords.DepositForm.LicenseField.Modal.link"
                     label={i18next.t("Link")}
-                    placeholder={i18next.t("License link")}
-                    fieldPath="selectedLicense.link"
-                  />
+                  >
+                    <TextField
+                      label={i18next.t("Link")}
+                      fieldPath="selectedLicense.link"
+                    />
+                  </Overridable>
                 </Form>
               )}
             </Modal.Content>

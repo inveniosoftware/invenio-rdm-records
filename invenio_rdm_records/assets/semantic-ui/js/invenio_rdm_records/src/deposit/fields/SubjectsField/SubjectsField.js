@@ -42,13 +42,7 @@ class SubjectsFieldComponent extends Component {
     const fieldWidth = displaySuggestFromField ? 11 : 16;
 
     const labelComponent = (
-      <Overridable
-        id="InvenioRdmRecords.DepositForm.SubjectsField.Label"
-        labelIcon={labelIcon}
-        label={label}
-      >
-        <FieldLabel htmlFor={fieldPath} icon={labelIcon} label={label} />
-      </Overridable>
+      <FieldLabel htmlFor={fieldPath} icon={labelIcon} label={label} />
     );
 
     return (
@@ -91,31 +85,20 @@ class SubjectsFieldComponent extends Component {
             </Form.Field>
           )}
 
-          <Overridable
-            id="InvenioRdmRecords.DepositForm.SubjectsField.Input"
+          <SubjectAutocompleteDropdown
+            {...dropdownProps}
+            noQueryMessage={noQueryMessage}
+            fieldPath={fieldPath}
+            label={
+              !displaySuggestFromField && labelComponent // Add label to second field if suggest from is hidden
+            }
             limitTo={limitTo}
             width={fieldWidth}
             required={required}
             disabled={disabled}
-            noQueryMessage={noQueryMessage}
             helpText={helpText}
             placeholder={placeholder}
-          >
-            <SubjectAutocompleteDropdown
-              {...dropdownProps}
-              noQueryMessage={noQueryMessage}
-              fieldPath={fieldPath}
-              label={
-                !displaySuggestFromField && labelComponent // Add label to second field if suggest from is hidden
-              }
-              limitTo={limitTo}
-              width={fieldWidth}
-              required={required}
-              disabled={disabled}
-              helpText={helpText}
-              placeholder={placeholder}
-            />
-          </Overridable>
+          />
         </GroupField>
       </Overridable>
     );
