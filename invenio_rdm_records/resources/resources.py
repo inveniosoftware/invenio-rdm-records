@@ -14,10 +14,11 @@
 
 from functools import wraps
 
-from flask import abort, current_app, g, redirect, url_for
+from flask import abort, current_app, flash, g, redirect, url_for
 from flask_resources import Resource, resource_requestctx, response_handler, route
 from invenio_base import invenio_url_for
 from invenio_drafts_resources.resources import RecordResource
+from invenio_i18n import lazy_gettext as _
 from invenio_records_resources.resources.errors import ErrorHandlersMixin
 from invenio_records_resources.resources.records.resource import (
     request_data,
@@ -95,6 +96,7 @@ class RDMRecordResource(RecordResource):
             route("POST", routes["set-user-quota"], self.set_user_quota),
             route("GET", p(routes["item-revision-list"]), self.search_revisions),
             route("GET", p(routes["item-revision"]), self.read_revision),
+            route("POST", p(routes["request-deletion"]), self.request_deletion),
         ]
 
         return url_rules
@@ -211,6 +213,30 @@ class RDMRecordResource(RecordResource):
         )
 
         return item.to_dict(), 204
+
+    @request_headers
+    @request_view_args
+    @request_data
+    def request_deletion(self):
+        """Read the related review request."""
+        item = self.service.request_deletion(
+            g.identity,
+            resource_requestctx.view_args["pid_value"],
+            resource_requestctx.data,
+        )
+
+        resp_code = 201
+        if item.data["status"] == "accepted":
+            resp_code = 200
+            flash(
+                _(
+                    "Your record was deleted and from now on "
+                    "will resolve to this tombstone page."
+                ),
+                category="success",
+            )
+
+        return item.to_dict(), resp_code
 
     @request_headers
     @request_view_args

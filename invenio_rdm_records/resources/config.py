@@ -37,6 +37,7 @@ from invenio_requests.resources.requests.config import RequestSearchRequestArgsS
 from ..services.errors import (
     AccessRequestExistsError,
     CommunityRequiredError,
+    DeletionStatusException,
     GrantExistsError,
     InvalidAccessRestrictions,
     RecordDeletedException,
@@ -207,6 +208,16 @@ error_handlers = {
             )
         )
     ),
+    DeletionStatusException: create_error_handler(
+        lambda e: (
+            HTTPJSONException(code=404, description=_("Record not found"))
+            if e.record.tombstone and not e.record.tombstone.is_visible
+            else HTTPJSONException(
+                code=400,
+                description=_("Record in unexpected deletion status."),
+            )
+        )
+    ),
     RecordSubmissionClosedCommunityError: create_error_handler(
         lambda e: HTTPJSONException(
             code=403,
@@ -247,6 +258,7 @@ class RDMRecordResourceConfig(RecordResourceConfig, ConfiguratorMixin):
     routes["set-user-quota"] = "/users/<pid_value>/quota"
     routes["item-revision-list"] = "/<pid_value>/revisions"
     routes["item-revision"] = "/<pid_value>/revisions/<revision_id>"
+    routes["request-deletion"] = "/<pid_value>/request-deletion"
 
     request_view_args = {
         "pid_value": ma.fields.Str(),
