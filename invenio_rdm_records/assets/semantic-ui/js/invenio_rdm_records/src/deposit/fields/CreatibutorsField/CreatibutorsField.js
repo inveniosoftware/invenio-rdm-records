@@ -2,6 +2,7 @@
 // Copyright (C) 2020-2025 CERN.
 // Copyright (C) 2020-2022 Northwestern University.
 // Copyright (C) 2021 Graz University of Technology.
+// Copyright (C) 2025 CSC - IT Center for Science ltd.
 //
 // Invenio-RDM-Records is free software; you can redistribute it and/or modify it
 // under the terms of the MIT License; see LICENSE file for more details.
@@ -12,7 +13,7 @@ import { getIn, FieldArray } from "formik";
 import { Button, Form, List, Icon } from "semantic-ui-react";
 import _get from "lodash/get";
 import { FeedbackLabel, FieldLabel } from "react-invenio-forms";
-import { HTML5Backend } from "react-dnd-html5-backend";
+import { manager } from "../../utils";
 import { DndProvider } from "react-dnd";
 import { CreatibutorsModal } from "./CreatibutorsModal";
 import { CreatibutorsFieldItem } from "./CreatibutorsFieldItem";
@@ -95,7 +96,7 @@ class CreatibutorsFieldForm extends Component {
     }
 
     return (
-      <DndProvider backend={HTML5Backend}>
+      <DndProvider manager={manager}>
         <Form.Field required={schema === "creators"} className={className}>
           <FieldLabel htmlFor={fieldPath} icon={labelIcon} label={label} />
           <List>
