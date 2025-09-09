@@ -435,29 +435,6 @@
   tags:
     - depositable
     - linkable
-- id: publication-thesis
-  icon: file alternate
-  props:
-    csl: thesis
-    datacite_general: Text
-    datacite_type: Thesis
-    openaire_resourceType: "0006"
-    openaire_type: publication
-    eurepo: info:eu-repo/semantics/doctoralThesis
-    schema.org: https://schema.org/Thesis
-    subtype: publication-thesis
-    type: publication
-    marc21_type: publication
-    marc21_subtype: thesis
-  title:
-    en: Thesis
-    sv: Avhandling
-    de: Abschlussarbeit
-    es: Tesis
-    cs: Závěrečná práce
-  tags:
-    - depositable
-    - linkable
 - id: publication-workingpaper
   icon: file alternate
   props:
@@ -519,11 +496,10 @@
     marc21_type: publication
     marc21_subtype: dissertation
   title:
-    en: Dissertation
+    en: Thesis
     sv: Avhandling
-    de: Dissertation
-    es: Disertación
-    cs: Disertační práce
+    de: Abschlussarbeit
+    cs: Závěrečná práce
   tags:
     - depositable
     - linkable
