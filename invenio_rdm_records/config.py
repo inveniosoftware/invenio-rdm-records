@@ -174,14 +174,8 @@ both. When your policy comes into effect on a date in the future, and this
 is the date which you will use to check whether the new or old policy will apply.
 """
 
-RDM_REQUEST_RECORD_DELETION_ENABLED = False
-"""Allow users to request record deletion."""
-
-RDM_REQUEST_RECORD_DELETION_POLICIES = [RequestDeletionPolicy()]
-"""List of policies for record deletion requests."""
-
-RDM_RECORD_DELETION_CHECKLIST = []
-"""Checklist which appears on the modal to redirect user from deletion if possible.
+RDM_IMMEDIATE_RECORD_DELETION_CHECKLIST = []
+"""Checklist which appears on the modal to redirect user from immediate record deletion if possible.
 
 The config accepts a list of dictionaries with "label" and "message" key-value pairs.
 The "label" is used as the checklist question item, and the "message" is displayed in
@@ -191,12 +185,11 @@ Example config value:
 
 .. code-block:: python
 
-    RDM_RECORD_DELETION_CHECKLIST = [
+    RDM_IMMEDIATE_RECORD_DELETION_CHECKLIST = [
         {
             "label": _("I want to change the metadata (title, description, etc.)"),
             "message": _(
-                "Instead of deleting the record, you can instead edit the "
-                "metadata at any time."
+                "You can edit the metadata of a published record at any time."
             ),
         },
         {
@@ -209,6 +202,14 @@ Example config value:
     ]
 """
 
+RDM_REQUEST_RECORD_DELETION_ENABLED = False
+"""Allow users to request record deletion."""
+
+RDM_REQUEST_RECORD_DELETION_POLICIES = [RequestDeletionPolicy()]
+"""List of policies for record deletion requests."""
+
+RDM_REQUEST_RECORD_DELETION_CHECKLIST = []
+"""Checklist which appears on the modal to redirect user from record deletion request if possible."""
 
 #
 # Record communities
