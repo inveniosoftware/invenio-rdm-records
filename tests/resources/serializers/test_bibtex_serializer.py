@@ -438,7 +438,9 @@ def test_serialize_publication_thesis(running_app, updated_minimal_record):
 
     It serializes into 'phdthesis'.
     """
-    updated_minimal_record["metadata"]["resource_type"]["id"] = "publication-thesis"
+    updated_minimal_record["metadata"]["resource_type"][
+        "id"
+    ] = "publication-dissertation"  # Previously publication-thesis
 
     updated_minimal_record.update(
         {"custom_fields": {"thesis:university": "A university"}}
