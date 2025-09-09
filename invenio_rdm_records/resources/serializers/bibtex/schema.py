@@ -60,7 +60,9 @@ class BibTexSchema(BaseSerializerSchema, CommonFieldsMixin):
         ],
         "publication-article": [BibTexFormatter.article],
         "publication-preprint": [BibTexFormatter.unpublished],
-        "publication-thesis": [BibTexFormatter.thesis],
+        "publication-dissertation": [
+            BibTexFormatter.thesis
+        ],  # Previously publication-thesis
         "publication-technicalnote": [BibTexFormatter.manual],
         "publication-workingpaper": [BibTexFormatter.unpublished],
         # Software
