@@ -478,7 +478,7 @@ export class CreatibutorsModal extends Component {
                     <>
                       {autocompleteNames !== NamesAutocompleteOptions.OFF && (
                         <Overridable
-                          id="InvenioRDMRecords.CreatibutorsModal.PersonRemoteSelectField.container"
+                          id="InvenioRdmRecords.DepositForm.CreatibutorsModal.PersonRemoteSelectField"
                           initialCreatibutor={initialCreatibutor}
                           serializeSuggestions={
                             serializeSuggestions || this.serializeSuggestions
@@ -517,7 +517,7 @@ export class CreatibutorsModal extends Component {
                       {showPersonForm && (
                         <>
                           <Overridable
-                            id="InvenioRDMRecords.CreatibutorsModal.FullNameField.container"
+                            id="InvenioRdmRecords.DepositForm.CreatibutorsModal.FullNameField"
                             familyNameFieldPath={familyNameFieldPath}
                             givenNameFieldPath={givenNameFieldPath}
                             isCreator={this.isCreator()}
@@ -537,7 +537,7 @@ export class CreatibutorsModal extends Component {
                             </Form.Group>
                           </Overridable>
                           <Overridable
-                            id="InvenioRDMRecords.CreatibutorsModal.PersonIdentifiersField.container"
+                            id="InvenioRdmRecords.DepositForm.CreatibutorsModal.PersonIdentifiersField"
                             ref={this.identifiersRef}
                             fieldPath={identifiersFieldPath}
                             values={values}
@@ -556,7 +556,7 @@ export class CreatibutorsModal extends Component {
                             />
                           </Overridable>
                           <Overridable
-                            id="InvenioRDMRecords.CreatibutorsModal.PersonAffiliationsField.container"
+                            id="InvenioRdmRecords.DepositForm.CreatibutorsModal.PersonAffiliationsField"
                             ref={this.affiliationsRef}
                             fieldPath={affiliationsFieldPath}
                           >
@@ -572,7 +572,7 @@ export class CreatibutorsModal extends Component {
                     <>
                       {autocompleteNames !== NamesAutocompleteOptions.OFF && (
                         <Overridable
-                          id="InvenioRDMRecords.CreatibutorsModal.OrganizationRemoteSelectField.container"
+                          id="InvenioRdmRecords.DepositForm.CreatibutorsModal.OrganizationRemoteSelectField"
                           initialCreatibutor={initialCreatibutor}
                           serializeSuggestions={
                             serializeSuggestions || this.serializeSuggestions
@@ -607,7 +607,7 @@ export class CreatibutorsModal extends Component {
                         </Overridable>
                       )}
                       <Overridable
-                        id="InvenioRDMRecords.CreatibutorsModal.OrganizationNameField.container"
+                        id="InvenioRdmRecords.DepositForm.CreatibutorsModal.OrganizationNameField"
                         fieldPath={organizationNameFieldPath}
                         ref={this.inputRef}
                         isCreator={this.isCreator()}
@@ -623,27 +623,7 @@ export class CreatibutorsModal extends Component {
                         />
                       </Overridable>
                       <Overridable
-                        id="InvenioRDMRecords.CreatibutorsModal.OrganizationIdentifiersField.container"
-                        ref={this.identifiersRef}
-                        values={values}
-                        fieldPath={identifiersFieldPath}
-                      >
-                        <CreatibutorsIdentifiers
-                          initialOptions={_map(
-                            _get(values, identifiersFieldPath, []),
-                            (identifier) => ({
-                              text: identifier,
-                              value: identifier,
-                              key: identifier,
-                            })
-                          )}
-                          fieldPath={identifiersFieldPath}
-                          ref={this.identifiersRef}
-                          placeholder={i18next.t("e.g. ROR, ISNI or GND.")}
-                        />
-                      </Overridable>
-                      <Overridable
-                        id="InvenioRDMRecords.CreatibutorsModal.OrganizationAffiliationsField.container"
+                        id="InvenioRdmRecords.DepositForm.CreatibutorsModal.OrganizationAffiliationsField"
                         fieldPath={affiliationsFieldPath}
                         ref={this.affiliationsRef}
                       >
@@ -658,7 +638,7 @@ export class CreatibutorsModal extends Component {
                     (showPersonForm &&
                       _get(values, typeFieldPath) === CREATIBUTOR_TYPE.PERSON)) && (
                     <Overridable
-                      id="InvenioRDMRecords.CreatibutorsModal.RoleSelectField.container"
+                      id="InvenioRdmRecords.DepositForm.CreatibutorsModal.RoleSelectField"
                       fieldPath={roleFieldPath}
                       roleOptions={roleOptions}
                       isCreator={this.isCreator()}

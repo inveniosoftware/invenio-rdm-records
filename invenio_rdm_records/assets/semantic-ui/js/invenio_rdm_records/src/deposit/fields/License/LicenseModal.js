@@ -88,8 +88,7 @@ export class LicenseModal extends Component {
       serializeLicenses,
       initialLicense: initialLicenseProp,
     } = this.props;
-    const { open } = this.state;
-    const modeState = this.state.mode;
+    const { open, mode: modeState } = this.state;
 
     const initialLicense = initialLicenseProp || {
       title: "",
@@ -222,7 +221,6 @@ export class LicenseModal extends Component {
                 <Form>
                   <TextField
                     label={i18next.t("Title")}
-                    placeholder={i18next.t("License title")}
                     fieldPath="selectedLicense.title"
                     required
                     // eslint-disable-next-line
@@ -234,7 +232,6 @@ export class LicenseModal extends Component {
                   />
                   <TextField
                     label={i18next.t("Link")}
-                    placeholder={i18next.t("License link")}
                     fieldPath="selectedLicense.link"
                   />
                 </Form>
