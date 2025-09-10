@@ -11,10 +11,10 @@ from flask import current_app
 from invenio_access.permissions import authenticated_user, system_identity
 from invenio_access.utils import get_identity
 from invenio_db import db
-from invenio_github.api import GitHubRelease
-from invenio_github.models import ReleaseStatus
 from invenio_i18n import lazy_gettext as _
 from invenio_records_resources.services.uow import UnitOfWork
+from invenio_vcs.models import ReleaseStatus
+from invenio_vcs.service import VCSRelease
 
 from ...proxies import current_rdm_records_service
 from ...resources.serializers.ui import UIJSONSerializer
@@ -30,7 +30,7 @@ def _get_user_identity(user):
     return identity
 
 
-class RDMGithubRelease(GitHubRelease):
+class RDMVCSRelease(VCSRelease):
     """Implement release API instance for RDM."""
 
     metadata_cls = RDMReleaseMetadata
@@ -75,7 +75,7 @@ class RDMGithubRelease(GitHubRelease):
     def get_custom_fields(self):
         """Get custom fields."""
         ret = {}
-        repo_url = self.repository_payload["html_url"]
+        repo_url = self.generic_repo.html_url
         ret["code:codeRepository"] = repo_url
         return ret
 
@@ -93,9 +93,9 @@ class RDMGithubRelease(GitHubRelease):
 
     def resolve_record(self):
         """Resolves an RDM record from a release."""
-        if not self.release_object.record_id:
+        if not self.db_release.record_id:
             return None
-        recid = retrieve_recid_by_uuid(self.release_object.record_id)
+        recid = retrieve_recid_by_uuid(self.db_release.record_id)
         try:
             return current_rdm_records_service.read(system_identity, recid.pid_value)
         except RecordDeletedException:
@@ -160,9 +160,11 @@ class RDMGithubRelease(GitHubRelease):
                     self._upload_files_to_draft(identity, draft, uow)
                 else:
                     # Retrieve latest record id and its recid
-                    latest_record_uuid = self.repository_object.latest_release(
+                    latest_release = self.db_repo.latest_release(
                         ReleaseStatus.PUBLISHED
-                    ).record_id
+                    )
+                    assert latest_release is not None
+                    latest_record_uuid = latest_release.record_id
 
                     recid = retrieve_recid_by_uuid(latest_record_uuid)
 
@@ -194,7 +196,7 @@ class RDMGithubRelease(GitHubRelease):
                 )
 
                 # Update release weak reference and set status to PUBLISHED
-                self.release_object.record_id = record._record.model.id
+                self.db_release.record_id = record._record.model.id
                 self.release_published()
 
                 # UOW must be committed manually since we're not using the decorator
@@ -219,7 +221,7 @@ class RDMGithubRelease(GitHubRelease):
             return record
         except Exception as ex:
             current_app.logger.exception(
-                f"Error while processing GitHub release {self.release_object.id}: {str(ex)}"
+                f"Error while processing VCS release {self.db_release.id}: {str(ex)}"
             )
             raise ex
 
