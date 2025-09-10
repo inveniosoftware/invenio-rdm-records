@@ -104,7 +104,7 @@ IMPRINT_CUSTOM_FIELDS_UI = {
                     "placeholder": _("e.g. 3"),
                     "description": _("The edition of the book"),
                 },
-                "icon": "book",
+                "labelIcon": "book",
             },
         }
     ],

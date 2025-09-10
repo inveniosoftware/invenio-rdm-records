@@ -174,7 +174,7 @@ export const FileUploaderComponent = ({
     filesEnabled && isDraftRecord && hasParentRecord && !filesList.length;
   return (
     <Overridable
-      id="ReactInvenioDeposit.FileUploader.layout"
+      id="InvenioRdmRecords.DepositForm.FileUploader.Container"
       config={config}
       files={files}
       isDraftRecord={isDraftRecord}
@@ -216,7 +216,7 @@ export const FileUploaderComponent = ({
             )}
           </Grid.Row>
           <Overridable
-            id="ReactInvenioDeposit.FileUploader.ImportButton.container"
+            id="InvenioRdmRecords.DepositForm.FileUploader.ImportButton"
             importButtonIcon={importButtonIcon}
             importButtonText={importButtonText}
             importParentFiles={importParentFiles}
@@ -251,7 +251,7 @@ export const FileUploaderComponent = ({
           </Overridable>
 
           <Overridable
-            id="ReactInvenioDeposit.FileUploader.FileUploaderArea.container"
+            id="InvenioRdmRecords.DepositForm.FileUploader.UploadArea"
             filesList={filesList}
             dropzoneParams={dropzoneParams}
             filesLocked={lockFileUploader}
@@ -278,7 +278,7 @@ export const FileUploaderComponent = ({
           </Overridable>
 
           <Overridable
-            id="ReactInvenioDeposit.FileUploader.NewVersionButton.container"
+            id="InvenioRdmRecords.DepositForm.FileUploader.NewVersionButton"
             isDraftRecord={isDraftRecord}
             draft={formikDraft}
             filesLocked={lockFileUploader}
@@ -324,7 +324,7 @@ export const FileUploaderComponent = ({
           </Overridable>
         </Grid>
         <Overridable
-          id="ReactInvenioDeposit.FileUploader.Modal.container"
+          id="InvenioRdmRecords.DepositForm.FileUploader.Modal"
           warningMsg={warningMsg}
           setWarningMsg={setWarningMsg}
           {...uiProps}

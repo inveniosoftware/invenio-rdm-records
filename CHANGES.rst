@@ -12,6 +12,34 @@
 Changes
 =======
 
+Version v21.0.0 (released 2025-09-XX)
+
+- **feat(deposit-form)!: added `react-overridable` support more consistently across all deposit form fields**
+    - Added Overridable for many components that did not already have it. This was done following the existing naming convention. New Overridables do not represent any breaking or behavior changes.
+    - Renamed a number of existing Overridable IDs for better compliance with existing naming conventions. This is the full list:
+        - `ReactInvenioDeposit.FileUploader.layout` -> `InvenioRdmRecords.DepositForm.FileUploader.Container`
+        - `ReactInvenioDeposit.FileUploader.ImportButton.container` -> `InvenioRdmRecords.DepositForm.FileUploader.ImportButton`
+        - `ReactInvenioDeposit.FileUploader.FileUploaderArea.container` -> `InvenioRdmRecords.DepositForm.FileUploader.UploadArea`
+        - `ReactInvenioDeposit.FileUploader.NewVersionButton.container` -> `InvenioRdmRecords.DepositForm.FileUploader.NewVersionButton`
+        - `ReactInvenioDeposit.FileUploader.Modal.container` -> `InvenioRdmRecords.DepositForm.FileUploader.Modal`
+        - `ReactInvenioDeposit.FileUploaderToolbar.layout` -> `InvenioRdmRecords.DepositForm.FileUploaderToolbar.Container`
+        - `ReactInvenioDeposit.FileUploaderToolbar.MetadataOnlyToggle.container` -> `InvenioRdmRecords.DepositForm.FileUploaderToolbar.MetadataOnlyToggle`
+        - `InvenioRDMRecords.CreatibutorsModal.RoleSelectField.container` -> `InvenioRdmRecords.DepositForm.CreatibutorsModal.RoleSelectField`
+        - `InvenioRDMRecords.CreatibutorsModal.PersonRemoteSelectField.container` -> `InvenioRdmRecords.DepositForm.CreatibutorsModal.PersonRemoteSelectField`
+        - `InvenioRDMRecords.CreatibutorsModal.FullNameField.container` -> `InvenioRdmRecords.DepositForm.CreatibutorsModal.FullNameField`
+        - `InvenioRDMRecords.CreatibutorsModal.PersonIdentifiersField.container` -> `InvenioRdmRecords.DepositForm.CreatibutorsModal.PersonIdentifiersField`
+        - `InvenioRDMRecords.CreatibutorsModal.PersonAffiliationsField.container` -> `InvenioRdmRecords.DepositForm.CreatibutorsModal.PersonAffiliationsField`
+        - `InvenioRDMRecords.CreatibutorsModal.OrganizationRemoteSelectField.container` -> `InvenioRdmRecords.DepositForm.CreatibutorsModal.OrganizationRemoteSelectField`
+        - `InvenioRDMRecords.CreatibutorsModal.OrganizationNameField.container` -> `InvenioRdmRecords.DepositForm.CreatibutorsModal.OrganizationNameField`
+        - `InvenioRDMRecords.CreatibutorsModal.OrganizationIdentifiersField.container` -> `InvenioRdmRecords.DepositForm.CreatibutorsModal.OrganizationIdentifiersField`
+        - `InvenioRDMRecords.CreatibutorsModal.OrganizationAffiliationsField.container` -> `InvenioRdmRecords.DepositForm.CreatibutorsModal.OrganizationAffiliationsField`
+        - `InvenioRdmRecords.DatesField.AddDateArrayField.Container` -> `InvenioRdmRecords.DepositForm.DatesField.Container`
+        - `InvenioRdmRecords.DatesField.DescriptionTextField.Container` -> `InvenioRdmRecords.DepositForm.DatesField.DescriptionField`
+        - `InvenioRdmRecords.DatesField.DateTextField.Container` -> `InvenioRdmRecords.DepositForm.DatesField.DateField`
+        - `InvenioRdmRecords.DatesField.TypeSelectField.Container` -> `InvenioRdmRecords.DepositForm.DatesField.TypeField`
+        - `InvenioRdmRecords.DatesField.RemoveFormField.Container` -> `InvenioRdmRecords.DepositForm.DatesField.RemoveButton`
+    - No existing overridables have been removed completely to avoid breaking current implementations in an unresolvable way.
+
 Version v20.1.0 (released 2025-09-05)
 
 - setup: bump major versions of invenio-jobs and invenio-vocabularies

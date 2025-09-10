@@ -35,7 +35,7 @@ export const FileUploaderToolbar = (props) => {
 
   return (
     <Overridable
-      id="ReactInvenioDeposit.FileUploaderToolbar.layout"
+      id="InvenioRdmRecords.DepositForm.FileUploaderToolbar.Container"
       filesList={filesList}
       filesSize={filesSize}
       filesEnabled={filesEnabled}
@@ -53,7 +53,7 @@ export const FileUploaderToolbar = (props) => {
           computer={6}
         >
           <Overridable
-            id="ReactInvenioDeposit.FileUploaderToolbar.MetadataOnlyToggle.container"
+            id="InvenioRdmRecords.DepositForm.FileUploaderToolbar.MetadataOnlyToggle"
             filesList={filesList}
             filesEnabled={filesEnabled}
             showMetadataOnlyToggle={showMetadataOnlyToggle}

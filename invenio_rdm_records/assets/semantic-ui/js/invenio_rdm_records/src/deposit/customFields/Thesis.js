@@ -7,12 +7,16 @@
 
 import React, { Component } from "react";
 
-import { FieldLabel, Input } from "react-invenio-forms";
+import {
+  FieldLabel,
+  InputComponent,
+  showHideOverridableWithDynamicId,
+} from "react-invenio-forms";
 import { Divider, Grid } from "semantic-ui-react";
 
 import PropTypes from "prop-types";
 
-export class Thesis extends Component {
+class ThesisComponent extends Component {
   render() {
     const {
       fieldPath, // injected by the custom field loader via the `field` config property
@@ -21,7 +25,7 @@ export class Thesis extends Component {
       type,
       date_submitted: dateSubmitted,
       date_defended: dateDefended,
-      icon,
+      labelIcon,
       label,
     } = this.props;
     // For backwards compability added conditional rendering for fields; it is based on their definition in the props in THESIS_CUSTOM_FIELDS_UI
@@ -30,68 +34,58 @@ export class Thesis extends Component {
       <>
         {label && (
           <>
-            <FieldLabel htmlFor={fieldPath} icon={icon} label={label} />
+            <FieldLabel htmlFor={fieldPath} icon={labelIcon} label={label} />
             <Divider fitted />
           </>
         )}
         <Grid padded>
           {university && (
             <Grid.Column width={uniWidth}>
-              <Input
+              <InputComponent
                 fieldPath={`${fieldPath}.university`}
                 label={university.label}
                 placeholder={university.placeholder}
+                helpText={university.description}
               />
-              {university.description && (
-                <label className="helptext mb-0">{university.description}</label>
-              )}
             </Grid.Column>
           )}
 
           {department && (
             <Grid.Column width={6}>
-              <Input
+              <InputComponent
                 fieldPath={`${fieldPath}.department`}
                 label={department.label}
                 placeholder={department.placeholder}
+                helpText={department.description}
               />
-              {department.description && (
-                <label className="helptext mb-0">{department.description}</label>
-              )}
             </Grid.Column>
           )}
 
           {type && (
             <Grid.Column width={4}>
-              <Input
+              <InputComponent
                 fieldPath={`${fieldPath}.type`}
                 label={type.label}
                 placeholder={type.placeholder}
+                helpText={type.description}
               />
-              {type.description && (
-                <label className="helptext mb-0">{type.description}</label>
-              )}
             </Grid.Column>
           )}
           <Grid.Column width="8">
-            <Input
+            <InputComponent
               fieldPath={`${fieldPath}.date_submitted`}
               label={dateSubmitted.label}
               placeholder={dateSubmitted.placeholder}
+              helpText={dateSubmitted.description}
             />
-            {dateSubmitted.description && (
-              <label className="helptext mb-0">{dateSubmitted.description}</label>
-            )}
           </Grid.Column>
           <Grid.Column width="8">
-            <Input
+            <InputComponent
               fieldPath={`${fieldPath}.date_defended`}
               label={dateDefended.label}
               placeholder={dateDefended.placeholder}
+              helpText={dateDefended.description}
             />
-            {dateDefended.description && (
-              <label className="helptext mb-0">{dateDefended.description}</label>
-            )}
           </Grid.Column>
         </Grid>
       </>
@@ -99,18 +93,20 @@ export class Thesis extends Component {
   }
 }
 
-Thesis.propTypes = {
+ThesisComponent.propTypes = {
   fieldPath: PropTypes.string.isRequired,
   university: PropTypes.object.isRequired,
   department: PropTypes.object.isRequired,
   type: PropTypes.object.isRequired,
   date_submitted: PropTypes.object.isRequired,
   date_defended: PropTypes.object.isRequired,
-  icon: PropTypes.string,
+  labelIcon: PropTypes.string,
   label: PropTypes.string,
 };
 
-Thesis.defaultProps = {
-  icon: undefined,
+ThesisComponent.defaultProps = {
+  labelIcon: undefined,
   label: undefined,
 };
+
+export const Thesis = showHideOverridableWithDynamicId(ThesisComponent);
