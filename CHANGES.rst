@@ -12,7 +12,7 @@
 Changes
 =======
 
-Version v21.0.0 (released 2025-09-XX)
+Version v20.2.0 (released 2025-09-16)
 
 - **feat(deposit-form)!: added `react-overridable` support more consistently across all deposit form fields**
     - Added Overridable for many components that did not already have it. This was done following the existing naming convention. New Overridables do not represent any breaking or behavior changes.
