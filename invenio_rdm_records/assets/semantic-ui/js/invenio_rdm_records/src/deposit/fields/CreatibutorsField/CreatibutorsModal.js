@@ -151,25 +151,33 @@ export class CreatibutorsModal extends Component {
    * back to the external format.
    */
   serializeCreatibutor = (submittedCreatibutor) => {
+    const { personIdentifiers } = this.state;
     const { initialCreatibutor, serializeCreatibutor } = this.props;
     if (serializeCreatibutor) {
       return serializeCreatibutor(submittedCreatibutor, initialCreatibutor);
     }
-    const findField = (arrayField, key, value) => {
-      const knownField = _find(arrayField, {
-        [key]: value,
-      });
-      return knownField ? knownField : { [key]: value };
-    };
+
     const identifiersFieldPath = "person_or_org.identifiers";
     const affiliationsFieldPath = "affiliations";
     // The modal is saving only identifiers values, thus
     // identifiers with existing scheme are trimmed
-    // Here we merge back the known scheme for the submitted identifiers
     const initialIdentifiers = _get(initialCreatibutor, identifiersFieldPath, []);
     const submittedIdentifiers = _get(submittedCreatibutor, identifiersFieldPath, []);
+
+    // Here we merge back the known scheme for the submitted identifiers
     const identifiers = submittedIdentifiers.map((identifier) => {
-      return findField(initialIdentifiers, "identifier", identifier);
+      // First search in state with the newly submitted identifiers
+      const stateField = _find(personIdentifiers, { identifier: identifier });
+      if (stateField) {
+        return stateField;
+      }
+      // If not found, search in initial identifiers
+      const initialField = _find(initialIdentifiers, { identifier: identifier });
+      if (initialField) {
+        return initialField;
+      }
+      // If not found, return as key-value pair
+      return { identifier: identifier };
     });
 
     const submittedAffiliations = _get(submittedCreatibutor, affiliationsFieldPath, []);
@@ -333,7 +341,7 @@ export class CreatibutorsModal extends Component {
       {
         showPersonForm: true,
         personIdentifiers: selectedSuggestion.identifiers.map(
-          (identifier) => identifier.identifier
+          (identifier) => identifier
         ),
         personAffiliations: selectedSuggestion.affiliations.map(
           (affiliation) => affiliation
@@ -355,7 +363,7 @@ export class CreatibutorsModal extends Component {
 
         this.updateIdentifiersAndAffiliations(
           formikProps,
-          personIdentifiers,
+          personIdentifiers.map((identifier) => identifier.identifier), // Only identifer value is needed for the form
           personAffiliations,
           this.identifiersRef,
           this.affiliationsRef
