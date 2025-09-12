@@ -10,6 +10,7 @@
 from flask import g
 from invenio_access.permissions import authenticated_user, system_identity
 from invenio_i18n import lazy_gettext as _
+from invenio_notifications.services.uow import NotificationOp
 from invenio_pidstore.errors import PIDDoesNotExistError
 from invenio_requests.customizations import RequestType, actions
 from invenio_requests.proxies import current_requests_service
@@ -18,6 +19,10 @@ from invenio_vocabularies.proxies import current_service as current_vocabularies
 from marshmallow import ValidationError, fields, validate
 from sqlalchemy.exc import NoResultFound
 
+from invenio_rdm_records.notifications.builders import (
+    RecordDeletionAcceptNotificationBuilder,
+    RecordDeletionDeclineNotificationBuilder,
+)
 from invenio_rdm_records.proxies import current_rdm_records_service
 
 
@@ -82,7 +87,7 @@ class AcceptAction(actions.AcceptAction):
             "removal_reason": {"id": removal_reason_id},
         }
 
-        # For immediate deletions, we track in the tombstone the deletion policy ID
+        # For immediate deletions, we track the deletion policy ID in the tombstone
         policy_id = self.request.get("payload", {}).get("policy_id")
         if policy_id:
             tombstone_data["note"] = str(_("Record deleted by uploader"))
@@ -100,6 +105,27 @@ class AcceptAction(actions.AcceptAction):
             identity, record["id"], tombstone_data, uow=uow
         )
 
+        if kwargs.get("send_notification", True):
+            uow.register(
+                NotificationOp(
+                    RecordDeletionAcceptNotificationBuilder.build(request=self.request)
+                )
+            )
+
+        super().execute(identity, uow)
+
+
+class DeclineAction(actions.DeclineAction):
+    """Decline action."""
+
+    def execute(self, identity, uow, **kwargs):
+        """Execute the decline action."""
+        if kwargs.get("send_notification", True):
+            uow.register(
+                NotificationOp(
+                    RecordDeletionDeclineNotificationBuilder.build(request=self.request)
+                )
+            )
         super().execute(identity, uow)
 
 
@@ -125,7 +151,7 @@ class RecordDeletion(RequestType):
         "submit": actions.SubmitAction,
         "delete": actions.DeleteAction,
         "accept": AcceptAction,
-        "decline": actions.DeclineAction,
+        "decline": DeclineAction,
         "cancel": actions.CancelAction,
         "expire": actions.ExpireAction,
     }

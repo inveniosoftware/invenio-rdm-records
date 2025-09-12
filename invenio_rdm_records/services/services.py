@@ -274,9 +274,9 @@ class RDMRecordService(RecordService):
         immediate_deletion = policy_result["immediate_deletion"]
         request_deletion = policy_result["request_deletion"]
 
-        featured_disabled = not (immediate_deletion.enabled or request_deletion.enabled)
+        featured_disable = not (immediate_deletion.enabled or request_deletion.enabled)
         allowed = immediate_deletion.allowed or request_deletion.allowed
-        if featured_disabled or not allowed:  # bail early
+        if featured_disable or not allowed:  # bail early
             raise PermissionDeniedError()
 
         # Keep track of the immediate deletion policy ID

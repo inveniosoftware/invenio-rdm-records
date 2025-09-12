@@ -1,0 +1,44 @@
+{% set deletion_request = notification.context.request %}
+{% set creator = deletion_request.created_by %}
+{% set request_links = notification.context.request.links %}
+
+{% set account_settings_link = invenio_url_for("invenio_notifications_settings.index") %}
+
+{%- block subject -%}
+    {{ _("Your record deletion request was declined") }}
+{%- endblock subject -%}
+
+{%- block html_body -%}
+<table style="font-family:'Lato',Helvetica,Arial,sans-serif;border-spacing:15px">
+    <tr>
+        <td>{{ _("{request_title} has been declined.").format(request_title=deletion_request.title)}}
+        </td>
+    </tr>
+    <tr>
+        <td>{{ _("For more details,")}} <a href="{{ request_links.self_html }}" class="button">{{ _("view deletion request")}}</a></td>
+    </tr>
+    <tr>
+        <td><strong>_</strong></td>
+    </tr>
+    <tr>
+        <td style="font-size:smaller">{{ _("This is an auto-generated message. To manage notifications, visit your")}} <a href="{{account_settings_link}}">{{ _("account settings")}}</a>.</td>
+    </tr>
+</table>
+{%- endblock html_body -%}
+
+{%- block plain_body -%}
+{{ _("'{request_title}' has been declined.").format(request_title=deletion_request.title)}}
+
+{{ _("For more details,") }} [{{ _("view the request") }}]({{ request_links.self_html }})
+
+{{ _("This is an auto-generated message. To manage notifications, visit your account settings")}}
+{%- endblock plain_body -%}
+
+{# Markdown for Slack/Mattermost/chat #}
+{%- block md_body -%}
+{{ _("'{request_title}' has been declined.").format(request_title=deletion_request.title)}}
+
+{{ _("For more details,") }}[{{ _("view the request") }}]({{ request_links.self_html }})
+
+{{ _("This is an auto-generated message. To manage notifications, visit your account settings")}}
+{%- endblock md_body -%}
