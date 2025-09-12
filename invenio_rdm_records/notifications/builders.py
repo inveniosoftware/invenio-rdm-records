@@ -554,3 +554,48 @@ class CommunityInclusionExpireNotificationBuilder(
         EntityResolve(key="request.topic"),
         EntityResolve(key="request.receiver"),
     ]
+
+
+class RecordDeletionActionNotificationBuilder(NotificationBuilder):
+    """Notification builder for record deletion actions."""
+
+    type = "record-deletion"
+
+    @classmethod
+    def build(cls, request):
+        """Build notification with request context."""
+        return Notification(
+            type=cls.type,
+            context={
+                "request": EntityResolverRegistry.reference_entity(request),
+            },
+        )
+
+    context = [
+        EntityResolve(key="request"),
+        EntityResolve(key="request.created_by"),
+    ]
+
+    recipients = [
+        UserRecipient("request.created_by"),
+    ]
+
+    recipient_filters = [
+        UserPreferencesRecipientFilter(),
+    ]
+
+    recipient_backends = [
+        UserEmailBackend(),
+    ]
+
+
+class RecordDeletionAcceptNotificationBuilder(RecordDeletionActionNotificationBuilder):
+    """Notification builder for record deletion accept action."""
+
+    type = f"{RecordDeletionActionNotificationBuilder.type}.accept"
+
+
+class RecordDeletionDeclineNotificationBuilder(RecordDeletionActionNotificationBuilder):
+    """Notification builder for record deletion decline action."""
+
+    type = f"{RecordDeletionActionNotificationBuilder.type}.decline"
