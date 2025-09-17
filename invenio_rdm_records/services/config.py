@@ -313,7 +313,7 @@ class ThumbnailLinks:
 
 record_doi_link = ConditionalLink(
     cond=is_datacite_test,
-    if_=RecordPIDLink("https://handle.stage.datacite.org/{+pid_doi}", when=has_doi),
+    if_=RecordPIDLink("https://handle.test.datacite.org/{+pid_doi}", when=has_doi),
     else_=RecordPIDLink("https://doi.org/{+pid_doi}", when=has_doi),
 )
 
