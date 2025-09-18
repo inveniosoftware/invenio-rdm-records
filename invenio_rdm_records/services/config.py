@@ -682,7 +682,7 @@ class RDMRecordServiceConfig(RecordServiceConfig, ConfiguratorMixin):
         "parent_doi": ConditionalLink(
             cond=is_datacite_test,
             if_=RecordPIDLink(
-                "https://handle.stage.datacite.org/{+parent_pid_doi}",
+                "https://handle.test.datacite.org/{+parent_pid_doi}",
                 when=is_record_or_draft_and_has_parent_doi,
             ),
             else_=RecordPIDLink(
