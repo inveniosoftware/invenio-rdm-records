@@ -1,7 +1,7 @@
 
 ..
     Copyright (C) 2019-2025 CERN.
-    Copyright (C) 2019-2024 Northwestern University.
+    Copyright (C) 2019-2025 Northwestern University.
     Copyright (C) 2024      KTH Royal Institute of Technology.
     Copyright (C) 2024-2025 Graz University of Technology.
 
@@ -11,6 +11,12 @@
 
 Changes
 =======
+
+Version v19.5.5 (released 2025-09-20)
+
+- fix(datacite test link): update Datacite test DOI link
+- fix(iiif): add error handler for `MultimediaImageNotFound`
+- i18n: pulled translations
 
 Version v19.5.4 (released 2025-08-20)
 
