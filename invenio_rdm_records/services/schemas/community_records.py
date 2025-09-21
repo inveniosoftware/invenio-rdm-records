@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # Copyright (C) 2023 CERN.
+# Copyright (C) 2025 Graz University of Technology.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
@@ -9,6 +10,7 @@
 
 from invenio_i18n import lazy_gettext as _
 from marshmallow import Schema, ValidationError, fields, validate, validates
+from marshmallow_utils.context import context_schema
 
 
 class RecordSchema(Schema):
@@ -27,7 +29,7 @@ class CommunityRecordsSchema(Schema):
     @validates("records")
     def validate_records(self, value):
         """Validate communities."""
-        max_number = self.context["max_number"]
+        max_number = context_schema.get()["max_number"]
         if max_number < len(value):
             raise ValidationError(
                 _(
