@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # Copyright (C) 2023 CERN.
+# Copyright (C) 2025 Graz University of Technology.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
@@ -30,12 +31,11 @@ class RecordCommunitiesSchema(Schema):
     @validates("communities")
     def validate_communities(self, value):
         """Validate communities."""
-        max_number = self.context["max_number"]
-        if max_number < len(value):
+        if self.max_number < len(value):
             raise ValidationError(
                 _(
                     "Too many communities passed, {max_number} max allowed.".format(
-                        max_number=max_number
+                        max_number=self.max_number
                     )
                 )
             )
