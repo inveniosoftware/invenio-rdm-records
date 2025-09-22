@@ -10,6 +10,7 @@
 
 from invenio_i18n import lazy_gettext as _
 from marshmallow import Schema, ValidationError, fields, validate, validates
+from marshmallow_utils.context import context_schema
 
 
 class RecordSchema(Schema):
@@ -28,7 +29,8 @@ class CommunityRecordsSchema(Schema):
     @validates("records")
     def validate_records(self, value):
         """Validate communities."""
-        if self.max_number < len(value):
+        max_number = context_schema.get()["max_number"]
+        if max_number < len(value):
             raise ValidationError(
                 _(
                     "Too many records passed, {max_number} max allowed.".format(

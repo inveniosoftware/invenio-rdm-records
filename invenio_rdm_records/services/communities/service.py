@@ -137,12 +137,11 @@ class RecordCommunitiesService(Service, RecordIndexerMixin):
     @unit_of_work()
     def add(self, identity, id_, data, uow):
         """Include the record in the given communities."""
-        self.config.schema.max_number = self.config.max_number_of_additions
-
         valid_data, errors = self.schema.load(
             data,
             context={
                 "identity": identity,
+                "max_number": self.config.max_number_of_additions,
             },
             raise_errors=True,
         )
@@ -234,12 +233,11 @@ class RecordCommunitiesService(Service, RecordIndexerMixin):
         """Remove communities from the record."""
         record = self.record_cls.pid.resolve(id_)
 
-        self.config.schema.max_number = self.config.max_number_of_removals
-
         valid_data, errors = self.schema.load(
             data,
             context={
                 "identity": identity,
+                "max_number": self.config.max_number_of_removals,
             },
             raise_errors=True,
         )

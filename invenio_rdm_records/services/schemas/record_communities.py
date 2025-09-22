@@ -11,6 +11,7 @@
 from invenio_i18n import lazy_gettext as _
 from invenio_requests.customizations import CommentEventType
 from marshmallow import Schema, ValidationError, fields, validate, validates
+from marshmallow_utils.context import context_schema
 
 
 class CommunitySchema(Schema):
@@ -31,7 +32,8 @@ class RecordCommunitiesSchema(Schema):
     @validates("communities")
     def validate_communities(self, value):
         """Validate communities."""
-        if self.max_number < len(value):
+        max_number = context_schema.get()["max_number"]
+        if max_number < len(value):
             raise ValidationError(
                 _(
                     "Too many communities passed, {max_number} max allowed.".format(
