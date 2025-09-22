@@ -67,7 +67,7 @@ THESIS_CUSTOM_FIELDS_UI = {
             "ui_widget": "Thesis",
             "props": {
                 "label": _("Thesis"),
-                "icon": "university",
+                "labelIcon": "university",
                 "university": {
                     "label": _("Awarding university"),
                     "placeholder": "",

@@ -12,6 +12,71 @@
 Changes
 =======
 
+Version v20.2.0 (released 2025-09-16)
+
+- **feat(deposit-form)!: added `react-overridable` support more consistently across all deposit form fields**
+    - Added Overridable for many components that did not already have it. This was done following the existing naming convention. New Overridables do not represent any breaking or behavior changes.
+    - Renamed a number of existing Overridable IDs for better compliance with existing naming conventions. This is the full list:
+        - `ReactInvenioDeposit.FileUploader.layout` -> `InvenioRdmRecords.DepositForm.FileUploader.Container`
+        - `ReactInvenioDeposit.FileUploader.ImportButton.container` -> `InvenioRdmRecords.DepositForm.FileUploader.ImportButton`
+        - `ReactInvenioDeposit.FileUploader.FileUploaderArea.container` -> `InvenioRdmRecords.DepositForm.FileUploader.UploadArea`
+        - `ReactInvenioDeposit.FileUploader.NewVersionButton.container` -> `InvenioRdmRecords.DepositForm.FileUploader.NewVersionButton`
+        - `ReactInvenioDeposit.FileUploader.Modal.container` -> `InvenioRdmRecords.DepositForm.FileUploader.Modal`
+        - `ReactInvenioDeposit.FileUploaderToolbar.layout` -> `InvenioRdmRecords.DepositForm.FileUploaderToolbar.Container`
+        - `ReactInvenioDeposit.FileUploaderToolbar.MetadataOnlyToggle.container` -> `InvenioRdmRecords.DepositForm.FileUploaderToolbar.MetadataOnlyToggle`
+        - `InvenioRDMRecords.CreatibutorsModal.RoleSelectField.container` -> `InvenioRdmRecords.DepositForm.CreatibutorsModal.RoleSelectField`
+        - `InvenioRDMRecords.CreatibutorsModal.PersonRemoteSelectField.container` -> `InvenioRdmRecords.DepositForm.CreatibutorsModal.PersonRemoteSelectField`
+        - `InvenioRDMRecords.CreatibutorsModal.FullNameField.container` -> `InvenioRdmRecords.DepositForm.CreatibutorsModal.FullNameField`
+        - `InvenioRDMRecords.CreatibutorsModal.PersonIdentifiersField.container` -> `InvenioRdmRecords.DepositForm.CreatibutorsModal.PersonIdentifiersField`
+        - `InvenioRDMRecords.CreatibutorsModal.PersonAffiliationsField.container` -> `InvenioRdmRecords.DepositForm.CreatibutorsModal.PersonAffiliationsField`
+        - `InvenioRDMRecords.CreatibutorsModal.OrganizationRemoteSelectField.container` -> `InvenioRdmRecords.DepositForm.CreatibutorsModal.OrganizationRemoteSelectField`
+        - `InvenioRDMRecords.CreatibutorsModal.OrganizationNameField.container` -> `InvenioRdmRecords.DepositForm.CreatibutorsModal.OrganizationNameField`
+        - `InvenioRDMRecords.CreatibutorsModal.OrganizationIdentifiersField.container` -> `InvenioRdmRecords.DepositForm.CreatibutorsModal.OrganizationIdentifiersField`
+        - `InvenioRDMRecords.CreatibutorsModal.OrganizationAffiliationsField.container` -> `InvenioRdmRecords.DepositForm.CreatibutorsModal.OrganizationAffiliationsField`
+        - `InvenioRdmRecords.DatesField.AddDateArrayField.Container` -> `InvenioRdmRecords.DepositForm.DatesField.Container`
+        - `InvenioRdmRecords.DatesField.DescriptionTextField.Container` -> `InvenioRdmRecords.DepositForm.DatesField.DescriptionField`
+        - `InvenioRdmRecords.DatesField.DateTextField.Container` -> `InvenioRdmRecords.DepositForm.DatesField.DateField`
+        - `InvenioRdmRecords.DatesField.TypeSelectField.Container` -> `InvenioRdmRecords.DepositForm.DatesField.TypeField`
+        - `InvenioRdmRecords.DatesField.RemoveFormField.Container` -> `InvenioRdmRecords.DepositForm.DatesField.RemoveButton`
+    - No existing overridables have been removed completely to avoid breaking current implementations in an unresolvable way.
+
+Version v20.1.0 (released 2025-09-05)
+
+- setup: bump major versions of invenio-jobs and invenio-vocabularies
+- fix: improve rendering of ErrorMessage in deposit form
+
+Version v20.0.3 (released 2025-09-03)
+
+- fix(deposit-form): correct wrong propType for optionalDOItransitions
+- fix(deposit-form): on delete draft discard all changed pids
+    * discard all draft pids if there is no published record (i.e. new version or new draft)
+    * discard all draft pids that are not in the published record
+
+Version v20.0.2 (released 2025-09-01)
+
+- fix(optional-doi): show correctly showed value on form initialization
+    * uses published record doi to check if the managed DOI can be unreserved.
+    * `shouldCheckForExplicitDOIReservation` condition is evaluated against pids.doi because
+      before it was taking into account only the pids object and there more pids could be present e.g. oai
+- fix(iiif): add error handler for `MultimediaImageNotFound`
+
+Version v20.0.1 (released 2025-08-27)
+
+- fix: use config variable instead of redefining
+- services: create RDMCommunityRecordSearchOptions
+- deposit-form: add fallback message if checksum is not yet available
+    * this is relevant for the multipart file upload with local file
+      storage, where the checksum gets calculated in a background task after
+      finalizing the upload
+- fix(schemaorg): chase award schema relaxation from Invenio-Vocabularies
+- fix(oaipmh): properly change output format
+    * `URLSearchParams` does not parse URLs,
+      https://developer.mozilla.org/en-US/docs/Web/API/URLSearchParams#no_url_parsing,
+      preventing the `metadataPrefix` from changing when a new value is
+      selected on the dropdown.
+- UI: use X for discard instead of trash icon
+- UI: add icon to delete button
+
 Version v20.0.0 (released 2025-08-01)
 
 - feat: implement request reviewers functionality
@@ -20,7 +85,7 @@ Version v20.0.0 (released 2025-08-01)
   - Remove deprecated approve action
   - Add comprehensive tests for reviewer assignment
   - Include configuration validation for reviewer settings
-- setup: bump major versions of invenio-communties and invenio-checks
+- setup: bump major versions of invenio-communities and invenio-checks
   - needed to isolate the new request reviewers functionality
 
 Version v19.5.3 (released 2025-07-31)

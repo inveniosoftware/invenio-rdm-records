@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2023 CERN.
+# Copyright (C) 2023-2025 CERN.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
@@ -19,7 +19,10 @@ class VerifiedRecordsSortParam(SortParam):
         If the config "RDM_SEARCH_SORT_BY_VERIFIED" is set, then all the sorting is
         prepended by the record's `is_verified` property.
         """
-        if current_app.config["RDM_SEARCH_SORT_BY_VERIFIED"]:
+        if (
+            current_app.config["RDM_SEARCH_SORT_BY_VERIFIED"]
+            and self.config.verified_sorting_enabled
+        ):
             fields = self._compute_sort_fields(params)
             return search.sort(*["-parent.is_verified", *fields])
         return super().apply(identity, search, params)

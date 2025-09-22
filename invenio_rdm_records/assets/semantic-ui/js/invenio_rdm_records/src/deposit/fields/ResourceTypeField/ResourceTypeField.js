@@ -9,10 +9,16 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
 import _get from "lodash/get";
-import { FieldLabel, SelectField } from "react-invenio-forms";
+import {
+  FieldLabel,
+  SelectField,
+  showHideOverridable,
+  mandatoryFieldCommonProps,
+} from "react-invenio-forms";
 import { i18next } from "@translations/invenio_rdm_records/i18next";
+import Overridable from "react-overridable";
 
-export class ResourceTypeField extends Component {
+export class ResourceTypeFieldComponent extends Component {
   groupErrors = (errors, fieldPath) => {
     const fieldErrors = _get(errors, fieldPath);
     if (fieldErrors) {
@@ -51,26 +57,53 @@ export class ResourceTypeField extends Component {
   };
 
   render() {
-    const { fieldPath, label, labelIcon, options, ...restProps } = this.props;
+    const {
+      fieldPath,
+      label,
+      labelIcon: propLabelIcon,
+      options,
+      placeholder,
+      helpText: propHelpText,
+      schema,
+      optimized,
+      ...restProps
+    } = this.props;
     const frontEndOptions = this.createOptions(options);
+
+    // Cannot show helpText or labelIcon when the field is inside an ArrayField
+    const helpText = schema === "record" ? propHelpText : undefined;
+    const labelIcon = schema === "record" ? propLabelIcon : undefined;
+
     return (
-      <SelectField
+      <Overridable
+        id="InvenioRdmRecords.DepositForm.ResourceTypeField.Container"
         fieldPath={fieldPath}
-        label={<FieldLabel htmlFor={fieldPath} icon={labelIcon} label={label} />}
-        optimized
+        labelIcon={labelIcon}
+        label={label}
         aria-label={label}
         options={frontEndOptions}
-        selectOnBlur={false}
-        {...restProps}
-      />
+        placeholder={placeholder}
+        helpText={helpText}
+        optimized={optimized}
+      >
+        <SelectField
+          fieldPath={fieldPath}
+          label={<FieldLabel htmlFor={fieldPath} icon={labelIcon} label={label} />}
+          optimized={optimized}
+          aria-label={label}
+          options={frontEndOptions}
+          selectOnBlur={false}
+          helpText={helpText}
+          placeholder={placeholder}
+          required
+          {...restProps}
+        />
+      </Overridable>
     );
   }
 }
 
-ResourceTypeField.propTypes = {
-  fieldPath: PropTypes.string.isRequired,
-  label: PropTypes.string,
-  labelIcon: PropTypes.string,
+ResourceTypeFieldComponent.propTypes = {
   labelclassname: PropTypes.string,
   options: PropTypes.arrayOf(
     PropTypes.shape({
@@ -80,12 +113,20 @@ ResourceTypeField.propTypes = {
       id: PropTypes.string,
     })
   ).isRequired,
-  required: PropTypes.bool,
+  schema: PropTypes.oneOf(["record", "relatedWork"]).isRequired,
+  optimized: PropTypes.bool,
+  ...mandatoryFieldCommonProps,
 };
 
-ResourceTypeField.defaultProps = {
+ResourceTypeFieldComponent.defaultProps = {
   label: i18next.t("Resource type"),
   labelIcon: "tag",
   labelclassname: "field-label-class",
-  required: false,
+  schema: "record",
+  optimized: true,
 };
+
+export const ResourceTypeField = showHideOverridable(
+  "InvenioRdmRecords.DepositForm.ResourceTypeField",
+  ResourceTypeFieldComponent
+);

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2020-2024 CERN.
+# Copyright (C) 2020-2025 CERN.
 # Copyright (C) 2020-2025 Northwestern University.
 # Copyright (C)      2021 TU Wien.
 # Copyright (C) 2021-2023 Graz University of Technology.
@@ -191,6 +191,8 @@ def get_record_thumbnail_file(record, **kwargs):
 class RDMSearchOptions(SearchOptions, SearchOptionsMixin):
     """Search options for record search."""
 
+    verified_sorting_enabled = True
+
     facets = {
         "resource_type": facets.resource_type,
         "languages": facets.language,
@@ -208,6 +210,12 @@ class RDMSearchOptions(SearchOptions, SearchOptionsMixin):
         PublishedRecordsParam,
         MetricsParam,
     ]
+
+
+class RDMCommunityRecordSearchOptions(RDMSearchOptions):
+    """Search options for community record search."""
+
+    verified_sorting_enabled = False
 
 
 class RDMSearchDraftsOptions(SearchDraftsOptions, SearchOptionsMixin):
@@ -305,7 +313,7 @@ class ThumbnailLinks:
 
 record_doi_link = ConditionalLink(
     cond=is_datacite_test,
-    if_=RecordPIDLink("https://handle.stage.datacite.org/{+pid_doi}", when=has_doi),
+    if_=RecordPIDLink("https://handle.test.datacite.org/{+pid_doi}", when=has_doi),
     else_=RecordPIDLink("https://doi.org/{+pid_doi}", when=has_doi),
 )
 
@@ -674,7 +682,7 @@ class RDMRecordServiceConfig(RecordServiceConfig, ConfiguratorMixin):
         "parent_doi": ConditionalLink(
             cond=is_datacite_test,
             if_=RecordPIDLink(
-                "https://handle.stage.datacite.org/{+parent_pid_doi}",
+                "https://handle.test.datacite.org/{+parent_pid_doi}",
                 when=is_record_or_draft_and_has_parent_doi,
             ),
             else_=RecordPIDLink(
@@ -827,8 +835,8 @@ class RDMCommunityRecordsConfig(BaseRecordServiceConfig, ConfiguratorMixin):
         "RDM_SEARCH",
         "RDM_SORT_OPTIONS",
         "RDM_FACETS",
-        search_option_cls=RDMSearchOptions,
-        search_option_cls_key="RDM_SEARCH_OPTIONS_CLS",
+        search_option_cls=RDMCommunityRecordSearchOptions,
+        search_option_cls_key="RDM_COMMUNITY_RECORD_SEARCH_OPTIONS_CLS",
     )
     search_versions = FromConfigSearchOptions(
         "RDM_SEARCH_VERSIONING",

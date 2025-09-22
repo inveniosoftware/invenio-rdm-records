@@ -8,13 +8,18 @@
 
 import React, { Component } from "react";
 import PropTypes from "prop-types";
-
-import { FieldLabel, TextField } from "react-invenio-forms";
+import Overridable from "react-overridable";
+import {
+  FieldLabel,
+  TextField,
+  showHideOverridable,
+  fieldCommonProps,
+} from "react-invenio-forms";
 import { i18next } from "@translations/invenio_rdm_records/i18next";
 
-export class VersionField extends Component {
+class VersionFieldComponent extends Component {
   render() {
-    const { fieldPath, label, labelIcon, placeholder } = this.props;
+    const { fieldPath, label, labelIcon, placeholder, disabled, required } = this.props;
     const helpText = (
       <span>
         {i18next.t(
@@ -29,25 +34,42 @@ export class VersionField extends Component {
     );
 
     return (
-      <TextField
+      <Overridable
+        id="InvenioRdmRecords.DepositForm.VersionField.Container"
         fieldPath={fieldPath}
         helpText={helpText}
-        label={<FieldLabel htmlFor={fieldPath} icon={labelIcon} label={label} />}
+        labelIcon={labelIcon}
+        label={label}
         placeholder={placeholder}
-      />
+        disabled={disabled}
+        required={required}
+      >
+        <TextField
+          fieldPath={fieldPath}
+          helpText={helpText}
+          label={<FieldLabel htmlFor={fieldPath} icon={labelIcon} label={label} />}
+          placeholder={placeholder}
+          disabled={disabled}
+          required={required}
+        />
+      </Overridable>
     );
   }
 }
 
-VersionField.propTypes = {
+VersionFieldComponent.propTypes = {
   fieldPath: PropTypes.string.isRequired,
-  label: PropTypes.string,
-  labelIcon: PropTypes.string,
   placeholder: PropTypes.string,
+  ...fieldCommonProps,
 };
 
-VersionField.defaultProps = {
+VersionFieldComponent.defaultProps = {
   label: i18next.t("Version"),
   labelIcon: "code branch",
   placeholder: "",
 };
+
+export const VersionField = showHideOverridable(
+  "InvenioRdmRecords.DepositForm.VersionField",
+  VersionFieldComponent
+);

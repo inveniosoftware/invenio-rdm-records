@@ -105,7 +105,7 @@ JOURNAL_CUSTOM_FIELDS_UI = {
                     "placeholder": _("e.g. 2077-9550"),
                     "description": _("International Standard Serial Number"),
                 },
-                "icon": "newspaper outline",
+                "labelIcon": "newspaper outline",
             },
         }
     ],

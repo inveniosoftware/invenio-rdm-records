@@ -8,6 +8,7 @@
 export { AccessRightField } from "./AccessField";
 export { DescriptionsField } from "./DescriptionsField";
 export { LanguagesField } from "./LanguagesField";
+export { CopyrightsField } from "./CopyrightsField";
 export { CreatibutorsField } from "./CreatibutorsField";
 export { DatesField } from "./DatesField";
 export * from "./FileUploader";

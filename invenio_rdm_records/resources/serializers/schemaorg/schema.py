@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2023-2024 CERN.
+# Copyright (C) 2023-2025 CERN.
 # Copyright (C) 2021 Northwestern University.
 # Copyright (C) 2023-2025 Graz University of Technology.
 # Copyright (C) 2024 KTH Royal Institute of Technology.
@@ -362,11 +362,11 @@ class SchemaorgSchema(BaseSerializerSchema, CommonFieldsMixin):
             number = award.get("number")
             id_ = award.get("id")
 
-            if not (id_ or (title and number)):
-                # One of 'id' or '(title' and 'number') must be provided
+            if not (id_ or title or number):
+                # One of 'id', 'title', or 'number' must be provided
                 raise ValidationError(
                     _(
-                        "Funding serialization failed on award: one of 'id' or ('number' and 'title') are required."
+                        "Funding serialization failed on award: one of 'id', 'number', or 'title' are required."
                     )
                 )
 
