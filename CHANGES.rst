@@ -12,6 +12,12 @@
 Changes
 =======
 
+Version v19.5.6 (released 2025-09-24)
+
+- fix(CreatibutorsModal): get identifier scheme from recent suggestions
+- chore(js-tests): upgrade react-overridable major version
+- setup: remove unused ftfy pin to remove pkg-resources usage  
+
 Version v19.5.5 (released 2025-09-20)
 
 - fix(datacite test link): update Datacite test DOI link
