@@ -12,6 +12,12 @@
 Changes
 =======
 
+Version v19.5.7 (released 2025-09-25)
+
+- fix(optional-doi): show correctly showed value on form initialization
+- fix(deposit-form): on delete draft discard all changed pids
+- fix(deposit-form): correct wrong propType for optionalDOItransitions
+
 Version v19.5.6 (released 2025-09-24)
 
 - fix(CreatibutorsModal): get identifier scheme from recent suggestions
