@@ -62,8 +62,6 @@ class CreateAction(actions.CreateAction):
     def _verify_removal_reason(self):
         invalid_reason_msg = _("Invalid removal reason")
         removal_reason_id = self.request.get("payload", {}).get("reason")
-        if not removal_reason_id:
-            raise ValidationError(_("Removal reason is required."))
         try:
             vocab = current_vocabularies_service.read(
                 identity=system_identity, id_=("removalreasons", removal_reason_id)
@@ -158,7 +156,11 @@ class RecordDeletion(RequestType):
     payload_schema = {
         "policy_id": fields.String(required=False),
         "reason": fields.String(required=True, validate=validate.Length(min=1)),
-        "comment": fields.String(required=False, allow_none=True),
+        "comment": fields.String(
+            required=False,
+            validate=validate.Length(min=25),
+            allow_none=True,
+        ),
     }
 
     def _update_link_config(self, **context_vars):
