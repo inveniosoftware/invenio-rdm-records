@@ -7,8 +7,7 @@
 
 """Record deletion request."""
 
-from flask import g
-from invenio_access.permissions import authenticated_user, system_identity
+from invenio_access.permissions import system_identity
 from invenio_i18n import lazy_gettext as _
 from invenio_notifications.services.uow import NotificationOp
 from invenio_pidstore.errors import PIDDoesNotExistError
@@ -30,7 +29,7 @@ class CreateAction(actions.CreateAction):
     """Create action."""
 
     def execute(self, identity, uow):
-        """Execute the create action."""
+        """Verify request preconditions and create the request."""
         record = self.request.topic.resolve()
         existing_requests = self._get_existing_requests(record)
         if existing_requests.total > 0:
@@ -117,7 +116,7 @@ class DeclineAction(actions.DeclineAction):
     """Decline action."""
 
     def execute(self, identity, uow, **kwargs):
-        """Execute the decline action."""
+        """Decline the request."""
         if kwargs.get("send_notification", True):
             uow.register(
                 NotificationOp(
@@ -164,7 +163,7 @@ class RecordDeletion(RequestType):
     }
 
     def _update_link_config(self, **context_vars):
-        """Fix the prefix required for "self_html"."""
+        """Fix the prefix required for `self_html`."""
         prefix = "/me"
         return {"ui": context_vars["ui"] + prefix}
 
