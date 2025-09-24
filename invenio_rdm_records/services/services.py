@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2020-2024 CERN.
+# Copyright (C) 2020-2025 CERN.
 # Copyright (C) 2020-2021 Northwestern University.
 # Copyright (C) 2021-2023 TU Wien.
 # Copyright (C) 2021 Graz University of Technology.

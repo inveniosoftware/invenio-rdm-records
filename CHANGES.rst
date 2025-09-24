@@ -12,6 +12,23 @@
 Changes
 =======
 
+Version v21.0.0 (released 2025-09-24)
+
+- installation: bump invenio-communities and invenio-checks
+- feat(deletion-request): different checklist for immediate and request
+- feat(record-deletion): add notifications
+- fix(record-deletion): tombstone should have accepter's ID
+- feat(deletion-request): add tags for valid removal reasons
+- feat(schema): allow `removed_by` to be passed to tombstone schema
+    * Allows loading the field in the schema.
+    * If not passed, defaults to the `identity.id` of the deletion action.
+- feat(schema): add `deletion_policy` to record tombstone
+- feat: add support to request deletion of a record
+- chore(js-tests): upgrade react-overridable major version
+- fix(CreatibutorsModal): get identifier scheme from recent suggestions
+- fix(datacite test link): update Datacite test DOI link
+- fix: invalid datacite test mode link
+
 Version v20.2.0 (released 2025-09-16)
 
 - **feat(deposit-form)!: added `react-overridable` support more consistently across all deposit form fields**
