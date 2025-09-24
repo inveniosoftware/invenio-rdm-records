@@ -260,6 +260,8 @@ class RDMRecordService(RecordService):
         """Request deletion of a record."""
         record = self.record_cls.pid.resolve(id_)
 
+        self.require_permission(identity, "request_deletion", record=record)
+
         if record.deletion_status.is_deleted:
             raise DeletionStatusException(record, RecordDeletionStatusEnum.PUBLISHED)
 

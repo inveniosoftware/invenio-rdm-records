@@ -319,6 +319,7 @@ class RDMRecordPermissionPolicy(RecordPermissionPolicy):
     #
     can_delete = [Administration(), SystemProcess()]
     can_delete_files = [SystemProcess()]
+    can_request_deletion = can_manage
     can_purge = [SystemProcess()]
 
     #
