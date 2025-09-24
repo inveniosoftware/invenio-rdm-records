@@ -340,24 +340,6 @@
   tags:
     - depositable
     - linkable
-- id: publication-thesis
-  icon: file alternate
-  props:
-    csl: thesis
-    datacite_general: Text
-    datacite_type: Thesis
-    openaire_resourceType: "0006"
-    openaire_type: publication
-    eurepo: info:eu-repo/semantics/doctoralThesis
-    schema.org: https://schema.org/Thesis
-    subtype: publication-thesis
-    type: publication
-  title:
-    en: Thesis
-    de: Abschlussarbeit
-  tags:
-    - depositable
-    - linkable
 - id: publication-workingpaper
   icon: file alternate
   props:
@@ -407,8 +389,8 @@
     subtype: publication-dissertation
     type: publication
   title:
-    en: Dissertation
-    de: Dissertation
+    en: Thesis
+    de: Abschlussarbeit
   tags:
     - depositable
     - linkable
