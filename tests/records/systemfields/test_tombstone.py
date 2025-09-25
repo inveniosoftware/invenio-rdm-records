@@ -1,13 +1,14 @@
 # -*- coding: utf-8 -*-
 #
 # Copyright (C) 2023 TU Wien.
+# Copyright (C) 2025 Graz University of Technology.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
 
 """Tests for the tombstone field and record deletion field."""
 
-import datetime
+from datetime import datetime, timezone
 
 import pytest
 from invenio_requests.resolvers.registry import ResolverRegistry
@@ -39,7 +40,7 @@ def test_tombstone_creation(app):
         "removed_by": {"user": "1"},
         "removal_reason": {"id": "spam"},
         "note": "nothing in particular",
-        "removal_date": datetime.datetime.utcnow(),
+        "removal_date": datetime.now(timezone.utc),
         "citation_text": "No citation available, sorry",
         "is_visible": False,
     }
@@ -55,7 +56,7 @@ def test_tombstone_creation(app):
 
 def test_tombstone_invalid_removed_by(app):
     """Test the failure of tombstone creation if the `removed_by` entry is invalid."""
-    for invalid_value in [[], datetime.datetime.utcnow()]:
+    for invalid_value in [[], datetime.now(timezone.utc)]:
         with pytest.raises(ValueError):
             Tombstone({"removed_by": invalid_value})
 

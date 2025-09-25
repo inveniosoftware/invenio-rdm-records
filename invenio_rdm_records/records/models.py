@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # Copyright (C) 2020-2024 CERN.
+# Copyright (C) 2026 Graz University of Technology.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
@@ -8,6 +9,7 @@
 """Record and draft database models."""
 
 import uuid
+from datetime import datetime, timezone
 
 from invenio_accounts.models import User
 from invenio_communities.records.records.models import CommunityRelationMixin
@@ -21,7 +23,6 @@ from invenio_files_rest.models import Bucket
 from invenio_records.models import RecordMetadataBase
 from invenio_records_resources.records import FileRecordModelMixin
 from sqlalchemy.ext.declarative import declared_attr
-from sqlalchemy_utils import Timestamp
 from sqlalchemy_utils.types import ChoiceType, UUIDType
 
 from .systemfields.deletion_status import RecordDeletionStatusEnum
@@ -144,7 +145,7 @@ def default_max_file_size(context):
     return context.get_current_parameters()["quota_size"]
 
 
-class RDMRecordQuota(db.Model, Timestamp):
+class RDMRecordQuota(db.Model, db.Timestamp):
     """Store for the files bucket quota for all versions of a record."""
 
     __tablename__ = "rdm_records_quota"
@@ -192,7 +193,7 @@ class RDMRecordQuota(db.Model, Timestamp):
     """Notes related to setting the quota."""
 
 
-class RDMUserQuota(db.Model, Timestamp):
+class RDMUserQuota(db.Model, db.Timestamp):
     """Store for the files bucket quota for a user."""
 
     __tablename__ = "rdm_users_quota"
