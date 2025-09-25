@@ -321,6 +321,7 @@ RDM_SORT_OPTIONS = {
     "mostdownloaded": dict(
         title=_("Most downloaded"), fields=["-stats.all_versions.unique_downloads"]
     ),
+    "last_replied": dict(title=_("Last replied"), fields=["last_reply.created"]),
 }
 """Definitions of available record sort options.
 
