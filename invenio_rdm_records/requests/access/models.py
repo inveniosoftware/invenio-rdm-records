@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # Copyright (C) 2023 TU Wien.
+# Copyright (C) 2025 Graz University of Technology.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
@@ -8,7 +9,7 @@
 """Database models related to access requests."""
 
 import uuid
-from datetime import date, datetime
+from datetime import date, datetime, timezone
 from secrets import token_urlsafe
 
 from invenio_db import db
@@ -37,7 +38,10 @@ class AccessRequestToken(db.Model):
     """Randomly generated token which will grant access to the request."""
 
     created = db.Column(
-        db.DateTime, nullable=False, default=datetime.utcnow, index=True
+        db.DateTime,
+        nullable=False,
+        default=lambda: datetime.now(timezone.utc),
+        index=True,
     )
     """Creation timestamp."""
 
@@ -84,7 +88,7 @@ class AccessRequestToken(db.Model):
     @property
     def is_expired(self):
         """Determine if link is expired."""
-        return datetime.utcnow() > self.expires_at
+        return datetime.now(timezone.utc) > self.expires_at
 
     @classmethod
     def get_by_token(cls, token):
@@ -114,7 +118,7 @@ class AccessRequestToken(db.Model):
         :param expires_at: The expiration date of the access request token.
         """
         if shelf_life and not expires_at:
-            expires_at = datetime.utcnow() + shelf_life
+            expires_at = datetime.now(timezone.utc) + shelf_life
 
         is_date = isinstance(expires_at, date)
         is_datetime = isinstance(expires_at, datetime)
