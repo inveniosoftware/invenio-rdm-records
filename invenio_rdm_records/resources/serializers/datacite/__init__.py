@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # Copyright (C) 2021-2024 CERN.
+# Copyright (C) 2025 Graz University of Technology.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
@@ -18,13 +19,16 @@ from .schema import DataCite43Schema
 class DataCite43JSONSerializer(MarshmallowSerializer):
     """Marshmallow based DataCite serializer for records."""
 
-    def __init__(self, **options):
+    def __init__(self, is_parent=False, **options):
         """Constructor."""
         super().__init__(
             format_serializer_cls=JSONSerializer,
             object_schema_cls=DataCite43Schema,
             list_schema_cls=BaseListSchema,
-            schema_kwargs={"dumpers": [JournalDataciteDumper()]},  # Order matters
+            schema_kwargs={
+                "dumpers": [JournalDataciteDumper()],  # Order matters
+                "is_parent": is_parent,
+            },
             **options,
         )
 
