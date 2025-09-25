@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # Copyright (C) 2021 TU Wien.
-# Copyright (C) 2024 Graz University of Technology.
+# Copyright (C) 2024-2025 Graz University of Technology.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
@@ -9,7 +9,7 @@
 """Secret links for sharing access to records."""
 
 import secrets
-from datetime import datetime
+from datetime import datetime, timezone
 
 from flask import current_app
 from itsdangerous import BadData, Serializer, SignatureExpired
@@ -110,7 +110,7 @@ class TimedSecretLinkSerializer(TimedJSONWebSignatureSerializer, TokenSerializer
         """
         assert isinstance(expires_at, datetime) or expires_at is None
 
-        dt = (expires_at - datetime.utcnow()) if expires_at else None
+        dt = (expires_at - datetime.now(timezone.utc)) if expires_at else None
 
         super().__init__(
             current_app.config["SECRET_KEY"],
