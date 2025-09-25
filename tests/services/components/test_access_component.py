@@ -1,15 +1,15 @@
 # -*- coding: utf-8 -*-
 #
 # Copyright (C) 2021 TU Wien.
+# Copyright (C) 2025 Graz University of Technology.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
 
 """Tests for the service AccessComponent."""
 
-from datetime import timedelta
+from datetime import datetime, timedelta, timezone
 
-import arrow
 import pytest
 from flask_principal import Identity, UserNeed
 from invenio_access.permissions import system_identity
@@ -93,7 +93,7 @@ def test_access_component_set_owner(minimal_record, parent, users):
 def test_access_component_update_access_via_json(
     minimal_record, parent, users, identity_simple
 ):
-    next_year = arrow.utcnow().datetime + timedelta(days=+365)
+    next_year = datetime.now(timezone.utc) + timedelta(days=+365)
     restricted_access = {
         "record": "restricted",
         "files": "restricted",
