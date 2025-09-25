@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # Copyright (C) 2021 CERN.
+# Copyright (C) 2025-2026 Graz University of Technology.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
@@ -8,7 +9,7 @@
 """Celery tasks."""
 
 import math
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 
 from celery import shared_task
 from celery.schedules import crontab
@@ -28,7 +29,7 @@ from .errors import EmbargoNotLiftedError
 # event statistics.
 StatsRDMReindexTask = {
     "task": "invenio_rdm_records.services.tasks.reindex_stats",
-    "schedule": crontab(minute=10),
+    "schedule": crontab(minute="05,15,25,35,45,55"),  # crontab(minute=10),
     "args": [
         (
             "stats-record-view",
@@ -64,8 +65,8 @@ def reindex_stats(stats_indices):
     last_run = bm.get_bookmark()
     if not last_run:
         # If this is the first time that we run, let's do it for the documents of the last week
-        last_run = (datetime.utcnow() - timedelta(days=7)).isoformat()
-    reindex_start_time = datetime.utcnow().isoformat()
+        last_run = (datetime.now(timezone.utc) - timedelta(days=7)).isoformat()
+    reindex_start_time = datetime.now(timezone.utc).isoformat()
     indices = ",".join(map(lambda x: prefix_index(x) + "*", stats_indices))
 
     all_parents = set()

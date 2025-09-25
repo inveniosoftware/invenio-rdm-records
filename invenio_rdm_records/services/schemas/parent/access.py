@@ -3,6 +3,7 @@
 # Copyright (C) 2020-2024 CERN.
 # Copyright (C) 2020 Northwestern University.
 # Copyright (C) 2021 TU Wien.
+# Copyright (C) 2025 Graz University of Technology.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
@@ -63,7 +64,7 @@ class SecretLink(Schema):
     created_at = TZDateTime(
         timezone=timezone.utc, format="iso", required=False, dump_only=True
     )
-    expires_at = ISODateString(required=False)
+    expires_at = TZDateTime(timezone=timezone.utc, format="iso", required=False)
     permission = fields.String(
         required=False, validate=validate.OneOf(["view", "preview", "edit"])
     )

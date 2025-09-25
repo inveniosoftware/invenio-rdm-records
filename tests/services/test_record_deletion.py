@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # Copyright (C) 2023 TU Wien.
+# Copyright (C) 2025 Graz University of Technology.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
@@ -8,7 +9,7 @@
 """Service-level tests for record deletion."""
 
 from copy import deepcopy
-from datetime import datetime
+from datetime import datetime, timezone
 
 import arrow
 import pytest
@@ -52,7 +53,7 @@ def test_record_deletion(running_app, minimal_record, search_clear):
     assert tombstone.removal_reason is None
     assert tombstone.note == tombstone_info["note"]
     assert tombstone.citation_text
-    assert arrow.get(tombstone.removal_date).date() == datetime.utcnow().date()
+    assert arrow.get(tombstone.removal_date).date() == datetime.now(timezone.utc).date()
 
     # mark the record for purge
     record = service.mark_record_for_purge(superuser_identity, record.id)

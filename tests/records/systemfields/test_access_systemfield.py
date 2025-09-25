@@ -3,6 +3,7 @@
 # Copyright (C) 2020-2021 CERN.
 # Copyright (C) 2020-2021 Northwestern University.
 # Copyright (C) 2021 TU Wien.
+# Copyright (C) 2025 Graz University of Technology.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
@@ -10,9 +11,8 @@
 """Test access system field."""
 
 from base64 import b64encode
-from datetime import timedelta
+from datetime import datetime, timedelta, timezone
 
-import arrow
 import pytest
 from invenio_access.permissions import system_user_id
 
@@ -51,17 +51,17 @@ def test_protection_invalid_values():
 
 
 def test_embargo_creation():
-    next_year = arrow.utcnow().datetime + timedelta(days=+365)
+    next_year = datetime.now(timezone.utc) + timedelta(days=+365)
     embargo = Embargo(until=next_year, reason="espionage")
     assert embargo.active
 
-    last_year = arrow.utcnow().datetime + timedelta(days=-365)
+    last_year = datetime.now(timezone.utc) + timedelta(days=-365)
     embargo = Embargo(until=last_year, reason="espionage")
     assert not embargo.active
 
 
 def test_embargo_from_dict():
-    next_year = arrow.utcnow().datetime + timedelta(days=+365)
+    next_year = datetime.now(timezone.utc) + timedelta(days=+365)
     embargo_dict = {"until": next_year, "active": True, "reason": "espionage"}
     embargo = Embargo.from_dict(embargo_dict)
     assert embargo.active
@@ -72,8 +72,8 @@ def test_embargo_from_dict():
 
 
 def test_embargo_lift():
-    next_year = arrow.utcnow().datetime + timedelta(days=+365)
-    last_year = arrow.utcnow().datetime + timedelta(days=-365)
+    next_year = datetime.now(timezone.utc) + timedelta(days=+365)
+    last_year = datetime.now(timezone.utc) + timedelta(days=-365)
     embargo_dict1 = {"until": next_year, "active": True, "reason": "espionage"}
     embargo_dict2 = {"until": last_year, "active": True, "reason": "espionage"}
     new_embargo = Embargo.from_dict(embargo_dict1)
@@ -300,7 +300,7 @@ def test_owner_dump():
 
 
 def test_access_field_on_record(running_app, minimal_record, parent, users):
-    next_year = arrow.utcnow().datetime + timedelta(days=+365)
+    next_year = datetime.now(timezone.utc) + timedelta(days=+365)
     minimal_record["access"]["embargo"] = {
         "until": next_year.strftime("%Y-%m-%d"),
         "active": True,
@@ -316,7 +316,7 @@ def test_access_field_on_record(running_app, minimal_record, parent, users):
 
 
 def test_access_field_update_embargo(running_app, minimal_record, parent, users):
-    next_year = arrow.utcnow().datetime + timedelta(days=+365)
+    next_year = datetime.now(timezone.utc) + timedelta(days=+365)
     minimal_record["access"]["embargo"] = {
         "until": next_year.strftime("%Y-%m-%d"),
         "active": True,
@@ -334,7 +334,7 @@ def test_access_field_update_embargo(running_app, minimal_record, parent, users)
 
 
 def test_access_field_clear_embargo(minimal_record, parent):
-    next_year = arrow.utcnow().datetime + timedelta(days=+365)
+    next_year = datetime.now(timezone.utc) + timedelta(days=+365)
     minimal_record["access"]["embargo"] = {
         "until": next_year.strftime("%Y-%m-%d"),
         "active": True,
@@ -347,7 +347,7 @@ def test_access_field_clear_embargo(minimal_record, parent):
 
 
 def test_access_field_lift_embargo(minimal_record, parent):
-    tomorrow = arrow.utcnow().datetime + timedelta(days=+1)
+    tomorrow = datetime.now(timezone.utc) + timedelta(days=+1)
     minimal_record["access"]["record"] = "public"
     minimal_record["access"]["files"] = "restricted"
     minimal_record["access"]["embargo"] = {
@@ -361,7 +361,7 @@ def test_access_field_lift_embargo(minimal_record, parent):
     assert rec["access"]["files"] == "restricted"
     assert rec["access"]["embargo"]["active"] is True
 
-    today = arrow.utcnow().datetime
+    today = datetime.now(timezone.utc)
     rec.access.embargo.until = today
     assert rec.access.lift_embargo()
     assert rec.access.protection.record == "public"
