@@ -2,6 +2,7 @@
 # #
 # # Copyright (C) 2023-2024 CERN.
 # # Copyright (C) 2023 TU Wien.
+# Copyright (C) 2025 Graz University of Technology.
 # #
 # # Invenio-RDM is free software; you can redistribute it and/or modify
 # # it under the terms of the MIT License; see LICENSE file for more details.
@@ -33,7 +34,7 @@ class MockRequestModerationTask(Task):
 
 
 def test_user_moderation_approve(
-    running_app, mod_identity, unverified_user, es_clear, minimal_record, mocker
+    running_app, mod_identity, unverified_user, search_clear, minimal_record, mocker
 ):
     """Tests moderation action after user approval.
 
@@ -99,7 +100,7 @@ def test_user_moderation_approve(
 
 
 def test_user_moderation_decline(
-    running_app, mod_identity, unverified_user, es_clear, minimal_record, mocker
+    running_app, mod_identity, unverified_user, search_clear, minimal_record, mocker
 ):
     """Tests user moderation action after decline.
 
