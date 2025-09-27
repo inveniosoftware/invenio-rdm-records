@@ -56,11 +56,11 @@ def test_secret_link_revoke(app):
         db.session.commit()
         uuid = link.id
 
-        assert SecretLink.query.get(uuid) == link
+        assert db.session.get(SecretLink, uuid) == link
         link.revoke()
         db.session.commit()
 
-        assert SecretLink.query.get(uuid) is None
+        assert db.session.get(SecretLink, uuid) is None
 
 
 def test_secret_link_get_by_token(app):
