@@ -719,7 +719,7 @@ class RecordAccessService(RecordService):
         record = self.record_cls.pid.resolve(id_)
         if current_app.config.get("MAIL_SUPPRESS_SEND", False):
             # TODO should be handled globally, not here, maybe EmailOp?
-            current_app.logger.warn(
+            current_app.logger.warning(
                 "Cannot proceed with guest based access request - "
                 "email sending has been disabled!"
             )
