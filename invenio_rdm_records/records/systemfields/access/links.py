@@ -2,11 +2,14 @@
 #
 # This file is part of Invenio.
 # Copyright (C) 2021 TU Wien.
+# Copyright (C) 2025 Graz University of Technology.
 #
 # Invenio is free software; you can redistribute it and/or modify it
 # under the terms of the MIT License; see LICENSE file for more details.
 
 """Links class for the access system field."""
+
+from invenio_db import db
 
 from ....secret_links.models import SecretLink
 
@@ -36,7 +39,7 @@ class Link:
     def resolve(self, raise_exc=False):
         """Resolve the link entity (e.g. SecretLink) via a database query."""
         if self._entity is None:
-            self._entity = SecretLink.query.get(self.link_id)
+            self._entity = db.session.get(SecretLink, self.link_id)
 
             if self._entity is None and raise_exc:
                 raise LookupError("could not find link: {}".format(self.dump()))
