@@ -102,7 +102,7 @@ class SecretLink(db.Model):
         """Get the SecretLink referenced by the specified token."""
         data = cls.load_token(token)
         if data:
-            link = cls.query.get(data["id"])
+            link = db.session.get(cls, data["id"])
             return link
         else:
             return None
@@ -153,7 +153,7 @@ class SecretLink(db.Model):
         data = cls.load_token(token, expected_data=expected_data)
 
         if data:
-            link = cls.query.get(data["id"])
+            link = db.session.get(cls, data["id"])
             if link and not link.is_expired:
                 return True
 
