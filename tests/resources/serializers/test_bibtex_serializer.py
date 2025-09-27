@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # Copyright (C) 2023-2025 CERN
+# Copyright (C) 2025-2026 Graz University of Technology.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
@@ -85,7 +86,7 @@ def test_bibtex_serializer_full_record(running_app, updated_full_record):
 
 def test_bibtex_serializer_record_all_versions(running_app, updated_full_record):
     """Test serializer for BibTex (All versions)."""
-    serializer = BibtexSerializer(schema_context={"doi_all_versions": True})
+    serializer = BibtexSerializer(schema_kwargs={"doi_all_versions": True})
     serialized_record = serializer.serialize_object(updated_full_record)
 
     expected_data = (
