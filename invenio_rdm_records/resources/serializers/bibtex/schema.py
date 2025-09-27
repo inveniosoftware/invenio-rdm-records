@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # Copyright (C) 2023-2026 CERN
+# Copyright (C) 2025-2026 Graz University of Technology.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
@@ -72,6 +73,11 @@ class BibTexSchema(BaseSerializerSchema, CommonFieldsMixin):
     }
     """Maps resource types to formats."""
 
+    def __init__(self, doi_all_versions=False, **kwargs):
+        """Construct."""
+        super().__init__(**kwargs)
+        self.doi_all_versions = doi_all_versions
+
     @property
     def default_entry_type(self):
         """Read-only property that defines the default bibtex entry type to be used.
@@ -82,7 +88,7 @@ class BibTexSchema(BaseSerializerSchema, CommonFieldsMixin):
 
     def get_id(self, obj):
         """Get record id."""
-        if self.context.get("doi_all_versions", False):
+        if self.doi_all_versions:
             # If all versions export is requested, return the parent id
             return obj["parent"]["id"]
         return obj["id"]
