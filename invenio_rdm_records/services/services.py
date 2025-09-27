@@ -811,7 +811,7 @@ class RDMRecordService(RecordService):
         uow=None,
     ):
         """Set user files quota."""
-        user = User.query.get(id_)
+        user = db.session.get(User, id_)
 
         self.require_permission(identity, "manage_quota", record=user)
 
