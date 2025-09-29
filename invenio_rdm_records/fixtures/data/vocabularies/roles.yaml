@@ -6,6 +6,7 @@
     en: Contact person
     sv: Kontaktperson
     de: Kontaktperson
+    es: Persona de contacto
     cs: Kontaktní osoba
 - id: datacollector
   props:
@@ -15,6 +16,7 @@
     en: Data collector
     sv: Datainsamlare
     de: DatensammlerIn
+    es: Recolector de datos
     cs: Sběratel dat
 - id: datacurator
   props:
@@ -24,6 +26,7 @@
     en: Data curator
     sv: Datakurator
     de: DatenkuratorIn
+    es: Curador de datos
     cs: Kurátor dat
 - id: datamanager
   props:
@@ -33,6 +36,7 @@
     en: Data manager
     sv: Dataansvarig
     de: DatenmanagerIn
+    es: Gestor de datos
     cs: Správce dat
 - id: distributor
   props:
@@ -42,6 +46,7 @@
     en: Distributor
     sv: Distributör
     de: VerteilerIn
+    es: Distribuidor
     cs: Distributor
 - id: editor
   props:
@@ -51,6 +56,7 @@
     en: Editor
     sv: Redaktör
     de: EditorIn
+    es: Editor
     cs: Editor
 - id: hostinginstitution
   props:
@@ -60,6 +66,7 @@
     en: Hosting institution
     sv: Värdinstitution
     de: Bereitstellende Institution
+    es: Institución anfitriona
     cs: Hostující instituce
 - id: producer
   props:
@@ -69,6 +76,7 @@
     en: Producer
     sv: Producent
     de: ProduzentIn
+    es: Productor
     cs: Producent
 - id: projectleader
   props:
@@ -78,6 +86,7 @@
     en: Project leader
     sv: Projektledare
     de: ProjektleiterIn
+    es: Líder de proyecto
     cs: Vedoucí projektu
 - id: projectmanager
   props:
@@ -87,6 +96,7 @@
     en: Project manager
     sv: Projektansvarig
     de: ProjektmanagerIn
+    es: Gerente de proyecto
     cs: Manažer projektu
 - id: projectmember
   props:
@@ -96,6 +106,7 @@
     en: Project member
     sv: Projektmedlem
     de: Projektmitglied
+    es: Miembro del proyecto
     cs: Člen projektu
 - id: registrationagency
   props:
@@ -105,6 +116,7 @@
     en: Registration agency
     sv: Registreringsorgan
     de: Registrierungsstelle
+    es: Agencia de registro
     cs: Registrační agentura
 - id: registrationauthority
   props:
@@ -114,6 +126,7 @@
     en: Registration authority
     sv: Registreringsmyndighet
     de: Registrierungsbehörde
+    es: Autoridad de registro
     cs: Registrační autorita
 - id: relatedperson
   props:
@@ -123,6 +136,7 @@
     en: Related person
     sv: Relaterad person
     de: Verwandte Person
+    es: Persona relacionada
     cs: Související osoba
 - id: researcher
   props:
@@ -132,6 +146,7 @@
     en: Researcher
     sv: Forskare
     de: WissenschaftlerIn
+    es: Investigador
     cs: Výzkumník
 - id: researchgroup
   props:
@@ -141,6 +156,7 @@
     en: Research group
     sv: Forskningsgrupp
     de: Forschungsgruppe
+    es: Grupo de investigación
     cs: Výzkumná skupina
 - id: rightsholder
   props:
@@ -150,6 +166,7 @@
     en: Rights holder
     sv: Rättighetsinnehavare
     de: RechteinhaberIn
+    es: Titular de derechos
     cs: Držitel práv
 - id: sponsor
   props:
@@ -159,6 +176,7 @@
     en: Sponsor
     sv: Sponsor
     de: Sponsor
+    es: Patrocinador
     cs: Sponzor
 - id: supervisor
   props:
@@ -168,6 +186,7 @@
     en: Supervisor
     sv: Handledare
     de: SupervisorIn
+    es: Supervisor
     cs: Supervizor
 - id: workpackageleader
   props:
@@ -177,6 +196,7 @@
     en: Work package leader
     sv: Arbetspaketsledare
     de: ArbeitspaketleiterIn
+    es: Líder del paquete de trabajo
     cs: Vedoucí pracovního balíku
 - id: other
   props:
@@ -186,4 +206,5 @@
     en: Other
     sv: Övriga
     de: Andere
+    es: Otro
     cs: Jiné

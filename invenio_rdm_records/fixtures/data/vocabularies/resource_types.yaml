@@ -16,6 +16,7 @@
     en: Publication
     sv: Publikation
     de: Publikation
+    es: Publicación
     cs: Publikace
   tags:
     - depositable
@@ -38,6 +39,7 @@
     en: Annotation collection
     sv: Annoteringssamling
     de: Anmerkungssammlung
+    es: Colección de anotaciones
     cs: Kolekce anotací
   tags:
     - depositable
@@ -60,6 +62,7 @@
     en: Book
     sv: Bok
     de: Buch
+    es: Libro
     cs: Kniha
   tags:
     - depositable
@@ -82,6 +85,7 @@
     en: Book chapter
     sv: Bokkapitel
     de: Buchkapitel
+    es: Capítulo de libro
     cs: Kapitola v knize
   tags:
     - depositable
@@ -104,6 +108,7 @@
     en: Conference paper
     sv: Konferensbidrag
     de: Konferenzbeitrag
+    es: Ponencia de conferencia
     cs: Konferenční příspěvek
   tags:
     - depositable
@@ -126,6 +131,7 @@
     en: Conference proceeding
     sv: Konferenshandling
     de: Tagungsband
+    es: Actas de congreso
     cs: Sborník konference
   tags:
     - depositable
@@ -148,6 +154,7 @@
     en: Output management plan
     sv: Outputhanteringsplan
     de: Outputmanagementplan
+    es: Plan de gestión de resultados
     cs: Plán správy dat
   tags:
     - depositable
@@ -170,6 +177,7 @@
     en: Journal
     sv: Tidskrift
     de: Zeitschrift
+    es: Revista
     cs: Časopis
   tags:
     - depositable
@@ -192,6 +200,7 @@
     en: Journal article
     sv: Tidskriftsartikel
     de: Zeitschriftenartikel
+    es: Artículo de revista
     cs: Článek v časopise
   tags:
     - depositable
@@ -214,6 +223,7 @@
     en: Patent
     sv: Patent
     de: Patent
+    es: Patente
     cs: Patent
   tags:
     - depositable
@@ -236,6 +246,7 @@
     en: Peer review
     sv: Peer review
     de: Peer Review
+    es: Revisión por pares
     cs: Recenze
   tags:
     - depositable
@@ -258,6 +269,7 @@
     en: Preprint
     sv: Preprint
     de: Preprint
+    es: Preimpresión
     cs: Preprint
   tags:
     - depositable
@@ -280,6 +292,7 @@
     en: Project deliverable
     sv: Projektresultat
     de: Projektergebnis
+    es: Entregable de proyecto
     cs: Výstup projektu
   tags:
     - depositable
@@ -302,6 +315,7 @@
     en: Project milestone
     sv: Milstolpe för projektet
     de: Projektmeilenstein
+    es: Hito de proyecto
     cs: Mezník projektu
   tags:
     - depositable
@@ -324,6 +338,7 @@
     en: Proposal
     sv: Förslag
     de: Antrag
+    es: Propuesta
     cs: Návrh
   tags:
     - depositable
@@ -346,6 +361,7 @@
     en: Report
     sv: Rapport
     de: Bericht
+    es: Informe
     cs: Zpráva
   tags:
     - depositable
@@ -368,6 +384,7 @@
     en: Software documentation
     sv: Mjukvarudokumentation
     de: Softwaredokumentation
+    es: Documentación de software
     cs: Dokumentace softwaru
   tags:
     - depositable
@@ -390,6 +407,7 @@
     en: Taxonomic treatment
     sv: Taxonomisk behandling
     de: Taxonomische Behandlung
+    es: Tratamiento taxonómico
     cs: Taxonomické zpracování
   tags:
     - depositable
@@ -412,6 +430,7 @@
     en: Technical note
     sv: Technical note
     de: Technical Note
+    es: Nota técnica
     cs: Technická poznámka
   tags:
     - depositable
@@ -434,6 +453,7 @@
     en: Thesis
     sv: Avhandling
     de: Abschlussarbeit
+    es: Tesis
     cs: Závěrečná práce
   tags:
     - depositable
@@ -456,6 +476,7 @@
     en: Working paper
     sv: Arbetsdokument
     de: Arbeitspapier
+    es: Documento de trabajo
     cs: Pracovní dokument
   tags:
     - depositable
@@ -478,6 +499,7 @@
     en: Data paper
     sv: Datadokument
     de: Datenpapier
+    es: Artículo de datos
     cs: Datový článek
   tags:
     - depositable
@@ -500,6 +522,7 @@
     en: Dissertation
     sv: Avhandling
     de: Dissertation
+    es: Disertación
     cs: Disertační práce
   tags:
     - depositable
@@ -522,6 +545,7 @@
     en: Standard
     sv: Standard
     de: Standard
+    es: Estándard
     cs: Standard
   tags:
     - depositable
@@ -544,6 +568,7 @@
     en: Other
     sv: Övrig
     de: Sonstige
+    es: Otro
     cs: Jiné
   tags:
     - depositable
@@ -566,6 +591,7 @@
     en: Poster
     sv: Poster
     de: Poster
+    es: Póster
     cs: Poster
   tags:
     - depositable
@@ -588,6 +614,7 @@
     en: Presentation
     sv: Presentation
     de: Präsentation
+    es: Presentación
     cs: Prezentace
   tags:
     - depositable
@@ -610,6 +637,7 @@
     en: Event
     sv: Evenemang
     de: Veranstaltung
+    es: Evento
     cs: Událost
   tags:
     - depositable
@@ -632,6 +660,7 @@
     en: Dataset
     sv: Dataset
     de: Datensatz
+    es: Conjunto de datos
     cs: Datová sada
   tags:
     - depositable
@@ -654,6 +683,7 @@
     en: Image
     sv: Bild
     de: Bild
+    es: Imagen
     cs: Obrázek
   tags:
     - depositable
@@ -676,6 +706,7 @@
     en: Figure
     sv: Figur
     de: Abbildung
+    es: Figura
     cs: Schéma
   tags:
     - depositable
@@ -698,6 +729,7 @@
     en: Plot
     sv: Plot
     de: Plot
+    es: Gráfico de imagen
     cs: Graf
   tags:
     - depositable
@@ -720,6 +752,7 @@
     en: Drawing
     sv: Ritning
     de: Zeichnung
+    es: Dibujo
     cs: Kresba
   tags:
     - depositable
@@ -742,6 +775,7 @@
     en: Diagram
     sv: Diagram
     de: Diagramm
+    es: Diagrama
     cs: Diagram
   tags:
     - depositable
@@ -764,6 +798,7 @@
     en: Photo
     sv: Foto
     de: Foto
+    es: Foto
     cs: Fotografie
   tags:
     - depositable
@@ -786,6 +821,7 @@
     en: Other
     sv: Övrig
     de: Sonstiges
+    es: Otro
     cs: Jiné
   tags:
     - depositable
@@ -808,6 +844,7 @@
     en: Model
     sv: Modell
     de: Modell
+    es: Modelo
     cs: Model
   tags:
     - depositable
@@ -830,6 +867,7 @@
     en: Video
     de: Video
     sv: Video
+    es: Video
     cs: Video
   tags:
     - depositable
@@ -852,6 +890,7 @@
     en: Audio
     de: Audio
     sv: Audio
+    es: Audio
     cs: Audio
   tags:
     - depositable
@@ -874,6 +913,7 @@
     en: Software
     sv: Mjukvara
     de: Software
+    es: Software
     cs: Software
   tags:
     - depositable
@@ -896,6 +936,7 @@
     en: Lesson
     sv: Lektion
     de: Unterrichtseinheit
+    es: Lección
     cs: Lekce
   tags:
     - depositable
@@ -918,6 +959,7 @@
     en: Computational notebook
     sv: Computational notebook
     de: Computational Notebook
+    es: Cuaderno de cálculo
     cs: Výpočetní notebook
   tags:
     - depositable
@@ -940,6 +982,7 @@
     en: Other
     sv: Övrig
     de: Sonstige
+    es: Otro
     cs: Jiné
   tags:
     - depositable
@@ -962,6 +1005,7 @@
     en: Physical object
     sv: Fysiskt objekt
     de: Physikalisches Objekt
+    es: Objeto físico
     cs: Fyzický objekt
   tags:
     - depositable
@@ -984,6 +1028,7 @@
     en: Workflow
     sv: Workflow
     de: Workflow
+    es: Flujo
     cs: Workflow
   tags:
     - depositable

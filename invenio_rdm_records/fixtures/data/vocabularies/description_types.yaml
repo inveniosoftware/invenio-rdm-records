@@ -5,6 +5,7 @@
     en: Abstract
     sv: Abstract
     de: Abstract
+    es: Resumen
     cs: Abstrakt
 - id: methods
   props:
@@ -13,6 +14,7 @@
     en: Methods
     sv: Metoder
     de: Methoden
+    es: Métodos
     cs: Metody
 - id: series-information
   props:
@@ -21,6 +23,7 @@
     en: Series information
     sv: Information om serien
     de: Informationen zur Reihe
+    es: Información de la serie
     cs: Informace o sérii
 - id: table-of-contents
   props:
@@ -29,6 +32,7 @@
     en: Table of contents
     sv: Innehållsförteckning
     de: Inhaltsverzeichnis
+    es: Tabla de contenido
     cs: Obsah
 - id: technical-info
   props:
@@ -37,6 +41,7 @@
     en: Technical info
     sv: Teknisk information
     de: Technische Informationen
+    es: Información técnica
     cs: Technické informace
 - id: other
   props:
@@ -45,4 +50,5 @@
     en: Other
     sv: Övrig
     de: Sonstige
+    es: Otro
     cs: Jiné

@@ -5,6 +5,7 @@
      en: Is cited by
      sv: Citeras av
      de: Wird zitiert von
+     es: Citado por
      cs: Je citován (čím)
 - id: cites
   props:
@@ -13,6 +14,7 @@
      en: Cites
      sv: Citerar
      de: Zitiert
+     es: Citas
      cs: Cituje (co)
 - id: issupplementto
   props:
@@ -21,6 +23,7 @@
      en: Is supplement to
      sv: Är supplement till
      de: Ergänzt
+     es: Es un suplemento de
      cs: Je doplňkem k (čemu)
 - id: issupplementedby
   props:
@@ -29,6 +32,7 @@
      en: Is supplemented by
      sv: Supplementerad av
      de: Wird ergänzt durch
+     es: Es complementado por
      cs: Má doplněk (co)
 - id: iscontinuedby
   props:
@@ -37,6 +41,7 @@
      en: Is continued by
      sv: Är fortsatt av
      de: Wird fortgesetzt durch
+     es: Es continuado por
      cs: Je pokračováním (čeho)
 - id: continues
   props:
@@ -45,6 +50,7 @@
      en: Continues
      sv: Fortsätter
      de: Setzt fort
+     es: Continúa
      cs: Pokračuje (čím)
 - id: isdescribedby
   props:
@@ -53,6 +59,7 @@
      en: Is described by
      sv: Beskrivs av
      de: Wird beschrieben von
+     es: Es descrito por
      cs: Je popsán (čím)
 - id: describes
   props:
@@ -61,6 +68,7 @@
      en: Describes
      sv: Beskriver
      de: Beschreibt
+     es: Describe
      cs: Popisuje (co)
 - id: hasmetadata
   props:
@@ -69,6 +77,7 @@
     en: Has metadata
     sv: Har metadata
     de: Hat Metadaten in
+    es: Tiene metadatos
     cs: Má metadata
 - id: ismetadatafor
   props:
@@ -77,6 +86,7 @@
     en: Is metadata for
     sv: Är metadata för
     de: Hat Metadaten für
+    es: Es metadatos para
     cs: Je metadaty pro
 - id: hasversion
   props:
@@ -85,6 +95,7 @@
      en: Has version
      sv: Har version
      de: Hat versionierte Instanz
+     es: Tiene versión
      cs: Má verzi
 - id: isversionof
   props:
@@ -93,6 +104,7 @@
      en: Is version of
      sv: Är version av
      de: Ist eine Version von
+     es: Es versión de
      cs: Je verzí (čeho)
 - id: isnewversionof
   props:
@@ -101,6 +113,7 @@
      en: Is new version of
      sv: Är en ny version av
      de: Ist eine neue Version von
+     es: Es una nueva versión de
      cs: Je novou verzí (čeho)
 - id: ispreviousversionof
   props:
@@ -109,6 +122,7 @@
      en: Is previous version of
      sv: Är en tidigare version av
      de: Ist eine vorherige Version von
+     es: Es una versión anterior de
      cs: Je předchozí verzí (čeho)
 - id: ispartof
   props:
@@ -117,6 +131,7 @@
      en: Is part of
      sv: Är del av
      de: Ist Teil von
+     es: Es parte de
      cs: Je součástí (čeho)
 - id: haspart
   props:
@@ -125,6 +140,7 @@
      en: Has part
      sv: Innehåller följande del
      de: Umfasst folgenden Teil
+     es: Tiene parte
      cs: Má část/i (co)
 - id: ispublishedin
   props:
@@ -133,6 +149,7 @@
      en: Is published in
      sv: Är publicerad i
      de: Ist veröffentlicht in
+     es: Se publica en
      cs: Je publikován v
 - id: isreferencedby
   props:
@@ -141,6 +158,7 @@
      en: Is referenced by
      sv: Hänvisas till av
      de: Wird referenziert von
+     es: Es referenciado por
      cs: Je na něj odkazováno z (čeho)
 - id: references
   props:
@@ -149,6 +167,7 @@
      en: References
      sv: Hänvisar till
      de: Referenziert
+     es: Referencias
      cs: Odkazuje na (co)
 - id: isdocumentedby
   props:
@@ -157,6 +176,7 @@
      en: Is documented by
      sv: Är dokumenterad av
      de: Wird dokumentiert von
+     es: Es documentado por
      cs: Je zdokumentován (čím)
 - id: documents
   props:
@@ -165,6 +185,7 @@
      en: Documents
      sv: Dokumenterar
      de: Dokumentiert
+     es: Documentos
      cs: Dokumentuje (co)
 - id: iscompiledby
   props:
@@ -173,6 +194,7 @@
      en: Is compiled by
      sv: Är sammanställd av
      de: Kompiliert durch
+     es: Es compilado por
      cs: Je kompilován (čím)
 - id: compiles
   props:
@@ -181,6 +203,7 @@
      en: Compiles
      sv: Sammanställer
      de: Kompiliert
+     es: Compila
      cs: Kompiluje (co)
 - id: isvariantformof
   props:
@@ -189,6 +212,7 @@
      en: Is variant form of
      sv: Är en variant av
      de: Ist eine Variante von
+     es: Es una forma variante de
      cs: Je variantou (čeho)
 - id: isoriginalformof
   props:
@@ -197,6 +221,7 @@
      en: Is original form of
      sv: Är originalet av
      de: Ist das Orginal von
+     es: Es la forma original de
      cs: Je původní variantou (čeho)
 - id: isidenticalto
   props:
@@ -205,6 +230,7 @@
      en: Is identical to
      sv: Är identisk med
      de: Ist identisch mit
+     es: Es idéntico a
      cs: Je identický s (čím)
 - id: isreviewedby
   props:
@@ -213,6 +239,7 @@
      en: Is reviewed by
      sv: Är granskad av
      de: Wird begutachtet von
+     es: Es revisado por
      cs: Je recenzován (čím)
 - id: reviews
   props:
@@ -221,6 +248,7 @@
      en: Reviews
      sv: Granskar
      de: Begutachtet
+     es: Revisiones
      cs: Recenzuje (co)
 - id: isderivedfrom
   props:
@@ -229,6 +257,7 @@
      en: Is derived from
      sv: Härrör från
      de: Wird abgeleitet von
+     es: Se deriva de
      cs: Je odvozen od (čeho)
 - id: issourceof
   props:
@@ -237,6 +266,7 @@
      en: Is source of
      sv: Är källa till
      de: Ist Quelle von
+     es: Es fuente de
      cs: Je zdrojem odvozené verze
 - id: isrequiredby
   props:
@@ -245,6 +275,7 @@
      en: Is required by
      sv: Krävs av
      de: Wird gefordert von
+     es: Es requerido por
      cs: Je požadován (čím)
 - id: requires
   props:
@@ -253,6 +284,7 @@
      en: Requires
      sv: Kräver
      de: Setzt voraus
+     es: Requiere
      cs: Požaduje (co)
 - id: isobsoletedby
   props:
@@ -261,6 +293,7 @@
      en: Is obsoleted by
      sv: Ersätts av
      de: Wird ersetzt durch
+     es: Está obsoleto por
      cs: Je nahrazen (čím)
 - id: obsoletes
   props:
@@ -269,4 +302,5 @@
      en: Obsoletes
      sv: Ersätter
      de: Ersetzt
+     es: Obsoletos
      cs: Nahrazuje (co)
