@@ -12,6 +12,10 @@
 Changes
 =======
 
+Version v21.1.0 (released 2025-09-24)
+
+- installation: upgrade invenio-jobs
+
 Version v21.0.0 (released 2025-09-24)
 
 - installation: bump invenio-communities and invenio-checks
