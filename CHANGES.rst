@@ -12,6 +12,10 @@
 Changes
 =======
 
+Version v21.2.0 (released 2025-10-01)
+
+- feat(config): add last activity sort option
+
 Version v21.1.0 (released 2025-09-24)
 
 - installation: upgrade invenio-jobs
