@@ -2,6 +2,7 @@
 #
 # Copyright (C) 2023 Northwestern University.
 # Copyright (C) 2024-2025 CERN.
+# Copyright (C) 2025 Graz University of Technology.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
@@ -198,9 +199,14 @@ class ContentResourceSchema(Schema):
     anchor = fields.Method(serialize="serialize_anchor")
     collection = fields.Method(serialize="serialize_collection")
 
+    def __init__(self, record_dict, **kwargs):
+        """Construct ContentResourceSchema."""
+        super().__init__(**kwargs)
+        self.record_dict = record_dict
+
     def serialize_anchor(self, obj, **kwargs):
         """Serialize to download url."""
-        pid_value = self.context["record_dict"]["id"]
+        pid_value = self.record_dict["id"]
         return invenio_url_for(
             "invenio_app_rdm_records.record_file_download",
             pid_value=pid_value,
@@ -211,7 +217,7 @@ class ContentResourceSchema(Schema):
         """Serialize to record landing page url."""
         return [
             {
-                "href": self.context["record_dict"]["links"]["self_html"],
+                "href": self.record_dict["links"]["self_html"],
                 "type": "text/html",
             }
         ]
@@ -254,7 +260,7 @@ class FAIRSignpostingProfileLvl2Schema(Schema):
         """Serialize linkset."""
         result = [LandingPageLvl2Schema().dump(obj)]
 
-        content_resource_schema = ContentResourceSchema(context={"record_dict": obj})
+        content_resource_schema = ContentResourceSchema(record_dict=obj)
         result += [
             content_resource_schema.dump(entry)
             for entry in obj.get("files", {}).get("entries", {}).values()
