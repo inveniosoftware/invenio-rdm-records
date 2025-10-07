@@ -1,6 +1,7 @@
 // This file is part of Invenio-RDM-Records
 // Copyright (C) 2020-2025 CERN.
 // Copyright (C)      2025 CESNET.
+// Copyright (C)      2025 KTH Royal Institute of Technology.
 //
 // Invenio-RDM-Records is free software; you can redistribute it and/or modify it
 // under the terms of the MIT License; see LICENSE file for more details.
@@ -62,7 +63,7 @@ export const UppyUploaderComponent = ({
 }) => {
   // We extract the working copy of the draft stored as `values` in formik
   const { values: formikDraft, errors, initialErrors } = useFormikContext();
-  const { filesList } = getFilesList(files);
+  const { filesList } = getFilesList(files ?? {});
   const hasError = (errors.files || initialErrors?.files) && files;
   const locale = useUppyLocale();
   const filesEnabled = _get(formikDraft, "files.enabled", false);
@@ -122,6 +123,33 @@ export const UppyUploaderComponent = ({
       })
       .use(ImageEditor)
   );
+
+  React.useEffect(() => {
+    const onFileAdded = (file) => {
+      const normalizedName = file.name?.normalize?.() ?? file.name;
+      const alreadyUploaded =
+        normalizedName &&
+        filesList.some(
+          (item) =>
+            item.name?.normalize?.() === normalizedName && !item.uploadState.isFailed
+        );
+
+      if (alreadyUploaded) {
+        uppy.info(
+          i18next.t("{{filename}} is already part of this upload.", {
+            filename: file.name,
+          }),
+          "warning"
+        );
+        uppy.removeFile(file.id);
+      }
+    };
+
+    uppy.on("file-added", onFileAdded);
+    return () => {
+      uppy.off("file-added", onFileAdded);
+    };
+  }, [uppy, filesList]);
 
   React.useEffect(() => {
     const uploaderPlugin = uppy.getPlugin("RDMUppyUploaderPlugin");
