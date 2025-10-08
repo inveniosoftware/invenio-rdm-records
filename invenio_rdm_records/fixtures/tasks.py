@@ -3,6 +3,7 @@
 # Copyright (C) 2021-2022 CERN.
 # Copyright (C) 2021-2022 Northwestern University.
 # Copyright (C) 2023 California Institute of Technology.
+# Copyright (C) 2025 Graz University of Technology.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
@@ -14,13 +15,12 @@ from io import BytesIO
 
 from celery import shared_task
 from flask import current_app
-from flask_principal import Identity, UserNeed
 from invenio_access.permissions import (
-    any_user,
-    authenticated_user,
     system_identity,
     system_user_id,
 )
+from invenio_access.utils import get_identity
+from invenio_accounts.proxies import current_datastore
 from invenio_communities.generators import CommunityRoleNeed
 from invenio_communities.members.errors import AlreadyMemberError
 from invenio_communities.proxies import current_communities
@@ -38,11 +38,8 @@ from .demo import create_fake_comment
 
 def get_authenticated_identity(user_id):
     """Return an authenticated identity for the given user."""
-    identity = Identity(user_id)
-    identity.provides.add(any_user)
-    identity.provides.add(UserNeed(user_id))
-    identity.provides.add(authenticated_user)
-    return identity
+    user = current_datastore.get_user_by_id(user_id)
+    return get_identity(user)
 
 
 @shared_task
