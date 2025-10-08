@@ -29,6 +29,12 @@ def mock_datacite_client(mock_datacite_client):
         yield mock_datacite_client
 
 
+@pytest.fixture(scope="module")
+def mock_crossref_client(mock_crossref_client):
+    """Mock Crossref client API calls."""
+    return mock_crossref_client
+
+
 def test_register_pid(
     running_app,
     search_clear,
@@ -54,6 +60,69 @@ def test_register_pid(
     register_or_update_pid(recid=record["id"], scheme="doi")
     assert pid.status == PIDStatus.REGISTERED
     mock_datacite_client.api.public_doi.assert_has_calls(
+        [
+            mock.call(
+                metadata={
+                    "identifiers": [{"identifier": doi, "identifierType": "DOI"}],
+                    "types": {"resourceTypeGeneral": "Image", "resourceType": "Photo"},
+                    "publisher": "Acme Inc",
+                    "creators": [
+                        {
+                            "givenName": "Troy",
+                            "nameIdentifiers": [],
+                            "familyName": "Brown",
+                            "nameType": "Personal",
+                            "name": "Brown, Troy",
+                        },
+                        {
+                            "nameIdentifiers": [],
+                            "nameType": "Organizational",
+                            "name": "Troy Inc.",
+                        },
+                    ],
+                    "titles": [{"title": "A Romans story"}],
+                    "schemaVersion": "http://datacite.org/schema/kernel-4",
+                    "publicationYear": "2020",
+                    "dates": [{"date": "2020-06-01", "dateType": "Issued"}],
+                },
+                url=f"https://127.0.0.1:5000/doi/{doi}",
+                doi=doi,
+            )
+        ]
+    )
+
+
+def test_register_pid_crossref(
+    running_app,
+    search_clear,
+    minimal_record,
+    superuser_identity,
+    mock_crossref_client,
+):
+    """Registers a crossref PID."""
+    minimal_record["pids"]["doi"] = {
+        "identifier": "10.5678/inveniordm.1234",
+        "provider": "crossref",
+        "client": "crossref",
+    }
+    minimal_record["metadata"]["resource_type"]["id"] = "publication-preprint"
+    service = current_rdm_records.records_service
+    draft = service.create(superuser_identity, minimal_record)
+    draft = service.pids.create(superuser_identity, draft.id, "doi")
+    doi = draft["pids"]["doi"]["identifier"]
+    provider = service.pids.pid_manager._get_provider("doi", "crossref")
+    pid = provider.get(pid_value=doi)
+    record = service.record_cls.publish(draft._record)
+    record.pids = {pid.pid_type: {"identifier": pid.pid_value, "provider": "crossref"}}
+    record.metadata = draft["metadata"]
+    record.register()
+    record.commit()
+    assert pid.status == PIDStatus.NEW
+    pid.reserve()
+    assert pid.status == PIDStatus.RESERVED
+    register_or_update_pid(recid=record["id"], scheme="doi")
+    assert pid.status == PIDStatus.REGISTERED
+    mock_crossref_client.api.post.assert_has_calls(
         [
             mock.call(
                 metadata={
@@ -184,6 +253,126 @@ def test_update_pid(
     service.publish(superuser_identity, record_edited.id)
 
     mock_datacite_client.api.update_doi.assert_has_calls(
+        [
+            mock.call(
+                metadata={
+                    "event": "publish",
+                    "schemaVersion": "http://datacite.org/schema/kernel-4",
+                    "types": {"resourceTypeGeneral": "Image", "resourceType": "Photo"},
+                    "creators": [
+                        {
+                            "name": "Brown, Troy",
+                            "familyName": "Brown",
+                            "nameIdentifiers": [],
+                            "nameType": "Personal",
+                            "givenName": "Troy",
+                        },
+                        {
+                            "name": "Troy Inc.",
+                            "nameIdentifiers": [],
+                            "nameType": "Organizational",
+                        },
+                    ],
+                    "relatedIdentifiers": [
+                        {
+                            "relatedIdentifier": parent_doi,
+                            "relationType": "IsVersionOf",
+                            "relatedIdentifierType": "DOI",
+                        }
+                    ],
+                    "titles": [{"title": "A Romans story"}],
+                    "dates": [{"date": "2020-06-01", "dateType": "Issued"}],
+                    "identifiers": [
+                        {"identifier": doi, "identifierType": "DOI"},
+                        {
+                            "identifier": oai,
+                            "identifierType": "oai",
+                        },
+                    ],
+                    "publicationYear": "2020",
+                    "publisher": "Acme Inc",
+                },
+                doi=doi,
+                url=f"https://127.0.0.1:5000/doi/{doi}",
+            ),
+            mock.call(
+                metadata={
+                    "event": "publish",
+                    "schemaVersion": "http://datacite.org/schema/kernel-4",
+                    "types": {"resourceTypeGeneral": "Image", "resourceType": "Photo"},
+                    "creators": [
+                        {
+                            "name": "Brown, Troy",
+                            "familyName": "Brown",
+                            "nameIdentifiers": [],
+                            "nameType": "Personal",
+                            "givenName": "Troy",
+                        },
+                        {
+                            "name": "Troy Inc.",
+                            "nameIdentifiers": [],
+                            "nameType": "Organizational",
+                        },
+                    ],
+                    "relatedIdentifiers": [
+                        {
+                            "relatedIdentifier": doi,
+                            "relationType": "HasVersion",
+                            "relatedIdentifierType": "DOI",
+                        }
+                    ],
+                    "titles": [{"title": "A Romans story"}],
+                    "dates": [{"date": "2020-06-01", "dateType": "Issued"}],
+                    "identifiers": [
+                        {"identifier": parent_doi, "identifierType": "DOI"}
+                    ],
+                    "publicationYear": "2020",
+                    "publisher": "Acme Inc",
+                },
+                doi=parent_doi,
+                url=f"https://127.0.0.1:5000/doi/{parent_doi}",
+            ),
+        ],
+        any_order=True,
+    )
+
+
+def test_update_pid_crossref(
+    running_app,
+    search_clear,
+    minimal_record,
+    mocker,
+    superuser_identity,
+    mock_crossref_client,
+):
+    """No pid provided, creating one by default."""
+    minimal_record["pids"]["doi"] = {
+        "identifier": "10.5678/inveniordm.1234",
+        "provider": "crossref",
+        "client": "crossref",
+    }
+    minimal_record["metadata"]["resource_type"]["id"] = "publication-preprint"
+    service = current_rdm_records.records_service
+    draft = service.create(superuser_identity, minimal_record)
+    record = service.publish(superuser_identity, draft.id)
+
+    oai = record["pids"]["oai"]["identifier"]
+    doi = record["pids"]["doi"]["identifier"]
+    parent_doi = record["parent"]["pids"]["doi"]["identifier"]
+    provider = service.pids.pid_manager._get_provider("doi", "crossref")
+    pid = provider.get(pid_value=doi)
+    assert pid.status == PIDStatus.REGISTERED
+    parent_provider = service.pids.parent_pid_manager._get_provider("doi", "crossref")
+    parent_pid = parent_provider.get(pid_value=parent_doi)
+    assert parent_pid.status == PIDStatus.REGISTERED
+
+    # we do not explicitly call the update_pid task
+    # we check that the lower level provider update is called
+    record_edited = service.edit(superuser_identity, record.id)
+    assert mock_crossref_client.deposit.called is False
+    service.publish(superuser_identity, record_edited.id)
+
+    mock_crossref_client.deposit.assert_has_calls(
         [
             mock.call(
                 metadata={
@@ -774,8 +963,188 @@ def test_full_record_register(
                             "rightsUri": "https://customlicense.org/licenses/by/4.0/",
                         },
                         {
-                            "rights": "Creative Commons Attribution 4.0 "
-                            "International",
+                            "rights": "Creative Commons Attribution 4.0 International",
+                            "rightsIdentifier": "cc-by-4.0",
+                            "rightsIdentifierScheme": "spdx",
+                            "rightsUri": "https://creativecommons.org/licenses/by/4.0/legalcode",
+                        },
+                    ],
+                    "schemaVersion": "http://datacite.org/schema/kernel-4",
+                    "sizes": ["11 pages"],
+                    "subjects": [
+                        {
+                            "subject": "Abdominal Injuries",
+                            "subjectScheme": "MeSH",
+                            "valueURI": "http://id.nlm.nih.gov/mesh/A-D000007",
+                        },
+                        {"subject": "custom"},
+                    ],
+                    "titles": [
+                        {"title": "InvenioRDM"},
+                        {
+                            "lang": "eng",
+                            "title": "a research data management platform",
+                            "titleType": "Subtitle",
+                        },
+                    ],
+                    "types": {
+                        "resourceType": "Photo",
+                        "resourceTypeGeneral": "Image",
+                    },
+                    "version": "v1.0",
+                },
+                url=f"https://127.0.0.1:5000/doi/{doi}",
+                doi=doi,
+            )
+        ]
+    )
+
+
+def test_full_record_register_crossref(
+    running_app,
+    search_clear,
+    full_record,
+    superuser_identity,
+    mock_crossref_client,
+):
+    """Registers a PID for a full record."""
+    full_record["pids"] = {}
+
+    service = current_rdm_records.records_service
+    draft = service.create(superuser_identity, full_record)
+    draft = service.pids.create(superuser_identity, draft.id, "doi")
+    doi = draft["pids"]["doi"]["identifier"]
+    provider = service.pids.pid_manager._get_provider("doi", "crossref")
+    pid = provider.get(pid_value=doi)
+    record = service.record_cls.publish(draft._record)
+    record.pids = {pid.pid_type: {"identifier": pid.pid_value, "provider": "crossref"}}
+    record.metadata = draft["metadata"]
+    record.register()
+    record.commit()
+    assert pid.status == PIDStatus.NEW
+    pid.reserve()
+    assert pid.status == PIDStatus.RESERVED
+    register_or_update_pid(recid=record["id"], scheme="doi")
+    assert pid.status == PIDStatus.REGISTERED
+
+    mock_crossref_client.deposit.assert_has_calls(
+        [
+            mock.call(
+                metadata={
+                    "contributors": [
+                        {
+                            "affiliation": [
+                                {
+                                    "affiliationIdentifier": "https://ror.org/01ggx4157",
+                                    "affiliationIdentifierScheme": "ROR",
+                                    "name": "CERN",
+                                }
+                            ],
+                            "contributorType": "Other",
+                            "familyName": "Nielsen",
+                            "givenName": "Lars Holm",
+                            "name": "Nielsen, Lars Holm",
+                            "nameIdentifiers": [
+                                {
+                                    "nameIdentifier": "0000-0001-8135-3489",
+                                    "nameIdentifierScheme": "ORCID",
+                                }
+                            ],
+                            "nameType": "Personal",
+                        }
+                    ],
+                    "creators": [
+                        {
+                            "affiliation": [
+                                {
+                                    "affiliationIdentifier": "https://ror.org/01ggx4157",
+                                    "affiliationIdentifierScheme": "ROR",
+                                    "name": "CERN",
+                                },
+                                {"name": "free-text"},
+                            ],
+                            "familyName": "Nielsen",
+                            "givenName": "Lars Holm",
+                            "name": "Nielsen, Lars Holm",
+                            "nameIdentifiers": [
+                                {
+                                    "nameIdentifier": "0000-0001-8135-3489",
+                                    "nameIdentifierScheme": "ORCID",
+                                }
+                            ],
+                            "nameType": "Personal",
+                        }
+                    ],
+                    "dates": [
+                        {"date": "2018/2020-09", "dateType": "Issued"},
+                        {
+                            "date": "1939/1945",
+                            "dateInformation": "A date",
+                            "dateType": "Other",
+                        },
+                    ],
+                    "descriptions": [
+                        {
+                            "description": "A description \nwith HTML tags",
+                            "descriptionType": "Abstract",
+                        },
+                        {
+                            "description": "Bla bla bla",
+                            "descriptionType": "Methods",
+                            "lang": "eng",
+                        },
+                    ],
+                    "formats": ["application/pdf"],
+                    "fundingReferences": [
+                        {
+                            "awardNumber": "755021",
+                            "awardTitle": "Personalised Treatment For "
+                            "Cystic Fibrosis Patients "
+                            "With Ultra-rare CFTR "
+                            "Mutations (and beyond)",
+                            "awardURI": "https://cordis.europa.eu/project/id/755021",
+                            "funderIdentifier": "00k4n6c32",
+                            "funderIdentifierType": "ROR",
+                            "funderName": "European Commission",
+                        }
+                    ],
+                    "geoLocations": [
+                        {
+                            "geoLocationPlace": "test location place",
+                            "geoLocationPoint": {
+                                "pointLatitude": "-60.63932",
+                                "pointLongitude": "-32.94682",
+                            },
+                        }
+                    ],
+                    "identifiers": [
+                        {
+                            "identifier": doi,
+                            "identifierType": "DOI",
+                        },
+                        {
+                            "identifier": "1924MNRAS..84..308E",
+                            "identifierType": "bibcode",
+                        },
+                    ],
+                    "language": "dan",
+                    "publicationYear": "2018",
+                    "publisher": "InvenioRDM",
+                    "relatedIdentifiers": [
+                        {
+                            "relatedIdentifier": "10.1234/foo.bar",
+                            "relatedIdentifierType": "DOI",
+                            "relationType": "IsCitedBy",
+                            "resourceTypeGeneral": "Dataset",
+                        }
+                    ],
+                    "rightsList": [
+                        {
+                            "rights": "A custom license",
+                            "rightsUri": "https://customlicense.org/licenses/by/4.0/",
+                        },
+                        {
+                            "rights": "Creative Commons Attribution 4.0 International",
                             "rightsIdentifier": "cc-by-4.0",
                             "rightsIdentifierScheme": "spdx",
                             "rightsUri": "https://creativecommons.org/licenses/by/4.0/legalcode",
