@@ -17,9 +17,9 @@ import PropTypes from "prop-types";
 import React, { useState } from "react";
 import { Button, Grid, Icon, Message, Modal } from "semantic-ui-react";
 import { UploadState } from "../../state/reducers/files";
-import { NewVersionButton } from "../../controls/NewVersionButton";
 import { FileUploaderArea } from "./FileUploaderArea";
 import { FileUploaderToolbar } from "./FileUploaderToolbar";
+import { EditFilesAccordion } from "./EditFilesAccordion";
 import { humanReadableBytes } from "react-invenio-forms";
 import Overridable from "react-overridable";
 import { getFilesList } from "./utils";
@@ -172,6 +172,7 @@ export const FileUploaderComponent = ({
 
   const displayImportBtn =
     filesEnabled && isDraftRecord && hasParentRecord && !filesList.length;
+
   return (
     <Overridable
       id="InvenioRdmRecords.DepositForm.FileUploader.Container"
@@ -303,20 +304,7 @@ export const FileUploaderComponent = ({
               filesLocked && (
                 <Grid.Row className="file-upload-note pt-5">
                   <Grid.Column width={16}>
-                    <Message info>
-                      <NewVersionButton
-                        record={record}
-                        onError={() => {}}
-                        className="right-floated"
-                        disabled={!permissions.can_new_version}
-                      />
-                      <p className="mt-5 display-inline-block">
-                        <Icon name="info circle" size="large" />
-                        {i18next.t(
-                          "You must create a new version to add, modify or delete files."
-                        )}
-                      </p>
-                    </Message>
+                    <EditFilesAccordion record={record} permissions={permissions} />
                   </Grid.Column>
                 </Grid.Row>
               )
