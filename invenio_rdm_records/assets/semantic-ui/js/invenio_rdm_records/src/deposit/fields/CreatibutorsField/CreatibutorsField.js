@@ -67,6 +67,7 @@ class CreatibutorsFieldForm extends Component {
       modal,
       autocompleteNames,
       addButtonLabel,
+      addButtonHelpText,
       serializeSuggestions,
       serializeCreatibutor,
       deserializeCreatibutor,
@@ -110,6 +111,7 @@ class CreatibutorsFieldForm extends Component {
         addLabel={modal.addLabel}
         editLabel={modal.editLabel}
         addButtonLabel={addButtonLabel}
+        addButtonHelpText={addButtonHelpText}
         className={className}
       >
         <DndProvider backend={HTML5Backend}>
@@ -164,6 +166,9 @@ class CreatibutorsFieldForm extends Component {
                 </Button>
               }
             />
+            {addButtonHelpText && (
+              <label className="helptext">{addButtonHelpText}</label>
+            )}
             {generalCreatibutorsError && <FeedbackLabel fieldPath={fieldPath} />}
           </Form.Field>
         </DndProvider>
@@ -189,6 +194,7 @@ export class CreatibutorsFieldComponent extends Component {
 
 CreatibutorsFieldForm.propTypes = {
   addButtonLabel: PropTypes.string,
+  addButtonHelpText: PropTypes.string,
   modal: PropTypes.shape({
     addLabel: PropTypes.string.isRequired,
     editLabel: PropTypes.string.isRequired,
@@ -210,13 +216,14 @@ CreatibutorsFieldForm.propTypes = {
 
 CreatibutorsFieldForm.defaultProps = {
   autocompleteNames: "search",
-  label: i18next.t("Creators"),
+  label: i18next.t("Authors"),
   labelIcon: "user",
   modal: {
-    addLabel: i18next.t("Add creator"),
-    editLabel: i18next.t("Edit creator"),
+    addLabel: i18next.t("Add author"),
+    editLabel: i18next.t("Edit author"),
   },
-  addButtonLabel: i18next.t("Add creator"),
+  addButtonLabel: i18next.t("Add author"),
+  addButtonHelpText: undefined,
   serializeSuggestions: undefined,
   serializeCreatibutor: undefined,
   deserializeCreatibutor: undefined,
@@ -224,6 +231,7 @@ CreatibutorsFieldForm.defaultProps = {
 
 CreatibutorsFieldComponent.propTypes = {
   addButtonLabel: PropTypes.string,
+  addButtonHelpText: PropTypes.string,
   modal: PropTypes.shape({
     addLabel: PropTypes.string.isRequired,
     editLabel: PropTypes.string.isRequired,
@@ -243,10 +251,11 @@ CreatibutorsFieldComponent.defaultProps = {
   labelIcon: undefined,
   roleOptions: undefined,
   modal: {
-    addLabel: i18next.t("Add creator"),
-    editLabel: i18next.t("Edit creator"),
+    addLabel: i18next.t("Add author"),
+    editLabel: i18next.t("Edit author"),
   },
-  addButtonLabel: i18next.t("Add creator"),
+  addButtonLabel: i18next.t("Add author"),
+  addButtonHelpText: undefined,
   serializeSuggestions: undefined,
   serializeCreatibutor: undefined,
   deserializeCreatibutor: undefined,
