@@ -14,7 +14,7 @@ from copy import deepcopy
 
 import pycountry
 from babel_edtf import parse_edtf
-from commonmeta import dict_to_spdx, doi_as_url, parse_attributes, unwrap, wrap
+from commonmeta import dict_to_spdx, doi_as_url, first, parse_attributes, unwrap, wrap
 from edtf.parser.grammar import ParseException
 from flask_resources.serializers import BaseSerializerSchema
 from idutils import to_url
@@ -270,8 +270,8 @@ class SchemaorgSchema(BaseSerializerSchema, CommonFieldsMixin):
         for the alternateName (e.g. dan) and the language string (e.g. Danish)
         for the name. Use only the first of multiple languages provided.
         """
-        language = parse_attributes(
-            py_.get(obj, "metadata.languages"), content="id", first=True
+        language = first(
+            parse_attributes(py_.get(obj, "metadata.languages"), content="id")
         )
         if not language:
             return missing
