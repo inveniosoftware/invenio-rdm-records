@@ -147,9 +147,7 @@ export class ModificationModal extends Component {
           {({ handleSubmit }) => (
             <Form>
               <ModalContent>
-                <>
-                  <p>{fileModification["fileModification"]["policy"]["description"]}</p>
-                </>
+                <p>{fileModification.fileModification?.policy?.description}</p>
                 {this.checklist.length > 0 && (
                   <>
                     <strong>{i18next.t("File modification checklist:")}</strong>
@@ -240,5 +238,9 @@ ModificationModal.propTypes = {
   record: PropTypes.object.isRequired,
   open: PropTypes.bool.isRequired,
   handleClose: PropTypes.func.isRequired,
-  fileModification: PropTypes.object.isRequired,
+  fileModification: PropTypes.object,
+};
+
+ModificationModal.defaultProps = {
+  fileModification: {},
 };
