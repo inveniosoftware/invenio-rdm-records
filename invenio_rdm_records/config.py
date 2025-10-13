@@ -33,6 +33,8 @@ from .resources.serializers import DataCite45JSONSerializer
 from .services import facets
 from .services.config import lock_edit_published_files
 from .services.deletion_policy import (
+    FileModificationGracePeriodPolicy,
+    FileModificationPolicyEvaluator,
     GracePeriodPolicy,
     RDMRecordDeletionPolicy,
     RequestDeletionPolicy,
@@ -174,8 +176,9 @@ as the policy for the record. As such, policies should be specified from most
 to least specific.
 
 To update a policy, create a duplicate of it and add a check on creation date to
-both. When your policy comes into effect on a date in the future, and this
-is the date which you will use to check whether the new or old policy will apply.
+both. When your policy comes into effect on a date in the future it will be used,
+and this is the date which you will use to check whether the new or old policy 
+will apply.
 """
 
 RDM_IMMEDIATE_RECORD_DELETION_CHECKLIST = []
@@ -214,6 +217,28 @@ RDM_REQUEST_RECORD_DELETION_POLICIES = [RequestDeletionPolicy()]
 
 RDM_REQUEST_RECORD_DELETION_CHECKLIST = []
 """Checklist which appears on the modal to redirect user from record deletion request if possible."""
+
+#
+# File modification by users
+#
+RDM_FILE_MODIFICATION_POLICY = FileModificationPolicyEvaluator
+"""Policy class which evaluates whether published files can be modified by a user."""
+
+RDM_IMMEDIATE_FILE_MODIFICATION_ENABLED = False
+"""Allow users to edit published files immediately."""
+
+RDM_IMMEDIATE_FILE_MODIFICATION_POLICIES = [FileModificationGracePeriodPolicy()]
+"""List of policies for editing published files immediately.
+
+Policies are executed in order and the first one to return True is used
+as the policy for the record. As such, policies should be specified from most
+to least specific.
+
+To update a policy, create a duplicate of it and add a check on creation date to
+both. When your policy comes into effect on a date in the future it will be used,
+and this is the date which you will use to check whether the new or old policy 
+will apply.
+"""
 
 #
 # Record communities
