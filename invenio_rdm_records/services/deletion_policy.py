@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2020-2025 CERN.
+# Copyright (C) 2025 CERN.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
 
-"""Record deletion policies."""
+"""Policies for self-service user actions."""
 
 from dataclasses import dataclass
 from datetime import datetime, timedelta, timezone
@@ -17,7 +17,7 @@ from invenio_i18n import lazy_gettext as _
 
 
 class BasePolicy:
-    """Base class for defining deletion policies."""
+    """Base class for defining policies."""
 
     id: str
     description: str
@@ -90,8 +90,34 @@ class RequestDeletionPolicy(BasePolicy):
         return True
 
 
-class RDMRecordDeletionPolicy:
-    """Record deletion policy for both immediate and request deletions."""
+class FileModificationGracePeriodPolicy(BasePolicy):
+    """File modification policy which depends on a number of days since publishing."""
+
+    id = "file-modification-grace-period-v1"
+
+    def __init__(self, grace_period=timedelta(days=30)):
+        """Initialise the policy with a grace_period."""
+        self.grace_period = grace_period
+        self.description = _(
+            "You can edit the files of your records within {grace_period} days of publishing."
+        ).format(grace_period=grace_period.days)
+
+    def is_allowed(self, identity, record):
+        """Whether the identity is allowed to modify files."""
+        is_record_owner = identity.user.id == record.parent.access.owned_by.owner_id
+        return is_record_owner
+
+    def evaluate(self, identity, record):
+        """Whether the record is within the grace period."""
+        expiration_time = record.created + self.grace_period
+        expiration_time = expiration_time.replace(tzinfo=timezone.utc)
+        is_record_within_grace_period = expiration_time > datetime.now(timezone.utc)
+
+        return is_record_within_grace_period
+
+
+class PolicyEvaluator:
+    """Base class for policy evaluator classes."""
 
     @dataclass
     class Result:
@@ -120,6 +146,15 @@ class RDMRecordDeletionPolicy:
                     return result  # early return, do not evaluate all policies
 
         return result
+
+    @classmethod
+    def evaluate(cls, identity, record):
+        """Evaluate both immediate and request deletion for an identity and record."""
+        raise NotImplementedError
+
+
+class RDMRecordDeletionPolicy(PolicyEvaluator):
+    """Record deletion policy for both immediate and request deletions."""
 
     @classmethod
     def evaluate(cls, identity, record):
@@ -157,3 +192,25 @@ class RDMRecordDeletionPolicy:
             if policy.id == policy_id:
                 return policy.tombstone_description
         return None
+
+
+class FileModificationPolicyEvaluator(PolicyEvaluator):
+    """Published record file modification policy."""
+
+    @classmethod
+    def evaluate(cls, identity, record):
+        """Evaluate file modification for an identity and record."""
+        if authenticated_user not in identity.provides:
+            # only authenticated users can modify files of records
+            return {
+                "immediate_file_modification": cls.Result(False),
+            }
+
+        return {
+            "immediate_file_modification": cls.evaluate_policies(
+                "RDM_IMMEDIATE_FILE_MODIFICATION_ENABLED",
+                "RDM_IMMEDIATE_FILE_MODIFICATION_POLICIES",
+                identity,
+                record,
+            ),
+        }
