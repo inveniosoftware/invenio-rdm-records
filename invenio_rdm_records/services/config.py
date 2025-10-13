@@ -78,7 +78,7 @@ from .customizations import (
     FromConfigPIDsProviders,
     FromConfigRequiredPIDs,
 )
-from .deletion_policy import RDMRecordDeletionPolicy
+from .deletion_policy import FileModificationPolicyEvaluator, RDMRecordDeletionPolicy
 from .permissions import RDMRecordPermissionPolicy
 from .result_items import GrantItem, GrantList, SecretLinkItem, SecretLinkList
 from .results import RDMRecordList, RDMRecordRevisionsList
@@ -570,9 +570,12 @@ class RDMRecordServiceConfig(RecordServiceConfig, ConfiguratorMixin):
         "RDM_PERMISSION_POLICY", default=RDMRecordPermissionPolicy, import_string=True
     )
 
-    # Deletion policy
+    # Policies
     deletion_policy = FromConfig(
         "RDM_RECORD_DELETION_POLICY", default=RDMRecordDeletionPolicy
+    )
+    file_modification_policy = FromConfig(
+        "RDM_FILE_MODIFICATION_POLICY", default=FileModificationPolicyEvaluator
     )
 
     # Result classes
