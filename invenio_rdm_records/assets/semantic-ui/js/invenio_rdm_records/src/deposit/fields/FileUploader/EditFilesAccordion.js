@@ -7,8 +7,9 @@
 import { i18next } from "@translations/invenio_rdm_records/i18next";
 import PropTypes from "prop-types";
 import React, { Component } from "react";
-import { Accordion, Button, Grid, Icon, Message } from "semantic-ui-react";
+import { Accordion, Grid, Icon, Message } from "semantic-ui-react";
 import { NewVersionButton } from "../../controls/NewVersionButton";
+import { FileModification } from "./FileModification/FileModification";
 
 export class EditFilesAccordion extends Component {
   state = { activeIndex: -1 };
@@ -22,7 +23,7 @@ export class EditFilesAccordion extends Component {
   };
 
   render() {
-    const { record, permissions } = this.props;
+    const { record, permissions, fileModification } = this.props;
     const { activeIndex } = this.state;
     return (
       <Message info>
@@ -71,10 +72,12 @@ export class EditFilesAccordion extends Component {
                 </Grid.Column>
 
                 <Grid.Column width={4} className="right aligned">
-                  <Button type="button" size="mini" icon labelPosition="left" primary>
-                    <Icon name="lock open" />
-                    {i18next.t("Edit published files")}
-                  </Button>
+                  <FileModification
+                    record={record}
+                    permissions={permissions}
+                    fileModification={fileModification}
+                    disabled={false}
+                  />
                 </Grid.Column>
               </Grid.Row>
             </Grid>
@@ -88,4 +91,9 @@ export class EditFilesAccordion extends Component {
 EditFilesAccordion.propTypes = {
   record: PropTypes.object.isRequired,
   permissions: PropTypes.object.isRequired,
+  fileModification: PropTypes.object,
+};
+
+EditFilesAccordion.defaultProps = {
+  fileModification: {},
 };

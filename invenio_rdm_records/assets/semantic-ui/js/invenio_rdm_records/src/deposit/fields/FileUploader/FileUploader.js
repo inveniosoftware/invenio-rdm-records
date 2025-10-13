@@ -43,6 +43,7 @@ export const FileUploaderComponent = ({
   decimalSizeDisplay,
   filesLocked,
   allowEmptyFiles,
+  fileModification,
   ...uiProps
 }) => {
   // We extract the working copy of the draft stored as `values` in formik
@@ -304,7 +305,11 @@ export const FileUploaderComponent = ({
               filesLocked && (
                 <Grid.Row className="file-upload-note pt-5">
                   <Grid.Column width={16}>
-                    <EditFilesAccordion record={record} permissions={permissions} />
+                    <EditFilesAccordion
+                      record={record}
+                      permissions={permissions}
+                      fileModification={fileModification}
+                    />
                   </Grid.Column>
                 </Grid.Row>
               )
@@ -366,6 +371,7 @@ FileUploaderComponent.propTypes = {
   filesLocked: PropTypes.bool,
   permissions: PropTypes.object,
   allowEmptyFiles: PropTypes.bool,
+  fileModification: PropTypes.object,
 };
 
 FileUploaderComponent.defaultProps = {
@@ -388,4 +394,5 @@ FileUploaderComponent.defaultProps = {
   decimalSizeDisplay: true,
   filesLocked: false,
   allowEmptyFiles: true,
+  fileModification: {},
 };
