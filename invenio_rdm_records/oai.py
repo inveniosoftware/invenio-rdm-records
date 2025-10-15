@@ -14,7 +14,7 @@ from flask import current_app, g
 from invenio_pidstore.errors import PersistentIdentifierError, PIDDoesNotExistError
 from invenio_pidstore.fetchers import FetchedPID
 from invenio_pidstore.models import PersistentIdentifier
-from invenio_records_resources.services.errors import PermissionDeniedError
+from invenio_records_resources.services.errors import PermissionDenied
 from invenio_search import RecordsSearch
 from invenio_search.engine import dsl
 from lxml import etree
@@ -130,7 +130,7 @@ def getrecord_fetcher(record_id):
 
     try:
         result = current_rdm_records.records_service.read(g.identity, recid.pid_value)
-    except PermissionDeniedError:
+    except PermissionDenied:
         # if it is a restricted record.
         raise PIDDoesNotExistError("recid", None)
 
