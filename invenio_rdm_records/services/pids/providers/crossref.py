@@ -72,7 +72,7 @@ class CrossrefClient:
             )
             warnings.warn(
                 f"The {self.__class__.__name__} is misconfigured. Please "
-                f"set {self.cfgkey('username')}, {self.cfgkey('password')}"
+                f"set {self.cfgkey('username')}, <password>}"
                 f" and {self.cfgkey('prefixes')} in your configuration.",
                 UserWarning,
             )
