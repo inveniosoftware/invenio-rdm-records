@@ -65,10 +65,14 @@ class CrossrefClient:
             or not self.cfg("password")
             or not self.cfg("prefixes")
             or not len(self.cfg("prefixes")) > 0
+            or not self.cfg("depositor")
+            or not self.cfg("email")
+            or not self.cfg("registrant")
         ):
             current_app.logger.error(
-                f"CrossrefClient configuration incomplete: missing credentials or prefixes. "
-                f"Required: {self.cfgkey('username')}, <password>, {self.cfgkey('prefixes')}"
+                f"CrossrefClient configuration incomplete: missing configuration settings. "
+                f"Required: {self.cfgkey('username')}, <password>, {self.cfgkey('prefixes')}, "
+                f"{self.cfgkey('depositor')}, {self.cfgkey('email')}, {self.cfgkey('registrant')}"
             )
             warnings.warn(
                 f"The {self.__class__.__name__} is misconfigured. Please "
