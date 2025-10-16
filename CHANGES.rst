@@ -12,6 +12,10 @@
 Changes
 =======
 
+Version v19.5.8 (released 2025-10-16)
+
+- fix(oai-pmh): handle broader permission denied errors
+
 Version v19.5.7 (released 2025-09-25)
 
 - fix(optional-doi): show correctly showed value on form initialization
@@ -22,7 +26,7 @@ Version v19.5.6 (released 2025-09-24)
 
 - fix(CreatibutorsModal): get identifier scheme from recent suggestions
 - chore(js-tests): upgrade react-overridable major version
-- setup: remove unused ftfy pin to remove pkg-resources usage  
+- setup: remove unused ftfy pin to remove pkg-resources usage
 
 Version v19.5.5 (released 2025-09-20)
 
