@@ -5,11 +5,7 @@
 # FIRST AUTHOR <EMAIL@ADDRESS>, 2025.
 # 
 # Translators:
-# yyones, 2024
-# Tibor Simko <tibor.simko@cern.ch>, 2025
-# Mattias Vesterlund, 2025
-# Sam Arbid, 2025
-# Lina Andrén, 2025
+# Matti Lassila <matti.lassila@gmail.com>, 2025
 # 
 #, fuzzy
 msgid ""
@@ -18,13 +14,13 @@ msgstr ""
 "Report-Msgid-Bugs-To: info@inveniosoftware.org\n"
 "POT-Creation-Date: 2025-07-10 06:49+0000\n"
 "PO-Revision-Date: 2021-07-12 14:31+0000\n"
-"Last-Translator: Lina Andrén, 2025\n"
-"Language-Team: Swedish (https://app.transifex.com/inveniosoftware/teams/23537/sv/)\n"
+"Last-Translator: Matti Lassila <matti.lassila@gmail.com>, 2025\n"
+"Language-Team: Finnish (https://app.transifex.com/inveniosoftware/teams/23537/fi/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.17.0\n"
-"Language: sv\n"
+"Language: fi\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 #: invenio_rdm_records/config.py:89 invenio_rdm_records/config.py:368
@@ -35,12 +31,12 @@ msgstr "DOI"
 
 #: invenio_rdm_records/config.py:380 tests/conftest.py:282
 msgid "OAI ID"
-msgstr "OAI ID"
+msgstr "OAI-tunnus"
 
 #: invenio_rdm_records/config.py:427 invenio_rdm_records/config.py:437
 #: tests/conftest.py:291
 msgid "Concept DOI"
-msgstr "Koncept DOI"
+msgstr "Konseptin DOI"
 
 #: invenio_rdm_records/config.py:70
 msgid "ORCID"
@@ -72,7 +68,7 @@ msgstr "Bibcode"
 
 #: invenio_rdm_records/config.py:85
 msgid "Crossref Funder ID"
-msgstr "Crossref Funder ID"
+msgstr "Crossref-rahoittajan tunnus"
 
 #: invenio_rdm_records/config.py:90
 msgid "EAN13"
@@ -88,7 +84,7 @@ msgstr "GRID"
 
 #: invenio_rdm_records/config.py:94
 msgid "Handle"
-msgstr "Hantera"
+msgstr "Handle"
 
 #: invenio_rdm_records/config.py:98
 msgid "IGSN"
@@ -144,7 +140,7 @@ msgstr "W3ID"
 
 #: invenio_rdm_records/config.py:111
 msgid "Other"
-msgstr "Övrig"
+msgstr "Muu"
 
 #: invenio_rdm_records/config.py:116
 msgid "Wikidata"
@@ -156,35 +152,35 @@ msgstr "GeoNames"
 
 #: invenio_rdm_records/config.py:232
 msgid "Best match"
-msgstr "Bästa matchningen"
+msgstr "Paras osuma"
 
 #: invenio_rdm_records/config.py:236
 msgid "Newest"
-msgstr "Nyast"
+msgstr "Uusin"
 
 #: invenio_rdm_records/config.py:240
 msgid "Oldest"
-msgstr "Äldst"
+msgstr "Vanhin"
 
 #: invenio_rdm_records/config.py:244
 msgid "Version"
-msgstr "Version"
+msgstr "Versio"
 
 #: invenio_rdm_records/config.py:248
 msgid "Recently updated"
-msgstr "Nyast uppdatering"
+msgstr "Äskettäin päivitetty"
 
 #: invenio_rdm_records/config.py:252
 msgid "Least recently updated"
-msgstr "Äldst uppdatering"
+msgstr "Vähiten äskettäin päivitetty"
 
 #: invenio_rdm_records/config.py:256
 msgid "Most viewed"
-msgstr "Mest visade"
+msgstr "Katsotuimmat"
 
 #: invenio_rdm_records/config.py:259
 msgid "Most downloaded"
-msgstr "Mest nedladdade"
+msgstr "Ladatuimmat"
 
 #: invenio_rdm_records/administration/views/oai.py:41
 #: invenio_rdm_records/administration/views/oai.py:70
@@ -192,7 +188,7 @@ msgstr "Mest nedladdade"
 #: invenio_rdm_records/administration/views/oai.py:150
 #: invenio_rdm_records/config.py:336
 msgid "Set name"
-msgstr "Ange namn"
+msgstr "Joukon nimi"
 
 #: invenio_rdm_records/administration/views/oai.py:40
 #: invenio_rdm_records/administration/views/oai.py:75
@@ -200,21 +196,21 @@ msgstr "Ange namn"
 #: invenio_rdm_records/administration/views/oai.py:151
 #: invenio_rdm_records/config.py:340
 msgid "Set spec"
-msgstr "OAI-PMH-set spec"
+msgstr "Joukon tunnus"
 
 #: invenio_rdm_records/administration/views/oai.py:43
 #: invenio_rdm_records/administration/views/oai.py:153
 #: invenio_rdm_records/config.py:344
 #: invenio_rdm_records/oaiserver/services/config.py:54
 msgid "Created"
-msgstr "Skapad"
+msgstr "Luotu"
 
 #: invenio_rdm_records/administration/views/oai.py:44
 #: invenio_rdm_records/administration/views/oai.py:154
 #: invenio_rdm_records/config.py:348
 #: invenio_rdm_records/oaiserver/services/config.py:58
 msgid "Updated"
-msgstr "Uppdaterad"
+msgstr "Päivitetty"
 
 #: invenio_rdm_records/config.py:407
 msgid "OAI"
@@ -222,26 +218,26 @@ msgstr "OAI"
 
 #: invenio_rdm_records/utils.py:117
 msgid "Your shared link has expired."
-msgstr "Din delade länk har upphört att gälla."
+msgstr "Jakamasi linkki on vanhentunut."
 
 #: invenio_rdm_records/administration/views/oai.py:29
 msgid "OAI-PMH Sets"
-msgstr "OAI-PMH Set"
+msgstr "OAI-PMH-joukot"
 
 #: invenio_rdm_records/administration/views/oai.py:30
 msgid "Site management"
-msgstr "Hantera webbplatsen"
+msgstr "Sivuston hallinta"
 
 #: invenio_rdm_records/administration/views/oai.py:42
 #: invenio_rdm_records/administration/views/oai.py:83
 #: invenio_rdm_records/administration/views/oai.py:123
 #: invenio_rdm_records/administration/views/oai.py:152
 msgid "Search query"
-msgstr "Sökfråga"
+msgstr "Hakukysely"
 
 #: invenio_rdm_records/administration/views/oai.py:63
 msgid "Edit OAI-PMH set"
-msgstr "Redigera OAI-PMH set"
+msgstr "Muokkaa OAI-PMH-haravointisettiä"
 
 #: invenio_rdm_records/administration/views/oai.py:65
 #: invenio_rdm_records/administration/views/oai.py:105
@@ -252,150 +248,150 @@ msgstr "OAI-PMH"
 #: invenio_rdm_records/administration/views/oai.py:71
 #: invenio_rdm_records/administration/views/oai.py:111
 msgid "A short human-readable string naming the set."
-msgstr "En kort läsbar sträng som namnger datasetet."
+msgstr ""
+"Lyhyt ihmisen luettavissa oleva merkkijono, joka nimeää haravointisetin."
 
 #: invenio_rdm_records/administration/views/oai.py:77
 #: invenio_rdm_records/administration/views/oai.py:117
 msgid ""
 "An identifier for the set, which cannot be edited after the set is created."
-msgstr ""
-"En identifierare för OAI-PMH-setet, som inte kan redigeras efter att setet "
-"har skapats."
+msgstr "Tunniste, jota ei voi muokata haravointisetin luonnin jälkeen."
 
 #: invenio_rdm_records/administration/views/oai.py:85
 #: invenio_rdm_records/administration/views/oai.py:125
 msgid ""
 "See the supported query syntax in the <a href='/help/search'>Search "
 "Guide</a>."
-msgstr "Se frågesyntaxen som stöds i <a href='/help/search'>Search Guide</a>."
+msgstr ""
+"Katso tuettu hakusyntaksi kohdasta <a href='/help/search'>Search Guide</a>."
 
 #: invenio_rdm_records/administration/views/oai.py:103
 msgid "Create OAI-PMH set"
-msgstr "Skapa OAI-PMH set"
+msgstr "Luo OAI-PMH-haravointisetti"
 
 #: invenio_rdm_records/administration/views/oai.py:140
 msgid "OAI-PMH Details"
-msgstr "OAI-PMH Detaljer"
+msgstr "OAI-PMH:n tiedot"
 
 #: invenio_rdm_records/contrib/codemeta/custom_fields.py:36
 #: invenio_rdm_records/contrib/meeting/custom_fields.py:47
 msgid "You must provide a valid URL."
-msgstr "Ange en giltig URL."
+msgstr "Sinun on annettava kelvollinen URL-osoite."
 
 #: invenio_rdm_records/contrib/codemeta/custom_fields.py:54
 msgid "Software"
-msgstr "Mjukvara"
+msgstr "Ohjelmisto"
 
 #: invenio_rdm_records/contrib/codemeta/custom_fields.py:61
 msgid "Repository URL"
-msgstr "Repository URL"
+msgstr "Tietovaraston URL-osoite"
 
 #: invenio_rdm_records/contrib/codemeta/custom_fields.py:63
 msgid "URL or link where the code repository is hosted."
-msgstr "URL eller länk till det kod repositorium där koden förvaras."
+msgstr "URL tai linkki, jossa koodivarasto sijaitsee."
 
 #: invenio_rdm_records/contrib/codemeta/custom_fields.py:70
 #: invenio_rdm_records/contrib/codemeta/custom_fields.py:111
 msgid "Programming language"
-msgstr "Programmeringsspråk"
+msgstr "Ohjelmointikieli"
 
 #: invenio_rdm_records/contrib/codemeta/custom_fields.py:72
 msgid "Repository's programming language."
-msgstr "Repositoriets programmeringsspråk."
+msgstr "Käytetty ohjelmointikieli."
 
 #: invenio_rdm_records/contrib/codemeta/custom_fields.py:73
 msgid "e.g. Python ..."
-msgstr "t.ex. Python ..."
+msgstr "esim. Python ..."
 
 #: invenio_rdm_records/contrib/codemeta/custom_fields.py:85
 msgid "Development Status"
-msgstr "Utvecklingsstatus"
+msgstr "Kehitysvaihe"
 
 #: invenio_rdm_records/contrib/codemeta/custom_fields.py:86
 msgid "Repository status"
-msgstr "Repositorie status"
+msgstr "Versionhallinnan tila"
 
 #: invenio_rdm_records/contrib/codemeta/custom_fields.py:88
 msgid "Repository current status."
-msgstr "Repositoriets nuvarande status."
+msgstr "Versionhallinnan nykyinen tila."
 
 #: invenio_rdm_records/contrib/codemeta/custom_fields.py:101
 msgid "Development status"
-msgstr "Utvecklingsstatus"
+msgstr "Kehityksen tila"
 
 #: invenio_rdm_records/contrib/imprint/custom_fields.py:36
 msgid "Please provide a valid ISBN."
-msgstr "Ange ett giltigt ISBN."
+msgstr "Anna kelvollinen ISBN."
 
 #: invenio_rdm_records/contrib/imprint/custom_fields.py:72
 msgid "Book / Report / Conference proceedings"
-msgstr "Bok / Rapport / Konferensproceedings"
+msgstr "Kirja / Raportti / Konferenssijulkaisu"
 
 #: invenio_rdm_records/contrib/imprint/custom_fields.py:79
 msgid "Imprint (Book, Report, or Conference proceedings)"
-msgstr "Utgivning (Bok, Rapport eller Konferensproceedings)"
+msgstr "Julkaisutiedot (kirja, raportti tai konferenssijulkaisu)"
 
 #: invenio_rdm_records/contrib/imprint/custom_fields.py:81
 #: invenio_rdm_records/contrib/meeting/custom_fields.py:119
 #: invenio_rdm_records/templates/semantic-ui/imprint.html:7
 #: invenio_rdm_records/templates/semantic-ui/meeting.html:17
 msgid "Place"
-msgstr "Plats"
+msgstr "Paikka"
 
 #: invenio_rdm_records/contrib/imprint/custom_fields.py:82
 msgid "e.g. city, country"
-msgstr "t. ex. stad, land"
+msgstr "esim. kaupunki, maa"
 
 #: invenio_rdm_records/contrib/imprint/custom_fields.py:83
 msgid "Place where the book or report was published"
-msgstr "Plats där boken eller rapporten publicerades"
+msgstr "Paikka, jossa kirja tai raportti julkaistiin"
 
 #: invenio_rdm_records/contrib/imprint/custom_fields.py:87
 msgid "e.g. 0-06-251587-X"
-msgstr "t.ex. 0-06-251587-X"
+msgstr "esim. 0-06-251587-X"
 
 #: invenio_rdm_records/contrib/imprint/custom_fields.py:88
 msgid "International Standard Book Number"
-msgstr "International Standard Book Number"
+msgstr "Kansainvälinen standardikirjanumero"
 
 #: invenio_rdm_records/contrib/imprint/custom_fields.py:91
 msgid "Book, report, or proceedings title"
-msgstr "Titel på bok, rapport eller konferensproceedings"
+msgstr "Kirjan, raportin tai konferenssijulkaisun nimi"
 
 #: invenio_rdm_records/contrib/imprint/custom_fields.py:94
 msgid "Title of the book, report, or proceedings which this upload is part of"
 msgstr ""
-"Titel på boken, rapporten eller konferensproceedings som denna uppladdning "
-"är en del av"
+"Sen kirjan, raportin tai konferenssijulkaisun nimi, johon tämä julkaisu "
+"kuuluu"
 
 #: invenio_rdm_records/contrib/imprint/custom_fields.py:98
 msgid "Pagination"
-msgstr "Sidnumrering"
+msgstr "Sivunumerointi"
 
 #: invenio_rdm_records/contrib/imprint/custom_fields.py:99
 msgid "e.g. 15-23 or 158"
-msgstr "t.ex. 15-23 eller 158"
+msgstr "esim. 15–23 tai 158"
 
 #: invenio_rdm_records/contrib/imprint/custom_fields.py:103
 msgid "Edition"
-msgstr "Upplaga"
+msgstr "Painos"
 
 #: invenio_rdm_records/contrib/imprint/custom_fields.py:104
 msgid "e.g. 3"
-msgstr "e.g. 3"
+msgstr "esim. 3"
 
 #: invenio_rdm_records/contrib/imprint/custom_fields.py:105
 msgid "The edition of the book"
-msgstr "Bokens upplaga"
+msgstr "Kirjan painos"
 
 #: invenio_rdm_records/contrib/journal/custom_fields.py:38
 msgid "Please provide a valid ISSN."
-msgstr "Ange ett giltigt ISSN."
+msgstr "Anna kelvollinen ISSN."
 
 #: invenio_rdm_records/contrib/journal/custom_fields.py:73
 #: invenio_rdm_records/contrib/journal/custom_fields.py:80
 msgid "Journal"
-msgstr "Tidskrift"
+msgstr "Lehti"
 
 #: invenio_rdm_records/contrib/journal/custom_fields.py:82
 #: invenio_rdm_records/contrib/meeting/custom_fields.py:104
@@ -403,591 +399,588 @@ msgstr "Tidskrift"
 #: invenio_rdm_records/templates/semantic-ui/journal.html:3
 #: invenio_rdm_records/templates/semantic-ui/meeting.html:2
 msgid "Title"
-msgstr "Titel"
+msgstr "Otsikko"
 
 #: invenio_rdm_records/contrib/journal/custom_fields.py:85
 msgid "Title of the journal in which the article was published"
-msgstr "Titeln på tidskriften där artikeln publicerades"
+msgstr "Lehden nimi, jossa artikkeli julkaistiin"
 
 #: invenio_rdm_records/contrib/journal/custom_fields.py:89
 #: invenio_rdm_records/templates/semantic-ui/journal.html:8
 msgid "Volume"
-msgstr "Volym"
+msgstr "Vuosikerta"
 
 #: invenio_rdm_records/contrib/journal/custom_fields.py:90
 msgid "e.g. 645"
-msgstr "t.ex. 645"
+msgstr "esim. 645"
 
 #: invenio_rdm_records/contrib/journal/custom_fields.py:94
 #: invenio_rdm_records/templates/semantic-ui/journal.html:13
 msgid "Issue"
-msgstr "Utgåva"
+msgstr "Numero"
 
 #: invenio_rdm_records/contrib/journal/custom_fields.py:95
 msgid "e.g. 7"
-msgstr "t.ex. 7"
+msgstr "esim. 7"
 
 #: invenio_rdm_records/contrib/journal/custom_fields.py:99
 msgid "Page range or article number"
-msgstr "Sidintervall eller artikelnummer"
+msgstr "Sivuväli tai artikkelinumero"
 
 #: invenio_rdm_records/contrib/journal/custom_fields.py:100
 msgid "e.g. 15-23 or A29"
-msgstr "t.ex 15-23 or A29"
+msgstr "esim. 15–23 tai A29"
 
 #: invenio_rdm_records/contrib/journal/custom_fields.py:105
 msgid "e.g. 2077-9550"
-msgstr "t.ex. 2077-9550"
+msgstr "esim. 2077-9550"
 
 #: invenio_rdm_records/contrib/journal/custom_fields.py:106
 msgid "International Standard Serial Number"
-msgstr "International Standard Serial Number"
+msgstr "Kansainvälinen standardisarjanumero"
 
 #: invenio_rdm_records/contrib/journal/sort.py:14
 msgid "Journal [Newest]"
-msgstr "Tidskrift [Newest]"
+msgstr "Lehti [uusin]"
 
 #: invenio_rdm_records/contrib/meeting/custom_fields.py:96
 msgid "Conference"
-msgstr "Konferens"
+msgstr "Konferenssi"
 
 #: invenio_rdm_records/contrib/meeting/custom_fields.py:109
 #: invenio_rdm_records/templates/semantic-ui/meeting.html:7
 msgid "Acronym"
-msgstr "Akronym"
+msgstr "Akronyymi"
 
 #: invenio_rdm_records/contrib/meeting/custom_fields.py:114
 #: invenio_rdm_records/templates/semantic-ui/meeting.html:12
 msgid "Dates"
-msgstr "Datum"
+msgstr "Päivämäärät"
 
 #: invenio_rdm_records/contrib/meeting/custom_fields.py:115
 msgid "e.g. 21-22 November 2022."
-msgstr "t.ex. 21-22 November 2022."
+msgstr "esim. 21–22 marraskuuta 2022."
 
 #: invenio_rdm_records/contrib/meeting/custom_fields.py:121
 msgid "Location where the conference took place."
-msgstr "Plats där konferensen ägde rum."
+msgstr "Konferenssin järjestämispaikka."
 
 #: invenio_rdm_records/contrib/meeting/custom_fields.py:124
 #: invenio_rdm_records/templates/semantic-ui/meeting.html:22
 msgid "Website"
-msgstr "Hemsida"
+msgstr "Verkkosivusto"
 
 #: invenio_rdm_records/contrib/meeting/custom_fields.py:129
 #: invenio_rdm_records/templates/semantic-ui/meeting.html:27
 msgid "Session"
-msgstr "Session"
+msgstr "Istunto"
 
 #: invenio_rdm_records/contrib/meeting/custom_fields.py:130
 msgid "e.g. VI"
-msgstr "t.ex. VI"
+msgstr "esim. VI"
 
 #: invenio_rdm_records/contrib/meeting/custom_fields.py:131
 msgid "Session within the conference."
-msgstr "Session inom konferensen."
+msgstr "Konferenssin sessio"
 
 #: invenio_rdm_records/contrib/meeting/custom_fields.py:134
 msgid "Part"
-msgstr "Del"
+msgstr "Osa"
 
 #: invenio_rdm_records/contrib/meeting/custom_fields.py:135
 msgid "e.g. 1"
-msgstr "t.ex. 1"
+msgstr "esim. 1"
 
 #: invenio_rdm_records/contrib/meeting/custom_fields.py:136
 msgid "Part within the session."
-msgstr "Del inom sessionen."
+msgstr "Session osa."
 
 #: invenio_rdm_records/contrib/meeting/sort.py:14
 msgid "Conference session [Newest]"
-msgstr "Konferenssession [Newest]"
+msgstr "Konferenssin sessio [uusin]"
 
 #: invenio_rdm_records/contrib/thesis/custom_fields.py:63
 #: invenio_rdm_records/contrib/thesis/custom_fields.py:69
 msgid "Thesis"
-msgstr "Avhandling"
+msgstr "Opinnäyte"
 
 #: invenio_rdm_records/contrib/thesis/custom_fields.py:72
 msgid "Awarding university"
-msgstr "Utfärdande universitet"
+msgstr "Tutkinnon myöntänyt yliopisto"
 
 #: invenio_rdm_records/contrib/thesis/custom_fields.py:77
 msgid "Awarding department"
-msgstr "Utfärdande institution"
+msgstr "Tutkinnon myöntänyt laitos"
 
 #: invenio_rdm_records/contrib/thesis/custom_fields.py:82
 msgid "Thesis type"
-msgstr "Typ av avhandling"
+msgstr "Opinnäytteen tyyppi"
 
 #: invenio_rdm_records/contrib/thesis/custom_fields.py:83
 msgid "PhD"
-msgstr "PhD"
+msgstr "Tohtori (PhD)"
 
 #: invenio_rdm_records/contrib/thesis/custom_fields.py:85
 msgid "The type of thesis (e.g. Masters, PhD, Engineers, Bachelors)"
 msgstr ""
-"Typ av avhandling (t.ex. Magister, Doktorsavhandling, Ingenjör, "
-"Kandidatexamen)"
+"Opinnäytteen tyyppi (esim. maisteri, tohtori, diplomi-insinööri, "
+"kandidaatti)"
 
 #: invenio_rdm_records/contrib/thesis/custom_fields.py:89
 msgid "Submission date"
-msgstr "Inlämningsdatum"
+msgstr "Palautuspäivä"
 
 #: invenio_rdm_records/contrib/thesis/custom_fields.py:91
 msgid "Submission date in YYYY-MM-DD format."
-msgstr "Inlämningsdatum i formatet ÅÅÅÅ-MM-DD."
+msgstr "Palautuspäivä muodossa VVVV-KK-PP."
 
 #: invenio_rdm_records/contrib/thesis/custom_fields.py:94
 msgid "Defense date"
-msgstr "Disputationsdatum"
+msgstr "Väitöspäivä"
 
 #: invenio_rdm_records/contrib/thesis/custom_fields.py:96
 msgid "Defense date in YYYY-MM-DD format."
-msgstr "Disputationsdatum i formatet ÅÅÅÅ-MM-DD."
+msgstr "Väitöspäivä muodossa VVVV-KK-PP."
 
 #: invenio_rdm_records/jobs/jobs.py:21
 msgid "Updates expired embargoes"
-msgstr "Uppdaterar utgångna embargon"
+msgstr "Päivittää vanhentuneet embargoajat"
 
 #: invenio_rdm_records/jobs/jobs.py:22
 msgid "Update expired embargoes"
-msgstr "Uppdatera utgångna embargon"
+msgstr "Päivitä vanhentuneet embargoajat"
 
 #: invenio_rdm_records/oaiserver/services/config.py:35
 msgid "Ascending"
-msgstr "Stigande"
+msgstr "Nouseva"
 
 #: invenio_rdm_records/oaiserver/services/config.py:39
 msgid "Descending"
-msgstr "Nedåtgående"
+msgstr "Laskeva"
 
 #: invenio_rdm_records/oaiserver/services/config.py:46
 msgid "Name"
-msgstr "Namn"
+msgstr "Nimi"
 
 #: invenio_rdm_records/oaiserver/services/config.py:50
 msgid "Spec"
-msgstr "Spec"
+msgstr "Tunnus"
 
 #: invenio_rdm_records/oaiserver/services/errors.py:30
 #, python-brace-format
 msgid "A set where {query_arguments} does not exist."
-msgstr "Ett OAI-PMH-set där {query_arguments} inte existerar."
+msgstr "Joukkoa, jossa {query_arguments}, ei ole olemassa."
 
 #: invenio_rdm_records/oaiserver/services/errors.py:43
 #, python-brace-format
 msgid "A set with id {id} does not exist."
-msgstr "Ett OAI-PMH-set med id {id} finns inte."
+msgstr "Joukkoa tunnuksella {id} ei ole olemassa."
 
 #: invenio_rdm_records/oaiserver/services/errors.py:53
 #, python-brace-format
 msgid "A set with spec '{spec}' already exists."
-msgstr "Ett OAI-PMH-set med specifikationen '{spec}' finns redan."
+msgstr "Joukko tunnuksella '{spec}' on jo olemassa."
 
 #: invenio_rdm_records/oaiserver/services/errors.py:63
 #, python-brace-format
 msgid "The set with id {id} is not editable."
-msgstr "OAI-PMH-setet med id {id} kan inte redigeras."
+msgstr "Joukkoa tunnuksella {id} ei voi muokata."
 
 #: invenio_rdm_records/oaiserver/services/schema.py:30
 msgid "Search pattern"
-msgstr "Sökmönster"
+msgstr "Hakukaava"
 
 #: invenio_rdm_records/oaiserver/services/services.py:101
 #, python-brace-format
 msgid "The spec must not start with any of the following list '{prefix}'."
-msgstr ""
-"Specifikationen får inte börja med något från följande lista '{prefix}'."
+msgstr "Tunnus ei saa alkaa millään seuraavista etuliitteistä '{prefix}'."
 
 #: invenio_rdm_records/oaiserver/services/services.py:113
 #, python-brace-format
 msgid "The spec must only consist of letters, numbers or {marks}."
-msgstr "Specifikationen får endast bestå av bokstäver, siffror eller {marks}."
+msgstr ""
+"Tunnus saa koostua vain kirjaimista, numeroista tai merkeistä {marks}."
 
 #: invenio_rdm_records/records/systemfields/draft_status.py:83
 #, python-brace-format
 msgid "Unknown draft status for review: {reviewstatus}."
-msgstr "Okänd utkast-status för granskning: {reviewstatus}."
+msgstr "Tuntematon luonnoksen tila arvioinnille: {reviewstatus}."
 
 #: invenio_rdm_records/records/systemfields/draft_status.py:89
 msgid "Unknown draft status."
-msgstr "Okänd utkast-status."
+msgstr "Tuntematon luonnoksen tila."
 
 #: invenio_rdm_records/requests/community_inclusion.py:100
 msgid "Community inclusion"
-msgstr "Community-inkludering"
+msgstr "Yhteisöön sisällyttäminen"
 
 #: invenio_rdm_records/requests/community_submission.py:182
 msgid "Community submission"
-msgstr "Community-inlämning"
+msgstr "Yhteisöön lähettäminen"
 
 #: invenio_rdm_records/requests/access/requests.py:190
 #, python-format
 msgid "Click <a href=\"%(url)s\">here</a> to access the record."
-msgstr "Klicka <a href=\"%(url)s\">här </a> för att få tillgång till posten."
+msgstr "Napsauta <a href=\"%(url)s”>tästä</a> avataksesi tietueen."
 
 #: invenio_rdm_records/requests/access/requests.py:250
 #: invenio_rdm_records/requests/access/requests.py:282
 msgid "Access request"
-msgstr "Åtkomstbegäran"
+msgstr "Käyttöoikeuspyyntö"
 
 #: invenio_rdm_records/requests/access/requests.py:319
 #: invenio_rdm_records/requests/access/requests.py:324
 msgid "Not a valid number of days."
-msgstr "Inte ett giltigt antal dagar."
+msgstr "Päivien määrä ei ole kelvollinen."
 
 #: invenio_rdm_records/resources/config.py:157
 msgid "Citation string style not found."
-msgstr "Citeringsstilen hittades inte."
+msgstr "Viittaustyylin merkkijonoa ei löytynyt."
 
 #: invenio_rdm_records/resources/config.py:163
 msgid "Review for draft not found"
-msgstr "Granskning för utkast hittades inte"
+msgstr "Luonnoksen arviota ei löytynyt"
 
 #: invenio_rdm_records/resources/config.py:201
 #: invenio_rdm_records/resources/config.py:299
 #: invenio_rdm_records/resources/config.py:349
 msgid "Record not found"
-msgstr "Posten existerar inte"
+msgstr "Tietuetta ei löytynyt"
 
 #: invenio_rdm_records/resources/config.py:205
 #: invenio_rdm_records/resources/config.py:303
 #: invenio_rdm_records/resources/config.py:353
 msgid "Record deleted"
-msgstr "Posten raderades"
+msgstr "Tietue poistettu"
 
 #: invenio_rdm_records/resources/config.py:219
 msgid "Cannot publish without selecting a community."
-msgstr "Går inte att publicera utan community."
+msgstr "Julkaisu ei onnistu ilman yhteisön valintaa."
 
 #: invenio_rdm_records/resources/config.py:402
 msgid "No secret link found with the given ID."
-msgstr "Ingen hemlig länk hittades med angivet ID."
+msgstr "Annetulla tunnisteella ei löytynyt salaista linkkiä."
 
 #: invenio_rdm_records/resources/config.py:410
 msgid "No grant found with the given ID."
-msgstr "Inget anslag hittades med angivet ID."
+msgstr "Annetulla tunnisteella ei löytynyt myönnettyä oikeutta."
 
 #: invenio_rdm_records/resources/config.py:423
 msgid "No grant found by given user id."
-msgstr "Inget anslag hittades för angivet användar-ID."
+msgstr "Annetulla käyttäjätunnuksella ei löytynyt myönnettyä oikeutta."
 
 #: invenio_rdm_records/resources/config.py:430
 msgid "No grant found by given group id."
-msgstr "Inget anslag hittades för angivet grupp-ID."
+msgstr "Annetulla ryhmätunnuksella ei löytynyt myönnettyä oikeutta."
 
 #: invenio_rdm_records/resources/iiif.py:99
 msgid "Image size limit exceeded"
-msgstr "Gränsen för bildstorlek har överskridits"
+msgstr "Kuvan kokoraja ylittyi"
 
 #: invenio_rdm_records/resources/iiif.py:106
 msgid ""
 "The record associated with this file has been deleted. See deletion notice."
-msgstr ""
-"Posten som är kopplad till den här filen har raderats. Se meddelande om "
-"borttagning."
+msgstr "Tähän tiedostoon liittyvä tietue on poistettu. Katso poistohuomautus."
 
 #: invenio_rdm_records/resources/deserializers/rocrate/__init__.py:31
 msgid "Invalid RO-Crate metadata format, missing '@graph' key."
-msgstr "'Ogiltigt RO-Crate-metadataformat, nyckeln '@graph' saknas."
+msgstr "Virheellinen RO-Crate-metadatan muoto; '@graph'-avain puuttuu."
 
 #: invenio_rdm_records/resources/deserializers/rocrate/schema.py:32
 #: invenio_rdm_records/services/schemas/metadata.py:363
 msgid "Missing data for required field."
-msgstr "Data saknas för obligatoriskt fält."
+msgstr "Pakollisen kentän tiedot puuttuvat."
 
 #: invenio_rdm_records/resources/deserializers/rocrate/schema.py:102
 msgid "'@type' must be 'Person' or 'Organization'"
-msgstr "'@type' måste vara 'Person' eller 'Organisation'"
+msgstr "'@type':n on oltava 'Person' tai 'Organization'"
 
 #: invenio_rdm_records/resources/deserializers/rocrate/schema.py:138
 msgid "Format must be a list of strings."
-msgstr "Format måste vara en lista med strängar."
+msgstr "Muodon on oltava merkkijonojen lista."
 
 #: invenio_rdm_records/resources/serializers/utils.py:38
 #, python-format
 msgid "The '%(vocabulary)s' vocabulary item '%(id_)s' was not found."
-msgstr "Denna '%(vocabulary)s' vokabulärterm '%(id_)s' kunde inte hittas."
+msgstr "Sanaston '%(vocabulary)s' kohdetta '%(id_)s' ei löytynyt."
 
 #: invenio_rdm_records/resources/serializers/cff/schema.py:29
 msgid "One of 'family-names' or 'given-names' is required."
-msgstr "Antingen 'efternamn' eller 'förnamn' måste anges."
+msgstr "Joko 'family-names' tai 'given-names' on annettava."
 
 #: invenio_rdm_records/resources/serializers/datacite/schema.py:281
 msgid "Invalid publication date value."
-msgstr "Ogiltigt publiceringsdatum."
+msgstr "Julkaisupäivän arvo on virheellinen."
 
 #: invenio_rdm_records/resources/serializers/iiif/schema.py:168
 msgid "Current Page Order"
-msgstr "Nuvarande sidordning"
+msgstr "Nykyinen sivujärjestys"
 
 #: invenio_rdm_records/resources/serializers/iiif/schema.py:195
 msgid "Manifest generated by InvenioRDM"
-msgstr "Manifestet genererat av InvenioRDM"
+msgstr "Manifesti luotu InvenioRDM:llä"
 
 #: invenio_rdm_records/resources/serializers/iiif/schema.py:214
 msgid "Publication Date"
-msgstr "Publiceringsdatum"
+msgstr "Julkaisupäivä"
 
 #: invenio_rdm_records/resources/serializers/schemaorg/schema.py:123
 msgid ""
 "Affiliation failed to serialize: one of 'id' or 'name' must be provided."
 msgstr ""
-"Serialiseringen av affiliering misslyckades: ett av 'id' eller 'namn' måste "
-"anges."
+"Affiliaation sarjallistaminen epäonnistui: joko 'id' tai 'name' on "
+"annettava."
 
 #: invenio_rdm_records/resources/serializers/schemaorg/schema.py:369
 msgid ""
 "Funding serialization failed on award: one of 'id' or ('number' and 'title')"
 " are required."
 msgstr ""
-"Serialisering av finansiering misslyckades vid tilldelningen: antingen 'id' "
-"eller ('nummer' och 'titel') krävs."
+"Rahoituksen sarjallistaminen epäonnistui palkinnossa: joko 'id' tai "
+"('number' ja 'title') vaaditaan."
 
 #: invenio_rdm_records/resources/serializers/ui/fields.py:36
 #: invenio_rdm_records/services/facets.py:32
 msgid "Open"
-msgstr "Öppen"
+msgstr "Avoin"
 
 #: invenio_rdm_records/resources/serializers/ui/fields.py:37
 #: invenio_rdm_records/services/facets.py:33
 msgid "Embargoed"
-msgstr "Låst"
+msgstr "Embargossa"
 
 #: invenio_rdm_records/resources/serializers/ui/fields.py:38
 #: invenio_rdm_records/services/facets.py:34
 msgid "Restricted"
-msgstr "Begränsad"
+msgstr "Rajoitettu"
 
 #: invenio_rdm_records/resources/serializers/ui/fields.py:39
 #: invenio_rdm_records/services/facets.py:35
 msgid "Metadata-only"
-msgstr "Endast metadata"
+msgstr "Vain metatiedot"
 
 #: invenio_rdm_records/resources/serializers/ui/fields.py:66
 msgid "The record and files are publicly accessible."
-msgstr "Posten och filerna är offentligt tillgängliga."
+msgstr "Tietue ja tiedostot ovat julkisesti saatavilla."
 
 #: invenio_rdm_records/resources/serializers/ui/fields.py:68
 msgid "No files are available for this record."
-msgstr "Inga filer är tillgängliga för denna post."
+msgstr "Tällä tietueella ei ole tiedostoja saatavilla."
 
 #: invenio_rdm_records/resources/serializers/ui/fields.py:77
 #, python-format
 msgid "The record and files will be made publicly available on %(date)s."
-msgstr "Posten och filerna kommer att offentliggöras den %(date)s."
+msgstr "Tietue ja tiedostot tulevat julkisesti saataville %(date)s."
 
 #: invenio_rdm_records/resources/serializers/ui/fields.py:82
 msgid "The record and files are restricted to users with access."
-msgstr "Posten och filerna är begränsade till användare med åtkomst."
+msgstr "Tietue ja tiedostot on rajattu käyttöoikeuden omaaville käyttäjille."
 
 #: invenio_rdm_records/resources/serializers/ui/fields.py:91
 #, python-format
 msgid "The record will be made publicly available on %(date)s."
-msgstr "Posten kommer att offentliggöras den %(date)s."
+msgstr "Tietue tulee julkisesti saataville %(date)s."
 
 #: invenio_rdm_records/resources/serializers/ui/fields.py:95
 msgid "The record is restricted to users with access."
-msgstr "Posten är begränsad till användare med åtkomst."
+msgstr "Tietue on rajattu käyttöoikeuden omaaville käyttäjille."
 
 #: invenio_rdm_records/resources/serializers/ui/fields.py:103
 #, python-format
 msgid "The files will be made publicly available on %(date)s."
-msgstr "Filerna kommer att offentliggöras den %(date)s."
+msgstr "Tiedostot tulevat julkisesti saataville %(date)s."
 
 #: invenio_rdm_records/resources/serializers/ui/fields.py:107
 msgid ""
 "The record is publicly accessible, but files are restricted to users with "
 "access."
 msgstr ""
-"Posten är offentligt tillgänglig, men filerna är begränsade till användare "
-"med åtkomst."
+"Tietue on julkisesti saatavilla, mutta tiedostot on rajattu käyttöoikeuden "
+"omaaville käyttäjille."
 
 #: invenio_rdm_records/resources/serializers/ui/schema.py:109
 #: invenio_rdm_records/services/github/release.py:60
 msgid "Unknown"
-msgstr "Okänd"
+msgstr "Tuntematon"
 
 #: invenio_rdm_records/resources/serializers/ui/schema.py:116
 msgid "System (automatic)"
-msgstr "System (automatiskt)"
+msgstr "Järjestelmä (automaattinen)"
 
 #: invenio_rdm_records/resources/serializers/ui/schema.py:118
 msgid "Admin"
-msgstr "Administratör"
+msgstr "Ylläpitäjä"
 
 #: invenio_rdm_records/resources/serializers/ui/schema.py:303
 msgid "Submitted: "
-msgstr "Inlämnad:"
+msgstr "Lähetetty: "
 
 #: invenio_rdm_records/resources/serializers/ui/schema.py:304
 msgid "Defended: "
-msgstr "Försvarad: "
+msgstr "Väitöspäivä: "
 
 #: invenio_rdm_records/services/errors.py:22
 msgid "Grant for this user/role already exists within this record."
-msgstr "Anslag för denna användare/roll finns redan i den här posten."
+msgstr ""
+"Tälle käyttäjälle/roolille on jo olemassa myönnetty oikeus tässä tietueessa."
 
 #: invenio_rdm_records/services/errors.py:54
 #, python-format
 msgid "Embargo could not be lifted for record: %(record_id)s"
-msgstr "Embargot kunde inte hävas för posten: %(record_id)s"
+msgstr "Embargoa ei voitu poistaa tietueelta: %(record_id)s"
 
 #: invenio_rdm_records/services/errors.py:66
 msgid "Review not found."
-msgstr "Granskning hittades inte."
+msgstr "Arviointia ei löytynyt."
 
 #: invenio_rdm_records/services/errors.py:84
 msgid "The record is already included in this community."
-msgstr "Posten är redan inkluderad i denna community."
+msgstr "Tietue on jo liitetty tähän yhteisöön."
 
 #: invenio_rdm_records/services/errors.py:94
 msgid "A public record cannot be included in a restricted community."
-msgstr ""
-"En offentlig post kan inte inkluderas i en community med begränsad åtkomst."
+msgstr "Julkista tietuetta ei voi liittää rajoitettuun yhteisöön."
 
 #: invenio_rdm_records/services/errors.py:107
 msgid "There is already an open inclusion request for this community."
-msgstr ""
-"Det finns redan en öppen begäran om inkludering för den här communityn."
+msgstr "Tälle yhteisölle on jo avoin sisällytyspyyntö."
 
 #: invenio_rdm_records/services/errors.py:163
 #, python-format
 msgid "The record %(rec_id)s in not included in the community %(com_id)s."
-msgstr "Posten %(rec_id)s är inte inkluderad i communityn %(com_id)s."
+msgstr "Tietuetta %(rec_id)s ei ole liitetty yhteisöön %(com_id)s."
 
 #: invenio_rdm_records/services/errors.py:179
 #, python-format
 msgid "Cannot modify community visibility: %(reason)s"
-msgstr "Det går inte att ändra communityns synlighet: %(reason)s"
+msgstr "Yhteisön näkyvyyttä ei voi muuttaa: %(reason)s"
 
 #: invenio_rdm_records/services/errors.py:198
 #, python-format
 msgid "Identical access requests already exist: %(request_id)s"
-msgstr "Identiska åtkomstförfrågningar finns redan: %(request_id)s"
+msgstr "Samanlaisia käyttöoikeuspyyntöjä on jo olemassa: %(request_id)s"
 
 #: invenio_rdm_records/services/errors.py:202
 msgid "The access request is a duplicate"
-msgstr "Begäran om åtkomst är en kopia"
+msgstr "Käyttöoikeuspyyntö on kaksoiskappale"
 
 #: invenio_rdm_records/services/errors.py:209
 msgid "Submission to this community is only allowed to community members."
-msgstr "Endast communitymedlemmar kan skicka in till denna community."
+msgstr "Tähän yhteisöön voivat lähettää vain yhteisön jäsenet."
 
 #: invenio_rdm_records/services/errors.py:216
 msgid "Cannot publish without a community."
-msgstr "Går inte att publicera utan community."
+msgstr "Julkaisu ei onnistu ilman yhteisöä."
 
 #: invenio_rdm_records/services/errors.py:222
 msgid "A record should be part of at least 1 community."
-msgstr "En post måste tillhöra minst 1 community."
+msgstr "Tietueen tulee kuulua vähintään yhteen yhteisöön."
 
 #: invenio_rdm_records/services/facets.py:30
 msgid "Access status"
-msgstr "Åtkomststatus"
+msgstr "Käytön tila"
 
 #: invenio_rdm_records/services/facets.py:42
 msgid "Status"
-msgstr "Status"
+msgstr "Tila"
 
 #: invenio_rdm_records/services/facets.py:43
 msgid "Published"
-msgstr "Publicerad"
+msgstr "Julkaistu"
 
 #: invenio_rdm_records/services/facets.py:43
 msgid "Unpublished"
-msgstr "Opublicerad"
+msgstr "Julkaisematon"
 
 #: invenio_rdm_records/services/facets.py:49
 msgid "File type"
-msgstr "Filtyp"
+msgstr "Tiedostotyyppi"
 
 #: invenio_rdm_records/services/facets.py:56
 msgid "Languages"
-msgstr "Språk"
+msgstr "Kielet"
 
 #: invenio_rdm_records/services/facets.py:65
 msgid "Resource types"
-msgstr "Resurstyper"
+msgstr "Aineistotyypit"
 
 #: invenio_rdm_records/services/facets.py:82
 #: invenio_rdm_records/services/facets.py:92
 #: invenio_rdm_records/services/facets.py:108
 msgid "Subjects"
-msgstr "Ämnen"
+msgstr "Aiheet"
 
 #: invenio_rdm_records/services/services.py:636
 msgid ""
 "Record visibility can not be changed to restricted anymore. Please contact "
 "support if you still need to make these changes."
 msgstr ""
-"Det går inte längre att ändra postens synlighet till begränsad. Kontakta "
-"supporten om du fortfarande behöver göra dessa ändringar."
+"Tietueen näkyvyyttä ei voi enää muuttaa rajoitetuksi. Ota yhteyttä tukeen, "
+"jos muutokset ovat edelleen tarpeen."
 
 #: invenio_rdm_records/services/access/service.py:140
 #: invenio_rdm_records/services/access/service.py:174
 msgid "Expiration date must be set to the future"
-msgstr "Utgångsdatum får ej ha passerats"
+msgstr "Viimeinen voimassaolopäivä on asetettava tulevaisuuteen"
 
 #: invenio_rdm_records/services/access/service.py:168
 msgid "Cannot postpone expiration of links"
-msgstr "Det går inte att förlänga utgångsdatum för länkar"
+msgstr "Linkkien vanhenemista ei voi siirtää myöhemmäksi"
 
 #: invenio_rdm_records/services/access/service.py:195
 msgid "An access permission level is required"
-msgstr "En åtkomstbehörighetsnivå krävs"
+msgstr "Käyttöoikeustaso on pakollinen"
 
 #: invenio_rdm_records/services/access/service.py:210
 msgid "Invalid access permission level."
-msgstr "Ogiltig åtkomstbehörighetsnivå."
+msgstr "Virheellinen käyttöoikeustaso."
 
 #: invenio_rdm_records/services/access/service.py:423
 #: invenio_rdm_records/services/access/service.py:529
 #: invenio_rdm_records/services/access/service.py:951
 msgid "Could not find the specified subject."
-msgstr "Kunde inte hitta det angivna ämnet."
+msgstr "Määritettyä aihetta ei löytynyt."
 
 #: invenio_rdm_records/services/access/service.py:746
 msgid "Verification link sent out, please check your e-mail inbox"
-msgstr "Verifieringslänk skickad, vänligen kontrollera din e-postinkorg"
+msgstr "Vahvistuslinkki on lähetetty – tarkista sähköpostisi"
 
 #: invenio_rdm_records/services/communities/components.py:52
 msgid "Cannot restrict a community with public records."
-msgstr "Det går inte att begränsa en community med offentliga poster."
+msgstr "Yhteisöä, jossa on julkisia tietueita, ei voi asettaa rajoitetuksi."
 
 #: invenio_rdm_records/services/communities/service.py:189
 msgid "Community not found."
-msgstr "Communityn hittades inte."
+msgstr "Yhteisöä ei löytynyt."
 
 #: invenio_rdm_records/services/communities/service.py:425
 msgid "Community already included."
-msgstr "Community redan inkluderat."
+msgstr "Yhteisö on jo liitetty."
 
 #: invenio_rdm_records/services/community_inclusion/service.py:45
 #: invenio_rdm_records/services/community_inclusion/service.py:59
 msgid "Invalid request type."
-msgstr "Ogiltig granskningstyp."
+msgstr "Virheellinen pyyntötyyppi."
 
 #: invenio_rdm_records/services/community_inclusion/service.py:78
 msgid ""
 "This request has been automatically accepted, as the uploader can submit to "
 "community directly without review."
 msgstr ""
-"Denna begäran har accepterats automatiskt, eftersom uppladdaren kan skicka "
-"till communityn direkt, utan granskning."
+"Tämä pyyntö hyväksyttiin automaattisesti, koska lataaja voi lähettää "
+"yhteisöön suoraan ilman arviointia."
 
 #: invenio_rdm_records/services/community_records/service.py:138
 msgid "The record does not exist."
-msgstr "Posten finns inte."
+msgstr "Tietuetta ei ole olemassa."
 
 #: invenio_rdm_records/services/community_records/service.py:145
 msgid "Permission denied."
-msgstr "Tillstånd nekat."
+msgstr "Käyttö estetty."
 
 #: invenio_rdm_records/services/components/access.py:39
 msgid "You don't have permissions to manage record access."
-msgstr "Du har inte behörighet att hantera åtkomst till poster."
+msgstr "Sinulla ei ole oikeuksia hallita tietueen käyttöoikeuksia."
 
 #: invenio_rdm_records/services/components/pids.py:28
 #, python-brace-format
@@ -995,8 +988,8 @@ msgid ""
 "A previous version used a DOI registered from {sitename}. This version must "
 "also use a DOI from {sitename}."
 msgstr ""
-"En tidigare version använde en DOI registrerad från {sitename}. Denna "
-"version måste också använda en DOI från {sitename}."
+"Edellinen versio käytti sivuston {sitename} rekisteröimää DOI-tunnusta. "
+"Tämän version on myös käytettävä {sitename}-sivuston DOI-tunnusta."
 
 #: invenio_rdm_records/services/components/pids.py:37
 #: invenio_rdm_records/services/components/pids.py:46
@@ -1006,74 +999,71 @@ msgid ""
 "without one. You cannot use a DOI registered from {sitename} for this "
 "version."
 msgstr ""
-"En tidigare version publicerades med en DOI från en extern leverantör eller "
-"utan DOI. Du kan inte använda en DOI registrerad från {sitename} för denna "
-"version."
+"Edellinen versio julkaistiin ulkopuolisen tarjoajan DOI-tunnuksella tai "
+"ilman DOI:ta. Et voi käyttää {sitename}-sivuston rekisteröimää DOI-tunnusta "
+"tälle versiolle."
 
 #: invenio_rdm_records/services/components/review.py:37
 msgid ""
 "You cannot delete a draft with an open review. Please cancel the review "
 "first."
 msgstr ""
-"Du kan inte ta bort ett utkast med en öppen granskning. Avbryt granskningen "
-"först."
+"Et voi poistaa luonnosta, jolla on avoin arviointi. Peru arviointi ensin."
 
 #: invenio_rdm_records/services/github/metadata.py:59
 msgid "No description provided."
-msgstr "Beskrivning saknas."
+msgstr "Kuvausta ei ole annettu."
 
 #: invenio_rdm_records/services/github/metadata.py:178
 msgid "Citation schema is needed to load citation metadata."
-msgstr "Citeringsschema behövs för att ladda metadata för citeringar."
+msgstr "Viittauskaavio tarvitaan viittausmetatiedon lataamiseen."
 
 #: invenio_rdm_records/services/pids/errors.py:22
 #, python-brace-format
 msgid "No configuration defined for PIDs {schemes}"
-msgstr "Ingen konfiguration definierad för PID:ar {schemes}"
+msgstr "Pysyville tunnisteille {schemes} ei ole määritelty asetuksia"
 
 #: invenio_rdm_records/services/pids/errors.py:33
 #, python-format
 msgid "Unknown PID provider %(provider)s for %(scheme)s"
-msgstr "Okönd PID tillhandahållare %(provider)s för %(scheme)s"
+msgstr "Tuntematon PID-tarjoaja %(provider)s järjestelmälle %(scheme)s"
 
 #: invenio_rdm_records/services/pids/manager.py:86
 #, python-brace-format
 msgid "Invalid {scheme}"
-msgstr "Ogiltig {scheme}"
+msgstr "Virheellinen {scheme}"
 
 #: invenio_rdm_records/services/pids/manager.py:162
 #, python-brace-format
 msgid "A PID already exists for type {scheme}"
-msgstr "Ett PID finns redan för typen {scheme}"
+msgstr "Tyyppiä {scheme} varten on jo olemassa pysyvä tunniste"
 
 #: invenio_rdm_records/services/pids/manager.py:169
 msgid "External identifier value is required."
-msgstr "Externt identifieringsvärde krävs."
+msgstr "Ulkoinen tunnistearvo on pakollinen."
 
 #: invenio_rdm_records/services/pids/manager.py:204
 #: invenio_rdm_records/services/pids/manager.py:230
 #, python-brace-format
 msgid "PID not found for type {scheme}"
-msgstr "PID hittades inte för typen {scheme}"
+msgstr "Pysyvää tunnistetta ei löytynyt tyypille {scheme}"
 
 #: invenio_rdm_records/services/pids/manager.py:251
 msgid "Cannot discard a reserved or registered persistent identifier."
-msgstr ""
-"Det går inte att ta bort en reserverad eller registrerad beständig "
-"identifierare."
+msgstr "Varattua tai rekisteröityä pysyvää tunnistetta ei voi hylätä."
 
 #: invenio_rdm_records/services/pids/providers/base.py:85
 msgid "You must provide a pid value."
-msgstr "Du måste ange ett PID-värde."
+msgstr "Sinun on annettava PID-arvo."
 
 #: invenio_rdm_records/services/pids/providers/base.py:176
 #, python-brace-format
 msgid "{pid_type}:{identifier} already exists."
-msgstr "{pid_type}:{identifier} finns redan."
+msgstr "{pid_type}:{identifier} on jo olemassa."
 
 #: invenio_rdm_records/services/pids/providers/datacite.py:284
 msgid "Missing publisher field required for DOI registration."
-msgstr "Utgivarfält saknas för DOI-registrering."
+msgstr "DOI-rekisteröinti edellyttää julkaisijan kenttää, joka puuttuu."
 
 #: invenio_rdm_records/services/pids/providers/external.py:45
 #, python-brace-format
@@ -1081,162 +1071,162 @@ msgid ""
 "The prefix '{prefix}' is managed by {sitename}. Please supply an external "
 "DOI or select 'No' to have a DOI generated for you."
 msgstr ""
-"Prefixet '{prefix}' hanteras av {sitename}. Ange en extern DOI eller välj "
-"”Nej” om du vill att en DOI ska genereras."
+"Etuliitettä '{prefix}' hallinnoi {sitename}. Anna ulkoinen DOI tai valitse "
+"'Ei', jotta DOI luodaan puolestasi."
 
 #: invenio_rdm_records/services/pids/providers/external.py:91
 #, python-brace-format
 msgid "Missing {scheme} for required field."
-msgstr "Saknar {scheme} för obligatoriskt fält."
+msgstr "Pakollisesta kentästä puuttuu {scheme}."
 
 #: invenio_rdm_records/services/review/service.py:58
 msgid "Invalid review type."
-msgstr "Ogiltig granskningstyp."
+msgstr "Virheellinen arviointityyppi."
 
 #: invenio_rdm_records/services/review/service.py:65
 msgid "A review already exists for this record"
-msgstr "Det finns redan en granskning för den här posten"
+msgstr "Tälle tietueelle on jo olemassa arviointi"
 
 #: invenio_rdm_records/services/review/service.py:69
 msgid "You cannot create a review for an already published record."
-msgstr "Du kan inte skapa en granskning för en redan publicerad post."
+msgstr "Et voi luoda arviota jo julkaistulle tietueelle."
 
 #: invenio_rdm_records/services/review/service.py:138
 msgid ""
 "You cannot delete a review for a draft that has already been published."
-msgstr ""
-"Du kan inte ta bort en granskning för ett utkast som redan har publicerats."
+msgstr "Et voi poistaa arviota luonnoksesta, joka on jo julkaistu."
 
 #: invenio_rdm_records/services/review/service.py:144
 msgid "An open review cannot be deleted."
-msgstr "En öppen granskning kan inte raderas."
+msgstr "Avointa arviota ei voi poistaa."
 
 #: invenio_rdm_records/services/review/service.py:163
 msgid "Must be a boolean, true or false"
-msgstr "Måste vara att booleskt värde, true eller false"
+msgstr "On oltava totuusarvo (true tai false)"
 
 #: invenio_rdm_records/services/schemas/access.py:39
 msgid "Embargo end date must be set to a future date."
-msgstr "Embargots slutdatum måste sättas till ett framtida datum."
+msgstr "Embargon päättymispäivä on asetettava tulevaisuuteen."
 
 #: invenio_rdm_records/services/schemas/access.py:48
 msgid "Embargo end date must be unset or in the past."
-msgstr "Embargots slutdatum måste vara oinställt eller i det förflutna."
+msgstr ""
+"Embargon päättymispäivä pitää poistaa tai sen tulee olla menneisyydessä."
 
 #: invenio_rdm_records/services/schemas/access.py:65
 #, python-brace-format
 msgid "'{field_name}' must be either 'public' or 'restricted'"
-msgstr "'{field_name}' måste vara antingen 'offentlig' eller 'begränsad'"
+msgstr "'{field_name}' on oltava joko 'public' tai 'restricted'"
 
 #: invenio_rdm_records/services/schemas/community_records.py:34
 #, python-brace-format
 msgid "Too many records passed, {max_number} max allowed."
-msgstr "För många poster godkända, {max_number} max tillåtet."
+msgstr "Liian monta tietuetta annettu; enimmäismäärä on {max_number}."
 
 #: invenio_rdm_records/services/schemas/community_records.py:51
 #, python-brace-format
 msgid "Duplicated records {rec_ids}."
-msgstr "Duplicerade poster {rec_ids}."
+msgstr "Päällekkäiset tietueet {rec_ids}."
 
 #: invenio_rdm_records/services/schemas/metadata.py:74
 msgid "Only one value is accepted."
-msgstr "Endast ett värde kan anges."
+msgstr "Vain yksi arvo hyväksytään."
 
 #: invenio_rdm_records/services/schemas/metadata.py:76
 msgid "Not a valid locale."
-msgstr "Inte en giltig plats."
+msgstr "Ei kelvollinen kieliasetus."
 
 #: invenio_rdm_records/services/schemas/metadata.py:88
 #: invenio_rdm_records/services/schemas/metadata.py:92
 #, python-brace-format
 msgid "Invalid value. Choose one of {NAMES}."
-msgstr "Ogiltigt värde. Välj någon av {NAMES}."
+msgstr "Virheellinen arvo. Valitse jokin seuraavista: {NAMES}."
 
 #: invenio_rdm_records/services/schemas/metadata.py:115
 msgid "Family name cannot be blank."
-msgstr "Efternamn får inte vara tomt."
+msgstr "Sukunimi ei voi olla tyhjä."
 
 #: invenio_rdm_records/services/schemas/metadata.py:120
 msgid "Name cannot be blank."
-msgstr "Namn får inte vara tomt."
+msgstr "Nimi ei voi olla tyhjä."
 
 #: invenio_rdm_records/services/schemas/metadata.py:156
 msgid "Duplicated affiliations: "
-msgstr "Duplicerade affilieringar: "
+msgstr "Päällekkäiset organisaatiot: "
 
 #: invenio_rdm_records/services/schemas/metadata.py:215
 #: invenio_rdm_records/services/schemas/metadata.py:227
 msgid "Not a valid URL."
-msgstr "Inte en giltig URL-adress."
+msgstr "Ei kelvollinen URL-osoite."
 
 #: invenio_rdm_records/services/schemas/metadata.py:247
 msgid "An existing id or a free text title must be present"
-msgstr "Ett befintligt id eller en fritexttitel måste finnas"
+msgstr "Olemassa oleva tunniste tai vapaamuotoinen otsikko on annettava"
 
 #: invenio_rdm_records/services/schemas/metadata.py:252
 msgid ""
 "Only an existing id or free text title/description/link is accepted, but not"
 " both cases at the same time"
 msgstr ""
-"Endast ett befintligt id eller fritexttitel/beskrivning/länk accepteras, men"
-" inte båda samtidigt"
+"Vain olemassa oleva tunniste TAI vapaamuotoinen otsikko/kuvaus/linkki "
+"hyväksytään, ei molempia yhtä aikaa"
 
 #: invenio_rdm_records/services/schemas/metadata.py:342
 msgid ""
 "At least one of ['geometry', 'place',                 identifiers', "
 "'description'] must be present."
 msgstr ""
-"Minst en av ['geometry', 'place',                 identifiers', "
-"'description'] måste finnas."
+"Vähintään yksi seuraavista on annettava: ['geometry', 'place', "
+"'identifiers', 'description']."
 
 #: invenio_rdm_records/services/schemas/metadata.py:381
 msgid "Size cannot be a blank string."
-msgstr "Storlek kan inte vara en tom sträng."
+msgstr "Koko ei voi olla tyhjä merkkijono."
 
 #: invenio_rdm_records/services/schemas/metadata.py:384
 msgid "Format cannot be a blank string."
-msgstr "Format får inte vara en tom sträng."
+msgstr "Muoto ei voi olla tyhjä merkkijono."
 
 #: invenio_rdm_records/services/schemas/record.py:44
 msgid "Invalid persistent identifier scheme."
-msgstr "Ogiltigt schema för beständigt identifierare."
+msgstr "Virheellinen pysyvän tunnisteen skeema."
 
 #: invenio_rdm_records/services/schemas/record_communities.py:37
 #, python-brace-format
 msgid "Too many communities passed, {max_number} max allowed."
-msgstr "För många communities godkända, {max_number} max tillåtet."
+msgstr "Liian monta yhteisöä annettu; enimmäismäärä on {max_number}."
 
 #: invenio_rdm_records/services/schemas/record_communities.py:54
 #, python-brace-format
 msgid "Duplicated communities {com_ids}."
-msgstr "Duplicerade communities {com_ids}."
+msgstr "Päällekkäiset yhteisöt {com_ids}."
 
 #: invenio_rdm_records/services/schemas/parent/__init__.py:28
 #, python-brace-format
 msgid "Invalid persistent identifier scheme {scheme}."
-msgstr "Ogiltigt schema för beständigt identifierare {scheme}."
+msgstr "Virheellinen pysyvän tunnisteen skeema {scheme}."
 
 #: invenio_rdm_records/templates/semantic-ui/imprint.html:2
 msgid "Publisher"
-msgstr "Utgivare"
+msgstr "Julkaisija"
 
 #: invenio_rdm_records/templates/semantic-ui/imprint.html:17
 #: invenio_rdm_records/templates/semantic-ui/journal.html:18
 msgid "Pages"
-msgstr "Sidor"
+msgstr "Sivut"
 
 #: invenio_rdm_records/templates/semantic-ui/meeting.html:32
 msgid "Session part"
-msgstr "Sessionsdel"
+msgstr "Istunnon osa"
 
 #: invenio_rdm_records/templates/semantic-ui/meeting.html:42
 msgid "Opens in new tab"
-msgstr "Öppnas i ny flik"
+msgstr "Aukeaa uuteen välilehteen"
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/community-submission.accept.jinja:21
 #, python-brace-format
 msgid "✅ Community inclusion accepted for '{record_title}'"
-msgstr "✅ Community inkludering accepterad för '{record_title}'"
+msgstr "✅ Yhteisöön sisällyttäminen hyväksytty tietueelle '{record_title}'"
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/community-submission.accept.jinja:27
 #, python-brace-format
@@ -1244,8 +1234,8 @@ msgid ""
 "The community curator '@{curator_name}' accepted the record '{record_title}'"
 " into the community '{community_title}'"
 msgstr ""
-"Community granskaren '@{curator_name}' har accepterat posten "
-"'{record_title}' till communitiet '{community_title}'"
+"Yhteisön kuraattori '@{curator_name}' hyväksyi tietueen '{record_title}' "
+"yhteisöön '{community_title}'"
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/community-submission.accept.jinja:29
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/community-submission.decline.jinja:28
@@ -1256,7 +1246,7 @@ msgstr ""
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/user-access-request.cancel.jinja:28
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/user-access-request.decline.jinja:23
 msgid " with the following message:"
-msgstr " med följande meddelande:"
+msgstr " seuraavalla viestillä:"
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/community-submission.accept.jinja:39
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/community-submission.accept.jinja:58
@@ -1268,7 +1258,7 @@ msgstr " med följande meddelande:"
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/community-submission.expire.jinja:27
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/community-submission.expire.jinja:50
 msgid "Check out the submission request"
-msgstr "Se begäran om inlämning"
+msgstr "Tarkastele lähetyspyyntöä"
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/community-submission.accept.jinja:45
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/community-submission.cancel.jinja:35
@@ -1288,7 +1278,7 @@ msgstr "Se begäran om inlämning"
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/user-access-request.submit.jinja:33
 msgid "This is an auto-generated message. To manage notifications, visit your"
 msgstr ""
-"Detta är ett auto-genererat meddelande. För att hantera notiser, besök din"
+"Tämä on automaattisesti luotu viesti. Hallitaksesi ilmoituksia, siirry"
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/community-submission.accept.jinja:45
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/community-submission.cancel.jinja:35
@@ -1307,7 +1297,7 @@ msgstr ""
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/user-access-request.decline.jinja:39
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/user-access-request.submit.jinja:33
 msgid "account settings"
-msgstr "kontoinställningar"
+msgstr "tiliasetuksiisi"
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/community-submission.accept.jinja:51
 #, python-brace-format
@@ -1315,8 +1305,8 @@ msgid ""
 "The community curator @{curator_name} accepted the record '{record_title}' "
 "into the community '{community_title}'"
 msgstr ""
-"Community granskaren '@{curator_name}' har accepterat posten "
-"'{record_title}' till communitiet '{community_title}'"
+"Yhteisön kuraattori @{curator_name} hyväksyi tietueen '{record_title}' "
+"yhteisöön '{community_title}'"
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/community-submission.accept.jinja:54
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/community-submission.accept.jinja:68
@@ -1335,7 +1325,7 @@ msgstr ""
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/user-access-request.decline.jinja:48
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/user-access-request.decline.jinja:62
 msgid "with the following message:"
-msgstr "med följande meddelande:"
+msgstr "seuraavalla viestillä:"
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/community-submission.accept.jinja:60
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/community-submission.accept.jinja:74
@@ -1364,8 +1354,8 @@ msgid ""
 "This is an auto-generated message. To manage notifications, visit your "
 "account settings"
 msgstr ""
-"Detta är ett auto-genererat meddelande. För att hantera notiser, besök dina "
-"konto-inställningar"
+"Tämä on automaattisesti luotu viesti. Hallitaksesi ilmoituksia, siirry "
+"tiliasetuksiisi"
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/community-submission.accept.jinja:65
 #, python-brace-format
@@ -1373,13 +1363,13 @@ msgid ""
 "The community curator *@{curator_name}* accepted the record *{record_title}*"
 " into the community *{community_title}*"
 msgstr ""
-"Community granskaren *@{curator_name}* har accepterat posten "
-"*{record_title}* till communitiet *{community_title}*"
+"Yhteisön kuraattori *@{curator_name}* hyväksyi tietueen *{record_title}* "
+"yhteisöön *{community_title}*"
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/community-submission.cancel.jinja:20
 #, python-brace-format
 msgid "❌ Community inclusion cancelled for '{record_title}'"
-msgstr "❌ Community inkludering avbruten för '{record_title}'"
+msgstr "❌ Yhteisöön sisällyttäminen peruttu tietueelle '{record_title}'"
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/community-submission.cancel.jinja:26
 #, python-brace-format
@@ -1387,8 +1377,8 @@ msgid ""
 "The record submission for your community '{community_title}' was cancelled "
 "by '@{cancel_name}'."
 msgstr ""
-"Kontrollera begäran om inlämning. Inlämningen av posten för din community "
-"'{community_title}' avbröts av '@{cancel_name}'."
+"Tietueen lähetys yhteisöösi '{community_title}' peruttiin käyttäjän "
+"'@{cancel_name}' toimesta."
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/community-submission.cancel.jinja:41
 #, python-brace-format
@@ -1396,15 +1386,15 @@ msgid ""
 "The record submission for your community '{community_title}' was cancelled "
 "by @'{cancel_name}'."
 msgstr ""
-"Inlämningen av uppgifter för ditt community '{community_title}' avbröts av "
-"@'{cancel_name}'."
+"Tietueen lähetys yhteisöösi '{community_title}' peruttiin @'{cancel_name}' "
+"toimesta."
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/community-submission.cancel.jinja:43
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/community-submission.decline.jinja:57
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/community-submission.expire.jinja:41
 #, python-brace-format
 msgid "Check out the submission request: {request_link}"
-msgstr "Se begäran om inlämning: {request_link}"
+msgstr "Tarkastele lähetyspyyntöä: {request_link}"
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/community-submission.cancel.jinja:48
 #, python-brace-format
@@ -1412,13 +1402,13 @@ msgid ""
 "The record submission for your community *'{community_title}'* was cancelled"
 " by *'{cancel_name}'*."
 msgstr ""
-"Inlämningen av uppgifter för ditt community *'{community_title}'* avbröts av"
-" *'{cancel_name}'*."
+"Tietueen lähetys yhteisöösi *'{community_title}'* peruttiin käyttäjän "
+"*'{cancel_name}'* toimesta."
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/community-submission.decline.jinja:20
 #, python-brace-format
 msgid "⛔️ Community inclusion declined for '{record_title}'"
-msgstr "⛔️ Community inkludering nekad för '{record_title}'"
+msgstr "⛔️ Yhteisöön sisällyttäminen hylätty tietueelle '{record_title}'"
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/community-submission.decline.jinja:26
 #, python-brace-format
@@ -1426,8 +1416,8 @@ msgid ""
 "The community curator '@{curator_name}' declined the record '{record_title}'"
 " into the community '{community_title}'"
 msgstr ""
-"Community granskaren '@{curator_name}' har nekat posten '{record_title}' "
-"till att inkluderas i communitiet '{community_title}'"
+"Yhteisön kuraattori '@{curator_name}' hylkäsi tietueen '{record_title}' "
+"sisällyttämisen yhteisöön '{community_title}'"
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/community-submission.decline.jinja:50
 #, python-brace-format
@@ -1435,8 +1425,8 @@ msgid ""
 "The community curator @{curator_name} declined the record '{record_title}' "
 "into the community '{community_title}'"
 msgstr ""
-"Community granskaren '@{curator_name}' har nekat posten '{record_title}' "
-"till att inkluderas i communitiet '{community_title}'"
+"Yhteisön kuraattori @{curator_name} hylkäsi tietueen '{record_title}' "
+"sisällyttämisen yhteisöön '{community_title}'"
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/community-submission.decline.jinja:64
 #, python-brace-format
@@ -1444,26 +1434,24 @@ msgid ""
 "The community curator *@{curator_name}* declined the record *{record_title}*"
 " into the community *{community_title}*"
 msgstr ""
-"Community curator *@{curator_name}* har nekat posten *{record_title}* till "
-"att inkluderas i communitiet  *{community_title}*"
+"Yhteisön kuraattori *@{curator_name}* hylkäsi tietueen *{record_title}* "
+"sisällyttämisen yhteisöön *{community_title}*"
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/community-submission.expire.jinja:18
 #, python-brace-format
 msgid "⌛️ Community inclusion expired for '{record_title}'"
-msgstr ""
-"⌛️TIdsgränsen för community inclusion begäran har gått ut för "
-"'{record_title}'"
+msgstr "⌛️ Yhteisöön sisällyttäminen vanheni tietueelle '{record_title}'"
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/community-submission.expire.jinja:24
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/community-submission.expire.jinja:39
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/community-submission.expire.jinja:48
 msgid "The submission for your record has expired."
-msgstr "Tidsgränsen för inlämning av din post har gått ut."
+msgstr "Tietueesi lähetys on vanhentunut."
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/community-submission.submit.jinja:19
 #, python-brace-format
 msgid "📥 New record submission to your community '{community_title}'"
-msgstr "📥 Ny inlämning av post till ditt community '{community_title}'"
+msgstr "📥 Uusi tietueen lähetys yhteisöösi '{community_title}'"
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/community-submission.submit.jinja:25
 #, python-brace-format
@@ -1471,14 +1459,14 @@ msgid ""
 "The record '{record_title}' was submitted to your community "
 "'{community_title}' by '@{creator_name}'"
 msgstr ""
-"Posten '{record_title}' har lämnats in till ditt community "
-"'{community_title}' av '@{creator_name}'"
+"Tietue '{record_title}' lähetettiin yhteisöösi '{community_title}' käyttäjän"
+" '@{creator_name}' toimesta"
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/community-submission.submit.jinja:37
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/community-submission.submit.jinja:56
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/community-submission.submit.jinja:70
 msgid "Review the submission request"
-msgstr "Granska inlämningsförfrågan"
+msgstr "Tarkista lähetyspyyntö"
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/community-submission.submit.jinja:49
 #, python-brace-format
@@ -1486,8 +1474,8 @@ msgid ""
 "The record '{record_title}' was submitted to your community "
 "'{community_title}' by @'{creator_name}'."
 msgstr ""
-"Posten '{record_title}' har lämnats in till ditt community "
-"'{community_title}' av @'{creator_name}'."
+"Tietue '{record_title}' lähetettiin yhteisöösi '{community_title}' "
+"@'{creator_name}' toimesta."
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/community-submission.submit.jinja:63
 #, python-brace-format
@@ -1495,8 +1483,8 @@ msgid ""
 "The record *'{record_title}'* was submitted to your community "
 "*'{community_title}'* by *@'{creator_name}'*."
 msgstr ""
-"Posten *'{record_title}'* har lämnats in till ditt community "
-"*'{community_title}'* av *@'{creator_name}'*."
+"Tietue *'{record_title}'* lähetettiin yhteisöösi *'{community_title}'* "
+"*@'{creator_name}'* toimesta."
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/grant-user-access.create.jinja:17
 #, python-brace-format
@@ -1504,19 +1492,19 @@ msgid ""
 "👤✔️ You were granted {permission} access to all versions of the record "
 "'{record_title}'"
 msgstr ""
-"👤✔️ Du har beviljats {permission} tillgång till alla versioner av posten "
-"'{record_title}'"
+"👤✔️ Sinulle myönnettiin {permission}-oikeus tietueen '{record_title}' "
+"kaikkiin versioihin"
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/grant-user-access.create.jinja:20
 #, python-brace-format
 msgid "👤✔️ You were granted {permission} access to draft '{record_title}'"
 msgstr ""
-"👤✔️ Du har beviljats {permission} tillgång till utkastet '{record_title}'"
+"👤✔️ Sinulle myönnettiin {permission}-oikeus luonnokseen '{record_title}'"
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/grant-user-access.create.jinja:22
 #, python-brace-format
 msgid "👤✔️ You were granted {permission} access to a draft"
-msgstr "👤✔️ Du har beviljats {permission} tillgång till ett utkast"
+msgstr "👤✔️ Sinulle myönnettiin {permission}-oikeus luonnokseen"
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/grant-user-access.create.jinja:32
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/grant-user-access.create.jinja:75
@@ -1525,24 +1513,24 @@ msgid ""
 "You have now permission to {permission} all versions of the record "
 "'{record_title}'."
 msgstr ""
-"Du har nu beviljats {permission} till alla versioner av posten "
-"'{record_title}'."
+"Sinulla on nyt oikeus {permission} tietueen '{record_title}' kaikkiin "
+"versioihin."
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/grant-user-access.create.jinja:35
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/grant-user-access.create.jinja:78
 #, python-brace-format
 msgid "You have now permission to {permission} the draft '{record_title}'."
-msgstr "Du har nu beviljats {permission} till utkastet '{record_title}'."
+msgstr "Sinulla on nyt oikeus {permission} luonnosta '{record_title}'."
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/grant-user-access.create.jinja:37
 #, python-brace-format
 msgid "You have now permission to {permission} a draft."
-msgstr "Du har nu beviljats tillgång {permission} till ett utkast."
+msgstr "Sinulla on nyt oikeus {permission} luonnosta."
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/grant-user-access.create.jinja:44
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/grant-user-access.create.jinja:86
 msgid "Message:"
-msgstr "Meddelande:"
+msgstr "Viesti:"
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/grant-user-access.create.jinja:56
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/guest-access-request.cancel.jinja:33
@@ -1559,47 +1547,47 @@ msgstr "Meddelande:"
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/user-access-request.decline.jinja:52
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/user-access-request.decline.jinja:66
 msgid "View the record"
-msgstr "Visa post"
+msgstr "Näytä tietue"
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/grant-user-access.create.jinja:56
 msgid "View the draft"
-msgstr "Visa utkast"
+msgstr "Näytä luonnos"
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/grant-user-access.create.jinja:80
 #, python-brace-format
 msgid "You have now permission to {permission} the draft."
-msgstr "Du har nu beviljats tillgång {permission} till ett utkast."
+msgstr "Sinulla on nyt oikeus {permission} luonnosta."
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/grant-user-access.create.jinja:91
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/guest-access-request.cancel.jinja:52
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/guest-access-request.decline.jinja:53
 msgid "View the record: "
-msgstr "Visa post: "
+msgstr "Näytä tietue: "
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/grant-user-access.create.jinja:91
 msgid "View the draft: "
-msgstr "Visa utkast: "
+msgstr "Näytä luonnos: "
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/grant-user-access.create.jinja:93
 msgid ""
 "This is an auto-generated message. To manage notifications, visit your "
 "account settings: "
 msgstr ""
-"Detta är ett auto-genererat meddelande. För att hantera notiser, gå till "
-"dina konto-inställningar: "
+"Tämä on automaattisesti luotu viesti. Hallitaksesi ilmoituksia, siirry "
+"tiliasetuksiisi: "
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/guest-access-request-token.create.jinja:9
 #, python-brace-format
 msgid "❗️Access request for '{record_title}' requires action"
-msgstr "❗️Begäran om åtkomst till '{record_title}' kräver åtgärd"
+msgstr "❗️ Pääsypyyntö tietueeseen '{record_title}' vaatii toimenpiteitä"
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/guest-access-request-token.create.jinja:15
 msgid "Please verify the email address in order to submit the access request"
-msgstr "Var god bekräfta e-post adressen för att skicka åtkomstbegäran"
+msgstr "Vahvista sähköpostiosoitteesi lähettääksesi pääsypyynnön"
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/guest-access-request-token.create.jinja:18
 msgid "Verify e-mail address"
-msgstr "Bekräfta e-post address"
+msgstr "Vahvista sähköpostiosoite"
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/guest-access-request-token.create.jinja:30
 #, python-format
@@ -1607,14 +1595,14 @@ msgid ""
 "Please verify your e-mail address via the following link in order to submit "
 "the access request for the record '%(record_title)s'."
 msgstr ""
-"Var god bekräfta din e-post-adress via länken för att skicka in begäran om "
-"åtkomst till posten '%(record_title)s'."
+"Vahvista sähköpostiosoitteesi seuraavan linkin kautta, jotta voit lähettää "
+"pääsypyynnön tietueeseen '%(record_title)s'."
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/guest-access-request-token.create.jinja:32
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/guest-access-request-token.create.jinja:39
 #, python-format
 msgid "Verify e-mail address: %(url)s"
-msgstr "Bekräfta e-post address: %(url)s"
+msgstr "Vahvista sähköpostiosoite: %(url)s"
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/guest-access-request-token.create.jinja:37
 #, python-format
@@ -1622,86 +1610,86 @@ msgid ""
 "Please verify your e-mail address via the following link in order to submit "
 "the access request for the record *%(record_title)s*."
 msgstr ""
-"Var god bekräfta din e-post-adress via länken för att skicka in begäran om "
-"åtkomst till posten *%(record_title)s*."
+"Vahvista sähköpostiosoitteesi seuraavan linkin kautta, jotta voit lähettää "
+"pääsypyynnön tietueeseen *%(record_title)s*."
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/guest-access-request.accept.jinja:9
 #, python-brace-format
 msgid "✅ Access request for '{record_title}' was accepted."
-msgstr "✅ Begäran om åtkomst till '{record_title}' accepterades."
+msgstr "✅ Pääsypyyntö tietueeseen '{record_title}' hyväksyttiin."
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/guest-access-request.accept.jinja:14
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/guest-access-request.accept.jinja:21
 #, python-brace-format
 msgid "Your access request for '{record_title}' was accepted."
-msgstr "Din begäran om åtkomst till '{record_title}' accepterades."
+msgstr "Pääsypyyntösi tietueeseen '{record_title}' hyväksyttiin."
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/guest-access-request.accept.jinja:17
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/guest-access-request.accept.jinja:30
 msgid "Access the record"
-msgstr "Få tillgång till posten"
+msgstr "Avaa tietue"
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/guest-access-request.accept.jinja:23
 #, python-brace-format
 msgid "Access the record here: {url}"
-msgstr "Få tillgång till posten här: {url}"
+msgstr "Avaa tietue täältä: {url}"
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/guest-access-request.accept.jinja:28
 #, python-brace-format
 msgid "Your access request for *'{record_title}'* was accepted."
-msgstr "Din begäran om åtkomst till *'{record_title}'* accepterades."
+msgstr "Pääsypyyntösi *'{record_title}'* hyväksyttiin."
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/guest-access-request.cancel.jinja:15
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/user-access-request.cancel.jinja:20
 msgid "❌ Access request canceled"
-msgstr "❌ Åtkomstbegäran avbruten"
+msgstr "❌ Pääsypyyntö peruttu"
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/guest-access-request.cancel.jinja:21
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/guest-access-request.cancel.jinja:45
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/guest-access-request.cancel.jinja:59
 msgid "Your access request has been canceled"
-msgstr "Din åtkomstbegäran har avbrutits"
+msgstr "Pääsypyyntösi on peruttu"
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/guest-access-request.decline.jinja:16
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/user-access-request.decline.jinja:15
 msgid "⛔️ Access request declined"
-msgstr "⛔️ Åtkomstbegäran nekades"
+msgstr "⛔️ Pääsypyyntö hylätty"
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/guest-access-request.decline.jinja:22
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/user-access-request.decline.jinja:21
 #, python-brace-format
 msgid "The owner of '{record_title}' has declined your access request"
-msgstr "Ägaren till '{record_title}' har avböjt din begäran om åtkomst"
+msgstr "Tietueen '{record_title}' omistaja hylkäsi pääsypyyntösi"
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/guest-access-request.decline.jinja:46
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/user-access-request.decline.jinja:45
 #, python-brace-format
 msgid "The owner of '{record_title}' has rejected your access request"
-msgstr "Ägaren till '{record_title}' har nekat din begäran om åtkomst"
+msgstr "Tietueen '{record_title}' omistaja on hylännyt pääsypyyntösi"
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/guest-access-request.decline.jinja:60
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/user-access-request.decline.jinja:59
 #, python-brace-format
 msgid "The owner of *{record_title}* has rejected your access request"
-msgstr "Ägaren till *{record_title}* har nekat din begäran om åtkomst"
+msgstr "Tietueen *{record_title}* omistaja on hylännyt pääsypyyntösi"
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/guest-access-request.submit.jinja:16
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/user-access-request.submit.jinja:15
 #, python-brace-format
 msgid "📥 New access request for your record '{record_title}'"
-msgstr "📥 Ny åtkomstbegäran för din post '{record_title}'"
+msgstr "📥 Uusi pääsypyyntö tietueeseesi '{record_title}'"
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/guest-access-request.submit.jinja:22
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/user-access-request.submit.jinja:21
 #, python-brace-format
 msgid "An access request was submitted for your record '{record_title}'."
-msgstr "En åtkomstbegäran för din post '{record_title}', har skickats in."
+msgstr "Tietueeseesi '{record_title}' on lähetetty pääsypyyntö."
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/guest-access-request.submit.jinja:25
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/user-access-request.submit.jinja:24
 #, python-brace-format
 msgid "The requestor's e-mail address: {email}"
-msgstr "Ansökandens e-postadress: {email}"
+msgstr "Pyynnön esittäjän sähköpostiosoite: {email}"
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/guest-access-request.submit.jinja:28
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/guest-access-request.submit.jinja:42
@@ -1710,18 +1698,18 @@ msgstr "Ansökandens e-postadress: {email}"
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/user-access-request.submit.jinja:41
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/user-access-request.submit.jinja:50
 msgid "See request details"
-msgstr "Se detaljer för förfrågan"
+msgstr "Näytä pyynnön tiedot"
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/guest-access-request.submit.jinja:40
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/guest-access-request.submit.jinja:49
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/user-access-request.submit.jinja:39
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/user-access-request.submit.jinja:48
 msgid "An access request was submitted for your record."
-msgstr "En åtkomstbegäran för din post har skickats in."
+msgstr "Tietueeseesi on lähetetty pääsypyyntö."
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/guest-access-request.submitted.jinja:11
 msgid "📥 Your access request was submitted successfully"
-msgstr "📥 Din åtkomstbegäran har skickats in"
+msgstr "📥 Pääsypyyntösi lähetettiin onnistuneesti"
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/guest-access-request.submitted.jinja:17
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/guest-access-request.submitted.jinja:32
@@ -1729,75 +1717,77 @@ msgstr "📥 Din åtkomstbegäran har skickats in"
 msgid ""
 "Your access request was submitted successfully. The request details are "
 "available at:"
-msgstr "Din åtkomstbegäran har skickats. Uppgifterna finns tillgängliga på:"
+msgstr ""
+"Pääsypyyntösi lähetettiin onnistuneesti. Pyynnön tiedot ovat saatavilla "
+"osoitteessa:"
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/guest-access-request.submitted.jinja:20
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/guest-access-request.submitted.jinja:43
 msgid "View request details"
-msgstr "Visa detaljer för förfrågan"
+msgstr "Näytä pyynnön tiedot"
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/guest-access-request.submitted.jinja:34
 msgid "View request details: "
-msgstr "Visa detaljer om förfrågan: "
+msgstr "Näytä pyynnön tiedot: "
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/user-access-request.accept.jinja:10
 msgid "✅ Access request accepted"
-msgstr "✅ Åtkomstbegäran godkändes"
+msgstr "✅ Pääsypyyntö hyväksytty"
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/user-access-request.accept.jinja:16
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/user-access-request.accept.jinja:40
 #, python-brace-format
 msgid "The owner of '{record_title}' has accepted your access request"
-msgstr "Ägaren till '{record_title}' har godkänt din begäran om åtkomst"
+msgstr "Tietueen '{record_title}' omistaja on hyväksynyt pääsypyyntösi"
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/user-access-request.accept.jinja:54
 #, python-brace-format
 msgid "The owner of *{record_title}* has accepted your access request"
-msgstr "Ägaren till *{record_title}* har godkänt din begäran om åtkomst"
+msgstr "Tietueen *{record_title}* omistaja on hyväksynyt pääsypyyntösi"
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/user-access-request.cancel.jinja:26
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/user-access-request.cancel.jinja:50
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/user-access-request.cancel.jinja:64
 #, python-brace-format
 msgid "Your access request has been canceled by {cancel_name}"
-msgstr "Din åtkomstbegäran har avbrutits av {cancel_name}"
+msgstr "Pääsypyyntösi on peruttu käyttäjän {cancel_name} toimesta"
 
 #: invenio_rdm_records/tokens/errors.py:24
 msgid ""
 "Missing \"kid\" key with personal access token ID in JWT header of resource "
 "access token."
 msgstr ""
-"Saknar ”kid”-nyckel med ID för personlig åtkomsttoken i JWT-headern för "
-"åtkomsttoken."
+"Resurssin käyttötunnuksen JWT-otsikosta puuttuu \"kid\"-avain, jossa on "
+"henkilökohtaisen käyttöoikeustunnuksen tunniste."
 
 #: invenio_rdm_records/tokens/errors.py:33
 msgid ""
 "\"kid\" JWT header value of resource access token not a valid personal "
 "access token ID."
 msgstr ""
-"”kid” JWT-headervärdet för åtkomsttoken är inte ett giltigt ID för personlig"
-" åtkomsttoken."
+"\"kid\"-arvo resurssin käyttöoikeustunnuksen JWT-otsikossa ei ole "
+"kelvollinen henkilökohtaisen käyttöoikeustunnuksen tunniste."
 
 #: invenio_rdm_records/tokens/errors.py:41
 msgid "Failed to decode resource access token."
-msgstr "Misslyckades med att avkoda åtkomsttoken."
+msgstr "Resurssin käyttötunnuksen purku epäonnistui."
 
 #: invenio_rdm_records/tokens/errors.py:47
 msgid "The resource access token is invalid."
-msgstr "Åtkomsttoken är ogiltig."
+msgstr "Resurssin käyttötunnus on virheellinen."
 
 #: invenio_rdm_records/tokens/errors.py:53
 msgid "The resource access token subject is invalid."
-msgstr "Ämnet för åtkomsttoken är ogiltigt."
+msgstr "Resurssin käyttötunnuksen subject-kenttä on virheellinen."
 
 #: invenio_rdm_records/tokens/errors.py:59
 msgid "The resource access token is expired."
-msgstr "Åtkomsttoken har löpt ut."
+msgstr "Resurssin käyttötunnus on vanhentunut."
 
 #: invenio_rdm_records/tokens/errors.py:65
 msgid "Resource Access Tokens feature is currently disabled."
-msgstr "Funktionen åtkomsttokens är för närvarande inaktiverad."
+msgstr "Resource Access Tokens -ominaisuus on tällä hetkellä pois käytöstä."
 
 #: invenio_rdm_records/tokens/scopes.py:16
 msgid "Allow generation of granular access JWT tokens."
-msgstr "Tillåt generering av JWT-tokens för granulär åtkomst."
+msgstr "Salli hienojakoisten käyttöoikeus-JWT-tunnusten luominen."
