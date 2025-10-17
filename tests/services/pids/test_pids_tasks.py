@@ -2,6 +2,7 @@
 #
 # Copyright (C) 2021-2024 CERN
 # Copyright (C) 2024 Graz University of Technology.
+# Copyright (C) 2025 Front Matter.
 #
 # Invenio-RDM-Records is free software; you can redistribute it
 # and/or modify it under the terms of the MIT License; see LICENSE file for
@@ -30,9 +31,21 @@ def mock_datacite_client(mock_datacite_client):
 
 
 @pytest.fixture(scope="module")
-def mock_crossref_client(mock_crossref_client):
+def mock_crossref_client():
     """Mock Crossref client API calls."""
-    return mock_crossref_client
+    with mock.patch(
+        "invenio_rdm_records.services.pids.providers.crossref.CrossrefClient"
+    ) as mock_client:
+        # Mock the client instance
+        client_instance = mock.MagicMock()
+        mock_client.return_value = client_instance
+
+        # Mock the API methods
+        client_instance.deposit = mock.MagicMock()
+        client_instance.api = mock.MagicMock()
+        client_instance.api.post = mock.MagicMock()
+
+        yield client_instance
 
 
 def test_register_pid(

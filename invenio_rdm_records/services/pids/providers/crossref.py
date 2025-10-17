@@ -14,13 +14,13 @@ from collections import ChainMap
 from time import time
 
 import requests
-from commonmeta import validate_prefix, dig
+from commonmeta import dig, validate_prefix
 from flask import current_app
 from idutils import is_doi
-from invenio_i18n import lazy_gettext as _
-from invenio_pidstore.models import PIDStatus
 from invenio_access.permissions import system_identity
 from invenio_communities import current_communities
+from invenio_i18n import lazy_gettext as _
+from invenio_pidstore.models import PIDStatus
 from requests_toolbelt.multipart.encoder import MultipartEncoder
 
 from ....resources.serializers import CrossrefXMLSerializer
@@ -85,8 +85,7 @@ class CrossrefClient:
         return True
 
     def generate_doi(self, record, **kwargs):
-        """Generate a DOI. Uses the DOI prefix of the default community custom_field,
-        falling back to the first configured prefix.
+        """Generate a DOI. Uses the DOI prefix of the default community custom_field.
 
         :param record: The record for which to generate a DOI.
         :returns: Generated DOI string.

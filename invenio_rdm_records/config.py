@@ -29,7 +29,7 @@ from invenio_rdm_records.services.components.verified import UserModerationHandl
 from . import tokens
 from .requests.community_inclusion import CommunityInclusion
 from .requests.community_submission import CommunitySubmission
-from .resources.serializers import DataCite43JSONSerializer
+from .resources.serializers import CrossrefXMLSerializer, DataCite43JSONSerializer
 from .services import facets
 from .services.config import lock_edit_published_files
 from .services.deletion_policy import (
@@ -438,6 +438,12 @@ RDM_PERSISTENT_IDENTIFIER_PROVIDERS = [
         client=providers.DataCiteClient("datacite", config_prefix="DATACITE"),
         label=_("DOI"),
     ),
+    # Crossref DOI provider
+    providers.CrossrefPIDProvider(
+        "crossref",
+        client=providers.CrossrefClient("crossref", config_prefix="CROSSREF"),
+        label=_("DOI"),
+    ),
     # DOI provider for externally managed DOIs
     providers.ExternalPIDProvider(
         "external",
@@ -464,7 +470,7 @@ The name is further used to configure the desired persistent identifiers (see
 RDM_PERSISTENT_IDENTIFIERS = {
     # DOI automatically removed if DATACITE_ENABLED is False.
     "doi": {
-        "providers": ["datacite", "external"],
+        "providers": ["datacite", "crossref", "external"],
         "required": True,
         "label": _("DOI"),
         "validator": idutils.is_doi,
@@ -497,18 +503,27 @@ RDM_PARENT_PERSISTENT_IDENTIFIER_PROVIDERS = [
         serializer=DataCite43JSONSerializer(schema_context={"is_parent": True}),
         label=_("Concept DOI"),
     ),
+    # Crossref Concept DOI provider
+    providers.CrossrefPIDProvider(
+        "crossref",
+        client=providers.CrossrefClient("crossref", config_prefix="CROSSREF"),
+        serializer=CrossrefXMLSerializer(schema_context={"is_parent": True}),
+        label=_("Concept DOI"),
+    ),
 ]
 """Persistent identifier providers for parent record."""
 
 RDM_PARENT_PERSISTENT_IDENTIFIERS = {
     "doi": {
-        "providers": ["datacite"],
+        "providers": ["datacite", "crossref"],
         "required": True,
-        "condition": lambda rec: rec.pids.get("doi", {}).get("provider") == "datacite",
+        "condition": lambda rec: rec.pids.get("doi", {}).get("provider")
+        in ["datacite", "crossref"],
         "label": _("Concept DOI"),
         "validator": idutils.is_doi,
         "normalizer": idutils.normalize_doi,
-        "is_enabled": providers.DataCitePIDProvider.is_enabled,
+        "is_enabled": lambda: providers.DataCitePIDProvider.is_enabled()
+        or providers.CrossrefPIDProvider.is_enabled(),
     },
 }
 """Persistent identifiers for parent record."""
@@ -527,7 +542,7 @@ Check the signature of validate_optional_doi for more information.
 # Configuration for the DataCiteClient used by the DataCitePIDProvider
 
 DATACITE_ENABLED = False
-"""Flag to enable/disable DOI registration."""
+"""Flag to enable/disable DataCite DOI registration."""
 
 DATACITE_USERNAME = ""
 """DataCite username."""
@@ -561,6 +576,47 @@ DATACITE_DATACENTER_SYMBOL = ""
 
 This is only required if you want your records to be harvestable (OAI-PMH)
 in DataCite XML format.
+"""
+
+# Configuration for the CrossrefClient used by the CrossrefPIDProvider
+
+CROSSREF_ENABLED = False
+"""Flag to enable/disable Crossref DOI registration."""
+
+CROSSREF_USERNAME = ""
+"""Crossref username."""
+
+CROSSREF_PASSWORD = ""
+"""Crossref password."""
+
+CROSSREF_PREFIXES = []
+"""Crossref DOI prefixes."""
+
+CROSSREF_DEPOSITOR = ""
+"""Crossref depositor name."""
+
+CROSSREF_EMAIL = ""
+"""Crossref depositor email."""
+
+CROSSREF_REGISTRANT = ""
+"""Crossref registrant."""
+
+CROSSREF_TEST_MODE = True
+"""Crossref test mode enabled."""
+
+CROSSREF_FORMAT = "{prefix}/{id}"
+"""A string used for formatting the DOI or a callable.
+
+If set to a string, you can used ``{prefix}`` and ``{id}`` inside the string.
+
+You can also provide a callable instead:
+
+.. code-block:: python
+
+    def make_doi(prefix, record):
+        return f"{prefix}/{record.pid.pid_value}"
+
+    DATACITE_FORMAT = make_doi
 """
 
 #

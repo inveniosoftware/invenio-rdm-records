@@ -10,8 +10,8 @@
 
 from commonmeta import (
     MARSHMALLOW_MAP,
-    CrossrefXMLSchema,
     CrossrefError,
+    CrossrefXMLSchema,
     Metadata,
     convert_crossref_xml,
     unparse_xml,
