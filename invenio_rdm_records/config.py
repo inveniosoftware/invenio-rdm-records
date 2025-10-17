@@ -448,7 +448,11 @@ RDM_PERSISTENT_IDENTIFIER_PROVIDERS = [
     providers.ExternalPIDProvider(
         "external",
         "doi",
-        validators=[providers.BlockedPrefixes(config_names=["DATACITE_PREFIX"])],
+        validators=[
+            providers.BlockedPrefixes(
+                config_names=["DATACITE_PREFIX"] + ["CROSSREF_PREFIXES"]
+            )
+        ],
         label=_("DOI"),
     ),
     # OAI identifier
@@ -475,7 +479,8 @@ RDM_PERSISTENT_IDENTIFIERS = {
         "label": _("DOI"),
         "validator": idutils.is_doi,
         "normalizer": idutils.normalize_doi,
-        "is_enabled": providers.DataCitePIDProvider.is_enabled,
+        "is_enabled": providers.DataCitePIDProvider.is_enabled
+        or providers.CrossrefPIDProvider.is_enabled,
         "ui": {"default_selected": "yes"},  # "yes", "no" or "not_needed"
     },
     "oai": {

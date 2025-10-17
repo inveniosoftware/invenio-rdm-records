@@ -9,12 +9,10 @@
 """Crossref Serializers for Invenio RDM Records."""
 
 from commonmeta import (
-    MARSHMALLOW_MAP,
     CrossrefError,
     CrossrefXMLSchema,
     Metadata,
-    convert_crossref_xml,
-    unparse_xml,
+    write_crossref_xml,
 )
 from flask import current_app
 from flask_resources import BaseListSchema, MarshmallowSerializer
@@ -52,29 +50,10 @@ class CrossrefXMLSerializer(MarshmallowSerializer):
                 email=current_app.config.get("CROSSREF_EMAIL"),
                 registrant=current_app.config.get("CROSSREF_REGISTRANT"),
             )
-            data = convert_crossref_xml(metadata)
-
-            # Use the marshmallow schema to dump the data
-            schema = CrossrefXMLSchema()
-            crossref_xml = schema.dump(data)
-
-            # Ensure consistent field ordering through the defined mapping
-            field_order = [MARSHMALLOW_MAP.get(k, k) for k in list(data.keys())]
-            crossref_xml = {
-                k: crossref_xml[k] for k in field_order if k in crossref_xml
-            }
-
-            head = {
-                "depositor": metadata.depositor,
-                "email": metadata.email,
-                "registrant": metadata.registrant,
-            }
-
-            # Convert the dict to Crossref XML
-            return unparse_xml(crossref_xml, dialect="crossref", head=head)
-        except (ValueError, CrossrefError) as e:
+            return write_crossref_xml(metadata)
+        except CrossrefError as e:
             current_app.logger.error(
-                f"CrossrefError while converting metadata to Crossref XML: {metadata.id} - {str(e)}"
+                f"CrossrefError while converting {metadata.id} to Crossref XML: {str(e)}"
             )
             return ""
 
