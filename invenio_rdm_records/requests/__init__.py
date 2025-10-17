@@ -11,6 +11,7 @@ from .access import GuestAccessRequest, UserAccessRequest
 from .community_inclusion import CommunityInclusion
 from .community_submission import CommunitySubmission
 from .record_deletion import RecordDeletion
+from .file_modification import FileModification
 
 __all__ = (
     "CommunityInclusion",
@@ -18,4 +19,5 @@ __all__ = (
     "GuestAccessRequest",
     "UserAccessRequest",
     "RecordDeletion",
+    "FileModification",
 )
