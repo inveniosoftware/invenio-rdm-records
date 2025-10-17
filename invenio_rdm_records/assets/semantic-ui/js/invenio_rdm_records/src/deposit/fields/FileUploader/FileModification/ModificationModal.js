@@ -164,7 +164,7 @@ export class ModificationModal extends Component {
                           <RadioGroup
                             index={index}
                             row={row}
-                            key={row.name}
+                            key={index}
                             state={checklistState}
                             onStateChange={this.handleRadioUpdate}
                           />

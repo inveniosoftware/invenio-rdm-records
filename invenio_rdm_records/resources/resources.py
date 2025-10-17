@@ -97,6 +97,7 @@ class RDMRecordResource(RecordResource):
             route("GET", p(routes["item-revision-list"]), self.search_revisions),
             route("GET", p(routes["item-revision"]), self.read_revision),
             route("POST", p(routes["request-deletion"]), self.request_deletion),
+            route("POST", p(routes["file-modification"]), self.file_modification),
         ]
 
         return url_rules
@@ -235,6 +236,21 @@ class RDMRecordResource(RecordResource):
                 ),
                 category="success",
             )
+
+        return item.to_dict(), resp_code
+
+    @request_headers
+    @request_view_args
+    @request_data
+    def file_modification(self):
+        """Read the related review request."""
+        item = self.service.file_modification(
+            g.identity,
+            resource_requestctx.view_args["pid_value"],
+            resource_requestctx.data,
+        )
+
+        resp_code = 200
 
         return item.to_dict(), resp_code
 

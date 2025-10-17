@@ -799,6 +799,9 @@ class RDMRecordServiceConfig(RecordServiceConfig, ConfiguratorMixin):
         "request_deletion": RecordEndpointLink(
             "records.request_deletion", when=is_published
         ),
+        "file_modification": RecordEndpointLink(
+            "records.file_modification", when=is_published
+        ),
         # Requests
         # Unfortunately `record_pid`` was used in `RDMRecordRequestsResourceConfig``
         # instead of `pid_value`, so we have to pass a bespoke vars func
