@@ -2,16 +2,17 @@
 # Translators:
 # yyones, 2024
 # Rim Sharif, 2024
-# Mattias Vesterlund, 2025
 # Tibor Simko <tibor.simko@cern.ch>, 2025
 # Sam Arbid, 2025
+# Mattias Vesterlund, 2025
+# Lina Andrén, 2025
 # 
 msgid ""
 msgstr ""
 "Project-Id-Version: i18next-conv\n"
 "POT-Creation-Date: 2025-07-10T06:49:34.732Z\n"
 "PO-Revision-Date: 2024-08-06 08:56+0000\n"
-"Last-Translator: Sam Arbid, 2025\n"
+"Last-Translator: Lina Andrén, 2025\n"
 "Language-Team: Swedish (https://app.transifex.com/inveniosoftware/teams/23537/sv/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -98,8 +99,7 @@ msgstr ""
 "Inlämning till communityn är endast tillåtet om posten är åtkomstbegränsad."
 
 msgid "Submission to this community is only allowed to community members."
-msgstr ""
-"Inlämning till denna community är endast tillåten för communitymedlemmar."
+msgstr "Endast communitymedlemmar kan skicka in till denna community."
 
 msgid "Community submission conditions information"
 msgstr "Information om villkor för inlämning till communityn"
@@ -222,7 +222,7 @@ msgid "Preview"
 msgstr "Förhandsgranska"
 
 msgid "DOI is needed. You need to reserve a DOI before publishing."
-msgstr "DOI krävs. Du måste reservera en DOI innan publicering."
+msgstr "DOI krävs. Du måste reservera en DOI innan du publicerar."
 
 msgid "Are you sure you want to publish this record?"
 msgstr "Är du säker på att du vill publicera denna post?"
@@ -303,8 +303,7 @@ msgid "Message to curators (optional)"
 msgstr "Meddelande till granskare (valfritt)"
 
 msgid "msgWarningText1"
-msgstr ""
-"varning: du måste fylla i alla obligatoriska fält innan du kan fortsätta"
+msgstr "msgWarningText1"
 
 msgid "Change community"
 msgstr "Byt community"
@@ -796,7 +795,7 @@ msgid "Change license"
 msgstr "Ändra licens"
 
 msgid "Did not find your license? "
-msgstr "Hittade du inte din licens? "
+msgstr "Hittade du inte den licens du sökte efter? "
 
 msgid "Add a custom license."
 msgstr "Lägg till en anpassad licens."
@@ -891,10 +890,10 @@ msgid "only"
 msgstr "endast"
 
 msgid "be accessed by"
-msgstr "åtkommas av"
+msgstr "kommas åt av"
 
 msgid "users specified"
-msgstr "angivna användare"
+msgstr "de användare som anges"
 
 msgid "in the permissions."
 msgstr "i behörigheterna."
@@ -919,7 +918,7 @@ msgid "Record or files protection must be"
 msgstr "Post- eller filskydd måste vara"
 
 msgid "restricted"
-msgstr "åtkomstbegränsad"
+msgstr "åtkomstbegränsat"
 
 msgid "to apply an embargo."
 msgstr "för att tillämpa ett embargo."
@@ -936,7 +935,7 @@ msgid ""
 "is preferred see"
 msgstr ""
 "Mestadels relevant för uppladdning av programvara och dataset. En semantisk "
-"versionssträng föredras, se"
+"versionssträng är att föredra, se"
 
 msgid ", but any version string is accepted."
-msgstr ", men vilken versionssträng som helst accepteras."
+msgstr ", men vilken versionssträng som helst kommer att accepteras."
