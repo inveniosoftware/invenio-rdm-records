@@ -328,9 +328,9 @@ FilesListTable.defaultProps = {
 
 export class FileUploaderArea extends Component {
   render() {
-    const { filesEnabled, dropzoneParams, filesList } = this.props;
+    const { filesEnabled, dropzoneParams, filesList, filesLocked } = this.props;
     return filesEnabled ? (
-      <Dropzone {...dropzoneParams}>
+      <Dropzone {...dropzoneParams} disabled={filesLocked}>
         {({ getRootProps, getInputProps, open: openFileDialog }) => (
           <Grid.Column width={16}>
             <span {...getRootProps()}>
