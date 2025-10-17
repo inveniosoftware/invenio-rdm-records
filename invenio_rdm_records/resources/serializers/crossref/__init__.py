@@ -9,9 +9,12 @@
 """Crossref Serializers for Invenio RDM Records."""
 
 from commonmeta import (
+    MARSHMALLOW_MAP,
     CrossrefXMLSchema,
+    CrossrefError,
     Metadata,
-    write_crossref_xml,
+    convert_crossref_xml,
+    unparse_xml,
 )
 from flask import current_app
 from flask_resources import BaseListSchema, MarshmallowSerializer
@@ -39,21 +42,41 @@ class CrossrefXMLSerializer(MarshmallowSerializer):
         :param record: Record instance.
         """
         # Convert the metadata to crossref_xml format via the commonmeta intermediary format.
-        # Report write errors. Reasons for failing to convert to Crossref XML include missing
-        # required metadata and type not supported by Crossref.
-        metadata = Metadata(
-            record,
-            via="inveniordm",
-            depositor=current_app.config.get("CROSSREF_DEPOSITOR"),
-            email=current_app.config.get("CROSSREF_EMAIL"),
-            registrant=current_app.config.get("CROSSREF_REGISTRANT"),
-        )
-        crossref_xml, write_errors = write_crossref_xml(metadata)
-        if write_errors is not None:
-            current_app.logger.error(
-                f"Could not convert metadata {metadata.id} to Crossref XML: {write_errors}"
+        # Reasons for failing to convert to Crossref XML include missing required metadata
+        # and type not supported by Crossref.
+        try:
+            metadata = Metadata(
+                record,
+                via="inveniordm",
+                depositor=current_app.config.get("CROSSREF_DEPOSITOR"),
+                email=current_app.config.get("CROSSREF_EMAIL"),
+                registrant=current_app.config.get("CROSSREF_REGISTRANT"),
             )
-        return crossref_xml
+            data = convert_crossref_xml(metadata)
+
+            # Use the marshmallow schema to dump the data
+            schema = CrossrefXMLSchema()
+            crossref_xml = schema.dump(data)
+
+            # Ensure consistent field ordering through the defined mapping
+            field_order = [MARSHMALLOW_MAP.get(k, k) for k in list(data.keys())]
+            crossref_xml = {
+                k: crossref_xml[k] for k in field_order if k in crossref_xml
+            }
+
+            head = {
+                "depositor": metadata.depositor,
+                "email": metadata.email,
+                "registrant": metadata.registrant,
+            }
+
+            # Convert the dict to Crossref XML
+            return unparse_xml(crossref_xml, dialect="crossref", head=head)
+        except (ValueError, CrossrefError) as e:
+            current_app.logger.error(
+                f"CrossrefError while converting metadata to Crossref XML: {metadata.id} - {str(e)}"
+            )
+            return ""
 
     @classmethod
     def crossref_xml_tostring(cls, record):
