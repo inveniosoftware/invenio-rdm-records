@@ -1281,6 +1281,8 @@ msgstr ""
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/user-access-request.submit.jinja:33
 msgid "This is an auto-generated message. To manage notifications, visit your"
 msgstr ""
+"Este es un mensaje generado automáticamente. Para administrar las "
+"notificaciones, visite su"
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/community-submission.accept.jinja:45
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/community-submission.cancel.jinja:35
@@ -1299,7 +1301,7 @@ msgstr ""
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/user-access-request.decline.jinja:39
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/user-access-request.submit.jinja:33
 msgid "account settings"
-msgstr ""
+msgstr "configuraciones de la cuenta"
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/community-submission.accept.jinja:51
 #, python-brace-format
