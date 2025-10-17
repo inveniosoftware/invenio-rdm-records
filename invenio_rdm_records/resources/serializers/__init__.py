@@ -19,6 +19,7 @@ performance for the OAI-PMH server and search results serialzations.
 from .bibtex import BibtexSerializer
 from .cff import CFFSerializer
 from .codemeta import CodemetaSerializer
+from .crossref import CrossrefXMLSerializer
 from .csl import CSLJSONSerializer, StringCitationSerializer
 from .csv import CSVRecordSerializer
 from .datacite import DataCite43JSONSerializer, DataCite43XMLSerializer
@@ -43,6 +44,7 @@ from .ui import UIJSONSerializer
 __all__ = (
     "BibtexSerializer",
     "CFFSerializer",
+    "CrossrefXMLSerializer",
     "CSLJSONSerializer",
     "CSVRecordSerializer",
     "DataCite43JSONSerializer",
