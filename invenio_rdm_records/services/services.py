@@ -38,6 +38,7 @@ from marshmallow import ValidationError
 from sqlalchemy.exc import NoResultFound
 
 from invenio_rdm_records.records.models import RDMRecordQuota, RDMUserQuota
+from invenio_rdm_records.requests.file_modification import FileModification
 from invenio_rdm_records.requests.record_deletion import RecordDeletion
 from invenio_rdm_records.services.pids.tasks import register_or_update_pid
 
@@ -300,6 +301,48 @@ class RDMRecordService(RecordService):
             request = requests_service.execute_action(
                 # NOTE: We use the system identity to accept the request, since
                 # technically the system-defined deletion policy was checked above
+                system_identity,
+                request.id,
+                "accept",
+                send_notification=False,
+                uow=uow,
+            )
+
+        return request
+
+    @unit_of_work()
+    def file_modification(self, identity, id_, data=None, uow=None, **kwargs):
+        """File modification of a record."""
+        record = self.record_cls.pid.resolve(id_)
+
+        policy_result = self.config.file_modification_policy.evaluate(identity, record)
+
+        immediate_file_mod = policy_result["immediate_file_modification"]
+
+        disabled = not immediate_file_mod.enabled
+        forbidden = not immediate_file_mod.allowed
+        if disabled or forbidden:  # bail early
+            raise PermissionDeniedError()
+
+        request = requests_service.create(
+            identity,
+            request_type=FileModification,
+            topic=record,
+            creator=identity.user,
+            receiver=None,
+            data={"payload": data},
+            uow=uow,
+        )
+
+        request = requests_service.execute_action(
+            identity, request.id, "submit", uow=uow
+        )
+
+        if immediate_file_mod.allowed:
+            request = requests_service.execute_action(
+                # NOTE: We use the system identity to accept the request, since
+                # technically the system-defined file modification policy was
+                # checked above
                 system_identity,
                 request.id,
                 "accept",

@@ -10,7 +10,7 @@ import { Radio, FormField, TableRow, TableCell } from "semantic-ui-react";
 
 const RadioGroup = ({ index, row, state, onStateChange }) => {
   return (
-    <TableRow key={row.name}>
+    <TableRow>
       <TableCell>{row.label}</TableCell>
       <TableCell>
         <FormField>

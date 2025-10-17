@@ -259,6 +259,7 @@ class RDMRecordResourceConfig(RecordResourceConfig, ConfiguratorMixin):
     routes["item-revision-list"] = "/<pid_value>/revisions"
     routes["item-revision"] = "/<pid_value>/revisions/<revision_id>"
     routes["request-deletion"] = "/<pid_value>/request-deletion"
+    routes["file-modification"] = "/<pid_value>/file-modification"
 
     request_view_args = {
         "pid_value": ma.fields.Str(),

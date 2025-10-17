@@ -125,6 +125,7 @@ def test_record_links(client, published_json, headers):
         "access_users": f"https://127.0.0.1:5000/api/records/{pid_value}/access/users",
         "access_groups": f"https://127.0.0.1:5000/api/records/{pid_value}/access/groups",
         "request_deletion": f"https://127.0.0.1:5000/api/records/{pid_value}/request-deletion",  # noqa
+        "file_modification": f"https://127.0.0.1:5000/api/records/{pid_value}/file-modification",  # noqa
     }
 
     assert expected_links == published_record_links == read_record_links
