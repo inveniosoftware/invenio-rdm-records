@@ -12,6 +12,10 @@
 Changes
 =======
 
+Version v19.5.9 (released 2025-10-17)
+
+- fix(setup): pin commonmeta-py
+
 Version v19.5.8 (released 2025-10-16)
 
 - fix(oai-pmh): handle broader permission denied errors
