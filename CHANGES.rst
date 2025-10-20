@@ -12,6 +12,22 @@
 Changes
 =======
 
+Version v21.3.0 (released 2025-10-20)
+
+- fix(deposit-ui): disable drag-n-drop files when files are locked
+- fix(deposit-ui): re-add code removed in 9e8f553
+- feat(schema): added related_identifiers variable
+- fix(setup): temporarily tighten commonmeta-py pin
+    * this avoids getting a version of the dependency with breaking changes
+- fix(oai-pmh): handle broader permission denied errors
+    * previously, the `GetRecord` verb targeting a restricted record would
+      result in a HTTP 500 response due to an unhandled error
+    * the `getrecord_fetcher()` function only handled
+      `PermissionDeniedError` exceptions but not
+      `RecordPermissionDeniedError`, which are the ones raised by services
+    * since both of them are subclasses of `PermissionDenied`, we simply
+      handle that instead
+
 Version v21.2.0 (released 2025-10-01)
 
 - feat(config): add last activity sort option
