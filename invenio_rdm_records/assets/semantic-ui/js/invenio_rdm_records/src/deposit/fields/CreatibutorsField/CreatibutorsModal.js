@@ -631,6 +631,26 @@ export class CreatibutorsModal extends Component {
                         />
                       </Overridable>
                       <Overridable
+                        id="InvenioRdmRecords.DepositForm.CreatibutorsModal.OrganizationIdentifiersField"
+                        ref={this.identifiersRef}
+                        values={values}
+                        fieldPath={identifiersFieldPath}
+                      >
+                        <CreatibutorsIdentifiers
+                          initialOptions={_map(
+                            _get(values, identifiersFieldPath, []),
+                            (identifier) => ({
+                              text: identifier,
+                              value: identifier,
+                              key: identifier,
+                            })
+                          )}
+                          fieldPath={identifiersFieldPath}
+                          ref={this.identifiersRef}
+                          placeholder={i18next.t("e.g. ROR, ISNI or GND.")}
+                        />
+                      </Overridable>
+                      <Overridable
                         id="InvenioRdmRecords.DepositForm.CreatibutorsModal.OrganizationAffiliationsField"
                         fieldPath={affiliationsFieldPath}
                         ref={this.affiliationsRef}
