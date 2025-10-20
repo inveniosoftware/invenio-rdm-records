@@ -12,6 +12,11 @@
 Changes
 =======
 
+Version v22.0.0 (released 2025-10-21)
+
+- feat(resource_types)!: Remove publication-thesis
+    * BREAKING CHANGE: resource_type with id publication-dissertation will now be used instead as it is correctly mapped to the "Dissertation" type in DataCite
+
 Version v21.3.0 (released 2025-10-20)
 
 - fix(deposit-ui): disable drag-n-drop files when files are locked
