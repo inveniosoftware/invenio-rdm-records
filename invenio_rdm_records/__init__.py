@@ -2,7 +2,7 @@
 #
 # Copyright (C) 2019-2025 CERN.
 # Copyright (C) 2019-2025 Northwestern University.
-# Copyright (C) 2024      KTH Royal Institute of Technology.
+# Copyright (C) 2024-2025 KTH Royal Institute of Technology.
 # Copyright (C) 2024-2025 Graz University of Technology.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
@@ -12,6 +12,6 @@
 
 from .ext import InvenioRDMRecords
 
-__version__ = "19.5.9"
+__version__ = "19.5.10"
 
 __all__ = ("__version__", "InvenioRDMRecords")
