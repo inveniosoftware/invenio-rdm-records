@@ -2,11 +2,14 @@
 #
 # This file is part of Invenio.
 # Copyright (C) 2021 TU Wien.
+# Copyright (C) 2025 Graz University of Technology.
 #
 # Invenio is free software; you can redistribute it and/or modify it
 # under the terms of the MIT License; see LICENSE file for more details.
 
 """Embargo class for the access system field."""
+
+from datetime import datetime, timezone
 
 import arrow
 
@@ -32,7 +35,7 @@ class Embargo:
         elif self.until is None:
             return False
 
-        return arrow.utcnow().datetime < self.until
+        return datetime.now(timezone.utc) < self.until
 
     @active.setter
     def active(self, value):
@@ -46,7 +49,7 @@ class Embargo:
         expired but still marked as active).
         """
         if self.until is not None:
-            if arrow.utcnow().datetime > self.until:
+            if datetime.now(timezone.utc) > self.until:
                 was_active = bool(self._active)
                 self.active = False
                 return was_active
