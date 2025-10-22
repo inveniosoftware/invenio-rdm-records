@@ -474,13 +474,12 @@ The name is further used to configure the desired persistent identifiers (see
 RDM_PERSISTENT_IDENTIFIERS = {
     # DOI automatically removed if DATACITE_ENABLED is False.
     "doi": {
-        "providers": ["datacite", "crossref", "external"],
+        "providers": ["datacite", "external"],
         "required": True,
         "label": _("DOI"),
         "validator": idutils.is_doi,
         "normalizer": idutils.normalize_doi,
-        "is_enabled": providers.DataCitePIDProvider.is_enabled
-        or providers.CrossrefPIDProvider.is_enabled,
+        "is_enabled": providers.DataCitePIDProvider.is_enabled,
         "ui": {"default_selected": "yes"},  # "yes", "no" or "not_needed"
     },
     "oai": {
