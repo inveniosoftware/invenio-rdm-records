@@ -75,7 +75,7 @@ class RDMVCSRelease(VCSRelease):
     def get_custom_fields(self):
         """Get custom fields."""
         ret = {}
-        repo_url = self.generic_repo.html_url
+        repo_url = self.provider.factory.url_for_repository(self.generic_repo.full_name)
         ret["code:codeRepository"] = repo_url
         return ret
 
