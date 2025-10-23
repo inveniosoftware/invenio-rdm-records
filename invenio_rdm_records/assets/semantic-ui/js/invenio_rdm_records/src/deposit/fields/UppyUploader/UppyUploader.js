@@ -37,6 +37,39 @@ const defaultDashboardProps = {
   autoOpenFileEditor: false,
 };
 
+const normalizeFileName = (name) =>
+  typeof name === "string" ? name.normalize?.() ?? name : name;
+
+const defaultOnBeforeFileAdded = (currentFile, currentFiles = {}) =>
+  !Object.hasOwn(currentFiles, currentFile.id);
+
+const createDuplicateFileChecker = (uppy, filesList) => {
+  return (file, files) => {
+    const normalizedName = normalizeFileName(file.name);
+    if (!normalizedName) {
+      return defaultOnBeforeFileAdded(file, files);
+    }
+
+    const alreadyUploaded = filesList.some((item) => {
+      const existingName = normalizeFileName(item.name);
+      return existingName === normalizedName && !item.uploadState.isFailed;
+    });
+
+    if (!alreadyUploaded) {
+      return defaultOnBeforeFileAdded(file, files);
+    }
+
+    uppy.info(
+      i18next.t("{{filename}} is already part of this upload.", {
+        filename: file.name,
+      }),
+      "warning"
+    );
+    // See https://uppy.io/docs/uppy/#onbeforefileaddedfile-files
+    return false;
+  };
+};
+
 export const UppyUploaderComponent = ({
   config,
   files,
@@ -125,30 +158,15 @@ export const UppyUploaderComponent = ({
   );
 
   React.useEffect(() => {
-    const onFileAdded = (file) => {
-      const normalizedName = file.name?.normalize?.() ?? file.name;
-      const alreadyUploaded =
-        normalizedName &&
-        filesList.some(
-          (item) =>
-            item.name?.normalize?.() === normalizedName && !item.uploadState.isFailed
-        );
-
-      if (alreadyUploaded) {
-        uppy.info(
-          i18next.t("{{filename}} is already part of this upload.", {
-            filename: file.name,
-          }),
-          "warning"
-        );
-        uppy.removeFile(file.id);
-      }
-    };
-
-    uppy.on("file-added", onFileAdded);
     return () => {
-      uppy.off("file-added", onFileAdded);
+      // https://uppy.io/blog/2017/05/0.16/#dom-element-in-target-option-uppyclose-for-tearing-down-an-uppy-instance
+      uppy.close();
     };
+  }, [uppy]);
+
+  React.useEffect(() => {
+    const onBeforeFileAdded = createDuplicateFileChecker(uppy, filesList);
+    uppy.setOptions({ onBeforeFileAdded });
   }, [uppy, filesList]);
 
   React.useEffect(() => {
