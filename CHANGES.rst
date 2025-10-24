@@ -13,6 +13,11 @@
 Changes
 =======
 
+Version v19.5.11 (released 2025-10-24)
+
+- fix: duplicate uploads from resetting progress
+- tests: disable warnings entirely on maint-19.x branch
+
 Version v19.5.10 (released 2025-10-21)
 
 - i18n: pulled translations
