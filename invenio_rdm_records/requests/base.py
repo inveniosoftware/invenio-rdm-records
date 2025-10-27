@@ -10,7 +10,16 @@
 from invenio_requests.customizations import RequestType
 
 
-class ReviewRequest(RequestType):
+class BaseRequest(RequestType):
+    """Base class for all RDM requests."""
+
+    def _update_link_config(self, **context_values):
+        """Add the /me prefix for the self_html links."""
+        prefix = "/me"
+        return {"ui": context_values["ui"] + prefix}
+
+
+class ReviewRequest(BaseRequest):
     """Base class for all review requests."""
 
     block_publish = True
