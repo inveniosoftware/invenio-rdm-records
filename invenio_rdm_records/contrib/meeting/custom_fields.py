@@ -26,7 +26,7 @@ from marshmallow import fields
 from marshmallow_utils.fields import IdentifierValueSet, SanitizedUnicode
 from marshmallow_utils.schemas import IdentifierSchema
 
-from ...services.schemas.metadata import _valid_url, record_identifiers_schemes
+from ...services.schemas.metadata import _valid_url, record_related_identifiers_schemes
 
 
 class MeetingCF(BaseCF):
@@ -49,7 +49,8 @@ class MeetingCF(BaseCF):
                 "identifiers": IdentifierValueSet(
                     fields.Nested(
                         partial(
-                            IdentifierSchema, allowed_schemes=record_identifiers_schemes
+                            IdentifierSchema,
+                            allowed_schemes=record_related_identifiers_schemes,
                         )
                     )
                 ),
