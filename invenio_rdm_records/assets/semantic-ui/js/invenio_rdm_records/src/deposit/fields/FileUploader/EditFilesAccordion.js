@@ -4,7 +4,7 @@
 // Invenio-RDM-Records is free software; you can redistribute it and/or modify it
 // under the terms of the MIT License; see LICENSE file for more details.
 
-import { i18next } from "@translations/invenio_rdm_records/i18next";
+import { Trans } from "react-i18next";
 import PropTypes from "prop-types";
 import React, { Component } from "react";
 import { Accordion, Grid, Icon, Message } from "semantic-ui-react";
@@ -48,11 +48,11 @@ export class EditFilesAccordion extends Component {
               <Grid.Row className="p-0">
                 <Grid.Column width={12}>
                   <p className="mt-5 display-inline-block">
-                    {i18next.t("To")}{" "}
-                    <strong>{i18next.t("add, modify or remove files")}</strong>
-                    {i18next.t(
-                      ", it is recommended that you create a new version. A new record is created which tracks the evolution of your work."
-                    )}
+                    <Trans>
+                      To <strong>add, modify or remove files</strong>, it is recommended
+                      that you create a new version. A new record is created which
+                      tracks the evolution of your work.
+                    </Trans>
                   </p>
                 </Grid.Column>
                 <Grid.Column width={4} className="right aligned">
@@ -66,8 +66,10 @@ export class EditFilesAccordion extends Component {
               <Grid.Row className="p-0">
                 <Grid.Column width={12}>
                   <p className="mt-5 display-inline-block">
-                    {i18next.t("To")} <strong>{i18next.t("correct")}</strong>{" "}
-                    {i18next.t("minor errors, you can unlock the files.")}
+                    <Trans>
+                      To <strong>correct</strong> minor errors, you can unlock the
+                      files.
+                    </Trans>
                   </p>
                 </Grid.Column>
 
