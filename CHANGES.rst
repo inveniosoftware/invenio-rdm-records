@@ -12,6 +12,11 @@
 Changes
 =======
 
+Version v22.0.1 (released 2025-10-27)
+
+- fix(contrib): meeting field ID allowed schemas source
+- fix(deposit): duplicate uploads from resetting progress
+
 Version v22.0.0 (released 2025-10-21)
 
 - feat(resource_types)!: Remove publication-thesis
