@@ -90,30 +90,31 @@ export class ModificationModal extends Component {
       reason: values.reason,
       comment: values.comment,
     };
-    if ("file_modification" in record.links) {
-      this.cancellableAction = withCancel(
-        http.post(record.links.file_modification, payload)
-      );
-      try {
-        const response = await this.cancellableAction.promise;
-        const data = response.data;
-
-        if (response.status === 200) {
-          window.location.reload();
-        } else if (response.status === 201) {
-          window.location.href = data.links.self_html;
-        }
-      } catch (error) {
-        this.setState({ error: error });
-        console.error(error);
-      } finally {
-        this.setState({ loading: false });
-      }
-    } else {
+    if (!("file_modification" in record.links)) {
       this.setState({
         error: "Could not submit file modification request",
         loading: false,
       });
+      return;
+    }
+
+    this.cancellableAction = withCancel(
+      http.post(record.links.file_modification, payload)
+    );
+    try {
+      const response = await this.cancellableAction.promise;
+      const data = response.data;
+
+      if (response.status === 200) {
+        window.location.reload();
+      } else if (response.status === 201) {
+        window.location.href = data.links.self_html;
+      }
+    } catch (error) {
+      this.setState({ error: error });
+      console.error(error);
+    } finally {
+      this.setState({ loading: false });
     }
   };
 
@@ -206,17 +207,7 @@ export class ModificationModal extends Component {
                     </Table>
                     {messages.length > 0 && (
                       <Message info>
-                        {messages.length === 1 ? (
-                          <p dangerouslySetInnerHTML={{ __html: messages[0] }} />
-                        ) : (
-                          <Message.List>
-                            {messages.map((message) => (
-                              <Message.Item key={message}>
-                                <p dangerouslySetInnerHTML={{ __html: message }} />
-                              </Message.Item>
-                            ))}
-                          </Message.List>
-                        )}
+                        <p>{messages.join(" ")}</p>
                       </Message>
                     )}
                   </>
