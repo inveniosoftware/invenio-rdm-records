@@ -61,8 +61,6 @@ class AcceptAction(actions.AcceptAction):
 
         draft.files.unlock()
         uow.register(ModelCommitOp(draft.files.bucket))
-        # record.files.unlock()
-        # uow.register(ModelCommitOp(record.files.bucket))
 
         super().execute(identity, uow)
 
