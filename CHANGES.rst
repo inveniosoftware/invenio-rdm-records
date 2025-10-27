@@ -12,6 +12,10 @@
 Changes
 =======
 
+Version v22.1.0 (released 2025-10-27)
+
+- feat(form): add support for help text to creatibutors button in the deposit form
+
 Version v22.0.1 (released 2025-10-27)
 
 - fix(contrib): meeting field ID allowed schemas source
