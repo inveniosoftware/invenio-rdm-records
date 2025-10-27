@@ -8,6 +8,7 @@ import { i18next } from "@translations/invenio_app_rdm/i18next";
 import { Formik } from "formik";
 import PropTypes from "prop-types";
 import React, { Component } from "react";
+import Overridable from "react-overridable";
 
 import { ErrorMessage, http, withCancel } from "react-invenio-forms";
 import {
@@ -123,6 +124,38 @@ export class ModificationModal extends Component {
     const formDisabled =
       checkboxState.some((v) => v === false) ||
       checklistState.some((x) => x === true || x === undefined);
+
+    if (!fileModification.fileModification?.allowed) {
+      return (
+        <Modal
+          open={open}
+          closeIcon
+          onClose={this.handleClose}
+          role="dialog"
+          aria-modal="true"
+          tab-index="-1"
+          size="tiny"
+          closeOnDimmerClick={false}
+          onClick={(e) => e.stopPropagation()} // prevent interaction with dropdown
+          onKeyDown={(e) => e.stopPropagation()} // prevent interaction with dropdown
+        >
+          <ModalHeader>{i18next.t("Edit files")}</ModalHeader>
+          <Overridable id="InvenioAppRdm.Deposit.ModificationModal.message">
+            <ModalContent>
+              <p>
+                {i18next.t(
+                  "Please contact us to request file modification, including the" +
+                    " record URL and a detailed justification in your message."
+                )}
+              </p>
+            </ModalContent>
+          </Overridable>
+          <ModalActions className="text-align-left">
+            <Button onClick={this.handleClose} content={i18next.t("Close")} />
+          </ModalActions>
+        </Modal>
+      );
+    }
 
     return (
       <Modal
