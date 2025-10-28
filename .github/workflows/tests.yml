@@ -31,8 +31,11 @@ on:
 
 jobs:
   Python:
+    # use inveniosoftware/workflows/.github/workflows/tests-python.yml@maint-v13
     uses: inveniosoftware/workflows/.github/workflows/tests-python.yml@master
-
+    with:
+      # or on per repo basis
+      python-version: '["3.9", "3.14"]'
   JS:
     uses: inveniosoftware/workflows/.github/workflows/tests-js.yml@master
     with:

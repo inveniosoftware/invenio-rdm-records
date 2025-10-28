@@ -12,6 +12,7 @@
 
 from .ext import InvenioRDMRecords
 
+# bump to 22.2.0 or 22.1.1  when new policy (minor is a little bit more visible)
 __version__ = "22.1.0"
 
 __all__ = ("__version__", "InvenioRDMRecords")
