@@ -450,7 +450,7 @@ RDM_PERSISTENT_IDENTIFIER_PROVIDERS = [
         "doi",
         validators=[
             providers.BlockedPrefixes(
-                config_names=["DATACITE_PREFIX"] + ["CROSSREF_PREFIXES"]
+                config_names=["DATACITE_PREFIX"] + ["CROSSREF_PREFIX"]
             )
         ],
         label=_("DOI"),
@@ -472,14 +472,15 @@ The name is further used to configure the desired persistent identifiers (see
 """
 
 RDM_PERSISTENT_IDENTIFIERS = {
-    # DOI automatically removed if DATACITE_ENABLED is False.
+    # DOI automatically removed if DATACITE_ENABLED and CROSSREF_ENABLED are False.
     "doi": {
-        "providers": ["datacite", "external"],
+        "providers": ["datacite", "crossref", "external"],
         "required": True,
         "label": _("DOI"),
         "validator": idutils.is_doi,
         "normalizer": idutils.normalize_doi,
-        "is_enabled": providers.DataCitePIDProvider.is_enabled,
+        "is_enabled": lambda app: providers.DataCitePIDProvider.is_enabled(app)
+        or providers.CrossrefPIDProvider.is_enabled(app),
         "ui": {"default_selected": "yes"},  # "yes", "no" or "not_needed"
     },
     "oai": {
@@ -593,8 +594,8 @@ CROSSREF_USERNAME = ""
 CROSSREF_PASSWORD = ""
 """Crossref password."""
 
-CROSSREF_PREFIXES = []
-"""Crossref DOI prefixes."""
+CROSSREF_PREFIX = ""
+"""Crossref DOI prefix."""
 
 CROSSREF_DEPOSITOR = ""
 """Crossref depositor name."""
@@ -620,8 +621,11 @@ You can also provide a callable instead:
     def make_doi(prefix, record):
         return f"{prefix}/{record.pid.pid_value}"
 
-    DATACITE_FORMAT = make_doi
+    CROSSREF_FORMAT = make_doi
 """
+
+RDM_COMMUNITY_DOI_PREFIXES = {}
+"""Optional mapping of community PIDs to DOI prefixes."""
 
 #
 # Custom fields

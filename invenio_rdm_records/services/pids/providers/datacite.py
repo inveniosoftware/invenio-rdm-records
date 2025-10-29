@@ -49,10 +49,11 @@ class DataCiteClient:
         config = ChainMap(self._config_overrides, current_app.config)
         return config.get(self.cfgkey(key), default)
 
-    def generate_doi(self, record):
-        """Generate a DOI."""
+    def generate_doi(self, record, **kwargs):
+        """Generate a DOI. Uses the optional prefix argument or the default for the prefix.
+        Uses the configured format for the suffix"""
         self.check_credentials()
-        prefix = self.cfg("prefix")
+        prefix = kwargs.get("prefix", self.cfg("prefix"))
         if not prefix:
             raise RuntimeError("Invalid DOI prefix configured.")
         doi_format = self.cfg("format", "{prefix}/{id}")
@@ -144,7 +145,7 @@ class DataCitePIDProvider(PIDProvider):
     def generate_id(self, record, **kwargs):
         """Generate a unique DOI."""
         # Delegate to client
-        return self.client.generate_doi(record)
+        return self.client.generate_doi(record, **kwargs)
 
     @classmethod
     def is_enabled(cls, app):

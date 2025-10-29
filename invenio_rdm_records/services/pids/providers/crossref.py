@@ -14,11 +14,9 @@ from collections import ChainMap
 from time import time
 
 import requests
-from commonmeta import dig, validate_prefix
+from commonmeta import validate_prefix
 from flask import current_app
 from idutils import is_doi
-from invenio_access.permissions import system_identity
-from invenio_communities import current_communities
 from invenio_i18n import lazy_gettext as _
 from invenio_pidstore.models import PIDStatus
 from requests_toolbelt.multipart.encoder import MultipartEncoder
@@ -63,20 +61,19 @@ class CrossrefClient:
         if (
             not self.cfg("username")
             or not self.cfg("password")
-            or not self.cfg("prefixes")
-            or not len(self.cfg("prefixes")) > 0
+            or not self.cfg("prefix")
             or not self.cfg("depositor")
             or not self.cfg("email")
             or not self.cfg("registrant")
         ):
             current_app.logger.error(
                 f"CrossrefClient configuration incomplete: missing configuration settings. "
-                f"Required: {self.cfgkey('username')}, <password>, {self.cfgkey('prefixes')}, "
+                f"Required: {self.cfgkey('username')}, <password>, {self.cfgkey('prefix')}, "
                 f"{self.cfgkey('depositor')}, {self.cfgkey('email')}, {self.cfgkey('registrant')}"
             )
             warnings.warn(
                 f"The {self.__class__.__name__} is misconfigured. Please "
-                f"set {self.cfgkey('username')}, <password> and {self.cfgkey('prefixes')}, "
+                f"set {self.cfgkey('username')}, <password> and {self.cfgkey('prefix')}, "
                 f"{self.cfgkey('depositor')}, {self.cfgkey('email')}, {self.cfgkey('registrant')} in your configuration.",
                 UserWarning,
             )
@@ -85,55 +82,17 @@ class CrossrefClient:
         return True
 
     def generate_doi(self, record, **kwargs):
-        """Generate a DOI. Uses the DOI prefix of the default community custom_field.
-
-        :param record: The record for which to generate a DOI.
-        :returns: Generated DOI string.
-        :raises RuntimeError: If credentials or prefixes are not configured.
-        """
-        if not self.check_credentials():
-            raise RuntimeError("Crossref client credentials not properly configured.")
-
-        # Determine prefix to use
-        prefixes = self.cfg("prefixes")
-        default_community = dig(record, "communities.default")
-
-        prefix = None
-        if len(prefixes) > 1 and default_community:
-            try:
-                # Fetch default community and get DOI prefix custom field
-                community = current_communities.service.read(
-                    identity=system_identity, id_=default_community
-                )
-                community_prefix = dig(community.data, "custom_fields.rs:prefix")
-                if community_prefix and community_prefix in [str(p) for p in prefixes]:
-                    prefix = str(community_prefix)
-                    current_app.logger.debug(
-                        f"Using DOI prefix: {prefix} for community: {default_community}"
-                    )
-
-            except Exception as e:
-                current_app.logger.warning(
-                    f"Failed to fetch community metadata for {default_community}: {type(e).__name__}: {str(e)}"
-                )
-
+        """Generate a DOI. Uses the optional prefix argument or the default for the prefix.
+        Uses the configured format for the suffix"""
+        self.check_credentials()
+        prefix = kwargs.get("prefix", self.cfg("prefix"))
         if not prefix:
-            # Fallback to first configured prefix
-            prefix = str(prefixes[0])
-
+            raise RuntimeError("Invalid DOI prefix configured.")
         doi_format = self.cfg("format", "{prefix}/{id}")
-
         if callable(doi_format):
             return doi_format(prefix, record)
         else:
-            # Ensure we have a valid record ID
-            record_id = getattr(record, "pid", None)
-            if record_id and hasattr(record_id, "pid_value"):
-                return f"{prefix}/{record_id.pid_value}"
-            elif hasattr(record, "id"):
-                return f"{prefix}/{record.id}"
-            else:
-                raise RuntimeError("Cannot generate DOI: record has no valid ID.")
+            return doi_format.format(prefix=prefix, id=record.pid.pid_value)
 
     def deposit(self, input_xml):
         """Upload metadata for a new or existing DOI.
@@ -211,7 +170,7 @@ class CrossrefClient:
             return "ERROR"
 
     def validate_doi(self, doi):
-        """Validate if a DOI is valid and uses an allowed prefix.
+        """Validate if a DOI is valid.
 
         :param doi: DOI string to validate.
         :returns: True if valid, False otherwise.
@@ -224,8 +183,7 @@ class CrossrefClient:
 
         try:
             doi_prefix = validate_prefix(doi)
-            prefixes = self.cfg("prefixes", [])
-            return doi_prefix in [str(p) for p in prefixes]
+            return doi_prefix is not None
         except Exception as e:
             current_app.logger.error(
                 f"CrossrefClient.validate_doi: Exception during validation: {type(e).__name__}: {str(e)}"
@@ -262,7 +220,8 @@ class CrossrefPIDProvider(PIDProvider):
         self.serializer = serializer or CrossrefXMLSerializer()
 
     def generate_id(self, record, **kwargs):
-        """Generate a unique DOI, delegating to the client."""
+        """Generate a unique DOI."""
+        # Delegate to client
         return self.client.generate_doi(record, **kwargs)
 
     @classmethod
@@ -358,7 +317,7 @@ class CrossrefPIDProvider(PIDProvider):
             if (
                 not identifier
                 or not is_doi(identifier)
-                or validate_prefix(identifier) not in self.client.cfg("prefixes")
+                or validate_prefix(identifier) is None
             ):
                 errors.append(
                     {

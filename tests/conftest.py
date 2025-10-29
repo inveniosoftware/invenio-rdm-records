@@ -122,6 +122,7 @@ from invenio_rdm_records.services.deletion_policy import (
 )
 from invenio_rdm_records.services.pids import providers
 
+from .fake_crossref_client import FakeCrossrefClient
 from .fake_datacite_client import FakeDataCiteClient
 
 
@@ -164,6 +165,12 @@ def _(x):
 def mock_datacite_client():
     """Mock DataCite client."""
     return FakeDataCiteClient
+
+
+@pytest.fixture(scope="module")
+def mock_crossref_client():
+    """Mock Crossref client."""
+    return FakeCrossrefClient
 
 
 @pytest.fixture(scope="module")

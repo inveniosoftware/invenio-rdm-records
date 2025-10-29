@@ -31,21 +31,10 @@ def mock_datacite_client(mock_datacite_client):
 
 
 @pytest.fixture(scope="module")
-def mock_crossref_client():
+def mock_crossref_client(mock_crossref_client):
     """Mock Crossref client API calls."""
-    with mock.patch(
-        "invenio_rdm_records.services.pids.providers.crossref.CrossrefClient"
-    ) as mock_client:
-        # Mock the client instance
-        client_instance = mock.MagicMock()
-        mock_client.return_value = client_instance
-
-        # Mock the API methods
-        client_instance.deposit = mock.MagicMock()
-        client_instance.api = mock.MagicMock()
-        client_instance.api.post = mock.MagicMock()
-
-        yield client_instance
+    with mock.patch.object(mock_crossref_client, "api"):
+        yield mock_crossref_client
 
 
 def test_register_pid(
@@ -112,7 +101,7 @@ def test_register_pid_crossref(
     superuser_identity,
     mock_crossref_client,
 ):
-    """Registers a crossref PID."""
+    """Registers a Crossref DOI."""
     minimal_record["pids"]["doi"] = {
         "identifier": "10.5678/inveniordm.1234",
         "provider": "crossref",
