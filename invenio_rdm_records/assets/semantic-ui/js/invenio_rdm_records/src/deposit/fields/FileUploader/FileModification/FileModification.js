@@ -26,6 +26,7 @@ export const FileModification = ({
         content={i18next.t("It is not possible to modify the files of this record.")}
         disabled={!disabled}
         trigger={
+          // Extra span needed since disabled buttons do not trigger hover events
           <span>
             <Button
               type="button"

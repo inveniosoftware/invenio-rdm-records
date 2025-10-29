@@ -19,6 +19,7 @@ import { Button, Grid, Icon, Message, Modal } from "semantic-ui-react";
 import { UploadState } from "../../state/reducers/files";
 import { FileUploaderArea } from "./FileUploaderArea";
 import { FileUploaderToolbar } from "./FileUploaderToolbar";
+import { NewVersionButton } from "../../controls/NewVersionButton";
 import { EditFilesAccordion } from "./EditFilesAccordion";
 import { humanReadableBytes } from "react-invenio-forms";
 import Overridable from "react-overridable";
@@ -302,7 +303,8 @@ export const FileUploaderComponent = ({
                 </Grid.Column>
               </Grid.Row>
             ) : (
-              filesLocked && (
+              filesLocked &&
+              (fileModification.fileModification?.enabled ? (
                 <Grid.Row className="file-upload-note pt-5">
                   <Grid.Column width={16}>
                     <EditFilesAccordion
@@ -312,7 +314,26 @@ export const FileUploaderComponent = ({
                     />
                   </Grid.Column>
                 </Grid.Row>
-              )
+              ) : (
+                <Grid.Row className="file-upload-note pt-5">
+                  <Grid.Column width={16}>
+                    <Message info>
+                      <NewVersionButton
+                        record={record}
+                        onError={() => {}}
+                        className="right-floated"
+                        disabled={!permissions.can_new_version}
+                      />
+                      <p className="mt-5 display-inline-block">
+                        <Icon name="info circle" size="large" />
+                        {i18next.t(
+                          "You must create a new version to add, modify or delete files."
+                        )}
+                      </p>
+                    </Message>
+                  </Grid.Column>
+                </Grid.Row>
+              ))
             )}
           </Overridable>
         </Grid>
