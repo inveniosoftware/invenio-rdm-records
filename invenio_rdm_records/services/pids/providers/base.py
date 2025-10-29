@@ -47,6 +47,7 @@ class PIDProvider:
                 identity=system_identity, id_=dig(record, "communities.default")
             )
             community = community_prefixes.get(comid, None)
+            current_app.logger.error(f"PIDProvider.generate_id: community {community}")
             if presence(community):
                 self.name = community.get("provider", "datacite")
                 kwargs["prefix"] = community.get("prefix", None)
