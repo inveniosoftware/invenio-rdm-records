@@ -381,7 +381,7 @@ class DataCite43Schema(BaseSerializerSchema):
 
             scheme = rel_id["scheme"]
             id_scheme = get_scheme_datacite(
-                scheme, "RDM_RECORDS_IDENTIFIERS_SCHEMES", default=scheme
+                scheme, "RDM_RECORDS_RELATED_IDENTIFIERS_SCHEMES", default=scheme
             )
 
             # Only serialize related identifiers with a valid scheme for DataCite.
@@ -421,7 +421,7 @@ class DataCite43Schema(BaseSerializerSchema):
                 version_doi = version.get("pids", {}).get("doi")
                 id_scheme = get_scheme_datacite(
                     "doi",
-                    "RDM_RECORDS_IDENTIFIERS_SCHEMES",
+                    "RDM_RECORDS_RELATED_IDENTIFIERS_SCHEMES",
                     default="DOI",
                 )
 
@@ -443,7 +443,7 @@ class DataCite43Schema(BaseSerializerSchema):
             if parent_doi:
                 id_scheme = get_scheme_datacite(
                     "doi",
-                    "RDM_RECORDS_IDENTIFIERS_SCHEMES",
+                    "RDM_RECORDS_RELATED_IDENTIFIERS_SCHEMES",
                     default="doi",
                 )
                 if id_scheme.lower() in RELATED_IDENTIFIER_SCHEMES:
