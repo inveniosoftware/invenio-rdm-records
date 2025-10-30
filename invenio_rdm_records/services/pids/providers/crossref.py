@@ -222,13 +222,13 @@ class CrossrefPIDProvider(PIDProvider):
         self.serializer = serializer or CrossrefXMLSerializer()
 
     def generate_id(self, record, **kwargs):
-        """Generates an identifier value. If RDM_COMMUNITY_DOI_PREFIXES is set, use community-specific DOI prefix."""
-        community_prefixes = current_app.config.get("RDM_COMMUNITY_DOI_PREFIXES")
-        if presence(community_prefixes):
+        """Generates an identifier value. If CROSSREF_ADDITIONAL_PREFIXES is set, use community-specific DOI prefix."""
+        additional_prefixes = current_app.config.get("CROSSREF_ADDITIONAL_PREFIXES")
+        if presence(additional_prefixes):
             comid = current_communities.service.read(
                 identity=system_identity, id_=dig(record, "communities.default")
             )
-            prefix = community_prefixes.get(comid, None)
+            prefix = additional_prefixes.get(comid, None)
             if presence(prefix):
                 current_app.logger.debug(
                     f"CrossrefPIDProvider.generate_id: prefix {prefix} for community {comid}"

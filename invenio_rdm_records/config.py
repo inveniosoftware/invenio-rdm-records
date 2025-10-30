@@ -453,7 +453,8 @@ RDM_PERSISTENT_IDENTIFIER_PROVIDERS = [
                 config_names=[
                     "DATACITE_PREFIX",
                     "CROSSREF_PREFIX",
-                    "RDM_COMMUNITY_DOI_PREFIXES",
+                    "DATACITE_ADDITIONAL_PREFIXES",
+                    "CROSSREF_ADDITIONAL_PREFIXES",
                 ]
             )
         ],
@@ -562,6 +563,9 @@ DATACITE_PASSWORD = ""
 DATACITE_PREFIX = ""
 """DataCite DOI prefix."""
 
+DATACITE_ADDITIONAL_PREFIXES = {}
+"""Optional mapping of community PIDs to DataCite DOI prefixes."""
+
 DATACITE_TEST_MODE = True
 """DataCite test mode enabled."""
 
@@ -601,6 +605,9 @@ CROSSREF_PASSWORD = ""
 CROSSREF_PREFIX = ""
 """Crossref DOI prefix."""
 
+CROSSREF_ADDITIONAL_PREFIXES = {}
+"""Optional mapping of community PIDs to Crossref DOI prefixes."""
+
 CROSSREF_DEPOSITOR = ""
 """Crossref depositor name."""
 
@@ -627,9 +634,6 @@ You can also provide a callable instead:
 
     CROSSREF_FORMAT = make_doi
 """
-
-RDM_COMMUNITY_DOI_PREFIXES = {}
-"""Optional mapping of community PIDs to DOI prefixes."""
 
 #
 # Custom fields
