@@ -9,10 +9,7 @@
 
 """PID Provider."""
 
-from commonmeta import dig, presence
 from flask import current_app
-from invenio_access.permissions import system_identity
-from invenio_communities import current_communities
 from invenio_i18n import lazy_gettext as _
 from invenio_pidstore.errors import PIDAlreadyExists, PIDDoesNotExistError
 from invenio_pidstore.models import PersistentIdentifier, PIDStatus
@@ -40,18 +37,7 @@ class PIDProvider:
         self.managed = managed
 
     def generate_id(self, record, **kwargs):
-        """Generates an identifier value. If RDM_COMMUNITY_DOI_PREFIXES is set, use community-specific DOI prefix."""
-        community_prefixes = current_app.config.get("RDM_COMMUNITY_DOI_PREFIXES")
-        if presence(community_prefixes):
-            comid = current_communities.service.read(
-                identity=system_identity, id_=dig(record, "communities.default")
-            )
-            community = community_prefixes.get(comid, None)
-            current_app.logger.error(f"PIDProvider.generate_id: community {community}")
-            if presence(community):
-                self.name = community.get("provider", "datacite")
-                kwargs["prefix"] = community.get("prefix", None)
-                return self.client.generate_doi(record, **kwargs)
+        """Generates an identifier value."""
         raise NotImplementedError
 
     @classmethod

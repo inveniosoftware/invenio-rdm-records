@@ -14,9 +14,11 @@ from collections import ChainMap
 from time import time
 
 import requests
-from commonmeta import validate_prefix
+from commonmeta import dig, presence, validate_prefix
 from flask import current_app
 from idutils import is_doi
+from invenio_access.permissions import system_identity
+from invenio_communities import current_communities
 from invenio_i18n import lazy_gettext as _
 from invenio_pidstore.models import PIDStatus
 from requests_toolbelt.multipart.encoder import MultipartEncoder
@@ -220,7 +222,19 @@ class CrossrefPIDProvider(PIDProvider):
         self.serializer = serializer or CrossrefXMLSerializer()
 
     def generate_id(self, record, **kwargs):
-        """Generate a unique DOI."""
+        """Generates an identifier value. If RDM_COMMUNITY_DOI_PREFIXES is set, use community-specific DOI prefix."""
+        community_prefixes = current_app.config.get("RDM_COMMUNITY_DOI_PREFIXES")
+        if presence(community_prefixes):
+            comid = current_communities.service.read(
+                identity=system_identity, id_=dig(record, "communities.default")
+            )
+            prefix = community_prefixes.get(comid, None)
+            if presence(prefix):
+                current_app.logger.debug(
+                    f"CrossrefPIDProvider.generate_id: prefix {prefix} for community {comid}"
+                )
+                kwargs["prefix"] = prefix
+
         # Delegate to client
         return self.client.generate_doi(record, **kwargs)
 
