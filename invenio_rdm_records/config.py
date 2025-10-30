@@ -453,8 +453,6 @@ RDM_PERSISTENT_IDENTIFIER_PROVIDERS = [
                 config_names=[
                     "DATACITE_PREFIX",
                     "CROSSREF_PREFIX",
-                    "DATACITE_ADDITIONAL_PREFIXES",
-                    "CROSSREF_ADDITIONAL_PREFIXES",
                 ]
             )
         ],
@@ -477,15 +475,14 @@ The name is further used to configure the desired persistent identifiers (see
 """
 
 RDM_PERSISTENT_IDENTIFIERS = {
-    # DOI automatically removed if DATACITE_ENABLED and CROSSREF_ENABLED are False.
+    # DOI automatically removed if DATACITE_ENABLED is False.
     "doi": {
-        "providers": ["datacite", "crossref", "external"],
+        "providers": ["datacite", "external"],
         "required": True,
         "label": _("DOI"),
         "validator": idutils.is_doi,
         "normalizer": idutils.normalize_doi,
-        "is_enabled": lambda app: providers.DataCitePIDProvider.is_enabled(app)
-        or providers.CrossrefPIDProvider.is_enabled(app),
+        "is_enabled": providers.DataCitePIDProvider.is_enabled,
         "ui": {"default_selected": "yes"},  # "yes", "no" or "not_needed"
     },
     "oai": {
@@ -513,27 +510,18 @@ RDM_PARENT_PERSISTENT_IDENTIFIER_PROVIDERS = [
         serializer=DataCite43JSONSerializer(schema_context={"is_parent": True}),
         label=_("Concept DOI"),
     ),
-    # Crossref Concept DOI provider
-    providers.CrossrefPIDProvider(
-        "crossref",
-        client=providers.CrossrefClient("crossref", config_prefix="CROSSREF"),
-        serializer=CrossrefXMLSerializer(schema_context={"is_parent": True}),
-        label=_("Concept DOI"),
-    ),
 ]
 """Persistent identifier providers for parent record."""
 
 RDM_PARENT_PERSISTENT_IDENTIFIERS = {
     "doi": {
-        "providers": ["datacite", "crossref"],
+        "providers": ["datacite"],
         "required": True,
-        "condition": lambda rec: rec.pids.get("doi", {}).get("provider")
-        in ["datacite", "crossref"],
+        "condition": lambda rec: rec.pids.get("doi", {}).get("provider") == "datacite",
         "label": _("Concept DOI"),
         "validator": idutils.is_doi,
         "normalizer": idutils.normalize_doi,
-        "is_enabled": lambda: providers.DataCitePIDProvider.is_enabled()
-        or providers.CrossrefPIDProvider.is_enabled(),
+        "is_enabled": providers.DataCitePIDProvider.is_enabled,
     },
 }
 """Persistent identifiers for parent record."""
@@ -562,9 +550,6 @@ DATACITE_PASSWORD = ""
 
 DATACITE_PREFIX = ""
 """DataCite DOI prefix."""
-
-DATACITE_ADDITIONAL_PREFIXES = {}
-"""Optional mapping of community PIDs to DataCite DOI prefixes."""
 
 DATACITE_TEST_MODE = True
 """DataCite test mode enabled."""
@@ -604,9 +589,6 @@ CROSSREF_PASSWORD = ""
 
 CROSSREF_PREFIX = ""
 """Crossref DOI prefix."""
-
-CROSSREF_ADDITIONAL_PREFIXES = {}
-"""Optional mapping of community PIDs to Crossref DOI prefixes."""
 
 CROSSREF_DEPOSITOR = ""
 """Crossref depositor name."""

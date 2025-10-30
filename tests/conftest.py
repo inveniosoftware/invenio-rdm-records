@@ -112,7 +112,10 @@ from invenio_rdm_records.requests.entity_resolvers import (
     EmailResolver,
     RDMRecordServiceResultResolver,
 )
-from invenio_rdm_records.resources.serializers import DataCite43JSONSerializer
+from invenio_rdm_records.resources.serializers import (
+    DataCite43JSONSerializer,
+    CrossrefXMLSerializer,
+)
 from invenio_rdm_records.services.communities.components import (
     CommunityServiceComponents,
 )

@@ -20,7 +20,7 @@ from flask_resources.serializers import SimpleSerializer
 
 
 class CrossrefXMLSerializer(MarshmallowSerializer):
-    """JSON based Crossref XML serializer for records."""
+    """Marshmallow based Crossref XML serializer for records."""
 
     def __init__(self, **options):
         """Constructor."""
@@ -40,8 +40,7 @@ class CrossrefXMLSerializer(MarshmallowSerializer):
         :param record: Record instance.
         """
         # Convert the metadata to crossref_xml format via the commonmeta intermediary format.
-        # Reasons for failing to convert to Crossref XML include missing required metadata
-        # and type not supported by Crossref.
+        # XML Schema validation errors raise CrossrefError.
         try:
             metadata = Metadata(
                 record,

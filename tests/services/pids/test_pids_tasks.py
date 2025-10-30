@@ -14,13 +14,67 @@ from copy import deepcopy
 from unittest import mock
 
 import pytest
+from invenio_i18n import _
 from invenio_pidstore.models import PIDStatus
 
 from invenio_rdm_records.proxies import current_rdm_records
 from invenio_rdm_records.records.systemfields.deletion_status import (
     RecordDeletionStatusEnum,
 )
+from invenio_rdm_records.resources.serializers import CrossrefXMLSerializer
+from invenio_rdm_records.services.pids import providers
 from invenio_rdm_records.services.pids.tasks import register_or_update_pid
+
+
+@pytest.fixture()
+def crossref_config(running_app, mock_crossref_client):
+    old_config = running_app.app.config.copy()
+    running_app.app.config.update(
+        {
+            "CROSSREF_ENABLED": True,
+            "DATACITE_ENABLED": False,
+            "CROSSREF_USERNAME": "INVALID",
+            "CROSSREF_PASSWORD": "INVALID",
+            "CROSSREF_DEPOSITOR": "INVALID",
+            "CROSSREF_EMAIL": "info@example.org",
+            "CROSSREF_REGISTRANT": "INVALID",
+            "CROSSREF_PREFIX": "10.1234",
+            "RDM_PERSISTENT_IDENTIFIER_PROVIDERS": [
+                providers.CrossrefPIDProvider(
+                    "crossref",
+                    client=mock_crossref_client,
+                    label=_("DOI"),
+                ),
+                # DOI provider for externally managed DOIs
+                providers.ExternalPIDProvider(
+                    "external",
+                    "doi",
+                    validators=[
+                        providers.BlockedPrefixes(config_names=["DATACITE_PREFIX"])
+                    ],
+                    label=_("DOI"),
+                ),
+                # OAI identifier
+                providers.OAIPIDProvider(
+                    "oai",
+                    label=_("OAI ID"),
+                ),
+            ],
+            "RDM_PARENT_PERSISTENT_IDENTIFIER_PROVIDERS": [
+                providers.CrossrefPIDProvider(
+                    "crossref",
+                    client=mock_crossref_client,
+                    serializer=CrossrefXMLSerializer(
+                        schema_context={"is_parent": True}
+                    ),
+                    label=_("Concept DOI"),
+                ),
+            ],
+        }
+    )
+    yield
+    running_app.app.config.clear()
+    running_app.app.config.update(old_config)
 
 
 @pytest.fixture(scope="module")
@@ -33,8 +87,22 @@ def mock_datacite_client(mock_datacite_client):
 @pytest.fixture(scope="module")
 def mock_crossref_client(mock_crossref_client):
     """Mock Crossref client API calls."""
-    with mock.patch.object(mock_crossref_client, "api"):
-        yield mock_crossref_client
+
+    def generate_doi(record, **kwargs):
+        return "10.1234/mock.doi"
+
+    def deposit(*args, **kwargs):
+        return None
+
+    def cfg(key):
+        # Gibt einen Dummy-Wert für alle Konfigurationsschlüssel zurück
+        return f"mock_{key}"
+
+    mock_crossref_client.generate_doi = generate_doi
+    mock_crossref_client.deposit = mock.Mock(side_effect=deposit)
+    mock_crossref_client.name = "crossref"
+    mock_crossref_client.cfg = cfg
+    yield mock_crossref_client
 
 
 def test_register_pid(
@@ -100,16 +168,25 @@ def test_register_pid_crossref(
     minimal_record,
     superuser_identity,
     mock_crossref_client,
+    crossref_config,
 ):
     """Registers a Crossref DOI."""
-    minimal_record["pids"]["doi"] = {
-        "identifier": "10.5678/inveniordm.1234",
+    running_app.app.config["RDM_PERSISTENT_IDENTIFIERS"]["doi"]["providers"] = [
+        "crossref",
+        "external",
+    ]
+    running_app.app.config["RDM_PERSISTENT_IDENTIFIERS"]["doi"]["is_enabled"] = (
+        lambda *args, **kwargs: True
+    )
+    service = current_rdm_records.records_service
+    data = minimal_record.copy()
+    doi = "10.1234/test.1234"
+    data["pids"]["doi"] = {
+        "identifier": doi,
         "provider": "crossref",
         "client": "crossref",
     }
-    minimal_record["metadata"]["resource_type"]["id"] = "publication-preprint"
-    service = current_rdm_records.records_service
-    draft = service.create(superuser_identity, minimal_record)
+    draft = service.create(superuser_identity, data)
     draft = service.pids.create(superuser_identity, draft.id, "doi")
     doi = draft["pids"]["doi"]["identifier"]
     provider = service.pids.pid_manager._get_provider("doi", "crossref")
@@ -238,7 +315,7 @@ def test_update_pid(
     draft = service.create(superuser_identity, minimal_record)
     record = service.publish(superuser_identity, draft.id)
 
-    oai = record["pids"]["oai"]["identifier"]
+    # oai = record["pids"]["oai"]["identifier"]  # entfernt, da ungenutzt
     doi = record["pids"]["doi"]["identifier"]
     parent_doi = record["parent"]["pids"]["doi"]["identifier"]
     provider = service.pids.pid_manager._get_provider("doi", "datacite")
@@ -287,7 +364,7 @@ def test_update_pid(
                     "identifiers": [
                         {"identifier": doi, "identifierType": "DOI"},
                         {
-                            "identifier": oai,
+                            "identifier": record["pids"]["oai"]["identifier"],
                             "identifierType": "oai",
                         },
                     ],
@@ -346,19 +423,26 @@ def test_update_pid_crossref(
     mocker,
     superuser_identity,
     mock_crossref_client,
+    crossref_config,
 ):
     """No pid provided, creating one by default."""
+    running_app.app.config["RDM_PERSISTENT_IDENTIFIERS"]["doi"]["providers"] = [
+        "crossref",
+        "external",
+    ]
+    running_app.app.config["RDM_PERSISTENT_IDENTIFIERS"]["doi"]["is_enabled"] = (
+        lambda *args, **kwargs: True
+    )
     minimal_record["pids"]["doi"] = {
-        "identifier": "10.5678/inveniordm.1234",
+        "identifier": "10.1234/inveniordm.1234",
         "provider": "crossref",
         "client": "crossref",
     }
-    minimal_record["metadata"]["resource_type"]["id"] = "publication-preprint"
     service = current_rdm_records.records_service
     draft = service.create(superuser_identity, minimal_record)
     record = service.publish(superuser_identity, draft.id)
 
-    oai = record["pids"]["oai"]["identifier"]
+    # oai = record["pids"]["oai"]["identifier"]  # entfernt, da ungenutzt
     doi = record["pids"]["doi"]["identifier"]
     parent_doi = record["parent"]["pids"]["doi"]["identifier"]
     provider = service.pids.pid_manager._get_provider("doi", "crossref")
@@ -407,7 +491,7 @@ def test_update_pid_crossref(
                     "identifiers": [
                         {"identifier": doi, "identifierType": "DOI"},
                         {
-                            "identifier": oai,
+                            "identifier": record["pids"]["oai"]["identifier"],
                             "identifierType": "oai",
                         },
                     ],
@@ -472,7 +556,7 @@ def test_invalidate_pid(
     draft = service.create(superuser_identity, minimal_record)
     record = service.publish(superuser_identity, draft.id)
 
-    oai = record["pids"]["oai"]["identifier"]
+    # oai = record["pids"]["oai"]["identifier"]  # entfernt, da ungenutzt
     doi = record["pids"]["doi"]["identifier"]
     parent_doi = record["parent"]["pids"]["doi"]["identifier"]
     provider = service.pids.pid_manager._get_provider("doi", "datacite")
@@ -543,7 +627,7 @@ def test_invalidate_versions_pid(
     draft = service.create(superuser_identity, minimal_record)
     record = service.publish(superuser_identity, draft.id)
 
-    oai = record["pids"]["oai"]["identifier"]
+    # oai = record["pids"]["oai"]["identifier"]  # not used
     doi = record["pids"]["doi"]["identifier"]
     parent_doi = record["parent"]["pids"]["doi"]["identifier"]
     provider = service.pids.pid_manager._get_provider("doi", "datacite")
@@ -658,9 +742,9 @@ def test_invalidate_versions_pid(
     assert record._record.pid.status == PIDStatus.REGISTERED
 
     # DELETE THE SECOND VERSION
-    record_v2_del = service.delete_record(
+    service.delete_record(
         superuser_identity, id_=record_v2.id, data=tombstone_info
-    )
+    )  # record_v2_del entfernt, da ungenutzt
 
     mock_datacite_client.api.update_doi.assert_has_calls(
         expected_calls
@@ -714,7 +798,7 @@ def test_restore_pid(
     draft = service.create(superuser_identity, minimal_record)
     record = service.publish(superuser_identity, draft.id)
 
-    oai = record["pids"]["oai"]["identifier"]
+    # oai = record["pids"]["oai"]["identifier"]  # entfernt, da ungenutzt
     doi = record["pids"]["doi"]["identifier"]
     parent_doi = record["parent"]["pids"]["doi"]["identifier"]
     provider = service.pids.pid_manager._get_provider("doi", "datacite")
@@ -1008,9 +1092,22 @@ def test_full_record_register_crossref(
     full_record,
     superuser_identity,
     mock_crossref_client,
+    crossref_config,
 ):
     """Registers a PID for a full record."""
-    full_record["pids"] = {}
+    running_app.app.config["RDM_PERSISTENT_IDENTIFIERS"]["doi"]["providers"] = [
+        "crossref",
+        "external",
+    ]
+    running_app.app.config["RDM_PERSISTENT_IDENTIFIERS"]["doi"]["is_enabled"] = (
+        lambda *args, **kwargs: True
+    )
+    full_record["pids"]["doi"] = {
+        "identifier": "10.1234/mock.doi",
+        "provider": "crossref",
+        "client": "crossref",
+    }
+    # full_record["metadata"]["resource_type"]["id"] = "publication-preprint"
 
     service = current_rdm_records.records_service
     draft = service.create(superuser_identity, full_record)

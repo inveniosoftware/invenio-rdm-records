@@ -14,11 +14,9 @@ from collections import ChainMap
 from time import time
 
 import requests
-from commonmeta import dig, presence, validate_prefix
+from commonmeta import validate_prefix
 from flask import current_app
-from idutils import is_doi
-from invenio_access.permissions import system_identity
-from invenio_communities import current_communities
+import idutils
 from invenio_i18n import lazy_gettext as _
 from invenio_pidstore.models import PIDStatus
 from requests_toolbelt.multipart.encoder import MultipartEncoder
@@ -84,8 +82,11 @@ class CrossrefClient:
         return True
 
     def generate_doi(self, record, **kwargs):
-        """Generate a DOI. Uses the optional prefix argument or the default for the prefix.
-        Uses the configured format for the suffix"""
+        """Generate a DOI.
+
+        Uses the optional prefix argument or the default for the prefix.
+        Uses the configured format for the suffix.
+        """
         self.check_credentials()
         prefix = kwargs.get("prefix", self.cfg("prefix"))
         if not prefix:
@@ -171,27 +172,6 @@ class CrossrefClient:
             )
             return "ERROR"
 
-    def validate_doi(self, doi):
-        """Validate if a DOI is valid.
-
-        :param doi: DOI string to validate.
-        :returns: True if valid, False otherwise.
-        """
-        if not doi or not is_doi(doi):
-            current_app.logger.error(
-                f"CrossrefClient.validate_doi: DOI format invalid or empty: {doi}"
-            )
-            return False
-
-        try:
-            doi_prefix = validate_prefix(doi)
-            return doi_prefix is not None
-        except Exception as e:
-            current_app.logger.error(
-                f"CrossrefClient.validate_doi: Exception during validation: {type(e).__name__}: {str(e)}"
-            )
-            return False
-
 
 class CrossrefPIDProvider(PIDProvider):
     """Crossref Provider class.
@@ -222,26 +202,19 @@ class CrossrefPIDProvider(PIDProvider):
         self.serializer = serializer or CrossrefXMLSerializer()
 
     def generate_id(self, record, **kwargs):
-        """Generates an identifier value. If CROSSREF_ADDITIONAL_PREFIXES is set, use community-specific DOI prefix."""
-        additional_prefixes = current_app.config.get("CROSSREF_ADDITIONAL_PREFIXES")
-        if presence(additional_prefixes):
-            comid = current_communities.service.read(
-                identity=system_identity, id_=dig(record, "communities.default")
-            )
-            prefix = additional_prefixes.get(comid, None)
-            if presence(prefix):
-                current_app.logger.debug(
-                    f"CrossrefPIDProvider.generate_id: prefix {prefix} for community {comid}"
-                )
-                kwargs["prefix"] = prefix
-
+        """Generates an identifier value."""
         # Delegate to client
         return self.client.generate_doi(record, **kwargs)
 
     @classmethod
     def is_enabled(cls, app):
-        """Determine if crossref is enabled or not."""
-        return app.config.get("CROSSREF_ENABLED", False)
+        """Determine if crossref is enabled or not.
+
+        If DATACITE_ENABLED is set to True or CROSSREF_ENABLED is set to False, the CrossrefPIDProvider is disabled.
+        """
+        return app.config.get("CROSSREF_ENABLED", False) and not app.config.get(
+            "DATACITE_ENABLED", False
+        )
 
     def can_modify(self, pid, **kwargs):
         """Checks if the PID can be modified."""
@@ -325,13 +298,12 @@ class CrossrefPIDProvider(PIDProvider):
                   `{"field": <field>, "messages: ["<msgA1>", ...]}`.
         """
         errors = []
-
         try:
-            # Validate DOI. Should be a valid DOI with an enabled prefix.
+            # Validate DOI. Should be a valid DOI.
             if (
                 not identifier
-                or not is_doi(identifier)
-                or validate_prefix(identifier) is None
+                or not idutils.is_doi(identifier)
+                or not validate_prefix(identifier)
             ):
                 errors.append(
                     {
@@ -340,9 +312,18 @@ class CrossrefPIDProvider(PIDProvider):
                     }
                 )
 
-            success = errors == []
+            # Validate record
+            if not record.get("metadata", {}).get("publisher"):
+                errors.append(
+                    {
+                        "field": "metadata.publisher",
+                        "messages": [
+                            _("Missing publisher field required for DOI registration.")
+                        ],
+                    }
+                )
 
-            return success, errors
+            return not bool(errors), errors
 
         except Exception as e:
             current_app.logger.error(

@@ -14,7 +14,6 @@ import warnings
 from collections import ChainMap
 from json import JSONDecodeError
 
-from commonmeta import dig, presence
 from datacite import DataCiteRESTClient
 from datacite.errors import (
     DataCiteError,
@@ -23,8 +22,6 @@ from datacite.errors import (
     DataCiteServerError,
 )
 from flask import current_app
-from invenio_access.permissions import system_identity
-from invenio_communities import current_communities
 from invenio_i18n import lazy_gettext as _
 from invenio_pidstore.models import PIDStatus
 
@@ -146,19 +143,7 @@ class DataCitePIDProvider(PIDProvider):
                 )
 
     def generate_id(self, record, **kwargs):
-        """Generates an identifier value. If DATACITE_ADDITIONAL_PREFIXES is set, use community-specific DOI prefix."""
-        additional_prefixes = current_app.config.get("DATACITE_ADDITIONAL_PREFIXES")
-        if presence(additional_prefixes):
-            comid = current_communities.service.read(
-                identity=system_identity, id_=dig(record, "communities.default")
-            )
-            prefix = additional_prefixes.get(comid, None)
-            if presence(prefix):
-                current_app.logger.debug(
-                    f"DataCitePIDProvider.generate_id: prefix {prefix} for community {comid}"
-                )
-                kwargs["prefix"] = prefix
-
+        """Generates an identifier value."""
         # Delegate to client
         return self.client.generate_doi(record, **kwargs)
 
