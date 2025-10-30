@@ -450,7 +450,11 @@ RDM_PERSISTENT_IDENTIFIER_PROVIDERS = [
         "doi",
         validators=[
             providers.BlockedPrefixes(
-                config_names=["DATACITE_PREFIX"] + ["CROSSREF_PREFIX"]
+                config_names=[
+                    "DATACITE_PREFIX",
+                    "CROSSREF_PREFIX",
+                    "RDM_COMMUNITY_DOI_PREFIXES",
+                ]
             )
         ],
         label=_("DOI"),
