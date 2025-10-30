@@ -17,8 +17,6 @@ import requests
 from commonmeta import dig, presence, validate_prefix
 from flask import current_app
 from idutils import is_doi
-from invenio_access.permissions import system_identity
-from invenio_communities import current_communities
 from invenio_i18n import lazy_gettext as _
 from invenio_pidstore.models import PIDStatus
 from requests_toolbelt.multipart.encoder import MultipartEncoder
@@ -84,8 +82,11 @@ class CrossrefClient:
         return True
 
     def generate_doi(self, record, **kwargs):
-        """Generate a DOI. Uses the optional prefix argument or the default for the prefix.
-        Uses the configured format for the suffix"""
+        """Generate a DOI.
+
+        Uses the optional prefix argument or the default for the prefix.
+        Uses the configured format for the suffix.
+        """
         self.check_credentials()
         prefix = kwargs.get("prefix", self.cfg("prefix"))
         if not prefix:
@@ -225,13 +226,11 @@ class CrossrefPIDProvider(PIDProvider):
         """Generates an identifier value. If CROSSREF_ADDITIONAL_PREFIXES is set, use community-specific DOI prefix."""
         additional_prefixes = current_app.config.get("CROSSREF_ADDITIONAL_PREFIXES")
         if presence(additional_prefixes):
-            comid = current_communities.service.read(
-                identity=system_identity, id_=dig(record, "communities.default")
-            )
-            prefix = additional_prefixes.get(comid, None)
+            community_id = dig(record, "parent.communities.default")
+            prefix = additional_prefixes.get(community_id, None)
             if presence(prefix):
                 current_app.logger.debug(
-                    f"CrossrefPIDProvider.generate_id: prefix {prefix} for community {comid}"
+                    f"CrossrefPIDProvider.generate_id: prefix {prefix} for community {community_id}"
                 )
                 kwargs["prefix"] = prefix
 
@@ -240,8 +239,13 @@ class CrossrefPIDProvider(PIDProvider):
 
     @classmethod
     def is_enabled(cls, app):
-        """Determine if crossref is enabled or not."""
-        return app.config.get("CROSSREF_ENABLED", False)
+        """Determine if crossref is enabled or not.
+
+        If DATACITE_ENABLED is set to True or CROSSREF_ENABLED is set to False, the CrossrefPIDProvider is disabled.
+        """
+        return app.config.get("CROSSREF_ENABLED", False) and not app.config.get(
+            "DATACITE_ENABLED", False
+        )
 
     def can_modify(self, pid, **kwargs):
         """Checks if the PID can be modified."""

@@ -102,14 +102,22 @@ def test_register_pid_crossref(
     mock_crossref_client,
 ):
     """Registers a Crossref DOI."""
-    minimal_record["pids"]["doi"] = {
-        "identifier": "10.5678/inveniordm.1234",
+    running_app.app.config["RDM_PERSISTENT_IDENTIFIERS"]["doi"]["providers"] = [
+        "crossref",
+        "external",
+    ]
+    running_app.app.config["RDM_PERSISTENT_IDENTIFIERS"]["doi"]["is_enabled"] = (
+        lambda *args, **kwargs: True
+    )
+    service = current_rdm_records.records_service
+    data = minimal_record.copy()
+    doi = "10.5678/test.1234"
+    data["pids"]["doi"] = {
+        "identifier": doi,
         "provider": "crossref",
         "client": "crossref",
     }
-    minimal_record["metadata"]["resource_type"]["id"] = "publication-preprint"
-    service = current_rdm_records.records_service
-    draft = service.create(superuser_identity, minimal_record)
+    draft = service.create(superuser_identity, data)
     draft = service.pids.create(superuser_identity, draft.id, "doi")
     doi = draft["pids"]["doi"]["identifier"]
     provider = service.pids.pid_manager._get_provider("doi", "crossref")
@@ -348,12 +356,18 @@ def test_update_pid_crossref(
     mock_crossref_client,
 ):
     """No pid provided, creating one by default."""
+    running_app.app.config["RDM_PERSISTENT_IDENTIFIERS"]["doi"]["providers"] = [
+        "crossref",
+        "external",
+    ]
+    running_app.app.config["RDM_PERSISTENT_IDENTIFIERS"]["doi"]["is_enabled"] = (
+        lambda *args, **kwargs: True
+    )
     minimal_record["pids"]["doi"] = {
         "identifier": "10.5678/inveniordm.1234",
         "provider": "crossref",
         "client": "crossref",
     }
-    minimal_record["metadata"]["resource_type"]["id"] = "publication-preprint"
     service = current_rdm_records.records_service
     draft = service.create(superuser_identity, minimal_record)
     record = service.publish(superuser_identity, draft.id)
@@ -1010,6 +1024,13 @@ def test_full_record_register_crossref(
     mock_crossref_client,
 ):
     """Registers a PID for a full record."""
+    running_app.app.config["RDM_PERSISTENT_IDENTIFIERS"]["doi"]["providers"] = [
+        "crossref",
+        "external",
+    ]
+    running_app.app.config["RDM_PERSISTENT_IDENTIFIERS"]["doi"]["is_enabled"] = (
+        lambda *args, **kwargs: True
+    )
     full_record["pids"] = {}
 
     service = current_rdm_records.records_service

@@ -112,7 +112,10 @@ from invenio_rdm_records.requests.entity_resolvers import (
     EmailResolver,
     RDMRecordServiceResultResolver,
 )
-from invenio_rdm_records.resources.serializers import DataCite43JSONSerializer
+from invenio_rdm_records.resources.serializers import (
+    DataCite43JSONSerializer,
+    CrossrefXMLSerializer,
+)
 from invenio_rdm_records.services.communities.components import (
     CommunityServiceComponents,
 )
@@ -174,7 +177,7 @@ def mock_crossref_client():
 
 
 @pytest.fixture(scope="module")
-def app_config(app_config, mock_datacite_client):
+def app_config(app_config, mock_datacite_client, mock_crossref_client):
     """Override pytest-invenio app_config fixture.
 
     For test purposes we need to enforce the configuration variables set in
@@ -287,6 +290,12 @@ def app_config(app_config, mock_datacite_client):
             client=mock_datacite_client("datacite", config_prefix="DATACITE"),
             label=_("DOI"),
         ),
+        # Crossref DOI provider with fake client
+        providers.CrossrefPIDProvider(
+            "crossref",
+            client=mock_crossref_client("crossref", config_prefix="CROSSREF"),
+            label=_("DOI"),
+        ),
         # DOI provider for externally managed DOIs
         providers.ExternalPIDProvider(
             "external",
@@ -306,6 +315,13 @@ def app_config(app_config, mock_datacite_client):
             "datacite",
             client=mock_datacite_client("datacite", config_prefix="DATACITE"),
             serializer=DataCite43JSONSerializer(schema_context={"is_parent": True}),
+            label=_("Concept DOI"),
+        ),
+        # Crossref Concept DOI provider
+        providers.CrossrefPIDProvider(
+            "crossref",
+            client=mock_crossref_client("crossref", config_prefix="CROSSREF"),
+            serializer=CrossrefXMLSerializer(schema_context={"is_parent": True}),
             label=_("Concept DOI"),
         ),
     ]
