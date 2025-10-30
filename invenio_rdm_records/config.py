@@ -177,7 +177,7 @@ to least specific.
 
 To update a policy, create a duplicate of it and add a check on creation date to
 both. When your policy comes into effect on a date in the future it will be used,
-and this is the date which you will use to check whether the new or old policy 
+and this is the date which you will use to check whether the new or old policy
 will apply.
 """
 
@@ -236,9 +236,19 @@ to least specific.
 
 To update a policy, create a duplicate of it and add a check on creation date to
 both. When your policy comes into effect on a date in the future it will be used,
-and this is the date which you will use to check whether the new or old policy 
+and this is the date which you will use to check whether the new or old policy
 will apply.
 """
+
+RDM_FILE_MODIFICATION_PERIOD = timedelta(days=30 + 30)
+"""Time period after creation during which modified files can be published.
+30 + 30 denotes grace period + extra days for file modification. This is checked
+during publish to block people from publishing after this period given the bucket stays open.
+"""
+
+RDM_FILE_MODIFICATION_VALIDATION_ERROR_MESSAGE = _(
+    "File modification grace period has passed. Please discard this draft to make any changes."
+)
 
 #
 # Record communities
