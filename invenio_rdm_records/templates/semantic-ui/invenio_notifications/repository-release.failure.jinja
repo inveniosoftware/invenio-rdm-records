@@ -1,19 +1,23 @@
 {% set repository_full_name = notification.context.repository_full_name %}
 {% set release_tag = notification.context.release_tag %}
 {% set draft = notification.context.draft %}
+{% set error_message = notification.context.error_message %}
 
 {% set account_settings_link = invenio_url_for("invenio_notifications_settings.index") %}
 {% set draft_link = draft["links"]["self_html"] %}
 
 {%- block subject -%}
-    {{ _("There was a problem publishing a release from {repository_name}", repository_name=repository_full_name) }}
+    {{ _("There was a problem publishing a release from %(repository_name)s", repository_name=repository_full_name) }}
 {%- endblock subject -%}
 
 {%- block html_body -%}
 <table style="font-family:'Lato',Helvetica,Arial,sans-serif;border-spacing:15px">
     <tr>
-        <td>{{ _("Release {release_tag} of {repository_name} failed to publish.", release_tag=release_tag, repository_name=repository_full_name )}}
+        <td>{{ _("Release %(release_tag)s of %(repository_name)s failed to publish.", release_tag=release_tag, repository_name=repository_full_name )}}
         </td>
+    </tr>
+    <tr>
+        <td>{{ _("Reason:") }} <strong>{{ error_message }}</strong></td>
     </tr>
     <tr>
         <td>{{ _("For more details and to fix any errors,") }} <a href="{{ draft_link }}" class="button">{{ _("view the unpublished draft record.") }}</a></td>
@@ -28,7 +32,9 @@
 {%- endblock html_body -%}
 
 {%- block plain_body -%}
-{{ _("Release {release_tag} of {repository_name} failed to publish.", release_tag=release_tag, repository_name=repository_full_name) }}
+{{ _("Release %(release_tag)s of %(repository_name)s failed to publish.", release_tag=release_tag, repository_name=repository_full_name) }}
+
+{{ _("Reason:") }} {{error_message}}
 
 {{ _("For more details and to fix any errors,") }} [{{ _("view the unpublished draft record.") }}]({{ draft_link }})
 
@@ -37,7 +43,9 @@
 
 {# Markdown for Slack/Mattermost/chat #}
 {%- block md_body -%}
-{{ _("Release {release_tag} of {repository_name} failed to publish.", release_tag=release_tag, repository_name=repository_full_name )}}
+{{ _("Release %(release_tag)s of %(repository_name)s failed to publish.", release_tag=release_tag, repository_name=repository_full_name )}}
+
+{{ _("Reason:") }} {{error_message}}
 
 {{ _("For more details and to fix any errors,") }} [{{ _("view the unpublished draft record.") }}]({{ draft_link }})
 

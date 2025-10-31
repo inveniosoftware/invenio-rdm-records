@@ -14,6 +14,7 @@ from invenio_db import db
 from invenio_i18n import lazy_gettext as _
 from invenio_notifications.services.uow import NotificationOp
 from invenio_records_resources.services.uow import UnitOfWork
+from invenio_vcs.errors import CustomVCSReleaseNoRetryError
 from invenio_vcs.models import ReleaseStatus
 from invenio_vcs.service import VCSRelease
 
@@ -237,6 +238,20 @@ class RDMVCSRelease(VCSRelease):
             # Flag release as FAILED and raise the exception
             self.release_failed()
 
+            # The release publish can fail for a wide range of reasons, each of which have various inconsistent error types.
+            # Some errors have a 'message' attribute or a 'description' attribute, which is not the value that gets used
+            # when the error is stringified.
+            # Some errors might not have any accessible message, so we use the class name as a last resort.
+            error_message = str(ex)
+            if not error_message:
+                if hasattr(ex, "message"):
+                    # Need to stringify the LazyString, otherwise serialisation will fail
+                    error_message = str(ex.message)
+                elif hasattr(ex, "description"):
+                    error_message = str(ex.description)
+                else:
+                    error_message = type(ex).__name__
+
             with UnitOfWork(db.session) as uow:
                 uow.register(
                     NotificationOp(
@@ -245,6 +260,7 @@ class RDMVCSRelease(VCSRelease):
                             generic_repository=self.generic_repo,
                             generic_release=self.generic_release,
                             draft=draft,
+                            error_message=error_message,
                         )
                     )
                 )
@@ -253,7 +269,8 @@ class RDMVCSRelease(VCSRelease):
             # Commit the FAILED state, other changes were already rollbacked by the UOW
             db.session.commit()
 
-            raise ex
+            # Wrap the error to ensure Celery does not attempt to retry it (since user action is needed to resolve the problem)
+            raise CustomVCSReleaseNoRetryError(message=error_message)
 
     def process_release(self):
         """Processes a github release.
