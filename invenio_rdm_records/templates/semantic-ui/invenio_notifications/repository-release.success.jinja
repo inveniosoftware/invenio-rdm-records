@@ -6,13 +6,13 @@
 {% set record_link = record.data["links"]["self_html"] %}
 
 {%- block subject -%}
-    {{ _("A release from {repository_name} was published successfully", repository_name=repository_full_name) }}
+    {{ _("A release from %(repository_name)s was published successfully", repository_name=repository_full_name) }}
 {%- endblock subject -%}
 
 {%- block html_body -%}
 <table style="font-family:'Lato',Helvetica,Arial,sans-serif;border-spacing:15px">
     <tr>
-        <td>{{ _("Release {release_tag} of {repository_name} has been received and published successfully.", release_tag=release_tag, repository_name=repository_full_name) }}
+        <td>{{ _("Release %(release_tag)s of %(repository_name)s has been received and published successfully.", release_tag=release_tag, repository_name=repository_full_name) }}
         </td>
     </tr>
     <tr>
@@ -28,7 +28,7 @@
 {%- endblock html_body -%}
 
 {%- block plain_body -%}
-{{ _("Release {release_tag} of {repository_name} has been received and published successfully.", release_tag=release_tag, repository_name=repository_full_name) }}
+{{ _("Release %(release_tag)s of %(repository_name)s has been received and published successfully.", release_tag=release_tag, repository_name=repository_full_name) }}
 
 {{ _("For more details,") }} [{{ _("view the published record.") }}]({{ record_link }})
 
@@ -37,7 +37,7 @@
 
 {# Markdown for Slack/Mattermost/chat #}
 {%- block md_body -%}
-{{ _("Release {release_tag} of {repository_name} has been received and published successfully.", release_tag=release_tag, repository_name=repository_full_name) }}
+{{ _("Release %(release_tag)s of %(repository_name)s has been received and published successfully.", release_tag=release_tag, repository_name=repository_full_name) }}
 
 {{ _("For more details,") }} [{{ _("view the published record.") }}]({{ record_link }})
 

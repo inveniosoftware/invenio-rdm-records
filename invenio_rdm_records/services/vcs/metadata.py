@@ -12,7 +12,7 @@ from typing import TYPE_CHECKING
 import yaml
 from flask import current_app
 from invenio_i18n import _
-from invenio_vcs.errors import CustomVCSMetadataError
+from invenio_vcs.errors import CustomVCSReleaseNoRetryError
 from invenio_vcs.generic_models import GenericContributor
 from marshmallow import Schema, ValidationError
 from mistune import markdown
@@ -145,8 +145,9 @@ class RDMReleaseMetadata(object):
             # Load metadata from citation file and serialize it
             return self.load_citation_metadata(data)
         except ValidationError as e:
-            # Wrap the error into CustomVCSMetadataError() so it can be handled upstream
-            raise CustomVCSMetadataError(file=citation_file_path, message=e.messages)
+            # Wrap the error into CustomVCSReleaseNoRetryError() so it can be handled upstream.
+            # This also ensures the release isn't retried without user action.
+            raise CustomVCSReleaseNoRetryError(message=e.messages)
 
     @property
     def extra_metadata(self):
