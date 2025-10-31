@@ -4,7 +4,7 @@
 // Invenio-rdm-records is free software; you can redistribute it and/or modify it
 // under the terms of the MIT License; see LICENSE file for more details.
 
-import { i18next } from "@translations/invenio_app_rdm/i18next";
+import { i18next } from "@translations/invenio_rdm_records/i18next";
 import { Formik } from "formik";
 import PropTypes from "prop-types";
 import React, { Component } from "react";
@@ -181,7 +181,13 @@ export class ModificationModal extends Component {
           {({ handleSubmit }) => (
             <Form>
               <ModalContent>
-                <p>{fileModification.fileModification?.policy?.description}</p>
+                <p>
+                  {fileModification.fileModification?.policy?.description}{" "}
+                  {i18next.t(
+                    "Once unlocked you will have {{ daysUntil }} days to publish your changes.",
+                    { daysUntil: fileModification.context.days_until }
+                  )}
+                </p>
                 {this.checklist.length > 0 && (
                   <>
                     <strong>{i18next.t("File modification checklist:")}</strong>
