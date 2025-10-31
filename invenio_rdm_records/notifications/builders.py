@@ -666,9 +666,11 @@ class RepositoryReleaseFailureNotificationBuilder(RepositoryReleaseNotificationB
         generic_repository: GenericRepository,
         generic_release: GenericRelease,
         draft,
+        error_message: str,
     ):
         notification = super().build(provider, generic_repository, generic_release)
         notification.context["draft"] = EntityResolverRegistry.reference_entity(draft)
+        notification.context["error_message"] = error_message
         return notification
 
     context = [EntityResolve(key="draft")]
