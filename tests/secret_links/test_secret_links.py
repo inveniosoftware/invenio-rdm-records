@@ -1,13 +1,14 @@
 # -*- coding: utf-8 -*-
 #
 # Copyright (C) 2021 TU Wien.
+# Copyright (C) 2025 Graz University of Technology.
 #
 # Invenio is free software; you can redistribute it and/or modify it
 # under the terms of the MIT License; see LICENSE file for more details.
 
 """Test SecretLink model class."""
 
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 
 from invenio_db import db
 
@@ -31,7 +32,7 @@ def test_secret_link_creation(app):
 def test_secret_link_not_expired(app):
     """Check is_expired for a link that will expire in 10 minutes."""
     with app.app_context():
-        in_10_mins = datetime.utcnow() + timedelta(minutes=10)
+        in_10_mins = datetime.now(timezone.utc) + timedelta(minutes=10)
         link = SecretLink.create("view", expires_at=in_10_mins)
         db.session.commit()
 
@@ -41,7 +42,7 @@ def test_secret_link_not_expired(app):
 def test_secret_link_expired(app):
     """Check is_expired for a link that expired 10 minutes ago."""
     with app.app_context():
-        _10_mins_ago = datetime.utcnow() - timedelta(minutes=10)
+        _10_mins_ago = datetime.now(timezone.utc) - timedelta(minutes=10)
         link = SecretLink.create("view", expires_at=_10_mins_ago)
         db.session.commit()
 
@@ -55,11 +56,11 @@ def test_secret_link_revoke(app):
         db.session.commit()
         uuid = link.id
 
-        assert SecretLink.query.get(uuid) == link
+        assert db.session.get(SecretLink, uuid) == link
         link.revoke()
         db.session.commit()
 
-        assert SecretLink.query.get(uuid) is None
+        assert db.session.get(SecretLink, uuid) is None
 
 
 def test_secret_link_get_by_token(app):
@@ -99,7 +100,7 @@ def test_secret_link_get_by_old_token(app):
 def test_secret_link_validate_token(app):
     """Check validate_token for a valid token."""
     with app.app_context():
-        in_10_mins = datetime.utcnow() + timedelta(minutes=10)
+        in_10_mins = datetime.now(timezone.utc) + timedelta(minutes=10)
         link = SecretLink.create("view", expires_at=in_10_mins)
         db.session.commit()
 
@@ -109,7 +110,7 @@ def test_secret_link_validate_token(app):
 def test_secret_link_validate_token_expired(app):
     """Check validate_token for an expired token."""
     with app.app_context():
-        _10_mins_ago = datetime.utcnow() - timedelta(minutes=10)
+        _10_mins_ago = datetime.now(timezone.utc) - timedelta(minutes=10)
         link = SecretLink.create("view", expires_at=_10_mins_ago)
         db.session.commit()
 

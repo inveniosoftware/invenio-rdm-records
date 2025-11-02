@@ -1,13 +1,14 @@
 # -*- coding: utf-8 -*-
 #
 # Copyright (C) 2021 TU Wien.
+# Copyright (C) 2025 Graz University of Technology.
 #
 # Invenio is free software; you can redistribute it and/or modify it
 # under the terms of the MIT License; see LICENSE file for more details.
 
 """Test token serializers."""
 
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 
 import pytest
 from itsdangerous import SignatureExpired
@@ -70,7 +71,7 @@ def test_serializer_validate_invalid_token(base_app):
 def test_timed_serializer(base_app):
     """Test loading operations on valid tokens."""
     with base_app.app_context():
-        in_10_mins = datetime.utcnow() + timedelta(minutes=10)
+        in_10_mins = datetime.now(timezone.utc) + timedelta(minutes=10)
         serializer = TimedSecretLinkSerializer(expires_at=in_10_mins)
         tkn_str = serializer.create_token(
             obj_id="someid", extra_data={"hello": "world"}
@@ -100,7 +101,7 @@ def test_timed_serializer(base_app):
 def test_timed_serializer_expired(base_app):
     """Test loading operations on expired tokens."""
     with base_app.app_context():
-        _10_mins_ago = datetime.utcnow() - timedelta(minutes=10)
+        _10_mins_ago = datetime.now(timezone.utc) - timedelta(minutes=10)
         serializer = TimedSecretLinkSerializer(expires_at=_10_mins_ago)
         tkn_str = serializer.create_token(
             obj_id="someid", extra_data={"hello": "world"}
