@@ -283,9 +283,17 @@ class RDMVCSRelease(VCSRelease):
             record = self.publish()
             return record
         except Exception as ex:
-            current_app.logger.exception(
+            message = (
                 f"Error while processing VCS release {self.db_release.id}: {str(ex)}"
             )
+
+            # A CustomVCSReleaseNoRetryError implies that the release failed due to a user error. Therefore, we should not
+            # log this as an exception. This error will be caught upstream by InvenioVCS.
+            if isinstance(ex, CustomVCSReleaseNoRetryError):
+                current_app.logger.info(message)
+            else:
+                current_app.logger.exception(message)
+
             raise ex
 
     def serialize_record(self):
