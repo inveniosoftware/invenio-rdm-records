@@ -261,4 +261,4 @@ def test_dcat_serializer(running_app, full_record_to_dict):
 
     serializer = DCATSerializer()
     serialized_record = serializer.serialize_object(full_record_to_dict)
-    assert expected_data == serialized_record
+    assert serialized_record == expected_data

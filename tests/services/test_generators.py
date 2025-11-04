@@ -16,11 +16,7 @@ fixtures are available.
 
 import pytest
 from flask_principal import Identity, UserNeed
-from invenio_access.permissions import (
-    any_user,
-    authenticated_user,
-    system_process,
-)
+from invenio_access.permissions import any_user, authenticated_user, system_process
 from invenio_communities.generators import CommunityRoleNeed
 from invenio_communities.members.records.api import Member
 from invenio_db import db

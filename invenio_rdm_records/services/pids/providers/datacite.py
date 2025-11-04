@@ -25,7 +25,7 @@ from flask import current_app
 from invenio_i18n import lazy_gettext as _
 from invenio_pidstore.models import PIDStatus
 
-from ....resources.serializers import DataCite43JSONSerializer
+from ....resources.serializers import DataCite45JSONSerializer
 from ....utils import ChainObject
 from .base import PIDProvider
 
@@ -112,7 +112,7 @@ class DataCitePIDProvider(PIDProvider):
             pid_type=pid_type,
             default_status=default_status,
         )
-        self.serializer = serializer or DataCite43JSONSerializer()
+        self.serializer = serializer or DataCite45JSONSerializer()
 
     @staticmethod
     def _log_errors(exception):

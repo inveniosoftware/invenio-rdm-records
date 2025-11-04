@@ -29,7 +29,7 @@ from invenio_rdm_records.services.components.verified import UserModerationHandl
 from . import tokens
 from .requests.community_inclusion import CommunityInclusion
 from .requests.community_submission import CommunitySubmission
-from .resources.serializers import DataCite43JSONSerializer
+from .resources.serializers import DataCite45JSONSerializer
 from .services import facets
 from .services.config import lock_edit_published_files
 from .services.deletion_policy import (
@@ -498,7 +498,7 @@ RDM_PARENT_PERSISTENT_IDENTIFIER_PROVIDERS = [
     providers.DataCitePIDProvider(
         "datacite",
         client=providers.DataCiteClient("datacite", config_prefix="DATACITE"),
-        serializer=DataCite43JSONSerializer(schema_context={"is_parent": True}),
+        serializer=DataCite45JSONSerializer(schema_context={"is_parent": True}),
         label=_("Concept DOI"),
     ),
 ]

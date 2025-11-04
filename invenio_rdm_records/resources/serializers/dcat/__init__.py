@@ -11,7 +11,7 @@
 import mimetypes
 from importlib.resources import files
 
-from datacite import schema43
+from datacite import schema45
 from flask_resources import BaseListSchema, MarshmallowSerializer
 from flask_resources.serializers import SimpleSerializer
 from idutils import detect_identifier_schemes, to_url
@@ -202,8 +202,8 @@ class DCATSerializer(MarshmallowSerializer):
 
     def transform_with_xslt(self, dc_record, **kwargs):
         """Transform record with XSLT."""
-        dc_etree = schema43.dump_etree(dc_record)
-        dc_namespace = schema43.ns[None]
+        dc_etree = schema45.dump_etree(dc_record)
+        dc_namespace = schema45.ns[None]
         dc_etree.tag = "{{{0}}}resource".format(dc_namespace)
         dcat_etree = self.xslt_transform_func(dc_etree).getroot()
 

@@ -55,8 +55,8 @@ from .serializers import (
     BibtexSerializer,
     CSLJSONSerializer,
     CSVRecordSerializer,
-    DataCite43JSONSerializer,
-    DataCite43XMLSerializer,
+    DataCite45JSONSerializer,
+    DataCite45XMLSerializer,
     DataPackageSerializer,
     DCATSerializer,
     DublinCoreXMLSerializer,
@@ -121,13 +121,13 @@ record_serializers = {
         CSLJSONSerializer(), headers=etag_headers
     ),
     "application/vnd.datacite.datacite+json": ResponseHandler(
-        DataCite43JSONSerializer(), headers=etag_headers
+        DataCite45JSONSerializer(), headers=etag_headers
     ),
     "application/vnd.geo+json": ResponseHandler(
         GeoJSONSerializer(), headers=etag_headers
     ),
     "application/vnd.datacite.datacite+xml": ResponseHandler(
-        DataCite43XMLSerializer(), headers=etag_headers
+        DataCite45XMLSerializer(), headers=etag_headers
     ),
     f'application/ld+json;profile="{DATAPACKAGE_PROFILE}"': ResponseHandler(
         DataPackageSerializer(), headers=etag_headers

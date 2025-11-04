@@ -86,7 +86,7 @@ def test_datacite_provider_reserve(record, datacite_provider):
 def test_datacite_provider_register(record_w_links, datacite_provider, mocker):
     mocker.patch(
         "invenio_rdm_records.services.pids.providers.datacite."
-        + "DataCite43JSONSerializer"
+        + "DataCite45JSONSerializer"
     )
     created_pid = datacite_provider.get(record_w_links["pids"]["doi"]["identifier"])
     assert datacite_provider.register(
@@ -106,7 +106,7 @@ def test_datacite_provider_register(record_w_links, datacite_provider, mocker):
 def test_datacite_provider_update(record_w_links, datacite_provider, mocker):
     mocker.patch(
         "invenio_rdm_records.services.pids.providers.datacite."
-        + "DataCite43JSONSerializer"
+        + "DataCite45JSONSerializer"
     )
     created_pid = datacite_provider.get(record_w_links["pids"]["doi"]["identifier"])
     assert datacite_provider.register(
@@ -149,7 +149,7 @@ def test_datacite_provider_unregister_registered(
 ):
     mocker.patch(
         "invenio_rdm_records.services.pids.providers.datacite."
-        + "DataCite43JSONSerializer"
+        + "DataCite45JSONSerializer"
     )
     # Unregister NEW is a soft delete
     created_pid = datacite_provider.get(record_w_links["pids"]["doi"]["identifier"])

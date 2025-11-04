@@ -21,7 +21,12 @@ from .cff import CFFSerializer
 from .codemeta import CodemetaSerializer
 from .csl import CSLJSONSerializer, StringCitationSerializer
 from .csv import CSVRecordSerializer
-from .datacite import DataCite43JSONSerializer, DataCite43XMLSerializer
+from .datacite import (
+    DataCite43JSONSerializer,
+    DataCite43XMLSerializer,
+    DataCite45JSONSerializer,
+    DataCite45XMLSerializer,
+)
 from .datapackage import DataPackageSerializer
 from .dcat import DCATSerializer
 from .dublincore import DublinCoreJSONSerializer, DublinCoreXMLSerializer
@@ -47,6 +52,8 @@ __all__ = (
     "CSVRecordSerializer",
     "DataCite43JSONSerializer",
     "DataCite43XMLSerializer",
+    "DataCite45JSONSerializer",
+    "DataCite45XMLSerializer",
     "DataPackageSerializer",
     "DublinCoreJSONSerializer",
     "DublinCoreXMLSerializer",

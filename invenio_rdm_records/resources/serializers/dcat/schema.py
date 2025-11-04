@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2023-2024 CERN.
+# Copyright (C) 2023-2025 CERN.
 # Copyright (C) 2025 Northwestern University.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
@@ -13,10 +13,10 @@ from invenio_base import invenio_url_for
 from marshmallow import ValidationError, fields, missing, validate
 from marshmallow_utils.html import sanitize_unicode
 
-from invenio_rdm_records.resources.serializers.datacite import DataCite43Schema
+from invenio_rdm_records.resources.serializers.datacite import DataCite45Schema
 
 
-class DcatSchema(DataCite43Schema):
+class DcatSchema(DataCite45Schema):
     """Dcat Marshmallow Schema."""
 
     _files = fields.Method("get_files")
