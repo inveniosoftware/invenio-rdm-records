@@ -188,6 +188,16 @@
     de: SupervisorIn
     es: Supervisor
     cs: Supervizor
+- id: translator
+  props:
+    datacite: Translator
+    marc: trl
+  title:
+    en: Translator
+    sv: Oeversaettare
+    de: Uebersetzer
+    es: Traductor
+    cs: Prekladatel
 - id: workpackageleader
   props:
     datacite: WorkPackageLeader
