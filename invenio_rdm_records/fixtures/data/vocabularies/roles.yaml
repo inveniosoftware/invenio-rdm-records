@@ -194,10 +194,10 @@
     marc: trl
   title:
     en: Translator
-    sv: Oeversaettare
-    de: Uebersetzer
+    sv: Översättare
+    de: Übersetzer
     es: Traductor
-    cs: Prekladatel
+    cs: Překladatel
 - id: workpackageleader
   props:
     datacite: WorkPackageLeader
