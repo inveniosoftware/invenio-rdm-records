@@ -104,22 +104,6 @@ def record_version(obj):
     return field_data
 
 
-def mask_removed_by(obj):
-    """Mask information about who removed the record."""
-    return_value = _("Unknown")
-    removed_by = obj.get("removed_by", None)
-
-    if removed_by is not None:
-        user = removed_by.get("user", None)
-
-        if user == "system":
-            return_value = _("System (automatic)")
-        elif user is not None:
-            return_value = _("Admin")
-
-    return return_value
-
-
 def get_coordinates(obj):
     """Coordinates determined by geometry type."""
     geometry_type = obj.get("type", None)
@@ -348,7 +332,8 @@ class TombstoneSchema(Schema):
 
     note = fields.String(attribute="note")
 
-    removed_by = fields.Function(mask_removed_by)
+    # This information is masked into a string in UIRecordSchema
+    removed_by = fields.Raw(attribute="removed_by")
 
     removal_date_l10n_medium = FormatEDTF(attribute="removal_date", format="medium")
 
@@ -430,6 +415,26 @@ class UIRecordSchema(BaseObjectSchema):
     tombstone = fields.Nested(TombstoneSchema, attribute="tombstone")
 
     locations = fields.Nested(LocationSchema, attribute="metadata.locations")
+
+    @post_dump(pass_original=True)
+    def mask_removed_by(self, obj, orig, **kwargs):
+        """Mask information about who removed the record."""
+        if not (tombstone := obj.get("tombstone", None)):
+            return obj
+
+        masked = _("NA")
+        removed_by = tombstone.get("removed_by", {}).get("user", None)
+        orig_owner = orig["parent"]["access"]["owned_by"].get("user", None)
+
+        if removed_by == "system":
+            masked = _("System (automatic)")
+        elif removed_by == orig_owner:
+            masked = _("Owner")
+        elif removed_by is not None:
+            masked = _("Admin")
+
+        obj["tombstone"]["removed_by"] = masked
+        return obj
 
     @pre_dump
     def add_communities_permissions_and_roles(self, obj, **kwargs):
