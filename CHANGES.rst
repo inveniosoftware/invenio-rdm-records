@@ -12,6 +12,10 @@
 Changes
 =======
 
+Version v22.4.0 (released 2025-XX-XX)
+
+- setup: bump `invenio-github` major version
+
 Version v22.3.0 (released 2025-11-05)
 
 - feat(serializers.datacite): Add DataCite schema version 4.5 support
