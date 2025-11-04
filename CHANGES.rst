@@ -12,6 +12,11 @@
 Changes
 =======
 
+Version v22.2.0 (released 2025-11-04)
+
+- feat(secret-links): make expiration date optional or required for secret links
+- feat(community-records): adds service component calls to RecordCommunitiesService
+
 Version v22.1.0 (released 2025-10-27)
 
 - feat(form): add support for help text to creatibutors button in the deposit form
