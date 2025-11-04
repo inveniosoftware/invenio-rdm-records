@@ -57,9 +57,9 @@ def test_register_pid(
         [
             mock.call(
                 metadata={
-                    "identifiers": [{"identifier": doi, "identifierType": "DOI"}],
+                    "doi": doi,
                     "types": {"resourceTypeGeneral": "Image", "resourceType": "Photo"},
-                    "publisher": "Acme Inc",
+                    "publisher": {"name": "Acme Inc"},
                     "creators": [
                         {
                             "givenName": "Troy",
@@ -125,9 +125,9 @@ def test_register_restricted_pid(
         [
             mock.call(
                 metadata={
-                    "identifiers": [{"identifier": doi, "identifierType": "DOI"}],
+                    "doi": doi,
                     "types": {"resourceTypeGeneral": "Image", "resourceType": "Photo"},
-                    "publisher": "Acme Inc",
+                    "publisher": {"name": "Acme Inc"},
                     "creators": [
                         {
                             "givenName": "Troy",
@@ -213,15 +213,15 @@ def test_update_pid(
                     ],
                     "titles": [{"title": "A Romans story"}],
                     "dates": [{"date": "2020-06-01", "dateType": "Issued"}],
-                    "identifiers": [
-                        {"identifier": doi, "identifierType": "DOI"},
+                    "alternateIdentifiers": [
                         {
-                            "identifier": oai,
-                            "identifierType": "oai",
+                            "alternateIdentifier": oai,
+                            "alternateIdentifierType": "oai",
                         },
                     ],
+                    "doi": doi,
                     "publicationYear": "2020",
-                    "publisher": "Acme Inc",
+                    "publisher": {"name": "Acme Inc"},
                 },
                 doi=doi,
                 url=f"https://127.0.0.1:5000/doi/{doi}",
@@ -254,11 +254,9 @@ def test_update_pid(
                     ],
                     "titles": [{"title": "A Romans story"}],
                     "dates": [{"date": "2020-06-01", "dateType": "Issued"}],
-                    "identifiers": [
-                        {"identifier": parent_doi, "identifierType": "DOI"}
-                    ],
+                    "doi": parent_doi,
                     "publicationYear": "2020",
-                    "publisher": "Acme Inc",
+                    "publisher": {"name": "Acme Inc"},
                 },
                 doi=parent_doi,
                 url=f"https://127.0.0.1:5000/doi/{parent_doi}",
@@ -323,11 +321,9 @@ def test_invalidate_pid(
                     ],
                     "titles": [{"title": "A Romans story"}],
                     "dates": [{"date": "2020-06-01", "dateType": "Issued"}],
-                    "identifiers": [
-                        {"identifier": parent_doi, "identifierType": "DOI"}
-                    ],
+                    "doi": parent_doi,
                     "publicationYear": "2020",
-                    "publisher": "Acme Inc",
+                    "publisher": {"name": "Acme Inc"},
                 },
                 doi=parent_doi,
                 url=f"https://127.0.0.1:5000/doi/{parent_doi}",
@@ -414,9 +410,9 @@ def test_invalidate_versions_pid(
                 ],
                 "titles": [{"title": "A Romans story v2"}],
                 "dates": [{"date": "2020-06-01", "dateType": "Issued"}],
-                "identifiers": [{"identifier": parent_doi, "identifierType": "DOI"}],
+                "doi": parent_doi,
                 "publicationYear": "2020",
-                "publisher": "Acme Inc",
+                "publisher": {"name": "Acme Inc"},
             },
             doi=parent_doi,
             url=f"https://127.0.0.1:5000/doi/{parent_doi}",
@@ -450,11 +446,9 @@ def test_invalidate_versions_pid(
                 ],
                 "titles": [{"title": "A Romans story v2"}],
                 "dates": [{"date": "2020-06-01", "dateType": "Issued"}],
-                "identifiers": [
-                    {"identifier": parent_doi, "identifierType": "DOI"},
-                ],
+                "doi": parent_doi,
                 "publicationYear": "2020",
-                "publisher": "Acme Inc",
+                "publisher": {"name": "Acme Inc"},
             },
             doi=parent_doi,
             url=f"https://127.0.0.1:5000/doi/{parent_doi}",
@@ -497,11 +491,9 @@ def test_invalidate_versions_pid(
                     ],
                     "titles": [{"title": "A Romans story v2"}],
                     "dates": [{"date": "2020-06-01", "dateType": "Issued"}],
-                    "identifiers": [
-                        {"identifier": parent_doi, "identifierType": "DOI"},
-                    ],
+                    "doi": parent_doi,
                     "publicationYear": "2020",
-                    "publisher": "Acme Inc",
+                    "publisher": {"name": "Acme Inc"},
                 },
                 doi=parent_doi,
                 url=f"https://127.0.0.1:5000/doi/{parent_doi}",
@@ -565,9 +557,9 @@ def test_restore_pid(
                 ],
                 "titles": [{"title": "A Romans story"}],
                 "dates": [{"date": "2020-06-01", "dateType": "Issued"}],
-                "identifiers": [{"identifier": parent_doi, "identifierType": "DOI"}],
+                "doi": parent_doi,
                 "publicationYear": "2020",
-                "publisher": "Acme Inc",
+                "publisher": {"name": "Acme Inc"},
             },
             doi=parent_doi,
             url=f"https://127.0.0.1:5000/doi/{parent_doi}",
@@ -615,11 +607,9 @@ def test_restore_pid(
                     ],
                     "titles": [{"title": "A Romans story"}],
                     "dates": [{"date": "2020-06-01", "dateType": "Issued"}],
-                    "identifiers": [
-                        {"identifier": parent_doi, "identifierType": "DOI"}
-                    ],
+                    "doi": parent_doi,
                     "publicationYear": "2020",
-                    "publisher": "Acme Inc",
+                    "publisher": {"name": "Acme Inc"},
                 },
                 doi=parent_doi,
                 url=f"https://127.0.0.1:5000/doi/{parent_doi}",
@@ -747,19 +737,16 @@ def test_full_record_register(
                             },
                         }
                     ],
-                    "identifiers": [
+                    "doi": doi,
+                    "alternateIdentifiers": [
                         {
-                            "identifier": doi,
-                            "identifierType": "DOI",
-                        },
-                        {
-                            "identifier": "1924MNRAS..84..308E",
-                            "identifierType": "bibcode",
+                            "alternateIdentifier": "1924MNRAS..84..308E",
+                            "alternateIdentifierType": "bibcode",
                         },
                     ],
                     "language": "dan",
                     "publicationYear": "2018",
-                    "publisher": "InvenioRDM",
+                    "publisher": {"name": "InvenioRDM"},
                     "relatedIdentifiers": [
                         {
                             "relatedIdentifier": "10.1234/foo.bar",

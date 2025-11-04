@@ -47,10 +47,7 @@ from flask_principal import Identity, Need, RoleNeed, UserNeed
 from flask_security import login_user
 from flask_security.utils import hash_password
 from invenio_access.models import ActionRoles
-from invenio_access.permissions import (
-    superuser_access,
-    system_identity,
-)
+from invenio_access.permissions import superuser_access, system_identity
 from invenio_accounts.models import Role
 from invenio_accounts.testutils import login_user_via_session
 from invenio_administration.permissions import administration_access_action
@@ -112,7 +109,7 @@ from invenio_rdm_records.requests.entity_resolvers import (
     EmailResolver,
     RDMRecordServiceResultResolver,
 )
-from invenio_rdm_records.resources.serializers import DataCite43JSONSerializer
+from invenio_rdm_records.resources.serializers import DataCite45JSONSerializer
 from invenio_rdm_records.services.communities.components import (
     CommunityServiceComponents,
 )
@@ -236,7 +233,7 @@ def app_config(app_config, mock_datacite_client):
         },
         "datacite": {
             "serializer": "invenio_rdm_records.oai:datacite_etree",
-            "schema": "http://schema.datacite.org/meta/kernel-4.3/metadata.xsd",
+            "schema": "http://schema.datacite.org/meta/kernel-4.5/metadata.xsd",
             "namespace": "http://datacite.org/schema/kernel-4",
         },
         "oai_datacite": {
@@ -246,7 +243,7 @@ def app_config(app_config, mock_datacite_client):
         },
         "datacite4": {
             "serializer": "invenio_rdm_records.oai:datacite_etree",
-            "schema": "http://schema.datacite.org/meta/kernel-4.3/metadata.xsd",
+            "schema": "http://schema.datacite.org/meta/kernel-4.5/metadata.xsd",
             "namespace": "http://datacite.org/schema/kernel-4",
         },
         "oai_datacite4": {
@@ -298,7 +295,7 @@ def app_config(app_config, mock_datacite_client):
         providers.DataCitePIDProvider(
             "datacite",
             client=mock_datacite_client("datacite", config_prefix="DATACITE"),
-            serializer=DataCite43JSONSerializer(schema_context={"is_parent": True}),
+            serializer=DataCite45JSONSerializer(schema_context={"is_parent": True}),
             label=_("Concept DOI"),
         ),
     ]

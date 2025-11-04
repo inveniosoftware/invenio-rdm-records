@@ -8,7 +8,7 @@
 
 """Invenio-RDM-Records OAI Functionality."""
 
-from datacite import schema43
+from datacite import schema45
 from dcxml import simpledc
 from flask import current_app, g
 from invenio_pidstore.errors import PersistentIdentifierError, PIDDoesNotExistError
@@ -20,7 +20,7 @@ from invenio_search.engine import dsl
 from lxml import etree
 
 from .proxies import current_rdm_records, current_rdm_records_service
-from .resources.serializers.datacite import DataCite43XMLSerializer
+from .resources.serializers.datacite import DataCite45XMLSerializer
 from .resources.serializers.dcat import DCATSerializer
 from .resources.serializers.dublincore import DublinCoreXMLSerializer
 from .resources.serializers.marcxml import MARCXMLSerializer
@@ -62,8 +62,8 @@ def datacite_etree(pid, record):
     It assumes that record is a search result.
     """
     # TODO: Ditto. See https://github.com/inveniosoftware/flask-resources/issues/117
-    data_dict = DataCite43XMLSerializer().dump_obj(record["_source"])
-    return schema43.dump_etree(data_dict)
+    data_dict = DataCite45XMLSerializer().dump_obj(record["_source"])
+    return schema45.dump_etree(data_dict)
 
 
 def oai_datacite_etree(pid, record):
@@ -73,7 +73,7 @@ def oai_datacite_etree(pid, record):
     """
     # TODO: See https://github.com/inveniosoftware/flask-resources/issues/117
     # This should be made into a serializer similar to the ones above.
-    resource_dict = DataCite43XMLSerializer().dump_obj(record["_source"])
+    resource_dict = DataCite45XMLSerializer().dump_obj(record["_source"])
 
     nsmap = {
         None: "http://schema.datacite.org/oai/oai-1.1/",
@@ -94,11 +94,11 @@ def oai_datacite_etree(pid, record):
     payload = etree.SubElement(oai_datacite, "payload")
 
     # dump the record's metadata as usual
-    resource = schema43.dump_etree(resource_dict)
+    resource = schema45.dump_etree(resource_dict)
     payload.append(resource)
 
     # set up the elements' contents
-    schema_version.text = "4.3"
+    schema_version.text = "4.5"
     datacentre_symbol.text = current_app.config.get("DATACITE_DATACENTER_SYMBOL")
 
     return oai_datacite
