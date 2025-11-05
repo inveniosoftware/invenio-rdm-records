@@ -12,6 +12,11 @@
 Changes
 =======
 
+Version v22.3.0 (released 2025-11-05)
+
+- feat(serializers.datacite): Add DataCite schema version 4.5 support
+- fix(services): Make 'notes' parameter optional in _update_quota
+
 Version v22.2.0 (released 2025-11-04)
 
 - feat(secret-links): make expiration date optional or required for secret links
