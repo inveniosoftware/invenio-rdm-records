@@ -304,7 +304,7 @@ export const FileUploaderComponent = ({
               </Grid.Row>
             ) : (
               filesLocked &&
-              (fileModification.fileModification?.enabled ? (
+              (fileModification.enabled ? (
                 <Grid.Row className="file-upload-note pt-5">
                   <Grid.Column width={16}>
                     <EditFilesAccordion
