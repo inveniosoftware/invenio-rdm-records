@@ -65,7 +65,7 @@ export class AdditionalDescriptionsField extends Component {
                       suggestions.map((item) => ({
                         text: item.title_l10n,
                         value: item.id,
-                        fieldPathPrefix: item.id,
+                        key: item.id,
                       }))
                     }
                     initialOptions={

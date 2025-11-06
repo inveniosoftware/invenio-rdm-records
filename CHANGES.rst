@@ -13,6 +13,10 @@
 Changes
 =======
 
+Version v19.5.12 (released 2025-11-06)
+
+- fix: showing all available suggestions in lang picker
+
 Version v19.5.11 (released 2025-10-24)
 
 - fix: duplicate uploads from resetting progress
