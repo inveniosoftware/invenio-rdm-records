@@ -1,6 +1,7 @@
 // This file is part of Invenio-RDM-Records
 // Copyright (C) 2020-2025 CERN.
 // Copyright (C) 2020-2022 Northwestern University.
+// Copyright (C) 2025 Graz University of Technology.
 //
 // Invenio-RDM-Records is free software; you can redistribute it and/or modify it
 // under the terms of the MIT License; see LICENSE file for more details.
@@ -96,7 +97,11 @@ class PublishButtonComponent extends Component {
     const { isConfirmModalOpen } = this.state;
     const { values, isSubmitting } = formik;
 
-    const uiProps = _omit(ui, ["dispatch"]);
+    const uiProps = _omit(ui, [
+      "dispatch",
+      "doiReservationCheck",
+      "publishWithoutCommunity",
+    ]);
 
     return (
       <>
