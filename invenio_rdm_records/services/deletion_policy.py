@@ -21,6 +21,7 @@ class BasePolicy:
 
     id: str
     description: str
+    tombstone_description: str
 
     def is_allowed(self, identity, record):
         """Whether the identity is allowed to delete the record."""
@@ -46,6 +47,9 @@ class GracePeriodPolicy(BasePolicy):
         self.grace_period = grace_period
         self.description = _(
             "You can delete your records within {grace_period} days of publishing."
+        ).format(grace_period=grace_period.days)
+        self.tombstone_description = _(
+            "Record owners can delete their records within {grace_period} days of publishing."
         ).format(grace_period=grace_period.days)
 
     def is_allowed(self, identity, record):
@@ -141,3 +145,15 @@ class RDMRecordDeletionPolicy:
                 record,
             ),
         }
+
+    @classmethod
+    def get_policy_description(cls, policy_id):
+        """Get deletion policy description."""
+        if not policy_id:
+            return None
+
+        policies = current_app.config.get("RDM_IMMEDIATE_RECORD_DELETION_POLICIES", [])
+        for policy in policies:
+            if policy.id == policy_id:
+                return policy.tombstone_description
+        return None
