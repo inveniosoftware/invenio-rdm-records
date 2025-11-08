@@ -1,7 +1,7 @@
 // This file is part of Invenio-RDM-Records
 // Copyright (C) 2020-2025 CERN.
 // Copyright (C) 2020-2022 Northwestern University.
-// Copyright (C) 2021 Graz University of Technology.
+// Copyright (C) 2021-2025 Graz University of Technology.
 //
 // Invenio-RDM-Records is free software; you can redistribute it and/or modify it
 // under the terms of the MIT License; see LICENSE file for more details.
@@ -168,7 +168,7 @@ class DisconnectedFormFeedback extends Component {
         <Grid container>
           <Grid.Column width={15} textAlign="left">
             <strong>
-              <Icon name={icon} middle aligned /> {backendErrorMessage || message}
+              <Icon name={icon} /> {backendErrorMessage || message}
               <FormFeedbackSummary sectionsConfig={sectionsConfig} errors={errors} />
             </strong>
           </Grid.Column>
