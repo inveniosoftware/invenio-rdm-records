@@ -32,6 +32,7 @@ from marshmallow_utils.fields import FormatEDTF as FormatEDTF_
 from marshmallow_utils.fields import SanitizedHTML, SanitizedUnicode, StrippedHTML
 from marshmallow_utils.fields.babel import gettext_from_dict
 from pyparsing import ParseException
+
 from invenio_rdm_records.services.deletion_policy import RDMRecordDeletionPolicy
 
 from .fields import AccessStatusField
@@ -350,6 +351,7 @@ class TombstoneSchema(Schema):
         """Get deletion policy description."""
         policy_id = obj.get("deletion_policy", {}).get("id", None)
         return RDMRecordDeletionPolicy.get_policy_description(policy_id)
+
 
 class UIRecordSchema(BaseObjectSchema):
     """Schema for dumping extra information for the UI."""
