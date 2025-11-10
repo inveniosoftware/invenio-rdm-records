@@ -7,7 +7,11 @@
 
 """Service component taking care of files-related tasks such as setting the quota."""
 
+from datetime import datetime
+
+from flask import current_app
 from invenio_drafts_resources.services.records.components import DraftFilesComponent
+from marshmallow import ValidationError
 
 from ...records.api import get_files_quota
 
@@ -25,3 +29,28 @@ class RDMDraftFilesComponent(DraftFilesComponent):
 
         if max_file_size := quota.get("max_file_size"):
             record.files.bucket.max_file_size = max_file_size
+
+    def publish(self, identity, draft=None, record=None, errors=None):
+        """Check if files modified can be published."""
+        # Check if modified files are being published after modification period
+        can_manage_files = self.service.check_permission(
+            identity, "manage_files", record=draft
+        )
+        file_mod_enabled = current_app.config.get(
+            "RDM_IMMEDIATE_FILE_MODIFICATION_ENABLED"
+        )
+        modification_period = current_app.config.get("RDM_FILE_MODIFICATION_PERIOD")
+        if (
+            file_mod_enabled
+            and record.is_published  # Draft should be of a published record
+            and not can_manage_files  # This allows admins to bypass the check
+            and not draft.files.bucket.locked  # Only if the bucket is still unlocked
+        ):
+            if (datetime.utcnow() - record.created) > modification_period:
+                raise ValidationError(
+                    current_app.config.get(
+                        "RDM_FILE_MODIFICATION_VALIDATION_ERROR_MESSAGE"
+                    )
+                )
+
+        super().publish(identity, draft=draft, record=record)

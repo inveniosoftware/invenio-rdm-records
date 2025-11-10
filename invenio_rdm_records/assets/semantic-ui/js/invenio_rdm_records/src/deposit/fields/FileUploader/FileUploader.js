@@ -17,9 +17,10 @@ import PropTypes from "prop-types";
 import React, { useState } from "react";
 import { Button, Grid, Icon, Message, Modal } from "semantic-ui-react";
 import { UploadState } from "../../state/reducers/files";
-import { NewVersionButton } from "../../controls/NewVersionButton";
 import { FileUploaderArea } from "./FileUploaderArea";
 import { FileUploaderToolbar } from "./FileUploaderToolbar";
+import { NewVersionButton } from "../../controls/NewVersionButton";
+import { EditFilesAccordion } from "./EditFilesAccordion";
 import { humanReadableBytes } from "react-invenio-forms";
 import Overridable from "react-overridable";
 import { getFilesList } from "./utils";
@@ -43,6 +44,7 @@ export const FileUploaderComponent = ({
   decimalSizeDisplay,
   filesLocked,
   allowEmptyFiles,
+  fileModification,
   ...uiProps
 }) => {
   // We extract the working copy of the draft stored as `values` in formik
@@ -172,6 +174,7 @@ export const FileUploaderComponent = ({
 
   const displayImportBtn =
     filesEnabled && isDraftRecord && hasParentRecord && !filesList.length;
+
   return (
     <Overridable
       id="InvenioRdmRecords.DepositForm.FileUploader.Container"
@@ -300,7 +303,19 @@ export const FileUploaderComponent = ({
                 </Grid.Column>
               </Grid.Row>
             ) : (
-              filesLocked && (
+              filesLocked &&
+              (fileModification.enabled ? (
+                <Grid.Row className="file-upload-note pt-5">
+                  <Grid.Column width={16}>
+                    <EditFilesAccordion
+                      record={record}
+                      permissions={permissions}
+                      fileModification={fileModification}
+                      draft={formikDraft}
+                    />
+                  </Grid.Column>
+                </Grid.Row>
+              ) : (
                 <Grid.Row className="file-upload-note pt-5">
                   <Grid.Column width={16}>
                     <Message info>
@@ -319,7 +334,7 @@ export const FileUploaderComponent = ({
                     </Message>
                   </Grid.Column>
                 </Grid.Row>
-              )
+              ))
             )}
           </Overridable>
         </Grid>
@@ -378,6 +393,7 @@ FileUploaderComponent.propTypes = {
   filesLocked: PropTypes.bool,
   permissions: PropTypes.object,
   allowEmptyFiles: PropTypes.bool,
+  fileModification: PropTypes.object,
 };
 
 FileUploaderComponent.defaultProps = {
@@ -400,4 +416,5 @@ FileUploaderComponent.defaultProps = {
   decimalSizeDisplay: true,
   filesLocked: false,
   allowEmptyFiles: true,
+  fileModification: {},
 };
