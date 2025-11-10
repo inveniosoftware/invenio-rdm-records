@@ -12,6 +12,7 @@ import { ModificationModal } from "./ModificationModal";
 
 export const FileModification = ({
   disabled,
+  draft,
   record,
   permissions,
   fileModification,
@@ -45,6 +46,7 @@ export const FileModification = ({
         }
       />
       <ModificationModal
+        draft={draft}
         record={record}
         open={modalOpen}
         handleClose={handleClose}
@@ -57,6 +59,7 @@ export const FileModification = ({
 
 FileModification.propTypes = {
   disabled: PropTypes.bool,
+  draft: PropTypes.object.isRequired,
   record: PropTypes.object.isRequired,
   permissions: PropTypes.object.isRequired,
   fileModification: PropTypes.object,

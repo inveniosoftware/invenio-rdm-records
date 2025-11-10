@@ -9,6 +9,8 @@ import { Formik } from "formik";
 import PropTypes from "prop-types";
 import React, { Component } from "react";
 import Overridable from "react-overridable";
+import { save } from "../../../state/actions";
+import { connect } from "react-redux";
 
 import { ErrorMessage, http, withCancel } from "react-invenio-forms";
 import {
@@ -28,7 +30,7 @@ import {
 } from "semantic-ui-react";
 import RadioGroup from "./RadioGroup";
 
-export class ModificationModal extends Component {
+class ModificationModalComponent extends Component {
   constructor(props) {
     super(props);
     this.initState = {
@@ -85,7 +87,7 @@ export class ModificationModal extends Component {
 
   handleSubmit = async (values) => {
     this.setState({ loading: true });
-    const { record } = this.props;
+    const { draft, record, saveAction } = this.props;
     const payload = {
       reason: values.reason,
       comment: values.comment,
@@ -97,6 +99,9 @@ export class ModificationModal extends Component {
       });
       return;
     }
+
+    // save draft before reloading the page
+    await saveAction(draft, {});
 
     this.cancellableAction = withCancel(
       http.post(record.links.file_modification, payload)
@@ -219,14 +224,9 @@ export class ModificationModal extends Component {
                   </>
                 )}
                 <Checkbox
-                  label={
-                    /* eslint-disable-next-line jsx-a11y/label-has-associated-control */
-                    <label>
-                      {i18next.t(
-                        "I will not modify files that supplement findings/results of an already published work."
-                      )}
-                    </label>
-                  }
+                  label={i18next.t(
+                    "I will not modify files that supplement findings/results of an already published work."
+                  )}
                   className="mt-5 mb-5"
                   onChange={() => this.handleCheckboxUpdate(0)}
                 />
@@ -251,7 +251,7 @@ export class ModificationModal extends Component {
                   className="primary"
                   icon="lock open"
                   type="submit"
-                  onClick={(event) => handleSubmit(event)}
+                  onClick={() => handleSubmit()}
                   loading={loading}
                   disabled={formDisabled || loading}
                 />
@@ -264,13 +264,24 @@ export class ModificationModal extends Component {
   }
 }
 
-ModificationModal.propTypes = {
+ModificationModalComponent.propTypes = {
+  draft: PropTypes.object.isRequired,
   record: PropTypes.object.isRequired,
   open: PropTypes.bool.isRequired,
   handleClose: PropTypes.func.isRequired,
   fileModification: PropTypes.object,
+  saveAction: PropTypes.func.isRequired,
 };
 
-ModificationModal.defaultProps = {
+ModificationModalComponent.defaultProps = {
   fileModification: {},
 };
+
+const mapDispatchToProps = (dispatch) => ({
+  saveAction: (values) => dispatch(save(values)),
+});
+
+export const ModificationModal = connect(
+  null,
+  mapDispatchToProps
+)(ModificationModalComponent);

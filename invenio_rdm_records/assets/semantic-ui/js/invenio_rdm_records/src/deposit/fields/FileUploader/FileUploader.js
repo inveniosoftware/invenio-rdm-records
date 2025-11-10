@@ -311,6 +311,7 @@ export const FileUploaderComponent = ({
                       record={record}
                       permissions={permissions}
                       fileModification={fileModification}
+                      draft={formikDraft}
                     />
                   </Grid.Column>
                 </Grid.Row>

@@ -23,7 +23,7 @@ export class EditFilesAccordion extends Component {
   };
 
   render() {
-    const { record, permissions, fileModification } = this.props;
+    const { draft, record, permissions, fileModification } = this.props;
     const { activeIndex } = this.state;
     return (
       <Message info>
@@ -75,6 +75,7 @@ export class EditFilesAccordion extends Component {
 
                 <Grid.Column width={4} className="right aligned">
                   <FileModification
+                    draft={draft}
                     record={record}
                     permissions={permissions}
                     fileModification={fileModification}
@@ -91,6 +92,7 @@ export class EditFilesAccordion extends Component {
 }
 
 EditFilesAccordion.propTypes = {
+  draft: PropTypes.object.isRequired,
   record: PropTypes.object.isRequired,
   permissions: PropTypes.object.isRequired,
   fileModification: PropTypes.object,
