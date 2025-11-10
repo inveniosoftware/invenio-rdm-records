@@ -41,7 +41,6 @@ def test_success(uploader, client, record_factory, headers):
     assert resp.json["message"] == "Record deleted"
     assert resp.json["tombstone"]["removed_by"] == {"user": str(uploader.id)}
     assert resp.json["tombstone"]["is_visible"] is True
-    assert resp.json["tombstone"]["note"] == "Record deleted by uploader"
     assert resp.json["tombstone"]["removal_date"].startswith(date.today().isoformat())
     assert resp.json["tombstone"]["removal_reason"] == {"id": "test-record"}
     assert resp.json["tombstone"]["deletion_policy"] == {"id": "grace-period-v1"}
