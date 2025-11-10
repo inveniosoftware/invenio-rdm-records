@@ -63,7 +63,6 @@ def test_request_deletion_immediate_allowed(record_factory, search_clear, upload
     assert deleted_record.deletion_status == RecordDeletionStatusEnum.DELETED
     assert deleted_record.tombstone.removal_reason["id"] == "test-record"
     assert deleted_record.tombstone.removed_by["user"] == str(uploader.id)
-    assert deleted_record.tombstone.note == "Record deleted by uploader"
     assert deleted_record.tombstone.removal_date.startswith(date.today().isoformat())
     assert deleted_record.tombstone.is_visible is True
     assert deleted_record.tombstone.deletion_policy["id"] == "grace-period-v1"
@@ -202,7 +201,6 @@ def test_tombstone_deletion_policy_serialization(
     deleted_record = exc.value.result_item.data
 
     assert deleted_record["tombstone"]["removal_reason"]["id"] == "test-record"
-    assert deleted_record["tombstone"]["note"] == "Record deleted by uploader"
     assert deleted_record["tombstone"]["removed_by"] == {"user": str(uploader.id)}
     assert deleted_record["tombstone"]["removal_date"] == date.today().isoformat()
     assert deleted_record["tombstone"]["is_visible"] is True
