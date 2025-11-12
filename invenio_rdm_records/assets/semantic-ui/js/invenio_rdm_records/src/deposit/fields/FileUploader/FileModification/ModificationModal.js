@@ -127,6 +127,10 @@ class ModificationModalComponent extends Component {
     const { open, fileModification } = this.props;
     const { loading, error, messages, checklistState, checkboxState } = this.state;
 
+    // The submit button is enabled when:
+    //  all the checkboxes are true and all the checklist boxes are false
+    // by boolean logic: !(A && !B) === !A || B
+    // note: radio buttons have three states including undefined
     const formDisabled =
       checkboxState.some((v) => v === false) ||
       checklistState.some((x) => x === true || x === undefined);
