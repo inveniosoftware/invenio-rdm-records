@@ -12,7 +12,7 @@
 Changes
 =======
 
-Version v22.4.0 (released 2025-XX-XX)
+Version v22.4.0 (released 2025-11-12)
 
 - setup: bump `invenio-github` major version
 
