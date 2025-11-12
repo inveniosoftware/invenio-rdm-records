@@ -11,7 +11,7 @@ from datetime import timedelta
 
 from invenio_db import db
 
-from invenio_rdm_records.services.deletion_policy import (
+from invenio_rdm_records.services.request_policies import (
     GracePeriodPolicy,
     RDMRecordDeletionPolicy,
 )
