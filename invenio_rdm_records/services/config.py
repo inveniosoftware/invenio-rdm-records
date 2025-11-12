@@ -78,7 +78,7 @@ from .customizations import (
     FromConfigPIDsProviders,
     FromConfigRequiredPIDs,
 )
-from .deletion_policy import FileModificationPolicyEvaluator, RDMRecordDeletionPolicy
+from .request_policies import FileModificationPolicyEvaluator, RDMRecordDeletionPolicy
 from .permissions import RDMRecordPermissionPolicy
 from .result_items import GrantItem, GrantList, SecretLinkItem, SecretLinkList
 from .results import RDMRecordList, RDMRecordRevisionsList
