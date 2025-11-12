@@ -15,6 +15,7 @@ from flask import current_app
 from invenio_access.permissions import authenticated_user
 from invenio_i18n import lazy_gettext as _
 
+from invenio_administration.permissions import administration_permission
 
 class BasePolicy:
     """Base class for defining policies."""
@@ -114,6 +115,22 @@ class FileModificationGracePeriodPolicy(BasePolicy):
         is_record_within_grace_period = expiration_time > datetime.now(timezone.utc)
 
         return is_record_within_grace_period
+
+
+class FileModificationAdminPolicy(BasePolicy):
+    """File modification policy which allows admins to modify files of all records."""
+
+    id = "file-modification-admin-v1"
+    description = _("You can edit the files of the record as you are an admin.")
+
+    def is_allowed(self, identity, record):
+        """Admins are allowed."""
+        is_admin = administration_permission.allows(identity)
+        return is_admin
+
+    def evaluate(self, identity, record):
+        """All records are valid."""
+        return True
 
 
 class PolicyEvaluator:

@@ -32,8 +32,8 @@ from .requests.community_submission import CommunitySubmission
 from .resources.serializers import DataCite45JSONSerializer
 from .services import facets
 from .services.config import lock_edit_published_files
-    FileModificationGracePeriodPolicy,
 from .services.request_policies import (
+    FileModificationAdminPolicy,
     FileModificationPolicyEvaluator,
     GracePeriodPolicy,
     RDMRecordDeletionPolicy,
@@ -224,11 +224,27 @@ RDM_REQUEST_RECORD_DELETION_CHECKLIST = []
 RDM_FILE_MODIFICATION_POLICY = FileModificationPolicyEvaluator
 """Policy class which evaluates whether published files can be modified by a user."""
 
-RDM_IMMEDIATE_FILE_MODIFICATION_ENABLED = False
-"""Allow users to edit published files immediately."""
+RDM_IMMEDIATE_FILE_MODIFICATION_ENABLED = True
+"""Allow editing of published files (by default by admins only)."""
 
-RDM_IMMEDIATE_FILE_MODIFICATION_POLICIES = [FileModificationGracePeriodPolicy()]
+RDM_IMMEDIATE_FILE_MODIFICATION_POLICIES = [FileModificationAdminPolicy()]
 """List of policies for editing published files immediately.
+
+To enable users to modify the files of their records, configure as:
+
+.. code-block:: python
+
+    from invenio_rdm_records.services.request_policies import (
+        FileModificationGracePeriodPolicy,
+        FileModificationAdminPolicy,
+    )
+    RDM_IMMEDIATE_FILE_MODIFICATION_POLICIES = [
+        FileModificationGracePeriodPolicy(),
+        FileModificationAdminPolicy(),
+    ]
+
+Also check whether you also want to pass a custom grace period or change
+``RDM_FILE_MODIFICATION_PERIOD``.
 
 Policies are executed in order and the first one to return True is used
 as the policy for the record. As such, policies should be specified from most
@@ -240,7 +256,7 @@ and this is the date which you will use to check whether the new or old policy
 will apply.
 """
 
-RDM_FILE_MODIFICATION_PERIOD = timedelta(days=30 + 30)
+RDM_FILE_MODIFICATION_PERIOD = timedelta(days=30 + 15)
 """Time period after creation during which modified files can be published.
 30 + 30 denotes grace period + extra days for file modification. This is checked
 during publish to block people from publishing after this period given the bucket stays open.
