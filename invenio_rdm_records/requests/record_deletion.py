@@ -23,6 +23,7 @@ from invenio_rdm_records.notifications.builders import (
     RecordDeletionDeclineNotificationBuilder,
 )
 from invenio_rdm_records.proxies import current_rdm_records_service
+from invenio_rdm_records.requests.base import BaseRequest
 
 
 class CreateAction(actions.CreateAction):
@@ -125,7 +126,7 @@ class DeclineAction(actions.DeclineAction):
         super().execute(identity, uow)
 
 
-class RecordDeletion(RequestType):
+class RecordDeletion(BaseRequest):
     """Request type for record deletion."""
 
     type_id = "record-deletion"
@@ -160,11 +161,6 @@ class RecordDeletion(RequestType):
             allow_none=True,
         ),
     }
-
-    def _update_link_config(self, **context_vars):
-        """Fix the prefix required for `self_html`."""
-        prefix = "/me"
-        return {"ui": context_vars["ui"] + prefix}
 
 
 def get_request_type(app):
