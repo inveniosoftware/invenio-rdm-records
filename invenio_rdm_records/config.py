@@ -32,8 +32,8 @@ from .requests.community_submission import CommunitySubmission
 from .resources.serializers import DataCite43JSONSerializer
 from .services import facets
 from .services.config import lock_edit_published_files
-from .services.deletion_policy import (
     FileModificationGracePeriodPolicy,
+from .services.request_policies import (
     FileModificationPolicyEvaluator,
     GracePeriodPolicy,
     RDMRecordDeletionPolicy,

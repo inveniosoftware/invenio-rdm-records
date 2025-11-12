@@ -116,11 +116,11 @@ from invenio_rdm_records.resources.serializers import DataCite43JSONSerializer
 from invenio_rdm_records.services.communities.components import (
     CommunityServiceComponents,
 )
-from invenio_rdm_records.services.deletion_policy import (
+from invenio_rdm_records.services.pids import providers
+from invenio_rdm_records.services.request_policies import (
     GracePeriodPolicy,
     RequestDeletionPolicy,
 )
-from invenio_rdm_records.services.pids import providers
 
 from .fake_datacite_client import FakeDataCiteClient
 
