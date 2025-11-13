@@ -12,6 +12,12 @@
 Changes
 =======
 
+Version v21.3.1 (released 2025-11-13)
+
+- fix(config): reuse community records search params config
+    * Search params configured by `RDM_SEARCH_ARGS_SCHEMA` were
+      not used in the `/api/communities/{id}/records` endpoint.
+
 Version v21.3.0 (released 2025-10-20)
 
 - fix(deposit-ui): disable drag-n-drop files when files are locked
