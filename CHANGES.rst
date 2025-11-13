@@ -12,6 +12,12 @@
 Changes
 =======
 
+Version v21.3.2 (released 2025-11-13)
+
+- tombstone: remove removal note when with policy
+- feat(record-deletion): show deletion policy on tombstone
+- serializer: ui: fix removed by to show owner/admin/system
+
 Version v21.3.1 (released 2025-11-13)
 
 - fix(config): reuse community records search params config
