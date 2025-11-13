@@ -586,6 +586,10 @@ class RDMCommunityRecordsResourceConfig(RecordResourceConfig, ConfiguratorMixin)
         default=record_serializers,
     )
 
+    request_search_args = FromConfig(
+        "RDM_SEARCH_ARGS_SCHEMA", default=RDMSearchRequestArgsSchema
+    )
+
 
 class RDMRecordCommunitiesResourceConfig(CommunityResourceConfig, ConfiguratorMixin):
     """Record communities resource config."""
