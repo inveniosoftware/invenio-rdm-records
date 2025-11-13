@@ -49,7 +49,18 @@ class TilesProcessor(RecordFilesProcessor):
 
     def _can_process_file(self, file_record, draft, record) -> bool:
         """Checks to determine if to process the record."""
-        return file_record.file.ext in self.valid_exts
+        if file_record.file.ext not in self.valid_exts:
+            return False
+
+        iiif_config = current_app.config.get("IIIF_TILES_CONVERTER_PARAMS")
+        metadata = file_record.metadata or {}
+
+        if (metadata.get("height", 0) <= iiif_config.get("tile_width")) or (
+            metadata.get("width", 0) <= iiif_config.get("tile_height")
+        ):
+            return False
+
+        return True
 
     @contextmanager
     def unlocked_bucket(self, files):
