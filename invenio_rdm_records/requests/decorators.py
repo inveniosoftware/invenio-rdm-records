@@ -26,7 +26,7 @@ def request_next_link(**kwargs):
             # check if the request is still open, or accepted (closed)
             has_review_request = request_item._record.is_open
             if has_review_request:
-                next_html = RequestLink("{+ui}/me/requests/{id}")
+                next_html = RequestLink("{+ui}/requests/{id}")
             else:
                 next_html = RequestRecordLink("{+ui}/records/{record_id}")
 
