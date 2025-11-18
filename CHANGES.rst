@@ -13,6 +13,11 @@
 Changes
 =======
 
+Version v19.6.0 (released 2025-11-19)
+
+- fix(services): Make 'notes' parameter optional in _update_quota
+- community-records: Adds service component calls to RecordCommunitiesService
+
 Version v19.5.12 (released 2025-11-06)
 
 - fix: showing all available suggestions in lang picker
