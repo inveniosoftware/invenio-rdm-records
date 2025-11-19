@@ -13,9 +13,9 @@ from typing import Optional
 
 from flask import current_app
 from invenio_access.permissions import authenticated_user
+from invenio_administration.permissions import administration_permission
 from invenio_i18n import lazy_gettext as _
 
-from invenio_administration.permissions import administration_permission
 
 class BasePolicy:
     """Base class for defining policies."""
