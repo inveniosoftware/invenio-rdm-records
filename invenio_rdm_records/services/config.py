@@ -78,8 +78,8 @@ from .customizations import (
     FromConfigPIDsProviders,
     FromConfigRequiredPIDs,
 )
-from .request_policies import FileModificationPolicyEvaluator, RDMRecordDeletionPolicy
 from .permissions import RDMRecordPermissionPolicy
+from .request_policies import FileModificationPolicyEvaluator, RDMRecordDeletionPolicy
 from .result_items import GrantItem, GrantList, SecretLinkItem, SecretLinkList
 from .results import RDMRecordList, RDMRecordRevisionsList
 from .schemas import RDMParentSchema, RDMRecordSchema

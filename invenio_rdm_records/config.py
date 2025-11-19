@@ -32,6 +32,9 @@ from .requests.community_submission import CommunitySubmission
 from .resources.serializers import DataCite45JSONSerializer
 from .services import facets
 from .services.config import lock_edit_published_files
+from .services.permissions import RDMRecordPermissionPolicy
+from .services.pids import providers
+from .services.queryparser import word_internal_notes
 from .services.request_policies import (
     FileModificationAdminPolicy,
     FileModificationPolicyEvaluator,
@@ -39,9 +42,6 @@ from .services.request_policies import (
     RDMRecordDeletionPolicy,
     RequestDeletionPolicy,
 )
-from .services.permissions import RDMRecordPermissionPolicy
-from .services.pids import providers
-from .services.queryparser import word_internal_notes
 
 # Invenio-RDM-Records
 # ===================
