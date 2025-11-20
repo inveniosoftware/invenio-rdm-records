@@ -12,6 +12,11 @@
 Changes
 =======
 
+Version v22.5.0 (released 2025-11-20)
+
+- feat(file-modification): allow admins to unlock files for editing by default
+- feat(file-modification): allows to configure conditions for users to edit files of published records
+
 Version v22.4.0 (released 2025-11-12)
 
 - setup: bump `invenio-github` major version
