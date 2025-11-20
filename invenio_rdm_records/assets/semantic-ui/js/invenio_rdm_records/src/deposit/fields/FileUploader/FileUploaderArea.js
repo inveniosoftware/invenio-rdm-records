@@ -108,7 +108,7 @@ const FileTableRow = ({
             </>
           )}
           {file.uploadState.isPending ? (
-            <div>{file.name}</div>
+            <div className="mr-5 text-break">{file.name}</div>
           ) : (
             <a
               href={_get(file, "links.content", "")}
