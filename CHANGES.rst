@@ -12,6 +12,21 @@
 Changes
 =======
 
+Version v21.4.0 (released 2025-11-21)
+
+- feat: enable admins to edit files by default
+    * enable feature by default
+    * add admin policy and replace grace period policy
+    * change UI so that you can only see the accordion if you are allowed to
+      modify the files
+    * change default time period to 30+15
+- fix: save draft before reloading page after unlocking bucket
+- UI: add info about remaining days to publish changes
+- fix: hide file modification if feature disabled
+- feat: add file editing policy and evaluator
+- feat: add edit files modal
+- feat: add edit files accordion
+
 Version v21.3.2 (released 2025-11-13)
 
 - tombstone: remove removal note when with policy
