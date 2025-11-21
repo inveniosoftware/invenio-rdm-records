@@ -12,6 +12,11 @@
 Changes
 =======
 
+Version v22.6.0 (released 2025-11-21)
+
+- fix(requests): don't hard-code /me for record review request
+- refactor(requests): move _update_link_config to new BaseRequest
+
 Version v22.5.0 (released 2025-11-20)
 
 - feat(file-modification): allow admins to unlock files for editing by default
