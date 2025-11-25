@@ -361,7 +361,7 @@ class RDMRequestsPermissionPolicy(RequestPermissionPolicy):
     can_update = RequestPermissionPolicy.can_update + [guest_token]
     can_action_submit = RequestPermissionPolicy.can_action_submit + [guest_token]
     can_action_cancel = RequestPermissionPolicy.can_action_cancel + [guest_token]
-    can_create_comment = can_read
+    can_create_comment = RequestPermissionPolicy.can_create_comment + [guest_token]
     can_update_comment = RequestPermissionPolicy.can_update_comment + [guest_token]
     can_delete_comment = RequestPermissionPolicy.can_delete_comment + [guest_token]
 
