@@ -56,14 +56,17 @@ def verify_access_request_token():
 def read_request(request, **kwargs):
     """UI endpoint for the guest access request details."""
     request_type = request["type"]
+    community = request["receiver"]["community"]
     request_is_accepted = request["status"] == GuestAcceptAction.status_to
+    permissions = request.has_permissions_to(["create_comment"])
 
     # NOTE: this template is defined in Invenio-App-RDM
     return render_template(
         f"invenio_requests/{request_type}/index.html",
         user_avatar=None,
         record=None,
-        permissions={},
+        community=community,
+        permissions=permissions,
         invenio_request=request.to_dict(),
         request_is_accepted=request_is_accepted,
     )
