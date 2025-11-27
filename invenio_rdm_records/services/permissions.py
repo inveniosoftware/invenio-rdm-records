@@ -25,7 +25,7 @@ from invenio_records_resources.services.files.transfer import (
     LOCAL_TRANSFER_TYPE,
     MULTIPART_TRANSFER_TYPE,
 )
-from invenio_requests.services.generators import Receiver, Status
+from invenio_requests.services.generators import IfLocked, Receiver, Status
 from invenio_requests.services.permissions import (
     PermissionPolicy as RequestPermissionPolicy,
 )
@@ -353,6 +353,23 @@ guest_token = IfRequestType(
     GuestAccessRequest, then_=[GuestAccessRequestToken()], else_=[]
 )
 
+guest_token_locked = IfRequestType(
+    GuestAccessRequest,
+    then_=[
+        IfConfig(
+            "REQUESTS_LOCKING_ENABLED",
+            then_=[
+                IfLocked(
+                    then_=[Disable()],
+                    else_=[GuestAccessRequestToken()],
+                ),
+            ],
+            else_=[GuestAccessRequestToken()],
+        ),
+    ],
+    else_=[],
+)
+
 
 class RDMRequestsPermissionPolicy(RequestPermissionPolicy):
     """Permission policy for requets, adapted to the needs for RDM-Records."""
@@ -361,8 +378,12 @@ class RDMRequestsPermissionPolicy(RequestPermissionPolicy):
     can_update = RequestPermissionPolicy.can_update + [guest_token]
     can_action_submit = RequestPermissionPolicy.can_action_submit + [guest_token]
     can_action_cancel = RequestPermissionPolicy.can_action_cancel + [guest_token]
-    can_create_comment = RequestPermissionPolicy.can_create_comment + [guest_token]
-    can_update_comment = RequestPermissionPolicy.can_update_comment + [guest_token]
+    can_create_comment = RequestPermissionPolicy.can_create_comment + [
+        guest_token_locked
+    ]
+    can_update_comment = RequestPermissionPolicy.can_update_comment + [
+        guest_token_locked
+    ]
     can_delete_comment = RequestPermissionPolicy.can_delete_comment + [guest_token]
 
     # manages GuessAccessRequest payload permissions
