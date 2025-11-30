@@ -2,6 +2,7 @@
 #
 # Copyright (C) 2021-2024 CERN.
 # Copyright (C) 2023 Northwestern University.
+# Copyright (C) 2025 Graz University of Technology.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
@@ -25,7 +26,7 @@ from invenio_rdm_records.services.pids.providers import ExternalPIDProvider, PID
 # providers
 
 
-class TestManagedPIDProvider(PIDProvider):
+class ManagedPIDProviderTest(PIDProvider):
     """Dummy managed provider for test purposes."""
 
     def __init__(self, name, pid_type=None, **kwargs):
@@ -88,7 +89,7 @@ class TestServiceConfigNoRequiredPIDs(RDMRecordServiceConfig):
     pids_providers = {
         "test": {
             "default": "managed",
-            "managed": TestManagedPIDProvider("managed", pid_type="test"),
+            "managed": ManagedPIDProviderTest("managed", pid_type="test"),
             "external": ExternalPIDProvider("external", pid_type="test"),
         }
     }
@@ -101,7 +102,7 @@ class TestServiceConfigRequiredManagedPID(RDMRecordServiceConfig):
     pids_providers = {
         "test": {
             "default": "managed",
-            "managed": TestManagedPIDProvider("managed", pid_type="test"),
+            "managed": ManagedPIDProviderTest("managed", pid_type="test"),
         }
     }
     pids_required = ["test"]
@@ -366,7 +367,7 @@ def test_publish_non_existing_required_managed(
     assert "pids" in record
     assert record.pids == {"test": {"identifier": "1", "provider": "managed"}}
 
-    provider = TestManagedPIDProvider("managed", pid_type="test")
+    provider = ManagedPIDProviderTest("managed", pid_type="test")
     pid = provider.get(record.pids["test"]["identifier"])
     assert pid.is_reserved()  # cannot test registration because is async
 
@@ -415,7 +416,7 @@ def test_delete_pids_from_draft(
     # create a minimal draft
     draft = RDMDraft.create(data)
     # create pid, simulates a query to the reserve endpoint (/:scheme)
-    provider = TestManagedPIDProvider("managed", pid_type="test")
+    provider = ManagedPIDProviderTest("managed", pid_type="test")
     pid = _create_managed_pid(draft, pid_value, provider)
 
     # run the delete hook and check the pid is not in the system anymore
@@ -454,7 +455,7 @@ def test_update_managed_to_empty(
     draft = RDMDraft.create(data)
     assert draft.pids["test"]["identifier"] == "1"
     # create pid, simulates a query to the reserve endpoint (/:scheme)
-    provider = TestManagedPIDProvider("managed", pid_type="test")
+    provider = ManagedPIDProviderTest("managed", pid_type="test")
     pid = _create_managed_pid(draft, pid_value, provider)
 
     data["pids"] = {}
@@ -476,7 +477,7 @@ def test_update_external_to_managed(
     assert draft.pids["test"]["identifier"] == "1234"
     # create pid, simulates a query to the reserve endpoint (/:scheme)
     pid_value = "1"
-    provider = TestManagedPIDProvider("managed", pid_type="test")
+    provider = ManagedPIDProviderTest("managed", pid_type="test")
     pid = _create_managed_pid(draft, pid_value, provider)
 
     ext_pids = {"test": {"identifier": pid_value, "provider": "managed"}}
@@ -501,7 +502,7 @@ def test_update_managed_to_external(
     draft = RDMDraft.create(data)
     assert draft.pids["test"]["identifier"] == "1"
     # create pid, simulates a query to the reserve endpoint (/:scheme)
-    provider = TestManagedPIDProvider("managed", pid_type="test")
+    provider = ManagedPIDProviderTest("managed", pid_type="test")
     pid = _create_managed_pid(draft, pid_value, provider)
 
     ext_pids = {"test": {"identifier": "1234", "provider": "external"}}
