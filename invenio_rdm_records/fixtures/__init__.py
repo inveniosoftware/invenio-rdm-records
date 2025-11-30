@@ -73,6 +73,7 @@ class FixturesEngine:
             app_data_folder=app_data_folder,
             pkg_data_folder=data_folder,
             filename="vocabularies.yaml",
+            delay=False,
         ).load(reload=fixture)
 
 
