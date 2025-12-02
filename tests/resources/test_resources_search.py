@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # Copyright (C) 2023-2024 CERN.
+# Copyright (C) 2025 Graz University of Technology.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
@@ -36,7 +37,7 @@ def test_advance_record_search(
     assert records[0]["metadata"]["title"] == record_title
 
     # Search with regex
-    res = client.get("/records", query_string={"q": "/\d{12}/"}, headers=headers)
+    res = client.get("/records", query_string={"q": r"/\d{12}/"}, headers=headers)
     assert res.status_code == 200
     assert res.json["hits"]["total"] == 1
     records = res.json["hits"]["hits"]
