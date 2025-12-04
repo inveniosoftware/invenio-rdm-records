@@ -98,6 +98,7 @@ def test_simple_guest_access_request_flow(running_app, client, users, minimal_re
             identity=guest_identity, token=args["access_request_token"]
         )
 
+        assert f"/access/requests/{request.id}" in request.links["self_html"]
         assert len(outbox) == 3
         owner_submit_message = outbox[1]
         assert (
@@ -204,8 +205,11 @@ def test_simple_user_access_request_flow(running_app, client, users, minimal_rec
                 "full_name": "ABC",
             },
         )
-        request_id = response.json["id"]
         assert response.status_code == 200
+        request_id = response.json["id"]
+        # this tests pre-existing functionality although /me/requests/{} could
+        # work as well semantically
+        assert f"/access/requests/{request_id}" in response.json["links"]["self_html"]
         assert len(outbox) == 1
         submit_message = outbox[0]
         # TODO: update to `req["links"]["self_html"]` when addressing https://github.com/inveniosoftware/invenio-rdm-records/issues/1327
