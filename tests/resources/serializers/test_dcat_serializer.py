@@ -40,6 +40,7 @@ def test_dcat_serializer(running_app, full_record_to_dict):
         'xmlns:dct="http://purl.org/dc/terms/" '
         'xmlns:dctype="http://purl.org/dc/dcmitype/" '
         'xmlns:dcat="http://www.w3.org/ns/dcat#" '
+        'xmlns:spdx="http://spdx.org/rdf/terms#" '
         'xmlns:foaf="http://xmlns.com/foaf/0.1/" '
         'xmlns:gsp="http://www.opengis.net/ont/geosparql#" '
         'xmlns:locn="http://www.w3.org/ns/locn#" '
@@ -253,7 +254,13 @@ def test_dcat_serializer(running_app, full_record_to_dict):
         "        <dcat:byteSize>9</dcat:byteSize>\n"
         "        <dcat:accessURL "
         'rdf:resource="https://doi.org/10.1234/12345-abcde"/>\n'
-        "        <dcat:checksum>md5:e795abeef2c38de2b064be9f6364ceae</dcat:checksum>\n"
+        "        <spdx:checksum>\n"
+        "          <spdx:Checksum>\n"
+        "            <spdx:algorithm "
+        'rdf:resource="http://spdx.org/rdf/terms#checksumAlgorithm_md5"/>\n'
+        "            <spdx:checksumValue>e795abeef2c38de2b064be9f6364ceae</spdx:checksumValue>\n"
+        "          </spdx:Checksum>\n"
+        "        </spdx:checksum>\n"
         "      </dcat:Distribution>\n"
         "    </dcat:distribution>\n"
         "  </rdf:Description>\n"

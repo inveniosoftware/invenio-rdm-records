@@ -75,30 +75,49 @@ class DCATSerializer(MarshmallowSerializer):
             url = file.get("access_url")
             return {"{{{rdf}}}resource".format(**ns): url} if url else None
 
-        def checksum(file):
-            return file["checksum"] if file.get("checksum") else None
-
         files_fields = {
             "{{{dcat}}}downloadURL": download_url,
             "{{{dcat}}}mediaType": media_type,
             "{{{dcat}}}byteSize": byte_size,
             "{{{dcat}}}accessURL": access_url,
-            "{{{dcat}}}checksum": checksum,
         }
 
-        for f in files:
+        for file in files:
             dist_wrapper = ET.SubElement(root[0], "{{{dcat}}}distribution".format(**ns))
             dist = ET.SubElement(dist_wrapper, "{{{dcat}}}Distribution".format(**ns))
 
             for tag, func in files_fields.items():
-                tag_value = func(f)
-
+                tag_value = func(file)
                 if tag_value:
                     el = ET.SubElement(dist, tag.format(**ns))
                     if isinstance(tag_value, str):
                         el.text = tag_value
                     if isinstance(tag_value, dict):
                         el.attrib.update(tag_value)
+
+            checksum = file.get("checksum") if file.get("checksum") else None
+            if checksum:
+                value = checksum.split(":")[1]
+                spdx_checksum_el = ET.SubElement(
+                    dist, "{{{spdx}}}checksum".format(**ns)
+                )
+                spdx_checksum_obj = ET.SubElement(
+                    spdx_checksum_el, "{{{spdx}}}Checksum".format(**ns)
+                )
+
+                algo_el = ET.SubElement(
+                    spdx_checksum_obj,
+                    "{{{spdx}}}algorithm".format(**ns),
+                )
+                algo_el.attrib["{{{rdf}}}resource".format(**ns)] = (
+                    f"http://spdx.org/rdf/terms#checksumAlgorithm_md5"
+                )
+
+                value_el = ET.SubElement(
+                    spdx_checksum_obj,
+                    "{{{spdx}}}checksumValue".format(**ns),
+                )
+                value_el.text = value
 
     def add_missing_creatibutor_links(self, rdf_tree):
         """Add missing `rdf:about` attributes to <rdf:Description> within <dct:creator> and <dct:contributor> and <foaf:Organization> within <org:memberOf>."""
