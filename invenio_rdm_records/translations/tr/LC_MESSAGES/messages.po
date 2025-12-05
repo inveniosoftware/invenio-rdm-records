@@ -7,6 +7,7 @@
 # Translators:
 # Ben Translation and Interpreting Services <info@bentercume.com>, 2025
 # BEN TERCÜME, 2025
+# Eylül-1 -, 2025
 # 
 #, fuzzy
 msgid ""
@@ -15,7 +16,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: info@inveniosoftware.org\n"
 "POT-Creation-Date: 2025-07-10 06:49+0000\n"
 "PO-Revision-Date: 2021-07-12 14:31+0000\n"
-"Last-Translator: BEN TERCÜME, 2025\n"
+"Last-Translator: Eylül-1 -, 2025\n"
 "Language-Team: Turkish (https://app.transifex.com/inveniosoftware/teams/23537/tr/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -219,11 +220,11 @@ msgstr "OAI"
 
 #: invenio_rdm_records/utils.py:117
 msgid "Your shared link has expired."
-msgstr "Paylaşılan bağlantınızın süresi doldu."
+msgstr "Paylaşılan bağlantınızın süresi geçti."
 
 #: invenio_rdm_records/administration/views/oai.py:29
 msgid "OAI-PMH Sets"
-msgstr ""
+msgstr "OAI-PMH Kümeleri"
 
 #: invenio_rdm_records/administration/views/oai.py:30
 msgid "Site management"
@@ -238,7 +239,7 @@ msgstr "Arama sorgusu"
 
 #: invenio_rdm_records/administration/views/oai.py:63
 msgid "Edit OAI-PMH set"
-msgstr ""
+msgstr "OAI-PMH kümesini düzenle"
 
 #: invenio_rdm_records/administration/views/oai.py:65
 #: invenio_rdm_records/administration/views/oai.py:105
@@ -268,16 +269,16 @@ msgstr ""
 
 #: invenio_rdm_records/administration/views/oai.py:103
 msgid "Create OAI-PMH set"
-msgstr ""
+msgstr "OAI-PMH kümesi oluştur"
 
 #: invenio_rdm_records/administration/views/oai.py:140
 msgid "OAI-PMH Details"
-msgstr ""
+msgstr "OAI-PMH Detayları"
 
 #: invenio_rdm_records/contrib/codemeta/custom_fields.py:36
 #: invenio_rdm_records/contrib/meeting/custom_fields.py:47
 msgid "You must provide a valid URL."
-msgstr ""
+msgstr "Geçerli bir URL girmelisiniz."
 
 #: invenio_rdm_records/contrib/codemeta/custom_fields.py:54
 msgid "Software"
@@ -285,11 +286,11 @@ msgstr "Yazılım"
 
 #: invenio_rdm_records/contrib/codemeta/custom_fields.py:61
 msgid "Repository URL"
-msgstr ""
+msgstr "Depo URL'si"
 
 #: invenio_rdm_records/contrib/codemeta/custom_fields.py:63
 msgid "URL or link where the code repository is hosted."
-msgstr ""
+msgstr "Kod deposunun barındırıldığı URL veya bağlantı."
 
 #: invenio_rdm_records/contrib/codemeta/custom_fields.py:70
 #: invenio_rdm_records/contrib/codemeta/custom_fields.py:111
@@ -298,23 +299,23 @@ msgstr "Programlama dili"
 
 #: invenio_rdm_records/contrib/codemeta/custom_fields.py:72
 msgid "Repository's programming language."
-msgstr ""
+msgstr "Deponun programlama dili."
 
 #: invenio_rdm_records/contrib/codemeta/custom_fields.py:73
 msgid "e.g. Python ..."
-msgstr ""
+msgstr "örneğin Python..."
 
 #: invenio_rdm_records/contrib/codemeta/custom_fields.py:85
 msgid "Development Status"
-msgstr ""
+msgstr "Geliştirme Durumu"
 
 #: invenio_rdm_records/contrib/codemeta/custom_fields.py:86
 msgid "Repository status"
-msgstr ""
+msgstr "Depo durumu"
 
 #: invenio_rdm_records/contrib/codemeta/custom_fields.py:88
 msgid "Repository current status."
-msgstr ""
+msgstr "Deponun şu anki durumu."
 
 #: invenio_rdm_records/contrib/codemeta/custom_fields.py:101
 msgid "Development status"
@@ -326,11 +327,11 @@ msgstr "Lütfen geçerli bir ISBN girin."
 
 #: invenio_rdm_records/contrib/imprint/custom_fields.py:72
 msgid "Book / Report / Conference proceedings"
-msgstr ""
+msgstr "Kitap / Rapor / Konferans bildirileri"
 
 #: invenio_rdm_records/contrib/imprint/custom_fields.py:79
 msgid "Imprint (Book, Report, or Conference proceedings)"
-msgstr ""
+msgstr "Basım (Kitap, Rapor veya Konferans tutanakları)"
 
 #: invenio_rdm_records/contrib/imprint/custom_fields.py:81
 #: invenio_rdm_records/contrib/meeting/custom_fields.py:119
@@ -357,11 +358,11 @@ msgstr "Uluslararası Standart Kitap Numarası"
 
 #: invenio_rdm_records/contrib/imprint/custom_fields.py:91
 msgid "Book, report, or proceedings title"
-msgstr ""
+msgstr "Kitap, rapor ve bildiri başlığı"
 
 #: invenio_rdm_records/contrib/imprint/custom_fields.py:94
 msgid "Title of the book, report, or proceedings which this upload is part of"
-msgstr ""
+msgstr "Bu yüklemenin parçası olduğu kitap, rapor veya bildirilerin başlığı"
 
 #: invenio_rdm_records/contrib/imprint/custom_fields.py:98
 msgid "Pagination"
@@ -377,11 +378,11 @@ msgstr "Baskı"
 
 #: invenio_rdm_records/contrib/imprint/custom_fields.py:104
 msgid "e.g. 3"
-msgstr ""
+msgstr "örneğin 3"
 
 #: invenio_rdm_records/contrib/imprint/custom_fields.py:105
 msgid "The edition of the book"
-msgstr ""
+msgstr "Kitabın baskısı"
 
 #: invenio_rdm_records/contrib/journal/custom_fields.py:38
 msgid "Please provide a valid ISSN."
@@ -411,7 +412,7 @@ msgstr "Cilt"
 
 #: invenio_rdm_records/contrib/journal/custom_fields.py:90
 msgid "e.g. 645"
-msgstr ""
+msgstr "örneğin 645"
 
 #: invenio_rdm_records/contrib/journal/custom_fields.py:94
 #: invenio_rdm_records/templates/semantic-ui/journal.html:13
@@ -420,7 +421,7 @@ msgstr "Sayı"
 
 #: invenio_rdm_records/contrib/journal/custom_fields.py:95
 msgid "e.g. 7"
-msgstr ""
+msgstr "örneğin 7"
 
 #: invenio_rdm_records/contrib/journal/custom_fields.py:99
 msgid "Page range or article number"
@@ -428,11 +429,11 @@ msgstr "Sayfa aralığı veya makale numarası"
 
 #: invenio_rdm_records/contrib/journal/custom_fields.py:100
 msgid "e.g. 15-23 or A29"
-msgstr ""
+msgstr "örneğin 15-23 veya A29"
 
 #: invenio_rdm_records/contrib/journal/custom_fields.py:105
 msgid "e.g. 2077-9550"
-msgstr ""
+msgstr "örneğin 2077-9550"
 
 #: invenio_rdm_records/contrib/journal/custom_fields.py:106
 msgid "International Standard Serial Number"
@@ -505,47 +506,47 @@ msgstr "Tez"
 
 #: invenio_rdm_records/contrib/thesis/custom_fields.py:72
 msgid "Awarding university"
-msgstr "Derece/diploma/sertifika veren üniversite"
+msgstr "Araştırma desteğini sağlayan üniversite"
 
 #: invenio_rdm_records/contrib/thesis/custom_fields.py:77
 msgid "Awarding department"
-msgstr ""
+msgstr "Araştırma desteğini sağlayan bölüm"
 
 #: invenio_rdm_records/contrib/thesis/custom_fields.py:82
 msgid "Thesis type"
-msgstr ""
+msgstr "Tez türü"
 
 #: invenio_rdm_records/contrib/thesis/custom_fields.py:83
 msgid "PhD"
-msgstr ""
+msgstr "Doktora"
 
 #: invenio_rdm_records/contrib/thesis/custom_fields.py:85
 msgid "The type of thesis (e.g. Masters, PhD, Engineers, Bachelors)"
-msgstr ""
+msgstr "Tezin türü (örneğin, yüksek lisans, doktora, mühendislik, lisans)"
 
 #: invenio_rdm_records/contrib/thesis/custom_fields.py:89
 msgid "Submission date"
-msgstr ""
+msgstr "Gönderim tarihi"
 
 #: invenio_rdm_records/contrib/thesis/custom_fields.py:91
 msgid "Submission date in YYYY-MM-DD format."
-msgstr ""
+msgstr "YYYY-AA-GG biçiminde gönderim tarihi."
 
 #: invenio_rdm_records/contrib/thesis/custom_fields.py:94
 msgid "Defense date"
-msgstr ""
+msgstr "Savunma tarihi"
 
 #: invenio_rdm_records/contrib/thesis/custom_fields.py:96
 msgid "Defense date in YYYY-MM-DD format."
-msgstr ""
+msgstr "YYYY-AA-GG biçiminde savunma tarihi."
 
 #: invenio_rdm_records/jobs/jobs.py:21
 msgid "Updates expired embargoes"
-msgstr ""
+msgstr "Süresi geçmiş ambargoları günceller"
 
 #: invenio_rdm_records/jobs/jobs.py:22
 msgid "Update expired embargoes"
-msgstr ""
+msgstr "Süresi geçmiş ambargoları güncelle"
 
 #: invenio_rdm_records/oaiserver/services/config.py:35
 msgid "Ascending"
@@ -611,7 +612,7 @@ msgstr "Bilinmeyen taslak durumu."
 
 #: invenio_rdm_records/requests/community_inclusion.py:100
 msgid "Community inclusion"
-msgstr "Topluluk dahil etme"
+msgstr "Topluluğa alınma"
 
 #: invenio_rdm_records/requests/community_submission.py:182
 msgid "Community submission"
@@ -620,17 +621,17 @@ msgstr "Topluluk gönderimi"
 #: invenio_rdm_records/requests/access/requests.py:190
 #, python-format
 msgid "Click <a href=\"%(url)s\">here</a> to access the record."
-msgstr ""
+msgstr "Kayda erişmek için <a href=\"%(url)s\">buraya</a> tıklayın."
 
 #: invenio_rdm_records/requests/access/requests.py:250
 #: invenio_rdm_records/requests/access/requests.py:282
 msgid "Access request"
-msgstr "Erişim talebi"
+msgstr "Erişim isteği"
 
 #: invenio_rdm_records/requests/access/requests.py:319
 #: invenio_rdm_records/requests/access/requests.py:324
 msgid "Not a valid number of days."
-msgstr ""
+msgstr "Geçerli bir gün sayısı değil."
 
 #: invenio_rdm_records/resources/config.py:157
 msgid "Citation string style not found."
@@ -654,7 +655,7 @@ msgstr "Kayıt silindi"
 
 #: invenio_rdm_records/resources/config.py:219
 msgid "Cannot publish without selecting a community."
-msgstr ""
+msgstr "Bir topluluk seçmeden yayınlanamaz."
 
 #: invenio_rdm_records/resources/config.py:402
 msgid "No secret link found with the given ID."
@@ -662,15 +663,15 @@ msgstr "Belirtilen kimliğe sahip gizli bağlantı bulunamadı."
 
 #: invenio_rdm_records/resources/config.py:410
 msgid "No grant found with the given ID."
-msgstr "Belirtilen kimliğe ait hibe bulunamadı."
+msgstr "Belirtilen kimliğe ait erişim izni bulunamadı."
 
 #: invenio_rdm_records/resources/config.py:423
 msgid "No grant found by given user id."
-msgstr "Belirtilen kullanıcı kimliğine ait hibe bulunamadı."
+msgstr "Belirtilen kullanıcı kimliğine ait erişim izni bulunamadı."
 
 #: invenio_rdm_records/resources/config.py:430
 msgid "No grant found by given group id."
-msgstr "Belirtilen grup kimliğine ait hibe bulunamadı."
+msgstr "Belirtilen grup kimliğine ait erişim izni bulunamadı."
 
 #: invenio_rdm_records/resources/iiif.py:99
 msgid "Image size limit exceeded"
@@ -683,7 +684,7 @@ msgstr "Bu dosyayla ilişkili kayıt silindi. Silinme bildirimine bakın."
 
 #: invenio_rdm_records/resources/deserializers/rocrate/__init__.py:31
 msgid "Invalid RO-Crate metadata format, missing '@graph' key."
-msgstr "Geçersiz RO-Crate meta veri biçimi, '@graph' anahtarı eksik."
+msgstr "Geçersiz RO-Crate üst veri biçimi, '@graph' anahtarı eksik."
 
 #: invenio_rdm_records/resources/deserializers/rocrate/schema.py:32
 #: invenio_rdm_records/services/schemas/metadata.py:363
@@ -701,11 +702,11 @@ msgstr "Biçim, dizgelerden oluşan bir liste olmalıdır."
 #: invenio_rdm_records/resources/serializers/utils.py:38
 #, python-format
 msgid "The '%(vocabulary)s' vocabulary item '%(id_)s' was not found."
-msgstr ""
+msgstr "'%(id_)s' kimlikli '%(vocabulary)s' sözlük öğesi bulunamadı."
 
 #: invenio_rdm_records/resources/serializers/cff/schema.py:29
 msgid "One of 'family-names' or 'given-names' is required."
-msgstr ""
+msgstr "'family-names' ya da 'given-names' değerlerinden biri gereklidir."
 
 #: invenio_rdm_records/resources/serializers/datacite/schema.py:281
 msgid "Invalid publication date value."
@@ -727,12 +728,16 @@ msgstr "Yayın Tarihi"
 msgid ""
 "Affiliation failed to serialize: one of 'id' or 'name' must be provided."
 msgstr ""
+"Bağlı olunan kurum/kuruluş serileştirilemedi: 'id' ya da 'name' "
+"değerlerinden biri belirtilmelidir."
 
 #: invenio_rdm_records/resources/serializers/schemaorg/schema.py:369
 msgid ""
 "Funding serialization failed on award: one of 'id' or ('number' and 'title')"
 " are required."
 msgstr ""
+"Araştırma desteğinde fonlamanın serileştirilmesi başarısız oldu: 'id' ya da "
+"('number' ve 'title') değerlerinden biri gereklidir."
 
 #: invenio_rdm_records/resources/serializers/ui/fields.py:36
 #: invenio_rdm_records/services/facets.py:32
@@ -752,7 +757,7 @@ msgstr "Kısıtlı"
 #: invenio_rdm_records/resources/serializers/ui/fields.py:39
 #: invenio_rdm_records/services/facets.py:35
 msgid "Metadata-only"
-msgstr "Yalnızca üstveri"
+msgstr "Sadece Üst Veri"
 
 #: invenio_rdm_records/resources/serializers/ui/fields.py:66
 msgid "The record and files are publicly accessible."
@@ -810,15 +815,15 @@ msgstr "Yönetici"
 
 #: invenio_rdm_records/resources/serializers/ui/schema.py:303
 msgid "Submitted: "
-msgstr ""
+msgstr "Gönderilen:"
 
 #: invenio_rdm_records/resources/serializers/ui/schema.py:304
 msgid "Defended: "
-msgstr ""
+msgstr "Savunan:"
 
 #: invenio_rdm_records/services/errors.py:22
 msgid "Grant for this user/role already exists within this record."
-msgstr "Bu kullanıcı/rol için yetki bu kayıtta zaten mevcut."
+msgstr "Bu kullanıcı/rol için erişim izni bu kayıtta zaten mevcut."
 
 #: invenio_rdm_records/services/errors.py:54
 #, python-format
@@ -835,17 +840,16 @@ msgstr "Kayıt zaten bu topluluğun içinde yer alıyor."
 
 #: invenio_rdm_records/services/errors.py:94
 msgid "A public record cannot be included in a restricted community."
-msgstr ""
-"Herkese açık bir kayıt, erişilmesi kısıtlı bir topluluğa dahil edilemez."
+msgstr "Herkese açık bir kayıt, erişilmesi kısıtlı bir topluluğa alınamaz."
 
 #: invenio_rdm_records/services/errors.py:107
 msgid "There is already an open inclusion request for this community."
-msgstr "Bu topluluk için açık bir katılım talebi zaten mevcut."
+msgstr "Bu topluluk için açık bir alınma isteği zaten mevcut."
 
 #: invenio_rdm_records/services/errors.py:163
 #, python-format
 msgid "The record %(rec_id)s in not included in the community %(com_id)s."
-msgstr "%(rec_id)s kaydı %(com_id)s topluluğuna dahil edilmemiştir."
+msgstr "%(rec_id)s kaydı %(com_id)s topluluğuna alınmamıştır."
 
 #: invenio_rdm_records/services/errors.py:179
 #, python-format
@@ -855,7 +859,7 @@ msgstr "Topluluk görünürlüğü değiştirilemiyor: %(reason)s"
 #: invenio_rdm_records/services/errors.py:198
 #, python-format
 msgid "Identical access requests already exist: %(request_id)s"
-msgstr "Özdeş erişim istekleri zaten mevcut: %(request_id)s"
+msgstr "Aynı erişim istekleri zaten mevcut: %(request_id)s"
 
 #: invenio_rdm_records/services/errors.py:202
 msgid "The access request is a duplicate"
@@ -863,15 +867,15 @@ msgstr "Mükerrer erişim isteği"
 
 #: invenio_rdm_records/services/errors.py:209
 msgid "Submission to this community is only allowed to community members."
-msgstr ""
+msgstr "Bu topluluğa gönderim sadece topluluk üyelerine izin verilir."
 
 #: invenio_rdm_records/services/errors.py:216
 msgid "Cannot publish without a community."
-msgstr ""
+msgstr "Bir topluluk olmadan yayınlanamaz."
 
 #: invenio_rdm_records/services/errors.py:222
 msgid "A record should be part of at least 1 community."
-msgstr ""
+msgstr "Bir kayıt en az 1 topluluğun parçası olmalıdır."
 
 #: invenio_rdm_records/services/facets.py:30
 msgid "Access status"
@@ -954,12 +958,12 @@ msgstr "Topluluk bulunamadı."
 
 #: invenio_rdm_records/services/communities/service.py:425
 msgid "Community already included."
-msgstr ""
+msgstr "Topluluk zaten alınmıştır."
 
 #: invenio_rdm_records/services/community_inclusion/service.py:45
 #: invenio_rdm_records/services/community_inclusion/service.py:59
 msgid "Invalid request type."
-msgstr ""
+msgstr "Geçersiz istek türü."
 
 #: invenio_rdm_records/services/community_inclusion/service.py:78
 msgid ""
@@ -987,6 +991,8 @@ msgid ""
 "A previous version used a DOI registered from {sitename}. This version must "
 "also use a DOI from {sitename}."
 msgstr ""
+"Önceki sürüm {sitename} adresinden kaydedilen bir DOI kullanıyordu. Bu sürüm"
+" de {sitename} adresinden bir DOI kullanmalıdır."
 
 #: invenio_rdm_records/services/components/pids.py:37
 #: invenio_rdm_records/services/components/pids.py:46
@@ -996,6 +1002,9 @@ msgid ""
 "without one. You cannot use a DOI registered from {sitename} for this "
 "version."
 msgstr ""
+"Önceki sürüm, harici bir sağlayıcıdan alınan bir DOI ile veya DOI olmadan "
+"yayınlanmıştır. Bu sürüm için {sitename} adresinden kayıtlı bir DOI "
+"kullanamazsınız."
 
 #: invenio_rdm_records/services/components/review.py:37
 msgid ""
@@ -1011,7 +1020,7 @@ msgstr "Açıklama girilmedi."
 
 #: invenio_rdm_records/services/github/metadata.py:178
 msgid "Citation schema is needed to load citation metadata."
-msgstr "Atıf meta verilerini yüklemek için atıf şemasına ihtiyaç vardır."
+msgstr "Atıf üst verilerini yüklemek için atıf şeması gereklidir."
 
 #: invenio_rdm_records/services/pids/errors.py:22
 #, python-brace-format
@@ -1021,7 +1030,7 @@ msgstr "PID'ler için tanımlanmış bir yapılandırma yok {schemes}"
 #: invenio_rdm_records/services/pids/errors.py:33
 #, python-format
 msgid "Unknown PID provider %(provider)s for %(scheme)s"
-msgstr ""
+msgstr "%(scheme)s için %(provider)s bilinmeyen PID sağlayıcı"
 
 #: invenio_rdm_records/services/pids/manager.py:86
 #, python-brace-format
@@ -1049,7 +1058,7 @@ msgstr "Ayrılmış veya kayıtlı kalıcı bir tanımlayıcı silinemez."
 
 #: invenio_rdm_records/services/pids/providers/base.py:85
 msgid "You must provide a pid value."
-msgstr ""
+msgstr "Bir pid değeri girmelisiniz."
 
 #: invenio_rdm_records/services/pids/providers/base.py:176
 #, python-brace-format
@@ -1147,7 +1156,7 @@ msgstr "Ad alanı boş bırakılamaz."
 
 #: invenio_rdm_records/services/schemas/metadata.py:156
 msgid "Duplicated affiliations: "
-msgstr "Mükerrer bağlılıklar:"
+msgstr "Mükerrer bağlı olunan kurum/kuruluşlar:"
 
 #: invenio_rdm_records/services/schemas/metadata.py:215
 #: invenio_rdm_records/services/schemas/metadata.py:227
@@ -1221,7 +1230,7 @@ msgstr "Yeni sekmede açılır"
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/community-submission.accept.jinja:21
 #, python-brace-format
 msgid "✅ Community inclusion accepted for '{record_title}'"
-msgstr ""
+msgstr "✅ '{record_title}' başlıklı kaydın topluluğa alınması kabul edildi"
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/community-submission.accept.jinja:27
 #, python-brace-format
@@ -1229,6 +1238,8 @@ msgid ""
 "The community curator '@{curator_name}' accepted the record '{record_title}'"
 " into the community '{community_title}'"
 msgstr ""
+"'@{curator_name}' adlı topluluk küratörü, '{record_title}' başlıklı kaydın "
+"'{community_title}' başlıklı topluluğa alınmasını kabul etti."
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/community-submission.accept.jinja:29
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/community-submission.decline.jinja:28
@@ -1239,7 +1250,7 @@ msgstr ""
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/user-access-request.cancel.jinja:28
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/user-access-request.decline.jinja:23
 msgid " with the following message:"
-msgstr ""
+msgstr " şu mesajı bıraktı:"
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/community-submission.accept.jinja:39
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/community-submission.accept.jinja:58
@@ -1251,7 +1262,7 @@ msgstr ""
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/community-submission.expire.jinja:27
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/community-submission.expire.jinja:50
 msgid "Check out the submission request"
-msgstr ""
+msgstr "Gönderim isteğini kontrol et"
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/community-submission.accept.jinja:45
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/community-submission.cancel.jinja:35
@@ -1271,6 +1282,8 @@ msgstr ""
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/user-access-request.submit.jinja:33
 msgid "This is an auto-generated message. To manage notifications, visit your"
 msgstr ""
+"Bu otomatik olarak oluşturulan bir mesajdır. Bildirimleri yönetmek için "
+"şurayı ziyaret edin:"
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/community-submission.accept.jinja:45
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/community-submission.cancel.jinja:35
@@ -1289,7 +1302,7 @@ msgstr ""
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/user-access-request.decline.jinja:39
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/user-access-request.submit.jinja:33
 msgid "account settings"
-msgstr ""
+msgstr "hesap ayarları"
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/community-submission.accept.jinja:51
 #, python-brace-format
@@ -1297,6 +1310,8 @@ msgid ""
 "The community curator @{curator_name} accepted the record '{record_title}' "
 "into the community '{community_title}'"
 msgstr ""
+"@{curator_name} adlı topluluk küratörü, '{record_title}' başlıklı kaydın "
+"'{community_title}' başlıklı topluluğa alınmasını kabul etti."
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/community-submission.accept.jinja:54
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/community-submission.accept.jinja:68
@@ -1315,7 +1330,7 @@ msgstr ""
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/user-access-request.decline.jinja:48
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/user-access-request.decline.jinja:62
 msgid "with the following message:"
-msgstr ""
+msgstr "şu mesajı bıraktı:"
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/community-submission.accept.jinja:60
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/community-submission.accept.jinja:74
@@ -1344,6 +1359,8 @@ msgid ""
 "This is an auto-generated message. To manage notifications, visit your "
 "account settings"
 msgstr ""
+"Bu otomatik olarak oluşturulan bir mesajdır. Bildirimleri yönetmek için "
+"hesap ayarlarınıza gidin"
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/community-submission.accept.jinja:65
 #, python-brace-format
@@ -1351,11 +1368,13 @@ msgid ""
 "The community curator *@{curator_name}* accepted the record *{record_title}*"
 " into the community *{community_title}*"
 msgstr ""
+"*@{curator_name}* adlı topluluk küratörü, *{record_title}* başlıklı kaydın "
+"*{community_title}* başlıklı topluluğa alınmasını kabul etti."
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/community-submission.cancel.jinja:20
 #, python-brace-format
 msgid "❌ Community inclusion cancelled for '{record_title}'"
-msgstr ""
+msgstr "❌ '{record_title}' başlıklı kaydın topluluğa alınması iptal edildi"
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/community-submission.cancel.jinja:26
 #, python-brace-format
@@ -1363,6 +1382,8 @@ msgid ""
 "The record submission for your community '{community_title}' was cancelled "
 "by '@{cancel_name}'."
 msgstr ""
+"'{community_title}' başlıklı topluluğunuza kayıt gönderimi, '@{cancel_name}'"
+" adlı kullanıcı tarafından iptal edildi."
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/community-submission.cancel.jinja:41
 #, python-brace-format
@@ -1370,13 +1391,15 @@ msgid ""
 "The record submission for your community '{community_title}' was cancelled "
 "by @'{cancel_name}'."
 msgstr ""
+"'{community_title}' başlıklı topluluğunuza kayıt gönderimi, @'{cancel_name}'"
+" adlı kullanıcı tarafından iptal edildi."
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/community-submission.cancel.jinja:43
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/community-submission.decline.jinja:57
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/community-submission.expire.jinja:41
 #, python-brace-format
 msgid "Check out the submission request: {request_link}"
-msgstr ""
+msgstr "Gönderim isteğini kontrol edin: {request_link}"
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/community-submission.cancel.jinja:48
 #, python-brace-format
@@ -1384,11 +1407,13 @@ msgid ""
 "The record submission for your community *'{community_title}'* was cancelled"
 " by *'{cancel_name}'*."
 msgstr ""
+"*'{community_title}'* başlıklı topluluğunuza kayıt gönderimi, "
+"*'{cancel_name}'* adlı kullanıcı tarafından iptal edildi."
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/community-submission.decline.jinja:20
 #, python-brace-format
 msgid "⛔️ Community inclusion declined for '{record_title}'"
-msgstr ""
+msgstr "⛔️ '{record_title}' başlıklı kaydın topluluğa alınması reddedildi"
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/community-submission.decline.jinja:26
 #, python-brace-format
@@ -1396,6 +1421,8 @@ msgid ""
 "The community curator '@{curator_name}' declined the record '{record_title}'"
 " into the community '{community_title}'"
 msgstr ""
+"'@{curator_name}' adlı topluluk küratörü, '{record_title}' başlıklı kaydın "
+"'{community_title}' başlıklı topluluğa alınmasını reddetti."
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/community-submission.decline.jinja:50
 #, python-brace-format
@@ -1403,6 +1430,8 @@ msgid ""
 "The community curator @{curator_name} declined the record '{record_title}' "
 "into the community '{community_title}'"
 msgstr ""
+"@{curator_name} adlı topluluk küratörü, '{record_title}' başlıklı kaydın "
+"'{community_title}' başlıklı topluluğa alınmasını reddetti."
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/community-submission.decline.jinja:64
 #, python-brace-format
@@ -1410,22 +1439,25 @@ msgid ""
 "The community curator *@{curator_name}* declined the record *{record_title}*"
 " into the community *{community_title}*"
 msgstr ""
+"*@{curator_name}* adlı topluluk küratörü, *{record_title}* başlıklı kaydın "
+"*{community_title}* başlıklı topluluğa alınmasını reddetti."
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/community-submission.expire.jinja:18
 #, python-brace-format
 msgid "⌛️ Community inclusion expired for '{record_title}'"
 msgstr ""
+"⌛️ '{record_title}' başlıklı kaydın topluluğa alınmasının süresi geçti"
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/community-submission.expire.jinja:24
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/community-submission.expire.jinja:39
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/community-submission.expire.jinja:48
 msgid "The submission for your record has expired."
-msgstr ""
+msgstr "Kaydınız için gönderim süresi geçti."
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/community-submission.submit.jinja:19
 #, python-brace-format
 msgid "📥 New record submission to your community '{community_title}'"
-msgstr ""
+msgstr "📥 '{community_title}' başlıklı topluluğunuza yeni kayıt gönderimi"
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/community-submission.submit.jinja:25
 #, python-brace-format
@@ -1433,12 +1465,14 @@ msgid ""
 "The record '{record_title}' was submitted to your community "
 "'{community_title}' by '@{creator_name}'"
 msgstr ""
+"'{record_title}' başlıklı kayıt, '{community_title}' başlıklı topluluğunuza "
+"'@{creator_name}' tarafından gönderildi."
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/community-submission.submit.jinja:37
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/community-submission.submit.jinja:56
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/community-submission.submit.jinja:70
 msgid "Review the submission request"
-msgstr ""
+msgstr "Gönderim isteğini incele"
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/community-submission.submit.jinja:49
 #, python-brace-format
@@ -1446,6 +1480,8 @@ msgid ""
 "The record '{record_title}' was submitted to your community "
 "'{community_title}' by @'{creator_name}'."
 msgstr ""
+"'{record_title}' başlıklı kayıt, '{community_title}' başlıklı topluluğunuza "
+"@'{creator_name}' tarafından gönderildi."
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/community-submission.submit.jinja:63
 #, python-brace-format
@@ -1453,6 +1489,8 @@ msgid ""
 "The record *'{record_title}'* was submitted to your community "
 "*'{community_title}'* by *@'{creator_name}'*."
 msgstr ""
+"*'{record_title}'* başlıklı kayıt, *'{community_title}'* başlıklı "
+"topluluğunuza *@'{creator_name}'* tarafından gönderildi."
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/grant-user-access.create.jinja:17
 #, python-brace-format
@@ -1460,16 +1498,20 @@ msgid ""
 "👤✔️ You were granted {permission} access to all versions of the record "
 "'{record_title}'"
 msgstr ""
+"👤✔️ '{record_title}' başlıklı kaydın tüm sürümleri için size {permission} "
+"erişim izni verildi."
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/grant-user-access.create.jinja:20
 #, python-brace-format
 msgid "👤✔️ You were granted {permission} access to draft '{record_title}'"
 msgstr ""
+"👤✔️ '{record_title} başlıklı taslak için size {permission} erişim izni "
+"verildi."
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/grant-user-access.create.jinja:22
 #, python-brace-format
 msgid "👤✔️ You were granted {permission} access to a draft"
-msgstr ""
+msgstr "👤✔️ Bir taslak için size {permission} erişim izni verildi."
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/grant-user-access.create.jinja:32
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/grant-user-access.create.jinja:75
@@ -1478,17 +1520,20 @@ msgid ""
 "You have now permission to {permission} all versions of the record "
 "'{record_title}'."
 msgstr ""
+"Artık '{record_title}' başlıklı kaydın tüm sürümleri için {permission} "
+"iznine sahipsiniz."
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/grant-user-access.create.jinja:35
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/grant-user-access.create.jinja:78
 #, python-brace-format
 msgid "You have now permission to {permission} the draft '{record_title}'."
 msgstr ""
+"Artık '{record_title}' başlıklı taslak için {permission} iznine sahipsiniz."
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/grant-user-access.create.jinja:37
 #, python-brace-format
 msgid "You have now permission to {permission} a draft."
-msgstr ""
+msgstr "Artık bir taslak için {permission} iznine sahipsiniz."
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/grant-user-access.create.jinja:44
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/grant-user-access.create.jinja:86
@@ -1510,45 +1555,49 @@ msgstr "İleti:"
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/user-access-request.decline.jinja:52
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/user-access-request.decline.jinja:66
 msgid "View the record"
-msgstr ""
+msgstr "Kaydı görüntüle"
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/grant-user-access.create.jinja:56
 msgid "View the draft"
-msgstr ""
+msgstr "Taslağı görüntüle"
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/grant-user-access.create.jinja:80
 #, python-brace-format
 msgid "You have now permission to {permission} the draft."
-msgstr ""
+msgstr "Artık taslak için {permission} iznine sahipsiniz."
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/grant-user-access.create.jinja:91
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/guest-access-request.cancel.jinja:52
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/guest-access-request.decline.jinja:53
 msgid "View the record: "
-msgstr ""
+msgstr "Kaydı görüntüleyin:"
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/grant-user-access.create.jinja:91
 msgid "View the draft: "
-msgstr ""
+msgstr "Taslağı görüntüleyin:"
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/grant-user-access.create.jinja:93
 msgid ""
 "This is an auto-generated message. To manage notifications, visit your "
 "account settings: "
 msgstr ""
+"Bu otomatik olarak oluşturulan bir mesajdır. Bildirimleri yönetmek için "
+"hesap ayarlarınıza şuradan ulaşabilirsiniz: "
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/guest-access-request-token.create.jinja:9
 #, python-brace-format
 msgid "❗️Access request for '{record_title}' requires action"
 msgstr ""
+"❗️'{record_title}' başlıklı kayıt için erişim isteğinde işlem yapılması "
+"gerekli"
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/guest-access-request-token.create.jinja:15
 msgid "Please verify the email address in order to submit the access request"
-msgstr ""
+msgstr "Erişim isteğini göndermek için lütfen e-posta adresini doğrulayın."
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/guest-access-request-token.create.jinja:18
 msgid "Verify e-mail address"
-msgstr ""
+msgstr "E-posta adresini doğrula"
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/guest-access-request-token.create.jinja:30
 #, python-format
@@ -1556,12 +1605,14 @@ msgid ""
 "Please verify your e-mail address via the following link in order to submit "
 "the access request for the record '%(record_title)s'."
 msgstr ""
+"Lütfen '%(record_title)s' başlıklı kayıt için erişim isteğini göndermek "
+"üzere aşağıdaki bağlantıdan e-posta adresinizi doğrulayın."
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/guest-access-request-token.create.jinja:32
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/guest-access-request-token.create.jinja:39
 #, python-format
 msgid "Verify e-mail address: %(url)s"
-msgstr ""
+msgstr "E-posta adresini doğrulayın: %(url)s"
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/guest-access-request-token.create.jinja:37
 #, python-format
@@ -1569,84 +1620,87 @@ msgid ""
 "Please verify your e-mail address via the following link in order to submit "
 "the access request for the record *%(record_title)s*."
 msgstr ""
+"Lütfen *%(record_title)s* başlıklı kayıt için erişim isteğini göndermek "
+"üzere aşağıdaki bağlantıdan e-posta adresinizi doğrulayın."
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/guest-access-request.accept.jinja:9
 #, python-brace-format
 msgid "✅ Access request for '{record_title}' was accepted."
-msgstr ""
+msgstr "✅ '{record_title}' başlıklı kayıt için erişim isteği kabul edildi."
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/guest-access-request.accept.jinja:14
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/guest-access-request.accept.jinja:21
 #, python-brace-format
 msgid "Your access request for '{record_title}' was accepted."
-msgstr ""
+msgstr "'{record_title}' başlıklı kayıt için erişim isteğiniz kabul edildi."
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/guest-access-request.accept.jinja:17
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/guest-access-request.accept.jinja:30
 msgid "Access the record"
-msgstr ""
+msgstr "Kayda eriş"
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/guest-access-request.accept.jinja:23
 #, python-brace-format
 msgid "Access the record here: {url}"
-msgstr ""
+msgstr "Kayda buradan erişin: {url}"
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/guest-access-request.accept.jinja:28
 #, python-brace-format
 msgid "Your access request for *'{record_title}'* was accepted."
-msgstr ""
+msgstr "*'{record_title}'* başlıklı kayıt için erişim isteğiniz kabul edildi."
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/guest-access-request.cancel.jinja:15
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/user-access-request.cancel.jinja:20
 msgid "❌ Access request canceled"
-msgstr ""
+msgstr "❌ Erişim isteği iptal edildi"
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/guest-access-request.cancel.jinja:21
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/guest-access-request.cancel.jinja:45
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/guest-access-request.cancel.jinja:59
 msgid "Your access request has been canceled"
-msgstr ""
+msgstr "Erişim isteğiniz iptal edildi."
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/guest-access-request.decline.jinja:16
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/user-access-request.decline.jinja:15
 msgid "⛔️ Access request declined"
-msgstr ""
+msgstr "⛔️ Erişim isteği reddedildi"
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/guest-access-request.decline.jinja:22
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/user-access-request.decline.jinja:21
 #, python-brace-format
 msgid "The owner of '{record_title}' has declined your access request"
 msgstr ""
+"'{record_title}' başlıklı kaydın sahibi, erişim isteğinizi geri çevirdi."
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/guest-access-request.decline.jinja:46
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/user-access-request.decline.jinja:45
 #, python-brace-format
 msgid "The owner of '{record_title}' has rejected your access request"
-msgstr ""
+msgstr "'{record_title}' başlıklı kaydın sahibi, erişim isteğinizi reddetti."
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/guest-access-request.decline.jinja:60
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/user-access-request.decline.jinja:59
 #, python-brace-format
 msgid "The owner of *{record_title}* has rejected your access request"
-msgstr ""
+msgstr "*{record_title}* başlıklı kaydın sahibi, erişim isteğinizi reddetti."
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/guest-access-request.submit.jinja:16
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/user-access-request.submit.jinja:15
 #, python-brace-format
 msgid "📥 New access request for your record '{record_title}'"
-msgstr ""
+msgstr "📥 '{record_title}' başlıklı kaydınız için yeni erişim isteği"
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/guest-access-request.submit.jinja:22
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/user-access-request.submit.jinja:21
 #, python-brace-format
 msgid "An access request was submitted for your record '{record_title}'."
-msgstr ""
+msgstr "'{record_title}' başlıklı kaydınız için bir erişim isteği gönderildi."
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/guest-access-request.submit.jinja:25
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/user-access-request.submit.jinja:24
 #, python-brace-format
 msgid "The requestor's e-mail address: {email}"
-msgstr ""
+msgstr "İstek sahibinin e-posta adresi: {email}"
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/guest-access-request.submit.jinja:28
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/guest-access-request.submit.jinja:42
@@ -1655,18 +1709,18 @@ msgstr ""
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/user-access-request.submit.jinja:41
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/user-access-request.submit.jinja:50
 msgid "See request details"
-msgstr ""
+msgstr "İstek detaylarını gör"
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/guest-access-request.submit.jinja:40
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/guest-access-request.submit.jinja:49
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/user-access-request.submit.jinja:39
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/user-access-request.submit.jinja:48
 msgid "An access request was submitted for your record."
-msgstr ""
+msgstr "Kaydınız için bir erişim isteği gönderildi."
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/guest-access-request.submitted.jinja:11
 msgid "📥 Your access request was submitted successfully"
-msgstr ""
+msgstr "📥 Erişim isteğiniz başarıyla gönderildi."
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/guest-access-request.submitted.jinja:17
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/guest-access-request.submitted.jinja:32
@@ -1675,37 +1729,39 @@ msgid ""
 "Your access request was submitted successfully. The request details are "
 "available at:"
 msgstr ""
+"Erişim isteğiniz başarıyla gönderildi. Talebin detaylarına şuradan "
+"ulaşabilirsiniz:"
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/guest-access-request.submitted.jinja:20
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/guest-access-request.submitted.jinja:43
 msgid "View request details"
-msgstr ""
+msgstr "İstek detaylarını görüntüle"
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/guest-access-request.submitted.jinja:34
 msgid "View request details: "
-msgstr ""
+msgstr "İstek detaylarını görüntüle:"
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/user-access-request.accept.jinja:10
 msgid "✅ Access request accepted"
-msgstr ""
+msgstr "✅ Erişim isteği kabul edildi"
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/user-access-request.accept.jinja:16
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/user-access-request.accept.jinja:40
 #, python-brace-format
 msgid "The owner of '{record_title}' has accepted your access request"
-msgstr ""
+msgstr "'{record_title}' başlıklı kaydın sahibi, erişim isteğinizi kabul etti"
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/user-access-request.accept.jinja:54
 #, python-brace-format
 msgid "The owner of *{record_title}* has accepted your access request"
-msgstr ""
+msgstr "*{record_title}* başlıklı kaydın sahibi, erişim isteğinizi kabul etti"
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/user-access-request.cancel.jinja:26
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/user-access-request.cancel.jinja:50
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/user-access-request.cancel.jinja:64
 #, python-brace-format
 msgid "Your access request has been canceled by {cancel_name}"
-msgstr ""
+msgstr "Erişim isteğiniz, {cancel_name} tarafından iptal edildi."
 
 #: invenio_rdm_records/tokens/errors.py:24
 msgid ""
@@ -1737,7 +1793,7 @@ msgstr "Kaynak erişim belirtecinin konusu geçersiz."
 
 #: invenio_rdm_records/tokens/errors.py:59
 msgid "The resource access token is expired."
-msgstr "Kaynak erişim belirtecinin son kullanma süresi doldu."
+msgstr "Kaynak erişim belirtecinin son kullanma süresi geçti."
 
 #: invenio_rdm_records/tokens/errors.py:65
 msgid "Resource Access Tokens feature is currently disabled."
