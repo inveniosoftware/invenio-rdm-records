@@ -3,13 +3,14 @@
 # Berat Aldemir <berataldemir@gmail.com>, 2024
 # BEN TERCÜME, 2025
 # Ben Translation and Interpreting Services <info@bentercume.com>, 2025
+# Eylül-1 -, 2025
 # 
 msgid ""
 msgstr ""
 "Project-Id-Version: i18next-conv\n"
 "POT-Creation-Date: 2025-07-10T06:49:34.732Z\n"
 "PO-Revision-Date: 2024-08-06 08:56+0000\n"
-"Last-Translator: Ben Translation and Interpreting Services <info@bentercume.com>, 2025\n"
+"Last-Translator: Eylül-1 -, 2025\n"
 "Language-Team: Turkish (https://app.transifex.com/inveniosoftware/teams/23537/tr/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -95,7 +96,7 @@ msgstr ""
 "verilir."
 
 msgid "Submission to this community is only allowed to community members."
-msgstr ""
+msgstr "Bu topluluğa gönderim sadece topluluk üyelerine izin verilir."
 
 msgid "Community submission conditions information"
 msgstr "Topluluğa gönderim koşulları ile ilgili bilgiler"
@@ -108,7 +109,7 @@ msgstr ""
 "Forma erişmek için butona tıklayın."
 
 msgid "Go to the community"
-msgstr ""
+msgstr "Topluluğa git"
 
 msgid "Selected"
 msgstr "Seçildi"
@@ -154,7 +155,7 @@ msgid "Expired"
 msgstr "Süresi doldu"
 
 msgid "The request to submit this upload to the community has expired."
-msgstr "Bu yüklemeyi topluluğa gönderme talebinin süresi doldu."
+msgstr "Bu yüklemeyi topluluğa gönderme isteğinin süresi doldu."
 
 msgid "Published"
 msgstr "Yayınlanmış"
@@ -186,7 +187,7 @@ msgid "Once your upload is complete, you can publish it."
 msgstr "Yüklemeniz tamamlandıktan sonra yayınlayabilirsiniz."
 
 msgid "View request"
-msgstr "Görüntüleme talebi"
+msgstr "İsteği görüntüle"
 
 msgid "discard changes"
 msgstr "değişiklikleri gözardı et"
@@ -217,7 +218,7 @@ msgid "Preview"
 msgstr "Gözden geçir"
 
 msgid "DOI is needed. You need to reserve a DOI before publishing."
-msgstr ""
+msgstr "DOI gereklidir. Yayınlamadan önce bir DOI ayırtmanız gerekir."
 
 msgid "Are you sure you want to publish this record?"
 msgstr "Bu kaydı yayınlamak istediğinizden emin misiniz?"
@@ -228,8 +229,8 @@ msgid ""
 "metadata later."
 msgstr ""
 "Kayıt yayınlandıktan sonra yüklemedeki dosyaları artık "
-"değiştiremeyeceksiniz! Ancak, kaydın meta verilerini daha sonra "
-"güncelleyebileceksiniz."
+"değiştiremeyeceksiniz! Ancak kaydın üst verilerini daha sonra yine "
+"güncelleyebilirsiniz."
 
 msgid "Publish"
 msgstr "Yayınla"
@@ -258,7 +259,7 @@ msgid ""
 msgstr ""
 "Yüklemeniz '{{communityTitle}} topluluğunda <bold>hemen "
 "yayınlanacaktır</bold>. Yüklemedeki dosyaları artık değiştiremeyeceksiniz! "
-"Ancak, kaydın meta verilerini daha sonra güncelleyebileceksiniz."
+"Ancak kaydın üst verilerini daha sonra yine güncelleyebilirsiniz."
 
 msgid "Publish record to community"
 msgstr "Kaydı toplulukta yayınla"
@@ -271,35 +272,34 @@ msgstr ""
 "Topluluğa göndermeden önce lütfen aşağıdakileri okuyun ve kontrol edin:"
 
 msgid "Before requesting review, please read and check the following:"
-msgstr ""
-"İnceleme talep etmeden önce lütfen aşağıdakileri okuyun ve kontrol edin:"
+msgstr "İnceleme istemeden önce lütfen aşağıdakileri okuyun ve kontrol edin:"
 
 msgid ""
 "If your upload is accepted by the community curators, it will be "
 "<bold>immediately published</bold>. Before that, you will still be able to "
 "modify metadata and files of this upload."
 msgstr ""
-"Yüklemeniz topluluk küratörleri tarafından kabul edilirse, <bold>hemen "
-"yayınlanacaktır</bold>. Ondan önce, bu yüklemenin meta verilerini ve "
-"dosyalarını hala değiştirebileceksiniz."
+"Yüklemeniz topluluk küratörleri tarafından kabul edilirse <bold>hemen "
+"yayınlanacaktır</bold>. Ondan önce, bu yüklemenin üst verilerini ve "
+"dosyalarını yine değiştirebilirsiniz."
 
 msgid "Submit record for review"
 msgstr "Kaydı incelemeye gönderin"
 
 msgid "The '{{communityTitle}}' curators will have access to"
-msgstr ""
+msgstr "'{{communityTitle}}' küratörlerinin, yüklediğiniz"
 
 msgid "view and edit"
-msgstr ""
+msgstr "üst veri ve dosyaları"
 
 msgid "your upload's metadata and files."
-msgstr ""
+msgstr "görüntüleme ve düzenleme erişimi olacaktır."
 
 msgid "Message to curators (optional)"
 msgstr "Küratörlere mesaj (isteğe bağlı)"
 
 msgid "msgWarningText1"
-msgstr ""
+msgstr "msgWarningText1"
 
 msgid "Change community"
 msgstr "Topluluğu değiştir"
@@ -314,10 +314,10 @@ msgid "Record successfully saved."
 msgstr "Kayıt başarıyla kaydedildi."
 
 msgid "Record saved with validation feedback in"
-msgstr ""
+msgstr "Şu alanlarda doğrulama uyarılarıyla birlikte kayıt kaydedildi:"
 
 msgid "Draft has validation feedback in"
-msgstr ""
+msgstr "Taslakta şu alanlarda doğrulama uyarıları var:"
 
 msgid ""
 "The draft was not saved. Please try again. If the problem persists, contact "
@@ -335,6 +335,8 @@ msgstr ""
 
 msgid "The draft was not published. Record saved with validation feedback in"
 msgstr ""
+"Taslak yayınlanamadı. Şu alanlarda doğrulama uyarılarıyla birlikte kayıt "
+"kaydedildi:"
 
 msgid ""
 "The draft was not submitted for review. Please try again. If the problem "
@@ -347,6 +349,8 @@ msgid ""
 "The draft was not submitted for review. Record saved with validation "
 "feedback in"
 msgstr ""
+"Taslak incelemeye gönderilemedi. Şu alanlarda doğrulama uyarılarıyla "
+"birlikte kayıt kaydedildi:"
 
 msgid ""
 "Draft deletion failed. Please try again. If the problem persists, contact "
@@ -458,26 +462,26 @@ msgstr ""
 "değişiklikleri yapmanız gerekiyorsa lütfen destek ile iletişime geçin."
 
 msgid "Search or create affiliation"
-msgstr "Bağlı olunan kurumları/kuruluşları ara veya oluştur"
+msgstr "Bağlı olunan kurum/kuruluş ara veya oluştur"
 
 msgid "Affiliations"
-msgstr "Bağlı olunan kurumlar/kuruluşlar"
+msgstr "Bağlı olunan kurum/kuruluşlar"
 
 msgid "Search for affiliations.."
-msgstr "Bağlı olunan kurumları/kuruluşları ara"
+msgstr "Bağlı olunan kurum/kuruluşları ara..."
 
 msgid "Coming soon"
-msgstr ""
+msgstr "Çok yakında"
 
 msgid ""
 "A copyright statement describing the ownership of the uploaded resource."
-msgstr ""
+msgstr "Yüklenen kaynağın sahipliğini açıklayan bir telif hakkı beyanı."
 
 msgid "Copyright (C) {{currentYear}} The Authors."
-msgstr ""
+msgstr "Telif hakkı (C) {{currentYear}} Yazarlar."
 
 msgid "Copyright"
-msgstr ""
+msgstr "Telif hakkı"
 
 msgid "Creators"
 msgstr "Oluşturanlar"
@@ -486,19 +490,19 @@ msgid "Add creator"
 msgstr "Oluşturan kişi ekle"
 
 msgid "Edit creator"
-msgstr "Düzenleme yaratıcısı"
+msgstr "Oluşturan kişiyi düzenle"
 
 msgid "Edit"
 msgstr "Düzenle"
 
 msgid "ORCID logo"
-msgstr ""
+msgstr "ORCID logosu"
 
 msgid "ROR logo"
-msgstr ""
+msgstr "ROR logosu"
 
 msgid "GND logo"
-msgstr ""
+msgstr "GND logosu"
 
 msgid "Type the value of an identifier..."
 msgstr "Bir tanımlayıcının değerini yazın..."
@@ -608,16 +612,16 @@ msgid "Select language"
 msgstr "Dil Seçin"
 
 msgid "Could not upload files."
-msgstr ""
+msgstr "Dosyalar yüklenemedi."
 
 msgid "The following files already exist"
 msgstr "Aşağıdaki dosyalar zaten var"
 
 msgid "Could not upload all files."
-msgstr ""
+msgstr "Tüm dosyalar yüklenemedi."
 
 msgid "Empty files were skipped."
-msgstr ""
+msgstr "Boş dosyalar geçildi."
 
 msgid "You can import files from the previous version."
 msgstr "Dosyaları önceki sürümden içe aktarabilirsiniz."
@@ -643,7 +647,7 @@ msgid "Import files"
 msgstr "Dosyaları içe aktar"
 
 msgid "Choose which file to preview on the published record landing page"
-msgstr ""
+msgstr "Yayınlanan kayıt açılış sayfasında önizlenecek dosyayı seçin"
 
 msgid "Filename"
 msgstr "Dosya adı"
@@ -677,10 +681,10 @@ msgid "or"
 msgstr "veya"
 
 msgid "This is a Metadata-only record."
-msgstr "Bu bir sadece-meta verisi kaydıdır."
+msgstr "Bu bir Sadece Üst Veri kaydıdır."
 
 msgid "Metadata-only record"
-msgstr "yalnızca-üstveri kaydı"
+msgstr "Sadece Üst Veri kaydı"
 
 msgid "Disable files for this record"
 msgstr "Bu kayıt için dosyaları devre dışı bırak"
@@ -707,13 +711,13 @@ msgid "Do you already have a {{pidLabel}} for this upload?"
 msgstr "Bu yükleme için zaten bir {{pidLabel}} var mı?"
 
 msgid "Yes, I already have one"
-msgstr ""
+msgstr "Evet, zaten bir tane var."
 
 msgid "No, I need one"
-msgstr ""
+msgstr "Hayır, bir tane lazım."
 
 msgid "No, I don't need one"
-msgstr ""
+msgstr "Hayır, ihtiyacım yok."
 
 msgid "Search for languages..."
 msgstr "Dilleri ara..."
@@ -749,28 +753,28 @@ msgid "Change {{mode}} license"
 msgstr "{{mode}} lisansını değiştir"
 
 msgid "Search for licenses"
-msgstr ""
+msgstr "Lisansları ara"
 
 msgid "Recommended"
 msgstr "Tavsiye edilen"
 
 msgid "recommended"
-msgstr ""
+msgstr "tavsiye edilen"
 
 msgid "all"
-msgstr ""
+msgstr "tümü"
 
 msgid "Data"
 msgstr "Veri"
 
 msgid "data"
-msgstr ""
+msgstr "veri"
 
 msgid "Software"
 msgstr "Yazılım"
 
 msgid "software"
-msgstr ""
+msgstr "yazılım"
 
 msgid "Title"
 msgstr "Başlık"
@@ -791,10 +795,10 @@ msgid "Change license"
 msgstr "Lisansı değiştir"
 
 msgid "Did not find your license? "
-msgstr ""
+msgstr "Lisansınızı bulamadınız mı?"
 
 msgid "Add a custom license."
-msgstr ""
+msgstr "Özel bir lisans ekleyin."
 
 msgid ""
 "In case your upload was already published elsewhere, please use the date of "
@@ -869,63 +873,71 @@ msgid "Add titles"
 msgstr "Başlık ekleyin"
 
 msgid "Additional title"
-msgstr ""
+msgstr "Ek başlık"
 
 msgid "Version"
 msgstr "Sürüm"
 
 msgid "On"
-msgstr ""
+msgstr "Kaydı"
 
 msgid ""
 "the record will automatically be made publicly accessible. Until then, the "
 "record can"
 msgstr ""
+"belirtilen tarihte sistem otomatik olarak kamuya açık hâle getirilecektir. O"
+" zamana kadar, kayda"
 
 msgid "only"
-msgstr ""
+msgstr "yalnızca"
 
 msgid "be accessed by"
-msgstr ""
+msgstr "izinlerde"
 
 msgid "users specified"
-msgstr ""
+msgstr "belirtilen kullanıcılar"
 
 msgid "in the permissions."
-msgstr ""
+msgstr "erişebilir."
 
 msgid "The record can"
-msgstr ""
+msgstr "Kayda"
 
 msgid "The record is publicly accessible. The files can"
-msgstr ""
+msgstr "Kayıt kamuya açıktır. Dosyalara"
 
 msgid "The record is publicly accessible. On"
-msgstr ""
+msgstr "Kayıt kamuya açıktır. "
 
 msgid ""
 "the files will automatically be made publicly accessible. Until then, the "
 "files can"
 msgstr ""
+"Dosyalar otomatik olarak kamuya açık hâle getirilecektir. O zamana kadar, "
+"dosyalara"
 
 msgid "Record or files protection must be"
-msgstr ""
+msgstr "Kayıt veya dosya koruması"
 
 msgid "restricted"
-msgstr "kısıtlı"
+msgstr "kısıtlanarak"
 
 msgid "to apply an embargo."
-msgstr ""
+msgstr "ambargo uygulanmalıdır."
 
 msgid ""
 "Uploading the selected files would result in {{total}} of storage use, "
 "exceeding the limit of {{limit}}."
 msgstr ""
+"Seçilen dosyaların yüklenmesiyle {{limit}} sınırı aşılarak {{total}} "
+"depolama alanı kullanılmış olacak."
 
 msgid ""
 "Mostly relevant for software and dataset uploads. A semantic version string "
 "is preferred see"
 msgstr ""
+"Çoğunlukla yazılım ve veri kümesi yüklemeleri için geçerlidir. Anlamsal "
+"versiyon dizesi tercih edilir, bkz."
 
 msgid ", but any version string is accepted."
-msgstr ""
+msgstr "ancak herhangi bir versiyon dizesi kabul edilir."

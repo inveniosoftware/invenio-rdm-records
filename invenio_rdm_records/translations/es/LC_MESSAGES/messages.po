@@ -1249,7 +1249,7 @@ msgstr ""
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/user-access-request.cancel.jinja:28
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/user-access-request.decline.jinja:23
 msgid " with the following message:"
-msgstr ""
+msgstr "con el siguiente mensaje:"
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/community-submission.accept.jinja:39
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/community-submission.accept.jinja:58
@@ -1327,7 +1327,7 @@ msgstr ""
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/user-access-request.decline.jinja:48
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/user-access-request.decline.jinja:62
 msgid "with the following message:"
-msgstr ""
+msgstr "con el siguiente mensaje:"
 
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/community-submission.accept.jinja:60
 #: invenio_rdm_records/templates/semantic-ui/invenio_notifications/community-submission.accept.jinja:74
