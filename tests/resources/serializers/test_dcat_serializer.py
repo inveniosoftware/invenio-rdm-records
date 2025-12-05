@@ -253,6 +253,7 @@ def test_dcat_serializer(running_app, full_record_to_dict):
         "        <dcat:byteSize>9</dcat:byteSize>\n"
         "        <dcat:accessURL "
         'rdf:resource="https://doi.org/10.1234/12345-abcde"/>\n'
+        "        <dcat:checksum>md5:e795abeef2c38de2b064be9f6364ceae</dcat:checksum>\n"
         "      </dcat:Distribution>\n"
         "    </dcat:distribution>\n"
         "  </rdf:Description>\n"

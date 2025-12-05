@@ -75,12 +75,15 @@ class DCATSerializer(MarshmallowSerializer):
             url = file.get("access_url")
             return {"{{{rdf}}}resource".format(**ns): url} if url else None
 
+        def checksum(file):
+            return file["checksum"] if file.get("checksum") else None
+
         files_fields = {
             "{{{dcat}}}downloadURL": download_url,
             "{{{dcat}}}mediaType": media_type,
             "{{{dcat}}}byteSize": byte_size,
             "{{{dcat}}}accessURL": access_url,
-            # TODO: there's also "spdx:checksum", but it's not in the W3C spec yet
+            "{{{dcat}}}checksum": checksum,
         }
 
         for f in files:
