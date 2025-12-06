@@ -64,7 +64,7 @@ class SecretLink(Schema):
     created_at = TZDateTime(
         timezone=timezone.utc, format="iso", required=False, dump_only=True
     )
-    expires_at = TZDateTime(timezone=timezone.utc, format="iso", required=False)
+    expires_at = ISODateString(required=False)
     permission = fields.String(
         required=False, validate=validate.OneOf(["view", "preview", "edit"])
     )
