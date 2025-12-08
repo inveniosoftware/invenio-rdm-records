@@ -12,6 +12,11 @@
 Changes
 =======
 
+Version v22.7.0 (released 2025-12-08)
+
+- fix(access_requests_ui): Fix permissions for commenting with guest token when request is locked
+- fix(permissions): Fix can_create_comment to use parent attibute
+
 Version v22.6.0 (released 2025-11-21)
 
 - fix(requests): don't hard-code /me for record review request
