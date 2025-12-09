@@ -273,6 +273,16 @@ RDM_COMMUNITY_REQUIRED_TO_PUBLISH = False
 """Enforces at least one community per record."""
 RDM_COMMUNITY_INCLUSION_REQUEST_CLS = CommunityInclusion
 """Request type for record inclusion requests."""
+RDM_ALLOW_OWNERS_REMOVE_COMMUNITY_FROM_RECORD = True
+"""Allow record owners to remove communities from records.
+
+When set to False, only community curators, managers, and owners can remove
+communities from records. This applies to published records.
+Record owners will still be able to add communities, but removal is restricted
+to community curators, managers, and owners.
+
+Default: True (backwards compatible - owners can remove communities)
+"""
 
 #
 # Search configuration
