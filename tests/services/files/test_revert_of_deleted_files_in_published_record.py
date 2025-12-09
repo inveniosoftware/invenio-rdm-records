@@ -82,7 +82,9 @@ def test_revert_of_deleted_files_in_published_record(
     deleted_file = all_files["test.pdf"]
 
     # revert deleted file
-    deleted_file.revert(deleted_file.revision_id - 1)
+    # note that the list of revision IDs may have "holes" in it, so we use
+    # negative array indexing to find the second-to-last revision
+    deleted_file.revert(deleted_file.revisions[-2].revision_id)
 
     files = service.files.list_files(identity_simple, record.id)
     files_keys = [f["key"] for f in files.to_dict()["entries"]]
