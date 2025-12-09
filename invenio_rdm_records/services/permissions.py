@@ -252,9 +252,11 @@ class RDMRecordPermissionPolicy(RecordPermissionPolicy):
     can_add_community = can_manage
     # Who can remove a community from a record
     can_remove_community_ = [
-        RecordOwners(),
-        CommunityCurators(),
-        SystemProcess(),
+        IfConfig(
+            "RDM_ALLOW_OWNERS_REMOVE_COMMUNITY",
+            then_=[RecordOwners(), CommunityCurators(), SystemProcess()],
+            else_=[CommunityCurators(), SystemProcess()],
+        ),
     ]
     can_remove_community = [
         IfConfig(
