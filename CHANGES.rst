@@ -13,6 +13,10 @@
 Changes
 =======
 
+Version v19.6.1 (released 2025-12-08)
+
+- i18n: pulled translations
+
 Version v19.6.0 (released 2025-11-19)
 
 - fix(services): Make 'notes' parameter optional in _update_quota
