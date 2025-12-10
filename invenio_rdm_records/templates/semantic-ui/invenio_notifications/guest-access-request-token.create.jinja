@@ -6,7 +6,7 @@
 {% set account_settings_link = invenio_url_for("invenio_notifications_settings.index") %}
 
 {%- block subject -%}
-    {{ _("❗️Access request for '{record_title}' requires action").format(record_title=record_title) }}
+    {{ _("❗️ Access request for '{record_title}' requires action").format(record_title=record_title) }}
 {%- endblock subject -%}
 
 {%- block html_body -%}
