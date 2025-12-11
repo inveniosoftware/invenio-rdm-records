@@ -42,20 +42,18 @@ from invenio_records_resources.services.base.config import (
     SearchOptionsMixin,
     ServiceConfig,
 )
-from invenio_records_resources.services.base.links import (
+from invenio_records_resources.services import (
     ConditionalLink,
     EndpointLink,
     ExternalLink,
     NestedLinks,
+    RecordEndpointLink,
+    pagination_endpoint_links,
 )
 from invenio_records_resources.services.files.links import FileEndpointLink
 from invenio_records_resources.services.files.schema import FileSchema
 from invenio_records_resources.services.records.config import (
     RecordServiceConfig as BaseRecordServiceConfig,
-)
-from invenio_records_resources.services.records.links import (
-    RecordEndpointLink,
-    pagination_endpoint_links,
 )
 from invenio_records_resources.services.records.params import (
     FacetsParam,
