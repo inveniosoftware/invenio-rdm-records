@@ -3,7 +3,7 @@
 # Copyright (C) 2019-2025 CERN.
 # Copyright (C) 2019-2022 Northwestern University.
 # Copyright (C) 2021 TU Wien.
-# Copyright (C) 2022-2023 Graz University of Technology.
+# Copyright (C) 2022-2025 Graz University of Technology.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
@@ -36,13 +36,11 @@ except AttributeError:
 
 from collections import namedtuple
 from copy import deepcopy
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from io import BytesIO
 from unittest import mock
 
-import arrow
 import pytest
-from dateutil import tz
 from flask_principal import Identity, Need, RoleNeed, UserNeed
 from flask_security import login_user
 from flask_security.utils import hash_password
@@ -295,7 +293,7 @@ def app_config(app_config, mock_datacite_client):
         providers.DataCitePIDProvider(
             "datacite",
             client=mock_datacite_client("datacite", config_prefix="DATACITE"),
-            serializer=DataCite45JSONSerializer(schema_context={"is_parent": True}),
+            serializer=DataCite45JSONSerializer(is_parent=True),
             label=_("Concept DOI"),
         ),
     ]
@@ -1828,25 +1826,34 @@ def admin_role_need(db):
 def embargoed_files_record(running_app, minimal_record, superuser_identity):
     """Embargoed files record."""
     service = current_rdm_records_service
-    today = arrow.utcnow().date().isoformat()
+    today = datetime.now(timezone.utc).date().isoformat()
 
     # Add embargo to record
-    with mock.patch("arrow.utcnow") as mock_arrow:
-        minimal_record["access"]["files"] = "restricted"
-        minimal_record["access"]["status"] = "embargoed"
-        minimal_record["access"]["embargo"] = dict(
-            active=True, until=today, reason=None
-        )
-
+    with mock.patch(
+        "invenio_rdm_records.records.systemfields.access.embargo.datetime"
+    ) as mock_arrow:
         # We need to set the current date in the past to pass the validations
-        mock_arrow.return_value = arrow.get(datetime(1954, 9, 29), tz.gettz("UTC"))
-        draft = service.create(superuser_identity, minimal_record)
-        record = service.publish(id_=draft.id, identity=superuser_identity)
+        mock_arrow.now.return_value = datetime(1954, 9, 29, tzinfo=timezone.utc)
 
-        RDMRecord.index.refresh()
+        with mock.patch(
+            "invenio_rdm_records.services.schemas.access.datetime"
+        ) as mock_arrow_access:
+            mock_arrow_access.now.return_value = datetime(
+                1954, 9, 29, tzinfo=timezone.utc
+            )
+            minimal_record["access"]["files"] = "restricted"
+            minimal_record["access"]["status"] = "embargoed"
+            minimal_record["access"]["embargo"] = dict(
+                active=True, until=today, reason=None
+            )
 
+            draft = service.create(superuser_identity, minimal_record)
+            record = service.publish(id_=draft.id, identity=superuser_identity)
+
+            RDMRecord.index.refresh()
+            mock_arrow_access.now.return_value = datetime.now(timezone.utc)
         # Recover current date
-        mock_arrow.return_value = arrow.get(datetime.utcnow())
+        mock_arrow.now.return_value = datetime.now(timezone.utc)
 
     return record
 
@@ -1855,25 +1862,36 @@ def embargoed_files_record(running_app, minimal_record, superuser_identity):
 def embargoed_record(running_app, minimal_record, superuser_identity):
     """Embargoed record."""
     service = current_rdm_records_service
-    today = arrow.utcnow().date().isoformat()
+    today = datetime.now(timezone.utc).date().isoformat()
 
     # Add embargo to record
-    with mock.patch("arrow.utcnow") as mock_arrow:
-        minimal_record["access"]["record"] = "restricted"
-        minimal_record["access"]["status"] = "embargoed"
-        minimal_record["access"]["embargo"] = dict(
-            active=True, until=today, reason=None
-        )
+    with mock.patch(
+        "invenio_rdm_records.records.systemfields.access.embargo.datetime"
+    ) as mock_arrow:
+        mock_arrow.now.return_value = datetime(1954, 9, 29, tzinfo=timezone.utc)
 
-        # We need to set the current date in the past to pass the validations
-        mock_arrow.return_value = arrow.get(datetime(1954, 9, 29), tz.gettz("UTC"))
-        draft = service.create(superuser_identity, minimal_record)
-        record = service.publish(id_=draft.id, identity=superuser_identity)
+        with mock.patch(
+            "invenio_rdm_records.services.schemas.access.datetime"
+        ) as mock_arrow_access:
+            mock_arrow_access.now.return_value = datetime(
+                1954, 9, 29, tzinfo=timezone.utc
+            )
 
-        RDMRecord.index.refresh()
+            minimal_record["access"]["record"] = "restricted"
+            minimal_record["access"]["status"] = "embargoed"
+            minimal_record["access"]["embargo"] = dict(
+                active=True, until=today, reason=None
+            )
 
+            # We need to set the current date in the past to pass the validations
+
+            draft = service.create(superuser_identity, minimal_record)
+            record = service.publish(id_=draft.id, identity=superuser_identity)
+
+            RDMRecord.index.refresh()
+            mock_arrow_access.now.return_value = datetime.now(timezone.utc)
         # Recover current date
-        mock_arrow.return_value = arrow.get(datetime.utcnow())
+        mock_arrow.now.return_value = datetime.now(timezone.utc)
 
     return record
 
@@ -1898,7 +1916,7 @@ def verified_user(UserFixture, app, db):
         password="testuser",
     )
     u.create(app, db)
-    u.user.verified_at = datetime.utcnow()
+    u.user.verified_at = datetime.now(timezone.utc)
     # Dumping `is_verified` requires authenticated user in tests
     u.identity.provides.add(Need(method="system_role", value="authenticated_user"))
     return u

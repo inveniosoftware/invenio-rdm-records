@@ -3,14 +3,14 @@
 # Copyright (C) 2020-2024 CERN.
 # Copyright (C) 2020-2021 Northwestern University.
 # Copyright (C) 2021 TU Wien.
-# Copyright (C) 2023 Graz University of Technology.
+# Copyright (C) 2023-2025 Graz University of Technology.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
 
 """RDM record access settings service."""
 
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 
 import arrow
 from flask import current_app
@@ -141,10 +141,8 @@ class RecordAccessService(RecordService):
 
         if expires_at and is_specified:
             # if the expiration date was specified, check if it's in the future
-            expires_at = arrow.get(expires_at).to("utc").datetime
-            expires_at = expires_at.replace(tzinfo=None)
-
-            if expires_at < datetime.utcnow():
+            expires_at = arrow.get(expires_at, tzinfo=timezone.utc).datetime
+            if expires_at < datetime.now(timezone.utc):
                 raise ValidationError(
                     message=_("Expiration date must be set to the future"),
                     field_name="expires_at",
@@ -160,6 +158,7 @@ class RecordAccessService(RecordService):
             introduces_expiration = (
                 is_specified and not expires_at and secret_link.expires_at
             )
+
             extends_existing_expiration = (
                 expires_at
                 and secret_link.expires_at
@@ -178,7 +177,7 @@ class RecordAccessService(RecordService):
                     field_name="expires_at",
                 )
 
-            elif expires_at and expires_at < datetime.utcnow():
+            elif expires_at and expires_at < datetime.now(timezone.utc):
                 raise ValidationError(
                     message=_("Expiration date must be set to the future"),
                     field_name="expires_at",
@@ -720,7 +719,7 @@ class RecordAccessService(RecordService):
         record = self.record_cls.pid.resolve(id_)
         if current_app.config.get("MAIL_SUPPRESS_SEND", False):
             # TODO should be handled globally, not here, maybe EmailOp?
-            current_app.logger.warn(
+            current_app.logger.warning(
                 "Cannot proceed with guest based access request - "
                 "email sending has been disabled!"
             )

@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # Copyright (C) 2023 TU Wien.
+# Copyright (C) 2025 Graz University of Technology.
 #
 # Invenio RDM Records is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
@@ -14,7 +15,7 @@ As such, it is assumed that a request context is available (and thus, Flask's gl
 ``request`` is accessible).
 """
 
-from datetime import datetime
+from datetime import datetime, timezone
 
 from flask import current_app, request
 from invenio_stats.utils import get_user
@@ -38,7 +39,7 @@ def file_download_event_builder(event, sender_app, **kwargs):
     event.update(
         {
             # When:
-            "timestamp": datetime.utcnow().isoformat(),
+            "timestamp": datetime.now(timezone.utc).replace(tzinfo=None).isoformat(),
             # What:
             "bucket_id": str(obj.bucket_id),
             "file_id": str(obj.file_id),
@@ -71,7 +72,9 @@ def record_view_event_builder(event, sender_app, **kwargs):
         event.update(
             {
                 # When:
-                "timestamp": datetime.utcnow().isoformat(),
+                "timestamp": datetime.now(timezone.utc)
+                .replace(tzinfo=None)
+                .isoformat(),
                 # What:
                 "recid": record["id"],
                 "parent_recid": record.parent["id"],
