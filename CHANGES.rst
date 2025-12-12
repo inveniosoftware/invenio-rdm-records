@@ -12,6 +12,10 @@
 Changes
 =======
 
+Version v21.4.1 (released 2025-12-12)
+
+- fix(deposit-ui): support `data-label` for specifying section label
+
 Version v21.4.0 (released 2025-11-21)
 
 - feat: enable admins to edit files by default
