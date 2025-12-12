@@ -6,6 +6,7 @@
 # Copyright (C) 2021-2023 Graz University of Technology.
 # Copyright (C) 2022      Universität Hamburg
 # Copyright (C) 2024      KTH Royal Institute of Technology.
+# Copyright (C) 2025 CESNET i.a.l.e.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
@@ -68,6 +69,8 @@ from requests import Request
 from werkzeug.local import LocalProxy
 
 from invenio_rdm_records.records.processors.tiles import TilesProcessor
+from invenio_rdm_records.services.files.extractors.zip import ZipExtractor
+from invenio_rdm_records.services.files.processors.zip import ZipProcessor
 
 from ..records import RDMDraft, RDMRecord
 from ..records.api import RDMDraftMediaFiles, RDMRecordMediaFiles
@@ -434,6 +437,16 @@ class WithFileLinks(type):
 
     def __init__(cls, *args, **kwargs):
         """Constructor."""
+        cls.container_item_links_item = {
+            "content": EndpointLink(
+                "record_files.extract_container_item",
+                params=["pid_value", "key", "path"],
+                vars=lambda container_item_metadata, variables: variables.update(
+                    {"path": container_item_metadata["id"]}
+                ),
+            ),
+        }
+
         cls.file_links_list = {
             "self": EndpointLink(
                 f"{cls.name_of_file_blueprint}.search", params=["pid_value"]
@@ -550,6 +563,10 @@ class RDMFileRecordServiceConfig(FileServiceConfig, ConfiguratorMixin):
     components = FromConfig(
         "RDM_FILES_SERVICE_COMPONENTS", default=FileServiceConfig.components
     )
+
+    file_processors = FileServiceConfig.file_processors + [ZipProcessor()]
+
+    file_extractors = FileServiceConfig.file_extractors + [ZipExtractor()]
 
 
 class RDMRecordServiceConfig(RecordServiceConfig, ConfiguratorMixin):
@@ -936,6 +953,10 @@ class RDMFileDraftServiceConfig(FileServiceConfig, ConfiguratorMixin):
     components = FromConfig(
         "RDM_DRAFT_FILES_SERVICE_COMPONENTS", default=FileServiceConfig.components
     )
+
+    file_processors = FileServiceConfig.file_processors + [ZipProcessor()]
+
+    file_extractors = FileServiceConfig.file_extractors + [ZipExtractor()]
 
 
 class RDMMediaFileDraftServiceConfig(FileServiceConfig, ConfiguratorMixin):
