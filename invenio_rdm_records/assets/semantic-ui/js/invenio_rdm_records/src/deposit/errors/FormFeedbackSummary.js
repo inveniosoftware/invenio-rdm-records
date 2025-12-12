@@ -31,6 +31,14 @@ export class FormFeedbackSummary extends Component {
     }, 0);
   }
 
+  getSectionLabel = (sectionElement) => {
+    return (
+      sectionElement?.getAttribute("data-label") ||
+      sectionElement?.getAttribute("label") ||
+      "Unknown section"
+    );
+  };
+
   getAllErrPaths = (obj, prev = "") => {
     const result = [];
 
@@ -60,7 +68,7 @@ export class FormFeedbackSummary extends Component {
       for (const [section, fields] of Object.entries(this.sections)) {
         if (fields.some((field) => path.startsWith(field))) {
           const sectionElement = document.getElementById(section);
-          const label = sectionElement?.getAttribute("label") || "Unknown section";
+          const label = this.getSectionLabel(sectionElement);
           errorSections.set(section, {
             label,
             count: (errorSections.get(section)?.count || 0) + 1,
@@ -82,7 +90,7 @@ export class FormFeedbackSummary extends Component {
 
       if (sectionElement) {
         const sectionId = sectionElement.id;
-        const label = sectionElement.getAttribute("label") || "Unknown section";
+        const label = this.getSectionLabel(sectionElement);
         errorSections.set(sectionId, {
           label,
           count: (errorSections.get(sectionId)?.count || 0) + 1,
