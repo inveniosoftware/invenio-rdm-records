@@ -12,6 +12,11 @@
 Changes
 =======
 
+Version v23.0.0 (released 2025-12-12)
+
+- chore(setup): bump major versions
+- feat(permissions): add reply_comment permission
+
 Version v22.7.0 (released 2025-12-08)
 
 - fix(access_requests_ui): Fix permissions for commenting with guest token when request is locked
