@@ -381,6 +381,7 @@ class RDMRequestsPermissionPolicy(RequestPermissionPolicy):
     can_create_comment = RequestPermissionPolicy.can_create_comment + [
         guest_token_locked
     ]
+    can_reply_comment = RequestPermissionPolicy.can_reply_comment + [guest_token_locked]
     can_update_comment = RequestPermissionPolicy.can_update_comment + [
         guest_token_locked
     ]
