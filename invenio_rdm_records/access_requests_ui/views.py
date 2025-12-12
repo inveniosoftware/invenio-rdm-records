@@ -58,7 +58,7 @@ def read_request(request, **kwargs):
     request_type = request["type"]
     community = request["receiver"]["community"]
     request_is_accepted = request["status"] == GuestAcceptAction.status_to
-    permissions = request.has_permissions_to(["create_comment"])
+    permissions = request.has_permissions_to(["create_comment", "reply_comment"])
 
     # NOTE: this template is defined in Invenio-App-RDM
     return render_template(
