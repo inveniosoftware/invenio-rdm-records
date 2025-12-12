@@ -48,7 +48,7 @@ class DataPackageSchema(Schema):
                 resource["name"] = file.get("key")
                 resource["path"] = f'{basepath}/files/{file.get("key")}'
                 resource["format"] = file.get("ext")
-                resource["mimetype"] = file.get("mimetype")
+                resource["mediatype"] = file.get("mimetype")
                 resource["bytes"] = file.get("size")
                 resource["hash"] = file.get("checksum")
                 resource = {k: v for k, v in resource.items() if v is not None}

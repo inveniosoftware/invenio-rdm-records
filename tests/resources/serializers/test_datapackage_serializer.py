@@ -65,7 +65,7 @@ def test_data_package_serializer_full_record(full_record_to_dict):
                 "name": "test.txt",
                 "path": "https://127.0.0.1:5000/records/12345-abcde/files/test.txt",
                 "format": "txt",
-                "mimetype": "text/plain",
+                "mediatype": "text/plain",
                 "bytes": 9,
                 "hash": "md5:e795abeef2c38de2b064be9f6364ceae",
             },
