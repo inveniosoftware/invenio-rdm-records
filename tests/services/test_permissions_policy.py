@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2021 Graz University of Technology.
+# Copyright (C) 2021-2025 Graz University of Technology.
 # Copyright (C) 2021 TU Wien.
 #
 # Invenio-RDM-Records is free software; you can redistribute it
@@ -28,7 +28,7 @@ from invenio_rdm_records.records import RDMParent, RDMRecord
 from invenio_rdm_records.services.generators import IfRestricted, RecordOwners
 
 
-class TestRDMPermissionPolicy(RecordPermissionPolicy):
+class RDMPermissionPolicyTest(RecordPermissionPolicy):
     """Define permission policies for RDM Records."""
 
     can_search = [AnyUser(), SystemProcess()]
@@ -59,7 +59,7 @@ def test_permission_policy_generators(
     app, anyuser_identity, authenticated_identity, superuser_identity
 ):
     """Test permission policies with given Identities."""
-    policy = TestRDMPermissionPolicy
+    policy = RDMPermissionPolicyTest
 
     # TODO: add to fixture
     rest_record = RDMRecord.create({}, access={}, parent=RDMParent.create({}))
@@ -113,11 +113,11 @@ def test_permission_policy_generators(
 
 def test_permission_policy_needs_excludes(superuser_role_need):
     """Test permission policy excluding 'superuser_role_need'."""
-    search_perm = TestRDMPermissionPolicy(action="search")
-    create_perm = TestRDMPermissionPolicy(action="create")
-    update_perm = TestRDMPermissionPolicy(action="update")
-    delete_perm = TestRDMPermissionPolicy(action="delete")
-    updates_files_perm = TestRDMPermissionPolicy(action="updates_files")
+    search_perm = RDMPermissionPolicyTest(action="search")
+    create_perm = RDMPermissionPolicyTest(action="create")
+    update_perm = RDMPermissionPolicyTest(action="update")
+    delete_perm = RDMPermissionPolicyTest(action="delete")
+    updates_files_perm = RDMPermissionPolicyTest(action="updates_files")
 
     assert search_perm.needs == {superuser_role_need, any_user, system_process}
     assert search_perm.excludes == set()

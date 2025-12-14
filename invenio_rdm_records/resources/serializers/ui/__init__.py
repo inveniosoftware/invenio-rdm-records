@@ -2,6 +2,7 @@
 #
 # Copyright (C) 2020 CERN.
 # Copyright (C) 2020 Northwestern University.
+# Copyright (C) 2025 Graz University of Technology.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
@@ -23,5 +24,4 @@ class UIJSONSerializer(MarshmallowSerializer):
             format_serializer_cls=JSONSerializer,
             object_schema_cls=UIRecordSchema,
             list_schema_cls=BaseListSchema,
-            schema_context={"object_key": "ui"},
         )

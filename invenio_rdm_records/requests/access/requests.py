@@ -2,13 +2,14 @@
 #
 # Copyright (C) 2023 TU Wien.
 # Copyright (C) 2024 KTH Royal Institute of Technology.
+# Copyright (C) 2025 Graz University of Technology.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
 
 """Access requests for records."""
 
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 
 import marshmallow as ma
 from flask import g
@@ -164,7 +165,7 @@ class GuestAcceptAction(actions.AcceptAction):
         # TODO date calculation could be done elsewhere ?
         if days:
             data["expires_at"] = (
-                (datetime.utcnow() + timedelta(days=days)).date().isoformat()
+                (datetime.now(timezone.utc) + timedelta(days=days)).date().isoformat()
             )
         link = service.access.create_secret_link(identity, record.id, data)
         access_url = f"{record.links['self_html']}?token={link._link.token}"

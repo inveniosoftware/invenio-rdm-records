@@ -12,7 +12,7 @@
           "match_mapping_type": "date",
           "mapping": {
             "type": "date",
-            "format": "strict_date_hour_minute_second"
+            "format": "strict_date_optional_time"
           }
         }
       }
@@ -23,7 +23,7 @@
     "properties": {
       "timestamp": {
         "type": "date",
-        "format": "strict_date_hour_minute_second"
+        "format": "strict_date_optional_time"
       },
       "bucket_id": {
         "type": "keyword"
