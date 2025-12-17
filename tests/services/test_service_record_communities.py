@@ -98,14 +98,14 @@ def test_add_community_component_called(
     assert "dummy_id" not in [c["community_id"] for c in requests]
 
 
-def test_remove_community_component_called(
+def test_remove_community_from_record_component_called(
     db, community, community2, uploader, record_factory, set_app_config_fn_scoped
 ):
-    """The component `remove_community` method is called and blocks the removal."""
+    """The component `remove_community_from_record` method is called and blocks the removal."""
     test_community_id = community.id
 
     class MockRemoveComponent(ServiceComponent):
-        def remove_community(
+        def remove_community_from_record(
             self, identity, record, community, valid_data, errors, **kwargs
         ):
             if community["id"] == str(community2.id):
