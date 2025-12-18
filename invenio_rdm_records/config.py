@@ -812,6 +812,11 @@ IIIF_TILES_CONVERTER_PARAMS = {
 }
 """Parameters to be passed to the tiles converter."""
 
+
+RDM_CONTAINER_ZIP_FORMATS = [".zip"]
+"""Which zip formats to extract metadata for."""
+
+
 RDM_RECORDS_RESTRICTION_GRACE_PERIOD = timedelta(days=30)
 """Grace period for changing record access to restricted."""
 

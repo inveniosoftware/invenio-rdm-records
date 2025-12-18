@@ -2,6 +2,7 @@
 #
 # This file is part of Invenio.
 # Copyright (C) 2025 Northwestern University.
+# Copyright (C) 2025 CESNET i.a.l.e.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or
 # modify it under the terms of the MIT License; see LICENSE file for more
@@ -12,7 +13,6 @@
 It has to exist here to be picked up correctly by the create_app of
 tests/resources/conftest.py .
 """
-
 
 from flask import Blueprint
 
@@ -44,6 +44,10 @@ def create_invenio_app_rdm_records_blueprint(app):
         """Fake record_from_pid view function."""
         return "<record from pid>"
 
+    def record_container_file_preview(pid_value, key, path=None, **kwargs):
+        """Fake record_container_file_preview view function."""
+        return "<file preview>"
+
     # Records URL rules
     blueprint.add_url_rule(
         "/records/<pid_value>/files/<path:filename>",
@@ -68,6 +72,11 @@ def create_invenio_app_rdm_records_blueprint(app):
     blueprint.add_url_rule(
         "/<any(doi):pid_scheme>/<path:pid_value>",
         view_func=record_from_pid,
+    )
+
+    blueprint.add_url_rule(
+        "/records/<pid_value>/preview/<path:filename>/container/<path:path>",
+        view_func=record_container_file_preview,
     )
 
     return blueprint
