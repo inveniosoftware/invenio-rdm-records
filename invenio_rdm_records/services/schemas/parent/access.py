@@ -17,11 +17,12 @@ from marshmallow import Schema, fields, validate
 from marshmallow.validate import OneOf
 from marshmallow_utils.fields import (
     ISODateString,
-    SanitizedHTML,
     SanitizedUnicode,
     TZDateTime,
 )
 from marshmallow_utils.permissions import FieldPermissionsMixin
+
+from ..fields import SanitizedHTML
 
 
 class GrantSubject(Schema):

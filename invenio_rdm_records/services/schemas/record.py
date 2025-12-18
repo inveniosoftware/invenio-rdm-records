@@ -21,13 +21,13 @@ from marshmallow import EXCLUDE, Schema, ValidationError, fields, post_dump, pre
 from marshmallow_utils.fields import (
     EDTFDateTimeString,
     NestedAttribute,
-    SanitizedHTML,
     SanitizedUnicode,
     TZDateTime,
 )
 from marshmallow_utils.permissions import FieldPermissionsMixin
 
 from .access import AccessSchema
+from .fields import SanitizedHTML
 from .files import FilesSchema
 from .metadata import MetadataSchema
 from .parent import RDMParentSchema
