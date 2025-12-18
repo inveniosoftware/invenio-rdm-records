@@ -10,7 +10,9 @@
 from flask_resources.serializers import BaseSerializerSchema
 from invenio_i18n import lazy_gettext as _
 from marshmallow import ValidationError, fields, missing
-from marshmallow_utils.fields import SanitizedHTML, SanitizedUnicode
+from marshmallow_utils.fields import SanitizedUnicode
+
+from ....services.schemas.fields import SanitizedHTML
 
 
 def _serialize_person(person):
