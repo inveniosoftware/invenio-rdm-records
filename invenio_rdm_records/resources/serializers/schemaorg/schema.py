@@ -20,9 +20,10 @@ from flask_resources.serializers import BaseSerializerSchema
 from idutils import to_url
 from invenio_i18n import lazy_gettext as _
 from marshmallow import Schema, ValidationError, fields, missing
-from marshmallow_utils.fields import SanitizedHTML, SanitizedUnicode
+from marshmallow_utils.fields import SanitizedUnicode
 from pydash import py_
 
+from ....services.schemas.fields import SanitizedHTML
 from ..schemas import CommonFieldsMixin
 from ..utils import convert_size, get_vocabulary_props
 
