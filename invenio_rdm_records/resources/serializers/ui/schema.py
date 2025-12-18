@@ -33,8 +33,8 @@ from marshmallow_utils.fields import SanitizedHTML, SanitizedUnicode, StrippedHT
 from marshmallow_utils.fields.babel import gettext_from_dict
 from pyparsing import ParseException
 
-from invenio_rdm_records.services.request_policies import RDMRecordDeletionPolicy
-
+from ....services.request_policies import RDMRecordDeletionPolicy
+from ....services.schemas.fields import SanitizedHTML
 from .fields import AccessStatusField
 
 
