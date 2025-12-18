@@ -10,7 +10,9 @@
 
 from invenio_i18n import lazy_gettext as _
 from marshmallow import EXCLUDE, Schema, ValidationError, fields, pre_load, validate
-from marshmallow_utils.fields import SanitizedHTML, SanitizedUnicode
+from marshmallow_utils.fields import SanitizedUnicode
+
+from ....services.schemas.fields import SanitizedHTML
 
 
 def _list_value(lst):

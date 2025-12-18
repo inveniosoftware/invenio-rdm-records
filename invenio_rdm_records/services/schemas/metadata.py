@@ -35,11 +35,12 @@ from marshmallow_utils.fields import (
     EDTFDateTimeString,
     IdentifierSet,
     IdentifierValueSet,
-    SanitizedHTML,
     SanitizedUnicode,
 )
 from marshmallow_utils.schemas import GeometryObjectSchema, IdentifierSchema
 from werkzeug.local import LocalProxy
+
+from .fields import SanitizedHTML
 
 record_personorg_schemes = LocalProxy(
     lambda: current_app.config["RDM_RECORDS_PERSONORG_SCHEMES"]

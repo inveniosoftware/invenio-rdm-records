@@ -29,10 +29,11 @@ from invenio_vocabularies.resources import L10NString, VocabularyL10Schema
 from marshmallow import Schema, fields, missing, post_dump, pre_dump
 from marshmallow_utils.fields import FormatDate as FormatDate_
 from marshmallow_utils.fields import FormatEDTF as FormatEDTF_
-from marshmallow_utils.fields import SanitizedHTML, SanitizedUnicode, StrippedHTML
+from marshmallow_utils.fields import SanitizedUnicode, StrippedHTML
 from marshmallow_utils.fields.babel import gettext_from_dict
 from pyparsing import ParseException
 
+from ....services.schemas.fields import SanitizedHTML
 from .fields import AccessStatusField
 
 
