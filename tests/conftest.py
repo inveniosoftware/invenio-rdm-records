@@ -585,7 +585,7 @@ def full_record(users):
                         "place": "test location place",
                         "description": "test location description",
                         "identifiers": [
-                            {"identifier": "12345abcde", "scheme": "wikidata"},
+                            {"identifier": "Q42944", "scheme": "wikidata"},
                             {"identifier": "12345abcde", "scheme": "geonames"},
                         ],
                     }
@@ -855,7 +855,7 @@ def enhanced_full_record(users):
                         "place": "test location place",
                         "description": "test location description",
                         "identifiers": [
-                            {"identifier": "12345abcde", "scheme": "wikidata"},
+                            {"identifier": "Q42944", "scheme": "wikidata"},
                             {"identifier": "12345abcde", "scheme": "geonames"},
                         ],
                     }

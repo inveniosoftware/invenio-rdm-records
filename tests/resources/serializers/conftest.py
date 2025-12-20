@@ -310,7 +310,7 @@ def full_record_to_dict():
                         },
                         "identifiers": [
                             {
-                                "identifier": "12345abcde",
+                                "identifier": "Q42944",
                                 "scheme": "wikidata",
                             },
                             {
