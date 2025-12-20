@@ -38,6 +38,16 @@ def test_valid_full(app, valid_full_location):
         ({"description": "test location description"}),
         ({"place": "test location place"}),
         ({"identifiers": [{"identifier": "Q39", "scheme": "wikidata"}]}),
+        (
+            {
+                "identifiers": [
+                    {
+                        "identifier": "https://www.geonames.org/2660646",
+                        "scheme": "geonames",
+                    }
+                ]
+            }
+        ),
     ],
 )
 def test_valid_minimal(app, valid_minimal_location):
