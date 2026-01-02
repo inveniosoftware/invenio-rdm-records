@@ -1,17 +1,21 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2023 CERN
+# Copyright (C) 2023-2025 CERN
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
 
 """BibTex based Schema for Invenio RDM Records."""
 
-import datetime
+import calendar
 import textwrap
 
+from babel_edtf import parse_edtf
+from edtf.parser.grammar import ParseException
+from edtf.parser.parser_classes import Date, Interval
 from flask_resources.serializers import BaseSerializerSchema
-from marshmallow import fields, post_dump
+from marshmallow import fields, missing, post_dump
+from pydash import py_
 from slugify import slugify
 
 from ..schemas import CommonFieldsMixin
@@ -21,10 +25,10 @@ from .schema_formats import BibTexFormatter
 class BibTexSchema(BaseSerializerSchema, CommonFieldsMixin):
     """Schema for records in BibTex."""
 
-    id = fields.Str()
+    id = fields.Method("get_id")
     resource_id = fields.Str(attribute="metadata.resource_type.id")
     version = fields.Str(attribute="metadata.version")
-    date_created = fields.Method("get_date_created")
+    date_published = fields.Method("get_date_published")
     locations = fields.Method("get_locations")
     titles = fields.Method("get_titles")
     doi = fields.Method("get_doi")
@@ -44,17 +48,21 @@ class BibTexSchema(BaseSerializerSchema, CommonFieldsMixin):
 
     entry_mapper = {
         # Publication fields
-        "publication-conferencepaper": [
-            BibTexFormatter.in_proceedings,
-            BibTexFormatter.proceedings,
-        ],
+        "publication-conferencepaper": [BibTexFormatter.in_proceedings],
+        "publication-conferenceproceeding": [BibTexFormatter.proceedings],
         "publication-book": [
             BibTexFormatter.book,
             BibTexFormatter.booklet,
         ],
+        "publication-section": [
+            BibTexFormatter.in_collection,
+            BibTexFormatter.in_book,
+        ],
         "publication-article": [BibTexFormatter.article],
         "publication-preprint": [BibTexFormatter.unpublished],
-        "publication-thesis": [BibTexFormatter.thesis],
+        "publication-dissertation": [
+            BibTexFormatter.thesis
+        ],  # Previously publication-thesis
         "publication-technicalnote": [BibTexFormatter.manual],
         "publication-workingpaper": [BibTexFormatter.unpublished],
         # Software
@@ -71,13 +79,38 @@ class BibTexSchema(BaseSerializerSchema, CommonFieldsMixin):
         """
         return BibTexFormatter.misc
 
-    def get_date_created(self, obj):
-        """Get date last updated."""
-        date_obj = datetime.datetime.fromisoformat(obj["created"])
+    def get_id(self, obj):
+        """Get record id."""
+        if self.context.get("doi_all_versions", False):
+            # If all versions export is requested, return the parent id
+            return obj["parent"]["id"]
+        return obj["id"]
 
-        month = date_obj.strftime("%b").lower()
-        year = date_obj.strftime("%Y")
-        return {"month": month, "year": year}
+    def get_date_published(self, obj):
+        """Get publication year and month from edtf date."""
+        publication_date = py_.get(obj, "metadata.publication_date")
+        if not publication_date:
+            return None
+
+        try:
+            parsed_date = parse_edtf(publication_date)
+        except ParseException:
+            return None
+
+        if isinstance(parsed_date, Interval):
+            # if date is an interval, use the start date
+            parsed_date = parsed_date.lower
+        elif not isinstance(parsed_date, Date):
+            return None
+
+        date_published = {"year": parsed_date.year}
+        if parsed_date.month:
+            month_three_letter_abbr = calendar.month_abbr[
+                int(parsed_date.month)
+            ].lower()
+            date_published["month"] = month_three_letter_abbr
+
+        return date_published
 
     def get_creator(self, obj):
         """Get creator."""
@@ -151,9 +184,9 @@ class BibTexSchema(BaseSerializerSchema, CommonFieldsMixin):
 
     def get_url(self, obj):
         """Generate url."""
-        doi = obj.get("pids", {}).get("doi", {}).get("identifier")
+        doi = self.get_doi(obj)
         url = None
-        if doi:
+        if doi is not missing:
             url = f"https://doi.org/{doi}"
         return url
 
@@ -232,9 +265,9 @@ class BibTexSchema(BaseSerializerSchema, CommonFieldsMixin):
             "title": (lambda titles: None if titles is None else titles[0])(
                 data.get("titles", None)
             ),
-            "year": data.get("date_created", {}).get("year", None),
+            "year": data.get("date_published", {}).get("year", None),
             "doi": data.get("doi", None),
-            "month": data.get("date_created", {}).get("month", None),
+            "month": data.get("date_published", {}).get("month", None),
             "version": data.get("version", None),
             "url": data.get("url", None),
             "school": data.get("school", None),
@@ -245,6 +278,7 @@ class BibTexSchema(BaseSerializerSchema, CommonFieldsMixin):
             "pages": data.get("pages", None),
             "note": data.get("note", None),
             "venue": data.get("venue", None),
+            "swhid": data.get("swhid", None),
         }
 
     def _format_output_row(self, field, value):
@@ -261,14 +295,14 @@ class BibTexSchema(BaseSerializerSchema, CommonFieldsMixin):
 
         elif len(value) > 50:
             wrapped = textwrap.wrap(value, 50)
-            out = "  {0:<12} = {{{{{1} \n".format(field, wrapped[0])
-            for line in wrapped[1:-1]:
-                out += " {0:<17} {1:<}\n".format("", line)
-            out += " {0:<17} {1:<}}}}},\n".format("", wrapped[-1])
+            out = f"  {field:<12} = {{{wrapped[0]}\n"
+            for line in wrapped[1:]:
+                out += f" {'' :<17} {line}\n"
+            out += f" {'' :<17}}},\n"  # Closing the single brace here
         elif field == "month":
             out = "  {0:<12} = {1},\n".format(field, value)
         elif field == "url":
-            out = "  {0:<12} = {{{1}}}\n".format(field, value)
+            out = "  {0:<12} = {{{1}}},\n".format(field, value)
         else:
             if not isinstance(value, list) and value.isdigit():
                 out = "  {0:<12} = {1},\n".format(field, value)
@@ -286,7 +320,7 @@ class BibTexSchema(BaseSerializerSchema, CommonFieldsMixin):
 
         creator = creators[0].get("person_or_org", {})
         name = creator.get("family_name", creator["name"])
-        pubdate = data.get("date_created", {}).get("year", None)
+        pubdate = data.get("date_published", {}).get("year", None)
         year = id
         if pubdate is not None:
             year = "{}_{}".format(pubdate, id)

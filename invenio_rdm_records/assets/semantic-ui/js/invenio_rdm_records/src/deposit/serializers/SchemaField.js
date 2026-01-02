@@ -1,5 +1,5 @@
 // This file is part of Invenio-RDM-Records
-// Copyright (C) 2020-2023 CERN.
+// Copyright (C) 2020-2024 CERN.
 // Copyright (C) 2020-2022 Northwestern University.
 //
 // Invenio-RDM-Records is free software; you can redistribute it and/or modify it
@@ -57,7 +57,7 @@ export class SchemaField extends Field {
    */
   serialize(deserialized, defaultLocale) {
     const fieldValues = _get(deserialized, this.fieldpath, this.serializedDefault);
-    const serializedElements = fieldValues.map((value) => {
+    const serializedElements = fieldValues?.map((value) => {
       let serializedElement = _pick(value, this.schemaKeys);
       this.schemaKeys.forEach((key) => {
         serializedElement = this.schema[key].serialize(

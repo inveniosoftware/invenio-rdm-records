@@ -1,26 +1,26 @@
 # -*- coding: utf-8 -*-
 #
 # Copyright (C) 2021 Graz University of Technology.
-# Copyright (C) 2021-2023 CERN.
+# Copyright (C) 2021-2025 CERN.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
 
 """Invenio-RDM-Records OAI Functionality."""
 
-from datacite import schema43
+from datacite import schema45
 from dcxml import simpledc
 from flask import current_app, g
 from invenio_pidstore.errors import PersistentIdentifierError, PIDDoesNotExistError
 from invenio_pidstore.fetchers import FetchedPID
 from invenio_pidstore.models import PersistentIdentifier
-from invenio_records_resources.services.errors import PermissionDeniedError
+from invenio_records_resources.services.errors import PermissionDenied
 from invenio_search import RecordsSearch
 from invenio_search.engine import dsl
 from lxml import etree
 
 from .proxies import current_rdm_records, current_rdm_records_service
-from .resources.serializers.datacite import DataCite43XMLSerializer
+from .resources.serializers.datacite import DataCite45XMLSerializer
 from .resources.serializers.dcat import DCATSerializer
 from .resources.serializers.dublincore import DublinCoreXMLSerializer
 from .resources.serializers.marcxml import MARCXMLSerializer
@@ -62,8 +62,8 @@ def datacite_etree(pid, record):
     It assumes that record is a search result.
     """
     # TODO: Ditto. See https://github.com/inveniosoftware/flask-resources/issues/117
-    data_dict = DataCite43XMLSerializer().dump_obj(record["_source"])
-    return schema43.dump_etree(data_dict)
+    data_dict = DataCite45XMLSerializer().dump_obj(record["_source"])
+    return schema45.dump_etree(data_dict)
 
 
 def oai_datacite_etree(pid, record):
@@ -73,7 +73,7 @@ def oai_datacite_etree(pid, record):
     """
     # TODO: See https://github.com/inveniosoftware/flask-resources/issues/117
     # This should be made into a serializer similar to the ones above.
-    resource_dict = DataCite43XMLSerializer().dump_obj(record["_source"])
+    resource_dict = DataCite45XMLSerializer().dump_obj(record["_source"])
 
     nsmap = {
         None: "http://schema.datacite.org/oai/oai-1.1/",
@@ -94,11 +94,11 @@ def oai_datacite_etree(pid, record):
     payload = etree.SubElement(oai_datacite, "payload")
 
     # dump the record's metadata as usual
-    resource = schema43.dump_etree(resource_dict)
+    resource = schema45.dump_etree(resource_dict)
     payload.append(resource)
 
     # set up the elements' contents
-    schema_version.text = "4.3"
+    schema_version.text = "4.5"
     datacentre_symbol.text = current_app.config.get("DATACITE_DATACENTER_SYMBOL")
 
     return oai_datacite
@@ -130,7 +130,7 @@ def getrecord_fetcher(record_id):
 
     try:
         result = current_rdm_records.records_service.read(g.identity, recid.pid_value)
-    except PermissionDeniedError:
+    except PermissionDenied:
         # if it is a restricted record.
         raise PIDDoesNotExistError("recid", None)
 
@@ -148,6 +148,7 @@ class OAIRecordSearch(RecordsSearch):
         default_filter = [
             dsl.Q("exists", field="pids.oai.identifier"),
             dsl.Q("term", **{"access.record": "public"}),
+            dsl.Q("term", **{"is_deleted": "false"}),
         ]
 
 

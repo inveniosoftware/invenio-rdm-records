@@ -2,7 +2,7 @@
 #
 # Copyright (C) 2021 CERN.
 # Copyright (C) 2023 Northwestern University.
-# Copyright (C) 2023 Graz University of Technology.
+# Copyright (C) 2023-2024 Graz University of Technology.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
@@ -41,9 +41,9 @@ class BlockedPrefixes:
         for p in self.prefixes:
             if identifier.startswith(p):
                 errors.append(
-                    _("The prefix '{prefix}' is administrated locally.").format(
-                        prefix=p
-                    )
+                    _(
+                        "The prefix '{prefix}' is managed by {sitename}. Please supply an external DOI or select 'No' to have a DOI generated for you."
+                    ).format(prefix=p, sitename=current_app.config["THEME_SITENAME"])
                 )
                 # Bail early
                 return
@@ -60,6 +60,13 @@ class ExternalPIDProvider(PIDProvider):
         """Constructor."""
         super().__init__(name, pid_type=pid_type, managed=False, **kwargs)
         self._validators = validators or []
+
+    @classmethod
+    def is_enabled(cls, app):
+        """Determine if datacite is enabled or not."""
+        # TODO: not used at the moment, but this should be implemented when the
+        # ui distinguish between datacite and external doi's
+        return NotImplementedError
 
     def validate(self, record, identifier=None, provider=None, client=None, **kwargs):
         """Validate the pid attributes and record.

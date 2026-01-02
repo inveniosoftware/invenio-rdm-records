@@ -17,14 +17,6 @@ from invenio_rdm_records.resources.serializers.errors import VocabularyItemNotFo
 
 
 @pytest.fixture(scope="function")
-def updated_full_record(full_record):
-    """Update fields (done after record create) for Dublin Core serializer."""
-    full_record["access"]["status"] = "embargoed"
-
-    return full_record
-
-
-@pytest.fixture(scope="function")
 def updated_minimal_record(minimal_record):
     """Update fields (done after record create) for Dublin Core serializer."""
     minimal_record["access"]["status"] = "open"
@@ -37,34 +29,32 @@ def updated_minimal_record(minimal_record):
     return minimal_record
 
 
-def test_dublincorejson_serializer(running_app, updated_full_record):
+def test_dublincorejson_serializer(running_app, full_record_to_dict):
     """Test serializer to Dublin Core JSON"""
     expected_data = {
-        "contributors": ["Nielsen, Lars Holm"],
-        "types": ["info:eu-repo/semantic/other"],
-        "relations": [
-            "https://doi.org/10.1234/foo.bar",
-            "https://doi.org/10.1234/inveniordm.1234.parent",
-        ],
+        "contributors": ["Nielsen, Lars Holm", "Dirk, Dirkin"],
+        "creators": ["Nielsen, Lars Holm", "Tom, Blabin"],
+        "dates": ["2018/2020-09", "info:eu-repo/date/embargoEnd/2131-01-01"],
         "descriptions": [
-            "&lt;h1&gt;A description&lt;/h1&gt; &lt;p&gt;with HTML tags&lt;/p&gt;",
+            "&lt;h1&gt;A description&lt;/h1&gt; &lt;p&gt;with HTML " "tags&lt;/p&gt;",
             "Bla bla bla",
         ],
-        "publishers": ["InvenioRDM"],
-        "languages": ["dan", "eng"],
-        "locations": [
-            "name=test location place; description=test location description; lat=-32.94682; lon=-60.63932"
-        ],
+        "formats": ["application/pdf"],
         "identifiers": [
-            "https://doi.org/10.1234/inveniordm.1234",
-            "oai:vvv.com:abcde-fghij",
+            "https://doi.org/10.1234/12345-abcde",
+            "oai:invenio-rdm.com:12345-abcde",
             "https://ui.adsabs.harvard.edu/#abs/1924MNRAS..84..308E",
         ],
-        "formats": ["application/pdf"],
-        "titles": ["InvenioRDM"],
-        "creators": ["Nielsen, Lars Holm"],
-        "subjects": ["custom"],
-        "dates": ["2018/2020-09", "info:eu-repo/date/embargoEnd/2131-01-01"],
+        "languages": ["dan", "eng"],
+        "locations": [
+            "name=test location place; description=test location "
+            "description; lat=-32.94682; lon=-60.63932"
+        ],
+        "publishers": ["InvenioRDM"],
+        "relations": [
+            "https://doi.org/10.1234/foo.bar",
+            "https://doi.org/10.1234/pgfpj-at058",
+        ],
         "rights": [
             "info:eu-repo/semantics/embargoedAccess",
             "A custom license",
@@ -72,10 +62,13 @@ def test_dublincorejson_serializer(running_app, updated_full_record):
             "Creative Commons Attribution 4.0 International",
             "https://creativecommons.org/licenses/by/4.0/legalcode",
         ],
+        "subjects": ["Abdominal Injuries", "custom"],
+        "titles": ["InvenioRDM"],
+        "types": ["info:eu-repo/semantics/other"],
     }
 
     serializer = DublinCoreJSONSerializer()
-    serialized_record = serializer.dump_obj(updated_full_record)
+    serialized_record = serializer.dump_obj(full_record_to_dict)
 
     assert serialized_record == expected_data
 
@@ -83,7 +76,7 @@ def test_dublincorejson_serializer(running_app, updated_full_record):
 def test_dublincorejson_serializer_minimal(running_app, updated_minimal_record):
     """Test serializer to Dublin Core JSON with minimal record"""
     expected_data = {
-        "types": ["info:eu-repo/semantic/other"],
+        "types": ["info:eu-repo/semantics/other"],
         "titles": ["A Romans story"],
         "creators": ["Name", "Troy Inc."],
         "dates": ["2020-06-01"],
@@ -97,6 +90,17 @@ def test_dublincorejson_serializer_minimal(running_app, updated_minimal_record):
     assert serialized_record == expected_data
 
 
+def test_dublincorejson_serializer_empty_record(running_app, empty_record):
+    """Test serializer to Dublin Core JSON with an empty record"""
+
+    expected_data = {}
+
+    serializer = DublinCoreJSONSerializer()
+    serialized_record = serializer.dump_obj(empty_record)
+
+    assert serialized_record == expected_data
+
+
 def test_vocabulary_type_error(running_app, updated_minimal_record):
     """Test error thrown on missing resource type."""
     updated_minimal_record["metadata"]["resource_type"]["id"] = "invalid"
@@ -105,36 +109,50 @@ def test_vocabulary_type_error(running_app, updated_minimal_record):
         DublinCoreJSONSerializer().dump_obj(updated_minimal_record)
 
 
-def test_dublincorexml_serializer(running_app, updated_full_record):
+def test_dublincorexml_serializer(running_app, full_record_to_dict):
     """Test serializer to Dublin Core XML"""
-    expected_data = [
-        "<dc:contributor>Nielsen, Lars Holm</dc:contributor>",
-        "<dc:creator>Nielsen, Lars Holm</dc:creator>",
-        "<dc:date>2018/2020-09</dc:date>",
-        "<dc:date>info:eu-repo/date/embargoEnd/2131-01-01</dc:date>",
-        "<dc:description>&amp;lt;h1&amp;gt;A description&amp;lt;/h1&amp;gt; &amp;lt;p&amp;gt;with HTML tags&amp;lt;/p&amp;gt;</dc:description>",
-        "<dc:description>Bla bla bla</dc:description>",
-        "<dc:format>application/pdf</dc:format>",
-        "<dc:identifier>https://doi.org/10.1234/inveniordm.1234</dc:identifier>",
-        "<dc:identifier>oai:vvv.com:abcde-fghij</dc:identifier>",
-        "<dc:identifier>https://ui.adsabs.harvard.edu/#abs/1924MNRAS..84..308E</dc:identifier>",
-        "<dc:language>dan</dc:language>",
-        "<dc:language>eng</dc:language>",
-        "<dc:publisher>InvenioRDM</dc:publisher>",
-        "<dc:relation>https://doi.org/10.1234/foo.bar</dc:relation>",
-        "<dc:rights>info:eu-repo/semantics/embargoedAccess</dc:rights>",
-        "<dc:rights>A custom license</dc:rights>",
-        "<dc:rights>https://customlicense.org/licenses/by/4.0/</dc:rights>",
-        "<dc:rights>Creative Commons Attribution 4.0 " + "International</dc:rights>",
-        "<dc:rights>https://creativecommons.org/licenses/by/4.0/legalcode</dc:rights>",
-        "<dc:title>InvenioRDM</dc:title>",
-        "<dc:type>info:eu-repo/semantic/other</dc:type>",
-    ]
+    expected_data = (
+        "<?xml version='1.0' encoding='utf-8'?>\n"
+        '<oai_dc:dc xmlns:dc="http://purl.org/dc/elements/1.1/" '
+        'xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" '
+        'xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" '
+        'xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/ '
+        'http://www.openarchives.org/OAI/2.0/oai_dc.xsd">\n'
+        "  <dc:contributor>Nielsen, Lars Holm</dc:contributor>\n"
+        "  <dc:contributor>Dirk, Dirkin</dc:contributor>\n"
+        "  <dc:creator>Nielsen, Lars Holm</dc:creator>\n"
+        "  <dc:creator>Tom, Blabin</dc:creator>\n"
+        "  <dc:date>2018/2020-09</dc:date>\n"
+        "  <dc:date>info:eu-repo/date/embargoEnd/2131-01-01</dc:date>\n"
+        "  <dc:description>&amp;lt;h1&amp;gt;A description&amp;lt;/h1&amp;gt; "
+        "&amp;lt;p&amp;gt;with HTML tags&amp;lt;/p&amp;gt;</dc:description>\n"
+        "  <dc:description>Bla bla bla</dc:description>\n"
+        "  <dc:format>application/pdf</dc:format>\n"
+        "  <dc:identifier>https://doi.org/10.1234/12345-abcde</dc:identifier>\n"
+        "  <dc:identifier>oai:invenio-rdm.com:12345-abcde</dc:identifier>\n"
+        "  "
+        "<dc:identifier>https://ui.adsabs.harvard.edu/#abs/1924MNRAS..84..308E</dc:identifier>\n"
+        "  <dc:language>dan</dc:language>\n"
+        "  <dc:language>eng</dc:language>\n"
+        "  <dc:publisher>InvenioRDM</dc:publisher>\n"
+        "  <dc:relation>https://doi.org/10.1234/foo.bar</dc:relation>\n"
+        "  <dc:relation>https://doi.org/10.1234/pgfpj-at058</dc:relation>\n"
+        "  <dc:rights>info:eu-repo/semantics/embargoedAccess</dc:rights>\n"
+        "  <dc:rights>A custom license</dc:rights>\n"
+        "  <dc:rights>https://customlicense.org/licenses/by/4.0/</dc:rights>\n"
+        "  <dc:rights>Creative Commons Attribution 4.0 International</dc:rights>\n"
+        "  "
+        "<dc:rights>https://creativecommons.org/licenses/by/4.0/legalcode</dc:rights>\n"
+        "  <dc:subject>Abdominal Injuries</dc:subject>\n"
+        "  <dc:subject>custom</dc:subject>\n"
+        "  <dc:title>InvenioRDM</dc:title>\n"
+        "  <dc:type>info:eu-repo/semantics/other</dc:type>\n"
+        "</oai_dc:dc>\n"
+    )
 
     serializer = DublinCoreXMLSerializer()
-    serialized_record = serializer.serialize_object(updated_full_record)
-    for ed in expected_data:
-        assert ed in serialized_record
+    serialized_record = serializer.serialize_object(full_record_to_dict)
+    assert serialized_record == expected_data
 
 
 def test_dublincorexml_serializer_minimal(running_app, updated_minimal_record):
@@ -145,7 +163,7 @@ def test_dublincorexml_serializer_minimal(running_app, updated_minimal_record):
         "<dc:date>2020-06-01</dc:date>",
         "<dc:rights>info:eu-repo/semantics/openAccess</dc:rights>",
         "<dc:title>A Romans story</dc:title>",
-        "<dc:type>info:eu-repo/semantic/other</dc:type>",
+        "<dc:type>info:eu-repo/semantics/other</dc:type>",
     ]
 
     serializer = DublinCoreXMLSerializer()
@@ -156,30 +174,46 @@ def test_dublincorexml_serializer_minimal(running_app, updated_minimal_record):
 
 
 def test_dublincorexml_serializer_list(
-    running_app, updated_full_record, updated_minimal_record
+    running_app, full_record_to_dict, updated_minimal_record
 ):
-    expected_data_full = [
-        "<dc:contributor>Nielsen, Lars Holm</dc:contributor>",
-        "<dc:creator>Nielsen, Lars Holm</dc:creator>",
-        "<dc:date>2018/2020-09</dc:date>",
-        "<dc:date>info:eu-repo/date/embargoEnd/2131-01-01</dc:date>",
-        "<dc:description>&amp;lt;h1&amp;gt;A description&amp;lt;/h1&amp;gt; &amp;lt;p&amp;gt;with HTML tags&amp;lt;/p&amp;gt;</dc:description>",
-        "<dc:description>Bla bla bla</dc:description>",
-        "<dc:format>application/pdf</dc:format>",
-        "<dc:identifier>https://doi.org/10.1234/inveniordm.1234</dc:identifier>",
-        "<dc:identifier>https://ui.adsabs.harvard.edu/#abs/1924MNRAS..84..308E</dc:identifier>",
-        "<dc:language>dan</dc:language>",
-        "<dc:language>eng</dc:language>",
-        "<dc:publisher>InvenioRDM</dc:publisher>",
-        "<dc:relation>https://doi.org/10.1234/foo.bar</dc:relation>",
-        "<dc:rights>info:eu-repo/semantics/embargoedAccess</dc:rights>",
-        "<dc:rights>A custom license</dc:rights>",
-        "<dc:rights>https://customlicense.org/licenses/by/4.0/</dc:rights>",
-        "<dc:rights>Creative Commons Attribution 4.0 " + "International</dc:rights>",
-        "<dc:rights>https://creativecommons.org/licenses/by/4.0/legalcode</dc:rights>",
-        "<dc:title>InvenioRDM</dc:title>",
-        "<dc:type>info:eu-repo/semantic/other</dc:type>",
-    ]
+    expected_data_full = (
+        "<?xml version='1.0' encoding='utf-8'?>\n"
+        '<oai_dc:dc xmlns:dc="http://purl.org/dc/elements/1.1/" '
+        'xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" '
+        'xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" '
+        'xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/ '
+        'http://www.openarchives.org/OAI/2.0/oai_dc.xsd">\n'
+        "  <dc:contributor>Nielsen, Lars Holm</dc:contributor>\n"
+        "  <dc:contributor>Dirk, Dirkin</dc:contributor>\n"
+        "  <dc:creator>Nielsen, Lars Holm</dc:creator>\n"
+        "  <dc:creator>Tom, Blabin</dc:creator>\n"
+        "  <dc:date>2018/2020-09</dc:date>\n"
+        "  <dc:date>info:eu-repo/date/embargoEnd/2131-01-01</dc:date>\n"
+        "  <dc:description>&amp;lt;h1&amp;gt;A description&amp;lt;/h1&amp;gt; "
+        "&amp;lt;p&amp;gt;with HTML tags&amp;lt;/p&amp;gt;</dc:description>\n"
+        "  <dc:description>Bla bla bla</dc:description>\n"
+        "  <dc:format>application/pdf</dc:format>\n"
+        "  <dc:identifier>https://doi.org/10.1234/12345-abcde</dc:identifier>\n"
+        "  <dc:identifier>oai:invenio-rdm.com:12345-abcde</dc:identifier>\n"
+        "  "
+        "<dc:identifier>https://ui.adsabs.harvard.edu/#abs/1924MNRAS..84..308E</dc:identifier>\n"
+        "  <dc:language>dan</dc:language>\n"
+        "  <dc:language>eng</dc:language>\n"
+        "  <dc:publisher>InvenioRDM</dc:publisher>\n"
+        "  <dc:relation>https://doi.org/10.1234/foo.bar</dc:relation>\n"
+        "  <dc:relation>https://doi.org/10.1234/pgfpj-at058</dc:relation>\n"
+        "  <dc:rights>info:eu-repo/semantics/embargoedAccess</dc:rights>\n"
+        "  <dc:rights>A custom license</dc:rights>\n"
+        "  <dc:rights>https://customlicense.org/licenses/by/4.0/</dc:rights>\n"
+        "  <dc:rights>Creative Commons Attribution 4.0 International</dc:rights>\n"
+        "  "
+        "<dc:rights>https://creativecommons.org/licenses/by/4.0/legalcode</dc:rights>\n"
+        "  <dc:subject>Abdominal Injuries</dc:subject>\n"
+        "  <dc:subject>custom</dc:subject>\n"
+        "  <dc:title>InvenioRDM</dc:title>\n"
+        "  <dc:type>info:eu-repo/semantics/other</dc:type>\n"
+        "</oai_dc:dc>\n"
+    )
 
     expected_data_minimal = [
         "<dc:creator>Name</dc:creator>",
@@ -187,12 +221,12 @@ def test_dublincorexml_serializer_list(
         "<dc:date>2020-06-01</dc:date>",
         "<dc:rights>info:eu-repo/semantics/openAccess</dc:rights>",
         "<dc:title>A Romans story</dc:title>",
-        "<dc:type>info:eu-repo/semantic/other</dc:type>",
+        "<dc:type>info:eu-repo/semantics/other</dc:type>",
     ]
 
     serializer = DublinCoreXMLSerializer()
     serialized_records = serializer.serialize_object_list(
-        {"hits": {"hits": [updated_full_record, updated_minimal_record]}}
+        {"hits": {"hits": [full_record_to_dict, updated_minimal_record]}}
     )
 
     for ed in expected_data_full:

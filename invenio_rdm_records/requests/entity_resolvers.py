@@ -24,6 +24,7 @@ from invenio_records_resources.references.entity_resolvers import (
 from invenio_users_resources.services.schemas import SystemUserSchema
 from sqlalchemy.orm.exc import NoResultFound
 
+from ..proxies import current_rdm_records_service
 from ..records.api import RDMDraft, RDMRecord
 from ..services.config import RDMRecordServiceConfig
 from ..services.dummy import DummyExpandingService
@@ -56,12 +57,27 @@ class RDMRecordProxy(RecordProxy):
         return record
 
     def ghost_record(self, record):
-        """Ghost reprensentation of a record.
+        """Ghost representation of a record.
 
         Drafts at the moment cannot be resolved, service.read_many() is searching on
         public records, thus the `ghost_record` method will always kick in!
         """
         return {"id": record}
+
+    def get_needs(self, ctx=None):
+        """Enrich request with record needs.
+
+        A user that can preview a record can also read its requests.
+        """
+        if ctx is None or "record_permission" not in ctx:
+            return []
+
+        record = self.resolve()
+        record_permission = ctx["record_permission"]
+        needs = current_rdm_records_service.config.permission_policy_cls(
+            record_permission, record=record
+        ).needs
+        return needs
 
 
 class RDMRecordResolver(RecordResolver):
@@ -123,6 +139,18 @@ class RDMRecordServiceResultResolver(ServiceResultResolver):
         """Create a reference dict for the given result item."""
         pid = entity.id if isinstance(entity, self.item_cls) else entity.pid.pid_value
         return {self.type_key: str(pid)}
+
+    @property
+    def draft_cls(self):
+        """Get specified draft class or from service."""
+        return self.get_service().draft_cls
+
+    def matches_entity(self, entity):
+        """Check if the entity is a draft."""
+        if isinstance(entity, self.draft_cls):
+            return True
+
+        return ServiceResultResolver.matches_entity(self, entity=entity)
 
 
 class EmailProxy(EntityProxy):

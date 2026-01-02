@@ -340,24 +340,6 @@
   tags:
     - depositable
     - linkable
-- id: publication-thesis
-  icon: file alternate
-  props:
-    csl: thesis
-    datacite_general: Text
-    datacite_type: Thesis
-    openaire_resourceType: "0006"
-    openaire_type: publication
-    eurepo: info:eu-repo/semantics/doctoralThesis
-    schema.org: https://schema.org/ScholarlyArticle
-    subtype: publication-thesis
-    type: publication
-  title:
-    en: Thesis
-    de: Abschlussarbeit
-  tags:
-    - depositable
-    - linkable
 - id: publication-workingpaper
   icon: file alternate
   props:
@@ -403,12 +385,12 @@
     openaire_resourceType: "0044"
     openaire_type: publication
     eurepo: info:eu-repo/semantics/other
-    schema.org: https://schema.org/thesis
+    schema.org: https://schema.org/Thesis
     subtype: publication-dissertation
     type: publication
   title:
-    en: Dissertation
-    de: Dissertation
+    en: Thesis
+    de: Abschlussarbeit
   tags:
     - depositable
     - linkable
@@ -493,7 +475,7 @@
     openaire_resourceType: "0023"
     openaire_type: publication
     eurepo: info:eu-repo/semantics/other
-    schema.org: https://schema.org/event
+    schema.org: https://schema.org/Event
     subtype: ""
     type: event
   title:
@@ -677,8 +659,26 @@
     subtype: ""
     type: video
   title:
-    en: Video/Audio
-    de: Video/Audio
+    en: Video
+    de: Video
+  tags:
+    - depositable
+    - linkable
+- id: audio
+  icon: volume up
+  props:
+    csl: document
+    datacite_general: Sound
+    datacite_type: ""
+    openaire_resourceType: "0033"
+    openaire_type: dataset
+    eurepo: info:eu-repo/semantics/other
+    schema.org: https://schema.org/MediaObject
+    subtype: ""
+    type: audio
+  title:
+    en: Audio
+    de: Audio
   tags:
     - depositable
     - linkable

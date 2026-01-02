@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2022-2023 Graz University of Technology.
+# Copyright (C) 2022-2025 Graz University of Technology.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
@@ -10,7 +10,7 @@
 import re
 
 from flask import current_app
-from flask_sqlalchemy import Pagination
+from flask_sqlalchemy.pagination import Pagination
 from invenio_db import db
 from invenio_i18n import lazy_gettext as _
 from invenio_oaiserver.models import OAISet
@@ -31,6 +31,26 @@ from .errors import (
     OAIPMHSetSpecAlreadyExistsError,
 )
 from .uow import OAISetCommitOp, OAISetDeleteOp
+
+
+class OAIPagination(Pagination):
+    """OAI Pagination."""
+
+    def _query_items(self):
+        """Return items."""
+        try:
+            return self._query_args["items"]
+        except KeyError:
+            msg = "items not set in OAIPaginations constructor."
+            raise RuntimeError(msg)
+
+    def _query_count(self):
+        """Return count."""
+        try:
+            return self._query_args["total"]
+        except KeyError:
+            msg = "total not set in OAIPaginations constructor."
+            raise RuntimeError(msg)
 
 
 class OAIPMHServerService(Service):
@@ -138,21 +158,20 @@ class OAIPMHServerService(Service):
         """Perform search over OAI sets."""
         self.require_permission(identity, "read")
 
+        filters = []
         search_params = map_search_params(self.config.search, params)
 
         query_param = search_params["q"]
-        filters = []
-
         if query_param:
-            filters.extend(
-                [
+            filters.append(
+                or_(
                     OAISet.name.ilike(f"%{query_param}%"),
                     OAISet.spec.ilike(f"%{query_param}%"),
-                ]
+                )
             )
 
         oai_sets = (
-            OAISet.query.filter(or_(*filters))
+            OAISet.query.filter(*filters)
             .order_by(
                 search_params["sort_direction"](text(",".join(search_params["sort"])))
             )
@@ -220,7 +239,7 @@ class OAIPMHServerService(Service):
             for k, v in current_app.config.get("OAISERVER_METADATA_FORMATS").items()
         ]
 
-        results = Pagination(
+        results = OAIPagination(
             query=None,
             page=1,
             per_page=None,

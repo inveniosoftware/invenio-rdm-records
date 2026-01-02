@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2023 CERN
+# Copyright (C) 2023-2024 CERN
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
@@ -9,14 +9,12 @@
 
 import bleach
 from dateutil.parser import parse
-from flask import current_app, g
+from dojson.contrib.to_marc21.fields.bdleader import to_leader
 from flask_resources.serializers import BaseSerializerSchema
-from invenio_access.permissions import system_identity
-from invenio_communities import current_communities
-from invenio_communities.communities.services.service import get_cached_community_slug
-from invenio_vocabularies.proxies import current_service as vocabulary_service
+from invenio_base import invenio_url_for
 from marshmallow import fields, missing
 from marshmallow_utils.html import sanitize_unicode
+from pydash import py_
 
 from ..schemas import CommonFieldsMixin
 from ..ui.schema import current_default_locale
@@ -34,26 +32,61 @@ class MARCXMLSchema(BaseSerializerSchema, CommonFieldsMixin):
     first_creator = fields.Method("get_first_creator", data_key="100  ")
     relations = fields.Method("get_relations", data_key="856 2")
     rights = fields.Method("get_rights", data_key="540  ")
+    license = fields.Method("get_license", data_key="65017")
     subjects = fields.Method("get_subjects", data_key="653  ")
     descriptions = fields.Method("get_descriptions", data_key="520  ")
+    additional_descriptions = fields.Method(
+        "get_additional_descriptions", data_key="500  "
+    )
+    languages = fields.Method("get_languages", data_key="041  ")
+    references = fields.Method("get_references", data_key="999C5")
     publication_information = fields.Method("get_pub_information", data_key="260  ")
-    types = fields.Method(
-        "get_types", data_key="901  "
+    dissertation_note = fields.Method("get_dissertation_note", data_key="502  ")
+    types_and_community_ids = fields.Method(
+        "get_types_and_communities", data_key="980  "
     )  # Corresponds to resource_type in the metadata schema
     # TODO: sources = fields.List(fields.Str(), attribute="metadata.references")
     # sources = fields.Constant(missing)  # Corresponds to references in the metadata schema
     formats = fields.Method("get_formats", data_key="520 1")
-    parent_id = fields.Method("get_parent_id", data_key="024 1")
-    community_ids = fields.Method("get_communities", data_key="980  ")
     sizes = fields.Method("get_sizes", data_key="520 2")
-    version = fields.Method("get_version", data_key="024 3")
     funding = fields.Method(
-        "get_funding", data_key="856 1"
+        "get_funding", data_key="536  "
     )  # TODO this was not implemented on Zenodo, neither specified in marcxml
     updated = fields.Method("get_updated", data_key="005")
     files = fields.Method("get_files", data_key="8564 ")
     access = fields.Method("get_access", data_key="542  ")
     host_information = fields.Method("get_host_information", data_key="773  ")
+    leader = fields.Method("get_leader")
+
+    def get_leader(self, obj):
+        """Return the leader information."""
+        rt = obj["metadata"]["resource_type"]["id"]
+        rec_types = {
+            "image": "two-dimensional_nonprojectable_graphic",
+            "video": "projected_medium",
+            "dataset": "computer_file",
+            "software": "computer_file",
+        }
+        type_of_record = rec_types[rt] if rt in rec_types else "language_material"
+        res = {
+            "record_length": "00000",
+            "record_status": "new",
+            "type_of_record": type_of_record,
+            "bibliographic_level": "monograph_item",
+            "type_of_control": "no_specified_type",
+            "character_coding_scheme": "marc-8",
+            "indicator_count": 2,
+            "subfield_code_count": 2,
+            "base_address_of_data": "00000",
+            "encoding_level": "unknown",
+            "descriptive_cataloging_form": "unknown",
+            "multipart_resource_record_level": "not_specified_or_not_applicable",
+            "length_of_the_length_of_field_portion": 4,
+            "length_of_the_starting_character_position_portion": 5,
+            "length_of_the_implementation_defined_portion": 0,
+            "undefined": 0,
+        }
+        return to_leader(None, None, res)
 
     def get_host_information(self, obj):
         """Get host information.
@@ -88,7 +121,7 @@ class MARCXMLSchema(BaseSerializerSchema, CommonFieldsMixin):
 
     def get_access(self, obj):
         """Get access rights."""
-        access = {"a": obj["access"]["record"]}
+        access = {"l": obj["access"]["status"]}
         return access
 
     def get_files(self, obj):
@@ -101,7 +134,12 @@ class MARCXMLSchema(BaseSerializerSchema, CommonFieldsMixin):
         files = []
         for file_entry in files_entries.values():
             file_name = sanitize_unicode(file_entry["key"])
-            url = f"{current_app.config['SITE_UI_URL']}/records/{record_id}/files/{file_name}"
+            url = invenio_url_for(
+                "invenio_app_rdm_records.record_file_download",
+                pid_value=record_id,
+                filename=file_name,
+            )
+
             file_ = {
                 "s": str(file_entry["size"]),  # file size
                 "z": file_entry["checksum"],  # check sum
@@ -110,15 +148,6 @@ class MARCXMLSchema(BaseSerializerSchema, CommonFieldsMixin):
             files.append(file_)
 
         return files or missing
-
-    def get_version(self, obj):
-        """Get version."""
-        v_ = obj["metadata"].get("version")
-        if not v_:
-            return missing
-
-        version = {"a": v_}
-        return version
 
     def get_sizes(self, obj):
         """Get sizes."""
@@ -129,25 +158,16 @@ class MARCXMLSchema(BaseSerializerSchema, CommonFieldsMixin):
         sizes = [{"a": s} for s in sizes_list]
         return sizes
 
-    def _get_communities_slugs(self, ids):
-        """Get communities slugs."""
-        service_id = current_communities.service.id
-        return [
-            get_cached_community_slug(community_id, service_id) for community_id in ids
-        ]
-
     def get_communities(self, obj):
         """Get communities."""
-        ids = obj["parent"].get("communities", {}).get("ids", [])
-        if not ids:
-            return missing
-        # Communities are prefixed with ``user-``
-        return [{"a": f"user-{slug}"} for slug in self._get_communities_slugs(ids)]
+        communities = obj["parent"].get("communities", {}).get("entries", [])
 
-    def get_parent_id(self, obj):
-        """Get parent id."""
-        parent_id = {"a": obj["parent"]["id"]}
-        return parent_id
+        if not communities:
+            return missing
+
+        slugs = [community.get("slug") for community in communities]
+        # Communities are prefixed with "user-"
+        return [{"a": f"user-{slug}"} for slug in slugs]
 
     def get_formats(self, obj):
         """Get data formats."""
@@ -192,11 +212,14 @@ class MARCXMLSchema(BaseSerializerSchema, CommonFieldsMixin):
             result.update({"o": identifier})
 
             # Communities
-            ids = obj["parent"].get("communities", {}).get("ids", [])
-            for slug in self._get_communities_slugs(ids):
-                user_slug = f"user-{slug}"
-                # Add "p": [user_slug] or extend if there are already other communities
-                result.setdefault("p", []).append(user_slug)
+            communities = obj["parent"].get("communities", {}).get("entries", [])
+            if communities:
+                for community in communities:
+                    slug = community.get("slug")
+                    if slug:
+                        user_slug = f"user-{slug}"
+                        # Add "p": [user_slug] or extend if there are already other communities
+                        result.setdefault("p", []).append(user_slug)
 
         return result or missing
 
@@ -204,12 +227,28 @@ class MARCXMLSchema(BaseSerializerSchema, CommonFieldsMixin):
         """Serializes one contributor."""
         name = contributor["person_or_org"]["name"]
         contributor_dict = dict(a=name)
+
+        identifiers = contributor["person_or_org"].get("identifiers", [])
+        for identifier in identifiers:
+            if identifier["scheme"] in ["gnd", "orcid"]:
+                contributor_dict.setdefault("0", []).append(
+                    "({0}){1}".format(identifier["scheme"], identifier["identifier"])
+                )
+
         affiliations = contributor.get("affiliations", [])
         if affiliations:
             # Affiliation is not repeatable, we only get the first
             # (https://www.loc.gov/marc/bibliographic/bd700.html)
             affiliation = affiliations[0]["name"]
             contributor_dict["u"] = affiliation
+
+        role_id = contributor.get("role", {}).get("id", "")
+        if role_id:
+            props = get_vocabulary_props("contributorsroles", ["props.marc"], role_id)
+            marc_role = props.get("marc")
+            if marc_role:
+                contributor_dict["4"] = marc_role
+
         return contributor_dict
 
     def get_contributors(self, obj):
@@ -232,7 +271,7 @@ class MARCXMLSchema(BaseSerializerSchema, CommonFieldsMixin):
         return contrib_list or missing
 
     def get_first_creator(self, obj):
-        """Returns the fist autor of the list."""
+        """Returns the fist author of the list."""
         creators = obj["metadata"].get("creators", [])
         if not creators:
             return missing
@@ -270,6 +309,17 @@ class MARCXMLSchema(BaseSerializerSchema, CommonFieldsMixin):
 
         return pub_information
 
+    def get_dissertation_note(self, obj):
+        """Get dissertation note."""
+        name_of_granting_institution = obj.get("custom_fields", {}).get(
+            "thesis:university"
+        )
+        if not name_of_granting_institution:
+            return missing
+
+        dissertation_note = {"c": name_of_granting_institution}
+        return dissertation_note
+
     def get_titles(self, obj):
         """Get titles."""
         title = {"a": obj["metadata"]["title"]}
@@ -277,7 +327,7 @@ class MARCXMLSchema(BaseSerializerSchema, CommonFieldsMixin):
 
     def get_updated(self, obj):
         """Gets updated."""
-        updated = str(parse(obj["updated"]).timestamp())
+        updated = parse(obj["updated"]).strftime("%Y%m%d%H%M%S.0")
         return updated
 
     def get_id(self, obj):
@@ -290,44 +340,23 @@ class MARCXMLSchema(BaseSerializerSchema, CommonFieldsMixin):
 
         def _serialize_funder(funding_object):
             """Serializes one funder."""
-            funder = funding_object["funder"]
             award = funding_object.get("award", {})
+            award_title = award.get("title", {}).get("en")
+            award_number = award.get("number")
 
-            funder_string = ""
+            serialized_funder = {}
+            if award_number:
+                serialized_funder["c"] = award_number
+            if award_title:
+                serialized_funder["a"] = award_title
 
-            if award:
-                identifiers = award.get("identifiers", [])
-                title = award.get("title", {})
-                title = list(title.values())[0] if title else "null"
-                number = award.get("number", "null")
-
-                funder_string += f"award_title={title}; "
-                funder_string += f"award_number={number}; "
-
-                if identifiers:
-                    identifier = identifiers[0]
-                    scheme = identifier.get("scheme", "null")
-                    identifier_value = identifier.get("identifier", "null")
-
-                    funder_string += f"award_identifiers_scheme={scheme}; "
-                    funder_string += (
-                        f"award_identifiers_identifier={identifier_value}; "
-                    )
-
-            funder_id = funder["id"]
-            funder_name = funder.get("name", "null")
-
-            # Serialize funder
-            funder_string += f"funder_id={funder_id}; "
-            funder_string += f"funder_name={funder_name}; "
-
-            return funder_string
+            return serialized_funder
 
         funders_list = obj["metadata"].get("funding", [])
         if not funders_list:
             return missing
 
-        funding = [{"a": _serialize_funder(funder)} for funder in funders_list]
+        funding = [_serialize_funder(funder) for funder in funders_list]
 
         return funding
 
@@ -359,69 +388,94 @@ class MARCXMLSchema(BaseSerializerSchema, CommonFieldsMixin):
         if access_right == "metadata-only":
             access_right = "closed"
 
-        ids = []
         for right in obj["metadata"].get("rights", []):
-            _id = right.get("id")
-            if _id:
-                ids.append(_id)
+            title = right.get("title").get(current_default_locale())
+            right_dict = dict()
+            if title:
+                right_dict["a"] = title
+            license_url = right.get("link")
+            if license_url:
+                right_dict["u"] = license_url
             else:
-                title = right.get("title").get(current_default_locale())
-                right_dict = dict()
-                if title:
-                    right_dict["a"] = title
-                license_url = right.get("link")
-                if license_url:
-                    right_dict["u"] = license_url
-                rights.append(right_dict)
-
-        if ids:
-            vocab_rights = vocabulary_service.read_many(
-                system_identity, "licenses", ids
-            )
-            for right in vocab_rights:
-                title = right.get("title").get(current_default_locale())
-                right_dict = dict()
-                if title:
-                    right_dict["a"] = title
-
-                license_url = right.get("props").get("url")
-                if license_url:
-                    right_dict["u"] = license_url
-
-                rights.append(right_dict)
+                props_license_url = right.get("props", {}).get("url")
+                if props_license_url:
+                    right_dict["u"] = props_license_url
+            rights.append(right_dict)
 
         return rights or missing
 
+    def get_license(self, obj):
+        """Get license.
+
+        Same data as get_rights but duplicated for backwards compatibility reasons.
+        """
+        license = []
+        for right in obj["metadata"].get("rights", []):
+            license_dict = {}
+            id = right.get("id")
+            if id:
+                license_dict["a"] = id
+            scheme = right.get("props", {}).get("scheme")
+            if scheme:
+                license_dict["2"] = scheme
+
+            license.append(license_dict)
+
+        return license or missing
+
+    def _serialize_description(self, description):
+        """Serializes one description.
+
+        The description string is sanitized using ``bleach.clean``.
+        """
+        return {
+            "a": bleach.clean(
+                description,
+                tags=[],
+                attributes=[],
+            )
+        }
+
     def get_descriptions(self, obj):
         """Get descriptions."""
-
-        def _serialize_description(description):
-            """Serializes one description.
-
-            The description string is sanitized using ``bleach.clean``.
-            """
-            return {
-                "a": bleach.clean(
-                    description,
-                    tags=[],
-                    attributes=[],
-                )
-            }
-
         metadata = obj["metadata"]
         descriptions = []
 
         description = metadata.get("description")
         if description:
-            serialized = _serialize_description(description)
-            descriptions.append(serialized)
-
-        additional_descriptions = metadata.get("additional_descriptions", [])
-        for add_desc in additional_descriptions:
-            serialized = _serialize_description(add_desc["description"])
+            serialized = self._serialize_description(description)
             descriptions.append(serialized)
 
         return descriptions or missing
+
+    def get_additional_descriptions(self, obj):
+        """Get additional descriptions."""
+        metadata = obj["metadata"]
+        additional_descriptions = []
+
+        for add_desc in metadata.get("additional_descriptions", []):
+            serialized = self._serialize_description(add_desc["description"])
+            additional_descriptions.append(serialized)
+
+        return additional_descriptions or missing
+
+    def get_languages(self, obj):
+        """Get languages."""
+        languages = obj["metadata"].get("languages")
+
+        if languages:
+            return [{"a": language["id"]} for language in languages]
+
+        return missing
+
+    def get_references(self, obj):
+        """Get references."""
+        references_list = obj["metadata"].get("references", [])
+
+        if references_list:
+            return [{"x": reference["reference"]} for reference in references_list]
+
+        return missing
 
     def get_subjects(self, obj):
         """Get subjects."""
@@ -436,15 +490,40 @@ class MARCXMLSchema(BaseSerializerSchema, CommonFieldsMixin):
             subjects_list.append({"a": subject["subject"]})
         return subjects_list
 
-    def get_types(self, obj):
+    def get_types_and_communities(self, obj):
         """Get resource type."""
-        props = get_vocabulary_props(
-            "resourcetypes",
-            [
-                "props.eurepo",
-            ],
-            obj["metadata"]["resource_type"]["id"],
-        )
-        resource_type = props.get("eurepo")
-        types = {"u": resource_type}
-        return types or missing
+        output = []
+        communities = obj["parent"].get("communities", {}).get("entries", [])
+        if communities:
+            slugs = [community.get("slug") for community in communities]
+            output += [{"a": f"user-{slug}"} for slug in slugs]
+
+        resource_type_id = py_.get(obj, "metadata.resource_type.id")
+        if resource_type_id:
+            props = get_vocabulary_props(
+                "resourcetypes",
+                [
+                    "props.eurepo",
+                    "props.marc21_type",
+                    "props.marc21_subtype",
+                ],
+                resource_type_id,
+            )
+            props_eurepo = props.get("eurepo")
+            if props_eurepo:
+                eurepo = {"a": props_eurepo}
+                output.append(eurepo)
+
+            resource_types = {}
+
+            resource_type = props.get("marc21_type")
+            if resource_type:
+                resource_types["a"] = resource_type
+            resource_subtype = props.get("marc21_subtype")
+            if resource_subtype:
+                resource_types["b"] = resource_subtype
+
+            if resource_types:
+                output.append(resource_types)
+
+        return output or missing

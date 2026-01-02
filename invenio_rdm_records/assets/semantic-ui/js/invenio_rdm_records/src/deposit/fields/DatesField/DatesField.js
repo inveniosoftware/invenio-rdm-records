@@ -1,5 +1,5 @@
 // This file is part of Invenio-RDM-Records
-// Copyright (C) 2020-2023 CERN.
+// Copyright (C) 2020-2024 CERN.
 // Copyright (C) 2020-2022 Northwestern University.
 // Copyright (C) 2021 Graz University of Technology.
 //
@@ -8,8 +8,15 @@
 
 import React, { Component } from "react";
 import PropTypes from "prop-types";
-import { ArrayField, GroupField, SelectField, TextField } from "react-invenio-forms";
-import { Button, Form, Icon } from "semantic-ui-react";
+import {
+  ArrayField,
+  GroupField,
+  SelectField,
+  TextField,
+  showHideOverridable,
+  fieldCommonProps,
+} from "react-invenio-forms";
+import { Button, Form } from "semantic-ui-react";
 import _isEmpty from "lodash/isEmpty";
 import _matches from "lodash/matches";
 import _filter from "lodash/filter";
@@ -18,8 +25,9 @@ import _has from "lodash/has";
 import { emptyDate } from "./initialValues";
 import { i18next } from "@translations/invenio_rdm_records/i18next";
 import { sortOptions } from "../../utils";
+import Overridable from "react-overridable";
 
-export class DatesField extends Component {
+class DatesFieldComponent extends Component {
   /** Top-level Dates Component */
 
   /**
@@ -46,82 +54,111 @@ export class DatesField extends Component {
       options,
       label,
       labelIcon,
-      placeholderDate,
       required,
       requiredOptions,
       showEmptyValue,
+      placeholder,
+      helpText,
+      addButtonLabel,
+      optimized,
     } = this.props;
 
     return (
-      <ArrayField
-        addButtonLabel={i18next.t("Add date")} // TODO: Pass by prop
-        defaultNewValue={emptyDate}
+      <Overridable
+        id="InvenioRdmRecords.DepositForm.DatesField.Container"
         fieldPath={fieldPath}
-        helpText={i18next.t(
-          "Format: DATE or DATE/DATE where DATE is YYYY or YYYY-MM or YYYY-MM-DD."
-        )}
+        defaultNewValue={emptyDate}
         label={label}
         labelIcon={labelIcon}
         required={required}
         requiredOptions={requiredOptions}
         showEmptyValue={showEmptyValue}
+        placeholder={placeholder}
+        helpText={helpText}
+        addButtonLabel={addButtonLabel}
+        optimized={optimized}
       >
-        {({ array, arrayHelpers, indexPath, value }) => {
-          const fieldPathPrefix = `${fieldPath}.${indexPath}`;
-          const requiredOption = this.getRequiredOption(value, array);
-          const hasRequiredDateValue = _has(requiredOption, "date");
-          const hasRequiredTypeValue = _has(requiredOption, "type");
-          const hasRequiredDescriptionValue = _has(requiredOption, "description");
-          return (
-            <GroupField fieldPath={fieldPath} optimized>
-              <TextField
-                fieldPath={`${fieldPathPrefix}.date`}
-                label={i18next.t("Date")}
-                placeholder={placeholderDate}
-                disabled={hasRequiredDateValue}
-                required
-                width={5}
-              />
-              <SelectField
-                fieldPath={`${fieldPathPrefix}.type`}
-                label={i18next.t("Type")}
-                aria-label={i18next.t("Type")}
-                options={sortOptions(options.type)}
-                disabled={hasRequiredTypeValue}
-                required
-                width={5}
-                optimized
-              />
-              <TextField
-                fieldPath={`${fieldPathPrefix}.description`}
-                label={i18next.t("Description")}
-                disabled={hasRequiredDescriptionValue}
-                width={5}
-              />
-              <Form.Field>
-                <Button
-                  aria-label={i18next.t("Remove field")}
-                  className="close-btn"
-                  disabled={!_isEmpty(requiredOption)}
-                  icon
-                  onClick={() => arrayHelpers.remove(indexPath)}
-                  type="button"
+        <ArrayField
+          addButtonLabel={addButtonLabel}
+          defaultNewValue={emptyDate}
+          fieldPath={fieldPath}
+          helpText={helpText}
+          label={label}
+          labelIcon={labelIcon}
+          required={required}
+          requiredOptions={requiredOptions}
+          showEmptyValue={showEmptyValue}
+        >
+          {({ array, arrayHelpers, indexPath, value }) => {
+            const fieldPathPrefix = `${fieldPath}.${indexPath}`;
+            const requiredOption = this.getRequiredOption(value, array);
+            const hasRequiredDateValue = _has(requiredOption, "date");
+            const hasRequiredTypeValue = _has(requiredOption, "type");
+            const hasRequiredDescriptionValue = _has(requiredOption, "description");
+            return (
+              <GroupField fieldPath={fieldPath} optimized={optimized}>
+                <Overridable
+                  id="InvenioRdmRecords.DepositForm.DatesField.DateField"
+                  fieldPath={`${fieldPathPrefix}.date`}
                 >
-                  <Icon name="close" />
-                </Button>
-              </Form.Field>
-            </GroupField>
-          );
-        }}
-      </ArrayField>
+                  <TextField
+                    fieldPath={`${fieldPathPrefix}.date`}
+                    label={i18next.t("Date")}
+                    placeholder={placeholder}
+                    disabled={hasRequiredDateValue}
+                    required
+                    width={5}
+                  />
+                </Overridable>
+                <Overridable
+                  id="InvenioRdmRecords.DepositForm.DatesField.TypeField"
+                  fieldPath={`${fieldPathPrefix}.type`}
+                >
+                  <SelectField
+                    fieldPath={`${fieldPathPrefix}.type`}
+                    label={i18next.t("Type")}
+                    aria-label={i18next.t("Type")}
+                    options={sortOptions(options.type)}
+                    disabled={hasRequiredTypeValue}
+                    required
+                    width={5}
+                    optimized={optimized}
+                  />
+                </Overridable>
+                <Overridable
+                  id="InvenioRdmRecords.DepositForm.DatesField.DescriptionField"
+                  disabled={hasRequiredDescriptionValue}
+                  width={5}
+                >
+                  <TextField
+                    fieldPath={`${fieldPathPrefix}.description`}
+                    label={i18next.t("Description")}
+                    disabled={hasRequiredDescriptionValue}
+                    width={5}
+                  />
+                </Overridable>
+                <Overridable id="InvenioRdmRecords.DepositForm.DatesField.RemoveButton">
+                  <Form.Field>
+                    <Button
+                      aria-label={i18next.t("Remove field")}
+                      className="close-btn"
+                      disabled={!_isEmpty(requiredOption)}
+                      icon="close"
+                      onClick={() => arrayHelpers.remove(indexPath)}
+                      type="button"
+                    />
+                  </Form.Field>
+                </Overridable>
+              </GroupField>
+            );
+          }}
+        </ArrayField>
+      </Overridable>
     );
   }
 }
 
-DatesField.propTypes = {
-  fieldPath: PropTypes.string.isRequired,
-  label: PropTypes.string,
-  labelIcon: PropTypes.string,
+DatesFieldComponent.propTypes = {
   options: PropTypes.shape({
     type: PropTypes.arrayOf(
       PropTypes.shape({
@@ -130,17 +167,27 @@ DatesField.propTypes = {
       })
     ),
   }).isRequired,
-  required: PropTypes.bool,
-  placeholderDate: PropTypes.string,
   requiredOptions: PropTypes.array,
   showEmptyValue: PropTypes.bool,
+  optimized: PropTypes.bool,
+  ...fieldCommonProps,
 };
 
-DatesField.defaultProps = {
+DatesFieldComponent.defaultProps = {
   label: i18next.t("Dates"),
   labelIcon: "calendar",
-  placeholderDate: i18next.t("YYYY-MM-DD or YYYY-MM-DD/YYYY-MM-DD"),
+  placeholder: i18next.t("YYYY-MM-DD or YYYY-MM-DD/YYYY-MM-DD"),
+  helpText: i18next.t(
+    "Format: DATE or DATE/DATE where DATE is YYYY or YYYY-MM or YYYY-MM-DD."
+  ),
+  addButtonLabel: i18next.t("Add date"),
   required: false,
   requiredOptions: [],
   showEmptyValue: false,
+  optimized: true,
 };
+
+export const DatesField = showHideOverridable(
+  "InvenioRdmRecords.DepositForm.DatesField",
+  DatesFieldComponent
+);

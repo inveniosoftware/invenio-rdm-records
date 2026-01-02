@@ -1,5 +1,6 @@
 #
 # Copyright (C) 2023 CERN.
+# Copyright (C) 2024 KTH Royal Institute of Technology.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
@@ -81,30 +82,30 @@ JOURNAL_CUSTOM_FIELDS_UI = {
                     "label": _("Title"),
                     "placeholder": "",
                     "description": _(
-                        "Title of the journal on which the article was published"
+                        "Title of the journal in which the article was published"
                     ),
                 },
                 "volume": {
                     "label": _("Volume"),
-                    "placeholder": "",
+                    "placeholder": _("e.g. 645"),
                     "description": "",
                 },
                 "issue": {
                     "label": _("Issue"),
-                    "placeholder": "",
+                    "placeholder": _("e.g. 7"),
                     "description": "",
                 },
                 "pages": {
-                    "label": _("Pages"),
-                    "placeholder": "",
+                    "label": _("Page range or article number"),
+                    "placeholder": _("e.g. 15-23 or A29"),
                     "description": "",
                 },
                 "issn": {
                     "label": _("ISSN"),
-                    "placeholder": "",
+                    "placeholder": _("e.g. 2077-9550"),
                     "description": _("International Standard Serial Number"),
                 },
-                "icon": "newspaper outline",
+                "labelIcon": "newspaper outline",
             },
         }
     ],

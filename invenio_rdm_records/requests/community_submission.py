@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2021-2022 CERN.
+# Copyright (C) 2021-2025 CERN.
 # Copyright (C) 2023 Graz University of Technology.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
@@ -43,7 +43,7 @@ class SubmitAction(actions.SubmitAction):
 class AcceptAction(actions.AcceptAction):
     """Accept action."""
 
-    def execute(self, identity, uow):
+    def execute(self, identity, uow, **kwargs):
         """Accept record into community."""
         # Resolve the topic and community - the request type only allow for
         # community receivers and record topics.
@@ -70,6 +70,10 @@ class AcceptAction(actions.AcceptAction):
         draft.parent.communities.add(
             community, request=self.request, default=is_default
         )
+
+        if getattr(community, "parent", None):
+            draft.parent.communities.add(community.parent, request=self.request)
+
         uow.register(
             ParentRecordCommitOp(draft.parent, indexer_context=dict(service=service))
         )
@@ -77,13 +81,16 @@ class AcceptAction(actions.AcceptAction):
         # Publish the record
         # TODO: Ensure that the accepting user has permissions to publish.
         service.publish(identity, draft.pid.pid_value, uow=uow)
-        uow.register(
-            NotificationOp(
-                CommunityInclusionAcceptNotificationBuilder.build(
-                    identity=identity, request=self.request
+
+        if kwargs.get("send_notification", True):
+            uow.register(
+                NotificationOp(
+                    CommunityInclusionAcceptNotificationBuilder.build(
+                        identity=identity, request=self.request
+                    )
                 )
             )
-        )
+
         super().execute(identity, uow)
 
 
@@ -182,8 +189,10 @@ class CommunitySubmission(ReviewRequest):
     allowed_creator_ref_types = ["user"]
     allowed_receiver_ref_types = ["community"]
     allowed_topic_ref_types = ["record"]
+    resolve_topic_needs = True
     needs_context = {
         "community_roles": ["owner", "manager", "curator"],
+        "record_permission": "preview",
     }
 
     available_actions = {
@@ -195,3 +204,15 @@ class CommunitySubmission(ReviewRequest):
         "cancel": CancelAction,
         "expire": ExpireAction,
     }
+
+
+def get_request_type(app):
+    """Return the community submission request type from config.
+
+    This function is only used to register the request type via the
+    ``invenio_requests.types`` entrypoint, and allow to customize the request type
+    class via the ``RDM_COMMUNITY_SUBMISSION_REQUEST_CLS`` application config.
+    """
+    if not app:
+        return
+    return app.config.get("RDM_COMMUNITY_SUBMISSION_REQUEST_CLS", CommunitySubmission)

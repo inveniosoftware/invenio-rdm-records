@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # Copyright (C) 2021 TU Wien.
+# Copyright (C) 2024 Graz University of Technology.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
@@ -11,13 +12,17 @@ import secrets
 from datetime import datetime
 
 from flask import current_app
-from itsdangerous import (
-    BadData,
-    JSONWebSignatureSerializer,
-    Serializer,
-    SignatureExpired,
-    TimedJSONWebSignatureSerializer,
-)
+from itsdangerous import BadData, Serializer, SignatureExpired
+
+try:
+    # itsdangerous < 2.1.0
+    from itsdangerous import JSONWebSignatureSerializer, TimedJSONWebSignatureSerializer
+except ImportError:
+    # itsdangerous >= 2.1.0
+    from invenio_base.jws import (
+        JSONWebSignatureSerializer,
+        TimedJSONWebSignatureSerializer,
+    )
 
 
 class TokenSerializerMixin(Serializer):
@@ -111,7 +116,7 @@ class TimedSecretLinkSerializer(TimedJSONWebSignatureSerializer, TokenSerializer
             current_app.config["SECRET_KEY"],
             expires_in=int(dt.total_seconds()) if dt else None,
             salt="rdm-records-timed-link",
-            **kwargs
+            **kwargs,
         )
 
 

@@ -18,7 +18,9 @@ import { sortOptions } from "../../../utils";
 
 export class AdditionalDescriptionsField extends Component {
   render() {
-    const { fieldPath, options, recordUI, editorConfig } = this.props;
+    const { fieldPath, options, recordUI, editorConfig, optimized } = this.props;
+    const typeOptions = sortOptions(options.type);
+
     return (
       <ArrayField
         addButtonLabel={i18next.t("Add description")}
@@ -37,7 +39,7 @@ export class AdditionalDescriptionsField extends Component {
                     fieldPath={`${fieldPathPrefix}.description`}
                     label={i18next.t("Additional Description")}
                     editorConfig={editorConfig}
-                    optimized
+                    optimized={optimized}
                     required
                   />
                 </Grid.Column>
@@ -53,26 +55,28 @@ export class AdditionalDescriptionsField extends Component {
                       <Icon name="close" />
                     </Button>
                   </Form.Field>
+
                   <SelectField
                     fieldPath={`${fieldPathPrefix}.type`}
                     label={i18next.t("Type")}
-                    options={sortOptions(options.type)}
+                    options={typeOptions}
                     required
-                    optimized
+                    optimized={optimized}
                   />
+
                   <LanguagesField
                     serializeSuggestions={(suggestions) =>
                       suggestions.map((item) => ({
                         text: item.title_l10n,
                         value: item.id,
-                        fieldPathPrefix: item.id,
+                        key: item.id,
                       }))
                     }
                     initialOptions={
                       recordUI?.additional_descriptions &&
-                      recordUI.additional_descriptions[indexPath]?.lang
+                      (recordUI.additional_descriptions[indexPath]?.lang
                         ? [recordUI.additional_descriptions[indexPath].lang]
-                        : []
+                        : [])
                     }
                     fieldPath={`${fieldPathPrefix}.lang`}
                     label={i18next.t("Language")}
@@ -111,9 +115,11 @@ AdditionalDescriptionsField.propTypes = {
   }).isRequired,
   recordUI: PropTypes.object,
   editorConfig: PropTypes.object,
+  optimized: PropTypes.bool,
 };
 
 AdditionalDescriptionsField.defaultProps = {
   recordUI: {},
   editorConfig: undefined,
+  optimized: true,
 };

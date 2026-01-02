@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2020 CERN.
+# Copyright (C) 2020-2024 CERN.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
@@ -55,10 +55,10 @@ class RDMRecordMetadata(db.Model, RecordMetadataBase, ParentRecordMixin):
     # Enable versioning
     __versioned__ = {}
 
-    bucket_id = db.Column(UUIDType, db.ForeignKey(Bucket.id))
+    bucket_id = db.Column(UUIDType, db.ForeignKey(Bucket.id), index=True)
     bucket = db.relationship(Bucket, foreign_keys=[bucket_id])
 
-    media_bucket_id = db.Column(UUIDType, db.ForeignKey(Bucket.id))
+    media_bucket_id = db.Column(UUIDType, db.ForeignKey(Bucket.id), index=True)
     media_bucket = db.relationship(Bucket, foreign_keys=[media_bucket_id])
 
     # The deletion status is stored in the model so that we can use it in SQL queries
@@ -100,10 +100,10 @@ class RDMDraftMetadata(db.Model, DraftMetadataBase, ParentRecordMixin):
     __tablename__ = "rdm_drafts_metadata"
     __parent_record_model__ = RDMParentMetadata
 
-    bucket_id = db.Column(UUIDType, db.ForeignKey(Bucket.id))
+    bucket_id = db.Column(UUIDType, db.ForeignKey(Bucket.id), index=True)
     bucket = db.relationship(Bucket, foreign_keys=[bucket_id])
 
-    media_bucket_id = db.Column(UUIDType, db.ForeignKey(Bucket.id))
+    media_bucket_id = db.Column(UUIDType, db.ForeignKey(Bucket.id), index=True)
     media_bucket = db.relationship(Bucket, foreign_keys=[media_bucket_id])
 
 
@@ -168,8 +168,13 @@ class RDMRecordQuota(db.Model, Timestamp):
 
     """Parent record id."""
 
-    user_id = db.Column(db.Integer, unique=True)
-    """User associated with the parent record via parent.access.owned_by."""
+    user_id = db.Column(db.Integer)
+    """User associated with the parent record via parent.access.owned_by.
+
+    This can be useful for e.g. quickly finding all per-record quota increases
+    for a certain user (instead of having to query for all of the user's records
+    and then finding the quota increases by their parent IDs).
+    """
 
     quota_size = db.Column(
         db.BigInteger,

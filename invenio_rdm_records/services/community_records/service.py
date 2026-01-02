@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2023 CERN.
+# Copyright (C) 2023-2024 CERN.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
@@ -45,7 +45,9 @@ class CommunityRecordsService(RecordService):
         params=None,
         search_preference=None,
         extra_filter=None,
-        **kwargs
+        scan=False,
+        scan_params=None,
+        **kwargs,
     ):
         """Search for records published in the given community."""
         self.require_permission(identity, "search")
@@ -76,7 +78,12 @@ class CommunityRecordsService(RecordService):
             permission_action="read",
             **kwargs,
         )
-        search_result = search.execute()
+
+        if scan:
+            scan_params = scan_params or {}
+            search_result = search.scan(**scan_params)
+        else:
+            search_result = search.execute()
 
         return self.result_list(
             self,
@@ -87,7 +94,7 @@ class CommunityRecordsService(RecordService):
                 self.config.links_search_community_records,
                 context={
                     "args": params,
-                    "id": community_id,
+                    "pid_value": community_id,
                 },
             ),
             links_item_tpl=self.links_item_tpl,

@@ -8,6 +8,7 @@
 """Base parsing functions for the various serializers."""
 
 from marshmallow import missing
+from pydash import py_
 
 
 class CommonFieldsMixin:
@@ -15,6 +16,10 @@ class CommonFieldsMixin:
 
     def get_doi(self, obj):
         """Get DOI."""
+        if self.context.get("doi_all_versions", False):
+            # If all versions export is requested, we return the DOI from the parent
+            if "doi" in obj["parent"]["pids"]:
+                return obj["parent"]["pids"]["doi"]["identifier"]
         if "doi" in obj["pids"]:
             return obj["pids"]["doi"]["identifier"]
 
@@ -55,7 +60,8 @@ class CommonFieldsMixin:
 
     def get_titles(self, obj):
         """Get titles."""
-        return [obj["metadata"]["title"]]
+        title = py_.get(obj, "metadata.title")
+        return [title] if title else missing
 
     def get_identifiers(self, obj):
         """Get identifiers."""
@@ -67,7 +73,9 @@ class CommonFieldsMixin:
 
     def get_creators(self, obj):
         """Get creators."""
-        return [c["person_or_org"]["name"] for c in obj["metadata"].get("creators", [])]
+        return [
+            c["person_or_org"]["name"] for c in obj["metadata"].get("creators", [])
+        ] or missing
 
     def get_publishers(self, obj):
         """Get publishers."""

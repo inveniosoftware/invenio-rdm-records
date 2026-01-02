@@ -10,7 +10,10 @@
 from io import BytesIO
 
 import pytest
-from invenio_records_resources.services.errors import PermissionDeniedError
+from invenio_records_resources.services.errors import (
+    FileKeyNotFoundError,
+    PermissionDeniedError,
+)
 
 from invenio_rdm_records.proxies import current_rdm_records_service
 from invenio_rdm_records.services.errors import RecordDeletedException
@@ -90,7 +93,7 @@ def test_deleted_records_file_flow(
         file_service.init_files(identity_simple, recid, file_to_initialise)
 
     # Update file content
-    with pytest.raises(PermissionDeniedError):
+    with pytest.raises(FileKeyNotFoundError):
         content = BytesIO(b"test file content")
         file_service.set_file_content(
             identity_simple,
@@ -101,5 +104,5 @@ def test_deleted_records_file_flow(
         )
 
     # Commit file
-    with pytest.raises(PermissionDeniedError):
+    with pytest.raises(FileKeyNotFoundError):
         file_service.commit_file(identity_simple, recid, "article.txt")

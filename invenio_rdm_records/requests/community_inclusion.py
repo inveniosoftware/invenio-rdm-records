@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2023 CERN.
+# Copyright (C) 2023-2025 CERN.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
@@ -12,7 +12,6 @@ from invenio_i18n import lazy_gettext as _
 from invenio_notifications.services.uow import NotificationOp
 from invenio_records_resources.services.uow import RecordIndexOp
 from invenio_requests.customizations import RequestType, actions
-from invenio_requests.errors import CannotExecuteActionError
 
 from invenio_rdm_records.notifications.builders import (
     CommunityInclusionAcceptNotificationBuilder,
@@ -48,7 +47,7 @@ class SubmitAction(actions.SubmitAction):
 class AcceptAction(actions.AcceptAction):
     """Accept action."""
 
-    def execute(self, identity, uow):
+    def execute(self, identity, uow, **kwargs):
         """Include record into community."""
         # Resolve the topic and community - the request type only allow for
         # community receivers and record topics.
@@ -65,6 +64,13 @@ class AcceptAction(actions.AcceptAction):
         default = not record.parent.communities
         record.parent.communities.add(community, request=self.request, default=default)
 
+        parent_community = getattr(community, "parent", None)
+        if (
+            parent_community
+            and str(parent_community.id) not in record.parent.communities.ids
+        ):
+            record.parent.communities.add(parent_community, request=self.request)
+
         uow.register(
             ParentRecordCommitOp(record.parent, indexer_context=dict(service=service))
         )
@@ -72,13 +78,15 @@ class AcceptAction(actions.AcceptAction):
         # not be immediately visible in the community's records, when the `all versions`
         # facet is not toggled
         uow.register(RecordIndexOp(record, indexer=service.indexer, index_refresh=True))
-        uow.register(
-            NotificationOp(
-                CommunityInclusionAcceptNotificationBuilder.build(
-                    identity=identity, request=self.request
+
+        if kwargs.get("send_notification", True):
+            uow.register(
+                NotificationOp(
+                    CommunityInclusionAcceptNotificationBuilder.build(
+                        identity=identity, request=self.request
+                    )
                 )
             )
-        )
         super().execute(identity, uow)
 
 
@@ -98,7 +106,9 @@ class CommunityInclusion(RequestType):
     allowed_topic_ref_types = ["record"]
     needs_context = {
         "community_roles": ["owner", "manager", "curator"],
+        "record_permission": "preview",
     }
+    resolve_topic_needs = True
 
     available_actions = {
         "create": actions.CreateAction,
@@ -109,3 +119,15 @@ class CommunityInclusion(RequestType):
         "cancel": actions.CancelAction,
         "expire": actions.ExpireAction,
     }
+
+
+def get_request_type(app):
+    """Return the community inclusion request type from config.
+
+    This function is only used to register the request type via the
+    ``invenio_requests.types`` entrypoint, and allow to customize the request type
+    class via the ``RDM_COMMUNITY_INCLUSION_REQUEST_CLS`` application config.
+    """
+    if not app:
+        return
+    return app.config.get("RDM_COMMUNITY_INCLUSION_REQUEST_CLS", CommunityInclusion)

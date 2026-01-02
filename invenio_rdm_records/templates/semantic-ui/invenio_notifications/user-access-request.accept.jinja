@@ -4,10 +4,7 @@
 
 {% set record_title = record.metadata.title %}
 {% set record_link = record.links.self_html %}
-{% set account_settings_link = "{ui}/account/settings/notifications".format(
-    ui=config.SITE_UI_URL
-    )
-%}
+{% set account_settings_link = invenio_url_for("invenio_notifications_settings.index") %}
 
 {%- block subject -%}
     {{ _("✅ Access request accepted") }}
@@ -17,13 +14,13 @@
 <table style="font-family:'Lato',Helvetica,Arial,sans-serif;border-spacing:15px">
     <tr>
         <td>{{ _("The owner of '{record_title}' has accepted your access request").format(record_title=record_title)}}
-            {% if message %} 
+            {% if message %}
             {{  _(" with the following message:")}}
             {% endif %}
         </td>
     </tr>
     <tr>
-        {% if message %} 
+        {% if message %}
         <td><em>{{message}}</em></td>
         {% endif %}
     </tr>
@@ -42,7 +39,7 @@
 {%- block plain_body -%}
 {{ _("The owner of '{record_title}' has accepted your access request").format(record_title=record_title)}}
 
-{% if message %} 
+{% if message %}
 {{ _("with the following message:")}}
 {{message}}
 {% endif %}
@@ -56,7 +53,7 @@
 {%- block md_body -%}
 {{ _("The owner of *{record_title}* has accepted your access request").format(record_title=record_title)}}
 
-{% if message %} 
+{% if message %}
 {{ _("with the following message:")}}
 {{message}}
 {% endif %}

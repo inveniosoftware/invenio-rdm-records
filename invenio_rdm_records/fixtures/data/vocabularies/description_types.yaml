@@ -3,34 +3,52 @@
     datacite: Abstract
   title:
     en: Abstract
+    sv: Abstract
     de: Abstract
+    es: Resumen
+    cs: Abstrakt
 - id: methods
   props:
     datacite: Methods
   title:
     en: Methods
+    sv: Metoder
     de: Methoden
+    es: Métodos
+    cs: Metody
 - id: series-information
   props:
     datacite: SeriesInformation
   title:
     en: Series information
+    sv: Information om serien
     de: Informationen zur Reihe
+    es: Información de la serie
+    cs: Informace o sérii
 - id: table-of-contents
   props:
     datacite: TableOfContents
   title:
     en: Table of contents
+    sv: Innehållsförteckning
     de: Inhaltsverzeichnis
+    es: Tabla de contenido
+    cs: Obsah
 - id: technical-info
   props:
     datacite: TechnicalInfo
   title:
     en: Technical info
+    sv: Teknisk information
     de: Technische Informationen
+    es: Información técnica
+    cs: Technické informace
 - id: other
   props:
     datacite: Other
   title:
     en: Other
+    sv: Övrig
     de: Sonstige
+    es: Otro
+    cs: Jiné

@@ -20,7 +20,7 @@ from invenio_app.factory import create_api
 
 
 @pytest.fixture(scope="module")
-def create_app(instance_path):
+def create_app(instance_path, entry_points):
     """Application factory fixture."""
     return create_api
 
@@ -36,7 +36,7 @@ def anyuser_identity():
 @pytest.fixture(scope="function")
 def authenticated_identity():
     """Authenticated identity fixture."""
-    identity = Identity(1)
-    identity.provides.add(UserNeed(1))
+    identity = Identity(100)
+    identity.provides.add(UserNeed(100))
     identity.provides.add(authenticated_user)
     return identity

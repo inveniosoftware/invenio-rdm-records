@@ -60,6 +60,15 @@ export const LicenseFieldItem = ({
         className={hidden ? "deposit-drag-listitem hidden" : "deposit-drag-listitem"}
       >
         <List.Content floated="right">
+          <Button
+            size="mini"
+            type="button"
+            onClick={() => {
+              removeLicense(license.index);
+            }}
+          >
+            {i18next.t("Remove")}
+          </Button>
           <LicenseModal
             searchConfig={searchConfig}
             onLicenseChange={(selectedLicense) => {
@@ -75,15 +84,6 @@ export const LicenseFieldItem = ({
             }
             serializeLicenses={serializeLicenses}
           />
-          <Button
-            size="mini"
-            type="button"
-            onClick={() => {
-              removeLicense(license.index);
-            }}
-          >
-            {i18next.t("Remove")}
-          </Button>
         </List.Content>
         <Ref innerRef={drag}>
           <List.Icon name="bars" className="drag-anchor" />

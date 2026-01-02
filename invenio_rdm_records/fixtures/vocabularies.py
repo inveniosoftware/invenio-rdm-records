@@ -1,7 +1,10 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2021-2022 CERN.
+# Copyright (C) 2021-2024 CERN.
 # Copyright (C) 2021-2022 Northwestern University.
+# Copyright (C) 2024 TU Wien.
+# Copyright (C) 2024 KTH Royal Institute of Technology.
+# Copyright (C) 2024-2025 Graz University of Technology.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
@@ -14,9 +17,9 @@ from collections import defaultdict
 from os.path import splitext
 from pathlib import Path
 
-import pkg_resources
 import yaml
 from flask import current_app
+from invenio_base.utils import entry_points
 from invenio_db import db
 from invenio_vocabularies.proxies import current_service
 from invenio_vocabularies.records.models import VocabularyScheme, VocabularyType
@@ -70,7 +73,9 @@ class CSVIterator(DataIterator):
     def __iter__(self):
         """Iterate over records."""
         with open(self._data_file) as fp:
-            reader = csv.reader(fp, delimiter=";", quotechar='"')
+            dialect = csv.Sniffer().sniff(fp.read(4096))
+            fp.seek(0)
+            reader = csv.reader(fp, dialect)
             header = next(reader)
             for row in reader:
                 yield self.map_row(header, row)
@@ -156,19 +161,8 @@ class PrioritizedVocabulariesFixtures:
         self._loaded_vocabularies = set()
 
     def _entry_points(self):
-        """List entrypoints.
-
-        Python now officially recommends importlib.metadata
-        (importlib_metadata backport) for entrypoints:
-        - https://docs.python.org/3/library/importlib.metadata.html
-        - https://packaging.python.org/guides/creating-and-discovering-plugins/
-          #using-package-metadata
-
-        but Invenio is much invested in pkg_resources (``entry_points``
-        fixture assumes it). So we use pkg_resources for now until
-        _entry_points implementation can be changed.
-        """
-        return list(pkg_resources.iter_entry_points("invenio_rdm_records.fixtures"))
+        """List entrypoints."""
+        return entry_points("invenio_rdm_records.fixtures")
 
     def load(self, reload=None):
         """Load the fixtures.
@@ -182,13 +176,19 @@ class PrioritizedVocabulariesFixtures:
         Fixtures found later are ignored.
         """
         # Prime with existing (sub)vocabularies
-        v_type_ids = [v.id for v in VocabularyType.query.options(load_only("id")).all()]
+        v_type_ids = [
+            v.id
+            for v in VocabularyType.query.options(load_only(VocabularyType.id)).all()
+        ]
         v_subtype_ids = [
             f"{v.parent_id}.{v.id}"
-            for v in VocabularyScheme.query.options(load_only("id", "parent_id")).all()
+            for v in VocabularyScheme.query.options(
+                load_only(VocabularyScheme.id, VocabularyScheme.parent_id)
+            ).all()
         ]
         self._loaded_vocabularies = set(v_type_ids + v_subtype_ids)
-        if reload:
+        # If it's not already loaded it means it's a new one
+        if reload and reload in self._loaded_vocabularies:
             self._loaded_vocabularies.remove(reload)
         # 1- Load from app_data_folder
         filepath = self._app_data_folder / self._filename
@@ -387,6 +387,10 @@ class VocabularyEntryWithSchemes(VocabularyEntry):
     # Template methods
     def pre_load(self, identity, ignore):
         """Actions taken before iteratively creating records."""
+        # Create the type first, if needed
+        super().pre_load(identity, ignore)
+
+        # Add schemes
         for scheme in self.schemes():
             id_ = f"{self._id}.{scheme['id']}"
             if id_ not in ignore:

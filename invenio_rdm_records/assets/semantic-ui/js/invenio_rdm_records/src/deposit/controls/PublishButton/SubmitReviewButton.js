@@ -19,6 +19,8 @@ import {
 } from "../../api/DepositFormSubmitContext";
 import { DepositStatus } from "../../state/reducers/deposit";
 import { SubmitReviewModal } from "./SubmitReviewModal";
+import { DRAFT_SUBMIT_REVIEW_FAILED_WITH_VALIDATION_ERRORS } from "../../state/types";
+import { scrollTop } from "../../utils";
 
 class SubmitReviewButtonComponent extends Component {
   state = { isConfirmModalOpen: false };
@@ -29,25 +31,58 @@ class SubmitReviewButtonComponent extends Component {
   closeConfirmModal = () => this.setState({ isConfirmModalOpen: false });
 
   handleSubmitReview = ({ reviewComment }) => {
-    const { formik, directPublish } = this.props;
+    const { formik, directPublish, isDOIRequired, noINeedDOI, doiReservationCheck } =
+      this.props;
     const { handleSubmit } = formik;
     const { setSubmitContext } = this.context;
 
-    setSubmitContext(DepositFormSubmitActions.SUBMIT_REVIEW, {
-      reviewComment,
-      directPublish,
-    });
-    handleSubmit();
+    const doiCheckFailed = doiReservationCheck(
+      isDOIRequired,
+      noINeedDOI,
+      formik,
+      "DOI is needed. You need to reserve a DOI before submitting for review.",
+      DRAFT_SUBMIT_REVIEW_FAILED_WITH_VALIDATION_ERRORS
+    );
+
+    if (!doiCheckFailed) {
+      setSubmitContext(DepositFormSubmitActions.SUBMIT_REVIEW, {
+        reviewComment,
+        directPublish,
+      });
+      handleSubmit();
+    }
     this.closeConfirmModal();
+    // scroll top to show the global error
+    scrollTop();
   };
 
-  isDisabled = (numberOfFiles, disableSubmitForReviewButton) => {
-    const { formik } = this.props;
+  isDisabled = (disableSubmitForReviewButton, filesState) => {
+    const { formik, userCanManageRecord, record } = this.props;
     const { values, isSubmitting } = formik;
 
+    // record is coming from the Jinja template and it is refreshed on page reload
+    const isNewUpload = !record.id;
+    // Check if the user can manage the record only if it is not a new upload
+    if (
+      (!isNewUpload && !userCanManageRecord) ||
+      disableSubmitForReviewButton ||
+      isSubmitting
+    ) {
+      return true;
+    }
+
     const filesEnabled = _get(values, "files.enabled", false);
-    const filesMissing = filesEnabled && !numberOfFiles;
-    return isSubmitting || filesMissing || disableSubmitForReviewButton;
+    const filesArray = Object.values(filesState.entries ?? {});
+    const filesMissing = filesEnabled && filesArray.length === 0;
+
+    if (filesMissing) {
+      return true;
+    }
+
+    // All files must be finished uploading
+    const allCompleted = filesArray.every((file) => file.status === "finished");
+
+    return !allCompleted;
   };
 
   render() {
@@ -59,8 +94,8 @@ class SubmitReviewButtonComponent extends Component {
       directPublish,
       formik,
       isRecordSubmittedForReview,
-      numberOfFiles,
       publishModalExtraContent,
+      filesState,
       ...ui
     } = this.props;
 
@@ -80,7 +115,7 @@ class SubmitReviewButtonComponent extends Component {
     return (
       <>
         <Button
-          disabled={this.isDisabled(numberOfFiles, disableSubmitForReviewButton)}
+          disabled={this.isDisabled(disableSubmitForReviewButton, filesState)}
           name="SubmitReview"
           onClick={this.openConfirmModal}
           positive={directPublish}
@@ -112,20 +147,27 @@ SubmitReviewButtonComponent.propTypes = {
   actionState: PropTypes.string,
   actionStateExtra: PropTypes.object.isRequired,
   community: PropTypes.object.isRequired,
-  numberOfFiles: PropTypes.number,
   disableSubmitForReviewButton: PropTypes.bool,
   isRecordSubmittedForReview: PropTypes.bool.isRequired,
   directPublish: PropTypes.bool,
   formik: PropTypes.object.isRequired,
   publishModalExtraContent: PropTypes.string,
+  filesState: PropTypes.object,
+  userCanManageRecord: PropTypes.bool.isRequired,
+  record: PropTypes.object.isRequired,
+  doiReservationCheck: PropTypes.func.isRequired,
+  isDOIRequired: PropTypes.bool,
+  noINeedDOI: PropTypes.bool,
 };
 
 SubmitReviewButtonComponent.defaultProps = {
   actionState: undefined,
-  numberOfFiles: undefined,
   disableSubmitForReviewButton: undefined,
   publishModalExtraContent: undefined,
   directPublish: false,
+  filesState: undefined,
+  isDOIRequired: undefined,
+  noINeedDOI: undefined,
 };
 
 const mapStateToProps = (state) => ({
@@ -135,8 +177,11 @@ const mapStateToProps = (state) => ({
   isRecordSubmittedForReview: state.deposit.record.status === DepositStatus.IN_REVIEW,
   disableSubmitForReviewButton:
     state.deposit.editorState.ui.disableSubmitForReviewButton,
-  numberOfFiles: Object.values(state.files.entries).length,
   publishModalExtraContent: state.deposit.config.publish_modal_extra,
+  filesState: state.files,
+  userCanManageRecord: state.deposit.permissions.can_manage,
+  isDOIRequired: state.deposit.config.is_doi_required,
+  noINeedDOI: state.deposit.noINeedDOI,
 });
 
 export const SubmitReviewButton = connect(

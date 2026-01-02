@@ -11,6 +11,7 @@ Implements the following fields:
 - imprint.pages
 - imprint.place
 - imprint.title
+- imprint.edition
 """
 
 from idutils import is_isbn
@@ -32,11 +33,12 @@ class ImprintCF(BaseCF):
                 "isbn": SanitizedUnicode(
                     validate=is_isbn,
                     error_messages={
-                        "validator_failed": [_("Please provide a valid ISBN.")]
+                        "validator_failed": _("Please provide a valid ISBN.")
                     },
                 ),
                 "pages": SanitizedUnicode(),
                 "place": SanitizedUnicode(),
+                "edition": SanitizedUnicode(),
             }
         )
 
@@ -53,6 +55,7 @@ class ImprintCF(BaseCF):
                 "isbn": {"type": "keyword"},
                 "pages": {"type": "keyword"},
                 "place": {"type": "keyword"},
+                "edition": {"type": "keyword"},
             },
         }
 
@@ -66,14 +69,14 @@ IMPRINT_NAMESPACE = {
 IMPRINT_CUSTOM_FIELDS = [ImprintCF(name="imprint:imprint")]
 
 IMPRINT_CUSTOM_FIELDS_UI = {
-    "section": _("Book / Report / Chapter"),
+    "section": _("Book / Report / Conference proceedings"),
     "fields": [
         {
             "field": "imprint:imprint",
             "ui_widget": "Imprint",
             "template": "imprint.html",
             "props": {
-                "label": _("Imprint (Book, Chapter, or Report)"),
+                "label": _("Imprint (Book, Report, or Conference proceedings)"),
                 "place": {
                     "label": _("Place"),
                     "placeholder": _("e.g. city, country"),
@@ -85,10 +88,10 @@ IMPRINT_CUSTOM_FIELDS_UI = {
                     "description": _("International Standard Book Number"),
                 },
                 "title": {
-                    "label": _("Book or report title"),
+                    "label": _("Book, report, or proceedings title"),
                     "placeholder": "",
                     "description": _(
-                        "Title of the book or report which this upload is part of"
+                        "Title of the book, report, or proceedings which this upload is part of"
                     ),
                 },
                 "pages": {
@@ -96,7 +99,12 @@ IMPRINT_CUSTOM_FIELDS_UI = {
                     "placeholder": _("e.g. 15-23 or 158"),
                     "description": "",
                 },
-                "icon": "book",
+                "edition": {
+                    "label": _("Edition"),
+                    "placeholder": _("e.g. 3"),
+                    "description": _("The edition of the book"),
+                },
+                "labelIcon": "book",
             },
         }
     ],

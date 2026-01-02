@@ -1,5 +1,5 @@
 // This file is part of Invenio-RDM-Records
-// Copyright (C) 2020-2023 CERN.
+// Copyright (C) 2020-2025 CERN.
 // Copyright (C) 2020-2022 Northwestern University.
 //
 // Invenio-RDM-Records is free software; you can redistribute it and/or modify it
@@ -82,7 +82,7 @@ export class RightsVocabularyField extends VocabularyField {
     let serializedValue = null;
     const _serialize = (value) => {
       let clonedValue = _cloneDeep(value);
-      if ("id" in value) {
+      if ("id" in value && value.id != null) {
         return { id: value.id };
       } else {
         this.localeFields.forEach((field) => {

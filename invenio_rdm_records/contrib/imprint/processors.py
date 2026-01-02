@@ -27,6 +27,7 @@ class ImprintCSLDumper(DumperMixin):
         place = imprint_data.get("place")
         pages = imprint_data.get("pages")
         isbn = imprint_data.get("isbn")
+        edition = imprint_data.get("edition")
 
         if title:
             data["container_title"] = title
@@ -36,6 +37,8 @@ class ImprintCSLDumper(DumperMixin):
             data["publisher_place"] = place
         if isbn:
             data["ISBN"] = isbn
+        if edition:
+            data["edition"] = edition
 
         return data
 
@@ -52,13 +55,29 @@ class ImprintMarcXMLDumper(DumperMixin):
         if not imprint_data:
             return data
 
+        place = imprint_data.get("place")
+        publisher = imprint_data.get("publisher")
+        date = _original.get("metadata", {}).get("publication_date")
+
+        d = f"{place}" if place else ""
+        if publisher:
+            if d:
+                d += f" : {publisher}"
+            else:
+                d = f"{publisher}"
+        if date:
+            if d:
+                d += f", {date}"
+            else:
+                d = f"{date}"
+
         items_dict = {}
         field_keys = {
             "t": imprint_data.get("title"),
             "z": imprint_data.get("isbn"),
             "g": imprint_data.get("pages"),
-            "a": imprint_data.get("place"),
-            "b": _original.get("metadata", {}).get("publication_date"),
+            "d": d,
+            "b": imprint_data.get("edition"),
         }
         for key, value in field_keys.items():
             if value:

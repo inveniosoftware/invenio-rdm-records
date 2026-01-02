@@ -95,7 +95,7 @@ class Grant:
 
         if type_ == "user":
             with db.session.no_autoflush:
-                subject = current_datastore.get_user(self._subject_id)
+                subject = current_datastore.get_user_by_id(self._subject_id)
         elif type_ == "role":
             subject = current_datastore.find_role(self._subject_id)
 

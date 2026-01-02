@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2019-2023 CERN.
+# Copyright (C) 2019-2025 CERN.
 # Copyright (C) 2019 Northwestern University.
-# Copyright (C) 2021-2023 Graz University of Technology.
+# Copyright (C) 2021-2024 Graz University of Technology.
 # Copyright (C) 2023 TU Wien.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
@@ -13,14 +13,35 @@
 from datetime import timedelta
 
 import idutils
+from invenio_access.permissions import system_permission
 from invenio_i18n import lazy_gettext as _
+from invenio_records_resources.services.records.queryparser import QueryParser
+from invenio_records_resources.services.records.queryparser.transformer import (
+    RestrictedTerm,
+    RestrictedTermValue,
+    SearchFieldTransformer,
+)
+
+import invenio_rdm_records.services.communities.moderation as communities_moderation
+from invenio_rdm_records.services.components.pids import validate_optional_doi
+from invenio_rdm_records.services.components.verified import UserModerationHandler
 
 from . import tokens
-from .resources.serializers import DataCite43JSONSerializer
+from .requests.community_inclusion import CommunityInclusion
+from .requests.community_submission import CommunitySubmission
+from .resources.serializers import DataCite45JSONSerializer
 from .services import facets
 from .services.config import lock_edit_published_files
 from .services.permissions import RDMRecordPermissionPolicy
 from .services.pids import providers
+from .services.queryparser import word_internal_notes
+from .services.request_policies import (
+    FileModificationAdminPolicy,
+    FileModificationPolicyEvaluator,
+    GracePeriodPolicy,
+    RDMRecordDeletionPolicy,
+    RequestDeletionPolicy,
+)
 
 # Invenio-RDM-Records
 # ===================
@@ -98,6 +119,10 @@ RDM_RECORDS_IDENTIFIERS_SCHEMES = {
 }
 """These are used for references, main, alternate and related identifiers."""
 
+
+RDM_RECORDS_RELATED_IDENTIFIERS_SCHEMES = RDM_RECORDS_IDENTIFIERS_SCHEMES
+"""This variable is used to separate related identifiers."""
+
 RDM_RECORDS_LOCATION_SCHEMES = {
     "wikidata": {"label": _("Wikidata"), "validator": always_valid},
     "geonames": {"label": _("GeoNames"), "validator": always_valid},
@@ -113,8 +138,11 @@ RDM_PERMISSION_POLICY = RDMRecordPermissionPolicy
 # Record review requests
 #
 RDM_RECORDS_REVIEWS = [
-    "community-submission",
+    CommunitySubmission.type_id,
 ]
+"""List of review request types."""
+RDM_COMMUNITY_SUBMISSION_REQUEST_CLS = CommunitySubmission
+"""Request type for community submission requests."""
 
 #
 # Record files configuration
@@ -130,6 +158,121 @@ RDM_DEFAULT_FILES_ENABLED = True
 #
 RDM_ALLOW_RESTRICTED_RECORDS = True
 """Allow users to set restricted/private records."""
+
+#
+# Record deletion by users
+#
+RDM_RECORD_DELETION_POLICY = RDMRecordDeletionPolicy
+"""Policy class which evaluates whether a record can be deleted by a user."""
+
+RDM_IMMEDIATE_RECORD_DELETION_ENABLED = False
+"""Allow users to immediately delete records."""
+
+RDM_IMMEDIATE_RECORD_DELETION_POLICIES = [GracePeriodPolicy()]
+"""List of policies for immediate record deletion.
+
+Policies are executed in order and the first one to return True is used
+as the policy for the record. As such, policies should be specified from most
+to least specific.
+
+To update a policy, create a duplicate of it and add a check on creation date to
+both. When your policy comes into effect on a date in the future it will be used,
+and this is the date which you will use to check whether the new or old policy
+will apply.
+"""
+
+RDM_IMMEDIATE_RECORD_DELETION_CHECKLIST = []
+"""Checklist which appears on the modal to redirect user from immediate record deletion if possible.
+
+The config accepts a list of dictionaries with "label" and "message" key-value pairs.
+The "label" is used as the checklist question item, and the "message" is displayed in
+case the user selects "Yes" on the checklist item.
+
+Example config value:
+
+.. code-block:: python
+
+    RDM_IMMEDIATE_RECORD_DELETION_CHECKLIST = [
+        {
+            "label": _("I want to change the metadata (title, description, etc.)"),
+            "message": _(
+                "You can edit the metadata of a published record at any time."
+            ),
+        },
+        {
+            "label": _("I forgot to submit to a community"),
+            "message": _(
+                "You can submit a published record to a community by going to the "
+                "record landing page and selecting the cog in the communities sidebar."
+            ),
+        },
+    ]
+"""
+
+RDM_REQUEST_RECORD_DELETION_ENABLED = False
+"""Allow users to request record deletion."""
+
+RDM_REQUEST_RECORD_DELETION_POLICIES = [RequestDeletionPolicy()]
+"""List of policies for record deletion requests."""
+
+RDM_REQUEST_RECORD_DELETION_CHECKLIST = []
+"""Checklist which appears on the modal to redirect user from record deletion request if possible."""
+
+#
+# File modification by users
+#
+RDM_FILE_MODIFICATION_POLICY = FileModificationPolicyEvaluator
+"""Policy class which evaluates whether published files can be modified by a user."""
+
+RDM_IMMEDIATE_FILE_MODIFICATION_ENABLED = True
+"""Allow editing of published files (by default by admins only)."""
+
+RDM_IMMEDIATE_FILE_MODIFICATION_POLICIES = [FileModificationAdminPolicy()]
+"""List of policies for editing published files immediately.
+
+To enable users to modify the files of their records, configure as:
+
+.. code-block:: python
+
+    from invenio_rdm_records.services.request_policies import (
+        FileModificationGracePeriodPolicy,
+        FileModificationAdminPolicy,
+    )
+    RDM_IMMEDIATE_FILE_MODIFICATION_POLICIES = [
+        FileModificationGracePeriodPolicy(),
+        FileModificationAdminPolicy(),
+    ]
+
+Also check whether you also want to pass a custom grace period or change
+``RDM_FILE_MODIFICATION_PERIOD``.
+
+Policies are executed in order and the first one to return True is used
+as the policy for the record. As such, policies should be specified from most
+to least specific.
+
+To update a policy, create a duplicate of it and add a check on creation date to
+both. When your policy comes into effect on a date in the future it will be used,
+and this is the date which you will use to check whether the new or old policy
+will apply.
+"""
+
+RDM_FILE_MODIFICATION_PERIOD = timedelta(days=30 + 15)
+"""Time period after creation during which modified files can be published.
+30 + 30 denotes grace period + extra days for file modification. This is checked
+during publish to block people from publishing after this period given the bucket stays open.
+"""
+
+RDM_FILE_MODIFICATION_VALIDATION_ERROR_MESSAGE = _(
+    "File modification grace period has passed. Please discard this draft to make any changes."
+)
+
+#
+# Record communities
+#
+RDM_COMMUNITY_REQUIRED_TO_PUBLISH = False
+"""Enforces at least one community per record."""
+RDM_COMMUNITY_INCLUSION_REQUEST_CLS = CommunityInclusion
+"""Request type for record inclusion requests."""
 
 #
 # Search configuration
@@ -174,8 +317,22 @@ RDM_FACETS = {
             "field": "subjects.subject",
         },
     },
+    # subject_nested is deprecated and should be removed.
+    # subject_combined does require a pre-existing change to indexed documents,
+    # so it's unclear if a direct replacement is right.
+    # Keeping it around until v13 might be better. On the flipside it is an incorrect
+    # facet...
     "subject_nested": {
         "facet": facets.subject_nested,
+        "ui": {
+            "field": "subjects.scheme",
+            "childAgg": {
+                "field": "subjects.subject",
+            },
+        },
+    },
+    "subject_combined": {
+        "facet": facets.subject_combined,
         "ui": {
             "field": "subjects.scheme",
             "childAgg": {
@@ -219,6 +376,14 @@ RDM_SORT_OPTIONS = {
     "mostdownloaded": dict(
         title=_("Most downloaded"), fields=["-stats.all_versions.unique_downloads"]
     ),
+    "newestactivity": dict(
+        title=_("Newest activity"),
+        fields=["-last_activity_at"],
+    ),
+    "oldestactivity": dict(
+        title=_("Oldest activity"),
+        fields=["last_activity_at"],
+    ),
 }
 """Definitions of available record sort options.
 
@@ -231,6 +396,7 @@ RDM_SORT_OPTIONS = {
 
 """
 
+
 RDM_SEARCH = {
     "facets": ["access_status", "file_type", "resource_type"],
     "sort": [
@@ -241,6 +407,18 @@ RDM_SEARCH = {
         "mostviewed",
         "mostdownloaded",
     ],
+    "query_parser_cls": QueryParser.factory(
+        mapping={
+            "internal_notes.note": RestrictedTerm(system_permission),
+            "internal_notes.id": RestrictedTerm(system_permission),
+            "internal_notes.added_by": RestrictedTerm(system_permission),
+            "internal_notes.timestamp": RestrictedTerm(system_permission),
+            "_exists_": RestrictedTermValue(
+                system_permission, word=word_internal_notes
+            ),
+        },
+        tree_transformer_cls=SearchFieldTransformer,
+    ),
 }
 """Record search configuration.
 
@@ -346,11 +524,14 @@ RDM_PERSISTENT_IDENTIFIERS = {
         "label": _("DOI"),
         "validator": idutils.is_doi,
         "normalizer": idutils.normalize_doi,
+        "is_enabled": providers.DataCitePIDProvider.is_enabled,
+        "ui": {"default_selected": "yes"},  # "yes", "no" or "not_needed"
     },
     "oai": {
         "providers": ["oai"],
         "required": True,
         "label": _("OAI"),
+        "is_enabled": providers.OAIPIDProvider.is_enabled,
     },
 }
 """The configured persistent identifiers for records.
@@ -368,7 +549,7 @@ RDM_PARENT_PERSISTENT_IDENTIFIER_PROVIDERS = [
     providers.DataCitePIDProvider(
         "datacite",
         client=providers.DataCiteClient("datacite", config_prefix="DATACITE"),
-        serializer=DataCite43JSONSerializer(schema_context={"is_parent": True}),
+        serializer=DataCite45JSONSerializer(schema_context={"is_parent": True}),
         label=_("Concept DOI"),
     ),
 ]
@@ -378,16 +559,25 @@ RDM_PARENT_PERSISTENT_IDENTIFIERS = {
     "doi": {
         "providers": ["datacite"],
         "required": True,
-        "condition": lambda record: record.pids["doi"]["provider"] == "datacite",
+        "condition": lambda rec: rec.pids.get("doi", {}).get("provider") == "datacite",
         "label": _("Concept DOI"),
         "validator": idutils.is_doi,
         "normalizer": idutils.normalize_doi,
+        "is_enabled": providers.DataCitePIDProvider.is_enabled,
     },
 }
 """Persistent identifiers for parent record."""
 
 RDM_ALLOW_EXTERNAL_DOI_VERSIONING = True
 """Allow records with external DOIs to be versioned."""
+
+
+RDM_OPTIONAL_DOI_VALIDATOR = validate_optional_doi
+"""Optional DOI transitions validate method.
+
+Check the signature of validate_optional_doi for more information.
+"""
+
 
 # Configuration for the DataCiteClient used by the DataCitePIDProvider
 
@@ -529,8 +719,18 @@ RDM_LOCK_EDIT_PUBLISHED_FILES = lock_edit_published_files
 """Lock editing already published files (enforce record versioning).
 
    signature to implement:
-   def lock_edit_published_files(service, identity, record=None):
+   def lock_edit_published_files(service, identity, record=None, draft=None):
 """
+
+RDM_CONTENT_MODERATION_HANDLERS = [
+    UserModerationHandler(),
+]
+"""Records content moderation handlers."""
+
+RDM_COMMUNITY_CONTENT_MODERATION_HANDLERS = [
+    communities_moderation.UserModerationHandler(),
+]
+"""Community content moderation handlers."""
 
 # Feature flag to enable/disable user moderation
 RDM_USER_MODERATION_ENABLED = False
@@ -541,3 +741,82 @@ RDM_RECORDS_MAX_FILES_COUNT = 100
 
 RDM_RECORDS_MAX_MEDIA_FILES_COUNT = 100
 """Max amount of media files allowed to upload in the deposit form."""
+
+RDM_MEDIA_FILES_DEFAULT_QUOTA_SIZE = 10 * (10**9)  # 10 GB
+"""Default size for a bucket in bytes for media files."""
+
+RDM_MEDIA_FILES_DEFAULT_MAX_FILE_SIZE = 10 * (10**9)  # 10 GB
+"""Default maximum file size for a bucket in bytes for media files."""
+
+# For backwards compatibility,
+# FILES_REST_DEFAULT_QUOTA_SIZE & FILES_REST_DEFAULT_MAX_FILE_SIZE
+# are used respectively instead
+RDM_FILES_DEFAULT_QUOTA_SIZE = None
+"""Default size for a bucket in bytes for files."""
+
+RDM_FILES_DEFAULT_MAX_FILE_SIZE = None
+"""Default maximum file size for a bucket in bytes for files."""
+
+
+RDM_DATACITE_FUNDER_IDENTIFIERS_PRIORITY = ("ror", "doi", "grid", "isni", "gnd")
+"""Priority of funder identifiers types to be used for DataCite serialization."""
+
+RDM_DATACITE_DUMP_OPENAIRE_ACCESS_RIGHTS = False
+"""Flag to control dumping DataCite OpenAIRE access rights.
+
+See https://guidelines.openaire.eu/en/latest/data/field_rights.html for further
+information on how the OpenAIRE Guidelines expect access rights to be exposed
+via the DataCite schema.
+"""
+
+RDM_IIIF_MANIFEST_FORMATS = [
+    "gif",
+    "jp2",
+    "jpeg",
+    "jpg",
+    "png",
+    "tif",
+    "tiff",
+]
+"""Formats to be included in the IIIF Manifest."""
+
+#
+# IIIF Tiles configuration
+#
+IIIF_TILES_GENERATION_ENABLED = False
+"""Enable generating pyramidal TIFF tiles for uploaded images."""
+
+IIIF_TILES_VALID_EXTENSIONS = [
+    "jp2",
+    "jpeg",
+    "jpg",
+    "pdf",  # We can still generate tiles for the first page of a PDF
+    "png",
+    "png",
+    "tif",
+    "tiff",
+]
+"""Valid (normalized) file extensions for generating tiles."""
+
+IIIF_TILES_STORAGE_BASE_PATH = "images/"
+"""Base path for storing IIIF tiles.
+
+Relative paths are resolved against the application instance path.
+"""
+
+IIIF_TILES_CONVERTER_PARAMS = {
+    "compression": "jpeg",
+    "Q": 90,
+    "tile_width": 256,
+    "tile_height": 256,
+}
+"""Parameters to be passed to the tiles converter."""
+
+RDM_RECORDS_RESTRICTION_GRACE_PERIOD = timedelta(days=30)
+"""Grace period for changing record access to restricted."""
+
+RDM_RECORDS_ALLOW_RESTRICTION_AFTER_GRACE_PERIOD = False
+"""Whether record access restriction is allowed after the grace period or not."""
+
+RDM_RECORDS_REQUIRE_SECRET_LINKS_EXPIRATION = False
+"""Whether share access links require an expiration date to be set or not."""

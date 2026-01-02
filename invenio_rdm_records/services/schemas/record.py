@@ -9,21 +9,29 @@
 # it under the terms of the MIT License; see LICENSE file for more details.
 
 """RDM record schemas."""
-
+from datetime import datetime, timezone
 from functools import partial
 
 from flask import current_app
 from invenio_drafts_resources.services.records.schema import RecordSchema
 from invenio_i18n import lazy_gettext as _
+from invenio_pidstore.providers.recordid_v2 import RecordIdProviderV2
 from invenio_records_resources.services.custom_fields import CustomFieldsSchema
-from marshmallow import EXCLUDE, ValidationError, fields, post_dump
-from marshmallow_utils.fields import NestedAttribute, SanitizedUnicode
+from marshmallow import EXCLUDE, Schema, ValidationError, fields, post_dump, pre_load
+from marshmallow_utils.fields import (
+    EDTFDateTimeString,
+    NestedAttribute,
+    SanitizedHTML,
+    SanitizedUnicode,
+    TZDateTime,
+)
 from marshmallow_utils.permissions import FieldPermissionsMixin
 
 from .access import AccessSchema
 from .files import FilesSchema
 from .metadata import MetadataSchema
 from .parent import RDMParentSchema
+from .parent.access import Agent
 from .pids import PIDSchema
 from .stats import StatsSchema
 from .tombstone import DeletionStatusSchema, TombstoneSchema
@@ -34,6 +42,20 @@ def validate_scheme(scheme):
     """Validate a PID scheme."""
     if scheme not in current_app.config["RDM_PERSISTENT_IDENTIFIERS"]:
         raise ValidationError(_("Invalid persistent identifier scheme."))
+
+
+class InternalNoteSchema(Schema):
+    """Schema for internal notes."""
+
+    id = SanitizedUnicode()
+    timestamp = EDTFDateTimeString(dump_only=True)
+    added_by = fields.Nested(Agent, dump_only=True)
+    note = SanitizedHTML()
+
+    class Meta:
+        """Meta attributes for the schema."""
+
+        unknown = EXCLUDE
 
 
 class RDMRecordSchema(RecordSchema, FieldPermissionsMixin):
@@ -61,18 +83,24 @@ class RDMRecordSchema(RecordSchema, FieldPermissionsMixin):
     access = NestedAttribute(AccessSchema)
     files = NestedAttribute(FilesSchema)
     media_files = NestedAttribute(FilesSchema)
-    # notes = fields.List(fields.Nested(InternalNoteSchema))
     revision = fields.Integer(dump_only=True)
     versions = NestedAttribute(VersionsSchema, dump_only=True)
     parent = NestedAttribute(RDMParentSchema)
     is_published = fields.Boolean(dump_only=True)
     status = fields.String(dump_only=True)
-
     tombstone = fields.Nested(TombstoneSchema, dump_only=True)
     deletion_status = fields.Nested(DeletionStatusSchema, dump_only=True)
-
+    internal_notes = fields.List(fields.Nested(InternalNoteSchema))
     stats = NestedAttribute(StatsSchema, dump_only=True)
     # schema_version = fields.Integer(dump_only=True)
+
+    field_dump_permissions = {
+        "internal_notes": "manage_internal",
+    }
+
+    field_load_permissions = {
+        "internal_notes": "manage_internal",
+    }
 
     def default_nested(self, data):
         """Serialize fields as empty dict for partial drafts.
@@ -88,7 +116,6 @@ class RDMRecordSchema(RecordSchema, FieldPermissionsMixin):
             data["pids"] = {}
         if not data.get("custom_fields"):
             data["custom_fields"] = {}
-
         return data
 
     def hide_tombstone(self, data):

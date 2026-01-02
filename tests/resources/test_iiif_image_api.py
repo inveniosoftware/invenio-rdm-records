@@ -6,7 +6,9 @@
 # it under the terms of the MIT License; see LICENSE file for more details.
 
 from io import BytesIO
+from urllib.parse import quote
 
+import dictdiffer
 from PIL import Image
 from werkzeug.utils import secure_filename
 
@@ -16,6 +18,7 @@ def publish_record_with_images(
 ):
     """A record with files."""
     record["files"]["enabled"] = True
+
     if restricted_files:
         record["access"]["files"] = "restricted"
 
@@ -27,23 +30,30 @@ def publish_record_with_images(
     res = client.post(
         f"/records/{id_}/draft/files", headers=headers, json=[{"key": file_id}]
     )
-
+    links = res.json["entries"][0]["links"]
     # Upload a file
     image_file = BytesIO()
     image = Image.new("RGBA", (1280, 1024), (255, 0, 0, 0))
     image.save(image_file, "png")
     image_file.seek(0)
-    res = client.put(
-        f"/records/{id_}/draft/files/{file_id}/content",
+    res1 = client.put(
+        links["content"].split("/api", 1)[
+            -1
+        ],  # Removes the base URL and keeps only the API path
         headers={"content-type": "application/octet-stream"},
         data=image_file,
     )
 
     # Commit the file
-    res = client.post(f"/records/{id_}/draft/files/{file_id}/commit", headers=headers)
+    res2 = client.post(
+        links["commit"].split("/api", 1)[
+            -1
+        ],  # Removes the base URL and keeps only the API path
+        headers=headers,
+    )
 
     # Publish the record
-    res = client.post(f"/records/{id_}/draft/actions/publish", headers=headers)
+    res3 = client.post(f"/records/{id_}/draft/actions/publish", headers=headers)
 
     return id_
 
@@ -63,10 +73,23 @@ def test_file_links_depending_on_file_extensions(
     file_id = "test_image.png"
     recid = publish_record_with_images(client, file_id, minimal_record, headers)
     response = client.get(f"/records/{recid}/files/{file_id}")
-    assert "iiif_canvas" in response.json["links"]
-    assert "iiif_base" in response.json["links"]
-    assert "iiif_info" in response.json["links"]
-    assert "iiif_api" in response.json["links"]
+    links = response.json["links"]
+    assert (
+        f"https://127.0.0.1:5000/api/iiif/record:{recid}/canvas/{file_id}"
+        == links["iiif_canvas"]
+    )
+    assert (
+        f"https://127.0.0.1:5000/api/iiif/record:{recid}:{file_id}"
+        == links["iiif_base"]
+    )
+    assert (
+        f"https://127.0.0.1:5000/api/iiif/record:{recid}:{file_id}/info.json"
+        == links["iiif_info"]
+    )
+    assert (
+        f"https://127.0.0.1:5000/api/iiif/record:{recid}:{file_id}/full/full/0/default.png"
+        == links["iiif_api"]
+    )
 
     ## Testing with filename with a slash ##
 
@@ -92,15 +115,18 @@ def test_iiif_base(
         == f"https://127.0.0.1:5000/api/iiif/record:{recid}:{file_id}/info.json"
     )
 
-    ## Testing with filename with a slash ##
+    ## Testing with filename with a slash and a "#" ##
 
-    file_id = "test/image.png"
+    file_id = "test/#image.png"
+    encoded_file_id = "test/%23image.png"
     recid = publish_record_with_images(client, file_id, minimal_record, headers)
-    response = client.get(f"/iiif/record:{recid}:{file_id}")
+
+    response = client.get(f"/iiif/record:{recid}:{encoded_file_id}")
+
     assert response.status_code == 301
     assert (
         response.json["location"]
-        == f"https://127.0.0.1:5000/api/iiif/record:{recid}:{file_id}/info.json"
+        == f"https://127.0.0.1:5000/api/iiif/record:{recid}:{encoded_file_id}/info.json"
     )
 
 
@@ -112,27 +138,33 @@ def test_iiif_info(
     recid = publish_record_with_images(client, file_id, minimal_record, headers)
     response = client.get(f"/iiif/record:{recid}:{file_id}/info.json")
     assert response.status_code == 200
-    assert response.json == {
-        "@context": "http://iiif.io/api/image/2/context.json",
-        "profile": ["http://iiif.io/api/image/2/level2.json"],
-        "protocol": "http://iiif.io/api/image",
-        "@id": f"https://127.0.0.1:5000/api/iiif/record:{recid}:{file_id}",
-        "tiles": [{"width": 256, "scaleFactors": [1, 2, 4, 8, 16, 32, 64]}],
-        "width": 1280,
-        "height": 1024,
-    }
+    assert not list(
+        dictdiffer.diff(
+            response.json,
+            {
+                "@context": "http://iiif.io/api/image/2/context.json",
+                "profile": ["http://iiif.io/api/image/2/level2.json"],
+                "protocol": "http://iiif.io/api/image",
+                "@id": f"https://127.0.0.1:5000/api/iiif/record:{recid}:{file_id}",
+                "tiles": [{"width": 256, "scaleFactors": [1, 2, 4, 8, 16, 32, 64]}],
+                "width": 1280,
+                "height": 1024,
+            },
+        )
+    )
 
-    ## Testing with filename with a slash ##
+    ## Testing with filename with a slash and a "#" ##
 
-    file_id = "test/image.png"
+    file_id = "test/#image.png"
+    encoded_file_id = "test/%23image.png"
     recid = publish_record_with_images(client, file_id, minimal_record, headers)
-    response = client.get(f"/iiif/record:{recid}:{file_id}/info.json")
+    response = client.get(f"/iiif/record:{recid}:{encoded_file_id}/info.json")
     assert response.status_code == 200
     assert response.json == {
         "@context": "http://iiif.io/api/image/2/context.json",
         "profile": ["http://iiif.io/api/image/2/level2.json"],
         "protocol": "http://iiif.io/api/image",
-        "@id": f"https://127.0.0.1:5000/api/iiif/record:{recid}:{file_id}",
+        "@id": f"https://127.0.0.1:5000/api/iiif/record:{recid}:{encoded_file_id}",
         "tiles": [{"width": 256, "scaleFactors": [1, 2, 4, 8, 16, 32, 64]}],
         "width": 1280,
         "height": 1024,

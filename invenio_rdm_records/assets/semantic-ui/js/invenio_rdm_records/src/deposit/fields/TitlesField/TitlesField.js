@@ -8,37 +8,61 @@
 
 import React, { Component } from "react";
 import PropTypes from "prop-types";
-
-import { FieldLabel, TextField } from "react-invenio-forms";
+import Overridable from "react-overridable";
+import {
+  FieldLabel,
+  TextField,
+  showHideOverridable,
+  mandatoryFieldCommonProps,
+} from "react-invenio-forms";
 import { AdditionalTitlesField } from "./AdditionalTitlesField";
 import { i18next } from "@translations/invenio_rdm_records/i18next";
 
-export class TitlesField extends Component {
+class TitlesFieldComponent extends Component {
   render() {
-    const { fieldPath, options, label, required, recordUI } = this.props;
+    const {
+      fieldPath,
+      options,
+      label,
+      labelIcon,
+      recordUI,
+      helpText,
+      placeholder,
+      optimized,
+    } = this.props;
 
     return (
-      <>
-        <TextField
-          fieldPath={fieldPath}
-          label={<FieldLabel htmlFor={fieldPath} icon="book" label={label} />}
-          required={required}
-          className="title-field"
-          optimized
-        />
-        <AdditionalTitlesField
-          options={options}
-          recordUI={recordUI}
-          fieldPath="metadata.additional_titles"
-        />
-      </>
+      <Overridable
+        id="InvenioRdmRecords.DepositForm.TitlesField.Container"
+        options={options}
+        recordUI={recordUI}
+        helpText={helpText}
+        placeholder={placeholder}
+        optimized={optimized}
+      >
+        <>
+          <TextField
+            fieldPath={fieldPath}
+            helpText={helpText}
+            placeholder={placeholder}
+            label={<FieldLabel htmlFor={fieldPath} icon={labelIcon} label={label} />}
+            required
+            className="title-field"
+            optimized={optimized}
+          />
+          <AdditionalTitlesField
+            options={options}
+            recordUI={recordUI}
+            fieldPath="metadata.additional_titles"
+            optimized={optimized}
+          />
+        </>
+      </Overridable>
     );
   }
 }
 
-TitlesField.propTypes = {
-  fieldPath: PropTypes.string.isRequired,
-  label: PropTypes.string,
+TitlesFieldComponent.propTypes = {
   options: PropTypes.shape({
     type: PropTypes.arrayOf(
       PropTypes.shape({
@@ -54,12 +78,19 @@ TitlesField.propTypes = {
       })
     ),
   }).isRequired,
-  required: PropTypes.bool,
   recordUI: PropTypes.object,
+  ...mandatoryFieldCommonProps,
 };
 
-TitlesField.defaultProps = {
+TitlesFieldComponent.defaultProps = {
   label: i18next.t("Title"),
+  labelIcon: "book",
   required: false,
   recordUI: undefined,
+  optimized: true,
 };
+
+export const TitlesField = showHideOverridable(
+  "InvenioRdmRecords.DepositForm.TitlesField",
+  TitlesFieldComponent
+);

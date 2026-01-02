@@ -14,21 +14,64 @@ See https://pytest-invenio.readthedocs.io/ for documentation on which test
 fixtures are available.
 """
 
-from typing import Pattern
-
 import pytest
 from flask_principal import Identity, UserNeed
 from invenio_access.permissions import any_user, authenticated_user, system_process
+from invenio_communities.generators import CommunityRoleNeed
+from invenio_communities.members.records.api import Member
 from invenio_db import db
-from invenio_pidstore.models import PersistentIdentifier, PIDStatus
 from invenio_records_permissions.generators import (
     AnyUser,
     AuthenticatedUser,
     SystemProcess,
 )
+from invenio_requests import current_requests_service
 
+from invenio_rdm_records.proxies import current_rdm_records
 from invenio_rdm_records.records import RDMParent, RDMRecord
-from invenio_rdm_records.services.generators import IfRestricted, RecordOwners
+from invenio_rdm_records.records.api import RDMDraft
+from invenio_rdm_records.records.systemfields.draft_status import DraftStatus
+from invenio_rdm_records.requests.community_submission import CommunitySubmission
+from invenio_rdm_records.services.generators import (
+    IfRestricted,
+    RecordOwners,
+    RequestReviewers,
+)
+
+
+@pytest.fixture()
+def draft_for_open_review(
+    minimal_record, open_review_community, service, community_owner, db
+):
+    minimal_record["parent"] = {
+        "review": {
+            "type": CommunitySubmission.type_id,
+            "receiver": {"community": open_review_community.data["id"]},
+        }
+    }
+
+    # Create draft with review
+    return service.create(community_owner.identity, minimal_record)
+
+
+def get_community_owner_identity(community):
+    """Get the identity for the first owner of the community."""
+    members = Member.get_members(community.id)
+    for m in members:
+        if m.role == "owner":
+            owner_id = m.user_id
+            identity = Identity(owner_id)
+            identity.provides.add(any_user)
+            identity.provides.add(authenticated_user)
+            identity.provides.add(CommunityRoleNeed(str(community.id), "owner"))
+            identity.provides.add(UserNeed(owner_id))
+            return identity
+
+
+@pytest.fixture()
+def service():
+    """Get the current RDM records service."""
+    return current_rdm_records.records_service
 
 
 def _public_record():
@@ -112,3 +155,26 @@ def test_record_owner(app, mocker):
 
     expected_query_filter = {"terms": {"parent.access.owned_by.user": [15]}}
     assert query_filter.to_dict() == expected_query_filter
+
+
+def test_request_reviewers(
+    draft_for_open_review, open_review_community, service, users
+):
+    """Test direct publish review for community owner."""
+    assert (
+        draft_for_open_review["status"]
+        == DraftStatus.review_to_draft_statuses["created"]
+    )
+    identity = get_community_owner_identity(open_review_community)
+
+    req = service.review.submit(identity, draft_for_open_review.id, require_review=True)
+    current_requests_service.update(
+        identity, req.id, {"reviewers": [{"user": str(users[0].id)}]}
+    )
+
+    req = current_requests_service.read(identity, req.id).to_dict()
+    record = service.draft_cls.pid.resolve(
+        draft_for_open_review["id"], registered_only=False
+    )
+    generator = RequestReviewers()
+    assert generator.needs(record=record) == [UserNeed(users[0].id)]

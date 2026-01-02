@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2023 CERN.
+# Copyright (C) 2023-2024 CERN.
 # Copyright (C) 2022 Universität Hamburg.
 # Copyright (C) 2023 Graz University of Technology.
 #
@@ -9,9 +9,9 @@
 
 """IIIF Service."""
 
-import tempfile
+import importlib.metadata as metadata
+import io
 
-import importlib_metadata as metadata
 from flask_iiif.api import IIIFImageAPIWrapper
 from invenio_records_resources.services import Service
 
@@ -23,6 +23,17 @@ try:
 except (metadata.PackageNotFoundError, ImportError):
     # ImageMagick notinstalled
     HAS_IMAGEMAGICK = False
+
+try:
+    import pyvips
+
+    HAS_VIPS = True
+except ModuleNotFoundError:
+    # Python module pyvips not installed
+    HAS_VIPS = False
+except OSError:
+    # Underlying library libvips not installed
+    HAS_VIPS = False
 
 
 class IIIFService(Service):
@@ -72,15 +83,35 @@ class IIIFService(Service):
 
     def _open_image(self, file_):
         fp = file_.get_stream("rb")
-        # If ImageMagick with Wand is installed, extract first page
-        # for PDF/text.
-        pages_mimetypes = {"application/pdf", "text/plain"}
-        if HAS_IMAGEMAGICK and file_.data["mimetype"] in pages_mimetypes:
-            first_page = Image(Image(fp).sequence[0])
-            tempfile_ = tempfile.TemporaryFile()
+        # If the file is not a PDF or text, return the file
+        if file_.data["mimetype"] not in {"application/pdf", "text/plain"}:
+            return fp
+
+        # If Wand (ImageMagick) or PyVIPS is installed, extract the first page
+        if HAS_VIPS:  # prefer PyVIPS since it doesn't load the whole file in memory
+
+            def _seek_handler(offset, whence):
+                fp.seek(offset, whence)
+                return fp.tell()
+
+            source = pyvips.SourceCustom()
+            source.on_read(fp.read)
+            source.on_seek(_seek_handler)
+
+            # PyVIPS returns by default the first page of the PDF
+            first_page = pyvips.Image.new_from_source(source, "", access="sequential")
+            # Convert to memory to be able to return a file-like object
+            first_page_buf = io.BytesIO(first_page.write_to_memory())
+            fp.close()
+            return first_page_buf
+        elif HAS_IMAGEMAGICK:
+            first_page = Image(blob=fp)
+            first_page_buf = io.BytesIO()
             with first_page.convert(format="png") as converted:
-                converted.save(file=tempfile_)
-            return tempfile_
+                converted.save(file=first_page_buf)
+            first_page_buf.seek(0)
+            fp.close()
+            return first_page_buf
 
         return fp
 

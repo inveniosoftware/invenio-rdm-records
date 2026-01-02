@@ -6,6 +6,7 @@
 # it under the terms of the MIT License; see LICENSE file for more details.
 
 """Access request UI views."""
+
 from flask import abort, current_app, g, redirect, render_template, request
 from invenio_access.permissions import system_identity
 from invenio_i18n import lazy_gettext as _
@@ -48,29 +49,6 @@ def verify_access_request_token():
 
     url = f"{access_request.links['self_html']}?access_request_token={token}"
 
-    # todo - move to notifications ( submit action )
-    send_email(
-        {
-            "subject": _("Access request submitted successfully"),
-            "html_body": _(
-                (
-                    "Your access request was submitted successfully. "
-                    'The request details are available <a href="%(url)s">here</a>.'
-                ),
-                url=url,
-            ),
-            "body": _(
-                (
-                    "Your access request was submitted successfully. "
-                    "The request details are available at: %(url)s"
-                ),
-                url=url,
-            ),
-            "recipients": [access_request._request["created_by"]["email"]],
-            "sender": current_app.config["MAIL_DEFAULT_SENDER"],
-        }
-    )
-
     return redirect(url)
 
 
@@ -78,14 +56,17 @@ def verify_access_request_token():
 def read_request(request, **kwargs):
     """UI endpoint for the guest access request details."""
     request_type = request["type"]
+    community = request["receiver"]["community"]
     request_is_accepted = request["status"] == GuestAcceptAction.status_to
+    permissions = request.has_permissions_to(["create_comment"])
 
     # NOTE: this template is defined in Invenio-App-RDM
     return render_template(
         f"invenio_requests/{request_type}/index.html",
         user_avatar=None,
         record=None,
-        permissions={},
+        community=community,
+        permissions=permissions,
         invenio_request=request.to_dict(),
         request_is_accepted=request_is_accepted,
     )

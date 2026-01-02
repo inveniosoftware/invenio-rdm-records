@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2021 CERN.
+# Copyright (C) 2021-2024 CERN.
 # Copyright (C) 2023 Graz University of Technology.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
@@ -8,11 +8,18 @@
 
 """RDM Record Service Errors."""
 
+from flask_principal import PermissionDenied
 from invenio_i18n import lazy_gettext as _
 
 
 class RDMRecordsException(Exception):
     """Base exception for RDMRecords errors."""
+
+
+class GrantExistsError(RDMRecordsException):
+    """Exception raised when trying to create a grant that already exists for user/role."""
+
+    description = _("Grant for this user/role already exists within this record.")
 
 
 class RecordDeletedException(RDMRecordsException):
@@ -193,3 +200,23 @@ class AccessRequestExistsError(AccessRequestException):
             )
         else:
             return _("The access request is a duplicate")
+
+
+class RecordSubmissionClosedCommunityError(PermissionDenied):
+    """Record submission policy forbids non-members from submitting records to community."""
+
+    description = _(
+        "Submission to this community is only allowed to community members."
+    )
+
+
+class CommunityRequiredError(Exception):
+    """Error thrown when a record is being created/updated with less than 1 community."""
+
+    description = _("Cannot publish without a community.")
+
+
+class CannotRemoveCommunityError(Exception):
+    """Error thrown when the last community is being removed from the record."""
+
+    description = _("A record should be part of at least 1 community.")

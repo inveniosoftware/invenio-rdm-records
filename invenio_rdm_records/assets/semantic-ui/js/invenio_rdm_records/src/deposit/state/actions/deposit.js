@@ -1,5 +1,5 @@
 // This file is part of Invenio-RDM-Records
-// Copyright (C) 2020-2023 CERN.
+// Copyright (C) 2020-2025 CERN.
 // Copyright (C) 2020-2022 Northwestern University.
 //
 // Invenio-RDM-Records is free software; you can redistribute it and/or modify it
@@ -30,6 +30,7 @@ import {
   RESERVE_PID_STARTED,
   RESERVE_PID_SUCCEEDED,
   SET_COMMUNITY,
+  SET_DOI_NEEDED,
 } from "../types";
 
 async function changeURLAfterCreation(draftURL) {
@@ -62,16 +63,45 @@ export const saveDraftWithUrlUpdate = async (draft, draftsService) => {
   return response;
 };
 
+function _hasValidationErrorsWithSeverityError(errors) {
+  if (typeof errors === "object") {
+    if (
+      Object.hasOwn(errors, "message") &&
+      Object.hasOwn(errors, "severity") &&
+      Object.hasOwn(errors, "description")
+    ) {
+      if (errors["severity"] === "error") {
+        return true;
+      }
+    }
+    for (const key of Object.keys(errors)) {
+      if (key !== "message" && key !== "severity" && key !== "description") {
+        return _hasValidationErrorsWithSeverityError(errors[key]);
+      }
+    }
+  } else {
+    // If the error message is a string and not an object with `message`, `severity`, and `description` keys, then it's an error.
+    return true;
+  }
+}
+
 async function _saveDraft(
   draft,
   draftsService,
-  { depositState, dispatchFn, failType, partialValidationActionType }
+  {
+    depositState,
+    dispatchFn,
+    failType,
+    partialValidationActionType,
+    showOnlyValidationErrorsWithSeverityError,
+  }
 ) {
   let response;
 
   try {
     response = await saveDraftWithUrlUpdate(draft, draftsService, failType);
   } catch (error) {
+    console.error("Error saving draft", error, draft);
     dispatchFn({
       type: failType,
       payload: { errors: error.errors },
@@ -79,7 +109,9 @@ async function _saveDraft(
     throw error;
   }
 
-  const draftHasValidationErrors = !_isEmpty(response.errors);
+  const draftHasValidationErrors = showOnlyValidationErrorsWithSeverityError
+    ? _hasValidationErrorsWithSeverityError(response.errors)
+    : !_isEmpty(response.errors);
   const draftValidationErrorResponse = draftHasValidationErrors ? response : {};
 
   const {
@@ -117,6 +149,10 @@ async function _saveDraft(
       ...draftValidationErrorResponse.data,
       ...response.data,
     };
+    draftValidationErrorResponse.errors = {
+      ...draftValidationErrorResponse.errors,
+      ...response.errors,
+    };
   }
   // Throw validation errors from the partially saved draft
   if (draftHasValidationErrors) {
@@ -145,6 +181,8 @@ export const save = (draft) => {
       dispatchFn: dispatch,
       failType: DRAFT_SAVE_FAILED,
       partialValidationActionType: DRAFT_HAS_VALIDATION_ERRORS,
+      // Users should see validation warnings when saving a draft.
+      showOnlyValidationErrorsWithSeverityError: false,
     });
 
     dispatch({
@@ -171,6 +209,8 @@ export const publish = (draft, { removeSelectedCommunity = false }) => {
       dispatchFn: dispatch,
       failType: DRAFT_PUBLISH_FAILED,
       partialValidationActionType: DRAFT_PUBLISH_FAILED_WITH_VALIDATION_ERRORS,
+      // Users should be able to publish a record with validation warnings.
+      showOnlyValidationErrorsWithSeverityError: true,
     });
 
     const draftWithLinks = response.data;
@@ -180,6 +220,7 @@ export const publish = (draft, { removeSelectedCommunity = false }) => {
       const recordURL = response.data.links.self_html;
       window.location.replace(recordURL);
     } catch (error) {
+      console.error("Error publishing draft", error, draft);
       dispatch({
         type: DRAFT_PUBLISH_FAILED,
         payload: { errors: error.errors },
@@ -204,6 +245,8 @@ export const submitReview = (draft, { reviewComment, directPublish }) => {
       dispatchFn: dispatch,
       failType: DRAFT_SUBMIT_REVIEW_FAILED,
       partialValidationActionType: DRAFT_SUBMIT_REVIEW_FAILED_WITH_VALIDATION_ERRORS,
+      // Users should be able to submit for review a record with validation warnings.
+      showOnlyValidationErrorsWithSeverityError: true,
     });
 
     const draftWithLinks = response.data;
@@ -215,6 +258,7 @@ export const submitReview = (draft, { reviewComment, directPublish }) => {
       const nextURL = reqResponse.data.links.next_html;
       window.location.replace(nextURL);
     } catch (error) {
+      console.error("Error submitting review", error, draft);
       dispatch({
         type: DRAFT_SUBMIT_REVIEW_FAILED,
         payload: { errors: error.errors },
@@ -235,6 +279,8 @@ export const preview = (draft) => {
       dispatchFn: dispatch,
       failType: DRAFT_PREVIEW_FAILED,
       partialValidationActionType: DRAFT_HAS_VALIDATION_ERRORS,
+      // Users should be able to preview a record with validation warnings.
+      showOnlyValidationErrorsWithSeverityError: true,
     });
     const recordUrl = response.data.links.record_html;
     // redirect to the preview page
@@ -257,11 +303,11 @@ export const delete_ = () => {
     try {
       const draft = getState().deposit.record;
       await config.service.drafts.delete(draft.links);
-
       // redirect to the the uploads page after deleting/discarding a draft
-      const redirectURL = "/me/uploads";
+      const redirectURL = config.config.dashboard_routes.uploads;
       window.location.replace(redirectURL);
     } catch (error) {
+      console.error("Error deleting draft", error);
       dispatch({
         type: DRAFT_DELETE_FAILED,
         payload: { errors: error.errors },
@@ -292,6 +338,7 @@ export const reservePID = (draft, { pidType }) => {
         payload: { data: response.data },
       });
     } catch (error) {
+      console.error("Error reserving PID", error, draft);
       dispatch({
         type: RESERVE_PID_FAILED,
         payload: { errors: error.errors },
@@ -322,6 +369,7 @@ export const discardPID = (draft, { pidType }) => {
         payload: { data: response.data },
       });
     } catch (error) {
+      console.error("Error discarding PID", error, draft);
       dispatch({
         type: DISCARD_PID_FAILED,
         payload: { errors: error.errors },
@@ -336,6 +384,15 @@ export const changeSelectedCommunity = (community) => {
     dispatch({
       type: SET_COMMUNITY,
       payload: { community },
+    });
+  };
+};
+
+export const setDOINeeded = (value) => {
+  return async (dispatch) => {
+    dispatch({
+      type: SET_DOI_NEEDED,
+      payload: { noINeedDOI: value },
     });
   };
 };

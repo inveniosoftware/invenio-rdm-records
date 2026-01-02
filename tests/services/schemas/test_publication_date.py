@@ -62,6 +62,10 @@ def test_asymmetric_interval(app, minimal_record):
     _assert_meta(minimal_record["metadata"], "2020-01/2020-12-01")
 
 
+def test_unknown_bound_interval(app, minimal_record):
+    _assert_meta(minimal_record["metadata"], "/2020-12")
+    _assert_meta(minimal_record["metadata"], "2020-12/")
+
+
 def test_invalid_interval(app, minimal_record):
     _assert_fails(minimal_record["metadata"], "2021-01/2020-12")
-    _assert_fails(minimal_record["metadata"], "/2020-12")

@@ -1,7 +1,8 @@
 // This file is part of Invenio-RDM-Records
-// Copyright (C) 2020-2023 CERN.
+// Copyright (C) 2020-2025 CERN.
 // Copyright (C) 2020-2022 Northwestern University.
 // Copyright (C) 2021 New York University.
+// Copyright (C) 2024 KTH Royal Institute of Technology.
 //
 // Invenio-RDM-Records is free software; you can redistribute it and/or modify it
 // under the terms of the MIT License; see LICENSE file for more details.
@@ -11,12 +12,13 @@ import _get from "lodash/get";
 import React from "react";
 import { useDrag, useDrop } from "react-dnd";
 import { Button, Label, List, Ref } from "semantic-ui-react";
+import { FeedbackLabel } from "react-invenio-forms";
 import { CreatibutorsModal } from "./CreatibutorsModal";
 import PropTypes from "prop-types";
 
 export const CreatibutorsFieldItem = ({
   compKey,
-  identifiersError,
+  creatibutorError,
   index,
   replaceCreatibutor,
   removeCreatibutor,
@@ -28,6 +30,9 @@ export const CreatibutorsFieldItem = ({
   roleOptions,
   schema,
   autocompleteNames,
+  serializeSuggestions,
+  serializeCreatibutor,
+  deserializeCreatibutor,
 }) => {
   const dropRef = React.useRef(null);
   // eslint-disable-next-line no-unused-vars
@@ -66,9 +71,6 @@ export const CreatibutorsFieldItem = ({
       return <Label size="tiny">{friendlyRole}</Label>;
     }
   };
-  const firstError =
-    identifiersError &&
-    identifiersError.find((elem) => ![undefined, null].includes(elem));
 
   // Initialize the ref explicitely
   drop(dropRef);
@@ -79,6 +81,9 @@ export const CreatibutorsFieldItem = ({
         className={hidden ? "deposit-drag-listitem hidden" : "deposit-drag-listitem"}
       >
         <List.Content floated="right">
+          <Button size="mini" type="button" onClick={() => removeCreatibutor(index)}>
+            {i18next.t("Remove")}
+          </Button>
           <CreatibutorsModal
             addLabel={addLabel}
             editLabel={editLabel}
@@ -95,10 +100,10 @@ export const CreatibutorsFieldItem = ({
                 {i18next.t("Edit")}
               </Button>
             }
+            serializeSuggestions={serializeSuggestions}
+            serializeCreatibutor={serializeCreatibutor}
+            deserializeCreatibutor={deserializeCreatibutor}
           />
-          <Button size="mini" type="button" onClick={() => removeCreatibutor(index)}>
-            {i18next.t("Remove")}
-          </Button>
         </List.Content>
         <Ref innerRef={drag}>
           <List.Icon name="bars" className="drag-anchor" />
@@ -111,7 +116,7 @@ export const CreatibutorsFieldItem = ({
                   (identifier) => identifier.scheme === "orcid"
                 ) && (
                   <img
-                    alt="ORCID logo"
+                    alt={i18next.t("ORCID logo")}
                     className="inline-id-icon mr-5"
                     src="/static/images/orcid.svg"
                     width="16"
@@ -122,7 +127,7 @@ export const CreatibutorsFieldItem = ({
                   (identifier) => identifier.scheme === "ror"
                 ) && (
                   <img
-                    alt="ROR logo"
+                    alt={i18next.t("ROR logo")}
                     className="inline-id-icon mr-5"
                     src="/static/images/ror-icon.svg"
                     width="16"
@@ -133,7 +138,7 @@ export const CreatibutorsFieldItem = ({
                   (identifier) => identifier.scheme === "gnd"
                 ) && (
                   <img
-                    alt="GND logo"
+                    alt={i18next.t("GND logo")}
                     className="inline-id-icon mr-5"
                     src="/static/images/gnd-icon.svg"
                     width="16"
@@ -143,10 +148,8 @@ export const CreatibutorsFieldItem = ({
                 {displayName} {renderRole(initialCreatibutor?.role, roleOptions)}
               </span>
             </List.Description>
-            {firstError && (
-              <Label pointing="left" prompt>
-                {firstError.scheme ? firstError.scheme : "Invalid identifiers"}
-              </Label>
+            {creatibutorError && (
+              <FeedbackLabel fieldPath={`${compKey}`} hasSubfields />
             )}
           </List.Content>
         </Ref>
@@ -157,7 +160,7 @@ export const CreatibutorsFieldItem = ({
 
 CreatibutorsFieldItem.propTypes = {
   compKey: PropTypes.string.isRequired,
-  identifiersError: PropTypes.array,
+  creatibutorError: PropTypes.array,
   index: PropTypes.number.isRequired,
   replaceCreatibutor: PropTypes.func.isRequired,
   removeCreatibutor: PropTypes.func.isRequired,
@@ -169,12 +172,18 @@ CreatibutorsFieldItem.propTypes = {
   roleOptions: PropTypes.array.isRequired,
   schema: PropTypes.string.isRequired,
   autocompleteNames: PropTypes.oneOfType([PropTypes.bool, PropTypes.string]),
+  serializeSuggestions: PropTypes.func,
+  serializeCreatibutor: PropTypes.func,
+  deserializeCreatibutor: PropTypes.func,
 };
 
 CreatibutorsFieldItem.defaultProps = {
-  identifiersError: undefined,
+  creatibutorError: undefined,
   addLabel: undefined,
   editLabel: undefined,
   displayName: undefined,
   autocompleteNames: undefined,
+  serializeSuggestions: undefined,
+  serializeCreatibutor: undefined,
+  deserializeCreatibutor: undefined,
 };

@@ -3,64 +3,97 @@
     datacite: Accepted
   title:
     en: Accepted
+    sv: Accepterad
     de: Angenommen
+    es: Aceptado
+    cs: Přijato
 - id: available
   props:
     datacite: Available
   title:
     en: Available
+    sv: Tillgänglig
     de: Verfügbar
+    es: Disponible
+    cs: Dostupné
 - id: collected
   props:
     datacite: Collected
   title:
     en: Collected
+    sv: Samlade
     de: Gesammelt
+    es: Recolectado
+    cs: Sebrané
 - id: copyrighted
   props:
     datacite: Copyrighted
   title:
     en: Copyrighted
+    sv: Upphovsrättsligt skyddad
     de: Mit Copyright versehen
+    es: Protegido por derechos de autor
+    cs: Copyright udělen
 - id: created
   props:
     datacite: Created
   title:
     en: Created
+    sv: Skapad
     de: Erstellt
+    es: Creado
+    cs: Vytvořeno
 - id: issued
   props:
     datacite: Issued
   title:
     en: Issued
+    sv: Utfärdad
     de: Veröffentlicht
+    es: Publicado
+    cs: Vydáno
 - id: other
   props:
     datacite: Other
   title:
     en: Other
+    sv: Övrig
     de: Sonstiges
+    es: Otro
+    cs: Jiné
 - id: submitted
   props:
     datacite: Submitted
   title:
     en: Submitted
+    sv: Inskickad
     de: Eingereicht
+    es: Enviado
+    cs: Odesláno
 - id: updated
   props:
     datacite: Updated
   title:
     en: Updated
+    sv: Uppdaterad
     de: Aktualisiert
+    es: Actualizado
+    cs: Aktualizováno
 - id: valid
   props:
     datacite: Valid
   title:
     en: Valid
+    sv: Giltig
     de: Gültig
+    es: Válido
+    cs: Platnost
 - id: withdrawn
   props:
     datacite: Withdrawn
   title:
     en: Withdrawn
+    sv: Tillbakadragen
     de: Zurückgezogen
+    es: Retirado
+    cs: Stáhnuto

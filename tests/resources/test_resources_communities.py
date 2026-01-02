@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2023 CERN.
+# Copyright (C) 2023-2024 CERN.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
@@ -18,7 +18,10 @@ from invenio_rdm_records.proxies import (
 )
 from invenio_rdm_records.records.api import RDMDraft, RDMRecord
 from invenio_rdm_records.requests.community_inclusion import CommunityInclusion
-from invenio_rdm_records.services.errors import InvalidAccessRestrictions
+from invenio_rdm_records.services.errors import (
+    CommunityRequiredError,
+    InvalidAccessRestrictions,
+)
 
 
 def _add_to_community(db, record, community):
@@ -59,17 +62,23 @@ def test_uploader_add_record_to_communities(
     processed = response.json["processed"]
     assert len(processed) == 2
 
-    # assert that no communities have been added yet
-    response = client.get(
-        f"/records/{record.pid.pid_value}",
-        headers=headers,
-        json=data,
-    )
-    record_communities = response.json["parent"]["communities"]["ids"]
-    assert len(record_communities) == 1
-    assert community.id in record_communities
-    assert open_review_community.id not in record_communities
-    assert closed_review_community.id not in record_communities
+    # assert that open review community has been added
+    response = client.get(f"/records/{record.pid.pid_value}", headers=headers)
+    record_communities_ids = response.json["parent"]["communities"]["ids"]
+    assert len(record_communities_ids) == 1
+    assert community.id in record_communities_ids
+    assert open_review_community.id not in record_communities_ids
+    assert closed_review_community.id not in record_communities_ids
+    rec_comms = response.json["parent"]["communities"]["entries"]
+    assert len(rec_comms) == 1
+    assert rec_comms[0]["id"] == str(community.id)
+    assert rec_comms[0]["created"] == community["created"]
+    assert rec_comms[0]["updated"] == community["updated"]
+    assert rec_comms[0]["revision_id"] == community["revision_id"]
+    assert rec_comms[0]["slug"] == community["slug"]
+    assert rec_comms[0]["metadata"]["title"] == community["metadata"]["title"]
+    assert rec_comms[0]["metadata"]["type"]["id"] == community["metadata"]["type"]["id"]
+    assert rec_comms[0]["access"] == community["access"]
 
     # assert that requests are "submitted", but not "accepted"
     for result in processed:
@@ -77,7 +86,6 @@ def test_uploader_add_record_to_communities(
         response = client.get(
             f"/requests/{request_id}",
             headers=headers,
-            json=data,
         )
         assert response.json["status"] == "submitted"
         assert response.json["type"] == CommunityInclusion.type_id
@@ -93,9 +101,28 @@ def test_uploader_add_record_to_communities(
         response = client.get(
             f"/communities/{community_id}/records",
             headers=headers,
-            json=data,
         )
         assert response.json["hits"]["total"] == expected_n_results
+
+    # check global search results
+    response = client.get("/records", headers=headers)
+    assert response.json["hits"]["total"] == 1
+    record_hit = response.json["hits"]["hits"][0]
+    assert record_hit["id"] == record.pid.pid_value
+    assert record_hit["parent"]["communities"]["ids"] == [str(community.id)]
+    record_hit_comms = record_hit["parent"]["communities"]["entries"]
+    assert len(record_hit_comms) == 1
+    assert record_hit_comms[0]["id"] == str(community.id)
+    assert record_hit_comms[0]["created"] == community["created"]
+    assert record_hit_comms[0]["updated"] == community["updated"]
+    assert record_hit_comms[0]["revision_id"] == community["revision_id"]
+    assert record_hit_comms[0]["slug"] == community["slug"]
+    assert record_hit_comms[0]["metadata"]["title"] == community["metadata"]["title"]
+    assert (
+        record_hit_comms[0]["metadata"]["type"]["id"]
+        == community["metadata"]["type"]["id"]
+    )
+    assert record_hit_comms[0]["access"] == community["access"]
 
 
 def test_community_owner_add_record_to_communities(
@@ -139,7 +166,6 @@ def test_community_owner_add_record_to_communities(
     response = client.get(
         f"/records/{record.pid.pid_value}",
         headers=headers,
-        json=data,
     )
     record_communities = response.json["parent"]["communities"]["ids"]
     # assert that only the curator's community has been added
@@ -155,7 +181,6 @@ def test_community_owner_add_record_to_communities(
         response = client.get(
             f"/requests/{request_id}",
             headers=headers,
-            json=data,
         )
         request = response.json
         assert request["type"] == CommunityInclusion.type_id
@@ -178,7 +203,6 @@ def test_community_owner_add_record_to_communities(
         response = client.get(
             f"/communities/{community_id}/records",
             headers=headers,
-            json=data,
         )
         assert response.json["hits"]["total"] == expected_n_results
 
@@ -223,7 +247,6 @@ def test_community_owner_add_record_to_communities_forcing_review_with_comment(
     response = client.get(
         f"/records/{record.pid.pid_value}",
         headers=headers,
-        json=data,
     )
     record_communities = response.json["parent"]["communities"]["ids"]
     # assert that the community was not added
@@ -241,7 +264,6 @@ def test_community_owner_add_record_to_communities_forcing_review_with_comment(
     response = client.get(
         f"/requests/{request_id}",
         headers=headers,
-        json=data,
     )
     request = response.json
     assert request["type"] == CommunityInclusion.type_id
@@ -252,7 +274,6 @@ def test_community_owner_add_record_to_communities_forcing_review_with_comment(
     response = client.get(
         f"/requests/{request_id}/timeline",
         headers=headers,
-        json=data,
     )
     comments = response.json
     assert comments["hits"]["total"] == 1
@@ -268,7 +289,6 @@ def test_community_owner_add_record_to_communities_forcing_review_with_comment(
         response = client.get(
             f"/communities/{community_id}/records",
             headers=headers,
-            json=data,
         )
         assert response.json["hits"]["total"] == expected_n_results
 
@@ -421,14 +441,13 @@ def test_create_new_version_after_inclusion_request(
 
 def test_accept_public_record_in_restricted_community(
     client,
-    uploader,
     record_community,
     headers,
     restricted_community,
     community_owner,
 ):
     """Test accept public record in restricted community."""
-    client = uploader.login(client)
+    client = community_owner.login(client)
 
     data = {
         "communities": [
@@ -445,8 +464,6 @@ def test_accept_public_record_in_restricted_community(
     assert response.json["processed"]
     assert len(response.json["processed"]) == 1
     request_id = response.json["processed"][0]["request_id"]
-    client = uploader.logout(client)
-    client = community_owner.login(client)
 
     # The error handlers for this action are defined in invenio-app-rdm, therefore we catch the exception here
     with pytest.raises(InvalidAccessRestrictions):
@@ -576,7 +593,6 @@ def test_remove_community(
         response = client.get(
             f"/communities/{community.id}/records",
             headers=headers,
-            json=data,
         )
         assert response.json["hits"]["total"] == 0
 
@@ -598,7 +614,7 @@ def test_remove_missing_permission(
     assert response.status_code == 400
     assert len(response.json["errors"]) == 1
     record_saved = client.get(f"/records/{record.pid.pid_value}", headers=headers)
-    assert record_saved.json["parent"]["communities"] == {"ids": [str(community.id)]}
+    assert record_saved.json["parent"]["communities"]["ids"] == [str(community.id)]
 
 
 def test_remove_existing_non_existing_community(
@@ -623,7 +639,11 @@ def test_remove_existing_non_existing_community(
 
 @pytest.mark.parametrize(
     "payload",
-    [[{"id": "wrong-id"}], [{"id": "duplicated-id"}, {"id": "duplicated-id"}], []],
+    (
+        [{"id": "wrong-id"}],
+        [{"id": "duplicated-id"}, {"id": "duplicated-id"}],
+        [],
+    ),
 )
 def test_add_remove_non_existing_community(
     client, uploader, record_community, headers, community, payload
@@ -641,9 +661,7 @@ def test_add_remove_non_existing_community(
         )
         assert response.status_code == 400
         record_saved = client.get(f"/records/{record.pid.pid_value}", headers=headers)
-        assert record_saved.json["parent"]["communities"] == {
-            "ids": [str(community.id)]
-        }
+        assert record_saved.json["parent"]["communities"]["ids"] == [str(community.id)]
 
 
 def test_remove_another_community(
@@ -729,3 +747,366 @@ def test_search_communities(
         headers=headers,
     )
     assert response.status_code == 403
+
+
+def test_add_record_to_community_submission_closed_non_member(
+    client,
+    uploader,
+    record_community,
+    headers,
+    community2,
+    closed_submission_community,
+):
+    """Test addition of record to community with closed submission."""
+    client = uploader.login(client)
+
+    data = {
+        "communities": [
+            {"id": community2.id},
+            {"id": closed_submission_community.id},
+        ]
+    }
+    record = record_community.create_record()
+    response = client.post(
+        f"/records/{record.pid.pid_value}/communities",
+        headers=headers,
+        json=data,
+    )
+
+    assert response.status_code == 200
+    assert (
+        response.json["errors"][0]["message"]
+        == "Submission to this community is only allowed to community members."
+    )
+    processed = response.json["processed"]
+    assert len(processed) == 1
+
+
+def test_add_record_to_community_submission_closed_member(
+    client,
+    community_owner,
+    record_community,
+    headers,
+    community2,
+    closed_submission_community,
+):
+    """Test addition of record to community with closed submission."""
+    client = community_owner.login(client)
+
+    data = {
+        "communities": [
+            {"id": community2.id},
+            {"id": closed_submission_community.id},
+        ]
+    }
+    record = record_community.create_record()
+    response = client.post(
+        f"/records/{record.pid.pid_value}/communities",
+        headers=headers,
+        json=data,
+    )
+    assert response.status_code == 200
+    assert not response.json.get("errors")
+    processed = response.json["processed"]
+    assert len(processed) == 2
+
+
+def test_add_record_to_community_submission_open_non_member(
+    client,
+    uploader,
+    record_community,
+    headers,
+    community2,
+):
+    """Test addition of record to community with open submission."""
+    client = uploader.login(client)
+
+    data = {
+        "communities": [
+            {"id": community2.id},
+        ]
+    }
+    record = record_community.create_record()
+    response = client.post(
+        f"/records/{record.pid.pid_value}/communities",
+        headers=headers,
+        json=data,
+    )
+    assert response.status_code == 200
+    assert not response.json.get("errors")
+    processed = response.json["processed"]
+    assert len(processed) == 1
+
+
+def test_add_record_to_restricted_community_submission_open_non_member(
+    client,
+    uploader,
+    record_community,
+    headers,
+    restricted_community,
+):
+    """Test addition of record to restricted community with open submission."""
+    client = uploader.login(client)
+
+    data = {
+        "communities": [
+            {"id": restricted_community.id},
+        ]
+    }
+    record = record_community.create_record()
+    response = client.post(
+        f"/records/{record.pid.pid_value}/communities",
+        headers=headers,
+        json=data,
+    )
+    assert response.status_code == 400
+    assert (
+        response.json["errors"][0]["message"]
+        == "Submission to this community is only allowed to community members."
+    )
+    assert not response.json.get("processed")
+
+
+def test_add_record_to_restricted_community_submission_open_member(
+    client,
+    community_owner,
+    record_community,
+    headers,
+    restricted_community,
+):
+    """Test addition of record to restricted community with open submission."""
+    client = community_owner.login(client)
+
+    data = {
+        "communities": [
+            {"id": restricted_community.id},
+        ]
+    }
+    record = record_community.create_record()
+    response = client.post(
+        f"/records/{record.pid.pid_value}/communities",
+        headers=headers,
+        json=data,
+    )
+    assert response.status_code == 200
+    assert not response.json.get("errors")
+    processed = response.json["processed"]
+    assert len(processed) == 1
+
+
+# Assure Records community exists tests
+# -------------------------------------
+
+
+def test_restricted_record_creation(
+    app,
+    record_community,
+    uploader,
+    curator,
+    community_owner,
+    test_user,
+    superuser,
+    monkeypatch,
+):
+    """Verify CommunityRequiredError is raised when direct publish a record"""
+    # You can directly publish a record when the config is disabled
+    monkeypatch.setitem(app.config, "RDM_COMMUNITY_REQUIRED_TO_PUBLISH", False)
+    rec = record_community.create_record(community=None)
+    assert rec.id
+    monkeypatch.setitem(app.config, "RDM_COMMUNITY_REQUIRED_TO_PUBLISH", True)
+    # You can't directly publish
+    users = [
+        curator,
+        test_user,
+        uploader,
+        community_owner,
+    ]
+    for user in users:
+        with pytest.raises(CommunityRequiredError):
+            record_community.create_record(uploader=user, community=None)
+
+    # Super user can!
+    super_user_rec = record_community.create_record(uploader=superuser, community=None)
+    assert super_user_rec.id
+
+
+def test_republish_with_mulitple_communities(
+    app,
+    db,
+    headers,
+    client,
+    minimal_record,
+    open_review_community,
+    record_community,
+    community2,
+    uploader,
+    monkeypatch,
+):
+    """Verify new version of record with multiple communities can be re-published"""
+    monkeypatch.setitem(app.config, "RDM_COMMUNITY_REQUIRED_TO_PUBLISH", True)
+    client = uploader.login(client)
+    comm = [
+        community2,
+        open_review_community,
+    ]
+    record = record_community.create_record()
+    record_pid = record.pid.pid_value
+    for com in comm:
+        _add_to_community(db, record, com)
+    assert len(record.parent.communities.ids) == 3
+    response = client.post(
+        f"/records/{record_pid}/versions",
+        headers=headers,
+    )
+    assert response.is_json
+    assert response.status_code == 201
+    current_rdm_records_service.update_draft(
+        uploader.identity, response.json["id"], minimal_record
+    )
+    result_item = current_rdm_records_service.publish(
+        uploader.identity, response.json["id"]
+    )
+    new_record_pid = result_item._record.pid.pid_value
+
+    new_record = client.get(f"/records/{new_record_pid}", headers=headers)
+    assert len(new_record.json["parent"]["communities"]["ids"]) == 3
+
+
+def test_remove_last_existing_non_existing_community(
+    app,
+    client,
+    uploader,
+    record_community,
+    headers,
+    community,
+    monkeypatch,
+):
+    """Test removal of an existing and non-existing community from the record,
+    while ensuring at least one community exists."""
+    monkeypatch.setitem(app.config, "RDM_COMMUNITY_REQUIRED_TO_PUBLISH", True)
+    data = {
+        "communities": [
+            {"id": "wrong-id"},
+            {"id": community.id},
+            {"id": "wrong-id2"},
+        ]
+    }
+
+    client = uploader.login(client)
+    record = record_community.create_record()
+    record_pid = record.pid.pid_value
+    response = client.delete(
+        f"/records/{record_pid}/communities",
+        headers=headers,
+        json=data,
+    )
+    assert response.is_json
+    assert response.status_code == 400
+    # Should get 3 errors: Can't remove community, 2 bad IDs
+    assert len(response.json["errors"]) == 3
+    record_saved = client.get(f"/records/{record_pid}", headers=headers)
+    assert record_saved.json["parent"]["communities"]
+
+
+def test_remove_last_community_api_error_handling(
+    record_community,
+    community,
+    uploader,
+    headers,
+    curator,
+    client,
+    app,
+    monkeypatch,
+):
+    """Testing error message when trying to remove last community."""
+    monkeypatch.setitem(app.config, "RDM_COMMUNITY_REQUIRED_TO_PUBLISH", True)
+    record = record_community.create_record()
+    record_pid = record.pid.pid_value
+    data = {"communities": [{"id": community.id}]}
+    for user in [uploader, curator]:
+        client = user.login(client)
+        response = client.get(
+            f"/communities/{community.id}/records",
+            headers=headers,
+            json=data,
+        )
+        assert (
+            len(response.json["hits"]["hits"][0]["parent"]["communities"]["ids"]) == 1
+        )
+        response = client.delete(
+            f"/records/{record_pid}/communities",
+            headers=headers,
+            json=data,
+        )
+        assert response.is_json
+        assert response.status_code == 400
+
+        record_saved = client.get(f"/records/{record_pid}", headers=headers)
+        assert record_saved.json["parent"]["communities"]
+        assert len(response.json["errors"]) == 1
+
+        client = user.logout(client)
+        # check communities number
+        response = client.get(
+            f"/communities/{community.id}/records",
+            headers=headers,
+            json=data,
+        )
+        assert (
+            len(response.json["hits"]["hits"][0]["parent"]["communities"]["ids"]) == 1
+        )
+
+
+def test_remove_record_last_community_with_multiple_communities(
+    closed_review_community,
+    open_review_community,
+    record_community,
+    community2,
+    uploader,
+    headers,
+    client,
+    app,
+    db,
+    monkeypatch,
+):
+    """Testing correct removal of multiple communities"""
+    monkeypatch.setitem(app.config, "RDM_COMMUNITY_REQUIRED_TO_PUBLISH", True)
+    client = uploader.login(client)
+
+    record = record_community.create_record()
+    record_pid = record.pid.pid_value
+    comm = [
+        community2,
+        open_review_community,
+        closed_review_community,
+    ]  # one more in the rec fixture so it's 4
+    for com in comm:
+        _add_to_community(db, record, com)
+    assert len(record.parent.communities.ids) == 4
+
+    data = {"communities": [{"id": x} for x in record.parent.communities.ids]}
+
+    response = client.delete(
+        f"/records/{record_pid}/communities",
+        headers=headers,
+        json=data,
+    )
+    # You get res 200 with error msg if all communities you are deleting
+    assert response.status_code == 200
+    assert "error" in str(response.data)
+
+    rec_com_left = client.get(f"/records/{record_pid}", headers=headers)
+    assert len(rec_com_left.json["parent"]["communities"]["ids"]) == 1
+
+    # You get res 400 with error msg if you Delete the last one only.
+    response = client.delete(
+        f"/records/{record_pid}/communities",
+        headers=headers,
+        json={"communities": [{"id": str(record.parent.communities.ids[0])}]},
+    )
+    assert response.status_code == 400
+    assert "error" in str(response.data)
+
+    record_saved = client.get(f"/records/{record_pid}", headers=headers)
+    # check that only one community ID is associated with the record
+    assert len(record_saved.json["parent"]["communities"]["ids"]) == 1

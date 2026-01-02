@@ -19,6 +19,8 @@
   Authors:      European Commission, Joint Research Centre (JRC)
                 Andrea Perego (https://github.com/andrea-perego)
 
+  Source code:  https://github.com/ec-jrc/datacite-to-dcat-ap
+
 -->
 
 <!--
@@ -26,10 +28,21 @@
   PURPOSE AND USAGE
 
   This XSLT is a proof of concept for the implementation of the specification
-  concerning the DataCite profile of DCAT-AP (CiteDCAT-AP)
+  concerning the DataCite profile of DCAT-AP (CiteDCAT-AP):
+
+    https://w3id.org/citedcat-ap/
 
   As such, this XSLT must be considered as unstable, and can be updated any
   time based on the revisions to the CiteDCAT-AP specification.
+
+  The official distributions of this XSLT are published in the dedicated GitHub
+  repository:
+
+    https://github.com/ec-jrc/datacite-to-dcat-ap
+
+  Comments and inquiries should be sent via the corresponding issue tracker:
+
+    https://github.com/ec-jrc/datacite-to-dcat-ap/issues
 
 -->
 
@@ -149,6 +162,7 @@
   <xsl:param name="skos">http://www.w3.org/2004/02/skos/core#</xsl:param>
   <xsl:param name="bibo">http://purl.org/ontology/bibo/</xsl:param>
   <xsl:param name="citedcat">https://w3id.org/citedcat-ap/</xsl:param>
+  <xsl:param name="prov">http://www.w3.org/ns/prov#</xsl:param>
 
 <!-- MDR NALs and other code lists -->
 
@@ -2091,7 +2105,7 @@
       </xsl:if>
       <xsl:if test="$relation = 'hasmetadata'">
         <rdf:type rdf:resource="{$dcat}CatalogRecord"/>
-	<xsl:if test="$cheme != '' or $schemeURI != ''">
+        <xsl:if test="$scheme != '' or $schemeURI != ''">
           <xsl:choose>
             <xsl:when test="$scheme != '' and $schemeURI != ''">
               <dct:conformsTo>

@@ -9,7 +9,6 @@ import PropTypes from "prop-types";
 import { Button, Icon, Message, Checkbox } from "semantic-ui-react";
 import { i18next } from "@translations/invenio_rdm_records/i18next";
 import { Modal } from "semantic-ui-react";
-import { Trans } from "react-i18next";
 import isEmpty from "lodash/isEmpty";
 import { ErrorMessage } from "@js/invenio_administration";
 
@@ -32,19 +31,16 @@ export class DeleteModal extends Component {
     return (
       <Modal role="dialog" open={modalOpen}>
         <Modal.Header as="h2">
-          <Trans defaults="Delete {{title}}" values={{ title: title }} />
+          {i18next.t("Delete {{title}}", { title: title })}
         </Modal.Header>
         <Modal.Content>
           <Modal.Description>
             <Message
               warning
               icon="warning sign"
-              header={
-                <Trans
-                  defaults="This will delete the set '{{title}}'."
-                  values={{ title: title }}
-                />
-              }
+              header={i18next.t("This will delete the set '{{title}}'.", {
+                title: title,
+              })}
               content={i18next.t(
                 "Before deleting, make sure to alert all harvesters that this set will no longer be available."
               )}

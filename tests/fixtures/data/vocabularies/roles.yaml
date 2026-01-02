@@ -1,15 +1,18 @@
 - id: contactperson
   props:
     datacite: ContactPerson
+    marc: prc
   title:
     en: Contact person
 - id: datacollector
   props:
     datacite: DataCollector
+    marc: col
   title:
     en: Data collector
 - id: other
   props:
     datacite: Other
+    marc: oth
   title:
     en: Other

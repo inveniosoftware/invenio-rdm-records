@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2021 Graz University of Technology.
+# Copyright (C) 2021-2025 Graz University of Technology.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
@@ -15,7 +15,7 @@ class GeoJSONSchema(Schema):
 
     features = fields.Method("get_locations")
     type = fields.Constant(
-        "FeatureCollection", dump_to="type"
+        "FeatureCollection", data_key="type"
     )  # Will always return Feature Collection, even though there may be just 1 point
 
     def get_locations(self, obj):

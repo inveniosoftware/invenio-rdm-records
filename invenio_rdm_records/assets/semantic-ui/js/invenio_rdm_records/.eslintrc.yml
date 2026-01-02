@@ -9,3 +9,6 @@
 extends:
   - '@inveniosoftware/eslint-config-invenio'
   - '@inveniosoftware/eslint-config-invenio/prettier'
+
+rules:
+  react/default-props-match-prop-types: off

@@ -1,0 +1,894 @@
+# 
+# Translators:
+# Corina Ionascu <icorina@nipne.ro>, 2024
+# Tibor Simko <tibor.simko@cern.ch>, 2025
+# Nicolaie Constantinescu, 2025
+# 
+msgid ""
+msgstr ""
+"Project-Id-Version: i18next-conv\n"
+"POT-Creation-Date: 2025-07-10T06:49:34.732Z\n"
+"PO-Revision-Date: 2024-08-06 08:56+0000\n"
+"Last-Translator: Nicolaie Constantinescu, 2025\n"
+"Language-Team: Romanian (https://app.transifex.com/inveniosoftware/teams/23537/ro/)\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: ro\n"
+"Plural-Forms: nplurals=3; plural=(n==1?0:(((n%100>19)||((n%100==0)&&(n!=0)))?2:1));\n"
+"mime-version: 1.0\n"
+
+msgid "Copy to clipboard"
+msgstr "Copiază în clipboard"
+
+msgid "Copied!"
+msgstr "Copiat!"
+
+msgid "This set is not editable as it was created by the system."
+msgstr ""
+
+msgid "This set is not deletable as it was created by the system."
+msgstr ""
+
+msgid "Fetch error"
+msgstr ""
+
+msgid "Error fetching OAI set formats."
+msgstr ""
+
+msgid "Links"
+msgstr ""
+
+msgid "Format"
+msgstr "Format"
+
+msgid "List records"
+msgstr ""
+
+msgid "Opens in new tab"
+msgstr "Se deschide într-un tab nou"
+
+msgid "List identifiers"
+msgstr ""
+
+msgid ""
+"Before deleting, make sure to alert all harvesters that this set will no "
+"longer be available."
+msgstr ""
+
+msgid ""
+"I have alerted all harvesters that this set will no longer be available."
+msgstr ""
+
+msgid "Cancel"
+msgstr "Anulează"
+
+msgid "Delete"
+msgstr "Şterge"
+
+msgid "Delete {{title}}"
+msgstr "Șterge {{title}}"
+
+msgid "This will delete the set '{{title}}'."
+msgstr ""
+
+msgid "Select the community where you want to submit your record."
+msgstr "Selectează comunitatea căreia dorești să-i trimiți înregistrarea."
+
+msgid "Change"
+msgstr "Modifică"
+
+msgid "Select a community"
+msgstr "Selectează o comunitate"
+
+msgid "Remove"
+msgstr "Elimină"
+
+msgid "Community inclusion information"
+msgstr ""
+
+msgid ""
+"Submission to this community is only allowed if the record is restricted."
+msgstr ""
+
+msgid "Submission to this community is only allowed to community members."
+msgstr ""
+
+msgid "Community submission conditions information"
+msgstr ""
+
+msgid ""
+"Submission to this community is only allowed by dedicated upload form. Use "
+"the button to jump to the form."
+msgstr ""
+
+msgid "Go to the community"
+msgstr ""
+
+msgid "Selected"
+msgstr "Selectat"
+
+msgid "Select"
+msgstr "Selectaţi"
+
+msgid "Select {{title}}"
+msgstr ""
+
+msgid "Verified"
+msgstr "Verificat"
+
+msgid "Close"
+msgstr "Închide"
+
+msgid "All"
+msgstr "Toate"
+
+msgid "My communities"
+msgstr "Comunitățile mele"
+
+msgid "Search"
+msgstr "Caută"
+
+msgid "In review"
+msgstr "În evaluare"
+
+msgid ""
+"Community curators will review your upload. Once accepted, it will be "
+"published."
+msgstr ""
+"Curatorii comunității vor evalua uploadul tău. Odată acceptat, va fi "
+"publicat."
+
+msgid "Declined"
+msgstr "Respins"
+
+msgid "The request to submit this upload to the community was declined."
+msgstr ""
+"Solicitarea pentru a trimite acest upload către comunitate a fost refuzată."
+
+msgid "Expired"
+msgstr "Expirat"
+
+msgid "The request to submit this upload to the community has expired."
+msgstr "Solicitarea de a trimite acest upload către comunitate a expirat."
+
+msgid "Published"
+msgstr "Publicat"
+
+msgid "Your upload is published."
+msgstr "Uploadul tău a fost publicat."
+
+msgid "Draft"
+msgstr "Ciornă"
+
+msgid ""
+"Once your upload is complete, you can submit it for review to the community "
+"curators."
+msgstr ""
+"În momentul în care uploadul tău s-a terminat, poți să-l trimiți spre "
+"evaluarea curatorilor de comunitate. "
+
+msgid ""
+"Once your upload is complete, you can publish or submit it for review to the"
+" community curators."
+msgstr ""
+"În momentul în care upload-ul tău este terminat, poți să-l publici sau să-l "
+"trimiți spre evaluarea curatorilor comunității."
+
+msgid "New version draft"
+msgstr "Versiune nouă de ciornă"
+
+msgid "Once your upload is complete, you can publish it."
+msgstr "Din moment ce upload-ul este terminat, poți să-l publici."
+
+msgid "View request"
+msgstr "Vezi solicitarea"
+
+msgid "discard changes"
+msgstr "renunță la modificări"
+
+msgid "discard version"
+msgstr "renunță la versiune"
+
+msgid "delete"
+msgstr "șterge"
+
+msgid "Are you sure you want to discard the changes to this draft?"
+msgstr "Ești sigur că dorești să renunți la modificările aduse acestui draft?"
+
+msgid "Are you sure you want to delete this new version?"
+msgstr "Ești sigur că dorești să ștergi această nouă versiune?"
+
+msgid "Are you sure you want to delete this draft?"
+msgstr "Ești sigur că dorești să ștergi acest draft?"
+
+msgid "You don't have permissions to create a new version."
+msgstr "Nu ai permisiunea de a crea o versiune nouă."
+
+msgid "New version"
+msgstr "Versiune nouă"
+
+msgid "Preview"
+msgstr "Previzualizare"
+
+msgid "DOI is needed. You need to reserve a DOI before publishing."
+msgstr ""
+
+msgid "Are you sure you want to publish this record?"
+msgstr "Ești sigur că vrei să publici această înregistrare?"
+
+msgid ""
+"Once the record is published you will no longer be able to change the files "
+"in the upload! However, you will still be able to update the record's "
+"metadata later."
+msgstr ""
+"Din moment ce înregistrarea este publicată, nu vei mai putea modifica "
+"fișierele din upload! Totuși, vei putea să actualizezi metadatele "
+"înregistrări mai târziu."
+
+msgid "Publish"
+msgstr "Publică"
+
+msgid "Submitted for review"
+msgstr "Trimis spre evaluare"
+
+msgid "Submit for review"
+msgstr "Trimite spre evaluare"
+
+msgid "Publish to community"
+msgstr ""
+
+msgid "You must accept this."
+msgstr "Trebuie să accepți asta."
+
+msgid ""
+"Before publishing to the community, please read and check the following:"
+msgstr ""
+
+msgid ""
+"Your upload will be <bold>immediately published</bold> in "
+"'{{communityTitle}}'. You will no longer be able to change the files in the "
+"upload! However, you will still be able to update the record's metadata "
+"later."
+msgstr ""
+
+msgid "Publish record to community"
+msgstr ""
+
+msgid "Submit to community"
+msgstr ""
+
+msgid "Before submitting to community, please read and check the following:"
+msgstr ""
+
+msgid "Before requesting review, please read and check the following:"
+msgstr ""
+
+msgid ""
+"If your upload is accepted by the community curators, it will be "
+"<bold>immediately published</bold>. Before that, you will still be able to "
+"modify metadata and files of this upload."
+msgstr ""
+"Dacă upload-ul tău este acceptat de către curatorii comunității, va fi "
+"<bold>publicat imediat</bold>. Înainte de aceasta, încă vei putea să "
+"modifici metadatele și fișierele acestui upload."
+
+msgid "Submit record for review"
+msgstr ""
+
+msgid "The '{{communityTitle}}' curators will have access to"
+msgstr ""
+
+msgid "view and edit"
+msgstr ""
+
+msgid "your upload's metadata and files."
+msgstr ""
+
+msgid "Message to curators (optional)"
+msgstr ""
+
+msgid "msgWarningText1"
+msgstr ""
+
+msgid "Change community"
+msgstr "Schimbă comunitatea"
+
+msgid "Publish without community"
+msgstr "Publică fără a implica o comunitate"
+
+msgid "Save draft"
+msgstr "Salvează draft"
+
+msgid "Record successfully saved."
+msgstr "Înregistrare salvată cu succes."
+
+msgid "Record saved with validation feedback in"
+msgstr ""
+
+msgid "Draft has validation feedback in"
+msgstr ""
+
+msgid ""
+"The draft was not saved. Please try again. If the problem persists, contact "
+"user support."
+msgstr ""
+
+msgid ""
+"The draft was not published. Please try again. If the problem persists, "
+"contact user support."
+msgstr ""
+
+msgid "The draft was not published. Record saved with validation feedback in"
+msgstr ""
+
+msgid ""
+"The draft was not submitted for review. Please try again. If the problem "
+"persists, contact user support."
+msgstr ""
+
+msgid ""
+"The draft was not submitted for review. Record saved with validation "
+"feedback in"
+msgstr ""
+
+msgid ""
+"Draft deletion failed. Please try again. If the problem persists, contact "
+"user support."
+msgstr ""
+
+msgid ""
+"Draft preview failed. Please try again. If the problem persists, contact "
+"user support."
+msgstr ""
+
+msgid ""
+"Identifier reservation failed. Please try again. If the problem persists, "
+"contact user support."
+msgstr ""
+
+msgid ""
+"Identifier could not be discarded. Please try again. If the problem "
+"persists, contact user support."
+msgstr ""
+
+msgid ""
+"Draft save failed before file upload. Please try again. If the problem "
+"persists, contact user support."
+msgstr ""
+
+msgid ""
+"Files import from the previous version failed. Please try again. If the "
+"problem persists, contact user support."
+msgstr ""
+
+msgid "Options"
+msgstr "Opțiuni"
+
+msgid "Public"
+msgstr "Public"
+
+msgid "The record is publicly accessible."
+msgstr "Înregistrarea este accesibilă public."
+
+msgid "The record and files are publicly accessible."
+msgstr "Înregistrarea și fișierele sunt public accesibile."
+
+msgid "Embargoed (full record)"
+msgstr "Sub embargo (înregistrare completă)"
+
+msgid "Restricted"
+msgstr "Restricționat"
+
+msgid "Public with restricted files"
+msgstr "Public având fișierele restricționate"
+
+msgid "Embargoed (files-only)"
+msgstr "Sub embargo (doar fișierele)"
+
+msgid "Apply an embargo"
+msgstr "Aplică un embargo"
+
+msgid "Embargo reason"
+msgstr "Motivul embargoului"
+
+msgid "Optionally, describe the reason for the embargo."
+msgstr "Opțional, descrie motivul embargoului."
+
+msgid "Embargo was lifted on {{fmtDate}}."
+msgstr "Embargoul a fost ridicat pe {{fmtDate}}."
+
+msgid "Reason"
+msgstr "Motiv"
+
+msgid "YYYY-MM-DD"
+msgstr "YYYY-MM-DD"
+
+msgid "Embargo until"
+msgstr "Embargo până la"
+
+msgid "The record has no files."
+msgstr "Înregistrarea nu are fișiere."
+
+msgid "Files only"
+msgstr "Doar fișiere"
+
+msgid "The full record is restricted."
+msgstr "Înregistrarea completă este restricționată."
+
+msgid "The files of this record are restricted."
+msgstr "Fișierele acestei înregistrări sunt restricționate."
+
+msgid "Full record"
+msgstr "Înregistrare plină"
+
+msgid ""
+"Record visibility can not be changed to restricted anymore. Please contact "
+"support if you still need to make these changes."
+msgstr ""
+
+msgid "Search or create affiliation"
+msgstr ""
+
+msgid "Affiliations"
+msgstr "Afilieri"
+
+msgid "Search for affiliations.."
+msgstr "Caută afilierile..."
+
+msgid "Coming soon"
+msgstr ""
+
+msgid ""
+"A copyright statement describing the ownership of the uploaded resource."
+msgstr ""
+
+msgid "Copyright (C) {{currentYear}} The Authors."
+msgstr ""
+
+msgid "Copyright"
+msgstr ""
+
+msgid "Creators"
+msgstr "Creatorii"
+
+msgid "Add creator"
+msgstr "Adaugă creator"
+
+msgid "Edit creator"
+msgstr "Editează creatorul"
+
+msgid "Edit"
+msgstr "Editează"
+
+msgid "ORCID logo"
+msgstr ""
+
+msgid "ROR logo"
+msgstr ""
+
+msgid "GND logo"
+msgstr ""
+
+msgid "Type the value of an identifier..."
+msgstr "Introdu valoarea pentru un identificator..."
+
+msgid "Identifiers"
+msgstr "Identificatori"
+
+msgid "e.g. ORCID, ISNI or GND."
+msgstr "ex. ORCID, ISNI sau GND."
+
+msgid "Save and add another"
+msgstr "Salvează și adaugă altul"
+
+msgid "Family name is a required field."
+msgstr "Numele de familie este un câmp obligatoriu."
+
+msgid "Name is a required field."
+msgstr "Numele este un câmp obligatoriu."
+
+msgid "Role is a required field."
+msgstr "Rolul este un câmp obligatoriu."
+
+msgid "Added"
+msgstr "Adăugate"
+
+msgid "Person"
+msgstr "Persoană"
+
+msgid "Organization"
+msgstr "Organizație"
+
+msgid "Search for persons by name, identifier, or affiliation..."
+msgstr "Caută persoane după nume, identificator sau afiliere..."
+
+msgid "Family name"
+msgstr "Nume de familie"
+
+msgid "Given names"
+msgstr "Nume"
+
+msgid "Search for an organization by name, identifier, or affiliation..."
+msgstr ""
+
+msgid "Search for organization by name, identifier, or affiliation..."
+msgstr ""
+
+msgid "Name"
+msgstr "Nume"
+
+msgid "Organization name"
+msgstr "Numele organizației"
+
+msgid "e.g. ROR, ISNI or GND."
+msgstr "ex. ROR, ISNI sau GND."
+
+msgid "Role"
+msgstr "Rol"
+
+msgid "Select role"
+msgstr "Selectează rolul"
+
+msgid "Save"
+msgstr "Salvează"
+
+msgid "Add date"
+msgstr "Adaugă data"
+
+msgid "Format: DATE or DATE/DATE where DATE is YYYY or YYYY-MM or YYYY-MM-DD."
+msgstr ""
+"Formatul: DATE sau DATE/DATE unde DATE este YYYY sau YYYY-MM sau YYYY-MM-DD."
+
+msgid "Date"
+msgstr "Dată"
+
+msgid "Type"
+msgstr "Tip"
+
+msgid "Description"
+msgstr "Descriere"
+
+msgid "Remove field"
+msgstr "Șterge câmp"
+
+msgid "Dates"
+msgstr "Date calendaristice"
+
+msgid "YYYY-MM-DD or YYYY-MM-DD/YYYY-MM-DD"
+msgstr "YYYY-MM-DD sau YYYY-MM-DD/YYYY-MM-DD"
+
+msgid "Add description"
+msgstr "Adaugă descriere"
+
+msgid "Additional Description"
+msgstr "Descriere suplimentară"
+
+msgid "Language"
+msgstr "Limbă"
+
+msgid "Select language"
+msgstr "Selectează limba"
+
+msgid "Could not upload files."
+msgstr ""
+
+msgid "The following files already exist"
+msgstr "Fișierele următoare există deja"
+
+msgid "Could not upload all files."
+msgstr ""
+
+msgid "Empty files were skipped."
+msgstr ""
+
+msgid "You can import files from the previous version."
+msgstr "Poți importa fișiere din versiunea anterioară."
+
+msgid ""
+"File addition, removal or modification are not allowed after you have "
+"published your upload."
+msgstr ""
+"Adăugarea fișierelor, eliminarea sau modificarea nu este permisă după ce ai "
+"publicat upload-ul."
+
+msgid "You must create a new version to add, modify or delete files."
+msgstr ""
+"Trebuie să creezi o nouă versiune pentru a o adăuga, modifica sau șterge "
+"fișierele."
+
+msgid "Drag and drop files"
+msgstr "Poți pune fișiere cu drag and drop"
+
+msgid "Upload files"
+msgstr "Încarcă fișierele"
+
+msgid "Import files"
+msgstr "Importă fișierelor"
+
+msgid "Choose which file to preview on the published record landing page"
+msgstr ""
+
+msgid "Filename"
+msgstr "Nume fișier"
+
+msgid "Size"
+msgstr "Dimensiune"
+
+msgid "Progress"
+msgstr "Progresul făcut"
+
+msgid "Default preview"
+msgstr "Previzualizare din oficiu"
+
+msgid ""
+"This is the file fingerprint (MD5 checksum), which can be used to verify the"
+" file integrity."
+msgstr ""
+"Acesta este fingerprint-ul fișierului (checksum MD5), care poate fi folosit "
+"pentru a verifica integritatea fișierului."
+
+msgid "N/A"
+msgstr "N/A"
+
+msgid "Pending"
+msgstr "În așteptare"
+
+msgid "Delete file"
+msgstr "Șterge fișier"
+
+msgid "or"
+msgstr "sau"
+
+msgid "This is a Metadata-only record."
+msgstr "Aceasta este o înregistrare metadata-only"
+
+msgid "Metadata-only record"
+msgstr "Înregistrarea metadata-only"
+
+msgid "Disable files for this record"
+msgstr "Dezactivează fișierele pentru această înregistrare"
+
+msgid "Storage available"
+msgstr "Stocare disponibilă"
+
+msgid "{{length}} out of {{maxfiles}} files"
+msgstr "{{length}} din {{maxfiles}} fișiere"
+
+msgid "out of"
+msgstr "din"
+
+msgid "Add identifier"
+msgstr "Adaugă identificator"
+
+msgid "Identifier"
+msgstr "Identificator"
+
+msgid "Scheme"
+msgstr "Schema"
+
+msgid "Do you already have a {{pidLabel}} for this upload?"
+msgstr "Deja ai un {{pidLabel}} pentru acest upload?"
+
+msgid "Yes, I already have one"
+msgstr ""
+
+msgid "No, I need one"
+msgstr ""
+
+msgid "No, I don't need one"
+msgstr ""
+
+msgid "Search for languages..."
+msgstr "Caută după limbile localizărilor..."
+
+msgid "Languages"
+msgstr "Limbi de circulație"
+
+msgid "Search for a language by name (e.g \"eng\", \"fr\" or \"Polish\")"
+msgstr "Caută după numele limbii (ex. \"rom\", \"ro\" sau \"Romanian\")"
+
+msgid "Add standard"
+msgstr "Adaugă standard"
+
+msgid "Add custom"
+msgstr "Adaugă particularizare"
+
+msgid "Licenses"
+msgstr "Licențe"
+
+msgid "Read more"
+msgstr "Citește mai mult"
+
+msgid "Title is a required field."
+msgstr "Titlul este un câmp necesar."
+
+msgid "Link must be a valid URL"
+msgstr "Linkul trebuie să fie un URL valid"
+
+msgid "Add {{mode}} license"
+msgstr "Adaugă {{mode}} licența"
+
+msgid "Change {{mode}} license"
+msgstr "Modifică {{mode}} licența"
+
+msgid "Search for licenses"
+msgstr ""
+
+msgid "Recommended"
+msgstr "Recomandat"
+
+msgid "recommended"
+msgstr ""
+
+msgid "all"
+msgstr ""
+
+msgid "Data"
+msgstr "Date"
+
+msgid "data"
+msgstr ""
+
+msgid "Software"
+msgstr "Software"
+
+msgid "software"
+msgstr ""
+
+msgid "Title"
+msgstr "Titlul"
+
+msgid "License title"
+msgstr "Titlul licenței"
+
+msgid "Link"
+msgstr "Link"
+
+msgid "License link"
+msgstr "Linkul licenței"
+
+msgid "Add license"
+msgstr "Adaugă licență"
+
+msgid "Change license"
+msgstr "Modifică licență"
+
+msgid "Did not find your license? "
+msgstr ""
+
+msgid "Add a custom license."
+msgstr ""
+
+msgid ""
+"In case your upload was already published elsewhere, please use the date of "
+"the first publication. Format: YYYY-MM-DD, YYYY-MM, or YYYY. For intervals "
+"use DATE/DATE, e.g. 1939/1945."
+msgstr ""
+"În cazul în care uploadul a fost publicat deja în altă parte, te rog să "
+"folosești data primei publicări. Formatul: YYYY-MM-DD, YYYY-MM, sau YYYY. "
+"Pentru intervale folosește DATE/DATE, ex. 1939/1945."
+
+msgid "Publication date"
+msgstr "Data publicării"
+
+msgid ""
+"YYYY-MM-DD or YYYY-MM-DD/YYYY-MM-DD for intervals. MM and DD are optional."
+msgstr ""
+"YYYY-MM-DD sau YYYY-MM-DD/YYYY-MM-DD pentru intervale. MM și DD sunt "
+"opționale."
+
+msgid ""
+"The publisher is used to formulate the citation, so consider the prominence "
+"of the role."
+msgstr ""
+"Se așteaptă ca editorul să formuleze citarea așa că ia în considerare acest "
+"lucru."
+
+msgid "Publisher"
+msgstr "Editură"
+
+msgid "Add reference"
+msgstr ""
+
+msgid "Reference string"
+msgstr ""
+
+msgid "References"
+msgstr "Referințe"
+
+msgid ""
+"Specify identifiers of related works. Supported identifiers include DOI, "
+"Handle, ARK, PURL, ISSN, ISBN, PubMed ID, PubMed Central ID, ADS "
+"Bibliographic Code, arXiv, Life Science Identifiers (LSID), EAN-13, ISTC, "
+"URNs, and URLs."
+msgstr ""
+"Specifică identificatorii operelor în relație. Identificatorii permiși "
+"includ DOI, Handle, ARK, PURL, ISSN, ISBN, PubMed ID, PubMed Central ID, ADS"
+" Bibliographic Code, arXiv, Life Science Identifiers (LSID), EAN-13, ISTC, "
+"URNs și URL-urile."
+
+msgid "Add related work"
+msgstr "Adaugă operele în legătură"
+
+msgid "Relation"
+msgstr "Relație"
+
+msgid "Related works"
+msgstr "Lucrări similare"
+
+msgid "Resource type"
+msgstr "Tipul resursei"
+
+msgid "Suggest from"
+msgstr "Sugestie de la"
+
+msgid "Keywords and subjects"
+msgstr "Cuvinte cheie și subiecte"
+
+msgid "Search for a subject by name"
+msgstr "Caută subiectul după nume"
+
+msgid "Add titles"
+msgstr "Adaugă titlurile"
+
+msgid "Additional title"
+msgstr ""
+
+msgid "Version"
+msgstr "Versiune"
+
+msgid "On"
+msgstr ""
+
+msgid ""
+"the record will automatically be made publicly accessible. Until then, the "
+"record can"
+msgstr ""
+
+msgid "only"
+msgstr ""
+
+msgid "be accessed by"
+msgstr ""
+
+msgid "users specified"
+msgstr ""
+
+msgid "in the permissions."
+msgstr ""
+
+msgid "The record can"
+msgstr ""
+
+msgid "The record is publicly accessible. The files can"
+msgstr ""
+
+msgid "The record is publicly accessible. On"
+msgstr ""
+
+msgid ""
+"the files will automatically be made publicly accessible. Until then, the "
+"files can"
+msgstr ""
+
+msgid "Record or files protection must be"
+msgstr ""
+
+msgid "restricted"
+msgstr "restricționat"
+
+msgid "to apply an embargo."
+msgstr ""
+
+msgid ""
+"Uploading the selected files would result in {{total}} of storage use, "
+"exceeding the limit of {{limit}}."
+msgstr ""
+
+msgid ""
+"Mostly relevant for software and dataset uploads. A semantic version string "
+"is preferred see"
+msgstr ""
+
+msgid ", but any version string is accepted."
+msgstr ""

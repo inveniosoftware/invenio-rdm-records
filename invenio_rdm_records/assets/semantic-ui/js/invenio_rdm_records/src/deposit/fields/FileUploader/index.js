@@ -8,6 +8,7 @@
 import { connect } from "react-redux";
 import { deleteFile, importParentFiles, uploadFiles } from "../../state/actions";
 import { FileUploaderComponent } from "./FileUploader";
+import { showHideOverridable } from "react-invenio-forms";
 
 const mapStateToProps = (state) => {
   const { links, entries } = state.files;
@@ -33,7 +34,13 @@ const mapDispatchToProps = (dispatch) => ({
 export const FileUploader = connect(
   mapStateToProps,
   mapDispatchToProps
-)(FileUploaderComponent);
+)(
+  showHideOverridable(
+    "InvenioRdmRecords.DepositForm.FileUploader",
+    FileUploaderComponent
+  )
+);
 
-export { FileUploaderArea } from "./FileUploaderArea";
+export { FileUploaderArea, FilesListTable } from "./FileUploaderArea";
 export { FileUploaderToolbar } from "./FileUploaderToolbar";
+export { getFilesList } from "./utils";

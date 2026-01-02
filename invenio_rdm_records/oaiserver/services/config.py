@@ -7,14 +7,13 @@
 
 """OAI-PMH service API configuration."""
 
-from invenio_i18n import gettext as _
+from invenio_i18n import lazy_gettext as _
 from invenio_oaiserver.models import OAISet
 from invenio_records_resources.services import ServiceConfig
-from invenio_records_resources.services.base import Link
-from invenio_records_resources.services.records.links import pagination_links
+from invenio_records_resources.services.base import EndpointLink
+from invenio_records_resources.services.records.links import pagination_endpoint_links
 from sqlalchemy import asc, desc
 
-from ..services.links import OAIPMHSetLink
 from ..services.permissions import OAIPMHServerPermissionPolicy
 from ..services.results import (
     OAIMetadataFormatItem,
@@ -90,21 +89,74 @@ class OAIPMHServerServiceConfig(ServiceConfig):
     metadata_format_schema = OAIPMHMetadataFormat
 
     links_item = {
-        "self": OAIPMHSetLink("{+api}/oaipmh/sets/{id}"),
-        "oai-listrecords": OAIPMHSetLink(
-            "{+ui}/oai2d?verb=ListRecords&metadataPrefix=oai_dc&set={spec}"
+        "self": EndpointLink(
+            "oaipmh-server.read",
+            vars=lambda obj, vars_: vars_.update({"id": obj.id}),
+            params=["id"],
         ),
-        "oai-listidentifiers": OAIPMHSetLink(
-            "{+ui}/oai2d?verb=ListIdentifiers&metadataPrefix=oai_dc&set={spec}"
+        "oai-listrecords": EndpointLink(
+            "invenio_oaiserver.response",
+            vars=lambda obj, vars_: vars_.update(
+                {
+                    # querystring parameters
+                    "args": {
+                        "verb": "ListRecords",
+                        "metadataPrefix": "oai_dc",
+                        "set": obj.spec,
+                    }
+                }
+            ),
+        ),
+        "oai-listidentifiers": EndpointLink(
+            "invenio_oaiserver.response",
+            vars=lambda obj, vars_: vars_.update(
+                {
+                    "args": {
+                        "verb": "ListIdentifiers",
+                        "metadataPrefix": "oai_dc",
+                        "set": obj.spec,
+                    }
+                }
+            ),
         ),
     }
 
     links_search = {
-        **pagination_links("{+api}/oaipmh/sets{?args*}"),
-        "oai-listsets": Link("{+ui}/oai2d?verb=ListSets"),
-        "oai-listrecords": Link("{+ui}/oai2d?verb=ListRecords&metadataPrefix=oai_dc"),
-        "oai-listidentifiers": Link(
-            "{+ui}/oai2d?verb=ListIdentifiers&metadataPrefix=oai_dc"
+        **pagination_endpoint_links("oaipmh-server.search"),
+        "oai-listsets": EndpointLink(
+            "invenio_oaiserver.response",
+            vars=lambda obj, vars_: vars_.update({"args": {"verb": "ListSets"}}),
         ),
-        "oai-identify": Link("{+ui}/oai2d?verb=Identify"),
+        "oai-listrecords": EndpointLink(
+            "invenio_oaiserver.response",
+            vars=lambda obj, vars_: vars_.update(
+                {
+                    "args": {
+                        "verb": "ListRecords",
+                        "metadataPrefix": "oai_dc",
+                    }
+                }
+            ),
+        ),
+        "oai-listidentifiers": EndpointLink(
+            "invenio_oaiserver.response",
+            vars=lambda obj, vars_: vars_.update(
+                {
+                    "args": {
+                        "verb": "ListIdentifiers",
+                        "metadataPrefix": "oai_dc",
+                    }
+                }
+            ),
+        ),
+        "oai-identify": EndpointLink(
+            "invenio_oaiserver.response",
+            vars=lambda obj, vars_: vars_.update(
+                {
+                    "args": {
+                        "verb": "Identify",
+                    }
+                }
+            ),
+        ),
     }

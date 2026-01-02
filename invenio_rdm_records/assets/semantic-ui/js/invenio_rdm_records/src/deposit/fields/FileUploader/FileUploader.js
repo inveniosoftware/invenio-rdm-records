@@ -1,8 +1,9 @@
 // This file is part of Invenio-RDM-Records
-// Copyright (C) 2020-2023 CERN.
+// Copyright (C) 2020-2025 CERN.
 // Copyright (C) 2020-2022 Northwestern University.
 // Copyright (C)      2022 Graz University of Technology.
 // Copyright (C)      2022 TU Wien.
+// Copyright (C) 2024-2025 KTH Royal Institute of Technology.
 //
 // Invenio-RDM-Records is free software; you can redistribute it and/or modify it
 // under the terms of the MIT License; see LICENSE file for more details.
@@ -16,11 +17,13 @@ import PropTypes from "prop-types";
 import React, { useState } from "react";
 import { Button, Grid, Icon, Message, Modal } from "semantic-ui-react";
 import { UploadState } from "../../state/reducers/files";
-import { NewVersionButton } from "../../controls/NewVersionButton";
 import { FileUploaderArea } from "./FileUploaderArea";
 import { FileUploaderToolbar } from "./FileUploaderToolbar";
+import { NewVersionButton } from "../../controls/NewVersionButton";
+import { EditFilesAccordion } from "./EditFilesAccordion";
 import { humanReadableBytes } from "react-invenio-forms";
 import Overridable from "react-overridable";
+import { getFilesList } from "./utils";
 
 // NOTE: This component has to be a function component to allow
 //       the `useFormikContext` hook.
@@ -40,34 +43,20 @@ export const FileUploaderComponent = ({
   isFileImportInProgress,
   decimalSizeDisplay,
   filesLocked,
+  allowEmptyFiles,
+  fileModification,
   ...uiProps
 }) => {
   // We extract the working copy of the draft stored as `values` in formik
-  const { values: formikDraft } = useFormikContext();
+  const { values: formikDraft, errors, initialErrors } = useFormikContext();
+  const { filesList, filesNamesSet, filesSize } = getFilesList(files);
+  const hasError = (errors.files || initialErrors?.files) && files;
+  const hasErrorNoFiles =
+    (errors.files?.enabled || initialErrors?.files?.enabled) && files;
+
   const filesEnabled = _get(formikDraft, "files.enabled", false);
   const [warningMsg, setWarningMsg] = useState();
   const lockFileUploader = !isDraftRecord && filesLocked;
-
-  const filesList = Object.values(files).map((fileState) => {
-    return {
-      name: fileState.name,
-      size: fileState.size,
-      checksum: fileState.checksum,
-      links: fileState.links,
-      uploadState: {
-        // initial: fileState.status === UploadState.initial,
-        isFailed: fileState.status === UploadState.error,
-        isUploading: fileState.status === UploadState.uploading,
-        isFinished: fileState.status === UploadState.finished,
-        isPending: fileState.status === UploadState.pending,
-      },
-      progressPercentage: fileState.progressPercentage,
-      cancelUploadFn: fileState.cancelUploadFn,
-    };
-  });
-
-  const filesSize = filesList.reduce((totalSize, file) => (totalSize += file.size), 0);
-
   const dropzoneParams = {
     preventDropOnDocument: true,
     onDropAccepted: (acceptedFiles) => {
@@ -79,10 +68,23 @@ export const FileUploaderComponent = ({
       );
       const maxFileStorageReached = filesSize + acceptedFilesSize > quota.maxStorage;
 
-      const filesNames = _map(filesList, "name");
-      const duplicateFiles = acceptedFiles.filter((acceptedFile) =>
-        filesNames.includes(acceptedFile.name)
+      const { duplicateFiles, emptyFiles, nonEmptyFiles } = acceptedFiles.reduce(
+        (accumulators, file) => {
+          if (filesNamesSet.has(file.name)) {
+            accumulators.duplicateFiles.push(file);
+          } else if (file.size === 0) {
+            accumulators.emptyFiles.push(file);
+          } else {
+            accumulators.nonEmptyFiles.push(file);
+          }
+
+          return accumulators;
+        },
+        { duplicateFiles: [], emptyFiles: [], nonEmptyFiles: [] }
       );
+
+      const hasEmptyFiles = !_isEmpty(emptyFiles);
+      const hasDuplicateFiles = !_isEmpty(duplicateFiles);
 
       if (maxFileNumberReached) {
         setWarningMsg(
@@ -90,10 +92,12 @@ export const FileUploaderComponent = ({
             <Message
               warning
               icon="warning circle"
-              header="Could not upload files."
-              content={`Uploading the selected files would result in ${
-                filesList.length + acceptedFiles.length
-              } files (max.${quota.maxFiles})`}
+              header={i18next.t("Could not upload files.")}
+              content={i18next.t(
+                `Uploading the selected files would result in ${
+                  filesList.length + acceptedFiles.length
+                } files (max.${quota.maxFiles})`
+              )}
             />
           </div>
         );
@@ -103,34 +107,58 @@ export const FileUploaderComponent = ({
             <Message
               warning
               icon="warning circle"
-              header="Could not upload files."
-              content={
-                <>
-                  {i18next.t("Uploading the selected files would result in")}{" "}
-                  {humanReadableBytes(
+              header={i18next.t("Could not upload files.")}
+              content={i18next.t(
+                "Uploading the selected files would result in {{total}} of storage use, exceeding the limit of {{limit}}.",
+                {
+                  total: humanReadableBytes(
                     filesSize + acceptedFilesSize,
                     decimalSizeDisplay
-                  )}
-                  {i18next.t("but the limit is")}
-                  {humanReadableBytes(quota.maxStorage, decimalSizeDisplay)}.
-                </>
-              }
-            />
-          </div>
-        );
-      } else if (!_isEmpty(duplicateFiles)) {
-        setWarningMsg(
-          <div className="content">
-            <Message
-              warning
-              icon="warning circle"
-              header={i18next.t(`The following files already exist`)}
-              list={_map(duplicateFiles, "name")}
+                  ),
+                  limit: humanReadableBytes(quota.maxStorage, decimalSizeDisplay),
+                }
+              )}
             />
           </div>
         );
       } else {
-        uploadFiles(formikDraft, acceptedFiles);
+        let warnings = [];
+
+        if (hasDuplicateFiles) {
+          warnings.push(
+            <Message
+              warning
+              icon="warning circle"
+              header={i18next.t("The following files already exist")}
+              list={_map(duplicateFiles, "name")}
+            />
+          );
+        }
+
+        if (!allowEmptyFiles && hasEmptyFiles) {
+          warnings.push(
+            <Message
+              warning
+              icon="warning circle"
+              header={i18next.t("Could not upload all files.")}
+              content={i18next.t("Empty files were skipped.")}
+              list={_map(emptyFiles, "name")}
+            />
+          );
+        }
+
+        if (!_isEmpty(warnings)) {
+          setWarningMsg(<div className="content">{warnings}</div>);
+        }
+
+        const filesToUpload = allowEmptyFiles
+          ? [...nonEmptyFiles, ...emptyFiles]
+          : nonEmptyFiles;
+
+        // Proceed with uploading files if there are any to upload
+        if (!_isEmpty(filesToUpload)) {
+          uploadFiles(formikDraft, filesToUpload);
+        }
       }
     },
     multiple: true,
@@ -146,9 +174,10 @@ export const FileUploaderComponent = ({
 
   const displayImportBtn =
     filesEnabled && isDraftRecord && hasParentRecord && !filesList.length;
+
   return (
     <Overridable
-      id="ReactInvenioDeposit.FileUploader.layout"
+      id="InvenioRdmRecords.DepositForm.FileUploader.Container"
       config={config}
       files={files}
       isDraftRecord={isDraftRecord}
@@ -171,6 +200,7 @@ export const FileUploaderComponent = ({
       warningMsg={warningMsg}
       setWarningMsg={setWarningMsg}
       filesLocked={lockFileUploader}
+      hasError={hasError}
       {...uiProps}
     >
       <>
@@ -189,7 +219,7 @@ export const FileUploaderComponent = ({
             )}
           </Grid.Row>
           <Overridable
-            id="ReactInvenioDeposit.FileUploader.ImportButton.container"
+            id="InvenioRdmRecords.DepositForm.FileUploader.ImportButton"
             importButtonIcon={importButtonIcon}
             importButtonText={importButtonText}
             importParentFiles={importParentFiles}
@@ -224,10 +254,11 @@ export const FileUploaderComponent = ({
           </Overridable>
 
           <Overridable
-            id="ReactInvenioDeposit.FileUploader.FileUploaderArea.container"
+            id="InvenioRdmRecords.DepositForm.FileUploader.UploadArea"
             filesList={filesList}
             dropzoneParams={dropzoneParams}
             filesLocked={lockFileUploader}
+            hasError={hasErrorNoFiles}
             filesEnabled={filesEnabled}
             deleteFile={deleteFile}
             decimalSizeDisplay={decimalSizeDisplay}
@@ -240,6 +271,7 @@ export const FileUploaderComponent = ({
                   filesList={filesList}
                   dropzoneParams={dropzoneParams}
                   filesLocked={lockFileUploader}
+                  hasError={hasErrorNoFiles}
                   filesEnabled={filesEnabled}
                   deleteFile={deleteFile}
                   decimalSizeDisplay={decimalSizeDisplay}
@@ -249,7 +281,7 @@ export const FileUploaderComponent = ({
           </Overridable>
 
           <Overridable
-            id="ReactInvenioDeposit.FileUploader.NewVersionButton.container"
+            id="InvenioRdmRecords.DepositForm.FileUploader.NewVersionButton"
             isDraftRecord={isDraftRecord}
             draft={formikDraft}
             filesLocked={lockFileUploader}
@@ -271,7 +303,19 @@ export const FileUploaderComponent = ({
                 </Grid.Column>
               </Grid.Row>
             ) : (
-              filesLocked && (
+              filesLocked &&
+              (fileModification.enabled && fileModification.valid_user ? (
+                <Grid.Row className="file-upload-note pt-5">
+                  <Grid.Column width={16}>
+                    <EditFilesAccordion
+                      record={record}
+                      permissions={permissions}
+                      fileModification={fileModification}
+                      draft={formikDraft}
+                    />
+                  </Grid.Column>
+                </Grid.Row>
+              ) : (
                 <Grid.Row className="file-upload-note pt-5">
                   <Grid.Column width={16}>
                     <Message info>
@@ -290,12 +334,12 @@ export const FileUploaderComponent = ({
                     </Message>
                   </Grid.Column>
                 </Grid.Row>
-              )
+              ))
             )}
           </Overridable>
         </Grid>
         <Overridable
-          id="ReactInvenioDeposit.FileUploader.Modal.container"
+          id="InvenioRdmRecords.DepositForm.FileUploader.Modal"
           warningMsg={warningMsg}
           setWarningMsg={setWarningMsg}
           {...uiProps}
@@ -348,6 +392,8 @@ FileUploaderComponent.propTypes = {
   decimalSizeDisplay: PropTypes.bool,
   filesLocked: PropTypes.bool,
   permissions: PropTypes.object,
+  allowEmptyFiles: PropTypes.bool,
+  fileModification: PropTypes.object,
 };
 
 FileUploaderComponent.defaultProps = {
@@ -369,4 +415,6 @@ FileUploaderComponent.defaultProps = {
   importButtonText: i18next.t("Import files"),
   decimalSizeDisplay: true,
   filesLocked: false,
+  allowEmptyFiles: true,
+  fileModification: {},
 };

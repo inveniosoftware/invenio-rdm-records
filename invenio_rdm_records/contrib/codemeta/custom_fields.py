@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # Copyright (C) 2023 CERN.
+# Copyright (C) 2024 KTH Royal Institute of Technology.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
@@ -32,7 +33,7 @@ CODEMETA_CUSTOM_FIELDS = [
         name="code:codeRepository",
         field_args={
             "validate": validate.URL(),
-            "error_messages": {"validate": "You must provide a valid URL."},
+            "error_messages": {"validate": _("You must provide a valid URL.")},
         },
     ),
     VocabularyCF(
@@ -56,19 +57,20 @@ CODEMETA_CUSTOM_FIELDS_UI = {
             field="code:codeRepository",
             ui_widget="Input",
             props=dict(
-                label="Repository URL",
+                is_identifier=True,
+                label=_("Repository URL"),
                 icon="linkify",
-                description="URL or link where the code repository is hosted.",
+                description=_("URL or link where the code repository is hosted."),
             ),
         ),
         dict(
             field="code:programmingLanguage",
             ui_widget="AutocompleteDropdown",
             props=dict(
-                label="Programming language",
+                label=_("Programming language"),
                 icon="code",
-                description="Repository's programming language.",
-                placeholder="e.g. Python ...",
+                description=_("Repository's programming language."),
+                placeholder=_("e.g. Python ..."),
                 autocompleteFrom="/api/vocabularies/code:programmingLanguages",
                 autocompleteFromAcceptHeader="application/vnd.inveniordm.v1+json",
                 required=False,
@@ -80,10 +82,10 @@ CODEMETA_CUSTOM_FIELDS_UI = {
             field="code:developmentStatus",
             ui_widget="Dropdown",
             props=dict(
-                label="Development Status",
-                placeholder="Repository status",
+                label=_("Development Status"),
+                placeholder=_("Repository status"),
                 icon="heartbeat",
-                description="Repository current status.",
+                description=_("Repository current status."),
                 search=False,
                 multiple=False,
                 clearable=True,

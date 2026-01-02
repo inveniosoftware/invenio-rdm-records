@@ -14,6 +14,7 @@ from datetime import timedelta
 
 import arrow
 import pytest
+from invenio_access.permissions import system_user_id
 
 from invenio_rdm_records.records import RDMRecord
 from invenio_rdm_records.records.systemfields.access import (
@@ -274,6 +275,11 @@ def test_owner_resolve(users):
     user = users[0]
     owner = Owner({"user": user.id})
     assert owner.resolve() == user
+
+
+def test_owner_system_user():
+    owner = Owner({"user": "system"})
+    assert owner.resolve()["id"] == system_user_id
 
 
 def test_owner_resolve_invalid():

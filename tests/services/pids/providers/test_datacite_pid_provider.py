@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2021 CERN.
+# Copyright (C) 2021-2024 CERN.
 # Copyright (C) 2023 Northwestern University.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
@@ -86,7 +86,7 @@ def test_datacite_provider_reserve(record, datacite_provider):
 def test_datacite_provider_register(record_w_links, datacite_provider, mocker):
     mocker.patch(
         "invenio_rdm_records.services.pids.providers.datacite."
-        + "DataCite43JSONSerializer"
+        + "DataCite45JSONSerializer"
     )
     created_pid = datacite_provider.get(record_w_links["pids"]["doi"]["identifier"])
     assert datacite_provider.register(
@@ -106,7 +106,7 @@ def test_datacite_provider_register(record_w_links, datacite_provider, mocker):
 def test_datacite_provider_update(record_w_links, datacite_provider, mocker):
     mocker.patch(
         "invenio_rdm_records.services.pids.providers.datacite."
-        + "DataCite43JSONSerializer"
+        + "DataCite45JSONSerializer"
     )
     created_pid = datacite_provider.get(record_w_links["pids"]["doi"]["identifier"])
     assert datacite_provider.register(
@@ -149,7 +149,7 @@ def test_datacite_provider_unregister_registered(
 ):
     mocker.patch(
         "invenio_rdm_records.services.pids.providers.datacite."
-        + "DataCite43JSONSerializer"
+        + "DataCite45JSONSerializer"
     )
     # Unregister NEW is a soft delete
     created_pid = datacite_provider.get(record_w_links["pids"]["doi"]["identifier"])
@@ -245,11 +245,19 @@ def test_datacite_provider_validation(record):
 def test_log_error_msg(app, mocker):
     """Test that error msgs are logged correctly."""
 
-    def _test(mock_fn, err, expected_msg):
+    def _test(mock_fn, err, expected_msg, expected_msg_args=None):
         DataCitePIDProvider._log_errors(err)
         mock_fn.assert_called_once()
-        _, args, _ = mock_fn.mock_calls[0]
-        assert expected_msg in args[0]  # first arg contains the exception msg
+        _, args, kwargs = mock_fn.mock_calls[0]
+        assert expected_msg == args[0]  # first arg is the logged msg
+        if expected_msg_args:  # second arg contains the msg args (if any)
+            assert len(args) == 2
+            assert expected_msg_args == args[1]
+        else:
+            assert len(args) == 1
+
+        # the error is always passed as exc_info
+        assert kwargs["exc_info"] == err
         mock_fn.reset_mock()
 
     _log_fn = (
@@ -259,18 +267,28 @@ def test_log_error_msg(app, mocker):
         _mocked_fn = mocker.patch(_log_fn)
 
         err = DataCiteError.factory(204, "")
-        _test(_mocked_fn, err, "No content error:")
+        _test(_mocked_fn, err, "DataCite no content error")
 
         err = DataCiteError.factory(500, "down")
-        _test(_mocked_fn, err, "DataCite internal server error: down")
+        _test(_mocked_fn, err, "DataCite internal server error")
 
         err = DataCiteError.factory(400, "{[")  # wrong json
-        _test(_mocked_fn, err, "Unknown error:")
+        _test(_mocked_fn, err, "Unknown DataCite error")
 
         err = DataCiteError.factory(
-            400, '{"errors": [{"source": "creator", "title": "reason"}]}'
+            400, '{"errors": [{"source": "creator", "title": "missing"}]}'
         )
-        _test(_mocked_fn, err, "Error in `creator`: reason")
+        _test(
+            _mocked_fn,
+            err,
+            "DataCite error (field: %(field)s): %(reason)s",
+            expected_msg_args={"field": "creator", "reason": "missing"},
+        )
 
         err = DataCiteError.factory(403, '{"errors": [{"title": "Unauthorized"}]}')
-        _test(_mocked_fn, err, "Error: Unauthorized")
+        _test(
+            _mocked_fn,
+            err,
+            "DataCite error (field: %(field)s): %(reason)s",
+            expected_msg_args={"field": None, "reason": "Unauthorized"},
+        )

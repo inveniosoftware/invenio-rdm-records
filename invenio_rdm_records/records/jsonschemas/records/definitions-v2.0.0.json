@@ -13,7 +13,7 @@
   },
   "affiliations": {
     "type": "array",
-    "items": {"$ref": "#/affiliation"}
+    "items": { "$ref": "#/affiliation" }
   },
   "agent": {
     "description": "An agent (user, software process, community, ...).",
@@ -72,16 +72,11 @@
       {
         "title": "GeoJSON Point",
         "type": "object",
-        "required": [
-          "type",
-          "coordinates"
-        ],
+        "required": ["type", "coordinates"],
         "properties": {
           "type": {
             "type": "string",
-            "enum": [
-              "Point"
-            ]
+            "enum": ["Point"]
           },
           "coordinates": {
             "type": "array",
@@ -102,16 +97,11 @@
       {
         "title": "GeoJSON LineString",
         "type": "object",
-        "required": [
-          "type",
-          "coordinates"
-        ],
+        "required": ["type", "coordinates"],
         "properties": {
           "type": {
             "type": "string",
-            "enum": [
-              "LineString"
-            ]
+            "enum": ["LineString"]
           },
           "coordinates": {
             "type": "array",
@@ -136,16 +126,11 @@
       {
         "title": "GeoJSON Polygon",
         "type": "object",
-        "required": [
-          "type",
-          "coordinates"
-        ],
+        "required": ["type", "coordinates"],
         "properties": {
           "type": {
             "type": "string",
-            "enum": [
-              "Polygon"
-            ]
+            "enum": ["Polygon"]
           },
           "coordinates": {
             "type": "array",
@@ -173,16 +158,11 @@
       {
         "title": "GeoJSON MultiPoint",
         "type": "object",
-        "required": [
-          "type",
-          "coordinates"
-        ],
+        "required": ["type", "coordinates"],
         "properties": {
           "type": {
             "type": "string",
-            "enum": [
-              "MultiPoint"
-            ]
+            "enum": ["MultiPoint"]
           },
           "coordinates": {
             "type": "array",
@@ -206,16 +186,11 @@
       {
         "title": "GeoJSON MultiLineString",
         "type": "object",
-        "required": [
-          "type",
-          "coordinates"
-        ],
+        "required": ["type", "coordinates"],
         "properties": {
           "type": {
             "type": "string",
-            "enum": [
-              "MultiLineString"
-            ]
+            "enum": ["MultiLineString"]
           },
           "coordinates": {
             "type": "array",
@@ -243,16 +218,11 @@
       {
         "title": "GeoJSON MultiPolygon",
         "type": "object",
-        "required": [
-          "type",
-          "coordinates"
-        ],
+        "required": ["type", "coordinates"],
         "properties": {
           "type": {
             "type": "string",
-            "enum": [
-              "MultiPolygon"
-            ]
+            "enum": ["MultiPolygon"]
           },
           "coordinates": {
             "type": "array",
@@ -311,10 +281,7 @@
   "nameType": {
     "description": "Type of name.",
     "type": "string",
-    "enum": [
-      "personal",
-      "organizational"
-    ]
+    "enum": ["personal", "organizational"]
   },
   "person_or_org": {
     "type": "object",
@@ -386,7 +353,7 @@
   },
   "subjects": {
     "type": "array",
-    "items": {"$ref": "#/subject"}
+    "items": { "$ref": "#/subject" }
   },
   "title_type": {
     "description": "Type of title.",
@@ -412,6 +379,16 @@
     "type": "object",
     "additionalProperties": false,
     "description": "Reason for the removal of a record.",
+    "properties": {
+      "id": {
+        "$ref": "local://definitions-v1.0.0.json#/identifier"
+      }
+    }
+  },
+  "deletion_policy": {
+    "type": "object",
+    "additionalProperties": false,
+    "description": "Deletion policy that applied to this record.",
     "properties": {
       "id": {
         "$ref": "local://definitions-v1.0.0.json#/identifier"

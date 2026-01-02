@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2020-2023 CERN.
+# Copyright (C) 2020-2024 CERN.
 # Copyright (C) 2020-2021 Northwestern University.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
@@ -16,6 +16,34 @@ from marshmallow_utils.fields import NestedAttribute, SanitizedUnicode
 from marshmallow_utils.permissions import FieldPermissionsMixin
 
 
+class MetadataSchema(Schema):
+    """Schema for file metadata."""
+
+    page = fields.Integer()
+    type = fields.String()
+    language = fields.String()
+    encoding = fields.String()
+    charset = fields.String()
+    previewer = fields.String()
+    width = fields.Integer()
+    height = fields.Integer()
+
+
+class AccessSchema(Schema):
+    """Schema for file access."""
+
+    hidden = fields.Bool()
+
+
+class ProcessorSchema(Schema):
+    """Schema for file processor."""
+
+    type = fields.String()
+    status = fields.String()
+    source_file_id = fields.String()
+    props = fields.Dict()
+
+
 class FileSchema(Schema):
     """File schema."""
 
@@ -25,10 +53,13 @@ class FileSchema(Schema):
     ext = fields.String(attribute="file.ext")
     size = fields.Integer(attribute="file.size")
     mimetype = fields.String(attribute="file.mimetype")
+    storage_class = fields.String(attribute="file.storage_class")
 
     # FileRecord fields
     key = SanitizedUnicode()
-    metadata = fields.Dict()
+    metadata = fields.Nested(MetadataSchema)
+    access = fields.Nested(AccessSchema)
+    processor = fields.Nested(ProcessorSchema)
 
 
 class FilesSchema(Schema, FieldPermissionsMixin):

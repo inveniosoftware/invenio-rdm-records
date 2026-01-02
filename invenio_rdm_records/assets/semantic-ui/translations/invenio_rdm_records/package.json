@@ -1,11 +1,7 @@
 {
   "name": "invenio-app-rdm-ui",
   "config": {
-    "languages": [
-      "en",
-      "de",
-      "el"
-    ]
+    "languages": ["en"]
   },
   "devDependencies": {
     "i18next-conv": "^10.2.0",
@@ -15,9 +11,9 @@
     "react": "^16.13.0"
   },
   "scripts": {
-    "extract_messages": "i18next-scanner --config i18next-scanner.config.js '../../js/**/*.{js,jsx}'",
-    "postextract_messages": "i18next-conv -l en -s ./messages/en/translations.json -t ./translations.pot",
+    "extract_messages": "i18next-scanner --config i18next-scanner.config.js '../../js/**/*.{js,jsx}' '!../../js/**/node_modules/**'",
+    "postextract_messages": "node ./scripts/postExtractMessages.js",
     "compile_catalog": "node ./scripts/compileCatalog.js",
-    "init_catalog": "node ./scripts/initCatalog"
+    "init_catalog": "node ./scripts/initCatalog.js"
   }
 }

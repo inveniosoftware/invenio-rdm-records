@@ -1,13 +1,12 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2021 CERN.
+# Copyright (C) 2021-2024 CERN.
 # Copyright (C) 2023 Northwestern University.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
 
 """Tests for the service PIDsComponent."""
-
 
 import pytest
 from invenio_pidstore.errors import PIDDoesNotExistError
@@ -124,12 +123,11 @@ class TestServiceConfigRequiredExternalPID(RDMRecordServiceConfig):
 
 
 @pytest.fixture(scope="module")
-def no_pids_cmp():
+def no_pids_cmp(app):
+    service_config = TestServiceConfigNoPIDs.build(app)
     service = RDMRecordService(
-        config=TestServiceConfigNoPIDs,
-        pids_service=PIDsService(
-            config=TestServiceConfigNoPIDs, manager_cls=PIDManager
-        ),
+        config=service_config,
+        pids_service=PIDsService(config=service_config, manager_cls=PIDManager),
     )
     c = PIDsComponent(service=service)
     c.uow = UnitOfWork()
@@ -137,12 +135,11 @@ def no_pids_cmp():
 
 
 @pytest.fixture(scope="module")
-def no_required_pids_service():
+def no_required_pids_service(app):
+    service_config = TestServiceConfigNoRequiredPIDs.build(app)
     return RDMRecordService(
-        config=TestServiceConfigNoRequiredPIDs,
-        pids_service=PIDsService(
-            config=TestServiceConfigNoRequiredPIDs, manager_cls=PIDManager
-        ),
+        config=service_config,
+        pids_service=PIDsService(config=service_config, manager_cls=PIDManager),
     )
 
 
@@ -154,12 +151,11 @@ def no_required_pids_cmp(no_required_pids_service):
 
 
 @pytest.fixture(scope="module")
-def required_managed_pids_cmp():
+def required_managed_pids_cmp(app):
+    service_config = TestServiceConfigRequiredManagedPID.build(app)
     service = RDMRecordService(
-        config=TestServiceConfigRequiredManagedPID,
-        pids_service=PIDsService(
-            config=TestServiceConfigRequiredManagedPID, manager_cls=PIDManager
-        ),
+        config=service_config,
+        pids_service=PIDsService(config=service_config, manager_cls=PIDManager),
     )
     c = PIDsComponent(service=service)
     c.uow = UnitOfWork()
@@ -167,12 +163,11 @@ def required_managed_pids_cmp():
 
 
 @pytest.fixture(scope="module")
-def required_external_pids_cmp():
+def required_external_pids_cmp(app):
+    service_config = TestServiceConfigRequiredExternalPID.build(app)
     service = RDMRecordService(
-        config=TestServiceConfigRequiredExternalPID,
-        pids_service=PIDsService(
-            config=TestServiceConfigRequiredExternalPID, manager_cls=PIDManager
-        ),
+        config=service_config,
+        pids_service=PIDsService(config=service_config, manager_cls=PIDManager),
     )
     c = PIDsComponent(service=service)
     c.uow = UnitOfWork()
@@ -319,6 +314,7 @@ def test_publish_no_pids(no_pids_cmp, minimal_record, identity_simple, location)
     ],
 )
 def test_publish_no_required_pids(
+    app,
     pids,
     no_required_pids_service,
     no_required_pids_cmp,

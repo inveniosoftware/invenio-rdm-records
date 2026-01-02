@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # Copyright (C) 2021 TU Wien.
-# Copyright (C) 2021 CERN.
+# Copyright (C) 2021-2024 CERN.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
@@ -13,7 +13,7 @@ from invenio_drafts_resources.services.records.schema import ParentSchema
 from invenio_i18n import lazy_gettext as _
 from invenio_requests.services.schemas import GenericRequestSchema
 from marshmallow import ValidationError, fields, post_dump, pre_load
-from marshmallow_utils.fields import SanitizedUnicode
+from marshmallow_utils.fields import NestedAttribute, SanitizedUnicode
 from marshmallow_utils.permissions import FieldPermissionsMixin
 
 from ..pids import PIDSchema
@@ -41,7 +41,7 @@ class RDMParentSchema(ParentSchema, FieldPermissionsMixin):
 
     access = fields.Nested(ParentAccessSchema, dump_only=True)
     review = fields.Nested(GenericRequestSchema, allow_none=False)
-    communities = fields.Nested(CommunitiesSchema, dump_only=True)
+    communities = NestedAttribute(CommunitiesSchema, dump_only=True)
 
     pids = fields.Dict(
         keys=SanitizedUnicode(validate=validate_scheme),

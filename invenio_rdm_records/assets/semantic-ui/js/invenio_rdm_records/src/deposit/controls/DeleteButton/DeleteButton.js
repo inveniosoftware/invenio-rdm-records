@@ -1,5 +1,5 @@
 // This file is part of Invenio-RDM-Records
-// Copyright (C) 2020-2023 CERN.
+// Copyright (C) 2020-2025 CERN.
 // Copyright (C) 2020-2022 Northwestern University.
 // Copyright (C) 2020-2022 Northwestern University.
 //
@@ -95,6 +95,7 @@ export class DeleteButtonComponent extends Component {
       actionLbl = DISCARD_CHANGES_LBL;
     }
     const color = isPublished ? "warning" : "negative";
+    const icon = isPublished ? "close" : "trash alternate outline";
     const capitalizedActionLbl = _capitalize(actionLbl);
 
     return (
@@ -103,7 +104,7 @@ export class DeleteButtonComponent extends Component {
           disabled={!draftExists || isSubmitting}
           onClick={this.openConfirmModal}
           className={color}
-          icon
+          icon={icon}
           loading={isSubmitting && actionState === DRAFT_DELETE_STARTED}
           labelPosition="left"
           {...uiProps}

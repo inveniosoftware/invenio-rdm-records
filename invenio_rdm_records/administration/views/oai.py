@@ -1,13 +1,15 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2022 CERN.
+# Copyright (C) 2022-2024 CERN.
 # Copyright (C) 2023 Graz University of Technology.
+# Copyright (C) 2024 KTH Royal Institute of Technology.
 #
 # invenio-administration is free software; you can redistribute it and/or
 # modify it under the terms of the MIT License; see LICENSE file for more
 # details.
 
 """Invenio administration OAI-PMH view module."""
+
 from invenio_administration.views.base import (
     AdminResourceCreateView,
     AdminResourceDetailView,
@@ -24,8 +26,8 @@ class OaiPmhListView(AdminResourceListView):
     name = "OAI-PMH"
     resource_config = "oaipmh_server_resource"
     search_request_headers = {"Accept": "application/json"}
-    title = "OAI-PMH Sets"
-    category = "Site management"
+    title = _("OAI-PMH Sets")
+    category = _("Site management")
     pid_path = "id"
     icon = "exchange"
     template = "invenio_rdm_records/oai-search.html"
@@ -58,9 +60,9 @@ class OaiPmhEditView(AdminResourceEditView):
     resource_config = "oaipmh_server_resource"
     pid_path = "id"
     api_endpoint = "/oaipmh/sets"
-    title = "Edit OAI-PMH set"
+    title = _("Edit OAI-PMH set")
 
-    list_view_name = "OAI-PMH"
+    list_view_name = _("OAI-PMH")
 
     form_fields = {
         "name": {
@@ -98,9 +100,9 @@ class OaiPmhCreateView(AdminResourceCreateView):
     resource_config = "oaipmh_server_resource"
     pid_path = "id"
     api_endpoint = "/oaipmh/sets"
-    title = "Create OAI-PMH set"
+    title = _("Create OAI-PMH set")
 
-    list_view_name = "OAI-PMH"
+    list_view_name = _("OAI-PMH")
 
     form_fields = {
         "name": {
@@ -135,13 +137,13 @@ class OaiPmhDetailView(AdminResourceDetailView):
     search_request_headers = {"Accept": "application/json"}
     name = "OAI-PMH details"
     resource_config = "oaipmh_server_resource"
-    title = "OAI-PMH Details"
+    title = _("OAI-PMH Details")
 
     template = "invenio_rdm_records/oai-details.html"
     display_delete = True
     display_edit = True
 
-    list_view_name = "OAI-PMH"
+    list_view_name = _("OAI-PMH")
     pid_path = "id"
 
     item_field_list = {

@@ -2,13 +2,17 @@
 #
 # This file is part of Invenio.
 # Copyright (C) 2021 TU Wien.
+# Copyright (C) 2024 Graz University of Technology.
 #
 # Invenio is free software; you can redistribute it and/or modify it
 # under the terms of the MIT License; see LICENSE file for more details.
 
 """Owners classes for the access system field."""
 
+from invenio_access.permissions import system_user_id
 from invenio_accounts.models import User
+from invenio_db import db
+from invenio_users_resources.services.schemas import SystemUserSchema
 
 
 class Owner:
@@ -50,7 +54,12 @@ class Owner:
                 return None
 
             elif self.owner_type == "user":
-                self._entity = User.query.get(self.owner_id)
+                if self.owner_id == system_user_id:
+                    # system user
+                    self._entity = SystemUserSchema().dump({})
+                else:
+                    # real user
+                    self._entity = db.session.get(User, self.owner_id)
 
             else:
                 raise ValueError("unknown owner type: {}".format(self.owner_type))

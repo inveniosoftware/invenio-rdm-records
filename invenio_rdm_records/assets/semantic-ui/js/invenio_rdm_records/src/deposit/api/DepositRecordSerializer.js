@@ -1,5 +1,5 @@
 // This file is part of Invenio-RDM-Records
-// Copyright (C) 2020-2023 CERN.
+// Copyright (C) 2020-2025 CERN.
 // Copyright (C) 2020-2022 Northwestern University.
 //
 // Invenio-RDM-Records is free software; you can redistribute it and/or modify it
@@ -323,6 +323,9 @@ export class RDMDepositRecordSerializer extends DepositRecordSerializer {
       "pids",
       "ui",
       "custom_fields",
+      "created",
+      "updated",
+      "revision_id",
     ]);
 
     // FIXME: move logic in a more sophisticated PIDField that allows empty values
@@ -366,7 +369,17 @@ export class RDMDepositRecordSerializer extends DepositRecordSerializer {
     //                 Form/Error UX is tackled in next sprint and this is good
     //                 enough for now.
     for (const e of errors) {
-      _set(deserializedErrors, e.field, e.messages.join(" "));
+      if ("severity" in e && "severity" in e) {
+        // New error format with severity and description
+        _set(deserializedErrors, e.field, {
+          message: e.messages.join(" "),
+          severity: e.severity, // severity level of the error
+          description: e.description, // additional information about the rule that generated the error
+        });
+      } else {
+        // Backward compatibility with old error format, including just the error string
+        _set(deserializedErrors, e.field, e.messages.join(" "));
+      }
     }
 
     return deserializedErrors;
@@ -380,7 +393,7 @@ export class RDMDepositRecordSerializer extends DepositRecordSerializer {
    *
    */
   serialize(record) {
-    // NOTE: cloning nows allows us to manipulate the copy with impunity without
+    // NOTE: cloning now allows us to manipulate the copy with impunity without
     //       affecting the original
     let originalRecord = _pick(_cloneDeep(record), [
       "access",
@@ -397,8 +410,7 @@ export class RDMDepositRecordSerializer extends DepositRecordSerializer {
     // Save pids so they are not removed when an empty value is passed
     let savedPIDsFieldValue = originalRecord.pids || {};
 
-    let serializedRecord = this._removeEmptyValues(originalRecord);
-
+    let serializedRecord = originalRecord;
     for (let key in this.depositRecordSchema) {
       serializedRecord = this.depositRecordSchema[key].serialize(
         serializedRecord,

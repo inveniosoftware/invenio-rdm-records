@@ -1,5 +1,5 @@
 // This file is part of Invenio-RDM-Records
-// Copyright (C) 2020-2023 CERN.
+// Copyright (C) 2020-2025 CERN.
 // Copyright (C) 2020-2022 Northwestern University.
 //
 // Invenio-RDM-Records is free software; you can redistribute it and/or modify it
@@ -14,7 +14,6 @@ import { Divider, Icon, List } from "semantic-ui-react";
 import { EmbargoCheckboxField } from "./EmbargoCheckboxField";
 import { EmbargoDateField } from "./EmbargoDateField";
 import { i18next } from "@translations/invenio_rdm_records/i18next";
-import { Trans } from "react-i18next";
 
 export const EmbargoAccess = ({ access, accessCommunity, metadataOnly }) => {
   const recordPublic = access.record === "public";
@@ -30,7 +29,9 @@ export const EmbargoAccess = ({ access, accessCommunity, metadataOnly }) => {
   const embargoEnabled = communityPublic && (!recordPublic || filesRestricted);
 
   const fmtDate = embargoUntil
-    ? DateTime.fromISO(embargoUntil).toLocaleString(DateTime.DATE_FULL)
+    ? DateTime.fromISO(embargoUntil)
+        .setLocale(i18next.language)
+        .toLocaleString(DateTime.DATE_FULL)
     : "???";
 
   return (
@@ -50,9 +51,10 @@ export const EmbargoAccess = ({ access, accessCommunity, metadataOnly }) => {
           </List.Header>
 
           <List.Description>
-            <Trans>
-              Record or files protection must be <b>restricted</b> to apply an embargo.
-            </Trans>
+            <>
+              {i18next.t("Record or files protection must be")}{" "}
+              <b>{i18next.t("restricted")}</b> {i18next.t("to apply an embargo.")}
+            </>
           </List.Description>
 
           {embargoActive && (

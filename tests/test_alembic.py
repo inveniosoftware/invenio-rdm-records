@@ -2,6 +2,7 @@
 #
 # This file is part of Invenio.
 # Copyright (C) 2021 TU Wien.
+# Copyright (C) 2024 Graz University of Technology.
 #
 # Invenio is free software; you can redistribute it and/or modify it
 # under the terms of the MIT License; see LICENSE file for more details.
@@ -10,8 +11,6 @@
 
 import pytest
 from invenio_db.utils import alembic_test_context, drop_alembic_version_table
-from sqlalchemy_continuum import version_class
-from sqlalchemy_utils.functions import get_class_by_table
 
 
 @pytest.mark.skip(reason="Caused by mergepoint")
@@ -26,7 +25,7 @@ def test_alembic(base_app, database):
     base_app.config["ALEMBIC_CONTEXT"] = alembic_test_context()
 
     # Check that this package's SQLAlchemy models have been properly registered
-    tables = [x.name for x in db.get_tables_for_bind()]
+    tables = [x for x in db.metadata.tables]
     assert "rdm_drafts_files" in tables
     assert "rdm_drafts_metadata" in tables
     assert "rdm_records_files" in tables

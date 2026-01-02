@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2020 CERN.
+# Copyright (C) 2020-2024 CERN.
 # Copyright (C) 2020 Northwestern University.
 # Copyright (C) 2021 TU Wien.
 #
@@ -47,9 +47,7 @@ def app_with_allowed_edits(running_app):
     sessions as we want to test sqlalchemy-continuum and the latter misbehaves when the
     default `pytest_invenio.db` fixture is used. Thus,
     """
-    running_app.app.config[
-        "RDM_LOCK_EDIT_PUBLISHED_FILES"
-    ] = lambda service, identity, record=None: False
+    running_app.app.config["RDM_LOCK_EDIT_PUBLISHED_FILES"] = lambda *_, **__: False
     return running_app
 
 

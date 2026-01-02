@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2021 CERN.
+# Copyright (C) 2021-2024 CERN.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
@@ -11,13 +11,12 @@ from babel_edtf import parse_edtf
 from edtf.parser.edtf_exceptions import EDTFParseException
 from edtf.parser.parser_classes import Date, Interval
 from flask_resources.serializers import BaseSerializerSchema
-from invenio_access.permissions import system_identity
-from invenio_records_resources.proxies import current_service_registry
-from invenio_vocabularies.proxies import current_service as vocabulary_service
 from marshmallow import Schema, fields, missing, pre_dump
 from marshmallow_utils.fields import SanitizedUnicode, StrippedHTML
+from pydash import py_
 
-from ..utils import get_preferred_identifier
+from ..schemas import CommonFieldsMixin
+from ..utils import get_vocabulary_props
 
 
 class CSLCreatorSchema(Schema):
@@ -46,7 +45,7 @@ def add_if_not_none(year, month, day):
     return _list
 
 
-class CSLJSONSchema(BaseSerializerSchema):
+class CSLJSONSchema(BaseSerializerSchema, CommonFieldsMixin):
     """CSL Marshmallow Schema."""
 
     id_ = SanitizedUnicode(data_key="id", attribute="id")
@@ -57,31 +56,34 @@ class CSLJSONSchema(BaseSerializerSchema):
     issued = fields.Method("get_issued")
     language = fields.Method("get_language")
     version = SanitizedUnicode(attribute="metadata.version")
-    note = fields.Method("get_note")
-    doi = fields.Str(attribute="pids.doi.identifier", data_key="DOI")
+    doi = fields.Method("get_doi", data_key="DOI")
     isbn = fields.Method("get_isbn", data_key="ISBN")
     issn = fields.Method("get_issn", data_key="ISSN")
     publisher = SanitizedUnicode(attribute="metadata.publisher")
 
-    def _read_resource_type(self, id_):
-        """Retrieve resource type record using service."""
-        rec = vocabulary_service.read(system_identity, ("resourcetypes", id_))
-        return rec._record
-
     def get_type(self, obj):
         """Get resource type."""
-        resource_type = obj["metadata"].get(
-            "resource_type", {"id": "publication-article"}
-        )
+        resource_type_id = py_.get(obj, "metadata.resource_type.id")
+        if not resource_type_id:
+            return missing
 
-        resource_type_record = self._read_resource_type(resource_type["id"])
-        props = resource_type_record["props"]
+        props = get_vocabulary_props(
+            "resourcetypes",
+            [
+                "props.csl",
+            ],
+            resource_type_id,
+        )
         return props.get("csl", "article")  # article is CSL "Other"
 
     def get_issued(self, obj):
         """Get issued dates."""
+        publication_date = py_.get(obj, "metadata.publication_date")
+        if not publication_date:
+            return missing
+
         try:
-            parsed = parse_edtf(obj["metadata"].get("publication_date"))
+            parsed = parse_edtf(publication_date)
         except EDTFParseException:
             return missing
 
@@ -111,7 +113,7 @@ class CSLJSONSchema(BaseSerializerSchema):
         """Get ISBN."""
         identifiers = obj["metadata"].get("identifiers", [])
         for identifier in identifiers:
-            if identifier["scheme"] == "ISBN":
+            if identifier["scheme"] == "isbn":
                 return identifier["identifier"]
 
         return missing
@@ -120,31 +122,7 @@ class CSLJSONSchema(BaseSerializerSchema):
         """Get ISSN."""
         identifiers = obj["metadata"].get("identifiers", [])
         for identifier in identifiers:
-            if identifier["scheme"] == "ISSN":
+            if identifier["scheme"] == "issn":
                 return identifier["identifier"]
-
-        return missing
-
-    def get_note(self, obj):
-        """Get note from funders."""
-        funding = obj["metadata"].get("funding")
-        if funding:
-            funder = funding[0]["funder"]
-            id_ = funder.get("id")
-            if id_:
-                funder_service = current_service_registry.get("funders")
-                funder = funder_service.read(system_identity, id_).to_dict()
-
-            note = f"Funding by {funder['name']}"
-            identifiers = funder.get("identifiers", [])
-            identifier = get_preferred_identifier(
-                priority=("ror", "grid", "doi", "isni", "gnd"), identifiers=identifiers
-            )
-
-            if identifier:
-                note += (
-                    f" {identifier['scheme'].upper()} " f"{identifier['identifier']}."
-                )
-            return note
 
         return missing

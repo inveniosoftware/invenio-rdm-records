@@ -20,6 +20,7 @@ class CodemetaSchema(SchemaorgSchema):
     CodeMeta schema derives from Schema.org
     """
 
+    identifier = fields.Method("get_id")
     context = fields.Constant(
         "https://doi.org/10.5063/schema/codemeta-2.0", data_key="@context"
     )

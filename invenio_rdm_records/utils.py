@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2022 CERN.
+# Copyright (C) 2022-2024 CERN.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
@@ -32,7 +32,7 @@ from .tokens.errors import (
 def get_or_create_user(email):
     """Get or create a user."""
     with db.session.no_autoflush:
-        user = current_datastore.get_user(email)
+        user = current_datastore.get_user_by_email(email)
     if not user:
         user = current_datastore.create_user(
             email=email,
@@ -71,7 +71,7 @@ class ChainObject:
 
         objs = super().__getattribute__("_objs")
         for o in objs:
-            if getattr(o, name):
+            if getattr(o, name, None):
                 return getattr(o, name)
         raise AttributeError()
 
@@ -106,6 +106,9 @@ def verify_token(identity):
             data = SecretLink.load_token(token)
             if data:
                 identity.provides.add(LinkNeed(data["id"]))
+                # In order for anonymous users with secret link to perform vulnerable HTTP requests
+                # ("POST", "PUT", "PATCH", "DELETE"), CSRF token must be set
+                request.csrf_cookie_needs_reset = True
             session[secret_link_token_arg] = token
             has_secret_link_token = True
         except SignatureExpired:

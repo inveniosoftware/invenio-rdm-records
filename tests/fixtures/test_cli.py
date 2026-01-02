@@ -1,13 +1,12 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2021-2022 CERN.
+# Copyright (C) 2021-2024 CERN.
 # Copyright (C) 2021-2022 Northwestern University.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
 
 """Tests for the CLI."""
-
 
 from invenio_access.permissions import system_identity
 from invenio_communities import current_communities

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2021 CERN.
+# Copyright (C) 2021-2024 CERN.
 # Copyright (C) 2021 Northwestern University.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
@@ -10,6 +10,7 @@
 
 Not every case is tested, but enough high-level ones for it to be useful.
 """
+
 from io import BytesIO
 
 import pytest

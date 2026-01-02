@@ -1,36 +1,50 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2020-2023 CERN.
+# Copyright (C) 2020-2025 CERN.
 # Copyright (C) 2020-2021 Northwestern University.
 # Copyright (C) 2021-2023 TU Wien.
 # Copyright (C) 2021 Graz University of Technology.
 # Copyright (C) 2022 Universität Hamburg.
+# Copyright (C) 2024 KTH Royal Institute of Technology.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
 
 """RDM Record Service."""
 
+from datetime import datetime
 
 import arrow
+from flask import current_app
+from invenio_access.permissions import system_identity, system_user_id
 from invenio_accounts.models import User
 from invenio_db import db
 from invenio_drafts_resources.services.records import RecordService
+from invenio_drafts_resources.services.records.uow import ParentRecordCommitOp
+from invenio_i18n import lazy_gettext as _
 from invenio_records_resources.services import LinksTemplate, ServiceSchemaWrapper
+from invenio_records_resources.services.errors import PermissionDeniedError
 from invenio_records_resources.services.uow import (
     RecordCommitOp,
     RecordIndexDeleteOp,
     RecordIndexOp,
+    TaskOp,
     unit_of_work,
 )
+from invenio_requests.proxies import current_requests_service as requests_service
 from invenio_requests.services.results import EntityResolverExpandableField
 from invenio_search.engine import dsl
+from marshmallow import ValidationError
 from sqlalchemy.exc import NoResultFound
 
 from invenio_rdm_records.records.models import RDMRecordQuota, RDMUserQuota
+from invenio_rdm_records.requests.file_modification import FileModification
+from invenio_rdm_records.requests.record_deletion import RecordDeletion
+from invenio_rdm_records.services.pids.tasks import register_or_update_pid
 
 from ..records.systemfields.deletion_status import RecordDeletionStatusEnum
 from .errors import (
+    CommunityRequiredError,
     DeletionStatusException,
     EmbargoNotLiftedError,
     RecordDeletedException,
@@ -86,6 +100,7 @@ class RDMRecordService(RecordService):
         return [
             EntityResolverExpandableField("parent.review.receiver"),
             ParentCommunitiesExpandableField("parent.communities.default"),
+            EntityResolverExpandableField("parent.access.owned_by"),
         ]
 
     @property
@@ -126,8 +141,25 @@ class RDMRecordService(RecordService):
         if not record.access.lift_embargo():
             raise EmbargoNotLiftedError(_id)
 
-        # Commit and reindex record
+        # Run components
+        self.run_components(
+            "lift_embargo", identity, draft=draft, record=record, uow=uow
+        )
+
+        self._pids.pid_manager.create_and_reserve(record)
         uow.register(RecordCommitOp(record, indexer=self.indexer))
+        uow.register(TaskOp(register_or_update_pid, record["id"], "doi", parent=False))
+        # If the record was previously public it will still keep the parent PID
+        if not record.parent.pids:
+            self._pids.parent_pid_manager.create_and_reserve(record.parent)
+            uow.register(
+                ParentRecordCommitOp(
+                    record.parent,
+                )
+            )
+            uow.register(
+                TaskOp(register_or_update_pid, record["id"], "doi", parent=True)
+            )
 
     def scan_expired_embargos(self, identity):
         """Scan for records with an expired embargo."""
@@ -223,6 +255,102 @@ class RDMRecordService(RecordService):
             expandable_fields=self.expandable_fields,
             expand=expand,
         )
+
+    @unit_of_work()
+    def request_deletion(self, identity, id_, data=None, uow=None, **kwargs):
+        """Request deletion of a record."""
+        record = self.record_cls.pid.resolve(id_)
+
+        if record.deletion_status.is_deleted:
+            raise DeletionStatusException(record, RecordDeletionStatusEnum.PUBLISHED)
+
+        # NOTE: For deletion requests, we delegate the permission check to the
+        # deletion policy class. This is because:
+        #
+        #   - deletion policies can be more complex than what the declarative permission
+        #     system can express
+        #   - we want to know which specific policy is being applied, since it will be
+        #     tracked in the record's tombstone or the created deletion request
+        policy_result = self.config.deletion_policy.evaluate(identity, record)
+        immediate_deletion = policy_result["immediate_deletion"]
+        request_deletion = policy_result["request_deletion"]
+
+        featured_disable = not (immediate_deletion.enabled or request_deletion.enabled)
+        allowed = immediate_deletion.allowed or request_deletion.allowed
+        if featured_disable or not allowed:  # bail early
+            raise PermissionDeniedError()
+
+        # Keep track of the immediate deletion policy ID
+        if immediate_deletion.policy:
+            data["policy_id"] = immediate_deletion.policy.get("id")
+
+        request = requests_service.create(
+            identity,
+            request_type=RecordDeletion,
+            topic=record,
+            creator=identity.user,
+            receiver=None,
+            data={"payload": data},
+            uow=uow,
+        )
+        request = requests_service.execute_action(
+            identity, request.id, "submit", uow=uow
+        )
+
+        if immediate_deletion.allowed:
+            request = requests_service.execute_action(
+                # NOTE: We use the system identity to accept the request, since
+                # technically the system-defined deletion policy was checked above
+                system_identity,
+                request.id,
+                "accept",
+                send_notification=False,
+                uow=uow,
+            )
+
+        return request
+
+    @unit_of_work()
+    def file_modification(self, identity, id_, data=None, uow=None, **kwargs):
+        """File modification of a record."""
+        record = self.record_cls.pid.resolve(id_)
+
+        policy_result = self.config.file_modification_policy.evaluate(identity, record)
+
+        immediate_file_mod = policy_result["immediate_file_modification"]
+
+        disabled = not immediate_file_mod.enabled
+        forbidden = not immediate_file_mod.allowed
+        if disabled or forbidden:  # bail early
+            raise PermissionDeniedError()
+
+        request = requests_service.create(
+            identity,
+            request_type=FileModification,
+            topic=record,
+            creator=identity.user,
+            receiver=None,
+            data={"payload": data},
+            uow=uow,
+        )
+
+        request = requests_service.execute_action(
+            identity, request.id, "submit", uow=uow
+        )
+
+        if immediate_file_mod.allowed:
+            request = requests_service.execute_action(
+                # NOTE: We use the system identity to accept the request, since
+                # technically the system-defined file modification policy was
+                # checked above
+                system_identity,
+                request.id,
+                "accept",
+                send_notification=False,
+                uow=uow,
+            )
+
+        return request
 
     @unit_of_work()
     def update_tombstone(self, identity, id_, data, expand=False, uow=None):
@@ -380,6 +508,28 @@ class RDMRecordService(RecordService):
 
         raise NotImplementedError()
 
+    @unit_of_work()
+    def publish(self, identity, id_, uow=None, expand=False):
+        """Publish a draft.
+
+        Check for permissions to publish a draft and then call invenio_drafts_resourcs.services.records.services.publish()
+        """
+        try:
+            draft = self.draft_cls.pid.resolve(id_, registered_only=False)
+            self.require_permission(identity, "publish", record=draft)
+            # By default, admin/superuser has permission to do everything, so PermissionDeniedError won't be raised for admin in any case
+        except PermissionDeniedError as exc:
+            # If user doesn't have permission to publish, determine which error to raise, based on config
+            community_required = current_app.config["RDM_COMMUNITY_REQUIRED_TO_PUBLISH"]
+            is_community_missing = len(draft.parent.communities.ids) < 1
+            if community_required and is_community_missing:
+                raise CommunityRequiredError()
+            else:
+                # If the config wasn't enabled, then raise the PermissionDeniedError
+                raise exc
+
+        return super().publish(identity, id_, uow=uow, expand=expand)
+
     #
     # Search functions
     #
@@ -507,7 +657,8 @@ class RDMRecordService(RecordService):
             search_result,
             params,
             links_tpl=LinksTemplate(
-                self.config.links_search_versions, context={"id": id_, "args": params}
+                self.config.links_search_versions,
+                context={"pid_value": id_, "args": params},
             ),
             links_item_tpl=self.links_item_tpl,
             expandable_fields=self.expandable_fields,
@@ -551,10 +702,54 @@ class RDMRecordService(RecordService):
 
         return result
 
+    @unit_of_work()
+    def update_draft(
+        self, identity, id_, data, revision_id=None, uow=None, expand=False
+    ):
+        """Replace a draft."""
+        draft = self.draft_cls.pid.resolve(id_, registered_only=False)
+
+        # can not make record restricted after grace period
+        current_draft_is_public = (
+            draft.get("access", {}).get("record", None) == "public"
+        )
+        is_update_to_restricted = (
+            data.get("access", {}).get("record", None) == "restricted"
+        )
+        allow_restriction = current_app.config[
+            "RDM_RECORDS_ALLOW_RESTRICTION_AFTER_GRACE_PERIOD"
+        ]
+
+        if (
+            not allow_restriction
+            and current_draft_is_public
+            and is_update_to_restricted
+        ):
+            end_of_grace_period = (
+                draft.created
+                + current_app.config["RDM_RECORDS_RESTRICTION_GRACE_PERIOD"]
+            )
+            if end_of_grace_period <= datetime.now():
+                raise ValidationError(
+                    _(
+                        "Record visibility can not be changed to restricted "
+                        "anymore. Please contact support if you still need to make these changes."
+                    )
+                )
+
+        return super().update_draft(
+            identity,
+            id_,
+            data,
+            revision_id=revision_id,
+            uow=uow,
+            expand=expand,
+        )
+
     #
     # Record file quota handling
     #
-    def _update_quota(self, record, quota_size, max_file_size, notes):
+    def _update_quota(self, record, quota_size, max_file_size, notes=None):
         """Update record with quota values."""
         record.quota_size = quota_size
         if max_file_size:
@@ -629,9 +824,12 @@ class RDMRecordService(RecordService):
             raise_errors=True,
         )
         # Set quota
-        user_quota = RDMUserQuota.query.filter(
-            RDMUserQuota.user_id == user.id
-        ).one_or_none()
+        if user.id == system_user_id:
+            user_quota = None
+        else:
+            user_quota = RDMUserQuota.query.filter(
+                RDMUserQuota.user_id == user.id
+            ).one_or_none()
         if not user_quota:
             user_quota = RDMUserQuota(user_id=user.id, **data)
         else:
@@ -641,3 +839,33 @@ class RDMRecordService(RecordService):
         db.session.add(user_quota)
 
         return True
+
+    def search_revisions(self, identity, id_):
+        """Return a list of record revisions."""
+        record = self.record_cls.pid.resolve(id_)
+        # Check permissions
+        self.require_permission(identity, "search_revisions", record=record)
+        revisions = list(reversed(record.model.versions.all()))
+
+        return self.config.revision_result_list_cls(
+            identity,
+            revisions,
+        )
+
+    def read_revision(self, identity, id_, revision_id, include_previous=False):
+        """Read a specific record revision (and return the precedent revision if include_previous==True)."""
+        record = self.record_cls.pid.resolve(id_)
+        self.require_permission(identity, "search_revisions", record=record)
+
+        revisions = []
+        current_revision = record.model.versions.filter_by(
+            transaction_id=revision_id
+        ).first()
+        revisions.append(current_revision)
+        if include_previous:
+            previous_revision = record.model.versions.filter_by(
+                end_transaction_id=revision_id
+            ).first()
+            if previous_revision:
+                revisions.append(previous_revision)
+        return self.config.revision_result_list_cls(identity, revisions)

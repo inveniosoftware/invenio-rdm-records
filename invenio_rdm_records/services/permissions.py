@@ -1,13 +1,15 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2019 CERN.
+# Copyright (C) 2019-2024 CERN.
 # Copyright (C) 2019 Northwestern University.
 # Copyright (C) 2023 TU Wien.
+# Copyright (C) 2024 CESNET.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
 
 """Permissions for Invenio RDM Records."""
+
 from invenio_administration.generators import Administration
 from invenio_communities.generators import CommunityCurators
 from invenio_records_permissions.generators import (
@@ -18,7 +20,12 @@ from invenio_records_permissions.generators import (
     SystemProcess,
 )
 from invenio_records_permissions.policies.records import RecordPermissionPolicy
-from invenio_requests.services.generators import Receiver, Status
+from invenio_records_resources.services.files.generators import IfTransferType
+from invenio_records_resources.services.files.transfer import (
+    LOCAL_TRANSFER_TYPE,
+    MULTIPART_TRANSFER_TYPE,
+)
+from invenio_requests.services.generators import IfLocked, Receiver, Status
 from invenio_requests.services.permissions import (
     PermissionPolicy as RequestPermissionPolicy,
 )
@@ -29,16 +36,18 @@ from .generators import (
     AccessGrant,
     CommunityInclusionReviewers,
     GuestAccessRequestToken,
+    IfAtLeastOneCommunity,
     IfCreate,
     IfDeleted,
     IfExternalDOIRecord,
-    IfFileIsLocal,
     IfNewRecord,
+    IfOneCommunity,
     IfRecordDeleted,
     IfRequestType,
     IfRestricted,
     RecordCommunitiesAction,
     RecordOwners,
+    RequestReviewers,
     ResourceAccessToken,
     SecretLinks,
     SubmissionReviewer,
@@ -58,12 +67,17 @@ class RDMRecordPermissionPolicy(RecordPermissionPolicy):
         "object-read": "read_files",
     }
 
+    # permission meant for global curators of the instance
+    # (for now applies to internal notes field only
+    # to be replaced with an adequate permission when it is defined)
+    can_manage_internal = [SystemProcess()]
     #
     # High-level permissions (used by low-level)
     #
     can_manage = [
         RecordOwners(),
         RecordCommunitiesAction("curate"),
+        AccessGrant("manage"),
         SystemProcess(),
     ]
     can_curate = can_manage + [AccessGrant("edit"), SecretLinks("edit")]
@@ -72,6 +86,7 @@ class RDMRecordPermissionPolicy(RecordPermissionPolicy):
         AccessGrant("preview"),
         SecretLinks("preview"),
         SubmissionReviewer(),
+        RequestReviewers(),
         UserManager,
     ]
     can_view = can_preview + [
@@ -123,10 +138,13 @@ class RDMRecordPermissionPolicy(RecordPermissionPolicy):
     can_get_content_files = [
         # note: even though this is closer to business logic than permissions,
         # it was simpler and less coupling to implement this as permission check
-        IfFileIsLocal(then_=can_read_files, else_=[SystemProcess()])
+        IfTransferType(LOCAL_TRANSFER_TYPE, can_read_files),
+        SystemProcess(),
     ]
     # Allow submitting new record
     can_create = can_authenticated
+
+    can_search_revisions = [Administration()]
 
     #
     # Drafts
@@ -140,21 +158,35 @@ class RDMRecordPermissionPolicy(RecordPermissionPolicy):
     # Allow updating metadata of a draft
     can_update_draft = can_review
     # Allow uploading, updating and deleting files in drafts
-    can_draft_create_files = can_review
+    can_draft_create_files = [
+        # review is the same as create_files
+        IfTransferType(LOCAL_TRANSFER_TYPE, can_review),
+        IfTransferType(MULTIPART_TRANSFER_TYPE, can_review),
+        SystemProcess(),
+    ]
     can_draft_set_content_files = [
         # review is the same as create_files
-        IfFileIsLocal(then_=can_review, else_=[SystemProcess()])
+        IfTransferType(LOCAL_TRANSFER_TYPE, can_review),
+        IfTransferType(MULTIPART_TRANSFER_TYPE, can_review),
+        SystemProcess(),
     ]
     can_draft_get_content_files = [
         # preview is same as read_files
-        IfFileIsLocal(then_=can_draft_read_files, else_=[SystemProcess()])
+        IfTransferType(LOCAL_TRANSFER_TYPE, can_draft_read_files),
+        SystemProcess(),
     ]
     can_draft_commit_files = [
         # review is the same as create_files
-        IfFileIsLocal(then_=can_review, else_=[SystemProcess()])
+        IfTransferType(LOCAL_TRANSFER_TYPE, can_review),
+        IfTransferType(MULTIPART_TRANSFER_TYPE, can_review),
+        SystemProcess(),
     ]
     can_draft_update_files = can_review
     can_draft_delete_files = can_review
+
+    can_draft_get_file_transfer_metadata = [SystemProcess()]
+    can_draft_update_file_transfer_metadata = [SystemProcess()]
+
     # Allow enabling/disabling files
     can_manage_files = [
         IfConfig(
@@ -180,6 +212,7 @@ class RDMRecordPermissionPolicy(RecordPermissionPolicy):
     can_pid_update = can_review
     can_pid_discard = can_review
     can_pid_delete = can_review
+    can_pid_manage = [SystemProcess()]
 
     #
     # Actions
@@ -193,11 +226,22 @@ class RDMRecordPermissionPolicy(RecordPermissionPolicy):
         IfConfig(
             "RDM_ALLOW_EXTERNAL_DOI_VERSIONING",
             then_=can_curate,
-            else_=[IfExternalDOIRecord(then_=[Disable()], else_=can_curate)],
+            else_=[IfExternalDOIRecord(then_=[SystemProcess()], else_=can_curate)],
         ),
     ]
     # Allow publishing a new record or changes to an existing record.
-    can_publish = can_review
+    can_publish = [
+        IfConfig(
+            "RDM_COMMUNITY_REQUIRED_TO_PUBLISH",
+            then_=[
+                IfAtLeastOneCommunity(
+                    then_=can_review,
+                    else_=[Administration(), SystemProcess()],
+                ),
+            ],
+            else_=can_review,
+        )
+    ]
     # Allow lifting a record or draft.
     can_lift_embargo = can_manage
 
@@ -207,13 +251,27 @@ class RDMRecordPermissionPolicy(RecordPermissionPolicy):
     # Who can add record to a community
     can_add_community = can_manage
     # Who can remove a community from a record
-    can_remove_community = [
+    can_remove_community_ = [
         RecordOwners(),
         CommunityCurators(),
         SystemProcess(),
     ]
+    can_remove_community = [
+        IfConfig(
+            "RDM_COMMUNITY_REQUIRED_TO_PUBLISH",
+            then_=[
+                IfOneCommunity(
+                    then_=[Administration(), SystemProcess()],
+                    else_=can_remove_community_,
+                ),
+            ],
+            else_=can_remove_community_,
+        ),
+    ]
     # Who can remove records from a community
-    can_remove_record = [CommunityCurators()]
+    can_remove_record = [CommunityCurators(), Administration(), SystemProcess()]
+    # Who can add records to a community in bulk
+    can_bulk_add = [SystemProcess()]
 
     #
     # Media files - draft
@@ -221,15 +279,18 @@ class RDMRecordPermissionPolicy(RecordPermissionPolicy):
     can_draft_media_create_files = can_review
     can_draft_media_read_files = can_review
     can_draft_media_set_content_files = [
-        IfFileIsLocal(then_=can_review, else_=[SystemProcess()])
+        IfTransferType(LOCAL_TRANSFER_TYPE, can_review),
+        SystemProcess(),
     ]
     can_draft_media_get_content_files = [
         # preview is same as read_files
-        IfFileIsLocal(then_=can_preview, else_=[SystemProcess()])
+        IfTransferType(LOCAL_TRANSFER_TYPE, can_preview),
+        SystemProcess(),
     ]
     can_draft_media_commit_files = [
         # review is the same as create_files
-        IfFileIsLocal(then_=can_review, else_=[SystemProcess()])
+        IfTransferType(LOCAL_TRANSFER_TYPE, can_review),
+        SystemProcess(),
     ]
     can_draft_media_update_files = can_review
     can_draft_media_delete_files = can_review
@@ -244,7 +305,8 @@ class RDMRecordPermissionPolicy(RecordPermissionPolicy):
     can_media_get_content_files = [
         # note: even though this is closer to business logic than permissions,
         # it was simpler and less coupling to implement this as permission check
-        IfFileIsLocal(then_=can_read, else_=[SystemProcess()])
+        IfTransferType(LOCAL_TRANSFER_TYPE, can_read),
+        SystemProcess(),
     ]
     can_media_create_files = [Disable()]
     can_media_set_content_files = [Disable()]
@@ -279,13 +341,33 @@ class RDMRecordPermissionPolicy(RecordPermissionPolicy):
     can_commit_files = [Disable()]
     can_update_files = [Disable()]
 
-    # Used to hide at the moment the `parent.is_verified` field. It should be set to
+    can_get_file_transfer_metadata = [Disable()]
+    can_update_file_transfer_metadata = [Disable()]
+
+    # Used to hide the `parent.is_verified` field. It should be set to
     # correct permissions based on which the field will be exposed only to moderators
-    can_moderate = [Disable()]
+    can_moderate = [SystemProcess()]
 
 
 guest_token = IfRequestType(
     GuestAccessRequest, then_=[GuestAccessRequestToken()], else_=[]
+)
+
+guest_token_locked = IfRequestType(
+    GuestAccessRequest,
+    then_=[
+        IfConfig(
+            "REQUESTS_LOCKING_ENABLED",
+            then_=[
+                IfLocked(
+                    then_=[Disable()],
+                    else_=[GuestAccessRequestToken()],
+                ),
+            ],
+            else_=[GuestAccessRequestToken()],
+        ),
+    ],
+    else_=[],
 )
 
 
@@ -296,8 +378,13 @@ class RDMRequestsPermissionPolicy(RequestPermissionPolicy):
     can_update = RequestPermissionPolicy.can_update + [guest_token]
     can_action_submit = RequestPermissionPolicy.can_action_submit + [guest_token]
     can_action_cancel = RequestPermissionPolicy.can_action_cancel + [guest_token]
-    can_create_comment = can_read
-    can_update_comment = RequestPermissionPolicy.can_update_comment + [guest_token]
+    can_create_comment = RequestPermissionPolicy.can_create_comment + [
+        guest_token_locked
+    ]
+    can_reply_comment = RequestPermissionPolicy.can_reply_comment + [guest_token_locked]
+    can_update_comment = RequestPermissionPolicy.can_update_comment + [
+        guest_token_locked
+    ]
     can_delete_comment = RequestPermissionPolicy.can_delete_comment + [guest_token]
 
     # manages GuessAccessRequest payload permissions
@@ -308,7 +395,7 @@ class RDMRequestsPermissionPolicy(RequestPermissionPolicy):
                 IfRequestType(
                     GuestAccessRequest,
                     then_=[Status(["submitted"], [Receiver()])],
-                    else_=Disable(),
+                    else_=SystemProcess(),
                 )
             ],
         )

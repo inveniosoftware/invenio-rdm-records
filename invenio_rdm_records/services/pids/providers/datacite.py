@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2021 CERN.
+# Copyright (C) 2021-2024 CERN.
 # Copyright (C) 2023 Northwestern University.
-# Copyright (C) 2023 Graz University of Technology.
+# Copyright (C) 2023-2024 Graz University of Technology.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
@@ -25,7 +25,8 @@ from flask import current_app
 from invenio_i18n import lazy_gettext as _
 from invenio_pidstore.models import PIDStatus
 
-from ....resources.serializers import DataCite43JSONSerializer
+from ....resources.serializers import DataCite45JSONSerializer
+from ....utils import ChainObject
 from .base import PIDProvider
 
 
@@ -111,7 +112,7 @@ class DataCitePIDProvider(PIDProvider):
             pid_type=pid_type,
             default_status=default_status,
         )
-        self.serializer = serializer or DataCite43JSONSerializer()
+        self.serializer = serializer or DataCite45JSONSerializer()
 
     @staticmethod
     def _log_errors(exception):
@@ -119,28 +120,36 @@ class DataCitePIDProvider(PIDProvider):
         # DataCiteError will have the response msg as first arg
         ex_txt = exception.args[0] or ""
         if isinstance(exception, DataCiteNoContentError):
-            current_app.logger.error(f"No content error: {ex_txt}")
+            current_app.logger.error("DataCite no content error", exc_info=exception)
         elif isinstance(exception, DataCiteServerError):
-            current_app.logger.error(f"DataCite internal server error: {ex_txt}")
+            current_app.logger.error(
+                "DataCite internal server error", exc_info=exception
+            )
         else:
             # Client error 4xx status code
             try:
                 ex_json = json.loads(ex_txt)
             except JSONDecodeError:
-                current_app.logger.error(f"Unknown error: {ex_txt}")
+                current_app.logger.error("Unknown DataCite error", exc_info=exception)
                 return
 
             # the `errors` field is only available when a 4xx error happened (not 500)
             for error in ex_json.get("errors", []):
-                reason = error["title"]
-                field = error.get("source")  # set when missing/wrong required field
-                error_prefix = f"Error in `{field}`: " if field else "Error: "
-                current_app.logger.error(f"{error_prefix}{reason}")
+                current_app.logger.error(
+                    "DataCite error (field: %(field)s): %(reason)s",
+                    {"field": error.get("source"), "reason": error.get("title")},
+                    exc_info=exception,
+                )
 
     def generate_id(self, record, **kwargs):
         """Generate a unique DOI."""
         # Delegate to client
         return self.client.generate_doi(record)
+
+    @classmethod
+    def is_enabled(cls, app):
+        """Determine if datacite is enabled or not."""
+        return app.config.get("DATACITE_ENABLED", False)
 
     def can_modify(self, pid, **kwargs):
         """Checks if the PID can be modified."""
@@ -153,6 +162,12 @@ class DataCitePIDProvider(PIDProvider):
         :param record: the record metadata for the DOI.
         :returns: `True` if is registered successfully.
         """
+        if isinstance(record, ChainObject):
+            if record._child["access"]["record"] == "restricted":
+                return False
+        elif record["access"]["record"] == "restricted":
+            return False
+
         local_success = super().register(pid)
         if not local_success:
             return False
@@ -178,10 +193,22 @@ class DataCitePIDProvider(PIDProvider):
         :param record: the record metadata for the DOI.
         :returns: `True` if is updated successfully.
         """
+        hide = False
+        if isinstance(record, ChainObject):
+            if record._child["access"]["record"] == "restricted":
+                hide = True
+        elif record["access"]["record"] == "restricted":
+            hide = True
+
         try:
-            # Set metadata
-            doc = self.serializer.dump_obj(record)
-            self.client.api.update_doi(metadata=doc, doi=pid.pid_value, url=url)
+            if hide:
+                self.client.api.hide_doi(doi=pid.pid_value)
+            else:
+                doc = self.serializer.dump_obj(record)
+                doc["event"] = (
+                    "publish"  # Required for DataCite to make the DOI findable in the case it was hidden before. See https://support.datacite.org/docs/how-do-i-make-a-findable-doi-with-the-rest-api
+                )
+                self.client.api.update_doi(metadata=doc, doi=pid.pid_value, url=url)
         except DataCiteError as e:
             current_app.logger.warning(
                 f"DataCite provider error when updating DOI for {pid.pid_value}"
@@ -260,3 +287,21 @@ class DataCitePIDProvider(PIDProvider):
             )
 
         return not bool(errors), errors
+
+    def validate_restriction_level(self, record, identifier=None, **kwargs):
+        """Remove the DOI if the record is restricted."""
+        if identifier and record["access"]["record"] == "restricted":
+            pid = self.get(identifier)
+            if pid.status in [PIDStatus.NEW]:
+                self.delete(pid)
+                del record["pids"][self.pid_type]
+
+    def create_and_reserve(self, record, **kwargs):
+        """Create and reserve a DOI for the given record, and update the record with the reserved DOI."""
+        if "doi" not in record.pids:
+            pid = self.create(record)
+            self.reserve(pid, record=record)
+            pid_attrs = {"identifier": pid.pid_value, "provider": self.name}
+            if self.client:
+                pid_attrs["client"] = self.client.name
+            record.pids["doi"] = pid_attrs

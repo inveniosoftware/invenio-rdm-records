@@ -1,17 +1,20 @@
 # -*- coding: utf-8 -*-
 #
 # Copyright (C) 2023 TU Wien.
+# Copyright (C) 2024 KTH Royal Institute of Technology.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
 
 """Access requests for records."""
+
 from datetime import datetime, timedelta
 
 import marshmallow as ma
 from flask import g
 from invenio_access.permissions import authenticated_user, system_identity
 from invenio_drafts_resources.services.records.uow import ParentRecordCommitOp
+from invenio_i18n import gettext as t
 from invenio_i18n import lazy_gettext as _
 from invenio_notifications.services.uow import NotificationOp
 from invenio_requests import current_events_service
@@ -22,8 +25,13 @@ from marshmallow_utils.permissions import FieldPermissionsMixin
 
 from invenio_rdm_records.notifications.builders import (
     GuestAccessRequestAcceptNotificationBuilder,
+    GuestAccessRequestCancelNotificationBuilder,
+    GuestAccessRequestDeclineNotificationBuilder,
     GuestAccessRequestSubmitNotificationBuilder,
+    GuestAccessRequestSubmittedNotificationBuilder,
     UserAccessRequestAcceptNotificationBuilder,
+    UserAccessRequestCancelNotificationBuilder,
+    UserAccessRequestDeclineNotificationBuilder,
     UserAccessRequestSubmitNotificationBuilder,
 )
 
@@ -47,6 +55,66 @@ class UserSubmitAction(actions.SubmitAction):
         super().execute(identity, uow)
 
 
+class UserCancelAction(actions.CancelAction):
+    """Cancel action for user access requests."""
+
+    def execute(self, identity, uow):
+        """Execute the cancel action."""
+        self.request["title"] = self.request.topic.resolve().metadata["title"]
+        uow.register(
+            NotificationOp(
+                UserAccessRequestCancelNotificationBuilder.build(
+                    request=self.request, identity=identity
+                )
+            )
+        )
+        super().execute(identity, uow)
+
+
+class UserDeclineAction(actions.DeclineAction):
+    """Decline action for user access requests."""
+
+    def execute(self, identity, uow):
+        """Execute the decline action."""
+        self.request["title"] = self.request.topic.resolve().metadata["title"]
+        uow.register(
+            NotificationOp(
+                UserAccessRequestDeclineNotificationBuilder.build(request=self.request)
+            )
+        )
+        super().execute(identity, uow)
+
+
+class GuestCancelAction(actions.CancelAction):
+    """Cancel action for guest access requests."""
+
+    def execute(self, identity, uow):
+        """Execute the cancel action."""
+        record = self.request.topic.resolve()
+        self.request["title"] = record.metadata["title"]
+        uow.register(
+            NotificationOp(
+                GuestAccessRequestCancelNotificationBuilder.build(
+                    request=self.request, identity=identity
+                )
+            )
+        )
+        super().execute(identity, uow)
+
+
+class GuestDeclineAction(actions.DeclineAction):
+    """Decline action for guest access requests."""
+
+    def execute(self, identity, uow):
+        """Execute the decline action."""
+        uow.register(
+            NotificationOp(
+                GuestAccessRequestDeclineNotificationBuilder.build(request=self.request)
+            )
+        )
+        super().execute(identity, uow)
+
+
 class GuestSubmitAction(actions.SubmitAction):
     """Submit action for guest access requests."""
 
@@ -57,6 +125,13 @@ class GuestSubmitAction(actions.SubmitAction):
         uow.register(
             NotificationOp(
                 GuestAccessRequestSubmitNotificationBuilder.build(request=self.request)
+            )
+        )
+        uow.register(
+            NotificationOp(
+                GuestAccessRequestSubmittedNotificationBuilder.build(
+                    request=self.request
+                )
             )
         )
         super().execute(identity, uow)
@@ -76,8 +151,10 @@ class GuestAcceptAction(actions.AcceptAction):
         #       by the record owner
         data = {
             "permission": payload["permission"],
-            "description": (
-                f"Requested by guest: {payload['full_name']} ({payload['email']})"
+            "description": t(
+                "Requested by guest: %(full_name)s (%(email)s)",
+                full_name=payload["full_name"],
+                email=payload["email"],
             ),
             "origin": f"request:{self.request.id}",
         }
@@ -109,9 +186,11 @@ class GuestAcceptAction(actions.AcceptAction):
 
         confirmation_message = {
             "payload": {
-                "content": 'Click <a href="{url}">here</a> to access the record.'.format(
-                    url=access_url
+                "content": _(
+                    'Click <a href="%(url)s">here</a> to access the record.',
+                    url=access_url,
                 )
+                % {"url": access_url}
             }
         }
         current_events_service.create(
@@ -134,17 +213,21 @@ class UserAcceptAction(actions.AcceptAction):
         permission = self.request["payload"]["permission"]
 
         data = {
-            "permission": permission,
-            "subject": {
-                "type": "user",
-                "id": str(creator.id),
-            },
-            "origin": f"request:{self.request.id}",
+            "grants": [
+                {
+                    "permission": permission,
+                    "subject": {
+                        "type": "user",
+                        "id": str(creator.id),
+                    },
+                    "origin": f"request:{self.request.id}",
+                }
+            ]
         }
 
         # NOTE: we're using the system identity here to avoid the grant creation
         #       potentially being blocked by the requesting user's profile visibility
-        service.access.create_grant(system_identity, record.pid.pid_value, data)
+        service.access.bulk_create_grants(system_identity, record.pid.pid_value, data)
         uow.register(
             ParentRecordCommitOp(record.parent, indexer_context=dict(service=service))
         )
@@ -181,8 +264,8 @@ class UserAccessRequest(RequestType):
         "submit": UserSubmitAction,
         "delete": actions.DeleteAction,
         "accept": UserAcceptAction,
-        "cancel": actions.CancelAction,
-        "decline": actions.DeclineAction,
+        "cancel": UserCancelAction,
+        "decline": UserDeclineAction,
         "expire": actions.ExpireAction,
     }
 
@@ -233,12 +316,12 @@ class GuestAccessRequest(RequestType):
         try:
             if int(value) < 0:
                 raise ValidationError(
-                    message="Not a valid number of days.",
+                    message=_("Not a valid number of days."),
                     field_name="secret_link_expiration",
                 )
         except ValueError:
             raise ValidationError(
-                message="Not a valid number of days.",
+                message=_("Not a valid number of days."),
                 field_name="secret_link_expiration",
             )
 
@@ -247,8 +330,8 @@ class GuestAccessRequest(RequestType):
         "submit": GuestSubmitAction,
         "delete": actions.DeleteAction,
         "accept": GuestAcceptAction,
-        "cancel": actions.CancelAction,
-        "decline": actions.DeclineAction,
+        "cancel": GuestCancelAction,
+        "decline": GuestDeclineAction,
         "expire": actions.ExpireAction,
     }
 

@@ -98,16 +98,33 @@ def test_simple_guest_access_request_flow(running_app, client, users, minimal_re
             identity=guest_identity, token=args["access_request_token"]
         )
 
-        assert len(outbox) == 2
-        submit_message = outbox[1]
+        assert len(outbox) == 3
+        owner_submit_message = outbox[1]
+        assert (
+            "New access request for your record 'A Romans story'"
+            in owner_submit_message.subject
+        )
+
+        guest_submit_message = outbox[2]
+        assert (
+            "Your access request was submitted successfully"
+            in guest_submit_message.subject
+        )
         # TODO: update to `req["links"]["self_html"]` when addressing https://github.com/inveniosoftware/invenio-rdm-records/issues/1327
-        assert "/me/requests/{}".format(request.id) in submit_message.html
+        assert "/me/requests/{}".format(request.id) in guest_submit_message.html
+        # Following is a 1-off test of invenio_url_for in Jinja settings + dynamic
+        # blueprint route registration (decorator style within a function). Good to keep
+        # as a smoke test.
+        assert (
+            "https://127.0.0.1:5000/account/settings/notifications"
+            in guest_submit_message.html
+        )
 
         # Accept the request
         # This is expected to send out another email, containing the new secret link
         current_requests_service.execute_action(identity, request.id, "accept", data={})
-        assert len(outbox) == 3
-        success_message = outbox[2]
+        assert len(outbox) == 4
+        success_message = outbox[3]
         match = link_regex.search(str(success_message.body))
         assert match
         access_url = match.group(1)
@@ -239,15 +256,19 @@ def test_access_grant_for_user(
     assert response.status_code == 403
 
     # Grant access to the *current user*
-    service.access.create_grant(
+    service.access.bulk_create_grants(
         identity=system_identity,
         id_=record.id,
         data={
-            "subject": {
-                "type": "user",
-                "id": str(user.id),
-            },
-            "permission": "view",
+            "grants": [
+                {
+                    "subject": {
+                        "type": "user",
+                        "id": str(user.id),
+                    },
+                    "permission": "view",
+                }
+            ]
         },
     )
 
@@ -269,15 +290,19 @@ def test_access_grant_for_system_role(
     assert response.status_code == 403
 
     # Grant access to *any authenticated user*
-    service.access.create_grant(
+    service.access.bulk_create_grants(
         identity=system_identity,
         id_=record.id,
         data={
-            "subject": {
-                "type": "system_role",
-                "id": "authenticated_user",
-            },
-            "permission": "view",
+            "grants": [
+                {
+                    "subject": {
+                        "type": "system_role",
+                        "id": "authenticated_user",
+                    },
+                    "permission": "view",
+                }
+            ]
         },
     )
 
@@ -308,15 +333,19 @@ def test_access_grant_for_role(
     assert response.status_code == 403
 
     # Grant access to users with a specific role (i.e. in a specific group)
-    service.access.create_grant(
+    service.access.bulk_create_grants(
         identity=system_identity,
         id_=record.id,
         data={
-            "subject": {
-                "type": "role",
-                "id": str(role.name),
-            },
-            "permission": "view",
+            "grants": [
+                {
+                    "subject": {
+                        "type": "role",
+                        "id": str(role.name),
+                    },
+                    "permission": "view",
+                }
+            ]
         },
     )
 

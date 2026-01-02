@@ -1,12 +1,14 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2022 Graz University of Technology.
+# Copyright (C) 2022-2025 Graz University of Technology.
+# Copyright (C) 2024 KTH Royal Institute of Technology.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
 
 """OAI-PMH API schemas."""
 
+from invenio_i18n import lazy_gettext as _
 from marshmallow import EXCLUDE, Schema, fields, validate
 from marshmallow_utils.fields import SanitizedUnicode
 
@@ -25,7 +27,7 @@ class OAIPMHSetSchema(Schema):
     description = SanitizedUnicode(load_default=None, dump_default=None)
     name = SanitizedUnicode(required=True, validate=validate.Length(min=1, max=255))
     search_pattern = SanitizedUnicode(
-        required=True, metadata={"title": "Search pattern"}
+        required=True, metadata={"title": _("Search pattern")}
     )
     spec = SanitizedUnicode(
         required=True,
@@ -41,4 +43,3 @@ class OAIPMHSetSchema(Schema):
         """Meta attributes for the schema."""
 
         unknown = EXCLUDE
-        ordered = True

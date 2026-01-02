@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2021 CERN
+# Copyright (C) 2021-2024 CERN
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
@@ -110,9 +110,13 @@ def test_creator_affiliations_indexing(running_app, minimal_record_with_creator)
     dump = draft.dumps()
     assert dump["metadata"]["creators"][0]["affiliations"] == [
         {
-            "id": "cern",
-            "name": "CERN",
             "@v": f"{running_app.affiliations_v._record.id}::2",
+            "id": "cern",
+            "identifiers": [
+                {"identifier": "01ggx4157", "scheme": "ror"},
+                {"identifier": "000000012156142X", "scheme": "isni"},
+            ],
+            "name": "CERN",
         }
     ]
 
@@ -187,9 +191,13 @@ def test_contributor_affiliations_indexing(
     dump = draft.dumps()
     assert dump["metadata"]["contributors"][0]["affiliations"] == [
         {
-            "id": "cern",
-            "name": "CERN",
             "@v": f"{running_app.affiliations_v._record.id}::2",
+            "id": "cern",
+            "identifiers": [
+                {"identifier": "01ggx4157", "scheme": "ror"},
+                {"identifier": "000000012156142X", "scheme": "isni"},
+            ],
+            "name": "CERN",
         }
     ]
 

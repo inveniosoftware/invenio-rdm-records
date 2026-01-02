@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2021 CERN.
+# Copyright (C) 2021-2024 CERN.
 # Copyright (C) 2021 Northwestern University.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
@@ -11,10 +11,13 @@
 Not every case is tested, but enough high-level ones for it to be useful.
 """
 
-
 from io import BytesIO
 
 import pytest
+from invenio_records_resources.services.files.transfer.constants import (
+    FETCH_TRANSFER_TYPE,
+    REMOTE_TRANSFER_TYPE,
+)
 
 from tests.helpers import login_user, logout_user
 
@@ -31,6 +34,19 @@ def init_file(client, recid, headers):
     """Init a file for draft with given recid."""
     return client.post(
         f"/records/{recid}/draft/files", headers=headers, json=[{"key": "test.pdf"}]
+    )
+
+
+def init_file_with_transfer(client, recid, headers, transfer_data):
+    return client.post(
+        f"/records/{recid}/draft/files",
+        headers=headers,
+        json=[
+            {
+                "key": "test.pdf",
+                "transfer": transfer_data,
+            }
+        ],
     )
 
 
@@ -73,6 +89,84 @@ def test_only_owners_can_init_file_upload(
     login_user(client, users[0])
     response = init_file(client, recid, headers)
     assert response.status_code == 201
+
+
+def test_no_one_can_init_remote_file(
+    client, headers, running_app, minimal_record, users
+):
+    login_user(client, users[0])
+
+    recid = create_draft(client, minimal_record, headers)
+
+    # Anonymous user can't init file for it
+    logout_user(client)
+    response = init_file_with_transfer(
+        client,
+        recid,
+        headers,
+        {"type": REMOTE_TRANSFER_TYPE, "url": "https://example.com/test.pdf"},
+    )
+    assert response.status_code == 403
+
+    # Different user can't init file for it
+    login_user(client, users[1])
+    response = init_file_with_transfer(
+        client,
+        recid,
+        headers,
+        {"type": REMOTE_TRANSFER_TYPE, "url": "https://example.com/test.pdf"},
+    )
+    assert response.status_code == 403
+
+    # Owner can init file for it
+    logout_user(client)
+    login_user(client, users[0])
+    response = init_file_with_transfer(
+        client,
+        recid,
+        headers,
+        {"type": REMOTE_TRANSFER_TYPE, "url": "https://example.com/test.pdf"},
+    )
+    assert response.status_code == 403
+
+
+def test_no_one_can_init_file_fetch(
+    client, headers, running_app, minimal_record, users
+):
+    login_user(client, users[0])
+
+    recid = create_draft(client, minimal_record, headers)
+
+    # Anonymous user can't init file for it
+    logout_user(client)
+    response = init_file_with_transfer(
+        client,
+        recid,
+        headers,
+        {"type": FETCH_TRANSFER_TYPE, "url": "https://example.com/test.pdf"},
+    )
+    assert response.status_code == 403
+
+    # Different user can't init file for it
+    login_user(client, users[1])
+    response = init_file_with_transfer(
+        client,
+        recid,
+        headers,
+        {"type": FETCH_TRANSFER_TYPE, "url": "https://example.com/test.pdf"},
+    )
+    assert response.status_code == 403
+
+    # Owner can init file for it
+    logout_user(client)
+    login_user(client, users[0])
+    response = init_file_with_transfer(
+        client,
+        recid,
+        headers,
+        {"type": FETCH_TRANSFER_TYPE, "url": "https://example.com/test.pdf"},
+    )
+    assert response.status_code == 403
 
 
 def test_only_owners_can_upload_file(

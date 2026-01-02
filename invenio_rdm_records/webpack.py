@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2019-2022 CERN.
+# Copyright (C) 2019-2025 CERN.
 # Copyright (C) 2019-2022 Northwestern University.
 # Copyright (C)      2022 TU Wien.
 # Copyright (C)      2022 Graz University of Technology.
@@ -24,9 +24,18 @@ theme = WebpackThemeBundle(
             },
             dependencies={
                 "@babel/runtime": "^7.9.0",
-                "@ckeditor/ckeditor5-build-classic": "^16.0.0",
-                "@ckeditor/ckeditor5-react": "^2.1.0",
+                "@tinymce/tinymce-react": "^4.3.0",
+                "@uppy/aws-s3-multipart": "^3.12.0",
+                "@uppy/core": "^3.13.1",
+                "@uppy/dashboard": "^3.9.1",
+                "@uppy/drag-drop": "^3.1.1",
+                "@uppy/image-editor": "^2.4.6",
+                "@uppy/file-input": "^3.1.2",
+                "@uppy/locales": "^3.5.4",
+                "@uppy/progress-bar": "^3.1.1",
+                "@uppy/react": "^3.4.0",
                 "formik": "^2.1.0",
+                "hash-wasm": "^4.12.0",
                 "i18next": "^20.3.0",
                 "i18next-browser-languagedetector": "^6.1.0",
                 "luxon": "^1.23.0",
@@ -37,11 +46,12 @@ theme = WebpackThemeBundle(
                 "react-dnd-html5-backend": "^11.1.0",
                 "react-dropzone": "^11.0.0",
                 "react-i18next": "^11.11.0",
-                "react-invenio-forms": "^2.0.0",
-                "react-searchkit": "^2.0.0",
+                "react-invenio-forms": "^4.11.0",
+                "react-searchkit": "^3.0.0",
+                "tinymce": "^6.7.2",
                 "yup": "^0.32.0",
                 "@semantic-ui-react/css-patch": "^1.0.0",
-                "axios": "^0.21.0",
+                "axios": "^1.7.7",
                 "react": "^16.13.0",
                 "react-dom": "^16.13.0",
                 "react-redux": "^7.2.0",

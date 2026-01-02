@@ -1,5 +1,5 @@
 // This file is part of Invenio-RDM-Records
-// Copyright (C) 2020-2023 CERN.
+// Copyright (C) 2020-2025 CERN.
 // Copyright (C) 2020-2022 Northwestern University.
 //
 // Invenio-RDM-Records is free software; you can redistribute it and/or modify it
@@ -7,7 +7,8 @@
 
 export const DRAFT_FETCHED = "DRAFT_FETCHED";
 export const DRAFT_HAS_VALIDATION_ERRORS = "DRAFT_HAS_VALIDATION_ERRORS";
-
+export const DRAFT_LOADED_WITH_VALIDATION_ERRORS =
+  "DRAFT_LOADED_WITH_VALIDATION_ERRORS";
 // Draft save
 export const DRAFT_SAVE_STARTED = "DRAFT_SAVE_STARTED";
 export const DRAFT_SAVE_SUCCEEDED = "DRAFT_SAVE_SUCCEEDED";
@@ -42,6 +43,8 @@ export const RESERVE_PID_FAILED = "RESERVE_PID_FAILED";
 export const DISCARD_PID_STARTED = "DISCARD_PID_STARTED";
 export const DISCARD_PID_SUCCEEDED = "DISCARD_PID_SUCCEEDED";
 export const DISCARD_PID_FAILED = "DISCARD_PID_FAILED";
+
+export const SET_DOI_NEEDED = "SET_DOI_NEEDED";
 
 // Files
 export const FILE_UPLOAD_ADDED = "FILE_UPLOAD_ADDED";

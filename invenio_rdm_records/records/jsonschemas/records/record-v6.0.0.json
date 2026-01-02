@@ -203,6 +203,10 @@
             }
           }
         },
+        "copyright": {
+          "description": "Copyright for record (may contain HTML).",
+          "type": "string"
+        },
         "description": {
           "description": "Description for record (may contain HTML).",
           "type": "string"
@@ -376,6 +380,28 @@
         "is_visible": {
           "type": "boolean",
           "description": "Whether or not the tombstone page is publicly visible."
+        },
+        "deletion_policy": {
+          "$ref": "local://records/definitions-v2.0.0.json#/deletion_policy",
+          "description": "Deletion policy that applied to this record."
+        }
+      }
+    },
+    "internal_notes": {
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "note": {
+          "type": "string"
+        },
+        "timestamp": {
+          "type": "string",
+          "description": "ISO8601 formatted timestamp in UTC.",
+          "format": "date-time"
+        },
+        "added_by": {
+          "$ref": "local://records/definitions-v2.0.0.json#/agent"
         }
       }
     },
@@ -400,18 +426,12 @@
         "record": {
           "description": "Record visibility (public or restricted)",
           "type": "string",
-          "enum": [
-            "public",
-            "restricted"
-          ]
+          "enum": ["public", "restricted"]
         },
         "files": {
           "description": "Files visibility (public or restricted)",
           "type": "string",
-          "enum": [
-            "public",
-            "restricted"
-          ]
+          "enum": ["public", "restricted"]
         },
         "embargo": {
           "description": "Description of the embargo on the record.",
@@ -420,25 +440,16 @@
           "properties": {
             "active": {
               "description": "Whether or not the embargo is (still) active.",
-              "type": [
-                "boolean",
-                "null"
-              ]
+              "type": ["boolean", "null"]
             },
             "until": {
               "description": "Embargo date of record (ISO8601 formatted date time in UTC). At this time both metadata and files will be made public.",
-              "type": [
-                "string",
-                "null"
-              ],
+              "type": ["string", "null"],
               "format": "date"
             },
             "reason": {
               "description": "The reason why the record is under embargo.",
-              "type": [
-                "string",
-                "null"
-              ]
+              "type": ["string", "null"]
             }
           }
         }

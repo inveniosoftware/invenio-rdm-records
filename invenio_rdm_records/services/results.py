@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2022 CERN.
+# Copyright (C) 2022-2024 CERN.
 # Copyright (C) 2023 TU Wien.
+# Copyright (C) 2024 Graz University of Technology.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
@@ -11,7 +12,14 @@
 from invenio_communities.communities.entity_resolvers import pick_fields
 from invenio_communities.communities.schema import CommunityGhostSchema
 from invenio_communities.proxies import current_communities
-from invenio_records_resources.services.records.results import ExpandableField
+from invenio_records_resources.services.base.results import (
+    ServiceItemResult,
+    ServiceListResult,
+)
+from invenio_records_resources.services.records.results import (
+    ExpandableField,
+    RecordList,
+)
 from invenio_users_resources.proxies import current_user_resources
 
 from .dummy import DummyExpandingService
@@ -69,3 +77,65 @@ class GrantSubjectExpandableField(ExpandableField):
     def pick(self, identity, resolved_rec):
         """Pick fields defined in the entity resolver."""
         return resolved_rec
+
+
+class RDMRecordList(RecordList):
+    """Record list with custom fields."""
+
+    @property
+    def hits(self):
+        """Iterator over the hits."""
+        for hit in self._results:
+            # Load dump
+            record_dict = hit.to_dict()
+
+            index_name = self._service.record_cls.index._name
+            if index_name in hit.meta["index"]:
+                record = self._service.record_cls.loads(record_dict)
+            else:
+                record = self._service.draft_cls.loads(record_dict)
+
+            # Project the record
+            projection = self._schema.dump(
+                record,
+                context=dict(
+                    identity=self._identity,
+                    record=record,
+                    meta=hit.meta,
+                ),
+            )
+            if self._links_item_tpl:
+                projection["links"] = self._links_item_tpl.expand(
+                    self._identity, record
+                )
+
+            yield projection
+
+
+class RDMRecordRevisionsList(ServiceListResult):
+    """Record revisions list.
+
+    We need a custom result class to handle the record revisions list as they are stored only in DB.
+    """
+
+    def __init__(self, identity, revisions):
+        """Instantiate a Collection tree list item."""
+        self._identity = identity
+        self._revisions = revisions
+
+    def to_dict(self):
+        """Serialize the collection tree list to a dictionary."""
+        res = map(
+            lambda revision: {
+                "updated": revision.updated,
+                "created": revision.created,
+                "revision_id": revision.transaction_id,
+                "json": revision.json,
+            },
+            self._revisions,
+        )
+        return list(res)
+
+    def __iter__(self):
+        """Iterate over the collection revisions."""
+        return iter(self._revisions)

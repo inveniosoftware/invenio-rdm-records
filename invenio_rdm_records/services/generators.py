@@ -1,31 +1,30 @@
 # -*- coding: utf-8 -*-
 #
 # Copyright (C) 2021 Graz University of Technology.
-# Copyright (C) 2021 CERN.
+# Copyright (C) 2021-2024 CERN.
 # Copyright (C) 2021 TU Wien.
+# Copyright (C) 2024 CESNET.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
 
 """Invenio-RDM-Records Permissions Generators."""
+
 import operator
 from collections import namedtuple
 from functools import partial, reduce
 from itertools import chain
 
-from flask import g
+from flask import current_app
 from flask_principal import UserNeed
-from invenio_communities.config import COMMUNITIES_ROLES
 from invenio_communities.generators import CommunityRoleNeed, CommunityRoles
 from invenio_communities.proxies import current_roles
 from invenio_records_permissions.generators import ConditionalGenerator, Generator
-from invenio_records_resources.services.files.transfer import TransferType
 from invenio_search.engine import dsl
 
 from ..records import RDMDraft
 from ..records.systemfields.access.grants import Grant
 from ..records.systemfields.deletion_status import RecordDeletionStatusEnum
-from ..requests import CommunityInclusion
 from ..requests.access import AccessRequestTokenNeed
 from ..tokens.permissions import RATNeed
 
@@ -95,28 +94,6 @@ class IfDraft(ConditionalGenerator):
     def _condition(self, record, **kwargs):
         """Check if the record is a draft."""
         return isinstance(record, RDMDraft)
-
-
-class IfFileIsLocal(ConditionalGenerator):
-    """Conditional generator for file storage class."""
-
-    def _condition(self, record, file_key=None, **kwargs):
-        """Check if the file is local."""
-        is_file_local = True
-        if file_key:
-            file_record = record.files.get(file_key)
-            # file_record __bool__ returns false for `if file_record`
-            file = file_record.file if file_record is not None else None
-            is_file_local = not file or file.storage_class == TransferType.LOCAL
-        else:
-            file_records = record.files.entries
-            for file_record in file_records:
-                file = file_record.file
-                if file and file.storage_class != TransferType.LOCAL:
-                    is_file_local = False
-                    break
-
-        return is_file_local
 
 
 class IfNewRecord(ConditionalGenerator):
@@ -308,7 +285,32 @@ class SubmissionReviewer(Generator):
         receiver = request.receiver
         if receiver is not None:
             return receiver.get_needs(ctx=request.type.needs_context)
+
         return []
+
+
+class RequestReviewers(Generator):
+    """Roles for request's reviewers."""
+
+    def _reviewers_enabled(self):
+        """Check if reviewers are enabled."""
+        return current_app.config.get("REQUESTS_REVIEWERS_ENABLED", False)
+
+    def needs(self, record=None, **kwargs):
+        """Set of Needs granting permission."""
+        if not self._reviewers_enabled():
+            return []
+
+        if record is None or record.parent.review is None:
+            return []
+
+        _needs = []
+        request = record.parent.review
+        reviewers = request.reviewers
+        if reviewers is not None:
+            for reviewer in reviewers:
+                _needs.extend(reviewer.get_needs(ctx=request.type.needs_context))
+        return _needs
 
 
 class CommunityInclusionReviewers(Generator):
@@ -413,3 +415,19 @@ class GuestAccessRequestToken(Generator):
             return [AccessRequestTokenNeed(request["payload"]["token"])]
 
         return []
+
+
+class IfOneCommunity(ConditionalGenerator):
+    """Conditional generator for records always in communities case."""
+
+    def _condition(self, record=None, **kwargs):
+        """Check if the record is associated with one community."""
+        return bool(record and len(record.parent.communities.ids) == 1)
+
+
+class IfAtLeastOneCommunity(ConditionalGenerator):
+    """Conditional generator for records always in communities case."""
+
+    def _condition(self, record=None, **kwargs):
+        """Check if the record is associated with at least one community."""
+        return bool(record and record.parent.communities.ids)

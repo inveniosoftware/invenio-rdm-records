@@ -26,15 +26,24 @@ class RemovalReasonSchema(VocabularyRelationSchema):
     id = fields.String(required=True)
 
 
+# NOTE: The deletion policy is not a vocabulary, but is instead defined via config. We
+# might want to handle this like a vocabulary though in the future.
+class DeletionPolicySchema(VocabularyRelationSchema):
+    """Schema for the deletion policy."""
+
+    id = fields.String(required=True)
+
+
 class TombstoneSchema(Schema):
     """Schema for the record's tombstone."""
 
     removal_reason = fields.Nested(RemovalReasonSchema)
     note = SanitizedUnicode()
-    removed_by = fields.Nested(AgentSchema, dump_only=True)
+    removed_by = fields.Nested(AgentSchema)
     removal_date = ISODateString(dump_only=True)
     citation_text = SanitizedUnicode()
     is_visible = fields.Boolean()
+    deletion_policy = fields.Nested(DeletionPolicySchema)
 
 
 class DeletionStatusSchema(Schema):

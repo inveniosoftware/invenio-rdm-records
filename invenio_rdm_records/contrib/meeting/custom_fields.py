@@ -1,5 +1,6 @@
 #
-# Copyright (C) 2023 CERN.
+# Copyright (C) 2023-2025 CERN.
+# Copyright (C) 2024 KTH Royal Institute of Technology.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
@@ -17,12 +18,15 @@ Implements the following fields:
 - meeting.url
 """
 
+from functools import partial
+
 from invenio_i18n import lazy_gettext as _
 from invenio_records_resources.services.custom_fields import BaseCF
 from marshmallow import fields
-from marshmallow_utils.fields import SanitizedUnicode
+from marshmallow_utils.fields import IdentifierValueSet, SanitizedUnicode
+from marshmallow_utils.schemas import IdentifierSchema
 
-from ...services.schemas.metadata import _valid_url
+from ...services.schemas.metadata import _valid_url, record_related_identifiers_schemes
 
 
 class MeetingCF(BaseCF):
@@ -40,7 +44,15 @@ class MeetingCF(BaseCF):
                 "session": SanitizedUnicode(),
                 "title": SanitizedUnicode(),
                 "url": SanitizedUnicode(
-                    validate=_valid_url(error_msg="You must provide a valid URL."),
+                    validate=_valid_url(error_msg=_("You must provide a valid URL.")),
+                ),
+                "identifiers": IdentifierValueSet(
+                    fields.Nested(
+                        partial(
+                            IdentifierSchema,
+                            allowed_schemes=record_related_identifiers_schemes,
+                        )
+                    )
                 ),
             }
         )
@@ -61,6 +73,13 @@ class MeetingCF(BaseCF):
                     "fields": {"keyword": {"type": "keyword"}},
                 },
                 "url": {"type": "keyword"},
+                "identifiers": {
+                    "type": "object",
+                    "properties": {
+                        "identifier": {"type": "keyword"},
+                        "scheme": {"type": "keyword"},
+                    },
+                },
             },
         }
 
@@ -69,7 +88,6 @@ MEETING_NAMESPACE = {
     # Meeting
     "meeting": "",
 }
-
 
 MEETING_CUSTOM_FIELDS = [
     MeetingCF(name="meeting:meeting"),

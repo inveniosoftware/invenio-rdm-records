@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2020-2021 CERN.
+# Copyright (C) 2020-2025 CERN.
 # Copyright (C) 2020-2021 Northwestern University.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
@@ -57,6 +57,7 @@ def test_draft_links(client, draft_json, minimal_record, headers):
         "self": f"https://127.0.0.1:5000/api/records/{pid_value}/draft",
         "review": f"https://127.0.0.1:5000/api/records/{pid_value}/draft/review",  # noqa
         "self_html": f"https://127.0.0.1:5000/uploads/{pid_value}",
+        "preview_html": f"https://127.0.0.1:5000/records/{pid_value}?preview=1",
         "publish": f"https://127.0.0.1:5000/api/records/{pid_value}/draft/actions/publish",  # noqa
         "record": f"https://127.0.0.1:5000/api/records/{pid_value}",
         "record_html": f"https://127.0.0.1:5000/records/{pid_value}",
@@ -74,8 +75,11 @@ def test_draft_links(client, draft_json, minimal_record, headers):
         "requests": f"https://127.0.0.1:5000/api/records/{pid_value}/requests",  # noqa
         "access": f"https://127.0.0.1:5000/api/records/{pid_value}/access",
         "access_request": f"https://127.0.0.1:5000/api/records/{pid_value}/access/request",
+        "access_grants": f"https://127.0.0.1:5000/api/records/{pid_value}/access/grants",
         "access_users": f"https://127.0.0.1:5000/api/records/{pid_value}/access/users",
+        "access_groups": f"https://127.0.0.1:5000/api/records/{pid_value}/access/groups",
     }
+
     assert expected_links == created_draft_links == read_draft_links
 
 
@@ -92,16 +96,19 @@ def test_record_links(client, published_json, headers):
     expected_links = {
         "self": f"https://127.0.0.1:5000/api/records/{pid_value}",
         "self_html": f"https://127.0.0.1:5000/records/{pid_value}",
-        "self_doi": f"https://127.0.0.1:5000/doi/{doi_value}",
-        "doi": f"https://handle.stage.datacite.org/{doi_value}",
+        "preview_html": f"https://127.0.0.1:5000/records/{pid_value}?preview=1",
+        "doi": f"https://handle.test.datacite.org/{doi_value}",
+        "self_doi": f"https://handle.test.datacite.org/{doi_value}",
+        "self_doi_html": f"https://127.0.0.1:5000/doi/{doi_value}",
         "draft": f"https://127.0.0.1:5000/api/records/{pid_value}/draft",
         "files": f"https://127.0.0.1:5000/api/records/{pid_value}/files",
         "media_files": f"https://127.0.0.1:5000/api/records/{pid_value}/media-files",
         "archive": f"https://127.0.0.1:5000/api/records/{pid_value}/files-archive",
         "archive_media": f"https://127.0.0.1:5000/api/records/{pid_value}/media-files-archive",
         "parent": f"https://127.0.0.1:5000/api/records/{parent_pid_value}",
-        "parent_doi": f"https://127.0.0.1:5000/doi/{parent_doi_value}",
         "parent_html": f"https://127.0.0.1:5000/records/{parent_pid_value}",
+        "parent_doi": f"https://handle.test.datacite.org/{parent_doi_value}",
+        "parent_doi_html": f"https://127.0.0.1:5000/doi/{parent_doi_value}",
         "versions": f"https://127.0.0.1:5000/api/records/{pid_value}/versions",
         "latest": f"https://127.0.0.1:5000/api/records/{pid_value}/versions/latest",  # noqa
         "latest_html": f"https://127.0.0.1:5000/records/{pid_value}/latest",  # noqa
@@ -114,8 +121,13 @@ def test_record_links(client, published_json, headers):
         "requests": f"https://127.0.0.1:5000/api/records/{pid_value}/requests",  # noqa
         "access": f"https://127.0.0.1:5000/api/records/{pid_value}/access",
         "access_request": f"https://127.0.0.1:5000/api/records/{pid_value}/access/request",
+        "access_grants": f"https://127.0.0.1:5000/api/records/{pid_value}/access/grants",
         "access_users": f"https://127.0.0.1:5000/api/records/{pid_value}/access/users",
+        "access_groups": f"https://127.0.0.1:5000/api/records/{pid_value}/access/groups",
+        "request_deletion": f"https://127.0.0.1:5000/api/records/{pid_value}/request-deletion",  # noqa
+        "file_modification": f"https://127.0.0.1:5000/api/records/{pid_value}/file-modification",  # noqa
     }
+
     assert expected_links == published_record_links == read_record_links
 
 

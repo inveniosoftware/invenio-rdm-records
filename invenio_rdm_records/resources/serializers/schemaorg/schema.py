@@ -1,14 +1,16 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2023 CERN.
+# Copyright (C) 2023-2025 CERN.
 # Copyright (C) 2021 Northwestern University.
-# Copyright (C) 2023 Graz University of Technology.
+# Copyright (C) 2023-2025 Graz University of Technology.
+# Copyright (C) 2024 KTH Royal Institute of Technology.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
 
 """Schemaorg based Schema for Invenio RDM Records."""
-from typing import Optional
+
+from copy import deepcopy
 
 import pycountry
 from babel_edtf import parse_edtf
@@ -16,8 +18,7 @@ from commonmeta import dict_to_spdx, doi_as_url, parse_attributes, unwrap, wrap
 from edtf.parser.grammar import ParseException
 from flask_resources.serializers import BaseSerializerSchema
 from idutils import to_url
-from invenio_access.permissions import system_identity
-from invenio_records_resources.proxies import current_service_registry
+from invenio_i18n import lazy_gettext as _
 from marshmallow import Schema, ValidationError, fields, missing
 from marshmallow_utils.fields import SanitizedHTML, SanitizedUnicode
 from pydash import py_
@@ -118,7 +119,9 @@ class PersonOrOrgSchema(Schema):
             id_ = affiliation.get("id")
             if not (name or id_):
                 raise ValidationError(
-                    "Affiliation failed to serialize: one of 'id' or 'name' must be provided."
+                    _(
+                        "Affiliation failed to serialize: one of 'id' or 'name' must be provided."
+                    )
                 )
 
             serialized_affiliation = {"@type": "Organization"}
@@ -128,20 +131,11 @@ class PersonOrOrgSchema(Schema):
 
             # Affiliation comes from a controlled vocabulary
             if id_:
-                affiliations_service = current_service_registry.get("affiliations")
-                affiliation_vc = affiliations_service.read(
-                    system_identity, id_
-                ).to_dict()
-
-                # Prioritize the vocabulary name instead of the custom one
-                if affiliation_vc.get("name"):
-                    serialized_affiliation.update({"name": affiliation_vc["name"]})
-
                 # Retrieve the first identifier
                 identifier = next(
                     (
                         idf
-                        for idf in affiliation_vc.get("identifiers", [])
+                        for idf in affiliation.get("identifiers", [])
                         if (idf.get("identifier") and idf.get("scheme"))
                     ),
                     None,
@@ -183,8 +177,9 @@ class SchemaorgSchema(BaseSerializerSchema, CommonFieldsMixin):
     )
     publisher = fields.Method("get_publisher")
     keywords = fields.Method("get_keywords")
-    datePublished = fields.Method("get_publication_date")
+    dateCreated = fields.Method("get_creation_date")
     dateModified = fields.Method("get_modification_date")
+    datePublished = fields.Method("get_publication_date")
     temporal = fields.Method("get_dates")
     inLanguage = fields.Method("get_language")
     contentSize = fields.Method("get_size")
@@ -205,6 +200,11 @@ class SchemaorgSchema(BaseSerializerSchema, CommonFieldsMixin):
 
     url = fields.Method("get_url")
 
+    # Fields that are specific to certain resource types.
+    measurementTechnique = fields.Method("get_measurement_techniques")
+    distribution = fields.Method("get_distribution")
+    uploadDate = fields.Method("get_upload_date")
+
     def get_id(self, obj):
         """Get id. Use the DOI expressed as a URL."""
         doi = py_.get(obj, "pids.doi.identifier")
@@ -214,12 +214,17 @@ class SchemaorgSchema(BaseSerializerSchema, CommonFieldsMixin):
 
     def get_type(self, obj):
         """Get type. Use the vocabulary service to get the schema.org type."""
+        resource_type_id = py_.get(obj, "metadata.resource_type.id")
+        if not resource_type_id:
+            return missing
+
         props = get_vocabulary_props(
             "resourcetypes",
             ["props.schema.org"],
-            py_.get(obj, "metadata.resource_type.id"),
+            resource_type_id,
         )
-        return props.get("schema.org", "CreativeWork")
+        ret = props.get("schema.org", "https://schema.org/CreativeWork")
+        return ret
 
     def get_size(self, obj):
         """Get size."""
@@ -236,8 +241,12 @@ class SchemaorgSchema(BaseSerializerSchema, CommonFieldsMixin):
 
     def get_publication_date(self, obj):
         """Get publication date."""
+        publication_date = py_.get(obj, "metadata.publication_date")
+        if not publication_date:
+            return missing
+
         try:
-            parsed_date = parse_edtf(py_.get(obj, "metadata.publication_date"))
+            parsed_date = parse_edtf(publication_date)
         except ParseException:
             return missing
 
@@ -246,10 +255,13 @@ class SchemaorgSchema(BaseSerializerSchema, CommonFieldsMixin):
             parsed_date = parsed_date.lower
         return str(parsed_date)
 
+    def get_creation_date(self, obj):
+        """Get creation date."""
+        return obj.get("created") or missing
+
     def get_modification_date(self, obj):
         """Get modification date."""
-        last_updated = obj.get("updated")
-        return last_updated or missing
+        return obj.get("updated") or missing
 
     def get_language(self, obj):
         """Get language. Schemaorg expects either a string or language dict.
@@ -350,10 +362,12 @@ class SchemaorgSchema(BaseSerializerSchema, CommonFieldsMixin):
             number = award.get("number")
             id_ = award.get("id")
 
-            if not (id_ or (title and number)):
-                # One of 'id' or '(title' and 'number') must be provided
+            if not (id_ or title or number):
+                # One of 'id', 'title', or 'number' must be provided
                 raise ValidationError(
-                    "Funding serialization failed on award: one of 'id' or ('number' and 'title') are required."
+                    _(
+                        "Funding serialization failed on award: one of 'id', 'number', or 'title' are required."
+                    )
                 )
 
             serialized_award = {}
@@ -418,7 +432,7 @@ class SchemaorgSchema(BaseSerializerSchema, CommonFieldsMixin):
         return ids or missing
 
     def get_url(self, obj):
-        """Get Zenodo URL of the record."""
+        """Get URL of the record."""
         self_url = py_.get(obj, "links.self_html")
         return self_url or missing
 
@@ -442,6 +456,46 @@ class SchemaorgSchema(BaseSerializerSchema, CommonFieldsMixin):
         ids = _serialize_identifiers(relids)
         return ids or missing
 
+    def _is_dataset(self, obj):
+        return self.get_type(obj) == "https://schema.org/Dataset"
+
+    def get_measurement_techniques(self, obj):
+        """Get measurement techniques (a.k.a. methods)."""
+        # Only applies to Datasets
+        if not self._is_dataset(obj):
+            return missing
+
+        additional_descriptions = py_.get(obj, "metadata.additional_descriptions", [])
+        res = None
+        for additional_description in additional_descriptions:
+            description = py_.get(additional_description, "description")
+            is_method = py_.get(additional_description, "type.id") == "methods"
+            if is_method and description:
+                # Use the first method as measurement technique
+                res = description
+                break
+
+        return res or missing
+
+    def get_distribution(self, obj):
+        """Get dataset distribution."""
+        if not self._is_dataset(obj):
+            return missing
+
+        files = py_.get(obj, "files.entries", {})
+        distribution_list = []
+        for f_name, f_object in files.items():
+            entry = {
+                "@type": "DataDownload",
+                "contentUrl": obj["links"]["files"] + f"/{f_name}/content",
+            }
+            mimetype = f_object.get("mimetype")
+            if mimetype:
+                entry["encodingFormat"] = mimetype
+            distribution_list.append(entry)
+
+        return distribution_list if distribution_list else missing
+
     def _filter_related_identifier_type(self, identifiers, relation_types):
         """Filters identifier by relation types.
 
@@ -457,3 +511,17 @@ class SchemaorgSchema(BaseSerializerSchema, CommonFieldsMixin):
             lambda x: x.get("relation_type", {}).get("id") in relation_types,
             identifiers,
         )
+
+    # Fields specific to https://schema.org/VideoObject
+    # Useful for video crawlers per
+    # https://developers.google.com/search/docs/appearance/structured-data/video
+    def _is_video(self, obj):
+        return self.get_type(obj) == "https://schema.org/VideoObject"
+
+    def get_upload_date(self, obj):
+        """Get uploadDate."""
+        if not self._is_video(obj):
+            return missing
+
+        # Creation date is closest in meaning to when video was uploaded
+        return self.get_creation_date(obj)

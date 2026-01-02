@@ -34,34 +34,35 @@ type = PO
 
 
 # Translate JavaScript strings
-# 1) Navigate to the invenio-rdm-records/theme/assets/semantic-ui/translations/invenio-rdm-records folder
+# 1) Navigate to the directory:
+#    cd invenio_rdm_records/assets/semantic-ui/translations/invenio_rdm_records
 # 2) Install i18n dev dependencies
 #    npm install
-# 3) Add a new language
+# 3) (Optional) Add a new language manually
 #    npm run init_catalog lang <lang>
+#    npm run extract_messages
+#    NOTE: Normally not needed, languages should be added in Transifex and pulled from there.
 # 4) Extract translation keys/values
 #    $ npm run extract_messages
-# 5) Update the ./messages/index.js file
-#    import TRANSLATE_<lang> from './<lang>/translations.json'
-#    export const translations = {
-#      ...rest,
-#      <lang>: { translation: TRANSLATE_<lang> }
-#    }
-# 6) Install the transifex-client
-#    $ pip install transifex-client
-# 7) Push source (.pot) and translations (.po) to Transifex
+# 5) Install the transifex-client
+#    $ curl -o- https://raw.githubusercontent.com/transifex/cli/master/install.sh | bash
+# 6) (Optional) Push source (.pot) and translations (.po) to Transifex
+#    Navigate to the root of the invenio_rdm_records repository
 #    $ tx push -s -t
-# 8) Pull translations for a single language from Transifex
+#    NOTE: this step can be omitted as adding new language
+# 7) (Optional) Pull translations for a single language from Transifex
 #    $ tx pull -l <lang>
-# 9) Pull translations for all languages from Transifex
+# 8) Pull translations for all languages from Transifex
+#    Navigate to the root of the invenio_rdm_records repository
 #    $ tx pull -a
-# 10) Compile .po files for all languages
+# 9) Compile .po files for all languages
+#    Navigate back to the invenio_rdm_records/assets/semantic-ui/translations/invenio_rdm_records folder
 #    $ npm run compile_catalog
-# 11) Convert .po file for a single language
+# 10) Convert .po file for a single language
 #    $ npm run compile_catalog lang <lang>
 
 [o:inveniosoftware:p:invenio:r:invenio-rdm-records-messages-ui]
-file_filter = invenio-rdm-records/assets/semantic-ui/translations/invenio-rdm-records/messages/<lang>/messages.po
-source_file = invenio-rdm-records/assets/semantic-ui/translations/invenio-rdm-records/translations.pot
+file_filter = invenio_rdm_records/assets/semantic-ui/translations/invenio_rdm_records/messages/<lang>/messages.po
+source_file = invenio_rdm_records/assets/semantic-ui/translations/invenio_rdm_records/translations.pot
 source_lang = en
 type = PO

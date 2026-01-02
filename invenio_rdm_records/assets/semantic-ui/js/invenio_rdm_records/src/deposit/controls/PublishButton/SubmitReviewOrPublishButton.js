@@ -21,6 +21,37 @@ class SubmitReviewOrPublishComponent extends Component {
       modalOpen: false,
     };
   }
+
+  doiReservationCheck = (
+    isDOIRequired,
+    noINeedDOI,
+    formik,
+    errorMessage,
+    errorType
+  ) => {
+    // Check for explicit DOI reservation via the "GET DOI button" only when DOI is
+    // optional in the instance's settings. If it is required, backend will automatically
+    // mint one even if it was not explicitly reserved
+    const shouldCheckForExplicitDOIReservation =
+      isDOIRequired !== undefined && // isDOIRequired is undefined when no value was provided from Invenio-app-rdm
+      !isDOIRequired &&
+      noINeedDOI &&
+      // Check if there is no DOI reserved yet. We check for doi explicitly as the pids object
+      // might contain other identifiers e.g. oai
+      Object.keys(formik?.values?.pids?.doi || {}).length === 0;
+    if (shouldCheckForExplicitDOIReservation) {
+      const errors = {
+        pids: {
+          doi: i18next.t(errorMessage),
+        },
+      };
+      formik.setErrors(errors);
+      const { raiseDOINeededButNotReserved } = this.props;
+      raiseDOINeededButNotReserved(formik?.values, errors, errorType);
+    }
+    return shouldCheckForExplicitDOIReservation;
+  };
+
   render() {
     const {
       community,
@@ -41,6 +72,8 @@ class SubmitReviewOrPublishComponent extends Component {
           {...ui}
           fluid
           className="mb-10"
+          record={record}
+          doiReservationCheck={this.doiReservationCheck}
         />
       );
     } else if (showChangeCommunityButton) {
@@ -61,13 +94,14 @@ class SubmitReviewOrPublishComponent extends Component {
           />
           <PublishButton
             buttonLabel={i18next.t("Publish without community")}
+            doiReservationCheck={this.doiReservationCheck}
             publishWithoutCommunity
             {...ui}
           />
         </>
       );
     } else {
-      result = <PublishButton {...ui} />;
+      result = <PublishButton doiReservationCheck={this.doiReservationCheck} {...ui} />;
     }
     return result;
   }
@@ -80,6 +114,7 @@ SubmitReviewOrPublishComponent.propTypes = {
   showDirectPublishButton: PropTypes.bool.isRequired,
   showSubmitForReviewButton: PropTypes.bool.isRequired,
   record: PropTypes.object.isRequired,
+  raiseDOINeededButNotReserved: PropTypes.func.isRequired,
 };
 
 SubmitReviewOrPublishComponent.defaultProps = {
@@ -96,6 +131,11 @@ const mapStateToProps = (state) => ({
 const mapDispatchToProps = (dispatch) => ({
   changeSelectedCommunityFn: (community) =>
     dispatch(changeSelectedCommunity(community)),
+  raiseDOINeededButNotReserved: (data, errors, errorType) =>
+    dispatch({
+      type: errorType,
+      payload: { data: data, errors: errors },
+    }),
 });
 
 export const SubmitReviewOrPublishButton = connect(

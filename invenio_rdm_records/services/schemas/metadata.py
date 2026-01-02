@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2020-2022 CERN.
+# Copyright (C) 2020-2025 CERN.
 # Copyright (C) 2020 Northwestern University.
-# Copyright (C) 2021-2023 Graz University of Technology.
+# Copyright (C) 2021-2025 Graz University of Technology.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
@@ -34,6 +34,7 @@ from marshmallow_utils.fields import (
     EDTFDateString,
     EDTFDateTimeString,
     IdentifierSet,
+    IdentifierValueSet,
     SanitizedHTML,
     SanitizedUnicode,
 )
@@ -47,6 +48,10 @@ record_personorg_schemes = LocalProxy(
 
 record_identifiers_schemes = LocalProxy(
     lambda: current_app.config["RDM_RECORDS_IDENTIFIERS_SCHEMES"]
+)
+
+record_related_identifiers_schemes = LocalProxy(
+    lambda: current_app.config["RDM_RECORDS_RELATED_IDENTIFIERS_SCHEMES"]
 )
 
 record_location_schemes = LocalProxy(
@@ -237,7 +242,7 @@ class RightsSchema(Schema):
 
     @validates_schema
     def validate_rights(self, data, **kwargs):
-        """Validates that id xor name are present."""
+        """Validates that id xor title are present."""
         id_ = data.get("id")
         title = data.get("title")
 
@@ -268,7 +273,7 @@ class RelatedIdentifierSchema(IdentifierSchema):
 
     def __init__(self, **kwargs):
         """Constructor."""
-        super().__init__(allowed_schemes=record_identifiers_schemes, **kwargs)
+        super().__init__(allowed_schemes=record_related_identifiers_schemes, **kwargs)
 
     relation_type = fields.Nested(VocabularySchema)
     resource_type = fields.Nested(VocabularySchema)
@@ -299,9 +304,9 @@ class ReferenceSchema(IdentifierSchema):
     def __init__(self, **kwargs):
         """Constructor."""
         super().__init__(
-            allowed_schemes=record_identifiers_schemes,
+            allowed_schemes=record_related_identifiers_schemes,
             identifier_required=False,
-            **kwargs
+            **kwargs,
         )
 
     reference = SanitizedUnicode(required=True)
@@ -310,8 +315,8 @@ class ReferenceSchema(IdentifierSchema):
 class PointSchema(Schema):
     """Point schema."""
 
-    lat = fields.Number(required=True)
-    lon = fields.Number(required=True)
+    lat = fields.Float(required=True)
+    lon = fields.Float(required=True)
 
 
 class LocationSchema(Schema):
@@ -370,7 +375,7 @@ class MetadataSchema(Schema):
     dates = fields.List(fields.Nested(DateSchema))
     languages = fields.List(fields.Nested(VocabularySchema))
     # alternate identifiers
-    identifiers = IdentifierSet(
+    identifiers = IdentifierValueSet(
         fields.Nested(
             partial(IdentifierSchema, allowed_schemes=record_identifiers_schemes)
         )
@@ -384,6 +389,7 @@ class MetadataSchema(Schema):
     )
     version = SanitizedUnicode()
     rights = fields.List(fields.Nested(RightsSchema))
+    copyright = SanitizedHTML(validate=validate.Length(min=1))
     description = SanitizedHTML(validate=validate.Length(min=3))
     additional_descriptions = fields.List(fields.Nested(DescriptionSchema))
     locations = fields.Nested(FeatureSchema)

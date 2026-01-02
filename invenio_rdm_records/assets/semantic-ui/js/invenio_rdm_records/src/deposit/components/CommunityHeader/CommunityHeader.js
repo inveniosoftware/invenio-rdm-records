@@ -1,5 +1,5 @@
 // This file is part of Invenio-RDM-Records
-// Copyright (C) 2020-2023 CERN.
+// Copyright (C) 2020-2024 CERN.
 // Copyright (C) 2020-2022 Northwestern University.
 // Copyright (C) 2021-2022 Graz University of Technology.
 //
@@ -14,6 +14,7 @@ import { connect } from "react-redux";
 import { Button, Container } from "semantic-ui-react";
 import { changeSelectedCommunity } from "../../state/actions";
 import { CommunitySelectionModal } from "../CommunitySelectionModal";
+import Overridable from "react-overridable";
 
 class CommunityHeaderComponent extends Component {
   constructor(props) {
@@ -22,6 +23,7 @@ class CommunityHeaderComponent extends Component {
       modalOpen: false,
     };
   }
+
   render() {
     const {
       changeSelectedCommunity,
@@ -29,10 +31,17 @@ class CommunityHeaderComponent extends Component {
       imagePlaceholderLink,
       showCommunitySelectionButton,
       disableCommunitySelectionButton,
-      showCommunityHeader,
+      userCanManageRecord,
       record,
+      showCommunityHeader,
     } = this.props;
     const { modalOpen } = this.state;
+
+    // record is coming from the Jinja template and it is refreshed on page reload
+    const isNewUpload = !record.id;
+    // Check if the user can manage the record only if it is not a new upload
+    const isCommunitySelectionDisabled =
+      (!isNewUpload && !userCanManageRecord) || disableCommunitySelectionButton;
 
     return (
       showCommunityHeader && (
@@ -64,47 +73,56 @@ class CommunityHeaderComponent extends Component {
             )}
             <div className="community-header-element flex align-items-center rel-ml-1">
               {showCommunitySelectionButton && (
-                <>
-                  <CommunitySelectionModal
-                    onCommunityChange={(community) => {
-                      changeSelectedCommunity(community);
-                      this.setState({ modalOpen: false });
-                    }}
-                    onModalChange={(value) => this.setState({ modalOpen: value })}
-                    modalOpen={modalOpen}
-                    chosenCommunity={community}
-                    displaySelected
-                    record={record}
-                    trigger={
-                      <Button
-                        className="community-header-button"
-                        disabled={disableCommunitySelectionButton}
-                        onClick={() => this.setState({ modalOpen: true })}
-                        primary
-                        size="mini"
-                        name="setting"
-                        type="button"
-                        content={
-                          community
-                            ? i18next.t("Change")
-                            : i18next.t("Select a community")
-                        }
-                      />
-                    }
-                  />
-                  {community && (
-                    <Button
-                      basic
-                      size="mini"
-                      labelPosition="left"
-                      className="community-header-button ml-5"
-                      onClick={() => changeSelectedCommunity(null)}
-                      content={i18next.t("Remove")}
-                      icon="close"
-                      disabled={disableCommunitySelectionButton}
+                <Overridable id="InvenioRdmRecords.CommunityHeader.CommunityHeaderElement.Container">
+                  <>
+                    <CommunitySelectionModal
+                      onCommunityChange={(community) => {
+                        changeSelectedCommunity(community);
+                        this.setState({ modalOpen: false });
+                      }}
+                      onModalChange={(value) => this.setState({ modalOpen: value })}
+                      modalOpen={modalOpen}
+                      chosenCommunity={community}
+                      displaySelected
+                      record={record}
+                      trigger={
+                        <Overridable id="InvenioRdmRecords.CommunityHeader.CommunitySelectionButton.Container">
+                          <Button
+                            className="community-header-button"
+                            disabled={isCommunitySelectionDisabled}
+                            onClick={() => this.setState({ modalOpen: true })}
+                            primary
+                            size="mini"
+                            name="setting"
+                            type="button"
+                            content={
+                              community
+                                ? i18next.t("Change")
+                                : i18next.t("Select a community")
+                            }
+                          />
+                        </Overridable>
+                      }
                     />
-                  )}
-                </>
+                    <Overridable
+                      id="InvenioRdmRecords.CommunityHeader.RemoveCommunityButton.Container"
+                      community={community}
+                    >
+                      {community && (
+                        <Button
+                          basic
+                          size="mini"
+                          labelPosition="left"
+                          className="community-header-button ml-5"
+                          onClick={() => changeSelectedCommunity(null)}
+                          content={i18next.t("Remove")}
+                          icon="close"
+                          disabled={isCommunitySelectionDisabled}
+                        />
+                      )}
+                    </Overridable>
+                  </>
+                </Overridable>
               )}
             </div>
           </Container>
@@ -122,6 +140,7 @@ CommunityHeaderComponent.propTypes = {
   showCommunityHeader: PropTypes.bool.isRequired,
   changeSelectedCommunity: PropTypes.func.isRequired,
   record: PropTypes.object.isRequired,
+  userCanManageRecord: PropTypes.bool.isRequired,
 };
 
 CommunityHeaderComponent.defaultProps = {
@@ -135,6 +154,7 @@ const mapStateToProps = (state) => ({
   showCommunitySelectionButton:
     state.deposit.editorState.ui.showCommunitySelectionButton,
   showCommunityHeader: state.deposit.editorState.ui.showCommunityHeader,
+  userCanManageRecord: state.deposit.permissions.can_manage,
 });
 
 const mapDispatchToProps = (dispatch) => ({

@@ -1,21 +1,22 @@
 // This file is part of Invenio-RDM-Records
-// Copyright (C) 2020-2023 CERN.
+// Copyright (C) 2020-2025 CERN.
 // Copyright (C) 2020-2022 Northwestern University.
 // Copyright (C) 2021-2022 Graz University of Technology.
 // Copyright (C)      2022 TU Wien.
+// Copyright (C)      2024 KTH Royal Institute of Technology.
 //
 // Invenio-RDM-Records is free software; you can redistribute it and/or modify it
 // under the terms of the MIT License; see LICENSE file for more details.
 
 import { i18next } from "@translations/invenio_rdm_records/i18next";
-import { useFormikContext } from "formik";
+import { useFormikContext, getIn } from "formik";
 import _get from "lodash/get";
 import PropTypes from "prop-types";
 import React, { Component, useState } from "react";
 import Dropzone from "react-dropzone";
 import {
   Button,
-  Checkbox,
+  Radio,
   Grid,
   Header,
   Icon,
@@ -24,7 +25,7 @@ import {
   Segment,
   Table,
 } from "semantic-ui-react";
-import { humanReadableBytes } from "react-invenio-forms";
+import { humanReadableBytes, FeedbackLabel } from "react-invenio-forms";
 
 const FileTableHeader = ({ filesLocked }) => (
   <Table.Header>
@@ -32,7 +33,9 @@ const FileTableHeader = ({ filesLocked }) => (
       <Table.HeaderCell>
         {i18next.t("Preview")}{" "}
         <Popup
-          content="Set the default preview"
+          content={i18next.t(
+            "Choose which file to preview on the published record landing page"
+          )}
           trigger={<Icon fitted name="help circle" size="small" />}
         />
       </Table.HeaderCell>
@@ -61,6 +64,7 @@ const FileTableRow = ({
   defaultPreview,
   setDefaultPreview,
   decimalSizeDisplay,
+  fileError,
 }) => {
   const [isCancelling, setIsCancelling] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
@@ -74,6 +78,7 @@ const FileTableRow = ({
         setDefaultPreview("");
       }
     } catch (error) {
+      setIsDeleting(false);
       console.error(error);
     }
   };
@@ -86,15 +91,22 @@ const FileTableRow = ({
   return (
     <Table.Row key={file.name}>
       <Table.Cell data-label={i18next.t("Default preview")} width={2}>
-        {/* TODO: Investigate if react-deposit-forms optimized Checkbox field
-                  would be more performant */}
-        <Checkbox
+        <Radio
           checked={isDefaultPreview}
           onChange={() => setDefaultPreview(isDefaultPreview ? "" : file.name)}
         />
       </Table.Cell>
       <Table.Cell data-label={i18next.t("Filename")} width={10}>
         <div>
+          {fileError && (
+            <>
+              <FeedbackLabel
+                fieldPath={"files.entries." + file.name}
+                pointing="below"
+              />
+              <br />
+            </>
+          )}
           {file.uploadState.isPending ? (
             <div>{file.name}</div>
           ) : (
@@ -102,13 +114,13 @@ const FileTableRow = ({
               href={_get(file, "links.content", "")}
               target="_blank"
               rel="noopener noreferrer"
-              className="mr-5"
+              className="mr-5 text-break"
             >
               {file.name}
             </a>
           )}
           <br />
-          {file.checksum && (
+          {(file.checksum && (
             <div className="ui text-muted">
               <span style={{ fontSize: "10px" }}>{file.checksum}</span>{" "}
               <Popup
@@ -119,11 +131,19 @@ const FileTableRow = ({
                 position="top center"
               />
             </div>
+          )) || (
+            <div className="ui text-muted">
+              <span style={{ fontSize: "10px" }}>
+                {i18next.t("Checksum not yet calculated.")}
+              </span>{" "}
+            </div>
           )}
         </div>
       </Table.Cell>
       <Table.Cell data-label={i18next.t("Size")} width={2}>
-        {file.size ? humanReadableBytes(file.size, decimalSizeDisplay) : ""}
+        {file.size
+          ? humanReadableBytes(file.size, decimalSizeDisplay)
+          : i18next.t("N/A")}
       </Table.Cell>
       {!filesLocked && (
         <Table.Cell
@@ -188,6 +208,7 @@ FileTableRow.propTypes = {
   defaultPreview: PropTypes.string,
   setDefaultPreview: PropTypes.func.isRequired,
   decimalSizeDisplay: PropTypes.bool,
+  fileError: PropTypes.object,
 };
 
 FileTableRow.defaultProps = {
@@ -195,12 +216,14 @@ FileTableRow.defaultProps = {
   file: undefined,
   defaultPreview: undefined,
   decimalSizeDisplay: false,
+  fileError: undefined,
 };
 
 const FileUploadBox = ({
   filesLocked,
   filesList,
   dragText,
+  hasError,
   uploadButtonIcon,
   uploadButtonText,
   openFileDialog,
@@ -224,7 +247,7 @@ const FileUploadBox = ({
           <Grid.Column mobile={16} tablet={7} computer={7}>
             <Button
               type="button"
-              primary
+              className={hasError ? "error" : "primary"}
               labelPosition="left"
               icon={uploadButtonIcon}
               content={uploadButtonText}
@@ -240,6 +263,7 @@ const FileUploadBox = ({
 FileUploadBox.propTypes = {
   filesLocked: PropTypes.bool.isRequired,
   filesList: PropTypes.array,
+  hasError: PropTypes.bool,
   dragText: PropTypes.string,
   uploadButtonIcon: PropTypes.node,
   uploadButtonText: PropTypes.string,
@@ -252,10 +276,16 @@ FileUploadBox.defaultProps = {
   uploadButtonIcon: undefined,
   uploadButtonText: undefined,
   openFileDialog: null,
+  hasError: false,
 };
 
-const FilesListTable = ({ filesLocked, filesList, deleteFile, decimalSizeDisplay }) => {
-  const { setFieldValue, values: formikDraft } = useFormikContext();
+export const FilesListTable = ({
+  filesLocked,
+  filesList,
+  deleteFile,
+  decimalSizeDisplay,
+}) => {
+  const { errors, setFieldValue, values: formikDraft } = useFormikContext();
   const defaultPreview = _get(formikDraft, "files.default_preview", "");
   return (
     <Table>
@@ -273,6 +303,7 @@ const FilesListTable = ({ filesLocked, filesList, deleteFile, decimalSizeDisplay
                 setFieldValue("files.default_preview", filename)
               }
               decimalSizeDisplay={decimalSizeDisplay}
+              fileError={getIn(errors, "files.entries." + file.name, undefined)}
             />
           );
         })}
@@ -297,9 +328,9 @@ FilesListTable.defaultProps = {
 
 export class FileUploaderArea extends Component {
   render() {
-    const { filesEnabled, dropzoneParams, filesList } = this.props;
+    const { filesEnabled, dropzoneParams, filesList, filesLocked } = this.props;
     return filesEnabled ? (
-      <Dropzone {...dropzoneParams}>
+      <Dropzone {...dropzoneParams} disabled={filesLocked}>
         {({ getRootProps, getInputProps, open: openFileDialog }) => (
           <Grid.Column width={16}>
             <span {...getRootProps()}>

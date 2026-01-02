@@ -10,8 +10,11 @@
     schema.org: https://schema.org/CreativeWork
     subtype: ""
     type: publication
+    marc21_type: publication
+    marc21_subtype: ""
   title:
     en: Publication
+    sv: Publikation
     de: Publikation
     ar: منشور
   tags:
@@ -29,8 +32,11 @@
     schema.org: https://schema.org/Collection
     subtype: publication-annotationcollection
     type: publication
+    marc21_type: publication
+    marc21_subtype: annotationcollection
   title:
     en: Annotation collection
+    sv: Annoteringssamling
     de: Anmerkungssammlung
     ar: مجموعة حواشي تفسيريّة
 
@@ -49,8 +55,11 @@
     schema.org: https://schema.org/Book
     subtype: publication-book
     type: publication
+    marc21_type: publication
+    marc21_subtype: book
   title:
     en: Book
+    sv: Bok
     de: Buch
     ar: كتاب
   tags:
@@ -68,8 +77,11 @@
     schema.org: https://schema.org/ScholarlyArticle
     subtype: publication-section
     type: publication
+    marc21_type: publication
+    marc21_subtype: section
   title:
     en: Book chapter
+    sv: Bokkapitel
     de: Buchkapitel
     ar: فصل من كتاب
   tags:
@@ -87,8 +99,11 @@
     schema.org: https://schema.org/ScholarlyArticle
     subtype: publication-conferencepaper
     type: publication
+    marc21_type: publication
+    marc21_subtype: conferencepaper
   title:
     en: Conference paper
+    sv: Konferensbidrag
     de: Konferenzbeitrag
     ar: مطبوع مؤتمر
   tags:
@@ -106,8 +121,11 @@
     schema.org: https://schema.org/ScholarlyArticle
     subtype: publication-conferenceproceeding
     type: publication
+    marc21_type: publication
+    marc21_subtype: conferenceproceeding
   title:
     en: Conference proceeding
+    sv: Konferenshandling
     de: Tagungsband
     ar: مداخلة بمؤتمر
   tags:
@@ -125,8 +143,11 @@
     schema.org: https://schema.org/CreativeWork
     subtype: publication-datamanagementplan
     type: publication
+    marc21_type: publication
+    marc21_subtype: datamanagementplan
   title:
     en: Output management plan
+    sv: Outputhanteringsplan
     de: Outputmanagementplan
     ar: مخرجات مخطط تصرّف
   tags:
@@ -144,8 +165,11 @@
     schema.org: https://schema.org/ScholarlyArticle
     subtype: publication-journal
     type: publication
+    marc21_type: publication
+    marc21_subtype: journal
   title:
     en: Journal
+    sv: Tidskrift
     de: Zeitschrift
     ar: دوريّة
   tags:
@@ -163,8 +187,11 @@
     schema.org: https://schema.org/ScholarlyArticle
     subtype: publication-article
     type: publication
+    marc21_type: publication
+    marc21_subtype: article
   title:
     en: Journal article
+    sv: Tidskriftsartikel
     de: Zeitschriftenartikel
     ar: مقال بدوريّة                           
   tags:
@@ -182,8 +209,11 @@
     schema.org: https://schema.org/CreativeWork
     subtype: publication-patent
     type: publication
+    marc21_type: publication
+    marc21_subtype: patent
   title:
     en: Patent
+    sv: Patent
     de: Patent
     ar: براء إختراع                        
   tags:
@@ -201,8 +231,11 @@
     schema.org: https://schema.org/ScholarlyArticle
     subtype: publication-peerreview
     type: publication
+    marc21_type: publication
+    marc21_subtype: peerreview
   title:
     en: Peer review
+    sv: Peer review
     de: Peer Review
     ar: محكّم
   tags:
@@ -220,8 +253,11 @@
     schema.org: https://schema.org/ScholarlyArticle
     subtype: publication-preprint
     type: publication
+    marc21_type: publication
+    marc21_subtype: preprint
   title:
     en: Preprint
+    sv: Preprint
     de: Preprint
     ar: مقال مقبول للنّشر                                    
   tags:
@@ -239,8 +275,11 @@
     schema.org: https://schema.org/CreativeWork
     subtype: publication-deliverable
     type: publication
+    marc21_type: publication
+    marc21_subtype: deliverable
   title:
     en: Project deliverable
+    sv: Projektresultat
     de: Projektergebnis
     ar: مشروع للتسليم                             
   tags:
@@ -258,8 +297,11 @@
     schema.org: https://schema.org/CreativeWork
     subtype: publication-milestone
     type: publication
+    marc21_type: publication
+    marc21_subtype: milestone
   title:
     en: Project milestone
+    sv: Milstolpe för projektet
     de: Projektmeilenstein
     ar: مخطط مشروع                       
   tags:
@@ -277,8 +319,11 @@
     schema.org: https://schema.org/CreativeWork
     subtype: publication-proposal
     type: publication
+    marc21_type: publication
+    marc21_subtype: proposal
   title:
     en: Proposal
+    sv: Förslag
     de: Antrag
     ar: إقتراح               
   tags:
@@ -296,8 +341,11 @@
     schema.org: https://schema.org/ScholarlyArticle
     subtype: publication-report
     type: publication
+    marc21_type: publication
+    marc21_subtype: report
   title:
     en: Report
+    sv: Rapport
     de: Bericht
     ar: تقرير             
   tags:
@@ -315,8 +363,11 @@
     schema.org: https://schema.org/CreativeWork
     subtype: publication-softwaredocumentation
     type: publication
+    marc21_type: publication
+    marc21_subtype: softwaredocumentation
   title:
     en: Software documentation
+    sv: Mjukvarudokumentation
     de: Softwaredokumentation
     ar: وثائق برنامج حاسوب                                     
   tags:
@@ -334,8 +385,11 @@
     schema.org: https://schema.org/ScholarlyArticle
     subtype: publication-taxonomictreatment
     type: publication
+    marc21_type: publication
+    marc21_subtype: taxonomictreatment
   title:
     en: Taxonomic treatment
+    sv: Taxonomisk behandling
     de: Taxonomische Behandlung
     ar: معالجة تصنيفيّة                                 
   tags:
@@ -353,8 +407,11 @@
     schema.org: https://schema.org/ScholarlyArticle
     subtype: publication-technicalnote
     type: publication
+    marc21_type: publication
+    marc21_subtype: technicalnote
   title:
     en: Technical note
+    sv: Technical note
     de: Technical Note
     ar: توضيح تقني                      
   tags:
@@ -391,8 +448,11 @@
     schema.org: https://schema.org/ScholarlyArticle
     subtype: publication-workingpaper
     type: publication
+    marc21_type: publication
+    marc21_subtype: workingpaper
   title:
     en: Working paper
+    sv: Arbetsdokument
     de: Arbeitspapier
     ar: ورقة عمل
   tags:
@@ -402,16 +462,19 @@
   icon: file alternate
   props:
     csl: article
-    datacite_general: Text
-    datacite_type: Data paper
+    datacite_general: DataPaper
+    datacite_type: ""
     openaire_resourceType: "0031"
     openaire_type: publication
     eurepo: info:eu-repo/semantics/workingPaper
     schema.org: https://schema.org/ScholarlyArticle
     subtype: publication-datapaper
     type: publication
+    marc21_type: publication
+    marc21_subtype: datapaper
   title:
     en: Data paper
+    sv: Datadokument
     de: Datenpapier
     ar: ورقة بيانات
   tags:
@@ -426,9 +489,11 @@
     openaire_resourceType: "0044"
     openaire_type: publication
     eurepo: info:eu-repo/semantics/other
-    schema.org: https://schema.org/thesis
+    schema.org: https://schema.org/Thesis
     subtype: publication-dissertation
     type: publication
+    marc21_type: publication
+    marc21_subtype: dissertation
   title:
     en: Dissertation
     de: Dissertation
@@ -448,8 +513,11 @@
     schema.org: https://schema.org/other
     subtype: publication-standard
     type: publication
+    marc21_type: publication
+    marc21_subtype: standard
   title:
     en: Standard
+    sv: Standard
     de: Standard
     ar: معيار
   tags:
@@ -467,8 +535,11 @@
     schema.org: https://schema.org/CreativeWork
     subtype: publication-other
     type: publication
+    marc21_type: publication
+    marc21_subtype: other
   title:
     en: Other
+    sv: Övrig
     de: Sonstige
     ar: آخر          
   tags:
@@ -486,8 +557,11 @@
     schema.org: https://schema.org/CreativeWork
     subtype: ""
     type: poster
+    marc21_type: poster
+    marc21_subtype: ""
   title:
     en: Poster
+    sv: Poster
     de: Poster
     ar: معلّقة               
   tags:
@@ -505,8 +579,11 @@
     schema.org: https://schema.org/PresentationDigitalDocument
     subtype: ""
     type: presentation
+    marc21_type: presentation
+    marc21_subtype: ""
   title:
     en: Presentation
+    sv: Presentation
     de: Präsentation
     ar: عرض تقديمي
   tags:
@@ -521,11 +598,14 @@
     openaire_resourceType: "0023"
     openaire_type: publication
     eurepo: info:eu-repo/semantics/other
-    schema.org: https://schema.org/event
+    schema.org: https://schema.org/Event
     subtype: ""
     type: event
+    marc21_type: event
+    marc21_subtype: ""
   title:
     en: Event
+    sv: Evenemang
     de: Veranstaltung
     ar: فعاليّة/حدث
   tags:
@@ -543,8 +623,11 @@
     schema.org: https://schema.org/Dataset
     subtype: ""
     type: dataset
+    marc21_type: dataset
+    marc21_subtype: ""
   title:
     en: Dataset
+    sv: Dataset
     de: Datensatz
     ar: مجموعة بيانات                            
   tags:
@@ -562,8 +645,11 @@
     schema.org: https://schema.org/ImageObject
     subtype: ""
     type: image
+    marc21_type: image
+    marc21_subtype: ""
   title:
     en: Image
+    sv: Bild
     de: Bild
     ar: صورة            
   tags:
@@ -581,8 +667,11 @@
     schema.org: https://schema.org/ImageObject
     subtype: image-figure
     type: image
+    marc21_type: image
+    marc21_subtype: figure
   title:
     en: Figure
+    sv: Figur
     de: Abbildung
     ar: رسم
   tags:
@@ -600,8 +689,11 @@
     schema.org: https://schema.org/ImageObject
     subtype: image-plot
     type: image
+    marc21_type: image
+    marc21_subtype: plot
   title:
     en: Plot
+    sv: Plot
     de: Plot
     ar: رسم بالنّقط                         
   tags:
@@ -619,8 +711,11 @@
     schema.org: https://schema.org/ImageObject
     subtype: image-drawing
     type: image
+    marc21_type: image
+    marc21_subtype: drawing
   title:
     en: Drawing
+    sv: Ritning
     de: Zeichnung
     ar: رسم تخطيطي                 
   tags:
@@ -638,8 +733,11 @@
     schema.org: https://schema.org/ImageObject
     subtype: image-diagram
     type: image
+    marc21_type: image
+    marc21_subtype: diagram
   title:
     en: Diagram
+    sv: Diagram
     de: Diagramm
     ar: رسم بياني                     
   tags:
@@ -657,8 +755,11 @@
     schema.org: https://schema.org/Photograph
     subtype: image-photo
     type: image
+    marc21_type: image
+    marc21_subtype: photo
   title:
     en: Photo
+    sv: Foto
     de: Foto
     ar: صورة فوتوغرافيّة
   tags:
@@ -676,8 +777,11 @@
     schema.org: https://schema.org/ImageObject
     subtype: image-other
     type: image
+    marc21_type: image
+    marc21_subtype: other
   title:
     en: Other
+    sv: Övrig
     de: Sonstiges
     ar: آخر
   tags:
@@ -695,8 +799,11 @@
     schema.org: https://schema.org/CreativeWork
     subtype: ""
     type: model
+    marc21_type: model
+    marc21_subtype: ""
   title:
     en: Model
+    sv: Modell
     de: Modell
     ar: أنموذج
   tags:
@@ -714,6 +821,31 @@
     schema.org: https://schema.org/MediaObject
     subtype: ""
     type: video
+    marc21_type: video
+    marc21_subtype: ""
+  title:
+    en: Video
+    de: Video
+    sv: Video
+    es: Video
+    cs: Video
+  tags:
+    - depositable
+    - linkable
+- id: audio
+  icon: volume up
+  props:
+    csl: document
+    datacite_general: Sound
+    datacite_type: ""
+    openaire_resourceType: "0033"
+    openaire_type: dataset
+    eurepo: info:eu-repo/semantics/other
+    schema.org: https://schema.org/MediaObject
+    subtype: ""
+    type: audio
+    marc21_type: audio
+    marc21_subtype: ""
   title:
     en: Video/Audio
     de: Video/Audio
@@ -733,8 +865,11 @@
     schema.org: https://schema.org/SoftwareSourceCode
     subtype: ""
     type: software
+    marc21_type: software
+    marc21_subtype: ""
   title:
     en: Software
+    sv: Mjukvara
     de: Software
     ar: برنامج حاسوب    
   tags:
@@ -745,15 +880,18 @@
   props:
     csl: speech
     datacite_general: InteractiveResource
-    datacite_type: Interactive resource
+    datacite_type: ""
     openaire_resourceType: "0010"
     openaire_type: other
     eurepo: info:eu-repo/semantics/lecture
     schema.org: https://schema.org/CreativeWork
     subtype: ""
     type: lesson
+    marc21_type: lesson
+    marc21_subtype: ""
   title:
     en: Lesson
+    sv: Lektion
     de: Unterrichtseinheit
     ar: درس
   tags:
@@ -771,8 +909,11 @@
     schema.org: https://schema.org/SoftwareSourceCode
     subtype: software-computationalnotebook
     type: software
+    marc21_type: software
+    marc21_subtype: computationalnotebook
   title:
     en: Computational notebook
+    sv: Computational notebook
     de: Computational Notebook
     ar: دفتر تبصيرات ممكنن
   tags:
@@ -790,8 +931,11 @@
     schema.org: https://schema.org/CreativeWork
     subtype: ""
     type: other
+    marc21_type: other
+    marc21_subtype: ""
   title:
     en: Other
+    sv: Övrig
     de: Sonstige
     ar: آخر     
   tags:
@@ -809,8 +953,11 @@
     schema.org: https://schema.org/CreativeWork
     subtype: ""
     type: physicalobject
+    marc21_type: physicalobject
+    marc21_subtype: ""
   title:
     en: Physical object
+    sv: Fysiskt objekt
     de: Physikalisches Objekt
     ar: شيئ مادّي
   tags:
@@ -828,8 +975,11 @@
     schema.org: https://schema.org/CreativeWork
     subtype: ""
     type: workflow
+    marc21_type: workflow
+    marc21_subtype: ""
   title:
     en: Workflow
+    sv: Workflow
     de: Workflow
     ar: إجراءات سير العمل
   tags:

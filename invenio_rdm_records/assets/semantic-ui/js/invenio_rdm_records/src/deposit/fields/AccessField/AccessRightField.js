@@ -1,5 +1,5 @@
 // This file is part of Invenio-RDM-Records
-// Copyright (C) 2020-2023 CERN.
+// Copyright (C) 2020-2025 CERN.
 // Copyright (C) 2020-2022 Northwestern University.
 // Copyright (C)      2021 Graz University of Technology.
 //
@@ -25,12 +25,16 @@ export class AccessRightFieldCmp extends Component {
 
   render() {
     const {
+      id,
       fieldPath,
       formik, // this is our access to the shared current draft
       label,
       labelIcon,
       showMetadataAccess,
       community,
+      record,
+      recordRestrictionGracePeriod,
+      allowRecordRestriction,
     } = this.props;
 
     const isGhostCommunity = community?.is_ghost === true;
@@ -39,7 +43,7 @@ export class AccessRightFieldCmp extends Component {
     const isMetadataOnly = !formik.form.values.files.enabled;
 
     return (
-      <Card className="access-right">
+      <Card label={label} id={id} className="access-right">
         <Form.Field required>
           <Card.Content>
             <Card.Header>
@@ -52,6 +56,9 @@ export class AccessRightFieldCmp extends Component {
                 <MetadataAccess
                   recordAccess={formik.field.value.record}
                   communityAccess={communityAccess}
+                  record={record}
+                  recordRestrictionGracePeriod={recordRestrictionGracePeriod}
+                  allowRecordRestriction={allowRecordRestriction}
                 />
                 <Divider hidden />
               </>
@@ -91,12 +98,16 @@ export class AccessRightFieldCmp extends Component {
 }
 
 AccessRightFieldCmp.propTypes = {
+  id: PropTypes.string,
   fieldPath: PropTypes.string.isRequired,
   formik: PropTypes.object.isRequired,
   label: PropTypes.string.isRequired,
   labelIcon: PropTypes.string.isRequired,
   showMetadataAccess: PropTypes.bool,
   community: PropTypes.object,
+  record: PropTypes.object.isRequired,
+  recordRestrictionGracePeriod: PropTypes.number.isRequired,
+  allowRecordRestriction: PropTypes.bool.isRequired,
 };
 
 AccessRightFieldCmp.defaultProps = {
@@ -130,6 +141,9 @@ AccessRightField.propTypes = {
   label: PropTypes.string.isRequired,
   labelIcon: PropTypes.string,
   isMetadataOnly: PropTypes.bool,
+  record: PropTypes.object.isRequired,
+  recordRestrictionGracePeriod: PropTypes.number.isRequired,
+  allowRecordRestriction: PropTypes.bool.isRequired,
 };
 
 AccessRightField.defaultProps = {
