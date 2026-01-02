@@ -16,8 +16,7 @@
     en: Publication
     sv: Publikation
     de: Publikation
-    es: Publicación
-    cs: Publikace
+    ar: منشور
   tags:
     - depositable
     - linkable
@@ -39,8 +38,8 @@
     en: Annotation collection
     sv: Annoteringssamling
     de: Anmerkungssammlung
-    es: Colección de anotaciones
-    cs: Kolekce anotací
+    ar: مجموعة حواشي تفسيريّة
+
   tags:
     - depositable
     - linkable
@@ -62,8 +61,7 @@
     en: Book
     sv: Bok
     de: Buch
-    es: Libro
-    cs: Kniha
+    ar: كتاب
   tags:
     - depositable
     - linkable
@@ -85,8 +83,7 @@
     en: Book chapter
     sv: Bokkapitel
     de: Buchkapitel
-    es: Capítulo de libro
-    cs: Kapitola v knize
+    ar: فصل من كتاب
   tags:
     - depositable
     - linkable
@@ -108,8 +105,7 @@
     en: Conference paper
     sv: Konferensbidrag
     de: Konferenzbeitrag
-    es: Ponencia de conferencia
-    cs: Konferenční příspěvek
+    ar: مطبوع مؤتمر
   tags:
     - depositable
     - linkable
@@ -131,8 +127,7 @@
     en: Conference proceeding
     sv: Konferenshandling
     de: Tagungsband
-    es: Actas de congreso
-    cs: Sborník konference
+    ar: مداخلة بمؤتمر
   tags:
     - depositable
     - linkable
@@ -154,8 +149,7 @@
     en: Output management plan
     sv: Outputhanteringsplan
     de: Outputmanagementplan
-    es: Plan de gestión de resultados
-    cs: Plán správy dat
+    ar: مخرجات مخطط تصرّف
   tags:
     - depositable
     - linkable
@@ -177,8 +171,7 @@
     en: Journal
     sv: Tidskrift
     de: Zeitschrift
-    es: Revista
-    cs: Časopis
+    ar: دوريّة
   tags:
     - depositable
     - linkable
@@ -200,8 +193,7 @@
     en: Journal article
     sv: Tidskriftsartikel
     de: Zeitschriftenartikel
-    es: Artículo de revista
-    cs: Článek v časopise
+    ar: مقال بدوريّة                           
   tags:
     - depositable
     - linkable
@@ -223,8 +215,7 @@
     en: Patent
     sv: Patent
     de: Patent
-    es: Patente
-    cs: Patent
+    ar: براء إختراع                        
   tags:
     - depositable
     - linkable
@@ -246,8 +237,7 @@
     en: Peer review
     sv: Peer review
     de: Peer Review
-    es: Revisión por pares
-    cs: Recenze
+    ar: محكّم
   tags:
     - depositable
     - linkable
@@ -269,8 +259,7 @@
     en: Preprint
     sv: Preprint
     de: Preprint
-    es: Preimpresión
-    cs: Preprint
+    ar: مقال مقبول للنّشر                                    
   tags:
     - depositable
     - linkable
@@ -292,8 +281,7 @@
     en: Project deliverable
     sv: Projektresultat
     de: Projektergebnis
-    es: Entregable de proyecto
-    cs: Výstup projektu
+    ar: مشروع للتسليم                             
   tags:
     - depositable
     - linkable
@@ -315,8 +303,7 @@
     en: Project milestone
     sv: Milstolpe för projektet
     de: Projektmeilenstein
-    es: Hito de proyecto
-    cs: Mezník projektu
+    ar: مخطط مشروع                       
   tags:
     - depositable
     - linkable
@@ -338,8 +325,7 @@
     en: Proposal
     sv: Förslag
     de: Antrag
-    es: Propuesta
-    cs: Návrh
+    ar: إقتراح               
   tags:
     - depositable
     - linkable
@@ -361,8 +347,7 @@
     en: Report
     sv: Rapport
     de: Bericht
-    es: Informe
-    cs: Zpráva
+    ar: تقرير             
   tags:
     - depositable
     - linkable
@@ -384,8 +369,7 @@
     en: Software documentation
     sv: Mjukvarudokumentation
     de: Softwaredokumentation
-    es: Documentación de software
-    cs: Dokumentace softwaru
+    ar: وثائق برنامج حاسوب                                     
   tags:
     - depositable
     - linkable
@@ -407,8 +391,7 @@
     en: Taxonomic treatment
     sv: Taxonomisk behandling
     de: Taxonomische Behandlung
-    es: Tratamiento taxonómico
-    cs: Taxonomické zpracování
+    ar: معالجة تصنيفيّة                                 
   tags:
     - depositable
     - linkable
@@ -430,8 +413,26 @@
     en: Technical note
     sv: Technical note
     de: Technical Note
-    es: Nota técnica
-    cs: Technická poznámka
+    ar: توضيح تقني                      
+  tags:
+    - depositable
+    - linkable
+- id: publication-thesis
+  icon: file alternate
+  props:
+    csl: thesis
+    datacite_general: Text
+    datacite_type: Thesis
+    openaire_resourceType: "0006"
+    openaire_type: publication
+    eurepo: info:eu-repo/semantics/doctoralThesis
+    schema.org: https://schema.org/ScholarlyArticle
+    subtype: publication-thesis
+    type: publication
+  title:
+    en: Thesis
+    de: Abschlussarbeit
+    ar: أطروحة                
   tags:
     - depositable
     - linkable
@@ -453,8 +454,7 @@
     en: Working paper
     sv: Arbetsdokument
     de: Arbeitspapier
-    es: Documento de trabajo
-    cs: Pracovní dokument
+    ar: ورقة عمل
   tags:
     - depositable
     - linkable
@@ -476,8 +476,7 @@
     en: Data paper
     sv: Datadokument
     de: Datenpapier
-    es: Artículo de datos
-    cs: Datový článek
+    ar: ورقة بيانات
   tags:
     - depositable
     - linkable
@@ -496,10 +495,9 @@
     marc21_type: publication
     marc21_subtype: dissertation
   title:
-    en: Thesis
-    sv: Avhandling
-    de: Abschlussarbeit
-    cs: Závěrečná práce
+    en: Dissertation
+    de: Dissertation
+    ar: رسالة ختم دروس/أطروحة
   tags:
     - depositable
     - linkable
@@ -521,8 +519,7 @@
     en: Standard
     sv: Standard
     de: Standard
-    es: Estándard
-    cs: Standard
+    ar: معيار
   tags:
     - depositable
     - linkable
@@ -544,8 +541,7 @@
     en: Other
     sv: Övrig
     de: Sonstige
-    es: Otro
-    cs: Jiné
+    ar: آخر          
   tags:
     - depositable
     - linkable
@@ -567,8 +563,7 @@
     en: Poster
     sv: Poster
     de: Poster
-    es: Póster
-    cs: Poster
+    ar: معلّقة               
   tags:
     - depositable
     - linkable
@@ -590,8 +585,7 @@
     en: Presentation
     sv: Presentation
     de: Präsentation
-    es: Presentación
-    cs: Prezentace
+    ar: عرض تقديمي
   tags:
     - depositable
     - linkable
@@ -613,8 +607,7 @@
     en: Event
     sv: Evenemang
     de: Veranstaltung
-    es: Evento
-    cs: Událost
+    ar: فعاليّة/حدث
   tags:
     - depositable
     - linkable
@@ -636,8 +629,7 @@
     en: Dataset
     sv: Dataset
     de: Datensatz
-    es: Conjunto de datos
-    cs: Datová sada
+    ar: مجموعة بيانات                            
   tags:
     - depositable
     - linkable
@@ -659,8 +651,7 @@
     en: Image
     sv: Bild
     de: Bild
-    es: Imagen
-    cs: Obrázek
+    ar: صورة            
   tags:
     - depositable
     - linkable
@@ -682,8 +673,7 @@
     en: Figure
     sv: Figur
     de: Abbildung
-    es: Figura
-    cs: Schéma
+    ar: رسم
   tags:
     - depositable
     - linkable
@@ -705,8 +695,7 @@
     en: Plot
     sv: Plot
     de: Plot
-    es: Gráfico de imagen
-    cs: Graf
+    ar: رسم بالنّقط                         
   tags:
     - depositable
     - linkable
@@ -728,8 +717,7 @@
     en: Drawing
     sv: Ritning
     de: Zeichnung
-    es: Dibujo
-    cs: Kresba
+    ar: رسم تخطيطي                 
   tags:
     - depositable
     - linkable
@@ -751,8 +739,7 @@
     en: Diagram
     sv: Diagram
     de: Diagramm
-    es: Diagrama
-    cs: Diagram
+    ar: رسم بياني                     
   tags:
     - depositable
     - linkable
@@ -774,8 +761,7 @@
     en: Photo
     sv: Foto
     de: Foto
-    es: Foto
-    cs: Fotografie
+    ar: صورة فوتوغرافيّة
   tags:
     - depositable
     - linkable
@@ -797,8 +783,7 @@
     en: Other
     sv: Övrig
     de: Sonstiges
-    es: Otro
-    cs: Jiné
+    ar: آخر
   tags:
     - depositable
     - linkable
@@ -820,8 +805,7 @@
     en: Model
     sv: Modell
     de: Modell
-    es: Modelo
-    cs: Model
+    ar: أنموذج
   tags:
     - depositable
     - linkable
@@ -863,11 +847,9 @@
     marc21_type: audio
     marc21_subtype: ""
   title:
-    en: Audio
-    de: Audio
-    sv: Audio
-    es: Audio
-    cs: Audio
+    en: Video/Audio
+    de: Video/Audio
+    ar: صوة/فيديو               
   tags:
     - depositable
     - linkable
@@ -889,8 +871,7 @@
     en: Software
     sv: Mjukvara
     de: Software
-    es: Software
-    cs: Software
+    ar: برنامج حاسوب    
   tags:
     - depositable
     - linkable
@@ -912,8 +893,7 @@
     en: Lesson
     sv: Lektion
     de: Unterrichtseinheit
-    es: Lección
-    cs: Lekce
+    ar: درس
   tags:
     - depositable
     - linkable
@@ -935,8 +915,7 @@
     en: Computational notebook
     sv: Computational notebook
     de: Computational Notebook
-    es: Cuaderno de cálculo
-    cs: Výpočetní notebook
+    ar: دفتر تبصيرات ممكنن
   tags:
     - depositable
     - linkable
@@ -958,8 +937,7 @@
     en: Other
     sv: Övrig
     de: Sonstige
-    es: Otro
-    cs: Jiné
+    ar: آخر     
   tags:
     - depositable
     - linkable
@@ -981,8 +959,7 @@
     en: Physical object
     sv: Fysiskt objekt
     de: Physikalisches Objekt
-    es: Objeto físico
-    cs: Fyzický objekt
+    ar: شيئ مادّي
   tags:
     - depositable
     - linkable
@@ -1004,8 +981,7 @@
     en: Workflow
     sv: Workflow
     de: Workflow
-    es: Flujo
-    cs: Workflow
+    ar: إجراءات سير العمل
   tags:
     - depositable
     - linkable
