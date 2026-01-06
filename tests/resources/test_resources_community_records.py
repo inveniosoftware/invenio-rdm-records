@@ -18,7 +18,9 @@ def service():
     return current_community_records_service
 
 
-def test_remove_community(client, curator, record_community, headers, community):
+def test_remove_community_from_record(
+    client, curator, record_community, headers, community
+):
     """Remove a record from the community."""
     client = curator.login(client)
     record = record_community.create_record()
