@@ -585,8 +585,11 @@ def full_record(users):
                         "place": "test location place",
                         "description": "test location description",
                         "identifiers": [
-                            {"identifier": "12345abcde", "scheme": "wikidata"},
-                            {"identifier": "12345abcde", "scheme": "geonames"},
+                            {"identifier": "Q39", "scheme": "wikidata"},
+                            {
+                                "identifier": "https://www.geonames.org/2660646",
+                                "scheme": "geonames",
+                            },
                         ],
                     }
                 ]
@@ -855,8 +858,11 @@ def enhanced_full_record(users):
                         "place": "test location place",
                         "description": "test location description",
                         "identifiers": [
-                            {"identifier": "12345abcde", "scheme": "wikidata"},
-                            {"identifier": "12345abcde", "scheme": "geonames"},
+                            {"identifier": "Q39", "scheme": "wikidata"},
+                            {
+                                "identifier": "https://www.geonames.org/2660646",
+                                "scheme": "geonames",
+                            },
                         ],
                     }
                 ]
