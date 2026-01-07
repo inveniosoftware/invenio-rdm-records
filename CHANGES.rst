@@ -12,6 +12,19 @@
 Changes
 =======
 
+Version v23.1.0 (released 2026-01-07)
+
+- fix(tests): use valid WikiData IDs and Geonames in fixtures
+- feat(config): validate WikiData IDs for locations
+- feat: add wikidata identifier to known identifier schemes
+- serializers: use datapackage mediatype
+    Express file MIMEType as mediatype, cf. Data Resource specification, see
+    https://datapackage.org/standard/data-resource/#mediatype
+- fix(tests): make logic to restore last revision more robust
+    * the `invenio_records.api.RevisionsIterator` definition mentions that
+      the list of revision IDs may have "holes" in it:
+      https://github.com/inveniosoftware/invenio-records/blob/master/invenio_records/api.py
+
 Version v23.0.0 (released 2025-12-12)
 
 - chore(setup): bump major versions

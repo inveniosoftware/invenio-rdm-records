@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2019-2025 CERN.
+# Copyright (C) 2019-2026 CERN.
 # Copyright (C) 2019-2024 Northwestern University.
 # Copyright (C) 2024      KTH Royal Institute of Technology.
 # Copyright (C) 2024-2025 Graz University of Technology.
@@ -12,6 +12,6 @@
 
 from .ext import InvenioRDMRecords
 
-__version__ = "23.0.0"
+__version__ = "23.1.0"
 
 __all__ = ("__version__", "InvenioRDMRecords")
