@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2019-2025 CERN.
+# Copyright (C) 2019-2026 CERN.
 # Copyright (C) 2019 Northwestern University.
 # Copyright (C) 2021-2024 Graz University of Technology.
 # Copyright (C) 2023 TU Wien.
@@ -130,7 +130,7 @@ RDM_RECORDS_RELATED_IDENTIFIERS_SCHEMES = RDM_RECORDS_IDENTIFIERS_SCHEMES
 """This variable is used to separate related identifiers."""
 
 RDM_RECORDS_LOCATION_SCHEMES = {
-    "wikidata": {"label": _("Wikidata"), "validator": always_valid},
+    "wikidata": {"label": _("Wikidata"), "validator": idutils.is_wikidata},
     "geonames": {"label": _("GeoNames"), "validator": always_valid},
 }
 
