@@ -12,6 +12,10 @@
 Changes
 =======
 
+Version v23.1.1 (released 2026-01-08)
+
+- bibtex: schema: add publication-thesis for compatibility
+
 Version v23.1.0 (released 2026-01-07)
 
 - fix(tests): use valid WikiData IDs and Geonames in fixtures
