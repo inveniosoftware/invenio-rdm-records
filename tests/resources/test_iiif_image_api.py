@@ -176,6 +176,16 @@ def test_api_info_not_found(running_app, search_clear, client):
     assert response.status_code == 404
 
 
+def test_api_invalid_keys(running_app, search_clear, client):
+    # gives 0 colons instead of the 2 expected
+    response = client.get(f"/iiif/record;1234-abcd;notfound.png/info.json")
+    assert response.status_code == 400
+
+    # gives 1 colon instead of the 2 expected
+    response = client.get(f"/iiif/record:1234-abcd;notfound.png/info.json")
+    assert response.status_code == 400
+
+
 def test_iiif_base_restricted_files(
     running_app,
     search_clear,
