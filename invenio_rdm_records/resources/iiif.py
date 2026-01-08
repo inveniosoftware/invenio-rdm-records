@@ -45,7 +45,7 @@ from invenio_records_resources.services.base.config import ConfiguratorMixin, Fr
 from PIL.Image import DecompressionBombError
 from werkzeug.utils import cached_property, secure_filename
 
-from ..services.errors import RecordDeletedException
+from ..services.errors import IdentifierShapeException, RecordDeletedException
 from .serializers import (
     IIIFCanvasV2JSONSerializer,
     IIIFInfoV2JSONSerializer,
@@ -112,6 +112,9 @@ class IIIFResourceConfig(ResourceConfig, ConfiguratorMixin):
             lambda e: HTTPJSONException(
                 code=404, description=_("The requested image cannot be found.")
             )
+        ),
+        IdentifierShapeException: create_error_handler(
+            lambda e: HTTPJSONException(code=400, description=e.description)
         ),
     }
 
