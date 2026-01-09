@@ -28,6 +28,8 @@ def test_success(uploader, client, record_factory, headers):
 
     assert resp.status_code == 200
     assert resp.json["status"] == "accepted"
+    request_id = resp.json["id"]
+    assert f"/me/requests/{request_id}" in resp.json["links"]["self_html"]
     assert session["_flashes"] == [
         (
             "success",
