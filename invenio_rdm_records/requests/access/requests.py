@@ -255,9 +255,9 @@ class UserAccessRequest(RequestType):
     allowed_receiver_ref_types = ["user", "community"]
     allowed_topic_ref_types = ["record"]
 
-    def _update_link_config(self, **context_vars):
-        """Update the 'ui' variable for generation of links."""
-        return {"ui": context_vars["ui"] + "/access"}
+    endpoints_item = {
+        "self_html": "invenio_app_rdm_requests.read_request"
+    }
 
     available_actions = {
         "create": actions.CreateAction,
@@ -275,6 +275,50 @@ class UserAccessRequest(RequestType):
     }
 
 
+class EndpointsItemForGuestAccessRequest(dict):
+    """This is to keep the pre-existing dynamic url logic while adopting new appproach.
+
+    Pre-existing logic had "ui" part of link appended with
+    - "/me" if authenticated user
+    - "/access" if not
+
+    The original logic is strange given that UserAccessRequest always appended "ui" part
+    of link with "/access" (and there the user is authenticated). Nevertheless, this
+    *tries* to keep the original logic, so that refactoring does not cause undue
+    breaking changes.
+
+    It tries to keep same logic, but has to make some concession: the previous code
+    checked if the passed identity was authenticated and that identity was typically
+    the g.identity. Because there is no access to the context from here now,
+    we check the g.identity always. (this also could be resolved by addressing that
+    wrinkle above and always selecting one endpoint)
+    """
+
+    def _self_html(self):
+        """Return dynamic self_html endpoint."""
+        endpoint = "invenio_app_rdm_requests.user_dashboard_request_view"
+
+        if hasattr(g, "identity"):
+            if authenticated_user not in g.identity.provides:
+                endpoint = "invenio_app_rdm_requests.read_request"
+
+        return endpoint
+
+    def __getitem__(self, key):
+        """Override `[]` access."""
+        if key == "self_html":
+            return self._self_html()
+        else:
+            return super().__getitem__(key)
+
+    def get(self, key, default=None):
+        """Override `.get` access."""
+        if key == "self_html":
+            return self._self_html()
+        else:
+            return super().get(key, default=default)
+
+
 class GuestAccessRequest(RequestType):
     """Access request type coming from a guest."""
 
@@ -287,6 +331,9 @@ class GuestAccessRequest(RequestType):
     allowed_receiver_ref_types = ["user", "community"]
     allowed_topic_ref_types = ["record"]
 
+    # passed dict is just to make instance non-empty
+    endpoints_item = EndpointsItemForGuestAccessRequest({"self_html": True})
+
     @classmethod
     def _create_payload_cls(cls):
         class PayloadBaseSchema(ma.Schema, FieldPermissionsMixin):
@@ -298,18 +345,6 @@ class GuestAccessRequest(RequestType):
                 unknown = ma.RAISE
 
         cls.payload_schema_cls = PayloadBaseSchema
-
-    def _update_link_config(self, **context_vars):
-        """Fix the prefix required for "self_html"."""
-        prefix = "/me"
-
-        if hasattr(g, "identity"):
-            identity = context_vars.get("identity", g.identity)
-
-            if authenticated_user not in identity.provides:
-                prefix = "/access"
-
-        return {"ui": context_vars["ui"] + prefix}
 
     @validates("secret_link_expiration")
     def _validate_days(self, value):
