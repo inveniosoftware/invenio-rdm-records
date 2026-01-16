@@ -1,8 +1,8 @@
 
 ..
-    Copyright (C) 2019-2025 CERN.
+    Copyright (C) 2019-2026 CERN.
     Copyright (C) 2019-2025 Northwestern University.
-    Copyright (C) 2024-2025 KTH Royal Institute of Technology.
+    Copyright (C) 2024-2026 KTH Royal Institute of Technology.
     Copyright (C) 2024-2025 Graz University of Technology.
     Copyright (C) 2025 TU Wien.
 
@@ -12,6 +12,10 @@
 
 Changes
 =======
+
+Version v19.6.3 (released 2026-01-16)
+
+- fix(deposit): rename conflicting prop func which was breaking deposit submission
 
 Version v19.6.2 (released 2026-01-13)
 
