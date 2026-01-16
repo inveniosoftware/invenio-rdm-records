@@ -12,6 +12,10 @@
 Changes
 =======
 
+Version v22.7.1 (released 2026-01-16)
+
+- fix(deposit): rename conflicting prop func which was breaking deposit submission
+
 Version v22.7.0 (released 2025-12-08)
 
 - fix(access_requests_ui): Fix permissions for commenting with guest token when request is locked
