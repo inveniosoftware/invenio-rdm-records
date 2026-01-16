@@ -12,6 +12,16 @@
 Changes
 =======
 
+
+
+Version v23.2.0 (released 2026-01-16)
+
+- fix(requests): inherit from BaseRequest to fix self_html links
+- fix(tests): update wikidata identifier
+- fix: The character 'U+fe0f' is invisible.
+- Add Arabic translations for resource types
+- fix(schema): take the list of allowed tags and attrs from the app config
+
 Version v23.1.1 (released 2026-01-08)
 
 - bibtex: schema: add publication-thesis for compatibility
