@@ -1,5 +1,5 @@
 // This file is part of Invenio-RDM-Records
-// Copyright (C) 2020-2023 CERN.
+// Copyright (C) 2020-2026 CERN.
 // Copyright (C) 2020-2022 Northwestern University.
 //
 // Invenio-RDM-Records is free software; you can redistribute it and/or modify it
@@ -53,7 +53,7 @@ class DepositBootstrapComponent extends Component {
     const {
       saveAction,
       publishAction,
-      submitReview,
+      submitReviewAction,
       previewAction,
       deleteAction,
       reservePIDAction,
@@ -75,7 +75,7 @@ class DepositBootstrapComponent extends Component {
         params["removeSelectedCommunity"] = true;
         break;
       case DepositFormSubmitActions.SUBMIT_REVIEW:
-        actionFunc = submitReview;
+        actionFunc = submitReviewAction;
         params["reviewComment"] = extra["reviewComment"];
         params["directPublish"] = extra["directPublish"];
         break;
@@ -148,7 +148,7 @@ DepositBootstrapComponent.propTypes = {
   children: PropTypes.node,
   saveAction: PropTypes.func.isRequired,
   publishAction: PropTypes.func.isRequired,
-  submitReview: PropTypes.func.isRequired,
+  submitReviewAction: PropTypes.func.isRequired,
   previewAction: PropTypes.func.isRequired,
   deleteAction: PropTypes.func.isRequired,
   reservePIDAction: PropTypes.func.isRequired,
@@ -176,7 +176,7 @@ const mapStateToProps = (state) => {
 const mapDispatchToProps = (dispatch) => ({
   publishAction: (values, { removeSelectedCommunity = false }) =>
     dispatch(publish(values, { removeSelectedCommunity })),
-  submitReview: (values, { reviewComment, directPublish }) =>
+  submitReviewAction: (values, { reviewComment, directPublish }) =>
     dispatch(submitReview(values, { reviewComment, directPublish })),
   saveAction: (values) => dispatch(save(values)),
   previewAction: (values) => dispatch(preview(values)),
