@@ -19,6 +19,7 @@ from invenio_rdm_records.notifications.builders import (
 from invenio_rdm_records.services.errors import InvalidAccessRestrictions
 
 from ..proxies import current_rdm_records_service as service
+from ..requests.base import BaseRequest
 from ..services.errors import InvalidAccessRestrictions
 
 
@@ -93,7 +94,7 @@ class AcceptAction(actions.AcceptAction):
 #
 # Request
 #
-class CommunityInclusion(RequestType):
+class CommunityInclusion(BaseRequest):
     """Community inclusion request for adding a record to a community."""
 
     type_id = "community-inclusion"

@@ -17,6 +17,8 @@ from marshmallow import ValidationError, fields, validate
 
 from invenio_rdm_records.proxies import current_rdm_records_service as records_service
 
+from ..requests.base import BaseRequest
+
 
 class CreateAction(actions.CreateAction):
     """Create action."""
@@ -65,7 +67,7 @@ class AcceptAction(actions.AcceptAction):
         super().execute(identity, uow)
 
 
-class FileModification(RequestType):
+class FileModification(BaseRequest):
     """Request type for file modification."""
 
     type_id = "file-modification"
