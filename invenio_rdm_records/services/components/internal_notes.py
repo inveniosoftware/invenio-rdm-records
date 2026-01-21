@@ -6,6 +6,7 @@
 # it under the terms of the MIT License; see LICENSE file for more details.
 
 """RDM service component for custom fields."""
+
 import uuid
 from copy import copy, deepcopy
 from datetime import datetime, timezone

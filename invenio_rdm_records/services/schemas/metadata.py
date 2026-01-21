@@ -342,12 +342,8 @@ class LocationSchema(Schema):
             and not data.get("description")
         ):
             raise ValidationError(
-                {
-                    "locations": _(
-                        "At least one of ['geometry', 'place', \
-                identifiers', 'description'] must be present."
-                    )
-                }
+                {"locations": _("At least one of ['geometry', 'place', \
+                identifiers', 'description'] must be present.")}
             )
 
 

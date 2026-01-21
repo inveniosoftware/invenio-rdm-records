@@ -13,7 +13,6 @@ It has to exist here to be picked up correctly by the create_app of
 tests/resources/conftest.py .
 """
 
-
 from flask import Blueprint
 
 
