@@ -7,7 +7,6 @@
 
 """Marshmallow field definitions."""
 
-
 from flask import current_app
 from marshmallow_utils.fields import SanitizedHTML as SanitizedHTMLBase
 
