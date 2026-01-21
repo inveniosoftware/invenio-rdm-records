@@ -12,7 +12,7 @@ from datetime import datetime, timedelta, timezone
 from typing import Optional
 
 from flask import current_app
-from invenio_access.permissions import authenticated_user, system_process
+from invenio_access.permissions import authenticated_user, system_permission
 from invenio_administration.permissions import administration_permission
 from invenio_i18n import lazy_gettext as _
 
@@ -126,7 +126,7 @@ class FileModificationAdminPolicy(BasePolicy):
     def is_allowed(self, identity, record):
         """Admins are allowed."""
         is_admin = administration_permission.allows(identity)
-        is_system = system_process.allows(identity)
+        is_system = system_permission.allows(identity)
         return is_admin or is_system
 
     def evaluate(self, identity, record):
