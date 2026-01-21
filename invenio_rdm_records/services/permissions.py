@@ -192,7 +192,7 @@ class RDMRecordPermissionPolicy(RecordPermissionPolicy):
         IfConfig(
             "RDM_ALLOW_METADATA_ONLY_RECORDS",
             then_=[IfNewRecord(then_=can_authenticated, else_=can_review)],
-            else_=[],
+            else_=[SystemProcess()],
         ),
     ]
     # Allow managing record access
