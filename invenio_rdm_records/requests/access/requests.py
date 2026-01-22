@@ -263,9 +263,7 @@ class UserAccessRequest(RequestType):
         "self_html": EndpointLink(
             "invenio_app_rdm_requests.read_request",
             params=["request_pid_value"],
-            vars=lambda obj, vars: (
-                vars.update(request_pid_value=vars["request"].id)
-            ),
+            vars=lambda obj, vars: vars.update(request_pid_value=vars["request"].id),
         ),
     }
 
