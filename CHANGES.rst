@@ -12,6 +12,13 @@
 Changes
 =======
 
+Version 23.2.1 (release 2026-01-22)
+
+- fix(permissions): allow system user to manage files
+- fix(request_policies): allow system user to modify files
+- chore: black formatting python3.9 compatability
+- fix(files): fix for pending files with long names
+- fix(deposit): rename conflicting prop func
 
 
 Version v23.2.0 (released 2026-01-16)
