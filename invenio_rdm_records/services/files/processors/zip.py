@@ -74,6 +74,12 @@ class ZipProcessor(FileProcessor):
                     )
 
                 record.media_files.commit(f"{file_record.key}.listing")
+        #TODO: pryc KONEC
+
+        #TODO: nahrada START
+
+
+        #TODO: nahrada KONEC
 
         except Exception:
             # Nested transaction for current file is rolled back
