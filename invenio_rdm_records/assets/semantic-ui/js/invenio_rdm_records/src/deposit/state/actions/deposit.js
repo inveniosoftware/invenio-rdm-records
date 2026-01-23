@@ -1,6 +1,7 @@
 // This file is part of Invenio-RDM-Records
 // Copyright (C) 2020-2025 CERN.
 // Copyright (C) 2020-2022 Northwestern University.
+// Copyright (C)      2026 CESNET.
 //
 // Invenio-RDM-Records is free software; you can redistribute it and/or modify it
 // under the terms of the MIT License; see LICENSE file for more details.
@@ -327,15 +328,37 @@ export const reservePID = (draft, { pidType }) => {
       payload: { pidType: pidType },
     });
 
+    let response;
     try {
-      let response = await saveDraftWithUrlUpdate(draft, config.service.drafts);
+      response = await _saveDraft(draft, config.service.drafts, {
+        depositState: getState().deposit,
+        dispatchFn: dispatch,
+        failType: RESERVE_PID_FAILED,
+        partialValidationActionType: "RESERVE_PID_VALIDATION_SILENT",
+        showOnlyValidationErrorsWithSeverityError: false,
+      });
+    } catch (error) {
+      // Validation errors are caught but do not block PID reservation.
+      // _saveDraft ensures the review was updated before throwing.
+      if (error.errors) {
+        response = error;
+      } else {
+        // Rethrow non-validation errors
+        console.error("Error saving draft before reserving PID", error, draft);
+        throw error;
+      }
+    }
 
+    try {
       const draftWithLinks = response.data;
-      response = await config.service.drafts.reservePID(draftWithLinks.links, pidType);
+      const reserveResponse = await config.service.drafts.reservePID(
+        draftWithLinks.links,
+        pidType
+      );
 
       dispatch({
         type: RESERVE_PID_SUCCEEDED,
-        payload: { data: response.data },
+        payload: { data: reserveResponse.data },
       });
     } catch (error) {
       console.error("Error reserving PID", error, draft);
